@@ -1,0 +1,664 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XnaContent xmlns:Pipeline="Microsoft.Xna.Framework.Content.Pipeline" xmlns:Framework="Microsoft.Xna.Framework" xmlns:Processors="Microsoft.Xna.Framework.Content.Pipeline.Processors">
+  <Asset Type="Pipeline:BuildItemCollection">
+    <Item>
+      <Source>CubetacularTexture.png</Source>
+      <Name>CubetacularTexture</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\CubetacularTexture.xnb</Output>
+      <Time>2012-08-04T16:29:15.1462783-04:00</Time>
+    </Item>
+    <Item>
+      <Source>DwarfSprites.png</Source>
+      <Name>DwarfSprites</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\DwarfSprites.xnb</Output>
+      <Time>2012-08-05T23:32:26.8744282-04:00</Time>
+    </Item>
+    <Item>
+      <Source>pine.png</Source>
+      <Name>pine</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\pine.xnb</Output>
+      <Time>2012-11-12T21:47:54.608944-05:00</Time>
+    </Item>
+    <Item>
+      <Source>icons.png</Source>
+      <Name>icons</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\icons.xnb</Output>
+      <Time>2012-08-26T15:22:19.328713-04:00</Time>
+    </Item>
+    <Item>
+      <Source>night_sky.dds</Source>
+      <Name>night_sky</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\night_sky.xnb</Output>
+      <Time>2012-10-09T22:35:45.9237155-04:00</Time>
+    </Item>
+    <Item>
+      <Source>day_sky.dds</Source>
+      <Name>day_sky</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\day_sky.xnb</Output>
+      <Time>2012-10-06T16:59:09.8539736-04:00</Time>
+    </Item>
+    <Item>
+      <Source>sun_moon.dds</Source>
+      <Name>sun_moon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\sun_moon.xnb</Output>
+      <Time>2012-10-10T01:22:44.3447364-04:00</Time>
+    </Item>
+    <Item>
+      <Source>SuaveSheet.png</Source>
+      <Name>SuaveSheet</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\SuaveSheet.xnb</Output>
+      <Time>2012-08-12T18:09:19.4998936-04:00</Time>
+    </Item>
+    <Item>
+      <Source>farming_fishing.png</Source>
+      <Name>farming_fishing</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\farming_fishing.xnb</Output>
+      <Time>2012-09-10T22:00:14.0240913-04:00</Time>
+    </Item>
+    <Item>
+      <Source>interior.png</Source>
+      <Name>interior</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\interior.xnb</Output>
+      <Time>2012-08-27T20:07:35.6217963-04:00</Time>
+    </Item>
+    <Item>
+      <Source>water_normal.jpg</Source>
+      <Name>water_normal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\water_normal.xnb</Output>
+      <Time>2012-09-02T22:20:53.3834666-04:00</Time>
+    </Item>
+    <Item>
+      <Source>cartoon_water.png</Source>
+      <Name>cartoon_water</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\cartoon_water.xnb</Output>
+      <Time>2012-09-02T22:07:37.0399183-04:00</Time>
+    </Item>
+    <Item>
+      <Source>water_normal2.jpg</Source>
+      <Name>water_normal2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\water_normal2.xnb</Output>
+      <Time>2012-09-02T22:18:29.5482396-04:00</Time>
+    </Item>
+    <Item>
+      <Source>foam.png</Source>
+      <Name>foam</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\foam.xnb</Output>
+      <Time>2012-09-03T00:02:50.0383192-04:00</Time>
+    </Item>
+    <Item>
+      <Source>puddle.png</Source>
+      <Name>puddle</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\puddle.xnb</Output>
+      <Time>2012-09-04T19:30:17.4259286-04:00</Time>
+    </Item>
+    <Item>
+      <Source>ambientgradient.png</Source>
+      <Name>ambientgradient</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\ambientgradient.xnb</Output>
+      <Time>2012-10-18T18:59:30.4350167-04:00</Time>
+    </Item>
+    <Item>
+      <Source>sungradient.png</Source>
+      <Name>sungradient</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\sungradient.xnb</Output>
+      <Time>2012-09-08T01:26:22.8292273-04:00</Time>
+    </Item>
+    <Item>
+      <Source>torchgradient.png</Source>
+      <Name>torchgradient</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\torchgradient.xnb</Output>
+      <Time>2012-10-02T15:04:45.6761468-04:00</Time>
+    </Item>
+    <Item>
+      <Source>redtexture.png</Source>
+      <Name>redtexture</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\redtexture.xnb</Output>
+      <Time>2012-09-08T17:08:51.4570607-04:00</Time>
+    </Item>
+    <Item>
+      <Source>apple_tree.png</Source>
+      <Name>apple_tree</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\apple_tree.xnb</Output>
+      <Time>2012-09-11T20:09:46.7375247-04:00</Time>
+    </Item>
+    <Item>
+      <Source>tiles.png</Source>
+      <Name>tiles</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\tiles.xnb</Output>
+      <Time>2012-11-17T21:41:50.6649028-05:00</Time>
+    </Item>
+    <Item>
+      <Source>dorfdorf.png</Source>
+      <Name>dorfdorf</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\dorfdorf.xnb</Output>
+      <Time>2012-11-12T22:22:39.5591963-05:00</Time>
+    </Item>
+    <Item>
+      <Source>shadowcircle.png</Source>
+      <Name>shadowcircle</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\shadowcircle.xnb</Output>
+      <Time>2012-09-30T19:47:49.4382094-04:00</Time>
+    </Item>
+    <Item>
+      <Source>puff.png</Source>
+      <Name>puff</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\puff.xnb</Output>
+      <Time>2012-10-06T12:36:06.2732044-04:00</Time>
+    </Item>
+    <Item>
+      <Source>grassthing.png</Source>
+      <Name>grassthing</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\grassthing.xnb</Output>
+      <Time>2012-10-20T15:19:24.0105474-04:00</Time>
+    </Item>
+    <Item>
+      <Source>skygradient.png</Source>
+      <Name>skygradient</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\skygradient.xnb</Output>
+      <Time>2012-10-10T00:54:09.6626622-04:00</Time>
+    </Item>
+    <Item>
+      <Source>leaf.png</Source>
+      <Name>leaf</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\leaf.xnb</Output>
+      <Time>2012-10-20T15:53:58.4912009-04:00</Time>
+    </Item>
+    <Item>
+      <Source>illum.png</Source>
+      <Name>illum</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\illum.xnb</Output>
+      <Time>2012-10-23T16:28:04.8763365-04:00</Time>
+    </Item>
+    <Item>
+      <Source>dwarfcorp3.png</Source>
+      <Name>dwarfcorp3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\dwarfcorp3.xnb</Output>
+      <Time>2012-10-28T23:35:25.4158001-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Default.spritefont</Source>
+      <Name>Default</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Default.xnb</Output>
+      <Time>2012-08-13T23:36:26.9341826-04:00</Time>
+    </Item>
+    <Item>
+      <Source>DefaultFont.spritefont</Source>
+      <Name>DefaultFont</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\DefaultFont.xnb</Output>
+      <Time>2012-08-12T18:09:25.4102316-04:00</Time>
+    </Item>
+    <Item>
+      <Source>TitleFont.spritefont</Source>
+      <Name>TitleFont</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\TitleFont.xnb</Output>
+      <Time>2012-08-12T18:09:28.5914136-04:00</Time>
+    </Item>
+    <Item>
+      <Source>BloomCombine.fx</Source>
+      <Name>BloomCombine</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\BloomCombine.xnb</Output>
+      <Time>2012-09-01T12:05:36.5763662-04:00</Time>
+    </Item>
+    <Item>
+      <Source>BloomExtract.fx</Source>
+      <Name>BloomExtract</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\BloomExtract.xnb</Output>
+      <Time>2012-09-01T12:05:36.5773662-04:00</Time>
+    </Item>
+    <Item>
+      <Source>GaussianBlur.fx</Source>
+      <Name>GaussianBlur</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\GaussianBlur.xnb</Output>
+      <Time>2012-09-01T12:05:36.5793663-04:00</Time>
+    </Item>
+    <Item>
+      <Source>SkySphere.fx</Source>
+      <Name>SkySphere</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\SkySphere.xnb</Output>
+      <Time>2012-10-09T23:45:12.2670167-04:00</Time>
+    </Item>
+    <Item>
+      <Source>ParticleEffect.fx</Source>
+      <Name>ParticleEffect</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\ParticleEffect.xnb</Output>
+      <Time>2012-10-17T20:06:41.4230623-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Hargraves.fx</Source>
+      <Name>Hargraves</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Hargraves.xnb</Output>
+      <Time>2012-10-23T16:38:22.8148929-04:00</Time>
+    </Item>
+    <Item>
+      <Source>SphereHighPoly.fbx</Source>
+      <Name>SphereHighPoly</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\SphereHighPoly.xnb</Output>
+      <Time>2012-09-08T17:08:20.7613636-04:00</Time>
+      <Dependency>
+        <Key>obj\x86\Release\SphereHighPoly_0.xml</Key>
+        <Value>2012-11-10T15:17:29.7333262-05:00</Value>
+      </Dependency>
+    </Item>
+    <Item>
+      <Source>redtorus.fbx</Source>
+      <Name>redtorus</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\redtorus.xnb</Output>
+      <Time>2012-09-08T17:08:54.1802092-04:00</Time>
+      <Dependency>
+        <Key>obj\x86\Release\redtorus_0.xml</Key>
+        <Value>2012-11-10T15:17:30.0693454-05:00</Value>
+      </Dependency>
+      <Request>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\FBX\AF292A77\redtorus.fbm\redtexture_0.xnb</Request>
+    </Item>
+    <Item>
+      <Source>Dwarven\echo.wav</Source>
+      <Name>Dwarven\echo</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\echo.xnb</Output>
+      <Time>2012-09-13T22:41:06.6189281-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\ekmono.wav</Source>
+      <Name>Dwarven\ekmono</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\ekmono.xnb</Output>
+      <Time>2012-09-13T22:41:06.6199281-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\ekmono2.wav</Source>
+      <Name>Dwarven\ekmono2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\ekmono2.xnb</Output>
+      <Time>2012-09-13T22:41:06.6199281-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\eksennaok.wav</Source>
+      <Name>Dwarven\eksennaok</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\eksennaok.xnb</Output>
+      <Time>2012-09-13T22:41:06.6219282-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\fenalan.wav</Source>
+      <Name>Dwarven\fenalan</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\fenalan.xnb</Output>
+      <Time>2012-09-13T22:41:06.6229283-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\fertuna.wav</Source>
+      <Name>Dwarven\fertuna</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\fertuna.xnb</Output>
+      <Time>2012-09-13T22:41:06.6229283-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\fertunak.wav</Source>
+      <Name>Dwarven\fertunak</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\fertunak.xnb</Output>
+      <Time>2012-09-13T22:41:06.6239284-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\fertunak2.wav</Source>
+      <Name>Dwarven\fertunak2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\fertunak2.xnb</Output>
+      <Time>2012-09-13T22:41:06.6249284-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\forioren.wav</Source>
+      <Name>Dwarven\forioren</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\forioren.xnb</Output>
+      <Time>2012-09-13T22:41:06.6259285-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\hakana.wav</Source>
+      <Name>Dwarven\hakana</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\hakana.xnb</Output>
+      <Time>2012-09-13T22:41:06.6269285-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\kayara.wav</Source>
+      <Name>Dwarven\kayara</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\kayara.xnb</Output>
+      <Time>2012-09-13T22:41:06.6279286-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\kellala.wav</Source>
+      <Name>Dwarven\kellala</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\kellala.xnb</Output>
+      <Time>2012-09-13T22:41:06.6279286-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\mella.wav</Source>
+      <Name>Dwarven\mella</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\mella.xnb</Output>
+      <Time>2012-09-13T22:41:06.6289286-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\mennas.wav</Source>
+      <Name>Dwarven\mennas</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\mennas.xnb</Output>
+      <Time>2012-09-13T22:41:06.6299287-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\menordere.wav</Source>
+      <Name>Dwarven\menordere</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\menordere.xnb</Output>
+      <Time>2012-09-13T22:41:06.6309288-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\orruk.wav</Source>
+      <Name>Dwarven\orruk</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\orruk.xnb</Output>
+      <Time>2012-09-13T22:41:06.6319288-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\sen.wav</Source>
+      <Name>Dwarven\sen</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\sen.xnb</Output>
+      <Time>2012-09-13T22:41:06.6329289-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\simulk.wav</Source>
+      <Name>Dwarven\simulk</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\simulk.xnb</Output>
+      <Time>2012-09-13T22:41:06.6339289-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Dwarven\yehrenos.wav</Source>
+      <Name>Dwarven\yehrenos</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Dwarven\yehrenos.xnb</Output>
+      <Time>2012-09-13T22:41:06.634929-04:00</Time>
+    </Item>
+    <Item>
+      <Source>SphereHighPoly.fbx</Source>
+      <Importer>FbxImporter</Importer>
+      <Options>IntermediateFile, DontCacheImportedData</Options>
+      <Output>obj\x86\Release\SphereHighPoly_0.xml</Output>
+      <Time>2012-09-08T17:08:20.7613636-04:00</Time>
+    </Item>
+    <Item>
+      <Source>redtorus.fbx</Source>
+      <Importer>FbxImporter</Importer>
+      <Options>IntermediateFile, DontCacheImportedData</Options>
+      <Output>obj\x86\Release\redtorus_0.xml</Output>
+      <Time>2012-09-08T17:08:54.1802092-04:00</Time>
+    </Item>
+    <Item>
+      <Source>obj\x86\Release\FBX\AF292A77\redtorus.fbm\redtexture.png</Source>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Parameters>
+        <Data Key="ColorKeyColor" Type="Framework:Color">FFFF00FF</Data>
+        <Data Key="ColorKeyEnabled" Type="bool">true</Data>
+        <Data Key="TextureFormat" Type="Processors:TextureProcessorOutputFormat">DxtCompressed</Data>
+        <Data Key="GenerateMipmaps" Type="bool">true</Data>
+        <Data Key="ResizeToPowerOfTwo" Type="bool">false</Data>
+        <Data Key="PremultiplyAlpha" Type="bool">true</Data>
+      </Parameters>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\FBX\AF292A77\redtorus.fbm\redtexture_0.xnb</Output>
+      <Time>2012-11-10T15:17:30.0353435-05:00</Time>
+    </Item>
+    <Item>
+      <Source>pickaxe.png</Source>
+      <Name>pickaxe</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\pickaxe.xnb</Output>
+      <Time>2012-11-18T16:19:57.8438517-05:00</Time>
+    </Item>
+    <Item>
+      <Source>hit.wav</Source>
+      <Name>hit</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\hit.xnb</Output>
+      <Time>2012-11-15T21:50:32.4871797-05:00</Time>
+    </Item>
+    <Item>
+      <Source>jump.wav</Source>
+      <Name>jump</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\jump.xnb</Output>
+      <Time>2012-11-15T21:50:53.9654081-05:00</Time>
+    </Item>
+    <Item>
+      <Source>explode.wav</Source>
+      <Name>explode</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\explode.xnb</Output>
+      <Time>2012-11-15T22:30:15.9585064-05:00</Time>
+    </Item>
+    <BuildSuccessful>true</BuildSuccessful>
+    <Settings>
+      <TargetPlatform>Windows</TargetPlatform>
+      <TargetProfile>HiDef</TargetProfile>
+      <BuildConfiguration>Release</BuildConfiguration>
+      <CompressContent>true</CompressContent>
+      <RootDirectory>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTestContent\</RootDirectory>
+      <LoggerRootDirectory>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\</LoggerRootDirectory>
+      <IntermediateDirectory>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTestContent\obj\x86\Release\</IntermediateDirectory>
+      <OutputDirectory>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\</OutputDirectory>
+    </Settings>
+    <Assemblies>
+      <Assembly>
+        <Key>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\Nuclex\Nuclex.Game.ContentCompressor.exe</Key>
+        <Value>2011-03-16T17:44:30-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\Nuclex\Nuclex.Fonts.Content.TrueTypeImporter.dll</Key>
+        <Value>2011-03-16T17:44:12-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.XImporter.dll</Key>
+        <Value>2010-08-23T12:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.VideoImporters.dll</Key>
+        <Value>2010-08-23T12:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.TextureImporter.dll</Key>
+        <Value>2010-08-23T12:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.FBXImporter.dll</Key>
+        <Value>2010-08-23T12:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.EffectImporter.dll</Key>
+        <Value>2010-08-23T12:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.AudioImporters.dll</Key>
+        <Value>2010-08-23T12:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\Nuclex\LzmaSharp.dll</Key>
+        <Value>2011-03-07T14:34:30-05:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Windows\Microsoft.Net\assembly\GAC_32\Microsoft.Xna.Framework.Content.Pipeline\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Content.Pipeline.dll</Key>
+        <Value>2012-05-14T13:20:12.6781612-04:00</Value>
+      </Assembly>
+    </Assemblies>
+  </Asset>
+</XnaContent>
