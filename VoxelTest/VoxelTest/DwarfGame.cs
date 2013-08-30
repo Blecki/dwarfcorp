@@ -19,10 +19,11 @@ namespace DwarfCorp
         public GraphicsDeviceManager graphics;
         public TextureManager TextureManager { get; set; }
         public static SpriteBatch SpriteBatch { get; set; }
+        public static string VersionString { get; set; }
 
         public DwarfGame()
         {
-            
+            VersionString = "1 . 0 . 21";
             Content.RootDirectory = "Content";
             StateManager = new GameStateManager(this);
             graphics = new GraphicsDeviceManager(this);
