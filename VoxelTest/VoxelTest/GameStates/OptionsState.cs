@@ -240,6 +240,11 @@ namespace DwarfCorp
             GameplayLayout.SetComponentPosition(ZoomSlider, 1, 1, 1, 1);
             ZoomSlider.OnValueModified += new Slider.ValueModified(ZoomSlider_OnValueModified);
 
+            Checkbox InvertZoomBox = new Checkbox(GUI, GameplayLayout, "Invert Zoom", GUI.DefaultFont, GameSettings.Default.InvertZoom);
+            GameplayLayout.SetComponentPosition(InvertZoomBox, 2, 1, 1, 1);
+            InvertZoomBox.OnCheckModified += new Checkbox.CheckModified(InvertZoomBox_OnCheckModified);
+
+
             Checkbox EdgeScrollBox = new Checkbox(GUI, GameplayLayout, "Edge Scrolling", GUI.DefaultFont, GameSettings.Default.EnableEdgeScroll);
             GameplayLayout.SetComponentPosition(EdgeScrollBox, 0, 2, 1, 1);
             EdgeScrollBox.OnCheckModified += new Checkbox.CheckModified(EdgeScrollBox_OnCheckModified);
@@ -355,6 +360,11 @@ namespace DwarfCorp
 
 
             base.OnEnter();
+        }
+
+        void InvertZoomBox_OnCheckModified(bool arg)
+        {
+            GameSettings.Default.InvertZoom = arg;
         }
 
         void MotesSlider_OnValueModified(float arg)
