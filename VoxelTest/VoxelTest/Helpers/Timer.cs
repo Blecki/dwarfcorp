@@ -23,6 +23,11 @@ namespace DwarfCorp
 
         public bool Update(GameTime t)
         {
+            if (null == t)
+            {
+                return false;
+            }
+
             if (!TriggerOnce && HasTriggered)
             {
                 HasTriggered = false;

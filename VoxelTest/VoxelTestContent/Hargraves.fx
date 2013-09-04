@@ -262,8 +262,9 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 {
     TPixelToFrame Output = (TPixelToFrame)0;
-	
-    Output.Color =  tex2D(SunSampler, float2(PSIn.Color.r * (1.0f - xTimeOfDay), 0.5f));
+	if (Clipping)  clip(PSIn.clipDistances);  //MSS - Water Refactor added
+    
+	Output.Color =  tex2D(SunSampler, float2(PSIn.Color.r * (1.0f - xTimeOfDay), 0.5f));
 	Output.Color.a *= PSIn.Color.a;
 	Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.Color.b + (sin(xTime * 10.0f) + 1.0f) * 0.01f * PSIn.Color.b, 0.5f));
 	saturate(Output.Color.rgb);
@@ -282,7 +283,7 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 
 	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
 
-    if (Clipping)  clip(PSIn.clipDistances);  //MSS - Water Refactor added
+
 
     return Output;
 }
@@ -330,6 +331,7 @@ struct WVertexToPixel
 	 float2 UnMovedTextureSamplingPos : TEXCOORD6;
 	 float4 Color : COLOR0;
 	 float Fog : TEXCOORD7;
+	 float clipDistances : COLOR1;
 
 };
 
@@ -371,6 +373,7 @@ WVertexToPixel WaterVS(float4 inPos : POSITION, float2 inTex: TEXCOORD0, float4 
 	 Output.UnMovedTextureSamplingPos = inTex;
 	 Output.Color = inColor;
 	 Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
+	 if(Clipping) Output.clipDistances = dot(mul(xWorld,inPos), ClipPlane0);
 
      return Output;
 }
@@ -378,6 +381,7 @@ WVertexToPixel WaterVS(float4 inPos : POSITION, float2 inTex: TEXCOORD0, float4 
 WPixelToFrame WaterPS(WVertexToPixel PSIn)
 {
     WPixelToFrame Output = (WPixelToFrame)0;   
+	if (Clipping)  clip(PSIn.clipDistances); 
 	Output.Color = PSIn.Color;     
 
     float4 bumpColor = tex2D(WaterBumpMapSampler, PSIn.BumpMapSamplingPos);
@@ -426,7 +430,6 @@ WPixelToFrame WaterPS(WVertexToPixel PSIn)
 	{
 		Output.Color.rgba += xRippleColor; 
 	}
-
     return Output;
 }
 

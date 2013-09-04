@@ -22,7 +22,7 @@ namespace DwarfCorp
         public Drawer2D Drawer { get; set; }
         public InputManager Input { get; set; }
         public bool IsGameRunning { get; set; }
-        
+
         public MainMenuState(DwarfGame game, GameStateManager stateManager) :
             base(game, "MainMenuState", stateManager)
         {
@@ -140,7 +140,8 @@ namespace DwarfCorp
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
             DwarfGame.SpriteBatch.Draw(Logo, new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - Logo.Width / 2 + dx, 30), null, Color.White);
-            DwarfGame.SpriteBatch.DrawString(GUI.DefaultFont, DwarfGame.VersionString, new Vector2(10, 10), Color.White);
+            DwarfGame.SpriteBatch.DrawString(GUI.DefaultFont, Program.Version, new Vector2(15, 15), Color.White);
+
             DwarfGame.SpriteBatch.End();
         }
 

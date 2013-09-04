@@ -46,14 +46,14 @@ namespace DwarfCorp
         PrimitiveLibrary primitiveLibrary = null;
         BloomPostprocess.BloomComponent bloom;
 
-        Effect waterEffect;
+        Effect shader;
         WaterRenderer waterRenderer;
 
         SkyRenderer Sky;
 
         Language dwarven = null;
 
-        public static Random random = new Random();
+        public static ThreadSafeRandom random = new ThreadSafeRandom();
 
         public static InstanceManager InstanceManager;
 
@@ -179,7 +179,7 @@ namespace DwarfCorp
             Tilesheet = TextureManager.GetTexture("TileSet"); 
             aspectRatio = GraphicsDevice.Viewport.AspectRatio;
             DefaultShader = Content.Load<Effect>("Hargraves");
-            waterEffect = Content.Load<Effect>("Hargraves");
+            shader = Content.Load<Effect>("Hargraves");
 
             waterRenderer = new WaterRenderer(GraphicsDevice);
 
@@ -727,7 +727,7 @@ namespace DwarfCorp
                 double x = timeHack;
                 Sky.TimeOfDay = (float)Math.Cos(x * 0.01f) * 0.5f + 0.5f;
                 Sky.CosTime = (float)x * 0.01f;
-                waterEffect.Parameters["xTimeOfDay"].SetValue(Sky.TimeOfDay);
+                shader.Parameters["xTimeOfDay"].SetValue(Sky.TimeOfDay);
             }
 
             
@@ -878,13 +878,13 @@ namespace DwarfCorp
 
             float x = (1.0f - Sky.TimeOfDay);
             x = x * x;
-            waterEffect.Parameters["xFogColor"].SetValue(new Vector3(0.32f * x, 0.58f * x, 0.9f * x));
+            shader.Parameters["xFogColor"].SetValue(new Vector3(0.32f * x, 0.58f * x, 0.9f * x));
 
             float wHeight = waterRenderer.GetVisibleWaterHeight(chunkManager, camera, GraphicsDevice.Viewport, lastWaterHeight);
             
             lastWaterHeight = wHeight;
-            waterRenderer.DrawRefractionMap(gameTime, this, wHeight + 1.0f, camera.ViewMatrix, waterEffect, GraphicsDevice);
-            waterRenderer.DrawReflectionMap(gameTime, this, wHeight - 0.1f, GetReflectedCameraMatrix(wHeight), waterEffect, GraphicsDevice);
+            waterRenderer.DrawRefractionMap(gameTime, this, wHeight + 1.0f, camera.ViewMatrix, shader, GraphicsDevice);
+            waterRenderer.DrawReflectionMap(gameTime, this, wHeight - 0.1f, GetReflectedCameraMatrix(wHeight), shader, GraphicsDevice);
 
             if (GameSettings.Default.EnableGlow)
             {
@@ -896,25 +896,33 @@ namespace DwarfCorp
 
             Plane slicePlane = waterRenderer.CreatePlane(chunkManager.MaxViewingLevel + 1.3f, new Vector3(0, -1, 0), camera.ViewMatrix, false);
 
-            waterEffect.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
-            waterEffect.Parameters["Clipping"].SetValue(true);   
+            shader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
+            shader.Parameters["Clipping"].SetValue(true);   
 
-            Draw3DThings(gameTime, waterEffect, camera.ViewMatrix);
+            Draw3DThings(gameTime, shader, camera.ViewMatrix);
 
-            waterEffect.Parameters["Clipping"].SetValue(false);   
+            shader.Parameters["Clipping"].SetValue(true);   
+            waterRenderer.DrawWater(
+                GraphicsDevice, 
+                (float)gameTime.TotalGameTime.TotalSeconds,
+                shader, 
+                camera.ViewMatrix,
+                GetReflectedCameraMatrix(wHeight),
+                camera.ProjectionMatrix,
+                new Vector3(0.1f, 0.0f, 0.1f),
+                camera,
+                chunkManager);
 
-            waterRenderer.DrawWater(GraphicsDevice, (float)gameTime.TotalGameTime.TotalSeconds, waterEffect, camera.ViewMatrix, GetReflectedCameraMatrix(wHeight), camera.ProjectionMatrix, new Vector3(0.1f, 0.0f, 0.1f), camera, chunkManager);
-
-            waterEffect.CurrentTechnique = waterEffect.Techniques["Textured"];
-            waterEffect.Parameters["Clipping"].SetValue(false);
+            shader.CurrentTechnique = shader.Techniques["Textured"];
+            shader.Parameters["Clipping"].SetValue(false);
 
 
-            SimpleDrawing.Render(GraphicsDevice, waterEffect, true);
+            SimpleDrawing.Render(GraphicsDevice, shader, true);
 
-            waterEffect.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
-            waterEffect.Parameters["Clipping"].SetValue(true);   
-            DrawComponents(gameTime, waterEffect, camera.ViewMatrix, ComponentManager.WaterRenderType.None, lastWaterHeight);
-            waterEffect.Parameters["Clipping"].SetValue(false);   
+            shader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
+            shader.Parameters["Clipping"].SetValue(true);   
+            DrawComponents(gameTime, shader, camera.ViewMatrix, ComponentManager.WaterRenderType.None, lastWaterHeight);
+            shader.Parameters["Clipping"].SetValue(false);   
 
             if (GameSettings.Default.EnableGlow)
             {

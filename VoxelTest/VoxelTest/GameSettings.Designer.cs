@@ -502,5 +502,17 @@ namespace DwarfCorp {
                 this["NumMotes"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool InvertZoom {
+            get {
+                return ((bool)(this["InvertZoom"]));
+            }
+            set {
+                this["InvertZoom"] = value;
+            }
+        }
     }
 }
