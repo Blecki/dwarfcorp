@@ -56,6 +56,7 @@ namespace DwarfCorp
         public bool DrawPath { get; set; }
         public InteractiveComponent InteractingWith { get; set; }
         public GOAP Goap { get; set; }
+        public Actor BehaviorTree { get; set; }
         public Goal CurrentGoal { get; set; }
         public int CurrentActionIndex { get; set; }
         public List<Action> CurrentActionPlan { get; set; }
@@ -75,6 +76,9 @@ namespace DwarfCorp
         public CreatureStats Stats { get { return Creature.Stats; } set { Creature.Stats = value; } }
         public CreatureStatus Status { get { return Creature.Status; } set { Creature.Status = value; } }
 
+        public Vector3 Velocity { get { return Creature.Physics.Velocity; } set { Creature.Physics.Velocity = value; } }
+        public Vector3 Position { get { return Creature.Physics.GlobalTransform.Translation; } }
+        public ChunkManager Chunks { get { return Creature.Master.Chunks; } }
 
         public CreatureAIComponent(Creature creature,
                                    string name,
@@ -109,6 +113,7 @@ namespace DwarfCorp
             Sensor = sensor;
             Sensor.OnEnemySensed += new EnemySensor.EnemySensed(Sensor_OnEnemySensed);
             Sensor.Creature = this;
+            BehaviorTree = new Actor(Manager, this);
           
         }
 
@@ -801,7 +806,6 @@ namespace DwarfCorp
             }
         }
 
-
         public void Jump(GameTime dt)
         {
             if (Creature.JumpTimer.HasTriggered)
@@ -812,8 +816,7 @@ namespace DwarfCorp
             }
 
         }
-
-
+       
         public PlannerSuccess Pathfind(GameTime gameTime)
         {
             ChunkManager chunks = Creature.Master.Chunks;
@@ -937,7 +940,6 @@ namespace DwarfCorp
 
 
         }
-
 
         public PlannerSuccess MeleeAttack(GameTime gameTime)
         {

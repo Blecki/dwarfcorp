@@ -324,6 +324,12 @@
     <Compile Include="Player\TaskManager.cs" />
     <Compile Include="Player\VoxelSelector.cs" />
     <Compile Include="Scripting\Act.cs" />
+    <Compile Include="Components\Actor.cs" />
+    <Compile Include="Scripting\Acts\DigAct.cs" />
+    <Compile Include="Scripting\Acts\FollowPathAct.cs" />
+    <Compile Include="Scripting\Acts\MeleeAct.cs" />
+    <Compile Include="Scripting\Acts\PlanAct.cs" />
+    <Compile Include="Scripting\Acts\StopAct.cs" />
     <Compile Include="Scripting\Acts\WanderAct.cs" />
     <Compile Include="Scripting\CompoundAct.cs" />
     <Compile Include="Scripting\Condition.cs" />
@@ -371,7 +377,6 @@
     <Compile Include="Voxels\WaterRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CSScriptLibrary.dll" />
     <Content Include="favicon.ico" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />

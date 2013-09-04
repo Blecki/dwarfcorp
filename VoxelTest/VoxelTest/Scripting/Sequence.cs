@@ -7,7 +7,6 @@ namespace DwarfCorp
 {
     public class Sequence : Act
     {
-        List<Act> Children { get; set; }
         public int CurrentChildIndex { get; set; }
         public Act CurrentChild { get { return Children[CurrentChildIndex]; } }
 

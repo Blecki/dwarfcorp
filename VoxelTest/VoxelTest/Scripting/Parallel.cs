@@ -7,8 +7,6 @@ namespace DwarfCorp
 {
     public class Parallel : Act
     {
-        List<Act> Children { get; set; }
-
 
         public Parallel(params Act[] children) :
             this(children.AsEnumerable())
