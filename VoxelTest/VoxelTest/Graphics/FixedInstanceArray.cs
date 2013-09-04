@@ -53,10 +53,16 @@ namespace DwarfCorp
                 {
                     //conservativeSphere.Center = instance.Transform.Translation;
                     //if (!frust.Intersects(conservativeSphere))
-                    if(Vector3.Dot(z, forward) > 0)
+
+                    // Half plane test. Faster. Much less accurate.
+                    if (Vector3.Dot(z, forward) > 0)
                     {
                         instance.Depth *= 100;
                     }
+                }
+                else
+                {
+                    instance.Depth *= 100;
                 }
             }
         }
@@ -105,6 +111,7 @@ namespace DwarfCorp
 
         public FixedInstanceArray(string name, VertexBuffer model, Texture2D texture, int numInstances, BlendState blendMode)
         {
+            CullDistance = (GameSettings.Default.ChunkDrawDistance * GameSettings.Default.ChunkDrawDistance) - 40;
             Name = name;
             Model = model;
             Vertices = new InstancedVertex[numInstances];
@@ -116,8 +123,6 @@ namespace DwarfCorp
             NumInstances = numInstances;
 
             RebuildVertices();
-
-
 
             InstanceBuffer = null;
             ShouldRebuild = true;

@@ -31,7 +31,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>http://www.dwarfcorp.com/PreAlpha/Builds/</UpdateUrl>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>22</ApplicationRevision>
+    <ApplicationRevision>23</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -192,6 +192,7 @@
     <Compile Include="Helpers\HungarianAlgorithm.cs" />
     <Compile Include="Helpers\KeyManager.cs" />
     <Compile Include="Helpers\MinBag.cs" />
+    <Compile Include="Helpers\ThreadSafeRandom.cs" />
     <Compile Include="ModAssets\TextureLoader.cs" />
     <Compile Include="LanguageGenerator\TextAtom.cs" />
     <Compile Include="LanguageGenerator\TextGenerator.cs" />
@@ -322,6 +323,19 @@
     <Compile Include="GUI\Toolbar.cs" />
     <Compile Include="Player\TaskManager.cs" />
     <Compile Include="Player\VoxelSelector.cs" />
+    <Compile Include="Scripting\Act.cs" />
+    <Compile Include="Scripting\Acts\WanderAct.cs" />
+    <Compile Include="Scripting\CompoundAct.cs" />
+    <Compile Include="Scripting\Condition.cs" />
+    <Compile Include="Scripting\ForLoop.cs" />
+    <Compile Include="Scripting\Not.cs" />
+    <Compile Include="Scripting\Parallel.cs" />
+    <Compile Include="Scripting\Select.cs" />
+    <Compile Include="Scripting\Sequence.cs" />
+    <Compile Include="Scripting\TestBehaviors.cs" />
+    <Compile Include="Scripting\Wait.cs" />
+    <Compile Include="Scripting\WhileLoop.cs" />
+    <Compile Include="Scripting\Wrap.cs" />
     <Compile Include="SerializableDictionary.cs" />
     <Compile Include="Sound\SoundManager.cs" />
     <Compile Include="Voxels\ChunkGenerator.cs" />
@@ -357,6 +371,7 @@
     <Compile Include="Voxels\WaterRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CSScriptLibrary.dll" />
     <Content Include="favicon.ico" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />

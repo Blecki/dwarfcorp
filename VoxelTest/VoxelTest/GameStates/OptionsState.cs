@@ -107,7 +107,7 @@ namespace DwarfCorp
 
 
             Label DrawDistance = new Label(GUI, GraphicsLayout, "Draw Distance", GUI.DefaultFont);
-            Slider ChunkDrawSlider = new Slider(GUI, GraphicsLayout, "", GameSettings.Default.ChunkDrawDistance, 0, 1000, Slider.SliderMode.Integer);
+            Slider ChunkDrawSlider = new Slider(GUI, GraphicsLayout, "", GameSettings.Default.ChunkDrawDistance, 1, 1000, Slider.SliderMode.Integer);
   
 
             GraphicsLayout.SetComponentPosition(DrawDistance, 0, 2, 1, 1);
@@ -115,7 +115,7 @@ namespace DwarfCorp
             ChunkDrawSlider.OnValueModified += new Slider.ValueModified(ChunkDrawSlider_OnValueModified);
 
             Label CullDistance = new Label(GUI, GraphicsLayout, "Cull Distance", GUI.DefaultFont);
-            Slider CullSlider = new Slider(GUI, GraphicsLayout, "", GameSettings.Default.VertexCullDistance, 0, 1000, Slider.SliderMode.Integer);
+            Slider CullSlider = new Slider(GUI, GraphicsLayout, "", GameSettings.Default.VertexCullDistance, 0.1f, 1000, Slider.SliderMode.Integer);
 
             CullSlider.OnValueModified += new Slider.ValueModified(CullSlider_OnValueModified);
 
@@ -123,7 +123,7 @@ namespace DwarfCorp
             GraphicsLayout.SetComponentPosition(CullSlider, 1, 3, 1, 1);
 
             Label GenerateDistance = new Label(GUI, GraphicsLayout, "Generate Distance", GUI.DefaultFont);
-            Slider GenerateSlider = new Slider(GUI, GraphicsLayout, "", GameSettings.Default.ChunkGenerateDistance, 0, 1000, Slider.SliderMode.Integer);
+            Slider GenerateSlider = new Slider(GUI, GraphicsLayout, "", GameSettings.Default.ChunkGenerateDistance, 1, 1000, Slider.SliderMode.Integer);
 
             GenerateSlider.OnValueModified += new Slider.ValueModified(GenerateSlider_OnValueModified);
 

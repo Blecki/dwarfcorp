@@ -1075,6 +1075,8 @@ namespace DwarfCorp
 
         public void UpdateSunlight(byte sunColor)
         {
+            LightingCalculated = false;
+
             if (!Manager.ChunkMap.ContainsKey(ID))
             {
                 return;
@@ -1307,7 +1309,6 @@ namespace DwarfCorp
                 }
             }
 
-
             LightingCalculated = true;
         }
 
@@ -1458,6 +1459,7 @@ namespace DwarfCorp
                 }
             }
 
+            ShouldRebuildWater = true;
             ShouldRebuild = true;
  
 

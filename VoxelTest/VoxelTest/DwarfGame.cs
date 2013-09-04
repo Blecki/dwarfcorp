@@ -52,6 +52,7 @@ namespace DwarfCorp
 
         protected override void LoadContent()
         {
+            
             TextureManager = new TextureManager(Content, GraphicsDevice);
 
             PlayState playState = new PlayState(this, StateManager);
@@ -76,6 +77,10 @@ namespace DwarfCorp
             StateManager.States["MainMenuState"].OnEnter();
             StateManager.States["OptionsState"].OnEnter();
             StateManager.States["CompanyMakerState"].OnEnter();
+             
+
+            //TestBehaviors.RunTests();
+            
             base.LoadContent();
         }
 
