@@ -30,11 +30,14 @@ namespace DwarfCorp
             Success
         }
 
+        public List<Act> Children { get; set; }
+
         public string Name = "Act";
 
         public IEnumerator<Status> Enumerator;
 
         public static GameTime LastTime { get; set; }
+        public static float Dt { get { return (float)LastTime.ElapsedGameTime.TotalSeconds; } }
 
         public Act()
         {
