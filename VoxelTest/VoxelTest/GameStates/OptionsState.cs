@@ -107,7 +107,7 @@ namespace DwarfCorp
 
 
             Label DrawDistance = new Label(GUI, GraphicsLayout, "Draw Distance", GUI.DefaultFont);
-            Slider ChunkDrawSlider = new Slider(GUI, GraphicsLayout, "", GameSettings.Default.ChunkDrawDistance, 0, 1000, Slider.SliderMode.Integer);
+            Slider ChunkDrawSlider = new Slider(GUI, GraphicsLayout, "", GameSettings.Default.ChunkDrawDistance, 1, 1000, Slider.SliderMode.Integer);
   
 
             GraphicsLayout.SetComponentPosition(DrawDistance, 0, 2, 1, 1);
@@ -115,7 +115,7 @@ namespace DwarfCorp
             ChunkDrawSlider.OnValueModified += new Slider.ValueModified(ChunkDrawSlider_OnValueModified);
 
             Label CullDistance = new Label(GUI, GraphicsLayout, "Cull Distance", GUI.DefaultFont);
-            Slider CullSlider = new Slider(GUI, GraphicsLayout, "", GameSettings.Default.VertexCullDistance, 0, 1000, Slider.SliderMode.Integer);
+            Slider CullSlider = new Slider(GUI, GraphicsLayout, "", GameSettings.Default.VertexCullDistance, 0.1f, 1000, Slider.SliderMode.Integer);
 
             CullSlider.OnValueModified += new Slider.ValueModified(CullSlider_OnValueModified);
 
@@ -123,7 +123,7 @@ namespace DwarfCorp
             GraphicsLayout.SetComponentPosition(CullSlider, 1, 3, 1, 1);
 
             Label GenerateDistance = new Label(GUI, GraphicsLayout, "Generate Distance", GUI.DefaultFont);
-            Slider GenerateSlider = new Slider(GUI, GraphicsLayout, "", GameSettings.Default.ChunkGenerateDistance, 0, 1000, Slider.SliderMode.Integer);
+            Slider GenerateSlider = new Slider(GUI, GraphicsLayout, "", GameSettings.Default.ChunkGenerateDistance, 1, 1000, Slider.SliderMode.Integer);
 
             GenerateSlider.OnValueModified += new Slider.ValueModified(GenerateSlider_OnValueModified);
 
@@ -240,6 +240,11 @@ namespace DwarfCorp
             GameplayLayout.SetComponentPosition(ZoomSlider, 1, 1, 1, 1);
             ZoomSlider.OnValueModified += new Slider.ValueModified(ZoomSlider_OnValueModified);
 
+            Checkbox InvertZoomBox = new Checkbox(GUI, GameplayLayout, "Invert Zoom", GUI.DefaultFont, GameSettings.Default.InvertZoom);
+            GameplayLayout.SetComponentPosition(InvertZoomBox, 2, 1, 1, 1);
+            InvertZoomBox.OnCheckModified += new Checkbox.CheckModified(InvertZoomBox_OnCheckModified);
+
+
             Checkbox EdgeScrollBox = new Checkbox(GUI, GameplayLayout, "Edge Scrolling", GUI.DefaultFont, GameSettings.Default.EnableEdgeScroll);
             GameplayLayout.SetComponentPosition(EdgeScrollBox, 0, 2, 1, 1);
             EdgeScrollBox.OnCheckModified += new Checkbox.CheckModified(EdgeScrollBox_OnCheckModified);
@@ -355,6 +360,11 @@ namespace DwarfCorp
 
 
             base.OnEnter();
+        }
+
+        void InvertZoomBox_OnCheckModified(bool arg)
+        {
+            GameSettings.Default.InvertZoom = arg;
         }
 
         void MotesSlider_OnValueModified(float arg)

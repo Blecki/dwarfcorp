@@ -279,6 +279,12 @@ namespace DwarfCorp
                     if (!keys.IsKeyDown(Keys.LeftControl))
                     {
                         Vector3 delta = new Vector3(0, change, 0);
+                        
+                        if (GameSettings.Default.InvertZoom)
+                        {
+                            delta *= -1;
+                        }
+                        
                         Velocity = delta * CameraZoomSpeed * dt;
                     }
                     else

@@ -77,7 +77,7 @@ namespace DwarfCorp
                     {
                         //VoxelVertex bestKey = VoxelChunk.GetNearestDelta(GlobalTransform.Translation - v.Position);
 
-                        Color color = new Color(v.Chunk.SunColors[(int)v.GridPosition.X][(int)v.GridPosition.Y][(int)v.GridPosition.Z], 255, v.Chunk.DynamicColors[(int)v.GridPosition.X][(int)v.GridPosition.Y][(int)v.GridPosition.Z]);
+                        Color color = new Color(v.Chunk.SunColors[(int)v.GridPosition.X][(int)v.GridPosition.Y + 1][(int)v.GridPosition.Z], 255, v.Chunk.DynamicColors[(int)v.GridPosition.X][(int)v.GridPosition.Y][(int)v.GridPosition.Z]);
 
                         TargetTint = color;
                         firstIteration = false;

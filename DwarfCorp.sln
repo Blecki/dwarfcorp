@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010 Express for Windows Phone
+# Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DwarfCorp", "VoxelTest\VoxelTest\DwarfCorp.csproj", "{99D7D745-BBE2-458E-8108-8D2E5A8835F3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DwarfCorpContent", "VoxelTest\VoxelTestContent\DwarfCorpContent.contentproj", "{D48F9E36-1F42-4633-B745-8C659D9550D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DwarfCorpMono", "DwarfCorpMono\DwarfCorpMono.csproj", "{96EBD735-CEA2-4ABA-B849-F7A964226D65}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,6 +19,10 @@ Global
 		{99D7D745-BBE2-458E-8108-8D2E5A8835F3}.Release|x86.Build.0 = Release|x86
 		{D48F9E36-1F42-4633-B745-8C659D9550D4}.Debug|x86.ActiveCfg = Debug|x86
 		{D48F9E36-1F42-4633-B745-8C659D9550D4}.Release|x86.ActiveCfg = Release|x86
+		{96EBD735-CEA2-4ABA-B849-F7A964226D65}.Debug|x86.ActiveCfg = Debug|x86
+		{96EBD735-CEA2-4ABA-B849-F7A964226D65}.Debug|x86.Build.0 = Debug|x86
+		{96EBD735-CEA2-4ABA-B849-F7A964226D65}.Release|x86.ActiveCfg = Release|x86
+		{96EBD735-CEA2-4ABA-B849-F7A964226D65}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

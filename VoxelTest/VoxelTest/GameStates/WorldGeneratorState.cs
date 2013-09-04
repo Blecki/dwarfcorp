@@ -62,7 +62,7 @@ namespace DwarfCorp
 
         public override void OnEnter()
         {
-            PlayState.random = new Random(Seed);
+            PlayState.random = new ThreadSafeRandom(Seed);
 
 
             Overworld.Volcanoes = new List<Vector2>();
@@ -180,7 +180,7 @@ namespace DwarfCorp
         void seedEdit_OnTextModified(string arg)
         {
             Seed = arg.GetHashCode();
-            PlayState.random = new Random(Seed);
+            PlayState.random = new ThreadSafeRandom(Seed);
         }
 
         public override void OnExit()
@@ -318,7 +318,7 @@ namespace DwarfCorp
 
         public void GenerateWorld(int seed, int width, int height)
         {
-            PlayState.random = new Random(Seed);
+            PlayState.random = new ThreadSafeRandom(Seed);
             GenerationComplete = false;
 
             LoadingMessage = "Init..";

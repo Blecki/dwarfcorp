@@ -37,11 +37,11 @@ the accompanying demo.
 
         public Perlin(int seed)
         {
-            Random rand = new Random(seed);
+            ThreadSafeRandom rand = new ThreadSafeRandom(seed);
             shufflepermutation(rand);
         }
 
-        public void shufflepermutation(Random rand)
+        public void shufflepermutation(ThreadSafeRandom rand)
         {
             for (int i = 0; i < perm.Length; i++)
             {

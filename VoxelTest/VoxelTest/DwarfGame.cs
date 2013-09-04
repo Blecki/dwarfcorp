@@ -19,11 +19,10 @@ namespace DwarfCorp
         public GraphicsDeviceManager graphics;
         public TextureManager TextureManager { get; set; }
         public static SpriteBatch SpriteBatch { get; set; }
-        public static string VersionString { get; set; }
 
         public DwarfGame()
         {
-            VersionString = "1 . 0 . 21";
+            
             Content.RootDirectory = "Content";
             StateManager = new GameStateManager(this);
             graphics = new GraphicsDeviceManager(this);
@@ -53,6 +52,7 @@ namespace DwarfCorp
 
         protected override void LoadContent()
         {
+            
             TextureManager = new TextureManager(Content, GraphicsDevice);
 
             PlayState playState = new PlayState(this, StateManager);
@@ -77,6 +77,10 @@ namespace DwarfCorp
             StateManager.States["MainMenuState"].OnEnter();
             StateManager.States["OptionsState"].OnEnter();
             StateManager.States["CompanyMakerState"].OnEnter();
+             
+
+            //TestBehaviors.RunTests();
+            
             base.LoadContent();
         }
 
