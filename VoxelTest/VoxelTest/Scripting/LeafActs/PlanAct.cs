@@ -6,16 +6,15 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class PlanAct : Act
+    public class PlanAct : CreatureAct
     {
-        public CreatureAIComponent Agent { get; set;}
         public Timer PlannerTimer { get; set; }
         public int MaxExpansions { get; set; }
 
-        public PlanAct(CreatureAIComponent agent, float rateLimit, int maxExpansions)
+        public PlanAct(CreatureAIComponent agent, float rateLimit, int maxExpansions) :
+            base(agent)
         {
             Name = "Plan";
-            Agent = agent;
             PlannerTimer = new Timer(rateLimit, false);
             MaxExpansions = maxExpansions;
         }

@@ -6,13 +6,13 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class DigAct : Act
+    public class DigAct : CreatureAct
     {
-        public Creature Creature { get; set; }
 
-        public DigAct(Creature creature)
+        public DigAct(CreatureAIComponent creature) :
+            base(creature)
         {
-            Creature = creature;
+
         }
 
         public override IEnumerable<Status> Run()
