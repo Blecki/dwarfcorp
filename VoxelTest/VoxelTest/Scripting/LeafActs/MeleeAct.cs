@@ -6,15 +6,12 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class MeleeAct : Act
+    public class MeleeAct : CreatureAct
     {
-        public CreatureAIComponent Agent { get; set; }
-        public Creature Creature { get; set; }
 
-        public MeleeAct(CreatureAIComponent agent)
+        public MeleeAct(CreatureAIComponent agent) :
+            base(agent)
         {
-            Agent = agent;
-            Creature = Agent.Creature;
         }
 
         public override IEnumerable<Status> Run()

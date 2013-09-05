@@ -6,14 +6,14 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class WanderAct : Act
+    public class WanderAct : CreatureAct
     {
-        public Creature Creature { get; set; }
         public Timer WanderTime { get; set; }
         public Timer TurnTime { get; set; }
         public float Radius { get; set; }
 
-        public WanderAct(Creature creature, float seconds, float turnTime, float radius)
+        public WanderAct(CreatureAIComponent creature, float seconds, float turnTime, float radius) :
+            base(creature)
         {
             Name = "Wander " + seconds;
             WanderTime = new Timer(seconds, false);

@@ -6,13 +6,12 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class FollowPathAct : Act
+    public class FollowPathAct : CreatureAct
     {
-        public CreatureAIComponent Agent { get; set; }
-
-        public FollowPathAct(CreatureAIComponent agent)
+        public FollowPathAct(CreatureAIComponent agent) :
+            base(agent)
         {
-            Agent = agent;
+
         }
 
 

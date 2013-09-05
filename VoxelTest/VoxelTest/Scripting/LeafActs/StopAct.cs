@@ -5,14 +5,13 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    public class StopAct : Act
+    public class StopAct : CreatureAct
     {
-        public CreatureAIComponent Agent { get; set;}
         public float StopForce { get; set; }
 
-        public StopAct(CreatureAIComponent agent, float stopForce)
+        public StopAct(CreatureAIComponent agent, float stopForce) :
+            base(agent)
         {
-            Agent = agent;
             StopForce = stopForce;
         }
 
