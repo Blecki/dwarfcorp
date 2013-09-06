@@ -4,13 +4,16 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
+using Newtonsoft.Json;
 namespace DwarfCorp
 {
     public class LocatableComponent : GameComponent, BoundedObject
     {
+        [JsonIgnore]
         public bool WasAddedToOctree { get { return m_wasEverAddedToOctree; } }
         private bool m_wasEverAddedToOctree = false;
+
+        [JsonIgnore]
         public Matrix GlobalTransform
         { 
             get
@@ -33,6 +36,8 @@ namespace DwarfCorp
                 }
             }
         }
+
+        [JsonIgnore]
         public Matrix LocalTransform 
         { 
             get 
@@ -46,6 +51,7 @@ namespace DwarfCorp
                 HasMoved = true;
             } 
         }
+
         public BoundingBox BoundingBox = new BoundingBox();
         public BoundingSphere BoundingSphere = new BoundingSphere();
         public Vector3 BoundingBoxPos { get; set; }
@@ -54,8 +60,12 @@ namespace DwarfCorp
         public bool FrustrumCull { get; set; }
         public bool DrawInFrontOfSiblings { get; set; }
         public bool IsStocked { get; set; }
+        
+        [JsonIgnore]
         public static Octree m_octree = null;
         public bool IsStatic { get; set; }
+        
+        [JsonIgnore]
         public bool HasMoved 
         {
             get
@@ -80,10 +90,13 @@ namespace DwarfCorp
         }
 
         public uint GetID() { return GlobalID; }
-
+        
         protected Matrix m_localTransform = Matrix.Identity;
+        
+
         protected Matrix m_globalTransform = Matrix.Identity;
         private bool m_hasMoved = true;
+        
         public bool AddToOctree { get; set; }
 
 

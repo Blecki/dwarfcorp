@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
+using Newtonsoft.Json;
 namespace DwarfCorp
 {
     public class Weapon
     {
+        [JsonIgnore]
         public CreatureAIComponent Creature { get; set; }
         public float DamageAmount { get; set; }
         public Timer HitTimer { get; set; }

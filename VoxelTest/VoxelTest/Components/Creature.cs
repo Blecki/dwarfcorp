@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -13,24 +14,39 @@ namespace DwarfCorp
         public CreatureAIComponent AI { get; set; }
         public PhysicsComponent Physics { get; set; }
         public CharacterSprite Sprite { get; set; }
+
         public EnemySensor Sensors { get; set; }
         public FlammableComponent Flames { get; set; }
         public HealthComponent Health { get; set; }
         public EmitterComponent DeathEmitter { get; set; }
         public Grabber Hands { get; set; }
         public ShadowComponent Shadow { get; set; }
+
+        [JsonIgnore]
         public GraphicsDevice Graphics { get; set; }
+
+        [JsonIgnore]
         public ChunkManager Chunks { get; set; }
         public Weapon Weapon { get; set; }
+
+        [JsonIgnore]
         public ContentManager Content { get; set; }
+
+        [JsonIgnore]
         public GameMaster Master { get; set; }
+
+        [JsonIgnore]
         public PlanService PlanService { get; set; }
+
         public string Allies { get; set; }
+
+        [JsonIgnore]
         public Vector3 LocalTarget { get; set; }
         public PIDController Controller { get; set; }
         public CreatureStats Stats { get; set; }
-        public Timer JumpTimer { get; set; }
         public CreatureStatus Status { get; set; }
+
+        public Timer JumpTimer { get; set; }
         protected CharacterMode currentCharacterMode = CharacterMode.Idle;
         public CharacterMode CurrentCharacterMode { get { return currentCharacterMode; } set { currentCharacterMode = value; if (Sprite != null) { Sprite.SetCurrentAnimation(value.ToString()); } } }
         public bool IsOnGround { get; set; }

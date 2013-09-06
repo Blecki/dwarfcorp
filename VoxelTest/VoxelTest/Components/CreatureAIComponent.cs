@@ -56,7 +56,9 @@ namespace DwarfCorp
         public bool DrawPath { get; set; }
         public InteractiveComponent InteractingWith { get; set; }
         public GOAP Goap { get; set; }
-        public Actor BehaviorTree { get; set; }
+
+        public Act CurrentAct { get; set; }
+
         public Goal CurrentGoal { get; set; }
         public int CurrentActionIndex { get; set; }
         public List<Action> CurrentActionPlan { get; set; }
@@ -113,7 +115,7 @@ namespace DwarfCorp
             Sensor = sensor;
             Sensor.OnEnemySensed += new EnemySensor.EnemySensed(Sensor_OnEnemySensed);
             Sensor.Creature = this;
-            BehaviorTree = new Actor(Manager, this);
+            CurrentAct = null;
           
         }
 
@@ -147,6 +149,15 @@ namespace DwarfCorp
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
+            if (CurrentAct != null)
+            {
+                Act.Status status = CurrentAct.Tick();
+
+                if (status != Act.Status.Running)
+                {
+                    CurrentAct = null;
+                }
+            }
 
             if (CurrentGoal == null || (!WaitingOnResponse && CurrentGoal != null && CurrentActionPlan == null))
             {

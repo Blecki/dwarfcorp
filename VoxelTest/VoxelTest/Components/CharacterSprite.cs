@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     public class CharacterSprite : OrientedAnimation
     {
+        [JsonIgnore]
         public GraphicsDevice Graphics { get; set; }
 
         public CharacterSprite(GraphicsDevice graphics, ComponentManager manager, string name, GameComponent parent, Matrix localTransform) :

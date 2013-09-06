@@ -5,16 +5,22 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Concurrent;
-
+using Newtonsoft.Json;
 namespace DwarfCorp
 {
     public class GameComponent
     {
         public string Name { get; set; }
+
+        [JsonIgnore]
         public uint GlobalID { get; set; }
+
         public uint LocalID { get; set; }
 
+        [JsonIgnore]
         public GameComponent Parent { get; set; }
+        
+        [JsonIgnore]
         public ConcurrentDictionary<uint, GameComponent> Children { get; set; }
 
         private static uint m_maxGlobalID = 0;
@@ -26,7 +32,7 @@ namespace DwarfCorp
 
         public List<string> Tags { get; set; }
 
-
+        [JsonIgnore]
         public ComponentManager Manager { get; set; }
 
         public virtual void ReceiveMessageRecursive(Message messageToReceive)
