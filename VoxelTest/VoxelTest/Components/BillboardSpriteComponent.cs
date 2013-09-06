@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -13,11 +14,21 @@ namespace DwarfCorp
     public class BillboardSpriteComponent : TintableComponent
     {
         public Dictionary<string, Animation> Animations { get; set; }
+
+        [JsonIgnore]
         public Texture2D SpriteSheet { get; set; }
+        
+        [JsonIgnore]
         public Animation CurrentAnimation { get; set; }
+
+        [JsonIgnore]
         private static Matrix InvertY =  Matrix.CreateScale(1, -1, 1);
+        
         public OrientMode OrientationType { get; set; }
+
+
         public enum OrientMode { Fixed, Spherical, XAxis, YAxis, ZAxis }
+        
         public float BillboardRotation { get; set; }
 
         private static RasterizerState rasterState = new RasterizerState()

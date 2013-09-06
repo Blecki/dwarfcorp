@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
+using Newtonsoft.Json;
 namespace DwarfCorp
 {
     public class Animation
@@ -22,7 +22,11 @@ namespace DwarfCorp
         public float WorldWidth { get; set; }
         public float WorldHeight { get; set; }
         public bool Flipped { get; set; }
+
+        [JsonIgnore]
         public List<BillboardPrimitive> Primitives { get; set; }
+
+        [JsonIgnore]
         public Texture2D SpriteSheet { get; set; }
 
 

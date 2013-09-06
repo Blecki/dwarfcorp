@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -80,6 +81,10 @@ namespace DwarfCorp
             DeathEmitter = new EmitterComponent("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero);
             DeathEmitter.TriggerOnDeath = true;
             DeathEmitter.TriggerAmount = 100;
+
+            //string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+            //System.IO.File.WriteAllText(@"C:\Users\Mklingen\Desktop\Dwarf.json", json);
+
         }
     }
 }
