@@ -514,5 +514,17 @@ namespace DwarfCorp {
                 this["InvertZoom"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableAIDebugger {
+            get {
+                return ((bool)(this["EnableAIDebugger"]));
+            }
+            set {
+                this["EnableAIDebugger"] = value;
+            }
+        }
     }
 }

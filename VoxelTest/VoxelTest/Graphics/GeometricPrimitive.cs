@@ -33,6 +33,7 @@ namespace DwarfCorp
         /// <param name="device">GPU to draw with.</param>
         public virtual void Render(GraphicsDevice device)
         {
+
             if (m_vertices == null || m_vertexBuffer == null || m_vertexBuffer.IsDisposed)
             {
                 return;

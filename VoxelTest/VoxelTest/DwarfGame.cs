@@ -86,6 +86,7 @@ namespace DwarfCorp
 
         protected override void Update(GameTime gameTime)
         {
+            Act.LastTime = gameTime;
             StateManager.Update(gameTime);
             base.Update(gameTime);
         }

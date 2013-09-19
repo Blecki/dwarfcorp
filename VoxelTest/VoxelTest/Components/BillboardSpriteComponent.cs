@@ -127,7 +127,7 @@ namespace DwarfCorp
 
                 if (CurrentAnimation != null)
                 {
-                    Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
+                    //Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
 
                     if (OrientationType != OrientMode.Fixed)
                     {
@@ -186,7 +186,7 @@ namespace DwarfCorp
                         pass.Apply();
                         CurrentAnimation.Primitives[CurrentAnimation.CurrentFrame].Render(graphicsDevice);
                     }
-                    effect.Parameters["xWorld"].SetValue(oldWorld);
+                    effect.Parameters["xWorld"].SetValue(Matrix.Identity);
                 }
 
 

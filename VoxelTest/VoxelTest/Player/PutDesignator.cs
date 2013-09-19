@@ -146,7 +146,7 @@ namespace DwarfCorp
             float st = (float)Math.Sin(t * 4) * 0.5f + 0.5f;
             effect.Parameters["xTexture"].SetValue(BlockTextures);
             effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 2.0f, 0.5f * st + 0.45f));
-            Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
+            //Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
             foreach (PutDesignation put in Designations)
             {
                 effect.Parameters["xWorld"].SetValue(Matrix.CreateTranslation(put.vox.WorldPosition));
@@ -159,7 +159,7 @@ namespace DwarfCorp
             }
 
             effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-            effect.Parameters["xWorld"].SetValue(oldWorld);
+            effect.Parameters["xWorld"].SetValue(Matrix.Identity);
         }
 
         public void VoxelsSelected(List<VoxelRef> refs, InputManager.MouseButton button)
