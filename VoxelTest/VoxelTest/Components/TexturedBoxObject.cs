@@ -33,7 +33,7 @@ namespace DwarfCorp
             graphicsDevice.RasterizerState = rasterState;
             effect.Parameters["xTexture"].SetValue(Texture);
 
-            Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
+            //Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
             effect.Parameters["xView"].SetValue(camera.ViewMatrix);
             effect.Parameters["xProjection"].SetValue(camera.ProjectionMatrix);
 
@@ -44,7 +44,7 @@ namespace DwarfCorp
                 pass.Apply();
                 Primitive.Render(graphicsDevice);
             }
-            effect.Parameters["xWorld"].SetValue(oldWorld);
+            effect.Parameters["xWorld"].SetValue(Matrix.Identity);
             
 
 

@@ -170,12 +170,12 @@ namespace DwarfCorp
             RasterizerState oldState = device.RasterizerState;
             device.RasterizerState = newState;
 
-            Matrix originalWorld = effect.Parameters["xWorld"].GetValueMatrix();
+            //Matrix originalWorld = effect.Parameters["xWorld"].GetValueMatrix();
 
             foreach (DrawCommand command in m_commands)
             {
                 command.Render(device, effect);
-                effect.Parameters["xWorld"].SetValue(originalWorld);
+                effect.Parameters["xWorld"].SetValue(Matrix.Identity);
             }
 
             if (oldState != null)

@@ -95,7 +95,7 @@ namespace DwarfCorp
             Paused = false;
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;
-            Seed = 0;
+            Seed = random.Next();
             RenderUnderneath = true;
             WorldOrigin = new Vector2(WorldWidth / 2, WorldHeight / 2);
             PreSimulateTimer = new Timer(3, false);
@@ -284,7 +284,7 @@ namespace DwarfCorp
             LoadingMessage = "Creating Environment...";
             camera.Radius = 0.01f;
             camera.Phi = -1.57f / 4.0f;
-            camera.Theta = -3.14159f;
+            camera.Theta = 0.0f; //-3.14159f;
 
             bloom = new BloomPostprocess.BloomComponent(Game);
 
@@ -334,15 +334,10 @@ namespace DwarfCorp
                     creat.Velocity = new Vector3(1, 0, 0);
                 }
 
-                camera.Target = new Vector3(camera.Position.X, h + 10, camera.Position.Z - 10);
+                camera.Target = new Vector3(camera.Position.X, h + 10, camera.Position.Z + 10);
                 camera.Phi = -(float)Math.PI * 0.3f;
 
-               // Vector3 barrelPosition = new Vector3(camera.Position.X + (float)random.NextDouble(), h + 0.6f , camera.Position.Z + (float)random.NextDouble());
-                //List<KeyValuePair<string, int>> values = new List<KeyValuePair<string, int>>();
-                //values.Add(new KeyValuePair<string, int>("Apple", 16));
-                //LocatableComponent barrel = EntityFactory.CreateBarrel("Barrel 1", barrelPosition, componentManager, Content, GraphicsDevice, values);
 
-                
                 GameMaster evilMaster = new GameMaster(Game, componentManager, chunkManager, camera, Game.GraphicsDevice, voxelLibrary, GUI);
 
                 

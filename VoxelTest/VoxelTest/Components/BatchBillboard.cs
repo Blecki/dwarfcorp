@@ -126,7 +126,7 @@ namespace DwarfCorp
                 graphicsDevice.DepthStencilState = newDepthStencil;
 
 
-                Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
+                //Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
                 effect.Parameters["xWorld"].SetValue(GlobalTransform);
 
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
@@ -135,7 +135,7 @@ namespace DwarfCorp
                     Primitive.Render(graphicsDevice);
                 }
 
-                effect.Parameters["xWorld"].SetValue(oldWorld);
+                effect.Parameters["xWorld"].SetValue(Matrix.Identity);
 
                 if (origDepthStencil != null)
                 {

@@ -94,9 +94,21 @@ namespace DwarfCorp
         public static Texture2D GetSubTexture(GraphicsDevice graphics, Texture2D image, Rectangle rect)
         {
             Texture2D img = new Texture2D(graphics, rect.Width, rect.Height);
-            Color[] data = new Color[rect.Width * rect.Height];
-            image.GetData<Color>(0, rect, data, 0, rect.Width * rect.Height);
-            img.SetData<Color>(data);
+            Color[] data = new Color[image.Width * image.Height];
+            image.GetData<Color>(data);
+            Color[] subData = new Color[rect.Width * rect.Height];
+
+            int i = 0;
+            for (int r = 0; r < rect.Height; r++)
+            {
+                for (int c = 0; c < rect.Width; c++)
+                {
+                    subData[i] = data[(c + rect.X) + (r + rect.Y) * image.Width];
+                    i++;
+                }
+            }
+
+            img.SetData<Color>(subData);
 
             return img;
         }
@@ -215,6 +227,18 @@ namespace DwarfCorp
                     drawColor.G = (byte)(Math.Min(drawColor.G * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GuardDesignationGlowRate)) + 50, 255));
                     drawColor.B = (byte)(Math.Min(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GuardDesignationGlowRate)) + 50, 255));
                     SimpleDrawing.DrawBox(box, drawColor, 0.08f, false);
+
+                    foreach (KeyValuePair<Voxel, LocatableComponent> p in s.ComponentVoxels)
+                    {
+                        if (p.Value == null)
+                        {
+                            SimpleDrawing.DrawBox(p.Key.GetBoundingBox(), Color.White, 0.05f, true);
+                        }
+                        else
+                        {
+                            SimpleDrawing.DrawBox(p.Key.GetBoundingBox(), Color.Yellow, 0.05f, true);
+                        }
+                    }
                 }
             }
 
@@ -286,11 +310,13 @@ namespace DwarfCorp
         {
             CurrentTool = ToolBar.CurrentMode;
 
-            //Debugger.Visible = true;
 
-            if(Debugger != null)
+            if (GameSettings.Default.EnableAIDebugger)
             {
-                Debugger.Update(time);
+                if (Debugger != null)
+                {
+                    Debugger.Update(time);
+                }
             }
 
             Economy.Update(time);
@@ -456,6 +482,20 @@ namespace DwarfCorp
             }
 
             return false;
+        }
+
+        public bool IsGuardDesignation(VoxelRef vox)
+        {
+            Voxel voxel = vox.GetVoxel(Chunks, false);
+
+            if (voxel == null)
+            {
+                return false;
+            }
+            else
+            {
+                return IsGuardDesignation(voxel);
+            }
         }
 
         public bool IsGuardDesignation(Voxel vox)
@@ -794,6 +834,10 @@ namespace DwarfCorp
                                     if (existingPile != null)
                                     {
                                         Stockpiles.Remove(existingPile);
+                                        foreach (Item i in existingPile.Items)
+                                        {
+                                            i.userData.IsStocked = false;
+                                        }
                                         existingPile.ResetVoxelTextures();
                                     }
                                 }
@@ -981,7 +1025,6 @@ namespace DwarfCorp
             if (!GatherDesignations.Contains(resource))
             {
                 GatherDesignations.Add(resource);
-                resource.DrawBoundingBox = true;
 
             }
 
