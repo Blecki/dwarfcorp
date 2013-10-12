@@ -35,7 +35,7 @@ namespace DwarfCorp
                     Room.VoxelBuildDesignations[0].AddResource(grabbedComponent.Tags[0]);
                     Creature.Hands.UnGrab(grabbedComponent);
                     grabbedComponent.Die();
-                    Agent.Blackboard.SetData("HeldObject", null);
+                    Agent.Blackboard.SetData<object>("HeldObject", null);
 
                     if (Room.VoxelBuildDesignations[0].MeetsBuildRequirements())
                     {

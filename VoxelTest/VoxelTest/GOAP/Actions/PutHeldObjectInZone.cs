@@ -79,11 +79,6 @@ namespace DwarfCorp
 
             
 
-            if (item.userData != null)
-            {
-                item.userData.IsStocked = true;
-            }
-
             if (item == null)
             {
                 return Action.PerformStatus.Failure;
@@ -96,7 +91,7 @@ namespace DwarfCorp
             {
                 Stockpile stock = (Stockpile)zone;
 
-                if (stock.PutResource(creature.Hands.GetFirstGrab(), creature.TargetVoxel.GetVoxel(creature.Master.Chunks, false)))
+                if (stock.AddItem(creature.Hands.GetFirstGrab(), creature.TargetVoxel))
                 {
                     LocatableComponent grabbed = creature.Hands.GetFirstGrab();
                     creature.Hands.UnGrab(grabbed);
@@ -107,7 +102,7 @@ namespace DwarfCorp
                     grabbed.HasMoved = true;
                     grabbed.DrawBoundingBox = false;
                     item.reservedFor = null;
-                    item.userData.IsStocked = true;
+
                     return PerformStatus.Success;
                 }
                 else
@@ -122,7 +117,7 @@ namespace DwarfCorp
 
                     creature.Master.AddGatherDesignation(grabbed);
                     item.reservedFor = null;
-                    item.userData.IsStocked = true;
+
                     return PerformStatus.Failure;
                 }
             }
@@ -155,7 +150,7 @@ namespace DwarfCorp
                 else
                 {
                     Room theRoom = (Room)zone;
-                    theRoom.AddItem(item);
+                    theRoom.AddItem(item, creature.TargetVoxel);
 
                     LocatableComponent grabbed = creature.Hands.GetFirstGrab();
                     creature.Hands.UnGrab(grabbed);
@@ -166,27 +161,10 @@ namespace DwarfCorp
                     grabbed.HasMoved = true;
                     grabbed.DrawBoundingBox = false;
                     item.reservedFor = null;
-                    item.userData.IsStocked = true;
                     return PerformStatus.Success;
                     
                 }
             }
-            else if (zone is Container)
-            {
-                Container container = (Container)zone;
-
-                if (container.PutResouce(creature.Hands.GetFirstGrab()))
-                {
-                    item.reservedFor = null;
-                    return PerformStatus.Success;
-                }
-                else
-                {
-                    item.reservedFor = null;
-                    return PerformStatus.Invalid;
-                }
-            }
-
             else
             {
                 LocatableComponent grabbed = creature.Hands.GetFirstGrab();
@@ -223,16 +201,8 @@ namespace DwarfCorp
             {
                 Stockpile stock = (Stockpile)zone;
 
-                if (stock.CanPutResource(item.userData))
-                {
-                    item.reservedFor = null;
-                    return ValidationStatus.Ok;
-                }
-                else
-                {
-                    item.reservedFor = null;
-                    return ValidationStatus.Replan;
-                }
+                item.reservedFor = null;
+                return ValidationStatus.Ok;
             }
             else
             {

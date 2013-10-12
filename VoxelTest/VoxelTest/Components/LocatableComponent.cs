@@ -59,7 +59,6 @@ namespace DwarfCorp
         public bool DepthSort { get; set; }
         public bool FrustrumCull { get; set; }
         public bool DrawInFrontOfSiblings { get; set; }
-        public bool IsStocked { get; set; }
         
         [JsonIgnore]
         public static Octree m_octree = null;
@@ -119,7 +118,6 @@ namespace DwarfCorp
             DepthSort = true;
             FrustrumCull = true;
             DrawInFrontOfSiblings = false;
-            IsStocked = false;
 
         }
 

@@ -52,16 +52,16 @@ namespace DwarfCorp
                     Stockpile s = (Stockpile)z;
 
 
-                    Voxel v = s.GetNextFreeVoxel(creature.Physics.GlobalTransform.Translation);
+                    VoxelRef v = s.GetNearestFreeVoxel(creature.Physics.GlobalTransform.Translation);
 
                     if (v != null)
                     {
-                        creature.TargetVoxel = v.GetReference();
+                        creature.TargetVoxel = v;
                     }
 
                     if (creature.TargetVoxel != null)
                     {
-                        s.IsReserved[v] = true;
+                        s.SetReserved(v, true);
                     }
                     else
                     {
@@ -81,23 +81,6 @@ namespace DwarfCorp
                     else
                     {
                         Console.Error.WriteLine("Failed to set target voxel.");
-                        return ValidationStatus.Invalid;
-                    }
-                }
-
-                else if (z is Container)
-                {
-                    Container c = (Container)z;
-                    Voxel vox = creature.Master.Chunks.GetFirstVisibleBlockHitByRay(c.UserData.GlobalTransform.Translation,
-                        c.UserData.GlobalTransform.Translation + new Vector3(0, -10, 0));
-
-                    if (vox != null)
-                    {
-                        creature.TargetVoxel = vox.GetReference();
-                        return ValidationStatus.Ok;
-                    }
-                    else
-                    {
                         return ValidationStatus.Invalid;
                     }
                 }

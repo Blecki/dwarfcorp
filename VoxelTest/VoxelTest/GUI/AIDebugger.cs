@@ -34,14 +34,15 @@ namespace DwarfCorp
             PlanLabel = new Label(gui, Layout, "Plan: null", gui.DefaultFont);
             AStarPathLabel = new Label(gui, Layout, "Astar Path: null", gui.DefaultFont);
             LastMessages = new Label(gui, Layout, "Messages: ", gui.DefaultFont);
-            BTDisplay = new ActDisplay(gui, Layout);
+            ScrollView btDisplayHolder = new ScrollView(gui, Layout);
+            BTDisplay = new ActDisplay(gui, btDisplayHolder);
 
             Layout.SetComponentPosition(DwarfSelector, 0, 0, 1, 1);
             Layout.SetComponentPosition(GoalLabel, 0, 1, 1, 1);
             Layout.SetComponentPosition(PlanLabel, 0, 2, 1, 1);
             Layout.SetComponentPosition(AStarPathLabel, 0, 3, 1, 1);
             Layout.SetComponentPosition(LastMessages, 0, 4, 1, 2);
-            Layout.SetComponentPosition(BTDisplay, 0, 6, 1, 6);
+            Layout.SetComponentPosition(btDisplayHolder, 0, 6, 1, 6);
             Visible = false;
 
             int i = 0;
@@ -54,7 +55,7 @@ namespace DwarfCorp
 
             Master = master;
 
-            MainPanel.LocalBounds = new Rectangle(20, 100, 500, 750);
+            MainPanel.LocalBounds = new Rectangle(20, 100, 500, 600);
         }
 
         void DwarfSelector_OnSelectionModified(string arg)

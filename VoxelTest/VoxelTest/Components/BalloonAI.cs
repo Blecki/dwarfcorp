@@ -168,12 +168,12 @@ namespace DwarfCorp
                     {
                         if (Shipment.Destination != null)
                         {
-                            foreach (Item i in Shipment.Destination.Items)
+                            foreach (Item i in Shipment.Destination.ListItems())
                             {
                                 i.userData.Die();
                                 Master.Economy.CurrentMoney += GetSellOrder(i);
                             }
-                            Shipment.Destination.Items.Clear();
+                            Shipment.Destination.ClearItems();
                         }
                         State = BalloonState.Leaving;
                     }

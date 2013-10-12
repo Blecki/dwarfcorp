@@ -28,7 +28,7 @@ namespace DwarfCorp
                 Creature.Hands.UnGrab(grabbed);
                 Matrix m = Matrix.Identity;
                 m.Translation = Creature.Physics.GlobalTransform.Translation;
-                Agent.Blackboard.SetData("HeldObject", null);
+                Agent.Blackboard.SetData<object>("HeldObject", null);
                 grabbed.LocalTransform = m;
                 grabbed.HasMoved = true;
                 grabbed.IsActive = true;

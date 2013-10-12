@@ -53,15 +53,15 @@ namespace DwarfCorp
 
             foreach (Stockpile s in sortedPiles)
             {
-                Voxel v = s.GetNextFreeVoxel(Creature.Physics.GlobalTransform.Translation);
+                VoxelRef v = s.GetNearestFreeVoxel(Creature.Physics.GlobalTransform.Translation);
 
                 if (v != null)
                 {
-                    Agent.TargetVoxel = v.GetReference();
+                    Agent.TargetVoxel = v;
                     Agent.TargetStockpile = s;
                     if (Agent.TargetVoxel != null)
                     {
-                        s.IsReserved[v] = true;
+                        s.SetReserved(v, true);
                         validTargetFound = true;
                         break;
                     }

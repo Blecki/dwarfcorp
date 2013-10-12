@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
+
+    
     public class ActDisplay : SillyGUIComponent
     {
         private Act m_act = null;
@@ -32,11 +34,12 @@ namespace DwarfCorp
             DisplayColors[(int)Act.Status.Running] = Color.DarkBlue;
             DisplayColors[(int)Act.Status.Success] = Color.Green;
             DisplayColors[(int)Act.Status.Fail] = Color.Red;
+
             Elements = new List<ActElement>();
         }
 
 
-        private void CreateSubtreeRecursive(Act root, ref Vector2 lastPosition)
+        private void CreateSubtreeRecursive(Act root, ref Vector2 lastPosition, ref Vector2 size)
         {
             if (root == null)
             {
@@ -53,11 +56,15 @@ namespace DwarfCorp
                 lastPosition.Y += ElementHeight;
                 lastPosition.X += ElementWidth;
 
+                size += Datastructures.SafeMeasure(GUI.DefaultFont, element.act.Name);
+                size.X += ElementWidth;
+                size.Y += ElementHeight;
+
                 if (root.Children != null && root.Enumerator.Current != Act.Status.Success)
                 {
                     foreach (Act child in root.Children)
                     {
-                        CreateSubtreeRecursive(child, ref lastPosition);
+                        CreateSubtreeRecursive(child, ref lastPosition, ref size);
                     }
                 }
 
@@ -69,8 +76,8 @@ namespace DwarfCorp
 
         private void InitAct()
         {
-
             Vector2 lastPosition = new Vector2(5, 5);
+            Vector2 size = new Vector2(0, 0);
 
             if (CurrentAct != null && CurrentAct.IsInitialized)
             {
@@ -81,21 +88,26 @@ namespace DwarfCorp
                 Elements.Add(element);
 
                 lastPosition += new Vector2(ElementWidth, ElementHeight);
+                size.X += ElementWidth;
+                size.Y += ElementHeight;
 
                 if (CurrentAct.Children != null)
                 {
                     foreach (Act child in CurrentAct.Children)
                     {
-                        CreateSubtreeRecursive(child, ref lastPosition);
+                        CreateSubtreeRecursive(child, ref lastPosition, ref size);
                     }
                 }
 
-
+             
             }
             else if (CurrentAct != null) 
             {
                 CurrentAct = null;
             }
+
+
+            LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, (int)size.X, (int)size.Y);
         }
 
         public override void  Update(GameTime time)

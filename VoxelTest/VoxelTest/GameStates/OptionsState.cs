@@ -350,12 +350,10 @@ namespace DwarfCorp
 
             Button apply = new Button(GUI, Layout, "Apply", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
             Layout.SetComponentPosition(apply, 4, 9, 1, 1);
-
             apply.OnClicked += new ClickedDelegate(apply_OnClicked);
 
             Button back = new Button(GUI, Layout, "Back", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
             Layout.SetComponentPosition(back, 5, 9, 1, 1);
-
             back.OnClicked += new ClickedDelegate(back_OnClicked);
 
 
@@ -578,11 +576,14 @@ namespace DwarfCorp
 
         private void DrawGUI(GameTime gameTime, float dx)
         {
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
+            RasterizerState rasterizerState = new RasterizerState() { ScissorTestEnable = true };
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
 
             DwarfGame.SpriteBatch.End();
+
+            DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle = DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
 
         }
 

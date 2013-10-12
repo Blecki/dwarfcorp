@@ -208,7 +208,8 @@ namespace DwarfCorp
 
         private void DrawGUI(GameTime gameTime, float dx)
         {
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
+            RasterizerState rasterizerState = new RasterizerState() { ScissorTestEnable = true };
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
 

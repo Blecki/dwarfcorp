@@ -37,7 +37,9 @@ namespace DwarfCorp
         public static string ButtonLower = "ButtonLower";
         public static string ButtonCenter = "ButtonCenter";
         public static string Track = "Track";
+        public static string TrackVert = "TrackVertical";
         public static string SliderTex = "Slider";
+        public static string SliderVertical = "SliderVertical";
         public static string FieldLeft = "FieldLeft";
         public static string FieldRight = "FieldRight";
         public static string FieldCenter = "FieldCenter";
@@ -109,6 +111,8 @@ namespace DwarfCorp
 
             Frames[Track] = new Point(3, 4);
             Frames[SliderTex] = new Point(4, 4);
+            Frames[TrackVert] = new Point(5, 4);
+            Frames[SliderVertical] = new Point(6, 4);
 
             Frames[GroupUpperLeft]  = new Point(0, 6);
             Frames[GroupUpper]      = new Point(1, 6);
@@ -270,14 +274,61 @@ namespace DwarfCorp
             spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height), GetSourceRect(GroupRight), Color.White);
         }
 
-        public void RenderSlider(SpriteFont font, Rectangle boundingRect, float value, float minvalue, float maxValue, Slider.SliderMode mode,  SpriteBatch spriteBatch)
+        public void RenderSliderVertical(SpriteFont font, Rectangle boundingRect, float value, float minvalue, float maxValue, Slider.SliderMode mode, bool drawLabel, SpriteBatch spriteBatch)
+        {
+            int fieldSize = Math.Max(Math.Min((int)(0.2f * boundingRect.Width), 150), 64);
+            Rectangle rect = new Rectangle(boundingRect.X + boundingRect.Width / 2 - TileWidth / 2, boundingRect.Y  , boundingRect.Width, boundingRect.Height - TileHeight);
+            Rectangle fieldRect = new Rectangle(boundingRect.Right - fieldSize, boundingRect.Y + boundingRect.Height / 2 - TileHeight / 2, fieldSize, TileHeight);
+            
+            int maxY = rect.Y + rect.Height;
+            int diffY = rect.Height % TileHeight;
+            int bottom = maxY ;
+            int left = rect.X;
+            int top = rect.Y;
+
+
+            for (int y = top; y <= bottom; y += TileHeight)
+            {
+                spriteBatch.Draw(Texture, new Rectangle(rect.X, y, TileWidth, TileHeight), GetSourceRect(TrackVert), Color.White);
+            }
+
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, maxY - diffY, TileWidth, diffY), GetSourceRect(TrackVert), Color.White);
+
+            int sliderY = (int)((value - minvalue) / (maxValue - minvalue) * rect.Height + rect.Y);
+
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, sliderY - TileHeight / 2, TileWidth, TileHeight), GetSourceRect(SliderVertical), Color.White);
+
+            if (drawLabel)
+            {
+                RenderField(fieldRect, spriteBatch);
+
+                float v = 0.0f;
+                if (mode == Slider.SliderMode.Float)
+                {
+                    v = (float)Math.Round(value, 2);
+                }
+                else
+                {
+                    v = (int)value;
+                }
+
+                string toDraw = "" + v;
+
+                Vector2 origin = Datastructures.SafeMeasure(font, toDraw) * 0.5f;
+
+                Drawer2D.SafeDraw(spriteBatch, toDraw, font, Color.Black, new Vector2(fieldRect.X + fieldRect.Width / 2, fieldRect.Y + 16), origin);
+            }
+
+        }
+
+        public void RenderSliderHorizontal(SpriteFont font, Rectangle boundingRect, float value, float minvalue, float maxValue, Slider.SliderMode mode, bool drawLabel,  SpriteBatch spriteBatch)
         {
             int fieldSize = Math.Max(Math.Min((int)(0.2f * boundingRect.Width), 150), 64);
             Rectangle rect = new Rectangle(boundingRect.X, boundingRect.Y + boundingRect.Height / 2 - TileHeight/2, boundingRect.Width - fieldSize - 5, boundingRect.Height / 2);
             Rectangle fieldRect = new Rectangle(boundingRect.Right - fieldSize, boundingRect.Y + boundingRect.Height / 2 - TileHeight /2, fieldSize, boundingRect.Height /2);
             int maxX = rect.X + rect.Width;
             int diffX = rect.Width % TileWidth;
-            int right = maxX - diffX;
+            int right = maxX;
             int left = rect.X;
             int top = rect.Y;
 
@@ -293,24 +344,26 @@ namespace DwarfCorp
 
             spriteBatch.Draw(Texture, new Rectangle(sliderX - TileWidth/2, rect.Y, TileWidth, TileHeight), GetSourceRect(SliderTex), Color.White);
 
-            RenderField(fieldRect, spriteBatch);
-
-            float v = 0.0f;
-            if (mode == Slider.SliderMode.Float)
+            if (drawLabel)
             {
-                v = (float)Math.Round(value, 2);
+                RenderField(fieldRect, spriteBatch);
+
+                float v = 0.0f;
+                if (mode == Slider.SliderMode.Float)
+                {
+                    v = (float)Math.Round(value, 2);
+                }
+                else
+                {
+                    v = (int)value;
+                }
+
+                string toDraw = "" + v;
+
+                Vector2 origin = Datastructures.SafeMeasure(font, toDraw) * 0.5f;
+
+                Drawer2D.SafeDraw(spriteBatch, toDraw, font, Color.Black, new Vector2(fieldRect.X + fieldRect.Width / 2, fieldRect.Y + 16), origin);
             }
-            else
-            {
-                v = (int)value;
-            }
-
-            string toDraw = "" + v;
-
-            Vector2 origin = Datastructures.SafeMeasure(font, toDraw) * 0.5f;
-
-            Drawer2D.SafeDraw(spriteBatch, toDraw, font, Color.Black, new Vector2(fieldRect.X + fieldRect.Width / 2, fieldRect.Y + 16), origin);
-           
             
         }
 

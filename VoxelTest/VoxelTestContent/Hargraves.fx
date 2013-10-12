@@ -52,9 +52,9 @@ float4 ClipPlane0;
 Texture xTexture;
 Texture xIllumination;
 
-sampler IllumSampler = sampler_state { texture = <xIllumination> ;  magfilter = POINT; minfilter = POINT; mipfilter=POINT; AddressU = clamp; AddressV = clamp;};
+sampler IllumSampler = sampler_state { texture = <xIllumination> ;  magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = clamp; AddressV = clamp;};
 
-sampler TextureSampler = sampler_state { texture = <xTexture> ; magfilter = POINT; minfilter = POINT; mipfilter=POINT; AddressU = clamp; AddressV = clamp;};Texture xTexture0;
+sampler TextureSampler = sampler_state { texture = <xTexture> ; magfilter = POINT; minfilter = ANISOTROPIC; mipfilter=POINT; AddressU = clamp; AddressV = clamp;};Texture xTexture0;
 Texture xTexture1;
 
 sampler TextureSampler1 = sampler_state { texture = <xTexture1> ; magfilter = POINT; minfilter = POINT; mipfilter=POINT; AddressU = clamp; AddressV = clamp;};

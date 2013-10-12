@@ -11,15 +11,15 @@ namespace DwarfCorp
     {
         public string Name { get; set; }
         public uint ID { get; set; }
-        public Point FloorTexture { get; set; }
+        public string FloorType { get; set; }
         public Dictionary<string, ResourceAmount> RequiredResources { get; set; }
         public List<RoomTemplate> Templates { get; set; }
 
-        public RoomType(string name, uint id, Point floorTexture, Dictionary<string, ResourceAmount> requiredResources, List<RoomTemplate> templates)
+        public RoomType(string name, uint id, string floorTexture, Dictionary<string, ResourceAmount> requiredResources, List<RoomTemplate> templates)
         {
             Name = name;
             ID = id;
-            FloorTexture = floorTexture;
+            FloorType = floorTexture;
             RequiredResources = requiredResources;
             Templates = templates;
 

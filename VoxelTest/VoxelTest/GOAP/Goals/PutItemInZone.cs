@@ -8,7 +8,6 @@ namespace DwarfCorp
     class PutItemInZone : Goal
     {
         public Zone m_zone;
-        public TagList m_tags;
         public Item m_item;
 
         public PutItemInZone(GOAP agent, Item item, Zone zone)
@@ -20,6 +19,10 @@ namespace DwarfCorp
             Reset(agent);
         }
 
+        public override Act GetBehaviorTree(CreatureAIComponent creature)
+        {
+            return new MoveItemAct(creature, m_item, m_zone);
+        }
 
 
         public override List<Action> GetPresetPlan(CreatureAIComponent creature, GOAP agent)

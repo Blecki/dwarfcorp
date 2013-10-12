@@ -439,28 +439,12 @@ namespace DwarfCorp
                     }
                 }
 
-                if (ContainerComponent.Containers != null)
-                {
-                    foreach (ContainerComponent container in ContainerComponent.Containers)
-                    {
-                        Goap.Zones.Add(container.Container);
-
-                        foreach (Item component in container.Container.Items)
-                        {
-                            if (!Goap.Items.Contains(component))
-                            {
-                                Goap.Items.Add(component);
-                            }
-                        }
-                    }
-                }
-
 
                 foreach (Stockpile stockpile in Creature.Master.Stockpiles)
                 {
                     Goap.Zones.Add(stockpile);
 
-                    foreach (Item component in stockpile.Items)
+                    foreach (Item component in stockpile.ListItems())
                     {
                         if (!Goap.Items.Contains(component))
                         {
@@ -679,7 +663,7 @@ namespace DwarfCorp
                 Goap.Belief[GOAPStrings.TargetDead] = false;
                 Goap.Belief[GOAPStrings.ZoneTags] = new TagList(TargetRoom.RoomType.Name);
 
-                if (TargetRoom.IsInRoom(Creature.Physics.GlobalTransform.Translation))
+                if (TargetRoom.IsInZone(Creature.Physics.GlobalTransform.Translation))
                 {
                     Goap.Belief[GOAPStrings.AtTarget] = true;
                     Goap.Belief[GOAPStrings.CurrentZone] = TargetRoom;

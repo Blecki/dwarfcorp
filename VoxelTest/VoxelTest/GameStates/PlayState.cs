@@ -99,6 +99,7 @@ namespace DwarfCorp
             RenderUnderneath = true;
             WorldOrigin = new Vector2(WorldWidth / 2, WorldHeight / 2);
             PreSimulateTimer = new Timer(3, false);
+            
         }
 
         public override void OnEnter()
@@ -131,6 +132,7 @@ namespace DwarfCorp
                 if (SoundManager.Content == null)
                 {
                     SoundManager.Content = Content;
+                    SoundManager.LoadDefaultSounds();
                 }
 
                 SoundManager.PlayMusic("dwarfcorp");
@@ -939,8 +941,9 @@ namespace DwarfCorp
                 frameCounter++;
             }
 
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
-             null, null);
+            RasterizerState rasterizerState = new RasterizerState() { ScissorTestEnable = true };
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
+   
 
             //Drawer2D.SafeDraw(spriteBatch, "\u20AC", Game.Content.Load<SpriteFont>("Default"), Color.White, new Vector2(100, 100), Vector2.Zero);
 
@@ -989,9 +992,10 @@ namespace DwarfCorp
 
             DwarfGame.SpriteBatch.End();
             master.Render(gameTime, GraphicsDevice);
+            DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle = DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-
             GraphicsDevice.BlendState = BlendState.Opaque;
+
 
             base.Render(gameTime);
         }

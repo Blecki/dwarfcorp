@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DwarfCorpAssets", "DwarfAss
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DwarfCorpContentProject", "DwarfAssets2\DwarfAssets2Content\DwarfCorpContentProject.contentproj", "{37AEBC49-2CBC-4CD6-A015-7F7943760308}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DwarfCorpLinux", "DwarfCorpLinux\DwarfCorpLinux.csproj", "{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Android|Any CPU = Android|Any CPU
@@ -233,51 +231,6 @@ Global
 		{37AEBC49-2CBC-4CD6-A015-7F7943760308}.Windows8|Any CPU.ActiveCfg = Windows8|Any CPU
 		{37AEBC49-2CBC-4CD6-A015-7F7943760308}.Windows8|Mixed Platforms.ActiveCfg = Windows8|Any CPU
 		{37AEBC49-2CBC-4CD6-A015-7F7943760308}.Windows8|x86.ActiveCfg = Windows8|Any CPU
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Android|Any CPU.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Android|Mixed Platforms.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Android|Mixed Platforms.Build.0 = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Android|x86.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Android|x86.Build.0 = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Debug|x86.ActiveCfg = Debug|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Debug|x86.Build.0 = Debug|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.iOS|Any CPU.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.iOS|Mixed Platforms.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.iOS|Mixed Platforms.Build.0 = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.iOS|x86.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.iOS|x86.Build.0 = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Linux|Any CPU.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Linux|Mixed Platforms.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Linux|Mixed Platforms.Build.0 = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Linux|x86.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Linux|x86.Build.0 = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.OSX|Any CPU.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.OSX|Mixed Platforms.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.OSX|Mixed Platforms.Build.0 = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.OSX|x86.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.OSX|x86.Build.0 = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.PSM|Any CPU.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.PSM|Mixed Platforms.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.PSM|Mixed Platforms.Build.0 = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.PSM|x86.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.PSM|x86.Build.0 = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Release|Any CPU.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Release|Mixed Platforms.Build.0 = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Release|x86.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Release|x86.Build.0 = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Windows|Any CPU.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Windows|Mixed Platforms.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Windows|Mixed Platforms.Build.0 = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Windows|x86.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Windows|x86.Build.0 = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Windows8|Any CPU.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Windows8|Mixed Platforms.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Windows8|Mixed Platforms.Build.0 = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Windows8|x86.ActiveCfg = Release|x86
-		{69FF13DE-51C4-4F39-89E7-4F3EB2A246A5}.Windows8|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

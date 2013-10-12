@@ -58,7 +58,7 @@ namespace DwarfCorp
 
             foreach(Stockpile stockpile in master.Stockpiles)
             {
-                foreach(Item i in stockpile.Items)
+                foreach(Item i in stockpile.ListItems())
                 {
                     LocatableComponent userData = i.userData;
                     Resource r = ResourceLibrary.Resources[userData.Tags[0]];

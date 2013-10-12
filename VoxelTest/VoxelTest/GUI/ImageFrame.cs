@@ -20,6 +20,12 @@ namespace DwarfCorp
             SourceRect = image.Bounds;
         }
 
+        public ImageFrame(Texture2D image, int frameSize, int x, int y)
+        {
+            Image = image;
+            SourceRect = new Rectangle(x * frameSize, y * frameSize, frameSize, frameSize);
+        }
+
         public ImageFrame(Texture2D image, Rectangle sourceRect)
         {
             Image = image;

@@ -42,7 +42,7 @@ namespace DwarfCorp
 
             List<RoomTemplate> BalloonTemplates = new List<RoomTemplate>();
             BalloonTemplates.Add(flag);
-            RoomType port = new RoomType("BalloonPort", 0, new Point(4, 0), balloonPortResources, BalloonTemplates);
+            RoomType port = new RoomType("BalloonPort", 0, "Stockpile", balloonPortResources, BalloonTemplates);
             RegisterType(port);
 
             Dictionary<string, ResourceAmount> bedroomResources = new Dictionary<string, ResourceAmount>();
@@ -73,7 +73,7 @@ namespace DwarfCorp
             bedroomTemplates.Add(bed);
             bedroomTemplates.Add(lamp);
 
-            RoomType bedroom = new RoomType("BedRoom", 0, new Point(5, 0), bedroomResources, bedroomTemplates);
+            RoomType bedroom = new RoomType("BedRoom", 0, "BrownTileFloor", bedroomResources, bedroomTemplates);
             RegisterType(bedroom);
 
             Dictionary<string, ResourceAmount> commonRoomResources = new Dictionary<string, ResourceAmount>();
@@ -100,7 +100,7 @@ namespace DwarfCorp
             commonRoomTemplates.Add(table);
             commonRoomTemplates.Add(lamp);
 
-            RoomType commonRoom = new RoomType("CommonRoom", 1, new Point(5, 2), commonRoomResources, commonRoomTemplates);
+            RoomType commonRoom = new RoomType("CommonRoom", 1, "CobblestoneFloor", commonRoomResources, commonRoomTemplates);
             RegisterType(commonRoom);
 
 
@@ -117,7 +117,7 @@ namespace DwarfCorp
             RoomTemplate anvil = new RoomTemplate(anvilTemp, anvilAcc);
             workshopTemplates.Add(anvil);
 
-            RoomType workshop = new RoomType("Workshop", 2, new Point(5, 2), commonRoomResources, workshopTemplates);
+            RoomType workshop = new RoomType("Workshop", 2, "CobblestoneFloor", commonRoomResources, workshopTemplates);
             RegisterType(workshop);
 
             List<RoomTemplate> trainingTemplates = new List<RoomTemplate>();
@@ -135,7 +135,7 @@ namespace DwarfCorp
             trainingTemplates.Add(straw);
             trainingTemplates.Add(lamp);
 
-            RoomType training = new RoomType("TrainingRoom", 3, new Point(5, 0), commonRoomResources, trainingTemplates);
+            RoomType training = new RoomType("TrainingRoom", 3, "CobblestoneFloor", commonRoomResources, trainingTemplates);
             RegisterType(training);
 
             List<RoomTemplate> libraryTemplates = new List<RoomTemplate>();
@@ -164,7 +164,7 @@ namespace DwarfCorp
             libraryTemplates.Add(book);
             libraryTemplates.Add(lamp);
 
-            RoomType library = new RoomType("Library", 4, new Point(6, 0), commonRoomResources, libraryTemplates);
+            RoomType library = new RoomType("Library", 4, "BlueTileFloor", commonRoomResources, libraryTemplates);
             RegisterType(library);
 
 
@@ -184,7 +184,7 @@ namespace DwarfCorp
             wheatTemplates.Add(wheatFarmTemp);
 
 
-            RoomType wheatFarm = new RoomType("WheatFarm", 5, new Point(5, 1), commonRoomResources, wheatTemplates);
+            RoomType wheatFarm = new RoomType("WheatFarm", 5, "TilledSoil", commonRoomResources, wheatTemplates);
             RegisterType(wheatFarm);
          
 
@@ -204,7 +204,7 @@ namespace DwarfCorp
             mushroomTemplates.Add(mushroomFarmTemp);
             mushroomFarmTemp.CanRotate = false;
 
-            RoomType mushroomFarm = new RoomType("MushroomFarm", 6, new Point(5, 1), commonRoomResources, mushroomTemplates);
+            RoomType mushroomFarm = new RoomType("MushroomFarm", 6, "TilledSoil", commonRoomResources, mushroomTemplates);
             RegisterType(mushroomFarm);
 
 
@@ -252,7 +252,7 @@ namespace DwarfCorp
         public static void GenerateRoomComponentsTemplate(Room room, ComponentManager componentManager, Microsoft.Xna.Framework.Content.ContentManager content, GraphicsDevice graphics)
         {
             RoomTile[,] currentTiles = RoomTemplate.CreateFromRoom(room, room.Chunks);
-            int count = Math.Max(room.Voxels.Count / 12, 1);
+            int count = Math.Max(room.Storage.Count / 12, 1);
 
             List<int> placedCount = new List<int>();
 
@@ -406,9 +406,9 @@ namespace DwarfCorp
            
             if (room.RoomType == GetType("BedRoom"))
             {
-                if (room.Voxels.Count > 1)
+                if (room.Storage.Count > 1)
                 {
-                    int maxBeds = room.Voxels.Count / 4;
+                    int maxBeds = room.Storage.Count / 4;
 
                     BoundingBox box = room.GetBoundingBox();
 
@@ -416,8 +416,9 @@ namespace DwarfCorp
 
                     for (int i = 0; i < maxBeds; i++)
                     {
-                        foreach (VoxelRef voxel in room.Voxels)
+                        foreach (VoxelStorage storage in room.Storage)
                         {
+                            VoxelRef voxel = storage.Voxel;
                             PlacedFurniture furniture = new PlacedFurniture();
                             furniture.occupiedSpace = new Rectangle((int)voxel.WorldPosition.X, (int)voxel.WorldPosition.Z, 2, 1);
                             furniture.vox = voxel;
@@ -454,21 +455,16 @@ namespace DwarfCorp
                         }
                     }
                      */
-                    List<int> existingIndecies = new List<int>();
+
                     float y = box.Min.Y;
                     for (float x = box.Min.X; x <= box.Max.X; x += (box.Max.X - box.Min.X))
                     {
                         for (float z = box.Min.Z; z <= box.Max.Z; z += (box.Max.Z - box.Min.Z))
                         {
-                            int index = room.GetClosestVoxelTo(new Vector3(x, y, z));
+                            VoxelRef voxel = room.GetNearestFreeVoxel(new Vector3(x, y, z));
 
-
-                            if (!existingIndecies.Contains(index))
-                            {
-                                GameComponent lamp = EntityFactory.GenerateLamp(room.Voxels[index].WorldPosition + new Vector3(0.5f, 1.5f, 0.5f), componentManager, content, graphics);
-                                existingIndecies.Add(index);
-                                room.Components.Add(lamp);
-                            }
+                            GameComponent lamp = EntityFactory.GenerateLamp(voxel.WorldPosition + new Vector3(0.5f, 1.5f, 0.5f), componentManager, content, graphics);
+                            room.Components.Add(lamp);
                         }
                     }
 
@@ -479,22 +475,16 @@ namespace DwarfCorp
             {
                 BoundingBox box = room.GetBoundingBox();
                 float y = box.Min.Y;
-                List<int> existingIndecies = new List<int>();
 
 
                 for (float x = box.Min.X + 1.0f; x < box.Max.X; x += 2.0f)
                 {
                     for (float z = box.Min.Z + 1.0f; z < box.Max.Z; z += 2.0f)
                     {
-                        int index = room.GetClosestVoxelTo(new Vector3(x, y, z));
+                        VoxelRef voxel = room.GetNearestFreeVoxel(new Vector3(x, y, z));
 
-
-                        if (!existingIndecies.Contains(index))
-                        {
-                            GameComponent table = EntityFactory.GenerateTable(room.Voxels[index].WorldPosition + new Vector3(0.0f, 1.2f, 0.0f), componentManager, content, graphics);
-                            existingIndecies.Add(index);
-                            room.Components.Add(table);
-                        }
+                        GameComponent table = EntityFactory.GenerateTable(voxel.WorldPosition + new Vector3(0.0f, 1.2f, 0.0f), componentManager, content, graphics);
+                        room.Components.Add(table);
 
                     }
                 }
@@ -503,15 +493,10 @@ namespace DwarfCorp
                 {
                     for (float z = box.Min.Z; z <= box.Max.Z; z += (box.Max.Z - box.Min.Z))
                     {
-                        int index = room.GetClosestVoxelTo(new Vector3(x, y, z));
+                        VoxelRef voxel = room.GetNearestFreeVoxel(new Vector3(x, y, z));
 
-
-                        if (!existingIndecies.Contains(index))
-                        {
-                            GameComponent lamp = EntityFactory.GenerateLamp(room.Voxels[index].WorldPosition + new Vector3(0.5f, 1.2f, 0.5f), componentManager, content, graphics);
-                            existingIndecies.Add(index);
-                            room.Components.Add(lamp);
-                        }
+                        GameComponent lamp = EntityFactory.GenerateLamp(voxel.WorldPosition + new Vector3(0.5f, 1.2f, 0.5f), componentManager, content, graphics);
+                        room.Components.Add(lamp);
                     }
                 }
             }

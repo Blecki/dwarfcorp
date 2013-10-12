@@ -21,6 +21,16 @@ namespace DwarfCorp
             Reset(agent);
         }
 
+        public override Act GetBehaviorTree(CreatureAIComponent creature)
+        {
+            
+            return new Sequence(new GetNearestFreeVoxelInZone(Agent.Creature, m_zone, "FreeVoxel"),
+                                new GoToNamedVoxelAct("FreeVoxel", Agent.Creature),
+                                new PutItemInZoneAct(Agent.Creature, m_zone));
+             
+             
+        }
+
         public override void Reset(GOAP agent)
         {
             if (agent != null)

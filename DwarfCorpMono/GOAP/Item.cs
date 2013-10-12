@@ -46,7 +46,8 @@ namespace DwarfCorp
             }
             else
             {
-                return null;
+                Item item = CreateItem(name, null, component);
+                return item;
             }
         }
 

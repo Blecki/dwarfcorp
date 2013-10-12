@@ -41,14 +41,9 @@ namespace DwarfCorp
                 Effects[GOAPStrings.TargetZoneType] = "Room";
                 Effects[GOAPStrings.TargetZoneFull] = ((Room)z).IsFull();
             }
-            else if (z is Container)
-            {
-                Effects[GOAPStrings.TargetZoneType] = "Container";
-                Effects[GOAPStrings.TargetZoneFull] = ((Container)z).IsFull();
-            }
 
             HashSet<string> tags = new HashSet<string>();
-            foreach(Item i in zone.Items)
+            foreach(Item i in zone.ListItems())
             {
                 foreach (string t in i.userData.Tags)
                 {

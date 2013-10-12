@@ -6,11 +6,11 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class PutItemInStockpileAct : CreatureAct
+    public class PutItemInZoneAct : CreatureAct
     {
-        public Stockpile Pile { get; set; }
+        public Zone Pile { get; set; }
 
-        public PutItemInStockpileAct(CreatureAIComponent agent, Stockpile stock) :
+        public PutItemInZoneAct(CreatureAIComponent agent, Zone stock) :
             base(agent)
         {
             Name = "Put Item";
@@ -19,20 +19,6 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (Pile == null && Agent.TargetStockpile != null)
-            {
-                Pile = Agent.TargetStockpile;
-            }
-            else if (Pile != null)
-            {
-                Agent.TargetStockpile = Pile;
-            }
-            else
-            {
-                yield return Status.Fail;
-            }
-          
-
             LocatableComponent grabbed = Creature.Hands.GetFirstGrab();
 
             if (grabbed == null)
@@ -48,7 +34,7 @@ namespace DwarfCorp
                 grabbed.LocalTransform = m;
                 grabbed.HasMoved = true;
                 grabbed.DrawBoundingBox = false;
-            
+
 
                 yield return Status.Success;
             }

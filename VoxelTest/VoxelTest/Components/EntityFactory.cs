@@ -39,40 +39,7 @@ namespace DwarfCorp
             return balloon;
         }
 
-        public static LocatableComponent CreateBarrel(string id, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, List<KeyValuePair<string, int>> Resources)
-        {
-            Matrix matrix = Matrix.Identity;
-            matrix.Translation = position;
-            Texture2D spriteSheet = TextureManager.GetTexture("InteriorSheet");
-            LocatableComponent table = new LocatableComponent(componentManager, "barrel", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
-            List<Point> frames = new List<Point>();
-            frames.Add(new Point(0, 0));
-            Animation tableAnimation = new Animation(graphics, spriteSheet, "Barrel", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
-
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", table, Matrix.Identity, spriteSheet, false);
-            sprite.OrientationType = BillboardSpriteComponent.OrientMode.Spherical;
-            sprite.AddAnimation(tableAnimation);
-
-            Container symbolicContainer = new Container(id, 64);
-
-            ContainerComponent container = new ContainerComponent(componentManager, id, table, symbolicContainer);
-            foreach (KeyValuePair<string, int> res in Resources)
-            {
-                for (int i = 0; i < res.Value; i++)
-                {
-                    LocatableComponent resource = GenerateComponent(res.Key, position, componentManager, content, graphics, null, null, null);
-                    symbolicContainer.PutResouce(resource);
-                }
-            }
-
-            tableAnimation.Play();
-            table.Tags.Add("Barrel");
-            table.Tags.Add("Container");
-
-
-            return table;
-        }
-
+      
         public static GameComponent GenerateVegetation(string id, float size, float offset, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
         {
             if (id == "pine" || id == "snowpine" || id == "palm")
@@ -95,7 +62,7 @@ namespace DwarfCorp
 
         public static string[] ComponentList =  { "Balloon", "Wood", "Iron", "Dirt", "Stone", "Gold",
             "Mana", "Apple", "pine", "snowpine", "palm", "berrybush", "apple_tree", "Dwarf",
-            "DarkDwarf", "Goblin", "Bed", "Lamp", "Table", "Barrel", "Chair", "Flag", "SpikeTrap", "Mushroom", "Wheat", "Potion", "Book", "BookTable", "PotionTable"};
+            "DarkDwarf", "Goblin", "Bed", "Lamp", "Table", "Chair", "Flag", "SpikeTrap", "Mushroom", "Wheat", "Potion", "Book", "BookTable", "PotionTable"};
 
         public static LocatableComponent GenerateComponent(string id, Vector3 position,
             ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ChunkManager chunks, GameMaster master, Camera camera)

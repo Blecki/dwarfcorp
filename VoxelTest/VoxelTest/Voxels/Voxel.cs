@@ -23,10 +23,12 @@ namespace DwarfCorp
         public string explosionSound { get; set; }
         public bool specialRampTextures { get; set; }
         public Dictionary<RampType, BoxPrimitive> RampPrimitives { get; set; }
+        private static uint maxID = 0;
 
         public  VoxelType()
         {
-            ID = 0;
+            ID = maxID;
+            maxID++;
             name = "";
             releasesResource = false;
             resourceToRelease = "";
@@ -56,7 +58,7 @@ namespace DwarfCorp
     }
 
     // Intended to be a smaller memory footprint representation
-    // that can be passed around.
+    // that can be passed around. Also stores empty voxels
     public class VoxelRef : IEquatable<VoxelRef>
     {
         public Point3 ChunkID { get; set; }

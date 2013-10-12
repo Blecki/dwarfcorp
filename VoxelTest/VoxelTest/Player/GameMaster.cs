@@ -43,11 +43,35 @@ namespace DwarfCorp
         {
             public ResourceAmount Resource { get ; set;}
             public Room Port { get; set; }
+            public List<Goal> Assignments { get; set; }
 
             public ShipDesignation(ResourceAmount resource, Room port)
             {
                 Resource = resource;
                 Port = port;
+                Assignments = new List<Goal>();
+            }
+
+            public int GetRemainingNumResources()
+            {
+                List<Item> items = Port.ListItems();
+
+                int count = Assignments.Count;
+                foreach (Item i in items)
+                {
+                    if (i.userData.Tags.Contains(Resource.ResourceType.ResourceName))
+                    {
+                        count++;
+                    }
+                }
+
+
+                return (int)Math.Max(Resource.NumResources - count, 0);
+            }
+
+            public bool IsSatisfied()
+            {
+                return GetRemainingNumResources() == 0;
             }
         }
 
@@ -91,28 +115,7 @@ namespace DwarfCorp
 
         public TaskManager TaskManager { get; set; }
 
-        public static Texture2D GetSubTexture(GraphicsDevice graphics, Texture2D image, Rectangle rect)
-        {
-            Texture2D img = new Texture2D(graphics, rect.Width, rect.Height);
-            Color[] data = new Color[image.Width * image.Height];
-            image.GetData<Color>(data);
-            Color[] subData = new Color[rect.Width * rect.Height];
-
-            int i = 0;
-            for (int r = 0; r < rect.Height; r++)
-            {
-                for (int c = 0; c < rect.Width; c++)
-                {
-                    subData[i] = data[(c + rect.X) + (r + rect.Y) * image.Width];
-                    i++;
-                }
-            }
-
-            img.SetData<Color>(subData);
-
-            return img;
-        }
-
+        
 
 
         public GameMaster(DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics, VoxelLibrary library, SillyGUI gui)
@@ -141,10 +144,6 @@ namespace DwarfCorp
             PutDesignator = new PutDesignator(this, chunks.Tilemap);
             Content = game.Content;
             Texture2D imageIcons = game.Content.Load<Texture2D>("icons");
-            Dictionary<ToolMode, Texture2D> textureMap = new Dictionary<ToolMode,Texture2D>();
-            textureMap[ToolMode.Dig] = GetSubTexture(game.GraphicsDevice, imageIcons, new Rectangle(7 * 50, 7 * 50, 50, 50));
-            textureMap[ToolMode.Chop] = GetSubTexture(game.GraphicsDevice, imageIcons, new Rectangle(7 * 50, 4 * 50, 50, 50));
-
 
             GUI = gui;
 
@@ -228,15 +227,16 @@ namespace DwarfCorp
                     drawColor.B = (byte)(Math.Min(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GuardDesignationGlowRate)) + 50, 255));
                     SimpleDrawing.DrawBox(box, drawColor, 0.08f, false);
 
-                    foreach (KeyValuePair<Voxel, LocatableComponent> p in s.ComponentVoxels)
+                    foreach (VoxelStorage storage in s.Storage)
                     {
-                        if (p.Value == null)
+                        
+                        if (storage.Voxel == null)
                         {
-                            SimpleDrawing.DrawBox(p.Key.GetBoundingBox(), Color.White, 0.05f, true);
+                            SimpleDrawing.DrawBox(storage.Voxel.GetBoundingBox(), Color.White, 0.05f, true);
                         }
                         else
                         {
-                            SimpleDrawing.DrawBox(p.Key.GetBoundingBox(), Color.Yellow, 0.05f, true);
+                            SimpleDrawing.DrawBox(storage.Voxel.GetBoundingBox(), Color.Yellow, 0.05f, true);
                         }
                     }
                 }
@@ -275,26 +275,20 @@ namespace DwarfCorp
                 return;
             }
 
+            VoxelRef voxelRef = v.GetReference();
+
             RoomDesignator.OnVoxelDestroyed(v);
 
             List<Stockpile> toRemove = new List<Stockpile>();
             foreach (Stockpile s in Stockpiles)
             {
-                if (s.ComponentVoxels.ContainsKey(v))
+               
+                if (s.ContainsVoxel(voxelRef))
                 {
-                    LocatableComponent componentAtStockpile = s.ComponentVoxels[v];
-
-                    if (null != componentAtStockpile)
-                    {
-                        componentAtStockpile.IsStocked = false;
-                        componentAtStockpile.HasMoved = true;
-                    }
-
-                    s.RemoveComponentVoxel(v);
-
+                    s.RemoveVoxel(voxelRef);
                 }
 
-                if (s.ComponentVoxels.Keys.Count == 0)
+                if (s.Storage.Count == 0)
                 {
                     toRemove.Add(s);
                 }
@@ -303,6 +297,7 @@ namespace DwarfCorp
             foreach (Stockpile s in toRemove)
             {
                 Stockpiles.Remove(s);
+                s.Destroy();
             }
         }
 
@@ -382,21 +377,6 @@ namespace DwarfCorp
             {
                 ChopDesignations.Remove(tree);
             }
-
-
-            if (ContainerComponent.Containers != null && Stockpiles.Count > 0)
-            {
-                foreach (ContainerComponent container in ContainerComponent.Containers)
-                {
-                    if (!container.Container.UserData.IsStocked)
-                    {
-                        AddGatherDesignation(container.Container.UserData);
-                    }
-                }
-
-            }
-
-
 
 
         }
@@ -551,7 +531,7 @@ namespace DwarfCorp
         {
             foreach (Stockpile s in Stockpiles)
             {
-                if (s.ComponentVoxels.ContainsValue(resource))
+                if (s.ContainsItem(resource))
                 {
                     return true;
                 }
@@ -575,9 +555,10 @@ namespace DwarfCorp
 
         public bool IsInStockpile(Voxel v)
         {
+            VoxelRef vRef = v.GetReference();
             foreach (Stockpile s in Stockpiles)
             {
-                if (s.ComponentVoxels.ContainsKey(v))
+                if (s.ContainsVoxel(vRef))
                 {
                     return true;
                 }
@@ -785,13 +766,19 @@ namespace DwarfCorp
 
                             Voxel v = r.GetVoxel(Chunks, false);
 
-                            if (v == null || v.RampType != RampType.None)
+                            if (v == null)
                             {
                                 continue;
                             }
 
                             if (button == InputManager.MouseButton.Left)
                             {
+                                if (v.RampType != RampType.None)
+                                {
+                                    continue;
+                                }
+
+
                                 if (v != null && !IsInStockpile(v))
                                 {
                                     Stockpile thisPile = GetIntersectingStockpile(v);
@@ -803,21 +790,12 @@ namespace DwarfCorp
 
                                     if (existingPile != null)
                                     {
-                                        existingPile.AddComponentVoxel(v, Graphics);
+                                        existingPile.AddVoxel(v.GetReference());
                                     }
                                     else
                                     {
-                                        Stockpile newPile = new Stockpile("Stockpile " + Stockpile.NextID());
-                                        newPile.AllowedResources.Add(ResourceLibrary.Resources["Wood"]);
-                                        newPile.AllowedResources.Add(ResourceLibrary.Resources["Dirt"]);
-                                        newPile.AllowedResources.Add(ResourceLibrary.Resources["Stone"]);
-                                        newPile.AllowedResources.Add(ResourceLibrary.Resources["Apple"]);
-                                        newPile.AllowedResources.Add(ResourceLibrary.Resources["Gold"]);
-                                        newPile.AllowedResources.Add(ResourceLibrary.Resources["Mana"]);
-                                        newPile.AllowedResources.Add(ResourceLibrary.Resources["Iron"]);
-                                        newPile.AllowedResources.Add(ResourceLibrary.Resources["Container"]);
-
-                                        newPile.AddComponentVoxel(v, Graphics);
+                                        Stockpile newPile = new Stockpile("Stockpile " + Stockpile.NextID(), Chunks);
+                                        newPile.AddVoxel(v.GetReference());
 
                                         Stockpiles.Add(newPile);
                                         existingPile = newPile;
@@ -833,12 +811,12 @@ namespace DwarfCorp
 
                                     if (existingPile != null)
                                     {
-                                        Stockpiles.Remove(existingPile);
-                                        foreach (Item i in existingPile.Items)
+                                        existingPile.RemoveVoxel(v.GetReference());
+
+                                        if (existingPile.Storage.Count == 0)
                                         {
-                                            i.userData.IsStocked = false;
+                                            existingPile.Destroy();
                                         }
-                                        existingPile.ResetVoxelTextures();
                                     }
                                 }
                             }
@@ -993,7 +971,7 @@ namespace DwarfCorp
             {
                 for (int i = componentsToShip.Count; i < resource.NumResources; i++)
                 {
-                    LocatableComponent r = s.GetNextResourceWithTagIgnore(resource.ResourceType.ResourceName, componentsToShip);
+                    LocatableComponent r = s.FindItemWithTag(resource.ResourceType.ResourceName, componentsToShip);
 
                     if (r != null)
                     {
@@ -1017,7 +995,7 @@ namespace DwarfCorp
         public void AddGatherDesignation(LocatableComponent resource)
         {
 
-            if(resource.IsStocked || resource.Parent != Components.RootComponent || resource.IsDead)
+            if(resource.Parent != Components.RootComponent || resource.IsDead)
             {
                 return;
             }
