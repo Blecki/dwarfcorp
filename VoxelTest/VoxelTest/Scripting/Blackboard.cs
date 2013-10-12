@@ -31,9 +31,18 @@ namespace DwarfCorp
             }
         }
 
-        public void SetData(string key, object value)
+        public void SetData<T>(string key, T value)
         {
             Data[key] = new ActData(value);
+        }
+
+
+        public void Erase(string key)
+        {
+            if (Data.ContainsKey(key))
+            {
+                Data.Remove(key);
+            }
         }
 
         public ActData this[string key]

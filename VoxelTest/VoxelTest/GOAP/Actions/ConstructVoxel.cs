@@ -73,12 +73,6 @@ namespace DwarfCorp
                 return Action.PerformStatus.Failure;
             }
 
-            if (item.userData != null)
-            {
-                item.userData.IsStocked = true;
-            }
-
-
           
             LocatableComponent grabbed = creature.Hands.GetFirstGrab();
             creature.Hands.UnGrab(grabbed);

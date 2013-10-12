@@ -58,7 +58,7 @@ namespace DwarfCorp
         public override bool ContextValidate(CreatureAIComponent creature)
         {
             if (entityToGater == null 
-                || (this.ZoneType == "Stockpile" && entityToGater.IsStocked)
+                || (this.ZoneType == "Stockpile")
                 || entityToGater.IsDead 
                 || entityToGater.Parent != creature.Manager.RootComponent)
             {
@@ -77,7 +77,7 @@ namespace DwarfCorp
                     creature.Say("Gather is attached");
                 }
 
-                if (this.ZoneType == "Stockpile" && entityToGater.IsStocked)
+                if (this.ZoneType == "Stockpile")
                 {
                     creature.Say("Gather is stocked");
                 }

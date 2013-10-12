@@ -50,10 +50,6 @@ namespace DwarfCorp
                 return PerformStatus.Failure;
             }
 
-            if (item.userData != null)
-            {
-                item.userData.IsStocked = false;
-            }
 
             Zone zone = item.Zone;
 
@@ -61,7 +57,7 @@ namespace DwarfCorp
             {
                 Stockpile s = (Stockpile)zone;
                 LocatableComponent component = item.userData;
-                bool removed = s.RemoveResource(component);
+                bool removed = s.RemoveItem(component);
                 if (removed && component != null && !creature.Hands.IsFull())
                 {
                     creature.Hands.Grab(component);
@@ -91,26 +87,6 @@ namespace DwarfCorp
                         return PerformStatus.Invalid;
                     }
                 }
-            }
-            else if (zone is Container)
-            {
-                Container c = (Container)zone;
-
-                if (c.HasResource(item.ID))
-                {
-                    LocatableComponent component = c.TakeResource(item.ID);
-
-                    if (component != null && !creature.Hands.IsFull())
-                    {
-                        creature.Hands.Grab(component);
-                        return PerformStatus.Success;
-                    }
-                    else
-                    {
-                        return PerformStatus.Invalid;
-                    }
-                }
-
             }
             else
             {

@@ -150,13 +150,12 @@ namespace DwarfCorp
 
                     foreach (Stockpile s in Master.Stockpiles)
                     {
-                        foreach (Item i in s.Items)
+                        Item i = s.FindItemWithTags(tags.Tags);
+
+                        if (i != null)
                         {
-                            if (tags.Contains(i.userData.Tags))
-                            {
-                                foundCandidateItem = true;
-                                break;
-                            }
+                            foundCandidateItem = true;
+                            break;
                         }
                     }
 
@@ -176,12 +175,20 @@ namespace DwarfCorp
                 {
 
                     List<LocatableComponent> componentsToShip = new List<LocatableComponent>();
+                    int remaining = ship.GetRemainingNumResources();
+
+                    if (remaining == 0)
+                    {
+                        continue;
+                    }
+
+                
 
                     foreach (Stockpile s in Master.Stockpiles)
                     {
-                        for (int i = componentsToShip.Count; i < ship.Resource.NumResources; i++)
+                        for (int i = componentsToShip.Count; i < remaining; i++)
                         {
-                            LocatableComponent r = s.GetNextResourceWithTagIgnore(ship.Resource.ResourceType.ResourceName, componentsToShip);
+                            LocatableComponent r = s.FindItemWithTag(ship.Resource.ResourceType.ResourceName, componentsToShip);
 
                             if (r != null)
                             {
@@ -192,11 +199,12 @@ namespace DwarfCorp
 
                     foreach (LocatableComponent loc in componentsToShip)
                     {
-                        if (!ship.Port.Items.Contains(Item.FindItem(loc)))
+                        if (!ship.Port.ContainsItem(loc))
                         {
                             Goal g = new PutItemInZone(null, Item.FindItem(loc), ship.Port);
                             if (!TaskIsAssigned(g))
                             {
+                                ship.Assignments.Add(g);
                                 goals.Add(g);
                             }
                         }

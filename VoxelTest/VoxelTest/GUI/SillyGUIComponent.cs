@@ -39,6 +39,7 @@ namespace DwarfCorp
                 }
             }
         }
+
         public Rectangle GlobalBounds { get { return m_globalBounds; } set { m_globalBounds = value; } }
         public SillyGUI GUI { get; set; }
         public bool IsMouseOver { get; set; }
@@ -164,6 +165,7 @@ namespace DwarfCorp
 
         void HandleClicks(MouseState state)
         {
+
             if (state.LeftButton == ButtonState.Pressed)
             {
                 if (!IsLeftPressed)
@@ -217,7 +219,7 @@ namespace DwarfCorp
 
         public virtual void Update(GameTime time)
         {
-
+            
             if (!IsVisible)
             {
                 return;
@@ -237,13 +239,18 @@ namespace DwarfCorp
             }
             else if (GlobalBounds.Contains(state.X, state.Y))
             {
+
+                if (IsMouseOver)
+                {
+                    HandleClicks(state);
+                }
+
                 if (!IsMouseOver)
                 {
                     IsMouseOver = true;
                     OnHover();
                 }
-
-                HandleClicks(state);
+                
             }
             else if (IsMouseOver)
             {
@@ -272,6 +279,20 @@ namespace DwarfCorp
             ChildrenToRemove.Clear();
 
 
+        }
+
+        protected Rectangle ClipToScreen(Rectangle rect, GraphicsDevice device)
+        {
+            int minScreenX = 0;
+            int minScreenY = 0;
+            int maxScreenX = device.Viewport.Bounds.Right;
+            int maxScreenY = device.Viewport.Bounds.Bottom;
+            int x = Math.Min(Math.Max(minScreenX, rect.X), maxScreenX);
+            int y = Math.Min(Math.Max(minScreenY, rect.Y), maxScreenY);
+            int maxX = Math.Max(Math.Min(rect.Right, maxScreenX), minScreenX);
+            int maxY = Math.Max(Math.Min(rect.Bottom, maxScreenY), minScreenY);
+
+            return new Rectangle(x, y, Math.Abs(maxX - x), Math.Abs(maxY - y)); 
         }
 
         public virtual void Render(GameTime time, SpriteBatch batch)

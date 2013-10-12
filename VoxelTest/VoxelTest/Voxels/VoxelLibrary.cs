@@ -46,9 +46,57 @@ namespace DwarfCorp
             BoxPrimitive ScaffoldCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(7, 0), new Point(7, 0), new Point(7, 0));
             BoxPrimitive PlankCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 0), new Point(4, 0), new Point(4, 0));
             BoxPrimitive waterCube = CreatePrimitive(graphics, cubeTexture, cubeTexture.Width, cubeTexture.Height, new Point(0, 0), new Point(0, 0), new Point(0, 0));
+            BoxPrimitive cobblestoneCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 2), new Point(5, 2), new Point(5, 2));
+            BoxPrimitive brownTileCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 0), new Point(5, 0), new Point(5, 0));
+            BoxPrimitive blueTileCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 0), new Point(6, 0), new Point(6, 0));
+            BoxPrimitive tilledSoilCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 1), new Point(2, 0), new Point(2, 0));
+
+            VoxelType TilledSoil = new VoxelType();
+            TilledSoil.name = "TilledSoil";
+            TilledSoil.releasesResource = false;
+            TilledSoil.startingHealth = 20;
+            TilledSoil.canRamp = true;
+            TilledSoil.isBuildable = false;
+            TilledSoil.particleType = "dirt_particle";
+            RegisterType(TilledSoil, tilledSoilCube);
+
+            VoxelType BrownTileFloor = new VoxelType();
+            BrownTileFloor.name = "BrownTileFloor";
+            BrownTileFloor.releasesResource = false;
+            BrownTileFloor.startingHealth = 20;
+            BrownTileFloor.canRamp = false;
+            BrownTileFloor.isBuildable = false;
+            BrownTileFloor.particleType = "stone_particle";
+            RegisterType(BrownTileFloor, brownTileCube);
+
+            VoxelType BlueTileFloor = new VoxelType();
+            BlueTileFloor.name = "BlueTileFloor";
+            BlueTileFloor.releasesResource = false;
+            BlueTileFloor.startingHealth = 20;
+            BlueTileFloor.canRamp = false;
+            BlueTileFloor.isBuildable = false;
+            BlueTileFloor.particleType = "stone_particle";
+            RegisterType(BlueTileFloor, blueTileCube);
+
+            VoxelType CobblestoneFloor = new VoxelType();
+            CobblestoneFloor.name = "CobblestoneFloor";
+            CobblestoneFloor.releasesResource = false;
+            CobblestoneFloor.startingHealth = 20;
+            CobblestoneFloor.canRamp = false;
+            CobblestoneFloor.isBuildable = false;
+            CobblestoneFloor.particleType = "stone_particle";
+            RegisterType(CobblestoneFloor, cobblestoneCube);
+
+            VoxelType StockpileType = new VoxelType();
+            StockpileType.name = "Stockpile";
+            StockpileType.releasesResource = false;
+            StockpileType.startingHealth = 20;
+            StockpileType.canRamp = false;
+            StockpileType.isBuildable = false;
+            StockpileType.particleType = "stone_particle";
+            RegisterType(StockpileType, PlankCube);
 
             VoxelType PlankType = new VoxelType();
-            PlankType.ID = 9;
             PlankType.name = "Plank";
             PlankType.probabilityOfRelease = 1.0f;
             PlankType.resourceToRelease = "Wood";
@@ -60,7 +108,6 @@ namespace DwarfCorp
             PlankType.particleType = "stone_particle";
 
             VoxelType ScaffoldType = new VoxelType();
-            ScaffoldType.ID = 10;
             ScaffoldType.name = "Scaffold";
             ScaffoldType.startingHealth = 20;
             ScaffoldType.probabilityOfRelease = 1.0f;
@@ -73,7 +120,6 @@ namespace DwarfCorp
 
 
             VoxelType GrassType = new VoxelType();
-            GrassType.ID = 0;
             GrassType.name = "Grass";
             GrassType.probabilityOfRelease = 0.1f;
             GrassType.resourceToRelease = "Dirt";
@@ -103,7 +149,6 @@ namespace DwarfCorp
 
 
             VoxelType FrostType = new VoxelType();
-            FrostType.ID = 8;
             FrostType.name = "Frost";
             FrostType.probabilityOfRelease = 0.1f;
             FrostType.resourceToRelease = "Dirt";
@@ -132,14 +177,12 @@ namespace DwarfCorp
             FrostType.RampPrimitives[RampType.TopBackRight] = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 4 + 2), new Point(2, 0), new Point(2, 0));
 
             emptyType = new VoxelType();
-            emptyType.ID = 1;
             emptyType.name = "empty";
             emptyType.releasesResource = false;
             emptyType.isBuildable = false;
            
 
             VoxelType  DirtType = new VoxelType();
-            DirtType.ID = 2;
             DirtType.name = "Dirt";
             DirtType.releasesResource = true;
             DirtType.resourceToRelease = "Dirt";
@@ -151,7 +194,6 @@ namespace DwarfCorp
             DirtType.particleType = "dirt_particle";
 
             VoxelType StoneType = new VoxelType();
-            StoneType.ID = 3;
             StoneType.name = "Stone";
             StoneType.probabilityOfRelease = 0.5f;
             StoneType.releasesResource = true;
@@ -161,13 +203,11 @@ namespace DwarfCorp
             StoneType.particleType = "stone_particle";
 
             VoxelType waterType = new VoxelType();
-            waterType.ID = 4;
             waterType.name = "water";
             waterType.releasesResource = false;
             waterType.isBuildable = false;
 
             VoxelType SandType = new VoxelType();
-            SandType.ID = 5;
             SandType.name = "Sand";
             SandType.releasesResource = false;
             SandType.startingHealth = 5;
@@ -177,7 +217,6 @@ namespace DwarfCorp
             SandType.particleType = "sand_particle";
 
             VoxelType IronType = new VoxelType();
-            IronType.ID = 6;
             IronType.name = "Iron";
             IronType.probabilityOfRelease = 0.99f;
             IronType.releasesResource = true;
@@ -194,7 +233,6 @@ namespace DwarfCorp
             ResourceSpawns["Iron"].Probability = 0.9f;
 
             VoxelType GoldType = new VoxelType();
-            GoldType.ID = 6;
             GoldType.name = "Gold";
             GoldType.probabilityOfRelease = 1.0f;
             GoldType.releasesResource = true;
@@ -211,7 +249,6 @@ namespace DwarfCorp
             ResourceSpawns["Gold"].Probability = 0.5f;
 
             VoxelType manaType = new VoxelType();
-            manaType.ID = 7;
             manaType.name = "Mana";
             manaType.probabilityOfRelease = 1.0f;
             manaType.releasesResource = true;

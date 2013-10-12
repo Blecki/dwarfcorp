@@ -8,24 +8,49 @@ namespace DwarfCorp
     public class SetTargetVoxelAct : CreatureAct
     {
         public VoxelRef Voxel { get; set; }
+        public string VoxelName { get; set; }
+
+        public SetTargetVoxelAct(string voxel, CreatureAIComponent creature) :
+            base(creature)
+        {
+            Name = "Set Target Voxel";
+            VoxelName = voxel;
+            Voxel = null;
+        }
+
 
         public SetTargetVoxelAct(VoxelRef voxel, CreatureAIComponent creature) :
             base(creature)
         {
             Name = "Set Target Voxel";
             Voxel = voxel;
+            VoxelName = "";
         }
 
         public override IEnumerable<Status> Run()
         {
-            if (Voxel == null)
+            if (Voxel == null && VoxelName == "")
             {
                 yield return Status.Fail;
             }
-            else
+            else if (VoxelName == "")
             {
                 Agent.TargetVoxel = Voxel;
                 yield return Status.Success;
+            }
+            else
+            {
+                Agent.TargetVoxel = Agent.Blackboard.GetData<VoxelRef>(VoxelName);
+                Voxel = Agent.TargetVoxel;
+
+                if (Agent.TargetVoxel != null)
+                {
+                    yield return Status.Success;
+                }
+                else
+                {
+                    yield return Status.Fail;
+                }
             }
         }
 

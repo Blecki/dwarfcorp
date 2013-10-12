@@ -29,5 +29,10 @@ namespace DwarfCorp
                     new StopAct(Agent));
             }
         }
+
+        public override IEnumerable<Status> Run()
+        {
+            return base.Run();
+        }
     }
 }

@@ -24,45 +24,46 @@ namespace DwarfCorp
         public MasterControls(SillyGUI gui, SillyGUIComponent parent, GameMaster master, Texture2D icons, GraphicsDevice device, SpriteFont font) :
             base(gui, parent)
         {
+            int iconSize = 32;
             CurrentMode = master.CurrentTool;
             ToolButtons = new Dictionary<GameMaster.ToolMode, Button>();
 
-            Button mineButton = new Button(GUI, this, "Mine", font, Button.ButtonMode.ImageButton, GameMaster.GetSubTexture(device, icons, new Rectangle(7 * 50, 7 * 50, 50, 50)));
+            Button mineButton = new Button(GUI, this, "Mine", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 0, 0));
             mineButton.CanToggle = true;
-            mineButton.LocalBounds = new Rectangle(device.Viewport.Width - 100 + 45, device.Viewport.Height - 100, 50, 50);
+            mineButton.LocalBounds = new Rectangle(device.Viewport.Width - 100 + 45, device.Viewport.Height - 100, iconSize, iconSize);
             mineButton.IsToggled = true;
             mineButton.OnClicked += new ClickedDelegate(delegate { ButtonClicked(mineButton); });
 
-            Button chopButton = new Button(GUI, this, "Chop", font, Button.ButtonMode.ImageButton, GameMaster.GetSubTexture(device, icons, new Rectangle(7 * 50, 4 * 50, 50, 50)));
+            Button chopButton = new Button(GUI, this, "Chop", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 1, 0));
             chopButton.CanToggle = true;
-            chopButton.LocalBounds = new Rectangle(device.Viewport.Width - 160 + 45, device.Viewport.Height - 100, 50, 50);
+            chopButton.LocalBounds = new Rectangle(device.Viewport.Width - 160 + 45, device.Viewport.Height - 100, iconSize, iconSize);
             chopButton.IsToggled = false;
             chopButton.OnClicked += new ClickedDelegate(delegate { ButtonClicked(chopButton); });
 
-            Button guardButton = new Button(GUI, this, "Guard", font, Button.ButtonMode.ImageButton, GameMaster.GetSubTexture(device, icons, new Rectangle(4 * 50, 0 * 50, 50, 50)));
+            Button guardButton = new Button(GUI, this, "Guard", font, Button.ButtonMode.ImageButton,new ImageFrame(icons, iconSize, 4, 0));
             guardButton.CanToggle = true;
-            guardButton.LocalBounds = new Rectangle(device.Viewport.Width - 220 + 45, device.Viewport.Height - 100, 50, 50);
+            guardButton.LocalBounds = new Rectangle(device.Viewport.Width - 220 + 45, device.Viewport.Height - 100, iconSize, iconSize);
             guardButton.IsToggled = false;
             guardButton.OnClicked += new ClickedDelegate(delegate { ButtonClicked(guardButton); });
 
 
-            Button stockButton = new Button(GUI, this, "Stock", font, Button.ButtonMode.ImageButton, GameMaster.GetSubTexture(device, icons, new Rectangle(6 * 50, 3 * 50, 50, 50)));
+            Button stockButton = new Button(GUI, this, "Stock", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 7, 0));
             stockButton.CanToggle = true;
-            stockButton.LocalBounds = new Rectangle(device.Viewport.Width - 280 + 45, device.Viewport.Height - 100, 50, 50);
+            stockButton.LocalBounds = new Rectangle(device.Viewport.Width - 280 + 45, device.Viewport.Height - 100, iconSize, iconSize);
             stockButton.IsToggled = false;
             stockButton.OnClicked += new ClickedDelegate(delegate { ButtonClicked(stockButton); });
 
 
-            Button gatherButton = new Button(GUI, this, "Gather", font, Button.ButtonMode.ImageButton, GameMaster.GetSubTexture(device, icons, new Rectangle(3 * 50, 0 * 50, 50, 50)));
+            Button gatherButton = new Button(GUI, this, "Gather", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 6, 0));
             gatherButton.CanToggle = true;
-            gatherButton.LocalBounds = new Rectangle(device.Viewport.Width - 340 + 45, device.Viewport.Height - 100, 50, 50);
+            gatherButton.LocalBounds = new Rectangle(device.Viewport.Width - 340 + 45, device.Viewport.Height - 100, iconSize, iconSize);
             gatherButton.IsToggled = false;
             gatherButton.OnClicked += new ClickedDelegate(delegate { ButtonClicked(gatherButton); });
 
 
-            Button buildButton = new Button(GUI, this, "Build", font, Button.ButtonMode.ImageButton, GameMaster.GetSubTexture(device, icons, new Rectangle(2 * 50, 0 * 50, 50, 50)));
+            Button buildButton = new Button(GUI, this, "Build", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 2, 0));
             buildButton.CanToggle = true;
-            buildButton.LocalBounds = new Rectangle(device.Viewport.Width - 400 + 45, device.Viewport.Height - 100, 50, 50);
+            buildButton.LocalBounds = new Rectangle(device.Viewport.Width - 400 + 45, device.Viewport.Height - 100, iconSize, iconSize);
             buildButton.IsToggled = false;
             buildButton.OnClicked += new ClickedDelegate(delegate { ButtonClicked(buildButton); });
 

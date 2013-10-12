@@ -21,19 +21,19 @@ namespace DwarfCorp
 
             foreach (Stockpile s in Agent.Master.Stockpiles)
             {
-                foreach (Item i in s.Items)
-                {
-                    if (Tags.Contains(i.userData.Tags) && !i.userData.IsDead)
-                    {
-                        float dist = (i.userData.GlobalTransform.Translation - Agent.Position).LengthSquared();
+                Item i = s.FindNearestItemWithTags(tags, Agent.Position);
 
-                        if (dist < closestDist)
-                        {
-                            closestDist = dist;
-                            closestItem = i;
-                        }
+                if (i != null)
+                {
+                    float d = (i.userData.GlobalTransform.Translation - Agent.Position).LengthSquared();
+                    if (d < closestDist)
+                    {
+                        closestDist = d;
+                        closestItem = i;
                     }
                 }
+
+
             }
 
             if (closestItem != null)

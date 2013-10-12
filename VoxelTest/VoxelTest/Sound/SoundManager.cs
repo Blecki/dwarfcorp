@@ -30,6 +30,17 @@ namespace DwarfCorp
         public static Dictionary<string, int> SoundCounts = new Dictionary<string, int>();
         public static Dictionary<string, SoundEffect> EffectLibrary = new Dictionary<string, SoundEffect>();
 
+        public static void LoadDefaultSounds()
+        {
+            string[] defaultSounds = { "pick", "hit", "jump", "ouch", "gravel", "splash", "sword" };
+
+            foreach (string name in defaultSounds)
+            {
+                SoundEffect effect = Content.Load<SoundEffect>(name);
+                EffectLibrary[name] = effect;
+            }
+        }
+
         public static void PlayMusic(string name)
         {
             if (GameSettings.Default.MasterVolume < 0.001f || GameSettings.Default.MusicVolume < 0.001f)

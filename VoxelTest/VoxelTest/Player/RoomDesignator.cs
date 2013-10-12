@@ -215,9 +215,10 @@ namespace DwarfCorp
 
         public bool IsInRoom(Voxel v)
         {
+            VoxelRef vRef = v.GetReference();
             foreach (Room r in DesignatedRooms)
             {
-                if (r.Voxels.Contains(v.GetReference()))
+                if (r.ContainsVoxel(vRef))
                 {
                     return true;
                 }
@@ -308,9 +309,10 @@ namespace DwarfCorp
 
         public Room GetMostLikelyRoom(Voxel v)
         {
+            VoxelRef vRef = v.GetReference();
             foreach (Room r in DesignatedRooms)
             {
-                if (r.IsInRoom(v.GetReference()))
+                if (r.ContainsVoxel(vRef))
                 {
                     return r;
                 }
@@ -412,23 +414,11 @@ namespace DwarfCorp
         public void OnVoxelDestroyed(Voxel voxDestroyed)
         {
             List<Room> toDestroy = new List<Room>();
+            VoxelRef vRef = voxDestroyed.GetReference();
             foreach (Room r in DesignatedRooms)
             {
-                List<VoxelRef> removals = new List<VoxelRef>();
-                foreach (VoxelRef v in r.Voxels)
-                {
-                    if (v.GetVoxel(PlayState.chunkManager, false) == voxDestroyed)
-                    {
-                        removals.Add(v);
-                    }
-                }
-
-                foreach (VoxelRef v in removals)
-                {
-                    r.Voxels.Remove(v);
-                }
-
-                if (r.Voxels.Count == 0)
+                r.RemoveVoxel(vRef);
+                if (r.Storage.Count == 0)
                 {
                     toDestroy.Add(r);
                 }
@@ -437,6 +427,7 @@ namespace DwarfCorp
             foreach (Room r in toDestroy)
             {
                 DesignatedRooms.Remove(r);
+                r.Destroy();
             }
         }
 
@@ -505,7 +496,7 @@ namespace DwarfCorp
 
                             BuildDesignations.Remove(roomDes);
 
-                            existingRoom.ClearRoom();
+                            existingRoom.Destroy();
                         }
                     }
                 }

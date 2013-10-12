@@ -48,11 +48,16 @@ namespace DwarfCorp
             {
                 switch (PickType)
                 {
+                    case (PickUpType.Room):
                     case (PickUpType.Stockpile):
                     {
-                        Stockpile s = (Stockpile)Zone;
 
-                        bool removed = s.RemoveResource(Agent.TargetComponent);
+                        if (Zone == null)
+                        {
+                            yield return Status.Fail;
+                            break;
+                        }
+                        bool removed = Zone.RemoveItem(Agent.TargetComponent);
                         
                         if (removed)
                         {
@@ -64,25 +69,6 @@ namespace DwarfCorp
                         {
                             yield return Status.Fail;
                         }
-                        break;
-                    }
-                    case (PickUpType.Room):
-                    {
-                        Room r = (Room)Zone;
-                        List<LocatableComponent> components = r.GetComponentsInRoomContainingTag(Agent.TargetComponent.Tags[0]);
-
-                        if (components.Count > 0)
-                        {
-                            Creature.Hands.Grab(Agent.TargetComponent);
-                            Agent.Blackboard.SetData("HeldObject", Agent.TargetComponent);
-                            yield return Status.Success;
-
-                        }
-                        else
-                        {
-                            yield return Status.Fail;
-                        }
-
                         break;
                     }
                     case (PickUpType.None):

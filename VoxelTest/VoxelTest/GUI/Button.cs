@@ -17,7 +17,7 @@ namespace DwarfCorp
             PushButton
         }
 
-        public Texture2D Image { get; set; }
+        public ImageFrame Image { get; set; }
         public string Text { get; set; }
         public Color TextColor { get; set; }
         public Color PressedTextColor { get; set; }
@@ -30,7 +30,7 @@ namespace DwarfCorp
         public bool IsToggled { get; set; }
         public ButtonMode Mode { get; set; }
 
-        public Button(SillyGUI gui, SillyGUIComponent parent, string text, SpriteFont textFont, ButtonMode mode, Texture2D image) :
+        public Button(SillyGUI gui, SillyGUIComponent parent, string text, SpriteFont textFont, ButtonMode mode, ImageFrame image) :
             base(gui, parent)
         {
             Text = text;
@@ -81,7 +81,7 @@ namespace DwarfCorp
 
             if (Mode == ButtonMode.ImageButton)
             {
-                    batch.Draw(Image, globalBounds, imageColor);
+                    batch.Draw(Image.Image, globalBounds, Image.SourceRect, imageColor);
                     Drawer2D.SafeDraw(batch, Text, TextFont, textColor, new Vector2(globalBounds.X, globalBounds.Y + globalBounds.Height + 5), Vector2.Zero);
             }
             else if (Mode == ButtonMode.PushButton)

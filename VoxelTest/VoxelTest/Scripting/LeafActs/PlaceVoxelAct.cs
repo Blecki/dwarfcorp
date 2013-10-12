@@ -30,10 +30,9 @@ namespace DwarfCorp
 
                 if (Creature.Master.PutDesignator.IsDesignation(Voxel))
                 {
-                    grabbed.IsStocked = true;
                     Creature.Hands.UnGrab(grabbed);
                     grabbed.Die();
-                    Agent.Blackboard.SetData("HeldObject", null);
+                    Agent.Blackboard.SetData<object>("HeldObject", null);
 
                     PutDesignation put = Creature.Master.PutDesignator.GetDesignation(Voxel);
                     put.Put(Creature.Master.Chunks);

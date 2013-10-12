@@ -13,7 +13,7 @@ namespace DwarfCorp
 
         public bool IsGatherable()
         {
-            return (!ItemToGather.IsStocked) && (Agent.Master.GatherDesignations.Contains(ItemToGather) || Agent.Hands.GetFirstGrab() == ItemToGather);
+            return (Agent.Master.GatherDesignations.Contains(ItemToGather) || Agent.Hands.GetFirstGrab() == ItemToGather);
         }
 
         public Act EntityIsGatherable()

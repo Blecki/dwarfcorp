@@ -10,8 +10,12 @@ namespace DwarfCorp
         public string ID;
         public Zone Zone;
         public LocatableComponent userData;
-        public bool canGrab = true;
+        public bool CanGrab = true;
         public CreatureAIComponent reservedFor = null;
+        public bool IsInZone { get { return Zone != null; } }
+        public bool IsInStockpile { get { return Zone != null && Zone is Stockpile; } }
+        public bool HasUserData { get { return userData != null; } }
+
         public static Dictionary<string, Item> ItemDictionary = new Dictionary<string, Item>();
 
         public static Item CreateItem(string name, Zone z, LocatableComponent userData)
@@ -46,7 +50,7 @@ namespace DwarfCorp
             }
             else
             {
-                return null;
+                return CreateItem(name, null, component);
             }
         }
 
