@@ -47,10 +47,11 @@ namespace DwarfCorp
         public void PlayItems()
         {
             ListSelect.ClearItems();
-            ListSelect.AddItem("Flat World");
+            ListSelect.AddItem("Load World");
             ListSelect.AddItem("Generate World");
+            ListSelect.AddItem("Flat World");
             ListSelect.AddItem("Create Company");
-            ListSelect.AddItem("Cancel");
+            ListSelect.AddItem("Back");
         }
 
         public void OnItemClicked(ListItem item)
@@ -79,7 +80,7 @@ namespace DwarfCorp
             {
                 StateManager.PushState("OptionsState");
             }
-            else if (item.Label == "Cancel")
+            else if (item.Label == "Back")
             {
                 DefaultItems();
             }
@@ -90,6 +91,14 @@ namespace DwarfCorp
                 PlayState play = (PlayState)StateManager.States["PlayState"];
 
                 IsGameRunning = true;
+            }
+            else if (item.Label == "Load World")
+            {
+                StateManager.PushState("WorldLoaderState");
+            }
+            else if (item.Label == "Load Game")
+            {
+                StateManager.PushState("GameLoaderState");
             }
            
         }
@@ -103,12 +112,13 @@ namespace DwarfCorp
             
             ListSelect = new ListSelector(GUI, GUI.RootComponent);
             ListSelect.Label = "- Main Menu -";
-            ListSelect.LocalBounds = new Rectangle(Game.GraphicsDevice.Viewport.Width / 2 - 100, Game.GraphicsDevice.Viewport.Height / 2 - 150, 150, 120);
+            ListSelect.LocalBounds = new Rectangle(Game.GraphicsDevice.Viewport.Width / 2 - 100, Game.GraphicsDevice.Viewport.Height / 2 - 150, 150, 150);
             if (IsGameRunning)
             {
                 ListSelect.AddItem("Continue Game");
             }
             ListSelect.AddItem("New Game");
+            ListSelect.AddItem("Load Game");
             ListSelect.AddItem("Options");
             ListSelect.AddItem("Quit");
 

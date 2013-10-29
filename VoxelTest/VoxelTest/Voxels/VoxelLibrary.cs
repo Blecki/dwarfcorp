@@ -295,6 +295,12 @@ namespace DwarfCorp
             PrimitiveMap[type] = primitive;
         }
 
+        public static VoxelType GetVoxelType(short id)
+        {
+            // 0 is the "null" type
+            return VoxelType.TypeList[id - 1];
+        }
+
         public static VoxelType GetVoxelType(string name)
         {
             foreach (VoxelType v in PrimitiveMap.Keys)
@@ -332,6 +338,12 @@ namespace DwarfCorp
                 return null;
             }
         }
+        public static BoxPrimitive GetPrimitive(short id)
+        {
+            return GetPrimitive(GetVoxelType(id));
+        }
+
+
 
         
 

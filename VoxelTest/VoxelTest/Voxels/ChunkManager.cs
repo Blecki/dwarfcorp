@@ -1438,6 +1438,32 @@ namespace DwarfCorp
 
 
         }
+
+        public bool SaveAllChunks(string directory, bool compress)
+        {
+            foreach (KeyValuePair<Point3, VoxelChunk> pair in ChunkMap)
+            {
+                ChunkFile chunkFile = new ChunkFile(pair.Value);
+                
+                string fileName = directory + System.IO.Path.DirectorySeparatorChar + pair.Key.X + "_" + pair.Key.Y + "_" + pair.Key.Z;
+
+                if(compress)
+                {
+                    fileName += ".zch";
+                }
+                else
+                {
+                    fileName += ".jch";
+                }
+
+                if (!chunkFile.WriteFile(fileName, compress))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
         
     }
 }

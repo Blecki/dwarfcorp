@@ -204,6 +204,12 @@ namespace DwarfCorp
             }
 
 
+            HandleAddRemoves();
+            
+        }
+
+        public void HandleAddRemoves()
+        {
             AdditionMutex.WaitOne();
             foreach (GameComponent component in Additions)
             {
@@ -221,7 +227,6 @@ namespace DwarfCorp
 
             Removals.Clear();
             RemovalMutex.ReleaseMutex();
-            
         }
 
       

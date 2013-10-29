@@ -10,7 +10,7 @@ namespace DwarfCorp
     public class LocatableComponent : GameComponent, BoundedObject
     {
         [JsonIgnore]
-        public bool WasAddedToOctree { get { return m_wasEverAddedToOctree; } }
+        public bool WasAddedToOctree { get { return m_wasEverAddedToOctree; } set { m_wasEverAddedToOctree = value; } }
         private bool m_wasEverAddedToOctree = false;
 
         [JsonIgnore]
@@ -161,7 +161,7 @@ namespace DwarfCorp
                     IsVisible = true;
                 }
             }
-             */
+            */
 
             if (DrawBoundingBox)
             {
@@ -174,6 +174,11 @@ namespace DwarfCorp
 
         public void UpdateTransformsRecursive()
         {
+            if (!IsActive)
+            {
+                return;
+            }
+
             if (Parent is LocatableComponent)
             {
                 LocatableComponent locatable = (LocatableComponent)Parent;

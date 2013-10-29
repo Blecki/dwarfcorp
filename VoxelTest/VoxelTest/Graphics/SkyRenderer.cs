@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-    class SkyRenderer
+    public class SkyRenderer
     {
         public TextureCube SkyTexture { get; set; }
         public TextureCube NightTexture { get; set; }

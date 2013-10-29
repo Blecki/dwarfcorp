@@ -79,17 +79,20 @@ namespace DwarfCorp
 
             foreach (DisplayMode mode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes)
             {
-                string s = mode.Width + " x " + mode.Height;
 
-                DisplayModes[s] = mode;
-                if (mode.Width == GameSettings.Default.Resolution.Width && mode.Height == GameSettings.Default.Resolution.Height)
+                if (mode.Format == SurfaceFormat.Color)
                 {
-                    resolutionBox.AddValue(s);
-                    resolutionBox.CurrentValue = s;
-                }
-                else
-                {
-                    resolutionBox.AddValue(s);
+                    string s = mode.Width + " x " + mode.Height;
+                    DisplayModes[s] = mode;
+                    if (mode.Width == GameSettings.Default.Resolution.Width && mode.Height == GameSettings.Default.Resolution.Height)
+                    {
+                        resolutionBox.AddValue(s);
+                        resolutionBox.CurrentValue = s;
+                    }
+                    else
+                    {
+                        resolutionBox.AddValue(s);
+                    }
                 }
 
             }

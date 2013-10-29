@@ -150,6 +150,7 @@ namespace DwarfCorp
             GodMode = new GodModeController(GUI, this);
 
             VoxSelector.Selected += OnSelected;
+
             InputManager.KeyReleasedCallback += OnKeyReleased;
 
             Minions = new List<CreatureAIComponent>();
@@ -931,8 +932,6 @@ namespace DwarfCorp
 
         public void OnKeyPressed()
         {
-
-
         }
 
         public void OnKeyReleased(Keys key)
