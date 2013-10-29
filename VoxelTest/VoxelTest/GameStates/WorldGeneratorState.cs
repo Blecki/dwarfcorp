@@ -39,6 +39,8 @@ namespace DwarfCorp
         public InputManager Input { get; set; }
         public int Seed { get { return PlayState.Seed; } set { PlayState.Seed = value; } }
         public ProgressBar Progress { get; set; }
+        public string OverworldDirectory = "Worlds";
+        public string WorldName = "world0";
 
         
 
@@ -78,8 +80,12 @@ namespace DwarfCorp
             layout.LocalBounds = new Rectangle(0, 0, MainWindow.LocalBounds.Width, MainWindow.LocalBounds.Height);
 
             Button startButton = new Button(GUI, layout, "Start!", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
-            layout.SetComponentPosition(startButton, 1, 6, 1, 1);
+            layout.SetComponentPosition(startButton, 2, 6, 1, 1);
             startButton.OnClicked += new ClickedDelegate(StartButtonOnClick);
+
+            Button saveButton = new Button(GUI, layout, "Save", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
+            layout.SetComponentPosition(saveButton, 1, 6, 1, 1);
+            saveButton.OnClicked += new ClickedDelegate(saveButton_OnClicked);
 
             Button genButton = new Button(GUI, layout, "Generate", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
             layout.SetComponentPosition(genButton, 3, 6, 1, 1);
@@ -96,6 +102,12 @@ namespace DwarfCorp
             MapPanel = new ImagePanel(GUI, layout,worldMap);
             layout.SetComponentPosition(MapPanel, 0, 0, 3, 5);
 
+            if (worldMap != null)
+            {
+
+                MapPanel.Image = new ImageFrame(worldMap);
+            }
+
 
             MapPanel.OnClicked += OnMapClick;
 
@@ -103,7 +115,7 @@ namespace DwarfCorp
 
             GroupBox mapProperties = new GroupBox(GUI, layout, "Map Properties");
             
-            GridLayout mapPropertiesLayout = new GridLayout(GUI, mapProperties, 5, 2);
+            GridLayout mapPropertiesLayout = new GridLayout(GUI, mapProperties, 6, 2);
             mapPropertiesLayout.LocalBounds = new Rectangle(mapProperties.LocalBounds.X, mapProperties.LocalBounds.Y + 32, mapProperties.LocalBounds.Width, mapProperties.LocalBounds.Height);
 
             ComboBox selectType = new ComboBox(GUI, mapPropertiesLayout);
@@ -122,22 +134,22 @@ namespace DwarfCorp
             Label rainFallLabel = new Label(GUI, mapPropertiesLayout, "Rain", GUI.DefaultFont);
             Slider rainFallScaleSlider = new Slider(GUI, mapPropertiesLayout, "", RainfallScale, 0.0f, 2.0f, Slider.SliderMode.Float);
             rainFallScaleSlider.OnValueModified += new Slider.ValueModified(rainFallScaleSlider_OnValueModified);
-            mapPropertiesLayout.SetComponentPosition(rainFallScaleSlider, 1, 2, 1, 1);
-            mapPropertiesLayout.SetComponentPosition(rainFallLabel, 0, 2, 1, 1);
+            mapPropertiesLayout.SetComponentPosition(rainFallScaleSlider, 1, 3, 1, 1);
+            mapPropertiesLayout.SetComponentPosition(rainFallLabel, 0, 3, 1, 1);
 
 
             Label tempLabel = new Label(GUI, mapPropertiesLayout, "Temp.", GUI.DefaultFont);
             Slider tempScaleSlider = new Slider(GUI, mapPropertiesLayout, "", TemperatureScale, 0.0f, 2.0f, Slider.SliderMode.Float);
             tempScaleSlider.OnValueModified += new Slider.ValueModified(tempScaleSlider_OnValueModified);
-            mapPropertiesLayout.SetComponentPosition(tempScaleSlider, 1, 3, 1, 1);
-            mapPropertiesLayout.SetComponentPosition(tempLabel, 0, 3, 1, 1);
+            mapPropertiesLayout.SetComponentPosition(tempScaleSlider, 1, 4, 1, 1);
+            mapPropertiesLayout.SetComponentPosition(tempLabel, 0, 4, 1, 1);
 
 
             Label faultLabel = new Label(GUI, mapPropertiesLayout, "Faults", GUI.DefaultFont);
             Slider numFaultsSlider = new Slider(GUI, mapPropertiesLayout, "", NumFaults, 0, 50, Slider.SliderMode.Integer);
             numFaultsSlider.OnValueModified += new Slider.ValueModified(numFaultsSlider_OnValueModified);
-            mapPropertiesLayout.SetComponentPosition(numFaultsSlider, 1, 4, 1, 1);
-            mapPropertiesLayout.SetComponentPosition(faultLabel, 0, 4, 1, 1);
+            mapPropertiesLayout.SetComponentPosition(numFaultsSlider, 1, 5, 1, 1);
+            mapPropertiesLayout.SetComponentPosition(faultLabel, 0, 5, 1, 1);
 
 
 
@@ -150,18 +162,42 @@ namespace DwarfCorp
             Progress = new ProgressBar(GUI, layout, 0.0f);
             layout.SetComponentPosition(Progress, 0, 5, 3, 1);
 
+            Label nameLabel = new Label(GUI, mapPropertiesLayout, "Name", GUI.DefaultFont);
+            mapPropertiesLayout.SetComponentPosition(nameLabel, 0, 1, 1, 1);
+            nameLabel.Alignment = Drawer2D.Alignment.Right;
+
+            LineEdit nameEdit = new LineEdit(GUI, mapPropertiesLayout, WorldName.ToString());
+            mapPropertiesLayout.SetComponentPosition(nameEdit, 1, 1, 1, 1);
+
+            nameEdit.OnTextModified += new LineEdit.Modified(nameEdit_OnTextModified);
+
 
             Label seedLabel = new Label(GUI, mapPropertiesLayout, "Seed", GUI.DefaultFont);
-            mapPropertiesLayout.SetComponentPosition(seedLabel, 0, 1, 1, 1);
+            mapPropertiesLayout.SetComponentPosition(seedLabel, 0, 2, 1, 1);
             seedLabel.Alignment = Drawer2D.Alignment.Right;
 
             LineEdit seedEdit = new LineEdit(GUI, mapPropertiesLayout, Seed.ToString());
-            mapPropertiesLayout.SetComponentPosition(seedEdit, 1, 1, 1, 1);
+            mapPropertiesLayout.SetComponentPosition(seedEdit, 1, 2, 1, 1);
 
             seedEdit.OnTextModified += new LineEdit.Modified(seedEdit_OnTextModified);
 
             selectType.OnSelectionModified += new ComboBoxSelector.Modified(DisplayModeModified);
             base.OnEnter();
+        }
+
+        void nameEdit_OnTextModified(string arg)
+        {
+            WorldName = arg;
+        }
+
+        void saveButton_OnClicked()
+        {
+            if (GenerationComplete)
+            {
+                System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + System.IO.Path.DirectorySeparatorChar + OverworldDirectory);
+                OverworldFile file = new OverworldFile(Overworld.Map, WorldName);
+                file.WriteFile(worldDirectory.FullName + System.IO.Path.DirectorySeparatorChar + WorldName + "." + OverworldFile.CompressedExtension, true);
+            }
         }
 
         void numFaultsSlider_OnValueModified(float arg)

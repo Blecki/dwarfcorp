@@ -274,11 +274,18 @@ namespace DwarfCorp
             spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height), GetSourceRect(GroupRight), Color.White);
         }
 
-        public void RenderSliderVertical(SpriteFont font, Rectangle boundingRect, float value, float minvalue, float maxValue, Slider.SliderMode mode, bool drawLabel, SpriteBatch spriteBatch)
+        public void RenderSliderVertical(SpriteFont font, Rectangle boundingRect, float value, float minvalue, float maxValue, Slider.SliderMode mode, bool drawLabel, bool invert, SpriteBatch spriteBatch)
         {
+
+            if (invert)
+            {
+                value = maxValue - value;
+            }
+
+
             int fieldSize = Math.Max(Math.Min((int)(0.2f * boundingRect.Width), 150), 64);
             Rectangle rect = new Rectangle(boundingRect.X + boundingRect.Width / 2 - TileWidth / 2, boundingRect.Y  , boundingRect.Width, boundingRect.Height - TileHeight);
-            Rectangle fieldRect = new Rectangle(boundingRect.Right - fieldSize, boundingRect.Y + boundingRect.Height / 2 - TileHeight / 2, fieldSize, TileHeight);
+            Rectangle fieldRect = new Rectangle(boundingRect.Right - fieldSize, boundingRect.Y + boundingRect.Height - TileHeight / 2, fieldSize, TileHeight);
             
             int maxY = rect.Y + rect.Height;
             int diffY = rect.Height % TileHeight;
@@ -294,13 +301,20 @@ namespace DwarfCorp
 
             spriteBatch.Draw(Texture, new Rectangle(rect.X, maxY - diffY, TileWidth, diffY), GetSourceRect(TrackVert), Color.White);
 
-            int sliderY = (int)((value - minvalue) / (maxValue - minvalue) * rect.Height + rect.Y);
+            float d = (value - minvalue) / (maxValue - minvalue);
+
+            int sliderY = (int)((d) * rect.Height + rect.Y);
 
             spriteBatch.Draw(Texture, new Rectangle(rect.X, sliderY - TileHeight / 2, TileWidth, TileHeight), GetSourceRect(SliderVertical), Color.White);
 
             if (drawLabel)
             {
                 RenderField(fieldRect, spriteBatch);
+
+                if (invert)
+                {
+                    value = -(value - maxValue);
+                }
 
                 float v = 0.0f;
                 if (mode == Slider.SliderMode.Float)
@@ -321,8 +335,13 @@ namespace DwarfCorp
 
         }
 
-        public void RenderSliderHorizontal(SpriteFont font, Rectangle boundingRect, float value, float minvalue, float maxValue, Slider.SliderMode mode, bool drawLabel,  SpriteBatch spriteBatch)
+        public void RenderSliderHorizontal(SpriteFont font, Rectangle boundingRect, float value, float minvalue, float maxValue, Slider.SliderMode mode, bool drawLabel, bool invertValue,  SpriteBatch spriteBatch)
         {
+            if (invertValue)
+            {
+                value = maxValue - value;
+            }
+
             int fieldSize = Math.Max(Math.Min((int)(0.2f * boundingRect.Width), 150), 64);
             Rectangle rect = new Rectangle(boundingRect.X, boundingRect.Y + boundingRect.Height / 2 - TileHeight/2, boundingRect.Width - fieldSize - 5, boundingRect.Height / 2);
             Rectangle fieldRect = new Rectangle(boundingRect.Right - fieldSize, boundingRect.Y + boundingRect.Height / 2 - TileHeight /2, fieldSize, boundingRect.Height /2);
@@ -349,6 +368,10 @@ namespace DwarfCorp
                 RenderField(fieldRect, spriteBatch);
 
                 float v = 0.0f;
+                if (invertValue)
+                {
+                    value = value - maxValue;
+                }
                 if (mode == Slider.SliderMode.Float)
                 {
                     v = (float)Math.Round(value, 2);

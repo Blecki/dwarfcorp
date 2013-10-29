@@ -14,6 +14,7 @@ namespace DwarfCorp
     public delegate void MouseHoveredDelegate();
     public delegate void MouseUnHoveredDelegate();
     public delegate void ReleasedDelegate();
+    public delegate void MouseScrolledDelegate(int amount);
 
     public class SillyGUI
     {
@@ -49,6 +50,7 @@ namespace DwarfCorp
             DefaultTextColor = new Color(48, 27, 0);
             DefaultStrokeColor = new Color(100, 100, 100, 100);
         }
+
 
         public void Update(GameTime time)
         {
