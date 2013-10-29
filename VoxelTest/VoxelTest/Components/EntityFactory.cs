@@ -806,16 +806,12 @@ namespace DwarfCorp
 
             foreach(LocatableComponent Wood in Woods)
             {
-                Wood.IsVisible = false;
-                Wood.IsActive = false;
-  
-
                 Wood.SetVisibleRecursive(false);
                 Wood.SetActiveRecursive(false);
-                GameComponent removed = null;
-                while (!componentManager.RootComponent.Children.TryRemove(Wood.LocalID, out removed)) { }
+                //GameComponent removed = null;
+                //while (!componentManager.RootComponent.Children.TryRemove(Wood.LocalID, out removed)) { }
 
-                componentManager.RemoveComponent(Wood);
+                //componentManager.RemoveComponent(Wood);
             }
 
             DeathComponentSpawner spawner = new DeathComponentSpawner(componentManager, "Component Spawner", tree, Matrix.Identity, new Vector3(treeSize * 2, treeSize, treeSize * 2), Vector3.Zero, Woods);
@@ -853,15 +849,16 @@ namespace DwarfCorp
 
             foreach (LocatableComponent apple in apples)
             {
-                apple.IsVisible = false;
-                apple.IsActive = false;
-
                 apple.SetVisibleRecursive(false);
                 apple.SetActiveRecursive(false);
+
+                /*
                 GameComponent removed = null;
                 while (!componentManager.RootComponent.Children.TryRemove(apple.LocalID, out removed)) { }
+                */
 
-                componentManager.RemoveComponent(apple);
+                //componentManager.RemoveComponent(apple);
+                 
             }
 
             apples.AddRange(apples);
@@ -900,15 +897,15 @@ namespace DwarfCorp
 
             foreach (LocatableComponent Wood in Woods)
             {
-                Wood.IsVisible = false;
-                Wood.IsActive = false;
-
                 Wood.SetVisibleRecursive(false);
                 Wood.SetActiveRecursive(false);
+
+                /*
                 GameComponent removed = null;
                 while (!componentManager.RootComponent.Children.TryRemove(Wood.LocalID, out removed)) { }
 
                 componentManager.RemoveComponent(Wood);
+                 */
             }
 
             List<LocatableComponent> apples = new List<LocatableComponent>();
@@ -920,15 +917,15 @@ namespace DwarfCorp
 
             foreach (LocatableComponent apple in apples)
             {
-                apple.IsVisible = false;
-                apple.IsActive = false;
-
                 apple.SetVisibleRecursive(false);
                 apple.SetActiveRecursive(false);
+
+                /*
                 GameComponent removed = null;
                 while (!componentManager.RootComponent.Children.TryRemove(apple.LocalID, out removed)) { }
 
                 componentManager.RemoveComponent(apple);
+                 */
             }
 
             Woods.AddRange(apples);

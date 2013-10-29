@@ -20,7 +20,9 @@ namespace DwarfCorp
         public event MouseHoveredDelegate OnHover;
         public event ReleasedDelegate OnRelease;
         public event MouseUnHoveredDelegate OnUnHover;
+        public event MouseScrolledDelegate OnScrolled;
 
+        public int LastScrollWheel { get; set; }
         public SillyGUIComponent Parent { get; set; }
         protected List<SillyGUIComponent> Children { get; set; }
         public Rectangle LocalBounds
@@ -79,10 +81,17 @@ namespace DwarfCorp
             OnHover += dummy;
             OnRelease += dummy;
             OnUnHover += dummy;
+            OnScrolled += new MouseScrolledDelegate(SillyGUIComponent_OnScrolled);
+
             ChildrenToRemove = new List<SillyGUIComponent>();
             ChildrenToAdd = new List<SillyGUIComponent>();
-
+            LastScrollWheel = 0;
         }
+
+        void SillyGUIComponent_OnScrolled(int amount)
+        {
+        }
+
 
         public bool HasAnscestor(SillyGUIComponent component)
         {
@@ -123,7 +132,6 @@ namespace DwarfCorp
 
         public bool IsMouseOverRecursive()
         {
-
             if (!IsVisible)
             {
                 return false;
@@ -165,6 +173,15 @@ namespace DwarfCorp
 
         void HandleClicks(MouseState state)
         {
+            if (IsMouseOver)
+            {
+                if (state.ScrollWheelValue != LastScrollWheel)
+                {
+                    OnScrolled(LastScrollWheel - state.ScrollWheelValue);
+                    LastScrollWheel = state.ScrollWheelValue;
+                }
+
+            }
 
             if (state.LeftButton == ButtonState.Pressed)
             {

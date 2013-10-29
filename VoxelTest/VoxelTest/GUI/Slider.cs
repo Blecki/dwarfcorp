@@ -32,6 +32,7 @@ namespace DwarfCorp
         public event ValueModified OnValueModified;
         public bool DrawLabel { get; set; }
         public bool Focused { get; set; }
+        public bool InvertValue { get; set; }
 
         public Slider(SillyGUI gui, SillyGUIComponent parent, string label,  float value, float minValue, float maxValue, SliderMode mode) :
             base(gui, parent)
@@ -46,6 +47,7 @@ namespace DwarfCorp
             OnValueModified += new ValueModified(Slider_OnValueModified);
             OnLeftPressed += new ClickedDelegate(Slider_OnLeftPressed);
             Focused = false;
+            InvertValue = false;
         }
 
         void Slider_OnLeftPressed()
@@ -87,6 +89,12 @@ namespace DwarfCorp
                         d = 0.0f;
                     }
 
+
+                    if (InvertValue)
+                    {
+                        d = (1.0f - d);
+                    }
+
                     SliderValue = d * (MaxValue - MinValue) + MinValue;
 
                     OnValueModified.Invoke(SliderValue);
@@ -104,15 +112,19 @@ namespace DwarfCorp
         
         public override void Render(GameTime time, SpriteBatch batch)
         {
+
             if (IsVisible)
             {
+
                 if (Orient == Orientation.Horizontal)
                 {
-                    GUI.Skin.RenderSliderHorizontal(GUI.DefaultFont, GlobalBounds, SliderValue, MinValue, MaxValue, Mode, DrawLabel, batch);
+
+                    GUI.Skin.RenderSliderHorizontal(GUI.DefaultFont, GlobalBounds, SliderValue, MinValue, MaxValue, Mode, DrawLabel, InvertValue, batch);
+                    
                 }
                 else
                 {
-                    GUI.Skin.RenderSliderVertical(GUI.DefaultFont, GlobalBounds, SliderValue, MinValue, MaxValue, Mode, DrawLabel, batch);
+                    GUI.Skin.RenderSliderVertical(GUI.DefaultFont, GlobalBounds, SliderValue, MinValue, MaxValue, Mode, DrawLabel, InvertValue, batch);
                 }
             }
             base.Render(time, batch);
