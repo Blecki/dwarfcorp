@@ -44,6 +44,11 @@ namespace DwarfCorp
 
         }
 
+        public static string GetGameDirectory()
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + System.IO.Path.DirectorySeparatorChar + "DwarfCorp";
+        }
+
         protected override void Initialize()
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
@@ -63,6 +68,8 @@ namespace DwarfCorp
             StateManager.States["OptionsState"] = new OptionsState(this, StateManager);
             StateManager.States["OrderScreen"] = new OrderScreen(this, StateManager, playState);
             StateManager.States["CompanyMakerState"] = new CompanyMakerState(this, StateManager);
+            StateManager.States["WorldLoaderState"] = new WorldLoaderState(this, StateManager);
+            StateManager.States["GameLoaderState"] = new GameLoaderState(this, StateManager);
 
             if (GameSettings.Default.DisplayIntro)
             {

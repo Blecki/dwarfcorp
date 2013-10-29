@@ -28,6 +28,7 @@ namespace DwarfCorp
         public SpriteFont TextFont { get; set; }
         public bool CanToggle { get; set; }
         public bool IsToggled { get; set; }
+        public bool KeepAspectRatio { get; set; }
         public ButtonMode Mode { get; set; }
 
         public Button(SillyGUI gui, SillyGUIComponent parent, string text, SpriteFont textFont, ButtonMode mode, ImageFrame image) :
@@ -45,6 +46,7 @@ namespace DwarfCorp
             CanToggle = false;
             IsToggled = false;
             OnClicked += Clicked;
+            KeepAspectRatio = false;
             Mode = mode;
         }
 
@@ -56,10 +58,30 @@ namespace DwarfCorp
             }
         }
 
+        public Rectangle GetImageBounds()
+        {
+            Rectangle toDraw = GlobalBounds;
+            toDraw.Height -= 60;
+            if (KeepAspectRatio)
+            {
+                if (toDraw.Width < toDraw.Height)
+                {
+                    float wPh = (float)toDraw.Width / (float)toDraw.Height;
+                    toDraw = new Rectangle(toDraw.X, toDraw.Y, toDraw.Width, (int)(toDraw.Height * wPh));
+                }
+                else
+                {
+                    float wPh = (float)toDraw.Height / (float)toDraw.Width;
+                    toDraw = new Rectangle(toDraw.X, toDraw.Y, (int)(toDraw.Width * wPh), toDraw.Height);
+                }
+            }
+            return toDraw;
+        }
+
         public override void Render(GameTime time, SpriteBatch batch)
         {
             Rectangle globalBounds = GlobalBounds;
-            Color imageColor = new Color(150, 150, 150, 0);
+            Color imageColor = Color.White;
             Color textColor = TextColor;
             Color strokeColor = GUI.DefaultStrokeColor;
 
@@ -81,8 +103,18 @@ namespace DwarfCorp
 
             if (Mode == ButtonMode.ImageButton)
             {
-                    batch.Draw(Image.Image, globalBounds, Image.SourceRect, imageColor);
-                    Drawer2D.SafeDraw(batch, Text, TextFont, textColor, new Vector2(globalBounds.X, globalBounds.Y + globalBounds.Height + 5), Vector2.Zero);
+                if (Image != null && Image.Image != null)
+                {
+                    if (!KeepAspectRatio)
+                    {
+                        batch.Draw(Image.Image, globalBounds, Image.SourceRect, imageColor);
+                    }
+                    else
+                    {
+                        batch.Draw(Image.Image, GetImageBounds(), Image.SourceRect, imageColor);
+                    }
+                }
+                Drawer2D.SafeDraw(batch, Text, TextFont, textColor, new Vector2(globalBounds.X, globalBounds.Y + globalBounds.Height - 60), Vector2.Zero);
             }
             else if (Mode == ButtonMode.PushButton)
             {

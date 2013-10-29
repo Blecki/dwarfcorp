@@ -15,6 +15,7 @@ namespace DwarfCorp
         public int Rows { get; set; }
         public int Cols { get; set; }
         public int EdgePadding { get; set; }
+        public bool FitToParent { get; set; }
 
         public GridLayout(SillyGUI gui, SillyGUIComponent parent, int rows, int cols) :
             base(gui, parent)
@@ -23,6 +24,7 @@ namespace DwarfCorp
             Rows = rows;
             Cols = cols;
             EdgePadding = 5;
+            FitToParent = true;
         }
 
         public void SetComponentPosition(SillyGUIComponent component, int x, int y, int w, int h)
@@ -32,7 +34,10 @@ namespace DwarfCorp
 
         public override void UpdateSizes() 
         {
-            LocalBounds = new Rectangle(EdgePadding, EdgePadding, Parent.LocalBounds.Width - EdgePadding, Parent.LocalBounds.Height - EdgePadding);
+            if (FitToParent)
+            {
+                LocalBounds = new Rectangle(EdgePadding, EdgePadding, Parent.LocalBounds.Width - EdgePadding, Parent.LocalBounds.Height - EdgePadding);
+            }
             int w = LocalBounds.Width;
             int h = LocalBounds.Height;
 

@@ -49,7 +49,7 @@ namespace DwarfCorp
         Effect shader;
         WaterRenderer waterRenderer;
 
-        SkyRenderer Sky;
+        public static SkyRenderer Sky;
 
         Language dwarven = null;
 
@@ -88,6 +88,8 @@ namespace DwarfCorp
         public Button CurrentLevelUpButton { get; set; }
         public Button CurrentLevelDownButton { get; set; }
 
+        public Slider LevelSlider { get; set; }
+
         public PlayState(DwarfGame game, GameStateManager stateManager) :
             base(game, "PlayState", stateManager)
         {
@@ -99,7 +101,6 @@ namespace DwarfCorp
             RenderUnderneath = true;
             WorldOrigin = new Vector2(WorldWidth / 2, WorldHeight / 2);
             PreSimulateTimer = new Timer(3, false);
-            
         }
 
         public override void OnEnter()
@@ -340,19 +341,7 @@ namespace DwarfCorp
                 camera.Phi = -(float)Math.PI * 0.3f;
 
 
-                GameMaster evilMaster = new GameMaster(Game, componentManager, chunkManager, camera, Game.GraphicsDevice, voxelLibrary, GUI);
 
-                
-                for (int i = 0; i < 0; i++)
-                {
-                    Vector3 dorfPos = new Vector3(camera.Position.X + (float)random.NextDouble() * 3 - 1.5f, h, camera.Position.Z + (float)random.NextDouble() * 3 - 1.5f);
-                    PhysicsComponent comp = (PhysicsComponent)EntityFactory.GenerateGoblin(dorfPos,
-                                            componentManager, Content, GraphicsDevice, chunkManager, camera, evilMaster, planService, "Goblin");
-
-                    comp.Velocity = new Vector3(1, 0, 0);
-                    comp.DrawBoundingBox = true;
-                }
-                 
 
             }
 
@@ -395,14 +384,33 @@ namespace DwarfCorp
             OrderStatusLabel.StrokeColor = new Color(0, 0, 0, 100);
             OrderStatusLabel.LocalBounds = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 300, GraphicsDevice.Viewport.Height - 60, 300, 60);
 
+            componentManager.HandleAddRemoves();
+            componentManager.RootComponent.UpdateTransformsRecursive();
+
+            LevelSlider = new Slider(GUI, GUI.RootComponent, "", chunkManager.MaxViewingLevel, 0, chunkManager.ChunkSizeY, Slider.SliderMode.Integer);
+            LevelSlider.Orient = Slider.Orientation.Vertical;
+            LevelSlider.LocalBounds = new Rectangle(28, 130, 40, GraphicsDevice.Viewport.Height - 300);
+            LevelSlider.OnClicked += new ClickedDelegate(LevelSlider_OnClicked);
+            LevelSlider.DrawLabel = true;
+            LevelSlider.InvertValue = true;
+
             SoundManager.Content = Content;
+
+            GameFile gameFile = new GameFile(this, Overworld.Name);
+            gameFile.WriteFile(DwarfGame.GetGameDirectory() + System.IO.Path.DirectorySeparatorChar + "Saves" + System.IO.Path.DirectorySeparatorChar + "save0", true);
+
             IsInitialized = true;
 
             InputManager.KeyReleasedCallback += new InputManager.OnKeyReleased(InputManager_KeyReleasedCallback);
             LoadingMessage = "Complete.";
 
-           
         }
+
+        void LevelSlider_OnClicked()
+        {
+            chunkManager.SetMaxViewingLevel((int)LevelSlider.SliderValue, ChunkManager.SliceMode.Y);
+        }
+
 
         void CurrentLevelDownButton_OnClicked()
         {
@@ -746,6 +754,11 @@ namespace DwarfCorp
                 OrderStatusLabel.OnClicked += new ClickedDelegate(OrderStatusLabel_OnClicked);
 
                 MoneyLabel.Text = master.Economy.CurrentMoney.ToString("C");
+            }
+
+            if (!LevelSlider.IsMouseOver)
+            {
+                LevelSlider.SliderValue = chunkManager.MaxViewingLevel;
             }
 
             base.Update(gameTime);

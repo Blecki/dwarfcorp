@@ -32,8 +32,8 @@ namespace DwarfCorp
 
         public TextureLoader(string folder, GraphicsDevice graphics)
         {
-            string assemblyLocation = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\DwarfCorp";
-            string relativePath = assemblyLocation + "\\" + folder;
+            string assemblyLocation = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + System.IO.Path.DirectorySeparatorChar + "DwarfCorp";
+            string relativePath = assemblyLocation + System.IO.Path.DirectorySeparatorChar + folder;
 
             FileTypes = "*.png";
 

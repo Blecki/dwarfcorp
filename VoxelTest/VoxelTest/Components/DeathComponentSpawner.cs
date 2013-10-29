@@ -25,6 +25,9 @@ namespace DwarfCorp
             {
                 locatable.SetVisibleRecursive(true);
                 locatable.SetActiveRecursive(true);
+                locatable.HasMoved = true;
+                locatable.WasAddedToOctree = false;
+                locatable.AddToOctree = true;
 
                 if (locatable is PhysicsComponent)
                 {
@@ -33,6 +36,7 @@ namespace DwarfCorp
                     ((PhysicsComponent)locatable).Velocity += diff * ThrowSpeed;
                 }
 
+                Manager.AddComponent(locatable);
                 Manager.RootComponent.AddChild(locatable);
             }
 
