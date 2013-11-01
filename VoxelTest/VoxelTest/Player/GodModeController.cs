@@ -48,7 +48,7 @@ namespace DwarfCorp
             GUI = gui;
             Master = master;
             SelectorPanel = new Panel(GUI, gui.RootComponent);
-            SelectorPanel.LocalBounds = new Rectangle(32, 180, 300, 100);
+            SelectorPanel.LocalBounds = new Rectangle(80, 140, 300, 100);
             SelectorBox = new ComboBox(GUI, SelectorPanel);
             SelectorBox.LocalBounds = new Rectangle(10, 10, 250, 32);
             IsActive = false;

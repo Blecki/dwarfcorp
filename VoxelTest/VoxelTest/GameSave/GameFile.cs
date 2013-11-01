@@ -84,6 +84,7 @@ namespace DwarfCorp
 
             public void SaveToDirectory(string directory)
             {
+                System.IO.Directory.CreateDirectory(directory);
                 PlayerData.WriteFile(directory + System.IO.Path.DirectorySeparatorChar + "Player." + PlayerFile.CompressedExtension, true);
                 EconomyData.WriteFile(directory + System.IO.Path.DirectorySeparatorChar + "Economy." + EconomyFile.CompressedExtension, true);
                 CompanyData.WriteFile(directory + System.IO.Path.DirectorySeparatorChar + "Company." + CompanyFile.CompressedExtension, true);

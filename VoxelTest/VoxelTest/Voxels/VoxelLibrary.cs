@@ -202,10 +202,16 @@ namespace DwarfCorp
             StoneType.isBuildable = true;
             StoneType.particleType = "stone_particle";
 
+            VoxelType BedrockType = new VoxelType();
+            BedrockType.name = "Bedrock";
+            BedrockType.startingHealth = 10000;
+            BedrockType.isBuildable = false;
+
             VoxelType waterType = new VoxelType();
             waterType.name = "water";
             waterType.releasesResource = false;
             waterType.isBuildable = false;
+            waterType.startingHealth = 9999;
 
             VoxelType SandType = new VoxelType();
             SandType.name = "Sand";
@@ -276,6 +282,7 @@ namespace DwarfCorp
             RegisterType(manaType, manaCube);
             RegisterType(PlankType, PlankCube);
             RegisterType(ScaffoldType, ScaffoldCube);
+            RegisterType(BedrockType, cobblestoneCube);
         }
 
 

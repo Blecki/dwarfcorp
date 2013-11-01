@@ -67,19 +67,18 @@ namespace DwarfCorp
             CreateSaves();
 
             ListSelector selector = new ListSelector(GUI, scroller);
+            selector.LocalBounds = new Rectangle(32, 32, scroller.GlobalBounds.Width - 64, Saves.Count * 80);
             selector.DrawPanel = false;
             selector.Label = "-Saved Games-";
             selector.Mode = ListItem.SelectionMode.ButtonList;
-            Saves.Add("Foo");
-            Saves.Add("Bar");
             foreach (string s in Saves)
             {
                 selector.AddItem(s);
             }
 
+            selector.OnItemClicked += new ClickedDelegate(() => { selector_OnItemClicked(selector); });
            
 
-            selector.LocalBounds = new Rectangle(32, 32, scroller.GlobalBounds.Width - 64, Saves.Count * 80);
 
 
         
@@ -88,6 +87,25 @@ namespace DwarfCorp
             layout.SetComponentPosition(back, 3, 9, 1, 1);
             back.OnClicked += new ClickedDelegate(back_OnClicked);
         }
+
+        void selector_OnItemClicked(ListSelector selector)
+        {
+            ListItem item = selector.SelectedItem;
+            string save = item.Label;
+
+            PlayState playState = StateManager.States["PlayState"] as PlayState;
+
+            if (playState != null)
+            {
+                playState.ShouldReset = true;
+                playState.ExistingFile = DwarfGame.GetGameDirectory() + System.IO.Path.DirectorySeparatorChar + "Saves" + System.IO.Path.DirectorySeparatorChar + save;
+                StateManager.PushState("PlayState");
+            }
+            
+            
+        }
+
+
 
         void back_OnClicked()
         {

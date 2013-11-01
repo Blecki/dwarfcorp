@@ -65,9 +65,16 @@ namespace DwarfCorp
         }
 
 
-        public virtual GameComponent CreateComponent(ComponentManager components, GraphicsDevice graphics)
+        public virtual GameComponent CreateComponent(ComponentManager components, GraphicsDevice graphics, Microsoft.Xna.Framework.Content.ContentManager content, ChunkManager chunks, GameMaster master, Camera camera)
         {
-            return null;
+            GameComponent toReturn = EntityFactory.GenerateComponent(Type, Position, components, content, graphics, chunks, master, camera);
+
+            if (toReturn != null)
+            {
+                toReturn.GlobalID = ID;
+            }
+
+            return toReturn;
         }
     }
 }

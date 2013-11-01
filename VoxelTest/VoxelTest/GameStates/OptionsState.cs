@@ -547,8 +547,10 @@ namespace DwarfCorp
             }
             catch (NoSuitableGraphicsDeviceException exception)
             {
-                Console.Error.WriteLine(exception.Message);
+                Dialog.Popup(GUI, "Failure!", exception.Message, Dialog.ButtonType.OK);
             }
+
+            Dialog.Popup(GUI, "Info", "Some settings will not take effect until the game is restarted.", Dialog.ButtonType.OK);
         }
 
         void fullscreenCheck_OnClicked(bool c)

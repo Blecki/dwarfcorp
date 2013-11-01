@@ -40,6 +40,7 @@ namespace DwarfCorp
             }
 
             ListSelect.AddItem("New Game");
+            //ListSelect.AddItem("Load Game");
             ListSelect.AddItem("Options");
             ListSelect.AddItem("Quit");
         }
@@ -113,19 +114,12 @@ namespace DwarfCorp
             ListSelect = new ListSelector(GUI, GUI.RootComponent);
             ListSelect.Label = "- Main Menu -";
             ListSelect.LocalBounds = new Rectangle(Game.GraphicsDevice.Viewport.Width / 2 - 100, Game.GraphicsDevice.Viewport.Height / 2 - 150, 150, 150);
-            if (IsGameRunning)
-            {
-                ListSelect.AddItem("Continue Game");
-            }
-            ListSelect.AddItem("New Game");
-            ListSelect.AddItem("Load Game");
-            ListSelect.AddItem("Options");
-            ListSelect.AddItem("Quit");
+            DefaultItems();
 
             ListSelect.OnItemClicked += ItemClicked;
             Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
             Input = new InputManager();
-            
+
             base.OnEnter();
         }
 

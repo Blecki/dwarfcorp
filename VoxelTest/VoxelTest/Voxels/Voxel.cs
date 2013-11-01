@@ -303,7 +303,7 @@ namespace DwarfCorp
 
         public void Kill()
         {
-            if (m_dead)
+            if (m_dead || Chunk == null)
             {
                 return;
             }
@@ -390,7 +390,7 @@ namespace DwarfCorp
             IsVisible = isVisible;
             InViewFrustrum = false;
             DrawWireFrame = false;
-            Health = 100.0f;
+            Health = voxelType.startingHealth;
 
             //AmbientColors = new byte[8];
             //SunColors = new byte[8];
