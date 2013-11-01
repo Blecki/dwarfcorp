@@ -50,10 +50,6 @@ namespace DwarfCorp
             {
                 return GenerateBerryBush(size, position + new Vector3(0.5f, size * offset - 0.1f, 0.5f), componentManager, content, graphics);
             }
-            else if (id == "apple_tree")
-            {
-                return GenerateAppleTree(size, position + new Vector3(0.5f, size * offset, 0.5f), componentManager, content, graphics);
-            }
             else
             {
                 return null;
@@ -177,7 +173,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
 
-            PhysicsComponent Stone = new PhysicsComponent(componentManager, "Mana Resource", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            PhysicsComponent Stone = new PhysicsComponent(componentManager, "Mana", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             List<Point> frames = new List<Point>();
             frames.Add(new Point(1, 0));
@@ -202,7 +198,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
 
-            PhysicsComponent Stone = new PhysicsComponent(componentManager, "Stone Resource", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            PhysicsComponent Stone = new PhysicsComponent(componentManager, "Stone", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             List<Point> frames = new List<Point>();
             frames.Add(new Point(3, 0));
@@ -227,7 +223,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
 
-            PhysicsComponent Stone = new PhysicsComponent(componentManager, "Gold Resource", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            PhysicsComponent Stone = new PhysicsComponent(componentManager, "Gold", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             List<Point> frames = new List<Point>();
             frames.Add(new Point(0, 0));
@@ -252,7 +248,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
 
-            PhysicsComponent Stone = new PhysicsComponent(componentManager, "Iron Resource", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            PhysicsComponent Stone = new PhysicsComponent(componentManager, "Iron", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             List<Point> frames = new List<Point>();
             frames.Add(new Point(2, 0));
@@ -352,7 +348,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
 
-            PhysicsComponent Dirt = new PhysicsComponent(componentManager, "Dirt Resource", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            PhysicsComponent Dirt = new PhysicsComponent(componentManager, "Dirt", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             List<Point> frames = new List<Point>();
             frames.Add(new Point(0, 1));
@@ -377,7 +373,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
 
-            PhysicsComponent Wood = new PhysicsComponent(componentManager, "Wood Resource", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            PhysicsComponent Wood = new PhysicsComponent(componentManager, "Wood", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
             
             List<Point> frames = new List<Point>();
             frames.Add(new Point(3, 1));
@@ -402,7 +398,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
 
-            PhysicsComponent apple = new PhysicsComponent(componentManager, "Apple Resource", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            PhysicsComponent apple = new PhysicsComponent(componentManager, "Apple", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             List<Point> frames = new List<Point>();
             frames.Add(new Point(2, 1));
@@ -438,7 +434,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             Texture2D spriteSheet = content.Load<Texture2D>("bedtex");
 
-            LocatableComponent bed = new LocatableComponent(componentManager, "bed", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.5f, 1.5f), new Vector3(0.5f, 0.5f, 1.0f));
+            LocatableComponent bed = new LocatableComponent(componentManager, "Bed", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.5f, 1.5f), new Vector3(0.5f, 0.5f, 1.0f));
             BedComponent logicalBed = new BedComponent(componentManager, "Bed", bed, 1);
             TexturedBoxObject bedModel = new TexturedBoxObject(componentManager, "bedbox", bed, Matrix.Identity, new Vector3(1.0f, 1.0f, 2.0f), new Vector3(0.5f, 0.5f, 1.0f), PrimitiveLibrary.BoxPrimitives["bed"], spriteSheet);
 
@@ -515,10 +511,10 @@ namespace DwarfCorp
             Matrix matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
             matrix.Translation = position;
             Texture2D spriteSheet = content.Load<Texture2D>("wheat");
-            LocatableComponent table = new LocatableComponent(componentManager, "wheat", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+            LocatableComponent table = new LocatableComponent(componentManager, "Wheat", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
             List<Point> frames = new List<Point>();
             frames.Add(new Point(0, 0));
-            Animation tableAnimation = new Animation(graphics, spriteSheet, "wheat", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
+            Animation tableAnimation = new Animation(graphics, spriteSheet, "Wheat", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
             BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", table, Matrix.Identity, spriteSheet, false);
             sprite.OrientationType = BillboardSpriteComponent.OrientMode.Fixed;
@@ -536,10 +532,10 @@ namespace DwarfCorp
             Matrix matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
             matrix.Translation = position;
             Texture2D spriteSheet = content.Load<Texture2D>("shroom");
-            LocatableComponent table = new LocatableComponent(componentManager, "wheat", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+            LocatableComponent table = new LocatableComponent(componentManager, "Mushroom", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
             List<Point> frames = new List<Point>();
             frames.Add(new Point(0, 0));
-            Animation tableAnimation = new Animation(graphics, spriteSheet, "wheat", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
+            Animation tableAnimation = new Animation(graphics, spriteSheet, "Mushroom", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
             BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", table, Matrix.Identity, spriteSheet, false);
             sprite.OrientationType = BillboardSpriteComponent.OrientMode.Fixed;
@@ -562,10 +558,10 @@ namespace DwarfCorp
             Matrix matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("InteriorSheet");
-            LocatableComponent table = new LocatableComponent(componentManager, "spikes", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+            LocatableComponent table = new LocatableComponent(componentManager, "Spikes", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
             List<Point> frames = new List<Point>();
             frames.Add(new Point(2, 4));
-            Animation tableAnimation = new Animation(graphics, spriteSheet, "spikes", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
+            Animation tableAnimation = new Animation(graphics, spriteSheet, "Spikes", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
             BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", table, Matrix.Identity, spriteSheet, false);
             sprite.OrientationType = BillboardSpriteComponent.OrientMode.Fixed;
@@ -593,7 +589,7 @@ namespace DwarfCorp
             Matrix matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("InteriorSheet");
-            LocatableComponent table = new LocatableComponent(componentManager, "table", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+            LocatableComponent table = new LocatableComponent(componentManager, "Table", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
 
             List<Point> frames = new List<Point>();
             frames.Add(topFrame);
@@ -688,6 +684,7 @@ namespace DwarfCorp
         {
             LocatableComponent table = (LocatableComponent)GenerateTable(position, componentManager, content, graphics);
             table.Tags.Add("PotionTable");
+            table.Name = "PotionTable";
             GameComponent potion = GeneratePotions(new Vector3(0, 0.1f, 0), componentManager, content, graphics, table);
             
             table.UpdateTransformsRecursive();
@@ -700,7 +697,7 @@ namespace DwarfCorp
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("InteriorSheet");
-            LocatableComponent flag = new LocatableComponent(componentManager, "flag", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+            LocatableComponent flag = new LocatableComponent(componentManager, "Flag", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
             List<Point> frames = new List<Point>();
             frames.Add(new Point(0, 2));
             frames.Add(new Point(1, 2));
@@ -726,7 +723,7 @@ namespace DwarfCorp
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("InteriorSheet");
-            LocatableComponent lamp = new LocatableComponent(componentManager, "lamp", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+            LocatableComponent lamp = new LocatableComponent(componentManager, "Lamp", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
             List<Point> frames = new List<Point>();
             frames.Add(new Point(0, 1));
             frames.Add(new Point(2, 1));
@@ -783,7 +780,7 @@ namespace DwarfCorp
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
             Texture2D spriteSheet = content.Load<Texture2D>(asset);
-            LocatableComponent tree = new LocatableComponent(componentManager, "Tree", componentManager.RootComponent, matrix, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), Vector3.Zero);
+            LocatableComponent tree = new LocatableComponent(componentManager, asset, componentManager.RootComponent, matrix, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), Vector3.Zero);
             ModelInstanceComponent modelInstance = new ModelInstanceComponent(componentManager, "Model", tree, Matrix.CreateRotationY((float)(PlayState.random.NextDouble() * Math.PI)) * Matrix.CreateScale(treeSize * 4, treeSize * 4, treeSize * 4), asset, false);
             //CreateIntersectingBillboard(tree, spriteSheet, treeSize, treeSize, position, componentManager, content, graphics);
             
@@ -870,72 +867,6 @@ namespace DwarfCorp
 
         }
 
-        public static GameComponent GenerateAppleTree(float treeSize, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
-        {
-            Matrix matrix = Matrix.Identity;
-            matrix.Translation = position;
-            Texture2D spriteSheet = content.Load<Texture2D>("apple_tree");
-            LocatableComponent tree = new LocatableComponent(componentManager, "Tree", componentManager.RootComponent, matrix, new Vector3(treeSize * 4, treeSize * 6, treeSize * 4), Vector3.Zero);
-
-            CreateIntersectingBillboard(tree, spriteSheet, treeSize * 3, treeSize * 7, position, componentManager, content, graphics);
-
-
-
-            HealthComponent health = new HealthComponent(componentManager, "Health", tree, 100.0f * treeSize, 0.0f, 100.0f * treeSize);
-
-
-            tree.Tags.Add("Tree");
-            tree.Tags.Add("EmitsWood");
-            tree.Tags.Add("EmitsFood");
-
-            List<LocatableComponent> Woods = new List<LocatableComponent>();
-
-            for (int i = 0; i < (int)(treeSize * 5); i++)
-            {
-                Woods.Add(GenerateWoodResource(new Vector3((float)(PlayState.random.NextDouble() * treeSize * 4) - treeSize * 2, (float)(PlayState.random.NextDouble() * treeSize * 2) - treeSize, (float)(PlayState.random.NextDouble() * treeSize * 4) - treeSize * 2) + position, componentManager, content, graphics));
-            }
-
-            foreach (LocatableComponent Wood in Woods)
-            {
-                Wood.SetVisibleRecursive(false);
-                Wood.SetActiveRecursive(false);
-
-                /*
-                GameComponent removed = null;
-                while (!componentManager.RootComponent.Children.TryRemove(Wood.LocalID, out removed)) { }
-
-                componentManager.RemoveComponent(Wood);
-                 */
-            }
-
-            List<LocatableComponent> apples = new List<LocatableComponent>();
-
-            for (int i = 0; i < (int)(treeSize * 10); i++)
-            {
-                apples.Add(GenerateAppleResource(new Vector3((float)(PlayState.random.NextDouble() * treeSize * 4) - treeSize * 2, (float)(PlayState.random.NextDouble() * treeSize * 2) - treeSize, (float)(PlayState.random.NextDouble() * treeSize * 4) - treeSize * 2) + position, componentManager, content, graphics));
-            }
-
-            foreach (LocatableComponent apple in apples)
-            {
-                apple.SetVisibleRecursive(false);
-                apple.SetActiveRecursive(false);
-
-                /*
-                GameComponent removed = null;
-                while (!componentManager.RootComponent.Children.TryRemove(apple.LocalID, out removed)) { }
-
-                componentManager.RemoveComponent(apple);
-                 */
-            }
-
-            Woods.AddRange(apples);
-
-            DeathComponentSpawner spawner = new DeathComponentSpawner(componentManager, "Component Spawner", tree, Matrix.Identity, new Vector3(treeSize * 4, treeSize * 2, treeSize * 4), Vector3.Zero, Woods);
-
-            tree.AddToOctree = true;
-            return tree;
-
-        }
 
         public static void CreateIntersectingBillboard(GameComponent component, Texture2D spriteSheet, float xSize, float ySize, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
         {

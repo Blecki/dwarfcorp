@@ -55,6 +55,7 @@ namespace DwarfCorp
         public static string ProgressLeft = "ProgressLeft";
         public static string ProgressFilled = "ProgressFilled";
         public static string ProgressEmpty = "ProgressEmpty";
+        public static string ProgressCap = "ProgressCap";
         public static string ProgressRight = "ProgressRight";
 
         public GUISkin(Texture2D texture, int tileWidth, int tileHeight)
@@ -124,9 +125,10 @@ namespace DwarfCorp
             Frames[GroupLowerRight] = new Point(2, 8);
 
             Frames[ProgressLeft]   = new Point(3, 6);
-            Frames[ProgressFilled] = new Point(4, 6);
+            Frames[ProgressFilled] = new Point(7, 6);
+            Frames[ProgressCap] = new Point(6, 6);
             Frames[ProgressEmpty]  = new Point(5, 6);
-            Frames[ProgressRight]  = new Point(6, 6);
+            Frames[ProgressRight]  = new Point(4, 6);
 
 
         }
@@ -252,13 +254,37 @@ namespace DwarfCorp
         public void RenderProgressBar(Rectangle rectBounds, float progress, SpriteBatch spriteBatch)
         {
             float n = (float)Math.Max(Math.Min(progress, 1.0), 0.0);
-            Rectangle rect = new Rectangle(rectBounds.X + TileWidth, rectBounds.Y, rectBounds.Width - TileWidth * 2, rectBounds.Height);
-            Rectangle fillRect = new Rectangle(rect.X, rect.Y, (int)(rect.Width * n), rect.Height);
-            Rectangle notFill = new Rectangle(rect.X + (int)(rect.Width * n), rect.Y, (int)(rect.Width * (1 - n)), rect.Height);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y, TileWidth, rect.Height), GetSourceRect(ProgressLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height), GetSourceRect(ProgressRight), Color.White);
-            spriteBatch.Draw(Texture, fillRect, GetSourceRect(ProgressFilled), Color.White);
-            spriteBatch.Draw(Texture, notFill, GetSourceRect(ProgressEmpty), Color.White);
+
+            if (n > 0)
+            {
+                Rectangle drawFillRect = new Rectangle(rectBounds.X + TileWidth / 2 - 8, rectBounds.Y, (int)((rectBounds.Width - TileWidth / 2 - 4) * n) - 8, rectBounds.Height);
+                Rectangle filledRect = GetSourceRect(ProgressFilled);
+                filledRect.Width = 1;
+                spriteBatch.Draw(Texture, drawFillRect, filledRect, Color.White);
+
+                Rectangle progressRect = GetSourceRect(ProgressCap);
+                progressRect.Width = 8;
+
+                Rectangle capRect = new Rectangle((int)((rectBounds.Width - TileWidth / 2 - 4) * n) + rectBounds.X , rectBounds.Y, 8, rectBounds.Height);
+                spriteBatch.Draw(Texture, capRect, progressRect, Color.White);
+            }
+
+            spriteBatch.Draw(Texture, new Rectangle(rectBounds.X, rectBounds.Y, TileWidth, rectBounds.Height), GetSourceRect(ProgressLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rectBounds.X + rectBounds.Width - TileWidth, rectBounds.Y, TileWidth, rectBounds.Height), GetSourceRect(ProgressRight), Color.White);
+
+            int steps = (rectBounds.Width - TileWidth) / TileWidth;
+
+            for (int i = 0; i < steps; i++)
+            {
+                spriteBatch.Draw(Texture, new Rectangle(rectBounds.X + TileWidth/2 +  i * TileWidth, rectBounds.Y, TileWidth, rectBounds.Height), GetSourceRect(ProgressEmpty), Color.White);
+            }
+
+            int remainder = (rectBounds.Width - TileWidth) - steps * TileWidth;
+
+            if (remainder > 0)
+            {
+                spriteBatch.Draw(Texture, new Rectangle(rectBounds.X + TileWidth / 2 + steps * TileWidth, rectBounds.Y, remainder, rectBounds.Height), GetSourceRect(ProgressEmpty), Color.White);
+            }
         }
 
         public void RenderGroup(Rectangle rectbounds, SpriteBatch spriteBatch)

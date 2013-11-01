@@ -38,6 +38,12 @@ namespace DwarfCorp
                 {
 
                     Voxel vox = chunks.GetFirstVisibleBlockUnder(Agent.Position, true);
+
+                    if (vox == null)
+                    {
+                        yield return Status.Fail;
+                    }
+
                     List<VoxelRef> voxAbove = new List<VoxelRef>();
                     chunks.GetVoxelReferencesAtWorldLocation(null, vox.Position + new Vector3(0, 1, 0), voxAbove);
 

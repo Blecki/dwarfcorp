@@ -38,6 +38,7 @@ namespace DwarfCorp
             Types = new short[Size.X, Size.Y, Size.Z];
             LiquidTypes = new short[Size.X, Size.Y, Size.Z];
             Liquid = new byte[Size.X, Size.Y, Size.Z];
+            Origin = chunk.Origin;
             FillDataFromChunk(chunk);
         }
 
@@ -75,6 +76,51 @@ namespace DwarfCorp
         public override bool WriteFile(string filePath, bool compress)
         {
             return FileUtils.SaveJSon<ChunkFile>(this, filePath, compress);
+        }
+
+        public VoxelChunk ToChunk(ChunkManager manager)
+        {
+            int chunkSizeX = this.Size.X;
+            int chunkSizeY = this.Size.Y;
+            int chunkSizeZ = this.Size.Z;
+            Vector3 origin = this.Origin;
+            Voxel[][][] voxels = ChunkGenerator.Allocate(chunkSizeX, chunkSizeY, chunkSizeZ);
+            float scaleFator = PlayState.WorldScale;
+
+            for (int x = 0; x < chunkSizeX; x++)
+            {
+                for (int z = 0; z < chunkSizeZ; z++)
+                {
+                    for (int y = 0; y < chunkSizeY; y++)
+                    {
+                        if (Types[x, y, z] > 0)
+                        {
+                            VoxelType t = VoxelType.TypeList[Types[x, y, z]];
+                            voxels[x][y][z] = new Voxel(new Vector3(x, y, z) + origin, t, VoxelLibrary.PrimitiveMap[t], true);
+                        }
+                        
+                    }
+                }
+            }
+
+            VoxelChunk c = new VoxelChunk(origin, manager, voxels, ID, 1);
+            c.ShouldRebuild = true;
+            c.ShouldRecalculateLighting = true;
+
+            for (int x = 0; x < chunkSizeX; x++)
+            {
+                for (int z = 0; z < chunkSizeZ; z++)
+                {
+                    for (int y = 0; y < chunkSizeY; y++)
+                    {
+                        c.Water[x][y][z].WaterLevel = Liquid[x, y, z];
+                        c.Water[x][y][z].Type = (LiquidType)LiquidTypes[x, y, z];
+                    }
+                }
+            }
+            c.ShouldRebuildWater = true;
+
+            return c;
         }
 
         public void FillDataFromChunk(VoxelChunk chunk)

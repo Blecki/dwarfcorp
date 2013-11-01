@@ -197,6 +197,8 @@ namespace DwarfCorp
                 System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + System.IO.Path.DirectorySeparatorChar + OverworldDirectory);
                 OverworldFile file = new OverworldFile(Overworld.Map, WorldName);
                 file.WriteFile(worldDirectory.FullName + System.IO.Path.DirectorySeparatorChar + WorldName + "." + OverworldFile.CompressedExtension, true);
+
+                Dialog.Popup(GUI, "Save", "File saved.", Dialog.ButtonType.OK);
             }
         }
 
@@ -235,6 +237,11 @@ namespace DwarfCorp
         {
             if (GenerationComplete)
             {
+                Overworld.Name = WorldName;
+                System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + System.IO.Path.DirectorySeparatorChar + OverworldDirectory);
+                OverworldFile file = new OverworldFile(Overworld.Map, WorldName);
+                file.WriteFile(worldDirectory.FullName + System.IO.Path.DirectorySeparatorChar + WorldName + "." + OverworldFile.CompressedExtension, true);
+
                 StateManager.PushState("PlayState");
                 PlayState play = (PlayState)StateManager.States["PlayState"];
                 MainMenuState menu = (MainMenuState)StateManager.States["MainMenuState"];
