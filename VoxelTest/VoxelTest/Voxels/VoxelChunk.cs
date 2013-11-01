@@ -263,7 +263,73 @@ namespace DwarfCorp
         #endregion
 
 
- 
+
+        public VoxelChunk(ChunkManager manager, ChunkFile chunkFile)
+        {
+            FirstWaterIter = true;
+            Motes = new Dictionary<string, List<InstanceData>>();
+
+            m_sizeX = chunkFile.Size.X;
+            m_sizeY = chunkFile.Size.Y;
+            m_sizeZ = chunkFile.Size.Z;
+
+            VoxelGrid = ChunkGenerator.Allocate(m_sizeX, m_sizeY, m_sizeZ);
+            Water = VoxelChunk.WaterAllocate(m_sizeX, m_sizeY, m_sizeZ); 
+
+            ID = chunkFile.ID;
+            IsVisible = true;
+            m_tileSize = 1;
+            HalfLength = new Vector3((float)m_tileSize / 2.0f, (float)m_tileSize / 2.0f, (float)m_tileSize / 2.0f);
+            Origin = chunkFile.Origin;
+            Primitive = new VoxelListPrimitive();
+            RenderWireframe = false;
+            Manager = manager;
+            IsActive = true;
+
+            Neighbors = new ConcurrentDictionary<Point3, VoxelChunk>();
+            DynamicLights = new List<DynamicLight>();
+            Liquids = new Dictionary<LiquidType, LiquidPrimitive>();
+            Liquids[LiquidType.Water] = new LiquidPrimitive(LiquidType.Water);
+            Liquids[LiquidType.Lava] = new LiquidPrimitive(LiquidType.Lava);
+
+
+            for (int x = 0; x < VoxelGrid.Length; x++)
+            {
+                for (int y = 0; y < VoxelGrid[x].Length; y++)
+                {
+                    for (int z = 0; z < VoxelGrid[x][y].Length; z++)
+                    {
+                        short type = chunkFile.Types[x, y, z];
+                        if (type > 0)
+                        {
+                            Voxel v = new Voxel(Origin + new Vector3(x, y, z), VoxelLibrary.GetVoxelType(type), VoxelLibrary.GetPrimitive(type), true);
+                            if (v != null)
+                            {
+                                v.Chunk = this;
+                                v.GridPosition = v.Position - Origin;
+                            }
+                            VoxelGrid[x][y][z] = v;
+                        }
+
+                        Water[x][y][z].WaterLevel = chunkFile.Liquid[x, y, z];
+                        Water[x][y][z].Type = (LiquidType)chunkFile.LiquidTypes[x, y, z];
+                    }
+                }
+            }
+
+
+            SunColors = ChunkGenerator.Allocate<byte>(m_sizeX, m_sizeY, m_sizeZ);
+            DynamicColors = ChunkGenerator.Allocate<byte>(m_sizeX, m_sizeY, m_sizeZ);
+            InitializeStatics();
+            PrimitiveMutex = new Mutex();
+            ShouldRecalculateLighting = true;
+            ShouldRebuildWater = true;
+            Springs = new ConcurrentDictionary<VoxelRef, byte>();
+            IsRebuilding = false;
+            InitializeWater();
+            LightingCalculated = false;
+        }
+
         public VoxelChunk(ChunkManager manager, Vector3 origin, int tileSize, Point3 id, int sizeX, int sizeY, int sizeZ)
         {
             FirstWaterIter = true;

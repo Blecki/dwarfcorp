@@ -45,10 +45,10 @@ namespace DwarfCorp
         {
             CycleTimers = new Dictionary<OrderCylce, Timer>();
             CurrentCycle = OrderCylce.WaitingForMotherland;
-            CycleTimers[OrderCylce.BalloonAtColony] = new Timer(10, true);
-            CycleTimers[OrderCylce.BalloonAtMotherland] = new Timer(10, true);
-            CycleTimers[OrderCylce.WaitingForMotherland] = new Timer(10, true);
-            CycleTimers[OrderCylce.WaitingForColony] = new Timer(10, true);
+            CycleTimers[OrderCylce.BalloonAtColony] = new Timer(60, true);
+            CycleTimers[OrderCylce.BalloonAtMotherland] = new Timer(60, true);
+            CycleTimers[OrderCylce.WaitingForMotherland] = new Timer(60, true);
+            CycleTimers[OrderCylce.WaitingForColony] = new Timer(60, true);
             OnCycleChanged += new CycleChanged(GameCycle_OnCycleChanged);
         }
 

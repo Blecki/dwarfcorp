@@ -103,16 +103,7 @@ namespace DwarfCorp
         public static List<Vector2> Volcanoes { get; set; }
 
         public static MapData[,] Map { get; set; }
-
-        /*
-        public static float [,] erosionMap = null;
-        public static float[,] weatheringMap = null;
-        public static float[,] voronoiMap = null;
-        public static float[,] heightMap = null;
-        
-        public static float[,] temperatureMap = null;
-        public static float[,] rainfallMap = null;
-         */
+        public static string Name { get; set; }
 
         public static ColorGradient JetGradient = null;
 
@@ -197,14 +188,6 @@ namespace DwarfCorp
         public static void CreateUniformLand(GraphicsDevice graphics)
         {
             Map = new MapData[1000, 1000];
-            /*
-            erosionMap = new float[1000, 1000];
-            weatheringMap = new float[1000, 1000];
-            voronoiMap = new float[1000, 1000];
-            temperatureMap = new float[1000, 1000];
-            rainfallMap = new float[1000, 1000];
-            heightMap = new float[1000, 1000];
-             */
 
             for (int x = 0; x < 1000; x++)
             {
@@ -225,7 +208,7 @@ namespace DwarfCorp
             Color[] worldData = new Color[1000 * 1000];
             WorldGeneratorState.worldMap = new Texture2D(graphics, 1000, 1000);
             Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap);
-          
+            Overworld.Name = "flat";
         }
 
 
@@ -669,10 +652,15 @@ namespace DwarfCorp
             colorIndex[RIVER] = new Color(80, 80, 255);
             colorIndex[VOLCANO] = new Color(255, 200, 0);
 
-            for (int x = 0; x < width; x++)
+            int stepX = map.GetLength(0) / width;
+            int stepY = map.GetLength(1) / height;
+
+            for (int tx = 0; tx < width; tx++)
             {
-                for (int y = 0; y < height; y++)
+                for (int ty = 0; ty < height; ty++)
                 {
+                    int x = tx * stepX;
+                    int y = ty * stepY;
                     int index = 0;
                     float h1 = map[x, y].GetValue(type);
                     if (h1 < 0.1f)
@@ -691,7 +679,7 @@ namespace DwarfCorp
                         }
                         else
                         {
-                            Biome biome = Map[x, y].Biome; // GetBiome(Map[x, y].Temperature, Map[x, y].Rainfall, h1);
+                            Biome biome = Map[x, y].Biome;
 
                             switch (biome)
                             {
@@ -762,7 +750,7 @@ namespace DwarfCorp
                     {
                         Color ci = colorIndex[index];
                         Color toDraw = new Color((float)(ci.R) * (h1 + 0.5f) / 255.0f, (float)(ci.G * (h1 + 0.5f)) / 255.0f, (float)(ci.B * (h1 + 0.5f)) / 255.0f);
-                        worldData[y * width + x] = toDraw;
+                        worldData[ty * width + tx] = toDraw;
                     }
 
                 }

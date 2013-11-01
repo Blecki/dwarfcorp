@@ -55,6 +55,7 @@ namespace DwarfCorp
         public static string ProgressLeft = "ProgressLeft";
         public static string ProgressFilled = "ProgressFilled";
         public static string ProgressEmpty = "ProgressEmpty";
+        public static string ProgressCap = "ProgressCap";
         public static string ProgressRight = "ProgressRight";
 
         public GUISkin(Texture2D texture, int tileWidth, int tileHeight)
@@ -124,9 +125,10 @@ namespace DwarfCorp
             Frames[GroupLowerRight] = new Point(2, 8);
 
             Frames[ProgressLeft]   = new Point(3, 6);
-            Frames[ProgressFilled] = new Point(4, 6);
+            Frames[ProgressFilled] = new Point(7, 6);
+            Frames[ProgressCap] = new Point(6, 6);
             Frames[ProgressEmpty]  = new Point(5, 6);
-            Frames[ProgressRight]  = new Point(6, 6);
+            Frames[ProgressRight]  = new Point(4, 6);
 
 
         }
@@ -252,13 +254,37 @@ namespace DwarfCorp
         public void RenderProgressBar(Rectangle rectBounds, float progress, SpriteBatch spriteBatch)
         {
             float n = (float)Math.Max(Math.Min(progress, 1.0), 0.0);
-            Rectangle rect = new Rectangle(rectBounds.X + TileWidth, rectBounds.Y, rectBounds.Width - TileWidth * 2, rectBounds.Height);
-            Rectangle fillRect = new Rectangle(rect.X, rect.Y, (int)(rect.Width * n), rect.Height);
-            Rectangle notFill = new Rectangle(rect.X + (int)(rect.Width * n), rect.Y, (int)(rect.Width * (1 - n)), rect.Height);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y, TileWidth, rect.Height), GetSourceRect(ProgressLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height), GetSourceRect(ProgressRight), Color.White);
-            spriteBatch.Draw(Texture, fillRect, GetSourceRect(ProgressFilled), Color.White);
-            spriteBatch.Draw(Texture, notFill, GetSourceRect(ProgressEmpty), Color.White);
+
+            if (n > 0)
+            {
+                Rectangle drawFillRect = new Rectangle(rectBounds.X + TileWidth / 2 - 8, rectBounds.Y, (int)((rectBounds.Width - TileWidth / 2 - 4) * n) - 8, rectBounds.Height);
+                Rectangle filledRect = GetSourceRect(ProgressFilled);
+                filledRect.Width = 1;
+                spriteBatch.Draw(Texture, drawFillRect, filledRect, Color.White);
+
+                Rectangle progressRect = GetSourceRect(ProgressCap);
+                progressRect.Width = 8;
+
+                Rectangle capRect = new Rectangle((int)((rectBounds.Width - TileWidth / 2 - 4) * n) + rectBounds.X , rectBounds.Y, 8, rectBounds.Height);
+                spriteBatch.Draw(Texture, capRect, progressRect, Color.White);
+            }
+
+            spriteBatch.Draw(Texture, new Rectangle(rectBounds.X, rectBounds.Y, TileWidth, rectBounds.Height), GetSourceRect(ProgressLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rectBounds.X + rectBounds.Width - TileWidth, rectBounds.Y, TileWidth, rectBounds.Height), GetSourceRect(ProgressRight), Color.White);
+
+            int steps = (rectBounds.Width - TileWidth) / TileWidth;
+
+            for (int i = 0; i < steps; i++)
+            {
+                spriteBatch.Draw(Texture, new Rectangle(rectBounds.X + TileWidth/2 +  i * TileWidth, rectBounds.Y, TileWidth, rectBounds.Height), GetSourceRect(ProgressEmpty), Color.White);
+            }
+
+            int remainder = (rectBounds.Width - TileWidth) - steps * TileWidth;
+
+            if (remainder > 0)
+            {
+                spriteBatch.Draw(Texture, new Rectangle(rectBounds.X + TileWidth / 2 + steps * TileWidth, rectBounds.Y, remainder, rectBounds.Height), GetSourceRect(ProgressEmpty), Color.White);
+            }
         }
 
         public void RenderGroup(Rectangle rectbounds, SpriteBatch spriteBatch)
@@ -274,11 +300,18 @@ namespace DwarfCorp
             spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height), GetSourceRect(GroupRight), Color.White);
         }
 
-        public void RenderSliderVertical(SpriteFont font, Rectangle boundingRect, float value, float minvalue, float maxValue, Slider.SliderMode mode, bool drawLabel, SpriteBatch spriteBatch)
+        public void RenderSliderVertical(SpriteFont font, Rectangle boundingRect, float value, float minvalue, float maxValue, Slider.SliderMode mode, bool drawLabel, bool invert, SpriteBatch spriteBatch)
         {
+
+            if (invert)
+            {
+                value = maxValue - value;
+            }
+
+
             int fieldSize = Math.Max(Math.Min((int)(0.2f * boundingRect.Width), 150), 64);
             Rectangle rect = new Rectangle(boundingRect.X + boundingRect.Width / 2 - TileWidth / 2, boundingRect.Y  , boundingRect.Width, boundingRect.Height - TileHeight);
-            Rectangle fieldRect = new Rectangle(boundingRect.Right - fieldSize, boundingRect.Y + boundingRect.Height / 2 - TileHeight / 2, fieldSize, TileHeight);
+            Rectangle fieldRect = new Rectangle(boundingRect.Right - fieldSize, boundingRect.Y + boundingRect.Height - TileHeight / 2, fieldSize, TileHeight);
             
             int maxY = rect.Y + rect.Height;
             int diffY = rect.Height % TileHeight;
@@ -294,13 +327,20 @@ namespace DwarfCorp
 
             spriteBatch.Draw(Texture, new Rectangle(rect.X, maxY - diffY, TileWidth, diffY), GetSourceRect(TrackVert), Color.White);
 
-            int sliderY = (int)((value - minvalue) / (maxValue - minvalue) * rect.Height + rect.Y);
+            float d = (value - minvalue) / (maxValue - minvalue);
+
+            int sliderY = (int)((d) * rect.Height + rect.Y);
 
             spriteBatch.Draw(Texture, new Rectangle(rect.X, sliderY - TileHeight / 2, TileWidth, TileHeight), GetSourceRect(SliderVertical), Color.White);
 
             if (drawLabel)
             {
                 RenderField(fieldRect, spriteBatch);
+
+                if (invert)
+                {
+                    value = -(value - maxValue);
+                }
 
                 float v = 0.0f;
                 if (mode == Slider.SliderMode.Float)
@@ -321,8 +361,13 @@ namespace DwarfCorp
 
         }
 
-        public void RenderSliderHorizontal(SpriteFont font, Rectangle boundingRect, float value, float minvalue, float maxValue, Slider.SliderMode mode, bool drawLabel,  SpriteBatch spriteBatch)
+        public void RenderSliderHorizontal(SpriteFont font, Rectangle boundingRect, float value, float minvalue, float maxValue, Slider.SliderMode mode, bool drawLabel, bool invertValue,  SpriteBatch spriteBatch)
         {
+            if (invertValue)
+            {
+                value = maxValue - value;
+            }
+
             int fieldSize = Math.Max(Math.Min((int)(0.2f * boundingRect.Width), 150), 64);
             Rectangle rect = new Rectangle(boundingRect.X, boundingRect.Y + boundingRect.Height / 2 - TileHeight/2, boundingRect.Width - fieldSize - 5, boundingRect.Height / 2);
             Rectangle fieldRect = new Rectangle(boundingRect.Right - fieldSize, boundingRect.Y + boundingRect.Height / 2 - TileHeight /2, fieldSize, boundingRect.Height /2);
@@ -349,6 +394,10 @@ namespace DwarfCorp
                 RenderField(fieldRect, spriteBatch);
 
                 float v = 0.0f;
+                if (invertValue)
+                {
+                    value = value - maxValue;
+                }
                 if (mode == Slider.SliderMode.Float)
                 {
                     v = (float)Math.Round(value, 2);

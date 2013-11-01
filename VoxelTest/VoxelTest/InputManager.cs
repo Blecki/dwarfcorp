@@ -255,18 +255,17 @@ namespace DwarfCorp
                     if (KeyStates[key] == KeyState.Up)
                     {
                         KeyPressedCallback(key);
+                        KeyStates[key] = KeyState.Down;
                     }
 
-                    KeyStates[key] = KeyState.Down;
                 }
                 else if(keyState.IsKeyUp(key))
                 {
                     if (KeyStates[key] == KeyState.Down)
                     {
                         KeyReleasedCallback(key);
+                        KeyStates[key] = KeyState.Up;
                     }
-
-                    KeyStates[key] = KeyState.Up;
                 }
             }
         }

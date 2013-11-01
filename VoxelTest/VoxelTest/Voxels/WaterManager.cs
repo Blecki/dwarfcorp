@@ -13,9 +13,9 @@ namespace DwarfCorp
 {
     public enum LiquidType
     {
+        None,
         Water,
-        Lava,
-        None
+        Lava
     }
 
     public class WaterCell

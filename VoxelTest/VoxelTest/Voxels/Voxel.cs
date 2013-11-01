@@ -10,7 +10,7 @@ namespace DwarfCorp
 {
     public class VoxelType
     {
-        public uint ID { get; set; }
+        public short ID { get; set; }
         public string name { get; set; }
         public bool releasesResource { get; set; }
         public string resourceToRelease { get; set; }
@@ -23,7 +23,8 @@ namespace DwarfCorp
         public string explosionSound { get; set; }
         public bool specialRampTextures { get; set; }
         public Dictionary<RampType, BoxPrimitive> RampPrimitives { get; set; }
-        private static uint maxID = 0;
+        private static short maxID = 0;
+        public static List<VoxelType> TypeList = new List<VoxelType>();
 
         public  VoxelType()
         {
@@ -41,6 +42,7 @@ namespace DwarfCorp
             explosionSound = "gravel";
             specialRampTextures = false;
             RampPrimitives = new Dictionary<RampType, BoxPrimitive>();
+            TypeList.Add(this);
         }
     }
 
@@ -301,7 +303,7 @@ namespace DwarfCorp
 
         public void Kill()
         {
-            if (m_dead)
+            if (m_dead || Chunk == null)
             {
                 return;
             }
@@ -388,7 +390,7 @@ namespace DwarfCorp
             IsVisible = isVisible;
             InViewFrustrum = false;
             DrawWireFrame = false;
-            Health = 100.0f;
+            Health = voxelType.startingHealth;
 
             //AmbientColors = new byte[8];
             //SunColors = new byte[8];

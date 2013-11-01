@@ -6,7 +6,7 @@ namespace DwarfCorp
 #if WINDOWS || XBOX
     static class Program
     {
-        public static string Version = "1 . 0 . 26";
+        public static string Version = "1 . 0 . 27";
         /// <summary>
         /// The main entry point for the application.
         /// </summary>

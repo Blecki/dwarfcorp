@@ -37,6 +37,8 @@ namespace DwarfCorp
         public static ComponentManager componentManager = null;
         public static GameMaster master = null;
 
+        public string ExistingFile = "";
+
         SillyGUI GUI = null;
 
         Texture2D pixel = null;
@@ -49,9 +51,8 @@ namespace DwarfCorp
         Effect shader;
         WaterRenderer waterRenderer;
 
-        SkyRenderer Sky;
+        public static SkyRenderer Sky;
 
-        Language dwarven = null;
 
         public static ThreadSafeRandom random = new ThreadSafeRandom();
 
@@ -88,6 +89,8 @@ namespace DwarfCorp
         public Button CurrentLevelUpButton { get; set; }
         public Button CurrentLevelDownButton { get; set; }
 
+        public Slider LevelSlider { get; set; }
+
         public PlayState(DwarfGame game, GameStateManager stateManager) :
             base(game, "PlayState", stateManager)
         {
@@ -99,7 +102,6 @@ namespace DwarfCorp
             RenderUnderneath = true;
             WorldOrigin = new Vector2(WorldWidth / 2, WorldHeight / 2);
             PreSimulateTimer = new Timer(3, false);
-            
         }
 
         public override void OnEnter()
@@ -162,27 +164,190 @@ namespace DwarfCorp
             Game.IsMouseVisible = false;
         }
 
-        public void Load()
+        public void CreateInitialDwarves(int numDwarves, VoxelChunk c)
         {
+            Vector3 g = c.WorldToGrid(camera.Position);
+            float h = c.GetFilledVoxelGridHeightAt((int)g.X, ChunkHeight - 1, (int)g.Z);
 
 
+            camera.UpdateBasisVectors();
+            camera.UpdateProjectionMatrix();
+            camera.UpdateViewMatrix();
+
+            for (int i = 0; i < numDwarves; i++)
+            {
+                Vector3 dorfPos = new Vector3(camera.Position.X + (float)random.NextDouble(), h + 10, camera.Position.Z + (float)random.NextDouble());
+                PhysicsComponent creat = (PhysicsComponent)EntityFactory.GenerateDwarf(dorfPos,
+                                        componentManager, Content, GraphicsDevice, chunkManager, camera, master, planService, "Dwarf");
+
+                creat.Velocity = new Vector3(1, 0, 0);
+            }
+
+            camera.Target = new Vector3(camera.Position.X, h + 10, camera.Position.Z + 10);
+            camera.Phi = -(float)Math.PI * 0.3f;
+
+
+
+        }
+
+        public void InitializeStaticData()
+        {
             primitiveLibrary = new PrimitiveLibrary(GraphicsDevice, Content);
             InstanceManager = new InstanceManager();
+
             EntityFactory.instanceManager = InstanceManager;
             InstanceManager.CreateStatics(Content);
 
-            Alliance allies = new Alliance();
-            LoadingMessage = "Initializing Data...";
             Color[] white = new Color[1];
             white[0] = Color.White;
             pixel = new Texture2D(GraphicsDevice, 1, 1);
             pixel.SetData<Color>(white);
 
-            Tilesheet = TextureManager.GetTexture("TileSet"); 
+            Tilesheet = TextureManager.GetTexture("TileSet");
             aspectRatio = GraphicsDevice.Viewport.AspectRatio;
             DefaultShader = Content.Load<Effect>("Hargraves");
             shader = Content.Load<Effect>("Hargraves");
 
+            voxelLibrary = new VoxelLibrary();
+            VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice, Tilesheet);
+
+            LocatableComponent.m_octree = new Octree(new BoundingBox(new Vector3(-1000, -1000, -1000), new Vector3(1000, 1000, 1000)), 10, 50, 2);
+
+            bloom = new BloomPostprocess.BloomComponent(Game);
+            bloom.Settings = BloomPostprocess.BloomSettings.PresetSettings[5];
+            bloom.Initialize();
+
+
+            SoundManager.Content = Content;
+            planService.Restart();
+
+            componentManager = new ComponentManager();
+            componentManager.RootComponent = new LocatableComponent(componentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero, false);
+
+            Alliance.Relationships = Alliance.InitializeRelationships();
+        }
+
+        public void GenerateInitialChunks()
+        {
+
+            GameFile gameFile = null;
+            OverworldFile overWorldFile = null;
+
+            bool fileExists = ExistingFile != "" && ExistingFile != null;
+
+            if (fileExists)
+            {
+                LoadingMessage = "Loading " + ExistingFile;
+                gameFile = new GameFile(ExistingFile, true);
+                Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
+                PlayState.WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
+                PlayState.WorldScale = gameFile.Data.Metadata.WorldScale;
+                ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
+                ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
+
+                if (gameFile.Data.Metadata.OverworldFile != null && gameFile.Data.Metadata.OverworldFile != "flat")
+                {
+                    LoadingMessage = "Loading world " + gameFile.Data.Metadata.OverworldFile;
+                    overWorldFile = new OverworldFile(DwarfGame.GetGameDirectory() + System.IO.Path.DirectorySeparatorChar + "Worlds" + System.IO.Path.DirectorySeparatorChar + gameFile.Data.Metadata.OverworldFile + "." + OverworldFile.CompressedExtension, true);
+                    Overworld.Map = overWorldFile.Data.CreateMap();
+                    Overworld.Name = overWorldFile.Data.Name;
+                    PlayState.WorldWidth = Overworld.Map.GetLength(1);
+                    PlayState.WorldHeight = Overworld.Map.GetLength(0);
+                }
+                else
+                {
+                    LoadingMessage = "Generating flat world..";
+                    Overworld.CreateUniformLand(Game.GraphicsDevice);
+                }
+
+                LoadingMessage = "Creating Entitites...";
+                foreach (EntityFile file in gameFile.Data.EntityData)
+                {
+                    file.CreateComponent(componentManager, Game.GraphicsDevice, Game.Content, chunkManager, master, camera);
+                }
+
+            }
+
+            chunkGenerator = new ChunkGenerator(voxelLibrary, PlayState.Seed, 0.02f, ChunkHeight / 2.0f);
+
+            Vector3 GlobalOffset = new Vector3(PlayState.WorldOrigin.X, 0, PlayState.WorldOrigin.Y) * PlayState.WorldScale;
+
+            if(fileExists)
+            {
+                GlobalOffset /= PlayState.WorldScale;
+            }
+
+            camera = new OrbitCamera(this, 0, 0, 10f, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + GlobalOffset, new Vector3(0, 50, 0) + GlobalOffset, MathHelper.PiOver4, aspectRatio, 0.1f, GameSettings.Default.VertexCullDistance);
+
+
+            if(fileExists)
+            {
+                camera.Position = gameFile.Data.Metadata.CameraPosition;
+                camera.Phi = gameFile.Data.Metadata.CameraRotation.X;
+                camera.Theta = gameFile.Data.Metadata.CameraRotation.Y;
+                camera.Radius = 0.01f;
+            }
+
+            SimpleDrawing.m_camera = camera;
+
+            chunkManager = new ChunkManager(Content, (uint)ChunkWidth, (uint)ChunkHeight, (uint)ChunkWidth, camera, GraphicsDevice, Tilesheet,
+                                            Content.Load<Texture2D>("illum2"),
+                                            Content.Load<Texture2D>("sungradient"),
+                                            Content.Load<Texture2D>("ambientgradient"),
+                                            Content.Load<Texture2D>("torchgradient"),
+                                            chunkGenerator);
+            GlobalOffset = chunkManager.RoundToChunkCoords(GlobalOffset);
+            GlobalOffset.X *= ChunkWidth;
+            GlobalOffset.Y *= ChunkHeight;
+            GlobalOffset.Z *= ChunkWidth;
+
+            if(!fileExists)
+            {
+                WorldOrigin = new Vector2(GlobalOffset.X, GlobalOffset.Z);
+                camera.Position = new Vector3(0, 10, 0) + GlobalOffset;
+                camera.Target = new Vector3(0, 10, 1) + GlobalOffset;
+                camera.Radius = 0.01f;
+                camera.Phi = -1.57f;
+            }
+
+            chunkManager.Components = componentManager;
+
+
+            if (gameFile == null)
+            {
+                chunkManager.PotentialChunks.Add(new BoundingBox(new Vector3(0, 0, 0)
+                                                + GlobalOffset,
+                                                new Vector3(ChunkWidth, ChunkHeight, ChunkWidth)
+                                                + GlobalOffset));
+                chunkManager.GenerateInitialChunks(camera, ref LoadingMessage);
+            }
+            else
+            {
+                LoadingMessage = "Loading Chunks from Game File";
+                chunkManager.LoadFromFile(gameFile, ref LoadingMessage);
+            }
+
+            if (!fileExists)
+            {
+                camera.Radius = 0.01f;
+                camera.Phi = -1.57f / 4.0f;
+                camera.Theta = 0.0f;
+            }
+            else
+            {
+                camera.Position = gameFile.Data.Metadata.CameraPosition;
+                camera.Phi = gameFile.Data.Metadata.CameraRotation.X;
+                camera.Theta = gameFile.Data.Metadata.CameraRotation.Y;
+                camera.Radius = 0.01f;
+            }
+
+            chunkManager.RebuildList = new System.Collections.Concurrent.ConcurrentQueue<VoxelChunk>();
+            chunkManager.StartThreads();
+
+        }
+
+        public void CreateLiquids()
+        {
             waterRenderer = new WaterRenderer(GraphicsDevice);
 
             LiquidAsset WaterAsset = new LiquidAsset();
@@ -200,7 +365,7 @@ namespace DwarfCorp
             WaterAsset.RippleColor = new Vector4(0.1f, 0.1f, 0.1f, 0.0f);
             waterRenderer.AddLiquidAsset(WaterAsset);
 
-            
+
             LiquidAsset LavaAsset = new LiquidAsset();
 
             LavaAsset.Type = LiquidType.Lava;
@@ -216,149 +381,33 @@ namespace DwarfCorp
             LavaAsset.PuddleTexture = Content.Load<Texture2D>("puddle");
             LavaAsset.RippleColor = new Vector4(0.5f, 0.4f, 0.04f, 0.0f);
             waterRenderer.AddLiquidAsset(LavaAsset);
-             
+        }
 
 
+        public void CreateSky()
+        {
+            Sky = new SkyRenderer(
+                      Content.Load<Texture2D>("moon"),
+                      Content.Load<Texture2D>("sun"),
+                      Content.Load<TextureCube>("day_sky"),
+                      Content.Load<TextureCube>("night_sky"),
+                      Content.Load<Texture2D>("skygradient"),
+                      Content.Load<Model>("sphereLowPoly"),
+                      Content.Load<Effect>("SkySphere"));
+        }
 
-            voxelLibrary = new VoxelLibrary();
-            VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice, Tilesheet);
-            chunkGenerator = new ChunkGenerator(voxelLibrary, PlayState.Seed, 0.02f, ChunkHeight / 2.0f);
-           
-            Vector3 GlobalOffset = new Vector3(PlayState.WorldOrigin.X, 0, PlayState.WorldOrigin.Y) * PlayState.WorldScale;
-            camera = new OrbitCamera(this, 0, 0, 10f, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + GlobalOffset, new Vector3(0, 50, 0) + GlobalOffset, MathHelper.PiOver4, aspectRatio, 0.1f, GameSettings.Default.VertexCullDistance);
-            
-
-            SimpleDrawing.m_camera = camera;
-
-            LoadingMessage = "Generating Initial Chunks...";
-
-
-            LocatableComponent.m_octree = new Octree(new BoundingBox(new Vector3(-1000, -1000, -1000), new Vector3(1000, 1000, 1000)), 10, 50, 2);
-            chunkManager = new ChunkManager(Content, (uint)ChunkWidth, (uint)ChunkHeight, (uint)ChunkWidth, camera, GraphicsDevice, Tilesheet,
-                                            Content.Load<Texture2D>("illum2"),
-                                            Content.Load<Texture2D>("sungradient"),
-                                            Content.Load<Texture2D>("ambientgradient"),
-                                            Content.Load<Texture2D>("torchgradient"),
-                                            chunkGenerator);
-            GlobalOffset = chunkManager.RoundToChunkCoords(GlobalOffset);
-            GlobalOffset.X *= ChunkWidth;
-            GlobalOffset.Y *= ChunkHeight;
-            GlobalOffset.Z *= ChunkWidth;
-
-            WorldOrigin = new Vector2(GlobalOffset.X, GlobalOffset.Z);
-           
-
-            chunkManager.PotentialChunks.Add(new BoundingBox(new Vector3(0, 0, 0)
-                                                            + GlobalOffset,
-                                                            new Vector3(ChunkWidth, ChunkHeight, ChunkWidth) 
-                                                            + GlobalOffset));
-
-
-            componentManager = new ComponentManager();
-            componentManager.RootComponent = new LocatableComponent(componentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero, false);
-
+        public void CreateGUI()
+        {
+            LoadingMessage = "Creating GUI";
             Game.IsMouseVisible = true;
-
             GUI = new SillyGUI(Game, Game.Content.Load<SpriteFont>("Default"), Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
-
             Texture2D iconsImage = TextureManager.GetTexture("IconSheet");
-
             master = new GameMaster(Game, componentManager, chunkManager, camera, GraphicsDevice, voxelLibrary, GUI);
-
             MasterControls tools = new MasterControls(GUI, GUI.RootComponent, master, iconsImage, GraphicsDevice, Game.Content.Load<SpriteFont>("Default"));
-
             master.ToolBar = tools;
             master.ToolBar.Master = master;
-
-            chunkManager.Components = componentManager;
-
-            camera.Position = new Vector3(0, 10, 0) + GlobalOffset;
-            camera.Target = new Vector3(0, 10, 1) + GlobalOffset;
-            camera.Radius = 0.01f;
-            camera.Phi = -1.57f;
-
-
-            chunkManager.GenerateInitialChunks(camera, ref LoadingMessage);
-            chunkManager.RebuildList = new System.Collections.Concurrent.ConcurrentQueue<VoxelChunk>();
-
-            chunkManager.StartThreads();
-
-            LoadingMessage = "Creating Environment...";
-            camera.Radius = 0.01f;
-            camera.Phi = -1.57f / 4.0f;
-            camera.Theta = 0.0f; //-3.14159f;
-
-            bloom = new BloomPostprocess.BloomComponent(Game);
-
-            bloom.Settings = BloomPostprocess.BloomSettings.PresetSettings[5];
-            bloom.Initialize();
-
-            Sky = new SkyRenderer(
-                                  Content.Load<Texture2D>("moon"),
-                                  Content.Load<Texture2D>("sun"),
-                                  Content.Load<TextureCube>("day_sky"),
-                                  Content.Load<TextureCube>("night_sky"),
-                                  Content.Load<Texture2D>("skygradient"),
-                                  Content.Load<Model>("sphereLowPoly"),
-                                  Content.Load<Effect>("SkySphere"));
-
-            LoadingMessage = "Creating Languages...";
-            List<SoundEffect> syllables = new List<SoundEffect>();
-            dwarven = new Language(syllables);
-
-            LoadingMessage = "Particles...";
-
-            CreateParticles();
-
-
-            LoadingMessage = "Dwarves.";
-            VoxelChunk c = chunkManager.GetVoxelChunkAtWorldLocation(camera.Position);
-
-            GenerateInitialBalloonPort(master.RoomDesignator, chunkManager, camera.Position.X, camera.Position.Z, 3);
-
-            planService.Restart();
-            if (c != null)
-            {
-                Vector3 g = c.WorldToGrid(camera.Position);
-                float h = c.GetFilledVoxelGridHeightAt((int)g.X, ChunkHeight - 1, (int)g.Z);
-
-     
-                camera.UpdateBasisVectors();
-                camera.UpdateProjectionMatrix();
-                camera.UpdateViewMatrix();
-
-                for (int i = 0; i < 5; i++)
-                {
-                    Vector3 dorfPos = new Vector3(camera.Position.X + (float)random.NextDouble(), h + 10, camera.Position.Z + (float)random.NextDouble());
-                    PhysicsComponent creat = (PhysicsComponent)EntityFactory.GenerateDwarf(dorfPos,
-                                            componentManager, Content, GraphicsDevice, chunkManager, camera, master, planService, "Dwarf");
-
-                    creat.Velocity = new Vector3(1, 0, 0);
-                }
-
-                camera.Target = new Vector3(camera.Position.X, h + 10, camera.Position.Z + 10);
-                camera.Phi = -(float)Math.PI * 0.3f;
-
-
-                GameMaster evilMaster = new GameMaster(Game, componentManager, chunkManager, camera, Game.GraphicsDevice, voxelLibrary, GUI);
-
-                
-                for (int i = 0; i < 0; i++)
-                {
-                    Vector3 dorfPos = new Vector3(camera.Position.X + (float)random.NextDouble() * 3 - 1.5f, h, camera.Position.Z + (float)random.NextDouble() * 3 - 1.5f);
-                    PhysicsComponent comp = (PhysicsComponent)EntityFactory.GenerateGoblin(dorfPos,
-                                            componentManager, Content, GraphicsDevice, chunkManager, camera, evilMaster, planService, "Goblin");
-
-                    comp.Velocity = new Vector3(1, 0, 0);
-                    comp.DrawBoundingBox = true;
-                }
-                 
-
-            }
-
             master.Debugger = new AIDebugger(GUI, master);
 
-            EntityFactory.CreateBalloon(camera.Position + new Vector3(0, 1000, 0), camera.Position + new Vector3(0, 20, 0), componentManager, Content, GraphicsDevice, new ShipmentOrder(0, null), master);
 
             SillyGUIComponent companyInfoComponent = new SillyGUIComponent(GUI, GUI.RootComponent);
             companyInfoComponent.LocalBounds = new Rectangle(10, 10, 400, 80);
@@ -388,21 +437,78 @@ namespace DwarfCorp
 
             CurrentLevelDownButton = new Button(GUI, infoLayout, "down", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
             infoLayout.SetComponentPosition(CurrentLevelDownButton, 1, 1, 1, 1);
-            CurrentLevelDownButton.OnClicked += new ClickedDelegate(CurrentLevelDownButton_OnClicked);      
+            CurrentLevelDownButton.OnClicked += new ClickedDelegate(CurrentLevelDownButton_OnClicked);
 
             OrderStatusLabel = new Label(GUI, GUI.RootComponent, "Ballon : " + GameCycle.GetStatusString(GameCycle.CurrentCycle), GUI.SmallFont);
             OrderStatusLabel.TextColor = Color.White;
             OrderStatusLabel.StrokeColor = new Color(0, 0, 0, 100);
             OrderStatusLabel.LocalBounds = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 300, GraphicsDevice.Viewport.Height - 60, 300, 60);
 
-            SoundManager.Content = Content;
-            IsInitialized = true;
+            componentManager.HandleAddRemoves();
+            componentManager.RootComponent.UpdateTransformsRecursive();
+
+            LevelSlider = new Slider(GUI, GUI.RootComponent, "", chunkManager.MaxViewingLevel, 0, chunkManager.ChunkSizeY, Slider.SliderMode.Integer);
+            LevelSlider.Orient = Slider.Orientation.Vertical;
+            LevelSlider.LocalBounds = new Rectangle(28, 130, 40, GraphicsDevice.Viewport.Height - 300);
+            LevelSlider.OnClicked += new ClickedDelegate(LevelSlider_OnClicked);
+            LevelSlider.DrawLabel = true;
+            LevelSlider.InvertValue = true;
 
             InputManager.KeyReleasedCallback += new InputManager.OnKeyReleased(InputManager_KeyReleasedCallback);
+        }
+
+        public void CreateInitialEmbarkment()
+        {
+            VoxelChunk c = chunkManager.GetVoxelChunkAtWorldLocation(camera.Position);
+            GenerateInitialBalloonPort(master.RoomDesignator, chunkManager, camera.Position.X, camera.Position.Z, 3);
+            CreateInitialDwarves(5, c);
+            EntityFactory.CreateBalloon(camera.Position + new Vector3(0, 1000, 0), camera.Position + new Vector3(0, 20, 0), componentManager, Content, GraphicsDevice, new ShipmentOrder(0, null), master);
+
+        }
+
+
+        public void Load()
+        {
+            
+            LoadingMessage = "Initializing Static Data...";
+            InitializeStaticData();
+
+
+            LoadingMessage = "Creating Particles...";
+            CreateParticles();
+
+            LoadingMessage = "Creating Sky...";
+            CreateSky();
+
+            LoadingMessage = "Creating Liquids..";
+            CreateLiquids();
+
+            LoadingMessage = "Generating Initial Terrain Chunks...";
+            GenerateInitialChunks();
+
+            LoadingMessage = "Creating GUI";
+            CreateGUI();
+
+            if (ExistingFile == "" || ExistingFile == null)
+            {
+                LoadingMessage = "Embarking.";
+                CreateInitialEmbarkment();
+            }
+            
+            //GameFile gameFile = new GameFile(this, Overworld.Name);
+            //gameFile.WriteFile(DwarfGame.GetGameDirectory() + System.IO.Path.DirectorySeparatorChar + "Saves" + System.IO.Path.DirectorySeparatorChar + "save0", true);
+
+            IsInitialized = true;
+
             LoadingMessage = "Complete.";
 
-           
         }
+
+        void LevelSlider_OnClicked()
+        {
+            chunkManager.SetMaxViewingLevel((int)LevelSlider.SliderValue, ChunkManager.SliceMode.Y);
+        }
+
 
         void CurrentLevelDownButton_OnClicked()
         {
@@ -425,6 +531,12 @@ namespace DwarfCorp
                 {
                     Vector3 worldPos = new Vector3(pos.X + dx, pos.Y, pos.Z + dz);
                     VoxelChunk chunk = chunkManager.GetVoxelChunkAtWorldLocation(worldPos);
+
+                    if (chunk == null)
+                    {
+                        continue;
+                    }
+
                     Vector3 gridPos = chunk.WorldToGrid(worldPos);
                     int h = chunk.GetFilledHeightOrWaterAt((int)gridPos.X + dx, (int)gridPos.Y, (int)gridPos.Z + dz);
                  
@@ -746,6 +858,11 @@ namespace DwarfCorp
                 OrderStatusLabel.OnClicked += new ClickedDelegate(OrderStatusLabel_OnClicked);
 
                 MoneyLabel.Text = master.Economy.CurrentMoney.ToString("C");
+            }
+
+            if (!LevelSlider.IsMouseOver)
+            {
+                LevelSlider.SliderValue = chunkManager.MaxViewingLevel;
             }
 
             base.Update(gameTime);

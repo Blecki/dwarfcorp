@@ -463,7 +463,7 @@ namespace DwarfCorp
 
             Point3 point = new Point3(startChunk.WorldToGrid(rayStart));
 
-            for (int y = point.Y; y > 0; y--)
+            for (int y = point.Y; y >= 0; y--)
             {
                 Voxel vox = startChunk.VoxelGrid[point.X][y][point.Z];
                 if (vox != null && (vox.IsVisible || nullCheck))
@@ -911,6 +911,106 @@ namespace DwarfCorp
             ChunkOctree.Root.Draw();
         }
 
+        public void LoadFromFile(GameFile gameFile, ref string message)
+        {
+            List<ChunkFile> chunkFiles = gameFile.Data.ChunkData;
+
+            for (int i = 0; i < gameFile.Data.ChunkData.Count; i++)
+            {
+                message = "Loading: " + (i + 1) + "/" + gameFile.Data.ChunkData.Count;
+                VoxelChunk chunk = chunkFiles[i].ToChunk(this);
+                chunk.ShouldRebuild = true;
+                chunk.ShouldRecalculateLighting = true;
+                chunk.IsVisible = true;
+                chunk.ResetSunlight(0);
+                AddChunk(chunk);
+            }
+
+            UpdateRebuildList();
+            CreateGraphics(ref message);
+        }
+
+        public void CreateGraphics(ref string message)
+        {
+            message = "Creating Graphics";
+            List<VoxelChunk> ToRebuild = new List<VoxelChunk>();
+            while (RebuildList.Count > 0)
+            {
+                VoxelChunk chunk = null;
+                if (!RebuildList.TryDequeue(out chunk))
+                {
+                    break;
+                }
+
+                if (chunk == null)
+                {
+                    continue;
+                }
+
+                ToRebuild.Add(chunk);
+            }
+
+            message = "Creating Graphics : Updating Max Viewing Level";
+            foreach (VoxelChunk chunk in ToRebuild)
+            {
+                chunk.UpdateMaxViewingLevel();
+            }
+
+            message = "Creating Graphics : Updating Ramps";
+            foreach (VoxelChunk chunk in ToRebuild)
+            {
+                if (GameSettings.Default.CalculateRamps)
+                {
+                    chunk.UpdateRamps();
+                }
+            }
+
+            message = "Creating Graphics : Calculating lighting ";
+            int j = 0;
+            foreach (VoxelChunk chunk in ToRebuild)
+            {
+                j++;
+                message = "Creating Graphics : Calculating lighting " + j + "/" + ToRebuild.Count;
+                if (chunk.ShouldRecalculateLighting)
+                {
+                    chunk.CalculateGlobalLight();
+                    chunk.ShouldRecalculateLighting = false;
+                }
+
+            }
+
+            j = 0;
+            foreach (VoxelChunk chunk in ToRebuild)
+            {
+                j++;
+                message = "Creating Graphics : Calculating vertex light " + j + "/" + ToRebuild.Count;
+                chunk.CalculateVertexLighting();
+            }
+
+            message = "Creating Graphics: Building Vertices";
+            j = 0;
+            foreach (VoxelChunk chunk in ToRebuild)
+            {
+                j++;
+                message = "Creating Graphics : Building Vertices " + j + "/" + ToRebuild.Count;
+
+                if (chunk.ShouldRebuild)
+                {
+                    chunk.Rebuild(Graphics);
+                    chunk.ShouldRebuild = false;
+                    chunk.RebuildPending = false;
+                    chunk.RebuildLiquidPending = false;
+
+                }
+            }
+
+            RecomputeNeighbors();
+
+
+
+            message = "Cleaning Up.";
+        }
+
         public void GenerateInitialChunks(OrbitCamera camera, ref string message)
         {
             float origBuildRadius = GenerateDistance;
@@ -956,6 +1056,7 @@ namespace DwarfCorp
 
 
                 UpdateRebuildList();
+                GenerateDistance = origBuildRadius;
 
             }
 
@@ -967,85 +1068,9 @@ namespace DwarfCorp
                 {
                     break;
                 }
-            } 
-
-            message = "Creating Graphics";
-            List<VoxelChunk> ToRebuild = new List<VoxelChunk>();
-            while (RebuildList.Count > 0)
-            {
-                VoxelChunk chunk = null;
-                if (!RebuildList.TryDequeue(out chunk))
-                {
-                    break;
-                }
-
-                if (chunk == null)
-                {
-                    continue;
-                }
-
-                ToRebuild.Add(chunk);
             }
 
-            message = "Creating Graphics : Updating Max Viewing Level";
-            foreach (VoxelChunk chunk in ToRebuild)
-            {
-                chunk.UpdateMaxViewingLevel();
-            }
-
-            message = "Creating Graphics : Updating Ramps";
-            foreach (VoxelChunk chunk in ToRebuild)
-            {
-                if (GameSettings.Default.CalculateRamps)
-                {
-                    chunk.UpdateRamps();
-                }
-            }
-
-            message = "Creating Graphics : Calculating lighting ";
-            int j = 0;
-            foreach (VoxelChunk chunk in ToRebuild)
-            {
-                j++;
-                message = "Creating Graphics : Calculating lighting " + j + "/" + ToRebuild.Count; 
-                if (chunk.ShouldRecalculateLighting)
-                {
-                    chunk.CalculateGlobalLight();
-                    chunk.ShouldRecalculateLighting = false;
-                }
-
-            }
-
-            j = 0;
-            foreach (VoxelChunk chunk in ToRebuild)
-            {
-                j++;
-                message = "Creating Graphics : Calculating vertex light " + j + "/" + ToRebuild.Count;
-                chunk.CalculateVertexLighting();
-            }
-
-            message = "Creating Graphics: Building Vertices";
-            j = 0;
-            foreach (VoxelChunk chunk in ToRebuild)
-            {
-                j++;
-                message = "Creating Graphics : Building Vertices " + j + "/" + ToRebuild.Count;
-
-                if (chunk.ShouldRebuild)
-                {
-                    chunk.Rebuild(Graphics);
-                    chunk.ShouldRebuild = false;
-                    chunk.RebuildPending = false;
-                    chunk.RebuildLiquidPending = false;
-                }
-            }
-
-            RecomputeNeighbors();
-
-            GenerateDistance = origBuildRadius;
-
-
-            message = "Cleaning Up.";
+            CreateGraphics(ref message);
             
 
         }
@@ -1437,6 +1462,32 @@ namespace DwarfCorp
             }
 
 
+        }
+
+        public bool SaveAllChunks(string directory, bool compress)
+        {
+            foreach (KeyValuePair<Point3, VoxelChunk> pair in ChunkMap)
+            {
+                ChunkFile chunkFile = new ChunkFile(pair.Value);
+                
+                string fileName = directory + System.IO.Path.DirectorySeparatorChar + pair.Key.X + "_" + pair.Key.Y + "_" + pair.Key.Z;
+
+                if(compress)
+                {
+                    fileName += ".zch";
+                }
+                else
+                {
+                    fileName += ".jch";
+                }
+
+                if (!chunkFile.WriteFile(fileName, compress))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
         
     }
