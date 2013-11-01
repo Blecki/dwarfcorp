@@ -202,10 +202,16 @@ namespace DwarfCorp
             StoneType.isBuildable = true;
             StoneType.particleType = "stone_particle";
 
+            VoxelType BedrockType = new VoxelType();
+            BedrockType.name = "Bedrock";
+            BedrockType.startingHealth = 10000;
+            BedrockType.isBuildable = false;
+
             VoxelType waterType = new VoxelType();
             waterType.name = "water";
             waterType.releasesResource = false;
             waterType.isBuildable = false;
+            waterType.startingHealth = 9999;
 
             VoxelType SandType = new VoxelType();
             SandType.name = "Sand";
@@ -276,6 +282,7 @@ namespace DwarfCorp
             RegisterType(manaType, manaCube);
             RegisterType(PlankType, PlankCube);
             RegisterType(ScaffoldType, ScaffoldCube);
+            RegisterType(BedrockType, cobblestoneCube);
         }
 
 
@@ -293,6 +300,12 @@ namespace DwarfCorp
         public static void RegisterType(VoxelType type, BoxPrimitive primitive)
         {
             PrimitiveMap[type] = primitive;
+        }
+
+        public static VoxelType GetVoxelType(short id)
+        {
+            // 0 is the "null" type
+            return VoxelType.TypeList[id - 1];
         }
 
         public static VoxelType GetVoxelType(string name)
@@ -332,6 +345,12 @@ namespace DwarfCorp
                 return null;
             }
         }
+        public static BoxPrimitive GetPrimitive(short id)
+        {
+            return GetPrimitive(GetVoxelType(id));
+        }
+
+
 
         
 

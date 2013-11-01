@@ -330,9 +330,8 @@ namespace DwarfCorp
                         if (y == 0)
                         {
                             voxels[x][ y][ z] = new Voxel(new Vector3((x + origin.X), (y + origin.Y), (z + origin.Z)),
-                            VoxelLibrary.GetVoxelType("Sand"),
-                            VoxelLibrary.GetPrimitive("Sand"), true);
-                            voxels[x][y][z].Health = 999;
+                            VoxelLibrary.GetVoxelType("Bedrock"),
+                            VoxelLibrary.GetPrimitive("Bedrock"), true);
                             continue;
                         }
                         

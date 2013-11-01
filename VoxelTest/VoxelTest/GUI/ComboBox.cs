@@ -31,7 +31,10 @@ namespace DwarfCorp
 
         void ComboBox_OnSelectionModified(string arg)
         {
-            
+            if (GUI.FocusComponent == Selector)
+            {
+                GUI.FocusComponent = null;
+            }
         }
 
         void ComboBox_OnLeftPressed()
@@ -43,6 +46,7 @@ namespace DwarfCorp
                 if (fieldRect.Contains(Mouse.GetState().X, Mouse.GetState().Y))
                 {
                     Selector = new ComboBoxSelector(GUI, this, Values, CurrentValue);
+                    GUI.FocusComponent = Selector;
                     Selector.OnSelectionModified += new ComboBoxSelector.Modified(Selector_OnSelectionModified);
                 }
             }

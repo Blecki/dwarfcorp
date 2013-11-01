@@ -79,17 +79,20 @@ namespace DwarfCorp
 
             foreach (DisplayMode mode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes)
             {
-                string s = mode.Width + " x " + mode.Height;
 
-                DisplayModes[s] = mode;
-                if (mode.Width == GameSettings.Default.Resolution.Width && mode.Height == GameSettings.Default.Resolution.Height)
+                if (mode.Format == SurfaceFormat.Color)
                 {
-                    resolutionBox.AddValue(s);
-                    resolutionBox.CurrentValue = s;
-                }
-                else
-                {
-                    resolutionBox.AddValue(s);
+                    string s = mode.Width + " x " + mode.Height;
+                    DisplayModes[s] = mode;
+                    if (mode.Width == GameSettings.Default.Resolution.Width && mode.Height == GameSettings.Default.Resolution.Height)
+                    {
+                        resolutionBox.AddValue(s);
+                        resolutionBox.CurrentValue = s;
+                    }
+                    else
+                    {
+                        resolutionBox.AddValue(s);
+                    }
                 }
 
             }
@@ -544,8 +547,10 @@ namespace DwarfCorp
             }
             catch (NoSuitableGraphicsDeviceException exception)
             {
-                Console.Error.WriteLine(exception.Message);
+                Dialog.Popup(GUI, "Failure!", exception.Message, Dialog.ButtonType.OK);
             }
+
+            Dialog.Popup(GUI, "Info", "Some settings will not take effect until the game is restarted.", Dialog.ButtonType.OK);
         }
 
         void fullscreenCheck_OnClicked(bool c)
