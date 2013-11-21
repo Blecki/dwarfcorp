@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class Goal
     {
         public WorldState State { get; set; }
@@ -30,13 +31,13 @@ namespace DwarfCorp
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Goal))
+            if(!(obj is Goal))
             {
                 return false;
             }
             else
             {
-                return ((Goal)obj).Name == Name;
+                return ((Goal) obj).Name == Name;
             }
         }
 
@@ -46,7 +47,6 @@ namespace DwarfCorp
 
         public virtual void ContextReweight(CreatureAIComponent creature)
         {
-
         }
 
         public virtual bool ContextValidate(CreatureAIComponent creature)
@@ -63,7 +63,6 @@ namespace DwarfCorp
         {
             return null;
         }
-
     }
 
 }

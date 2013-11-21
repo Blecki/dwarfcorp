@@ -3,27 +3,30 @@ using System.Threading;
 
 namespace DwarfCorp
 {
+
 #if WINDOWS || XBOX
-    static class Program
+    internal static class Program
     {
         public static string Version = "1 . 0 . 27";
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            using (DwarfGame game = new DwarfGame())
+            using(DwarfGame game = new DwarfGame())
             {
                 game.Run();
             }
 
             SignalShutdown();
         }
+
         public static ManualResetEvent shutdownEvent = new ManualResetEvent(false);
 
-        static void SignalShutdown()
+        private static void SignalShutdown()
         {
-            GeometricPrimitive.ExitGame = true;
+            DwarfGame.ExitGame = true;
             shutdownEvent.Set();
         }
 
@@ -36,4 +39,3 @@ namespace DwarfCorp
     }
 #endif
 }
-

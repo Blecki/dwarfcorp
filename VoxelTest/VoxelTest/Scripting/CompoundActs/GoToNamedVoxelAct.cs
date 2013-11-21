@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class GoToNamedVoxelAct : CompoundCreatureAct
     {
         public string Voxel { get; set; }
@@ -14,22 +15,22 @@ namespace DwarfCorp
         {
             Voxel = voxel;
             Name = "Go to Voxel " + voxel;
-           
         }
 
         public override void Initialize()
         {
-            Tree = new Sequence(new SetTargetVoxelAct(Voxel, Agent),
-                                new PlanAct(Agent),
-                                new FollowPathAct(Agent),
-                                new StopAct(Agent));
+            Tree = new Sequence(
+                new ForLoop(new Sequence( 
+                                  new PlanAct(Agent, "PathToVoxel", Voxel),
+                                  new FollowPathAct(Agent, "PathToVoxel")
+                                 )
+                                   , 3, true),
+                                  new StopAct(Agent));
 
             base.Initialize();
         }
 
-        public override IEnumerable<Status> Run()
-        {
-            return base.Run();
-        }
+
     }
+
 }

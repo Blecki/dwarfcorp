@@ -5,9 +5,11 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    class MoveToVoxel : Goal
+
+    internal class MoveToVoxel : Goal
     {
-        VoxelRef m_voxel = null;
+        private VoxelRef m_voxel = null;
+
         public MoveToVoxel(GOAP agent, VoxelRef voxel)
         {
             Name = "Go to Voxel: " + voxel.WorldPosition;
@@ -18,7 +20,6 @@ namespace DwarfCorp
 
         public override void Reset(GOAP agent)
         {
-
             State[GOAPStrings.TargetType] = GOAP.TargetType.Voxel;
             State[GOAPStrings.TargetVoxel] = m_voxel;
             State[GOAPStrings.AtTarget] = true;
@@ -28,12 +29,10 @@ namespace DwarfCorp
         }
 
 
-
         public override void ContextReweight(CreatureAIComponent creature)
         {
-                Priority = 0.5f;
-                Cost = 1.0f - Priority;
-            
+            Priority = 0.5f;
+            Cost = 1.0f - Priority;
         }
 
         public override bool ContextValidate(CreatureAIComponent creature)
@@ -41,4 +40,5 @@ namespace DwarfCorp
             return true;
         }
     }
+
 }

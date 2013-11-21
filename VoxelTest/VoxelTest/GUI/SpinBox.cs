@@ -8,9 +8,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
+
     public class SpinBox : SillyGUIComponent
     {
         public delegate void ValueChangedDelegate(SpinBox box);
+
         public event ValueChangedDelegate OnValueChanged;
 
         public enum SpinMode
@@ -46,46 +48,42 @@ namespace DwarfCorp
             Layout.SetComponentPosition(PlusButton, 3, 0, 1, 1);
             Layout.SetComponentPosition(MinusButton, 2, 0, 1, 1);
 
-            PlusButton.OnClicked += new ClickedDelegate(PlusButton_OnClicked);
-            MinusButton.OnClicked += new ClickedDelegate(MinusButton_OnClicked);
-            OnValueChanged += new ValueChangedDelegate(SpinBox_OnValueChanged);
-
+            PlusButton.OnClicked += PlusButton_OnClicked;
+            MinusButton.OnClicked += MinusButton_OnClicked;
+            OnValueChanged += SpinBox_OnValueChanged;
         }
 
-        void SpinBox_OnValueChanged(SpinBox value)
+        private void SpinBox_OnValueChanged(SpinBox value)
         {
         }
 
-        void MinusButton_OnClicked()
+        private void MinusButton_OnClicked()
         {
             SpinValue -= Increment;
 
             SpinValue = Math.Min(Math.Max(SpinValue, MinValue), MaxValue);
 
-            if (Mode == SpinMode.Integer)
+            if(Mode == SpinMode.Integer)
             {
-                SpinValue = (int)SpinValue;
+                SpinValue = (int) SpinValue;
             }
 
             ValueBox.Text = SpinValue.ToString();
             OnValueChanged.Invoke(this);
         }
 
-        void PlusButton_OnClicked()
+        private void PlusButton_OnClicked()
         {
             SpinValue += Increment;
             SpinValue = Math.Min(Math.Max(SpinValue, MinValue), MaxValue);
-            if (Mode == SpinMode.Integer)
+            if(Mode == SpinMode.Integer)
             {
-                SpinValue = (int)SpinValue;
+                SpinValue = (int) SpinValue;
             }
 
             ValueBox.Text = SpinValue.ToString();
             OnValueChanged.Invoke(this);
         }
-
-
-
-
     }
+
 }

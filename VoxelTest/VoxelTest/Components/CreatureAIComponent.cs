@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
+
 namespace DwarfCorp
 
 {
@@ -14,9 +16,9 @@ namespace DwarfCorp
         public float MaxAcceleration { get; set; }
         public float StoppingForce { get; set; }
         public float BaseDigSpeed { get; set; }
-        public float JumpForce { get; set;}
+        public float JumpForce { get; set; }
         public float BaseChopSpeed { get; set; }
-        public float MaxHealth { get; set;}
+        public float MaxHealth { get; set; }
         public float EnergyRecharge { get; set; }
         public float EnergyRechargeBed { get; set; }
         public float EnergyLoss { get; set; }
@@ -42,7 +44,7 @@ namespace DwarfCorp
         }
     }
 
-
+    [JsonObject(IsReference = true)]
     public class CreatureAIComponent : GameComponent
     {
         public Creature Creature { get; set; }
@@ -57,6 +59,7 @@ namespace DwarfCorp
         public List<VoxelRef> CurrentPath { get; set; }
         public bool DrawPath { get; set; }
         public InteractiveComponent InteractingWith { get; set; }
+        [JsonIgnore]
         public GOAP Goap { get; set; }
 
         public Act CurrentAct { get; set; }
@@ -66,31 +69,71 @@ namespace DwarfCorp
         public List<Action> CurrentActionPlan { get; set; }
         public Timer PlannerTimer { get; set; }
         public Timer LocalControlTimeout { get; set; }
-        public Timer WanderTimer { get;set;}
+        public Timer WanderTimer { get; set; }
         public Timer ServiceTimeout { get; set; }
         public bool DrawAIPlan { get; set; }
+
+        [JsonIgnore]
         public PlanSubscriber PlanSubscriber { get; set; }
         public bool WaitingOnResponse { get; set; }
         public List<string> MessageBuffer = new List<string>();
         public int MaxMessages = 10;
         public EnemySensor Sensor { get; set; }
-        public Grabber Hands { get { return Creature.Hands; } set { Creature.Hands = value; } }
-        public PhysicsComponent Physics { get { return Creature.Physics; } set { Creature.Physics = value; } }
-        public GameMaster Master { get { return Creature.Master; } set { Creature.Master = value; } }
-        public CreatureStats Stats { get { return Creature.Stats; } set { Creature.Stats = value; } }
-        public CreatureStatus Status { get { return Creature.Status; } set { Creature.Status = value; } }
 
-        public Vector3 Velocity { get { return Creature.Physics.Velocity; } set { Creature.Physics.Velocity = value; } }
-        public Vector3 Position { get { return Creature.Physics.GlobalTransform.Translation; } }
-        public ChunkManager Chunks { get { return Creature.Master.Chunks; } }
+        public Grabber Hands
+        {
+            get { return Creature.Hands; }
+            set { Creature.Hands = value; }
+        }
+
+        public PhysicsComponent Physics
+        {
+            get { return Creature.Physics; }
+            set { Creature.Physics = value; }
+        }
+
+        public GameMaster Master
+        {
+            get { return Creature.Master; }
+            set { Creature.Master = value; }
+        }
+
+        public CreatureStats Stats
+        {
+            get { return Creature.Stats; }
+            set { Creature.Stats = value; }
+        }
+
+        public CreatureStatus Status
+        {
+            get { return Creature.Status; }
+            set { Creature.Status = value; }
+        }
+
+        public Vector3 Velocity
+        {
+            get { return Creature.Physics.Velocity; }
+            set { Creature.Physics.Velocity = value; }
+        }
+
+        public Vector3 Position
+        {
+            get { return Creature.Physics.GlobalTransform.Translation; }
+        }
+
+        [JsonIgnore]
+        public ChunkManager Chunks
+        {
+            get { return Creature.Master.Chunks; }
+        }
 
         public Blackboard Blackboard { get; set; }
 
         public CreatureAIComponent(Creature creature,
-                                   string name,
-                                   EnemySensor sensor,
-                                   PlanService planService) :
-            base(creature.Manager, name, creature.Physics)
+            string name,
+            EnemySensor sensor,
+            PlanService planService) :
+                base(creature.Manager, name, creature.Physics)
         {
             Blackboard = new Blackboard();
             Creature = creature;
@@ -118,41 +161,31 @@ namespace DwarfCorp
             PlanSubscriber = new PlanSubscriber(planService);
             ServiceTimeout = new Timer(2, false);
             Sensor = sensor;
-            Sensor.OnEnemySensed += new EnemySensor.EnemySensed(Sensor_OnEnemySensed);
+            Sensor.OnEnemySensed += Sensor_OnEnemySensed;
             Sensor.Creature = this;
             CurrentAct = null;
-          
         }
 
         public void Say(string message)
         {
             MessageBuffer.Add(message);
-            if (MessageBuffer.Count > MaxMessages)
+            if(MessageBuffer.Count > MaxMessages)
             {
                 MessageBuffer.RemoveAt(0);
             }
         }
 
-        void Sensor_OnEnemySensed(List<CreatureAIComponent> enemies)
+        private void Sensor_OnEnemySensed(List<CreatureAIComponent> enemies)
         {
-            if (enemies.Count > 0)
+            if(enemies.Count > 0)
             {
                 Goap.Belief[GOAPStrings.SenseEnemy] = true;
 
                 Say("Sensed " + enemies.Count + " enemies");
 
-                foreach(CreatureAIComponent creature in enemies)
+                foreach(KillEntity goal in enemies.Where(creature => !creature.IsDead).Select(creature => new KillEntity(Goap, creature.Creature.Physics)).Where(goal => !Goap.Goals.ContainsKey(goal.Name)))
                 {
-                    if (creature.IsDead)
-                    {
-                        continue;
-                    }
-
-                    Goal goal = new KillEntity(Goap, creature.Creature.Physics);
-                    if (!Goap.Goals.ContainsKey(goal.Name))
-                    {
-                        Goap.AddGoal(goal);
-                    }
+                    Goap.AddGoal(goal);
                 }
             }
             else
@@ -163,12 +196,11 @@ namespace DwarfCorp
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
-
-            if (CurrentAct != null)
+            if(CurrentAct != null)
             {
                 Act.Status status = CurrentAct.Tick();
 
-                if (status != Act.Status.Running)
+                if(status != Act.Status.Running)
                 {
                     CurrentAct = null;
                 }
@@ -176,13 +208,13 @@ namespace DwarfCorp
             else
             {
                 Goal goal = Goap.GetHighestPriorityGoal();
-                if (goal != null)
+                if(goal != null)
                 {
                     CurrentAct = goal.GetBehaviorTree(this);
                     Goap.Goals.Remove(goal.Name);
                 }
             }
-            
+
             /*
             if (CurrentGoal == null || (!WaitingOnResponse && CurrentGoal != null && CurrentActionPlan == null))
             {
@@ -191,7 +223,7 @@ namespace DwarfCorp
 
             PerformCurrentGOAPAction(chunks, gameTime);
             */
-             
+
             PlannerTimer.Update(gameTime);
             CheckPlanSubscriber(gameTime);
 
@@ -199,20 +231,18 @@ namespace DwarfCorp
         }
 
 
-   
-
         public void CheckPlanSubscriber(GameTime dt)
         {
-            if (WaitingOnResponse)
+            if(WaitingOnResponse)
             {
                 ServiceTimeout.Update(dt);
 
-                if (ServiceTimeout.HasTriggered)
+                if(ServiceTimeout.HasTriggered)
                 {
                     Say("Stopped waiting on response.");
                     WaitingOnResponse = false;
 
-                    if (CurrentGoal != null)
+                    if(CurrentGoal != null)
                     {
                         Goap.Goals.Remove(CurrentGoal.Name);
                         CurrentGoal = null;
@@ -220,12 +250,15 @@ namespace DwarfCorp
                 }
             }
 
-            while (PlanSubscriber.AStarPlans.Count > 0)
+            while(PlanSubscriber.AStarPlans.Count > 0)
             {
                 PlanService.AStarPlanResponse res = null;
-                while(!PlanSubscriber.AStarPlans.TryDequeue(out res)) { ; }
+                while(!PlanSubscriber.AStarPlans.TryDequeue(out res))
+                {
+                    ;
+                }
                 CurrentPath = res.path;
-                if (CurrentPath != null && CurrentPath.Count > 0)
+                if(CurrentPath != null && CurrentPath.Count > 0)
                 {
                     Say("Got an A* path of length " + CurrentPath.Count);
                     TargetVoxel = CurrentPath[0];
@@ -234,21 +267,22 @@ namespace DwarfCorp
                 {
                     Say("A* Path was null!");
                     ResetBrain();
-                    
                 }
 
                 WaitingOnResponse = false;
                 ServiceTimeout.Reset(ServiceTimeout.TargetTimeSeconds);
-               
             }
 
-            while (PlanSubscriber.GoapPlans.Count > 0)
+            while(PlanSubscriber.GoapPlans.Count > 0)
             {
                 PlanService.GoapPlanResponse res = null;
-                while (!PlanSubscriber.GoapPlans.TryDequeue(out res)) { ; }
+                while(!PlanSubscriber.GoapPlans.TryDequeue(out res))
+                {
+                    ;
+                }
                 CurrentActionPlan = res.path;
 
-                if (res.path != null)
+                if(res.path != null)
                 {
                     Say("Got a GOAP path of length " + res.path.Count);
                     CurrentActionIndex = 0;
@@ -262,23 +296,19 @@ namespace DwarfCorp
                 WaitingOnResponse = false;
                 ServiceTimeout.Reset(ServiceTimeout.TargetTimeSeconds);
             }
-           
-    
-
         }
 
         public override void Render(GameTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
-
-            if (DrawAIPlan)
+            if(DrawAIPlan)
             {
-                if (CurrentActionIndex != -1 && CurrentActionPlan != null)
+                if(CurrentActionIndex != -1 && CurrentActionPlan != null)
                 {
                     int i = 0;
                     string actionString = "{\n";
-                    foreach (Action a in CurrentActionPlan)
+                    foreach(Action a in CurrentActionPlan)
                     {
-                        if (i == CurrentActionIndex)
+                        if(i == CurrentActionIndex)
                         {
                             actionString += "> ";
                         }
@@ -291,9 +321,9 @@ namespace DwarfCorp
 
                     Drawer2D.DrawText("Goal: " + CurrentGoal.Name + "\n" + actionString + "\n", Creature.Physics.GlobalTransform.Translation + new Vector3(0, 0.5f, 0), Color.White, Color.Black);
                 }
-                else if (CurrentGoal != null && CurrentActionPlan == null)
+                else if(CurrentGoal != null && CurrentActionPlan == null)
                 {
-                    if (!WaitingOnResponse)
+                    if(!WaitingOnResponse)
                     {
                         Drawer2D.DrawText(CurrentGoal.Name, Creature.Physics.GlobalTransform.Translation + new Vector3(0, 0.5f, 0), Color.Yellow, Color.Black);
                     }
@@ -302,74 +332,73 @@ namespace DwarfCorp
                         Drawer2D.DrawText(CurrentGoal.Name + ServiceTimeout.CurrentTimeSeconds, Creature.Physics.GlobalTransform.Translation + new Vector3(0, 0.5f, 0), Color.Red, Color.Black);
                     }
                 }
-                else if (CurrentActionPlan != null)
+                else if(CurrentActionPlan != null)
                 {
                     Drawer2D.DrawText("???", Creature.Physics.GlobalTransform.Translation + new Vector3(0, 0.5f, 0), Color.White, Color.Red);
                 }
             }
-             
-           
+
 
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
         }
 
-
         #region GOAPING
-        
+
         public void PerformCurrentGOAPAction(ChunkManager chunks, GameTime gameTime)
         {
-            if (CurrentActionPlan != null)
+            if(CurrentActionPlan != null)
             {
-                if (CurrentActionIndex >= 0 && CurrentActionIndex < CurrentActionPlan.Count)
+                if(CurrentActionIndex >= 0 && CurrentActionIndex < CurrentActionPlan.Count)
                 {
                     Action currentAction = CurrentActionPlan[CurrentActionIndex];
 
                     Action.PerformStatus status = currentAction.PerformContextAction(this, gameTime);
 
-                    if (status == Action.PerformStatus.Failure || status == Action.PerformStatus.Invalid)
+                    if(status == Action.PerformStatus.Failure || status == Action.PerformStatus.Invalid)
                     {
                         Say("Action " + currentAction.Name + " failed! Replanning.");
 
-                        if (CurrentGoal != null) { Goap.Goals.Remove(CurrentGoal.Name); }
+                        if(CurrentGoal != null)
+                        {
+                            Goap.Goals.Remove(CurrentGoal.Name);
+                        }
                         CurrentGoal = null;
                         CurrentActionPlan = null;
                         CurrentActionIndex = -1;
 
                         ReplanGOAP();
-                        
                     }
-                    else if (status == Action.PerformStatus.Success)
+                    else if(status == Action.PerformStatus.Success)
                     {
                         currentAction.Apply(Goap.Belief);
                         CurrentActionIndex++;
 
                         Say("Action " + currentAction.Name + " success.");
 
-                        if (CurrentActionIndex >= 0 && CurrentActionIndex < CurrentActionPlan.Count)
+                        if(CurrentActionIndex >= 0 && CurrentActionIndex < CurrentActionPlan.Count)
                         {
                             Action nextAction = CurrentActionPlan[CurrentActionIndex];
 
                             Action.ValidationStatus validate = nextAction.ContextValidate(this);
 
-                            if (validate == Action.ValidationStatus.Replan)
+                            if(validate == Action.ValidationStatus.Replan)
                             {
-                                Say("Could not validate action. Replanning.");             
+                                Say("Could not validate action. Replanning.");
                                 ReplanGOAP();
                             }
-                            else if (validate == Action.ValidationStatus.Invalid)
+                            else if(validate == Action.ValidationStatus.Invalid)
                             {
-                                Say("Could not validate action. Replanning.");    
+                                Say("Could not validate action. Replanning.");
                                 ReplanGOAP();
                             }
                         }
                     }
-
                 }
             }
 
-            if (CurrentActionPlan != null && CurrentActionIndex >= CurrentActionPlan.Count)
+            if(CurrentActionPlan != null && CurrentActionIndex >= CurrentActionPlan.Count)
             {
-                Say("Resetting brain."); 
+                Say("Resetting brain.");
                 ResetBrain();
                 ReplanGOAP();
             }
@@ -379,7 +408,7 @@ namespace DwarfCorp
         {
             CurrentActionPlan = null;
             CurrentActionIndex = -1;
-            if (!(CurrentGoal is CompoundGoal) && CurrentGoal != null)
+            if(!(CurrentGoal is CompoundGoal) && CurrentGoal != null)
             {
                 Goap.Goals.Remove(CurrentGoal.Name);
             }
@@ -404,34 +433,34 @@ namespace DwarfCorp
 
         public void ReplanGOAP()
         {
-            if (CurrentGoal == null && Goap.Goals.Count > 0)
+            if(CurrentGoal == null && Goap.Goals.Count > 0)
             {
                 ResetBrain();
                 UpdateGOAPBelief();
-                
+
                 Goap.Zones.Clear();
                 Goap.Items.Clear();
                 Goap.Voxels.Clear();
 
 
-                foreach (Goal g in Goap.Goals.Values)
+                foreach(Goal g in Goap.Goals.Values)
                 {
-                    if (g is KillEntity)
+                    if(g is KillEntity)
                     {
-                        Goap.Items.Add(((KillEntity)(g)).Item);
+                        Goap.Items.Add(((KillEntity) (g)).Item);
                     }
                 }
 
 
-                foreach (Room room in Creature.Master.RoomDesignator.DesignatedRooms)
+                foreach(Room room in Creature.Master.RoomDesignator.DesignatedRooms)
                 {
                     Goap.Zones.Add(room);
 
-                    if (room.RoomType.Name == "BedRoom")
+                    if(room.RoomType.Name == "BedRoom")
                     {
                         List<LocatableComponent> beds = room.GetComponentsInRoomContainingTag("Bed");
 
-                        foreach (LocatableComponent bed in beds)
+                        foreach(LocatableComponent bed in beds)
                         {
                             List<BedComponent> interactivebeds = bed.GetChildrenOfTypeRecursive<BedComponent>();
                             Goap.Items.Add(new BedItem("Bed " + bed.GlobalID, room, bed, interactivebeds[0], 1.0f));
@@ -440,52 +469,51 @@ namespace DwarfCorp
                 }
 
 
-                foreach (Stockpile stockpile in Creature.Master.Stockpiles)
+                foreach(Stockpile stockpile in Creature.Master.Stockpiles)
                 {
                     Goap.Zones.Add(stockpile);
 
-                    foreach (Item component in stockpile.ListItems())
+                    foreach(Item component in stockpile.ListItems())
                     {
-                        if (!Goap.Items.Contains(component))
+                        if(!Goap.Items.Contains(component))
                         {
                             Goap.Items.Add(component);
                         }
                     }
                 }
 
-                foreach (GameMaster.Designation des in Creature.Master.DigDesignations)
+                foreach(GameMaster.Designation des in Creature.Master.DigDesignations)
                 {
-                    Goap.Voxels.Add(des.vox.GetReference());
+                    Goap.Voxels.Add(des.vox);
                 }
 
-                foreach (GameMaster.Designation des in Creature.Master.GuardDesignations)
+                foreach(GameMaster.Designation des in Creature.Master.GuardDesignations)
                 {
-                    Goap.Voxels.Add(des.vox.GetReference());
+                    Goap.Voxels.Add(des.vox);
                 }
 
-                foreach (LocatableComponent grab in Creature.Hands.GrabbedComponents.Keys)
+                foreach(LocatableComponent grab in Creature.Hands.GrabbedComponents.Keys)
                 {
                     Goap.Items.Add(Item.CreateItem(grab.Name + " " + grab.GlobalID, null, grab));
                 }
 
-                foreach (LocatableComponent des in Creature.Master.GatherDesignations)
+                foreach(LocatableComponent des in Creature.Master.GatherDesignations)
                 {
                     Goap.Items.Add(Item.CreateItem(des.Name + " " + des.GlobalID, null, des));
                 }
 
-                foreach (LocatableComponent des in Creature.Master.ChopDesignations)
+                foreach(LocatableComponent des in Creature.Master.ChopDesignations)
                 {
                     Goap.Items.Add(Item.CreateItem(des.Name + " " + des.GlobalID, null, des));
                 }
 
 
-                foreach (RoomBuildDesignation buildDesignation in Creature.Master.RoomDesignator.BuildDesignations)
+                foreach(RoomBuildDesignation buildDesignation in Creature.Master.RoomDesignator.BuildDesignations)
                 {
-
-                    if (!buildDesignation.IsBuilt)
+                    if(!buildDesignation.IsBuilt)
                     {
                         HashSet<string> strings = new HashSet<string>();
-                        foreach (string item in buildDesignation.ToBuild.RoomType.RequiredResources.Keys)
+                        foreach(string item in buildDesignation.ToBuild.RoomType.RequiredResources.Keys)
                         {
                             strings.Add(item);
                         }
@@ -494,9 +522,9 @@ namespace DwarfCorp
                     }
                 }
 
-                foreach (Item i in Item.ItemDictionary.Values)
+                foreach(Item i in Item.ItemDictionary.Values)
                 {
-                    if (!Goap.Items.Contains(i) && !i.userData.IsDead && (i.reservedFor == null || i.reservedFor == this))
+                    if(!Goap.Items.Contains(i) && !i.UserData.IsDead && (i.ReservedFor == null || i.ReservedFor == this))
                     {
                         Goap.Items.Add(i);
                     }
@@ -506,7 +534,7 @@ namespace DwarfCorp
                 Goap.Actions.Clear();
 
                 bool reservedPutDesignation = false;
-                foreach (PutDesignation put in Creature.Master.PutDesignator.Designations)
+                foreach(PutDesignation put in Creature.Master.PutDesignator.Designations)
                 {
                     Goap.AddAction(new ConstructVoxel(put.vox));
                     Goap.Voxels.Add(put.vox);
@@ -532,18 +560,16 @@ namespace DwarfCorp
                 }
 
 
-
                 CurrentGoal = Goap.GetHighestPriorityGoal();
 
-                
 
-                if (CurrentGoal is CompoundGoal)
+                if(CurrentGoal is CompoundGoal)
                 {
-                    CompoundGoal comp = (CompoundGoal)CurrentGoal;
+                    CompoundGoal comp = (CompoundGoal) CurrentGoal;
 
                     comp.CurrentGoalIndex++;
 
-                    if (comp.CurrentGoalIndex >= comp.Goals.Count)
+                    if(comp.CurrentGoalIndex >= comp.Goals.Count)
                     {
                         comp.CurrentGoalIndex = 0;
                         CurrentGoal = Goap.GetHighestPriorityGoal();
@@ -551,10 +577,9 @@ namespace DwarfCorp
                 }
 
 
-                if (CurrentGoal != null && ! WaitingOnResponse)
+                if(CurrentGoal != null && ! WaitingOnResponse)
                 {
-
-                    if (!CurrentGoal.ContextValidate(this))
+                    if(!CurrentGoal.ContextValidate(this))
                     {
                         Goap.Goals.Remove(CurrentGoal.Name);
                         CurrentGoal = null;
@@ -564,58 +589,58 @@ namespace DwarfCorp
                         CurrentGoal.Reset(Goap);
                         //CurrentActionPlan = Goap.PlanToGoal(CurrentGoal);
                         CurrentActionPlan = null;
-                        
-                        PlanService.GoapPlanRequest gpr = new PlanService.GoapPlanRequest();
-                        gpr.goal = CurrentGoal;
-                        gpr.sender = this;
-                        gpr.start = Goap.Belief;
-                        gpr.subscriber = PlanSubscriber;
+
+                        PlanService.GoapPlanRequest gpr = new PlanService.GoapPlanRequest
+                        {
+                            goal = CurrentGoal,
+                            sender = this,
+                            start = Goap.Belief,
+                            subscriber = PlanSubscriber
+                        };
 
                         PlanSubscriber.SendRequest(gpr);
                         WaitingOnResponse = true;
                     }
-
                 }
 
-                if (CurrentActionPlan != null && CurrentActionPlan.Count > 0)
+                if(CurrentActionPlan != null && CurrentActionPlan.Count > 0)
                 {
                     CurrentActionIndex = 0;
                 }
-                
             }
-            else if (Goap.Goals.Count == 0)
+            else if(Goap.Goals.Count == 0)
             {
                 Goap.Goals.Add("LookInteresting", new LookInteresting(Goap));
                 //Goap.Goals.Add("SatisfyHunger", new SatisfyHunger(Goap));
                 //Goap.Goals.Add("SatisfySleepiness", new SatisfySleepiness(Goap));
             }
 
-            if (Goap.Belief.Specification.ContainsKey(GOAPStrings.IsSleepy) && (bool)Goap.Belief[GOAPStrings.IsSleepy])
+            if(Goap.Belief.Specification.ContainsKey(GOAPStrings.IsSleepy) && (bool) Goap.Belief[GOAPStrings.IsSleepy])
             {
-                if (!Goap.Goals.ContainsKey("SatisfySleepiness"))
+                if(!Goap.Goals.ContainsKey("SatisfySleepiness"))
                 {
                     //Goap.Goals.Add("SatisfySleepiness", new SatisfySleepiness(Goap));
                 }
             }
 
-            if (Goap.Belief.Specification.ContainsKey(GOAPStrings.IsHungry) && (bool)Goap.Belief[GOAPStrings.IsHungry])
+            if(Goap.Belief.Specification.ContainsKey(GOAPStrings.IsHungry) && (bool) Goap.Belief[GOAPStrings.IsHungry])
             {
-                if (!Goap.Goals.ContainsKey("SatisfyHunger"))
+                if(!Goap.Goals.ContainsKey("SatisfyHunger"))
                 {
                     //Goap.Goals.Add("SatisfyHunger", new SatisfyHunger(Goap));
                 }
             }
 
-            if (Goap.Belief.Specification.ContainsKey(GOAPStrings.MotionStatus) && (GOAP.MotionStatus)Goap.Belief[GOAPStrings.MotionStatus] == GOAP.MotionStatus.Stationary)
+            if(Goap.Belief.Specification.ContainsKey(GOAPStrings.MotionStatus) && (GOAP.MotionStatus) Goap.Belief[GOAPStrings.MotionStatus] == GOAP.MotionStatus.Stationary)
             {
-                if (!Goap.Goals.ContainsKey("LookInteresting"))
+                if(!Goap.Goals.ContainsKey("LookInteresting"))
                 {
                     Goap.Goals.Add("LookInteresting", new LookInteresting(Goap));
                 }
             }
 
 
-            if (!WaitingOnResponse && CurrentActionPlan == null && CurrentGoal != null)
+            if(!WaitingOnResponse && CurrentActionPlan == null && CurrentGoal != null)
             {
                 Goap.Goals.Remove(CurrentGoal.Name);
                 CurrentGoal = null;
@@ -624,8 +649,7 @@ namespace DwarfCorp
 
         public void UpdateGOAPBelief()
         {
-
-            if (Creature.Status.Energy < Creature.Stats.SleepyThreshold)
+            if(Creature.Status.Energy < Creature.Stats.SleepyThreshold)
             {
                 Goap.Belief[GOAPStrings.IsSleepy] = true;
             }
@@ -634,7 +658,7 @@ namespace DwarfCorp
                 Goap.Belief[GOAPStrings.IsSleepy] = false;
             }
 
-            if (Creature.Status.Hunger > Creature.Stats.HungerThreshold)
+            if(Creature.Status.Hunger > Creature.Stats.HungerThreshold)
             {
                 Goap.Belief[GOAPStrings.IsHungry] = true;
             }
@@ -643,7 +667,7 @@ namespace DwarfCorp
                 Goap.Belief[GOAPStrings.IsHungry] = false;
             }
 
-            if (Creature.Hands.IsFull())
+            if(Creature.Hands.IsFull())
             {
                 Goap.Belief[GOAPStrings.HandState] = GOAP.HandState.Full;
                 Goap.Belief[GOAPStrings.HeldObject] = Item.CreateItem(Creature.Hands.GetFirstGrab().Name + " " + Creature.Hands.GetFirstGrab().GlobalID, null, Creature.Hands.GetFirstGrab());
@@ -656,20 +680,19 @@ namespace DwarfCorp
                 Goap.Belief[GOAPStrings.HeldItemTags] = null;
             }
 
-            if (TargetRoom != null)
+            if(TargetRoom != null)
             {
                 Goap.Belief[GOAPStrings.TargetZone] = TargetRoom;
                 Goap.Belief[GOAPStrings.TargetType] = GOAP.TargetType.Zone;
                 Goap.Belief[GOAPStrings.TargetDead] = false;
                 Goap.Belief[GOAPStrings.ZoneTags] = new TagList(TargetRoom.RoomType.Name);
 
-                if (TargetRoom.IsInZone(Creature.Physics.GlobalTransform.Translation))
+                if(TargetRoom.IsInZone(Creature.Physics.GlobalTransform.Translation))
                 {
                     Goap.Belief[GOAPStrings.AtTarget] = true;
                     Goap.Belief[GOAPStrings.CurrentZone] = TargetRoom;
 
                     Goap.Belief[GOAPStrings.TargetZoneType] = "Room";
-
                 }
                 else
                 {
@@ -678,7 +701,7 @@ namespace DwarfCorp
                     Goap.Belief[GOAPStrings.TargetZoneType] = null;
                 }
             }
-            else if (TargetVoxel != null && TargetComponent == null)
+            else if(TargetVoxel != null && TargetComponent == null)
             {
                 Voxel vox = TargetVoxel.GetVoxel(Creature.Master.Chunks, true);
                 Goap.Belief[GOAPStrings.TargetVoxel] = TargetVoxel;
@@ -687,7 +710,7 @@ namespace DwarfCorp
                 Goap.Belief[GOAPStrings.ZoneTags] = null;
                 Vector3 diff = TargetVoxel.WorldPosition - Creature.Physics.GlobalTransform.Translation;
 
-                if (diff.Length() < 1)
+                if(diff.Length() < 1)
                 {
                     Goap.Belief[GOAPStrings.AtTarget] = true;
                 }
@@ -695,9 +718,8 @@ namespace DwarfCorp
                 {
                     Goap.Belief[GOAPStrings.AtTarget] = false;
                 }
-
             }
-            else if (TargetComponent != null)
+            else if(TargetComponent != null)
             {
                 Goap.Belief[GOAPStrings.TargetEntity] = TargetComponent;
                 Goap.Belief[GOAPStrings.TargetType] = GOAP.TargetType.Entity;
@@ -706,7 +728,7 @@ namespace DwarfCorp
 
                 Vector3 diff = TargetComponent.GlobalTransform.Translation - Creature.Physics.GlobalTransform.Translation;
 
-                if (diff.Length() < 1)
+                if(diff.Length() < 1)
                 {
                     Goap.Belief[GOAPStrings.AtTarget] = true;
                 }
@@ -714,7 +736,6 @@ namespace DwarfCorp
                 {
                     Goap.Belief[GOAPStrings.AtTarget] = false;
                 }
-
             }
             else
             {
@@ -730,7 +751,7 @@ namespace DwarfCorp
                 Goap.Belief[GOAPStrings.TargetZoneFull] = false;
             }
 
-            if (Creature.Physics.Velocity.LengthSquared() < 0.5f)
+            if(Creature.Physics.Velocity.LengthSquared() < 0.5f)
             {
                 Goap.Belief[GOAPStrings.MotionStatus] = GOAP.MotionStatus.Stationary;
             }
@@ -739,10 +760,11 @@ namespace DwarfCorp
                 Goap.Belief[GOAPStrings.MotionStatus] = GOAP.MotionStatus.Moving;
             }
         }
-        
-        #endregion 
+
+        #endregion
 
         #region ACTING
+
         public enum PlannerSuccess
         {
             Success,
@@ -751,21 +773,19 @@ namespace DwarfCorp
         }
 
 
-
         public PlannerSuccess Wander(GameTime gameTime, float radius)
         {
-
-            if (WanderTimer.Update(gameTime) || WanderTimer.HasTriggered)
+            if(WanderTimer.Update(gameTime) || WanderTimer.HasTriggered)
             {
-                Creature.LocalTarget = new Vector3((float)PlayState.random.NextDouble() * radius - radius / 2.0f, 0.0f, (float)PlayState.random.NextDouble() * radius - radius / 2.0f) + Creature.Physics.GlobalTransform.Translation;
+                Creature.LocalTarget = new Vector3((float) PlayState.Random.NextDouble() * radius - radius / 2.0f, 0.0f, (float) PlayState.Random.NextDouble() * radius - radius / 2.0f) + Creature.Physics.GlobalTransform.Translation;
             }
 
-            Vector3 output = Creature.Controller.GetOutput((float)gameTime.ElapsedGameTime.TotalSeconds, Creature.LocalTarget, Creature.Physics.GlobalTransform.Translation);
+            Vector3 output = Creature.Controller.GetOutput((float) gameTime.ElapsedGameTime.TotalSeconds, Creature.LocalTarget, Creature.Physics.GlobalTransform.Translation);
             output.Y = 0.0f;
 
-            Creature.Physics.ApplyForce(output, (float)gameTime.ElapsedGameTime.TotalSeconds);
+            Creature.Physics.ApplyForce(output, (float) gameTime.ElapsedGameTime.TotalSeconds);
 
-            if (output.LengthSquared() > 0.5f)
+            if(output.LengthSquared() > 0.5f)
             {
                 return PlannerSuccess.Wait;
             }
@@ -778,34 +798,35 @@ namespace DwarfCorp
 
         public PlannerSuccess PlanPath(GameTime gameTime)
         {
-            if (CurrentPath != null)
+            if(CurrentPath != null)
             {
                 return PlannerSuccess.Success;
             }
 
             ChunkManager chunks = Creature.Master.Chunks;
-            if (PlannerTimer.HasTriggered)
+            if(PlannerTimer.HasTriggered)
             {
-
                 Voxel vox = chunks.GetFirstVisibleBlockUnder(Creature.Physics.GlobalTransform.Translation, true);
                 List<VoxelRef> voxAbove = new List<VoxelRef>();
                 chunks.GetVoxelReferencesAtWorldLocation(null, vox.Position + new Vector3(0, 1, 0), voxAbove);
 
-                if (TargetVoxel == null)
+                if(TargetVoxel == null)
                 {
                     return PlannerSuccess.Failure;
                 }
 
-                if (voxAbove.Count > 0)
+                if(voxAbove.Count > 0)
                 {
                     CurrentPath = null; // AStarPlanner.FindPath(voxAbove[0], TargetVoxel.GetReference(), chunks, 500);
 
-                    PlanService.AstarPlanRequest aspr = new PlanService.AstarPlanRequest();
-                    aspr.subscriber = PlanSubscriber;
-                    aspr.start = voxAbove[0];
-                    aspr.goal = TargetVoxel;
-                    aspr.maxExpansions = 20000;
-                    aspr.sender = this;
+                    PlanService.AstarPlanRequest aspr = new PlanService.AstarPlanRequest
+                    {
+                        subscriber = PlanSubscriber,
+                        start = voxAbove[0],
+                        goal = TargetVoxel,
+                        maxExpansions = 20000,
+                        sender = this
+                    };
 
                     PlanSubscriber.SendRequest(aspr);
                     PlannerTimer.Reset(PlannerTimer.TargetTimeSeconds);
@@ -817,9 +838,6 @@ namespace DwarfCorp
                     CurrentPath = null;
                     return PlannerSuccess.Failure;
                 }
-
-
- 
             }
             else
             {
@@ -829,57 +847,56 @@ namespace DwarfCorp
 
         public void Jump(GameTime dt)
         {
-            if (Creature.JumpTimer.HasTriggered)
+            if(Creature.JumpTimer.HasTriggered)
             {
-                Creature.Physics.ApplyForce(Vector3.Up * Creature.Stats.JumpForce, (float)dt.ElapsedGameTime.TotalSeconds);
+                Creature.Physics.ApplyForce(Vector3.Up * Creature.Stats.JumpForce, (float) dt.ElapsedGameTime.TotalSeconds);
                 Creature.JumpTimer.Reset(Creature.JumpTimer.TargetTimeSeconds);
                 SoundManager.PlaySound("jump", Creature.Physics.GlobalTransform.Translation);
             }
-
         }
-       
+
         public PlannerSuccess Pathfind(GameTime gameTime)
         {
             ChunkManager chunks = Creature.Master.Chunks;
-            if (CurrentPath == null)
+            if(CurrentPath == null)
             {
                 CurrentPath = null;
                 return PlannerSuccess.Failure;
             }
 
-            if (TargetVoxel != null)
+            if(TargetVoxel != null)
             {
                 LocalControlTimeout.Update(gameTime);
 
-                if (LocalControlTimeout.HasTriggered)
+                if(LocalControlTimeout.HasTriggered)
                 {
                     return PlannerSuccess.Failure;
                 }
 
 
-                if (PreviousTargetVoxel == null)
+                if(PreviousTargetVoxel == null)
                 {
                     Creature.LocalTarget = TargetVoxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
                 }
                 else
                 {
-                    Creature.LocalTarget = LinearMathHelpers.ClosestPointToLineSegment(Creature.Physics.GlobalTransform.Translation, PreviousTargetVoxel.WorldPosition, TargetVoxel.WorldPosition, 0.25f) + new Vector3(0.5f, 0.5f, 0.5f); 
+                    Creature.LocalTarget = LinearMathHelpers.ClosestPointToLineSegment(Creature.Physics.GlobalTransform.Translation, PreviousTargetVoxel.WorldPosition, TargetVoxel.WorldPosition, 0.25f) + new Vector3(0.5f, 0.5f, 0.5f);
                 }
 
-                Vector3 output = Creature.Controller.GetOutput((float)gameTime.ElapsedGameTime.TotalSeconds, Creature.LocalTarget, Creature.Physics.GlobalTransform.Translation);
-                Creature.Physics.ApplyForce(output, (float)gameTime.ElapsedGameTime.TotalSeconds);
+                Vector3 output = Creature.Controller.GetOutput((float) gameTime.ElapsedGameTime.TotalSeconds, Creature.LocalTarget, Creature.Physics.GlobalTransform.Translation);
+                Creature.Physics.ApplyForce(output, (float) gameTime.ElapsedGameTime.TotalSeconds);
                 output.Y = 0.0f;
 
-                if ((Creature.LocalTarget - Creature.Physics.GlobalTransform.Translation).Y > 0.3)
+                if((Creature.LocalTarget - Creature.Physics.GlobalTransform.Translation).Y > 0.3)
                 {
                     Jump(gameTime);
                 }
 
 
-                if (DrawPath)
+                if(DrawPath)
                 {
                     List<Vector3> points = new List<Vector3>();
-                    foreach (VoxelRef v in CurrentPath)
+                    foreach(VoxelRef v in CurrentPath)
                     {
                         points.Add(v.WorldPosition + new Vector3(0.5f, 0.5f, 0.2f));
                     }
@@ -887,9 +904,9 @@ namespace DwarfCorp
                     SimpleDrawing.DrawLineList(points, Color.Red, 0.1f);
                 }
 
-                if ((Creature.LocalTarget - Creature.Physics.GlobalTransform.Translation).Length() < 0.8f || CurrentPath.Count < 2)
+                if((Creature.LocalTarget - Creature.Physics.GlobalTransform.Translation).Length() < 0.8f || CurrentPath.Count < 2)
                 {
-                    if (CurrentPath != null && CurrentPath.Count > 1)
+                    if(CurrentPath != null && CurrentPath.Count > 1)
                     {
                         PreviousTargetVoxel = TargetVoxel;
                         CurrentPath.RemoveAt(0);
@@ -915,7 +932,7 @@ namespace DwarfCorp
 
         public PlannerSuccess Stop(GameTime gameTime)
         {
-            if (Creature.Physics.Velocity.LengthSquared() < 0.5f)
+            if(Creature.Physics.Velocity.LengthSquared() < 0.5f)
             {
                 return PlannerSuccess.Success;
             }
@@ -929,60 +946,56 @@ namespace DwarfCorp
         public PlannerSuccess Dig(GameTime gameTime)
         {
             Voxel vox = TargetVoxel.GetVoxel(Creature.Master.Chunks, false);
-            if (vox == null || vox.Health <= 0.0f || !Creature.Master.IsDigDesignation(vox))
+            if(vox == null || vox.Health <= 0.0f || !Creature.Master.IsDigDesignation(vox))
             {
-                if (vox != null && vox.Health <= 0.0f)
+                if(vox != null && vox.Health <= 0.0f)
                 {
                     vox.Kill();
                 }
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
                 return PlannerSuccess.Success;
             }
-            else 
+            else
             {
                 Creature.LocalTarget = vox.Position + new Vector3(0.5f, 0.5f, 0.5f);
-                Vector3 output = Creature.Controller.GetOutput((float)gameTime.ElapsedGameTime.TotalSeconds, Creature.LocalTarget, Creature.Physics.GlobalTransform.Translation);
-                Creature.Physics.ApplyForce(output, (float)gameTime.ElapsedGameTime.TotalSeconds);
+                Vector3 output = Creature.Controller.GetOutput((float) gameTime.ElapsedGameTime.TotalSeconds, Creature.LocalTarget, Creature.Physics.GlobalTransform.Translation);
+                Creature.Physics.ApplyForce(output, (float) gameTime.ElapsedGameTime.TotalSeconds);
                 output.Y = 0.0f;
 
-                if ((Creature.LocalTarget - Creature.Physics.GlobalTransform.Translation).Y > 0.3)
+                if((Creature.LocalTarget - Creature.Physics.GlobalTransform.Translation).Y > 0.3)
                 {
                     Jump(gameTime);
                 }
 
                 Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.5f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.5f);
-                vox.Health -= Creature.Stats.BaseDigSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                vox.Health -= Creature.Stats.BaseDigSpeed * (float) gameTime.ElapsedGameTime.TotalSeconds;
 
                 Creature.CurrentCharacterMode = DwarfCorp.Creature.CharacterMode.Attacking;
                 Creature.Weapon.PlayNoise();
 
                 return PlannerSuccess.Wait;
             }
-
-
         }
 
         public PlannerSuccess MeleeAttack(GameTime gameTime)
         {
-
             Creature.LocalTarget = new Vector3(TargetComponent.GlobalTransform.Translation.X,
-                                                Creature.Physics.GlobalTransform.Translation.Y,
-                                                TargetComponent.GlobalTransform.Translation.Z);
+                Creature.Physics.GlobalTransform.Translation.Y,
+                TargetComponent.GlobalTransform.Translation.Z);
 
 
             Vector3 diff = Creature.LocalTarget - Creature.Physics.GlobalTransform.Translation;
 
             Creature.Physics.Face(Creature.LocalTarget);
-           
 
-            if (diff.Length() > 1.0f)
+
+            if(diff.Length() > 1.0f)
             {
-
-                Vector3 output = Creature.Controller.GetOutput((float)gameTime.ElapsedGameTime.TotalSeconds, Creature.LocalTarget, Creature.Physics.GlobalTransform.Translation) * 0.9f;
-                Creature.Physics.ApplyForce(output, (float)gameTime.ElapsedGameTime.TotalSeconds);
+                Vector3 output = Creature.Controller.GetOutput((float) gameTime.ElapsedGameTime.TotalSeconds, Creature.LocalTarget, Creature.Physics.GlobalTransform.Translation) * 0.9f;
+                Creature.Physics.ApplyForce(output, (float) gameTime.ElapsedGameTime.TotalSeconds);
                 output.Y = 0.0f;
 
-                if ((Creature.LocalTarget - Creature.Physics.GlobalTransform.Translation).Y > 0.3)
+                if((Creature.LocalTarget - Creature.Physics.GlobalTransform.Translation).Y > 0.3)
                 {
                     Jump(gameTime);
                 }
@@ -996,12 +1009,12 @@ namespace DwarfCorp
 
             List<HealthComponent> healths = TargetComponent.GetChildrenOfTypeRecursive<HealthComponent>();
 
-            foreach (HealthComponent health in healths)
+            foreach(HealthComponent health in healths)
             {
-                health.Damage(Creature.Stats.BaseChopSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
+                health.Damage(Creature.Stats.BaseChopSpeed * (float) gameTime.ElapsedGameTime.TotalSeconds);
             }
 
-            if (TargetComponent.IsDead)
+            if(TargetComponent.IsDead)
             {
                 Creature.Master.ChopDesignations.Remove(TargetComponent);
                 TargetComponent = null;
@@ -1016,12 +1029,11 @@ namespace DwarfCorp
 
             Creature.Weapon.PlayNoise();
 
-            if (TargetComponent is PhysicsComponent)
+            if(TargetComponent is PhysicsComponent)
             {
-
-                if (PlayState.random.Next(100) < 10)
+                if(PlayState.Random.Next(100) < 10)
                 {
-                    PhysicsComponent phys = (PhysicsComponent)TargetComponent;
+                    PhysicsComponent phys = (PhysicsComponent) TargetComponent;
                     //if (ouchTimer.HasTriggered)
                     {
                         SoundManager.PlaySound("ouch", phys.GlobalTransform.Translation);
@@ -1030,7 +1042,7 @@ namespace DwarfCorp
 
 
                     Vector3 f = phys.GlobalTransform.Translation - Creature.Physics.GlobalTransform.Translation;
-                    if (f.Length() > 2.0f)
+                    if(f.Length() > 2.0f)
                     {
                         Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
                         Creature.Physics.OrientWithVelocity = true;
@@ -1043,13 +1055,13 @@ namespace DwarfCorp
                     f *= 80;
 
 
-                    phys.ApplyForce(f, (float)gameTime.ElapsedGameTime.TotalSeconds);
+                    phys.ApplyForce(f, (float) gameTime.ElapsedGameTime.TotalSeconds);
                 }
             }
 
             return PlannerSuccess.Wait;
         }
-
     }
+
     #endregion
 }

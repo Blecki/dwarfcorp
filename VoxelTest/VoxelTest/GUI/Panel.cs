@@ -7,17 +7,17 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class Panel : SillyGUIComponent
     {
         public Panel(SillyGUI gui, SillyGUIComponent parent) :
             base(gui, parent)
         {
-
         }
 
         public override void Render(GameTime time, SpriteBatch batch)
         {
-            if (!IsVisible)
+            if(!IsVisible)
             {
                 return;
             }
@@ -25,7 +25,6 @@ namespace DwarfCorp
             GUI.Skin.RenderPanel(GlobalBounds, batch);
             base.Render(time, batch);
         }
-
-        
     }
+
 }

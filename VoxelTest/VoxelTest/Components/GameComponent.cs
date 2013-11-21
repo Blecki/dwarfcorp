@@ -6,21 +6,20 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Concurrent;
 using Newtonsoft.Json;
+
 namespace DwarfCorp
 {
+    [JsonObject(IsReference = true)]
     public class GameComponent
     {
         public string Name { get; set; }
 
-        [JsonIgnore]
         public uint GlobalID { get; set; }
 
         public uint LocalID { get; set; }
 
-        [JsonIgnore]
         public GameComponent Parent { get; set; }
-        
-        [JsonIgnore]
+
         public ConcurrentDictionary<uint, GameComponent> Children { get; set; }
 
         private static uint m_maxGlobalID = 0;
@@ -32,15 +31,23 @@ namespace DwarfCorp
 
         public List<string> Tags { get; set; }
 
-        [JsonIgnore]
         public ComponentManager Manager { get; set; }
 
         public virtual void ReceiveMessageRecursive(Message messageToReceive)
         {
-            foreach (GameComponent child in Children.Values)
+            foreach(GameComponent child in Children.Values)
             {
                 child.ReceiveMessageRecursive(messageToReceive);
             }
+        }
+
+        public GameComponent()
+        {
+            Children = new ConcurrentDictionary<uint, GameComponent>();
+            Name = "uninitialized";
+            IsVisible = true;
+            IsActive = true;
+            Tags = new List<string>();
         }
 
         public GameComponent(ComponentManager manager)
@@ -71,7 +78,7 @@ namespace DwarfCorp
             Name = name;
             RemoveFromParent();
 
-            if (parent != null)
+            if(parent != null)
             {
                 parent.AddChild(this);
             }
@@ -94,7 +101,7 @@ namespace DwarfCorp
 
             toReturn.AddRange(Children.Values);
 
-            foreach (GameComponent child in Children.Values)
+            foreach(GameComponent child in Children.Values)
             {
                 toReturn.AddRange(child.GetAllChildrenRecursive());
             }
@@ -105,24 +112,23 @@ namespace DwarfCorp
 
         public virtual void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
-
         }
 
 
         public virtual void Render(GameTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
-
         }
 
         public override int GetHashCode()
         {
-            return (int)GlobalID;
+            return (int) GlobalID;
         }
+
         public void SetActiveRecursive(bool active)
         {
             IsActive = active;
 
-            foreach (GameComponent child in Children.Values)
+            foreach(GameComponent child in Children.Values)
             {
                 child.SetActiveRecursive(active);
             }
@@ -132,7 +138,7 @@ namespace DwarfCorp
         {
             IsVisible = visible;
 
-            foreach (GameComponent child in Children.Values)
+            foreach(GameComponent child in Children.Values)
             {
                 child.SetVisibleRecursive(visible);
             }
@@ -142,92 +148,44 @@ namespace DwarfCorp
         {
             IsDead = true;
 
-            foreach (GameComponent child in Children.Values)
+            foreach(GameComponent child in Children.Values)
             {
                 child.Die();
             }
         }
 
         #region child_operators
-        public bool HasChildWithType <T> () where T : GameComponent
-        {
-            foreach (GameComponent child in Children.Values)
-            {
-                if (child is T)
-                {
-                    return true;
-                }
-            }
 
-            return false;
+        public bool HasChildWithType<T>() where T : GameComponent
+        {
+            return Children.Values.OfType<T>().Any();
         }
 
-        public List<T> GetChildrendOfType<T>() where T : GameComponent
+        public List<T> GetChildrenOfType<T>() where T : GameComponent
         {
-            List<T> toReturn = new List<T>();
-
-            foreach (GameComponent child in Children.Values)
-            {
-                if (child is T)
-                {
-                    toReturn.Add((T)child);
-                }
-            }
-
-            return toReturn;
+            return (from child in Children
+                where child.Value is T
+                select (T) child.Value).ToList();
         }
 
         public bool HasChildWithName(string name)
         {
-            foreach (GameComponent child in Children.Values)
-            {
-                if (child.Name == name)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return Children.Values.Any(child => child.Name == name);
         }
 
         public List<GameComponent> GetChildrenWithName(string name)
         {
-            List<GameComponent> toReturn = new List<GameComponent>();
-            foreach (GameComponent child in Children.Values)
-            {
-                if (child.Name == name)
-                {
-                    toReturn.Add(child);
-                }
-            }
-
-            return toReturn;
+            return Children.Values.Where(child => child.Name == name).ToList();
         }
 
         public bool HasChildWithGlobalID(uint id)
         {
-            foreach (GameComponent child in Children.Values)
-            {
-                if (child.GlobalID == id)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return Children.Values.Any(child => child.GlobalID == id);
         }
 
         public GameComponent GetChildWithGlobalID(uint id)
         {
-            foreach (GameComponent child in Children.Values)
-            {
-                if (child.GlobalID == id)
-                {
-                    return child;
-                }
-            }
-
-            return null;
+            return Children.Values.FirstOrDefault(child => child.GlobalID == id);
         }
 
         public bool HasChildWithLocalID(uint id)
@@ -237,20 +195,13 @@ namespace DwarfCorp
 
         public GameComponent GetChildByLocalID(uint id)
         {
-            if (HasChildWithLocalID(id))
-            {
-                return Children[id];
-            }
-            else
-            {
-                return null;
-            }
+            return HasChildWithLocalID(id) ? Children[id] : null;
         }
 
 
         public void RemoveFromParent()
         {
-            if (Parent != null)
+            if(Parent != null)
             {
                 Parent.RemoveChild(this);
             }
@@ -258,32 +209,37 @@ namespace DwarfCorp
 
         public void AddChild(GameComponent child)
         {
-            if (!HasChildWithGlobalID(child.GlobalID))
+            if(HasChildWithGlobalID(child.GlobalID))
             {
-                child.LocalID = GetNextLocalID();
-                Children[child.LocalID] = child;
-                child.Parent = this;
+                return;
             }
+
+            child.LocalID = GetNextLocalID();
+            Children[child.LocalID] = child;
+            child.Parent = this;
         }
 
         public void RemoveChild(GameComponent child)
         {
-            if (HasChildWithGlobalID(child.GlobalID))
+            if(!HasChildWithGlobalID(child.GlobalID))
             {
-                GameComponent removed = null;
-               
-                Children.TryRemove(child.LocalID, out removed);
+                return;
             }
+
+            GameComponent removed = null;
+
+            Children.TryRemove(child.LocalID, out removed);
         }
 
         #endregion
 
         #region recursive_child_operators
+
         public bool HasChildWithNameRecursive(string name)
         {
-            foreach (GameComponent child in Children.Values)
+            foreach(GameComponent child in Children.Values)
             {
-                if (child.Name == name || child.HasChildWithNameRecursive(name))
+                if(child.Name == name || child.HasChildWithNameRecursive(name))
                 {
                     return true;
                 }
@@ -296,7 +252,7 @@ namespace DwarfCorp
         {
             GameComponent p = this;
 
-            while (p != null && p.Parent != Manager.RootComponent)
+            while(p != null && p.Parent != Manager.RootComponent)
             {
                 p = p.Parent;
             }
@@ -307,9 +263,9 @@ namespace DwarfCorp
         public List<GameComponent> GetChildrenWithNameRecursive(string name)
         {
             List<GameComponent> toReturn = new List<GameComponent>();
-            foreach (GameComponent child in Children.Values)
+            foreach(GameComponent child in Children.Values)
             {
-                if (child.Name == name)
+                if(child.Name == name)
                 {
                     toReturn.Add(child);
                 }
@@ -323,9 +279,9 @@ namespace DwarfCorp
 
         public bool HasChildWithGlobalIDRecursive(uint id)
         {
-            foreach (GameComponent child in Children.Values)
+            foreach(GameComponent child in Children.Values)
             {
-                if (child.GlobalID == id || child.HasChildWithGlobalIDRecursive(id))
+                if(child.GlobalID == id || child.HasChildWithGlobalIDRecursive(id))
                 {
                     return true;
                 }
@@ -336,16 +292,16 @@ namespace DwarfCorp
 
         public GameComponent GetChildWithGlobalIDRecursive(uint id)
         {
-            foreach (GameComponent child in Children.Values)
+            foreach(GameComponent child in Children.Values)
             {
-                if (child.GlobalID == id)
+                if(child.GlobalID == id)
                 {
                     return child;
                 }
 
                 GameComponent grandChild = child.GetChildWithGlobalIDRecursive(id);
 
-                if (grandChild != null)
+                if(grandChild != null)
                 {
                     return grandChild;
                 }
@@ -357,9 +313,9 @@ namespace DwarfCorp
 
         public bool HasChildWithTypeRecursive<T>() where T : GameComponent
         {
-            foreach (GameComponent child in Children.Values)
+            foreach(GameComponent child in Children.Values)
             {
-                if (child is T || child.HasChildWithTypeRecursive<T>())
+                if(child is T || child.HasChildWithTypeRecursive<T>())
                 {
                     return true;
                 }
@@ -372,20 +328,20 @@ namespace DwarfCorp
         {
             List<T> toReturn = new List<T>();
 
-            foreach (KeyValuePair<uint, GameComponent> child in Children)
+            foreach(KeyValuePair<uint, GameComponent> child in Children)
             {
-                if (child.Value is T)
+                if(child.Value is T)
                 {
-                    toReturn.Add((T)child.Value);
+                    toReturn.Add((T) child.Value);
                 }
 
-                toReturn.AddRange(child.Value.GetChildrendOfType<T>());
+                toReturn.AddRange(child.Value.GetChildrenOfType<T>());
             }
 
             return toReturn;
         }
+
         #endregion
-
-
     }
+
 }

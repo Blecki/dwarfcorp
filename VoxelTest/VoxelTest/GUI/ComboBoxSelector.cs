@@ -8,9 +8,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
+
     public class ComboBoxSelector : SillyGUIComponent
     {
-        public  delegate void Modified(string arg);
+        public delegate void Modified(string arg);
+
         public event Modified OnSelectionModified;
 
         private List<string> Values { get; set; }
@@ -42,19 +44,19 @@ namespace DwarfCorp
             int columnWidth = parent.GlobalBounds.Width - 37;
             ColumnWidth = columnWidth;
             int bestHeight = 0;
-            foreach (string s in values)
+            foreach(string s in values)
             {
                 List<string> column = Columns[currentColumn];
                 Vector2 measure = Datastructures.SafeMeasure(GUI.DefaultFont, s);
-                height += (int)measure.Y;
+                height += (int) measure.Y;
                 column.Add(s);
 
-                if (height > bestHeight)
+                if(height > bestHeight)
                 {
                     bestHeight = height;
                 }
 
-                if (height >= MaxHeight)
+                if(height >= MaxHeight)
                 {
                     height = 0;
                     Columns.Add(new List<string>());
@@ -65,15 +67,15 @@ namespace DwarfCorp
 
             List<List<string>> removals = new List<List<string>>();
 
-            foreach (List<string> column in Columns)
+            foreach(List<string> column in Columns)
             {
-                if (column.Count == 0)
+                if(column.Count == 0)
                 {
                     removals.Add(column);
                 }
             }
 
-            foreach (List<string> column in removals)
+            foreach(List<string> column in removals)
             {
                 Columns.Remove(column);
                 columnWidth -= ColumnWidth;
@@ -87,25 +89,23 @@ namespace DwarfCorp
             ClickTimer = new Timer(0.1f, true);
             InputManager.MouseClickedCallback += InputManager_MouseClickedCallback;
             Drawn = true;
-            
         }
 
-        Vector2 MeasureColumn(List<string> column)
+        private Vector2 MeasureColumn(List<string> column)
         {
             Vector2 toReturn = Vector2.Zero;
-            foreach (string s in column)
+            foreach(string s in column)
             {
                 toReturn.Y += Datastructures.SafeMeasure(GUI.DefaultFont, s).Y;
-                toReturn.X = (float)Math.Max(toReturn.X, Datastructures.SafeMeasure(GUI.DefaultFont, s).X);
+                toReturn.X = (float) Math.Max(toReturn.X, Datastructures.SafeMeasure(GUI.DefaultFont, s).X);
             }
             return toReturn;
         }
 
 
-        void InputManager_MouseClickedCallback(InputManager.MouseButton button)
+        private void InputManager_MouseClickedCallback(InputManager.MouseButton button)
         {
-
-            if (ClickTimer.HasTriggered && !IsDead)
+            if(ClickTimer.HasTriggered && !IsDead)
             {
                 OnSelectionModified.Invoke(CurrentValue);
                 Parent.RemoveChild(this);
@@ -119,21 +119,21 @@ namespace DwarfCorp
         public override void Update(GameTime time)
         {
             ClickTimer.Update(time);
-            if (IsMouseOver && !IsDead)
+            if(IsMouseOver && !IsDead)
             {
                 //GUI.FocusComponent = Parent;
                 MouseState mouse = Mouse.GetState();
 
-                float normalizedX = Math.Min(Math.Max(((float)mouse.X - (float)GlobalBounds.X) / GlobalBounds.Width, 0), 1.0f);
-                int nearestColumn = (int)(normalizedX * Columns.Count);
+                float normalizedX = Math.Min(Math.Max(((float) mouse.X - (float) GlobalBounds.X) / GlobalBounds.Width, 0), 1.0f);
+                int nearestColumn = (int) (normalizedX * Columns.Count);
 
-                if (nearestColumn >= 0 && nearestColumn < Columns.Count)
+                if(nearestColumn >= 0 && nearestColumn < Columns.Count)
                 {
                     Vector2 colMeasure = MeasureColumn(Columns[nearestColumn]);
-                    float normalizedY = Math.Min(Math.Max(((float)mouse.Y - (float)GlobalBounds.Y) / colMeasure.Y, 0), 1.0f);
-                    int nearestRow = (int)(normalizedY * Columns[nearestColumn].Count);
+                    float normalizedY = Math.Min(Math.Max(((float) mouse.Y - (float) GlobalBounds.Y) / colMeasure.Y, 0), 1.0f);
+                    int nearestRow = (int) (normalizedY * Columns[nearestColumn].Count);
 
-                    if (nearestRow >= 0 && nearestRow < Columns[nearestColumn].Count)
+                    if(nearestRow >= 0 && nearestRow < Columns[nearestColumn].Count)
                     {
                         CurrentValue = Columns[nearestColumn][nearestRow];
                         Box.CurrentValue = CurrentValue;
@@ -145,7 +145,6 @@ namespace DwarfCorp
                 //GUI.FocusComponent = null;
             }
 
-             
 
             base.Update(time);
         }
@@ -153,9 +152,9 @@ namespace DwarfCorp
 
         public override void Render(Microsoft.Xna.Framework.GameTime time, Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
         {
-            if (Drawn)
+            if(Drawn)
             {
-                if (!GUI.DrawAfter.Contains(this))
+                if(!GUI.DrawAfter.Contains(this))
                 {
                     GUI.DrawAfter.Add(this);
                     Drawn = false;
@@ -163,36 +162,33 @@ namespace DwarfCorp
             }
             else
             {
-
-
                 GUI.Skin.RenderButton(GlobalBounds, batch);
 
 
-
                 int x = 0;
-                foreach (List<string> column in Columns)
+                foreach(List<string> column in Columns)
                 {
-                    if (column.Count == 0)
+                    if(column.Count == 0)
                     {
                         continue;
                     }
 
                     float columnMeasure = MeasureColumn(column).Y;
-                    PixelsPerValue = (int)columnMeasure / column.Count;
+                    PixelsPerValue = (int) columnMeasure / column.Count;
                     int h = 0;
-                    
-                    foreach (string s in column)
+
+                    foreach(string s in column)
                     {
                         Vector2 measure = Datastructures.SafeMeasure(GUI.DefaultFont, s);
 
                         Color c = Color.Black;
 
-                        if (s == CurrentValue)
+                        if(s == CurrentValue)
                         {
                             c = Color.DarkRed;
                         }
 
-                        Drawer2D.DrawAlignedText(batch, s, GUI.DefaultFont, c, Drawer2D.Alignment.Left, new Rectangle(GlobalBounds.X + 10 + x, GlobalBounds.Y + h + 5, GlobalBounds.Width, (int)measure.Y + 5));
+                        Drawer2D.DrawAlignedText(batch, s, GUI.DefaultFont, c, Drawer2D.Alignment.Left, new Rectangle(GlobalBounds.X + 10 + x, GlobalBounds.Y + h + 5, GlobalBounds.Width, (int) measure.Y + 5));
 
                         h += PixelsPerValue;
                     }
@@ -204,4 +200,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

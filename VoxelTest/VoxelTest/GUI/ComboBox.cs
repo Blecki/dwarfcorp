@@ -8,9 +8,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
+
     public class ComboBox : SillyGUIComponent
     {
-
         private List<string> Values { get; set; }
         public string CurrentValue { get; set; }
         public int CurrentIndex { get; set; }
@@ -23,37 +23,34 @@ namespace DwarfCorp
         {
             Values = new List<string>();
             CurrentValue = "";
-            OnLeftClicked += new ClickedDelegate(ComboBox_OnLeftPressed);
+            OnLeftClicked += ComboBox_OnLeftPressed;
             Selector = null;
-            OnSelectionModified += new ComboBoxSelector.Modified(ComboBox_OnSelectionModified);
-         
+            OnSelectionModified += ComboBox_OnSelectionModified;
         }
 
-        void ComboBox_OnSelectionModified(string arg)
+        private void ComboBox_OnSelectionModified(string arg)
         {
-            if (GUI.FocusComponent == Selector)
+            if(GUI.FocusComponent == Selector)
             {
                 GUI.FocusComponent = null;
             }
         }
 
-        void ComboBox_OnLeftPressed()
+        private void ComboBox_OnLeftPressed()
         {
-            if (Selector == null)
+            if(Selector == null)
             {
-
-                Rectangle fieldRect = new Rectangle(GlobalBounds.X, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width , 32);
-                if (fieldRect.Contains(Mouse.GetState().X, Mouse.GetState().Y))
+                Rectangle fieldRect = new Rectangle(GlobalBounds.X, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width, 32);
+                if(fieldRect.Contains(Mouse.GetState().X, Mouse.GetState().Y))
                 {
                     Selector = new ComboBoxSelector(GUI, this, Values, CurrentValue);
                     GUI.FocusComponent = Selector;
-                    Selector.OnSelectionModified += new ComboBoxSelector.Modified(Selector_OnSelectionModified);
+                    Selector.OnSelectionModified += Selector_OnSelectionModified;
                 }
             }
-
         }
 
-        void Selector_OnSelectionModified(string value)
+        private void Selector_OnSelectionModified(string value)
         {
             CurrentIndex = Selector.GetCurrentIndex();
             OnSelectionModified.Invoke(value);
@@ -73,22 +70,21 @@ namespace DwarfCorp
         {
             Values.Remove(value);
 
-            if (CurrentValue == value)
+            if(CurrentValue == value)
             {
                 CurrentValue = "";
                 CurrentIndex = 0;
             }
-
         }
 
         public override void Render(Microsoft.Xna.Framework.GameTime time, Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
         {
-            Rectangle fieldRect = new Rectangle(GlobalBounds.X , GlobalBounds.Y + GlobalBounds.Height/2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width - 37, 32);
+            Rectangle fieldRect = new Rectangle(GlobalBounds.X, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width - 37, 32);
             GUI.Skin.RenderField(fieldRect, batch);
-            Drawer2D.DrawAlignedText(batch, CurrentValue, GUI.DefaultFont,  Color.Black, Drawer2D.Alignment.Center, fieldRect);
+            Drawer2D.DrawAlignedText(batch, CurrentValue, GUI.DefaultFont, Color.Black, Drawer2D.Alignment.Center, fieldRect);
             GUI.Skin.RenderDownArrow(new Rectangle(GlobalBounds.X + GlobalBounds.Width - 32, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, 32, 32), batch);
             base.Render(time, batch);
         }
-
     }
+
 }

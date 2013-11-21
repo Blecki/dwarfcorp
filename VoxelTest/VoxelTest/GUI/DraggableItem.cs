@@ -9,13 +9,15 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
+
     public class DraggableItem : SillyGUIComponent
     {
-
         public delegate void DragStarted();
+
         public event DragStarted OnDragStarted;
 
         public delegate void DragEnded();
+
         public event DragEnded OnDragEnded;
 
         public GItem Item { get; set; }
@@ -30,52 +32,52 @@ namespace DwarfCorp
         {
             IsDragging = false;
             Item = item;
-            OnHover += new MouseHoveredDelegate(DraggableItem_OnHover);
-            OnUnHover += new MouseUnHoveredDelegate(DraggableItem_OnUnHover);
-            OnPressed += new ClickedDelegate(DraggableItem_OnPressed);
-            OnRelease += new ReleasedDelegate(DraggableItem_OnRelease);
-            OnDragStarted += new DragStarted(DraggableItem_OnDragStarted);
-            OnDragEnded += new DragEnded(DraggableItem_OnDragEnded);
+            OnHover += DraggableItem_OnHover;
+            OnUnHover += DraggableItem_OnUnHover;
+            OnPressed += DraggableItem_OnPressed;
+            OnRelease += DraggableItem_OnRelease;
+            OnDragStarted += DraggableItem_OnDragStarted;
+            OnDragEnded += DraggableItem_OnDragEnded;
             IsHighlighting = false;
             KeepAspectRatio = true;
         }
 
-        void DraggableItem_OnUnHover()
+        private void DraggableItem_OnUnHover()
         {
             IsHighlighting = false;
         }
 
-        void DraggableItem_OnHover()
+        private void DraggableItem_OnHover()
         {
             IsHighlighting = true;
         }
 
-        void DraggableItem_OnDragEnded()
+        private void DraggableItem_OnDragEnded()
         {
             IsDragging = false;
             OverrideClickBehavior = false;
             GUI.FocusComponent = null;
         }
 
-        void DraggableItem_OnDragStarted()
+        private void DraggableItem_OnDragStarted()
         {
             IsDragging = true;
             OverrideClickBehavior = true;
             GUI.FocusComponent = this;
         }
 
-        void DraggableItem_OnRelease()
+        private void DraggableItem_OnRelease()
         {
-            if (IsDragging)
+            if(IsDragging)
             {
                 IsDragging = false;
                 OnDragEnded.Invoke();
             }
         }
 
-        void DraggableItem_OnPressed()
+        private void DraggableItem_OnPressed()
         {
-            if (!IsDragging)
+            if(!IsDragging)
             {
                 IsDragging = true;
                 OnDragStarted.Invoke();
@@ -87,22 +89,21 @@ namespace DwarfCorp
             Rectangle toDraw = GlobalBounds;
 
 
-            if (KeepAspectRatio)
+            if(KeepAspectRatio)
             {
-                if (toDraw.Width < toDraw.Height)
+                if(toDraw.Width < toDraw.Height)
                 {
-                    float wPh = (float)toDraw.Width / (float)toDraw.Height;
-                    toDraw = new Rectangle(toDraw.X, toDraw.Y, toDraw.Width, (int)(toDraw.Height * wPh));
+                    float wPh = (float) toDraw.Width / (float) toDraw.Height;
+                    toDraw = new Rectangle(toDraw.X, toDraw.Y, toDraw.Width, (int) (toDraw.Height * wPh));
                 }
                 else
                 {
-                    float wPh = (float)toDraw.Height / (float)toDraw.Width;
-                    toDraw = new Rectangle(toDraw.X, toDraw.Y, (int)(toDraw.Width * wPh), toDraw.Height);
+                    float wPh = (float) toDraw.Height / (float) toDraw.Width;
+                    toDraw = new Rectangle(toDraw.X, toDraw.Y, (int) (toDraw.Width * wPh), toDraw.Height);
                 }
             }
             return toDraw;
         }
-
 
 
         public override void Update(GameTime time)
@@ -113,24 +114,24 @@ namespace DwarfCorp
         public override void Render(GameTime time, SpriteBatch batch)
         {
             Rectangle toDraw = GetImageBounds();
-            
+
             MouseState m = Mouse.GetState();
             if(IsDragging)
             {
-                toDraw.Y = m.Y - toDraw.Height/2;
+                toDraw.Y = m.Y - toDraw.Height / 2;
                 toDraw.X = m.X - toDraw.Width / 2;
                 batch.Draw(Item.Image.Image, GetImageBounds(), Item.Image.SourceRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
             }
 
             //if (Item.CurrentAmount > 0)
             {
-                if (!IsHighlighting)
+                if(!IsHighlighting)
                 {
                     batch.Draw(Item.Image.Image, toDraw, Item.Image.SourceRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
                 }
                 else
                 {
-                    if (IsMouseOver)
+                    if(IsMouseOver)
                     {
                         batch.Draw(Item.Image.Image, toDraw, Item.Image.SourceRect, Color.Orange, 0, Vector2.Zero, SpriteEffects.None, 0);
                     }
@@ -138,13 +139,10 @@ namespace DwarfCorp
                     {
                         batch.Draw(Item.Image.Image, toDraw, Item.Image.SourceRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
                     }
-
-
                 }
 
-                if (Item.CurrentAmount < 256)
+                if(Item.CurrentAmount < 256)
                 {
-                  
                     Drawer2D.DrawStrokedText(batch, "" + Item.CurrentAmount, GUI.SmallFont, new Vector2(GetImageBounds().X, GetImageBounds().Y), Color.White, Color.Black);
                     Drawer2D.DrawStrokedText(batch, "" + (Item.CurrentAmount * Item.Price).ToString("C"), GUI.SmallFont, new Vector2(GetImageBounds().X + GetImageBounds().Width / 2, GetImageBounds().Y + GetImageBounds().Height - 20), Color.White, Color.Black);
                 }
@@ -154,8 +152,9 @@ namespace DwarfCorp
                 }
                 //batch.DrawString(GUI.SmallFont, "" + Item.CurrentAmount, new Vector2(GetImageBounds().X, GetImageBounds().Y), Color.Black);
             }
-            
+
             base.Render(time, batch);
         }
     }
+
 }

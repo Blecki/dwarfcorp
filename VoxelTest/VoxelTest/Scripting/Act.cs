@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -20,7 +22,7 @@ namespace DwarfCorp
             return new Wrap(func);
         }
     }
-
+    [JsonObject(IsReference = true)]
     public class Act
     {
         public enum Status
@@ -35,10 +37,18 @@ namespace DwarfCorp
 
         public string Name = "Act";
         public bool IsInitialized { get; set; }
+
+        [JsonIgnore]
         public IEnumerator<Status> Enumerator;
 
+        [JsonIgnore]
         public static GameTime LastTime { get; set; }
-        public static float Dt { get { return (float)LastTime.ElapsedGameTime.TotalSeconds; } }
+
+        [JsonIgnore]
+        public static float Dt
+        {
+            get { return (float) LastTime.ElapsedGameTime.TotalSeconds; }
+        }
 
 
         public Act()
@@ -48,7 +58,7 @@ namespace DwarfCorp
         }
 
 
-        public static implicit operator Act(Func<IEnumerable<Status> > enumerator)
+        public static implicit operator Act(Func<IEnumerable<Status>> enumerator)
         {
             return enumerator.GetAct();
         }
@@ -84,10 +94,9 @@ namespace DwarfCorp
         }
 
 
-
         public Status Tick()
         {
-            if (Enumerator == null)
+            if(Enumerator == null)
             {
                 Initialize();
             }
@@ -106,7 +115,6 @@ namespace DwarfCorp
         {
             throw new NotImplementedException();
         }
-
-
     }
+
 }

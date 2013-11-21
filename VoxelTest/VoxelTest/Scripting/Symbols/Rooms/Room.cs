@@ -4,14 +4,12 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
-
-
-
-    public class Room : Zone
+    [JsonObject(IsReference = true)]
+    public sealed class Room : Zone
     {
         public List<VoxelRef> Designations { get; set; }
         public List<GameComponent> Components { get; set; }
@@ -19,7 +17,7 @@ namespace DwarfCorp
         public RoomType RoomType { get; set; }
         private static int Counter = 0;
 
-        public Room(bool designation, List<VoxelRef> designations, RoomType type,ChunkManager chunks) :
+        public Room(bool designation, List<VoxelRef> designations, RoomType type, ChunkManager chunks) :
             base(type.Name + " " + Counter, chunks)
         {
             RoomType = type;
@@ -31,7 +29,7 @@ namespace DwarfCorp
             IsBuilt = false;
         }
 
-        public Room(List<VoxelRef> voxels, RoomType type, ChunkManager chunks) :
+        public Room(IEnumerable<VoxelRef> voxels, RoomType type, ChunkManager chunks) :
             base(type.Name + " " + Counter, chunks)
         {
             RoomType = type;
@@ -43,12 +41,10 @@ namespace DwarfCorp
             Counter++;
 
             IsBuilt = true;
-            foreach (VoxelRef voxel in voxels)
+            foreach(VoxelRef voxel in voxels)
             {
                 AddVoxel(voxel);
             }
-
-
         }
 
 
@@ -58,7 +54,7 @@ namespace DwarfCorp
             HashSet<LocatableComponent> components = new HashSet<LocatableComponent>();
             BoundingBox box = GetBoundingBox();
             box.Max += new Vector3(0, 0, 2);
-            LocatableComponent.m_octree.Root.GetComponentsIntersecting<LocatableComponent>(GetBoundingBox(), components);
+            LocatableComponent.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
             toReturn.AddRange(components);
 
@@ -68,17 +64,8 @@ namespace DwarfCorp
         public List<LocatableComponent> GetComponentsInRoomContainingTag(string tag)
         {
             List<LocatableComponent> inRoom = GetComponentsInRoom();
-            List<LocatableComponent> toReturn = new List<LocatableComponent>();
 
-            foreach(LocatableComponent c in inRoom)
-            {
-                if (c.Tags.Contains(tag))
-                {
-                    toReturn.Add(c);
-                }
-            }
-
-            return toReturn;
+            return inRoom.Where(c => c.Tags.Contains(tag)).ToList();
         }
 
 
@@ -87,12 +74,12 @@ namespace DwarfCorp
             float closestDist = 99999;
             int closestIndex = -1;
 
-            for (int i = 0; i < Designations.Count; i++)
+            for(int i = 0; i < Designations.Count; i++)
             {
                 VoxelRef v = Designations[i];
                 float d = (v.WorldPosition - worldCoordinate).LengthSquared();
 
-                if (d < closestDist)
+                if(d < closestDist)
                 {
                     closestDist = d;
                     closestIndex = i;
@@ -101,7 +88,6 @@ namespace DwarfCorp
 
             return closestIndex;
         }
-
-
     }
+
 }

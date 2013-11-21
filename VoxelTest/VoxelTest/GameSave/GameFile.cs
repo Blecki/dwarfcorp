@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Serialization;
@@ -9,6 +11,7 @@ using System.IO.Compression;
 
 namespace DwarfCorp
 {
+
     public class GameFile : SaveData
     {
         public class GameData
@@ -37,7 +40,7 @@ namespace DwarfCorp
                 public Vector2 CameraRotation { get; set; }
 
                 public new static string Extension = "meta";
-                public new static string CompressedExtension = "zmeta"; 
+                public new static string CompressedExtension = "zmeta";
 
                 public MetaData(string file, bool compressed)
                 {
@@ -61,11 +64,11 @@ namespace DwarfCorp
                     OverworldFile = file.OverworldFile;
                 }
 
-                public override bool ReadFile(string filePath, bool isCompressed)
+                public override sealed bool ReadFile(string filePath, bool isCompressed)
                 {
                     MetaData file = FileUtils.LoadJson<MetaData>(filePath, isCompressed);
 
-                    if (file == null)
+                    if(file == null)
                     {
                         return false;
                     }
@@ -91,7 +94,7 @@ namespace DwarfCorp
 
                 System.IO.Directory.CreateDirectory(directory + System.IO.Path.DirectorySeparatorChar + "Chunks");
 
-                foreach (ChunkFile chunk in ChunkData)
+                foreach(ChunkFile chunk in ChunkData)
                 {
                     chunk.WriteFile(directory + System.IO.Path.DirectorySeparatorChar + "Chunks" + System.IO.Path.DirectorySeparatorChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + "." + ChunkFile.CompressedExtension, true);
                 }
@@ -99,7 +102,7 @@ namespace DwarfCorp
 
                 System.IO.Directory.CreateDirectory(directory + System.IO.Path.DirectorySeparatorChar + "Entitites");
 
-                foreach (EntityFile ent in EntityData)
+                foreach(EntityFile ent in EntityData)
                 {
                     ent.WriteFile(directory + System.IO.Path.DirectorySeparatorChar + "Entitites" + System.IO.Path.DirectorySeparatorChar + ent.Type + ent.ID + "." + EntityFile.CompressedExtension, true);
                 }
@@ -109,59 +112,190 @@ namespace DwarfCorp
         }
 
         public GameData Data { get; set; }
-
-
+        public Dictionary<uint, uint> IDMap { get; set; } 
 
         public new static string Extension = "game";
-        public new static string CompressedExtension = "zgame"; 
+        public new static string CompressedExtension = "zgame";
 
-        public GameFile(PlayState playState, string overworld)
+        public GameFile(string overworld)
         {
-            Data = new GameData();
-            
-            Data.EconomyData = new EconomyFile(PlayState.master.Economy);
-            Data.CompanyData = new CompanyFile(PlayerSettings.Default.CompanyName, PlayerSettings.Default.CompanyLogo, PlayerSettings.Default.CompanyMotto);
-
-            Data.Metadata.OverworldFile = overworld;
-            Data.Metadata.WorldOrigin = PlayState.WorldOrigin;
-            Data.Metadata.WorldScale = PlayState.WorldScale;
-            Data.Metadata.TimeOfDay = PlayState.Sky.TimeOfDay;
-            Data.Metadata.ChunkHeight = GameSettings.Default.ChunkHeight;
-            Data.Metadata.ChunkWidth = GameSettings.Default.ChunkWidth;
-            Data.Metadata.CameraPosition = PlayState.camera.Position;
-            Data.Metadata.CameraRotation = new Vector2(PlayState.camera.Phi, PlayState.camera.Theta);
-
-            Data.EntityData = new List<EntityFile>();
-
-            foreach(GameComponent component in PlayState.componentManager.Components.Values)
+            Data = new GameData
             {
-                if (component is LocatableComponent && component.Parent == PlayState.componentManager.RootComponent)
+                EconomyData = new EconomyFile(PlayState.Master.Economy),
+                CompanyData = new CompanyFile(PlayerSettings.Default.CompanyName, PlayerSettings.Default.CompanyLogo, PlayerSettings.Default.CompanyMotto),
+                Metadata =
                 {
-                    LocatableComponent loc = (LocatableComponent)component;
-
-                    EntityFile entityFile = new EntityFile(component.GlobalID, component.Name, loc.GlobalTransform, loc.LocalTransform.M44);
-                    Data.EntityData.Add(entityFile);
-                }
+                    OverworldFile = overworld,
+                    WorldOrigin = PlayState.WorldOrigin,
+                    WorldScale = PlayState.WorldScale,
+                    TimeOfDay = PlayState.Sky.TimeOfDay,
+                    ChunkHeight = GameSettings.Default.ChunkHeight,
+                    ChunkWidth = GameSettings.Default.ChunkWidth,
+                    CameraPosition = PlayState.camera.Position,
+                    CameraRotation = new Vector2(PlayState.camera.Phi, PlayState.camera.Theta)
+                },
+                EntityData = new List<EntityFile>(),
+            };
+            IDMap = new Dictionary<uint, uint>();
+            foreach(EntityFile entityFile in from component in PlayState.ComponentManager.Components.Values
+                where component is LocatableComponent && component.Parent == PlayState.ComponentManager.RootComponent && component.IsActive
+                let loc = (LocatableComponent) component
+                select new EntityFile(component.GlobalID, component.Name, loc.GlobalTransform, loc.LocalTransform.M44))
+            {
+                Data.EntityData.Add(entityFile);
             }
 
             Data.ChunkData = new List<ChunkFile>();
 
-            foreach (KeyValuePair<Point3, VoxelChunk> pair in PlayState.chunkManager.ChunkMap)
+            foreach(ChunkFile file in PlayState.ChunkManager.ChunkMap.Select(pair => new ChunkFile(pair.Value)))
             {
-                ChunkFile file = new ChunkFile(pair.Value);
                 Data.ChunkData.Add(file);
             }
 
-            Data.PlayerData = new PlayerFile(PlayState.master);
+            Data.PlayerData = new PlayerFile(PlayState.Master);
         }
 
-        public virtual string GetExtension() { return "game"; }
-        public virtual string GetCompressedExtension() { return "zgame"; }
+        public void CreateEntities(PlayState playState)
+        {
+
+            foreach (EntityFile file in Data.EntityData)
+            {
+                GameComponent component = file.CreateComponent(PlayState.ComponentManager, playState.GraphicsDevice, playState.Game.Content, PlayState.ChunkManager, PlayState.Master, PlayState.camera);
+
+                if (component == null)
+                {
+                    continue;
+                }
+
+                PlayState.ComponentManager.AddComponent(component);
+                IDMap[file.ID] = component.GlobalID;
+            }
+        }
+
+        public static VoxelRef GetVoxelRef(VoxelPtr voxelPtr)
+        {
+            VoxelChunk chunk = PlayState.ChunkManager.ChunkMap[new Point3(voxelPtr.Ptr[0], voxelPtr.Ptr[1], voxelPtr.Ptr[2])];
+            
+            if(chunk == null)
+            {
+                return null;
+            }
+
+            List<VoxelRef> list = PlayState.ChunkManager.GetVoxelReferencesAtWorldLocation(chunk.Origin + new Vector3(voxelPtr.Ptr[3], voxelPtr.Ptr[4], voxelPtr.Ptr[5]));
+
+            return list.Count == 0 ? null : list.ElementAt(0);
+        }
+
+        public  GameComponent GetEntity(EntityPtr entityPtr)
+        {
+            if(!IDMap.ContainsKey(entityPtr.ID))
+            {
+                return null;
+            }
+
+            uint globalID = IDMap[entityPtr.ID];
+            return PlayState.ComponentManager.Components.ContainsKey(globalID) ? PlayState.ComponentManager.Components[globalID] : null;
+        }
+
+        public void CreatePlayerData(PlayState playState)
+        {
+            foreach(GameMaster.Designation designation in from des in Data.PlayerData.Data.DigDesignations
+                select GetVoxelRef(des)
+                into vref
+                where vref != null
+                select new GameMaster.Designation()
+                {
+                    numCreaturesAssigned = 0,
+                    vox = vref
+                })
+            {
+                PlayState.Master.DigDesignations.Add(designation);
+            }
+
+            foreach(GameMaster.Designation designation in from des in Data.PlayerData.Data.GuardDesignations
+                select GetVoxelRef(des)
+                into vref
+                where vref != null
+                select new GameMaster.Designation()
+                {
+                    numCreaturesAssigned = 0,
+                    vox = vref
+                })
+            {
+                PlayState.Master.GuardDesignations.Add(designation);
+            }
+
+            foreach(LocatableComponent loc in (from ent in Data.PlayerData.Data.ChopDesignations
+                where IDMap.ContainsKey(ent.ID)
+                select IDMap[ent.ID]
+                into globalID
+                where PlayState.ComponentManager.Components.ContainsKey(globalID)
+                select PlayState.ComponentManager.Components[globalID]).OfType<LocatableComponent>())
+            {
+                PlayState.Master.ChopDesignations.Add(loc);
+            }
+
+            foreach (LocatableComponent loc in (from ent in Data.PlayerData.Data.GatherDesignations
+                                                where IDMap.ContainsKey(ent.ID)
+                                                select IDMap[ent.ID]
+                                                    into globalID
+                                                    where PlayState.ComponentManager.Components.ContainsKey(globalID)
+                                                    select PlayState.ComponentManager.Components[globalID]).OfType<LocatableComponent>())
+            {
+                PlayState.Master.GatherDesignations.Add(loc);
+            }
+
+            foreach(ZoneData zone in Data.PlayerData.Data.Rooms)
+            {
+                List<VoxelRef> voxelRef = zone.Voxels.Select(GetVoxelRef).ToList();
+                Room room = new Room(voxelRef, RoomLibrary.GetType(zone.Type), PlayState.ChunkManager)
+                {
+                    ID = zone.Name
+                };
+
+                PlayState.Master.RoomDesignator.DesignatedRooms.Add(room);
+
+                foreach(EntityPtr ent in zone.AttachedEntities)
+                {
+                    room.Components.Add(GetEntity(ent));
+                }
+            }
+
+            foreach(ZoneData zone in Data.PlayerData.Data.Stockpiles)
+            {
+                List<VoxelRef> voxelRef = zone.Voxels.Select(GetVoxelRef).ToList();
+                Stockpile stock = new Stockpile(zone.Name, PlayState.ChunkManager);
+                foreach(VoxelRef vRef in voxelRef)
+                {
+                    stock.AddVoxel(vRef);
+                }
+
+                PlayState.Master.Stockpiles.Add(stock);
+
+                foreach (EntityPtr ent in zone.AttachedEntities)
+                {
+                    GameComponent component = GetEntity(ent);
+                    stock.AddItem(Item.CreateItem(component.Name + component.GlobalID, stock, component as LocatableComponent), GetVoxelRef(ent.Voxel));
+                }
+            }
+
+
+        }
+
+        public virtual string GetExtension()
+        {
+            return "game";
+        }
+
+        public virtual string GetCompressedExtension()
+        {
+            return "zgame";
+        }
 
         public GameFile(string file, bool compressed)
         {
             Data = new GameData();
-
+            IDMap = new Dictionary<uint, uint>();
             ReadFile(file, compressed);
         }
 
@@ -175,9 +309,9 @@ namespace DwarfCorp
             Data = file.Data;
         }
 
-        public override bool ReadFile(string filePath, bool isCompressed)
+        public override sealed bool ReadFile(string filePath, bool isCompressed)
         {
-            if (!System.IO.Directory.Exists(filePath))
+            if(!System.IO.Directory.Exists(filePath))
             {
                 return false;
             }
@@ -188,7 +322,7 @@ namespace DwarfCorp
                 string[] economyFiles = EconomyFile.GetFilesInDirectory(filePath, isCompressed, EconomyFile.CompressedExtension, EconomyFile.Extension);
                 string[] playerFiles = PlayerFile.GetFilesInDirectory(filePath, isCompressed, PlayerFile.CompressedExtension, PlayerFile.Extension);
 
-                if (metaFiles.Length > 0)
+                if(metaFiles.Length > 0)
                 {
                     Data.Metadata = new GameData.MetaData(metaFiles[0], isCompressed);
                 }
@@ -197,7 +331,7 @@ namespace DwarfCorp
                     return false;
                 }
 
-                if (companyFiles.Length > 0)
+                if(companyFiles.Length > 0)
                 {
                     Data.CompanyData = new CompanyFile(companyFiles[0], isCompressed);
                 }
@@ -206,7 +340,7 @@ namespace DwarfCorp
                     return false;
                 }
 
-                if (economyFiles.Length > 0)
+                if(economyFiles.Length > 0)
                 {
                     Data.EconomyData = new EconomyFile(economyFiles[0], isCompressed);
                 }
@@ -215,7 +349,7 @@ namespace DwarfCorp
                     return false;
                 }
 
-                if (playerFiles.Length > 0)
+                if(playerFiles.Length > 0)
                 {
                     Data.PlayerData = new PlayerFile(playerFiles[0], isCompressed);
                 }
@@ -226,13 +360,13 @@ namespace DwarfCorp
 
                 string[] chunkDirs = System.IO.Directory.GetDirectories(filePath, "Chunks");
 
-                if (chunkDirs.Length > 0)
+                if(chunkDirs.Length > 0)
                 {
                     string chunkDir = chunkDirs[0];
 
                     string[] chunks = ChunkFile.GetFilesInDirectory(chunkDir, isCompressed, ChunkFile.CompressedExtension, ChunkFile.Extension);
                     Data.ChunkData = new List<ChunkFile>();
-                    foreach (string chunk in chunks)
+                    foreach(string chunk in chunks)
                     {
                         Data.ChunkData.Add(new ChunkFile(chunk, isCompressed));
                     }
@@ -244,13 +378,13 @@ namespace DwarfCorp
 
                 string[] entDirs = System.IO.Directory.GetDirectories(filePath, "Entitites");
 
-                if (entDirs.Length > 0)
+                if(entDirs.Length > 0)
                 {
                     string entDir = entDirs[0];
 
                     string[] ents = EntityFile.GetFilesInDirectory(entDir, isCompressed, EntityFile.CompressedExtension, EntityFile.Extension);
                     Data.EntityData = new List<EntityFile>();
-                    foreach (string ent in ents)
+                    foreach(string ent in ents)
                     {
                         Data.EntityData.Add(new EntityFile(ent, isCompressed));
                     }
@@ -261,7 +395,6 @@ namespace DwarfCorp
                 }
 
                 return true;
-
             }
         }
 
@@ -270,6 +403,6 @@ namespace DwarfCorp
             Data.SaveToDirectory(filePath);
             return true;
         }
-
     }
+
 }

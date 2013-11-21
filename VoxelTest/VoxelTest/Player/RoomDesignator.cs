@@ -9,12 +9,15 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Newtonsoft.Json;
 
 
 namespace DwarfCorp
 {
+     [JsonObject(IsReference = true)]
     public class RoomBuildDesignation
     {
+        [JsonIgnore]
         public Room ToBuild { get; set; }
         public Dictionary<string, ResourceAmount> PutResources { get; set; }
         public List<VoxelBuildDesignation> VoxelBuildDesignations { get; set; }
@@ -34,12 +37,12 @@ namespace DwarfCorp
 
         public void Build()
         {
-            if (IsBuilt)
+            if(IsBuilt)
             {
                 return;
             }
 
-            foreach (VoxelBuildDesignation vox in VoxelBuildDesignations)
+            foreach(VoxelBuildDesignation vox in VoxelBuildDesignations)
             {
                 ToBuild.AddVoxel(vox.Voxel);
             }
@@ -52,7 +55,7 @@ namespace DwarfCorp
         {
             List<BoundingBox> components = new List<BoundingBox>();
 
-            foreach (VoxelBuildDesignation vox in VoxelBuildDesignations)
+            foreach(VoxelBuildDesignation vox in VoxelBuildDesignations)
             {
                 components.Add(vox.Voxel.GetBoundingBox());
             }
@@ -65,20 +68,19 @@ namespace DwarfCorp
             int required = GetNumRequiredResources(name);
             int current = 0;
 
-            if (PutResources.ContainsKey(name))
+            if(PutResources.ContainsKey(name))
             {
-                current = (int)PutResources[name].NumResources;
+                current = (int) PutResources[name].NumResources;
             }
 
             return current >= required;
-            
         }
 
         public int GetNumRequiredResources(string name)
         {
-            if (ToBuild.RoomType.RequiredResources.ContainsKey(name))
+            if(ToBuild.RoomType.RequiredResources.ContainsKey(name))
             {
-                return Math.Max((int)(ToBuild.RoomType.RequiredResources[name].NumResources * VoxelBuildDesignations.Count), 1);
+                return Math.Max((int) (ToBuild.RoomType.RequiredResources[name].NumResources * VoxelBuildDesignations.Count), 1);
             }
             else
             {
@@ -90,15 +92,15 @@ namespace DwarfCorp
         {
             string toReturn = ToBuild.RoomType.Name;
 
-            foreach (ResourceAmount amount in ToBuild.RoomType.RequiredResources.Values)
+            foreach(ResourceAmount amount in ToBuild.RoomType.RequiredResources.Values)
             {
                 toReturn += "\n";
                 int numResource = 0;
-                if (PutResources.ContainsKey(amount.ResourceType.ResourceName))
+                if(PutResources.ContainsKey(amount.ResourceType.ResourceName))
                 {
-                    numResource = (int)(PutResources[amount.ResourceType.ResourceName].NumResources);
+                    numResource = (int) (PutResources[amount.ResourceType.ResourceName].NumResources);
                 }
-                toReturn += amount.ResourceType.ResourceName + " : " + numResource + "/" + Math.Max((int)(amount.NumResources * VoxelBuildDesignations.Count), 1);
+                toReturn += amount.ResourceType.ResourceName + " : " + numResource + "/" + Math.Max((int) (amount.NumResources * VoxelBuildDesignations.Count), 1);
             }
 
             return toReturn;
@@ -120,7 +122,7 @@ namespace DwarfCorp
 
         public void AddResource(string resource)
         {
-            if (BuildDesignation.PutResources.ContainsKey(resource))
+            if(BuildDesignation.PutResources.ContainsKey(resource))
             {
                 ResourceAmount amount = BuildDesignation.PutResources[resource];
                 amount.NumResources++;
@@ -133,7 +135,6 @@ namespace DwarfCorp
 
                 BuildDesignation.PutResources[resource] = amount;
             }
-
         }
 
         public void Build()
@@ -144,43 +145,41 @@ namespace DwarfCorp
         public Resource GetNextRequiredResource()
         {
             IEnumerable<string> randomKeys = Datastructures.RandomKeys<string, ResourceAmount>(ToBuild.RoomType.RequiredResources);
-            foreach (string s in ToBuild.RoomType.RequiredResources.Keys)
+            foreach(string s in ToBuild.RoomType.RequiredResources.Keys)
             {
-                if (!BuildDesignation.PutResources.ContainsKey(s))
+                if(!BuildDesignation.PutResources.ContainsKey(s))
                 {
                     return ToBuild.RoomType.RequiredResources[s].ResourceType;
                 }
-                else if (BuildDesignation.PutResources[s].NumResources < Math.Max((int)(ToBuild.RoomType.RequiredResources[s].NumResources * BuildDesignation.VoxelBuildDesignations.Count), 1))
+                else if(BuildDesignation.PutResources[s].NumResources < Math.Max((int) (ToBuild.RoomType.RequiredResources[s].NumResources * BuildDesignation.VoxelBuildDesignations.Count), 1))
                 {
                     return ToBuild.RoomType.RequiredResources[s].ResourceType;
                 }
             }
 
             return null;
-
         }
 
         public bool MeetsBuildRequirements()
         {
             bool toReturn = true;
-            foreach (string s in ToBuild.RoomType.RequiredResources.Keys)
+            foreach(string s in ToBuild.RoomType.RequiredResources.Keys)
             {
-                if (!BuildDesignation.PutResources.ContainsKey(s))
+                if(!BuildDesignation.PutResources.ContainsKey(s))
                 {
                     return false;
                 }
                 else
                 {
-                    toReturn = toReturn && (BuildDesignation.PutResources[s].NumResources >= Math.Max((int)(ToBuild.RoomType.RequiredResources[s].NumResources * BuildDesignation.VoxelBuildDesignations.Count), 1));
+                    toReturn = toReturn && (BuildDesignation.PutResources[s].NumResources >= Math.Max((int) (ToBuild.RoomType.RequiredResources[s].NumResources * BuildDesignation.VoxelBuildDesignations.Count), 1));
                 }
             }
 
             return toReturn;
         }
-
     }
 
-
+    [JsonObject(IsReference = true)]
     public class RoomDesignator
     {
         public List<Room> DesignatedRooms { get; set; }
@@ -191,16 +190,7 @@ namespace DwarfCorp
 
         public List<Room> FilterRoomsByType(string type)
         {
-            List<Room> toReturn = new List<Room>();
-            foreach (Room r in DesignatedRooms)
-            {
-                if (r.RoomType.Name == type)
-                {
-                    toReturn.Add(r);
-                }
-            }
-
-            return toReturn;
+            return DesignatedRooms.Where(r => r.RoomType.Name == type).ToList();
         }
 
         public RoomDesignator(GameMaster master)
@@ -216,159 +206,82 @@ namespace DwarfCorp
         public bool IsInRoom(Voxel v)
         {
             VoxelRef vRef = v.GetReference();
-            foreach (Room r in DesignatedRooms)
-            {
-                if (r.ContainsVoxel(vRef))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return DesignatedRooms.Any(r => r.ContainsVoxel(vRef));
         }
 
         public bool IsBuildDesignation(Voxel v)
         {
-            foreach (RoomBuildDesignation room in BuildDesignations)
-            {
-                foreach (VoxelBuildDesignation buildDesignation in room.VoxelBuildDesignations)
-                {
-                    if ((buildDesignation.Voxel.WorldPosition - v.Position).LengthSquared() < 0.1f)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
+            return BuildDesignations.SelectMany(room => room.VoxelBuildDesignations).Any(buildDesignation => (buildDesignation.Voxel.WorldPosition - v.Position).LengthSquared() < 0.1f);
         }
 
         public bool IsBuildDesignation(Room r)
         {
-            foreach (RoomBuildDesignation room in BuildDesignations)
-            {
-                if (room.ToBuild == r)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return BuildDesignations.Any(room => room.ToBuild == r);
         }
 
         public VoxelBuildDesignation GetBuildDesignation(Room v)
         {
-            foreach (RoomBuildDesignation room in BuildDesignations)
-            {
-                if (room.ToBuild == v)
-                {
-                    if (room.VoxelBuildDesignations.Count > 0)
-                    {
-                        return room.VoxelBuildDesignations[0];
-                    }
-                }
-            }
-
-            return null;
+            return (from room in BuildDesignations
+                where room.ToBuild == v
+                where room.VoxelBuildDesignations.Count > 0
+                select room.VoxelBuildDesignations[0]).FirstOrDefault();
         }
 
         public VoxelBuildDesignation GetBuildDesignation(Voxel v)
         {
-            foreach (RoomBuildDesignation room in BuildDesignations)
-            {
-                foreach (VoxelBuildDesignation buildDesignation in room.VoxelBuildDesignations)
-                {
-                    if ((buildDesignation.Voxel.WorldPosition - v.Position).LengthSquared() < 0.1f)
-                    {
-                        return buildDesignation;
-                    }
-                }
-            }
-
-            return null;
+            return BuildDesignations.SelectMany(room => room.VoxelBuildDesignations).FirstOrDefault(buildDesignation => (buildDesignation.Voxel.WorldPosition - v.Position).LengthSquared() < 0.1f);
         }
 
         public RoomBuildDesignation GetMostLikelyDesignation(Voxel v)
         {
-
             BoundingBox larger = new BoundingBox(v.GetBoundingBox().Min - new Vector3(0.5f, 0.5f, 0.5f), v.GetBoundingBox().Max + new Vector3(0.5f, 0.5f, 0.5f));
 
-            foreach (RoomBuildDesignation room in BuildDesignations)
-            {
-                foreach (VoxelBuildDesignation buildDesignation in room.VoxelBuildDesignations)
-                {
-                    if (larger.Intersects(buildDesignation.Voxel.GetBoundingBox()))
-                    {
-                        return room;
-                    }
-                }
-            }
-
-            return null;
+            return (from room in BuildDesignations
+                from buildDesignation in room.VoxelBuildDesignations
+                where larger.Intersects(buildDesignation.Voxel.GetBoundingBox())
+                select room).FirstOrDefault();
         }
 
         public Room GetMostLikelyRoom(Voxel v)
         {
             VoxelRef vRef = v.GetReference();
-            foreach (Room r in DesignatedRooms)
+            foreach(Room r in DesignatedRooms.Where(r => r.ContainsVoxel(vRef)))
             {
-                if (r.ContainsVoxel(vRef))
-                {
-                    return r;
-                }
+                return r;
             }
 
             BoundingBox larger = new BoundingBox(v.GetBoundingBox().Min - new Vector3(0.5f, 0.5f, 0.5f), v.GetBoundingBox().Max + new Vector3(0.5f, 0.5f, 0.5f));
 
-            foreach (RoomBuildDesignation room in BuildDesignations)
-            {
-                foreach (VoxelBuildDesignation buildDesignation in room.VoxelBuildDesignations)
-                {
-                    if (larger.Intersects(buildDesignation.Voxel.GetBoundingBox()))
-                    {
-                        return buildDesignation.ToBuild;
-                    }
-                }
-            }
-
-            return null;
+            return (from room in BuildDesignations
+                from buildDesignation in room.VoxelBuildDesignations
+                where larger.Intersects(buildDesignation.Voxel.GetBoundingBox())
+                select buildDesignation.ToBuild).FirstOrDefault();
         }
 
         public List<VoxelBuildDesignation> GetDesignationsAssociatedWithRoom(Room room)
         {
-            List<VoxelBuildDesignation> toReturn = new List<VoxelBuildDesignation>();
-
-            foreach (RoomBuildDesignation roomDesignation in BuildDesignations)
-            {
-                foreach (VoxelBuildDesignation des in roomDesignation.VoxelBuildDesignations)
-                {
-                    if (des.ToBuild == room)
-                    {
-                        toReturn.Add(des);
-                    }
-                }
-            }
-
-            return toReturn;
+            return (from roomDesignation in BuildDesignations
+                from des in roomDesignation.VoxelBuildDesignations
+                where des.ToBuild == room
+                select des).ToList();
         }
 
         public void Render(GameTime game, GraphicsDevice graphics)
         {
-
-            foreach (Room room in DesignatedRooms)
+            foreach(Room room in DesignatedRooms)
             {
                 SimpleDrawing.DrawBox(room.GetBoundingBox(), Color.White, 0.1f, true);
             }
 
 
-            foreach (RoomBuildDesignation roomDesignation in BuildDesignations)
+            foreach(RoomBuildDesignation roomDesignation in BuildDesignations)
             {
                 BoundingBox roomBox = roomDesignation.GetBoundingBox();
                 roomBox.Max = new Vector3(roomBox.Max.X, roomBox.Max.Y + 0.1f, roomBox.Max.Z);
 
                 SimpleDrawing.DrawBox(roomBox, Color.White, 0.1f, true);
                 List<VoxelBuildDesignation> removals = new List<VoxelBuildDesignation>();
-                foreach (VoxelBuildDesignation des in roomDesignation.VoxelBuildDesignations)
+                foreach(VoxelBuildDesignation des in roomDesignation.VoxelBuildDesignations)
                 {
                     SimpleDrawing.DrawBox(des.Voxel.GetBoundingBox(), Color.LightBlue, 0.05f, true);
                     BoundingBox centerBox = des.Voxel.GetBoundingBox();
@@ -376,13 +289,13 @@ namespace DwarfCorp
                     centerBox.Max += new Vector3(-0.7f, 0.2f, -0.7f);
                     SimpleDrawing.DrawBox(centerBox, Color.LightBlue, 0.01f, true);
 
-                    if (des.Voxel.GetVoxel(this.Master.Chunks, false) == null)
+                    if(des.Voxel.GetVoxel(this.Master.Chunks, false) == null)
                     {
                         removals.Add(des);
                     }
                 }
 
-                foreach (VoxelBuildDesignation des in removals)
+                foreach(VoxelBuildDesignation des in removals)
                 {
                     roomDesignation.VoxelBuildDesignations.Remove(des);
                 }
@@ -394,37 +307,28 @@ namespace DwarfCorp
 
         public void CheckRemovals()
         {
-            List<RoomBuildDesignation> toRemove = new List<RoomBuildDesignation>();
-            foreach (RoomBuildDesignation build in BuildDesignations)
-            {
-                if (build.IsBuilt)
-                {
-                    toRemove.Add(build);
-                }
-            }
+            List<RoomBuildDesignation> toRemove = BuildDesignations.Where(build => build.IsBuilt).ToList();
 
-            foreach (RoomBuildDesignation build in toRemove)
+            foreach(RoomBuildDesignation build in toRemove)
             {
                 BuildDesignations.Remove(build);
             }
-
-
         }
 
         public void OnVoxelDestroyed(Voxel voxDestroyed)
         {
             List<Room> toDestroy = new List<Room>();
             VoxelRef vRef = voxDestroyed.GetReference();
-            foreach (Room r in DesignatedRooms)
+            foreach(Room r in DesignatedRooms)
             {
                 r.RemoveVoxel(vRef);
-                if (r.Storage.Count == 0)
+                if(r.Storage.Count == 0)
                 {
                     toDestroy.Add(r);
                 }
             }
 
-            foreach (Room r in toDestroy)
+            foreach(Room r in toDestroy)
             {
                 DesignatedRooms.Remove(r);
                 r.Destroy();
@@ -438,29 +342,21 @@ namespace DwarfCorp
 
         public void VoxelsSelected(List<VoxelRef> refs, InputManager.MouseButton button)
         {
-            if (Master.CurrentTool != GameMaster.ToolMode.Build || CurrentRoomType == null || Master.GodMode.IsActive)
+            if(Master.CurrentTool != GameMaster.ToolMode.Build || CurrentRoomType == null || Master.GodMode.IsActive)
             {
                 return;
             }
 
-            foreach (VoxelRef r in refs)
+            foreach(Voxel v in refs.Select(r => r.GetVoxel(Master.Chunks, false)).Where(v => v != null && v.RampType == RampType.None).Where(v => v != null))
             {
-                Voxel v = r.GetVoxel(Master.Chunks, false);
-                
-                if (v == null || v.RampType != RampType.None)
+                switch(button)
                 {
-                    continue;
-                }
-
-                if (v != null)
-                {
-                    if (button == InputManager.MouseButton.Left)
-                    {
-                        if (!IsBuildDesignation(v) && !IsInRoom(v))
+                    case InputManager.MouseButton.Left:
+                        if(!IsBuildDesignation(v) && !IsInRoom(v))
                         {
                             RoomBuildDesignation existingRoom = GetMostLikelyDesignation(v);
 
-                            if (existingRoom != null)
+                            if(existingRoom != null)
                             {
                                 existingRoom.VoxelBuildDesignations.Add(new VoxelBuildDesignation(existingRoom, existingRoom.ToBuild, v.GetReference()));
                             }
@@ -473,22 +369,21 @@ namespace DwarfCorp
                                 BuildDesignations.Add(buildDesignation);
                             }
                         }
-                    }
-                    else if (button == InputManager.MouseButton.Right)
-                    {
-                        if (IsBuildDesignation(v))
+                        break;
+                    case InputManager.MouseButton.Right:
+                        if(IsBuildDesignation(v))
                         {
                             VoxelBuildDesignation vox = GetBuildDesignation(v);
                             vox.BuildDesignation.VoxelBuildDesignations.Remove(vox);
                         }
-                        else if (IsInRoom(v))
+                        else if(IsInRoom(v))
                         {
                             Room existingRoom = GetMostLikelyRoom(v);
                             DesignatedRooms.Remove(existingRoom);
 
                             List<VoxelBuildDesignation> existingDesignations = GetDesignationsAssociatedWithRoom(existingRoom);
                             RoomBuildDesignation roomDes = null;
-                            foreach (VoxelBuildDesignation des in existingDesignations)
+                            foreach(VoxelBuildDesignation des in existingDesignations)
                             {
                                 des.BuildDesignation.VoxelBuildDesignations.Remove(des);
                                 roomDes = des.BuildDesignation;
@@ -498,9 +393,10 @@ namespace DwarfCorp
 
                             existingRoom.Destroy();
                         }
-                    }
+                        break;
                 }
             }
         }
     }
+
 }

@@ -9,9 +9,12 @@ using System.Collections.Concurrent;
 
 namespace DwarfCorp
 {
+
     public class DrawCommand2D
     {
-        public virtual void Render(SpriteBatch batch, Camera camera, Viewport viewport) { }
+        public virtual void Render(SpriteBatch batch, Camera camera, Viewport viewport)
+        {
+        }
     }
 
     public class TextBoxDrawCommand : DrawCommand2D
@@ -39,15 +42,18 @@ namespace DwarfCorp
 
         public override void Render(SpriteBatch batch, Camera camera, Viewport viewport)
         {
-            if (batch == null || camera == null) { return; }
+            if(batch == null || camera == null)
+            {
+                return;
+            }
 
             Vector2 extents = Datastructures.SafeMeasure(Font, Text);
 
 
             Vector3 unprojected = viewport.Project(Position, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
 
-            Rectangle rect = new Rectangle((int)(unprojected.X - extents.X / 2.0f  - StrokeWeight), (int)(unprojected.Y - extents.Y / 2.0f - StrokeWeight),
-                                           (int)(extents.X + StrokeWeight + 5), (int)(extents.Y + StrokeWeight + 5));
+            Rectangle rect = new Rectangle((int) (unprojected.X - extents.X / 2.0f - StrokeWeight), (int) (unprojected.Y - extents.Y / 2.0f - StrokeWeight),
+                (int) (extents.X + StrokeWeight + 5), (int) (extents.Y + StrokeWeight + 5));
 
             Drawer2D.FillRect(batch, rect, FillColor);
             Drawer2D.DrawRect(batch, rect, RectStrokeColor, StrokeWeight);
@@ -68,7 +74,7 @@ namespace DwarfCorp
         public Color FillColor { get; set; }
         public Color StrokeColor { get; set; }
         public float StrokeWeight { get; set; }
-        public Rectangle Bounds { get; set;}
+        public Rectangle Bounds { get; set; }
 
         public RectDrawCommand(Color fill, Color stroke, float strokeWeight, Rectangle bounds)
         {
@@ -85,8 +91,6 @@ namespace DwarfCorp
             Drawer2D.DrawRect(batch, Bounds, StrokeColor, StrokeWeight);
             base.Render(batch, camera, viewport);
         }
-
-
     }
 
     public class TextDrawCommand : DrawCommand2D
@@ -120,7 +124,7 @@ namespace DwarfCorp
             Drawer2D.SafeDraw(batch, Text, Font, StrokeColor, new Vector2(unprojected.X, unprojected.Y - 1) - extents / 2.0f, Vector2.Zero);
 
             Drawer2D.SafeDraw(batch, Text, Font, TextColor, new Vector2(unprojected.X, unprojected.Y) - extents / 2.0f, Vector2.Zero);
-            
+
             base.Render(batch, camera, viewport);
         }
     }
@@ -128,8 +132,8 @@ namespace DwarfCorp
     public class Drawer2D
     {
         public static ConcurrentQueue<DrawCommand2D> DrawCommands = new ConcurrentQueue<DrawCommand2D>();
-        public static ContentManager Content {get; set;}
-        public static SpriteFont DefaultFont { get; set;}
+        public static ContentManager Content { get; set; }
+        public static SpriteFont DefaultFont { get; set; }
         public static Texture2D Pixel { get; set; }
 
         public Drawer2D(ContentManager content, GraphicsDevice graphics)
@@ -161,19 +165,19 @@ namespace DwarfCorp
 
         public void Render(SpriteBatch batch, Camera camera, Viewport viewport)
         {
-            foreach (DrawCommand2D draw in DrawCommands)
+            foreach(DrawCommand2D draw in DrawCommands)
             {
                 draw.Render(batch, camera, viewport);
             }
 
-            while (DrawCommands.Count > 0)
+            while(DrawCommands.Count > 0)
             {
                 DrawCommand2D draw = null;
                 DrawCommands.TryDequeue(out draw);
             }
         }
 
-               /// <summary>
+        /// <summary>
         /// Streches a circle to create the desired ellipse.
         /// </summary>
         /// <param name="batch">The sprite batch to use.</param>
@@ -183,11 +187,11 @@ namespace DwarfCorp
         /// <param name="b">The minor axis of the ellipse</param>
         /// <param name="phi">The angle of the major axis with the horizontal</param>
         /// <param name="color">The color of the ellipse</param>
-        public static void DrawEllipse(SpriteBatch batch,Texture2D circle,  Vector2 center, float a, float b, float phi, Color color)
+        public static void DrawEllipse(SpriteBatch batch, Texture2D circle, Vector2 center, float a, float b, float phi, Color color)
         {
             batch.Draw(circle, 100 * center - new Vector2(100 * a, 100 * b), null, color, phi, Vector2.Zero, new Vector2(200 * a / 256, 200 * b / 256), SpriteEffects.None, 0);
         }
-     
+
         /// <summary>
         /// Fills a solid rectangle.
         /// </summary>
@@ -208,10 +212,10 @@ namespace DwarfCorp
         /// <param name="borderColor">The color of the border of the rectangle.</param>
         public static void DrawRect(SpriteBatch batch, Rectangle rect, Color borderColor, float width)
         {
-            batch.Draw(Pixel, new Rectangle((int)(rect.Left - width), (int)(rect.Top - width), (int)width, (int)(rect.Height + width)), borderColor);
-            batch.Draw(Pixel, new Rectangle((int)(rect.Left - width), (int)(rect.Top - width), rect.Width, (int)width), borderColor);
-            batch.Draw(Pixel, new Rectangle((int)(rect.Left - width), (int)(rect.Top + rect.Height), rect.Width, (int)width), borderColor);
-            batch.Draw(Pixel, new Rectangle((int)(rect.Left + rect.Width - width), (int)(rect.Top - width), (int)width, (int)(rect.Height + width)), borderColor);
+            batch.Draw(Pixel, new Rectangle((int) (rect.Left - width), (int) (rect.Top - width), (int) width, (int) (rect.Height + width)), borderColor);
+            batch.Draw(Pixel, new Rectangle((int) (rect.Left - width), (int) (rect.Top - width), rect.Width, (int) width), borderColor);
+            batch.Draw(Pixel, new Rectangle((int) (rect.Left - width), (int) (rect.Top + rect.Height), rect.Width, (int) width), borderColor);
+            batch.Draw(Pixel, new Rectangle((int) (rect.Left + rect.Width - width), (int) (rect.Top - width), (int) width, (int) (rect.Height + width)), borderColor);
         }
 
         /// <summary>
@@ -223,15 +227,14 @@ namespace DwarfCorp
         /// <param name="point2">The second point of the line.</param>
         /// <param name="lineColor">The color of the line.</param>
         /// <param name="width">The width, in pixels, of the line.</param>
-        public static void DrawLine(SpriteBatch batch,Vector2 point1, Vector2 point2, Color lineColor, int width)
+        public static void DrawLine(SpriteBatch batch, Vector2 point1, Vector2 point2, Color lineColor, int width)
         {
             float distance = Vector2.Distance(point1, point2);
             Vector2 normal = (point2 - point1);
             normal.Normalize();
 
-            batch.Draw(Pixel, new Rectangle((int)(point1.X), (int)(point1.Y) - width/2, (int)distance, width), new Rectangle(0, 0, 1, 1), lineColor, LinearMathHelpers.RectangularToPolar(normal).Y, Vector2.Zero, SpriteEffects.None, 0.0f);
-            batch.Draw(Pixel, point1 , null, lineColor, LinearMathHelpers.RectangularToPolar(normal).Y, Vector2.Zero, new Vector2(distance, width), SpriteEffects.None, 0);
-        
+            batch.Draw(Pixel, new Rectangle((int) (point1.X), (int) (point1.Y) - width / 2, (int) distance, width), new Rectangle(0, 0, 1, 1), lineColor, LinearMathHelpers.RectangularToPolar(normal).Y, Vector2.Zero, SpriteEffects.None, 0.0f);
+            batch.Draw(Pixel, point1, null, lineColor, LinearMathHelpers.RectangularToPolar(normal).Y, Vector2.Zero, new Vector2(distance, width), SpriteEffects.None, 0);
         }
 
 
@@ -243,16 +246,14 @@ namespace DwarfCorp
         /// <param name="lineColor">Color of the lines.</param>
         /// <param name="width">The width of the lines.</param>
         /// <param name="points">The points to connect.</param>
-        public static void DrawPolygon(SpriteBatch spriteBatch,Color lineColor, int width,List<Vector2> points)
+        public static void DrawPolygon(SpriteBatch spriteBatch, Color lineColor, int width, List<Vector2> points)
         {
-            for (int i = 0; i < points.Count() - 1; i++)
+            for(int i = 0; i < points.Count() - 1; i++)
             {
                 DrawLine(spriteBatch, points[i], points[i + 1], lineColor, width);
             }
-            DrawLine(spriteBatch,  points[0], points[points.Count()-1], lineColor, width);
+            DrawLine(spriteBatch, points[0], points[points.Count() - 1], lineColor, width);
         }
-
-
 
 
         /// <summary>
@@ -266,37 +267,86 @@ namespace DwarfCorp
         /// <param name="strokeColor">Color of the stroke outside the text.</param>
         public static void DrawStrokedText(SpriteBatch batch, string toDisplay, SpriteFont Font, Vector2 textPosition, Color textColor, Color strokeColor)
         {
-            if (toDisplay == null)
+            if(toDisplay == null)
+            {
                 toDisplay = "null";
+            }
 
             Drawer2D.SafeDraw(batch, toDisplay, Font, strokeColor, textPosition - new Vector2(1, 0), Vector2.Zero);
             Drawer2D.SafeDraw(batch, toDisplay, Font, strokeColor, textPosition + new Vector2(1, 0), Vector2.Zero);
             Drawer2D.SafeDraw(batch, toDisplay, Font, strokeColor, textPosition - new Vector2(0, 1), Vector2.Zero);
             Drawer2D.SafeDraw(batch, toDisplay, Font, strokeColor, textPosition + new Vector2(0, 1), Vector2.Zero);
             Drawer2D.SafeDraw(batch, toDisplay, Font, textColor, textPosition, Vector2.Zero);
-
         }
 
-        public enum Alignment { Center = 0, Left = 1, Right = 2, Top = 4, Bottom = 8 }
-
-        public static void DrawAlignedStrokedText(SpriteBatch batch, string text, SpriteFont font,  Color textColor, Color strokeColor, Alignment align, Rectangle bounds)
+        public enum Alignment
         {
-            Vector2 size = Datastructures.SafeMeasure(font, text);
+            Center = 0,
+            Left = 1,
+            Right = 2,
+            Top = 4,
+            Bottom = 8
+        }
 
-            Vector2 pos = new Vector2(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height  / 2);
+        public static Rectangle Align(Rectangle bounds, int width, int height, Alignment align)
+        {
+            Vector2 size = new Vector2(width, height);
+
+            Vector2 pos = new Vector2(bounds.X + bounds.Width / 2 - width/2, bounds.Y + bounds.Height / 2 - height);
             Vector2 origin = size * 0.5f;
 
             if (align.HasFlag(Alignment.Left))
-                origin.X += bounds.Width / 2 - size.X / 2;
+            {
+                origin.X -= bounds.Width / 2;
+            }
 
             if (align.HasFlag(Alignment.Right))
-                origin.X -= bounds.Width / 2 - size.X / 2;
+            {
+                origin.X += bounds.Width / 2;
+            }
 
             if (align.HasFlag(Alignment.Top))
-                origin.Y += bounds.Height / 2 - size.Y / 2;
+            {
+                origin.Y += bounds.Height / 2;
+            }
 
             if (align.HasFlag(Alignment.Bottom))
+            {
+                origin.Y -= bounds.Height / 2;
+            }
+
+            Vector2 corner = origin + pos;
+
+            return new Rectangle((int)corner.X, (int)corner.Y, width, height);
+
+        }
+
+        public static void DrawAlignedStrokedText(SpriteBatch batch, string text, SpriteFont font, Color textColor, Color strokeColor, Alignment align, Rectangle bounds)
+        {
+            Vector2 size = Datastructures.SafeMeasure(font, text);
+
+            Vector2 pos = new Vector2(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
+            Vector2 origin = size * 0.5f;
+
+            if(align.HasFlag(Alignment.Left))
+            {
+                origin.X += bounds.Width / 2 - size.X / 2;
+            }
+
+            if(align.HasFlag(Alignment.Right))
+            {
+                origin.X -= bounds.Width / 2 - size.X / 2;
+            }
+
+            if(align.HasFlag(Alignment.Top))
+            {
+                origin.Y += bounds.Height / 2 - size.Y / 2;
+            }
+
+            if(align.HasFlag(Alignment.Bottom))
+            {
                 origin.Y -= bounds.Height / 2 - size.Y / 2;
+            }
 
             SafeDraw(batch, text, font, strokeColor, pos - new Vector2(1, 0), origin);
             SafeDraw(batch, text, font, strokeColor, pos + new Vector2(1, 0), origin);
@@ -305,37 +355,51 @@ namespace DwarfCorp
             SafeDraw(batch, text, font, textColor, pos, origin);
         }
 
-        public static void DrawAlignedText(SpriteBatch batch, string text, SpriteFont font, Color textColor,  Alignment align, Rectangle bounds)
+        public static void DrawAlignedText(SpriteBatch batch, string text, SpriteFont font, Color textColor, Alignment align, Rectangle bounds)
         {
             Vector2 size = Datastructures.SafeMeasure(font, text);
 
             Vector2 pos = new Vector2(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
             Vector2 origin = size * 0.5f;
 
-            if (align.HasFlag(Alignment.Left))
+            if(align.HasFlag(Alignment.Left))
+            {
                 origin.X += bounds.Width / 2 - size.X / 2;
+            }
 
-            if (align.HasFlag(Alignment.Right))
+            if(align.HasFlag(Alignment.Right))
+            {
                 origin.X -= bounds.Width / 2 - size.X / 2;
+            }
 
-            if (align.HasFlag(Alignment.Top))
+            if(align.HasFlag(Alignment.Top))
+            {
                 origin.Y += bounds.Height / 2 - size.Y / 2;
+            }
 
-            if (align.HasFlag(Alignment.Bottom))
+            if(align.HasFlag(Alignment.Bottom))
+            {
                 origin.Y -= bounds.Height / 2 - size.Y / 2;
+            }
 
             SafeDraw(batch, text, font, textColor, pos, origin);
         }
 
 
-        public static char[] escapeChars = {'\n', '\t', '\b'};
+        public static char[] escapeChars =
+        {
+            '\n',
+            '\t',
+            '\b'
+        };
+
         public static string Internationalize(string text, SpriteFont font)
         {
             char[] arr = text.ToCharArray();
-            for (int i = 0; i < text.Length; i++)
+            for(int i = 0; i < text.Length; i++)
             {
                 char c = arr[i];
-                if (!escapeChars.Contains(c) && !font.Characters.Contains(c))
+                if(!escapeChars.Contains(c) && !font.Characters.Contains(c))
                 {
                     arr[i] = '?';
                 }
@@ -349,4 +413,5 @@ namespace DwarfCorp
             batch.DrawString(font, Internationalize(text, font), pos, textColor, 0, origin, 1, SpriteEffects.None, 0);
         }
     }
+
 }

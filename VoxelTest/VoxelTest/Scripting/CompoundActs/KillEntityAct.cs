@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class KillEntityAct : CompoundCreatureAct
     {
         public LocatableComponent Entity { get; set; }
@@ -15,7 +16,8 @@ namespace DwarfCorp
             Entity = entity;
             Name = "Kill Entity";
             Tree = new Sequence(new GoToEntityAct(entity, creature),
-                                new MeleeAct(Agent));
+                new MeleeAct(Agent));
         }
     }
+
 }

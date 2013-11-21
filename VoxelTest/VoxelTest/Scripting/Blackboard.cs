@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class Blackboard
     {
         public Dictionary<string, ActData> Data { get; set; }
@@ -21,7 +22,7 @@ namespace DwarfCorp
 
         public T GetData<T>(string key)
         {
-            if (Data.ContainsKey(key))
+            if(Data.ContainsKey(key))
             {
                 return Data[key].GetData<T>();
             }
@@ -39,7 +40,7 @@ namespace DwarfCorp
 
         public void Erase(string key)
         {
-            if (Data.ContainsKey(key))
+            if(Data.ContainsKey(key))
             {
                 Data.Remove(key);
             }
@@ -50,8 +51,6 @@ namespace DwarfCorp
             get { return Data[key]; }
             set { Data[key] = value; }
         }
-
-
     }
 
 }

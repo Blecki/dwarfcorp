@@ -6,8 +6,10 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
     public class Timer
     {
+        private float StartTimeSeconds { get; set; }
         public float TargetTimeSeconds { get; set; }
         public float CurrentTimeSeconds { get; set; }
         public bool TriggerOnce { get; set; }
@@ -19,31 +21,38 @@ namespace DwarfCorp
             CurrentTimeSeconds = 0.0f;
             TriggerOnce = triggerOnce;
             HasTriggered = false;
+            StartTimeSeconds = -1;
         }
 
         public bool Update(GameTime t)
         {
-            if (null == t)
+            if(null == t)
             {
                 return false;
             }
 
-            if (!TriggerOnce && HasTriggered)
+
+            if(!TriggerOnce && HasTriggered)
             {
                 HasTriggered = false;
                 CurrentTimeSeconds = 0.0f;
+                StartTimeSeconds = -1;
             }
 
-            CurrentTimeSeconds += (float)t.ElapsedGameTime.TotalSeconds;
+            if(StartTimeSeconds < 0)
+            {
+                StartTimeSeconds = (float) t.TotalGameTime.TotalSeconds;
+            }
 
-            if (CurrentTimeSeconds > TargetTimeSeconds)
+            CurrentTimeSeconds = (float) t.TotalGameTime.TotalSeconds - StartTimeSeconds;
+
+            if(CurrentTimeSeconds > TargetTimeSeconds)
             {
                 HasTriggered = true;
                 return true;
             }
 
             return false;
-            
         }
 
         public void Reset(float time)
@@ -51,6 +60,8 @@ namespace DwarfCorp
             CurrentTimeSeconds = 0.0f;
             HasTriggered = false;
             TargetTimeSeconds = time;
+            StartTimeSeconds = -1;
         }
     }
+
 }

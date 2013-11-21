@@ -5,13 +5,14 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class PutTaggedRoomItemAct : CompoundCreatureAct
     {
         public RoomBuildDesignation Room { get; set; }
 
-        public IEnumerable<Status> SetTargetVoxelFromRoom(RoomBuildDesignation room)
+        public IEnumerable<Status> SetTargetVoxelFromRoom(RoomBuildDesignation room, string target)
         {
-            if (room.VoxelBuildDesignations.Count == 0)
+            if(room.VoxelBuildDesignations.Count == 0)
             {
                 yield return Status.Fail;
             }
@@ -19,25 +20,25 @@ namespace DwarfCorp
             {
                 VoxelRef closestVoxel = null;
                 float closestDist = float.MaxValue;
-                foreach (VoxelBuildDesignation voxDes in room.VoxelBuildDesignations)
+                foreach(VoxelBuildDesignation voxDes in room.VoxelBuildDesignations)
                 {
                     float dist = (voxDes.Voxel.WorldPosition - Agent.Position).LengthSquared();
 
-                    if (dist < closestDist)
+                    if(dist < closestDist)
                     {
                         closestDist = dist;
                         closestVoxel = voxDes.Voxel;
                     }
                 }
 
-                Agent.TargetVoxel = closestVoxel;
+                Agent.Blackboard.SetData(target, closestVoxel);
                 yield return Status.Success;
             }
         }
 
-        public Act SetTargetVoxelFromRoomAct(RoomBuildDesignation room)
+        public Act SetTargetVoxelFromRoomAct(RoomBuildDesignation room, string target)
         {
-            return new Wrap(() => { return SetTargetVoxelFromRoom(room);  });
+            return new Wrap(() => SetTargetVoxelFromRoom(room, target));
         }
 
         public PutTaggedRoomItemAct(CreatureAIComponent agent, RoomBuildDesignation room, TagList tags) :
@@ -45,13 +46,11 @@ namespace DwarfCorp
         {
             Name = "Build room " + room.ToString();
             Tree = new Sequence(new GetItemWithTagsAct(Agent, tags),
-                                    new Sequence(
-                                        SetTargetVoxelFromRoomAct(room),
-                                    new GoToVoxelAct(null, Agent),
-                                    new PlaceRoomItemAct(Agent, room)) | new GatherItemAct(Agent, "HeldObject")
-                                   );
-
-                                              
+                new Sequence(
+                    SetTargetVoxelFromRoomAct(room, "TargetVoxel"),
+                    new GoToVoxelAct("TargetVoxel", Agent),
+                    new PlaceRoomItemAct(Agent, room)) | new GatherItemAct(Agent, "HeldObject")
+                );
         }
 
         public override IEnumerable<Act.Status> Run()
@@ -59,4 +58,5 @@ namespace DwarfCorp
             return base.Run();
         }
     }
+
 }

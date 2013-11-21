@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class SetTargetVoxelAct : CreatureAct
     {
         public VoxelRef Voxel { get; set; }
@@ -29,11 +30,11 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (Voxel == null && VoxelName == "")
+            if(Voxel == null && VoxelName == "")
             {
                 yield return Status.Fail;
             }
-            else if (VoxelName == "")
+            else if(VoxelName == "")
             {
                 Agent.TargetVoxel = Voxel;
                 yield return Status.Success;
@@ -43,7 +44,7 @@ namespace DwarfCorp
                 Agent.TargetVoxel = Agent.Blackboard.GetData<VoxelRef>(VoxelName);
                 Voxel = Agent.TargetVoxel;
 
-                if (Agent.TargetVoxel != null)
+                if(Agent.TargetVoxel != null)
                 {
                     yield return Status.Success;
                 }
@@ -53,6 +54,6 @@ namespace DwarfCorp
                 }
             }
         }
-
     }
+
 }

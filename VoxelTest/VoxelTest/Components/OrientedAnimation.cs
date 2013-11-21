@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    [JsonObject(IsReference = true)]
     public class OrientedAnimation : BillboardSpriteComponent
     {
         public enum Orientation
@@ -17,48 +19,53 @@ namespace DwarfCorp
             Backward = 3
         }
 
-        protected static string[] OrientationStrings = { "RIGHT", "LEFT", "FORWARD", "BACKWARD" };
+        protected static string[] OrientationStrings =
+        {
+            "RIGHT",
+            "LEFT",
+            "FORWARD",
+            "BACKWARD"
+        };
 
 
         public Orientation CurrentOrientation { get; set; }
 
-        private string CurrentMode = "";
+        private string currentMode = "";
 
         public override void SetCurrentAnimation(string name)
         {
-            CurrentMode = name;
+            currentMode = name;
         }
 
         public void AddAnimation(string mode, Animation rightAnimation, Animation leftAnimation, Animation forwardAnimation, Animation backwardAnimation)
         {
-            Animations[mode + OrientationStrings[(int)Orientation.Right]] = rightAnimation;
-            Animations[mode + OrientationStrings[(int)Orientation.Left]] = leftAnimation;
-            Animations[mode + OrientationStrings[(int)Orientation.Forward]] = forwardAnimation;
-            Animations[mode + OrientationStrings[(int)Orientation.Backward]] = backwardAnimation;
+            Animations[mode + OrientationStrings[(int) Orientation.Right]] = rightAnimation;
+            Animations[mode + OrientationStrings[(int) Orientation.Left]] = leftAnimation;
+            Animations[mode + OrientationStrings[(int) Orientation.Forward]] = forwardAnimation;
+            Animations[mode + OrientationStrings[(int) Orientation.Backward]] = backwardAnimation;
 
-            if (CurrentMode == "")
+            if(currentMode == "")
             {
-                CurrentMode = mode;
+                currentMode = mode;
             }
         }
 
         public OrientedAnimation(ComponentManager manager, string name,
             GameComponent parent, Matrix localTransform) :
-            base(manager, name, parent, localTransform, null, false)
+                base(manager, name, parent, localTransform, null, false)
         {
         }
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
-
             CalculateCurrentOrientation(camera);
 
-            string s = CurrentMode + OrientationStrings[(int)CurrentOrientation];
+            string s = currentMode + OrientationStrings[(int) CurrentOrientation];
             if(Animations.ContainsKey(s))
             {
                 CurrentAnimation = Animations[s];
                 CurrentAnimation.Play();
-            
+
                 SpriteSheet = CurrentAnimation.SpriteSheet;
             }
 
@@ -70,19 +77,18 @@ namespace DwarfCorp
             float xComponent = Vector3.Dot(camera.ViewMatrix.Forward, GlobalTransform.Left);
             float yComponent = Vector3.Dot(camera.ViewMatrix.Forward, GlobalTransform.Forward);
 
-            float angle = (float)Math.Atan2(yComponent, xComponent);
+            float angle = (float) Math.Atan2(yComponent, xComponent);
 
 
-
-            if (angle > -MathHelper.PiOver4 && angle < MathHelper.PiOver4)
+            if(angle > -MathHelper.PiOver4 && angle < MathHelper.PiOver4)
             {
                 CurrentOrientation = Orientation.Left;
             }
-            else if (angle > MathHelper.PiOver4 && angle < 3.0f * MathHelper.PiOver4)
+            else if(angle > MathHelper.PiOver4 && angle < 3.0f * MathHelper.PiOver4)
             {
                 CurrentOrientation = Orientation.Backward;
             }
-            else if ((angle > 3.0f * MathHelper.PiOver4 ||  angle < -3.0f * MathHelper.PiOver4))
+            else if((angle > 3.0f * MathHelper.PiOver4 || angle < -3.0f * MathHelper.PiOver4))
             {
                 CurrentOrientation = Orientation.Right;
             }
@@ -91,6 +97,6 @@ namespace DwarfCorp
                 CurrentOrientation = Orientation.Forward;
             }
         }
-        
     }
+
 }

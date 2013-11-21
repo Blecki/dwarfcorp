@@ -32,40 +32,40 @@ namespace DwarfCorp
             mineButton.CanToggle = true;
             mineButton.LocalBounds = new Rectangle(device.Viewport.Width - 100 + 45, device.Viewport.Height - 100, iconSize, iconSize);
             mineButton.IsToggled = true;
-            mineButton.OnClicked += new ClickedDelegate(delegate { ButtonClicked(mineButton); });
+            mineButton.OnClicked += delegate { ButtonClicked(mineButton); };
 
             Button chopButton = new Button(GUI, this, "Chop", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 1, 0));
             chopButton.CanToggle = true;
             chopButton.LocalBounds = new Rectangle(device.Viewport.Width - 160 + 45, device.Viewport.Height - 100, iconSize, iconSize);
             chopButton.IsToggled = false;
-            chopButton.OnClicked += new ClickedDelegate(delegate { ButtonClicked(chopButton); });
+            chopButton.OnClicked += delegate { ButtonClicked(chopButton); };
 
-            Button guardButton = new Button(GUI, this, "Guard", font, Button.ButtonMode.ImageButton,new ImageFrame(icons, iconSize, 4, 0));
+            Button guardButton = new Button(GUI, this, "Guard", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 4, 0));
             guardButton.CanToggle = true;
             guardButton.LocalBounds = new Rectangle(device.Viewport.Width - 220 + 45, device.Viewport.Height - 100, iconSize, iconSize);
             guardButton.IsToggled = false;
-            guardButton.OnClicked += new ClickedDelegate(delegate { ButtonClicked(guardButton); });
+            guardButton.OnClicked += delegate { ButtonClicked(guardButton); };
 
 
             Button stockButton = new Button(GUI, this, "Stock", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 7, 0));
             stockButton.CanToggle = true;
             stockButton.LocalBounds = new Rectangle(device.Viewport.Width - 280 + 45, device.Viewport.Height - 100, iconSize, iconSize);
             stockButton.IsToggled = false;
-            stockButton.OnClicked += new ClickedDelegate(delegate { ButtonClicked(stockButton); });
+            stockButton.OnClicked += delegate { ButtonClicked(stockButton); };
 
 
             Button gatherButton = new Button(GUI, this, "Gather", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 6, 0));
             gatherButton.CanToggle = true;
             gatherButton.LocalBounds = new Rectangle(device.Viewport.Width - 340 + 45, device.Viewport.Height - 100, iconSize, iconSize);
             gatherButton.IsToggled = false;
-            gatherButton.OnClicked += new ClickedDelegate(delegate { ButtonClicked(gatherButton); });
+            gatherButton.OnClicked += delegate { ButtonClicked(gatherButton); };
 
 
             Button buildButton = new Button(GUI, this, "Build", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 2, 0));
             buildButton.CanToggle = true;
             buildButton.LocalBounds = new Rectangle(device.Viewport.Width - 400 + 45, device.Viewport.Height - 100, iconSize, iconSize);
             buildButton.IsToggled = false;
-            buildButton.OnClicked += new ClickedDelegate(delegate { ButtonClicked(buildButton); });
+            buildButton.OnClicked += delegate { ButtonClicked(buildButton); };
 
             ToolButtons[GameMaster.ToolMode.Dig] = mineButton;
             ToolButtons[GameMaster.ToolMode.Chop] = chopButton;
@@ -87,35 +87,34 @@ namespace DwarfCorp
             ComboBox buildBox = new ComboBox(gui, buildGroup);
             buildBox.LocalBounds = new Rectangle(2, 20, 180, 40);
 
-            foreach (string room in RoomLibrary.GetRoomTypes())
+            foreach(string room in RoomLibrary.GetRoomTypes())
             {
                 buildBox.AddValue(room);
             }
 
-            foreach (VoxelType vox in VoxelLibrary.PrimitiveMap.Keys)
+            foreach(VoxelType vox in VoxelLibrary.PrimitiveMap.Keys)
             {
-                if (vox.isBuildable)
+                if(vox.isBuildable)
                 {
                     buildBox.AddValue(vox.name + " Wall");
                 }
             }
 
-            buildBox.OnSelectionModified += new ComboBoxSelector.Modified(buildBox_OnSelectionModified);
+            buildBox.OnSelectionModified += buildBox_OnSelectionModified;
 
             BuildPanel.IsVisible = false;
-
         }
 
-        void buildBox_OnSelectionModified(string arg)
+        private void buildBox_OnSelectionModified(string arg)
         {
-            if (arg.Contains("Wall"))
+            if(arg.Contains("Wall"))
             {
                 string voxType = arg.Substring(0, arg.Length - "Wall".Length - 1);
                 Master.PutDesignator.CurrentVoxelType = VoxelLibrary.GetVoxelType(voxType);
                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                 Master.RoomDesignator.CurrentRoomType = null;
             }
-            else if (arg != "") 
+            else if(arg != "")
             {
                 Master.RoomDesignator.CurrentRoomType = RoomLibrary.GetType(arg);
                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
@@ -127,13 +126,13 @@ namespace DwarfCorp
         {
             sender.IsToggled = true;
 
-            foreach (KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons)
+            foreach(KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons)
             {
-                if (pair.Value == sender)
+                if(pair.Value == sender)
                 {
                     CurrentMode = pair.Key;
 
-                    if (CurrentMode == GameMaster.ToolMode.Build)
+                    if(CurrentMode == GameMaster.ToolMode.Build)
                     {
                         BuildPanel.IsVisible = true;
                     }
@@ -153,6 +152,6 @@ namespace DwarfCorp
         {
             base.Update(time);
         }
-
     }
+
 }

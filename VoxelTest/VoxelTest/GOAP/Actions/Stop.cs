@@ -5,9 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class Stop : Action
     {
-
         public Stop()
         {
             Name = "Stop";
@@ -24,11 +24,11 @@ namespace DwarfCorp
         {
             CreatureAIComponent.PlannerSuccess code = creature.Stop(time);
 
-            if (code == CreatureAIComponent.PlannerSuccess.Success)
+            if(code == CreatureAIComponent.PlannerSuccess.Success)
             {
                 return PerformStatus.Success;
             }
-            else if (code == CreatureAIComponent.PlannerSuccess.Failure)
+            else if(code == CreatureAIComponent.PlannerSuccess.Failure)
             {
                 return PerformStatus.Invalid;
             }
@@ -40,7 +40,6 @@ namespace DwarfCorp
         {
             return ValidationStatus.Ok;
         }
-
-
     }
+
 }

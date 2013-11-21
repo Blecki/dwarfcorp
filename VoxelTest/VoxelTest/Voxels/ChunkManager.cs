@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
@@ -11,12 +12,11 @@ using System.Collections.Concurrent;
 
 namespace DwarfCorp
 {
+
     public class ChunkManager
     {
-
-
         public ConcurrentDictionary<Point3, VoxelChunk> ChunkMap { get; set; }
-        
+
         public ConcurrentQueue<VoxelChunk> RenderList { get; set; }
         public ConcurrentQueue<VoxelChunk> RebuildList { get; set; }
         public ConcurrentQueue<VoxelChunk> RebuildLiquidsList { get; set; }
@@ -27,42 +27,78 @@ namespace DwarfCorp
         public List<BoundingBox> PotentialChunks { get; set; }
         public ConcurrentQueue<VoxelChunk> GeneratedChunks { get; set; }
         public List<BoundingBox> ToGenerate { get; set; }
-        public int MaxChunks { get { return (int)GameSettings.Default.MaxChunks; } set { GameSettings.Default.MaxChunks = (ulong)value; } }
+
+        public int MaxChunks
+        {
+            get { return (int) GameSettings.Default.MaxChunks; }
+            set { GameSettings.Default.MaxChunks = (ulong) value; }
+        }
 
         private Thread GeneratorThread { get; set; }
         private Mutex GeneratorLock { get; set; }
-        static AutoResetEvent NeedsGenerationEvent = new AutoResetEvent(false);
+        private static AutoResetEvent NeedsGenerationEvent = new AutoResetEvent(false);
 
 
         private Thread RebuildThread { get; set; }
         private Thread RebuildLiquidThread { get; set; }
         private Mutex RebuildLock { get; set; }
         private Mutex LiquidLock { get; set; }
-        static AutoResetEvent NeedsRebuildEvent = new AutoResetEvent(false);
-        static AutoResetEvent NeedsLiquidEvent = new AutoResetEvent(false);
+        private static AutoResetEvent NeedsRebuildEvent = new AutoResetEvent(false);
+        private static AutoResetEvent NeedsLiquidEvent = new AutoResetEvent(false);
 
         private Thread WaterThread { get; set; }
         private AutoResetEvent WaterUpdateEvent = new AutoResetEvent(true);
 
 
         private Timer GenerateChunksTimer = new Timer(0.5f, false);
-        private Timer RebuildChunksTimer = new Timer(0.5f, false);
-        private Timer VisibilityChunksTimer = new Timer(0.5f, false);
-        private Timer WaterUpdateTimer = new Timer(1.0f, false);
+        private Timer RebuildChunksTimer = new Timer(0.25f, false);
+        private Timer VisibilityChunksTimer = new Timer(0.1f, false);
+        private Timer WaterUpdateTimer = new Timer(0.1f, false);
 
-        public float DrawDistance { get { return GameSettings.Default.ChunkDrawDistance; } set { GameSettings.Default.ChunkDrawDistance = value; m_drawDistSq = value * value; } }
+        public float DrawDistance
+        {
+            get { return GameSettings.Default.ChunkDrawDistance; }
+            set
+            {
+                GameSettings.Default.ChunkDrawDistance = value;
+                m_drawDistSq = value * value;
+            }
+        }
+
         protected float m_drawDistSq = 0;
-        public float DrawDistanceSquared { get { return m_drawDistSq; } set { m_drawDistSq = value; GameSettings.Default.ChunkDrawDistance = (float)Math.Sqrt(value); } }
-        public float RemoveDistance { get { return GameSettings.Default.ChunkUnloadDistance; } set { GameSettings.Default.ChunkDrawDistance = value; } }
-        public float GenerateDistance { get { return GameSettings.Default.ChunkGenerateDistance; } set { GameSettings.Default.ChunkDrawDistance = value; } }
+
+        public float DrawDistanceSquared
+        {
+            get { return m_drawDistSq; }
+            set
+            {
+                m_drawDistSq = value;
+                GameSettings.Default.ChunkDrawDistance = (float) Math.Sqrt(value);
+            }
+        }
+
+        public float RemoveDistance
+        {
+            get { return GameSettings.Default.ChunkUnloadDistance; }
+            set { GameSettings.Default.ChunkDrawDistance = value; }
+        }
+
+        public float GenerateDistance
+        {
+            get { return GameSettings.Default.ChunkGenerateDistance; }
+            set { GameSettings.Default.ChunkDrawDistance = value; }
+        }
+
         public GraphicsDevice Graphics { get; set; }
-        public float MaxViewingLevel { get; set;}
+        public float MaxViewingLevel { get; set; }
 
         public bool PauseThreads { get; set; }
 
         public enum SliceMode
         {
-            X, Y, Z
+            X,
+            Y,
+            Z
         }
 
         public SliceMode Slice { get; set; }
@@ -74,7 +110,6 @@ namespace DwarfCorp
 
         public Octree ChunkOctree { get; set; }
 
-        private HashSet<VoxelChunk> m_intersecting = new HashSet<VoxelChunk>();
         private HashSet<VoxelChunk> m_visibleSet = new HashSet<VoxelChunk>();
 
         public WaterManager Water { get; set; }
@@ -83,19 +118,19 @@ namespace DwarfCorp
         public Texture2D AmbientMap { get; set; }
         public Texture2D TorchMap { get; set; }
 
-        public  uint ChunkSizeX { get; set; }
-        public  uint ChunkSizeY { get; set; }
-        public  uint ChunkSizeZ { get; set; }
+        public uint ChunkSizeX { get; set; }
+        public uint ChunkSizeY { get; set; }
+        public uint ChunkSizeZ { get; set; }
         public float InvCSX { get; set; }
         public float InvCSY { get; set; }
-        public float InvCSZ { get; set;}
+        public float InvCSZ { get; set; }
 
         public List<DynamicLight> DynamicLights { get; set; }
 
-        public ChunkManager(ContentManager Content, uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, Camera camera, GraphicsDevice graphics, Texture2D tilemap, Texture2D illumMap, Texture2D sunMap, Texture2D ambientMap, Texture2D torchMap, ChunkGenerator chunkGen)
+        public ChunkManager(ContentManager content, uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, Camera camera, GraphicsDevice graphics, Texture2D tilemap, Texture2D illumMap, Texture2D sunMap, Texture2D ambientMap, Texture2D torchMap, ChunkGenerator chunkGen)
         {
             m_drawDistSq = DrawDistance * DrawDistance;
-            this.Content = Content;
+            Content = content;
             ChunkSizeX = chunkSizeX;
             ChunkSizeY = chunkSizeY;
             ChunkSizeZ = chunkSizeZ;
@@ -116,13 +151,13 @@ namespace DwarfCorp
 
             GeneratedChunks = new ConcurrentQueue<VoxelChunk>();
             GeneratorLock = new Mutex();
-            GeneratorThread = new Thread(this.GenerateThread);
+            GeneratorThread = new Thread(GenerateThread);
 
             RebuildLock = new Mutex();
-            RebuildThread = new Thread(this.RebuildVoxelsThread);
-            RebuildLiquidThread = new Thread(this.RebuildLiquidsThread);
+            RebuildThread = new Thread(RebuildVoxelsThread);
+            RebuildLiquidThread = new Thread(RebuildLiquidsThread);
 
-            WaterThread = new Thread(this.UpdateWaterThread);
+            WaterThread = new Thread(UpdateWaterThread);
 
             ToGenerate = new List<BoundingBox>();
             Graphics = graphics;
@@ -164,56 +199,59 @@ namespace DwarfCorp
 
         public void UpdateWaterThread()
         {
-            EventWaitHandle[] waitHandles = new EventWaitHandle[] { WaterUpdateEvent, Program.shutdownEvent };
+            EventWaitHandle[] waitHandles =
+            {
+                WaterUpdateEvent,
+                Program.shutdownEvent
+            };
 
-            bool shouldExit = false;
-            while (!shouldExit && !GeometricPrimitive.ExitGame)
+            while(!DwarfGame.ExitGame)
             {
                 EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
 
-                if (wh == Program.shutdownEvent)
+                if(wh == Program.shutdownEvent)
                 {
-                    shouldExit = true;
                     break;
                 }
 
-                if (!PauseThreads)
+                if(!PauseThreads)
                 {
                     Water.UpdateWater();
                 }
             }
-
         }
 
         public void RebuildLiquidsThread()
         {
-
-            EventWaitHandle[] waitHandles = new EventWaitHandle[] { NeedsLiquidEvent, Program.shutdownEvent };
+            EventWaitHandle[] waitHandles =
+            {
+                NeedsLiquidEvent,
+                Program.shutdownEvent
+            };
 
             bool shouldExit = false;
-            while (!shouldExit && !GeometricPrimitive.ExitGame)
+            while(!shouldExit && !DwarfGame.ExitGame)
             {
                 EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
 
-                if (wh == Program.shutdownEvent)
+                if(wh == Program.shutdownEvent)
                 {
-                    shouldExit = true;
                     break;
                 }
 
-                while (!PauseThreads && RebuildLiquidsList.Count > 0 )
+                while(!PauseThreads && RebuildLiquidsList.Count > 0)
                 {
                     VoxelChunk chunk = null;
 
                     //LiquidLock.WaitOne();
-                    if (!RebuildLiquidsList.TryDequeue(out chunk))
+                    if(!RebuildLiquidsList.TryDequeue(out chunk))
                     {
                         //LiquidLock.ReleaseMutex();
                         break;
                     }
                     //LiquidLock.ReleaseMutex();
 
-                    if (chunk == null)
+                    if(chunk == null)
                     {
                         continue;
                     }
@@ -231,171 +269,126 @@ namespace DwarfCorp
                         break;
                     }
                 }
-
-               
             }
         }
 
 
         public void RebuildVoxelsThread()
         {
-            EventWaitHandle[] waitHandles = new EventWaitHandle[] { NeedsRebuildEvent, Program.shutdownEvent};
-            bool shouldExit = false;
-    
-            while (!shouldExit && !GeometricPrimitive.ExitGame)
+            EventWaitHandle[] waitHandles =
+            {
+                NeedsRebuildEvent,
+                Program.shutdownEvent
+            };
+
+            while(!DwarfGame.ExitGame)
             {
                 EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
 
-                if (wh == Program.shutdownEvent)
+                if(wh == Program.shutdownEvent)
                 {
                     break;
                 }
                 {
-                    if (PauseThreads)
+                    if(PauseThreads)
                     {
                         continue;
                     }
 
-                    if (RebuildList.Count > 0)
+                    if(RebuildList.Count > 0)
                     {
                         UpdateDynamicLights();
                     }
 
-                    Dictionary<Point3, VoxelChunk> ToRebuild = new Dictionary<Point3, VoxelChunk>();
+                    Dictionary<Point3, VoxelChunk> toRebuild = new Dictionary<Point3, VoxelChunk>();
                     bool calculateRamps = GameSettings.Default.CalculateRamps;
-                    while (RebuildList.Count > 0)
+                    while(RebuildList.Count > 0)
                     {
                         VoxelChunk chunk = null;
 
-                        //RebuildLock.WaitOne();
-                        if (!RebuildList.TryDequeue(out chunk))
+                        if(!RebuildList.TryDequeue(out chunk))
                         {
-                            //RebuildLock.ReleaseMutex();
                             break;
                         }
-                        //RebuildLock.ReleaseMutex();
 
-                        if (chunk == null)
+                        if(chunk == null)
                         {
                             continue;
                         }
 
-                        ToRebuild[chunk.ID] = chunk;
+                        toRebuild[chunk.ID] = chunk;
 
-                        if (PauseThreads)
+                        if(PauseThreads)
                         {
                             break;
                         }
-
                     }
 
-                    if (calculateRamps)
+                    if(calculateRamps)
                     {
-                        foreach (KeyValuePair<Point3, VoxelChunk> chunkPair in ToRebuild)
+                        foreach(VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
                         {
-                            VoxelChunk chunk = chunkPair.Value;
                             chunk.UpdateRamps();
                         }
                     }
 
 
-                    /*
-                    foreach (KeyValuePair<Point3, VoxelChunk> chunkPair in ToRebuild)
+                    foreach(VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value).Where(chunk => chunk.ShouldRecalculateLighting))
                     {
-                        VoxelChunk chunk = chunkPair.Value;
-                        chunk.UpdateMaxViewingLevel();
+                        chunk.CalculateGlobalLight();
                     }
 
-                    // First pass for quick graphics
-                    foreach (KeyValuePair<Point3, VoxelChunk> chunkPair in ToRebuild)
+                    foreach(VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
                     {
-                        VoxelChunk chunk = chunkPair.Value;
-                        if (chunk.RebuildPending && chunk.ShouldRebuild)
-                        {
-                            chunk.Rebuild(Graphics);
-                            chunk.ShouldRebuild = true;
-                        }
-                    }
-
-
-                    foreach (KeyValuePair<Point3, VoxelChunk> chunkPair in ToRebuild)
-                    {
-                        VoxelChunk chunk = chunkPair.Value;
-                        if (chunk.ShouldRecalculateLighting)
-                        {
-                            chunk.CalculateLighting();
-                            chunk.ShouldRecalculateLighting = false;
-                        }
-
-                    }
-                     */
-
-                    foreach (KeyValuePair<Point3, VoxelChunk> chunkPair in ToRebuild)
-                    {
-                        VoxelChunk chunk = chunkPair.Value;
-                        if (chunk.ShouldRecalculateLighting)
-                        {
-                            chunk.CalculateGlobalLight();
-                        }
-
-                    }
-
-                    foreach (KeyValuePair<Point3, VoxelChunk> chunkPair in ToRebuild)
-                    {
-                        VoxelChunk chunk = chunkPair.Value;
-                        if (chunk.RebuildPending && chunk.ShouldRebuild)
+                        if(chunk.RebuildPending && chunk.ShouldRebuild)
                         {
                             chunk.UpdateMaxViewingLevel();
 
-                            if (chunk.ShouldRecalculateLighting)
+                            if(chunk.ShouldRecalculateLighting)
                             {
-                                //SimpleDrawing.DrawBox(chunk.GetBoundingBox(), Color.White, 0.1f);
                                 chunk.CalculateVertexLighting();
                             }
                             chunk.Rebuild(Graphics);
                             chunk.ShouldRebuild = false;
                             chunk.RebuildPending = false;
                             chunk.ShouldRecalculateLighting = false;
-
                         }
                         else
                         {
                             chunk.RebuildPending = false;
                         }
-
                     }
                 }
             }
         }
 
-        public int CompareChunkDistance(VoxelChunk A, VoxelChunk B)
+        public int CompareChunkDistance(VoxelChunk a, VoxelChunk b)
         {
-            if (A == B || !A.IsVisible && !B.IsVisible)
+            if(a == b || !a.IsVisible && !b.IsVisible)
             {
                 return 0;
             }
-            else
+
+            if(!a.IsVisible)
             {
-                if (!A.IsVisible)
-                {
-                    return 1;
-                }
-                else if (!B.IsVisible)
-                {
-                    return -1;
-                }
-
-                float dA = (A.Origin - m_camera.Position + new Vector3(A.SizeX / 2.0f, A.SizeY / 2.0f, A.SizeZ / 2.0f)).LengthSquared();
-                float dB = (B.Origin - m_camera.Position + new Vector3(B.SizeX / 2.0f, B.SizeY / 2.0f, B.SizeZ / 2.0f)).LengthSquared();
-
-                if (dA < dB)
-                {
-                    return -1;
-                }
-                else return 1;
+                return 1;
             }
-        }
 
+            if(!b.IsVisible)
+            {
+                return -1;
+            }
+
+            float dA = (a.Origin - m_camera.Position + new Vector3(a.SizeX / 2.0f, a.SizeY / 2.0f, a.SizeZ / 2.0f)).LengthSquared();
+            float dB = (b.Origin - m_camera.Position + new Vector3(b.SizeX / 2.0f, b.SizeY / 2.0f, b.SizeZ / 2.0f)).LengthSquared();
+
+            if(dA < dB)
+            {
+                return -1;
+            }
+
+            return 1;
+        }
 
 
         public void SetMaxViewingLevel(float level, SliceMode slice)
@@ -403,15 +396,10 @@ namespace DwarfCorp
             Slice = slice;
             MaxViewingLevel = Math.Max(Math.Min(level, ChunkSizeY), 1);
 
-            foreach (KeyValuePair<Point3, VoxelChunk> chunks in ChunkMap)
+            foreach(VoxelChunk c in ChunkMap.Select(chunks => chunks.Value).Where(c => c.NeedsViewingLevelChange()))
             {
-                VoxelChunk c = chunks.Value;
-
-                if (c.NeedsViewingLevelChange())
-                {
-                    c.ShouldRecalculateLighting = false;
-                    c.ShouldRebuild = true;
-                }
+                c.ShouldRecalculateLighting = false;
+                c.ShouldRebuild = true;
             }
         }
 
@@ -424,16 +412,10 @@ namespace DwarfCorp
             Vector3 dir = Vector3.Normalize(pos2 - pos1);
             return new Ray(pos1, dir);
         }
-        
+
         public Voxel GetFirstVisibleBlockHitByMouse(MouseState mouse, Camera camera, Viewport viewPort)
         {
-            Voxel vox =  GetFirstVisibleBlockHitByScreenCoord(mouse.X, mouse.Y, camera, viewPort, 50.0f);
-
-            if (vox == null)
-            {
-                return null;
-            }
-
+            Voxel vox = GetFirstVisibleBlockHitByScreenCoord(mouse.X, mouse.Y, camera, viewPort, 50.0f);
             return vox;
         }
 
@@ -444,11 +426,6 @@ namespace DwarfCorp
             Vector3 dir = Vector3.Normalize(pos2 - pos1);
             Voxel vox = GetFirstVisibleBlockHitByRay(pos1, pos1 + dir * dist, false);
 
-            if (vox == null)
-            {
-                return null;
-            }
-
             return vox;
         }
 
@@ -456,17 +433,17 @@ namespace DwarfCorp
         {
             VoxelChunk startChunk = GetVoxelChunkAtWorldLocation(rayStart);
 
-            if (startChunk == null)
+            if(startChunk == null)
             {
                 return null;
             }
 
             Point3 point = new Point3(startChunk.WorldToGrid(rayStart));
 
-            for (int y = point.Y; y >= 0; y--)
+            for(int y = point.Y; y >= 0; y--)
             {
                 Voxel vox = startChunk.VoxelGrid[point.X][y][point.Z];
-                if (vox != null && (vox.IsVisible || nullCheck))
+                if(vox != null && (vox.IsVisible || nullCheck))
                 {
                     return vox;
                 }
@@ -495,43 +472,49 @@ namespace DwarfCorp
             float length = delta.Length();
             delta.Normalize();
 
-            
-            Vector3 pos = Vector3.Zero;
 
-            List<Voxel> atPos = new List<Voxel>(); 
-            for (float dn = 0.0f; dn < length; dn += 0.2f)
+            Vector3 pos;
+
+            List<Voxel> atPos = new List<Voxel>();
+            for(float dn = 0.0f; dn < length; dn += 0.2f)
             {
                 pos = rayStart + delta * dn;
 
                 atPos.Clear();
                 GetNonNullVoxelsAtWorldLocationCheckFirst(startChunk, pos, atPos, 0);
 
-                if (draw && atPos.Count > 0)
+                if(draw && atPos.Count > 0)
                 {
                     SimpleDrawing.DrawBox(new BoundingBox(pos, pos + new Vector3(0.01f, 0.01f, 0.01f)), Color.White, 0.01f);
                 }
-                if (atPos.Count > 0)
+
+                if(atPos.Count <= 0)
                 {
-                    float closestDist = 100000;
-                    Voxel closestVox = null;
-                    foreach (Voxel v in atPos)
-                    {
+                    continue;
+                }
 
-                        if (v != null && v.IsVisible && v != ignore)
-                        {
-                            float d = (v.Position + new Vector3(0.5f, 0.5f, 0.5f) - rayStart).LengthSquared() ;
-                            if(d < closestDist)
-                            {
-                                closestDist = d;
-                                closestVox = v;
-                            }
-                        }
+                float closestDist = 100000;
+                Voxel closestVox = null;
+                foreach(Voxel v in atPos)
+                {
+                    if(v == null || !v.IsVisible || v == ignore)
+                    {
+                        continue;
                     }
 
-                    if(closestVox != null)
+                    float d = (v.Position + new Vector3(0.5f, 0.5f, 0.5f) - rayStart).LengthSquared();
+                    if(!(d < closestDist))
                     {
-                        return closestVox;
+                        continue;
                     }
+
+                    closestDist = d;
+                    closestVox = v;
+                }
+
+                if(closestVox != null)
+                {
+                    return closestVox;
                 }
             }
 
@@ -540,47 +523,43 @@ namespace DwarfCorp
 
         public void AddChunk(VoxelChunk chunk)
         {
-            if (ChunkMap.Count < MaxChunks && !ChunkMap.ContainsKey(chunk.ID))
+            if(ChunkMap.Count < MaxChunks && !ChunkMap.ContainsKey(chunk.ID))
             {
                 ChunkMap[chunk.ID] = chunk;
                 ChunkOctree.AddObjectRecursive(chunk);
             }
-            else if (ChunkMap.ContainsKey(chunk.ID))
+            else if(ChunkMap.ContainsKey(chunk.ID))
             {
                 RemoveChunk(ChunkMap[chunk.ID]);
                 ChunkMap[chunk.ID] = chunk;
                 ChunkOctree.AddObjectRecursive(chunk);
             }
-
-
         }
 
         public void RemoveChunk(VoxelChunk chunk)
         {
             VoxelChunk removed = null;
-            while (!ChunkMap.TryRemove(chunk.ID, out removed))
+            while(!ChunkMap.TryRemove(chunk.ID, out removed))
             {
                 ChunkOctree.Root.RemoveObject(chunk);
             }
 
             HashSet<LocatableComponent> locatables = new HashSet<LocatableComponent>();
 
-            LocatableComponent.m_octree.Root.GetComponentsIntersecting(chunk.GetBoundingBox(), locatables);
+            LocatableComponent.CollisionManager.GetObjectsIntersecting(chunk.GetBoundingBox(), locatables, CollisionManager.CollisionType.Static | CollisionManager.CollisionType.Dynamic);
 
-            foreach (LocatableComponent component in locatables)
+            foreach(LocatableComponent component in locatables)
             {
                 component.IsDead = true;
             }
 
             chunk.Destroy(Graphics);
-
-
         }
 
         public void RemoveDistantBlocks(Camera camera)
         {
             List<VoxelChunk> toRemove = new List<VoxelChunk>();
-            foreach (KeyValuePair<Point3, VoxelChunk> chunkpair in ChunkMap)
+            foreach(KeyValuePair<Point3, VoxelChunk> chunkpair in ChunkMap)
             {
                 VoxelChunk chunk = chunkpair.Value;
                 BoundingBox box = chunk.GetBoundingBox();
@@ -602,20 +581,19 @@ namespace DwarfCorp
         {
             while(RenderList.Count > 0)
             {
-                VoxelChunk result = null;
-                if (!RenderList.TryDequeue(out result))
+                VoxelChunk result;
+                if(!RenderList.TryDequeue(out result))
                 {
                     break;
                 }
             }
 
 
-
-            foreach (VoxelChunk chunk in m_visibleSet)
+            foreach(VoxelChunk chunk in m_visibleSet)
             {
                 BoundingBox box = chunk.GetBoundingBox();
 
-                if ((camera.Position - (box.Min + box.Max) * 0.5f).Length() < DrawDistance)
+                if((camera.Position - (box.Min + box.Max) * 0.5f).Length() < DrawDistance)
                 {
                     chunk.IsVisible = true;
                     RenderList.Enqueue(chunk);
@@ -625,26 +603,24 @@ namespace DwarfCorp
                     chunk.IsVisible = false;
                 }
             }
-
         }
 
-        public List<VoxelChunk> rebuildTest = new List<VoxelChunk>();
+        public List<VoxelChunk> RebuildTest = new List<VoxelChunk>();
 
         public void UpdateRebuildList()
         {
             List<VoxelChunk> toRebuild = new List<VoxelChunk>();
             List<VoxelChunk> toRebuildLiquids = new List<VoxelChunk>();
-            rebuildTest = toRebuild;
-            foreach (KeyValuePair<Point3, VoxelChunk> chunks in ChunkMap)
+            RebuildTest = toRebuild;
+            foreach(VoxelChunk chunk in ChunkMap.Select(chunks => chunks.Value))
             {
-                VoxelChunk chunk = chunks.Value;
-                if (chunk.ShouldRebuild && ! chunk.RebuildPending)
+                if(chunk.ShouldRebuild && ! chunk.RebuildPending)
                 {
                     toRebuild.Add(chunk);
                     chunk.RebuildPending = true;
                 }
 
-                if (chunk.ShouldRebuildWater && ! chunk.RebuildLiquidPending)
+                if(chunk.ShouldRebuildWater && ! chunk.RebuildLiquidPending)
                 {
                     toRebuildLiquids.Add(chunk);
                     chunk.RebuildLiquidPending = true;
@@ -652,53 +628,49 @@ namespace DwarfCorp
             }
 
 
-            if (toRebuild.Count > 0)
+            if(toRebuild.Count > 0)
             {
                 toRebuild.Sort(CompareChunkDistance);
                 //RebuildLock.WaitOne();
-                foreach (VoxelChunk chunk in toRebuild)
+                foreach(VoxelChunk chunk in toRebuild)
                 {
                     RebuildList.Enqueue(chunk);
                 }
                 //RebuildLock.ReleaseMutex();
             }
 
-            if (toRebuildLiquids.Count > 0)
+            if(toRebuildLiquids.Count > 0)
             {
                 toRebuildLiquids.Sort(CompareChunkDistance);
 
                 //LiquidLock.WaitOne();
-                foreach (VoxelChunk chunk in toRebuildLiquids)
+                foreach(VoxelChunk chunk in toRebuildLiquids.Where(chunk => !RebuildLiquidsList.Contains(chunk)))
                 {
-                    if (!RebuildLiquidsList.Contains(chunk))
-                    {
-                        RebuildLiquidsList.Enqueue(chunk);
-                    }
+                    RebuildLiquidsList.Enqueue(chunk);
                 }
                 //LiquidLock.ReleaseMutex();
             }
 
 
-            if (RebuildList.Count > 0)
+            if(RebuildList.Count > 0)
             {
                 NeedsRebuildEvent.Set();
             }
 
-            if (RebuildLiquidsList.Count > 0)
+            if(RebuildLiquidsList.Count > 0)
             {
                 NeedsLiquidEvent.Set();
             }
-        
         }
 
         public List<VoxelChunk> GetAdjacentChunks(VoxelChunk chunk)
         {
             List<VoxelChunk> toReturn = new List<VoxelChunk>();
-            for (int dx = -1; dx < 2; dx++)
+            for(int dx = -1; dx < 2; dx++)
             {
-                for (int dz = -1; dz < 2; dz++)
+                for(int dz = -1; dz < 2; dz++)
                 {
-                    if (dx == 0 && dz == 0)
+                    if(dx == 0 && dz == 0)
                     {
                         continue;
                     }
@@ -706,7 +678,7 @@ namespace DwarfCorp
                     {
                         Point3 key = new Point3(chunk.ID.X + dx, 0, chunk.ID.Z + dz);
 
-                        if (ChunkMap.ContainsKey(key))
+                        if(ChunkMap.ContainsKey(key))
                         {
                             toReturn.Add(ChunkMap[key]);
                         }
@@ -715,7 +687,6 @@ namespace DwarfCorp
             }
 
             return toReturn;
-
         }
 
         public bool BoundingBoxIntersectsWorld(BoundingBox box)
@@ -728,16 +699,19 @@ namespace DwarfCorp
 
         public void GenerateThread()
         {
-            EventWaitHandle[] waitHandles = new EventWaitHandle[] { NeedsGenerationEvent, Program.shutdownEvent };
-            while (true)
+            EventWaitHandle[] waitHandles =
+            {
+                NeedsGenerationEvent,
+                Program.shutdownEvent
+            };
+            while(true)
             {
                 EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
 
                 //GeneratorLock.WaitOne();
 
 
-
-                if (!PauseThreads && ToGenerate != null && ToGenerate.Count > 0)
+                if(!PauseThreads && ToGenerate != null && ToGenerate.Count > 0)
                 {
                     BoundingBox box = ToGenerate[0];
                     BoundingBox smaller = new BoundingBox(box.Min + new Vector3(0.05f, 0.05f, 0.05f), box.Max - new Vector3(0.05f, 0.05f, 0.05f));
@@ -745,13 +719,12 @@ namespace DwarfCorp
 
                     bool intersectsWorld = BoundingBoxIntersectsWorld(smaller);
 
-                    if (!intersectsWorld)
+                    if(!intersectsWorld)
                     {
-                        VoxelChunk chunk = ChunkGen.GenerateChunk(box.Min , (int)(box.Max.X - box.Min.X), (int)(box.Max.Y - box.Min.Y), (int)(box.Max.Z - box.Min.Z), Components, Content, Graphics);
+                        VoxelChunk chunk = ChunkGen.GenerateChunk(box.Min, (int) (box.Max.X - box.Min.X), (int) (box.Max.Y - box.Min.Y), (int) (box.Max.Z - box.Min.Z), Components, Content, Graphics);
                         chunk.ShouldRebuild = true;
                         chunk.ShouldRecalculateLighting = true;
                         GeneratedChunks.Enqueue(chunk);
-                        
                     }
 
                     ToGenerate.Remove(box);
@@ -759,7 +732,7 @@ namespace DwarfCorp
 
 
                 //GeneratorLock.ReleaseMutex();
-                if (wh == Program.shutdownEvent)
+                if(wh == Program.shutdownEvent)
                 {
                     break;
                 }
@@ -768,7 +741,7 @@ namespace DwarfCorp
 
         public void BuildAllGrass()
         {
-            foreach (KeyValuePair<Point3, VoxelChunk> pair in ChunkMap)
+            foreach(KeyValuePair<Point3, VoxelChunk> pair in ChunkMap)
             {
                 pair.Value.BuildGrassMotes();
             }
@@ -776,13 +749,12 @@ namespace DwarfCorp
 
         public void GenerateNewChunks(Camera camera, bool frustrumCull)
         {
-
-            if (ChunkMap.Count > MaxChunks)
+            if(ChunkMap.Count > MaxChunks)
             {
                 return;
             }
 
-            if (ToGenerate.Count > 0)
+            if(ToGenerate.Count > 0)
             {
                 NeedsGenerationEvent.Set();
             }
@@ -793,105 +765,76 @@ namespace DwarfCorp
 
 
             int originalCount = PotentialChunks.Count;
-            for (int i = 0; i < originalCount; i++)
+            for(int i = 0; i < originalCount; i++)
             {
                 BoundingBox box = PotentialChunks[i];
-                if (!frustrumCull || (camera.IsInView(box) && ((camera.Position - box.Min).Length() < GenerateDistance)))
+                if(frustrumCull && (!camera.IsInView(box) || (!((camera.Position - box.Min).Length() < GenerateDistance))))
                 {
-                    toRemove.Add(box);
-
-                    ToGenerate.Add(box);
-                    for (int dx = -1; dx < 2; dx++)
-                    {
-                        for (int dy = -1; dy < 2; dy++)
-                        {
-
-                            if (dx == 0 && dy == 0)
-                            {
-                                continue;
-                            }
-
-                            Vector3 extents = box.Max - box.Min;
-                            float xWidth = (box.Max.X - box.Min.X) * dx;
-                            float zWidth = (box.Max.Z - box.Min.Z) * dy;
-
-                            BoundingBox newPotential = new BoundingBox(box.Min + new Vector3(xWidth, 0, zWidth), box.Max + new Vector3(xWidth, 0, zWidth));
-                            BoundingBox smaller = new BoundingBox(newPotential.Min + new Vector3(2f, 2f, 2f), newPotential.Max - new Vector3(2f, 2f, 2f));
-
-                            bool intersects = false;
-
-                            foreach (BoundingBox potential in PotentialChunks)
-                            {
-                                if (potential.Intersects(smaller))
-                                {
-                                    intersects = true;
-                                    break;
-                                }
-                            }
-
-                            foreach (BoundingBox potential in toAdd)
-                            {
-                                if (potential.Intersects(smaller))
-                                {
-                                    intersects = true;
-                                    break;
-                                }
-                            }
-
-                            if (!intersects && !BoundingBoxIntersectsWorld(smaller))
-                            {
-                                toAdd.Add(newPotential);
-                            }
-
-                        }
-
-                    }
-
-                    foreach (BoundingBox add in toAdd)
-                    {
-                        PotentialChunks.Add(add);
-                    }
-
-                    toAdd.Clear();
+                    continue;
                 }
 
+                toRemove.Add(box);
 
+                ToGenerate.Add(box);
+                for(int dx = -1; dx < 2; dx++)
+                {
+                    for(int dy = -1; dy < 2; dy++)
+                    {
+                        if(dx == 0 && dy == 0)
+                        {
+                            continue;
+                        }
+
+                        Vector3 extents = box.Max - box.Min;
+                        float xWidth = (box.Max.X - box.Min.X) * dx;
+                        float zWidth = (box.Max.Z - box.Min.Z) * dy;
+
+                        BoundingBox newPotential = new BoundingBox(box.Min + new Vector3(xWidth, 0, zWidth), box.Max + new Vector3(xWidth, 0, zWidth));
+                        BoundingBox smaller = new BoundingBox(newPotential.Min + new Vector3(2f, 2f, 2f), newPotential.Max - new Vector3(2f, 2f, 2f));
+
+                        bool intersects = PotentialChunks.Any(potential => potential.Intersects(smaller)) || toAdd.Any(potential => potential.Intersects(smaller));
+
+                        if(!intersects && !BoundingBoxIntersectsWorld(smaller))
+                        {
+                            toAdd.Add(newPotential);
+                        }
+                    }
+                }
+
+                foreach(BoundingBox add in toAdd)
+                {
+                    PotentialChunks.Add(add);
+                }
+
+                toAdd.Clear();
             }
 
-            foreach (BoundingBox box in toRemove)
+            foreach(BoundingBox box in toRemove)
             {
                 PotentialChunks.Remove(box);
             }
-
-
-
         }
 
         public void RecomputeNeighbors()
         {
-
-
-            foreach (KeyValuePair<Point3, VoxelChunk> chunks in ChunkMap)
+            foreach(VoxelChunk chunk in ChunkMap.Select(chunks => chunks.Value))
             {
-                VoxelChunk chunk = chunks.Value;
                 chunk.Neighbors.Clear();
             }
 
-            foreach (KeyValuePair<Point3, VoxelChunk> chunks in ChunkMap)
+            foreach(KeyValuePair<Point3, VoxelChunk> chunks in ChunkMap)
             {
                 VoxelChunk chunk = chunks.Value;
                 List<VoxelChunk> adjacents = GetAdjacentChunks(chunk);
-                foreach (VoxelChunk c in adjacents)
+                foreach(VoxelChunk c in adjacents)
                 {
-                    if (!c.Neighbors.ContainsKey(chunk.ID) && chunk != c)
+                    if(!c.Neighbors.ContainsKey(chunk.ID) && chunk != c)
                     {
                         c.Neighbors[chunk.ID] = (chunk);
                     }
                     chunk.Neighbors[c.ID] = c;
                 }
             }
-            
-
         }
 
         public void Render(Camera camera, GameTime gameTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix)
@@ -903,19 +846,19 @@ namespace DwarfCorp
             effect.Parameters["xTorchGradient"].SetValue(TorchMap);
             effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
             effect.Parameters["SelfIllumination"].SetValue(true);
-            foreach (VoxelChunk chunk in RenderList)
+            foreach(VoxelChunk chunk in RenderList)
             {
                 chunk.Render(Tilemap, IllumMap, SunMap, AmbientMap, TorchMap, graphicsDevice, effect, worldMatrix);
             }
 
-            ChunkOctree.Root.Draw();
+            ChunkOctree.Root.Draw(Color.White, 0.1f);
         }
 
         public void LoadFromFile(GameFile gameFile, ref string message)
         {
             List<ChunkFile> chunkFiles = gameFile.Data.ChunkData;
 
-            for (int i = 0; i < gameFile.Data.ChunkData.Count; i++)
+            for(int i = 0; i < gameFile.Data.ChunkData.Count; i++)
             {
                 message = "Loading: " + (i + 1) + "/" + gameFile.Data.ChunkData.Count;
                 VoxelChunk chunk = chunkFiles[i].ToChunk(this);
@@ -933,79 +876,75 @@ namespace DwarfCorp
         public void CreateGraphics(ref string message)
         {
             message = "Creating Graphics";
-            List<VoxelChunk> ToRebuild = new List<VoxelChunk>();
-            while (RebuildList.Count > 0)
+            List<VoxelChunk> toRebuild = new List<VoxelChunk>();
+            while(RebuildList.Count > 0)
             {
                 VoxelChunk chunk = null;
-                if (!RebuildList.TryDequeue(out chunk))
+                if(!RebuildList.TryDequeue(out chunk))
                 {
                     break;
                 }
 
-                if (chunk == null)
+                if(chunk == null)
                 {
                     continue;
                 }
 
-                ToRebuild.Add(chunk);
+                toRebuild.Add(chunk);
             }
 
             message = "Creating Graphics : Updating Max Viewing Level";
-            foreach (VoxelChunk chunk in ToRebuild)
+            foreach(VoxelChunk chunk in toRebuild)
             {
                 chunk.UpdateMaxViewingLevel();
             }
 
             message = "Creating Graphics : Updating Ramps";
-            foreach (VoxelChunk chunk in ToRebuild)
+            foreach(VoxelChunk chunk in toRebuild.Where(chunk => GameSettings.Default.CalculateRamps))
             {
-                if (GameSettings.Default.CalculateRamps)
-                {
-                    chunk.UpdateRamps();
-                }
+                chunk.UpdateRamps();
             }
 
             message = "Creating Graphics : Calculating lighting ";
             int j = 0;
-            foreach (VoxelChunk chunk in ToRebuild)
+            foreach(VoxelChunk chunk in toRebuild)
             {
                 j++;
-                message = "Creating Graphics : Calculating lighting " + j + "/" + ToRebuild.Count;
-                if (chunk.ShouldRecalculateLighting)
+                message = "Creating Graphics : Calculating lighting " + j + "/" + toRebuild.Count;
+                if(chunk.ShouldRecalculateLighting)
                 {
                     chunk.CalculateGlobalLight();
                     chunk.ShouldRecalculateLighting = false;
                 }
-
             }
 
             j = 0;
-            foreach (VoxelChunk chunk in ToRebuild)
+            foreach(VoxelChunk chunk in toRebuild)
             {
                 j++;
-                message = "Creating Graphics : Calculating vertex light " + j + "/" + ToRebuild.Count;
+                message = "Creating Graphics : Calculating vertex light " + j + "/" + toRebuild.Count;
                 chunk.CalculateVertexLighting();
             }
 
             message = "Creating Graphics: Building Vertices";
             j = 0;
-            foreach (VoxelChunk chunk in ToRebuild)
+            foreach(VoxelChunk chunk in toRebuild)
             {
                 j++;
-                message = "Creating Graphics : Building Vertices " + j + "/" + ToRebuild.Count;
+                message = "Creating Graphics : Building Vertices " + j + "/" + toRebuild.Count;
 
-                if (chunk.ShouldRebuild)
+                if(!chunk.ShouldRebuild)
                 {
-                    chunk.Rebuild(Graphics);
-                    chunk.ShouldRebuild = false;
-                    chunk.RebuildPending = false;
-                    chunk.RebuildLiquidPending = false;
-
+                    continue;
                 }
+
+                chunk.Rebuild(Graphics);
+                chunk.ShouldRebuild = false;
+                chunk.RebuildPending = false;
+                chunk.RebuildLiquidPending = false;
             }
 
             RecomputeNeighbors();
-
 
 
             message = "Cleaning Up.";
@@ -1016,7 +955,7 @@ namespace DwarfCorp
             float origBuildRadius = GenerateDistance;
             GenerateDistance = origBuildRadius * 2.0f;
             int iters = 4;
-            for (int i = 0; i < iters; i++)
+            for(int i = 0; i < iters; i++)
             {
                 message = "Generating : " + (i + 1) + "/" + iters;
                 camera.Radius = 0.01f;
@@ -1025,7 +964,7 @@ namespace DwarfCorp
                 camera.UpdateProjectionMatrix();
                 camera.UpdateViewMatrix();
                 camera.UpdateBasisVectors();
-             
+
                 GenerateNewChunks(camera, false);
 
                 while(ToGenerate != null && ToGenerate.Count > 0)
@@ -1036,15 +975,15 @@ namespace DwarfCorp
 
                     bool intersectsWorld = BoundingBoxIntersectsWorld(smaller);
 
-                    if (!intersectsWorld)
+                    if(!intersectsWorld)
                     {
-                        VoxelChunk chunk = ChunkGen.GenerateChunk(box.Min, (int)(box.Max.X - box.Min.X), (int)(box.Max.Y - box.Min.Y) , (int)(box.Max.Z - box.Min.Z), Components, Content, Graphics);
+                        VoxelChunk chunk = ChunkGen.GenerateChunk(box.Min, (int) (box.Max.X - box.Min.X), (int) (box.Max.Y - box.Min.Y), (int) (box.Max.Z - box.Min.Z), Components, Content, Graphics);
                         chunk.ShouldRebuild = true;
                         chunk.ShouldRecalculateLighting = true;
                         chunk.IsVisible = true;
                         chunk.ResetSunlight(0);
                         GeneratedChunks.Enqueue(chunk);
-                        foreach (VoxelChunk chunk2 in GeneratedChunks)
+                        foreach(VoxelChunk chunk2 in GeneratedChunks)
                         {
                             AddChunk(chunk2);
                         }
@@ -1054,45 +993,38 @@ namespace DwarfCorp
                 }
 
 
-
                 UpdateRebuildList();
                 GenerateDistance = origBuildRadius;
-
             }
 
 
-            while (GeneratedChunks.Count > 0)
+            while(GeneratedChunks.Count > 0)
             {
                 VoxelChunk gen = null;
-                if (!GeneratedChunks.TryDequeue(out gen))
+                if(!GeneratedChunks.TryDequeue(out gen))
                 {
                     break;
                 }
             }
 
             CreateGraphics(ref message);
-            
-
         }
 
         public void Update(GameTime gameTime, Camera camera, GraphicsDevice g)
         {
             UpdateRenderList(camera);
 
-            if (WaterUpdateTimer.HasTriggered)
+            if(WaterUpdateTimer.Update(gameTime))
             {
                 WaterUpdateEvent.Set();
-            }
-            else
-            {
-                WaterUpdateTimer.Update(gameTime);
             }
 
             UpdateRebuildList();
 
-            if (GenerateChunksTimer.HasTriggered)
+            GenerateChunksTimer.Update(gameTime);
+            if(GenerateChunksTimer.HasTriggered)
             {
-                if (ToGenerate.Count > 0)
+                if(ToGenerate.Count > 0)
                 {
                     NeedsGenerationEvent.Set();
                     RecomputeNeighbors();
@@ -1100,62 +1032,52 @@ namespace DwarfCorp
 
                 GenerateNewChunks(camera, true);
 
- 
 
-                foreach (VoxelChunk chunk in GeneratedChunks)
+                foreach(VoxelChunk chunk in GeneratedChunks)
                 {
                     AddChunk(chunk);
                     List<VoxelChunk> adjacents = GetAdjacentChunks(chunk);
-                    foreach (VoxelChunk c in adjacents)
+                    foreach(VoxelChunk c in adjacents)
                     {
                         c.ShouldRecalculateLighting = true;
                         c.ShouldRebuild = true;
                     }
                 }
 
-                while (GeneratedChunks.Count > 0)
+                while(GeneratedChunks.Count > 0)
                 {
                     VoxelChunk gen = null;
-                    if (!GeneratedChunks.TryDequeue(out gen))
+                    if(!GeneratedChunks.TryDequeue(out gen))
                     {
                         break;
                     }
                 }
             }
-            else
-            {
-                GenerateChunksTimer.Update(gameTime);
-            }
-             
 
-            
-            if (VisibilityChunksTimer.HasTriggered)
+
+            VisibilityChunksTimer.Update(gameTime);
+            if(VisibilityChunksTimer.HasTriggered)
             {
                 m_visibleSet.Clear();
-                ChunkOctree.Root.GetComponentsIntersecting<VoxelChunk>(camera.GetFrustrum(), m_visibleSet);
+                ChunkOctree.Root.GetComponentsIntersecting(camera.GetFrustrum(), m_visibleSet);
                 RemoveDistantBlocks(camera);
             }
-            else
-            {
-                VisibilityChunksTimer.Update(gameTime);
-            }
 
 
-            foreach (VoxelChunk chunk in ChunkMap.Values)
+            foreach(VoxelChunk chunk in ChunkMap.Values)
             {
                 chunk.Update(gameTime);
             }
 
             Water.Splash(gameTime);
             Water.HandleTransfers(gameTime);
-           
         }
 
-        public  Vector3 RoundToChunkCoords(Vector3 location)
+        public Vector3 RoundToChunkCoords(Vector3 location)
         {
-            int x = (int)(location.X * InvCSX);
-            int y = (int)(location.Y * InvCSY);
-            int z = (int)(location.Z * InvCSZ);
+            int x = (int) (location.X * InvCSX);
+            int y = (int) (location.Y * InvCSY);
+            int z = (int) (location.Z * InvCSZ);
 
 
             return new Vector3(x, y, z);
@@ -1165,13 +1087,13 @@ namespace DwarfCorp
         {
             Point3 id = GetChunkID(worldLocation);
 
-            if (ChunkMap.ContainsKey(id))
+            if(ChunkMap.ContainsKey(id))
             {
                 return ChunkMap[id];
             }
 
 
-                return null;
+            return null;
         }
 
         public List<VoxelRef> GetVoxelReferencesAtWorldLocation(Vector3 worldLocation)
@@ -1183,130 +1105,77 @@ namespace DwarfCorp
 
         public void GetVoxelReferencesAtWorldLocation(VoxelChunk checkFirst, Vector3 worldLocation, List<VoxelRef> toReturn)
         {
-              if (checkFirst != null )
+            while(true)
+            {
+                if(checkFirst != null)
                 {
-                    if (checkFirst.IsWorldLocationValid(worldLocation))
+                    if(checkFirst.IsWorldLocationValid(worldLocation))
                     {
                         Voxel v = checkFirst.GetVoxelAtWorldLocation(worldLocation);
 
-                        if (v != null)
+                        if(v != null)
                         {
                             toReturn.Add(v.GetReference());
                         }
                         else
                         {
                             Vector3 grid = checkFirst.WorldToGrid(worldLocation);
-                            VoxelRef newReference = new VoxelRef();
-                            newReference.ChunkID = checkFirst.ID;
-                            newReference.GridPosition = new Vector3((int)grid.X, (int)grid.Y, (int)grid.Z);
+                            VoxelRef newReference = new VoxelRef
+                            {
+                                ChunkID = checkFirst.ID,
+                                GridPosition = new Vector3((int) grid.X, (int) grid.Y, (int) grid.Z)
+                            };
                             newReference.WorldPosition = newReference.GridPosition + checkFirst.Origin;
                             newReference.TypeName = "empty";
                             newReference.isValid = true;
                             toReturn.Add(newReference);
                         }
+                        return;
                     }
                     else
                     {
-                         GetVoxelReferencesAtWorldLocation(null, worldLocation, toReturn);
-                        
-                        /*
-                        foreach (VoxelChunk n in checkFirst.Neighbors.Values)
-                        {
-                            if (n.IsWorldLocationValid(worldLocation))
-                            {
-                                Voxel voxel = n.GetVoxelAtWorldLocation(worldLocation);
-
-                                if (voxel != null)
-                                {
-                                    toReturn.Add(voxel.GetReference());
-                                }
-                                else
-                                {
-                                    VoxelRef newReference = new VoxelRef();
-                                    newReference.ChunkID = n.ID;
-                                    Vector3 grid = n.WorldToGrid(worldLocation);
-                                    newReference.GridPosition = new Vector3((int)grid.X, (int)grid.Y, (int)grid.Z);
-                                    newReference.WorldPosition = newReference.GridPosition + n.Origin;
-                                    newReference.TypeName = "empty";
-                                    newReference.isValid = true;
-                                    toReturn.Add(newReference);
-                                }
-                                break;
-                            }
-
-                        }
-                        */
+                        checkFirst = null;
+                        continue;
                     }
-                         
                 }
                 else
                 {
                     VoxelChunk v = GetVoxelChunkAtWorldLocation(worldLocation);
 
-                    if (v != null)
+                    if(v == null)
                     {
-                        Voxel got = v.GetVoxelAtWorldLocation(worldLocation);
-
-                        if (got != null)
-                        {
-                            toReturn.Add(got.GetReference());
-                        }
-                        else
-                        {
-                            Vector3 grid = v.WorldToGrid(worldLocation);
-                            VoxelRef newReference = new VoxelRef();
-                            newReference.ChunkID = v.ID;
-                            newReference.GridPosition = new Vector3((int)grid.X, (int)grid.Y, (int)grid.Z);
-                            newReference.WorldPosition = newReference.GridPosition + v.Origin;
-                            newReference.TypeName = "empty";
-                            newReference.isValid = true;
-                            toReturn.Add(newReference);
-                        }
-                        
+                        return;
                     }
 
-                  /*
-                    m_intersecting.Clear();
-                    m_intersecting.Add(ChunkOctree.Root.GetComponentIntersecting<VoxelChunk>(worldLocation));
+                    Voxel got = v.GetVoxelAtWorldLocation(worldLocation);
 
-                    foreach (VoxelChunk v in m_intersecting)
+                    if(got != null)
                     {
-                        if (v != null)
-                        {
-                            if (v.IsWorldLocationValid(worldLocation))
-                            {
-                                Voxel got = v.GetVoxelAtWorldLocation(worldLocation);
-                            
-                                if (got != null)
-                                {
-                                    toReturn.Add(got.GetReference());
-                                }
-                                else
-                                {
-                                    Vector3 grid = v.WorldToGrid(worldLocation);
-                                    VoxelRef newReference = new VoxelRef();
-                                    newReference.ChunkID = v.ID;
-                                    newReference.GridPosition = new Vector3((int)grid.X, (int)grid.Y, (int)grid.Z);
-                                    newReference.WorldPosition = newReference.GridPosition + v.Origin;
-                                    newReference.TypeName = "empty";
-                                    newReference.isValid = true;
-                                    toReturn.Add(newReference);
-                                }
-                            }
-
-                        }
+                        toReturn.Add(got.GetReference());
                     }
-                   */
+                    else
+                    {
+                        Vector3 grid = v.WorldToGrid(worldLocation);
+                        VoxelRef newReference = new VoxelRef
+                        {
+                            ChunkID = v.ID,
+                            GridPosition = new Vector3((int) grid.X, (int) grid.Y, (int) grid.Z),
+                            TypeName = "empty",
+                            isValid = true
+                        };
+                        newReference.WorldPosition = newReference.GridPosition + v.Origin;
+                        toReturn.Add(newReference);
+                    }
+
+                    return;
                 }
-
-                return;
-            
+            }
         }
 
         public Point3 GetChunkID(Vector3 origin)
         {
             origin = RoundToChunkCoords(origin);
-            return new Point3((int)origin.X, (int)origin.Y, (int)origin.Z);
+            return new Point3((int) origin.X, (int) origin.Y, (int) origin.Z);
         }
 
         public List<Voxel> GetNonNullVoxelsAtWorldLocation(Vector3 worldLocation, int depth)
@@ -1320,73 +1189,74 @@ namespace DwarfCorp
         {
             VoxelChunk chunk = GetVoxelChunkAtWorldLocation(new Vector3(x, y, z));
 
-            if (chunk != null)
+            if(chunk != null)
             {
-                return chunk.GetFilledVoxelGridHeightAt((int)(x - chunk.Origin.X), (int)(y - chunk.Origin.Y), (int)(z - chunk.Origin.Z));
+                return chunk.GetFilledVoxelGridHeightAt((int) (x - chunk.Origin.X), (int) (y - chunk.Origin.Y), (int) (z - chunk.Origin.Z));
             }
 
-            else return -1;
+            else
+            {
+                return -1;
+            }
         }
 
-        public void GetNonNullVoxelsAtWorldLocationCheckFirst(VoxelChunk checkFirst,  Vector3 worldLocation, List<Voxel> toReturn, int depth)
+        public void GetNonNullVoxelsAtWorldLocationCheckFirst(VoxelChunk checkFirst, Vector3 worldLocation, List<Voxel> toReturn, int depth)
         {
-            if (depth > 1)
+            if(depth > 1)
             {
                 return;
             }
 
-            if (checkFirst != null )
+            if(checkFirst != null)
             {
-                if (checkFirst.IsWorldLocationValid(worldLocation))
+                if(checkFirst.IsWorldLocationValid(worldLocation))
                 {
                     Voxel v = checkFirst.GetVoxelAtWorldLocation(worldLocation);
 
-                    if (v != null)
+                    if(v != null)
                     {
-                        toReturn.Add(v); 
+                        toReturn.Add(v);
                     }
                     else
                     {
                         toReturn.AddRange(GetNonNullVoxelsAtWorldLocation(worldLocation, depth + 1));
                     }
                 }
-                
+
                 else
                 {
                     toReturn.AddRange(GetNonNullVoxelsAtWorldLocation(worldLocation, depth + 1));
                 }
-                 
             }
             else
             {
-                
                 VoxelChunk v = GetVoxelChunkAtWorldLocation(worldLocation);
-                
-                if (v != null)
+
+                if(v == null)
                 {
-                    if (v.IsWorldLocationValid(worldLocation))
-                    {
-                        Voxel got = v.GetVoxelAtWorldLocation(worldLocation);
+                    return;
+                }
 
-                        if (got != null)
-                        {
-                            toReturn.Add(got);
-                        }
-                    }
+                if(!v.IsWorldLocationValid(worldLocation))
+                {
+                    return;
+                }
 
+                Voxel got = v.GetVoxelAtWorldLocation(worldLocation);
+
+                if(got != null)
+                {
+                    toReturn.Add(got);
                 }
             }
-
-            return;
         }
 
         public List<LiquidPrimitive> GetAllLiquidPrimitives()
         {
             List<LiquidPrimitive> toReturn = new List<LiquidPrimitive>();
 
-            foreach (KeyValuePair<Point3, VoxelChunk> chunks in ChunkMap)
+            foreach(VoxelChunk chunk in ChunkMap.Select(chunks => chunks.Value))
             {
-                VoxelChunk chunk = chunks.Value;
                 toReturn.AddRange(chunk.Liquids.Values);
             }
 
@@ -1396,28 +1266,20 @@ namespace DwarfCorp
         public bool DoesWaterCellExist(Vector3 worldLocation)
         {
             VoxelChunk chunkAtLocation = GetVoxelChunkAtWorldLocation(worldLocation);
-
-            if (chunkAtLocation == null)
-            {
-                return false;
-            }
-            else
-            {
-                return chunkAtLocation.IsWorldLocationValid(worldLocation);
-            }
+            return chunkAtLocation != null && chunkAtLocation.IsWorldLocationValid(worldLocation);
         }
 
         public WaterCell GetWaterCellAtLocation(Vector3 worldLocation)
         {
             VoxelChunk chunkAtLocation = GetVoxelChunkAtWorldLocation(worldLocation);
 
-            if (chunkAtLocation != null)
+            if(chunkAtLocation == null)
             {
-                Vector3 gridPos = chunkAtLocation.WorldToGrid(worldLocation);
-                return chunkAtLocation.Water[(int)gridPos.X][ (int)gridPos.Y][ (int)gridPos.Z];
+                return null;
             }
 
-            return null;
+            Vector3 gridPos = chunkAtLocation.WorldToGrid(worldLocation);
+            return chunkAtLocation.Water[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z];
         }
 
         public List<VoxelRef> GetVoxelsIntersecting(BoundingBox box)
@@ -1427,7 +1289,7 @@ namespace DwarfCorp
 
             List<VoxelRef> toReturn = new List<VoxelRef>();
 
-            foreach (VoxelChunk chunk in intersects)
+            foreach(VoxelChunk chunk in intersects)
             {
                 toReturn.AddRange(chunk.GetVoxelsIntersecting(box));
             }
@@ -1437,40 +1299,37 @@ namespace DwarfCorp
 
         public void UpdateDynamicLights()
         {
-            Dictionary<Point3, VoxelChunk> needsUpdate = new Dictionary<Point3,VoxelChunk>();
+            Dictionary<Point3, VoxelChunk> needsUpdate = new Dictionary<Point3, VoxelChunk>();
 
-            for (int i = 0; i < DynamicLights.Count; i++)
+            foreach(DynamicLight light in DynamicLights)
             {
-                DynamicLight light = DynamicLights[i];
                 VoxelChunk chunk = ChunkMap[light.Voxel.ChunkID];
                 needsUpdate[light.Voxel.ChunkID] = chunk;
 
-                foreach (VoxelChunk neighbor in chunk.Neighbors.Values)
+                foreach(VoxelChunk neighbor in chunk.Neighbors.Values)
                 {
                     needsUpdate[neighbor.ID] = neighbor;
                 }
             }
 
-            foreach (VoxelChunk chunk in needsUpdate.Values)
+            foreach(VoxelChunk chunk in needsUpdate.Values)
             {
                 chunk.ResetDynamicLight(0);
             }
 
-            foreach (VoxelChunk chunk in needsUpdate.Values)
+            foreach(VoxelChunk chunk in needsUpdate.Values)
             {
                 chunk.CalculateDynamicLights();
             }
-
-
         }
 
         public bool SaveAllChunks(string directory, bool compress)
         {
-            foreach (KeyValuePair<Point3, VoxelChunk> pair in ChunkMap)
+            foreach(KeyValuePair<Point3, VoxelChunk> pair in ChunkMap)
             {
                 ChunkFile chunkFile = new ChunkFile(pair.Value);
-                
-                string fileName = directory + System.IO.Path.DirectorySeparatorChar + pair.Key.X + "_" + pair.Key.Y + "_" + pair.Key.Z;
+
+                string fileName = directory + Path.DirectorySeparatorChar + pair.Key.X + "_" + pair.Key.Y + "_" + pair.Key.Z;
 
                 if(compress)
                 {
@@ -1481,7 +1340,7 @@ namespace DwarfCorp
                     fileName += ".jch";
                 }
 
-                if (!chunkFile.WriteFile(fileName, compress))
+                if(!chunkFile.WriteFile(fileName, compress))
                 {
                     return false;
                 }
@@ -1489,6 +1348,6 @@ namespace DwarfCorp
 
             return true;
         }
-        
     }
+
 }

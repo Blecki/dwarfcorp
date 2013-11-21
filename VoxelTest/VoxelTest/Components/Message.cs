@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class Message
     {
         public enum MessageType
@@ -13,7 +14,7 @@ namespace DwarfCorp
         }
 
         public string MessageString { get; set; }
-        public MessageType Type { get; set;}
+        public MessageType Type { get; set; }
 
         public Message(MessageType type, string messageString)
         {
@@ -21,4 +22,5 @@ namespace DwarfCorp
             Type = type;
         }
     }
+
 }

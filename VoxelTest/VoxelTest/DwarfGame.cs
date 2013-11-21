@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -13,40 +14,37 @@ using Microsoft.Xna.Framework.Media;
 namespace DwarfCorp
 {
 
-    public class DwarfGame : Microsoft.Xna.Framework.Game
+    public class DwarfGame : Game
     {
         public GameStateManager StateManager { get; set; }
-        public GraphicsDeviceManager graphics;
+        public GraphicsDeviceManager Graphics;
         public TextureManager TextureManager { get; set; }
         public static SpriteBatch SpriteBatch { get; set; }
 
         public DwarfGame()
         {
-            
             Content.RootDirectory = "Content";
             StateManager = new GameStateManager(this);
-            graphics = new GraphicsDeviceManager(this);
+            Graphics = new GraphicsDeviceManager(this);
             Window.Title = "DwarfCorp";
             Window.AllowUserResizing = false;
-            graphics.IsFullScreen = GameSettings.Default.Fullscreen;
-            graphics.PreferredBackBufferWidth = GameSettings.Default.Resolution.Width;
-            graphics.PreferredBackBufferHeight = GameSettings.Default.Resolution.Height;
+            Graphics.IsFullScreen = GameSettings.Default.Fullscreen;
+            Graphics.PreferredBackBufferWidth = GameSettings.Default.Resolution.Width;
+            Graphics.PreferredBackBufferHeight = GameSettings.Default.Resolution.Height;
 
             try
             {
-                graphics.ApplyChanges();
+                Graphics.ApplyChanges();
             }
-            catch (NoSuitableGraphicsDeviceException exception)
+            catch(NoSuitableGraphicsDeviceException exception)
             {
-                
                 Console.Error.WriteLine(exception.Message);
             }
-
         }
 
         public static string GetGameDirectory()
         {
-            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + System.IO.Path.DirectorySeparatorChar + "DwarfCorp";
+            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "DwarfCorp";
         }
 
         protected override void Initialize()
@@ -57,7 +55,6 @@ namespace DwarfCorp
 
         protected override void LoadContent()
         {
-            
             TextureManager = new TextureManager(Content, GraphicsDevice);
 
             PlayState playState = new PlayState(this, StateManager);
@@ -71,7 +68,7 @@ namespace DwarfCorp
             StateManager.States["WorldLoaderState"] = new WorldLoaderState(this, StateManager);
             StateManager.States["GameLoaderState"] = new GameLoaderState(this, StateManager);
 
-            if (GameSettings.Default.DisplayIntro)
+            if(GameSettings.Default.DisplayIntro)
             {
                 StateManager.PushState("IntroState");
             }
@@ -84,10 +81,10 @@ namespace DwarfCorp
             StateManager.States["MainMenuState"].OnEnter();
             StateManager.States["OptionsState"].OnEnter();
             StateManager.States["CompanyMakerState"].OnEnter();
-             
+
 
             //TestBehaviors.RunTests();
-            
+
             base.LoadContent();
         }
 
@@ -103,5 +100,8 @@ namespace DwarfCorp
             StateManager.Render(gameTime);
             base.Draw(gameTime);
         }
+
+        public static bool ExitGame = false;
     }
+
 }

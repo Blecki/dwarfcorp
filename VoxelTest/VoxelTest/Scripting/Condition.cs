@@ -5,14 +5,15 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class Condition : Act
     {
-        Func<bool> Function { get; set; }
+        private Func<bool> Function { get; set; }
 
         public Condition(bool condition)
         {
             Name = "Condition";
-            Function = new Func<bool>(() => { return condition; });
+            Function = () => { return condition; };
         }
 
         public Condition(Func<bool> condition)
@@ -23,7 +24,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (Function())
+            if(Function())
             {
                 yield return Status.Success;
             }
@@ -33,4 +34,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

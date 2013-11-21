@@ -6,17 +6,17 @@ using System.Text;
 namespace DwarfCorp
 {
 
-    class GOAPStrings
+    internal class GOAPStrings
     {
-        public static string HandState    = "Hand/State";
-        public static string HeldObject   = "Hand/HeldObject";
-        public static string AtTarget     = "Target/AtTarget";
+        public static string HandState = "Hand/State";
+        public static string HeldObject = "Hand/HeldObject";
+        public static string AtTarget = "Target/AtTarget";
         public static string TargetEntity = "Target/TargetEntity";
-        public static string TargetVoxel  = "Target/TargetVoxel";
-        public static string TargetZone   = "Target/TargetZone";
-        public static string TargetType   = "Target/Type";
-        public static string TargetDead   = "Target/IsDead";
-        public static string TargetTags   = "Target/Tags";
+        public static string TargetVoxel = "Target/TargetVoxel";
+        public static string TargetZone = "Target/TargetZone";
+        public static string TargetType = "Target/Type";
+        public static string TargetDead = "Target/IsDead";
+        public static string TargetTags = "Target/Tags";
         public static string TargetEntityInZone = "Target/TargetEntity/InZone";
         public static string TargetZoneType = "Target/TargetZone/Type";
         public static string TargetZoneFull = "Target/TargetZone/Full";
@@ -27,6 +27,6 @@ namespace DwarfCorp
         public static string IsHungry = "IsHungry";
         public static string IsSleepy = "IsSleepy";
         public static string SenseEnemy = "SenseEnemy";
-
     }
+
 }

@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class LeaveTarget : Action
     {
         public LeaveTarget()
@@ -20,4 +21,5 @@ namespace DwarfCorp
             Cost = 1.0f;
         }
     }
+
 }

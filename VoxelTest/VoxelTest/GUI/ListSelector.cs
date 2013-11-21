@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
+
     public class ListItem : SillyGUIComponent
     {
         public enum SelectionMode
@@ -22,10 +23,10 @@ namespace DwarfCorp
         public Rectangle TextureBounds { get; set; }
         public Color TextColor { get; set; }
         public Color TextStrokeColor { get; set; }
-        public Color ToggledColor { get; set;}
+        public Color ToggledColor { get; set; }
         public Color HoverColor { get; set; }
-        public bool Toggleable { get; set;}
-        public bool IsToggled { get; set;}
+        public bool Toggleable { get; set; }
+        public bool IsToggled { get; set; }
         public SelectionMode Mode { get; set; }
 
         public ListItem(SillyGUI gui, SillyGUIComponent parent, string label, Texture2D tex, Rectangle texBounds) :
@@ -46,13 +47,13 @@ namespace DwarfCorp
         public override void Render(GameTime time, SpriteBatch batch)
         {
             //Drawer2D.DrawRect(GlobalBounds, Color.White, Color.Black, 1.0f);
-            if (IsMouseOver)
+            if(IsMouseOver)
             {
                 Drawer2D.DrawStrokedText(batch, Label, GUI.DefaultFont, new Vector2(GlobalBounds.Left, GlobalBounds.Top), HoverColor, TextStrokeColor);
             }
             else
             {
-                if (!IsToggled || Mode == SelectionMode.ButtonList)
+                if(!IsToggled || Mode == SelectionMode.ButtonList)
                 {
                     Drawer2D.DrawStrokedText(batch, Label, GUI.DefaultFont, new Vector2(GlobalBounds.Left, GlobalBounds.Top), TextColor, TextStrokeColor);
                 }
@@ -61,7 +62,7 @@ namespace DwarfCorp
                     Drawer2D.DrawStrokedText(batch, Label, GUI.DefaultFont, new Vector2(GlobalBounds.Left, GlobalBounds.Top), ToggledColor, TextStrokeColor);
                 }
             }
-            
+
             if(Texture != null)
             {
                 batch.Draw(Texture, new Vector2(GlobalBounds.Top, GlobalBounds.Left - 10), TextureBounds, Color.White, 0.0f, Vector2.Zero, Vector2.Zero, SpriteEffects.None, 0);
@@ -69,7 +70,6 @@ namespace DwarfCorp
 
             base.Render(time, batch);
         }
-
     }
 
     public class ListSelector : SillyGUIComponent
@@ -85,7 +85,7 @@ namespace DwarfCorp
         public Color LabelStroke { get; set; }
         public ListItem.SelectionMode Mode { get; set; }
         public bool DrawPanel { get; set; }
-  
+
 
         public ListSelector(SillyGUI gui, SillyGUIComponent parent) :
             base(gui, parent)
@@ -123,15 +123,15 @@ namespace DwarfCorp
         {
             int top = 30 + 25 * Items.Count;
             int left = 5;
-            
+
             ListItem item = new ListItem(GUI, this, text, null, new Rectangle());
             item.Toggleable = true;
 
             item.LocalBounds = new Rectangle(left, top, LocalBounds.Width, 25);
-            item.OnClicked += new ClickedDelegate(delegate { item_OnClicked(item); });
+            item.OnClicked += delegate { item_OnClicked(item); };
             AddItem(item);
 
-            if (SelectedItem == null)
+            if(SelectedItem == null)
             {
                 SelectedItem = item;
                 item.IsToggled = true;
@@ -139,14 +139,13 @@ namespace DwarfCorp
         }
 
 
-        void ItemClicked()
+        private void ItemClicked()
         {
-
         }
 
-        void item_OnClicked(ListItem item)
+        private void item_OnClicked(ListItem item)
         {
-            if (SelectedItem != null)
+            if(SelectedItem != null)
             {
                 SelectedItem.IsToggled = false;
             }
@@ -157,9 +156,9 @@ namespace DwarfCorp
 
         public override void Render(GameTime time, SpriteBatch batch)
         {
-            if (IsVisible)
+            if(IsVisible)
             {
-                if (DrawPanel)
+                if(DrawPanel)
                 {
                     GUI.Skin.RenderPanel(GlobalBounds, batch);
                 }
@@ -170,4 +169,5 @@ namespace DwarfCorp
             base.Render(time, batch);
         }
     }
+
 }

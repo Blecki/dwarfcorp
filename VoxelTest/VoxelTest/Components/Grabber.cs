@@ -7,12 +7,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class Grabber : LocatableComponent
     {
         public Dictionary<LocatableComponent, Matrix> GrabbedComponents { get; set; }
         public int MaxGrabs { get; set; }
 
-        public Grabber(ComponentManager manager, string name, GameComponent parent, Matrix localTrans, Vector3 boundingboxExtents, Vector3 boundingBoxCenter):
+        public Grabber(ComponentManager manager, string name, GameComponent parent, Matrix localTrans, Vector3 boundingboxExtents, Vector3 boundingBoxCenter) :
             base(manager, name, parent, localTrans, boundingboxExtents, boundingBoxCenter, false)
         {
             GrabbedComponents = new Dictionary<LocatableComponent, Matrix>();
@@ -21,7 +22,7 @@ namespace DwarfCorp
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
-            foreach (LocatableComponent grabbed in GrabbedComponents.Keys)
+            foreach(LocatableComponent grabbed in GrabbedComponents.Keys)
             {
                 grabbed.GlobalTransform = GrabbedComponents[grabbed] * GlobalTransform;
             }
@@ -39,7 +40,7 @@ namespace DwarfCorp
             List<LocatableComponent> removals = new List<LocatableComponent>();
             removals.AddRange(GrabbedComponents.Keys);
 
-            foreach (LocatableComponent r in removals)
+            foreach(LocatableComponent r in removals)
             {
                 UnGrab(r);
             }
@@ -49,7 +50,7 @@ namespace DwarfCorp
 
         public bool Grab(LocatableComponent other)
         {
-            if (!GrabbedComponents.ContainsKey(other) && GrabbedComponents.Count < MaxGrabs)
+            if(!GrabbedComponents.ContainsKey(other) && GrabbedComponents.Count < MaxGrabs)
             {
                 Matrix m = Matrix.Identity;
                 m = GlobalTransform;
@@ -60,12 +61,15 @@ namespace DwarfCorp
                 AddChild(other);
                 return true;
             }
-            else return false;
+            else
+            {
+                return false;
+            }
         }
 
         public bool UnGrab(LocatableComponent other)
         {
-            if (GrabbedComponents.ContainsKey(other))
+            if(GrabbedComponents.ContainsKey(other))
             {
                 GrabbedComponents.Remove(other);
                 RemoveChild(other);
@@ -89,16 +93,16 @@ namespace DwarfCorp
 
         public LocatableComponent GetFirstGrab()
         {
-            if (GrabbedComponents.Count <= 0)
+            if(GrabbedComponents.Count <= 0)
             {
                 return null;
             }
 
-            else return GrabbedComponents.Keys.ElementAt<LocatableComponent>(0);
+            else
+            {
+                return GrabbedComponents.Keys.ElementAt<LocatableComponent>(0);
+            }
         }
-
-      
-
-
     }
+
 }

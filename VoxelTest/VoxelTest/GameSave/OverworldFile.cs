@@ -9,6 +9,7 @@ using System.IO.Compression;
 
 namespace DwarfCorp
 {
+
     public class OverworldFile : SaveData
     {
         public class OverworldData
@@ -30,19 +31,21 @@ namespace DwarfCorp
 
                 Overworld.MapData[,] toReturn = new Overworld.MapData[Biomes.GetLength(0), Biomes.GetLength(1)];
 
-                for (int x = 0; x < sx; x++)
+                for(int x = 0; x < sx; x++)
                 {
-                    for (int y = 0; y < sy; y++)
+                    for(int y = 0; y < sy; y++)
                     {
-                        toReturn[x, y] = new Overworld.MapData();
-                        toReturn[x, y].Biome = (Overworld.Biome)Biomes[x, y];
-                        toReturn[x, y].Erosion = (float)Erosion[x, y] / 255.0f;
-                        toReturn[x, y].Faults = (float)Faults[x, y] / 255.0f;
-                        toReturn[x, y].Height = (float)Height[x, y] / 255.0f;
-                        toReturn[x, y].Rainfall = (float)Rainfall[x, y] / 255.0f;
-                        toReturn[x, y].Temperature = (float)Temperature[x, y] / 255.0f;
-                        toReturn[x, y].Water = (Overworld.WaterType)(Water[x, y]);
-                        toReturn[x, y].Weathering = (float)Weathering[x, y] / 255.0f;
+                        toReturn[x, y] = new Overworld.MapData
+                        {
+                            Biome = (Overworld.Biome) Biomes[x, y],
+                            Erosion = (float) Erosion[x, y] / 255.0f,
+                            Faults = (float) Faults[x, y] / 255.0f,
+                            Height = (float) Height[x, y] / 255.0f,
+                            Rainfall = (float) Rainfall[x, y] / 255.0f,
+                            Temperature = (float) Temperature[x, y] / 255.0f,
+                            Water = (Overworld.WaterType) (Water[x, y]),
+                            Weathering = (float) Weathering[x, y] / 255.0f
+                        };
                     }
                 }
 
@@ -52,7 +55,7 @@ namespace DwarfCorp
             public Texture2D CreateTexture(GraphicsDevice device, int width, int height)
             {
                 Texture2D toReturn = null;
-                Overworld.MapData[ , ] mapData = CreateMap();
+                Overworld.MapData[,] mapData = CreateMap();
                 toReturn = new Texture2D(device, width, height);
                 System.Threading.Mutex imageMutex = new System.Threading.Mutex();
                 Color[] worldData = new Color[width * height];
@@ -63,7 +66,6 @@ namespace DwarfCorp
 
             public OverworldData()
             {
-
             }
 
             public OverworldData(Overworld.MapData[,] map, string name)
@@ -80,19 +82,19 @@ namespace DwarfCorp
                 Height = new int[sizeX, sizeY];
                 Name = name;
 
-                for (int x = 0; x < sizeX; x++)
+                for(int x = 0; x < sizeX; x++)
                 {
-                    for (int y = 0; y < sizeY; y++)
+                    for(int y = 0; y < sizeY; y++)
                     {
                         Overworld.MapData data = map[x, y];
-                        Biomes[x, y] = (int)data.Biome;
-                        Erosion[x, y] = (int)(data.Erosion * 255);
-                        Faults[x, y] = (int)(data.Faults * 255);
-                        Height[x, y] = (int)(data.Height * 255);
-                        Rainfall[x, y] = (int)(data.Rainfall * 255);
-                        Temperature[x, y] = (int)(data.Temperature * 255);
-                        Water[x, y] = (int)(data.Water);
-                        Weathering[x, y] = (int)(data.Weathering * 255);
+                        Biomes[x, y] = (int) data.Biome;
+                        Erosion[x, y] = (int) (data.Erosion * 255);
+                        Faults[x, y] = (int) (data.Faults * 255);
+                        Height[x, y] = (int) (data.Height * 255);
+                        Rainfall[x, y] = (int) (data.Rainfall * 255);
+                        Temperature[x, y] = (int) (data.Temperature * 255);
+                        Water[x, y] = (int) (data.Water);
+                        Weathering[x, y] = (int) (data.Weathering * 255);
                     }
                 }
             }
@@ -105,7 +107,6 @@ namespace DwarfCorp
 
         public OverworldFile()
         {
-
         }
 
         public OverworldFile(Overworld.MapData[,] map, string name)
@@ -128,7 +129,7 @@ namespace DwarfCorp
         {
             OverworldFile file = FileUtils.LoadJson<OverworldFile>(filePath, isCompressed);
 
-            if (file == null)
+            if(file == null)
             {
                 return false;
             }
@@ -144,4 +145,5 @@ namespace DwarfCorp
             return FileUtils.SaveJSon<OverworldFile>(this, filePath, compress);
         }
     }
+
 }

@@ -8,6 +8,7 @@ public class SerializableDictionary<TKey, TValue>
     : Dictionary<TKey, TValue>, IXmlSerializable
 {
     #region IXmlSerializable Members
+
     public System.Xml.Schema.XmlSchema GetSchema()
     {
         return null;
@@ -21,19 +22,21 @@ public class SerializableDictionary<TKey, TValue>
         bool wasEmpty = reader.IsEmptyElement;
         reader.Read();
 
-        if (wasEmpty)
+        if(wasEmpty)
+        {
             return;
+        }
 
-        while (reader.NodeType != System.Xml.XmlNodeType.EndElement)
+        while(reader.NodeType != System.Xml.XmlNodeType.EndElement)
         {
             reader.ReadStartElement("item");
 
             reader.ReadStartElement("key");
-            TKey key = (TKey)keySerializer.Deserialize(reader);
+            TKey key = (TKey) keySerializer.Deserialize(reader);
             reader.ReadEndElement();
 
             reader.ReadStartElement("value");
-            TValue value = (TValue)valueSerializer.Deserialize(reader);
+            TValue value = (TValue) valueSerializer.Deserialize(reader);
             reader.ReadEndElement();
 
             this.Add(key, value);
@@ -49,7 +52,7 @@ public class SerializableDictionary<TKey, TValue>
         XmlSerializer keySerializer = new XmlSerializer(typeof(TKey));
         XmlSerializer valueSerializer = new XmlSerializer(typeof(TValue));
 
-        foreach (TKey key in this.Keys)
+        foreach(TKey key in this.Keys)
         {
             writer.WriteStartElement("item");
 
@@ -65,5 +68,6 @@ public class SerializableDictionary<TKey, TValue>
             writer.WriteEndElement();
         }
     }
+
     #endregion
 }

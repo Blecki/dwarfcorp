@@ -5,12 +5,12 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class SaveData
     {
-
         public class VoxelPtr
         {
-            public int[] Ptr { get; set;}
+            public int[] Ptr { get; set; }
 
             public VoxelPtr()
             {
@@ -23,9 +23,9 @@ namespace DwarfCorp
                 Ptr[0] = voxel.ChunkID.X;
                 Ptr[1] = voxel.ChunkID.Y;
                 Ptr[2] = voxel.ChunkID.Z;
-                Ptr[3] = (int)voxel.GridPosition.X;
-                Ptr[4] = (int)voxel.GridPosition.Y;
-                Ptr[5] = (int)voxel.GridPosition.Z;
+                Ptr[3] = (int) voxel.GridPosition.X;
+                Ptr[4] = (int) voxel.GridPosition.Y;
+                Ptr[5] = (int) voxel.GridPosition.Z;
             }
         }
 
@@ -37,7 +37,6 @@ namespace DwarfCorp
 
             public EntityPtr()
             {
-
             }
 
             public EntityPtr(uint id)
@@ -70,33 +69,54 @@ namespace DwarfCorp
             public ZoneData(Zone zone)
             {
                 Name = zone.ID;
-                Type = zone.GetType().ToString();
+
+                if(zone is Room)
+                {
+                    Type = (zone as Room).RoomType.Name;
+                }
+                else if(zone is Stockpile)
+                {
+                    Type = "Stockpile";
+                }
+                else
+                {
+                    Type = zone.GetType().ToString();
+                }
+
                 Voxels = new List<VoxelPtr>();
                 AttachedEntities = new List<EntityPtr>();
 
 
-                foreach (VoxelStorage v in zone.Storage)
+                foreach(VoxelStorage v in zone.Storage)
                 {
                     VoxelPtr vox = new VoxelPtr(v.Voxel);
                     Voxels.Add(vox);
 
-                    if (v.IsOccupied)
+                    if(v.IsOccupied)
                     {
-                        AttachedEntities.Add(new EntityPtr(v.OwnedItem.userData.GlobalID, vox));
+                        AttachedEntities.Add(new EntityPtr(v.OwnedItem.UserData.GlobalID, vox));
                     }
                 }
-                
             }
         }
 
 
         public static string Extension = "json";
-        public static string CompressedExtension = "zip"; 
-        public virtual bool ReadFile(string filePath, bool isCompressed) { return false;  }
-        public virtual bool WriteFile(string filePath, bool compress) { return false; }
+        public static string CompressedExtension = "zip";
+
+        public virtual bool ReadFile(string filePath, bool isCompressed)
+        {
+            return false;
+        }
+
+        public virtual bool WriteFile(string filePath, bool compress)
+        {
+            return false;
+        }
+
         public static string[] GetFilesInDirectory(string dir, bool compressed, string compressedExtension, string extension)
         {
-            if (compressed)
+            if(compressed)
             {
                 return System.IO.Directory.GetFiles(dir, "*." + compressedExtension);
             }
@@ -105,6 +125,6 @@ namespace DwarfCorp
                 return System.IO.Directory.GetFiles(dir, "*." + extension);
             }
         }
-            
     }
+
 }

@@ -5,9 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class AttackTargetEntity : Action
     {
-
         public AttackTargetEntity()
         {
             Name = "AttackTargetEntity";
@@ -25,22 +25,25 @@ namespace DwarfCorp
 
         public override Action.ValidationStatus ContextValidate(CreatureAIComponent creature)
         {
-            if (creature.TargetComponent == null || creature.TargetComponent.IsDead)
+            if(creature.TargetComponent == null || creature.TargetComponent.IsDead)
             {
                 return ValidationStatus.Invalid;
             }
-            else return ValidationStatus.Ok;
+            else
+            {
+                return ValidationStatus.Ok;
+            }
         }
 
         public override Action.PerformStatus PerformContextAction(CreatureAIComponent creature, Microsoft.Xna.Framework.GameTime time)
         {
             CreatureAIComponent.PlannerSuccess code = creature.MeleeAttack(time);
 
-            if (code == CreatureAIComponent.PlannerSuccess.Success)
+            if(code == CreatureAIComponent.PlannerSuccess.Success)
             {
                 return PerformStatus.Success;
             }
-            else if (code == CreatureAIComponent.PlannerSuccess.Failure)
+            else if(code == CreatureAIComponent.PlannerSuccess.Failure)
             {
                 return PerformStatus.Invalid;
             }

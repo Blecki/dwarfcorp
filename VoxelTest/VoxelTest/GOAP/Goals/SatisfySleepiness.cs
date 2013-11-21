@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class SatisfySleepiness : Goal
     {
         public SatisfySleepiness(GOAP agent)
@@ -16,7 +17,7 @@ namespace DwarfCorp
 
         public override bool ContextValidate(CreatureAIComponent creature)
         {
-            return (bool)(creature.Goap.Belief[GOAPStrings.IsSleepy]) == true;
+            return (bool) (creature.Goap.Belief[GOAPStrings.IsSleepy]) == true;
         }
 
         public override void Reset(GOAP agent)
@@ -29,7 +30,7 @@ namespace DwarfCorp
 
         public override void ContextReweight(CreatureAIComponent creature)
         {
-            if (creature.Status.Energy < creature.Stats.SleepyThreshold)
+            if(creature.Status.Energy < creature.Stats.SleepyThreshold)
             {
                 Priority = 100;
                 Cost = 0;
@@ -42,6 +43,6 @@ namespace DwarfCorp
 
             base.ContextReweight(creature);
         }
-
     }
+
 }

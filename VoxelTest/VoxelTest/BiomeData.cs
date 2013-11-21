@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class VegetationData
     {
         public string Name { get; set; }
@@ -42,7 +43,12 @@ namespace DwarfCorp
     public class BiomeData
     {
         public Overworld.Biome Biome { get; set; }
-        public string Name { get { return Biome.ToString(); } }
+
+        public string Name
+        {
+            get { return Biome.ToString(); }
+        }
+
         public List<VegetationData> Vegetation { get; set; }
         public List<DetailMoteData> Motes { get; set; }
         public string GrassVoxel { get; set; }
@@ -56,6 +62,6 @@ namespace DwarfCorp
             Vegetation = new List<VegetationData>();
             Motes = new List<DetailMoteData>();
         }
-
     }
+
 }

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace DwarfCorp
 {
+
     public struct Point3 : IEquatable<Point3>
     {
         public int X;
@@ -13,12 +15,12 @@ namespace DwarfCorp
 
         public Point3(Microsoft.Xna.Framework.Vector3 vect)
         {
-            X = (int)vect.X;
-            Y = (int)vect.Y;
-            Z = (int)vect.Z;
+            X = (int) vect.X;
+            Y = (int) vect.Y;
+            Z = (int) vect.Z;
         }
 
-        public Point3(int x, int y, int z) 
+        public Point3(int x, int y, int z)
         {
             X = x;
             Y = y;
@@ -27,26 +29,25 @@ namespace DwarfCorp
 
         public override int GetHashCode()
         {
-            return X ^ 2 * Y ^ 4 * Z;
+            const int p1 = 4273;
+            const int p2 = 6247;
+            return (X * p1 + Y) * p2 + Z;
         }
 
         public bool Equals(Point3 other)
         {
-             return other.X == X && other.Y == Y && other.Z == Z;
+            return other.X == X && other.Y == Y && other.Z == Z;
         }
 
         public override bool Equals(object obj)
         {
-            if (obj is Point3)
-            {
-                Point3 other = (Point3)obj;
-                return other.X == X && other.Y == Y && other.Z == Z;
-            }
-            else
+            if(!(obj is Point3))
             {
                 return false;
             }
+            Point3 other = (Point3) obj;
+            return other.X == X && other.Y == Y && other.Z == Z;
         }
-
     }
+
 }

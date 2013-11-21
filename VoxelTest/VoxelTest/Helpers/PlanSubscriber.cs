@@ -6,11 +6,12 @@ using System.Collections.Concurrent;
 
 namespace DwarfCorp
 {
+
     public class PlanSubscriber
     {
         public PlanService Service { get; set; }
-        public ConcurrentQueue<PlanService.AStarPlanResponse> AStarPlans { get; set;}
-        public ConcurrentQueue<PlanService.GoapPlanResponse> GoapPlans { get; set;}
+        public ConcurrentQueue<PlanService.AStarPlanResponse> AStarPlans { get; set; }
+        public ConcurrentQueue<PlanService.GoapPlanResponse> GoapPlans { get; set; }
 
         public PlanSubscriber(PlanService service)
         {
@@ -30,7 +31,6 @@ namespace DwarfCorp
             Service.GoapRequests.Enqueue(request);
             Service.NeedsPlanEvent.Set();
         }
-
-
     }
+
 }

@@ -13,8 +13,6 @@ using Microsoft.Xna.Framework.Media;
 namespace DwarfCorp
 {
 
-
-
     public class Stockpile : Zone
     {
         private static uint maxID = 0;
@@ -31,6 +29,6 @@ namespace DwarfCorp
         {
             ReplacementType = VoxelLibrary.GetVoxelType("Stockpile");
         }
-
     }
+
 }

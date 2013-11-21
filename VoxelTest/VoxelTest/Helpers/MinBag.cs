@@ -5,12 +5,14 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class MinBag<T>
     {
-        public int MaxSize { get; set;}
+        public int MaxSize { get; set; }
         public PriorityQueue<T, float> Queue { get; set; }
         public List<T> Data { get; set; }
-        KeyValuePair<T, float> Max;
+        private KeyValuePair<T, float> Max;
+
         public MinBag(int maxSize)
         {
             MaxSize = maxSize;
@@ -27,32 +29,26 @@ namespace DwarfCorp
 
         public bool Add(T element, float value)
         {
-            if (Queue.Count < MaxSize)
+            if(Queue.Count < MaxSize)
             {
                 Queue.Enqueue(element, -value);
                 Data.Add(element);
                 Max = Queue.Peek();
                 return true;
             }
-            else
+
+            if(!(value < -Max.Value))
             {
-                if (value < -Max.Value)
-                {
-                    Data.Remove(Queue.Dequeue());
-                    Queue.Enqueue(element, -value);
-                    Data.Add(element);
-                    Max = Queue.Peek();
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return false;
             }
+
+            Data.Remove(Queue.Dequeue());
+            Queue.Enqueue(element, -value);
+            Data.Add(element);
+            Max = Queue.Peek();
+
+            return true;
         }
-
-        
-
-    
     }
+
 }

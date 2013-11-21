@@ -9,27 +9,31 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
+
     public class DragGrid : SillyGUIComponent
     {
         public DragManager DragManager { get; set; }
         public List<DraggableItem> Items { get; set; }
         public int GridWidth { get; set; }
         public int GridHeight { get; set; }
-        public  int TotalRows { get; set;  }
-        public  int TotalCols { get; set;  }
-        public  GridLayout Layout { get; set; }
+        public int TotalRows { get; set; }
+        public int TotalCols { get; set; }
+        public GridLayout Layout { get; set; }
         public bool DrawGrid { get; set; }
         public bool DrawBackground { get; set; }
         public Color BackColor { get; set; }
         public Color BorderColor { get; set; }
 
         public delegate void ItemCreated(DraggableItem item);
+
         public event ItemCreated OnItemCreated;
 
         public delegate void ItemDestroyed(DraggableItem item);
+
         public event ItemDestroyed OnItemDestroyed;
 
         public delegate void Changed();
+
         public event Changed OnChanged;
 
         public DragGrid(SillyGUI gui, SillyGUIComponent parent, DragManager dragManager, int gridWidth, int gridHeight) :
@@ -41,83 +45,69 @@ namespace DwarfCorp
             GridHeight = gridHeight;
             SetupLayout();
             DrawGrid = false;
-            DragManager.OnDragEnded += new DwarfCorp.DragManager.DragEnded(DragManager_OnDragEnded);
-            DragManager.OnDragStarted += new DwarfCorp.DragManager.DragStarted(DragManager_OnDragStarted);
-            OnItemCreated += new ItemCreated(DragGrid_OnItemCreated);
-            OnItemDestroyed += new ItemDestroyed(DragGrid_OnItemDestroyed);
-            OnChanged += new Changed(DragGrid_OnChanged);
+            DragManager.OnDragEnded += DragManager_OnDragEnded;
+            DragManager.OnDragStarted += DragManager_OnDragStarted;
+            OnItemCreated += DragGrid_OnItemCreated;
+            OnItemDestroyed += DragGrid_OnItemDestroyed;
+            OnChanged += DragGrid_OnChanged;
             DrawBackground = true;
             BackColor = new Color(255, 255, 255, 100);
             BorderColor = new Color(0, 0, 0, 100);
         }
 
-        void DragGrid_OnChanged()
+        private void DragGrid_OnChanged()
         {
-          
         }
 
-        void DragGrid_OnItemRemoved(DraggableItem item, int amount)
+        private void DragGrid_OnItemRemoved(DraggableItem item, int amount)
         {
-
         }
 
-        void DragGrid_OnItemAdded(DraggableItem item, int amount)
+        private void DragGrid_OnItemAdded(DraggableItem item, int amount)
         {
-        
         }
 
-        void DragGrid_OnItemDestroyed(DraggableItem item)
+        private void DragGrid_OnItemDestroyed(DraggableItem item)
         {
-
         }
 
-        void DragGrid_OnItemCreated(DraggableItem item)
+        private void DragGrid_OnItemCreated(DraggableItem item)
         {
-            
         }
 
-        void DragManager_OnDragStarted(DraggableItem item, int amount)
+        private void DragManager_OnDragStarted(DraggableItem item, int amount)
         {
             DrawGrid = true;
         }
 
-        void DragManager_OnDragEnded(DraggableItem dItem, DraggableItem newSpawnedItem, int amount)
+        private void DragManager_OnDragEnded(DraggableItem dItem, DraggableItem newSpawnedItem, int amount)
         {
             MouseState m = Mouse.GetState();
             DrawGrid = false;
 
-            if (GlobalBounds.Contains(m.X, m.Y))
+            if(GlobalBounds.Contains(m.X, m.Y))
             {
-                if (newSpawnedItem != null)
+                if(newSpawnedItem != null)
                 {
                     OnItemCreated.Invoke(newSpawnedItem);
                     Items.Add(newSpawnedItem);
                     newSpawnedItem.LocalBounds = new Rectangle(0, 0, GridWidth, GridHeight);
-                    newSpawnedItem.OnDragStarted += delegate
-                    {
-                        DragManager.StartDrag(newSpawnedItem, 1);
-                    };
+                    newSpawnedItem.OnDragStarted += delegate { DragManager.StartDrag(newSpawnedItem, 1); };
 
-                    newSpawnedItem.OnDragEnded += delegate
-                    {
-                        DragManager.Drop();
-                    };
+                    newSpawnedItem.OnDragEnded += delegate { DragManager.Drop(); };
                 }
-
             }
-        
 
-            if (Items.Contains(dItem) && dItem.Item.CurrentAmount <= 0)
+
+            if(Items.Contains(dItem) && dItem.Item.CurrentAmount <= 0)
             {
                 DragManager.Slots[dItem.Parent] = null;
                 dItem.Parent.RemoveChild(dItem);
                 Items.Remove(dItem);
                 OnItemDestroyed.Invoke(dItem);
-
             }
 
             OnChanged.Invoke();
-
         }
 
         public override void Update(GameTime time)
@@ -128,18 +118,18 @@ namespace DwarfCorp
 
         public override void Render(GameTime time, SpriteBatch batch)
         {
-            if (DrawBackground)
+            if(DrawBackground)
             {
                 Drawer2D.DrawRect(batch, GlobalBounds, BorderColor, 2);
                 Drawer2D.FillRect(batch, GlobalBounds, BackColor);
             }
 
-            if (DrawGrid)
+            if(DrawGrid)
             {
                 MouseState m = Mouse.GetState();
-                for (int r = 0; r < TotalRows; r++)
+                for(int r = 0; r < TotalRows; r++)
                 {
-                    for (int c = 0; c < TotalCols; c++)
+                    for(int c = 0; c < TotalCols; c++)
                     {
                         Rectangle rect = new Rectangle(c, r, 1, 1);
                         SillyGUIComponent slot = Layout.ComponentPositions[rect];
@@ -150,19 +140,18 @@ namespace DwarfCorp
                         draw.Height += 5;
                         Drawer2D.DrawRect(batch, draw, new Color(0, 0, 0, 50), 2);
 
-                        if (draw.Contains(m.X, m.Y))
+                        if(draw.Contains(m.X, m.Y))
                         {
                             Drawer2D.FillRect(batch, draw, new Color(100, 100, 0, 100));
                         }
                     }
                 }
-
             }
             else
             {
-                for (int r = 0; r < TotalRows; r++)
+                for(int r = 0; r < TotalRows; r++)
                 {
-                    for (int c = 0; c < TotalCols; c++)
+                    for(int c = 0; c < TotalCols; c++)
                     {
                         Rectangle rect = new Rectangle(c, r, 1, 1);
                         SillyGUIComponent slot = Layout.ComponentPositions[rect];
@@ -177,8 +166,6 @@ namespace DwarfCorp
             }
 
             base.Render(time, batch);
-
-
         }
 
         public void SetupLayout()
@@ -188,31 +175,24 @@ namespace DwarfCorp
             TotalCols = globalRect.Width / GridWidth;
             Layout = new GridLayout(GUI, this, TotalRows, TotalCols);
 
-            for (int r = 0; r < TotalRows; r++)
+            for(int r = 0; r < TotalRows; r++)
             {
-                for (int c = 0; c < TotalCols; c++)
+                for(int c = 0; c < TotalCols; c++)
                 {
                     SillyGUIComponent slot = new SillyGUIComponent(GUI, Layout);
                     Layout.SetComponentPosition(slot, c, r, 1, 1);
                     DragManager.Slots[slot] = null;
                 }
             }
-
         }
 
         public void AddItem(SillyGUIComponent slot, GItem item)
         {
             DraggableItem dItem = new DraggableItem(GUI, slot, item);
             DragManager.Slots[slot] = dItem;
-            dItem.OnDragStarted += delegate 
-            {
-                DragManager.StartDrag(dItem, 1); 
-            };
+            dItem.OnDragStarted += () => DragManager.StartDrag(dItem, 1);
 
-            dItem.OnDragEnded += delegate 
-            {
-                DragManager.Drop();
-            };
+            dItem.OnDragEnded += () => DragManager.Drop();
 
             dItem.LocalBounds = new Rectangle(0, 0, GridWidth, GridHeight);
             slot.ClearChildren();
@@ -224,7 +204,7 @@ namespace DwarfCorp
         public bool AddItem(GItem item, int r, int c)
         {
             Rectangle rect = new Rectangle(c, r, 1, 1);
-            if (Layout.ComponentPositions.ContainsKey(rect))
+            if(Layout.ComponentPositions.ContainsKey(rect))
             {
                 SillyGUIComponent slot = Layout.ComponentPositions[rect];
                 AddItem(slot, item);
@@ -245,9 +225,6 @@ namespace DwarfCorp
 
             AddItem(item, r, c);
         }
-
-
-
-        
     }
+
 }

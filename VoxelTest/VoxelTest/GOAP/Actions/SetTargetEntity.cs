@@ -25,7 +25,7 @@ namespace DwarfCorp
             Effects[GOAPStrings.TargetType] = GOAP.TargetType.Entity;
             Effects[GOAPStrings.TargetEntity] = item;
             Effects[GOAPStrings.AtTarget] = false;
-            Effects[GOAPStrings.TargetTags] = new TagList(item.userData.Tags);
+            Effects[GOAPStrings.TargetTags] = new TagList(item.UserData.Tags);
 
 
             Cost = 0.1f;
@@ -33,12 +33,11 @@ namespace DwarfCorp
 
         public override ValidationStatus ContextValidate(CreatureAIComponent creature)
         {
-            
-            if (creature == null || creature.TargetComponent != null)
+            if(creature == null || creature.TargetComponent != null)
             {
                 return ValidationStatus.Invalid;
             }
-            else if (item == null || item.userData == null || item.userData.IsDead)
+            else if(item == null || item.UserData == null || item.UserData.IsDead)
             {
                 return ValidationStatus.Invalid;
             }
@@ -50,16 +49,10 @@ namespace DwarfCorp
 
         public override PerformStatus PerformContextAction(CreatureAIComponent creature, GameTime time)
         {
-            creature.TargetComponent = item.userData;
-            item.reservedFor = creature;
+            creature.TargetComponent = item.UserData;
+            item.ReservedFor = creature;
             return PerformStatus.Success;
         }
-
-
-
-        
-
     }
-
 
 }

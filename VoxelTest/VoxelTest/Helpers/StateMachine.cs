@@ -38,10 +38,10 @@ namespace DwarfCorp
 
         public void RemoveState(State state)
         {
-            if (States.ContainsKey(state.Name))
+            if(States.ContainsKey(state.Name))
             {
                 State dummy = null;
-                while (!States.TryRemove(state.Name, out dummy))
+                while(!States.TryRemove(state.Name, out dummy))
                 {
                     // nothing.
                 }
@@ -52,7 +52,7 @@ namespace DwarfCorp
         {
             CurrentState = StartState;
 
-            if (CurrentState != null)
+            if(CurrentState != null)
             {
                 CurrentState.OnEnter();
             }
@@ -60,7 +60,7 @@ namespace DwarfCorp
 
         public virtual void OnExit()
         {
-            if (CurrentState != null)
+            if(CurrentState != null)
             {
                 CurrentState.OnExit();
             }
@@ -68,13 +68,13 @@ namespace DwarfCorp
 
         public virtual void Update(GameTime time)
         {
-            if (CurrentState != null)
+            if(CurrentState != null)
             {
                 CurrentState.Update(time);
 
-                if (CurrentState.ShouldTransition)
+                if(CurrentState.ShouldTransition)
                 {
-                    if (States.ContainsKey(CurrentState.TransitionTo))
+                    if(States.ContainsKey(CurrentState.TransitionTo))
                     {
                         CurrentState.OnExit();
                         CurrentState = States[CurrentState.TransitionTo];
@@ -86,22 +86,21 @@ namespace DwarfCorp
 
         public virtual void Render(GameTime time, GraphicsDevice device)
         {
-            if (CurrentState != null)
+            if(CurrentState != null)
             {
                 CurrentState.Render(time, device);
             }
         }
-
     }
 
     public class State
     {
         public string Name { get; set; }
-        public MetaState Parent { get; set;}
+        public MetaState Parent { get; set; }
         public bool ShouldTransition { get; set; }
         public string TransitionTo { get; set; }
 
-        public State(string name) 
+        public State(string name)
         {
             Name = name;
             ShouldTransition = false;
@@ -110,22 +109,19 @@ namespace DwarfCorp
 
         public virtual void OnEnter()
         {
-
         }
+
         public virtual void OnExit()
         {
-
         }
 
         public virtual void Update(GameTime time)
         {
-
         }
 
         public virtual void Render(GameTime time, GraphicsDevice device)
         {
         }
-
     }
 
     public class StateMachine
@@ -134,7 +130,7 @@ namespace DwarfCorp
         public ConcurrentDictionary<string, MetaState> States { get; set; }
         public string Name { get; set; }
         public MetaState CurrentState { get; set; }
-        
+
         public StateMachine(string name)
         {
             Name = name;
@@ -151,10 +147,10 @@ namespace DwarfCorp
 
         public void RemoveState(MetaState state)
         {
-            if (States.ContainsKey(state.Name))
+            if(States.ContainsKey(state.Name))
             {
                 MetaState dummy = null;
-                while (!States.TryRemove(state.Name, out dummy))
+                while(!States.TryRemove(state.Name, out dummy))
                 {
                     // nothing.
                 }
@@ -165,7 +161,7 @@ namespace DwarfCorp
         {
             CurrentState = StartState;
 
-            if (CurrentState != null)
+            if(CurrentState != null)
             {
                 CurrentState.OnEnter();
             }
@@ -173,7 +169,7 @@ namespace DwarfCorp
 
         public virtual void OnExit()
         {
-            if (CurrentState != null)
+            if(CurrentState != null)
             {
                 CurrentState.OnExit();
             }
@@ -181,13 +177,13 @@ namespace DwarfCorp
 
         public virtual void Update(GameTime time)
         {
-            if (CurrentState != null)
+            if(CurrentState != null)
             {
                 CurrentState.Update(time);
 
-                if (CurrentState.ShouldTransition)
+                if(CurrentState.ShouldTransition)
                 {
-                    if (States.ContainsKey(CurrentState.TransitionTo))
+                    if(States.ContainsKey(CurrentState.TransitionTo))
                     {
                         CurrentState.OnExit();
                         CurrentState = States[CurrentState.TransitionTo];
@@ -199,7 +195,7 @@ namespace DwarfCorp
 
         public virtual void Render(GameTime time, GraphicsDevice device)
         {
-            if (CurrentState != null)
+            if(CurrentState != null)
             {
                 CurrentState.Render(time, device);
             }

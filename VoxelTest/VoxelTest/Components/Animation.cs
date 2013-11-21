@@ -5,8 +5,10 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+
 namespace DwarfCorp
 {
+    [JsonObject(IsReference = true)]
     public class Animation
     {
         public int FrameWidth { get; set; }
@@ -30,17 +32,15 @@ namespace DwarfCorp
         public Texture2D SpriteSheet { get; set; }
 
 
-        public Animation(Animation other,  Texture2D spriteSheet, GraphicsDevice device) 
+        public Animation(Animation other, Texture2D spriteSheet, GraphicsDevice device)
             : this(device, spriteSheet, other.Name, other.FrameWidth, other.FrameHeight, other.Frames, other.Loops, other.Tint, other.FrameHZ, other.WorldWidth, other.WorldHeight, other.Flipped)
         {
-
         }
 
 
         public Animation(GraphicsDevice device, Texture2D sheet, string name, List<Point> frames, bool loops, Color tint, float frameHZ, bool flipped) :
             this(device, sheet, name, sheet.Width, sheet.Height, frames, loops, tint, frameHZ, sheet.Width / 32.0f, sheet.Height / 32.0f, flipped)
         {
-
         }
 
         public Animation(GraphicsDevice device, Texture2D sheet, string name, int frameWidth, int frameHeight, List<Point> frames, bool loops, Color tint, float frameHZ, float worldWidth, float worldHeight, bool flipped)
@@ -53,7 +53,7 @@ namespace DwarfCorp
             IsPlaying = false;
             Loops = loops;
             Tint = tint;
-            FrameHZ = frameHZ + (float)PlayState.random.NextDouble();
+            FrameHZ = frameHZ + (float) PlayState.Random.NextDouble();
             FrameTimer = 0.0f;
             WorldWidth = worldWidth;
             WorldHeight = worldHeight;
@@ -62,16 +62,15 @@ namespace DwarfCorp
             Flipped = flipped;
 
             CreatePrimitives(device);
-
         }
 
 
         public void CreatePrimitives(GraphicsDevice device)
         {
-            foreach (Point frame in Frames)
+            foreach(Point frame in Frames)
             {
                 string key = SpriteSheet.GetHashCode() + ": " + FrameWidth + "," + FrameHeight + frame.ToString() + "," + Flipped;
-                if (!PrimitiveLibrary.BillboardPrimitives.ContainsKey(key))
+                if(!PrimitiveLibrary.BillboardPrimitives.ContainsKey(key))
                 {
                     PrimitiveLibrary.BillboardPrimitives[key] = new BillboardPrimitive(device, SpriteSheet, FrameWidth, FrameHeight, frame, WorldWidth, WorldHeight, Flipped);
                 }
@@ -120,29 +119,27 @@ namespace DwarfCorp
         }
 
 
-
         public void Update(GameTime gameTime)
         {
-            if (IsPlaying)
+            if(IsPlaying)
             {
-                FrameTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                FrameTimer += (float) gameTime.ElapsedGameTime.TotalSeconds;
 
-                if (FrameTimer >= 1.0f / FrameHZ)
+                if(FrameTimer >= 1.0f / FrameHZ)
                 {
                     NextFrame();
                     FrameTimer = 0.0f;
                 }
             }
-
         }
 
         public void NextFrame()
         {
             CurrentFrame++;
 
-            if (CurrentFrame >= Frames.Count)
+            if(CurrentFrame >= Frames.Count)
             {
-                if (Loops)
+                if(Loops)
                 {
                     CurrentFrame = 0;
                 }

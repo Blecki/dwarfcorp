@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class AssetManager : SillyGUIComponent
     {
         public TextureLoadDialog LoadDialog { get; set; }
@@ -21,14 +22,14 @@ namespace DwarfCorp
             AssetSelector = new ComboBox(GUI, Layout);
 
             CurrentAsset = assets[0];
-            foreach (string s in assets)
+            foreach(string s in assets)
             {
                 AssetSelector.AddValue(s);
             }
 
             AssetSelector.CurrentValue = CurrentAsset;
 
-            AssetSelector.OnSelectionModified += new ComboBoxSelector.Modified(AssetSelector_OnSelectionModified);
+            AssetSelector.OnSelectionModified += AssetSelector_OnSelectionModified;
 
             AssetLabel = new Label(GUI, Layout, CurrentAsset + " : " + TextureManager.GetStringValue(CurrentAsset), GUI.DefaultFont);
 
@@ -39,25 +40,23 @@ namespace DwarfCorp
 
             Layout.SetComponentPosition(LoadDialog, 0, 2, 3, 4);
 
-            LoadDialog.OnTextureSelected += new TextureLoadDialog.TextureSelected(LoadDialog_OnTextureSelected);
-
+            LoadDialog.OnTextureSelected += LoadDialog_OnTextureSelected;
         }
 
-        void LoadDialog_OnTextureSelected(TextureLoader.TextureFile arg)
+        private void LoadDialog_OnTextureSelected(TextureLoader.TextureFile arg)
         {
             TextureManager.SetStringValue(CurrentAsset, arg.File);
             AssetLabel.Text = CurrentAsset + " : " + TextureManager.GetStringValue(CurrentAsset);
         }
 
 
-
-        void AssetSelector_OnSelectionModified(string arg)
+        private void AssetSelector_OnSelectionModified(string arg)
         {
             CurrentAsset = arg;
             AssetLabel.Text = CurrentAsset + " : " + TextureManager.GetStringValue(CurrentAsset);
             LoadDialog.Initialize(TextureManager.GetTexture(CurrentAsset), CurrentAsset);
-            LoadDialog.OnTextureSelected += new TextureLoadDialog.TextureSelected(LoadDialog_OnTextureSelected);
+            LoadDialog.OnTextureSelected += LoadDialog_OnTextureSelected;
         }
-
     }
+
 }

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+
 namespace DwarfCorp
 {
 
-
-    class AStarPlanner
+    internal class AStarPlanner
     {
         public static VoxelRef GetVoxelWithMinimumFScore(PriorityQueue<VoxelRef> f_score, HashSet<VoxelRef> openSet)
         {
@@ -29,23 +29,19 @@ namespace DwarfCorp
                 toReturn.Add(currentNode);
                 return toReturn;
             }
-        
         }
 
 
         private static bool Path(VoxelRef start, VoxelRef end, ChunkManager chunks, int maxExpansions, ref List<VoxelRef> toReturn, bool reverse)
         {
-
             VoxelChunk startChunk = chunks.ChunkMap[start.ChunkID];
             VoxelChunk endChunk = chunks.ChunkMap[end.ChunkID];
 
-            if (startChunk.IsCompletelySurrounded(start) || endChunk.IsCompletelySurrounded(end))
+            if(startChunk.IsCompletelySurrounded(start) || endChunk.IsCompletelySurrounded(end))
             {
                 toReturn = null;
                 return false;
             }
-
-
 
 
             HashSet<VoxelRef> closedSet = new HashSet<VoxelRef>();
@@ -62,24 +58,22 @@ namespace DwarfCorp
             VoxelRef current = start;
 
             int numExpansions = 0;
-            while (openSet.Count > 0 && numExpansions < maxExpansions)
+            while(openSet.Count > 0 && numExpansions < maxExpansions)
             {
-
                 current = GetVoxelWithMinimumFScore(f_score, openSet);
 
-                if (!current.isValid)
+                if(!current.isValid)
                 {
                     current = start;
                     numExpansions++;
-
                 }
 
                 //SimpleDrawing.DrawBox(current.GetBoundingBox(), Color.Red, 0.1f);
 
                 numExpansions++;
-                if ((current.WorldPosition - end.WorldPosition).LengthSquared() < 0.5f)
+                if((current.WorldPosition - end.WorldPosition).LengthSquared() < 0.5f)
                 {
-                    toReturn =  ReconstructPath(cameFrom, current);
+                    toReturn = ReconstructPath(cameFrom, current);
                     return true;
                 }
 
@@ -90,7 +84,7 @@ namespace DwarfCorp
 
                 List<VoxelRef> neighbors = null;
 
-                if (!reverse)
+                if(!reverse)
                 {
                     neighbors = currentChunk.GetMovableNeighbors(current);
                 }
@@ -101,7 +95,7 @@ namespace DwarfCorp
 
                 List<VoxelRef> manhattanNeighbors = currentChunk.GetNeighborsManhattan(current);
 
-                if (manhattanNeighbors.Contains(end))
+                if(manhattanNeighbors.Contains(end))
                 {
                     List<VoxelRef> subPath = ReconstructPath(cameFrom, current);
                     subPath.Add(end);
@@ -109,16 +103,16 @@ namespace DwarfCorp
                     return true;
                 }
 
-                foreach (VoxelRef n in neighbors)
+                foreach(VoxelRef n in neighbors)
                 {
-                    if (closedSet.Contains(n))
+                    if(closedSet.Contains(n))
                     {
                         continue;
                     }
 
                     float tenative_g_score = g_score[current] + GetDistance(current, n, chunks);
 
-                    if (!openSet.Contains(n) || tenative_g_score < g_score[n])
+                    if(!openSet.Contains(n) || tenative_g_score < g_score[n])
                     {
                         openSet.Add(n);
                         cameFrom[n] = current;
@@ -127,22 +121,20 @@ namespace DwarfCorp
                     }
                 }
 
-                if (numExpansions >= maxExpansions)
+                if(numExpansions >= maxExpansions)
                 {
                     return false;
                 }
-
             }
             toReturn = null;
             return false;
-        
         }
 
         public static bool FindReversePath(VoxelRef start, VoxelRef end, ChunkManager chunks, int maxExpansions, ref List<VoxelRef> p)
         {
             bool success = Path(end, start, chunks, maxExpansions, ref p, true);
 
-            if (p != null && success)
+            if(p != null && success)
             {
                 p.Reverse();
                 return true;
@@ -157,10 +149,10 @@ namespace DwarfCorp
         {
             List<VoxelRef> p = new List<VoxelRef>();
             bool success = Path(start, end, chunks, maxExpansions, ref p, false);
-            if (p == null || !success)
+            if(p == null || !success)
             {
                 List<VoxelRef> rp = new List<VoxelRef>();
-                if (FindReversePath(start, end, chunks, maxExpansions, ref rp))
+                if(FindReversePath(start, end, chunks, maxExpansions, ref rp))
                 {
                     return rp;
                 }
@@ -173,20 +165,19 @@ namespace DwarfCorp
             {
                 return p;
             }
-
         }
 
         public static float GetDistance(VoxelRef A, VoxelRef B, ChunkManager chunks)
         {
-            if (B.TypeName != "empty")
+            if(B.TypeName != "empty")
             {
                 return 100000;
             }
             else
             {
-                float score =  (A.WorldPosition - B.WorldPosition).LengthSquared() + (Math.Abs((B.WorldPosition - A.WorldPosition).Y)) * 10;
+                float score = (A.WorldPosition - B.WorldPosition).LengthSquared() + (Math.Abs((B.WorldPosition - A.WorldPosition).Y)) * 10;
 
-                if (B.GetWaterLevel(chunks) > 5)
+                if(B.GetWaterLevel(chunks) > 5)
                 {
                     score += 5 + (Math.Abs((B.WorldPosition - A.WorldPosition).Y)) * 100;
                 }
@@ -197,9 +188,8 @@ namespace DwarfCorp
 
         public static float Heuristic(VoxelRef A, VoxelRef B)
         {
-            return (A.WorldPosition - B.WorldPosition).LengthSquared() + (Math.Abs((B.WorldPosition - A.WorldPosition).Y)) * 10; 
+            return (A.WorldPosition - B.WorldPosition).LengthSquared() + (Math.Abs((B.WorldPosition - A.WorldPosition).Y)) * 10;
         }
     }
-
 
 }

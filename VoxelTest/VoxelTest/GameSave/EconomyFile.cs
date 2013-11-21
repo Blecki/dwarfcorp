@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class EconomyFile : SaveData
     {
         public float CurrentMoney { get; set; }
@@ -41,7 +42,7 @@ namespace DwarfCorp
         {
             EconomyFile file = FileUtils.LoadJson<EconomyFile>(filePath, isCompressed);
 
-            if (file == null)
+            if(file == null)
             {
                 return false;
             }
@@ -57,4 +58,5 @@ namespace DwarfCorp
             return FileUtils.SaveJSon<EconomyFile>(this, filePath, compress);
         }
     }
+
 }

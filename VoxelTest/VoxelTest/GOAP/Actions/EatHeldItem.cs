@@ -7,10 +7,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class EatHeldItem : Action
     {
         public Timer EatTimer { get; set; }
         public Timer ChewTimer { get; set; }
+
         public EatHeldItem()
         {
             Name = "EatHeldItem";
@@ -32,21 +34,21 @@ namespace DwarfCorp
 
         public override Action.PerformStatus PerformContextAction(CreatureAIComponent creature, GameTime time)
         {
-            Item item = (Item)creature.Goap.Belief[GOAPStrings.HeldObject];
+            Item item = (Item) creature.Goap.Belief[GOAPStrings.HeldObject];
 
-            if (item == null)
+            if(item == null)
             {
                 return Action.PerformStatus.Failure;
             }
 
-            if (EatTimer.HasTriggered)
+            if(EatTimer.HasTriggered)
             {
                 LocatableComponent grabbed = creature.Hands.GetFirstGrab();
                 creature.Hands.UnGrab(grabbed);
 
                 List<FoodComponent> foods = grabbed.GetChildrenOfTypeRecursive<FoodComponent>();
 
-                if (foods.Count > 0)
+                if(foods.Count > 0)
                 {
                     grabbed.HasMoved = true;
                     grabbed.IsActive = true;
@@ -66,7 +68,7 @@ namespace DwarfCorp
             }
             else
             {
-                if (ChewTimer.HasTriggered)
+                if(ChewTimer.HasTriggered)
                 {
                     SoundManager.PlaySound("ouch", creature.Physics.GlobalTransform.Translation);
                 }
@@ -78,14 +80,13 @@ namespace DwarfCorp
                 EatTimer.Update(time);
                 return PerformStatus.InProgress;
             }
-            
         }
 
         public override ValidationStatus ContextValidate(CreatureAIComponent creature)
         {
-            Item item = (Item)creature.Goap.Belief[GOAPStrings.HeldObject];
+            Item item = (Item) creature.Goap.Belief[GOAPStrings.HeldObject];
 
-            if (item == null)
+            if(item == null)
             {
                 return ValidationStatus.Replan;
             }
@@ -93,4 +94,5 @@ namespace DwarfCorp
             return ValidationStatus.Ok;
         }
     }
+
 }

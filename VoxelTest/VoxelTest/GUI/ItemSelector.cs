@@ -13,6 +13,7 @@ namespace DwarfCorp
     public class ItemSelector : SillyGUIComponent
     {
         public delegate void ItemChanged(GItem item);
+
         public event ItemChanged OnItemChanged;
 
         public List<GItem> Items { get; set; }
@@ -25,23 +26,22 @@ namespace DwarfCorp
             Items = new List<GItem>();
             Filter = "";
             Layout = new GridLayout(gui, this, 15, 5);
-            OnItemChanged += new ItemChanged(ItemSelector_OnItemChanged);
+            OnItemChanged += ItemSelector_OnItemChanged;
         }
 
         public void SetItemNumber(GItem item, float number)
         {
-            item.CurrentAmount = (int)number;
+            item.CurrentAmount = (int) number;
             OnItemChanged.Invoke(item);
         }
 
-        void ItemSelector_OnItemChanged(GItem item)
+        private void ItemSelector_OnItemChanged(GItem item)
         {
-
         }
 
         public List<GItem> GetItemsWithTag(string tag)
         {
-            if (tag == "")
+            if(tag == "")
             {
                 return Items;
             }
@@ -49,9 +49,9 @@ namespace DwarfCorp
             {
                 List<GItem> toReturn = new List<GItem>();
 
-                foreach (GItem item in Items)
+                foreach(GItem item in Items)
                 {
-                    if (item.Tags.Contains(tag))
+                    if(item.Tags.Contains(tag))
                     {
                         toReturn.Add(item);
                     }
@@ -71,7 +71,7 @@ namespace DwarfCorp
 
             Layout = new GridLayout(GUI, this, rows, 6);
 
-            for (int i = 0; i < toDisplay.Count; i++)
+            for(int i = 0; i < toDisplay.Count; i++)
             {
                 ImagePanel image = new ImagePanel(GUI, Layout, toDisplay[i].Image);
                 image.KeepAspectRatio = true;
@@ -79,17 +79,14 @@ namespace DwarfCorp
                 Label priceLabel = new Label(GUI, Layout, toDisplay[i].Price.ToString("C"), GUI.DefaultFont);
                 SpinBox spinbox = new SpinBox(GUI, Layout, "", toDisplay[i].CurrentAmount, toDisplay[i].MinAmount, toDisplay[i].MaxAmount, SpinBox.SpinMode.Integer);
                 GItem item = toDisplay[i];
-                spinbox.OnValueChanged += new SpinBox.ValueChangedDelegate( (SpinBox x) => SetItemNumber(item, x.SpinValue));
+                spinbox.OnValueChanged += (SpinBox x) => SetItemNumber(item, x.SpinValue);
 
-                Layout.SetComponentPosition(image,      0, i, 1, 1);
-                Layout.SetComponentPosition(label,      1, i, 1, 1);
+                Layout.SetComponentPosition(image, 0, i, 1, 1);
+                Layout.SetComponentPosition(label, 1, i, 1, 1);
                 Layout.SetComponentPosition(priceLabel, 2, i, 1, 1);
-                Layout.SetComponentPosition(spinbox,    3, i, 2, 1);
-
+                Layout.SetComponentPosition(spinbox, 3, i, 2, 1);
             }
-            
         }
-        
-
     }
+
 }

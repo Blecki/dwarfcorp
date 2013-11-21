@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class SetTargetVoxel : Action
     {
         public VoxelRef vox;
@@ -35,6 +36,6 @@ namespace DwarfCorp
             creature.TargetVoxel = vox;
             return PerformStatus.Success;
         }
-
     }
+
 }

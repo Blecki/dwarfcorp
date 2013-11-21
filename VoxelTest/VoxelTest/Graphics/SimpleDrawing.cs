@@ -8,7 +8,8 @@ using System.Collections.Concurrent;
 
 namespace DwarfCorp
 {
-    class DrawCommand
+
+    internal class DrawCommand
     {
         public Color m_colorToDraw = Color.White;
 
@@ -19,11 +20,10 @@ namespace DwarfCorp
 
         public virtual void Render(GraphicsDevice device, Effect effect)
         {
-
         }
     }
 
-    class LineListCommand : DrawCommand
+    internal class LineListCommand : DrawCommand
     {
         public Vector3[] m_points;
         private VertexPositionColor[] m_triangles;
@@ -41,16 +41,18 @@ namespace DwarfCorp
 
         public override void Render(GraphicsDevice device, Effect effect)
         {
-            if (m_triangleCount <= 0 || m_points.Count() < 2) return;
+            if(m_triangleCount <= 0 || m_points.Count() < 2)
+            {
+                return;
+            }
             Matrix w = Matrix.Identity;
             effect.Parameters["xWorld"].SetValue(w);
             effect.CurrentTechnique = effect.Techniques["Untextured"];
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            foreach(EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
 
                 device.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, m_triangles, 0, m_triangleCount - 2);
-
             }
             effect.CurrentTechnique = effect.Techniques["Textured"];
 
@@ -59,7 +61,7 @@ namespace DwarfCorp
     }
 
 
-    class BoxDrawCommand : DrawCommand
+    internal class BoxDrawCommand : DrawCommand
     {
         public BoundingBox m_boundingBox;
         private List<VertexPositionColor[]> m_triangles = new List<VertexPositionColor[]>();
@@ -72,11 +74,50 @@ namespace DwarfCorp
         private static Vector3 btmLeftBack = new Vector3(0.0f, 0.0f, 1.0f);
         private static Vector3 btmRightFront = new Vector3(1.0f, 0.0f, 0.0f);
         private static Vector3 btmRightBack = new Vector3(1.0f, 0.0f, 1.0f);
-        private static Vector3[] frontFace = { btmLeftFront, topLeftFront, topRightFront, btmRightFront, btmLeftFront };
-        private static Vector3[] backFace = { btmRightBack, topRightBack, topLeftBack, btmLeftBack, btmRightBack };
-        private static Vector3[] topFace = { topRightFront, topRightBack, topLeftBack, topLeftFront, topRightFront };
-        private static Vector3[] btmFace = { btmLeftFront, btmLeftBack, btmRightBack, btmRightFront, btmLeftFront };
-        private static Vector3[][] m_boxPoints = { frontFace, backFace, topFace, btmFace };
+
+        private static Vector3[] frontFace =
+        {
+            btmLeftFront,
+            topLeftFront,
+            topRightFront,
+            btmRightFront,
+            btmLeftFront
+        };
+
+        private static Vector3[] backFace =
+        {
+            btmRightBack,
+            topRightBack,
+            topLeftBack,
+            btmLeftBack,
+            btmRightBack
+        };
+
+        private static Vector3[] topFace =
+        {
+            topRightFront,
+            topRightBack,
+            topLeftBack,
+            topLeftFront,
+            topRightFront
+        };
+
+        private static Vector3[] btmFace =
+        {
+            btmLeftFront,
+            btmLeftBack,
+            btmRightBack,
+            btmRightFront,
+            btmLeftFront
+        };
+
+        private static Vector3[][] m_boxPoints =
+        {
+            frontFace,
+            backFace,
+            topFace,
+            btmFace
+        };
 
         public BoxDrawCommand(BoundingBox box, Color color, float thickness, bool warp) :
             base(color)
@@ -87,9 +128,9 @@ namespace DwarfCorp
             for(int i = 0; i < 4; i++)
             {
                 Vector3[] points;
-                if (warp)
+                if(warp)
                 {
-                    points = VertexNoise.WarpPoints(m_boxPoints[i], new Vector3(box.Max.X - box.Min.X, box.Max.Y - box.Min.Y, box.Max.Z - box.Min.Z), box.Min );
+                    points = VertexNoise.WarpPoints(m_boxPoints[i], new Vector3(box.Max.X - box.Min.X, box.Max.Y - box.Min.Y, box.Max.Z - box.Min.Z), box.Min);
                 }
                 else
                 {
@@ -97,14 +138,12 @@ namespace DwarfCorp
                 }
 
                 int count = -2;
-               
+
                 List<VertexPositionColor> triangles = SimpleDrawing.GetTriangleStrip(points, thickness, color, ref count, worldMatrix);
                 m_triangles.Add(new VertexPositionColor[triangles.Count]);
                 m_triangleCounts.Add(count);
                 triangles.CopyTo(m_triangles[i]);
             }
-
-
         }
 
         public override void Render(GraphicsDevice device, Effect effect)
@@ -113,14 +152,13 @@ namespace DwarfCorp
 
             effect.Parameters["xWorld"].SetValue(w);
             effect.CurrentTechnique = effect.Techniques["Untextured"];
-            for (int i = 0; i < m_triangles.Count; i++)
+            for(int i = 0; i < m_triangles.Count; i++)
             {
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
 
                     device.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, m_triangles[i], 0, m_triangleCounts[i]);
-
                 }
             }
             effect.CurrentTechnique = effect.Techniques["Textured"];
@@ -141,7 +179,7 @@ namespace DwarfCorp
 
         public static void DrawBoxList(List<BoundingBox> boxes, Color color, float thickness)
         {
-            foreach (BoundingBox box in boxes)
+            foreach(BoundingBox box in boxes)
             {
                 m_commands.Add(new BoxDrawCommand(box, color, thickness, false));
             }
@@ -172,26 +210,26 @@ namespace DwarfCorp
 
             //Matrix originalWorld = effect.Parameters["xWorld"].GetValueMatrix();
 
-            foreach (DrawCommand command in m_commands)
+            foreach(DrawCommand command in m_commands)
             {
                 command.Render(device, effect);
                 effect.Parameters["xWorld"].SetValue(Matrix.Identity);
             }
 
-            if (oldState != null)
+            if(oldState != null)
             {
                 device.RasterizerState = oldState;
             }
 
-            if (origBlen != null)
+            if(origBlen != null)
             {
                 device.BlendState = origBlen;
             }
 
 
-            if (delete)
+            if(delete)
             {
-                while (m_commands.Count > 0)
+                while(m_commands.Count > 0)
                 {
                     DrawCommand result = null;
                     m_commands.TryTake(out result);
@@ -201,15 +239,17 @@ namespace DwarfCorp
 
         public static List<VertexPositionColor> GetTriangleStrip(Vector3[] points, float thickness, Color color, ref int triangleCount, Matrix worldMatrix)
         {
-            
             Vector3 lastPoint = Vector3.Zero;
             List<VertexPositionColor> list = new List<VertexPositionColor>();
 
 
-
-            for (int i=0;i<points.Length;i++)
+            for(int i = 0; i < points.Length; i++)
             {
-                if (i == 0) { lastPoint = points[i]; continue; }
+                if(i == 0)
+                {
+                    lastPoint = points[i];
+                    continue;
+                }
                 Vector3 t1 = Vector3.Transform(lastPoint, worldMatrix);
                 Vector3 t2 = Vector3.Transform(points[i], worldMatrix);
                 Vector3 direction = t1 - t2;
@@ -219,10 +259,14 @@ namespace DwarfCorp
                 normal.Normalize();
 
 
-                Vector3 p1 = t1 + normal * thickness; triangleCount++;
-                Vector3 p2 = t1 - normal * thickness; triangleCount++;
-                Vector3 p3 = t2 + normal * thickness; triangleCount++;
-                Vector3 p4 = t2 - normal * thickness; triangleCount++; 
+                Vector3 p1 = t1 + normal * thickness;
+                triangleCount++;
+                Vector3 p2 = t1 - normal * thickness;
+                triangleCount++;
+                Vector3 p3 = t2 + normal * thickness;
+                triangleCount++;
+                Vector3 p4 = t2 - normal * thickness;
+                triangleCount++;
                 list.Add(new VertexPositionColor(p1, color));
                 list.Add(new VertexPositionColor(p2, color));
                 list.Add(new VertexPositionColor(p3, color));
@@ -232,6 +276,6 @@ namespace DwarfCorp
 
             return list;
         }
-        
     }
+
 }

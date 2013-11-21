@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class SkyRenderer
     {
         public TextureCube SkyTexture { get; set; }
@@ -33,9 +34,9 @@ namespace DwarfCorp
             TimeOfDay = 0.0f;
             CosTime = 0.0f;
 
-            foreach (ModelMesh mesh in SkyMesh.Meshes)
+            foreach(ModelMesh mesh in SkyMesh.Meshes)
             {
-                foreach (ModelMeshPart part in mesh.MeshParts)
+                foreach(ModelMeshPart part in mesh.MeshParts)
                 {
                     part.Effect = SkyEffect;
                 }
@@ -54,15 +55,14 @@ namespace DwarfCorp
             SkyEffect.Parameters["SkyboxTexture"].SetValue(SkyTexture);
             SkyEffect.Parameters["ViewMatrix"].SetValue(camera.ViewMatrix);
             SkyEffect.Parameters["ProjectionMatrix"].SetValue(camera.ProjectionMatrix);
-            SkyEffect.Parameters["xTransparency"].SetValue(1.0f - (float)Math.Pow(TimeOfDay, 2));
-            SkyEffect.Parameters["xRot"].SetValue(Matrix.CreateRotationY((float)time.TotalGameTime.TotalSeconds * 0.005f));
+            SkyEffect.Parameters["xTransparency"].SetValue(1.0f - (float) Math.Pow(TimeOfDay, 2));
+            SkyEffect.Parameters["xRot"].SetValue(Matrix.CreateRotationY((float) time.TotalGameTime.TotalSeconds * 0.005f));
             SkyEffect.CurrentTechnique = SkyEffect.Techniques[0];
             SkyEffect.Parameters["xTint"].SetValue(TimeOfDay);
-            foreach (ModelMesh mesh in SkyMesh.Meshes)
+            foreach(ModelMesh mesh in SkyMesh.Meshes)
             {
                 mesh.Draw();
             }
-
         }
 
         public void RenderNightSky(GameTime time, GraphicsDevice device, Camera camera)
@@ -74,7 +74,7 @@ namespace DwarfCorp
             SkyEffect.Parameters["xRot"].SetValue(Matrix.CreateRotationZ(-(CosTime + 0.5f)));
             SkyEffect.Parameters["xTint"].SetValue(0.0f);
             SkyEffect.CurrentTechnique = SkyEffect.Techniques[0];
-            foreach (ModelMesh mesh in SkyMesh.Meshes)
+            foreach(ModelMesh mesh in SkyMesh.Meshes)
             {
                 mesh.Draw();
             }
@@ -82,7 +82,7 @@ namespace DwarfCorp
 
         public void RenderSunMoon(GameTime time, GraphicsDevice device, Camera camera, Viewport viewPort)
         {
-            Matrix rot = Matrix.CreateRotationZ(-(CosTime + 0.5f * (float)Math.PI));
+            Matrix rot = Matrix.CreateRotationZ(-(CosTime + 0.5f * (float) Math.PI));
             Vector3 sunPosition = new Vector3(100000, 0, 0) + camera.Position;
             Vector3 moonPosition = new Vector3(-100000, 0, 0) + camera.Position;
             sunPosition = Vector3.Transform(sunPosition, rot);
@@ -92,23 +92,22 @@ namespace DwarfCorp
             Vector3 cameraFrameSun = Vector3.Transform(sunPosition, camera.ViewMatrix * camera.ProjectionMatrix);
             Vector3 cameraFramMoon = Vector3.Transform(moonPosition, camera.ViewMatrix * camera.ProjectionMatrix);
 
-         
 
             Vector3 unProjectSun = viewPort.Project(sunPosition, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
             Vector3 unProjectMoon = viewPort.Project(moonPosition, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
 
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
 
-            if (unProjectSun.Z > 0 && cameraFrameSun.Z > 0)
+            if(unProjectSun.Z > 0 && cameraFrameSun.Z > 0)
             {
                 DwarfGame.SpriteBatch.Draw(SunTexture, new Vector2(unProjectSun.X - SunTexture.Width / 2, unProjectSun.Y - SunTexture.Height / 2), Color.White);
             }
-            if (unProjectMoon.Z > 0 && cameraFramMoon.Z > 0)
+            if(unProjectMoon.Z > 0 && cameraFramMoon.Z > 0)
             {
                 DwarfGame.SpriteBatch.Draw(MoonTexture, new Vector2(unProjectMoon.X - MoonTexture.Width / 2, unProjectMoon.Y - MoonTexture.Height / 2), Color.White);
             }
             DwarfGame.SpriteBatch.End();
-
         }
     }
+
 }

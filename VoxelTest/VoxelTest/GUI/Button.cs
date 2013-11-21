@@ -9,12 +9,14 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
+
     public class Button : SillyGUIComponent
     {
         public enum ButtonMode
         {
             ImageButton,
-            PushButton
+            PushButton,
+            ToolButton
         }
 
         public ImageFrame Image { get; set; }
@@ -31,6 +33,8 @@ namespace DwarfCorp
         public bool KeepAspectRatio { get; set; }
         public ButtonMode Mode { get; set; }
 
+        public bool ConstrainSize { get; set; }
+
         public Button(SillyGUI gui, SillyGUIComponent parent, string text, SpriteFont textFont, ButtonMode mode, ImageFrame image) :
             base(gui, parent)
         {
@@ -46,13 +50,14 @@ namespace DwarfCorp
             CanToggle = false;
             IsToggled = false;
             OnClicked += Clicked;
-            KeepAspectRatio = false;
+            KeepAspectRatio = mode == ButtonMode.ToolButton;
+            ConstrainSize = mode == ButtonMode.ToolButton;
             Mode = mode;
         }
 
         public void Clicked()
         {
-            if (CanToggle)
+            if(CanToggle)
             {
                 IsToggled = !IsToggled;
             }
@@ -61,19 +66,27 @@ namespace DwarfCorp
         public Rectangle GetImageBounds()
         {
             Rectangle toDraw = GlobalBounds;
-            toDraw.Height -= 60;
-            if (KeepAspectRatio)
+
+            if(ConstrainSize)
             {
-                if (toDraw.Width < toDraw.Height)
-                {
-                    float wPh = (float)toDraw.Width / (float)toDraw.Height;
-                    toDraw = new Rectangle(toDraw.X, toDraw.Y, toDraw.Width, (int)(toDraw.Height * wPh));
-                }
-                else
-                {
-                    float wPh = (float)toDraw.Height / (float)toDraw.Width;
-                    toDraw = new Rectangle(toDraw.X, toDraw.Y, (int)(toDraw.Width * wPh), toDraw.Height);
-                }
+                toDraw.Width = Math.Min(toDraw.Width, Image.SourceRect.Width);
+                toDraw.Height = Math.Min(toDraw.Height, Image.SourceRect.Height);
+            }
+
+            if(!KeepAspectRatio)
+            {
+                return toDraw;
+            }
+
+            if(toDraw.Width < toDraw.Height)
+            {
+                float wPh = (float) toDraw.Width / (float) toDraw.Height;
+                toDraw = new Rectangle(toDraw.X, toDraw.Y, toDraw.Width, (int) (toDraw.Height * wPh));
+            }
+            else
+            {
+                float wPh = (float) toDraw.Height / (float) toDraw.Width;
+                toDraw = new Rectangle(toDraw.X, toDraw.Y, (int) (toDraw.Width * wPh), toDraw.Height);
             }
             return toDraw;
         }
@@ -85,48 +98,52 @@ namespace DwarfCorp
             Color textColor = TextColor;
             Color strokeColor = GUI.DefaultStrokeColor;
 
-            if (IsLeftPressed)
+            if(IsLeftPressed)
             {
                 imageColor = PressedTint;
                 textColor = PressedTextColor;
             }
-            else if (IsMouseOver)
+            else if(IsMouseOver)
             {
                 imageColor = HoverTint;
                 textColor = HoverTextColor;
             }
 
-            if (CanToggle && IsToggled)
+            if(CanToggle && IsToggled)
             {
                 imageColor = ToggleTint;
             }
 
-            if (Mode == ButtonMode.ImageButton)
+            switch(Mode)
             {
-                if (Image != null && Image.Image != null)
-                {
-                    if (!KeepAspectRatio)
+                case ButtonMode.ImageButton:
+                    if(Image != null && Image.Image != null)
                     {
-                        batch.Draw(Image.Image, globalBounds, Image.SourceRect, imageColor);
+                        batch.Draw(Image.Image, !KeepAspectRatio ? globalBounds : GetImageBounds(), Image.SourceRect, imageColor);
                     }
-                    else
+                    Drawer2D.SafeDraw(batch, Text, TextFont, textColor, new Vector2(globalBounds.X, globalBounds.Y + globalBounds.Height - 60), Vector2.Zero);
+                    break;
+                case ButtonMode.PushButton:
+                    GUI.Skin.RenderButton(GlobalBounds, batch);
+                    Drawer2D.DrawAlignedStrokedText(batch, Text,
+                        TextFont,
+                        textColor, strokeColor, Drawer2D.Alignment.Center, GlobalBounds);
+                    break;
+                case ButtonMode.ToolButton:
+                    GUI.Skin.RenderButton(GlobalBounds, batch);
+                    if (Image != null && Image.Image != null)
                     {
-                        batch.Draw(Image.Image, GetImageBounds(), Image.SourceRect, imageColor);
+                        Rectangle imageRect = GetImageBounds();
+                        Rectangle alignedRect = Drawer2D.Align(GlobalBounds, imageRect.Width, imageRect.Height, Drawer2D.Alignment.Left);
+                        alignedRect.X += 5;
+                        batch.Draw(Image.Image, alignedRect, Image.SourceRect, imageColor);
                     }
-                }
-                Drawer2D.SafeDraw(batch, Text, TextFont, textColor, new Vector2(globalBounds.X, globalBounds.Y + globalBounds.Height - 60), Vector2.Zero);
-            }
-            else if (Mode == ButtonMode.PushButton)
-            {
-                
-                GUI.Skin.RenderButton(GlobalBounds, batch);
-
-                Drawer2D.DrawAlignedStrokedText(batch, Text,
-                                         TextFont,
-                                         textColor, strokeColor, Drawer2D.Alignment.Center, GlobalBounds);
+                    Drawer2D.DrawAlignedStrokedText(batch, Text, TextFont, textColor, strokeColor, Drawer2D.Alignment.Center, GlobalBounds);
+                    break;
             }
 
             base.Render(time, batch);
         }
     }
+
 }

@@ -7,10 +7,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-    
+
     public class BatchBillboardPrimitive : GeometricPrimitive
     {
-        Texture2D SpriteSheet { get; set; }
+        private Texture2D SpriteSheet { get; set; }
 
         public BillboardPrimitive.BoardTextureCoords UVs { get; set; }
         public float Width { get; set; }
@@ -19,11 +19,11 @@ namespace DwarfCorp
         public List<Color> m_tints;
 
         public BatchBillboardPrimitive(GraphicsDevice device,
-                                       Texture2D spriteSheet,
-                                       int frameWidth,
-                                       int frameHeight,
-                                       Point frame,
-                                        float width, float height, bool flipped, List<Matrix> relativeTransforms, List<Color> tints)
+            Texture2D spriteSheet,
+            int frameWidth,
+            int frameHeight,
+            Point frame,
+            float width, float height, bool flipped, List<Matrix> relativeTransforms, List<Color> tints)
         {
             m_relativeTransforms = relativeTransforms;
             UVs = new BillboardPrimitive.BoardTextureCoords(spriteSheet.Width, spriteSheet.Height, frameWidth, frameHeight, frame, flipped);
@@ -52,9 +52,7 @@ namespace DwarfCorp
             Vector3 btmRightBack = new Vector3(0.5f * Width, -0.5f * Height, 0.0f);
 
 
-
-
-            for (int i = 0; i < m_relativeTransforms.Count; i++)
+            for(int i = 0; i < m_relativeTransforms.Count; i++)
             {
                 // Add the vertices for the FRONT face.
                 m_vertices[i * 6 + 0] = new ExtendedVertex(Vector3.Transform(topLeftFront, m_relativeTransforms[i]), m_tints[i], UVs.m_uvs[0], UVs.Bounds);
@@ -65,10 +63,7 @@ namespace DwarfCorp
                 m_vertices[i * 6 + 5] = new ExtendedVertex(Vector3.Transform(topRightFront, m_relativeTransforms[i]), m_tints[i], UVs.m_uvs[5], UVs.Bounds);
             }
             //Console.Out.WriteLine("There are {0}", m_relativeTransforms.Count);
-
         }
-
-
     }
-     
+
 }

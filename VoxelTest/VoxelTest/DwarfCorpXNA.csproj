@@ -206,9 +206,12 @@
     <Compile Include="GUI\ScrollView.cs" />
     <Compile Include="GUI\SpinBox.cs" />
     <Compile Include="GUI\TextureLoadDialog.cs" />
+    <Compile Include="Helpers\CollisionManager.cs" />
     <Compile Include="Helpers\HungarianAlgorithm.cs" />
+    <Compile Include="Helpers\IBoundedObject.cs" />
     <Compile Include="Helpers\KeyManager.cs" />
     <Compile Include="Helpers\MinBag.cs" />
+    <Compile Include="Helpers\OctreeNode.cs" />
     <Compile Include="Helpers\ThreadSafeRandom.cs" />
     <Compile Include="ModAssets\TextureLoader.cs" />
     <Compile Include="LanguageGenerator\TextAtom.cs" />
@@ -281,6 +284,7 @@
     <Compile Include="Scripting\CompoundActs\GoToNamedVoxelAct.cs" />
     <Compile Include="Scripting\CompoundActs\MoveItemAct.cs" />
     <Compile Include="Scripting\LeafActs\PutItemInZoneAct.cs" />
+    <Compile Include="Scripting\LeafActs\SetBlackboardData.cs" />
     <Compile Include="Scripting\Symbols\Item.cs" />
     <Compile Include="Scripting\Symbols\TagList.cs" />
     <Compile Include="GOAP\WorldState.cs" />
@@ -363,7 +367,7 @@
     <Compile Include="Scripting\LeafActs\CreatureAct.cs" />
     <Compile Include="Scripting\LeafActs\DigAct.cs" />
     <Compile Include="Scripting\LeafActs\DropItemAct.cs" />
-    <Compile Include="Scripting\LeafActs\PickUpTargetAct.cs" />
+    <Compile Include="Scripting\LeafActs\PickUpAct.cs" />
     <Compile Include="Scripting\LeafActs\PutItemInStockpileAct.cs" />
     <Compile Include="Scripting\LeafActs\SearchFreeStockpileAct.cs" />
     <Compile Include="Scripting\LeafActs\FollowPathAct.cs" />

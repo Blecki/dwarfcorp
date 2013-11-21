@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class PlaceRoomItemAct : CreatureAct
     {
         public RoomBuildDesignation Room { get; set; }
@@ -18,7 +19,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (Room == null || Room.IsBuilt)
+            if(Room == null || Room.IsBuilt)
             {
                 yield return Status.Fail;
             }
@@ -26,7 +27,7 @@ namespace DwarfCorp
             {
                 LocatableComponent grabbedComponent = Creature.Hands.GetFirstGrab();
 
-                if (grabbedComponent == null || Room.VoxelBuildDesignations.Count == 0)
+                if(grabbedComponent == null || Room.VoxelBuildDesignations.Count == 0)
                 {
                     yield return Status.Fail;
                 }
@@ -37,15 +38,14 @@ namespace DwarfCorp
                     grabbedComponent.Die();
                     Agent.Blackboard.SetData<object>("HeldObject", null);
 
-                    if (Room.VoxelBuildDesignations[0].MeetsBuildRequirements())
+                    if(Room.VoxelBuildDesignations[0].MeetsBuildRequirements())
                     {
                         Room.VoxelBuildDesignations[0].Build();
                     }
                     yield return Status.Success;
-
                 }
             }
         }
-    
     }
+
 }

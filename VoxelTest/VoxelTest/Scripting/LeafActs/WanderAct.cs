@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
     public class WanderAct : CreatureAct
     {
         public Timer WanderTime { get; set; }
@@ -29,22 +30,21 @@ namespace DwarfCorp
         }
 
 
-
         public override IEnumerable<Status> Run()
         {
             Vector3 oldPosition = Agent.Position;
-            while (!WanderTime.HasTriggered)
+            while(!WanderTime.HasTriggered)
             {
                 WanderTime.Update(Act.LastTime);
-                if (TurnTime.Update(Act.LastTime) || TurnTime.HasTriggered)
+                if(TurnTime.Update(Act.LastTime) || TurnTime.HasTriggered)
                 {
-                    Creature.LocalTarget = new Vector3((float)PlayState.random.NextDouble() * Radius - Radius / 2.0f, 0.0f, (float)PlayState.random.NextDouble() * Radius - Radius / 2.0f) + oldPosition;
+                    Creature.LocalTarget = new Vector3((float) PlayState.Random.NextDouble() * Radius - Radius / 2.0f, 0.0f, (float) PlayState.Random.NextDouble() * Radius - Radius / 2.0f) + oldPosition;
                 }
 
-                Vector3 output = Creature.Controller.GetOutput((float)Act.LastTime.ElapsedGameTime.TotalSeconds, Creature.LocalTarget, Creature.Physics.GlobalTransform.Translation);
+                Vector3 output = Creature.Controller.GetOutput((float) Act.LastTime.ElapsedGameTime.TotalSeconds, Creature.LocalTarget, Creature.Physics.GlobalTransform.Translation);
                 output.Y = 0.0f;
 
-                Creature.Physics.ApplyForce(output, (float)Act.LastTime.ElapsedGameTime.TotalSeconds);
+                Creature.Physics.ApplyForce(output, (float) Act.LastTime.ElapsedGameTime.TotalSeconds);
 
                 yield return Status.Running;
             }
@@ -52,4 +52,5 @@ namespace DwarfCorp
             yield return Status.Success;
         }
     }
+
 }

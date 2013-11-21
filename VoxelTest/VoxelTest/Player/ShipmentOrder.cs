@@ -6,6 +6,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class ShipmentOrder
     {
         public List<ResourceAmount> BuyOrder { get; set; }
@@ -24,6 +25,6 @@ namespace DwarfCorp
             Destination = destination;
             HasSentResources = false;
         }
-
     }
+
 }

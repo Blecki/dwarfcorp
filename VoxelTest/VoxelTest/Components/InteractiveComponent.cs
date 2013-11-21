@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class InteractiveComponent : GameComponent
     {
         public List<GameComponent> InteractingComponents { get; set; }
@@ -26,7 +27,7 @@ namespace DwarfCorp
                 return true;
             }
 
-            if (InteractingComponents.Count < MaxInteractions)
+            if(InteractingComponents.Count < MaxInteractions)
             {
                 InteractingComponents.Add(interactor);
                 return true;
@@ -35,4 +36,5 @@ namespace DwarfCorp
             return false;
         }
     }
+
 }

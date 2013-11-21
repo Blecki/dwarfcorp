@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
     public class SetTargetEntityAct : CreatureAct
     {
         public LocatableComponent Entity { get; set; }
@@ -19,7 +20,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (Entity == null || Entity.IsDead)
+            if(Entity == null || Entity.IsDead)
             {
                 yield return Act.Status.Fail;
             }
@@ -30,4 +31,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

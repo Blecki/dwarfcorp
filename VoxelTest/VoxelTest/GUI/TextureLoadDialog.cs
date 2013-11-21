@@ -7,13 +7,16 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class TextureLoadDialog : SillyGUIComponent
     {
         public TextureLoader TextureLoader { get; set; }
         public Texture2D DefaultTexture { get; set; }
         public List<TextureLoader.TextureFile> Textures { get; set; }
         public Label DirLabel { get; set; }
+
         public delegate void TextureSelected(TextureLoader.TextureFile arg);
+
         public event TextureSelected OnTextureSelected;
         public GridLayout Layout { get; set; }
 
@@ -32,12 +35,12 @@ namespace DwarfCorp
             TextureLoader.TextureFile defaultFile = new TextureLoader.TextureFile(DefaultTexture, "Default");
             Textures.Insert(0, defaultFile);
 
-            OnTextureSelected += new TextureSelected(TextureLoadDialog_OnTextureSelected);
+            OnTextureSelected += TextureLoadDialog_OnTextureSelected;
 
-            int rc = Math.Max((int)(Math.Sqrt(Textures.Count)), 2);
+            int rc = Math.Max((int) (Math.Sqrt(Textures.Count)), 2);
 
 
-            if (Layout == null)
+            if(Layout == null)
             {
                 Layout = new GridLayout(GUI, this, rc + 1, rc);
             }
@@ -47,7 +50,7 @@ namespace DwarfCorp
                 Layout = new GridLayout(GUI, this, rc + 1, rc);
             }
 
-            if (DirLabel == null)
+            if(DirLabel == null)
             {
                 Label dirLabel = new Label(GUI, Layout, "Images from: " + TextureLoader.Folder, GUI.DefaultFont);
                 DirLabel = dirLabel;
@@ -59,7 +62,7 @@ namespace DwarfCorp
             }
             Layout.SetComponentPosition(DirLabel, 0, 0, 1, 1);
 
-            for (int i = 0; i < Textures.Count; i++)
+            for(int i = 0; i < Textures.Count; i++)
             {
                 ImagePanel img = new ImagePanel(GUI, Layout, Textures[i].Texture);
                 img.Highlight = true;
@@ -67,20 +70,21 @@ namespace DwarfCorp
                 int row = i / rc;
                 int col = i % rc;
                 TextureLoader.TextureFile texFile = Textures[i];
-                img.OnClicked += new ClickedDelegate(delegate { img_OnClicked(texFile); });
+                img.OnClicked += delegate { img_OnClicked(texFile); };
 
                 Layout.SetComponentPosition(img, col, row + 1, 1, 1);
             }
         }
 
-        void img_OnClicked(TextureLoader.TextureFile image)
+        private void img_OnClicked(TextureLoader.TextureFile image)
         {
             OnTextureSelected.Invoke(image);
         }
 
-        void TextureLoadDialog_OnTextureSelected(TextureLoader.TextureFile arg)
+        private void TextureLoadDialog_OnTextureSelected(TextureLoader.TextureFile arg)
         {
             //throw new NotImplementedException();
         }
     }
+
 }

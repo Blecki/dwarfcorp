@@ -10,7 +10,30 @@ namespace DwarfCorp
     {
         public static Dictionary<string, TextAtom> TextAtoms { get; set; }
         private static bool staticsInitialized = false;
-        public static string[] Literals = { " ", ".", "!", "&", "(", ")", ",", "+", "-", "%", "#", "_", "@", "$", "^", "*", "\n", "\t", "\"", "\'"};
+
+        public static string[] Literals =
+        {
+            " ",
+            ".",
+            "!",
+            "&",
+            "(",
+            ")",
+            ",",
+            "+",
+            "-",
+            "%",
+            "#",
+            "_",
+            "@",
+            "$",
+            "^",
+            "*",
+            "\n",
+            "\t",
+            "\"",
+            "\'"
+        };
 
         public void CreateDefaults()
         {
@@ -44,13 +67,13 @@ namespace DwarfCorp
         public string GenerateRandom(params string[] atoms)
         {
             string toReturn = "";
-            foreach (string s in atoms)
+            foreach(string s in atoms)
             {
                 if(Literals.Contains(s))
                 {
                     toReturn += s;
                 }
-                else if (TextAtoms.ContainsKey(s))
+                else if(TextAtoms.ContainsKey(s))
                 {
                     toReturn += TextAtoms[s].GetRandom();
                 }
@@ -77,4 +100,5 @@ namespace DwarfCorp
             TextAtoms[atom.Name] = atom;
         }
     }
+
 }

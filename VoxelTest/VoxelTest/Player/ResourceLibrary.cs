@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace DwarfCorp
 {
+
     public class ResourceLibrary
     {
         public static Dictionary<string, Resource> Resources = new Dictionary<string, Resource>();
@@ -39,4 +40,5 @@ namespace DwarfCorp
             Resources["Container"] = new Resource("Container", 5.0f, "Not sure why this is a resource...", new ImageFrame(TileSheet, GetRect(0, 2)), "All", "Containers");
         }
     }
+
 }

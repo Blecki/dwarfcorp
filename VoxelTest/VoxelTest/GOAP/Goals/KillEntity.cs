@@ -5,10 +5,12 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    class KillEntity : Goal
+
+    internal class KillEntity : Goal
     {
-        LocatableComponent entityToKill = null;
+        private LocatableComponent entityToKill = null;
         public Item Item { get; set; }
+
         public KillEntity(GOAP agent, LocatableComponent entity)
         {
             Name = "Kill Entity: " + entity.Name + " " + entity.GlobalID;
@@ -21,7 +23,7 @@ namespace DwarfCorp
         {
             Item = new Item(entityToKill.Name + " " + entityToKill.GlobalID, null, entityToKill);
 
-            if (agent != null)
+            if(agent != null)
             {
                 agent.Items.Add(Item);
             }
@@ -37,20 +39,20 @@ namespace DwarfCorp
 
         public override void ContextReweight(CreatureAIComponent creature)
         {
-            if (entityToKill == null)
+            if(entityToKill == null)
             {
                 Priority = 0.0f;
             }
             else
             {
-                Priority = 0.1f / ((creature.Physics.GlobalTransform.Translation - entityToKill.GlobalTransform.Translation).LengthSquared() + 0.01f) + (float)PlayState.random.NextDouble() * 0.1f;
+                Priority = 0.1f / ((creature.Physics.GlobalTransform.Translation - entityToKill.GlobalTransform.Translation).LengthSquared() + 0.01f) + (float) PlayState.Random.NextDouble() * 0.1f;
                 Cost = ((creature.Physics.GlobalTransform.Translation - entityToKill.GlobalTransform.Translation).LengthSquared());
             }
         }
 
         public override bool ContextValidate(CreatureAIComponent creature)
         {
-            if (entityToKill == null || entityToKill.IsDead)
+            if(entityToKill == null || entityToKill.IsDead)
             {
                 return false;
             }

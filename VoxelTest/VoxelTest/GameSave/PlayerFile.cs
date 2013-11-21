@@ -9,11 +9,12 @@ using System.IO.Compression;
 
 namespace DwarfCorp
 {
+
     public class PlayerFile : SaveData
     {
-
         public new static string Extension = "player";
         public new static string CompressedExtension = "zplayer";
+
         public class PlayerData
         {
             public List<ZoneData> Rooms { get; set; }
@@ -23,6 +24,9 @@ namespace DwarfCorp
             public List<VoxelPtr> GuardDesignations { get; set; }
             public List<EntityPtr> ChopDesignations { get; set; }
 
+            public List<EntityPtr> GatherDesignations { get; set; } 
+            
+
             public PlayerData()
             {
                 Rooms = new List<ZoneData>();
@@ -31,31 +35,29 @@ namespace DwarfCorp
                 DigDesignations = new List<VoxelPtr>();
                 GuardDesignations = new List<VoxelPtr>();
                 ChopDesignations = new List<EntityPtr>();
+                GatherDesignations = new List<EntityPtr>();
             }
 
             public PlayerData(GameMaster player)
             {
                 Rooms = new List<ZoneData>();
 
-                foreach (Room r in player.RoomDesignator.DesignatedRooms)
+                foreach(ZoneData zoneData in player.RoomDesignator.DesignatedRooms.Select(r => new ZoneData(r)))
                 {
-                    ZoneData zoneData = new ZoneData(r);
                     Rooms.Add(zoneData);
                 }
 
                 Stockpiles = new List<ZoneData>();
 
-                foreach (Stockpile s in player.Stockpiles)
+                foreach(ZoneData zoneData in player.Stockpiles.Select(s => new ZoneData(s)))
                 {
-                    ZoneData zoneData = new ZoneData(s);
                     Stockpiles.Add(zoneData);
                 }
 
                 Minions = new List<EntityPtr>();
 
-                foreach (CreatureAIComponent minion in player.Minions)
+                foreach(EntityPtr ent in player.Minions.Select(minion => new EntityPtr(minion.Parent.GlobalID)))
                 {
-                    EntityPtr ent = new EntityPtr(minion.Parent.GlobalID);
                     Minions.Add(ent);
                 }
 
@@ -63,21 +65,27 @@ namespace DwarfCorp
 
                 foreach(GameMaster.Designation designation in player.DigDesignations)
                 {
-                    DigDesignations.Add(new VoxelPtr(designation.vox.GetReference()));
+                    DigDesignations.Add(new VoxelPtr(designation.vox));
                 }
 
                 GuardDesignations = new List<VoxelPtr>();
 
-                foreach (GameMaster.Designation designation in player.GuardDesignations)
+                foreach(GameMaster.Designation designation in player.GuardDesignations)
                 {
-                    GuardDesignations.Add(new VoxelPtr(designation.vox.GetReference()));
+                    GuardDesignations.Add(new VoxelPtr(designation.vox));
                 }
 
                 ChopDesignations = new List<EntityPtr>();
 
-                foreach (LocatableComponent designation in player.ChopDesignations)
+                foreach(LocatableComponent designation in player.ChopDesignations)
                 {
                     ChopDesignations.Add(new EntityPtr(designation.GlobalID));
+                }
+
+                GatherDesignations = new List<EntityPtr>();
+                foreach (LocatableComponent designation in player.GatherDesignations)
+                {
+                    GatherDesignations.Add(new EntityPtr(designation.GlobalID));
                 }
 
             }
@@ -87,8 +95,15 @@ namespace DwarfCorp
         public PlayerData Data { get; set; }
 
 
-        public virtual string GetExtension() { return "player"; }
-        public virtual string GetCompressedExtension() { return "zplayer"; }
+        public virtual string GetExtension()
+        {
+            return "player";
+        }
+
+        public virtual string GetCompressedExtension()
+        {
+            return "zplayer";
+        }
 
         public PlayerFile()
         {
@@ -115,7 +130,7 @@ namespace DwarfCorp
         {
             PlayerFile file = FileUtils.LoadJson<PlayerFile>(filePath, isCompressed);
 
-            if (file == null)
+            if(file == null)
             {
                 return false;
             }
@@ -130,7 +145,6 @@ namespace DwarfCorp
         {
             return FileUtils.SaveJSon<PlayerFile>(this, filePath, compress);
         }
-
-
     }
+
 }

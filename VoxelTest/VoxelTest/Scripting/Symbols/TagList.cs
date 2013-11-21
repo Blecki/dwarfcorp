@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class TagList : IEquatable<TagList>
     {
         public List<string> Tags { get; set; }
@@ -25,9 +26,9 @@ namespace DwarfCorp
         {
             int maxCode = 0;
 
-            foreach (string s in Tags)
+            foreach(string s in Tags)
             {
-                if (Math.Abs(s.GetHashCode()) > Math.Abs(maxCode))
+                if(Math.Abs(s.GetHashCode()) > Math.Abs(maxCode))
                 {
                     maxCode = s.GetHashCode();
                 }
@@ -40,7 +41,7 @@ namespace DwarfCorp
         {
             string toReturn = "{";
 
-            foreach (string t in Tags)
+            foreach(string t in Tags)
             {
                 toReturn += t;
                 toReturn += " ";
@@ -53,49 +54,35 @@ namespace DwarfCorp
 
         public bool Contains(IEnumerable<string> tags)
         {
-            foreach (string s in tags)
-            {
-                if (Tags.Contains(s))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return tags.Any(s => Tags.Contains(s));
         }
 
 
-        public  bool Equals(TagList obj)
+        public bool Equals(TagList obj)
         {
-            return Equals((object)obj);
+            return Equals((object) obj);
         }
 
         // Equal if they share ANY tag in common.
         public override bool Equals(object obj)
         {
-            if(obj is TagList)
+            var list = obj as TagList;
+            if(list != null)
             {
-                TagList other = (TagList)obj;
+                TagList other = list;
 
-                foreach (string s in Tags)
+                if(Tags.Any(s => other.Tags.Contains(s)))
                 {
-                    if (other.Tags.Contains(s))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
 
-                foreach (string s in other.Tags)
-                {
-                    if (Tags.Contains(s))
-                    {
-                        return true;
-                    }
-                }
-
+                return other.Tags.Any(s => Tags.Contains(s));
+            }
+            else
+            {
                 return false;
             }
-            else return false;
         }
     }
+
 }

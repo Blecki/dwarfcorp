@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 
 namespace DwarfCorp
 {
+
     public class VoxelType
     {
         public short ID { get; set; }
@@ -26,7 +28,7 @@ namespace DwarfCorp
         private static short maxID = 0;
         public static List<VoxelType> TypeList = new List<VoxelType>();
 
-        public  VoxelType()
+        public VoxelType()
         {
             ID = maxID;
             maxID++;
@@ -56,7 +58,6 @@ namespace DwarfCorp
         BackTopRight,
         BackBottomLeft,
         BackBottomRight,
-
     }
 
     // Intended to be a smaller memory footprint representation
@@ -71,22 +72,22 @@ namespace DwarfCorp
 
         public override int GetHashCode()
         {
-            return (int)WorldPosition.X ^ (int)WorldPosition.Y ^ (int)WorldPosition.Z;
+            return (int) WorldPosition.X ^ (int) WorldPosition.Y ^ (int) WorldPosition.Z;
         }
 
-        public  bool Equals(VoxelRef other)
+        public bool Equals(VoxelRef other)
         {
-            return other.ChunkID.Equals(ChunkID) 
-                && (int)(GridPosition.X) == (int)(other.GridPosition.X) 
-                && (int)(GridPosition.Y) == (int)(other.GridPosition.Y)
-                && (int)(GridPosition.Z) == (int)(other.GridPosition.Z);
+            return other.ChunkID.Equals(ChunkID)
+                   && (int) (GridPosition.X) == (int) (other.GridPosition.X)
+                   && (int) (GridPosition.Y) == (int) (other.GridPosition.Y)
+                   && (int) (GridPosition.Z) == (int) (other.GridPosition.Z);
         }
 
         public override bool Equals(object obj)
         {
-            if (obj is VoxelRef)
+            if(obj is VoxelRef)
             {
-                return Equals((VoxelRef)obj);
+                return Equals((VoxelRef) obj);
             }
             else
             {
@@ -112,20 +113,20 @@ namespace DwarfCorp
 
         public Voxel GetVoxel(ChunkManager manager, bool reconstruct)
         {
-            if (!manager.ChunkMap.ContainsKey(ChunkID))
+            if(!manager.ChunkMap.ContainsKey(ChunkID))
             {
                 return null;
             }
-            else if (manager.ChunkMap[ChunkID].IsCellValid((int)GridPosition.X, (int)GridPosition.Y, (int)GridPosition.Z))
+            else if(manager.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
             {
-                Voxel vox = manager.ChunkMap[ChunkID].VoxelGrid[(int)GridPosition.X][ (int)GridPosition.Y][ (int)GridPosition.Z];
-                if (!reconstruct)
+                Voxel vox = manager.ChunkMap[ChunkID].VoxelGrid[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z];
+                if(!reconstruct)
                 {
                     return vox;
                 }
                 else
                 {
-                    if (vox != null)
+                    if(vox != null)
                     {
                         return vox;
                     }
@@ -143,13 +144,13 @@ namespace DwarfCorp
 
         public WaterCell GetWater(ChunkManager manager)
         {
-            if (!manager.ChunkMap.ContainsKey(ChunkID))
+            if(!manager.ChunkMap.ContainsKey(ChunkID))
             {
                 return null;
             }
-            else if (manager.ChunkMap[ChunkID].IsCellValid((int)GridPosition.X, (int)GridPosition.Y, (int)GridPosition.Z))
+            else if(manager.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
             {
-                return manager.ChunkMap[ChunkID].Water[(int)GridPosition.X][ (int)GridPosition.Y][ (int)GridPosition.Z];
+                return manager.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z];
             }
             else
             {
@@ -159,13 +160,13 @@ namespace DwarfCorp
 
         public byte GetWaterLevel(ChunkManager manager)
         {
-            if (!manager.ChunkMap.ContainsKey(ChunkID))
+            if(!manager.ChunkMap.ContainsKey(ChunkID))
             {
-                return 0 ;
+                return 0;
             }
-            else if (manager.ChunkMap[ChunkID].IsCellValid((int)GridPosition.X, (int)GridPosition.Y, (int)GridPosition.Z))
+            else if(manager.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
             {
-                return manager.ChunkMap[ChunkID].Water[(int)GridPosition.X][ (int)GridPosition.Y][ (int)GridPosition.Z].WaterLevel;
+                return manager.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z].WaterLevel;
             }
             else
             {
@@ -175,13 +176,13 @@ namespace DwarfCorp
 
         public void SetWaterLevel(ChunkManager manager, byte level)
         {
-            if (!manager.ChunkMap.ContainsKey(ChunkID))
+            if(!manager.ChunkMap.ContainsKey(ChunkID))
             {
                 return;
             }
-            else if (manager.ChunkMap[ChunkID].IsCellValid((int)GridPosition.X, (int)GridPosition.Y, (int)GridPosition.Z))
+            else if(manager.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
             {
-               manager.ChunkMap[ChunkID].Water[(int)GridPosition.X][ (int)GridPosition.Y][ (int)GridPosition.Z].WaterLevel = level;
+                manager.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z].WaterLevel = level;
             }
             else
             {
@@ -191,14 +192,14 @@ namespace DwarfCorp
 
         public void AddWaterLevel(ChunkManager manager, byte level)
         {
-            if (!manager.ChunkMap.ContainsKey(ChunkID))
+            if(!manager.ChunkMap.ContainsKey(ChunkID))
             {
                 return;
             }
-            else if (manager.ChunkMap[ChunkID].IsCellValid((int)GridPosition.X, (int)GridPosition.Y, (int)GridPosition.Z))
+            else if(manager.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
             {
-                int amount = manager.ChunkMap[ChunkID].Water[(int)GridPosition.X][ (int)GridPosition.Y][ (int)GridPosition.Z].WaterLevel + level;
-                manager.ChunkMap[ChunkID].Water[(int)GridPosition.X][ (int)GridPosition.Y][ (int)GridPosition.Z].WaterLevel = (byte)(Math.Min(amount, 255)); 
+                int amount = manager.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z].WaterLevel + level;
+                manager.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z].WaterLevel = (byte) (Math.Min(amount, 255));
             }
             else
             {
@@ -223,15 +224,21 @@ namespace DwarfCorp
     }
 
 
-
-    public class Voxel : BoundedObject
+    public class Voxel : IBoundedObject
     {
-        public VoxelChunk Chunk { get { return m_chunk; } set { 
-            
-            GridPosition = Position - value.Origin;
-            IsInterior = IsInteriorPoint(new Point3(GridPosition), value);
+        [JsonIgnore]
+        public VoxelChunk Chunk
+        {
+            get { return m_chunk; }
+            set
+            {
+                GridPosition = Position - value.Origin;
+                IsInterior = IsInteriorPoint(new Point3(GridPosition), value);
 
-            m_chunk = value; } }
+                m_chunk = value;
+            }
+        }
+
         public Vector3 Position { get; set; }
         public VoxelType Type { get; set; }
         public BoxPrimitive Primitive { get; set; }
@@ -251,7 +258,10 @@ namespace DwarfCorp
         public RampType RampType = RampType.None;
         public bool IsInterior = false;
 
-        public uint GetID() { return (uint)GetHashCode(); }
+        public uint GetID()
+        {
+            return (uint) GetHashCode();
+        }
 
         public static bool IsInteriorPoint(Point3 GridPosition, VoxelChunk chunk)
         {
@@ -271,7 +281,7 @@ namespace DwarfCorp
 
         public void UpdateStatics()
         {
-            if (!m_staticsCreated)
+            if(!m_staticsCreated)
             {
                 VoxelVertexList = new List<VoxelVertex>();
                 VoxelVertexList.Add(VoxelVertex.BackBottomLeft);
@@ -293,38 +303,39 @@ namespace DwarfCorp
             {
                 m_health = value;
 
-                if (m_health <= 0.0f)
+                if(m_health <= 0.0f)
                 {
                     Kill();
                 }
             }
         }
+
         private float m_health = 10.0f;
 
         public void Kill()
         {
-            if (m_dead || Chunk == null)
+            if(m_dead || Chunk == null)
             {
                 return;
             }
 
-            if (PlayState.ParticleManager != null)
+            if(PlayState.ParticleManager != null)
             {
                 PlayState.ParticleManager.Trigger(Type.particleType, Position + new Vector3(0.5f, 0.5f, 0.5f), new Color(255, 255, 0), 20);
                 PlayState.ParticleManager.Trigger("puff", Position + new Vector3(0.5f, 0.5f, 0.5f), new Color(255, 255, 0), 20);
             }
 
-            if (PlayState.master != null)
+            if(PlayState.Master != null)
             {
-                PlayState.master.OnVoxelDestroyed(this);
+                PlayState.Master.OnVoxelDestroyed(this);
             }
 
             SoundManager.PlaySound(Type.explosionSound, Position);
-            if (Type.releasesResource)
+            if(Type.releasesResource)
             {
-                float randFloat = (float)PlayState.random.NextDouble();
+                float randFloat = (float) PlayState.Random.NextDouble();
 
-                if (randFloat < Type.probabilityOfRelease)
+                if(randFloat < Type.probabilityOfRelease)
                 {
                     EntityFactory.GenerateComponent(Type.resourceToRelease, Position + new Vector3(0.5f, 0.5f, 0.5f), Chunk.Manager.Components, Chunk.Manager.Content, Chunk.Manager.Graphics, Chunk.Manager, null, null);
                 }
@@ -335,24 +346,23 @@ namespace DwarfCorp
             Chunk.ReconstructRamps = true;
             Chunk.NotifyChangedComponents();
 
-            if (!IsInterior)
+            if(!IsInterior)
             {
-                List<VoxelRef> neighbors = Chunk.GetNeighborsEuclidean((int)this.GridPosition.X, (int)this.GridPosition.Y, (int)this.GridPosition.Z);
-                foreach (VoxelRef v in neighbors)
+                List<VoxelRef> neighbors = Chunk.GetNeighborsEuclidean((int) this.GridPosition.X, (int) this.GridPosition.Y, (int) this.GridPosition.Z);
+                foreach(VoxelRef v in neighbors)
                 {
                     Voxel vox = v.GetVoxel(Chunk.Manager, true);
-                    if (vox != null)
+                    if(vox != null)
                     {
                         vox.RecalculateLighting = true;
                         vox.Chunk.ShouldRebuild = true;
                         vox.Chunk.ShouldRecalculateLighting = true;
                         vox.Chunk.ReconstructRamps = true;
                     }
-
                 }
             }
 
-            Chunk.VoxelGrid[(int)GridPosition.X][ (int)GridPosition.Y][ (int)GridPosition.Z] = null;
+            Chunk.VoxelGrid[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z] = null;
 
             m_dead = true;
         }
@@ -365,7 +375,7 @@ namespace DwarfCorp
         public BoundingBox GetBoundingBox()
         {
             BoundingBox pBox = new BoundingBox(Vector3.Zero, Vector3.Zero);
-            if (Primitive != null)
+            if(Primitive != null)
             {
                 pBox = Primitive.boundingBox;
             }
@@ -374,11 +384,11 @@ namespace DwarfCorp
                 pBox = new BoundingBox(Vector3.Zero, new Vector3(1, 1, 1));
             }
             return new BoundingBox(pBox.Min + Position, pBox.Max + Position);
-           
         }
 
 
-        Color blankColor = new Color(0, 255, 0);
+        private Color blankColor = new Color(0, 255, 0);
+
         public Voxel(Vector3 position, VoxelType voxelType, BoxPrimitive primitive, bool isVisible)
         {
             UpdateStatics();
@@ -399,11 +409,11 @@ namespace DwarfCorp
 
             VertexColors = new Color[8];
 
-            for (int i = 0; i < 8; i++)
+            for(int i = 0; i < 8; i++)
             {
                 VertexColors[i] = blankColor;
             }
-           
+
 
             /*
             for(int i = 0; i < 8; i++)
@@ -421,8 +431,6 @@ namespace DwarfCorp
                 DynamicColors[i] = 0;
             }
              */
-
-  
         }
 
 
@@ -442,7 +450,7 @@ namespace DwarfCorp
 
         public void Render(GraphicsDevice device, Effect effect, Matrix worldMatrix)
         {
-            if (!IsVisible)
+            if(!IsVisible)
             {
                 return;
             }
@@ -450,14 +458,14 @@ namespace DwarfCorp
             worldMatrix.Translation += Position;
             effect.Parameters["xWorld"].SetValue(worldMatrix);
 
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            foreach(EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
             }
 
             RasterizerState origState = device.RasterizerState;
 
-            if (!DrawWireFrame)
+            if(!DrawWireFrame)
             {
                 Primitive.Render(device);
             }
@@ -470,6 +478,6 @@ namespace DwarfCorp
             worldMatrix.Translation -= Position;
             effect.Parameters["xWorld"].SetValue(worldMatrix);
         }
-
     }
+
 }

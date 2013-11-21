@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class StopAct : CreatureAct
     {
         public float StopForce { get; set; }
@@ -20,9 +21,9 @@ namespace DwarfCorp
         {
             bool hasStopped = false;
 
-            while (!hasStopped)
+            while(!hasStopped)
             {
-                if (Agent.Velocity.LengthSquared() < 0.5f)
+                if(Agent.Velocity.LengthSquared() < 0.5f)
                 {
                     yield return Status.Success;
                     hasStopped = true;
@@ -34,7 +35,7 @@ namespace DwarfCorp
                     yield return Status.Running;
                 }
             }
-
         }
     }
+
 }

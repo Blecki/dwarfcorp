@@ -21,13 +21,13 @@
       <Value Profile="(Default)">90</Value>
     </Setting>
     <Setting Name="ChunkGenerateTime" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">5</Value>
+      <Value Profile="(Default)">0.5</Value>
     </Setting>
     <Setting Name="ChunkRebuildTime" Type="System.Single" Scope="User">
       <Value Profile="(Default)">0.1</Value>
     </Setting>
     <Setting Name="VisibilityUpdateTime" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">1</Value>
+      <Value Profile="(Default)">0.25</Value>
     </Setting>
     <Setting Name="EnableGlow" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -126,7 +126,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="EnableAIDebugger" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

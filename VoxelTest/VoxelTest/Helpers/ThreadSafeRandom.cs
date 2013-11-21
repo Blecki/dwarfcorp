@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     // C# does not have a thread safe Random generator. This one
     // tries to transparently wrap Random in such a way that the
     // same object produces valid random numbers no matter which
@@ -25,13 +26,13 @@ namespace DwarfCorp
         // Additionally, we need to generate *random* seeds.
         public void CheckThreadGenerator()
         {
-            if (generator == null)
+            if(generator == null)
             {
                 int seed;
 
-                if (!hasSeed)
+                if(!hasSeed)
                 {
-                    lock (seedGenerator)
+                    lock(seedGenerator)
                     {
                         seed = seedGenerator.Next();
                     }
@@ -55,7 +56,7 @@ namespace DwarfCorp
         {
             hasSeed = true;
             lastSeed = seed;
-            if (generator == null)
+            if(generator == null)
             {
                 generator = new Random(seed);
             }
@@ -86,6 +87,6 @@ namespace DwarfCorp
         }
 
         // TODO: Wrap more functions.
-      
     }
+
 }

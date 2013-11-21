@@ -5,9 +5,11 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    class MoveToZone : Goal
+
+    internal class MoveToZone : Goal
     {
-        Zone m_zone = null;
+        private Zone m_zone = null;
+
         public MoveToZone(GOAP agent, Zone zone)
         {
             Name = "Go to Zone: " + zone.ID;
@@ -18,7 +20,6 @@ namespace DwarfCorp
 
         public override void Reset(GOAP agent)
         {
-
             State[GOAPStrings.TargetType] = GOAP.TargetType.Zone;
             State[GOAPStrings.TargetZone] = m_zone;
             State[GOAPStrings.AtTarget] = true;
@@ -28,10 +29,9 @@ namespace DwarfCorp
         }
 
 
-
         public override void ContextReweight(CreatureAIComponent creature)
         {
-            if (m_zone == null)
+            if(m_zone == null)
             {
                 Priority = 0.0f;
                 Cost = 999f;
@@ -45,7 +45,7 @@ namespace DwarfCorp
 
         public override bool ContextValidate(CreatureAIComponent creature)
         {
-            if (m_zone == null)
+            if(m_zone == null)
             {
                 return false;
             }
@@ -55,4 +55,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

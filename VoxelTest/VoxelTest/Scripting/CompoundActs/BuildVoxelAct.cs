@@ -5,7 +5,8 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    class BuildVoxelAct : CompoundCreatureAct
+
+    internal class BuildVoxelAct : CompoundCreatureAct
     {
         public VoxelRef Voxel { get; set; }
         public TagList Tags { get; set; }
@@ -17,12 +18,11 @@ namespace DwarfCorp
             Tags = tags;
             Name = "Build voxel";
 
-            if (Agent.Master.PutDesignator.IsDesignation(voxel))
+            if(Agent.Master.PutDesignator.IsDesignation(voxel))
             {
-
                 Tree = new Sequence(new GetItemWithTagsAct(creature, tags),
-                        (new GoToVoxelAct(voxel, creature) | new GatherItemAct(creature, "HeldObject")),
-                        (new PlaceVoxelAct(voxel, creature) | new GatherItemAct(creature, "HeldObject")));
+                    (new GoToVoxelAct(voxel, creature) | new GatherItemAct(creature, "HeldObject")),
+                    (new PlaceVoxelAct(voxel, creature) | new GatherItemAct(creature, "HeldObject")));
             }
             else
             {
@@ -30,4 +30,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

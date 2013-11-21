@@ -13,11 +13,12 @@ using Microsoft.Xna.Framework.Media;
 
 namespace DwarfCorp
 {
+
     public class WorldLoaderState : GameState
     {
         public class WorldLoadDescriptor
         {
-            public string FileName { get; set;}
+            public string FileName { get; set; }
             public OverworldFile File { get; set; }
             public Button Button { get; set; }
             public bool IsLoaded { get; set; }
@@ -38,6 +39,10 @@ namespace DwarfCorp
         public bool ExitThreads { get; set; }
         public List<Thread> Threads { get; set; }
 
+        public GroupBox PropertiesPanel { get; set; }
+
+        public WorldLoadDescriptor SelectedDescriptor { get; set; }
+
         public WorldLoaderState(DwarfGame game, GameStateManager stateManager) :
             base(game, "WorldLoaderState", stateManager)
         {
@@ -50,7 +55,7 @@ namespace DwarfCorp
         public void JoinThreads()
         {
             ExitThreads = true;
-            foreach (Thread t in Threads)
+            foreach(Thread t in Threads)
             {
                 t.Join();
             }
@@ -60,15 +65,15 @@ namespace DwarfCorp
 
         public void WorldLoaderThread(int min, int max)
         {
-            for (int i = min; i < max; i++)
+            for(int i = min; i < max; i++)
             {
-                if (ExitThreads)
+                if(ExitThreads)
                 {
                     break;
                 }
-                
+
                 Worlds[i].Lock.WaitOne();
-                if (!Worlds[i].IsLoaded)
+                if(!Worlds[i].IsLoaded)
                 {
                     Worlds[i].Lock.ReleaseMutex();
 
@@ -96,73 +101,35 @@ namespace DwarfCorp
             try
             {
                 System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + System.IO.Path.DirectorySeparatorChar + OverworldDirectory);
-                foreach (System.IO.FileInfo file in worldDirectory.EnumerateFiles("*." + OverworldFile.CompressedExtension))
+                foreach(System.IO.FileInfo file in worldDirectory.EnumerateFiles("*." + OverworldFile.CompressedExtension))
                 {
-                    WorldLoadDescriptor descriptor = new WorldLoadDescriptor();
-                    descriptor.FileName = file.FullName;
+                    WorldLoadDescriptor descriptor = new WorldLoadDescriptor
+                    {
+                        FileName = file.FullName
+                    };
                     Worlds.Add(descriptor);
                 }
             }
-            catch (System.IO.IOException exception)
+            catch(System.IO.IOException exception)
             {
                 Console.Error.WriteLine(exception.Message);
             }
         }
 
-        public void CreateWorldPictures(SillyGUIComponent parent)
+        public void CreateWorldPictures(SillyGUIComponent parent, int cols)
         {
-            foreach (WorldLoadDescriptor overworld in Worlds)
+            scrollGrid.ClearChildren();
+
+            foreach(WorldLoadDescriptor overworld in Worlds)
             {
-                Button image = new Button(GUI, parent, "Loading...", GUI.DefaultFont, Button.ButtonMode.ImageButton, null);
-                image.TextColor = Color.Black;
-                image.ToggleTint = new Color(255, 255, 150);
-               
+                Button image = new Button(GUI, parent, "Loading...", GUI.DefaultFont, Button.ButtonMode.ImageButton, null)
+                {
+                    TextColor = Color.Black,
+                    ToggleTint = new Color(255, 255, 150)
+                };
+
                 overworld.Button = image;
             }
-        }
-
-        public void CreateLoadThreads(int num)
-        {
-            int numPerThread = (int)Math.Ceiling(Math.Max(((float)Worlds.Count / (float)num), 1.0f));
-            for (int i = 0; i < num; i++)
-            {
-                int min = Math.Min((numPerThread) * i, Worlds.Count);
-                int max = Math.Min(min + numPerThread, Worlds.Count);
-
-                if (max - min > 0)
-                {
-                    Thread loadThread = new Thread(() => { this.WorldLoaderThread(min, max); });
-                    loadThread.Start();
-                    Threads.Add(loadThread);
-                }
-            }
-        }
-
-        public void CreateGUI()
-        {
-            int EdgePadding = 32;
-            Panel MainWindow = new Panel(GUI, GUI.RootComponent);
-            MainWindow.LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2);
-            GridLayout layout = new GridLayout(GUI, MainWindow, 10, 4);
-            
-            Label title = new Label(GUI, layout, "Load World", GUI.TitleFont);
-            layout.SetComponentPosition(title, 0, 0, 1, 1);
-
-            ScrollView scroller = new ScrollView(GUI, layout);
-            layout.SetComponentPosition(scroller, 0, 1, 4, 8);
-
-            LoadWorlds();
-
-            layout.UpdateSizes();
-
-            int cols = Math.Max(scroller.LocalBounds.Width/ 256, 1);
-            int rows = Math.Max(Math.Max(scroller.LocalBounds.Height / 256, 1), (int)Math.Ceiling((float)Worlds.Count / (float)cols));
-
-            GridLayout scrollGrid = new GridLayout(GUI, scroller, rows, cols);
-            scrollGrid.LocalBounds = new Rectangle(EdgePadding, EdgePadding, scroller.LocalBounds.Width - EdgePadding, rows * 256);
-            scrollGrid.FitToParent = false;
-
-            CreateWorldPictures(scrollGrid);
 
             for (int i = 0; i < Worlds.Count; i++)
             {
@@ -171,58 +138,164 @@ namespace DwarfCorp
                 int x = i - (y * cols);
                 scrollGrid.SetComponentPosition(worldPicture, x, y, 1, 1);
                 int j = i;
-                worldPicture.OnClicked += new ClickedDelegate(() => { worldPicture_OnClicked(j); });
+                worldPicture.OnClicked += () => worldPicture_OnClicked(j);
             }
+
+            if(Worlds.Count == 0)
+            {
+                Label apology = new Label(GUI, scrollGrid, "No files found...", GUI.DefaultFont);
+                scrollGrid.SetComponentPosition(apology, 0, 0, 1, 1);
+            }
+        }
+
+        public void CreateLoadThreads(int num)
+        {
+            int numPerThread = (int) Math.Ceiling(Math.Max(((float) Worlds.Count / (float) num), 1.0f));
+            for(int i = 0; i < num; i++)
+            {
+                int min = Math.Min((numPerThread) * i, Worlds.Count);
+                int max = Math.Min(min + numPerThread, Worlds.Count);
+
+                if(max - min > 0)
+                {
+                    Thread loadThread = new Thread(() => WorldLoaderThread(min, max));
+                    loadThread.Start();
+                    Threads.Add(loadThread);
+                }
+            }
+        }
+
+        public void CreateGUI()
+        {
+            const int edgePadding = 32;
+            Panel mainWindow = new Panel(GUI, GUI.RootComponent)
+            {
+                LocalBounds = new Rectangle(edgePadding, edgePadding, Game.GraphicsDevice.Viewport.Width - edgePadding * 2, Game.GraphicsDevice.Viewport.Height - edgePadding * 2)
+            };
+            GridLayout layout = new GridLayout(GUI, mainWindow, 10, 4);
+
+            Label title = new Label(GUI, layout, "Load World", GUI.TitleFont);
+            layout.SetComponentPosition(title, 0, 0, 1, 1);
+
+            scroller = new ScrollView(GUI, layout);
+            layout.SetComponentPosition(scroller, 0, 1, 3, 8);
+
+            LoadWorlds();
+
+            layout.UpdateSizes();
+
+            int cols = Math.Max(scroller.LocalBounds.Width / 256, 1);
+            int rows = Math.Max(Math.Max(scroller.LocalBounds.Height / 256, 1), (int) Math.Ceiling((float) Worlds.Count / (float) cols));
+
+            scrollGrid = new GridLayout(GUI, scroller, rows, cols)
+            {
+                LocalBounds = new Rectangle(edgePadding, edgePadding, scroller.LocalBounds.Width - edgePadding, rows * 256),
+                FitToParent = false
+            };
+
+            CreateWorldPictures(scrollGrid, cols);
+
 
             CreateLoadThreads(4);
 
-            Button back = new Button(GUI, layout, "Back", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
+            PropertiesPanel = new GroupBox(GUI, layout, "Selected");
+            
+            layout.SetComponentPosition(PropertiesPanel, 3, 1, 1, 8);
+
+            Button back = new Button(GUI, layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.LeftArrow));
             layout.SetComponentPosition(back, 3, 9, 1, 1);
-            back.OnClicked += new ClickedDelegate(back_OnClicked);
+            back.OnClicked += back_OnClicked;
         }
 
-        void worldPicture_OnClicked(int picture)
+        public void LoadDescriptor(WorldLoadDescriptor descriptor)
         {
-            WorldLoadDescriptor descriptor = Worlds[picture];
             lock (descriptor.Lock)
             {
                 if (!descriptor.IsLoaded)
                 {
                     return;
                 }
-                else
-                {
-                    Overworld.Map = Worlds[picture].File.Data.CreateMap();
-                    Overworld.Name = Worlds[picture].File.Data.Name;
-                    PlayState.WorldWidth = Overworld.Map.GetLength(1);
-                    PlayState.WorldHeight = Overworld.Map.GetLength(0);
 
-                    WorldGeneratorState state = (WorldGeneratorState)(StateManager.States["WorldGeneratorState"]);
-                    
-                    WorldGeneratorState.worldMap = Worlds[picture].File.Data.CreateTexture(Game.GraphicsDevice, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
-                    JoinThreads();
-                    StateManager.PushState("WorldGeneratorState");
-                    state.Progress.Value = 1.0f;
-                    state.GenerationComplete = true;
-                    Worlds.Clear();
-                }
+                Overworld.Map = descriptor.File.Data.CreateMap();
+                Overworld.Name = descriptor.File.Data.Name;
+                PlayState.WorldWidth = Overworld.Map.GetLength(1);
+                PlayState.WorldHeight = Overworld.Map.GetLength(0);
+
+                WorldGeneratorState state = (WorldGeneratorState)(StateManager.States["WorldGeneratorState"]);
+
+                WorldGeneratorState.worldMap = descriptor.File.Data.CreateTexture(Game.GraphicsDevice, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
+                JoinThreads();
+                StateManager.PushState("WorldGeneratorState");
+                state.Progress.Value = 1.0f;
+                state.GenerationComplete = true;
+                Worlds.Clear();
             }
         }
 
-        void back_OnClicked()
+        private void UpdateSelection()
+        {
+            if(SelectedDescriptor == null || !SelectedDescriptor.IsLoaded)
+            {
+                return;
+            }
+
+            PropertiesPanel.ClearChildren();
+            GridLayout layout = new GridLayout(GUI, PropertiesPanel, 5, 1);
+
+            ImagePanel worldPanel = new ImagePanel(GUI, layout, SelectedDescriptor.Button.Image);
+            layout.SetComponentPosition(worldPanel, 0, 1, 1, 1);
+
+            Label worldLabel = new Label(GUI, PropertiesPanel, SelectedDescriptor.File.Data.Name, GUI.DefaultFont);
+            layout.SetComponentPosition(worldLabel, 0, 2, 1, 1);
+
+            Button loadButton = new Button(GUI, layout, "Load", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Save));
+            layout.SetComponentPosition(loadButton, 0, 3, 1, 1);
+
+            loadButton.OnClicked += loadButton_OnClicked;
+
+            Button deleteButton = new Button(GUI, layout, "Delete", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Ex));
+            layout.SetComponentPosition(deleteButton, 0, 4, 1, 1);
+
+            deleteButton.OnClicked += deleteButton_OnClicked;
+        }
+
+        void deleteButton_OnClicked()
+        {
+            DeleteDescriptor(SelectedDescriptor);
+        }
+
+        public void DeleteDescriptor(WorldLoadDescriptor selectedDescriptor)
+        {
+            Worlds.Remove(selectedDescriptor);
+            int cols = Math.Max(scroller.LocalBounds.Width / 256, 1);
+            CreateWorldPictures(scrollGrid, cols);
+            PropertiesPanel.ClearChildren();
+        }
+
+        void loadButton_OnClicked()
+        {
+            LoadDescriptor(SelectedDescriptor);
+        }
+
+        private void worldPicture_OnClicked(int picture)
+        {
+            SelectedDescriptor = Worlds[picture];
+            UpdateSelection();
+        }
+
+        private void back_OnClicked()
         {
             StateManager.PopState();
         }
 
         public override void OnEnter()
         {
- 
             DefaultFont = Game.Content.Load<SpriteFont>("Default");
             GUI = new SillyGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
             Input = new InputManager();
 
             CreateGUI();
-
+            SelectedDescriptor = null;
             IsInitialized = true;
             base.OnEnter();
         }
@@ -233,7 +306,10 @@ namespace DwarfCorp
             base.OnExit();
         }
 
-        int iter = 0;
+        private int iter = 0;
+        private GridLayout scrollGrid;
+        private ScrollView scroller;
+
         public override void Update(GameTime gameTime)
         {
             iter++;
@@ -241,58 +317,64 @@ namespace DwarfCorp
             GUI.Update(gameTime);
             Game.IsMouseVisible = true;
 
-            for (int i = 0; i < Worlds.Count; i++)
+            foreach(WorldLoadDescriptor t in Worlds)
             {
-                Worlds[i].Lock.WaitOne();
+                t.Lock.WaitOne();
 
-                if (!Worlds[i].IsLoaded)
+                if(!t.IsLoaded)
                 {
-                    Worlds[i].Button.Text = "Loading";
-                    for (int j = 0; j < (iter / 10) % 4; j++)
+                    t.Button.Text = "Loading";
+                    for(int j = 0; j < (iter / 10) % 4; j++)
                     {
-                        Worlds[i].Button.Text += ".";
+                        t.Button.Text += ".";
                     }
                 }
 
-                Worlds[i].Lock.ReleaseMutex();
+                t.Lock.ReleaseMutex();
             }
 
             base.Update(gameTime);
         }
 
 
-
         private void DrawGUI(GameTime gameTime, float dx)
         {
-            RasterizerState rasterizerState = new RasterizerState() { ScissorTestEnable = true };
+            RasterizerState rasterizerState = new RasterizerState()
+            {
+                ScissorTestEnable = true
+            };
+
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
             DwarfGame.SpriteBatch.End();
+
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle = DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
         }
 
         public override void Render(GameTime gameTime)
         {
-            if (Transitioning == TransitionMode.Running)
+            switch(Transitioning)
             {
-                Game.GraphicsDevice.Clear(Color.Black);
-
-
-                DrawGUI(gameTime, 0);
-            }
-            else if (Transitioning == TransitionMode.Entering)
-            {
-                float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                DrawGUI(gameTime, dx);
-            }
-            else if (Transitioning == TransitionMode.Exiting)
-            {
-                float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                DrawGUI(gameTime, dx);
+                case TransitionMode.Running:
+                    Game.GraphicsDevice.Clear(Color.Black);
+                    DrawGUI(gameTime, 0);
+                    break;
+                case TransitionMode.Entering:
+                {
+                    float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Width, 1.0f);
+                    DrawGUI(gameTime, dx);
+                }
+                    break;
+                case TransitionMode.Exiting:
+                {
+                    float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Width, 1.0f);
+                    DrawGUI(gameTime, dx);
+                }
+                    break;
             }
 
             base.Render(gameTime);
         }
-    
     }
+
 }

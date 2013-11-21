@@ -5,11 +5,12 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class Wait : Act
     {
         public Timer Time { get; set; }
 
-        public Wait(float time) 
+        public Wait(float time)
         {
             Name = "Wait " + time;
             Time = new Timer(time, true);
@@ -29,7 +30,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            while (!Time.HasTriggered)
+            while(!Time.HasTriggered)
             {
                 Time.Update(Act.LastTime);
                 yield return Status.Running;
@@ -38,4 +39,5 @@ namespace DwarfCorp
             yield return Status.Success;
         }
     }
+
 }

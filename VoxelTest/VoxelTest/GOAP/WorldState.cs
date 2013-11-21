@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class WorldState : IEquatable<WorldState>
     {
         public Dictionary<string, object> Specification { get; set; }
@@ -13,17 +14,17 @@ namespace DwarfCorp
         {
             Dictionary<string, object> Spec = new Dictionary<string, object>();
 
-            foreach (string s in other.Specification.Keys)
+            foreach(string s in other.Specification.Keys)
             {
-                if (!Specification.ContainsKey(s) || !Specification[s].Equals(other.Specification[s]))
+                if(!Specification.ContainsKey(s) || !Specification[s].Equals(other.Specification[s]))
                 {
                     Spec[s] = other[s];
                 }
             }
 
-            foreach (string s in Specification.Keys)
+            foreach(string s in Specification.Keys)
             {
-                if (!other.Specification.ContainsKey(s))
+                if(!other.Specification.ContainsKey(s))
                 {
                     Spec[s] = Specification[s];
                 }
@@ -33,20 +34,20 @@ namespace DwarfCorp
 
         public bool Conflicts(WorldState requirements)
         {
-            foreach (string s in requirements.Specification.Keys)
+            foreach(string s in requirements.Specification.Keys)
             {
-                if (!Specification.ContainsKey(s))
+                if(!Specification.ContainsKey(s))
                 {
                     continue;
                 }
-                else if (Specification[s] == null)
+                else if(Specification[s] == null)
                 {
-                    if (requirements[s] != null)
+                    if(requirements[s] != null)
                     {
                         return true;
                     }
                 }
-                else if (!Specification[s].Equals(requirements[s]))
+                else if(!Specification[s].Equals(requirements[s]))
                 {
                     return true;
                 }
@@ -57,20 +58,20 @@ namespace DwarfCorp
 
         public bool MeetsRequirements(WorldState requirements)
         {
-            foreach (string s in requirements.Specification.Keys)
+            foreach(string s in requirements.Specification.Keys)
             {
-                if (!Specification.ContainsKey(s))
+                if(!Specification.ContainsKey(s))
                 {
                     return false;
                 }
-                else if (Specification[s] == null)
+                else if(Specification[s] == null)
                 {
-                    if (requirements[s] != null)
+                    if(requirements[s] != null)
                     {
                         return false;
                     }
                 }
-                else if (!Specification[s].Equals(requirements[s]))
+                else if(!Specification[s].Equals(requirements[s]))
                 {
                     return false;
                 }
@@ -80,32 +81,31 @@ namespace DwarfCorp
         }
 
 
-
         public int Distance(WorldState other)
         {
             int toReturn = 0;
-            foreach (string s in other.Specification.Keys)
+            foreach(string s in other.Specification.Keys)
             {
-                if (!Specification.ContainsKey(s))
+                if(!Specification.ContainsKey(s))
                 {
                     toReturn++;
                 }
-                else if (Specification[s] == null)
+                else if(Specification[s] == null)
                 {
-                    if (Specification[s] != other.Specification[s])
+                    if(Specification[s] != other.Specification[s])
                     {
                         toReturn++;
                     }
                 }
-                else if (!Specification[s].Equals(other[s]))
+                else if(!Specification[s].Equals(other[s]))
                 {
                     toReturn++;
                 }
             }
 
-            foreach (string s in Specification.Keys)
+            foreach(string s in Specification.Keys)
             {
-                if (!other.Specification.ContainsKey(s))
+                if(!other.Specification.ContainsKey(s))
                 {
                     toReturn++;
                 }
@@ -131,7 +131,7 @@ namespace DwarfCorp
             string[] keys = new string[other.Specification.Keys.Count];
             other.Specification.Keys.CopyTo(keys, 0);
 
-            foreach (string s in keys)
+            foreach(string s in keys)
             {
                 Specification[s] = other.Specification[s];
             }
@@ -139,10 +139,9 @@ namespace DwarfCorp
 
         public object this[string index]
         {
-
             get
             {
-                if (Specification.ContainsKey(index))
+                if(Specification.ContainsKey(index))
                 {
                     return Specification[index];
                 }
@@ -151,10 +150,7 @@ namespace DwarfCorp
                     return null;
                 }
             }
-            set
-            {
-                Specification[index] = value;
-            }
+            set { Specification[index] = value; }
         }
 
         public bool Equals(WorldState other)
@@ -164,9 +160,9 @@ namespace DwarfCorp
 
         public override bool Equals(object obj)
         {
-            if (obj is WorldState)
+            if(obj is WorldState)
             {
-                return Equals((WorldState)obj);
+                return Equals((WorldState) obj);
             }
             else
             {
@@ -178,7 +174,7 @@ namespace DwarfCorp
         {
             int toReturn = 0;
             int v = 0;
-            foreach (KeyValuePair<string, object> pair in Specification)
+            foreach(KeyValuePair<string, object> pair in Specification)
             {
                 toReturn = v * 7 + toReturn ^ pair.GetHashCode();
                 v++;
@@ -186,7 +182,6 @@ namespace DwarfCorp
 
             return toReturn;
         }
-
     }
 
 }

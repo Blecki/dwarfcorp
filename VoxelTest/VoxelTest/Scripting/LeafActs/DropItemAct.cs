@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
     public class DropItemAct : CreatureAct
     {
         public DropItemAct(CreatureAIComponent creature) :
@@ -14,17 +15,16 @@ namespace DwarfCorp
             Name = "Drop Item";
         }
 
-        public override IEnumerable<Act.Status> Run()
+        public override IEnumerable<Status> Run()
         {
             LocatableComponent grabbed = Creature.Hands.GetFirstGrab();
 
-            if (grabbed == null)
+            if(grabbed == null)
             {
-                yield return Act.Status.Fail;
+                yield return Status.Fail;
             }
             else
             {
-
                 Creature.Hands.UnGrab(grabbed);
                 Matrix m = Matrix.Identity;
                 m.Translation = Creature.Physics.GlobalTransform.Translation;
@@ -33,8 +33,9 @@ namespace DwarfCorp
                 grabbed.HasMoved = true;
                 grabbed.IsActive = true;
 
-                yield return Act.Status.Success;
+                yield return Status.Success;
             }
         }
     }
+
 }

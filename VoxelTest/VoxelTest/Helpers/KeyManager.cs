@@ -8,27 +8,28 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
+
     public class KeyManager
     {
-        public Dictionary<string, Keys> Buttons { get; set;}
+        public Dictionary<string, Keys> Buttons { get; set; }
 
         public void SaveConfigSettings()
         {
-            ControlSettings.Default.CameraMode= this["Rotate Camera"];
-            ControlSettings.Default.Back= this["Back"];
-            ControlSettings.Default.Forward= this["Forward"];
-            ControlSettings.Default.Left= this["Left"];
-            ControlSettings.Default.Right= this["Right"];
-            ControlSettings.Default.SliceUp= this["Slice Up"];
-            ControlSettings.Default.SliceDown= this["Slice Down"];
-            ControlSettings.Default.SliceSelected= this["Goto Slice"];
-            ControlSettings.Default.SliceSelectedUp= this["Goto Slice +"];
-            ControlSettings.Default.GodMode= this["God Mode"];
-            ControlSettings.Default.TimeForward= this["Time +"];
-            ControlSettings.Default.TimeBackward= this["Time -"];
-            ControlSettings.Default.ToggleGUI= this["Toggle GUI"];
-            ControlSettings.Default.OrderScreen= this["Debug Order"];
-            ControlSettings.Default.Map= this["Toggle Map"];
+            ControlSettings.Default.CameraMode = this["Rotate Camera"];
+            ControlSettings.Default.Back = this["Back"];
+            ControlSettings.Default.Forward = this["Forward"];
+            ControlSettings.Default.Left = this["Left"];
+            ControlSettings.Default.Right = this["Right"];
+            ControlSettings.Default.SliceUp = this["Slice Up"];
+            ControlSettings.Default.SliceDown = this["Slice Down"];
+            ControlSettings.Default.SliceSelected = this["Goto Slice"];
+            ControlSettings.Default.SliceSelectedUp = this["Goto Slice +"];
+            ControlSettings.Default.GodMode = this["God Mode"];
+            ControlSettings.Default.TimeForward = this["Time +"];
+            ControlSettings.Default.TimeBackward = this["Time -"];
+            ControlSettings.Default.ToggleGUI = this["Toggle GUI"];
+            ControlSettings.Default.OrderScreen = this["Debug Order"];
+            ControlSettings.Default.Map = this["Toggle Map"];
             ControlSettings.Default.Pause = this["Pause"];
             ControlSettings.Default.Save();
         }
@@ -55,7 +56,7 @@ namespace DwarfCorp
 
         public KeyManager()
         {
-            Buttons = new Dictionary<string,Keys>();
+            Buttons = new Dictionary<string, Keys>();
             LoadConfigSettings();
         }
 
@@ -70,12 +71,11 @@ namespace DwarfCorp
         }
 
 
-        public  Keys  this[string key]
+        public Keys this[string key]
         {
             get { return GetKey(key); }
             set { Buttons[key] = value; }
         }
-
-
     }
+
 }

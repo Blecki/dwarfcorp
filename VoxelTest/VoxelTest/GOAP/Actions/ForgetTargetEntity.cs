@@ -24,4 +24,5 @@ namespace DwarfCorp
             Cost = 1.0f;
         }
     }
+
 }

@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+
 namespace DwarfCorp
 {
+
     public class GameCycle
     {
         public delegate void CycleChanged(OrderCylce cycle);
+
         public event CycleChanged OnCycleChanged;
+
         public enum OrderCylce
         {
             BalloonAtMotherland,
@@ -23,11 +27,11 @@ namespace DwarfCorp
 
         public string GetStatusString(OrderCylce cycle)
         {
-            switch (cycle)
+            switch(cycle)
             {
                 case OrderCylce.WaitingForMotherland:
                     return "Going to Motherland";
-                    
+
                 case OrderCylce.WaitingForColony:
                     return "Coming to Colony";
 
@@ -49,18 +53,17 @@ namespace DwarfCorp
             CycleTimers[OrderCylce.BalloonAtMotherland] = new Timer(60, true);
             CycleTimers[OrderCylce.WaitingForMotherland] = new Timer(60, true);
             CycleTimers[OrderCylce.WaitingForColony] = new Timer(60, true);
-            OnCycleChanged += new CycleChanged(GameCycle_OnCycleChanged);
+            OnCycleChanged += GameCycle_OnCycleChanged;
         }
 
-        void GameCycle_OnCycleChanged(GameCycle.OrderCylce cycle)
+        private void GameCycle_OnCycleChanged(GameCycle.OrderCylce cycle)
         {
-     
         }
 
         public Color GetColor(GameCycle.OrderCylce cylce, double t)
         {
-            float x = (float)Math.Sin(t * 2.0f) * 0.5f + 0.5f;
-            switch (cylce)
+            float x = (float) Math.Sin(t * 2.0f) * 0.5f + 0.5f;
+            switch(cylce)
             {
                 case OrderCylce.WaitingForMotherland:
                 case OrderCylce.WaitingForColony:
@@ -75,7 +78,7 @@ namespace DwarfCorp
 
         public OrderCylce GetNextCycle()
         {
-            switch (CurrentCycle)
+            switch(CurrentCycle)
             {
                 case OrderCylce.WaitingForColony:
                     return OrderCylce.BalloonAtColony;
@@ -101,4 +104,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

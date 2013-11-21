@@ -5,7 +5,8 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    class GetNearestFreeVoxelInZone : CreatureAct
+
+    internal class GetNearestFreeVoxelInZone : CreatureAct
     {
         public Zone TargetZone { get; set; }
         public string OutputVoxel { get; set; }
@@ -20,7 +21,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (TargetZone == null)
+            if(TargetZone == null)
             {
                 yield return Status.Fail;
             }
@@ -28,7 +29,7 @@ namespace DwarfCorp
             {
                 VoxelRef v = TargetZone.GetNearestFreeVoxel(Agent.Position);
 
-                if (v != null)
+                if(v != null)
                 {
                     Agent.Blackboard.SetData(OutputVoxel, v);
                     yield return Status.Success;
@@ -39,6 +40,6 @@ namespace DwarfCorp
                 }
             }
         }
-
     }
+
 }

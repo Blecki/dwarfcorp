@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class GoToTargetEntity : Action
     {
         public GoToTargetEntity()
@@ -26,7 +27,7 @@ namespace DwarfCorp
 
         public override ValidationStatus ContextValidate(CreatureAIComponent creature)
         {
-            if (creature.TargetComponent == null || creature.TargetComponent.IsDead)
+            if(creature.TargetComponent == null || creature.TargetComponent.IsDead)
             {
                 return ValidationStatus.Invalid;
             }
@@ -40,12 +41,12 @@ namespace DwarfCorp
         {
             CreatureAIComponent.PlannerSuccess successCode = CreatureAIComponent.PlannerSuccess.Wait;
 
-            if (creature.CurrentPath == null)
+            if(creature.CurrentPath == null)
             {
                 Voxel vox = creature.Master.Chunks.GetFirstVisibleBlockHitByRay(creature.TargetComponent.GlobalTransform.Translation, creature.TargetComponent.GlobalTransform.Translation + new Vector3(0, -10, 0));
                 creature.TargetVoxel = vox.GetReference();
                 successCode = creature.PlanPath(time);
-                if (successCode == CreatureAIComponent.PlannerSuccess.Failure)
+                if(successCode == CreatureAIComponent.PlannerSuccess.Failure)
                 {
                     return PerformStatus.Invalid;
                 }
@@ -53,11 +54,11 @@ namespace DwarfCorp
             else
             {
                 successCode = creature.Pathfind(time);
-                if (successCode == CreatureAIComponent.PlannerSuccess.Success)
+                if(successCode == CreatureAIComponent.PlannerSuccess.Success)
                 {
                     return PerformStatus.Success;
                 }
-                else if (successCode == CreatureAIComponent.PlannerSuccess.Failure)
+                else if(successCode == CreatureAIComponent.PlannerSuccess.Failure)
                 {
                     return PerformStatus.Failure;
                 }
@@ -66,4 +67,5 @@ namespace DwarfCorp
             return PerformStatus.InProgress;
         }
     }
+
 }
