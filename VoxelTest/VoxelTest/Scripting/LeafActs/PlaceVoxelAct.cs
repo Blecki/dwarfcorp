@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class PlaceVoxelAct : CreatureAct
     {
         public VoxelRef Voxel { get; set; }
@@ -21,14 +22,13 @@ namespace DwarfCorp
         {
             LocatableComponent grabbed = Creature.Hands.GetFirstGrab();
 
-            if (grabbed == null)
+            if(grabbed == null)
             {
                 yield return Status.Fail;
             }
             else
             {
-
-                if (Creature.Master.PutDesignator.IsDesignation(Voxel))
+                if(Creature.Master.PutDesignator.IsDesignation(Voxel))
                 {
                     Creature.Hands.UnGrab(grabbed);
                     grabbed.Die();
@@ -45,8 +45,8 @@ namespace DwarfCorp
                 {
                     yield return Status.Fail;
                 }
-
             }
         }
     }
+
 }

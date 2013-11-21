@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class WhileLoop : Act
     {
         public Act Child { get; set; }
@@ -42,17 +43,17 @@ namespace DwarfCorp
 
                 bool childDone = false;
 
-                while (!childDone && CheckCondition())
+                while(!childDone && CheckCondition())
                 {
                     Status childStatus = Child.Tick();
 
-                    if (childStatus == Status.Fail)
+                    if(childStatus == Status.Fail)
                     {
                         failEncountered = true;
                         yield return Status.Fail;
                         break;
                     }
-                    else if (childStatus == Status.Success)
+                    else if(childStatus == Status.Success)
                     {
                         yield return Status.Running;
                         childDone = true;
@@ -64,13 +65,13 @@ namespace DwarfCorp
                     }
                 }
 
-                if (failEncountered)
+                if(failEncountered)
                 {
                     break;
                 }
-           }
+            }
 
-            if (failEncountered)
+            if(failEncountered)
             {
                 yield return Status.Fail;
             }
@@ -78,9 +79,7 @@ namespace DwarfCorp
             {
                 yield return Status.Success;
             }
-
-
         }
-
     }
+
 }

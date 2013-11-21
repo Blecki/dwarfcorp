@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
+
     public class Slider : SillyGUIComponent
     {
         public enum SliderMode
@@ -28,13 +29,15 @@ namespace DwarfCorp
         public SliderMode Mode { get; set; }
         public Orientation Orient { get; set; }
         public string Label { get; set; }
+
         public delegate void ValueModified(float arg);
+
         public event ValueModified OnValueModified;
         public bool DrawLabel { get; set; }
         public bool Focused { get; set; }
         public bool InvertValue { get; set; }
 
-        public Slider(SillyGUI gui, SillyGUIComponent parent, string label,  float value, float minValue, float maxValue, SliderMode mode) :
+        public Slider(SillyGUI gui, SillyGUIComponent parent, string label, float value, float minValue, float maxValue, SliderMode mode) :
             base(gui, parent)
         {
             Orient = Orientation.Horizontal;
@@ -44,53 +47,55 @@ namespace DwarfCorp
             MaxValue = maxValue;
             Mode = mode;
             Label = label;
-            OnValueModified += new ValueModified(Slider_OnValueModified);
-            OnLeftPressed += new ClickedDelegate(Slider_OnLeftPressed);
+            OnValueModified += Slider_OnValueModified;
+            OnLeftPressed += Slider_OnLeftPressed;
             Focused = false;
             InvertValue = false;
         }
 
-        void Slider_OnLeftPressed()
+        private void Slider_OnLeftPressed()
         {
-            if (IsMouseOver)
+            if(IsMouseOver)
             {
                 Focused = true;
             }
         }
 
-        void Slider_OnValueModified(float arg)
+        private void Slider_OnValueModified(float arg)
         {
-
         }
 
 
         public override void Update(GameTime time)
         {
-            if (IsMouseOver && Focused)
+            if(IsMouseOver && Focused)
             {
                 MouseState mouse = Mouse.GetState();
-                if (mouse.LeftButton == ButtonState.Pressed)
+                if(mouse.LeftButton == ButtonState.Pressed)
                 {
-                    float w = GlobalBounds.Width - GlobalBounds.Width * 0.2f;
-                    float d = (mouse.X - GlobalBounds.X) / w;
+                    const int padding = 5;
+                    const int fieldWidth = 64;
+                    const int fieldHeight = 32;
+                    float w = GlobalBounds.Width - padding * 2 - fieldWidth;
+                    float d = (mouse.X - (GlobalBounds.X + padding)) / w;
 
-                    if (Orient == Orientation.Vertical)
+                    if(Orient == Orientation.Vertical)
                     {
-                        w = GlobalBounds.Height - GlobalBounds.Height * 0.2f;
-                        d = (mouse.Y - GlobalBounds.Y) / w;
+                        w = GlobalBounds.Height - padding * 2 - fieldHeight;
+                        d = (mouse.Y - (GlobalBounds.Y - padding)) / w;
                     }
 
-                    if (d > 1.0f)
+                    if(d > 1.0f)
                     {
                         d = 1.0f;
                     }
-                    else if (d < 0)
+                    else if(d < 0)
                     {
                         d = 0.0f;
                     }
 
 
-                    if (InvertValue)
+                    if(InvertValue)
                     {
                         d = (1.0f - d);
                     }
@@ -98,7 +103,6 @@ namespace DwarfCorp
                     SliderValue = d * (MaxValue - MinValue) + MinValue;
 
                     OnValueModified.Invoke(SliderValue);
-
                 }
             }
             else
@@ -108,19 +112,15 @@ namespace DwarfCorp
 
             base.Update(time);
         }
-        
-        
+
+
         public override void Render(GameTime time, SpriteBatch batch)
         {
-
-            if (IsVisible)
+            if(IsVisible)
             {
-
-                if (Orient == Orientation.Horizontal)
+                if(Orient == Orientation.Horizontal)
                 {
-
                     GUI.Skin.RenderSliderHorizontal(GUI.DefaultFont, GlobalBounds, SliderValue, MinValue, MaxValue, Mode, DrawLabel, InvertValue, batch);
-                    
                 }
                 else
                 {
@@ -129,8 +129,6 @@ namespace DwarfCorp
             }
             base.Render(time, batch);
         }
-
-        
-
     }
+
 }

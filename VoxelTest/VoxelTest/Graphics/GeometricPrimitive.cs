@@ -4,17 +4,18 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 
 namespace DwarfCorp
 {
+
     /// <summary>
     /// Simple class representing a geometric object with verticies, textures, and whatever else.
     /// </summary>
+    [JsonObject(IsReference = true)]
     public class GeometricPrimitive
     {
-        public static bool ExitGame = false;
-
         protected short[] m_indices = null;
 
         // Array of vertex information - contains position, normal and texture data
@@ -24,8 +25,16 @@ namespace DwarfCorp
         protected VertexBuffer m_vertexBuffer = null;
 
 
-        public ExtendedVertex[] Vertices { get { return m_vertices; } }
-        public VertexBuffer VertexBuffer { get { return m_vertexBuffer; } }
+        public ExtendedVertex[] Vertices
+        {
+            get { return m_vertices; }
+        }
+
+        [JsonIgnore]
+        public VertexBuffer VertexBuffer
+        {
+            get { return m_vertexBuffer; }
+        }
 
         /// <summary>
         /// Draws the primitive to the screen.
@@ -33,15 +42,14 @@ namespace DwarfCorp
         /// <param name="device">GPU to draw with.</param>
         public virtual void Render(GraphicsDevice device)
         {
-
-            if (m_vertices == null || m_vertexBuffer == null || m_vertexBuffer.IsDisposed)
+            if(m_vertices == null || m_vertexBuffer == null || m_vertexBuffer.IsDisposed)
             {
                 return;
             }
 
             device.SetVertexBuffer(m_vertexBuffer);
 
-            if (m_indices != null)
+            if(m_indices != null)
             {
                 device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, m_vertexBuffer.VertexCount, 0, m_vertexBuffer.VertexCount / 3);
             }
@@ -49,7 +57,6 @@ namespace DwarfCorp
             {
                 device.DrawPrimitives(PrimitiveType.TriangleList, 0, m_vertices.Length / 3);
             }
-
         }
 
         /// <summary>
@@ -72,22 +79,21 @@ namespace DwarfCorp
         /// <param name="device">GPU to draw with.</param>
         public virtual void ResetBuffer(GraphicsDevice device)
         {
-
-            if (!ExitGame)
+            if(!DwarfGame.ExitGame)
             {
-                if (m_vertexBuffer != null && !m_vertexBuffer.IsDisposed)
+                if(m_vertexBuffer != null && !m_vertexBuffer.IsDisposed)
                 {
                     m_vertexBuffer.Dispose();
                     m_vertexBuffer = null;
                 }
 
-                if (m_vertices != null && m_vertices.Length > 0 && !device.IsDisposed)
+                if(m_vertices != null && m_vertices.Length > 0 && !device.IsDisposed)
                 {
                     m_vertexBuffer = new VertexBuffer(device, ExtendedVertex.VertexDeclaration, m_vertices.Length, BufferUsage.WriteOnly);
                     m_vertexBuffer.SetData(m_vertices);
                 }
             }
         }
-
     }
+
 }

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class RoomType
     {
         public string Name { get; set; }
@@ -22,10 +23,7 @@ namespace DwarfCorp
             FloorType = floorTexture;
             RequiredResources = requiredResources;
             Templates = templates;
-
-            
         }
-
     }
 
 }

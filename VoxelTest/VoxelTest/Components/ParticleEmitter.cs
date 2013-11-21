@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+
     public class Particle
     {
         public Vector3 Position;
@@ -19,6 +21,7 @@ namespace DwarfCorp
         public InstanceData InstanceData;
     }
 
+    [JsonObject(IsReference = true)]
     public class EmitterData
     {
         public int MaxParticles;
@@ -36,6 +39,7 @@ namespace DwarfCorp
         public float MaxAngular;
         public float AngularDamping;
         public float LinearDamping;
+        [JsonIgnore]
         public Texture2D Texture;
         public Animation Animation;
         public float EmissionRadius;
@@ -43,14 +47,27 @@ namespace DwarfCorp
         public float ParticleDecay;
         public bool CollidesWorld = false;
         public bool Sleeps = false;
+        [JsonIgnore]
         public BlendState Blend = BlendState.AlphaBlend;
     }
 
+    [JsonObject(IsReference =  true)]
     public class ParticleEmitter : TintableComponent
     {
+        [JsonIgnore]
         public FixedInstanceArray Sprites { get; set; }
         private int maxParticles = 0;
-        public int MaxParticles { get { return maxParticles; } set { Sprites.SetNumInstances(MaxParticles); maxParticles = value; } }
+
+        public int MaxParticles
+        {
+            get { return maxParticles; }
+            set
+            {
+                Sprites.SetNumInstances(MaxParticles);
+                maxParticles = value;
+            }
+        }
+
         public List<Particle> Particles { get; set; }
         public EmitterData Data { get; set; }
         public Timer TriggerTimer { get; set; }
@@ -76,13 +93,13 @@ namespace DwarfCorp
             maxParticles = Data.MaxParticles;
             Sprites = new FixedInstanceArray(name, Data.Animation.Primitives[0].VertexBuffer, emitterData.Texture, Data.MaxParticles, Data.Blend);
             Data.Animation.Play();
-            
+
             TriggerTimer = new Timer(Data.EmissionFrequency, Data.ReleaseOnce);
         }
 
         public float rand(float min, float max)
         {
-            return (float)(PlayState.random.NextDouble() * (max - min) + min);
+            return (float) (PlayState.Random.NextDouble() * (max - min) + min);
         }
 
         public Vector3 randVec(float scale)
@@ -92,21 +109,21 @@ namespace DwarfCorp
 
         public void Trigger(int num, Vector3 origin, Color tint)
         {
-            for (int i = 0; i < num; i++)
+            for(int i = 0; i < num; i++)
             {
-                if (Particles.Count < Data.MaxParticles)
+                if(Particles.Count < Data.MaxParticles)
                 {
                     Particle toAdd = new Particle();
 
                     bool sampleFound = false;
 
                     Vector3 sample = new Vector3(99999, 99999, 9999);
-                    
-                    while (!sampleFound)
+
+                    while(!sampleFound)
                     {
                         sample = randVec(Data.EmissionRadius);
 
-                        if (sample.Length() < Data.EmissionRadius)
+                        if(sample.Length() < Data.EmissionRadius)
                         {
                             sampleFound = true;
                         }
@@ -114,7 +131,7 @@ namespace DwarfCorp
 
                     toAdd.Position = sample + origin;
                     toAdd.Velocity = randVec(Data.EmissionSpeed);
-                    
+
                     toAdd.Scale = rand(Data.MinScale, Data.MaxScale);
                     toAdd.Angle = rand(Data.MinAngle, Data.MaxAngle);
                     toAdd.AngularVelocity = rand(Data.MinAngular, Data.MaxAngular);
@@ -124,23 +141,22 @@ namespace DwarfCorp
 
                     Particles.Add(toAdd);
 
-                    if (toAdd.InstanceData != null)
+                    if(toAdd.InstanceData != null)
                     {
                         Sprites.Add(toAdd.InstanceData);
                     }
                 }
             }
-
         }
 
         public static int CompareZDepth(Particle A, Particle B)
         {
-            if (A == B)
+            if(A == B)
             {
                 return 0;
             }
 
-            if ((m_camera.Position - A.Position).LengthSquared() < (m_camera.Position - B.Position).LengthSquared())
+            if((m_camera.Position - A.Position).LengthSquared() < (m_camera.Position - B.Position).LengthSquared())
             {
                 return 1;
             }
@@ -159,68 +175,57 @@ namespace DwarfCorp
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
             m_camera = camera;
-    
+
             List<Particle> toRemove = new List<Particle>();
 
-            if (TriggerTimer.HasTriggered)
+            TriggerTimer.Update(gameTime);
+            if(TriggerTimer.HasTriggered)
             {
                 Trigger(Data.ParticlesPerFrame, Vector3.Zero, Tint);
-            }
-            else
-            {
-                TriggerTimer.Update(gameTime);
             }
 
 
             bool particlePhysics = GameSettings.Default.ParticlePhysics;
 
-            for(int i = 0; i < Particles.Count; i++)
+            foreach(Particle p in Particles)
             {
-
-                Particle p = Particles[i];
-
-
-                if (!Data.Sleeps || p.Velocity.LengthSquared() > 0.1f)
+                if(!Data.Sleeps || p.Velocity.LengthSquared() > 0.1f)
                 {
-                    p.Position += p.Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    p.Angle += (float)(p.AngularVelocity * gameTime.ElapsedGameTime.TotalSeconds);
-                    p.Velocity += Data.ConstantAccel * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    p.Position += p.Velocity * (float) gameTime.ElapsedGameTime.TotalSeconds;
+                    p.Angle += (float) (p.AngularVelocity * gameTime.ElapsedGameTime.TotalSeconds);
+                    p.Velocity += Data.ConstantAccel * (float) gameTime.ElapsedGameTime.TotalSeconds;
                     p.Velocity *= Data.LinearDamping;
                     p.AngularVelocity *= Data.AngularDamping;
                 }
-                
-                
-                p.LifeRemaining -= Data.ParticleDecay * (float)gameTime.ElapsedGameTime.TotalSeconds ;
-                p.Scale += Data.GrowthSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                
+
+
+                p.LifeRemaining -= Data.ParticleDecay * (float) gameTime.ElapsedGameTime.TotalSeconds;
+                p.Scale += Data.GrowthSpeed * (float) gameTime.ElapsedGameTime.TotalSeconds;
+
                 p.Scale = Math.Max(p.Scale, 0.0f);
 
 
-                if (Data.CollidesWorld && particlePhysics && p.Velocity.LengthSquared() > 0.1f)
+                if(Data.CollidesWorld && particlePhysics && p.Velocity.LengthSquared() > 0.1f)
                 {
                     List<Voxel> voxels = chunks.GetNonNullVoxelsAtWorldLocation(p.Position, 0);
                     BoundingBox b = new BoundingBox(p.Position - Vector3.One * p.Scale * 0.5f, p.Position + Vector3.One * p.Scale * 0.5f);
-                    foreach (Voxel v in voxels)
+                    foreach(Voxel v in voxels)
                     {
-                        
                         PhysicsComponent.Contact contact = new PhysicsComponent.Contact();
-                        if (PhysicsComponent.TestStaticAABBAABB(b, v.GetBoundingBox(), ref contact))
+                        if(PhysicsComponent.TestStaticAABBAABB(b, v.GetBoundingBox(), ref contact))
                         {
-
                             p.Position += contact.nEnter * contact.penetration;
 
                             Vector3 newVelocity = (contact.nEnter * Vector3.Dot(p.Velocity, contact.nEnter));
                             p.Velocity = (p.Velocity - newVelocity) * 0.5f;
                             p.AngularVelocity *= 0.5f;
                         }
-                        
                     }
                 }
 
-                if (p.LifeRemaining < 0)
+                if(p.LifeRemaining < 0)
                 {
-
-                    if (p.InstanceData != null)
+                    if(p.InstanceData != null)
                     {
                         p.InstanceData.ShouldDraw = false;
                         p.InstanceData.Transform = Matrix.CreateTranslation(camera.Position + new Vector3(-1000, -1000, -1000));
@@ -230,7 +235,7 @@ namespace DwarfCorp
                     toRemove.Add(p);
                 }
 
-                else if (p.InstanceData != null)
+                else if(p.InstanceData != null)
                 {
                     p.InstanceData.ShouldDraw = true;
                     p.InstanceData.Transform = MatrixFromParticle(p, camera);
@@ -238,7 +243,7 @@ namespace DwarfCorp
                 }
             }
 
-            foreach (Particle p in toRemove)
+            foreach(Particle p in toRemove)
             {
                 Particles.Remove(p);
             }
@@ -247,6 +252,6 @@ namespace DwarfCorp
             Sprites.Update(gameTime, camera, chunks.Graphics);
             base.Update(gameTime, chunks, camera);
         }
-
     }
+
 }

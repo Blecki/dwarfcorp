@@ -5,25 +5,38 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class Item : IEquatable<Item>
     {
         public string ID;
         public Zone Zone;
-        public LocatableComponent userData;
+        public LocatableComponent UserData;
         public bool CanGrab = true;
-        public CreatureAIComponent reservedFor = null;
-        public bool IsInZone { get { return Zone != null; } }
-        public bool IsInStockpile { get { return Zone != null && Zone is Stockpile; } }
-        public bool HasUserData { get { return userData != null; } }
+        public CreatureAIComponent ReservedFor = null;
+
+        public bool IsInZone
+        {
+            get { return Zone != null; }
+        }
+
+        public bool IsInStockpile
+        {
+            get { return Zone != null && Zone is Stockpile; }
+        }
+
+        public bool HasUserData
+        {
+            get { return UserData != null; }
+        }
 
         public static Dictionary<string, Item> ItemDictionary = new Dictionary<string, Item>();
 
         public static Item CreateItem(string name, Zone z, LocatableComponent userData)
         {
-            if (ItemDictionary.ContainsKey(name))
+            if(ItemDictionary.ContainsKey(name))
             {
                 ItemDictionary[name].Zone = z;
-                ItemDictionary[name].userData = userData;
+                ItemDictionary[name].UserData = userData;
                 return ItemDictionary[name];
             }
             else
@@ -35,7 +48,7 @@ namespace DwarfCorp
 
         public Item(string id, Zone zone, LocatableComponent userData)
         {
-            this.userData = userData;
+            this.UserData = userData;
             ID = id;
             Zone = zone;
         }
@@ -44,7 +57,7 @@ namespace DwarfCorp
         {
             string name = component.Name + " " + component.GlobalID;
 
-            if (ItemDictionary.ContainsKey(name))
+            if(ItemDictionary.ContainsKey(name))
             {
                 return ItemDictionary[name];
             }
@@ -66,15 +79,16 @@ namespace DwarfCorp
 
         public override bool Equals(object obj)
         {
-            if (obj is Item)
+            var a = obj as Item;
+            if(a != null)
             {
-                return Equals((Item)obj);
+                return Equals(a);
             }
             else
             {
                 return false;
             }
-
         }
     }
+
 }

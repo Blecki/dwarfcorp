@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class GatherItemAct : CompoundCreatureAct
     {
         public LocatableComponent ItemToGather { get; set; }
@@ -35,47 +36,44 @@ namespace DwarfCorp
         {
             ItemToGather = item;
             Name = "Gather Item";
-            Tree = new Sequence((EntityIsGatherable() & new GoToEntityAct(ItemToGather, Agent)),
-                                (EntityIsGatherable() & new PickUpTargetAct(agent, PickUpTargetAct.PickUpType.None, null)),
-                                new Sequence(
-                                new SearchFreeStockpileAct(Agent),
-                                new GoToVoxelAct(null, Agent),
-                                new PutItemInStockpileAct(Agent, null)) | new DropItemAct(Agent));
-                                
+            Tree = new Sequence(new SetBlackboardData<LocatableComponent>(agent, "GatherItem", ItemToGather) & (EntityIsGatherable() & new GoToEntityAct(ItemToGather, Agent)),
+                (EntityIsGatherable() & new PickUpAct(agent, PickUpAct.PickUpType.None, null, "GatherItem")),
+                new Sequence(
+                    new SearchFreeStockpileAct(Agent, "TargetStockpile", "TargetVoxel"),
+                    new GoToVoxelAct("TargetVoxel", Agent),
+                    new PutItemInStockpileAct(Agent, "TargetStockpile")) | new DropItemAct(Agent));
         }
 
         public override void Initialize()
         {
-
             base.Initialize();
         }
 
 
         public override IEnumerable<Status> Run()
         {
-
-            if (Tree == null)
+            if(Tree == null)
             {
-                if (ItemToGather == null)
+                if(ItemToGather == null)
                 {
                     ItemToGather = Agent.Blackboard.GetData<LocatableComponent>(ItemID);
                 }
 
 
-                if (ItemToGather != null)
+                if(ItemToGather != null)
                 {
-                    Tree = new Sequence((EntityIsGatherable() & new GoToEntityAct(ItemToGather, Agent)),
-                        (EntityIsGatherable() & new PickUpTargetAct(Agent, PickUpTargetAct.PickUpType.None, null)),
+                    Tree = new Sequence(new SetBlackboardData<LocatableComponent>(Agent, "GatherItem", ItemToGather), (EntityIsGatherable() & new GoToEntityAct(ItemToGather, Agent)),
+                        (EntityIsGatherable() & new PickUpAct(Agent, PickUpAct.PickUpType.None, null, "GatherItem")),
                         new Sequence(
-                        new SearchFreeStockpileAct(Agent),
-                        new GoToVoxelAct(null, Agent),
-                        new PutItemInStockpileAct(Agent, null)) | new DropItemAct(Agent));
+                            new SearchFreeStockpileAct(Agent, "TargetStockpile", "TargetVoxel"),
+                            new GoToVoxelAct("TargetVoxel", Agent),
+                            new PutItemInStockpileAct(Agent, "TargetStockpile")) | new DropItemAct(Agent));
 
                     Tree.Initialize();
                 }
             }
 
-            if (Tree == null)
+            if(Tree == null)
             {
                 yield return Status.Fail;
             }
@@ -87,7 +85,6 @@ namespace DwarfCorp
                 }
             }
         }
-
-
     }
+
 }

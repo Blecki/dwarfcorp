@@ -6,15 +6,17 @@ using System.Threading;
 using System.Collections.Concurrent;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 namespace DwarfCorp
 {
-    class Datastructures
+
+    internal class Datastructures
     {
         public static Vector2 SafeMeasure(SpriteFont font, string text)
         {
             Vector2 extents = Vector2.One;
 
-            if (text == null)
+            if(text == null)
             {
                 return extents;
             }
@@ -23,7 +25,7 @@ namespace DwarfCorp
             {
                 extents = font.MeasureString(text);
             }
-            catch (ArgumentException e)
+            catch(ArgumentException e)
             {
                 Console.Error.WriteLine(e.Message);
                 extents.X = text.Length * 20;
@@ -45,14 +47,14 @@ namespace DwarfCorp
             List<int> toReturn = new List<int>(max);
             List<int> indices = new List<int>(max);
 
-            for (int i = 0; i < max; i++)
+            for(int i = 0; i < max; i++)
             {
                 indices.Add(i);
             }
 
-            for (int i = 0; i < max; i++)
+            for(int i = 0; i < max; i++)
             {
-                int r = PlayState.random.Next(indices.Count);
+                int r = PlayState.Random.Next(indices.Count);
 
                 toReturn.Add(indices[r]);
                 indices.RemoveAt(r);
@@ -67,12 +69,11 @@ namespace DwarfCorp
             List<TKey> values = Enumerable.ToList(dict.Keys);
 
 
-
             int size = dict.Count;
 
-            if (size > 0)
+            if(size > 0)
             {
-                while (true)
+                while(true)
                 {
                     yield return values[rand.Next(size)];
                 }
@@ -86,17 +87,17 @@ namespace DwarfCorp
 
             T[,] toReturn = new T[nc, nr];
 
-            for (int r = 0; r < nc; r++)
+            for(int r = 0; r < nc; r++)
             {
-                for (int c = 0; c < nr; c++)
+                for(int c = 0; c < nr; c++)
                 {
                     toReturn[r, c] = A[c, r];
                 }
             }
 
-            for (int r = 0; r < nc; r++)
+            for(int r = 0; r < nc; r++)
             {
-                for (int c = 0; c < nr / 2; c++)
+                for(int c = 0; c < nr / 2; c++)
                 {
                     Swap(ref toReturn[r, c], ref toReturn[r, nr - c - 1]);
                 }
@@ -112,4 +113,5 @@ namespace DwarfCorp
             b = temp;
         }
     }
+
 }

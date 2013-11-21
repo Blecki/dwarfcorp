@@ -6,7 +6,8 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    class BedItem : InteractiveItem
+
+    internal class BedItem : InteractiveItem
     {
         public BedItem(string id, Zone zone, LocatableComponent userData, InteractiveComponent component, float cost) :
             base(id, zone, userData, component, cost)
@@ -19,12 +20,12 @@ namespace DwarfCorp
 
         public override Action.PerformStatus Interact(CreatureAIComponent creature, GameTime time)
         {
-            if (Component.Interact(creature, time))
+            if(Component.Interact(creature, time))
             {
                 creature.InteractingWith = Component;
-                creature.TargetComponent = userData;
+                creature.TargetComponent = UserData;
 
-                if (creature.Status.Energy > 1.0)
+                if(creature.Status.Energy > 1.0)
                 {
                     Component.InteractingComponents.Remove(creature);
                     return Action.PerformStatus.Success;
@@ -40,4 +41,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

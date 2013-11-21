@@ -7,7 +7,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-    class DropHeldItem : Action
+
+    internal class DropHeldItem : Action
     {
         public DropHeldItem()
         {
@@ -25,11 +26,11 @@ namespace DwarfCorp
 
         public override void Apply(WorldState state)
         {
-            Item item = (Item)(state[GOAPStrings.HeldObject]);
+            Item item = (Item) (state[GOAPStrings.HeldObject]);
 
-            if (item != null)
+            if(item != null)
             {
-                state[GOAPStrings.TargetEntity] = new Item(item.ID, item.Zone, item.userData);
+                state[GOAPStrings.TargetEntity] = new Item(item.ID, item.Zone, item.UserData);
             }
             else
             {
@@ -41,12 +42,12 @@ namespace DwarfCorp
 
         public override void UnApply(WorldState state)
         {
-            Item item = (Item)(state[GOAPStrings.TargetEntity]);
+            Item item = (Item) (state[GOAPStrings.TargetEntity]);
 
-            if (item != null)
+            if(item != null)
             {
-                state[GOAPStrings.HeldObject] = new Item(item.ID, null, item.userData);
-                state[GOAPStrings.HeldItemTags] = new TagList(item.userData.Tags);
+                state[GOAPStrings.HeldObject] = new Item(item.ID, null, item.UserData);
+                state[GOAPStrings.HeldItemTags] = new TagList(item.UserData.Tags);
             }
             else
             {
@@ -59,9 +60,9 @@ namespace DwarfCorp
 
         public override Action.PerformStatus PerformContextAction(CreatureAIComponent creature, GameTime time)
         {
-            Item item = (Item)creature.Goap.Belief[GOAPStrings.HeldObject];
+            Item item = (Item) creature.Goap.Belief[GOAPStrings.HeldObject];
 
-            if (item == null)
+            if(item == null)
             {
                 return Action.PerformStatus.Failure;
             }
@@ -71,23 +72,22 @@ namespace DwarfCorp
             creature.Hands.UnGrab(grabbed);
             Matrix m = Matrix.Identity;
             m.Translation = creature.Physics.GlobalTransform.Translation;
-           
+
             grabbed.LocalTransform = m;
             grabbed.HasMoved = true;
             grabbed.IsActive = true;
-            
+
 
             creature.Goap.Belief[GOAPStrings.HandState] = GOAP.HandState.Empty;
 
             return PerformStatus.Success;
-            
         }
 
         public override ValidationStatus ContextValidate(CreatureAIComponent creature)
         {
-            Item item = (Item)creature.Goap.Belief[GOAPStrings.HeldObject];
+            Item item = (Item) creature.Goap.Belief[GOAPStrings.HeldObject];
 
-            if (item == null)
+            if(item == null)
             {
                 return ValidationStatus.Replan;
             }
@@ -95,4 +95,5 @@ namespace DwarfCorp
             return ValidationStatus.Ok;
         }
     }
+
 }

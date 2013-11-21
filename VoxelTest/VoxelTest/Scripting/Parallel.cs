@@ -5,13 +5,12 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class Parallel : Act
     {
-
         public Parallel(params Act[] children) :
             this(children.AsEnumerable())
         {
-        
         }
 
         public Parallel(IEnumerable<Act> children)
@@ -23,7 +22,7 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            foreach (Act child in Children)
+            foreach(Act child in Children)
             {
                 child.Initialize();
             }
@@ -35,26 +34,25 @@ namespace DwarfCorp
         {
             bool allSuccess = false;
 
-            while (!allSuccess)
+            while(!allSuccess)
             {
                 bool runEncountered = false;
-                foreach (Act child in Children)
+                foreach(Act child in Children)
                 {
                     Status childStatus = child.Tick();
 
-                    if (childStatus == Status.Fail)
+                    if(childStatus == Status.Fail)
                     {
                         yield return Status.Fail;
                         break;
                     }
-                    else if (childStatus != Status.Success)
+                    else if(childStatus != Status.Success)
                     {
                         runEncountered = true;
                     }
-
                 }
 
-                if (!runEncountered)
+                if(!runEncountered)
                 {
                     allSuccess = true;
                 }
@@ -62,10 +60,9 @@ namespace DwarfCorp
                 {
                     yield return Status.Running;
                 }
-
             }
 
-            if (allSuccess)
+            if(allSuccess)
             {
                 yield return Status.Success;
             }

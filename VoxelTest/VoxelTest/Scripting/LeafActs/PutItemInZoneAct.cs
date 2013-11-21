@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
     public class PutItemInZoneAct : CreatureAct
     {
         public Zone Pile { get; set; }
@@ -21,11 +22,11 @@ namespace DwarfCorp
         {
             LocatableComponent grabbed = Creature.Hands.GetFirstGrab();
 
-            if (grabbed == null)
+            if(grabbed == null)
             {
                 yield return Status.Fail;
             }
-            else if (Pile.AddItem(grabbed, Agent.TargetVoxel))
+            else if(Pile.AddItem(grabbed, Agent.TargetVoxel))
             {
                 Creature.Hands.UnGrab(grabbed);
 
@@ -44,4 +45,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

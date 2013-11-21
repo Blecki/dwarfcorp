@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace DwarfCorp
 {
+
     public enum UtteranceType
     {
         Syllable,
@@ -39,16 +40,15 @@ namespace DwarfCorp
         {
             List<Utterance> toReturn = new List<Utterance>();
             string[] words = sentence.Split(' ');
-            foreach (string word in words)
+            foreach(string word in words)
             {
-
-                if (word != "." && word != ",")
+                if(word != "." && word != ",")
                 {
                     Utterance utter = new Utterance();
                     utter.Type = UtteranceType.Syllable;
                     utter.Syllable = Syllables[Math.Abs(word.GetHashCode()) % Syllables.Count];
 
-                    if (toReturn.Count == 0 || utter.Syllable != toReturn.Last().Syllable)
+                    if(toReturn.Count == 0 || utter.Syllable != toReturn.Last().Syllable)
                     {
                         toReturn.Add(utter);
                     }
@@ -59,20 +59,16 @@ namespace DwarfCorp
                     pause.Type = UtteranceType.Pause;
                     toReturn.Add(pause);
                 }
-
-                
-
             }
 
             return toReturn;
-
         }
 
         public void SayUtterance(List<Utterance> utterances)
         {
-            foreach (Utterance utter in utterances)
+            foreach(Utterance utter in utterances)
             {
-                if (utter.Type == UtteranceType.Pause)
+                if(utter.Type == UtteranceType.Pause)
                 {
                     System.Threading.Thread.Sleep(1000);
                 }
@@ -81,15 +77,13 @@ namespace DwarfCorp
                     SoundEffectInstance inst = utter.Syllable.CreateInstance();
                     inst.Play();
 
-                    while (inst.State == SoundState.Playing)
+                    while(inst.State == SoundState.Playing)
                     {
                         System.Threading.Thread.Sleep(5);
                     }
-                   
                 }
             }
-
         }
-       
     }
+
 }

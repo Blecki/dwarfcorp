@@ -8,27 +8,32 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
-
-
+    [JsonObject(IsReference = true)]
     public class BillboardSpriteComponent : TintableComponent
     {
         public Dictionary<string, Animation> Animations { get; set; }
 
         [JsonIgnore]
         public Texture2D SpriteSheet { get; set; }
-        
+
         [JsonIgnore]
         public Animation CurrentAnimation { get; set; }
 
         [JsonIgnore]
-        private static Matrix InvertY =  Matrix.CreateScale(1, -1, 1);
-        
+        private static Matrix InvertY = Matrix.CreateScale(1, -1, 1);
+
         public OrientMode OrientationType { get; set; }
 
 
-        public enum OrientMode { Fixed, Spherical, XAxis, YAxis, ZAxis }
-        
+        public enum OrientMode
+        {
+            Fixed,
+            Spherical,
+            XAxis,
+            YAxis,
+            ZAxis
+        }
+
         public float BillboardRotation { get; set; }
 
         private static RasterizerState rasterState = new RasterizerState()
@@ -40,14 +45,14 @@ namespace DwarfCorp
             base(manager, name, parent, localTransform, Vector3.Zero, Vector3.Zero, addToOctree)
         {
             SpriteSheet = spriteSheet;
-            Animations = new Dictionary<string, Animation> ();
+            Animations = new Dictionary<string, Animation>();
             OrientationType = OrientMode.Spherical;
             BillboardRotation = 0.0f;
         }
 
         public void AddAnimation(Animation animation)
         {
-            if (CurrentAnimation == null)
+            if(CurrentAnimation == null)
             {
                 CurrentAnimation = animation;
             }
@@ -56,7 +61,7 @@ namespace DwarfCorp
 
         public Animation GetAnimation(string name)
         {
-            if (Animations.ContainsKey(name))
+            if(Animations.ContainsKey(name))
             {
                 return Animations[name];
             }
@@ -68,7 +73,7 @@ namespace DwarfCorp
         {
             Animation anim = GetAnimation(name);
 
-            if (anim != null)
+            if(anim != null)
             {
                 CurrentAnimation = anim;
             }
@@ -77,7 +82,7 @@ namespace DwarfCorp
 
         public override void ReceiveMessageRecursive(Message messageToReceive)
         {
-            switch (messageToReceive.Type)
+            switch(messageToReceive.Type)
             {
                 case Message.MessageType.OnChunkModified:
                     HasMoved = true;
@@ -90,13 +95,12 @@ namespace DwarfCorp
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (IsActive)
+            if(IsActive)
             {
-                if (CurrentAnimation != null)
+                if(CurrentAnimation != null)
                 {
                     CurrentAnimation.Update(gameTime);
                 }
-
             }
 
 
@@ -104,36 +108,31 @@ namespace DwarfCorp
         }
 
         public override void Render(GameTime gameTime,
-                                    ChunkManager chunks,
-                                    Camera camera,
-                                    SpriteBatch spriteBatch,
-                                    GraphicsDevice graphicsDevice,
-                                    Effect effect,
-                                    bool renderingForWater)
+            ChunkManager chunks,
+            Camera camera,
+            SpriteBatch spriteBatch,
+            GraphicsDevice graphicsDevice,
+            Effect effect,
+            bool renderingForWater)
         {
-
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
-            
-            if (IsVisible)
+
+            if(IsVisible)
             {
-
-
-
                 RasterizerState r = graphicsDevice.RasterizerState;
                 graphicsDevice.RasterizerState = rasterState;
                 effect.Parameters["xTexture"].SetValue(SpriteSheet);
 
 
-
-                if (CurrentAnimation != null)
+                if(CurrentAnimation != null)
                 {
                     //Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
 
-                    if (OrientationType != OrientMode.Fixed)
+                    if(OrientationType != OrientMode.Fixed)
                     {
-                        if (camera.Projection == Camera.ProjectionMode.Perspective)
+                        if(camera.Projection == Camera.ProjectionMode.Perspective)
                         {
-                            if (OrientationType == OrientMode.Spherical)
+                            if(OrientationType == OrientMode.Spherical)
                             {
                                 float xscale = GlobalTransform.Left.Length();
                                 float yscale = GlobalTransform.Up.Length();
@@ -151,7 +150,7 @@ namespace DwarfCorp
                             {
                                 Vector3 axis = Vector3.Zero;
 
-                                switch (OrientationType)
+                                switch(OrientationType)
                                 {
                                     case OrientMode.XAxis:
                                         axis = Vector3.UnitX;
@@ -170,18 +169,16 @@ namespace DwarfCorp
                         }
                         else
                         {
-                            Matrix rotation = Matrix.CreateRotationY(-(float)Math.PI * 0.25f) * Matrix.CreateTranslation(GlobalTransform.Translation);
+                            Matrix rotation = Matrix.CreateRotationY(-(float) Math.PI * 0.25f) * Matrix.CreateTranslation(GlobalTransform.Translation);
                             effect.Parameters["xWorld"].SetValue(rotation);
                         }
-
-
                     }
                     else
                     {
                         effect.Parameters["xWorld"].SetValue(GlobalTransform);
                     }
 
-                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                    foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                     {
                         pass.Apply();
                         CurrentAnimation.Primitives[CurrentAnimation.CurrentFrame].Render(graphicsDevice);
@@ -190,14 +187,12 @@ namespace DwarfCorp
                 }
 
 
-                if (r != null)
+                if(r != null)
                 {
                     graphicsDevice.RasterizerState = r;
                 }
             }
         }
-
-
-
     }
+
 }

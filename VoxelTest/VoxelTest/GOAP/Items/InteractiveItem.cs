@@ -6,10 +6,11 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
     public class InteractiveItem : Item
     {
-        public InteractiveComponent Component { get; set;}
-        
+        public InteractiveComponent Component { get; set; }
+
         public WorldState UsePrecondition { get; set; }
         public WorldState UseEffects { get; set; }
         public float Cost { get; set; }
@@ -27,8 +28,6 @@ namespace DwarfCorp
         {
             return Action.PerformStatus.Success;
         }
-
-
-
     }
+
 }

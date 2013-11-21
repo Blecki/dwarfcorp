@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public enum Relationship
     {
         Indifferent,
@@ -12,7 +13,7 @@ namespace DwarfCorp
         Hates
     }
 
-    public class Alliance 
+    public class Alliance
     {
         public struct AlliancePair : IEquatable<AlliancePair>
         {
@@ -21,7 +22,7 @@ namespace DwarfCorp
 
             public bool Equals(AlliancePair other)
             {
-                return (AllianceA == other.AllianceA && AllianceB == other.AllianceB) || (AllianceA == other.AllianceB && AllianceB == other.AllianceA); 
+                return (AllianceA == other.AllianceA && AllianceB == other.AllianceB) || (AllianceA == other.AllianceB && AllianceB == other.AllianceA);
             }
 
             public override int GetHashCode()
@@ -31,13 +32,13 @@ namespace DwarfCorp
 
             public override bool Equals(object obj)
             {
-                if (!(obj is AlliancePair))
+                if(!(obj is AlliancePair))
                 {
                     return false;
                 }
                 else
                 {
-                    return Equals((AlliancePair)obj);
+                    return Equals((AlliancePair) obj);
                 }
             }
         }
@@ -48,7 +49,7 @@ namespace DwarfCorp
         }
 
         public static Dictionary<AlliancePair, Relationship> Relationships { get; set; }
-       
+
         public static Dictionary<AlliancePair, Relationship> InitializeRelationships()
         {
             Relationships = new Dictionary<AlliancePair, Relationship>();
@@ -60,7 +61,7 @@ namespace DwarfCorp
             SetRelationship("Goblin", "Undead", Relationship.Hates);
             SetRelationship("Goblin", "Carnivore", Relationship.Hates);
             SetRelationship("Goblin", "Herbivore", Relationship.Indifferent);
-            
+
 
             SetSelfClassLove();
 
@@ -71,7 +72,7 @@ namespace DwarfCorp
         {
             List<AlliancePair> relationships = new List<AlliancePair>();
             relationships.AddRange(Relationships.Keys);
-            foreach (AlliancePair a in relationships)
+            foreach(AlliancePair a in relationships)
             {
                 SetRelationship(a.AllianceA, a.AllianceA, Relationship.Loves);
                 SetRelationship(a.AllianceB, a.AllianceB, Relationship.Loves);
@@ -94,4 +95,5 @@ namespace DwarfCorp
             return Relationships[alliance];
         }
     }
+
 }

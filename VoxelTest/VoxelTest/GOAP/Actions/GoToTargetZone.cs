@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class GoToTargetZone : Action
     {
         public GoToTargetZone()
@@ -43,23 +44,23 @@ namespace DwarfCorp
 
         public override Action.ValidationStatus ContextValidate(CreatureAIComponent creature)
         {
-            if (creature.TargetVoxel == null)
+            if(creature.TargetVoxel == null)
             {
-                Zone z = (Zone)creature.Goap.Belief[GOAPStrings.TargetZone];
+                Zone z = (Zone) creature.Goap.Belief[GOAPStrings.TargetZone];
 
-                if (z is Stockpile)
+                if(z is Stockpile)
                 {
-                    Stockpile s = (Stockpile)z;
+                    Stockpile s = (Stockpile) z;
 
 
                     VoxelRef v = s.GetNearestFreeVoxel(creature.Physics.GlobalTransform.Translation);
 
-                    if (v != null)
+                    if(v != null)
                     {
                         creature.TargetVoxel = v;
                     }
 
-                    if (creature.TargetVoxel != null)
+                    if(creature.TargetVoxel != null)
                     {
                         s.SetReserved(v, true);
                     }
@@ -68,13 +69,13 @@ namespace DwarfCorp
                         return ValidationStatus.Invalid;
                     }
                 }
-                else if (z is Room)
+                else if(z is Room)
                 {
-                    Room r = (Room)z;
+                    Room r = (Room) z;
 
                     int index = r.GetClosestDesignationTo(creature.Physics.GlobalTransform.Translation);
 
-                    if (index != -1)
+                    if(index != -1)
                     {
                         creature.TargetVoxel = r.Designations[index];
                     }
@@ -88,23 +89,22 @@ namespace DwarfCorp
                 {
                     return ValidationStatus.Invalid;
                 }
-
             }
             else
             {
                 return ValidationStatus.Invalid;
             }
-            
+
             return ValidationStatus.Ok;
         }
 
         public override PerformStatus PerformContextAction(CreatureAIComponent creature, GameTime time)
         {
             CreatureAIComponent.PlannerSuccess successCode = CreatureAIComponent.PlannerSuccess.Wait;
-            if (creature.CurrentPath == null)
+            if(creature.CurrentPath == null)
             {
                 successCode = creature.PlanPath(time);
-                if (successCode == CreatureAIComponent.PlannerSuccess.Failure)
+                if(successCode == CreatureAIComponent.PlannerSuccess.Failure)
                 {
                     return PerformStatus.Invalid;
                 }
@@ -112,7 +112,7 @@ namespace DwarfCorp
             else
             {
                 successCode = creature.Pathfind(time);
-                if (successCode == CreatureAIComponent.PlannerSuccess.Success)
+                if(successCode == CreatureAIComponent.PlannerSuccess.Success)
                 {
                     return PerformStatus.Success;
                 }
@@ -121,4 +121,5 @@ namespace DwarfCorp
             return PerformStatus.InProgress;
         }
     }
+
 }

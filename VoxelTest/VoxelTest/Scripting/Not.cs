@@ -5,9 +5,11 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class Not : Act
     {
-        Act Child { get; set; }
+        private Act Child { get; set; }
+
         public Not(Act behavior)
         {
             Name = "Not";
@@ -26,28 +28,28 @@ namespace DwarfCorp
         {
             bool done = false;
 
-            while (!done)
+            while(!done)
             {
                 Status childStatus = Child.Tick();
 
-                if (childStatus == Status.Running)
+                if(childStatus == Status.Running)
                 {
                     yield return Status.Running;
                 }
-                else if (childStatus == Status.Success)
+                else if(childStatus == Status.Success)
                 {
                     yield return Status.Fail;
                     done = true;
                     break;
                 }
-                else if (childStatus == Status.Fail)
+                else if(childStatus == Status.Fail)
                 {
                     yield return Status.Success;
                     done = true;
                     break;
                 }
-
             }
         }
     }
+
 }

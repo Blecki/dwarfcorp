@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace DwarfCorp
 {
+
     public class Economy
     {
         public float CurrentMoney { get; set; }
@@ -21,6 +22,7 @@ namespace DwarfCorp
 
         public List<ShipmentOrder> OutstandingOrders { get; set; }
         public List<ShipmentOrder> TravelingOrders { get; set; }
+
         public Economy(GameMaster master, float currentMoney, float buyMultiplier, float sellMulitiplier)
         {
             CurrentMoney = currentMoney;
@@ -45,16 +47,16 @@ namespace DwarfCorp
             {
                 ShipmentOrder order = OutstandingOrders[i];
 
-                if (!order.HasSentResources)
+                if(!order.HasSentResources)
                 {
                     order.HasSentResources = true;
-                    foreach (ResourceAmount amount in order.SellOrder)
+                    foreach(ResourceAmount amount in order.SellOrder)
                     {
                         Master.AddShipDesignation(amount, order.Destination);
                     }
                 }
 
-                if (!order.OrderTimer.HasTriggered)
+                if(!order.OrderTimer.HasTriggered)
                 {
                     order.OrderTimer.Update(t);
                 }
@@ -64,15 +66,13 @@ namespace DwarfCorp
                 }
             }
 
-            foreach (ShipmentOrder order in removals)
+            foreach(ShipmentOrder order in removals)
             {
                 OutstandingOrders.Remove(order);
                 TravelingOrders.Add(order);
                 DispatchBalloon(order);
             }
         }
-        
-
-
     }
+
 }

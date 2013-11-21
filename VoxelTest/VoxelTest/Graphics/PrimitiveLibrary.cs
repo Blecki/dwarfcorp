@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
+
     public class PrimitiveLibrary
     {
         public static Dictionary<string, BoxPrimitive> BoxPrimitives = new Dictionary<string, BoxPrimitive>();
@@ -22,7 +23,7 @@ namespace DwarfCorp
             Initialize(graphics, content);
         }
 
-        static void CreateIntersecting(string name, GraphicsDevice graphics, ContentManager content)
+        private static void CreateIntersecting(string name, GraphicsDevice graphics, ContentManager content)
         {
             Texture2D bushSheet = content.Load<Texture2D>(name);
             List<Matrix> bushTransforms = new List<Matrix>();
@@ -33,21 +34,20 @@ namespace DwarfCorp
             bushColors.Add(Color.White);
 
             BatchBillboardPrimitives[name] = new BatchBillboardPrimitive(graphics, bushSheet, bushSheet.Width, bushSheet.Height, new Point(0, 0), 1.0f, 1.0f, false, bushTransforms, bushColors);
-
         }
 
         public void Initialize(GraphicsDevice graphics, ContentManager content)
         {
-            if (!m_initialized)
+            if(!m_initialized)
             {
                 Texture2D spriteSheet = content.Load<Texture2D>("bedtex");
-                BoxPrimitive.BoxTextureCoords boxCoords = new BoxPrimitive.BoxTextureCoords(spriteSheet.Width, spriteSheet.Height, 
-                                                        new BoxPrimitive.FaceData(new Rectangle(24, 0, 24, 16), false),
-                                                        new BoxPrimitive.FaceData(new Rectangle(24, 72, 24, 16), false),
-                                                        new BoxPrimitive.FaceData(new Rectangle(0, 24, 48, 24), true),
-                                                        new BoxPrimitive.FaceData(new Rectangle(0, 0, 1, 1), false),
-                                                        new BoxPrimitive.FaceData(new Rectangle(24, 24, 48, 16), false),
-                                                        new BoxPrimitive.FaceData(new Rectangle(40, 24, 48, 16), false));
+                BoxPrimitive.BoxTextureCoords boxCoords = new BoxPrimitive.BoxTextureCoords(spriteSheet.Width, spriteSheet.Height,
+                    new BoxPrimitive.FaceData(new Rectangle(24, 0, 24, 16), false),
+                    new BoxPrimitive.FaceData(new Rectangle(24, 72, 24, 16), false),
+                    new BoxPrimitive.FaceData(new Rectangle(0, 24, 48, 24), true),
+                    new BoxPrimitive.FaceData(new Rectangle(0, 0, 1, 1), false),
+                    new BoxPrimitive.FaceData(new Rectangle(24, 24, 48, 16), false),
+                    new BoxPrimitive.FaceData(new Rectangle(40, 24, 48, 16), false));
                 BoxPrimitives["bed"] = new BoxPrimitive(graphics, 0.8f, 0.5f, 1.8f, boxCoords);
                 m_initialized = false;
 
@@ -93,12 +93,8 @@ namespace DwarfCorp
                 CreateIntersecting("shroom", graphics, content);
                 CreateIntersecting("vine", graphics, content);
                 CreateIntersecting("gnarled", graphics, content);
-
-
             }
-
-            
         }
-
     }
+
 }

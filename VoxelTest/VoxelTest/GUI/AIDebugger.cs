@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
+
     public class AIDebugger
     {
         public Panel MainPanel { get; set; }
@@ -18,18 +19,26 @@ namespace DwarfCorp
         public Label AStarPathLabel { get; set; }
         public GameMaster Master { get; set; }
         public Label LastMessages { get; set; }
-        ActDisplay BTDisplay { get; set; }
-        bool m_visible = false;
+        private ActDisplay BTDisplay { get; set; }
+        private bool m_visible = false;
 
-        public bool Visible { get { return m_visible; } set { m_visible = value; MainPanel.IsVisible = value; } }
+        public bool Visible
+        {
+            get { return m_visible; }
+            set
+            {
+                m_visible = value;
+                MainPanel.IsVisible = value;
+            }
+        }
 
         public AIDebugger(SillyGUI gui, GameMaster master)
         {
             MainPanel = new Panel(gui, gui.RootComponent);
             Layout = new GridLayout(gui, MainPanel, 13, 1);
-            
+
             DwarfSelector = new ComboBox(gui, Layout);
-            DwarfSelector.OnSelectionModified += new ComboBoxSelector.Modified(DwarfSelector_OnSelectionModified);
+            DwarfSelector.OnSelectionModified += DwarfSelector_OnSelectionModified;
             GoalLabel = new Label(gui, Layout, "Goal: null", gui.DefaultFont);
             PlanLabel = new Label(gui, Layout, "Plan: null", gui.DefaultFont);
             AStarPathLabel = new Label(gui, Layout, "Astar Path: null", gui.DefaultFont);
@@ -46,7 +55,7 @@ namespace DwarfCorp
             Visible = false;
 
             int i = 0;
-            foreach (CreatureAIComponent component in master.Minions)
+            foreach(CreatureAIComponent component in master.Minions)
             {
                 DwarfSelector.AddValue("Minion " + i);
                 i++;
@@ -55,92 +64,87 @@ namespace DwarfCorp
 
             Master = master;
 
-            MainPanel.LocalBounds = new Rectangle(20, 100, 500, 600);
+            MainPanel.LocalBounds = new Rectangle(100, 120, 500, 600);
         }
 
-        void DwarfSelector_OnSelectionModified(string arg)
+        private void DwarfSelector_OnSelectionModified(string arg)
         {
-            /*
+            
              int dwarfIndex = DwarfSelector.CurrentIndex;
              if (dwarfIndex != -1 && DwarfSelector.CurrentValue != "")
              {
                  CreatureAIComponent creature = Master.Minions[dwarfIndex];
                  BTDisplay.CurrentAct = creature.CurrentAct;
              }
-             */
+             
         }
 
         public void Update(GameTime time)
         {
-
-            if (GameSettings.Default.EnableAIDebugger)
+            if(GameSettings.Default.EnableAIDebugger)
             {
-                if (Keyboard.GetState().IsKeyDown(Keys.K))
+                if(Keyboard.GetState().IsKeyDown(Keys.K))
                 {
                     Visible = true;
                 }
-                else if (Keyboard.GetState().IsKeyDown(Keys.L))
+                else if(Keyboard.GetState().IsKeyDown(Keys.L))
                 {
                     Visible = false;
                 }
             }
-             
+
             if(!Visible)
             {
                 return;
             }
 
             int dwarfIndex = DwarfSelector.CurrentIndex;
-            if (dwarfIndex != -1 && DwarfSelector.CurrentValue != "")
+            if(dwarfIndex != -1 && DwarfSelector.CurrentValue != "")
             {
                 CreatureAIComponent creature = Master.Minions[dwarfIndex];
-              
+
                 Goal g = creature.CurrentGoal;
 
-                if (creature.CurrentAct != BTDisplay.CurrentAct)
+                if(creature.CurrentAct != BTDisplay.CurrentAct)
                 {
                     BTDisplay.CurrentAct = creature.CurrentAct;
                 }
 
-                if (g != null && creature != null)
+                if(g == null || creature == null)
                 {
-                    GoalLabel.Text = g.Name;
-                    List<Action> plan = creature.CurrentActionPlan;
-
-                    if (plan != null && plan.Count > 0)
-                    {
-                        PlanLabel.Text = "Action: " + plan[creature.CurrentActionIndex].Name;
-                    }
-                    else
-                    {
-                        PlanLabel.Text = "Action: null";
-                    }
-
-                    if (creature.CurrentPath != null)
-                    {
-                        AStarPathLabel.Text = "A* Plan: " + creature.CurrentPath.Count;
-                    }
-                    else
-                    {
-                        AStarPathLabel.Text = "A* Plan: null";
-                    }
-
-                    LastMessages.Text = "";
-                    for (int i = creature.MessageBuffer.Count - 1; i > Math.Max(creature.MessageBuffer.Count - 4, 0); i--)
-                    {
-                        LastMessages.Text += creature.MessageBuffer[i] + "\n";
-                    }
-
-                    SimpleDrawing.DrawBox(creature.Physics.GetBoundingBox(), Color.White, 0.05f);
+                    return;
                 }
 
+                GoalLabel.Text = g.Name;
+                List<Action> plan = creature.CurrentActionPlan;
 
+                if(plan != null && plan.Count > 0)
+                {
+                    PlanLabel.Text = "Action: " + plan[creature.CurrentActionIndex].Name;
+                }
+                else
+                {
+                    PlanLabel.Text = "Action: null";
+                }
+
+                if(creature.CurrentPath != null)
+                {
+                    AStarPathLabel.Text = "A* Plan: " + creature.CurrentPath.Count;
+                }
+                else
+                {
+                    AStarPathLabel.Text = "A* Plan: null";
+                }
+
+                LastMessages.Text = "";
+                for(int i = creature.MessageBuffer.Count - 1; i > Math.Max(creature.MessageBuffer.Count - 4, 0); i--)
+                {
+                    LastMessages.Text += creature.MessageBuffer[i] + "\n";
+                }
+
+                SimpleDrawing.DrawBox(creature.Physics.GetBoundingBox(), Color.White, 0.05f);
             }
-
-            
         }
-
-
-
     }
+
 }

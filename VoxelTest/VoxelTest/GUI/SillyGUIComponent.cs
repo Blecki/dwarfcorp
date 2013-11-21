@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
+
     public class SillyGUIComponent
     {
         public event ClickedDelegate OnClicked;
@@ -25,30 +26,24 @@ namespace DwarfCorp
         public int LastScrollWheel { get; set; }
         public SillyGUIComponent Parent { get; set; }
         protected List<SillyGUIComponent> Children { get; set; }
+
         public Rectangle LocalBounds
         {
             get { return m_localBounds; }
             set
             {
                 m_localBounds = value;
-                if (Parent != null)
-                { 
-                    GlobalBounds = new Rectangle(Parent.GlobalBounds.X + LocalBounds.X, Parent.GlobalBounds.Y + LocalBounds.Y, LocalBounds.Width, LocalBounds.Height);
-                }
-                else 
-                { 
-                    GlobalBounds = LocalBounds; 
-                }
+                GlobalBounds = Parent != null ? new Rectangle(Parent.GlobalBounds.X + LocalBounds.X, Parent.GlobalBounds.Y + LocalBounds.Y, LocalBounds.Width, LocalBounds.Height) : LocalBounds;
             }
         }
 
-        public Rectangle GlobalBounds { get { return m_globalBounds; } set { m_globalBounds = value; } }
+        public Rectangle GlobalBounds { get; set; }
+
         public SillyGUI GUI { get; set; }
         public bool IsMouseOver { get; set; }
         public bool IsLeftPressed { get; set; }
         public bool IsRightPressed { get; set; }
         private Rectangle m_localBounds;
-        private Rectangle m_globalBounds;
         public bool IsVisible { get; set; }
 
         public bool OverrideClickBehavior { get; set; }
@@ -68,7 +63,7 @@ namespace DwarfCorp
             Parent = parent;
             IsVisible = true;
             OverrideClickBehavior = false;
-            if (parent != null)
+            if(parent != null)
             {
                 Parent.AddChild(this);
             }
@@ -81,25 +76,25 @@ namespace DwarfCorp
             OnHover += dummy;
             OnRelease += dummy;
             OnUnHover += dummy;
-            OnScrolled += new MouseScrolledDelegate(SillyGUIComponent_OnScrolled);
+            OnScrolled += SillyGUIComponent_OnScrolled;
 
             ChildrenToRemove = new List<SillyGUIComponent>();
             ChildrenToAdd = new List<SillyGUIComponent>();
             LastScrollWheel = 0;
         }
 
-        void SillyGUIComponent_OnScrolled(int amount)
+        private void SillyGUIComponent_OnScrolled(int amount)
         {
         }
 
 
         public bool HasAnscestor(SillyGUIComponent component)
         {
-            if (Parent == component)
+            if(Parent == component)
             {
                 return true;
             }
-            else if (Parent == null)
+            else if(Parent == null)
             {
                 return false;
             }
@@ -111,12 +106,11 @@ namespace DwarfCorp
 
         public void dummy()
         {
-
         }
 
         public void AddChild(SillyGUIComponent component)
         {
-            if (!ChildrenToAdd.Contains(component))
+            if(!ChildrenToAdd.Contains(component))
             {
                 ChildrenToAdd.Add(component);
             }
@@ -124,7 +118,7 @@ namespace DwarfCorp
 
         public void RemoveChild(SillyGUIComponent component)
         {
-            if (!ChildrenToRemove.Contains(component))
+            if(!ChildrenToRemove.Contains(component))
             {
                 ChildrenToRemove.Add(component);
             }
@@ -132,60 +126,39 @@ namespace DwarfCorp
 
         public bool IsMouseOverRecursive()
         {
-            if (!IsVisible)
+            if(!IsVisible)
             {
                 return false;
             }
 
-            if (IsMouseOver)
-            {
-                return true;
-            }
-
-            foreach (SillyGUIComponent child in Children)
-            {
-                if (child.IsMouseOverRecursive())
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return IsMouseOver || Children.Any(child => child.IsMouseOverRecursive());
         }
 
         public void UpdateTransformsRecursive()
         {
-            if (Parent != null)
-            {
-                GlobalBounds = new Rectangle(LocalBounds.Left + Parent.GlobalBounds.Left, LocalBounds.Top + Parent.GlobalBounds.Top, LocalBounds.Width, LocalBounds.Height);
-            }
-            else
-            {
-                GlobalBounds = LocalBounds;
-            }
+            GlobalBounds = Parent != null ? new Rectangle(LocalBounds.Left + Parent.GlobalBounds.Left, LocalBounds.Top + Parent.GlobalBounds.Top, LocalBounds.Width, LocalBounds.Height) : LocalBounds;
 
 
-            foreach (SillyGUIComponent child in Children)
+            foreach(SillyGUIComponent child in Children)
             {
                 child.UpdateTransformsRecursive();
             }
         }
 
-        void HandleClicks(MouseState state)
+        private void HandleClicks(MouseState state)
         {
-            if (IsMouseOver)
+            if(IsMouseOver)
             {
-                if (state.ScrollWheelValue != LastScrollWheel)
+                if(state.ScrollWheelValue != LastScrollWheel)
                 {
                     OnScrolled(LastScrollWheel - state.ScrollWheelValue);
                     LastScrollWheel = state.ScrollWheelValue;
                 }
-
             }
 
-            if (state.LeftButton == ButtonState.Pressed)
+            if(state.LeftButton == ButtonState.Pressed)
             {
-                if (!IsLeftPressed)
+                if(!IsLeftPressed)
                 {
                     IsLeftPressed = true;
                     OnLeftPressed();
@@ -194,41 +167,43 @@ namespace DwarfCorp
             }
             else
             {
-                if (IsLeftPressed)
+                if(IsLeftPressed)
                 {
                     OnLeftClicked();
                     OnClicked();
                     IsLeftPressed = false;
                     OnRelease();
                 }
-
             }
 
-            if (state.RightButton == ButtonState.Pressed)
+            if(state.RightButton == ButtonState.Pressed)
             {
-                if (!IsRightPressed)
+                if(IsRightPressed)
                 {
-                    IsRightPressed = true;
-                    OnRightPressed();
-                    OnPressed();
+                    return;
                 }
+
+                IsRightPressed = true;
+                OnRightPressed();
+                OnPressed();
             }
             else
             {
-                if (IsRightPressed)
+                if(!IsRightPressed)
                 {
-                    OnRightClicked();
-                    OnClicked();
-                    IsRightPressed = false;
-                    OnRelease();
+                    return;
                 }
 
+                OnRightClicked();
+                OnClicked();
+                IsRightPressed = false;
+                OnRelease();
             }
         }
 
         public void ClearChildren()
         {
-            foreach (SillyGUIComponent child in Children)
+            foreach(SillyGUIComponent child in Children)
             {
                 RemoveChild(child);
             }
@@ -236,13 +211,12 @@ namespace DwarfCorp
 
         public virtual void Update(GameTime time)
         {
-            
-            if (!IsVisible)
+            if(!IsVisible)
             {
                 return;
             }
 
-            foreach (SillyGUIComponent child in Children)
+            foreach(SillyGUIComponent child in Children)
             {
                 child.Update(time);
             }
@@ -250,58 +224,52 @@ namespace DwarfCorp
             MouseState state = Mouse.GetState();
 
 
-            if (OverrideClickBehavior)
+            if(OverrideClickBehavior)
             {
                 HandleClicks(state);
             }
-            else if (GlobalBounds.Contains(state.X, state.Y))
+            else if(GlobalBounds.Contains(state.X, state.Y))
             {
-
-                if (IsMouseOver)
+                if(IsMouseOver)
                 {
                     HandleClicks(state);
                 }
 
-                if (!IsMouseOver)
+                if(!IsMouseOver)
                 {
                     IsMouseOver = true;
                     OnHover();
                 }
-                
             }
-            else if (IsMouseOver)
+            else if(IsMouseOver)
             {
                 IsMouseOver = false;
                 OnUnHover();
                 IsLeftPressed = false;
                 IsRightPressed = false;
-
             }
 
 
-
-            foreach (SillyGUIComponent child in ChildrenToAdd)
+            foreach(SillyGUIComponent child in ChildrenToAdd)
             {
                 Children.Add(child);
             }
             ChildrenToAdd.Clear();
 
-            foreach (SillyGUIComponent child in ChildrenToRemove)
+            foreach(SillyGUIComponent child in ChildrenToRemove)
             {
-                if (!Children.Remove(child))
+                if(!Children.Remove(child))
                 {
                     Console.Out.WriteLine("Something's wrong with removing child...");
                 }
             }
             ChildrenToRemove.Clear();
-
-
         }
 
         protected Rectangle ClipToScreen(Rectangle rect, GraphicsDevice device)
         {
-            int minScreenX = 0;
-            int minScreenY = 0;
+            const int minScreenX = 0;
+            const int minScreenY = 0;
             int maxScreenX = device.Viewport.Bounds.Right;
             int maxScreenY = device.Viewport.Bounds.Bottom;
             int x = Math.Min(Math.Max(minScreenX, rect.X), maxScreenX);
@@ -309,19 +277,32 @@ namespace DwarfCorp
             int maxX = Math.Max(Math.Min(rect.Right, maxScreenX), minScreenX);
             int maxY = Math.Max(Math.Min(rect.Bottom, maxScreenY), minScreenY);
 
-            return new Rectangle(x, y, Math.Abs(maxX - x), Math.Abs(maxY - y)); 
+            return new Rectangle(x, y, Math.Abs(maxX - x), Math.Abs(maxY - y));
         }
 
         public virtual void Render(GameTime time, SpriteBatch batch)
         {
-            if (IsVisible)
+            if(!IsVisible)
             {
-                foreach (SillyGUIComponent child in Children)
-                {
-                    child.Render(time, batch);
-                }
+                return;
+            }
 
+            foreach(SillyGUIComponent child in Children)
+            {
+                child.Render(time, batch);
+            }
+        }
+
+        public virtual void DebugRender(GameTime time, SpriteBatch batch)
+        {
+            Drawer2D.DrawRect(batch, GlobalBounds, IsMouseOver ? Color.Red : Color.White, 1);
+
+
+            foreach (SillyGUIComponent child in Children)
+            {
+                child.DebugRender(time, batch);
             }
         }
     }
+
 }

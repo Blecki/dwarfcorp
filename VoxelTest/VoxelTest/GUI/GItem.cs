@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
+
     public class GItem
     {
         public string Name { get; set; }
@@ -31,4 +32,5 @@ namespace DwarfCorp
             Price = price;
         }
     }
+
 }

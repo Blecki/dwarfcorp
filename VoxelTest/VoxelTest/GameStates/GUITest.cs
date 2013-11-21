@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace DwarfCorp
 {
+
     public class GUITest : GameState
     {
         public SillyGUI GUI { get; set; }
@@ -36,7 +37,7 @@ namespace DwarfCorp
             IsInitialized = true;
             Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
             MainWindow = new Panel(GUI, GUI.RootComponent);
-            MainWindow.LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2 );
+            MainWindow.LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2);
             Layout = new GridLayout(GUI, MainWindow, 10, 4);
             Label label = new Label(GUI, Layout, "GUI Elements", GUI.TitleFont);
             Layout.SetComponentPosition(label, 0, 0, 1, 1);
@@ -73,7 +74,7 @@ namespace DwarfCorp
             combo.CurrentValue = "Foo";
             Layout.SetComponentPosition(combo, 1, 4, 1, 1);
 
-            back.OnClicked += new ClickedDelegate(back_OnClicked);
+            back.OnClicked += back_OnClicked;
 
             GroupBox groupBox = new GroupBox(GUI, Layout, "");
             Layout.SetComponentPosition(groupBox, 2, 1, 2, 6);
@@ -106,9 +107,9 @@ namespace DwarfCorp
             dragGrid2.SetupLayout();
 
 
-            foreach (Resource r in ResourceLibrary.Resources.Values)
+            foreach(Resource r in ResourceLibrary.Resources.Values)
             {
-                if (r.ResourceName != "Container")
+                if(r.ResourceName != "Container")
                 {
                     GItem gitem = new GItem(r.ResourceName, r.Image, 0, 32, 2, 1, r.Tags);
                     gitem.CurrentAmount = 2;
@@ -134,7 +135,7 @@ namespace DwarfCorp
             base.OnEnter();
         }
 
-        void back_OnClicked()
+        private void back_OnClicked()
         {
             StateManager.PopState();
         }
@@ -155,35 +156,30 @@ namespace DwarfCorp
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
 
             DwarfGame.SpriteBatch.End();
-
         }
 
         public override void Render(GameTime gameTime)
         {
-
-            if (Transitioning == TransitionMode.Running)
+            if(Transitioning == TransitionMode.Running)
             {
                 Game.GraphicsDevice.Clear(Color.Black);
                 Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
                 DrawGUI(gameTime, 0);
             }
-            else if (Transitioning == TransitionMode.Entering)
+            else if(Transitioning == TransitionMode.Entering)
             {
                 float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Width, 1.0f);
                 DrawGUI(gameTime, dx);
             }
-            else if (Transitioning == TransitionMode.Exiting)
+            else if(Transitioning == TransitionMode.Exiting)
             {
                 float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Width, 1.0f);
                 DrawGUI(gameTime, dx);
             }
 
 
-
             base.Render(gameTime);
         }
-
-
-
     }
+
 }

@@ -9,9 +9,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
+
     public class LineEdit : SillyGUIComponent
     {
         public delegate void Modified(string arg);
+
         public event Modified OnTextModified;
 
         public string Text { get; set; }
@@ -24,25 +26,24 @@ namespace DwarfCorp
         {
             HasKeyboardFocus = false;
             Text = text;
-            InputManager.MouseClickedCallback += new InputManager.OnMouseClicked(InputManager_MouseClickedCallback);
-            InputManager.KeyPressedCallback += new InputManager.OnKeyPressed(InputManager_KeyPressedCallback);
+            InputManager.MouseClickedCallback += InputManager_MouseClickedCallback;
+            InputManager.KeyPressedCallback += InputManager_KeyPressedCallback;
             Carat = 0;
-            OnTextModified += new Modified(LineEdit_OnTextModified);
+            OnTextModified += LineEdit_OnTextModified;
             IsEditable = true;
         }
 
-        void LineEdit_OnTextModified(string arg)
+        private void LineEdit_OnTextModified(string arg)
         {
-           
         }
 
-        void InputManager_KeyPressedCallback(Microsoft.Xna.Framework.Input.Keys key)
+        private void InputManager_KeyPressedCallback(Microsoft.Xna.Framework.Input.Keys key)
         {
-            if (HasKeyboardFocus && IsEditable)
+            if(HasKeyboardFocus && IsEditable)
             {
-                if (key == Keys.Back || key == Keys.Delete)
+                if(key == Keys.Back || key == Keys.Delete)
                 {
-                    if (Text.Length > 0)
+                    if(Text.Length > 0)
                     {
                         Text = Text.Substring(0, Text.Length - 1);
                     }
@@ -50,7 +51,7 @@ namespace DwarfCorp
                 else
                 {
                     char k = ' ';
-                    if (InputManager.TryConvertKeyboardInput(key, Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift), out k))
+                    if(InputManager.TryConvertKeyboardInput(key, Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift), out k))
                     {
                         Text += k;
                     }
@@ -58,12 +59,11 @@ namespace DwarfCorp
 
                 OnTextModified.Invoke(Text);
             }
-
         }
 
-        void InputManager_MouseClickedCallback(InputManager.MouseButton button)
+        private void InputManager_MouseClickedCallback(InputManager.MouseButton button)
         {
-            if (IsMouseOver && IsEditable)
+            if(IsMouseOver && IsEditable)
             {
                 HasKeyboardFocus = true;
             }
@@ -82,18 +82,18 @@ namespace DwarfCorp
         {
             Vector2 measure = Datastructures.SafeMeasure(GUI.DefaultFont, Text);
 
-            if (measure.X < GlobalBounds.Width - 15)
+            if(measure.X < GlobalBounds.Width - 15)
             {
                 return Text;
             }
             else
             {
-                for (int i = 0; i < Text.Length; i++)
+                for(int i = 0; i < Text.Length; i++)
                 {
                     string subtext = Text.Substring(i);
                     measure = Datastructures.SafeMeasure(GUI.DefaultFont, subtext);
 
-                    if (measure.X < GlobalBounds.Width - 15)
+                    if(measure.X < GlobalBounds.Width - 15)
                     {
                         return "..." + subtext;
                     }
@@ -111,13 +111,13 @@ namespace DwarfCorp
 
             string substring = GetSubstringToShow();
 
-            if (!HasKeyboardFocus)
+            if(!HasKeyboardFocus)
             {
                 Drawer2D.DrawAlignedText(batch, substring, GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
             }
             else
             {
-                if (time.TotalGameTime.TotalMilliseconds % 1000 < 500)
+                if(time.TotalGameTime.TotalMilliseconds % 1000 < 500)
                 {
                     Drawer2D.DrawAlignedText(batch, substring + "|", GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
                 }
@@ -129,7 +129,6 @@ namespace DwarfCorp
 
             base.Render(time, batch);
         }
-
-        
     }
+
 }

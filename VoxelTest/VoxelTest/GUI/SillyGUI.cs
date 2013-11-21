@@ -9,17 +9,23 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
+
     public delegate void ClickedDelegate();
+
     public delegate void PressedDelegate();
+
     public delegate void MouseHoveredDelegate();
+
     public delegate void MouseUnHoveredDelegate();
+
     public delegate void ReleasedDelegate();
+
     public delegate void MouseScrolledDelegate(int amount);
 
     public class SillyGUI
     {
         public SillyGUIComponent RootComponent { get; set; }
-        DwarfGame m_game = null;
+        private DwarfGame m_game = null;
         public SpriteFont DefaultFont { get; set; }
         public SpriteFont SmallFont { get; set; }
         public SpriteFont TitleFont { get; set; }
@@ -31,6 +37,8 @@ namespace DwarfCorp
         public Color DefaultTextColor { get; set; }
         public Color DefaultStrokeColor { get; set; }
         public GraphicsDevice Graphics { get; set; }
+
+        public bool DebugDraw { get; set; }
 
         public SillyGUI(DwarfGame game, SpriteFont defaultFont, SpriteFont titleFont, SpriteFont smallFont, InputManager input)
         {
@@ -49,18 +57,19 @@ namespace DwarfCorp
             DrawAfter = new List<SillyGUIComponent>();
             DefaultTextColor = new Color(48, 27, 0);
             DefaultStrokeColor = new Color(100, 100, 100, 100);
+            DebugDraw = false;
         }
 
 
         public void Update(GameTime time)
         {
-            if (!m_game.IsMouseVisible)
+            if(!m_game.IsMouseVisible)
             {
                 return;
             }
 
-            
-            if (FocusComponent == null)
+
+            if(FocusComponent == null)
             {
                 RootComponent.Update(time);
             }
@@ -68,36 +77,42 @@ namespace DwarfCorp
             {
                 FocusComponent.Update(time);
             }
-            
-        
         }
 
         public void Render(GameTime time, SpriteBatch batch, Vector2 globalOffset)
         {
             GlobalOffset = globalOffset;
 
-            RootComponent.LocalBounds = new Rectangle((int)globalOffset.X, (int)globalOffset.Y, 0, 0);
+            RootComponent.LocalBounds = new Rectangle((int) globalOffset.X, (int) globalOffset.Y, 0, 0);
             RootComponent.UpdateTransformsRecursive();
             RootComponent.Render(time, batch);
 
-            if (FocusComponent != null)
+            if(FocusComponent != null)
             {
                 FocusComponent.Render(time, batch);
             }
 
-            
-            foreach (SillyGUIComponent component in DrawAfter)
+
+            foreach(SillyGUIComponent component in DrawAfter)
             {
                 component.Render(time, batch);
             }
-             
+
 
             DrawAfter.Clear();
+
+            if(DebugDraw)
+            {
+                RootComponent.DebugRender(time, batch);
+            }
         }
+
+
 
         public bool IsMouseOver()
         {
             return RootComponent.IsMouseOverRecursive();
         }
     }
+
 }

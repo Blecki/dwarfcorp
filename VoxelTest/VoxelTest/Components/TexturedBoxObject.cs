@@ -7,10 +7,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class TexturedBoxObject : TintableComponent
     {
-        public BoxPrimitive Primitive { get; set;}
-        public Texture2D Texture { get; set;}
+        public BoxPrimitive Primitive { get; set; }
+        public Texture2D Texture { get; set; }
+
         private static RasterizerState rasterState = new RasterizerState()
         {
             CullMode = CullMode.CullCounterClockwiseFace
@@ -25,7 +27,6 @@ namespace DwarfCorp
 
         public override void Render(GameTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
-
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
             Texture2D originalText = effect.Parameters["xTexture"].GetValueTexture2D();
 
@@ -39,23 +40,19 @@ namespace DwarfCorp
 
             effect.Parameters["xWorld"].SetValue(GlobalTransform);
 
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            foreach(EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
                 Primitive.Render(graphicsDevice);
             }
             effect.Parameters["xWorld"].SetValue(Matrix.Identity);
-            
 
 
             effect.Parameters["xTexture"].SetValue(originalText);
 
 
             graphicsDevice.RasterizerState = r;
-
-
         }
-
-
     }
+
 }

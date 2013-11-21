@@ -9,7 +9,8 @@ using System.Collections.Concurrent;
 
 namespace DwarfCorp
 {
-    public class VoxelChunk : BoundedObject
+
+    public class VoxelChunk : IBoundedObject
     {
         public struct VertexColorInfo
         {
@@ -18,7 +19,7 @@ namespace DwarfCorp
             public int DynamicColor;
         }
 
-        public Dictionary<string, List<InstanceData> > Motes { get; set; }
+        public Dictionary<string, List<InstanceData>> Motes { get; set; }
         public VoxelListPrimitive Primitive { get; set; }
         public VoxelListPrimitive NewPrimitive = null;
         public Dictionary<LiquidType, LiquidPrimitive> Liquids { get; set; }
@@ -29,9 +30,22 @@ namespace DwarfCorp
         public byte[][][] SunColors { get; set; }
         public byte[][][] DynamicColors { get; set; }
         public ConcurrentDictionary<VoxelRef, byte> Springs { get; set; }
-        public int SizeX { get { return m_sizeX; } }
-        public int SizeY { get { return m_sizeY; } }
-        public int SizeZ { get { return m_sizeZ; }}
+
+        public int SizeX
+        {
+            get { return m_sizeX; }
+        }
+
+        public int SizeY
+        {
+            get { return m_sizeY; }
+        }
+
+        public int SizeZ
+        {
+            get { return m_sizeZ; }
+        }
+
         public bool IsVisible { get; set; }
         public bool ShouldRebuild { get; set; }
         public bool IsRebuilding { get; set; }
@@ -48,29 +62,27 @@ namespace DwarfCorp
 
         public static byte m_fogOfWar = 1;
         public ConcurrentDictionary<Point3, VoxelChunk> Neighbors { get; set; }
-        public List<DynamicLight> DynamicLights { get; set;}
-        
+        public List<DynamicLight> DynamicLights { get; set; }
+
 
         private static bool m_staticsInitialized = false;
-        private static  Vector3[] m_vertexDeltas = new Vector3[8];
+        private static Vector3[] m_vertexDeltas = new Vector3[8];
         private static Vector3[] m_faceDeltas = new Vector3[6];
-        
-        private static Dictionary<VoxelVertex, List<Vector3>> m_vertexSuccessors = new Dictionary<VoxelVertex, List<Vector3> >();
-        private static Dictionary<VoxelVertex, List<Vector3>> m_vertexSuccessorsDiag = new Dictionary<VoxelVertex, List<Vector3>>();
-        private static Dictionary<BoxFace, VoxelVertex[]> m_faceVertices = new Dictionary<BoxFace, VoxelVertex[]>();
 
-        private static List<Vector3> m_manhattanSuccessors = new List<Vector3>();
+        private static readonly Dictionary<VoxelVertex, List<Vector3>> m_vertexSuccessors = new Dictionary<VoxelVertex, List<Vector3>>();
+        private static readonly Dictionary<VoxelVertex, List<Vector3>> m_vertexSuccessorsDiag = new Dictionary<VoxelVertex, List<Vector3>>();
+        private static readonly Dictionary<BoxFace, VoxelVertex[]> m_faceVertices = new Dictionary<BoxFace, VoxelVertex[]>();
+        private static readonly List<Vector3> m_manhattanSuccessors = new List<Vector3>();
         public static ColorGradient m_sunGradient = new ColorGradient(new Color(70, 70, 70), new Color(255, 254, 224), 255);
         public static ColorGradient m_ambientGradient = new ColorGradient(new Color(50, 50, 50), new Color(255, 255, 255), 255);
         public static ColorGradient m_caveGradient = new ColorGradient(new Color(8, 12, 17), new Color(41, 54, 76), 255);
         public static ColorGradient m_torchGradient = null;
         public bool LightingCalculated { get; set; }
-        private static List<KeyValuePair<Voxel, List<VoxelVertex>>> m_sharedVertices = new List<KeyValuePair<Voxel, List<VoxelVertex>>>();
         private bool firstRebuild = true;
-        int m_sizeX = -1;
-        int m_sizeY = -1;
-        int m_sizeZ = -1;
-        int m_tileSize = -1;
+        private int m_sizeX = -1;
+        private int m_sizeY = -1;
+        private int m_sizeZ = -1;
+        private int m_tileSize = -1;
 
 
         public bool RebuildPending { get; set; }
@@ -79,190 +91,237 @@ namespace DwarfCorp
 
         public bool ReconstructRamps { get; set; }
 
-        public uint GetID() { return (uint)ID.GetHashCode(); }
+        public uint GetID()
+        {
+            return (uint) ID.GetHashCode();
+        }
 
         #region statics
+
         private void InitializeStatics()
         {
-            if (!m_staticsInitialized)
+            if(m_staticsInitialized)
             {
-                m_vertexDeltas[(int)VoxelVertex.BackBottomLeft] =new Vector3(0, 0, 0);
-                m_vertexDeltas[(int)VoxelVertex.BackTopLeft] =new Vector3(0, 1.0f, 0);
-                m_vertexDeltas[(int)VoxelVertex.BackBottomRight] =new Vector3(1.0f, 0, 0);
-                m_vertexDeltas[(int)VoxelVertex.BackTopRight] =new Vector3(1.0f, 1.0f, 0);
-                
-                m_vertexDeltas[(int)VoxelVertex.FrontBottomLeft] = new Vector3(0, 0, 1.0f);
-                m_vertexDeltas[(int)VoxelVertex.FrontTopLeft] =new Vector3(0, 1.0f, 1.0f);
-                m_vertexDeltas[(int)VoxelVertex.FrontBottomRight] = new Vector3(1.0f, 0, 1.0f);
-                m_vertexDeltas[(int)VoxelVertex.FrontTopRight] =new Vector3(1.0f, 1.0f, 1.0f);
+                return;
+            }
+
+            m_vertexDeltas[(int) VoxelVertex.BackBottomLeft] = new Vector3(0, 0, 0);
+            m_vertexDeltas[(int) VoxelVertex.BackTopLeft] = new Vector3(0, 1.0f, 0);
+            m_vertexDeltas[(int) VoxelVertex.BackBottomRight] = new Vector3(1.0f, 0, 0);
+            m_vertexDeltas[(int) VoxelVertex.BackTopRight] = new Vector3(1.0f, 1.0f, 0);
+
+            m_vertexDeltas[(int) VoxelVertex.FrontBottomLeft] = new Vector3(0, 0, 1.0f);
+            m_vertexDeltas[(int) VoxelVertex.FrontTopLeft] = new Vector3(0, 1.0f, 1.0f);
+            m_vertexDeltas[(int) VoxelVertex.FrontBottomRight] = new Vector3(1.0f, 0, 1.0f);
+            m_vertexDeltas[(int) VoxelVertex.FrontTopRight] = new Vector3(1.0f, 1.0f, 1.0f);
 
 
-                m_manhattanSuccessors.Add(new Vector3(1.0f, 0, 0));
-                m_manhattanSuccessors.Add(new Vector3(-1.0f, 0, 0));
-                m_manhattanSuccessors.Add(new Vector3(0, -1.0f, 0));
-                m_manhattanSuccessors.Add(new Vector3(0, 1.0f, 0));
-                m_manhattanSuccessors.Add(new Vector3(0, 0, -1.0f));
-                m_manhattanSuccessors.Add(new Vector3(0, 0, 1.0f));
+            m_manhattanSuccessors.Add(new Vector3(1.0f, 0, 0));
+            m_manhattanSuccessors.Add(new Vector3(-1.0f, 0, 0));
+            m_manhattanSuccessors.Add(new Vector3(0, -1.0f, 0));
+            m_manhattanSuccessors.Add(new Vector3(0, 1.0f, 0));
+            m_manhattanSuccessors.Add(new Vector3(0, 0, -1.0f));
+            m_manhattanSuccessors.Add(new Vector3(0, 0, 1.0f));
 
-                m_faceDeltas[(int)BoxFace.Top] = new Vector3(0.5f, 0.0f, 0.5f);
-                m_faceDeltas[(int)BoxFace.Bottom] = new Vector3(0.5f, 1.0f, 0.5f);
-                m_faceDeltas[(int)BoxFace.Left] = new Vector3(1.0f, 0.5f, 0.5f);
-                m_faceDeltas[(int)BoxFace.Right] = new Vector3(0.0f, 0.5f, 0.5f);
-                m_faceDeltas[(int)BoxFace.Front] = new Vector3(0.5f, 0.5f, 0.0f);
-                m_faceDeltas[(int)BoxFace.Back] = new Vector3(0.5f, 0.5f, 1.0f);
-
-                
-                m_faceVertices[BoxFace.Top] = new VoxelVertex[]    {VoxelVertex.BackTopLeft, VoxelVertex.BackTopRight, VoxelVertex.FrontTopLeft, VoxelVertex.FrontTopRight};
-                m_faceVertices[BoxFace.Bottom] = new VoxelVertex[] { VoxelVertex.BackBottomLeft, VoxelVertex.BackBottomRight, VoxelVertex.FrontBottomLeft, VoxelVertex.FrontBottomRight };
-                m_faceVertices[BoxFace.Left] = new VoxelVertex[]   { VoxelVertex.BackTopLeft, VoxelVertex.BackBottomLeft, VoxelVertex.FrontTopLeft, VoxelVertex.FrontBottomLeft };
-                m_faceVertices[BoxFace.Right] = new VoxelVertex[]  { VoxelVertex.BackTopRight, VoxelVertex.BackBottomRight, VoxelVertex.FrontTopRight, VoxelVertex.FrontBottomRight };
-                m_faceVertices[BoxFace.Front] = new VoxelVertex[]  { VoxelVertex.FrontBottomLeft, VoxelVertex.FrontBottomRight, VoxelVertex.FrontTopLeft, VoxelVertex.FrontTopRight };
-                m_faceVertices[BoxFace.Back] = new VoxelVertex[]   { VoxelVertex.BackTopLeft, VoxelVertex.BackTopRight, VoxelVertex.BackBottomLeft, VoxelVertex.BackBottomRight };
+            m_faceDeltas[(int) BoxFace.Top] = new Vector3(0.5f, 0.0f, 0.5f);
+            m_faceDeltas[(int) BoxFace.Bottom] = new Vector3(0.5f, 1.0f, 0.5f);
+            m_faceDeltas[(int) BoxFace.Left] = new Vector3(1.0f, 0.5f, 0.5f);
+            m_faceDeltas[(int) BoxFace.Right] = new Vector3(0.0f, 0.5f, 0.5f);
+            m_faceDeltas[(int) BoxFace.Front] = new Vector3(0.5f, 0.5f, 0.0f);
+            m_faceDeltas[(int) BoxFace.Back] = new Vector3(0.5f, 0.5f, 1.0f);
 
 
-                List<ColorStop> torchStops = new List<ColorStop>();
-                ColorStop first = new ColorStop();
-                first.m_color = Color.Black;
-                first.m_position = 0.0f;
+            m_faceVertices[BoxFace.Top] = new[]
+            {
+                VoxelVertex.BackTopLeft,
+                VoxelVertex.BackTopRight,
+                VoxelVertex.FrontTopLeft,
+                VoxelVertex.FrontTopRight
+            };
+            m_faceVertices[BoxFace.Bottom] = new[]
+            {
+                VoxelVertex.BackBottomLeft,
+                VoxelVertex.BackBottomRight,
+                VoxelVertex.FrontBottomLeft,
+                VoxelVertex.FrontBottomRight
+            };
+            m_faceVertices[BoxFace.Left] = new[]
+            {
+                VoxelVertex.BackTopLeft,
+                VoxelVertex.BackBottomLeft,
+                VoxelVertex.FrontTopLeft,
+                VoxelVertex.FrontBottomLeft
+            };
+            m_faceVertices[BoxFace.Right] = new[]
+            {
+                VoxelVertex.BackTopRight,
+                VoxelVertex.BackBottomRight,
+                VoxelVertex.FrontTopRight,
+                VoxelVertex.FrontBottomRight
+            };
+            m_faceVertices[BoxFace.Front] = new[]
+            {
+                VoxelVertex.FrontBottomLeft,
+                VoxelVertex.FrontBottomRight,
+                VoxelVertex.FrontTopLeft,
+                VoxelVertex.FrontTopRight
+            };
+            m_faceVertices[BoxFace.Back] = new[]
+            {
+                VoxelVertex.BackTopLeft,
+                VoxelVertex.BackTopRight,
+                VoxelVertex.BackBottomLeft,
+                VoxelVertex.BackBottomRight
+            };
 
-                ColorStop second = new ColorStop();
-                second.m_color = new Color(100, 50, 0);
-                second.m_position = 0.2f;
 
-                ColorStop third = new ColorStop();
-                third.m_color = new Color(240, 200, 50);
-                third.m_position = 0.5f;
+            ColorStop first = new ColorStop
+            {
+                m_color = Color.Black,
+                m_position = 0.0f
+            };
+            ColorStop second = new ColorStop
+            {
+                m_color = new Color(100, 50, 0),
+                m_position = 0.2f
+            };
+            ColorStop third = new ColorStop
+            {
+                m_color = new Color(240, 200, 50),
+                m_position = 0.5f
+            };
+            ColorStop fourth = new ColorStop
+            {
+                m_color = new Color(255, 240, 180),
+                m_position = 1.0f
+            };
 
-                ColorStop fourth = new ColorStop();
-                fourth.m_color = new Color(255, 240, 180);
-                fourth.m_position = 1.0f;
+            List<ColorStop> torchStops = new List<ColorStop>
+            {
+                first,
+                second,
+                third,
+                fourth
+            };
 
-                torchStops.Add(first);
-                torchStops.Add(second);
-                torchStops.Add(third);
-                torchStops.Add(fourth);
+            m_torchGradient = new ColorGradient(torchStops);
 
-                m_torchGradient = new ColorGradient(torchStops);
+            for(int i = 0; i < 8; i++)
+            {
+                VoxelVertex vertex = (VoxelVertex) (i);
+                List<Vector3> successors = new List<Vector3>();
+                List<Vector3> diagSuccessors = new List<Vector3>();
+                int xlim = 0;
+                int ylim = 0;
+                int zlim = 0;
+                int nXLim = 0;
+                int nYLim = 0;
+                int nZLim = 0;
 
-                for(int i = 0; i < 8; i++)
+                switch(vertex)
                 {
-                    VoxelVertex vertex = (VoxelVertex)(i);
-                    List<Vector3> successors = new List<Vector3>();
-                    List<Vector3> diagSuccessors = new List<Vector3>();
-                    int xlim = 0;
-                    int ylim = 0;
-                    int zlim = 0;
-                    int nXLim = 0;
-                    int nYLim = 0;
-                    int nZLim = 0;
+                    case VoxelVertex.BackBottomLeft:
+                        nXLim = -1;
+                        xlim = 1;
 
-                    switch (vertex)
+                        nYLim = -1;
+                        ylim = 1;
+
+                        nZLim = -1;
+                        zlim = 1;
+                        break;
+                    case VoxelVertex.BackBottomRight:
+                        nXLim = 0;
+                        xlim = 2;
+
+                        nYLim = -1;
+                        ylim = 1;
+
+                        nZLim = -1;
+                        zlim = 1;
+                        break;
+                    case VoxelVertex.BackTopLeft:
+                        nXLim = -1;
+                        xlim = 1;
+                        nYLim = 0;
+                        ylim = 2;
+                        nZLim = -1;
+                        zlim = 1;
+                        break;
+                    case VoxelVertex.BackTopRight:
+                        nXLim = 0;
+                        xlim = 2;
+                        nYLim = 0;
+                        ylim = 2;
+                        nZLim = -1;
+                        zlim = 1;
+                        break;
+
+                    case VoxelVertex.FrontBottomLeft:
+                        nXLim = -1;
+                        xlim = 1;
+                        nYLim = -1;
+                        ylim = 1;
+                        nZLim = 0;
+                        zlim = 2;
+                        break;
+                    case VoxelVertex.FrontBottomRight:
+                        nXLim = 0;
+                        xlim = 2;
+                        nYLim = -1;
+                        ylim = 1;
+                        nZLim = 0;
+                        zlim = 2;
+                        break;
+                    case VoxelVertex.FrontTopLeft:
+                        nXLim = -1;
+                        xlim = 1;
+                        nYLim = 0;
+                        ylim = 2;
+                        nZLim = 0;
+                        zlim = 2;
+                        break;
+                    case VoxelVertex.FrontTopRight:
+                        nXLim = 0;
+                        xlim = 2;
+                        nYLim = 0;
+                        ylim = 2;
+                        nZLim = 0;
+                        zlim = 2;
+                        break;
+                }
+
+                for(int dx = nXLim; dx < xlim; dx++)
+                {
+                    for(int dy = nYLim; dy < ylim; dy++)
                     {
-                        case VoxelVertex.BackBottomLeft:
-                            nXLim = -1;
-                            xlim = 1;
-
-                            nYLim = -1;
-                            ylim = 1;
-
-                            nZLim = -1;
-                            zlim = 1;
-                            break;
-                        case VoxelVertex.BackBottomRight:
-                            nXLim = 0;
-                            xlim = 2;
-
-                            nYLim = -1;
-                            ylim = 1;
-
-                            nZLim = -1;
-                            zlim = 1;
-                            break;
-                        case VoxelVertex.BackTopLeft:
-                            nXLim = -1;
-                            xlim = 1;
-                            nYLim = 0;
-                            ylim = 2;
-                            nZLim = -1;
-                            zlim = 1;
-                            break;
-                        case VoxelVertex.BackTopRight:
-                            nXLim = 0;
-                            xlim = 2;
-                            nYLim = 0;
-                            ylim = 2;
-                            nZLim = -1;
-                            zlim = 1;
-                            break;
-
-                        case VoxelVertex.FrontBottomLeft:
-                            nXLim = -1;
-                            xlim = 1;
-                            nYLim = -1;
-                            ylim = 1;
-                            nZLim = 0;
-                            zlim = 2;
-                            break;
-                        case VoxelVertex.FrontBottomRight:
-                            nXLim = 0;
-                            xlim = 2;
-                            nYLim = -1;
-                            ylim = 1;
-                            nZLim = 0;
-                            zlim = 2;
-                            break;
-                        case VoxelVertex.FrontTopLeft:
-                            nXLim = -1;
-                            xlim = 1;
-                            nYLim = 0;
-                            ylim = 2;
-                            nZLim = 0;
-                            zlim = 2;
-                            break;
-                        case VoxelVertex.FrontTopRight:
-                            nXLim = 0;
-                            xlim = 2;
-                            nYLim = 0;
-                            ylim = 2;
-                            nZLim = 0;
-                            zlim = 2;
-                            break;
-                    }
-
-                    for (int dx = nXLim; dx < xlim; dx++)
-                    {
-                        for (int dy = nYLim; dy < ylim; dy++)
+                        for(int dz = nZLim; dz < zlim; dz++)
                         {
-                            for (int dz = nZLim; dz < zlim; dz++)
+                            if(dx == 0 && dy == 0 && dz == 0)
                             {
-                                
-                                if (dx == 0 && dy == 0 && dz == 0)
-                                {
-                                    continue;
-                                }
-                                else
-                                {
-                                    successors.Add(new Vector3(dx, dy, dz));
+                                continue;
+                            }
+                            else
+                            {
+                                successors.Add(new Vector3(dx, dy, dz));
 
-                                    if ((dx != 0 && dz != 0 && dy == 0))
-                                    {
-                                        diagSuccessors.Add(new Vector3(dx, dy, dz));
-                                    }
+                                if((dx != 0 && dz != 0 && dy == 0))
+                                {
+                                    diagSuccessors.Add(new Vector3(dx, dy, dz));
                                 }
                             }
                         }
                     }
-
-                    m_vertexSuccessors[vertex] = successors;
-                    m_vertexSuccessorsDiag[vertex] = diagSuccessors;
                 }
 
-                m_staticsInitialized = true;
+                m_vertexSuccessors[vertex] = successors;
+                m_vertexSuccessorsDiag[vertex] = diagSuccessors;
             }
+
+            m_staticsInitialized = true;
         }
+
         #endregion
-
-
 
         public VoxelChunk(ChunkManager manager, ChunkFile chunkFile)
         {
@@ -274,12 +333,12 @@ namespace DwarfCorp
             m_sizeZ = chunkFile.Size.Z;
 
             VoxelGrid = ChunkGenerator.Allocate(m_sizeX, m_sizeY, m_sizeZ);
-            Water = VoxelChunk.WaterAllocate(m_sizeX, m_sizeY, m_sizeZ); 
+            Water = WaterAllocate(m_sizeX, m_sizeY, m_sizeZ);
 
             ID = chunkFile.ID;
             IsVisible = true;
             m_tileSize = 1;
-            HalfLength = new Vector3((float)m_tileSize / 2.0f, (float)m_tileSize / 2.0f, (float)m_tileSize / 2.0f);
+            HalfLength = new Vector3((float) m_tileSize / 2.0f, (float) m_tileSize / 2.0f, (float) m_tileSize / 2.0f);
             Origin = chunkFile.Origin;
             Primitive = new VoxelListPrimitive();
             RenderWireframe = false;
@@ -293,26 +352,25 @@ namespace DwarfCorp
             Liquids[LiquidType.Lava] = new LiquidPrimitive(LiquidType.Lava);
 
 
-            for (int x = 0; x < VoxelGrid.Length; x++)
+            for(int x = 0; x < VoxelGrid.Length; x++)
             {
-                for (int y = 0; y < VoxelGrid[x].Length; y++)
+                for(int y = 0; y < VoxelGrid[x].Length; y++)
                 {
-                    for (int z = 0; z < VoxelGrid[x][y].Length; z++)
+                    for(int z = 0; z < VoxelGrid[x][y].Length; z++)
                     {
                         short type = chunkFile.Types[x, y, z];
-                        if (type > 0)
+                        if(type > 0)
                         {
-                            Voxel v = new Voxel(Origin + new Vector3(x, y, z), VoxelLibrary.GetVoxelType(type), VoxelLibrary.GetPrimitive(type), true);
-                            if (v != null)
+                            Voxel v = new Voxel(Origin + new Vector3(x, y, z), VoxelLibrary.GetVoxelType(type), VoxelLibrary.GetPrimitive(type), true)
                             {
-                                v.Chunk = this;
-                                v.GridPosition = v.Position - Origin;
-                            }
+                                Chunk = this
+                            };
+                            v.GridPosition = v.Position - Origin;
                             VoxelGrid[x][y][z] = v;
                         }
 
                         Water[x][y][z].WaterLevel = chunkFile.Liquid[x, y, z];
-                        Water[x][y][z].Type = (LiquidType)chunkFile.LiquidTypes[x, y, z];
+                        Water[x][y][z].Type = (LiquidType) chunkFile.LiquidTypes[x, y, z];
                     }
                 }
             }
@@ -339,16 +397,16 @@ namespace DwarfCorp
             ID = id;
             Origin = origin;
             VoxelGrid = ChunkGenerator.Allocate(m_sizeX, m_sizeY, m_sizeZ);
-            Water = VoxelChunk.WaterAllocate(m_sizeX, m_sizeY, m_sizeZ); 
+            Water = WaterAllocate(m_sizeX, m_sizeY, m_sizeZ);
             IsVisible = true;
             ShouldRebuild = true;
             m_tileSize = tileSize;
-            HalfLength = new Vector3((float)m_tileSize / 2.0f, (float)m_tileSize / 2.0f, (float)m_tileSize / 2.0f);
+            HalfLength = new Vector3((float) m_tileSize / 2.0f, (float) m_tileSize / 2.0f, (float) m_tileSize / 2.0f);
             Primitive = new VoxelListPrimitive();
             RenderWireframe = false;
             Manager = manager;
             IsActive = true;
- 
+
             InitializeStatics();
             PrimitiveMutex = new Mutex();
             ShouldRecalculateLighting = true;
@@ -374,11 +432,11 @@ namespace DwarfCorp
         {
             WaterCell[][][] w = new WaterCell[sx][][];
 
-            for (int x = 0; x < sx; x++)
+            for(int x = 0; x < sx; x++)
             {
                 w[x] = new WaterCell[sy][];
 
-                for (int y = 0; y < sy; y++)
+                for(int y = 0; y < sy; y++)
                 {
                     w[x][y] = new WaterCell[sz];
                 }
@@ -399,13 +457,13 @@ namespace DwarfCorp
             ID = id;
             IsVisible = true;
             m_tileSize = tileSize;
-            HalfLength = new Vector3((float)m_tileSize / 2.0f, (float)m_tileSize / 2.0f, (float)m_tileSize / 2.0f);
+            HalfLength = new Vector3((float) m_tileSize / 2.0f, (float) m_tileSize / 2.0f, (float) m_tileSize / 2.0f);
             Origin = origin;
             Primitive = new VoxelListPrimitive();
             RenderWireframe = false;
             Manager = manager;
             IsActive = true;
-     
+
             Neighbors = new ConcurrentDictionary<Point3, VoxelChunk>();
             DynamicLights = new List<DynamicLight>();
             Liquids = new Dictionary<LiquidType, LiquidPrimitive>();
@@ -419,7 +477,7 @@ namespace DwarfCorp
                     for(int z = 0; z < voxelGrid[x][y].Length; z++)
                     {
                         Voxel v = voxelGrid[x][y][z];
-                        if (v != null)
+                        if(v != null)
                         {
                             v.Chunk = this;
                             v.GridPosition = v.Position - Origin;
@@ -443,13 +501,13 @@ namespace DwarfCorp
 
         public void InitializeWater()
         {
-            for (int x = 0; x < m_sizeX; x++)
+            for(int x = 0; x < m_sizeX; x++)
             {
-                for (int y = 0; y < m_sizeY; y++)
+                for(int y = 0; y < m_sizeY; y++)
                 {
-                    for (int z = 0; z < m_sizeZ; z++)
+                    for(int z = 0; z < m_sizeZ; z++)
                     {
-                        Water[x][ y][ z] = new WaterCell();
+                        Water[x][y][z] = new WaterCell();
                     }
                 }
             }
@@ -459,16 +517,14 @@ namespace DwarfCorp
         {
             float bestDist = 10000000;
             VoxelVertex bestKey = VoxelVertex.BackTopRight;
-            float dist = 0.0f;
             for(int i = 0; i < 8; i++)
             {
-                dist = (position - m_vertexDeltas[i]).LengthSquared();
-                if (dist < bestDist)
+                float dist = (position - m_vertexDeltas[i]).LengthSquared();
+                if(dist < bestDist)
                 {
                     bestDist = dist;
-                    bestKey = (VoxelVertex)(i);
+                    bestKey = (VoxelVertex) (i);
                 }
-
             }
 
 
@@ -479,16 +535,14 @@ namespace DwarfCorp
         {
             float bestDist = 10000000;
             BoxFace bestKey = BoxFace.Top;
-            float dist = 0.0f;
-            for (int i = 0; i < 6; i++)
+            for(int i = 0; i < 6; i++)
             {
-                dist = (position - m_faceDeltas[i]).LengthSquared();
-                if (dist < bestDist)
+                float dist = (position - m_faceDeltas[i]).LengthSquared();
+                if(dist < bestDist)
                 {
                     bestDist = dist;
-                    bestKey = (BoxFace)(i);
+                    bestKey = (BoxFace) (i);
                 }
-
             }
 
 
@@ -497,9 +551,10 @@ namespace DwarfCorp
 
         private BoundingBox m_boundingBox;
         private bool m_boundingBoxCreated = false;
+
         public BoundingBox GetBoundingBox()
         {
-            if (!m_boundingBoxCreated)
+            if(!m_boundingBoxCreated)
             {
                 Vector3 max = new Vector3(m_sizeX, m_sizeY, m_sizeZ) + Origin;
                 m_boundingBox = new BoundingBox(Origin, max);
@@ -511,12 +566,13 @@ namespace DwarfCorp
 
         private BoundingSphere m_boundingSphere;
         private bool m_boundingSphereCreated = false;
+
         public BoundingSphere GetBoundingSphere()
         {
-            if (!m_boundingSphereCreated)
+            if(!m_boundingSphereCreated)
             {
                 float m = Math.Max(Math.Max(m_sizeX, m_sizeY), m_sizeZ) * 0.5f;
-                m_boundingSphere = new BoundingSphere(Origin + new Vector3(m_sizeX, m_sizeY, m_sizeZ) * 0.5f, (float)Math.Sqrt(3 * m * m));
+                m_boundingSphere = new BoundingSphere(Origin + new Vector3(m_sizeX, m_sizeY, m_sizeZ) * 0.5f, (float) Math.Sqrt(3 * m * m));
                 m_boundingSphereCreated = true;
             }
 
@@ -526,7 +582,7 @@ namespace DwarfCorp
         public void Update(GameTime t)
         {
             PrimitiveMutex.WaitOne();
-            if (NewPrimitiveReceived)
+            if(NewPrimitiveReceived)
             {
                 Primitive = NewPrimitive;
                 NewPrimitive = null;
@@ -537,31 +593,28 @@ namespace DwarfCorp
 
         public void Render(Texture2D tilemap, Texture2D illumMap, Texture2D sunMap, Texture2D ambientMap, Texture2D torchMap, GraphicsDevice device, Effect effect, Matrix worldMatrix)
         {
-
-            
             effect.Parameters["xEnableLighting"].SetValue(GameSettings.Default.CursorLightEnabled);
 
             effect.Parameters["xLightColor"].SetValue(new Vector4(0, 0, 1, 0));
             effect.Parameters["xLightPos"].SetValue(PlayState.CursorLightPos);
 
 
-            if (GameSettings.Default.SelfIlluminationEnabled)
+            if(GameSettings.Default.SelfIlluminationEnabled)
             {
                 effect.Parameters["SelfIllumination"].SetValue(true);
             }
 
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            foreach(EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
 
-                if (!RenderWireframe)
+                if(!RenderWireframe)
                 {
                     Primitive.Render(device);
                 }
                 else
                 {
                     Primitive.RenderWireframe(device);
-
                 }
             }
 
@@ -569,26 +622,26 @@ namespace DwarfCorp
 
             //Color color = Color.White;
 
-            
+
             //Drawer2D.DrawText("" + ID.X + "," + ID.Y + "," + ID.Z + ":" + ID.GetHashCode(), Origin, Color.White, Color.Black);
         }
 
         public void RebuildLiquids(GraphicsDevice g)
         {
-            foreach (KeyValuePair<LiquidType, LiquidPrimitive> primitive in Liquids)
+            foreach(KeyValuePair<LiquidType, LiquidPrimitive> primitive in Liquids)
             {
                 primitive.Value.InitializeFromChunk(this, g);
             }
             ShouldRebuildWater = false;
         }
 
-        byte getMax(byte[] values)
+        private byte getMax(byte[] values)
         {
             byte max = 0;
 
-            foreach (byte b in values)
+            foreach(byte b in values)
             {
-                if (b > max)
+                if(b > max)
                 {
                     max = b;
                 }
@@ -602,12 +655,12 @@ namespace DwarfCorp
 
         private float Clamp(float v, float a)
         {
-            if (v > a)
+            if(v > a)
             {
                 return a;
             }
 
-            if (v < -a)
+            if(v < -a)
             {
                 return -a;
             }
@@ -629,28 +682,27 @@ namespace DwarfCorp
 
             string GrassType = biomeData.GrassVoxel;
 
-            for (int i = 0; i < biomeData.Motes.Count; i++)
+            for(int i = 0; i < biomeData.Motes.Count; i++)
             {
                 List<Vector3> GrassPositions = new List<Vector3>();
                 List<Color> GrassColors = new List<Color>();
                 List<float> GrassScales = new List<float>();
                 DetailMoteData moteData = biomeData.Motes[i];
 
-                for (int x = 0; x < SizeX; x++)
+                for(int x = 0; x < SizeX; x++)
                 {
-                    for (int y = 1; y < Math.Min(Manager.MaxViewingLevel + 1, SizeY - 1); y++)
+                    for(int y = 1; y < Math.Min(Manager.MaxViewingLevel + 1, SizeY - 1); y++)
                     {
-                        for (int z = 0; z < SizeZ; z++)
+                        for(int z = 0; z < SizeZ; z++)
                         {
                             Voxel v = VoxelGrid[x][y][z];
 
 
-                            if (v != null && VoxelGrid[x][y + 1][z] == null && v.Type.name == GrassType && v.IsVisible && Water[x][y + 1][z].WaterLevel == 0)
+                            if(v != null && VoxelGrid[x][y + 1][z] == null && v.Type.name == GrassType && v.IsVisible && Water[x][y + 1][z].WaterLevel == 0)
                             {
-
                                 float vOffset = 0.0f;
 
-                                if (v.RampType != RampType.None)
+                                if(v.RampType != RampType.None)
                                 {
                                     vOffset = -0.5f;
                                 }
@@ -658,24 +710,20 @@ namespace DwarfCorp
                                 float value = MoteNoise.Noise(v.Position.X * moteData.RegionScale, v.Position.Y * moteData.RegionScale, v.Position.Z * moteData.RegionScale);
                                 float s = MoteScaleNoise.Noise(v.Position.X * moteData.RegionScale, v.Position.Y * moteData.RegionScale, v.Position.Z * moteData.RegionScale) * moteData.MoteScale;
 
-                                if (Math.Abs(value) > moteData.SpawnThreshold)
+                                if(Math.Abs(value) > moteData.SpawnThreshold)
                                 {
-
                                     Vector3 smallNoise = ClampVector(VertexNoise.GetRandomNoiseVector(v.Position * moteData.RegionScale * 20.0f) * 20.0f, 0.4f);
                                     smallNoise.Y = 0.0f;
                                     GrassPositions.Add(v.Position + new Vector3(0.5f, 1.0f + s * 0.5f + vOffset, 0.5f) + smallNoise);
-                                    GrassColors.Add(new Color((int)SunColors[x][y][z], 128, (int)DynamicColors[x][y][z]));
+                                    GrassColors.Add(new Color((int) SunColors[x][y][z], 128, (int) DynamicColors[x][y][z]));
                                     GrassScales.Add(s);
                                 }
-
                             }
-
-
                         }
                     }
                 }
 
-                if (Motes.Count < i + 1)
+                if(Motes.Count < i + 1)
                 {
                     Motes[moteData.Name] = new List<InstanceData>();
                 }
@@ -683,27 +731,24 @@ namespace DwarfCorp
                 Motes[moteData.Name] = EntityFactory.GenerateGrassMotes(GrassPositions,
                     GrassColors, GrassScales, Manager.Components, Manager.Content, Manager.Graphics, Motes[moteData.Name], moteData.Name);
             }
-             
         }
 
         public void UpdateRamps()
         {
-            if (ReconstructRamps || firstRebuild)
+            if(ReconstructRamps || firstRebuild)
             {
                 VoxelListPrimitive.UpdateRamps(this);
                 VoxelListPrimitive.UpdateCornerRamps(this);
                 ReconstructRamps = false;
             }
-
         }
 
         public void BuildGrassMotes()
         {
-
             Vector2 v = new Vector2(Origin.X, Origin.Z) / PlayState.WorldScale;
 
-            Overworld.Biome biome = Overworld.Map[(int)v.X, (int)v.Y].Biome;
-                /*Overworld.GetBiome(Overworld.LinearInterpolate(v, Overworld.Map, Overworld.ScalarFieldType.Temperature),
+            Overworld.Biome biome = Overworld.Map[(int) v.X, (int) v.Y].Biome;
+            /*Overworld.GetBiome(Overworld.LinearInterpolate(v, Overworld.Map, Overworld.ScalarFieldType.Temperature),
                                    Overworld.LinearInterpolate(v, Overworld.Map, Overworld.ScalarFieldType.Rainfall),
                                    Overworld.LinearInterpolate(v, Overworld.Map, Overworld.ScalarFieldType.Height));*/
             BuildGrassMotes(biome);
@@ -713,7 +758,7 @@ namespace DwarfCorp
         {
             //SimpleDrawing.DrawBox(GetBoundingBox(), Color.White, 0.1f);
 
-            if (g == null || g.IsDisposed)
+            if(g == null || g.IsDisposed)
             {
                 return;
             }
@@ -721,7 +766,7 @@ namespace DwarfCorp
 
             BuildPrimitive(g);
             BuildGrassMotes();
-            if (firstRebuild)
+            if(firstRebuild)
             {
                 RebuildLiquids(g);
                 firstRebuild = false;
@@ -729,13 +774,11 @@ namespace DwarfCorp
 
             IsRebuilding = false;
 
-            if (ShouldRecalculateLighting)
+            if(ShouldRecalculateLighting)
             {
                 NotifyChangedComponents();
             }
             ShouldRebuild = false;
-            
-
         }
 
         public void BuildPrimitive(GraphicsDevice g)
@@ -747,31 +790,30 @@ namespace DwarfCorp
 
         public void NotifyChangedComponents()
         {
-            HashSet<BoundedObject> componentsInside = new HashSet<BoundedObject>();
-            LocatableComponent.m_octree.Root.GetComponentsIntersecting(GetBoundingBox(), componentsInside);
+            HashSet<IBoundedObject> componentsInside = new HashSet<IBoundedObject>();
+            LocatableComponent.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), componentsInside, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
             Message changedMessage = new Message(Message.MessageType.OnChunkModified, "Chunk Modified");
 
-            foreach(BoundedObject c in componentsInside)
+            foreach(IBoundedObject c in componentsInside)
             {
-                if (c is GameComponent)
+                if(c is GameComponent)
                 {
-                    ((GameComponent)c).ReceiveMessageRecursive(changedMessage);
-
+                    ((GameComponent) c).ReceiveMessageRecursive(changedMessage);
                 }
             }
         }
 
         public void Destroy(GraphicsDevice device)
         {
-            if (Primitive != null)
+            if(Primitive != null)
             {
                 Primitive.ResetBuffer(device);
             }
 
-            if (Motes != null)
+            if(Motes != null)
             {
-                foreach (KeyValuePair<string, List<InstanceData> > mote in Motes)
+                foreach(KeyValuePair<string, List<InstanceData>> mote in Motes)
                 {
                     foreach(InstanceData mote2 in mote.Value)
                     {
@@ -779,12 +821,10 @@ namespace DwarfCorp
                     }
                 }
             }
-
-            
         }
 
         #region transformations
-        
+
         public Vector3 WorldToGrid(Vector3 worldLocation)
         {
             Vector3 grid = (worldLocation - Origin);
@@ -796,11 +836,11 @@ namespace DwarfCorp
         {
             Vector3 grid = WorldToGrid(worldLocation);
 
-            bool valid = IsCellValid((int)grid.X , (int)grid.Y , (int)grid.Z );
+            bool valid = IsCellValid((int) grid.X, (int) grid.Y, (int) grid.Z);
 
-            if (valid)
+            if(valid)
             {
-                return VoxelGrid[(int)grid.X][ (int)grid.Y][ (int)grid.Z ];
+                return VoxelGrid[(int) grid.X][(int) grid.Y][(int) grid.Z];
             }
             else
             {
@@ -810,14 +850,14 @@ namespace DwarfCorp
 
         public bool IsGridPositionValid(Vector3 grid)
         {
-            return IsCellValid((int)grid.X, (int)grid.Y, (int)grid.Z);
+            return IsCellValid((int) grid.X, (int) grid.Y, (int) grid.Z);
         }
 
         public bool IsWorldLocationValid(Vector3 worldLocation)
         {
             Vector3 grid = WorldToGrid(worldLocation);
 
-            return IsCellValid((int)grid.X, (int)grid.Y, (int)grid.Z);
+            return IsCellValid((int) grid.X, (int) grid.Y, (int) grid.Z);
         }
 
         public bool IsCellValid(int x, int y, int z)
@@ -828,6 +868,7 @@ namespace DwarfCorp
         #endregion transformations
 
         #region lighting
+
         public DynamicLight AddLight(Vector3 worldLocation, byte range, byte intensity)
         {
             if(IsWorldLocationValid(worldLocation))
@@ -839,9 +880,9 @@ namespace DwarfCorp
                 DynamicLight light = new DynamicLight(range, intensity, voxels[0], Manager);
                 DynamicLights.Add(light);
                 Manager.DynamicLights.Add(light);
-                foreach (VoxelChunk chunk in Neighbors.Values)
+                foreach(VoxelChunk chunk in Neighbors.Values)
                 {
-                    if (chunk != this)
+                    if(chunk != this)
                     {
                         chunk.ShouldRebuild = true;
                         chunk.ShouldRecalculateLighting = true;
@@ -856,14 +897,14 @@ namespace DwarfCorp
 
         public void SetAllToRecalculate()
         {
-            for (int x = 0; x < SizeX; x++)
+            for(int x = 0; x < SizeX; x++)
             {
-                for (int y = 0; y < SizeY; y++)
+                for(int y = 0; y < SizeY; y++)
                 {
-                    for (int z = 0; z < SizeZ; z++)
+                    for(int z = 0; z < SizeZ; z++)
                     {
                         Voxel v = VoxelGrid[x][y][z];
-                        if (v != null)
+                        if(v != null)
                         {
                             v.RecalculateLighting = true;
                         }
@@ -872,121 +913,88 @@ namespace DwarfCorp
             }
         }
 
-         public void CalculateDynamicLights()
+        public void CalculateDynamicLights()
         {
-            for (int i = 0; i < DynamicLights.Count; i++ )
+            for(int i = 0; i < DynamicLights.Count; i++)
             {
                 DynamicLight light = DynamicLights[i];
                 List<VoxelRef> visitedNodes = new List<VoxelRef>();
                 CalculateDynamicLight(light, 0, light.Intensity, light.Voxel, visitedNodes);
             }
-
         }
 
-         public byte GetIntensity(DynamicLight light, byte lightIntensity, VoxelRef voxel)
-         {
-             Vector3 vertexPos = voxel.WorldPosition;
-             Vector3 diff = vertexPos - (light.Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f));
-             float dist = diff.LengthSquared() * 2;
-      
-             return (byte)(int)((Math.Min(1.0f / (dist + 0.0001f), 1.0f)) * (float)light.Intensity);
-         }
+        public byte GetIntensity(DynamicLight light, byte lightIntensity, VoxelRef voxel)
+        {
+            Vector3 vertexPos = voxel.WorldPosition;
+            Vector3 diff = vertexPos - (light.Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f));
+            float dist = diff.LengthSquared() * 2;
+
+            return (byte) (int) ((Math.Min(1.0f / (dist + 0.0001f), 1.0f)) * (float) light.Intensity);
+        }
 
         public void CalculateDynamicLight(DynamicLight light, byte depth, byte intensity, VoxelRef seed, List<VoxelRef> visitedNodes)
         {
-            Queue<VoxelRef> Q = new Queue<VoxelRef>();
-            Queue<int> Depths = new Queue<int>();
-            Queue<Vector3> Deltas = new Queue<Vector3>();
+            Queue<VoxelRef> q = new Queue<VoxelRef>();
+            Queue<int> depths = new Queue<int>();
+            Queue<Vector3> deltas = new Queue<Vector3>();
             HashSet<VoxelRef> visitedSet = new HashSet<VoxelRef>();
 
-            Q.Enqueue(light.Voxel);
+            q.Enqueue(light.Voxel);
             visitedSet.Add(light.Voxel);
-            Depths.Enqueue(0);
-            Deltas.Enqueue(new Vector3(0.01f, 0, 0));
+            depths.Enqueue(0);
+            deltas.Enqueue(new Vector3(0.01f, 0, 0));
             int iters = 0;
 
-            while (Q.Count > 0)
+            while(q.Count > 0)
             {
-                VoxelRef t = Q.Dequeue();
-                int d = Depths.Dequeue();
-                Vector3 delta = Deltas.Dequeue();
+                VoxelRef t = q.Dequeue();
+                int d = depths.Dequeue();
+                Vector3 delta = deltas.Dequeue();
                 iters++;
 
-                if (d > light.Range)
+                if(d > light.Range)
                 {
                     continue;
                 }
 
                 Voxel seedVoxel = t.GetVoxel(Manager, false);
                 VoxelChunk seedChunk = null;
-                if (seedVoxel != null)
+                if(seedVoxel != null)
                 {
                     seedChunk = seedVoxel.Chunk;
                 }
                 else
                 {
-                    if (t.ChunkID.Equals(ID))
-                    {
-                        seedChunk = this;
-                    }
-                    else
-                    {
-                        seedChunk = Manager.ChunkMap[t.ChunkID];
-                    }
+                    seedChunk = t.ChunkID.Equals(ID) ? this : Manager.ChunkMap[t.ChunkID];
                 }
 
-                if (seedVoxel != null && iters > 1)
+                if(seedVoxel != null && iters > 1)
                 {
-                    BoxFace faceLit = GetNearestFace(delta);
                     Vector3 grid = seedVoxel.GridPosition;
-                    seedVoxel.Chunk.DynamicColors[(int)grid.X][(int)grid.Y][(int)grid.Z] = (byte)(int)Math.Min((float)seedVoxel.Chunk.DynamicColors[(int)grid.X][(int)grid.Y][(int)grid.Z] + GetIntensity(light, intensity, t), 255.0f);
-                    
-                    /*
-                    foreach (VoxelVertex vertexLit in m_faceVertices[faceLit])
-                    {
-                        seedVoxel.DynamicColors[(int)vertexLit] = (byte)(int)Math.Min((float)seedVoxel.DynamicColors[(int)vertexLit] + GetIntensity(light, intensity, vertexLit, t), 255.0f);
-                        seedChunk.GetSharedVertices(t, vertexLit, m_sharedVertices);
-
-                        foreach (KeyValuePair<Voxel, List<VoxelVertex>> sharedVertex in m_sharedVertices)
-                        {
-                            foreach (VoxelVertex vertex in sharedVertex.Value)
-                            {
-                                Voxel shared = sharedVertex.Key;
-                                shared.DynamicColors[(int)vertex] = (byte)(int)Math.Min(shared.DynamicColors[(int)vertex] + GetIntensity(light, intensity, vertex, sharedVertex.Key.GetReference()), 255.0f);
-                            }
-                        }
-                        
-                    }
-                     */
-
+                    seedVoxel.Chunk.DynamicColors[(int) grid.X][(int) grid.Y][(int) grid.Z] = (byte) (int) Math.Min((float) seedVoxel.Chunk.DynamicColors[(int) grid.X][(int) grid.Y][(int) grid.Z] + GetIntensity(light, intensity, t), 255.0f);
                 }
 
-                if (d == 0 || t.TypeName == "empty" || t.TypeName == "water")
+                if(d != 0 && t.TypeName != "empty" && t.TypeName != "water")
                 {
-                    Vector3 relativeGrid = t.WorldPosition - seedChunk.Origin;
-                    List<VoxelRef> neighbors = seedChunk.GetNeighborsManhattan((int)relativeGrid.X, (int)relativeGrid.Y, (int)relativeGrid.Z);
-
-
-                    foreach (VoxelRef n in neighbors)
-                    {
-                        if (!visitedSet.Contains(n))
-                        {
-                            Q.Enqueue(n);
-                            Depths.Enqueue(d + 1);
-                            visitedSet.Add(n);
-                            Deltas.Enqueue(n.WorldPosition - t.WorldPosition + HalfLength);
-                        }
-                    }
+                    continue;
                 }
-                
+
+                Vector3 relativeGrid = t.WorldPosition - seedChunk.Origin;
+                List<VoxelRef> neighbors = seedChunk.GetNeighborsManhattan((int) relativeGrid.X, (int) relativeGrid.Y, (int) relativeGrid.Z);
 
 
+                foreach(VoxelRef n in neighbors.Where(n => !visitedSet.Contains(n)))
+                {
+                    q.Enqueue(n);
+                    depths.Enqueue(d + 1);
+                    visitedSet.Add(n);
+                    deltas.Enqueue(n.WorldPosition - t.WorldPosition + HalfLength);
+                }
             }
-
         }
 
         public static void CalculateVertexLight(Voxel vox, VoxelVertex face,
-                                          ChunkManager chunks, List<VoxelRef> neighbors, ref VertexColorInfo color)
+            ChunkManager chunks, List<VoxelRef> neighbors, ref VertexColorInfo color)
         {
             float numHit = 1;
             float numChecked = 1;
@@ -994,20 +1002,19 @@ namespace DwarfCorp
 
             neighbors.Clear();
 
-            color.SunColor += vox.Chunk.SunColors[(int)vox.GridPosition.X][(int)vox.GridPosition.Y][(int)vox.GridPosition.Z];
-            color.DynamicColor += vox.Chunk.DynamicColors[(int)vox.GridPosition.X][(int)vox.GridPosition.Y][(int)vox.GridPosition.Z];
+            color.SunColor += vox.Chunk.SunColors[(int) vox.GridPosition.X][(int) vox.GridPosition.Y][(int) vox.GridPosition.Z];
+            color.DynamicColor += vox.Chunk.DynamicColors[(int) vox.GridPosition.X][(int) vox.GridPosition.Y][(int) vox.GridPosition.Z];
             vox.Chunk.GetNeighborsVertex(face, vox.GetReference(), neighbors, true);
-            for(int i = 0; i < neighbors.Count; i++)
-            {
-                VoxelRef v= neighbors[i];
 
+            foreach(VoxelRef v in neighbors)
+            {
                 VoxelChunk c = chunks.ChunkMap[v.ChunkID];
-                color.SunColor += c.SunColors[(int)v.GridPosition.X][(int)v.GridPosition.Y][(int)v.GridPosition.Z];
-                if (VoxelLibrary.IsSolid(v))
+                color.SunColor += c.SunColors[(int) v.GridPosition.X][(int) v.GridPosition.Y][(int) v.GridPosition.Z];
+                if(VoxelLibrary.IsSolid(v))
                 {
                     numHit++;
                     numChecked++;
-                    color.DynamicColor += c.DynamicColors[(int)v.GridPosition.X][(int)v.GridPosition.Y][(int)v.GridPosition.Z];
+                    color.DynamicColor += c.DynamicColors[(int) v.GridPosition.X][(int) v.GridPosition.Y][(int) v.GridPosition.Z];
                 }
                 else
                 {
@@ -1016,103 +1023,73 @@ namespace DwarfCorp
             }
 
 
-
             float proportionHit = numHit / numChecked;
-            color.AmbientColor =  (int)Math.Min((1.0f - proportionHit) * 255.0f, 255);
-            color.SunColor = (int)Math.Min((float)color.SunColor / (float)numChecked, 255);
-            color.DynamicColor = (int)Math.Min((float)color.DynamicColor / (float)numHit, 255);
+            color.AmbientColor = (int) Math.Min((1.0f - proportionHit) * 255.0f, 255);
+            color.SunColor = (int) Math.Min((float) color.SunColor / (float) numChecked, 255);
+            color.DynamicColor = (int) Math.Min((float) color.DynamicColor / (float) numHit, 255);
         }
 
         public void ResetDynamicLight(byte sunColor)
         {
-            for (int x = 0; x < SizeX; x++)
+            for(int x = 0; x < SizeX; x++)
             {
-                for (int z = 0; z < SizeZ; z++)
+                for(int z = 0; z < SizeZ; z++)
                 {
-                    for (int y = 0; y < SizeY; y++)
+                    for(int y = 0; y < SizeY; y++)
                     {
-                        if (VoxelGrid[x][y][z] != null)
+                        if(VoxelGrid[x][y][z] != null)
                         {
                             DynamicColors[x][y][z] = sunColor;
-                            /*
-                            for (int i = 0; i < 8; i++)
-                            {
-                                VoxelGrid[x][ y][ z].DynamicColors[i] = sunColor;
-                            }
-                             */
                         }
                     }
                 }
             }
-
         }
 
         public void ResetSunlightIgnoreEdges(byte sunColor)
         {
-
-            for (int x = 1; x < SizeX - 1; x++)
+            for(int x = 1; x < SizeX - 1; x++)
             {
-                for (int z = 1; z < SizeZ - 1; z++)
+                for(int z = 1; z < SizeZ - 1; z++)
                 {
-                    for (int y = 0; y < SizeY; y++)
+                    for(int y = 0; y < SizeY; y++)
                     {
-                        if (VoxelGrid[x][y][z] != null)
+                        if(VoxelGrid[x][y][z] != null)
                         {
                             SunColors[x][y][z] = sunColor;
-                            /*
-                            for (int i = 0; i < 8; i++)
-                            {
-
-                                VoxelGrid[x][y][z].SunColors[i] = sunColor;
-
-                            }
-                             */
-                             
                         }
                     }
                 }
             }
-
-
         }
 
         public void ResetSunlight(byte sunColor)
         {
-
-            for (int x = 0; x < SizeX; x++)
+            for(int x = 0; x < SizeX; x++)
             {
-                for (int z = 0; z < SizeZ; z++)
+                for(int z = 0; z < SizeZ; z++)
                 {
-                    for (int y = 0;  y < SizeY; y++)
+                    for(int y = 0; y < SizeY; y++)
                     {
-                        if (VoxelGrid[x][y][z] != null)
+                        if(VoxelGrid[x][y][z] != null)
                         {
                             SunColors[x][y][z] = sunColor;
-                            /*
-                            for (int i = 0; i < 8; i++)
-                            {
-                                VoxelGrid[x][y][z].SunColors[i] = sunColor;
-                            }
-                             */
-
                         }
                     }
                 }
             }
-             
-
         }
 
         public float GetTotalWaterHeight(VoxelRef voxRef)
         {
             float tot = 0;
-            int x = (int)voxRef.GridPosition.X;
-            int z = (int)voxRef.GridPosition.Z;
-            for (int y = (int)voxRef.GridPosition.Y; y < SizeY; y++)
+            int x = (int) voxRef.GridPosition.X;
+            int z = (int) voxRef.GridPosition.Z;
+            for(int y = (int) voxRef.GridPosition.Y; y < SizeY; y++)
             {
-                tot += (float)Water[x][ y][ z].WaterLevel;
+                tot += Water[x][y][z].WaterLevel;
 
-                if (Water[x][ y][ z].WaterLevel == 0)
+                if(Water[x][y][z].WaterLevel == 0)
                 {
                     return tot;
                 }
@@ -1124,13 +1101,13 @@ namespace DwarfCorp
         public float GetTotalWaterHeightCells(VoxelRef voxRef)
         {
             float tot = 0;
-            int x = (int)voxRef.GridPosition.X;
-            int z = (int)voxRef.GridPosition.Z;
-            for (int y = (int)voxRef.GridPosition.Y; y < SizeY; y++)
+            int x = (int) voxRef.GridPosition.X;
+            int z = (int) voxRef.GridPosition.Z;
+            for(int y = (int) voxRef.GridPosition.Y; y < SizeY; y++)
             {
-                tot += ((float)Water[x][ y][ z].WaterLevel) / 255.0f;
+                tot += (Water[x][y][z].WaterLevel) / 255.0f;
 
-                if (Water[x][ y][ z].WaterLevel == 0 && y > (int)voxRef.GridPosition.Y)
+                if(Water[x][y][z].WaterLevel == 0 && y > (int) voxRef.GridPosition.Y)
                 {
                     return tot;
                 }
@@ -1143,7 +1120,7 @@ namespace DwarfCorp
         {
             LightingCalculated = false;
 
-            if (!Manager.ChunkMap.ContainsKey(ID))
+            if(!Manager.ChunkMap.ContainsKey(ID))
             {
                 return;
             }
@@ -1151,19 +1128,20 @@ namespace DwarfCorp
             VoxelRef r = new VoxelRef();
             ResetSunlight(0);
 
-            for (int x = 0; x < SizeX; x++)
+            for(int x = 0; x < SizeX; x++)
             {
-                for (int z = 0; z < SizeZ; z++)
+                for(int z = 0; z < SizeZ; z++)
                 {
                     bool rayHit = false;
                     bool recalculateFound = false;
-                    for (int y = SizeY - 1; y >= 0; y--)
+                    for(int y = SizeY - 1; y >= 0; y--)
                     {
-                        if (rayHit)
+                        if(rayHit)
                         {
                             break;
                         }
-                        else if (VoxelGrid[x][ y][z] == null && !rayHit)
+
+                        if(VoxelGrid[x][y][z] == null)
                         {
                             recalculateFound = true;
                             r.ChunkID = ID;
@@ -1171,108 +1149,27 @@ namespace DwarfCorp
                             r.WorldPosition = new Vector3(x, y, z) + Origin;
                             r.TypeName = "empty";
 
-                            if (!HasNoNeighbors(r))
+                            if(!HasNoNeighbors(r))
                             {
                                 SunColors[x][y][z] = sunColor;
-                                /*
-                                for (int i = 0; i < 8; i++)
-                                {
-                                    m_sharedVertices.Clear();
-                                    GetSharedVertices(r, (VoxelVertex)(i), m_sharedVertices);
-
-                                    foreach (KeyValuePair<Voxel, List<VoxelVertex>> pair in m_sharedVertices)
-                                    {
-                                        if (pair.Key == null)
-                                        {
-                                            continue;
-                                        }
-                                        else
-                                        {
-                                            foreach (VoxelVertex vert in pair.Value)
-                                            {
-                                                pair.Key.SunColors[(int)vert] = Math.Max(pair.Key.SunColors[(int)vert], (byte)((float)sunColor / 1.5f));
-                                            }
-                                        }
-                                    }
-                                }
-                                 */
                             }
                             continue;
- 
                         }
 
-                        VoxelRef reference = VoxelGrid[x][ y][ z].GetReference();
-
-                        recalculateFound = recalculateFound || VoxelGrid[x][ y][ z].RecalculateLighting;
-
- 
-
-
-                        if (recalculateFound)
+                        VoxelRef reference = VoxelGrid[x][y][z].GetReference();
+                        recalculateFound = recalculateFound || VoxelGrid[x][y][z].RecalculateLighting;
+                        if(!recalculateFound)
                         {
-
-                            if (!rayHit && y < SizeY - 1)
-                            {
-                                SunColors[x][y][z] = sunColor;
-                                /*
-                                VoxelGrid[x][ y][ z].SunColors[(int)VoxelVertex.FrontTopLeft] = sunColor;
-
-                                GetSharedVertices(reference, VoxelVertex.FrontTopLeft, m_sharedVertices);
-
-                                foreach (KeyValuePair<Voxel, List<VoxelVertex>> sharedVertex in m_sharedVertices)
-                                {
-                                    foreach (VoxelVertex vertex in sharedVertex.Value)
-                                    {
-                                        sharedVertex.Key.SunColors[(int)vertex] = sunColor;
-                                    }
-                                }
-
-                                VoxelGrid[x][ y][ z].SunColors[(int)VoxelVertex.FrontTopRight] = sunColor;
-
-                                GetSharedVertices(reference, VoxelVertex.FrontTopRight, m_sharedVertices);
-
-                                foreach (KeyValuePair<Voxel, List<VoxelVertex>> sharedVertex in m_sharedVertices)
-                                {
-                                    foreach (VoxelVertex vertex in sharedVertex.Value)
-                                    {
-                                        sharedVertex.Key.SunColors[(int)vertex] = sunColor;
-                                    }
-                                }
-
-                                VoxelGrid[x][ y][ z].SunColors[(int)VoxelVertex.BackTopLeft] = sunColor;
-
-
-                                GetSharedVertices(reference, VoxelVertex.BackTopLeft, m_sharedVertices);
-
-                                foreach (KeyValuePair<Voxel, List<VoxelVertex>> sharedVertex in m_sharedVertices)
-                                {
-                                    foreach (VoxelVertex vertex in sharedVertex.Value)
-                                    {
-                                        sharedVertex.Key.SunColors[(int)vertex] = sunColor;
-                                    }
-                                }
-
-                                VoxelGrid[x][ y][ z].SunColors[(int)VoxelVertex.BackTopRight] = sunColor;
-
-                                GetSharedVertices(reference, VoxelVertex.BackTopRight, m_sharedVertices);
-
-                                foreach (KeyValuePair<Voxel, List<VoxelVertex>> sharedVertex in m_sharedVertices)
-                                {
-                                    foreach (VoxelVertex vertex in sharedVertex.Value)
-                                    {
-                                        sharedVertex.Key.SunColors[(int)vertex] = sunColor;
-                                    }
-                                }
-                                */
-
-
-                                rayHit = true;
-
-
-
-                            }
+                            continue;
                         }
-                      
+
+                        if(y >= SizeY - 1)
+                        {
+                            continue;
+                        }
+
+                        SunColors[x][y][z] = sunColor;
+                        rayHit = true;
                     }
                 }
             }
@@ -1284,11 +1181,11 @@ namespace DwarfCorp
 
             List<Voxel> neighbors = new List<Voxel>();
             GetNeighborsVertex(vertex, v, neighbors, false);
-    
-            Vector3 myDelta = m_vertexDeltas[(int)vertex];
-            foreach (Voxel neighbor in neighbors)
+
+            Vector3 myDelta = m_vertexDeltas[(int) vertex];
+            foreach(Voxel neighbor in neighbors)
             {
-                if (neighbor == null)
+                if(neighbor == null)
                 {
                     continue;
                 }
@@ -1307,68 +1204,59 @@ namespace DwarfCorp
             List<VoxelRef> neighbors = new List<VoxelRef>();
             VertexColorInfo colorInfo = new VertexColorInfo();
             bool ambientOcclusion = GameSettings.Default.AmbientOcclusion;
-            for (int x = 0; x < SizeX; x++)
+            for(int x = 0; x < SizeX; x++)
             {
-                for (int y = 0; y < Math.Min(Manager.MaxViewingLevel + 1, SizeY); y++)
+                for(int y = 0; y < Math.Min(Manager.MaxViewingLevel + 1, SizeY); y++)
                 {
-                    for (int z = 0; z < SizeZ; z++)
+                    for(int z = 0; z < SizeZ; z++)
                     {
                         Voxel voxel = VoxelGrid[x][y][z];
-                        if (voxel == null)
+                        if(voxel == null)
                         {
                             continue;
                         }
 
-                        if (VoxelLibrary.IsSolid(voxel) && (voxel.IsVisible || voxel.RecalculateLighting))
+                        if(VoxelLibrary.IsSolid(voxel) && (voxel.IsVisible || voxel.RecalculateLighting))
                         {
-
                             VoxelRef voxelRef = voxel.GetReference();
-                            if (IsCompletelySurrounded(voxelRef, true))
+                            if(IsCompletelySurrounded(voxelRef, true))
                             {
                                 SunColors[x][y][z] = 0;
-                                for (int i = 0; i < 8; i++)
+                                for(int i = 0; i < 8; i++)
                                 {
                                     voxel.VertexColors[i].G = m_fogOfWar;
-
                                 }
                                 voxel.RecalculateLighting = false;
                                 continue;
                             }
 
-                            if (ambientOcclusion)
+                            if(ambientOcclusion)
                             {
-                                for (int i = 0; i < 8; i++)
+                                for(int i = 0; i < 8; i++)
                                 {
-                                    CalculateVertexLight(voxel, (VoxelVertex)(i), Manager, neighbors, ref colorInfo);
+                                    CalculateVertexLight(voxel, (VoxelVertex) (i), Manager, neighbors, ref colorInfo);
                                     voxel.VertexColors[i] = new Color(colorInfo.SunColor, colorInfo.AmbientColor, colorInfo.DynamicColor);
-                                    //voxel.AmbientColors[i] = AmbientOcclude(voxelRef, (VoxelVertex)(i), Manager, neighbors);
-
                                 }
                                 voxel.RecalculateLighting = false;
                             }
                             else
                             {
-                                byte sunColor = SunColors[(int)voxel.GridPosition.X][(int)voxel.GridPosition.Y][(int)voxel.GridPosition.Z];
-                                byte dynColor = DynamicColors[(int)voxel.GridPosition.X][(int)voxel.GridPosition.Y][(int)voxel.GridPosition.Z];
-                                for (int i = 0; i < 8; i++)
+                                byte sunColor = SunColors[(int) voxel.GridPosition.X][(int) voxel.GridPosition.Y][(int) voxel.GridPosition.Z];
+                                byte dynColor = DynamicColors[(int) voxel.GridPosition.X][(int) voxel.GridPosition.Y][(int) voxel.GridPosition.Z];
+                                for(int i = 0; i < 8; i++)
                                 {
                                     voxel.VertexColors[i] = new Color(sunColor, 128, dynColor);
-                                    //voxel.AmbientColors[i] = 255;
-
                                 }
                                 voxel.RecalculateLighting = false;
                             }
                         }
-                        else if (voxel != null && voxel.IsVisible && voxel.RecalculateLighting)
+                        else if(voxel.IsVisible && voxel.RecalculateLighting)
                         {
                             SunColors[x][y][z] = 0;
                             voxel.RecalculateLighting = false;
-                            for (int i = 0; i < 8; i++)
+                            for(int i = 0; i < 8; i++)
                             {
                                 voxel.VertexColors[i] = new Color(0, m_fogOfWar, 0);
-                                //voxel.AmbientColors[i] = m_fogOfWar;
-                                //voxel.SunColors[i] = 0;
-
                             }
                         }
                     }
@@ -1380,8 +1268,7 @@ namespace DwarfCorp
 
         public void CalculateGlobalLight()
         {
-            
-            if (GameSettings.Default.CalculateSunlight)
+            if(GameSettings.Default.CalculateSunlight)
             {
                 UpdateSunlight(255);
             }
@@ -1389,7 +1276,6 @@ namespace DwarfCorp
             {
                 ResetSunlight(255);
             }
-
         }
 
         #endregion
@@ -1400,15 +1286,15 @@ namespace DwarfCorp
         {
             int invalid = -1;
 
-            if (!IsCellValid(x, y, z))
+            if(!IsCellValid(x, y, z))
             {
                 return invalid;
             }
             else
             {
-                for (int h = y; h > 0; h--)
+                for(int h = y; h > 0; h--)
                 {
-                    if (VoxelLibrary.IsSolid(VoxelGrid[x][h][z]))
+                    if(VoxelLibrary.IsSolid(VoxelGrid[x][h][z]))
                     {
                         return h + 1;
                     }
@@ -1422,15 +1308,15 @@ namespace DwarfCorp
         {
             int invalid = -1;
 
-            if (!IsCellValid(x, y, z))
+            if(!IsCellValid(x, y, z))
             {
                 return invalid;
             }
             else
             {
-                for (int h = y; h > 0; h--)
+                for(int h = y; h > 0; h--)
                 {
-                    if (VoxelLibrary.IsSolid(VoxelGrid[x][h][z]) || Water[x][h][z].WaterLevel > 1)
+                    if(VoxelLibrary.IsSolid(VoxelGrid[x][h][z]) || Water[x][h][z].WaterLevel > 1)
                     {
                         return h + 1;
                     }
@@ -1448,15 +1334,15 @@ namespace DwarfCorp
             int my = SizeY;
             int mz = SizeZ;
 
-            for (int x = 0; x < mx; x++)
+            for(int x = 0; x < mx; x++)
             {
-                for (int y = 0; y < my; y++)
+                for(int y = 0; y < my; y++)
                 {
-                    for (int z = 0; z < mz; z++)
+                    for(int z = 0; z < mz; z++)
                     {
                         float test = 0.0f;
 
-                        switch (Manager.Slice)
+                        switch(Manager.Slice)
                         {
                             case ChunkManager.SliceMode.X:
                                 test = x + Origin.X;
@@ -1469,11 +1355,11 @@ namespace DwarfCorp
                                 break;
                         }
 
-                        if (test > level && VoxelGrid[x][y][z] != null && VoxelGrid[x][y][z].IsVisible)
+                        if(test > level && VoxelGrid[x][y][z] != null && VoxelGrid[x][y][z].IsVisible)
                         {
                             return true;
                         }
-                        else if (VoxelGrid[x][y][z] != null && !VoxelGrid[x][y][z].IsVisible)
+                        else if(VoxelGrid[x][y][z] != null && !VoxelGrid[x][y][z].IsVisible)
                         {
                             return true;
                         }
@@ -1487,20 +1373,20 @@ namespace DwarfCorp
         public void UpdateMaxViewingLevel()
         {
             float level = Manager.MaxViewingLevel;
-            
+
             int mx = SizeX;
             int my = SizeY;
             int mz = SizeZ;
 
-            for (int x = 0; x < mx; x++)
+            for(int x = 0; x < mx; x++)
             {
-                for (int y = 0; y < my; y++)
+                for(int y = 0; y < my; y++)
                 {
-                    for (int z = 0; z < mz; z++)
+                    for(int z = 0; z < mz; z++)
                     {
                         float test = 0.0f;
 
-                        switch (Manager.Slice)
+                        switch(Manager.Slice)
                         {
                             case ChunkManager.SliceMode.X:
                                 test = x + Origin.X;
@@ -1513,13 +1399,13 @@ namespace DwarfCorp
                                 break;
                         }
 
-                        if (test > level && VoxelGrid[x][y][z] != null)
+                        if(test > level && VoxelGrid[x][y][z] != null)
                         {
-                            VoxelGrid[x][ y][ z].IsVisible = false;
+                            VoxelGrid[x][y][z].IsVisible = false;
                         }
-                        else if (VoxelGrid[x][y][z] != null)
+                        else if(VoxelGrid[x][y][z] != null)
                         {
-                            VoxelGrid[x][ y][ z].IsVisible = true;
+                            VoxelGrid[x][y][z].IsVisible = true;
                         }
                     }
                 }
@@ -1527,22 +1413,19 @@ namespace DwarfCorp
 
             ShouldRebuildWater = true;
             ShouldRebuild = true;
- 
-
         }
-
 
 
         public void MakeAllVoxelsVisible()
         {
-            for (int x = 0; x < SizeX; x++)
+            for(int x = 0; x < SizeX; x++)
             {
-                for (int y = 0; y < SizeY; y++)
+                for(int y = 0; y < SizeY; y++)
                 {
-                    for (int z = 0; z < SizeZ; z++)
+                    for(int z = 0; z < SizeZ; z++)
                     {
                         Voxel v = VoxelGrid[x][y][z];
-                        if (v.Type != VoxelLibrary.emptyType)
+                        if(v.Type != VoxelLibrary.emptyType)
                         {
                             continue;
                         }
@@ -1553,8 +1436,8 @@ namespace DwarfCorp
                     }
                 }
             }
-
         }
+
         #endregion
 
         #region neighbors
@@ -1563,20 +1446,19 @@ namespace DwarfCorp
         public void GetNeighborsVertex(VoxelVertex vertex, VoxelRef v, List<VoxelRef> toReturn, bool empties)
         {
             Vector3 grid = v.GridPosition;
-            GetNeighborsVertex(vertex, (int)grid.X, (int)grid.Y, (int)grid.Z, toReturn, empties);
+            GetNeighborsVertex(vertex, (int) grid.X, (int) grid.Y, (int) grid.Z, toReturn, empties);
         }
 
         public void GetNeighborsVertex(VoxelVertex vertex, VoxelRef v, List<Voxel> toReturn, bool empties)
         {
             Vector3 grid = v.GridPosition;
-            GetNeighborsVertex(vertex, (int)grid.X, (int)grid.Y, (int)grid.Z, toReturn, empties);
+            GetNeighborsVertex(vertex, (int) grid.X, (int) grid.Y, (int) grid.Z, toReturn, empties);
         }
 
 
-
-        bool IsInterior(int x, int y, int z)
+        private bool IsInterior(int x, int y, int z)
         {
-            return (x != 0 && y != 0 && z != 0 && x != SizeX - 1 && y != SizeY - 1 && z != SizeZ - 1); 
+            return (x != 0 && y != 0 && z != 0 && x != SizeX - 1 && y != SizeY - 1 && z != SizeZ - 1);
         }
 
 
@@ -1587,21 +1469,21 @@ namespace DwarfCorp
             Vector3 successor = Vector3.Zero;
             bool isInterior = IsInterior(x, y, z);
             int count = succ.Count;
-            for (int i = 0; i < count; i++)
+            for(int i = 0; i < count; i++)
             {
                 successor = succ[i];
-                int nx = (int)successor.X + x;
-                int ny = (int)successor.Y + y;
-                int nz = (int)successor.Z + z;
+                int nx = (int) successor.X + x;
+                int ny = (int) successor.Y + y;
+                int nz = (int) successor.Z + z;
 
-                if (isInterior || IsCellValid(nx, ny, nz))
+                if(isInterior || IsCellValid(nx, ny, nz))
                 {
                     Voxel v = VoxelGrid[nx][ny][nz];
-                    if (v != null)
+                    if(v != null)
                     {
                         toReturn.Add(v);
                     }
-                    else if (considerEmpties)
+                    else if(considerEmpties)
                     {
                         toReturn.Add(null);
                     }
@@ -1609,41 +1491,41 @@ namespace DwarfCorp
                 else
                 {
                     Point3 chunkID = ID;
-                    if (nx >= SizeZ)
+                    if(nx >= SizeZ)
                     {
                         chunkID.X += 1;
                         nx = 0;
                     }
-                    else if (nx < 0)
+                    else if(nx < 0)
                     {
                         chunkID.X -= 1;
                         nx = SizeX - 1;
                     }
 
-                    if (ny >= SizeY)
+                    if(ny >= SizeY)
                     {
                         chunkID.Y += 1;
                         ny = 0;
                     }
-                    else if (ny < 0)
+                    else if(ny < 0)
                     {
                         chunkID.Y -= 1;
                         ny = SizeY - 1;
                     }
 
-                    if (nz >= SizeZ)
+                    if(nz >= SizeZ)
                     {
                         chunkID.Z += 1;
                         nz = 0;
                     }
-                    else if (nz < 0)
+                    else if(nz < 0)
                     {
                         chunkID.Z -= 1;
                         nz = SizeZ - 1;
                     }
 
 
-                    if (!Manager.ChunkMap.ContainsKey(chunkID))
+                    if(!Manager.ChunkMap.ContainsKey(chunkID))
                     {
                         continue;
                     }
@@ -1651,11 +1533,11 @@ namespace DwarfCorp
                     VoxelChunk chunk = Manager.ChunkMap[chunkID];
                     Voxel n = chunk.VoxelGrid[nx][ny][nz];
 
-                    if (n != null)
+                    if(n != null)
                     {
                         toReturn.Add(n);
                     }
-                    else if (considerEmpties)
+                    else if(considerEmpties)
                     {
                         VoxelRef newRef = new VoxelRef();
                         newRef.TypeName = "empty";
@@ -1666,7 +1548,6 @@ namespace DwarfCorp
 
                         toReturn.Add(null);
                     }
-
                 }
             }
         }
@@ -1675,73 +1556,73 @@ namespace DwarfCorp
         {
             toReturn.Clear();
 
-            Vector3 successor = Vector3.Zero;
             bool isInterior = IsInterior(x, y, z);
             int count = succ.Count;
-            for (int i = 0; i < count; i++)
+            for(int i = 0; i < count; i++)
             {
-                successor = succ[i];
-                int nx = (int)successor.X + x;
-                int ny = (int)successor.Y + y;
-                int nz = (int)successor.Z + z;
+                Vector3 successor = succ[i];
+                int nx = (int) successor.X + x;
+                int ny = (int) successor.Y + y;
+                int nz = (int) successor.Z + z;
 
-                if (isInterior || IsCellValid(nx, ny, nz))
+                if(isInterior || IsCellValid(nx, ny, nz))
                 {
                     Voxel v = VoxelGrid[nx][ny][nz];
-                    if (v != null)
+                    if(v != null)
                     {
                         toReturn.Add(v.GetReference());
                     }
                     else if(considerEmpties)
                     {
-                        VoxelRef newRef = new VoxelRef();
-                        newRef.TypeName = "empty";
-                        newRef.ChunkID = this.ID;
-                        newRef.GridPosition = new Vector3(nx, ny, nz);
-                        newRef.WorldPosition = newRef.GridPosition + this.Origin;
-                        newRef.isValid = true;
-
+                        VoxelRef newRef = new VoxelRef
+                        {
+                            TypeName = "empty",
+                            ChunkID = ID,
+                            GridPosition = new Vector3(nx, ny, nz),
+                            isValid = true
+                        };
+                        newRef.WorldPosition = newRef.GridPosition + Origin;
                         toReturn.Add(newRef);
                     }
                 }
                 else
                 {
                     Point3 chunkID = ID;
-                    if (nx >= SizeZ)
+                    if(nx >= SizeZ)
                     {
                         chunkID.X += 1;
                         nx = 0;
                     }
-                    else if (nx < 0)
+                    else if(nx < 0)
                     {
                         chunkID.X -= 1;
                         nx = SizeX - 1;
                     }
 
-                    if (ny >= SizeY)
+                    if(ny >= SizeY)
                     {
                         chunkID.Y += 1;
                         ny = 0;
                     }
-                    else if (ny < 0)
+                    else if(ny < 0)
                     {
                         chunkID.Y -= 1;
                         ny = SizeY - 1;
                     }
 
-                    if (nz >= SizeZ)
+                    if(nz >= SizeZ)
                     {
                         chunkID.Z += 1;
                         nz = 0;
                     }
-                    else if (nz < 0)
+                    else if(nz < 0)
                     {
                         chunkID.Z -= 1;
                         nz = SizeZ - 1;
                     }
 
 
-                    if (!Manager.ChunkMap.ContainsKey(chunkID))
+                    if(!Manager.ChunkMap.ContainsKey(chunkID))
                     {
                         continue;
                     }
@@ -1749,29 +1630,30 @@ namespace DwarfCorp
                     VoxelChunk chunk = Manager.ChunkMap[chunkID];
                     Voxel n = chunk.VoxelGrid[nx][ny][nz];
 
-                    if (n != null)
+                    if(n != null)
                     {
                         toReturn.Add(n.GetReference());
                     }
                     else if(considerEmpties)
                     {
-                        VoxelRef newRef = new VoxelRef();
-                        newRef.TypeName = "empty";
-                        newRef.ChunkID = chunk.ID;
-                        newRef.GridPosition = new Vector3(nx, ny, nz);
+                        VoxelRef newRef = new VoxelRef
+                        {
+                            TypeName = "empty",
+                            ChunkID = chunk.ID,
+                            GridPosition = new Vector3(nx, ny, nz),
+                            isValid = true
+                        };
                         newRef.WorldPosition = newRef.GridPosition + chunk.Origin;
-                        newRef.isValid = true;
 
                         toReturn.Add(newRef);
                     }
-
                 }
             }
         }
 
         public void GetNeighborsVertex(VoxelVertex vertex, int x, int y, int z, List<VoxelRef> toReturn, bool considerEmpties)
         {
-            GetNeighborsSuccessors(m_vertexSuccessors[vertex], x, y, z, toReturn,considerEmpties);
+            GetNeighborsSuccessors(m_vertexSuccessors[vertex], x, y, z, toReturn, considerEmpties);
         }
 
         public void GetNeighborsVertex(VoxelVertex vertex, int x, int y, int z, List<Voxel> toReturn, bool considerEmpties)
@@ -1781,13 +1663,13 @@ namespace DwarfCorp
 
         public void GetNeighborsVertexDiag(VoxelVertex vertex, int x, int y, int z, List<VoxelRef> toReturn, bool considerEmpties)
         {
-            GetNeighborsSuccessors(m_vertexSuccessorsDiag[vertex], x, y, z, toReturn,considerEmpties);
+            GetNeighborsSuccessors(m_vertexSuccessorsDiag[vertex], x, y, z, toReturn, considerEmpties);
         }
 
         public List<VoxelRef> GeteighborsEuclidean(Voxel v)
         {
             Vector3 gridCoord = v.GridPosition;
-            return GetNeighborsEuclidean((int)gridCoord.X, (int)gridCoord.Y, (int)gridCoord.Z);
+            return GetNeighborsEuclidean((int) gridCoord.X, (int) gridCoord.Y, (int) gridCoord.Z);
         }
 
         public List<VoxelRef> GetNeighborsEuclidean(int x, int y, int z)
@@ -1795,26 +1677,26 @@ namespace DwarfCorp
             List<VoxelRef> toReturn = new List<VoxelRef>();
             List<VoxelRef> otherVox = new List<VoxelRef>();
             bool isInterior = (x > 0 && y > 0 && z > 0 && x < SizeX - 1 && y < SizeY - 1 && z < SizeZ - 1);
-            for (int dx = -1; dx < 2; dx++)
+            for(int dx = -1; dx < 2; dx++)
             {
-                for (int dy = -1; dy < 2; dy++)
+                for(int dy = -1; dy < 2; dy++)
                 {
-                    for (int dz = -1; dz < 2; dz++)
+                    for(int dz = -1; dz < 2; dz++)
                     {
-                        if (dx == 0 && dy == 0 && dz == 0)
+                        if(dx == 0 && dy == 0 && dz == 0)
                         {
                             continue;
                         }
 
-                        int nx = (int)dx + x;
-                        int ny = (int)dy + y;
-                        int nz = (int)dz + z;
+                        int nx = (int) dx + x;
+                        int ny = (int) dy + y;
+                        int nz = (int) dz + z;
 
-                        if (isInterior || IsCellValid(nx, ny, nz))
+                        if(isInterior || IsCellValid(nx, ny, nz))
                         {
-                            if (VoxelGrid[nx][ ny][ nz] != null)
+                            if(VoxelGrid[nx][ny][nz] != null)
                             {
-                                toReturn.Add(VoxelGrid[nx][ ny][ nz].GetReference());
+                                toReturn.Add(VoxelGrid[nx][ny][nz].GetReference());
                             }
                             else
                             {
@@ -1833,17 +1715,15 @@ namespace DwarfCorp
                             otherVox.Clear();
                             Manager.GetVoxelReferencesAtWorldLocation(this, new Vector3(nx, ny, nz) + Origin, otherVox);
 
-                            foreach (VoxelRef v in otherVox)
+                            foreach(VoxelRef v in otherVox)
                             {
                                 toReturn.Add(v);
                             }
-
                         }
                     }
                 }
             }
             return toReturn;
-
         }
 
         public List<VoxelRef> GetNeighborsManhattan(int x, int y, int z)
@@ -1860,16 +1740,17 @@ namespace DwarfCorp
             ShouldRecalculateLighting = true;
             ShouldRebuildWater = true;
             ReconstructRamps = true;
-            
+
             if(neighbors)
-            foreach (VoxelChunk chunk in Neighbors.Values)
             {
-                chunk.ShouldRebuild = true;
-                chunk.ShouldRecalculateLighting = true;
-                chunk.SetAllToRecalculate();
-                chunk.ShouldRebuildWater = true;
+                foreach(VoxelChunk chunk in Neighbors.Values)
+                {
+                    chunk.ShouldRebuild = true;
+                    chunk.ShouldRecalculateLighting = true;
+                    chunk.SetAllToRecalculate();
+                    chunk.ShouldRebuildWater = true;
+                }
             }
-             
         }
 
         public List<VoxelRef> GetMovableNeighbors(int x, int y, int z)
@@ -1877,11 +1758,11 @@ namespace DwarfCorp
             List<VoxelRef> toReturn = new List<VoxelRef>();
             VoxelRef[,,] neighborHood = new VoxelRef[3, 3, 3];
             List<VoxelRef> otherVox = new List<VoxelRef>();
-            for (int dx = -1; dx < 2; dx++)
+            for(int dx = -1; dx < 2; dx++)
             {
-                for (int dy = -1; dy < 2; dy++)
+                for(int dy = -1; dy < 2; dy++)
                 {
-                    for (int dz = -1; dz < 2; dz++)
+                    for(int dz = -1; dz < 2; dz++)
                     {
                         int nx = dx + x;
                         int ny = dy + y;
@@ -1891,26 +1772,24 @@ namespace DwarfCorp
                         otherVox.Clear();
                         Manager.GetVoxelReferencesAtWorldLocation(this, new Vector3(nx, ny, nz) + Origin, otherVox);
 
-                        foreach (VoxelRef v in otherVox)
+                        foreach(VoxelRef v in otherVox)
                         {
                             neighborHood[dx + 1, dy + 1, dz + 1] = v;
-
                         }
-
                     }
                 }
             }
 
             bool inWater = (neighborHood[1, 1, 1].GetWaterLevel(this.Manager) > 5);
-            bool standingOnGround = (neighborHood[1,0, 1].TypeName != "empty");
+            bool standingOnGround = (neighborHood[1, 0, 1].TypeName != "empty");
             bool topCovered = (neighborHood[1, 1, 1].TypeName != "empty");
             bool hasNeighbors = false;
 
-            for (int dx = 0; dx < 3; dx++)
+            for(int dx = 0; dx < 3; dx++)
             {
-                for (int dz = 0; dz < 3; dz++)
+                for(int dz = 0; dz < 3; dz++)
                 {
-                    if (dx == 1 && dz == 1)
+                    if(dx == 1 && dz == 1)
                     {
                         continue;
                     }
@@ -1921,14 +1800,14 @@ namespace DwarfCorp
 
             List<Vector3> successors = new List<Vector3>();
 
-            if (standingOnGround || inWater)
+            if(standingOnGround || inWater)
             {
                 successors.Add(new Vector3(0, 1, 1));
                 successors.Add(new Vector3(2, 1, 1));
                 successors.Add(new Vector3(1, 1, 0));
                 successors.Add(new Vector3(1, 1, 2));
 
-                if (!hasNeighbors)
+                if(!hasNeighbors)
                 {
                     successors.Add(new Vector3(2, 1, 2));
                     successors.Add(new Vector3(2, 1, 0));
@@ -1936,7 +1815,7 @@ namespace DwarfCorp
                     successors.Add(new Vector3(0, 1, 0));
                 }
 
-                if (!topCovered)
+                if(!topCovered)
                 {
                     successors.Add(new Vector3(0, 2, 1));
                     successors.Add(new Vector3(1, 2, 0));
@@ -1948,16 +1827,14 @@ namespace DwarfCorp
             successors.Add(new Vector3(1, 0, 1));
 
 
-
-            foreach (Vector3 v in successors)
+            foreach(Vector3 v in successors)
             {
-                VoxelRef n = neighborHood[(int)v.X, (int)v.Y, (int)v.Z];
+                VoxelRef n = neighborHood[(int) v.X, (int) v.Y, (int) v.Z];
                 if(n != null && (n.TypeName == "empty" || n.GetWaterLevel(Manager) > 0))
                 {
-                    toReturn.Add(neighborHood[(int)v.X, (int)v.Y, (int)v.Z]);
+                    toReturn.Add(neighborHood[(int) v.X, (int) v.Y, (int) v.Z]);
                 }
             }
-
 
 
             return toReturn;
@@ -1967,7 +1844,7 @@ namespace DwarfCorp
         {
             Vector3 gridCoord = v.GridPosition;
 
-            return GetMovableNeighbors((int)gridCoord.X, (int)gridCoord.Y, (int)gridCoord.Z);
+            return GetMovableNeighbors((int) gridCoord.X, (int) gridCoord.Y, (int) gridCoord.Z);
         }
 
 
@@ -1976,18 +1853,18 @@ namespace DwarfCorp
             List<VoxelRef> toReturn = new List<VoxelRef>();
             Vector3 gridCoord = v.GridPosition;
 
-            for (int dx = -1; dx < 2; dx++)
+            for(int dx = -1; dx < 2; dx++)
             {
-                for (int dy = -1; dy < 2; dy++)
+                for(int dy = -1; dy < 2; dy++)
                 {
-                    for (int dz = -1; dz < 2; dz++)
+                    for(int dz = -1; dz < 2; dz++)
                     {
-                        if (dx == 0 && dy == 0 && dz == 0)
+                        if(dx == 0 && dy == 0 && dz == 0)
                         {
                             continue;
                         }
 
-                        if (GetMovableNeighbors((int)gridCoord.X + dx, (int)gridCoord.Y + dy, (int)gridCoord.Z + dz).Contains(v))
+                        if(GetMovableNeighbors((int) gridCoord.X + dx, (int) gridCoord.Y + dy, (int) gridCoord.Z + dz).Contains(v))
                         {
                             toReturn.AddRange(Manager.GetVoxelReferencesAtWorldLocation(v.WorldPosition + new Vector3(dx, dy, dz)));
                         }
@@ -2004,7 +1881,7 @@ namespace DwarfCorp
             Vector3 pos = v.WorldPosition;
             Vector3 gridPos = v.GridPosition;
 
-            if (!Manager.ChunkMap.ContainsKey(v.ChunkID))
+            if(!Manager.ChunkMap.ContainsKey(v.ChunkID))
             {
                 return false;
             }
@@ -2015,14 +1892,14 @@ namespace DwarfCorp
             bool interior = Voxel.IsInteriorPoint(gridPoint, chunk);
 
 
-            if (interior)
+            if(interior)
             {
-                for (int i = 0; i < 6; i++)
+                for(int i = 0; i < 6; i++)
                 {
                     Vector3 neighbor = m_manhattanSuccessors[i];
-                    Voxel n = VoxelGrid[gridPoint.X + (int)neighbor.X][gridPoint.Y + (int)neighbor.Y][gridPoint.Z + (int)neighbor.Z];
+                    Voxel n = VoxelGrid[gridPoint.X + (int) neighbor.X][gridPoint.Y + (int) neighbor.Y][gridPoint.Z + (int) neighbor.Z];
 
-                    if (n != null)
+                    if(n != null)
                     {
                         return false;
                     }
@@ -2030,32 +1907,30 @@ namespace DwarfCorp
             }
             else
             {
-
                 List<Voxel> atPos = new List<Voxel>();
 
-                for (int i = 0; i < 6; i++)
+                for(int i = 0; i < 6; i++)
                 {
                     Vector3 neighbor = m_manhattanSuccessors[i];
                     atPos.Clear();
 
-                    if (!IsGridPositionValid(neighbor + gridPos))
+                    if(!IsGridPositionValid(neighbor + gridPos))
                     {
                         Manager.GetNonNullVoxelsAtWorldLocationCheckFirst(null, pos + neighbor, atPos, 0);
-                        if (atPos.Count != 0)
+                        if(atPos.Count != 0)
                         {
                             return false;
                         }
                     }
                     else
                     {
-                        Voxel n = VoxelGrid[(int)gridPos.X + (int)neighbor.X][(int)gridPos.Y + (int)neighbor.Y][(int)gridPos.Z + (int)neighbor.Z];
+                        Voxel n = VoxelGrid[(int) gridPos.X + (int) neighbor.X][(int) gridPos.Y + (int) neighbor.Y][(int) gridPos.Z + (int) neighbor.Z];
 
-                        if (n != null)
+                        if(n != null)
                         {
                             return false;
                         }
                     }
-
                 }
             }
 
@@ -2065,7 +1940,7 @@ namespace DwarfCorp
 
         public bool IsCompletelySurrounded(VoxelRef v, bool ramps)
         {
-            if (!Manager.ChunkMap.ContainsKey(v.ChunkID))
+            if(!Manager.ChunkMap.ContainsKey(v.ChunkID))
             {
                 return false;
             }
@@ -2076,31 +1951,30 @@ namespace DwarfCorp
             bool interior = Voxel.IsInteriorPoint(gridPoint, chunk);
 
 
-            if (interior)
+            if(interior)
             {
-                for (int i = 0; i < 6; i++)
+                for(int i = 0; i < 6; i++)
                 {
                     Vector3 neighbor = m_manhattanSuccessors[i];
-                    Voxel n = chunk.VoxelGrid[gridPoint.X + (int)neighbor.X][gridPoint.Y + (int)neighbor.Y][gridPoint.Z + (int)neighbor.Z];
+                    Voxel n = chunk.VoxelGrid[gridPoint.X + (int) neighbor.X][gridPoint.Y + (int) neighbor.Y][gridPoint.Z + (int) neighbor.Z];
 
-                    if (n == null || (ramps && n.RampType != RampType.None))
+                    if(n == null || (ramps && n.RampType != RampType.None))
                     {
                         return false;
                     }
-
                 }
             }
             else
             {
                 List<Voxel> atPos = new List<Voxel>();
 
-                for (int i = 0; i < 6; i++)
+                for(int i = 0; i < 6; i++)
                 {
                     Vector3 neighbor = m_manhattanSuccessors[i];
                     atPos.Clear();
                     Manager.GetNonNullVoxelsAtWorldLocationCheckFirst(chunk, pos + neighbor, atPos, 0);
 
-                    if (atPos.Count == 0 || (ramps && atPos[0].RampType != RampType.None))
+                    if(atPos.Count == 0 || (ramps && atPos[0].RampType != RampType.None))
                     {
                         return false;
                     }
@@ -2119,21 +1993,20 @@ namespace DwarfCorp
         {
             Vector3 gridCoord = v.GridPosition;
 
-            return GetNeighborsManhattan((int)gridCoord.X, (int)gridCoord.Y, (int)gridCoord.Z);
+            return GetNeighborsManhattan((int) gridCoord.X, (int) gridCoord.Y, (int) gridCoord.Z);
         }
-
 
 
         public void ResetWaterBuffer()
         {
-            for (int x = 0; x < SizeX; x++)
+            for(int x = 0; x < SizeX; x++)
             {
-                for (int y = 0; y < SizeY; y++)
+                for(int y = 0; y < SizeY; y++)
                 {
-                    for (int z = 0; z < SizeZ; z++)
+                    for(int z = 0; z < SizeZ; z++)
                     {
-                        Water[x][ y][ z].HasChanged = false;
-                        Water[x][ y][ z].IsFalling = false;
+                        Water[x][y][z].HasChanged = false;
+                        Water[x][y][z].IsFalling = false;
                         Water[x][y][z].FluidFlow = Vector3.Zero;
                     }
                 }
@@ -2149,7 +2022,7 @@ namespace DwarfCorp
 
         public List<VoxelRef> GetVoxelsIntersecting(BoundingBox box)
         {
-            if (!GetBoundingBox().Intersects(box) && GetBoundingBox().Contains(box) != ContainmentType.Disjoint)
+            if(!GetBoundingBox().Intersects(box) && GetBoundingBox().Contains(box) != ContainmentType.Disjoint)
             {
                 return new List<VoxelRef>();
             }
@@ -2157,15 +2030,15 @@ namespace DwarfCorp
             {
                 BoundingBox myBox = GetBoundingBox();
                 List<VoxelRef> toReturn = new List<VoxelRef>();
-                for (float x = Math.Max(box.Min.X, myBox.Min.X); x < Math.Min(box.Max.X, myBox.Max.X); x++)
+                for(float x = Math.Max(box.Min.X, myBox.Min.X); x < Math.Min(box.Max.X, myBox.Max.X); x++)
                 {
-                    for (float y = Math.Max(box.Min.Y, myBox.Min.Y); y < Math.Min(box.Max.Y, myBox.Max.Y); y++)
+                    for(float y = Math.Max(box.Min.Y, myBox.Min.Y); y < Math.Min(box.Max.Y, myBox.Max.Y); y++)
                     {
-                        for (float z = Math.Max(box.Min.Z, myBox.Min.Z); z < Math.Min(box.Max.Z, myBox.Max.Z); z++)
+                        for(float z = Math.Max(box.Min.Z, myBox.Min.Z); z < Math.Min(box.Max.Z, myBox.Max.Z); z++)
                         {
                             Vector3 grid = new Vector3(x, y, z) - Origin;
-                            Voxel vox = VoxelGrid[(int)grid.X][ (int)grid.Y][ (int)grid.Z];
-                            if (null != vox)
+                            Voxel vox = VoxelGrid[(int) grid.X][(int) grid.Y][(int) grid.Z];
+                            if(null != vox)
                             {
                                 toReturn.Add(vox.GetReference());
                             }
@@ -2185,8 +2058,8 @@ namespace DwarfCorp
                 return toReturn;
             }
         }
-        
-        #endregion neighbors
 
+        #endregion neighbors
     }
+
 }

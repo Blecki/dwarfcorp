@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class RandomState : State
     {
         public Dictionary<string, int> ProbabilityDistribution { get; set; }
@@ -39,11 +40,11 @@ namespace DwarfCorp
             int sum = 0;
 
 
-            foreach (KeyValuePair<string, int> obj in probabilityDistribution)
+            foreach(KeyValuePair<string, int> obj in probabilityDistribution)
             {
-                for (float i = sum; i < obj.Value + sum; i++)
+                for(float i = sum; i < obj.Value + sum; i++)
                 {
-                    if (i >= choice)
+                    if(i >= choice)
                     {
                         return obj.Key;
                     }
@@ -54,7 +55,7 @@ namespace DwarfCorp
             return null;
         }
     }
-    
+
     public class TimeoutState : State
     {
         public Timer TransitionTimer { get; set; }
@@ -74,17 +75,16 @@ namespace DwarfCorp
 
         public override void Update(GameTime time)
         {
-            if (TransitionTimer.HasTriggered)
+            TransitionTimer.Update(time);
+            if(TransitionTimer.HasTriggered)
             {
                 ShouldTransition = true;
                 TransitionTo = StateOnTimeout;
             }
-            else
-            {
-                TransitionTimer.Update(time);
-            }
+
 
             base.Update(time);
         }
     }
+
 }

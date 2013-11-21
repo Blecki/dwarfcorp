@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -18,11 +19,9 @@ namespace DwarfCorp
         Back
     }
 
-
-
-    public class BoxPrimitive :  GeometricPrimitive
+    [JsonObject(IsReference = true)]
+    public class BoxPrimitive : GeometricPrimitive
     {
-
         public float Width { get; set; }
         public float Height { get; set; }
         public float Depth { get; set; }
@@ -43,14 +42,12 @@ namespace DwarfCorp
             {
                 Rect = rect;
                 flipXY = false;
-
             }
 
             public FaceData(Rectangle rect, bool flip)
             {
                 Rect = rect;
                 flipXY = flip;
-
             }
         }
 
@@ -70,9 +67,8 @@ namespace DwarfCorp
             public Vector4[] Bounds = new Vector4[NUM_FACES];
 
 
-
             public BoxTextureCoords(int totalTextureWidth, int totalTextureHeight,
-                                    FaceData front, FaceData back, FaceData top, FaceData bottom, FaceData left, FaceData right)
+                FaceData front, FaceData back, FaceData top, FaceData bottom, FaceData left, FaceData right)
             {
                 m_texWidth = totalTextureWidth;
                 m_texHeight = totalTextureHeight;
@@ -90,7 +86,6 @@ namespace DwarfCorp
                 cells.Add(bottom);
                 cells.Add(left);
                 cells.Add(right);
-
 
 
                 List<Vector2> baseCoords = new List<Vector2>();
@@ -138,20 +133,20 @@ namespace DwarfCorp
                 baseCoords.Add(textureBottomRight);
 
 
-                for (int face = 0; face < 6; face++)
+                for(int face = 0; face < 6; face++)
                 {
-                    Vector2 pixelCoords = new Vector2(cells[face].Rect.Top , cells[face].Rect.Left);
-                    float normalizeX = (float)(cells[face].Rect.Width) / (float)(totalTextureWidth);
-                    float normalizeY = (float)(cells[face].Rect.Height) / (float)(totalTextureHeight);
-                    Vector2 normalizedCoords = new Vector2(pixelCoords.X / (float)totalTextureWidth, pixelCoords.Y / (float)totalTextureHeight);
+                    Vector2 pixelCoords = new Vector2(cells[face].Rect.Top, cells[face].Rect.Left);
+                    float normalizeX = (float) (cells[face].Rect.Width) / (float) (totalTextureWidth);
+                    float normalizeY = (float) (cells[face].Rect.Height) / (float) (totalTextureHeight);
+                    Vector2 normalizedCoords = new Vector2(pixelCoords.X / (float) totalTextureWidth, pixelCoords.Y / (float) totalTextureHeight);
 
                     Bounds[face] = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f, normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
 
-                    for (int vert = 0; vert < 6; vert++)
+                    for(int vert = 0; vert < 6; vert++)
                     {
                         int index = vert + face * 6;
 
-                        if (!cells[face].flipXY)
+                        if(!cells[face].flipXY)
                         {
                             m_uvs[index] = new Vector2(normalizedCoords.X + baseCoords[index].X * normalizeX, normalizedCoords.Y + baseCoords[index].Y * normalizeY);
                         }
@@ -159,17 +154,15 @@ namespace DwarfCorp
                         {
                             m_uvs[index] = new Vector2(normalizedCoords.X + baseCoords[index].Y * normalizeX, normalizedCoords.Y + baseCoords[index].X * normalizeY);
                         }
-
                     }
-                    
                 }
             }
 
             public BoxTextureCoords(int totalTextureWidth, int totalTextureHeight,
-                                     int cellWidth, int cellHeight,
-                                      Point front, Point back,
-                                      Point top, Point bottom,
-                                      Point left, Point right)
+                int cellWidth, int cellHeight,
+                Point front, Point back,
+                Point top, Point bottom,
+                Point left, Point right)
             {
                 m_front = front;
                 m_top = top;
@@ -196,8 +189,8 @@ namespace DwarfCorp
                 cells.Add(left);
                 cells.Add(right);
 
-                float normalizeX = (float)(cellWidth) / (float)(totalTextureWidth);
-                float normalizeY = (float)(cellHeight) / (float)(totalTextureHeight);
+                float normalizeX = (float) (cellWidth) / (float) (totalTextureWidth);
+                float normalizeY = (float) (cellHeight) / (float) (totalTextureHeight);
 
 
                 List<Vector2> baseCoords = new List<Vector2>();
@@ -245,22 +238,19 @@ namespace DwarfCorp
                 baseCoords.Add(textureBottomRight);
 
 
-                for (int face = 0; face < 6; face++)
+                for(int face = 0; face < 6; face++)
                 {
                     Vector2 pixelCoords = new Vector2(cells[face].X * cellWidth, cells[face].Y * cellHeight);
-                    Vector2 normalizedCoords = new Vector2(pixelCoords.X / (float)totalTextureWidth, pixelCoords.Y / (float)totalTextureHeight);
+                    Vector2 normalizedCoords = new Vector2(pixelCoords.X / (float) totalTextureWidth, pixelCoords.Y / (float) totalTextureHeight);
 
                     Bounds[face] = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f, normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
 
-                    for (int vert = 0; vert < 6; vert++)
+                    for(int vert = 0; vert < 6; vert++)
                     {
                         int index = vert + face * 6;
                         m_uvs[index] = new Vector2(normalizedCoords.X + baseCoords[index].X * normalizeX, normalizedCoords.Y + baseCoords[index].Y * normalizeY);
-
                     }
-                    
                 }
-
             }
         }
 
@@ -278,23 +268,21 @@ namespace DwarfCorp
         }
 
 
-
         public static BoxPrimitive RetextureTop(BoxPrimitive other, GraphicsDevice graphics, Point newTexture)
         {
-            BoxPrimitive.BoxTextureCoords coords = 
+            BoxPrimitive.BoxTextureCoords coords =
                 new BoxPrimitive.BoxTextureCoords(other.UVs.m_texWidth,
-                other.UVs.m_texHeight, other.UVs.m_cellWidth, other.UVs.m_cellHeight, other.UVs.m_front,
-                other.UVs.m_back, newTexture, other.UVs.m_bottom, other.UVs.m_left, other.UVs.m_right);
+                    other.UVs.m_texHeight, other.UVs.m_cellWidth, other.UVs.m_cellHeight, other.UVs.m_front,
+                    other.UVs.m_back, newTexture, other.UVs.m_bottom, other.UVs.m_left, other.UVs.m_right);
 
             BoxPrimitive toReturn = new BoxPrimitive(graphics, other.Width, other.Height, other.Depth, coords);
             return toReturn;
         }
 
 
-
         public ExtendedVertex[] GetFace(BoxFace face)
         {
-            switch (face)
+            switch(face)
             {
                 case BoxFace.Back:
                     return GetBackFace();
@@ -349,15 +337,16 @@ namespace DwarfCorp
 
             // Calculate the position of the vertices on the top face.
             Vector3 topLeftFront = new Vector3(0.0f, Height, 0.0f);
-            Vector3 topLeftBack = new Vector3(0.0f, Height , Depth);
-            Vector3 topRightFront = new Vector3(Width , Height, 0.0f);
-            Vector3 topRightBack = new Vector3(Width, Height , Depth); ;
+            Vector3 topLeftBack = new Vector3(0.0f, Height, Depth);
+            Vector3 topRightFront = new Vector3(Width, Height, 0.0f);
+            Vector3 topRightBack = new Vector3(Width, Height, Depth);
+            ;
 
             // Calculate the position of the vertices on the bottom face.
             Vector3 btmLeftFront = new Vector3(0.0f, 0.0f, 0.0f);
             Vector3 btmLeftBack = new Vector3(0.0f, 0.0f, Depth);
             Vector3 btmRightFront = new Vector3(Width, 0.0f, 0.0f);
-            Vector3 btmRightBack = new Vector3(Width, 0.0f, Depth );
+            Vector3 btmRightBack = new Vector3(Width, 0.0f, Depth);
 
             // Normal vectors for each face (needed for lighting / display)
             /*
@@ -396,7 +385,7 @@ namespace DwarfCorp
             m_vertices[17] = new ExtendedVertex(topRightBack, Color.White, UVs.m_uvs[17], UVs.Bounds[2]);
 
             // Add the vertices for the BOTTOM face. 
-            m_vertices[18] = new ExtendedVertex(btmLeftFront, Color.White, UVs.m_uvs[18],  UVs.Bounds[3]);
+            m_vertices[18] = new ExtendedVertex(btmLeftFront, Color.White, UVs.m_uvs[18], UVs.Bounds[3]);
             m_vertices[19] = new ExtendedVertex(btmLeftBack, Color.White, UVs.m_uvs[19], UVs.Bounds[3]);
             m_vertices[20] = new ExtendedVertex(btmRightBack, Color.White, UVs.m_uvs[20], UVs.Bounds[3]);
             m_vertices[21] = new ExtendedVertex(btmLeftFront, Color.White, UVs.m_uvs[21], UVs.Bounds[3]);
@@ -419,6 +408,6 @@ namespace DwarfCorp
             m_vertices[34] = new ExtendedVertex(topRightFront, Color.White, UVs.m_uvs[34], UVs.Bounds[5]);
             m_vertices[35] = new ExtendedVertex(btmRightBack, Color.White, UVs.m_uvs[35], UVs.Bounds[5]);
         }
-
     }
+
 }

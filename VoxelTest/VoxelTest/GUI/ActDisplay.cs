@@ -9,11 +9,20 @@ using Microsoft.Xna.Framework.Input;
 namespace DwarfCorp
 {
 
-    
     public class ActDisplay : SillyGUIComponent
     {
         private Act m_act = null;
-        public Act CurrentAct { get { return m_act; } set { m_act = value; InitAct(); } }
+
+        public Act CurrentAct
+        {
+            get { return m_act; }
+            set
+            {
+                m_act = value;
+                InitAct();
+            }
+        }
+
         public Color[] DisplayColors { get; set; }
         public int ElementWidth = 50;
         public int ElementHeight = 15;
@@ -31,9 +40,9 @@ namespace DwarfCorp
             base(gui, parent)
         {
             DisplayColors = new Color[3];
-            DisplayColors[(int)Act.Status.Running] = Color.DarkBlue;
-            DisplayColors[(int)Act.Status.Success] = Color.Green;
-            DisplayColors[(int)Act.Status.Fail] = Color.Red;
+            DisplayColors[(int) Act.Status.Running] = Color.DarkBlue;
+            DisplayColors[(int) Act.Status.Success] = Color.Green;
+            DisplayColors[(int) Act.Status.Fail] = Color.Red;
 
             Elements = new List<ActElement>();
         }
@@ -41,7 +50,7 @@ namespace DwarfCorp
 
         private void CreateSubtreeRecursive(Act root, ref Vector2 lastPosition, ref Vector2 size)
         {
-            if (root == null)
+            if(root == null)
             {
                 return;
             }
@@ -60,18 +69,16 @@ namespace DwarfCorp
                 size.X += ElementWidth;
                 size.Y += ElementHeight;
 
-                if (root.Children != null && root.Enumerator.Current != Act.Status.Success)
+                if(root.Children != null && root.Enumerator.Current != Act.Status.Success)
                 {
-                    foreach (Act child in root.Children)
+                    foreach(Act child in root.Children)
                     {
                         CreateSubtreeRecursive(child, ref lastPosition, ref size);
                     }
                 }
 
                 lastPosition.X -= ElementWidth;
-                
             }
-
         }
 
         private void InitAct()
@@ -79,7 +86,7 @@ namespace DwarfCorp
             Vector2 lastPosition = new Vector2(5, 5);
             Vector2 size = new Vector2(0, 0);
 
-            if (CurrentAct != null && CurrentAct.IsInitialized)
+            if(CurrentAct != null && CurrentAct.IsInitialized)
             {
                 ActElement element = new ActElement();
                 element.act = CurrentAct;
@@ -91,26 +98,24 @@ namespace DwarfCorp
                 size.X += ElementWidth;
                 size.Y += ElementHeight;
 
-                if (CurrentAct.Children != null)
+                if(CurrentAct.Children != null)
                 {
-                    foreach (Act child in CurrentAct.Children)
+                    foreach(Act child in CurrentAct.Children)
                     {
                         CreateSubtreeRecursive(child, ref lastPosition, ref size);
                     }
                 }
-
-             
             }
-            else if (CurrentAct != null) 
+            else if(CurrentAct != null)
             {
                 CurrentAct = null;
             }
 
 
-            LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, (int)size.X, (int)size.Y);
+            LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, (int) size.X, (int) size.Y);
         }
 
-        public override void  Update(GameTime time)
+        public override void Update(GameTime time)
         {
             rebuildTimer.Update(time);
 
@@ -119,17 +124,17 @@ namespace DwarfCorp
                 InitAct();
             }
 
- 	         base.Update(time);
+            base.Update(time);
         }
 
         public override void Render(GameTime time, SpriteBatch batch)
         {
-            foreach (ActElement element in Elements)
+            foreach(ActElement element in Elements)
             {
                 string toDraw = element.act.Name;
-                Color color = DisplayColors[(int)(element.act.Enumerator.Current)];
+                Color color = DisplayColors[(int) (element.act.Enumerator.Current)];
 
-                if (element.act.Children.Count == 0 && element.act.Enumerator.Current == Act.Status.Running)
+                if(element.act.Children.Count == 0 && element.act.Enumerator.Current == Act.Status.Running)
                 {
                     toDraw = ">" + toDraw;
                     color = Color.Blue;
@@ -141,4 +146,5 @@ namespace DwarfCorp
             base.Render(time, batch);
         }
     }
+
 }

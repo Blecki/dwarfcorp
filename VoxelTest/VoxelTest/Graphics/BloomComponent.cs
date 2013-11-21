@@ -1,34 +1,39 @@
 #region File Description
+
 //-----------------------------------------------------------------------------
 // BloomComponent.cs
 //
 // Microsoft XNA Community Game Platform
 // Copyright (C) Microsoft Corporation. All rights reserved.
 //-----------------------------------------------------------------------------
+
 #endregion
 
 #region Using Statements
+
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+
 #endregion
 
 namespace BloomPostprocess
 {
+
     public class BloomComponent : DrawableGameComponent
     {
         #region Fields
 
-        SpriteBatch spriteBatch;
+        private SpriteBatch spriteBatch;
 
-        Effect bloomExtractEffect;
-        Effect bloomCombineEffect;
-        Effect gaussianBlurEffect;
+        private Effect bloomExtractEffect;
+        private Effect bloomCombineEffect;
+        private Effect gaussianBlurEffect;
 
         public RenderTarget2D sceneRenderTarget;
-        RenderTarget2D renderTarget1;
-        RenderTarget2D renderTarget2;
+        private RenderTarget2D renderTarget1;
+        private RenderTarget2D renderTarget2;
 
 
         // Choose what display settings the bloom should use.
@@ -38,7 +43,7 @@ namespace BloomPostprocess
             set { settings = value; }
         }
 
-        BloomSettings settings = BloomSettings.PresetSettings[0];
+        private BloomSettings settings = BloomSettings.PresetSettings[0];
 
 
         // Optionally displays one of the intermediate buffers used
@@ -58,19 +63,19 @@ namespace BloomPostprocess
             set { showBuffer = value; }
         }
 
-        IntermediateBuffer showBuffer = IntermediateBuffer.FinalResult;
-
+        private IntermediateBuffer showBuffer = IntermediateBuffer.FinalResult;
 
         #endregion
 
         #region Initialization
 
-
         public BloomComponent(Game game)
             : base(game)
         {
-            if (game == null)
+            if(game == null)
+            {
                 throw new ArgumentNullException("game");
+            }
         }
 
 
@@ -94,8 +99,8 @@ namespace BloomPostprocess
 
             // Create a texture for rendering the main scene, prior to applying bloom.
             sceneRenderTarget = new RenderTarget2D(GraphicsDevice, width, height, false,
-                                                   format, pp.DepthStencilFormat, pp.MultiSampleCount,
-                                                   RenderTargetUsage.DiscardContents);
+                format, pp.DepthStencilFormat, pp.MultiSampleCount,
+                RenderTargetUsage.DiscardContents);
 
             // Create two rendertargets for the bloom processing. These are half the
             // size of the backbuffer, in order to minimize fillrate costs. Reducing
@@ -119,11 +124,9 @@ namespace BloomPostprocess
             renderTarget2.Dispose();
         }
 
-
         #endregion
 
         #region Draw
-
 
         /// <summary>
         /// This should be called at the very start of the scene rendering. The bloom
@@ -132,7 +135,7 @@ namespace BloomPostprocess
         /// </summary>
         public void BeginDraw()
         {
-            if (Visible)
+            if(Visible)
             {
                 GraphicsDevice.SetRenderTarget(sceneRenderTarget);
             }
@@ -153,24 +156,24 @@ namespace BloomPostprocess
                 Settings.BloomThreshold);
 
             DrawFullscreenQuad(sceneRenderTarget, renderTarget1,
-                               bloomExtractEffect,
-                               IntermediateBuffer.PreBloom);
+                bloomExtractEffect,
+                IntermediateBuffer.PreBloom);
 
             // Pass 2: draw from rendertarget 1 into rendertarget 2,
             // using a shader to apply a horizontal gaussian blur filter.
-            SetBlurEffectParameters(1.0f / (float)renderTarget1.Width, 0);
+            SetBlurEffectParameters(1.0f / (float) renderTarget1.Width, 0);
 
             DrawFullscreenQuad(renderTarget1, renderTarget2,
-                               gaussianBlurEffect,
-                               IntermediateBuffer.BlurredHorizontally);
+                gaussianBlurEffect,
+                IntermediateBuffer.BlurredHorizontally);
 
             // Pass 3: draw from rendertarget 2 back into rendertarget 1,
             // using a shader to apply a vertical gaussian blur filter.
-            SetBlurEffectParameters(0, 1.0f / (float)renderTarget1.Height);
+            SetBlurEffectParameters(0, 1.0f / (float) renderTarget1.Height);
 
             DrawFullscreenQuad(renderTarget2, renderTarget1,
-                               gaussianBlurEffect,
-                               IntermediateBuffer.BlurredBothWays);
+                gaussianBlurEffect,
+                IntermediateBuffer.BlurredBothWays);
 
             // Pass 4: draw both rendertarget 1 and the original scene
             // image back into the main backbuffer, using a shader that
@@ -189,9 +192,9 @@ namespace BloomPostprocess
             Viewport viewport = GraphicsDevice.Viewport;
 
             DrawFullscreenQuad(renderTarget1,
-                               viewport.Width, viewport.Height,
-                               bloomCombineEffect,
-                               IntermediateBuffer.FinalResult);
+                viewport.Width, viewport.Height,
+                bloomCombineEffect,
+                IntermediateBuffer.FinalResult);
         }
 
 
@@ -199,14 +202,14 @@ namespace BloomPostprocess
         /// Helper for drawing a texture into a rendertarget, using
         /// a custom shader to apply postprocessing effects.
         /// </summary>
-        void DrawFullscreenQuad(Texture2D texture, RenderTarget2D renderTarget,
-                                Effect effect, IntermediateBuffer currentBuffer)
+        private void DrawFullscreenQuad(Texture2D texture, RenderTarget2D renderTarget,
+            Effect effect, IntermediateBuffer currentBuffer)
         {
             GraphicsDevice.SetRenderTarget(renderTarget);
 
             DrawFullscreenQuad(texture,
-                               renderTarget.Width, renderTarget.Height,
-                               effect, currentBuffer);
+                renderTarget.Width, renderTarget.Height,
+                effect, currentBuffer);
         }
 
 
@@ -214,13 +217,13 @@ namespace BloomPostprocess
         /// Helper for drawing a texture into the current rendertarget,
         /// using a custom shader to apply postprocessing effects.
         /// </summary>
-        void DrawFullscreenQuad(Texture2D texture, int width, int height,
-                                Effect effect, IntermediateBuffer currentBuffer)
+        private void DrawFullscreenQuad(Texture2D texture, int width, int height,
+            Effect effect, IntermediateBuffer currentBuffer)
         {
             // If the user has selected one of the show intermediate buffer options,
             // we still draw the quad to make sure the image will end up on the screen,
             // but might need to skip applying the custom pixel shader.
-            if (showBuffer < currentBuffer)
+            if(showBuffer < currentBuffer)
             {
                 effect = null;
             }
@@ -235,10 +238,11 @@ namespace BloomPostprocess
         /// Computes sample weightings and texture coordinate offsets
         /// for one pass of a separable gaussian blur filter.
         /// </summary>
-        void SetBlurEffectParameters(float dx, float dy)
+        private void SetBlurEffectParameters(float dx, float dy)
         {
             // Look up the sample weight and offset effect parameters.
-            EffectParameter weightsParameter, offsetsParameter;
+            EffectParameter weightsParameter,
+                offsetsParameter;
 
             weightsParameter = gaussianBlurEffect.Parameters["SampleWeights"];
             offsetsParameter = gaussianBlurEffect.Parameters["SampleOffsets"];
@@ -259,7 +263,7 @@ namespace BloomPostprocess
 
             // Add pairs of additional sample taps, positioned
             // along a line in both directions from the center.
-            for (int i = 0; i < sampleCount / 2; i++)
+            for(int i = 0; i < sampleCount / 2; i++)
             {
                 // Store weights for the positive and negative taps.
                 float weight = ComputeGaussian(i + 1);
@@ -287,7 +291,7 @@ namespace BloomPostprocess
             }
 
             // Normalize the list of sample weightings, so they will always sum to one.
-            for (int i = 0; i < sampleWeights.Length; i++)
+            for(int i = 0; i < sampleWeights.Length; i++)
             {
                 sampleWeights[i] /= totalWeights;
             }
@@ -302,15 +306,15 @@ namespace BloomPostprocess
         /// Evaluates a single point on the gaussian falloff curve.
         /// Used for setting up the blur filter weightings.
         /// </summary>
-        float ComputeGaussian(float n)
+        private float ComputeGaussian(float n)
         {
             float theta = Settings.BlurAmount;
 
-            return (float)((1.0 / Math.Sqrt(2 * Math.PI * theta)) *
-                           Math.Exp(-(n * n) / (2 * theta * theta)));
+            return (float) ((1.0 / Math.Sqrt(2 * Math.PI * theta)) *
+                            Math.Exp(-(n * n) / (2 * theta * theta)));
         }
-
 
         #endregion
     }
+
 }

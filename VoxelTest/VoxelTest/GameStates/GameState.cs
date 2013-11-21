@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -9,6 +10,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -59,17 +61,17 @@ namespace DwarfCorp
 
         public virtual void RenderUnitialized(GameTime gameTime)
         {
-
         }
 
         public virtual void Update(GameTime gameTime)
         {
-
         }
 
         public virtual void Render(GameTime gameTime)
         {
-
         }
+
+
     }
+
 }

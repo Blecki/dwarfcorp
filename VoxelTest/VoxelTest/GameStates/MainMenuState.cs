@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace DwarfCorp
 {
+
     public class MainMenuState : GameState
     {
         public Texture2D Logo { get; set; }
@@ -34,13 +35,13 @@ namespace DwarfCorp
         {
             ListSelect.ClearItems();
 
-            if (IsGameRunning)
+            if(IsGameRunning)
             {
                 ListSelect.AddItem("Continue Game");
             }
 
             ListSelect.AddItem("New Game");
-            //ListSelect.AddItem("Load Game");
+            ListSelect.AddItem("Load Game");
             ListSelect.AddItem("Options");
             ListSelect.AddItem("Quit");
         }
@@ -57,63 +58,64 @@ namespace DwarfCorp
 
         public void OnItemClicked(ListItem item)
         {
-            if (item.Label == "Continue Game")
+            if(item.Label == "Continue Game")
             {
                 StateManager.PopState();
             }
-            else if (item.Label == "New Game")
+            else if(item.Label == "New Game")
             {
                 PlayItems();
             }
-            else if (item.Label == "Quit")
+            else if(item.Label == "Quit")
             {
                 Game.Exit();
             }
-            else if (item.Label == "Create Company")
+            else if(item.Label == "Create Company")
             {
                 StateManager.PushState("CompanyMakerState");
             }
-            else if (item.Label == "Generate World")
+            else if(item.Label == "Generate World")
             {
                 StateManager.PushState("WorldGeneratorState");
             }
-            else if (item.Label == "Options")
+            else if(item.Label == "Options")
             {
                 StateManager.PushState("OptionsState");
             }
-            else if (item.Label == "Back")
+            else if(item.Label == "Back")
             {
                 DefaultItems();
             }
-            else if (item.Label == "Flat World")
+            else if(item.Label == "Flat World")
             {
                 Overworld.CreateUniformLand(Game.GraphicsDevice);
                 StateManager.PushState("PlayState");
-                PlayState play = (PlayState)StateManager.States["PlayState"];
+                PlayState play = (PlayState) StateManager.States["PlayState"];
 
                 IsGameRunning = true;
             }
-            else if (item.Label == "Load World")
+            else if(item.Label == "Load World")
             {
                 StateManager.PushState("WorldLoaderState");
             }
-            else if (item.Label == "Load Game")
+            else if(item.Label == "Load Game")
             {
                 StateManager.PushState("GameLoaderState");
             }
-           
         }
 
         public override void OnEnter()
         {
             DefaultFont = Game.Content.Load<SpriteFont>("Default");
-            GUI = new SillyGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"),  Game.Content.Load<SpriteFont>("Small"), Input);
+            GUI = new SillyGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
             IsInitialized = true;
             Logo = Game.Content.Load<Texture2D>("banner3");
-            
-            ListSelect = new ListSelector(GUI, GUI.RootComponent);
-            ListSelect.Label = "- Main Menu -";
-            ListSelect.LocalBounds = new Rectangle(Game.GraphicsDevice.Viewport.Width / 2 - 100, Game.GraphicsDevice.Viewport.Height / 2 - 150, 150, 150);
+
+            ListSelect = new ListSelector(GUI, GUI.RootComponent)
+            {
+                Label = "- Main Menu -",
+                LocalBounds = new Rectangle(Game.GraphicsDevice.Viewport.Width / 2 - 100, Game.GraphicsDevice.Viewport.Height / 2 - 150, 150, 150)
+            };
             DefaultItems();
 
             ListSelect.OnItemClicked += ItemClicked;
@@ -139,10 +141,12 @@ namespace DwarfCorp
         }
 
 
-
         private void DrawGUI(GameTime gameTime, float dx)
         {
-            RasterizerState rasterizerState = new RasterizerState() { ScissorTestEnable = true };
+            RasterizerState rasterizerState = new RasterizerState()
+            {
+                ScissorTestEnable = true
+            };
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
@@ -155,19 +159,19 @@ namespace DwarfCorp
 
         public override void Render(GameTime gameTime)
         {
-            if (Transitioning == TransitionMode.Running)
+            if(Transitioning == TransitionMode.Running)
             {
                 Game.GraphicsDevice.Clear(Color.Black);
 
 
                 DrawGUI(gameTime, 0);
             }
-            else if (Transitioning == TransitionMode.Entering)
+            else if(Transitioning == TransitionMode.Entering)
             {
                 float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Width, 1.0f);
                 DrawGUI(gameTime, dx);
             }
-            else if (Transitioning == TransitionMode.Exiting)
+            else if(Transitioning == TransitionMode.Exiting)
             {
                 float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Width, 1.0f);
                 DrawGUI(gameTime, dx);
@@ -176,4 +180,5 @@ namespace DwarfCorp
             base.Render(gameTime);
         }
     }
+
 }

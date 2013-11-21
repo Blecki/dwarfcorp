@@ -6,83 +6,126 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
     public class PlanAct : CreatureAct
     {
         public Timer PlannerTimer { get; set; }
         public int MaxExpansions { get; set; }
 
-        public PlanAct(CreatureAIComponent agent) :
+        public string PathOut { get; set; }
+
+        public string TargetName { get; set; }
+
+        public List<VoxelRef> Path { get { return GetPath(); } set {  SetPath(value);} }
+        public VoxelRef Target { get { return GetTarget(); } set {  SetTarget(value);} }
+
+        public PlanSubscriber PlanSubscriber { get; set; }
+
+        private bool WaitingOnResponse { get; set; }
+
+        public PlanAct(CreatureAIComponent agent, string pathOut, string target) :
             base(agent)
         {
-            Name = "Plan";
+            Name = "Plan to " + target;
             PlannerTimer = new Timer(Agent.Stats.PlanRateLimit, false);
             MaxExpansions = Agent.Stats.MaxExpansions;
+            PathOut = pathOut;
+            TargetName = target;
+            PlanSubscriber = new PlanSubscriber(PlayState.PlanService);
+            WaitingOnResponse = false;
+        }
+
+        public VoxelRef GetTarget()
+        {
+            return Agent.Blackboard.GetData<VoxelRef>(TargetName);
+        }
+
+        public void SetTarget(VoxelRef target)
+        {
+            Agent.Blackboard.SetData(TargetName, target);
+        }
+
+        public List<VoxelRef> GetPath()
+        {
+            return Agent.Blackboard.GetData<List<VoxelRef>>(PathOut);
+        }
+
+        public void SetPath(List<VoxelRef> path)
+        {
+            Agent.Blackboard.SetData(PathOut, path);
         }
 
         public override IEnumerable<Status> Run()
         {
-            bool pathFound = false;
-            while (!pathFound)
+            Path = null;
+            while(true)
             {
-                if (Agent.CurrentPath != null)
+                if (Path != null)
                 {
                     yield return Status.Success;
-                    pathFound = true;
                     break;
                 }
 
-                PlannerTimer.Update(Act.LastTime);
+                PlannerTimer.Update(LastTime);
 
                 ChunkManager chunks = Agent.Creature.Master.Chunks;
-                if (PlannerTimer.HasTriggered)
+                if(PlannerTimer.HasTriggered)
                 {
-
                     Voxel vox = chunks.GetFirstVisibleBlockUnder(Agent.Position, true);
 
-                    if (vox == null)
+                    if(vox == null)
                     {
                         yield return Status.Fail;
+                        break;
                     }
 
                     List<VoxelRef> voxAbove = new List<VoxelRef>();
                     chunks.GetVoxelReferencesAtWorldLocation(null, vox.Position + new Vector3(0, 1, 0), voxAbove);
 
-                    if (Agent.TargetVoxel == null)
+
+                    if(Target == null)
                     {
                         yield return Status.Fail;
-                        pathFound = false;
                         break;
                     }
 
-                    if (voxAbove.Count > 0)
+                    if(voxAbove.Count > 0)
                     {
-                        Agent.CurrentPath = null;
+                        Path = null;
 
-                        PlanService.AstarPlanRequest aspr = new PlanService.AstarPlanRequest();
-                        aspr.subscriber = Agent.PlanSubscriber;
-                        aspr.start = voxAbove[0];
-                        aspr.goal = Agent.TargetVoxel;
-                        aspr.maxExpansions = MaxExpansions;
-                        aspr.sender = Agent;
+                        PlanService.AstarPlanRequest aspr = new PlanService.AstarPlanRequest
+                        {
+                            subscriber = PlanSubscriber,
+                            start = voxAbove[0],
+                            goal = Target,
+                            maxExpansions = MaxExpansions,
+                            sender = Agent
+                        };
 
-                        Agent.PlanSubscriber.SendRequest(aspr);
+                        PlanSubscriber.SendRequest(aspr);
                         PlannerTimer.Reset(PlannerTimer.TargetTimeSeconds);
-                        Agent.WaitingOnResponse = true;
+                        WaitingOnResponse = true;
                         yield return Status.Running;
                     }
                     else
                     {
-                        Agent.CurrentPath = null;
+                        Path = null;
                         yield return Status.Fail;
                         break;
                     }
- 
                 }
                 else
                 {
+                    foreach(PlanService.AStarPlanResponse response in PlanSubscriber.AStarPlans.Where(response => response.success))
+                    {
+                        Path = response.path;
+                        WaitingOnResponse = false;
+                    }
+
                     yield return Status.Running;
                 }
             }
         }
     }
+
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;using System;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,16 +9,18 @@ using System.Threading;
 
 namespace DwarfCorp
 {
+
     public class InstanceList
     {
         public VertexBuffer Model { get; set; }
         private Dictionary<uint, InstanceData> Instances { get; set; }
-        private Dictionary<uint, InstancedVertex> Vertices { get; set; }        
+        private Dictionary<uint, InstancedVertex> Vertices { get; set; }
         public DynamicVertexBuffer InstanceBuffer { get; set; }
-        Mutex rebuildMutex = new Mutex();
+        private Mutex rebuildMutex = new Mutex();
         public bool ShouldRebuild { get; set; }
         public Texture2D Texture { get; set; }
         public IndexBuffer Indicies { get; set; }
+
         private static RasterizerState rasterState = new RasterizerState()
         {
             CullMode = CullMode.None,
@@ -31,19 +34,19 @@ namespace DwarfCorp
             InstanceBuffer = null;
             ShouldRebuild = true;
             Texture = texture;
-          
         }
 
-        int rebuildIndex = 0;
+        private int rebuildIndex = 0;
+
         private void RebuildInstanceBuffer(GraphicsDevice graphics)
         {
-            if (Vertices.Count > 0 && InstanceBuffer != null && !InstanceBuffer.IsDisposed)
+            if(Vertices.Count > 0 && InstanceBuffer != null && !InstanceBuffer.IsDisposed)
             {
                 InstanceBuffer.Dispose();
                 InstanceBuffer = null;
             }
 
-            if (Vertices.Count > 0)
+            if(Vertices.Count > 0)
             {
                 InstanceBuffer = new DynamicVertexBuffer(graphics, InstancedVertex.VertexDeclaration, Vertices.Count, Microsoft.Xna.Framework.Graphics.BufferUsage.WriteOnly);
                 InstancedVertex[] buffer = new InstancedVertex[Vertices.Count];
@@ -58,33 +61,31 @@ namespace DwarfCorp
                 Console.Out.WriteLine("REBUILDING! " + rebuildIndex);
                 rebuildIndex++;
             }
-
-        } 
+        }
 
         public void Render(GraphicsDevice graphics, Effect effect)
         {
-
-            if (Indicies == null)
+            if(Indicies == null)
             {
                 Indicies = new IndexBuffer(graphics, IndexElementSize.SixteenBits, Model.VertexCount, BufferUsage.WriteOnly);
                 short[] indices = new short[Model.VertexCount];
                 for(int i = 0; i < Model.VertexCount; i++)
                 {
-                    indices[i] = (short)i;
+                    indices[i] = (short) i;
                 }
                 Indicies.SetData(indices);
             }
 
-            if (ShouldRebuild)
+            if(ShouldRebuild)
             {
                 RebuildInstanceBuffer(graphics);
             }
 
-            if (InstanceBuffer != null && !InstanceBuffer.IsDisposed)
+            if(InstanceBuffer != null && !InstanceBuffer.IsDisposed)
             {
                 RasterizerState r = graphics.RasterizerState;
                 graphics.RasterizerState = rasterState;
-                
+
                 //DepthStencilState origDepthStencil = graphics.DepthStencilState;
                 //DepthStencilState newDepthStencil = DepthStencilState.DepthRead;
                 //graphics.DepthStencilState = newDepthStencil;
@@ -93,11 +94,11 @@ namespace DwarfCorp
                 graphics.SetVertexBuffers(Model, new VertexBufferBinding(InstanceBuffer, 0, 1));
                 graphics.Indices = Indicies;
                 effect.Parameters["xTexture"].SetValue(Texture);
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
                 }
-              
+
                 graphics.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0, Model.VertexCount, 0, Model.VertexCount / 3, InstanceBuffer.VertexCount);
                 effect.CurrentTechnique = effect.Techniques["Textured"];
 
@@ -134,4 +135,5 @@ namespace DwarfCorp
             return toReturn;
         }
     }
+
 }

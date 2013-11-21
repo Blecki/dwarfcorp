@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    [JsonObject(IsReference = true)]
     public class CharacterSprite : OrientedAnimation
     {
         [JsonIgnore]
@@ -21,15 +22,15 @@ namespace DwarfCorp
 
         public bool HasAnimation(Creature.CharacterMode mode, Orientation orient)
         {
-            return Animations.ContainsKey(mode.ToString() + OrientationStrings[(int)orient]);
+            return Animations.ContainsKey(mode.ToString() + OrientationStrings[(int) orient]);
         }
 
         public List<Animation> GetAnimations(Creature.CharacterMode mode)
         {
             List<Animation> toReturn = new List<Animation>();
-            for (int i = 0; i < OrientationStrings.Length; i++)
+            for(int i = 0; i < OrientationStrings.Length; i++)
             {
-                if (HasAnimation(mode, (Orientation)i))
+                if(HasAnimation(mode, (Orientation) i))
                 {
                     toReturn.Add(Animations[mode.ToString() + OrientationStrings[i]]);
                 }
@@ -41,7 +42,7 @@ namespace DwarfCorp
         public void ResetAnimations(Creature.CharacterMode mode)
         {
             List<Animation> animations = GetAnimations(mode);
-            foreach (Animation a in animations)
+            foreach(Animation a in animations)
             {
                 a.Reset();
             }
@@ -51,7 +52,7 @@ namespace DwarfCorp
         {
             if(HasAnimation(mode, orient))
             {
-                return Animations[mode.ToString() + OrientationStrings[(int)orient]];
+                return Animations[mode.ToString() + OrientationStrings[(int) orient]];
             }
             else
             {
@@ -59,37 +60,37 @@ namespace DwarfCorp
             }
         }
 
-        public void AddAnimation(Creature.CharacterMode mode, 
-                                 Orientation orient, 
-                                 Texture2D texture,
-                                 float frameHz,
-                                 int frameWidth,
-                                 int frameHeight,
-                                 int row,
-                                 params int[] cols)
+        public void AddAnimation(Creature.CharacterMode mode,
+            Orientation orient,
+            Texture2D texture,
+            float frameHz,
+            int frameWidth,
+            int frameHeight,
+            int row,
+            params int[] cols)
         {
             List<Point> frames = new List<Point>();
             int numCols = texture.Width / frameWidth;
 
-            if (cols.Length == 0)
+            if(cols.Length == 0)
             {
-                for (int i = 0; i < numCols; i++)
+                for(int i = 0; i < numCols; i++)
                 {
                     frames.Add(new Point(i, row));
                 }
             }
             else
             {
-                foreach (int c in cols)
+                foreach(int c in cols)
                 {
                     frames.Add(new Point(c, row));
                 }
             }
 
-            Animation animation = new Animation(Graphics, texture, mode.ToString() + OrientationStrings[(int)orient], frameWidth, frameHeight,frames, true, Color.White, frameHz,  (float)frameWidth / 35.0f, (float)frameHeight / 35.0f, false);
-            Animations[mode.ToString() + OrientationStrings[(int)orient]] = animation;
+            Animation animation = new Animation(Graphics, texture, mode.ToString() + OrientationStrings[(int) orient], frameWidth, frameHeight, frames, true, Color.White, frameHz, (float) frameWidth / 35.0f, (float) frameHeight / 35.0f, false);
+            Animations[mode.ToString() + OrientationStrings[(int) orient]] = animation;
             animation.Play();
         }
-
     }
+
 }

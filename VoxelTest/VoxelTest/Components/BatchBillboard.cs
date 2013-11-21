@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    
+    [JsonObject(IsReference = true)]
     public class BatchBillboard : BillboardSpriteComponent
     {
         public List<Matrix> LocalTransforms { get; set; }
@@ -15,22 +16,24 @@ namespace DwarfCorp
         public List<Color> Tints { get; set; }
         public float CullDistance = 1000.0f;
         public BatchBillboardPrimitive Primitive;
-        Point Frame;
-        int Width = 32;
-        int Height = 32;
+        private Point Frame;
+        private int Width = 32;
+        private int Height = 32;
+
         private static RasterizerState rasterState = new RasterizerState()
         {
             CullMode = CullMode.None,
         };
-        GraphicsDevice graphicsDevice;
+
+        private GraphicsDevice graphicsDevice;
 
         public BatchBillboard(ComponentManager manager,
-                              string name,
-                              GameComponent parent,
-                              Matrix localTransform,
-                              Texture2D spriteSheet,
-                              int numBillboards, GraphicsDevice graphi) :
-            base(manager, name, parent, localTransform, spriteSheet, false)
+            string name,
+            GameComponent parent,
+            Matrix localTransform,
+            Texture2D spriteSheet,
+            int numBillboards, GraphicsDevice graphi) :
+                base(manager, name, parent, localTransform, spriteSheet, false)
         {
             LocalTransforms = new List<Matrix>(numBillboards);
             Rotations = new List<float>(numBillboards);
@@ -48,16 +51,15 @@ namespace DwarfCorp
             LocalTransforms.Add(transform * Matrix.Invert(GlobalTransform));
             Rotations.Add(rotation);
             Tints.Add(tint);
-            if (rebuild)
+            if(rebuild)
             {
                 RebuildPrimitive();
             }
-
         }
 
         public void RebuildPrimitive()
         {
-            if (Primitive != null && Primitive.VertexBuffer != null )
+            if(Primitive != null && Primitive.VertexBuffer != null)
             {
                 Primitive.VertexBuffer.Dispose();
             }
@@ -67,7 +69,7 @@ namespace DwarfCorp
 
         public void RemoveTransform(int index)
         {
-            if (index >= 0 && index < LocalTransforms.Count)
+            if(index >= 0 && index < LocalTransforms.Count)
             {
                 LocalTransforms.RemoveAt(index);
                 Rotations.RemoveAt(index);
@@ -78,7 +80,7 @@ namespace DwarfCorp
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (LightsWithVoxels)
+            if(LightsWithVoxels)
             {
                 base.Update(gameTime, chunks, camera);
             }
@@ -92,23 +94,21 @@ namespace DwarfCorp
         }
 
         public override void Render(GameTime gameTime,
-                                    ChunkManager chunks,
-                                    Camera camera,
-                                    SpriteBatch spriteBatch,
-                                    GraphicsDevice graphicsDevice,
-                                    Effect effect, bool renderingForWater)
+            ChunkManager chunks,
+            Camera camera,
+            SpriteBatch spriteBatch,
+            GraphicsDevice graphicsDevice,
+            Effect effect, bool renderingForWater)
         {
-
-            if (Primitive == null)
+            if(Primitive == null)
             {
                 Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet, Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints);
             }
 
 
-            if (IsVisible && ShouldDraw(camera))
+            if(IsVisible && ShouldDraw(camera))
             {
-
-                if (!LightsWithVoxels)
+                if(!LightsWithVoxels)
                 {
                     effect.Parameters["xTint"].SetValue(new Vector4(1, 1, 1, 1));
                 }
@@ -129,7 +129,7 @@ namespace DwarfCorp
                 //Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
                 effect.Parameters["xWorld"].SetValue(GlobalTransform);
 
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
                     Primitive.Render(graphicsDevice);
@@ -137,19 +137,17 @@ namespace DwarfCorp
 
                 effect.Parameters["xWorld"].SetValue(Matrix.Identity);
 
-                if (origDepthStencil != null)
+                if(origDepthStencil != null)
                 {
                     graphicsDevice.DepthStencilState = origDepthStencil;
                 }
 
-                if (r != null)
+                if(r != null)
                 {
                     graphicsDevice.RasterizerState = r;
                 }
-            }        
-
+            }
         }
-
     }
-     
+
 }

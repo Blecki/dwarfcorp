@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class ParticleManager
     {
         public Dictionary<string, ParticleEmitter> Emitters { get; set; }
@@ -31,7 +32,6 @@ namespace DwarfCorp
             Emitters[name].Tint = Color.White;
             Emitters[name].FrustrumCull = false;
         }
-
-
     }
+
 }

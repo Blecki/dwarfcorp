@@ -6,10 +6,15 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
     public class CreatureAct : Act
     {
         public CreatureAIComponent Agent { get; set; }
-        public Creature Creature { get { return Agent.Creature; } }
+
+        public Creature Creature
+        {
+            get { return Agent.Creature; }
+        }
 
 
         public CreatureAct(CreatureAIComponent agent)
@@ -17,7 +22,6 @@ namespace DwarfCorp
             Agent = agent;
             Name = "Creature Act";
         }
-
-
     }
+
 }

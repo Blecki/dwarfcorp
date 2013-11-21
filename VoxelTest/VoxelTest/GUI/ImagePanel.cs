@@ -8,9 +8,20 @@ using System.Threading;
 
 namespace DwarfCorp
 {
+
     public class ImagePanel : SillyGUIComponent
     {
-        public ImageFrame Image { get { return m_texture; } set { Lock.WaitOne(); m_texture = value; Lock.ReleaseMutex(); } }
+        public ImageFrame Image
+        {
+            get { return m_texture; }
+            set
+            {
+                Lock.WaitOne();
+                m_texture = value;
+                Lock.ReleaseMutex();
+            }
+        }
+
         private ImageFrame m_texture = null;
         public Mutex Lock { get; set; }
         public bool KeepAspectRatio { get; set; }
@@ -21,7 +32,7 @@ namespace DwarfCorp
         {
             Highlight = false;
             Lock = new Mutex();
-            if (image != null)
+            if(image != null)
             {
                 Image = new ImageFrame(image, new Rectangle(0, 0, image.Width, image.Height));
             }
@@ -40,17 +51,17 @@ namespace DwarfCorp
         public Rectangle GetImageBounds()
         {
             Rectangle toDraw = GlobalBounds;
-            if (KeepAspectRatio)
+            if(KeepAspectRatio)
             {
-                if (toDraw.Width < toDraw.Height)
+                if(toDraw.Width < toDraw.Height)
                 {
-                    float wPh = (float)toDraw.Width / (float)toDraw.Height;
-                    toDraw = new Rectangle(toDraw.X, toDraw.Y, toDraw.Width, (int)(toDraw.Height * wPh));
+                    float wPh = (float) toDraw.Width / (float) toDraw.Height;
+                    toDraw = new Rectangle(toDraw.X, toDraw.Y, toDraw.Width, (int) (toDraw.Height * wPh));
                 }
                 else
                 {
-                    float wPh = (float)toDraw.Height / (float)toDraw.Width;
-                    toDraw = new Rectangle(toDraw.X, toDraw.Y, (int)(toDraw.Width * wPh), toDraw.Height);
+                    float wPh = (float) toDraw.Height / (float) toDraw.Width;
+                    toDraw = new Rectangle(toDraw.X, toDraw.Y, (int) (toDraw.Width * wPh), toDraw.Height);
                 }
             }
             return toDraw;
@@ -58,18 +69,18 @@ namespace DwarfCorp
 
         public override void Render(GameTime time, SpriteBatch batch)
         {
-            if (Image != null)
+            if(Image != null)
             {
                 Lock.WaitOne();
                 Rectangle toDraw = GetImageBounds();
 
-                if (!Highlight)
+                if(!Highlight)
                 {
                     batch.Draw(m_texture.Image, toDraw, m_texture.SourceRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
                 }
                 else
                 {
-                    if (IsMouseOver)
+                    if(IsMouseOver)
                     {
                         batch.Draw(m_texture.Image, toDraw, m_texture.SourceRect, Color.Orange, 0, Vector2.Zero, SpriteEffects.None, 0);
                     }
@@ -82,8 +93,6 @@ namespace DwarfCorp
             }
             base.Render(time, batch);
         }
-
-
-        
     }
+
 }

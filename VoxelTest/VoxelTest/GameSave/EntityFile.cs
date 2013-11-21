@@ -9,6 +9,7 @@ using System.IO.Compression;
 
 namespace DwarfCorp
 {
+
     public class EntityFile : SaveData
     {
         public string Type { get; set; }
@@ -21,7 +22,6 @@ namespace DwarfCorp
 
         public EntityFile()
         {
-
         }
 
         public EntityFile(string path, bool isCompressed)
@@ -42,13 +42,14 @@ namespace DwarfCorp
             Type = other.Type;
             Position = other.Position;
             Scale = other.Scale;
+            ID = other.ID;
         }
 
-        public override bool ReadFile(string filePath, bool isCompressed)
+        public override sealed bool ReadFile(string filePath, bool isCompressed)
         {
             EntityFile file = FileUtils.LoadJson<EntityFile>(filePath, isCompressed);
 
-            if (file == null)
+            if(file == null)
             {
                 return false;
             }
@@ -69,7 +70,7 @@ namespace DwarfCorp
         {
             GameComponent toReturn = EntityFactory.GenerateComponent(Type, Position, components, content, graphics, chunks, master, camera);
 
-            if (toReturn != null)
+            if(toReturn != null)
             {
                 toReturn.GlobalID = ID;
             }
@@ -77,4 +78,5 @@ namespace DwarfCorp
             return toReturn;
         }
     }
+
 }

@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    [JsonObject(IsReference = true)]
     public class Creature : GameComponent
     {
         public CreatureAIComponent AI { get; set; }
@@ -27,6 +28,7 @@ namespace DwarfCorp
 
         [JsonIgnore]
         public ChunkManager Chunks { get; set; }
+
         public Weapon Weapon { get; set; }
 
         [JsonIgnore]
@@ -42,13 +44,27 @@ namespace DwarfCorp
 
         [JsonIgnore]
         public Vector3 LocalTarget { get; set; }
+
         public PIDController Controller { get; set; }
         public CreatureStats Stats { get; set; }
         public CreatureStatus Status { get; set; }
 
         public Timer JumpTimer { get; set; }
         protected CharacterMode currentCharacterMode = CharacterMode.Idle;
-        public CharacterMode CurrentCharacterMode { get { return currentCharacterMode; } set { currentCharacterMode = value; if (Sprite != null) { Sprite.SetCurrentAnimation(value.ToString()); } } }
+
+        public CharacterMode CurrentCharacterMode
+        {
+            get { return currentCharacterMode; }
+            set
+            {
+                currentCharacterMode = value;
+                if(Sprite != null)
+                {
+                    Sprite.SetCurrentAnimation(value.ToString());
+                }
+            }
+        }
+
         public bool IsOnGround { get; set; }
 
         public enum CharacterMode
@@ -65,16 +81,16 @@ namespace DwarfCorp
 
 
         public Creature(CreatureStats stats,
-                        string allies,
-                        PlanService planService,
-                        GameMaster master,
-                        PhysicsComponent parent,
-                        ComponentManager manager,
-                        ChunkManager chunks,
-                        GraphicsDevice graphics,
-                        ContentManager content,
-                        string name) :
-            base(parent.Manager, name, parent)
+            string allies,
+            PlanService planService,
+            GameMaster master,
+            PhysicsComponent parent,
+            ComponentManager manager,
+            ChunkManager chunks,
+            GraphicsDevice graphics,
+            ContentManager content,
+            string name) :
+                base(parent.Manager, name, parent)
         {
             IsOnGround = true;
             Physics = parent;
@@ -93,10 +109,10 @@ namespace DwarfCorp
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
-            CheckGrounded(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
+            CheckGrounded(chunks, (float) gameTime.ElapsedGameTime.TotalSeconds);
             UpdateAnimation(gameTime, chunks, camera);
-            Status.Hunger += (float)gameTime.ElapsedGameTime.TotalSeconds * Stats.HungerIncrease;
-            Status.Energy = Math.Max(Status.Energy - (float)gameTime.ElapsedGameTime.TotalSeconds * Stats.EnergyLoss, 0.0f);
+            Status.Hunger += (float) gameTime.ElapsedGameTime.TotalSeconds * Stats.HungerIncrease;
+            Status.Energy = Math.Max(Status.Energy - (float) gameTime.ElapsedGameTime.TotalSeconds * Stats.EnergyLoss, 0.0f);
             JumpTimer.Update(gameTime);
             Weapon.Update(gameTime);
             base.Update(gameTime, chunks, camera);
@@ -107,49 +123,60 @@ namespace DwarfCorp
             List<VoxelRef> voxelsBelow = chunks.GetVoxelReferencesAtWorldLocation(Physics.GlobalTransform.Translation - Vector3.UnitY * 0.8f);
             VoxelRef voxelBelow = null;
 
-            if (voxelsBelow.Count > 0)
+            if(voxelsBelow.Count > 0)
             {
                 voxelBelow = voxelsBelow[0];
             }
 
 
-            if (voxelBelow != null && voxelBelow.GetWaterLevel(chunks) > 5)
+            if(voxelBelow != null && voxelBelow.GetWaterLevel(chunks) > 5)
             {
                 IsOnGround = false;
                 CurrentCharacterMode = CharacterMode.Swimming;
             }
-            else if (voxelBelow != null)
+            else if(voxelBelow != null)
             {
-                if (voxelBelow.TypeName!= "empty")
+                if(voxelBelow.TypeName != "empty")
                 {
                     IsOnGround = true;
 
                     if(CurrentCharacterMode != CharacterMode.Attacking)
+                    {
                         CurrentCharacterMode = CharacterMode.Idle;
+                    }
                 }
                 else
                 {
                     IsOnGround = false;
-                    if (Physics.Velocity.Y > 0.1)
+                    if(Physics.Velocity.Y > 0.1)
                     {
-                        if (CurrentCharacterMode != CharacterMode.Attacking) CurrentCharacterMode = CharacterMode.Jumping;
+                        if(CurrentCharacterMode != CharacterMode.Attacking)
+                        {
+                            CurrentCharacterMode = CharacterMode.Jumping;
+                        }
                     }
-                    else if (Physics.Velocity.Y < -0.1)
+                    else if(Physics.Velocity.Y < -0.1)
                     {
-                        if (CurrentCharacterMode != CharacterMode.Attacking) CurrentCharacterMode = CharacterMode.Falling;
+                        if(CurrentCharacterMode != CharacterMode.Attacking)
+                        {
+                            CurrentCharacterMode = CharacterMode.Falling;
+                        }
                     }
                     else
                     {
-                        if (CurrentCharacterMode != CharacterMode.Attacking) currentCharacterMode = CharacterMode.Idle;
+                        if(CurrentCharacterMode != CharacterMode.Attacking)
+                        {
+                            currentCharacterMode = CharacterMode.Idle;
+                        }
                     }
                 }
             }
             else
             {
-                if (IsOnGround)
+                if(IsOnGround)
                 {
                     IsOnGround = false;
-                    if (Physics.Velocity.Y > 0)
+                    if(Physics.Velocity.Y > 0)
                     {
                         CurrentCharacterMode = CharacterMode.Jumping;
                     }
@@ -159,34 +186,42 @@ namespace DwarfCorp
                     }
                 }
             }
-
         }
 
 
         public void UpdateAnimation(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
             float veloNorm = Physics.Velocity.Length();
-            if (veloNorm > Stats.MaxSpeed)
+            if(veloNorm > Stats.MaxSpeed)
             {
                 Physics.Velocity = (Physics.Velocity / veloNorm) * Stats.MaxSpeed;
-                if(IsOnGround && CurrentCharacterMode == CharacterMode.Idle) CurrentCharacterMode = CharacterMode.Walking;
+                if(IsOnGround && CurrentCharacterMode == CharacterMode.Idle)
+                {
+                    CurrentCharacterMode = CharacterMode.Walking;
+                }
             }
 
-            if (CurrentCharacterMode != CharacterMode.Attacking)
+            if(CurrentCharacterMode != CharacterMode.Attacking)
             {
-                if (IsOnGround)
+                if(IsOnGround)
                 {
-                    if (veloNorm < 0.3f || Physics.IsSleeping)
+                    if(veloNorm < 0.3f || Physics.IsSleeping)
                     {
-                        if (CurrentCharacterMode == CharacterMode.Walking) CurrentCharacterMode = CharacterMode.Idle;
+                        if(CurrentCharacterMode == CharacterMode.Walking)
+                        {
+                            CurrentCharacterMode = CharacterMode.Idle;
+                        }
                     }
                     else
                     {
-                        if (CurrentCharacterMode == CharacterMode.Idle) CurrentCharacterMode = CharacterMode.Walking;
+                        if(CurrentCharacterMode == CharacterMode.Idle)
+                        {
+                            CurrentCharacterMode = CharacterMode.Walking;
+                        }
                     }
                 }
             }
         }
-
     }
+
 }

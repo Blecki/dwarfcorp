@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class DynamicLight
     {
         public byte Range { get; set; }
@@ -25,13 +26,13 @@ namespace DwarfCorp
             VoxelChunk chunk = Chunks.ChunkMap[Voxel.ChunkID];
             chunk.DynamicLights.Remove(this);
             Chunks.DynamicLights.Remove(this);
-            foreach (VoxelChunk neighbor in chunk.Neighbors.Values)
+            foreach(VoxelChunk neighbor in chunk.Neighbors.Values)
             {
                 neighbor.ShouldRebuild = true;
                 neighbor.ShouldRecalculateLighting = true;
                 neighbor.ResetDynamicLight(0);
             }
         }
-
     }
+
 }

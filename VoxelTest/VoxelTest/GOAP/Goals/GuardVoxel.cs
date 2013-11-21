@@ -5,9 +5,11 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    class GuardVoxel : Goal
+
+    internal class GuardVoxel : Goal
     {
-        VoxelRef voxelToGuard = null;
+        private VoxelRef voxelToGuard = null;
+
         public GuardVoxel(GOAP agent, VoxelRef vox)
         {
             Name = "Guard Voxel: " + vox.WorldPosition;
@@ -18,7 +20,7 @@ namespace DwarfCorp
 
         public override void Reset(GOAP agent)
         {
-            if (agent != null)
+            if(agent != null)
             {
                 agent.Voxels.Add(voxelToGuard);
             }
@@ -31,10 +33,9 @@ namespace DwarfCorp
         }
 
 
-
         public override void ContextReweight(CreatureAIComponent creature)
         {
-            if (voxelToGuard == null)
+            if(voxelToGuard == null)
             {
                 Priority = 0.0f;
             }
@@ -48,7 +49,7 @@ namespace DwarfCorp
         public override bool ContextValidate(CreatureAIComponent creature)
         {
             Voxel vox = voxelToGuard.GetVoxel(creature.Master.Chunks, false);
-            if (voxelToGuard == null || vox.Health <= 0)
+            if(voxelToGuard == null || vox.Health <= 0)
             {
                 return false;
             }
@@ -63,4 +64,5 @@ namespace DwarfCorp
             return new GuardVoxelAct(creature, voxelToGuard);
         }
     }
+
 }

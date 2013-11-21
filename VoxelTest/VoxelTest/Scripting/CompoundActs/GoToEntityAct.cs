@@ -5,9 +5,10 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class GoToEntityAct : CompoundCreatureAct
     {
-        public LocatableComponent Entity { get; set;}
+        public LocatableComponent Entity { get; set; }
 
         public bool EntityIsInHands()
         {
@@ -25,11 +26,12 @@ namespace DwarfCorp
             Name = "Go to entity";
             Entity = entity;
             Tree = new Sequence(new SetTargetEntityAct(entity, Agent),
-                                InHands() |
-                                new Sequence(new SetTargetVoxelFromEntityAct(Agent),
-                                new PlanAct(Agent),
-                                new FollowPathAct(Agent),
-                                new StopAct(Agent)));
+                InHands() |
+                new Sequence(new SetTargetVoxelFromEntityAct(Agent, "EntityVoxel"),
+                    new PlanAct(Agent, "PathToEntity", "EntityVoxel"),
+                    new FollowPathAct(Agent, "PathToEntity"),
+                    new StopAct(Agent)));
         }
     }
+
 }

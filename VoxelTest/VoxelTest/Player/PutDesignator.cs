@@ -9,9 +9,11 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+
     public class PutDesignation
     {
         public VoxelRef vox;
@@ -22,52 +24,52 @@ namespace DwarfCorp
         {
             vox = v;
             type = t;
-  
         }
 
         public void Put(ChunkManager manager)
         {
             VoxelChunk chunk = manager.ChunkMap[vox.ChunkID];
-            chunk.VoxelGrid[(int)vox.GridPosition.X][(int)vox.GridPosition.Y] [(int)vox.GridPosition.Z] = new Voxel(vox.WorldPosition, type, VoxelLibrary.GetPrimitive(type.name), true);
-            
-            Voxel v = chunk.VoxelGrid[(int)vox.GridPosition.X][(int)vox.GridPosition.Y][(int)vox.GridPosition.Z];
+            chunk.VoxelGrid[(int) vox.GridPosition.X][(int) vox.GridPosition.Y][(int) vox.GridPosition.Z] = new Voxel(vox.WorldPosition, type, VoxelLibrary.GetPrimitive(type.name), true);
+
+            Voxel v = chunk.VoxelGrid[(int) vox.GridPosition.X][(int) vox.GridPosition.Y][(int) vox.GridPosition.Z];
             v.Chunk = chunk;
-            
-            chunk.Water[(int)vox.GridPosition.X][(int)vox.GridPosition.Y][(int)vox.GridPosition.Z].WaterLevel = 0;
-            chunk.NotifyTotalRebuild(!chunk.VoxelGrid[(int)vox.GridPosition.X][(int)vox.GridPosition.Y][(int)vox.GridPosition.Z].IsInterior);
-            
+
+            chunk.Water[(int) vox.GridPosition.X][(int) vox.GridPosition.Y][(int) vox.GridPosition.Z].WaterLevel = 0;
+            chunk.NotifyTotalRebuild(!chunk.VoxelGrid[(int) vox.GridPosition.X][(int) vox.GridPosition.Y][(int) vox.GridPosition.Z].IsInterior);
+
             PlayState.ParticleManager.Trigger("puff", v.Position, Color.White, 20);
 
             List<LocatableComponent> components = new List<LocatableComponent>();
-            manager.Components.GetComponentsIntersecting(vox.GetBoundingBox(), components);
+            manager.Components.GetComponentsIntersecting(vox.GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic);
 
-            foreach (LocatableComponent comp in components)
+            foreach(PhysicsComponent phys in components.OfType<PhysicsComponent>())
             {
-                if (comp is PhysicsComponent)
-                {
-                    PhysicsComponent phys = (PhysicsComponent)comp;
-                    phys.ApplyForce((phys.GlobalTransform.Translation - (vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f))) * 100, 0.01f);
-                    BoundingBox box = v.GetBoundingBox();
-                    PhysicsComponent.Contact contact = new PhysicsComponent.Contact();
-                    PhysicsComponent.TestStaticAABBAABB(box, phys.GetBoundingBox(), ref contact);
+                phys.ApplyForce((phys.GlobalTransform.Translation - (vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f))) * 100, 0.01f);
+                BoundingBox box = v.GetBoundingBox();
+                PhysicsComponent.Contact contact = new PhysicsComponent.Contact();
+                PhysicsComponent.TestStaticAABBAABB(box, phys.GetBoundingBox(), ref contact);
 
-                    if (contact.isIntersecting)
-                    {
-                        Vector3 diff = contact.nEnter * contact.penetration;
-                        Matrix m = phys.LocalTransform;
-                        m.Translation += diff;
-                        phys.LocalTransform = m;
-                    }
+                if(!contact.isIntersecting)
+                {
+                    continue;
                 }
+
+                Vector3 diff = contact.nEnter * contact.penetration;
+                Matrix m = phys.LocalTransform;
+                m.Translation += diff;
+                phys.LocalTransform = m;
             }
         }
     }
 
+    [JsonObject(IsReference = true)]
     public class PutDesignator
     {
         public GameMaster Master { get; set; }
         public List<PutDesignation> Designations { get; set; }
         public VoxelType CurrentVoxelType { get; set; }
+
+        [JsonIgnore]
         public Texture2D BlockTextures { get; set; }
 
         public PutDesignator(GameMaster master, Texture2D blockTextures)
@@ -82,20 +84,19 @@ namespace DwarfCorp
         {
             PutDesignation des = GetDesignation(reference);
 
-            if (des == null)
+            if(des == null)
             {
                 return null;
             }
 
             return des.reservedCreature;
-
         }
 
         public bool IsDesignation(VoxelRef reference)
         {
-            foreach (PutDesignation put in Designations)
+            foreach(PutDesignation put in Designations)
             {
-                if ((put.vox.WorldPosition - reference.WorldPosition).LengthSquared() < 0.1)
+                if((put.vox.WorldPosition - reference.WorldPosition).LengthSquared() < 0.1)
                 {
                     return true;
                 }
@@ -107,9 +108,9 @@ namespace DwarfCorp
 
         public PutDesignation GetDesignation(VoxelRef v)
         {
-            foreach (PutDesignation put in Designations)
+            foreach(PutDesignation put in Designations)
             {
-                if ((put.vox.WorldPosition - v.WorldPosition).LengthSquared() < 0.1)
+                if((put.vox.WorldPosition - v.WorldPosition).LengthSquared() < 0.1)
                 {
                     return put;
                 }
@@ -133,7 +134,7 @@ namespace DwarfCorp
         {
             PutDesignation des = GetDesignation(v);
 
-            if (des != null)
+            if(des != null)
             {
                 RemoveDesignation(des);
             }
@@ -142,16 +143,16 @@ namespace DwarfCorp
 
         public void Render(GameTime gametime, GraphicsDevice graphics, Effect effect)
         {
-            float t = (float)gametime.TotalGameTime.TotalSeconds;
-            float st = (float)Math.Sin(t * 4) * 0.5f + 0.5f;
+            float t = (float) gametime.TotalGameTime.TotalSeconds;
+            float st = (float) Math.Sin(t * 4) * 0.5f + 0.5f;
             effect.Parameters["xTexture"].SetValue(BlockTextures);
             effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 2.0f, 0.5f * st + 0.45f));
             //Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
-            foreach (PutDesignation put in Designations)
+            foreach(PutDesignation put in Designations)
             {
                 effect.Parameters["xWorld"].SetValue(Matrix.CreateTranslation(put.vox.WorldPosition));
 
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
                     VoxelLibrary.GetPrimitive(put.type.name).Render(graphics);
@@ -164,48 +165,44 @@ namespace DwarfCorp
 
         public void VoxelsSelected(List<VoxelRef> refs, InputManager.MouseButton button)
         {
-            if (CurrentVoxelType == null || Master.GodMode.IsActive)
+            if(CurrentVoxelType == null || Master.GodMode.IsActive)
             {
                 return;
             }
             switch(button)
             {
-                    case(InputManager.MouseButton.Left):
+                case (InputManager.MouseButton.Left):
+                {
+                    foreach(VoxelRef r in refs)
                     {
-                        foreach (VoxelRef r in refs)
+                        if(IsDesignation(r) || r.TypeName != "empty")
                         {
-                            if (IsDesignation(r) || r.TypeName != "empty")
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                AddDesignation(new PutDesignation(r, CurrentVoxelType));
-                            }
+                            continue;
                         }
-                        break;
+                        else
+                        {
+                            AddDesignation(new PutDesignation(r, CurrentVoxelType));
+                        }
                     }
-                    case(InputManager.MouseButton.Right):
+                    break;
+                }
+                case (InputManager.MouseButton.Right):
+                {
+                    foreach(VoxelRef r in refs)
                     {
-                        foreach (VoxelRef r in refs)
+                        if(!IsDesignation(r) || r.TypeName != "empty")
                         {
-                            if (!IsDesignation(r) || r.TypeName != "empty")
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                RemoveDesignation(r);
-                            }
+                            continue;
                         }
-                        break;
+                        else
+                        {
+                            RemoveDesignation(r);
+                        }
                     }
+                    break;
+                }
             }
         }
-
-        
     }
-
-
 
 }

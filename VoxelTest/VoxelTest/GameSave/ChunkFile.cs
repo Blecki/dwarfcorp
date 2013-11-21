@@ -16,19 +16,18 @@ namespace DwarfCorp
     /// </summary>
     public class ChunkFile : SaveData
     {
-        public short[, ,] Types;
-        public short[, ,] LiquidTypes;
-        public byte[, ,] Liquid;
+        public short[,,] Types;
+        public short[,,] LiquidTypes;
+        public byte[,,] Liquid;
         public Point3 Size;
         public Point3 ID;
         public Vector3 Origin;
 
-        public new static string Extension = "chunk"; 
+        public new static string Extension = "chunk";
         public new static string CompressedExtension = "zchunk";
 
         public ChunkFile()
         {
-
         }
 
         public ChunkFile(VoxelChunk chunk)
@@ -62,7 +61,7 @@ namespace DwarfCorp
         {
             ChunkFile chunkFile = FileUtils.LoadJson<ChunkFile>(filePath, isCompressed);
 
-            if (chunkFile == null)
+            if(chunkFile == null)
             {
                 return false;
             }
@@ -87,34 +86,39 @@ namespace DwarfCorp
             Voxel[][][] voxels = ChunkGenerator.Allocate(chunkSizeX, chunkSizeY, chunkSizeZ);
             float scaleFator = PlayState.WorldScale;
 
-            for (int x = 0; x < chunkSizeX; x++)
+            for(int x = 0; x < chunkSizeX; x++)
             {
-                for (int z = 0; z < chunkSizeZ; z++)
+                for(int z = 0; z < chunkSizeZ; z++)
                 {
-                    for (int y = 0; y < chunkSizeY; y++)
+                    for(int y = 0; y < chunkSizeY; y++)
                     {
-                        if (Types[x, y, z] > 0)
+                        if(Types[x, y, z] > 0)
                         {
                             VoxelType t = VoxelType.TypeList[Types[x, y, z]];
                             voxels[x][y][z] = new Voxel(new Vector3(x, y, z) + origin, t, VoxelLibrary.PrimitiveMap[t], true);
                         }
-                        
                     }
                 }
             }
 
-            VoxelChunk c = new VoxelChunk(origin, manager, voxels, ID, 1);
-            c.ShouldRebuild = true;
-            c.ShouldRecalculateLighting = true;
-
-            for (int x = 0; x < chunkSizeX; x++)
+            VoxelChunk c = new VoxelChunk(origin, manager, voxels, ID, 1)
             {
-                for (int z = 0; z < chunkSizeZ; z++)
+                ShouldRebuild = true,
+                ShouldRecalculateLighting = true
+            };
+
+            for(int x = 0; x < chunkSizeX; x++)
+            {
+                for(int z = 0; z < chunkSizeZ; z++)
                 {
-                    for (int y = 0; y < chunkSizeY; y++)
+                    for(int y = 0; y < chunkSizeY; y++)
                     {
+                        if(Liquid[x, y, z] > 0)
+                        {
+                        }
+
                         c.Water[x][y][z].WaterLevel = Liquid[x, y, z];
-                        c.Water[x][y][z].Type = (LiquidType)LiquidTypes[x, y, z];
+                        c.Water[x][y][z].Type = (LiquidType) LiquidTypes[x, y, z];
                     }
                 }
             }
@@ -125,11 +129,11 @@ namespace DwarfCorp
 
         public void FillDataFromChunk(VoxelChunk chunk)
         {
-            for (int x = 0; x < Size.X; x++)
+            for(int x = 0; x < Size.X; x++)
             {
-                for (int y = 0; y < Size.Y; y++)
+                for(int y = 0; y < Size.Y; y++)
                 {
-                    for (int z = 0; z < Size.Z; z++)
+                    for(int z = 0; z < Size.Z; z++)
                     {
                         Voxel vox = chunk.VoxelGrid[x][y][z];
                         WaterCell water = chunk.Water[x][y][z];
@@ -143,10 +147,10 @@ namespace DwarfCorp
                             Types[x, y, z] = vox.Type.ID;
                         }
 
-                        if (water.WaterLevel > 0)
+                        if(water.WaterLevel > 0)
                         {
                             Liquid[x, y, z] = water.WaterLevel;
-                            LiquidTypes[x, y, z] = (short)water.Type;
+                            LiquidTypes[x, y, z] = (short) water.Type;
                         }
                         else
                         {
@@ -157,6 +161,6 @@ namespace DwarfCorp
                 }
             }
         }
-    
     }
+
 }

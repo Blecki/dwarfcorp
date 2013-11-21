@@ -5,16 +5,19 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class ForLoop : Act
     {
         public Act Child { get; set; }
         public int Iters { get; set; }
+        public bool BreakOnSuccess { get; set; }
 
-        public ForLoop(Act child, int iters)
+        public ForLoop(Act child, int iters, bool breakOnSuccess)
         {
             Name = "For(" + iters + ")";
             Iters = iters;
             Child = child;
+            BreakOnSuccess = breakOnSuccess;
         }
 
         public override void Initialize()
@@ -28,25 +31,23 @@ namespace DwarfCorp
         public override IEnumerable<Status> Run()
         {
             bool failEncountered = false;
-            for (int i = 0; i < Iters; i++)
+            for(int i = 0; i < Iters; i++)
             {
                 Child.Initialize();
 
-                bool childDone = false;
-                while (!childDone)
+                while(true)
                 {
                     Status childStatus = Child.Tick();
 
-                    if (childStatus == Status.Fail)
+                    if(childStatus == Status.Fail)
                     {
                         failEncountered = true;
                         yield return Status.Fail;
                         break;
                     }
-                    else if (childStatus == Status.Success)
+                    else if(childStatus == Status.Success)
                     {
                         yield return Status.Running;
-                        childDone = true;
                         break;
                     }
                     else
@@ -54,9 +55,14 @@ namespace DwarfCorp
                         yield return Status.Running;
                     }
                 }
+
+                if(!failEncountered && BreakOnSuccess)
+                {
+                    break;
+                }
             }
 
-            if (failEncountered)
+            if(failEncountered)
             {
                 yield return Status.Fail;
             }
@@ -64,9 +70,7 @@ namespace DwarfCorp
             {
                 yield return Status.Success;
             }
-
-            
         }
-
     }
+
 }

@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace DwarfCorp
 {
+
     public class GameStateManager
     {
         public List<string> StateStack { get; set; }
@@ -33,12 +34,11 @@ namespace DwarfCorp
 
         public void PopState()
         {
-
-            if (StateStack.Count > 0)
+            if(StateStack.Count > 0)
             {
                 StateStack.RemoveAt(0);
             }
-            if (StateStack.Count > 0)
+            if(StateStack.Count > 0)
             {
                 string state = StateStack.ElementAt(0);
 
@@ -47,7 +47,7 @@ namespace DwarfCorp
                 States[NextState].TransitionValue = 0.0f;
                 States[NextState].Transitioning = GameState.TransitionMode.Entering;
 
-                if (CurrentState != "")
+                if(CurrentState != "")
                 {
                     States[CurrentState].Transitioning = GameState.TransitionMode.Exiting;
                     States[CurrentState].TransitionValue = 0.0f;
@@ -63,7 +63,7 @@ namespace DwarfCorp
             States[NextState].TransitionValue = 0.0f;
             States[NextState].Transitioning = GameState.TransitionMode.Entering;
 
-            if (CurrentState != "")
+            if(CurrentState != "")
             {
                 States[CurrentState].Transitioning = GameState.TransitionMode.Exiting;
                 States[CurrentState].TransitionValue = 0.0f;
@@ -74,7 +74,7 @@ namespace DwarfCorp
 
         private void TransitionComplete()
         {
-            if (CurrentState != "")
+            if(CurrentState != "")
             {
                 States[CurrentState].OnExit();
                 States[CurrentState].Transitioning = GameState.TransitionMode.Exiting;
@@ -87,26 +87,26 @@ namespace DwarfCorp
 
         public void Update(GameTime time)
         {
-            if (CurrentState != "" && States[CurrentState].IsInitialized)
+            if(CurrentState != "" && States[CurrentState].IsInitialized)
             {
                 States[CurrentState].Update(time);
 
                 if(States[CurrentState].Transitioning != GameState.TransitionMode.Running)
                 {
-                    States[CurrentState].TransitionValue += (float)(TransitionSpeed * time.ElapsedGameTime.TotalSeconds);
+                    States[CurrentState].TransitionValue += (float) (TransitionSpeed * time.ElapsedGameTime.TotalSeconds);
                     States[CurrentState].TransitionValue = Math.Min(States[CurrentState].TransitionValue, 1.001f);
                 }
             }
 
-            if (NextState != "" && States[NextState].IsInitialized)
+            if(NextState != "" && States[NextState].IsInitialized)
             {
                 //States[NextState].Update(time);
 
-                if (States[NextState].Transitioning != GameState.TransitionMode.Running)
+                if(States[NextState].Transitioning != GameState.TransitionMode.Running)
                 {
-                    States[NextState].TransitionValue += (float)(TransitionSpeed * time.ElapsedGameTime.TotalSeconds);
+                    States[NextState].TransitionValue += (float) (TransitionSpeed * time.ElapsedGameTime.TotalSeconds);
                     States[NextState].TransitionValue = Math.Min(States[NextState].TransitionValue, 1.001f);
-                    if (States[NextState].TransitionValue >= 1.0)
+                    if(States[NextState].TransitionValue >= 1.0)
                     {
                         TransitionComplete();
                     }
@@ -119,26 +119,23 @@ namespace DwarfCorp
             Game.GraphicsDevice.Clear(Color.Black);
 
 
-
-            for (int i = StateStack.Count - 1; i >= 0; i--)
+            for(int i = StateStack.Count - 1; i >= 0; i--)
             {
                 GameState state = States[StateStack[i]];
 
-                if (state.RenderUnderneath || i == 0 || state.Name == CurrentState || state.Name == NextState)
+                if(state.RenderUnderneath || i == 0 || state.Name == CurrentState || state.Name == NextState)
                 {
-                    if (state.IsInitialized)
+                    if(state.IsInitialized)
                     {
                         state.Render(time);
                     }
-                    else if (!state.IsInitialized)
+                    else if(!state.IsInitialized)
                     {
                         state.RenderUnitialized(time);
                     }
                 }
             }
-
-
-
         }
     }
+
 }

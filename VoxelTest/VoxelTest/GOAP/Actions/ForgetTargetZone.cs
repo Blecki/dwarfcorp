@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class ForgetTargetZone : Action
     {
         public ForgetTargetZone()
@@ -23,7 +24,6 @@ namespace DwarfCorp
 
             Cost = 1.0f;
         }
-
     }
 
 }

@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class CompoundAct : Act
     {
         public Act Tree { get; set; }
@@ -14,7 +15,7 @@ namespace DwarfCorp
             Children = new List<Act>();
         }
 
-        public CompoundAct(Act tree) 
+        public CompoundAct(Act tree)
         {
             Name = Tree.Name;
             Tree = tree;
@@ -33,4 +34,5 @@ namespace DwarfCorp
             return Tree.Run();
         }
     }
+
 }

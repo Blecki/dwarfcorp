@@ -5,7 +5,8 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    class PutItemInZone : Goal
+
+    internal class PutItemInZone : Goal
     {
         public Zone m_zone;
         public Item m_item;
@@ -36,34 +37,33 @@ namespace DwarfCorp
             toReturn.Add(new GoToTargetZone());
             toReturn.Add(new PutHeldObjectInZone(creature, m_zone));
             return toReturn;
-        }  
+        }
 
         public override bool ContextValidate(CreatureAIComponent creature)
         {
-
-            if (m_zone is Room)
+            if(m_zone is Room)
             {
-                Room r = (Room)m_zone;
+                Room r = (Room) m_zone;
 
-                if (r.IsBuilt && r.RoomType.Name != "BalloonPort")
+                if(r.IsBuilt && r.RoomType.Name != "BalloonPort")
                 {
                     return false;
                 }
 
-                if (!creature.Master.RoomDesignator.IsBuildDesignation(r) && r.RoomType.Name != "BalloonPort")
+                if(!creature.Master.RoomDesignator.IsBuildDesignation(r) && r.RoomType.Name != "BalloonPort")
                 {
                     return false;
                 }
             }
 
-            if ((m_item.reservedFor != null && m_item.reservedFor != creature) || m_item.Zone == m_zone)
+            if((m_item.ReservedFor != null && m_item.ReservedFor != creature) || m_item.Zone == m_zone)
             {
                 return false;
             }
-           
+
 
             return true;
         }
-
     }
+
 }

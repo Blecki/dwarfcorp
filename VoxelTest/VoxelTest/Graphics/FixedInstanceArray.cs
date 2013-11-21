@@ -8,16 +8,23 @@ using System.Threading;
 
 namespace DwarfCorp
 {
+    
     public class FixedInstanceArray
     {
 
-        public InstancedVertex[] Vertices { get; set;}
+        public InstancedVertex[] Vertices { get; set; }
         private MinBag<InstanceData> SortedData { get; set; }
-        private List<InstanceData> Data { get; set;}
+        private List<InstanceData> Data { get; set; }
         private List<InstanceData> Additions { get; set; }
         private List<InstanceData> Removals { get; set; }
         private int numInstances = 0;
-        public int NumInstances { get {return numInstances;}  set{ SetNumInstances(value);}}
+
+        public int NumInstances
+        {
+            get { return numInstances; }
+            set { SetNumInstances(value); }
+        }
+
         public DynamicVertexBuffer InstanceBuffer { get; set; }
         public VertexBuffer Model { get; set; }
         public Texture2D Texture { get; set; }
@@ -25,17 +32,19 @@ namespace DwarfCorp
         public bool ShouldRebuild { get; set; }
         public string Name { get; set; }
         private Mutex DataLock { get; set; }
+
         private static RasterizerState rasterState = new RasterizerState()
         {
             CullMode = CullMode.None,
         };
+
         public Camera camera;
-        public BlendState BlendMode { get; set;}
+        public BlendState BlendMode { get; set; }
         public float CullDistance = 100 * 100;
 
         public void CreateDepths(Camera camera)
         {
-            if (camera == null)
+            if(camera == null)
             {
                 return;
             }
@@ -49,13 +58,13 @@ namespace DwarfCorp
                 z = instance.Transform.Translation - camera.Position;
                 instance.Depth = z.LengthSquared();
 
-                if (instance.Depth < CullDistance)
+                if(instance.Depth < CullDistance)
                 {
                     //conservativeSphere.Center = instance.Transform.Translation;
                     //if (!frust.Intersects(conservativeSphere))
 
                     // Half plane test. Faster. Much less accurate.
-                    if (Vector3.Dot(z, forward) > 0)
+                    if(Vector3.Dot(z, forward) > 0)
                     {
                         instance.Depth *= 100;
                     }
@@ -71,16 +80,15 @@ namespace DwarfCorp
         {
             int IComparer<InstanceData>.Compare(InstanceData A, InstanceData B)
             {
-
-                if (A == B)
+                if(A == B)
                 {
                     return 0;
                 }
 
 
-                if (A.Depth <= B.Depth)
+                if(A.Depth <= B.Depth)
                 {
-                    if (B.Depth > A.Depth)
+                    if(B.Depth > A.Depth)
                     {
                         return -1;
                     }
@@ -89,20 +97,23 @@ namespace DwarfCorp
                         return 0;
                     }
                 }
-                else return 1;
+                else
+                {
+                    return 1;
+                }
             }
         }
 
-        Timer sortTimer = new Timer(0.1f, false);
+        private Timer sortTimer = new Timer(0.1f, false);
 
         public void SortDistances()
         {
             CreateDepths(camera);
 
             SortedData.Clear();
-            for (int i = 0; i < Data.Count; i++)
+            for(int i = 0; i < Data.Count; i++)
             {
-                if (Data[i].Depth < CullDistance)
+                if(Data[i].Depth < CullDistance)
                 {
                     SortedData.Add(Data[i], Data[i].Depth);
                 }
@@ -135,15 +146,14 @@ namespace DwarfCorp
 
         public void DeleteNulls()
         {
-            for (int j = 0; j < Data.Count; j++)
+            for(int j = 0; j < Data.Count; j++)
             {
-                if (Data[j] == null)
+                if(Data[j] == null)
                 {
                     Data.RemoveAt(j);
                     j--;
                 }
             }
-
         }
 
         public void RebuildVertices()
@@ -156,20 +166,19 @@ namespace DwarfCorp
 
         public void RebuildInstanceBuffer(GraphicsDevice graphics)
         {
-
-            if (Indicies == null)
+            if(Indicies == null)
             {
                 Indicies = new IndexBuffer(graphics, IndexElementSize.SixteenBits, Model.VertexCount, BufferUsage.WriteOnly);
                 short[] indices = new short[Model.VertexCount];
-                for (int i = 0; i < Model.VertexCount; i++)
+                for(int i = 0; i < Model.VertexCount; i++)
                 {
-                    indices[i] = (short)i;
+                    indices[i] = (short) i;
                 }
                 Indicies.SetData(indices);
             }
 
 
-            if ( InstanceBuffer != null && !InstanceBuffer.IsDisposed)
+            if(InstanceBuffer != null && !InstanceBuffer.IsDisposed)
             {
                 InstanceBuffer.Dispose();
                 InstanceBuffer = null;
@@ -184,34 +193,34 @@ namespace DwarfCorp
             bool rebuildVertices = true;
             DeleteNulls();
             sortTimer.Update(time);
-            if (Indicies == null)
+            if(Indicies == null)
             {
                 Indicies = new IndexBuffer(graphics, IndexElementSize.SixteenBits, Model.VertexCount, BufferUsage.WriteOnly);
                 short[] indices = new short[Model.VertexCount];
-                for (int i = 0; i < Model.VertexCount; i++)
+                for(int i = 0; i < Model.VertexCount; i++)
                 {
-                    indices[i] = (short)i;
+                    indices[i] = (short) i;
                 }
                 Indicies.SetData(indices);
             }
-            if (ShouldRebuild)
+            if(ShouldRebuild)
             {
                 RebuildInstanceBuffer(graphics);
             }
 
-            if (sortTimer.HasTriggered)
+            if(sortTimer.HasTriggered)
             {
                 SortDistances();
                 sortTimer.Reset(sortTimer.TargetTimeSeconds);
             }
 
-            if (rebuildVertices)
+            if(rebuildVertices)
             {
                 RebuildVertices();
             }
 
 
-            if (rebuildVertices)
+            if(rebuildVertices)
             {
                 InstanceBuffer.SetData(Vertices);
             }
@@ -224,14 +233,13 @@ namespace DwarfCorp
         {
             camera = cam;
 
-            
 
-            if (SortedData.Data.Count > 0 && InstanceBuffer != null && !InstanceBuffer.IsDisposed)
+            if(SortedData.Data.Count > 0 && InstanceBuffer != null && !InstanceBuffer.IsDisposed)
             {
                 RasterizerState r = graphics.RasterizerState;
                 graphics.RasterizerState = rasterState;
 
-      
+
                 effect.CurrentTechnique = effect.Techniques["Instanced"];
                 effect.Parameters["xEnableLighting"].SetValue(GameSettings.Default.CursorLightEnabled);
                 graphics.SetVertexBuffers(Model, new VertexBufferBinding(InstanceBuffer, 0, 1));
@@ -241,13 +249,12 @@ namespace DwarfCorp
                 graphics.BlendState = BlendMode;
 
                 effect.Parameters["xTexture"].SetValue(Texture);
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
                 }
 
 
-            
                 graphics.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0, Model.VertexCount, 0, Model.VertexCount / 3, SortedData.Data.Count);
                 effect.CurrentTechnique = effect.Techniques["Textured"];
 
@@ -255,8 +262,6 @@ namespace DwarfCorp
                 graphics.RasterizerState = r;
                 graphics.BlendState = blendState;
             }
-
-
         }
 
         public void Add(InstanceData data)
@@ -276,12 +281,12 @@ namespace DwarfCorp
         private void AddRemove()
         {
             //DataLock.WaitOne();
-            for (int i = 0; i < Additions.Count; i++)
+            for(int i = 0; i < Additions.Count; i++)
             {
                 Data.Add(Additions[i]);
             }
 
-            for (int j = 0; j < Removals.Count; j++)
+            for(int j = 0; j < Removals.Count; j++)
             {
                 Data.Remove(Removals[j]);
             }
@@ -297,21 +302,16 @@ namespace DwarfCorp
             InstancedVertex[] oldVertices = Vertices;
             Vertices = new InstancedVertex[nInstances];
 
-            for (int i = 0; i < Math.Min(oldVertices.Length, nInstances); i++)
+            for(int i = 0; i < Math.Min(oldVertices.Length, nInstances); i++)
             {
                 Vertices[i] = oldVertices[i];
             }
 
-            for (int j = oldVertices.Length; j < nInstances; j++)
+            for(int j = oldVertices.Length; j < nInstances; j++)
             {
                 Vertices[j] = new InstancedVertex();
             }
-
-           
         }
-
-
-    
-
     }
+
 }

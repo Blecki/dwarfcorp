@@ -5,9 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    class LookInteresting : Goal
-    {
 
+    internal class LookInteresting : Goal
+    {
         public LookInteresting(GOAP agent)
         {
             Name = "LookInteresting";
@@ -31,7 +31,7 @@ namespace DwarfCorp
 
         public override bool ContextValidate(CreatureAIComponent creature)
         {
-            return (GOAP.MotionStatus)creature.Goap.Belief[GOAPStrings.MotionStatus] == GOAP.MotionStatus.Stationary;
+            return (GOAP.MotionStatus) creature.Goap.Belief[GOAPStrings.MotionStatus] == GOAP.MotionStatus.Stationary;
         }
 
         public override void Reset(GOAP agent)
@@ -46,7 +46,6 @@ namespace DwarfCorp
         {
             return new WanderAct(creature, 2, 0.5f, 1.0f);
         }
-
-
     }
+
 }

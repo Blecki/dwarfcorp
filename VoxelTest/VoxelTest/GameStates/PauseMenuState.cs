@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace DwarfCorp
 {
+
     public class PauseMenuState
     {
         public SillyGUI GUI { get; set; }
@@ -19,4 +20,5 @@ namespace DwarfCorp
         public SpriteFont DefaultFont { get; set; }
         public string SaveDirectory = "Saves";
     }
+
 }

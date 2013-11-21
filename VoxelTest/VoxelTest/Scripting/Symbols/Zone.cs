@@ -3,17 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
+    [JsonObject(IsReference = true)]
     public class Zone
     {
         public string ID = "";
         public List<VoxelStorage> Storage = new List<VoxelStorage>();
         public VoxelStorage.StorageType StoreType = VoxelStorage.StorageType.OnVoxel;
-        public bool ReplaceVoxelTypes { get { return ReplacementType != null; } }
+
+        public bool ReplaceVoxelTypes
+        {
+            get { return ReplacementType != null; }
+        }
+
         public VoxelType ReplacementType { get; set; }
+
+        [JsonIgnore]
         public ChunkManager Chunks { get; set; }
 
         public Zone(string id, ChunkManager chunks)
@@ -25,9 +33,9 @@ namespace DwarfCorp
 
         public VoxelStorage GetStorage(VoxelRef voxel)
         {
-            foreach (VoxelStorage storage in Storage)
+            foreach(VoxelStorage storage in Storage)
             {
-                if (storage.Voxel == voxel)
+                if(storage.Voxel == voxel)
                 {
                     return storage;
                 }
@@ -40,7 +48,7 @@ namespace DwarfCorp
         {
             VoxelStorage storage = GetStorage(voxel);
 
-            if (storage != null)
+            if(storage != null)
             {
                 storage.IsReserved = reserved;
             }
@@ -54,7 +62,7 @@ namespace DwarfCorp
 
         public void ClearItems()
         {
-            foreach (VoxelStorage storage in Storage)
+            foreach(VoxelStorage storage in Storage)
             {
                 storage.RemoveItem();
             }
@@ -62,9 +70,9 @@ namespace DwarfCorp
 
         public virtual bool IsFull()
         {
-            foreach (VoxelStorage storage in Storage)
+            foreach(VoxelStorage storage in Storage)
             {
-                if (!storage.IsOccupied && !storage.IsReserved)
+                if(!storage.IsOccupied && !storage.IsReserved)
                 {
                     return false;
                 }
@@ -75,9 +83,9 @@ namespace DwarfCorp
 
         public Item GetItemAt(VoxelRef vox)
         {
-            foreach (VoxelStorage storage in Storage)
+            foreach(VoxelStorage storage in Storage)
             {
-                if (storage.Voxel == vox && !storage.IsOccupied)
+                if(storage.Voxel == vox && !storage.IsOccupied)
                 {
                     return storage.OwnedItem;
                 }
@@ -88,10 +96,9 @@ namespace DwarfCorp
 
         public Item FindItemWithTag(string tag)
         {
-
-            foreach (VoxelStorage storage in Storage)
+            foreach(VoxelStorage storage in Storage)
             {
-                if (storage.IsOccupied && storage.OwnedItem.userData.Tags.Contains(tag))
+                if(storage.IsOccupied && storage.OwnedItem.UserData.Tags.Contains(tag))
                 {
                     return storage.OwnedItem;
                 }
@@ -102,11 +109,11 @@ namespace DwarfCorp
 
         public LocatableComponent FindItemWithTag(string tag, List<LocatableComponent> ignores)
         {
-            foreach (VoxelStorage storage in Storage)
+            foreach(VoxelStorage storage in Storage)
             {
-                if (storage.IsOccupied && storage.OwnedItem.userData.Tags.Contains(tag) && !ignores.Contains(storage.OwnedItem.userData))
+                if(storage.IsOccupied && storage.OwnedItem.UserData.Tags.Contains(tag) && !ignores.Contains(storage.OwnedItem.UserData))
                 {
-                    return storage.OwnedItem.userData;
+                    return storage.OwnedItem.UserData;
                 }
             }
 
@@ -115,9 +122,9 @@ namespace DwarfCorp
 
         public Item FindItemWithTag(string tag, List<Item> ignores)
         {
-            foreach (VoxelStorage storage in Storage)
+            foreach(VoxelStorage storage in Storage)
             {
-                if (storage.IsOccupied && storage.OwnedItem.userData.Tags.Contains(tag) && !ignores.Contains(storage.OwnedItem))
+                if(storage.IsOccupied && storage.OwnedItem.UserData.Tags.Contains(tag) && !ignores.Contains(storage.OwnedItem))
                 {
                     return storage.OwnedItem;
                 }
@@ -133,13 +140,13 @@ namespace DwarfCorp
             float closestDist = float.MaxValue;
             Item closestItem = null;
 
-            foreach (Item i in items)
+            foreach(Item i in items)
             {
-                if (tags.Contains(i.userData.Tags) && !i.userData.IsDead)
+                if(tags.Contains(i.UserData.Tags) && !i.UserData.IsDead)
                 {
-                    float dist = (i.userData.GlobalTransform.Translation - position).LengthSquared();
+                    float dist = (i.UserData.GlobalTransform.Translation - position).LengthSquared();
 
-                    if (dist < closestDist)
+                    if(dist < closestDist)
                     {
                         closestDist = dist;
                         closestItem = i;
@@ -152,11 +159,11 @@ namespace DwarfCorp
 
         public Item FindItemWithTags(List<string> tags)
         {
-            foreach (string r in tags)
+            foreach(string r in tags)
             {
                 Item component = FindItemWithTag(r);
 
-                if (component != null)
+                if(component != null)
                 {
                     return component;
                 }
@@ -169,9 +176,9 @@ namespace DwarfCorp
         {
             List<Item> toReturn = new List<Item>();
 
-            foreach (VoxelStorage storage in Storage)
+            foreach(VoxelStorage storage in Storage)
             {
-                if (storage.IsOccupied && storage.OwnedItem != null)
+                if(storage.IsOccupied && storage.OwnedItem != null)
                 {
                     toReturn.Add(storage.OwnedItem);
                 }
@@ -183,9 +190,9 @@ namespace DwarfCorp
 
         public bool ContainsVoxel(VoxelRef voxel)
         {
-            foreach (VoxelStorage store in Storage)
+            foreach(VoxelStorage store in Storage)
             {
-                if (store.Voxel.Equals(voxel))
+                if(store.Voxel.Equals(voxel))
                 {
                     return true;
                 }
@@ -197,36 +204,35 @@ namespace DwarfCorp
         public virtual void RemoveVoxel(VoxelRef voxel)
         {
             VoxelStorage toRemove = null;
-            foreach (VoxelStorage store in Storage)
+            foreach(VoxelStorage store in Storage)
             {
-                if (store.Voxel.Equals(voxel))
+                if(store.Voxel.Equals(voxel))
                 {
                     toRemove = store;
                     break;
                 }
             }
 
-            if (toRemove != null)
+            if(toRemove != null)
             {
                 toRemove.RemoveItem();
                 Storage.Remove(toRemove);
 
-                if (ReplaceVoxelTypes)
+                if(ReplaceVoxelTypes)
                 {
                     toRemove.RevertType(Chunks);
                 }
             }
-
         }
 
         public virtual void AddVoxel(VoxelRef voxel)
         {
-            if (!ContainsVoxel(voxel))
+            if(!ContainsVoxel(voxel))
             {
                 VoxelStorage storage = new VoxelStorage(voxel, this, StoreType);
                 Storage.Add(storage);
 
-                if (ReplaceVoxelTypes)
+                if(ReplaceVoxelTypes)
                 {
                     storage.SetType(Chunks, ReplacementType);
                 }
@@ -238,17 +244,19 @@ namespace DwarfCorp
             VoxelRef closest = null;
             double closestDist = double.MaxValue;
 
-            foreach (VoxelStorage v in Storage)
+            foreach(VoxelStorage v in Storage)
             {
-                if (!v.IsOccupied && !v.IsReserved)
+                if(v.IsOccupied || v.IsReserved)
                 {
-                    double d = (v.Voxel.WorldPosition - position).LengthSquared();
+                    continue;
+                }
 
-                    if (d < closestDist)
-                    {
-                        closestDist = d;
-                        closest = v.Voxel;
-                    }
+                double d = (v.Voxel.WorldPosition - position).LengthSquared();
+
+                if(d < closestDist)
+                {
+                    closestDist = d;
+                    closest = v.Voxel;
                 }
             }
 
@@ -257,9 +265,9 @@ namespace DwarfCorp
 
         public bool ContainsItem(Item i)
         {
-            foreach (VoxelStorage store in Storage)
+            foreach(VoxelStorage store in Storage)
             {
-                if (store.OwnedItem == i)
+                if(store.OwnedItem == i)
                 {
                     return true;
                 }
@@ -270,9 +278,9 @@ namespace DwarfCorp
 
         public bool ContainsItem(LocatableComponent component)
         {
-            foreach (VoxelStorage store in Storage)
+            foreach(VoxelStorage store in Storage)
             {
-                if (store.IsOccupied && store.OwnedItem.userData == component)
+                if(store.IsOccupied && store.OwnedItem.UserData == component)
                 {
                     return true;
                 }
@@ -283,9 +291,9 @@ namespace DwarfCorp
 
         public virtual bool RemoveItem(LocatableComponent item)
         {
-            foreach (VoxelStorage store in Storage)
+            foreach(VoxelStorage store in Storage)
             {
-                if (store.IsOccupied && store.OwnedItem.userData == item)
+                if(store.IsOccupied && store.OwnedItem.UserData == item)
                 {
                     Item i = store.OwnedItem;
                     store.RemoveItem();
@@ -303,14 +311,14 @@ namespace DwarfCorp
 
         public virtual bool AddItem(Item i, VoxelRef voxel)
         {
-            if (i == null)
+            if(i == null)
             {
                 return false;
             }
 
-            foreach (VoxelStorage store in Storage)
+            foreach(VoxelStorage store in Storage)
             {
-                if (store.Voxel == voxel && !store.IsOccupied)
+                if(store.Voxel == voxel && !store.IsOccupied)
                 {
                     store.OwnedItem = i;
                     store.IsOccupied = true;
@@ -324,13 +332,13 @@ namespace DwarfCorp
 
         public Item GetItemWithName(string name, bool remove)
         {
-            foreach (VoxelStorage store in Storage)
+            foreach(VoxelStorage store in Storage)
             {
-                if (store.IsOccupied && store.OwnedItem.ID == name)
+                if(store.IsOccupied && store.OwnedItem.ID == name)
                 {
                     Item i = store.OwnedItem;
 
-                    if (remove)
+                    if(remove)
                     {
                         store.RemoveItem();
                     }
@@ -343,14 +351,13 @@ namespace DwarfCorp
         }
 
 
-
         public bool Intersects(BoundingBox box)
         {
             BoundingBox larger = new BoundingBox(box.Min - new Vector3(0.1f, 0.1f, 0.1f), box.Max + new Vector3(0.1f, 0.1f, 0.1f));
 
-            foreach (VoxelStorage storage in Storage)
+            foreach(VoxelStorage storage in Storage)
             {
-                if (storage.Voxel.GetBoundingBox().Intersects(larger))
+                if(storage.Voxel.GetBoundingBox().Intersects(larger))
                 {
                     return true;
                 }
@@ -367,7 +374,7 @@ namespace DwarfCorp
         public BoundingBox GetBoundingBox()
         {
             List<BoundingBox> boxes = new List<BoundingBox>();
-            foreach (VoxelStorage storage in Storage)
+            foreach(VoxelStorage storage in Storage)
             {
                 boxes.Add(storage.Voxel.GetBoundingBox());
             }

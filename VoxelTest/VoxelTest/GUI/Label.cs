@@ -7,11 +7,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class Label : SillyGUIComponent
     {
         public string Text { get; set; }
         public Color TextColor { get; set; }
-        public Color StrokeColor { get; set;}
+        public Color StrokeColor { get; set; }
         public SpriteFont TextFont { get; set; }
         public Drawer2D.Alignment Alignment { get; set; }
 
@@ -31,4 +32,5 @@ namespace DwarfCorp
             base.Render(time, batch);
         }
     }
+
 }

@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class ActData
     {
         public object Data { get; set; }
@@ -17,9 +18,9 @@ namespace DwarfCorp
 
         public T GetData<T>()
         {
-            if (Data is T)
+            if(Data is T)
             {
-                return (T)Data;
+                return (T) Data;
             }
             else
             {
@@ -27,4 +28,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

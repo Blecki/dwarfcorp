@@ -7,9 +7,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class PutHeldObjectInZone : Action
     {
         public Zone zone;
+
         public PutHeldObjectInZone(CreatureAIComponent creature, Zone z)
         {
             zone = z;
@@ -33,9 +35,9 @@ namespace DwarfCorp
             Effects[GOAPStrings.HeldItemTags] = null;
             Cost = 0.1f;
 
-            if (z is Stockpile)
+            if(z is Stockpile)
             {
-                BoundingBox box = ((Stockpile)z).GetBoundingBox();
+                BoundingBox box = ((Stockpile) z).GetBoundingBox();
                 Vector3 center = (box.Min + box.Max) * 0.5f;
                 Cost = (creature.Physics.GlobalTransform.Translation - center).LengthSquared() * 0.1f;
             }
@@ -43,11 +45,11 @@ namespace DwarfCorp
 
         public override void Apply(WorldState state)
         {
-            Item item = (Item)(state[GOAPStrings.HeldObject]);
+            Item item = (Item) (state[GOAPStrings.HeldObject]);
 
-            if (item != null)
+            if(item != null)
             {
-                state[GOAPStrings.TargetEntity] = new Item(item.ID, item.Zone, item.userData);
+                state[GOAPStrings.TargetEntity] = new Item(item.ID, item.Zone, item.UserData);
             }
             else
             {
@@ -59,11 +61,11 @@ namespace DwarfCorp
 
         public override void UnApply(WorldState state)
         {
-            Item item = (Item)(state[GOAPStrings.TargetEntity]);
+            Item item = (Item) (state[GOAPStrings.TargetEntity]);
 
-            if (item != null)
+            if(item != null)
             {
-                state[GOAPStrings.HeldObject] = new Item(item.ID, null, item.userData);
+                state[GOAPStrings.HeldObject] = new Item(item.ID, null, item.UserData);
             }
             else
             {
@@ -75,11 +77,10 @@ namespace DwarfCorp
 
         public override Action.PerformStatus PerformContextAction(CreatureAIComponent creature, GameTime time)
         {
-            Item item = (Item)creature.Goap.Belief[GOAPStrings.HeldObject];
+            Item item = (Item) creature.Goap.Belief[GOAPStrings.HeldObject];
 
-            
 
-            if (item == null)
+            if(item == null)
             {
                 return Action.PerformStatus.Failure;
             }
@@ -87,21 +88,21 @@ namespace DwarfCorp
             PutHeldObjectInZone put = this;
             Zone zone = put.zone;
 
-            if (zone is Stockpile)
+            if(zone is Stockpile)
             {
-                Stockpile stock = (Stockpile)zone;
+                Stockpile stock = (Stockpile) zone;
 
-                if (stock.AddItem(creature.Hands.GetFirstGrab(), creature.TargetVoxel))
+                if(stock.AddItem(creature.Hands.GetFirstGrab(), creature.TargetVoxel))
                 {
                     LocatableComponent grabbed = creature.Hands.GetFirstGrab();
                     creature.Hands.UnGrab(grabbed);
-                    
+
                     Matrix m = Matrix.Identity;
                     m.Translation = creature.TargetVoxel.WorldPosition + new Vector3(0.5f, 1.5f, 0.5f);
                     grabbed.LocalTransform = m;
                     grabbed.HasMoved = true;
                     grabbed.DrawBoundingBox = false;
-                    item.reservedFor = null;
+                    item.ReservedFor = null;
 
                     return PerformStatus.Success;
                 }
@@ -116,20 +117,20 @@ namespace DwarfCorp
                     creature.Goap.Belief[GOAPStrings.HandState] = GOAP.HandState.Empty;
 
                     creature.Master.AddGatherDesignation(grabbed);
-                    item.reservedFor = null;
+                    item.ReservedFor = null;
 
                     return PerformStatus.Failure;
                 }
             }
-            else if (zone is Room)
+            else if(zone is Room)
             {
-                Room room = (Room)zone;
-                
-                if (creature.Master.RoomDesignator.IsBuildDesignation(room))
+                Room room = (Room) zone;
+
+                if(creature.Master.RoomDesignator.IsBuildDesignation(room))
                 {
                     VoxelBuildDesignation des = creature.Master.RoomDesignator.GetBuildDesignation(room);
 
-                    if (des == null || des.BuildDesignation.IsBuilt)
+                    if(des == null || des.BuildDesignation.IsBuilt)
                     {
                         return PerformStatus.Invalid;
                     }
@@ -140,16 +141,16 @@ namespace DwarfCorp
                     grabbed.Die();
 
 
-                    if (des.MeetsBuildRequirements())
+                    if(des.MeetsBuildRequirements())
                     {
                         des.Build();
                     }
-                    item.reservedFor = null;
+                    item.ReservedFor = null;
                     return PerformStatus.Success;
                 }
                 else
                 {
-                    Room theRoom = (Room)zone;
+                    Room theRoom = (Room) zone;
                     theRoom.AddItem(item, creature.TargetVoxel);
 
                     LocatableComponent grabbed = creature.Hands.GetFirstGrab();
@@ -160,9 +161,8 @@ namespace DwarfCorp
                     grabbed.LocalTransform = m;
                     grabbed.HasMoved = true;
                     grabbed.DrawBoundingBox = false;
-                    item.reservedFor = null;
+                    item.ReservedFor = null;
                     return PerformStatus.Success;
-                    
                 }
             }
             else
@@ -173,18 +173,18 @@ namespace DwarfCorp
                 m.Translation = creature.TargetVoxel.WorldPosition + new Vector3(0.5f, 1.5f, 0.5f);
                 grabbed.LocalTransform = m;
                 creature.Goap.Belief[GOAPStrings.HandState] = GOAP.HandState.Empty;
-                item.reservedFor = null;
+                item.ReservedFor = null;
                 return PerformStatus.Success;
             }
         }
 
         public override ValidationStatus ContextValidate(CreatureAIComponent creature)
         {
-            Item item = (Item)creature.Goap.Belief[GOAPStrings.HeldObject];
+            Item item = (Item) creature.Goap.Belief[GOAPStrings.HeldObject];
 
-            if (item == null)
+            if(item == null)
             {
-                item.reservedFor = null;
+                item.ReservedFor = null;
                 return ValidationStatus.Replan;
             }
 
@@ -192,35 +192,35 @@ namespace DwarfCorp
             Zone zone = put.zone;
 
 
-            if (zone == null)
+            if(zone == null)
             {
                 return ValidationStatus.Invalid;
             }
 
-            if (zone is Stockpile)
+            if(zone is Stockpile)
             {
-                Stockpile stock = (Stockpile)zone;
+                Stockpile stock = (Stockpile) zone;
 
-                item.reservedFor = null;
+                item.ReservedFor = null;
                 return ValidationStatus.Ok;
             }
             else
             {
-                if (zone is Room)
+                if(zone is Room)
                 {
-                    Room r = (Room)zone;
+                    Room r = (Room) zone;
 
-                    if (r.RoomType.Name != "BalloonPort")
+                    if(r.RoomType.Name != "BalloonPort")
                     {
                         VoxelBuildDesignation des = creature.Master.RoomDesignator.GetBuildDesignation(r);
 
-                        if (des == null)
+                        if(des == null)
                         {
                             return ValidationStatus.Invalid;
                         }
                     }
                 }
-                item.reservedFor = null;
+                item.ReservedFor = null;
                 return ValidationStatus.Ok;
             }
         }

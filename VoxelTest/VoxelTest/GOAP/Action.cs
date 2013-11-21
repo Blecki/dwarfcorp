@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
     public class Action
     {
         public WorldState PreCondition { get; set; }
@@ -59,9 +60,9 @@ namespace DwarfCorp
 
         public bool EffectsContainsTags(WorldState state)
         {
-            foreach (string s in state.Specification.Keys)
+            foreach(string s in state.Specification.Keys)
             {
-                if (Effects.Specification.ContainsKey(s))
+                if(Effects.Specification.ContainsKey(s))
                 {
                     return true;
                 }
@@ -73,11 +74,10 @@ namespace DwarfCorp
 
         public virtual bool Satisfies(WorldState currentState)
         {
-
             WorldState after = new WorldState(currentState);
             UndoEffects(after);
 
-            if (!after.Conflicts(PreCondition) && !Effects.Conflicts(currentState) && EffectsContainsTags(currentState))
+            if(!after.Conflicts(PreCondition) && !Effects.Conflicts(currentState) && EffectsContainsTags(currentState))
             {
                 return true;
             }
@@ -90,9 +90,9 @@ namespace DwarfCorp
 
         public virtual void Apply(WorldState state)
         {
-            foreach (string s in Effects.Specification.Keys)
+            foreach(string s in Effects.Specification.Keys)
             {
-                if (Effects.Specification.ContainsKey(s))
+                if(Effects.Specification.ContainsKey(s))
                 {
                     state[s] = Effects[s];
                 }
@@ -101,9 +101,9 @@ namespace DwarfCorp
 
         public virtual void UndoEffects(WorldState state)
         {
-            foreach (string s in Effects.Specification.Keys)
+            foreach(string s in Effects.Specification.Keys)
             {
-                if (PreCondition.Specification.ContainsKey(s))
+                if(PreCondition.Specification.ContainsKey(s))
                 {
                     state[s] = PreCondition[s];
                 }
@@ -112,13 +112,13 @@ namespace DwarfCorp
 
         public virtual void UnApply(WorldState state)
         {
-            foreach (string s in PreCondition.Specification.Keys)
+            foreach(string s in PreCondition.Specification.Keys)
             {
-                if (PreCondition.Specification.ContainsKey(s))
+                if(PreCondition.Specification.ContainsKey(s))
                 {
                     state[s] = PreCondition[s];
                 }
-                else if (Effects.Specification.ContainsKey(s) && state.Specification.ContainsKey(s))
+                else if(Effects.Specification.ContainsKey(s) && state.Specification.ContainsKey(s))
                 {
                     state.Specification.Remove(s);
                 }
@@ -127,7 +127,7 @@ namespace DwarfCorp
 
         public virtual ValidationStatus ContextValidate(CreatureAIComponent creature)
         {
-            if (CanPerform(creature.Goap.Belief))
+            if(CanPerform(creature.Goap.Belief))
             {
                 return ValidationStatus.Ok;
             }
@@ -141,7 +141,6 @@ namespace DwarfCorp
         {
             return PerformStatus.Success;
         }
-
-
     }
+
 }

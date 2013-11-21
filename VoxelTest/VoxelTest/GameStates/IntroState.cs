@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace DwarfCorp
 {
+
     public class IntroState : GameState
     {
         public Texture2D Logo { get; set; }
@@ -24,7 +25,6 @@ namespace DwarfCorp
             ResourceLibrary library = new ResourceLibrary(game);
         }
 
- 
 
         public override void OnEnter()
         {
@@ -41,13 +41,13 @@ namespace DwarfCorp
             Game.IsMouseVisible = false;
             IntroTimer.Update(gameTime);
 
-            if (IntroTimer.HasTriggered && Transitioning == TransitionMode.Running)
+            if(IntroTimer.HasTriggered && Transitioning == TransitionMode.Running)
             {
                 Game.IsMouseVisible = true;
                 StateManager.PushState("MainMenuState");
             }
 
-            if (Keyboard.GetState().GetPressedKeys().Length > 0 && Transitioning == TransitionMode.Running)
+            if(Keyboard.GetState().GetPressedKeys().Length > 0 && Transitioning == TransitionMode.Running)
             {
                 StateManager.PushState("MainMenuState");
             }
@@ -62,15 +62,15 @@ namespace DwarfCorp
 
             float x = Easing.CubeInOut(TransitionValue, 0.0f, 1.0f, 0.5f);
 
-            if (Transitioning == TransitionMode.Running)
+            if(Transitioning == TransitionMode.Running)
             {
                 DwarfGame.SpriteBatch.Draw(Logo, new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - Logo.Width / 2, Game.GraphicsDevice.Viewport.Height / 2 - Logo.Height / 2), null, new Color(1f, 1f, 1f));
             }
-            else if (Transitioning == TransitionMode.Entering)
+            else if(Transitioning == TransitionMode.Entering)
             {
                 DwarfGame.SpriteBatch.Draw(Logo, new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - Logo.Width / 2, Game.GraphicsDevice.Viewport.Height / 2 - Logo.Height / 2), null, new Color(x, x, x));
             }
-            else if (Transitioning == TransitionMode.Exiting)
+            else if(Transitioning == TransitionMode.Exiting)
             {
                 DwarfGame.SpriteBatch.Draw(Logo, new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - Logo.Width / 2, Game.GraphicsDevice.Viewport.Height / 2 - Logo.Height / 2), null, new Color(1.0f - x, 1.0f - x, 1.0f - x));
             }
@@ -79,4 +79,5 @@ namespace DwarfCorp
             base.Render(gameTime);
         }
     }
+
 }

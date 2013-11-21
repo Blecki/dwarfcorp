@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class DeathComponentSpawner : LocatableComponent
     {
         public List<LocatableComponent> Spawns { get; set; }
@@ -21,7 +22,7 @@ namespace DwarfCorp
 
         public override void Die()
         {
-            foreach (LocatableComponent locatable in Spawns)
+            foreach(LocatableComponent locatable in Spawns)
             {
                 locatable.SetVisibleRecursive(true);
                 locatable.SetActiveRecursive(true);
@@ -29,11 +30,11 @@ namespace DwarfCorp
                 locatable.WasAddedToOctree = false;
                 locatable.AddToOctree = true;
 
-                if (locatable is PhysicsComponent)
+                if(locatable is PhysicsComponent)
                 {
                     Vector3 diff = (locatable.GlobalTransform.Translation - GlobalTransform.Translation);
                     diff.Normalize();
-                    ((PhysicsComponent)locatable).Velocity += diff * ThrowSpeed;
+                    ((PhysicsComponent) locatable).Velocity += diff * ThrowSpeed;
                 }
 
                 Manager.AddComponent(locatable);
@@ -43,4 +44,5 @@ namespace DwarfCorp
             base.Die();
         }
     }
+
 }

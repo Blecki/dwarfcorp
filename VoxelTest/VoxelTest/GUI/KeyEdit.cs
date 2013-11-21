@@ -9,12 +9,15 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
+
     public class KeyEdit : SillyGUIComponent
     {
         public delegate void Modified(string arg);
+
         public event Modified OnTextModified;
 
         public delegate void KeyModified(Keys arg);
+
         public event KeyModified OnKeyModified;
 
         public string Text { get; set; }
@@ -29,39 +32,36 @@ namespace DwarfCorp
             Key = key;
             HasKeyboardFocus = false;
             Text = key.ToString();
-            InputManager.MouseClickedCallback += new InputManager.OnMouseClicked(InputManager_MouseClickedCallback);
-            InputManager.KeyPressedCallback += new InputManager.OnKeyPressed(InputManager_KeyPressedCallback);
+            InputManager.MouseClickedCallback += InputManager_MouseClickedCallback;
+            InputManager.KeyPressedCallback += InputManager_KeyPressedCallback;
             Carat = 0;
-            OnTextModified += new Modified(LineEdit_OnTextModified);
-            OnKeyModified += new KeyModified(KeyEdit_OnKeyModified);
+            OnTextModified += LineEdit_OnTextModified;
+            OnKeyModified += KeyEdit_OnKeyModified;
             IsEditable = true;
         }
 
-        void KeyEdit_OnKeyModified(Keys arg)
+        private void KeyEdit_OnKeyModified(Keys arg)
         {
-          
         }
 
-        void LineEdit_OnTextModified(string arg)
+        private void LineEdit_OnTextModified(string arg)
         {
-
         }
 
-        void InputManager_KeyPressedCallback(Microsoft.Xna.Framework.Input.Keys key)
+        private void InputManager_KeyPressedCallback(Microsoft.Xna.Framework.Input.Keys key)
         {
-            if (HasKeyboardFocus && IsEditable)
+            if(HasKeyboardFocus && IsEditable)
             {
                 Key = key;
                 Text = key.ToString();
                 OnTextModified.Invoke(Text);
                 OnKeyModified.Invoke(Key);
             }
-
         }
 
-        void InputManager_MouseClickedCallback(InputManager.MouseButton button)
+        private void InputManager_MouseClickedCallback(InputManager.MouseButton button)
         {
-            if (IsMouseOver && IsEditable)
+            if(IsMouseOver && IsEditable)
             {
                 HasKeyboardFocus = true;
             }
@@ -80,18 +80,18 @@ namespace DwarfCorp
         {
             Vector2 measure = Datastructures.SafeMeasure(GUI.DefaultFont, Text);
 
-            if (measure.X < GlobalBounds.Width - 15)
+            if(measure.X < GlobalBounds.Width - 15)
             {
                 return Text;
             }
             else
             {
-                for (int i = 0; i < Text.Length; i++)
+                for(int i = 0; i < Text.Length; i++)
                 {
                     string subtext = Text.Substring(i);
                     measure = Datastructures.SafeMeasure(GUI.DefaultFont, subtext);
 
-                    if (measure.X < GlobalBounds.Width - 15)
+                    if(measure.X < GlobalBounds.Width - 15)
                     {
                         return "..." + subtext;
                     }
@@ -109,13 +109,13 @@ namespace DwarfCorp
 
             string substring = GetSubstringToShow();
 
-            if (!HasKeyboardFocus)
+            if(!HasKeyboardFocus)
             {
                 Drawer2D.DrawAlignedText(batch, substring, GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
             }
             else
             {
-                if (time.TotalGameTime.TotalMilliseconds % 1000 < 500)
+                if(time.TotalGameTime.TotalMilliseconds % 1000 < 500)
                 {
                     Drawer2D.DrawAlignedText(batch, substring + "|", GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
                 }
@@ -127,7 +127,6 @@ namespace DwarfCorp
 
             base.Render(time, batch);
         }
-
-
     }
+
 }

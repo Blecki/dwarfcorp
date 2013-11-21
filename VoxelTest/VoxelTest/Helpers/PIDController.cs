@@ -7,12 +7,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class PIDController
     {
         public float KP { get; set; }
         public float KD { get; set; }
         public float KI { get; set; }
-        
+
         public Vector3 LastError { get; set; }
         public Vector3 SumError { get; set; }
 
@@ -47,4 +48,5 @@ namespace DwarfCorp
             return toReturn;
         }
     }
+
 }

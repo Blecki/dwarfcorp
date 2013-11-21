@@ -9,17 +9,41 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
+
     public class ScrollView : SillyGUIComponent
     {
         protected int sx = 0;
         protected int sy = 0;
         protected int lastSx = 0;
         protected int lastSy = 0;
-        public int ScrollX { get { return sx; } set { sx = value; UpdateScrollArea(); } }
-        public int ScrollY { get { return sy; } set { sy = value; UpdateScrollArea(); } }
+
+        public int ScrollX
+        {
+            get { return sx; }
+            set
+            {
+                sx = value;
+                UpdateScrollArea();
+            }
+        }
+
+        public int ScrollY
+        {
+            get { return sy; }
+            set
+            {
+                sy = value;
+                UpdateScrollArea();
+            }
+        }
 
         protected Rectangle childRect;
-        public Rectangle ChildRect { get{return childRect;} set { childRect = value; } }
+
+        public Rectangle ChildRect
+        {
+            get { return childRect; }
+            set { childRect = value; }
+        }
 
         public Slider HorizontalSlider { get; set; }
         public Slider VerticalSlider { get; set; }
@@ -31,39 +55,38 @@ namespace DwarfCorp
             ScrollY = 0;
             HorizontalSlider = new Slider(gui, parent, "", 0.0f, 0.0f, 1.0f, Slider.SliderMode.Float);
             HorizontalSlider.DrawLabel = false;
-            HorizontalSlider.OnValueModified += new Slider.ValueModified(HorizontalSlider_OnValueModified);
+            HorizontalSlider.OnValueModified += HorizontalSlider_OnValueModified;
 
             VerticalSlider = new Slider(gui, parent, "", 0.0f, 0.0f, 1.0f, Slider.SliderMode.Float);
             VerticalSlider.DrawLabel = false;
-            VerticalSlider.OnValueModified += new Slider.ValueModified(VerticalSlider_OnValueModified);
+            VerticalSlider.OnValueModified += VerticalSlider_OnValueModified;
             VerticalSlider.Orient = Slider.Orientation.Vertical;
-            OnScrolled += new MouseScrolledDelegate(ScrollView_OnScrolled);
+            OnScrolled += ScrollView_OnScrolled;
         }
 
-        void ScrollView_OnScrolled(int amount)
+        private void ScrollView_OnScrolled(int amount)
         {
             ScrollY = Math.Max(ScrollY + amount, 0);
-            VerticalSlider.SliderValue = Math.Min(Math.Max(((float)ScrollY + (float)ChildRect.Y) / ((float)ChildRect.Height + GetViewRect().Height / 2), 0), 1);
+            VerticalSlider.SliderValue = Math.Min(Math.Max(((float) ScrollY + (float) ChildRect.Y) / ((float) ChildRect.Height + GetViewRect().Height / 2), 0), 1);
         }
 
-        void VerticalSlider_OnValueModified(float arg)
+        private void VerticalSlider_OnValueModified(float arg)
         {
-            ScrollY = (int)(arg * (ChildRect.Height + GetViewRect().Height / 2)  - ChildRect.Y);
+            ScrollY = (int) (arg * (ChildRect.Height + GetViewRect().Height / 2) - ChildRect.Y);
         }
 
-        void HorizontalSlider_OnValueModified(float arg)
+        private void HorizontalSlider_OnValueModified(float arg)
         {
-            ScrollX = (int)(arg * (ChildRect.Width + GetViewRect().Width / 2) - ChildRect.X);
+            ScrollX = (int) (arg * (ChildRect.Width + GetViewRect().Width / 2) - ChildRect.X);
         }
 
         private void CalculateChildRect()
         {
-
             int minX = int.MaxValue;
             int minY = int.MaxValue;
             int maxX = -int.MaxValue;
             int maxY = -int.MaxValue;
-            foreach (SillyGUIComponent child in Children)
+            foreach(SillyGUIComponent child in Children)
             {
                 minX = Math.Min(child.LocalBounds.X + sx, minX);
                 minY = Math.Min(child.LocalBounds.Y + sy, minY);
@@ -79,7 +102,7 @@ namespace DwarfCorp
         {
             int dx = sx - lastSx;
             int dy = sy - lastSy;
-            foreach (SillyGUIComponent child in Children)
+            foreach(SillyGUIComponent child in Children)
             {
                 child.LocalBounds = new Rectangle(child.LocalBounds.X - dx, child.LocalBounds.Y - dy, child.LocalBounds.Width, child.LocalBounds.Height);
             }
@@ -96,7 +119,7 @@ namespace DwarfCorp
             HorizontalSlider.LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Bottom - 32, LocalBounds.Width, 32);
             VerticalSlider.LocalBounds = new Rectangle(LocalBounds.Right - 32, LocalBounds.Top, 32, LocalBounds.Height);
 
-            if (ChildRect.Width <= LocalBounds.Width)
+            if(ChildRect.Width <= LocalBounds.Width)
             {
                 HorizontalSlider.IsVisible = false;
             }
@@ -105,7 +128,7 @@ namespace DwarfCorp
                 HorizontalSlider.IsVisible = true;
             }
 
-            if (ChildRect.Height <= LocalBounds.Height)
+            if(ChildRect.Height <= LocalBounds.Height)
             {
                 VerticalSlider.IsVisible = false;
             }
@@ -120,18 +143,17 @@ namespace DwarfCorp
             return new Rectangle(GlobalBounds.X, GlobalBounds.Y, GlobalBounds.Width - 32, GlobalBounds.Height - 32);
         }
 
-        public override  void Render(GameTime time, SpriteBatch batch)
+        public override void Render(GameTime time, SpriteBatch batch)
         {
-            
             CalculateChildRect();
             UpdateSliders();
-            if (IsVisible)
+            if(IsVisible)
             {
                 Rectangle originalRect = batch.GraphicsDevice.ScissorRectangle;
                 Rectangle screenRect = ClipToScreen(GetViewRect(), batch.GraphicsDevice);
 
                 batch.GraphicsDevice.ScissorRectangle = screenRect;
-                foreach (SillyGUIComponent child in Children)
+                foreach(SillyGUIComponent child in Children)
                 {
                     child.Render(time, batch);
                 }
@@ -141,4 +163,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

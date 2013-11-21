@@ -8,7 +8,8 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
-    public class KeyEditor :  SillyGUIComponent
+
+    public class KeyEditor : SillyGUIComponent
     {
         public KeyManager KeyManager { get; set; }
         public GridLayout Layout { get; set; }
@@ -28,7 +29,20 @@ namespace DwarfCorp
         public KeyEditor(SillyGUI gui, SillyGUIComponent parent, KeyManager keyManager, int numRows, int numColumns) :
             base(gui, parent)
         {
-            Keys[] reserved = {Keys.Up, Keys.Left, Keys.Right, Keys.Down, Keys.LeftControl, Keys.LeftShift, Keys.RightShift, Keys.LeftAlt, Keys.RightAlt, Keys.RightControl, Keys.Escape};
+            Keys[] reserved =
+            {
+                Keys.Up,
+                Keys.Left,
+                Keys.Right,
+                Keys.Down,
+                Keys.LeftControl,
+                Keys.LeftShift,
+                Keys.RightShift,
+                Keys.LeftAlt,
+                Keys.RightAlt,
+                Keys.RightControl,
+                Keys.Escape
+            };
             ReservedKeys = new List<Keys>();
             ReservedKeys.AddRange(reserved);
 
@@ -39,9 +53,9 @@ namespace DwarfCorp
             int r = 0;
             int c = 0;
 
-            foreach (KeyValuePair<string, Keys> button in KeyManager.Buttons)
+            foreach(KeyValuePair<string, Keys> button in KeyManager.Buttons)
             {
-                if (r == numRows)
+                if(r == numRows)
                 {
                     r = 0;
                     c++;
@@ -59,21 +73,16 @@ namespace DwarfCorp
 
                 r++;
             }
-
-           
-                
         }
 
-        void editor_OnKeyModified(string name, Keys arg)
+        private void editor_OnKeyModified(string name, Keys arg)
         {
-            if (!IsReserved(arg))
+            if(!IsReserved(arg))
             {
                 KeyManager[name] = arg;
                 KeyManager.SaveConfigSettings();
             }
         }
-
-        
-
     }
+
 }

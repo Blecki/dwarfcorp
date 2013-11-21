@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
     public class SetTargetZone : Action
     {
         public Zone zone;
@@ -28,24 +29,24 @@ namespace DwarfCorp
             Effects[GOAPStrings.AtTarget] = false;
 
 
-            if (z is Stockpile)
+            if(z is Stockpile)
             {
                 Effects[GOAPStrings.TargetZoneType] = "Stockpile";
-                Effects[GOAPStrings.TargetZoneFull] = ((Stockpile)z).IsFull();
-                BoundingBox box = ((Stockpile)z).GetBoundingBox();
+                Effects[GOAPStrings.TargetZoneFull] = ((Stockpile) z).IsFull();
+                BoundingBox box = ((Stockpile) z).GetBoundingBox();
                 Vector3 center = (box.Min + box.Max) * 0.5f;
                 Cost = (creature.Physics.GlobalTransform.Translation - center).LengthSquared() * 0.1f;
             }
-            else if (z is Room)
+            else if(z is Room)
             {
                 Effects[GOAPStrings.TargetZoneType] = "Room";
-                Effects[GOAPStrings.TargetZoneFull] = ((Room)z).IsFull();
+                Effects[GOAPStrings.TargetZoneFull] = ((Room) z).IsFull();
             }
 
             HashSet<string> tags = new HashSet<string>();
             foreach(Item i in zone.ListItems())
             {
-                foreach (string t in i.userData.Tags)
+                foreach(string t in i.UserData.Tags)
                 {
                     tags.Add(t);
                 }
@@ -59,6 +60,6 @@ namespace DwarfCorp
             creature.TargetVoxel = null;
             return base.PerformContextAction(creature, time);
         }
-
     }
+
 }

@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class GroupBox : SillyGUIComponent
     {
         public string Title { get; set; }
@@ -22,18 +23,18 @@ namespace DwarfCorp
 
         public override void Render(GameTime time, SpriteBatch batch)
         {
-            if (!IsVisible)
+            if(!IsVisible)
             {
                 return;
             }
 
-            if (DrawBounds)
+            if(DrawBounds)
             {
                 GUI.Skin.RenderGroup(GlobalBounds, batch);
             }
             Drawer2D.DrawAlignedText(batch, Title, GUI.DefaultFont, Color.Black, Drawer2D.Alignment.Top | Drawer2D.Alignment.Left, GlobalBounds);
             base.Render(time, batch);
         }
-
     }
+
 }

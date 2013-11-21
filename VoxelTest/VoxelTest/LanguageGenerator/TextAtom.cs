@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class TextAtom
     {
         public string Name { get; set; }
@@ -15,7 +16,7 @@ namespace DwarfCorp
             Name = name;
             Terms = new List<string>();
 
-            for (int i = 0; i < terms.Length; i++)
+            for(int i = 0; i < terms.Length; i++)
             {
                 Terms.Add(terms[i]);
             }
@@ -30,7 +31,8 @@ namespace DwarfCorp
 
         public string GetRandom()
         {
-            return Terms[PlayState.random.Next(Terms.Count)];
+            return Terms[PlayState.Random.Next(Terms.Count)];
         }
     }
+
 }

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class TintableComponent : LocatableComponent
     {
         public bool LightsWithVoxels { get; set; }
@@ -15,10 +16,11 @@ namespace DwarfCorp
         public Color TargetTint { get; set; }
         public float TintChangeRate { get; set; }
         public Timer LightingTimer { get; set; }
-        public bool colorAppplied = false;
-        bool entityLighting = GameSettings.Default.EntityLighting;
+       
+        public bool ColorAppplied = false;
+        private bool entityLighting = GameSettings.Default.EntityLighting;
 
-        public TintableComponent(ComponentManager manager, string name, GameComponent parent, Matrix localTransform,  Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool octree) :
+        public TintableComponent(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool octree) :
             base(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos, octree)
         {
             LightsWithVoxels = true;
@@ -32,9 +34,9 @@ namespace DwarfCorp
 
         public override void ReceiveMessageRecursive(Message messageToReceive)
         {
-            if (messageToReceive.MessageString == "Chunk Modified")
+            if(messageToReceive.MessageString == "Chunk Modified")
             {
-                colorAppplied = false;
+                ColorAppplied = false;
             }
             base.ReceiveMessageRecursive(messageToReceive);
         }
@@ -45,11 +47,11 @@ namespace DwarfCorp
 
             GameComponent root = GetRootComponent();
 
-            if (root is LocatableComponent)
+            if(root is LocatableComponent)
             {
-                LocatableComponent loc = (LocatableComponent)root;
+                LocatableComponent loc = (LocatableComponent) root;
 
-                if (loc.HasMoved)
+                if(loc.HasMoved)
                 {
                     parentHasMoved = true;
                 }
@@ -57,32 +59,30 @@ namespace DwarfCorp
                 {
                     parentHasMoved = false;
                 }
-
             }
 
             bool moved = HasMoved || parentHasMoved;
 
-            return LightsWithVoxels && ((moved && LightingTimer.HasTriggered) || firstIteration || !colorAppplied);
+            return LightsWithVoxels && ((moved && LightingTimer.HasTriggered) || firstIteration || !ColorAppplied);
         }
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (ShouldUpdate())
+            if(ShouldUpdate())
             {
-                if (entityLighting)
+                if(entityLighting)
                 {
                     Voxel v = chunks.GetFirstVisibleBlockUnder(GlobalTransform.Translation, true);
 
-                    if (v != null && !v.Chunk.IsRebuilding && v.Chunk.LightingCalculated)
+                    if(v != null && !v.Chunk.IsRebuilding && v.Chunk.LightingCalculated)
                     {
                         //VoxelVertex bestKey = VoxelChunk.GetNearestDelta(GlobalTransform.Translation - v.Position);
 
-                        Color color = new Color(v.Chunk.SunColors[(int)v.GridPosition.X][(int)v.GridPosition.Y + 1][(int)v.GridPosition.Z], 255, v.Chunk.DynamicColors[(int)v.GridPosition.X][(int)v.GridPosition.Y][(int)v.GridPosition.Z]);
+                        Color color = new Color(v.Chunk.SunColors[(int) v.GridPosition.X][(int) v.GridPosition.Y + 1][(int) v.GridPosition.Z], 255, v.Chunk.DynamicColors[(int) v.GridPosition.X][(int) v.GridPosition.Y][(int) v.GridPosition.Z]);
 
                         TargetTint = color;
                         firstIteration = false;
-                        colorAppplied = true;
-
+                        ColorAppplied = true;
                     }
                     else
                     {
@@ -96,17 +96,16 @@ namespace DwarfCorp
 
                 LightingTimer.HasTriggered = false;
                 LightingTimer.Reset(LightingTimer.TargetTimeSeconds);
-
             }
-            else if (!entityLighting)
+            else if(!entityLighting)
             {
                 TargetTint = new Color(200, 255, 0);
             }
-            else if (LightsWithVoxels)
+            else if(LightsWithVoxels)
             {
                 LightingTimer.Update(gameTime);
-                Vector4 lerpTint = new Vector4((float)TargetTint.R / 255.0f, (float)TargetTint.G / 255.0f, (float)TargetTint.B / 255.0f, (float)TargetTint.A / 255.0f);
-                Vector4 currTint = new Vector4((float)Tint.R / 255.0f, (float)Tint.G / 255.0f, (float)Tint.B / 255.0f, (float)Tint.A / 255.0f);
+                Vector4 lerpTint = new Vector4((float) TargetTint.R / 255.0f, (float) TargetTint.G / 255.0f, (float) TargetTint.B / 255.0f, (float) TargetTint.A / 255.0f);
+                Vector4 currTint = new Vector4((float) Tint.R / 255.0f, (float) Tint.G / 255.0f, (float) Tint.B / 255.0f, (float) Tint.A / 255.0f);
 
                 Vector4 delta = lerpTint - currTint;
                 lerpTint = currTint + delta * Math.Max(Math.Min(LightingTimer.CurrentTimeSeconds * TintChangeRate, 1.0f), 0.0f);
@@ -114,19 +113,19 @@ namespace DwarfCorp
                 //Tint = new Color(lerpTint.X, lerpTint.Y, lerpTint.Z, lerpTint.W);
                 Tint = TargetTint;
             }
-            
+
             base.Update(gameTime, chunks, camera);
         }
 
         public override void Render(GameTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
-            if (IsVisible)
+            if(IsVisible)
             {
                 effect.Parameters["xTint"].SetValue(new Vector4(Tint.R, Tint.G, Tint.B, Tint.A));
 
                 base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
-
             }
         }
     }
+
 }

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class Dialog : SillyGUIComponent
     {
         public enum ReturnStatus
@@ -26,8 +27,9 @@ namespace DwarfCorp
 
         public bool IsModal { get; set; }
         private bool isClosed = false;
-        
+
         public delegate void Closed(ReturnStatus status);
+
         public event Closed OnClosed;
 
         public Label Title { get; set; }
@@ -38,8 +40,8 @@ namespace DwarfCorp
             Dialog d = new Dialog(gui, gui.RootComponent, title, message, buttons);
             int w = message.Length * 8 + 150;
             int h = 150;
-            d.LocalBounds = new Rectangle(gui.Graphics.Viewport.Width / 2 - w/2, gui.Graphics.Viewport.Height / 2 - h/2, w, h);
-      
+            d.LocalBounds = new Rectangle(gui.Graphics.Viewport.Width / 2 - w / 2, gui.Graphics.Viewport.Height / 2 - h / 2, w, h);
+
             return d;
         }
 
@@ -47,8 +49,8 @@ namespace DwarfCorp
             base(gui, parent)
         {
             IsModal = true;
-            OnClicked += new ClickedDelegate(Dialog_OnClicked);
-            OnClosed += new Closed(Dialog_OnClosed);
+            OnClicked += Dialog_OnClicked;
+            OnClosed += Dialog_OnClosed;
 
             GridLayout layout = new GridLayout(GUI, this, 4, 4);
             Title = new Label(GUI, layout, title, GUI.DefaultFont);
@@ -61,7 +63,7 @@ namespace DwarfCorp
             bool createOK = false;
             bool createCancel = false;
 
-            switch (buttons)
+            switch(buttons)
             {
                 case ButtonType.None:
                     break;
@@ -75,48 +77,47 @@ namespace DwarfCorp
                 case ButtonType.Cancel:
                     createCancel = true;
                     break;
-               
             }
 
-            if (createOK)
+            if(createOK)
             {
-                Button OKButton = new Button(GUI, layout, "OK", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
-                layout.SetComponentPosition(OKButton, 3, 3, 1, 1);
-                OKButton.OnClicked += new ClickedDelegate(OKButton_OnClicked);
+                Button okButton = new Button(GUI, layout, "OK", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Check));
+                layout.SetComponentPosition(okButton, 3, 3, 1, 1);
+                okButton.OnClicked += OKButton_OnClicked;
             }
 
-            if (createCancel)
+            if(createCancel)
             {
-                Button cancelButton = new Button(GUI, layout, "Cancel", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
+                Button cancelButton = new Button(GUI, layout, "Cancel", GUI.DefaultFont, Button.ButtonMode.PushButton, GUI.Skin.GetSpecialFrame(GUISkin.Ex));
                 layout.SetComponentPosition(cancelButton, 2, 3, 1, 1);
-                cancelButton.OnClicked += new ClickedDelegate(cancelButton_OnClicked);
+                cancelButton.OnClicked += cancelButton_OnClicked;
             }
         }
 
-        void cancelButton_OnClicked()
+        private void cancelButton_OnClicked()
         {
             Close(ReturnStatus.Canceled);
         }
 
-        void OKButton_OnClicked()
+        private void OKButton_OnClicked()
         {
             Close(ReturnStatus.Ok);
         }
 
-        void Dialog_OnClosed(Dialog.ReturnStatus status)
+        private void Dialog_OnClosed(Dialog.ReturnStatus status)
         {
             // nothing
         }
 
-        void Dialog_OnClicked()
+        private void Dialog_OnClicked()
         {
-            if (IsMouseOver)
+            if(IsMouseOver)
             {
                 GUI.FocusComponent = this;
             }
             else if(!IsModal)
             {
-                if (GUI.FocusComponent == this)
+                if(GUI.FocusComponent == this)
                 {
                     GUI.FocusComponent = null;
                 }
@@ -126,7 +127,7 @@ namespace DwarfCorp
 
         public virtual void Close(ReturnStatus status)
         {
-            if (GUI.FocusComponent == this)
+            if(GUI.FocusComponent == this)
             {
                 GUI.FocusComponent = null;
             }
@@ -136,16 +137,15 @@ namespace DwarfCorp
 
             OnClosed.Invoke(status);
             Parent.RemoveChild(this);
-           
         }
 
         public override void Update(GameTime time)
         {
-            if (IsModal && !isClosed && IsVisible)
+            if(IsModal && !isClosed && IsVisible)
             {
                 GUI.FocusComponent = this;
             }
-            else if (GUI.FocusComponent == this)
+            else if(GUI.FocusComponent == this)
             {
                 GUI.FocusComponent = null;
             }
@@ -154,7 +154,7 @@ namespace DwarfCorp
 
         public override void Render(GameTime time, SpriteBatch batch)
         {
-            if (!IsVisible)
+            if(!IsVisible)
             {
                 return;
             }
@@ -162,7 +162,6 @@ namespace DwarfCorp
             GUI.Skin.RenderPanel(GlobalBounds, batch);
             base.Render(time, batch);
         }
-
-
     }
+
 }

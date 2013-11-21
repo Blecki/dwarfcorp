@@ -6,40 +6,54 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
     public class PutItemInStockpileAct : CreatureAct
     {
-        public Stockpile Pile { get; set; }
+        public Stockpile Pile { get { return GetPile();  } set{ SetPile(value);} }
 
-        public PutItemInStockpileAct(CreatureAIComponent agent, Stockpile stock) :
+        public Stockpile GetPile()
+        {
+            return Agent.Blackboard.GetData<Stockpile>(StockpileName);
+        }
+
+        public void SetPile(Stockpile pile)
+        {
+            Agent.Blackboard.SetData<Stockpile>(StockpileName, pile);   
+        }
+
+        public string StockpileName { get; set; }
+
+        public PutItemInStockpileAct(CreatureAIComponent agent, string stockpileName) :
             base(agent)
         {
             Name = "Put Item";
-            Pile = stock;
+            StockpileName = stockpileName;
         }
 
         public override IEnumerable<Status> Run()
         {
-            if (Pile == null && Agent.TargetStockpile != null)
+            if(Pile == null && Agent.TargetStockpile != null)
             {
                 Pile = Agent.TargetStockpile;
             }
-            else if (Pile != null)
+            else if(Pile != null)
             {
                 Agent.TargetStockpile = Pile;
             }
             else
             {
                 yield return Status.Fail;
+                yield break;
             }
-          
+
 
             LocatableComponent grabbed = Creature.Hands.GetFirstGrab();
 
-            if (grabbed == null)
+            if(grabbed == null)
             {
                 yield return Status.Fail;
             }
-            else if (Pile.AddItem(grabbed, Agent.TargetVoxel))
+            else if(Pile.AddItem(grabbed, Agent.TargetVoxel))
             {
                 Creature.Hands.UnGrab(grabbed);
 
@@ -48,7 +62,7 @@ namespace DwarfCorp
                 grabbed.LocalTransform = m;
                 grabbed.HasMoved = true;
                 grabbed.DrawBoundingBox = false;
-            
+
 
                 yield return Status.Success;
             }
@@ -58,4 +72,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

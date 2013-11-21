@@ -7,21 +7,23 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class Layout : SillyGUIComponent
     {
         public Layout(SillyGUI gui, SillyGUIComponent parent) :
             base(gui, parent)
         {
-
         }
 
-        public virtual void UpdateSizes() { }
+        public virtual void UpdateSizes()
+        {
+        }
 
         public override void Update(GameTime time)
         {
             UpdateSizes();
             base.Update(time);
         }
-
     }
+
 }

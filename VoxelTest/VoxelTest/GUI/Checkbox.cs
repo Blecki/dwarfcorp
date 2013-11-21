@@ -9,17 +9,18 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
+
     public class Checkbox : SillyGUIComponent
     {
-
-
         public string Text { get; set; }
         public Color TextColor { get; set; }
-        public Color StrokeColor { get; set;}
+        public Color StrokeColor { get; set; }
         public Color HoverTextColor { get; set; }
         public SpriteFont TextFont { get; set; }
         public bool Checked { get; set; }
+
         public delegate void CheckModified(bool arg);
+
         public event CheckModified OnCheckModified;
 
         public Checkbox(SillyGUI gui, SillyGUIComponent parent, string text, SpriteFont textFont, bool check) :
@@ -32,11 +33,11 @@ namespace DwarfCorp
             StrokeColor = new Color(0, 0, 0, 0);
             Checked = check;
             HoverTextColor = Color.DarkRed;
-            OnCheckModified += new Checkbox.CheckModified(CheckBox_OnCheckModified);
+            OnCheckModified += CheckBox_OnCheckModified;
         }
-        void CheckBox_OnCheckModified(bool arg)
-        {
 
+        private void CheckBox_OnCheckModified(bool arg)
+        {
         }
 
 
@@ -52,7 +53,7 @@ namespace DwarfCorp
 
             Color c = TextColor;
 
-            if (IsMouseOver)
+            if(IsMouseOver)
             {
                 c = HoverTextColor;
             }
@@ -64,12 +65,13 @@ namespace DwarfCorp
 
 
             Drawer2D.DrawStrokedText(batch, Text,
-                                        GUI.DefaultFont,
-                                        new Vector2(GlobalBounds.Right - measure.X - 32, GlobalBounds.Top + 5),
-                                        c, StrokeColor);
+                GUI.DefaultFont,
+                new Vector2(GlobalBounds.Right - measure.X - 32, GlobalBounds.Top + 5),
+                c, StrokeColor);
 
 
             base.Render(time, batch);
         }
     }
+
 }

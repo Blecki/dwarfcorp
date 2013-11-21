@@ -7,9 +7,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class Wrap : Act
     {
-        Func<IEnumerable<Status>> Function { get; set; }
+        private Func<IEnumerable<Status>> Function { get; set; }
 
         public Wrap(Func<IEnumerable<Status>> fn)
         {
@@ -22,11 +23,10 @@ namespace DwarfCorp
             Enumerator = Run().GetEnumerator();
         }
 
-        public override  IEnumerable<Status> Run()
+        public override IEnumerable<Status> Run()
         {
             return Function();
         }
-
-
     }
+
 }

@@ -5,11 +5,11 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
- 
-
+    [JsonObject(IsReference = true)]
     public class BalloonAI : GameComponent
     {
         public PhysicsComponent Physics { get; set; }
@@ -23,7 +23,7 @@ namespace DwarfCorp
 
         public List<ResourceAmount> CurrentResources { get; set; }
 
-        bool shipmentGiven = false;
+        private bool shipmentGiven = false;
 
         public enum BalloonState
         {
@@ -44,8 +44,6 @@ namespace DwarfCorp
             Shipment = shipment;
             Master = master;
             CurrentResources = new List<ResourceAmount>();
-
-
         }
 
         public override void Die()
@@ -57,27 +55,29 @@ namespace DwarfCorp
         {
             string resourceName = loc.Tags[0];
 
-            foreach (ResourceAmount r in CurrentResources)
+            foreach(ResourceAmount r in CurrentResources)
             {
-                if (r.ResourceType.ResourceName == resourceName)
+                if(r.ResourceType.ResourceName == resourceName)
                 {
                     r.NumResources++;
                     return;
                 }
             }
 
-            ResourceAmount newResource = new ResourceAmount();
-            newResource.NumResources = 1;
-            newResource.ResourceType = ResourceLibrary.Resources[resourceName];
+            ResourceAmount newResource = new ResourceAmount
+            {
+                NumResources = 1,
+                ResourceType = ResourceLibrary.Resources[resourceName]
+            };
 
             CurrentResources.Add(newResource);
         }
 
         public float GetSellOrder(Item i)
         {
-            foreach (ResourceAmount amount in Shipment.SellOrder)
+            foreach(ResourceAmount amount in Shipment.SellOrder)
             {
-                if (amount.ResourceType.ResourceName == i.userData.Tags[0])
+                if(amount.ResourceType.ResourceName == i.UserData.Tags[0])
                 {
                     return amount.ResourceType.MoneyValue * Master.Economy.SellMultiplier;
                 }
@@ -89,41 +89,41 @@ namespace DwarfCorp
         {
             Vector3 targetVelocity = TargetPosition - Physics.GlobalTransform.Translation;
 
-            if (targetVelocity.LengthSquared() > 0.0001f)
+            if(targetVelocity.LengthSquared() > 0.0001f)
             {
                 targetVelocity.Normalize();
                 targetVelocity *= MaxVelocity;
             }
 
-            Vector3 force = VelocityController.GetOutput((float)gameTime.ElapsedGameTime.TotalSeconds, targetVelocity, Physics.Velocity);
+            Vector3 force = VelocityController.GetOutput((float) gameTime.ElapsedGameTime.TotalSeconds, targetVelocity, Physics.Velocity);
 
-            if (force.Length() > MaxForce)
+            if(force.Length() > MaxForce)
             {
                 force.Normalize();
                 force *= MaxForce;
             }
 
-            Physics.ApplyForce(force, (float)gameTime.ElapsedGameTime.TotalSeconds);
+            Physics.ApplyForce(force, (float) gameTime.ElapsedGameTime.TotalSeconds);
 
 
             Physics.HasMoved = true;
             Physics.IsSleeping = false;
 
 
-            switch (State)
+            switch(State)
             {
                 case BalloonState.DeliveringGoods:
                     VoxelChunk chunk = chunks.GetVoxelChunkAtWorldLocation(Physics.GlobalTransform.Translation);
 
-                    if (chunk != null)
+                    if(chunk != null)
                     {
                         Vector3 gridPos = chunk.WorldToGrid(Physics.GlobalTransform.Translation);
-                        float height = chunk.GetFilledVoxelGridHeightAt((int)gridPos.X, (int)gridPos.Y, (int)gridPos.Z) + chunk.Origin.Y;
+                        float height = chunk.GetFilledVoxelGridHeightAt((int) gridPos.X, (int) gridPos.Y, (int) gridPos.Z) + chunk.Origin.Y;
                         TargetPosition = new Vector3(Physics.GlobalTransform.Translation.X, height + 5, Physics.GlobalTransform.Translation.Z);
 
                         Vector3 diff = Physics.GlobalTransform.Translation - TargetPosition;
 
-                        if (diff.LengthSquared() < 2)
+                        if(diff.LengthSquared() < 2)
                         {
                             State = BalloonState.Waiting;
                         }
@@ -137,7 +137,7 @@ namespace DwarfCorp
                 case BalloonState.Leaving:
                     TargetPosition = Vector3.UnitY * 100 + Physics.GlobalTransform.Translation;
 
-                    if (Physics.GlobalTransform.Translation.Y > 50)
+                    if(Physics.GlobalTransform.Translation.Y > 50)
                     {
                         Die();
                     }
@@ -146,19 +146,17 @@ namespace DwarfCorp
                 case BalloonState.Waiting:
                     TargetPosition = Physics.GlobalTransform.Translation;
 
-                    if (!shipmentGiven)
+                    if(!shipmentGiven)
                     {
-                        foreach (ResourceAmount amount in Shipment.BuyOrder)
+                        foreach(ResourceAmount amount in Shipment.BuyOrder)
                         {
-                            for (int i = 0; i < amount.NumResources; i++)
+                            for(int i = 0; i < amount.NumResources; i++)
                             {
-                                Vector3 pos = Physics.GlobalTransform.Translation + new Vector3((float)PlayState.random.NextDouble() - 0.5f, (float)PlayState.random.NextDouble() - 0.5f, (float)PlayState.random.NextDouble() - 0.5f) * 2;
+                                Vector3 pos = Physics.GlobalTransform.Translation + new Vector3((float) PlayState.Random.NextDouble() - 0.5f, (float) PlayState.Random.NextDouble() - 0.5f, (float) PlayState.Random.NextDouble() - 0.5f) * 2;
                                 LocatableComponent loc = EntityFactory.GenerateComponent(amount.ResourceType.ResourceName, pos, Manager, chunks.Content, chunks.Graphics, chunks, Master, camera);
                                 Master.AddGatherDesignation(loc);
                                 Master.Economy.CurrentMoney -= amount.ResourceType.MoneyValue * Master.Economy.BuyMultiplier;
                             }
-
-                            
                         }
 
 
@@ -166,11 +164,11 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        if (Shipment.Destination != null)
+                        if(Shipment.Destination != null)
                         {
-                            foreach (Item i in Shipment.Destination.ListItems())
+                            foreach(Item i in Shipment.Destination.ListItems())
                             {
-                                i.userData.Die();
+                                i.UserData.Die();
                                 Master.Economy.CurrentMoney += GetSellOrder(i);
                             }
                             Shipment.Destination.ClearItems();
@@ -185,7 +183,6 @@ namespace DwarfCorp
 
             base.Update(gameTime, chunks, camera);
         }
-
-      
     }
+
 }

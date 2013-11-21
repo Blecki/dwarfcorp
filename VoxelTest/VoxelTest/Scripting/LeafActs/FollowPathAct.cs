@@ -1,93 +1,114 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
     public class FollowPathAct : CreatureAct
     {
-        public FollowPathAct(CreatureAIComponent agent) :
+        private string PathName { get; set; }
+        public FollowPathAct(CreatureAIComponent agent, string pathName) :
             base(agent)
         {
             Name = "Follow path";
+            PathName = pathName;
         }
 
+        public List<VoxelRef> GetPath()
+        {
+            return Agent.Blackboard.GetData<List<VoxelRef>>(PathName);
+        }
+
+        public void SetPath(List<VoxelRef> path)
+        {
+            Agent.Blackboard.SetData(PathName, path);
+        }
 
         public override IEnumerable<Status> Run()
         {
             bool pathFinished = false;
 
-            while (!pathFinished)
+            while(true)
             {
+                List<VoxelRef> path = GetPath();
+
                 ChunkManager chunks = Agent.Creature.Master.Chunks;
-                if (Agent.CurrentPath == null)
+                if(path == null)
                 {
-                    Agent.CurrentPath = null;
+                    SetPath(null);
                     yield return Status.Fail;
                     break;
                 }
-
-                if (Agent.TargetVoxel != null)
+                else if(path.Count > 0)
                 {
-                    Agent.LocalControlTimeout.Update(Act.LastTime);
+                    Agent.TargetVoxel = path.ElementAt(0);
+                }
+                else
+                {
+                    yield return Status.Success;
+                    break;
+                }
 
-                    if (Agent.LocalControlTimeout.HasTriggered)
+                if(Agent.TargetVoxel != null)
+                {
+                    Agent.LocalControlTimeout.Update(LastTime);
+
+                    if(Agent.LocalControlTimeout.HasTriggered)
                     {
+                        Agent.LocalControlTimeout.Reset(Agent.LocalControlTimeout.TargetTimeSeconds);
                         yield return Status.Fail;
                         break;
                     }
 
 
-                    if (Agent.PreviousTargetVoxel == null)
+                    if(Agent.PreviousTargetVoxel == null)
                     {
                         Agent.Creature.LocalTarget = Agent.TargetVoxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
                     }
                     else
                     {
-                        Agent.Creature.LocalTarget = LinearMathHelpers.ClosestPointToLineSegment(Agent.Position, 
-                                                                                                 Agent.PreviousTargetVoxel.WorldPosition, 
-                                                                                                 Agent.TargetVoxel.WorldPosition, 0.25f) + new Vector3(0.5f, 0.5f, 0.5f);
+                        Agent.Creature.LocalTarget = LinearMathHelpers.ClosestPointToLineSegment(Agent.Position,
+                            Agent.PreviousTargetVoxel.WorldPosition,
+                            Agent.TargetVoxel.WorldPosition, 0.25f) + new Vector3(0.5f, 0.5f, 0.5f);
                     }
 
-                    Vector3 output = Agent.Creature.Controller.GetOutput((float)Act.LastTime.ElapsedGameTime.TotalSeconds,
-                                                                               Agent.Creature.LocalTarget, 
-                                                                               Agent.Creature.Physics.GlobalTransform.Translation);
-                    Agent.Creature.Physics.ApplyForce(output, (float)Act.LastTime.ElapsedGameTime.TotalSeconds);
+                    Vector3 output = Agent.Creature.Controller.GetOutput((float) Act.LastTime.ElapsedGameTime.TotalSeconds,
+                        Agent.Creature.LocalTarget,
+                        Agent.Creature.Physics.GlobalTransform.Translation);
+                    Agent.Creature.Physics.ApplyForce(output, (float) Act.LastTime.ElapsedGameTime.TotalSeconds);
 
                     output.Y = 0.0f;
 
-                    if ((Agent.Creature.LocalTarget - Agent.Creature.Physics.GlobalTransform.Translation).Y > 0.3)
+                    if((Agent.Creature.LocalTarget - Agent.Creature.Physics.GlobalTransform.Translation).Y > 0.1)
                     {
-                        Agent.Jump(Act.LastTime);
+                        Agent.Jump(LastTime);
                     }
 
 
-                    if (Agent.DrawPath)
+                    if(Agent.DrawPath)
                     {
-                        List<Vector3> points = new List<Vector3>();
-                        foreach (VoxelRef v in Agent.CurrentPath)
-                        {
-                            points.Add(v.WorldPosition + new Vector3(0.5f, 0.5f, 0.2f));
-                        }
+                        List<Vector3> points = path.Select(v => v.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f)).ToList();
 
                         SimpleDrawing.DrawLineList(points, Color.Red, 0.1f);
                     }
 
-                    if ((Agent.Creature.LocalTarget - Agent.Creature.Physics.GlobalTransform.Translation).Length() < 0.8f || Agent.CurrentPath.Count < 1)
+                    if((Agent.Creature.LocalTarget - Agent.Creature.Physics.GlobalTransform.Translation).Length() < 0.8f || path.Count < 1)
                     {
-                        if (Agent.CurrentPath != null && Agent.CurrentPath.Count > 1)
+                        if(path.Count > 1)
                         {
                             Agent.PreviousTargetVoxel = Agent.TargetVoxel;
-                            Agent.CurrentPath.RemoveAt(0);
+                            path.RemoveAt(0);
                             Agent.LocalControlTimeout.Reset(Agent.LocalControlTimeout.TargetTimeSeconds);
-                            Agent.TargetVoxel = Agent.CurrentPath[0];
+                            Agent.TargetVoxel = path[0];
                         }
                         else
                         {
                             Agent.PreviousTargetVoxel = null;
-                            Agent.CurrentPath = null;
+                            SetPath(null);
                             yield return Status.Success;
                             pathFinished = true;
                             break;
@@ -104,6 +125,6 @@ namespace DwarfCorp
                 yield return Status.Running;
             }
         }
-
     }
+
 }

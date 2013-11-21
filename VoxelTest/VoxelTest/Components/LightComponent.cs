@@ -8,7 +8,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-    class LightComponent : LocatableComponent
+
+    internal class LightComponent : LocatableComponent
     {
         public byte Intensity { get; set; }
         public byte Range { get; set; }
@@ -25,7 +26,7 @@ namespace DwarfCorp
 
         public void UpdateLight(ChunkManager chunks)
         {
-            if (Light == null)
+            if(Light == null)
             {
                 Light = chunks.GetVoxelChunkAtWorldLocation(GlobalTransform.Translation).AddLight(GlobalTransform.Translation, Range, Intensity);
             }
@@ -39,12 +40,11 @@ namespace DwarfCorp
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (HasMoved || Light == null)
+            if(HasMoved || Light == null)
             {
                 UpdateLight(chunks);
             }
 
-            
 
             base.Update(gameTime, chunks, camera);
         }
@@ -55,4 +55,5 @@ namespace DwarfCorp
             base.Die();
         }
     }
+
 }

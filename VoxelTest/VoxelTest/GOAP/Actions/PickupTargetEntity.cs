@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class PickupTargetEntity : Action
     {
         public PickupTargetEntity(GOAP g)
@@ -29,7 +30,7 @@ namespace DwarfCorp
 
         public override Action.ValidationStatus ContextValidate(CreatureAIComponent creature)
         {
-            if (creature.TargetComponent == null || creature.Hands.IsFull() || creature.TargetComponent.IsDead)
+            if(creature.TargetComponent == null || creature.Hands.IsFull() || creature.TargetComponent.IsDead)
             {
                 return ValidationStatus.Invalid;
             }
@@ -40,12 +41,10 @@ namespace DwarfCorp
 
         public override Action.PerformStatus PerformContextAction(CreatureAIComponent creature, GameTime time)
         {
-
-            Item item = (Item)creature.Goap.Belief[GOAPStrings.TargetEntity];
-
+            Item item = (Item) creature.Goap.Belief[GOAPStrings.TargetEntity];
 
 
-            if (item == null)
+            if(item == null)
             {
                 return PerformStatus.Failure;
             }
@@ -53,12 +52,12 @@ namespace DwarfCorp
 
             Zone zone = item.Zone;
 
-            if (zone is Stockpile)
+            if(zone is Stockpile)
             {
-                Stockpile s = (Stockpile)zone;
-                LocatableComponent component = item.userData;
+                Stockpile s = (Stockpile) zone;
+                LocatableComponent component = item.UserData;
                 bool removed = s.RemoveItem(component);
-                if (removed && component != null && !creature.Hands.IsFull())
+                if(removed && component != null && !creature.Hands.IsFull())
                 {
                     creature.Hands.Grab(component);
                     return PerformStatus.Success;
@@ -68,16 +67,16 @@ namespace DwarfCorp
                     return PerformStatus.Invalid;
                 }
             }
-            else if (zone is Room)
+            else if(zone is Room)
             {
-                Room r = (Room)zone;
+                Room r = (Room) zone;
                 List<LocatableComponent> components = r.GetComponentsInRoomContainingTag(item.ID);
 
-                if (components.Count > 0)
+                if(components.Count > 0)
                 {
                     LocatableComponent component = r.GetComponentsInRoomContainingTag(item.ID)[0];
 
-                    if (component != null && !creature.Hands.IsFull())
+                    if(component != null && !creature.Hands.IsFull())
                     {
                         creature.Hands.Grab(component);
                         return PerformStatus.Success;
@@ -90,12 +89,12 @@ namespace DwarfCorp
             }
             else
             {
-                LocatableComponent component = item.userData;
-                if (component != null && !creature.Hands.IsFull() && component.Parent == creature.Manager.RootComponent)
+                LocatableComponent component = item.UserData;
+                if(component != null && !creature.Hands.IsFull() && component.Parent == creature.Manager.RootComponent)
                 {
                     creature.Hands.Grab(component);
 
-                    if (creature.Master.GatherDesignations.Contains(component))
+                    if(creature.Master.GatherDesignations.Contains(component))
                     {
                         creature.Master.GatherDesignations.Remove(component);
 
@@ -116,8 +115,8 @@ namespace DwarfCorp
         {
             state[GOAPStrings.HeldObject] = state[GOAPStrings.TargetEntity];
             state[GOAPStrings.HeldItemTags] = state[GOAPStrings.TargetTags];
-            Item item = (Item)(state[GOAPStrings.HeldObject]);
-            if (item != null)
+            Item item = (Item) (state[GOAPStrings.HeldObject]);
+            if(item != null)
             {
                 item.Zone = null;
             }

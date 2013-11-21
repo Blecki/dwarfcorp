@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace DwarfCorp
 {
+
     public class Sound3D
     {
         public SoundEffectInstance EffectInstance;
@@ -32,9 +33,18 @@ namespace DwarfCorp
 
         public static void LoadDefaultSounds()
         {
-            string[] defaultSounds = { "pick", "hit", "jump", "ouch", "gravel", "splash", "sword" };
+            string[] defaultSounds =
+            {
+                "pick",
+                "hit",
+                "jump",
+                "ouch",
+                "gravel",
+                "splash",
+                "sword"
+            };
 
-            foreach (string name in defaultSounds)
+            foreach(string name in defaultSounds)
             {
                 SoundEffect effect = Content.Load<SoundEffect>(name);
                 EffectLibrary[name] = effect;
@@ -43,7 +53,7 @@ namespace DwarfCorp
 
         public static void PlayMusic(string name)
         {
-            if (GameSettings.Default.MasterVolume < 0.001f || GameSettings.Default.MusicVolume < 0.001f)
+            if(GameSettings.Default.MasterVolume < 0.001f || GameSettings.Default.MusicVolume < 0.001f)
             {
                 return;
             }
@@ -53,7 +63,7 @@ namespace DwarfCorp
                 MediaPlayer.Play(Content.Load<Song>(name));
                 MediaPlayer.Volume = GameSettings.Default.MasterVolume * GameSettings.Default.MusicVolume;
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 Console.Error.WriteLine(e.Message);
                 return;
@@ -62,7 +72,7 @@ namespace DwarfCorp
 
         public static void PlaySound(string name, Vector3 location, bool randomPitch)
         {
-            if (Content == null)
+            if(Content == null)
             {
                 return;
             }
@@ -70,7 +80,7 @@ namespace DwarfCorp
             {
                 SoundEffect effect = null;
 
-                if (!EffectLibrary.ContainsKey(name))
+                if(!EffectLibrary.ContainsKey(name))
                 {
                     effect = Content.Load<SoundEffect>(name);
                     EffectLibrary[name] = effect;
@@ -88,17 +98,17 @@ namespace DwarfCorp
                 sound.HasStarted = false;
                 sound.name = name;
 
-                if (randomPitch)
+                if(randomPitch)
                 {
-                    sound.EffectInstance.Pitch = (float)(PlayState.random.NextDouble() * 1.0f - 0.5f);
+                    sound.EffectInstance.Pitch = (float) (PlayState.Random.NextDouble() * 1.0f - 0.5f);
                 }
 
-                if (!SoundCounts.ContainsKey(name))
+                if(!SoundCounts.ContainsKey(name))
                 {
                     SoundCounts[name] = 0;
                 }
 
-                if (SoundCounts[name] < MaxSounds)
+                if(SoundCounts[name] < MaxSounds)
                 {
                     SoundCounts[name]++;
                     ActiveSounds.Add(sound);
@@ -110,7 +120,7 @@ namespace DwarfCorp
                     sound.EffectInstance = null;
                 }
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 Console.Out.WriteLine(e.Message);
                 return;
@@ -131,32 +141,32 @@ namespace DwarfCorp
             Listener.Up = viewInverse.Up;
             Listener.Velocity = camera.Velocity;
             Listener.Forward = viewInverse.Forward;
-          
 
 
-            foreach (Sound3D instance in ActiveSounds)
+            foreach(Sound3D instance in ActiveSounds)
             {
-                if (instance.HasStarted && instance.EffectInstance.State == SoundState.Stopped || instance.EffectInstance.State == SoundState.Paused)
+                if(instance.HasStarted && instance.EffectInstance.State == SoundState.Stopped || instance.EffectInstance.State == SoundState.Paused)
                 {
                     instance.EffectInstance.Dispose();
                     toRemove.Add(instance);
                     SoundCounts[instance.name]--;
                 }
-                else if (!instance.HasStarted)
+                else if(!instance.HasStarted)
                 {
                     Emitter.Position = instance.Position;
                     instance.EffectInstance.Apply3D(Listener, Emitter);
                     instance.EffectInstance.Volume *= (GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume);
-                 
+
                     instance.EffectInstance.Play();
                     instance.HasStarted = true;
                 }
             }
 
-            foreach (Sound3D r in toRemove)
+            foreach(Sound3D r in toRemove)
             {
                 ActiveSounds.Remove(r);
             }
         }
     }
+
 }

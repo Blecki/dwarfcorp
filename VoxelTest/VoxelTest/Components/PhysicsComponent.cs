@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     public class PhysicsComponent : LocatableComponent
     {
         public Vector3 AngularVelocity { get; set; }
@@ -25,10 +26,10 @@ namespace DwarfCorp
         private bool m_overrideSleepThisFrame = true;
         public bool FixedOrientation { get; set; }
         public bool IsInLiquid { get; set; }
-      
+
 
         public PhysicsComponent(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, float mass, float i, float linearDamping, float angularDamping, Vector3 gravity) :
-            base(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos) 
+            base(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             Mass = mass;
             Velocity = Vector3.Zero;
@@ -44,12 +45,12 @@ namespace DwarfCorp
             PreviousPosition = LocalTransform.Translation;
             FixedOrientation = false;
             IsInLiquid = false;
+            CollisionType = CollisionManager.CollisionType.Dynamic;
         }
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
-
-            if (Velocity.LengthSquared() < 0.1f)
+            if(Velocity.LengthSquared() < 0.1f)
             {
                 IsSleeping = true;
             }
@@ -58,17 +59,16 @@ namespace DwarfCorp
                 IsSleeping = false;
             }
 
-            if (!IsSleeping || m_overrideSleepThisFrame)
+            if(!IsSleeping || m_overrideSleepThisFrame)
             {
-
-                if (m_overrideSleepThisFrame)
+                if(m_overrideSleepThisFrame)
                 {
                     m_overrideSleepThisFrame = false;
                 }
 
-                float dt = (float)(gameTime.ElapsedGameTime.TotalSeconds);
+                float dt = (float) (gameTime.ElapsedGameTime.TotalSeconds);
 
-                if (m_applyGravityThisFrame)
+                if(m_applyGravityThisFrame)
                 {
                     ApplyForce(Gravity, dt);
                 }
@@ -82,7 +82,7 @@ namespace DwarfCorp
                 transform.Translation = LocalTransform.Translation + Velocity * dt;
 
 
-                if (!OrientWithVelocity && !FixedOrientation)
+                if(!OrientWithVelocity && !FixedOrientation)
                 {
                     Matrix dA = Matrix.Identity;
                     dA *= Matrix.CreateRotationX(AngularVelocity.X * dt);
@@ -91,11 +91,11 @@ namespace DwarfCorp
 
                     transform = dA * transform;
                 }
-                else if (!FixedOrientation)
+                else if(!FixedOrientation)
                 {
-                    if (Velocity.Length() > 0.4f)
+                    if(Velocity.Length() > 0.4f)
                     {
-                        Matrix newTransform = Matrix.CreateRotationY((float)Math.Atan2(Velocity.X, -Velocity.Z));
+                        Matrix newTransform = Matrix.CreateRotationY((float) Math.Atan2(Velocity.X, -Velocity.Z));
                         newTransform.Translation = transform.Translation;
                         transform = newTransform;
                     }
@@ -104,7 +104,7 @@ namespace DwarfCorp
 
                 LocalTransform = transform;
 
-                if (Math.Abs(Velocity.Y) < 0.1f)
+                if(Math.Abs(Velocity.Y) < 0.1f)
                 {
                     Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
                 }
@@ -113,7 +113,7 @@ namespace DwarfCorp
                 AngularVelocity *= AngularDamping;
                 UpdateBoundingBox();
                 HandleCollisions(chunks, dt);
-                CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
+                CheckLiquids(chunks, (float) gameTime.ElapsedGameTime.TotalSeconds);
             }
             base.Update(gameTime, chunks, camera);
         }
@@ -121,7 +121,7 @@ namespace DwarfCorp
         public void Face(Vector3 target)
         {
             Vector3 diff = target - GlobalTransform.Translation;
-            Matrix newTransform = Matrix.CreateRotationY((float)Math.Atan2(diff.X, -diff.Z));
+            Matrix newTransform = Matrix.CreateRotationY((float) Math.Atan2(diff.X, -diff.Z));
             newTransform.Translation = LocalTransform.Translation;
             LocalTransform = newTransform;
         }
@@ -130,11 +130,11 @@ namespace DwarfCorp
         {
             List<VoxelRef> currentVoxels = chunks.GetVoxelReferencesAtWorldLocation(GlobalTransform.Translation);
             VoxelRef currentVoxel = null;
-            if (currentVoxels.Count > 0)
+            if(currentVoxels.Count > 0)
             {
                 currentVoxel = currentVoxels[0];
             }
-            if (currentVoxel != null && currentVoxel.GetWaterLevel(chunks) > 5)
+            if(currentVoxel != null && currentVoxel.GetWaterLevel(chunks) > 5)
             {
                 IsInLiquid = true;
                 ApplyForce(new Vector3(0, 25, 0), dt);
@@ -148,7 +148,7 @@ namespace DwarfCorp
 
         public override void ReceiveMessageRecursive(Message messageToReceive)
         {
-            switch (messageToReceive.Type)
+            switch(messageToReceive.Type)
             {
                 case Message.MessageType.OnChunkModified:
                     m_overrideSleepThisFrame = true;
@@ -162,39 +162,36 @@ namespace DwarfCorp
 
         public virtual void HandleCollisions(ChunkManager chunks, float dt)
         {
-            if (Velocity.LengthSquared() < 0.1f)
+            if(Velocity.LengthSquared() < 0.1f)
             {
                 return;
             }
             List<VoxelRef> vs = new List<VoxelRef>();
-            chunks.GetVoxelReferencesAtWorldLocation(null, LocalTransform.Translation , vs);
+            chunks.GetVoxelReferencesAtWorldLocation(null, LocalTransform.Translation, vs);
 
             VoxelChunk chunk = chunks.GetVoxelChunkAtWorldLocation(LocalTransform.Translation);
 
 
-            if (vs.Count > 0 && chunk != null)
+            if(vs.Count > 0 && chunk != null)
             {
                 Vector3 grid = chunk.WorldToGrid(LocalTransform.Translation);
-                List<VoxelRef> adjacencies = chunk.GetNeighborsEuclidean((int)grid.X, (int)grid.Y, (int)grid.Z);
+                List<VoxelRef> adjacencies = chunk.GetNeighborsEuclidean((int) grid.X, (int) grid.Y, (int) grid.Z);
                 vs.AddRange(adjacencies);
-                foreach (VoxelRef v in vs)
+                foreach(VoxelRef v in vs)
                 {
-
-                    if (v.TypeName != "empty" && v.TypeName != "water")
+                    if(v.TypeName != "empty" && v.TypeName != "water")
                     {
-
                         BoundingBox voxAABB = v.GetBoundingBox();
 
-                        if (BoundingBox.Intersects(voxAABB))
+                        if(BoundingBox.Intersects(voxAABB))
                         {
                             Contact contact = new Contact();
-                            if (TestStaticAABBAABB(BoundingBox, voxAABB, ref contact))
+                            if(TestStaticAABBAABB(BoundingBox, voxAABB, ref contact))
                             {
-
                                 Matrix m = LocalTransform;
                                 m.Translation += contact.nEnter * contact.penetration;
 
-                                if (contact.nEnter.Y > 0.9)
+                                if(contact.nEnter.Y > 0.9)
                                 {
                                     m_applyGravityThisFrame = false;
                                 }
@@ -207,13 +204,9 @@ namespace DwarfCorp
                                 UpdateBoundingBox();
                             }
                         }
-
                     }
-                    
-
                 }
             }
-
         }
 
 
@@ -230,8 +223,8 @@ namespace DwarfCorp
             BoundingBox b = s2;
 
             // [Minimum Translation Vector]
-            float mtvDistance = float.MaxValue;             // Set current minimum distance (max float value so next value is always less)
-            Vector3 mtvAxis = new Vector3();                // Axis along which to travel with the minimum distance
+            float mtvDistance = float.MaxValue; // Set current minimum distance (max float value so next value is always less)
+            Vector3 mtvAxis = new Vector3(); // Axis along which to travel with the minimum distance
 
             // [Axes of potential separation]
             // • Each shape must be projected on these axes to test for intersection:
@@ -241,19 +234,19 @@ namespace DwarfCorp
             // (0, 0, 1)                    A1 (= B2) [Z Axis]
 
             // [X Axis]
-            if (!TestAxisStatic(Vector3.UnitX, a.Min.X, a.Max.X, b.Min.X, b.Max.X, ref mtvAxis, ref mtvDistance))
+            if(!TestAxisStatic(Vector3.UnitX, a.Min.X, a.Max.X, b.Min.X, b.Max.X, ref mtvAxis, ref mtvDistance))
             {
                 return false;
             }
 
             // [Y Axis]
-            if (!TestAxisStatic(Vector3.UnitY, a.Min.Y, a.Max.Y, b.Min.Y, b.Max.Y, ref mtvAxis, ref mtvDistance))
+            if(!TestAxisStatic(Vector3.UnitY, a.Min.Y, a.Max.Y, b.Min.Y, b.Max.Y, ref mtvAxis, ref mtvDistance))
             {
                 return false;
             }
 
             // [Z Axis]
-            if (!TestAxisStatic(Vector3.UnitZ, a.Min.Z, a.Max.Z, b.Min.Z, b.Max.Z, ref mtvAxis, ref mtvDistance))
+            if(!TestAxisStatic(Vector3.UnitZ, a.Min.Z, a.Max.Z, b.Min.Z, b.Max.Z, ref mtvAxis, ref mtvDistance))
             {
                 return false;
             }
@@ -265,7 +258,7 @@ namespace DwarfCorp
 
             // Multiply the penetration depth by itself plus a small increment
             // When the penetration is resolved using the MTV, it will no longer intersect
-            contact.penetration = (float)Math.Sqrt(mtvDistance) * 1.001f;
+            contact.penetration = (float) Math.Sqrt(mtvDistance) * 1.001f;
 
             return true;
         }
@@ -281,18 +274,18 @@ namespace DwarfCorp
             float axisLengthSquared = Vector3.Dot(axis, axis);
 
             // If the axis is degenerate then ignore
-            if (axisLengthSquared < 1.0e-8f)
+            if(axisLengthSquared < 1.0e-8f)
             {
                 return true;
             }
 
             // Calculate the two possible overlap ranges
             // Either we overlap on the left or the right sides
-            float d0 = (maxB - minA);   // 'Left' side
-            float d1 = (maxA - minB);   // 'Right' side
+            float d0 = (maxB - minA); // 'Left' side
+            float d1 = (maxA - minB); // 'Right' side
 
             // Intervals do not overlap, so no intersection
-            if (d0 <= 0.0f || d1 <= 0.0f)
+            if(d0 <= 0.0f || d1 <= 0.0f)
             {
                 return false;
             }
@@ -307,7 +300,7 @@ namespace DwarfCorp
             float sepLengthSquared = Vector3.Dot(sep, sep);
 
             // If that vector is smaller than our computed Minimum Translation Distance use that vector as our current MTV distance
-            if (sepLengthSquared < mtvDistance)
+            if(sepLengthSquared < mtvDistance)
             {
                 mtvDistance = sepLengthSquared;
                 mtvAxis = sep;
@@ -319,12 +312,14 @@ namespace DwarfCorp
         public void ApplyForce(Vector3 force, float dt)
         {
             Velocity += (force / Mass) * dt;
+            IsSleeping = false;
         }
 
         public void ApplyTorque(Vector3 torque, float dt)
         {
             AngularVelocity += (torque / I) / dt;
+            IsSleeping = false;
         }
-
     }
+
 }

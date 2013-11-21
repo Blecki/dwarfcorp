@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace DwarfCorp
 {
+
     public class ResourceAmount
     {
         public Resource ResourceType { get; set; }
@@ -36,4 +37,5 @@ namespace DwarfCorp
             Tags.AddRange(tags);
         }
     }
+
 }

@@ -5,26 +5,30 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    class ClearBlackboardData : CreatureAct
+
+    internal class ClearBlackboardData : CreatureAct
     {
-        string DataKey { get; set; }
+        private string DataKey { get; set; }
+
         public ClearBlackboardData(CreatureAIComponent creature, string data) :
             base(creature)
         {
+            Name = "Clear " + data;
             DataKey = data;
         }
 
         public override IEnumerable<Status> Run()
         {
-            if (DataKey == null)
+            if(DataKey == null)
             {
                 yield return Status.Fail;
             }
             else
             {
                 Agent.Blackboard.Erase(DataKey);
+                yield return Status.Success;
             }
         }
-
     }
+
 }

@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace DwarfCorp
 {
+
     public class TextureManager
     {
         private static string DefaultString = "Default";
@@ -28,7 +29,7 @@ namespace DwarfCorp
         {
             Content = content;
             Graphics = graphics;
-            if (!staticsInitialized)
+            if(!staticsInitialized)
             {
                 InitializeStatics();
                 Instance = this;
@@ -61,97 +62,74 @@ namespace DwarfCorp
 
         public static void SetStringValue(string asset, string v)
         {
-            if (asset == "TileSet")
+            switch(asset)
             {
-                AssetSettings.Default.TileSet = v;
-            }
-            else if (asset == "DwarfSheet")
-            {
-                AssetSettings.Default.DwarfSheet = v;
-            }
-            else if (asset == "GoblinSheet")
-            {
-                AssetSettings.Default.GoblinSheet = v;
-            }
-            else if (asset == "InteriorSheet")
-            {
-                AssetSettings.Default.InteriorSheet = v;
-            }
-            else if (asset == "IconSheet")
-            {
-                AssetSettings.Default.IconSheet = v;
-            }
-            else if (asset == "GUISheet")
-            {
-                AssetSettings.Default.GUISheet = v;
-            }
-            else if (asset == "CompanyLogo")
-            {
-                PlayerSettings.Default.CompanyLogo = v;
-            }
-            else if (asset == "ResourceSheet")
-            {
-                AssetSettings.Default.ResourceSheet = v;
+                case "TileSet":
+                    AssetSettings.Default.TileSet = v;
+                    break;
+                case "DwarfSheet":
+                    AssetSettings.Default.DwarfSheet = v;
+                    break;
+                case "GoblinSheet":
+                    AssetSettings.Default.GoblinSheet = v;
+                    break;
+                case "InteriorSheet":
+                    AssetSettings.Default.InteriorSheet = v;
+                    break;
+                case "IconSheet":
+                    AssetSettings.Default.IconSheet = v;
+                    break;
+                case "GUISheet":
+                    AssetSettings.Default.GUISheet = v;
+                    break;
+                case "CompanyLogo":
+                    PlayerSettings.Default.CompanyLogo = v;
+                    break;
+                case "ResourceSheet":
+                    AssetSettings.Default.ResourceSheet = v;
+                    break;
             }
         }
 
 
         public static string GetStringValue(string asset)
         {
-            if (asset == "TileSet")
+            switch(asset)
             {
-                return AssetSettings.Default.TileSet;
+                case "TileSet":
+                    return AssetSettings.Default.TileSet;
+                case "DwarfSheet":
+                    return AssetSettings.Default.DwarfSheet;
+                case "GoblinSheet":
+                    return AssetSettings.Default.GoblinSheet;
+                case "InteriorSheet":
+                    return AssetSettings.Default.InteriorSheet;
+                case "IconSheet":
+                    return AssetSettings.Default.IconSheet;
+                case "GUISheet":
+                    return AssetSettings.Default.GUISheet;
+                case "CompanyLogo":
+                    return PlayerSettings.Default.CompanyLogo;
+                case "ResourceSheet":
+                    return AssetSettings.Default.ResourceSheet;
+                default:
+                    return "";
             }
-            else if (asset == "DwarfSheet")
-            {
-                return AssetSettings.Default.DwarfSheet;
-            }
-            else if (asset == "GoblinSheet")
-            {
-                return AssetSettings.Default.GoblinSheet;
-            }
-            else if (asset == "InteriorSheet")
-            {
-                return AssetSettings.Default.InteriorSheet;
-            }
-            else if (asset == "IconSheet")
-            {
-                return AssetSettings.Default.IconSheet;
-            }
-            else if (asset == "GUISheet")
-            {
-                return AssetSettings.Default.GUISheet;
-            }
-            else if (asset == "CompanyLogo")
-            {
-                return PlayerSettings.Default.CompanyLogo;
-            }
-            else if (asset == "ResourceSheet")
-            {
-                return AssetSettings.Default.ResourceSheet;
-            }
-            else return "";
-
-            return "";
         }
 
         public Texture2D GetInstanceTexture(string asset)
         {
             string assetValue = GetStringValue(asset);
 
-            if (assetValue == "")
+            switch(assetValue)
             {
-                return Content.Load<Texture2D>(asset);
+                case "":
+                    return Content.Load<Texture2D>(asset);
+                case "Default":
+                    return Content.Load<Texture2D>(DefaultContent[asset]);
+                default:
+                    return LoadInstanceTexture(assetValue);
             }
-            else if (assetValue == "Default")
-            {
-                return Content.Load<Texture2D>(DefaultContent[asset]);
-            }
-            else
-            {
-                return LoadInstanceTexture(assetValue);
-            }
-
         }
 
         public Texture2D LoadInstanceTexture(string file)
@@ -163,10 +141,6 @@ namespace DwarfCorp
 
             return texture;
         }
-
-
-      
-
-    
     }
+
 }

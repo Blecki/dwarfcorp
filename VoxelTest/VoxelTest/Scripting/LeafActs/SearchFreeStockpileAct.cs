@@ -6,17 +6,48 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
     public class SearchFreeStockpileAct : CreatureAct
     {
-        public SearchFreeStockpileAct(CreatureAIComponent creature) :
+        public string StockpileName { get; set; }
+        public string VoxelName { get; set; }
+
+        public Stockpile Stockpile { get { return GetStockpile(); } set { SetStockpile(value);} }
+
+        public VoxelRef Voxel { get { return GetVoxel(); } set { SetVoxel(value);} }
+
+        public SearchFreeStockpileAct(CreatureAIComponent creature, string stockName, string voxName) :
             base(creature)
         {
-            Name = "Search Stockpile";
+            Name = "Search Stockpile " + stockName;
+            StockpileName = stockName;
+            VoxelName = voxName;
+        }
+
+        public VoxelRef GetVoxel()
+        {
+            return Agent.Blackboard.GetData<VoxelRef>(VoxelName);
+        }
+
+
+        public void SetVoxel(VoxelRef value)
+        {
+            Agent.Blackboard.SetData(VoxelName, value);
+        }
+
+        public Stockpile GetStockpile()
+        {
+            return Agent.Blackboard.GetData<Stockpile>(StockpileName);
+        }
+
+        public void SetStockpile(Stockpile value)
+        {
+            Agent.Blackboard.SetData(StockpileName, value);
         }
 
         public int CompareStockpiles(Stockpile A, Stockpile B)
         {
-            if (A == B)
+            if(A == B)
             {
                 return 0;
             }
@@ -30,7 +61,7 @@ namespace DwarfCorp
                 Vector3 centerB = (boxB.Min + boxB.Max) * 0.5f;
                 float costB = (Creature.Physics.GlobalTransform.Translation - centerB).LengthSquared();
 
-                if (costA < costB)
+                if(costA < costB)
                 {
                     return -1;
                 }
@@ -38,37 +69,39 @@ namespace DwarfCorp
                 {
                     return 1;
                 }
-
             }
         }
 
         public override IEnumerable<Status> Run()
         {
-
             bool validTargetFound = false;
 
             List<Stockpile> sortedPiles = new List<Stockpile>(Creature.Master.Stockpiles);
 
             sortedPiles.Sort(CompareStockpiles);
 
-            foreach (Stockpile s in sortedPiles)
+            foreach(Stockpile s in sortedPiles)
             {
                 VoxelRef v = s.GetNearestFreeVoxel(Creature.Physics.GlobalTransform.Translation);
 
-                if (v != null)
+                if(v == null)
                 {
-                    Agent.TargetVoxel = v;
-                    Agent.TargetStockpile = s;
-                    if (Agent.TargetVoxel != null)
-                    {
-                        s.SetReserved(v, true);
-                        validTargetFound = true;
-                        break;
-                    }
+                    continue;
                 }
+
+                Voxel = v;
+                Stockpile = s;
+                if(Voxel == null)
+                {
+                    continue;
+                }
+
+                s.SetReserved(v, true);
+                validTargetFound = true;
+                break;
             }
 
-            if (validTargetFound)
+            if(validTargetFound)
             {
                 yield return Status.Success;
             }
@@ -78,4 +111,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

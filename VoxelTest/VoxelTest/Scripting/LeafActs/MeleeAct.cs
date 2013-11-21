@@ -6,9 +6,9 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
     public class MeleeAct : CreatureAct
     {
-
         public MeleeAct(CreatureAIComponent agent) :
             base(agent)
         {
@@ -17,14 +17,13 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-
             bool targetDead = false;
             Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
-            while (!targetDead)
+            while(!targetDead)
             {
                 Creature.LocalTarget = new Vector3(Agent.TargetComponent.GlobalTransform.Translation.X,
-                                                     Creature.Physics.GlobalTransform.Translation.Y,
-                                                     Agent.TargetComponent.GlobalTransform.Translation.Z);
+                    Creature.Physics.GlobalTransform.Translation.Y,
+                    Agent.TargetComponent.GlobalTransform.Translation.Z);
 
 
                 Vector3 diff = Creature.LocalTarget - Creature.Physics.GlobalTransform.Translation;
@@ -32,14 +31,13 @@ namespace DwarfCorp
                 Creature.Physics.Face(Creature.LocalTarget);
 
 
-                if (diff.Length() > 1.0f)
+                if(diff.Length() > 1.0f)
                 {
-
                     Vector3 output = Creature.Controller.GetOutput(Act.Dt, Creature.LocalTarget, Creature.Physics.GlobalTransform.Translation) * 0.9f;
                     Creature.Physics.ApplyForce(output, Act.Dt);
                     output.Y = 0.0f;
 
-                    if ((Creature.LocalTarget - Creature.Physics.GlobalTransform.Translation).Y > 0.3)
+                    if((Creature.LocalTarget - Creature.Physics.GlobalTransform.Translation).Y > 0.3)
                     {
                         Agent.Jump(Act.LastTime);
                     }
@@ -53,12 +51,12 @@ namespace DwarfCorp
 
                 List<HealthComponent> healths = Agent.TargetComponent.GetChildrenOfTypeRecursive<HealthComponent>();
 
-                foreach (HealthComponent health in healths)
+                foreach(HealthComponent health in healths)
                 {
-                    health.Damage(Creature.Stats.BaseChopSpeed * (float)Act.LastTime.ElapsedGameTime.TotalSeconds);
+                    health.Damage(Creature.Stats.BaseChopSpeed * (float) Act.LastTime.ElapsedGameTime.TotalSeconds);
                 }
 
-                if (Agent.TargetComponent.IsDead)
+                if(Agent.TargetComponent.IsDead)
                 {
                     Creature.Master.ChopDesignations.Remove(Agent.TargetComponent);
                     Agent.TargetComponent = null;
@@ -72,15 +70,14 @@ namespace DwarfCorp
                 }
 
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
-                
+
                 Creature.Weapon.PlayNoise();
 
-                if (Agent.TargetComponent is PhysicsComponent)
+                if(Agent.TargetComponent is PhysicsComponent)
                 {
-
-                    if (PlayState.random.Next(100) < 10)
+                    if(PlayState.Random.Next(100) < 10)
                     {
-                        PhysicsComponent phys = (PhysicsComponent)Agent.TargetComponent;
+                        PhysicsComponent phys = (PhysicsComponent) Agent.TargetComponent;
                         {
                             SoundManager.PlaySound("ouch", phys.GlobalTransform.Translation);
                             PlayState.ParticleManager.Trigger("blood_particle", phys.GlobalTransform.Translation, Color.White, 5);
@@ -88,7 +85,7 @@ namespace DwarfCorp
 
 
                         Vector3 f = phys.GlobalTransform.Translation - Creature.Physics.GlobalTransform.Translation;
-                        if (f.Length() > 2.0f)
+                        if(f.Length() > 2.0f)
                         {
                             Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
                             Creature.Physics.OrientWithVelocity = true;
@@ -110,4 +107,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

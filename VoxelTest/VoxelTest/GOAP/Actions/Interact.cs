@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
     public class Interact : Action
     {
         public InteractiveItem item;
@@ -23,9 +24,6 @@ namespace DwarfCorp
         {
             return item.Interact(creature, time);
         }
-
-
-
-        
     }
+
 }

@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace DwarfCorp
 {
+
     public class TextureLoader
     {
         public string Folder { get; set; }
@@ -23,6 +24,7 @@ namespace DwarfCorp
         {
             public Texture2D Texture;
             public string File;
+
             public TextureFile(Texture2D texture, string file)
             {
                 Texture = texture;
@@ -39,21 +41,20 @@ namespace DwarfCorp
 
             Folder = relativePath;
             Graphics = graphics;
-
         }
 
         public List<TextureFile> GetTextures()
         {
             DirectoryInfo di = new DirectoryInfo(Folder);
 
-            if (!di.Exists)
+            if(!di.Exists)
             {
                 di.Create();
             }
             FileInfo[] files = di.GetFiles(FileTypes, SearchOption.TopDirectoryOnly);
 
             List<TextureFile> toReturn = new List<TextureFile>();
-            foreach (FileInfo file in files)
+            foreach(FileInfo file in files)
             {
                 Texture2D texture = null;
                 FileStream stream = new FileStream(file.FullName, FileMode.Open);
@@ -61,13 +62,14 @@ namespace DwarfCorp
                 {
                     texture = Texture2D.FromStream(Graphics, stream);
                 }
-                catch (IOException e)
+                catch(IOException e)
                 {
+                    Console.Error.WriteLine(e.Message);
                     stream.Close();
                     continue;
                 }
 
-                if (texture != null)
+                if(texture != null)
                 {
                     toReturn.Add(new TextureFile(texture, file.FullName));
                 }
@@ -77,4 +79,5 @@ namespace DwarfCorp
             return toReturn;
         }
     }
+
 }

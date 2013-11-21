@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class HealthComponent : GameComponent
     {
         public float Health { get; set; }
@@ -24,9 +25,9 @@ namespace DwarfCorp
         {
             Health = Math.Min(Math.Max(Health + amount, MinHealth), MaxHealth);
 
-            if (Health <= MinHealth)
+            if(Health <= MinHealth)
             {
-                if (Parent != null)
+                if(Parent != null)
                 {
                     Parent.Die();
                 }
@@ -35,11 +36,11 @@ namespace DwarfCorp
 
         public void Damage(float amount)
         {
-            if (!IsDead)
+            if(!IsDead)
             {
                 Heal(-amount);
             }
         }
-
     }
+
 }

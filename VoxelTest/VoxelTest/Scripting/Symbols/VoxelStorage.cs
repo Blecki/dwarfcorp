@@ -2,22 +2,46 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    [JsonObject(IsReference = true)]
     public class VoxelStorage
     {
         public VoxelRef Voxel { get; set; }
         public VoxelType OriginalType { get; set; }
         public bool IsOccupied { get; set; }
-        public bool IsReserved { get; set;}
+        public bool IsReserved { get; set; }
 
         private Item m_ownedItem = null;
-        public Item OwnedItem { get { return m_ownedItem; } set { m_ownedItem = value; if (m_ownedItem != null) { m_ownedItem.Zone = ParentZone; IsOccupied = true; } else { IsOccupied = false; } } }
-        public Zone ParentZone { get; set; }
-        public StorageType StoreType { get; set;}
 
-        public enum StorageType { InVoxel, OnVoxel }
+        public Item OwnedItem
+        {
+            get { return m_ownedItem; }
+            set
+            {
+                m_ownedItem = value;
+                if(m_ownedItem != null)
+                {
+                    m_ownedItem.Zone = ParentZone;
+                    IsOccupied = true;
+                }
+                else
+                {
+                    IsOccupied = false;
+                }
+            }
+        }
+
+        public Zone ParentZone { get; set; }
+        public StorageType StoreType { get; set; }
+
+        public enum StorageType
+        {
+            InVoxel,
+            OnVoxel
+        }
 
 
         public VoxelStorage(VoxelRef voxel, Zone parentZone, StorageType storeType)
@@ -34,37 +58,39 @@ namespace DwarfCorp
         {
             Voxel vox = Voxel.GetVoxel(chunks, false);
 
-            if (vox != null)
+            if(vox == null)
             {
-                vox.Type = type;
-                vox.Primitive = VoxelLibrary.GetPrimitive(vox.Type);
-                vox.Chunk.ShouldRebuild = true;
+                return;
             }
+
+            vox.Type = type;
+            vox.Primitive = VoxelLibrary.GetPrimitive(vox.Type);
+            vox.Chunk.ShouldRebuild = true;
         }
 
         public void RevertType(ChunkManager chunks)
         {
             Voxel vox = Voxel.GetVoxel(chunks, false);
 
-            if (vox != null)
+            if(vox == null)
             {
-                vox.Type = OriginalType;
-                vox.Primitive = VoxelLibrary.GetPrimitive(vox.Type);
-                vox.Chunk.ShouldRebuild = true;
+                return;
             }
+
+            vox.Type = OriginalType;
+            vox.Primitive = VoxelLibrary.GetPrimitive(vox.Type);
+            vox.Chunk.ShouldRebuild = true;
         }
 
         public void RemoveItem()
         {
-            if (m_ownedItem != null)
+            if(m_ownedItem != null)
             {
                 OwnedItem.Zone = null;
                 m_ownedItem = null;
             }
             IsOccupied = false;
         }
-
-
-
     }
+
 }

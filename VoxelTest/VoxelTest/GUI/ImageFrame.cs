@@ -6,11 +6,14 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    [JsonObject(IsReference = true)]
     public class ImageFrame
     {
+        [JsonIgnore]
         public Texture2D Image { get; set; }
         public Rectangle SourceRect { get; set; }
 

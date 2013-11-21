@@ -9,6 +9,7 @@ using System.IO.Compression;
 
 namespace DwarfCorp
 {
+
     public class CompanyFile : SaveData
     {
         public string CompanyName { get; set; }
@@ -21,7 +22,6 @@ namespace DwarfCorp
 
         public CompanyFile()
         {
-
         }
 
         public CompanyFile(string file, bool compressed)
@@ -47,7 +47,7 @@ namespace DwarfCorp
         {
             CompanyFile file = FileUtils.LoadJson<CompanyFile>(filePath, isCompressed);
 
-            if (file == null)
+            if(file == null)
             {
                 return false;
             }
@@ -63,4 +63,5 @@ namespace DwarfCorp
             return FileUtils.SaveJSon<CompanyFile>(this, filePath, compress);
         }
     }
+
 }

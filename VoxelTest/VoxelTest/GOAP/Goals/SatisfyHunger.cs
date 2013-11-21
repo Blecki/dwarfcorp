@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
     public class SatisfyHunger : Goal
     {
         public SatisfyHunger(GOAP agent)
@@ -16,7 +17,7 @@ namespace DwarfCorp
 
         public override bool ContextValidate(CreatureAIComponent creature)
         {
-            return (bool)(creature.Goap.Belief[GOAPStrings.IsHungry]) == true;
+            return (bool) (creature.Goap.Belief[GOAPStrings.IsHungry]) == true;
         }
 
         public override void Reset(GOAP agent)
@@ -29,7 +30,7 @@ namespace DwarfCorp
 
         public override void ContextReweight(CreatureAIComponent creature)
         {
-            if (creature.Status.Hunger > creature.Stats.HungerThreshold)
+            if(creature.Status.Hunger > creature.Stats.HungerThreshold)
             {
                 Priority = 100;
                 Cost = 0;
@@ -42,6 +43,6 @@ namespace DwarfCorp
 
             base.ContextReweight(creature);
         }
-
     }
+
 }

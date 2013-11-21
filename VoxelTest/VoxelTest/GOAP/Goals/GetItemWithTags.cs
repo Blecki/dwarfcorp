@@ -5,9 +5,11 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    class GetItemWithTags : Goal
+
+    internal class GetItemWithTags : Goal
     {
         public TagList m_tags = null;
+
         public GetItemWithTags(GOAP agent, TagList tags)
         {
             m_tags = tags;
@@ -28,28 +30,27 @@ namespace DwarfCorp
 
             Item toGather = null;
 
-            foreach (Item i in creature.Goap.Items)
+            foreach(Item i in creature.Goap.Items)
             {
-                if (m_tags.Contains(i.userData.Tags))
+                if(m_tags.Contains(i.UserData.Tags))
                 {
                     toGather = i;
                     break;
                 }
             }
 
-            if (toGather == null)
+            if(toGather == null)
             {
                 return null;
             }
             else
             {
-
                 toReturn.Add(new SetTargetEntity(toGather));
                 toReturn.Add(new GoToTargetEntity());
                 toReturn.Add(new PickupTargetEntity(agent));
             }
             return toReturn;
-        }  
+        }
 
         public override void ContextReweight(CreatureAIComponent creature)
         {
@@ -60,9 +61,9 @@ namespace DwarfCorp
         public override bool ContextValidate(CreatureAIComponent creature)
         {
             Reset(creature.Goap);
-            foreach (Item i in creature.Goap.Items)
+            foreach(Item i in creature.Goap.Items)
             {
-                if (m_tags.Contains(i.userData.Tags))
+                if(m_tags.Contains(i.UserData.Tags))
                 {
                     return true;
                 }
@@ -75,4 +76,5 @@ namespace DwarfCorp
             return new GetItemWithTagsAct(creature, m_tags);
         }
     }
+
 }

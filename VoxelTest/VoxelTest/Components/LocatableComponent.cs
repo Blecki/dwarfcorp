@@ -5,107 +5,113 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+
 namespace DwarfCorp
 {
-    public class LocatableComponent : GameComponent, BoundedObject
+
+    [JsonObject(IsReference = true)]
+    public class LocatableComponent : GameComponent, IBoundedObject
     {
         [JsonIgnore]
-        public bool WasAddedToOctree { get { return m_wasEverAddedToOctree; } set { m_wasEverAddedToOctree = value; } }
+        public bool WasAddedToOctree
+        {
+            get { return m_wasEverAddedToOctree; }
+            set { m_wasEverAddedToOctree = value; }
+        }
+
         private bool m_wasEverAddedToOctree = false;
 
-        [JsonIgnore]
+        public CollisionManager.CollisionType CollisionType { get; set; }
+
+
         public Matrix GlobalTransform
-        { 
-            get
-            {
-                return m_globalTransform;
-            }
+        {
+            get { return m_globalTransform; }
             set
             {
                 m_globalTransform = value;
 
-                if (AddToOctree)
+                if(!AddToOctree)
                 {
-                    if (IsActive 
-                        && (HasMoved || !m_wasEverAddedToOctree) 
-                        && (m_octree.NeedsUpdate(this)))
-                    {
-                        m_octree.AddUpdate(this);
-                        m_wasEverAddedToOctree = true;
-                    }
+                    return;
                 }
+
+                if(!IsActive || (!HasMoved && m_wasEverAddedToOctree) || (!CollisionManager.NeedsUpdate(this, CollisionType)))
+                {
+                    return;
+                }
+
+                CollisionManager.UpdateObject(this, CollisionType);
+                m_wasEverAddedToOctree = true;
             }
         }
 
-        [JsonIgnore]
-        public Matrix LocalTransform 
-        { 
-            get 
-            { 
-                return m_localTransform; 
-            }
-            
-            set 
-            { 
+
+        public Matrix LocalTransform
+        {
+            get { return m_localTransform; }
+
+            set
+            {
                 m_localTransform = value;
                 HasMoved = true;
-            } 
+            }
         }
 
         public BoundingBox BoundingBox = new BoundingBox();
-        public BoundingSphere BoundingSphere = new BoundingSphere();
+
+        
         public Vector3 BoundingBoxPos { get; set; }
         public bool DrawBoundingBox { get; set; }
         public bool DepthSort { get; set; }
         public bool FrustrumCull { get; set; }
         public bool DrawInFrontOfSiblings { get; set; }
-        
-        [JsonIgnore]
-        public static Octree m_octree = null;
-        public bool IsStatic { get; set; }
-        
-        [JsonIgnore]
-        public bool HasMoved 
+
+        [JsonIgnore] public static CollisionManager CollisionManager = null;
+
+        public bool HasMoved
         {
-            get
-            {
-                return m_hasMoved;
-            }
+            get { return m_hasMoved; }
             set
             {
                 m_hasMoved = value;
 
-                if (AddToOctree)
+                if(!AddToOctree)
                 {
-                    foreach (GameComponent child in Children.Values)
-                    {
-                        if (child is LocatableComponent)
-                        {
-                            ((LocatableComponent)child).HasMoved = value;
-                        }
-                    }
+                    return;
+                }
+
+                foreach(LocatableComponent child in Children.Values.OfType<LocatableComponent>())
+                {
+                    (child).HasMoved = value;
                 }
             }
         }
 
-        public uint GetID() { return GlobalID; }
-        
-        protected Matrix m_localTransform = Matrix.Identity;
-        
+        public uint GetID()
+        {
+            return GlobalID;
+        }
 
+        protected Matrix m_localTransform = Matrix.Identity;
         protected Matrix m_globalTransform = Matrix.Identity;
         private bool m_hasMoved = true;
-        
+
         public bool AddToOctree { get; set; }
 
+        public LocatableComponent()
+        {
+            
+        }
 
         public LocatableComponent(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
             this(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos, true)
         {
             DrawInFrontOfSiblings = false;
-            IsStatic = false;
+            CollisionType = CollisionManager.CollisionType.None;
         }
-        public LocatableComponent(ComponentManager manager, string name, GameComponent parent, Matrix localTransform,  Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToOctree) :
+
+        public LocatableComponent(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToOctree) :
             base(manager, name, parent)
         {
             AddToOctree = addToOctree;
@@ -118,7 +124,7 @@ namespace DwarfCorp
             DepthSort = true;
             FrustrumCull = true;
             DrawInFrontOfSiblings = false;
-
+            CollisionType = CollisionManager.CollisionType.None;
         }
 
 
@@ -144,7 +150,6 @@ namespace DwarfCorp
         }
 
 
-
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
             /*
@@ -163,7 +168,7 @@ namespace DwarfCorp
             }
             */
 
-            if (DrawBoundingBox)
+            if(DrawBoundingBox)
             {
                 SimpleDrawing.DrawBox(BoundingBox, Color.White, 0.02f);
             }
@@ -174,39 +179,38 @@ namespace DwarfCorp
 
         public void UpdateTransformsRecursive()
         {
-            if (!IsActive)
+            if(!IsActive)
             {
                 return;
             }
 
-            if (Parent is LocatableComponent)
+            if(Parent is LocatableComponent)
             {
-                LocatableComponent locatable = (LocatableComponent)Parent;
+                LocatableComponent locatable = (LocatableComponent) Parent;
 
-                if (HasMoved)
+                if(HasMoved)
                 {
                     GlobalTransform = LocalTransform * locatable.GlobalTransform;
                     m_hasMoved = false;
                 }
-
             }
             else
             {
-                if (HasMoved)
+                if(HasMoved)
                 {
                     GlobalTransform = LocalTransform;
                     m_hasMoved = false;
                 }
             }
 
-          
+
             foreach(KeyValuePair<uint, GameComponent> pair in Children)
             {
-                if (pair.Value is LocatableComponent)
+                if(pair.Value is LocatableComponent)
                 {
-                    LocatableComponent locatable = (LocatableComponent)pair.Value;
+                    LocatableComponent locatable = (LocatableComponent) pair.Value;
 
-                    if (locatable.HasMoved)
+                    if(locatable.HasMoved)
                     {
                         locatable.UpdateTransformsRecursive();
                     }
@@ -214,25 +218,15 @@ namespace DwarfCorp
             }
 
             UpdateBoundingBox();
-
         }
 
-        public BoundingSphere GetBoundingSphere()
-        {
-            return BoundingSphere;
-        }
+
 
         public BoundingBox GetBoundingBox()
         {
             return BoundingBox;
         }
 
-        public override void Render(GameTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
-        {
-            
-             
-            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
-        }
 
         public void UpdateBoundingBox()
         {
@@ -240,22 +234,21 @@ namespace DwarfCorp
             float m = Math.Max(Math.Max(extents.X, extents.Y), extents.Z) * 0.5f;
             BoundingBox.Min = GlobalTransform.Translation - extents / 2.0f + BoundingBoxPos;
             BoundingBox.Max = GlobalTransform.Translation + extents / 2.0f + BoundingBoxPos;
-            BoundingSphere.Center = GlobalTransform.Translation;
-            BoundingSphere.Radius = (float)Math.Sqrt(3 * m * m);
         }
 
         public override void Die()
         {
             UpdateBoundingBox();
-            if (AddToOctree)
+            if(AddToOctree)
             {
-                m_octree.RemoveObject(this);
+                CollisionManager.RemoveObject(this, CollisionType);
             }
             IsActive = false;
             IsVisible = false;
             HasMoved = false;
-           
+
             base.Die();
         }
     }
+
 }
