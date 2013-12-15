@@ -23,7 +23,7 @@ namespace DwarfCorp
             Running
         }
 
-        public DwarfGame Game { get; set; }
+        public static DwarfGame Game { get; set; }
         public string Name { get; set; }
         public GameStateManager StateManager { get; set; }
         public bool IsInitialized { get; set; }

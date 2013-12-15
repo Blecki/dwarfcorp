@@ -323,71 +323,6 @@ namespace DwarfCorp
 
         #endregion
 
-        public VoxelChunk(ChunkManager manager, ChunkFile chunkFile)
-        {
-            FirstWaterIter = true;
-            Motes = new Dictionary<string, List<InstanceData>>();
-
-            m_sizeX = chunkFile.Size.X;
-            m_sizeY = chunkFile.Size.Y;
-            m_sizeZ = chunkFile.Size.Z;
-
-            VoxelGrid = ChunkGenerator.Allocate(m_sizeX, m_sizeY, m_sizeZ);
-            Water = WaterAllocate(m_sizeX, m_sizeY, m_sizeZ);
-
-            ID = chunkFile.ID;
-            IsVisible = true;
-            m_tileSize = 1;
-            HalfLength = new Vector3((float) m_tileSize / 2.0f, (float) m_tileSize / 2.0f, (float) m_tileSize / 2.0f);
-            Origin = chunkFile.Origin;
-            Primitive = new VoxelListPrimitive();
-            RenderWireframe = false;
-            Manager = manager;
-            IsActive = true;
-
-            Neighbors = new ConcurrentDictionary<Point3, VoxelChunk>();
-            DynamicLights = new List<DynamicLight>();
-            Liquids = new Dictionary<LiquidType, LiquidPrimitive>();
-            Liquids[LiquidType.Water] = new LiquidPrimitive(LiquidType.Water);
-            Liquids[LiquidType.Lava] = new LiquidPrimitive(LiquidType.Lava);
-
-
-            for(int x = 0; x < VoxelGrid.Length; x++)
-            {
-                for(int y = 0; y < VoxelGrid[x].Length; y++)
-                {
-                    for(int z = 0; z < VoxelGrid[x][y].Length; z++)
-                    {
-                        short type = chunkFile.Types[x, y, z];
-                        if(type > 0)
-                        {
-                            Voxel v = new Voxel(Origin + new Vector3(x, y, z), VoxelLibrary.GetVoxelType(type), VoxelLibrary.GetPrimitive(type), true)
-                            {
-                                Chunk = this
-                            };
-                            v.GridPosition = v.Position - Origin;
-                            VoxelGrid[x][y][z] = v;
-                        }
-
-                        Water[x][y][z].WaterLevel = chunkFile.Liquid[x, y, z];
-                        Water[x][y][z].Type = (LiquidType) chunkFile.LiquidTypes[x, y, z];
-                    }
-                }
-            }
-
-
-            SunColors = ChunkGenerator.Allocate<byte>(m_sizeX, m_sizeY, m_sizeZ);
-            DynamicColors = ChunkGenerator.Allocate<byte>(m_sizeX, m_sizeY, m_sizeZ);
-            InitializeStatics();
-            PrimitiveMutex = new Mutex();
-            ShouldRecalculateLighting = true;
-            ShouldRebuildWater = true;
-            Springs = new ConcurrentDictionary<VoxelRef, byte>();
-            IsRebuilding = false;
-            InitializeWater();
-            LightingCalculated = false;
-        }
-
         public VoxelChunk(ChunkManager manager, Vector3 origin, int tileSize, Point3 id, int sizeX, int sizeY, int sizeZ)
         {
             FirstWaterIter = true;
@@ -439,6 +374,11 @@ namespace DwarfCorp
                 for(int y = 0; y < sy; y++)
                 {
                     w[x][y] = new WaterCell[sz];
+
+                    for(int z = 0; z < sx; z++)
+                    {
+                        w[x][y][z] = new WaterCell();
+                    }
                 }
             }
 
@@ -691,7 +631,7 @@ namespace DwarfCorp
 
                 for(int x = 0; x < SizeX; x++)
                 {
-                    for(int y = 1; y < Math.Min(Manager.MaxViewingLevel + 1, SizeY - 1); y++)
+                    for(int y = 1; y < Math.Min(Manager.ChunkData.MaxViewingLevel + 1, SizeY - 1); y++)
                     {
                         for(int z = 0; z < SizeZ; z++)
                         {
@@ -791,7 +731,7 @@ namespace DwarfCorp
         public void NotifyChangedComponents()
         {
             HashSet<IBoundedObject> componentsInside = new HashSet<IBoundedObject>();
-            LocatableComponent.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), componentsInside, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
+            Manager.Components.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), componentsInside, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
             Message changedMessage = new Message(Message.MessageType.OnChunkModified, "Chunk Modified");
 
@@ -876,7 +816,7 @@ namespace DwarfCorp
                 ShouldRecalculateLighting = true;
                 ShouldRebuild = true;
                 List<VoxelRef> voxels = new List<VoxelRef>();
-                Manager.GetVoxelReferencesAtWorldLocation(this, worldLocation, voxels);
+                Manager.ChunkData.GetVoxelReferencesAtWorldLocation(this, worldLocation, voxels);
                 DynamicLight light = new DynamicLight(range, intensity, voxels[0], Manager);
                 DynamicLights.Add(light);
                 Manager.DynamicLights.Add(light);
@@ -957,7 +897,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                Voxel seedVoxel = t.GetVoxel(Manager, false);
+                Voxel seedVoxel = t.GetVoxel(false);
                 VoxelChunk seedChunk = null;
                 if(seedVoxel != null)
                 {
@@ -965,7 +905,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    seedChunk = t.ChunkID.Equals(ID) ? this : Manager.ChunkMap[t.ChunkID];
+                    seedChunk = t.ChunkID.Equals(ID) ? this : Manager.ChunkData.ChunkMap[t.ChunkID];
                 }
 
                 if(seedVoxel != null && iters > 1)
@@ -1008,7 +948,12 @@ namespace DwarfCorp
 
             foreach(VoxelRef v in neighbors)
             {
-                VoxelChunk c = chunks.ChunkMap[v.ChunkID];
+                if(!chunks.ChunkData.ChunkMap.ContainsKey(v.ChunkID))
+                {
+                    continue;
+                }
+
+                VoxelChunk c = chunks.ChunkData.ChunkMap[v.ChunkID];
                 color.SunColor += c.SunColors[(int) v.GridPosition.X][(int) v.GridPosition.Y][(int) v.GridPosition.Z];
                 if(VoxelLibrary.IsSolid(v))
                 {
@@ -1119,8 +1064,8 @@ namespace DwarfCorp
         public void UpdateSunlight(byte sunColor)
         {
             LightingCalculated = false;
-
-            if(!Manager.ChunkMap.ContainsKey(ID))
+            
+            if(!Manager.ChunkData.ChunkMap.ContainsKey(ID))
             {
                 return;
             }
@@ -1206,7 +1151,7 @@ namespace DwarfCorp
             bool ambientOcclusion = GameSettings.Default.AmbientOcclusion;
             for(int x = 0; x < SizeX; x++)
             {
-                for(int y = 0; y < Math.Min(Manager.MaxViewingLevel + 1, SizeY); y++)
+                for(int y = 0; y < Math.Min(Manager.ChunkData.MaxViewingLevel + 1, SizeY); y++)
                 {
                     for(int z = 0; z < SizeZ; z++)
                     {
@@ -1328,7 +1273,7 @@ namespace DwarfCorp
 
         public bool NeedsViewingLevelChange()
         {
-            float level = Manager.MaxViewingLevel;
+            float level = Manager.ChunkData.MaxViewingLevel;
 
             int mx = SizeX;
             int my = SizeY;
@@ -1342,7 +1287,7 @@ namespace DwarfCorp
                     {
                         float test = 0.0f;
 
-                        switch(Manager.Slice)
+                        switch(Manager.ChunkData.Slice)
                         {
                             case ChunkManager.SliceMode.X:
                                 test = x + Origin.X;
@@ -1372,7 +1317,7 @@ namespace DwarfCorp
 
         public void UpdateMaxViewingLevel()
         {
-            float level = Manager.MaxViewingLevel;
+            float level = Manager.ChunkData.MaxViewingLevel;
 
             int mx = SizeX;
             int my = SizeY;
@@ -1386,7 +1331,7 @@ namespace DwarfCorp
                     {
                         float test = 0.0f;
 
-                        switch(Manager.Slice)
+                        switch(Manager.ChunkData.Slice)
                         {
                             case ChunkManager.SliceMode.X:
                                 test = x + Origin.X;
@@ -1525,12 +1470,12 @@ namespace DwarfCorp
                     }
 
 
-                    if(!Manager.ChunkMap.ContainsKey(chunkID))
+                    if(!Manager.ChunkData.ChunkMap.ContainsKey(chunkID))
                     {
                         continue;
                     }
 
-                    VoxelChunk chunk = Manager.ChunkMap[chunkID];
+                    VoxelChunk chunk = Manager.ChunkData.ChunkMap[chunkID];
                     Voxel n = chunk.VoxelGrid[nx][ny][nz];
 
                     if(n != null)
@@ -1544,7 +1489,7 @@ namespace DwarfCorp
                         newRef.ChunkID = chunk.ID;
                         newRef.GridPosition = new Vector3(nx, ny, nz);
                         newRef.WorldPosition = newRef.GridPosition + chunk.Origin;
-                        newRef.isValid = true;
+                        newRef.IsValid = true;
 
                         toReturn.Add(null);
                     }
@@ -1579,7 +1524,7 @@ namespace DwarfCorp
                             TypeName = "empty",
                             ChunkID = ID,
                             GridPosition = new Vector3(nx, ny, nz),
-                            isValid = true
+                            IsValid = true
                         };
                         newRef.WorldPosition = newRef.GridPosition + Origin;
                         toReturn.Add(newRef);
@@ -1622,12 +1567,12 @@ namespace DwarfCorp
                     }
 
 
-                    if(!Manager.ChunkMap.ContainsKey(chunkID))
+                    if(!Manager.ChunkData.ChunkMap.ContainsKey(chunkID))
                     {
                         continue;
                     }
 
-                    VoxelChunk chunk = Manager.ChunkMap[chunkID];
+                    VoxelChunk chunk = Manager.ChunkData.ChunkMap[chunkID];
                     Voxel n = chunk.VoxelGrid[nx][ny][nz];
 
                     if(n != null)
@@ -1641,7 +1586,7 @@ namespace DwarfCorp
                             TypeName = "empty",
                             ChunkID = chunk.ID,
                             GridPosition = new Vector3(nx, ny, nz),
-                            isValid = true
+                            IsValid = true
                         };
                         newRef.WorldPosition = newRef.GridPosition + chunk.Origin;
 
@@ -1705,7 +1650,7 @@ namespace DwarfCorp
                                 newRef.ChunkID = this.ID;
                                 newRef.GridPosition = new Vector3(nx, ny, nz);
                                 newRef.WorldPosition = newRef.GridPosition + this.Origin;
-                                newRef.isValid = true;
+                                newRef.IsValid = true;
 
                                 toReturn.Add(newRef);
                             }
@@ -1713,7 +1658,7 @@ namespace DwarfCorp
                         else
                         {
                             otherVox.Clear();
-                            Manager.GetVoxelReferencesAtWorldLocation(this, new Vector3(nx, ny, nz) + Origin, otherVox);
+                            Manager.ChunkData.GetVoxelReferencesAtWorldLocation(this, new Vector3(nx, ny, nz) + Origin, otherVox);
 
                             foreach(VoxelRef v in otherVox)
                             {
@@ -1770,7 +1715,7 @@ namespace DwarfCorp
 
 
                         otherVox.Clear();
-                        Manager.GetVoxelReferencesAtWorldLocation(this, new Vector3(nx, ny, nz) + Origin, otherVox);
+                        Manager.ChunkData.GetVoxelReferencesAtWorldLocation(this, new Vector3(nx, ny, nz) + Origin, otherVox);
 
                         foreach(VoxelRef v in otherVox)
                         {
@@ -1866,7 +1811,7 @@ namespace DwarfCorp
 
                         if(GetMovableNeighbors((int) gridCoord.X + dx, (int) gridCoord.Y + dy, (int) gridCoord.Z + dz).Contains(v))
                         {
-                            toReturn.AddRange(Manager.GetVoxelReferencesAtWorldLocation(v.WorldPosition + new Vector3(dx, dy, dz)));
+                            toReturn.AddRange(Manager.ChunkData.GetVoxelReferencesAtWorldLocation(v.WorldPosition + new Vector3(dx, dy, dz)));
                         }
                     }
                 }
@@ -1881,12 +1826,12 @@ namespace DwarfCorp
             Vector3 pos = v.WorldPosition;
             Vector3 gridPos = v.GridPosition;
 
-            if(!Manager.ChunkMap.ContainsKey(v.ChunkID))
+            if(!Manager.ChunkData.ChunkMap.ContainsKey(v.ChunkID))
             {
                 return false;
             }
 
-            VoxelChunk chunk = Manager.ChunkMap[v.ChunkID];
+            VoxelChunk chunk = Manager.ChunkData.ChunkMap[v.ChunkID];
             Point3 gridPoint = new Point3(gridPos);
 
             bool interior = Voxel.IsInteriorPoint(gridPoint, chunk);
@@ -1916,7 +1861,7 @@ namespace DwarfCorp
 
                     if(!IsGridPositionValid(neighbor + gridPos))
                     {
-                        Manager.GetNonNullVoxelsAtWorldLocationCheckFirst(null, pos + neighbor, atPos, 0);
+                        Manager.ChunkData.GetNonNullVoxelsAtWorldLocationCheckFirst(null, pos + neighbor, atPos, 0);
                         if(atPos.Count != 0)
                         {
                             return false;
@@ -1940,13 +1885,13 @@ namespace DwarfCorp
 
         public bool IsCompletelySurrounded(VoxelRef v, bool ramps)
         {
-            if(!Manager.ChunkMap.ContainsKey(v.ChunkID))
+            if(!Manager.ChunkData.ChunkMap.ContainsKey(v.ChunkID))
             {
                 return false;
             }
 
             Vector3 pos = v.WorldPosition;
-            VoxelChunk chunk = Manager.ChunkMap[v.ChunkID];
+            VoxelChunk chunk = Manager.ChunkData.ChunkMap[v.ChunkID];
             Point3 gridPoint = new Point3(v.GridPosition);
             bool interior = Voxel.IsInteriorPoint(gridPoint, chunk);
 
@@ -1972,7 +1917,7 @@ namespace DwarfCorp
                 {
                     Vector3 neighbor = m_manhattanSuccessors[i];
                     atPos.Clear();
-                    Manager.GetNonNullVoxelsAtWorldLocationCheckFirst(chunk, pos + neighbor, atPos, 0);
+                    Manager.ChunkData.GetNonNullVoxelsAtWorldLocationCheckFirst(chunk, pos + neighbor, atPos, 0);
 
                     if(atPos.Count == 0 || (ramps && atPos[0].RampType != RampType.None))
                     {

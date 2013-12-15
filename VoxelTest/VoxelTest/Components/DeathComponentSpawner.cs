@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DwarfCorp
 {
 
+    [JsonObject(IsReference = true)]
     public class DeathComponentSpawner : LocatableComponent
     {
         public List<LocatableComponent> Spawns { get; set; }
@@ -18,10 +21,16 @@ namespace DwarfCorp
         {
             Spawns = spawns;
             ThrowSpeed = 1.0f;
+            AddToOctree = false;
         }
 
         public override void Die()
         {
+            if(IsDead)
+            {
+                return;
+            }
+
             foreach(LocatableComponent locatable in Spawns)
             {
                 locatable.SetVisibleRecursive(true);
@@ -30,11 +39,11 @@ namespace DwarfCorp
                 locatable.WasAddedToOctree = false;
                 locatable.AddToOctree = true;
 
-                if(locatable is PhysicsComponent)
+                var component = locatable as PhysicsComponent;
+                if(component != null)
                 {
-                    Vector3 diff = (locatable.GlobalTransform.Translation - GlobalTransform.Translation);
-                    diff.Normalize();
-                    ((PhysicsComponent) locatable).Velocity += diff * ThrowSpeed;
+                    Vector3 radialThrow = MathFunctions.RandVector3Cube() * ThrowSpeed;
+                    component.Velocity += radialThrow;
                 }
 
                 Manager.AddComponent(locatable);

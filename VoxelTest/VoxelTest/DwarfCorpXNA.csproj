@@ -31,7 +31,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>http://www.dwarfcorp.com/PreAlpha/Builds/</UpdateUrl>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>28</ApplicationRevision>
+    <ApplicationRevision>31</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -112,14 +112,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.5.5.0, Culture=neutral, PublicKeyToken=96bb577564343f16, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Nuclex\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="SlimDX.DirectInput, Version=4.0.10.43, Culture=neutral, PublicKeyToken=96bb577564343f16, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Nuclex\SlimDX.DirectInput.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
@@ -138,39 +130,67 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssetManagement\GameSave\GameFile.cs" />
     <Compile Include="AssetSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>AssetSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="BiomeData.cs" />
-    <Compile Include="BiomeLibrary.cs" />
-    <Compile Include="Combat\Alliance.cs" />
-    <Compile Include="Combat\Weapon.cs" />
-    <Compile Include="Components\Animation.cs" />
-    <Compile Include="Components\BalloonAI.cs" />
-    <Compile Include="Components\BatchBillboard.cs" />
-    <Compile Include="Components\BedComponent.cs" />
-    <Compile Include="Components\BillboardList.cs" />
-    <Compile Include="Components\CharacterSprite.cs" />
-    <Compile Include="Components\Creature.cs" />
-    <Compile Include="Components\Dwarf.cs" />
-    <Compile Include="Components\FlammableComponent.cs" />
-    <Compile Include="Components\Goblin.cs" />
-    <Compile Include="Components\ModelInstanceComponent.cs" />
+    <Compile Include="AssetManagement\GameSave\JsonConverters\RectangleConverter.cs" />
+    <Compile Include="GUI\ToolTipManager.cs" />
+    <Compile Include="Scripting\Player\Designation\Designation.cs" />
+    <Compile Include="Scripting\Player\Designation\RoomBuildDesignation.cs" />
+    <Compile Include="Scripting\Player\Designation\ShipDesignation.cs" />
+    <Compile Include="Scripting\Data\CreatureStats.cs" />
+    <Compile Include="Scripting\Data\CreatureStatus.cs" />
+    <Compile Include="AssetManagement\GameSave\JsonConverters\BoxConverter.cs" />
+    <Compile Include="AssetManagement\GameSave\JsonConverters\MatrixConverter.cs" />
+    <Compile Include="AssetManagement\GameSave\JsonConverters\ContentConverter.cs" />
+    <Compile Include="Scripting\Player\Designation\VoxelBuildDesignation.cs" />
+    <Compile Include="Scripting\Player\Factions\Faction.cs" />
+    <Compile Include="Scripting\Player\Factions\FactionLibrary.cs" />
+    <Compile Include="Scripting\Player\Tools\BuildTool.cs" />
+    <Compile Include="Scripting\Player\Tools\ChopTool.cs" />
+    <Compile Include="Scripting\Player\Tools\DigTool.cs" />
+    <Compile Include="Scripting\Player\Tools\GatherTool.cs" />
+    <Compile Include="Scripting\Player\Tools\GuardTool.cs" />
+    <Compile Include="Scripting\Player\Tools\PlayerTool.cs" />
+    <Compile Include="Scripting\Player\Tools\StockpileTool.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\PutItemInZoneTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\BuildVoxelTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\GatherItemTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\GetItemWithTagsTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\GuardVoxelTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\KillEntityTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\KillVoxelTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\LookInterestingTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\PutItemWithTagTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Task.cs" />
+    <Compile Include="Scripting\Player\Economy\ResourceAmount.cs" />
+    <Compile Include="Voxels\ChunkData.cs" />
+    <Compile Include="World\BiomeData.cs" />
+    <Compile Include="World\BiomeLibrary.cs" />
+    <Compile Include="Scripting\Combat\Alliance.cs" />
+    <Compile Include="Scripting\Combat\Weapon.cs" />
+    <Compile Include="Graphics\Primitives\Animation.cs" />
+    <Compile Include="Components\AI\BalloonAI.cs" />
+    <Compile Include="Components\Graphics\BatchBillboard.cs" />
+    <Compile Include="Components\AI\BedComponent.cs" />
+    <Compile Include="Components\Graphics\BillboardList.cs" />
+    <Compile Include="Components\Graphics\CharacterSprite.cs" />
+    <Compile Include="Components\AI\Creature.cs" />
+    <Compile Include="Components\AI\Dwarf.cs" />
+    <Compile Include="Components\Physics\FlammableComponent.cs" />
+    <Compile Include="Components\AI\Goblin.cs" />
+    <Compile Include="Components\Graphics\ModelInstanceComponent.cs" />
     <Compile Include="ControlSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ControlSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="GameSave\CompanyFile.cs" />
-    <Compile Include="GameSave\EconomyFile.cs" />
-    <Compile Include="GameSave\EntityFile.cs" />
-    <Compile Include="GameSave\FileUtils.cs" />
-    <Compile Include="GameSave\GameFile.cs" />
-    <Compile Include="GameSave\OverworldFile.cs" />
-    <Compile Include="GameSave\PlayerFile.cs" />
-    <Compile Include="GameSave\SaveData.cs" />
+    <Compile Include="AssetManagement\GameSave\FileUtils.cs" />
+    <Compile Include="AssetManagement\GameSave\OverworldFile.cs" />
+    <Compile Include="AssetManagement\GameSave\SaveData.cs" />
     <Compile Include="GameSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -178,183 +198,136 @@
     </Compile>
     <Compile Include="GameStates\CompanyMakerState.cs" />
     <Compile Include="GameStates\GameLoaderState.cs" />
-    <Compile Include="GameStates\PauseMenuState.cs" />
     <Compile Include="GameStates\WorldLoaderState.cs" />
-    <Compile Include="GOAP\Goals\PutItemInZone.cs" />
-    <Compile Include="GUI\ActDisplay.cs" />
-    <Compile Include="GUI\Dialog.cs" />
-    <Compile Include="GUI\DraggableItem.cs" />
-    <Compile Include="GUI\DragGrid.cs" />
+    <Compile Include="GUI\Components\ActDisplay.cs" />
+    <Compile Include="GUI\Components\Dialog.cs" />
+    <Compile Include="GUI\Components\DraggableItem.cs" />
+    <Compile Include="GUI\Components\DragGrid.cs" />
     <Compile Include="GUI\DragManager.cs" />
     <Compile Include="GUI\GItem.cs" />
-    <Compile Include="GUI\ImageFrame.cs" />
+    <Compile Include="Graphics\Drawing\ImageFrame.cs" />
     <Compile Include="GameStates\IntroState.cs" />
     <Compile Include="GameStates\OptionsState.cs" />
     <Compile Include="GameStates\OrderScreen.cs" />
-    <Compile Include="GOAP\Actions\ConstructVoxel.cs" />
-    <Compile Include="GOAP\Goals\MoveToVoxel.cs" />
-    <Compile Include="GOAP\Goals\PutHeldItemOnVoxel.cs" />
-    <Compile Include="GOAP\Goals\BuildVoxel.cs" />
-    <Compile Include="Graphics\FixedInstanceArray.cs" />
-    <Compile Include="Graphics\InstancedVertex.cs" />
-    <Compile Include="Graphics\InstanceList.cs" />
-    <Compile Include="GUI\AIDebugger.cs" />
-    <Compile Include="GUI\AssetManager.cs" />
-    <Compile Include="GUI\ItemSelector.cs" />
-    <Compile Include="GUI\KeyEdit.cs" />
-    <Compile Include="GUI\KeyEditor.cs" />
-    <Compile Include="GUI\ScrollView.cs" />
-    <Compile Include="GUI\SpinBox.cs" />
-    <Compile Include="GUI\TextureLoadDialog.cs" />
-    <Compile Include="Helpers\CollisionManager.cs" />
-    <Compile Include="Helpers\HungarianAlgorithm.cs" />
-    <Compile Include="Helpers\IBoundedObject.cs" />
-    <Compile Include="Helpers\KeyManager.cs" />
-    <Compile Include="Helpers\MinBag.cs" />
-    <Compile Include="Helpers\OctreeNode.cs" />
-    <Compile Include="Helpers\ThreadSafeRandom.cs" />
-    <Compile Include="ModAssets\TextureLoader.cs" />
+    <Compile Include="Graphics\Instancing\FixedInstanceArray.cs" />
+    <Compile Include="Graphics\Instancing\InstancedVertex.cs" />
+    <Compile Include="Graphics\Instancing\InstanceList.cs" />
+    <Compile Include="GUI\Components\AIDebugger.cs" />
+    <Compile Include="GUI\Components\AssetManager.cs" />
+    <Compile Include="GUI\Components\ItemSelector.cs" />
+    <Compile Include="GUI\Components\KeyEdit.cs" />
+    <Compile Include="GUI\Components\KeyEditor.cs" />
+    <Compile Include="GUI\Components\ScrollView.cs" />
+    <Compile Include="GUI\Components\SpinBox.cs" />
+    <Compile Include="GUI\Components\TextureLoadDialog.cs" />
+    <Compile Include="Tools\Datastructures\CollisionManager.cs" />
+    <Compile Include="Tools\Math\HungarianAlgorithm.cs" />
+    <Compile Include="Tools\Datastructures\IBoundedObject.cs" />
+    <Compile Include="Scripting\Player\KeyManager.cs" />
+    <Compile Include="Tools\Datastructures\MinBag.cs" />
+    <Compile Include="Tools\Datastructures\OctreeNode.cs" />
+    <Compile Include="Tools\Datastructures\ThreadSafeRandom.cs" />
+    <Compile Include="AssetManagement\TextureLoader.cs" />
     <Compile Include="LanguageGenerator\TextAtom.cs" />
     <Compile Include="LanguageGenerator\TextGenerator.cs" />
-    <Compile Include="ModAssets\TextureManager.cs" />
+    <Compile Include="AssetManagement\TextureManager.cs" />
     <Compile Include="PlayerSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>PlayerSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="Components\DeathComponentSpawner.cs" />
-    <Compile Include="Components\EmitterComponent.cs" />
-    <Compile Include="Components\EnemySensor.cs" />
-    <Compile Include="Components\FoodComponent.cs" />
-    <Compile Include="Components\InteractiveComponent.cs" />
-    <Compile Include="Components\LightComponent.cs" />
-    <Compile Include="Components\Grabber.cs" />
-    <Compile Include="Components\HealthComponent.cs" />
-    <Compile Include="Components\Message.cs" />
-    <Compile Include="Components\ParticleEmitter.cs" />
-    <Compile Include="Components\Sensor.cs" />
-    <Compile Include="Components\ShadowComponent.cs" />
-    <Compile Include="Components\SinMover.cs" />
-    <Compile Include="Components\TexturedBoxObject.cs" />
-    <Compile Include="Components\TintableComponent.cs" />
+    <Compile Include="Components\Graphics\EmitterComponent.cs" />
+    <Compile Include="Components\AI\EnemySensor.cs" />
+    <Compile Include="Components\AI\FoodComponent.cs" />
+    <Compile Include="Components\AI\InteractiveComponent.cs" />
+    <Compile Include="Components\Graphics\LightComponent.cs" />
+    <Compile Include="Components\AI\Grabber.cs" />
+    <Compile Include="Components\AI\HealthComponent.cs" />
+    <Compile Include="Components\Systems\Message.cs" />
+    <Compile Include="Components\Graphics\ParticleEmitter.cs" />
+    <Compile Include="Components\AI\Sensor.cs" />
+    <Compile Include="Components\Graphics\ShadowComponent.cs" />
+    <Compile Include="Components\Graphics\SinMover.cs" />
+    <Compile Include="Components\Graphics\TexturedBoxObject.cs" />
+    <Compile Include="Components\Graphics\TintableComponent.cs" />
     <Compile Include="GameStates\GameState.cs" />
     <Compile Include="GameStates\GameStateManager.cs" />
     <Compile Include="GameStates\MainMenuState.cs" />
     <Compile Include="GameStates\GUITest.cs" />
     <Compile Include="GameStates\PlayState.cs" />
     <Compile Include="GameStates\WorldGeneratorState.cs" />
-    <Compile Include="GOAP\Action.cs" />
-    <Compile Include="GOAP\Actions\AttackTargetEntity.cs" />
-    <Compile Include="GOAP\Actions\AttackTargetVoxel.cs" />
-    <Compile Include="GOAP\Actions\DropHeldItem.cs" />
-    <Compile Include="GOAP\Actions\EatHeldItem.cs" />
-    <Compile Include="GOAP\Actions\ForgetTargetEntity.cs" />
-    <Compile Include="GOAP\Actions\ForgetTargets.cs" />
-    <Compile Include="GOAP\Actions\ForgetTargetZone.cs" />
-    <Compile Include="GOAP\Actions\GoToTargetEntity.cs" />
-    <Compile Include="GOAP\Actions\GoToTargetVoxel.cs" />
-    <Compile Include="GOAP\Actions\GoToTargetZone.cs" />
-    <Compile Include="GOAP\Actions\Interact.cs" />
-    <Compile Include="GOAP\Actions\LeaveTarget.cs" />
-    <Compile Include="GOAP\Actions\PickupTargetEntity.cs" />
-    <Compile Include="GOAP\Actions\PutHeldObjectInZone.cs" />
-    <Compile Include="GOAP\Actions\SetTargetEntity.cs" />
-    <Compile Include="GOAP\Actions\SetTargetVoxel.cs" />
-    <Compile Include="GOAP\Actions\SetTargetZone.cs" />
-    <Compile Include="GOAP\Actions\Stop.cs" />
-    <Compile Include="GOAP\Actions\Wander.cs" />
-    <Compile Include="GOAP\CompoundGoal.cs" />
-    <Compile Include="GOAP\Goal.cs" />
-    <Compile Include="GOAP\Goals\GatherItem.cs" />
-    <Compile Include="GOAP\Goals\GetItemWithTags.cs" />
-    <Compile Include="GOAP\Goals\GuardVoxel.cs" />
-    <Compile Include="GOAP\Goals\KillEntity.cs" />
-    <Compile Include="GOAP\Goals\KillVoxel.cs" />
-    <Compile Include="GOAP\Goals\LookInteresting.cs" />
-    <Compile Include="GOAP\Goals\MoveToZone.cs" />
-    <Compile Include="GOAP\Goals\PutHeldItemInZone.cs" />
-    <Compile Include="GOAP\Goals\PutItemWithTag.cs" />
-    <Compile Include="GOAP\Goals\SatisfyHunger.cs" />
-    <Compile Include="GOAP\Goals\SatisfySleepiness.cs" />
-    <Compile Include="GOAP\GOAP.cs" />
-    <Compile Include="GOAP\GOAPPlanner.cs" />
-    <Compile Include="GOAP\GOAPStrings.cs" />
-    <Compile Include="GOAP\Items\BedItem.cs" />
-    <Compile Include="GOAP\Items\InteractiveItem.cs" />
     <Compile Include="Scripting\CompoundActs\GoToNamedVoxelAct.cs" />
     <Compile Include="Scripting\CompoundActs\MoveItemAct.cs" />
     <Compile Include="Scripting\LeafActs\PutItemInZoneAct.cs" />
     <Compile Include="Scripting\LeafActs\SetBlackboardData.cs" />
     <Compile Include="Scripting\Symbols\Item.cs" />
     <Compile Include="Scripting\Symbols\TagList.cs" />
-    <Compile Include="GOAP\WorldState.cs" />
     <Compile Include="Scripting\Symbols\VoxelStorage.cs" />
     <Compile Include="Scripting\Symbols\Zone.cs" />
-    <Compile Include="Graphics\BatchBillboardPrimitive.cs" />
-    <Compile Include="Graphics\BloomComponent.cs" />
-    <Compile Include="Graphics\BloomSettings.cs" />
-    <Compile Include="Graphics\Drawer2D.cs" />
-    <Compile Include="Graphics\ExtendedVertex.cs" />
-    <Compile Include="Graphics\PrimitiveLibrary.cs" />
-    <Compile Include="Graphics\LiquidPrimitive.cs" />
-    <Compile Include="Graphics\SkyRenderer.cs" />
-    <Compile Include="GUI\Button.cs" />
-    <Compile Include="GUI\Checkbox.cs" />
-    <Compile Include="GUI\ComboBox.cs" />
-    <Compile Include="GUI\ComboBoxSelector.cs" />
-    <Compile Include="GUI\GridLayout.cs" />
-    <Compile Include="GUI\GroupBox.cs" />
-    <Compile Include="GUI\GUISkin.cs" />
-    <Compile Include="GUI\ImagePanel.cs" />
-    <Compile Include="GUI\Label.cs" />
-    <Compile Include="GUI\Layout.cs" />
-    <Compile Include="GUI\LineEdit.cs" />
-    <Compile Include="GUI\ListSelector.cs" />
-    <Compile Include="GUI\Panel.cs" />
-    <Compile Include="GUI\ProgressBar.cs" />
-    <Compile Include="GUI\SillyGUIComponent.cs" />
-    <Compile Include="GUI\Slider.cs" />
-    <Compile Include="Helpers\Easing.cs" />
-    <Compile Include="Overworld.cs" />
-    <Compile Include="Helpers\PlanService.cs" />
-    <Compile Include="Helpers\AStarPlanner.cs" />
-    <Compile Include="Graphics\BillboardPrimitive.cs" />
-    <Compile Include="Components\BillboardSpriteComponent.cs" />
-    <Compile Include="Helpers\Datastructures.cs" />
-    <Compile Include="Helpers\HelperStates.cs" />
-    <Compile Include="Helpers\LinearMathHelpers.cs" />
-    <Compile Include="Helpers\Octree.cs" />
-    <Compile Include="Helpers\PlanSubscriber.cs" />
-    <Compile Include="Helpers\PriorityQueue.cs" />
-    <Compile Include="Helpers\StateMachine.cs" />
-    <Compile Include="Helpers\VertexNoise.cs" />
-    <Compile Include="InputManager.cs" />
+    <Compile Include="Graphics\Primitives\BatchBillboardPrimitive.cs" />
+    <Compile Include="Graphics\Effects\BloomComponent.cs" />
+    <Compile Include="Graphics\Effects\BloomSettings.cs" />
+    <Compile Include="Graphics\Drawing\Drawer2D.cs" />
+    <Compile Include="Graphics\Primitives\ExtendedVertex.cs" />
+    <Compile Include="Graphics\Primitives\PrimitiveLibrary.cs" />
+    <Compile Include="Graphics\Primitives\LiquidPrimitive.cs" />
+    <Compile Include="Graphics\Effects\SkyRenderer.cs" />
+    <Compile Include="GUI\Components\Button.cs" />
+    <Compile Include="GUI\Components\Checkbox.cs" />
+    <Compile Include="GUI\Components\ComboBox.cs" />
+    <Compile Include="GUI\Components\ComboBoxSelector.cs" />
+    <Compile Include="GUI\Layouts\GridLayout.cs" />
+    <Compile Include="GUI\Components\GroupBox.cs" />
+    <Compile Include="GUI\Skins\GUISkin.cs" />
+    <Compile Include="GUI\Components\ImagePanel.cs" />
+    <Compile Include="GUI\Components\Label.cs" />
+    <Compile Include="GUI\Layouts\Layout.cs" />
+    <Compile Include="GUI\Components\LineEdit.cs" />
+    <Compile Include="GUI\Components\ListSelector.cs" />
+    <Compile Include="GUI\Components\Panel.cs" />
+    <Compile Include="GUI\Components\ProgressBar.cs" />
+    <Compile Include="GUI\GUIComponent.cs" />
+    <Compile Include="GUI\Components\Slider.cs" />
+    <Compile Include="Tools\Math\Easing.cs" />
+    <Compile Include="World\Overworld.cs" />
+    <Compile Include="Tools\Planning\PlanService.cs" />
+    <Compile Include="Tools\Planning\AStarPlanner.cs" />
+    <Compile Include="Graphics\Primitives\BillboardPrimitive.cs" />
+    <Compile Include="Components\Graphics\BillboardSpriteComponent.cs" />
+    <Compile Include="Tools\Datastructures\Datastructures.cs" />
+    <Compile Include="Tools\Math\MathFunctions.cs" />
+    <Compile Include="Tools\Datastructures\Octree.cs" />
+    <Compile Include="Tools\Planning\PlanSubscriber.cs" />
+    <Compile Include="Tools\Datastructures\PriorityQueue.cs" />
+    <Compile Include="Tools\Graphics\VertexNoise.cs" />
+    <Compile Include="Scripting\Player\InputManager.cs" />
     <Compile Include="LanguageGenerator\Language.cs" />
-    <Compile Include="ParticleManager.cs" />
-    <Compile Include="Player\Camera.cs" />
-    <Compile Include="Player\Economy.cs" />
-    <Compile Include="Player\GameCycle.cs" />
-    <Compile Include="Player\GodModeController.cs" />
-    <Compile Include="Player\PutDesignator.cs" />
-    <Compile Include="Scripting\Symbols\Resource.cs" />
-    <Compile Include="Player\ResourceLibrary.cs" />
-    <Compile Include="Player\RoomDesignator.cs" />
+    <Compile Include="Graphics\Effects\ParticleManager.cs" />
+    <Compile Include="Graphics\Cameras\Camera.cs" />
+    <Compile Include="Scripting\Player\Economy\Economy.cs" />
+    <Compile Include="Scripting\Player\Economy\GameCycle.cs" />
+    <Compile Include="Scripting\Player\Tools\GodModeTool.cs" />
+    <Compile Include="Scripting\Player\Designation\PutDesignator.cs" />
+    <Compile Include="Scripting\Player\Economy\Resource.cs" />
+    <Compile Include="Scripting\Player\Economy\ResourceLibrary.cs" />
+    <Compile Include="Scripting\Player\Designation\RoomDesignator.cs" />
     <Compile Include="Scripting\Symbols\Rooms\RoomLibrary.cs" />
     <Compile Include="Scripting\Symbols\Rooms\RoomTemplate.cs" />
     <Compile Include="Scripting\Symbols\Rooms\RoomType.cs" />
-    <Compile Include="Player\ShipmentOrder.cs" />
+    <Compile Include="Scripting\Player\Economy\ShipmentOrder.cs" />
     <Compile Include="Scripting\Symbols\Stockpile.cs" />
-    <Compile Include="GUI\Toolbar.cs" />
-    <Compile Include="Scripting\ActData.cs" />
-    <Compile Include="Scripting\Blackboard.cs" />
+    <Compile Include="GUI\Components\Toolbar.cs" />
+    <Compile Include="Scripting\Data\ActData.cs" />
+    <Compile Include="Scripting\Data\Blackboard.cs" />
     <Compile Include="Scripting\CompoundActs\BuildVoxelAct.cs" />
     <Compile Include="Scripting\CompoundActs\PutTaggedRoomItemAct.cs" />
     <Compile Include="Scripting\CompoundActs\GetItemWithTagsAct.cs" />
     <Compile Include="Scripting\CompoundActs\GuardVoxelAct.cs" />
     <Compile Include="Scripting\LeafActs\ClearBlackboardData.cs" />
     <Compile Include="Scripting\LeafActs\GetNearestFreeVoxelInZone.cs" />
-    <Compile Include="Scripting\TaskManager.cs" />
-    <Compile Include="Player\VoxelSelector.cs" />
+    <Compile Include="Scripting\TaskManagement\TaskManager.cs" />
+    <Compile Include="Scripting\Player\VoxelSelector.cs" />
     <Compile Include="Scripting\Act.cs" />
     <Compile Include="Scripting\CompoundActs\GatherItemAct.cs" />
     <Compile Include="Scripting\CompoundActs\GoToEntityAct.cs" />
@@ -378,49 +351,48 @@
     <Compile Include="Scripting\LeafActs\SetTargetVoxelFromEntityAct.cs" />
     <Compile Include="Scripting\LeafActs\StopAct.cs" />
     <Compile Include="Scripting\LeafActs\WanderAct.cs" />
-    <Compile Include="Scripting\CompoundAct.cs" />
-    <Compile Include="Scripting\Condition.cs" />
-    <Compile Include="Scripting\ForLoop.cs" />
-    <Compile Include="Scripting\Not.cs" />
-    <Compile Include="Scripting\Parallel.cs" />
-    <Compile Include="Scripting\Select.cs" />
-    <Compile Include="Scripting\Sequence.cs" />
+    <Compile Include="Scripting\CompoundActs\CompoundAct.cs" />
+    <Compile Include="Scripting\ControlFlow\Condition.cs" />
+    <Compile Include="Scripting\ControlFlow\ForLoop.cs" />
+    <Compile Include="Scripting\ControlFlow\Not.cs" />
+    <Compile Include="Scripting\ControlFlow\Parallel.cs" />
+    <Compile Include="Scripting\ControlFlow\Select.cs" />
+    <Compile Include="Scripting\ControlFlow\Sequence.cs" />
     <Compile Include="Scripting\TestBehaviors.cs" />
-    <Compile Include="Scripting\Wait.cs" />
-    <Compile Include="Scripting\WhileLoop.cs" />
-    <Compile Include="Scripting\Wrap.cs" />
-    <Compile Include="SerializableDictionary.cs" />
+    <Compile Include="Scripting\ControlFlow\Wait.cs" />
+    <Compile Include="Scripting\ControlFlow\WhileLoop.cs" />
+    <Compile Include="Scripting\ControlFlow\Wrap.cs" />
     <Compile Include="Sound\SoundManager.cs" />
-    <Compile Include="GameSave\ChunkFile.cs" />
+    <Compile Include="AssetManagement\GameSave\ChunkFile.cs" />
     <Compile Include="Voxels\ChunkGenerator.cs" />
     <Compile Include="Voxels\ChunkManager.cs" />
-    <Compile Include="Helpers\ColorGradient.cs" />
-    <Compile Include="Components\ComponentManager.cs" />
-    <Compile Include="Graphics\BoxPrimitive.cs" />
-    <Compile Include="Components\CreatureAIComponent.cs" />
-    <Compile Include="Components\EntityFactory.cs" />
+    <Compile Include="Tools\Graphics\ColorGradient.cs" />
+    <Compile Include="Components\Systems\ComponentManager.cs" />
+    <Compile Include="Graphics\Primitives\BoxPrimitive.cs" />
+    <Compile Include="Components\AI\CreatureAIComponent.cs" />
+    <Compile Include="Components\Systems\EntityFactory.cs" />
     <Compile Include="Components\GameComponent.cs" />
-    <Compile Include="Player\GameMaster.cs" />
-    <Compile Include="Graphics\GeometricPrimitive.cs" />
+    <Compile Include="Scripting\Player\GameMaster.cs" />
+    <Compile Include="Graphics\Primitives\GeometricPrimitive.cs" />
     <Compile Include="Components\LocatableComponent.cs" />
-    <Compile Include="Player\OrbitCamera.cs" />
-    <Compile Include="Components\OrientedAnimation.cs" />
-    <Compile Include="Helpers\Perlin.cs" />
-    <Compile Include="Components\PhysicsComponent.cs" />
-    <Compile Include="Helpers\PIDController.cs" />
+    <Compile Include="Graphics\Cameras\OrbitCamera.cs" />
+    <Compile Include="Components\Graphics\OrientedAnimation.cs" />
+    <Compile Include="Tools\Math\Perlin.cs" />
+    <Compile Include="Components\Physics\PhysicsComponent.cs" />
+    <Compile Include="Tools\Math\PIDController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="DwarfGame.cs" />
     <Compile Include="Scripting\Symbols\Rooms\Room.cs" />
-    <Compile Include="GUI\SillyGUI.cs" />
-    <Compile Include="Graphics\SimpleDrawing.cs" />
-    <Compile Include="Helpers\Timer.cs" />
+    <Compile Include="GUI\DwarfGUI.cs" />
+    <Compile Include="Graphics\Drawing\SimpleDrawing.cs" />
+    <Compile Include="Tools\Timer.cs" />
     <Compile Include="Voxels\DynamicLight.cs" />
-    <Compile Include="Voxels\Point3.cs" />
+    <Compile Include="Tools\Math\Point3.cs" />
     <Compile Include="Voxels\Voxel.cs" />
     <Compile Include="Voxels\VoxelChunk.cs" />
     <Compile Include="Voxels\VoxelLibrary.cs" />
-    <Compile Include="Graphics\VoxelListPrimitive.cs" />
+    <Compile Include="Graphics\Primitives\VoxelListPrimitive.cs" />
     <Compile Include="Voxels\WaterManager.cs" />
     <Compile Include="Voxels\WaterRenderer.cs" />
   </ItemGroup>
@@ -465,7 +437,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Graphics\InstanceManager.cs" />
+    <Compile Include="Graphics\Instancing\InstanceManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

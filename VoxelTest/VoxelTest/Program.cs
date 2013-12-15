@@ -7,7 +7,8 @@ namespace DwarfCorp
 #if WINDOWS || XBOX
     internal static class Program
     {
-        public static string Version = "1 . 0 . 27";
+        public static string Version = "1 . 0 . 29";
+        public static char DirChar = System.IO.Path.DirectorySeparatorChar;
 
         /// <summary>
         /// The main entry point for the application.
@@ -22,12 +23,12 @@ namespace DwarfCorp
             SignalShutdown();
         }
 
-        public static ManualResetEvent shutdownEvent = new ManualResetEvent(false);
+        public static ManualResetEvent ShutdownEvent = new ManualResetEvent(false);
 
         private static void SignalShutdown()
         {
             DwarfGame.ExitGame = true;
-            shutdownEvent.Set();
+            ShutdownEvent.Set();
         }
 
         public static T[] SubArray<T>(this T[] data, int index, int length)

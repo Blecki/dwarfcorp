@@ -23,7 +23,7 @@ namespace DwarfCorp
 
         public void Destroy()
         {
-            VoxelChunk chunk = Chunks.ChunkMap[Voxel.ChunkID];
+            VoxelChunk chunk = Chunks.ChunkData.ChunkMap[Voxel.ChunkID];
             chunk.DynamicLights.Remove(this);
             Chunks.DynamicLights.Remove(this);
             foreach(VoxelChunk neighbor in chunk.Neighbors.Values)

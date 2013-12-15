@@ -17,7 +17,7 @@ namespace DwarfCorp
     public class MainMenuState : GameState
     {
         public Texture2D Logo { get; set; }
-        public SillyGUI GUI { get; set; }
+        public DwarfGUI GUI { get; set; }
         public SpriteFont DefaultFont { get; set; }
         public ListSelector ListSelect { get; set; }
         public Drawer2D Drawer { get; set; }
@@ -37,23 +37,23 @@ namespace DwarfCorp
 
             if(IsGameRunning)
             {
-                ListSelect.AddItem("Continue Game");
+                ListSelect.AddItem("Continue Game", "Keep playing DwarfCorp");
             }
 
-            ListSelect.AddItem("New Game");
-            ListSelect.AddItem("Load Game");
-            ListSelect.AddItem("Options");
-            ListSelect.AddItem("Quit");
+            ListSelect.AddItem("New Game", "Start a new game of DwarfCorp.");
+            ListSelect.AddItem("Load Game", "Load DwarfCorp game from a file.");
+            ListSelect.AddItem("Options", "Change game settings.");
+            ListSelect.AddItem("Quit", "Exit the game.");
         }
 
         public void PlayItems()
         {
             ListSelect.ClearItems();
-            ListSelect.AddItem("Load World");
-            ListSelect.AddItem("Generate World");
-            ListSelect.AddItem("Flat World");
-            ListSelect.AddItem("Create Company");
-            ListSelect.AddItem("Back");
+            ListSelect.AddItem("Load World", "Load a continent from an existing file!");
+            ListSelect.AddItem("Generate World", "Create a new world from scratch!");
+            ListSelect.AddItem("Flat World", "Create a flat (Debug) world.");
+            ListSelect.AddItem("Create Company", "Customize your own Dwarf Corporation!");
+            ListSelect.AddItem("Back", "Back to the Main Menu");
         }
 
         public void OnItemClicked(ListItem item)
@@ -107,9 +107,9 @@ namespace DwarfCorp
         public override void OnEnter()
         {
             DefaultFont = Game.Content.Load<SpriteFont>("Default");
-            GUI = new SillyGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
+            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
             IsInitialized = true;
-            Logo = Game.Content.Load<Texture2D>("banner3");
+            Logo = TextureManager.GetTexture("banner3");
 
             ListSelect = new ListSelector(GUI, GUI.RootComponent)
             {

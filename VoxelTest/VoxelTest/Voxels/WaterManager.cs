@@ -118,15 +118,15 @@ namespace DwarfCorp
 
                 if(transfer.cellFrom.Type == LiquidType.Lava && transfer.cellTo.Type == LiquidType.Water || (transfer.cellFrom.Type == LiquidType.Water && transfer.cellTo.Type == LiquidType.Lava))
                 {
-                    List<VoxelRef> atPos = Chunks.GetVoxelReferencesAtWorldLocation(transfer.worldLocation);
+                    List<VoxelRef> atPos = Chunks.ChunkData.GetVoxelReferencesAtWorldLocation(transfer.worldLocation);
 
                     if(atPos.Count > 0)
                     {
                         VoxelRef v = atPos[0];
 
-                        VoxelChunk chunk = Chunks.ChunkMap[v.ChunkID];
+                        VoxelChunk chunk = Chunks.ChunkData.ChunkMap[v.ChunkID];
                         chunk.VoxelGrid[(int) v.GridPosition.X][(int) v.GridPosition.Y][(int) v.GridPosition.Z] = new Voxel(v.WorldPosition, VoxelLibrary.GetVoxelType("Stone"), VoxelLibrary.GetPrimitive("Stone"), true);
-                        chunk.VoxelGrid[(int) v.GridPosition.X][(int) v.GridPosition.Y][(int) v.GridPosition.Z].Chunk = Chunks.ChunkMap[v.ChunkID];
+                        chunk.VoxelGrid[(int) v.GridPosition.X][(int) v.GridPosition.Y][(int) v.GridPosition.Z].Chunk = Chunks.ChunkData.ChunkMap[v.ChunkID];
                         chunk.Water[(int) v.GridPosition.X][(int) v.GridPosition.Y][(int) v.GridPosition.Z].Type = LiquidType.None;
                         chunk.Water[(int) v.GridPosition.X][(int) v.GridPosition.Y][(int) v.GridPosition.Z].WaterLevel = 0;
                         chunk.ShouldRebuild = true;
@@ -182,7 +182,7 @@ namespace DwarfCorp
                 return;
             }
 
-            List<VoxelChunk> chunksToUpdate = Chunks.ChunkMap.Select(chunks => chunks.Value).ToList();
+            List<VoxelChunk> chunksToUpdate = Chunks.ChunkData.ChunkMap.Select(chunks => chunks.Value).ToList();
 
             chunksToUpdate.Sort(Chunks.CompareChunkDistance);
 
@@ -338,13 +338,13 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    if(chunk.Manager.DoesWaterCellExist(worldPos))
+                    if(chunk.Manager.ChunkData.DoesWaterCellExist(worldPos))
                     {
-                        chunk.Manager.GetVoxelReferencesAtWorldLocation(chunk, worldPos + new Vector3(0, -1, 0), voxelsBelow);
+                        chunk.Manager.ChunkData.GetVoxelReferencesAtWorldLocation(chunk, worldPos + new Vector3(0, -1, 0), voxelsBelow);
 
                         if(voxelsBelow.Count > 0 && voxelsBelow[0].TypeName == "empty")
                         {
-                            cellBelow = chunk.Manager.GetWaterCellAtLocation(worldPos + new Vector3(0, -1, 0));
+                            cellBelow = chunk.Manager.ChunkData.GetWaterCellAtLocation(worldPos + new Vector3(0, -1, 0));
                             shouldFall = true;
                             cellBelow.IsFalling = true;
                         }
@@ -423,7 +423,7 @@ namespace DwarfCorp
                 foreach(Vector3 spread in m_spreadNeighbors)
                 {
                     neighbors.Clear();
-                    chunk.Manager.GetVoxelReferencesAtWorldLocation(chunk, worldPos + spread, neighbors);
+                    chunk.Manager.ChunkData.GetVoxelReferencesAtWorldLocation(chunk, worldPos + spread, neighbors);
 
                     if(neighbors.Count > 0)
                     {
@@ -459,8 +459,8 @@ namespace DwarfCorp
                                     neighborWater.Type = cell.Type;
                                 }
 
-                                cell.FluidFlow = spread + LinearMathHelpers.RandVector3Cube() * 0.5f;
-                                neighborWater.FluidFlow = spread + LinearMathHelpers.RandVector3Cube() * 0.5f;
+                                cell.FluidFlow = spread + MathFunctions.RandVector3Cube() * 0.5f;
+                                neighborWater.FluidFlow = spread + MathFunctions.RandVector3Cube() * 0.5f;
                                 cell.HasChanged = true;
                                 neighborWater.HasChanged = true;
 

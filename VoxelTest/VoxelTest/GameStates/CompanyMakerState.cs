@@ -15,7 +15,7 @@ namespace DwarfCorp
 
     public class CompanyMakerState : GameState
     {
-        public SillyGUI GUI { get; set; }
+        public DwarfGUI GUI { get; set; }
         public SpriteFont DefaultFont { get; set; }
         public Drawer2D Drawer { get; set; }
         public Panel MainWindow { get; set; }
@@ -51,7 +51,7 @@ namespace DwarfCorp
         {
             IsInitialized = true;
             DefaultFont = Game.Content.Load<SpriteFont>("Default");
-            GUI = new SillyGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
+            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
             MainWindow = new Panel(GUI, GUI.RootComponent)
             {
                 LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2)
@@ -67,7 +67,10 @@ namespace DwarfCorp
             CompanyNameEdit = new LineEdit(GUI, Layout, CompanyName);
             Layout.SetComponentPosition(CompanyNameEdit, 1, 1, 1, 1);
 
-            Button randomButton = new Button(GUI, Layout, "Random", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
+            Button randomButton = new Button(GUI, Layout, "Random", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
+            {
+                ToolTip = "Randomly generate a motto"
+            };
             Layout.SetComponentPosition(randomButton, 2, 1, 1, 1);
             randomButton.OnClicked += randomButton_OnClicked;
 
@@ -80,7 +83,10 @@ namespace DwarfCorp
 
             CompanyNameEdit.OnTextModified += companyNameEdit_OnTextModified;
 
-            Button randomButton2 = new Button(GUI, Layout, "Random", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
+            Button randomButton2 = new Button(GUI, Layout, "Random", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
+            {
+                ToolTip = "Randomly generate a name"
+            };
             Layout.SetComponentPosition(randomButton2, 2, 2, 1, 1);
             randomButton2.OnClicked += randomButton2_OnClicked;
 
@@ -94,7 +100,10 @@ namespace DwarfCorp
             Layout.SetComponentPosition(CompanyLogoPanel, 1, 3, 1, 1);
 
 
-            Button selectorButton = new Button(GUI, Layout, "Select", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
+            Button selectorButton = new Button(GUI, Layout, "Select", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
+            {
+                ToolTip = "Load a custom company logo"
+            };
             Layout.SetComponentPosition(selectorButton, 2, 3, 1, 1);
             selectorButton.OnClicked += selectorButton_OnClicked;
 
@@ -103,12 +112,12 @@ namespace DwarfCorp
             Loader.OnTextureSelected += Loader_OnTextureSelected;
             Loader.IsVisible = false;
 
-            Button apply = new Button(GUI, Layout, "Apply", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Check));
+            Button apply = new Button(GUI, Layout, "Apply", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Check));
             Layout.SetComponentPosition(apply, 2, 9, 1, 1);
 
             apply.OnClicked += apply_OnClicked;
 
-            Button back = new Button(GUI, Layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.LeftArrow));
+            Button back = new Button(GUI, Layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.LeftArrow));
             Layout.SetComponentPosition(back, 3, 9, 1, 1);
 
             back.OnClicked += back_onClicked;

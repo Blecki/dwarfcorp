@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class SetTargetVoxelFromEntityAct : CreatureAct
     {
         public string VoxelOutName { get; set; }
@@ -25,7 +25,7 @@ namespace DwarfCorp
             }
             else
             {
-                Voxel voxel = Creature.Chunks.GetFirstVisibleBlockUnder(Agent.TargetComponent.GlobalTransform.Translation, false);
+                Voxel voxel = Creature.Chunks.ChunkData.GetFirstVisibleBlockUnder(Agent.TargetComponent.GlobalTransform.Translation, false);
                 if(voxel == null)
                 {
                     yield return Status.Fail;

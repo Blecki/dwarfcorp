@@ -18,7 +18,7 @@ namespace DwarfCorp
         public SoundEffectInstance EffectInstance;
         public Vector3 Position;
         public bool HasStarted;
-        public string name;
+        public string Name;
     }
 
     public class SoundManager
@@ -91,12 +91,14 @@ namespace DwarfCorp
                 }
 
 
-                Sound3D sound = new Sound3D();
-                sound.Position = location;
-                sound.EffectInstance = effect.CreateInstance();
+                Sound3D sound = new Sound3D
+                {
+                    Position = location,
+                    EffectInstance = effect.CreateInstance(),
+                    HasStarted = false,
+                    Name = name
+                };
                 sound.EffectInstance.IsLooped = false;
-                sound.HasStarted = false;
-                sound.name = name;
 
                 if(randomPitch)
                 {
@@ -149,7 +151,7 @@ namespace DwarfCorp
                 {
                     instance.EffectInstance.Dispose();
                     toRemove.Add(instance);
-                    SoundCounts[instance.name]--;
+                    SoundCounts[instance.Name]--;
                 }
                 else if(!instance.HasStarted)
                 {

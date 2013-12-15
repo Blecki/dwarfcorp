@@ -56,7 +56,7 @@ namespace DwarfCorp
 
         public void SetType(ChunkManager chunks, VoxelType type)
         {
-            Voxel vox = Voxel.GetVoxel(chunks, false);
+            Voxel vox = Voxel.GetVoxel(false);
 
             if(vox == null)
             {
@@ -70,7 +70,7 @@ namespace DwarfCorp
 
         public void RevertType(ChunkManager chunks)
         {
-            Voxel vox = Voxel.GetVoxel(chunks, false);
+            Voxel vox = Voxel.GetVoxel(false);
 
             if(vox == null)
             {

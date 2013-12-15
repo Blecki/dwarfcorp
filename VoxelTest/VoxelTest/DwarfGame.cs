@@ -44,7 +44,7 @@ namespace DwarfCorp
 
         public static string GetGameDirectory()
         {
-            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "DwarfCorp";
+            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Program.DirChar + "DwarfCorp";
         }
 
         protected override void Initialize()

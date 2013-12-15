@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class PlanAct : CreatureAct
     {
         public Timer PlannerTimer { get; set; }
@@ -22,6 +22,11 @@ namespace DwarfCorp
         public PlanSubscriber PlanSubscriber { get; set; }
 
         private bool WaitingOnResponse { get; set; }
+
+        public PlanAct()
+        {
+
+        }
 
         public PlanAct(CreatureAIComponent agent, string pathOut, string target) :
             base(agent)
@@ -68,10 +73,10 @@ namespace DwarfCorp
 
                 PlannerTimer.Update(LastTime);
 
-                ChunkManager chunks = Agent.Creature.Master.Chunks;
+                ChunkManager chunks = PlayState.ChunkManager;
                 if(PlannerTimer.HasTriggered)
                 {
-                    Voxel vox = chunks.GetFirstVisibleBlockUnder(Agent.Position, true);
+                    Voxel vox = chunks.ChunkData.GetFirstVisibleBlockUnder(Agent.Position, true);
 
                     if(vox == null)
                     {
@@ -80,7 +85,7 @@ namespace DwarfCorp
                     }
 
                     List<VoxelRef> voxAbove = new List<VoxelRef>();
-                    chunks.GetVoxelReferencesAtWorldLocation(null, vox.Position + new Vector3(0, 1, 0), voxAbove);
+                    chunks.ChunkData.GetVoxelReferencesAtWorldLocation(null, vox.Position + new Vector3(0, 1, 0), voxAbove);
 
 
                     if(Target == null)
@@ -95,11 +100,11 @@ namespace DwarfCorp
 
                         PlanService.AstarPlanRequest aspr = new PlanService.AstarPlanRequest
                         {
-                            subscriber = PlanSubscriber,
-                            start = voxAbove[0],
-                            goal = Target,
-                            maxExpansions = MaxExpansions,
-                            sender = Agent
+                            Subscriber = PlanSubscriber,
+                            Start = voxAbove[0],
+                            Goal = Target,
+                            MaxExpansions = MaxExpansions,
+                            Sender = Agent
                         };
 
                         PlanSubscriber.SendRequest(aspr);
@@ -116,9 +121,9 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    foreach(PlanService.AStarPlanResponse response in PlanSubscriber.AStarPlans.Where(response => response.success))
+                    foreach(PlanService.AStarPlanResponse response in PlanSubscriber.AStarPlans.Where(response => response.Success))
                     {
-                        Path = response.path;
+                        Path = response.Path;
                         WaitingOnResponse = false;
                     }
 

@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class FollowPathAct : CreatureAct
     {
         private string PathName { get; set; }
@@ -30,13 +30,10 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            bool pathFinished = false;
-
             while(true)
             {
                 List<VoxelRef> path = GetPath();
 
-                ChunkManager chunks = Agent.Creature.Master.Chunks;
                 if(path == null)
                 {
                     SetPath(null);
@@ -71,7 +68,7 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        Agent.Creature.LocalTarget = LinearMathHelpers.ClosestPointToLineSegment(Agent.Position,
+                        Agent.Creature.LocalTarget = MathFunctions.ClosestPointToLineSegment(Agent.Position,
                             Agent.PreviousTargetVoxel.WorldPosition,
                             Agent.TargetVoxel.WorldPosition, 0.25f) + new Vector3(0.5f, 0.5f, 0.5f);
                     }
@@ -110,7 +107,6 @@ namespace DwarfCorp
                             Agent.PreviousTargetVoxel = null;
                             SetPath(null);
                             yield return Status.Success;
-                            pathFinished = true;
                             break;
                         }
                     }

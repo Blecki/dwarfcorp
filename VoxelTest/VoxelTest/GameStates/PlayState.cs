@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.Design.Serialization;
+using System.IO;
 using System.Linq;
 using System.Text;
+using BloomPostprocess;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -55,7 +60,7 @@ namespace DwarfCorp
         public bool DrawMap = false;
         public Texture2D Tilesheet;
         public static Effect DefaultShader;
-        public static OrbitCamera camera;
+        public static OrbitCamera Camera;
 
         public int MultiSamples
         {
@@ -69,18 +74,19 @@ namespace DwarfCorp
         public static VoxelLibrary VoxelLibrary = null;
         public static ChunkGenerator ChunkGenerator = null;
         public static ComponentManager ComponentManager = null;
+
         public static GameMaster Master = null;
 
         public string ExistingFile = "";
 
-        public SillyGUI GUI = null;
+        public static DwarfGUI GUI = null;
 
         private Texture2D pixel = null;
 
         private Drawer2D drawer2D = null;
 
         private PrimitiveLibrary primitiveLibrary = null;
-        private BloomPostprocess.BloomComponent bloom;
+        private BloomComponent bloom;
 
         private Effect shader;
         private WaterRenderer waterRenderer;
@@ -100,8 +106,6 @@ namespace DwarfCorp
         public Thread LoadingThread { get; set; }
 
         public string LoadingMessage = "";
-
-        public static ParticleManager ParticleManager;
 
         public static bool Paused { get; set; }
 
@@ -125,6 +129,11 @@ namespace DwarfCorp
 
         public Slider LevelSlider { get; set; }
 
+        public static ParticleManager ParticleManager { get { return ComponentManager.ParticleManager; } set { ComponentManager.ParticleManager = value; } }
+
+
+        public static FactionLibrary FactionLibrary = new FactionLibrary();
+
         public PlayState(DwarfGame game, GameStateManager stateManager) :
             base(game, "PlayState", stateManager)
         {
@@ -140,7 +149,6 @@ namespace DwarfCorp
 
         public override void OnEnter()
         {
-            isExiting = false;
             if(ShouldReset)
             {
                 PreSimulateTimer.Reset(3);
@@ -199,25 +207,25 @@ namespace DwarfCorp
 
         public void CreateInitialDwarves(int numDwarves, VoxelChunk c)
         {
-            Vector3 g = c.WorldToGrid(camera.Position);
+            Vector3 g = c.WorldToGrid(Camera.Position);
             float h = c.GetFilledVoxelGridHeightAt((int) g.X, ChunkHeight - 1, (int) g.Z);
 
 
-            camera.UpdateBasisVectors();
-            camera.UpdateProjectionMatrix();
-            camera.UpdateViewMatrix();
+            Camera.UpdateBasisVectors();
+            Camera.UpdateProjectionMatrix();
+            Camera.UpdateViewMatrix();
 
             for(int i = 0; i < numDwarves; i++)
             {
-                Vector3 dorfPos = new Vector3(camera.Position.X + (float) Random.NextDouble(), h + 10, camera.Position.Z + (float) Random.NextDouble());
+                Vector3 dorfPos = new Vector3(Camera.Position.X + (float) Random.NextDouble(), h + 10, Camera.Position.Z + (float) Random.NextDouble());
                 PhysicsComponent creat = (PhysicsComponent) EntityFactory.GenerateDwarf(dorfPos,
-                    ComponentManager, Content, GraphicsDevice, ChunkManager, camera, Master, PlanService, "Dwarf");
+                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, FactionLibrary.Factions["Player"], PlanService, "Dwarf");
 
                 creat.Velocity = new Vector3(1, 0, 0);
             }
 
-            camera.Target = new Vector3(camera.Position.X, h + 10, camera.Position.Z + 10);
-            camera.Phi = -(float) Math.PI * 0.3f;
+            Camera.Target = new Vector3(Camera.Position.X, h + 10, Camera.Position.Z + 10);
+            Camera.Phi = -(float) Math.PI * 0.3f;
         }
 
         public void InitializeStaticData()
@@ -241,11 +249,11 @@ namespace DwarfCorp
             VoxelLibrary = new VoxelLibrary();
             VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice, Tilesheet);
 
-            LocatableComponent.CollisionManager = new CollisionManager(new BoundingBox(new Vector3(-1000, -1000, -1000), new Vector3(1000, 1000, 1000)));
 
-            bloom = new BloomPostprocess.BloomComponent(Game)
+
+            bloom = new BloomComponent(Game)
             {
-                Settings = BloomPostprocess.BloomSettings.PresetSettings[5]
+                Settings = BloomSettings.PresetSettings[5]
             };
             bloom.Initialize();
 
@@ -255,6 +263,7 @@ namespace DwarfCorp
 
             ComponentManager = new ComponentManager();
             ComponentManager.RootComponent = new LocatableComponent(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero, false);
+            ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(new Vector3(-1000, -1000, -1000), new Vector3(1000, 1000, 1000)));
 
             Alliance.Relationships = Alliance.InitializeRelationships();
         }
@@ -270,15 +279,17 @@ namespace DwarfCorp
                 LoadingMessage = "Loading " + ExistingFile;
                 gameFile = new GameFile(ExistingFile, true);
                 Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
-                PlayState.WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
-                PlayState.WorldScale = gameFile.Data.Metadata.WorldScale;
+                WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
+                WorldScale = gameFile.Data.Metadata.WorldScale;
                 ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
                 ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
 
                 if(gameFile.Data.Metadata.OverworldFile != null && gameFile.Data.Metadata.OverworldFile != "flat")
                 {
                     LoadingMessage = "Loading world " + gameFile.Data.Metadata.OverworldFile;
-                    OverworldFile overWorldFile = new OverworldFile(DwarfGame.GetGameDirectory() + System.IO.Path.DirectorySeparatorChar + "Worlds" + System.IO.Path.DirectorySeparatorChar + gameFile.Data.Metadata.OverworldFile + "." + OverworldFile.CompressedExtension, true);
+                    Overworld.Name = gameFile.Data.Metadata.OverworldFile;
+                    DirectoryInfo worldDirectory = Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Program.DirChar + "Worlds" + Program.DirChar + Overworld.Name);
+                    OverworldFile overWorldFile = new OverworldFile(worldDirectory.FullName + Program.DirChar +  "world." + OverworldFile.CompressedExtension, true);
                     Overworld.Map = overWorldFile.Data.CreateMap();
                     Overworld.Name = overWorldFile.Data.Name;
                     WorldWidth = Overworld.Map.GetLength(1);
@@ -292,37 +303,29 @@ namespace DwarfCorp
 
             }
 
-            ChunkGenerator = new ChunkGenerator(VoxelLibrary, PlayState.Seed, 0.02f, ChunkHeight / 2.0f);
+            ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f, ChunkHeight / 2.0f);
 
-            Vector3 globalOffset = new Vector3(PlayState.WorldOrigin.X, 0, PlayState.WorldOrigin.Y) * PlayState.WorldScale;
-
-            if(fileExists)
-            {
-                globalOffset /= PlayState.WorldScale;
-            }
-
-            camera = new OrbitCamera(this, 0, 0, 10f, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset, new Vector3(0, 50, 0) + globalOffset, MathHelper.PiOver4, AspectRatio, 0.1f, GameSettings.Default.VertexCullDistance);
-
+            Vector3 globalOffset = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale;
 
             if(fileExists)
             {
-                camera.Position = gameFile.Data.Metadata.CameraPosition;
-                camera.Phi = gameFile.Data.Metadata.CameraRotation.X;
-                camera.Theta = gameFile.Data.Metadata.CameraRotation.Y;
-                camera.SetTargetRotation(camera.Theta, camera.Phi);
-                camera.Radius = 0.01f;
-                
+                globalOffset /= WorldScale;
             }
 
-            SimpleDrawing.m_camera = camera;
 
-            ChunkManager = new ChunkManager(Content, (uint) ChunkWidth, (uint) ChunkHeight, (uint) ChunkWidth, camera, GraphicsDevice, Tilesheet,
-                Content.Load<Texture2D>("illum2"),
-                Content.Load<Texture2D>("sungradient"),
-                Content.Load<Texture2D>("ambientgradient"),
-                Content.Load<Texture2D>("torchgradient"),
+
+            Camera = fileExists ? gameFile.Data.Camera : 
+                new OrbitCamera(this, 0, 0, 10f, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset, new Vector3(0, 50, 0) + globalOffset, MathHelper.PiOver4, AspectRatio, 0.1f, GameSettings.Default.VertexCullDistance);
+
+            SimpleDrawing.m_camera = Camera;
+
+            ChunkManager = new ChunkManager(Content, (uint) ChunkWidth, (uint) ChunkHeight, (uint) ChunkWidth, Camera, GraphicsDevice, Tilesheet,
+                TextureManager.GetTexture("illum2"),
+                TextureManager.GetTexture("sungradient"),
+                TextureManager.GetTexture("ambientgradient"),
+                TextureManager.GetTexture("torchgradient"),
                 ChunkGenerator);
-            globalOffset = ChunkManager.RoundToChunkCoords(globalOffset);
+            globalOffset = ChunkManager.ChunkData.RoundToChunkCoords(globalOffset);
             globalOffset.X *= ChunkWidth;
             globalOffset.Y *= ChunkHeight;
             globalOffset.Z *= ChunkWidth;
@@ -330,10 +333,10 @@ namespace DwarfCorp
             if(!fileExists)
             {
                 WorldOrigin = new Vector2(globalOffset.X, globalOffset.Z);
-                camera.Position = new Vector3(0, 10, 0) + globalOffset;
-                camera.Target = new Vector3(0, 10, 1) + globalOffset;
-                camera.Radius = 0.01f;
-                camera.Phi = -1.57f;
+                Camera.Position = new Vector3(0, 10, 0) + globalOffset;
+                Camera.Target = new Vector3(0, 10, 1) + globalOffset;
+                Camera.Radius = 0.01f;
+                Camera.Phi = -1.57f;
             }
 
             ChunkManager.Components = ComponentManager;
@@ -345,31 +348,51 @@ namespace DwarfCorp
                                                                  + globalOffset,
                     new Vector3(ChunkWidth, ChunkHeight, ChunkWidth)
                     + globalOffset));
-                ChunkManager.GenerateInitialChunks(camera, ref LoadingMessage);
+                ChunkManager.GenerateInitialChunks(Camera, ref LoadingMessage);
             }
             else
             {
                 LoadingMessage = "Loading Chunks from Game File";
-                ChunkManager.LoadFromFile(gameFile, ref LoadingMessage);
+                ChunkManager.ChunkData.LoadFromFile(gameFile, ref LoadingMessage);
             }
 
             if(!fileExists)
             {
-                camera.Radius = 0.01f;
-                camera.Phi = -1.57f / 4.0f;
-                camera.Theta = 0.0f;
-            }
-            else
-            {
-                camera.Position = gameFile.Data.Metadata.CameraPosition;
-                camera.Phi = gameFile.Data.Metadata.CameraRotation.X;
-                camera.Theta = gameFile.Data.Metadata.CameraRotation.Y;
-                camera.SetTargetRotation(camera.Theta, camera.Phi);
-                camera.Radius = 0.01f;
+                Camera.Radius = 0.01f;
+                Camera.Phi = -1.57f / 4.0f;
+                Camera.Theta = 0.0f;
             }
 
-            ChunkManager.RebuildList = new System.Collections.Concurrent.ConcurrentQueue<VoxelChunk>();
+
+            ChunkManager.RebuildList = new ConcurrentQueue<VoxelChunk>();
             ChunkManager.StartThreads();
+        }
+
+        public bool TakeScreenshot(string filename, Point resolution)
+        {
+            try
+            {
+                using (RenderTarget2D renderTarget = new RenderTarget2D(GraphicsDevice, resolution.X, resolution.Y, false, SurfaceFormat.Color, DepthFormat.Depth24))
+                {
+                    GraphicsDevice.SetRenderTarget(renderTarget);
+                    DrawSky(new GameTime(), Camera.ViewMatrix);
+                    Draw3DThings(new GameTime(), DefaultShader, Camera.ViewMatrix);
+                    DrawComponents(new GameTime(), DefaultShader, Camera.ViewMatrix, ComponentManager.WaterRenderType.None, 0);
+                    GraphicsDevice.SetRenderTarget(null);
+                    renderTarget.SaveAsPng(new FileStream(filename, FileMode.Create), resolution.X, resolution.Y);
+                    GraphicsDevice.Textures[0] = null;
+                    GraphicsDevice.Indices = null;
+                    GraphicsDevice.SetVertexBuffer(null);
+                }
+            }
+            catch(IOException e)
+            {
+                Console.Error.WriteLine(e.Message);
+                return false;
+            }
+
+            return true;
+
         }
 
         public void CreateLiquids()
@@ -384,10 +407,10 @@ namespace DwarfCorp
                 WaveHeight = 0.1f,
                 WaveLength = 0.05f,
                 WindForce = 0.001f,
-                BumpTexture = Content.Load<Texture2D>("water_normal"),
-                FoamTexture = Content.Load<Texture2D>("foam"),
-                BaseTexture = Content.Load<Texture2D>("cartoon_water"),
-                PuddleTexture = Content.Load<Texture2D>("puddle"),
+                BumpTexture = TextureManager.GetTexture("water_normal"),
+                FoamTexture = TextureManager.GetTexture("foam"),
+                BaseTexture = TextureManager.GetTexture("cartoon_water"),
+                PuddleTexture = TextureManager.GetTexture("puddle"),
                 MinOpacity = 0.0f,
                 RippleColor = new Vector4(0.1f, 0.1f, 0.1f, 0.0f)
             };
@@ -403,10 +426,10 @@ namespace DwarfCorp
                 WaveLength = 0.05f,
                 WindForce = 0.001f,
                 MinOpacity = 0.99f,
-                BumpTexture = Content.Load<Texture2D>("water_normal"),
-                FoamTexture = Content.Load<Texture2D>("lavafoam"),
-                BaseTexture = Content.Load<Texture2D>("lava"),
-                PuddleTexture = Content.Load<Texture2D>("puddle"),
+                BumpTexture = TextureManager.GetTexture("water_normal"),
+                FoamTexture = TextureManager.GetTexture("lavafoam"),
+                BaseTexture = TextureManager.GetTexture("lava"),
+                PuddleTexture = TextureManager.GetTexture("puddle"),
                 RippleColor = new Vector4(0.5f, 0.4f, 0.04f, 0.0f)
             };
 
@@ -417,11 +440,11 @@ namespace DwarfCorp
         public void CreateSky()
         {
             Sky = new SkyRenderer(
-                Content.Load<Texture2D>("moon"),
-                Content.Load<Texture2D>("sun"),
+                TextureManager.GetTexture("moon"),
+                TextureManager.GetTexture("sun"),
                 Content.Load<TextureCube>("day_sky"),
                 Content.Load<TextureCube>("night_sky"),
-                Content.Load<Texture2D>("skygradient"),
+                TextureManager.GetTexture("skygradient"),
                 Content.Load<Model>("sphereLowPoly"),
                 Content.Load<Effect>("SkySphere"));
         }
@@ -430,15 +453,19 @@ namespace DwarfCorp
         {
             LoadingMessage = "Creating GUI";
             Game.IsMouseVisible = true;
-            GUI = new SillyGUI(Game, Game.Content.Load<SpriteFont>("Default"), Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
-            Texture2D iconsImage = TextureManager.GetTexture("IconSheet");
-            Master = new GameMaster(Game, ComponentManager, ChunkManager, camera, GraphicsDevice, VoxelLibrary, GUI);
-            MasterControls tools = new MasterControls(GUI, GUI.RootComponent, Master, iconsImage, GraphicsDevice, Game.Content.Load<SpriteFont>("Default"));
-            Master.ToolBar = tools;
-            Master.ToolBar.Master = Master;
+            GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>("Default"), Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
 
+            Master = new GameMaster(FactionLibrary.Factions["Player"], Game, ComponentManager, ChunkManager, Camera, GraphicsDevice, GUI);
+            CreateGUIComponents();
+        }
 
-            SillyGUIComponent companyInfoComponent = new SillyGUIComponent(GUI, GUI.RootComponent)
+        public void CreateGUIComponents()
+        {
+            GUI.RootComponent.ClearChildren();
+            GUI.RootComponent.AddChild(Master.Debugger.MainPanel);
+            GUI.RootComponent.AddChild(Master.ToolBar);
+
+            GUIComponent companyInfoComponent = new GUIComponent(GUI, GUI.RootComponent)
             {
                 LocalBounds = new Rectangle(10, 10, 400, 80)
             };
@@ -450,29 +477,39 @@ namespace DwarfCorp
             CompanyNameLabel = new Label(GUI, infoLayout, PlayerSettings.Default.CompanyName, GUI.DefaultFont)
             {
                 TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 100)
+                StrokeColor = new Color(0, 0, 0, 100),
+                ToolTip = "Our company name."
             };
             infoLayout.SetComponentPosition(CompanyNameLabel, 1, 0, 1, 1);
 
-            MoneyLabel = new Label(GUI, infoLayout, Master.Economy.CurrentMoney.ToString("C"), GUI.DefaultFont)
+            MoneyLabel = new Label(GUI, infoLayout, Master.Faction.Economy.CurrentMoney.ToString("C"), GUI.DefaultFont)
             {
                 TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 100)
+                StrokeColor = new Color(0, 0, 0, 100),
+                ToolTip = "Amount of money in our treasury."
             };
             infoLayout.SetComponentPosition(MoneyLabel, 3, 0, 1, 1);
 
-            CurrentLevelLabel = new Label(GUI, infoLayout, "Slice: " + ChunkManager.MaxViewingLevel, GUI.DefaultFont)
+            CurrentLevelLabel = new Label(GUI, infoLayout, "Slice: " + ChunkManager.ChunkData.MaxViewingLevel, GUI.DefaultFont)
             {
                 TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 100)
+                StrokeColor = new Color(0, 0, 0, 100),
+                ToolTip = "The maximum height of visible terrain"
             };
             infoLayout.SetComponentPosition(CurrentLevelLabel, 0, 1, 1, 1);
 
-            CurrentLevelUpButton = new Button(GUI, infoLayout, "up", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
+            CurrentLevelUpButton = new Button(GUI, infoLayout, "up", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
+            {
+                ToolTip = "Go up one level of visible terrain"
+            };
+
             infoLayout.SetComponentPosition(CurrentLevelUpButton, 2, 1, 1, 1);
             CurrentLevelUpButton.OnClicked += CurrentLevelUpButton_OnClicked;
 
-            CurrentLevelDownButton = new Button(GUI, infoLayout, "down", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
+            CurrentLevelDownButton = new Button(GUI, infoLayout, "down", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
+            {
+                ToolTip = "Go down one level of visible terrain"
+            };
             infoLayout.SetComponentPosition(CurrentLevelDownButton, 1, 1, 1, 1);
             CurrentLevelDownButton.OnClicked += CurrentLevelDownButton_OnClicked;
 
@@ -480,43 +517,44 @@ namespace DwarfCorp
             {
                 TextColor = Color.White,
                 StrokeColor = new Color(0, 0, 0, 100),
-                LocalBounds = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 300, GraphicsDevice.Viewport.Height - 60, 300, 60)
+                LocalBounds = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 300, GraphicsDevice.Viewport.Height - 60, 300, 60),
+                ToolTip = "Current status of the balloon"
             };
 
-            ComponentManager.HandleAddRemoves();
-            ComponentManager.RootComponent.UpdateTransformsRecursive();
-
-            LevelSlider = new Slider(GUI, GUI.RootComponent, "", ChunkManager.MaxViewingLevel, 0, ChunkManager.ChunkSizeY, Slider.SliderMode.Integer)
+            LevelSlider = new Slider(GUI, GUI.RootComponent, "", ChunkManager.ChunkData.MaxViewingLevel, 0, ChunkManager.ChunkData.ChunkSizeY, Slider.SliderMode.Integer)
             {
                 Orient = Slider.Orientation.Vertical,
-                LocalBounds = new Rectangle(28, 130, 64, GraphicsDevice.Viewport.Height - 300)
+                LocalBounds = new Rectangle(28, 130, 64, GraphicsDevice.Viewport.Height - 300),
+                ToolTip = "Controls the maximum height of visible terrain"
             };
             LevelSlider.OnClicked += LevelSlider_OnClicked;
             LevelSlider.DrawLabel = true;
             LevelSlider.InvertValue = true;
 
+            InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
         }
-
 
         public void CreateInitialEmbarkment()
         {
             if(string.IsNullOrEmpty(ExistingFile))
             {
-                VoxelChunk c = ChunkManager.GetVoxelChunkAtWorldLocation(camera.Position);
-                GenerateInitialBalloonPort(Master.RoomDesignator, ChunkManager, camera.Position.X, camera.Position.Z, 3);
+                VoxelChunk c = ChunkManager.ChunkData.GetVoxelChunkAtWorldLocation(Camera.Position);
+                GenerateInitialBalloonPort(Master.Faction.RoomDesignator, ChunkManager, Camera.Position.X, Camera.Position.Z, 3);
                 CreateInitialDwarves(5, c);
-                EntityFactory.CreateBalloon(camera.Position + new Vector3(0, 1000, 0), camera.Position + new Vector3(0, 20, 0), ComponentManager, Content, GraphicsDevice, new ShipmentOrder(0, null), Master);
+                EntityFactory.CreateBalloon(Camera.Position + new Vector3(0, 1000, 0), Camera.Position + new Vector3(0, 20, 0), ComponentManager, Content, GraphicsDevice, new ShipmentOrder(0, null), Master.Faction);
             }
             else
             {
-                LoadingMessage = "Creating Entitites...";
-                gameFile.CreateEntities(this);
-                gameFile.CreatePlayerData(this);
-                
-            }
+                InstanceManager.Clear();
+                gameFile.LoadComponents(ExistingFile);
+                ComponentManager = gameFile.Data.Components;
+                ChunkManager.Components = ComponentManager;
+                Master.Faction.Components = ComponentManager;
 
-            Master.Debugger = new AIDebugger(GUI, Master);
+                CreateGUIComponents();
+
+            }
         }
 
 
@@ -552,18 +590,18 @@ namespace DwarfCorp
 
         private void LevelSlider_OnClicked()
         {
-            ChunkManager.SetMaxViewingLevel((int) LevelSlider.SliderValue, ChunkManager.SliceMode.Y);
+            ChunkManager.ChunkData.SetMaxViewingLevel((int) LevelSlider.SliderValue, ChunkManager.SliceMode.Y);
         }
 
 
         private void CurrentLevelDownButton_OnClicked()
         {
-            ChunkManager.SetMaxViewingLevel(ChunkManager.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
+            ChunkManager.ChunkData.SetMaxViewingLevel(ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
         }
 
         private void CurrentLevelUpButton_OnClicked()
         {
-            ChunkManager.SetMaxViewingLevel(ChunkManager.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
+            ChunkManager.ChunkData.SetMaxViewingLevel(ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
         }
 
         public void GenerateInitialBalloonPort(RoomDesignator roomDes, ChunkManager chunkManager, float x, float z, int size)
@@ -576,7 +614,7 @@ namespace DwarfCorp
                 for(int dz = -size; dz <= size; dz++)
                 {
                     Vector3 worldPos = new Vector3(pos.X + dx, pos.Y, pos.Z + dz);
-                    VoxelChunk chunk = chunkManager.GetVoxelChunkAtWorldLocation(worldPos);
+                    VoxelChunk chunk = chunkManager.ChunkData.GetVoxelChunkAtWorldLocation(worldPos);
 
                     if(chunk == null)
                     {
@@ -599,7 +637,7 @@ namespace DwarfCorp
                 for(int dz = -size; dz <= size; dz++)
                 {
                     Vector3 worldPos = new Vector3(pos.X + dx, pos.Y, pos.Z + dz);
-                    VoxelChunk chunk = chunkManager.GetVoxelChunkAtWorldLocation(worldPos);
+                    VoxelChunk chunk = chunkManager.ChunkData.GetVoxelChunkAtWorldLocation(worldPos);
                     Vector3 gridPos = chunk.WorldToGrid(worldPos);
                     int h = chunk.GetFilledVoxelGridHeightAt((int) gridPos.X, (int) gridPos.Y, (int) gridPos.Z);
 
@@ -629,7 +667,7 @@ namespace DwarfCorp
 
 
             Room toBuild = new Room(designations, RoomLibrary.GetType("BalloonPort"), chunkManager);
-            RoomBuildDesignation buildDes = new RoomBuildDesignation(toBuild, roomDes.Master);
+            RoomBuildDesignation buildDes = new RoomBuildDesignation(toBuild, roomDes.Faction);
             buildDes.Build();
             roomDes.DesignatedRooms.Add(toBuild);
         }
@@ -640,7 +678,7 @@ namespace DwarfCorp
             {
                 new Point(0, 0)
             };
-            Texture2D tex = Content.Load<Texture2D>(assetName);
+            Texture2D tex = TextureManager.GetTexture(assetName);
             EmitterData testData = new EmitterData
             {
                 Animation = new Animation(GraphicsDevice, tex, assetName, tex.Width, tex.Height, frm, true, Color.White, 1.0f, 1.0f, 1.0f, false),
@@ -676,9 +714,10 @@ namespace DwarfCorp
             {
                 new Point(0, 0)
             };
-            EmitterData testData = new EmitterData
+
+            EmitterData data = new EmitterData
             {
-                Animation = new Animation(GraphicsDevice, Content.Load<Texture2D>(name), name, 32, 32, frm, true, Color.White, 1.0f, 1.0f, 1.0f, false),
+                Animation = new Animation(GraphicsDevice, TextureManager.GetTexture(name), name, 32, 32, frm, true, Color.White, 1.0f, 1.0f, 1.0f, false),
                 ConstantAccel = new Vector3(0, 3, 0),
                 LinearDamping = 0.9f,
                 AngularDamping = 0.99f,
@@ -696,10 +735,11 @@ namespace DwarfCorp
                 ParticleDecay = 0.8f,
                 ParticlesPerFrame = 0,
                 ReleaseOnce = true,
-                Texture = Content.Load<Texture2D>(name),
+                Texture = TextureManager.GetTexture(name),
                 Blend = state
             };
-            return testData;
+
+            return data;
         }
 
         public void CreateParticles()
@@ -717,13 +757,15 @@ namespace DwarfCorp
             ParticleManager.RegisterEffect("puff", puff);
             ParticleManager.RegisterEffect("bubble2", bubble);
             ParticleManager.RegisterEffect("flame", flame);
+
             List<Point> frm2 = new List<Point>
             {
                 new Point(0, 0)
             };
+
             EmitterData testData2 = new EmitterData
             {
-                Animation = new Animation(GraphicsDevice, Content.Load<Texture2D>("leaf"), "leaf", 32, 32, frm2, true, Color.White, 1.0f, 1.0f, 1.0f, false),
+                Animation = new Animation(GraphicsDevice, TextureManager.GetTexture("leaf"), "leaf", 32, 32, frm2, true, Color.White, 1.0f, 1.0f, 1.0f, false),
                 ConstantAccel = new Vector3(0, -10, 0),
                 LinearDamping = 0.99f,
                 AngularDamping = 0.99f,
@@ -741,7 +783,7 @@ namespace DwarfCorp
                 ParticleDecay = 0.5f,
                 ParticlesPerFrame = 0,
                 ReleaseOnce = true,
-                Texture = Content.Load<Texture2D>("leaf")
+                Texture = TextureManager.GetTexture("leaf")
             };
 
             ParticleManager.RegisterEffect("Leaves", testData2);
@@ -762,14 +804,19 @@ namespace DwarfCorp
             {
                 DrawMap = !DrawMap;
             }
+
+            if(key == Keys.Escape)
+            {
+                OpenPauseMenu();
+            }
+
         }
 
         private uint frameCounter = 0;
-        private Timer frameTimer = new Timer(1.0f, false);
+        private readonly Timer frameTimer = new Timer(1.0f, false);
         private float lastWaterHeight = 8.0f;
         private double timeHack = 250.0;
         private bool pausePressed = false;
-        private bool isExiting = false;
         private bool bPressed = false;
 
         public override void Update(GameTime gameTime)
@@ -793,7 +840,7 @@ namespace DwarfCorp
 
             if(!Paused)
             {
-                LocatableComponent.CollisionManager.Update(gameTime);
+                ComponentManager.CollisionManager.Update(gameTime);
             }
 
             if(Keyboard.GetState().IsKeyDown(ControlSettings.Default.TimeForward))
@@ -807,45 +854,10 @@ namespace DwarfCorp
 
             if(Keyboard.GetState().IsKeyDown(Keys.End))
             {
-                //FileUtils.SaveJSon(ComponentManager, "Components.json", true);
-                string output = Newtonsoft.Json.JsonConvert.SerializeObject(ComponentManager, Formatting.Indented,
-                new JsonSerializerSettings()
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Error,
-                    TypeNameHandling = TypeNameHandling.All,
-                    ObjectCreationHandling = ObjectCreationHandling.Replace
-                });
-
-                
-
-                ComponentManager manager = Newtonsoft.Json.JsonConvert.DeserializeObject<ComponentManager>(output, new JsonSerializerSettings()
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Error,
-                    TypeNameHandling = TypeNameHandling.All,
-                    ObjectCreationHandling = ObjectCreationHandling.Replace,
-                    Converters = new List<JsonConverter>
-                    {
-                        new BoxConverter()
-                    }
-                });
-                manager.RootComponent.Die();
-
-                gameFile = new GameFile(Overworld.Name);
-                gameFile.WriteFile(DwarfGame.GetGameDirectory() + System.IO.Path.DirectorySeparatorChar + "Saves" + System.IO.Path.DirectorySeparatorChar + "save0", true);
+                DwarfGame.ExitGame = true;
                 Game.Exit();
             }
 
-            if(Keyboard.GetState().IsKeyDown(Keys.Escape))
-            {
-                if(!isExiting)
-                {
-                    StateManager.PushState("MainMenuState");
-                    isExiting = true;
-                }
-
-                //GeometricPrimitive.ExitGame = true;
-                //Game.Exit();
-            }
 
 
             if(Keyboard.GetState().IsKeyDown(ControlSettings.Default.Pause))
@@ -897,26 +909,26 @@ namespace DwarfCorp
             {
                 Master.Update(Game, gameTime);
                 GUI.Update(gameTime);
+                FactionLibrary.Update(gameTime);
             }
 
 
-            ChunkManager.Update(gameTime, camera, GraphicsDevice);
-            InstanceManager.Update(gameTime, camera, GraphicsDevice);
+            ChunkManager.Update(gameTime, Camera, GraphicsDevice);
+            InstanceManager.Update(gameTime, Camera, GraphicsDevice);
 
             if(!Paused)
             {
                 timeHack += (float) gameTime.ElapsedGameTime.TotalSeconds * 0.5f;
-                ComponentManager.Update(gameTime, ChunkManager, camera);
-                double x = timeHack;
-                Sky.TimeOfDay = (float) Math.Cos(x * 0.01f) * 0.5f + 0.5f;
-                Sky.CosTime = (float) x * 0.01f;
+                ComponentManager.Update(gameTime, ChunkManager, Camera);
+                Sky.TimeOfDay = (float)Math.Cos(timeHack * 0.01f) * 0.5f + 0.5f;
+                Sky.CosTime = (float)timeHack * 0.01f;
                 shader.Parameters["xTimeOfDay"].SetValue(Sky.TimeOfDay);
             }
 
 
             Input.Update();
 
-            SoundManager.Update(gameTime, camera);
+            SoundManager.Update(gameTime, Camera);
 
             if(!Paused && Game.IsActive)
             {
@@ -925,17 +937,17 @@ namespace DwarfCorp
                 string answer = string.Format("{0:D2}m:{1:D2}s",
                     t.Minutes,
                     t.Seconds);
-                CurrentLevelLabel.Text = "Slice: " + ChunkManager.MaxViewingLevel + "/" + ChunkHeight;
+                CurrentLevelLabel.Text = "Slice: " + ChunkManager.ChunkData.MaxViewingLevel + "/" + ChunkHeight;
                 OrderStatusLabel.Text = "Balloon: " + GameCycle.GetStatusString(GameCycle.CurrentCycle) + " ETA: " + answer;
                 OrderStatusLabel.TextColor = GameCycle.GetColor(GameCycle.CurrentCycle, (float) gameTime.TotalGameTime.TotalSeconds);
                 OrderStatusLabel.OnClicked += OrderStatusLabel_OnClicked;
 
-                MoneyLabel.Text = Master.Economy.CurrentMoney.ToString("C");
+                MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString("C");
             }
 
             if(!LevelSlider.IsMouseOver)
             {
-                LevelSlider.SliderValue = ChunkManager.MaxViewingLevel;
+                LevelSlider.SliderValue = ChunkManager.ChunkData.MaxViewingLevel;
             }
 
             base.Update(gameTime);
@@ -943,36 +955,106 @@ namespace DwarfCorp
 
         private void OrderStatusLabel_OnClicked()
         {
-            if(GameCycle.CurrentCycle == GameCycle.OrderCylce.BalloonAtMotherland)
+            switch(GameCycle.CurrentCycle)
             {
-                if(StateManager.NextState == "")
-                {
-                    OrderScreen orderScreen = (OrderScreen) StateManager.States["OrderScreen"];
-                    orderScreen.Mode = OrderScreen.OrderMode.Buying;
-                    StateManager.PushState("OrderScreen");
-                }
-                Paused = true;
+                case GameCycle.OrderCylce.BalloonAtMotherland:
+                    if(StateManager.NextState == "")
+                    {
+                        OrderScreen orderScreen = (OrderScreen) StateManager.States["OrderScreen"];
+                        orderScreen.Mode = OrderScreen.OrderMode.Buying;
+                        StateManager.PushState("OrderScreen");
+                    }
+                    Paused = true;
+                    break;
+                case GameCycle.OrderCylce.BalloonAtColony:
+                    if(StateManager.NextState == "")
+                    {
+                        OrderScreen orderScreen = (OrderScreen) StateManager.States["OrderScreen"];
+                        orderScreen.Mode = OrderScreen.OrderMode.Selling;
+                        StateManager.PushState("OrderScreen");
+                    }
+                    Paused = true;
+                    break;
             }
-            else if(GameCycle.CurrentCycle == GameCycle.OrderCylce.BalloonAtColony)
+        }
+
+        public void OpenPauseMenu()
+        {
+            int w = 200;
+            int h = 200;
+            
+            PausePanel = new Panel(GUI, GUI.RootComponent)
             {
-                if(StateManager.NextState == "")
-                {
-                    OrderScreen orderScreen = (OrderScreen) StateManager.States["OrderScreen"];
-                    orderScreen.Mode = OrderScreen.OrderMode.Selling;
-                    StateManager.PushState("OrderScreen");
-                }
-                Paused = true;
+                LocalBounds = new Rectangle(GraphicsDevice.Viewport.Width / 2 - w / 2, GraphicsDevice.Viewport.Height / 2 - h / 2, w, h)
+            };
+
+            GridLayout pauseLayout = new GridLayout(GUI, PausePanel, 1, 1);
+
+            ListSelector pauseSelector = new ListSelector(GUI, pauseLayout)
+            {
+                Label = "-Menu-",
+                DrawPanel = false,
+                Mode = ListItem.SelectionMode.Selector
+            };
+            pauseLayout.SetComponentPosition(pauseSelector, 0, 0, 1, 1);
+            pauseLayout.UpdateSizes();
+
+            pauseSelector.AddItem("Continue");
+            pauseSelector.AddItem("Save");
+            pauseSelector.AddItem("Quit");
+            
+            pauseSelector.OnItemClicked += () => pauseSelector_OnItemClicked(pauseSelector);
+
+
+        }
+
+        void pauseSelector_OnItemClicked(ListSelector selector)
+        {
+            string selected = selector.SelectedItem.Label;
+            switch(selected)
+            {
+                case "Continue":
+                    GUI.RootComponent.RemoveChild(PausePanel);
+                    Paused = false;
+                    break;
+                case "Save":
+                    SaveGame(DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss"));
+                    break;
+                case "Quit":
+                    StateManager.PushState("MainMenuState");
+                    break;
+
             }
+        }
+
+        public void SaveGame(string filename)
+        {
+            DirectoryInfo worldDirectory = Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Worlds" + Path.DirectorySeparatorChar + Overworld.Name);
+
+            if(Overworld.Name != "flat")
+            {
+                OverworldFile file = new OverworldFile(Overworld.Map, Overworld.Name);
+                file.WriteFile(worldDirectory.FullName + Path.DirectorySeparatorChar + "world." + OverworldFile.CompressedExtension, true);
+                file.SaveScreenshot(worldDirectory.FullName + Path.DirectorySeparatorChar + "screenshot.png");
+            }
+
+            gameFile = new GameFile(Overworld.Name);
+            gameFile.WriteFile(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar + filename, true);
+            TakeScreenshot(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar + filename + Path.DirectorySeparatorChar + "screenshot.png", new Point(GraphicsDevice.Viewport.Width / 4, GraphicsDevice.Viewport.Height / 4));
+
+
+            Dialog.Popup(GUI, "Save", "File saved.", Dialog.ButtonType.OK);
+        
         }
 
         public Matrix GetReflectedCameraMatrix(float waterHeight)
         {
-            Vector3 reflCameraPosition = camera.Position;
-            reflCameraPosition.Y = -camera.Position.Y + waterHeight * 2;
-            Vector3 reflTargetPos = camera.Target;
-            reflTargetPos.Y = -camera.Target.Y + waterHeight * 2;
+            Vector3 reflCameraPosition = Camera.Position;
+            reflCameraPosition.Y = -Camera.Position.Y + waterHeight * 2;
+            Vector3 reflTargetPos = Camera.Target;
+            reflTargetPos.Y = -Camera.Target.Y + waterHeight * 2;
 
-            Vector3 cameraRight = Vector3.Cross(camera.Target - camera.Position, camera.UpVector);
+            Vector3 cameraRight = Vector3.Cross(Camera.Target - Camera.Position, Camera.UpVector);
             cameraRight.Normalize();
             Vector3 invUpVector = Vector3.Cross(cameraRight, reflTargetPos - reflCameraPosition);
             invUpVector.Normalize();
@@ -981,47 +1063,47 @@ namespace DwarfCorp
 
         public void Draw3DThings(GameTime gameTime, Effect cubeEffect, Matrix view)
         {
-            Matrix viewMatrix = camera.ViewMatrix;
-            camera.ViewMatrix = view;
+            Matrix viewMatrix = Camera.ViewMatrix;
+            Camera.ViewMatrix = view;
 
-            this.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+            GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
             cubeEffect.Parameters["xView"].SetValue(view);
 
-            cubeEffect.Parameters["xProjection"].SetValue(camera.ProjectionMatrix);
+            cubeEffect.Parameters["xProjection"].SetValue(Camera.ProjectionMatrix);
             cubeEffect.CurrentTechnique = cubeEffect.Techniques["Textured"];
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
 
-            ChunkManager.Render(camera, gameTime, GraphicsDevice, cubeEffect, Matrix.Identity);
+            ChunkManager.Render(Camera, gameTime, GraphicsDevice, cubeEffect, Matrix.Identity);
 
 
-            if(Master.CurrentTool == GameMaster.ToolMode.Build)
+            if(Master.CurrentToolMode == GameMaster.ToolMode.Build)
             {
-                Master.PutDesignator.Render(gameTime, GraphicsDevice, cubeEffect);
+                Master.Faction.PutDesignator.Render(gameTime, GraphicsDevice, cubeEffect);
             }
 
-            //LocatableComponent.CollisionManager.Root.Draw();
-            camera.ViewMatrix = viewMatrix;
+            //ComponentManager.CollisionManager.DebugDraw();
+            Camera.ViewMatrix = viewMatrix;
         }
 
         public void DrawComponents(GameTime gameTime, Effect effect, Matrix view, ComponentManager.WaterRenderType waterRenderType, float waterLevel)
         {
-            ComponentManager.Render(gameTime, ChunkManager, camera, DwarfGame.SpriteBatch, GraphicsDevice, effect, waterRenderType, waterLevel);
+            ComponentManager.Render(gameTime, ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, effect, waterRenderType, waterLevel);
 
             bool reset = waterRenderType == ComponentManager.WaterRenderType.None;
 
-            InstanceManager.Render(GraphicsDevice, effect, camera, reset);
+            InstanceManager.Render(GraphicsDevice, effect, Camera, reset);
         }
 
         public void DrawSky(GameTime time, Matrix view)
         {
-            Matrix oldView = camera.ViewMatrix;
-            camera.ViewMatrix = view;
-            Sky.Render(time, GraphicsDevice, camera);
+            Matrix oldView = Camera.ViewMatrix;
+            Camera.ViewMatrix = view;
+            Sky.Render(time, GraphicsDevice, Camera);
             GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            camera.ViewMatrix = oldView;
+            Camera.ViewMatrix = oldView;
         }
 
         public override void RenderUnitialized(GameTime gameTime)
@@ -1029,16 +1111,19 @@ namespace DwarfCorp
             DwarfGame.SpriteBatch.Begin();
             float t = (float) (Math.Sin(gameTime.TotalGameTime.TotalSeconds * 2.0f) + 1.0f) * 0.5f + 0.5f;
             Color toDraw = new Color(t, t, t);
-            Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, LoadingMessage, Game.Content.Load<SpriteFont>("Default"), new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - 100, Game.GraphicsDevice.Viewport.Height / 2), toDraw, new Color(50, 50, 50));
+            SpriteFont font = Game.Content.Load<SpriteFont>("Default");
+            Vector2 measurement = Datastructures.SafeMeasure(font, LoadingMessage);
+            Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, LoadingMessage, font, new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - measurement.X / 2, Game.GraphicsDevice.Viewport.Height / 2), toDraw, new Color(50, 50, 50));
             DwarfGame.SpriteBatch.End();
 
             base.RenderUnitialized(gameTime);
         }
 
 
-        private List<float> lastFPS = new List<float>();
-        private float FPS = 0.0f;
+        private readonly List<float> lastFps = new List<float>();
+        private float fps = 0.0f;
         private GameFile gameFile;
+        public Panel PausePanel;
 
         public override void Render(GameTime gameTime)
         {
@@ -1049,9 +1134,9 @@ namespace DwarfCorp
                 return;
             }
 
-            if(lastFPS.Count > 100)
+            if(lastFps.Count > 100)
             {
-                lastFPS.RemoveAt(0);
+                lastFps.RemoveAt(0);
             }
 
 
@@ -1059,10 +1144,10 @@ namespace DwarfCorp
             x = x * x;
             shader.Parameters["xFogColor"].SetValue(new Vector3(0.32f * x, 0.58f * x, 0.9f * x));
 
-            float wHeight = waterRenderer.GetVisibleWaterHeight(ChunkManager, camera, GraphicsDevice.Viewport, lastWaterHeight);
+            float wHeight = waterRenderer.GetVisibleWaterHeight(ChunkManager, Camera, GraphicsDevice.Viewport, lastWaterHeight);
 
             lastWaterHeight = wHeight;
-            waterRenderer.DrawRefractionMap(gameTime, this, wHeight + 1.0f, camera.ViewMatrix, shader, GraphicsDevice);
+            waterRenderer.DrawRefractionMap(gameTime, this, wHeight + 1.0f, Camera.ViewMatrix, shader, GraphicsDevice);
             waterRenderer.DrawReflectionMap(gameTime, this, wHeight - 0.1f, GetReflectedCameraMatrix(wHeight), shader, GraphicsDevice);
 
             if(GameSettings.Default.EnableGlow)
@@ -1071,25 +1156,25 @@ namespace DwarfCorp
             }
 
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            DrawSky(gameTime, camera.ViewMatrix);
+            DrawSky(gameTime, Camera.ViewMatrix);
 
-            Plane slicePlane = waterRenderer.CreatePlane(ChunkManager.MaxViewingLevel + 1.3f, new Vector3(0, -1, 0), camera.ViewMatrix, false);
+            Plane slicePlane = waterRenderer.CreatePlane(ChunkManager.ChunkData.MaxViewingLevel + 1.3f, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
 
             shader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
             shader.Parameters["Clipping"].SetValue(true);
 
-            Draw3DThings(gameTime, shader, camera.ViewMatrix);
+            Draw3DThings(gameTime, shader, Camera.ViewMatrix);
 
             shader.Parameters["Clipping"].SetValue(true);
             waterRenderer.DrawWater(
                 GraphicsDevice,
                 (float) gameTime.TotalGameTime.TotalSeconds,
                 shader,
-                camera.ViewMatrix,
+                Camera.ViewMatrix,
                 GetReflectedCameraMatrix(wHeight),
-                camera.ProjectionMatrix,
+                Camera.ProjectionMatrix,
                 new Vector3(0.1f, 0.0f, 0.1f),
-                camera,
+                Camera,
                 ChunkManager);
 
             shader.CurrentTechnique = shader.Techniques["Textured"];
@@ -1101,7 +1186,7 @@ namespace DwarfCorp
 
             shader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
             shader.Parameters["Clipping"].SetValue(true);
-            DrawComponents(gameTime, shader, camera.ViewMatrix, ComponentManager.WaterRenderType.None, lastWaterHeight);
+            DrawComponents(gameTime, shader, Camera.ViewMatrix, ComponentManager.WaterRenderType.None, lastWaterHeight);
             shader.Parameters["Clipping"].SetValue(false);
 
             if(GameSettings.Default.EnableGlow)
@@ -1113,9 +1198,9 @@ namespace DwarfCorp
 
             if(frameTimer.HasTriggered)
             {
-                FPS = frameCounter;
+                fps = frameCounter;
 
-                lastFPS.Add(FPS);
+                lastFps.Add(fps);
                 frameCounter = 0;
                 frameTimer.Reset(1.0f);
             }
@@ -1128,12 +1213,13 @@ namespace DwarfCorp
             {
                 ScissorTestEnable = true
             };
+
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
 
 
             //Drawer2D.SafeDraw(spriteBatch, "\u20AC", Game.Content.Load<SpriteFont>("Default"), Color.White, new Vector2(100, 100), Vector2.Zero);
 
-            drawer2D.Render(DwarfGame.SpriteBatch, camera, GraphicsDevice.Viewport);
+            drawer2D.Render(DwarfGame.SpriteBatch, Camera, GraphicsDevice.Viewport);
 
             GUI.Render(gameTime, DwarfGame.SpriteBatch, Vector2.Zero);
 
@@ -1143,28 +1229,28 @@ namespace DwarfCorp
             //camera.Position = master.Minions[0].Physics.GlobalTransform.Translation + new Vector3(0, 5, 0);
             if(drawDebugData)
             {
-                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "Num Chunks " + ChunkManager.ChunkMap.Values.Count, new Vector2(5, 5), Color.White);
-                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "Max Viewing Level " + ChunkManager.MaxViewingLevel, new Vector2(5, 20), Color.White);
-                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "FPS " + Math.Round(FPS), new Vector2(5, 35), Color.White);
+                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "Num Chunks " + ChunkManager.ChunkData.ChunkMap.Values.Count, new Vector2(5, 5), Color.White);
+                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "Max Viewing Level " + ChunkManager.ChunkData.MaxViewingLevel, new Vector2(5, 20), Color.White);
+                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "FPS " + Math.Round(fps), new Vector2(5, 35), Color.White);
                 DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "60", new Vector2(5, 150 - 65), Color.White);
                 DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "30", new Vector2(5, 150 - 35), Color.White);
                 DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "10", new Vector2(5, 150 - 15), Color.White);
-                for(int i = 0; i < lastFPS.Count; i++)
+                for(int i = 0; i < lastFps.Count; i++)
                 {
-                    DwarfGame.SpriteBatch.Draw(pixel, new Rectangle(30 + i * 2, 150 - (int) lastFPS[i], 2, (int) lastFPS[i]), new Color(1.0f - lastFPS[i] / 60.0f, lastFPS[i] / 60.0f, 0.0f, 0.5f));
+                    DwarfGame.SpriteBatch.Draw(pixel, new Rectangle(30 + i * 2, 150 - (int) lastFps[i], 2, (int) lastFps[i]), new Color(1.0f - lastFps[i] / 60.0f, lastFps[i] / 60.0f, 0.0f, 0.5f));
                 }
             }
 
-            Vector3 frustrumNormal = camera.GetFrustrum().Far.Normal;
+            Vector3 frustrumNormal = Camera.GetFrustrum().Far.Normal;
 
             if(DrawMap)
             {
-                int mapWidth = 256;
-                int mapHeight = 256;
+                const int mapWidth = 256;
+                const int mapHeight = 256;
                 float scaleX = (float) mapWidth / (float) WorldGeneratorState.worldMap.Width;
                 float scaleY = (float) mapHeight / (float) WorldGeneratorState.worldMap.Height;
                 DwarfGame.SpriteBatch.Draw(WorldGeneratorState.worldMap, new Rectangle(0, GraphicsDevice.Viewport.Height - mapHeight, mapWidth, mapHeight), new Color(255, 255, 255, 200));
-                Vector2 spos = ((new Vector2(camera.Position.X * scaleX, camera.Position.Z * scaleY) / WorldScale)) + new Vector2(0, GraphicsDevice.Viewport.Height - mapHeight);
+                Vector2 spos = ((new Vector2(Camera.Position.X * scaleX, Camera.Position.Z * scaleY) / WorldScale)) + new Vector2(0, GraphicsDevice.Viewport.Height - mapHeight);
                 Vector2 spos2 = spos + new Vector2(frustrumNormal.X * 100 * scaleX, frustrumNormal.Z * 100 * scaleY) / WorldScale;
                 Drawer2D.DrawRect(DwarfGame.SpriteBatch, new Rectangle((int) spos.X, (int) spos.Y, 1, 1), Color.White, 1.0f);
                 Drawer2D.DrawLine(DwarfGame.SpriteBatch, spos, spos2, Color.White, 1);
@@ -1176,7 +1262,7 @@ namespace DwarfCorp
             }
 
             DwarfGame.SpriteBatch.End();
-            Master.Render(gameTime, GraphicsDevice);
+            Master.Render(Game, gameTime, GraphicsDevice);
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle = DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
@@ -1187,18 +1273,18 @@ namespace DwarfCorp
 
         private bool CollideCamera()
         {
-            Vector3 position = camera.Target;
+            Vector3 position = Camera.Target;
             BoundingBox box = new BoundingBox(position - Vector3.One * 0.25f, position + Vector3.One * 0.25f);
             List<VoxelRef> vs = new List<VoxelRef>();
-            ChunkManager.GetVoxelReferencesAtWorldLocation(null, position, vs);
+            ChunkManager.ChunkData.GetVoxelReferencesAtWorldLocation(null, position, vs);
 
-            VoxelChunk chunk = ChunkManager.GetVoxelChunkAtWorldLocation(position);
+            VoxelChunk chunk = ChunkManager.ChunkData.GetVoxelChunkAtWorldLocation(position);
 
             bool collided = false;
 
             if(vs.Count > 0 && chunk != null)
             {
-                Vector3 grid = chunk.WorldToGrid(camera.Position);
+                Vector3 grid = chunk.WorldToGrid(Camera.Position);
                 List<VoxelRef> adjacencies = chunk.GetNeighborsEuclidean((int) grid.X, (int) grid.Y, (int) grid.Z);
                 vs.AddRange(adjacencies);
                 foreach(VoxelRef v in vs)
@@ -1206,7 +1292,7 @@ namespace DwarfCorp
                     if(v.TypeName != "empty" && v.TypeName != "water")
                     {
                         BoundingBox voxAABB = v.GetBoundingBox();
-                        Voxel vox = v.GetVoxel(ChunkManager, false);
+                        Voxel vox = v.GetVoxel(false);
 
                         if(!vox.IsVisible)
                         {
@@ -1219,8 +1305,8 @@ namespace DwarfCorp
                             if(PhysicsComponent.TestStaticAABBAABB(box, voxAABB, ref contact))
                             {
                                 collided = true;
-                                camera.Target += contact.nEnter * contact.penetration;
-                                camera.Velocity *= 0;
+                                Camera.Target += contact.nEnter * contact.penetration;
+                                Camera.Velocity *= 0;
                             }
                         }
                     }

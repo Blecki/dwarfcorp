@@ -12,7 +12,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class LocatableComponent : GameComponent, IBoundedObject
     {
-        [JsonIgnore]
         public bool WasAddedToOctree
         {
             get { return m_wasEverAddedToOctree; }
@@ -36,12 +35,12 @@ namespace DwarfCorp
                     return;
                 }
 
-                if(!IsActive || (!HasMoved && m_wasEverAddedToOctree) || (!CollisionManager.NeedsUpdate(this, CollisionType)))
+                if(!IsActive || (!HasMoved && m_wasEverAddedToOctree) || (!Manager.CollisionManager.NeedsUpdate(this, CollisionType)))
                 {
                     return;
                 }
 
-                CollisionManager.UpdateObject(this, CollisionType);
+                Manager.CollisionManager.UpdateObject(this, CollisionType);
                 m_wasEverAddedToOctree = true;
             }
         }
@@ -67,8 +66,6 @@ namespace DwarfCorp
         public bool FrustrumCull { get; set; }
         public bool DrawInFrontOfSiblings { get; set; }
 
-        [JsonIgnore] public static CollisionManager CollisionManager = null;
-
         public bool HasMoved
         {
             get { return m_hasMoved; }
@@ -81,7 +78,7 @@ namespace DwarfCorp
                     return;
                 }
 
-                foreach(LocatableComponent child in Children.Values.OfType<LocatableComponent>())
+                foreach(LocatableComponent child in Children.OfType<LocatableComponent>())
                 {
                     (child).HasMoved = value;
                 }
@@ -173,7 +170,6 @@ namespace DwarfCorp
                 SimpleDrawing.DrawBox(BoundingBox, Color.White, 0.02f);
             }
 
-
             base.Update(gameTime, chunks, camera);
         }
 
@@ -204,16 +200,11 @@ namespace DwarfCorp
             }
 
 
-            foreach(KeyValuePair<uint, GameComponent> pair in Children)
+            lock(Children)
             {
-                if(pair.Value is LocatableComponent)
+                foreach(LocatableComponent locatable in Children.OfType<LocatableComponent>().Where(locatable => locatable.HasMoved))
                 {
-                    LocatableComponent locatable = (LocatableComponent) pair.Value;
-
-                    if(locatable.HasMoved)
-                    {
-                        locatable.UpdateTransformsRecursive();
-                    }
+                    locatable.UpdateTransformsRecursive();
                 }
             }
 
@@ -241,7 +232,7 @@ namespace DwarfCorp
             UpdateBoundingBox();
             if(AddToOctree)
             {
-                CollisionManager.RemoveObject(this, CollisionType);
+                Manager.CollisionManager.RemoveObject(this, CollisionType);
             }
             IsActive = false;
             IsVisible = false;

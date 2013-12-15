@@ -5,16 +5,20 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GatherItemAct : CompoundCreatureAct
     {
         public LocatableComponent ItemToGather { get; set; }
         public string ItemID { get; set; }
 
+        public GatherItemAct()
+        {
+            
+        }
 
         public bool IsGatherable()
         {
-            return (Agent.Master.GatherDesignations.Contains(ItemToGather) || Agent.Hands.GetFirstGrab() == ItemToGather);
+            return (!Agent.Faction.IsInStockpile(ItemToGather) && (Agent.Faction.GatherDesignations.Contains(ItemToGather) || Agent.Hands.GetFirstGrab() == ItemToGather));
         }
 
         public Act EntityIsGatherable()

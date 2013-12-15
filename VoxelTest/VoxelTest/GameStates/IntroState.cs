@@ -29,7 +29,7 @@ namespace DwarfCorp
         public override void OnEnter()
         {
             IsInitialized = true;
-            Logo = Game.Content.Load<Texture2D>("companylogo");
+            Logo = TextureManager.GetTexture("companylogo");
             IntroTimer.Reset(3);
 
             base.OnEnter();

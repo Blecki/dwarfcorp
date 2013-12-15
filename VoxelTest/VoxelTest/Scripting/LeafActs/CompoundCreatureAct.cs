@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class CompoundCreatureAct : CreatureAct
     {
         public Act Tree { get; set; }
@@ -16,6 +16,11 @@ namespace DwarfCorp
         {
             Name = "CompoundCreatureAct";
             Tree = null;
+        }
+
+        public CompoundCreatureAct()
+        {
+
         }
 
         public override void Initialize()

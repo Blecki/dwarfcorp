@@ -5,10 +5,15 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GoToEntityAct : CompoundCreatureAct
     {
         public LocatableComponent Entity { get; set; }
+
+        public GoToEntityAct()
+        {
+
+        }
 
         public bool EntityIsInHands()
         {

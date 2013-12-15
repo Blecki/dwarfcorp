@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class MeleeAct : CreatureAct
     {
         public MeleeAct(CreatureAIComponent agent) :
@@ -58,7 +58,7 @@ namespace DwarfCorp
 
                 if(Agent.TargetComponent.IsDead)
                 {
-                    Creature.Master.ChopDesignations.Remove(Agent.TargetComponent);
+                    Creature.Faction.ChopDesignations.Remove(Agent.TargetComponent);
                     Agent.TargetComponent = null;
 
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;

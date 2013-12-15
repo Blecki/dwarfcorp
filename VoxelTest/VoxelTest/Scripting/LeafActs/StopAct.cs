@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class StopAct : CreatureAct
     {
         public float StopForce { get; set; }

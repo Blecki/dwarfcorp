@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class DigAct : CreatureAct
     {
         public string TargetVoxelName { get; set; }
@@ -36,8 +36,8 @@ namespace DwarfCorp
                     break;
                 }
 
-                Voxel vox = blackBoardVoxelRef.GetVoxel(Creature.Master.Chunks, false);
-                if(vox == null || vox.Health <= 0.0f || !Creature.Master.IsDigDesignation(vox))
+                Voxel vox = blackBoardVoxelRef.GetVoxel(false);
+                if(vox == null || vox.Health <= 0.0f || !Creature.Faction.IsDigDesignation(vox))
                 {
                     if(vox != null && vox.Health <= 0.0f)
                     {

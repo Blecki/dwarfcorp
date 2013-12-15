@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class SetTargetVoxelAct : CreatureAct
     {
         public VoxelRef Voxel { get; set; }
