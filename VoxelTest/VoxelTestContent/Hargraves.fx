@@ -250,10 +250,16 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 
 	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
 
-    if (Clipping)  clip(PSIn.clipDistances);  //MSS - Water Refactor added
-
 	clip((texColor.a - 0.5));
 
+	if (Clipping)
+	{
+		if (PSIn.clipDistances.w < 0.0f)
+		{
+			Output.Color.b = 1.0f;
+			Output.Color.a *= 0.5f;
+		}
+	}
 
     return Output;
 }

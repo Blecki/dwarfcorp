@@ -15,7 +15,7 @@ namespace DwarfCorp
 
     public class GUITest : GameState
     {
-        public SillyGUI GUI { get; set; }
+        public DwarfGUI GUI { get; set; }
         public SpriteFont DefaultFont { get; set; }
         public Drawer2D Drawer { get; set; }
         public Panel MainWindow { get; set; }
@@ -33,7 +33,7 @@ namespace DwarfCorp
         public override void OnEnter()
         {
             DefaultFont = Game.Content.Load<SpriteFont>("Default");
-            GUI = new SillyGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
+            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
             IsInitialized = true;
             Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
             MainWindow = new Panel(GUI, GUI.RootComponent);

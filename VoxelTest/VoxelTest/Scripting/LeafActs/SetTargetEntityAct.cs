@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class SetTargetEntityAct : CreatureAct
     {
         public LocatableComponent Entity { get; set; }

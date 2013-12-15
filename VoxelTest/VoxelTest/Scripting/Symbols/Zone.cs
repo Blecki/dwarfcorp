@@ -31,6 +31,11 @@ namespace DwarfCorp
             Chunks = chunks;
         }
 
+        public Zone()
+        {
+
+        }
+
         public VoxelStorage GetStorage(VoxelRef voxel)
         {
             foreach(VoxelStorage storage in Storage)
@@ -380,7 +385,7 @@ namespace DwarfCorp
             }
 
 
-            return LinearMathHelpers.GetBoundingBox(boxes);
+            return MathFunctions.GetBoundingBox(boxes);
         }
 
         public bool IsInZone(Vector3 worldCoordinate)

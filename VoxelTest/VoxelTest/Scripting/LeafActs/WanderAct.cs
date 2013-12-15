@@ -3,15 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class WanderAct : CreatureAct
     {
         public Timer WanderTime { get; set; }
         public Timer TurnTime { get; set; }
         public float Radius { get; set; }
+
+        public WanderAct()
+        {
+            
+        }
 
         public WanderAct(CreatureAIComponent creature, float seconds, float turnTime, float radius) :
             base(creature)

@@ -5,11 +5,16 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class MoveItemAct : CompoundCreatureAct
     {
         public Item Item { get; set; }
         public Zone Zone { get; set; }
+
+        public MoveItemAct()
+        {
+
+        }
 
         public MoveItemAct(CreatureAIComponent agent, Item item, Zone zone) :
             base(agent)

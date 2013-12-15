@@ -5,15 +5,20 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GuardVoxelAct : CompoundCreatureAct
     {
         public VoxelRef Voxel { get; set; }
 
 
+        public GuardVoxelAct()
+        {
+
+        }
+
         public bool IsGuardDesignation()
         {
-            return Agent.Master.IsGuardDesignation(Voxel);
+            return Agent.Faction.IsGuardDesignation(Voxel);
         }
 
         public GuardVoxelAct(CreatureAIComponent agent, VoxelRef voxel) :

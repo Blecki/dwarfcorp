@@ -12,7 +12,7 @@ namespace DwarfCorp
 
     public class DragManager
     {
-        public Dictionary<SillyGUIComponent, DraggableItem> Slots { get; set; }
+        public Dictionary<GUIComponent, DraggableItem> Slots { get; set; }
         public DraggableItem CurrentItem { get; set; }
         public int CurrentDragAmount { get; set; }
 
@@ -24,19 +24,19 @@ namespace DwarfCorp
 
         public event DragEnded OnDragEnded;
 
-        public Dictionary<SillyGUIComponent, Dictionary<SillyGUIComponent, bool>> IllegalDrags { get; set; }
+        public Dictionary<GUIComponent, Dictionary<GUIComponent, bool>> IllegalDrags { get; set; }
 
         public DragManager()
         {
-            IllegalDrags = new Dictionary<SillyGUIComponent, Dictionary<SillyGUIComponent, bool>>();
-            Slots = new Dictionary<SillyGUIComponent, DraggableItem>();
+            IllegalDrags = new Dictionary<GUIComponent, Dictionary<GUIComponent, bool>>();
+            Slots = new Dictionary<GUIComponent, DraggableItem>();
             CurrentItem = null;
             CurrentDragAmount = 0;
             OnDragStarted += DragManager_OnDragStarted;
             OnDragEnded += DragManager_OnDragEnded;
         }
 
-        public void DisallowDragging(SillyGUIComponent component1, SillyGUIComponent component2)
+        public void DisallowDragging(GUIComponent component1, GUIComponent component2)
         {
             if(component1 == null || component2 == null)
             {
@@ -45,7 +45,7 @@ namespace DwarfCorp
 
             if(!IllegalDrags.ContainsKey(component1))
             {
-                IllegalDrags[component1] = new Dictionary<SillyGUIComponent, bool>();
+                IllegalDrags[component1] = new Dictionary<GUIComponent, bool>();
             }
 
             IllegalDrags[component1][component2] = true;
@@ -59,9 +59,9 @@ namespace DwarfCorp
         {
         }
 
-        public SillyGUIComponent GetIntersectingSlot(Rectangle rect)
+        public GUIComponent GetIntersectingSlot(Rectangle rect)
         {
-            foreach(SillyGUIComponent component in Slots.Keys)
+            foreach(GUIComponent component in Slots.Keys)
             {
                 if(component.GlobalBounds.Contains(rect.X + rect.Width / 2, rect.Y + rect.Height / 2))
                 {
@@ -89,16 +89,16 @@ namespace DwarfCorp
                 rect.X = mouseState.X - rect.Width / 2;
                 rect.Y = mouseState.Y - rect.Height / 2;
 
-                SillyGUIComponent drop = GetIntersectingSlot(rect);
+                GUIComponent drop = GetIntersectingSlot(rect);
 
 
                 if(drop != null)
                 {
-                    foreach(SillyGUIComponent slotDropper in IllegalDrags.Keys)
+                    foreach(GUIComponent slotDropper in IllegalDrags.Keys)
                     {
                         if(CurrentItem.HasAnscestor(slotDropper))
                         {
-                            foreach(SillyGUIComponent illegals in IllegalDrags[slotDropper].Keys)
+                            foreach(GUIComponent illegals in IllegalDrags[slotDropper].Keys)
                             {
                                 if(drop.HasAnscestor(illegals))
                                 {
@@ -146,7 +146,7 @@ namespace DwarfCorp
             return null;
         }
 
-        public bool IsDragValid(DraggableItem item, SillyGUIComponent slot)
+        public bool IsDragValid(DraggableItem item, GUIComponent slot)
         {
             if(!Slots.ContainsKey(slot))
             {
@@ -167,7 +167,7 @@ namespace DwarfCorp
             }
         }
 
-        public bool Drag(DraggableItem item, int amount, SillyGUIComponent slot, out DraggableItem itemDraggedTo, out bool wasNew)
+        public bool Drag(DraggableItem item, int amount, GUIComponent slot, out DraggableItem itemDraggedTo, out bool wasNew)
         {
             if(!Slots.ContainsKey(slot))
             {

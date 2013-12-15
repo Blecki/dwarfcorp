@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class SearchFreeStockpileAct : CreatureAct
     {
         public string StockpileName { get; set; }
@@ -76,7 +76,7 @@ namespace DwarfCorp
         {
             bool validTargetFound = false;
 
-            List<Stockpile> sortedPiles = new List<Stockpile>(Creature.Master.Stockpiles);
+            List<Stockpile> sortedPiles = new List<Stockpile>(Creature.Faction.Stockpiles);
 
             sortedPiles.Sort(CompareStockpiles);
 

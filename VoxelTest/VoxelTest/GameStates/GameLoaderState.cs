@@ -16,41 +16,178 @@ namespace DwarfCorp
 
     public class GameLoaderState : GameState
     {
-        public SillyGUI GUI { get; set; }
+        public class GameLoadDescriptor
+        {
+            public string FileName { get; set; }
+            public Button Button { get; set; }
+            public bool IsLoaded { get; set; }
+            public Mutex Lock { get; set; }
+
+            public GameLoadDescriptor()
+            {
+                IsLoaded = false;
+                Lock = new Mutex();
+            }
+        }
+
+        public DwarfGUI GUI { get; set; }
         public InputManager Input { get; set; }
         public SpriteFont DefaultFont { get; set; }
         public string SaveDirectory = "Saves";
-        public List<string> Saves { get; set; }
+        public List<GameLoadDescriptor> Games { get; set; }
         public bool ExitThreads { get; set; }
+        public List<Thread> Threads { get; set; }
+
+        public GroupBox PropertiesPanel { get; set; }
+
+        public GameLoadDescriptor SelectedDescriptor { get; set; }
 
         public GameLoaderState(DwarfGame game, GameStateManager stateManager) :
             base(game, "GameLoaderState", stateManager)
         {
             IsInitialized = false;
-            Saves = new List<string>();
+            Games = new List<GameLoadDescriptor>();
             ExitThreads = false;
+            Threads = new List<Thread>();
+        }
+
+        public void JoinThreads()
+        {
+            ExitThreads = true;
+            foreach (Thread t in Threads)
+            {
+                t.Join();
+            }
+
+            Threads.Clear();
+        }
+
+        public void WorldLoaderThread(int min, int max)
+        {
+            for (int i = min; i < max; i++)
+            {
+                if (ExitThreads)
+                {
+                    break;
+                }
+
+                Games[i].Lock.WaitOne();
+                if (!Games[i].IsLoaded)
+                {
+                    Games[i].Lock.ReleaseMutex();
+
+                    string[] screenshots = SaveData.GetFilesInDirectory(Games[i].FileName, false, "png", "png");
+
+                    Games[i].Lock.WaitOne();
+                    Games[i].Button.Text = Games[i].FileName.Split(Program.DirChar).Last();
+                    if(screenshots.Length > 0)
+                    {
+                        Games[i].Button.Image = new ImageFrame(TextureManager.LoadInstanceTexture(screenshots[0]));
+                        Games[i].Button.Mode = Button.ButtonMode.ImageButton;
+                    }
+                    else
+                    {
+                        Games[i].Button.Text += "... No image.";
+                        Games[i].Button.Mode = Button.ButtonMode.PushButton;
+                    }
+
+                    Games[i].Button.KeepAspectRatio = true;
+                    Games[i].IsLoaded = true;
+                    
+                    Games[i].Lock.ReleaseMutex();
+                }
+                else
+                {
+                    Games[i].Lock.ReleaseMutex();
+                }
+            }
         }
 
 
-        public void CreateSaves()
+        public void LoadWorlds()
         {
             ExitThreads = false;
             try
             {
-                System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + System.IO.Path.DirectorySeparatorChar + SaveDirectory);
-                foreach(System.IO.DirectoryInfo file in worldDirectory.EnumerateDirectories())
+                System.IO.DirectoryInfo savedirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Program.DirChar + SaveDirectory);
+                foreach (System.IO.DirectoryInfo file in savedirectory.EnumerateDirectories())
                 {
-                    Saves.Add(file.Name);
+                    GameLoadDescriptor descriptor = new GameLoadDescriptor
+                    {
+                        FileName = file.FullName
+                    };
+                    Games.Add(descriptor);
                 }
             }
-            catch(System.IO.IOException exception)
+            catch (System.IO.IOException exception)
             {
                 Console.Error.WriteLine(exception.Message);
             }
         }
 
+        public void CreateGamePictures(GUIComponent parent, int cols)
+        {
+            scrollGrid.ClearChildren();
+
+            foreach (GameLoadDescriptor overworld in Games)
+            {
+                if(overworld.Button == null)
+                {
+                    Button image = new Button(GUI, parent, "Loading...", GUI.DefaultFont, Button.ButtonMode.ImageButton, null)
+                    {
+                        TextColor = Color.Black,
+                        ToggleTint = new Color(255, 255, 150)
+                    };
+
+                    overworld.Button = image;
+                }
+                else
+                {
+                    overworld.Button = new Button(GUI, parent, overworld.Button.Text, overworld.Button.TextFont, overworld.Button.Mode, overworld.Button.Image)
+                    {
+                        TextColor = Color.White
+                    };
+                }
+            }
+
+            for (int i = 0; i < Games.Count; i++)
+            {
+                Button worldPicture = Games[i].Button;
+                int y = (int)(i / cols);
+                int x = i - (y * cols);
+                scrollGrid.SetComponentPosition(worldPicture, x, y, 1, 1);
+                int j = i;
+                worldPicture.OnClicked += () => worldPicture_OnClicked(j);
+            }
+
+            if (Games.Count == 0)
+            {
+                Label apology = new Label(GUI, scrollGrid, "No files found...", GUI.DefaultFont);
+                scrollGrid.SetComponentPosition(apology, 0, 0, 1, 1);
+            }
+        }
+
+        public void CreateLoadThreads(int num)
+        {
+            int numPerThread = (int)Math.Ceiling(Math.Max(((float)Games.Count / (float)num), 1.0f));
+            for (int i = 0; i < num; i++)
+            {
+                int min = Math.Min((numPerThread) * i, Games.Count);
+                int max = Math.Min(min + numPerThread, Games.Count);
+
+                if (max - min > 0)
+                {
+                    Thread loadThread = new Thread(() => WorldLoaderThread(min, max));
+                    loadThread.Start();
+                    Threads.Add(loadThread);
+                }
+            }
+        }
+
         public void CreateGUI()
         {
+            GUI.RootComponent.ClearChildren();
+            Games.Clear();
             const int edgePadding = 32;
             Panel mainWindow = new Panel(GUI, GUI.RootComponent)
             {
@@ -61,49 +198,109 @@ namespace DwarfCorp
             Label title = new Label(GUI, layout, "Load Game", GUI.TitleFont);
             layout.SetComponentPosition(title, 0, 0, 1, 1);
 
-            ScrollView scroller = new ScrollView(GUI, layout);
-            layout.SetComponentPosition(scroller, 0, 1, 4, 8);
+            scroller = new ScrollView(GUI, layout);
+            layout.SetComponentPosition(scroller, 0, 1, 3, 8);
+
+            LoadWorlds();
 
             layout.UpdateSizes();
-            CreateSaves();
 
-            ListSelector selector = new ListSelector(GUI, scroller)
+            int cols = Math.Max(scroller.LocalBounds.Width / 256, 1);
+            int rows = Math.Max(Math.Max(scroller.LocalBounds.Height / 256, 1), (int)Math.Ceiling((float)Games.Count / (float)cols));
+
+            scrollGrid = new GridLayout(GUI, scroller, rows, cols)
             {
-                LocalBounds = new Rectangle(32, 32, scroller.GlobalBounds.Width - 64, Saves.Count * 80),
-                DrawPanel = false,
-                Label = "-Saved Games-",
-                Mode = ListItem.SelectionMode.ButtonList
+                LocalBounds = new Rectangle(edgePadding, edgePadding, scroller.LocalBounds.Width - edgePadding, rows * 256),
+                FitToParent = false
             };
-            foreach(string s in Saves)
-            {
-                selector.AddItem(s);
-            }
 
-            selector.OnItemClicked += () => selector_OnItemClicked(selector);
+            CreateGamePictures(scrollGrid, cols);
 
 
-            Button back = new Button(GUI, layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.LeftArrow));
+            CreateLoadThreads(4);
+
+            PropertiesPanel = new GroupBox(GUI, layout, "Selected");
+
+            layout.SetComponentPosition(PropertiesPanel, 3, 1, 1, 8);
+
+            Button back = new Button(GUI, layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.LeftArrow));
             layout.SetComponentPosition(back, 3, 9, 1, 1);
             back.OnClicked += back_OnClicked;
         }
 
-        private void selector_OnItemClicked(ListSelector selector)
+        public void LoadDescriptor(GameLoadDescriptor descriptor)
         {
-            ListItem item = selector.SelectedItem;
-            string save = item.Label;
+            lock (descriptor.Lock)
+            {
+                if (!descriptor.IsLoaded)
+                {
+                    return;
+                }
 
-            PlayState playState = StateManager.States["PlayState"] as PlayState;
 
-            if(playState == null)
+                PlayState state = (PlayState)(StateManager.States["PlayState"]);
+                state.ExistingFile = descriptor.FileName;
+
+                JoinThreads();
+                StateManager.PushState("PlayState");
+                Games.Clear();
+            }
+        }
+
+        private void UpdateSelection()
+        {
+            if (SelectedDescriptor == null || !SelectedDescriptor.IsLoaded)
             {
                 return;
             }
 
-            playState.ShouldReset = true;
-            playState.ExistingFile = DwarfGame.GetGameDirectory() + System.IO.Path.DirectorySeparatorChar + "Saves" + System.IO.Path.DirectorySeparatorChar + save;
-            StateManager.PushState("PlayState");
+            PropertiesPanel.ClearChildren();
+            GridLayout layout = new GridLayout(GUI, PropertiesPanel, 5, 1);
+
+            ImagePanel worldPanel = new ImagePanel(GUI, layout, SelectedDescriptor.Button.Image)
+            {
+                KeepAspectRatio = true
+            };
+            layout.SetComponentPosition(worldPanel, 0, 1, 1, 1);
+
+            Label worldLabel = new Label(GUI, PropertiesPanel, "Selected", GUI.DefaultFont);
+            layout.SetComponentPosition(worldLabel, 0, 2, 1, 1);
+
+            Button loadButton = new Button(GUI, layout, "Load", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Save));
+            layout.SetComponentPosition(loadButton, 0, 3, 1, 1);
+
+            loadButton.OnClicked += loadButton_OnClicked;
+
+            Button deleteButton = new Button(GUI, layout, "Delete", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Ex));
+            layout.SetComponentPosition(deleteButton, 0, 4, 1, 1);
+
+            deleteButton.OnClicked += deleteButton_OnClicked;
         }
 
+        void deleteButton_OnClicked()
+        {
+            DeleteDescriptor(SelectedDescriptor);
+        }
+
+        public void DeleteDescriptor(GameLoadDescriptor selectedDescriptor)
+        {
+            Games.Remove(selectedDescriptor);
+            int cols = Math.Max(scroller.LocalBounds.Width / 256, 1);
+            CreateGamePictures(scrollGrid, cols);
+            PropertiesPanel.ClearChildren();
+            System.IO.Directory.Delete(selectedDescriptor.FileName, true);
+        }
+
+        void loadButton_OnClicked()
+        {
+            LoadDescriptor(SelectedDescriptor);
+        }
+
+        private void worldPicture_OnClicked(int picture)
+        {
+            SelectedDescriptor = Games[picture];
+            UpdateSelection();
+        }
 
         private void back_OnClicked()
         {
@@ -113,17 +310,24 @@ namespace DwarfCorp
         public override void OnEnter()
         {
             DefaultFont = Game.Content.Load<SpriteFont>("Default");
-            GUI = new SillyGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
+            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
             Input = new InputManager();
-
+           
             CreateGUI();
-
+            SelectedDescriptor = null;
             IsInitialized = true;
             base.OnEnter();
         }
 
+        public override void OnExit()
+        {
+            JoinThreads();
+            base.OnExit();
+        }
 
         private int iter = 0;
+        private GridLayout scrollGrid;
+        private ScrollView scroller;
 
         public override void Update(GameTime gameTime)
         {
@@ -131,6 +335,22 @@ namespace DwarfCorp
             Input.Update();
             GUI.Update(gameTime);
             Game.IsMouseVisible = true;
+
+            foreach (GameLoadDescriptor t in Games)
+            {
+                t.Lock.WaitOne();
+
+                if (!t.IsLoaded)
+                {
+                    t.Button.Text = "Loading";
+                    for (int j = 0; j < (iter / 10) % 4; j++)
+                    {
+                        t.Button.Text += ".";
+                    }
+                }
+
+                t.Lock.ReleaseMutex();
+            }
 
             base.Update(gameTime);
         }
@@ -142,31 +362,33 @@ namespace DwarfCorp
             {
                 ScissorTestEnable = true
             };
+
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
             DwarfGame.SpriteBatch.End();
+
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle = DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
         }
 
         public override void Render(GameTime gameTime)
         {
-            switch(Transitioning)
+            switch (Transitioning)
             {
                 case TransitionMode.Running:
                     Game.GraphicsDevice.Clear(Color.Black);
                     DrawGUI(gameTime, 0);
                     break;
                 case TransitionMode.Entering:
-                {
-                    float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                    DrawGUI(gameTime, dx);
-                }
+                    {
+                        float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Width, 1.0f);
+                        DrawGUI(gameTime, dx);
+                    }
                     break;
                 case TransitionMode.Exiting:
-                {
-                    float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                    DrawGUI(gameTime, dx);
-                }
+                    {
+                        float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Width, 1.0f);
+                        DrawGUI(gameTime, dx);
+                    }
                     break;
             }
 

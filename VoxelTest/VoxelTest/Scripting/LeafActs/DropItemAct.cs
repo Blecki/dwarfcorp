@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class DropItemAct : CreatureAct
     {
         public DropItemAct(CreatureAIComponent creature) :

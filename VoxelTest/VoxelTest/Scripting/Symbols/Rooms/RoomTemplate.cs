@@ -46,6 +46,11 @@ namespace DwarfCorp
             }
         }
 
+        public RoomTemplate()
+        {
+            
+        }
+
         public RoomTemplate(RoomTile[,] template, RoomTile[,] accessories)
         {
             Template = template;
@@ -169,7 +174,7 @@ namespace DwarfCorp
             RoomTile[,] toReturn = new RoomTile[nr + 2, nc + 2];
 
             Dictionary<Point, VoxelRef> voxelDict = new Dictionary<Point, VoxelRef>();
-            List<VoxelRef> voxelsInRoom = chunks.GetVoxelsIntersecting(bigBox);
+            List<VoxelRef> voxelsInRoom = chunks.ChunkData.GetVoxelsIntersecting(bigBox);
             foreach(VoxelRef vox in voxelsInRoom)
             {
                 voxelDict[new Point((int) (vox.WorldPosition.X - box.Min.X) + 1, (int) (vox.WorldPosition.Z - box.Min.Z) + 1)] = vox;

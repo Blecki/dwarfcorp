@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class GetNearestFreeVoxelInZone : CreatureAct
     {
         public Zone TargetZone { get; set; }

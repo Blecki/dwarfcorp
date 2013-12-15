@@ -17,6 +17,11 @@ namespace DwarfCorp
         public RoomType RoomType { get; set; }
         private static int Counter = 0;
 
+        public Room() : base()
+        {
+            
+        }
+
         public Room(bool designation, List<VoxelRef> designations, RoomType type, ChunkManager chunks) :
             base(type.Name + " " + Counter, chunks)
         {
@@ -54,7 +59,7 @@ namespace DwarfCorp
             HashSet<LocatableComponent> components = new HashSet<LocatableComponent>();
             BoundingBox box = GetBoundingBox();
             box.Max += new Vector3(0, 0, 2);
-            LocatableComponent.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
+            PlayState.ComponentManager.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
             toReturn.AddRange(components);
 

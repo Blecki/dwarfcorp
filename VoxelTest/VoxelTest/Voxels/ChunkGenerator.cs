@@ -47,7 +47,7 @@ namespace DwarfCorp
                 }
             }
 
-            VoxelChunk c = new VoxelChunk(origin, Manager, voxels, Manager.GetChunkID(origin + new Vector3(0.5f, 0.5f, 0.5f)), 2);
+            VoxelChunk c = new VoxelChunk(origin, Manager, voxels, Manager.ChunkData.GetChunkID(origin + new Vector3(0.5f, 0.5f, 0.5f)), 2);
 
 
             return c;
@@ -300,7 +300,7 @@ namespace DwarfCorp
 
 
                     float hNorm = Overworld.GetValue(Overworld.Map, new Vector2(x + origin.X, z + origin.Z) / PlayState.WorldScale, Overworld.ScalarFieldType.Height);
-                    float h = LinearMathHelpers.Clamp(hNorm * chunkSizeY, 0.0f, chunkSizeY - 2);
+                    float h = MathFunctions.Clamp(hNorm * chunkSizeY, 0.0f, chunkSizeY - 2);
                     int StoneHeight = (int) Math.Max(h - 2, 1);
 
 
@@ -359,7 +359,7 @@ namespace DwarfCorp
                 }
             }
 
-            VoxelChunk c = new VoxelChunk(origin, Manager, voxels, Manager.GetChunkID(origin + new Vector3(0.5f, 0.5f, 0.5f)), 1);
+            VoxelChunk c = new VoxelChunk(origin, Manager, voxels, Manager.ChunkData.GetChunkID(origin + new Vector3(0.5f, 0.5f, 0.5f)), 1);
             c.ShouldRebuild = true;
             c.ShouldRecalculateLighting = true;
 

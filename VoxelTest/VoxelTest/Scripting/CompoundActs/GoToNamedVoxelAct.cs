@@ -5,10 +5,15 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GoToNamedVoxelAct : CompoundCreatureAct
     {
         public string Voxel { get; set; }
+
+        public GoToNamedVoxelAct()
+        {
+
+        }
 
         public GoToNamedVoxelAct(string voxel, CreatureAIComponent creature) :
             base(creature)

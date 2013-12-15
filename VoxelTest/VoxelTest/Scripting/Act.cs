@@ -22,6 +22,7 @@ namespace DwarfCorp
             return new Wrap(func);
         }
     }
+
     [JsonObject(IsReference = true)]
     public class Act
     {

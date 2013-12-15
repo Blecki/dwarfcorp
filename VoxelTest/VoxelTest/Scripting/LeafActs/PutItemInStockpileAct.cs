@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class PutItemInStockpileAct : CreatureAct
     {
         public Stockpile Pile { get { return GetPile();  } set{ SetPile(value);} }

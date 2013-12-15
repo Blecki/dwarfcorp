@@ -18,7 +18,12 @@ namespace DwarfCorp
     {
         public class WorldLoadDescriptor
         {
+            public string DirectoryName { get; set; }
             public string FileName { get; set; }
+            public string ScreenshotName { get; set; }
+
+            public string WorldName { get; set; }
+
             public OverworldFile File { get; set; }
             public Button Button { get; set; }
             public bool IsLoaded { get; set; }
@@ -31,7 +36,7 @@ namespace DwarfCorp
             }
         }
 
-        public SillyGUI GUI { get; set; }
+        public DwarfGUI GUI { get; set; }
         public InputManager Input { get; set; }
         public SpriteFont DefaultFont { get; set; }
         public string OverworldDirectory = "Worlds";
@@ -77,20 +82,41 @@ namespace DwarfCorp
                 {
                     Worlds[i].Lock.ReleaseMutex();
 
-                    Worlds[i].File = new OverworldFile(Worlds[i].FileName, true);
+                    //Worlds[i].File = new OverworldFile(Worlds[i].FileName, true);
+                    Worlds[i].File = new OverworldFile();
+                    Worlds[i].File.Data = new OverworldFile.OverworldData();
 
                     Worlds[i].Lock.WaitOne();
-                    Worlds[i].Button.Image = new ImageFrame(Worlds[i].File.Data.CreateTexture(Game.GraphicsDevice, 256, 256));
-                    Worlds[i].Button.Mode = Button.ButtonMode.ImageButton;
-                    Worlds[i].Button.KeepAspectRatio = true;
-                    Worlds[i].IsLoaded = true;
-                    Worlds[i].Button.Text = Worlds[i].File.Data.Name;
+                    try
+                    {
+                        Worlds[i].File.Data.Screenshot = TextureManager.LoadInstanceTexture(Worlds[i].ScreenshotName);
+                        if(Worlds[i].File.Data.Screenshot != null)
+                        {
+                            Worlds[i].Button.Image = new ImageFrame(Worlds[i].File.Data.Screenshot);
+                            Worlds[i].Button.Mode = Button.ButtonMode.ImageButton;
+                            Worlds[i].Button.KeepAspectRatio = true;
+                            Worlds[i].Button.Text = Worlds[i].WorldName;
+                            Worlds[i].Button.TextColor = Color.White;
+                        }
+                        else
+                        {
+                            Worlds[i].Button.Text = Worlds[i].WorldName;
+                        }
+
+                    }
+                    catch(Exception e)
+                    {
+                        Worlds[i].Button.Text = "ERROR " + Worlds[i].WorldName;
+                        Console.Error.WriteLine(e.Message);
+                    }
                     Worlds[i].Lock.ReleaseMutex();
                 }
                 else
                 {
                     Worlds[i].Lock.ReleaseMutex();
                 }
+
+                Worlds[i].IsLoaded = true;
             }
         }
 
@@ -100,12 +126,15 @@ namespace DwarfCorp
             ExitThreads = false;
             try
             {
-                System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + System.IO.Path.DirectorySeparatorChar + OverworldDirectory);
-                foreach(System.IO.FileInfo file in worldDirectory.EnumerateFiles("*." + OverworldFile.CompressedExtension))
+                System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Program.DirChar + OverworldDirectory);
+                foreach(System.IO.DirectoryInfo file in worldDirectory.EnumerateDirectories())
                 {
                     WorldLoadDescriptor descriptor = new WorldLoadDescriptor
                     {
-                        FileName = file.FullName
+                        DirectoryName = file.FullName,
+                        WorldName = file.FullName.Split(Program.DirChar).Last(),
+                        ScreenshotName = file.FullName + Program.DirChar + "screenshot.png",
+                        FileName = file.FullName + Program.DirChar + "world." + OverworldFile.CompressedExtension,
                     };
                     Worlds.Add(descriptor);
                 }
@@ -116,19 +145,29 @@ namespace DwarfCorp
             }
         }
 
-        public void CreateWorldPictures(SillyGUIComponent parent, int cols)
+        public void CreateWorldPictures(GUIComponent parent, int cols)
         {
             scrollGrid.ClearChildren();
 
             foreach(WorldLoadDescriptor overworld in Worlds)
             {
-                Button image = new Button(GUI, parent, "Loading...", GUI.DefaultFont, Button.ButtonMode.ImageButton, null)
+                if(overworld.Button == null)
                 {
-                    TextColor = Color.Black,
-                    ToggleTint = new Color(255, 255, 150)
-                };
+                    Button image = new Button(GUI, parent, "Loading...", GUI.DefaultFont, Button.ButtonMode.ImageButton, null)
+                    {
+                        TextColor = Color.Black,
+                        ToggleTint = new Color(255, 255, 150)
+                    };
 
-                overworld.Button = image;
+                    overworld.Button = image;
+                }
+                else
+                {
+                    overworld.Button = new Button(GUI, parent, overworld.Button.Text, overworld.Button.TextFont, overworld.Button.Mode, overworld.Button.Image)
+                    {
+                        TextColor = Color.White
+                    };
+                }
             }
 
             for (int i = 0; i < Worlds.Count; i++)
@@ -167,6 +206,8 @@ namespace DwarfCorp
 
         public void CreateGUI()
         {
+            GUI.RootComponent.ClearChildren();
+            Worlds.Clear();
             const int edgePadding = 32;
             Panel mainWindow = new Panel(GUI, GUI.RootComponent)
             {
@@ -202,7 +243,7 @@ namespace DwarfCorp
             
             layout.SetComponentPosition(PropertiesPanel, 3, 1, 1, 8);
 
-            Button back = new Button(GUI, layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.LeftArrow));
+            Button back = new Button(GUI, layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.LeftArrow));
             layout.SetComponentPosition(back, 3, 9, 1, 1);
             back.OnClicked += back_OnClicked;
         }
@@ -216,6 +257,8 @@ namespace DwarfCorp
                     return;
                 }
 
+                descriptor.File = new OverworldFile(descriptor.FileName, true);
+
                 Overworld.Map = descriptor.File.Data.CreateMap();
                 Overworld.Name = descriptor.File.Data.Name;
                 PlayState.WorldWidth = Overworld.Map.GetLength(1);
@@ -228,6 +271,8 @@ namespace DwarfCorp
                 StateManager.PushState("WorldGeneratorState");
                 state.Progress.Value = 1.0f;
                 state.GenerationComplete = true;
+                state.WorldName = descriptor.WorldName;
+                state.NameEdit.Text = descriptor.WorldName;
                 Worlds.Clear();
             }
         }
@@ -242,18 +287,22 @@ namespace DwarfCorp
             PropertiesPanel.ClearChildren();
             GridLayout layout = new GridLayout(GUI, PropertiesPanel, 5, 1);
 
-            ImagePanel worldPanel = new ImagePanel(GUI, layout, SelectedDescriptor.Button.Image);
+            ImagePanel worldPanel = new ImagePanel(GUI, layout, SelectedDescriptor.Button.Image)
+            {
+                KeepAspectRatio = true
+            };
+
             layout.SetComponentPosition(worldPanel, 0, 1, 1, 1);
 
-            Label worldLabel = new Label(GUI, PropertiesPanel, SelectedDescriptor.File.Data.Name, GUI.DefaultFont);
+            Label worldLabel = new Label(GUI, PropertiesPanel, SelectedDescriptor.WorldName, GUI.DefaultFont);
             layout.SetComponentPosition(worldLabel, 0, 2, 1, 1);
 
-            Button loadButton = new Button(GUI, layout, "Load", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Save));
+            Button loadButton = new Button(GUI, layout, "Load", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Save));
             layout.SetComponentPosition(loadButton, 0, 3, 1, 1);
 
             loadButton.OnClicked += loadButton_OnClicked;
 
-            Button deleteButton = new Button(GUI, layout, "Delete", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Ex));
+            Button deleteButton = new Button(GUI, layout, "Delete", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Ex));
             layout.SetComponentPosition(deleteButton, 0, 4, 1, 1);
 
             deleteButton.OnClicked += deleteButton_OnClicked;
@@ -270,6 +319,16 @@ namespace DwarfCorp
             int cols = Math.Max(scroller.LocalBounds.Width / 256, 1);
             CreateWorldPictures(scrollGrid, cols);
             PropertiesPanel.ClearChildren();
+
+            try
+            {
+                System.IO.Directory.Delete(selectedDescriptor.DirectoryName, true);
+            }
+            catch(Exception e)
+            {
+                Console.Error.WriteLine(e.Message);
+            }
+
         }
 
         void loadButton_OnClicked()
@@ -291,7 +350,7 @@ namespace DwarfCorp
         public override void OnEnter()
         {
             DefaultFont = Game.Content.Load<SpriteFont>("Default");
-            GUI = new SillyGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
+            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
             Input = new InputManager();
 
             CreateGUI();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -27,7 +28,7 @@ namespace DwarfCorp
 
         public static Texture2D worldMap;
         public Color[] worldData;
-        public SillyGUI GUI { get; set; }
+        public DwarfGUI GUI { get; set; }
         public SpriteFont DefaultFont { get; set; }
         public Drawer2D Drawer { get; set; }
         public bool GenerationComplete { get; set; }
@@ -48,6 +49,7 @@ namespace DwarfCorp
         public ProgressBar Progress { get; set; }
         public string OverworldDirectory = "Worlds";
         public string WorldName = "world0";
+        public LineEdit NameEdit;
 
 
         public WorldGeneratorState(DwarfGame game, GameStateManager stateManager) :
@@ -64,7 +66,49 @@ namespace DwarfCorp
             NumRains = 5000;
             NumRivers = 100;
             NumVolcanoes = 3;
+            GenerateWorldName();
         }
+
+        public void GenerateWorldName()
+        {
+            List<string[]> templates = new List<string[]>
+            {
+                new[]
+                {
+                    "$Place",
+                    " of the ",
+                    "$Color",
+                    " ",
+                    "$Animal"
+                },
+                new[]
+                {
+                    "$Place",
+                    " of the ",
+                    "$Material",
+                    " ",
+                    "$Animal"
+                },
+                new[]
+                {
+                    "$Material",
+                    " of ",
+                    "$Place"
+                },
+                new[]
+                {
+                    "$Color",
+                    " ",
+                    "$Material",
+                    " ",
+                    "$Place"
+                }
+               
+            };
+
+            WorldName = new TextGenerator().GenerateRandom(templates[PlayState.Random.Next(templates.Count)]); 
+        }
+
 
         public override void OnEnter()
         {
@@ -74,36 +118,56 @@ namespace DwarfCorp
             Overworld.Volcanoes = new List<Vector2>();
 
             DefaultFont = Game.Content.Load<SpriteFont>("Default");
-            GUI = new SillyGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
+            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
             IsInitialized = true;
             Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
             GenerationComplete = false;
-            MainWindow = new Panel(GUI, GUI.RootComponent);
-            MainWindow.LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2);
+            MainWindow = new Panel(GUI, GUI.RootComponent)
+            {
+                LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2)
+            };
 
-            GridLayout layout = new GridLayout(GUI, MainWindow, 7, 4);
-            layout.LocalBounds = new Rectangle(0, 0, MainWindow.LocalBounds.Width, MainWindow.LocalBounds.Height);
+            GridLayout layout = new GridLayout(GUI, MainWindow, 7, 4)
+            {
+                LocalBounds = new Rectangle(0, 0, MainWindow.LocalBounds.Width, MainWindow.LocalBounds.Height)
+            };
 
-            Button startButton = new Button(GUI, layout, "Start!", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Check));
+            Button startButton = new Button(GUI, layout, "Start!", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Check))
+            {
+                ToolTip = "Start the game with the currently generated world."
+            };
+
             layout.SetComponentPosition(startButton, 2, 6, 1, 1);
             startButton.OnClicked += StartButtonOnClick;
 
-            Button saveButton = new Button(GUI, layout, "Save", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Save));
+            Button saveButton = new Button(GUI, layout, "Save", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Save))
+            {
+                ToolTip = "Save the generated world to a file."
+            };
             layout.SetComponentPosition(saveButton, 1, 6, 1, 1);
             saveButton.OnClicked += saveButton_OnClicked;
 
-            Button genButton = new Button(GUI, layout, "Generate", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
+            Button genButton = new Button(GUI, layout, "Generate", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
+            {
+                ToolTip = "Generatea  new random world."
+            };
             layout.SetComponentPosition(genButton, 3, 6, 1, 1);
 
             genButton.OnClicked += OnClick;
 
-            Button exitButton = new Button(GUI, layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.LeftArrow));
+            Button exitButton = new Button(GUI, layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.LeftArrow))
+            {
+                ToolTip = "Back to the main menu."
+            };
             layout.SetComponentPosition(exitButton, 0, 6, 1, 1);
 
             exitButton.OnClicked += ExitButtonOnClick;
 
 
-            MapPanel = new ImagePanel(GUI, layout, worldMap);
+            MapPanel = new ImagePanel(GUI, layout, worldMap)
+            {
+                ToolTip = "Map of the world.\nClick to select a location to embark."
+            };
             layout.SetComponentPosition(MapPanel, 0, 0, 3, 5);
 
             if(worldMap != null)
@@ -118,10 +182,16 @@ namespace DwarfCorp
 
             GroupBox mapProperties = new GroupBox(GUI, layout, "Map Properties");
 
-            GridLayout mapPropertiesLayout = new GridLayout(GUI, mapProperties, 6, 2);
-            mapPropertiesLayout.LocalBounds = new Rectangle(mapProperties.LocalBounds.X, mapProperties.LocalBounds.Y + 32, mapProperties.LocalBounds.Width, mapProperties.LocalBounds.Height);
+            GridLayout mapPropertiesLayout = new GridLayout(GUI, mapProperties, 6, 2)
+            {
+                LocalBounds = new Rectangle(mapProperties.LocalBounds.X, mapProperties.LocalBounds.Y + 32, mapProperties.LocalBounds.Width, mapProperties.LocalBounds.Height)
+            };
 
-            ComboBox selectType = new ComboBox(GUI, mapPropertiesLayout);
+            ComboBox selectType = new ComboBox(GUI, mapPropertiesLayout)
+            {
+                ToolTip = "Display type for the map."
+            };
+
             selectType.AddValue("Height");
             selectType.AddValue("Biomes");
             selectType.AddValue("Temp.");
@@ -135,21 +205,33 @@ namespace DwarfCorp
 
 
             Label rainFallLabel = new Label(GUI, mapPropertiesLayout, "Rain", GUI.DefaultFont);
-            Slider rainFallScaleSlider = new Slider(GUI, mapPropertiesLayout, "", RainfallScale, 0.0f, 2.0f, Slider.SliderMode.Float);
+            Slider rainFallScaleSlider = new Slider(GUI, mapPropertiesLayout, "", RainfallScale, 0.0f, 2.0f, Slider.SliderMode.Float)
+            {
+                ToolTip = "Controls the amount of rainfall in the world."
+            };
+
             rainFallScaleSlider.OnValueModified += rainFallScaleSlider_OnValueModified;
             mapPropertiesLayout.SetComponentPosition(rainFallScaleSlider, 1, 3, 1, 1);
             mapPropertiesLayout.SetComponentPosition(rainFallLabel, 0, 3, 1, 1);
 
 
             Label tempLabel = new Label(GUI, mapPropertiesLayout, "Temp.", GUI.DefaultFont);
-            Slider tempScaleSlider = new Slider(GUI, mapPropertiesLayout, "", TemperatureScale, 0.0f, 2.0f, Slider.SliderMode.Float);
+            Slider tempScaleSlider = new Slider(GUI, mapPropertiesLayout, "", TemperatureScale, 0.0f, 2.0f, Slider.SliderMode.Float)
+            {
+                ToolTip = "Controls the average temperature of the world."
+            };
+
             tempScaleSlider.OnValueModified += tempScaleSlider_OnValueModified;
             mapPropertiesLayout.SetComponentPosition(tempScaleSlider, 1, 4, 1, 1);
             mapPropertiesLayout.SetComponentPosition(tempLabel, 0, 4, 1, 1);
 
 
             Label faultLabel = new Label(GUI, mapPropertiesLayout, "Faults", GUI.DefaultFont);
-            Slider numFaultsSlider = new Slider(GUI, mapPropertiesLayout, "", NumFaults, 0, 50, Slider.SliderMode.Integer);
+            Slider numFaultsSlider = new Slider(GUI, mapPropertiesLayout, "", NumFaults, 0, 50, Slider.SliderMode.Integer)
+            {
+                ToolTip = "Controls, roughly, the number of seas."
+            };
+
             numFaultsSlider.OnValueModified += numFaultsSlider_OnValueModified;
             mapPropertiesLayout.SetComponentPosition(numFaultsSlider, 1, 5, 1, 1);
             mapPropertiesLayout.SetComponentPosition(faultLabel, 0, 5, 1, 1);
@@ -164,21 +246,24 @@ namespace DwarfCorp
             Progress = new ProgressBar(GUI, layout, 0.0f);
             layout.SetComponentPosition(Progress, 0, 5, 3, 1);
 
-            Label nameLabel = new Label(GUI, mapPropertiesLayout, "Name", GUI.DefaultFont);
-            mapPropertiesLayout.SetComponentPosition(nameLabel, 0, 1, 1, 1);
-            nameLabel.Alignment = Drawer2D.Alignment.Right;
 
-            LineEdit nameEdit = new LineEdit(GUI, mapPropertiesLayout, WorldName.ToString());
-            mapPropertiesLayout.SetComponentPosition(nameEdit, 1, 1, 1, 1);
+            NameEdit = new LineEdit(GUI, mapPropertiesLayout, WorldName)
+            {
+                ToolTip = "Name of the world."
+            };
+            mapPropertiesLayout.SetComponentPosition(NameEdit, 0, 1, 2, 1);
 
-            nameEdit.OnTextModified += nameEdit_OnTextModified;
+            NameEdit.OnTextModified += nameEdit_OnTextModified;
 
 
             Label seedLabel = new Label(GUI, mapPropertiesLayout, "Seed", GUI.DefaultFont);
             mapPropertiesLayout.SetComponentPosition(seedLabel, 0, 2, 1, 1);
             seedLabel.Alignment = Drawer2D.Alignment.Right;
 
-            LineEdit seedEdit = new LineEdit(GUI, mapPropertiesLayout, Seed.ToString());
+            LineEdit seedEdit = new LineEdit(GUI, mapPropertiesLayout, Seed.ToString(CultureInfo.InvariantCulture))
+            {
+                ToolTip = "Global random seed of the whole game."
+            };
             mapPropertiesLayout.SetComponentPosition(seedEdit, 1, 2, 1, 1);
 
             seedEdit.OnTextModified += seedEdit_OnTextModified;
@@ -196,10 +281,10 @@ namespace DwarfCorp
         {
             if(GenerationComplete)
             {
-                System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + System.IO.Path.DirectorySeparatorChar + OverworldDirectory);
+                System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Program.DirChar + "Worlds" + Program.DirChar + WorldName);
                 OverworldFile file = new OverworldFile(Overworld.Map, WorldName);
-                file.WriteFile(worldDirectory.FullName + System.IO.Path.DirectorySeparatorChar + WorldName + "." + OverworldFile.CompressedExtension, true);
-
+                file.WriteFile(worldDirectory.FullName + Program.DirChar + "world." + OverworldFile.CompressedExtension, true);
+                file.SaveScreenshot(worldDirectory.FullName + Program.DirChar + "screenshot.png");
                 Dialog.Popup(GUI, "Save", "File saved.", Dialog.ButtonType.OK);
             }
         }
@@ -240,9 +325,9 @@ namespace DwarfCorp
             if(GenerationComplete)
             {
                 Overworld.Name = WorldName;
-                System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + System.IO.Path.DirectorySeparatorChar + OverworldDirectory);
-                OverworldFile file = new OverworldFile(Overworld.Map, WorldName);
-                file.WriteFile(worldDirectory.FullName + System.IO.Path.DirectorySeparatorChar + WorldName + "." + OverworldFile.CompressedExtension, true);
+                //System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Program.DirChar + OverworldDirectory);
+                //OverworldFile file = new OverworldFile(Overworld.Map, WorldName);
+                //file.WriteFile(worldDirectory.FullName + Program.DirChar + WorldName + "." + OverworldFile.CompressedExtension, true);
 
                 StateManager.PushState("PlayState");
                 PlayState play = (PlayState) StateManager.States["PlayState"];
@@ -258,10 +343,18 @@ namespace DwarfCorp
 
         public void OnClick()
         {
-            PlayState.WorldOrigin = new Vector2(PlayState.WorldWidth / 2, PlayState.WorldHeight / 2);
-            genThread = new Thread(unused => GenerateWorld(Seed, (int) PlayState.WorldWidth, (int) PlayState.WorldHeight));
-            genThread.Start();
+            if(!IsGenerating)
+            {
+                GenerateWorldName();
+                NameEdit.Text = WorldName;
+                PlayState.WorldOrigin = new Vector2(PlayState.WorldWidth / 2, PlayState.WorldHeight / 2);
+                genThread = new Thread(unused => GenerateWorld(Seed, (int) PlayState.WorldWidth, (int) PlayState.WorldHeight));
+                genThread.Start();
+                IsGenerating = true;
+            }
         }
+
+        public bool IsGenerating { get; set; }
 
         public void OnMapClick()
         {
@@ -336,13 +429,13 @@ namespace DwarfCorp
                 {
                     for(int dy = -(int) volcanoSize; dy <= (int) volcanoSize; dy++)
                     {
-                        int x = (int) LinearMathHelpers.Clamp(randomPos.X + dx, 0, width - 1);
-                        int y = (int) LinearMathHelpers.Clamp(randomPos.Y + dy, 0, height - 1);
+                        int x = (int) MathFunctions.Clamp(randomPos.X + dx, 0, width - 1);
+                        int y = (int) MathFunctions.Clamp(randomPos.Y + dy, 0, height - 1);
 
                         float dist = (float) Math.Sqrt(dx * dx + dy * dy);
                         float fDist = (float) Math.Sqrt((dx / 3.0f) * (dx / 3.0f) + (dy / 3.0f) * (dy / 3.0f));
 
-                        //Overworld.Map[x, y].Erosion = LinearMathHelpers.Clamp(dist, 0.0f, 0.5f);
+                        //Overworld.Map[x, y].Erosion = MathFunctions.Clamp(dist, 0.0f, 0.5f);
                         float f = (float) (Math.Pow(Math.Sin(fDist), 3.0f) + 1.0f) * 0.2f;
                         Overworld.Map[x, y].Height += f;
 
@@ -436,8 +529,6 @@ namespace DwarfCorp
 
             #region weathering
 
-            float T = 0.01f;
-
             Vector2[] neighbs =
             {
                 new Vector2(1, 0),
@@ -494,6 +585,7 @@ namespace DwarfCorp
 
 
             Progress.Value = 1.0f;
+            IsGenerating = false;
         }
 
         private void Voronoi(int width, int height, int numVoronoiPoints)
@@ -813,7 +905,7 @@ namespace DwarfCorp
             for(int i = 0; i < points.Count; i++)
             {
                 VoronoiNode vor = points[i];
-                vor.dist = LinearMathHelpers.PointLineDistance2D(vor.pointA, vor.pointB, xVec);
+                vor.dist = MathFunctions.PointLineDistance2D(vor.pointA, vor.pointB, xVec);
 
                 if(vor.dist < minDist)
                 {

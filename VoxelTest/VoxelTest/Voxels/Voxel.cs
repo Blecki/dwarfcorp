@@ -68,7 +68,7 @@ namespace DwarfCorp
         public Vector3 WorldPosition { get; set; }
         public Vector3 GridPosition { get; set; }
         public string TypeName { get; set; }
-        public bool isValid;
+        public bool IsValid;
 
         public override int GetHashCode()
         {
@@ -106,34 +106,28 @@ namespace DwarfCorp
         public Voxel CreateEmptyVoxel(ChunkManager manager)
         {
             Voxel emptyVox = new Voxel(WorldPosition, VoxelLibrary.emptyType, null, false);
-            emptyVox.Chunk = manager.ChunkMap[ChunkID];
+            emptyVox.Chunk = manager.ChunkData.ChunkMap[ChunkID];
 
             return emptyVox;
         }
 
-        public Voxel GetVoxel(ChunkManager manager, bool reconstruct)
+        public Voxel GetVoxel(bool reconstruct)
         {
-            if(!manager.ChunkMap.ContainsKey(ChunkID))
+            ChunkManager manager = PlayState.ChunkManager;
+            if(!manager.ChunkData.ChunkMap.ContainsKey(ChunkID))
             {
                 return null;
             }
-            else if(manager.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
+            else if(manager.ChunkData.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
             {
-                Voxel vox = manager.ChunkMap[ChunkID].VoxelGrid[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z];
+                Voxel vox = manager.ChunkData.ChunkMap[ChunkID].VoxelGrid[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z];
                 if(!reconstruct)
                 {
                     return vox;
                 }
                 else
                 {
-                    if(vox != null)
-                    {
-                        return vox;
-                    }
-                    else
-                    {
-                        return CreateEmptyVoxel(manager);
-                    }
+                    return vox ?? CreateEmptyVoxel(manager);
                 }
             }
             else
@@ -144,13 +138,13 @@ namespace DwarfCorp
 
         public WaterCell GetWater(ChunkManager manager)
         {
-            if(!manager.ChunkMap.ContainsKey(ChunkID))
+            if(!manager.ChunkData.ChunkMap.ContainsKey(ChunkID))
             {
                 return null;
             }
-            else if(manager.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
+            else if(manager.ChunkData.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
             {
-                return manager.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z];
+                return manager.ChunkData.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z];
             }
             else
             {
@@ -160,13 +154,13 @@ namespace DwarfCorp
 
         public byte GetWaterLevel(ChunkManager manager)
         {
-            if(!manager.ChunkMap.ContainsKey(ChunkID))
+            if(!manager.ChunkData.ChunkMap.ContainsKey(ChunkID))
             {
                 return 0;
             }
-            else if(manager.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
+            else if(manager.ChunkData.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
             {
-                return manager.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z].WaterLevel;
+                return manager.ChunkData.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z].WaterLevel;
             }
             else
             {
@@ -176,13 +170,13 @@ namespace DwarfCorp
 
         public void SetWaterLevel(ChunkManager manager, byte level)
         {
-            if(!manager.ChunkMap.ContainsKey(ChunkID))
+            if(!manager.ChunkData.ChunkMap.ContainsKey(ChunkID))
             {
                 return;
             }
-            else if(manager.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
+            else if(manager.ChunkData.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
             {
-                manager.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z].WaterLevel = level;
+                manager.ChunkData.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z].WaterLevel = level;
             }
             else
             {
@@ -192,14 +186,14 @@ namespace DwarfCorp
 
         public void AddWaterLevel(ChunkManager manager, byte level)
         {
-            if(!manager.ChunkMap.ContainsKey(ChunkID))
+            if(!manager.ChunkData.ChunkMap.ContainsKey(ChunkID))
             {
                 return;
             }
-            else if(manager.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
+            else if(manager.ChunkData.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
             {
-                int amount = manager.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z].WaterLevel + level;
-                manager.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z].WaterLevel = (byte) (Math.Min(amount, 255));
+                int amount = manager.ChunkData.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z].WaterLevel + level;
+                manager.ChunkData.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z].WaterLevel = (byte) (Math.Min(amount, 255));
             }
             else
             {
@@ -327,7 +321,7 @@ namespace DwarfCorp
 
             if(PlayState.Master != null)
             {
-                PlayState.Master.OnVoxelDestroyed(this);
+                PlayState.Master.Faction.OnVoxelDestroyed(this);
             }
 
             SoundManager.PlaySound(Type.explosionSound, Position);
@@ -351,7 +345,7 @@ namespace DwarfCorp
                 List<VoxelRef> neighbors = Chunk.GetNeighborsEuclidean((int) this.GridPosition.X, (int) this.GridPosition.Y, (int) this.GridPosition.Z);
                 foreach(VoxelRef v in neighbors)
                 {
-                    Voxel vox = v.GetVoxel(Chunk.Manager, true);
+                    Voxel vox = v.GetVoxel(true);
                     if(vox != null)
                     {
                         vox.RecalculateLighting = true;
@@ -377,7 +371,7 @@ namespace DwarfCorp
             BoundingBox pBox = new BoundingBox(Vector3.Zero, Vector3.Zero);
             if(Primitive != null)
             {
-                pBox = Primitive.boundingBox;
+                pBox = Primitive.BoundingBox;
             }
             else
             {
@@ -442,7 +436,7 @@ namespace DwarfCorp
             toReturn.GridPosition = GridPosition;
             toReturn.WorldPosition = Position;
             toReturn.TypeName = Type.name;
-            toReturn.isValid = true;
+            toReturn.IsValid = true;
 
             return toReturn;
         }

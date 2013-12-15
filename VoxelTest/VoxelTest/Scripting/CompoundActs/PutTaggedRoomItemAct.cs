@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class PutTaggedRoomItemAct : CompoundCreatureAct
     {
         public RoomBuildDesignation Room { get; set; }
@@ -39,6 +39,11 @@ namespace DwarfCorp
         public Act SetTargetVoxelFromRoomAct(RoomBuildDesignation room, string target)
         {
             return new Wrap(() => SetTargetVoxelFromRoom(room, target));
+        }
+
+        public PutTaggedRoomItemAct()
+        {
+
         }
 
         public PutTaggedRoomItemAct(CreatureAIComponent agent, RoomBuildDesignation room, TagList tags) :

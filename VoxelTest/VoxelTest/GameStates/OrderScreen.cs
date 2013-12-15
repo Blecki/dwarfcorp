@@ -15,10 +15,10 @@ namespace DwarfCorp
 
     public class OrderScreen : GameState
     {
-        public SillyGUI GUI { get; set; }
+        public DwarfGUI GUI { get; set; }
         public SpriteFont DefaultFont { get; set; }
         public Drawer2D Drawer { get; set; }
-        public SillyGUIComponent MainWindow { get; set; }
+        public GUIComponent MainWindow { get; set; }
         public int EdgePadding { get; set; }
         public GridLayout Layout { get; set; }
         public InputManager Input { get; set; }
@@ -56,7 +56,7 @@ namespace DwarfCorp
             List<GItem> toReturn = new List<GItem>();
             Dictionary<Resource, int> Counts = new Dictionary<Resource, int>();
 
-            foreach(Stockpile stockpile in master.Stockpiles)
+            foreach(Stockpile stockpile in master.Faction.Stockpiles)
             {
                 foreach(Item i in stockpile.ListItems())
                 {
@@ -101,19 +101,19 @@ namespace DwarfCorp
 
         public override void OnEnter()
         {
-            BalloonTexture = Game.Content.Load<Texture2D>("balloon");
+            BalloonTexture = TextureManager.GetTexture("balloon");
             DragManager = new DragManager();
             DefaultFont = Game.Content.Load<SpriteFont>("Default");
-            GUI = new SillyGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
+            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
             IsInitialized = true;
             Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
-            MainWindow = new SillyGUIComponent(GUI, GUI.RootComponent)
+            MainWindow = new GUIComponent(GUI, GUI.RootComponent)
             {
                 LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2)
             };
             Layout = new GridLayout(GUI, MainWindow, 10, 4);
 
-            CurrentMoney = PlayState.Master.Economy.CurrentMoney;
+            CurrentMoney = PlayState.Master.Faction.Economy.CurrentMoney;
             OrderTotal = 0.0f;
 
 
@@ -126,7 +126,7 @@ namespace DwarfCorp
                 };
                 Layout.SetComponentPosition(motherlandLabel, 3, 0, 1, 1);
 
-                List<GItem> resources = GetResources(PlayState.Master.Economy.BuyMultiplier);
+                List<GItem> resources = GetResources(PlayState.Master.Faction.Economy.BuyMultiplier);
                 Panel motherlandPanel = new Panel(GUI, Layout);
                 GridLayout motherLayout = new GridLayout(GUI, motherlandPanel, 1, 1);
                 FromMotherland = new DragGrid(GUI, motherLayout, DragManager, 64, 64)
@@ -147,7 +147,7 @@ namespace DwarfCorp
             }
 
             Layout.UpdateSizes();
-            SillyGUIComponent fakePanel = new SillyGUIComponent(GUI, Layout);
+            GUIComponent fakePanel = new GUIComponent(GUI, Layout);
             Layout.SetComponentPosition(fakePanel, 1, 0, 2, 8);
             Layout.UpdateSizes();
 
@@ -176,7 +176,7 @@ namespace DwarfCorp
                 };
                 Layout.SetComponentPosition(colonyLabel, 0, 0, 1, 1);
 
-                List<GItem> resources2 = GetResources(PlayState.Master, PlayState.Master.Economy.SellMultiplier);
+                List<GItem> resources2 = GetResources(PlayState.Master, PlayState.Master.Faction.Economy.SellMultiplier);
 
                 Panel colonyPanel = new Panel(GUI, Layout);
                 GridLayout colonyLayout = new GridLayout(GUI, colonyPanel, 1, 1);
@@ -257,7 +257,7 @@ namespace DwarfCorp
             {
                 return;
             }
-            List<Room> ports = PlayState.Master.RoomDesignator.FilterRoomsByType("BalloonPort");
+            List<Room> ports = PlayState.Master.Faction.RoomDesignator.FilterRoomsByType("BalloonPort");
 
             if(ports.Count == 0)
             {
@@ -304,7 +304,7 @@ namespace DwarfCorp
                 }
             }
 
-            PlayState.Master.Economy.OutstandingOrders.Add(o);
+            PlayState.Master.Faction.Economy.OutstandingOrders.Add(o);
             PlayState.Paused = false;
             StateManager.PopState();
         }

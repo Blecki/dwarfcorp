@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class PlaceVoxelAct : CreatureAct
     {
         public VoxelRef Voxel { get; set; }
@@ -28,17 +28,17 @@ namespace DwarfCorp
             }
             else
             {
-                if(Creature.Master.PutDesignator.IsDesignation(Voxel))
+                if(Creature.Faction.PutDesignator.IsDesignation(Voxel))
                 {
                     Creature.Hands.UnGrab(grabbed);
                     grabbed.Die();
                     Agent.Blackboard.SetData<object>("HeldObject", null);
 
-                    PutDesignation put = Creature.Master.PutDesignator.GetDesignation(Voxel);
-                    put.Put(Creature.Master.Chunks);
+                    PutDesignation put = Creature.Faction.PutDesignator.GetDesignation(Voxel);
+                    put.Put(PlayState.ChunkManager);
 
 
-                    Creature.Master.PutDesignator.Designations.Remove(put);
+                    Creature.Faction.PutDesignator.Designations.Remove(put);
                     yield return Status.Success;
                 }
                 else

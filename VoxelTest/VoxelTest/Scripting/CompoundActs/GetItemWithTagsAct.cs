@@ -5,10 +5,15 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GetItemWithTagsAct : CompoundCreatureAct
     {
         private TagList Tags { get; set; }
+
+        public GetItemWithTagsAct()
+        {
+
+        }
 
         public GetItemWithTagsAct(CreatureAIComponent agent, TagList tags) :
             base(agent)
@@ -20,7 +25,7 @@ namespace DwarfCorp
             Item closestItem = null;
             float closestDist = float.MaxValue;
 
-            foreach(Stockpile s in Agent.Master.Stockpiles)
+            foreach(Stockpile s in Agent.Faction.Stockpiles)
             {
                 Item i = s.FindNearestItemWithTags(tags, Agent.Position);
 

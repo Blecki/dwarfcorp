@@ -89,7 +89,7 @@ namespace DwarfCorp
 
         public float GetVisibleWaterHeight(ChunkManager chunkManager, Camera camera, Viewport port, float defaultHeight)
         {
-            Voxel vox = chunkManager.GetFirstVisibleBlockHitByScreenCoord(port.Width / 2, port.Height / 2, camera, port, 100.0f);
+            Voxel vox = chunkManager.ChunkData.GetFirstVisibleBlockHitByScreenCoord(port.Width / 2, port.Height / 2, camera, port, 100.0f);
 
             if(vox != null)
             {
@@ -219,7 +219,7 @@ namespace DwarfCorp
                 effect.Parameters["xWaterSloshOpacity"].SetValue(asset.Value.SloshOpacity);
                 effect.Parameters["xRippleColor"].SetValue(asset.Value.RippleColor);
 
-                foreach(KeyValuePair<Point3, VoxelChunk> chunkpair in chunks.ChunkMap)
+                foreach(KeyValuePair<Point3, VoxelChunk> chunkpair in chunks.ChunkData.ChunkMap)
                 {
                     VoxelChunk chunk = chunkpair.Value;
 
