@@ -13,6 +13,9 @@ using Microsoft.Xna.Framework.Media;
 namespace DwarfCorp
 {
 
+    /// <summary>
+    /// A stockpile is a kind of zone which contains items on top of it.
+    /// </summary>
     public class Stockpile : Zone
     {
         private static uint maxID = 0;

@@ -1,17 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
+    /// <summary>
+    /// Lights nearby voxels with torch lights.
+    /// </summary>
+    [JsonObject(IsReference = true)]
     public class DynamicLight
     {
         public byte Range { get; set; }
         public byte Intensity { get; set; }
         public VoxelRef Voxel { get; set; }
+
+        [JsonIgnore]
         public ChunkManager Chunks { get; set; }
+
+        [OnDeserialized]
+        protected void OnDeserialized(StreamingContext context)
+        {
+            Chunks = PlayState.ChunkManager;
+        }
+
+
+        public DynamicLight()
+        {
+            
+        }
 
         public DynamicLight(byte range, byte intensity, VoxelRef voxel, ChunkManager chunks)
         {

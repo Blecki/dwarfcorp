@@ -13,6 +13,9 @@ using Microsoft.Xna.Framework.Media;
 namespace DwarfCorp
 {
 
+    /// <summary>
+    /// This is a debug state for testing new GUI stuff. 
+    /// </summary>
     public class GUITest : GameState
     {
         public DwarfGUI GUI { get; set; }

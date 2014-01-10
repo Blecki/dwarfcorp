@@ -5,6 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature uses the item currently in its hands to construct a voxel.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class PlaceVoxelAct : CreatureAct
     {
@@ -43,6 +46,7 @@ namespace DwarfCorp
                 }
                 else
                 {
+                    Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                     yield return Status.Fail;
                 }
             }

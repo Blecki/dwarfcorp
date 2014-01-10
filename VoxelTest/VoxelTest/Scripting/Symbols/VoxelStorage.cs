@@ -6,6 +6,10 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A voxel storage is a voxel associated with an item sitting on top of it
+    /// or in it.
+    /// </summary>
     [JsonObject(IsReference = true)]
     public class VoxelStorage
     {
@@ -90,6 +94,7 @@ namespace DwarfCorp
                 m_ownedItem = null;
             }
             IsOccupied = false;
+            IsReserved = false;
         }
     }
 

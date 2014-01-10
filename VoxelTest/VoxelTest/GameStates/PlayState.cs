@@ -19,6 +19,10 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+
+    /// <summary>
+    /// This is the main game state for actually playing the game.
+    /// </summary>
     public class PlayState : GameState
     {
         public static int Seed { get; set; }
@@ -119,6 +123,7 @@ namespace DwarfCorp
         public Label CompanyNameLabel { get; set; }
         public ImagePanel CompanyLogoPanel { get; set; }
         public Label MoneyLabel { get; set; }
+        public Label TimeLabel { get; set; }
         public Label OrderStatusLabel { get; set; }
 
         public Timer PreSimulateTimer { get; set; }
@@ -132,7 +137,8 @@ namespace DwarfCorp
         public static ParticleManager ParticleManager { get { return ComponentManager.ParticleManager; } set { ComponentManager.ParticleManager = value; } }
 
 
-        public static FactionLibrary FactionLibrary = new FactionLibrary();
+
+        public static WorldTime Time = new WorldTime();
 
         public PlayState(DwarfGame game, GameStateManager stateManager) :
             base(game, "PlayState", stateManager)
@@ -145,6 +151,8 @@ namespace DwarfCorp
             RenderUnderneath = true;
             WorldOrigin = new Vector2(WorldWidth / 2, WorldHeight / 2);
             PreSimulateTimer = new Timer(3, false);
+            Time = new WorldTime();
+            
         }
 
         public override void OnEnter()
@@ -219,7 +227,7 @@ namespace DwarfCorp
             {
                 Vector3 dorfPos = new Vector3(Camera.Position.X + (float) Random.NextDouble(), h + 10, Camera.Position.Z + (float) Random.NextDouble());
                 PhysicsComponent creat = (PhysicsComponent) EntityFactory.GenerateDwarf(dorfPos,
-                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, FactionLibrary.Factions["Player"], PlanService, "Dwarf");
+                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Dwarf");
 
                 creat.Velocity = new Vector3(1, 0, 0);
             }
@@ -243,8 +251,8 @@ namespace DwarfCorp
 
             Tilesheet = TextureManager.GetTexture("TileSet");
             AspectRatio = GraphicsDevice.Viewport.AspectRatio;
-            DefaultShader = Content.Load<Effect>("Hargraves");
-            shader = Content.Load<Effect>("Hargraves");
+            DefaultShader = Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders);
+            shader = Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders);
 
             VoxelLibrary = new VoxelLibrary();
             VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice, Tilesheet);
@@ -315,15 +323,15 @@ namespace DwarfCorp
 
 
             Camera = fileExists ? gameFile.Data.Camera : 
-                new OrbitCamera(this, 0, 0, 10f, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset, new Vector3(0, 50, 0) + globalOffset, MathHelper.PiOver4, AspectRatio, 0.1f, GameSettings.Default.VertexCullDistance);
+                new OrbitCamera(0, 0, 10f, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset, new Vector3(0, 50, 0) + globalOffset, MathHelper.PiOver4, AspectRatio, 0.1f, GameSettings.Default.VertexCullDistance);
 
-            SimpleDrawing.m_camera = Camera;
+            Drawer3D.Camera = Camera;
 
             ChunkManager = new ChunkManager(Content, (uint) ChunkWidth, (uint) ChunkHeight, (uint) ChunkWidth, Camera, GraphicsDevice, Tilesheet,
-                TextureManager.GetTexture("illum2"),
-                TextureManager.GetTexture("sungradient"),
-                TextureManager.GetTexture("ambientgradient"),
-                TextureManager.GetTexture("torchgradient"),
+                TextureManager.GetTexture(ContentPaths.Terrain.terrain_illumination),
+                TextureManager.GetTexture(ContentPaths.Gradients.sungradient),
+                TextureManager.GetTexture(ContentPaths.Gradients.ambientgradient),
+                TextureManager.GetTexture(ContentPaths.Gradients.torchgradient),
                 ChunkGenerator);
             globalOffset = ChunkManager.ChunkData.RoundToChunkCoords(globalOffset);
             globalOffset.X *= ChunkWidth;
@@ -407,10 +415,9 @@ namespace DwarfCorp
                 WaveHeight = 0.1f,
                 WaveLength = 0.05f,
                 WindForce = 0.001f,
-                BumpTexture = TextureManager.GetTexture("water_normal"),
-                FoamTexture = TextureManager.GetTexture("foam"),
-                BaseTexture = TextureManager.GetTexture("cartoon_water"),
-                PuddleTexture = TextureManager.GetTexture("puddle"),
+                BumpTexture = TextureManager.GetTexture(ContentPaths.Terrain.water_normal),
+                FoamTexture = TextureManager.GetTexture(ContentPaths.Terrain.foam),
+                BaseTexture = TextureManager.GetTexture(ContentPaths.Terrain.cartoon_water),
                 MinOpacity = 0.0f,
                 RippleColor = new Vector4(0.1f, 0.1f, 0.1f, 0.0f)
             };
@@ -426,10 +433,9 @@ namespace DwarfCorp
                 WaveLength = 0.05f,
                 WindForce = 0.001f,
                 MinOpacity = 0.99f,
-                BumpTexture = TextureManager.GetTexture("water_normal"),
-                FoamTexture = TextureManager.GetTexture("lavafoam"),
-                BaseTexture = TextureManager.GetTexture("lava"),
-                PuddleTexture = TextureManager.GetTexture("puddle"),
+                BumpTexture = TextureManager.GetTexture(ContentPaths.Terrain.water_normal),
+                FoamTexture = TextureManager.GetTexture(ContentPaths.Terrain.lavafoam),
+                BaseTexture = TextureManager.GetTexture(ContentPaths.Terrain.lava),
                 RippleColor = new Vector4(0.5f, 0.4f, 0.04f, 0.0f)
             };
 
@@ -440,23 +446,27 @@ namespace DwarfCorp
         public void CreateSky()
         {
             Sky = new SkyRenderer(
-                TextureManager.GetTexture("moon"),
-                TextureManager.GetTexture("sun"),
-                Content.Load<TextureCube>("day_sky"),
-                Content.Load<TextureCube>("night_sky"),
-                TextureManager.GetTexture("skygradient"),
-                Content.Load<Model>("sphereLowPoly"),
-                Content.Load<Effect>("SkySphere"));
+                TextureManager.GetTexture(ContentPaths.Sky.moon),
+                TextureManager.GetTexture(ContentPaths.Sky.sun),
+                Content.Load<TextureCube>(ContentPaths.Sky.day_sky),
+                Content.Load<TextureCube>(ContentPaths.Sky.night_sky),
+                TextureManager.GetTexture(ContentPaths.Gradients.skygradient),
+                Content.Load<Model>(ContentPaths.Models.sphereLowPoly),
+                Content.Load<Effect>(ContentPaths.Shaders.SkySphere));
         }
 
-        public void CreateGUI()
+        public void CreateGUI(bool createMaster)
         {
             LoadingMessage = "Creating GUI";
+            IndicatorManager.SetupStandards();
             Game.IsMouseVisible = true;
-            GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>("Default"), Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
+            GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
 
-            Master = new GameMaster(FactionLibrary.Factions["Player"], Game, ComponentManager, ChunkManager, Camera, GraphicsDevice, GUI);
-            CreateGUIComponents();
+            if(createMaster)
+            {
+                Master = new GameMaster(ComponentManager.Factions.Factions["Player"], Game, ComponentManager, ChunkManager, Camera, GraphicsDevice, GUI);
+                CreateGUIComponents();
+            }
         }
 
         public void CreateGUIComponents()
@@ -478,7 +488,7 @@ namespace DwarfCorp
             {
                 TextColor = Color.White,
                 StrokeColor = new Color(0, 0, 0, 100),
-                ToolTip = "Our company name."
+                ToolTip = "Our company Name."
             };
             infoLayout.SetComponentPosition(CompanyNameLabel, 1, 0, 1, 1);
 
@@ -489,6 +499,16 @@ namespace DwarfCorp
                 ToolTip = "Amount of money in our treasury."
             };
             infoLayout.SetComponentPosition(MoneyLabel, 3, 0, 1, 1);
+
+            TimeLabel = new Label(GUI, infoLayout, Time.CurrentDate.ToShortDateString() + " " + Time.CurrentDate.ToShortTimeString(), GUI.SmallFont)
+            {
+                TextColor = Color.White,
+                StrokeColor = new Color(0, 0, 0, 100),
+                ToolTip = "Current time and date."
+            };
+            infoLayout.SetComponentPosition(TimeLabel, 4, 0, 1, 1);
+
+
 
             CurrentLevelLabel = new Label(GUI, infoLayout, "Slice: " + ChunkManager.ChunkData.MaxViewingLevel, GUI.DefaultFont)
             {
@@ -542,13 +562,14 @@ namespace DwarfCorp
                 VoxelChunk c = ChunkManager.ChunkData.GetVoxelChunkAtWorldLocation(Camera.Position);
                 GenerateInitialBalloonPort(Master.Faction.RoomDesignator, ChunkManager, Camera.Position.X, Camera.Position.Z, 3);
                 CreateInitialDwarves(5, c);
-                EntityFactory.CreateBalloon(Camera.Position + new Vector3(0, 1000, 0), Camera.Position + new Vector3(0, 20, 0), ComponentManager, Content, GraphicsDevice, new ShipmentOrder(0, null), Master.Faction);
+                EntityFactory.CreateBalloon(Camera.Position + new Vector3(0, 1000, 0),  new Vector3(Camera.Position.X, ChunkHeight, Camera.Position.Z), ComponentManager, Content, GraphicsDevice, new ShipmentOrder(0, null), Master.Faction);
             }
             else
             {
                 InstanceManager.Clear();
                 gameFile.LoadComponents(ExistingFile);
                 ComponentManager = gameFile.Data.Components;
+                Master = new GameMaster(ComponentManager.Factions.Factions["Player"], Game, ComponentManager, ChunkManager, Camera, GraphicsDevice, GUI);
                 ChunkManager.Components = ComponentManager;
                 Master.Faction.Components = ComponentManager;
 
@@ -560,6 +581,7 @@ namespace DwarfCorp
 
         public void Load()
         {
+            EnableScreensaver = true;
             LoadingMessage = "Initializing Static Data...";
             InitializeStaticData();
 
@@ -577,7 +599,7 @@ namespace DwarfCorp
             GenerateInitialChunks();
 
             LoadingMessage = "Creating GUI";
-            CreateGUI();
+            CreateGUI(string.IsNullOrEmpty(ExistingFile));
 
             LoadingMessage = "Embarking.";
             CreateInitialEmbarkment();
@@ -586,6 +608,7 @@ namespace DwarfCorp
             IsInitialized = true;
 
             LoadingMessage = "Complete.";
+            EnableScreensaver = false;
         }
 
         private void LevelSlider_OnClicked()
@@ -672,7 +695,7 @@ namespace DwarfCorp
             roomDes.DesignatedRooms.Add(toBuild);
         }
 
-        public ParticleEmitter CreateGenericExplosion(string assetName)
+        public ParticleEmitter CreateGenericExplosion(string assetName, string name)
         {
             List<Point> frm = new List<Point>
             {
@@ -704,11 +727,11 @@ namespace DwarfCorp
                 Sleeps = true
             };
 
-            ParticleManager.RegisterEffect(assetName, testData);
-            return ParticleManager.Emitters[assetName];
+            ParticleManager.RegisterEffect(name, testData);
+            return ParticleManager.Emitters[name];
         }
 
-        public EmitterData CreatePuffLike(string name, BlendState state)
+        public EmitterData CreatePuffLike(string name, string assetName, BlendState state)
         {
             List<Point> frm = new List<Point>
             {
@@ -717,7 +740,7 @@ namespace DwarfCorp
 
             EmitterData data = new EmitterData
             {
-                Animation = new Animation(GraphicsDevice, TextureManager.GetTexture(name), name, 32, 32, frm, true, Color.White, 1.0f, 1.0f, 1.0f, false),
+                Animation = new Animation(GraphicsDevice, TextureManager.GetTexture(assetName), name, 32, 32, frm, true, Color.White, 1.0f, 1.0f, 1.0f, false),
                 ConstantAccel = new Vector3(0, 3, 0),
                 LinearDamping = 0.9f,
                 AngularDamping = 0.99f,
@@ -735,7 +758,7 @@ namespace DwarfCorp
                 ParticleDecay = 0.8f,
                 ParticlesPerFrame = 0,
                 ReleaseOnce = true,
-                Texture = TextureManager.GetTexture(name),
+                Texture = TextureManager.GetTexture(assetName),
                 Blend = state
             };
 
@@ -746,16 +769,16 @@ namespace DwarfCorp
         {
             ParticleManager = new ParticleManager(ComponentManager);
 
-            EmitterData puff = CreatePuffLike("puff", BlendState.AlphaBlend);
-            EmitterData bubble = CreatePuffLike("bubble2", BlendState.AlphaBlend);
+            EmitterData puff = CreatePuffLike("puff", ContentPaths.Particles.puff, BlendState.AlphaBlend);
+            EmitterData bubble = CreatePuffLike("splash2", ContentPaths.Particles.splash2, BlendState.AlphaBlend);
             bubble.ConstantAccel = new Vector3(0, -10, 0);
             bubble.EmissionSpeed = 5;
             bubble.LinearDamping = 0.999f;
             bubble.GrowthSpeed = 1.05f;
             bubble.ParticleDecay = 1.5f;
-            EmitterData flame = CreatePuffLike("flame", BlendState.Additive);
+            EmitterData flame = CreatePuffLike("flame", ContentPaths.Particles.flame, BlendState.Additive);
             ParticleManager.RegisterEffect("puff", puff);
-            ParticleManager.RegisterEffect("bubble2", bubble);
+            ParticleManager.RegisterEffect("splash2", bubble);
             ParticleManager.RegisterEffect("flame", flame);
 
             List<Point> frm2 = new List<Point>
@@ -765,7 +788,7 @@ namespace DwarfCorp
 
             EmitterData testData2 = new EmitterData
             {
-                Animation = new Animation(GraphicsDevice, TextureManager.GetTexture("leaf"), "leaf", 32, 32, frm2, true, Color.White, 1.0f, 1.0f, 1.0f, false),
+                Animation = new Animation(GraphicsDevice, TextureManager.GetTexture(ContentPaths.Particles.leaf), "leaf", 32, 32, frm2, true, Color.White, 1.0f, 1.0f, 1.0f, false),
                 ConstantAccel = new Vector3(0, -10, 0),
                 LinearDamping = 0.99f,
                 AngularDamping = 0.99f,
@@ -783,15 +806,15 @@ namespace DwarfCorp
                 ParticleDecay = 0.5f,
                 ParticlesPerFrame = 0,
                 ReleaseOnce = true,
-                Texture = TextureManager.GetTexture("leaf")
+                Texture = TextureManager.GetTexture(ContentPaths.Particles.leaf)
             };
 
             ParticleManager.RegisterEffect("Leaves", testData2);
 
-            CreateGenericExplosion("dirt_particle");
-            CreateGenericExplosion("stone_particle");
-            CreateGenericExplosion("sand_particle");
-            ParticleEmitter b = CreateGenericExplosion("blood_particle");
+            CreateGenericExplosion(ContentPaths.Particles.dirt_particle, "dirt_particle");
+            CreateGenericExplosion(ContentPaths.Particles.stone_particle, "stone_particle");
+            CreateGenericExplosion(ContentPaths.Particles.sand_particle, "sand_particle");
+            ParticleEmitter b = CreateGenericExplosion(ContentPaths.Particles.blood_particle, "blood_particle");
             b.Data.MinScale = 0.1f;
             b.Data.MaxScale = 0.15f;
             b.Data.GrowthSpeed = -0.1f;
@@ -815,7 +838,6 @@ namespace DwarfCorp
         private uint frameCounter = 0;
         private readonly Timer frameTimer = new Timer(1.0f, false);
         private float lastWaterHeight = 8.0f;
-        private double timeHack = 250.0;
         private bool pausePressed = false;
         private bool bPressed = false;
 
@@ -828,6 +850,8 @@ namespace DwarfCorp
 
             if(!Paused)
             {
+                IndicatorManager.Update(gameTime);
+                Time.Update(gameTime);
                 GameCycle.Update(gameTime);
 
                 /*
@@ -845,11 +869,15 @@ namespace DwarfCorp
 
             if(Keyboard.GetState().IsKeyDown(ControlSettings.Default.TimeForward))
             {
-                timeHack += 1.0;
+                Time.Speed = 10000;
             }
             else if(Keyboard.GetState().IsKeyDown(ControlSettings.Default.TimeBackward))
             {
-                timeHack -= 1.0;
+                Time.Speed = -10000;
+            }
+            else
+            {
+                Time.Speed = 100;
             }
 
             if(Keyboard.GetState().IsKeyDown(Keys.End))
@@ -897,9 +925,9 @@ namespace DwarfCorp
             {
                 if(StateManager.NextState == "")
                 {
-                    OrderScreen orderScreen = (OrderScreen) StateManager.States["OrderScreen"];
-                    orderScreen.Mode = OrderScreen.OrderMode.Buying;
-                    StateManager.PushState("OrderScreen");
+                    OrderState orderState = (OrderState) StateManager.States["OrderState"];
+                    orderState.Mode = OrderState.OrderMode.Buying;
+                    StateManager.PushState("OrderState");
                 }
                 Paused = true;
             }
@@ -909,7 +937,7 @@ namespace DwarfCorp
             {
                 Master.Update(Game, gameTime);
                 GUI.Update(gameTime);
-                FactionLibrary.Update(gameTime);
+    
             }
 
 
@@ -918,10 +946,12 @@ namespace DwarfCorp
 
             if(!Paused)
             {
-                timeHack += (float) gameTime.ElapsedGameTime.TotalSeconds * 0.5f;
                 ComponentManager.Update(gameTime, ChunkManager, Camera);
-                Sky.TimeOfDay = (float)Math.Cos(timeHack * 0.01f) * 0.5f + 0.5f;
-                Sky.CosTime = (float)timeHack * 0.01f;
+
+                Sky.TimeOfDay = Time.GetSkyLightness();
+                Sky.CosTime = (float)(Time.GetTotalHours() * 2 * Math.PI / 24.0f);
+                //Sky.TimeOfDay = (float)Math.Cos(timeHack * 0.01f) * 0.5f + 0.5f;
+                //Sky.CosTime = (float)timeHack * 0.01f;
                 shader.Parameters["xTimeOfDay"].SetValue(Sky.TimeOfDay);
             }
 
@@ -941,7 +971,7 @@ namespace DwarfCorp
                 OrderStatusLabel.Text = "Balloon: " + GameCycle.GetStatusString(GameCycle.CurrentCycle) + " ETA: " + answer;
                 OrderStatusLabel.TextColor = GameCycle.GetColor(GameCycle.CurrentCycle, (float) gameTime.TotalGameTime.TotalSeconds);
                 OrderStatusLabel.OnClicked += OrderStatusLabel_OnClicked;
-
+                TimeLabel.Text = Time.CurrentDate.ToShortDateString() + " " + Time.CurrentDate.ToShortTimeString();
                 MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString("C");
             }
 
@@ -960,18 +990,18 @@ namespace DwarfCorp
                 case GameCycle.OrderCylce.BalloonAtMotherland:
                     if(StateManager.NextState == "")
                     {
-                        OrderScreen orderScreen = (OrderScreen) StateManager.States["OrderScreen"];
-                        orderScreen.Mode = OrderScreen.OrderMode.Buying;
-                        StateManager.PushState("OrderScreen");
+                        OrderState orderState = (OrderState) StateManager.States["OrderState"];
+                        orderState.Mode = OrderState.OrderMode.Buying;
+                        StateManager.PushState("OrderState");
                     }
                     Paused = true;
                     break;
                 case GameCycle.OrderCylce.BalloonAtColony:
                     if(StateManager.NextState == "")
                     {
-                        OrderScreen orderScreen = (OrderScreen) StateManager.States["OrderScreen"];
-                        orderScreen.Mode = OrderScreen.OrderMode.Selling;
-                        StateManager.PushState("OrderScreen");
+                        OrderState orderState = (OrderState) StateManager.States["OrderState"];
+                        orderState.Mode = OrderState.OrderMode.Selling;
+                        StateManager.PushState("OrderState");
                     }
                     Paused = true;
                     break;
@@ -1021,6 +1051,7 @@ namespace DwarfCorp
                     SaveGame(DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss"));
                     break;
                 case "Quit":
+                    StateManager.StateStack.Clear();
                     StateManager.PushState("MainMenuState");
                     break;
 
@@ -1111,7 +1142,7 @@ namespace DwarfCorp
             DwarfGame.SpriteBatch.Begin();
             float t = (float) (Math.Sin(gameTime.TotalGameTime.TotalSeconds * 2.0f) + 1.0f) * 0.5f + 0.5f;
             Color toDraw = new Color(t, t, t);
-            SpriteFont font = Game.Content.Load<SpriteFont>("Default");
+            SpriteFont font = Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
             Vector2 measurement = Datastructures.SafeMeasure(font, LoadingMessage);
             Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, LoadingMessage, font, new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - measurement.X / 2, Game.GraphicsDevice.Viewport.Height / 2), toDraw, new Color(50, 50, 50));
             DwarfGame.SpriteBatch.End();
@@ -1162,10 +1193,11 @@ namespace DwarfCorp
 
             shader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
             shader.Parameters["Clipping"].SetValue(true);
-
+            shader.Parameters["GhostMode"].SetValue(true);
             Draw3DThings(gameTime, shader, Camera.ViewMatrix);
 
             shader.Parameters["Clipping"].SetValue(true);
+            shader.Parameters["GhostMode"].SetValue(false);
             waterRenderer.DrawWater(
                 GraphicsDevice,
                 (float) gameTime.TotalGameTime.TotalSeconds,
@@ -1182,10 +1214,11 @@ namespace DwarfCorp
 
             //LocatableComponent.CollisionManager.DebugDraw();
 
-            SimpleDrawing.Render(GraphicsDevice, shader, true);
+            Drawer3D.Render(GraphicsDevice, shader, true);
 
             shader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
             shader.Parameters["Clipping"].SetValue(true);
+            shader.Parameters["GhostMode"].SetValue(true);
             DrawComponents(gameTime, shader, Camera.ViewMatrix, ComponentManager.WaterRenderType.None, lastWaterHeight);
             shader.Parameters["Clipping"].SetValue(false);
 
@@ -1215,9 +1248,6 @@ namespace DwarfCorp
             };
 
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
-
-
-            //Drawer2D.SafeDraw(spriteBatch, "\u20AC", Game.Content.Load<SpriteFont>("Default"), Color.White, new Vector2(100, 100), Vector2.Zero);
 
             drawer2D.Render(DwarfGame.SpriteBatch, Camera, GraphicsDevice.Viewport);
 
@@ -1271,50 +1301,7 @@ namespace DwarfCorp
             base.Render(gameTime);
         }
 
-        private bool CollideCamera()
-        {
-            Vector3 position = Camera.Target;
-            BoundingBox box = new BoundingBox(position - Vector3.One * 0.25f, position + Vector3.One * 0.25f);
-            List<VoxelRef> vs = new List<VoxelRef>();
-            ChunkManager.ChunkData.GetVoxelReferencesAtWorldLocation(null, position, vs);
-
-            VoxelChunk chunk = ChunkManager.ChunkData.GetVoxelChunkAtWorldLocation(position);
-
-            bool collided = false;
-
-            if(vs.Count > 0 && chunk != null)
-            {
-                Vector3 grid = chunk.WorldToGrid(Camera.Position);
-                List<VoxelRef> adjacencies = chunk.GetNeighborsEuclidean((int) grid.X, (int) grid.Y, (int) grid.Z);
-                vs.AddRange(adjacencies);
-                foreach(VoxelRef v in vs)
-                {
-                    if(v.TypeName != "empty" && v.TypeName != "water")
-                    {
-                        BoundingBox voxAABB = v.GetBoundingBox();
-                        Voxel vox = v.GetVoxel(false);
-
-                        if(!vox.IsVisible)
-                        {
-                            continue;
-                        }
-
-                        if(box.Intersects(voxAABB))
-                        {
-                            PhysicsComponent.Contact contact = new PhysicsComponent.Contact();
-                            if(PhysicsComponent.TestStaticAABBAABB(box, voxAABB, ref contact))
-                            {
-                                collided = true;
-                                Camera.Target += contact.nEnter * contact.penetration;
-                                Camera.Velocity *= 0;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return !collided;
-        }
+ 
 
         private void GraphicsPreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {

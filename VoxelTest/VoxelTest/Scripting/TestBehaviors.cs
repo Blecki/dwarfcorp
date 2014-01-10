@@ -6,6 +6,9 @@ using System.Text;
 namespace DwarfCorp
 {
 
+    /// <summary>
+    /// Functions to test behaviors (or acts)
+    /// </summary>
     public class TestBehaviors
     {
         public static IEnumerable<Act.Status> AlwaysTrue()

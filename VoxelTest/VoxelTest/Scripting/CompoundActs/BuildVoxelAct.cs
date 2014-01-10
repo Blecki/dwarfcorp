@@ -5,6 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature goes to a voxel location, and places an object with the desired tags there to build it.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class BuildVoxelAct : CompoundCreatureAct
     {
@@ -26,7 +29,7 @@ namespace DwarfCorp
             if(Agent.Faction.PutDesignator.IsDesignation(voxel))
             {
                 Tree = new Sequence(new GetItemWithTagsAct(creature, tags),
-                    (new GoToVoxelAct(voxel, creature) | new GatherItemAct(creature, "HeldObject")),
+                    (new GoToVoxelAct(voxel, PlanAct.PlanType.Into, creature) | new GatherItemAct(creature, "HeldObject")),
                     (new PlaceVoxelAct(voxel, creature) | new GatherItemAct(creature, "HeldObject")));
             }
             else

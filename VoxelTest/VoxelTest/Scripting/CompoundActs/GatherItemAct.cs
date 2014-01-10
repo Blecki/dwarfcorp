@@ -5,6 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature takes an item to an open stockpile and leaves it there.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GatherItemAct : CompoundCreatureAct
     {
@@ -40,12 +43,7 @@ namespace DwarfCorp
         {
             ItemToGather = item;
             Name = "Gather Item";
-            Tree = new Sequence(new SetBlackboardData<LocatableComponent>(agent, "GatherItem", ItemToGather) & (EntityIsGatherable() & new GoToEntityAct(ItemToGather, Agent)),
-                (EntityIsGatherable() & new PickUpAct(agent, PickUpAct.PickUpType.None, null, "GatherItem")),
-                new Sequence(
-                    new SearchFreeStockpileAct(Agent, "TargetStockpile", "TargetVoxel"),
-                    new GoToVoxelAct("TargetVoxel", Agent),
-                    new PutItemInStockpileAct(Agent, "TargetStockpile")) | new DropItemAct(Agent));
+            Tree = null;
         }
 
         public override void Initialize()
@@ -53,6 +51,23 @@ namespace DwarfCorp
             base.Initialize();
         }
 
+
+        public IEnumerable<Status> Unreserve(string stockpile, string voxelID)
+        {
+            Stockpile pile = Agent.Blackboard.GetData<Stockpile>(stockpile);
+            VoxelRef voxel = Agent.Blackboard.GetData<VoxelRef>(voxelID);
+
+            if(pile == null || voxel == null)
+            {
+                yield return Status.Success;
+            }
+            else
+            {
+                pile.SetReserved(voxel, false);
+                yield return Status.Success;
+            }
+            
+        }
 
         public override IEnumerable<Status> Run()
         {
@@ -66,12 +81,22 @@ namespace DwarfCorp
 
                 if(ItemToGather != null)
                 {
-                    Tree = new Sequence(new SetBlackboardData<LocatableComponent>(Agent, "GatherItem", ItemToGather), (EntityIsGatherable() & new GoToEntityAct(ItemToGather, Agent)),
-                        (EntityIsGatherable() & new PickUpAct(Agent, PickUpAct.PickUpType.None, null, "GatherItem")),
-                        new Sequence(
-                            new SearchFreeStockpileAct(Agent, "TargetStockpile", "TargetVoxel"),
-                            new GoToVoxelAct("TargetVoxel", Agent),
-                            new PutItemInStockpileAct(Agent, "TargetStockpile")) | new DropItemAct(Agent));
+                    Tree = new Sequence(
+                                        new SetBlackboardData<LocatableComponent>(Agent, "GatherItem", ItemToGather),
+                                        new SearchFreeStockpileAct(Agent, "TargetStockpile", "FreeVoxel"),
+                                        EntityIsGatherable(),
+                                        new GoToEntityAct(ItemToGather, Agent),
+                                        EntityIsGatherable(),
+                                        new PickUpAct(Agent, PickUpAct.PickUpType.None, null, "GatherItem"),
+                                        new Select(
+                                                    new Sequence(
+                                                                    new GoToVoxelAct("FreeVoxel", PlanAct.PlanType.Adjacent, Agent),
+                                                                    new PutItemInStockpileAct(Agent, "TargetStockpile", "FreeVoxel")
+                                                                ),
+                                                    new DropItemAct(Agent)
+                                                  )
+                                       )
+                               | new Wrap(() => Unreserve("TargetStockpile", "FreeVoxel"));
 
                     Tree.Initialize();
                 }

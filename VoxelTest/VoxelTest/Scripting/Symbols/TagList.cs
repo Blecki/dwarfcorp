@@ -5,7 +5,10 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
+    /// <summary>
+    /// A tag list is a list of strings. Arbitrary tag lists can be attached
+    /// to items to modify how scripts interpret the items.
+    /// </summary>
     public class TagList : IEquatable<TagList>
     {
         public List<string> Tags { get; set; }
@@ -62,6 +65,17 @@ namespace DwarfCorp
         {
             return Equals((object) obj);
         }
+
+        public static implicit operator TagList(string tag)
+        {
+            return new TagList(tag);
+        }
+
+        public static implicit operator TagList(string[] tags)
+        {
+            return new TagList(tags);
+        }
+
 
         // Equal if they share ANY tag in common.
         public override bool Equals(object obj)

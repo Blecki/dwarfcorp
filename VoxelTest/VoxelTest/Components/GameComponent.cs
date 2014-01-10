@@ -10,6 +10,15 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+
+    /// <summary>
+    /// This class is responsible for handling components. "Components" are one of the most important parts of the 
+    /// DwarfCorp engine. Everything in the game is a collection of components. A collection of components is called an "entity".
+    /// Components live in a tree-like structure, they have parents and children. Most components (called Locatable components)
+    /// also have a position and orientation.
+    /// 
+    /// By adding and removing components to an entity, functionality can be changed.
+    /// </summary>
     [JsonObject(IsReference = true)]
     public class GameComponent
     {
@@ -21,8 +30,8 @@ namespace DwarfCorp
 
         public List<GameComponent> Children { get; set; }
 
-        private static uint m_maxGlobalID = 0;
-        private uint m_maxLocalID = 0;
+        private static uint maxGlobalID = 0;
+        private uint maxLocalID = 0;
 
         public bool IsVisible { get; set; }
         public bool IsActive { get; set; }
@@ -42,15 +51,6 @@ namespace DwarfCorp
             }
         }
 
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            if(Name == "pine")
-            {
-                Console.Out.WriteLine("Pin");
-            }
-
-        }
 
         public GameComponent()
         {
@@ -65,8 +65,8 @@ namespace DwarfCorp
         {
             lock (globalIdLock)
             {
-                GlobalID = m_maxGlobalID;
-                m_maxGlobalID++;
+                GlobalID = maxGlobalID;
+                maxGlobalID++;
             }
 
             Parent = null;
@@ -103,7 +103,7 @@ namespace DwarfCorp
 
         public uint GetNextLocalID()
         {
-            return m_maxLocalID++;
+            return maxLocalID++;
         }
 
 
@@ -158,6 +158,11 @@ namespace DwarfCorp
 
         public virtual void Die()
         {
+            if(IsDead)
+            {
+                return;
+            }
+
             IsDead = true;
 
             foreach(GameComponent child in Children)

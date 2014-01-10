@@ -5,6 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature sets its current target voxel to the given item.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class SetTargetVoxelAct : CreatureAct
     {

@@ -13,14 +13,9 @@ using Microsoft.Xna.Framework.Media;
 namespace DwarfCorp
 {
 
-    public class Sound3D
-    {
-        public SoundEffectInstance EffectInstance;
-        public Vector3 Position;
-        public bool HasStarted;
-        public string Name;
-    }
-
+    /// <summary>
+    /// Manages and creates 3D sounds.
+    /// </summary>
     public class SoundManager
     {
         public static List<Sound3D> ActiveSounds = new List<Sound3D>();
@@ -35,13 +30,12 @@ namespace DwarfCorp
         {
             string[] defaultSounds =
             {
-                "pick",
-                "hit",
-                "jump",
-                "ouch",
-                "gravel",
-                "splash",
-                "sword"
+                ContentPaths.Audio.pick,
+                ContentPaths.Audio.hit,
+                ContentPaths.Audio.jump,
+                ContentPaths.Audio.ouch,
+                ContentPaths.Audio.gravel,
+                ContentPaths.Audio.river
             };
 
             foreach(string name in defaultSounds)
@@ -70,11 +64,11 @@ namespace DwarfCorp
             }
         }
 
-        public static void PlaySound(string name, Vector3 location, bool randomPitch)
+        public static Sound3D PlaySound(string name, Vector3 location, bool randomPitch, float volume = 1.0f)
         {
             if(Content == null)
             {
-                return;
+                return null;
             }
             try
             {
@@ -121,17 +115,22 @@ namespace DwarfCorp
                     sound.EffectInstance.Dispose();
                     sound.EffectInstance = null;
                 }
+
+
+                sound.VolumeMultiplier = volume;
+
+                return sound;
             }
             catch(Exception e)
             {
                 Console.Out.WriteLine(e.Message);
-                return;
+                return null;
             }
         }
 
-        public static void PlaySound(string name, Vector3 location)
+        public static Sound3D PlaySound(string name, Vector3 location, float volume = 1.0f)
         {
-            PlaySound(name, location, false);
+            return PlaySound(name, location, false, volume);
         }
 
         public static void Update(GameTime time, Camera camera)
@@ -157,7 +156,7 @@ namespace DwarfCorp
                 {
                     Emitter.Position = instance.Position;
                     instance.EffectInstance.Apply3D(Listener, Emitter);
-                    instance.EffectInstance.Volume *= (GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume);
+                    instance.EffectInstance.Volume *= (GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * instance.VolumeMultiplier);
 
                     instance.EffectInstance.Play();
                     instance.HasStarted = true;

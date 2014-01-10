@@ -6,13 +6,19 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature attacks a target until the target is dead.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class MeleeAct : CreatureAct
     {
+        public float EnergyLoss { get; set; }
+
         public MeleeAct(CreatureAIComponent agent) :
             base(agent)
         {
             Name = "Attack!";
+            EnergyLoss = 200.0f;
         }
 
         public override IEnumerable<Status> Run()
@@ -72,14 +78,15 @@ namespace DwarfCorp
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
 
                 Creature.Weapon.PlayNoise();
+                Creature.Status.Energy.CurrentValue -= EnergyLoss * Dt * Creature.Stats.Tiredness;
 
-                if(Agent.TargetComponent is PhysicsComponent)
+                PhysicsComponent component = Agent.TargetComponent as PhysicsComponent;
+                if(component != null)
                 {
                     if(PlayState.Random.Next(100) < 10)
                     {
-                        PhysicsComponent phys = (PhysicsComponent) Agent.TargetComponent;
+                        PhysicsComponent phys = component;
                         {
-                            SoundManager.PlaySound("ouch", phys.GlobalTransform.Translation);
                             PlayState.ParticleManager.Trigger("blood_particle", phys.GlobalTransform.Translation, Color.White, 5);
                         }
 
@@ -96,10 +103,10 @@ namespace DwarfCorp
                         f.Y = 0.0f;
 
                         f.Normalize();
-                        f *= 80;
+                        f *= 20;
 
 
-                        phys.ApplyForce(f, Act.Dt);
+                        phys.ApplyForce(f, Dt);
                     }
                 }
 

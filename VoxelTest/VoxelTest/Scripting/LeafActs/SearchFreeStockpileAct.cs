@@ -6,6 +6,9 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature looks for the nearest, free stockpile and puts that information onto the blackboard.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class SearchFreeStockpileAct : CreatureAct
     {
@@ -107,6 +110,7 @@ namespace DwarfCorp
             }
             else
             {
+                Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                 yield return Status.Fail;
             }
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -7,7 +8,7 @@ namespace DwarfCorp
 #if WINDOWS || XBOX
     internal static class Program
     {
-        public static string Version = "1 . 0 . 29";
+        public static string Version = "1 . 0 . 31";
         public static char DirChar = System.IO.Path.DirectorySeparatorChar;
 
         /// <summary>
@@ -21,6 +22,24 @@ namespace DwarfCorp
             }
 
             SignalShutdown();
+            
+        }
+
+        public static string CreatePath(params string[] args)
+        {
+            string toReturn = "";
+
+            for(int i = 0; i < args.Length; i++)
+            {
+                toReturn += args[i];
+
+                if(i < args.Length - 1)
+                {
+                    toReturn += DirChar;
+                }
+            }
+
+            return toReturn;
         }
 
         public static ManualResetEvent ShutdownEvent = new ManualResetEvent(false);
@@ -31,12 +50,6 @@ namespace DwarfCorp
             ShutdownEvent.Set();
         }
 
-        public static T[] SubArray<T>(this T[] data, int index, int length)
-        {
-            T[] result = new T[length];
-            Array.Copy(data, index, result, 0, length);
-            return result;
-        }
     }
 #endif
 }

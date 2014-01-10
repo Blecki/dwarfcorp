@@ -5,6 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// Erases a specific named value from the blackboard.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class ClearBlackboardData : CreatureAct
     {

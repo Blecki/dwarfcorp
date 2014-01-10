@@ -5,6 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature finds an item from a stockpile or room with the given tags, goes to it, and picks it up.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GetItemWithTagsAct : CompoundCreatureAct
     {
@@ -18,55 +21,45 @@ namespace DwarfCorp
         public GetItemWithTagsAct(CreatureAIComponent agent, TagList tags) :
             base(agent)
         {
-            Name = "Get Item With Tags " + tags.ToString();
+            Name = "Get Item With Tags " + tags;
             Tags = tags;
+
+        }
+
+        public override void Initialize()
+        {
             Item toGather = null;
+            Item closestItem = Agent.Faction.FindNearestItemWithTags(Tags, Agent.Position, false);
 
-            Item closestItem = null;
-            float closestDist = float.MaxValue;
 
-            foreach(Stockpile s in Agent.Faction.Stockpiles)
-            {
-                Item i = s.FindNearestItemWithTags(tags, Agent.Position);
-
-                if(i != null)
-                {
-                    float d = (i.UserData.GlobalTransform.Translation - Agent.Position).LengthSquared();
-                    if(d < closestDist)
-                    {
-                        closestDist = d;
-                        closestItem = i;
-                    }
-                }
-            }
-
-            if(closestItem != null)
+            if (closestItem != null)
             {
                 toGather = closestItem;
             }
 
-            if(toGather == null)
+            if (toGather == null)
             {
                 Tree = null;
             }
-            else if(toGather.Zone is Stockpile)
+            else if (toGather.Zone is Stockpile)
             {
-                Tree = new Sequence(new GoToEntityAct(toGather.UserData, agent),
-                                    new SetBlackboardData<LocatableComponent>(agent, "TargetObject", toGather.UserData),
-                                    new PickUpAct(agent, PickUpAct.PickUpType.Stockpile, toGather.Zone, "TargetObject"));
+                Tree = new Sequence(new GoToEntityAct(toGather.UserData, Agent),
+                                    new SetBlackboardData<LocatableComponent>(Agent, "TargetObject", toGather.UserData),
+                                    new PickUpAct(Agent, PickUpAct.PickUpType.Stockpile, toGather.Zone, "TargetObject"));
             }
-            else if(toGather.Zone is Room)
+            else if (toGather.Zone is Room)
             {
-                Tree = new Sequence(new GoToEntityAct(toGather.UserData, agent),
-                                    new SetBlackboardData<LocatableComponent>(agent, "TargetObject", toGather.UserData),
-                                    new PickUpAct(agent, PickUpAct.PickUpType.Room, toGather.Zone, "TargetObject"));
+                Tree = new Sequence(new GoToEntityAct(toGather.UserData, Agent),
+                                    new SetBlackboardData<LocatableComponent>(Agent, "TargetObject", toGather.UserData),
+                                    new PickUpAct(Agent, PickUpAct.PickUpType.Room, toGather.Zone, "TargetObject"));
             }
             else
             {
-                Tree = new Sequence(new GoToEntityAct(toGather.UserData, agent),
-                                    new SetBlackboardData<LocatableComponent>(agent, "TargetObject", toGather.UserData),
-                                    new PickUpAct(agent, PickUpAct.PickUpType.None, null, "TargetObject"));
+                Tree = new Sequence(new GoToEntityAct(toGather.UserData, Agent),
+                                    new SetBlackboardData<LocatableComponent>(Agent, "TargetObject", toGather.UserData),
+                                    new PickUpAct(Agent, PickUpAct.PickUpType.None, null, "TargetObject"));
             }
+            base.Initialize();
         }
     }
 

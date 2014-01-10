@@ -7,15 +7,23 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature moves along a planned path until the path is completed, or
+    /// it detects failure.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class FollowPathAct : CreatureAct
     {
         private string PathName { get; set; }
+
+        public float EnergyLoss { get; set; }
+
         public FollowPathAct(CreatureAIComponent agent, string pathName) :
             base(agent)
         {
             Name = "Follow path";
             PathName = pathName;
+            EnergyLoss = 10.0f;
         }
 
         public List<VoxelRef> GetPath()
@@ -37,6 +45,7 @@ namespace DwarfCorp
                 if(path == null)
                 {
                     SetPath(null);
+                    Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                     yield return Status.Fail;
                     break;
                 }
@@ -57,6 +66,7 @@ namespace DwarfCorp
                     if(Agent.LocalControlTimeout.HasTriggered)
                     {
                         Agent.LocalControlTimeout.Reset(Agent.LocalControlTimeout.TargetTimeSeconds);
+                        Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                         yield return Status.Fail;
                         break;
                     }
@@ -76,11 +86,14 @@ namespace DwarfCorp
                     Vector3 output = Agent.Creature.Controller.GetOutput((float) Act.LastTime.ElapsedGameTime.TotalSeconds,
                         Agent.Creature.LocalTarget,
                         Agent.Creature.Physics.GlobalTransform.Translation);
+
                     Agent.Creature.Physics.ApplyForce(output, (float) Act.LastTime.ElapsedGameTime.TotalSeconds);
 
                     output.Y = 0.0f;
 
-                    if((Agent.Creature.LocalTarget - Agent.Creature.Physics.GlobalTransform.Translation).Y > 0.1)
+                    float yDifference = (Agent.Creature.LocalTarget - Agent.Creature.Physics.GlobalTransform.Translation).Y;
+
+                    if(yDifference > 0.1)
                     {
                         Agent.Jump(LastTime);
                     }
@@ -88,19 +101,31 @@ namespace DwarfCorp
 
                     if(Agent.DrawPath)
                     {
+                        Drawer3D.DrawLineList(new List<Vector3>{Agent.Creature.LocalTarget, Agent.Creature.Physics.GlobalTransform.Translation}, Color.White, 0.01f );
+
                         List<Vector3> points = path.Select(v => v.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f)).ToList();
 
-                        SimpleDrawing.DrawLineList(points, Color.Red, 0.1f);
+                        Drawer3D.DrawLineList(points, Color.Red, 0.1f);
                     }
 
-                    if((Agent.Creature.LocalTarget - Agent.Creature.Physics.GlobalTransform.Translation).Length() < 0.8f || path.Count < 1)
+                    bool goToNextNode;
+                    if(path.Count > 1)
                     {
-                        if(path.Count > 1)
+                        goToNextNode = (yDifference < 0.05 && (Agent.Creature.LocalTarget - Agent.Creature.Physics.GlobalTransform.Translation).Length() < 0.7f);
+                    }
+                    else
+                    {
+                        goToNextNode = (Agent.Creature.LocalTarget - Agent.Creature.Physics.GlobalTransform.Translation).Length() < 0.25f;
+                    }
+
+                    if(goToNextNode)
+                    {
+                        if(path.Count > 0)
                         {
                             Agent.PreviousTargetVoxel = Agent.TargetVoxel;
-                            path.RemoveAt(0);
                             Agent.LocalControlTimeout.Reset(Agent.LocalControlTimeout.TargetTimeSeconds);
                             Agent.TargetVoxel = path[0];
+                            path.RemoveAt(0);
                         }
                         else
                         {
@@ -114,10 +139,12 @@ namespace DwarfCorp
                 else
                 {
                     Agent.PreviousTargetVoxel = null;
+                    Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                     yield return Status.Fail;
                     break;
                 }
 
+                Creature.Status.Energy.CurrentValue -= EnergyLoss * Dt * Creature.Stats.Tiredness;
                 yield return Status.Running;
             }
         }

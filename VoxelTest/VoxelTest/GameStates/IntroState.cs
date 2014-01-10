@@ -14,6 +14,9 @@ using Microsoft.Xna.Framework.Media;
 namespace DwarfCorp
 {
 
+    /// <summary>
+    ///  This game state displays the company and game credits or whatever else needs to go at the beginning of the game.
+    /// </summary>
     public class IntroState : GameState
     {
         public Texture2D Logo { get; set; }
@@ -29,7 +32,7 @@ namespace DwarfCorp
         public override void OnEnter()
         {
             IsInitialized = true;
-            Logo = TextureManager.GetTexture("companylogo");
+            Logo = TextureManager.GetTexture("CompanyLogo");
             IntroTimer.Reset(3);
 
             base.OnEnter();
@@ -58,21 +61,21 @@ namespace DwarfCorp
 
         public override void Render(GameTime gameTime)
         {
-            DwarfGame.SpriteBatch.Begin();
 
-            float x = Easing.CubeInOut(TransitionValue, 0.0f, 1.0f, 0.5f);
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
-            if(Transitioning == TransitionMode.Running)
+            Vector2 screenCenter = new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - Logo.Width / 2, Game.GraphicsDevice.Viewport.Height / 2 - Logo.Height / 2);
+            switch(Transitioning)
             {
-                DwarfGame.SpriteBatch.Draw(Logo, new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - Logo.Width / 2, Game.GraphicsDevice.Viewport.Height / 2 - Logo.Height / 2), null, new Color(1f, 1f, 1f));
-            }
-            else if(Transitioning == TransitionMode.Entering)
-            {
-                DwarfGame.SpriteBatch.Draw(Logo, new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - Logo.Width / 2, Game.GraphicsDevice.Viewport.Height / 2 - Logo.Height / 2), null, new Color(x, x, x));
-            }
-            else if(Transitioning == TransitionMode.Exiting)
-            {
-                DwarfGame.SpriteBatch.Draw(Logo, new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - Logo.Width / 2, Game.GraphicsDevice.Viewport.Height / 2 - Logo.Height / 2), null, new Color(1.0f - x, 1.0f - x, 1.0f - x));
+                case TransitionMode.Running:
+                    DwarfGame.SpriteBatch.Draw(Logo, screenCenter, null, new Color(1f, 1f, 1f));
+                    break;
+                case TransitionMode.Entering:
+                    DwarfGame.SpriteBatch.Draw(Logo, screenCenter, null, new Color(1f, 1f, 1f, TransitionValue));
+                    break;
+                case TransitionMode.Exiting:
+                    DwarfGame.SpriteBatch.Draw(Logo, screenCenter, null, new Color(1f, 1f, 1f, 1.0f - TransitionValue));
+                    break;
             }
             DwarfGame.SpriteBatch.End();
 

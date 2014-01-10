@@ -6,6 +6,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature goes to a voxel, and then hits the voxel until it is destroyed.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class KillVoxelAct : CompoundCreatureAct
     {
@@ -15,6 +18,7 @@ namespace DwarfCorp
         {
 
         }
+
 
         public IEnumerable<Status> IncrementAssignment( CreatureAIComponent creature, string designation, int amount)
         {
@@ -26,7 +30,7 @@ namespace DwarfCorp
 
                 if(digDesignation != null)
                 {
-                    digDesignation.numCreaturesAssigned += amount;
+                    digDesignation.NumCreaturesAssigned += amount;
                     yield return Status.Success;
                 }
                 else
@@ -46,14 +50,16 @@ namespace DwarfCorp
             base(creature)
         {
             Voxel = voxel;
-            Name = "Kill Voxel ";
+            Name = "Kill Voxel " + voxel.WorldPosition;
             Tree = new Sequence(
                 new SetBlackboardData<VoxelRef>(creature, "DigVoxel", voxel),
-                new Wrap(() => IncrementAssignment(creature, "DigVoxel", 1)),
-                new GoToVoxelAct(voxel, creature),
-                new DigAct(Agent, "DigVoxel"),
-                new ClearBlackboardData(creature, "DigVoxel")
-                ) | new Wrap(() => IncrementAssignment(creature, "DigVoxel", -1));
+                new Sequence(
+                              new Wrap(() => IncrementAssignment(creature, "DigVoxel", 1)),
+                              new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, creature),
+                              new DigAct(Agent, "DigVoxel"),
+                              new ClearBlackboardData(creature, "DigVoxel")
+                            ) 
+                            | new Wrap(() => IncrementAssignment(creature, "DigVoxel", -1)));
         }
     }
 

@@ -5,6 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature finds the voxel below a given entity, and goes to it.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GoToEntityAct : CompoundCreatureAct
     {
@@ -33,7 +36,7 @@ namespace DwarfCorp
             Tree = new Sequence(new SetTargetEntityAct(entity, Agent),
                 InHands() |
                 new Sequence(new SetTargetVoxelFromEntityAct(Agent, "EntityVoxel"),
-                    new PlanAct(Agent, "PathToEntity", "EntityVoxel"),
+                    new PlanAct(Agent, "PathToEntity", "EntityVoxel", PlanAct.PlanType.Adjacent),
                     new FollowPathAct(Agent, "PathToEntity"),
                     new StopAct(Agent)));
         }

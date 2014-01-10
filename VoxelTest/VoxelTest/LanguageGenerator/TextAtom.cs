@@ -5,7 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
+    /// <summary>
+    /// This represents a particular part of randomly generated text which can change (such as a noun or verb)
+    /// </summary>
     public class TextAtom
     {
         public string Name { get; set; }

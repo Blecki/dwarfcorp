@@ -5,6 +5,10 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature goes to a specific item in one zone, and then picks it up.
+    /// The creature then goes to another zone, and leaves the held item there.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class MoveItemAct : CompoundCreatureAct
     {

@@ -5,6 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature goes to a voxel, and then waits there until cancelled.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GuardVoxelAct : CompoundCreatureAct
     {
@@ -27,7 +30,7 @@ namespace DwarfCorp
             Voxel = voxel;
             Name = "Guard Voxel " + voxel;
 
-            Tree = new Sequence(new GoToVoxelAct(voxel, agent),
+            Tree = new Sequence(new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, agent),
                 new StopAct(Agent),
                 new WhileLoop(new WanderAct(Agent, 1.0f, 0.5f, 0.1f), new Condition(IsGuardDesignation)));
         }

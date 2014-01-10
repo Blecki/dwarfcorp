@@ -8,7 +8,9 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
-
+    /// <summary>
+    /// Creates randomly generated voxel chunks using data from the overworld.
+    /// </summary>
     public class ChunkGenerator
     {
         public VoxelLibrary VoxLibrary { get; set; }
@@ -159,7 +161,7 @@ namespace DwarfCorp
                             float p = spawns.Value.VeinSpawnThreshold;
 
                             Voxel v = chunk.VoxelGrid[x][y][z];
-                            if(v == null || y >= h - 1 || !(y < spawns.Value.MaximumHeight) || !(y > spawns.Value.MinimumHeight) || !(PlayState.Random.NextDouble() <= spawns.Value.Probability) || v.Type.name != "Stone")
+                            if(v == null || y >= h - 1 || !(y < spawns.Value.MaximumHeight) || !(y > spawns.Value.MinimumHeight) || !(PlayState.Random.NextDouble() <= spawns.Value.Probability) || v.Type.Name != "Stone")
                             {
                                 continue;
                             }
@@ -320,7 +322,7 @@ namespace DwarfCorp
                             voxels[x][y][z] = new Voxel(new Vector3((x + origin.X), (y + origin.Y), (z + origin.Z)),
                                 VoxelLibrary.GetVoxelType(biomeData.SubsurfVoxel),
                                 VoxelLibrary.GetPrimitive(biomeData.SubsurfVoxel), true);
-                            voxels[x][y][z].Health = VoxelLibrary.GetVoxelType(biomeData.SubsurfVoxel).startingHealth;
+                            voxels[x][y][z].Health = VoxelLibrary.GetVoxelType(biomeData.SubsurfVoxel).StartingHealth;
                         }
 
                         else if((y == (int) h || y == StoneHeight) && hNorm > waterHeight)
@@ -331,7 +333,7 @@ namespace DwarfCorp
                                 VoxelLibrary.GetPrimitive(biomeData.GrassVoxel),
                                 true);
 
-                            voxels[x][y][z].Health = VoxelLibrary.GetVoxelType(biomeData.GrassVoxel).startingHealth;
+                            voxels[x][y][z].Health = VoxelLibrary.GetVoxelType(biomeData.GrassVoxel).StartingHealth;
                         }
                         else if(y > h && y > 0)
                         {
@@ -344,7 +346,7 @@ namespace DwarfCorp
                                 VoxelLibrary.GetVoxelType(biomeData.ShoreVoxel),
                                 VoxelLibrary.GetPrimitive(biomeData.ShoreVoxel),
                                 true);
-                            voxels[x][y][z].Health = VoxelLibrary.GetVoxelType(biomeData.ShoreVoxel).startingHealth;
+                            voxels[x][y][z].Health = VoxelLibrary.GetVoxelType(biomeData.ShoreVoxel).StartingHealth;
                         }
                         else
                         {
@@ -353,7 +355,7 @@ namespace DwarfCorp
                                 VoxelLibrary.GetVoxelType(biomeData.SoilVoxel),
                                 VoxelLibrary.GetPrimitive(biomeData.SoilVoxel), true);
 
-                            voxels[x][y][z].Health = VoxelLibrary.GetVoxelType(biomeData.SoilVoxel).startingHealth;
+                            voxels[x][y][z].Health = VoxelLibrary.GetVoxelType(biomeData.SoilVoxel).StartingHealth;
                         }
                     }
                 }

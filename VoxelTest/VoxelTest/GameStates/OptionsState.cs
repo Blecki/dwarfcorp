@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
@@ -14,6 +15,9 @@ using Microsoft.Xna.Framework.Media;
 namespace DwarfCorp
 {
 
+    /// <summary>
+    /// This game state allows the player to modify game options (stored in the GameSettings file).
+    /// </summary>
     public class OptionsState : GameState
     {
         public DwarfGUI GUI { get; set; }
@@ -45,8 +49,8 @@ namespace DwarfCorp
 
         public override void OnEnter()
         {
-            DefaultFont = Game.Content.Load<SpriteFont>("Default");
-            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
+            DefaultFont = Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Default"));
+            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts","Title")), Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Small")), Input);
             IsInitialized = true;
             Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
             MainWindow = new Panel(GUI, GUI.RootComponent)
@@ -372,6 +376,8 @@ namespace DwarfCorp
 
             gameplayLayout.SetComponentPosition(chunkHeightLabel, 2, 3, 1, 1);
             gameplayLayout.SetComponentPosition(chunkHeightSlider, 3, 3, 1, 1);
+
+
             chunkHeightSlider.OnValueModified += ChunkHeightSlider_OnValueModified;
 
             Label worldWidthLabel = new Label(GUI, gameplayLayout, "World Width", GUI.DefaultFont);
@@ -413,7 +419,7 @@ namespace DwarfCorp
             TabSelector.AddItem("Audio");
             GridLayout audioLayout = new GridLayout(GUI, audioBox, 6, 5);
 
-            Label masterLabel = new Label(GUI, audioLayout, "Faction Volume", GUI.DefaultFont);
+            Label masterLabel = new Label(GUI, audioLayout, "Master Volume", GUI.DefaultFont);
             Slider masterSlider = new Slider(GUI, audioLayout, "", GameSettings.Default.MasterVolume, 0.0f, 1.0f, Slider.SliderMode.Float);
             audioLayout.SetComponentPosition(masterLabel, 0, 0, 1, 1);
             audioLayout.SetComponentPosition(masterSlider, 1, 0, 1, 1);
@@ -705,7 +711,6 @@ namespace DwarfCorp
         {
             if(Transitioning == TransitionMode.Running)
             {
-                Game.GraphicsDevice.Clear(Color.Black);
                 Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
                 DrawGUI(gameTime, 0);
             }
