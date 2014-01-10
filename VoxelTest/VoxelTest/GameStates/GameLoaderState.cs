@@ -14,6 +14,9 @@ using Microsoft.Xna.Framework.Media;
 namespace DwarfCorp
 {
 
+    /// <summary>
+    /// This game state allows the player to load saved games.
+    /// </summary>
     public class GameLoaderState : GameState
     {
         public class GameLoadDescriptor
@@ -309,8 +312,8 @@ namespace DwarfCorp
 
         public override void OnEnter()
         {
-            DefaultFont = Game.Content.Load<SpriteFont>("Default");
-            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
+            DefaultFont = Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
+            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
             Input = new InputManager();
            
             CreateGUI();
@@ -375,7 +378,6 @@ namespace DwarfCorp
             switch (Transitioning)
             {
                 case TransitionMode.Running:
-                    Game.GraphicsDevice.Clear(Color.Black);
                     DrawGUI(gameTime, 0);
                     break;
                 case TransitionMode.Entering:

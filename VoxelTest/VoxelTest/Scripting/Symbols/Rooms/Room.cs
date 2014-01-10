@@ -8,11 +8,14 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A room is a kind of zone which can be built by creatures.
+    /// </summary>
     [JsonObject(IsReference = true)]
     public sealed class Room : Zone
     {
         public List<VoxelRef> Designations { get; set; }
-        public List<GameComponent> Components { get; set; }
+
         public bool IsBuilt { get; set; }
         public RoomType RoomType { get; set; }
         private static int Counter = 0;
@@ -28,7 +31,6 @@ namespace DwarfCorp
             RoomType = type;
             ReplacementType = VoxelLibrary.GetVoxelType(RoomType.FloorType);
             Chunks = chunks;
-            Components = new List<GameComponent>();
             Counter++;
             Designations = designations;
             IsBuilt = false;
@@ -41,7 +43,6 @@ namespace DwarfCorp
             ReplacementType = VoxelLibrary.GetVoxelType(RoomType.FloorType);
             Chunks = chunks;
 
-            Components = new List<GameComponent>();
             Designations = new List<VoxelRef>();
             Counter++;
 
@@ -52,6 +53,19 @@ namespace DwarfCorp
             }
         }
 
+
+        public override void RemoveVoxel(VoxelRef voxel)
+        {
+            VoxelStorage toRemove = Storage.FirstOrDefault(store => store.Voxel.Equals(voxel));
+            
+            if(toRemove != null && toRemove.OwnedItem != null)
+            {
+                toRemove.OwnedItem.UserData.Die();
+                toRemove.OwnedItem = null;
+            }
+
+            base.RemoveVoxel(voxel);
+        }
 
         public List<LocatableComponent> GetComponentsInRoom()
         {

@@ -5,7 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
+    /// <summary>
+    /// Generates random strings of text based on patterns. Like mad libs.
+    /// </summary>
     public class TextGenerator
     {
         public static Dictionary<string, TextAtom> TextAtoms { get; set; }

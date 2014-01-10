@@ -8,9 +8,16 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A static collection of voxel types and their properties.
+    /// </summary>
     [JsonObject(IsReference = true)]
     public class VoxelLibrary
     {
+        /// <summary>
+        /// Specifies that a specific voxel is a resource which should
+        /// spawn in veins.
+        /// </summary>
         public class ResourceSpawnRate
         {
             public float VeinSize;
@@ -57,97 +64,97 @@ namespace DwarfCorp
 
             VoxelType tilledSoil = new VoxelType
             {
-                name = "TilledSoil",
-                releasesResource = false,
-                startingHealth = 20,
-                canRamp = true,
-                isBuildable = false,
-                particleType = "dirt_particle"
+                Name = "TilledSoil",
+                ReleasesResource = false,
+                StartingHealth = 20,
+                CanRamp = true,
+                IsBuildable = false,
+                ParticleType = "dirt_particle"
             };
             RegisterType(tilledSoil, tilledSoilCube);
 
             VoxelType brownTileFloor = new VoxelType
             {
-                name = "BrownTileFloor",
-                releasesResource = false,
-                startingHealth = 20,
-                canRamp = false,
-                isBuildable = false,
-                particleType = "stone_particle"
+                Name = "BrownTileFloor",
+                ReleasesResource = false,
+                StartingHealth = 20,
+                CanRamp = false,
+                IsBuildable = false,
+                ParticleType = "stone_particle"
             };
             RegisterType(brownTileFloor, brownTileCube);
 
             VoxelType blueTileFloor = new VoxelType
             {
-                name = "BlueTileFloor",
-                releasesResource = false,
-                startingHealth = 20,
-                canRamp = false,
-                isBuildable = false,
-                particleType = "stone_particle"
+                Name = "BlueTileFloor",
+                ReleasesResource = false,
+                StartingHealth = 20,
+                CanRamp = false,
+                IsBuildable = false,
+                ParticleType = "stone_particle"
             };
             RegisterType(blueTileFloor, blueTileCube);
 
             VoxelType cobblestoneFloor = new VoxelType
             {
-                name = "CobblestoneFloor",
-                releasesResource = false,
-                startingHealth = 20,
-                canRamp = false,
-                isBuildable = false,
-                particleType = "stone_particle"
+                Name = "CobblestoneFloor",
+                ReleasesResource = false,
+                StartingHealth = 20,
+                CanRamp = false,
+                IsBuildable = false,
+                ParticleType = "stone_particle"
             };
             RegisterType(cobblestoneFloor, cobblestoneCube);
 
             VoxelType stockpileType = new VoxelType
             {
-                name = "Stockpile",
-                releasesResource = false,
-                startingHealth = 20,
-                canRamp = false,
-                isBuildable = false,
-                particleType = "stone_particle"
+                Name = "Stockpile",
+                ReleasesResource = false,
+                StartingHealth = 20,
+                CanRamp = false,
+                IsBuildable = false,
+                ParticleType = "stone_particle"
             };
             RegisterType(stockpileType, plankCube);
 
             VoxelType plankType = new VoxelType
             {
-                name = "Plank",
-                probabilityOfRelease = 1.0f,
-                resourceToRelease = "Wood",
-                startingHealth = 20,
-                releasesResource = true,
-                canRamp = true,
-                rampSize = 0.5f,
-                isBuildable = true,
-                particleType = "stone_particle"
+                Name = "Plank",
+                ProbabilityOfRelease = 1.0f,
+                ResourceToRelease = "Wood",
+                StartingHealth = 20,
+                ReleasesResource = true,
+                CanRamp = true,
+                RampSize = 0.5f,
+                IsBuildable = true,
+                ParticleType = "stone_particle"
             };
 
             VoxelType scaffoldType = new VoxelType
             {
-                name = "Scaffold",
-                startingHealth = 20,
-                probabilityOfRelease = 1.0f,
-                resourceToRelease = "Wood",
-                releasesResource = false,
-                canRamp = false,
-                rampSize = 0.5f,
-                isBuildable = true,
-                particleType = "stone_particle"
+                Name = "Scaffold",
+                StartingHealth = 20,
+                ProbabilityOfRelease = 1.0f,
+                ResourceToRelease = "Wood",
+                ReleasesResource = false,
+                CanRamp = false,
+                RampSize = 0.5f,
+                IsBuildable = true,
+                ParticleType = "stone_particle"
             };
 
             VoxelType grassType = new VoxelType
             {
-                name = "Grass",
-                probabilityOfRelease = 0.1f,
-                resourceToRelease = "Dirt",
-                startingHealth = 10,
-                releasesResource = true,
-                canRamp = true,
-                rampSize = 0.5f,
-                isBuildable = false,
-                particleType = "dirt_particle",
-                specialRampTextures = true
+                Name = "Grass",
+                ProbabilityOfRelease = 0.1f,
+                ResourceToRelease = "Dirt",
+                StartingHealth = 10,
+                ReleasesResource = true,
+                CanRamp = true,
+                RampSize = 0.5f,
+                IsBuildable = false,
+                ParticleType = "dirt_particle",
+                SpecialRampTextures = true
             };
 
             //GrassType.RampPrimitives[RampType.None] = GrassCube;
@@ -168,16 +175,16 @@ namespace DwarfCorp
 
             VoxelType frostType = new VoxelType
             {
-                name = "Frost",
-                probabilityOfRelease = 0.1f,
-                resourceToRelease = "Dirt",
-                startingHealth = 10,
-                releasesResource = true,
-                canRamp = true,
-                rampSize = 0.5f,
-                isBuildable = false,
-                particleType = "dirt_particle",
-                specialRampTextures = true
+                Name = "Frost",
+                ProbabilityOfRelease = 0.1f,
+                ResourceToRelease = "Dirt",
+                StartingHealth = 10,
+                ReleasesResource = true,
+                CanRamp = true,
+                RampSize = 0.5f,
+                IsBuildable = false,
+                ParticleType = "dirt_particle",
+                SpecialRampTextures = true
             };
 
             //FrostType.RampPrimitives[RampType.None] = FrostCube;
@@ -196,70 +203,70 @@ namespace DwarfCorp
             frostType.RampPrimitives[RampType.TopBackRight] = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 4 + 2), new Point(2, 0), new Point(2, 0));
 
             emptyType = new VoxelType();
-            emptyType.name = "empty";
-            emptyType.releasesResource = false;
-            emptyType.isBuildable = false;
+            emptyType.Name = "empty";
+            emptyType.ReleasesResource = false;
+            emptyType.IsBuildable = false;
 
 
             VoxelType dirtType = new VoxelType
             {
-                name = "Dirt",
-                releasesResource = true,
-                resourceToRelease = "Dirt",
-                probabilityOfRelease = 0.3f,
-                startingHealth = 10,
-                rampSize = 0.5f,
-                canRamp = true,
-                isBuildable = true,
-                particleType = "dirt_particle"
+                Name = "Dirt",
+                ReleasesResource = true,
+                ResourceToRelease = "Dirt",
+                ProbabilityOfRelease = 0.3f,
+                StartingHealth = 10,
+                RampSize = 0.5f,
+                CanRamp = true,
+                IsBuildable = true,
+                ParticleType = "dirt_particle"
             };
 
             VoxelType stoneType = new VoxelType
             {
-                name = "Stone",
-                probabilityOfRelease = 0.5f,
-                releasesResource = true,
-                resourceToRelease = "Stone",
-                startingHealth = 100,
-                isBuildable = true,
-                particleType = "stone_particle"
+                Name = "Stone",
+                ProbabilityOfRelease = 0.5f,
+                ReleasesResource = true,
+                ResourceToRelease = "Stone",
+                StartingHealth = 100,
+                IsBuildable = true,
+                ParticleType = "stone_particle"
             };
 
             VoxelType bedrockType = new VoxelType
             {
-                name = "Bedrock",
-                startingHealth = 10000,
-                isBuildable = false
+                Name = "Bedrock",
+                StartingHealth = 10000,
+                IsBuildable = false
             };
 
             VoxelType waterType = new VoxelType
             {
-                name = "water",
-                releasesResource = false,
-                isBuildable = false,
-                startingHealth = 9999
+                Name = "water",
+                ReleasesResource = false,
+                IsBuildable = false,
+                StartingHealth = 9999
             };
 
             VoxelType sandType = new VoxelType
             {
-                name = "Sand",
-                releasesResource = false,
-                startingHealth = 5,
-                canRamp = true,
-                rampSize = 0.5f,
-                isBuildable = false,
-                particleType = "sand_particle"
+                Name = "Sand",
+                ReleasesResource = false,
+                StartingHealth = 5,
+                CanRamp = true,
+                RampSize = 0.5f,
+                IsBuildable = false,
+                ParticleType = "sand_particle"
             };
 
             VoxelType ironType = new VoxelType
             {
-                name = "Iron",
-                probabilityOfRelease = 0.99f,
-                releasesResource = true,
-                resourceToRelease = "Iron",
-                startingHealth = 200,
-                isBuildable = false,
-                particleType = "stone_particle"
+                Name = "Iron",
+                ProbabilityOfRelease = 0.99f,
+                ReleasesResource = true,
+                ResourceToRelease = "Iron",
+                StartingHealth = 200,
+                IsBuildable = false,
+                ParticleType = "stone_particle"
             };
 
             ResourceSpawns["Iron"] = new ResourceSpawnRate
@@ -273,13 +280,13 @@ namespace DwarfCorp
 
             VoxelType goldType = new VoxelType
             {
-                name = "Gold",
-                probabilityOfRelease = 1.0f,
-                releasesResource = true,
-                resourceToRelease = "Gold",
-                startingHealth = 200,
-                isBuildable = false,
-                particleType = "stone_particle"
+                Name = "Gold",
+                ProbabilityOfRelease = 1.0f,
+                ReleasesResource = true,
+                ResourceToRelease = "Gold",
+                StartingHealth = 200,
+                IsBuildable = false,
+                ParticleType = "stone_particle"
             };
 
             ResourceSpawns["Gold"] = new ResourceSpawnRate
@@ -293,13 +300,13 @@ namespace DwarfCorp
 
             VoxelType manaType = new VoxelType
             {
-                name = "Mana",
-                probabilityOfRelease = 1.0f,
-                releasesResource = true,
-                resourceToRelease = "Mana",
-                startingHealth = 200,
-                isBuildable = false,
-                particleType = "stone_particle"
+                Name = "Mana",
+                ProbabilityOfRelease = 1.0f,
+                ReleasesResource = true,
+                ResourceToRelease = "Mana",
+                StartingHealth = 200,
+                IsBuildable = false,
+                ParticleType = "stone_particle"
             };
 
             ResourceSpawns["Mana"] = new ResourceSpawnRate
@@ -351,13 +358,13 @@ namespace DwarfCorp
 
         public static VoxelType GetVoxelType(string name)
         {
-            return PrimitiveMap.Keys.FirstOrDefault(v => v.name == name);
+            return PrimitiveMap.Keys.FirstOrDefault(v => v.Name == name);
         }
 
         public static BoxPrimitive GetPrimitive(string name)
         {
             return (from v in PrimitiveMap.Keys
-                where v.name == name
+                where v.Name == name
                 select GetPrimitive(v)).FirstOrDefault();
         }
 

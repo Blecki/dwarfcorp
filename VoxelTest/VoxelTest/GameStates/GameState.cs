@@ -14,6 +14,10 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A game state is a generic representation of how the game behaves. Game states live in a stack. The state on the top of the stack is the one currently running.
+    /// States can be both rendered and updated. There are brief transition periods between states where animations can occur.
+    /// </summary>
     public class GameState
     {
         public enum TransitionMode
@@ -31,9 +35,11 @@ namespace DwarfCorp
         public TransitionMode Transitioning { get; set; }
         public bool RenderUnderneath { get; set; }
         public bool IsActiveState { get; set; }
+        public bool EnableScreensaver { get; set; }
 
         public GameState(DwarfGame game, string name, GameStateManager stateManager)
         {
+            EnableScreensaver = true;
             Game = game;
             Name = name;
             StateManager = stateManager;

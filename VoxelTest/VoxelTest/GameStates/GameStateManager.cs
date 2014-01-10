@@ -13,6 +13,10 @@ using Microsoft.Xna.Framework.Media;
 namespace DwarfCorp
 {
 
+    /// <summary>
+    /// Manages a set of game states. A game state is a generic representation of how the game behaves. Game states live in a stack. The state on the top of the stack is the one currently running.
+    /// States can be both rendered and updated. There are brief transition periods between states where animations can occur.
+    /// </summary>
     public class GameStateManager
     {
         public List<string> StateStack { get; set; }
@@ -21,6 +25,8 @@ namespace DwarfCorp
         public string CurrentState { get; set; }
         public string NextState { get; set; }
         public float TransitionSpeed { get; set; }
+
+        public Terrain2D ScreenSaver { get; set; }
 
         public GameStateManager(DwarfGame game)
         {
@@ -87,6 +93,10 @@ namespace DwarfCorp
 
         public void Update(GameTime time)
         {
+            if(ScreenSaver == null)
+            {
+                ScreenSaver = new Terrain2D(Game);
+            }
             if(CurrentState != "" && States[CurrentState].IsInitialized)
             {
                 States[CurrentState].Update(time);
@@ -118,7 +128,10 @@ namespace DwarfCorp
         {
             Game.GraphicsDevice.Clear(Color.Black);
 
-
+            if(CurrentState != "" && States[CurrentState].EnableScreensaver)
+            {
+                ScreenSaver.Render(Game.GraphicsDevice, DwarfGame.SpriteBatch, time);
+            }
             for(int i = StateStack.Count - 1; i >= 0; i--)
             {
                 GameState state = States[StateStack[i]];

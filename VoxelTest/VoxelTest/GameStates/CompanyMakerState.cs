@@ -13,6 +13,9 @@ using Microsoft.Xna.Framework.Media;
 namespace DwarfCorp
 {
 
+    /// <summary>
+    /// This game state allows the player to design their own dwarf company.
+    /// </summary>
     public class CompanyMakerState : GameState
     {
         public DwarfGUI GUI { get; set; }
@@ -50,8 +53,8 @@ namespace DwarfCorp
         public override void OnEnter()
         {
             IsInitialized = true;
-            DefaultFont = Game.Content.Load<SpriteFont>("Default");
-            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
+            DefaultFont = Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Default"));
+            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Title")), Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Small")), Input);
             MainWindow = new Panel(GUI, GUI.RootComponent)
             {
                 LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2)
@@ -85,7 +88,7 @@ namespace DwarfCorp
 
             Button randomButton2 = new Button(GUI, Layout, "Random", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
             {
-                ToolTip = "Randomly generate a name"
+                ToolTip = "Randomly generate a Name"
             };
             Layout.SetComponentPosition(randomButton2, 2, 2, 1, 1);
             randomButton2.OnClicked += randomButton2_OnClicked;
@@ -352,7 +355,6 @@ namespace DwarfCorp
         {
             if(Transitioning == TransitionMode.Running)
             {
-                Game.GraphicsDevice.Clear(Color.Black);
                 Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
                 DrawGUI(gameTime, 0);
             }

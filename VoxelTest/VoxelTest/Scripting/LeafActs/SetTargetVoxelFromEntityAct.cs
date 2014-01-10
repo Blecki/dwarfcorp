@@ -25,7 +25,7 @@ namespace DwarfCorp
             }
             else
             {
-                Voxel voxel = Creature.Chunks.ChunkData.GetFirstVisibleBlockUnder(Agent.TargetComponent.GlobalTransform.Translation, false);
+                Voxel voxel = Creature.Chunks.ChunkData.GetFirstVoxelUnder(Agent.TargetComponent.BoundingBox.Center());
                 if(voxel == null)
                 {
                     yield return Status.Fail;

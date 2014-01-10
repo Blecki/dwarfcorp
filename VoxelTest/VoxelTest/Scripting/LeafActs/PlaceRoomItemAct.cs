@@ -5,6 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature uses the item currently in its hands to build a room.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class PlaceRoomItemAct : CreatureAct
     {

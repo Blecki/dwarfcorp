@@ -10,44 +10,9 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
 
-    public class VoxelType
-    {
-        public short ID { get; set; }
-        public string name { get; set; }
-        public bool releasesResource { get; set; }
-        public string resourceToRelease { get; set; }
-        public float startingHealth { get; set; }
-        public float probabilityOfRelease { get; set; }
-        public bool canRamp { get; set; }
-        public float rampSize { get; set; }
-        public bool isBuildable { get; set; }
-        public string particleType { get; set; }
-        public string explosionSound { get; set; }
-        public bool specialRampTextures { get; set; }
-        public Dictionary<RampType, BoxPrimitive> RampPrimitives { get; set; }
-        private static short maxID = 0;
-        public static List<VoxelType> TypeList = new List<VoxelType>();
-
-        public VoxelType()
-        {
-            ID = maxID;
-            maxID++;
-            name = "";
-            releasesResource = false;
-            resourceToRelease = "";
-            startingHealth = 0.0f;
-            probabilityOfRelease = 0.0f;
-            canRamp = false;
-            rampSize = 0.0f;
-            isBuildable = false;
-            particleType = "puff";
-            explosionSound = "gravel";
-            specialRampTextures = false;
-            RampPrimitives = new Dictionary<RampType, BoxPrimitive>();
-            TypeList.Add(this);
-        }
-    }
-
+    /// <summary>
+    /// Specifies the location of a vertex on a voxel.
+    /// </summary>
     public enum VoxelVertex
     {
         FrontTopLeft,
@@ -60,148 +25,9 @@ namespace DwarfCorp
         BackBottomRight,
     }
 
-    // Intended to be a smaller memory footprint representation
-    // that can be passed around. Also stores empty voxels
-    public class VoxelRef : IEquatable<VoxelRef>
-    {
-        public Point3 ChunkID { get; set; }
-        public Vector3 WorldPosition { get; set; }
-        public Vector3 GridPosition { get; set; }
-        public string TypeName { get; set; }
-        public bool IsValid;
-
-        public override int GetHashCode()
-        {
-            return (int) WorldPosition.X ^ (int) WorldPosition.Y ^ (int) WorldPosition.Z;
-        }
-
-        public bool Equals(VoxelRef other)
-        {
-            return other.ChunkID.Equals(ChunkID)
-                   && (int) (GridPosition.X) == (int) (other.GridPosition.X)
-                   && (int) (GridPosition.Y) == (int) (other.GridPosition.Y)
-                   && (int) (GridPosition.Z) == (int) (other.GridPosition.Z);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if(obj is VoxelRef)
-            {
-                return Equals((VoxelRef) obj);
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public BoundingBox GetBoundingBox()
-        {
-            BoundingBox toReturn = new BoundingBox();
-            toReturn.Min = WorldPosition;
-            toReturn.Max = WorldPosition + new Vector3(1, 1, 1);
-            return toReturn;
-        }
-
-        public Voxel CreateEmptyVoxel(ChunkManager manager)
-        {
-            Voxel emptyVox = new Voxel(WorldPosition, VoxelLibrary.emptyType, null, false);
-            emptyVox.Chunk = manager.ChunkData.ChunkMap[ChunkID];
-
-            return emptyVox;
-        }
-
-        public Voxel GetVoxel(bool reconstruct)
-        {
-            ChunkManager manager = PlayState.ChunkManager;
-            if(!manager.ChunkData.ChunkMap.ContainsKey(ChunkID))
-            {
-                return null;
-            }
-            else if(manager.ChunkData.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
-            {
-                Voxel vox = manager.ChunkData.ChunkMap[ChunkID].VoxelGrid[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z];
-                if(!reconstruct)
-                {
-                    return vox;
-                }
-                else
-                {
-                    return vox ?? CreateEmptyVoxel(manager);
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public WaterCell GetWater(ChunkManager manager)
-        {
-            if(!manager.ChunkData.ChunkMap.ContainsKey(ChunkID))
-            {
-                return null;
-            }
-            else if(manager.ChunkData.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
-            {
-                return manager.ChunkData.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z];
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public byte GetWaterLevel(ChunkManager manager)
-        {
-            if(!manager.ChunkData.ChunkMap.ContainsKey(ChunkID))
-            {
-                return 0;
-            }
-            else if(manager.ChunkData.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
-            {
-                return manager.ChunkData.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z].WaterLevel;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
-        public void SetWaterLevel(ChunkManager manager, byte level)
-        {
-            if(!manager.ChunkData.ChunkMap.ContainsKey(ChunkID))
-            {
-                return;
-            }
-            else if(manager.ChunkData.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
-            {
-                manager.ChunkData.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z].WaterLevel = level;
-            }
-            else
-            {
-                return;
-            }
-        }
-
-        public void AddWaterLevel(ChunkManager manager, byte level)
-        {
-            if(!manager.ChunkData.ChunkMap.ContainsKey(ChunkID))
-            {
-                return;
-            }
-            else if(manager.ChunkData.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
-            {
-                int amount = manager.ChunkData.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z].WaterLevel + level;
-                manager.ChunkData.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z].WaterLevel = (byte) (Math.Min(amount, 255));
-            }
-            else
-            {
-                return;
-            }
-        }
-    }
-
+    /// <summary>
+    /// Specifies how a voxel is to be sloped.
+    /// </summary>
     [Flags]
     public enum RampType
     {
@@ -218,6 +44,9 @@ namespace DwarfCorp
     }
 
 
+    /// <summary>
+    /// An atomic cube in the world which represents a bit of terrain. 
+    /// </summary>
     public class Voxel : IBoundedObject
     {
         [JsonIgnore]
@@ -239,10 +68,9 @@ namespace DwarfCorp
         public bool IsVisible { get; set; }
         public bool InViewFrustrum { get; set; }
         public bool DrawWireFrame { get; set; }
+        
         public Color[] VertexColors;
-        //public byte[] AmbientColors { get; set; }
-        //public byte[] SunColors { get; set; }
-        //public byte[] DynamicColors { get; set; }
+
         public Vector3 GridPosition { get; set; }
         public bool RecalculateLighting { get; set; }
         public static List<VoxelVertex> VoxelVertexList { get; set; }
@@ -315,7 +143,7 @@ namespace DwarfCorp
 
             if(PlayState.ParticleManager != null)
             {
-                PlayState.ParticleManager.Trigger(Type.particleType, Position + new Vector3(0.5f, 0.5f, 0.5f), new Color(255, 255, 0), 20);
+                PlayState.ParticleManager.Trigger(Type.ParticleType, Position + new Vector3(0.5f, 0.5f, 0.5f), new Color(255, 255, 0), 20);
                 PlayState.ParticleManager.Trigger("puff", Position + new Vector3(0.5f, 0.5f, 0.5f), new Color(255, 255, 0), 20);
             }
 
@@ -324,14 +152,14 @@ namespace DwarfCorp
                 PlayState.Master.Faction.OnVoxelDestroyed(this);
             }
 
-            SoundManager.PlaySound(Type.explosionSound, Position);
-            if(Type.releasesResource)
+            SoundManager.PlaySound(Type.ExplosionSound, Position);
+            if(Type.ReleasesResource)
             {
                 float randFloat = (float) PlayState.Random.NextDouble();
 
-                if(randFloat < Type.probabilityOfRelease)
+                if(randFloat < Type.ProbabilityOfRelease)
                 {
-                    EntityFactory.GenerateComponent(Type.resourceToRelease, Position + new Vector3(0.5f, 0.5f, 0.5f), Chunk.Manager.Components, Chunk.Manager.Content, Chunk.Manager.Graphics, Chunk.Manager, null, null);
+                    EntityFactory.GenerateComponent(Type.ResourceToRelease, Position + new Vector3(0.5f, 0.5f, 0.5f), Chunk.Manager.Components, Chunk.Manager.Content, Chunk.Manager.Graphics, Chunk.Manager, null, null);
                 }
             }
 
@@ -394,7 +222,7 @@ namespace DwarfCorp
             IsVisible = isVisible;
             InViewFrustrum = false;
             DrawWireFrame = false;
-            Health = voxelType.startingHealth;
+            Health = voxelType.StartingHealth;
 
             //AmbientColors = new byte[8];
             //SunColors = new byte[8];
@@ -435,7 +263,7 @@ namespace DwarfCorp
             toReturn.ChunkID = Chunk.ID;
             toReturn.GridPosition = GridPosition;
             toReturn.WorldPosition = Position;
-            toReturn.TypeName = Type.name;
+            toReturn.TypeName = Type.Name;
             toReturn.IsValid = true;
 
             return toReturn;

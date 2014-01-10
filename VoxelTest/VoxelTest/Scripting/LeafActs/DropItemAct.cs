@@ -6,6 +6,10 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
+    /// <summary>
+    /// A creature drops the item currently in its hands.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class DropItemAct : CreatureAct
     {
@@ -21,6 +25,7 @@ namespace DwarfCorp
 
             if(grabbed == null)
             {
+                Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                 yield return Status.Fail;
             }
             else

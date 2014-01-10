@@ -61,6 +61,8 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
     <XnaCompressContent>true</XnaCompressContent>
+    <DocumentationFile>bin\x86\Release\DwarfCorp.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>DwarfCorp.Program</StartupObject>
@@ -87,24 +89,6 @@
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.Xna.Framework.GamerServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Xact, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Video, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Avatar, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Net, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Xna.Framework.Storage, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
-      <Private>False</Private>
-    </Reference>
     <Reference Include="mscorlib">
       <Private>False</Private>
     </Reference>
@@ -116,13 +100,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml">
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Core">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Xml.Linq">
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Net">
@@ -130,14 +108,35 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssetManagement\ContentPaths.cs" />
     <Compile Include="AssetManagement\GameSave\GameFile.cs" />
+    <Compile Include="AssetManagement\ContentPathGenerator.cs" />
     <Compile Include="AssetSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>AssetSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="AssetManagement\GameSave\JsonConverters\RectangleConverter.cs" />
+    <Compile Include="Graphics\Drawing\Drawer2D\DrawCommand2D.cs" />
+    <Compile Include="Graphics\Drawing\Drawer2D\SpriteDrawCommand.cs" />
+    <Compile Include="Graphics\Drawing\Drawer2D\RectDrawCommand.cs" />
+    <Compile Include="Graphics\Drawing\Drawer2D\TextBoxDrawCommand.cs" />
+    <Compile Include="Graphics\Drawing\Drawer2D\TextDrawCommand.cs" />
+    <Compile Include="Graphics\Drawing\Drawer3D\BoxDrawCommand3D.cs" />
+    <Compile Include="Graphics\Drawing\Drawer3D\DrawCommand3D.cs" />
+    <Compile Include="Graphics\Drawing\Drawer3D\LineListCommand3D.cs" />
+    <Compile Include="Graphics\Drawing\Indicators\IndicatorManager.cs" />
+    <Compile Include="Graphics\Instancing\InstanceData.cs" />
+    <Compile Include="GUI\Layouts\FormEntry.cs" />
+    <Compile Include="GUI\Layouts\FormLayout.cs" />
     <Compile Include="GUI\ToolTipManager.cs" />
+    <Compile Include="Screensaver\Terrain2D.cs" />
+    <Compile Include="Scripting\BehaviorExtensions.cs" />
+    <Compile Include="Scripting\CompoundActs\FindAndEatFoodAct.cs" />
+    <Compile Include="Scripting\CompoundActs\FindBedAndSleepAct.cs" />
+    <Compile Include="Scripting\LeafActs\ConsumeItemAct.cs" />
+    <Compile Include="Scripting\LeafActs\SleepAct.cs" />
+    <Compile Include="Sound\NoiseMaker.cs" />
     <Compile Include="Scripting\Player\Designation\Designation.cs" />
     <Compile Include="Scripting\Player\Designation\RoomBuildDesignation.cs" />
     <Compile Include="Scripting\Player\Designation\ShipDesignation.cs" />
@@ -167,7 +166,17 @@
     <Compile Include="Scripting\TaskManagement\Tasks\PutItemWithTagTask.cs" />
     <Compile Include="Scripting\TaskManagement\Task.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceAmount.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\SatisfyHungerTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\SatisfyTirednessTask.cs" />
+    <Compile Include="Sound\Sound3D.cs" />
+    <Compile Include="Tools\Extensions.cs" />
+    <Compile Include="Tools\ServiceArchitecture\Service.cs" />
+    <Compile Include="Tools\ServiceArchitecture\Subscriber.cs" />
     <Compile Include="Voxels\ChunkData.cs" />
+    <Compile Include="Voxels\LiquidAsset.cs" />
+    <Compile Include="Voxels\VoxelRef.cs" />
+    <Compile Include="Voxels\VoxelType.cs" />
+    <Compile Include="Voxels\WaterCell.cs" />
     <Compile Include="World\BiomeData.cs" />
     <Compile Include="World\BiomeLibrary.cs" />
     <Compile Include="Scripting\Combat\Alliance.cs" />
@@ -175,8 +184,6 @@
     <Compile Include="Graphics\Primitives\Animation.cs" />
     <Compile Include="Components\AI\BalloonAI.cs" />
     <Compile Include="Components\Graphics\BatchBillboard.cs" />
-    <Compile Include="Components\AI\BedComponent.cs" />
-    <Compile Include="Components\Graphics\BillboardList.cs" />
     <Compile Include="Components\Graphics\CharacterSprite.cs" />
     <Compile Include="Components\AI\Creature.cs" />
     <Compile Include="Components\AI\Dwarf.cs" />
@@ -208,10 +215,9 @@
     <Compile Include="Graphics\Drawing\ImageFrame.cs" />
     <Compile Include="GameStates\IntroState.cs" />
     <Compile Include="GameStates\OptionsState.cs" />
-    <Compile Include="GameStates\OrderScreen.cs" />
+    <Compile Include="GameStates\OrderState.cs" />
     <Compile Include="Graphics\Instancing\FixedInstanceArray.cs" />
     <Compile Include="Graphics\Instancing\InstancedVertex.cs" />
-    <Compile Include="Graphics\Instancing\InstanceList.cs" />
     <Compile Include="GUI\Components\AIDebugger.cs" />
     <Compile Include="GUI\Components\AssetManager.cs" />
     <Compile Include="GUI\Components\ItemSelector.cs" />
@@ -240,7 +246,6 @@
     <Compile Include="Components\Graphics\EmitterComponent.cs" />
     <Compile Include="Components\AI\EnemySensor.cs" />
     <Compile Include="Components\AI\FoodComponent.cs" />
-    <Compile Include="Components\AI\InteractiveComponent.cs" />
     <Compile Include="Components\Graphics\LightComponent.cs" />
     <Compile Include="Components\AI\Grabber.cs" />
     <Compile Include="Components\AI\HealthComponent.cs" />
@@ -268,7 +273,7 @@
     <Compile Include="Graphics\Primitives\BatchBillboardPrimitive.cs" />
     <Compile Include="Graphics\Effects\BloomComponent.cs" />
     <Compile Include="Graphics\Effects\BloomSettings.cs" />
-    <Compile Include="Graphics\Drawing\Drawer2D.cs" />
+    <Compile Include="Graphics\Drawing\Drawer2D\Drawer2D.cs" />
     <Compile Include="Graphics\Primitives\ExtendedVertex.cs" />
     <Compile Include="Graphics\Primitives\PrimitiveLibrary.cs" />
     <Compile Include="Graphics\Primitives\LiquidPrimitive.cs" />
@@ -290,6 +295,7 @@
     <Compile Include="GUI\GUIComponent.cs" />
     <Compile Include="GUI\Components\Slider.cs" />
     <Compile Include="Tools\Math\Easing.cs" />
+    <Compile Include="World\DetailMoteData.cs" />
     <Compile Include="World\Overworld.cs" />
     <Compile Include="Tools\Planning\PlanService.cs" />
     <Compile Include="Tools\Planning\AStarPlanner.cs" />
@@ -317,7 +323,7 @@
     <Compile Include="Scripting\Symbols\Rooms\RoomType.cs" />
     <Compile Include="Scripting\Player\Economy\ShipmentOrder.cs" />
     <Compile Include="Scripting\Symbols\Stockpile.cs" />
-    <Compile Include="GUI\Components\Toolbar.cs" />
+    <Compile Include="GUI\Components\MasterControls.cs" />
     <Compile Include="Scripting\Data\ActData.cs" />
     <Compile Include="Scripting\Data\Blackboard.cs" />
     <Compile Include="Scripting\CompoundActs\BuildVoxelAct.cs" />
@@ -336,7 +342,7 @@
     <Compile Include="Scripting\CompoundActs\KillVoxelAct.cs" />
     <Compile Include="Scripting\LeafActs\PlaceRoomItemAct.cs" />
     <Compile Include="Scripting\LeafActs\PlaceVoxelAct.cs" />
-    <Compile Include="Scripting\LeafActs\CompoundCreatureAct.cs" />
+    <Compile Include="Scripting\CompoundActs\CompoundCreatureAct.cs" />
     <Compile Include="Scripting\LeafActs\CreatureAct.cs" />
     <Compile Include="Scripting\LeafActs\DigAct.cs" />
     <Compile Include="Scripting\LeafActs\DropItemAct.cs" />
@@ -385,7 +391,7 @@
     <Compile Include="DwarfGame.cs" />
     <Compile Include="Scripting\Symbols\Rooms\Room.cs" />
     <Compile Include="GUI\DwarfGUI.cs" />
-    <Compile Include="Graphics\Drawing\SimpleDrawing.cs" />
+    <Compile Include="Graphics\Drawing\Drawer3D\Drawer3D.cs" />
     <Compile Include="Tools\Timer.cs" />
     <Compile Include="Voxels\DynamicLight.cs" />
     <Compile Include="Tools\Math\Point3.cs" />
@@ -395,19 +401,16 @@
     <Compile Include="Graphics\Primitives\VoxelListPrimitive.cs" />
     <Compile Include="Voxels\WaterManager.cs" />
     <Compile Include="Voxels\WaterRenderer.cs" />
+    <Compile Include="World\VegetationData.cs" />
+    <Compile Include="World\WorldTime.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
     <None Include="Newtonsoft.Json.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\VoxelTestContent\DwarfCorpXNAContent.contentproj">
-      <Name>DwarfCorpXNAContent %28Content%29</Name>
-      <XnaReferenceType>Content</XnaReferenceType>
-      <Project>{D48F9E36-1F42-4633-B745-8C659D9550D4}</Project>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
@@ -459,7 +462,13 @@
       <LastGenOutput>PlayerSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\VoxelTestContent\DwarfCorpXNAContent.contentproj">
+      <Project>{D48F9E36-1F42-4633-B745-8C659D9550D4}</Project>
+      <Name>DwarfCorpXNAContent</Name>
+      <XnaReferenceType>Content</XnaReferenceType>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

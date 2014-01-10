@@ -6,16 +6,21 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature attacks a voxel until it is destroyed.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class DigAct : CreatureAct
     {
         public string TargetVoxelName { get; set; }
-        
+        public float EnergyLoss { get; set; }
+
         public DigAct(CreatureAIComponent creature, string targetVoxel) :
             base(creature)
         {
             TargetVoxelName = targetVoxel;
             Name = "Dig!";
+            EnergyLoss = 100.0f;
         }
 
         public VoxelRef GetTargetVoxel()
@@ -32,6 +37,7 @@ namespace DwarfCorp
 
                 if(blackBoardVoxelRef == null)
                 {
+                    Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                     yield return Status.Fail;
                     break;
                 }
@@ -63,7 +69,7 @@ namespace DwarfCorp
 
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
                 Creature.Weapon.PlayNoise();
-
+                Creature.Status.Energy.CurrentValue -= EnergyLoss * Dt * Creature.Stats.Tiredness;
                 yield return Status.Running;
             }
         }

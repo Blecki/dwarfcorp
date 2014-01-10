@@ -9,50 +9,55 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
 
+    /// <summary>
+    /// This is a special kind of component which has a position and orientation. The global position of an object
+    /// is computed from its local position relative to its parent. This is known as a "scene graph". Locatable components
+    /// also live inside an octree for faster access to colliding or nearby objects.
+    /// </summary>
     [JsonObject(IsReference = true)]
     public class LocatableComponent : GameComponent, IBoundedObject
     {
         public bool WasAddedToOctree
         {
-            get { return m_wasEverAddedToOctree; }
-            set { m_wasEverAddedToOctree = value; }
+            get { return wasEverAddedToOctree; }
+            set { wasEverAddedToOctree = value; }
         }
 
-        private bool m_wasEverAddedToOctree = false;
+        private bool wasEverAddedToOctree = false;
 
         public CollisionManager.CollisionType CollisionType { get; set; }
 
 
         public Matrix GlobalTransform
         {
-            get { return m_globalTransform; }
+            get { return globalTransform; }
             set
             {
-                m_globalTransform = value;
+                globalTransform = value;
 
                 if(!AddToOctree)
                 {
                     return;
                 }
 
-                if(!IsActive || (!HasMoved && m_wasEverAddedToOctree) || (!Manager.CollisionManager.NeedsUpdate(this, CollisionType)))
+                if(!IsActive || (!HasMoved && wasEverAddedToOctree) || (!Manager.CollisionManager.NeedsUpdate(this, CollisionType)))
                 {
                     return;
                 }
 
                 Manager.CollisionManager.UpdateObject(this, CollisionType);
-                m_wasEverAddedToOctree = true;
+                wasEverAddedToOctree = true;
             }
         }
 
 
         public Matrix LocalTransform
         {
-            get { return m_localTransform; }
+            get { return localTransform; }
 
             set
             {
-                m_localTransform = value;
+                localTransform = value;
                 HasMoved = true;
             }
         }
@@ -68,10 +73,10 @@ namespace DwarfCorp
 
         public bool HasMoved
         {
-            get { return m_hasMoved; }
+            get { return hasMoved; }
             set
             {
-                m_hasMoved = value;
+                hasMoved = value;
 
                 if(!AddToOctree)
                 {
@@ -90,9 +95,9 @@ namespace DwarfCorp
             return GlobalID;
         }
 
-        protected Matrix m_localTransform = Matrix.Identity;
-        protected Matrix m_globalTransform = Matrix.Identity;
-        private bool m_hasMoved = true;
+        protected Matrix localTransform = Matrix.Identity;
+        protected Matrix globalTransform = Matrix.Identity;
+        private bool hasMoved = true;
 
         public bool AddToOctree { get; set; }
 
@@ -167,7 +172,7 @@ namespace DwarfCorp
 
             if(DrawBoundingBox)
             {
-                SimpleDrawing.DrawBox(BoundingBox, Color.White, 0.02f);
+                Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f);
             }
 
             base.Update(gameTime, chunks, camera);
@@ -187,7 +192,7 @@ namespace DwarfCorp
                 if(HasMoved)
                 {
                     GlobalTransform = LocalTransform * locatable.GlobalTransform;
-                    m_hasMoved = false;
+                    hasMoved = false;
                 }
             }
             else
@@ -195,7 +200,7 @@ namespace DwarfCorp
                 if(HasMoved)
                 {
                     GlobalTransform = LocalTransform;
-                    m_hasMoved = false;
+                    hasMoved = false;
                 }
             }
 

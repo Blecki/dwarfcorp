@@ -5,6 +5,10 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature finds an item with a particular tag, and then puts it into a build zone
+    /// for a room. (This is used to construct rooms)
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class PutTaggedRoomItemAct : CompoundCreatureAct
     {
@@ -53,7 +57,7 @@ namespace DwarfCorp
             Tree = new Sequence(new GetItemWithTagsAct(Agent, tags),
                 new Sequence(
                     SetTargetVoxelFromRoomAct(room, "TargetVoxel"),
-                    new GoToVoxelAct("TargetVoxel", Agent),
+                    new GoToVoxelAct("TargetVoxel", PlanAct.PlanType.Adjacent, Agent),
                     new PlaceRoomItemAct(Agent, room)) | new GatherItemAct(Agent, "HeldObject")
                 );
         }

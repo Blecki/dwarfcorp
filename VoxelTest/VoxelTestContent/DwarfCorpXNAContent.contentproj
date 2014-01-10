@@ -42,119 +42,74 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CubetacularTexture.png">
-      <Name>CubetacularTexture</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Default.spritefont">
+    <Compile Include="Fonts\Default.spritefont">
       <Name>Default</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DwarfSprites.png">
-      <Name>DwarfSprites</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="pine.png">
+    <Compile Include="Entities\Plants\pine.png">
       <Name>pine</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="icons.png">
+    <Compile Include="GUI\icons.png">
       <Name>icons</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BloomCombine.fx">
+    <Compile Include="Shaders\BloomCombine.fx">
       <Name>BloomCombine</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
-    <Compile Include="BloomExtract.fx">
+    <Compile Include="Shaders\BloomExtract.fx">
       <Name>BloomExtract</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
-    <Compile Include="GaussianBlur.fx">
+    <Compile Include="Shaders\GaussianBlur.fx">
       <Name>GaussianBlur</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
-    <Compile Include="SkySphere.fx">
+    <Compile Include="Shaders\SkySphere.fx">
       <Name>SkySphere</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
-    <Compile Include="SphereHighPoly.fbx">
-      <Name>SphereHighPoly</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="redtorus.fbx">
-      <Name>redtorus</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="night_sky.dds">
+    <Compile Include="Sky\night_sky.dds">
       <Name>night_sky</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="ParticleEffect.fx">
-      <Name>ParticleEffect</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-    <Compile Include="intersecting.fbx">
-      <Name>intersecting</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="sphereLowPoly.fbx">
+    <Compile Include="Models\sphereLowPoly.fbx">
       <Name>sphereLowPoly</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
-    <Compile Include="Small.spritefont">
+    <Compile Include="Fonts\Small.spritefont">
       <Name>Small</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
       <SubType>Designer</SubType>
     </Compile>
-    <None Include="Suave.skin.xml">
-      <Name>Suave.skin</Name>
-      <Importer>XImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <SubType>Designer</SubType>
-    </None>
-    <Compile Include="Hargraves.fx">
-      <Name>Hargraves</Name>
+    <Compile Include="Shaders\TexturedShaders.fx">
+      <Name>TexturedShaders</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
-    <Compile Include="day_sky.dds">
+    <Compile Include="Sky\day_sky.dds">
       <Name>day_sky</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="sun_moon.dds">
-      <Name>sun_moon</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="Title.spritefont">
+    <Compile Include="Fonts\Title.spritefont">
       <Name>Title</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
@@ -162,610 +117,455 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SuaveSheet.png">
-      <Name>SuaveSheet</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="farming_fishing.png">
-      <Name>farming_fishing</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="interior.png">
-      <Name>interior</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="water_normal.jpg">
+    <Compile Include="Terrain\water_normal.jpg">
       <Name>water_normal</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="cartoon_water.png">
+    <Compile Include="Terrain\cartoon_water.png">
       <Name>cartoon_water</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="water_normal2.jpg">
+    <Compile Include="Terrain\water_normal2.jpg">
       <Name>water_normal2</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="foam.png">
+    <Compile Include="Terrain\foam.png">
       <Name>foam</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="puddle.png">
-      <Name>puddle</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ambientgradient.png">
+    <Compile Include="Gradients\ambientgradient.png">
       <Name>ambientgradient</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="sungradient.png">
+    <Compile Include="Gradients\sungradient.png">
       <Name>sungradient</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="torchgradient.png">
+    <Compile Include="Gradients\torchgradient.png">
       <Name>torchgradient</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="redtexture.png">
-      <Name>redtexture</Name>
+    <Compile Include="Entities\Dwarf\Sprites\dwarf_animations.png">
+      <Name>dwarf_animations</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="apple_tree.png">
-      <Name>apple_tree</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="tiles.png">
-      <Name>tiles</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Dwarven\echo.wav">
-      <Name>echo</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\ekmono.wav">
-      <Name>ekmono</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\ekmono2.wav">
-      <Name>ekmono2</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\eksennaok.wav">
-      <Name>eksennaok</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\fenalan.wav">
-      <Name>fenalan</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\fertuna.wav">
-      <Name>fertuna</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\fertunak.wav">
-      <Name>fertunak</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\fertunak2.wav">
-      <Name>fertunak2</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\forioren.wav">
-      <Name>forioren</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\hakana.wav">
-      <Name>hakana</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\kayara.wav">
-      <Name>kayara</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\kellala.wav">
-      <Name>kellala</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\mella.wav">
-      <Name>mella</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\mennas.wav">
-      <Name>mennas</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\menordere.wav">
-      <Name>menordere</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\orruk.wav">
-      <Name>orruk</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\sen.wav">
-      <Name>sen</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\simulk.wav">
-      <Name>simulk</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Dwarven\yehrenos.wav">
-      <Name>yehrenos</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="dorfdorf.png">
-      <Name>dorfdorf</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="shadowcircle.png">
+    <Compile Include="Effects\shadowcircle.png">
       <Name>shadowcircle</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="puff.png">
+    <Compile Include="Particles\puff.png">
       <Name>puff</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="grassthing.png">
-      <Name>grassthing</Name>
+    <Compile Include="Entities\Plants\grass.png">
+      <Name>grass</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="skygradient.png">
+    <Compile Include="Gradients\skygradient.png">
       <Name>skygradient</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="leaf.png">
+    <Compile Include="Particles\leaf.png">
       <Name>leaf</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="illum.png">
-      <Name>illum</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="pickaxe.png">
-      <Name>pickaxe</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="hit.wav">
+    <Compile Include="Audio\hit.wav">
       <Name>hit</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
-    <Compile Include="jump.wav">
+    <Compile Include="Audio\jump.wav">
       <Name>jump</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="explode.wav">
+    <Compile Include="Audio\explode.wav">
       <Name>explode</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="gnarled.png">
+    <Compile Include="Entities\Plants\gnarled.png">
       <Name>gnarled</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="shrub.png">
+    <Compile Include="Entities\Plants\shrub.png">
       <Name>shrub</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="shroom.png">
-      <Name>shroom</Name>
+    <Compile Include="Entities\Plants\mushroom.png">
+      <Name>mushroom</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="snowpine.png">
+    <Compile Include="Entities\Plants\snowpine.png">
       <Name>snowpine</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="frostgrass.png">
+    <Compile Include="Entities\Plants\frostgrass.png">
       <Name>frostgrass</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="vine.png">
+    <Compile Include="Entities\Plants\vine.png">
       <Name>vine</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="berrybush.png">
+    <Compile Include="Entities\Plants\berrybush.png">
       <Name>berrybush</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="gui_panels.png">
-      <Name>gui_panels</Name>
+    <Compile Include="GUI\gui_widgets.png">
+      <Name>gui_widgets</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="darkdorf.png">
-      <Name>darkdorf</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ouch.wav">
+    <Compile Include="Audio\ouch.wav">
       <Name>ouch</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="europe.png">
-      <Name>europe</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="europe_2.png">
-      <Name>europe_2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="america.png">
-      <Name>america</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="world.png">
-      <Name>world</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="balloon.png">
+    <Compile Include="Entities\Balloon\Sprites\balloon.png">
       <Name>balloon</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="interior2.png">
-      <Name>interior2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="dorf_splash.png">
-      <Name>dorf_splash</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="flower.png">
+    <Compile Include="Entities\Plants\flower.png">
       <Name>flower</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="deadbush.png">
+    <Compile Include="Entities\Plants\deadbush.png">
       <Name>deadbush</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="wheat.png">
+    <Compile Include="Entities\Plants\wheat.png">
       <Name>wheat</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="lava.png">
+    <Compile Include="Terrain\lava.png">
       <Name>lava</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="lavafoam.png">
+    <Compile Include="Terrain\lavafoam.png">
       <Name>lavafoam</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="interior2_wilson.png">
-      <Name>interior2_wilson</Name>
+    <Compile Include="Entities\Furniture\interior_furniture.png">
+      <Name>interior_furniture</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="resources.png">
+    <Compile Include="Entities\Resources\resources.png">
       <Name>resources</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="dirt_particle.png">
+    <Compile Include="Particles\dirt_particle.png">
       <Name>dirt_particle</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="stone_particle.png">
+    <Compile Include="Particles\stone_particle.png">
       <Name>stone_particle</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="sand_particle.png">
+    <Compile Include="Particles\sand_particle.png">
       <Name>sand_particle</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="gravel.wav">
+    <Compile Include="Audio\gravel.wav">
       <Name>gravel</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
-    <Compile Include="pick.wav">
+    <Compile Include="Audio\pick.wav">
       <Name>pick</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="flame.png">
+    <Compile Include="Particles\flame.png">
       <Name>flame</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="gob.png">
-      <Name>gob</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="small_sword.png">
-      <Name>small_sword</Name>
+    <Compile Include="Entities\Goblin\Sprites\goblin_animations.png">
+      <Name>goblin_animations</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="blood_particle.png">
+    <Compile Include="Particles\blood_particle.png">
       <Name>blood_particle</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="sword.wav">
+    <Compile Include="Audio\sword.wav">
       <Name>sword</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="bedtex.png">
+    <Compile Include="Entities\Furniture\bedtex.png">
       <Name>bedtex</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="bubble.png">
-      <Name>bubble</Name>
+    <Compile Include="Particles\splash.png">
+      <Name>splash</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="splash.wav">
+    <Compile Include="Audio\splash.wav">
       <Name>splash</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="fire.wav">
+    <Compile Include="Audio\fire.wav">
       <Name>fire</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="river.wav">
+    <Compile Include="Audio\river.wav">
       <Name>river</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="banner3.png">
-      <Name>banner3</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="companylogo.png">
+    <Compile Include="Logos\companylogo.png">
       <Name>companylogo</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="bubble2.png">
-      <Name>bubble2</Name>
+    <Compile Include="Particles\splash2.png">
+      <Name>splash2</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="dwarfcorp.mp3">
+    <Compile Include="Music\dwarfcorp.mp3">
       <Name>dwarfcorp</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SongProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="grebeardlogo.png">
+    <Compile Include="Logos\grebeardlogo.png">
       <Name>grebeardlogo</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="moon.png">
+    <Compile Include="Sky\moon.png">
       <Name>moon</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="sun.png">
+    <Compile Include="Sky\sun.png">
       <Name>sun</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="tiles2.png">
-      <Name>tiles2</Name>
+    <Compile Include="Terrain\terrain_tiles.png">
+      <Name>terrain_tiles</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="illum2.png">
-      <Name>illum2</Name>
+    <Compile Include="Terrain\terrain_illumination.png">
+      <Name>terrain_illumination</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="palm.png">
+    <Compile Include="Entities\Plants\palm.png">
       <Name>palm</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GUI\indicators.png">
+      <Name>indicators</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Dwarf\Audio\dwarfhurt1.wav">
+      <Name>dwarfhurt1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Audio\dwarfhurt2.wav">
+      <Name>dwarfhurt2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Audio\dwarfhurt3.wav">
+      <Name>dwarfhurt3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Audio\dwarfhurt4.wav">
+      <Name>dwarfhurt4</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Goblin\Audio\goblinhurt1.wav">
+      <Name>goblinhurt1</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Goblin\Audio\goblinhurt2.wav">
+      <Name>goblinhurt2</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Goblin\Audio\goblinhurt3.wav">
+      <Name>goblinhurt3</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Goblin\Audio\goblinhurt4.wav">
+      <Name>goblinhurt4</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Audio\chew.wav">
+      <Name>chew</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Logos\gamelogo.png">
+      <Name>gamelogo</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

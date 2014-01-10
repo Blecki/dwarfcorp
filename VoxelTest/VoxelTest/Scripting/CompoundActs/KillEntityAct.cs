@@ -5,6 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature goes to an entity, and then hits it until the other entity is dead.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class KillEntityAct : CompoundCreatureAct
     {
@@ -21,7 +24,7 @@ namespace DwarfCorp
             Entity = entity;
             Name = "Kill Entity";
             Tree = new Sequence(new GoToEntityAct(entity, creature),
-                new MeleeAct(Agent));
+                                new MeleeAct(Agent));
         }
     }
 

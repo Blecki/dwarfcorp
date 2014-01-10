@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,22 +11,9 @@ using Microsoft.Xna.Framework.Content;
 namespace DwarfCorp
 {
 
-    public struct LiquidAsset
-    {
-        public LiquidType Type;
-        public Texture2D BaseTexture;
-        public Texture2D FoamTexture;
-        public Texture2D PuddleTexture;
-        public Texture2D BumpTexture;
-        public float Opactiy;
-        public float SloshOpacity;
-        public float WaveLength;
-        public float WaveHeight;
-        public float WindForce;
-        public float MinOpacity;
-        public Vector4 RippleColor;
-    }
-
+    /// <summary>
+    /// Handles the drawing routines for liquids.
+    /// </summary>
     public class WaterRenderer
     {
         private RenderTarget2D refractionRenderTarget = null;
@@ -68,11 +56,21 @@ namespace DwarfCorp
 
         public WaterRenderer(GraphicsDevice device)
         {
-            reflectionMap = new Texture2D(device, device.Viewport.Width, device.Viewport.Height);
-            refractionMap = new Texture2D(device, device.Viewport.Width, device.Viewport.Height);
+            int width = device.Viewport.Width;
+            int height = device.Viewport.Height;
+
+            while(width <= 0 || height <= 0)
+            {
+                width = device.Viewport.Width;
+                height = device.Viewport.Height;
+                Thread.Sleep(100);
+            }
+
+            reflectionMap = new Texture2D(device, width, height);
+            refractionMap = new Texture2D(device, width, height);
             PresentationParameters pp = device.PresentationParameters;
-            refractionRenderTarget = new RenderTarget2D(device, device.Viewport.Width, device.Viewport.Height, false, pp.BackBufferFormat, pp.DepthStencilFormat);
-            reflectionRenderTarget = new RenderTarget2D(device, device.Viewport.Width, device.Viewport.Height, false, pp.BackBufferFormat, pp.DepthStencilFormat);
+            refractionRenderTarget = new RenderTarget2D(device, width, height, false, pp.BackBufferFormat, pp.DepthStencilFormat);
+            reflectionRenderTarget = new RenderTarget2D(device, width, height, false, pp.BackBufferFormat, pp.DepthStencilFormat);
         }
 
         public Plane CreatePlane(float height, Vector3 planeNormalDirection, Matrix currentViewMatrix, bool clipSide)
@@ -113,6 +111,7 @@ namespace DwarfCorp
 
             effect.Parameters["ClipPlane0"].SetValue(new Vector4(refractionPlane.Normal, refractionPlane.D));
             effect.Parameters["Clipping"].SetValue(true);
+            effect.Parameters["GhostMode"].SetValue(false);
             device.SetRenderTarget(refractionRenderTarget);
             device.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);
 
@@ -126,7 +125,7 @@ namespace DwarfCorp
                 game.DrawSky(gameTime, viewMatrix);
             }
 
-            SimpleDrawing.Render(device, effect, false);
+            Drawer3D.Render(device, effect, false);
 
             if(DrawComponentsRefracted)
             {
@@ -150,6 +149,7 @@ namespace DwarfCorp
 
             effect.Parameters["ClipPlane0"].SetValue(new Vector4(reflectionPlane.Normal, reflectionPlane.D));
             effect.Parameters["Clipping"].SetValue(true);
+            effect.Parameters["GhostMode"].SetValue(false);
             device.SetRenderTarget(reflectionRenderTarget);
 
 
@@ -168,7 +168,7 @@ namespace DwarfCorp
                 game.DrawSky(gameTime, reflectionViewMatrix);
             }
 
-            SimpleDrawing.Render(device, effect, false);
+            Drawer3D.Render(device, effect, false);
 
             if(DrawComponentsReflected)
             {

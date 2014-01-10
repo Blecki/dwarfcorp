@@ -21,6 +21,9 @@ namespace DwarfCorp
         public SoundEffect Syllable;
     }
 
+    /// <summary>
+    /// This is a weird (probably deprecated) system for making "talky" noises.
+    /// </summary>
     public class Language
     {
         public List<SoundEffect> Syllables { get; set; }

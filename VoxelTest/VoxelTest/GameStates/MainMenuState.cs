@@ -14,6 +14,9 @@ using Microsoft.Xna.Framework.Media;
 namespace DwarfCorp
 {
 
+    /// <summary>
+    /// This game state is just the set of menus at the start of the game. Allows navigation to other game states.
+    /// </summary>
     public class MainMenuState : GameState
     {
         public Texture2D Logo { get; set; }
@@ -23,6 +26,7 @@ namespace DwarfCorp
         public Drawer2D Drawer { get; set; }
         public InputManager Input { get; set; }
         public bool IsGameRunning { get; set; }
+
 
         public MainMenuState(DwarfGame game, GameStateManager stateManager) :
             base(game, "MainMenuState", stateManager)
@@ -106,15 +110,16 @@ namespace DwarfCorp
 
         public override void OnEnter()
         {
-            DefaultFont = Game.Content.Load<SpriteFont>("Default");
-            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
+            
+            DefaultFont = Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Default"));
+            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Title")), Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts","Small")), Input);
             IsInitialized = true;
-            Logo = TextureManager.GetTexture("banner3");
+            Logo = TextureManager.GetTexture(Program.CreatePath("Logos", "gamelogo"));
 
             ListSelect = new ListSelector(GUI, GUI.RootComponent)
             {
                 Label = "- Main Menu -",
-                LocalBounds = new Rectangle(Game.GraphicsDevice.Viewport.Width / 2 - 100, Game.GraphicsDevice.Viewport.Height / 2 - 150, 150, 150)
+                LocalBounds = new Rectangle(Game.GraphicsDevice.Viewport.Width / 2 - 100, Game.GraphicsDevice.Viewport.Height / 2, 150, 150)
             };
             DefaultItems();
 
@@ -150,7 +155,7 @@ namespace DwarfCorp
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
-            DwarfGame.SpriteBatch.Draw(Logo, new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - Logo.Width / 2 + dx, 30), null, Color.White);
+            DwarfGame.SpriteBatch.Draw(Logo, new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - Logo.Width / 2 + dx, 10), null, Color.White);
             DwarfGame.SpriteBatch.DrawString(GUI.DefaultFont, Program.Version, new Vector2(15, 15), Color.White);
 
             DwarfGame.SpriteBatch.End();
@@ -159,11 +164,9 @@ namespace DwarfCorp
 
         public override void Render(GameTime gameTime)
         {
+
             if(Transitioning == TransitionMode.Running)
             {
-                Game.GraphicsDevice.Clear(Color.Black);
-
-
                 DrawGUI(gameTime, 0);
             }
             else if(Transitioning == TransitionMode.Entering)

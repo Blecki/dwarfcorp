@@ -5,6 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature attempts to slow its velocity until stopped.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class StopAct : CreatureAct
     {

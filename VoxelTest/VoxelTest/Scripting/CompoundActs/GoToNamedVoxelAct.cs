@@ -5,6 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature goes to a voxel named in the blackboard.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GoToNamedVoxelAct : CompoundCreatureAct
     {
@@ -26,7 +29,7 @@ namespace DwarfCorp
         {
             Tree = new Sequence(
                 new ForLoop(new Sequence( 
-                                  new PlanAct(Agent, "PathToVoxel", Voxel),
+                                  new PlanAct(Agent, "PathToVoxel", Voxel, PlanAct.PlanType.Adjacent),
                                   new FollowPathAct(Agent, "PathToVoxel")
                                  )
                                    , 3, true),

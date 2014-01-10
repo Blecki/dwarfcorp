@@ -10,19 +10,10 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
 
-    public static class BehaviorExtensions
-    {
-        public static Act GetAct(this Func<bool> condition)
-        {
-            return new Condition(condition);
-        }
-
-        public static Act GetAct(this Func<IEnumerable<Act.Status>> func)
-        {
-            return new Wrap(func);
-        }
-    }
-
+    /// <summary>
+    /// An act is an another Name for a "Behavior". Behaviors are linked together into an "behavior tree". Each behavior is a coroutine
+    /// which can either be running, succeed, or fail. 
+    /// </summary>
     [JsonObject(IsReference = true)]
     public class Act
     {
@@ -71,7 +62,7 @@ namespace DwarfCorp
 
         public static implicit operator Act(bool condition)
         {
-            return new Condition(() => { return condition; });
+            return new Condition(() => condition);
         }
 
         public static Act operator &(Act b1, Act b2)

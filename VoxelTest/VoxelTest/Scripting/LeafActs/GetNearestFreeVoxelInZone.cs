@@ -5,6 +5,10 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// This act finds the nearest unoccupied and unreserved voxel in a zone,
+    /// and fills the blackboard with it.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class GetNearestFreeVoxelInZone : CreatureAct
     {
@@ -36,6 +40,7 @@ namespace DwarfCorp
                 }
                 else
                 {
+                    Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                     yield return Status.Fail;
                 }
             }

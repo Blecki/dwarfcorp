@@ -9,7 +9,9 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
-
+    /// <summary>
+    /// A graphical item (usually to be placed in a drag grid)
+    /// </summary>
     public class GItem
     {
         public string Name { get; set; }

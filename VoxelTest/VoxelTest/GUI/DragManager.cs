@@ -9,7 +9,9 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
-
+    /// <summary>
+    /// Handles draggable items in the GUI, which can be picked and placed.
+    /// </summary>
     public class DragManager
     {
         public Dictionary<GUIComponent, DraggableItem> Slots { get; set; }

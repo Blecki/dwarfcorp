@@ -7,6 +7,9 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature randomly applies force at intervals to itself.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class WanderAct : CreatureAct
     {
@@ -39,6 +42,7 @@ namespace DwarfCorp
         public override IEnumerable<Status> Run()
         {
             Vector3 oldPosition = Agent.Position;
+
             while(!WanderTime.HasTriggered)
             {
                 WanderTime.Update(Act.LastTime);

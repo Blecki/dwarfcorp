@@ -31,25 +31,21 @@ namespace DwarfCorp
         public List<BoundingBox> ToGenerate { get; set; }
 
         private Thread GeneratorThread { get; set; }
-        private Mutex GeneratorLock { get; set; }
-        private static AutoResetEvent NeedsGenerationEvent = new AutoResetEvent(false);
-
 
         private Thread RebuildThread { get; set; }
         private Thread RebuildLiquidThread { get; set; }
-        private Mutex RebuildLock { get; set; }
-        private Mutex LiquidLock { get; set; }
-        private static AutoResetEvent NeedsRebuildEvent = new AutoResetEvent(false);
-        private static AutoResetEvent NeedsLiquidEvent = new AutoResetEvent(false);
+
+
+        private static readonly AutoResetEvent WaterUpdateEvent = new AutoResetEvent(true);
+        private static readonly AutoResetEvent NeedsGenerationEvent = new AutoResetEvent(false);
+        private static readonly AutoResetEvent NeedsRebuildEvent = new AutoResetEvent(false);
+        private static readonly AutoResetEvent NeedsLiquidEvent = new AutoResetEvent(false);
 
         private Thread WaterThread { get; set; }
-        private AutoResetEvent WaterUpdateEvent = new AutoResetEvent(true);
 
-
-        private Timer GenerateChunksTimer = new Timer(0.5f, false);
-        private Timer RebuildChunksTimer = new Timer(0.25f, false);
-        private Timer VisibilityChunksTimer = new Timer(0.1f, false);
-        private Timer WaterUpdateTimer = new Timer(0.1f, false);
+        private readonly Timer generateChunksTimer = new Timer(0.5f, false);
+        private readonly Timer visibilityChunksTimer = new Timer(0.1f, false);
+        private readonly Timer waterUpdateTimer = new Timer(0.1f, false);
 
         public float DrawDistance
         {
@@ -57,18 +53,18 @@ namespace DwarfCorp
             set
             {
                 GameSettings.Default.ChunkDrawDistance = value;
-                m_drawDistSq = value * value;
+                drawDistSq = value * value;
             }
         }
 
-        protected float m_drawDistSq = 0;
+        protected float drawDistSq = 0;
 
         public float DrawDistanceSquared
         {
-            get { return m_drawDistSq; }
+            get { return drawDistSq; }
             set
             {
-                m_drawDistSq = value;
+                drawDistSq = value;
                 GameSettings.Default.ChunkDrawDistance = (float) Math.Sqrt(value);
             }
         }
@@ -96,14 +92,14 @@ namespace DwarfCorp
             Z
         }
 
-        private Camera m_camera = null;
+        private Camera camera = null;
 
         public ComponentManager Components { get; set; }
         public ContentManager Content { get; set; }
 
         public Octree ChunkOctree { get; set; }
 
-        private HashSet<VoxelChunk> m_visibleSet = new HashSet<VoxelChunk>();
+        private readonly HashSet<VoxelChunk> visibleSet = new HashSet<VoxelChunk>();
 
         public WaterManager Water { get; set; }
 
@@ -116,11 +112,10 @@ namespace DwarfCorp
 
         public ChunkManager(ContentManager content, uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, Camera camera, GraphicsDevice graphics, Texture2D tilemap, Texture2D illumMap, Texture2D sunMap, Texture2D ambientMap, Texture2D torchMap, ChunkGenerator chunkGen)
         {
-            m_drawDistSq = DrawDistance * DrawDistance;
+            drawDistSq = DrawDistance * DrawDistance;
             Content = content;
 
             chunkData = new ChunkData(chunkSizeX, chunkSizeY, chunkSizeZ, 1.0f / chunkSizeX, 1.0f / chunkSizeY, 1.0f / chunkSizeZ, tilemap, illumMap, this);
-            LiquidLock = new Mutex();
             ChunkData.ChunkMap = new ConcurrentDictionary<Point3, VoxelChunk>();
             RenderList = new ConcurrentQueue<VoxelChunk>();
             RebuildList = new ConcurrentQueue<VoxelChunk>();
@@ -129,10 +124,8 @@ namespace DwarfCorp
             PotentialChunks = new List<BoundingBox>();
 
             GeneratedChunks = new ConcurrentQueue<VoxelChunk>();
-            GeneratorLock = new Mutex();
             GeneratorThread = new Thread(GenerateThread);
 
-            RebuildLock = new Mutex();
             RebuildThread = new Thread(RebuildVoxelsThread);
             RebuildLiquidThread = new Thread(RebuildLiquidsThread);
 
@@ -146,15 +139,15 @@ namespace DwarfCorp
             ChunkData.MaxViewingLevel = chunkSizeY;
 
             GameSettings.Default.ChunkGenerateTime = 0.5f;
-            GenerateChunksTimer = new Timer(GameSettings.Default.ChunkGenerateTime, false);
+            generateChunksTimer = new Timer(GameSettings.Default.ChunkGenerateTime, false);
             GameSettings.Default.ChunkRebuildTime = 0.1f;
-            RebuildChunksTimer = new Timer(GameSettings.Default.ChunkRebuildTime, false);
+            Timer rebuildChunksTimer = new Timer(GameSettings.Default.ChunkRebuildTime, false);
             GameSettings.Default.VisibilityUpdateTime = 0.25f;
-            VisibilityChunksTimer = new Timer(GameSettings.Default.VisibilityUpdateTime, false);
-            GenerateChunksTimer.HasTriggered = true;
-            RebuildChunksTimer.HasTriggered = true;
-            VisibilityChunksTimer.HasTriggered = true;
-            m_camera = camera;
+            visibilityChunksTimer = new Timer(GameSettings.Default.VisibilityUpdateTime, false);
+            generateChunksTimer.HasTriggered = true;
+            rebuildChunksTimer.HasTriggered = true;
+            visibilityChunksTimer.HasTriggered = true;
+            this.camera = camera;
 
             Water = new WaterManager(this);
 
@@ -361,8 +354,8 @@ namespace DwarfCorp
                 return -1;
             }
 
-            float dA = (a.Origin - m_camera.Position + new Vector3(a.SizeX / 2.0f, a.SizeY / 2.0f, a.SizeZ / 2.0f)).LengthSquared();
-            float dB = (b.Origin - m_camera.Position + new Vector3(b.SizeX / 2.0f, b.SizeY / 2.0f, b.SizeZ / 2.0f)).LengthSquared();
+            float dA = (a.Origin - camera.Position + new Vector3(a.SizeX / 2.0f, a.SizeY / 2.0f, a.SizeZ / 2.0f)).LengthSquared();
+            float dB = (b.Origin - camera.Position + new Vector3(b.SizeX / 2.0f, b.SizeY / 2.0f, b.SizeZ / 2.0f)).LengthSquared();
 
             if(dA < dB)
             {
@@ -406,7 +399,7 @@ namespace DwarfCorp
             }
 
 
-            foreach(VoxelChunk chunk in m_visibleSet)
+            foreach(VoxelChunk chunk in visibleSet)
             {
                 BoundingBox box = chunk.GetBoundingBox();
 
@@ -681,15 +674,15 @@ namespace DwarfCorp
         {
             UpdateRenderList(camera);
 
-            if(WaterUpdateTimer.Update(gameTime))
+            if(waterUpdateTimer.Update(gameTime))
             {
                 WaterUpdateEvent.Set();
             }
 
             UpdateRebuildList();
 
-            GenerateChunksTimer.Update(gameTime);
-            if(GenerateChunksTimer.HasTriggered)
+            generateChunksTimer.Update(gameTime);
+            if(generateChunksTimer.HasTriggered)
             {
                 if(ToGenerate.Count > 0)
                 {
@@ -722,11 +715,11 @@ namespace DwarfCorp
             }
 
 
-            VisibilityChunksTimer.Update(gameTime);
-            if(VisibilityChunksTimer.HasTriggered)
+            visibilityChunksTimer.Update(gameTime);
+            if(visibilityChunksTimer.HasTriggered)
             {
-                m_visibleSet.Clear();
-                ChunkOctree.Root.GetComponentsIntersecting(camera.GetFrustrum(), m_visibleSet);
+                visibleSet.Clear();
+                ChunkOctree.Root.GetComponentsIntersecting(camera.GetFrustrum(), visibleSet);
                 RemoveDistantBlocks(camera);
             }
 

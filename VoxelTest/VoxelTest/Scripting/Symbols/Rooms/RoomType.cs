@@ -7,7 +7,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-
+    /// <summary>
+    /// A room type has a Name, alters the apperance of voxels, requires resources to build,
+    /// and has item templates.
+    /// </summary>
     public class RoomType
     {
         public string Name { get; set; }

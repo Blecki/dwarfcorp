@@ -6,6 +6,9 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature puts the item currently in its hands into a zone.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class PutItemInZoneAct : CreatureAct
     {

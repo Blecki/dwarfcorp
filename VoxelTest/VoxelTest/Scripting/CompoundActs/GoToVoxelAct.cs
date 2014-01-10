@@ -5,6 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A creature plans to a voxel and then follows the path to it.
+    /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GoToVoxelAct : CompoundCreatureAct
     {
@@ -15,21 +18,21 @@ namespace DwarfCorp
             
         }
 
-        public GoToVoxelAct(string voxel, CreatureAIComponent creature) :
+        public GoToVoxelAct(string voxel, PlanAct.PlanType planType, CreatureAIComponent creature) :
             base(creature)
         {
             Name = "Go to Voxel " + voxel;
             Tree = new Sequence(
                     new ForLoop(
                         new Sequence(
-                                      new PlanAct(Agent, "PathToVoxel", voxel),
+                                      new PlanAct(Agent, "PathToVoxel", voxel, planType),
                                       new FollowPathAct(Agent, "PathToVoxel")
                                      )
                                        , 3, true),
                                       new StopAct(Agent));
         }
 
-        public GoToVoxelAct(VoxelRef voxel, CreatureAIComponent creature) :
+        public GoToVoxelAct(VoxelRef voxel, PlanAct.PlanType planType, CreatureAIComponent creature) :
             base(creature)
         {
             Voxel = voxel;
@@ -37,13 +40,9 @@ namespace DwarfCorp
             if(Voxel != null)
             {
                 Tree = new Sequence(
-                    new ForLoop(
-                        new Sequence(
                                       new SetBlackboardData<VoxelRef>(Agent, "TargetVoxel", Voxel),
-                                      new PlanAct(Agent, "PathToVoxel", "TargetVoxel"),
-                                      new FollowPathAct(Agent, "PathToVoxel")
-                                     )
-                                       , 3, true),
+                                      new PlanAct(Agent, "PathToVoxel", "TargetVoxel", PlanAct.PlanType.Adjacent),
+                                      new FollowPathAct(Agent, "PathToVoxel"),
                                       new StopAct(Agent));
             }
 

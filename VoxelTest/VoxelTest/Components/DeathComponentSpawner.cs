@@ -10,6 +10,9 @@ using Newtonsoft.Json.Linq;
 namespace DwarfCorp
 {
 
+    /// <summary>
+    /// When an entity dies, this component releases other components (such as resources)
+    /// </summary>
     [JsonObject(IsReference = true)]
     public class DeathComponentSpawner : LocatableComponent
     {
@@ -20,7 +23,7 @@ namespace DwarfCorp
             base(manager, name, parent, localTransform, boundingExtents, boundingBoxPos, false)
         {
             Spawns = spawns;
-            ThrowSpeed = 1.0f;
+            ThrowSpeed = 5.0f;
             AddToOctree = false;
         }
 

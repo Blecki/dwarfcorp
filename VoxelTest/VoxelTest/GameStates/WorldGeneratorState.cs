@@ -15,6 +15,9 @@ using Microsoft.Xna.Framework.Media;
 namespace DwarfCorp
 {
 
+    /// <summary>
+    /// This game state allows the player to create randomly generated worlds to play in.
+    /// </summary>
     public class WorldGeneratorState : GameState
     {
         public float TemperatureScale { get; set; }
@@ -117,8 +120,8 @@ namespace DwarfCorp
 
             Overworld.Volcanoes = new List<Vector2>();
 
-            DefaultFont = Game.Content.Load<SpriteFont>("Default");
-            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
+            DefaultFont = Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
+            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
             IsInitialized = true;
             Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
             GenerationComplete = false;
@@ -983,7 +986,6 @@ namespace DwarfCorp
         {
             if(Transitioning == TransitionMode.Running)
             {
-                Game.GraphicsDevice.Clear(Color.Black);
                 Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
                 DrawGUI(gameTime, 0);
             }

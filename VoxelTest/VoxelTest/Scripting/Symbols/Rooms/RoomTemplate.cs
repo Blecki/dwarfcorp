@@ -31,10 +31,25 @@ namespace DwarfCorp
         Mushroom = 1 << 17
     }
 
+    public enum PlacementType
+    {
+        Random,
+        All
+    }
+
+
+    /// <summary>
+    /// Describes how a room should be populated with items. A template has a number of "required" items,
+    /// and "accessory" items. Templates will fill up a room until no more can be placed. Templates can be
+    /// rotated to fill more space.
+    /// </summary>
     public class RoomTemplate
     {
         public RoomTile[,] Template { get; set; }
         public RoomTile[,] Accessories { get; set; }
+
+        public PlacementType PlacementType { get; set; }
+
         public bool CanRotate { get; set; }
 
         public void RotateClockwise(int numRotations)
@@ -51,8 +66,9 @@ namespace DwarfCorp
             
         }
 
-        public RoomTemplate(RoomTile[,] template, RoomTile[,] accessories)
+        public RoomTemplate(PlacementType type, RoomTile[,] template, RoomTile[,] accessories)
         {
+            PlacementType = type;
             Template = template;
             Accessories = accessories;
             CanRotate = true;
@@ -96,25 +112,36 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    if((x >= nr - 1 || y >= nc - 1 || x <= 0 || y <= 0) && !Has(desired, RoomTile.Edge))
+                    bool hasWall = Has(desired, RoomTile.Wall);
+                    bool hasOpen = Has(desired, RoomTile.Open);
+                    bool hasEdge = Has(desired, RoomTile.Edge);
+                    bool onEdge = (x >= nr - 1 || y >= nc - 1 || x < 1 || y < 1);
+                    bool outOfBounds = onEdge && (x >= nr  || y >= nc  || x < 0 || y < 0);
+                    if(onEdge && !hasEdge)
                     {
                         return -1;
+                    }
+                    else if(outOfBounds && desired != RoomTile.None)
+                    {
+                        return -1;
+                    }
+                    else if(outOfBounds)
+                    {
+                        continue;
                     }
 
                     RoomTile curent = room[x, y];
 
-                    bool hasWall = Has(desired, RoomTile.Wall);
-                    bool hasOpen = Has(desired, RoomTile.Open);
-                    bool hasEdge = Has(desired, RoomTile.Edge);
 
 
                     bool meetsWallRequirements = !hasWall || (curent == RoomTile.Wall);
                     bool meetsEdgeRequirements = (!hasEdge && !hasWall) || (hasEdge && curent == RoomTile.Edge);
                     bool meetsOpenRequriments = !hasOpen || (curent == RoomTile.Open);
+                    bool doesntIntersect = hasEdge || hasWall || curent == RoomTile.Open;
 
                     // Tiles conflict when walls exist in the room already, or other objects
                     // block the template.
-                    if(!(((meetsWallRequirements || meetsEdgeRequirements) && meetsOpenRequriments)))
+                    if (!(((meetsWallRequirements || meetsEdgeRequirements) && meetsOpenRequriments && doesntIntersect)))
                     {
                         return -1;
                     }
@@ -139,7 +166,7 @@ namespace DwarfCorp
                     RoomTile unimport = Accessories[r, c];
                     RoomTile currentTile = room[x, y];
 
-                    if((currentTile == RoomTile.Open || currentTile == RoomTile.Edge) && desiredTile != RoomTile.None && !Has(desiredTile, RoomTile.Edge) && ! Has(desiredTile, RoomTile.Wall))
+                    if((currentTile == RoomTile.Open || currentTile == RoomTile.Edge) && desiredTile != RoomTile.None && !Has(desiredTile, RoomTile.Edge) && ! Has(desiredTile, RoomTile.Wall) && desiredTile != RoomTile.Open)
                     {
                         room[x, y] = desiredTile;
                         toReturn++;

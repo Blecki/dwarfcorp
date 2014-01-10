@@ -5,7 +5,9 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
+    /// <summary>
+    /// An item keeps track of an entity in the context of it existing in a zone.
+    /// </summary>
     public class Item : IEquatable<Item>
     {
         public string ID;
@@ -30,6 +32,11 @@ namespace DwarfCorp
         }
 
         public static Dictionary<string, Item> ItemDictionary = new Dictionary<string, Item>();
+
+        public static Item CreateItem(Zone z, LocatableComponent locatableComponent)
+        {
+            return CreateItem(locatableComponent.Name + locatableComponent.GlobalID, z, locatableComponent);
+        }
 
         public static Item CreateItem(string name, Zone z, LocatableComponent userData)
         {
