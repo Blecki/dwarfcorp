@@ -77,8 +77,7 @@ namespace DwarfCorp
             bool stateChanged = false;
             float dt = (float) time.ElapsedGameTime.TotalSeconds;
 
-            if(keys.IsKeyDown(ControlSettings.Default.CameraMode))
-            {
+            if(KeyManager.RotationEnabled()){
                 if(!shiftPressed)
                 {
                     shiftPressed = true;
@@ -155,7 +154,7 @@ namespace DwarfCorp
                 Vector3 forward = (Target - Position);
                 forward.Normalize();
 
-                if(!keys.IsKeyDown(ControlSettings.Default.CameraMode))
+                if(!KeyManager.RotationEnabled())
                 {
                     forward.Y = 0;
                 }
@@ -169,7 +168,7 @@ namespace DwarfCorp
                 forward.Normalize();
                 goingBackward = true;
 
-                if(!keys.IsKeyDown(ControlSettings.Default.CameraMode))
+                if(!KeyManager.RotationEnabled())
                 {
                     forward.Y = 0;
                 }
@@ -211,7 +210,7 @@ namespace DwarfCorp
             }
 
 
-            if(!keys.IsKeyDown(ControlSettings.Default.CameraMode))
+            if(!KeyManager.RotationEnabled())
             {
                 if(mouse.X < edgePadding || mouse.X > GameState.Game.GraphicsDevice.Viewport.Width - edgePadding)
                 {
