@@ -18,12 +18,15 @@ namespace DwarfCorp
 
         public float EnergyLoss { get; set; }
 
+        public Timer ValidPathTimer { get; set; }
+
         public FollowPathAct(CreatureAIComponent agent, string pathName) :
             base(agent)
         {
             Name = "Follow path";
             PathName = pathName;
             EnergyLoss = 10.0f;
+            ValidPathTimer = new Timer(.75f, false);
         }
 
         public List<VoxelRef> GetPath()
@@ -36,10 +39,31 @@ namespace DwarfCorp
             Agent.Blackboard.SetData(PathName, path);
         }
 
+        public bool IsPathValid(List<VoxelRef> path)
+        {
+            for (int i = 0; i < path.Count - 2; i++)
+            {
+                List<VoxelRef> neighbors = Agent.Chunks.ChunkData.ChunkMap[path[i].ChunkID].GetMovableNeighbors(path[i]);
+                bool valid = false;
+                foreach (VoxelRef vr in neighbors)
+                {
+                    Vector3 dif = vr.WorldPosition - path[i + 1].WorldPosition;
+                    if (dif.Length() < .1)
+                    {
+                        valid = true;
+                    }
+                }
+                if (!valid) return false;
+            }
+            return true;
+        }
+
         public override IEnumerable<Status> Run()
         {
             while(true)
             {
+                // ERROR CHECKS / INITIALIZING
+
                 List<VoxelRef> path = GetPath();
 
                 if(path == null)
@@ -59,16 +83,25 @@ namespace DwarfCorp
                     break;
                 }
 
+                // IF WE ARE MOVING
                 if(Agent.TargetVoxel != null)
                 {
                     Agent.LocalControlTimeout.Update(LastTime);
+                    ValidPathTimer.Update(LastTime);
+
+                    // Check if the path has been made invalid
+                    if (ValidPathTimer.HasTriggered && !IsPathValid(path))
+                    {
+                        Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                        yield return Status.Fail;
+                    }
 
                     if(Agent.LocalControlTimeout.HasTriggered)
                     {
+                        Agent.Position = Agent.TargetVoxel.WorldPosition + new Vector3(.5f, .5f, .5f);
                         Agent.LocalControlTimeout.Reset(Agent.LocalControlTimeout.TargetTimeSeconds);
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                        yield return Status.Fail;
-                        break;
+                        yield return Status.Running;
                     }
 
 
