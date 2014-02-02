@@ -214,15 +214,20 @@ namespace DwarfCorp
 
                 foreach(LocatableComponent loc in componentsToShip)
                 {
-                    if(!ship.Port.ContainsItem(loc))
+                    if(ship.Port.ContainsItem(loc))
                     {
-                        Task g = new PutItemInZoneTask(Item.FindItem(loc), ship.Port);
-                        if(!TaskIsAssigned(g) && IsFeasible(g, Faction.Minions))
-                        {
-                            ship.Assignments.Add(g);
-                            tasks.Add(g);
-                        }
+                        continue;
                     }
+
+                    Task g = new PutItemInZoneTask(Item.FindItem(loc), ship.Port);
+                    
+                    if(TaskIsAssigned(g) || !IsFeasible(g, Faction.Minions))
+                    {
+                        continue;
+                    }
+
+                    ship.Assignments.Add(g);
+                    tasks.Add(g);
                 }
             }
 

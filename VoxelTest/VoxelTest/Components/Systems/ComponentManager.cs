@@ -232,10 +232,10 @@ namespace DwarfCorp
         }
 
 
-        public HashSet<LocatableComponent> FrustrumCullLocatableComponents(Camera camera)
+        public List<LocatableComponent> FrustrumCullLocatableComponents(Camera camera)
         {
-            HashSet<LocatableComponent> visible = new HashSet<LocatableComponent>();
-            CollisionManager.GetObjectsIntersecting(camera.GetFrustrum(), visible, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
+            List<LocatableComponent> visible = CollisionManager.GetVisibleObjects<LocatableComponent>(camera.GetFrustrum(), CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
+            //CollisionManager.GetObjectsIntersecting(camera.GetFrustrum(), visible, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
             return visible;
         }
@@ -289,7 +289,14 @@ namespace DwarfCorp
             {
                 visibleComponents.Clear();
                 componentsToDraw.Clear();
-                visibleComponents = FrustrumCullLocatableComponents(camera);
+                
+                
+                List<LocatableComponent> list = FrustrumCullLocatableComponents(camera);
+                foreach(LocatableComponent component in list)
+                {
+                    visibleComponents.Add(component);
+                }
+                 
 
                 ComponentManager.Camera = camera;
                 foreach(GameComponent component in Components.Values)

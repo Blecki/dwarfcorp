@@ -31,7 +31,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>http://www.dwarfcorp.com/PreAlpha/Builds/</UpdateUrl>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>31</ApplicationRevision>
+    <ApplicationRevision>32</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -117,6 +117,7 @@
       <DependentUpon>AssetSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="AssetManagement\GameSave\JsonConverters\RectangleConverter.cs" />
+    <Compile Include="Components\AI\Inventory.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\DrawCommand2D.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\SpriteDrawCommand.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\RectDrawCommand.cs" />
@@ -136,6 +137,7 @@
     <Compile Include="Scripting\CompoundActs\FindBedAndSleepAct.cs" />
     <Compile Include="Scripting\LeafActs\ConsumeItemAct.cs" />
     <Compile Include="Scripting\LeafActs\SleepAct.cs" />
+    <Compile Include="Scripting\Player\Economy\ResourceContainer.cs" />
     <Compile Include="Sound\NoiseMaker.cs" />
     <Compile Include="Scripting\Player\Designation\Designation.cs" />
     <Compile Include="Scripting\Player\Designation\RoomBuildDesignation.cs" />
@@ -408,8 +410,6 @@
     <Content Include="favicon.ico" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
-    <None Include="ClassDiagram1.cd" />
-    <None Include="ClassDiagram2.cd" />
     <None Include="Newtonsoft.Json.dll" />
   </ItemGroup>
   <ItemGroup>

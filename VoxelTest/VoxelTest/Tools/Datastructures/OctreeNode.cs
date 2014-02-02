@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
@@ -157,6 +158,38 @@ namespace DwarfCorp
                     }
                 }
             }
+        }
+
+
+        public List<T> GetVisibleObjects<T>(BoundingFrustum frustrum) where T : IBoundedObject
+        {
+            List<T> toReturn = new List<T>();
+
+            Stack<OctreeNode> stack = new Stack<OctreeNode>();
+            stack.Push(this);
+
+            while (stack.Count > 0)
+            {
+                OctreeNode t = stack.Pop();
+                if (!t.Bounds.Intersects(frustrum))
+                {
+                    continue;
+                }
+
+                toReturn.AddRange(t.Objects.OfType<T>());
+
+
+                for (int i = 0; i < 8; i++)
+                {
+                    OctreeNode child = t.Children[i];
+                    if (child != null)
+                    {
+                        stack.Push(child);
+                    }
+                }
+            }
+
+            return toReturn;
         }
 
 

@@ -43,9 +43,9 @@ namespace DwarfCorp
 
 
             Sprite.AddAnimation(CharacterMode.Sleeping, OrientedAnimation.Orientation.Forward, dwarfSprites, 0.8f, frameWidth, frameHeight, 0, 4, 5, 6, 7);
-            Sprite.AddAnimation(CharacterMode.Sleeping, OrientedAnimation.Orientation.Right, dwarfSprites, 0.8f, frameWidth, frameHeight, 2, 4, 5, 6, 7);
-            Sprite.AddAnimation(CharacterMode.Sleeping, OrientedAnimation.Orientation.Left, dwarfSprites, 0.8f, frameWidth, frameHeight, 1, 4, 5, 6, 7);
-            Sprite.AddAnimation(CharacterMode.Sleeping, OrientedAnimation.Orientation.Backward, dwarfSprites, 0.8f, frameWidth, frameHeight, 3, 4, 5, 6, 7);
+            Sprite.AddAnimation(CharacterMode.Sleeping, OrientedAnimation.Orientation.Right, dwarfSprites, 0.8f, frameWidth, frameHeight, 0, 4, 5, 6, 7);
+            Sprite.AddAnimation(CharacterMode.Sleeping, OrientedAnimation.Orientation.Left, dwarfSprites, 0.8f, frameWidth, frameHeight, 0, 4, 5, 6, 7);
+            Sprite.AddAnimation(CharacterMode.Sleeping, OrientedAnimation.Orientation.Backward, dwarfSprites, 0.8f, frameWidth, frameHeight, 0, 4, 5, 6, 7);
 
             Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, dwarfSprites, 0.8f, frameWidth, frameHeight, 0, 1, 3, 1);
             Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, dwarfSprites, 0.8f, frameWidth, frameHeight, 2, 2, 0, 2);

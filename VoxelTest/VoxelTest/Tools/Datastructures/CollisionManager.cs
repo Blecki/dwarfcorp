@@ -33,8 +33,8 @@ namespace DwarfCorp
         public CollisionManager(BoundingBox bounds)
         {
             Octrees = new Dictionary<CollisionType, Octree>();
-            Octrees[CollisionType.Static] = new Octree(bounds, 16, 20, 3);
-            Octrees[CollisionType.Dynamic] = new Octree(bounds, 16, 5, 1);
+            Octrees[CollisionType.Static] = new Octree(bounds, 8, 20, 3);
+            Octrees[CollisionType.Dynamic] = new Octree(bounds, 8, 5, 1);
         }
 
         public void AddObject(IBoundedObject bounded, CollisionType type)
@@ -156,6 +156,24 @@ namespace DwarfCorp
                 octree.Value.Root.Draw(colors[i], 0.1f);
                 i++;
             }
+        }
+
+        public List<LocatableComponent> GetVisibleObjects<TObject>(BoundingFrustum box,  CollisionType queryType) where TObject : IBoundedObject
+        {
+            List<LocatableComponent> toReturn = new List<LocatableComponent>();
+            switch ((int)queryType)
+            {
+                case (int)CollisionType.Static:
+                case (int)CollisionType.Dynamic:
+                    toReturn.AddRange(Octrees[queryType].Root.GetVisibleObjects<LocatableComponent>(box));
+                    break;
+                case ((int)CollisionType.Static | (int)CollisionType.Dynamic):
+                    toReturn.AddRange(Octrees[CollisionType.Static].Root.GetVisibleObjects<LocatableComponent>(box));
+                    toReturn.AddRange(Octrees[CollisionType.Dynamic].Root.GetVisibleObjects<LocatableComponent>(box));
+                    break;
+            }
+
+            return toReturn;
         }
     }
 

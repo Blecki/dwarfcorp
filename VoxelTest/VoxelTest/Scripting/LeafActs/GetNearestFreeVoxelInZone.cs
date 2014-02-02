@@ -14,13 +14,15 @@ namespace DwarfCorp
     {
         public Zone TargetZone { get; set; }
         public string OutputVoxel { get; set; }
+        public bool ReserveVoxel { get; set; }
 
-        public GetNearestFreeVoxelInZone(CreatureAIComponent agent, Zone targetZone, string outputVoxel) :
+        public GetNearestFreeVoxelInZone(CreatureAIComponent agent, Zone targetZone, string outputVoxel, bool reserve) :
             base(agent)
         {
             Name = "Get Free Voxel";
             OutputVoxel = outputVoxel;
             TargetZone = targetZone;
+            ReserveVoxel = reserve;
         }
 
         public override IEnumerable<Status> Run()
@@ -31,7 +33,7 @@ namespace DwarfCorp
             }
             else
             {
-                VoxelRef v = TargetZone.GetNearestFreeVoxel(Agent.Position);
+                VoxelRef v = TargetZone.GetNearestFreeVoxel(Agent.Position, ReserveVoxel);
 
                 if(v != null)
                 {

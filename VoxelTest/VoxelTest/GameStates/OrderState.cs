@@ -93,8 +93,8 @@ namespace DwarfCorp
         {
             BalloonTexture = TextureManager.GetTexture(ContentPaths.Entities.Balloon.Sprites.balloon);
             DragManager = new DragManager();
-            DefaultFont = Game.Content.Load<SpriteFont>("Default");
-            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
+            DefaultFont = Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
+            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
             IsInitialized = true;
             Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
             MainWindow = new GUIComponent(GUI, GUI.RootComponent)
@@ -318,6 +318,7 @@ namespace DwarfCorp
 
             PlayState.Master.Faction.Economy.OutstandingOrders.Add(o);
             PlayState.Paused = false;
+            PlayState.GUI.RootComponent.IsVisible = true;
             StateManager.PopState();
         }
 
@@ -355,6 +356,7 @@ namespace DwarfCorp
         private void back_OnClicked()
         {
             PlayState.Paused = false;
+            PlayState.GUI.RootComponent.IsVisible = true;
             StateManager.PopState();
         }
 

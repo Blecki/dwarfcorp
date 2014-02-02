@@ -124,7 +124,7 @@ namespace DwarfCorp
             Creature = creature;
             TargetVoxel = null;
             CurrentPath = null;
-            DrawPath = true;
+            DrawPath = false;
             TargetComponent = null;
             TargetStockpile = null;
             TargetRoom = null;

@@ -66,11 +66,13 @@ namespace DwarfCorp
         {
             string resourceName = loc.Tags[0];
 
+            /*
             foreach(ResourceAmount r in CurrentResources.Where(r => r.ResourceType.ResourceName == resourceName))
             {
                 r.NumResources++;
                 return;
             }
+             */
 
             ResourceAmount newResource = new ResourceAmount
             {
@@ -171,8 +173,11 @@ namespace DwarfCorp
                         {
                             foreach(Item i in Shipment.Destination.ListItems())
                             {
-                                i.UserData.Die();
-                                Faction.Economy.CurrentMoney += GetSellOrder(i);
+                                if(i.UserData.CollisionType == CollisionManager.CollisionType.Dynamic)
+                                {
+                                    i.UserData.Die();
+                                    Faction.Economy.CurrentMoney += GetSellOrder(i);
+                                }
                             }
                             Shipment.Destination.ClearItems();
                         }

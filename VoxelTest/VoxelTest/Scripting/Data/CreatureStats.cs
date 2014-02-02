@@ -27,9 +27,12 @@ namespace DwarfCorp
 
         public float EatSpeed { get { return Size + Strength; }}
 
-        public float HungerGrowth { get { return Size * 0.01f; } }
+        public float HungerGrowth { get { return Size * 0.0025f; } }
 
-        public float Tiredness { get { return 0.5f / Constitution; }}
+        public float Tiredness
+        {
+            get { return 0.25f / Constitution; }
+        } 
 
         public float HungerResistance { get { return Constitution; } }
     }

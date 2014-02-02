@@ -27,7 +27,7 @@ namespace DwarfCorp
         {
             public Texture2D Texture;
             public string File;
-
+            
             public TextureFile(Texture2D texture, string file)
             {
                 Texture = texture;

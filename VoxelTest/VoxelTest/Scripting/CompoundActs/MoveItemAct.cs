@@ -20,6 +20,37 @@ namespace DwarfCorp
 
         }
 
+        public IEnumerable<Status> Reserve(Zone zone, string voxelName)
+        {
+            VoxelRef voxel = Agent.Blackboard.GetData<VoxelRef>(voxelName);
+
+            if (zone == null || voxel == null)
+            {
+                yield return Status.Success;
+            }
+            else
+            {
+                zone.SetReserved(voxel, true);
+                yield return Status.Success;
+            }
+        }
+
+        public IEnumerable<Status> Unreserve(Zone zone, string voxelName)
+        {
+            VoxelRef voxel = Agent.Blackboard.GetData<VoxelRef>(voxelName);
+
+            if (zone == null || voxel == null)
+            {
+                yield return Status.Success;
+            }
+            else
+            {
+                zone.SetReserved(voxel, false);
+                yield return Status.Success;
+            }
+            
+        }
+
         public MoveItemAct(CreatureAIComponent agent, Item item, Zone zone) :
             base(agent)
         {
@@ -27,6 +58,7 @@ namespace DwarfCorp
             Item = item;
             Zone = zone;
 
+            /*
             Tree = new Sequence(
                 new GoToEntityAct(item.UserData, agent),
                 new SetBlackboardData<LocatableComponent>(agent, "TargetObject", item.UserData),
@@ -35,6 +67,22 @@ namespace DwarfCorp
                     new GetNearestFreeVoxelInZone(agent, Zone, "FreeVoxel"),
                     new GoToNamedVoxelAct("FreeVoxel", agent),
                     new PutItemInZoneAct(agent, Zone)) | new DropItemAct(agent));
+             */
+
+            Tree = new Sequence(
+                new SetBlackboardData<LocatableComponent>(agent, "TargetObject", item.UserData),
+                    new GetNearestFreeVoxelInZone(agent, Zone, "FreeVoxel", true),
+                    new GoToEntityAct(Item.UserData, Agent),
+                    new PickUpAct(Agent, PickUpAct.PickUpType.Stockpile, item.Zone, "TargetObject"),
+                    new Select(
+                                new Sequence(
+                                                new GoToVoxelAct("FreeVoxel", PlanAct.PlanType.Adjacent, Agent),
+                                                new PutItemInZoneAct(Agent, Zone, "FreeVoxel")
+                                            ),
+                                new DropItemAct(Agent)
+                              )
+                   )
+           | new Wrap(() => Unreserve(Zone, "FreeVoxel"));
         }
     }
 

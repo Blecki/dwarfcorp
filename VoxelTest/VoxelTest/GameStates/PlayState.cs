@@ -176,6 +176,7 @@ namespace DwarfCorp
                     Console.Error.WriteLine(exception.Message);
                 }
 
+                Game.Graphics.PreparingDeviceSettings -= GraphicsPreparingDeviceSettings;
                 Game.Graphics.PreparingDeviceSettings += GraphicsPreparingDeviceSettings;
                 PlanService = new PlanService();
                 LoadingThread = new Thread(Load);
@@ -271,7 +272,9 @@ namespace DwarfCorp
 
             ComponentManager = new ComponentManager();
             ComponentManager.RootComponent = new LocatableComponent(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero, false);
-            ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(new Vector3(-1000, -1000, -1000), new Vector3(1000, 1000, 1000)));
+            Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
+            Vector3 extents = new Vector3(1500, 1500, 1500);
+            ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
             Alliance.Relationships = Alliance.InitializeRelationships();
         }
@@ -926,7 +929,8 @@ namespace DwarfCorp
                 if(StateManager.NextState == "")
                 {
                     OrderState orderState = (OrderState) StateManager.States["OrderState"];
-                    orderState.Mode = OrderState.OrderMode.Buying;
+                    orderState.Mode = OrderState.OrderMode.Selling;
+                    GUI.RootComponent.IsVisible = false;
                     StateManager.PushState("OrderState");
                 }
                 Paused = true;
@@ -995,6 +999,7 @@ namespace DwarfCorp
                         StateManager.PushState("OrderState");
                     }
                     Paused = true;
+                    GUI.RootComponent.IsVisible = false;
                     break;
                 case GameCycle.OrderCylce.BalloonAtColony:
                     if(StateManager.NextState == "")
@@ -1002,6 +1007,7 @@ namespace DwarfCorp
                         OrderState orderState = (OrderState) StateManager.States["OrderState"];
                         orderState.Mode = OrderState.OrderMode.Selling;
                         StateManager.PushState("OrderState");
+                        GUI.RootComponent.IsVisible = false;
                     }
                     Paused = true;
                     break;
@@ -1288,7 +1294,7 @@ namespace DwarfCorp
 
             if(Paused)
             {
-                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Paused", Game.Content.Load<SpriteFont>("Default"), new Vector2(GraphicsDevice.Viewport.Width - 100, 10), Color.White, Color.Black);
+                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Paused", GUI.DefaultFont, new Vector2(GraphicsDevice.Viewport.Width - 100, 10), Color.White, Color.Black);
             }
 
             DwarfGame.SpriteBatch.End();

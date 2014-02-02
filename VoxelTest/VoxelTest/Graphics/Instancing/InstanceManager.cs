@@ -46,7 +46,7 @@ namespace DwarfCorp
             };
             AddInstances("pine", pinetree);
 
-            FixedInstanceArray palmTree = new FixedInstanceArray("palm", PrimitiveLibrary.BatchBillboardPrimitives["tree"].VertexBuffer, TextureManager.GetTexture(ContentPaths.Entities.Plants.berrybush), (int)(50 * GameSettings.Default.NumMotes), BlendState.AlphaBlend)
+            FixedInstanceArray palmTree = new FixedInstanceArray("palm", PrimitiveLibrary.BatchBillboardPrimitives["tree"].VertexBuffer, TextureManager.GetTexture(ContentPaths.Entities.Plants.palm), (int)(50 * GameSettings.Default.NumMotes), BlendState.AlphaBlend)
             {
                 ShouldRebuild = true
             };

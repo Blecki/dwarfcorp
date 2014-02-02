@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -17,7 +18,6 @@ namespace DwarfCorp
         public List<VoxelStorage> Storage = new List<VoxelStorage>();
         public VoxelStorage.StorageType StoreType = VoxelStorage.StorageType.OnVoxel;
 
-
         public bool ReplaceVoxelTypes
         {
             get { return ReplacementType != null; }
@@ -28,11 +28,18 @@ namespace DwarfCorp
         [JsonIgnore]
         public ChunkManager Chunks { get; set; }
 
+        public ResourceContainer Resources { get; set; }
+
         public Zone(string id, ChunkManager chunks)
         {
             ID = id;
             ReplacementType = null;
             Chunks = chunks;
+            Resources = new ResourceContainer
+            {
+                MaxResources = 1
+            };
+
         }
 
         public Zone()
@@ -194,9 +201,9 @@ namespace DwarfCorp
             }
         }
 
-        public VoxelRef GetNearestFreeVoxel(Vector3 position)
+        public VoxelRef GetNearestFreeVoxel(Vector3 position, bool reserve)
         {
-            VoxelRef closest = null;
+            VoxelStorage closest = null;
             Vector3 halfSize = new Vector3(0.5f, 0.5f, 0.5f);
             double closestDist = double.MaxValue;
 
@@ -212,11 +219,17 @@ namespace DwarfCorp
                 if(d < closestDist)
                 {
                     closestDist = d;
-                    closest = v.Voxel;
+                    closest = v;
                 }
             }
 
-            return closest;
+            if(closest == null)
+            {
+                return null;
+            }
+
+            closest.IsReserved = true;
+            return closest.Voxel;
         }
 
         public bool ContainsItem(Item i)
@@ -263,7 +276,7 @@ namespace DwarfCorp
 
         public virtual bool AddItem(LocatableComponent component)
         {
-            return AddItem(component, GetNearestFreeVoxel(component.LocalTransform.Translation + component.BoundingBoxPos));
+            return AddItem(component, GetNearestFreeVoxel(component.LocalTransform.Translation + component.BoundingBoxPos, false));
         }
 
         public virtual bool AddItem(LocatableComponent component, VoxelRef voxel)

@@ -34,7 +34,7 @@ namespace DwarfCorp
             ResourceAmount balloonStoneRequired = new ResourceAmount
             {
                 ResourceType = ResourceLibrary.Resources["Stone"],
-                NumResources = 0.1f
+                NumResources = 1
             };
             balloonPortResources["Stone"] = balloonStoneRequired;
 
@@ -76,7 +76,7 @@ namespace DwarfCorp
             ResourceAmount woodRequired = new ResourceAmount
             {
                 ResourceType = ResourceLibrary.Resources["Wood"],
-                NumResources = 0.25f
+                NumResources = 1
             };
             bedroomResources["Wood"] = woodRequired;
 
@@ -159,7 +159,7 @@ namespace DwarfCorp
             ResourceAmount stoneRquired = new ResourceAmount
             {
                 ResourceType = ResourceLibrary.Resources["Stone"],
-                NumResources = 0.2f
+                NumResources = 1
             };
 
             commonRoomResources["Stone"] = stoneRquired;

@@ -42,7 +42,7 @@ namespace DwarfCorp
             RampSize = 0.0f;
             IsBuildable = false;
             ParticleType = "puff";
-            ExplosionSound = "gravel";
+            ExplosionSound = ContentPaths.Audio.gravel;
             SpecialRampTextures = false;
             RampPrimitives = new Dictionary<RampType, BoxPrimitive>();
 

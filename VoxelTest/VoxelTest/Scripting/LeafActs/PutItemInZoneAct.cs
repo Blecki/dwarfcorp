@@ -13,28 +13,30 @@ namespace DwarfCorp
     public class PutItemInZoneAct : CreatureAct
     {
         public Zone Pile { get; set; }
+        public string VoxelID { get; set; }
 
-        public PutItemInZoneAct(CreatureAIComponent agent, Zone stock) :
+        public PutItemInZoneAct(CreatureAIComponent agent, Zone stock, string voxel) :
             base(agent)
         {
             Name = "Put Item";
             Pile = stock;
+            VoxelID = voxel;
         }
 
         public override IEnumerable<Status> Run()
         {
             LocatableComponent grabbed = Creature.Hands.GetFirstGrab();
-
-            if(grabbed == null)
+            VoxelRef voxel = Agent.Blackboard.GetData<VoxelRef>(VoxelID);
+            if(grabbed == null || voxel == null)
             {
                 yield return Status.Fail;
             }
-            else if(Pile.AddItem(grabbed, Agent.TargetVoxel))
+            else if (Pile.AddItem(grabbed, voxel))
             {
                 Creature.Hands.UnGrab(grabbed);
 
                 Matrix m = Matrix.Identity;
-                m.Translation = Agent.TargetVoxel.WorldPosition + new Vector3(0.5f, 1.5f, 0.5f);
+                m.Translation = voxel.WorldPosition + new Vector3(0.5f, 1.5f, 0.5f);
                 grabbed.LocalTransform = m;
                 grabbed.HasMoved = true;
                 grabbed.DrawBoundingBox = false;

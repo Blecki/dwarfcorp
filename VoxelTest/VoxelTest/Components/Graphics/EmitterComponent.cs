@@ -59,7 +59,7 @@ namespace DwarfCorp
         {
             if(TriggerOnDeath)
             {
-                SoundManager.PlaySound(Program.CreatePath("Audio", "explode"), GlobalTransform.Translation);
+                SoundManager.PlaySound(ContentPaths.Audio.explode, GlobalTransform.Translation);
                 Trigger();
             }
             base.Die();
