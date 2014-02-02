@@ -1,7 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)"
-              GeneratedClassNamespace="DwarfCorp" GeneratedClassName="ControlSettings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DwarfCorp" GeneratedClassName="ControlSettings">
   <Profiles />
   <Settings>
     <Setting Name="Forward" Type="Microsoft.Xna.Framework.Input.Keys" Scope="User">

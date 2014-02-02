@@ -1288,7 +1288,7 @@ namespace DwarfCorp
 
             if(Paused)
             {
-                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Paused", Game.Content.Load<SpriteFont>("Default"), new Vector2(GraphicsDevice.Viewport.Width - 100, 10), Color.White, Color.Black);
+                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Paused", Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default), new Vector2(GraphicsDevice.Viewport.Width - 100, 10), Color.White, Color.Black);
             }
 
             DwarfGame.SpriteBatch.End();

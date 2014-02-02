@@ -78,6 +78,13 @@ namespace DwarfCorp
             get { return GetKey(key); }
             set { Buttons[key] = value; }
         }
+
+        public static bool RotationEnabled()
+        {
+            KeyboardState keys = Keyboard.GetState();
+
+            return keys.IsKeyDown(ControlSettings.Default.CameraMode);
+        }
     }
 
 }
