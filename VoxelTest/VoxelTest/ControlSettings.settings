@@ -1,0 +1,56 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)"
+              GeneratedClassNamespace="DwarfCorp" GeneratedClassName="ControlSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Forward" Type="Microsoft.Xna.Framework.Input.Keys" Scope="User">
+      <Value Profile="(Default)">W</Value>
+    </Setting>
+    <Setting Name="Left" Type="Microsoft.Xna.Framework.Input.Keys" Scope="User">
+      <Value Profile="(Default)">A</Value>
+    </Setting>
+    <Setting Name="Right" Type="Microsoft.Xna.Framework.Input.Keys" Scope="User">
+      <Value Profile="(Default)">D</Value>
+    </Setting>
+    <Setting Name="Back" Type="Microsoft.Xna.Framework.Input.Keys" Scope="User">
+      <Value Profile="(Default)">S</Value>
+    </Setting>
+    <Setting Name="CameraMode" Type="Microsoft.Xna.Framework.Input.Keys" Scope="User">
+      <Value Profile="(Default)">LeftShift</Value>
+    </Setting>
+    <Setting Name="GodMode" Type="Microsoft.Xna.Framework.Input.Keys" Scope="User">
+      <Value Profile="(Default)">G</Value>
+    </Setting>
+    <Setting Name="TimeForward" Type="Microsoft.Xna.Framework.Input.Keys" Scope="User">
+      <Value Profile="(Default)">Z</Value>
+    </Setting>
+    <Setting Name="TimeBackward" Type="Microsoft.Xna.Framework.Input.Keys" Scope="User">
+      <Value Profile="(Default)">X</Value>
+    </Setting>
+    <Setting Name="SliceUp" Type="Microsoft.Xna.Framework.Input.Keys" Scope="User">
+      <Value Profile="(Default)">PageUp</Value>
+    </Setting>
+    <Setting Name="SliceDown" Type="Microsoft.Xna.Framework.Input.Keys" Scope="User">
+      <Value Profile="(Default)">PageDown</Value>
+    </Setting>
+    <Setting Name="Pause" Type="Microsoft.Xna.Framework.Input.Keys" Scope="User">
+      <Value Profile="(Default)">P</Value>
+    </Setting>
+    <Setting Name="OrderScreen" Type="Microsoft.Xna.Framework.Input.Keys" Scope="User">
+      <Value Profile="(Default)">O</Value>
+    </Setting>
+    <Setting Name="Map" Type="Microsoft.Xna.Framework.Input.Keys" Scope="User">
+      <Value Profile="(Default)">M</Value>
+    </Setting>
+    <Setting Name="SliceSelected" Type="Microsoft.Xna.Framework.Input.Keys" Scope="User">
+      <Value Profile="(Default)">Q</Value>
+    </Setting>
+    <Setting Name="SliceSelectedUp" Type="Microsoft.Xna.Framework.Input.Keys" Scope="User">
+      <Value Profile="(Default)">E</Value>
+    </Setting>
+    <Setting Name="ToggleGUI" Type="Microsoft.Xna.Framework.Input.Keys" Scope="User">
+      <Value Profile="(Default)">B</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
