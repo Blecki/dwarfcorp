@@ -84,14 +84,13 @@ namespace DwarfCorp
         }
 
         public void Update(Creature creature, GameTime gameTime, ChunkManager chunks, Camera camera)
-        {
-
-            float t = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            Hunger.CurrentValue -= t * creature.Stats.HungerGrowth;
+        { 
+            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Hunger.CurrentValue -= dt * creature.Stats.HungerGrowth;
 
             if(!IsAsleep)
             {
-                Energy.CurrentValue -= t * creature.Stats.Tiredness;
+                Energy.CurrentValue -= dt * creature.Stats.Tiredness;
             }
 
             if(Energy.IsUnhappy())
