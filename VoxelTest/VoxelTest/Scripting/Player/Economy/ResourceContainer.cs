@@ -44,7 +44,7 @@ namespace DwarfCorp
 
         public bool RemoveResource(ResourceAmount resource)
         {
-            if(resource < Resources[resource.ResourceType.ResourceName])
+            if(resource.NumResources > Resources[resource.ResourceType.ResourceName].NumResources)
             {
                 return false;
             }

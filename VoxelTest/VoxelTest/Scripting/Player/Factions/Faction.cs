@@ -292,6 +292,11 @@ namespace DwarfCorp
             return toReturn;
         }
 
+        public bool HasFreeStockpile()
+        {
+            return Stockpiles.Any(s => !s.IsFull());
+        }
+
         public Item FindNearestItemWithTags(TagList tags, Vector3 location, bool filterReserved)
         {
             Item closestItem = null;

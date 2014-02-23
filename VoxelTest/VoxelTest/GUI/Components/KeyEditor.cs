@@ -79,11 +79,18 @@ namespace DwarfCorp
 
         private void editor_OnKeyModified(string name, Keys arg)
         {
+
+            KeyManager[name] = arg;
+            KeyManager.SaveConfigSettings();
+
+            /*
             if(!IsReserved(arg))
             {
                 KeyManager[name] = arg;
                 KeyManager.SaveConfigSettings();
             }
+             */
+
         }
     }
 

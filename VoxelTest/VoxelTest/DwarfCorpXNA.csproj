@@ -117,6 +117,7 @@
       <DependentUpon>AssetSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="AssetManagement\GameSave\JsonConverters\RectangleConverter.cs" />
+    <Compile Include="Components\AI\GatherManager.cs" />
     <Compile Include="Components\AI\Inventory.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\DrawCommand2D.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\SpriteDrawCommand.cs" />
@@ -135,9 +136,13 @@
     <Compile Include="Scripting\BehaviorExtensions.cs" />
     <Compile Include="Scripting\CompoundActs\FindAndEatFoodAct.cs" />
     <Compile Include="Scripting\CompoundActs\FindBedAndSleepAct.cs" />
+    <Compile Include="Scripting\CompoundActs\StockResourceAct.cs" />
     <Compile Include="Scripting\LeafActs\ConsumeItemAct.cs" />
+    <Compile Include="Scripting\LeafActs\PutResourceInZoneAct.cs" />
     <Compile Include="Scripting\LeafActs\SleepAct.cs" />
+    <Compile Include="Scripting\LeafActs\StashAct.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceContainer.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\StockResourceTask.cs" />
     <Compile Include="Sound\NoiseMaker.cs" />
     <Compile Include="Scripting\Player\Designation\Designation.cs" />
     <Compile Include="Scripting\Player\Designation\RoomBuildDesignation.cs" />
@@ -205,9 +210,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>GameSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="GameStates\CompanyMakerState.cs" />
-    <Compile Include="GameStates\GameLoaderState.cs" />
-    <Compile Include="GameStates\WorldLoaderState.cs" />
+    <Compile Include="Components\GameStates\CompanyMakerState.cs" />
+    <Compile Include="Components\GameStates\GameLoaderState.cs" />
+    <Compile Include="Components\GameStates\WorldLoaderState.cs" />
     <Compile Include="GUI\Components\ActDisplay.cs" />
     <Compile Include="GUI\Components\Dialog.cs" />
     <Compile Include="GUI\Components\DraggableItem.cs" />
@@ -215,9 +220,9 @@
     <Compile Include="GUI\DragManager.cs" />
     <Compile Include="GUI\GItem.cs" />
     <Compile Include="Graphics\Drawing\ImageFrame.cs" />
-    <Compile Include="GameStates\IntroState.cs" />
-    <Compile Include="GameStates\OptionsState.cs" />
-    <Compile Include="GameStates\OrderState.cs" />
+    <Compile Include="Components\GameStates\IntroState.cs" />
+    <Compile Include="Components\GameStates\OptionsState.cs" />
+    <Compile Include="Components\GameStates\OrderState.cs" />
     <Compile Include="Graphics\Instancing\FixedInstanceArray.cs" />
     <Compile Include="Graphics\Instancing\InstancedVertex.cs" />
     <Compile Include="GUI\Components\AIDebugger.cs" />
@@ -258,12 +263,12 @@
     <Compile Include="Components\Graphics\SinMover.cs" />
     <Compile Include="Components\Graphics\TexturedBoxObject.cs" />
     <Compile Include="Components\Graphics\TintableComponent.cs" />
-    <Compile Include="GameStates\GameState.cs" />
-    <Compile Include="GameStates\GameStateManager.cs" />
-    <Compile Include="GameStates\MainMenuState.cs" />
-    <Compile Include="GameStates\GUITest.cs" />
-    <Compile Include="GameStates\PlayState.cs" />
-    <Compile Include="GameStates\WorldGeneratorState.cs" />
+    <Compile Include="Components\GameStates\GameState.cs" />
+    <Compile Include="Components\GameStates\GameStateManager.cs" />
+    <Compile Include="Components\GameStates\MainMenuState.cs" />
+    <Compile Include="Components\GameStates\GUITest.cs" />
+    <Compile Include="Components\GameStates\PlayState.cs" />
+    <Compile Include="Components\GameStates\WorldGeneratorState.cs" />
     <Compile Include="Scripting\CompoundActs\GoToNamedVoxelAct.cs" />
     <Compile Include="Scripting\CompoundActs\MoveItemAct.cs" />
     <Compile Include="Scripting\LeafActs\PutItemInZoneAct.cs" />

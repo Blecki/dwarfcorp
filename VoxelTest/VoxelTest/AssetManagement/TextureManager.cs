@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Remoting.Activation;
 using System.Text;
 using System.IO;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;

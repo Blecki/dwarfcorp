@@ -83,6 +83,14 @@ namespace DwarfCorp
 
             Health = new HealthComponent(Manager, "Health", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
 
+            Inventory = new Inventory(Manager, "Inventory", Physics)
+            {
+                Resources = new ResourceContainer
+                {
+                    MaxResources = 16
+                }
+            };
+
             Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
 
@@ -97,7 +105,7 @@ namespace DwarfCorp
             Shadow.SetCurrentAnimation("sh");
             Physics.Tags.Add("Dwarf");
 
-            DeathEmitter = new EmitterComponent(ContentPaths.Particles.blood_particle, Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
+            DeathEmitter = new EmitterComponent("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 100

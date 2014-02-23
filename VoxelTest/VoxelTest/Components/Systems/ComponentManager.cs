@@ -189,7 +189,6 @@ namespace DwarfCorp
 
             Factions.Update(gameTime);
 
-            List<GameComponent> Removals = new List<GameComponent>();
 
             foreach(GameComponent component in Components.Values)
             {
@@ -203,6 +202,7 @@ namespace DwarfCorp
                     Removals.Add(component);
                     component.IsActive = false;
                     component.IsDead = true;
+                    component.IsVisible = false;
                 }
             }
 

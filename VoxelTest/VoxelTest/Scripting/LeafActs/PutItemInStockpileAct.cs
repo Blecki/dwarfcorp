@@ -23,7 +23,7 @@ namespace DwarfCorp
 
         public void SetPile(Stockpile pile)
         {
-            Agent.Blackboard.SetData<Stockpile>(StockpileName, pile);   
+            Agent.Blackboard.SetData(StockpileName, pile);   
         }
 
 

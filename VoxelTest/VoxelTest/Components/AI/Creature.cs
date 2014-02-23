@@ -30,6 +30,8 @@ namespace DwarfCorp
 
         public NoiseMaker NoiseMaker { get; set; }
 
+        public Inventory Inventory { get; set; }
+
         [JsonIgnore]
         public GraphicsDevice Graphics { get; set; }
 
@@ -214,6 +216,18 @@ namespace DwarfCorp
             {
                 CurrentCharacterMode = CharacterMode.Sleeping;
             }
+        }
+
+
+        public void DrawIndicator(ImageFrame image)
+        {
+            if (!((DateTime.Now - LastIndicatorTime).TotalSeconds >= IndicatorRateLimit))
+            {
+                return;
+            }
+
+            IndicatorManager.DrawIndicator(image, AI.Position + new Vector3(0, 0.5f, 0), 1, 1.5f, new Vector2(image.SourceRect.Width / 2.0f, -image.SourceRect.Height / 2.0f));
+            LastIndicatorTime = DateTime.Now;
         }
 
 

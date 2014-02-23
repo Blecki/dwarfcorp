@@ -22,21 +22,16 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            bool hasStopped = false;
-
-            while(!hasStopped)
+            while(true)
             {
-                if(Agent.Velocity.LengthSquared() < 0.5f)
+                if(Agent.Velocity.LengthSquared() < 1.5f)
                 {
                     yield return Status.Success;
-                    hasStopped = true;
                     break;
                 }
-                else
-                {
-                    Agent.Velocity /= StopForce;
-                    yield return Status.Running;
-                }
+
+                Agent.Velocity /= StopForce;
+                yield return Status.Running;
             }
         }
     }
