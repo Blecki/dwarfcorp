@@ -20,7 +20,7 @@ namespace DwarfCorp
         {
             TargetVoxelName = targetVoxel;
             Name = "Dig!";
-            EnergyLoss = 100.0f;
+            EnergyLoss = 10.0f;
         }
 
         public VoxelRef GetTargetVoxel()
