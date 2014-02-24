@@ -833,7 +833,12 @@ namespace DwarfCorp
 
             if(key == Keys.Escape)
             {
-                OpenPauseMenu();
+                if (!Paused) OpenPauseMenu();
+                else
+                {
+                    Paused = false;
+                    GUI.RootComponent.RemoveChild(PausePanel);
+                }
             }
 
         }
@@ -940,10 +945,9 @@ namespace DwarfCorp
             if(!Paused)
             {
                 Master.Update(Game, gameTime);
-                GUI.Update(gameTime);
-    
             }
 
+            GUI.Update(gameTime);
 
             ChunkManager.Update(gameTime, Camera, GraphicsDevice);
             InstanceManager.Update(gameTime, Camera, GraphicsDevice);
@@ -1016,6 +1020,8 @@ namespace DwarfCorp
 
         public void OpenPauseMenu()
         {
+            Paused = true;
+
             int w = 200;
             int h = 200;
             

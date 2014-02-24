@@ -437,6 +437,7 @@ namespace DwarfCorp
             audioLayout.SetComponentPosition(musicSlider, 1, 2, 1, 1);
             musicSlider.OnValueModified += MusicSlider_OnValueModified;
 
+            // Keys bug?
             GroupBox keysBox = new GroupBox(GUI, Layout, "Keys")
             {
                 IsVisible = false

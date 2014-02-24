@@ -27,6 +27,7 @@ namespace DwarfCorp
             Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
             while(!targetDead)
             {
+                // Find the location of the melee target
                 Creature.LocalTarget = new Vector3(Agent.TargetComponent.GlobalTransform.Translation.X,
                     Creature.Physics.GlobalTransform.Translation.Y,
                     Agent.TargetComponent.GlobalTransform.Translation.Z);
@@ -36,7 +37,7 @@ namespace DwarfCorp
 
                 Creature.Physics.Face(Creature.LocalTarget);
 
-
+                // If we are close to the target, apply force to it
                 if(diff.Length() > 1.0f)
                 {
                     Vector3 output = Creature.Controller.GetOutput(Act.Dt, Creature.LocalTarget, Creature.Physics.GlobalTransform.Translation) * 0.9f;
@@ -49,6 +50,8 @@ namespace DwarfCorp
                     }
                     Creature.Physics.OrientWithVelocity = true;
                 }
+
+                // Else run toward the target
                 else
                 {
                     Creature.Physics.OrientWithVelocity = false;

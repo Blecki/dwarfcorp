@@ -578,12 +578,16 @@ namespace DwarfCorp
             return table;
         }
 
+        // Biar's workspace
         public static GameComponent GenerateSpikeTrap(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
         {
             Matrix matrix = Matrix.CreateRotationY((float) Math.PI * 0.5f);
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("InteriorSheet");
             LocatableComponent table = new LocatableComponent(componentManager, "Spikes", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+
+            EnemySensor sensor = new EnemySensor(componentManager, "EnemySensor", componentManager.RootComponent, matrix, new Vector3(20, 5, 20), Vector3.Zero); // that 20,5,20 is the bounding box
+
             List<Point> frames = new List<Point>
             {
                 new Point(2, 4)
