@@ -11,6 +11,7 @@ namespace DwarfCorp
 
     /// <summary>
     /// Component which fires when an enemy creature enters a box. Attached to other components.
+    /// REQUIRES that the EnemySensor be attached to a creature
     /// </summary>
     [JsonObject(IsReference = true)]
     public class EnemySensor : Sensor

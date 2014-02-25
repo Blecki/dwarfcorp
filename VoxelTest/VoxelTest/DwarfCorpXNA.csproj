@@ -118,6 +118,7 @@
     </Compile>
     <Compile Include="AssetManagement\GameSave\JsonConverters\RectangleConverter.cs" />
     <Compile Include="Components\AI\Inventory.cs" />
+    <Compile Include="Components\AI\Sensors\TrapSensor.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\DrawCommand2D.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\SpriteDrawCommand.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\RectDrawCommand.cs" />
@@ -246,14 +247,14 @@
     </Compile>
     <Compile Include="Components\DeathComponentSpawner.cs" />
     <Compile Include="Components\Graphics\EmitterComponent.cs" />
-    <Compile Include="Components\AI\EnemySensor.cs" />
+    <Compile Include="Components\AI\Sensors\EnemySensor.cs" />
     <Compile Include="Components\AI\FoodComponent.cs" />
     <Compile Include="Components\Graphics\LightComponent.cs" />
     <Compile Include="Components\AI\Grabber.cs" />
     <Compile Include="Components\AI\HealthComponent.cs" />
     <Compile Include="Components\Systems\Message.cs" />
     <Compile Include="Components\Graphics\ParticleEmitter.cs" />
-    <Compile Include="Components\AI\Sensor.cs" />
+    <Compile Include="Components\AI\Sensors\Sensor.cs" />
     <Compile Include="Components\Graphics\ShadowComponent.cs" />
     <Compile Include="Components\Graphics\SinMover.cs" />
     <Compile Include="Components\Graphics\TexturedBoxObject.cs" />
