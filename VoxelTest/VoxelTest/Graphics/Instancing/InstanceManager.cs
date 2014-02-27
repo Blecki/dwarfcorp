@@ -66,6 +66,7 @@ namespace DwarfCorp
             CreateBillboard("deadbush", content, (int) (100 * GameSettings.Default.NumMotes));
             CreateBillboard("vine", content, (int) (100 * GameSettings.Default.NumMotes));
             CreateBillboard("gnarled", content, (int) (100 * GameSettings.Default.NumMotes));
+            CreateBillboard("mushroom", content, (int)(100 * GameSettings.Default.NumMotes));
         }
 
         public FixedInstanceArray GetInstances(string name)

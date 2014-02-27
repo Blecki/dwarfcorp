@@ -69,6 +69,15 @@ namespace DwarfCorp
 
             Health = new HealthComponent(Manager, "Health", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
 
+
+            Inventory = new Inventory(Manager, "Inventory", Physics)
+            {
+                Resources = new ResourceContainer
+                {
+                    MaxResources = 16
+                }
+            };
+
             Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
 

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -290,6 +291,11 @@ namespace DwarfCorp
 
 
             return toReturn;
+        }
+
+        public bool HasFreeStockpile()
+        {
+            return Stockpiles.Any(s => !s.IsFull());
         }
 
         public Item FindNearestItemWithTags(TagList tags, Vector3 location, bool filterReserved)

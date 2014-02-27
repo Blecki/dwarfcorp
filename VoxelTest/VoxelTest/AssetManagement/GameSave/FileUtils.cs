@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using DwarfCorp.GameStates;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Microsoft.Xna.Framework.Graphics;

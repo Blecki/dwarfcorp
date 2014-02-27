@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -28,6 +29,7 @@ namespace DwarfCorp
         public VoxelRef PreviousTargetVoxel { get; set; }
         public List<VoxelRef> CurrentPath { get; set; }
         public bool DrawPath { get; set; }
+        public GatherManager GatherManager { get; set; }
 
 
         [JsonIgnore]
@@ -120,6 +122,7 @@ namespace DwarfCorp
             PlanService planService) :
                 base(creature.Manager, name, creature.Physics)
         {
+            GatherManager = new GatherManager(this);
             Blackboard = new Blackboard();
             Creature = creature;
             TargetVoxel = null;
@@ -169,6 +172,7 @@ namespace DwarfCorp
             }
         }
 
+
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
             if(CurrentAct != null)
@@ -206,7 +210,16 @@ namespace DwarfCorp
 
         public Act ActOnIdle()
         {
-            return new WanderAct(this, 2, 0.5f, 1.0f);
+            if(GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile())
+            {
+                return new WanderAct(this, 2, 0.5f, 1.0f);
+            }
+            else
+            {
+                GatherManager.StockOrder order = GatherManager.StockOrders[0];
+                GatherManager.StockOrders.RemoveAt(0);
+                return new StockResourceAct(this, order.Resource);
+            }
         }
 
 
