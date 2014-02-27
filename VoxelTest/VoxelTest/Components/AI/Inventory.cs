@@ -95,10 +95,13 @@ namespace DwarfCorp
  
         public override void Die()
         {
-            foreach(var resource in Resources)
+            foreach(var resource in Resources.Where(resource => resource.NumResources > 0))
             {
-                EntityFactory.GenerateComponent(resource.ResourceType.ResourceName, GlobalTransform.Translation + MathFunctions.RandVector3Cube() * 0.5f, 
-                    Manager, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics, PlayState.ChunkManager, Manager.Factions, PlayState.Camera);
+                for(int i = 0; i < resource.NumResources; i++)
+                {
+                    EntityFactory.GenerateComponent(resource.ResourceType.ResourceName, GlobalTransform.Translation + MathFunctions.RandVector3Cube() * 0.5f,
+                        Manager, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics, PlayState.ChunkManager, Manager.Factions, PlayState.Camera);
+                }
             }
             base.Die();
         }
