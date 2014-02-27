@@ -48,7 +48,7 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent)
         {
-            return VoxelToKill == null ? 1000 : (agent.AI.Position - VoxelToKill.WorldPosition).LengthSquared();
+            return VoxelToKill == null ? 1000 : (agent.AI.Position - VoxelToKill.WorldPosition).LengthSquared() + 100 * Math.Abs(agent.AI.Position.Y - VoxelToKill.WorldPosition.Y);
         }
     }
 

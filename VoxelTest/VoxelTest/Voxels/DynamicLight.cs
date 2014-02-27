@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using DwarfCorp.GameStates;
 using Newtonsoft.Json;
 
 namespace DwarfCorp

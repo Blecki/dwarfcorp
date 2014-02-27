@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
@@ -189,7 +190,6 @@ namespace DwarfCorp
 
             Factions.Update(gameTime);
 
-            List<GameComponent> Removals = new List<GameComponent>();
 
             foreach(GameComponent component in Components.Values)
             {
@@ -203,6 +203,7 @@ namespace DwarfCorp
                     Removals.Add(component);
                     component.IsActive = false;
                     component.IsDead = true;
+                    component.IsVisible = false;
                 }
             }
 

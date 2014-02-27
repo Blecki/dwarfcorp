@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Threading;
@@ -622,13 +623,13 @@ namespace DwarfCorp
         {
             BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
-            string GrassType = biomeData.GrassVoxel;
+            string grassType = biomeData.GrassVoxel;
 
             for(int i = 0; i < biomeData.Motes.Count; i++)
             {
-                List<Vector3> GrassPositions = new List<Vector3>();
-                List<Color> GrassColors = new List<Color>();
-                List<float> GrassScales = new List<float>();
+                List<Vector3> grassPositions = new List<Vector3>();
+                List<Color> grassColors = new List<Color>();
+                List<float> grassScales = new List<float>();
                 DetailMoteData moteData = biomeData.Motes[i];
 
                 for(int x = 0; x < SizeX; x++)
@@ -640,27 +641,31 @@ namespace DwarfCorp
                             Voxel v = VoxelGrid[x][y][z];
 
 
-                            if(v != null && VoxelGrid[x][y + 1][z] == null && v.Type.Name == GrassType && v.IsVisible && Water[x][y + 1][z].WaterLevel == 0)
+                            if(v == null || VoxelGrid[x][y + 1][z] != null || v.Type.Name != grassType || !v.IsVisible || Water[x][y + 1][z].WaterLevel != 0)
                             {
-                                float vOffset = 0.0f;
-
-                                if(v.RampType != RampType.None)
-                                {
-                                    vOffset = -0.5f;
-                                }
-
-                                float value = MoteNoise.Noise(v.Position.X * moteData.RegionScale, v.Position.Y * moteData.RegionScale, v.Position.Z * moteData.RegionScale);
-                                float s = MoteScaleNoise.Noise(v.Position.X * moteData.RegionScale, v.Position.Y * moteData.RegionScale, v.Position.Z * moteData.RegionScale) * moteData.MoteScale;
-
-                                if(Math.Abs(value) > moteData.SpawnThreshold)
-                                {
-                                    Vector3 smallNoise = ClampVector(VertexNoise.GetRandomNoiseVector(v.Position * moteData.RegionScale * 20.0f) * 20.0f, 0.4f);
-                                    smallNoise.Y = 0.0f;
-                                    GrassPositions.Add(v.Position + new Vector3(0.5f, 1.0f + s * 0.5f + vOffset, 0.5f) + smallNoise);
-                                    GrassColors.Add(new Color((int) SunColors[x][y][z], 128, (int) DynamicColors[x][y][z]));
-                                    GrassScales.Add(s);
-                                }
+                                continue;
                             }
+
+                            float vOffset = 0.0f;
+
+                            if(v.RampType != RampType.None)
+                            {
+                                vOffset = -0.5f;
+                            }
+
+                            float value = MoteNoise.Noise(v.Position.X * moteData.RegionScale, v.Position.Y * moteData.RegionScale, v.Position.Z * moteData.RegionScale);
+                            float s = MoteScaleNoise.Noise(v.Position.X * moteData.RegionScale, v.Position.Y * moteData.RegionScale, v.Position.Z * moteData.RegionScale) * moteData.MoteScale;
+
+                            if(!(Math.Abs(value) > moteData.SpawnThreshold))
+                            {
+                                continue;
+                            }
+
+                            Vector3 smallNoise = ClampVector(VertexNoise.GetRandomNoiseVector(v.Position * moteData.RegionScale * 20.0f) * 20.0f, 0.4f);
+                            smallNoise.Y = 0.0f;
+                            grassPositions.Add(v.Position + new Vector3(0.5f, 1.0f + s * 0.5f + vOffset, 0.5f) + smallNoise);
+                            grassColors.Add(new Color(SunColors[x][y][z], 128, DynamicColors[x][y][z]));
+                            grassScales.Add(s);
                         }
                     }
                 }
@@ -670,8 +675,8 @@ namespace DwarfCorp
                     Motes[moteData.Name] = new List<InstanceData>();
                 }
 
-                Motes[moteData.Name] = EntityFactory.GenerateGrassMotes(GrassPositions,
-                    GrassColors, GrassScales, Manager.Components, Manager.Content, Manager.Graphics, Motes[moteData.Name], moteData.Asset, moteData.Name);
+                Motes[moteData.Name] = EntityFactory.GenerateGrassMotes(grassPositions,
+                    grassColors, grassScales, Manager.Components, Manager.Content, Manager.Graphics, Motes[moteData.Name], moteData.Asset, moteData.Name);
             }
         }
 
@@ -759,7 +764,7 @@ namespace DwarfCorp
                 {
                     foreach(InstanceData mote2 in mote.Value)
                     {
-                        EntityFactory.instanceManager.RemoveInstance(mote.Key, mote2);
+                        EntityFactory.InstanceManager.RemoveInstance(mote.Key, mote2);
                     }
                 }
             }

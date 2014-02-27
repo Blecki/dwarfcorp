@@ -18,7 +18,7 @@ namespace DwarfCorp
 
         public event Modified OnTextModified;
 
-        public delegate void KeyModified(Keys arg);
+        public delegate void KeyModified(Keys prevKey, Keys arg, KeyEdit editor);
 
         public event KeyModified OnKeyModified;
 
@@ -42,7 +42,7 @@ namespace DwarfCorp
             IsEditable = true;
         }
 
-        private void KeyEdit_OnKeyModified(Keys arg)
+        private void KeyEdit_OnKeyModified(Keys prevKey, Keys arg, KeyEdit editor)
         {
         }
 
@@ -52,13 +52,15 @@ namespace DwarfCorp
 
         private void InputManager_KeyPressedCallback(Microsoft.Xna.Framework.Input.Keys key)
         {
-            if(HasKeyboardFocus && IsEditable)
+            if(!HasKeyboardFocus || !IsEditable)
             {
-                Key = key;
-                Text = key.ToString();
-                OnTextModified.Invoke(Text);
-                OnKeyModified.Invoke(Key);
+                return;
             }
+            Keys prevKey = Key;
+            Key = key;
+            Text = key.ToString();
+            OnTextModified.Invoke(Text);
+            OnKeyModified.Invoke(prevKey, Key, this);
         }
 
         private void InputManager_MouseClickedCallback(InputManager.MouseButton button)

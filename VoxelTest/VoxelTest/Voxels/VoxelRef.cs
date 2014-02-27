@@ -1,4 +1,5 @@
 using System;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp

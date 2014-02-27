@@ -156,6 +156,24 @@ namespace DwarfCorp
             }
         }
 
+        // This is intended to be used like Die(), but is garunteed only
+        // to clean up memory, without doing things like animations.
+        public virtual void Delete()
+        {
+            if (IsDead)
+            {
+                return;
+            }
+
+            IsDead = true;
+
+            foreach (GameComponent child in Children)
+            {
+                child.Delete();
+            }
+
+        }
+
         public virtual void Die()
         {
             if(IsDead)
