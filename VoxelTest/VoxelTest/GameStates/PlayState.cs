@@ -234,7 +234,7 @@ namespace DwarfCorp.GameStates
             primitiveLibrary = new PrimitiveLibrary(GraphicsDevice, Content);
             InstanceManager = new InstanceManager();
 
-            EntityFactory.instanceManager = InstanceManager;
+            EntityFactory.InstanceManager = InstanceManager;
             InstanceManager.CreateStatics(Content);
 
             Color[] white = new Color[1];
@@ -825,7 +825,14 @@ namespace DwarfCorp.GameStates
 
             if(key == Keys.Escape)
             {
-                OpenPauseMenu();
+                if(PausePanel != null && PausePanel.IsVisible)
+                {
+                    PausePanel.IsVisible = false;
+                }
+                else
+                {
+                    OpenPauseMenu();   
+                }
             }
 
         }
@@ -1008,6 +1015,7 @@ namespace DwarfCorp.GameStates
 
         public void OpenPauseMenu()
         {
+           
             int w = 200;
             int h = 200;
             
@@ -1050,6 +1058,10 @@ namespace DwarfCorp.GameStates
                     break;
                 case "Quit":
                     StateManager.StateStack.Clear();
+                    MainMenuState menuState = StateManager.GetState<MainMenuState>("MainMenuState");
+                    menuState.IsGameRunning = false;
+                    StateManager.States["PlayState"] = new PlayState(Game, StateManager);
+                    StateManager.CurrentState = "";
                     StateManager.PushState("MainMenuState");
                     break;
 
