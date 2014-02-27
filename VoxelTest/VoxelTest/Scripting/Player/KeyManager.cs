@@ -25,7 +25,7 @@ namespace DwarfCorp
             ControlSettings.Default.SliceUp = this["Slice Up"];
             ControlSettings.Default.SliceDown = this["Slice Down"];
             ControlSettings.Default.SliceSelected = this["Goto Slice"];
-            ControlSettings.Default.SliceSelectedUp = this["Goto Slice +"];
+            ControlSettings.Default.SliceSelectedUp = this["Un-Slice"];
             ControlSettings.Default.GodMode = this["God Mode"];
             ControlSettings.Default.TimeForward = this["Time +"];
             ControlSettings.Default.TimeBackward = this["Time -"];
@@ -46,7 +46,7 @@ namespace DwarfCorp
             this["Slice Up"] = ControlSettings.Default.SliceUp;
             this["Slice Down"] = ControlSettings.Default.SliceDown;
             this["Goto Slice"] = ControlSettings.Default.SliceSelected;
-            this["Goto Slice +"] = ControlSettings.Default.SliceSelectedUp;
+            this["Un-Slice"] = ControlSettings.Default.SliceSelectedUp;
             this["God Mode"] = ControlSettings.Default.GodMode;
             this["Time +"] = ControlSettings.Default.TimeForward;
             this["Time -"] = ControlSettings.Default.TimeBackward;
@@ -84,6 +84,11 @@ namespace DwarfCorp
             KeyboardState keys = Keyboard.GetState();
 
             return keys.IsKeyDown(ControlSettings.Default.CameraMode);
+        }
+
+        public bool IsMapped(Keys keys)
+        {
+            return Buttons.Any(keyPair => keyPair.Value == keys);
         }
     }
 

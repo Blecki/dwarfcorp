@@ -253,7 +253,7 @@ namespace DwarfCorp
                 }
                 else if(Keyboard.GetState().IsKeyDown(ControlSettings.Default.SliceSelectedUp))
                 {
-                    Chunks.ChunkData.SetMaxViewingLevel(v.Position.Y + 1, ChunkManager.SliceMode.Y);
+                    Chunks.ChunkData.SetMaxViewingLevel(Chunks.ChunkData.ChunkSizeY, ChunkManager.SliceMode.Y);
                 }
             }
 

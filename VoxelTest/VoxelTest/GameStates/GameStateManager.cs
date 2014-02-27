@@ -31,6 +31,15 @@ namespace DwarfCorp.GameStates
             StateStack = new List<string>();
         }
 
+        public T GetState<T>(string name) where T : class
+        {
+            if(States.ContainsKey(name) && States[name] is T)
+            {
+                return States[name] as T;
+            }
+            else return null;
+        }
+
         public void PopState()
         {
             if(StateStack.Count > 0)
@@ -94,7 +103,7 @@ namespace DwarfCorp.GameStates
             {
                 States[CurrentState].Update(time);
 
-                if(States[CurrentState].Transitioning != GameState.TransitionMode.Running)
+                if(CurrentState != "" && States[CurrentState].Transitioning != GameState.TransitionMode.Running)
                 {
                     States[CurrentState].TransitionValue += (float) (TransitionSpeed * time.ElapsedGameTime.TotalSeconds);
                     States[CurrentState].TransitionValue = Math.Min(States[CurrentState].TransitionValue, 1.001f);

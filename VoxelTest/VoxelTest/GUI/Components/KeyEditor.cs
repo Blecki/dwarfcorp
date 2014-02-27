@@ -71,26 +71,26 @@ namespace DwarfCorp
 
                 string name = button.Key;
 
-                editor.OnKeyModified += delegate(Keys arg) { editor_OnKeyModified(name, arg); };
+                editor.OnKeyModified += (prevKey, arg, keyedit) => editor_OnKeyModified(name, prevKey, arg, keyedit);
 
                 r++;
             }
         }
 
-        private void editor_OnKeyModified(string name, Keys arg)
+        private void editor_OnKeyModified(string name, Keys prevKey, Keys arg, KeyEdit editor)
         {
-
-            KeyManager[name] = arg;
-            KeyManager.SaveConfigSettings();
-
-            /*
-            if(!IsReserved(arg))
+            if(!KeyManager.IsMapped(arg))
             {
                 KeyManager[name] = arg;
                 KeyManager.SaveConfigSettings();
             }
-             */
+            else
+            {
+                editor.Key = prevKey;
+                editor.Text = prevKey.ToString();
+                Dialog.Popup(GUI, "Key assigned!", "Key " + arg.ToString() + " already assigned.", Dialog.ButtonType.OK);
 
+            }
         }
     }
 

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Management.Instrumentation;
 using System.Security.AccessControl;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 

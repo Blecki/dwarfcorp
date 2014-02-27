@@ -21,7 +21,7 @@ namespace DwarfCorp
     /// </summary>
     internal class EntityFactory
     {
-        public static InstanceManager instanceManager = null;
+        public static InstanceManager InstanceManager = null;
 
         public static LocatableComponent CreateBalloon(Vector3 target, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ShipmentOrder order, Faction master)
         {
@@ -30,8 +30,7 @@ namespace DwarfCorp
                 OrientWithVelocity = false,
                 FixedOrientation = true
             };
-            //CreateIntersectingBillboard(balloon, content.Load<Texture2D>("balloon"), 1.3f, 4, Vector3.Zero, componentManager, content, graphics);
-            //balloon.DrawBoundingBox = true;
+
 
             Texture2D tex = TextureManager.GetTexture(ContentPaths.Entities.Balloon.Sprites.balloon);
             List<Point> points = new List<Point>
@@ -293,19 +292,16 @@ namespace DwarfCorp
 
             try
             {
-                Texture2D spriteSheet = TextureManager.GetTexture(asset);
 
-
-                instanceManager.RemoveInstances(name, motes);
+                InstanceManager.RemoveInstances(name, motes);
 
                 motes.Clear();
 
-                Vector3 avg = Vector3.Zero;
+
                 float minNorm = float.MaxValue;
                 float maxNorm = float.MinValue;
                 foreach(Vector3 p in positions)
                 {
-                    avg += p;
                     if(p.LengthSquared() > maxNorm)
                     {
                         maxNorm = p.LengthSquared();
@@ -316,10 +312,6 @@ namespace DwarfCorp
                     }
                 }
 
-                if(positions.Count > 0)
-                {
-                    avg /= positions.Count;
-                }
 
 
                 for(int i = 0; i < positions.Count; i++)
@@ -327,12 +319,12 @@ namespace DwarfCorp
                     float rot = scales[i] * scales[i];
                     Matrix trans = Matrix.CreateTranslation(positions[i]);
                     Matrix scale = Matrix.CreateScale(scales[i]);
-                    motes.Add(new InstanceData(scale * Matrix.CreateRotationY((float) (rot)) * trans, colors[i], true));
+                    motes.Add(new InstanceData(scale * Matrix.CreateRotationY(rot) * trans, colors[i], true));
                 }
 
                 foreach(InstanceData data in motes.Where(data => data != null))
                 {
-                    instanceManager.AddInstance(name, data);
+                    InstanceManager.AddInstance(name, data);
                 }
 
                 return motes;
