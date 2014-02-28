@@ -1,0 +1,17 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)"
+              GeneratedClassNamespace="DwarfCorp" GeneratedClassName="PlayerSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="CompanyLogo" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Default</Value>
+    </Setting>
+    <Setting Name="CompanyMotto" Type="System.String" Scope="User">
+      <Value Profile="(Default)">My Beard is In the Work!</Value>
+    </Setting>
+    <Setting Name="CompanyName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Greybeard &amp; Sons</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
