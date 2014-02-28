@@ -232,7 +232,7 @@ namespace DwarfCorp
 
             Creature.Physics.ApplyForce(Vector3.Up * Creature.Stats.JumpForce, (float) dt.ElapsedGameTime.TotalSeconds);
             Creature.JumpTimer.Reset(Creature.JumpTimer.TargetTimeSeconds);
-            SoundManager.PlaySound("jump", Creature.Physics.GlobalTransform.Translation);
+            SoundManager.PlaySound(ContentPaths.Audio.jump, Creature.Physics.GlobalTransform.Translation);
         }
 
 
