@@ -8,22 +8,22 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature puts the object currently in its hands into a stockpile.
+    /// A creature puts a specified resource (in its inventory) into a zone.
     /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
-    public class PutItemInStockpileAct : CreatureAct
+    public class PutResourceInZone : CreatureAct
     {
         [JsonIgnore]
-        public Stockpile Pile { get { return GetPile();  } set{ SetPile(value);} }
+        public Zone Zone { get { return GetZone(); } set { SetZone(value); } }
 
-        public Stockpile GetPile()
+        public Zone GetZone()
         {
             return Agent.Blackboard.GetData<Stockpile>(StockpileName);
         }
 
-        public void SetPile(Stockpile pile)
+        public void SetZone(Zone pile)
         {
-            Agent.Blackboard.SetData(StockpileName, pile);   
+            Agent.Blackboard.SetData(StockpileName, pile);
         }
 
 
@@ -43,50 +43,53 @@ namespace DwarfCorp
         public string StockpileName { get; set; }
         public string VoxelName { get; set; }
 
-        public PutItemInStockpileAct(CreatureAIComponent agent, string stockpileName, string voxelname) :
+        [JsonIgnore]
+        public ResourceAmount Resource { get { return GetResource(); } set { SetResource(value); } }
+
+        public ResourceAmount GetResource()
+        {
+            return Agent.Blackboard.GetData<ResourceAmount>(ResourceName);
+        }
+
+        public void SetResource(ResourceAmount amount)
+        {
+            Agent.Blackboard.SetData(ResourceName, amount);
+        }
+
+        public string ResourceName { get; set; }
+
+        public PutResourceInZone(CreatureAIComponent agent, string stockpileName, string voxelname, string resourceName) :
             base(agent)
         {
             VoxelName = voxelname;
             Name = "Put Item";
             StockpileName = stockpileName;
+            ResourceName = resourceName;
         }
 
         public override IEnumerable<Status> Run()
         {
-            if(Pile == null && Agent.TargetStockpile != null)
-            {
-                Pile = Agent.TargetStockpile;
-            }
-            else if(Pile != null)
-            {
-                Agent.TargetStockpile = Pile;
-            }
-            else
+            if (Zone == null)
             {
                 Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                 yield return Status.Fail;
                 yield break;
             }
 
-
-            LocatableComponent grabbed = Creature.Hands.GetFirstGrab();
-
-            if(grabbed == null)
+            List<LocatableComponent> createdItems = Creature.Inventory.RemoveAndCreate(Resource);
+            if(createdItems.Count == 0)
             {
                 Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                 yield return Status.Fail;
             }
-            else if(Pile.AddItem(grabbed, Voxel))
-            {
-                Creature.Hands.UnGrab(grabbed);
 
+            if (Zone.AddItem(createdItems[0], Voxel))
+            {
                 Matrix m = Matrix.Identity;
                 m.Translation = Voxel.WorldPosition + new Vector3(0.5f, 1.5f, 0.5f);
-                grabbed.LocalTransform = m;
-                grabbed.HasMoved = true;
-                grabbed.DrawBoundingBox = false;
-
-
+                createdItems[0].LocalTransform = m;
+                createdItems[0].HasMoved = true;
+                createdItems[0].DrawBoundingBox = false;
                 yield return Status.Success;
             }
             else

@@ -1,23 +1,15 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.Design.Serialization;
 using System.IO;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using BloomPostprocess;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using System.Threading;
-using Newtonsoft.Json;
 
-namespace DwarfCorp
+namespace DwarfCorp.GameStates
 {
 
     /// <summary>
@@ -242,7 +234,7 @@ namespace DwarfCorp
             primitiveLibrary = new PrimitiveLibrary(GraphicsDevice, Content);
             InstanceManager = new InstanceManager();
 
-            EntityFactory.instanceManager = InstanceManager;
+            EntityFactory.InstanceManager = InstanceManager;
             InstanceManager.CreateStatics(Content);
 
             Color[] white = new Color[1];
@@ -833,12 +825,16 @@ namespace DwarfCorp
 
             if(key == Keys.Escape)
             {
-                if (!Paused) OpenPauseMenu();
+                if(PausePanel != null && PausePanel.IsVisible)
+                {
+                    PausePanel.IsVisible = false;
+                }
                 else
                 {
-                    Paused = false;
-                    GUI.RootComponent.RemoveChild(PausePanel);
+                    OpenPauseMenu();   
                 }
+
+
             }
 
         }
@@ -1064,6 +1060,10 @@ namespace DwarfCorp
                     break;
                 case "Quit":
                     StateManager.StateStack.Clear();
+                    MainMenuState menuState = StateManager.GetState<MainMenuState>("MainMenuState");
+                    menuState.IsGameRunning = false;
+                    StateManager.States["PlayState"] = new PlayState(Game, StateManager);
+                    StateManager.CurrentState = "";
                     StateManager.PushState("MainMenuState");
                     break;
 

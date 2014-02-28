@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
-namespace DwarfCorp
+namespace DwarfCorp.GameStates
 {
 
     /// <summary>
@@ -36,6 +29,15 @@ namespace DwarfCorp
             NextState = "";
             TransitionSpeed = 2.0f;
             StateStack = new List<string>();
+        }
+
+        public T GetState<T>(string name) where T : class
+        {
+            if(States.ContainsKey(name) && States[name] is T)
+            {
+                return States[name] as T;
+            }
+            else return null;
         }
 
         public void PopState()
@@ -101,7 +103,7 @@ namespace DwarfCorp
             {
                 States[CurrentState].Update(time);
 
-                if(States[CurrentState].Transitioning != GameState.TransitionMode.Running)
+                if(CurrentState != "" && States[CurrentState].Transitioning != GameState.TransitionMode.Running)
                 {
                     States[CurrentState].TransitionValue += (float) (TransitionSpeed * time.ElapsedGameTime.TotalSeconds);
                     States[CurrentState].TransitionValue = Math.Min(States[CurrentState].TransitionValue, 1.001f);

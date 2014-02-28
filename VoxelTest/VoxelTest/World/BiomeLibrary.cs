@@ -41,7 +41,7 @@ namespace DwarfCorp
             VegetationData forestPines = new VegetationData("pine", 0.008f, 1.0f, 0.5f, 1.7f);
             VegetationData forestBushes = new VegetationData("berrybush", 0.004f, 1.0f, 0.1f, 0.6f);
             DetailMoteData forestGrass = new DetailMoteData("grass", ContentPaths.Entities.Plants.grass, 0.1f, 0.6f, 1.0f);
-            DetailMoteData forestMushrooms = new DetailMoteData("shroom",  ContentPaths.Entities.Plants.mushroom, 0.5f, 0.9f, 0.8f);
+            DetailMoteData forestMushrooms = new DetailMoteData("mushroom",  ContentPaths.Entities.Plants.mushroom, 0.8f, 0.85f, 1.0f);
             BiomeData forest = new BiomeData(Overworld.Biome.Forest)
             {
                 GrassVoxel = "Grass",
