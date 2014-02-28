@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 

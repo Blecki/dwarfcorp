@@ -9,35 +9,35 @@ namespace DwarfCorp
     /// Tells a creature that it should pick up an item and put it in a stockpile.
     /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
-    internal class GatherItemTask : Task
+    internal class StockResourceTask : Task
     {
-        public LocatableComponent EntityToGather = null;
+        public ResourceAmount EntityToGather = null;
         public string ZoneType = "Stockpile";
 
-        public GatherItemTask()
+        public StockResourceTask()
         {
 
         }
 
-        public GatherItemTask(LocatableComponent entity)
+        public StockResourceTask(ResourceAmount entity)
         {
             EntityToGather = entity;
-            Name = "Gather Entity: " + entity.Name + " " + entity.GlobalID;
+            Name = "Stock Entity: " + entity.ResourceType.ResourceName + " " + entity.NumResources;
         }
 
         public override Act CreateScript(Creature creature)
         {
-            return new GatherItemAct(creature.AI, EntityToGather);
+            return new StockResourceAct(creature.AI, EntityToGather);
         }
 
         public override bool IsFeasible(Creature agent)
         {
-            return EntityToGather != null && !EntityToGather.IsDead && !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather);
+            return agent.Faction.HasFreeStockpile();
         }
 
         public override float ComputeCost(Creature agent)
         {
-            return EntityToGather == null  || EntityToGather.IsDead ? 1000 : (agent.AI.Position - EntityToGather.GlobalTransform.Translation).LengthSquared();
+            return 1.0f;
         }
     }
 

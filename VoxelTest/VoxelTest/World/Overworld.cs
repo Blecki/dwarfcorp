@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -199,7 +200,7 @@ namespace DwarfCorp
             {
                 for(int y = 0; y < 1000; y++)
                 {
-                    Map[x, y].Biome = Biome.Grassland;
+                    Map[x, y].Biome = Biome.Forest;
                     Map[x, y].Erosion = 1.0f;
                     Map[x, y].Weathering = 0.0f;
                     Map[x, y].Faults = 1.0f;
