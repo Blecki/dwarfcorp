@@ -19,6 +19,8 @@ namespace DwarfCorp
         {
             OnSensed += TrapSensor_OnSensed;
             Tags.Add("Sensor");
+            DrawBoundingBox = true;
+            FireTimer = new Timer(0.5f, false);
         }
 
         private void TrapSensor_OnSensed(List<LocatableComponent> sensed)
@@ -30,7 +32,10 @@ namespace DwarfCorp
                     Console.WriteLine(t);
                 }
                 List<HealthComponent> hcList = lc.GetChildrenOfType<HealthComponent>();
-                //if (hcList.Count > 0) Console.WriteLine("Sensed Health Component");
+                foreach (HealthComponent hc in hcList)
+                {
+                    hc.Damage(1000000);
+                }
             }
         }
     }

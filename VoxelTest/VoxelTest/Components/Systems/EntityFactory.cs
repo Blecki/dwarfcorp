@@ -584,9 +584,9 @@ namespace DwarfCorp
             Matrix matrix = Matrix.CreateRotationY((float) Math.PI * 0.5f);
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("InteriorSheet");
-            LocatableComponent table = new LocatableComponent(componentManager, "Spikes", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+            LocatableComponent spikeTrap = new LocatableComponent(componentManager, "Spikes", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
 
-            TrapSensor sensor = new TrapSensor(componentManager, "Sensor", componentManager.RootComponent, matrix, new Vector3(20, 5, 20), Vector3.Zero); // that 20,5,20 is the bounding box
+            TrapSensor sensor = new TrapSensor(componentManager, "TrapSensor", spikeTrap, Matrix.Identity, new Vector3(1, 1, 1), Vector3.Zero); // that 20,5,20 is the bounding box
 
             List<Point> frames = new List<Point>
             {
@@ -594,13 +594,13 @@ namespace DwarfCorp
             };
             Animation tableAnimation = new Animation(graphics, spriteSheet, "Spikes", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", table, Matrix.Identity, spriteSheet, false)
+            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", spikeTrap, Matrix.Identity, spriteSheet, false)
             {
                 OrientationType = BillboardSpriteComponent.OrientMode.Fixed
             };
             sprite.AddAnimation(tableAnimation);
 
-            BillboardSpriteComponent sprite2 = new BillboardSpriteComponent(componentManager, "sprite2", table, Matrix.CreateRotationY((float) Math.PI * 0.5f), spriteSheet, false)
+            BillboardSpriteComponent sprite2 = new BillboardSpriteComponent(componentManager, "sprite2", spikeTrap, Matrix.CreateRotationY((float) Math.PI * 0.5f), spriteSheet, false)
             {
                 OrientationType = BillboardSpriteComponent.OrientMode.Fixed
             };
@@ -608,10 +608,10 @@ namespace DwarfCorp
 
 
             tableAnimation.Play();
-            table.Tags.Add("Trap");
-            table.Tags.Add("Spikes");
-            table.CollisionType = CollisionManager.CollisionType.Static;
-            return table;
+            spikeTrap.Tags.Add("Trap");
+            spikeTrap.Tags.Add("Spikes");
+            spikeTrap.CollisionType = CollisionManager.CollisionType.Static;
+            return spikeTrap;
         }
 
         public static GameComponent GenerateTableLike(Vector3 position,
