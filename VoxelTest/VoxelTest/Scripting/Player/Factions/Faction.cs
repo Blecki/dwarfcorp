@@ -254,6 +254,8 @@ namespace DwarfCorp
             return Stockpiles.Any(s => s.ContainsItem(resource));
         }
 
+
+
         public Stockpile GetIntersectingStockpile(Voxel v)
         {
             return Stockpiles.FirstOrDefault(pile => pile.Intersects(v));
@@ -262,6 +264,16 @@ namespace DwarfCorp
         public Stockpile GetIntersectingStockpile(BoundingBox v)
         {
             return Stockpiles.FirstOrDefault(pile => pile.Intersects(v));
+        }
+
+        public List<Stockpile> GetIntersectingStockpiles(BoundingBox v)
+        {
+            return Stockpiles.Where(pile => pile.Intersects(v)).ToList();
+        }
+
+        public List<Room> GetIntersectingRooms(BoundingBox v)
+        {
+            return RoomDesignator.DesignatedRooms.Where(room => room.Intersects(v)).ToList();
         }
 
         public bool IsInStockpile(Voxel v)

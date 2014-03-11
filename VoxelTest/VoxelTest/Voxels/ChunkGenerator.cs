@@ -303,8 +303,8 @@ namespace DwarfCorp
 
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
-
-                    float hNorm = Overworld.GetValue(Overworld.Map, new Vector2(x + origin.X, z + origin.Z) / PlayState.WorldScale, Overworld.ScalarFieldType.Height);
+                    Vector2 pos = new Vector2(x + origin.X, z + origin.Z) / PlayState.WorldScale;
+                    float hNorm = Overworld.GetValue(Overworld.Map, pos, Overworld.ScalarFieldType.Height);
                     float h = MathFunctions.Clamp(hNorm * chunkSizeY, 0.0f, chunkSizeY - 2);
                     int stoneHeight = (int) Math.Max(h - 2, 1);
 
