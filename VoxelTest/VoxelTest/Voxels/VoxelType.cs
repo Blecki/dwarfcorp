@@ -21,9 +21,9 @@ namespace DwarfCorp
         public bool IsBuildable { get; set; }
         public string ParticleType { get; set; }
         public string ExplosionSound { get; set; }
-        public bool SpecialRampTextures { get; set; }
+        public bool HasTransitionTextures { get; set; }
         
-        public Dictionary<RampType, BoxPrimitive> RampPrimitives { get; set; }
+        public Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords> TransitionTextures { get; set; } 
         
         private static short maxID = 0;
 
@@ -43,8 +43,8 @@ namespace DwarfCorp
             IsBuildable = false;
             ParticleType = "puff";
             ExplosionSound = ContentPaths.Audio.gravel;
-            SpecialRampTextures = false;
-            RampPrimitives = new Dictionary<RampType, BoxPrimitive>();
+            HasTransitionTextures = false;
+            TransitionTextures = new Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords>();
 
             if(!TypeList.Contains(this))
             {

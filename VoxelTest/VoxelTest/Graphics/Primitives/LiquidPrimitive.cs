@@ -246,7 +246,7 @@ namespace DwarfCorp
         private static IEnumerable<ExtendedVertex> CreateWaterFace(VoxelRef voxel, BoxFace face, VoxelChunk chunk, int x, int y, int z, int totalDepth, bool top)
         {
             List<ExtendedVertex> toReturn = new List<ExtendedVertex>();
-            toReturn.AddRange(m_canconicalPrimitive.GetFace(face));
+            toReturn.AddRange(m_canconicalPrimitive.GetFace(face, m_canconicalPrimitive.UVs));
 
             Vector3 origin = chunk.Origin + new Vector3(x, y, z);
             List<VoxelRef> neighborsVertex = new List<VoxelRef>();

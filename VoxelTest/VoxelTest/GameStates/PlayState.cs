@@ -109,14 +109,10 @@ namespace DwarfCorp.GameStates
         public static DwarfGUI GUI = null;
 
         // Just a helpful 1x1 white pixel texture
-        private Texture2D pixel = null;
+        private Texture2D pixel;
 
         // Draws lines/boxes etc. to the screen
-        private Drawer2D drawer2D = null;
-
-        // Keeps track of a bunch of code-generated "primitives" (such as boxes, lines and billboard)
-        // to use later. Essentially these are just models
-        private PrimitiveLibrary primitiveLibrary = null;
+        private Drawer2D drawer2D;
 
         // A shader which draws fancy light blooming to the screen
         private BloomComponent bloom;
@@ -353,7 +349,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public void InitializeStaticData()
         {
-            primitiveLibrary = new PrimitiveLibrary(GraphicsDevice, Content);
+            new PrimitiveLibrary(GraphicsDevice, Content);
             InstanceManager = new InstanceManager();
 
             EntityFactory.InstanceManager = InstanceManager;

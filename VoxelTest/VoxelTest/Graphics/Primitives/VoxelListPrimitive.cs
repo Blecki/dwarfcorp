@@ -57,7 +57,7 @@ namespace DwarfCorp
 
             if(Voxel.HasFlag(rampType, RampType.TopFrontRight))
             {
-                toReturn = toReturn || (vertex == VoxelVertex.BackTopRight);
+                toReturn = (vertex == VoxelVertex.BackTopRight);
             }
 
             if(Voxel.HasFlag(rampType, RampType.TopBackRight))
@@ -146,7 +146,7 @@ namespace DwarfCorp
                                 continue;
                             }
 
-                            ExtendedVertex[] faceVertices = v.Primitive.GetFace(face);
+                            ExtendedVertex[] faceVertices = v.Primitive.GetFace(face, v.Primitive.UVs);
                             foreach(VoxelVertex bestKey in faceVertices.Select(vertex => VoxelChunk.GetNearestDelta(vertex.Position)))
                             {
                                 chunk.GetNeighborsVertexDiag(bestKey, x, y, z, diagNeighbors, true);
@@ -1479,9 +1479,7 @@ namespace DwarfCorp
             faceExists.Clear();
             drawFace.Clear();
 
-            List<Voxel> neighbors = new List<Voxel>();
-            List<VoxelRef> neighborRef = new List<VoxelRef>();
-
+  
             for(int x = 0; x < chunk.SizeX; x++)
             {
                 for(int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY); y++)
@@ -1496,17 +1494,15 @@ namespace DwarfCorp
                             continue;
                         }
 
-                        BoxPrimitive primitive = null;
-                        if(!v.Type.SpecialRampTextures)
+                        BoxPrimitive primitive = VoxelLibrary.GetPrimitive(v.Type);
+                        BoxPrimitive.BoxTextureCoords uvs = primitive.UVs;
+
+                        if(v.Type.HasTransitionTextures)
                         {
-                            primitive = VoxelLibrary.GetPrimitive(v.Type);
-                        }
-                        else
-                        {
-                            primitive = v.Type.RampPrimitives.ContainsKey(v.RampType) ? v.Type.RampPrimitives[v.RampType] : v.Primitive;
+                            uvs = v.ComputeTransitionTexture();
                         }
 
-                        float texScale = (float) primitive.UVs.m_cellHeight / (float) primitive.UVs.m_texHeight;
+                        float texScale = (float)uvs.m_cellHeight / (float)uvs.m_texHeight;
 
 
                         for(int i = 0; i < 6; i++)
@@ -1538,9 +1534,10 @@ namespace DwarfCorp
                                 continue;
                             }
 
-                            ExtendedVertex[] faceVertices = primitive.GetFace(face);
+                            ExtendedVertex[] faceVertices = primitive.GetFace(face, uvs);
                             foreach(ExtendedVertex vertex in faceVertices)
                             {
+                                
                                 VoxelVertex bestKey = VoxelChunk.GetNearestDelta(vertex.Position);
                                 //VoxelChunk.CalculateVertexLight(v, bestKey, chunk.Manager, neighborRef, ref colorInfo);
 

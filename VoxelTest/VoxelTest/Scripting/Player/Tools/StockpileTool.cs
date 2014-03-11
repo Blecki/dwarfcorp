@@ -26,31 +26,37 @@ namespace DwarfCorp
         {
             Stockpile existingPile = null;
 
-            BoundingBox boundBox = ComputeBoundingBox(refs);
-            existingPile = Player.Faction.GetIntersectingStockpile(boundBox);
+            IEnumerable<Voxel> voxelsToCheck =  refs.Where(r => r != null).Select(r => r.GetVoxel(false)).Where(v => v != null);
 
-            foreach (Voxel v in refs.Where(r => r != null).Select(r => r.GetVoxel(false)).Where(v => v != null))
+            // If left clicking, we are creating a new stockpile
+            if(button == InputManager.MouseButton.Left)
             {
-                if (button == InputManager.MouseButton.Left)
+                List<Stockpile> existingPiles = null;
+                List<Room> existingRooms = null;
+
+                BoundingBox boundBox = ComputeBoundingBox(refs);
+                existingPiles = Player.Faction.GetIntersectingStockpiles(boundBox);
+                existingRooms = Player.Faction.GetIntersectingRooms(boundBox);
+
+
+                // Dont' even attempt to build
+                // stockpiles where multiple ones exist
+                if (existingPiles.Count > 1 || existingRooms.Count > 0)
                 {
-                    if (v.RampType != RampType.None)
-                    {
-                        continue;
-                    }
+                    return;
+                }
+
+                // Only add to the first found existing stockpile if it already
+                // exists
+                if (existingPiles.Count == 1)
+                {
+                    existingPile = existingPiles.First();
+                }
 
 
-                    if (Player.Faction.IsInStockpile(v))
-                    {
-                        continue;
-                    }
 
-                    Stockpile thisPile = Player.Faction.GetIntersectingStockpile(v);
-
-                    if (existingPile == null)
-                    {
-                        existingPile = thisPile;
-                    }
-
+                foreach (Voxel v in voxelsToCheck.Where(v => v.RampType == RampType.None && !Player.Faction.IsInStockpile(v) && v.IsTopEmpty()))
+                {
                     if (existingPile != null)
                     {
                         existingPile.AddVoxel(v.GetReference());
@@ -64,13 +70,12 @@ namespace DwarfCorp
                         existingPile = newPile;
                     }
                 }
-                else
+            }
+            // Otherwise, destroy existing voxels.
+            else
+            {
+                foreach(Voxel v in voxelsToCheck.Where(v => Player.Faction.IsInStockpile(v)))
                 {
-                    if (v == null || !Player.Faction.IsInStockpile(v))
-                    {
-                        continue;
-                    }
-
                     existingPile = Player.Faction.GetIntersectingStockpile(v);
 
                     if (existingPile == null)
@@ -86,6 +91,8 @@ namespace DwarfCorp
                     }
                 }
             }
+
+       
         }
 
         public override void Update(DwarfGame game, GameTime time)

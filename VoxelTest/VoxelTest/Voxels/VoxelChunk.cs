@@ -75,7 +75,11 @@ namespace DwarfCorp
         private static readonly Dictionary<VoxelVertex, List<Vector3>> m_vertexSuccessors = new Dictionary<VoxelVertex, List<Vector3>>();
         private static readonly Dictionary<VoxelVertex, List<Vector3>> m_vertexSuccessorsDiag = new Dictionary<VoxelVertex, List<Vector3>>();
         private static readonly Dictionary<BoxFace, VoxelVertex[]> m_faceVertices = new Dictionary<BoxFace, VoxelVertex[]>();
-        private static readonly List<Vector3> m_manhattanSuccessors = new List<Vector3>();
+        private static List<Vector3> m_manhattanSuccessors;
+        private static List<Vector3> m_manhattan2DSuccessors;
+        private static int[] manhattan2DMultipliers;
+
+
         public static ColorGradient m_sunGradient = new ColorGradient(new Color(70, 70, 70), new Color(255, 254, 224), 255);
         public static ColorGradient m_ambientGradient = new ColorGradient(new Color(50, 50, 50), new Color(255, 255, 255), 255);
         public static ColorGradient m_caveGradient = new ColorGradient(new Color(8, 12, 17), new Color(41, 54, 76), 255);
@@ -118,13 +122,33 @@ namespace DwarfCorp
             m_vertexDeltas[(int) VoxelVertex.FrontBottomRight] = new Vector3(1.0f, 0, 1.0f);
             m_vertexDeltas[(int) VoxelVertex.FrontTopRight] = new Vector3(1.0f, 1.0f, 1.0f);
 
+            m_manhattanSuccessors = new List<Vector3>
+            {
+                new Vector3(1.0f, 0, 0),
+                new Vector3(-1.0f, 0, 0),
+                new Vector3(0, -1.0f, 0),
+                new Vector3(0, 1.0f, 0),
+                new Vector3(0, 0, -1.0f),
+                new Vector3(0, 0, 1.0f)
+            };
 
-            m_manhattanSuccessors.Add(new Vector3(1.0f, 0, 0));
-            m_manhattanSuccessors.Add(new Vector3(-1.0f, 0, 0));
-            m_manhattanSuccessors.Add(new Vector3(0, -1.0f, 0));
-            m_manhattanSuccessors.Add(new Vector3(0, 1.0f, 0));
-            m_manhattanSuccessors.Add(new Vector3(0, 0, -1.0f));
-            m_manhattanSuccessors.Add(new Vector3(0, 0, 1.0f));
+            m_manhattan2DSuccessors = new List<Vector3>
+            {
+                new Vector3(-1.0f, 0, 0),
+                new Vector3(1.0f, 0, 0),
+                new Vector3(0, 0, -1.0f),
+                new Vector3(0, 0, 1.0f)
+            };
+
+            manhattan2DMultipliers = new[]
+            {
+                2,
+                8,
+                4,
+                1
+            };
+
+
 
             m_faceDeltas[(int) BoxFace.Top] = new Vector3(0.5f, 0.0f, 0.5f);
             m_faceDeltas[(int) BoxFace.Bottom] = new Vector3(0.5f, 1.0f, 0.5f);
@@ -1494,6 +1518,99 @@ namespace DwarfCorp
                     }
                 }
             }
+        }
+
+        public TransitionTexture ComputeTransitionValue(int x, int y, int z)
+        {
+            
+            Voxel vox = VoxelGrid[x][y][z];
+            Voxel[] neighbors = new Voxel[m_manhattan2DSuccessors.Count];
+            Get2DManhattanNeighbors(neighbors, x, y, z);
+
+            int value = 0;
+            for(int i = 0; i < neighbors.Length; i++)
+            {
+                if(neighbors[i] != null && neighbors[i].Type == vox.Type)
+                {
+                    value += manhattan2DMultipliers[i];
+                }
+            }
+
+            return (TransitionTexture)value;
+        }
+
+        public void Get2DManhattanNeighbors(Voxel[] neighbors, int x, int y, int z)
+        {
+            List<Vector3> succ = m_manhattan2DSuccessors;
+            int count = succ.Count;
+            bool isInterior = IsInterior(x, y, z);
+            for (int i = 0; i < count; i++)
+            {
+                Vector3 successor = succ[i];
+                int nx = (int)successor.X + x;
+                int ny = (int)successor.Y + y;
+                int nz = (int)successor.Z + z;
+
+                if(isInterior || IsCellValid(nx, ny, nz))
+                {
+                    Voxel v = VoxelGrid[nx][ny][nz];
+                    if(v != null)
+                    {
+                        neighbors[i] = v;
+                    }
+                }
+                else
+                {
+                    Point3 chunkID = ID;
+                    if(nx >= SizeZ)
+                    {
+                        chunkID.X += 1;
+                        nx = 0;
+                    }
+                    else if(nx < 0)
+                    {
+                        chunkID.X -= 1;
+                        nx = SizeX - 1;
+                    }
+
+                    if(ny >= SizeY)
+                    {
+                        chunkID.Y += 1;
+                        ny = 0;
+                    }
+                    else if(ny < 0)
+                    {
+                        chunkID.Y -= 1;
+                        ny = SizeY - 1;
+                    }
+
+                    if(nz >= SizeZ)
+                    {
+                        chunkID.Z += 1;
+                        nz = 0;
+                    }
+                    else if(nz < 0)
+                    {
+                        chunkID.Z -= 1;
+                        nz = SizeZ - 1;
+                    }
+
+
+                    if(!Manager.ChunkData.ChunkMap.ContainsKey(chunkID))
+                    {
+                        continue;
+                    }
+
+                    VoxelChunk chunk = Manager.ChunkData.ChunkMap[chunkID];
+                    Voxel n = chunk.VoxelGrid[nx][ny][nz];
+
+                    if(n != null)
+                    {
+                        neighbors[i] = n;
+                    }
+                }
+            }
+
         }
 
         public void GetNeighborsSuccessors(List<Vector3> succ, int x, int y, int z, List<VoxelRef> toReturn, bool considerEmpties)

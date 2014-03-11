@@ -36,6 +36,15 @@ namespace DwarfCorp
         {
         }
 
+        public static void CreateTransitionUVs(GraphicsDevice graphics, Texture2D textureMap, int width, int height, Point top, Point sides, Point bottom, Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords> transitionTextures)
+        {
+            for(int i = 0; i < 16; i++)
+            {
+                Point topPoint = new Point(top.X + i, top.Y);
+                transitionTextures[(TransitionTexture)i] = new BoxPrimitive.BoxTextureCoords(textureMap.Width, textureMap.Height, width, height, sides, sides, topPoint, bottom, sides, sides);
+            }
+        }
+
         public static BoxPrimitive CreatePrimitive(GraphicsDevice graphics, Texture2D textureMap, int width, int height, Point top, Point sides, Point bottom)
         {
             BoxPrimitive.BoxTextureCoords coords = new BoxPrimitive.BoxTextureCoords(textureMap.Width, textureMap.Height, width, height, sides, sides, top, bottom, sides, sides);
@@ -154,10 +163,11 @@ namespace DwarfCorp
                 RampSize = 0.5f,
                 IsBuildable = false,
                 ParticleType = "dirt_particle",
-                SpecialRampTextures = true
+                HasTransitionTextures = true
             };
 
             //GrassType.RampPrimitives[RampType.None] = GrassCube;
+            /*
             grassType.RampPrimitives[RampType.All] = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 4), new Point(2, 0), new Point(2, 0));
             grassType.RampPrimitives[RampType.Front] = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 3), new Point(2, 0), new Point(2, 0));
             grassType.RampPrimitives[RampType.Back] = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 3), new Point(2, 0), new Point(2, 0));
@@ -171,6 +181,9 @@ namespace DwarfCorp
             grassType.RampPrimitives[RampType.TopFrontLeft] = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 4), new Point(2, 0), new Point(2, 0));
             grassType.RampPrimitives[RampType.TopBackLeft] = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 4), new Point(2, 0), new Point(2, 0));
             grassType.RampPrimitives[RampType.TopBackRight] = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 4), new Point(2, 0), new Point(2, 0));
+             */
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 8), new Point(2, 0), new Point(2, 0), grassType.TransitionTextures);
+            
 
 
             VoxelType frostType = new VoxelType
@@ -184,10 +197,11 @@ namespace DwarfCorp
                 RampSize = 0.5f,
                 IsBuildable = false,
                 ParticleType = "dirt_particle",
-                SpecialRampTextures = true
+                HasTransitionTextures = true
             };
 
             //FrostType.RampPrimitives[RampType.None] = FrostCube;
+            /*
             frostType.RampPrimitives[RampType.All] = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 4 + 2), new Point(2, 0), new Point(2, 0));
             frostType.RampPrimitives[RampType.Front] = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 3 + 2), new Point(2, 0), new Point(2, 0));
             frostType.RampPrimitives[RampType.Back] = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 3 + 2), new Point(2, 0), new Point(2, 0));
@@ -201,11 +215,16 @@ namespace DwarfCorp
             frostType.RampPrimitives[RampType.TopFrontLeft] = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 4 + 2), new Point(2, 0), new Point(2, 0));
             frostType.RampPrimitives[RampType.TopBackLeft] = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 4 + 2), new Point(2, 0), new Point(2, 0));
             frostType.RampPrimitives[RampType.TopBackRight] = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 4 + 2), new Point(2, 0), new Point(2, 0));
+             */
 
-            emptyType = new VoxelType();
-            emptyType.Name = "empty";
-            emptyType.ReleasesResource = false;
-            emptyType.IsBuildable = false;
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 9), new Point(2, 0), new Point(2, 0), frostType.TransitionTextures);
+
+            emptyType = new VoxelType
+            {
+                Name = "empty",
+                ReleasesResource = false,
+                IsBuildable = false
+            };
 
 
             VoxelType dirtType = new VoxelType

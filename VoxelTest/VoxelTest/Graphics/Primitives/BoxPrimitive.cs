@@ -70,7 +70,7 @@ namespace DwarfCorp
             public int m_texHeight;
             public int m_cellWidth;
             public int m_cellHeight;
-            public Vector4[] Bounds = new Vector4[NumFaces];
+            public Vector4[] Bounds = new Vector4[NumVertices];
 
             public BoxTextureCoords()
             {
@@ -148,11 +148,11 @@ namespace DwarfCorp
                     float normalizeY = (float) (cells[face].Rect.Height) / (float) (totalTextureHeight);
                     Vector2 normalizedCoords = new Vector2(pixelCoords.X / (float) totalTextureWidth, pixelCoords.Y / (float) totalTextureHeight);
 
-                    Bounds[face] = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f, normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
 
                     for(int vert = 0; vert < 6; vert++)
                     {
                         int index = vert + face * 6;
+                        Bounds[index] = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f, normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
 
                         if(!cells[face].FlipXY)
                         {
@@ -249,11 +249,11 @@ namespace DwarfCorp
                     Vector2 pixelCoords = new Vector2(cells[face].X * cellWidth, cells[face].Y * cellHeight);
                     Vector2 normalizedCoords = new Vector2(pixelCoords.X / (float) totalTextureWidth, pixelCoords.Y / (float) totalTextureHeight);
 
-                    Bounds[face] = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f, normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
-
                     for(int vert = 0; vert < 6; vert++)
                     {
                         int index = vert + face * 6;
+                        Bounds[index] = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f, normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
+
                         m_uvs[index] = new Vector2(normalizedCoords.X + baseCoords[index].X * normalizeX, normalizedCoords.Y + baseCoords[index].Y * normalizeY);
                     }
                 }
@@ -286,55 +286,68 @@ namespace DwarfCorp
         }
 
 
-        public ExtendedVertex[] GetFace(BoxFace face)
+        public ExtendedVertex[] GetFace(BoxFace face, BoxPrimitive.BoxTextureCoords uvs)
         {
             switch(face)
             {
                 case BoxFace.Back:
-                    return GetBackFace();
+                    return GetBackFace(uvs);
                 case BoxFace.Front:
-                    return GetFrontFace();
+                    return GetFrontFace(uvs);
                 case BoxFace.Left:
-                    return GetLeftFace();
+                    return GetLeftFace(uvs);
                 case BoxFace.Right:
-                    return GetRightFace();
+                    return GetRightFace(uvs);
                 case BoxFace.Top:
-                    return GetTopFace();
+                    return GetTopFace(uvs);
                 case BoxFace.Bottom:
-                    return GetBottomFace();
+                    return GetBottomFace(uvs);
             }
 
             return null;
         }
 
-        public ExtendedVertex[] GetFrontFace()
+        public ExtendedVertex[] GetFace(BoxPrimitive.BoxTextureCoords uvs, int offset)
         {
-            return Vertices.SubArray(0, 6);
+            ExtendedVertex[] toReturn = Vertices.SubArray(offset, 6);
+
+            for(int i = 0; i < 6; i++)
+            {
+                toReturn[i].TextureCoordinate = uvs.m_uvs[i + offset];
+                toReturn[i].TextureBounds = uvs.Bounds[i + offset];
+            }
+
+            return toReturn;
         }
 
-        public ExtendedVertex[] GetBackFace()
+        public ExtendedVertex[] GetFrontFace(BoxPrimitive.BoxTextureCoords uvs)
         {
-            return Vertices.SubArray(6, 6);
+            return GetFace(uvs, 0);
         }
 
-        public ExtendedVertex[] GetTopFace()
+        public ExtendedVertex[] GetBackFace(BoxPrimitive.BoxTextureCoords uvs)
         {
-            return Vertices.SubArray(12, 6);
+            return GetFace(uvs, 6);
         }
 
-        public ExtendedVertex[] GetBottomFace()
+        public ExtendedVertex[] GetTopFace(BoxPrimitive.BoxTextureCoords uvs)
         {
-            return Vertices.SubArray(18, 6);
+            return GetFace(uvs, 12);
         }
 
-        public ExtendedVertex[] GetLeftFace()
+        public ExtendedVertex[] GetBottomFace(BoxPrimitive.BoxTextureCoords uvs)
         {
-            return Vertices.SubArray(24, 6);
+            return GetFace(uvs, 18);
         }
 
-        public ExtendedVertex[] GetRightFace()
+        public ExtendedVertex[] GetLeftFace(BoxPrimitive.BoxTextureCoords uvs)
         {
-            return Vertices.SubArray(30, 6);
+            return GetFace(uvs, 24);
+        }
+
+        public ExtendedVertex[] GetRightFace(BoxPrimitive.BoxTextureCoords uvs)
+        {
+            return GetFace(uvs, 30);
         }
 
         private void CreateVerticies()
