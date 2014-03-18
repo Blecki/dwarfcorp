@@ -158,7 +158,7 @@ namespace DwarfCorp
                         {
                             for(int i = 0; i < amount.NumResources; i++)
                             {
-                                Vector3 pos = Physics.GlobalTransform.Translation + new Vector3((float) PlayState.Random.NextDouble() - 0.5f, (float) PlayState.Random.NextDouble() - 0.5f, (float) PlayState.Random.NextDouble() - 0.5f) * 2;
+                                Vector3 pos = Physics.GlobalTransform.Translation + MathFunctions.RandVector3Cube() * 2;
                                 LocatableComponent loc = EntityFactory.GenerateComponent(amount.ResourceType.ResourceName, pos, Manager, chunks.Content, chunks.Graphics, chunks, Manager.Factions, camera);
                                 Faction.AddGatherDesignation(loc);
                                 Faction.Economy.CurrentMoney -= amount.ResourceType.MoneyValue * Faction.Economy.BuyMultiplier;

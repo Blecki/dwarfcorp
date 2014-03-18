@@ -359,7 +359,7 @@ namespace DwarfCorp
         public static float[,] CalculateGaussianKernel(int W, double sigma)
         {
             float[,] kernel = new float[W, W];
-            double mean = W / 2;
+            double mean = W / 2.0;
             float sum = 0.0f;
             for(int x = 0; x < W; ++x)
             {
@@ -387,16 +387,14 @@ namespace DwarfCorp
             float[,] b = new float[width, height];
             float[,] kernel = CalculateGaussianKernel(10, 0.75f);
 
-            int kernelSizeX = 10;
-            int kernelSizeY = 10;
+            const int kernelSizeX = 10;
+            const int kernelSizeY = 10;
 
 
-            for(int x = 0; x < width; x++)
+            for(int x = kernelSizeX; x < width - kernelSizeX; x++)
             {
-                for(int y = 0; y < height; y++)
+                for(int y =kernelSizeY; y < height - kernelSizeY; y++)
                 {
-                    b[x, y] = 0;
-
                     for(int dx = 0; dx < kernelSizeX; dx++)
                     {
                         for(int dy = 0; dy < kernelSizeY; dy++)
@@ -404,23 +402,11 @@ namespace DwarfCorp
                             int nx = x + dx - kernelSizeX / 2;
                             int ny = y + dy - kernelSizeY / 2;
 
-                            if(nx >= 0 && nx < width && ny >= 0 && ny < height)
-                            {
-                                float a = array[nx, ny].GetValue(type);
-
-                                float h = kernel[dx, dy] * a;
-                                b[x, y] += h;
-                            }
-                            else
-                            {
-                                b[x, y] = array[x, y].GetValue(type);
-                                goto exitloop;
-                            }
+                            float a = array[nx, ny].GetValue(type);
+                            float h = kernel[dx, dy] * a;
+                            b[x, y] += h;
                         }
                     }
-
-                    exitloop:
-                    continue;
                 }
             }
 
@@ -452,8 +438,8 @@ namespace DwarfCorp
             return max;
         }
 
-        private static Perlin xDistort = new Perlin(PlayState.Random.Next());
-        private static Perlin yDistort = new Perlin(PlayState.Random.Next());
+        private static readonly Perlin XDistort = new Perlin(PlayState.Random.Next());
+        private static readonly Perlin YDistort = new Perlin(PlayState.Random.Next());
 
         public static void Distort(int width, int height, float distortAmount, float distortScale, ScalarFieldType fieldType)
         {
@@ -463,8 +449,8 @@ namespace DwarfCorp
             {
                 for(int y = 0; y < height; y++)
                 {
-                    buffer[x, y] = GetValue(Map, new Vector2(x, y) + new Vector2((xDistort.Noise(x * distortScale, y * distortScale, 0) * 2.0f - 1.0f) * distortAmount,
-                        (yDistort.Noise(x * distortScale, y * distortScale, 0) * 2.0f - 1.0f) * distortAmount), fieldType);
+                    buffer[x, y] = GetValue(Map, new Vector2(x, y) + new Vector2((XDistort.Noise(x * distortScale, y * distortScale, 0) * 2.0f - 1.0f) * distortAmount,
+                        (YDistort.Noise(x * distortScale, y * distortScale, 0) * 2.0f - 1.0f) * distortAmount), fieldType);
                 }
             }
 
@@ -504,7 +490,7 @@ namespace DwarfCorp
             float q21 = map[(int) x2, (int) y1].GetValue(fieldType);
             float q22 = map[(int) x2, (int) y2].GetValue(fieldType);
 
-            return MathFunctions.LinearCombination(x, y, x1, y1, x2, y2, q11, q22, q21, q22);
+            return MathFunctions.LinearCombination(x, y, x1, y1, x2, y2, q11, q12, q21, q22);
         }
 
 
@@ -522,35 +508,27 @@ namespace DwarfCorp
         {
             float x = (wx) / globalScale;
             float y = (wy) / globalScale;
-            float width = worldWidth;
-            float height = worldHeight;
 
-            float mountainWidth = 0.04f;
+            const float mountainWidth = 0.04f;
             float mountain = (float) Math.Pow(noise(x, y, 0, mountainWidth), 1);
-            float continentSize = 0.03f;
+            const float continentSize = 0.03f;
             float continent = noise(x, y, 10, continentSize);
-            float hillSize = 0.1f;
+            const float hillSize = 0.1f;
             float hill = noise(x, y, 20, hillSize) * 0.02f;
-            float smallNoiseSize = 0.15f;
+            const float smallNoiseSize = 0.15f;
             float smallnoise = noise(x, y, 100, smallNoiseSize) * 0.01f;
-            float cliffiness = 0;
-
-            float dx = abs(x - width / 2);
-            float dy = abs(y - height / 2);
-
-            float squareDist = sqrt(pow(dx, 2) + pow(dy, 2));
+            const float cliffiness = 0;
 
             float h = pow(clamp((continent * mountain) + hill, 0, 1), 1);
-
             h += smallnoise + cliffiness;
-
             h += 0.4f;
 
             if(erode)
             {
-                h *= LinearInterpolate(new Vector2(x, y), Map, ScalarFieldType.Faults);
-                h += LinearInterpolate(new Vector2(x, y), Map, ScalarFieldType.Weathering);
-                h *= LinearInterpolate(new Vector2(x, y), Map, ScalarFieldType.Erosion);
+                Vector2 vec = new Vector2(x, y);
+                h *= LinearInterpolate(vec, Map, ScalarFieldType.Faults);
+                h += LinearInterpolate(vec, Map, ScalarFieldType.Weathering);
+                h *= LinearInterpolate(vec, Map, ScalarFieldType.Erosion);
             }
 
             h = clamp(h, 0, 1);
@@ -581,26 +559,36 @@ namespace DwarfCorp
             if(JetGradient == null)
             {
                 List<ColorStop> stops = new List<ColorStop>();
-                ColorStop first = new ColorStop();
-                first.m_color = new Color(0, 255, 255);
-                first.m_position = 0.0f;
+                ColorStop first = new ColorStop
+                {
+                    m_color = new Color(0, 255, 255),
+                    m_position = 0.0f
+                };
 
-                ColorStop second = new ColorStop();
-                second.m_color = new Color(0, 0, 255);
-                second.m_position = 0.2f;
+                ColorStop second = new ColorStop
+                {
+                    m_color = new Color(0, 0, 255),
+                    m_position = 0.2f
+                };
 
 
-                ColorStop third = new ColorStop();
-                third.m_color = new Color(255, 255, 0);
-                third.m_position = 0.4f;
+                ColorStop third = new ColorStop
+                {
+                    m_color = new Color(255, 255, 0),
+                    m_position = 0.4f
+                };
 
-                ColorStop fourth = new ColorStop();
-                fourth.m_color = new Color(255, 0, 0);
-                fourth.m_position = 0.8f;
+                ColorStop fourth = new ColorStop
+                {
+                    m_color = new Color(255, 0, 0),
+                    m_position = 0.8f
+                };
 
-                ColorStop fifth = new ColorStop();
-                fifth.m_color = new Color(255, 255, 255);
-                fifth.m_position = 1.0f;
+                ColorStop fifth = new ColorStop
+                {
+                    m_color = new Color(255, 255, 255),
+                    m_position = 1.0f
+                };
 
                 stops.Add(first);
                 stops.Add(second);
@@ -612,40 +600,40 @@ namespace DwarfCorp
                 JetGradient = new ColorGradient(stops);
             }
 
-            int DEEP_WATER = 0;
-            int WATER = 1;
-            int SAND = 2;
-            int PLAINS = 3;
-            int HILLS = 4;
-            int MOUNTAINS = 5;
-            int PEAKS = 6;
-            int SNOWCAP = 7;
-            int COLDFOREST = 8;
-            int FOREST = 9;
-            int GRASSLAND = 10;
-            int JUNGLE = 11;
-            int TUNDRA = 12;
-            int DESERT = 13;
-            int RIVER = 14;
-            int VOLCANO = 15;
+            const int deepWater = 0;
+            const int water = 1;
+            const int sand = 2;
+            const int plains = 3;
+            const int hills = 4;
+            const int mountains = 5;
+            const int peaks = 6;
+            const int snowcap = 7;
+            const int coldforest = 8;
+            const int forest = 9;
+            const int grassland = 10;
+            const int jungle = 11;
+            const int tundra = 12;
+            const int desert = 13;
+            const int river = 14;
+            const int volcano = 15;
 
             Color[] colorIndex = new Color[16];
-            colorIndex[DEEP_WATER] = new Color(30, 30, 150);
-            colorIndex[WATER] = new Color(50, 50, 255);
-            colorIndex[SAND] = new Color(180, 180, 100);
-            colorIndex[PLAINS] = new Color(50, 180, 40);
-            colorIndex[HILLS] = new Color(20, 100, 20);
-            colorIndex[MOUNTAINS] = new Color(80, 70, 50);
-            colorIndex[PEAKS] = new Color(100, 100, 100);
-            colorIndex[SNOWCAP] = new Color(200, 200, 200);
-            colorIndex[COLDFOREST] = new Color(200, 255, 200);
-            colorIndex[FOREST] = new Color(50, 150, 50);
-            colorIndex[GRASSLAND] = new Color(50, 255, 40);
-            colorIndex[JUNGLE] = new Color(20, 100, 20);
-            colorIndex[TUNDRA] = new Color(200, 200, 200);
-            colorIndex[DESERT] = new Color(180, 180, 100);
-            colorIndex[RIVER] = new Color(80, 80, 255);
-            colorIndex[VOLCANO] = new Color(255, 200, 0);
+            colorIndex[deepWater] = new Color(30, 30, 150);
+            colorIndex[water] = new Color(50, 50, 255);
+            colorIndex[sand] = new Color(180, 180, 100);
+            colorIndex[plains] = new Color(50, 180, 40);
+            colorIndex[hills] = new Color(20, 100, 20);
+            colorIndex[mountains] = new Color(80, 70, 50);
+            colorIndex[peaks] = new Color(100, 100, 100);
+            colorIndex[snowcap] = new Color(200, 200, 200);
+            colorIndex[coldforest] = new Color(200, 255, 200);
+            colorIndex[forest] = new Color(50, 150, 50);
+            colorIndex[grassland] = new Color(50, 255, 40);
+            colorIndex[jungle] = new Color(20, 100, 20);
+            colorIndex[tundra] = new Color(200, 200, 200);
+            colorIndex[desert] = new Color(180, 180, 100);
+            colorIndex[river] = new Color(80, 80, 255);
+            colorIndex[volcano] = new Color(255, 200, 0);
 
             int stepX = map.GetLength(0) / width;
             int stepY = map.GetLength(1) / height;
@@ -660,17 +648,17 @@ namespace DwarfCorp
                     float h1 = map[x, y].GetValue(type);
                     if(h1 < 0.1f)
                     {
-                        index = DEEP_WATER;
+                        index = deepWater;
                     }
                     else if(h1 >= 0.1f && h1 <= 0.17f)
                     {
-                        index = WATER;
+                        index = water;
                     }
                     else if(displayMode == "Biomes")
                     {
                         if(map[x, y].Water == WaterType.River)
                         {
-                            index = RIVER;
+                            index = river;
                         }
                         else
                         {
@@ -679,25 +667,25 @@ namespace DwarfCorp
                             switch(biome)
                             {
                                 case Biome.ColdForest:
-                                    index = COLDFOREST;
+                                    index = coldforest;
                                     break;
                                 case Biome.Forest:
-                                    index = FOREST;
+                                    index = forest;
                                     break;
                                 case Biome.Grassland:
-                                    index = GRASSLAND;
+                                    index = grassland;
                                     break;
                                 case Biome.Jungle:
-                                    index = JUNGLE;
+                                    index = jungle;
                                     break;
                                 case Biome.Tundra:
-                                    index = TUNDRA;
+                                    index = tundra;
                                     break;
                                 case Biome.Desert:
-                                    index = DESERT;
+                                    index = desert;
                                     break;
                                 case Biome.Volcano:
-                                    index = VOLCANO;
+                                    index = volcano;
                                     break;
                             }
                         }
@@ -706,31 +694,31 @@ namespace DwarfCorp
                     {
                         if(map[x, y].Water == WaterType.River)
                         {
-                            index = RIVER;
+                            index = river;
                         }
                         else if(map[x, y].Water == WaterType.Volcano)
                         {
-                            index = VOLCANO;
+                            index = volcano;
                         }
                         else if(h1 >= 0.2f && h1 < 0.21f)
                         {
-                            index = SAND;
+                            index = sand;
                         }
                         else if(h1 >= 0.21f && h1 < 0.4f)
                         {
-                            index = PLAINS;
+                            index = plains;
                         }
                         else if(h1 >= 0.4f && h1 < 0.6f)
                         {
-                            index = HILLS;
+                            index = hills;
                         }
                         else if(h1 >= 0.6f && h1 < 0.9f)
                         {
-                            index = MOUNTAINS;
+                            index = mountains;
                         }
                         else
                         {
-                            index = SNOWCAP;
+                            index = snowcap;
                         }
                     }
 
@@ -755,7 +743,7 @@ namespace DwarfCorp
                 imageMutex.WaitOne();
             }
 
-            worldMap.SetData<Color>(worldData);
+            worldMap.SetData(worldData);
 
             if(imageMutex != null)
             {

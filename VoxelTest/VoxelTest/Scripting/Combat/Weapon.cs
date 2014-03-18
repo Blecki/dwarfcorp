@@ -33,7 +33,7 @@ namespace DwarfCorp
         {
             Name = name;
             DamageAmount = damage;
-            HitTimer = new Timer(time + (float) PlayState.Random.NextDouble() * time * 0.5f, false);
+            HitTimer = new Timer(time + MathFunctions.Rand() * time * 0.5f, false);
             Range = range;
             Creature = creature;
             Creature.Creature.Weapon = this;

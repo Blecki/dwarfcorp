@@ -31,10 +31,27 @@ namespace DwarfCorp
 
         public float Tiredness
         {
-            get { return 0.25f / Constitution; }
+            get
+            {
+                if(CanSleep)
+                {
+                    return 0.25f / Constitution;
+                }
+                else
+                {
+                    return 0.0f;
+                }
+            }
         } 
 
         public float HungerResistance { get { return Constitution; } }
+
+        public bool CanSleep { get; set; }
+
+        public CreatureStats()
+        {
+            CanSleep = true;
+        }
     }
 
 }

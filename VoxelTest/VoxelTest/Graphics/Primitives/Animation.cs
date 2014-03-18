@@ -64,7 +64,7 @@ namespace DwarfCorp
             IsPlaying = false;
             Loops = loops;
             Tint = tint;
-            FrameHZ = frameHZ + (float) PlayState.Random.NextDouble();
+            FrameHZ = frameHZ + MathFunctions.Rand();
             FrameTimer = 0.0f;
             WorldWidth = worldWidth;
             WorldHeight = worldHeight;

@@ -60,7 +60,7 @@ namespace DwarfCorp.GameStates
             MountainScale = 1.0f;
             NoiseScale = 1.0f;
             NumFaults = 10;
-            NumRains = 5000;
+            NumRains = 8000;
             NumRivers = 100;
             NumVolcanoes = 3;
             GenerateWorldName();
@@ -468,9 +468,9 @@ namespace DwarfCorp.GameStates
 
             Progress.Value = 0.05f;
 
-            int numRains = 5000;
-            int rainLength = 5000;
-            int numRainSamples = 2;
+            int numRains = (int)NumRains;
+            int rainLength = 250;
+            int numRainSamples = 3;
 
             for(int x = 0; x < width; x++)
             {
@@ -609,7 +609,7 @@ namespace DwarfCorp.GameStates
                     rands.Add(1.0f);
 
                     line.Add(v);
-                    v += new Vector2((float) PlayState.Random.NextDouble() - 0.5f, (float) PlayState.Random.NextDouble() - 0.5f) * 50;
+                    v += new Vector2(MathFunctions.Rand() - 0.5f, MathFunctions.Rand() - 0.5f) * 50;
                     line.Add(v);
                     vPoints.Add(line);
                 }
@@ -664,7 +664,7 @@ namespace DwarfCorp.GameStates
             {
                 for(int y = 0; y < height; y++)
                 {
-                    buffer[x, y] = heightMap[x, y].Height;
+                    buffer[x, y] = heightMap[x, y].Faults;
                 }
             }
 
@@ -692,35 +692,29 @@ namespace DwarfCorp.GameStates
 
                 currentPos = bestPos;
 
-                float erosionRate = 0.9999f;
+                const float erosionRate = 0.99f;
                 Vector2 velocity = Vector2.Zero;
-                float velocityMag = 0;
                 for(int j = 0; j < rainLength; j++)
                 {
                     Vector2 g = Overworld.GetMinNeighbor(buffer, currentPos);
 
                     float h = Overworld.GetHeight(buffer, currentPos);
 
-                    if(h < 0.19f)
+                    if(h < 0.18f || g.LengthSquared() < 1e-12)
                     {
                         break;
                     }
 
-                    if(g.Length() < 1e-3)
-                    {
-                        g = new Vector2((float) PlayState.Random.NextDouble() - 0.5f, (float) PlayState.Random.NextDouble() - 0.5f);
-                    }
+                    Overworld.MinBlend(Overworld.Map, currentPos, erosionRate * Overworld.GetValue(Overworld.Map, currentPos, Overworld.ScalarFieldType.Erosion), Overworld.ScalarFieldType.Erosion);
 
-                    float f = erosionRate;
-                    Overworld.MinBlend(Overworld.Map, currentPos, f * Overworld.GetValue(Overworld.Map, currentPos, Overworld.ScalarFieldType.Erosion), Overworld.ScalarFieldType.Erosion);
-
-                    velocity += g * 0.1f;
-                    velocityMag = velocity.Length();
-                    currentPos += velocity * 0.0005f;
+                    velocity = 0.1f * g + 0.7f * velocity + 0.2f * MathFunctions.RandVector2Circle();
+                    //velocity += g * 0.01f;
+                    //velocity.Length();
+                    currentPos += velocity;
                 }
             }
 
-
+            /*
             int numReverseRains = 200;
 
             for(int i = 0; i < numReverseRains; i++)
@@ -756,7 +750,7 @@ namespace DwarfCorp.GameStates
                         break;
                     }
 
-                    g += new Vector2((float) PlayState.Random.NextDouble() - 0.5f, (float) PlayState.Random.NextDouble() - 0.5f);
+                    g += new Vector2(MathFunctions.Rand() - 0.5f, MathFunctions.Rand() - 0.5f);
 
                     float h = Overworld.GetHeight(buffer, currentPos);
 
@@ -781,6 +775,7 @@ namespace DwarfCorp.GameStates
                     }
                 }
             }
+             */
         }
 
         private void Weather(int width, int height, float T, Vector2[] neighbs, float[,] buffer)

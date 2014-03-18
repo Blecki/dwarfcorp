@@ -49,7 +49,7 @@ namespace DwarfCorp
                 WanderTime.Update(Act.LastTime);
                 if(TurnTime.Update(Act.LastTime) || TurnTime.HasTriggered)
                 {
-                    Creature.LocalTarget = new Vector3((float) PlayState.Random.NextDouble() * Radius - Radius / 2.0f, 0.0f, (float) PlayState.Random.NextDouble() * Radius - Radius / 2.0f) + oldPosition;
+                    Creature.LocalTarget = new Vector3(MathFunctions.Rand() * Radius - Radius / 2.0f, 0.0f, MathFunctions.Rand() * Radius - Radius / 2.0f) + oldPosition;
                 }
 
                 Vector3 output = Creature.Controller.GetOutput((float) Act.LastTime.ElapsedGameTime.TotalSeconds, Creature.LocalTarget, Creature.Physics.GlobalTransform.Translation);
