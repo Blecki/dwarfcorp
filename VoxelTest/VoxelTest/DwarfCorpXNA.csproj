@@ -117,6 +117,8 @@
       <DependentUpon>AssetSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="AssetManagement\GameSave\JsonConverters\RectangleConverter.cs" />
+    <Compile Include="Components\AI\Bird.cs" />
+    <Compile Include="Components\AI\BirdAI.cs" />
     <Compile Include="Components\AI\GatherManager.cs" />
     <Compile Include="Components\AI\Inventory.cs" />
     <Compile Include="GameStates\CompanyMakerState.cs" />
@@ -151,6 +153,7 @@
     <Compile Include="Scripting\CompoundActs\FindBedAndSleepAct.cs" />
     <Compile Include="Scripting\CompoundActs\StockResourceAct.cs" />
     <Compile Include="Scripting\LeafActs\ConsumeItemAct.cs" />
+    <Compile Include="Scripting\LeafActs\FlyWanderAct.cs" />
     <Compile Include="Scripting\LeafActs\PutResourceInZoneAct.cs" />
     <Compile Include="Scripting\LeafActs\SleepAct.cs" />
     <Compile Include="Scripting\LeafActs\StashAct.cs" />

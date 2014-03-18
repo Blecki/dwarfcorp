@@ -81,6 +81,7 @@ namespace DwarfCorp
             "palm",
             "berrybush",
             "apple_tree",
+            "Bird",
             "Dwarf",
             "DarkDwarf",
             "Goblin",
@@ -98,8 +99,14 @@ namespace DwarfCorp
             "PotionTable"
         };
 
-        public static LocatableComponent GenerateComponent(string id, Vector3 position,
-            ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ChunkManager chunks, FactionLibrary factions, Camera camera)
+        public static LocatableComponent GenerateComponent(string id, 
+            Vector3 position,
+            ComponentManager componentManager, 
+            ContentManager content, 
+            GraphicsDevice graphics, 
+            ChunkManager chunks, 
+            FactionLibrary factions,
+            Camera camera)
         {
             switch(id)
             {
@@ -125,7 +132,7 @@ namespace DwarfCorp
                 case "berrybush":
                 case "pine":
                 {
-                    float s = (float) PlayState.Random.NextDouble() * 0.8f + 0.5f;
+                    float s = MathFunctions.Rand() * 0.8f + 0.5f;
                     return (LocatableComponent) GenerateVegetation(id, s, 1.0f, position, componentManager, content, graphics);
                 }
                 case "Dwarf":
@@ -158,6 +165,8 @@ namespace DwarfCorp
                     return (LocatableComponent) GenerateBook(position, componentManager, content, graphics, componentManager.RootComponent);
                 case "Potion":
                     return (LocatableComponent) GeneratePotions(position, componentManager, content, graphics, componentManager.RootComponent);
+                case "Bird":
+                    return (LocatableComponent) GenerateBird(position, componentManager, content, graphics, chunks);
                 default:
                     return null;
             }
@@ -188,7 +197,7 @@ namespace DwarfCorp
 
             stone.Tags.Add("Mana");
             stone.Tags.Add("Resource");
-            SinMover sinMover = new SinMover(0.05f, 2.0f, (float) PlayState.Random.NextDouble() * 3.0f, sprite);
+            SinMover sinMover = new SinMover(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
             return stone;
         }
 
@@ -217,7 +226,7 @@ namespace DwarfCorp
 
             stone.Tags.Add("Stone");
             stone.Tags.Add("Resource");
-            SinMover sinMover = new SinMover(0.05f, 2.0f, (float) PlayState.Random.NextDouble() * 3.0f, sprite);
+            SinMover sinMover = new SinMover(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
             return stone;
         }
 
@@ -246,7 +255,7 @@ namespace DwarfCorp
 
             stone.Tags.Add("Gold");
             stone.Tags.Add("Resource");
-            SinMover sinMover = new SinMover(0.05f, 2.0f, (float) PlayState.Random.NextDouble() * 3.0f, sprite);
+            SinMover sinMover = new SinMover(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
             return stone;
         }
 
@@ -275,7 +284,7 @@ namespace DwarfCorp
 
             stone.Tags.Add("Iron");
             stone.Tags.Add("Resource");
-            SinMover sinMover = new SinMover(0.05f, 2.0f, (float) PlayState.Random.NextDouble() * 3.0f, sprite);
+            SinMover sinMover = new SinMover(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
             return stone;
         }
 
@@ -360,7 +369,7 @@ namespace DwarfCorp
 
             dirt.Tags.Add("Dirt");
             dirt.Tags.Add("Resource");
-            SinMover sinMover = new SinMover(0.05f, 2.0f, (float) PlayState.Random.NextDouble() * 3.0f, sprite);
+            SinMover sinMover = new SinMover(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
             return dirt;
         }
 
@@ -389,7 +398,7 @@ namespace DwarfCorp
 
             wood.Tags.Add("Wood");
             wood.Tags.Add("Resource");
-            SinMover sinMover = new SinMover(0.05f, 2.0f, (float) PlayState.Random.NextDouble() * 3.0f, sprite);
+            SinMover sinMover = new SinMover(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
             return wood;
         }
 
@@ -421,7 +430,7 @@ namespace DwarfCorp
             apple.Tags.Add("Resource");
             apple.Tags.Add("Food");
 
-            SinMover sinMover = new SinMover(0.05f, 2.0f, (float) PlayState.Random.NextDouble() * 3.0f, sprite);
+            SinMover sinMover = new SinMover(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
 
             return apple;
         }
@@ -745,7 +754,7 @@ namespace DwarfCorp
                 new Point(2, 2),
                 new Point(1, 2)
             };
-            Animation lampAnimation = new Animation(graphics, spriteSheet, "Flag", 32, 32, frames, true, Color.White, 5.0f + (float) PlayState.Random.NextDouble(), 1f, 1.0f, false);
+            Animation lampAnimation = new Animation(graphics, spriteSheet, "Flag", 32, 32, frames, true, Color.White, 5.0f + MathFunctions.Rand(), 1f, 1.0f, false);
 
             BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", flag, Matrix.Identity, spriteSheet, false)
             {
@@ -843,6 +852,7 @@ namespace DwarfCorp
             tree.Tags.Add("Tree");
             tree.Tags.Add("EmitsWood");
 
+            /*
             List<LocatableComponent> woods = new List<LocatableComponent>();
 
             for(int i = 0; i < (int) (treeSize * 10); i++)
@@ -857,6 +867,22 @@ namespace DwarfCorp
             }
 
             DeathComponentSpawner spawner = new DeathComponentSpawner(componentManager, "Component Spawner", tree, Matrix.Identity, new Vector3(treeSize * 2, treeSize, treeSize * 2), Vector3.Zero, woods);
+            */
+
+            Inventory inventory = new Inventory(componentManager, "Inventory", tree)
+            {
+                Resources = new ResourceContainer
+                {
+                    MaxResources = (int) (treeSize * 10)
+                }
+            };
+
+            inventory.Resources.AddResource(new ResourceAmount()
+            {
+                NumResources = (int) (treeSize * 10),
+                ResourceType = ResourceLibrary.Resources["Wood"]
+            });
+            
 
             EmitterComponent emitter = new EmitterComponent("Leaves", componentManager, "LeafEmitter", tree, Matrix.Identity, new Vector3(treeSize * 2, treeSize, treeSize * 2), Vector3.Zero);
 
@@ -880,7 +906,7 @@ namespace DwarfCorp
             tree.Tags.Add("Bush");
             tree.Tags.Add("EmitsFood");
 
-
+            /*
             List<LocatableComponent> apples = new List<LocatableComponent>();
 
             for(int i = 0; i < (int) (bushSize * 5); i++)
@@ -898,6 +924,20 @@ namespace DwarfCorp
             apples.AddRange(apples);
 
             DeathComponentSpawner spawner = new DeathComponentSpawner(componentManager, "Component Spawner", tree, Matrix.Identity, new Vector3(bushSize * 4, bushSize * 2, bushSize * 4), Vector3.Zero, apples);
+            */
+            Inventory inventory = new Inventory(componentManager, "Inventory", tree)
+            {
+                Resources = new ResourceContainer
+                {
+                    MaxResources = (int)(bushSize * 5)
+                }
+            };
+
+            inventory.Resources.AddResource(new ResourceAmount()
+            {
+                NumResources = (int)(bushSize * 5),
+                ResourceType = ResourceLibrary.Resources["Apple"]
+            });
 
             tree.AddToOctree = true;
             tree.CollisionType = CollisionManager.CollisionType.Static;
@@ -956,6 +996,17 @@ namespace DwarfCorp
             };
             return new Dwarf(stats, allies, planService, faction, componentManager, "Dwarf", chunkManager, graphics, content, TextureManager.GetTexture("DwarfSheet"), position).Physics;
         }
+
+        public static GameComponent GenerateBird(Vector3 position,
+            ComponentManager componentManager,
+            ContentManager content,
+            GraphicsDevice graphics,
+            ChunkManager chunkManager)
+        {
+          return new Bird(ContentPaths.Entities.Animals.Birds.GetRandomBird(), position, componentManager, chunkManager, graphics, content, "Bird").Physics;
+        }
+
+    
     }
 
 }

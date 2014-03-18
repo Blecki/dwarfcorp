@@ -170,7 +170,7 @@ namespace DwarfCorp
             switch(type)
             {
                 case LiquidType.Lava:
-                    return 0.1f + (float) PlayState.Random.NextDouble() * 0.1f;
+                    return 0.1f + MathFunctions.Rand() * 0.1f;
                 case LiquidType.Water:
                     return 0.5f;
             }

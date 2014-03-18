@@ -23,7 +23,7 @@ namespace DwarfCorp
         }
 
         public Inventory(ComponentManager manager, string name, LocatableComponent parent) :
-            base(manager, name, parent, Matrix.Identity, new Vector3(1, 1, 1), Vector3.Zero)
+            base(manager, name, parent, Matrix.Identity, parent.BoundingBox.Extents(), parent.BoundingBoxPos)
         {
             
         }
@@ -99,8 +99,13 @@ namespace DwarfCorp
             {
                 for(int i = 0; i < resource.NumResources; i++)
                 {
-                    EntityFactory.GenerateComponent(resource.ResourceType.ResourceName, GlobalTransform.Translation + MathFunctions.RandVector3Cube() * 0.5f,
-                        Manager, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics, PlayState.ChunkManager, Manager.Factions, PlayState.Camera);
+                   PhysicsComponent item =  EntityFactory.GenerateComponent(resource.ResourceType.ResourceName, MathFunctions.RandVector3Box(GetBoundingBox()), Manager, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics, PlayState.ChunkManager, Manager.Factions, PlayState.Camera) as PhysicsComponent;
+
+                    if(item != null)
+                    {
+                        item.Velocity = MathFunctions.RandVector3Cube() * 5.0f;
+                    }
+                   
                 }
             }
             base.Die();

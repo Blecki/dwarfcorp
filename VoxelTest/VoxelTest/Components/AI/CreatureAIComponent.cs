@@ -208,7 +208,7 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
 
-        public Act ActOnIdle()
+        public virtual Act ActOnIdle()
         {
             if(GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile())
             {

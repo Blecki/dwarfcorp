@@ -12,6 +12,16 @@ namespace DwarfCorp
     /// </summary>
     public static class MathFunctions
     {
+        public static float Rand()
+        {
+            return (float)PlayState.Random.NextDouble();
+        }
+
+        public static float Rand(float min, float max)
+        {
+            return Rand() * (max - min) + min;
+        }
+
         public static Vector3 GetClosestPointOnLineSegment(Vector3 A, Vector3 B, Vector3 P)
         {
             Vector3 AP = P - A; //Vector from A to P   
@@ -180,14 +190,22 @@ namespace DwarfCorp
 
         public static Vector3 RandVector3Cube()
         {
-            return new Vector3((float) PlayState.Random.NextDouble() - 0.5f,
-                (float) PlayState.Random.NextDouble() - 0.5f,
-                (float) PlayState.Random.NextDouble() - 0.5f);
+            return new Vector3(Rand() - 0.5f, Rand() - 0.5f, Rand() - 0.5f);
+        }
+
+        public static Vector3 RandVector3Box(float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
+        {
+            return new Vector3(Rand(minX, maxX), Rand(minY, maxY), Rand(minZ, maxZ));
+        }
+
+        public static Vector3 RandVector3Box(BoundingBox box)
+        {
+            return RandVector3Box(box.Min.X, box.Max.X, box.Min.Y, box.Max.Y, box.Min.Z, box.Max.Z);
         }
 
         public static Vector2 RandVector2Square()
         {
-            return new Vector2((float) PlayState.Random.NextDouble() - 0.5f, (float) PlayState.Random.NextDouble() - 0.5f);
+            return new Vector2(Rand() - 0.5f, Rand() - 0.5f);
         }
 
         public static Vector2 RandVector2Circle()

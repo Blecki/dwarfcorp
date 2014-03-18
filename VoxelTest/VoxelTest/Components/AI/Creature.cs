@@ -90,7 +90,8 @@ namespace DwarfCorp
             Attacking,
             Hurt,
             Sleeping,
-            Swimming
+            Swimming,
+            Flying
         }
 
         [OnDeserialized]
@@ -173,31 +174,28 @@ namespace DwarfCorp
                 {
                     IsOnGround = true;
 
-                    if(CurrentCharacterMode != CharacterMode.Attacking)
-                    {
-                        CurrentCharacterMode = CharacterMode.Idle;
-                    }
+                    CurrentCharacterMode = CharacterMode.Idle;
                 }
                 else
                 {
                     IsOnGround = false;
                     if(Physics.Velocity.Y > 0.1)
                     {
-                        if(CurrentCharacterMode != CharacterMode.Attacking)
+                        if (CurrentCharacterMode == CharacterMode.Walking || CurrentCharacterMode == CharacterMode.Idle)
                         {
                             CurrentCharacterMode = CharacterMode.Jumping;
                         }
                     }
                     else if(Physics.Velocity.Y < -0.1)
                     {
-                        if(CurrentCharacterMode != CharacterMode.Attacking)
+                        if (CurrentCharacterMode == CharacterMode.Walking || CurrentCharacterMode == CharacterMode.Idle)
                         {
                             CurrentCharacterMode = CharacterMode.Falling;
                         }
                     }
                     else
                     {
-                        if(CurrentCharacterMode != CharacterMode.Attacking)
+                        if(CurrentCharacterMode == CharacterMode.Walking || CurrentCharacterMode == CharacterMode.Idle)
                         {
                             currentCharacterMode = CharacterMode.Idle;
                         }
@@ -209,7 +207,10 @@ namespace DwarfCorp
                 if(IsOnGround)
                 {
                     IsOnGround = false;
-                    CurrentCharacterMode = Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling;
+                    if(CurrentCharacterMode != CharacterMode.Flying)
+                    {
+                        CurrentCharacterMode = Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling;
+                    }
                 }
             }
 

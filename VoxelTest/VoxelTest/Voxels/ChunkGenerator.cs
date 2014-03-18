@@ -215,7 +215,7 @@ namespace DwarfCorp
                             continue;
                         }
 
-                        float treeSize = (float) PlayState.Random.NextDouble() * veg.SizeVariance + veg.MeanSize;
+                        float treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
                         EntityFactory.GenerateVegetation(veg.Name, treeSize, veg.VerticalOffset, chunk.Origin + new Vector3(x, y, z), components, content, graphics);
 
 

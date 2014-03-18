@@ -47,12 +47,16 @@ namespace DwarfCorp
 
         public int Depth { get; set; }
 
+        public object ObjectLock = new object();
 
         public void ComputeObjectsToNodesRecursive(Dictionary<IBoundedObject, OctreeNode> nodeMap)
         {
-            foreach(IBoundedObject obj in Objects)
+            lock(ObjectLock)
             {
-                nodeMap[obj] = this;
+                foreach(IBoundedObject obj in Objects)
+                {
+                    nodeMap[obj] = this;
+                }
             }
 
             foreach(OctreeNode node in Children.Where(node => node != null))
@@ -107,9 +111,12 @@ namespace DwarfCorp
                 return default(T);
             }
 
-            foreach(IBoundedObject o in Objects.Where(o => o is T && o.GetBoundingBox().Contains(vect) != ContainmentType.Disjoint))
+            lock(ObjectLock)
             {
-                return (T) o;
+                foreach(IBoundedObject o in Objects.Where(o => o is T && o.GetBoundingBox().Contains(vect) != ContainmentType.Disjoint))
+                {
+                    return (T) o;
+                }
             }
 
             for(int i = 0; i < 8; i++)
@@ -143,9 +150,12 @@ namespace DwarfCorp
                     continue;
                 }
 
-                foreach(IBoundedObject o in t.Objects.Where(o => o is T && o.GetBoundingBox().Intersects(box)))
+                lock(t.ObjectLock)
                 {
-                    set.Add((T) o);
+                    foreach(IBoundedObject o in t.Objects.Where(o => o is T && o.GetBoundingBox().Intersects(box)))
+                    {
+                        set.Add((T) o);
+                    }
                 }
 
 
@@ -206,9 +216,12 @@ namespace DwarfCorp
                     continue;
                 }
 
-                foreach(IBoundedObject o in t.Objects.Where(o => o is T && o.GetBoundingBox().Intersects(box)))
+                lock(t.ObjectLock)
                 {
-                    set.Add((T) o);
+                    foreach(IBoundedObject o in t.Objects.Where(o => o is T && o.GetBoundingBox().Intersects(box)))
+                    {
+                        set.Add((T) o);
+                    }
                 }
 
 
@@ -233,9 +246,12 @@ namespace DwarfCorp
                 OctreeNode t = stack.Peek();
                 if(t.Bounds.Intersects(box))
                 {
-                    foreach(IBoundedObject o in t.Objects.Where(o => o is T && o.GetBoundingBox().Intersects(box)))
+                    lock(t.ObjectLock)
                     {
-                        set.Add((T) o);
+                        foreach(IBoundedObject o in t.Objects.Where(o => o is T && o.GetBoundingBox().Intersects(box)))
+                        {
+                            set.Add((T) o);
+                        }
                     }
 
 
@@ -266,9 +282,12 @@ namespace DwarfCorp
                     continue;
                 }
 
-                foreach(IBoundedObject o in t.Objects.Where(o => o is T && o.GetBoundingBox().Intersects(box) != null))
+                lock(t.ObjectLock)
                 {
-                    set.Add((T) o);
+                    foreach(IBoundedObject o in t.Objects.Where(o => o is T && o.GetBoundingBox().Intersects(box) != null))
+                    {
+                        set.Add((T) o);
+                    }
                 }
 
 
@@ -483,10 +502,13 @@ namespace DwarfCorp
 
             foreach(IBoundedObject component in toAdd)
             {
-                if(!Objects.Contains(component))
+                lock(ObjectLock)
                 {
-                    Objects.Add(component);
-                    Tree.ObjectsToNodes[component] = this;
+                    if(!Objects.Contains(component))
+                    {
+                        Objects.Add(component);
+                        Tree.ObjectsToNodes[component] = this;
+                    }
                 }
             }
 
@@ -564,14 +586,19 @@ namespace DwarfCorp
                         break;
                 }
 
-
-                foreach(IBoundedObject o in Objects)
+                lock(ObjectLock)
                 {
-                    Children[i].AddObjectRecursive(o);
+                    foreach(IBoundedObject o in Objects)
+                    {
+                        Children[i].AddObjectRecursive(o);
+                    }
                 }
             }
 
-            Objects.Clear();
+            lock(ObjectLock)
+            {
+                Objects.Clear();
+            }
         }
 
         public void Draw(Color color, float width)

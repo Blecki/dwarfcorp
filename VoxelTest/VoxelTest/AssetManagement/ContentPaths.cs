@@ -1,4 +1,6 @@
-﻿namespace DwarfCorp
+﻿using DwarfCorp.GameStates;
+
+namespace DwarfCorp
 {
 
     /// <summary>
@@ -41,6 +43,28 @@
         }
         public class Entities
         {
+            public class Animals
+            {
+                public class Birds
+                {
+                    public static string bird_prefix = Program.CreatePath("Entities", "Animals", "Birds", "bird");
+                    public static string bird0 = Program.CreatePath("Entities", "Animals", "Birds", "bird0");
+                    public static string bird1 = Program.CreatePath("Entities", "Animals", "Birds", "bird1");
+                    public static string bird2 = Program.CreatePath("Entities", "Animals", "Birds", "bird2");
+                    public static string bird3 = Program.CreatePath("Entities", "Animals", "Birds", "bird3");
+                    public static string bird4 = Program.CreatePath("Entities", "Animals", "Birds", "bird4");
+                    public static string bird5 = Program.CreatePath("Entities", "Animals", "Birds", "bird5");
+                    public static string bird6 = Program.CreatePath("Entities", "Animals", "Birds", "bird6");
+                    public static string bird7 = Program.CreatePath("Entities", "Animals", "Birds", "bird7");
+
+                    // Generates a random bird asset string from bird0 to bird7.
+                    public static string GetRandomBird()
+                    {
+                        return bird_prefix + PlayState.Random.Next(8);
+                    }
+                }
+            }
+
             public class Balloon
             {
                 public class Sprites

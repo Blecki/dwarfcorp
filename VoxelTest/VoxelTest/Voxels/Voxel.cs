@@ -203,7 +203,7 @@ namespace DwarfCorp
             SoundManager.PlaySound(Type.ExplosionSound, Position);
             if(Type.ReleasesResource)
             {
-                float randFloat = (float) PlayState.Random.NextDouble();
+                float randFloat = MathFunctions.Rand();
 
                 if(randFloat < Type.ProbabilityOfRelease)
                 {

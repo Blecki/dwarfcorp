@@ -43,9 +43,9 @@ namespace DwarfCorp
                 Vector3 ext = GetBoundingBox().Max - GetBoundingBox().Min;
                 for(int i = 0; i < BoxTriggerTimes; i++)
                 {
-                    Vector3 triggerPos = GetBoundingBox().Min + new Vector3((float) PlayState.Random.NextDouble() * ext.X,
-                        (float) PlayState.Random.NextDouble() * ext.Y,
-                        (float) PlayState.Random.NextDouble() * ext.Z)
+                    Vector3 triggerPos = GetBoundingBox().Min + new Vector3(MathFunctions.Rand() * ext.X,
+                        MathFunctions.Rand() * ext.Y,
+                        MathFunctions.Rand() * ext.Z)
                         ;
                     PlayState.ParticleManager.Emitters[Emitter].Trigger(TriggerAmount, triggerPos, Tint);
                 }

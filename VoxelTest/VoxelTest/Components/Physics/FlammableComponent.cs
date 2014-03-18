@@ -47,7 +47,7 @@ namespace DwarfCorp
 
             if((from currentVoxel in voxels
                 where currentVoxel != null
-                select currentVoxel.GetWater(chunks)).Any(cell => cell.WaterLevel > 0 && cell.Type == LiquidType.Lava))
+                select currentVoxel.GetWater(chunks)).Any(cell => cell != null && cell.WaterLevel > 0 && cell.Type == LiquidType.Lava))
             {
                 Heat += 100;
             }
@@ -73,7 +73,7 @@ namespace DwarfCorp
                 for(int i = 0; i < numFlames; i++)
                 {
                     Vector3 extents = (LocParent.BoundingBox.Max - LocParent.BoundingBox.Min);
-                    Vector3 randomPoint = LocParent.BoundingBox.Min + new Vector3(extents.X * (float) PlayState.Random.NextDouble(), extents.Y * (float) PlayState.Random.NextDouble(), extents.Z * (float) PlayState.Random.NextDouble());
+                    Vector3 randomPoint = LocParent.BoundingBox.Min + new Vector3(extents.X * MathFunctions.Rand(), extents.Y * MathFunctions.Rand(), extents.Z * MathFunctions.Rand());
                     PlayState.ParticleManager.Trigger("flame", randomPoint, Color.White, 1);
                 }
             }
