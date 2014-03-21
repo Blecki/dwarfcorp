@@ -449,7 +449,7 @@
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
       <Output>C:\CurrentClasses\Capstone\DC\VoxelTest\VoxelTest\bin\x86\Debug\Content\Terrain\terrain_tiles.xnb</Output>
-      <Time>2014-01-19T21:14:44.8538939-05:00</Time>
+      <Time>2014-03-18T20:04:41.3055351-04:00</Time>
     </Item>
     <Item>
       <Source>Terrain\terrain_illumination.png</Source>
@@ -732,6 +732,87 @@
       <Options>IntermediateFile, DontCacheImportedData</Options>
       <Output>obj\x86\Debug\Models\sphereLowPoly_0.xml</Output>
       <Time>2014-01-19T21:14:44.7398874-05:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Birds\bird0.png</Source>
+      <Name>Entities\Animals\Birds\bird0</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\CurrentClasses\Capstone\DC\VoxelTest\VoxelTest\bin\x86\Debug\Content\Entities\Animals\Birds\bird0.xnb</Output>
+      <Time>2014-03-17T21:39:54.8412701-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Birds\bird1.png</Source>
+      <Name>Entities\Animals\Birds\bird1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\CurrentClasses\Capstone\DC\VoxelTest\VoxelTest\bin\x86\Debug\Content\Entities\Animals\Birds\bird1.xnb</Output>
+      <Time>2014-03-17T21:39:54.8422702-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Birds\bird2.png</Source>
+      <Name>Entities\Animals\Birds\bird2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\CurrentClasses\Capstone\DC\VoxelTest\VoxelTest\bin\x86\Debug\Content\Entities\Animals\Birds\bird2.xnb</Output>
+      <Time>2014-03-17T21:39:54.8442703-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Birds\bird3.png</Source>
+      <Name>Entities\Animals\Birds\bird3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\CurrentClasses\Capstone\DC\VoxelTest\VoxelTest\bin\x86\Debug\Content\Entities\Animals\Birds\bird3.xnb</Output>
+      <Time>2014-03-17T21:39:54.8452703-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Birds\bird4.png</Source>
+      <Name>Entities\Animals\Birds\bird4</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\CurrentClasses\Capstone\DC\VoxelTest\VoxelTest\bin\x86\Debug\Content\Entities\Animals\Birds\bird4.xnb</Output>
+      <Time>2014-03-17T21:39:54.8472705-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Birds\bird5.png</Source>
+      <Name>Entities\Animals\Birds\bird5</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\CurrentClasses\Capstone\DC\VoxelTest\VoxelTest\bin\x86\Debug\Content\Entities\Animals\Birds\bird5.xnb</Output>
+      <Time>2014-03-17T21:39:54.8482705-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Birds\bird6.png</Source>
+      <Name>Entities\Animals\Birds\bird6</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\CurrentClasses\Capstone\DC\VoxelTest\VoxelTest\bin\x86\Debug\Content\Entities\Animals\Birds\bird6.xnb</Output>
+      <Time>2014-03-17T21:39:54.8502706-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Birds\bird7.png</Source>
+      <Name>Entities\Animals\Birds\bird7</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\CurrentClasses\Capstone\DC\VoxelTest\VoxelTest\bin\x86\Debug\Content\Entities\Animals\Birds\bird7.xnb</Output>
+      <Time>2014-03-17T21:39:54.8512707-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Deer\deer.png</Source>
+      <Name>Entities\Animals\Deer\deer</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\CurrentClasses\Capstone\DC\VoxelTest\VoxelTest\bin\x86\Debug\Content\Entities\Animals\Deer\deer.xnb</Output>
+      <Time>2014-03-17T21:38:25.096137-04:00</Time>
     </Item>
     <BuildSuccessful>true</BuildSuccessful>
     <Settings>

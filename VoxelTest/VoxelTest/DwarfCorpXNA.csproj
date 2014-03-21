@@ -119,6 +119,7 @@
     <Compile Include="AssetManagement\GameSave\JsonConverters\RectangleConverter.cs" />
     <Compile Include="Components\AI\Bird.cs" />
     <Compile Include="Components\AI\BirdAI.cs" />
+    <Compile Include="Components\AI\Deer.cs" />
     <Compile Include="Components\AI\GatherManager.cs" />
     <Compile Include="Components\AI\Inventory.cs" />
     <Compile Include="GameStates\CompanyMakerState.cs" />

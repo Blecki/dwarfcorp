@@ -63,6 +63,11 @@ namespace DwarfCorp
                         return bird_prefix + PlayState.Random.Next(8);
                     }
                 }
+
+                public class Deer
+                {
+                    public static string deer = Program.CreatePath("Entities", "Animals", "Deer", "deer");
+                }
             }
 
             public class Balloon

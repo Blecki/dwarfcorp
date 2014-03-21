@@ -82,6 +82,7 @@ namespace DwarfCorp
             "berrybush",
             "apple_tree",
             "Bird",
+            "Deer",
             "Dwarf",
             "DarkDwarf",
             "Goblin",
@@ -167,6 +168,8 @@ namespace DwarfCorp
                     return (LocatableComponent) GeneratePotions(position, componentManager, content, graphics, componentManager.RootComponent);
                 case "Bird":
                     return (LocatableComponent) GenerateBird(position, componentManager, content, graphics, chunks);
+                case "Deer":
+                    return (LocatableComponent)GenerateDeer(position, componentManager, content, graphics, chunks);
                 default:
                     return null;
             }
@@ -1004,6 +1007,15 @@ namespace DwarfCorp
             ChunkManager chunkManager)
         {
           return new Bird(ContentPaths.Entities.Animals.Birds.GetRandomBird(), position, componentManager, chunkManager, graphics, content, "Bird").Physics;
+        }
+
+        public static GameComponent GenerateDeer(Vector3 position,
+            ComponentManager componentManager,
+            ContentManager content,
+            GraphicsDevice graphics,
+            ChunkManager chunks)
+        {
+            return new Deer(ContentPaths.Entities.Animals.Deer.deer, position, componentManager, chunks, graphics, content, "Deer").Physics;
         }
 
     
