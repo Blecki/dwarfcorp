@@ -20,6 +20,7 @@ namespace DwarfCorp
         public float WindForce;
         public float MinOpacity;
         public Vector4 RippleColor;
+        public Vector4 FlatColor;
     }
 
 }

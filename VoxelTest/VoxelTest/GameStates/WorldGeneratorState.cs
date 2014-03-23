@@ -941,6 +941,7 @@ namespace DwarfCorp.GameStates
 
         private void DrawGUI(GameTime gameTime, float dx)
         {
+            GUI.PreRender(gameTime);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
                 null, null);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
@@ -969,6 +970,7 @@ namespace DwarfCorp.GameStates
             }
 
             DwarfGame.SpriteBatch.End();
+            GUI.PostRender(gameTime);
         }
 
         public override void Render(GameTime gameTime)

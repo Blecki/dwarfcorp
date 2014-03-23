@@ -70,7 +70,7 @@ namespace DwarfCorp
 
         public override void Render(GameTime time, SpriteBatch batch)
         {
-            if(Image != null)
+            if(Image != null && IsVisible)
             {
                 Lock.WaitOne();
                 Rectangle toDraw = GetImageBounds();
