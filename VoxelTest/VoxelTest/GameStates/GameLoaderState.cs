@@ -360,9 +360,12 @@ namespace DwarfCorp.GameStates
                 ScissorTestEnable = true
             };
 
+
+            GUI.PreRender(gameTime);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
             DwarfGame.SpriteBatch.End();
+            GUI.PostRender(gameTime);
 
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle = DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
         }

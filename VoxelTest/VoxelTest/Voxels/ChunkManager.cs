@@ -593,7 +593,25 @@ namespace DwarfCorp
         }
 
 
-        public void Render(Camera camera, GameTime gameTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix)
+        public void RenderAll(Camera renderCamera, GameTime gameTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix, Texture2D tilemap)
+        {
+            effect.Parameters["xIllumination"].SetValue(ChunkData.IllumMap);
+            effect.Parameters["xTexture"].SetValue(tilemap);
+            effect.Parameters["xSunGradient"].SetValue(ChunkData.SunMap);
+            effect.Parameters["xAmbientGradient"].SetValue(ChunkData.AmbientMap);
+            effect.Parameters["xTorchGradient"].SetValue(ChunkData.TorchMap);
+            effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+            effect.Parameters["SelfIllumination"].SetValue(true);
+            foreach (KeyValuePair<Point3, VoxelChunk> chunk in ChunkData.ChunkMap)
+            {
+                if(renderCamera.GetFrustrum().Intersects(chunk.Value.GetBoundingBox()))
+                {
+                    chunk.Value.Render(tilemap, ChunkData.IllumMap, ChunkData.SunMap, ChunkData.AmbientMap, ChunkData.TorchMap, graphicsDevice, effect, worldMatrix);
+                }
+            }
+        }
+
+        public void Render(Camera renderCamera, GameTime gameTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix)
         {
             effect.Parameters["xIllumination"].SetValue(ChunkData.IllumMap);
             effect.Parameters["xTexture"].SetValue(ChunkData.Tilemap);

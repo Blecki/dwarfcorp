@@ -202,6 +202,7 @@ namespace DwarfCorp
             public static string lavafoam = Program.CreatePath("Terrain", "lavafoam");
             public static string terrain_illumination = Program.CreatePath("Terrain", "terrain_illumination");
             public static string terrain_tiles = Program.CreatePath("Terrain", "terrain_tiles");
+            public static string terrain_colormap = Program.CreatePath("Terrain", "terrain_colormap");
             public static string water_normal = Program.CreatePath("Terrain", "water_normal");
             public static string water_normal2 = Program.CreatePath("Terrain", "water_normal2");
 

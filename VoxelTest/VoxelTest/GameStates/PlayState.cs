@@ -66,7 +66,7 @@ namespace DwarfCorp.GameStates
         public static bool HasStarted = false;
 
         // When true, the minimap will be drawn.
-        public bool DrawMap = false;
+        public bool DrawMap = true;
 
         // The texture used for the terrain tiles.
         public Texture2D Tilesheet;
@@ -118,7 +118,7 @@ namespace DwarfCorp.GameStates
         private BloomComponent bloom;
 
         // Responsible for drawing liquids.
-        private WaterRenderer waterRenderer;
+        public static WaterRenderer WaterRenderer;
 
         // Responsible for drawing the skybox
         public static SkyRenderer Sky;
@@ -212,6 +212,8 @@ namespace DwarfCorp.GameStates
         private GameFile gameFile;
         public Panel PausePanel;
 
+        public Minimap MiniMap { get; set; }
+
         #endregion
 
         /// <summary>
@@ -275,6 +277,8 @@ namespace DwarfCorp.GameStates
                 }
 
                 SoundManager.PlayMusic("dwarfcorp");
+
+
             }
 
             // Otherwise, we just unpause everything and re-enter the game.
@@ -548,7 +552,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public void CreateLiquids()
         {
-            waterRenderer = new WaterRenderer(GraphicsDevice);
+            WaterRenderer = new WaterRenderer(GraphicsDevice);
 
             LiquidAsset waterAsset = new LiquidAsset
             {
@@ -562,9 +566,10 @@ namespace DwarfCorp.GameStates
                 FoamTexture = TextureManager.GetTexture(ContentPaths.Terrain.foam),
                 BaseTexture = TextureManager.GetTexture(ContentPaths.Terrain.cartoon_water),
                 MinOpacity = 0.0f,
-                RippleColor = new Vector4(0.1f, 0.1f, 0.1f, 0.0f)
+                RippleColor = new Vector4(0.1f, 0.1f, 0.1f, 0.0f),
+                FlatColor = new Vector4(0.3f, 0.3f, 0.9f, 1.0f)
             };
-            waterRenderer.AddLiquidAsset(waterAsset);
+            WaterRenderer.AddLiquidAsset(waterAsset);
 
 
             LiquidAsset lavaAsset = new LiquidAsset
@@ -579,10 +584,11 @@ namespace DwarfCorp.GameStates
                 BumpTexture = TextureManager.GetTexture(ContentPaths.Terrain.water_normal),
                 FoamTexture = TextureManager.GetTexture(ContentPaths.Terrain.lavafoam),
                 BaseTexture = TextureManager.GetTexture(ContentPaths.Terrain.lava),
-                RippleColor = new Vector4(0.5f, 0.4f, 0.04f, 0.0f)
+                RippleColor = new Vector4(0.5f, 0.4f, 0.04f, 0.0f),
+                FlatColor = new Vector4(0.9f, 0.7f, 0.2f, 1.0f)
             };
 
-            waterRenderer.AddLiquidAsset(lavaAsset);
+            WaterRenderer.AddLiquidAsset(lavaAsset);
         }
 
 
@@ -629,15 +635,24 @@ namespace DwarfCorp.GameStates
         public void CreateGUIComponents()
         {
             GUI.RootComponent.ClearChildren();
-            GUI.RootComponent.AddChild(Master.Debugger.MainPanel);
-            GUI.RootComponent.AddChild(Master.ToolBar);
-
-            GUIComponent companyInfoComponent = new GUIComponent(GUI, GUI.RootComponent)
+            GridLayout layout = new GridLayout(GUI, GUI.RootComponent, 11, 11)
             {
-                LocalBounds = new Rectangle(10, 10, 400, 80)
+                LocalBounds = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height),
+                FitToParent =  false
             };
 
-            GridLayout infoLayout = new GridLayout(GUI, companyInfoComponent, 2, 4);
+            GUI.RootComponent.AddChild(Master.Debugger.MainPanel);
+            layout.AddChild(Master.ToolBar);
+            Master.ToolBar.Parent = layout;
+            layout.SetComponentPosition(Master.ToolBar, 7, 10, 4, 1);
+
+
+            GUIComponent companyInfoComponent = new GUIComponent(GUI, layout);
+
+            layout.SetComponentPosition(companyInfoComponent, 0, 0, 4, 2);
+
+            GridLayout infoLayout = new GridLayout(GUI, companyInfoComponent, 3, 4);
+
             CompanyLogoPanel = new ImagePanel(GUI, infoLayout, new ImageFrame(TextureManager.GetTexture("CompanyLogo")));
             infoLayout.SetComponentPosition(CompanyLogoPanel, 0, 0, 1, 1);
 
@@ -690,26 +705,37 @@ namespace DwarfCorp.GameStates
             infoLayout.SetComponentPosition(CurrentLevelDownButton, 1, 1, 1, 1);
             CurrentLevelDownButton.OnClicked += CurrentLevelDownButton_OnClicked;
 
-            OrderStatusLabel = new Label(GUI, GUI.RootComponent, "Ballon : " + GameCycle.GetStatusString(GameCycle.CurrentCycle), GUI.SmallFont)
+            OrderStatusLabel = new Label(GUI, layout, "Ballon : " + GameCycle.GetStatusString(GameCycle.CurrentCycle), GUI.SmallFont)
             {
                 TextColor = Color.White,
                 StrokeColor = new Color(0, 0, 0, 100),
-                LocalBounds = new Rectangle(GraphicsDevice.Viewport.Width / 2 - 300, GraphicsDevice.Viewport.Height - 60, 300, 60),
                 ToolTip = "Current status of the balloon"
             };
 
-            LevelSlider = new Slider(GUI, GUI.RootComponent, "", ChunkManager.ChunkData.MaxViewingLevel, 0, ChunkManager.ChunkData.ChunkSizeY, Slider.SliderMode.Integer)
+            layout.SetComponentPosition(OrderStatusLabel, 4, 10, 3, 1);
+
+            LevelSlider = new Slider(GUI, layout, "", ChunkManager.ChunkData.MaxViewingLevel, 0, ChunkManager.ChunkData.ChunkSizeY, Slider.SliderMode.Integer)
             {
                 Orient = Slider.Orientation.Vertical,
-                LocalBounds = new Rectangle(28, 130, 64, GraphicsDevice.Viewport.Height - 300),
-                ToolTip = "Controls the maximum height of visible terrain"
+                ToolTip = "Controls the maximum height of visible terrain",
+                DrawLabel = false
             };
+
+            layout.SetComponentPosition(LevelSlider, 0, 1, 1, 6);
             LevelSlider.OnClicked += LevelSlider_OnClicked;
-            LevelSlider.DrawLabel = true;
             LevelSlider.InvertValue = true;
+
+            MiniMap = new Minimap(GUI, layout, 256, 256, this, TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap))
+            {
+                IsVisible =  false
+            };
+
+            layout.SetComponentPosition(MiniMap, 0, 7, 4, 4);
 
             InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
+
+            layout.UpdateSizes();
         }
 
 
@@ -1433,6 +1459,7 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
+            GUI.PreRender(gameTime);
             // Keeping track of a running FPS buffer (averaged)
             if(lastFps.Count > 100)
             {
@@ -1446,12 +1473,12 @@ namespace DwarfCorp.GameStates
             DefaultShader.Parameters["xFogColor"].SetValue(new Vector3(0.32f * x, 0.58f * x, 0.9f * x));
 
             // Computes the water height.
-            float wHeight = waterRenderer.GetVisibleWaterHeight(ChunkManager, Camera, GraphicsDevice.Viewport, lastWaterHeight);
+            float wHeight = WaterRenderer.GetVisibleWaterHeight(ChunkManager, Camera, GraphicsDevice.Viewport, lastWaterHeight);
             lastWaterHeight = wHeight;
 
             // Draw reflection/refraction images
-            waterRenderer.DrawRefractionMap(gameTime, this, wHeight + 1.0f, Camera.ViewMatrix, DefaultShader, GraphicsDevice);
-            waterRenderer.DrawReflectionMap(gameTime, this, wHeight - 0.1f, GetReflectedCameraMatrix(wHeight), DefaultShader, GraphicsDevice);
+            WaterRenderer.DrawRefractionMap(gameTime, this, wHeight + 1.0f, Camera.ViewMatrix, DefaultShader, GraphicsDevice);
+            WaterRenderer.DrawReflectionMap(gameTime, this, wHeight - 0.1f, GetReflectedCameraMatrix(wHeight), DefaultShader, GraphicsDevice);
 
             // Start drawing the bloom effect
             if(GameSettings.Default.EnableGlow)
@@ -1464,7 +1491,7 @@ namespace DwarfCorp.GameStates
             DrawSky(gameTime, Camera.ViewMatrix);
 
             // Defines the current slice for the GPU
-            Plane slicePlane = waterRenderer.CreatePlane(ChunkManager.ChunkData.MaxViewingLevel + 1.3f, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
+            Plane slicePlane = WaterRenderer.CreatePlane(ChunkManager.ChunkData.MaxViewingLevel + 1.3f, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
 
             // Draw the whole world, and make sure to handle slicing
             DefaultShader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
@@ -1476,7 +1503,7 @@ namespace DwarfCorp.GameStates
             // Now we want to draw the water on top of everything else
             DefaultShader.Parameters["Clipping"].SetValue(true);
             DefaultShader.Parameters["GhostMode"].SetValue(false);
-            waterRenderer.DrawWater(
+            WaterRenderer.DrawWater(
                 GraphicsDevice,
                 (float) gameTime.TotalGameTime.TotalSeconds,
                 DefaultShader,
@@ -1527,6 +1554,7 @@ namespace DwarfCorp.GameStates
                 ScissorTestEnable = true
             };
 
+
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
 
             drawer2D.Render(DwarfGame.SpriteBatch, Camera, GraphicsDevice.Viewport);
@@ -1553,15 +1581,22 @@ namespace DwarfCorp.GameStates
 
             if(DrawMap)
             {
+                /*
                 const int mapWidth = 256;
                 const int mapHeight = 256;
                 float scaleX = (float) mapWidth / (float) WorldGeneratorState.worldMap.Width;
                 float scaleY = (float) mapHeight / (float) WorldGeneratorState.worldMap.Height;
-                DwarfGame.SpriteBatch.Draw(WorldGeneratorState.worldMap, new Rectangle(0, GraphicsDevice.Viewport.Height - mapHeight, mapWidth, mapHeight), new Color(255, 255, 255, 200));
+                DwarfGame.SpriteBatch.Draw(MiniMap.RenderTarget, new Rectangle(0, GraphicsDevice.Viewport.Height - mapHeight, mapWidth, mapHeight), new Color(255, 255, 255, 200));
                 Vector2 spos = ((new Vector2(Camera.Position.X * scaleX, Camera.Position.Z * scaleY) / WorldScale)) + new Vector2(0, GraphicsDevice.Viewport.Height - mapHeight);
                 Vector2 spos2 = spos + new Vector2(frustrumNormal.X * 100 * scaleX, frustrumNormal.Z * 100 * scaleY) / WorldScale;
                 Drawer2D.DrawRect(DwarfGame.SpriteBatch, new Rectangle((int) spos.X, (int) spos.Y, 1, 1), Color.White, 1.0f);
                 Drawer2D.DrawLine(DwarfGame.SpriteBatch, spos, spos2, Color.White, 1);
+                 */
+                MiniMap.IsVisible = true;
+            }
+            else
+            {
+                MiniMap.IsVisible = false;
             }
 
             if(Paused)
@@ -1572,8 +1607,12 @@ namespace DwarfCorp.GameStates
             DwarfGame.SpriteBatch.End();
             Master.Render(Game, gameTime, GraphicsDevice);
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle = DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
+
+            GUI.PostRender(gameTime);
+
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
+
 
 
             base.Render(gameTime);
