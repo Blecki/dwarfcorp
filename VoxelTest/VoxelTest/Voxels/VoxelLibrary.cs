@@ -182,7 +182,7 @@ namespace DwarfCorp
             grassType.RampPrimitives[RampType.TopBackLeft] = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 4), new Point(2, 0), new Point(2, 0));
             grassType.RampPrimitives[RampType.TopBackRight] = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 4), new Point(2, 0), new Point(2, 0));
              */
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 8), new Point(2, 0), new Point(2, 0), grassType.TransitionTextures);
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 3), new Point(2, 0), new Point(2, 0), grassType.TransitionTextures);
             
 
 
@@ -217,7 +217,7 @@ namespace DwarfCorp
             frostType.RampPrimitives[RampType.TopBackRight] = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 4 + 2), new Point(2, 0), new Point(2, 0));
              */
 
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 9), new Point(2, 0), new Point(2, 0), frostType.TransitionTextures);
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 4), new Point(2, 0), new Point(2, 0), frostType.TransitionTextures);
 
             emptyType = new VoxelType
             {

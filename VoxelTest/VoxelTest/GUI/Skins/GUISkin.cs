@@ -359,7 +359,7 @@ namespace DwarfCorp
             spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height), GetSourceRect(Tile.GroupRight), Color.White);
         }
 
-        public void RenderSliderVertical(SpriteFont font, Rectangle boundingRect, float value, float minvalue, float maxValue, Slider.SliderMode mode, bool drawLabel, bool invert, SpriteBatch spriteBatch)
+        public void RenderSliderVertical(SpriteFont font, Rectangle boundingRect, float value, float minvalue, float maxValue, Slider.SliderMode mode,  bool drawLabel, bool invert, SpriteBatch spriteBatch)
         {
             const int padding = 5;
 
@@ -422,7 +422,7 @@ namespace DwarfCorp
             Drawer2D.SafeDraw(spriteBatch, toDraw, font, Color.Black, new Vector2(fieldRect.X + fieldRect.Width / 2, fieldRect.Y + 16), origin);
         }
 
-        public void RenderSliderHorizontal(SpriteFont font, Rectangle boundingRect, float value, float minvalue, float maxValue, Slider.SliderMode mode, bool drawLabel, bool invertValue, SpriteBatch spriteBatch)
+        public void RenderSliderHorizontal(SpriteFont font, Rectangle boundingRect, float value, float minvalue, float maxValue, Slider.SliderMode mode,  bool drawLabel, bool invertValue, SpriteBatch spriteBatch)
         {
             const int padding = 5;
 
@@ -456,7 +456,6 @@ namespace DwarfCorp
             {
                 return;
             }
-
             RenderField(fieldRect, spriteBatch);
 
             float v = 0.0f;

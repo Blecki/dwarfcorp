@@ -19,8 +19,8 @@ namespace DwarfCorp
     {
         private RenderTarget2D refractionRenderTarget = null;
         private RenderTarget2D reflectionRenderTarget = null;
-        public Texture2D reflectionMap = null;
-        public Texture2D refractionMap = null;
+        public Texture2D ReflectionMap = null;
+        public Texture2D RefractionMap = null;
 
         public Dictionary<LiquidType, LiquidAsset> LiquidAssets = new Dictionary<LiquidType, LiquidAsset>();
 
@@ -67,8 +67,8 @@ namespace DwarfCorp
                 Thread.Sleep(100);
             }
 
-            reflectionMap = new Texture2D(device, width, height);
-            refractionMap = new Texture2D(device, width, height);
+            ReflectionMap = new Texture2D(device, width, height);
+            RefractionMap = new Texture2D(device, width, height);
             PresentationParameters pp = device.PresentationParameters;
             refractionRenderTarget = new RenderTarget2D(device, width, height, false, pp.BackBufferFormat, pp.DepthStencilFormat);
             reflectionRenderTarget = new RenderTarget2D(device, width, height, false, pp.BackBufferFormat, pp.DepthStencilFormat);
@@ -140,7 +140,7 @@ namespace DwarfCorp
 
             device.SetRenderTarget(null);
             effect.Parameters["Clipping"].SetValue(false);
-            refractionMap = refractionRenderTarget;
+            RefractionMap = refractionRenderTarget;
         }
 
 
@@ -180,8 +180,39 @@ namespace DwarfCorp
             effect.Parameters["Clipping"].SetValue(false);
             device.SetRenderTarget(null);
 
-            reflectionMap = reflectionRenderTarget;
+            ReflectionMap = reflectionRenderTarget;
         }
+
+        public void DrawWaterFlat(GraphicsDevice device, Matrix view, Matrix projection, Effect effect, ChunkManager chunks)
+        {
+            effect.CurrentTechnique = effect.Techniques["WaterFlat"];
+            Matrix worldMatrix = Matrix.Identity;
+            effect.Parameters["xWorld"].SetValue(worldMatrix);
+            effect.Parameters["xView"].SetValue(view);
+            effect.Parameters["xProjection"].SetValue(projection);
+
+            foreach(KeyValuePair<LiquidType, LiquidAsset> asset in LiquidAssets)
+            {
+                effect.Parameters["xFlatColor"].SetValue(asset.Value.FlatColor);
+
+                foreach(KeyValuePair<Point3, VoxelChunk> chunkpair in chunks.ChunkData.ChunkMap)
+                {
+                    VoxelChunk chunk = chunkpair.Value;
+
+                    foreach(EffectPass pass in effect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+                        if(chunk.IsVisible)
+                        {
+                            chunk.PrimitiveMutex.WaitOne();
+                            chunk.Liquids[asset.Key].Render(device);
+                            chunk.PrimitiveMutex.ReleaseMutex();
+                        }
+                    }
+                }
+            }
+        }
+        
 
         public void DrawWater(GraphicsDevice device,
             float time,
@@ -199,8 +230,8 @@ namespace DwarfCorp
             effect.Parameters["xView"].SetValue(viewMatrix);
             effect.Parameters["xReflectionView"].SetValue(reflectionViewMatrix);
             effect.Parameters["xProjection"].SetValue(projectionMatrix);
-            effect.Parameters["xReflectionMap"].SetValue(reflectionMap);
-            effect.Parameters["xRefractionMap"].SetValue(refractionMap);
+            effect.Parameters["xReflectionMap"].SetValue(ReflectionMap);
+            effect.Parameters["xRefractionMap"].SetValue(RefractionMap);
             effect.Parameters["xTime"].SetValue(time);
             effect.Parameters["xWindDirection"].SetValue(windDirection);
             effect.Parameters["xLightDirection"].SetValue(new Vector3(0.2f, -0.8f, 0));

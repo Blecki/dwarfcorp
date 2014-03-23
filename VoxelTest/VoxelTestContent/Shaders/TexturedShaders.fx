@@ -25,6 +25,7 @@ float xTime;
 float xWindForce;
 float3 xWindDirection;
 float xTimeOfDay;
+bool xEnableFog = true;
 
 float xFogStart = 50;
 float xFogEnd = 80;
@@ -32,6 +33,7 @@ float3 xFogColor = float3(0.5f, 0.5f, 0.5f);
 float3 xLightPos = float3(0, 0, 0);
 float4 xLightColor = float4(0, 0, 0, 0);
 float4 xRippleColor = float4(0.1, 0.1, 0.1, 0);
+float4 xFlatColor = float4(0, 0, 0, 0);
 //------- Technique: Clipping Plane Fix --------
 
 bool Clipping;
@@ -49,15 +51,18 @@ Texture xIllumination;
 
 sampler IllumSampler = sampler_state { texture = <xIllumination> ;  magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = clamp; AddressV = clamp;};
 
-sampler TextureSampler = sampler_state { texture = <xTexture> ; magfilter = POINT; minfilter = ANISOTROPIC; mipfilter=POINT; AddressU = clamp; AddressV = clamp;};Texture xTexture0;
+sampler TextureSampler = sampler_state { texture = <xTexture> ; magfilter = POINT; minfilter = ANISOTROPIC; mipfilter=POINT; AddressU = clamp; AddressV = clamp;};
+
+sampler ColorscaleSampler = sampler_state { texture = <xTexture>; magfilter = POINT; minfilter = POINT; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
+Texture xTexture0;
+
 Texture xTexture1;
-
 sampler TextureSampler1 = sampler_state { texture = <xTexture1> ; magfilter = POINT; minfilter = POINT; mipfilter=POINT; AddressU = clamp; AddressV = clamp;};
+
 Texture xTexture2;
-
 sampler TextureSampler2 = sampler_state { texture = <xTexture2> ; magfilter = POINT; minfilter = POINT; mipfilter=POINT; AddressU = clamp; AddressV = clamp;};
-Texture xTexture3;
 
+Texture xTexture3;
 sampler TextureSampler3 = sampler_state { texture = <xTexture3> ; magfilter = POINT; minfilter = POINT; mipfilter=POINT; AddressU = clamp; AddressV = clamp;};
 
 sampler WrappedTextureSampler = sampler_state { texture = <xTexture> ; magfilter = POINT; minfilter = POINT; mipfilter=POINT; AddressU = wrap; AddressV = wrap;};
@@ -168,6 +173,9 @@ struct TPixelToFrame
 float4 Color : COLOR0;
 };
 
+
+
+
 TVertexToPixel TexturedVS( float4 inPos : POSITION,  float2 inTexCoords: TEXCOORD0, float4 inColor : COLOR0, float4 inTexSource : TEXCOORD1, float4x4 world : BLENDWEIGHT, float4 tint : COLOR1)
 {
 
@@ -198,9 +206,10 @@ TVertexToPixel TexturedVS( float4 inPos : POSITION,  float2 inTexCoords: TEXCOOR
 		Output.Color = saturate(Output.Color + xLightColor / 999.0f);
 	}
 	
+	[branch]
+	if (xEnableFog)
+		Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
 	
-
-	Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
 	Output.TextureBounds = inTexSource;
     return Output;
 }
@@ -220,6 +229,31 @@ float2 ClampTexture(float2 uv, float4 bounds)
 {	
 	
 	return float2(clamp(uv.x, bounds.x, bounds.z), clamp(uv.y, bounds.y, bounds.w));
+}
+
+TPixelToFrame TexturedPS_Colorscale(TVertexToPixel PSIn)
+{
+	TPixelToFrame Output = (TPixelToFrame)0;
+
+	Output.Color = tex2D(ColorscaleSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
+	Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f));
+
+	if (Clipping)
+	{
+		if (GhostMode && PSIn.clipDistances.w < 0.0f)
+		{
+			Output.Color.b = 1.0f;
+			Output.Color *= clamp(-1.0f / (PSIn.clipDistances.w * 0.75f) * 0.25f, 0, 0.6f);
+
+			clip((Output.Color.a - 0.1f));
+		}
+		else
+		{
+			clip(PSIn.clipDistances.w);
+		}
+	}
+
+	return Output;
 }
 
 TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
@@ -313,6 +347,15 @@ technique Textured
     }
 }
 
+technique Textured_colorscale
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_2_0 TexturedVSNonInstanced();
+		PixelShader = compile ps_2_0 TexturedPS_Colorscale();
+	}
+}
+
 technique Instanced
 {
     pass Pass0
@@ -385,6 +428,27 @@ WVertexToPixel WaterVS(float4 inPos : POSITION, float2 inTex: TEXCOORD0, float4 
      return Output;
 }
 
+WVertexToPixel WaterVS_Flat(float4 inPos : POSITION, float2 inTex : TEXCOORD0, float4 inColor : COLOR0)
+{
+	WVertexToPixel Output = (WVertexToPixel)0;
+
+	float4x4 preViewProjection = mul(xView, xProjection);
+	float4x4 preWorldViewProjection = mul(xWorld, preViewProjection);
+	Output.Position = mul(inPos, preWorldViewProjection);
+	Output.Color = xFlatColor;
+
+	if (Clipping) Output.clipDistances = dot(mul(xWorld, inPos), ClipPlane0);
+
+	return Output;
+}
+
+WPixelToFrame WaterPS_Flat(WVertexToPixel PSIn)
+{
+	WPixelToFrame Output = (WPixelToFrame)0;
+	Output.Color = PSIn.Color;
+	return Output;
+}
+
 WPixelToFrame WaterPS(WVertexToPixel PSIn)
 {
     WPixelToFrame Output = (WPixelToFrame)0;   
@@ -451,4 +515,14 @@ technique Water
          PixelShader = compile ps_2_0 WaterPS();
 
      }
+}
+
+technique WaterFlat
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_1_1 WaterVS_Flat();
+		PixelShader = compile ps_2_0 WaterPS_Flat();
+
+	}
 }

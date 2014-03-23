@@ -142,6 +142,8 @@ namespace DwarfCorp.GameStates
             {
                 ScissorTestEnable = true
             };
+
+            GUI.PreRender(gameTime);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
@@ -150,6 +152,7 @@ namespace DwarfCorp.GameStates
 
             DwarfGame.SpriteBatch.End();
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle = DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
+            GUI.PostRender(gameTime);
         }
 
         public override void Render(GameTime gameTime)
