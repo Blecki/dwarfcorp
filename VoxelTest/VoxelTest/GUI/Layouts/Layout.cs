@@ -27,6 +27,11 @@ namespace DwarfCorp
             UpdateSizes();
             base.Update(time);
         }
+
+        public override bool IsMouseOverRecursive()
+        {
+            return  Children.Any(child => child.IsMouseOverRecursive());
+        }
     }
 
 }

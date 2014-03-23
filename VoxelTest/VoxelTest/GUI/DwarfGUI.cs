@@ -103,9 +103,20 @@ namespace DwarfCorp
 
         }
 
+        public void PreRender(GameTime time)
+        {
+            RootComponent.PreRender(time);
+        }
+
+        public void PostRender(GameTime time)
+        {
+            
+        }
+
         public void Render(GameTime time, SpriteBatch batch, Vector2 globalOffset)
         {
             GlobalOffset = globalOffset;
+
 
             RootComponent.LocalBounds = new Rectangle((int) globalOffset.X, (int) globalOffset.Y, 0, 0);
             RootComponent.UpdateTransformsRecursive();

@@ -119,7 +119,7 @@ namespace DwarfCorp
                     {
                         batch.Draw(Image.Image, !KeepAspectRatio ? globalBounds : GetImageBounds(), Image.SourceRect, imageColor);
                     }
-                    Drawer2D.SafeDraw(batch, Text, TextFont, textColor, new Vector2(globalBounds.X, globalBounds.Y + globalBounds.Height - 25), Vector2.Zero);
+                    Drawer2D.SafeDraw(batch, Text, TextFont, textColor, new Vector2(globalBounds.X, globalBounds.Y + globalBounds.Height), Vector2.Zero);
                     break;
                 case ButtonMode.PushButton:
                     GUI.Skin.RenderButton(GlobalBounds, batch);

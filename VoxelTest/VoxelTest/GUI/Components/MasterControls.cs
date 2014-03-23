@@ -32,10 +32,14 @@ namespace DwarfCorp
             CurrentMode = master.CurrentToolMode;
             ToolButtons = new Dictionary<GameMaster.ToolMode, Button>();
 
-            Button mineButton = new Button(GUI, this, "Mine", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 0, 0))
+            GridLayout layout = new GridLayout(GUI, this, 1, 6)
+            {
+                EdgePadding = 0
+            };
+
+            Button mineButton = new Button(GUI, layout, "Mine", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 0, 0))
             {
                 CanToggle = true,
-                LocalBounds = new Rectangle(device.Viewport.Width - 100 + 45, device.Viewport.Height - 100, buttonSize, buttonSize),
                 IsToggled = true,
                 KeepAspectRatio = true,
                 ConstrainSize = true,
@@ -43,10 +47,9 @@ namespace DwarfCorp
             };
             mineButton.OnClicked += () => ButtonClicked(mineButton);
 
-            Button chopButton = new Button(GUI, this, "Chop", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 1, 0))
+            Button chopButton = new Button(GUI, layout, "Chop", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 1, 0))
             {
                 CanToggle = true,
-                LocalBounds = new Rectangle(device.Viewport.Width - 160 + 45, device.Viewport.Height - 100, buttonSize, buttonSize),
                 IsToggled = false,
                 ConstrainSize = true,
                 KeepAspectRatio = true,
@@ -54,10 +57,9 @@ namespace DwarfCorp
             };
             chopButton.OnClicked += () => ButtonClicked(chopButton);
 
-            Button guardButton = new Button(GUI, this, "Guard", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 4, 0))
+            Button guardButton = new Button(GUI, layout, "Guard", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 4, 0))
             {
                 CanToggle = true,
-                LocalBounds = new Rectangle(device.Viewport.Width - 220 + 45, device.Viewport.Height - 100, buttonSize, buttonSize),
                 IsToggled = false,
                 ConstrainSize = true,
                 KeepAspectRatio = true,
@@ -66,10 +68,9 @@ namespace DwarfCorp
             guardButton.OnClicked += () => ButtonClicked(guardButton);
 
 
-            Button stockButton = new Button(GUI, this, "Stock", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 7, 0))
+            Button stockButton = new Button(GUI, layout, "Stock", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 7, 0))
             {
                 CanToggle = true,
-                LocalBounds = new Rectangle(device.Viewport.Width - 280 + 45, device.Viewport.Height - 100, buttonSize, buttonSize),
                 IsToggled = false,
                 KeepAspectRatio = true,
                 ConstrainSize = true,
@@ -78,7 +79,7 @@ namespace DwarfCorp
             stockButton.OnClicked += () => ButtonClicked(stockButton);
 
 
-            Button gatherButton = new Button(GUI, this, "Gather", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 6, 0))
+            Button gatherButton = new Button(GUI, layout, "Gather", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 6, 0))
             {
                 CanToggle = true,
                 LocalBounds = new Rectangle(device.Viewport.Width - 340 + 45, device.Viewport.Height - 100, buttonSize, buttonSize),
@@ -90,10 +91,9 @@ namespace DwarfCorp
             gatherButton.OnClicked += () => ButtonClicked(gatherButton);
 
 
-            Button buildButton = new Button(GUI, this, "Build", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 2, 0))
+            Button buildButton = new Button(GUI, layout, "Build", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 2, 0))
             {
                 CanToggle = true,
-                LocalBounds = new Rectangle(device.Viewport.Width - 400 + 45, device.Viewport.Height - 100, buttonSize, buttonSize),
                 IsToggled = false,
                 KeepAspectRatio = true,
                 ConstrainSize = true,
@@ -108,18 +108,24 @@ namespace DwarfCorp
             ToolButtons[GameMaster.ToolMode.Gather] = gatherButton;
             ToolButtons[GameMaster.ToolMode.Build] = buildButton;
 
+
+            int i = 0;
             foreach(Button b in ToolButtons.Values)
             {
                 b.TextColor = Color.White;
                 b.HoverTextColor = Color.Yellow;
+                layout.SetComponentPosition(b, i, 0, 1, 1);
+                i++;
             }
 
             BuildPanel = new Panel(gui, Parent);
             GroupBox buildGroup = new GroupBox(gui, BuildPanel, "Build");
             BuildPanel.LocalBounds = new Rectangle(device.Viewport.Width - 300, 32, 225, 150);
             buildGroup.LocalBounds = new Rectangle(5, 5, 200, 125);
-            ComboBox buildBox = new ComboBox(gui, buildGroup);
-            buildBox.LocalBounds = new Rectangle(2, 20, 180, 40);
+            ComboBox buildBox = new ComboBox(gui, buildGroup)
+            {
+                LocalBounds = new Rectangle(2, 20, 180, 40)
+            };
 
             foreach(string room in RoomLibrary.GetRoomTypes())
             {
@@ -166,14 +172,7 @@ namespace DwarfCorp
                 {
                     CurrentMode = pair.Key;
 
-                    if(CurrentMode == GameMaster.ToolMode.Build)
-                    {
-                        BuildPanel.IsVisible = true;
-                    }
-                    else
-                    {
-                        BuildPanel.IsVisible = false;
-                    }
+                    BuildPanel.IsVisible = CurrentMode == GameMaster.ToolMode.Build;
                 }
                 else
                 {

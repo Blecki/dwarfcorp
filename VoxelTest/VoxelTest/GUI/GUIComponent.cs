@@ -129,14 +129,25 @@ namespace DwarfCorp
             }
         }
 
-        public bool IsMouseOverRecursive()
+        public virtual bool IsMouseOverRecursive()
         {
             if(!IsVisible)
             {
                 return false;
             }
 
-            return IsMouseOver || Children.Any(child => child.IsMouseOverRecursive());
+            bool mouseOver =  (IsMouseOver && this != GUI.RootComponent) || Children.Any(child => child.IsMouseOverRecursive());
+            
+            /*
+            List<GUIComponent> childrenMouseOver = Children.FindAll(child => child.IsMouseOverRecursive());
+
+            if(childrenMouseOver.Count > 0)
+            {
+                return true;
+            }
+            */
+
+            return mouseOver;
         }
 
         public void UpdateTransformsRecursive()
@@ -283,6 +294,22 @@ namespace DwarfCorp
             int maxY = Math.Max(Math.Min(rect.Bottom, maxScreenY), minScreenY);
 
             return new Rectangle(x, y, Math.Abs(maxX - x), Math.Abs(maxY - y));
+        }
+
+        public virtual void PreRender(GameTime time)
+        {
+            foreach(GUIComponent child in Children)
+            {
+                child.PreRender(time);
+            }
+        }
+
+        public virtual void PostRender(GameTime time)
+        {
+            foreach (GUIComponent child in Children)
+            {
+                child.PostRender(time);
+            }
         }
 
         public virtual void Render(GameTime time, SpriteBatch batch)
