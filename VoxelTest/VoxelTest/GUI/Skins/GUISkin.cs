@@ -88,7 +88,11 @@ namespace DwarfCorp
             RightArrow ,
             LeftArrow ,
             DownArrow,
-            Save 
+            Save ,
+
+            ZoomIn,
+            ZoomOut,
+            ZoomHome
 
         }
 
@@ -185,7 +189,12 @@ namespace DwarfCorp
             Frames[Tile.Save] = new Point(3, 8);
             Frames[Tile.LeftArrow] = new Point(4, 8);
             Frames[Tile.RightArrow] = new Point(5, 8);
-        }
+
+            Frames[Tile.ZoomIn] = new Point(11,0);
+            Frames[Tile.ZoomOut] = new Point(11, 1);
+            Frames[Tile.ZoomHome] = new Point(12, 0);
+
+         }
 
         public void RenderPanel(Rectangle rectbounds, SpriteBatch spriteBatch)
         {

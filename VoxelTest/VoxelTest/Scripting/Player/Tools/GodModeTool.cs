@@ -160,13 +160,13 @@ namespace DwarfCorp
                         case "Delete Block":
                         {
                             Vector3 gridPos = vox.GridPosition;
-
-                            Voxel v = Chunks.ChunkData.ChunkMap[vox.ChunkID].VoxelGrid[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z];
+                            VoxelChunk chunk = Chunks.ChunkData.ChunkMap[vox.ChunkID];
+                            Voxel v = chunk.VoxelGrid[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z];
 
                             PlayState.Master.Faction.OnVoxelDestroyed(v);
-
-                            Chunks.ChunkData.ChunkMap[vox.ChunkID].VoxelGrid[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z] = null;
-                            Chunks.ChunkData.ChunkMap[vox.ChunkID].Water[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z].WaterLevel = 0;
+                            chunk.NotifyDestroyed(new Point3(gridPos));
+                            chunk.VoxelGrid[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z] = null;
+                            chunk.Water[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z].WaterLevel = 0;
 
                             if(!chunksToRebuild.Contains(vox.ChunkID))
                             {

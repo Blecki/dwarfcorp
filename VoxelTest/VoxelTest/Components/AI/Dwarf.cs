@@ -131,6 +131,7 @@ namespace DwarfCorp
                 ContentPaths.Audio.jump
             };
 
+            MinimapIcon minimapIcon = new MinimapIcon(Physics, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 0, 0));
 
             //string json = JsonConvert.SerializeObject(this, Formatting.Indented);
             //System.IO.File.WriteAllText(@"C:\Users\Mklingen\Desktop\Dwarf.json", json);

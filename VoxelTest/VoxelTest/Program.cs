@@ -8,7 +8,7 @@ namespace DwarfCorp
 #if WINDOWS || XBOX
     internal static class Program
     {
-        public static string Version = "1 . 0 . 31";
+        public static string Version = "1 . 0 . 32";
         public static char DirChar = System.IO.Path.DirectorySeparatorChar;
 
         /// <summary>

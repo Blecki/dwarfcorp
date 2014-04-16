@@ -36,6 +36,7 @@ namespace DwarfCorp.GameStates
         public int EdgePadding = 32;
         private ImagePanel MapPanel { get; set; }
         public InputManager Input { get; set; }
+        public ColorKey ColorKeys { get; set; }
 
         public int Seed
         {
@@ -47,6 +48,7 @@ namespace DwarfCorp.GameStates
         public string OverworldDirectory = "Worlds";
         public string WorldName = "world0";
         public LineEdit NameEdit;
+
 
 
         public WorldGeneratorState(DwarfGame game, GameStateManager stateManager) :
@@ -165,6 +167,16 @@ namespace DwarfCorp.GameStates
             {
                 ToolTip = "Map of the world.\nClick to select a location to embark."
             };
+
+            GridLayout mapLayout = new GridLayout(GUI, MapPanel, 4, 4);
+
+            ColorKeys = new ColorKey(GUI, mapLayout)
+            {
+                ColorEntries = Overworld.HeightColors
+            };
+
+            mapLayout.SetComponentPosition(ColorKeys, 3, 0, 1, 3);
+
             layout.SetComponentPosition(MapPanel, 0, 0, 3, 5);
 
             if(worldMap != null)
@@ -376,26 +388,38 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
-            if(type == "Height" || type == "Biomes")
+            if(type == "Height")
             {
+                ColorKeys.ColorEntries = Overworld.HeightColors;
+                Overworld.TextureFromHeightMap(type, Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap);
+            }
+            else if(type == "Biomes")
+            {
+                ColorKeys.ColorEntries = Overworld.BiomeColors;
                 Overworld.TextureFromHeightMap(type, Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap);
             }
             else if(type == "Temp.")
             {
+                ColorKeys.ColorEntries = Overworld.JetColors;
                 Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Temperature, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap);
             }
             else if(type == "Rain")
             {
+                ColorKeys.ColorEntries = Overworld.JetColors;
                 Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Rainfall, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap);
             }
             else if(type == "Erosion")
             {
+                ColorKeys.ColorEntries = Overworld.JetColors;
                 Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Erosion, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap);
             }
             else if(type == "Faults")
             {
+                ColorKeys.ColorEntries = Overworld.JetColors;
                 Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Faults, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap);
             }
+
+            
         }
 
 
@@ -941,7 +965,7 @@ namespace DwarfCorp.GameStates
 
         private void DrawGUI(GameTime gameTime, float dx)
         {
-            GUI.PreRender(gameTime);
+            GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
                 null, null);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);

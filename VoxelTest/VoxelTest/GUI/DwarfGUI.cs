@@ -103,9 +103,9 @@ namespace DwarfCorp
 
         }
 
-        public void PreRender(GameTime time)
+        public void PreRender(GameTime time, SpriteBatch sprites)
         {
-            RootComponent.PreRender(time);
+            RootComponent.PreRender(time, sprites);
         }
 
         public void PostRender(GameTime time)

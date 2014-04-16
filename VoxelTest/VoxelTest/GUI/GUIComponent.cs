@@ -296,11 +296,11 @@ namespace DwarfCorp
             return new Rectangle(x, y, Math.Abs(maxX - x), Math.Abs(maxY - y));
         }
 
-        public virtual void PreRender(GameTime time)
+        public virtual void PreRender(GameTime time, SpriteBatch sprites)
         {
             foreach(GUIComponent child in Children)
             {
-                child.PreRender(time);
+                child.PreRender(time, sprites);
             }
         }
 
