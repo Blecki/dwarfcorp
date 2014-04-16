@@ -218,6 +218,15 @@ namespace DwarfCorp
                         float treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
                         EntityFactory.GenerateVegetation(veg.Name, treeSize, veg.VerticalOffset, chunk.Origin + new Vector3(x, y, z), components, content, graphics);
 
+                        int yh = chunk.GetFilledVoxelGridHeightAt(x, y, z);
+
+                        if(yh > 0)
+                        {
+                            Voxel vUnder = chunk.VoxelGrid[x][yh - 1][z];
+
+                            if(vUnder != null)
+                                vUnder.Type = VoxelLibrary.GetVoxelType(biomeData.SoilVoxel);
+                        }
 
                         break;
                     }
@@ -381,8 +390,7 @@ namespace DwarfCorp
 
             GenerateLava(c);
 
-            GenerateVegetation(c, components, content, graphics);
-
+   
 
             c.ShouldRebuildWater = true;
             return c;

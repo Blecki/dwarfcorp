@@ -101,6 +101,39 @@ namespace DwarfCorp
             }
         }
 
+        public static Dictionary<string, Color> JetColors = new Dictionary<string, Color>
+        {
+            {"Lowest", Color.Cyan},
+            {"Low", Color.Blue},
+            {"Med", Color.Yellow},
+            {"High", Color.Red},
+            {"Highest", Color.White}
+        };
+
+        public static Dictionary<string, Color> BiomeColors = new Dictionary<string, Color>
+        {
+            {"Tundra", new Color(200, 255, 200)},
+            {"Taiga", new Color(200, 200, 200)},
+            {"Forest", new Color(50, 150, 50)},
+            {"Desert", new Color(180, 180, 100)},
+            {"Grassland", new Color(50, 255, 40)},
+            {"Jungle", new Color(20, 100, 20)},
+            {"Waste", new Color(255, 200, 0)},
+            {"Sea", new Color(30, 30, 150)},
+            {"Water", new Color(50, 50, 255)},
+        };
+
+        public static Dictionary<string, Color> HeightColors = new Dictionary<string, Color>
+        {
+            {"Sea", new Color(30, 30, 150)},
+            {"Water", new Color(50, 50, 255)},
+            {"Shore", new Color(180, 180, 100)},
+            {"Lowlands", new Color(50, 180, 40)},
+            {"Highlands", new Color(20, 100, 20)},
+            {"Mountains", new Color(80, 70, 50)},
+            {"Peaks", new Color(200, 200, 200)},
+        };
+
 
         public static Perlin heightNoise = new Perlin(PlayState.Random.Next());
 
@@ -200,7 +233,7 @@ namespace DwarfCorp
             {
                 for(int y = 0; y < 1000; y++)
                 {
-                    Map[x, y].Biome = Biome.Forest;
+                    Map[x, y].Biome = Biome.Desert;
                     Map[x, y].Erosion = 1.0f;
                     Map[x, y].Weathering = 0.0f;
                     Map[x, y].Faults = 1.0f;
@@ -600,65 +633,32 @@ namespace DwarfCorp
                 JetGradient = new ColorGradient(stops);
             }
 
-            const int deepWater = 0;
-            const int water = 1;
-            const int sand = 2;
-            const int plains = 3;
-            const int hills = 4;
-            const int mountains = 5;
-            const int peaks = 6;
-            const int snowcap = 7;
-            const int coldforest = 8;
-            const int forest = 9;
-            const int grassland = 10;
-            const int jungle = 11;
-            const int tundra = 12;
-            const int desert = 13;
-            const int river = 14;
-            const int volcano = 15;
-
-            Color[] colorIndex = new Color[16];
-            colorIndex[deepWater] = new Color(30, 30, 150);
-            colorIndex[water] = new Color(50, 50, 255);
-            colorIndex[sand] = new Color(180, 180, 100);
-            colorIndex[plains] = new Color(50, 180, 40);
-            colorIndex[hills] = new Color(20, 100, 20);
-            colorIndex[mountains] = new Color(80, 70, 50);
-            colorIndex[peaks] = new Color(100, 100, 100);
-            colorIndex[snowcap] = new Color(200, 200, 200);
-            colorIndex[coldforest] = new Color(200, 255, 200);
-            colorIndex[forest] = new Color(50, 150, 50);
-            colorIndex[grassland] = new Color(50, 255, 40);
-            colorIndex[jungle] = new Color(20, 100, 20);
-            colorIndex[tundra] = new Color(200, 200, 200);
-            colorIndex[desert] = new Color(180, 180, 100);
-            colorIndex[river] = new Color(80, 80, 255);
-            colorIndex[volcano] = new Color(255, 200, 0);
 
             int stepX = map.GetLength(0) / width;
             int stepY = map.GetLength(1) / height;
-
+            string index = "";
+            Dictionary<string, Color> colormap = displayMode == "Height" ? HeightColors : BiomeColors;
             for(int tx = 0; tx < width; tx++)
             {
                 for(int ty = 0; ty < height; ty++)
                 {
                     int x = tx * stepX;
                     int y = ty * stepY;
-                    int index = 0;
+   
                     float h1 = map[x, y].GetValue(type);
                     if(h1 < 0.1f)
                     {
-                        index = deepWater;
+                        index = "Sea";
                     }
                     else if(h1 >= 0.1f && h1 <= 0.17f)
                     {
-                        index = water;
+                        index = "Water";
                     }
                     else if(displayMode == "Biomes")
                     {
                         if(map[x, y].Water == WaterType.River)
                         {
-                            index = river;
+                            //index = river;
                         }
                         else
                         {
@@ -667,58 +667,50 @@ namespace DwarfCorp
                             switch(biome)
                             {
                                 case Biome.ColdForest:
-                                    index = coldforest;
+                                    index = "Taiga";
                                     break;
                                 case Biome.Forest:
-                                    index = forest;
+                                    index = "Forest";
                                     break;
                                 case Biome.Grassland:
-                                    index = grassland;
+                                    index = "Grassland";
                                     break;
                                 case Biome.Jungle:
-                                    index = jungle;
+                                    index = "Jungle";
                                     break;
                                 case Biome.Tundra:
-                                    index = tundra;
+                                    index = "Tundra";
                                     break;
                                 case Biome.Desert:
-                                    index = desert;
+                                    index = "Desert";
                                     break;
                                 case Biome.Volcano:
-                                    index = volcano;
+                                    index = "Waste";
                                     break;
                             }
                         }
                     }
                     else if(displayMode == "Height")
                     {
-                        if(map[x, y].Water == WaterType.River)
+                        if(h1 >= 0.2f && h1 < 0.21f)
                         {
-                            index = river;
-                        }
-                        else if(map[x, y].Water == WaterType.Volcano)
-                        {
-                            index = volcano;
-                        }
-                        else if(h1 >= 0.2f && h1 < 0.21f)
-                        {
-                            index = sand;
+                            index = "Shore";
                         }
                         else if(h1 >= 0.21f && h1 < 0.4f)
                         {
-                            index = plains;
+                            index = "Lowlands";
                         }
                         else if(h1 >= 0.4f && h1 < 0.6f)
                         {
-                            index = hills;
+                            index = "Highlands";
                         }
                         else if(h1 >= 0.6f && h1 < 0.9f)
                         {
-                            index = mountains;
+                            index = "Mountains";
                         }
                         else
                         {
-                            index = snowcap;
+                            index = "Peaks";
                         }
                     }
 
@@ -731,7 +723,7 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        Color ci = colorIndex[index];
+                        Color ci = colormap[index];
                         Color toDraw = new Color((float) (ci.R) * (h1 + 0.5f) / 255.0f, (float) (ci.G * (h1 + 0.5f)) / 255.0f, (float) (ci.B * (h1 + 0.5f)) / 255.0f);
                         worldData[ty * width + tx] = toDraw;
                     }

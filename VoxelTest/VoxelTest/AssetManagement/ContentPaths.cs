@@ -163,6 +163,7 @@ namespace DwarfCorp
             public static string gui_widgets = Program.CreatePath("GUI", "gui_widgets");
             public static string icons = Program.CreatePath("GUI", "icons");
             public static string indicators = Program.CreatePath("GUI", "indicators");
+            public static string map_icons = Program.CreatePath("GUI", "map_icons");
 
         }
         public class Logos

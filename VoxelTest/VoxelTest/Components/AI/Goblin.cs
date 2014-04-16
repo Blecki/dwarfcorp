@@ -111,6 +111,10 @@ namespace DwarfCorp
             };
 
 
+            MinimapIcon minimapIcon = new MinimapIcon(Physics, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 3, 0));
+
+
+
             NoiseMaker.Noises["Chew"] = new List<string>
             {
                 ContentPaths.Audio.chew

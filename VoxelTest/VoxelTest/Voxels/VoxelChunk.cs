@@ -15,6 +15,9 @@ namespace DwarfCorp
     /// </summary>
     public class VoxelChunk : IBoundedObject
     {
+        public delegate void VoxelDestroyed(Point3 voxelID);
+        public event VoxelDestroyed OnVoxelDestroyed;
+
         public struct VertexColorInfo
         {
             public int SunColor;
@@ -36,17 +39,17 @@ namespace DwarfCorp
 
         public int SizeX
         {
-            get { return m_sizeX; }
+            get { return sizeX; }
         }
 
         public int SizeY
         {
-            get { return m_sizeY; }
+            get { return sizeY; }
         }
 
         public int SizeZ
         {
-            get { return m_sizeZ; }
+            get { return sizeZ; }
         }
 
         public bool IsVisible { get; set; }
@@ -68,28 +71,28 @@ namespace DwarfCorp
         public List<DynamicLight> DynamicLights { get; set; }
 
 
-        private static bool m_staticsInitialized = false;
-        private static Vector3[] m_vertexDeltas = new Vector3[8];
-        private static Vector3[] m_faceDeltas = new Vector3[6];
+        private static bool staticsInitialized = false;
+        private static Vector3[] vertexDeltas = new Vector3[8];
+        private static Vector3[] faceDeltas = new Vector3[6];
 
-        private static readonly Dictionary<VoxelVertex, List<Vector3>> m_vertexSuccessors = new Dictionary<VoxelVertex, List<Vector3>>();
-        private static readonly Dictionary<VoxelVertex, List<Vector3>> m_vertexSuccessorsDiag = new Dictionary<VoxelVertex, List<Vector3>>();
-        private static readonly Dictionary<BoxFace, VoxelVertex[]> m_faceVertices = new Dictionary<BoxFace, VoxelVertex[]>();
-        private static List<Vector3> m_manhattanSuccessors;
-        private static List<Vector3> m_manhattan2DSuccessors;
+        private static readonly Dictionary<VoxelVertex, List<Vector3>> VertexSuccessors = new Dictionary<VoxelVertex, List<Vector3>>();
+        private static readonly Dictionary<VoxelVertex, List<Vector3>> VertexSuccessorsDiag = new Dictionary<VoxelVertex, List<Vector3>>();
+        private static readonly Dictionary<BoxFace, VoxelVertex[]> FaceVertices = new Dictionary<BoxFace, VoxelVertex[]>();
+        private static List<Vector3> manhattanSuccessors;
+        private static List<Vector3> manhattan2DSuccessors;
         private static int[] manhattan2DMultipliers;
 
 
-        public static ColorGradient m_sunGradient = new ColorGradient(new Color(70, 70, 70), new Color(255, 254, 224), 255);
-        public static ColorGradient m_ambientGradient = new ColorGradient(new Color(50, 50, 50), new Color(255, 255, 255), 255);
-        public static ColorGradient m_caveGradient = new ColorGradient(new Color(8, 12, 17), new Color(41, 54, 76), 255);
-        public static ColorGradient m_torchGradient = null;
+        //public static ColorGradient MSunGradient = new ColorGradient(new Color(70, 70, 70), new Color(255, 254, 224), 255);
+        //public static ColorGradient MAmbientGradient = new ColorGradient(new Color(50, 50, 50), new Color(255, 255, 255), 255);
+        //public static ColorGradient MCaveGradient = new ColorGradient(new Color(8, 12, 17), new Color(41, 54, 76), 255);
+        //public static ColorGradient MTorchGradient = null;
         public bool LightingCalculated { get; set; }
         private bool firstRebuild = true;
-        private int m_sizeX = -1;
-        private int m_sizeY = -1;
-        private int m_sizeZ = -1;
-        private int m_tileSize = -1;
+        private int sizeX = -1;
+        private int sizeY = -1;
+        private int sizeZ = -1;
+        private int tileSize = -1;
 
 
         public bool RebuildPending { get; set; }
@@ -105,24 +108,24 @@ namespace DwarfCorp
 
         #region statics
 
-        private void InitializeStatics()
+        private static void InitializeStatics()
         {
-            if(m_staticsInitialized)
+            if(staticsInitialized)
             {
                 return;
             }
 
-            m_vertexDeltas[(int) VoxelVertex.BackBottomLeft] = new Vector3(0, 0, 0);
-            m_vertexDeltas[(int) VoxelVertex.BackTopLeft] = new Vector3(0, 1.0f, 0);
-            m_vertexDeltas[(int) VoxelVertex.BackBottomRight] = new Vector3(1.0f, 0, 0);
-            m_vertexDeltas[(int) VoxelVertex.BackTopRight] = new Vector3(1.0f, 1.0f, 0);
+            vertexDeltas[(int) VoxelVertex.BackBottomLeft] = new Vector3(0, 0, 0);
+            vertexDeltas[(int) VoxelVertex.BackTopLeft] = new Vector3(0, 1.0f, 0);
+            vertexDeltas[(int) VoxelVertex.BackBottomRight] = new Vector3(1.0f, 0, 0);
+            vertexDeltas[(int) VoxelVertex.BackTopRight] = new Vector3(1.0f, 1.0f, 0);
 
-            m_vertexDeltas[(int) VoxelVertex.FrontBottomLeft] = new Vector3(0, 0, 1.0f);
-            m_vertexDeltas[(int) VoxelVertex.FrontTopLeft] = new Vector3(0, 1.0f, 1.0f);
-            m_vertexDeltas[(int) VoxelVertex.FrontBottomRight] = new Vector3(1.0f, 0, 1.0f);
-            m_vertexDeltas[(int) VoxelVertex.FrontTopRight] = new Vector3(1.0f, 1.0f, 1.0f);
+            vertexDeltas[(int) VoxelVertex.FrontBottomLeft] = new Vector3(0, 0, 1.0f);
+            vertexDeltas[(int) VoxelVertex.FrontTopLeft] = new Vector3(0, 1.0f, 1.0f);
+            vertexDeltas[(int) VoxelVertex.FrontBottomRight] = new Vector3(1.0f, 0, 1.0f);
+            vertexDeltas[(int) VoxelVertex.FrontTopRight] = new Vector3(1.0f, 1.0f, 1.0f);
 
-            m_manhattanSuccessors = new List<Vector3>
+            manhattanSuccessors = new List<Vector3>
             {
                 new Vector3(1.0f, 0, 0),
                 new Vector3(-1.0f, 0, 0),
@@ -132,7 +135,7 @@ namespace DwarfCorp
                 new Vector3(0, 0, 1.0f)
             };
 
-            m_manhattan2DSuccessors = new List<Vector3>
+            manhattan2DSuccessors = new List<Vector3>
             {
                 new Vector3(-1.0f, 0, 0),
                 new Vector3(1.0f, 0, 0),
@@ -150,88 +153,56 @@ namespace DwarfCorp
 
 
 
-            m_faceDeltas[(int) BoxFace.Top] = new Vector3(0.5f, 0.0f, 0.5f);
-            m_faceDeltas[(int) BoxFace.Bottom] = new Vector3(0.5f, 1.0f, 0.5f);
-            m_faceDeltas[(int) BoxFace.Left] = new Vector3(1.0f, 0.5f, 0.5f);
-            m_faceDeltas[(int) BoxFace.Right] = new Vector3(0.0f, 0.5f, 0.5f);
-            m_faceDeltas[(int) BoxFace.Front] = new Vector3(0.5f, 0.5f, 0.0f);
-            m_faceDeltas[(int) BoxFace.Back] = new Vector3(0.5f, 0.5f, 1.0f);
+            faceDeltas[(int) BoxFace.Top] = new Vector3(0.5f, 0.0f, 0.5f);
+            faceDeltas[(int) BoxFace.Bottom] = new Vector3(0.5f, 1.0f, 0.5f);
+            faceDeltas[(int) BoxFace.Left] = new Vector3(1.0f, 0.5f, 0.5f);
+            faceDeltas[(int) BoxFace.Right] = new Vector3(0.0f, 0.5f, 0.5f);
+            faceDeltas[(int) BoxFace.Front] = new Vector3(0.5f, 0.5f, 0.0f);
+            faceDeltas[(int) BoxFace.Back] = new Vector3(0.5f, 0.5f, 1.0f);
 
 
-            m_faceVertices[BoxFace.Top] = new[]
+            FaceVertices[BoxFace.Top] = new[]
             {
                 VoxelVertex.BackTopLeft,
                 VoxelVertex.BackTopRight,
                 VoxelVertex.FrontTopLeft,
                 VoxelVertex.FrontTopRight
             };
-            m_faceVertices[BoxFace.Bottom] = new[]
+            FaceVertices[BoxFace.Bottom] = new[]
             {
                 VoxelVertex.BackBottomLeft,
                 VoxelVertex.BackBottomRight,
                 VoxelVertex.FrontBottomLeft,
                 VoxelVertex.FrontBottomRight
             };
-            m_faceVertices[BoxFace.Left] = new[]
+            FaceVertices[BoxFace.Left] = new[]
             {
                 VoxelVertex.BackTopLeft,
                 VoxelVertex.BackBottomLeft,
                 VoxelVertex.FrontTopLeft,
                 VoxelVertex.FrontBottomLeft
             };
-            m_faceVertices[BoxFace.Right] = new[]
+            FaceVertices[BoxFace.Right] = new[]
             {
                 VoxelVertex.BackTopRight,
                 VoxelVertex.BackBottomRight,
                 VoxelVertex.FrontTopRight,
                 VoxelVertex.FrontBottomRight
             };
-            m_faceVertices[BoxFace.Front] = new[]
+            FaceVertices[BoxFace.Front] = new[]
             {
                 VoxelVertex.FrontBottomLeft,
                 VoxelVertex.FrontBottomRight,
                 VoxelVertex.FrontTopLeft,
                 VoxelVertex.FrontTopRight
             };
-            m_faceVertices[BoxFace.Back] = new[]
+            FaceVertices[BoxFace.Back] = new[]
             {
                 VoxelVertex.BackTopLeft,
                 VoxelVertex.BackTopRight,
                 VoxelVertex.BackBottomLeft,
                 VoxelVertex.BackBottomRight
             };
-
-
-            ColorStop first = new ColorStop
-            {
-                m_color = Color.Black,
-                m_position = 0.0f
-            };
-            ColorStop second = new ColorStop
-            {
-                m_color = new Color(100, 50, 0),
-                m_position = 0.2f
-            };
-            ColorStop third = new ColorStop
-            {
-                m_color = new Color(240, 200, 50),
-                m_position = 0.5f
-            };
-            ColorStop fourth = new ColorStop
-            {
-                m_color = new Color(255, 240, 180),
-                m_position = 1.0f
-            };
-
-            List<ColorStop> torchStops = new List<ColorStop>
-            {
-                first,
-                second,
-                third,
-                fourth
-            };
-
-            m_torchGradient = new ColorGradient(torchStops);
 
             for(int i = 0; i < 8; i++)
             {
@@ -341,29 +312,37 @@ namespace DwarfCorp
                     }
                 }
 
-                m_vertexSuccessors[vertex] = successors;
-                m_vertexSuccessorsDiag[vertex] = diagSuccessors;
+                VertexSuccessors[vertex] = successors;
+                VertexSuccessorsDiag[vertex] = diagSuccessors;
             }
 
-            m_staticsInitialized = true;
+            staticsInitialized = true;
         }
 
         #endregion
 
+        public void NotifyDestroyed(Point3 voxel)
+        {
+            if(OnVoxelDestroyed != null)
+            {
+                OnVoxelDestroyed.Invoke(voxel);
+            }
+        }
+
         public VoxelChunk(ChunkManager manager, Vector3 origin, int tileSize, Point3 id, int sizeX, int sizeY, int sizeZ)
         {
             FirstWaterIter = true;
-            m_sizeX = sizeX;
-            m_sizeY = sizeY;
-            m_sizeZ = sizeZ;
+            this.sizeX = sizeX;
+            this.sizeY = sizeY;
+            this.sizeZ = sizeZ;
             ID = id;
             Origin = origin;
-            VoxelGrid = ChunkGenerator.Allocate(m_sizeX, m_sizeY, m_sizeZ);
-            Water = WaterAllocate(m_sizeX, m_sizeY, m_sizeZ);
+            VoxelGrid = ChunkGenerator.Allocate(this.sizeX, this.sizeY, this.sizeZ);
+            Water = WaterAllocate(this.sizeX, this.sizeY, this.sizeZ);
             IsVisible = true;
             ShouldRebuild = true;
-            m_tileSize = tileSize;
-            HalfLength = new Vector3((float) m_tileSize / 2.0f, (float) m_tileSize / 2.0f, (float) m_tileSize / 2.0f);
+            this.tileSize = tileSize;
+            HalfLength = new Vector3((float) this.tileSize / 2.0f, (float) this.tileSize / 2.0f, (float) this.tileSize / 2.0f);
             Primitive = new VoxelListPrimitive();
             RenderWireframe = false;
             Manager = manager;
@@ -385,8 +364,8 @@ namespace DwarfCorp
             RebuildPending = false;
             RebuildLiquidPending = false;
             ReconstructRamps = true;
-            SunColors = ChunkGenerator.Allocate<byte>(m_sizeX, m_sizeY, m_sizeZ);
-            DynamicColors = ChunkGenerator.Allocate<byte>(m_sizeX, m_sizeY, m_sizeZ);
+            SunColors = ChunkGenerator.Allocate<byte>(this.sizeX, this.sizeY, this.sizeZ);
+            DynamicColors = ChunkGenerator.Allocate<byte>(this.sizeX, this.sizeY, this.sizeZ);
         }
 
 
@@ -418,13 +397,13 @@ namespace DwarfCorp
             FirstWaterIter = true;
             Motes = new Dictionary<string, List<InstanceData>>();
             VoxelGrid = voxelGrid;
-            m_sizeX = VoxelGrid.Length;
-            m_sizeY = VoxelGrid[0].Length;
-            m_sizeZ = VoxelGrid[0][0].Length;
+            sizeX = VoxelGrid.Length;
+            sizeY = VoxelGrid[0].Length;
+            sizeZ = VoxelGrid[0][0].Length;
             ID = id;
             IsVisible = true;
-            m_tileSize = tileSize;
-            HalfLength = new Vector3((float) m_tileSize / 2.0f, (float) m_tileSize / 2.0f, (float) m_tileSize / 2.0f);
+            this.tileSize = tileSize;
+            HalfLength = new Vector3((float) this.tileSize / 2.0f, (float) this.tileSize / 2.0f, (float) this.tileSize / 2.0f);
             Origin = origin;
             Primitive = new VoxelListPrimitive();
             RenderWireframe = false;
@@ -453,9 +432,9 @@ namespace DwarfCorp
                 }
             }
 
-            Water = WaterAllocate(m_sizeX, m_sizeY, m_sizeZ);
-            SunColors = ChunkGenerator.Allocate<byte>(m_sizeX, m_sizeY, m_sizeZ);
-            DynamicColors = ChunkGenerator.Allocate<byte>(m_sizeX, m_sizeY, m_sizeZ);
+            Water = WaterAllocate(sizeX, sizeY, sizeZ);
+            SunColors = ChunkGenerator.Allocate<byte>(sizeX, sizeY, sizeZ);
+            DynamicColors = ChunkGenerator.Allocate<byte>(sizeX, sizeY, sizeZ);
             InitializeStatics();
             PrimitiveMutex = new Mutex();
             ShouldRecalculateLighting = true;
@@ -468,11 +447,11 @@ namespace DwarfCorp
 
         public void InitializeWater()
         {
-            for(int x = 0; x < m_sizeX; x++)
+            for(int x = 0; x < sizeX; x++)
             {
-                for(int y = 0; y < m_sizeY; y++)
+                for(int y = 0; y < sizeY; y++)
                 {
-                    for(int z = 0; z < m_sizeZ; z++)
+                    for(int z = 0; z < sizeZ; z++)
                     {
                         Water[x][y][z] = new WaterCell();
                     }
@@ -486,7 +465,7 @@ namespace DwarfCorp
             VoxelVertex bestKey = VoxelVertex.BackTopRight;
             for(int i = 0; i < 8; i++)
             {
-                float dist = (position - m_vertexDeltas[i]).LengthSquared();
+                float dist = (position - vertexDeltas[i]).LengthSquared();
                 if(dist < bestDist)
                 {
                     bestDist = dist;
@@ -504,7 +483,7 @@ namespace DwarfCorp
             BoxFace bestKey = BoxFace.Top;
             for(int i = 0; i < 6; i++)
             {
-                float dist = (position - m_faceDeltas[i]).LengthSquared();
+                float dist = (position - faceDeltas[i]).LengthSquared();
                 if(dist < bestDist)
                 {
                     bestDist = dist;
@@ -523,7 +502,7 @@ namespace DwarfCorp
         {
             if(!m_boundingBoxCreated)
             {
-                Vector3 max = new Vector3(m_sizeX, m_sizeY, m_sizeZ) + Origin;
+                Vector3 max = new Vector3(sizeX, sizeY, sizeZ) + Origin;
                 m_boundingBox = new BoundingBox(Origin, max);
                 m_boundingBoxCreated = true;
             }
@@ -538,8 +517,8 @@ namespace DwarfCorp
         {
             if(!m_boundingSphereCreated)
             {
-                float m = Math.Max(Math.Max(m_sizeX, m_sizeY), m_sizeZ) * 0.5f;
-                m_boundingSphere = new BoundingSphere(Origin + new Vector3(m_sizeX, m_sizeY, m_sizeZ) * 0.5f, (float) Math.Sqrt(3 * m * m));
+                float m = Math.Max(Math.Max(sizeX, sizeY), sizeZ) * 0.5f;
+                m_boundingSphere = new BoundingSphere(Origin + new Vector3(sizeX, sizeY, sizeZ) * 0.5f, (float) Math.Sqrt(3 * m * m));
                 m_boundingSphereCreated = true;
             }
 
@@ -1157,7 +1136,7 @@ namespace DwarfCorp
             List<Voxel> neighbors = new List<Voxel>();
             GetNeighborsVertex(vertex, v, neighbors, false);
 
-            Vector3 myDelta = m_vertexDeltas[(int) vertex];
+            Vector3 myDelta = vertexDeltas[(int) vertex];
             foreach(Voxel neighbor in neighbors)
             {
                 if(neighbor == null)
@@ -1524,7 +1503,7 @@ namespace DwarfCorp
         {
             
             Voxel vox = VoxelGrid[x][y][z];
-            Voxel[] neighbors = new Voxel[m_manhattan2DSuccessors.Count];
+            Voxel[] neighbors = new Voxel[manhattan2DSuccessors.Count];
             Get2DManhattanNeighbors(neighbors, x, y, z);
 
             int value = 0;
@@ -1541,7 +1520,7 @@ namespace DwarfCorp
 
         public void Get2DManhattanNeighbors(Voxel[] neighbors, int x, int y, int z)
         {
-            List<Vector3> succ = m_manhattan2DSuccessors;
+            List<Vector3> succ = manhattan2DSuccessors;
             int count = succ.Count;
             bool isInterior = IsInterior(x, y, z);
             for (int i = 0; i < count; i++)
@@ -1714,17 +1693,17 @@ namespace DwarfCorp
 
         public void GetNeighborsVertex(VoxelVertex vertex, int x, int y, int z, List<VoxelRef> toReturn, bool considerEmpties)
         {
-            GetNeighborsSuccessors(m_vertexSuccessors[vertex], x, y, z, toReturn, considerEmpties);
+            GetNeighborsSuccessors(VertexSuccessors[vertex], x, y, z, toReturn, considerEmpties);
         }
 
         public void GetNeighborsVertex(VoxelVertex vertex, int x, int y, int z, List<Voxel> toReturn, bool considerEmpties)
         {
-            GetNeighborsSuccessors(m_vertexSuccessors[vertex], x, y, z, toReturn, considerEmpties);
+            GetNeighborsSuccessors(VertexSuccessors[vertex], x, y, z, toReturn, considerEmpties);
         }
 
         public void GetNeighborsVertexDiag(VoxelVertex vertex, int x, int y, int z, List<VoxelRef> toReturn, bool considerEmpties)
         {
-            GetNeighborsSuccessors(m_vertexSuccessorsDiag[vertex], x, y, z, toReturn, considerEmpties);
+            GetNeighborsSuccessors(VertexSuccessorsDiag[vertex], x, y, z, toReturn, considerEmpties);
         }
 
         public List<VoxelRef> GetNeighborsEuclidean(Voxel v)
@@ -1789,7 +1768,7 @@ namespace DwarfCorp
         public List<VoxelRef> GetNeighborsManhattan(int x, int y, int z)
         {
             List<VoxelRef> toReturn = new List<VoxelRef>();
-            GetNeighborsSuccessors(m_manhattanSuccessors, x, y, z, toReturn, true);
+            GetNeighborsSuccessors(manhattanSuccessors, x, y, z, toReturn, true);
             return toReturn;
         }
 
@@ -1958,7 +1937,7 @@ namespace DwarfCorp
             {
                 for(int i = 0; i < 6; i++)
                 {
-                    Vector3 neighbor = m_manhattanSuccessors[i];
+                    Vector3 neighbor = manhattanSuccessors[i];
                     Voxel n = VoxelGrid[gridPoint.X + (int) neighbor.X][gridPoint.Y + (int) neighbor.Y][gridPoint.Z + (int) neighbor.Z];
 
                     if(n != null)
@@ -1972,7 +1951,7 @@ namespace DwarfCorp
 
                 for(int i = 0; i < 6; i++)
                 {
-                    Vector3 neighbor = m_manhattanSuccessors[i];
+                    Vector3 neighbor = manhattanSuccessors[i];
 
                     if(!IsGridPositionValid(neighbor + gridPos))
                     {
@@ -2015,7 +1994,7 @@ namespace DwarfCorp
             {
                 for(int i = 0; i < 6; i++)
                 {
-                    Vector3 neighbor = m_manhattanSuccessors[i];
+                    Vector3 neighbor = manhattanSuccessors[i];
                     Voxel n = chunk.VoxelGrid[gridPoint.X + (int) neighbor.X][gridPoint.Y + (int) neighbor.Y][gridPoint.Z + (int) neighbor.Z];
 
                     if(n == null || (ramps && n.RampType != RampType.None))
@@ -2029,7 +2008,7 @@ namespace DwarfCorp
 
                 for(int i = 0; i < 6; i++)
                 {
-                    Vector3 neighbor = m_manhattanSuccessors[i];
+                    Vector3 neighbor = manhattanSuccessors[i];
                     Voxel atPos = Manager.ChunkData.GetNonNullVoxelAtWorldLocationCheckFirst(chunk, pos + neighbor);
 
                     if(atPos == null|| (ramps && atPos.RampType != RampType.None))

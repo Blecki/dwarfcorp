@@ -242,7 +242,7 @@ namespace DwarfCorp
             IsActive = false;
             IsVisible = false;
             HasMoved = false;
-
+           
             base.Die();
         }
     }

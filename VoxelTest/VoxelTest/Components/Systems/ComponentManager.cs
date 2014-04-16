@@ -166,6 +166,11 @@ namespace DwarfCorp
 
         private void RemoveComponentImmediate(GameComponent component)
         {
+            if(!Components.ContainsKey(component.GlobalID))
+            {
+                return;
+            }
+
             Components.Remove(component.GlobalID);
 
             List<GameComponent> children = component.GetAllChildrenRecursive();

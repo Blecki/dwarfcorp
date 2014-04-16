@@ -479,7 +479,7 @@ namespace DwarfCorp
             HashSet<VoxelChunk> chunksIntersecting = new HashSet<VoxelChunk>();
             ChunkOctree.Root.GetComponentsIntersecting<VoxelChunk>(box, chunksIntersecting);
 
-            return chunksIntersecting.Count > 0;
+            return chunksIntersecting.Count > 0 || GeneratedChunks.Any(chunk => chunk.GetBoundingBox().Intersects(box));
         }
 
         public void GenerateThread()
@@ -562,7 +562,7 @@ namespace DwarfCorp
                             continue;
                         }
 
-                        Vector3 extents = box.Max - box.Min;
+                   
                         float xWidth = (box.Max.X - box.Min.X) * dx;
                         float zWidth = (box.Max.Z - box.Min.Z) * dy;
 
@@ -663,7 +663,11 @@ namespace DwarfCorp
                         GeneratedChunks.Enqueue(chunk);
                         foreach(VoxelChunk chunk2 in GeneratedChunks)
                         {
-                            ChunkData.AddChunk(chunk2);
+                            if(!ChunkData.ChunkMap.ContainsKey(chunk2.ID))
+                            {
+                                ChunkData.AddChunk(chunk2);
+                                ChunkGen.GenerateVegetation(chunk2, Components, Content, Graphics);
+                            }
                         }
                     }
 
@@ -713,12 +717,16 @@ namespace DwarfCorp
 
                 foreach(VoxelChunk chunk in GeneratedChunks)
                 {
-                    ChunkData.AddChunk(chunk);
-                    List<VoxelChunk> adjacents = ChunkData.GetAdjacentChunks(chunk);
-                    foreach(VoxelChunk c in adjacents)
+                    if(ChunkData.ChunkMap.ContainsKey(chunk.ID))
                     {
-                        c.ShouldRecalculateLighting = true;
-                        c.ShouldRebuild = true;
+                        ChunkData.AddChunk(chunk);
+                        ChunkGen.GenerateVegetation(chunk, Components, Content, Graphics);
+                        List<VoxelChunk> adjacents = ChunkData.GetAdjacentChunks(chunk);
+                        foreach(VoxelChunk c in adjacents)
+                        {
+                            c.ShouldRecalculateLighting = true;
+                            c.ShouldRebuild = true;
+                        }
                     }
                 }
 

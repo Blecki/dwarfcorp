@@ -123,6 +123,12 @@ namespace DwarfCorp
             return value;
         }
 
+        public static Vector2 Clamp(Vector2 value, Rectangle bounds)
+        {
+            return new Vector2(Clamp(value.X, bounds.Left, bounds.Right), Clamp(value.Y, bounds.Top, bounds.Bottom));
+        }
+
+
         /// <summary>
         /// Gets the Pitch, yaw and roll of a rotation matrix.
         /// </summary>

@@ -1459,7 +1459,7 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
-            GUI.PreRender(gameTime);
+            GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
             // Keeping track of a running FPS buffer (averaged)
             if(lastFps.Count > 100)
             {

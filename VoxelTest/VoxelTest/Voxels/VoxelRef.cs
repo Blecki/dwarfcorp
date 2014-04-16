@@ -90,14 +90,8 @@ namespace DwarfCorp
             {
                 return null;
             }
-            else if(manager.ChunkData.ChunkMap[ChunkID].IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z))
-            {
-                return manager.ChunkData.ChunkMap[ChunkID].Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z];
-            }
-            else
-            {
-                return null;
-            }
+            VoxelChunk chunk = manager.ChunkData.ChunkMap[ChunkID];
+            return chunk.IsCellValid((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z) ? chunk.Water[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z] : null;
         }
 
         public byte GetWaterLevel(ChunkManager manager)

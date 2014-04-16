@@ -182,11 +182,16 @@ namespace DwarfCorp
             }
 
             IsDead = true;
+            List<GameComponent> children = GetAllChildrenRecursive();
 
-            foreach(GameComponent child in Children)
+            foreach (GameComponent child in children)
             {
                 child.Die();
             }
+
+            RemoveFromParent();
+            
+
         }
 
         #region child_operators

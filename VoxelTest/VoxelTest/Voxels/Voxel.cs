@@ -182,6 +182,7 @@ namespace DwarfCorp
         }
 
 
+
         public void Kill()
         {
             if(dead || Chunk == null)
@@ -214,7 +215,9 @@ namespace DwarfCorp
             Chunk.ShouldRebuild = true;
             Chunk.ShouldRecalculateLighting = true;
             Chunk.ReconstructRamps = true;
+            Chunk.NotifyDestroyed(new Point3(GridPosition));
             Chunk.NotifyChangedComponents();
+
 
             if(!IsInterior)
             {

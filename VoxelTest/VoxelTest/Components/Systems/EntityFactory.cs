@@ -48,6 +48,7 @@ namespace DwarfCorp
             ShadowComponent shadow = new ShadowComponent(componentManager, "shadow", balloon, shadowTransform, TextureManager.GetTexture(ContentPaths.Effects.shadowcircle));
             BalloonAI balloonAI = new BalloonAI(balloon, target, order, master);
 
+            MinimapIcon minimapIcon = new MinimapIcon(balloon, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 2, 0));
 
             return balloon;
         }
@@ -855,6 +856,14 @@ namespace DwarfCorp
             tree.Tags.Add("Tree");
             tree.Tags.Add("EmitsWood");
 
+            MinimapIcon minimapIcon = new MinimapIcon(tree, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 1, 0));
+            Voxel voxelUnder = PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position);
+
+            if(voxelUnder != null)
+            {
+                VoxelListener listener = new VoxelListener(componentManager, tree, PlayState.ChunkManager, voxelUnder.GetReference());
+            }
+
             /*
             List<LocatableComponent> woods = new List<LocatableComponent>();
 
@@ -897,13 +906,21 @@ namespace DwarfCorp
         public static GameComponent GenerateBerryBush(float bushSize, Vector3 position, float offset, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
         {
             Matrix matrix = Matrix.Identity;
-            matrix.Translation = position;
+            matrix.Translation = position + new Vector3(0.5f, 0, 0.5f);
             Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.berrybush);
             LocatableComponent tree = new LocatableComponent(componentManager, "Bush", componentManager.RootComponent, matrix, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero);
             ModelInstanceComponent modelInstance = new ModelInstanceComponent(componentManager, "Model", tree, Matrix.CreateScale(bushSize, bushSize, bushSize) * Matrix.CreateTranslation(new Vector3(0.0f, bushSize * offset - 0.1f, 0.0f)), "berrybush", false);
 
             HealthComponent health = new HealthComponent(componentManager, "Health", tree, 30 * bushSize, 0.0f, 30 * bushSize);
 
+
+
+            Voxel voxelUnder = PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position);
+
+            if (voxelUnder != null)
+            {
+                VoxelListener listener = new VoxelListener(componentManager, tree, PlayState.ChunkManager, voxelUnder.GetReference());
+            }
 
             tree.Tags.Add("Tree");
             tree.Tags.Add("Bush");
