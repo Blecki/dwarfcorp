@@ -1,0 +1,89 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace DwarfCorp
+{
+    /// <summary>
+    /// A creature goes to a specific item in one zone, and then picks it up.
+    /// The creature then goes to another zone, and leaves the held item there.
+    /// </summary>
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    internal class MoveItemAct : CompoundCreatureAct
+    {
+        public Item Item { get; set; }
+        public Zone Zone { get; set; }
+
+        public MoveItemAct()
+        {
+
+        }
+
+        public IEnumerable<Status> Reserve(Zone zone, string voxelName)
+        {
+            VoxelRef voxel = Agent.Blackboard.GetData<VoxelRef>(voxelName);
+
+            if (zone == null || voxel == null)
+            {
+                yield return Status.Success;
+            }
+            else
+            {
+                zone.SetReserved(voxel, true);
+                yield return Status.Success;
+            }
+        }
+
+        public IEnumerable<Status> Unreserve(Zone zone, string voxelName)
+        {
+            VoxelRef voxel = Agent.Blackboard.GetData<VoxelRef>(voxelName);
+
+            if (zone == null || voxel == null)
+            {
+                yield return Status.Success;
+            }
+            else
+            {
+                zone.SetReserved(voxel, false);
+                yield return Status.Success;
+            }
+            
+        }
+
+        public MoveItemAct(CreatureAIComponent agent, Item item, Zone zone) :
+            base(agent)
+        {
+            Name = "Move item " + item.ID + " to zone " + zone.ID;
+            Item = item;
+            Zone = zone;
+
+            /*
+            Tree = new Sequence(
+                new GoToEntityAct(item.UserData, agent),
+                new SetBlackboardData<LocatableComponent>(agent, "TargetObject", item.UserData),
+                new PickUpAct(agent, PickUpAct.PickUpType.Stockpile, item.Zone, "TargetObject"),
+                new Sequence(
+                    new GetNearestFreeVoxelInZone(agent, Zone, "FreeVoxel"),
+                    new GoToNamedVoxelAct("FreeVoxel", agent),
+                    new PutItemInZoneAct(agent, Zone)) | new DropItemAct(agent));
+             */
+
+            Tree = new Sequence(
+                new SetBlackboardData<LocatableComponent>(agent, "TargetObject", item.UserData),
+                    new GetNearestFreeVoxelInZone(agent, Zone, "FreeVoxel", true),
+                    new GoToEntityAct(Item.UserData, Agent),
+                    new PickUpAct(Agent, PickUpAct.PickUpType.Stockpile, item.Zone, "TargetObject"),
+                    new Select(
+                                new Sequence(
+                                                new GoToVoxelAct("FreeVoxel", PlanAct.PlanType.Adjacent, Agent),
+                                                new PutItemInZoneAct(Agent, Zone, "FreeVoxel")
+                                            ),
+                                new DropItemAct(Agent)
+                              )
+                   )
+           | new Wrap(() => Unreserve(Zone, "FreeVoxel"));
+        }
+    }
+
+}
