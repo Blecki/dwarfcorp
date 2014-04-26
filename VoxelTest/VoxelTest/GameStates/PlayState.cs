@@ -382,7 +382,7 @@ namespace DwarfCorp.GameStates
             PlanService.Restart();
 
             ComponentManager = new ComponentManager();
-            ComponentManager.RootComponent = new LocatableComponent(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero, false);
+            ComponentManager.RootComponent = new Body(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero, false);
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);
             ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
@@ -1517,7 +1517,7 @@ namespace DwarfCorp.GameStates
             DefaultShader.CurrentTechnique = DefaultShader.Techniques["Textured"];
             DefaultShader.Parameters["Clipping"].SetValue(false);
 
-            //LocatableComponent.CollisionManager.DebugDraw();
+            //Body.CollisionManager.DebugDraw();
 
             // Render simple geometry (boxes, etc.)
             Drawer3D.Render(GraphicsDevice, DefaultShader, true);

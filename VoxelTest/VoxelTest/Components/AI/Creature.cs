@@ -174,7 +174,7 @@ namespace DwarfCorp
                 {
                     IsOnGround = true;
 
-                    CurrentCharacterMode = CharacterMode.Idle;
+                    if(CurrentCharacterMode != CharacterMode.Attacking) CurrentCharacterMode = CharacterMode.Idle;
                 }
                 else
                 {
@@ -263,6 +263,7 @@ namespace DwarfCorp
 
         public void UpdateAnimation(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
+           
             float veloNorm = Physics.Velocity.Length();
             if(veloNorm > Stats.MaxSpeed)
             {

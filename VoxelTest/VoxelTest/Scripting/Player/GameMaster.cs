@@ -52,6 +52,9 @@ namespace DwarfCorp
         public VoxelSelector VoxSelector { get; set; }
 
         [JsonIgnore]
+        public BodySelector BodySelector { get; set; }
+
+        [JsonIgnore]
         public AIDebugger Debugger { get; set; }
 
         public Faction Faction { get; set; }
@@ -81,6 +84,7 @@ namespace DwarfCorp
             Faction.Components = components;
             CameraController = camera;
             VoxSelector = new VoxelSelector(CameraController, chunks.Graphics, chunks);
+            BodySelector = new BodySelector(CameraController, chunks.Graphics, components);
             GUI = gui;
             
             CreateTools();
@@ -150,6 +154,12 @@ namespace DwarfCorp
             Faction = faction;
             Initialize(game, components, chunks, camera, graphics, gui);
             VoxSelector.Selected += OnSelected;
+            BodySelector.Selected += OnBodiesSelected;
+        }
+
+        public void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        {
+            CurrentTool.OnBodiesSelected(bodies, button);
         }
 
         public void OnSelected(List<VoxelRef> voxels, InputManager.MouseButton button)
@@ -162,6 +172,9 @@ namespace DwarfCorp
         {
             CurrentTool.Render(game, g, time);
             VoxSelector.Render();
+            DwarfGame.SpriteBatch.Begin();
+            BodySelector.Render(DwarfGame.SpriteBatch);
+            DwarfGame.SpriteBatch.End();
         }
 
         public void Update(DwarfGame game, GameTime time)
@@ -179,6 +192,7 @@ namespace DwarfCorp
                     Debugger.Update(time);
                 }
             }
+      
             CameraController.Update(time, PlayState.ChunkManager);
             UpdateInput(game, time);
         }
@@ -213,6 +227,7 @@ namespace DwarfCorp
             {
                 UpdateMouse(Mouse.GetState(), Keyboard.GetState(), game, time);
                 VoxSelector.Update();
+                BodySelector.Update();
             }
 
         }

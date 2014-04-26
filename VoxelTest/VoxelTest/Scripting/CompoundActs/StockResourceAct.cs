@@ -42,22 +42,7 @@ namespace DwarfCorp
         }
 
 
-        public IEnumerable<Status> Unreserve(string stockpile, string voxelID)
-        {
-            Stockpile pile = Agent.Blackboard.GetData<Stockpile>(stockpile);
-            VoxelRef voxel = Agent.Blackboard.GetData<VoxelRef>(voxelID);
 
-            if (pile == null || voxel == null)
-            {
-                yield return Status.Success;
-            }
-            else
-            {
-                pile.SetReserved(voxel, false);
-                yield return Status.Success;
-            }
-
-        }
 
         public override IEnumerable<Status> Run()
         {
@@ -84,7 +69,7 @@ namespace DwarfCorp
                                                   )
                                          
                         ) 
-                       | new Wrap(() => Unreserve("TargetStockpile", "FreeVoxel"));
+                     ;
 
                     Tree.Initialize();
                 }

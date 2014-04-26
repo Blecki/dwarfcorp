@@ -14,7 +14,7 @@ namespace DwarfCorp
     /// </summary>
     public class SinMover : GameComponent
     {
-        public LocatableComponent Component { get; set; }
+        public Body Component { get; set; }
         public float Magnitude { get; set; }
         public float Rate { get; set; }
         public float Offset { get; set; }
@@ -24,7 +24,7 @@ namespace DwarfCorp
             
         }
 
-        public SinMover(float mag, float rate, float offset, LocatableComponent component) :
+        public SinMover(float mag, float rate, float offset, Body component) :
             base(component.Manager, "Sinmover", component)
         {
             Magnitude = mag;
@@ -43,9 +43,9 @@ namespace DwarfCorp
 
             Component.HasMoved = true;
 
-            if(Component.Parent is LocatableComponent)
+            if(Component.Parent is Body)
             {
-                (Component.Parent as LocatableComponent).HasMoved = true;
+                (Component.Parent as Body).HasMoved = true;
             }
 
 

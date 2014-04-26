@@ -17,6 +17,13 @@ namespace DwarfCorp
             time--;
             return dest * (time * time * time + 1) + start;
         }
+
+        public static float Ballistic(float time, float duration, float height)
+        {
+            float t = time / duration;
+
+            return (-((t - 0.5f) * (t - 0.5f)) + 0.25f) * height * 4.0f;
+        }
     }
 
 }

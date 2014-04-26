@@ -28,16 +28,23 @@ namespace DwarfCorp
             {
                 Player.VoxSelector.Enabled = false;
                 game.IsMouseVisible = false;
+                Player.BodySelector.Enabled = false;
                 return;
             }
 
             Player.VoxSelector.Enabled = true;
+            Player.BodySelector.Enabled = false;
             game.IsMouseVisible = true;
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
         {
             Player.Faction.RoomDesignator.Render(time, PlayState.ChunkManager.Graphics);
+        }
+
+        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        {
+            
         }
     }
 }

@@ -60,7 +60,7 @@ namespace DwarfCorp
             NumResources = 1;
         }
 
-        public ResourceAmount(LocatableComponent component)
+        public ResourceAmount(Body component)
         {
             ResourceType = ResourceLibrary.Resources[component.Tags[0]];
             NumResources = 1;

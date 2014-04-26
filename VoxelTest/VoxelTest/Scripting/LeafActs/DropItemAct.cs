@@ -21,7 +21,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            LocatableComponent grabbed = Creature.Hands.GetFirstGrab();
+            Body grabbed = Creature.Hands.GetFirstGrab();
 
             if(grabbed == null)
             {

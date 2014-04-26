@@ -76,20 +76,16 @@ namespace DwarfCorp
                 yield break;
             }
 
-            List<LocatableComponent> createdItems = Creature.Inventory.RemoveAndCreate(Resource);
+            List<Body> createdItems = Creature.Inventory.RemoveAndCreate(Resource);
             if(createdItems.Count == 0)
             {
                 Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                 yield return Status.Fail;
             }
 
-            if (Zone.AddItem(createdItems[0], Voxel))
+            if (Zone.AddItem(createdItems[0]))
             {
-                Matrix m = Matrix.Identity;
-                m.Translation = Voxel.WorldPosition + new Vector3(0.5f, 1.5f, 0.5f);
-                createdItems[0].LocalTransform = m;
-                createdItems[0].HasMoved = true;
-                createdItems[0].DrawBoundingBox = false;
+                Creature.NoiseMaker.MakeNoise("Hurt", Creature.AI.Position);
                 yield return Status.Success;
             }
             else

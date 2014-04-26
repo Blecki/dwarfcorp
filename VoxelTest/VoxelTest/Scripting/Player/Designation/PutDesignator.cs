@@ -43,8 +43,8 @@ namespace DwarfCorp
 
             PlayState.ParticleManager.Trigger("puff", v.Position, Color.White, 20);
 
-            List<LocatableComponent> components = new List<LocatableComponent>();
-            manager.Components.GetComponentsIntersecting(Vox.GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic);
+            List<Body> components = new List<Body>();
+            manager.Components.GetBodiesIntersecting(Vox.GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic);
 
             foreach(PhysicsComponent phys in components.OfType<PhysicsComponent>())
             {

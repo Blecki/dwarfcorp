@@ -19,6 +19,33 @@ namespace DwarfCorp
         public Color GatherDesignationColor { get; set; }
         public float GatherDesignationGlowRate { get; set; }
 
+        public GatherTool()
+        {
+
+        }
+
+
+        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        {
+            List<Body> resourcesPickedByMouse = ComponentManager.FilterComponentsWithTag("Resource", bodies);
+
+            foreach (Body resource in resourcesPickedByMouse.Where(resource => resource.IsActive && resource.IsVisible && resource.Parent == PlayState.ComponentManager.RootComponent))
+            {
+                Drawer3D.DrawBox(resource.BoundingBox, Color.LightGoldenrodYellow, 0.05f, true);
+
+                if (button == InputManager.MouseButton.Left)
+                    Player.Faction.AddGatherDesignation(resource);
+                else
+                {
+                    if (!Player.Faction.GatherDesignations.Contains(resource))
+                    {
+                        continue;
+                    }
+
+                    Player.Faction.GatherDesignations.Remove(resource);
+                }
+            }
+        }
 
         public override void OnVoxelsSelected(List<VoxelRef> voxels, InputManager.MouseButton button)
         {
@@ -27,23 +54,27 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, GameTime time)
         {
+           
             if (Player.IsCameraRotationModeActive())
             {
-                Player.VoxSelector.Enabled = false;
-                game.IsMouseVisible = false;
                 return;
             }
+            Player.VoxSelector.Enabled = false;
+            Player.BodySelector.Enabled = true;
+            game.IsMouseVisible = true;
 
+
+            /*
             MouseState mouseState = Mouse.GetState();
             Player.VoxSelector.Enabled = false;
             game.IsMouseVisible = true;
 
-            List<LocatableComponent> pickedByMouse = new List<LocatableComponent>();
-            PlayState.ComponentManager.GetComponentsUnderMouse(mouseState, Player.CameraController, PlayState.ChunkManager.Graphics.Viewport, pickedByMouse);
+            List<Body> pickedByMouse = new List<Body>();
+            PlayState.ComponentManager.GetBodiesUnderMouse(mouseState, Player.CameraController, PlayState.ChunkManager.Graphics.Viewport, pickedByMouse);
 
-            List<LocatableComponent> resourcesPickedByMouse = ComponentManager.FilterComponentsWithTag("Resource", pickedByMouse);
+            List<Body> resourcesPickedByMouse = ComponentManager.FilterComponentsWithTag("Resource", pickedByMouse);
 
-            foreach (LocatableComponent resource in resourcesPickedByMouse.Where(resource => resource.IsActive && resource.IsVisible && resource.Parent == PlayState.ComponentManager.RootComponent && !Player.Faction.IsInStockpile(resource)))
+            foreach (Body resource in resourcesPickedByMouse.Where(resource => resource.IsActive && resource.IsVisible && resource.Parent == PlayState.ComponentManager.RootComponent))
             {
                 Drawer3D.DrawBox(resource.BoundingBox, Color.LightGoldenrodYellow, 0.05f, true);
                 
@@ -61,6 +92,7 @@ namespace DwarfCorp
                     Player.Faction.GatherDesignations.Remove(resource);
                 }
             }
+             */
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
@@ -76,6 +108,7 @@ namespace DwarfCorp
             {
                 Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
             }
+
         }
     }
 }

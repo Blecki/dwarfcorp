@@ -16,7 +16,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class FlammableComponent : GameComponent
     {
-        public LocatableComponent LocParent { get; set; }
+        public Body LocParent { get; set; }
         public HealthComponent Health { get; set; }
 
         public float Heat { get; set; }
@@ -25,7 +25,7 @@ namespace DwarfCorp
 
         public Timer CheckLavaTimer { get; set; }
 
-        public FlammableComponent(ComponentManager manager, string name, LocatableComponent parent, HealthComponent health) :
+        public FlammableComponent(ComponentManager manager, string name, Body parent, HealthComponent health) :
             base(manager, name, parent)
         {
             LocParent = parent;

@@ -20,22 +20,7 @@ namespace DwarfCorp
             Voxel = voxel;
         }
 
-        public void AddResource(string resource)
-        {
-            if(BuildDesignation.PutResources.ContainsKey(resource))
-            {
-                ResourceAmount amount = BuildDesignation.PutResources[resource];
-                amount.NumResources++;
-            }
-            else
-            {
-                ResourceAmount amount = new ResourceAmount();
-                amount.NumResources++;
-                amount.ResourceType = ResourceLibrary.Resources[resource];
 
-                BuildDesignation.PutResources[resource] = amount;
-            }
-        }
 
         public void Build()
         {
@@ -60,23 +45,7 @@ namespace DwarfCorp
             return null;
         }
 
-        public bool MeetsBuildRequirements()
-        {
-            bool toReturn = true;
-            foreach(string s in ToBuild.RoomType.RequiredResources.Keys)
-            {
-                if(!BuildDesignation.PutResources.ContainsKey(s))
-                {
-                    return false;
-                }
-                else
-                {
-                    toReturn = toReturn && (BuildDesignation.PutResources[s].NumResources >= Math.Max((int) (ToBuild.RoomType.RequiredResources[s].NumResources * BuildDesignation.VoxelBuildDesignations.Count), 1));
-                }
-            }
 
-            return toReturn;
-        }
     }
 
 }

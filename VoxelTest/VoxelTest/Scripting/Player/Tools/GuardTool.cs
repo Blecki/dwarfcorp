@@ -62,6 +62,7 @@ namespace DwarfCorp
 
             Player.VoxSelector.Enabled = true;
             game.IsMouseVisible = true;
+            Player.BodySelector.Enabled = false;
             Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
         }
 
@@ -91,6 +92,11 @@ namespace DwarfCorp
                 drawColor.B = (byte)(Math.Min(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GuardDesignationGlowRate)) + 50, 255));
                 Drawer3D.DrawBox(box, drawColor, 0.05f, true);
             }
+        }
+
+        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        {
+            
         }
     }
 }

@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference=true)]
-    public class Inventory : LocatableComponent
+    public class Inventory : Body
     {
         public ResourceContainer Resources { get; set; }
 
@@ -22,7 +22,7 @@ namespace DwarfCorp
             
         }
 
-        public Inventory(ComponentManager manager, string name, LocatableComponent parent) :
+        public Inventory(ComponentManager manager, string name, Body parent) :
             base(manager, name, parent, Matrix.Identity, parent.BoundingBox.Extents(), parent.BoundingBoxPos)
         {
             
@@ -33,12 +33,18 @@ namespace DwarfCorp
             return Resources.AddResource(resourceAmount);
         }
 
+
+        public bool Remove(IEnumerable<ResourceAmount> resourceAmount)
+        {
+            return resourceAmount.Aggregate(true, (current, resource) => current && Resources.RemoveResource(resource));
+        }
+
         public bool Remove(ResourceAmount resourceAmount)
         {
             return Resources.RemoveResource(resourceAmount);
         }
 
-        public bool Pickup(LocatableComponent component)
+        public bool Pickup(Body component)
         {
             return Pickup(Item.CreateItem(null, component));
         }
@@ -64,7 +70,6 @@ namespace DwarfCorp
 
             if(item.IsInZone)
             {
-                item.Zone.RemoveItem(item.UserData);
                 item.Zone = null;
             }
             item.UserData.GetRootComponent().Delete();
@@ -72,9 +77,9 @@ namespace DwarfCorp
             return true;
         }
 
-        public List<LocatableComponent> RemoveAndCreate(ResourceAmount resources)
+        public List<Body> RemoveAndCreate(ResourceAmount resources)
         {
-            List<LocatableComponent> toReturn = new List<LocatableComponent>();
+            List<Body> toReturn = new List<Body>();
 
             if(!Resources.RemoveResource(resources))
             {
@@ -83,7 +88,7 @@ namespace DwarfCorp
 
             for(int i = 0; i < resources.NumResources; i++)
             {
-                LocatableComponent newEntity = EntityFactory.GenerateComponent(resources.ResourceType.ResourceName, GlobalTransform.Translation + MathFunctions.RandVector3Cube() * 0.5f,
+                Body newEntity = EntityFactory.GenerateComponent(resources.ResourceType.ResourceName, GlobalTransform.Translation + MathFunctions.RandVector3Cube() * 0.5f,
                     Manager, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics, PlayState.ChunkManager, Manager.Factions, PlayState.Camera);
                 toReturn.Add(newEntity);
             }

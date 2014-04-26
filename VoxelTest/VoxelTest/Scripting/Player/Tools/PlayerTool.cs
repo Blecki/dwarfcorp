@@ -22,5 +22,6 @@ namespace DwarfCorp
         public abstract void Render(DwarfGame game, GraphicsDevice graphics, GameTime time);
 
 
+        public abstract void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button);
     }
 }

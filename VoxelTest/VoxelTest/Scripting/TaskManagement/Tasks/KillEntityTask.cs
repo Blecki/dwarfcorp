@@ -11,9 +11,9 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class KillEntityTask : Task
     {
-        public LocatableComponent EntityToKill = null;
+        public Body EntityToKill = null;
 
-        public KillEntityTask(LocatableComponent entity)
+        public KillEntityTask(Body entity)
         {
             Name = "Kill Entity: " + entity.Name + " " + entity.GlobalID;
             EntityToKill = entity;

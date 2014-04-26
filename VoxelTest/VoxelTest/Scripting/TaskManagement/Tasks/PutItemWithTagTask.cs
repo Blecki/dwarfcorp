@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace DwarfCorp
@@ -48,7 +49,7 @@ namespace DwarfCorp
             }
 
             RoomBuildDesignation designation = voxDesignation.BuildDesignation;
-            return new PutTaggedRoomItemAct(creature.AI, designation, Tags);
+            return  new BuildRoomAct(creature.AI, designation);
         }
 
         public override float ComputeCost(Creature agent)

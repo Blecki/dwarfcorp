@@ -24,7 +24,7 @@ namespace DwarfCorp
         public Room TargetRoom { get; set; }
         public VoxelBuildDesignation TargetBuildDesignation { get; set; }
         public List<string> DesiredTags { get; set; }
-        public LocatableComponent TargetComponent { get; set; }
+        public Body TargetComponent { get; set; }
         public VoxelRef TargetVoxel { get; set; }
         public VoxelRef PreviousTargetVoxel { get; set; }
         public List<VoxelRef> CurrentPath { get; set; }

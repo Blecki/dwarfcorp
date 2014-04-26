@@ -21,6 +21,8 @@ namespace DwarfCorp
             public static string pick = Program.CreatePath("Audio", "pick");
             public static string river = Program.CreatePath("Audio", "river");
             public static string sword = Program.CreatePath("Audio", "sword");
+            public static string dig = Program.CreatePath("Audio", "dig");
+            public static string whoosh = Program.CreatePath("Audio", "whoosh");
 
         }
         public class Particles

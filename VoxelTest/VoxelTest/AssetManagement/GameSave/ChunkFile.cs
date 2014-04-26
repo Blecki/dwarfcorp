@@ -15,7 +15,7 @@ namespace DwarfCorp
     ///  Minimal representation of a chunk.
     ///  Exists to write to and from files.
     /// </summary>
-    public class ChunkFile : SaveData
+    public class ChunkFile 
     {
         public short[,,] Types;
         public short[,,] LiquidTypes;
@@ -58,7 +58,7 @@ namespace DwarfCorp
             this.Types = chunkFile.Types;
         }
 
-        public override bool ReadFile(string filePath, bool isCompressed)
+        public bool ReadFile(string filePath, bool isCompressed)
         {
             ChunkFile chunkFile = FileUtils.LoadJson<ChunkFile>(filePath, isCompressed);
 
@@ -73,7 +73,7 @@ namespace DwarfCorp
             }
         }
 
-        public override bool WriteFile(string filePath, bool compress)
+        public bool WriteFile(string filePath, bool compress)
         {
             return FileUtils.SaveJSon<ChunkFile>(this, filePath, compress);
         }

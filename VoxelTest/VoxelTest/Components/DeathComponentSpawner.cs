@@ -14,12 +14,12 @@ namespace DwarfCorp
     /// When an entity dies, this component releases other components (such as resources)
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class DeathComponentSpawner : LocatableComponent
+    public class DeathComponentSpawner : Body
     {
-        public List<LocatableComponent> Spawns { get; set; }
+        public List<Body> Spawns { get; set; }
         public float ThrowSpeed { get; set; }
 
-        public DeathComponentSpawner(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingExtents, Vector3 boundingBoxPos, List<LocatableComponent> spawns) :
+        public DeathComponentSpawner(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingExtents, Vector3 boundingBoxPos, List<Body> spawns) :
             base(manager, name, parent, localTransform, boundingExtents, boundingBoxPos, false)
         {
             Spawns = spawns;
@@ -34,7 +34,7 @@ namespace DwarfCorp
                 return;
             }
 
-            foreach(LocatableComponent locatable in Spawns)
+            foreach(Body locatable in Spawns)
             {
                 locatable.SetVisibleRecursive(true);
                 locatable.SetActiveRecursive(true);
