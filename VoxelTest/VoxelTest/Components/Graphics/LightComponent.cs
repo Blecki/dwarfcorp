@@ -13,7 +13,7 @@ namespace DwarfCorp
     /// This component dynamically lights up voxels around it with torch light.
     /// </summary>
     [JsonObject(IsReference = true)]
-    internal class LightComponent : LocatableComponent
+    internal class LightComponent : Body
     {
         public byte Intensity { get; set; }
         public byte Range { get; set; }

@@ -12,7 +12,7 @@ namespace DwarfCorp
     /// Basic physics object. When attached to an entity, it causes it to obey gravity, and collide with stuff.
     /// All objects are just axis-aligned boxes that are treated as point masses.
     /// </summary>
-    public class PhysicsComponent : LocatableComponent
+    public class PhysicsComponent : Body
     {
         public Vector3 AngularVelocity { get; set; }
         public Vector3 Velocity { get; set; }

@@ -13,9 +13,9 @@ using System.IO.Compression;
 namespace DwarfCorp
 {
 
-    public class GameFile : SaveData
+    public class GameFile 
     {
-        public class GameData
+        public class GameData : SaveData
         {
             public Texture2D Screenshot { get; set; }
             public List<ChunkFile> ChunkData { get; set; }
@@ -107,7 +107,7 @@ namespace DwarfCorp
 
         public bool LoadComponents(string filePath)
         {
-            string[] componentFiles = GetFilesInDirectory(filePath, true, "zcomp", "zcomp");
+            string[] componentFiles = SaveData.GetFilesInDirectory(filePath, true, "zcomp", "zcomp");
             if (componentFiles.Length > 0)
             {
                 Data.Components = FileUtils.LoadJson<ComponentManager>(componentFiles[0], true);
@@ -120,7 +120,7 @@ namespace DwarfCorp
             return true;
         }
 
-        public override sealed bool ReadFile(string filePath, bool isCompressed)
+        public  bool ReadFile(string filePath, bool isCompressed)
         {
             if(!System.IO.Directory.Exists(filePath))
             {
@@ -128,9 +128,9 @@ namespace DwarfCorp
             }
             else
             {
-                string[] screenshots = GetFilesInDirectory(filePath, false, "png", "png");
-                string[] metaFiles = GetFilesInDirectory(filePath, isCompressed, GameFile.MetaData.CompressedExtension, GameFile.MetaData.Extension);
-                string[] cameraFiles = GetFilesInDirectory(filePath, false, "json", "json");
+                string[] screenshots = SaveData.GetFilesInDirectory(filePath, false, "png", "png");
+                string[] metaFiles = SaveData.GetFilesInDirectory(filePath, isCompressed, GameFile.MetaData.CompressedExtension, GameFile.MetaData.Extension);
+                string[] cameraFiles = SaveData.GetFilesInDirectory(filePath, false, "json", "json");
                 if(metaFiles.Length > 0)
                 {
                     Data.Metadata = new MetaData(metaFiles[0], isCompressed);
@@ -156,7 +156,7 @@ namespace DwarfCorp
                 {
                     string chunkDir = chunkDirs[0];
 
-                    string[] chunks = ChunkFile.GetFilesInDirectory(chunkDir, isCompressed, ChunkFile.CompressedExtension, ChunkFile.Extension);
+                    string[] chunks = SaveData.GetFilesInDirectory(chunkDir, isCompressed, ChunkFile.CompressedExtension, ChunkFile.Extension);
                     Data.ChunkData = new List<ChunkFile>();
                     foreach(string chunk in chunks)
                     {
@@ -178,13 +178,13 @@ namespace DwarfCorp
             }
         }
 
-        public override bool WriteFile(string filePath, bool compress)
+        public bool WriteFile(string filePath, bool compress)
         {
             Data.SaveToDirectory(filePath);
             return true;
         }
 
-        public class MetaData : SaveData
+        public class MetaData 
         {
             public string OverworldFile { get; set; }
             public float WorldScale { get; set; }
@@ -216,7 +216,7 @@ namespace DwarfCorp
                 OverworldFile = file.OverworldFile;
             }
 
-            public override sealed bool ReadFile(string filePath, bool isCompressed)
+            public  bool ReadFile(string filePath, bool isCompressed)
             {
                 MetaData file = FileUtils.LoadJson<MetaData>(filePath, isCompressed);
 
@@ -231,7 +231,7 @@ namespace DwarfCorp
                 }
             }
 
-            public override bool WriteFile(string filePath, bool compress)
+            public  bool WriteFile(string filePath, bool compress)
             {
                 return FileUtils.SaveJSon(this, filePath, compress);
             }

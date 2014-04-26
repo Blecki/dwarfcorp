@@ -10,13 +10,14 @@ namespace DwarfCorp
     /// for a room. (This is used to construct rooms)
     /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
-    public class PutTaggedRoomItemAct : CompoundCreatureAct
+    public class BuildRoomAct : CompoundCreatureAct
     {
         public RoomBuildDesignation Room { get; set; }
+        public List<ResourceAmount> Resources { get; set; } 
 
         public IEnumerable<Status> SetTargetVoxelFromRoom(RoomBuildDesignation room, string target)
         {
-            if(room.VoxelBuildDesignations.Count == 0)
+            if (room.VoxelBuildDesignations.Count == 0)
             {
                 yield return Status.Fail;
             }
@@ -24,11 +25,11 @@ namespace DwarfCorp
             {
                 VoxelRef closestVoxel = null;
                 float closestDist = float.MaxValue;
-                foreach(VoxelBuildDesignation voxDes in room.VoxelBuildDesignations)
+                foreach (VoxelBuildDesignation voxDes in room.VoxelBuildDesignations)
                 {
                     float dist = (voxDes.Voxel.WorldPosition - Agent.Position).LengthSquared();
 
-                    if(dist < closestDist)
+                    if (dist < closestDist)
                     {
                         closestDist = dist;
                         closestVoxel = voxDes.Voxel;
@@ -45,27 +46,28 @@ namespace DwarfCorp
             return new Wrap(() => SetTargetVoxelFromRoom(room, target));
         }
 
-        public PutTaggedRoomItemAct()
+
+        public BuildRoomAct()
         {
 
         }
 
-        public PutTaggedRoomItemAct(CreatureAIComponent agent, RoomBuildDesignation room, TagList tags) :
+        public BuildRoomAct(CreatureAIComponent agent, RoomBuildDesignation room) :
             base(agent)
         {
             Name = "Build room " + room.ToString();
-            Tree = new Sequence(new GetItemWithTagsAct(Agent, tags),
+            Resources = room.ListRequiredResources();
+
+            Tree = new Sequence(new GetResourcesAct(Agent, Resources),
                 new Sequence(
                     SetTargetVoxelFromRoomAct(room, "TargetVoxel"),
                     new GoToVoxelAct("TargetVoxel", PlanAct.PlanType.Adjacent, Agent),
-                    new PlaceRoomItemAct(Agent, room)) | new GatherItemAct(Agent, "HeldObject")
+                    new PlaceRoomResourcesAct(Agent, room, Resources), new Wrap(Creature.RestockAll)) | new Wrap(Creature.RestockAll)
                 );
         }
 
-        public override IEnumerable<Act.Status> Run()
-        {
-            return base.Run();
-        }
     }
+
+
 
 }

@@ -175,23 +175,24 @@ namespace DwarfCorp
             {
                 TagList tags = new TagList(put.Type.ResourceToRelease);
 
-                bool foundCandidateItem = Faction.Stockpiles.Select(s => s.FindItemWithTags(tags.Tags)).Any(i => i != null);
-
-                if(!foundCandidateItem)
+                if(Faction.HasResources(new List<ResourceAmount>()
                 {
-                    continue;
-                }
-                Task g = (new BuildVoxelTask(new TagList(put.Type.ResourceToRelease), put.Vox, put.Type));
-
-                if(!TaskIsAssigned(g) &&  IsFeasible(g, Faction.Minions))
+                    new ResourceAmount(tags.Tags[0])
+                }))
                 {
-                    tasks.Add(g);
+
+                    Task g = (new BuildVoxelTask(new TagList(put.Type.ResourceToRelease), put.Vox, put.Type));
+
+                    if(!TaskIsAssigned(g) && IsFeasible(g, Faction.Minions))
+                    {
+                        tasks.Add(g);
+                    }
                 }
             }
 
             foreach(ShipDesignation ship in Faction.ShipDesignations)
             {
-                List<LocatableComponent> componentsToShip = new List<LocatableComponent>();
+                List<Body> componentsToShip = new List<Body>();
                 int remaining = ship.GetRemainingNumResources();
 
                 if(remaining == 0)
@@ -204,21 +205,27 @@ namespace DwarfCorp
                 {
                     for(int i = componentsToShip.Count; i < remaining; i++)
                     {
-                        LocatableComponent r = s.FindItemWithTag(ship.Resource.ResourceType.ResourceName, componentsToShip);
+                        // TODO: Reimplement
+                        /*
+                        Body r = s.FindItemWithTag(ship.Resource.ResourceType.ResourceName, componentsToShip);
 
                         if(r != null)
                         {
                             componentsToShip.Add(r);
                         }
+                         */
                     }
                 }
 
-                foreach(LocatableComponent loc in componentsToShip)
+                foreach(Body loc in componentsToShip)
                 {
+                    // TODO: Reimplement
+                    /*
                     if(ship.Port.ContainsItem(loc))
                     {
                         continue;
                     }
+                     */
 
                     Task g = new PutItemInZoneTask(Item.FindItem(loc), ship.Port);
                     

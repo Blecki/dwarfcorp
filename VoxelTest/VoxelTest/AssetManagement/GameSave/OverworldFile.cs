@@ -11,7 +11,7 @@ using System.IO.Compression;
 namespace DwarfCorp
 {
 
-    public class OverworldFile : SaveData
+    public class OverworldFile
     {
         public class OverworldData
         {
@@ -131,7 +131,7 @@ namespace DwarfCorp
             Data = file.Data;
         }
 
-        public override bool ReadFile(string filePath, bool isCompressed)
+        public  bool ReadFile(string filePath, bool isCompressed)
         {
             OverworldFile file = FileUtils.LoadJson<OverworldFile>(filePath, isCompressed);
 
@@ -151,7 +151,7 @@ namespace DwarfCorp
             Data.Screenshot.SaveAsPng(new System.IO.FileStream(filename, System.IO.FileMode.Create), Data.Screenshot.Width, Data.Screenshot.Height);
         }
 
-        public override bool WriteFile(string filePath, bool compress)
+        public bool WriteFile(string filePath, bool compress)
         {
 
             return FileUtils.SaveJSon<OverworldFile>(this, filePath, compress);

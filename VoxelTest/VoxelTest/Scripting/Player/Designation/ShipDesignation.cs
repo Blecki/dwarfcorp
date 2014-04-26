@@ -24,11 +24,15 @@ namespace DwarfCorp
 
         public int GetRemainingNumResources()
         {
+            // TODO: Reimplement
+            /*
             List<Item> items = Port.ListItems();
 
             int count = Assignments.Count + items.Count(i => i.UserData.Tags.Contains(Resource.ResourceType.ResourceName));
 
             return (int) Math.Max(Resource.NumResources - count, 0);
+             */
+            return 0;
         }
 
         public bool IsSatisfied()

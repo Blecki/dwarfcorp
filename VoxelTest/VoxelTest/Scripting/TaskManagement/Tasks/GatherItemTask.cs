@@ -11,7 +11,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class GatherItemTask : Task
     {
-        public LocatableComponent EntityToGather = null;
+        public Body EntityToGather = null;
         public string ZoneType = "Stockpile";
 
         public GatherItemTask()
@@ -19,7 +19,7 @@ namespace DwarfCorp
 
         }
 
-        public GatherItemTask(LocatableComponent entity)
+        public GatherItemTask(Body entity)
         {
             EntityToGather = entity;
             Name = "Gather Entity: " + entity.Name + " " + entity.GlobalID;
@@ -32,7 +32,7 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            return EntityToGather != null && !EntityToGather.IsDead && !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather);
+            return EntityToGather != null && !EntityToGather.IsDead && !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather) && !agent.Inventory.Resources.IsFull();
         }
 
         public override float ComputeCost(Creature agent)

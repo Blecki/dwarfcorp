@@ -12,9 +12,9 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class SetTargetEntityAct : CreatureAct
     {
-        public LocatableComponent Entity { get; set; }
+        public Body Entity { get; set; }
 
-        public SetTargetEntityAct(LocatableComponent entity, CreatureAIComponent creature) :
+        public SetTargetEntityAct(Body entity, CreatureAIComponent creature) :
             base(creature)
         {
             Name = "Set Target Entity";

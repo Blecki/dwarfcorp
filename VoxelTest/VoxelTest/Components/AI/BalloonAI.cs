@@ -63,7 +63,7 @@ namespace DwarfCorp
             }
         }
 
-        public void PutResource(LocatableComponent loc)
+        public void PutResource(Body loc)
         {
             string resourceName = loc.Tags[0];
 
@@ -159,7 +159,7 @@ namespace DwarfCorp
                             for(int i = 0; i < amount.NumResources; i++)
                             {
                                 Vector3 pos = Physics.GlobalTransform.Translation + MathFunctions.RandVector3Cube() * 2;
-                                LocatableComponent loc = EntityFactory.GenerateComponent(amount.ResourceType.ResourceName, pos, Manager, chunks.Content, chunks.Graphics, chunks, Manager.Factions, camera);
+                                Body loc = EntityFactory.GenerateComponent(amount.ResourceType.ResourceName, pos, Manager, chunks.Content, chunks.Graphics, chunks, Manager.Factions, camera);
                                 Faction.AddGatherDesignation(loc);
                                 Faction.Economy.CurrentMoney -= amount.ResourceType.MoneyValue * Faction.Economy.BuyMultiplier;
                             }
@@ -172,6 +172,8 @@ namespace DwarfCorp
                     {
                         if(Shipment.Destination != null)
                         {
+                            // TODO: Reimplement
+                            /*
                             foreach(Item i in Shipment.Destination.ListItems())
                             {
                                 if(i.UserData.CollisionType == CollisionManager.CollisionType.Dynamic)
@@ -180,6 +182,8 @@ namespace DwarfCorp
                                     Faction.Economy.CurrentMoney += GetSellOrder(i);
                                 }
                             }
+                             */
+
                             Shipment.Destination.ClearItems();
                         }
                         State = BalloonState.Leaving;

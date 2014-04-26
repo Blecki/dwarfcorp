@@ -217,11 +217,11 @@ namespace DwarfCorp
                 chunkManager.ChunkOctree.Root.RemoveObject(chunk);
             }
 
-            HashSet<LocatableComponent> locatables = new HashSet<LocatableComponent>();
+            HashSet<Body> locatables = new HashSet<Body>();
 
             chunkManager.Components.CollisionManager.GetObjectsIntersecting(chunk.GetBoundingBox(), locatables, CollisionManager.CollisionType.Static | CollisionManager.CollisionType.Dynamic);
 
-            foreach(LocatableComponent component in locatables)
+            foreach(Body component in locatables)
             {
                 component.IsDead = true;
             }

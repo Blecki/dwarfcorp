@@ -23,9 +23,9 @@ namespace DwarfCorp
             FireTimer = new Timer(0.5f, false);
         }
 
-        private void TrapSensor_OnSensed(List<LocatableComponent> sensed)
+        private void TrapSensor_OnSensed(List<Body> sensed)
         {
-            foreach (LocatableComponent lc in sensed)
+            foreach (Body lc in sensed)
             {
                 foreach (string t in lc.Tags)
                 {

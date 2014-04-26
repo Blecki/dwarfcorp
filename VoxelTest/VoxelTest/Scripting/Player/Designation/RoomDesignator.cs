@@ -165,7 +165,7 @@ namespace DwarfCorp
             foreach(Room r in DesignatedRooms)
             {
                 r.RemoveVoxel(vRef);
-                if(r.Storage.Count == 0)
+                if(r.Voxels.Count == 0)
                 {
                     toDestroy.Add(r);
                 }

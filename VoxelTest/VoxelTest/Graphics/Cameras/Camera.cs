@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -45,6 +46,7 @@ namespace DwarfCorp
 
         public ProjectionMode Projection { get; set; }
 
+
         public Camera(Vector3 target, Vector3 position, float fov, float aspectRatio, float nearPlane, float farPlane)
         {
             UpVector = Vector3.Up;
@@ -63,6 +65,17 @@ namespace DwarfCorp
         public Camera()
         {
   
+        }
+
+
+        public Vector3 Project(Vector3 pos)
+        {
+            return GameState.Game.Graphics.GraphicsDevice.Viewport.Project(pos, ProjectionMatrix, ViewMatrix, Matrix.Identity);
+        }
+
+        public Vector3 UnProject(Vector3 pos)
+        {
+            return GameState.Game.Graphics.GraphicsDevice.Viewport.Unproject(pos, ProjectionMatrix, ViewMatrix, Matrix.Identity);
         }
 
 

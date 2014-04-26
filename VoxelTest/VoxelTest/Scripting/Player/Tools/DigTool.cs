@@ -72,12 +72,14 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
+                Player.BodySelector.Enabled = false;
                 game.IsMouseVisible = false;
                 return;
             }
 
             Player.VoxSelector.Enabled = true;
             game.IsMouseVisible = true;
+            Player.BodySelector.Enabled = false;
             Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
         }
 
@@ -102,6 +104,11 @@ namespace DwarfCorp
                 drawColor.B = (byte)(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
                 Drawer3D.DrawBox(box, drawColor, 0.05f, true);
             }
+        }
+
+        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        {
+            
         }
     }
 }

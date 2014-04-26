@@ -26,9 +26,9 @@ namespace DwarfCorp
             Stockpiles = new List<Stockpile>();
             DigDesignations = new List<Designation>();
             GuardDesignations = new List<Designation>();
-            ChopDesignations = new List<LocatableComponent>();
+            ChopDesignations = new List<Body>();
             ShipDesignations = new List<ShipDesignation>();
-            GatherDesignations = new List<LocatableComponent>();
+            GatherDesignations = new List<Body>();
             RoomDesignator = new RoomDesignator(this);
             PutDesignator = new PutDesignator(this, TextureManager.GetTexture("TileSet"));
         }
@@ -39,8 +39,8 @@ namespace DwarfCorp
 
         public List<Designation> DigDesignations { get; set; }
         public List<Designation> GuardDesignations { get; set; }
-        public List<LocatableComponent> ChopDesignations { get; set; }
-        public List<LocatableComponent> GatherDesignations { get; set; }
+        public List<Body> ChopDesignations { get; set; }
+        public List<Body> GatherDesignations { get; set; }
         public List<Stockpile> Stockpiles { get; set; }
         public List<CreatureAIComponent> Minions { get; set; }
         public List<ShipDesignation> ShipDesignations { get; set; }
@@ -72,6 +72,16 @@ namespace DwarfCorp
                 DigDesignations.Remove(v);
             }
 
+            List<Body> gatherRemovals = (from b in GatherDesignations
+                where b == null || b.IsDead
+                select b).ToList();
+
+            foreach(Body b in gatherRemovals)
+            {
+                GatherDesignations.Remove(b);
+            }
+            
+
             removals.Clear();
             foreach (Designation d in GuardDesignations)
             {
@@ -96,9 +106,9 @@ namespace DwarfCorp
                 GuardDesignations.Remove(v);
             }
 
-            List<LocatableComponent> treesToRemove = ChopDesignations.Where(tree => tree.IsDead).ToList();
+            List<Body> treesToRemove = ChopDesignations.Where(tree => tree.IsDead).ToList();
 
-            foreach (LocatableComponent tree in treesToRemove)
+            foreach (Body tree in treesToRemove)
             {
                 ChopDesignations.Remove(tree);
             }
@@ -124,7 +134,7 @@ namespace DwarfCorp
                     s.RemoveVoxel(voxelRef);
                 }
 
-                if(s.Storage.Count == 0)
+                if(s.Voxels.Count == 0)
                 {
                     toRemove.Add(s);
                 }
@@ -139,13 +149,15 @@ namespace DwarfCorp
 
         public void AddShipDesignation(ResourceAmount resource, Room port)
         {
-            List<LocatableComponent> componentsToShip = new List<LocatableComponent>();
+            // TODO: Reimplement
+            /*
+            List<Body> componentsToShip = new List<Body>();
 
             foreach (Stockpile s in Stockpiles)
             {
                 for (int i = componentsToShip.Count; i < resource.NumResources; i++)
                 {
-                    LocatableComponent r = s.FindItemWithTag(resource.ResourceType.ResourceName, componentsToShip);
+                    Body r = s.FindItemWithTag(resource.ResourceType.ResourceName, componentsToShip);
 
                     if (r != null)
                     {
@@ -155,9 +167,11 @@ namespace DwarfCorp
             }
 
             ShipDesignations.Add(new ShipDesignation(resource, port));
+             */
+
         }
 
-        public void AddGatherDesignation(LocatableComponent resource)
+        public void AddGatherDesignation(Body resource)
         {
             if (resource.Parent != Components.RootComponent || resource.IsDead)
             {
@@ -249,11 +263,25 @@ namespace DwarfCorp
             return GuardDesignations.Select(d => d.Vox).Select(vref => vref.GetVoxel(false)).Any(v => vox == v);
         }
 
-        public bool IsInStockpile(LocatableComponent resource)
-        {
-            return Stockpiles.Any(s => s.ContainsItem(resource));
-        }
 
+        public Stockpile GetNearestStockpile(Vector3 position)
+        {
+            Stockpile nearest = null;
+
+            float closestDist = float.MaxValue;
+            foreach(Stockpile stockpile in Stockpiles)
+            {
+                float dist = (stockpile.GetBoundingBox().Center() - position).LengthSquared();
+
+                if(dist < closestDist)
+                {
+                    closestDist = dist;
+                    nearest = stockpile;
+                }
+            }
+
+            return nearest;
+        }
 
 
         public Stockpile GetIntersectingStockpile(Voxel v)
@@ -282,9 +310,9 @@ namespace DwarfCorp
             return Stockpiles.Any(s => s.ContainsVoxel(vRef));
         }
 
-        public LocatableComponent GetRandomGatherDesignationWithTag(string tag)
+        public Body GetRandomGatherDesignationWithTag(string tag)
         {
-            List<LocatableComponent> des = GatherDesignations.Where(c => c.Tags.Contains(tag)).ToList();
+            List<Body> des = GatherDesignations.Where(c => c.Tags.Contains(tag)).ToList();
             return des.Count == 0 ? null : des[PlayState.Random.Next(0, des.Count)];
         }
 
@@ -297,7 +325,8 @@ namespace DwarfCorp
 
             foreach (Zone s in zones)
             {
-                toReturn.AddRange(s.GetItemsWithTags(tags));
+                // TODO: Reimplement
+                //toReturn.AddRange(s.GetItemsWithTags(tags));
             }
 
 
@@ -320,6 +349,8 @@ namespace DwarfCorp
 
             foreach (Zone s in zones)
             {
+                // TODO: Reimplement
+                /*
                 Item i = s.FindNearestItemWithTags(tags, location, filterReserved);
 
                 if (i != null)
@@ -331,11 +362,111 @@ namespace DwarfCorp
                         closestItem = i;
                     }
                 }
+                 */
             }
 
             
 
             return closestItem;
+        }
+
+        public int CompareZones(Zone a, Zone b, Vector3 pos)
+        {
+            if(a == b) 
+            {
+                return 0;
+            }
+            else
+            {
+               
+                float costA = (pos- a.GetBoundingBox().Center()).LengthSquared();
+                float costB = (pos - b.GetBoundingBox().Center()).LengthSquared();
+
+                if(costA < costB)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+        }
+
+
+        public bool HasResources(List<ResourceAmount> resources)
+        {
+            foreach (ResourceAmount resource in resources)
+            {
+                int count = Stockpiles.Sum(stock => stock.Resources.GetResourceCount(resource.ResourceType));
+
+                if(count < resource.NumResources)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool RemoveResources(List<ResourceAmount> resources, Vector3 position)
+        {
+            if(!HasResources(resources))
+            {
+                return false;
+            }
+
+
+            List<Stockpile> stockpilesCopy = new List<Stockpile>(Stockpiles);
+            stockpilesCopy.Sort((a, b) => CompareZones(a, b, position));
+
+
+            foreach(ResourceAmount resource in resources)
+            {
+                int count = 0;
+                List<Vector3> positions = new List<Vector3>();
+                foreach (Stockpile stock in stockpilesCopy)
+                {
+                    int num =  stock.Resources.RemoveMaxResources(resource, resource.NumResources - count);
+                    stock.HandleBoxes();
+                    if(stock.Boxes.Count > 0)
+                    {
+                        for(int i = 0; i < num; i++)
+                        {
+                            positions.Add(stock.Boxes[stock.Boxes.Count - 1].LocalTransform.Translation);
+                        }
+                    }
+
+                    count += num;
+
+                    if(count >= resource.NumResources)
+                    {
+                        break;
+                    }
+
+                }
+
+
+                foreach(Vector3 vec in positions)
+                {
+                    Body newEntity = EntityFactory.GenerateComponent(resource.ResourceType.ResourceName, vec + MathFunctions.RandVector3Cube() * 0.5f,
+               PlayState.ComponentManager, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics, PlayState.ChunkManager, PlayState.ComponentManager.Factions, PlayState.Camera);
+
+                    TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f), 2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
+                    newEntity.AnimationQueue.Add(toss);
+                    toss.OnComplete += () => toss_OnComplete(newEntity);
+
+                }
+
+            }
+
+            return true;
+        }
+
+        void toss_OnComplete(Body entity)
+        {
+            entity.Die();
+            
         }
     }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -538,49 +539,7 @@ namespace DwarfCorp
         public static void GenerateRoomComponentsTemplate(Room room, ComponentManager componentManager, Microsoft.Xna.Framework.Content.ContentManager content, GraphicsDevice graphics)
         {
             RoomTile[,] currentTiles = RoomTemplate.CreateFromRoom(room, room.Chunks);
-            int count = Math.Max(room.Storage.Count / 12, 5);
 
-            List<int> placedCount = room.RoomType.Templates.Select(template => 0).ToList();
-
-            /*
-            for(int i = 0; i < placedCount.Count + count; i++)
-            {
-                int k = PlayState.Random.Next(0, room.RoomType.Templates.Count);
-
-                const int maxIters = 200;
-                if(placedCount[k] >= count)
-                {
-                    continue;
-                }
-
-                RoomTemplate template = room.RoomType.Templates[k];
-
-                if(template.PlacementType == PlacementType.Random)
-                {
-                    for(int j = 0; j < maxIters; j++)
-                    {
-                        int randomX = PlayState.Random.Next(0, currentTiles.GetLength(0));
-                        int randomY = PlayState.Random.Next(0, currentTiles.GetLength(1));
-
-
-                        if(template.CanRotate)
-                        {
-                            int randomOrientation = PlayState.Random.Next(0, 4);
-
-                            template.RotateClockwise(randomOrientation);
-                        }
-
-                        if(template.PlaceTemplate(ref currentTiles, randomX, randomY) > 0)
-                        {
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                }
-            }
-             */
             foreach (RoomTemplate template in room.RoomType.Templates)
             {
                 for (int r = -2; r < currentTiles.GetLength(0) + 1; r++)
@@ -604,69 +563,58 @@ namespace DwarfCorp
                 for(int c = 0; c < currentTiles.GetLength(1); c++)
                 {
                     RoomTile tile = currentTiles[r, c];
+                    Body createdComponent = null;
 
                     switch(tile)
                     {
                         case RoomTile.Wheat:
-                            GameComponent wheat = EntityFactory.GenerateWheat(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
-                            room.AddItem(wheat as LocatableComponent);
+                            createdComponent = (Body) EntityFactory.GenerateWheat(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
                             thingsMade++;
                             break;
 
                         case RoomTile.Mushroom:
-                            GameComponent mushroom = EntityFactory.GenerateMushroom(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
-                            room.AddItem(mushroom as LocatableComponent);
+                            createdComponent = (Body)EntityFactory.GenerateMushroom(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
                             thingsMade++;
                             break;
 
                         case RoomTile.Table:
-                            GameComponent table = EntityFactory.GenerateTable(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
-                            room.AddItem(table as LocatableComponent);
+                            createdComponent = (Body) EntityFactory.GenerateTable(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
                             thingsMade++;
                             break;
                         case RoomTile.Lamp:
-                            GameComponent lamp = EntityFactory.GenerateLamp(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
-                            room.AddItem(lamp as LocatableComponent);
+                            createdComponent = (Body) EntityFactory.GenerateLamp(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
                             thingsMade++;
                             break;
                         case RoomTile.Flag:
-                            GameComponent flag = EntityFactory.GenerateFlag(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
-                            room.AddItem(flag as LocatableComponent);
+                            createdComponent = (Body) EntityFactory.GenerateFlag(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
                             thingsMade++;
                             break;
                         case RoomTile.Chair:
-                            GameComponent chair = EntityFactory.GenerateChair(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
-                            room.AddItem(chair as LocatableComponent);
+                            createdComponent = EntityFactory.GenerateChair(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
                             thingsMade++;
                             break;
                         case RoomTile.PotionTable:
-                            GameComponent potionTable = EntityFactory.GeneratePotionTable(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
-                            room.AddItem(potionTable as LocatableComponent);
+                            createdComponent = (Body) EntityFactory.GeneratePotionTable(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
                             thingsMade++;
                             break;
                         case RoomTile.BookTable:
-                            GameComponent bookTable = EntityFactory.GenerateBookTable(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
-                            room.AddItem(bookTable as LocatableComponent);
+                            createdComponent = (Body) EntityFactory.GenerateBookTable(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
                             thingsMade++;
                             break;
                         case RoomTile.Anvil:
-                            GameComponent anvil = EntityFactory.GenerateAnvil(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
-                            room.AddItem(anvil as LocatableComponent);
+                            createdComponent = (Body) EntityFactory.GenerateAnvil(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
                             thingsMade++;
                             break;
                         case RoomTile.Forge:
-                            GameComponent forge = EntityFactory.GenerateForge(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
-                            room.AddItem(forge as LocatableComponent);
+                            createdComponent = (Body) EntityFactory.GenerateForge(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
                             thingsMade++;
                             break;
                         case RoomTile.Target:
-                            GameComponent target = EntityFactory.GenerateTarget(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
-                            room.AddItem(target as LocatableComponent);
+                            createdComponent = (Body) EntityFactory.GenerateTarget(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
                             thingsMade++;
                             break;
                         case RoomTile.Strawman:
-                            GameComponent strawman = EntityFactory.GenerateStrawman(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
-                            room.AddItem(strawman as LocatableComponent);
+                            createdComponent = (Body) EntityFactory.GenerateStrawman(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
                             thingsMade++;
                             break;
                         case RoomTile.Pillow:
@@ -685,19 +633,16 @@ namespace DwarfCorp
                                         continue;
                                     }
 
-                                    GameComponent bed = EntityFactory.GenerateBed(box.Min + new Vector3(r - 1, 1.0f, c - 1), componentManager, content, graphics);
+                                    createdComponent = EntityFactory.GenerateBed(box.Min + new Vector3(r - 1, 1.0f, c - 1), componentManager, content, graphics);
 
                                     float angle = (float) Math.Atan2(dx, dy);
-                                    LocatableComponent loc = (LocatableComponent) bed;
 
-                                    Vector3 translation = loc.LocalTransform.Translation;
+                                    Vector3 translation = createdComponent.LocalTransform.Translation;
                                     Matrix bedRotation = Matrix.CreateRotationY(angle);
-                                    loc.LocalTransform = Matrix.CreateTranslation(new Vector3(-0.5f, 0, -0.5f)) * bedRotation * Matrix.CreateTranslation(new Vector3(0.5f, 0, 0.5f)) * Matrix.CreateTranslation(translation);
-                                    loc.BoundingBoxPos = Vector3.Transform(loc.BoundingBoxPos, bedRotation);
-                                    loc.BoundingBox.Min = Vector3.Transform(loc.BoundingBox.Min - translation, bedRotation) + translation;
-                                    loc.BoundingBox.Max = Vector3.Transform(loc.BoundingBox.Max - translation, bedRotation) + translation;;
-
-                                    room.AddItem(bed as LocatableComponent);
+                                    createdComponent.LocalTransform = Matrix.CreateTranslation(new Vector3(-0.5f, 0, -0.5f)) * bedRotation * Matrix.CreateTranslation(new Vector3(0.5f, 0, 0.5f)) * Matrix.CreateTranslation(translation);
+                                    createdComponent.BoundingBoxPos = Vector3.Transform(createdComponent.BoundingBoxPos, bedRotation);
+                                    createdComponent.BoundingBox.Min = Vector3.Transform(createdComponent.BoundingBox.Min - translation, bedRotation) + translation;
+                                    createdComponent.BoundingBox.Max = Vector3.Transform(createdComponent.BoundingBox.Max - translation, bedRotation) + translation; ;
                                     break;
                                 }
                             }
@@ -707,6 +652,17 @@ namespace DwarfCorp
                             break;
                         default:
                             break;
+                    }
+
+                    if(createdComponent != null)
+                    {
+                        Vector3 endPos = createdComponent.LocalTransform.Translation;
+                        Matrix offsetTransform = createdComponent.LocalTransform;
+                        offsetTransform.Translation += new Vector3(0, -1, 0);
+                        createdComponent.LocalTransform = offsetTransform;
+                        createdComponent.AnimationQueue.Add(new EaseMotion(0.8f, offsetTransform, endPos));
+
+                        PlayState.ParticleManager.Trigger("puff", endPos + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 10);
                     }
                 }
             }

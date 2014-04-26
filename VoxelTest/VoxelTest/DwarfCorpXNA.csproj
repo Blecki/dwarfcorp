@@ -111,6 +111,7 @@
     <Compile Include="AssetManagement\ContentPaths.cs" />
     <Compile Include="AssetManagement\GameSave\GameFile.cs" />
     <Compile Include="AssetManagement\ContentPathGenerator.cs" />
+    <Compile Include="AssetManagement\GameSave\SaveData.cs" />
     <Compile Include="AssetSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -124,6 +125,7 @@
     <Compile Include="Components\AI\Inventory.cs" />
     <Compile Include="Components\AI\Sensors\VoxelListener.cs" />
     <Compile Include="Components\Graphics\MinimapIcon.cs" />
+    <Compile Include="Scripting\Player\BodySelector.cs" />
     <Compile Include="GameStates\CompanyMakerState.cs" />
     <Compile Include="Components\AI\Sensors\TrapSensor.cs" />
     <Compile Include="GameStates\GameLoaderState.cs" />
@@ -137,6 +139,8 @@
     <Compile Include="GameStates\PlayState.cs" />
     <Compile Include="GameStates\WorldGeneratorState.cs" />
     <Compile Include="GameStates\WorldLoaderState.cs" />
+    <Compile Include="Graphics\MotionAnimation\EaseMotion.cs" />
+    <Compile Include="Graphics\MotionAnimation\MotionAnimation.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\DrawCommand2D.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\SpriteDrawCommand.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\RectDrawCommand.cs" />
@@ -147,6 +151,7 @@
     <Compile Include="Graphics\Drawing\Drawer3D\LineListCommand3D.cs" />
     <Compile Include="Graphics\Drawing\Indicators\IndicatorManager.cs" />
     <Compile Include="Graphics\Instancing\InstanceData.cs" />
+    <Compile Include="Graphics\MotionAnimation\TossMotion.cs" />
     <Compile Include="GUI\Components\ColorKey.cs" />
     <Compile Include="GUI\Components\Minimap.cs" />
     <Compile Include="GUI\Layouts\FormEntry.cs" />
@@ -154,14 +159,20 @@
     <Compile Include="GUI\ToolTipManager.cs" />
     <Compile Include="Screensaver\Terrain2D.cs" />
     <Compile Include="Scripting\BehaviorExtensions.cs" />
+    <Compile Include="Scripting\CompoundActs\BuildRoomAct.cs" />
     <Compile Include="Scripting\CompoundActs\FindAndEatFoodAct.cs" />
     <Compile Include="Scripting\CompoundActs\FindBedAndSleepAct.cs" />
+    <Compile Include="Scripting\CompoundActs\GetResourcesAct.cs" />
+    <Compile Include="Scripting\CompoundActs\GoToZoneAct.cs" />
     <Compile Include="Scripting\CompoundActs\StockResourceAct.cs" />
     <Compile Include="Scripting\LeafActs\ConsumeItemAct.cs" />
+    <Compile Include="Scripting\LeafActs\CreatureExtensions.cs" />
     <Compile Include="Scripting\LeafActs\FlyWanderAct.cs" />
+    <Compile Include="Scripting\LeafActs\PlaceRoomResourcesAct.cs" />
     <Compile Include="Scripting\LeafActs\PutResourceInZoneAct.cs" />
     <Compile Include="Scripting\LeafActs\SleepAct.cs" />
     <Compile Include="Scripting\LeafActs\StashAct.cs" />
+    <Compile Include="Scripting\LeafActs\StashResourcesAct.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceContainer.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\StockResourceTask.cs" />
     <Compile Include="Sound\NoiseMaker.cs" />
@@ -225,7 +236,6 @@
     </Compile>
     <Compile Include="AssetManagement\GameSave\FileUtils.cs" />
     <Compile Include="AssetManagement\GameSave\OverworldFile.cs" />
-    <Compile Include="AssetManagement\GameSave\SaveData.cs" />
     <Compile Include="GameSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -279,12 +289,9 @@
     <Compile Include="Components\Graphics\TexturedBoxObject.cs" />
     <Compile Include="Components\Graphics\TintableComponent.cs" />
     <Compile Include="Scripting\CompoundActs\GoToNamedVoxelAct.cs" />
-    <Compile Include="Scripting\CompoundActs\MoveItemAct.cs" />
-    <Compile Include="Scripting\LeafActs\PutItemInZoneAct.cs" />
     <Compile Include="Scripting\LeafActs\SetBlackboardData.cs" />
     <Compile Include="Scripting\Symbols\Item.cs" />
     <Compile Include="Scripting\Symbols\TagList.cs" />
-    <Compile Include="Scripting\Symbols\VoxelStorage.cs" />
     <Compile Include="Scripting\Symbols\Zone.cs" />
     <Compile Include="Graphics\Primitives\BatchBillboardPrimitive.cs" />
     <Compile Include="Graphics\Effects\BloomComponent.cs" />
@@ -343,8 +350,6 @@
     <Compile Include="Scripting\Data\ActData.cs" />
     <Compile Include="Scripting\Data\Blackboard.cs" />
     <Compile Include="Scripting\CompoundActs\BuildVoxelAct.cs" />
-    <Compile Include="Scripting\CompoundActs\PutTaggedRoomItemAct.cs" />
-    <Compile Include="Scripting\CompoundActs\GetItemWithTagsAct.cs" />
     <Compile Include="Scripting\CompoundActs\GuardVoxelAct.cs" />
     <Compile Include="Scripting\LeafActs\ClearBlackboardData.cs" />
     <Compile Include="Scripting\LeafActs\GetNearestFreeVoxelInZone.cs" />
@@ -356,14 +361,11 @@
     <Compile Include="Scripting\CompoundActs\GoToVoxelAct.cs" />
     <Compile Include="Scripting\CompoundActs\KillEntityAct.cs" />
     <Compile Include="Scripting\CompoundActs\KillVoxelAct.cs" />
-    <Compile Include="Scripting\LeafActs\PlaceRoomItemAct.cs" />
     <Compile Include="Scripting\LeafActs\PlaceVoxelAct.cs" />
     <Compile Include="Scripting\CompoundActs\CompoundCreatureAct.cs" />
     <Compile Include="Scripting\LeafActs\CreatureAct.cs" />
     <Compile Include="Scripting\LeafActs\DigAct.cs" />
     <Compile Include="Scripting\LeafActs\DropItemAct.cs" />
-    <Compile Include="Scripting\LeafActs\PickUpAct.cs" />
-    <Compile Include="Scripting\LeafActs\PutItemInStockpileAct.cs" />
     <Compile Include="Scripting\LeafActs\SearchFreeStockpileAct.cs" />
     <Compile Include="Scripting\LeafActs\FollowPathAct.cs" />
     <Compile Include="Scripting\LeafActs\MeleeAct.cs" />
@@ -396,7 +398,7 @@
     <Compile Include="Components\GameComponent.cs" />
     <Compile Include="Scripting\Player\GameMaster.cs" />
     <Compile Include="Graphics\Primitives\GeometricPrimitive.cs" />
-    <Compile Include="Components\LocatableComponent.cs" />
+    <Compile Include="Components\Body.cs" />
     <Compile Include="Graphics\Cameras\OrbitCamera.cs" />
     <Compile Include="Components\Graphics\OrientedAnimation.cs" />
     <Compile Include="Tools\Math\Perlin.cs" />

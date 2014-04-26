@@ -38,7 +38,7 @@ namespace DwarfCorp
             UpdateTimer.Update(gameTime);
             if(HasMoved && UpdateTimer.HasTriggered)
             {
-                LocatableComponent p = (LocatableComponent) Parent;
+                Body p = (Body) Parent;
 
                 VoxelChunk chunk = chunks.ChunkData.GetVoxelChunkAtWorldLocation(GlobalTransform.Translation);
 
