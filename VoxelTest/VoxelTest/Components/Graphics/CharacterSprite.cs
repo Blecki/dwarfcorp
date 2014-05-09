@@ -30,7 +30,6 @@ namespace DwarfCorp
 
         public override void Render(GameTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
-
             if(!isBlinking)
             {
                 base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
@@ -59,6 +58,8 @@ namespace DwarfCorp
             base(manager, name, parent, localTransform)
         {
             Graphics = graphics;
+            //DEBUG TODO PLEASE NOTICE ME AND KILL ME I DESIRE DEATH
+            BoundingBox = new BoundingBox(new Vector3(-1,-1,-1), new Vector3(1,1,1));
         }
 
         public bool HasAnimation(Creature.CharacterMode mode, Orientation orient)

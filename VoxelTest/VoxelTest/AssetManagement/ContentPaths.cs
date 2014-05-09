@@ -70,6 +70,11 @@ namespace DwarfCorp
                 {
                     public static string deer = Program.CreatePath("Entities", "Animals", "Deer", "deer");
                 }
+
+                public class Snake
+                {
+                    public static string snake = Program.CreatePath("Entities", "Animals", "Snake", "snake");
+                }
             }
 
             public class Balloon

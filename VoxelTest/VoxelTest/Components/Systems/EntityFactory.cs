@@ -101,7 +101,8 @@ namespace DwarfCorp
             "Potion",
             "Book",
             "BookTable",
-            "PotionTable"
+            "PotionTable",
+            "Snake"
         };
 
 
@@ -191,6 +192,8 @@ namespace DwarfCorp
                     return (Body) GenerateBird(position, componentManager, content, graphics, chunks);
                 case "Deer":
                     return (Body)GenerateDeer(position, componentManager, content, graphics, chunks);
+                case "Snake":
+                    return (Body)GenerateSnake(position, componentManager, content, graphics, chunks);
                 default:
                     return null;
             }
@@ -1106,7 +1109,14 @@ namespace DwarfCorp
             return new Deer(ContentPaths.Entities.Animals.Deer.deer, position, componentManager, chunks, graphics, content, "Deer").Physics;
         }
 
-    
+        public static GameComponent GenerateSnake(Vector3 position,
+            ComponentManager componentManager,
+            ContentManager content,
+            GraphicsDevice graphics,
+            ChunkManager chunks)
+        {
+            return new Snake(ContentPaths.Entities.Animals.Snake.snake, position, componentManager, chunks, graphics, content, "Snake").Physics;
+        }    
     }
 
 }
