@@ -33,7 +33,10 @@ namespace DwarfCorp
 
 
         [JsonIgnore]
-        public Act CurrentAct { get; set; }
+        public Act CurrentAct { get { return CurrentTask.Script;  }}
+
+        [JsonIgnore]
+        public Task CurrentTask { get; set; }
 
         public Timer PlannerTimer { get; set; }
         public Timer LocalControlTimeout { get; set; }
@@ -146,7 +149,7 @@ namespace DwarfCorp
             Sensor = sensor;
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
             Sensor.Creature = this;
-            CurrentAct = null;
+            CurrentTask = null;
             Tasks = new List<Task>();
         }
 
@@ -175,13 +178,25 @@ namespace DwarfCorp
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if(CurrentAct != null)
+            if(CurrentTask != null && CurrentAct != null)
             {
                 Act.Status status = CurrentAct.Tick();
 
-                if(status != Act.Status.Running)
+
+                bool retried = false;
+                if(status == Act.Status.Fail)
                 {
-                    CurrentAct = null;
+                    if(CurrentTask.ShouldRetry(Creature))
+                    {
+                        Tasks.Add(CurrentTask);
+                        CurrentTask = ActOnIdle();
+                        retried = true;
+                    }
+                }
+
+                if(status != Act.Status.Running && !retried)
+                {
+                    CurrentTask = null;
                 }
             }
             else
@@ -189,16 +204,20 @@ namespace DwarfCorp
                 Task goal = Tasks.FirstOrDefault();
                 if(goal != null)
                 {
-                    Tasks.RemoveAt(0);
-
                     if(goal.IsFeasible(Creature))
                     {
-                        CurrentAct = goal.CreateScript(Creature);
+                        goal.SetupScript(Creature);
+                        CurrentTask = goal;
+                        Tasks.RemoveAt(0);
+                    }
+                    else
+                    {
+                        Tasks.RemoveAt(0);
                     }
                 }
                 else
                 {
-                    CurrentAct = ActOnIdle();
+                    CurrentTask = ActOnIdle();
                 }
             }
 
@@ -208,17 +227,17 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
 
-        public virtual Act ActOnIdle()
+        public virtual Task ActOnIdle()
         {
             if(GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile())
             {
-                return new WanderAct(this, 2, 0.5f, 1.0f);
+                return new ActWrapperTask(new WanderAct(this, 2, 0.5f, 1.0f));
             }
             else
             {
                 GatherManager.StockOrder order = GatherManager.StockOrders[0];
                 GatherManager.StockOrders.RemoveAt(0);
-                return new StockResourceAct(this, order.Resource);
+                return new ActWrapperTask(new StockResourceAct(this, order.Resource));
             }
         }
 

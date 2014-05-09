@@ -37,7 +37,6 @@ namespace DwarfCorp.GameStates
 
             if(IntroTimer.HasTriggered && Transitioning == TransitionMode.Running)
             {
-                Game.IsMouseVisible = true;
                 StateManager.PushState("MainMenuState");
             }
 

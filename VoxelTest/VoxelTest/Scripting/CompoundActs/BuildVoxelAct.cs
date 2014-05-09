@@ -12,23 +12,21 @@ namespace DwarfCorp
     internal class BuildVoxelAct : CompoundCreatureAct
     {
         public VoxelRef Voxel { get; set; }
-        public TagList Tags { get; set; }
-
+   
         public BuildVoxelAct()
         {
             
         }
 
-        public BuildVoxelAct(CreatureAIComponent creature, VoxelRef voxel, TagList tags) :
+        public BuildVoxelAct(CreatureAIComponent creature, VoxelRef voxel, VoxelType type) :
             base(creature)
         {
             Voxel = voxel;
-            Tags = tags;
             Name = "Build voxel";
 
             List<ResourceAmount> resources = new List<ResourceAmount>()
             {
-                new ResourceAmount(ResourceLibrary.Resources[Tags.Tags[0]], 1)
+                new ResourceAmount(ResourceLibrary.Resources[type.ResourceToRelease], 1)
             };
 
             if(Agent.Faction.PutDesignator.IsDesignation(voxel))

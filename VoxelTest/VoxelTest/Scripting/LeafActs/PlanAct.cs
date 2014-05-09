@@ -86,6 +86,7 @@ namespace DwarfCorp
             Path = null;
             Timeouts = 0;
             PlannerTimer.Reset(PlannerTimer.TargetTimeSeconds);
+            
             while(true)
             {
                 if (Path != null)
@@ -103,7 +104,7 @@ namespace DwarfCorp
                 PlannerTimer.Update(LastTime);
 
                 ChunkManager chunks = PlayState.ChunkManager;
-                if(PlannerTimer.HasTriggered)
+                if(PlannerTimer.HasTriggered || Timeouts == 0)
                 {
                     Voxel vox = chunks.ChunkData.GetFirstVoxelUnder(Agent.Position);
 

@@ -22,6 +22,7 @@ namespace DwarfCorp
         {
             Threats = new List<Creature>();
             Minions = new List<CreatureAIComponent>();
+            SelectedMinions = new List<CreatureAIComponent>();
             TaskManager = new TaskManager(this);
             Stockpiles = new List<Stockpile>();
             DigDesignations = new List<Designation>();
@@ -52,14 +53,16 @@ namespace DwarfCorp
         public List<Creature> Threats { get; set; }
 
         public string Name { get; set; }
+        public List<CreatureAIComponent> SelectedMinions { get; set; }
+
 
 
         public void Update(GameTime time)
         {
             Economy.Update(time);
             RoomDesignator.CheckRemovals();
-            TaskManager.AssignTasks();
-            TaskManager.ManageTasks();
+            //TaskManager.AssignTasks();
+            //TaskManager.ManageTasks();
 
             List<Designation> removals = (from d in DigDesignations
                                           let vref = d.Vox
@@ -391,6 +394,18 @@ namespace DwarfCorp
                     return 1;
                 }
             }
+        }
+
+        public List<ResourceAmount> ListResources()
+        {
+            List<ResourceAmount> toReturn = new List<ResourceAmount>();
+
+            foreach(Stockpile stockpile in Stockpiles)
+            {
+                toReturn.AddRange(stockpile.Resources);
+            }
+
+            return toReturn;
         }
 
 

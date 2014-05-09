@@ -44,9 +44,11 @@ namespace DwarfCorp
 
         public Rectangle SelectionRectangle { get; set; }
 
+        public bool AllowRightClickSelection { get; set; }
+
         public BodySelector(Camera camera, GraphicsDevice graphics, ComponentManager components)
         {
-            SelectionType = VoxelSelectionType.SelectEmpty;
+            AllowRightClickSelection = true;
             SelectionColor = Color.White;
             SelectionWidth = 0.1f;
             CurrentWidth = 0.08f;
@@ -91,7 +93,7 @@ namespace DwarfCorp
                 {
                     isLeftPressed = false;
                     SelectionBuffer = Components.SelectRootBodiesOnScreen(SelectionRectangle, CameraController);
-                    LeftReleasedCallback();
+                    LeftReleased.Invoke();
                 }
                 else
                 {
@@ -105,20 +107,20 @@ namespace DwarfCorp
             }
 
 
-            if (isRightPressed)
+            if (isRightPressed && AllowRightClickSelection)
             {
                 if (mouse.RightButton == ButtonState.Released)
                 {
                     isRightPressed = false;
                     SelectionBuffer = Components.SelectRootBodiesOnScreen(SelectionRectangle, CameraController);
-                    RightReleasedCallback();
+                    RightReleased.Invoke(); 
                 }
                 else
                 {
                     UpdateSelectionRectangle(mouse.X, mouse.Y);
                 }
             }
-            else if (mouse.RightButton == ButtonState.Pressed)
+            else if (mouse.RightButton == ButtonState.Pressed && AllowRightClickSelection)
             {
                 SelectionRectangle = new Rectangle(mouse.X, mouse.Y, 0, 0);
                 isRightPressed = true;
@@ -149,11 +151,11 @@ namespace DwarfCorp
             }
             else
             {
-                Color rectColor = Color.White;
+                Color rectColor = SelectionColor;
 
-                if(isRightPressed)
+                if(isRightPressed && AllowRightClickSelection)
                 {
-                    rectColor = Color.Red;
+                    rectColor = DeleteColor;
                 }
                 Drawer2D.DrawRect(batch, SelectionRectangle, rectColor, 4);
             }
@@ -163,12 +165,9 @@ namespace DwarfCorp
         public List<Body> LeftReleasedCallback()
         {
             List<Body> toReturn = new List<Body>();
-            if (SelectionBuffer.Count > 0)
-            {
-                toReturn.AddRange(SelectionBuffer);
-                SelectionBuffer.Clear();
-                Selected.Invoke(toReturn, InputManager.MouseButton.Left);
-            }
+            toReturn.AddRange(SelectionBuffer);
+            SelectionBuffer.Clear();
+            Selected.Invoke(toReturn, InputManager.MouseButton.Left);
             return toReturn;
         }
 

@@ -29,13 +29,23 @@ namespace DwarfCorp
             {
                 Player.VoxSelector.Enabled = false;
                 Player.BodySelector.Enabled = false;
-                game.IsMouseVisible = false;
+                PlayState.GUI.IsMouseVisible = false;
                 return;
             }
 
             Player.VoxSelector.Enabled = false;
             Player.BodySelector.Enabled = true;
-            game.IsMouseVisible = true;
+            PlayState.GUI.IsMouseVisible = true;
+
+            if (PlayState.GUI.IsMouseOver())
+            {
+                PlayState.GUI.MouseMode = GUISkin.MousePointer.Pointer;
+            }
+            else
+            {
+                PlayState.GUI.MouseMode = GUISkin.MousePointer.Chop;
+            }
+
 
         }
 
@@ -68,6 +78,11 @@ namespace DwarfCorp
                     if (!Player.Faction.ChopDesignations.Contains(tree))
                     {
                         Player.Faction.ChopDesignations.Add(tree);
+
+                        foreach(CreatureAIComponent creature in Player.Faction.SelectedMinions)
+                        {
+                            creature.Tasks.Add(new KillEntityTask(tree));
+                        }
                     }
                 }
                 else if (button == InputManager.MouseButton.Right)

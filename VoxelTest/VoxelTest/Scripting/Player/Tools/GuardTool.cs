@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -36,7 +37,13 @@ namespace DwarfCorp
                     {
                         Vox = v.GetReference()
                     };
+
                     Player.Faction.GuardDesignations.Add(d);
+
+                    foreach(CreatureAIComponent minion in Player.SelectedMinions)
+                    {
+                        minion.Tasks.Add(new GuardVoxelTask(v.GetReference()));
+                    }
                 }
                 else
                 {
@@ -56,14 +63,23 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                game.IsMouseVisible = false;
+                PlayState.GUI.IsMouseVisible = false;
                 return;
             }
 
             Player.VoxSelector.Enabled = true;
-            game.IsMouseVisible = true;
+            PlayState.GUI.IsMouseVisible = true;
             Player.BodySelector.Enabled = false;
             Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+
+            if (PlayState.GUI.IsMouseOver())
+            {
+                PlayState.GUI.MouseMode = GUISkin.MousePointer.Pointer;
+            }
+            else
+            {
+                PlayState.GUI.MouseMode = GUISkin.MousePointer.Guard;
+            }
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)

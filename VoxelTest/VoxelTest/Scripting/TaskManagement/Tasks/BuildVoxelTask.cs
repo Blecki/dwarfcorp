@@ -37,7 +37,7 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
-            return new BuildVoxelAct(creature.AI, Voxel, Tags);
+            return new BuildVoxelAct(creature.AI, Voxel, VoxType);
         }
     }
 
