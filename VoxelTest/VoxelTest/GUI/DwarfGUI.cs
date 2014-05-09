@@ -42,13 +42,18 @@ namespace DwarfCorp
         public Color DefaultTextColor { get; set; }
         public Color DefaultStrokeColor { get; set; }
         public GraphicsDevice Graphics { get; set; }
-
+        public bool IsMouseVisible { get; set; }
+        public GUISkin.MousePointer MouseMode { get; set; }
+        public int MouseScale = 2;
+        public Color MouseTint = Color.White;
         public ToolTipManager ToolTipManager { get; set; }
 
         public bool DebugDraw { get; set; }
 
         public DwarfGUI(DwarfGame game, SpriteFont defaultFont, SpriteFont titleFont, SpriteFont smallFont, InputManager input)
         {
+            IsMouseVisible = true;
+            MouseMode = GUISkin.MousePointer.Pointer;
             SmallFont = smallFont;
             Graphics = game.GraphicsDevice;
             this.game = game;
@@ -58,7 +63,7 @@ namespace DwarfCorp
             };
 
             DefaultFont = defaultFont;
-            Skin = new GUISkin(TextureManager.GetTexture("GUISheet"), 32, 32);
+            Skin = new GUISkin(TextureManager.GetTexture("GUISheet"), 32, 32, TextureManager.GetTexture(ContentPaths.GUI.pointers), 16, 16);
             Skin.SetDefaults();
             TitleFont = titleFont;
             GlobalOffset = Vector2.Zero;
@@ -86,7 +91,7 @@ namespace DwarfCorp
 
             ToolTipManager.Update(time);
 
-            if(!game.IsMouseVisible)
+            if(!IsMouseVisible)
             {
                 return;
             }
@@ -140,6 +145,12 @@ namespace DwarfCorp
             if(DebugDraw)
             {
                 RootComponent.DebugRender(time, batch);
+            }
+
+            if(IsMouseVisible)
+            {
+                MouseState mouse = Mouse.GetState();
+                Skin.RenderMouse(mouse.X, mouse.Y, MouseScale, MouseMode, batch, MouseTint);
             }
         }
 

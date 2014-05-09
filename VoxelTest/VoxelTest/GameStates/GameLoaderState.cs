@@ -331,7 +331,7 @@ namespace DwarfCorp.GameStates
             iter++;
             Input.Update();
             GUI.Update(gameTime);
-            Game.IsMouseVisible = true;
+            GUI.IsMouseVisible = true;
 
             foreach (GameLoadDescriptor t in Games)
             {

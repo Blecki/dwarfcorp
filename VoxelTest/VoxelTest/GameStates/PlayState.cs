@@ -249,7 +249,7 @@ namespace DwarfCorp.GameStates
                 GameCycle = new GameCycle();
                 GameCycle.OnCycleChanged += GameCycle_OnCycleChanged;
                 Preload();
-                Game.IsMouseVisible = true;
+               
                 Game.Graphics.PreferMultiSampling = GameSettings.Default.AntiAliasing > 1;
 
                 // This is some grossness which tries to apply the current graphics settings
@@ -313,7 +313,7 @@ namespace DwarfCorp.GameStates
         public void Preload()
         {
             drawer2D = new Drawer2D(Content, GraphicsDevice);
-            Game.IsMouseVisible = false;
+          
         }
 
         /// <summary>
@@ -616,7 +616,7 @@ namespace DwarfCorp.GameStates
         {
             LoadingMessage = "Creating GUI";
             IndicatorManager.SetupStandards();
-            Game.IsMouseVisible = true;
+
             GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
 
             if(!createMaster)
@@ -650,6 +650,11 @@ namespace DwarfCorp.GameStates
             GUIComponent companyInfoComponent = new GUIComponent(GUI, layout);
 
             layout.SetComponentPosition(companyInfoComponent, 0, 0, 4, 2);
+
+
+            GUIComponent resourceInfoComponent = new ResourceInfoComponent(GUI, layout, Master.Faction);
+            layout.SetComponentPosition(resourceInfoComponent, 7, 0, 4, 2);
+
 
             GridLayout infoLayout = new GridLayout(GUI, companyInfoComponent, 3, 4);
 

@@ -25,8 +25,18 @@ namespace DwarfCorp
             yield return Status.Success;
         }
 
+        public IEnumerable<Status> Finally()
+        {
+            yield return Status.Fail;
+        }
+
         public IEnumerable<Status> RemoveItemFromGatherManager()
         {
+            if (Creature.Inventory.Resources.IsFull() && !ItemToGather.IsDead)
+            {
+                yield return Status.Fail;
+            }
+
             if(Agent.GatherManager.ItemsToGather.Contains(ItemToGather))
             {
                 Agent.GatherManager.ItemsToGather.Remove(ItemToGather);
@@ -101,7 +111,7 @@ namespace DwarfCorp
                         new StashAct(Agent, StashAct.PickUpType.None, null, "GatherItem", "GatheredResource"),
                         new Wrap(RemoveItemFromGatherManager),
                         new Wrap(AddStockOrder)
-                        ) | new Wrap(RemoveItemFromGatherManager);
+                        ) | (new Wrap(RemoveItemFromGatherManager) & new Wrap(Finally) & false);
 
                     Tree.Initialize();
                 }

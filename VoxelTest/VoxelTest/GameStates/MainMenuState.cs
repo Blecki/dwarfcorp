@@ -130,7 +130,7 @@ namespace DwarfCorp.GameStates
         {
             Input.Update();
             GUI.Update(gameTime);
-            Game.IsMouseVisible = true;
+            GUI.IsMouseVisible = true;
 
             base.Update(gameTime);
         }

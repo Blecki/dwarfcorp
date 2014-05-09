@@ -26,9 +26,9 @@ namespace DwarfCorp
 
         public enum ToolMode
         {
+            SelectUnits,
             Dig,
             Build,
-            SelectUnits,
             Chop,
             Guard,
             CreateStockpiles,
@@ -65,7 +65,9 @@ namespace DwarfCorp
         [JsonIgnore]
         public PlayerTool CurrentTool { get { return Tools[CurrentToolMode]; } }
             
-        [OnDeserialized]
+        [JsonIgnore]
+        public List<CreatureAIComponent> SelectedMinions { get { return Faction.SelectedMinions; }set { Faction.SelectedMinions = value; } }
+
         protected void OnDeserialized(StreamingContext context)
         {
             Initialize(GameState.Game, PlayState.ComponentManager, PlayState.ChunkManager, PlayState.Camera, PlayState.ChunkManager.Graphics,  PlayState.GUI);
@@ -86,7 +88,7 @@ namespace DwarfCorp
             VoxSelector = new VoxelSelector(CameraController, chunks.Graphics, chunks);
             BodySelector = new BodySelector(CameraController, chunks.Graphics, components);
             GUI = gui;
-            
+            SelectedMinions = new List<CreatureAIComponent>();
             CreateTools();
 
             InputManager.KeyReleasedCallback += OnKeyReleased;
@@ -105,6 +107,9 @@ namespace DwarfCorp
             Tools = new Dictionary<ToolMode, PlayerTool>();
             Tools[ToolMode.God] = new GodModeTool(GUI, this);
 
+            Tools[ToolMode.SelectUnits] = new DwarfSelectorTool(this);
+
+            
             Tools[ToolMode.Dig] = new DigTool
             {
                 Player = this,
@@ -112,6 +117,7 @@ namespace DwarfCorp
                 UnreachableColor = new Color(205, 10, 10),
                 DigDesignationColor = new Color(205, 200, 10)
             };
+             
 
             Tools[ToolMode.Gather] = new GatherTool
             {
@@ -172,6 +178,24 @@ namespace DwarfCorp
         {
             CurrentTool.Render(game, g, time);
             VoxSelector.Render();
+
+            foreach (CreatureAIComponent creature in Faction.SelectedMinions)
+            {
+                Drawer2D.DrawZAlignedRect(creature.Position + Vector3.Down * 0.5f, 0.25f, 0.25f, 2, new Color(255, 255, 255, 50));
+
+                foreach(Task task in creature.Tasks)
+                {
+                    task.Render(time);
+                }
+
+                if(creature.CurrentTask != null)
+                {
+                    creature.CurrentTask.Render(time);
+                }
+            
+            }
+
+
             DwarfGame.SpriteBatch.Begin();
             BodySelector.Render(DwarfGame.SpriteBatch);
             DwarfGame.SpriteBatch.End();
@@ -212,7 +236,7 @@ namespace DwarfCorp
         {
             if(KeyManager.RotationEnabled())
             {
-                game.IsMouseVisible = false;
+                PlayState.GUI.IsMouseVisible = false;
             }
           
         }

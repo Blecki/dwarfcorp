@@ -134,14 +134,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    if(IsMouseOver)
-                    {
-                        batch.Draw(Item.Image.Image, toDraw, Item.Image.SourceRect, Color.Orange, 0, Vector2.Zero, SpriteEffects.None, 0);
-                    }
-                    else
-                    {
-                        batch.Draw(Item.Image.Image, toDraw, Item.Image.SourceRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
-                    }
+                    batch.Draw(Item.Image.Image, toDraw, Item.Image.SourceRect, IsMouseOver ? Color.Orange : Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
                 }
 
                 if(Item.CurrentAmount < 256)

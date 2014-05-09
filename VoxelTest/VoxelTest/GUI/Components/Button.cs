@@ -91,6 +91,11 @@ namespace DwarfCorp
 
         public override void Render(GameTime time, SpriteBatch batch)
         {
+            if(!IsVisible)
+            {
+                return;
+            }
+
             Rectangle globalBounds = GlobalBounds;
             Color imageColor = Color.White;
             Color textColor = TextColor;

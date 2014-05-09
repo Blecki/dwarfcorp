@@ -125,6 +125,8 @@
     <Compile Include="Components\AI\Inventory.cs" />
     <Compile Include="Components\AI\Sensors\VoxelListener.cs" />
     <Compile Include="Components\Graphics\MinimapIcon.cs" />
+    <Compile Include="Graphics\Drawing\Drawer2D\PolygonDrawCommand.cs" />
+    <Compile Include="GUI\Components\ResourceInfoComponent.cs" />
     <Compile Include="Scripting\Player\BodySelector.cs" />
     <Compile Include="GameStates\CompanyMakerState.cs" />
     <Compile Include="Components\AI\Sensors\TrapSensor.cs" />
@@ -174,6 +176,8 @@
     <Compile Include="Scripting\LeafActs\StashAct.cs" />
     <Compile Include="Scripting\LeafActs\StashResourcesAct.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceContainer.cs" />
+    <Compile Include="Scripting\Player\Tools\DwarfSelectorTool.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\BuildRoomTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\StockResourceTask.cs" />
     <Compile Include="Sound\NoiseMaker.cs" />
     <Compile Include="Scripting\Player\Designation\Designation.cs" />

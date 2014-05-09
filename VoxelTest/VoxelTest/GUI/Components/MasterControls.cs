@@ -22,98 +22,33 @@ namespace DwarfCorp
         public Dictionary<GameMaster.ToolMode, Button> ToolButtons { get; set; }
         public GameMaster.ToolMode CurrentMode { get; set; }
         public Panel BuildPanel { get; set; }
-
+        public Texture2D Icons { get; set; }
+        public int IconSize { get; set; }
 
         public MasterControls(DwarfGUI gui, GUIComponent parent, GameMaster master, Texture2D icons, GraphicsDevice device, SpriteFont font) :
             base(gui, parent)
         {
-            int iconSize = 32;
-            int buttonSize = 52;
+            Icons = icons;
+            IconSize = 32;
             CurrentMode = master.CurrentToolMode;
             ToolButtons = new Dictionary<GameMaster.ToolMode, Button>();
 
-            GridLayout layout = new GridLayout(GUI, this, 1, 6)
+            GridLayout layout = new GridLayout(GUI, this, 1, 7)
             {
                 EdgePadding = 0
             };
 
-            Button mineButton = new Button(GUI, layout, "Mine", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 0, 0))
-            {
-                CanToggle = true,
-                IsToggled = true,
-                KeepAspectRatio = true,
-                ConstrainSize = true,
-                ToolTip = "Click and drag to designate mines.\nRight click to erase."
-            };
-            mineButton.OnClicked += () => ButtonClicked(mineButton);
-
-            Button chopButton = new Button(GUI, layout, "Chop", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 1, 0))
-            {
-                CanToggle = true,
-                IsToggled = false,
-                ConstrainSize = true,
-                KeepAspectRatio = true,
-                ToolTip = "Click on trees to designate them\nfor chopping. Right click to erase."
-            };
-            chopButton.OnClicked += () => ButtonClicked(chopButton);
-
-            Button guardButton = new Button(GUI, layout, "Guard", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 4, 0))
-            {
-                CanToggle = true,
-                IsToggled = false,
-                ConstrainSize = true,
-                KeepAspectRatio = true,
-                ToolTip = "Click and drag to designate guard areas.\nRight click to erase."
-            };
-            guardButton.OnClicked += () => ButtonClicked(guardButton);
-
-
-            Button stockButton = new Button(GUI, layout, "Stock", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 7, 0))
-            {
-                CanToggle = true,
-                IsToggled = false,
-                KeepAspectRatio = true,
-                ConstrainSize = true,
-                ToolTip = "Click and drag to designate stockpiles.\nRight click to erase."
-            };
-            stockButton.OnClicked += () => ButtonClicked(stockButton);
-
-
-            Button gatherButton = new Button(GUI, layout, "Gather", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 6, 0))
-            {
-                CanToggle = true,
-                LocalBounds = new Rectangle(device.Viewport.Width - 340 + 45, device.Viewport.Height - 100, buttonSize, buttonSize),
-                IsToggled = false,
-                ConstrainSize = true,
-                KeepAspectRatio = true,
-                ToolTip = "Click on resources to designate them\nfor gathering. Right click to erase."
-            };
-            gatherButton.OnClicked += () => ButtonClicked(gatherButton);
-
-
-            Button buildButton = new Button(GUI, layout, "Build", font, Button.ButtonMode.ImageButton, new ImageFrame(icons, iconSize, 2, 0))
-            {
-                CanToggle = true,
-                IsToggled = false,
-                KeepAspectRatio = true,
-                ConstrainSize = true,
-                ToolTip = "Click to open build menu."
-            };
-            buildButton.OnClicked += () => ButtonClicked(buildButton);
-
-            ToolButtons[GameMaster.ToolMode.Dig] = mineButton;
-            ToolButtons[GameMaster.ToolMode.Chop] = chopButton;
-            ToolButtons[GameMaster.ToolMode.Guard] = guardButton;
-            ToolButtons[GameMaster.ToolMode.CreateStockpiles] = stockButton;
-            ToolButtons[GameMaster.ToolMode.Gather] = gatherButton;
-            ToolButtons[GameMaster.ToolMode.Build] = buildButton;
-
+            CreateButton(layout, GameMaster.ToolMode.SelectUnits, "Select", "Click and drag to select dwarves.", 5, 0);
+            CreateButton(layout, GameMaster.ToolMode.Dig, "Mine", "Click and drag to designate mines.\nRight click to erase.", 0, 0);
+            CreateButton(layout, GameMaster.ToolMode.Chop, "Chop", "Click on trees to designate them\nfor chopping. Right click to erase.", 1, 0);
+            CreateButton(layout, GameMaster.ToolMode.Guard, "Guard", "Click and drag to designate guard areas.\nRight click to erase.", 4, 0);
+            CreateButton(layout, GameMaster.ToolMode.CreateStockpiles, "Stock", "Click and drag to designate stockpiles.\nRight click to erase.", 7, 0);
+            CreateButton(layout, GameMaster.ToolMode.Gather, "Gather", "Click on resources to designate them\nfor gathering. Right click to erase.", 6, 0);
+            CreateButton(layout, GameMaster.ToolMode.Build, "Build", "Click to open build menu.", 2, 0);
 
             int i = 0;
             foreach(Button b in ToolButtons.Values)
             {
-                b.TextColor = Color.White;
-                b.HoverTextColor = Color.Yellow;
                 layout.SetComponentPosition(b, i, 0, 1, 1);
                 i++;
             }
@@ -143,6 +78,25 @@ namespace DwarfCorp
             buildBox.OnSelectionModified += buildBox_OnSelectionModified;
 
             BuildPanel.IsVisible = false;
+        }
+
+
+        public Button CreateButton(GUIComponent parent, GameMaster.ToolMode mode, string name, string tooltip, int x, int y)
+        {
+            Button button = new Button(GUI, parent, name, GUI.DefaultFont, Button.ButtonMode.ImageButton, new ImageFrame(Icons, IconSize, x, y))
+            {
+                CanToggle = true,
+                IsToggled = false,
+                KeepAspectRatio = true,
+                ConstrainSize = true,
+                ToolTip = tooltip,
+                TextColor = Color.White,
+                HoverTextColor = Color.Yellow
+            };
+            button.OnClicked += () => ButtonClicked(button);
+            ToolButtons[mode] = button;
+
+            return button;
         }
 
         private void buildBox_OnSelectionModified(string arg)
@@ -183,6 +137,27 @@ namespace DwarfCorp
 
         public override void Update(GameTime time)
         {
+            if(Master.SelectedMinions.Count == 0)
+            {
+                Master.CurrentToolMode = GameMaster.ToolMode.SelectUnits;
+
+                 
+                foreach(KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons.Where(pair => pair.Key != GameMaster.ToolMode.SelectUnits))
+                {
+                    pair.Value.IsVisible = false;
+                }
+
+            }
+            else
+            {
+     
+                foreach(KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons.Where(pair => pair.Key != GameMaster.ToolMode.SelectUnits))
+                {
+                    pair.Value.IsVisible = true;
+                }
+                 
+            }
+
             base.Update(time);
         }
     }

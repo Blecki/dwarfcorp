@@ -39,6 +39,8 @@ namespace DwarfCorp
         {
             return 1.0f;
         }
+
+
     }
 
 }

@@ -59,7 +59,7 @@ namespace DwarfCorp
                               new DigAct(Agent, "DigVoxel"),
                               new ClearBlackboardData(creature, "DigVoxel")
                             ) 
-                            | new Wrap(() => IncrementAssignment(creature, "DigVoxel", -1)));
+                            | new Wrap(() => IncrementAssignment(creature, "DigVoxel", -1)) & false);
         }
     }
 
