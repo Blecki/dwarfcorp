@@ -249,7 +249,7 @@ namespace DwarfCorp.GameStates
                 GameCycle = new GameCycle();
                 GameCycle.OnCycleChanged += GameCycle_OnCycleChanged;
                 Preload();
-                Game.IsMouseVisible = true;
+               
                 Game.Graphics.PreferMultiSampling = GameSettings.Default.AntiAliasing > 1;
 
                 // This is some grossness which tries to apply the current graphics settings
@@ -313,7 +313,7 @@ namespace DwarfCorp.GameStates
         public void Preload()
         {
             drawer2D = new Drawer2D(Content, GraphicsDevice);
-            Game.IsMouseVisible = false;
+          
         }
 
         /// <summary>
@@ -382,7 +382,7 @@ namespace DwarfCorp.GameStates
             PlanService.Restart();
 
             ComponentManager = new ComponentManager();
-            ComponentManager.RootComponent = new LocatableComponent(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero, false);
+            ComponentManager.RootComponent = new Body(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero, false);
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);
             ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
@@ -616,7 +616,7 @@ namespace DwarfCorp.GameStates
         {
             LoadingMessage = "Creating GUI";
             IndicatorManager.SetupStandards();
-            Game.IsMouseVisible = true;
+
             GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
 
             if(!createMaster)
@@ -650,6 +650,11 @@ namespace DwarfCorp.GameStates
             GUIComponent companyInfoComponent = new GUIComponent(GUI, layout);
 
             layout.SetComponentPosition(companyInfoComponent, 0, 0, 4, 2);
+
+
+            GUIComponent resourceInfoComponent = new ResourceInfoComponent(GUI, layout, Master.Faction);
+            layout.SetComponentPosition(resourceInfoComponent, 7, 0, 4, 2);
+
 
             GridLayout infoLayout = new GridLayout(GUI, companyInfoComponent, 3, 4);
 
@@ -1517,7 +1522,7 @@ namespace DwarfCorp.GameStates
             DefaultShader.CurrentTechnique = DefaultShader.Techniques["Textured"];
             DefaultShader.Parameters["Clipping"].SetValue(false);
 
-            //LocatableComponent.CollisionManager.DebugDraw();
+            //Body.CollisionManager.DebugDraw();
 
             // Render simple geometry (boxes, etc.)
             Drawer3D.Render(GraphicsDevice, DefaultShader, true);

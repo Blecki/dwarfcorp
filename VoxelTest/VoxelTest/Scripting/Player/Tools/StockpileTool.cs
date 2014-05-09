@@ -85,7 +85,7 @@ namespace DwarfCorp
 
                     existingPile.RemoveVoxel(v.GetReference());
 
-                    if (existingPile.Storage.Count == 0)
+                    if (existingPile.Voxels.Count == 0)
                     {
                         existingPile.Destroy();
                     }
@@ -100,13 +100,23 @@ namespace DwarfCorp
             if(Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                game.IsMouseVisible = false;
+                PlayState.GUI.IsMouseVisible = false;
                 return;
             }
 
             Player.VoxSelector.Enabled = true;
-            game.IsMouseVisible = true;
+            Player.BodySelector.Enabled = false;
+            PlayState.GUI.IsMouseVisible = true;
             Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+
+            if (PlayState.GUI.IsMouseOver())
+            {
+                PlayState.GUI.MouseMode = GUISkin.MousePointer.Pointer;
+            }
+            else
+            {
+                PlayState.GUI.MouseMode = GUISkin.MousePointer.Build;
+            }
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
@@ -124,6 +134,11 @@ namespace DwarfCorp
                 box.Max = new Vector3(box.Max.X, box.Max.Y + 0.05f, box.Max.Z);
                 Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, false);
             }
+        }
+
+        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        {
+            
         }
     }
 }

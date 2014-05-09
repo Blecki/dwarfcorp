@@ -1,4 +1,6 @@
-﻿namespace DwarfCorp
+﻿using Microsoft.Xna.Framework;
+
+namespace DwarfCorp
 {
 
     /// <summary>
@@ -8,6 +10,7 @@
     /// </summary>
     public class Task
     {
+        public Act Script { get; set; }
 
         protected bool Equals(Task other)
         {
@@ -27,9 +30,20 @@
             
         }
 
+        public virtual void Render(GameTime time)
+        {
+            
+        }
+
         public override bool Equals(object obj)
         {
             return obj is Task && Name.Equals(((Task) (obj)).Name);
+        }
+
+
+        public virtual void SetupScript(Creature agent)
+        {
+            Script = CreateScript(agent);
         }
 
 
@@ -44,6 +58,30 @@
         }
 
         public virtual bool IsFeasible(Creature agent)
+        {
+            return true;
+        }
+
+        public virtual bool ShouldRetry(Creature agent)
+        {
+            return false;
+        }
+    }
+
+    public class ActWrapperTask : Task
+    {
+        public ActWrapperTask()
+        {
+            
+        }
+
+        public ActWrapperTask(Act act)
+        {
+            Script = act;
+            Name = Script.Name;
+        }
+
+        public override bool IsFeasible(Creature agent)
         {
             return true;
         }

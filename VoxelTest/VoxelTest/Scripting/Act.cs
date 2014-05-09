@@ -107,6 +107,11 @@ namespace DwarfCorp
         {
             throw new NotImplementedException();
         }
+
+        public virtual Task AsTask()
+        {
+            return new ActWrapperTask(this);
+        }
     }
 
 }

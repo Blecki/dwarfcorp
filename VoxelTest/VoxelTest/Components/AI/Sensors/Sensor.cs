@@ -13,13 +13,13 @@ namespace DwarfCorp
     /// <summary>
     /// Generic component with a box that fires when other components enter it.
     /// </summary>
-    public class Sensor : LocatableComponent
+    public class Sensor : Body
     {
 
-        public delegate void Sense(List<LocatableComponent> sensed);
+        public delegate void Sense(List<Body> sensed);
         public event Sense OnSensed;
         public Timer FireTimer { get; set; }
-        private readonly List<LocatableComponent> sensedItems = new List<LocatableComponent>();
+        private readonly List<Body> sensedItems = new List<Body>();
 
         public Sensor(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
             base(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
@@ -34,7 +34,7 @@ namespace DwarfCorp
             OnSensed += Sensor_OnSensed;
         }
 
-        private void Sensor_OnSensed(List<LocatableComponent> sensed)
+        private void Sensor_OnSensed(List<Body> sensed)
         {
             ;
         }
@@ -45,7 +45,7 @@ namespace DwarfCorp
             if(FireTimer.HasTriggered)
             {
                 sensedItems.Clear();
-                Manager.GetComponentsIntersecting(BoundingBox, sensedItems, CollisionManager.CollisionType.Dynamic);
+                Manager.GetBodiesIntersecting(BoundingBox, sensedItems, CollisionManager.CollisionType.Dynamic);
 
                 if(sensedItems.Count > 0)
                 {

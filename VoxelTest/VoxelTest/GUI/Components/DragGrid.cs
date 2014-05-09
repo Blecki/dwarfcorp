@@ -96,9 +96,9 @@ namespace DwarfCorp
                     OnItemCreated.Invoke(newSpawnedItem);
                     Items.Add(newSpawnedItem);
                     newSpawnedItem.LocalBounds = new Rectangle(0, 0, GridWidth, GridHeight);
-                    newSpawnedItem.OnDragStarted += delegate { DragManager.StartDrag(newSpawnedItem, 1); };
+                    newSpawnedItem.OnDragStarted += () => DragManager.StartDrag(newSpawnedItem, 1);
 
-                    newSpawnedItem.OnDragEnded += delegate { DragManager.Drop(); };
+                    newSpawnedItem.OnDragEnded += () => DragManager.Drop();
                 }
             }
 

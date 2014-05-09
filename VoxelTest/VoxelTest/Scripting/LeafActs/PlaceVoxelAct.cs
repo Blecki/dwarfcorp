@@ -13,18 +13,19 @@ namespace DwarfCorp
     public class PlaceVoxelAct : CreatureAct
     {
         public VoxelRef Voxel { get; set; }
-
-        public PlaceVoxelAct(VoxelRef voxel, CreatureAIComponent agent) :
+        public ResourceAmount Resource { get; set; }
+        public PlaceVoxelAct(VoxelRef voxel, CreatureAIComponent agent, ResourceAmount resource) :
             base(agent)
         {
             Agent = agent;
             Voxel = voxel;
             Name = "Build Voxel " + voxel.ToString();
+            Resource = resource;
         }
 
         public override IEnumerable<Status> Run()
         {
-            LocatableComponent grabbed = Creature.Hands.GetFirstGrab();
+            Body grabbed = Creature.Inventory.RemoveAndCreate(Resource).FirstOrDefault();
 
             if(grabbed == null)
             {
@@ -34,9 +35,7 @@ namespace DwarfCorp
             {
                 if(Creature.Faction.PutDesignator.IsDesignation(Voxel))
                 {
-                    Creature.Hands.UnGrab(grabbed);
                     grabbed.Die();
-                    Agent.Blackboard.SetData<object>("HeldObject", null);
 
                     PutDesignation put = Creature.Faction.PutDesignator.GetDesignation(Voxel);
                     put.Put(PlayState.ChunkManager);
@@ -47,7 +46,9 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                    Creature.Inventory.Resources.AddItem(grabbed);
+                    grabbed.Die();
+                    
                     yield return Status.Fail;
                 }
             }

@@ -21,7 +21,8 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
-            return new GetItemWithTagsAct(creature.AI, Tags);
+            return null;
+            //return new GetItemWithTagsAct(creature.AI, Tags);
         }
     }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -36,9 +37,9 @@ namespace DwarfCorp
             DrawCommands.Enqueue(new SpriteDrawCommand(worldPosition, image));
         }
 
-        public static void DrawSprite(ImageFrame image, Vector3 worldPosition, Vector2 scale, Vector2 offset)
+        public static void DrawSprite(ImageFrame image, Vector3 worldPosition, Vector2 scale, Vector2 offset, Color tint)
         {
-            DrawCommands.Enqueue(new SpriteDrawCommand(worldPosition, image) { Scale = scale, Offset =  offset});
+            DrawCommands.Enqueue(new SpriteDrawCommand(worldPosition, image) { Scale = scale, Offset =  offset, Tint = tint});
         }
 
         public static void DrawTextBox(string text, Vector3 position)
@@ -46,6 +47,39 @@ namespace DwarfCorp
             DrawCommands.Enqueue(new TextBoxDrawCommand(text, DefaultFont, position, Color.White, new Color(0, 0, 0, 200), new Color(50, 50, 50, 100), new Color(0, 0, 0, 200), 2.0f));
         }
 
+        public static void DrawRect(Vector3 worldPos, Rectangle screenRect, Color backgroundColor, Color strokeColor, float strokewidth)
+        {
+            
+            Vector3 screenPos = GameState.Game.GraphicsDevice.Viewport.Project(worldPos, PlayState.Camera.ProjectionMatrix, PlayState.Camera.ViewMatrix, Matrix.Identity);
+
+            Rectangle rect = new Rectangle((int)(screenPos.X - screenRect.Width/2), (int)(screenPos.Y - screenRect.Height/2), screenRect.Width, screenRect.Height);
+            
+            DrawCommands.Enqueue(new RectDrawCommand(backgroundColor, strokeColor, strokewidth, rect));
+        }
+
+        public static void DrawPolygon(List<Vector2> points, Color color, int width, bool closed)
+        {
+            DrawCommands.Enqueue(new PolygonDrawCommand(points, closed, color, width));
+        }
+
+        public static void DrawPolygon(List<Vector3> points, Color color, int width, bool closed)
+        {
+            DrawCommands.Enqueue(new PolygonDrawCommand(points, closed, color, width));
+        }
+
+        public static void DrawZAlignedRect(Vector3 center, float xWidth, float zHeight, int width, Color color)
+        {
+            List<Vector3> points = new List<Vector3>
+            {
+                center + new Vector3(-xWidth, 0, -zHeight),
+                center + new Vector3(-xWidth, 0, zHeight),
+                center + new Vector3(xWidth, 0, zHeight),
+                center + new Vector3(xWidth, 0, -zHeight)
+            };
+
+            DrawPolygon(points, color, width, true);
+
+        } 
 
         public static void DrawRect(Rectangle rect, Color backgroundColor, Color strokeColor, float strokewidth)
         {
@@ -173,6 +207,7 @@ namespace DwarfCorp
             SafeDraw(batch, toDisplay, Font, textColor, textPosition, Vector2.Zero);
         }
 
+        [Flags]
         public enum Alignment
         {
             Center = 0,

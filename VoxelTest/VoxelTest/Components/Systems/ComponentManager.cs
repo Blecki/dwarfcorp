@@ -27,7 +27,7 @@ namespace DwarfCorp
        
         private List<GameComponent> Additions { get; set; }
 
-        public LocatableComponent RootComponent { get; set; }
+        public Body RootComponent { get; set; }
 
         private static Camera Camera { get; set; }
 
@@ -65,9 +65,9 @@ namespace DwarfCorp
             return toFilter.Where(component => component.Tags.Contains(tag)).ToList();
         }
 
-        public bool IsUnderMouse(LocatableComponent component, MouseState mouse, Camera camera, Viewport viewPort)
+        public bool IsUnderMouse(Body component, MouseState mouse, Camera camera, Viewport viewPort)
         {
-            List<LocatableComponent> viewable = new List<LocatableComponent>();
+            List<Body> viewable = new List<Body>();
             Vector3 pos1 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 0), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
             Vector3 pos2 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 1), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
             Vector3 dir = Vector3.Normalize(pos2 - pos1);
@@ -78,77 +78,94 @@ namespace DwarfCorp
         }
 
 
-        public void GetComponentsUnderMouse(MouseState mouse, Camera camera, Viewport viewPort, List<LocatableComponent> components)
+        public void GetBodiesUnderMouse(MouseState mouse, Camera camera, Viewport viewPort, List<Body> components)
         {
             Vector3 pos1 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 0), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
             Vector3 pos2 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 1), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
             Vector3 dir = Vector3.Normalize(pos2 - pos1);
 
             Ray toCast = new Ray(pos1, dir);
-            HashSet<LocatableComponent> set = new HashSet<LocatableComponent>();
+            HashSet<Body> set = new HashSet<Body>();
             CollisionManager.GetObjectsIntersecting(toCast, set, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
             components.AddRange(set);
         }
 
-        public bool IsVisibleToCamera(LocatableComponent component, Camera camera)
+        public bool IsVisibleToCamera(Body component, Camera camera)
         {
             BoundingFrustum frustrum = new BoundingFrustum(camera.ViewMatrix * camera.ProjectionMatrix);
             return (component.Intersects(frustrum));
         }
 
-        public void GetComponentsVisibleToCamera(Camera camera, List<LocatableComponent> components)
+        public void GetBodiesVisibleToCamera(Camera camera, List<Body> components)
         {
             BoundingFrustum frustrum = new BoundingFrustum(camera.ViewMatrix * camera.ProjectionMatrix);
-            GetComponentsIntersecting(frustrum, components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
+            GetBodiesIntersecting(frustrum, components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
         }
 
-        public void GetComponentsInVisibleToCamera(Camera camera, List<LocatableComponent> components)
+        public void GetBodiesInvisibleToCamera(Camera camera, List<Body> components)
         {
             BoundingFrustum frustrum = new BoundingFrustum(camera.ViewMatrix * camera.ProjectionMatrix);
 
             foreach(GameComponent c in Components.Values)
             {
-                if(c is LocatableComponent && !((LocatableComponent) c).Intersects(frustrum))
+                if(c is Body && !((Body) c).Intersects(frustrum))
                 {
-                    components.Add((LocatableComponent) c);
+                    components.Add((Body) c);
                 }
             }
         }
 
-        public void GetComponentsIntersecting(BoundingSphere sphere, List<LocatableComponent> components, CollisionManager.CollisionType type)
+        public void GetBodiesIntersecting(BoundingSphere sphere, List<Body> components, CollisionManager.CollisionType type)
         {
-            HashSet<LocatableComponent> set = new HashSet<LocatableComponent>();
+            HashSet<Body> set = new HashSet<Body>();
             CollisionManager.GetObjectsIntersecting(sphere, set, type);
 
             components.AddRange(set);
         }
 
-        public void GetComponentsIntersecting(BoundingFrustum frustrum, List<LocatableComponent> components, CollisionManager.CollisionType type)
+        public void GetBodiesIntersecting(BoundingFrustum frustrum, List<Body> components, CollisionManager.CollisionType type)
         {
-            HashSet<LocatableComponent> set = new HashSet<LocatableComponent>();
+            HashSet<Body> set = new HashSet<Body>();
             CollisionManager.GetObjectsIntersecting(frustrum, set, type);
 
             components.AddRange(set);
         }
 
-        public void GetComponentsIntersecting(BoundingBox box, List<LocatableComponent> components, CollisionManager.CollisionType type)
+        public void GetBodiesIntersecting(BoundingBox box, List<Body> components, CollisionManager.CollisionType type)
         {
-            HashSet<LocatableComponent> set = new HashSet<LocatableComponent>();
+            HashSet<Body> set = new HashSet<Body>();
             CollisionManager.GetObjectsIntersecting(box, set, type);
 
             components.AddRange(set);
         }
 
-        public void GetComponentsIntersecting(Ray ray, List<LocatableComponent> components, CollisionManager.CollisionType type)
+        public void GetBodiesIntersecting(Ray ray, List<Body> components, CollisionManager.CollisionType type)
         {
-            HashSet<LocatableComponent> set = new HashSet<LocatableComponent>();
+            HashSet<Body> set = new HashSet<Body>();
             CollisionManager.GetObjectsIntersecting(ray, set, type);
 
             components.AddRange(set);
         }
 
+        public List<Body> SelectRootBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
+        {
+            return (from component in RootComponent.Children.OfType<Body>()
+                    let screenPos = camera.Project(component.GlobalTransform.Translation)
+                    where selectionRectangle.Contains((int)screenPos.X, (int)screenPos.Y) && screenPos.Z > 0
+                    select component).ToList();
+        }
+
+        public List<Body> SelectAllBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
+        {
+            return (from component in Components.Values.OfType<Body>()
+                    let screenPos = camera.Project(component.GlobalTransform.Translation)
+                    where selectionRectangle.Contains((int)screenPos.X, (int)screenPos.Y) && screenPos.Z > 0
+                    select component).ToList();
+        }
+
         #endregion
+
 
         public void AddComponent(GameComponent component)
         {
@@ -238,23 +255,23 @@ namespace DwarfCorp
         }
 
 
-        public List<LocatableComponent> FrustrumCullLocatableComponents(Camera camera)
+        public List<Body> FrustrumCullLocatableComponents(Camera camera)
         {
-            List<LocatableComponent> visible = CollisionManager.GetVisibleObjects<LocatableComponent>(camera.GetFrustrum(), CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
+            List<Body> visible = CollisionManager.GetVisibleObjects<Body>(camera.GetFrustrum(), CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
             //CollisionManager.GetObjectsIntersecting(camera.GetFrustrum(), visible, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
             return visible;
         }
 
 
-        private HashSet<LocatableComponent> visibleComponents = new HashSet<LocatableComponent>();
+        private HashSet<Body> visibleComponents = new HashSet<Body>();
         private List<GameComponent> componentsToDraw = new List<GameComponent>();
 
         public bool RenderRefractive(GameComponent component, float waterLevel)
         {
-            if(component is LocatableComponent)
+            if(component is Body)
             {
-                return ((LocatableComponent) component).GetBoundingBox().Min.Y < waterLevel + 2;
+                return ((Body) component).GetBoundingBox().Min.Y < waterLevel + 2;
             }
             else
             {
@@ -264,9 +281,9 @@ namespace DwarfCorp
 
         public bool RenderReflective(GameComponent component, float waterLevel)
         {
-            if(component is LocatableComponent)
+            if(component is Body)
             {
-                return ((LocatableComponent) component).GetBoundingBox().Min.Y > waterLevel - 2;
+                return ((Body) component).GetBoundingBox().Min.Y > waterLevel - 2;
             }
             else
             {
@@ -297,8 +314,8 @@ namespace DwarfCorp
                 componentsToDraw.Clear();
                 
                 
-                List<LocatableComponent> list = FrustrumCullLocatableComponents(camera);
-                foreach(LocatableComponent component in list)
+                List<Body> list = FrustrumCullLocatableComponents(camera);
+                foreach(Body component in list)
                 {
                     visibleComponents.Add(component);
                 }
@@ -307,11 +324,11 @@ namespace DwarfCorp
                 ComponentManager.Camera = camera;
                 foreach(GameComponent component in Components.Values)
                 {
-                    bool isLocatable = component is LocatableComponent;
+                    bool isLocatable = component is Body;
 
                     if(isLocatable)
                     {
-                        LocatableComponent loc = (LocatableComponent) component;
+                        Body loc = (Body) component;
 
 
                         if(((loc.GlobalTransform.Translation - camera.Position).LengthSquared() < chunks.DrawDistanceSquared &&
@@ -352,7 +369,7 @@ namespace DwarfCorp
             effect.Parameters["xEnableLighting"].SetValue(false);
         }
 
-        public static int CompareZDepth(LocatableComponent A, LocatableComponent B)
+        public static int CompareZDepth(Body A, Body B)
         {
             if(A == B)
             {

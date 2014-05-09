@@ -7,6 +7,7 @@ using System.Security.AccessControl;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace DwarfCorp
 {
@@ -23,6 +24,7 @@ namespace DwarfCorp
             public Timer CurrentTime;
             public float MaxScale;
             public Vector2 Offset { get; set; }
+            public Color Tint { get; set; }
         }
 
         public enum StandardIndicators
@@ -34,7 +36,11 @@ namespace DwarfCorp
             Question,
             Exclaim,
             Boom,
-            Heart
+            Heart,
+            DownArrow,
+            UpArrow,
+            LeftArrow,
+            RightArrow
         }
 
         public static Dictionary<StandardIndicators, ImageFrame> StandardFrames = new Dictionary<StandardIndicators, ImageFrame>(); 
@@ -53,14 +59,30 @@ namespace DwarfCorp
             StandardFrames[StandardIndicators.Exclaim] = new ImageFrame(indicators, 16, 0, 1);
             StandardFrames[StandardIndicators.Heart] = new ImageFrame(indicators, 16, 4, 1);
             StandardFrames[StandardIndicators.Boom] = new ImageFrame(indicators, 16, 2, 1);
+            StandardFrames[StandardIndicators.DownArrow] = new ImageFrame(indicators, 16, 0, 2);
+            StandardFrames[StandardIndicators.UpArrow] = new ImageFrame(indicators, 16, 1, 2);
+            StandardFrames[StandardIndicators.LeftArrow] = new ImageFrame(indicators, 16, 2, 2);
+            StandardFrames[StandardIndicators.RightArrow] = new ImageFrame(indicators, 16, 3, 2);
         }
+
 
         public static void DrawIndicator(StandardIndicators indicator, Vector3 position, float time, float scale, Vector2 offset)
         {
-            DrawIndicator(StandardFrames[indicator], position, time,  scale, offset);
+            DrawIndicator(StandardFrames[indicator], position, time, scale, offset, Color.White);
+        }
+
+
+        public static void DrawIndicator(StandardIndicators indicator, Vector3 position, float time, float scale, Vector2 offset, Color tint)
+        {
+            DrawIndicator(StandardFrames[indicator], position, time,  scale, offset, tint);
         }
 
         public static void DrawIndicator(ImageFrame image, Vector3 position, float time, float scale, Vector2 offset)
+        {
+            DrawIndicator(image, position, time, scale, offset, Color.White);
+        }
+
+        public static void DrawIndicator(ImageFrame image, Vector3 position, float time, float scale, Vector2 offset, Color tint)
         {
             lock(IndicatorLock)
             {
@@ -70,7 +92,8 @@ namespace DwarfCorp
                     Image = image,
                     Position = position,
                     MaxScale = scale,
-                    Offset = offset
+                    Offset = offset,
+                    Tint = tint
                 });
             }
         }
@@ -96,7 +119,7 @@ namespace DwarfCorp
                     {
                         scale = Easing.CubeInOut(indicator.CurrentTime.CurrentTimeSeconds - shrinkTime, indicator.MaxScale, -indicator.MaxScale, indicator.CurrentTime.TargetTimeSeconds - shrinkTime);
                     }
-                    Drawer2D.DrawSprite(indicator.Image, indicator.Position, new Vector2(scale, scale), indicator.Offset);
+                    Drawer2D.DrawSprite(indicator.Image, indicator.Position, new Vector2(scale, scale), indicator.Offset, indicator.Tint);
 
                     if(indicator.CurrentTime.HasTriggered)
                     {

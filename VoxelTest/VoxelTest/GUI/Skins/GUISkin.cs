@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,8 +16,23 @@ namespace DwarfCorp
     {
         public int TileWidth { get; set; }
         public int TileHeight { get; set; }
+        public int PointerWidth { get; set; }
+        public int PointerHeight { get; set; }
         public Texture2D Texture { get; set; }
+        public Texture2D PointerTexture { get; set; }
         public Dictionary<Tile, Point> Frames { get; set; }
+        public Dictionary<MousePointer, Point> MouseFrames { get; set; }
+
+        public enum MousePointer
+        {
+            Pointer,
+            Dig,
+            Gather,
+            Build,
+            Chop,
+            Guard,
+            Attack
+        }
 
         public enum Tile
         {
@@ -97,17 +113,36 @@ namespace DwarfCorp
         }
 
 
-        public GUISkin(Texture2D texture, int tileWidth, int tileHeight)
+        public GUISkin(Texture2D texture, int tileWidth, int tileHeight, Texture2D pointerTexture, int pointerWidth, int pointerHeight)
         {
             Texture = texture;
             TileWidth = tileWidth;
             TileHeight = tileHeight;
+            PointerWidth = pointerWidth;
+            PointerHeight = pointerHeight;
+            PointerTexture = pointerTexture;
+            MouseFrames = new Dictionary<MousePointer, Point>();
             Frames = new Dictionary<Tile, Point>();
+        }
+
+        public Rectangle GetRect(Point p, int w, int h)
+        {
+            return new Rectangle(p.X * w, p.Y * h, w, h);
+        }
+
+        public ImageFrame GetMouseFrame(Point p)
+        {
+            return new ImageFrame(PointerTexture, GetRect(p, PointerWidth, PointerHeight));
         }
 
         public Rectangle GetSourceRect(Point p)
         {
-            return new Rectangle(p.X * TileWidth, p.Y * TileHeight, TileWidth, TileHeight);
+            return GetRect(p, TileWidth, TileHeight);
+        }
+
+        public ImageFrame GetSpecialFrame(MousePointer key)
+        {
+            return GetMouseFrame(MouseFrames[key]);
         }
 
         public ImageFrame GetSpecialFrame(Tile key)
@@ -194,7 +229,20 @@ namespace DwarfCorp
             Frames[Tile.ZoomOut] = new Point(11, 1);
             Frames[Tile.ZoomHome] = new Point(12, 0);
 
+            MouseFrames[MousePointer.Pointer] = new Point(0, 0);
+            MouseFrames[MousePointer.Dig] = new Point(1, 0);
+            MouseFrames[MousePointer.Build] = new Point(2, 0);
+            MouseFrames[MousePointer.Gather] = new Point(3, 0);
+            MouseFrames[MousePointer.Chop] = new Point(4, 0);
+            MouseFrames[MousePointer.Attack] = new Point(5, 0);
+            MouseFrames[MousePointer.Guard] = new Point(6, 0);
+
          }
+
+        public void RenderMouse(int x, int y, int scale, MousePointer mode, SpriteBatch spriteBatch, Color tint)
+        {
+            spriteBatch.Draw(PointerTexture, new Rectangle(x, y, PointerWidth * scale, PointerHeight * scale), GetSpecialFrame(mode).SourceRect, Color.White);
+        }
 
         public void RenderPanel(Rectangle rectbounds, SpriteBatch spriteBatch)
         {

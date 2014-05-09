@@ -28,7 +28,8 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
-            return new MoveItemAct(creature.AI, Item, Zone);
+            return null;
+            //return new MoveItemAct(creature.AI, Item, Zone);
         }
 
         public override float ComputeCost(Creature agent)

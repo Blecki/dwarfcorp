@@ -12,7 +12,7 @@ namespace DwarfCorp
     {
         public string ID;
         public Zone Zone;
-        public LocatableComponent UserData;
+        public Body UserData;
         public bool CanGrab = true;
         public CreatureAIComponent ReservedFor = null;
 
@@ -33,12 +33,12 @@ namespace DwarfCorp
 
         public static Dictionary<string, Item> ItemDictionary = new Dictionary<string, Item>();
 
-        public static Item CreateItem(Zone z, LocatableComponent locatableComponent)
+        public static Item CreateItem(Zone z, Body body)
         {
-            return CreateItem(locatableComponent.Name + locatableComponent.GlobalID, z, locatableComponent);
+            return CreateItem(body.Name + body.GlobalID, z, body);
         }
 
-        public static Item CreateItem(string name, Zone z, LocatableComponent userData)
+        public static Item CreateItem(string name, Zone z, Body userData)
         {
             if(ItemDictionary.ContainsKey(name))
             {
@@ -53,14 +53,14 @@ namespace DwarfCorp
             }
         }
 
-        public Item(string id, Zone zone, LocatableComponent userData)
+        public Item(string id, Zone zone, Body userData)
         {
             this.UserData = userData;
             ID = id;
             Zone = zone;
         }
 
-        public static Item FindItem(LocatableComponent component)
+        public static Item FindItem(Body component)
         {
             string name = component.Name + " " + component.GlobalID;
 

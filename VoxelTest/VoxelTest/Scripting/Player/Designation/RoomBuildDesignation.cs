@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -30,6 +31,51 @@ namespace DwarfCorp
         }
 
 
+        public void AddResources(List<ResourceAmount> resources)
+        {
+            foreach(ResourceAmount resource in resources)
+            {
+                string resourceName = resource.ResourceType.ResourceName;
+                if(PutResources.ContainsKey(resourceName))
+                {
+                    ResourceAmount amount = PutResources[resourceName];
+                    amount.NumResources += resource.NumResources;
+                }
+                else
+                {
+                    ResourceAmount amount = new ResourceAmount();
+                    amount.NumResources += resource.NumResources;
+                    amount.ResourceType = resource.ResourceType;
+
+                    PutResources[resourceName] = amount;
+                }
+            }
+
+            if(MeetsBuildRequirements())
+            {
+                Build();
+            }
+        }
+
+
+        public bool MeetsBuildRequirements()
+        {
+            bool toReturn = true;
+            foreach (string s in ToBuild.RoomType.RequiredResources.Keys)
+            {
+                if (!PutResources.ContainsKey(s))
+                {
+                    return false;
+                }
+                else
+                {
+                    toReturn = toReturn && (PutResources[s].NumResources >= Math.Max((int)(ToBuild.RoomType.RequiredResources[s].NumResources * VoxelBuildDesignations.Count), 1));
+                }
+            }
+
+            return toReturn;
+        }
+
         public void Build()
         {
             if(IsBuilt)
@@ -48,12 +94,7 @@ namespace DwarfCorp
 
         public BoundingBox GetBoundingBox()
         {
-            List<BoundingBox> components = new List<BoundingBox>();
-
-            foreach(VoxelBuildDesignation vox in VoxelBuildDesignations)
-            {
-                components.Add(vox.Voxel.GetBoundingBox());
-            }
+            List<BoundingBox> components = VoxelBuildDesignations.Select(vox => vox.Voxel.GetBoundingBox()).ToList();
 
             return MathFunctions.GetBoundingBox(components);
         }
@@ -96,6 +137,30 @@ namespace DwarfCorp
                     numResource = (int) (PutResources[amount.ResourceType.ResourceName].NumResources);
                 }
                 toReturn += amount.ResourceType.ResourceName + " : " + numResource + "/" + Math.Max((int) (amount.NumResources * VoxelBuildDesignations.Count), 1);
+            }
+
+            return toReturn;
+        }
+
+        public List<ResourceAmount> ListRequiredResources()
+        {
+            List<ResourceAmount> toReturn = new List<ResourceAmount>();
+            foreach (string s in ToBuild.RoomType.RequiredResources.Keys)
+            {
+                int needed = Math.Max((int) (ToBuild.RoomType.RequiredResources[s].NumResources * VoxelBuildDesignations.Count), 1);
+                int currentResources = 0;
+
+                if(PutResources.ContainsKey(s))
+                {
+                    currentResources = PutResources[s].NumResources;
+                }
+
+                if(currentResources >= needed)
+                {
+                    continue;
+                }
+
+                toReturn.Add(new ResourceAmount(ResourceLibrary.Resources[s], needed - currentResources));
             }
 
             return toReturn;

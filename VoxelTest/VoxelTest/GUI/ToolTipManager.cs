@@ -88,7 +88,7 @@ namespace DwarfCorp
 
             Vector2 stringMeasure = Datastructures.SafeMeasure(GUI.SmallFont, ToolTip);
 
-            Rectangle bounds = new Rectangle(mouse.X + 10, mouse.Y + 10, (int)(stringMeasure.X + 15), (int)(stringMeasure.Y + 15));
+            Rectangle bounds = new Rectangle(mouse.X + 16, mouse.Y + 16, (int)(stringMeasure.X + 15), (int)(stringMeasure.Y + 15));
 
             if(bounds.Left < viewBounds.Left)
             {

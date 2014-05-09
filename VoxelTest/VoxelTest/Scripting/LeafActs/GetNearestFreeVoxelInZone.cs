@@ -33,7 +33,7 @@ namespace DwarfCorp
             }
             else
             {
-                VoxelRef v = TargetZone.GetNearestFreeVoxel(Agent.Position, ReserveVoxel);
+                VoxelRef v = TargetZone.GetNearestVoxel(Agent.Position);
 
                 if(v != null)
                 {

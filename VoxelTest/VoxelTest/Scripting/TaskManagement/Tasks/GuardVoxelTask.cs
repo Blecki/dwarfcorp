@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -27,6 +28,22 @@ namespace DwarfCorp
         public override float ComputeCost(Creature agent)
         {
             return VoxelToGuard == null ? 1000 : (agent.AI.Position - VoxelToGuard.WorldPosition).LengthSquared();
+        }
+
+        public override void Render(GameTime time)
+        {
+            BoundingBox box = VoxelToGuard.GetBoundingBox();
+
+
+            Color drawColor = Color.LightBlue;
+
+      
+
+            drawColor.R = (byte)(Math.Min(drawColor.R * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * 0.5f)) + 50, 255));
+            drawColor.G = (byte)(Math.Min(drawColor.G * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * 0.5f)) + 50, 255));
+            drawColor.B = (byte)(Math.Min(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * 0.5f)) + 50, 255));
+            Drawer3D.DrawBox(box, drawColor, 0.05f, true);
+            base.Render(time);
         }
     }
 

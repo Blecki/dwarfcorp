@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -24,6 +25,7 @@ namespace DwarfCorp
 
             if (button == InputManager.MouseButton.Left)
             {
+                List<Task> assignments = new List<Task>();
                 foreach (VoxelRef r in refs)
                 {
                     if (r == null)
@@ -32,17 +34,24 @@ namespace DwarfCorp
                     }
 
                     Voxel v = r.GetVoxel(false);
-                    if (v == null || Player.Faction.IsDigDesignation(v))
+                    if (v == null)
                     {
                         continue;
                     }
 
-                    Designation d = new Designation
+                    if(!Player.Faction.IsDigDesignation(v))
                     {
-                        Vox = r
-                    };
-                    Player.Faction.DigDesignations.Add(d);
+                        Designation d = new Designation
+                        {
+                            Vox = r
+                        };
+                        Player.Faction.DigDesignations.Add(d);
+                    }
+
+                    assignments.Add(new KillVoxelTask(r));
                 }
+
+                TaskManager.AssignTasks(assignments, Player.SelectedMinions);
             }
             else
             {
@@ -72,17 +81,30 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                game.IsMouseVisible = false;
+                Player.BodySelector.Enabled = false;
+                PlayState.GUI.IsMouseVisible = false;
                 return;
             }
 
             Player.VoxSelector.Enabled = true;
-            game.IsMouseVisible = true;
+            PlayState.GUI.IsMouseVisible = true;
+
+            if(PlayState.GUI.IsMouseOver())
+            {
+                PlayState.GUI.MouseMode = GUISkin.MousePointer.Pointer;
+            }
+            else
+            {
+                PlayState.GUI.MouseMode = GUISkin.MousePointer.Dig;
+            }
+
+            Player.BodySelector.Enabled = false;
             Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
         {
+            /*
             foreach (Designation d in Player.Faction.DigDesignations)
             {
                 VoxelRef v = d.Vox;
@@ -102,6 +124,12 @@ namespace DwarfCorp
                 drawColor.B = (byte)(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
                 Drawer3D.DrawBox(box, drawColor, 0.05f, true);
             }
+             */
+        }
+
+        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        {
+            
         }
     }
 }

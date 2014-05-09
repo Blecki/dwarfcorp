@@ -15,7 +15,7 @@ namespace DwarfCorp
     /// also live inside an octree for faster access to colliding or nearby objects.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class LocatableComponent : GameComponent, IBoundedObject
+    public class Body : GameComponent, IBoundedObject
     {
         public bool WasAddedToOctree
         {
@@ -71,6 +71,8 @@ namespace DwarfCorp
         public bool FrustrumCull { get; set; }
         public bool DrawInFrontOfSiblings { get; set; }
 
+        public List<MotionAnimation> AnimationQueue { get; set; } 
+
         public bool HasMoved
         {
             get { return hasMoved; }
@@ -83,7 +85,7 @@ namespace DwarfCorp
                     return;
                 }
 
-                foreach(LocatableComponent child in Children.OfType<LocatableComponent>())
+                foreach(Body child in Children.OfType<Body>())
                 {
                     (child).HasMoved = value;
                 }
@@ -101,21 +103,23 @@ namespace DwarfCorp
 
         public bool AddToOctree { get; set; }
 
-        public LocatableComponent()
+        public Body()
         {
             
         }
 
-        public LocatableComponent(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
+        public Body(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
             this(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos, true)
         {
+            AnimationQueue = new List<MotionAnimation>();
             DrawInFrontOfSiblings = false;
             CollisionType = CollisionManager.CollisionType.None;
         }
 
-        public LocatableComponent(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToOctree) :
+        public Body(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToOctree) :
             base(manager, name, parent)
         {
+            AnimationQueue = new List<MotionAnimation>();
             AddToOctree = addToOctree;
             BoundingBoxPos = boundingBoxPos;
             DrawBoundingBox = false;
@@ -175,6 +179,19 @@ namespace DwarfCorp
                 Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f);
             }
 
+            if(AnimationQueue.Count > 0)
+            {
+                MotionAnimation anim = AnimationQueue[0];
+                anim.Update(gameTime);
+
+                LocalTransform = anim.GetTransform();
+
+                if(anim.IsDone())
+                {
+                    AnimationQueue.RemoveAt(0);
+                }
+            }
+
             base.Update(gameTime, chunks, camera);
         }
 
@@ -185,9 +202,9 @@ namespace DwarfCorp
                 return;
             }
 
-            if(Parent is LocatableComponent)
+            if(Parent is Body)
             {
-                LocatableComponent locatable = (LocatableComponent) Parent;
+                Body locatable = (Body) Parent;
 
                 if(HasMoved)
                 {
@@ -207,7 +224,7 @@ namespace DwarfCorp
 
             lock(Children)
             {
-                foreach(LocatableComponent locatable in Children.OfType<LocatableComponent>().Where(locatable => locatable.HasMoved))
+                foreach(Body locatable in Children.OfType<Body>().Where(locatable => locatable.HasMoved))
                 {
                     locatable.UpdateTransformsRecursive();
                 }

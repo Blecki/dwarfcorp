@@ -115,6 +115,11 @@ namespace DwarfCorp
         public Voxel GetFirstVisibleBlockHitByMouse(MouseState mouse, Camera camera, Viewport viewPort)
         {
             Voxel vox = GetFirstVisibleBlockHitByScreenCoord(mouse.X, mouse.Y, camera, viewPort, 50.0f);
+
+            if(vox == null)
+            {
+                return null;
+            }
             return vox;
         }
 
@@ -153,19 +158,15 @@ namespace DwarfCorp
 
         public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd)
         {
-            VoxelChunk startChunk = GetVoxelChunkAtWorldLocation(rayStart);
-
-            return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, startChunk, false);
+            return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, false);
         }
 
         public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, bool draw)
         {
-            VoxelChunk startChunk = GetVoxelChunkAtWorldLocation(rayStart);
-
-            return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, startChunk, draw);
+            return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, draw);
         }
 
-        public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, Voxel ignore, VoxelChunk startChunk, bool draw)
+        public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, Voxel ignore,  bool draw)
         {
             Vector3 delta = rayEnd - rayStart;
             float length = delta.Length();
@@ -176,7 +177,7 @@ namespace DwarfCorp
             {
                 Vector3 pos = rayStart + delta * dn;
 
-                Voxel atPos = GetNonNullVoxelAtWorldLocationCheckFirst(startChunk, pos);
+                Voxel atPos = GetNonNullVoxelAtWorldLocationCheckFirst(null, pos);
 
                 if(draw && atPos != null)
                 {
@@ -217,11 +218,11 @@ namespace DwarfCorp
                 chunkManager.ChunkOctree.Root.RemoveObject(chunk);
             }
 
-            HashSet<LocatableComponent> locatables = new HashSet<LocatableComponent>();
+            HashSet<Body> locatables = new HashSet<Body>();
 
             chunkManager.Components.CollisionManager.GetObjectsIntersecting(chunk.GetBoundingBox(), locatables, CollisionManager.CollisionType.Static | CollisionManager.CollisionType.Dynamic);
 
-            foreach(LocatableComponent component in locatables)
+            foreach(Body component in locatables)
             {
                 component.IsDead = true;
             }

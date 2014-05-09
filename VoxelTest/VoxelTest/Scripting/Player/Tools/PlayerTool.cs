@@ -16,11 +16,11 @@ namespace DwarfCorp
         public GameMaster Player { get; set; }
 
         public abstract void OnVoxelsSelected(List<VoxelRef> voxels, InputManager.MouseButton button);
+        public abstract void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button);
 
         public abstract void Update(DwarfGame game, GameTime time);
 
         public abstract void Render(DwarfGame game, GraphicsDevice graphics, GameTime time);
-
 
     }
 }

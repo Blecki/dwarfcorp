@@ -16,13 +16,13 @@ namespace DwarfCorp
         }
 
         public CreatureAIComponent Creature { get; set; }
-        public List<LocatableComponent> ItemsToGather { get; set; }
+        public List<Body> ItemsToGather { get; set; }
         public List<StockOrder> StockOrders { get; set; }
 
         public GatherManager(CreatureAIComponent creature)
         {
             Creature = creature;
-            ItemsToGather = new List<LocatableComponent>();
+            ItemsToGather = new List<Body>();
             StockOrders = new List<StockOrder>();
         }
 

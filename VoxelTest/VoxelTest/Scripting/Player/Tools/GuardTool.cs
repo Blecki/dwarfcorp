@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -21,6 +22,9 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(List<VoxelRef> voxels, InputManager.MouseButton button)
         {
+            List<Task> assignedTasks = new List<Task>();
+
+
             foreach (Voxel v in from r in voxels
                                 where r != null
                                 select r.GetVoxel(false))
@@ -36,7 +40,9 @@ namespace DwarfCorp
                     {
                         Vox = v.GetReference()
                     };
+
                     Player.Faction.GuardDesignations.Add(d);
+                    assignedTasks.Add(new GuardVoxelTask(v.GetReference()));
                 }
                 else
                 {
@@ -49,6 +55,8 @@ namespace DwarfCorp
 
                 }
             }
+
+            TaskManager.AssignTasks(assignedTasks, Player.SelectedMinions);
         }
 
         public override void Update(DwarfGame game, GameTime time)
@@ -56,13 +64,23 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                game.IsMouseVisible = false;
+                PlayState.GUI.IsMouseVisible = false;
                 return;
             }
 
             Player.VoxSelector.Enabled = true;
-            game.IsMouseVisible = true;
+            PlayState.GUI.IsMouseVisible = true;
+            Player.BodySelector.Enabled = false;
             Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+
+            if (PlayState.GUI.IsMouseOver())
+            {
+                PlayState.GUI.MouseMode = GUISkin.MousePointer.Pointer;
+            }
+            else
+            {
+                PlayState.GUI.MouseMode = GUISkin.MousePointer.Guard;
+            }
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
@@ -91,6 +109,11 @@ namespace DwarfCorp
                 drawColor.B = (byte)(Math.Min(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GuardDesignationGlowRate)) + 50, 255));
                 Drawer3D.DrawBox(box, drawColor, 0.05f, true);
             }
+        }
+
+        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        {
+            
         }
     }
 }

@@ -28,37 +28,25 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                game.IsMouseVisible = false;
+                Player.BodySelector.Enabled = false;
+                PlayState.GUI.IsMouseVisible = false;
                 return;
             }
 
-            MouseState mouseState = Mouse.GetState();
             Player.VoxSelector.Enabled = false;
-            game.IsMouseVisible = true;
+            Player.BodySelector.Enabled = true;
+            PlayState.GUI.IsMouseVisible = true;
 
-            List<LocatableComponent> pickedByMouse = new List<LocatableComponent>();
-            PlayState.ComponentManager.GetComponentsUnderMouse(mouseState, Player.CameraController, PlayState.ChunkManager.Graphics.Viewport, pickedByMouse);
-
-            List<LocatableComponent> treesPickedByMouse = ComponentManager.FilterComponentsWithTag("Tree", pickedByMouse);
-
-            foreach (LocatableComponent tree in treesPickedByMouse)
+            if (PlayState.GUI.IsMouseOver())
             {
-                Drawer3D.DrawBox(tree.BoundingBox, Color.LightGreen, 0.1f, false);
-                if (mouseState.LeftButton == ButtonState.Pressed)
-                {
-                    if (!Player.Faction.ChopDesignations.Contains(tree))
-                    {
-                        Player.Faction.ChopDesignations.Add(tree);
-                    }
-                }
-                else if (mouseState.RightButton == ButtonState.Pressed)
-                {
-                    if (Player.Faction.ChopDesignations.Contains(tree))
-                    {
-                        Player.Faction.ChopDesignations.Remove(tree);
-                    }
-                }
+                PlayState.GUI.MouseMode = GUISkin.MousePointer.Pointer;
             }
+            else
+            {
+                PlayState.GUI.MouseMode = GUISkin.MousePointer.Chop;
+            }
+
+
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
@@ -74,6 +62,36 @@ namespace DwarfCorp
             foreach(BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
             {
                 Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
+            }
+        }
+
+        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        {
+
+            List<Body> treesPickedByMouse = ComponentManager.FilterComponentsWithTag("Tree", bodies);
+
+            foreach (Body tree in treesPickedByMouse)
+            {
+                Drawer3D.DrawBox(tree.BoundingBox, Color.LightGreen, 0.1f, false);
+                if (button == InputManager.MouseButton.Left)
+                {
+                    if (!Player.Faction.ChopDesignations.Contains(tree))
+                    {
+                        Player.Faction.ChopDesignations.Add(tree);
+
+                        foreach(CreatureAIComponent creature in Player.Faction.SelectedMinions)
+                        {
+                            creature.Tasks.Add(new KillEntityTask(tree));
+                        }
+                    }
+                }
+                else if (button == InputManager.MouseButton.Right)
+                {
+                    if (Player.Faction.ChopDesignations.Contains(tree))
+                    {
+                        Player.Faction.ChopDesignations.Remove(tree);
+                    }
+                }
             }
         }
     }

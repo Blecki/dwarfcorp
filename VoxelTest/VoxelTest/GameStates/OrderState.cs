@@ -55,18 +55,18 @@ namespace DwarfCorp.GameStates
 
             foreach(Stockpile stockpile in master.Faction.Stockpiles)
             {
-                foreach(Item i in stockpile.ListItems())
+                foreach(ResourceAmount resource in stockpile.Resources)
                 {
-                    LocatableComponent userData = i.UserData;
-                    Resource r = ResourceLibrary.Resources[userData.Tags[0]];
+
+                    Resource r = resource.ResourceType;
 
                     if(!counts.ContainsKey(r))
                     {
-                        counts[r] = 1;
+                        counts[r] = resource.NumResources;
                     }
                     else
                     {
-                        counts[r] = counts[r] + 1;
+                        counts[r] = counts[r] + resource.NumResources;
                     }
                 }
             }

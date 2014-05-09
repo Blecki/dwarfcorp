@@ -43,8 +43,8 @@ namespace DwarfCorp
 
             PlayState.ParticleManager.Trigger("puff", v.Position, Color.White, 20);
 
-            List<LocatableComponent> components = new List<LocatableComponent>();
-            manager.Components.GetComponentsIntersecting(Vox.GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic);
+            List<Body> components = new List<Body>();
+            manager.Components.GetBodiesIntersecting(Vox.GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic);
 
             foreach(PhysicsComponent phys in components.OfType<PhysicsComponent>())
             {
@@ -180,6 +180,7 @@ namespace DwarfCorp
             {
                 case (InputManager.MouseButton.Left):
                 {
+                    List<Task> assignments = new List<Task>();
                     foreach(VoxelRef r in refs)
                     {
                         if(IsDesignation(r) || r.TypeName != "empty")
@@ -189,8 +190,12 @@ namespace DwarfCorp
                         else
                         {
                             AddDesignation(new PutDesignation(r, CurrentVoxelType));
+                            assignments.Add(new BuildVoxelTask(new TagList(CurrentVoxelType.Name), r, CurrentVoxelType));
                         }
                     }
+
+                    TaskManager.AssignTasks(assignments, PlayState.Master.SelectedMinions);
+
                     break;
                 }
                 case (InputManager.MouseButton.Right):

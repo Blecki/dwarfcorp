@@ -165,7 +165,7 @@ namespace DwarfCorp
             foreach(Room r in DesignatedRooms)
             {
                 r.RemoveVoxel(vRef);
-                if(r.Storage.Count == 0)
+                if(r.Voxels.Count == 0)
                 {
                     toDestroy.Add(r);
                 }
@@ -180,7 +180,7 @@ namespace DwarfCorp
 
         public void Update(MouseState mouseState, KeyboardState keyState, DwarfGame game, GameTime time)
         {
-            game.IsMouseVisible = true;
+            PlayState.GUI.IsMouseVisible = true;
         }
 
         public void VoxelsSelected(List<VoxelRef> refs, InputManager.MouseButton button)
@@ -207,10 +207,12 @@ namespace DwarfCorp
                             {
                                 Room toBuild = new Room(true, refs, CurrentRoomType, PlayState.ChunkManager);
                                 DesignatedRooms.Add(toBuild);
-                                RoomBuildDesignation buildDesignation = new RoomBuildDesignation(toBuild, this.Faction);
-                                buildDesignation.VoxelBuildDesignations.Add(new VoxelBuildDesignation(buildDesignation, toBuild, v.GetReference()));
-                                BuildDesignations.Add(buildDesignation);
+                                existingRoom = new RoomBuildDesignation(toBuild, this.Faction);
+                                existingRoom.VoxelBuildDesignations.Add(new VoxelBuildDesignation(existingRoom, toBuild, v.GetReference()));
+                                BuildDesignations.Add(existingRoom);
                             }
+
+                            TaskManager.AssignTasks(new List<Task>(){new BuildRoomTask(existingRoom)}, PlayState.Master.SelectedMinions);
                         }
                         break;
                     case InputManager.MouseButton.Right:

@@ -27,7 +27,7 @@ namespace DwarfCorp
         public string StashedItemOut { get; set; }
 
         [Newtonsoft.Json.JsonIgnore]
-        public LocatableComponent Target { get { return GetTarget(); } set { SetTarget(value); } }
+        public Body Target { get { return GetTarget(); } set { SetTarget(value); } }
 
         public StashAct()
         {
@@ -44,12 +44,12 @@ namespace DwarfCorp
             StashedItemOut = stashedItemOut;
         }
 
-        public LocatableComponent GetTarget()
+        public Body GetTarget()
         {
-            return Agent.Blackboard.GetData<LocatableComponent>(TargetName);
+            return Agent.Blackboard.GetData<Body>(TargetName);
         }
 
-        public void SetTarget(LocatableComponent targt)
+        public void SetTarget(Body targt)
         {
             Agent.Blackboard.SetData(TargetName, targt);
         }
@@ -72,13 +72,14 @@ namespace DwarfCorp
                             yield return Status.Fail;
                             break;
                         }
-                        bool removed = Zone.RemoveItem(Target);
+                        bool removed = Zone.Resources.RemoveResource(new ResourceAmount(Target.Tags[0]));
 
                         if (removed)
                         {
                             if(Creature.Inventory.Pickup(Target))
                             {
                                 Agent.Blackboard.SetData(StashedItemOut, new ResourceAmount(Target));
+                                SoundManager.PlaySound(ContentPaths.Audio.dig, Agent.Position);
                                 yield return Status.Success;
                             }
                             else
@@ -107,6 +108,7 @@ namespace DwarfCorp
                         ResourceAmount resource = new ResourceAmount(Target);
                         Agent.Blackboard.SetData(StashedItemOut, resource);
                         Creature.DrawIndicator(resource.ResourceType.Image);
+                        SoundManager.PlaySound(ContentPaths.Audio.dig, Agent.Position);
                         yield return Status.Success;
                         break;
                     }
