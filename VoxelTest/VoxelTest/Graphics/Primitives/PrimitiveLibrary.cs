@@ -44,13 +44,25 @@ namespace DwarfCorp
             {
                 Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Furniture.bedtex);
                 BoxPrimitive.BoxTextureCoords boxCoords = new BoxPrimitive.BoxTextureCoords(spriteSheet.Width, spriteSheet.Height,
-                    new BoxPrimitive.FaceData(new Rectangle(24, 0, 24, 16), false),
-                    new BoxPrimitive.FaceData(new Rectangle(24, 72, 24, 16), false),
-                    new BoxPrimitive.FaceData(new Rectangle(0, 24, 48, 24), true),
-                    new BoxPrimitive.FaceData(new Rectangle(0, 0, 1, 1), false),
-                    new BoxPrimitive.FaceData(new Rectangle(24, 24, 48, 16), false),
-                    new BoxPrimitive.FaceData(new Rectangle(40, 24, 48, 16), false));
+                    new BoxPrimitive.FaceData(new Rectangle(0, 24, 24, 16), true),
+                    new BoxPrimitive.FaceData(new Rectangle(72, 24, 24, 16), true),
+                    new BoxPrimitive.FaceData(new Rectangle(24, 0, 48, 24), false),
+                    new BoxPrimitive.FaceData(new Rectangle(0, 0, 1, 1), true),
+                    new BoxPrimitive.FaceData(new Rectangle(24, 24, 48, 16), true),
+                    new BoxPrimitive.FaceData(new Rectangle(24, 40, 48, 16), true));
                 BoxPrimitives["bed"] = new BoxPrimitive(graphics, 0.8f, 0.5f, 1.8f, boxCoords);
+                m_initialized = false;
+
+
+                Texture2D sheetTiles = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
+                BoxPrimitive.BoxTextureCoords crateCoords = new BoxPrimitive.BoxTextureCoords(sheetTiles.Width, sheetTiles.Height,
+                    new BoxPrimitive.FaceData(7, 0, 32),
+                    new BoxPrimitive.FaceData(7, 0, 32),
+                    new BoxPrimitive.FaceData(8, 0, 32),
+                    new BoxPrimitive.FaceData(7, 0, 32),
+                    new BoxPrimitive.FaceData(7, 0, 32),
+                    new BoxPrimitive.FaceData(7, 0, 32));
+                BoxPrimitives["crate"] = new BoxPrimitive(graphics, 0.9f, 0.9f, 0.9f, crateCoords);
                 m_initialized = false;
 
 

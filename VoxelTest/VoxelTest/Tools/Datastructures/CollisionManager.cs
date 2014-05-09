@@ -158,18 +158,18 @@ namespace DwarfCorp
             }
         }
 
-        public List<LocatableComponent> GetVisibleObjects<TObject>(BoundingFrustum box,  CollisionType queryType) where TObject : IBoundedObject
+        public List<Body> GetVisibleObjects<TObject>(BoundingFrustum box,  CollisionType queryType) where TObject : IBoundedObject
         {
-            List<LocatableComponent> toReturn = new List<LocatableComponent>();
+            List<Body> toReturn = new List<Body>();
             switch ((int)queryType)
             {
                 case (int)CollisionType.Static:
                 case (int)CollisionType.Dynamic:
-                    toReturn.AddRange(Octrees[queryType].Root.GetVisibleObjects<LocatableComponent>(box));
+                    toReturn.AddRange(Octrees[queryType].Root.GetVisibleObjects<Body>(box));
                     break;
                 case ((int)CollisionType.Static | (int)CollisionType.Dynamic):
-                    toReturn.AddRange(Octrees[CollisionType.Static].Root.GetVisibleObjects<LocatableComponent>(box));
-                    toReturn.AddRange(Octrees[CollisionType.Dynamic].Root.GetVisibleObjects<LocatableComponent>(box));
+                    toReturn.AddRange(Octrees[CollisionType.Static].Root.GetVisibleObjects<Body>(box));
+                    toReturn.AddRange(Octrees[CollisionType.Dynamic].Root.GetVisibleObjects<Body>(box));
                     break;
             }
 

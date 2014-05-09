@@ -11,7 +11,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GatherItemAct : CompoundCreatureAct
     {
-        public LocatableComponent ItemToGather { get; set; }
+        public Body ItemToGather { get; set; }
         public string ItemID { get; set; }
 
         public GatherItemAct()
@@ -25,8 +25,18 @@ namespace DwarfCorp
             yield return Status.Success;
         }
 
+        public IEnumerable<Status> Finally()
+        {
+            yield return Status.Fail;
+        }
+
         public IEnumerable<Status> RemoveItemFromGatherManager()
         {
+            if (Creature.Inventory.Resources.IsFull() && !ItemToGather.IsDead)
+            {
+                yield return Status.Fail;
+            }
+
             if(Agent.GatherManager.ItemsToGather.Contains(ItemToGather))
             {
                 Agent.GatherManager.ItemsToGather.Remove(ItemToGather);
@@ -48,7 +58,7 @@ namespace DwarfCorp
 
         public bool IsGatherable()
         {
-            return (!Agent.Faction.IsInStockpile(ItemToGather) && (Agent.Faction.GatherDesignations.Contains(ItemToGather)));
+            return (Agent.Faction.GatherDesignations.Contains(ItemToGather) && !Creature.Inventory.Resources.IsFull());
         }
 
         public Act EntityIsGatherable()
@@ -65,7 +75,7 @@ namespace DwarfCorp
             Name = "Gather Item";
         }
 
-        public GatherItemAct(CreatureAIComponent agent, LocatableComponent item) :
+        public GatherItemAct(CreatureAIComponent agent, Body item) :
             base(agent)
         {
             ItemToGather = item;
@@ -79,22 +89,6 @@ namespace DwarfCorp
         }
 
 
-        public IEnumerable<Status> Unreserve(string stockpile, string voxelID)
-        {
-            Stockpile pile = Agent.Blackboard.GetData<Stockpile>(stockpile);
-            VoxelRef voxel = Agent.Blackboard.GetData<VoxelRef>(voxelID);
-
-            if(pile == null || voxel == null)
-            {
-                yield return Status.Success;
-            }
-            else
-            {
-                pile.SetReserved(voxel, false);
-                yield return Status.Success;
-            }
-            
-        }
 
         public override IEnumerable<Status> Run()
         {
@@ -102,15 +96,14 @@ namespace DwarfCorp
             {
                 if(ItemToGather == null)
                 {
-                    ItemToGather = Agent.Blackboard.GetData<LocatableComponent>(ItemID);
+                    ItemToGather = Agent.Blackboard.GetData<Body>(ItemID);
                 }
 
 
                 if(ItemToGather != null)
                 {
                     Tree = new Sequence(
-                        new SetBlackboardData<LocatableComponent>(Agent, "GatherItem", ItemToGather),
-                        //new SearchFreeStockpileAct(Agent, "TargetStockpile", "FreeVoxel"),
+                        new SetBlackboardData<Body>(Agent, "GatherItem", ItemToGather),
                         EntityIsGatherable(),
                         new Wrap(AddItemToGatherManager),
                         new GoToEntityAct(ItemToGather, Agent),
@@ -118,18 +111,7 @@ namespace DwarfCorp
                         new StashAct(Agent, StashAct.PickUpType.None, null, "GatherItem", "GatheredResource"),
                         new Wrap(RemoveItemFromGatherManager),
                         new Wrap(AddStockOrder)
-                        /*
-                                        new Select(
-                                                    new Sequence(
-                                                                    new GoToVoxelAct("FreeVoxel", PlanAct.PlanType.Adjacent, Agent),
-                                                                    new PutResourceInZone(Agent, "TargetStockpile", "FreeVoxel", "GatheredResource")
-                                                                    //new PutItemInStockpileAct(Agent, "TargetStockpile", "FreeVoxel")
-                                                                ),
-                                                    new DropItemAct(Agent)
-                                                  )
-                                         */
-                        ) | new Wrap(RemoveItemFromGatherManager);
-                               //| new Wrap(() => Unreserve("TargetStockpile", "FreeVoxel"));
+                        ) | (new Wrap(RemoveItemFromGatherManager) & new Wrap(Finally) & false);
 
                     Tree.Initialize();
                 }

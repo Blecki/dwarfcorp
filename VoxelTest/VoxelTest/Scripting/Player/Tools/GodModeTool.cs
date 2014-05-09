@@ -212,8 +212,8 @@ namespace DwarfCorp
                             break;
                         case "Fire":
                         {
-                            List<LocatableComponent> components = new List<LocatableComponent>();
-                            Player.Faction.Components.GetComponentsIntersecting(vox.GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
+                            List<Body> components = new List<Body>();
+                            Player.Faction.Components.GetBodiesIntersecting(vox.GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
                             foreach(FlammableComponent flam2 in components.Select(comp => comp.GetChildrenOfTypeRecursive<FlammableComponent>()).Where(flam => flam.Count > 0).SelectMany(flam => flam))
                             {
@@ -223,10 +223,10 @@ namespace DwarfCorp
                             break;
                         case "Kill Things":
                         {
-                            List<LocatableComponent> components = new List<LocatableComponent>();
-                            Player.Faction.Components.GetComponentsIntersecting(vox.GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
+                            List<Body> components = new List<Body>();
+                            Player.Faction.Components.GetBodiesIntersecting(vox.GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
-                            foreach(LocatableComponent comp in components)
+                            foreach(Body comp in components)
                             {
                                 comp.Die();
                             }
@@ -255,17 +255,26 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                game.IsMouseVisible = false;
+                PlayState.GUI.IsMouseVisible = false;
                 return;
             }
 
             Player.VoxSelector.Enabled = true;
-            game.IsMouseVisible = true;
+            Player.BodySelector.Enabled = false;
+            PlayState.GUI.IsMouseVisible = true;
+
+            PlayState.GUI.MouseMode = GUISkin.MousePointer.Pointer;
+
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
         {
           
+        }
+
+        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        {
+            
         }
     }
 

@@ -85,7 +85,12 @@ namespace DwarfCorp
 
             foreach(Stockpile s in sortedPiles)
             {
-                VoxelRef v = s.GetNearestFreeVoxel(Creature.Physics.GlobalTransform.Translation, true);
+                if(s.IsFull())
+                {
+                    continue;
+                }
+
+                VoxelRef v = s.GetNearestVoxel(Creature.Physics.GlobalTransform.Translation);
 
                 if(v == null)
                 {

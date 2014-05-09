@@ -11,7 +11,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GoToEntityAct : CompoundCreatureAct
     {
-        public LocatableComponent Entity { get { return Agent.Blackboard.GetData<LocatableComponent>(EntityName);  } set {Agent.Blackboard.SetData(EntityName, value);} }
+        public Body Entity { get { return Agent.Blackboard.GetData<Body>(EntityName);  } set {Agent.Blackboard.SetData(EntityName, value);} }
 
         public string EntityName { get; set; }
 
@@ -37,7 +37,7 @@ namespace DwarfCorp
             EntityName = entity;
         }
 
-        public GoToEntityAct(LocatableComponent entity, CreatureAIComponent creature) :
+        public GoToEntityAct(Body entity, CreatureAIComponent creature) :
             base(creature)
         {
             Name = "Go to entity";

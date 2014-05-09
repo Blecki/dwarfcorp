@@ -26,6 +26,7 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
+            /*
             if(Agent.Status.Hunger.IsUnhappy())
             {
                 Tree = new Sequence(
@@ -37,6 +38,7 @@ namespace DwarfCorp
             {
                 Tree = null;
             }
+             */
             base.Initialize();
         }
     }

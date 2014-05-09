@@ -22,15 +22,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if(DataKey == null)
-            {
-                yield return Status.Fail;
-            }
-            else
-            {
-                Agent.Blackboard.Erase(DataKey);
-                yield return Status.Success;
-            }
+            return Creature.ClearBlackboardData(DataKey);
         }
     }
 

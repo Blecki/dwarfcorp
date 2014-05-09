@@ -41,7 +41,7 @@ namespace DwarfCorp
             ;
         }
 
-        private void EnemySensor_OnSensed(List<LocatableComponent> sensed)
+        private void EnemySensor_OnSensed(List<Body> sensed)
         {
             List<CreatureAIComponent> creatures = (from c in sensed.OfType<PhysicsComponent>() from child in c.GetChildrenOfTypeRecursive<CreatureAIComponent>() where child != Creature && Alliance.GetRelationship(Creature.Creature.Allies, child.Creature.Allies) == Relationship.Hates select child).ToList();
             OnEnemySensed.Invoke(creatures);

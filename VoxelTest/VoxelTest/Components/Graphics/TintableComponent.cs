@@ -10,7 +10,7 @@ namespace DwarfCorp
     /// <summary>
     /// This component has a color tint which can change over time.
     /// </summary>
-    public class TintableComponent : LocatableComponent
+    public class TintableComponent : Body
     {
         public bool LightsWithVoxels { get; set; }
         private bool firstIteration = true;
@@ -62,9 +62,9 @@ namespace DwarfCorp
 
             GameComponent root = GetRootComponent();
 
-            if(root is LocatableComponent)
+            if(root is Body)
             {
-                LocatableComponent loc = (LocatableComponent) root;
+                Body loc = (Body) root;
 
                 parentHasMoved = loc.HasMoved;
             }

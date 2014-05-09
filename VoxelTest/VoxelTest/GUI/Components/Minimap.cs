@@ -73,6 +73,8 @@ namespace DwarfCorp
             OnClicked += Minimap_OnClicked;
         }
 
+
+
         void ZoomHomeButton_OnClicked()
         {
             PlayState.Camera.Target = HomePosition;

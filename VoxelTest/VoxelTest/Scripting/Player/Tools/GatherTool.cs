@@ -19,6 +19,39 @@ namespace DwarfCorp
         public Color GatherDesignationColor { get; set; }
         public float GatherDesignationGlowRate { get; set; }
 
+        public GatherTool()
+        {
+
+        }
+
+
+        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        {
+            List<Body> resourcesPickedByMouse = ComponentManager.FilterComponentsWithTag("Resource", bodies);
+            List<Task> assignments = new List<Task>();
+            foreach(Body resource in resourcesPickedByMouse.Where(resource => resource.IsActive && resource.IsVisible && resource.Parent == PlayState.ComponentManager.RootComponent))
+            {
+                Drawer3D.DrawBox(resource.BoundingBox, Color.LightGoldenrodYellow, 0.05f, true);
+
+                if(button == InputManager.MouseButton.Left)
+                {
+                    Player.Faction.AddGatherDesignation(resource);
+
+                    assignments.Add(new GatherItemTask(resource));
+                }
+                else
+                {
+                    if(!Player.Faction.GatherDesignations.Contains(resource))
+                    {
+                        continue;
+                    }
+
+                    Player.Faction.GatherDesignations.Remove(resource);
+                }
+            }
+
+            TaskManager.AssignTasks(assignments, Player.SelectedMinions);
+        }
 
         public override void OnVoxelsSelected(List<VoxelRef> voxels, InputManager.MouseButton button)
         {
@@ -27,44 +60,30 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, GameTime time)
         {
+           
             if (Player.IsCameraRotationModeActive())
             {
-                Player.VoxSelector.Enabled = false;
-                game.IsMouseVisible = false;
                 return;
             }
-
-            MouseState mouseState = Mouse.GetState();
             Player.VoxSelector.Enabled = false;
-            game.IsMouseVisible = true;
+            Player.BodySelector.Enabled = true;
+            PlayState.GUI.IsMouseVisible = true;
 
-            List<LocatableComponent> pickedByMouse = new List<LocatableComponent>();
-            PlayState.ComponentManager.GetComponentsUnderMouse(mouseState, Player.CameraController, PlayState.ChunkManager.Graphics.Viewport, pickedByMouse);
-
-            List<LocatableComponent> resourcesPickedByMouse = ComponentManager.FilterComponentsWithTag("Resource", pickedByMouse);
-
-            foreach (LocatableComponent resource in resourcesPickedByMouse.Where(resource => resource.IsActive && resource.IsVisible && resource.Parent == PlayState.ComponentManager.RootComponent && !Player.Faction.IsInStockpile(resource)))
+            if (PlayState.GUI.IsMouseOver())
             {
-                Drawer3D.DrawBox(resource.BoundingBox, Color.LightGoldenrodYellow, 0.05f, true);
-                
-                if (mouseState.LeftButton == ButtonState.Pressed)
-                {
-                    Player.Faction.AddGatherDesignation(resource);
-                }
-                else if (mouseState.RightButton == ButtonState.Pressed)
-                {
-                    if (!Player.Faction.GatherDesignations.Contains(resource))
-                    {
-                        continue;
-                    }
-
-                    Player.Faction.GatherDesignations.Remove(resource);
-                }
+                PlayState.GUI.MouseMode = GUISkin.MousePointer.Pointer;
             }
+            else
+            {
+                PlayState.GUI.MouseMode = GUISkin.MousePointer.Gather;
+            }
+
+
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
         {
+            /*
             Color drawColor = GatherDesignationColor;
 
             float alpha = (float)Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GatherDesignationGlowRate));
@@ -76,6 +95,8 @@ namespace DwarfCorp
             {
                 Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
             }
+             */
+
         }
     }
 }

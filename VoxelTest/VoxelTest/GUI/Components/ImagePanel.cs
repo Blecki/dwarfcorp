@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Threading;
+using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
@@ -49,6 +50,24 @@ namespace DwarfCorp
             Image = image;
             KeepAspectRatio = true;
         }
+
+        public override bool IsMouseOverRecursive()
+        {
+
+                if(!IsVisible)
+            {
+                return false;
+            }
+
+            MouseState mouse = Mouse.GetState();
+
+
+            bool mouseOver =  (IsMouseOver && this != GUI.RootComponent) || Children.Any(child => child.IsMouseOverRecursive());
+
+            return GetImageBounds().Contains(mouse.X, mouse.Y)  || Children.Any(child => child.IsMouseOverRecursive());
+        }
+
+
 
         public Rectangle GetImageBounds()
         {

@@ -55,23 +55,10 @@ namespace DwarfCorp
         }
 
 
-        public override void RemoveVoxel(VoxelRef voxel)
+        public List<Body> GetComponentsInRoom()
         {
-            VoxelStorage toRemove = Storage.FirstOrDefault(store => store.Voxel.Equals(voxel));
-            
-            if(toRemove != null && toRemove.OwnedItem != null)
-            {
-                toRemove.OwnedItem.UserData.Die();
-                toRemove.OwnedItem = null;
-            }
-
-            base.RemoveVoxel(voxel);
-        }
-
-        public List<LocatableComponent> GetComponentsInRoom()
-        {
-            List<LocatableComponent> toReturn = new List<LocatableComponent>();
-            HashSet<LocatableComponent> components = new HashSet<LocatableComponent>();
+            List<Body> toReturn = new List<Body>();
+            HashSet<Body> components = new HashSet<Body>();
             BoundingBox box = GetBoundingBox();
             box.Max += new Vector3(0, 0, 2);
             PlayState.ComponentManager.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
@@ -81,9 +68,9 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public List<LocatableComponent> GetComponentsInRoomContainingTag(string tag)
+        public List<Body> GetComponentsInRoomContainingTag(string tag)
         {
-            List<LocatableComponent> inRoom = GetComponentsInRoom();
+            List<Body> inRoom = GetComponentsInRoom();
 
             return inRoom.Where(c => c.Tags.Contains(tag)).ToList();
         }

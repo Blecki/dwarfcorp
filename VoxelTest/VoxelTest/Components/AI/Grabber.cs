@@ -11,11 +11,11 @@ namespace DwarfCorp
     /// <summary>
     /// This component represents the "Hands" of a creature. It's a generic way of attaching and detaching objects from each other.
     /// </summary>
-    public class Grabber : LocatableComponent
+    public class Grabber : Body
     {
         public struct GrabbedItem
         {
-            public LocatableComponent Component;
+            public Body Component;
             public Matrix LocalTransform;
         }
 
@@ -54,12 +54,12 @@ namespace DwarfCorp
             base.Die();
         }
 
-        public bool IsGrabbed(LocatableComponent component)
+        public bool IsGrabbed(Body component)
         {
             return GrabbedComponents.Any(item => item.Component == component);
         }
 
-        public bool Grab(LocatableComponent other)
+        public bool Grab(Body other)
         {
             if(!IsGrabbed(other) && GrabbedComponents.Count < MaxGrabs)
             {
@@ -86,7 +86,7 @@ namespace DwarfCorp
             }
         }
 
-        private void RemoveComponent(LocatableComponent component)
+        private void RemoveComponent(Body component)
         {
             int i = 0;
             int index = -1;
@@ -106,7 +106,7 @@ namespace DwarfCorp
             }
         }
 
-        public bool UnGrab(LocatableComponent other)
+        public bool UnGrab(Body other)
         {
             if(!IsGrabbed(other))
             {
@@ -123,14 +123,14 @@ namespace DwarfCorp
 
         public void UngrabFirst(Vector3 position)
         {
-            LocatableComponent grabbed = GetFirstGrab();
+            Body grabbed = GetFirstGrab();
             UnGrab(grabbed);
             Matrix m = Matrix.Identity;
             m.Translation = position;
             grabbed.LocalTransform = m;
         }
 
-        public LocatableComponent GetFirstGrab()
+        public Body GetFirstGrab()
         {
             return GrabbedComponents.Count <= 0 ? null : GrabbedComponents.First().Component;
         }

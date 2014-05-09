@@ -175,23 +175,24 @@ namespace DwarfCorp
             {
                 TagList tags = new TagList(put.Type.ResourceToRelease);
 
-                bool foundCandidateItem = Faction.Stockpiles.Select(s => s.FindItemWithTags(tags.Tags)).Any(i => i != null);
-
-                if(!foundCandidateItem)
+                if(Faction.HasResources(new List<ResourceAmount>()
                 {
-                    continue;
-                }
-                Task g = (new BuildVoxelTask(new TagList(put.Type.ResourceToRelease), put.Vox, put.Type));
-
-                if(!TaskIsAssigned(g) &&  IsFeasible(g, Faction.Minions))
+                    new ResourceAmount(tags.Tags[0])
+                }))
                 {
-                    tasks.Add(g);
+
+                    Task g = (new BuildVoxelTask(new TagList(put.Type.ResourceToRelease), put.Vox, put.Type));
+
+                    if(!TaskIsAssigned(g) && IsFeasible(g, Faction.Minions))
+                    {
+                        tasks.Add(g);
+                    }
                 }
             }
 
             foreach(ShipDesignation ship in Faction.ShipDesignations)
             {
-                List<LocatableComponent> componentsToShip = new List<LocatableComponent>();
+                List<Body> componentsToShip = new List<Body>();
                 int remaining = ship.GetRemainingNumResources();
 
                 if(remaining == 0)
@@ -204,21 +205,27 @@ namespace DwarfCorp
                 {
                     for(int i = componentsToShip.Count; i < remaining; i++)
                     {
-                        LocatableComponent r = s.FindItemWithTag(ship.Resource.ResourceType.ResourceName, componentsToShip);
+                        // TODO: Reimplement
+                        /*
+                        Body r = s.FindItemWithTag(ship.Resource.ResourceType.ResourceName, componentsToShip);
 
                         if(r != null)
                         {
                             componentsToShip.Add(r);
                         }
+                         */
                     }
                 }
 
-                foreach(LocatableComponent loc in componentsToShip)
+                foreach(Body loc in componentsToShip)
                 {
+                    // TODO: Reimplement
+                    /*
                     if(ship.Port.ContainsItem(loc))
                     {
                         continue;
                     }
+                     */
 
                     Task g = new PutItemInZoneTask(Item.FindItem(loc), ship.Port);
                     
@@ -290,7 +297,7 @@ namespace DwarfCorp
             return maxValue;
         }
 
-        public int GetMax(int[,] matrix, int numRows, int numColumns)
+        public static int GetMax(int[,] matrix, int numRows, int numColumns)
         {
             int maxValue = int.MinValue;
 
@@ -308,59 +315,89 @@ namespace DwarfCorp
             return maxValue;
         }
 
-        public void AssignTasks()
+        public static void AssignTasks(List<Task> newGoals, List<CreatureAIComponent> creatures)
         {
-            List<Task> newGoals = CreateTasks();
 
-            int numGoals = Math.Min(newGoals.Count, MaxTasks);
-            int numAgents = Faction.Minions.Count;
+            if(newGoals.Count == 0 || creatures.Count == 0)
+            {
+                return;
+            }
+
+            List<Task> unassignedGoals = new List<Task>();
+            unassignedGoals.AddRange(newGoals);
+
+            while(unassignedGoals.Count > 0)
+            {
+                int[] assignments = CalculateOptimalAssignment(unassignedGoals, creatures);
+                List<Task> removals = new List<Task>();
+                for(int i = 0; i < creatures.Count; i++)
+                {
+                    int assignment = assignments[i];
+
+                    if (assignment >= unassignedGoals.Count)
+                    {
+                        continue;
+                    }
+
+                    creatures[i].Tasks.Add(unassignedGoals[assignment]);
+                    removals.Add(unassignedGoals[assignment]);
+                }
+
+                foreach(Task removal in removals)
+                {
+                    unassignedGoals.Remove(removal);
+                }
+            }
+        }
+
+        public static int[] CalculateOptimalAssignment(List<Task> newGoals, List<CreatureAIComponent> agents )
+        {
+            int numGoals = newGoals.Count;
+            int numAgents = agents.Count;
             int maxSize = Math.Max(numGoals, numAgents);
 
             int[,] goalMatrix = new int[maxSize, maxSize];
             const float multiplier = 100;
 
-            if(numGoals == 0 || numAgents == 0)
+            if (numGoals == 0 || numAgents == 0)
             {
-                return;
+                return null;
             }
 
-            for(int goalIndex = 0; goalIndex < numGoals; goalIndex++)
+            for (int goalIndex = 0; goalIndex < numGoals; goalIndex++)
             {
                 Task goal = newGoals[goalIndex];
 
-                for(int agentIndex = 0; agentIndex < numAgents; agentIndex++)
+                for (int agentIndex = 0; agentIndex < numAgents; agentIndex++)
                 {
-                    CreatureAIComponent agent = Faction.Minions[agentIndex];
+                    CreatureAIComponent agent = agents[agentIndex];
                     float floatCost = goal.ComputeCost(agent.Creature);
 
                     int cost = (int)(floatCost * multiplier);
 
-                    if(TaskQueue.ContainsKey(agent.Creature))
-                    {
-                        cost += TaskQueue[agent.Creature].Count;
-                    }
-
-                    if(!goal.IsFeasible(agent.Creature))
+                    if (!goal.IsFeasible(agent.Creature))
                     {
                         cost += 99999;
                     }
 
-                    if(agent.Creature.Status.IsAsleep)
+                    if (agent.Creature.Status.IsAsleep)
                     {
                         cost += 99999;
                     }
+
+                    cost += agents[agentIndex].Tasks.Count;
 
                     goalMatrix[agentIndex, goalIndex] = cost;
                 }
             }
 
             // Add additional columns or rows
-            if(numAgents > numGoals)
+            if (numAgents > numGoals)
             {
                 int maxValue = GetMax(goalMatrix, numAgents, numGoals) + 1;
-                for(int dummyGoal = numGoals; dummyGoal < maxSize; dummyGoal++)
+                for (int dummyGoal = numGoals; dummyGoal < maxSize; dummyGoal++)
                 {
-                    for(int i = 0; i < numAgents; i++)
+                    for (int i = 0; i < numAgents; i++)
                     {
                         // If we have more agents than goals, we need to add additional fake goals
                         // Since goals are in columns, we are essentially adding a new column.
@@ -368,12 +405,12 @@ namespace DwarfCorp
                     }
                 }
             }
-            else if(numGoals > numAgents)
+            else if (numGoals > numAgents)
             {
                 int maxValue = GetMax(goalMatrix, numAgents, numGoals) + 1;
-                for(int dummyAngent = numAgents; dummyAngent < maxSize; dummyAngent++)
+                for (int dummyAngent = numAgents; dummyAngent < maxSize; dummyAngent++)
                 {
-                    for(int i = 0; i < numGoals; i++)
+                    for (int i = 0; i < numGoals; i++)
                     {
                         // If we have more goals than agents, we need to add additional fake agents
                         // Since goals are in columns, we are essentially adding a new row.
@@ -382,13 +419,20 @@ namespace DwarfCorp
                 }
             }
 
-            int[] assignments = goalMatrix.FindAssignments();
+            return goalMatrix.FindAssignments();
 
-            for(int i = 0; i < numAgents; i++)
+        }
+
+        public void AssignTasks()
+        {
+            List<Task> newGoals = CreateTasks();
+            int[] assignments = CalculateOptimalAssignment(newGoals, this.Faction.Minions);
+
+            for(int i = 0; i < Faction.Minions.Count; i++)
             {
                 int assignment = assignments[i];
 
-                if(assignment >= numGoals)
+                if(assignment >= newGoals.Count)
                 {
                     continue;
                 }
