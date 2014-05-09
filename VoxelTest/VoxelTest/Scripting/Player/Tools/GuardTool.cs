@@ -22,6 +22,9 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(List<VoxelRef> voxels, InputManager.MouseButton button)
         {
+            List<Task> assignedTasks = new List<Task>();
+
+
             foreach (Voxel v in from r in voxels
                                 where r != null
                                 select r.GetVoxel(false))
@@ -39,11 +42,7 @@ namespace DwarfCorp
                     };
 
                     Player.Faction.GuardDesignations.Add(d);
-
-                    foreach(CreatureAIComponent minion in Player.SelectedMinions)
-                    {
-                        minion.Tasks.Add(new GuardVoxelTask(v.GetReference()));
-                    }
+                    assignedTasks.Add(new GuardVoxelTask(v.GetReference()));
                 }
                 else
                 {
@@ -56,6 +55,8 @@ namespace DwarfCorp
 
                 }
             }
+
+            TaskManager.AssignTasks(assignedTasks, Player.SelectedMinions);
         }
 
         public override void Update(DwarfGame game, GameTime time)
