@@ -14,7 +14,9 @@ namespace DwarfCorp
     public class Snake : Creature
     {
         private float ANIM_SPEED = 5.0f;
-        public CharacterSprite Tail;
+        public CharacterSprite[] Tail;
+        public Vector3[] History;
+        public int counter = 0;
 
         public Snake(string sprites, Vector3 position, ComponentManager manager, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, string name):
             base
@@ -70,20 +72,27 @@ namespace DwarfCorp
             Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 0);
             Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 0);
 
-            Tail = new CharacterSprite
-                (Graphics,
+            Tail = new CharacterSprite[5];
+            for (int i = 0; i < 5; ++i)
+            {
+                Tail[i] = new CharacterSprite(Graphics,
                 Manager,
                 "tail Sprite",
                 Physics,
-                Matrix.CreateTranslation(1, 0, 0)
+                Matrix.CreateTranslation(i, 0, 0)
                 );
 
-            Tail.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 1);
-            Tail.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Left, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 1);
-            Tail.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 1);
-            Tail.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 1);
+                Tail[i].AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 1);
+                Tail[i].AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Left, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 1);
+                Tail[i].AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 1);
+                Tail[i].AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 1);
 
-            Tail.SetCurrentAnimation(CharacterMode.Idle.ToString());
+                Tail[i].SetCurrentAnimation(CharacterMode.Idle.ToString());
+            }
+
+            Vector3 v = Physics.LocalTransform.Translation;
+            History = new Vector3[]{ v,v,v,v,v,v };
+            
             //Physics.DrawBoundingBox = true;
             // TODO: figure out what these numbers mean
             // Add hands
@@ -142,8 +151,30 @@ namespace DwarfCorp
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
+
+            counter++;
+
+            if (counter % 10 == 0)
+            {
+                for (int i = 0; i < 5; ++i)
+                {
+                    History[i] = History[i + 1];
+                }
+                History[5] = Physics.LocalTransform.Translation;
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                Tail[i].LocalTransform = Matrix.CreateTranslation(History[i]-Physics.LocalTransform.Translation);
+            }
+            /*
             double time = gameTime.TotalGameTime.TotalSeconds * 30;
-            Tail.LocalTransform = Matrix.CreateTranslation( (float) Math.Cos(time), 0, (float) Math.Sin(time));
+            int i = 1;
+            foreach (CharacterSprite tail in Tail)
+            {
+                tail.LocalTransform = Matrix.CreateTranslation((float)Math.Cos(time) * i, 0, (float)Math.Sin(time) * i);
+                i++;
+            }
+            */
         }
     }
 }
