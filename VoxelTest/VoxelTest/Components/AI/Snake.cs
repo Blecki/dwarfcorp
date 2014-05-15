@@ -14,9 +14,7 @@ namespace DwarfCorp
     public class Snake : Creature
     {
         private float ANIM_SPEED = 5.0f;
-        public CharacterSprite[] Tail;
-        public Vector3[] History;
-        public int counter = 0;
+        public PhysicsComponent[] Tail;
 
         public Snake(string sprites, Vector3 position, ComponentManager manager, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, string name):
             base
@@ -48,6 +46,21 @@ namespace DwarfCorp
                 manager, chunks, graphics, content, name
             )
         {
+            Tail = new PhysicsComponent[5];
+            for (int i = 0; i < 5; ++i)
+            {
+                Tail[i] = new PhysicsComponent
+                (
+                    manager,
+                    "snaketail",
+                    manager.RootComponent,
+                    Matrix.CreateTranslation(position),
+                    new Vector3(2, 1.5f, .7f),
+                    new Vector3(0, 0, 0),
+                    1.0f, 1.0f, 0.999f, 0.999f,
+                    new Vector3(0, -10, 0)
+                );
+            }
             Initialize(TextureManager.GetTexture(sprites));
         }
 
@@ -72,32 +85,24 @@ namespace DwarfCorp
             Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 0);
             Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 0);
 
-            Tail = new CharacterSprite[5];
             for (int i = 0; i < 5; ++i)
             {
-                Tail[i] = new CharacterSprite(Graphics,
-                Manager,
-                "tail Sprite",
-                Physics,
-                Matrix.CreateTranslation(i, 0, 0)
-                );
+                CharacterSprite TailSprite = new CharacterSprite
+                    (Graphics,
+                    Manager,
+                    "snake Sprite",
+                    Tail[i],
+                    Matrix.Identity
+                    );
 
-                Tail[i].AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 1);
-                Tail[i].AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Left, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 1);
-                Tail[i].AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 1);
-                Tail[i].AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 1);
+                TailSprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 1);
+                TailSprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Left, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 1);
+                TailSprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 1);
+                TailSprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 0, 1);
 
-                Tail[i].SetCurrentAnimation(CharacterMode.Idle.ToString());
+                TailSprite.SetCurrentAnimation(CharacterMode.Idle.ToString());
             }
-
-            Vector3 v = Physics.LocalTransform.Translation;
-            History = new Vector3[]{ v,v,v,v,v,v };
             
-            //Physics.DrawBoundingBox = true;
-            // TODO: figure out what these numbers mean
-            // Add hands
-            Hands = new Grabber(Manager, "hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
-
             // Add sensor
             Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
 
@@ -108,41 +113,6 @@ namespace DwarfCorp
 
             Weapon = new Weapon("None", 0.0f, 0.0f, 0.0f, AI, ContentPaths.Audio.pick);
 
-            Inventory = new Inventory(Manager, "Inventory", Physics)
-            {
-                Resources = new ResourceContainer
-                {
-                    MaxResources = 1
-                }
-            };
-
-            // Shadow
-            Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-            shadowTransform.Translation = new Vector3(0.0f, -.25f, 0.0f);
-            Texture2D shadowTexture = TextureManager.GetTexture(ContentPaths.Effects.shadowcircle);
-            Shadow = new ShadowComponent(Manager, "Shadow", Physics, shadowTransform, shadowTexture);
-
-            List<Point> shP = new List<Point>
-            {
-                new Point(0,0)
-            };
-            Animation shadowAnimation = new Animation(Graphics, shadowTexture, "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            Shadow.AddAnimation(shadowAnimation);
-            shadowAnimation.Play();
-            Shadow.SetCurrentAnimation("sh");
-
-            // The bird will emit a shower of blood when it dies
-            DeathEmitter = new EmitterComponent("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 100
-            };
-
-            // The bird is flammable, and can die when exposed to fire.
-            Flames = new FlammableComponent(Manager, "Flames", Physics, Health);
-
-            // Tag the physics component with some information 
-            // that can be used later
             Physics.Tags.Add("Snake");
             Physics.Tags.Add("Animal");
 
@@ -151,30 +121,20 @@ namespace DwarfCorp
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
-
-            counter++;
-
-            if (counter % 10 == 0)
-            {
-                for (int i = 0; i < 5; ++i)
-                {
-                    History[i] = History[i + 1];
-                }
-                History[5] = Physics.LocalTransform.Translation;
-            }
+            PhysicsComponent prev, next;
+            prev = null;
+            next = Physics;
             for (int i = 0; i < 5; i++)
             {
-                Tail[i].LocalTransform = Matrix.CreateTranslation(History[i]-Physics.LocalTransform.Translation);
+                prev = next;
+                next = Tail[i];
+                Vector3 prevT, nextT, distance;
+                prevT = prev.GlobalTransform.Translation;
+                nextT = prev.GlobalTransform.Translation;
+                distance = prevT - nextT;
+                prev.ApplyForce(distance * -.1f, 1);
+                next.ApplyForce(distance * .1f, 1);
             }
-            /*
-            double time = gameTime.TotalGameTime.TotalSeconds * 30;
-            int i = 1;
-            foreach (CharacterSprite tail in Tail)
-            {
-                tail.LocalTransform = Matrix.CreateTranslation((float)Math.Cos(time) * i, 0, (float)Math.Sin(time) * i);
-                i++;
-            }
-            */
         }
     }
 }
