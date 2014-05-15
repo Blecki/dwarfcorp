@@ -92,7 +92,7 @@ namespace DwarfCorp
 
             Viewport viewPort = new Viewport(RenderTarget.Bounds);
 
-            if(IsOverButtons(mouseState.X, mouseState.Y))
+            if(IsOverButtons(mouseState.X, mouseState.Y) || !GetImageBounds().Contains(mouseState.X, mouseState.Y))
             {
                 return;
             }

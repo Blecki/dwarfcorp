@@ -618,7 +618,7 @@ namespace DwarfCorp.GameStates
             IndicatorManager.SetupStandards();
 
             GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
-
+         
             if(!createMaster)
             {
                 return;
