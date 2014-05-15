@@ -42,6 +42,7 @@ namespace DwarfCorp
         public float BoxYOffset { get; set; }
         public int LastMouseWheel { get; set; }
 
+        public Point ClickPoint { get; set; }
         public Rectangle SelectionRectangle { get; set; }
 
         public bool AllowRightClickSelection { get; set; }
@@ -103,6 +104,7 @@ namespace DwarfCorp
             else if (mouse.LeftButton == ButtonState.Pressed)
             {
                 isLeftPressed = true;
+                ClickPoint = new Point(mouse.X, mouse.Y);
                 SelectionRectangle = new Rectangle(mouse.X, mouse.Y, 0, 0);
             }
 
@@ -129,10 +131,10 @@ namespace DwarfCorp
 
         public void UpdateSelectionRectangle(int mouseX, int mouseY)
         {
-            int top = SelectionRectangle.Top;
-            int left = SelectionRectangle.Left;
-            int right = mouseX;
-            int bottom = mouseY;
+            int top = Math.Min(ClickPoint.Y, mouseY);
+            int left = Math.Min(ClickPoint.X, mouseX);
+            int right = Math.Max(ClickPoint.X, mouseX);
+            int bottom = Math.Max(ClickPoint.Y, mouseY);
             SelectionRectangle = new Rectangle(left, top, Math.Max(right - left, 0), Math.Max(bottom - top, 0));
         }
 
