@@ -139,9 +139,13 @@ namespace DwarfCorp
         {
             if(Master.SelectedMinions.Count == 0)
             {
-                Master.CurrentToolMode = GameMaster.ToolMode.SelectUnits;
 
-                 
+                if(Master.CurrentToolMode != GameMaster.ToolMode.God)
+                {
+                    Master.CurrentToolMode = GameMaster.ToolMode.SelectUnits;
+                }
+
+
                 foreach(KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons.Where(pair => pair.Key != GameMaster.ToolMode.SelectUnits))
                 {
                     pair.Value.IsVisible = false;
