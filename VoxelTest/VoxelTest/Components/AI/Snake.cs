@@ -38,7 +38,7 @@ namespace DwarfCorp
                     "snake",
                     manager.RootComponent,
                     Matrix.CreateTranslation(position),
-                    new Vector3(1, .5f, .5f),
+                    new Vector3(1, .3f, .5f),
                     new Vector3(0, 0, 0),
                     1.0f, 1.0f, 0.999f, 0.999f,
                     new Vector3(0, -10, 0)
