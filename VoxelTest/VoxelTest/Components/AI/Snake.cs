@@ -38,7 +38,7 @@ namespace DwarfCorp
                     "snake",
                     manager.RootComponent,
                     Matrix.CreateTranslation(position),
-                    new Vector3(2, 1.5f, .7f),
+                    new Vector3(1, .5f, .5f),
                     new Vector3(0, 0, 0),
                     1.0f, 1.0f, 0.999f, 0.999f,
                     new Vector3(0, -10, 0)
@@ -57,7 +57,7 @@ namespace DwarfCorp
                     Matrix.CreateTranslation(position),
                     new Vector3(2, 1.5f, .7f),
                     new Vector3(0, 0, 0),
-                    1.0f, 1.0f, 0.999f, 0.999f,
+                    1.0f, 1.0f, 0.995f, 0.999f,
                     new Vector3(0, -10, 0)
                 );
             }
@@ -107,7 +107,7 @@ namespace DwarfCorp
             Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
 
             // Add AI
-            AI = new CreatureAIComponent(this, "snake AI", Sensors, PlanService);
+            AI = new SnakeAI(this, "snake AI", Sensors, PlanService);
 
             Health = new HealthComponent(Manager, "Health", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
 
@@ -130,10 +130,18 @@ namespace DwarfCorp
                 next = Tail[i];
                 Vector3 prevT, nextT, distance;
                 prevT = prev.GlobalTransform.Translation;
-                nextT = prev.GlobalTransform.Translation;
+                nextT = next.GlobalTransform.Translation;
                 distance = prevT - nextT;
-                prev.ApplyForce(distance * -.1f, 1);
-                next.ApplyForce(distance * .1f, 1);
+                if (distance.LengthSquared() < .2f)
+                {
+                    prev.ApplyForce(distance * 1f, 1);
+                    next.ApplyForce(distance * -1f, 1);
+                }
+                else
+                {
+                    prev.ApplyForce(distance * -1f, 1);
+                    next.ApplyForce(distance * 1f, 1);
+                }
             }
         }
     }

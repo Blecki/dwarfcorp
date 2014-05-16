@@ -119,6 +119,7 @@
     </Compile>
     <Compile Include="AssetManagement\GameSave\JsonConverters\RectangleConverter.cs" />
     <Compile Include="Components\AI\Bird.cs" />
+    <Compile Include="Components\AI\SnakeAI.cs" />
     <Compile Include="Components\AI\BirdAI.cs" />
     <Compile Include="Components\AI\Snake.cs" />
     <Compile Include="Components\AI\Deer.cs" />
