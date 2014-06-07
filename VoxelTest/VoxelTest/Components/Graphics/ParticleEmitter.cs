@@ -56,7 +56,7 @@ namespace DwarfCorp
     /// This component manages a set of particles, and can emit them at certain locations. The particle manager keeps track of a small set of these.
     /// </summary>
     [JsonObject(IsReference =  true)]
-    public class ParticleEmitter : TintableComponent
+    public class ParticleEmitter : Tinter
     {
         [JsonIgnore]
         public FixedInstanceArray Sprites { get; set; }
@@ -235,8 +235,8 @@ namespace DwarfCorp
 
                     if(v != null)
                     {
-                        PhysicsComponent.Contact contact = new PhysicsComponent.Contact();
-                        if(PhysicsComponent.TestStaticAABBAABB(b, v.GetBoundingBox(), ref contact))
+                        Physics.Contact contact = new Physics.Contact();
+                        if(Physics.TestStaticAABBAABB(b, v.GetBoundingBox(), ref contact))
                         {
                             p.Position += contact.NEnter * contact.Penetration;
 

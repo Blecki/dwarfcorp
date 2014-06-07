@@ -6,32 +6,33 @@ using System.Text;
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature uses the item currently in its hands to build a room.
+    /// A creature uses the item currently in its hands to build a BuildRoom.
     /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class PlaceRoomResourcesAct : CreatureAct
     {
-        public RoomBuildDesignation Room { get; set; }
+        public BuildRoomOrder BuildRoom { get; set; }
         public List<ResourceAmount> Resources { get; set; } 
 
-        public PlaceRoomResourcesAct(CreatureAIComponent agent, RoomBuildDesignation room, List<ResourceAmount> resources) :
+        public PlaceRoomResourcesAct(CreatureAI agent, BuildRoomOrder buildRoom, List<ResourceAmount> resources) :
             base(agent)
         {
-            Name = "Place room resources";
-            Room = room;
+            Name = "Place BuildRoom resources";
+            BuildRoom = buildRoom;
             Resources = resources;
         }
 
         public override IEnumerable<Status> Run()
         {
-            if (Room == null || Room.IsBuilt || Room.VoxelBuildDesignations.Count == 0)
+            if (BuildRoom == null || BuildRoom.IsBuilt || BuildRoom.VoxelOrders.Count == 0)
             {
                 yield return Status.Fail;
             }
             else
             {
-                Room.AddResources(Resources);
+                BuildRoom.AddResources(Resources);
                 Creature.Inventory.Remove(Resources);
+                Creature.Stats.NumRoomsBuilt++;
                 yield return Status.Success;
             }
         }

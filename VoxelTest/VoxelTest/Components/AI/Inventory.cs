@@ -104,7 +104,7 @@ namespace DwarfCorp
             {
                 for(int i = 0; i < resource.NumResources; i++)
                 {
-                   PhysicsComponent item =  EntityFactory.GenerateComponent(resource.ResourceType.ResourceName, MathFunctions.RandVector3Box(GetBoundingBox()), Manager, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics, PlayState.ChunkManager, Manager.Factions, PlayState.Camera) as PhysicsComponent;
+                   Physics item =  EntityFactory.GenerateComponent(resource.ResourceType.ResourceName, MathFunctions.RandVector3Box(GetBoundingBox()), Manager, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics, PlayState.ChunkManager, Manager.Factions, PlayState.Camera) as Physics;
 
                     if(item != null)
                     {

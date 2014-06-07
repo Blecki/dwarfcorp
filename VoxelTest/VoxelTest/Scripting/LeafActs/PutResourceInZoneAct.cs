@@ -58,7 +58,7 @@ namespace DwarfCorp
 
         public string ResourceName { get; set; }
 
-        public PutResourceInZone(CreatureAIComponent agent, string stockpileName, string voxelname, string resourceName) :
+        public PutResourceInZone(CreatureAI agent, string stockpileName, string voxelname, string resourceName) :
             base(agent)
         {
             VoxelName = voxelname;
@@ -86,6 +86,7 @@ namespace DwarfCorp
             if (Zone.AddItem(createdItems[0]))
             {
                 Creature.NoiseMaker.MakeNoise("Hurt", Creature.AI.Position);
+                Creature.Stats.NumItemsGathered++;
                 yield return Status.Success;
             }
             else

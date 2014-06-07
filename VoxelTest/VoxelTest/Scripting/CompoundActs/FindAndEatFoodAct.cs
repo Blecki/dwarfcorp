@@ -6,7 +6,7 @@ using System.Text;
 namespace DwarfCorp
 {
     /// <summary>
-    /// The creature finds food in a stockpile or room, and eats it.
+    /// The creature finds food in a stockpile or BuildRoom, and eats it.
     /// </summary>
     public class FindAndEatFoodAct : CompoundCreatureAct
     {
@@ -16,7 +16,7 @@ namespace DwarfCorp
             Name = "Find and Eat Food";
         }
 
-        public FindAndEatFoodAct(CreatureAIComponent agent) :
+        public FindAndEatFoodAct(CreatureAI agent) :
             base(agent)
         {
             Name = "Find and Eat Food";

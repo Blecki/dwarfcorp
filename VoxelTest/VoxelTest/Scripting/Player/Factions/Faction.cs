@@ -21,16 +21,16 @@ namespace DwarfCorp
         public Faction()
         {
             Threats = new List<Creature>();
-            Minions = new List<CreatureAIComponent>();
-            SelectedMinions = new List<CreatureAIComponent>();
+            Minions = new List<CreatureAI>();
+            SelectedMinions = new List<CreatureAI>();
             TaskManager = new TaskManager(this);
             Stockpiles = new List<Stockpile>();
-            DigDesignations = new List<Designation>();
-            GuardDesignations = new List<Designation>();
+            DigDesignations = new List<BuildOrder>();
+            GuardDesignations = new List<BuildOrder>();
             ChopDesignations = new List<Body>();
-            ShipDesignations = new List<ShipDesignation>();
+            ShipDesignations = new List<ShipOrder>();
             GatherDesignations = new List<Body>();
-            RoomDesignator = new RoomDesignator(this);
+            RoomBuilder = new RoomBuilder(this);
             PutDesignator = new PutDesignator(this, TextureManager.GetTexture("TileSet"));
         }
 
@@ -38,14 +38,14 @@ namespace DwarfCorp
         public Economy Economy { get; set; }
         public ComponentManager Components { get; set; }
 
-        public List<Designation> DigDesignations { get; set; }
-        public List<Designation> GuardDesignations { get; set; }
+        public List<BuildOrder> DigDesignations { get; set; }
+        public List<BuildOrder> GuardDesignations { get; set; }
         public List<Body> ChopDesignations { get; set; }
         public List<Body> GatherDesignations { get; set; }
         public List<Stockpile> Stockpiles { get; set; }
-        public List<CreatureAIComponent> Minions { get; set; }
-        public List<ShipDesignation> ShipDesignations { get; set; }
-        public RoomDesignator RoomDesignator { get; set; }
+        public List<CreatureAI> Minions { get; set; }
+        public List<ShipOrder> ShipDesignations { get; set; }
+        public RoomBuilder RoomBuilder { get; set; }
         public PutDesignator PutDesignator { get; set; }
         public Color DigDesignationColor { get; set; }
 
@@ -53,24 +53,24 @@ namespace DwarfCorp
         public List<Creature> Threats { get; set; }
 
         public string Name { get; set; }
-        public List<CreatureAIComponent> SelectedMinions { get; set; }
+        public List<CreatureAI> SelectedMinions { get; set; }
 
 
 
         public void Update(GameTime time)
         {
             Economy.Update(time);
-            RoomDesignator.CheckRemovals();
+            RoomBuilder.CheckRemovals();
             //TaskManager.AssignTasks();
             //TaskManager.ManageTasks();
 
-            List<Designation> removals = (from d in DigDesignations
+            List<BuildOrder> removals = (from d in DigDesignations
                                           let vref = d.Vox
                                           let v = vref.GetVoxel(false)
                                           where v == null || v.Health <= 0.0f || v.Type.Name == "empty"
                                           select d).ToList();
 
-            foreach (Designation v in removals)
+            foreach (BuildOrder v in removals)
             {
                 DigDesignations.Remove(v);
             }
@@ -86,7 +86,7 @@ namespace DwarfCorp
             
 
             removals.Clear();
-            foreach (Designation d in GuardDesignations)
+            foreach (BuildOrder d in GuardDesignations)
             {
                 VoxelRef vref = d.Vox;
                 Voxel v = vref.GetVoxel(false);
@@ -104,7 +104,7 @@ namespace DwarfCorp
                 }
             }
 
-            foreach (Designation v in removals)
+            foreach (BuildOrder v in removals)
             {
                 GuardDesignations.Remove(v);
             }
@@ -127,7 +127,7 @@ namespace DwarfCorp
 
             VoxelRef voxelRef = v.GetReference();
 
-            RoomDesignator.OnVoxelDestroyed(v);
+            RoomBuilder.OnVoxelDestroyed(v);
 
             List<Stockpile> toRemove = new List<Stockpile>();
             foreach(Stockpile s in Stockpiles)
@@ -169,7 +169,7 @@ namespace DwarfCorp
                 }
             }
 
-            ShipDesignations.Add(new ShipDesignation(resource, port));
+            ShipDesignations.Add(new ShipOrder(resource, port));
              */
 
         }
@@ -187,11 +187,11 @@ namespace DwarfCorp
             }
         }
 
-        public Designation GetClosestDigDesignationTo(Vector3 position)
+        public BuildOrder GetClosestDigDesignationTo(Vector3 position)
         {
             float closestDist = 99999;
-            Designation closestVoxel = null;
-            foreach(Designation designation in DigDesignations)
+            BuildOrder closestVoxel = null;
+            foreach(BuildOrder designation in DigDesignations)
             {
                 VoxelRef vref = designation.Vox;
                 Voxel v = vref.GetVoxel(false);
@@ -209,11 +209,11 @@ namespace DwarfCorp
             return closestVoxel;
         }
 
-        public Designation GetClosestGuardDesignationTo(Vector3 position)
+        public BuildOrder GetClosestGuardDesignationTo(Vector3 position)
         {
             float closestDist = 99999;
-            Designation closestVoxel = null;
-            foreach(Designation designation in GuardDesignations)
+            BuildOrder closestVoxel = null;
+            foreach(BuildOrder designation in GuardDesignations)
             {
                 VoxelRef vref = designation.Vox;
                 Voxel v = vref.GetVoxel(false);
@@ -231,7 +231,7 @@ namespace DwarfCorp
             return closestVoxel;
         }
 
-        public Designation GetGuardDesignation(Voxel vox)
+        public BuildOrder GetGuardDesignation(Voxel vox)
         {
             return (from d in GuardDesignations
                 let vref = d.Vox
@@ -240,7 +240,7 @@ namespace DwarfCorp
                 select d).FirstOrDefault();
         }
 
-        public Designation GetDigDesignation(Voxel vox)
+        public BuildOrder GetDigDesignation(Voxel vox)
         {
             return (from d in DigDesignations
                 let vref = d.Vox
@@ -304,7 +304,7 @@ namespace DwarfCorp
 
         public List<Room> GetIntersectingRooms(BoundingBox v)
         {
-            return RoomDesignator.DesignatedRooms.Where(room => room.Intersects(v)).ToList();
+            return RoomBuilder.DesignatedRooms.Where(room => room.Intersects(v)).ToList();
         }
 
         public bool IsInStockpile(Voxel v)
@@ -323,7 +323,7 @@ namespace DwarfCorp
         {
             List<Item> toReturn = new List<Item>();
             List<Zone> zones = new List<Zone>();
-            zones.AddRange(RoomDesignator.DesignatedRooms);
+            zones.AddRange(RoomBuilder.DesignatedRooms);
             zones.AddRange(Stockpiles);
 
             foreach (Zone s in zones)
@@ -347,7 +347,7 @@ namespace DwarfCorp
             Item closestItem = null;
             float closestDist = float.MaxValue;
             List<Zone> zones = new List<Zone>();
-            zones.AddRange(RoomDesignator.DesignatedRooms);
+            zones.AddRange(RoomBuilder.DesignatedRooms);
             zones.AddRange(Stockpiles);
 
             foreach (Zone s in zones)

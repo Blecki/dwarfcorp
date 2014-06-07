@@ -411,6 +411,30 @@ namespace DwarfCorp
             Vector2 projection = v + t * (w - v); // Projection falls on the segment
             return (p - projection).LengthSquared();
         }
+
+        public static Vector3 Min(params  Vector3[] vecs)
+        {
+            Vector3 toReturn = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+
+            for(int i = 0; i < vecs.Length; i++)
+            {
+                toReturn = new Vector3(Math.Min(toReturn.X, vecs[i].X), Math.Min(toReturn.Y, vecs[i].Y), Math.Min(toReturn.Z, vecs[i].Z));
+            }
+
+            return toReturn;
+        }
+
+        public static Vector3 Max(params  Vector3[] vecs)
+        {
+            Vector3 toReturn = new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue);
+
+            for (int i = 0; i < vecs.Length; i++)
+            {
+                toReturn = new Vector3(Math.Max(toReturn.X, vecs[i].X), Math.Max(toReturn.Y, vecs[i].Y), Math.Max(toReturn.Z, vecs[i].Z));
+            }
+
+            return toReturn;
+        }
     }
 
 }

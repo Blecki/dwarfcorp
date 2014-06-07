@@ -15,7 +15,7 @@ namespace DwarfCorp
     {
         public float EnergyLoss { get; set; }
 
-        public MeleeAct(CreatureAIComponent agent) :
+        public MeleeAct(CreatureAI agent) :
             base(agent)
         {
             Name = "Attack!";
@@ -59,9 +59,9 @@ namespace DwarfCorp
                     Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
                 }
 
-                List<HealthComponent> healths = Agent.TargetComponent.GetChildrenOfTypeRecursive<HealthComponent>();
+                List<Health> healths = Agent.TargetComponent.GetChildrenOfTypeRecursive<Health>();
 
-                foreach(HealthComponent health in healths)
+                foreach(Health health in healths)
                 {
                     health.Damage(Creature.Stats.BaseChopSpeed * (float) Act.LastTime.ElapsedGameTime.TotalSeconds);
                 }
@@ -70,10 +70,11 @@ namespace DwarfCorp
                 {
                     Creature.Faction.ChopDesignations.Remove(Agent.TargetComponent);
                     Agent.TargetComponent = null;
-
+                    Agent.Stats.XP += Math.Max((int) (healths[0].MaxHealth / 10), 1);
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
                     Creature.Physics.OrientWithVelocity = true;
                     Creature.Physics.Face(Creature.Physics.Velocity + Creature.Physics.GlobalTransform.Translation);
+                    Creature.Stats.NumThingsKilled++;
                     yield return Status.Success;
                     targetDead = true;
                     break;
@@ -84,12 +85,12 @@ namespace DwarfCorp
                 Creature.Weapon.PlayNoise();
                 Creature.Status.Energy.CurrentValue -= EnergyLoss * Dt * Creature.Stats.Tiredness;
 
-                PhysicsComponent component = Agent.TargetComponent as PhysicsComponent;
+                Physics component = Agent.TargetComponent as Physics;
                 if(component != null)
                 {
                     if(PlayState.Random.Next(100) < 10)
                     {
-                        PhysicsComponent phys = component;
+                        Physics phys = component;
                         {
                             PlayState.ParticleManager.Trigger("blood_particle", phys.GlobalTransform.Translation, Color.White, 5);
                         }

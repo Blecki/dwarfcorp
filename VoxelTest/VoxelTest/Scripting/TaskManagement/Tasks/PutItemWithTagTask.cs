@@ -36,19 +36,19 @@ namespace DwarfCorp
                 return null;
             }
 
-            if(!creature.Faction.RoomDesignator.IsBuildDesignation(room))
+            if(!creature.Faction.RoomBuilder.IsBuildDesignation(room))
             {
                 return null;
             }
 
-            VoxelBuildDesignation voxDesignation = creature.Faction.RoomDesignator.GetBuildDesignation(room);
+            BuildVoxelOrder voxVoxelOrder = creature.Faction.RoomBuilder.GetBuildDesignation(room);
 
-            if(voxDesignation == null)
+            if(voxVoxelOrder == null)
             {
                 return null;
             }
 
-            RoomBuildDesignation designation = voxDesignation.BuildDesignation;
+            BuildRoomOrder designation = voxVoxelOrder.Order;
             return  new BuildRoomAct(creature.AI, designation);
         }
 

@@ -18,7 +18,7 @@ namespace DwarfCorp
 
         }
 
-        public KillEntityAct(Body entity, CreatureAIComponent creature) :
+        public KillEntityAct(Body entity, CreatureAI creature) :
             base(creature)
         {
             Entity = entity;

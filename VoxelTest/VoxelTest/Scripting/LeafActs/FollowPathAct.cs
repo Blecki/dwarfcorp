@@ -20,7 +20,7 @@ namespace DwarfCorp
 
         public Timer ValidPathTimer { get; set; }
 
-        public FollowPathAct(CreatureAIComponent agent, string pathName) :
+        public FollowPathAct(CreatureAI agent, string pathName) :
             base(agent)
         {
             Name = "Follow path";

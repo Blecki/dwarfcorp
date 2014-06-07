@@ -13,7 +13,7 @@ namespace DwarfCorp
     {
         private string DataKey { get; set; }
 
-        public ClearBlackboardData(CreatureAIComponent creature, string data) :
+        public ClearBlackboardData(CreatureAI creature, string data) :
             base(creature)
         {
             Name = "Clear " + data;

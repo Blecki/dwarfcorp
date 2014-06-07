@@ -106,9 +106,16 @@ namespace DwarfCorp
             DownArrow,
             Save ,
 
+            SmallArrowRight,
+            SmallArrowLeft,
+            SmallArrowUp,
+            SmallArrowDown,
+
             ZoomIn,
             ZoomOut,
-            ZoomHome
+            ZoomHome,
+
+            ButtonFrame
 
         }
 
@@ -229,19 +236,41 @@ namespace DwarfCorp
             Frames[Tile.ZoomOut] = new Point(11, 1);
             Frames[Tile.ZoomHome] = new Point(12, 0);
 
+
+            Frames[Tile.SmallArrowLeft] = new Point(14, 1);
+            Frames[Tile.SmallArrowRight] = new Point(13, 0);
+            Frames[Tile.SmallArrowUp] = new Point(12, 1);
+            Frames[Tile.SmallArrowDown] = new Point(13, 1);
+
+            Frames[Tile.ButtonFrame] = new Point(9, 4);
+
             MouseFrames[MousePointer.Pointer] = new Point(0, 0);
             MouseFrames[MousePointer.Dig] = new Point(1, 0);
-            MouseFrames[MousePointer.Build] = new Point(2, 0);
-            MouseFrames[MousePointer.Gather] = new Point(3, 0);
-            MouseFrames[MousePointer.Chop] = new Point(4, 0);
-            MouseFrames[MousePointer.Attack] = new Point(5, 0);
-            MouseFrames[MousePointer.Guard] = new Point(6, 0);
+            MouseFrames[MousePointer.Build] = new Point(4, 0);
+            MouseFrames[MousePointer.Gather] = new Point(6, 0);
+            MouseFrames[MousePointer.Chop] = new Point(5, 0);
+            MouseFrames[MousePointer.Attack] = new Point(2, 0);
+            MouseFrames[MousePointer.Guard] = new Point(3, 0);
 
          }
 
+        public void RenderButtonFrame(Rectangle buttonRect, SpriteBatch batch)
+        {
+            Rectangle destRect = new Rectangle(buttonRect.X - TileWidth, buttonRect.Y - TileHeight, buttonRect.Width + TileWidth * 2, buttonRect.Height + TileHeight * 2);
+            ImageFrame frame = GetSpecialFrame(Tile.ButtonFrame);
+            Rectangle sourceRect = new Rectangle(frame.SourceRect.X - TileWidth, frame.SourceRect.Y - TileHeight, frame.SourceRect.Width + TileWidth * 2, frame.SourceRect.Height + TileHeight * 2);
+
+            batch.Draw(frame.Image, destRect, sourceRect, Color.White);
+        }
+
         public void RenderMouse(int x, int y, int scale, MousePointer mode, SpriteBatch spriteBatch, Color tint)
         {
-            spriteBatch.Draw(PointerTexture, new Rectangle(x, y, PointerWidth * scale, PointerHeight * scale), GetSpecialFrame(mode).SourceRect, Color.White);
+            spriteBatch.Draw(PointerTexture, new Rectangle(x, y, PointerWidth * scale, PointerHeight * scale), GetSpecialFrame(mode).SourceRect, tint);
+        }
+
+        public void RenderTile(Rectangle screenRect, Tile tile, SpriteBatch batch, Color tint)
+        {
+            batch.Draw(Texture, screenRect, GetSpecialFrame(tile).SourceRect, tint);
         }
 
         public void RenderPanel(Rectangle rectbounds, SpriteBatch spriteBatch)
@@ -326,7 +355,7 @@ namespace DwarfCorp
             spriteBatch.Draw(Texture, rect, GetSourceRect(Tile.ButtonCenter), Color.White);
         }
 
-        public void RenderToolTip(Rectangle rectbounds, SpriteBatch spriteBatch)
+        public void RenderToolTip(Rectangle rectbounds, SpriteBatch spriteBatch, Color tint)
         {
             int w = Math.Max(rectbounds.Width - TileWidth / 4, TileWidth / 4);
             int h = Math.Max(rectbounds.Height - TileHeight / 4, TileHeight / 4);
@@ -334,15 +363,15 @@ namespace DwarfCorp
                 (int)(rectbounds.Y + TileHeight / 8),
                 w,
                 h);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.ToolTipUpperLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.ToolTipLowerLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.ToolTipUpperRight), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.ToolTipLowerRight), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y - TileHeight, rect.Width, TileHeight), GetSourceRect(Tile.ToolTipUpper), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y, TileWidth, rect.Height), GetSourceRect(Tile.ToolTipLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y + rect.Height, rect.Width, TileHeight), GetSourceRect(Tile.ToolTipLower), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height), GetSourceRect(Tile.ToolTipRight), Color.White);
-            spriteBatch.Draw(Texture, rect, GetSourceRect(Tile.ToolTipCenter), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.ToolTipUpperLeft), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.ToolTipLowerLeft), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.ToolTipUpperRight), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.ToolTipLowerRight), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y - TileHeight, rect.Width, TileHeight), GetSourceRect(Tile.ToolTipUpper), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y, TileWidth, rect.Height), GetSourceRect(Tile.ToolTipLeft), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y + rect.Height, rect.Width, TileHeight), GetSourceRect(Tile.ToolTipLower), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height), GetSourceRect(Tile.ToolTipRight), tint);
+            spriteBatch.Draw(Texture, rect, GetSourceRect(Tile.ToolTipCenter), tint);
         }
 
         public void RenderCheckbox(Rectangle rect, bool checkstate, SpriteBatch spriteBatch)

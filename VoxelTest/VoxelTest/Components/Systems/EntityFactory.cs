@@ -27,7 +27,7 @@ namespace DwarfCorp
 
         public static Body CreateBalloon(Vector3 target, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ShipmentOrder order, Faction master)
         {
-            PhysicsComponent balloon = new PhysicsComponent(componentManager, "Balloon", componentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.5f, 1, 0.5f), new Vector3(0, -2, 0), 4, 1, 0.99f, 0.99f, Vector3.Zero)
+            Physics balloon = new Physics(componentManager, "Balloon", componentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.5f, 1, 0.5f), new Vector3(0, -2, 0), 4, 1, 0.99f, 0.99f, Vector3.Zero)
             {
                 OrientWithVelocity = false,
                 FixedOrientation = true
@@ -40,14 +40,14 @@ namespace DwarfCorp
                 new Point(0, 0)
             };
             Animation balloonAnimation = new Animation(graphics, tex, "balloon", points, false, Color.White, 0.001f, false);
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", balloon, Matrix.Identity, tex, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", balloon, Matrix.Identity, tex, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Spherical
+                OrientationType = Sprite.OrientMode.Spherical
             };
             sprite.AddAnimation(balloonAnimation);
 
             Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI * 0.5f);
-            ShadowComponent shadow = new ShadowComponent(componentManager, "shadow", balloon, shadowTransform, TextureManager.GetTexture(ContentPaths.Effects.shadowcircle));
+            Shadow shadow = new Shadow(componentManager, "shadow", balloon, shadowTransform, TextureManager.GetTexture(ContentPaths.Effects.shadowcircle));
             BalloonAI balloonAI = new BalloonAI(balloon, target, order, master);
 
             MinimapIcon minimapIcon = new MinimapIcon(balloon, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 2, 0));
@@ -113,7 +113,7 @@ namespace DwarfCorp
             Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
 
             Body crate = new Body(PlayState.ComponentManager, "Crate", PlayState.ComponentManager.RootComponent, matrix, new Vector3(0.75f, 0.5f, 1.5f), new Vector3(0.5f, 0.5f, 1.0f));
-            TexturedBoxObject crateModel = new TexturedBoxObject(PlayState.ComponentManager, "Cratebox", crate, Matrix.CreateRotationY(rot), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.5f, 0.5f, 0.5f), PrimitiveLibrary.BoxPrimitives["crate"], spriteSheet);
+            Box crateModel = new Box(PlayState.ComponentManager, "Cratebox", crate, Matrix.CreateRotationY(rot), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.5f, 0.5f, 0.5f), PrimitiveLibrary.BoxPrimitives["crate"], spriteSheet);
 
             crate.Tags.Add("Crate");
             crate.CollisionType = CollisionManager.CollisionType.Static;
@@ -205,7 +205,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
 
-            PhysicsComponent stone = new PhysicsComponent(componentManager, "Mana", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            Physics stone = new Physics(componentManager, "Mana", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             List<Point> frames = new List<Point>
             {
@@ -213,9 +213,9 @@ namespace DwarfCorp
             };
             Animation stoneAnimation = new Animation(graphics, spriteSheet, "Mana", 32, 32, frames, false, Color.White, 0.01f, 0.5f, 0.5f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", stone, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", stone, Matrix.Identity, spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Spherical
+                OrientationType = Sprite.OrientMode.Spherical
             };
             sprite.AddAnimation(stoneAnimation);
             sprite.LightsWithVoxels = false;
@@ -224,7 +224,7 @@ namespace DwarfCorp
 
             stone.Tags.Add("Mana");
             stone.Tags.Add("Resource");
-            SinMover sinMover = new SinMover(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
+            Bobber bobber = new Bobber(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
             return stone;
         }
 
@@ -234,7 +234,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
 
-            PhysicsComponent stone = new PhysicsComponent(componentManager, "Stone", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            Physics stone = new Physics(componentManager, "Stone", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             List<Point> frames = new List<Point>
             {
@@ -242,9 +242,9 @@ namespace DwarfCorp
             };
             Animation stoneAnimation = new Animation(graphics, spriteSheet, "Stone", 32, 32, frames, false, Color.White, 0.01f, 0.5f, 0.5f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", stone, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", stone, Matrix.Identity, spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Spherical
+                OrientationType = Sprite.OrientMode.Spherical
             };
             sprite.AddAnimation(stoneAnimation);
 
@@ -253,7 +253,7 @@ namespace DwarfCorp
 
             stone.Tags.Add("Stone");
             stone.Tags.Add("Resource");
-            SinMover sinMover = new SinMover(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
+            Bobber bobber = new Bobber(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
             return stone;
         }
 
@@ -263,7 +263,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
 
-            PhysicsComponent stone = new PhysicsComponent(componentManager, "Gold", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            Physics stone = new Physics(componentManager, "Gold", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             List<Point> frames = new List<Point>
             {
@@ -271,9 +271,9 @@ namespace DwarfCorp
             };
             Animation stoneAnimation = new Animation(graphics, spriteSheet, "Gold", 32, 32, frames, false, Color.White, 0.01f, 0.5f, 0.5f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", stone, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", stone, Matrix.Identity, spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Spherical
+                OrientationType = Sprite.OrientMode.Spherical
             };
             sprite.AddAnimation(stoneAnimation);
 
@@ -282,7 +282,7 @@ namespace DwarfCorp
 
             stone.Tags.Add("Gold");
             stone.Tags.Add("Resource");
-            SinMover sinMover = new SinMover(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
+            Bobber bobber = new Bobber(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
             return stone;
         }
 
@@ -292,7 +292,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
 
-            PhysicsComponent stone = new PhysicsComponent(componentManager, "Iron", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            Physics stone = new Physics(componentManager, "Iron", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             List<Point> frames = new List<Point>
             {
@@ -300,9 +300,9 @@ namespace DwarfCorp
             };
             Animation stoneAnimation = new Animation(graphics, spriteSheet, "Iron", 32, 32, frames, false, Color.White, 0.01f, 0.5f, 0.5f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", stone, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", stone, Matrix.Identity, spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Spherical
+                OrientationType = Sprite.OrientMode.Spherical
             };
             sprite.AddAnimation(stoneAnimation);
 
@@ -311,7 +311,7 @@ namespace DwarfCorp
 
             stone.Tags.Add("Iron");
             stone.Tags.Add("Resource");
-            SinMover sinMover = new SinMover(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
+            Bobber bobber = new Bobber(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
             return stone;
         }
 
@@ -377,7 +377,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
 
-            PhysicsComponent dirt = new PhysicsComponent(componentManager, "Dirt", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            Physics dirt = new Physics(componentManager, "Dirt", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             List<Point> frames = new List<Point>
             {
@@ -385,9 +385,9 @@ namespace DwarfCorp
             };
             Animation dirtAnimation = new Animation(graphics, spriteSheet, "Dirt", 32, 32, frames, false, Color.White, 0.01f, 0.5f, 0.5f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", dirt, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", dirt, Matrix.Identity, spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Spherical
+                OrientationType = Sprite.OrientMode.Spherical
             };
             sprite.AddAnimation(dirtAnimation);
 
@@ -396,7 +396,7 @@ namespace DwarfCorp
 
             dirt.Tags.Add("Dirt");
             dirt.Tags.Add("Resource");
-            SinMover sinMover = new SinMover(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
+            Bobber bobber = new Bobber(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
             return dirt;
         }
 
@@ -406,7 +406,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
 
-            PhysicsComponent wood = new PhysicsComponent(componentManager, "Wood", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            Physics wood = new Physics(componentManager, "Wood", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             List<Point> frames = new List<Point>
             {
@@ -414,9 +414,9 @@ namespace DwarfCorp
             };
             Animation woodAnimation = new Animation(graphics, spriteSheet, "Wood", 32, 32, frames, false, Color.White, 0.01f, 0.5f, 0.5f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", wood, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", wood, Matrix.Identity, spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Spherical
+                OrientationType = Sprite.OrientMode.Spherical
             };
             sprite.AddAnimation(woodAnimation);
 
@@ -425,7 +425,7 @@ namespace DwarfCorp
 
             wood.Tags.Add("Wood");
             wood.Tags.Add("Resource");
-            SinMover sinMover = new SinMover(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
+            Bobber bobber = new Bobber(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
             return wood;
         }
 
@@ -435,7 +435,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
 
-            PhysicsComponent apple = new PhysicsComponent(componentManager, "Apple", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            Physics apple = new Physics(componentManager, "Apple", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             List<Point> frames = new List<Point>
             {
@@ -443,13 +443,13 @@ namespace DwarfCorp
             };
             Animation appleAnimation = new Animation(graphics, spriteSheet, "Apple", 32, 32, frames, false, Color.White, 0.01f, 0.5f, 0.5f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", apple, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", apple, Matrix.Identity, spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Spherical
+                OrientationType = Sprite.OrientMode.Spherical
             };
             sprite.AddAnimation(appleAnimation);
 
-            FoodComponent food = new FoodComponent(componentManager, "Food", apple, 15f);
+            Food food = new Food(componentManager, "Food", apple, 15f);
 
             appleAnimation.Play();
 
@@ -457,7 +457,7 @@ namespace DwarfCorp
             apple.Tags.Add("Resource");
             apple.Tags.Add("Food");
 
-            SinMover sinMover = new SinMover(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
+            Bobber bobber = new Bobber(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
 
             return apple;
         }
@@ -476,7 +476,7 @@ namespace DwarfCorp
 
             Body bed = new Body(componentManager, "Bed", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.5f, 1.5f), new Vector3(0.5f, 0.5f, 1.0f));
            
-            TexturedBoxObject bedModel = new TexturedBoxObject(componentManager, "bedbox", bed, Matrix.Identity, new Vector3(1.0f, 1.0f, 2.0f), new Vector3(0.5f, 0.5f, 1.0f), PrimitiveLibrary.BoxPrimitives["bed"], spriteSheet);
+            Box bedModel = new Box(componentManager, "bedbox", bed, Matrix.Identity, new Vector3(1.0f, 1.0f, 2.0f), new Vector3(0.5f, 0.5f, 1.0f), PrimitiveLibrary.BoxPrimitives["bed"], spriteSheet);
 
             Voxel voxelUnder = PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position);
 
@@ -503,8 +503,8 @@ namespace DwarfCorp
             };
             Animation tableAnimation = new Animation(graphics, spriteSheet, "Anvil", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", table, Matrix.Identity, spriteSheet, false);
-            sprite.OrientationType = BillboardSpriteComponent.OrientMode.Spherical;
+            Sprite sprite = new Sprite(componentManager, "sprite", table, Matrix.Identity, spriteSheet, false);
+            sprite.OrientationType = Sprite.OrientMode.Spherical;
             sprite.AddAnimation(tableAnimation);
 
             tableAnimation.Play();
@@ -525,8 +525,8 @@ namespace DwarfCorp
             };
             Animation tableAnimation = new Animation(graphics, spriteSheet, "Target", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", table, Matrix.Identity, spriteSheet, false);
-            sprite.OrientationType = BillboardSpriteComponent.OrientMode.Spherical;
+            Sprite sprite = new Sprite(componentManager, "sprite", table, Matrix.Identity, spriteSheet, false);
+            sprite.OrientationType = Sprite.OrientMode.Spherical;
             sprite.AddAnimation(tableAnimation);
 
             tableAnimation.Play();
@@ -547,9 +547,9 @@ namespace DwarfCorp
             };
             Animation tableAnimation = new Animation(graphics, spriteSheet, "Strawman", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", table, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", table, Matrix.Identity, spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Spherical
+                OrientationType = Sprite.OrientMode.Spherical
             };
             sprite.AddAnimation(tableAnimation);
 
@@ -571,9 +571,9 @@ namespace DwarfCorp
             };
             Animation tableAnimation = new Animation(graphics, spriteSheet, "Wheat", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", table, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", table, Matrix.Identity, spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Fixed
+                OrientationType = Sprite.OrientMode.Fixed
             };
             sprite.AddAnimation(tableAnimation);
 
@@ -595,15 +595,15 @@ namespace DwarfCorp
             };
             Animation tableAnimation = new Animation(graphics, spriteSheet, "Mushroom", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", table, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", table, Matrix.Identity, spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Fixed
+                OrientationType = Sprite.OrientMode.Fixed
             };
             sprite.AddAnimation(tableAnimation);
 
-            BillboardSpriteComponent sprite2 = new BillboardSpriteComponent(componentManager, "sprite2", table, Matrix.CreateRotationY((float) Math.PI * 0.5f), spriteSheet, false)
+            Sprite sprite2 = new Sprite(componentManager, "sprite2", table, Matrix.CreateRotationY((float) Math.PI * 0.5f), spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Fixed
+                OrientationType = Sprite.OrientMode.Fixed
             };
             sprite2.AddAnimation(tableAnimation);
 
@@ -630,15 +630,15 @@ namespace DwarfCorp
             };
             Animation tableAnimation = new Animation(graphics, spriteSheet, "Spikes", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", spikeTrap, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", spikeTrap, Matrix.Identity, spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Fixed
+                OrientationType = Sprite.OrientMode.Fixed
             };
             sprite.AddAnimation(tableAnimation);
 
-            BillboardSpriteComponent sprite2 = new BillboardSpriteComponent(componentManager, "sprite2", spikeTrap, Matrix.CreateRotationY((float) Math.PI * 0.5f), spriteSheet, false)
+            Sprite sprite2 = new Sprite(componentManager, "sprite2", spikeTrap, Matrix.CreateRotationY((float) Math.PI * 0.5f), spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Fixed
+                OrientationType = Sprite.OrientMode.Fixed
             };
             sprite2.AddAnimation(tableAnimation);
 
@@ -674,21 +674,21 @@ namespace DwarfCorp
             Animation tableTop = new Animation(graphics, spriteSheet, "tableTop", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
             Animation tableAnimation = new Animation(graphics, spriteSheet, "tableTop", 32, 32, sideframes, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            BillboardSpriteComponent tabletopSprite = new BillboardSpriteComponent(componentManager, "sprite1", table, Matrix.CreateRotationX((float) Math.PI * 0.5f), spriteSheet, false)
+            Sprite tabletopSprite = new Sprite(componentManager, "sprite1", table, Matrix.CreateRotationX((float) Math.PI * 0.5f), spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Fixed
+                OrientationType = Sprite.OrientMode.Fixed
             };
             tabletopSprite.AddAnimation(tableTop);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", table, Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", table, Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.Identity, spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Fixed
+                OrientationType = Sprite.OrientMode.Fixed
             };
             sprite.AddAnimation(tableAnimation);
 
-            BillboardSpriteComponent sprite2 = new BillboardSpriteComponent(componentManager, "sprite2", table, Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.CreateRotationY((float) Math.PI * 0.5f), spriteSheet, false)
+            Sprite sprite2 = new Sprite(componentManager, "sprite2", table, Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.CreateRotationY((float) Math.PI * 0.5f), spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Fixed
+                OrientationType = Sprite.OrientMode.Fixed
             };
             sprite2.AddAnimation(tableAnimation);
 
@@ -722,9 +722,9 @@ namespace DwarfCorp
             };
             Animation tableAnimation = new Animation(graphics, spriteSheet, "Book", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", parent, matrix, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", parent, matrix, spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Spherical
+                OrientationType = Sprite.OrientMode.Spherical
             };
             sprite.AddAnimation(tableAnimation);
 
@@ -764,9 +764,9 @@ namespace DwarfCorp
             frames.Add(new Point(1, 4));
             Animation tableAnimation = new Animation(graphics, spriteSheet, "Potion", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", parent, matrix, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", parent, matrix, spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.Spherical
+                OrientationType = Sprite.OrientMode.Spherical
             };
             sprite.AddAnimation(tableAnimation);
 
@@ -811,9 +811,9 @@ namespace DwarfCorp
             };
             Animation lampAnimation = new Animation(graphics, spriteSheet, "Flag", 32, 32, frames, true, Color.White, 5.0f + MathFunctions.Rand(), 1f, 1.0f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", flag, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", flag, Matrix.Identity, spriteSheet, false)
             {
-                OrientationType = BillboardSpriteComponent.OrientMode.YAxis
+                OrientationType = Sprite.OrientMode.YAxis
             };
             sprite.AddAnimation(lampAnimation);
 
@@ -847,10 +847,10 @@ namespace DwarfCorp
             };
             Animation lampAnimation = new Animation(graphics, spriteSheet, "Lamp", 32, 32, frames, true, Color.White, 3.0f, 1f, 1.0f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", lamp, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", lamp, Matrix.Identity, spriteSheet, false)
             {
                 LightsWithVoxels = false,
-                OrientationType = BillboardSpriteComponent.OrientMode.YAxis
+                OrientationType = Sprite.OrientMode.YAxis
             };
             sprite.AddAnimation(lampAnimation);
 
@@ -867,7 +867,7 @@ namespace DwarfCorp
             }
 
 
-            LightComponent light = new LightComponent(componentManager, "light", lamp, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 255, 8)
+            LightEmitter light = new LightEmitter(componentManager, "light", lamp, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 255, 8)
             {
                 HasMoved = true
             };
@@ -890,7 +890,7 @@ namespace DwarfCorp
             };
             Animation lampAnimation = new Animation(graphics, spriteSheet, "Forge", 32, 32, frames, true, Color.White, 3.0f, 1f, 1.0f, false);
 
-            BillboardSpriteComponent sprite = new BillboardSpriteComponent(componentManager, "sprite", lamp, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", lamp, Matrix.Identity, spriteSheet, false)
             {
                 LightsWithVoxels = false
             };
@@ -907,7 +907,7 @@ namespace DwarfCorp
                 VoxelListener listener = new VoxelListener(componentManager, lamp, PlayState.ChunkManager, voxelUnder.GetReference());
             }
 
-            LightComponent light = new LightComponent(componentManager, "light", lamp, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 50, 4)
+            LightEmitter light = new LightEmitter(componentManager, "light", lamp, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 50, 4)
             {
                 HasMoved = true
             };
@@ -920,11 +920,11 @@ namespace DwarfCorp
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
             Body tree = new Body(componentManager, asset, componentManager.RootComponent, matrix, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), new Vector3(treeSize , treeSize * 1.5f, treeSize));
-            ModelInstanceComponent modelInstance = new ModelInstanceComponent(componentManager, "Model", tree, Matrix.CreateRotationY((float)(PlayState.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(treeSize * 4, treeSize * 4, treeSize * 4) * Matrix.CreateTranslation(new Vector3(0.7f, treeSize * offset, 0.7f)), asset, false);
+            Mesh modelInstance = new Mesh(componentManager, "Model", tree, Matrix.CreateRotationY((float)(PlayState.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(treeSize * 4, treeSize * 4, treeSize * 4) * Matrix.CreateTranslation(new Vector3(0.7f, treeSize * offset, 0.7f)), asset, false);
 
-            HealthComponent health = new HealthComponent(componentManager, "Health", tree, 100.0f * treeSize, 0.0f, 100.0f * treeSize);
+            Health health = new Health(componentManager, "HP", tree, 100.0f * treeSize, 0.0f, 100.0f * treeSize);
 
-            FlammableComponent flame = new FlammableComponent(componentManager, "Flames", tree, health);
+            Flammable flame = new Flammable(componentManager, "Flames", tree, health);
 
 
             tree.Tags.Add("Tree");
@@ -970,7 +970,7 @@ namespace DwarfCorp
             });
             
 
-            EmitterComponent emitter = new EmitterComponent("Leaves", componentManager, "LeafEmitter", tree, Matrix.Identity, new Vector3(treeSize * 2, treeSize, treeSize * 2), Vector3.Zero);
+            ParticleTrigger particleTrigger = new ParticleTrigger("Leaves", componentManager, "LeafEmitter", tree, Matrix.Identity, new Vector3(treeSize * 2, treeSize, treeSize * 2), Vector3.Zero);
 
             tree.AddToOctree = true;
             tree.CollisionType = CollisionManager.CollisionType.Static;
@@ -983,9 +983,9 @@ namespace DwarfCorp
             matrix.Translation = position + new Vector3(0.5f, 0, 0.5f);
             Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.berrybush);
             Body tree = new Body(componentManager, "Bush", componentManager.RootComponent, matrix, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero);
-            ModelInstanceComponent modelInstance = new ModelInstanceComponent(componentManager, "Model", tree, Matrix.CreateScale(bushSize, bushSize, bushSize) * Matrix.CreateTranslation(new Vector3(0.0f, bushSize * offset - 0.1f, 0.0f)), "berrybush", false);
+            Mesh modelInstance = new Mesh(componentManager, "Model", tree, Matrix.CreateScale(bushSize, bushSize, bushSize) * Matrix.CreateTranslation(new Vector3(0.0f, bushSize * offset - 0.1f, 0.0f)), "berrybush", false);
 
-            HealthComponent health = new HealthComponent(componentManager, "Health", tree, 30 * bushSize, 0.0f, 30 * bushSize);
+            Health health = new Health(componentManager, "HP", tree, 30 * bushSize, 0.0f, 30 * bushSize);
 
 
 
@@ -1041,7 +1041,7 @@ namespace DwarfCorp
 
         public static void CreateIntersectingBillboard(GameComponent component, Texture2D spriteSheet, float xSize, float ySize, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
         {
-            BatchBillboard billboard = new BatchBillboard(componentManager, "BatchBillboard", component, Matrix.Identity, spriteSheet, 2, graphics)
+            BatchedSprite billboard = new BatchedSprite(componentManager, "BatchedSprite", component, Matrix.Identity, spriteSheet, 2, graphics)
             {
                 Primitive = PrimitiveLibrary.BatchBillboardPrimitives["tree"],
                 LightsWithVoxels = true,

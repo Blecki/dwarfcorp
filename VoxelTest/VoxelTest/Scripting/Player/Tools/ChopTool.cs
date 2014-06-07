@@ -79,7 +79,7 @@ namespace DwarfCorp
                     {
                         Player.Faction.ChopDesignations.Add(tree);
 
-                        foreach(CreatureAIComponent creature in Player.Faction.SelectedMinions)
+                        foreach(CreatureAI creature in Player.Faction.SelectedMinions)
                         {
                             creature.Tasks.Add(new KillEntityTask(tree));
                         }

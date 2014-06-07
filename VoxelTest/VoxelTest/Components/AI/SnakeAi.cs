@@ -8,10 +8,10 @@ using Microsoft.Xna.Framework;
 namespace DwarfCorp
 {
     /// <summary>
-    /// Extends CreatureAIComponent specifically for
+    /// Extends CreatureAI specifically for
     /// bird behavior.
     /// </summary>
-    public class SnakeAI : CreatureAIComponent
+    public class SnakeAI : CreatureAI
     {
         public SnakeAI()
         {
@@ -35,7 +35,8 @@ namespace DwarfCorp
         {
             while (true)
             {
-               Creature.Physics.ApplyForce(new Vector3(1, 0, 0), 1);
+                
+               Creature.Physics.ApplyForce(0.1f *(PlayState.CursorLightPos - this.Creature.AI.Position) - 0.1f * Creature.Physics.Velocity, 1);
                yield return Act.Status.Running;
             }
         }

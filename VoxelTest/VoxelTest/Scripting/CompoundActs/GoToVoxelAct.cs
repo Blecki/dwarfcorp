@@ -18,7 +18,7 @@ namespace DwarfCorp
             
         }
 
-        public GoToVoxelAct(string voxel, PlanAct.PlanType planType, CreatureAIComponent creature) :
+        public GoToVoxelAct(string voxel, PlanAct.PlanType planType, CreatureAI creature) :
             base(creature)
         {
             Name = "Go to Voxel " + voxel;
@@ -32,7 +32,7 @@ namespace DwarfCorp
                                       new StopAct(Agent));
         }
 
-        public GoToVoxelAct(VoxelRef voxel, PlanAct.PlanType planType, CreatureAIComponent creature) :
+        public GoToVoxelAct(VoxelRef voxel, PlanAct.PlanType planType, CreatureAI creature) :
             base(creature)
         {
             Voxel = voxel;

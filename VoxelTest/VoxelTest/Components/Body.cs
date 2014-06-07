@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -64,7 +65,8 @@ namespace DwarfCorp
 
         public BoundingBox BoundingBox = new BoundingBox();
 
-        
+
+        public bool DrawScreenRect { get; set; }
         public Vector3 BoundingBoxPos { get; set; }
         public bool DrawBoundingBox { get; set; }
         public bool DepthSort { get; set; }
@@ -114,6 +116,7 @@ namespace DwarfCorp
             AnimationQueue = new List<MotionAnimation>();
             DrawInFrontOfSiblings = false;
             CollisionType = CollisionManager.CollisionType.None;
+            DrawScreenRect = false;
         }
 
         public Body(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToOctree) :
@@ -131,6 +134,32 @@ namespace DwarfCorp
             FrustrumCull = true;
             DrawInFrontOfSiblings = false;
             CollisionType = CollisionManager.CollisionType.None;
+            DrawScreenRect = false;
+        }
+
+
+        public Rectangle GetScreenRect(Camera camera)
+        {
+            BoundingBox box = GetBoundingBox();
+
+            
+            Vector3 ext = (box.Max - box.Min);
+            Vector3 center = box.Center();
+
+
+            Vector3 p1 = camera.Project(box.Min);
+            Vector3 p2 = camera.Project(box.Max);
+            Vector3 p3 = camera.Project(box.Min + new Vector3(ext.X, 0, 0));
+            Vector3 p4 = camera.Project(box.Min + new Vector3(0, ext.Y, 0));
+            Vector3 p5 = camera.Project(box.Min + new Vector3(0, 0, ext.Z));
+            Vector3 p6 = camera.Project(box.Min + new Vector3(ext.X, ext.Y, 0));
+
+
+            Vector3 min = MathFunctions.Min(p1, p2, p3, p4, p5, p6);
+            Vector3 max = MathFunctions.Max(p1, p2, p3, p4, p5, p6);
+
+            return new Rectangle((int)min.X, (int)min.Y, (int)(max.X - min.X), (int)(max.Y - min.Y));
+
         }
 
 
@@ -174,6 +203,11 @@ namespace DwarfCorp
             }
             */
 
+            if(DrawScreenRect)
+            {
+                Drawer2D.DrawRect(GetScreenRect(camera), Color.Transparent, Color.White, 1);
+            }
+
             if(DrawBoundingBox)
             {
                 Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f);
@@ -194,6 +228,7 @@ namespace DwarfCorp
 
             base.Update(gameTime, chunks, camera);
         }
+
 
         public void UpdateTransformsRecursive()
         {

@@ -30,14 +30,14 @@ namespace DwarfCorp
             return new Condition(EntityIsInHands);
         }
 
-        public GoToEntityAct(string entity, CreatureAIComponent creature) :
+        public GoToEntityAct(string entity, CreatureAI creature) :
             base(creature)
         {
             Name = "Go to entity " + entity;
             EntityName = entity;
         }
 
-        public GoToEntityAct(Body entity, CreatureAIComponent creature) :
+        public GoToEntityAct(Body entity, CreatureAI creature) :
             base(creature)
         {
             Name = "Go to entity";

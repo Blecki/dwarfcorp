@@ -15,7 +15,7 @@ namespace DwarfCorp
         public string TargetVoxelName { get; set; }
         public float EnergyLoss { get; set; }
 
-        public DigAct(CreatureAIComponent creature, string targetVoxel) :
+        public DigAct(CreatureAI creature, string targetVoxel) :
             base(creature)
         {
             TargetVoxelName = targetVoxel;

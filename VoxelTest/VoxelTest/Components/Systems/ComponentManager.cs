@@ -152,7 +152,9 @@ namespace DwarfCorp
         {
             return (from component in RootComponent.Children.OfType<Body>()
                     let screenPos = camera.Project(component.GlobalTransform.Translation)
-                    where selectionRectangle.Contains((int)screenPos.X, (int)screenPos.Y) && screenPos.Z > 0
+                    where   screenPos.Z > 0 
+                    && (selectionRectangle.Contains((int)screenPos.X, (int)screenPos.Y) || selectionRectangle.Intersects(component.GetScreenRect(camera))) 
+                    && camera.GetFrustrum().Contains(component.GlobalTransform.Translation) != ContainmentType.Disjoint
                     select component).ToList();
         }
 
@@ -160,7 +162,7 @@ namespace DwarfCorp
         {
             return (from component in Components.Values.OfType<Body>()
                     let screenPos = camera.Project(component.GlobalTransform.Translation)
-                    where selectionRectangle.Contains((int)screenPos.X, (int)screenPos.Y) && screenPos.Z > 0
+                    where selectionRectangle.Contains((int)screenPos.X, (int)screenPos.Y) || selectionRectangle.Intersects(component.GetScreenRect(camera)) && screenPos.Z > 0
                     select component).ToList();
         }
 

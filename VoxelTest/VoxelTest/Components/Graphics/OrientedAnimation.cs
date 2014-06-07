@@ -14,7 +14,7 @@ namespace DwarfCorp
     /// of the camera.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class OrientedAnimation : BillboardSpriteComponent
+    public class OrientedAnimation : Sprite
     {
         public enum Orientation
         {

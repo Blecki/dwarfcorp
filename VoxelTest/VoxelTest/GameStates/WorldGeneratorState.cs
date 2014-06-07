@@ -105,7 +105,7 @@ namespace DwarfCorp.GameStates
                
             };
 
-            WorldName = new TextGenerator().GenerateRandom(templates[PlayState.Random.Next(templates.Count)]); 
+            WorldName =  TextGenerator.GenerateRandom(templates[PlayState.Random.Next(templates.Count)]); 
         }
 
 

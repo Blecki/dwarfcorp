@@ -32,7 +32,7 @@ namespace DwarfCorp
                 "Herbivore",
                 PlayState.PlanService,
                 manager.Factions.Factions["Herbivore"],
-                new PhysicsComponent
+                new Physics
                 (
                     manager,
                     "deer",
@@ -90,9 +90,9 @@ namespace DwarfCorp
             Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
 
             // Add AI
-            AI = new CreatureAIComponent(this, "Deer AI", Sensors, PlanService);
+            AI = new CreatureAI(this, "Deer AI", Sensors, PlanService);
 
-            Health = new HealthComponent(Manager, "Health", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
+            Health = new Health(Manager, "HP", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
 
             Weapon = new Weapon("None", 0.0f, 0.0f, 0.0f, AI, ContentPaths.Audio.pick);
 
@@ -108,7 +108,7 @@ namespace DwarfCorp
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -.25f, 0.0f);
             Texture2D shadowTexture = TextureManager.GetTexture(ContentPaths.Effects.shadowcircle);
-            Shadow = new ShadowComponent(Manager, "Shadow", Physics, shadowTransform, shadowTexture);
+            Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform, shadowTexture);
 
             List<Point> shP = new List<Point>
             {
@@ -120,14 +120,14 @@ namespace DwarfCorp
             Shadow.SetCurrentAnimation("sh");
 
             // The bird will emit a shower of blood when it dies
-            DeathEmitter = new EmitterComponent("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
+            DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 100
             };
 
             // The bird is flammable, and can die when exposed to fire.
-            Flames = new FlammableComponent(Manager, "Flames", Physics, Health);
+            Flames = new Flammable(Manager, "Flames", Physics, Health);
 
             // Tag the physics component with some information 
             // that can be used later

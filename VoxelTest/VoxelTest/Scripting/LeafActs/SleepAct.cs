@@ -24,7 +24,7 @@ namespace DwarfCorp.Scripting.LeafActs
             Teleport = false;
         }
 
-        public SleepAct(CreatureAIComponent creature) :
+        public SleepAct(CreatureAI creature) :
             base(creature)
         {
             Name = "Sleep";

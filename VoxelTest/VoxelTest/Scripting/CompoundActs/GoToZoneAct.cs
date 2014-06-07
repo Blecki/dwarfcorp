@@ -18,7 +18,7 @@ namespace DwarfCorp
 
         }
 
-        public GoToZoneAct(CreatureAIComponent agent, Zone zone) :
+        public GoToZoneAct(CreatureAI agent, Zone zone) :
             base(agent)
         {
             Tree = null;

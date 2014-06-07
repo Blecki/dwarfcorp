@@ -42,7 +42,7 @@ namespace DwarfCorp
                 locatable.WasAddedToOctree = false;
                 locatable.AddToOctree = true;
 
-                var component = locatable as PhysicsComponent;
+                var component = locatable as Physics;
                 if(component != null)
                 {
                     Vector3 radialThrow = MathFunctions.RandVector3Cube() * ThrowSpeed;

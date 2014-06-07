@@ -88,6 +88,16 @@ namespace DwarfCorp
             LastScrollWheel = 0;
         }
 
+        protected GUIComponent()
+        {
+           
+        }
+
+        public void InvokeClick()
+        {
+            OnClicked();
+        }
+
         private void SillyGUIComponent_OnScrolled(int amount)
         {
         }
@@ -333,6 +343,18 @@ namespace DwarfCorp
             foreach (GUIComponent child in Children)
             {
                 child.DebugRender(time, batch);
+            }
+        }
+
+        public void Destroy()
+        {
+            if(Parent == null)
+            {
+                GUI.RootComponent = null;
+            }
+            else
+            {
+                Parent.RemoveChild(this);
             }
         }
     }

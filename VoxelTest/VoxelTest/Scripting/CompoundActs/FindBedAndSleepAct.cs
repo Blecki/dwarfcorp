@@ -18,7 +18,7 @@ namespace DwarfCorp
             Name = "Find bed and sleep";
         }
 
-        public FindBedAndSleepAct(CreatureAIComponent agent) :
+        public FindBedAndSleepAct(CreatureAI agent) :
             base(agent)
         {
             Name = "Find bed and sleep";

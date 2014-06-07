@@ -31,8 +31,8 @@ namespace DwarfCorp
                 {
                     Console.WriteLine(t);
                 }
-                List<HealthComponent> hcList = lc.GetChildrenOfType<HealthComponent>();
-                foreach (HealthComponent hc in hcList)
+                List<Health> hcList = lc.GetChildrenOfType<Health>();
+                foreach (Health hc in hcList)
                 {
                     hc.Damage(1000000);
                 }

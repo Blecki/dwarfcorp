@@ -47,6 +47,12 @@ namespace DwarfCorp
             DrawCommands.Enqueue(new TextBoxDrawCommand(text, DefaultFont, position, Color.White, new Color(0, 0, 0, 200), new Color(50, 50, 50, 100), new Color(0, 0, 0, 200), 2.0f));
         }
 
+        public static void DrawLoadBar(Vector3 worldPos, Color backgroundColor, Color strokeColor, int width, int height, float progress)
+        {
+            Drawer2D.DrawRect(worldPos, new Rectangle(0, 0, width + 1, height + 1), Color.Transparent, strokeColor, 1);
+            Drawer2D.DrawRect(worldPos, new Rectangle(0, 0, (int)(width * (progress)), height), backgroundColor, Color.Transparent, 1);
+        }
+
         public static void DrawRect(Vector3 worldPos, Rectangle screenRect, Color backgroundColor, Color strokeColor, float strokewidth)
         {
             

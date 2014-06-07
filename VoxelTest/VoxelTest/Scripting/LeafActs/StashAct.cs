@@ -34,7 +34,7 @@ namespace DwarfCorp
 
         }
 
-        public StashAct(CreatureAIComponent agent, PickUpType type, Zone zone, string targetName, string stashedItemOut) :
+        public StashAct(CreatureAI agent, PickUpType type, Zone zone, string targetName, string stashedItemOut) :
             base(agent)
         {
             Name = "Stash " + targetName;

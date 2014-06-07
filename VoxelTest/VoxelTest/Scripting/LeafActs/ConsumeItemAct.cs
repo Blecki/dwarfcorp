@@ -23,7 +23,7 @@ namespace DwarfCorp
             
         }
 
-        public ConsumeItemAct(CreatureAIComponent agent) :
+        public ConsumeItemAct(CreatureAI agent) :
             base(agent)
         {
             Name = "Consume " + TargetID;

@@ -16,6 +16,7 @@ namespace DwarfCorp
 
         public DwarfSelectorTool(GameMaster master)
         {
+           
             Player = master;
             InputManager.MouseClickedCallback += InputManager_MouseClickedCallback;
         }
@@ -33,7 +34,7 @@ namespace DwarfCorp
                 return;
             }
 
-            foreach(CreatureAIComponent minion in Player.SelectedMinions)
+            foreach(CreatureAI minion in Player.SelectedMinions)
             {
                 if(minion.CurrentTask != null)
                 {
@@ -64,7 +65,13 @@ namespace DwarfCorp
 
             if(!keyState.IsKeyDown(Keys.LeftShift))
             {
+                foreach(CreatureAI creature in Player.SelectedMinions)
+                {
+                    creature.Creature.SelectionCircle.IsVisible = false;
+                }
                 Player.SelectedMinions.Clear();
+
+
             }
             foreach(Body body in bodies)
             {
@@ -76,6 +83,7 @@ namespace DwarfCorp
                 }
 
                 Dwarf dwarf = dwarves[0];
+
 
                 if (!Player.SelectedMinions.Contains(dwarf.AI))
                 {
@@ -106,11 +114,13 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
         {
-            foreach (CreatureAIComponent creature in Player.SelectedMinions)
+            /*
+            foreach (CreatureAI creature in Player.SelectedMinions)
             {
                 Drawer2D.DrawZAlignedRect(creature.Position + Vector3.Down * 0.5f, 0.25f, 0.25f, 1, new Color(100, 100, 100, 100));
                 //Drawer2D.DrawRect(creature.AI.Position, new Rectangle(0, 0, 64, 64), Color.Transparent, new Color(100, 100, 100, 100), 1);
             }
+             */
         }
     }
 }

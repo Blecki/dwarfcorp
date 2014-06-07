@@ -15,7 +15,7 @@ namespace DwarfCorp
     public class Goblin : Creature
     {
         public Goblin(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, Texture2D GoblinTexture, Vector3 position) :
-            base(stats, allies, planService, faction, new PhysicsComponent(manager, "goblin", manager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0)),
+            base(stats, allies, planService, faction, new Physics(manager, "goblin", manager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0)),
                 manager, chunks, graphics, content, name)
         {
             Initialize(GoblinTexture);
@@ -63,11 +63,11 @@ namespace DwarfCorp
 
             Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
 
-            AI = new CreatureAIComponent(this, "Goblin AI", Sensors, PlanService);
+            AI = new CreatureAI(this, "Goblin AI", Sensors, PlanService);
 
             Weapon = new Weapon("Sword", 1.0f, 2.0f, 1.0f, AI, ContentPaths.Audio.sword);
 
-            Health = new HealthComponent(Manager, "Health", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
+            Health = new Health(Manager, "HP", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
 
 
             Inventory = new Inventory(Manager, "Inventory", Physics)
@@ -83,7 +83,7 @@ namespace DwarfCorp
 
             Texture2D shadowTexture = TextureManager.GetTexture(ContentPaths.Effects.shadowcircle);
 
-            Shadow = new ShadowComponent(Manager, "Shadow", Physics, shadowTransform, shadowTexture);
+            Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform, shadowTexture);
             List<Point> shP = new List<Point>
             {
                 new Point(0, 0)
@@ -94,12 +94,12 @@ namespace DwarfCorp
             Shadow.SetCurrentAnimation("sh");
             Physics.Tags.Add("Goblin");
 
-            DeathEmitter = new EmitterComponent("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
+            DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 100
             };
-            Flames = new FlammableComponent(Manager, "Flames", Physics, Health);
+            Flames = new Flammable(Manager, "Flames", Physics, Health);
 
 
             NoiseMaker.Noises["Hurt"] = new List<string>
@@ -124,6 +124,9 @@ namespace DwarfCorp
             {
                 ContentPaths.Audio.jump
             };
+
+            Stats.FirstName = TextGenerator.GenerateRandom("$GoblinName");
+            Stats.LastName = TextGenerator.GenerateRandom("$GoblinFamily");
 
         }
     }

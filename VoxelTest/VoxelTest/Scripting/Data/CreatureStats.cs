@@ -48,9 +48,28 @@ namespace DwarfCorp
 
         public bool CanSleep { get; set; }
 
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int NumBlocksDestroyed { get; set; }
+        public int NumItemsGathered { get; set; }
+        public int NumRoomsBuilt { get; set; }
+        public int NumThingsKilled { get; set; }
+        public int NumBlocksPlaced { get; set; }
+
+        public int LevelIndex { get; set; }
+        public EmployeeClass CurrentClass { get; set; }
+        public EmployeeClass.Level CurrentLevel { get { return CurrentClass.Levels[LevelIndex]; } }
+
+        public int XP { get; set; }
+
         public CreatureStats()
         {
-            CanSleep = true;
+            CanSleep = false;
+            FirstName = "";
+            LastName = "";
+            CurrentClass = new WorkerClass();
+            LevelIndex = 0;
+            XP = 0;
         }
     }
 
