@@ -46,19 +46,35 @@
         </member>
         <member name="T:DwarfCorp.SnakeAI">
             <summary>
-            Extends CreatureAIComponent specifically for
+            Extends CreatureAI specifically for
             bird behavior.
             </summary>
         </member>
-        <member name="T:DwarfCorp.CreatureAIComponent">
+        <member name="T:DwarfCorp.CreatureAI">
             <summary>
             Component which manages the AI, scripting, and status of a particular creature (such as a Dwarf or Goblin)
             </summary>
         </member>
         <member name="T:DwarfCorp.BirdAI">
             <summary>
-            Extends CreatureAIComponent specifically for
+            Extends CreatureAI specifically for
             bird behavior.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.SelectionCircle">
+            <summary>
+            This component projects a billboard shadow to the ground below an entity.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Sprite">
+            <summary>
+            This is an animated "billboard". Essentially, a simple rectangle is drawn with a texture on it.
+            The rectangle is drawn in such a way that it is always more or less facing the camera.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Tinter">
+            <summary>
+            This component has a color tint which can change over time.
             </summary>
         </member>
         <member name="T:DwarfCorp.Body">
@@ -74,6 +90,34 @@
             a bounding box.
             </summary>
         </member>
+        <member name="T:DwarfCorp.GameStates.EconomyState">
+            <summary>
+            This game state allows the player to buy/sell goods from a balloon with a drag/drop interface.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GameStates.GameState">
+            <summary>
+            A game state is a generic representation of how the game behaves. Game states live in a stack. The state on the top of the stack is the one currently running.
+            States can be both rendered and updated. There are brief transition periods between states where animations can occur.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GUIComponent">
+            <summary>
+            Every element in the GUI is a GUI component. Components have children and parents. 
+            They have rectangles where they exist on the screen. They may be clicked or accept other inputs.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Panel">
+            <summary>
+            This is a simple GUI component which draws a fancy rectangle thing.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BuildRoomOrder">
+            <summary>
+            This designation specifies a list of voxels which are to be turned
+            into a BuildRoom.
+            </summary>
+        </member>
         <member name="T:DwarfCorp.VoxelListener">
             <summary>
             When a voxel is destroyed, this component kills whatever it is attached to.
@@ -86,12 +130,6 @@
             in the update thread.
             </summary>
         </member>
-        <member name="T:DwarfCorp.GUIComponent">
-            <summary>
-            Every element in the GUI is a GUI component. Components have children and parents. 
-            They have rectangles where they exist on the screen. They may be clicked or accept other inputs.
-            </summary>
-        </member>
         <member name="T:DwarfCorp.BodySelector">
             <summary>
             This class handles selecting regions of bodies with the mouse.
@@ -100,12 +138,6 @@
         <member name="T:DwarfCorp.GameStates.CompanyMakerState">
             <summary>
             This game state allows the player to design their own dwarf company.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.GameStates.GameState">
-            <summary>
-            A game state is a generic representation of how the game behaves. Game states live in a stack. The state on the top of the stack is the one currently running.
-            States can be both rendered and updated. There are brief transition periods between states where animations can occur.
             </summary>
         </member>
         <member name="T:DwarfCorp.TrapSensor">
@@ -263,12 +295,12 @@
             Called when the "Slice +" button is pressed
             </summary>
         </member>
-        <member name="M:DwarfCorp.GameStates.PlayState.GenerateInitialBalloonPort(DwarfCorp.RoomDesignator,DwarfCorp.ChunkManager,System.Single,System.Single,System.Int32)">
+        <member name="M:DwarfCorp.GameStates.PlayState.GenerateInitialBalloonPort(DwarfCorp.RoomBuilder,DwarfCorp.ChunkManager,System.Single,System.Single,System.Int32)">
             <summary>
             Creates a flat, wooden balloon port for the balloon to land on, and Dwarves to sit on.
             TODO: Fix height to that it's not too tall when on a mountain.
             </summary>
-            <param name="roomDes">The player's room designator (so that we can create a balloon port)</param>
+            <param name="roomDes">The player's BuildRoom designator (so that we can create a balloon port)</param>
             <param name="chunkManager">The terrain handler</param>
             <param name="x">The position of the center of the balloon port</param>
             <param name="z">The position of the center of the balloon port</param>
@@ -308,11 +340,6 @@
             Called every frame
             </summary>
             <param name="gameTime">The current time</param>
-        </member>
-        <member name="M:DwarfCorp.GameStates.PlayState.OrderStatusLabel_OnClicked">
-            <summary>
-            Called when the balloon status is clicked. Opens up an order screen.
-            </summary>
         </member>
         <member name="M:DwarfCorp.GameStates.PlayState.OpenPauseMenu">
             <summary>
@@ -483,7 +510,7 @@
         <member name="T:DwarfCorp.BuildRoomAct">
             <summary>
             A creature finds an item with a particular tag, and then puts it into a build zone
-            for a room. (This is used to construct rooms)
+            for a BuildRoom. (This is used to construct rooms)
             </summary>
         </member>
         <member name="T:DwarfCorp.CompoundCreatureAct">
@@ -504,7 +531,7 @@
         </member>
         <member name="T:DwarfCorp.FindAndEatFoodAct">
             <summary>
-            The creature finds food in a stockpile or room, and eats it.
+            The creature finds food in a stockpile or BuildRoom, and eats it.
             </summary>
         </member>
         <member name="T:DwarfCorp.FindBedAndSleepAct">
@@ -514,7 +541,7 @@
         </member>
         <member name="T:DwarfCorp.GetResourcesAct">
             <summary>
-            A creature finds an item from a stockpile or room with the given tags, goes to it, and picks it up.
+            A creature finds an item from a stockpile or BuildRoom with the given tags, goes to it, and picks it up.
             </summary>
         </member>
         <member name="T:DwarfCorp.GoToZoneAct">
@@ -539,7 +566,7 @@
         </member>
         <member name="T:DwarfCorp.PlaceRoomResourcesAct">
             <summary>
-            A creature uses the item currently in its hands to build a room.
+            A creature uses the item currently in its hands to build a BuildRoom.
             </summary>
         </member>
         <member name="T:DwarfCorp.PutResourceInZone">
@@ -592,18 +619,12 @@
             at a time (used, for instance, to make creatures have noises).
             </summary>
         </member>
-        <member name="T:DwarfCorp.Designation">
+        <member name="T:DwarfCorp.BuildOrder">
             <summary>
             A designation is just a voxel which can be assigned a number of creatures.
             </summary>
         </member>
-        <member name="T:DwarfCorp.RoomBuildDesignation">
-            <summary>
-            This designation specifies a list of voxels which are to be turned
-            into a room.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.ShipDesignation">
+        <member name="T:DwarfCorp.ShipOrder">
             <summary>
             This designation specifies that a resource should be shipped to a given port.
             Creatures will find a resource from stockpiles and move it to the port.
@@ -641,10 +662,10 @@
             </summary>
             <typeparam Name="T">The type of the object to convert</typeparam>
         </member>
-        <member name="T:DwarfCorp.VoxelBuildDesignation">
+        <member name="T:DwarfCorp.BuildVoxelOrder">
             <summary>
-            This designation specifies that a given voxel from a given room should be built.
-            A room build designation is actually a colletion of these.
+            This designation specifies that a given voxel from a given BuildRoom should be built.
+            A BuildRoom build designation is actually a colletion of these.
             </summary>
         </member>
         <member name="T:DwarfCorp.Faction">
@@ -856,20 +877,9 @@
             A simple hacked AI script for the DwarfCorp balloon. Has a state machine which makes it go up and down.
             </summary>
         </member>
-        <member name="T:DwarfCorp.BatchBillboard">
+        <member name="T:DwarfCorp.BatchedSprite">
             <summary>
             This component represents a list of several billboards which are efficiently drawn through state batching.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.BillboardSpriteComponent">
-            <summary>
-            This is an animated "billboard". Essentially, a simple rectangle is drawn with a texture on it.
-            The rectangle is drawn in such a way that it is always more or less facing the camera.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.TintableComponent">
-            <summary>
-            This component has a color tint which can change over time.
             </summary>
         </member>
         <member name="T:DwarfCorp.CharacterSprite">
@@ -891,7 +901,7 @@
             Convenience class for initializing Dwarves as Creatures.
             </summary>
         </member>
-        <member name="T:DwarfCorp.FlammableComponent">
+        <member name="T:DwarfCorp.Flammable">
             <summary>
             Component causes the object its attached to to become flammable. Flammable objects have "heat"
             when the heat is above a "flashpoint" they get damaged until they are destroyed, and emit flames.
@@ -902,7 +912,7 @@
             Convenience class for initializing goblins as creatures.
             </summary>
         </member>
-        <member name="T:DwarfCorp.ModelInstanceComponent">
+        <member name="T:DwarfCorp.Mesh">
             <summary>
             This component represents an instance of a particular primitive (such as intersecting billboards, or a box), or a mesh. 
             Efficiently drawn by the instance manager using state batching.
@@ -976,6 +986,11 @@
              <summary>
             This GUI component holds a list of items that the player can drag around.
              </summary>
+        </member>
+        <member name="T:DwarfCorp.GroupBox">
+            <summary>
+            This GUI component is a labeled panel which contains other components.
+            </summary>
         </member>
         <member name="T:DwarfCorp.KeyEdit">
             <summary>
@@ -1078,7 +1093,7 @@
             When an entity dies, this component releases other components (such as resources)
             </summary>
         </member>
-        <member name="T:DwarfCorp.EmitterComponent">
+        <member name="T:DwarfCorp.ParticleTrigger">
             <summary>
             This component emits particles either on the object's death, or when
             explicitly triggered.
@@ -1090,12 +1105,12 @@
             REQUIRES that the EnemySensor be attached to a creature
             </summary>
         </member>
-        <member name="T:DwarfCorp.FoodComponent">
+        <member name="T:DwarfCorp.Food">
             <summary>
             Component which is attached to a food object (like an apple)
             </summary>
         </member>
-        <member name="T:DwarfCorp.LightComponent">
+        <member name="T:DwarfCorp.LightEmitter">
             <summary>
             This component dynamically lights up voxels around it with torch light.
             </summary>
@@ -1105,7 +1120,7 @@
             This component represents the "Hands" of a creature. It's a generic way of attaching and detaching objects from each other.
             </summary>
         </member>
-        <member name="T:DwarfCorp.HealthComponent">
+        <member name="T:DwarfCorp.Health">
             <summary>
             When attached to another component, gives it health. When the health reaches its minimum, the object (and its parents/children) are destroyed.
             </summary>
@@ -1120,17 +1135,17 @@
             This component manages a set of particles, and can emit them at certain locations. The particle manager keeps track of a small set of these.
             </summary>
         </member>
-        <member name="T:DwarfCorp.ShadowComponent">
+        <member name="T:DwarfCorp.Shadow">
             <summary>
             This component projects a billboard shadow to the ground below an entity.
             </summary>
         </member>
-        <member name="T:DwarfCorp.SinMover">
+        <member name="T:DwarfCorp.Bobber">
             <summary>
             This component causes its parent to move up and down in a sinusoid pattern.
             </summary>
         </member>
-        <member name="T:DwarfCorp.TexturedBoxObject">
+        <member name="T:DwarfCorp.Box">
             <summary>
             This component draws a simple textured rectangular box.
             </summary>
@@ -1371,11 +1386,6 @@
             and extents in teh grid.
             </summary>
         </member>
-        <member name="T:DwarfCorp.GroupBox">
-            <summary>
-            This GUI component is a labeled panel which contains other components.
-            </summary>
-        </member>
         <member name="T:DwarfCorp.GUISkin">
             <summary>
             Specifies how a GUI should be drawn. Has a bunch of primitive drawing functions
@@ -1397,11 +1407,6 @@
             This is a GUI component with a list of possible selections,
             similar to a combo box, except the selections are all visible at
             the same time, and are pushed like buttons.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.Panel">
-            <summary>
-            This is a simple GUI component which draws a fancy rectangle thing.
             </summary>
         </member>
         <member name="T:DwarfCorp.ProgressBar">
@@ -1674,7 +1679,7 @@
             This is the debug tool that allows the player to mess with the engine.
             </summary>
         </member>
-        <member name="T:DwarfCorp.PutDesignation">
+        <member name="T:DwarfCorp.WallBuilder">
             <summary>
             A designation specifying that a creature should put a voxel of a given type
             at a location.
@@ -1691,10 +1696,10 @@
             A static collection of resource types (should eventually be replaced with a file)
             </summary>
         </member>
-        <member name="T:DwarfCorp.RoomDesignator">
+        <member name="T:DwarfCorp.RoomBuilder">
             <summary>
-            The room designator keeps track of voxels selected by the player and turns
-            them into room designations (so that dwarves can build room).
+            The BuildRoom designator keeps track of voxels selected by the player and turns
+            them into BuildRoom designations (so that dwarves can build BuildRoom).
             </summary>
         </member>
         <member name="T:DwarfCorp.RoomLibrary">
@@ -1704,14 +1709,14 @@
         </member>
         <member name="T:DwarfCorp.RoomTemplate">
             <summary>
-            Describes how a room should be populated with items. A template has a number of "required" items,
-            and "accessory" items. Templates will fill up a room until no more can be placed. Templates can be
+            Describes how a BuildRoom should be populated with items. A template has a number of "required" items,
+            and "accessory" items. Templates will fill up a BuildRoom until no more can be placed. Templates can be
             rotated to fill more space.
             </summary>
         </member>
         <member name="T:DwarfCorp.RoomType">
             <summary>
-            A room type has a Name, alters the apperance of voxels, requires resources to build,
+            A BuildRoom type has a Name, alters the apperance of voxels, requires resources to build,
             and has item templates.
             </summary>
         </member>
@@ -1723,6 +1728,11 @@
         <member name="T:DwarfCorp.Stockpile">
             <summary>
             A stockpile is a kind of zone which contains items on top of it.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Room">
+            <summary>
+            A BuildRoom is a kind of zone which can be built by creatures.
             </summary>
         </member>
         <member name="T:DwarfCorp.MasterControls">
@@ -2007,7 +2017,7 @@
             <param Name="y"></param>
             <returns></returns>
         </member>
-        <member name="T:DwarfCorp.PhysicsComponent">
+        <member name="T:DwarfCorp.Physics">
             <summary>
             Basic physics object. When attached to an entity, it causes it to obey gravity, and collide with stuff.
             All objects are just axis-aligned boxes that are treated as point masses.
@@ -2023,11 +2033,6 @@
         <member name="M:DwarfCorp.Program.Main(System.String[])">
             <summary>
             The main entry point for the application.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.Room">
-            <summary>
-            A room is a kind of zone which can be built by creatures.
             </summary>
         </member>
         <member name="T:DwarfCorp.DwarfGUI">

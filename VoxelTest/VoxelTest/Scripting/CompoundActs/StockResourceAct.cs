@@ -19,7 +19,7 @@ namespace DwarfCorp
 
         }
 
-        public StockResourceAct(CreatureAIComponent agent, string item) :
+        public StockResourceAct(CreatureAI agent, string item) :
             base(agent)
         {
             ItemID = item;
@@ -28,7 +28,7 @@ namespace DwarfCorp
             Name = "Stock Item";
         }
 
-        public StockResourceAct(CreatureAIComponent agent, ResourceAmount item) :
+        public StockResourceAct(CreatureAI agent, ResourceAmount item) :
             base(agent)
         {
             ItemToStock = item;

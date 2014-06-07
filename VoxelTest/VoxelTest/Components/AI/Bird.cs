@@ -42,7 +42,7 @@ namespace DwarfCorp
                 // Belongs to the herbivore team
                 manager.Factions.Factions["Herbivore"],
                 // The physics component this creature belongs to
-                new PhysicsComponent
+                new Physics
                 (
                     // We're creating a new physics component that belongs to the component manager
                     manager, 
@@ -150,7 +150,7 @@ namespace DwarfCorp
 
 
             // The creature just has the default amount of health calculated from its stats
-            Health = new HealthComponent(Manager, "Health", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
+            Health = new Health(Manager, "HP", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
 
 
             // The bird can hold one item at a time in its inventory
@@ -168,7 +168,7 @@ namespace DwarfCorp
             shadowTransform *= Matrix.CreateScale(0.75f);
 
             Texture2D shadowTexture = TextureManager.GetTexture(ContentPaths.Effects.shadowcircle);
-            Shadow = new ShadowComponent(Manager, "Shadow", Physics, shadowTransform, shadowTexture);
+            Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform, shadowTexture);
 
             // We set up the shadow's animation so that it's just a static black circle
             // TODO: Make the shadow set this up automatically
@@ -182,14 +182,14 @@ namespace DwarfCorp
             Shadow.SetCurrentAnimation("sh");
 
             // The bird will emit a shower of blood when it dies
-            DeathEmitter = new EmitterComponent("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
+            DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 100
             };
 
             // The bird is flammable, and can die when exposed to fire.
-            Flames = new FlammableComponent(Manager, "Flames", Physics, Health);
+            Flames = new Flammable(Manager, "Flames", Physics, Health);
 
             // Tag the physics component with some information 
             // that can be used later

@@ -41,7 +41,7 @@ namespace DwarfCorp
 
                     if(!Player.Faction.IsDigDesignation(v))
                     {
-                        Designation d = new Designation
+                        BuildOrder d = new BuildOrder
                         {
                             Vox = r
                         };
@@ -105,7 +105,7 @@ namespace DwarfCorp
         public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
         {
             /*
-            foreach (Designation d in Player.Faction.DigDesignations)
+            foreach (BuildOrder d in Player.Faction.DigDesignations)
             {
                 VoxelRef v = d.Vox;
 

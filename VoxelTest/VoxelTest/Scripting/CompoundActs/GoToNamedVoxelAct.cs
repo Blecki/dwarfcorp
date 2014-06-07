@@ -18,7 +18,7 @@ namespace DwarfCorp
 
         }
 
-        public GoToNamedVoxelAct(string voxel, CreatureAIComponent creature) :
+        public GoToNamedVoxelAct(string voxel, CreatureAI creature) :
             base(creature)
         {
             Voxel = voxel;

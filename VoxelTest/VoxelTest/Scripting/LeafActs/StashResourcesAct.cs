@@ -18,7 +18,7 @@ namespace DwarfCorp
 
         }
 
-        public StashResourcesAct(CreatureAIComponent agent, List<ResourceAmount> resources) :
+        public StashResourcesAct(CreatureAI agent, List<ResourceAmount> resources) :
             base(agent)
         {
             Resources = resources;

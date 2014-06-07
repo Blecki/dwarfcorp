@@ -16,11 +16,11 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class EnemySensor : Sensor
     {
-        public delegate void EnemySensed(List<CreatureAIComponent> enemies);
+        public delegate void EnemySensed(List<CreatureAI> enemies);
 
         public event EnemySensed OnEnemySensed;
 
-        public CreatureAIComponent Creature { get; set; }
+        public CreatureAI Creature { get; set; }
 
         public EnemySensor() : base()
         {
@@ -36,17 +36,17 @@ namespace DwarfCorp
             Tags.Add("Sensor");
         }
 
-        private void EnemySensor_OnEnemySensed(List<CreatureAIComponent> enemies)
+        private void EnemySensor_OnEnemySensed(List<CreatureAI> enemies)
         {
             ;
         }
 
         private void EnemySensor_OnSensed(List<Body> sensed)
         {
-            List<CreatureAIComponent> creatures = (from c in sensed.OfType<PhysicsComponent>() from child in c.GetChildrenOfTypeRecursive<CreatureAIComponent>() where child != Creature && Alliance.GetRelationship(Creature.Creature.Allies, child.Creature.Allies) == Relationship.Hates select child).ToList();
+            List<CreatureAI> creatures = (from c in sensed.OfType<Physics>() from child in c.GetChildrenOfTypeRecursive<CreatureAI>() where child != Creature && Alliance.GetRelationship(Creature.Creature.Allies, child.Creature.Allies) == Relationship.Hates select child).ToList();
             OnEnemySensed.Invoke(creatures);
 
-            foreach (CreatureAIComponent c in creatures)
+            foreach (CreatureAI c in creatures)
             {
                 Console.WriteLine(c.ToString());
             }

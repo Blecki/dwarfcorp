@@ -23,7 +23,7 @@ namespace DwarfCorp
             
         }
 
-        public WanderAct(CreatureAIComponent creature, float seconds, float turnTime, float radius) :
+        public WanderAct(CreatureAI creature, float seconds, float turnTime, float radius) :
             base(creature)
         {
             Name = "Wander " + seconds;

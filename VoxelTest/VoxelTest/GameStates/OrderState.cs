@@ -262,7 +262,7 @@ namespace DwarfCorp.GameStates
                 }
                 return;
             }
-            List<Room> ports = PlayState.Master.Faction.RoomDesignator.FilterRoomsByType("BalloonPort");
+            List<Room> ports = PlayState.Master.Faction.RoomBuilder.FilterRoomsByType("BalloonPort");
 
             if(ports.Count == 0)
             {

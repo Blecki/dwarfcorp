@@ -7,17 +7,17 @@ namespace DwarfCorp
 {
     /// <summary>
     /// A creature finds an item with a particular tag, and then puts it into a build zone
-    /// for a room. (This is used to construct rooms)
+    /// for a BuildRoom. (This is used to construct rooms)
     /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class BuildRoomAct : CompoundCreatureAct
     {
-        public RoomBuildDesignation Room { get; set; }
+        public BuildRoomOrder BuildRoom { get; set; }
         public List<ResourceAmount> Resources { get; set; } 
 
-        public IEnumerable<Status> SetTargetVoxelFromRoom(RoomBuildDesignation room, string target)
+        public IEnumerable<Status> SetTargetVoxelFromRoom(BuildRoomOrder buildRoom, string target)
         {
-            if (room.VoxelBuildDesignations.Count == 0)
+            if (buildRoom.VoxelOrders.Count == 0)
             {
                 yield return Status.Fail;
             }
@@ -25,7 +25,7 @@ namespace DwarfCorp
             {
                 VoxelRef closestVoxel = null;
                 float closestDist = float.MaxValue;
-                foreach (VoxelBuildDesignation voxDes in room.VoxelBuildDesignations)
+                foreach (BuildVoxelOrder voxDes in buildRoom.VoxelOrders)
                 {
                     float dist = (voxDes.Voxel.WorldPosition - Agent.Position).LengthSquared();
 
@@ -41,9 +41,9 @@ namespace DwarfCorp
             }
         }
 
-        public Act SetTargetVoxelFromRoomAct(RoomBuildDesignation room, string target)
+        public Act SetTargetVoxelFromRoomAct(BuildRoomOrder buildRoom, string target)
         {
-            return new Wrap(() => SetTargetVoxelFromRoom(room, target));
+            return new Wrap(() => SetTargetVoxelFromRoom(buildRoom, target));
         }
 
 
@@ -52,17 +52,19 @@ namespace DwarfCorp
 
         }
 
-        public BuildRoomAct(CreatureAIComponent agent, RoomBuildDesignation room) :
+        public BuildRoomAct(CreatureAI agent, BuildRoomOrder buildRoom) :
             base(agent)
         {
-            Name = "Build room " + room.ToString();
-            Resources = room.ListRequiredResources();
+            Name = "Build BuildRoom " + buildRoom.ToString();
+            Resources = buildRoom.ListRequiredResources();
 
             Tree = new Sequence(new GetResourcesAct(Agent, Resources),
                 new Sequence(
-                    SetTargetVoxelFromRoomAct(room, "TargetVoxel"),
+                    SetTargetVoxelFromRoomAct(buildRoom, "TargetVoxel"),
                     new GoToVoxelAct("TargetVoxel", PlanAct.PlanType.Adjacent, Agent),
-                    new PlaceRoomResourcesAct(Agent, room, Resources), new Wrap(Creature.RestockAll)) | new Wrap(Creature.RestockAll)
+                    new Wrap(() => Creature.HitAndWait(buildRoom.VoxelOrders.Count * 0.5f, true)),
+                    new PlaceRoomResourcesAct(Agent, buildRoom, Resources)
+                    , new Wrap(Creature.RestockAll)) | new Wrap(Creature.RestockAll)
                 );
         }
 

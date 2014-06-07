@@ -13,7 +13,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class CreatureAct : Act
     {
-        public CreatureAIComponent Agent { get; set; }
+        public CreatureAI Agent { get; set; }
 
 
         [JsonIgnore]
@@ -23,7 +23,7 @@ namespace DwarfCorp
         }
 
 
-        public CreatureAct(CreatureAIComponent agent)
+        public CreatureAct(CreatureAI agent)
         {
             Agent = agent;
             Name = "Creature Act";

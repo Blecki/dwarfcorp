@@ -24,7 +24,7 @@ namespace DwarfCorp
             return Agent.Faction.IsGuardDesignation(Voxel);
         }
 
-        public GuardVoxelAct(CreatureAIComponent agent, VoxelRef voxel) :
+        public GuardVoxelAct(CreatureAI agent, VoxelRef voxel) :
             base(agent)
         {
             Voxel = voxel;

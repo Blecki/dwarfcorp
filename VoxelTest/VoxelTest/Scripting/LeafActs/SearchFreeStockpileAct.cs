@@ -19,7 +19,7 @@ namespace DwarfCorp
 
         public VoxelRef Voxel { get { return GetVoxel(); } set { SetVoxel(value);} }
 
-        public SearchFreeStockpileAct(CreatureAIComponent creature, string stockName, string voxName) :
+        public SearchFreeStockpileAct(CreatureAI creature, string stockName, string voxName) :
             base(creature)
         {
             Name = "Search Stockpile " + stockName;

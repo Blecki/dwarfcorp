@@ -403,6 +403,11 @@ namespace DwarfCorp
         {
             return GetPrimitive(GetVoxelType(id));
         }
+
+        public static List<VoxelType> GetTypes()
+        {
+            return PrimitiveMap.Keys.ToList();
+        }
     }
 
 }

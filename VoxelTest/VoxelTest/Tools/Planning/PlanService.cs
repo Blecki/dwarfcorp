@@ -15,7 +15,7 @@ namespace DwarfCorp
     public class AstarPlanRequest
     {
         public PlanSubscriber Subscriber;
-        public CreatureAIComponent Sender;
+        public CreatureAI Sender;
         public VoxelRef Goal;
         public VoxelRef Start;
         public int MaxExpansions;

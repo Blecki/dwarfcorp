@@ -131,9 +131,9 @@ namespace DwarfCorp
             if(command.Contains("Build "))
             {
                 string type = command.Substring(6);
-                RoomBuildDesignation des = new RoomBuildDesignation(new Room(refs, RoomLibrary.GetType(type), Chunks), Player.Faction);
-                Player.Faction.RoomDesignator.BuildDesignations.Add(des);
-                Player.Faction.RoomDesignator.DesignatedRooms.Add(des.ToBuild);
+                BuildRoomOrder des = new BuildRoomOrder(new Room(refs, RoomLibrary.GetType(type), Chunks), Player.Faction);
+                Player.Faction.RoomBuilder.BuildDesignations.Add(des);
+                Player.Faction.RoomBuilder.DesignatedRooms.Add(des.ToBuild);
                 des.Build();
             }
             else
@@ -215,7 +215,7 @@ namespace DwarfCorp
                             List<Body> components = new List<Body>();
                             Player.Faction.Components.GetBodiesIntersecting(vox.GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
-                            foreach(FlammableComponent flam2 in components.Select(comp => comp.GetChildrenOfTypeRecursive<FlammableComponent>()).Where(flam => flam.Count > 0).SelectMany(flam => flam))
+                            foreach(Flammable flam2 in components.Select(comp => comp.GetChildrenOfTypeRecursive<Flammable>()).Where(flam => flam.Count > 0).SelectMany(flam => flam))
                             {
                                 flam2.Heat = flam2.Flashpoint + 1;
                             }

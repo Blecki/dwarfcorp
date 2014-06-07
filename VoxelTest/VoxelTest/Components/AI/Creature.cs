@@ -18,16 +18,16 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Creature : GameComponent
     {
-        public CreatureAIComponent AI { get; set; }
-        public PhysicsComponent Physics { get; set; }
+        public CreatureAI AI { get; set; }
+        public Physics Physics { get; set; }
         public CharacterSprite Sprite { get; set; }
-
+        public SelectionCircle SelectionCircle { get; set; }
         public EnemySensor Sensors { get; set; }
-        public FlammableComponent Flames { get; set; }
-        public HealthComponent Health { get; set; }
-        public EmitterComponent DeathEmitter { get; set; }
+        public Flammable Flames { get; set; }
+        public Health Health { get; set; }
+        public ParticleTrigger DeathParticleTrigger { get; set; }
         public Grabber Hands { get; set; }
-        public ShadowComponent Shadow { get; set; }
+        public Shadow Shadow { get; set; }
 
         public NoiseMaker NoiseMaker { get; set; }
 
@@ -111,7 +111,7 @@ namespace DwarfCorp
             string allies,
             PlanService planService,
             Faction faction,
-            PhysicsComponent parent,
+            Physics parent,
             ComponentManager manager,
             ChunkManager chunks,
             GraphicsDevice graphics,
@@ -135,6 +135,10 @@ namespace DwarfCorp
             Status = new CreatureStatus();
             IsHeadClear = true;
             NoiseMaker = new NoiseMaker();
+            SelectionCircle = new SelectionCircle(Manager, Physics)
+            {
+                IsVisible = false
+            };
         }
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
@@ -298,6 +302,28 @@ namespace DwarfCorp
                     CurrentCharacterMode = CharacterMode.Walking;
                 }
             }
+        }
+
+        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar)
+        {
+            Timer waitTimer = new Timer(f, true);
+
+            CurrentCharacterMode = CharacterMode.Attacking;
+            
+            while(!waitTimer.HasTriggered)
+            {
+                waitTimer.Update(Act.LastTime);
+
+                if(loadBar)
+                {
+                    Drawer2D.DrawLoadBar(AI.Position + Vector3.Up, Color.White, Color.Black, 100, 16, waitTimer.CurrentTimeSeconds / waitTimer.TargetTimeSeconds);
+                }
+
+                yield return Act.Status.Running;
+            }
+
+            CurrentCharacterMode = CharacterMode.Idle;
+            yield return Act.Status.Success;
         }
     }
 

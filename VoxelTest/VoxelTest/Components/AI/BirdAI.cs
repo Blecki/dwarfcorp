@@ -7,10 +7,10 @@ using DwarfCorp.GameStates;
 namespace DwarfCorp
 {
     /// <summary>
-    /// Extends CreatureAIComponent specifically for
+    /// Extends CreatureAI specifically for
     /// bird behavior.
     /// </summary>
-    public class BirdAI : CreatureAIComponent
+    public class BirdAI : CreatureAI
     {
         public BirdAI()
         {

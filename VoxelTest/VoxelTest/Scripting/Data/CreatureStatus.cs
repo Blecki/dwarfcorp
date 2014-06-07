@@ -54,6 +54,8 @@ namespace DwarfCorp
 
         public Status Hunger { get { return Statuses["Hunger"]; } set { Statuses["Hunger"] = value; } }
         public Status Energy { get { return Statuses["Energy"]; } set { Statuses["Energy"] = value; } }
+        public Status Happiness { get { return Statuses["Happiness"]; } set { Statuses["Happiness"] = value; } }
+        public Status Health { get { return Statuses["Health"]; } set { Statuses["Health"] = value; } }
 
         private float HungerDamageRate = 1.0f;
         private DateTime LastHungerDamageTime = DateTime.Now;
@@ -81,12 +83,34 @@ namespace DwarfCorp
                 UnhappyThreshold = 15.0f,
                 CurrentValue = 100.0f
             };
+
+            Happiness = new Status
+            {
+                MaxValue = 100.0f,
+                MinValue = 0.0f,
+                Name = "Happiness",
+                SatisfiedThreshold = 80.0f,
+                UnhappyThreshold = 15.0f,
+                CurrentValue = 50.0f
+            };
+
+            Health = new Status
+            {
+                MaxValue = 1.0f,
+                MinValue = 0.0f,
+                Name = "Health",
+                SatisfiedThreshold = 0.8f,
+                UnhappyThreshold = 0.15f,
+                CurrentValue = 1.0f
+            };
         }
 
         public void Update(Creature creature, GameTime gameTime, ChunkManager chunks, Camera camera)
         { 
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Hunger.CurrentValue -= dt * creature.Stats.HungerGrowth;
+
+            Health.CurrentValue = (creature.Health.Hp - creature.Health.MinHealth) / (creature.Health.MaxHealth - creature.Health.MinHealth);
 
             if(!IsAsleep)
             {

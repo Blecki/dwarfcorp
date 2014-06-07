@@ -24,15 +24,15 @@ namespace DwarfCorp
     public class GameMaster
     {
 
+
         public enum ToolMode
         {
             SelectUnits,
             Dig,
             Build,
+            Gather,
             Chop,
             Guard,
-            CreateStockpiles,
-            Gather,
             God
         }
 
@@ -66,7 +66,7 @@ namespace DwarfCorp
         public PlayerTool CurrentTool { get { return Tools[CurrentToolMode]; } }
             
         [JsonIgnore]
-        public List<CreatureAIComponent> SelectedMinions { get { return Faction.SelectedMinions; }set { Faction.SelectedMinions = value; } }
+        public List<CreatureAI> SelectedMinions { get { return Faction.SelectedMinions; }set { Faction.SelectedMinions = value; } }
 
         protected void OnDeserialized(StreamingContext context)
         {
@@ -88,7 +88,7 @@ namespace DwarfCorp
             VoxSelector = new VoxelSelector(CameraController, chunks.Graphics, chunks);
             BodySelector = new BodySelector(CameraController, chunks.Graphics, components);
             GUI = gui;
-            SelectedMinions = new List<CreatureAIComponent>();
+            SelectedMinions = new List<CreatureAI>();
             CreateTools();
 
             InputManager.KeyReleasedCallback += OnKeyReleased;
@@ -142,12 +142,14 @@ namespace DwarfCorp
             };
 
 
+            /*
             Tools[ToolMode.CreateStockpiles] = new StockpileTool
             {
                 Player = this,
                 DrawColor = Color.LightGoldenrodYellow,
                 GlowRate = 2.0f,
             };
+             */
 
             Tools[ToolMode.Build] = new BuildTool
             {
@@ -179,10 +181,10 @@ namespace DwarfCorp
             CurrentTool.Render(game, g, time);
             VoxSelector.Render();
 
-            foreach (CreatureAIComponent creature in Faction.SelectedMinions)
+            foreach (CreatureAI creature in Faction.SelectedMinions)
             {
-                Drawer2D.DrawZAlignedRect(creature.Position + Vector3.Down * 0.5f, 0.25f, 0.25f, 2, new Color(255, 255, 255, 50));
-
+                //Drawer2D.DrawZAlignedRect(creature.Position + Vector3.Down * 0.5f, 0.25f, 0.25f, 2, new Color(255, 255, 255, 50));
+                creature.Creature.SelectionCircle.IsVisible = true;
                 foreach(Task task in creature.Tasks)
                 {
                     task.Render(time);
@@ -217,7 +219,8 @@ namespace DwarfCorp
                 }
             }
       
-            CameraController.Update(time, PlayState.ChunkManager);
+            if(!PlayState.Paused)
+                CameraController.Update(time, PlayState.ChunkManager);
             UpdateInput(game, time);
         }
 

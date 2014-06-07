@@ -10,7 +10,7 @@ namespace DwarfCorp
     {
         public string VoxelOutName { get; set; }
 
-        public SetTargetVoxelFromEntityAct(CreatureAIComponent creature, string voxelOut) :
+        public SetTargetVoxelFromEntityAct(CreatureAI creature, string voxelOut) :
             base(creature)
         {
             Name = "Set Target Voxel";

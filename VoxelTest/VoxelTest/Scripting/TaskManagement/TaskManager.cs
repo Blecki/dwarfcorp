@@ -37,7 +37,7 @@ namespace DwarfCorp
             return TaskQueue.SelectMany(assignment => assignment.Value).Any(t => t.Name == goal.Name); ;
         }
 
-        public bool IsFeasible(Task task, List<CreatureAIComponent> agents )
+        public bool IsFeasible(Task task, List<CreatureAI> agents )
         {
             return agents.Any(agent => task.IsFeasible(agent.Creature));
         }
@@ -51,7 +51,7 @@ namespace DwarfCorp
                 tasks.AddRange(Faction.GatherDesignations.Select(i => new GatherItemTask(i)).Where(g => !TaskIsAssigned(g) && IsFeasible(g, Faction.Minions)));
             }
 
-            foreach(CreatureAIComponent creature in Faction.Minions)
+            foreach(CreatureAI creature in Faction.Minions)
             {
                 if(creature.Status.Hunger.IsUnhappy())
                 {
@@ -65,7 +65,7 @@ namespace DwarfCorp
                 }
             }
 
-            foreach (CreatureAIComponent creature in Faction.Minions)
+            foreach (CreatureAI creature in Faction.Minions)
             {
                 if (creature.Status.Energy.IsUnhappy())
                 {
@@ -102,7 +102,7 @@ namespace DwarfCorp
                 Faction.Threats.Remove(threat);
             }
 
-            foreach(Designation i in Faction.DigDesignations)
+            foreach(BuildOrder i in Faction.DigDesignations)
             {
                 if (i == null || i.Vox == null || i.Vox.GetVoxel(true).Health <= 0)
                 {
@@ -137,7 +137,7 @@ namespace DwarfCorp
                 return tasks;
             }
 
-            foreach(RoomBuildDesignation buildDesignation in Faction.RoomDesignator.BuildDesignations)
+            foreach(BuildRoomOrder buildDesignation in Faction.RoomBuilder.BuildDesignations)
             {
                 if(buildDesignation.IsBuilt)
                 {
@@ -171,7 +171,7 @@ namespace DwarfCorp
             }
 
 
-            foreach(PutDesignation put in Faction.PutDesignator.Designations)
+            foreach(WallBuilder put in Faction.PutDesignator.Designations)
             {
                 TagList tags = new TagList(put.Type.ResourceToRelease);
 
@@ -190,7 +190,7 @@ namespace DwarfCorp
                 }
             }
 
-            foreach(ShipDesignation ship in Faction.ShipDesignations)
+            foreach(ShipOrder ship in Faction.ShipDesignations)
             {
                 List<Body> componentsToShip = new List<Body>();
                 int remaining = ship.GetRemainingNumResources();
@@ -315,7 +315,7 @@ namespace DwarfCorp
             return maxValue;
         }
 
-        public static void AssignTasks(List<Task> newGoals, List<CreatureAIComponent> creatures)
+        public static void AssignTasks(List<Task> newGoals, List<CreatureAI> creatures)
         {
 
             if(newGoals.Count == 0 || creatures.Count == 0)
@@ -350,7 +350,7 @@ namespace DwarfCorp
             }
         }
 
-        public static int[] CalculateOptimalAssignment(List<Task> newGoals, List<CreatureAIComponent> agents )
+        public static int[] CalculateOptimalAssignment(List<Task> newGoals, List<CreatureAI> agents )
         {
             int numGoals = newGoals.Count;
             int numAgents = agents.Count;
@@ -370,7 +370,7 @@ namespace DwarfCorp
 
                 for (int agentIndex = 0; agentIndex < numAgents; agentIndex++)
                 {
-                    CreatureAIComponent agent = agents[agentIndex];
+                    CreatureAI agent = agents[agentIndex];
                     float floatCost = goal.ComputeCost(agent.Creature);
 
                     int cost = (int)(floatCost * multiplier);

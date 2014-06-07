@@ -14,7 +14,7 @@ namespace DwarfCorp
         public Act Tree { get; set; }
 
 
-        public CompoundCreatureAct(CreatureAIComponent creature) :
+        public CompoundCreatureAct(CreatureAI creature) :
             base(creature)
         {
             Name = "CompoundCreatureAct";

@@ -14,7 +14,7 @@ namespace DwarfCorp
     {
         public Body Entity { get; set; }
 
-        public SetTargetEntityAct(Body entity, CreatureAIComponent creature) :
+        public SetTargetEntityAct(Body entity, CreatureAI creature) :
             base(creature)
         {
             Name = "Set Target Entity";

@@ -7,8 +7,8 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\Default.xnb</Output>
-      <Time>2014-05-08T19:34:02.3577638-07:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\Default.xnb</Output>
+      <Time>2014-05-08T19:48:10.4234743-07:00</Time>
     </Item>
     <Item>
       <Source>Fonts\Small.spritefont</Source>
@@ -16,8 +16,8 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\Small.xnb</Output>
-      <Time>2014-05-08T19:33:52.5893587-07:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\Small.xnb</Output>
+      <Time>2014-05-08T19:48:10.4284746-07:00</Time>
     </Item>
     <Item>
       <Source>Fonts\Title.spritefont</Source>
@@ -25,8 +25,8 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\Title.xnb</Output>
-      <Time>2014-05-08T19:34:10.5257664-07:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\Title.xnb</Output>
+      <Time>2014-05-08T19:48:10.4334749-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Plants\pine.png</Source>
@@ -34,8 +34,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\pine.xnb</Output>
-      <Time>2014-02-01T15:18:12.3412854-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\pine.xnb</Output>
+      <Time>2012-11-12T18:47:54.608944-08:00</Time>
     </Item>
     <Item>
       <Source>GUI\icons.png</Source>
@@ -43,8 +43,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\icons.xnb</Output>
-      <Time>2014-02-01T15:18:12.3502968-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\icons.xnb</Output>
+      <Time>2014-06-01T07:59:21.0369144-07:00</Time>
     </Item>
     <Item>
       <Source>Sky\night_sky.dds</Source>
@@ -52,8 +52,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Sky\night_sky.xnb</Output>
-      <Time>2014-02-01T15:18:12.4268287-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Sky\night_sky.xnb</Output>
+      <Time>2012-10-09T19:35:45.9237155-07:00</Time>
     </Item>
     <Item>
       <Source>Sky\day_sky.dds</Source>
@@ -61,8 +61,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Sky\day_sky.xnb</Output>
-      <Time>2014-02-01T15:18:12.417817-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Sky\day_sky.xnb</Output>
+      <Time>2012-10-06T13:59:09.8539736-07:00</Time>
     </Item>
     <Item>
       <Source>Terrain\water_normal.jpg</Source>
@@ -70,8 +70,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\water_normal.xnb</Output>
-      <Time>2014-02-01T15:18:12.4348381-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\water_normal.xnb</Output>
+      <Time>2012-09-02T19:20:53.3834666-07:00</Time>
     </Item>
     <Item>
       <Source>Terrain\cartoon_water.png</Source>
@@ -79,8 +79,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\cartoon_water.xnb</Output>
-      <Time>2014-02-01T15:18:12.4288309-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\cartoon_water.xnb</Output>
+      <Time>2013-06-06T16:17:09.1074378-07:00</Time>
     </Item>
     <Item>
       <Source>Terrain\water_normal2.jpg</Source>
@@ -88,8 +88,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\water_normal2.xnb</Output>
-      <Time>2014-02-01T15:18:12.4368406-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\water_normal2.xnb</Output>
+      <Time>2012-09-02T19:18:29.5482396-07:00</Time>
     </Item>
     <Item>
       <Source>Terrain\foam.png</Source>
@@ -97,8 +97,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\foam.xnb</Output>
-      <Time>2014-02-01T15:18:12.4298323-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\foam.xnb</Output>
+      <Time>2012-09-02T21:02:50.0383192-07:00</Time>
     </Item>
     <Item>
       <Source>Gradients\ambientgradient.png</Source>
@@ -106,8 +106,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Gradients\ambientgradient.xnb</Output>
-      <Time>2014-02-01T15:18:12.3512976-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Gradients\ambientgradient.xnb</Output>
+      <Time>2013-03-25T19:42:38.6648726-07:00</Time>
     </Item>
     <Item>
       <Source>Gradients\sungradient.png</Source>
@@ -115,8 +115,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Gradients\sungradient.xnb</Output>
-      <Time>2014-02-01T15:18:12.3533004-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Gradients\sungradient.xnb</Output>
+      <Time>2012-09-07T22:26:22.8292273-07:00</Time>
     </Item>
     <Item>
       <Source>Gradients\torchgradient.png</Source>
@@ -124,8 +124,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Gradients\torchgradient.xnb</Output>
-      <Time>2014-02-01T15:18:12.3543018-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Gradients\torchgradient.xnb</Output>
+      <Time>2012-10-02T12:04:45.6761468-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Dwarf\Sprites\dwarf_animations.png</Source>
@@ -133,8 +133,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Sprites\dwarf_animations.xnb</Output>
-      <Time>2014-02-01T15:18:12.3238127-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Sprites\dwarf_animations.xnb</Output>
+      <Time>2014-01-18T17:21:42.6837664-08:00</Time>
     </Item>
     <Item>
       <Source>Effects\shadowcircle.png</Source>
@@ -142,8 +142,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Effects\shadowcircle.xnb</Output>
-      <Time>2014-02-01T15:18:12.308794-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Effects\shadowcircle.xnb</Output>
+      <Time>2013-05-05T13:49:15.0793525-07:00</Time>
     </Item>
     <Item>
       <Source>Particles\puff.png</Source>
@@ -151,8 +151,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\puff.xnb</Output>
-      <Time>2014-02-01T15:18:12.400794-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\puff.xnb</Output>
+      <Time>2012-10-06T09:36:06.2732044-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Plants\grass.png</Source>
@@ -160,8 +160,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\grass.xnb</Output>
-      <Time>2014-02-01T15:18:12.3392835-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\grass.xnb</Output>
+      <Time>2013-06-05T16:45:15.6621762-07:00</Time>
     </Item>
     <Item>
       <Source>Gradients\skygradient.png</Source>
@@ -169,8 +169,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Gradients\skygradient.xnb</Output>
-      <Time>2014-02-01T15:18:12.3522993-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Gradients\skygradient.xnb</Output>
+      <Time>2012-10-09T21:54:09.6626622-07:00</Time>
     </Item>
     <Item>
       <Source>Particles\leaf.png</Source>
@@ -178,8 +178,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\leaf.xnb</Output>
-      <Time>2014-02-01T15:18:12.400794-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\leaf.xnb</Output>
+      <Time>2012-10-20T12:53:58.4912009-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Plants\gnarled.png</Source>
@@ -187,8 +187,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\gnarled.xnb</Output>
-      <Time>2014-02-01T15:18:12.3382815-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\gnarled.xnb</Output>
+      <Time>2013-06-05T16:45:35.8943334-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Plants\shrub.png</Source>
@@ -196,8 +196,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\shrub.xnb</Output>
-      <Time>2014-02-01T15:18:12.3422865-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\shrub.xnb</Output>
+      <Time>2013-01-02T17:56:05.305517-08:00</Time>
     </Item>
     <Item>
       <Source>Entities\Plants\mushroom.png</Source>
@@ -205,8 +205,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\mushroom.xnb</Output>
-      <Time>2014-02-01T15:18:12.3402843-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\mushroom.xnb</Output>
+      <Time>2013-06-06T16:13:07.7606336-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Plants\snowpine.png</Source>
@@ -214,8 +214,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\snowpine.xnb</Output>
-      <Time>2014-02-01T15:18:12.3432876-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\snowpine.xnb</Output>
+      <Time>2013-01-02T18:55:45.6713022-08:00</Time>
     </Item>
     <Item>
       <Source>Entities\Plants\frostgrass.png</Source>
@@ -223,8 +223,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\frostgrass.xnb</Output>
-      <Time>2014-02-01T15:18:12.3372804-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\frostgrass.xnb</Output>
+      <Time>2013-06-05T16:40:42.7915689-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Plants\vine.png</Source>
@@ -232,8 +232,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\vine.xnb</Output>
-      <Time>2014-02-01T15:18:12.3432876-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\vine.xnb</Output>
+      <Time>2013-07-18T17:14:45.1384148-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Plants\berrybush.png</Source>
@@ -241,8 +241,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\berrybush.xnb</Output>
-      <Time>2014-02-01T15:18:12.3352779-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\berrybush.xnb</Output>
+      <Time>2013-06-06T16:14:30.4393625-07:00</Time>
     </Item>
     <Item>
       <Source>GUI\gui_widgets.png</Source>
@@ -250,8 +250,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\gui_widgets.xnb</Output>
-      <Time>2014-05-08T19:15:37.2549598-07:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\gui_widgets.xnb</Output>
+      <Time>2014-06-01T07:57:30.743606-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Balloon\Sprites\balloon.png</Source>
@@ -259,8 +259,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Balloon\Sprites\balloon.xnb</Output>
-      <Time>2014-02-01T15:18:12.3097957-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Balloon\Sprites\balloon.xnb</Output>
+      <Time>2013-06-04T15:48:03.4880259-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Plants\flower.png</Source>
@@ -268,8 +268,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\flower.xnb</Output>
-      <Time>2014-02-01T15:18:12.3372804-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\flower.xnb</Output>
+      <Time>2013-06-06T16:13:39.3544406-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Plants\deadbush.png</Source>
@@ -277,8 +277,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\deadbush.xnb</Output>
-      <Time>2014-02-01T15:18:12.336279-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\deadbush.xnb</Output>
+      <Time>2013-06-03T21:35:01.9684585-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Plants\wheat.png</Source>
@@ -286,8 +286,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\wheat.xnb</Output>
-      <Time>2014-02-01T15:18:12.3442896-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\wheat.xnb</Output>
+      <Time>2013-03-25T17:15:31.7560023-07:00</Time>
     </Item>
     <Item>
       <Source>Terrain\lava.png</Source>
@@ -295,8 +295,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\lava.xnb</Output>
-      <Time>2014-02-01T15:18:12.4308334-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\lava.xnb</Output>
+      <Time>2013-06-07T15:11:56.3197873-07:00</Time>
     </Item>
     <Item>
       <Source>Terrain\lavafoam.png</Source>
@@ -304,8 +304,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\lavafoam.xnb</Output>
-      <Time>2014-02-01T15:18:12.4308334-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\lavafoam.xnb</Output>
+      <Time>2013-06-07T15:25:11.9702959-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Furniture\interior_furniture.png</Source>
@@ -313,8 +313,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Furniture\interior_furniture.xnb</Output>
-      <Time>2014-02-01T15:18:12.3258152-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Furniture\interior_furniture.xnb</Output>
+      <Time>2014-05-30T08:35:28.3481951-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Resources\resources.png</Source>
@@ -322,8 +322,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Resources\resources.xnb</Output>
-      <Time>2014-02-01T15:18:12.3452904-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Resources\resources.xnb</Output>
+      <Time>2013-07-01T16:49:39.4391148-07:00</Time>
     </Item>
     <Item>
       <Source>Particles\dirt_particle.png</Source>
@@ -331,8 +331,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\dirt_particle.xnb</Output>
-      <Time>2014-02-01T15:18:12.3983565-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\dirt_particle.xnb</Output>
+      <Time>2013-05-18T15:34:18.3840615-07:00</Time>
     </Item>
     <Item>
       <Source>Particles\stone_particle.png</Source>
@@ -340,8 +340,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\stone_particle.xnb</Output>
-      <Time>2014-02-01T15:18:12.4037997-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\stone_particle.xnb</Output>
+      <Time>2013-05-18T15:34:36.2900857-07:00</Time>
     </Item>
     <Item>
       <Source>Particles\sand_particle.png</Source>
@@ -349,8 +349,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\sand_particle.xnb</Output>
-      <Time>2014-02-01T15:18:12.4017972-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\sand_particle.xnb</Output>
+      <Time>2013-05-18T15:45:25.0171908-07:00</Time>
     </Item>
     <Item>
       <Source>Particles\flame.png</Source>
@@ -358,8 +358,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\flame.xnb</Output>
-      <Time>2014-02-01T15:18:12.3998794-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\flame.xnb</Output>
+      <Time>2013-05-22T17:47:02.5137965-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Goblin\Sprites\goblin_animations.png</Source>
@@ -367,8 +367,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Sprites\goblin_animations.xnb</Output>
-      <Time>2014-02-01T15:18:12.3352779-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Sprites\goblin_animations.xnb</Output>
+      <Time>2013-06-22T18:25:17.4255807-07:00</Time>
     </Item>
     <Item>
       <Source>Particles\blood_particle.png</Source>
@@ -376,8 +376,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\blood_particle.xnb</Output>
-      <Time>2014-02-01T15:18:12.3983565-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\blood_particle.xnb</Output>
+      <Time>2013-06-01T17:27:29.2602469-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Furniture\bedtex.png</Source>
@@ -385,8 +385,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Furniture\bedtex.xnb</Output>
-      <Time>2014-05-08T19:33:28.9577971-07:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Furniture\bedtex.xnb</Output>
+      <Time>2014-04-15T19:32:21.2788816-07:00</Time>
     </Item>
     <Item>
       <Source>Particles\splash.png</Source>
@@ -394,8 +394,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\splash.xnb</Output>
-      <Time>2014-02-01T15:18:12.4027986-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\splash.xnb</Output>
+      <Time>2013-06-23T12:23:14.3128871-07:00</Time>
     </Item>
     <Item>
       <Source>Logos\companylogo.png</Source>
@@ -403,8 +403,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Logos\companylogo.xnb</Output>
-      <Time>2014-02-01T15:18:12.3553029-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Logos\companylogo.xnb</Output>
+      <Time>2013-06-23T12:25:23.0012477-07:00</Time>
     </Item>
     <Item>
       <Source>Particles\splash2.png</Source>
@@ -412,8 +412,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\splash2.xnb</Output>
-      <Time>2014-02-01T15:18:12.4037997-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\splash2.xnb</Output>
+      <Time>2013-06-23T12:53:43.0374842-07:00</Time>
     </Item>
     <Item>
       <Source>Logos\grebeardlogo.png</Source>
@@ -421,8 +421,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Logos\grebeardlogo.xnb</Output>
-      <Time>2014-02-01T15:18:12.3583065-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Logos\grebeardlogo.xnb</Output>
+      <Time>2013-06-25T16:40:23.5696117-07:00</Time>
     </Item>
     <Item>
       <Source>Sky\moon.png</Source>
@@ -430,8 +430,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Sky\moon.xnb</Output>
-      <Time>2014-02-01T15:18:12.4188187-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Sky\moon.xnb</Output>
+      <Time>2013-06-27T16:46:37.2854039-07:00</Time>
     </Item>
     <Item>
       <Source>Sky\sun.png</Source>
@@ -439,8 +439,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Sky\sun.xnb</Output>
-      <Time>2014-02-01T15:18:12.4278295-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Sky\sun.xnb</Output>
+      <Time>2013-06-27T16:24:53.2398167-07:00</Time>
     </Item>
     <Item>
       <Source>Terrain\terrain_tiles.png</Source>
@@ -448,8 +448,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\terrain_tiles.xnb</Output>
-      <Time>2014-05-08T19:33:28.9688101-07:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\terrain_tiles.xnb</Output>
+      <Time>2014-05-29T07:08:43.5853189-07:00</Time>
     </Item>
     <Item>
       <Source>Terrain\terrain_illumination.png</Source>
@@ -457,8 +457,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\terrain_illumination.xnb</Output>
-      <Time>2014-05-08T19:15:37.2597328-07:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\terrain_illumination.xnb</Output>
+      <Time>2014-03-23T09:55:01.4629173-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Plants\palm.png</Source>
@@ -466,8 +466,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\palm.xnb</Output>
-      <Time>2014-02-01T15:18:12.3402843-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\palm.xnb</Output>
+      <Time>2013-07-28T10:35:35.6614671-07:00</Time>
     </Item>
     <Item>
       <Source>GUI\indicators.png</Source>
@@ -475,8 +475,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\indicators.xnb</Output>
-      <Time>2014-05-08T19:33:28.9658065-07:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\indicators.xnb</Output>
+      <Time>2014-05-06T09:00:42.8944166-07:00</Time>
     </Item>
     <Item>
       <Source>Logos\gamelogo.png</Source>
@@ -484,8 +484,125 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Logos\gamelogo.xnb</Output>
-      <Time>2014-02-01T15:18:12.3573057-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Logos\gamelogo.xnb</Output>
+      <Time>2014-01-07T15:49:12.7481323-08:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Birds\bird0.png</Source>
+      <Name>Entities\Animals\Birds\bird0</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird0.xnb</Output>
+      <Time>2014-03-11T06:44:50.4700311-07:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Birds\bird1.png</Source>
+      <Name>Entities\Animals\Birds\bird1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird1.xnb</Output>
+      <Time>2014-03-11T06:44:50.4730313-07:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Birds\bird2.png</Source>
+      <Name>Entities\Animals\Birds\bird2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird2.xnb</Output>
+      <Time>2014-03-11T06:44:50.4760315-07:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Birds\bird3.png</Source>
+      <Name>Entities\Animals\Birds\bird3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird3.xnb</Output>
+      <Time>2014-03-11T06:44:50.4800317-07:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Birds\bird4.png</Source>
+      <Name>Entities\Animals\Birds\bird4</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird4.xnb</Output>
+      <Time>2014-03-11T06:44:50.4830319-07:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Birds\bird5.png</Source>
+      <Name>Entities\Animals\Birds\bird5</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird5.xnb</Output>
+      <Time>2014-03-11T06:44:50.485032-07:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Birds\bird6.png</Source>
+      <Name>Entities\Animals\Birds\bird6</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird6.xnb</Output>
+      <Time>2014-03-11T06:44:50.4870321-07:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Birds\bird7.png</Source>
+      <Name>Entities\Animals\Birds\bird7</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird7.xnb</Output>
+      <Time>2014-03-11T06:44:50.4890322-07:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Deer\deer.png</Source>
+      <Name>Entities\Animals\Deer\deer</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Deer\deer.xnb</Output>
+      <Time>2014-02-23T13:59:25.1461809-08:00</Time>
+    </Item>
+    <Item>
+      <Source>Terrain\terrain_colormap.png</Source>
+      <Name>Terrain\terrain_colormap</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\terrain_colormap.xnb</Output>
+      <Time>2014-03-23T09:10:00.7064429-07:00</Time>
+    </Item>
+    <Item>
+      <Source>GUI\map_icons.png</Source>
+      <Name>GUI\map_icons</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\map_icons.xnb</Output>
+      <Time>2014-03-28T15:27:30.9138643-07:00</Time>
+    </Item>
+    <Item>
+      <Source>GUI\pointers.png</Source>
+      <Name>GUI\pointers</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\pointers.xnb</Output>
+      <Time>2014-05-27T06:27:04.9758969-07:00</Time>
+    </Item>
+    <Item>
+      <Source>Entities\Animals\Snake\snake.png</Source>
+      <Name>Entities\Animals\Snake\snake</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Snake\snake.xnb</Output>
+      <Time>2014-05-11T19:54:17.3902256-07:00</Time>
     </Item>
     <Item>
       <Source>Shaders\BloomCombine.fx</Source>
@@ -493,8 +610,8 @@
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\BloomCombine.xnb</Output>
-      <Time>2014-02-01T15:18:12.405802-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\BloomCombine.xnb</Output>
+      <Time>2012-09-01T09:05:36.5763662-07:00</Time>
     </Item>
     <Item>
       <Source>Shaders\BloomExtract.fx</Source>
@@ -502,8 +619,8 @@
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\BloomExtract.xnb</Output>
-      <Time>2014-02-01T15:18:12.4068034-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\BloomExtract.xnb</Output>
+      <Time>2012-09-01T09:05:36.5773662-07:00</Time>
     </Item>
     <Item>
       <Source>Shaders\GaussianBlur.fx</Source>
@@ -511,8 +628,8 @@
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\GaussianBlur.xnb</Output>
-      <Time>2014-02-01T15:18:12.4078045-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\GaussianBlur.xnb</Output>
+      <Time>2012-09-01T09:05:36.5793663-07:00</Time>
     </Item>
     <Item>
       <Source>Shaders\SkySphere.fx</Source>
@@ -520,8 +637,8 @@
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\SkySphere.xnb</Output>
-      <Time>2014-02-01T15:18:12.4088056-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\SkySphere.xnb</Output>
+      <Time>2013-06-27T15:44:28.4231251-07:00</Time>
     </Item>
     <Item>
       <Source>Shaders\TexturedShaders.fx</Source>
@@ -529,8 +646,8 @@
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\TexturedShaders.xnb</Output>
-      <Time>2014-05-08T19:15:37.2577399-07:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\TexturedShaders.xnb</Output>
+      <Time>2014-03-22T15:16:47.2298688-07:00</Time>
     </Item>
     <Item>
       <Source>Models\sphereLowPoly.fbx</Source>
@@ -538,11 +655,11 @@
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Models\sphereLowPoly.xnb</Output>
-      <Time>2014-02-01T15:18:12.360309-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Models\sphereLowPoly.xnb</Output>
+      <Time>2013-04-14T14:57:49.2263976-07:00</Time>
       <Dependency>
-        <Key>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\obj\x86\Release\Models\sphereLowPoly_0.xml</Key>
-        <Value>2014-02-01T15:38:55.1438707-08:00</Value>
+        <Key>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\obj\x86\Release\Models\sphereLowPoly_0.xml</Key>
+        <Value>2014-05-21T05:22:39.024373-07:00</Value>
       </Dependency>
     </Item>
     <Item>
@@ -551,8 +668,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\hit.xnb</Output>
-      <Time>2014-02-01T15:18:12.2927737-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\hit.xnb</Output>
+      <Time>2012-11-15T18:50:32.4871797-08:00</Time>
     </Item>
     <Item>
       <Source>Audio\jump.wav</Source>
@@ -560,8 +677,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\jump.xnb</Output>
-      <Time>2014-02-01T15:18:12.2937757-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\jump.xnb</Output>
+      <Time>2012-11-15T18:50:53.9654081-08:00</Time>
     </Item>
     <Item>
       <Source>Audio\explode.wav</Source>
@@ -569,8 +686,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\explode.xnb</Output>
-      <Time>2014-02-01T15:18:12.2867662-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\explode.xnb</Output>
+      <Time>2012-11-15T19:30:15.9585064-08:00</Time>
     </Item>
     <Item>
       <Source>Audio\ouch.wav</Source>
@@ -578,8 +695,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\ouch.xnb</Output>
-      <Time>2014-02-01T15:18:12.2957776-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\ouch.xnb</Output>
+      <Time>2013-01-14T17:31:56.5401063-08:00</Time>
     </Item>
     <Item>
       <Source>Audio\gravel.wav</Source>
@@ -587,8 +704,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\gravel.xnb</Output>
-      <Time>2014-02-01T15:18:12.2917741-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\gravel.xnb</Output>
+      <Time>2013-05-20T18:21:03.4524506-07:00</Time>
     </Item>
     <Item>
       <Source>Audio\pick.wav</Source>
@@ -596,8 +713,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\pick.xnb</Output>
-      <Time>2014-02-01T15:18:12.2977895-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\pick.xnb</Output>
+      <Time>2013-05-20T18:21:03.4554507-07:00</Time>
     </Item>
     <Item>
       <Source>Audio\sword.wav</Source>
@@ -605,8 +722,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\sword.xnb</Output>
-      <Time>2014-02-01T15:18:12.3047893-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\sword.xnb</Output>
+      <Time>2013-06-01T17:48:22.9549541-07:00</Time>
     </Item>
     <Item>
       <Source>Audio\splash.wav</Source>
@@ -614,8 +731,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\splash.xnb</Output>
-      <Time>2014-02-01T15:18:12.3037879-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\splash.xnb</Output>
+      <Time>2013-06-18T15:37:20.5064818-07:00</Time>
     </Item>
     <Item>
       <Source>Audio\fire.wav</Source>
@@ -623,8 +740,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\fire.xnb</Output>
-      <Time>2014-02-01T15:18:12.2897792-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\fire.xnb</Output>
+      <Time>2013-06-18T16:31:00.0766307-07:00</Time>
     </Item>
     <Item>
       <Source>Audio\river.wav</Source>
@@ -632,8 +749,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\river.xnb</Output>
-      <Time>2014-02-01T15:18:12.3007834-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\river.xnb</Output>
+      <Time>2013-06-19T17:13:27.9823764-07:00</Time>
     </Item>
     <Item>
       <Source>Entities\Dwarf\Audio\dwarfhurt1.wav</Source>
@@ -641,8 +758,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Audio\dwarfhurt1.xnb</Output>
-      <Time>2014-02-01T15:18:12.3117982-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Audio\dwarfhurt1.xnb</Output>
+      <Time>2014-01-01T12:35:55.3603502-08:00</Time>
     </Item>
     <Item>
       <Source>Entities\Dwarf\Audio\dwarfhurt2.wav</Source>
@@ -650,8 +767,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Audio\dwarfhurt2.xnb</Output>
-      <Time>2014-02-01T15:18:12.3178199-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Audio\dwarfhurt2.xnb</Output>
+      <Time>2014-01-01T12:35:55.3623503-08:00</Time>
     </Item>
     <Item>
       <Source>Entities\Dwarf\Audio\dwarfhurt3.wav</Source>
@@ -659,8 +776,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Audio\dwarfhurt3.xnb</Output>
-      <Time>2014-02-01T15:18:12.3198074-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Audio\dwarfhurt3.xnb</Output>
+      <Time>2014-01-01T12:35:55.3643504-08:00</Time>
     </Item>
     <Item>
       <Source>Entities\Dwarf\Audio\dwarfhurt4.wav</Source>
@@ -668,8 +785,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Audio\dwarfhurt4.xnb</Output>
-      <Time>2014-02-01T15:18:12.3228218-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Audio\dwarfhurt4.xnb</Output>
+      <Time>2014-01-01T12:35:55.3663506-08:00</Time>
     </Item>
     <Item>
       <Source>Entities\Goblin\Audio\goblinhurt1.wav</Source>
@@ -677,8 +794,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Audio\goblinhurt1.xnb</Output>
-      <Time>2014-02-01T15:18:12.3278225-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Audio\goblinhurt1.xnb</Output>
+      <Time>2014-01-01T12:36:15.2294867-08:00</Time>
     </Item>
     <Item>
       <Source>Entities\Goblin\Audio\goblinhurt2.wav</Source>
@@ -686,8 +803,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Audio\goblinhurt2.xnb</Output>
-      <Time>2014-02-01T15:18:12.3298202-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Audio\goblinhurt2.xnb</Output>
+      <Time>2014-01-01T12:36:15.2314868-08:00</Time>
     </Item>
     <Item>
       <Source>Entities\Goblin\Audio\goblinhurt3.wav</Source>
@@ -695,8 +812,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Audio\goblinhurt3.xnb</Output>
-      <Time>2014-02-01T15:18:12.3318227-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Audio\goblinhurt3.xnb</Output>
+      <Time>2014-01-01T12:36:15.2334869-08:00</Time>
     </Item>
     <Item>
       <Source>Entities\Goblin\Audio\goblinhurt4.wav</Source>
@@ -704,8 +821,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Audio\goblinhurt4.xnb</Output>
-      <Time>2014-02-01T15:18:12.3332742-08:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Audio\goblinhurt4.xnb</Output>
+      <Time>2014-01-01T12:36:15.2364871-08:00</Time>
     </Item>
     <Item>
       <Source>Audio\chew.wav</Source>
@@ -713,133 +830,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\chew.xnb</Output>
-      <Time>2014-02-01T15:18:12.284764-08:00</Time>
-    </Item>
-    <Item>
-      <Source>Music\dwarfcorp.mp3</Source>
-      <Name>Music\dwarfcorp</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Music\dwarfcorp.xnb</Output>
-      <Extra>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Music\dwarfcorp.wma</Extra>
-      <Time>2014-02-01T15:18:12.396354-08:00</Time>
-    </Item>
-    <Item>
-      <Source>Models\sphereLowPoly.fbx</Source>
-      <Importer>FbxImporter</Importer>
-      <Options>IntermediateFile, DontCacheImportedData</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\obj\x86\Release\Models\sphereLowPoly_0.xml</Output>
-      <Time>2014-02-01T15:18:12.360309-08:00</Time>
-    </Item>
-    <Item>
-      <Source>Entities\Animals\Birds\bird0.png</Source>
-      <Name>Entities\Animals\Birds\bird0</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird0.xnb</Output>
-      <Time>2014-05-08T19:15:37.2331191-07:00</Time>
-    </Item>
-    <Item>
-      <Source>Entities\Animals\Birds\bird1.png</Source>
-      <Name>Entities\Animals\Birds\bird1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird1.xnb</Output>
-      <Time>2014-05-08T19:15:37.2341202-07:00</Time>
-    </Item>
-    <Item>
-      <Source>Entities\Animals\Birds\bird2.png</Source>
-      <Name>Entities\Animals\Birds\bird2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird2.xnb</Output>
-      <Time>2014-05-08T19:15:37.2351216-07:00</Time>
-    </Item>
-    <Item>
-      <Source>Entities\Animals\Birds\bird3.png</Source>
-      <Name>Entities\Animals\Birds\bird3</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird3.xnb</Output>
-      <Time>2014-05-08T19:15:37.2361242-07:00</Time>
-    </Item>
-    <Item>
-      <Source>Entities\Animals\Birds\bird4.png</Source>
-      <Name>Entities\Animals\Birds\bird4</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird4.xnb</Output>
-      <Time>2014-05-08T19:15:37.2371343-07:00</Time>
-    </Item>
-    <Item>
-      <Source>Entities\Animals\Birds\bird5.png</Source>
-      <Name>Entities\Animals\Birds\bird5</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird5.xnb</Output>
-      <Time>2014-05-08T19:15:37.2381255-07:00</Time>
-    </Item>
-    <Item>
-      <Source>Entities\Animals\Birds\bird6.png</Source>
-      <Name>Entities\Animals\Birds\bird6</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird6.xnb</Output>
-      <Time>2014-05-08T19:15:37.2391275-07:00</Time>
-    </Item>
-    <Item>
-      <Source>Entities\Animals\Birds\bird7.png</Source>
-      <Name>Entities\Animals\Birds\bird7</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird7.xnb</Output>
-      <Time>2014-05-08T19:15:37.2401385-07:00</Time>
-    </Item>
-    <Item>
-      <Source>Entities\Animals\Deer\deer.png</Source>
-      <Name>Entities\Animals\Deer\deer</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Deer\deer.xnb</Output>
-      <Time>2014-05-08T19:15:37.242145-07:00</Time>
-    </Item>
-    <Item>
-      <Source>Terrain\terrain_colormap.png</Source>
-      <Name>Terrain\terrain_colormap</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\terrain_colormap.xnb</Output>
-      <Time>2014-05-08T19:15:37.2587307-07:00</Time>
-    </Item>
-    <Item>
-      <Source>GUI\map_icons.png</Source>
-      <Name>GUI\map_icons</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\map_icons.xnb</Output>
-      <Time>2014-05-08T19:15:37.2557259-07:00</Time>
-    </Item>
-    <Item>
-      <Source>GUI\pointers.png</Source>
-      <Name>GUI\pointers</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\pointers.xnb</Output>
-      <Time>2014-05-08T19:33:28.9668079-07:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\chew.xnb</Output>
+      <Time>2014-01-01T12:46:15.9588464-08:00</Time>
     </Item>
     <Item>
       <Source>Audio\whoosh.wav</Source>
@@ -847,8 +839,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\whoosh.xnb</Output>
-      <Time>2014-05-08T19:33:28.952791-07:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\whoosh.xnb</Output>
+      <Time>2014-04-20T17:51:34.4716893-07:00</Time>
     </Item>
     <Item>
       <Source>Audio\dig.wav</Source>
@@ -856,17 +848,52 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\dig.xnb</Output>
-      <Time>2014-05-08T19:33:28.9497868-07:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\dig.xnb</Output>
+      <Time>2014-04-20T17:51:44.8172811-07:00</Time>
     </Item>
     <Item>
-      <Source>Entities\Animals\Snake\snake.png</Source>
-      <Name>Entities\Animals\Snake\snake</Name>
+      <Source>Music\dwarfcorp.mp3</Source>
+      <Name>Music\dwarfcorp</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SongProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Music\dwarfcorp.xnb</Output>
+      <Extra>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Music\dwarfcorp.wma</Extra>
+      <Time>2013-06-23T13:38:21.3766764-07:00</Time>
+    </Item>
+    <Item>
+      <Source>Models\sphereLowPoly.fbx</Source>
+      <Importer>FbxImporter</Importer>
+      <Options>IntermediateFile, DontCacheImportedData</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\obj\x86\Release\Models\sphereLowPoly_0.xml</Output>
+      <Time>2013-04-14T14:57:49.2263976-07:00</Time>
+    </Item>
+    <Item>
+      <Source>GUI\room_icons.png</Source>
+      <Name>GUI\room_icons</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Snake\snake.xnb</Output>
-      <Time>2014-05-08T19:50:19.1650451-07:00</Time>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\room_icons.xnb</Output>
+      <Time>2014-05-28T10:15:21.157988-07:00</Time>
+    </Item>
+    <Item>
+      <Source>Effects\selection_circle.png</Source>
+      <Name>Effects\selection_circle</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Effects\selection_circle.xnb</Output>
+      <Time>2014-05-29T07:43:13.7637263-07:00</Time>
+    </Item>
+    <Item>
+      <Source>GUI\gui_minimap.png</Source>
+      <Name>GUI\gui_minimap</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\gui_minimap.xnb</Output>
+      <Time>2014-06-04T08:25:48.557758-07:00</Time>
     </Item>
     <BuildSuccessful>true</BuildSuccessful>
     <Settings>
@@ -875,39 +902,39 @@
       <TargetProfile>Reach</TargetProfile>
       <BuildConfiguration>Release</BuildConfiguration>
       <CompressContent>true</CompressContent>
-      <RootDirectory>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTestContent\</RootDirectory>
-      <LoggerRootDirectory>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\</LoggerRootDirectory>
-      <IntermediateDirectory>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\obj\x86\Release\</IntermediateDirectory>
-      <OutputDirectory>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTest\bin\x86\Release\Content\</OutputDirectory>
+      <RootDirectory>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTestContent\</RootDirectory>
+      <LoggerRootDirectory>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\</LoggerRootDirectory>
+      <IntermediateDirectory>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\obj\x86\Release\</IntermediateDirectory>
+      <OutputDirectory>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\</OutputDirectory>
     </Settings>
     <Assemblies>
       <Assembly>
         <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.XImporter.dll</Key>
-        <Value>2011-09-01T17:22:30-07:00</Value>
+        <Value>2011-09-01T14:22:30-07:00</Value>
       </Assembly>
       <Assembly>
         <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.VideoImporters.dll</Key>
-        <Value>2011-09-01T17:22:30-07:00</Value>
+        <Value>2011-09-01T14:22:30-07:00</Value>
       </Assembly>
       <Assembly>
         <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.TextureImporter.dll</Key>
-        <Value>2011-09-01T17:22:30-07:00</Value>
+        <Value>2011-09-01T14:22:30-07:00</Value>
       </Assembly>
       <Assembly>
         <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.FBXImporter.dll</Key>
-        <Value>2011-09-01T17:22:30-07:00</Value>
+        <Value>2011-09-01T14:22:30-07:00</Value>
       </Assembly>
       <Assembly>
         <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.EffectImporter.dll</Key>
-        <Value>2011-09-01T17:22:30-07:00</Value>
+        <Value>2011-09-01T14:22:30-07:00</Value>
       </Assembly>
       <Assembly>
         <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.AudioImporters.dll</Key>
-        <Value>2011-09-01T17:22:30-07:00</Value>
+        <Value>2011-09-01T14:22:30-07:00</Value>
       </Assembly>
       <Assembly>
         <Key>C:\Windows\Microsoft.Net\assembly\GAC_32\Microsoft.Xna.Framework.Content.Pipeline\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Content.Pipeline.dll</Key>
-        <Value>2014-02-01T15:26:57.3489872-08:00</Value>
+        <Value>2012-11-20T17:43:07.8094408-08:00</Value>
       </Assembly>
     </Assemblies>
   </Asset>

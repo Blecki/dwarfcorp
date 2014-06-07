@@ -77,7 +77,7 @@ namespace DwarfCorp
 
         public void Render(GraphicsDevice device, SpriteBatch batch, GameTime time)
         {
-            if (string.IsNullOrEmpty(ToolTip))
+            if (string.IsNullOrEmpty(ToolTip) || !GUI.RootComponent.IsVisible)
             {
                 return;
             }
@@ -110,7 +110,7 @@ namespace DwarfCorp
                 bounds.Y = viewBounds.Bottom - bounds.Height;
             }
 
-            GUI.Skin.RenderToolTip(bounds, batch);
+            GUI.Skin.RenderToolTip(bounds, batch, Color.White);
             Drawer2D.DrawAlignedText(batch, ToolTip, GUI.SmallFont, Color.White, Drawer2D.Alignment.Center, bounds);
         }
 

@@ -13,7 +13,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class DropItemAct : CreatureAct
     {
-        public DropItemAct(CreatureAIComponent creature) :
+        public DropItemAct(CreatureAI creature) :
             base(creature)
         {
             Name = "Drop Item";

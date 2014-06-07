@@ -14,7 +14,7 @@ namespace DwarfCorp
     {
         public VoxelRef Voxel { get; set; }
         public ResourceAmount Resource { get; set; }
-        public PlaceVoxelAct(VoxelRef voxel, CreatureAIComponent agent, ResourceAmount resource) :
+        public PlaceVoxelAct(VoxelRef voxel, CreatureAI agent, ResourceAmount resource) :
             base(agent)
         {
             Agent = agent;
@@ -37,11 +37,12 @@ namespace DwarfCorp
                 {
                     grabbed.Die();
 
-                    PutDesignation put = Creature.Faction.PutDesignator.GetDesignation(Voxel);
+                    WallBuilder put = Creature.Faction.PutDesignator.GetDesignation(Voxel);
                     put.Put(PlayState.ChunkManager);
 
 
                     Creature.Faction.PutDesignator.Designations.Remove(put);
+                    Creature.Stats.NumBlocksPlaced++;
                     yield return Status.Success;
                 }
                 else

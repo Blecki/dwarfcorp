@@ -41,7 +41,7 @@ namespace DwarfCorp
         public class Effects
         {
             public static string shadowcircle = Program.CreatePath("Effects", "shadowcircle");
-
+            public static string selection_circle = Program.CreatePath("Effects", "selection_circle");
         }
         public class Entities
         {
@@ -172,6 +172,8 @@ namespace DwarfCorp
             public static string indicators = Program.CreatePath("GUI", "indicators");
             public static string map_icons = Program.CreatePath("GUI", "map_icons");
             public static string pointers = Program.CreatePath("GUI", "pointers");
+            public static string room_icons = Program.CreatePath("GUI", "room_icons");
+            public static string gui_minimap = Program.CreatePath("GUI", "gui_minimap");
         }
         public class Logos
         {

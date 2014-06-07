@@ -40,7 +40,7 @@ namespace DwarfCorp
             Resources["Gold"] = new Resource("Gold", 50.0f, "Shiny!", new ImageFrame(tileSheet, GetRect(0, 0)), "All", "Materials", "Gold");
             Resources["Iron"] = new Resource("Iron", 5.0f, "Needed to build things.", new ImageFrame(tileSheet, GetRect(2, 0)), "All", "Materials", "Iron");
             Resources["Apple"] = new Resource("Apple", 0.5f, "Eat it.", new ImageFrame(tileSheet, GetRect(2, 1)), "All", "Foods");
-            Resources["Container"] = new Resource("Container", 5.0f, "Not sure why this is a resource...", new ImageFrame(tileSheet, GetRect(0, 2)), "All", "Containers");
+           // Resources["Container"] = new Resource("Container", 5.0f, "Not sure why this is a resource...", new ImageFrame(tileSheet, GetRect(0, 2)), "All", "Containers");
         }
     }
 

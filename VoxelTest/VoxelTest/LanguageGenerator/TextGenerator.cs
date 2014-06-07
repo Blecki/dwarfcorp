@@ -37,8 +37,9 @@ namespace DwarfCorp
             "\'"
         };
 
-        public void CreateDefaults()
+        public static void CreateDefaults()
         {
+            TextAtoms = new Dictionary<string, TextAtom>();
             TextAtom animals = new TextAtom("$Animal", "Aardvark", "Bee", "Cat", "Dog", "Elephant", "Giraffe", "Hippo", "Iguana", "Jaguar", "Koala", "Lemur", "Manatee", "Nematode", "Ostrich", "Porpoise", "Quail", "Snake", "Tiger", "Ungulate", "Viper", "Whale", "Yak", "Zebra");
             TextAtom bodyparts = new TextAtom("$Bodypart", "Hair", "Ear", "Eye", "Nose", "Teeth", "Tounge", "Chin", "Beard", "Moustache", "Chest", "Shoulders", "Arm", "Hand", "Finger", "Thumb", "Stomach", "Heart", "Liver", "Leg", "Foot", "Toe");
             TextAtom family = new TextAtom("$Family", "Father", "Mother", "Son", "Daughter", "Brother", "Sister", "Uncle", "Aunt", "Gradfather", "Grandmother", "Cousin", "Nephew", "Niece");
@@ -51,7 +52,10 @@ namespace DwarfCorp
             TextAtom adverb = new TextAtom("$Adverb", "Angrily", "Slowly", "Valiantly", "Quickly", "Grudgingly", "Greatly", "Amazingly", "Understandably", "Deniably", "Meticulously", "Eagerly", "Lovingly");
             TextAtom verb = new TextAtom("$Verb", "Sit", "Shake", "Work", "Hit", "Attack", "Destroy", "Build", "Create", "Mine", "Explore", "Guard", "Survive", "Profit", "Defend", "Die", "Live");
             TextAtom interjection = new TextAtom("$Interjection", "Alas", "O", "Yay", "No", "Yes", "Still", "Yet", "But", "However");
-
+            TextAtom dwarfName = new TextAtom("$DwarfName", "Thuli", "Muli", "Fili", "Kunan", "Bali", "Kari", "Thali", "Arul", "Groda", "Thrinarv", "Igin", "Urund", "Urud", "Undil", "Ugmad", "Thrasanz", "Arud", "Gwari", "Zuri", "Kamin", "Gilli", "Akkar");
+            TextAtom dwarfFamily = new TextAtom("$DwarfFamily", "Greythorn", "Redthorn", "Greystone", "Redstone", "Goldstone", "Goldthorn", "Greybeard", "Redbeard", "Bluebeard", "Stonearm", "Witchpipe", "Fathunt", "Casker", "Harpsinger", "Khundushath", "Bilgabar", "Naragzinb", "Nargathur", "Bizaram", "Baragzar", "Kibarak", "Smith", "Belcher", "Bricker", "Greatmine");
+            TextAtom goblinName = new TextAtom("$GoblinName", "Lurtzog", "Gorkil", "Baluk", "Agrag", "Shakil", "Gashur", "Mega", "Balug", "Uglur", "Lagdush", "Oldog", "Muzga", "Lugdush");
+            TextAtom goblinFamily = new TextAtom("$GoblinFamily", "Ugdush", "Gashur", "Balcmurz", "Orgbag", "Azod", "Rat", "Lukil" );
             AddAtom(animals);
             AddAtom(bodyparts);
             AddAtom(family);
@@ -60,14 +64,23 @@ namespace DwarfCorp
             AddAtom(maleName);
             AddAtom(femaleName);
             AddAtom(colors);
+            AddAtom(dwarfName);
+            AddAtom(goblinName);
+            AddAtom(dwarfFamily);
+            AddAtom(goblinFamily);
             AddAtom(materials);
             AddAtom(adverb);
             AddAtom(verb);
             AddAtom(interjection);
+            staticsInitialized = true;
         }
 
-        public string GenerateRandom(params string[] atoms)
+        public static string GenerateRandom(params string[] atoms)
         {
+            if(!staticsInitialized)
+            {
+                CreateDefaults();
+            }
             string toReturn = "";
             foreach(string s in atoms)
             {
@@ -94,6 +107,7 @@ namespace DwarfCorp
             {
                 TextAtoms = new Dictionary<string, TextAtom>();
                 CreateDefaults();
+                staticsInitialized = true;
             }
         }
 

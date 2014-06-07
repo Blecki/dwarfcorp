@@ -18,7 +18,7 @@ namespace DwarfCorp
     {
         public override void OnVoxelsSelected(List<VoxelRef> voxels, InputManager.MouseButton button)
         {
-            Player.Faction.RoomDesignator.VoxelsSelected(voxels, button);
+            Player.Faction.RoomBuilder.VoxelsSelected(voxels, button);
             Player.Faction.PutDesignator.VoxelsSelected(voxels, button);
         }
 
@@ -36,19 +36,12 @@ namespace DwarfCorp
             Player.BodySelector.Enabled = false;
             PlayState.GUI.IsMouseVisible = true;
 
-            if (PlayState.GUI.IsMouseOver())
-            {
-                PlayState.GUI.MouseMode = GUISkin.MousePointer.Pointer;
-            }
-            else
-            {
-                PlayState.GUI.MouseMode = GUISkin.MousePointer.Build;
-            }
+            PlayState.GUI.MouseMode = PlayState.GUI.IsMouseOver() ? GUISkin.MousePointer.Pointer : GUISkin.MousePointer.Build;
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
         {
-            Player.Faction.RoomDesignator.Render(time, PlayState.ChunkManager.Graphics);
+            Player.Faction.RoomBuilder.Render(time, PlayState.ChunkManager.Graphics);
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)

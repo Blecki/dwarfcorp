@@ -20,17 +20,17 @@ namespace DwarfCorp
         }
 
 
-        public IEnumerable<Status> IncrementAssignment( CreatureAIComponent creature, string designation, int amount)
+        public IEnumerable<Status> IncrementAssignment( CreatureAI creature, string designation, int amount)
         {
 
             VoxelRef vref = creature.Blackboard.GetData<VoxelRef>(designation);
             if(vref != null)
             {
-                Designation digDesignation = creature.Faction.GetDigDesignation(vref.GetVoxel(false));
+                BuildOrder digBuildOrder = creature.Faction.GetDigDesignation(vref.GetVoxel(false));
 
-                if(digDesignation != null)
+                if(digBuildOrder != null)
                 {
-                    digDesignation.NumCreaturesAssigned += amount;
+                    digBuildOrder.NumCreaturesAssigned += amount;
                     yield return Status.Success;
                 }
                 else
@@ -46,7 +46,7 @@ namespace DwarfCorp
         }
 
 
-        public KillVoxelAct(VoxelRef voxel, CreatureAIComponent creature) :
+        public KillVoxelAct(VoxelRef voxel, CreatureAI creature) :
             base(creature)
         {
             Voxel = voxel;

@@ -36,7 +36,7 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    Designation d = new Designation
+                    BuildOrder d = new BuildOrder
                     {
                         Vox = v.GetReference()
                     };
@@ -85,7 +85,7 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
         {
-            foreach (Designation d in Player.Faction.GuardDesignations)
+            foreach (BuildOrder d in Player.Faction.GuardDesignations)
             {
                 VoxelRef v = d.Vox;
 

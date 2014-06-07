@@ -18,7 +18,7 @@ namespace DwarfCorp
             
         }
 
-        public BuildVoxelAct(CreatureAIComponent creature, VoxelRef voxel, VoxelType type) :
+        public BuildVoxelAct(CreatureAI creature, VoxelRef voxel, VoxelType type) :
             base(creature)
         {
             Voxel = voxel;

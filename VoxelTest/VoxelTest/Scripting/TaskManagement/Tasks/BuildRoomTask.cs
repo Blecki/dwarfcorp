@@ -13,16 +13,16 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class BuildRoomTask : Task
     {
-        public RoomBuildDesignation Zone;
+        public BuildRoomOrder Zone;
 
         public BuildRoomTask()
         {
 
         }
 
-        public BuildRoomTask(RoomBuildDesignation zone)
+        public BuildRoomTask(BuildRoomOrder zone)
         {
-            Name = "Build room " + zone.ToBuild.RoomType.Name + zone.ToBuild.ID;
+            Name = "Build BuildRoom " + zone.ToBuild.RoomType.Name + zone.ToBuild.ID;
             Zone = zone;
         }
 

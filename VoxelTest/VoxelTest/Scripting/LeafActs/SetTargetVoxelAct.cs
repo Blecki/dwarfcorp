@@ -14,7 +14,7 @@ namespace DwarfCorp
         public VoxelRef Voxel { get; set; }
         public string VoxelName { get; set; }
 
-        public SetTargetVoxelAct(string voxel, CreatureAIComponent creature) :
+        public SetTargetVoxelAct(string voxel, CreatureAI creature) :
             base(creature)
         {
             Name = "Set Target Voxel";
@@ -23,7 +23,7 @@ namespace DwarfCorp
         }
 
 
-        public SetTargetVoxelAct(VoxelRef voxel, CreatureAIComponent creature) :
+        public SetTargetVoxelAct(VoxelRef voxel, CreatureAI creature) :
             base(creature)
         {
             Name = "Set Target Voxel";

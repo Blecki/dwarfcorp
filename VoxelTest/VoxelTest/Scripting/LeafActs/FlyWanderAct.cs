@@ -27,7 +27,7 @@ namespace DwarfCorp
 
         }
 
-        public FlyWanderAct(CreatureAIComponent creature, float seconds, float turnTime, float radius, float altitude) :
+        public FlyWanderAct(CreatureAI creature, float seconds, float turnTime, float radius, float altitude) :
             base(creature)
         {
             Altitude = altitude;

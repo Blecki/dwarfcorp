@@ -82,7 +82,7 @@ namespace DwarfCorp
                 if(!shiftPressed)
                 {
                     shiftPressed = true;
-                    Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2, GameState.Game.GraphicsDevice.Viewport.Height / 2);
+                  
                     mouse = Mouse.GetState();
                 }
                 if(!isLeftPressed && mouse.LeftButton == ButtonState.Pressed)
@@ -113,7 +113,7 @@ namespace DwarfCorp
 
                 float diffX = mouse.X - GameState.Game.GraphicsDevice.Viewport.Width / 2;
                 float diffY = mouse.Y - GameState.Game.GraphicsDevice.Viewport.Height / 2;
-                Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2, GameState.Game.GraphicsDevice.Viewport.Height / 2);
+                //Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2, GameState.Game.GraphicsDevice.Viewport.Height / 2);
 
 
                 float filterDiffX = (float) (diffX * dt);

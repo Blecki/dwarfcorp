@@ -6,7 +6,7 @@ using System.Text;
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature finds an item from a stockpile or room with the given tags, goes to it, and picks it up.
+    /// A creature finds an item from a stockpile or BuildRoom with the given tags, goes to it, and picks it up.
     /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GetResourcesAct : CompoundCreatureAct
@@ -18,7 +18,7 @@ namespace DwarfCorp
 
         }
 
-        public GetResourcesAct(CreatureAIComponent agent, List<ResourceAmount> resources ) :
+        public GetResourcesAct(CreatureAI agent, List<ResourceAmount> resources ) :
             base(agent)
         {
             Name = "Get Resources";

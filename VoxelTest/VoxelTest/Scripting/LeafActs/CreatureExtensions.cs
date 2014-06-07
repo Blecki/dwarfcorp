@@ -42,11 +42,11 @@ namespace DwarfCorp
         {
             Body target = agent.AI.Blackboard.GetData<Body>(item);
             bool targetInHands = target == agent.Hands.GetFirstGrab();
-            bool targetIsFood = target.GetChildrenOfTypeRecursive<FoodComponent>().Count > 0;
+            bool targetIsFood = target.GetChildrenOfTypeRecursive<Food>().Count > 0;
             ;
             if(targetInHands && targetIsFood)
             {
-                FoodComponent food = target.GetChildrenOfTypeRecursive<FoodComponent>().First();
+                Food food = target.GetChildrenOfTypeRecursive<Food>().First();
 
                 while(food.FoodAmount > 1e-12)
                 {
@@ -91,8 +91,9 @@ namespace DwarfCorp
                     {
                         vox.Kill();
                     }
+                    agent.Stats.NumBlocksDestroyed++;
+                    agent.Stats.XP += Math.Max((int)(VoxelLibrary.GetVoxelType(blackBoardVoxelRef.TypeName).StartingHealth / 10), 1);
                     agent.CurrentCharacterMode = Creature.CharacterMode.Idle;
-
                     yield return Act.Status.Success;
                     break;
                 }

@@ -16,7 +16,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class BalloonAI : GameComponent
     {
-        public PhysicsComponent Physics { get; set; }
+        public Physics Physics { get; set; }
         public PIDController VelocityController { get; set; }
         public Vector3 TargetPosition { get; set; }
         public float MaxVelocity { get; set; }
@@ -41,7 +41,7 @@ namespace DwarfCorp
             
         }
 
-        public BalloonAI(PhysicsComponent physics, Vector3 target, ShipmentOrder shipment, Faction faction) :
+        public BalloonAI(Physics physics, Vector3 target, ShipmentOrder shipment, Faction faction) :
             base(physics.Manager, "BalloonAI", physics)
         {
             Physics = physics;

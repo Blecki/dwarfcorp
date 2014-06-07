@@ -14,7 +14,7 @@ namespace DwarfCorp
     public class Snake : Creature
     {
         private float ANIM_SPEED = 5.0f;
-        public PhysicsComponent[] Tail;
+        public Physics[] Tail;
 
         public Snake(string sprites, Vector3 position, ComponentManager manager, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, string name):
             base
@@ -32,7 +32,7 @@ namespace DwarfCorp
                 "Herbivore",
                 PlayState.PlanService,
                 manager.Factions.Factions["Herbivore"],
-                new PhysicsComponent
+                new Physics
                 (
                     manager,
                     "snake",
@@ -46,10 +46,10 @@ namespace DwarfCorp
                 manager, chunks, graphics, content, name
             )
         {
-            Tail = new PhysicsComponent[5];
+            Tail = new Physics[5];
             for (int i = 0; i < 5; ++i)
             {
-                Tail[i] = new PhysicsComponent
+                Tail[i] = new Physics
                 (
                     manager,
                     "snaketail",
@@ -109,7 +109,7 @@ namespace DwarfCorp
             // Add AI
             AI = new SnakeAI(this, "snake AI", Sensors, PlanService);
 
-            Health = new HealthComponent(Manager, "Health", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
+            Health = new Health(Manager, "HP", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
 
             Weapon = new Weapon("None", 0.0f, 0.0f, 0.0f, AI, ContentPaths.Audio.pick);
 
@@ -121,7 +121,7 @@ namespace DwarfCorp
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
-            PhysicsComponent prev, next;
+            Physics prev, next;
             prev = null;
             next = Physics;
             for (int i = 0; i < 5; i++)

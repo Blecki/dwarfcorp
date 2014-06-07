@@ -45,6 +45,8 @@ namespace DwarfCorp
         public static event OnMouseClicked MouseClickedCallback;
         public static event OnMouseScrolled MouseScrolledCallback;
 
+        public static Dictionary<Keys, int> NumberKeys { get; set; }  
+
         private static void OnMouseScrolledCallback(int amount)
         {
             OnMouseScrolled handler = MouseScrolledCallback;
@@ -64,12 +66,38 @@ namespace DwarfCorp
             ButtonStates = new Dictionary<MouseButton, ButtonState>();
             KeysInit(Keyboard.GetState());
             MouseInit(Mouse.GetState());
+            InitializeNumKeys();
             MousePressedCallback += dummymousepressed;
             MouseReleasedCallback += dummymousereleased;
             MouseClickedCallback += dummymouseclicked;
             MouseScrolledCallback += dummymousescroll;
             KeyPressedCallback += dummykeypressed;
             KeyReleasedCallback += dummykeypressed;
+        }
+
+        public void InitializeNumKeys()
+        {
+            NumberKeys = new Dictionary<Keys, int>();
+            NumberKeys[Keys.D0] = 0;
+            NumberKeys[Keys.D1] = 1;
+            NumberKeys[Keys.D2] = 2;
+            NumberKeys[Keys.D3] = 3;
+            NumberKeys[Keys.D4] = 4;
+            NumberKeys[Keys.D5] = 5;
+            NumberKeys[Keys.D6] = 6;
+            NumberKeys[Keys.D7] = 7;
+            NumberKeys[Keys.D8] = 8;
+            NumberKeys[Keys.D9] = 9;
+            NumberKeys[Keys.NumPad0] = 0;
+            NumberKeys[Keys.NumPad1] = 1;
+            NumberKeys[Keys.NumPad2] = 2;
+            NumberKeys[Keys.NumPad3] = 3;
+            NumberKeys[Keys.NumPad4] = 4;
+            NumberKeys[Keys.NumPad5] = 5;
+            NumberKeys[Keys.NumPad6] = 6;
+            NumberKeys[Keys.NumPad7] = 7;
+            NumberKeys[Keys.NumPad8] = 8;
+            NumberKeys[Keys.NumPad9] = 9;
         }
 
 
@@ -731,6 +759,23 @@ namespace DwarfCorp
             MouseState mouseState = Mouse.GetState();
             KeysUpdate(keyState);
             MouseUpate(mouseState);
+        }
+
+        public static bool IsNumKey(Keys key)
+        {
+            return NumberKeys.ContainsKey(key);
+        }
+
+        public static int GetNum(Keys key)
+        {
+            if(IsNumKey(key))
+            {
+                return NumberKeys[key];
+            }
+            else
+            {
+                return -1;
+            }
         }
     }
 

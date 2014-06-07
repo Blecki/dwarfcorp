@@ -16,7 +16,7 @@ namespace DwarfCorp
     [JsonObject(IsReference =  true)]
     public class Weapon
     {
-        public CreatureAIComponent Creature { get; set; }
+        public CreatureAI Creature { get; set; }
 
         public float DamageAmount { get; set; }
         public Timer HitTimer { get; set; }
@@ -29,7 +29,7 @@ namespace DwarfCorp
             
         }
 
-        public Weapon(string name, float damage, float time, float range, CreatureAIComponent creature, string noise)
+        public Weapon(string name, float damage, float time, float range, CreatureAI creature, string noise)
         {
             Name = name;
             DamageAmount = damage;

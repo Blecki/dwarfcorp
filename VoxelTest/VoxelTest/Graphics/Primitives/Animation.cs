@@ -92,7 +92,7 @@ namespace DwarfCorp
 
         public Rectangle GetCurrentFrameRect()
         {
-            Rectangle toReturn = new Rectangle(Frames[CurrentFrame].X, Frames[CurrentFrame].Y, FrameWidth, FrameHeight);
+            Rectangle toReturn = new Rectangle(Frames[CurrentFrame].X * FrameWidth, Frames[CurrentFrame].Y * FrameHeight, FrameWidth, FrameHeight);
             return toReturn;
         }
 

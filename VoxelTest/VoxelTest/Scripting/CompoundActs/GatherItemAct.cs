@@ -66,7 +66,7 @@ namespace DwarfCorp
             return new Condition(IsGatherable);
         }
 
-        public GatherItemAct(CreatureAIComponent agent, string item) :
+        public GatherItemAct(CreatureAI agent, string item) :
             base(agent)
         {
             ItemID = item;
@@ -75,7 +75,7 @@ namespace DwarfCorp
             Name = "Gather Item";
         }
 
-        public GatherItemAct(CreatureAIComponent agent, Body item) :
+        public GatherItemAct(CreatureAI agent, Body item) :
             base(agent)
         {
             ItemToGather = item;

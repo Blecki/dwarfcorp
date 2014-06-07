@@ -22,7 +22,7 @@ namespace DwarfCorp
             
         }
         public Dwarf(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, Texture2D dwarfTexture, Vector3 position) :
-            base(stats, allies, planService, faction, new PhysicsComponent(manager, "Dwarf", manager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0)),
+            base(stats, allies, planService, faction, new Physics(manager, "Dwarf", manager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0)),
                 manager, chunks, graphics, content, name)
         {
             SpriteSheet = dwarfTexture;
@@ -77,11 +77,11 @@ namespace DwarfCorp
 
             Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
 
-            AI = new CreatureAIComponent(this, "Dwarf AI", Sensors, PlanService);
+            AI = new CreatureAI(this, "Dwarf AI", Sensors, PlanService);
 
             Weapon = new Weapon("Pickaxe", 1.0f, 2.0f, 1.0f, AI, ContentPaths.Audio.pick);
 
-            Health = new HealthComponent(Manager, "Health", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
+            Health = new Health(Manager, "HP", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
 
             Inventory = new Inventory(Manager, "Inventory", Physics)
             {
@@ -94,7 +94,7 @@ namespace DwarfCorp
             Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
 
-            Shadow = new ShadowComponent(Manager, "Shadow", Physics, shadowTransform, TextureManager.GetTexture(ContentPaths.Effects.shadowcircle));
+            Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform, TextureManager.GetTexture(ContentPaths.Effects.shadowcircle));
             List<Point> shP = new List<Point>
             {
                 new Point(0, 0)
@@ -105,12 +105,12 @@ namespace DwarfCorp
             Shadow.SetCurrentAnimation("sh");
             Physics.Tags.Add("Dwarf");
 
-            DeathEmitter = new EmitterComponent("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
+            DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 100
             };
-            Flames = new FlammableComponent(Manager, "Flames", Physics, Health);
+            Flames = new Flammable(Manager, "Flames", Physics, Health);
 
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
@@ -135,6 +135,10 @@ namespace DwarfCorp
 
             //string json = JsonConvert.SerializeObject(this, Formatting.Indented);
             //System.IO.File.WriteAllText(@"C:\Users\Mklingen\Desktop\Dwarf.json", json);
+
+            Stats.FirstName = TextGenerator.GenerateRandom("$DwarfName");
+            Stats.LastName = TextGenerator.GenerateRandom("$DwarfFamily");
+            
         }
     }
 

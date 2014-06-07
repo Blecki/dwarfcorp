@@ -3,7 +3,7 @@
   <Asset Type="Graphics:NodeContent">
     <Name>RootNode</Name>
     <Identity>
-      <SourceFilename>C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTestContent\Models\sphereLowPoly.fbx</SourceFilename>
+      <SourceFilename>C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTestContent\Models\sphereLowPoly.fbx</SourceFilename>
       <SourceTool>FbxImporter</SourceTool>
     </Identity>
     <Transform>1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</Transform>

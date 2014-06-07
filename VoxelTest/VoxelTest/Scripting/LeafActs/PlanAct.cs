@@ -46,7 +46,7 @@ namespace DwarfCorp
 
         }
 
-        public PlanAct(CreatureAIComponent agent, string pathOut, string target, PlanType planType) :
+        public PlanAct(CreatureAI agent, string pathOut, string target, PlanType planType) :
             base(agent)
         {
             Type = planType;

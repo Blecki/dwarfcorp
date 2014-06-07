@@ -13,7 +13,7 @@ namespace DwarfCorp
     {
         public float StopForce { get; set; }
 
-        public StopAct(CreatureAIComponent agent) :
+        public StopAct(CreatureAI agent) :
             base(agent)
         {
             Name = "Stop";

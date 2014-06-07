@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using BloomPostprocess;
 using Microsoft.Xna.Framework;
@@ -172,9 +173,6 @@ namespace DwarfCorp.GameStates
         // Text displayed on the screen for the current game time
         public Label TimeLabel { get; set; }
 
-        // Text displayed on the screen for the current balloon status
-        public Label OrderStatusLabel { get; set; }
-
         // The game is briefly simulated before starting so things have time to settle.
         public Timer PreSimulateTimer { get; set; }
 
@@ -270,11 +268,7 @@ namespace DwarfCorp.GameStates
                 LoadingThread = new Thread(Load);
                 LoadingThread.Start();
 
-                if(SoundManager.Content == null)
-                {
-                    SoundManager.Content = Content;
-                    SoundManager.LoadDefaultSounds();
-                }
+
 
                 SoundManager.PlayMusic("dwarfcorp");
 
@@ -336,7 +330,7 @@ namespace DwarfCorp.GameStates
             for(int i = 0; i < numDwarves; i++)
             {
                 Vector3 dorfPos = new Vector3(Camera.Position.X + (float) Random.NextDouble(), h + 10, Camera.Position.Z + (float) Random.NextDouble());
-                PhysicsComponent creat = (PhysicsComponent) EntityFactory.GenerateDwarf(dorfPos,
+                Physics creat = (Physics) EntityFactory.GenerateDwarf(dorfPos,
                     ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Dwarf");
 
                 creat.Velocity = new Vector3(1, 0, 0);
@@ -353,6 +347,11 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public void InitializeStaticData()
         {
+            if (SoundManager.Content == null)
+            {
+                SoundManager.Content = Content;
+                SoundManager.LoadDefaultSounds();
+            }
             new PrimitiveLibrary(GraphicsDevice, Content);
             InstanceManager = new InstanceManager();
 
@@ -646,15 +645,12 @@ namespace DwarfCorp.GameStates
             Master.ToolBar.Parent = layout;
             layout.SetComponentPosition(Master.ToolBar, 7, 10, 4, 1);
 
-
             GUIComponent companyInfoComponent = new GUIComponent(GUI, layout);
 
             layout.SetComponentPosition(companyInfoComponent, 0, 0, 4, 2);
 
-
             GUIComponent resourceInfoComponent = new ResourceInfoComponent(GUI, layout, Master.Faction);
             layout.SetComponentPosition(resourceInfoComponent, 7, 0, 4, 2);
-
 
             GridLayout infoLayout = new GridLayout(GUI, companyInfoComponent, 3, 4);
 
@@ -677,15 +673,14 @@ namespace DwarfCorp.GameStates
             };
             infoLayout.SetComponentPosition(MoneyLabel, 3, 0, 1, 1);
 
-            TimeLabel = new Label(GUI, infoLayout, Time.CurrentDate.ToShortDateString() + " " + Time.CurrentDate.ToShortTimeString(), GUI.SmallFont)
+
+            TimeLabel = new Label(GUI, layout, Time.CurrentDate.ToShortDateString() + " " + Time.CurrentDate.ToShortTimeString(), GUI.SmallFont)
             {
                 TextColor = Color.White,
                 StrokeColor = new Color(0, 0, 0, 100),
                 ToolTip = "Current time and date."
             };
-            infoLayout.SetComponentPosition(TimeLabel, 4, 0, 1, 1);
-
-
+            layout.SetComponentPosition(TimeLabel, 5, 0, 1, 1);
 
             CurrentLevelLabel = new Label(GUI, infoLayout, "Slice: " + ChunkManager.ChunkData.MaxViewingLevel, GUI.DefaultFont)
             {
@@ -710,15 +705,6 @@ namespace DwarfCorp.GameStates
             infoLayout.SetComponentPosition(CurrentLevelDownButton, 1, 1, 1, 1);
             CurrentLevelDownButton.OnClicked += CurrentLevelDownButton_OnClicked;
 
-            OrderStatusLabel = new Label(GUI, layout, "Ballon : " + GameCycle.GetStatusString(GameCycle.CurrentCycle), GUI.SmallFont)
-            {
-                TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 100),
-                ToolTip = "Current status of the balloon"
-            };
-
-            layout.SetComponentPosition(OrderStatusLabel, 4, 10, 3, 1);
-
             LevelSlider = new Slider(GUI, layout, "", ChunkManager.ChunkData.MaxViewingLevel, 0, ChunkManager.ChunkData.ChunkSizeY, Slider.SliderMode.Integer)
             {
                 Orient = Slider.Orientation.Vertical,
@@ -730,17 +716,44 @@ namespace DwarfCorp.GameStates
             LevelSlider.OnClicked += LevelSlider_OnClicked;
             LevelSlider.InvertValue = true;
 
-            MiniMap = new Minimap(GUI, layout, 256, 256, this, TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap))
+            MiniMap = new Minimap(GUI, layout, 192, 192, this, TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap), TextureManager.GetTexture(ContentPaths.GUI.gui_minimap))
             {
-                IsVisible =  false
+                IsVisible =  true
             };
 
-            layout.SetComponentPosition(MiniMap, 0, 7, 4, 4);
+            layout.SetComponentPosition(MiniMap, 0, 8, 4, 4);
+
+
+
+            Button moneyButton = new Button(GUI, layout, "", GUI.DefaultFont, Button.ButtonMode.ImageButton, new ImageFrame(TextureManager.GetTexture("IconSheet"), 32, 2, 1))
+            {
+                KeepAspectRatio = true,
+                ToolTip = "Opens the Economy Menu",
+                DontMakeBigger = true,
+                DrawFrame = true
+            };
+
+
+            moneyButton.OnClicked += moneyButton_OnClicked;
+
+            layout.SetComponentPosition(moneyButton, 3, 10, 1, 1);
+
 
             InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
 
             layout.UpdateSizes();
+
+        }
+
+        void moneyButton_OnClicked()
+        {
+            if (StateManager.NextState == "")
+            {
+                GUI.RootComponent.IsVisible = false;
+                StateManager.PushState("EconomyState");
+            }
+            Paused = true;
         }
 
 
@@ -753,7 +766,7 @@ namespace DwarfCorp.GameStates
             if(string.IsNullOrEmpty(ExistingFile))
             {
                 VoxelChunk c = ChunkManager.ChunkData.GetVoxelChunkAtWorldLocation(Camera.Position);
-                GenerateInitialBalloonPort(Master.Faction.RoomDesignator, ChunkManager, Camera.Position.X, Camera.Position.Z, 3);
+                GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager, Camera.Position.X, Camera.Position.Z, 3);
                 CreateInitialDwarves(5, c);
                 EntityFactory.CreateBalloon(Camera.Position + new Vector3(0, 1000, 0),  new Vector3(Camera.Position.X, ChunkHeight, Camera.Position.Z), ComponentManager, Content, GraphicsDevice, new ShipmentOrder(0, null), Master.Faction);
             }
@@ -784,7 +797,7 @@ namespace DwarfCorp.GameStates
             InitializeStaticData();
 
 
-            LoadingMessage = "Creating Particles...";
+            LoadingMessage = "Creating ParticleTrigger...";
             CreateParticles();
 
             LoadingMessage = "Creating Sky...";
@@ -839,12 +852,12 @@ namespace DwarfCorp.GameStates
         /// Creates a flat, wooden balloon port for the balloon to land on, and Dwarves to sit on.
         /// TODO: Fix height to that it's not too tall when on a mountain.
         /// </summary>
-        /// <param name="roomDes">The player's room designator (so that we can create a balloon port)</param>
+        /// <param name="roomDes">The player's BuildRoom designator (so that we can create a balloon port)</param>
         /// <param name="chunkManager">The terrain handler</param>
         /// <param name="x">The position of the center of the balloon port</param>
         /// <param name="z">The position of the center of the balloon port</param>
         /// <param name="size">The size of the (square) balloon port in voxels on a side</param>
-        public void GenerateInitialBalloonPort(RoomDesignator roomDes, ChunkManager chunkManager, float x, float z, int size)
+        public void GenerateInitialBalloonPort(RoomBuilder roomDes, ChunkManager chunkManager, float x, float z, int size)
         {
             Vector3 pos = new Vector3(x, ChunkHeight - 1, z);
 
@@ -908,9 +921,9 @@ namespace DwarfCorp.GameStates
                 }
             }
 
-            // Actually create the room.
+            // Actually create the BuildRoom.
             Room toBuild = new Room(designations, RoomLibrary.GetType("BalloonPort"), chunkManager);
-            RoomBuildDesignation buildDes = new RoomBuildDesignation(toBuild, roomDes.Faction);
+            BuildRoomOrder buildDes = new BuildRoomOrder(toBuild, roomDes.Faction);
             buildDes.Build();
             roomDes.DesignatedRooms.Add(toBuild);
         }
@@ -1077,19 +1090,53 @@ namespace DwarfCorp.GameStates
             if(key == ControlSettings.Default.Map)
             {
                 DrawMap = !DrawMap;
+                MiniMap.SetMinimized(!DrawMap);
             }
 
             if(key == Keys.Escape)
             {
-                if(PausePanel != null && PausePanel.IsVisible)
+                if(Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
+                {
+                    Master.ToolBar.ToolButtons[GameMaster.ToolMode.SelectUnits].InvokeClick();
+                }
+                else if(PausePanel != null && PausePanel.IsVisible)
                 {
                     PausePanel.IsVisible = false;
+                    Paused = false;
                 }
                 else
                 {
                     OpenPauseMenu();   
                 }
 
+
+            }
+
+                // Special case: number keys reserved for changing tool mode
+            else if(InputManager.IsNumKey(key))
+            {
+                int index = InputManager.GetNum(key) - 1;
+
+                List<GameMaster.ToolMode> modes = Enum.GetValues(typeof(GameMaster.ToolMode)).Cast<GameMaster.ToolMode>().ToList();
+
+                // Last index reserved for god mode
+                if(index < 0 || index >= modes.Count - 1)
+                {
+                    return;
+                }
+
+                // In this special case, all dwarves are selected
+                if(index == 0 && Master.SelectedMinions.Count == 0)
+                {
+                    Master.SelectedMinions.AddRange(Master.Faction.Minions);
+                }
+
+                if(index == 0 || Master.SelectedMinions.Count > 0)
+                {
+                    Master.ToolBar.ToolButtons[modes[index]].InvokeClick();
+
+                    //Master.ToolBar.CurrentMode = modes[index];
+                }
 
             }
 
@@ -1168,6 +1215,7 @@ namespace DwarfCorp.GameStates
             }
 
             // Hack to test the order screen TODO: get rid of
+            /*
             if(Keyboard.GetState().IsKeyDown(ControlSettings.Default.OrderScreen))
             {
                 if(StateManager.NextState == "")
@@ -1179,7 +1227,7 @@ namespace DwarfCorp.GameStates
                 }
                 Paused = true;
             }
-
+            */
 
             // If not paused, we want to just update the rest of the game.
             if (!Paused)
@@ -1193,6 +1241,10 @@ namespace DwarfCorp.GameStates
                 Sky.TimeOfDay = Time.GetSkyLightness();
                 Sky.CosTime = (float)(Time.GetTotalHours() * 2 * Math.PI / 24.0f);
                 DefaultShader.Parameters["xTimeOfDay"].SetValue(Sky.TimeOfDay);
+
+                if(KeyManager.RotationEnabled())
+                    Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2, GameState.Game.GraphicsDevice.Viewport.Height / 2);
+
             }
 
 
@@ -1201,20 +1253,23 @@ namespace DwarfCorp.GameStates
             ChunkManager.Update(gameTime, Camera, GraphicsDevice);
             InstanceManager.Update(gameTime, Camera, GraphicsDevice);
             Input.Update();
+
             SoundManager.Update(gameTime, Camera);
 
             // Updates some of the GUI status
             if(!Paused && Game.IsActive)
             {
+                /*
                 TimeSpan t = TimeSpan.FromSeconds(GameCycle.CycleTimers[GameCycle.CurrentCycle].TargetTimeSeconds - GameCycle.CycleTimers[GameCycle.CurrentCycle].CurrentTimeSeconds);
 
                 string answer = string.Format("{0:D2}m:{1:D2}s",
                     t.Minutes,
                     t.Seconds);
-                CurrentLevelLabel.Text = "Slice: " + ChunkManager.ChunkData.MaxViewingLevel + "/" + ChunkHeight;
                 OrderStatusLabel.Text = "Balloon: " + GameCycle.GetStatusString(GameCycle.CurrentCycle) + " ETA: " + answer;
                 OrderStatusLabel.TextColor = GameCycle.GetColor(GameCycle.CurrentCycle, (float) gameTime.TotalGameTime.TotalSeconds);
                 OrderStatusLabel.OnClicked += OrderStatusLabel_OnClicked;
+                 */
+                CurrentLevelLabel.Text = "Slice: " + ChunkManager.ChunkData.MaxViewingLevel + "/" + ChunkHeight;
                 TimeLabel.Text = Time.CurrentDate.ToShortDateString() + " " + Time.CurrentDate.ToShortTimeString();
                 MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString("C");
             }
@@ -1228,35 +1283,6 @@ namespace DwarfCorp.GameStates
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// Called when the balloon status is clicked. Opens up an order screen.
-        /// </summary>
-        private void OrderStatusLabel_OnClicked()
-        {
-            switch(GameCycle.CurrentCycle)
-            {
-                case GameCycle.OrderCylce.BalloonAtMotherland:
-                    if(StateManager.NextState == "")
-                    {
-                        OrderState orderState = (OrderState) StateManager.States["OrderState"];
-                        orderState.Mode = OrderState.OrderMode.Buying;
-                        StateManager.PushState("OrderState");
-                    }
-                    Paused = true;
-                    GUI.RootComponent.IsVisible = false;
-                    break;
-                case GameCycle.OrderCylce.BalloonAtColony:
-                    if(StateManager.NextState == "")
-                    {
-                        OrderState orderState = (OrderState) StateManager.States["OrderState"];
-                        orderState.Mode = OrderState.OrderMode.Selling;
-                        StateManager.PushState("OrderState");
-                        GUI.RootComponent.IsVisible = false;
-                    }
-                    Paused = true;
-                    break;
-            }
-        }
 
         /// <summary>
         /// Called whenever the escape button is pressed. Opens a small menu for saving/loading, etc.
@@ -1584,25 +1610,7 @@ namespace DwarfCorp.GameStates
 
             Vector3 frustrumNormal = Camera.GetFrustrum().Far.Normal;
 
-            if(DrawMap)
-            {
-                /*
-                const int mapWidth = 256;
-                const int mapHeight = 256;
-                float scaleX = (float) mapWidth / (float) WorldGeneratorState.worldMap.Width;
-                float scaleY = (float) mapHeight / (float) WorldGeneratorState.worldMap.Height;
-                DwarfGame.SpriteBatch.Draw(MiniMap.RenderTarget, new Rectangle(0, GraphicsDevice.Viewport.Height - mapHeight, mapWidth, mapHeight), new Color(255, 255, 255, 200));
-                Vector2 spos = ((new Vector2(Camera.Position.X * scaleX, Camera.Position.Z * scaleY) / WorldScale)) + new Vector2(0, GraphicsDevice.Viewport.Height - mapHeight);
-                Vector2 spos2 = spos + new Vector2(frustrumNormal.X * 100 * scaleX, frustrumNormal.Z * 100 * scaleY) / WorldScale;
-                Drawer2D.DrawRect(DwarfGame.SpriteBatch, new Rectangle((int) spos.X, (int) spos.Y, 1, 1), Color.White, 1.0f);
-                Drawer2D.DrawLine(DwarfGame.SpriteBatch, spos, spos2, Color.White, 1);
-                 */
-                MiniMap.IsVisible = true;
-            }
-            else
-            {
-                MiniMap.IsVisible = false;
-            }
+
 
             if(Paused)
             {

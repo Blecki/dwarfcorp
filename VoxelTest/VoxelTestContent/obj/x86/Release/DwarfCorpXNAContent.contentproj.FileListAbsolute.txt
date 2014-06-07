@@ -1,1 +1,2 @@
 C:\Users\bobicus\Desktop\dwarfcorp\VoxelTest\VoxelTestContent\obj\x86\Release\DwarfCorpXNAContent.contentprojResolveAssemblyReference.cache
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTestContent\obj\x86\Release\DwarfCorpXNAContent.contentprojResolveAssemblyReference.cache
