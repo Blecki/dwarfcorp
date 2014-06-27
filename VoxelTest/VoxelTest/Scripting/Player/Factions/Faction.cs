@@ -59,10 +59,12 @@ namespace DwarfCorp
 
         public void Update(GameTime time)
         {
-            Economy.Update(time);
             RoomBuilder.CheckRemovals();
             //TaskManager.AssignTasks();
             //TaskManager.ManageTasks();
+
+            Minions.RemoveAll(m => m.IsDead);
+            SelectedMinions.RemoveAll(m => m.IsDead);
 
             List<BuildOrder> removals = (from d in DigDesignations
                                           let vref = d.Vox
@@ -118,6 +120,11 @@ namespace DwarfCorp
         }
 
 
+        public List<Room> GetRooms()
+        {
+            return RoomBuilder.DesignatedRooms;
+        }
+
         public void OnVoxelDestroyed(Voxel v)
         {
             if(v == null)
@@ -148,6 +155,28 @@ namespace DwarfCorp
                 Stockpiles.Remove(s);
                 s.Destroy();
             }
+        }
+
+        public int ComputeStockpileCapacity()
+        {
+            int space = 0;
+            foreach (Stockpile pile in Stockpiles)
+            {
+                space += pile.Resources.MaxResources;
+            }
+
+            return space;
+        }
+
+        public int ComputeStockpileSpace()
+        {
+            int space = 0;
+            foreach(Stockpile pile in Stockpiles)
+            {
+                space += pile.Resources.MaxResources - pile.Resources.CurrentResourceCount;
+            }
+
+            return space;
         }
 
         public void AddShipDesignation(ResourceAmount resource, Room port)
@@ -264,6 +293,34 @@ namespace DwarfCorp
         public bool IsGuardDesignation(Voxel vox)
         {
             return GuardDesignations.Select(d => d.Vox).Select(vref => vref.GetVoxel(false)).Any(v => vox == v);
+        }
+
+        public bool AddResources(ResourceAmount resources)
+        {
+            ResourceAmount amount = new ResourceAmount(resources.ResourceType, resources.NumResources);
+            foreach (Stockpile stockpile in Stockpiles)
+            {
+                int space = stockpile.Resources.MaxResources - stockpile.Resources.CurrentResourceCount;
+
+                if(space >= amount.NumResources)
+                {
+                    stockpile.Resources.AddResource(amount);
+                    stockpile.HandleBoxes();
+                    return true;
+                }
+                else
+                {
+                    stockpile.Resources.AddResource(amount);
+                    amount.NumResources -= space;
+                    stockpile.HandleBoxes();
+                    if(amount.NumResources == 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
 
@@ -482,6 +539,45 @@ namespace DwarfCorp
         {
             entity.Die();
             
+        }
+
+        public void Hire(Applicant currentApplicant)
+        {
+            List<Room> rooms = GetRooms().Where(room => room.RoomType.Name == "BalloonPort").ToList();
+
+            if (rooms.Count == 0)
+            {
+                return;
+            }
+
+            Economy.CurrentMoney -= currentApplicant.Level.Pay*4;
+            Dwarf newMinion =
+                EntityFactory.GenerateDwarf(
+                    rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15,
+                    Components, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager,
+                    PlayState.Camera, this, PlayState.PlanService, "Dwarf").GetChildrenOfType<Dwarf>().First();
+
+            newMinion.Stats.CurrentClass = currentApplicant.Class;
+            newMinion.Stats.LevelIndex = currentApplicant.Level.Index - 1;
+            newMinion.Stats.LevelUp();
+            newMinion.Stats.FirstName = currentApplicant.Name.Split(' ')[0];
+            newMinion.Stats.LastName = currentApplicant.Name.Split(' ')[1];
+
+            PlayState.AnnouncementManager.Announce("New Hire!" ,currentApplicant.Name + " was hired as a " + currentApplicant.Level.Name);
+
+        }
+
+        public void DispatchBalloon()
+        {
+            List<Room> rooms = GetRooms().Where(room => room.RoomType.Name == "BalloonPort").ToList();
+
+            if (rooms.Count == 0)
+            {
+                return;
+            }
+
+            Vector3 pos = rooms.First().GetBoundingBox().Center();
+            EntityFactory.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, Components, GameState.Game.Content, GameState.Game.GraphicsDevice, new ShipmentOrder(0, null), this);
         }
     }
 

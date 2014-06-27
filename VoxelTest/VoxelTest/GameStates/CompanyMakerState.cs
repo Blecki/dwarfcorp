@@ -198,7 +198,6 @@ namespace DwarfCorp.GameStates
 
         private void randomButton_OnClicked()
         {
-            List<string[]> templates = new List<string[]>();
             string[] partners =
             {
                 "$MaleName",
@@ -283,16 +282,19 @@ namespace DwarfCorp.GameStates
                 "$Place",
                 "s"
             };
-            templates.Add(partners);
-            templates.Add(animalCorp);
-            templates.Add(animalPart);
-            templates.Add(nameAndSons);
-            templates.Add(colorPart);
-            templates.Add(colorPlace);
-            templates.Add(colorAnimal);
-            templates.Add(materialAnimal);
-            templates.Add(materialBody);
-            templates.Add(reversed);
+            List<string[]> templates = new List<string[]>
+            {
+                partners,
+                animalCorp,
+                animalPart,
+                nameAndSons,
+                colorPart,
+                colorPlace,
+                colorAnimal,
+                materialAnimal,
+                materialBody,
+                reversed
+            };
             CompanyName = TextGenerator.GenerateRandom(templates[PlayState.Random.Next(templates.Count)]);
             PlayerSettings.Default.CompanyName = CompanyName;
             CompanyNameEdit.Text = CompanyName;

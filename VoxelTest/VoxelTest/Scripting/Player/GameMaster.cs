@@ -68,6 +68,8 @@ namespace DwarfCorp
         [JsonIgnore]
         public List<CreatureAI> SelectedMinions { get { return Faction.SelectedMinions; }set { Faction.SelectedMinions = value; } }
 
+        public bool PaidEmployees { get; set; }
+
         protected void OnDeserialized(StreamingContext context)
         {
             Initialize(GameState.Game, PlayState.ComponentManager, PlayState.ChunkManager, PlayState.Camera, PlayState.ChunkManager.Graphics,  PlayState.GUI);
@@ -81,6 +83,7 @@ namespace DwarfCorp
 
         public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics, DwarfGUI gui)
         {
+            PaidEmployees = false;
             RoomLibrary.InitializeStatics();
 
             Faction.Components = components;
@@ -175,6 +178,25 @@ namespace DwarfCorp
             CurrentTool.OnVoxelsSelected(voxels, button);
         }
 
+        public void PayEmployees()
+        {
+            float total = 0;
+            foreach (CreatureAI creature in Faction.Minions)
+            {
+                float pay = creature.Stats.CurrentLevel.Pay;
+                total += pay;
+                Faction.Economy.CurrentMoney = Math.Max(Faction.Economy.CurrentMoney - pay, 0);
+
+                if (!(Faction.Economy.CurrentMoney > 0))
+                {
+                    break;
+                }
+            }
+
+            SoundManager.PlaySound(ContentPaths.Audio.change);
+            PlayState.AnnouncementManager.Announce("Pay day!", "We paid our employees " + total.ToString("C") + " today.");
+        }
+
 
         public void Render(DwarfGame game, GameTime time, GraphicsDevice g)
         {
@@ -218,10 +240,32 @@ namespace DwarfCorp
                     Debugger.Update(time);
                 }
             }
-      
-            if(!PlayState.Paused)
+
+            if (!PlayState.Paused)
+            {
                 CameraController.Update(time, PlayState.ChunkManager);
+
+                if (KeyManager.RotationEnabled())
+                    Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2, GameState.Game.GraphicsDevice.Viewport.Height / 2);
+            }
+            else
+            {
+                CameraController.LastWheel = Mouse.GetState().ScrollWheelValue;
+            }
             UpdateInput(game, time);
+
+            if (PlayState.Time.CurrentDate.TimeOfDay.Hours == 0)
+            {
+                if (!PaidEmployees)
+                {
+                    PayEmployees();
+                    PaidEmployees = true;
+                }
+            }
+            else
+            {
+                PaidEmployees = false;
+            }
         }
 
         #region input

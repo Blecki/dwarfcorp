@@ -15,6 +15,8 @@ namespace DwarfCorp
     /// </summary>
     public class GUIComponent
     {
+        public event UpdateDelegate OnUpdate;
+        public event RenderDelegate OnRender;
         public event ClickedDelegate OnClicked;
         public event ClickedDelegate OnLeftClicked;
         public event ClickedDelegate OnRightClicked;
@@ -25,6 +27,7 @@ namespace DwarfCorp
         public event ReleasedDelegate OnRelease;
         public event MouseUnHoveredDelegate OnUnHover;
         public event MouseScrolledDelegate OnScrolled;
+        
 
         public int LastScrollWheel { get; set; }
         public GUIComponent Parent { get; set; }
@@ -81,12 +84,15 @@ namespace DwarfCorp
             OnHover += dummy;
             OnRelease += dummy;
             OnUnHover += dummy;
+            OnUpdate += dummy;
+            OnRender += dummy;
             OnScrolled += SillyGUIComponent_OnScrolled;
 
             ChildrenToRemove = new List<GUIComponent>();
             ChildrenToAdd = new List<GUIComponent>();
             LastScrollWheel = 0;
         }
+
 
         protected GUIComponent()
         {
@@ -242,6 +248,8 @@ namespace DwarfCorp
                 return;
             }
 
+            OnUpdate.Invoke();
+
             foreach(GUIComponent child in Children)
             {
                 child.Update(time);
@@ -328,6 +336,8 @@ namespace DwarfCorp
             {
                 return;
             }
+
+            OnRender.Invoke();
 
             foreach(GUIComponent child in Children)
             {

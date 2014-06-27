@@ -57,38 +57,10 @@ namespace DwarfCorp
 
         public override void Die()
         {
-            if(!IsDead)
+            if (!IsDead)
             {
                 Parent.Die();
             }
-        }
-
-        public void PutResource(Body loc)
-        {
-            string resourceName = loc.Tags[0];
-
-            /*
-            foreach(ResourceAmount r in CurrentResources.Where(r => r.ResourceType.ResourceName == resourceName))
-            {
-                r.NumResources++;
-                return;
-            }
-             */
-
-            ResourceAmount newResource = new ResourceAmount
-            {
-                NumResources = 1,
-                ResourceType = ResourceLibrary.Resources[resourceName]
-            };
-
-            CurrentResources.Add(newResource);
-        }
-
-        public float GetSellOrder(Item i)
-        {
-            return (from amount in Shipment.SellOrder
-                where amount.ResourceType.ResourceName == i.UserData.Tags[0]
-                select amount.ResourceType.MoneyValue * Faction.Economy.SellMultiplier).FirstOrDefault();
         }
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
@@ -161,7 +133,7 @@ namespace DwarfCorp
                                 Vector3 pos = Physics.GlobalTransform.Translation + MathFunctions.RandVector3Cube() * 2;
                                 Body loc = EntityFactory.GenerateComponent(amount.ResourceType.ResourceName, pos, Manager, chunks.Content, chunks.Graphics, chunks, Manager.Factions, camera);
                                 Faction.AddGatherDesignation(loc);
-                                Faction.Economy.CurrentMoney -= amount.ResourceType.MoneyValue * Faction.Economy.BuyMultiplier;
+                                Faction.Economy.CurrentMoney -= amount.ResourceType.MoneyValue;
                             }
                         }
 

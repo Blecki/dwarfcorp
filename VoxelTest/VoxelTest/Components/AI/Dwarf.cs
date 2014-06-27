@@ -87,7 +87,7 @@ namespace DwarfCorp
             {
                 Resources = new ResourceContainer
                 {
-                    MaxResources = 16
+                    MaxResources = 128
                 }
             };
 

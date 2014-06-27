@@ -23,6 +23,8 @@ namespace DwarfCorp
             public static string sword = Program.CreatePath("Audio", "sword");
             public static string dig = Program.CreatePath("Audio", "dig");
             public static string whoosh = Program.CreatePath("Audio", "whoosh");
+            public static string cash = Program.CreatePath("Audio", "cash");
+            public static string change = Program.CreatePath("Audio", "change");
 
         }
         public class Particles
@@ -103,6 +105,13 @@ namespace DwarfCorp
                 }
 
             }
+
+            public class DwarfObjects
+            {
+                public static string coinpiles = Program.CreatePath("Entities", "DwarfObjects", "coinpiles");
+                public static string beartrap = Program.CreatePath("Entities", "DwarfObjects", "beartrap");
+            }
+
             public class Furniture
             {
                 public static string bedtex = Program.CreatePath("Entities", "Furniture", "bedtex");
@@ -180,6 +189,7 @@ namespace DwarfCorp
             public static string companylogo = Program.CreatePath("Logos", "companylogo");
             public static string gamelogo = Program.CreatePath("Logos", "gamelogo");
             public static string grebeardlogo = Program.CreatePath("Logos", "grebeardlogo");
+            public static string logos = Program.CreatePath("Logos", "logos");
 
         }
         public class Models

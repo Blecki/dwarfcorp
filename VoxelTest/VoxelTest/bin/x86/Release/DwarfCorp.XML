@@ -101,6 +101,11 @@
             States can be both rendered and updated. There are brief transition periods between states where animations can occur.
             </summary>
         </member>
+        <member name="T:DwarfCorp.ImagePanel">
+            <summary>
+            This is a GUI component which merely draws an image.
+            </summary>
+        </member>
         <member name="T:DwarfCorp.GUIComponent">
             <summary>
             Every element in the GUI is a GUI component. Components have children and parents. 
@@ -110,6 +115,18 @@
         <member name="T:DwarfCorp.Panel">
             <summary>
             This is a simple GUI component which draws a fancy rectangle thing.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.HireDialog">
+            <summary>
+            This GUI component is a window which opens up on top
+            of the GUI, and blocks the game until it gets user input.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Dialog">
+            <summary>
+            This GUI component is a window which opens up on top
+            of the GUI, and blocks the game until it gets user input.
             </summary>
         </member>
         <member name="T:DwarfCorp.BuildRoomOrder">
@@ -181,11 +198,6 @@
             This game state allows the player to modify game options (stored in the GameSettings file).
             </summary>
         </member>
-        <member name="T:DwarfCorp.GameStates.OrderState">
-            <summary>
-            This game state allows the player to buy/sell goods from a balloon with a drag/drop interface.
-            </summary>
-        </member>
         <member name="T:DwarfCorp.GameStates.PlayState">
             <summary>
             This is the main game state for actually playing the game.
@@ -202,12 +214,6 @@
             <summary>
             Called when the PlayState is entered from the state manager.
             </summary>
-        </member>
-        <member name="M:DwarfCorp.GameStates.PlayState.GameCycle_OnCycleChanged(DwarfCorp.GameCycle.OrderCylce)">
-            <summary>
-            Called when the balloon state is changed
-            </summary>
-            <param name="cycle">The current balloon state</param>
         </member>
         <member name="M:DwarfCorp.GameStates.PlayState.OnExit">
             <summary>
@@ -465,11 +471,6 @@
             <summary>
             An instance data represents a single instantiation of an object model
             at a given location, with a given color.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.ImagePanel">
-            <summary>
-            This is a GUI component which merely draws an image.
             </summary>
         </member>
         <member name="T:DwarfCorp.FormEntry">
@@ -926,12 +927,6 @@
         <member name="T:DwarfCorp.ActDisplay">
             <summary>
             This is a debug display for behavior trees (acts)
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.Dialog">
-            <summary>
-            This GUI component is a window which opens up on top
-            of the GUI, and blocks the game until it gets user input.
             </summary>
         </member>
         <member name="T:DwarfCorp.DraggableItem">
@@ -1431,6 +1426,12 @@
             which is drawn over certain voxels.
             </summary>
         </member>
+        <member name="T:DwarfCorp.FaunaData">
+            <summary>
+            Fauna data describes how certain animals (such as birds) are to populate
+            a chunk.
+            </summary>
+        </member>
         <member name="T:DwarfCorp.Overworld">
             <summary>
             The overworld is a 2D map specifying biomes,
@@ -1665,13 +1666,6 @@
             <summary>
             Controls how much money the player has, and whether the player can
             buy and sell certain things. Controls balloon shipments.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.GameCycle">
-            <summary>
-            A simple state machine saying what business cycle the game is in.
-            This will need to change/become more complex. It's just saying that the
-            balloon is at the colony, at the motherland, or traveling.
             </summary>
         </member>
         <member name="T:DwarfCorp.GodModeTool">

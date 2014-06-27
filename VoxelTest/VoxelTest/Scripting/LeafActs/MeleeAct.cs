@@ -70,7 +70,7 @@ namespace DwarfCorp
                 {
                     Creature.Faction.ChopDesignations.Remove(Agent.TargetComponent);
                     Agent.TargetComponent = null;
-                    Agent.Stats.XP += Math.Max((int) (healths[0].MaxHealth / 10), 1);
+                    Agent.Stats.XP += 10;
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
                     Creature.Physics.OrientWithVelocity = true;
                     Creature.Physics.Face(Creature.Physics.Velocity + Creature.Physics.GlobalTransform.Translation);

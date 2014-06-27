@@ -39,14 +39,14 @@ namespace DwarfCorp
                 return Text;
             }
 
-            string[] originalLines = Text.Split(new[] { " " }, StringSplitOptions.None);
+            string[] originalWords = Text.Split(' ');
 
             List<string> wrappedLines = new List<string>();
 
             StringBuilder actualLine = new StringBuilder();
             double actualWidth = 0;
 
-            foreach (var item in originalLines)
+            foreach (var item in originalWords)
             {
                 Vector2 itemMeasure = Datastructures.SafeMeasure(TextFont, item);
                 actualLine.Append(item + " ");

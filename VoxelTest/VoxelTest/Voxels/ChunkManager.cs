@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -667,6 +668,7 @@ namespace DwarfCorp
                             {
                                 ChunkData.AddChunk(chunk2);
                                 ChunkGen.GenerateVegetation(chunk2, Components, Content, Graphics);
+                                ChunkGen.GenerateFauna(chunk2, Components, Content, Graphics, PlayState.ComponentManager.Factions);
                             }
                         }
                     }
@@ -721,6 +723,7 @@ namespace DwarfCorp
                     {
                         ChunkData.AddChunk(chunk);
                         ChunkGen.GenerateVegetation(chunk, Components, Content, Graphics);
+                        ChunkGen.GenerateFauna(chunk, Components, Content, Graphics, PlayState.ComponentManager.Factions);
                         List<VoxelChunk> adjacents = ChunkData.GetAdjacentChunks(chunk);
                         foreach(VoxelChunk c in adjacents)
                         {

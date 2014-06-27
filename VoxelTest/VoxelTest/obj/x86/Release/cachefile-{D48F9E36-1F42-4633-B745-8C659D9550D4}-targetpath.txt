@@ -97,3 +97,8 @@ Content\Music\dwarfcorp.wma
 Content\GUI\room_icons.xnb
 Content\Effects\selection_circle.xnb
 Content\GUI\gui_minimap.xnb
+Content\Audio\cash.xnb
+Content\Audio\change.xnb
+Content\Entities\DwarfObjects\coinpiles.xnb
+Content\Entities\DwarfObjects\beartrap.xnb
+Content\Logos\logos.xnb

@@ -15,6 +15,7 @@ namespace DwarfCorp
             public string Name;
             public float Pay;
             public int XP;
+            public CreatureStats.StatNums BaseStats;
         }
 
         public List<Level> Levels { get; set; }

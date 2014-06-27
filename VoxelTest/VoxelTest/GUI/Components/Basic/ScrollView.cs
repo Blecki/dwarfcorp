@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -56,12 +57,13 @@ namespace DwarfCorp
         {
             ScrollX = 0;
             ScrollY = 0;
-            HorizontalSlider = new Slider(gui, parent, "", 0.0f, 0.0f, 1.0f, Slider.SliderMode.Float);
-            HorizontalSlider.DrawLabel = false;
+            HorizontalSlider = new Slider(gui, parent, "", 0.0f, 0.0f, 1.0f, Slider.SliderMode.Float)
+            {
+                DrawLabel = false
+            };
             HorizontalSlider.OnValueModified += HorizontalSlider_OnValueModified;
 
-            VerticalSlider = new Slider(gui, parent, "", 0.0f, 0.0f, 1.0f, Slider.SliderMode.Float);
-            VerticalSlider.DrawLabel = false;
+            VerticalSlider = new Slider(gui, parent, "", 0.0f, 0.0f, 1.0f, Slider.SliderMode.Float) {DrawLabel = false};
             VerticalSlider.OnValueModified += VerticalSlider_OnValueModified;
             VerticalSlider.Orient = Slider.Orientation.Vertical;
             OnScrolled += ScrollView_OnScrolled;
@@ -116,29 +118,26 @@ namespace DwarfCorp
             CalculateChildRect();
         }
 
+        public override bool IsMouseOverRecursive()
+        {
+            Rectangle screenRect = GetViewRect();
+            MouseState mouseState = Mouse.GetState();
+            if (screenRect.Contains(mouseState.X, mouseState.Y))
+            {
+                return base.IsMouseOverRecursive();
+            }
+
+            else return false;
+        }
 
         public void UpdateSliders()
         {
             HorizontalSlider.LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Bottom - 32, LocalBounds.Width, 32);
             VerticalSlider.LocalBounds = new Rectangle(LocalBounds.Right - 32, LocalBounds.Top, 32, LocalBounds.Height);
 
-            if(ChildRect.Width <= LocalBounds.Width)
-            {
-                HorizontalSlider.IsVisible = false;
-            }
-            else
-            {
-                HorizontalSlider.IsVisible = true;
-            }
+            HorizontalSlider.IsVisible = ChildRect.Width > LocalBounds.Width;
 
-            if(ChildRect.Height <= LocalBounds.Height)
-            {
-                VerticalSlider.IsVisible = false;
-            }
-            else
-            {
-                VerticalSlider.IsVisible = true;
-            }
+            VerticalSlider.IsVisible = ChildRect.Height > LocalBounds.Height;
         }
 
         public Rectangle GetViewRect()
@@ -162,7 +161,7 @@ namespace DwarfCorp
                 }
                 batch.GraphicsDevice.ScissorRectangle = originalRect;
 
-                Drawer2D.DrawRect(batch, GetViewRect(), Color.Black, 1);
+                Drawer2D.DrawRect(batch, screenRect, Color.Black, 1);
             }
         }
     }
