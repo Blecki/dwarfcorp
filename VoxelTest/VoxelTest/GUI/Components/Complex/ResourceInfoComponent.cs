@@ -85,8 +85,9 @@ namespace DwarfCorp
 
                 if(isDifferent)
                 {
+                    CurrentResources.Clear();
+                    CurrentResources.AddRange(currentResources);
                     CreateResourcePanels();
-                    CurrentResources = currentResources;
                 }
             }
             base.Update(time);

@@ -13,9 +13,11 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class Parallel : Act
     {
+        public bool ReturnOnAllSucces { get; set; }
         public Parallel(params Act[] children) :
             this(children.AsEnumerable())
         {
+            ReturnOnAllSucces = true;
         }
 
         public Parallel(IEnumerable<Act> children)
@@ -23,6 +25,7 @@ namespace DwarfCorp
             Name = "Parallel";
             Children = new List<Act>();
             Children.AddRange(children);
+            ReturnOnAllSucces = true;
         }
 
         public override void Initialize()
@@ -51,9 +54,18 @@ namespace DwarfCorp
                         yield return Status.Fail;
                         break;
                     }
-                    else if(childStatus != Status.Success)
+                    else if (childStatus != Status.Success)
                     {
                         runEncountered = true;
+                    }
+                    else
+                    {
+
+                        if (!ReturnOnAllSucces)
+                        {
+                            yield return Status.Success;
+                            yield break;
+                        }
                     }
                 }
 

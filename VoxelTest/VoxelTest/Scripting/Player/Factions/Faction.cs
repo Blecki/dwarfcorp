@@ -28,6 +28,7 @@ namespace DwarfCorp
             DigDesignations = new List<BuildOrder>();
             GuardDesignations = new List<BuildOrder>();
             ChopDesignations = new List<Body>();
+            AttackDesignations = new List<Body>();
             ShipDesignations = new List<ShipOrder>();
             GatherDesignations = new List<Body>();
             RoomBuilder = new RoomBuilder(this);
@@ -41,6 +42,7 @@ namespace DwarfCorp
         public List<BuildOrder> DigDesignations { get; set; }
         public List<BuildOrder> GuardDesignations { get; set; }
         public List<Body> ChopDesignations { get; set; }
+        public List<Body> AttackDesignations { get; set; }
         public List<Body> GatherDesignations { get; set; }
         public List<Stockpile> Stockpiles { get; set; }
         public List<CreatureAI> Minions { get; set; }
@@ -53,16 +55,41 @@ namespace DwarfCorp
         public List<Creature> Threats { get; set; }
 
         public string Name { get; set; }
+        public string Alliance { get; set; }
         public List<CreatureAI> SelectedMinions { get; set; }
 
+        public void CollideMinions(GameTime time)
+        {
+            foreach (CreatureAI minion in Minions)
+            {
+                foreach (CreatureAI other in Minions)
+                {
+                    if (minion == other)
+                    {
+                        continue;
+                    }
+
+                    Vector3 meToOther = other.Position - minion.Position;
+                    float dist = (meToOther).Length();
+
+                    if (dist < 0.25f)
+                    {
+                        other.Physics.ApplyForce(meToOther / (dist + 0.01f) * 100, (float)time.ElapsedGameTime.TotalSeconds);
+                    }
+                }
+            }
+
+        }
 
 
         public void Update(GameTime time)
         {
-            Economy.Update(time);
             RoomBuilder.CheckRemovals();
-            //TaskManager.AssignTasks();
-            //TaskManager.ManageTasks();
+
+            Minions.RemoveAll(m => m.IsDead);
+            SelectedMinions.RemoveAll(m => m.IsDead);
+
+            CollideMinions(time);
 
             List<BuildOrder> removals = (from d in DigDesignations
                                           let vref = d.Vox
@@ -115,8 +142,63 @@ namespace DwarfCorp
             {
                 ChopDesignations.Remove(tree);
             }
+
+            List<Body> attacksToRemove = AttackDesignations.Where(body => body.IsDead).ToList();
+
+            foreach (Body body in attacksToRemove)
+            {
+                AttackDesignations.Remove(body);
+            }
+
+            HandleThreats();
         }
 
+        public bool IsTaskAssigned(Task task)
+        {
+            return Minions.Any(minion => minion.Tasks.Contains(task));
+        }
+
+        public void HandleThreats()
+        {
+            List<Task> tasks = new List<Task>();
+            List<Creature> threatsToRemove = new List<Creature>();
+            foreach (Creature threat in Threats)
+            {
+                if (threat != null && !threat.IsDead)
+                {
+                    Task g = new KillEntityTask(threat.Physics);
+
+                    if (!IsTaskAssigned(g))
+                    {
+                        if (!AttackDesignations.Contains(threat.Physics))
+                        {
+                            AttackDesignations.Add(threat.Physics);
+                        }
+                        tasks.Add(g);
+                    }
+                    else
+                    {
+                        threatsToRemove.Add(threat);
+                    }
+                }
+                else
+                {
+                    threatsToRemove.Add(threat);
+                }
+            }
+
+            foreach (Creature threat in threatsToRemove)
+            {
+               Threats.Remove(threat);
+            }
+
+            DwarfCorp.TaskManager.AssignTasks(tasks, Minions);
+        }
+
+        public List<Room> GetRooms()
+        {
+            return RoomBuilder.DesignatedRooms;
+        }
 
         public void OnVoxelDestroyed(Voxel v)
         {
@@ -148,6 +230,28 @@ namespace DwarfCorp
                 Stockpiles.Remove(s);
                 s.Destroy();
             }
+        }
+
+        public int ComputeStockpileCapacity()
+        {
+            int space = 0;
+            foreach (Stockpile pile in Stockpiles)
+            {
+                space += pile.Resources.MaxResources;
+            }
+
+            return space;
+        }
+
+        public int ComputeStockpileSpace()
+        {
+            int space = 0;
+            foreach(Stockpile pile in Stockpiles)
+            {
+                space += pile.Resources.MaxResources - pile.Resources.CurrentResourceCount;
+            }
+
+            return space;
         }
 
         public void AddShipDesignation(ResourceAmount resource, Room port)
@@ -264,6 +368,34 @@ namespace DwarfCorp
         public bool IsGuardDesignation(Voxel vox)
         {
             return GuardDesignations.Select(d => d.Vox).Select(vref => vref.GetVoxel(false)).Any(v => vox == v);
+        }
+
+        public bool AddResources(ResourceAmount resources)
+        {
+            ResourceAmount amount = new ResourceAmount(resources.ResourceType, resources.NumResources);
+            foreach (Stockpile stockpile in Stockpiles)
+            {
+                int space = stockpile.Resources.MaxResources - stockpile.Resources.CurrentResourceCount;
+
+                if(space >= amount.NumResources)
+                {
+                    stockpile.Resources.AddResource(amount);
+                    stockpile.HandleBoxes();
+                    return true;
+                }
+                else
+                {
+                    stockpile.Resources.AddResource(amount);
+                    amount.NumResources -= space;
+                    stockpile.HandleBoxes();
+                    if(amount.NumResources == 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
 
@@ -482,6 +614,45 @@ namespace DwarfCorp
         {
             entity.Die();
             
+        }
+
+        public void Hire(Applicant currentApplicant)
+        {
+            List<Room> rooms = GetRooms().Where(room => room.RoomType.Name == "BalloonPort").ToList();
+
+            if (rooms.Count == 0)
+            {
+                return;
+            }
+
+            Economy.CurrentMoney -= currentApplicant.Level.Pay*4;
+            Dwarf newMinion =
+                EntityFactory.GenerateDwarf(
+                    rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15,
+                    Components, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager,
+                    PlayState.Camera, this, PlayState.PlanService, "Dwarf", currentApplicant.Class, currentApplicant.Level.Index).GetChildrenOfType<Dwarf>().First();
+
+            newMinion.Stats.CurrentClass = currentApplicant.Class;
+            newMinion.Stats.LevelIndex = currentApplicant.Level.Index - 1;
+            newMinion.Stats.LevelUp();
+            newMinion.Stats.FirstName = currentApplicant.Name.Split(' ')[0];
+            newMinion.Stats.LastName = currentApplicant.Name.Split(' ')[1];
+
+            PlayState.AnnouncementManager.Announce("New Hire!" ,currentApplicant.Name + " was hired as a " + currentApplicant.Level.Name);
+
+        }
+
+        public void DispatchBalloon()
+        {
+            List<Room> rooms = GetRooms().Where(room => room.RoomType.Name == "BalloonPort").ToList();
+
+            if (rooms.Count == 0)
+            {
+                return;
+            }
+
+            Vector3 pos = rooms.First().GetBoundingBox().Center();
+            EntityFactory.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, Components, GameState.Game.Content, GameState.Game.GraphicsDevice, new ShipmentOrder(0, null), this);
         }
     }
 

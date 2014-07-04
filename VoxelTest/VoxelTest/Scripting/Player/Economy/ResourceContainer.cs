@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Security.AccessControl;
 using System.Text;
+using DwarfCorp.GameStates;
 using Newtonsoft.Json;
 
 namespace DwarfCorp

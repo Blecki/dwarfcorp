@@ -69,16 +69,11 @@ namespace DwarfCorp
                 Boxes.Clear();
             }
 
-            if(Resources.CurrentResourceCount == 0)
-            {
-                return;
-            }
-
             int numBoxes = Math.Min(Math.Max(Resources.CurrentResourceCount / ResourcesPerVoxel, 1), Voxels.Count);
 
             if (Boxes.Count > numBoxes)
             {
-                for (int i = Boxes.Count - 1; i > numBoxes; i--)
+                for (int i = Boxes.Count - 1; i >= numBoxes; i--)
                 {
                     KillBox(Boxes[i]);
                     Boxes.RemoveAt(i);

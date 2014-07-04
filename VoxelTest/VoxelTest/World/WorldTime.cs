@@ -14,9 +14,20 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class WorldTime
     {
+        public delegate void DayPassed(DateTime time);
+        public event DayPassed NewDay;
+
+        protected virtual void OnNewDay(DateTime time)
+        {
+            DayPassed handler = NewDay;
+            if (handler != null) handler(time);
+        }
+
+
         public DateTime CurrentDate { get; set; }
 
         public float Speed { get; set; }
+
 
         public WorldTime()
         {
@@ -26,7 +37,13 @@ namespace DwarfCorp
 
         public void Update(GameTime t)
         {
+            bool beforeMidnight = CurrentDate.Hour > 0;
             CurrentDate = CurrentDate.Add(new TimeSpan(0, 0, 0, 0, (int)(t.ElapsedGameTime.Milliseconds * Speed)));
+
+            if (CurrentDate.Hour == 0 && beforeMidnight)
+            {
+                OnNewDay(CurrentDate);
+            }
         }
 
         public float GetTotalSeconds()

@@ -33,6 +33,7 @@ namespace DwarfCorp
             Gather,
             Chop,
             Guard,
+            Attack,
             God
         }
 
@@ -141,6 +142,13 @@ namespace DwarfCorp
                 ChopDesignationGlowRate = 2.0f
             };
 
+            Tools[ToolMode.Attack] = new AttackTool
+            {
+                Player = this,
+                DesignationColor = Color.Red,
+                GlowRate = 2.0f
+            };
+
 
             /*
             Tools[ToolMode.CreateStockpiles] = new StockpileTool
@@ -163,6 +171,12 @@ namespace DwarfCorp
             Initialize(game, components, chunks, camera, graphics, gui);
             VoxSelector.Selected += OnSelected;
             BodySelector.Selected += OnBodiesSelected;
+            PlayState.Time.NewDay += Time_NewDay;
+        }
+
+        void Time_NewDay(DateTime time)
+        {
+            PayEmployees();
         }
 
         public void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
@@ -173,6 +187,26 @@ namespace DwarfCorp
         public void OnSelected(List<VoxelRef> voxels, InputManager.MouseButton button)
         {
             CurrentTool.OnVoxelsSelected(voxels, button);
+        }
+
+        public void PayEmployees()
+        {
+            float total = 0;
+            foreach (CreatureAI creature in Faction.Minions)
+            {
+                float pay = creature.Stats.CurrentLevel.Pay;
+                total += pay;
+                Faction.Economy.CurrentMoney = Math.Max(Faction.Economy.CurrentMoney - pay, 0);
+
+                if (!(Faction.Economy.CurrentMoney > 0))
+                {
+                    PlayState.AnnouncementManager.Announce("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
+                    break;
+                }
+            }
+
+            SoundManager.PlaySound(ContentPaths.Audio.change);
+            PlayState.AnnouncementManager.Announce("Pay day!", "We paid our employees " + total.ToString("C") + " today.");
         }
 
 
@@ -218,10 +252,25 @@ namespace DwarfCorp
                     Debugger.Update(time);
                 }
             }
-      
-            if(!PlayState.Paused)
+
+            if (!PlayState.Paused)
+            {
                 CameraController.Update(time, PlayState.ChunkManager);
+
+                if (KeyManager.RotationEnabled())
+                    Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2, GameState.Game.GraphicsDevice.Viewport.Height / 2);
+            }
+            else
+            {
+                CameraController.LastWheel = Mouse.GetState().ScrollWheelValue;
+            }
             UpdateInput(game, time);
+
+        }
+
+        public List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, ToolMode action)
+        {
+            return minions.Where(creature => creature.Stats.CurrentClass.HasAction(action)).ToList();
         }
 
         #region input

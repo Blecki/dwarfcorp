@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using DwarfCorp.GameStates;
 
 namespace DwarfCorp
 {
@@ -56,6 +58,11 @@ namespace DwarfCorp
             TextAtom dwarfFamily = new TextAtom("$DwarfFamily", "Greythorn", "Redthorn", "Greystone", "Redstone", "Goldstone", "Goldthorn", "Greybeard", "Redbeard", "Bluebeard", "Stonearm", "Witchpipe", "Fathunt", "Casker", "Harpsinger", "Khundushath", "Bilgabar", "Naragzinb", "Nargathur", "Bizaram", "Baragzar", "Kibarak", "Smith", "Belcher", "Bricker", "Greatmine");
             TextAtom goblinName = new TextAtom("$GoblinName", "Lurtzog", "Gorkil", "Baluk", "Agrag", "Shakil", "Gashur", "Mega", "Balug", "Uglur", "Lagdush", "Oldog", "Muzga", "Lugdush");
             TextAtom goblinFamily = new TextAtom("$GoblinFamily", "Ugdush", "Gashur", "Balcmurz", "Orgbag", "Azod", "Rat", "Lukil" );
+            TextAtom professions = new TextAtom("$Professions", "Urchin", "Homeless", "Fishmonger", "Beggar", "Factory Worker", "Student", "Fugitive", "Convict", "Carpenter", "Roofer", "Ditch Digger", "Disgraced Noble", "Policeman", "Conscript", "Enuch");
+            TextAtom magical = new TextAtom("$Magical", "University", "School", "Magerium", "Magicians", "Arcana", "Institute", "Learning Center", "Library", "Museum");
+            TextAtom military = new TextAtom("$Military", "Thugs", "Band", "Company", "Heroes", "Strongdwarves",
+                "Mercenaries", "Dwarfs-at-arms", "Shield", "Axe", "Sword", "Army", "Fighters", "Knights");
+            TextAtom industrial = new TextAtom("$Industry", "Industries", "Materials", "Techcenter", "Factories", "Machines", "Parts", "Hammers");
             AddAtom(animals);
             AddAtom(bodyparts);
             AddAtom(family);
@@ -72,6 +79,10 @@ namespace DwarfCorp
             AddAtom(adverb);
             AddAtom(verb);
             AddAtom(interjection);
+            AddAtom(professions);
+            AddAtom(magical);
+            AddAtom(military);
+            AddAtom(industrial);
             staticsInitialized = true;
         }
 
@@ -91,6 +102,14 @@ namespace DwarfCorp
                 else if(TextAtoms.ContainsKey(s))
                 {
                     toReturn += TextAtoms[s].GetRandom();
+                }
+                else if (Regex.Match(s, @"\${(.*?)}").Success)
+                {
+                    string match = Regex.Match(s, @"\${(.*?)}").Groups[1].Value;
+                    string[] splits = match.Split(',');
+
+                    if(splits.Length > 0)
+                        toReturn += splits[PlayState.Random.Next(splits.Length)];
                 }
                 else
                 {

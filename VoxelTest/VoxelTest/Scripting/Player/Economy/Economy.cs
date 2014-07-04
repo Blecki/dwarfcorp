@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -18,64 +19,83 @@ namespace DwarfCorp
     /// Controls how much money the player has, and whether the player can
     /// buy and sell certain things. Controls balloon shipments.
     /// </summary>
+    [JsonObject(IsReference = true)]
     public class Economy
     {
-        public float CurrentMoney { get; set; }
-        public float BuyMultiplier { get; set; }
-        public float SellMultiplier { get; set; }
+        public float CurrentMoney { get { return Company.Assets; } set { Company.Assets = value; } }
+        public Company Company { get; set; }
         public Faction Faction { get; set; }
+        public List<Company> Market { get; set; }
+        public PlayState PlayState { get; set; }
 
-        public List<ShipmentOrder> OutstandingOrders { get; set; }
-        public List<ShipmentOrder> TravelingOrders { get; set; }
-
-        public Economy(Faction faction, float currentMoney, float buyMultiplier, float sellMulitiplier)
+        public Economy(Faction faction, float currentMoney, PlayState state)
         {
+            PlayState = state;
+            Company = new Company();
+            Company.InitializeFromPlayer();
             CurrentMoney = currentMoney;
-            BuyMultiplier = buyMultiplier;
-            SellMultiplier = sellMulitiplier;
-            OutstandingOrders = new List<ShipmentOrder>();
-            TravelingOrders = new List<ShipmentOrder>();
             Faction = faction;
-        }
-
-        public void DispatchBalloon(ShipmentOrder order)
-        {
-            BoundingBox box = order.Destination.GetBoundingBox();
-            Vector3 position = box.Min + (box.Max - box.Min) * 0.5f;
-            EntityFactory.CreateBalloon(position, position + Vector3.UnitY * 30, PlayState.ComponentManager, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics, order, Faction);
-        }
-
-        public void Update(GameTime t)
-        {
-            List<ShipmentOrder> removals = new List<ShipmentOrder>();
-            foreach(ShipmentOrder order in OutstandingOrders)
+            Market  = new List<Company>
             {
-                if(!order.HasSentResources)
-                {
-                    order.HasSentResources = true;
-                    foreach(ResourceAmount amount in order.SellOrder)
-                    {
-                        Faction.AddShipDesignation(amount, order.Destination);
-                    }
-                }
+                Company,
+                Company.GenerateRandom(1000, 1.0f, Company.Sector.Exploration),
+                Company.GenerateRandom(1200, 5.0f, Company.Sector.Exploration),
+                Company.GenerateRandom(1500, 10.0f, Company.Sector.Exploration),
+                Company.GenerateRandom(1300, 10.0f, Company.Sector.Manufacturing),
+                Company.GenerateRandom(1200, 10.0f, Company.Sector.Manufacturing),
+                Company.GenerateRandom(1500, 15.0f, Company.Sector.Military),
+                Company.GenerateRandom(1300, 10.0f, Company.Sector.Military),
+                Company.GenerateRandom(1200, 15.0f, Company.Sector.Military),
+                Company.GenerateRandom(1500, 25.0f, Company.Sector.Magic),
+                Company.GenerateRandom(1200, 30.0f, Company.Sector.Magic),
+                Company.GenerateRandom(1300, 40.0f, Company.Sector.Magic),
+                Company.GenerateRandom(1500, 50.0f, Company.Sector.Finance),
+                Company.GenerateRandom(1800, 60.0f, Company.Sector.Finance)
+            };
 
-                if(!order.OrderTimer.HasTriggered)
+            PlayState.Time.NewDay += Time_NewDay;
+        }
+
+        public void UpdateStocks(DateTime time)
+        {
+            float marketBias = (float)Math.Sin(Act.LastTime.TotalGameTime.TotalSeconds * 0.001f) * 0.25f;
+            float originalStockPrice = Company.StockPrice;
+            foreach (Company company in Market)
+            {
+                float assetDiff = company.Assets - company.LastAssets;
+                float assetBonus = Math.Min(Math.Max(assetDiff * 0.01f, -1.5f), 1.5f);
+                if (company.Assets <= 0)
                 {
-                    order.OrderTimer.Update(t);
+                    assetBonus -= 1.5f;
                 }
-                else
-                {
-                    removals.Add(order);
-                }
+                float newPrice = Math.Max(company.StockPrice + marketBias + MathFunctions.Rand()*0.5f - 0.25f + assetBonus, 0);
+                company.StockHistory.Add(newPrice);
+                company.StockPrice = newPrice;
+                company.LastAssets = company.Assets;
             }
 
-            foreach(ShipmentOrder order in removals)
+            float diff = Company.StockPrice - originalStockPrice;
+            if (Company.StockPrice <= 0)
             {
-                OutstandingOrders.Remove(order);
-                TravelingOrders.Add(order);
-                DispatchBalloon(order);
+                PlayState.InvokeLoss();
             }
+
+            if (Company.Assets <= 0)
+            {
+                PlayState.AnnouncementManager.Announce("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
+            }
+
+            string symbol = diff > 0 ? "+" : "";
+           
+            PlayState.AnnouncementManager.Announce(Company.TickerName + " " + Company.StockPrice.ToString("F2") + " " + symbol + diff.ToString("F2"), "Our stock price changed by " + symbol + " " + diff.ToString("F2") + " today.");
         }
+
+        void Time_NewDay(DateTime time)
+        {
+            UpdateStocks(time);   
+        }
+
+       
     }
 
 }

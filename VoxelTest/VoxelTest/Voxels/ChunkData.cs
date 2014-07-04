@@ -366,7 +366,7 @@ namespace DwarfCorp
         public Point3 GetChunkID(Vector3 origin)
         {
             origin = RoundToChunkCoords(origin);
-            return new Point3((int) origin.X, (int) origin.Y, (int) origin.Z);
+            return new Point3((int)Math.Floor(origin.X), (int)Math.Floor(origin.Y), (int)Math.Floor(origin.Z));
         }
 
         /// <summary> 

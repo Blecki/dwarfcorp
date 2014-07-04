@@ -45,11 +45,6 @@ namespace DwarfCorp
         {
             List<CreatureAI> creatures = (from c in sensed.OfType<Physics>() from child in c.GetChildrenOfTypeRecursive<CreatureAI>() where child != Creature && Alliance.GetRelationship(Creature.Creature.Allies, child.Creature.Allies) == Relationship.Hates select child).ToList();
             OnEnemySensed.Invoke(creatures);
-
-            foreach (CreatureAI c in creatures)
-            {
-                Console.WriteLine(c.ToString());
-            }
         }
     }
 

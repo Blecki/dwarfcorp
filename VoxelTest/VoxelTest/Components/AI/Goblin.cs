@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
@@ -14,50 +15,23 @@ namespace DwarfCorp
     /// </summary>
     public class Goblin : Creature
     {
-        public Goblin(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, Texture2D GoblinTexture, Vector3 position) :
+        public Goblin(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, Vector3 position) :
             base(stats, allies, planService, faction, new Physics(manager, "goblin", manager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0)),
                 manager, chunks, graphics, content, name)
         {
-            Initialize(GoblinTexture);
+            Initialize();
         }
 
-        public void Initialize(Texture2D goblinSprites)
+        public void Initialize()
         {
             Physics.OrientWithVelocity = true;
-            const int frameWidth = 24;
-            const int frameHeight = 32;
             Sprite = new CharacterSprite(Graphics, Manager, "Goblin Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 0.1f, 0)));
+            foreach (Animation animation in Stats.CurrentClass.Animations)
+            {
+                Sprite.AddAnimation(new Animation(animation, animation.SpriteSheet, GameState.Game.GraphicsDevice));
+            }
 
-            Sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Forward, goblinSprites, 6.0f, frameWidth, frameHeight, 0, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Right, goblinSprites, 6.0f, frameWidth, frameHeight, 2, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Left, goblinSprites, 6.0f, frameWidth, frameHeight, 1, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Walking, OrientedAnimation.Orientation.Backward, goblinSprites, 6.0f, frameWidth, frameHeight, 3, 0, 1);
-
-            Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, goblinSprites, 0.8f, frameWidth, frameHeight, 0, 1, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, goblinSprites, 0.8f, frameWidth, frameHeight, 2, 2, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Left, goblinSprites, 0.8f, frameWidth, frameHeight, 1, 1, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, goblinSprites, 0.8f, frameWidth, frameHeight, 0, 1);
-
-            Sprite.AddAnimation(CharacterMode.Attacking, OrientedAnimation.Orientation.Forward, goblinSprites, 5.0f, frameWidth, frameHeight, 8, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Attacking, OrientedAnimation.Orientation.Right, goblinSprites, 5.0f, frameWidth, frameHeight, 10, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Attacking, OrientedAnimation.Orientation.Left, goblinSprites, 5.0f, frameWidth, frameHeight, 9, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Attacking, OrientedAnimation.Orientation.Backward, goblinSprites, 5.0f, frameWidth, frameHeight, 11, 0, 1);
-
-            Sprite.AddAnimation(CharacterMode.Falling, OrientedAnimation.Orientation.Forward, goblinSprites, 6.0f, frameWidth, frameHeight, 4, 0);
-            Sprite.AddAnimation(CharacterMode.Falling, OrientedAnimation.Orientation.Right, goblinSprites, 6.0f, frameWidth, frameHeight, 6, 0);
-            Sprite.AddAnimation(CharacterMode.Falling, OrientedAnimation.Orientation.Left, goblinSprites, 6.0f, frameWidth, frameHeight, 5, 0);
-            Sprite.AddAnimation(CharacterMode.Falling, OrientedAnimation.Orientation.Backward, goblinSprites, 6.0f, frameWidth, frameHeight, 7, 0);
-
-            Sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Forward, goblinSprites, 6.0f, frameWidth, frameHeight, 4, 1);
-            Sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Right, goblinSprites, 6.0f, frameWidth, frameHeight, 6, 1);
-            Sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Left, goblinSprites, 6.0f, frameWidth, frameHeight, 5, 1);
-            Sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Backward, goblinSprites, 6.0f, frameWidth, frameHeight, 7, 1);
-
-            Sprite.AddAnimation(CharacterMode.Swimming, OrientedAnimation.Orientation.Forward, goblinSprites, 6.0f, frameWidth, frameHeight, 12, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Swimming, OrientedAnimation.Orientation.Right, goblinSprites, 6.0f, frameWidth, frameHeight, 14, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Swimming, OrientedAnimation.Orientation.Left, goblinSprites, 6.0f, frameWidth, frameHeight, 13, 0, 1);
-            Sprite.AddAnimation(CharacterMode.Swimming, OrientedAnimation.Orientation.Backward, goblinSprites, 6.0f, frameWidth, frameHeight, 15, 0, 1);
-
+           
 
             Hands = new Grabber(Manager, "hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
 
@@ -65,7 +39,7 @@ namespace DwarfCorp
 
             AI = new CreatureAI(this, "Goblin AI", Sensors, PlanService);
 
-            Weapon = new Weapon("Sword", 1.0f, 2.0f, 1.0f, AI, ContentPaths.Audio.sword);
+            Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.MeleeAttack) };
 
             Health = new Health(Manager, "HP", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
 

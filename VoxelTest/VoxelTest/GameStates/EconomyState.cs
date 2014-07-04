@@ -58,8 +58,8 @@ namespace DwarfCorp.GameStates
             Layout = new GridLayout(GUI, MainWindow, 11, 4);
             Layout.UpdateSizes();
 
-            Button back = new Button(GUI, Layout, "Back", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
-            Layout.SetComponentPosition(back, 3, 10, 1, 1);
+            Button back = new Button(GUI, Layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.LeftArrow));
+            Layout.SetComponentPosition(back, 0, 10, 1, 1);
             back.OnClicked += back_OnClicked;
 
             Panel tabPanel = new Panel(GUI, Layout);
@@ -84,7 +84,7 @@ namespace DwarfCorp.GameStates
 
 
            CreateTabButton(tabLayout, "Capital", "Financial report", 2, 1);
-           Panel capitalPanel = new Panel(GUI, Layout)
+           CapitalPanel capitalPanel = new CapitalPanel(GUI, Layout, PlayState.Master.Faction)
            {
                IsVisible = false
            };
@@ -189,8 +189,14 @@ namespace DwarfCorp.GameStates
 
         private void DrawGUI(GameTime gameTime, float dx)
         {
+            RasterizerState rasterizerState = new RasterizerState()
+            {
+                ScissorTestEnable = true
+            };
+
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
+
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, rasterizerState);
 
             Drawer2D.FillRect(DwarfGame.SpriteBatch, Game.GraphicsDevice.Viewport.Bounds, new Color(0, 0, 0, 200));
          
