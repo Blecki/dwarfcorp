@@ -179,7 +179,7 @@ namespace DwarfCorp
                 HomeSet = true;
             }
 
-            if(IsVisible && !IsMinimized)
+            if(IsVisible && !IsMinimized && GUI.RootComponent.IsVisible)
             {
                 Viewport originalViewport = PlayState.GraphicsDevice.Viewport;
                 Camera.Update(time, PlayState.ChunkManager);

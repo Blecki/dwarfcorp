@@ -54,9 +54,10 @@ namespace DwarfCorp
             DefaultContent["DwarfSheet"] = Program.CreatePath("Entities" ,"Dwarf" , "Sprites", "dwarf_animations");
             DefaultContent["InteriorSheet"] = Program.CreatePath("Entities", "Furniture", "interior_furniture");
             DefaultContent["GUISheet"] = Program.CreatePath("GUI", "gui_widgets");
-            DefaultContent["GoblinSheet"] = Program.CreatePath("Entities", "Goblin", "Sprites", "goblin_animations");
-            DefaultContent["IconSheet"] = Program.CreatePath("GUI", "icons");
-            DefaultContent["CompanyLogo"] = Program.CreatePath("Logos", "companylogo");
+            DefaultContent["GoblinSheet"] = Program.CreatePath("Entities", "Goblin", "Sprites", "goblin_withsword");
+            DefaultContent["IconSheet"] = ContentPaths.GUI.icons;
+            DefaultContent["CompanyLogo"] = ContentPaths.Logos.companylogo;
+            DefaultContent["CorpLogo"] = ContentPaths.Logos.grebeardlogo;
             DefaultContent["ResourceSheet"] = Program.CreatePath("Entities", "Resources", "resources");
             staticsInitialized = true;
         }
@@ -140,6 +141,8 @@ namespace DwarfCorp
                     return AssetSettings.Default.GUISheet;
                 case "CompanyLogo":
                     return PlayerSettings.Default.CompanyLogo;
+                case "CorpLogo":
+                    return ContentPaths.Logos.grebeardlogo;
                 case "ResourceSheet":
                     return AssetSettings.Default.ResourceSheet;
                 default:
@@ -155,10 +158,10 @@ namespace DwarfCorp
             {
                 case "":
                     return Content.Load<Texture2D>(asset);
-                case "Default":
-                    return Content.Load<Texture2D>(DefaultContent[asset]);
                 default:
-                    return LoadInstanceTexture(assetValue);
+                    return Content.Load<Texture2D>(DefaultContent[asset]);
+               // default:
+               //     return LoadInstanceTexture(assetValue);
             }
         }
 

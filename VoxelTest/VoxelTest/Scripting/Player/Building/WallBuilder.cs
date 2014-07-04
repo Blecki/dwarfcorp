@@ -194,7 +194,7 @@ namespace DwarfCorp
                         }
                     }
 
-                    TaskManager.AssignTasks(assignments, PlayState.Master.SelectedMinions);
+                    TaskManager.AssignTasks(assignments, PlayState.Master.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Build));
 
                     break;
                 }

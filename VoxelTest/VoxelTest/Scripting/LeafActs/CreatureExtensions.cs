@@ -109,9 +109,8 @@ namespace DwarfCorp
                 }
 
                 agent.Physics.Velocity = new Vector3(agent.Physics.Velocity.X * 0.5f, agent.Physics.Velocity.Y, agent.Physics.Velocity.Z * 0.5f);
-                vox.Health -= agent.Stats.BaseDigSpeed * (float) Act.LastTime.ElapsedGameTime.TotalSeconds;
 
-                agent.Weapon.PlayNoise();
+                agent.Attacks[0].Perform(vox, Act.LastTime, agent.Stats.BaseDigSpeed);
                 agent.Status.Energy.CurrentValue -= energyLoss * Act.Dt * agent.Stats.Tiredness;
                 yield return Act.Status.Running;
             }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
@@ -15,27 +16,30 @@ namespace DwarfCorp
     {
         public Dictionary<string, Faction> Factions { get; set; }
 
-        public void Initialize()
+        public void Initialize(PlayState state)
         {
             Factions = new Dictionary<string, Faction>();
             Factions["Player"] = new Faction
             {
-                Name = "Player"
+                Name = "Player",
+                Alliance = "Dwarf"
             };
-            Factions["Player"].Economy = new Economy(Factions["Player"], 100.0f, 1.0f, 1.0f);
+            Factions["Player"].Economy = new Economy(Factions["Player"], 100.0f, state);
 
             Factions["Goblins"] = new Faction
             {
-                Name = "Goblins"
+                Name = "Goblins",
+                Alliance = "Goblin"
             };
-            Factions["Goblins"].Economy = new Economy(Factions["Goblins"], 0.0f, 1.0f, 1.0f);
+            //Factions["Goblins"].Economy = new Economy(Factions["Goblins"], 0.0f, 1.0f, 1.0f);
 
 
             Factions["Herbivore"] = new Faction
             {
-                Name = "Herbivore"
+                Name = "Herbivore",
+                Alliance = "Herbivore"
             };
-            Factions["Herbivore"].Economy = new Economy(Factions["Herbivore"], 0.0f, 1.0f, 1.0f);
+            //Factions["Herbivore"].Economy = new Economy(Factions["Herbivore"], 0.0f, 1.0f, 1.0f);
         }
 
 

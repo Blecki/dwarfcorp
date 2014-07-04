@@ -111,7 +111,7 @@ namespace DwarfCorp
 
             Health = new Health(Manager, "HP", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
 
-            Weapon = new Weapon("None", 0.0f, 0.0f, 0.0f, AI, ContentPaths.Audio.pick);
+            Attacks = new List<Attack>() {new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick)};
 
             Physics.Tags.Add("Snake");
             Physics.Tags.Add("Animal");

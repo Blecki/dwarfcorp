@@ -50,8 +50,8 @@ namespace DwarfCorp
 
         public GameData Data { get; set; }
 
-        public new static string Extension = "game";
-        public new static string CompressedExtension = "zgame";
+        public static string Extension = "game";
+        public static string CompressedExtension = "zgame";
 
         public GameFile(string overworld)
         {

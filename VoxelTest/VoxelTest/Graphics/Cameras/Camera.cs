@@ -45,6 +45,7 @@ namespace DwarfCorp
         }
 
         public ProjectionMode Projection { get; set; }
+        public int LastWheel { get; set; }
 
 
         public Camera(Vector3 target, Vector3 position, float fov, float aspectRatio, float nearPlane, float farPlane)

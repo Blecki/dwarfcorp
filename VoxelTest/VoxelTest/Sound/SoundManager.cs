@@ -52,17 +52,11 @@ namespace DwarfCorp
             {
                 return;
             }
-
-            try
-            {
-                MediaPlayer.Play(Content.Load<Song>(name));
-                MediaPlayer.Volume = GameSettings.Default.MasterVolume * GameSettings.Default.MusicVolume;
-            }
-            catch(Exception e)
-            {
-                Console.Error.WriteLine(e.Message);
-                return;
-            }
+            Song song = Content.Load<Song>(name);
+            MediaPlayer.Play(song);
+            MediaPlayer.Volume = GameSettings.Default.MasterVolume * GameSettings.Default.MusicVolume;
+            MediaPlayer.IsRepeating = true;
+           
         }
 
         public static Sound3D PlaySound(string name, Vector3 location, bool randomPitch, float volume = 1.0f)
@@ -71,62 +65,76 @@ namespace DwarfCorp
             {
                 return null;
             }
-            try
+            SoundEffect effect = null;
+
+            if (!EffectLibrary.ContainsKey(name))
             {
-                SoundEffect effect = null;
-
-                if(!EffectLibrary.ContainsKey(name))
-                {
-                    effect = Content.Load<SoundEffect>(name);
-                    EffectLibrary[name] = effect;
-                }
-                else
-                {
-                    effect = EffectLibrary[name];
-                }
+                effect = Content.Load<SoundEffect>(name);
+                EffectLibrary[name] = effect;
+            }
+            else
+            {
+                effect = EffectLibrary[name];
+            }
 
 
-                Sound3D sound = new Sound3D
-                {
-                    Position = location,
-                    EffectInstance = effect.CreateInstance(),
-                    HasStarted = false,
-                    Name = name
-                };
-                sound.EffectInstance.IsLooped = false;
+            Sound3D sound = new Sound3D
+            {
+                Position = location,
+                EffectInstance = effect.CreateInstance(),
+                HasStarted = false,
+                Name = name
+            };
+            sound.EffectInstance.IsLooped = false;
 
-                if(randomPitch)
-                {
-                    sound.EffectInstance.Pitch = (float) (PlayState.Random.NextDouble() * 1.0f - 0.5f);
-                }
+            if (randomPitch)
+            {
+                sound.EffectInstance.Pitch = (float)(PlayState.Random.NextDouble() * 1.0f - 0.5f);
+            }
 
-                if(!SoundCounts.ContainsKey(name))
-                {
-                    SoundCounts[name] = 0;
-                }
+            if (!SoundCounts.ContainsKey(name))
+            {
+                SoundCounts[name] = 0;
+            }
 
-                if(SoundCounts[name] < MaxSounds)
-                {
-                    SoundCounts[name]++;
-                    ActiveSounds.Add(sound);
-                }
-                else
+            if (SoundCounts[name] < MaxSounds)
+            {
+                SoundCounts[name]++;
+                ActiveSounds.Add(sound);
+            }
+            else
+            {
+                if (!sound.EffectInstance.IsDisposed)
                 {
                     sound.EffectInstance.Stop();
-                    sound.EffectInstance.Dispose();
                     sound.EffectInstance = null;
                 }
-
-
-                sound.VolumeMultiplier = volume;
-
-                return sound;
             }
-            catch(Exception e)
+
+
+            sound.VolumeMultiplier = volume;
+
+            return sound;
+
+        }
+
+        public static void PlaySound(string name)
+        {
+            SoundEffect effect = null;
+
+            if (!EffectLibrary.ContainsKey(name))
             {
-                Console.Out.WriteLine(e.Message);
-                return null;
+                effect = Content.Load<SoundEffect>(name);
+                EffectLibrary[name] = effect;
             }
+            else
+            {
+                effect = EffectLibrary[name];
+            }
+
+            effect.Play(GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume, 0.0f, 0.0f);
+
+
         }
 
         public static Sound3D PlaySound(string name, Vector3 location, float volume = 1.0f)
@@ -149,7 +157,8 @@ namespace DwarfCorp
             {
                 if(instance.HasStarted && instance.EffectInstance.State == SoundState.Stopped || instance.EffectInstance.State == SoundState.Paused)
                 {
-                    instance.EffectInstance.Dispose();
+                    if(!instance.EffectInstance.IsDisposed)
+                        instance.EffectInstance.Dispose();
                     toRemove.Add(instance);
                     SoundCounts[instance.Name]--;
                 }

@@ -155,9 +155,6 @@ namespace DwarfCorp.GameStates
         // Maintains a dictionary of biomes (forest, desert, etc.)
         public static BiomeLibrary BiomeLibrary = new BiomeLibrary();
 
-        // Handles the current game state (TODO: replace this with something more elegant)
-        public GameCycle GameCycle { get; set; }
-
         // If true, the game will re-set itself when entered instead of just continuing
         public bool ShouldReset { get; set; }
 
@@ -212,6 +209,10 @@ namespace DwarfCorp.GameStates
 
         public Minimap MiniMap { get; set; }
 
+        public static AnnouncementManager AnnouncementManager = new AnnouncementManager();
+
+        public AnnounementViewer AnnouncementViewer { get; set; }
+  
         #endregion
 
         /// <summary>
@@ -234,6 +235,13 @@ namespace DwarfCorp.GameStates
             
         }
 
+        public void InvokeLoss()
+        {
+            Paused = true;
+            StateManager.PushState("LoseState");
+        }
+
+
         /// <summary>
         /// Called when the PlayState is entered from the state manager.
         /// </summary>
@@ -242,10 +250,10 @@ namespace DwarfCorp.GameStates
             // If the game should reset, we initialize everything
             if(ShouldReset)
             {
+
                 PreSimulateTimer.Reset(3);
                 ShouldReset = false;
-                GameCycle = new GameCycle();
-                GameCycle.OnCycleChanged += GameCycle_OnCycleChanged;
+
                 Preload();
                
                 Game.Graphics.PreferMultiSampling = GameSettings.Default.AntiAliasing > 1;
@@ -267,12 +275,6 @@ namespace DwarfCorp.GameStates
                 
                 LoadingThread = new Thread(Load);
                 LoadingThread.Start();
-
-
-
-                SoundManager.PlayMusic("dwarfcorp");
-
-
             }
 
             // Otherwise, we just unpause everything and re-enter the game.
@@ -281,16 +283,12 @@ namespace DwarfCorp.GameStates
             {
                 ChunkManager.PauseThreads = false;
             }
+
+            if(Camera != null)
+                Camera.LastWheel = Mouse.GetState().ScrollWheelValue;
             base.OnEnter();
         }
 
-        /// <summary>
-        /// Called when the balloon state is changed
-        /// </summary>
-        /// <param name="cycle">The current balloon state</param>
-        private void GameCycle_OnCycleChanged(GameCycle.OrderCylce cycle)
-        {
-        }
 
         /// <summary>
         /// Called when the PlayState is exited and another state (such as the main menu) is loaded.
@@ -331,7 +329,7 @@ namespace DwarfCorp.GameStates
             {
                 Vector3 dorfPos = new Vector3(Camera.Position.X + (float) Random.NextDouble(), h + 10, Camera.Position.Z + (float) Random.NextDouble());
                 Physics creat = (Physics) EntityFactory.GenerateDwarf(dorfPos,
-                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Dwarf");
+                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.AxeDwarf], 0);
 
                 creat.Velocity = new Vector3(1, 0, 0);
             }
@@ -351,6 +349,7 @@ namespace DwarfCorp.GameStates
             {
                 SoundManager.Content = Content;
                 SoundManager.LoadDefaultSounds();
+                SoundManager.PlayMusic(ContentPaths.Music.dwarfcorp);
             }
             new PrimitiveLibrary(GraphicsDevice, Content);
             InstanceManager = new InstanceManager();
@@ -380,13 +379,15 @@ namespace DwarfCorp.GameStates
             SoundManager.Content = Content;
             PlanService.Restart();
 
-            ComponentManager = new ComponentManager();
+            ComponentManager = new ComponentManager(this);
             ComponentManager.RootComponent = new Body(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero, false);
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);
             ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
             Alliance.Relationships = Alliance.InitializeRelationships();
+
+            JobLibrary.Initialize();
         }
 
         /// <summary>
@@ -654,7 +655,7 @@ namespace DwarfCorp.GameStates
 
             GridLayout infoLayout = new GridLayout(GUI, companyInfoComponent, 3, 4);
 
-            CompanyLogoPanel = new ImagePanel(GUI, infoLayout, new ImageFrame(TextureManager.GetTexture("CompanyLogo")));
+            CompanyLogoPanel = new ImagePanel(GUI, infoLayout, new ImageFrame(TextureManager.GetTexture(ContentPaths.Logos.grebeardlogo)));
             infoLayout.SetComponentPosition(CompanyLogoPanel, 0, 0, 1, 1);
 
             CompanyNameLabel = new Label(GUI, infoLayout, PlayerSettings.Default.CompanyName, GUI.DefaultFont)
@@ -736,12 +737,14 @@ namespace DwarfCorp.GameStates
 
             moneyButton.OnClicked += moneyButton_OnClicked;
 
-            layout.SetComponentPosition(moneyButton, 3, 10, 1, 1);
+            layout.SetComponentPosition(moneyButton, 2, 10, 1, 1);
 
 
             InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
 
+            AnnouncementViewer = new AnnounementViewer(GUI, layout, AnnouncementManager);
+            layout.SetComponentPosition(AnnouncementViewer, 3, 10, 3, 1);
             layout.UpdateSizes();
 
         }
@@ -1234,16 +1237,12 @@ namespace DwarfCorp.GameStates
             {
                 IndicatorManager.Update(gameTime);
                 Time.Update(gameTime);
-                GameCycle.Update(gameTime);
                 ComponentManager.CollisionManager.Update(gameTime);
                 Master.Update(Game, gameTime);
                 ComponentManager.Update(gameTime, ChunkManager, Camera);
                 Sky.TimeOfDay = Time.GetSkyLightness();
                 Sky.CosTime = (float)(Time.GetTotalHours() * 2 * Math.PI / 24.0f);
                 DefaultShader.Parameters["xTimeOfDay"].SetValue(Sky.TimeOfDay);
-
-                if(KeyManager.RotationEnabled())
-                    Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2, GameState.Game.GraphicsDevice.Viewport.Height / 2);
 
             }
 
@@ -1271,7 +1270,7 @@ namespace DwarfCorp.GameStates
                  */
                 CurrentLevelLabel.Text = "Slice: " + ChunkManager.ChunkData.MaxViewingLevel + "/" + ChunkHeight;
                 TimeLabel.Text = Time.CurrentDate.ToShortDateString() + " " + Time.CurrentDate.ToShortTimeString();
-                MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString("C");
+                MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString("C") + " Stock: " + Master.Faction.Economy.Company.StockPrice.ToString("C");
             }
 
             // Make sure that the slice slider snaps to the current viewing level (an integer)
@@ -1319,6 +1318,16 @@ namespace DwarfCorp.GameStates
 
         }
 
+        public void QuitGame()
+        {
+            StateManager.StateStack.Clear();
+            MainMenuState menuState = StateManager.GetState<MainMenuState>("MainMenuState");
+            menuState.IsGameRunning = false;
+            StateManager.States["PlayState"] = new PlayState(Game, StateManager);
+            StateManager.CurrentState = "";
+            StateManager.PushState("MainMenuState");
+        }
+
         /// <summary>
         /// Called whenever the pause menu is clicked.
         /// </summary>
@@ -1336,12 +1345,7 @@ namespace DwarfCorp.GameStates
                     SaveGame(DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss"));
                     break;
                 case "Quit":
-                    StateManager.StateStack.Clear();
-                    MainMenuState menuState = StateManager.GetState<MainMenuState>("MainMenuState");
-                    menuState.IsGameRunning = false;
-                    StateManager.States["PlayState"] = new PlayState(Game, StateManager);
-                    StateManager.CurrentState = "";
-                    StateManager.PushState("MainMenuState");
+                    QuitGame();
                     break;
 
             }
