@@ -235,6 +235,13 @@ namespace DwarfCorp.GameStates
             
         }
 
+        public void InvokeLoss()
+        {
+            Paused = true;
+            StateManager.PushState("LoseState");
+        }
+
+
         /// <summary>
         /// Called when the PlayState is entered from the state manager.
         /// </summary>
@@ -243,6 +250,7 @@ namespace DwarfCorp.GameStates
             // If the game should reset, we initialize everything
             if(ShouldReset)
             {
+
                 PreSimulateTimer.Reset(3);
                 ShouldReset = false;
 
@@ -267,11 +275,6 @@ namespace DwarfCorp.GameStates
                 
                 LoadingThread = new Thread(Load);
                 LoadingThread.Start();
-
-
-
-
-
             }
 
             // Otherwise, we just unpause everything and re-enter the game.
@@ -326,7 +329,7 @@ namespace DwarfCorp.GameStates
             {
                 Vector3 dorfPos = new Vector3(Camera.Position.X + (float) Random.NextDouble(), h + 10, Camera.Position.Z + (float) Random.NextDouble());
                 Physics creat = (Physics) EntityFactory.GenerateDwarf(dorfPos,
-                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Dwarf");
+                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.AxeDwarf], 0);
 
                 creat.Velocity = new Vector3(1, 0, 0);
             }
@@ -376,13 +379,15 @@ namespace DwarfCorp.GameStates
             SoundManager.Content = Content;
             PlanService.Restart();
 
-            ComponentManager = new ComponentManager();
+            ComponentManager = new ComponentManager(this);
             ComponentManager.RootComponent = new Body(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero, false);
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);
             ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
             Alliance.Relationships = Alliance.InitializeRelationships();
+
+            JobLibrary.Initialize();
         }
 
         /// <summary>
@@ -1265,7 +1270,7 @@ namespace DwarfCorp.GameStates
                  */
                 CurrentLevelLabel.Text = "Slice: " + ChunkManager.ChunkData.MaxViewingLevel + "/" + ChunkHeight;
                 TimeLabel.Text = Time.CurrentDate.ToShortDateString() + " " + Time.CurrentDate.ToShortTimeString();
-                MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString("C");
+                MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString("C") + " Stock: " + Master.Faction.Economy.Company.StockPrice.ToString("C");
             }
 
             // Make sure that the slice slider snaps to the current viewing level (an integer)
@@ -1313,6 +1318,16 @@ namespace DwarfCorp.GameStates
 
         }
 
+        public void QuitGame()
+        {
+            StateManager.StateStack.Clear();
+            MainMenuState menuState = StateManager.GetState<MainMenuState>("MainMenuState");
+            menuState.IsGameRunning = false;
+            StateManager.States["PlayState"] = new PlayState(Game, StateManager);
+            StateManager.CurrentState = "";
+            StateManager.PushState("MainMenuState");
+        }
+
         /// <summary>
         /// Called whenever the pause menu is clicked.
         /// </summary>
@@ -1330,12 +1345,7 @@ namespace DwarfCorp.GameStates
                     SaveGame(DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss"));
                     break;
                 case "Quit":
-                    StateManager.StateStack.Clear();
-                    MainMenuState menuState = StateManager.GetState<MainMenuState>("MainMenuState");
-                    menuState.IsGameRunning = false;
-                    StateManager.States["PlayState"] = new PlayState(Game, StateManager);
-                    StateManager.CurrentState = "";
-                    StateManager.PushState("MainMenuState");
+                    QuitGame();
                     break;
 
             }

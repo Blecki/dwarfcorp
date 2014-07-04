@@ -41,7 +41,7 @@ namespace DwarfCorp
 
         public FactionLibrary Factions { get; set; }
 
-        public ComponentManager()
+        public ComponentManager(PlayState state)
         {
             Components = new Dictionary<uint, GameComponent>();
             Removals = new List<GameComponent>();
@@ -50,7 +50,7 @@ namespace DwarfCorp
             AdditionMutex = new Mutex();
             RemovalMutex = new Mutex();
             Factions = new FactionLibrary();
-            Factions.Initialize();
+            Factions.Initialize(state);
         }
 
         #region picking

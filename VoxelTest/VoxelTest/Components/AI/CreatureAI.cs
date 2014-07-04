@@ -166,8 +166,6 @@ namespace DwarfCorp
         {
             if(enemies.Count > 0)
             {
-                Say("Sensed " + enemies.Count + " enemies");
-
                 foreach(CreatureAI threat in enemies.Where(threat => !Faction.Threats.Contains(threat.Creature)))
                 {
                     Faction.Threats.Add(threat.Creature);

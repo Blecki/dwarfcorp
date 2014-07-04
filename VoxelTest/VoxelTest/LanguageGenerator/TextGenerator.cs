@@ -59,6 +59,10 @@ namespace DwarfCorp
             TextAtom goblinName = new TextAtom("$GoblinName", "Lurtzog", "Gorkil", "Baluk", "Agrag", "Shakil", "Gashur", "Mega", "Balug", "Uglur", "Lagdush", "Oldog", "Muzga", "Lugdush");
             TextAtom goblinFamily = new TextAtom("$GoblinFamily", "Ugdush", "Gashur", "Balcmurz", "Orgbag", "Azod", "Rat", "Lukil" );
             TextAtom professions = new TextAtom("$Professions", "Urchin", "Homeless", "Fishmonger", "Beggar", "Factory Worker", "Student", "Fugitive", "Convict", "Carpenter", "Roofer", "Ditch Digger", "Disgraced Noble", "Policeman", "Conscript", "Enuch");
+            TextAtom magical = new TextAtom("$Magical", "University", "School", "Magerium", "Magicians", "Arcana", "Institute", "Learning Center", "Library", "Museum");
+            TextAtom military = new TextAtom("$Military", "Thugs", "Band", "Company", "Heroes", "Strongdwarves",
+                "Mercenaries", "Dwarfs-at-arms", "Shield", "Axe", "Sword", "Army", "Fighters", "Knights");
+            TextAtom industrial = new TextAtom("$Industry", "Industries", "Materials", "Techcenter", "Factories", "Machines", "Parts", "Hammers");
             AddAtom(animals);
             AddAtom(bodyparts);
             AddAtom(family);
@@ -76,6 +80,9 @@ namespace DwarfCorp
             AddAtom(verb);
             AddAtom(interjection);
             AddAtom(professions);
+            AddAtom(magical);
+            AddAtom(military);
+            AddAtom(industrial);
             staticsInitialized = true;
         }
 

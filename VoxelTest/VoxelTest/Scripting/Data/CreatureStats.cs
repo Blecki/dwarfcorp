@@ -34,7 +34,7 @@ namespace DwarfCorp
         public float MaxSpeed { get { return Dexterity; } }
         public float MaxAcceleration { get { return MaxSpeed * 2.0f; }  }
         public float StoppingForce { get { return MaxAcceleration * 6.0f; } }
-        public float BaseDigSpeed { get { return Strength * 4.0f; }}
+        public float BaseDigSpeed { get { return Strength + Size; }}
         public float BaseChopSpeed { get { return Strength * 3.0f + Dexterity * 1.0f; } }
         public float JumpForce { get { return 1000.0f; } }
         public float MaxHealth { get { return (Strength + Constitution + Size) * 10.0f; }}
@@ -103,6 +103,22 @@ namespace DwarfCorp
             CurrentClass = new WorkerClass();
             LevelIndex = 0;
             XP = 0;
+        }
+
+        public CreatureStats(EmployeeClass creatureClass, int level)
+        {
+            CanSleep = false;
+            FirstName = "";
+            LastName = "";
+            CurrentClass = creatureClass;
+            LevelIndex = level;
+            XP = creatureClass.Levels[level].XP;
+            Dexterity = Math.Max(Dexterity, CurrentLevel.BaseStats.Dexterity);
+            Constitution = Math.Max(Constitution, CurrentLevel.BaseStats.Constitution);
+            Strength = Math.Max(Strength, CurrentLevel.BaseStats.Strength);
+            Wisdom = Math.Max(Wisdom, CurrentLevel.BaseStats.Wisdom);
+            Charisma = Math.Max(Charisma, CurrentLevel.BaseStats.Charisma);
+            Intelligence = Math.Max(Intelligence, CurrentLevel.BaseStats.Intelligence);
         }
 
         public void LevelUp()

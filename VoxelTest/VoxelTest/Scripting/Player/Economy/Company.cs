@@ -26,6 +26,7 @@ namespace DwarfCorp
         public Sector Industry { get; set; }
         public float StockPrice { get; set; }
         public float Assets { get; set; }
+        public float LastAssets { get; set; }
         public ImageFrame Logo { get; set; }
         public Color BaseColor { get; set; }
         public Color SecondaryColor { get; set; }
@@ -128,7 +129,7 @@ namespace DwarfCorp
             return TextGenerator.GenerateRandom(templates[PlayState.Random.Next(0, templates.Count)]);
         }
 
-        public static string GenerateName()
+        public static string GenerateName(Sector sector)
         {
             string[] partners =
             {
@@ -214,7 +215,68 @@ namespace DwarfCorp
                 "$Place",
                 "s"
             };
-            List<string[]> templates = new List<string[]>
+            string[] magical_color_place =
+            {
+                "$Color",
+                " ",
+                "$Place",
+                " ",
+                "$Magical"
+            };
+            string[] animal_magical =
+            {
+                "$Animal",
+                " ",
+                "$Magical"
+            };
+            string[] materialPlaceMilitary =
+            {
+                "$Material",
+                " ",
+                "$Place",
+                " ",
+                "$Military"
+            };
+            string[] personMilitary =
+            {
+                "$MaleName",
+                "'s",
+                " ",
+                "$Military"
+            };
+            string[] colorPlaceIndustry =
+            {
+                "$Color",
+                " ",
+                "$Place",
+                " ",
+                "$Industry"
+            };
+            string[] colorAnimalIndustry =
+            {
+                "$Color",
+                " ",
+                "$Animal",
+                " ",
+                "$Industry"
+            };
+            string[] materialAnimalIndustry =
+            {
+                "$Material",
+                " ",
+                "$Animal",
+                " ",
+                "$Industry"
+            };
+            string[] materialBodyIndustry =
+            {
+                "$Material",
+                " ",
+                "$Bodypart",
+                " ",
+                "$Industry"
+            };
+            List<string[]> genericTemplates = new List<string[]>
             {
                 partners,
                 animalCorp,
@@ -227,6 +289,37 @@ namespace DwarfCorp
                 materialBody,
                 reversed
             };
+            List<string[]> magicalTemplates = new List<string[]>
+            {
+                magical_color_place,
+                animal_magical
+            };
+            List<string[]> militaryTemplates = new List<string[]>
+            {
+                materialPlaceMilitary,
+                personMilitary
+            };
+            List<string[]> industralTemplates = new List<string[]>
+            {
+                colorPlaceIndustry,
+                colorAnimalIndustry,
+                materialAnimalIndustry,
+                materialBodyIndustry
+            };
+
+            List<string[]> templates = genericTemplates;
+            if (sector == Sector.Magic)
+            {
+                templates = magicalTemplates;
+            }
+            else if (sector == Sector.Manufacturing)
+            {
+                templates = industralTemplates;
+            }
+            else if (sector == Sector.Military)
+            {
+                templates = militaryTemplates;
+            }
             return TextGenerator.GenerateRandom(templates[PlayState.Random.Next(0, templates.Count)]);
         }
 
@@ -246,7 +339,27 @@ namespace DwarfCorp
         public static Company GenerateRandom(float assets, float stockPrice, Sector industry)
         {
             Texture2D texture = TextureManager.GetTexture(ContentPaths.Logos.logos);
-            ImageFrame image = new ImageFrame(texture, 32, PlayState.Random.Next(0, texture.Width / 32), PlayState.Random.Next(0, texture.Height / 32));
+
+            int row = 0;
+            switch (industry)
+            {
+                case Sector.Magic:
+                    row = 3;
+                    break;
+                case Sector.Finance:
+                    row = 3;
+                    break;
+                case Sector.Exploration:
+                    row = 0;
+                    break;
+                case Sector.Manufacturing:
+                    row = 1;
+                    break;
+                case Sector.Military:
+                    row = 2;
+                    break;
+            }
+            ImageFrame image = new ImageFrame(texture, 32, PlayState.Random.Next(0, texture.Width / 32), row);
 
             Color c = new Color(PlayState.Random.Next(0, 255), PlayState.Random.Next(0, 255),
                 PlayState.Random.Next(0, 255));
@@ -257,11 +370,12 @@ namespace DwarfCorp
                 StockPrice = stockPrice,
                 Industry = industry,
                 Logo = image,
-                Name = GenerateName(),
+                Name = GenerateName(industry),
                 Motto = GenerateMotto(),
                 BaseColor = c,
                 SecondaryColor  = c,
-                StockHistory = GenerateRandomStockHistory(stockPrice, 10)
+                StockHistory = GenerateRandomStockHistory(stockPrice, 10),
+                LastAssets = assets
             };
 
         }
@@ -277,6 +391,7 @@ namespace DwarfCorp
             BaseColor = Color.DarkRed;
             SecondaryColor = Color.White;
             StockHistory = GenerateRandomStockHistory(1.0f, 10);
+            LastAssets = Assets;
         }
 
     }

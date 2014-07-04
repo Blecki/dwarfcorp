@@ -37,9 +37,9 @@ namespace DwarfCorp
             DrawCommands.Enqueue(new SpriteDrawCommand(worldPosition, image));
         }
 
-        public static void DrawSprite(ImageFrame image, Vector3 worldPosition, Vector2 scale, Vector2 offset, Color tint)
+        public static void DrawSprite(ImageFrame image, Vector3 worldPosition, Vector2 scale, Vector2 offset, Color tint, bool flip = false)
         {
-            DrawCommands.Enqueue(new SpriteDrawCommand(worldPosition, image) { Scale = scale, Offset =  offset, Tint = tint});
+            DrawCommands.Enqueue(new SpriteDrawCommand(worldPosition, image) { Scale = scale, Offset =  offset, Tint = tint, Effects = flip? SpriteEffects.FlipHorizontally : SpriteEffects.None});
         }
 
         public static void DrawTextBox(string text, Vector3 position)
