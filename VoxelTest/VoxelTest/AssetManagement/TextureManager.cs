@@ -54,7 +54,7 @@ namespace DwarfCorp
             DefaultContent["DwarfSheet"] = Program.CreatePath("Entities" ,"Dwarf" , "Sprites", "dwarf_animations");
             DefaultContent["InteriorSheet"] = Program.CreatePath("Entities", "Furniture", "interior_furniture");
             DefaultContent["GUISheet"] = Program.CreatePath("GUI", "gui_widgets");
-            DefaultContent["GoblinSheet"] = Program.CreatePath("Entities", "Goblin", "Sprites", "goblin_animations");
+            DefaultContent["GoblinSheet"] = Program.CreatePath("Entities", "Goblin", "Sprites", "goblin_withsword");
             DefaultContent["IconSheet"] = ContentPaths.GUI.icons;
             DefaultContent["CompanyLogo"] = ContentPaths.Logos.companylogo;
             DefaultContent["CorpLogo"] = ContentPaths.Logos.grebeardlogo;

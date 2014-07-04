@@ -24,7 +24,7 @@ namespace DwarfCorp
             Entity = entity;
             Name = "Kill Entity";
             Tree = new Sequence(new GoToEntityAct(entity, creature),
-                                new MeleeAct(Agent));
+                                new MeleeAct(Agent, entity));
         }
     }
 

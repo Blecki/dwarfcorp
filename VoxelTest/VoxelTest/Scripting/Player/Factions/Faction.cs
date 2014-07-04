@@ -28,6 +28,7 @@ namespace DwarfCorp
             DigDesignations = new List<BuildOrder>();
             GuardDesignations = new List<BuildOrder>();
             ChopDesignations = new List<Body>();
+            AttackDesignations = new List<Body>();
             ShipDesignations = new List<ShipOrder>();
             GatherDesignations = new List<Body>();
             RoomBuilder = new RoomBuilder(this);
@@ -41,6 +42,7 @@ namespace DwarfCorp
         public List<BuildOrder> DigDesignations { get; set; }
         public List<BuildOrder> GuardDesignations { get; set; }
         public List<Body> ChopDesignations { get; set; }
+        public List<Body> AttackDesignations { get; set; }
         public List<Body> GatherDesignations { get; set; }
         public List<Stockpile> Stockpiles { get; set; }
         public List<CreatureAI> Minions { get; set; }
@@ -53,18 +55,41 @@ namespace DwarfCorp
         public List<Creature> Threats { get; set; }
 
         public string Name { get; set; }
+        public string Alliance { get; set; }
         public List<CreatureAI> SelectedMinions { get; set; }
 
+        public void CollideMinions(GameTime time)
+        {
+            foreach (CreatureAI minion in Minions)
+            {
+                foreach (CreatureAI other in Minions)
+                {
+                    if (minion == other)
+                    {
+                        continue;
+                    }
+
+                    Vector3 meToOther = other.Position - minion.Position;
+                    float dist = (meToOther).Length();
+
+                    if (dist < 0.25f)
+                    {
+                        other.Physics.ApplyForce(meToOther / (dist + 0.01f) * 100, (float)time.ElapsedGameTime.TotalSeconds);
+                    }
+                }
+            }
+
+        }
 
 
         public void Update(GameTime time)
         {
             RoomBuilder.CheckRemovals();
-            //TaskManager.AssignTasks();
-            //TaskManager.ManageTasks();
 
             Minions.RemoveAll(m => m.IsDead);
             SelectedMinions.RemoveAll(m => m.IsDead);
+
+            CollideMinions(time);
 
             List<BuildOrder> removals = (from d in DigDesignations
                                           let vref = d.Vox
@@ -117,8 +142,58 @@ namespace DwarfCorp
             {
                 ChopDesignations.Remove(tree);
             }
+
+            List<Body> attacksToRemove = AttackDesignations.Where(body => body.IsDead).ToList();
+
+            foreach (Body body in attacksToRemove)
+            {
+                AttackDesignations.Remove(body);
+            }
+
+            HandleThreats();
         }
 
+        public bool IsTaskAssigned(Task task)
+        {
+            return Minions.Any(minion => minion.Tasks.Contains(task));
+        }
+
+        public void HandleThreats()
+        {
+            List<Task> tasks = new List<Task>();
+            List<Creature> threatsToRemove = new List<Creature>();
+            foreach (Creature threat in Threats)
+            {
+                if (threat != null && !threat.IsDead)
+                {
+                    Task g = new KillEntityTask(threat.Physics);
+
+                    if (!IsTaskAssigned(g))
+                    {
+                        if (!AttackDesignations.Contains(threat.Physics))
+                        {
+                            AttackDesignations.Add(threat.Physics);
+                        }
+                        tasks.Add(g);
+                    }
+                    else
+                    {
+                        threatsToRemove.Add(threat);
+                    }
+                }
+                else
+                {
+                    threatsToRemove.Add(threat);
+                }
+            }
+
+            foreach (Creature threat in threatsToRemove)
+            {
+               Threats.Remove(threat);
+            }
+
+            DwarfCorp.TaskManager.AssignTasks(tasks, Minions);
+        }
 
         public List<Room> GetRooms()
         {
@@ -555,7 +630,7 @@ namespace DwarfCorp
                 EntityFactory.GenerateDwarf(
                     rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15,
                     Components, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager,
-                    PlayState.Camera, this, PlayState.PlanService, "Dwarf").GetChildrenOfType<Dwarf>().First();
+                    PlayState.Camera, this, PlayState.PlanService, "Dwarf", currentApplicant.Class, currentApplicant.Level.Index).GetChildrenOfType<Dwarf>().First();
 
             newMinion.Stats.CurrentClass = currentApplicant.Class;
             newMinion.Stats.LevelIndex = currentApplicant.Level.Index - 1;

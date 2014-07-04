@@ -68,14 +68,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="909824">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="929792">
       <assemblyIdentity name="DwarfCorp" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>60Y74ydvCVZREC8hVohFgUAkZ2A=</dsig:DigestValue>
+        <dsig:DigestValue>5ulIwJunsR9my5Jgb/eDUWzjbVw=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -244,6 +244,15 @@
       <dsig:DigestValue>grm4waIv6sYLkuA7ywCoCaQduEU=</dsig:DigestValue>
     </hash>
   </file>
+  <file name="Content\Effects\slice.xnb" size="704">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>3pWSolLyfrhBOZMtkDVvNAyhYnk=</dsig:DigestValue>
+    </hash>
+  </file>
   <file name="Content\Entities\Animals\Birds\bird0.xnb" size="1460">
     <hash>
       <dsig:Transforms>
@@ -388,6 +397,15 @@
       <dsig:DigestValue>hvwq9i/zZzCr0aLC+QMBQlxWGiM=</dsig:DigestValue>
     </hash>
   </file>
+  <file name="Content\Entities\Dwarf\Sprites\soldier-axe-shield.xnb" size="12616">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>G34brMLbAwnYnP9vHzRbz7b5nTs=</dsig:DigestValue>
+    </hash>
+  </file>
   <file name="Content\Entities\DwarfObjects\beartrap.xnb" size="1472">
     <hash>
       <dsig:Transforms>
@@ -467,6 +485,15 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
       <dsig:DigestValue>EnfYfefD7JiMCP7/8x8LAjIEHPI=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Entities\Goblin\Sprites\gob-withsword.xnb" size="9442">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>jIOTx20ysnh6g3t33cz3psUUgCg=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Entities\Plants\berrybush.xnb" size="610">
@@ -748,13 +775,13 @@
       <dsig:DigestValue>4RNM5jQdl6vvKf5EYruKh7Iz340=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Logos\logos.xnb" size="3208">
+  <file name="Content\Logos\logos.xnb" size="2540">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>nXckbcymEbsR/Vh7RUH0/FrU/Vs=</dsig:DigestValue>
+      <dsig:DigestValue>yerzIhXqhT62wVuzQZdbsjX2AW4=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Models\sphereLowPoly.xnb" size="1088">

@@ -38,7 +38,7 @@ namespace DwarfCorp
                     "deer",
                     manager.RootComponent,
                     Matrix.CreateTranslation(position),
-                    new Vector3(2, 1.5f, .7f),
+                    new Vector3(1.1f, 1.1f, 1.1f),
                     new Vector3(0, 0, 0),
                     1.0f, 1.0f, 0.999f, 0.999f,
                     new Vector3(0, -10, 0)
@@ -94,7 +94,7 @@ namespace DwarfCorp
 
             Health = new Health(Manager, "HP", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
 
-            Weapon = new Weapon("None", 0.0f, 0.0f, 0.0f, AI, ContentPaths.Audio.pick);
+            Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick)};
 
             Inventory = new Inventory(Manager, "Inventory", Physics)
             {

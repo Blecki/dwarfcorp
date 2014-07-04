@@ -135,6 +135,18 @@
             into a BuildRoom.
             </summary>
         </member>
+        <member name="T:DwarfCorp.AttackTool">
+            <summary>
+            When using this tool, the player clicks on creatures to specify that 
+            they should be killed
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.PlayerTool">
+            <summary>
+            The player's tools are a state machine. A build tool is a particular player
+            state. Contains callbacks to when voxels are selected.
+            </summary>
+        </member>
         <member name="T:DwarfCorp.VoxelListener">
             <summary>
             When a voxel is destroyed, this component kills whatever it is attached to.
@@ -590,12 +602,6 @@
             A creature grabs a given item and puts it in their inventory
             </summary>
         </member>
-        <member name="T:DwarfCorp.PlayerTool">
-            <summary>
-            The player's tools are a state machine. A build tool is a particular player
-            state. Contains callbacks to when voxels are selected.
-            </summary>
-        </member>
         <member name="T:DwarfCorp.BuildRoomTask">
             <summary>
             Tells a creature that it should find an item with the specified
@@ -861,7 +867,7 @@
             entities in different alliances.
             </summary>
         </member>
-        <member name="T:DwarfCorp.Weapon">
+        <member name="T:DwarfCorp.Attack">
             <summary>
             A weapon allows one entity to attack another. (This is assumed to be a melee weapon). A weapon just has a damage
             amount, a range, and a hit noise.

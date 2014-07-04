@@ -33,6 +33,7 @@ namespace DwarfCorp
             Gather,
             Chop,
             Guard,
+            Attack,
             God
         }
 
@@ -68,8 +69,6 @@ namespace DwarfCorp
         [JsonIgnore]
         public List<CreatureAI> SelectedMinions { get { return Faction.SelectedMinions; }set { Faction.SelectedMinions = value; } }
 
-        public bool PaidEmployees { get; set; }
-
         protected void OnDeserialized(StreamingContext context)
         {
             Initialize(GameState.Game, PlayState.ComponentManager, PlayState.ChunkManager, PlayState.Camera, PlayState.ChunkManager.Graphics,  PlayState.GUI);
@@ -83,7 +82,6 @@ namespace DwarfCorp
 
         public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics, DwarfGUI gui)
         {
-            PaidEmployees = false;
             RoomLibrary.InitializeStatics();
 
             Faction.Components = components;
@@ -144,6 +142,13 @@ namespace DwarfCorp
                 ChopDesignationGlowRate = 2.0f
             };
 
+            Tools[ToolMode.Attack] = new AttackTool
+            {
+                Player = this,
+                DesignationColor = Color.Red,
+                GlowRate = 2.0f
+            };
+
 
             /*
             Tools[ToolMode.CreateStockpiles] = new StockpileTool
@@ -166,6 +171,12 @@ namespace DwarfCorp
             Initialize(game, components, chunks, camera, graphics, gui);
             VoxSelector.Selected += OnSelected;
             BodySelector.Selected += OnBodiesSelected;
+            PlayState.Time.NewDay += Time_NewDay;
+        }
+
+        void Time_NewDay(DateTime time)
+        {
+            PayEmployees();
         }
 
         public void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
@@ -189,6 +200,7 @@ namespace DwarfCorp
 
                 if (!(Faction.Economy.CurrentMoney > 0))
                 {
+                    PlayState.AnnouncementManager.Announce("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
                     break;
                 }
             }
@@ -254,18 +266,11 @@ namespace DwarfCorp
             }
             UpdateInput(game, time);
 
-            if (PlayState.Time.CurrentDate.TimeOfDay.Hours == 0)
-            {
-                if (!PaidEmployees)
-                {
-                    PayEmployees();
-                    PaidEmployees = true;
-                }
-            }
-            else
-            {
-                PaidEmployees = false;
-            }
+        }
+
+        public List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, ToolMode action)
+        {
+            return minions.Where(creature => creature.Stats.CurrentClass.HasAction(action)).ToList();
         }
 
         #region input

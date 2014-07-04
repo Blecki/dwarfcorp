@@ -39,8 +39,8 @@ namespace DwarfCorp
         [JsonIgnore]
         public ChunkManager Chunks { get; set; }
 
-        public Weapon Weapon { get; set; }
-
+        public List<Attack> Attacks { get; set; }
+            
         [JsonIgnore]
         public ContentManager Content { get; set; }
 
@@ -150,8 +150,7 @@ namespace DwarfCorp
             Status.Update(this, gameTime, chunks, camera);
 
             JumpTimer.Update(gameTime);
-            Weapon.Update(gameTime);
-            
+
             base.Update(gameTime, chunks, camera);
         }
 
@@ -258,6 +257,7 @@ namespace DwarfCorp
                 case Message.MessageType.OnHurt:
                     NoiseMaker.MakeNoise("Hurt", AI.Position);
                     this.Sprite.Blink(0.5f);
+                    PlayState.ParticleManager.Trigger("blood_particle", AI.Position, Color.White, 5);
                     break;
             }
 

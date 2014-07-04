@@ -44,6 +44,7 @@ namespace DwarfCorp
         {
             public static string shadowcircle = Program.CreatePath("Effects", "shadowcircle");
             public static string selection_circle = Program.CreatePath("Effects", "selection_circle");
+            public static string slice = Program.CreatePath("Effects", "slice");
         }
         public class Entities
         {
@@ -101,6 +102,7 @@ namespace DwarfCorp
                 public class Sprites
                 {
                     public static string dwarf_animations = Program.CreatePath("Entities", "Dwarf", "Sprites", "dwarf_animations");
+                    public static string soldier_axe_shield= Program.CreatePath("Entities", "Dwarf", "Sprites", "soldier-axe-shield");
 
                 }
 
@@ -130,7 +132,7 @@ namespace DwarfCorp
                 }
                 public class Sprites
                 {
-                    public static string goblin_animations = Program.CreatePath("Entities", "Goblin", "Sprites", "goblin_animations");
+                    public static string goblin_withsword = Program.CreatePath("Entities", "Goblin", "Sprites", "gob-withsword");
 
                 }
 

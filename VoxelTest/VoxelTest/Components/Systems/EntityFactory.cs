@@ -88,7 +88,7 @@ namespace DwarfCorp
             "Bird",
             "Deer",
             "Dwarf",
-            "DarkDwarf",
+            "AxeDwarf",
             "Goblin",
             "Bed",
             "Lamp",
@@ -159,9 +159,9 @@ namespace DwarfCorp
                     return (Body) GenerateVegetation(id, s, 1.0f, position, componentManager, content, graphics);
                 }
                 case "Dwarf":
-                    return (Body) GenerateDwarf(position, componentManager, content, graphics, chunks, camera, factions.Factions["Player"], PlayState.PlanService, "Dwarf");
-                case "DarkDwarf":
-                    return (Body) GenerateDwarf(position, componentManager, content, graphics, chunks, camera, factions.Factions["Goblins"], PlayState.PlanService, "Undead");
+                    return (Body) GenerateDwarf(position, componentManager, content, graphics, chunks, camera, factions.Factions["Player"], PlayState.PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.Worker], 0);
+                case "AxeDwarf":
+                    return (Body) GenerateDwarf(position, componentManager, content, graphics, chunks, camera, factions.Factions["Player"], PlayState.PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.AxeDwarf], 0);
                 case "Goblin":
                     return (Body)GenerateGoblin(position, componentManager, content, graphics, chunks, camera, factions.Factions["Goblins"], PlayState.PlanService, "Goblin");
                 case "Bed":
@@ -923,7 +923,6 @@ namespace DwarfCorp
             Mesh modelInstance = new Mesh(componentManager, "Model", tree, Matrix.CreateRotationY((float)(PlayState.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(treeSize * 4, treeSize * 4, treeSize * 4) * Matrix.CreateTranslation(new Vector3(0.7f, treeSize * offset, 0.7f)), asset, false);
 
             Health health = new Health(componentManager, "HP", tree, 100.0f * treeSize, 0.0f, 100.0f * treeSize);
-
             Flammable flame = new Flammable(componentManager, "Flames", tree, health);
 
 
@@ -1058,17 +1057,8 @@ namespace DwarfCorp
             ChunkManager chunkManager, Camera camera,
             Faction faction, PlanService planService, string allies)
         {
-            CreatureStats stats = new CreatureStats
-            {
-                Dexterity = 5,
-                Constitution = 5,
-                Strength = 5,
-                Wisdom = 5,
-                Charisma = 5,
-                Intelligence = 5,
-                Size = 1
-            };
-            return new Goblin(stats, allies, planService, faction, componentManager, "Goblin", chunkManager, graphics, content, TextureManager.GetTexture("GoblinSheet"), position).Physics;
+            CreatureStats stats = new CreatureStats(new SwordGoblinClass(), 0);
+            return new Goblin(stats, allies, planService, faction, componentManager, "Goblin", chunkManager, graphics, content, position).Physics;
         }
 
         public static GameComponent GenerateDwarf(Vector3 position,
@@ -1076,19 +1066,10 @@ namespace DwarfCorp
             ContentManager content,
             GraphicsDevice graphics,
             ChunkManager chunkManager, Camera camera,
-            Faction faction, PlanService planService, string allies)
+            Faction faction, PlanService planService, string allies, EmployeeClass dwarfClass, int level)
         {
-            CreatureStats stats = new CreatureStats
-            {
-                Dexterity = 5,
-                Constitution = 5,
-                Strength = 5,
-                Wisdom = 5,
-                Charisma = 5,
-                Intelligence = 5,
-                Size = 1
-            };
-            return new Dwarf(stats, allies, planService, faction, componentManager, "Dwarf", chunkManager, graphics, content, TextureManager.GetTexture("DwarfSheet"), position).Physics;
+            CreatureStats stats = new CreatureStats(dwarfClass, level);
+            return new Dwarf(stats, allies, planService, faction, componentManager, "Dwarf", chunkManager, graphics, content, dwarfClass, position).Physics;
         }
 
         public static GameComponent GenerateBird(Vector3 position,

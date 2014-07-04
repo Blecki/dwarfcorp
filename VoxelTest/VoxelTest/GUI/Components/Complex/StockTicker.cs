@@ -224,6 +224,15 @@ namespace DwarfCorp
                 MinStock = Math.Min(stock, MinStock);
             }
 
+            foreach (Company company in FilteredCompanies)
+            {
+                Icons.Add(new StockIcon()
+                {
+                    Company = company,
+                    DestRect = new Rectangle(x + w/2, y + h /2, 32, 32)
+                });
+            }
+
             for (int i = 1; i < Window; i++)
             {
                 int tick = (w / (Window + 1)) * (i + 1);
@@ -240,11 +249,9 @@ namespace DwarfCorp
 
                     if (j % company.StockHistory.Count == (i - 1))
                     {
-                        Icons.Add(new StockIcon()
-                        {
-                            Company = company,
-                            DestRect = new Rectangle((int) (x + tick), (int) (y + h - normalizedPrice0*h) - 16, 32, 32)
-                        });
+                        StockIcon icon = Icons[j];
+                        icon.DestRect = new Rectangle((int) (x + tick), (int) (y + h - normalizedPrice0*h) - 16, 32, 32);
+                        Icons[j] = icon;
                     }
                     j++;
                 }
@@ -283,10 +290,18 @@ namespace DwarfCorp
             }
         }
 
+        private bool firstIter = true;
         public override void Update(GameTime time)
         {
             UpdateMouse();
             base.Update(time);
+
+            if (firstIter)
+            {
+                Layout.UpdateSizes();
+                IndustryBox_OnSelectionModified("Our Company");
+                firstIter = false;
+            }
         }
 
         public override void Render(GameTime time, SpriteBatch batch)
