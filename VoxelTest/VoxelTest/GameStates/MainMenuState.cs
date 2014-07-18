@@ -25,6 +25,16 @@ namespace DwarfCorp.GameStates
             IsGameRunning = false;
         }
 
+        public void DebugWorldItems()
+        {
+            ListSelect.ClearItems();
+            ListSelect.AddItem("Hills World", "Create a hilly (Debug) world.");
+            ListSelect.AddItem("Cliffs World", "Create a hilly (Debug) world.");
+            ListSelect.AddItem("Flat World", "Create a flat (Debug) world.");
+            ListSelect.AddItem("Ocean World", "Create an ocean (Debug) world.");
+            ListSelect.AddItem("Back", "Back to the Main Menu");
+        }
+
         public void DefaultItems()
         {
             ListSelect.ClearItems();
@@ -43,9 +53,9 @@ namespace DwarfCorp.GameStates
         public void PlayItems()
         {
             ListSelect.ClearItems();
-            ListSelect.AddItem("Load World", "Load a continent from an existing file!");
             ListSelect.AddItem("Generate World", "Create a new world from scratch!");
-            ListSelect.AddItem("Flat World", "Create a flat (Debug) world.");
+            ListSelect.AddItem("Load World", "Load a continent from an existing file!");
+            ListSelect.AddItem("Debug World", "Create a debug world");
             ListSelect.AddItem("Create Company", "Customize your own Dwarf Corporation!");
             ListSelect.AddItem("Back", "Back to the Main Menu");
         }
@@ -80,11 +90,39 @@ namespace DwarfCorp.GameStates
             {
                 DefaultItems();
             }
+            else if (item.Label == "Debug World")
+            {
+                DebugWorldItems();
+            }
             else if(item.Label == "Flat World")
             {
                 Overworld.CreateUniformLand(Game.GraphicsDevice);
                 StateManager.PushState("PlayState");
                 PlayState play = (PlayState) StateManager.States["PlayState"];
+
+                IsGameRunning = true;
+            }
+            else if (item.Label == "Hills World")
+            {
+                Overworld.CreateHillsLand(Game.GraphicsDevice);
+                StateManager.PushState("PlayState");
+                PlayState play = (PlayState)StateManager.States["PlayState"];
+
+                IsGameRunning = true;
+            }
+            else if (item.Label == "Cliffs World")
+            {
+                Overworld.CreateCliffsLand(Game.GraphicsDevice);
+                StateManager.PushState("PlayState");
+                PlayState play = (PlayState)StateManager.States["PlayState"];
+
+                IsGameRunning = true;
+            }
+            else if (item.Label == "Ocean World")
+            {
+                Overworld.CreateOceanLand(Game.GraphicsDevice);
+                StateManager.PushState("PlayState");
+                PlayState play = (PlayState)StateManager.States["PlayState"];
 
                 IsGameRunning = true;
             }

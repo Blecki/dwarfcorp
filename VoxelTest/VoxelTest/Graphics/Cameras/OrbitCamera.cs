@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -299,7 +300,10 @@ namespace DwarfCorp
                 LastWheel = mouse.ScrollWheelValue;
             }
 
-            Target += Velocity;
+            if (!CollidesWithChunks(PlayState.ChunkManager, Target + Velocity))
+            {
+                Target += Velocity;
+            }
             Velocity *= 0.8f;
             UpdateBasisVectors();
 
@@ -325,6 +329,48 @@ namespace DwarfCorp
 
             ViewMatrix = Matrix.CreateLookAt(Position, cameraFinalTarget, cameraRotatedUpVector);
             Position = Target - cameraRotatedTarget;
+        }
+
+      
+
+        public bool CollidesWithChunks(ChunkManager chunks, Vector3 pos)
+        {
+            BoundingBox box = new BoundingBox(pos - new Vector3(0.5f, 0.5f, 0.5f), pos + new Vector3(0.5f, 0.5f, 0.5f));
+            VoxelRef currentVoxel = chunks.ChunkData.GetVoxelReferenceAtWorldLocation(null, pos);
+
+            List<VoxelRef> vs = new List<VoxelRef>
+            {
+                currentVoxel
+            };
+
+            VoxelChunk chunk = chunks.ChunkData.GetVoxelChunkAtWorldLocation(pos);
+
+
+            if (currentVoxel == null || chunk == null)
+            {
+                return false;
+            }
+
+            Vector3 grid = chunk.WorldToGrid(pos);
+
+            List<VoxelRef> adjacencies = chunk.GetNeighborsEuclidean((int)grid.X, (int)grid.Y, (int)grid.Z);
+            vs.AddRange(adjacencies);
+
+            foreach (VoxelRef v in vs)
+            {
+                if (v == null || v.TypeName == "empty")
+                {
+                    continue;
+                }
+
+                BoundingBox voxAABB = v.GetBoundingBox();
+                if (box.Intersects(voxAABB))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 

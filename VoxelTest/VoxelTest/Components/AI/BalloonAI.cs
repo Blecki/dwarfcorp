@@ -16,7 +16,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class BalloonAI : GameComponent
     {
-        public Physics Physics { get; set; }
+        public Body Body { get; set; }
         public PIDController VelocityController { get; set; }
         public Vector3 TargetPosition { get; set; }
         public float MaxVelocity { get; set; }
@@ -41,12 +41,12 @@ namespace DwarfCorp
             
         }
 
-        public BalloonAI(Physics physics, Vector3 target, ShipmentOrder shipment, Faction faction) :
-            base(physics.Manager, "BalloonAI", physics)
+        public BalloonAI(Body body, Vector3 target, ShipmentOrder shipment, Faction faction) :
+            base(body.Manager, "BalloonAI", body)
         {
-            Physics = physics;
+            Body = body;
             VelocityController = new PIDController(0.9f, 0.5f, 0.0f);
-            MaxVelocity = 5.0f;
+            MaxVelocity = 2.0f;
             MaxForce = 15.0f;
             TargetPosition = target;
             State = BalloonState.DeliveringGoods;
@@ -65,7 +65,7 @@ namespace DwarfCorp
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
-            Vector3 targetVelocity = TargetPosition - Physics.GlobalTransform.Translation;
+            Vector3 targetVelocity = TargetPosition - Body.GlobalTransform.Translation;
 
             if(targetVelocity.LengthSquared() > 0.0001f)
             {
@@ -73,33 +73,24 @@ namespace DwarfCorp
                 targetVelocity *= MaxVelocity;
             }
 
-            Vector3 force = VelocityController.GetOutput((float) gameTime.ElapsedGameTime.TotalSeconds, targetVelocity, Physics.Velocity);
-
-            if(force.Length() > MaxForce)
-            {
-                force.Normalize();
-                force *= MaxForce;
-            }
-
-            Physics.ApplyForce(force, (float) gameTime.ElapsedGameTime.TotalSeconds);
-
-
-            Physics.HasMoved = true;
-            Physics.IsSleeping = false;
-
+            Matrix m = Body.LocalTransform;
+            m.Translation += targetVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Body.LocalTransform = m;
+            
+            Body.HasMoved = true;
 
             switch(State)
             {
                 case BalloonState.DeliveringGoods:
-                    VoxelChunk chunk = chunks.ChunkData.GetVoxelChunkAtWorldLocation(Physics.GlobalTransform.Translation);
+                    VoxelChunk chunk = chunks.ChunkData.GetVoxelChunkAtWorldLocation(Body.GlobalTransform.Translation);
 
                     if(chunk != null)
                     {
-                        Vector3 gridPos = chunk.WorldToGrid(Physics.GlobalTransform.Translation);
+                        Vector3 gridPos = chunk.WorldToGrid(Body.GlobalTransform.Translation);
                         float height = chunk.GetFilledVoxelGridHeightAt((int) gridPos.X, (int) gridPos.Y, (int) gridPos.Z) + chunk.Origin.Y;
-                        TargetPosition = new Vector3(Physics.GlobalTransform.Translation.X, height + 5, Physics.GlobalTransform.Translation.Z);
+                        TargetPosition = new Vector3(Body.GlobalTransform.Translation.X, height + 5, Body.GlobalTransform.Translation.Z);
 
-                        Vector3 diff = Physics.GlobalTransform.Translation - TargetPosition;
+                        Vector3 diff = Body.GlobalTransform.Translation - TargetPosition;
 
                         if(diff.LengthSquared() < 2)
                         {
@@ -108,21 +99,21 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        TargetPosition = new Vector3(Physics.GlobalTransform.Translation.X, 0, Physics.GlobalTransform.Translation.Z);
+                        TargetPosition = new Vector3(Body.GlobalTransform.Translation.X, 0, Body.GlobalTransform.Translation.Z);
                     }
 
                     break;
                 case BalloonState.Leaving:
-                    TargetPosition = Vector3.UnitY * 100 + Physics.GlobalTransform.Translation;
+                    TargetPosition = Vector3.UnitY * 100 + Body.GlobalTransform.Translation;
 
-                    if(Physics.GlobalTransform.Translation.Y > 50)
+                    if(Body.GlobalTransform.Translation.Y > 50)
                     {
                         Die();
                     }
 
                     break;
                 case BalloonState.Waiting:
-                    TargetPosition = Physics.GlobalTransform.Translation;
+                    TargetPosition = Body.GlobalTransform.Translation;
 
                     if(!shipmentGiven)
                     {
@@ -130,7 +121,7 @@ namespace DwarfCorp
                         {
                             for(int i = 0; i < amount.NumResources; i++)
                             {
-                                Vector3 pos = Physics.GlobalTransform.Translation + MathFunctions.RandVector3Cube() * 2;
+                                Vector3 pos = Body.GlobalTransform.Translation + MathFunctions.RandVector3Cube() * 2;
                                 Body loc = EntityFactory.GenerateComponent(amount.ResourceType.ResourceName, pos, Manager, chunks.Content, chunks.Graphics, chunks, Manager.Factions, camera);
                                 Faction.AddGatherDesignation(loc);
                                 Faction.Economy.CurrentMoney -= amount.ResourceType.MoneyValue;

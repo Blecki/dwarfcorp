@@ -68,15 +68,15 @@ namespace DwarfCorp
 
         public void InitializeFromChunk(VoxelChunk chunk, GraphicsDevice graphics)
         {
-            chunk.PrimitiveMutex.WaitOne();
+            //chunk.PrimitiveMutex.WaitOne();
             if(!chunk.IsVisible || IsBuilding)
             {
-                chunk.PrimitiveMutex.ReleaseMutex();
+               // chunk.PrimitiveMutex.ReleaseMutex();
                 return;
             }
 
             IsBuilding = true;
-            chunk.PrimitiveMutex.ReleaseMutex();
+            //chunk.PrimitiveMutex.ReleaseMutex();
 
             accumulatedVertices.Clear();
             faceExists.Clear();

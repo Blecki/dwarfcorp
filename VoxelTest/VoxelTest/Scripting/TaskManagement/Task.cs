@@ -85,6 +85,11 @@ namespace DwarfCorp
         {
             return true;
         }
+
+        public override Act CreateScript(Creature agent)
+        {
+            return Script;
+        }
     }
 
 }

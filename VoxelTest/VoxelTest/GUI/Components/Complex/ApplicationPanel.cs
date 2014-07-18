@@ -60,7 +60,7 @@ namespace DwarfCorp
         public void SetApplicant(Applicant applicant)
         {
             NameLabel.Text = applicant.Name;
-            PositionLabel.Text = applicant.Level.Name;
+            PositionLabel.Text = applicant.Class.Name;
             PayLabel.Text = "Wage: " + applicant.Level.Pay.ToString("C") + " / day";
             BonusLabel.Text = "Signing Bonus: " + (applicant.Level.Pay*4).ToString("C");
             LetterLabel.Text = applicant.CoverLetter;

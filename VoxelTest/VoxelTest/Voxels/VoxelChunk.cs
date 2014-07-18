@@ -527,14 +527,14 @@ namespace DwarfCorp
 
         public void Update(GameTime t)
         {
-            PrimitiveMutex.WaitOne();
+            //PrimitiveMutex.WaitOne();
             if(NewPrimitiveReceived)
             {
                 Primitive = NewPrimitive;
                 NewPrimitive = null;
                 NewPrimitiveReceived = false;
             }
-            PrimitiveMutex.ReleaseMutex();
+            //PrimitiveMutex.ReleaseMutex();
         }
 
         public void Render(Texture2D tilemap, Texture2D illumMap, Texture2D sunMap, Texture2D ambientMap, Texture2D torchMap, GraphicsDevice device, Effect effect, Matrix worldMatrix)

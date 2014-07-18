@@ -165,18 +165,18 @@ namespace DwarfCorp
         }
 
 
-        public void Collide(BoundingBox box)
+        public bool Collide(BoundingBox box)
         {
             if (!BoundingBox.Intersects(box))
             {
-                return;
+                return false;
             }
 
             Contact contact = new Contact();
 
             if (!TestStaticAABBAABB(BoundingBox, box, ref contact))
             {
-                return;
+                return false;
             }
 
             Matrix m = LocalTransform;
@@ -193,6 +193,8 @@ namespace DwarfCorp
 
             LocalTransform = m;
             UpdateBoundingBox();
+
+            return true;
         }
 
         public virtual void HandleCollisions(ChunkManager chunks, float dt)

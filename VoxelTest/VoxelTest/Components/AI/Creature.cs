@@ -257,7 +257,7 @@ namespace DwarfCorp
                 case Message.MessageType.OnHurt:
                     NoiseMaker.MakeNoise("Hurt", AI.Position);
                     this.Sprite.Blink(0.5f);
-                    PlayState.ParticleManager.Trigger("blood_particle", AI.Position, Color.White, 5);
+                    PlayState.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 5);
                     break;
             }
 

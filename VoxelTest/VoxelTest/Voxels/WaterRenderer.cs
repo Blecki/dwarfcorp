@@ -204,9 +204,9 @@ namespace DwarfCorp
                         pass.Apply();
                         if(chunk.IsVisible)
                         {
-                            chunk.PrimitiveMutex.WaitOne();
+                            //chunk.PrimitiveMutex.WaitOne();
                             chunk.Liquids[asset.Key].Render(device);
-                            chunk.PrimitiveMutex.ReleaseMutex();
+                            //chunk.PrimitiveMutex.ReleaseMutex();
                         }
                     }
                 }
