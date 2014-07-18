@@ -186,7 +186,10 @@ namespace DwarfCorp
                     continue;
                 }
 
-                toReturn.AddRange(t.Objects.OfType<T>());
+                lock (t.ObjectLock)
+                {
+                    toReturn.AddRange(t.Objects.OfType<T>());
+                }
 
 
                 for (int i = 0; i < 8; i++)
@@ -304,60 +307,66 @@ namespace DwarfCorp
 
         public bool ExistsInTreeRecursive(IBoundedObject component)
         {
-            if(Objects.Contains(component) || Tree.ObjectsToNodes.ContainsKey(component))
+            lock (ObjectLock)
             {
-                return true;
-            }
-            else
-            {
-                for(int i = 0; i < 8; i++)
+                if (Objects.Contains(component) || Tree.ObjectsToNodes.ContainsKey(component))
                 {
-                    OctreeNode node = Children[i];
-                    
-                    if(node == null)
+                    return true;
+                }
+                else
+                {
+                    for (int i = 0; i < 8; i++)
                     {
-                        continue;
-                    }
+                        OctreeNode node = Children[i];
 
-                    if(node.ExistsInTreeRecursive(component))
-                    {
-                        return true;
+                        if (node == null)
+                        {
+                            continue;
+                        }
+
+                        if (node.ExistsInTreeRecursive(component))
+                        {
+                            return true;
+                        }
                     }
                 }
-            }
 
-            return false;
+                return false;
+            }
         }
 
         public bool NeedsUpdateRecursive(IBoundedObject component)
         {
-            if(Objects.Contains(component))
+            lock (ObjectLock)
             {
-                return !component.GetBoundingBox().Intersects(Bounds);
-            }
-            else if(HasChildren())
-            {
-                bool shouldUpdate = false;
-                for(int i = 0; i < 8; i++)
+                if (Objects.Contains(component))
                 {
-                    OctreeNode node = Children[i];
-                    if(node == null)
-                    {
-                        continue;
-                    }
-
-                    if(node.NeedsUpdateRecursive(component))
-                    {
-                        shouldUpdate = true;
-                    }
+                    return !component.GetBoundingBox().Intersects(Bounds);
                 }
+                else if (HasChildren())
+                {
+                    bool shouldUpdate = false;
+                    for (int i = 0; i < 8; i++)
+                    {
+                        OctreeNode node = Children[i];
+                        if (node == null)
+                        {
+                            continue;
+                        }
+
+                        if (node.NeedsUpdateRecursive(component))
+                        {
+                            shouldUpdate = true;
+                        }
+                    }
 
 
-                return shouldUpdate;
-            }
-            else
-            {
-                return false;
+                    return shouldUpdate;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
@@ -371,16 +380,19 @@ namespace DwarfCorp
 
             if(component.GetBoundingBox().Intersects(Bounds) && !HasChildren())
             {
-                if(!Objects.Contains(component))
+                lock (ObjectLock)
                 {
-                    Objects.Add(component);
-                }
+                    if (!Objects.Contains(component))
+                    {
+                        Objects.Add(component);
+                    }
 
-                Tree.ObjectsToNodes[component] = this;
+                    Tree.ObjectsToNodes[component] = this;
 
-                if(Objects.Count > Tree.MaxObjectsPerNode && Depth  < Tree.MaxDepth)
-                {
-                    Split();
+                    if (Objects.Count > Tree.MaxObjectsPerNode && Depth < Tree.MaxDepth)
+                    {
+                        Split();
+                    }
                 }
             }
 
@@ -399,76 +411,85 @@ namespace DwarfCorp
 
         public bool ContainsObjectRecursive(IBoundedObject component)
         {
-            if(Objects.Contains(component))
+            lock (ObjectLock)
             {
-                return true;
-            }
-            else
-            {
-                for(int i = 0; i < 8; i++)
+                if (Objects.Contains(component))
                 {
-                    OctreeNode node = Children[i];
-                    if(node == null)
+                    return true;
+                }
+                else
+                {
+                    for (int i = 0; i < 8; i++)
                     {
-                        continue;
-                    }
+                        OctreeNode node = Children[i];
+                        if (node == null)
+                        {
+                            continue;
+                        }
 
-                    if(node.ContainsObjectRecursive(component))
-                    {
-                        return true;
+                        if (node.ContainsObjectRecursive(component))
+                        {
+                            return true;
+                        }
                     }
                 }
-            }
 
-            return false;
+                return false;
+            }
         }
 
         public bool RemoveObject(IBoundedObject component)
         {
-            Objects.Remove(component);
-
-            if(Tree.ObjectsToNodes.ContainsKey(component) && Tree.ObjectsToNodes[component] == this)
+            lock (ObjectLock)
             {
-                Tree.ObjectsToNodes.Remove(component);
-            }
-
-            if(CountObjectsRecursive() - 1 < Tree.MinObjectsPerNode && HasChildren())
-            {
-                MergeRecursive();
-            }
-            else if(Parent != null && !HasChildren() && CountObjectsRecursive() < Tree.MinObjectsPerNode)
-            {
-                Parent.MergeRecursive();
-            }
-
-            return true;
-        }
-
-        public bool RemoveObjectRecursive(IBoundedObject component)
-        {
-            if(Objects.Contains(component))
-            {
-                return RemoveObject(component);
-            }
-            else
-            {
-                bool toReturn = false;
-                for(int i = 0; i < 8; i++)
-                {
-                    OctreeNode node = Children[i];
-                    if(node != null)
-                    {
-                        toReturn = node.RemoveObjectRecursive(component) || toReturn;
-                    }
-                }
-
                 Objects.Remove(component);
-                if(Tree.ObjectsToNodes.ContainsKey(component) && Tree.ObjectsToNodes[component] == this)
+
+                if (Tree.ObjectsToNodes.ContainsKey(component) && Tree.ObjectsToNodes[component] == this)
                 {
                     Tree.ObjectsToNodes.Remove(component);
                 }
 
-                return toReturn;
+                if (CountObjectsRecursive() - 1 < Tree.MinObjectsPerNode && HasChildren())
+                {
+                    MergeRecursive();
+                }
+                else if (Parent != null && !HasChildren() && CountObjectsRecursive() < Tree.MinObjectsPerNode)
+                {
+                    Parent.MergeRecursive();
+                }
+
+                return true;
+            }
+        }
+
+        public bool RemoveObjectRecursive(IBoundedObject component)
+        {
+            lock (ObjectLock)
+            {
+                if (Objects.Contains(component))
+                {
+                    return RemoveObject(component);
+                }
+                else
+                {
+                    bool toReturn = false;
+                    for (int i = 0; i < 8; i++)
+                    {
+                        OctreeNode node = Children[i];
+                        if (node != null)
+                        {
+                            toReturn = node.RemoveObjectRecursive(component) || toReturn;
+                        }
+                    }
+
+                    Objects.Remove(component);
+                    if (Tree.ObjectsToNodes.ContainsKey(component) && Tree.ObjectsToNodes[component] == this)
+                    {
+                        Tree.ObjectsToNodes.Remove(component);
+                    }
+
+                    return toReturn;
+                }
             }
         }
 
@@ -489,7 +510,10 @@ namespace DwarfCorp
             {
                 if(Children[i] != null)
                 {
-                    Children[i].Objects.Clear();
+                    lock (Children[i].ObjectLock)
+                    {
+                        Children[i].Objects.Clear();
+                    }
                 }
                 Children[i] = null;
             }
@@ -497,8 +521,10 @@ namespace DwarfCorp
             List<IBoundedObject> toAdd = new List<IBoundedObject>();
             toAdd.AddRange(toReturn);
 
-
-            toReturn.AddRange(Objects);
+            lock (ObjectLock)
+            {
+                toReturn.AddRange(Objects);
+            }
 
             foreach(IBoundedObject component in toAdd)
             {
@@ -517,19 +543,22 @@ namespace DwarfCorp
 
         public int CountObjectsRecursive()
         {
-            int toReturn = Objects.Count;
-
-            for(int i = 0; i < 8; i++)
+            lock (ObjectLock)
             {
-                OctreeNode node = Children[i];
-                if(node != null)
+                int toReturn = Objects.Count;
+
+                for (int i = 0; i < 8; i++)
                 {
-                    toReturn += node.CountObjectsRecursive();
+                    OctreeNode node = Children[i];
+                    if (node != null)
+                    {
+                        toReturn += node.CountObjectsRecursive();
+                    }
                 }
+
+
+                return toReturn;
             }
-
-
-            return toReturn;
         }
 
         public void Split()
@@ -605,17 +634,20 @@ namespace DwarfCorp
         {
             if(Tree.DebugDraw)
             {
-                if(Objects.Count > 0 && !HasChildren())
+                lock (ObjectLock)
                 {
-                    Drawer3D.DrawBox(Bounds, color, width);
-                }
-
-                for(int i = 0; i < 8; i++)
-                {
-                    OctreeNode child = Children[i];
-                    if(child != null)
+                    if (Objects.Count > 0 && !HasChildren())
                     {
-                        child.Draw(color, width * 0.9f);
+                        Drawer3D.DrawBox(Bounds, color, width);
+                    }
+
+                    for (int i = 0; i < 8; i++)
+                    {
+                        OctreeNode child = Children[i];
+                        if (child != null)
+                        {
+                            child.Draw(color, width*0.9f);
+                        }
                     }
                 }
             }

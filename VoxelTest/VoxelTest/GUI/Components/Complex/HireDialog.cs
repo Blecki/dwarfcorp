@@ -56,17 +56,16 @@ namespace DwarfCorp
         {
             Applicants = new List<Applicant>();
 
-            int[] numWorkers = {5, 3, 3, 2, 1, 1, 1, 1, 1, 1};
-            WorkerClass workerClass = new WorkerClass();
-            for (int i = 0; i < numWorkers.Length; i++)
+            foreach (KeyValuePair<JobLibrary.JobType, EmployeeClass> employeeType in JobLibrary.Classes)
             {
-                for (int j = 0; j < numWorkers[i]; j++)
+                for (int i = 0; i < 5; i++)
                 {
                     Applicant applicant = new Applicant();
-                    applicant.GenerateRandom(workerClass, i);
-                    Applicants.Add(applicant);
+                    applicant.GenerateRandom(employeeType.Value, 0);
+                    Applicants.Add(applicant);   
                 }
             }
+           
         }
 
         public override void Initialize(Dialog.ButtonType buttons, string title, string message)

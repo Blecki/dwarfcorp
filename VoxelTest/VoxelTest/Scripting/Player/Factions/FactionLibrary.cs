@@ -31,6 +31,13 @@ namespace DwarfCorp
                 Name = "Goblins",
                 Alliance = "Goblin"
             };
+
+            Factions["Undead"] = new Faction
+            {
+                Name = "Undead",
+                Alliance = "Undead"
+            };
+
             //Factions["Goblins"].Economy = new Economy(Factions["Goblins"], 0.0f, 1.0f, 1.0f);
 
 

@@ -15,6 +15,7 @@ namespace DwarfCorp
     public class GridLayout : Layout
     {
         public Dictionary<Rectangle, GUIComponent> ComponentPositions { get; set; }
+        public Dictionary<GUIComponent, Point> ComponentOffsets { get; set; } 
         public int Rows { get; set; }
         public int Cols { get; set; }
         public int EdgePadding { get; set; }
@@ -27,6 +28,7 @@ namespace DwarfCorp
             base(gui, parent)
         {
             ComponentPositions = new Dictionary<Rectangle, GUIComponent>();
+            ComponentOffsets = new Dictionary<GUIComponent, Point>();
             Rows = rows;
             Cols = cols;
             EdgePadding = 5;
@@ -52,6 +54,21 @@ namespace DwarfCorp
             ComponentPositions[new Rectangle(x, y, w, h)] = component;
         }
 
+        public void SetComponentOffset(GUIComponent component, Point offset)
+        {
+            ComponentOffsets[component] = offset;
+        }
+
+        public bool HasOffset(GUIComponent component)
+        {
+            return ComponentOffsets.ContainsKey(component);
+        }
+
+        public Point GetOffset(GUIComponent component)
+        {
+            return ComponentOffsets[component];
+        }
+
         public override void UpdateSizes()
         {
             if(FitToParent)
@@ -68,9 +85,34 @@ namespace DwarfCorp
 
                 foreach(KeyValuePair<Rectangle, GUIComponent> comp in ComponentPositions)
                 {
-                    comp.Value.LocalBounds = new Rectangle(comp.Key.X * cellX, comp.Key.Y * cellY, comp.Key.Width * cellX - 10, comp.Key.Height * cellY - 10);
+                    if (HasOffset(comp.Value))
+                    {
+                        Point offset = GetOffset(comp.Value);
+                        comp.Value.LocalBounds = new Rectangle(
+                            comp.Key.X * cellX + offset.X,
+                            comp.Key.Y * cellY + offset.Y, 
+                            comp.Key.Width * cellX, 
+                            comp.Key.Height * cellY);
+                    }
+                    else
+                    {
+                        comp.Value.LocalBounds = new Rectangle(comp.Key.X * cellX, comp.Key.Y * cellY, comp.Key.Width * cellX - 10, comp.Key.Height * cellY - 10);   
+                    }
                 }
             }
+        }
+
+        public Rectangle GetRect(Rectangle coords)
+        {
+            int w = LocalBounds.Width;
+            int h = LocalBounds.Height;
+            int cellX = w / Cols;
+            int cellY = h / Rows;
+           return new Rectangle(
+                            coords.X * cellX,
+                            coords.Y * cellY, 
+                            coords.Width * cellX, 
+                            coords.Height * cellY);
         }
 
         public override void Update(GameTime time)

@@ -42,74 +42,79 @@ namespace DwarfCorp
             Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
             while(!targetDead)
             {
+                if (Target.IsDead)
+                {
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                    Creature.Physics.OrientWithVelocity = true;
+                    yield return Status.Success;
+                }
+
                 // Find the location of the melee target
-                Creature.LocalTarget = new Vector3(Target.GlobalTransform.Translation.X,
-                    Creature.Physics.GlobalTransform.Translation.Y,
+                Vector3 targetPos = new Vector3(Target.GlobalTransform.Translation.X,
+                    Target.GlobalTransform.Translation.Y,
                     Target.GlobalTransform.Translation.Z);
 
-                Creature.Physics.Collide(Target.BoundingBox);
-                Vector3 diff = Creature.LocalTarget - Creature.Physics.GlobalTransform.Translation;
+                bool collides = Creature.Physics.Collide(Target.BoundingBox);
+                Vector3 diff = targetPos - Creature.AI.Position;
 
-                Creature.Physics.Face(Creature.LocalTarget);
+                Creature.Physics.Face(targetPos);
 
-                // If we are close to the target, apply force to it
-                if(diff.Length() > 1.0f)
+
+
+
+                // If we are far away from the target, run toward it
+                if (diff.Length() > 10.0f && !collides)
                 {
-                    Vector3 output = Creature.Controller.GetOutput(Act.Dt, Creature.LocalTarget, Creature.Physics.GlobalTransform.Translation) * 0.9f;
-                    Creature.Physics.ApplyForce(output, Act.Dt);
+                    yield return Status.Fail;
+                }
+                if(diff.Length() > 2.0f && !collides)
+                {
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                    Vector3 output = Creature.Controller.GetOutput(Act.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
                     output.Y = 0.0f;
+                    Creature.Physics.ApplyForce(output, Act.Dt);
 
-                    if((Creature.LocalTarget - Creature.Physics.GlobalTransform.Translation).Y > 0.3)
+                    if ((targetPos - Creature.AI.Position).Y > 0.3 && Creature.IsOnGround)
                     {
                         Agent.Jump(Act.LastTime);
                     }
                     Creature.Physics.OrientWithVelocity = true;
                 }
-
-                // Else run toward the target
+                // Else, stop and attack
                 else
                 {
                     Creature.Physics.OrientWithVelocity = false;
                     Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
-                }
 
-                CurrentAttack.Perform(Target, Act.LastTime, Creature.Stats.Strength + Creature.Stats.Size, Creature.AI.Position);
-                if(Target.IsDead)
-                {
-                    if (Creature.Faction.ChopDesignations.Contains(Target))
+                    CurrentAttack.Perform(Target, Act.LastTime, Creature.Stats.Strength + Creature.Stats.Size, Creature.AI.Position);
+                    if (Target.IsDead)
                     {
-                        Creature.Faction.ChopDesignations.Remove(Target);
+                        if (Creature.Faction.ChopDesignations.Contains(Target))
+                        {
+                            Creature.Faction.ChopDesignations.Remove(Target);
+                        }
+
+                        if (Creature.Faction.AttackDesignations.Contains(Target))
+                        {
+                            Creature.Faction.AttackDesignations.Remove(Target);
+                        }
+
+                        Target = null;
+                        Agent.Stats.XP += 10;
+                        Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                        Creature.Physics.OrientWithVelocity = true;
+                        Creature.Physics.Face(Creature.Physics.Velocity + Creature.Physics.GlobalTransform.Translation);
+                        Creature.Stats.NumThingsKilled++;
+                        yield return Status.Success;
+                        targetDead = true;
+                        break;
                     }
 
-                    if (Creature.Faction.AttackDesignations.Contains(Target))
-                    {
-                        Creature.Faction.AttackDesignations.Remove(Target);
-                    }
 
-                    Target= null;
-                    Agent.Stats.XP += 10;
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
-                    Creature.Physics.OrientWithVelocity = true;
-                    Creature.Physics.Face(Creature.Physics.Velocity + Creature.Physics.GlobalTransform.Translation);
-                    Creature.Stats.NumThingsKilled++;
-                    yield return Status.Success;
-                    targetDead = true;
-                    break;
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
+                    Creature.Status.Energy.CurrentValue -= EnergyLoss * Dt * Creature.Stats.Tiredness;
+                
                 }
-                else
-                {
-                    /*
-                    Creature creature = Target.GetChildrenOfType<Creature>().FirstOrDefault();
-
-                    if (creature != null)
-                    {
-                        creature.AI.Tasks.Add(new KillEntityTask(Creature.Physics));
-                    }
-                     */
-                }
-
-                Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
-                Creature.Status.Energy.CurrentValue -= EnergyLoss * Dt * Creature.Stats.Tiredness;
 
                 yield return Status.Running;
             }

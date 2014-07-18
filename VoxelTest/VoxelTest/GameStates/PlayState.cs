@@ -329,7 +329,7 @@ namespace DwarfCorp.GameStates
             {
                 Vector3 dorfPos = new Vector3(Camera.Position.X + (float) Random.NextDouble(), h + 10, Camera.Position.Z + (float) Random.NextDouble());
                 Physics creat = (Physics) EntityFactory.GenerateDwarf(dorfPos,
-                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.AxeDwarf], 0);
+                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.Worker], 0);
 
                 creat.Velocity = new Vector3(1, 0, 0);
             }
@@ -723,7 +723,8 @@ namespace DwarfCorp.GameStates
             };
 
             layout.SetComponentPosition(MiniMap, 0, 8, 4, 4);
-
+            Rectangle rect = layout.GetRect(new Rectangle(0, 8, 4, 4));
+            layout.SetComponentOffset(MiniMap, new Point(0, rect.Height - 250));
 
 
             Button moneyButton = new Button(GUI, layout, "", GUI.DefaultFont, Button.ButtonMode.ImageButton, new ImageFrame(TextureManager.GetTexture("IconSheet"), 32, 2, 1))
@@ -931,89 +932,7 @@ namespace DwarfCorp.GameStates
             roomDes.DesignatedRooms.Add(toBuild);
         }
 
-        /// <summary>
-        /// A library function which creates a "explosion" particle effect (bouncy particles)
-        /// TODO: Move this to a different file
-        /// </summary>
-        /// <param name="assetName">Particle texture name</param>
-        /// <param name="name">Name of the effect</param>
-        /// <returns>A particle emitter which behaves like an explosion.</returns>
-        public ParticleEmitter CreateGenericExplosion(string assetName, string name)
-        {
-            List<Point> frm = new List<Point>
-            {
-                new Point(0, 0)
-            };
-            Texture2D tex = TextureManager.GetTexture(assetName);
-            EmitterData testData = new EmitterData
-            {
-                Animation = new Animation(GraphicsDevice, tex, assetName, tex.Width, tex.Height, frm, true, Color.White, 1.0f, 1.0f, 1.0f, false),
-                ConstantAccel = new Vector3(0, -10, 0),
-                LinearDamping = 0.9999f,
-                AngularDamping = 0.9f,
-                EmissionFrequency = 50.0f,
-                EmissionRadius = 1.0f,
-                EmissionSpeed = 5.0f,
-                GrowthSpeed = -0.0f,
-                MaxAngle = 3.14159f,
-                MinAngle = 0.0f,
-                MaxParticles = 1000,
-                MaxScale = 0.2f,
-                MinScale = 0.1f,
-                MinAngular = -5.0f,
-                MaxAngular = 5.0f,
-                ParticleDecay = 0.5f,
-                ParticlesPerFrame = 0,
-                ReleaseOnce = true,
-                Texture = tex,
-                CollidesWorld = true,
-                Sleeps = true
-            };
-
-            ParticleManager.RegisterEffect(name, testData);
-            return ParticleManager.Emitters[name];
-        }
-
-        /// <summary>
-        /// Creates a generic particle effect which is like a "puff" (cloudy particles which float)
-        /// </summary>
-        /// <param name="name">Name of the effect</param>
-        /// <param name="assetName">Texture asset to use</param>
-        /// <param name="state">Blend mode of the particles (alpha or additive)</param>
-        /// <returns>A puff emitter</returns>
-        public EmitterData CreatePuffLike(string name, string assetName, BlendState state)
-        {
-            List<Point> frm = new List<Point>
-            {
-                new Point(0, 0)
-            };
-
-            EmitterData data = new EmitterData
-            {
-                Animation = new Animation(GraphicsDevice, TextureManager.GetTexture(assetName), name, 32, 32, frm, true, Color.White, 1.0f, 1.0f, 1.0f, false),
-                ConstantAccel = new Vector3(0, 3, 0),
-                LinearDamping = 0.9f,
-                AngularDamping = 0.99f,
-                EmissionFrequency = 20.0f,
-                EmissionRadius = 1.0f,
-                EmissionSpeed = 2.0f,
-                GrowthSpeed = -0.6f,
-                MaxAngle = 3.14159f,
-                MinAngle = 0.0f,
-                MaxParticles = 1000,
-                MaxScale = 1.0f,
-                MinScale = 0.1f,
-                MinAngular = -5.0f,
-                MaxAngular = 5.0f,
-                ParticleDecay = 0.8f,
-                ParticlesPerFrame = 0,
-                ReleaseOnce = true,
-                Texture = TextureManager.GetTexture(assetName),
-                Blend = state
-            };
-
-            return data;
-        }
+      
 
         /// <summary>
         /// Creates all the static particle emitters used in the game.
@@ -1023,21 +942,23 @@ namespace DwarfCorp.GameStates
             ParticleManager = new ParticleManager(ComponentManager);
 
             // Smoke
-            EmitterData puff = CreatePuffLike("puff", ContentPaths.Particles.puff, BlendState.AlphaBlend);
+            EmitterData puff = ParticleManager.CreatePuffLike("puff", ContentPaths.Particles.puff, BlendState.AlphaBlend);
 
             // Bubbles
-            EmitterData bubble = CreatePuffLike("splash2", ContentPaths.Particles.splash2, BlendState.AlphaBlend);
+            EmitterData bubble = ParticleManager.CreatePuffLike("splash2", ContentPaths.Particles.splash2, BlendState.AlphaBlend);
             bubble.ConstantAccel = new Vector3(0, -10, 0);
             bubble.EmissionSpeed = 5;
             bubble.LinearDamping = 0.999f;
             bubble.GrowthSpeed = 1.05f;
             bubble.ParticleDecay = 1.5f;
-
-            // Fire
-            EmitterData flame = CreatePuffLike("flame", ContentPaths.Particles.flame, BlendState.Additive);
             ParticleManager.RegisterEffect("puff", puff);
             ParticleManager.RegisterEffect("splash2", bubble);
+
+            // Fire
+            EmitterData flame = ParticleManager.CreatePuffLike("flame", ContentPaths.Particles.flame, BlendState.Additive);
             ParticleManager.RegisterEffect("flame", flame);
+            EmitterData greenFlame = ParticleManager.CreatePuffLike("green_flame", ContentPaths.Particles.green_flame, BlendState.Additive);
+            ParticleManager.RegisterEffect("green_flame", greenFlame);
 
             List<Point> frm2 = new List<Point>
             {
@@ -1071,12 +992,12 @@ namespace DwarfCorp.GameStates
             ParticleManager.RegisterEffect("Leaves", testData2);
 
             // Various resource explosions
-            CreateGenericExplosion(ContentPaths.Particles.dirt_particle, "dirt_particle");
-            CreateGenericExplosion(ContentPaths.Particles.stone_particle, "stone_particle");
-            CreateGenericExplosion(ContentPaths.Particles.sand_particle, "sand_particle");
+            ParticleManager.CreateGenericExplosion(ContentPaths.Particles.dirt_particle, "dirt_particle");
+            ParticleManager.CreateGenericExplosion(ContentPaths.Particles.stone_particle, "stone_particle");
+            ParticleManager.CreateGenericExplosion(ContentPaths.Particles.sand_particle, "sand_particle");
 
             // Blood explosion
-            ParticleEmitter b = CreateGenericExplosion(ContentPaths.Particles.blood_particle, "blood_particle");
+            ParticleEmitter b = ParticleManager.CreateGenericExplosion(ContentPaths.Particles.blood_particle, "blood_particle");
             b.Data.MinScale = 0.1f;
             b.Data.MaxScale = 0.15f;
             b.Data.GrowthSpeed = -0.1f;
@@ -1217,20 +1138,6 @@ namespace DwarfCorp.GameStates
                 }
             }
 
-            // Hack to test the order screen TODO: get rid of
-            /*
-            if(Keyboard.GetState().IsKeyDown(ControlSettings.Default.OrderScreen))
-            {
-                if(StateManager.NextState == "")
-                {
-                    OrderState orderState = (OrderState) StateManager.States["OrderState"];
-                    orderState.Mode = OrderState.OrderMode.Selling;
-                    GUI.RootComponent.IsVisible = false;
-                    StateManager.PushState("OrderState");
-                }
-                Paused = true;
-            }
-            */
 
             // If not paused, we want to just update the rest of the game.
             if (!Paused)
@@ -1258,16 +1165,6 @@ namespace DwarfCorp.GameStates
             // Updates some of the GUI status
             if(!Paused && Game.IsActive)
             {
-                /*
-                TimeSpan t = TimeSpan.FromSeconds(GameCycle.CycleTimers[GameCycle.CurrentCycle].TargetTimeSeconds - GameCycle.CycleTimers[GameCycle.CurrentCycle].CurrentTimeSeconds);
-
-                string answer = string.Format("{0:D2}m:{1:D2}s",
-                    t.Minutes,
-                    t.Seconds);
-                OrderStatusLabel.Text = "Balloon: " + GameCycle.GetStatusString(GameCycle.CurrentCycle) + " ETA: " + answer;
-                OrderStatusLabel.TextColor = GameCycle.GetColor(GameCycle.CurrentCycle, (float) gameTime.TotalGameTime.TotalSeconds);
-                OrderStatusLabel.OnClicked += OrderStatusLabel_OnClicked;
-                 */
                 CurrentLevelLabel.Text = "Slice: " + ChunkManager.ChunkData.MaxViewingLevel + "/" + ChunkHeight;
                 TimeLabel.Text = Time.CurrentDate.ToShortDateString() + " " + Time.CurrentDate.ToShortTimeString();
                 MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString("C") + " Stock: " + Master.Faction.Economy.Company.StockPrice.ToString("C");
@@ -1375,6 +1272,7 @@ namespace DwarfCorp.GameStates
             Dialog.Popup(GUI, "Save", "File saved.", Dialog.ButtonType.OK);
         
         }
+
 
 
         /// <summary>
@@ -1526,7 +1424,13 @@ namespace DwarfCorp.GameStates
             DrawSky(gameTime, Camera.ViewMatrix);
 
             // Defines the current slice for the GPU
-            Plane slicePlane = WaterRenderer.CreatePlane(ChunkManager.ChunkData.MaxViewingLevel + 1.3f, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
+            float level = ChunkManager.ChunkData.MaxViewingLevel + 1.3f;
+            if (level > ChunkManager.ChunkData.ChunkSizeY)
+            {
+                level = 1000;
+            }
+
+            Plane slicePlane = WaterRenderer.CreatePlane(level, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
 
             // Draw the whole world, and make sure to handle slicing
             DefaultShader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));

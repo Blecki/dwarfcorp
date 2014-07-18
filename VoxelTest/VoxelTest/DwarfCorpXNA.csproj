@@ -118,11 +118,14 @@
       <DependentUpon>AssetSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="AssetManagement\GameSave\JsonConverters\RectangleConverter.cs" />
-    <Compile Include="Components\AI\Bird.cs" />
-    <Compile Include="Components\AI\SnakeAI.cs" />
-    <Compile Include="Components\AI\BirdAI.cs" />
-    <Compile Include="Components\AI\Snake.cs" />
-    <Compile Include="Components\AI\Deer.cs" />
+    <Compile Include="Components\AI\Animals\Bird.cs" />
+    <Compile Include="Components\AI\Monsters\Necromancer.cs" />
+    <Compile Include="Components\AI\Monsters\NecromancerAI.cs" />
+    <Compile Include="Components\AI\Monsters\Skeleton.cs" />
+    <Compile Include="Components\AI\Monsters\SnakeAI.cs" />
+    <Compile Include="Components\AI\Animals\BirdAI.cs" />
+    <Compile Include="Components\AI\Monsters\Snake.cs" />
+    <Compile Include="Components\AI\Animals\Deer.cs" />
     <Compile Include="Components\Graphics\SelectionCircle.cs" />
     <Compile Include="GameStates\EconomyState.cs" />
     <Compile Include="GameStates\LoseState.cs" />
@@ -142,6 +145,8 @@
     <Compile Include="Scripting\Classes\EmployeeClass.cs" />
     <Compile Include="Scripting\Classes\JobLibrary.cs" />
     <Compile Include="Scripting\Classes\AxeDwarfClass.cs" />
+    <Compile Include="Scripting\Classes\NecromancerClass.cs" />
+    <Compile Include="Scripting\Classes\SkeletonClass.cs" />
     <Compile Include="Scripting\Classes\SwordGoblinClass.cs" />
     <Compile Include="Scripting\Classes\WorkerClass.cs" />
     <Compile Include="Scripting\Player\Announcements\Announcement.cs" />
@@ -258,7 +263,7 @@
     <Compile Include="Components\AI\Creature.cs" />
     <Compile Include="Components\AI\Dwarves\Dwarf.cs" />
     <Compile Include="Components\Physics\Flammable.cs" />
-    <Compile Include="Components\AI\Goblin.cs" />
+    <Compile Include="Components\AI\Monsters\Goblin.cs" />
     <Compile Include="Components\Graphics\Mesh.cs" />
     <Compile Include="ControlSettings.Designer.cs">
       <AutoGen>True</AutoGen>

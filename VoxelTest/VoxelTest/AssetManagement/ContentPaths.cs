@@ -38,6 +38,7 @@ namespace DwarfCorp
             public static string sand_particle = Program.CreatePath("Particles", "sand_particle");
             public static string splash2 = Program.CreatePath("Particles", "splash2");
             public static string stone_particle = Program.CreatePath("Particles", "stone_particle");
+            public static string green_flame = Program.CreatePath("Particles", "green_flame");
 
         }
         public class Effects
@@ -45,6 +46,9 @@ namespace DwarfCorp
             public static string shadowcircle = Program.CreatePath("Effects", "shadowcircle");
             public static string selection_circle = Program.CreatePath("Effects", "selection_circle");
             public static string slice = Program.CreatePath("Effects", "slice");
+            public static string claws = Program.CreatePath("Effects", "claws");
+            public static string flash = Program.CreatePath("Effects", "flash");
+            public static string rings = Program.CreatePath("Effects", "ring");
         }
         public class Entities
         {
@@ -122,6 +126,12 @@ namespace DwarfCorp
             }
             public class Goblin
             {
+
+                public class Sprites
+                {
+                    public static string goblin_withsword = Program.CreatePath("Entities", "Goblin", "Sprites", "gob-withsword");                    
+                }
+
                 public class Audio
                 {
                     public static string goblinhurt1 = Program.CreatePath("Entities", "Goblin", "Audio", "goblinhurt1");
@@ -130,12 +140,15 @@ namespace DwarfCorp
                     public static string goblinhurt4 = Program.CreatePath("Entities", "Goblin", "Audio", "goblinhurt4");
 
                 }
+            }
+
+            public class Skeleton
+            {
                 public class Sprites
                 {
-                    public static string goblin_withsword = Program.CreatePath("Entities", "Goblin", "Sprites", "gob-withsword");
-
+                    public static string skele = Program.CreatePath("Entities", "Skeleton", "skele");
+                    public static string necro = Program.CreatePath("Entities", "Skeleton", "necro");
                 }
-
             }
             public class Plants
             {

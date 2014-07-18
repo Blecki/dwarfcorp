@@ -231,7 +231,7 @@ namespace DwarfCorp
             MeleeAttack = new Attack("Pickaxe", 1.0f, 1.0f, 1.0f, ContentPaths.Audio.pick)
             {
                 Knockback = 2.5f,
-                HitAnimation = new Animation(ContentPaths.Effects.slice, 32, 32, 0, 1, 2, 3) 
+                HitAnimation = new Animation(ContentPaths.Effects.flash, 32, 32, 0, 1, 2, 3) 
             };
         }
 

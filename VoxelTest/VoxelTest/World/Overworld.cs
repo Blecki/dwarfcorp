@@ -225,30 +225,7 @@ namespace DwarfCorp
             }
         }
 
-        public static void CreateUniformLand(GraphicsDevice graphics)
-        {
-            Map = new MapData[1000, 1000];
-
-            for(int x = 0; x < 1000; x++)
-            {
-                for(int y = 0; y < 1000; y++)
-                {
-                    Map[x, y].Biome = Biome.Grassland;
-                    Map[x, y].Erosion = 1.0f;
-                    Map[x, y].Weathering = 0.0f;
-                    Map[x, y].Faults = 1.0f;
-                    Map[x, y].Temperature = 0.6f;
-                    Map[x, y].Rainfall = 0.6f;
-                    Map[x, y].Height = 0.3f; //ComputeHeight(x, y, 1000, 1000, 5.0f, false);
-                }
-            }
-
-            Color[] worldData = new Color[1000 * 1000];
-            WorldGeneratorState.worldMap = new Texture2D(graphics, 1000, 1000);
-            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap);
-            Overworld.Name = "flat";
-        }
-
+     
         #region image_processing
 
         public static Vector2 GetMinNeighbor(float[,] heightMap, Vector2 pos)
@@ -741,6 +718,107 @@ namespace DwarfCorp
             {
                 imageMutex.ReleaseMutex();
             }
+        }
+
+        public static void CreateHillsLand(GraphicsDevice graphics)
+        {
+            Map = new MapData[1000, 1000];
+
+            for (int x = 0; x < 1000; x++)
+            {
+                for (int y = 0; y < 1000; y++)
+                {
+                    float temp = ComputeHeight(x, y, 1000, 1000, 3.0f, false);
+                    float rain = ComputeHeight(x, y, 1000, 1000, 2.0f, false);
+                    float height = ComputeHeight(x, y, 1000, 1000, 1.6f, false);
+                    Map[x, y].Erosion = 1.0f;
+                    Map[x, y].Weathering = 0.0f;
+                    Map[x, y].Faults = 1.0f;
+                    Map[x, y].Temperature = temp;
+                    Map[x, y].Rainfall = rain;
+                    Map[x, y].Biome = GetBiome(temp, rain, height);
+                    Map[x, y].Height = height;
+                }
+            }
+
+            Color[] worldData = new Color[1000 * 1000];
+            WorldGeneratorState.worldMap = new Texture2D(graphics, 1000, 1000);
+            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap);
+            Overworld.Name = "hills";
+        }
+
+        public static void CreateCliffsLand(GraphicsDevice graphicsDevice)
+        {
+            Map = new MapData[1000, 1000];
+
+            for (int x = 0; x < 1000; x++)
+            {
+                for (int y = 0; y < 1000; y++)
+                {
+                    Map[x, y].Biome = Biome.Grassland;
+                    Map[x, y].Erosion = 1.0f;
+                    Map[x, y].Weathering = 0.0f;
+                    Map[x, y].Faults = 1.0f;
+                    Map[x, y].Temperature = 0.6f;
+                    Map[x, y].Rainfall = 0.6f;
+                    int cell = x%32 + y;
+                    Map[x, y].Height = cell%32 > 16 ? 0.3f : 0.8f;
+                }
+            }
+
+
+            Color[] worldData = new Color[1000 * 1000];
+            WorldGeneratorState.worldMap = new Texture2D(graphicsDevice, 1000, 1000);
+            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap);
+            Overworld.Name = "hills";
+        }
+
+        public static void CreateUniformLand(GraphicsDevice graphics)
+        {
+            Map = new MapData[1000, 1000];
+
+            for (int x = 0; x < 1000; x++)
+            {
+                for (int y = 0; y < 1000; y++)
+                {
+                    Map[x, y].Biome = Biome.Grassland;
+                    Map[x, y].Erosion = 1.0f;
+                    Map[x, y].Weathering = 0.0f;
+                    Map[x, y].Faults = 1.0f;
+                    Map[x, y].Temperature = 0.6f;
+                    Map[x, y].Rainfall = 0.6f;
+                    Map[x, y].Height = 0.3f; //ComputeHeight(x, y, 1000, 1000, 5.0f, false);
+                }
+            }
+
+            Color[] worldData = new Color[1000 * 1000];
+            WorldGeneratorState.worldMap = new Texture2D(graphics, 1000, 1000);
+            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap);
+            Overworld.Name = "flat";
+        }
+
+        public static void CreateOceanLand(GraphicsDevice graphicsDevice)
+        {
+            Map = new MapData[1000, 1000];
+
+            for (int x = 0; x < 1000; x++)
+            {
+                for (int y = 0; y < 1000; y++)
+                {
+                    Map[x, y].Biome = Biome.Grassland;
+                    Map[x, y].Erosion = 1.0f;
+                    Map[x, y].Weathering = 0.0f;
+                    Map[x, y].Faults = 1.0f;
+                    Map[x, y].Temperature = 0.6f;
+                    Map[x, y].Rainfall = 0.6f;
+                    Map[x, y].Height = 0.05f; //ComputeHeight(x, y, 1000, 1000, 5.0f, false);
+                }
+            }
+
+            Color[] worldData = new Color[1000 * 1000];
+            WorldGeneratorState.worldMap = new Texture2D(graphicsDevice, 1000, 1000);
+            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap);
+            Overworld.Name = "flat";
         }
     }
 

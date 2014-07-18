@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading;
 using Microsoft.Xna.Framework;
 
@@ -9,20 +10,33 @@ namespace DwarfCorp
     internal static class Program
     {
         public static string Version = "1 . 0 . 32";
-        public static char DirChar = System.IO.Path.DirectorySeparatorChar;
+        public static char DirChar = Path.DirectorySeparatorChar;
 
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         private static void Main(string[] args)
         {
-            using(DwarfGame game = new DwarfGame())
+            try
             {
-                game.Run();
+                using (DwarfGame game = new DwarfGame())
+                {
+                    game.Run();
+                }
+
+                SignalShutdown();
+            }
+            catch (Exception exception)
+            {
+                SignalShutdown();
+                DirectoryInfo worldDirectory = Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Logging");
+                StreamWriter file =
+                    new StreamWriter(worldDirectory.FullName + Path.DirectorySeparatorChar + DateTime.Now.ToString("yyyyMMddHHmmssffff") + "_" + "Crashlog.txt", true);
+                file.WriteLine(exception.ToString());
+                file.Close();
+                throw;
             }
 
-            SignalShutdown();
-            
         }
 
         public static string CreatePath(params string[] args)
