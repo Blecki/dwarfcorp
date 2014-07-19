@@ -212,6 +212,8 @@ namespace DwarfCorp.GameStates
         public static AnnouncementManager AnnouncementManager = new AnnouncementManager();
 
         public AnnounementViewer AnnouncementViewer { get; set; }
+
+        public static MonsterSpawner MonsterSpawner { get; set; }
   
         #endregion
 
@@ -232,7 +234,6 @@ namespace DwarfCorp.GameStates
             WorldOrigin = new Vector2(WorldWidth / 2, WorldHeight / 2);
             PreSimulateTimer = new Timer(3, false);
             Time = new WorldTime();
-            
         }
 
         public void InvokeLoss()
@@ -388,6 +389,7 @@ namespace DwarfCorp.GameStates
             Alliance.Relationships = Alliance.InitializeRelationships();
 
             JobLibrary.Initialize();
+            MonsterSpawner = new MonsterSpawner();
         }
 
         /// <summary>
@@ -456,7 +458,7 @@ namespace DwarfCorp.GameStates
                 TextureManager.GetTexture(ContentPaths.Gradients.sungradient),
                 TextureManager.GetTexture(ContentPaths.Gradients.ambientgradient),
                 TextureManager.GetTexture(ContentPaths.Gradients.torchgradient),
-                ChunkGenerator)
+                ChunkGenerator, 10, 1, 10)
             {
                 Components = ComponentManager
             };
@@ -1150,7 +1152,7 @@ namespace DwarfCorp.GameStates
                 Sky.TimeOfDay = Time.GetSkyLightness();
                 Sky.CosTime = (float)(Time.GetTotalHours() * 2 * Math.PI / 24.0f);
                 DefaultShader.Parameters["xTimeOfDay"].SetValue(Sky.TimeOfDay);
-
+                MonsterSpawner.Update(gameTime);
             }
 
 

@@ -33,6 +33,7 @@ namespace DwarfCorp
             GatherDesignations = new List<Body>();
             RoomBuilder = new RoomBuilder(this);
             PutDesignator = new PutDesignator(this, TextureManager.GetTexture("TileSet"));
+            CreatureTypes = new List<string>();
         }
 
 
@@ -47,6 +48,7 @@ namespace DwarfCorp
         public List<Stockpile> Stockpiles { get; set; }
         public List<CreatureAI> Minions { get; set; }
         public List<ShipOrder> ShipDesignations { get; set; }
+        public List<string> CreatureTypes { get; set; } 
         public RoomBuilder RoomBuilder { get; set; }
         public PutDesignator PutDesignator { get; set; }
         public Color DigDesignationColor { get; set; }
@@ -156,6 +158,21 @@ namespace DwarfCorp
         public bool IsTaskAssigned(Task task)
         {
             return Minions.Any(minion => minion.Tasks.Contains(task));
+        }
+
+        public CreatureAI GetNearestMinion(Vector3 location)
+        {
+            float closestDist = float.MaxValue;
+            CreatureAI closestMinion = null;
+            foreach (CreatureAI minion in Minions)
+            {
+                float dist = (minion.Position - location).LengthSquared();
+                if (!(dist < closestDist)) continue;
+                closestDist = dist;
+                closestMinion = minion;
+            }
+
+            return closestMinion;
         }
 
         public void HandleThreats()
@@ -653,6 +670,35 @@ namespace DwarfCorp
 
             Vector3 pos = rooms.First().GetBoundingBox().Center();
             EntityFactory.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, Components, GameState.Game.Content, GameState.Game.GraphicsDevice, new ShipmentOrder(0, null), this);
+        }
+
+        public List<Body> GenerateRandomSpawn(int numCreatures, Vector3 position)
+        {
+            if (CreatureTypes.Count == 0)
+            {
+                return new List<Body>();
+            }
+
+            List<Body> toReturn = new List<Body>();
+            for (int i = 0; i < numCreatures; i++)
+            {
+                string creature = CreatureTypes[PlayState.Random.Next(CreatureTypes.Count)];
+                Vector3 offset = MathFunctions.RandVector3Cube() * 5;
+                Voxel voxel = PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position + offset);
+
+                if (voxel != null)
+                {
+                    toReturn.Add(EntityFactory.GenerateComponent(creature,
+                        position + offset,
+                        PlayState.ComponentManager,
+                        GameState.Game.Content,
+                        GameState.Game.GraphicsDevice,
+                        PlayState.ChunkManager, PlayState.ComponentManager.Factions,
+                        PlayState.Camera));
+                }
+            }
+
+            return toReturn;
         }
     }
 

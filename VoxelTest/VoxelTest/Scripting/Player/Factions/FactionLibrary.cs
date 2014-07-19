@@ -22,20 +22,23 @@ namespace DwarfCorp
             Factions["Player"] = new Faction
             {
                 Name = "Player",
-                Alliance = "Dwarf"
+                Alliance = "Dwarf",
+                CreatureTypes = new List<string> { "Dwarf", "AxeDwarf"}
             };
             Factions["Player"].Economy = new Economy(Factions["Player"], 100.0f, state);
 
             Factions["Goblins"] = new Faction
             {
                 Name = "Goblins",
-                Alliance = "Goblin"
+                Alliance = "Goblin",
+                CreatureTypes = new List<string> { "Goblin" }
             };
 
             Factions["Undead"] = new Faction
             {
                 Name = "Undead",
-                Alliance = "Undead"
+                Alliance = "Undead",
+                CreatureTypes = new List<string> { "Skeleton", "Necromancer"}
             };
 
             //Factions["Goblins"].Economy = new Economy(Factions["Goblins"], 0.0f, 1.0f, 1.0f);
