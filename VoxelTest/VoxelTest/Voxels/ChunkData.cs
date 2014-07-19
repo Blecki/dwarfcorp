@@ -16,7 +16,8 @@ namespace DwarfCorp
     {
         private ChunkManager chunkManager;
 
-        public ChunkData(uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, float invCSX, float invCSY, float invCSZ, Texture2D tilemap, Texture2D illumMap, ChunkManager chunkManager)
+        public ChunkData(uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, float invCSX, float invCSY, float invCSZ, 
+            Texture2D tilemap, Texture2D illumMap, ChunkManager chunkManager)
         {
             ChunkSizeX = chunkSizeX;
             ChunkSizeY = chunkSizeY;
@@ -49,7 +50,7 @@ namespace DwarfCorp
         public uint ChunkSizeZ { get; set; }
         public float InvCSX { get; set; }
         public float InvCSY { get; set; }
-        public float InvCSZ { get; set; }
+        public float InvCSZ { get; set; } 
 
         public ChunkManager ChunkManager
         {

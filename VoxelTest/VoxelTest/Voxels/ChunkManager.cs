@@ -48,6 +48,8 @@ namespace DwarfCorp
         private readonly Timer visibilityChunksTimer = new Timer(0.1f, false);
         private readonly Timer waterUpdateTimer = new Timer(0.1f, false);
 
+        public BoundingBox Bounds { get; set; }
+
         public float DrawDistance
         {
             get { return GameSettings.Default.ChunkDrawDistance; }
@@ -111,7 +113,11 @@ namespace DwarfCorp
             get { return chunkData; }
         }
 
-        public ChunkManager(ContentManager content, uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, Camera camera, GraphicsDevice graphics, Texture2D tilemap, Texture2D illumMap, Texture2D sunMap, Texture2D ambientMap, Texture2D torchMap, ChunkGenerator chunkGen)
+        public ChunkManager(ContentManager content, 
+            uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, 
+            Camera camera, GraphicsDevice graphics, Texture2D tilemap, 
+            Texture2D illumMap, Texture2D sunMap, Texture2D ambientMap, 
+            Texture2D torchMap, ChunkGenerator chunkGen, int maxChunksX, int maxChunksY, int maxChunksZ)
         {
             drawDistSq = DrawDistance * DrawDistance;
             Content = content;
@@ -162,6 +168,11 @@ namespace DwarfCorp
 
             ChunkData.Slice = SliceMode.Y;
             PauseThreads = false;
+
+            Vector3 maxBounds = new Vector3(maxChunksX * chunkSizeX * 0.5f, maxChunksY * chunkSizeY * 0.5f, maxChunksZ * chunkSizeZ * 0.5f);
+            Vector3 minBounds = -maxBounds;
+            Bounds = new BoundingBox(minBounds, maxBounds);
+
             //ChunkOctree.DebugDraw = true;
         }
 
@@ -669,6 +680,7 @@ namespace DwarfCorp
                                 ChunkData.AddChunk(chunk2);
                                 ChunkGen.GenerateVegetation(chunk2, Components, Content, Graphics);
                                 ChunkGen.GenerateFauna(chunk2, Components, Content, Graphics, PlayState.ComponentManager.Factions);
+                                RecalculateBounds();
                             }
                         }
                     }
@@ -692,6 +704,12 @@ namespace DwarfCorp
             }
 
             ChunkData.ChunkManager.CreateGraphics(ref message, ChunkData);
+        }
+
+        private void RecalculateBounds()
+        {
+            List<BoundingBox> boxes = ChunkData.ChunkMap.Select(chunkPair => chunkPair.Value.GetBoundingBox()).ToList();
+            Bounds = MathFunctions.GetBoundingBox(boxes);
         }
 
         public void Update(GameTime gameTime, Camera camera, GraphicsDevice g)
@@ -730,6 +748,7 @@ namespace DwarfCorp
                             c.ShouldRecalculateLighting = true;
                             c.ShouldRebuild = true;
                         }
+                        RecalculateBounds();
                     }
                 }
 

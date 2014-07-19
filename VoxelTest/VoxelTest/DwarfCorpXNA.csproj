@@ -149,6 +149,7 @@
     <Compile Include="Scripting\Classes\SkeletonClass.cs" />
     <Compile Include="Scripting\Classes\SwordGoblinClass.cs" />
     <Compile Include="Scripting\Classes\WorkerClass.cs" />
+    <Compile Include="Scripting\MonsterSpawner.cs" />
     <Compile Include="Scripting\Player\Announcements\Announcement.cs" />
     <Compile Include="Scripting\Player\Announcements\AnnouncementManager.cs" />
     <Compile Include="Scripting\Player\Building\BuildStockpileOrder.cs" />
