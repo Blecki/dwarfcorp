@@ -27,7 +27,8 @@ namespace DwarfCorp
         public ImageFrame(Texture2D image)
         {
             Image = image;
-            SourceRect = image.Bounds;
+            if(image != null)
+                SourceRect = image.Bounds;
         }
 
         public ImageFrame(Texture2D image, int frameSize, int x, int y)

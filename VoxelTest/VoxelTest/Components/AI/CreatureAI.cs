@@ -166,8 +166,6 @@ namespace DwarfCorp
         {
             if(enemies.Count > 0)
             {
-                Say("Sensed " + enemies.Count + " enemies");
-
                 foreach(CreatureAI threat in enemies.Where(threat => !Faction.Threats.Contains(threat.Creature)))
                 {
                     Faction.Threats.Add(threat.Creature);
@@ -175,6 +173,29 @@ namespace DwarfCorp
             }
         }
 
+        public Task GetEasiestTask(List<Task> tasks)
+        {
+            if(tasks == null)
+            {
+                return null;
+            }
+
+            float bestCost = float.MaxValue;
+            Task bestTask = null;
+
+            foreach(Task task in tasks)
+            {
+                float cost = task.ComputeCost(Creature);
+
+                if(cost < bestCost)
+                {
+                    bestCost = cost;
+                    bestTask = task;
+                }
+            }
+
+            return bestTask;
+        }
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
@@ -201,18 +222,18 @@ namespace DwarfCorp
             }
             else
             {
-                Task goal = Tasks.FirstOrDefault();
+                Task goal = GetEasiestTask(Tasks);
                 if(goal != null)
                 {
                     if(goal.IsFeasible(Creature))
                     {
                         goal.SetupScript(Creature);
                         CurrentTask = goal;
-                        Tasks.RemoveAt(0);
+                        Tasks.Remove(goal);
                     }
                     else
                     {
-                        Tasks.RemoveAt(0);
+                        Tasks.Remove(goal);
                     }
                 }
                 else

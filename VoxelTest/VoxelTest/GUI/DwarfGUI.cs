@@ -10,6 +10,9 @@ using Microsoft.Xna.Framework.Content;
 namespace DwarfCorp
 {
 
+    public delegate void UpdateDelegate();
+    public delegate void RenderDelegate();
+
     public delegate void ClickedDelegate();
 
     public delegate void PressedDelegate();

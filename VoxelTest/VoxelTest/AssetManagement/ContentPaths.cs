@@ -23,6 +23,8 @@ namespace DwarfCorp
             public static string sword = Program.CreatePath("Audio", "sword");
             public static string dig = Program.CreatePath("Audio", "dig");
             public static string whoosh = Program.CreatePath("Audio", "whoosh");
+            public static string cash = Program.CreatePath("Audio", "cash");
+            public static string change = Program.CreatePath("Audio", "change");
 
         }
         public class Particles
@@ -36,12 +38,17 @@ namespace DwarfCorp
             public static string sand_particle = Program.CreatePath("Particles", "sand_particle");
             public static string splash2 = Program.CreatePath("Particles", "splash2");
             public static string stone_particle = Program.CreatePath("Particles", "stone_particle");
+            public static string green_flame = Program.CreatePath("Particles", "green_flame");
 
         }
         public class Effects
         {
             public static string shadowcircle = Program.CreatePath("Effects", "shadowcircle");
             public static string selection_circle = Program.CreatePath("Effects", "selection_circle");
+            public static string slice = Program.CreatePath("Effects", "slice");
+            public static string claws = Program.CreatePath("Effects", "claws");
+            public static string flash = Program.CreatePath("Effects", "flash");
+            public static string rings = Program.CreatePath("Effects", "ring");
         }
         public class Entities
         {
@@ -99,10 +106,18 @@ namespace DwarfCorp
                 public class Sprites
                 {
                     public static string dwarf_animations = Program.CreatePath("Entities", "Dwarf", "Sprites", "dwarf_animations");
+                    public static string soldier_axe_shield= Program.CreatePath("Entities", "Dwarf", "Sprites", "soldier-axe-shield");
 
                 }
 
             }
+
+            public class DwarfObjects
+            {
+                public static string coinpiles = Program.CreatePath("Entities", "DwarfObjects", "coinpiles");
+                public static string beartrap = Program.CreatePath("Entities", "DwarfObjects", "beartrap");
+            }
+
             public class Furniture
             {
                 public static string bedtex = Program.CreatePath("Entities", "Furniture", "bedtex");
@@ -111,6 +126,12 @@ namespace DwarfCorp
             }
             public class Goblin
             {
+
+                public class Sprites
+                {
+                    public static string goblin_withsword = Program.CreatePath("Entities", "Goblin", "Sprites", "gob-withsword");                    
+                }
+
                 public class Audio
                 {
                     public static string goblinhurt1 = Program.CreatePath("Entities", "Goblin", "Audio", "goblinhurt1");
@@ -119,12 +140,15 @@ namespace DwarfCorp
                     public static string goblinhurt4 = Program.CreatePath("Entities", "Goblin", "Audio", "goblinhurt4");
 
                 }
+            }
+
+            public class Skeleton
+            {
                 public class Sprites
                 {
-                    public static string goblin_animations = Program.CreatePath("Entities", "Goblin", "Sprites", "goblin_animations");
-
+                    public static string skele = Program.CreatePath("Entities", "Skeleton", "skele");
+                    public static string necro = Program.CreatePath("Entities", "Skeleton", "necro");
                 }
-
             }
             public class Plants
             {
@@ -180,6 +204,7 @@ namespace DwarfCorp
             public static string companylogo = Program.CreatePath("Logos", "companylogo");
             public static string gamelogo = Program.CreatePath("Logos", "gamelogo");
             public static string grebeardlogo = Program.CreatePath("Logos", "grebeardlogo");
+            public static string logos = Program.CreatePath("Logos", "logos");
 
         }
         public class Models

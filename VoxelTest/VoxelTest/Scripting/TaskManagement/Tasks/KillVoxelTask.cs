@@ -50,12 +50,30 @@ namespace DwarfCorp
                 return false;
             }
 
+
             return true;
         }
 
         public override float ComputeCost(Creature agent)
         {
-            return VoxelToKill == null ? 1000 : (agent.AI.Position - VoxelToKill.WorldPosition).LengthSquared() + 100 * Math.Abs(agent.AI.Position.Y - VoxelToKill.WorldPosition.Y);
+            if(VoxelToKill == null)
+            {
+                return 1000;
+            }
+            Voxel vox = VoxelToKill.GetVoxel(false);
+
+            if (vox == null)
+            {
+                return 10000;
+            }
+
+            int surroundedValue = 0;
+            if(vox.Chunk.IsCompletelySurrounded(VoxelToKill))
+            {
+                surroundedValue = 100000;
+            }
+
+            return (agent.AI.Position - VoxelToKill.WorldPosition).LengthSquared() + 100 * Math.Abs(agent.AI.Position.Y - VoxelToKill.WorldPosition.Y) + surroundedValue;
         }
 
         public override void Render(Microsoft.Xna.Framework.GameTime time)

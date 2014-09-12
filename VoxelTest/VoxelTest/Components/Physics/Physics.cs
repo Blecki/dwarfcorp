@@ -165,6 +165,38 @@ namespace DwarfCorp
         }
 
 
+        public bool Collide(BoundingBox box)
+        {
+            if (!BoundingBox.Intersects(box))
+            {
+                return false;
+            }
+
+            Contact contact = new Contact();
+
+            if (!TestStaticAABBAABB(BoundingBox, box, ref contact))
+            {
+                return false;
+            }
+
+            Matrix m = LocalTransform;
+            m.Translation += contact.NEnter * contact.Penetration;
+
+            if (contact.NEnter.Y > 0.9)
+            {
+                applyGravityThisFrame = false;
+            }
+
+            Vector3 newVelocity = (contact.NEnter * Vector3.Dot(Velocity, contact.NEnter));
+            Velocity = (Velocity - newVelocity) * Restitution;
+
+
+            LocalTransform = m;
+            UpdateBoundingBox();
+
+            return true;
+        }
+
         public virtual void HandleCollisions(ChunkManager chunks, float dt)
         {
             if(Velocity.LengthSquared() < 0.1f)
@@ -199,33 +231,7 @@ namespace DwarfCorp
                 }
 
                 BoundingBox voxAABB = v.GetBoundingBox();
-
-                if(!BoundingBox.Intersects(voxAABB))
-                {
-                    continue;
-                }
-
-                Contact contact = new Contact();
-
-                if(!TestStaticAABBAABB(BoundingBox, voxAABB, ref contact))
-                {
-                    continue;
-                }
-
-                Matrix m = LocalTransform;
-                m.Translation += contact.NEnter * contact.Penetration;
-
-                if(contact.NEnter.Y > 0.9)
-                {
-                    applyGravityThisFrame = false;
-                }
-
-                Vector3 newVelocity = (contact.NEnter * Vector3.Dot(Velocity, contact.NEnter));
-                Velocity = (Velocity - newVelocity) * Restitution;
-
-
-                LocalTransform = m;
-                UpdateBoundingBox();
+                Collide(voxAABB);
             }
         }
 

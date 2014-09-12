@@ -20,6 +20,7 @@ namespace DwarfCorp
 
         public List<VegetationData> Vegetation { get; set; }
         public List<DetailMoteData> Motes { get; set; }
+        public List<FaunaData> Fauna { get; set; } 
         public string GrassVoxel { get; set; }
         public string SoilVoxel { get; set; }
         public string SubsurfVoxel { get; set; }
@@ -30,6 +31,7 @@ namespace DwarfCorp
             Biome = biome;
             Vegetation = new List<VegetationData>();
             Motes = new List<DetailMoteData>();
+            Fauna = new List<FaunaData>();
         }
     }
 

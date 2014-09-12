@@ -11,21 +11,43 @@ using Color = Microsoft.Xna.Framework.Color;
 
 namespace DwarfCorp
 {
+
+    public class Indicator
+    {
+        public ImageFrame Image;
+        public Vector3 Position;
+        public Timer CurrentTime;
+        public float MaxScale;
+        public Vector2 Offset { get; set; }
+        public Color Tint { get; set; }
+        public bool Grow = true;
+        public bool Flip = false;
+
+        public virtual void Update(GameTime time)
+        {
+            CurrentTime.Update(time);
+        }
+    }
+
+    public class AnimatedIndicator : Indicator
+    {
+        public Animation Animation;
+
+
+        public override void Update(GameTime time)
+        {
+            base.Update(time);
+            Animation.Update(time);
+
+            Image = new ImageFrame(Animation.SpriteSheet, Animation.GetCurrentFrameRect());
+        }
+    }
     /// <summary>
     /// This class exists to draw simple sprites (indicators) to the screen. Indicators
     /// are just a sprite at a location which grows, shrinks, and disappears over time.
     /// </summary>
     public static class IndicatorManager
     {
-        public class Indicator
-        {
-            public ImageFrame Image;
-            public Vector3 Position;
-            public Timer CurrentTime;
-            public float MaxScale;
-            public Vector2 Offset { get; set; }
-            public Color Tint { get; set; }
-        }
 
         public enum StandardIndicators
         {
@@ -82,6 +104,7 @@ namespace DwarfCorp
             DrawIndicator(image, position, time, scale, offset, Color.White);
         }
 
+
         public static void DrawIndicator(ImageFrame image, Vector3 position, float time, float scale, Vector2 offset, Color tint)
         {
             lock(IndicatorLock)
@@ -98,6 +121,25 @@ namespace DwarfCorp
             }
         }
 
+        public static void DrawIndicator(Animation image, Vector3 position, float time, float scale, Vector2 offset, Color tint, bool flip)
+        {
+            lock (IndicatorLock)
+            {
+                Indicators.Add(new AnimatedIndicator
+                {
+                    CurrentTime = new Timer(time, true),
+                    Image = null,
+                    Animation = image,
+                    Position = position,
+                    MaxScale = scale,
+                    Offset = offset,
+                    Tint = tint,
+                    Grow = false,
+                    Flip = flip
+                });
+            }
+        }
+
         public static void Update(GameTime time)
         {
             lock(IndicatorLock)
@@ -105,7 +147,7 @@ namespace DwarfCorp
                 List<Indicator> removals = new List<Indicator>();
                 foreach(Indicator indicator in Indicators)
                 {
-                    indicator.CurrentTime.Update(time);
+                    indicator.Update(time);
 
                     float scale = 1.0f;
                     float growTime = indicator.CurrentTime.TargetTimeSeconds * 0.5f;
@@ -119,7 +161,13 @@ namespace DwarfCorp
                     {
                         scale = Easing.CubeInOut(indicator.CurrentTime.CurrentTimeSeconds - shrinkTime, indicator.MaxScale, -indicator.MaxScale, indicator.CurrentTime.TargetTimeSeconds - shrinkTime);
                     }
-                    Drawer2D.DrawSprite(indicator.Image, indicator.Position, new Vector2(scale, scale), indicator.Offset, indicator.Tint);
+
+                    if (!indicator.Grow)
+                    {
+                        scale = indicator.MaxScale;
+                    }
+
+                    Drawer2D.DrawSprite(indicator.Image, indicator.Position, new Vector2(scale, scale), indicator.Offset, indicator.Tint, indicator.Flip);
 
                     if(indicator.CurrentTime.HasTriggered)
                     {

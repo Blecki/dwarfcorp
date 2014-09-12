@@ -108,8 +108,8 @@ namespace DwarfCorp
 
         public OverworldData Data { get; set; }
 
-        public new static string Extension = "world";
-        public new static string CompressedExtension = "zworld";
+        public static string Extension = "world";
+        public static string CompressedExtension = "zworld";
 
         public OverworldFile()
         {

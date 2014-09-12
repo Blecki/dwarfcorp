@@ -30,6 +30,7 @@ namespace DwarfCorp
         public bool KeepAspectRatio { get; set; }
         public bool ConstrainSize { get; set; }
         public bool Highlight { get; set; }
+       
 
         public ImagePanel(DwarfGUI gui, GUIComponent parent, Texture2D image) :
             base(gui, parent)
@@ -100,7 +101,7 @@ namespace DwarfCorp
 
         public override void Render(GameTime time, SpriteBatch batch)
         {
-            if(Image != null && IsVisible)
+            if(Image != null && Image.Image != null && IsVisible)
             {
                 Lock.WaitOne();
                 Rectangle toDraw = GetImageBounds();

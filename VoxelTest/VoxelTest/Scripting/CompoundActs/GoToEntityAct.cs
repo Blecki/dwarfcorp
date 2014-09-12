@@ -45,13 +45,28 @@ namespace DwarfCorp
             Entity = entity;
         }
 
+        public IEnumerable<Status> CollidesWithTarget()
+        {
+            while (true)
+            {
+                if (Entity.BoundingBox.Intersects(Creature.Physics.BoundingBox))
+                {
+                    yield return Status.Success;
+                    yield break;
+                }
+
+                yield return Status.Running;
+            }
+        }
+
+
         public override IEnumerable<Status> Run()
         {
             Tree = new Sequence(new SetTargetEntityAct(Entity, Agent),
                     InHands() |
                     new Sequence(new SetTargetVoxelFromEntityAct(Agent, "EntityVoxel"),
                         new PlanAct(Agent, "PathToEntity", "EntityVoxel", PlanAct.PlanType.Adjacent),
-                        new FollowPathAct(Agent, "PathToEntity"),
+                        new Parallel(new FollowPathAct(Agent, "PathToEntity"),new Wrap(CollidesWithTarget)) {ReturnOnAllSucces = false},
                         new StopAct(Agent)));
             Tree.Initialize();
             return base.Run();

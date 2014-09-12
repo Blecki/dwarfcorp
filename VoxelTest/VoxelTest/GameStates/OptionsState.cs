@@ -258,7 +258,7 @@ namespace DwarfCorp.GameStates
             selfIllum.OnCheckModified += selfIllum_OnCheckModified;
             graphicsLayout.SetComponentPosition(selfIllum, 3, 5, 1, 1);
 
-            Checkbox particlePhysics = new Checkbox(GUI, graphicsLayout, "Particle Physics", GUI.DefaultFont, GameSettings.Default.ParticlePhysics)
+            Checkbox particlePhysics = new Checkbox(GUI, graphicsLayout, "Particle Body", GUI.DefaultFont, GameSettings.Default.ParticlePhysics)
             {
                 ToolTip = "When checked, some particles will bounce off terrain"
             };

@@ -46,6 +46,11 @@ namespace DwarfCorp
 
         public override void Render(GameTime time, SpriteBatch batch)
         {
+            if (!IsVisible)
+            {
+                return;
+            }
+
             //Drawer2D.DrawRect(GlobalBounds, Color.White, Color.Black, 1.0f);
             if(IsMouseOver)
             {
@@ -174,6 +179,7 @@ namespace DwarfCorp
             SelectedItem.IsToggled = true;
             OnItemClicked();
         }
+
 
         public override void Render(GameTime time, SpriteBatch batch)
         {

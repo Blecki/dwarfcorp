@@ -90,6 +90,8 @@ namespace DwarfCorp
             IsBuilt = true;
             ToBuild.IsBuilt = true;
             RoomLibrary.GenerateRoomComponentsTemplate(ToBuild, Faction.Components, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics);
+
+            PlayState.AnnouncementManager.Announce("Built room!", ToBuild.ID + " was built");
         }
 
         public BoundingBox GetBoundingBox()

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Security.AccessControl;
 using System.Text;
 using Microsoft.Xna.Framework;
@@ -50,7 +51,8 @@ namespace DwarfCorp
 
         }
 
-      
+
+
 
         public void Destroy()
         {
@@ -96,15 +98,19 @@ namespace DwarfCorp
         public virtual void RecalculateMaxResources()
         {
             int newResources = Voxels.Count * ResourcesPerVoxel;
-            if(newResources < Resources.CurrentResourceCount)
-            {
-                while(Resources.CurrentResourceCount > newResources)
-                {
-                    Resources.RemoveAnyResource();
-                }
-            }
 
-            Resources.MaxResources = newResources;
+            if (Resources != null)
+            {
+                if (newResources < Resources.CurrentResourceCount)
+                {
+                    while (Resources.CurrentResourceCount > newResources)
+                    {
+                        Resources.RemoveAnyResource();
+                    }
+                }
+
+                Resources.MaxResources = newResources;
+            }
         }
 
         public virtual void AddVoxel(VoxelRef voxel)

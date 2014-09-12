@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -34,7 +35,6 @@ namespace DwarfCorp
 
         private bool isLeftPressed = false;
         private bool isRightPressed = false;
-        private int lastWheel = 1;
         private readonly Timer moveTimer = new Timer(0.25f, true);
         private float targetTheta = 0.0f;
         private float targetPhi = 0.0f;
@@ -51,7 +51,7 @@ namespace DwarfCorp
             Theta = theta;
             Phi = phi;
             Radius = radius;
-            lastWheel = Mouse.GetState().ScrollWheelValue;
+            LastWheel = Mouse.GetState().ScrollWheelValue;
             targetTheta = theta;
             targetPhi = phi;
         }
@@ -84,6 +84,7 @@ namespace DwarfCorp
                     shiftPressed = true;
                   
                     mouse = Mouse.GetState();
+                    stateChanged = true;
                 }
                 if(!isLeftPressed && mouse.LeftButton == ButtonState.Pressed)
                 {
@@ -108,13 +109,14 @@ namespace DwarfCorp
 
                 if(stateChanged)
                 {
+                    Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2, GameState.Game.GraphicsDevice.Viewport.Height / 2);
+                    mouse = Mouse.GetState();
                 }
 
 
                 float diffX = mouse.X - GameState.Game.GraphicsDevice.Viewport.Width / 2;
                 float diffY = mouse.Y - GameState.Game.GraphicsDevice.Viewport.Height / 2;
-                //Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2, GameState.Game.GraphicsDevice.Viewport.Height / 2);
-
+    
 
                 float filterDiffX = (float) (diffX * dt);
                 float filterDiffY = (float) (diffY * dt);
@@ -272,9 +274,9 @@ namespace DwarfCorp
                 }
             }
 
-            if(mouse.ScrollWheelValue != lastWheel)
+            if (mouse.ScrollWheelValue != LastWheel)
             {
-                int change = mouse.ScrollWheelValue - lastWheel;
+                int change = mouse.ScrollWheelValue - LastWheel;
 
                 if(!(keys.IsKeyDown(Keys.LeftAlt) || keys.IsKeyDown(Keys.RightAlt)))
                 {
@@ -295,10 +297,13 @@ namespace DwarfCorp
                     }
                 }
 
-                lastWheel = mouse.ScrollWheelValue;
+                LastWheel = mouse.ScrollWheelValue;
             }
 
-            Target += Velocity;
+            if (!CollidesWithChunks(PlayState.ChunkManager, Target + Velocity))
+            {
+                Target += Velocity;
+            }
             Velocity *= 0.8f;
             UpdateBasisVectors();
 
@@ -324,6 +329,48 @@ namespace DwarfCorp
 
             ViewMatrix = Matrix.CreateLookAt(Position, cameraFinalTarget, cameraRotatedUpVector);
             Position = Target - cameraRotatedTarget;
+        }
+
+      
+
+        public bool CollidesWithChunks(ChunkManager chunks, Vector3 pos)
+        {
+            BoundingBox box = new BoundingBox(pos - new Vector3(0.5f, 0.5f, 0.5f), pos + new Vector3(0.5f, 0.5f, 0.5f));
+            VoxelRef currentVoxel = chunks.ChunkData.GetVoxelReferenceAtWorldLocation(null, pos);
+
+            List<VoxelRef> vs = new List<VoxelRef>
+            {
+                currentVoxel
+            };
+
+            VoxelChunk chunk = chunks.ChunkData.GetVoxelChunkAtWorldLocation(pos);
+
+
+            if (currentVoxel == null || chunk == null)
+            {
+                return false;
+            }
+
+            Vector3 grid = chunk.WorldToGrid(pos);
+
+            List<VoxelRef> adjacencies = chunk.GetNeighborsEuclidean((int)grid.X, (int)grid.Y, (int)grid.Z);
+            vs.AddRange(adjacencies);
+
+            foreach (VoxelRef v in vs)
+            {
+                if (v == null || v.TypeName == "empty")
+                {
+                    continue;
+                }
+
+                BoundingBox voxAABB = v.GetBoundingBox();
+                if (box.Intersects(voxAABB))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 
