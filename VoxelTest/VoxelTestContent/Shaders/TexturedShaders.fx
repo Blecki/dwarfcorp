@@ -1,8 +1,14 @@
 
+#define MAX_LIGHTS 16
+#define LIGHT_COLOR float4(0, 0, 1, 0)
+
+float3 xLightPositions[MAX_LIGHTS];
+
 
 //------- Constants --------
 float4x4 xView;
-
+float4x4 xLightView;
+float4x4 xLightProj;
 float4x4 xReflectionView;
 
 float xWaterOpacity = 0.3f;
@@ -30,8 +36,6 @@ bool xEnableFog = true;
 float xFogStart = 50;
 float xFogEnd = 80;
 float3 xFogColor = float3(0.5f, 0.5f, 0.5f);
-float3 xLightPos = float3(0, 0, 0);
-float4 xLightColor = float4(0, 0, 0, 0);
 float4 xRippleColor = float4(0.1, 0.1, 0.1, 0);
 float4 xFlatColor = float4(0, 0, 0, 0);
 //------- Technique: Clipping Plane Fix --------
@@ -79,17 +83,20 @@ float4 xTint;
 float3 xLightDirection = float3(0, 1, 0);
 
 
-sampler SunSampler = sampler_state { texture = <xSunGradient> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = clamp; AddressV = clamp;}; 
+sampler SunSampler = sampler_state { texture = <xSunGradient>; magfilter = POINT; minfilter = POINT; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
 
-sampler AmbientSampler = sampler_state { texture = <xAmbientGradient> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=POINT; AddressU = clamp; AddressV = clamp;};
+sampler AmbientSampler = sampler_state { texture = <xAmbientGradient>; magfilter = POINT; minfilter = POINT; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
 
-sampler TorchSampler = sampler_state { texture = <xTorchGradient> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = clamp; AddressV = clamp;};
+sampler TorchSampler = sampler_state { texture = <xTorchGradient>; magfilter = POINT; minfilter = POINT; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
 
 sampler ReflectionSampler = sampler_state { texture = <xReflectionMap> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = clamp; AddressV = clamp;};
 
 sampler RefractionSampler = sampler_state { texture = <xRefractionMap> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = clamp; AddressV = clamp;};
 
 sampler WaterBumpMapSampler = sampler_state { texture = <xWaterBumpMap> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = wrap; AddressV = wrap;};
+
+Texture xShadowMap;
+sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = POINT; minfilter = POINT; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
 
 ///////////// Technique untextured
 	struct UTVertexToPixel
@@ -155,6 +162,68 @@ sampler WaterBumpMapSampler = sampler_state { texture = <xWaterBumpMap> ; magfil
 
 ///////////////
 
+// Shadowmaps
+struct SMapVertexToPixel
+{
+	float4 Position     : POSITION;
+	float4 Position2D    : TEXCOORD0;
+	float2 TextureCoords : TEXCOORD1;
+};
+
+struct SMapPixelToFrame
+{
+	float4 Color : COLOR0;
+};
+
+SMapVertexToPixel ShadowMapVS(float4 inPos : POSITION, float2 inTexCoords : TEXCOORD0, float4x4 world : BLENDWEIGHT)
+{
+	float4 worldPosition = mul(inPos, world);
+	float4 viewPosition = mul(worldPosition, xView);
+	SMapVertexToPixel Output = (SMapVertexToPixel)0;
+	Output.Position = mul(viewPosition, xProjection);
+	Output.Position2D = Output.Position;
+	Output.TextureCoords = inTexCoords;
+	return Output;
+}
+
+SMapPixelToFrame ShadowMapPixelShader(SMapVertexToPixel PSIn)
+{
+	SMapPixelToFrame Output = (SMapPixelToFrame)0;
+	float4 texColor = tex2D(TextureSampler, PSIn.TextureCoords);
+	clip((texColor.a - 0.5));
+	Output.Color = 1.0f - PSIn.Position2D.z / PSIn.Position2D.w;
+	Output.Color.a = 1.0f;
+	return Output;
+}
+
+SMapVertexToPixel ShadowMapVSNonInstance(float4 inPos : POSITION, float2 inTexCoords : TEXCOORD0)
+{
+	return ShadowMapVS(inPos, inTexCoords, xWorld);
+}
+
+SMapVertexToPixel ShadowMapVSInstance(float4 inPos : POSITION, float2 inTexCoords : TEXCOORD0, float4x4 transform : BLENDWEIGHT)
+{
+	return ShadowMapVS(inPos, inTexCoords, transpose(transform));
+}
+
+technique Shadow
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_2_0 ShadowMapVSNonInstance();
+		PixelShader = compile ps_2_0 ShadowMapPixelShader();
+	}
+};
+
+technique ShadowInstanced
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_2_0 ShadowMapVSInstance();
+		PixelShader = compile ps_2_0 ShadowMapPixelShader();
+	}
+};
+
 
 //------- Technique: Textured --------
 struct TVertexToPixel
@@ -170,19 +239,13 @@ float4 TextureBounds: TEXCOORD6;
 
 struct TPixelToFrame
 {
-float4 Color : COLOR0;
+	float4 Color : COLOR0;
 };
-
-
 
 
 TVertexToPixel TexturedVS( float4 inPos : POSITION,  float2 inTexCoords: TEXCOORD0, float4 inColor : COLOR0, float4 inTexSource : TEXCOORD1, float4x4 world : BLENDWEIGHT, float4 tint : COLOR1)
 {
-
     TVertexToPixel Output = (TVertexToPixel)0;
-    //float4x4 preViewProjection = mul (xView, xProjection);
-    //float4x4 preWorldViewProjection = mul (world, preViewProjection);
-    //Output.Position = mul(inPos, preWorldViewProjection);
 	float4 worldPosition = mul(inPos, world);
     float4 viewPosition = mul(worldPosition, xView);
     Output.Position = mul(viewPosition, xProjection);
@@ -196,14 +259,20 @@ TVertexToPixel TexturedVS( float4 inPos : POSITION,  float2 inTexCoords: TEXCOOR
 	[branch]
 	if(xEnableLighting)
 	{
-		float dist = (abs(worldPosition.x - xLightPos.x) + abs(worldPosition.y - xLightPos.y) + abs(worldPosition.z - xLightPos.z) + 0.001);
-		Output.Color = saturate(Output.Color + xLightColor / dist);
+		for (int i = 0; i < MAX_LIGHTS; i++)
+		{
+			float dx = worldPosition.x - xLightPositions[i].x;
+			float dy = worldPosition.y - xLightPositions[i].y;
+			float dz = worldPosition.z - xLightPositions[i].z;
+			float dist = pow(dx, 2) + pow(dy, 2) + pow(dz, 2) + 0.001f;
+			Output.Color = saturate(Output.Color + LIGHT_COLOR / dist);
+		}
 	}
 	
 	[branch]
 	if(!xEnableLighting)
 	{
-		Output.Color = saturate(Output.Color + xLightColor / 999.0f);
+		Output.Color = saturate(Output.Color + LIGHT_COLOR / 999.0f);
 	}
 	
 	[branch]
@@ -227,7 +296,6 @@ TVertexToPixel TexturedVSInstanced( float4 inPos : POSITION,  float2 inTexCoords
 
 float2 ClampTexture(float2 uv, float4 bounds)
 {	
-	
 	return float2(clamp(uv.x, bounds.x, bounds.z), clamp(uv.y, bounds.y, bounds.w));
 }
 
@@ -259,10 +327,9 @@ TPixelToFrame TexturedPS_Colorscale(TVertexToPixel PSIn)
 TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 {
     TPixelToFrame Output = (TPixelToFrame)0;
-	
     Output.Color =  tex2D(SunSampler, float2(PSIn.Color.r * (1.0f - xTimeOfDay), 0.5f));
 	Output.Color.a *= PSIn.Color.a;
-	Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.Color.b + (sin(xTime * 10.0f) + 1.0f) * 0.01f * PSIn.Color.b, 0.5f));
+	Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.Color.b,  0.5f));
 	saturate(Output.Color.rgb);
 
 	Output.Color.rgb *=  tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f));
@@ -295,7 +362,6 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 			clip(PSIn.clipDistances.w);
 		}
 	}
-
     return Output;
 }
 
@@ -364,10 +430,6 @@ technique Instanced
         PixelShader  = compile ps_2_0 TexturedPS_Alphatest();
     }
 }
-
-
-
-
 
 //------- Technique: Water --------
 struct WVertexToPixel
