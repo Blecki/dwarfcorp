@@ -45,6 +45,7 @@ namespace DwarfCorp
             CreateButton(layout, GameMaster.ToolMode.Gather, "Gather", "Click on resources to designate them\nfor gathering. Right click to erase.", 6, 0);
             CreateButton(layout, GameMaster.ToolMode.Chop, "Chop", "Click on trees to designate them\nfor chopping. Right click to erase.", 1, 0);
             CreateButton(layout, GameMaster.ToolMode.Guard, "Guard", "Click and drag to designate guard areas.\nRight click to erase.", 4, 0);
+            CreateButton(layout, GameMaster.ToolMode.Attack, "Attack", "Click and drag to attack entities.\nRight click to cancel.", 3, 0);
             //CreateButton(layout, GameMaster.ToolMode.CreateStockpiles, "Stock", "Click and drag to designate stockpiles.\nRight click to erase.", 7, 0);
           
 
@@ -131,6 +132,11 @@ namespace DwarfCorp
             }
         }
 
+        public bool SelectedUnitsHaveCapability(GameMaster.ToolMode tool)
+        {
+            return Master.Faction.SelectedMinions.Any(minion => minion.Stats.CurrentClass.HasAction(tool));
+        }
+
         public override void Update(GameTime time)
         {
 
@@ -154,7 +160,10 @@ namespace DwarfCorp
      
                 foreach(KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons.Where(pair => pair.Key != GameMaster.ToolMode.SelectUnits))
                 {
-                    pair.Value.IsVisible = true;
+                    if (SelectedUnitsHaveCapability(pair.Key))
+                    {
+                        pair.Value.IsVisible = true;
+                    }
                 }
                  
             }

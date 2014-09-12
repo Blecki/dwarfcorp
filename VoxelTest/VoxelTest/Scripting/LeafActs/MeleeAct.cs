@@ -14,105 +14,106 @@ namespace DwarfCorp
     public class MeleeAct : CreatureAct
     {
         public float EnergyLoss { get; set; }
+        public Attack CurrentAttack { get; set; }
+        public Body Target { get; set; }
 
-        public MeleeAct(CreatureAI agent) :
+        public MeleeAct(CreatureAI agent, Body target) :
             base(agent)
         {
             Name = "Attack!";
             EnergyLoss = 200.0f;
+            Target = target;
+            foreach (Attack attack in agent.Creature.Attacks.Where(attack => attack.Mode == Attack.AttackMode.Melee))
+            {
+                CurrentAttack = attack;
+                break;
+            }
         }
 
         public override IEnumerable<Status> Run()
         {
+            if (CurrentAttack == null)
+            {
+                yield return Status.Fail;
+                yield break;
+            }
+
             bool targetDead = false;
             Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
             while(!targetDead)
             {
-                // Find the location of the melee target
-                Creature.LocalTarget = new Vector3(Agent.TargetComponent.GlobalTransform.Translation.X,
-                    Creature.Physics.GlobalTransform.Translation.Y,
-                    Agent.TargetComponent.GlobalTransform.Translation.Z);
-
-
-                Vector3 diff = Creature.LocalTarget - Creature.Physics.GlobalTransform.Translation;
-
-                Creature.Physics.Face(Creature.LocalTarget);
-
-                // If we are close to the target, apply force to it
-                if(diff.Length() > 1.0f)
+                if (Target.IsDead)
                 {
-                    Vector3 output = Creature.Controller.GetOutput(Act.Dt, Creature.LocalTarget, Creature.Physics.GlobalTransform.Translation) * 0.9f;
-                    Creature.Physics.ApplyForce(output, Act.Dt);
-                    output.Y = 0.0f;
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                    Creature.Physics.OrientWithVelocity = true;
+                    yield return Status.Success;
+                }
 
-                    if((Creature.LocalTarget - Creature.Physics.GlobalTransform.Translation).Y > 0.3)
+                // Find the location of the melee target
+                Vector3 targetPos = new Vector3(Target.GlobalTransform.Translation.X,
+                    Target.GlobalTransform.Translation.Y,
+                    Target.GlobalTransform.Translation.Z);
+
+                bool collides = Creature.Physics.Collide(Target.BoundingBox);
+                Vector3 diff = targetPos - Creature.AI.Position;
+
+                Creature.Physics.Face(targetPos);
+
+
+
+
+                // If we are far away from the target, run toward it
+                if (diff.Length() > 10.0f && !collides)
+                {
+                    yield return Status.Fail;
+                }
+                if(diff.Length() > 2.0f && !collides)
+                {
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                    Vector3 output = Creature.Controller.GetOutput(Act.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
+                    output.Y = 0.0f;
+                    Creature.Physics.ApplyForce(output, Act.Dt);
+
+                    if ((targetPos - Creature.AI.Position).Y > 0.3 && Creature.IsOnGround)
                     {
                         Agent.Jump(Act.LastTime);
                     }
                     Creature.Physics.OrientWithVelocity = true;
                 }
-
-                // Else run toward the target
+                // Else, stop and attack
                 else
                 {
                     Creature.Physics.OrientWithVelocity = false;
                     Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
-                }
 
-                List<Health> healths = Agent.TargetComponent.GetChildrenOfTypeRecursive<Health>();
-
-                foreach(Health health in healths)
-                {
-                    health.Damage(Creature.Stats.BaseChopSpeed * (float) Act.LastTime.ElapsedGameTime.TotalSeconds);
-                }
-
-                if(Agent.TargetComponent.IsDead)
-                {
-                    Creature.Faction.ChopDesignations.Remove(Agent.TargetComponent);
-                    Agent.TargetComponent = null;
-                    Agent.Stats.XP += Math.Max((int) (healths[0].MaxHealth / 10), 1);
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
-                    Creature.Physics.OrientWithVelocity = true;
-                    Creature.Physics.Face(Creature.Physics.Velocity + Creature.Physics.GlobalTransform.Translation);
-                    Creature.Stats.NumThingsKilled++;
-                    yield return Status.Success;
-                    targetDead = true;
-                    break;
-                }
-
-                Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
-
-                Creature.Weapon.PlayNoise();
-                Creature.Status.Energy.CurrentValue -= EnergyLoss * Dt * Creature.Stats.Tiredness;
-
-                Physics component = Agent.TargetComponent as Physics;
-                if(component != null)
-                {
-                    if(PlayState.Random.Next(100) < 10)
+                    CurrentAttack.Perform(Target, Act.LastTime, Creature.Stats.Strength + Creature.Stats.Size, Creature.AI.Position);
+                    if (Target.IsDead)
                     {
-                        Physics phys = component;
+                        if (Creature.Faction.ChopDesignations.Contains(Target))
                         {
-                            PlayState.ParticleManager.Trigger("blood_particle", phys.GlobalTransform.Translation, Color.White, 5);
+                            Creature.Faction.ChopDesignations.Remove(Target);
                         }
 
-
-                        Vector3 f = phys.GlobalTransform.Translation - Creature.Physics.GlobalTransform.Translation;
-                        if(f.Length() > 2.0f)
+                        if (Creature.Faction.AttackDesignations.Contains(Target))
                         {
-                            Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
-                            Creature.Physics.OrientWithVelocity = true;
-                            Creature.Physics.Face(Creature.Physics.Velocity + Creature.Physics.GlobalTransform.Translation);
-                            yield return Status.Fail;
-                            break;
+                            Creature.Faction.AttackDesignations.Remove(Target);
                         }
-                        f.Y = 0.0f;
 
-                        f.Normalize();
-                        f *= 20;
-
-
-                        phys.ApplyForce(f, Dt);
+                        Target = null;
+                        Agent.Stats.XP += 10;
+                        Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                        Creature.Physics.OrientWithVelocity = true;
+                        Creature.Physics.Face(Creature.Physics.Velocity + Creature.Physics.GlobalTransform.Translation);
+                        Creature.Stats.NumThingsKilled++;
+                        yield return Status.Success;
+                        targetDead = true;
+                        break;
                     }
+
+
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
+                    Creature.Status.Energy.CurrentValue -= EnergyLoss * Dt * Creature.Stats.Tiredness;
+                
                 }
 
                 yield return Status.Running;

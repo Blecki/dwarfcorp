@@ -38,18 +38,37 @@ namespace DwarfCorp
         public Label Title { get; set; }
         public Label Message { get; set; }
 
-        public static Dialog Popup(DwarfGUI gui, string title, string message, ButtonType buttons)
+        public static Dialog Popup(DwarfGUI gui, string title, string message, ButtonType buttons, int w, int h, GUIComponent parent, int x, int y)
         {
-            Dialog d = new Dialog(gui, gui.RootComponent, title, message, buttons);
-            int w = message.Length * 8 + 150;
-            int h = 150;
-            d.LocalBounds = new Rectangle(gui.Graphics.Viewport.Width / 2 - w / 2, gui.Graphics.Viewport.Height / 2 - h / 2, w, h);
+            Dialog d = new Dialog(gui, parent)
+            {
+                LocalBounds =
+                    new Rectangle(x, y, w, h)
+            };
+
+            d.Initialize(buttons, title, message);
 
             return d;
         }
 
-        public Dialog(DwarfGUI gui, GUIComponent parent, string title, string message, ButtonType buttons) :
+        public static Dialog Popup(DwarfGUI gui, string title, string message, ButtonType buttons)
+        {
+            int w = message.Length * 8 + 150;
+            int h = 150;
+            int x = gui.Graphics.Viewport.Width/2 - w/2;
+            int y = gui.Graphics.Viewport.Height / 2 - h / 2;
+            return Popup(gui, title, message, buttons, w, h, gui.RootComponent, x, y);
+        }
+
+        public 
+            Dialog(DwarfGUI gui, GUIComponent parent) :
             base(gui, parent)
+        {
+           
+        }
+
+
+        public virtual void Initialize(ButtonType buttons, string title, string message)
         {
             IsModal = true;
             OnClicked += Dialog_OnClicked;
@@ -59,14 +78,17 @@ namespace DwarfCorp
             Title = new Label(GUI, layout, title, GUI.DefaultFont);
             layout.SetComponentPosition(Title, 0, 0, 1, 1);
 
-            Message = new Label(GUI, layout, message, GUI.DefaultFont);
+            Message = new Label(GUI, layout, message, GUI.DefaultFont)
+            {
+                WordWrap = true
+            };
             layout.SetComponentPosition(Message, 0, 1, 4, 2);
 
 
             bool createOK = false;
             bool createCancel = false;
 
-            switch(buttons)
+            switch (buttons)
             {
                 case ButtonType.None:
                     break;
@@ -82,21 +104,21 @@ namespace DwarfCorp
                     break;
             }
 
-            if(createOK)
+            if (createOK)
             {
                 Button okButton = new Button(GUI, layout, "OK", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Check));
                 layout.SetComponentPosition(okButton, 2, 3, 2, 1);
                 okButton.OnClicked += OKButton_OnClicked;
             }
 
-            if(createCancel)
+            if (createCancel)
             {
                 Button cancelButton = new Button(GUI, layout, "Cancel", GUI.DefaultFont, Button.ButtonMode.PushButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Ex));
                 layout.SetComponentPosition(cancelButton, 0, 3, 2, 1);
                 cancelButton.OnClicked += cancelButton_OnClicked;
             }
         }
-
+      
         private void cancelButton_OnClicked()
         {
             Close(ReturnStatus.Canceled);

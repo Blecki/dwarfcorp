@@ -29,7 +29,7 @@ namespace DwarfCorp
 
             MaxMountainHeight = maxMountainHeight;
             VoxLibrary = voxLibrary;
-            CaveNoiseScale = noiseScale * 2.0f;
+            CaveNoiseScale = noiseScale*2.0f;
         }
 
         public VoxelChunk GenerateEmptyChunk(Vector3 origin, int chunkSizeX, int chunkSizeY, int chunkSizeZ)
@@ -37,20 +37,21 @@ namespace DwarfCorp
             Voxel[][][] voxels = new Voxel[chunkSizeX][][];
             voxels[0] = new Voxel[chunkSizeY][];
 
-            for(int x = 0; x < chunkSizeX; x++)
+            for (int x = 0; x < chunkSizeX; x++)
             {
                 voxels[x] = new Voxel[chunkSizeY][];
-                for(int y = 0; y < chunkSizeY; y++)
+                for (int y = 0; y < chunkSizeY; y++)
                 {
                     voxels[x][y] = new Voxel[chunkSizeZ];
-                    for(int z = 0; z < chunkSizeZ; z++)
+                    for (int z = 0; z < chunkSizeZ; z++)
                     {
                         voxels[x][y][z] = null;
                     }
                 }
             }
 
-            VoxelChunk c = new VoxelChunk(origin, Manager, voxels, Manager.ChunkData.GetChunkID(origin + new Vector3(0.5f, 0.5f, 0.5f)), 2);
+            VoxelChunk c = new VoxelChunk(origin, Manager, voxels,
+                Manager.ChunkData.GetChunkID(origin + new Vector3(0.5f, 0.5f, 0.5f)), 2);
 
 
             return c;
@@ -59,17 +60,17 @@ namespace DwarfCorp
 
         public void GenerateWater(VoxelChunk chunk)
         {
-            int waterHeight = (int) (0.17f * chunk.SizeY);
-            for(int x = 0; x < chunk.SizeX; x++)
+            int waterHeight = (int) (0.17f*chunk.SizeY);
+            for (int x = 0; x < chunk.SizeX; x++)
             {
-                for(int z = 0; z < chunk.SizeZ; z++)
+                for (int z = 0; z < chunk.SizeZ; z++)
                 {
                     int h;
-                    for(int y = 0; y < waterHeight; y++)
+                    for (int y = 0; y < waterHeight; y++)
                     {
                         h = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
 
-                        if(chunk.VoxelGrid[x][y][z] == null && y >= h)
+                        if (chunk.VoxelGrid[x][y][z] == null && y >= h)
                         {
                             chunk.Water[x][y][z].WaterLevel = 255;
                             chunk.Water[x][y][z].Type = LiquidType.Water;
@@ -77,8 +78,8 @@ namespace DwarfCorp
                     }
 
 
-                    Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z) / PlayState.WorldScale;
-                    if(Overworld.GetWater(Overworld.Map, vec) != Overworld.WaterType.Volcano)
+                    Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z)/PlayState.WorldScale;
+                    if (Overworld.GetWater(Overworld.Map, vec) != Overworld.WaterType.Volcano)
                     {
                         continue;
                     }
@@ -86,7 +87,7 @@ namespace DwarfCorp
                     h = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
 
 
-                    if(h <= 0)
+                    if (h <= 0)
                     {
                         continue;
                     }
@@ -95,9 +96,10 @@ namespace DwarfCorp
                     chunk.Water[x][h][z].Type = LiquidType.Lava;
 
 
-                    for(int y = h - 1; y >= 0; y--)
+                    for (int y = h - 1; y >= 0; y--)
                     {
-                        Voxel v = new Voxel(new Vector3(x, y, z) + chunk.Origin, VoxelLibrary.GetVoxelType("Stone"), VoxelLibrary.GetPrimitive("Stone"), true);
+                        Voxel v = new Voxel(new Vector3(x, y, z) + chunk.Origin, VoxelLibrary.GetVoxelType("Stone"),
+                            VoxelLibrary.GetPrimitive("Stone"), true);
                         chunk.VoxelGrid[x][y][z] = v;
                         chunk.Water[x][y][z].Type = LiquidType.None;
                         chunk.Water[x][y][z].WaterLevel = 0;
@@ -127,13 +129,13 @@ namespace DwarfCorp
         public void GenerateLava(VoxelChunk chunk)
         {
             int lavaHeight = 2;
-            for(int x = 0; x < chunk.SizeX; x++)
+            for (int x = 0; x < chunk.SizeX; x++)
             {
-                for(int z = 0; z < chunk.SizeZ; z++)
+                for (int z = 0; z < chunk.SizeZ; z++)
                 {
-                    for(int y = 0; y < lavaHeight; y++)
+                    for (int y = 0; y < lavaHeight; y++)
                     {
-                        if(chunk.VoxelGrid[x][y][z] == null && chunk.Water[x][y][z].WaterLevel == 0)
+                        if (chunk.VoxelGrid[x][y][z] == null && chunk.Water[x][y][z].WaterLevel == 0)
                         {
                             chunk.Water[x][y][z].WaterLevel = 255;
                             chunk.Water[x][y][z].Type = LiquidType.Lava;
@@ -143,41 +145,86 @@ namespace DwarfCorp
             }
         }
 
-        public void GenerateOres(VoxelChunk chunk, ComponentManager components, ContentManager content, GraphicsDevice graphics)
+        public void GenerateOres(VoxelChunk chunk, ComponentManager components, ContentManager content,
+            GraphicsDevice graphics)
         {
             Vector3 origin = chunk.Origin;
             int chunkSizeX = chunk.SizeX;
             int chunkSizeY = chunk.SizeY;
             int chunkSizeZ = chunk.SizeZ;
-            for(int x = 0; x < chunkSizeX; x++)
+            for (int x = 0; x < chunkSizeX; x++)
             {
-                for(int z = 0; z < chunkSizeZ; z++)
+                for (int z = 0; z < chunkSizeZ; z++)
                 {
                     int h = chunk.GetFilledVoxelGridHeightAt(x, chunkSizeY - 1, z);
-                    for(int y = 1; y < chunkSizeY; y++)
+                    for (int y = 1; y < chunkSizeY; y++)
                     {
-                        foreach(KeyValuePair<string, VoxelLibrary.ResourceSpawnRate> spawns in VoxelLibrary.ResourceSpawns)
+                        foreach (
+                            KeyValuePair<string, VoxelLibrary.ResourceSpawnRate> spawns in VoxelLibrary.ResourceSpawns)
                         {
                             float s = spawns.Value.VeinSize;
                             float p = spawns.Value.VeinSpawnThreshold;
 
                             Voxel v = chunk.VoxelGrid[x][y][z];
-                            if(v == null || y >= h - 1 || !(y < spawns.Value.MaximumHeight) || !(y > spawns.Value.MinimumHeight) || !(PlayState.Random.NextDouble() <= spawns.Value.Probability) || v.Type.Name != "Stone")
+                            if (v == null || y >= h - 1 || !(y < spawns.Value.MaximumHeight) ||
+                                !(y > spawns.Value.MinimumHeight) ||
+                                !(PlayState.Random.NextDouble() <= spawns.Value.Probability) || v.Type.Name != "Stone")
                             {
                                 continue;
                             }
 
-                            float caviness = (float) NoiseGenerator.Noise((float) (x + origin.X) * s,
-                                (float) (z + origin.Z) * s,
-                                (float) (y + origin.Y) * s);
+                            float caviness = (float) NoiseGenerator.Noise((float) (x + origin.X)*s,
+                                (float) (z + origin.Z)*s,
+                                (float) (y + origin.Y)*s);
 
-                            if(caviness > p)
+                            if (caviness > p)
                             {
                                 v.Type = VoxelLibrary.GetVoxelType(spawns.Key);
                                 v.Primitive = VoxelLibrary.GetPrimitive(spawns.Key);
                             }
                             continue;
                         }
+                    }
+                }
+            }
+        }
+
+        public void GenerateFauna(VoxelChunk chunk, ComponentManager components, ContentManager content, GraphicsDevice graphics, FactionLibrary factions)
+        {
+            int waterHeight = (int)(0.17 * chunk.SizeY);
+            for (int x = 0; x < chunk.SizeX; x++)
+            {
+                for (int z = 0; z < chunk.SizeZ; z++)
+                {
+                    Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z) / PlayState.WorldScale;
+                    Overworld.Biome biome = Overworld.Map[(int)vec.X, (int)vec.Y].Biome;
+                    BiomeData biomeData = BiomeLibrary.Biomes[biome];
+
+                    int y = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
+
+                    if (!chunk.IsCellValid(x, (int)(y - chunk.Origin.Y), z))
+                    {
+                        continue;
+                    }
+
+                    Voxel v = chunk.VoxelGrid[x][y][z];
+
+                    if (v != null || chunk.Water[x][y][z].WaterLevel != 0 || y <= waterHeight)
+                    {
+                        continue;
+                    }
+
+                    foreach (FaunaData animal in biomeData.Fauna)
+                    {
+                        if (y <= 0 || !(PlayState.Random.NextDouble() < animal.SpawnProbability))
+                        {
+                            continue;
+                        }
+
+                    
+                        EntityFactory.GenerateComponent(animal.Name, chunk.Origin + new Vector3(x, y, z) + Vector3.Up * 1.0f, components, content, graphics, PlayState.ChunkManager, factions, PlayState.Camera);
+
+                        break;
                     }
                 }
             }

@@ -232,7 +232,7 @@ namespace DwarfCorp
                 TaskManager.AssignTasks(new List<Task>()
                 {
                     new BuildRoomTask(order)
-                }, PlayState.Master.SelectedMinions);
+                }, PlayState.Master.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Build));
             }
         }
 

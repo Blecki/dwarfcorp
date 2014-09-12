@@ -24,8 +24,8 @@ namespace DwarfCorp
         public Point3 ID;
         public Vector3 Origin;
 
-        public new static string Extension = "chunk";
-        public new static string CompressedExtension = "zchunk";
+        public static string Extension = "chunk";
+        public static string CompressedExtension = "zchunk";
 
         public ChunkFile()
         {

@@ -64,6 +64,8 @@ namespace DwarfCorp
             SetRelationship("Dwarf", "Undead", Relationship.Hates);
             SetRelationship("Dwarf", "Goblin", Relationship.Hates);
             SetRelationship("Goblin", "Undead", Relationship.Hates);
+            SetRelationship("Herbivore", "Undead", Relationship.Indifferent);
+            SetRelationship("Carnivore", "Undead", Relationship.Hates);
             SetRelationship("Goblin", "Carnivore", Relationship.Hates);
             SetRelationship("Goblin", "Herbivore", Relationship.Indifferent);
 

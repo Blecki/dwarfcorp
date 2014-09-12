@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using DwarfCorp.GameStates;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -13,7 +15,11 @@ namespace DwarfCorp
     public class VoxelListener : GameComponent
     {
         public Point3 VoxelID;
+
+        [JsonIgnore] 
         public VoxelChunk Chunk;
+
+        public Point3 ChunkID { get; set; }
 
         public VoxelListener()
         {
@@ -26,8 +32,16 @@ namespace DwarfCorp
             Chunk = chunkManager.ChunkData.ChunkMap[vref.ChunkID];
             VoxelID = new Point3(vref.GridPosition);
             Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
-           
+            ChunkID = Chunk.ID;
+
         }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            Chunk = PlayState.ChunkManager.ChunkData.ChunkMap[ChunkID];
+        }
+
 
         void VoxelListener_OnVoxelDestroyed(Point3 voxelID)
         {

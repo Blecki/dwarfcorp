@@ -114,13 +114,17 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
         {
-            /*
+            DwarfGame.SpriteBatch.Begin();
+            int i = 0;
+            Viewport port = GameState.Game.GraphicsDevice.Viewport;
             foreach (CreatureAI creature in Player.SelectedMinions)
             {
-                Drawer2D.DrawZAlignedRect(creature.Position + Vector3.Down * 0.5f, 0.25f, 0.25f, 1, new Color(100, 100, 100, 100));
-                //Drawer2D.DrawRect(creature.AI.Position, new Rectangle(0, 0, 64, 64), Color.Transparent, new Color(100, 100, 100, 100), 1);
+                Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, creature.Stats.FirstName + " " + creature.Stats.LastName, PlayState.GUI.SmallFont, Color.Black, Drawer2D.Alignment.Right, new Rectangle(port.Width - 300, i * 24, 300, 24));
+                i++;
             }
-             */
+
+            DwarfGame.SpriteBatch.End();
+             
         }
     }
 }

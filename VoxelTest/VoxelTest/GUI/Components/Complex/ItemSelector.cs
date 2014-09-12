@@ -73,6 +73,31 @@ namespace DwarfCorp
 
         public bool AllowShiftClick { get; set; }
 
+        public int ComputeSpace()
+        {
+            int total = 0;
+
+            foreach (GItem item in Items)
+            {
+                total += item.CurrentAmount;
+            }
+
+
+            return total;
+        }
+
+        public float ComputeTotal()
+        {
+            float total = 0;
+
+            foreach(GItem item in Items)
+            {
+                total += item.CurrentAmount * item.Price;
+            }
+
+            return total;
+        }
+
         public ItemSelector(DwarfGUI gui, GUIComponent parent, string title) :
             base(gui, parent, title)
         {
@@ -126,13 +151,17 @@ namespace DwarfCorp
                 };
                 Items.Add(existingItem);
                 ReCreateItems();
+                OnItemChanged(existingItem);
                 return;
             }
             else
             {
                 existingItem.CurrentAmount += amount;
                 UpdateItems();
+                OnItemChanged(existingItem);
             }
+
+ 
         }
 
         public void UpdateItem(Column columnType, int row, int column)

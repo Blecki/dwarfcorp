@@ -1575,10 +1575,10 @@ namespace DwarfCorp
             ResetBuffer(graphics);
             isRebuilding = false;
 
-            chunk.PrimitiveMutex.WaitOne();
+            //chunk.PrimitiveMutex.WaitOne();
             chunk.NewPrimitive = this;
             chunk.NewPrimitiveReceived = true;
-            chunk.PrimitiveMutex.ReleaseMutex();
+            //chunk.PrimitiveMutex.ReleaseMutex();
         }
 
 

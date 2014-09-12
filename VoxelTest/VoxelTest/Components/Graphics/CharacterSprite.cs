@@ -28,15 +28,16 @@ namespace DwarfCorp
         private bool isCoolingDown = false;
 
 
-        public override void Render(GameTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+        public override void Render(GameTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+            GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
-            if(!isBlinking)
+            if (!isBlinking)
             {
                 base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
             }
             else
             {
-                if(blinkTimer.CurrentTimeSeconds < 0.5f * blinkTimer.TargetTimeSeconds)
+                if (blinkTimer.CurrentTimeSeconds < 0.5f*blinkTimer.TargetTimeSeconds)
                 {
                     base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
                 }
@@ -49,17 +50,16 @@ namespace DwarfCorp
             Graphics = PlayState.ChunkManager.Graphics;
         }
 
-        public CharacterSprite() 
+        public CharacterSprite()
         {
-            
+
         }
 
-        public CharacterSprite(GraphicsDevice graphics, ComponentManager manager, string name, GameComponent parent, Matrix localTransform) :
-            base(manager, name, parent, localTransform)
+        public CharacterSprite(GraphicsDevice graphics, ComponentManager manager, string name, GameComponent parent,
+            Matrix localTransform) :
+                base(manager, name, parent, localTransform)
         {
             Graphics = graphics;
-            //DEBUG TODO PLEASE NOTICE ME AND KILL ME I DESIRE DEATH
-            BoundingBox = new BoundingBox(new Vector3(-1,-1,-1), new Vector3(1,1,1));
         }
 
         public bool HasAnimation(Creature.CharacterMode mode, Orientation orient)
@@ -69,13 +69,16 @@ namespace DwarfCorp
 
         public List<Animation> GetAnimations(Creature.CharacterMode mode)
         {
-            return OrientationStrings.Where((t, i) => HasAnimation(mode, (Orientation) i)).Select(t => Animations[mode.ToString() + t]).ToList();
+            return
+                OrientationStrings.Where((t, i) => HasAnimation(mode, (Orientation) i))
+                    .Select(t => Animations[mode.ToString() + t])
+                    .ToList();
         }
 
         public void ResetAnimations(Creature.CharacterMode mode)
         {
             List<Animation> animations = GetAnimations(mode);
-            foreach(Animation a in animations)
+            foreach (Animation a in animations)
             {
                 a.Reset();
             }
@@ -83,7 +86,7 @@ namespace DwarfCorp
 
         public Animation GetAnimation(Creature.CharacterMode mode, Orientation orient)
         {
-            if(HasAnimation(mode, orient))
+            if (HasAnimation(mode, orient))
             {
                 return Animations[mode.ToString() + OrientationStrings[(int) orient]];
             }
@@ -91,6 +94,46 @@ namespace DwarfCorp
             {
                 return null;
             }
+        }
+
+        public static Animation CreateAnimation(Creature.CharacterMode mode,
+            Orientation orient,
+            Texture2D texture,
+            float frameHz,
+            int frameWidth,
+            int frameHeight,
+            int row,
+            params int[] cols)
+        {
+            return CreateAnimation(mode, orient, texture, frameHz, frameWidth, frameHeight, row, cols.ToList());
+        }
+
+
+        public static Animation CreateAnimation(Creature.CharacterMode mode,
+            Orientation orient,
+            Texture2D texture,
+            float frameHz,
+            int frameWidth,
+            int frameHeight,
+            int row,
+            List<int> cols)
+        {
+            List<Point> frames = new List<Point>();
+            int numCols = texture.Width / frameWidth;
+
+            if (cols.Count == 0)
+            {
+                for (int i = 0; i < numCols; i++)
+                {
+                    frames.Add(new Point(i, row));
+                }
+            }
+            else
+            {
+                frames.AddRange(cols.Select(c => new Point(c, row)));
+            }
+
+            return new Animation(GameState.Game.GraphicsDevice, texture, mode.ToString() + OrientationStrings[(int)orient], frameWidth, frameHeight, frames, true, Color.White, frameHz, (float)frameWidth / 35.0f, (float)frameHeight / 35.0f, false);
         }
 
         public void AddAnimation(Creature.CharacterMode mode,
@@ -102,22 +145,9 @@ namespace DwarfCorp
             int row,
             params int[] cols)
         {
-            List<Point> frames = new List<Point>();
-            int numCols = texture.Width / frameWidth;
-
-            if(cols.Length == 0)
-            {
-                for(int i = 0; i < numCols; i++)
-                {
-                    frames.Add(new Point(i, row));
-                }
-            }
-            else
-            {
-                frames.AddRange(cols.Select(c => new Point(c, row)));
-            }
-
-            Animation animation = new Animation(Graphics, texture, mode.ToString() + OrientationStrings[(int) orient], frameWidth, frameHeight, frames, true, Color.White, frameHz, (float) frameWidth / 35.0f, (float) frameHeight / 35.0f, false);
+            List<int> ints = new List<int>();
+            ints.AddRange(cols);
+            Animation animation = CreateAnimation(mode, orient, texture, frameHz, frameWidth, frameHeight, row, ints);
             Animations[mode.ToString() + OrientationStrings[(int) orient]] = animation;
             animation.Play();
         }

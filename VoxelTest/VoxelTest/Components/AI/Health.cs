@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
     /// When attached to another component, gives it health. When the health reaches its minimum, the object (and its parents/children) are destroyed.
     /// </summary>
+    [JsonObject(IsReference = true)]
     public class Health : GameComponent
     {
         public float Hp { get; set; }

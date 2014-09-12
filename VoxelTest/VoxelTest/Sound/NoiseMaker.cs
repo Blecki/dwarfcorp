@@ -25,24 +25,17 @@ namespace DwarfCorp
 
         public void MakeNoise(string noise, Vector3 position, bool randomPitch = false, float volume = 1.0f)
         {
-            try
+            if (!Noises.ContainsKey(noise))
             {
-                if (!Noises.ContainsKey(noise))
-                {
-                    return;
-                }
+                return;
+            }
 
-                if (CurrentSound == null || CurrentSound.EffectInstance.State == SoundState.Stopped || CurrentSound.EffectInstance.State == SoundState.Paused)
-                {
-                    List<string> availableNoises = Noises[noise];
-                    CurrentSound = SoundManager.PlaySound(availableNoises[PlayState.Random.Next(availableNoises.Count)], position, randomPitch, volume);
-                }
-            }
-            catch(ObjectDisposedException exception)
+            if (CurrentSound == null || CurrentSound.EffectInstance.IsDisposed || CurrentSound.EffectInstance.State == SoundState.Stopped || CurrentSound.EffectInstance.State == SoundState.Paused)
             {
-                CurrentSound = null;
-                Console.Error.WriteLine(exception.Message);
+                List<string> availableNoises = Noises[noise];
+                CurrentSound = SoundManager.PlaySound(availableNoises[PlayState.Random.Next(availableNoises.Count)], position, randomPitch, volume);
             }
+
 
         }
     }

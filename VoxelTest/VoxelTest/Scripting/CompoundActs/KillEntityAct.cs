@@ -23,8 +23,8 @@ namespace DwarfCorp
         {
             Entity = entity;
             Name = "Kill Entity";
-            Tree = new Sequence(new GoToEntityAct(entity, creature),
-                                new MeleeAct(Agent));
+            Tree = new ForLoop(new Sequence(new GoToEntityAct(entity, creature),
+                                new MeleeAct(Agent, entity)), 5, true);
         }
     }
 

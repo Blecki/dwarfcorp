@@ -44,15 +44,25 @@
             </summary>
             <param name="spriteSheet">The sprite sheet to use for the bird</param>
         </member>
-        <member name="T:DwarfCorp.SnakeAI">
+        <member name="T:DwarfCorp.Necromancer">
             <summary>
-            Extends CreatureAI specifically for
-            bird behavior.
+            Convenience class for initializing Necromancers as creatures.
             </summary>
         </member>
         <member name="T:DwarfCorp.CreatureAI">
             <summary>
             Component which manages the AI, scripting, and status of a particular creature (such as a Dwarf or Goblin)
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Skeleton">
+            <summary>
+            Convenience class for initializing Skeletons as creatures.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.SnakeAI">
+            <summary>
+            Extends CreatureAI specifically for
+            bird behavior.
             </summary>
         </member>
         <member name="T:DwarfCorp.BirdAI">
@@ -101,6 +111,11 @@
             States can be both rendered and updated. There are brief transition periods between states where animations can occur.
             </summary>
         </member>
+        <member name="T:DwarfCorp.ImagePanel">
+            <summary>
+            This is a GUI component which merely draws an image.
+            </summary>
+        </member>
         <member name="T:DwarfCorp.GUIComponent">
             <summary>
             Every element in the GUI is a GUI component. Components have children and parents. 
@@ -112,10 +127,34 @@
             This is a simple GUI component which draws a fancy rectangle thing.
             </summary>
         </member>
+        <member name="T:DwarfCorp.HireDialog">
+            <summary>
+            This GUI component is a window which opens up on top
+            of the GUI, and blocks the game until it gets user input.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Dialog">
+            <summary>
+            This GUI component is a window which opens up on top
+            of the GUI, and blocks the game until it gets user input.
+            </summary>
+        </member>
         <member name="T:DwarfCorp.BuildRoomOrder">
             <summary>
             This designation specifies a list of voxels which are to be turned
             into a BuildRoom.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.AttackTool">
+            <summary>
+            When using this tool, the player clicks on creatures to specify that 
+            they should be killed
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.PlayerTool">
+            <summary>
+            The player's tools are a state machine. A build tool is a particular player
+            state. Contains callbacks to when voxels are selected.
             </summary>
         </member>
         <member name="T:DwarfCorp.VoxelListener">
@@ -181,11 +220,6 @@
             This game state allows the player to modify game options (stored in the GameSettings file).
             </summary>
         </member>
-        <member name="T:DwarfCorp.GameStates.OrderState">
-            <summary>
-            This game state allows the player to buy/sell goods from a balloon with a drag/drop interface.
-            </summary>
-        </member>
         <member name="T:DwarfCorp.GameStates.PlayState">
             <summary>
             This is the main game state for actually playing the game.
@@ -202,12 +236,6 @@
             <summary>
             Called when the PlayState is entered from the state manager.
             </summary>
-        </member>
-        <member name="M:DwarfCorp.GameStates.PlayState.GameCycle_OnCycleChanged(DwarfCorp.GameCycle.OrderCylce)">
-            <summary>
-            Called when the balloon state is changed
-            </summary>
-            <param name="cycle">The current balloon state</param>
         </member>
         <member name="M:DwarfCorp.GameStates.PlayState.OnExit">
             <summary>
@@ -305,24 +333,6 @@
             <param name="x">The position of the center of the balloon port</param>
             <param name="z">The position of the center of the balloon port</param>
             <param name="size">The size of the (square) balloon port in voxels on a side</param>
-        </member>
-        <member name="M:DwarfCorp.GameStates.PlayState.CreateGenericExplosion(System.String,System.String)">
-            <summary>
-            A library function which creates a "explosion" particle effect (bouncy particles)
-            TODO: Move this to a different file
-            </summary>
-            <param name="assetName">Particle texture name</param>
-            <param name="name">Name of the effect</param>
-            <returns>A particle emitter which behaves like an explosion.</returns>
-        </member>
-        <member name="M:DwarfCorp.GameStates.PlayState.CreatePuffLike(System.String,System.String,Microsoft.Xna.Framework.Graphics.BlendState)">
-            <summary>
-            Creates a generic particle effect which is like a "puff" (cloudy particles which float)
-            </summary>
-            <param name="name">Name of the effect</param>
-            <param name="assetName">Texture asset to use</param>
-            <param name="state">Blend mode of the particles (alpha or additive)</param>
-            <returns>A puff emitter</returns>
         </member>
         <member name="M:DwarfCorp.GameStates.PlayState.CreateParticles">
             <summary>
@@ -467,11 +477,6 @@
             at a given location, with a given color.
             </summary>
         </member>
-        <member name="T:DwarfCorp.ImagePanel">
-            <summary>
-            This is a GUI component which merely draws an image.
-            </summary>
-        </member>
         <member name="T:DwarfCorp.FormEntry">
             <summary>
             A row of a form layout.
@@ -587,12 +592,6 @@
         <member name="T:DwarfCorp.StashResourcesAct">
             <summary>
             A creature grabs a given item and puts it in their inventory
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.PlayerTool">
-            <summary>
-            The player's tools are a state machine. A build tool is a particular player
-            state. Contains callbacks to when voxels are selected.
             </summary>
         </member>
         <member name="T:DwarfCorp.BuildRoomTask">
@@ -860,7 +859,7 @@
             entities in different alliances.
             </summary>
         </member>
-        <member name="T:DwarfCorp.Weapon">
+        <member name="T:DwarfCorp.Attack">
             <summary>
             A weapon allows one entity to attack another. (This is assumed to be a melee weapon). A weapon just has a damage
             amount, a range, and a hit noise.
@@ -926,12 +925,6 @@
         <member name="T:DwarfCorp.ActDisplay">
             <summary>
             This is a debug display for behavior trees (acts)
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.Dialog">
-            <summary>
-            This GUI component is a window which opens up on top
-            of the GUI, and blocks the game until it gets user input.
             </summary>
         </member>
         <member name="T:DwarfCorp.DraggableItem">
@@ -1431,6 +1424,12 @@
             which is drawn over certain voxels.
             </summary>
         </member>
+        <member name="T:DwarfCorp.FaunaData">
+            <summary>
+            Fauna data describes how certain animals (such as birds) are to populate
+            a chunk.
+            </summary>
+        </member>
         <member name="T:DwarfCorp.Overworld">
             <summary>
             The overworld is a 2D map specifying biomes,
@@ -1661,17 +1660,28 @@
             at locations in 3D space.
             </summary>
         </member>
+        <member name="M:DwarfCorp.ParticleManager.CreateGenericExplosion(System.String,System.String)">
+            <summary>
+            A library function which creates a "explosion" particle effect (bouncy particles)
+            TODO: Move this to a different file
+            </summary>
+            <param name="assetName">Particle texture name</param>
+            <param name="name">Name of the effect</param>
+            <returns>A particle emitter which behaves like an explosion.</returns>
+        </member>
+        <member name="M:DwarfCorp.ParticleManager.CreatePuffLike(System.String,System.String,Microsoft.Xna.Framework.Graphics.BlendState)">
+            <summary>
+            Creates a generic particle effect which is like a "puff" (cloudy particles which float)
+            </summary>
+            <param name="name">Name of the effect</param>
+            <param name="assetName">Texture asset to use</param>
+            <param name="state">Blend mode of the particles (alpha or additive)</param>
+            <returns>A puff emitter</returns>
+        </member>
         <member name="T:DwarfCorp.Economy">
             <summary>
             Controls how much money the player has, and whether the player can
             buy and sell certain things. Controls balloon shipments.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.GameCycle">
-            <summary>
-            A simple state machine saying what business cycle the game is in.
-            This will need to change/become more complex. It's just saying that the
-            balloon is at the colony, at the motherland, or traveling.
             </summary>
         </member>
         <member name="T:DwarfCorp.GodModeTool">

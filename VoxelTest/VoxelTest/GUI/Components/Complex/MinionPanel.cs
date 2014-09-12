@@ -8,14 +8,26 @@ namespace DwarfCorp
 {
     public class MinionPanel : GUIComponent
     {
+        public delegate void MinionFired(CreatureAI creature);
+
+        public event MinionFired Fire;
+
+        protected virtual void OnFire(CreatureAI creature)
+        {
+            MinionFired handler = Fire;
+            if (handler != null) handler(creature);
+        }
+
         private CreatureAI minion;
         public CreatureAI Minion { get { return minion; } set { SetMinion(value); }}
-        public ImagePanel Portrait { get; set; }
+        public AnimatedImagePanel Portrait { get; set; }
         public Label ClassLabel { get; set; }
         public Label XpLabel { get; set; }
         public Label PayLabel { get; set; }
         public Dictionary<string, Label> StatLabels { get; set; }
-        public Dictionary<string, MiniBar> StatusBars { get; set; } 
+        public Dictionary<string, MiniBar> StatusBars { get; set; }
+        public Button LevelUpButton { get; set; }
+        public Button FireButton { get; set; }
 
         public MinionPanel(DwarfGUI gui, GUIComponent parent, CreatureAI minion) :
             base(gui, parent)
@@ -61,7 +73,7 @@ namespace DwarfCorp
                 i++;
             }
 
-            Portrait = new ImagePanel(GUI, layout, new ImageFrame())
+            Portrait = new AnimatedImagePanel(GUI, layout, new ImageFrame())
             {
                 KeepAspectRatio = true
             };
@@ -85,6 +97,32 @@ namespace DwarfCorp
 
             PayLabel = new Label(GUI, layout, "Pay", GUI.SmallFont);
             layout.SetComponentPosition(PayLabel, 5, 8, 2, 1);
+
+            LevelUpButton = new Button(GUI, layout, "Promote", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowUp));
+            layout.SetComponentPosition(LevelUpButton, 5, 9, 2, 1);
+            LevelUpButton.OnClicked += LevelUpButton_OnClicked;
+
+            FireButton = new Button(GUI, layout, "Fire", GUI.DefaultFont, Button.ButtonMode.ToolButton, 
+                GUI.Skin.GetSpecialFrame(GUISkin.Tile.ZoomOut))
+            {
+                ToolTip = "Let this employee go."
+            };
+
+            layout.SetComponentPosition(FireButton, 0, 9, 2, 1);
+
+            FireButton.OnClicked +=FireButton_OnClicked;
+        }
+
+        void FireButton_OnClicked()
+        {
+            OnFire(Minion);
+        }
+
+        void LevelUpButton_OnClicked()
+        {
+            Minion.Stats.LevelUp();
+            SoundManager.PlaySound(ContentPaths.Audio.change);
+            UpdatePanel();
         }
 
         private MiniBar CreateStatusBar(string name, GridLayout layout)
@@ -104,6 +142,13 @@ namespace DwarfCorp
 
         public void UpdatePanel()
         {
+            if (Minion == null)
+            {
+                IsVisible = false;
+                return;
+            }
+
+            IsVisible = true;
             StatLabels["Dexterity"].Text = "DEX: " + Minion.Stats.Dexterity;
             StatLabels["Strength"].Text = "STR: " + Minion.Stats.Strength;
             StatLabels["Wisdom"].Text = "WIS: " + Minion.Stats.Wisdom;
@@ -116,26 +161,33 @@ namespace DwarfCorp
                 StatusBars[status.Key].Value = (status.Value.CurrentValue - status.Value.MinValue) / (status.Value.MaxValue - status.Value.MinValue);
             }
 
-            Rectangle rect = Minion.Creature.Sprite.CurrentAnimation.GetCurrentFrameRect();
-            Portrait.Image = new ImageFrame(Minion.Creature.Sprite.SpriteSheet, rect);
+            Portrait.Image.Image = Minion.Creature.Sprite.SpriteSheet;
+            Portrait.Animation = Minion.Creature.Sprite.CurrentAnimation;
+
 
             ClassLabel.Text = "lvl. " + Minion.Stats.LevelIndex + " " + Minion.Stats.CurrentClass.Name + "\n" + Minion.Stats.CurrentLevel.Name;
-
-            int diff = Minion.Stats.CurrentClass.Levels[Minion.Stats.LevelIndex + 1].XP - Minion.Stats.XP;
+            EmployeeClass.Level nextLevel = Minion.Stats.CurrentClass.Levels[Minion.Stats.LevelIndex + 1];
+            int diff = nextLevel.XP - Minion.Stats.XP;
 
             string diffText = "";
 
             if(diff > 0)
             {
                 diffText = "(" + diff + " to next lvl)";
+                LevelUpButton.IsVisible = false;
             }
             else
             {
                 diffText = "(Overqualified)";
+                LevelUpButton.IsVisible = true;
+                LevelUpButton.ToolTip = "Promote to " + nextLevel.Name;
+
             }
 
             XpLabel.Text = "XP: " + Minion.Stats.XP + "\n" + diffText;
             PayLabel.Text = "Pay: " + Minion.Stats.CurrentLevel.Pay.ToString("C0") + " / day";
+
+
         }
 
         public void SetMinion(CreatureAI myMinion)
