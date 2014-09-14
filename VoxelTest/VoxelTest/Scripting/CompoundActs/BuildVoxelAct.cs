@@ -11,14 +11,14 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class BuildVoxelAct : CompoundCreatureAct
     {
-        public VoxelRef Voxel { get; set; }
+        public Voxel Voxel { get; set; }
    
         public BuildVoxelAct()
         {
             
         }
 
-        public BuildVoxelAct(CreatureAI creature, VoxelRef voxel, VoxelType type) :
+        public BuildVoxelAct(CreatureAI creature, Voxel voxel, VoxelType type) :
             base(creature)
         {
             Voxel = voxel;

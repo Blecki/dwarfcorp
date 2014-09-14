@@ -34,7 +34,6 @@ namespace DwarfCorp
                 manager.Factions.Factions["Herbivore"],
                 new Physics
                 (
-                    manager,
                     "snake",
                     manager.RootComponent,
                     Matrix.CreateTranslation(position),
@@ -43,7 +42,7 @@ namespace DwarfCorp
                     1.0f, 1.0f, 0.999f, 0.999f,
                     new Vector3(0, -10, 0)
                 ),
-                manager, chunks, graphics, content, name
+                chunks, graphics, content, name
             )
         {
             Tail = new Physics[5];
@@ -51,7 +50,6 @@ namespace DwarfCorp
             {
                 Tail[i] = new Physics
                 (
-                    manager,
                     "snaketail",
                     manager.RootComponent,
                     Matrix.CreateTranslation(position),

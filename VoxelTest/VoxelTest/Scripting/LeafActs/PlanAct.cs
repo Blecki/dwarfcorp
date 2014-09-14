@@ -21,8 +21,8 @@ namespace DwarfCorp
 
         public string TargetName { get; set; }
 
-        public List<VoxelRef> Path { get { return GetPath(); } set {  SetPath(value);} }
-        public VoxelRef Target { get { return GetTarget(); } set {  SetTarget(value);} }
+        public List<Voxel> Path { get { return GetPath(); } set {  SetPath(value);} }
+        public Voxel Target { get { return GetTarget(); } set {  SetTarget(value);} }
 
         public PlanSubscriber PlanSubscriber { get; set; }
 
@@ -61,22 +61,22 @@ namespace DwarfCorp
             Timeouts = 0;
         }
 
-        public VoxelRef GetTarget()
+        public Voxel GetTarget()
         {
-            return Agent.Blackboard.GetData<VoxelRef>(TargetName);
+            return Agent.Blackboard.GetData<Voxel>(TargetName);
         }
 
-        public void SetTarget(VoxelRef target)
+        public void SetTarget(Voxel target)
         {
             Agent.Blackboard.SetData(TargetName, target);
         }
 
-        public List<VoxelRef> GetPath()
+        public List<Voxel> GetPath()
         {
-            return Agent.Blackboard.GetData<List<VoxelRef>>(PathOut);
+            return Agent.Blackboard.GetData<List<Voxel>>(PathOut);
         }
 
-        public void SetPath(List<VoxelRef> path)
+        public void SetPath(List<Voxel> path)
         {
             Agent.Blackboard.SetData(PathOut, path);
         }
@@ -115,7 +115,7 @@ namespace DwarfCorp
                         break;
                     }
 
-                    VoxelRef voxAbove = chunks.ChunkData.GetVoxelReferenceAtWorldLocation(null, vox.Position + new Vector3(0, 1, 0));
+                    Voxel voxAbove = chunks.ChunkData.GetVoxelerenceAtWorldLocation(null, vox.Position + new Vector3(0, 1, 0));
 
 
                     if(Target == null)

@@ -25,6 +25,11 @@ namespace DwarfCorp
             Name = "Stock Entity: " + entity.ResourceType.ResourceName + " " + entity.NumResources;
         }
 
+        public override Task Clone()
+        {
+            return new StockResourceTask(new ResourceAmount(EntityToGather));
+        }
+
         public override Act CreateScript(Creature creature)
         {
             return new StockResourceAct(creature.AI, EntityToGather);

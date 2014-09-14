@@ -13,7 +13,7 @@ namespace DwarfCorp
         public short ID { get; set; }
         public string Name { get; set; }
         public bool ReleasesResource { get; set; }
-        public string ResourceToRelease { get; set; }
+        public ResourceLibrary.ResourceType ResourceToRelease { get; set; }
         public float StartingHealth { get; set; }
         public float ProbabilityOfRelease { get; set; }
         public bool CanRamp { get; set; }
@@ -23,8 +23,9 @@ namespace DwarfCorp
         public string ExplosionSound { get; set; }
         public bool HasTransitionTextures { get; set; }
         
-        public Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords> TransitionTextures { get; set; } 
-        
+        public Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords> TransitionTextures { get; set; }
+        public bool IsSoil { get; set; }
+
         private static short maxID = 0;
 
         public static List<VoxelType> TypeList = new List<VoxelType>();
@@ -35,7 +36,7 @@ namespace DwarfCorp
             maxID++;
             Name = "";
             ReleasesResource = false;
-            ResourceToRelease = "";
+            ResourceToRelease = ResourceLibrary.ResourceType.Dirt;
             StartingHealth = 0.0f;
             ProbabilityOfRelease = 0.0f;
             CanRamp = false;
@@ -45,7 +46,7 @@ namespace DwarfCorp
             ExplosionSound = ContentPaths.Audio.gravel;
             HasTransitionTextures = false;
             TransitionTextures = new Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords>();
-
+            IsSoil = false;
             if(!TypeList.Contains(this))
             {
                 TypeList.Add(this);

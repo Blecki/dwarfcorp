@@ -67,7 +67,7 @@ namespace DwarfCorp
 
             foreach (CreatureAI creature in Faction.Minions)
             {
-                if (creature.Status.Energy.IsUnhappy())
+                if (creature.Status.Energy.IsUnhappy() && PlayState.Time.IsNight())
                 {
                     Task g = new SatisfyTirednessTask();
 
@@ -104,12 +104,12 @@ namespace DwarfCorp
 
             foreach(BuildOrder i in Faction.DigDesignations)
             {
-                if (i == null || i.Vox == null || i.Vox.GetVoxel(true).Health <= 0)
+                if (i == null || i.Vox == null || i.Vox.Health <= 0)
                 {
                     continue;
                 }
 
-                VoxelChunk chunk = PlayState.ChunkManager.ChunkData.GetVoxelChunkAtWorldLocation(i.Vox.WorldPosition);
+                VoxelChunk chunk = PlayState.ChunkManager.ChunkData.GetVoxelChunkAtWorldLocation(i.Vox.Position);
 
                 if(chunk != null)
                 {
@@ -137,51 +137,15 @@ namespace DwarfCorp
                 return tasks;
             }
 
-            foreach(BuildRoomOrder buildDesignation in Faction.RoomBuilder.BuildDesignations)
-            {
-                if(buildDesignation.IsBuilt)
-                {
-                    continue;
-                }
-
-                HashSet<string> strings = new HashSet<string>();
-                foreach(string item in buildDesignation.ToBuild.RoomType.RequiredResources.Keys)
-                {
-                    if(buildDesignation.IsResourceSatisfied(item))
-                    {
-                        continue;
-                    }
-
-                    strings.Add(item);
-                    break;
-                }
-
-                if(strings.Count == 0)
-                {
-                    continue;
-                }
-
-                Task g = new PutItemWithTagTask(new TagList(strings), buildDesignation.ToBuild);
-
-
-                if(!TaskIsAssigned(g) && IsFeasible(g, Faction.Minions))
-                {
-                    tasks.Add(g);
-                }
-            }
-
-
             foreach(WallBuilder put in Faction.PutDesignator.Designations)
             {
-                TagList tags = new TagList(put.Type.ResourceToRelease);
-
                 if(Faction.HasResources(new List<ResourceAmount>()
                 {
-                    new ResourceAmount(tags.Tags[0])
+                    new ResourceAmount(put.Type.ResourceToRelease)
                 }))
                 {
 
-                    Task g = (new BuildVoxelTask(new TagList(put.Type.ResourceToRelease), put.Vox, put.Type));
+                    Task g = (new BuildVoxelTask(put.Vox, put.Type));
 
                     if(!TaskIsAssigned(g) && IsFeasible(g, Faction.Minions))
                     {
@@ -315,6 +279,46 @@ namespace DwarfCorp
             return maxValue;
         }
 
+        public static void AssignTasksGreedy(List<Task> newGoals, List<CreatureAI> creatures, int maxPerGoal)
+        {
+            List<int> counts = new List<int>();
+
+            for (int i = 0; i < newGoals.Count; i++)
+            {
+                counts.Add(0);
+            }
+
+            foreach (CreatureAI creature in creatures)
+            {
+                int index = 0;
+                List<KeyValuePair<int, float>> costs = new List<KeyValuePair<int, float>>();
+                foreach (Task task in newGoals)
+                {
+                    float cost = task.ComputeCost(creature.Creature);
+                    costs.Add(new KeyValuePair<int, float>(index, cost));
+                    index++;
+                }
+
+                costs.Sort((pairA, pairB) =>
+                {
+                    if (pairA.Key == pairB.Key)
+                    {
+                        return 0;
+                    }
+                    else return pairA.Value.CompareTo(pairB.Value);
+                });
+
+                foreach (KeyValuePair<int, float> taskCost in costs)
+                {
+                    if (counts[taskCost.Key] < maxPerGoal)
+                    {
+                        counts[taskCost.Key]++;
+                        creature.Tasks.Add(newGoals[taskCost.Key].Clone());
+                    }
+                }
+            }
+        }
+
         public static void AssignTasks(List<Task> newGoals, List<CreatureAI> creatures)
         {
 
@@ -339,7 +343,7 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    creatures[i].Tasks.Add(unassignedGoals[assignment]);
+                    creatures[i].Tasks.Add(unassignedGoals[assignment].Clone());
                     removals.Add(unassignedGoals[assignment]);
                 }
 

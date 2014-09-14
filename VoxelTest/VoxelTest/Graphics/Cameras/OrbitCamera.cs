@@ -336,9 +336,9 @@ namespace DwarfCorp
         public bool CollidesWithChunks(ChunkManager chunks, Vector3 pos)
         {
             BoundingBox box = new BoundingBox(pos - new Vector3(0.5f, 0.5f, 0.5f), pos + new Vector3(0.5f, 0.5f, 0.5f));
-            VoxelRef currentVoxel = chunks.ChunkData.GetVoxelReferenceAtWorldLocation(null, pos);
+            Voxel currentVoxel = chunks.ChunkData.GetVoxelerenceAtWorldLocation(null, pos);
 
-            List<VoxelRef> vs = new List<VoxelRef>
+            List<Voxel> vs = new List<Voxel>
             {
                 currentVoxel
             };
@@ -353,12 +353,12 @@ namespace DwarfCorp
 
             Vector3 grid = chunk.WorldToGrid(pos);
 
-            List<VoxelRef> adjacencies = chunk.GetNeighborsEuclidean((int)grid.X, (int)grid.Y, (int)grid.Z);
+            List<Voxel> adjacencies = chunk.GetNeighborsEuclidean((int)grid.X, (int)grid.Y, (int)grid.Z);
             vs.AddRange(adjacencies);
 
-            foreach (VoxelRef v in vs)
+            foreach (Voxel v in vs)
             {
-                if (v == null || v.TypeName == "empty")
+                if (v.IsEmpty || !v.IsVisible)
                 {
                     continue;
                 }

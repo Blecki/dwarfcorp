@@ -18,7 +18,8 @@ namespace DwarfCorp
         public Color ChopDesignationColor { get; set; }
         public float ChopDesignationGlowRate { get; set; }
 
-        public override void OnVoxelsSelected(List<VoxelRef> voxels, InputManager.MouseButton button)
+
+        public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
 
         }
@@ -68,10 +69,12 @@ namespace DwarfCorp
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
 
-            List<Body> treesPickedByMouse = ComponentManager.FilterComponentsWithTag("Tree", bodies);
+            List<Body> treesPickedByMouse = ComponentManager.FilterComponentsWithTag("Vegetation", bodies);
 
             foreach (Body tree in treesPickedByMouse)
             {
+                if (!tree.IsVisible || tree.IsAboveCullPlane) continue;
+
                 Drawer3D.DrawBox(tree.BoundingBox, Color.LightGreen, 0.1f, false);
                 if (button == InputManager.MouseButton.Left)
                 {

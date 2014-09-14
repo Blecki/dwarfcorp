@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
@@ -22,6 +23,52 @@ namespace DwarfCorp
             }
         }
 
+        public static IEnumerable<Act.Status> EatStockedFood(this Creature agent)
+        {
+            List<ResourceAmount> foods = agent.Faction.ListResourcesWithTag(Resource.ResourceTags.Food);
+
+            if (foods.Count == 0)
+            {
+
+                if (agent.Allies == "Dwarf")
+                {
+                    PlayState.AnnouncementManager.Announce("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
+                }
+                yield return Act.Status.Fail;
+                yield break;
+            }
+            else
+            {
+                foreach (ResourceAmount resource in foods)
+                {
+                    if (resource.NumResources > 0)
+                    {
+                        bool removed = agent.Faction.RemoveResources(new List<ResourceAmount>() { new ResourceAmount(resource.ResourceType, 1) }, agent.AI.Position);
+                        agent.Status.Hunger.CurrentValue += resource.ResourceType.FoodContent;
+                        agent.NoiseMaker.MakeNoise("Chew", agent.AI.Position);
+                        if (!removed)
+                        {
+                            yield return Act.Status.Fail;
+                        }
+                        else
+                        {
+                            agent.DrawIndicator(resource.ResourceType.Image);
+                            agent.AI.AddThought(Thought.ThoughtType.AteFood);
+                            yield return Act.Status.Success;
+                        }
+                        yield break;
+                    }
+                }
+
+                if (agent.Allies == "Dwarf")
+                {
+                    PlayState.AnnouncementManager.Announce("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
+                }
+
+                yield return Act.Status.Fail;
+                yield break;
+            }
+        }
 
         public static IEnumerable<Act.Status> RestockAll(this Creature agent)
         {
@@ -38,61 +85,31 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public static IEnumerable<Act.Status> ConsumeItem(this Creature agent, string item)
-        {
-            Body target = agent.AI.Blackboard.GetData<Body>(item);
-            bool targetInHands = target == agent.Hands.GetFirstGrab();
-            bool targetIsFood = target.GetChildrenOfTypeRecursive<Food>().Count > 0;
-            ;
-            if(targetInHands && targetIsFood)
-            {
-                Food food = target.GetChildrenOfTypeRecursive<Food>().First();
-
-                while(food.FoodAmount > 1e-12)
-                {
-                    float eatAmount = (float) (Act.LastTime.ElapsedGameTime.TotalSeconds) * agent.Stats.EatSpeed;
-
-                    food.FoodAmount -= eatAmount;
-                    agent.Status.Hunger.CurrentValue += eatAmount;
-                    agent.NoiseMaker.MakeNoise("Chew", agent.AI.Position);
-                    yield return Act.Status.Running;
-                }
-
-                agent.Hands.UngrabFirst(agent.AI.Position);
-
-                food.GetRootComponent().Die();
-                agent.DrawIndicator(IndicatorManager.StandardIndicators.Happy);
-                yield return Act.Status.Success;
-                yield break;
-            }
-            agent.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-            yield return Act.Status.Fail;
-        }
-
+        
         public static IEnumerable<Act.Status> Dig(this Creature agent, string voxel, float energyLoss)
         {
             agent.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
             while(true)
             {
                 agent.CurrentCharacterMode = Creature.CharacterMode.Attacking;
-                VoxelRef blackBoardVoxelRef = agent.AI.Blackboard.GetData<VoxelRef>(voxel);
+                Voxel blackBoardVoxel = agent.AI.Blackboard.GetData<Voxel>(voxel);
 
-                if(blackBoardVoxelRef == null)
+                if(blackBoardVoxel == null)
                 {
                     agent.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                     yield return Act.Status.Fail;
                     break;
                 }
 
-                Voxel vox = blackBoardVoxelRef.GetVoxel(false);
-                if(vox == null || vox.Health <= 0.0f || !agent.Faction.IsDigDesignation(vox))
+                Voxel vox = blackBoardVoxel;
+                if(vox.Health <= 0.0f || !agent.Faction.IsDigDesignation(vox))
                 {
-                    if(vox != null && vox.Health <= 0.0f)
+                    if(vox.Health <= 0.0f)
                     {
                         vox.Kill();
                     }
                     agent.Stats.NumBlocksDestroyed++;
-                    agent.Stats.XP += Math.Max((int)(VoxelLibrary.GetVoxelType(blackBoardVoxelRef.TypeName).StartingHealth / 10), 1);
+                    agent.Stats.XP += Math.Max((int)(VoxelLibrary.GetVoxelType(blackBoardVoxel.TypeName).StartingHealth / 10), 1);
                     agent.CurrentCharacterMode = Creature.CharacterMode.Idle;
                     yield return Act.Status.Success;
                     break;
@@ -111,7 +128,6 @@ namespace DwarfCorp
                 agent.Physics.Velocity = new Vector3(agent.Physics.Velocity.X * 0.5f, agent.Physics.Velocity.Y, agent.Physics.Velocity.Z * 0.5f);
 
                 agent.Attacks[0].Perform(vox, Act.LastTime, agent.Stats.BaseDigSpeed);
-                agent.Status.Energy.CurrentValue -= energyLoss * Act.Dt * agent.Stats.Tiredness;
                 yield return Act.Status.Running;
             }
 

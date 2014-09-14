@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -17,7 +18,21 @@ namespace DwarfCorp
     public class ParticleManager
     {
         public Dictionary<string, ParticleEmitter> Emitters { get; set; }
+        [JsonIgnore]
         public ComponentManager Components { get; set; }
+
+        public ParticleManager()
+        {
+            
+        }
+
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            Components = PlayState.ComponentManager;
+        }
+        
 
         public ParticleManager(ComponentManager components)
         {

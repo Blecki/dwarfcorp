@@ -20,11 +20,11 @@ namespace DwarfCorp
     /// </summary>
     public class WallBuilder
     {
-        public VoxelRef Vox;
+        public Voxel Vox;
         public VoxelType Type;
         public CreatureAI ReservedCreature = null;
 
-        public WallBuilder(VoxelRef v, VoxelType t)
+        public WallBuilder(Voxel v, VoxelType t)
         {
             Vox = v;
             Type = t;
@@ -33,13 +33,11 @@ namespace DwarfCorp
         public void Put(ChunkManager manager)
         {
             VoxelChunk chunk = manager.ChunkData.ChunkMap[Vox.ChunkID];
-            chunk.VoxelGrid[(int) Vox.GridPosition.X][(int) Vox.GridPosition.Y][(int) Vox.GridPosition.Z] = new Voxel(Vox.WorldPosition, Type, VoxelLibrary.GetPrimitive(Type.Name), true);
 
-            Voxel v = chunk.VoxelGrid[(int) Vox.GridPosition.X][(int) Vox.GridPosition.Y][(int) Vox.GridPosition.Z];
-            v.Chunk = chunk;
-
-            chunk.Water[(int) Vox.GridPosition.X][(int) Vox.GridPosition.Y][(int) Vox.GridPosition.Z].WaterLevel = 0;
-            chunk.NotifyTotalRebuild(!chunk.VoxelGrid[(int) Vox.GridPosition.X][(int) Vox.GridPosition.Y][(int) Vox.GridPosition.Z].IsInterior);
+            Voxel v = chunk.MakeVoxel((int) Vox.GridPosition.X, (int) Vox.GridPosition.Y, (int) Vox.GridPosition.Z);
+            v.Type = Type;
+            v.WaterLevel = 0;
+            chunk.NotifyTotalRebuild(!v.IsInterior);
 
             PlayState.ParticleManager.Trigger("puff", v.Position, Color.White, 20);
 
@@ -48,7 +46,7 @@ namespace DwarfCorp
 
             foreach(Physics phys in components.OfType<Physics>())
             {
-                phys.ApplyForce((phys.GlobalTransform.Translation - (Vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f))) * 100, 0.01f);
+                phys.ApplyForce((phys.GlobalTransform.Translation - (Vox.Position + new Vector3(0.5f, 0.5f, 0.5f))) * 100, 0.01f);
                 BoundingBox box = v.GetBoundingBox();
                 Physics.Contact contact = new Physics.Contact();
                 Physics.TestStaticAABBAABB(box, phys.GetBoundingBox(), ref contact);
@@ -87,7 +85,7 @@ namespace DwarfCorp
             BlockTextures = blockTextures;
         }
 
-        public CreatureAI GetReservedCreature(VoxelRef reference)
+        public CreatureAI GetReservedCreature(Voxel reference)
         {
             WallBuilder des = GetDesignation(reference);
 
@@ -99,11 +97,11 @@ namespace DwarfCorp
             return des.ReservedCreature;
         }
 
-        public bool IsDesignation(VoxelRef reference)
+        public bool IsDesignation(Voxel reference)
         {
             foreach(WallBuilder put in Designations)
             {
-                if((put.Vox.WorldPosition - reference.WorldPosition).LengthSquared() < 0.1)
+                if((put.Vox.Position - reference.Position).LengthSquared() < 0.1)
                 {
                     return true;
                 }
@@ -113,11 +111,11 @@ namespace DwarfCorp
         }
 
 
-        public WallBuilder GetDesignation(VoxelRef v)
+        public WallBuilder GetDesignation(Voxel v)
         {
             foreach(WallBuilder put in Designations)
             {
-                if((put.Vox.WorldPosition - v.WorldPosition).LengthSquared() < 0.1)
+                if ((put.Vox.Position - v.Position).LengthSquared() < 0.1)
                 {
                     return put;
                 }
@@ -137,7 +135,7 @@ namespace DwarfCorp
         }
 
 
-        public void RemoveDesignation(VoxelRef v)
+        public void RemoveDesignation(Voxel v)
         {
             WallBuilder des = GetDesignation(v);
 
@@ -157,7 +155,7 @@ namespace DwarfCorp
             //Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
             foreach(WallBuilder put in Designations)
             {
-                effect.Parameters["xWorld"].SetValue(Matrix.CreateTranslation(put.Vox.WorldPosition));
+                effect.Parameters["xWorld"].SetValue(Matrix.CreateTranslation(put.Vox.Position));
 
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
@@ -170,7 +168,7 @@ namespace DwarfCorp
             effect.Parameters["xWorld"].SetValue(Matrix.Identity);
         }
 
-        public void VoxelsSelected(List<VoxelRef> refs, InputManager.MouseButton button)
+        public void VoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
         {
             if(CurrentVoxelType == null)
             {
@@ -181,7 +179,7 @@ namespace DwarfCorp
                 case (InputManager.MouseButton.Left):
                 {
                     List<Task> assignments = new List<Task>();
-                    foreach(VoxelRef r in refs)
+                    foreach(Voxel r in refs)
                     {
                         if(IsDesignation(r) || r.TypeName != "empty")
                         {
@@ -190,7 +188,7 @@ namespace DwarfCorp
                         else
                         {
                             AddDesignation(new WallBuilder(r, CurrentVoxelType));
-                            assignments.Add(new BuildVoxelTask(new TagList(CurrentVoxelType.Name), r, CurrentVoxelType));
+                            assignments.Add(new BuildVoxelTask(r, CurrentVoxelType));
                         }
                     }
 
@@ -200,7 +198,7 @@ namespace DwarfCorp
                 }
                 case (InputManager.MouseButton.Right):
                 {
-                    foreach(VoxelRef r in refs)
+                    foreach(Voxel r in refs)
                     {
                         if(!IsDesignation(r) || r.TypeName != "empty")
                         {

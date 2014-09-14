@@ -29,7 +29,7 @@ namespace DwarfCorp
         }
 
         public EnemySensor(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-            base(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
+            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             OnSensed += EnemySensor_OnSensed;
             OnEnemySensed += EnemySensor_OnEnemySensed;

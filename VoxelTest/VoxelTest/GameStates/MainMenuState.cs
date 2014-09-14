@@ -16,6 +16,7 @@ namespace DwarfCorp.GameStates
         public Drawer2D Drawer { get; set; }
         public InputManager Input { get; set; }
         public bool IsGameRunning { get; set; }
+        public bool MaintainState { get; set; }
 
 
         public MainMenuState(DwarfGame game, GameStateManager stateManager) :
@@ -23,6 +24,7 @@ namespace DwarfCorp.GameStates
         {
             ResourceLibrary library = new ResourceLibrary(game);
             IsGameRunning = false;
+            MaintainState = false;
         }
 
         public void DebugWorldItems()
@@ -56,105 +58,113 @@ namespace DwarfCorp.GameStates
             ListSelect.AddItem("Generate World", "Create a new world from scratch!");
             ListSelect.AddItem("Load World", "Load a continent from an existing file!");
             ListSelect.AddItem("Debug World", "Create a debug world");
-            ListSelect.AddItem("Create Company", "Customize your own Dwarf Corporation!");
             ListSelect.AddItem("Back", "Back to the Main Menu");
         }
 
         public void OnItemClicked(ListItem item)
         {
-            if(item.Label == "Continue Game")
+            switch (item.Label)
             {
-                StateManager.PopState();
-            }
-            else if(item.Label == "New Game")
-            {
-                PlayItems();
-            }
-            else if(item.Label == "Quit")
-            {
-                Game.Exit();
-            }
-            else if(item.Label == "Create Company")
-            {
-                StateManager.PushState("CompanyMakerState");
-            }
-            else if(item.Label == "Generate World")
-            {
-                StateManager.PushState("WorldGeneratorState");
-            }
-            else if(item.Label == "Options")
-            {
-                StateManager.PushState("OptionsState");
-            }
-            else if(item.Label == "Back")
-            {
-                DefaultItems();
-            }
-            else if (item.Label == "Debug World")
-            {
-                DebugWorldItems();
-            }
-            else if(item.Label == "Flat World")
-            {
-                Overworld.CreateUniformLand(Game.GraphicsDevice);
-                StateManager.PushState("PlayState");
-                PlayState play = (PlayState) StateManager.States["PlayState"];
+                case "Continue Game":
+                    StateManager.PopState();
+                    break;
+                case "New Game":
+                    PlayItems();
+                    StateManager.PushState("CompanyMakerState");
+                    MaintainState = true;
+                    break;
+                case "Quit":
+                    Game.Exit();
+                    break;
+                case "Generate World":
+                    MaintainState = true;
+                    StateManager.PushState("WorldGeneratorState");
+                    break;
+                case "Options":
+                    MaintainState = true;
+                    StateManager.PushState("OptionsState");
+                    break;
+                case "Back":
+                    DefaultItems();
+                    break;
+                case "Debug World":
+                    DebugWorldItems();
+                    break;
+                case "Flat World":
+                {
+                    MaintainState = false;
+                    Overworld.CreateUniformLand(Game.GraphicsDevice);
+                    StateManager.PushState("PlayState");
+                    PlayState play = (PlayState) StateManager.States["PlayState"];
 
-                IsGameRunning = true;
-            }
-            else if (item.Label == "Hills World")
-            {
-                Overworld.CreateHillsLand(Game.GraphicsDevice);
-                StateManager.PushState("PlayState");
-                PlayState play = (PlayState)StateManager.States["PlayState"];
+                    IsGameRunning = true;
+                }
+                    break;
+                case "Hills World":
+                {
+                    MaintainState = false;
+                    Overworld.CreateHillsLand(Game.GraphicsDevice);
+                    StateManager.PushState("PlayState");
+                    PlayState play = (PlayState)StateManager.States["PlayState"];
 
-                IsGameRunning = true;
-            }
-            else if (item.Label == "Cliffs World")
-            {
-                Overworld.CreateCliffsLand(Game.GraphicsDevice);
-                StateManager.PushState("PlayState");
-                PlayState play = (PlayState)StateManager.States["PlayState"];
+                    IsGameRunning = true;
+                }
+                    break;
+                case "Cliffs World":
+                {
+                    MaintainState = false;
+                    Overworld.CreateCliffsLand(Game.GraphicsDevice);
+                    StateManager.PushState("PlayState");
+                    PlayState play = (PlayState)StateManager.States["PlayState"];
 
-                IsGameRunning = true;
-            }
-            else if (item.Label == "Ocean World")
-            {
-                Overworld.CreateOceanLand(Game.GraphicsDevice);
-                StateManager.PushState("PlayState");
-                PlayState play = (PlayState)StateManager.States["PlayState"];
+                    IsGameRunning = true;
+                }
+                    break;
+                case "Ocean World":
+                {
+                    MaintainState = false;
+                    Overworld.CreateOceanLand(Game.GraphicsDevice);
+                    StateManager.PushState("PlayState");
+                    PlayState play = (PlayState)StateManager.States["PlayState"];
 
-                IsGameRunning = true;
-            }
-            else if(item.Label == "Load World")
-            {
-                StateManager.PushState("WorldLoaderState");
-            }
-            else if(item.Label == "Load Game")
-            {
-                StateManager.PushState("GameLoaderState");
+                    IsGameRunning = true;
+                }
+                    break;
+                case "Load World":
+                    MaintainState = true;
+                    StateManager.PushState("WorldLoaderState");
+                    break;
+                case "Load Game":
+                    MaintainState = true;
+                    StateManager.PushState("GameLoaderState");
+                    break;
             }
         }
 
         public override void OnEnter()
         {
-            
-            DefaultFont = Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Default"));
-            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Title")), Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts","Small")), Input);
-            IsInitialized = true;
-            Logo = TextureManager.GetTexture(Program.CreatePath("Logos", "gamelogo"));
-
-            ListSelect = new ListSelector(GUI, GUI.RootComponent)
+            if (!MaintainState)
             {
-                Label = "- Main Menu -",
-                LocalBounds = new Rectangle(Game.GraphicsDevice.Viewport.Width / 2 - 100, Game.GraphicsDevice.Viewport.Height / 2, 150, 150)
-            };
-            DefaultItems();
+                DefaultFont = Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Default"));
+                GUI = new DwarfGUI(Game, DefaultFont,
+                    Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Title")),
+                    Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Small")), Input);
+                IsInitialized = true;
+                Logo = TextureManager.GetTexture(Program.CreatePath("Logos", "gamelogo"));
 
-            ListSelect.OnItemClicked += ItemClicked;
-            Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
-            Input = new InputManager();
+                ListSelect = new ListSelector(GUI, GUI.RootComponent)
+                {
+                    Label = "- Main Menu -",
+                    LocalBounds =
+                        new Rectangle(Game.GraphicsDevice.Viewport.Width/2 - 100, Game.GraphicsDevice.Viewport.Height/2,
+                            150, 150)
+                };
+                DefaultItems();
 
+                ListSelect.OnItemClicked += ItemClicked;
+                Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
+                Input = new InputManager();
+            }
             base.OnEnter();
         }
 

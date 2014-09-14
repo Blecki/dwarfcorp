@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -41,7 +42,23 @@ namespace DwarfCorp
 
         public FactionLibrary Factions { get; set; }
 
-        public ComponentManager(PlayState state)
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            AdditionMutex = new Mutex();
+            RemovalMutex = new Mutex();
+            Removals = new List<GameComponent>();
+            Additions = new List<GameComponent>();
+        }
+       
+
+        public ComponentManager()
+        {
+            
+        }
+
+        public ComponentManager(PlayState state, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
         {
             Components = new Dictionary<uint, GameComponent>();
             Removals = new List<GameComponent>();
@@ -50,7 +67,7 @@ namespace DwarfCorp
             AdditionMutex = new Mutex();
             RemovalMutex = new Mutex();
             Factions = new FactionLibrary();
-            Factions.Initialize(state);
+            Factions.Initialize(state, companyName, companyMotto, companyLogo, companyColor);
         }
 
         #region picking
@@ -202,7 +219,14 @@ namespace DwarfCorp
 
         private void AddComponentImmediate(GameComponent component)
         {
-            Components[component.GlobalID] = component;
+            if (Components.ContainsKey(component.GlobalID) && Components[component.GlobalID] != component)
+            {
+                throw new IndexOutOfRangeException("Component was added that already exists.");
+            }
+            else if (!Components.ContainsKey(component.GlobalID))
+            {
+                Components[component.GlobalID] = component;   
+            }
         }
 
         public void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
@@ -260,8 +284,7 @@ namespace DwarfCorp
         public List<Body> FrustrumCullLocatableComponents(Camera camera)
         {
             List<Body> visible = CollisionManager.GetVisibleObjects<Body>(camera.GetFrustrum(), CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
-            //CollisionManager.GetObjectsIntersecting(camera.GetFrustrum(), visible, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
-
+              
             return visible;
         }
 
@@ -334,7 +357,7 @@ namespace DwarfCorp
 
 
                         if(((loc.GlobalTransform.Translation - camera.Position).LengthSquared() < chunks.DrawDistanceSquared &&
-                            visibleComponents.Contains(loc) || !(loc.FrustrumCull) || !(loc.WasAddedToOctree))
+                            visibleComponents.Contains(loc) || !(loc.FrustrumCull) || !(loc.WasAddedToOctree) && !loc.IsAboveCullPlane)
                             )
                         {
                             componentsToDraw.Add(component);
@@ -349,8 +372,6 @@ namespace DwarfCorp
 
 
             effect.Parameters["xEnableLighting"].SetValue(GameSettings.Default.CursorLightEnabled);
-            effect.Parameters["xLightColor"].SetValue(new Vector4(0, 0, 1, 0));
-            effect.Parameters["xLightPos"].SetValue(PlayState.CursorLightPos);
 
 
             foreach(GameComponent component in componentsToDraw)
@@ -394,6 +415,11 @@ namespace DwarfCorp
             {
                 return -1;
             }
+        }
+
+        public uint GetMaxComponentID()
+        {
+            return Components.Aggregate<KeyValuePair<uint, GameComponent>, uint>(0, (current, component) => Math.Max(current, component.Value.GlobalID));
         }
     }
 

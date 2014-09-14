@@ -42,7 +42,7 @@ namespace DwarfCorp
         }
 
         public BalloonAI(Body body, Vector3 target, ShipmentOrder shipment, Faction faction) :
-            base(body.Manager, "BalloonAI", body)
+            base("BalloonAI", body)
         {
             Body = body;
             VelocityController = new PIDController(0.9f, 0.5f, 0.0f);

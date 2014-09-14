@@ -17,6 +17,11 @@ namespace DwarfCorp
             Name = "LookInteresting";
         }
 
+        public override Task Clone()
+        {
+            return new LookInterestingTask();
+        }
+
         public override Act CreateScript(Creature creature)
         {
             return new WanderAct(creature.AI, 2, 0.5f, 1.0f);

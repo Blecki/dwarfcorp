@@ -38,7 +38,7 @@ namespace DwarfCorp
         {
             if (Tree == null)
             {
-                VoxelRef voxel = Destination.GetNearestVoxel(Agent.Position);
+                Voxel voxel = Destination.GetNearestVoxel(Agent.Position);
 
                 Tree = new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, Agent);
 

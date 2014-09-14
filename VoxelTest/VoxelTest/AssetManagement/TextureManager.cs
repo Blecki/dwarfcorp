@@ -114,7 +114,6 @@ namespace DwarfCorp
                     AssetSettings.Default.GUISheet = v;
                     break;
                 case "CompanyLogo":
-                    PlayerSettings.Default.CompanyLogo = v;
                     break;
                 case "ResourceSheet":
                     AssetSettings.Default.ResourceSheet = v;
@@ -139,8 +138,6 @@ namespace DwarfCorp
                     return AssetSettings.Default.IconSheet;
                 case "GUISheet":
                     return AssetSettings.Default.GUISheet;
-                case "CompanyLogo":
-                    return PlayerSettings.Default.CompanyLogo;
                 case "CorpLogo":
                     return ContentPaths.Logos.grebeardlogo;
                 case "ResourceSheet":

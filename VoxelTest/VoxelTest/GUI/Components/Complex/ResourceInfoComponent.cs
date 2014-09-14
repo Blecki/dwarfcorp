@@ -79,7 +79,7 @@ namespace DwarfCorp
             UpdateTimer.Update(time);
             if(UpdateTimer.HasTriggered)
             {
-                List<ResourceAmount> currentResources = Faction.ListResources();
+                List<ResourceAmount> currentResources = Faction.ListResources().Values.ToList();
                 bool isDifferent = CurrentResources.Count != currentResources.Count || currentResources.Where((t, i) => t.NumResources != CurrentResources[i].NumResources).Any();
 
 

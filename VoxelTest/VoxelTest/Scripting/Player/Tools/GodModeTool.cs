@@ -54,6 +54,7 @@ namespace DwarfCorp
             return active ? VoxelSelectionType.SelectEmpty : orignalSelection;
         }
 
+
         public GodModeTool(DwarfGUI gui, GameMaster master)
         {
             GUI = gui;
@@ -113,7 +114,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void OnVoxelsSelected(List<VoxelRef> refs, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
         {
             if(!IsActive)
             {
@@ -131,70 +132,60 @@ namespace DwarfCorp
             if(command.Contains("Build "))
             {
                 string type = command.Substring(6);
-                BuildRoomOrder des = new BuildRoomOrder(new Room(refs, RoomLibrary.GetType(type), Chunks), Player.Faction);
+                BuildRoomOrder des = new BuildRoomOrder(RoomLibrary.CreateRoom(type, refs, false), Player.Faction);
                 Player.Faction.RoomBuilder.BuildDesignations.Add(des);
                 Player.Faction.RoomBuilder.DesignatedRooms.Add(des.ToBuild);
                 des.Build();
+
+                if (type == Stockpile.StockpileName)
+                {
+                    Player.Faction.Stockpiles.Add((Stockpile)des.ToBuild);
+                }
             }
             else
             {
-                foreach(VoxelRef vox in refs.Where(vox => vox != null))
+                foreach(Voxel vox in refs.Where(vox => vox != null))
                 {
                     if(command.Contains("Place "))
                     {
                         string type = command.Substring(6);
-
-                        Vector3 gridPos = vox.GridPosition;
-
-
-                        Chunks.ChunkData.ChunkMap[vox.ChunkID].VoxelGrid[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z] = new Voxel(vox.WorldPosition, VoxelLibrary.GetVoxelType(type), VoxelLibrary.GetPrimitive(type), true)
-                        {
-                            Chunk = Chunks.ChunkData.ChunkMap[vox.ChunkID]
-                        };
-
-                        Chunks.ChunkData.ChunkMap[vox.ChunkID].Water[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z].WaterLevel = 0;
+                        vox.Type = VoxelLibrary.GetVoxelType(type);
+                        vox.IsVisible = true;
+                        vox.WaterLevel = 0;
                         chunksToRebuild.Add(vox.ChunkID);
                     }
                     else switch(command)
                     {
                         case "Delete Block":
                         {
-                            Vector3 gridPos = vox.GridPosition;
-                            VoxelChunk chunk = Chunks.ChunkData.ChunkMap[vox.ChunkID];
-                            Voxel v = chunk.VoxelGrid[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z];
-
-                            PlayState.Master.Faction.OnVoxelDestroyed(v);
-                            chunk.NotifyDestroyed(new Point3(gridPos));
-                            chunk.VoxelGrid[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z] = null;
-                            chunk.Water[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z].WaterLevel = 0;
+                            PlayState.Master.Faction.OnVoxelDestroyed(vox);
+                            vox.Chunk.NotifyDestroyed(new Point3(vox.GridPosition));
+                            vox.Type = VoxelType.TypeList[0];
+                            vox.WaterLevel = 0;
 
                             if(!chunksToRebuild.Contains(vox.ChunkID))
                             {
-                                Chunks.ChunkData.ChunkMap[vox.ChunkID].NotifyTotalRebuild(v != null && !v.IsInterior);
+                                Chunks.ChunkData.ChunkMap[vox.ChunkID].NotifyTotalRebuild(vox.IsEmpty && !vox.IsInterior);
                             }
                             chunksToRebuild.Add(vox.ChunkID);
                         }
                             break;
                         case "Kill Block":
-                            foreach(VoxelRef selected in refs)
+                            foreach(Voxel selected in refs)
                             {
-                                Vector3 gridPos = selected.GridPosition;
 
-                                Voxel v = Chunks.ChunkData.ChunkMap[selected.ChunkID].VoxelGrid[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z];
-
-                                if(v != null)
+                                if (!selected.IsEmpty)
                                 {
-                                    v.Kill();
+                                    selected.Kill();
                                 }
                             }
                             break;
                         case "Fill Water":
                         {
-                            Vector3 gridPos = vox.GridPosition;
-                            if(Chunks.ChunkData.ChunkMap[vox.ChunkID].VoxelGrid[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z] == null)
+                            if (vox.IsEmpty)
                             {
-                                Chunks.ChunkData.ChunkMap[vox.ChunkID].Water[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z].WaterLevel = 255;
-                                Chunks.ChunkData.ChunkMap[vox.ChunkID].Water[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z].Type = LiquidType.Water;
+                                vox.WaterLevel = 255;
+                                vox.Chunk.Data.Water[vox.Index].Type = LiquidType.Water;
                                 chunksToRebuild.Add(vox.ChunkID);
                             }
                         }
@@ -202,10 +193,10 @@ namespace DwarfCorp
                         case "Fill Lava":
                         {
                             Vector3 gridPos = vox.GridPosition;
-                            if(Chunks.ChunkData.ChunkMap[vox.ChunkID].VoxelGrid[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z] == null)
+                            if (vox.IsEmpty)
                             {
-                                Chunks.ChunkData.ChunkMap[vox.ChunkID].Water[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z].WaterLevel = 255;
-                                Chunks.ChunkData.ChunkMap[vox.ChunkID].Water[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z].Type = LiquidType.Lava;
+                                vox.WaterLevel = 255;
+                                vox.Chunk.Data.Water[vox.Index].Type = LiquidType.Lava;
                                 chunksToRebuild.Add(vox.ChunkID);
                             }
                         }
@@ -233,9 +224,9 @@ namespace DwarfCorp
                         }
                             break;
                         default:
-                            if(vox.TypeName == "empty")
+                            if(vox.IsEmpty)
                             {
-                                EntityFactory.GenerateComponent(SelectorBox.CurrentValue, vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f),
+                                EntityFactory.GenerateComponent(SelectorBox.CurrentValue, vox.Position + new Vector3(0.5f, 0.5f, 0.5f),
                                     PlayState.ChunkManager.Components, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics, PlayState.ChunkManager, PlayState.ComponentManager.Factions, Player.CameraController);
                             }
                             break;

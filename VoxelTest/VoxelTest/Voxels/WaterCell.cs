@@ -7,12 +7,12 @@ namespace DwarfCorp
     /// </summary>
     public class WaterCell
     {
-        public byte WaterLevel = 0;
-        public Vector3 FluidFlow = Vector3.Zero;
-        public Vector3 FlowAccel = Vector3.Zero;
-        public bool HasChanged = false;
-        public bool IsFalling = false;
-        public LiquidType Type = LiquidType.None;
+        public byte WaterLevel;
+        public Vector3 FluidFlow;
+        public Vector3 FlowAccel;
+        public bool HasChanged;
+        public bool IsFalling;
+        public LiquidType Type;
     }
 
 }

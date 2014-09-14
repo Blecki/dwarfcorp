@@ -23,9 +23,9 @@ namespace DwarfCorp
             EnergyLoss = 10.0f;
         }
 
-        public VoxelRef GetTargetVoxel()
+        public Voxel GetTargetVoxel()
         {
-            return Agent.Blackboard.GetData<VoxelRef>(TargetVoxelName);
+            return Agent.Blackboard.GetData<Voxel>(TargetVoxelName);
         }
 
         public override IEnumerable<Status> Run()

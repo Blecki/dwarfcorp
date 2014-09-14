@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -21,13 +22,26 @@ namespace DwarfCorp
 
         public Point3 ChunkID { get; set; }
 
+        private bool firstIter = false;
+
+
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            Chunk = PlayState.ChunkManager.ChunkData.ChunkMap[ChunkID];
+            firstIter = true;
+            Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
+        }
+
         public VoxelListener()
         {
             
         }
 
-        public VoxelListener(ComponentManager manager, GameComponent parent, ChunkManager chunkManager, VoxelRef vref) :
-            base(manager, "VoxelListener", parent)
+
+        public VoxelListener(ComponentManager manager, GameComponent parent, ChunkManager chunkManager, Voxel vref) :
+            base("VoxelListener", parent)
         {
             Chunk = chunkManager.ChunkData.ChunkMap[vref.ChunkID];
             VoxelID = new Point3(vref.GridPosition);
@@ -36,12 +50,18 @@ namespace DwarfCorp
 
         }
 
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
+        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
-            Chunk = PlayState.ChunkManager.ChunkData.ChunkMap[ChunkID];
+            if (firstIter)
+            {
+                if (Chunk.Data.Types[Chunk.Data.IndexAt(VoxelID.X, VoxelID.Y, VoxelID.Z)] == 0)
+                {
+                    Delete();
+                }
+                firstIter = false;
+            }
+            base.Update(gameTime, chunks, camera);
         }
-
 
         void VoxelListener_OnVoxelDestroyed(Point3 voxelID)
         {

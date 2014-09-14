@@ -38,7 +38,7 @@ namespace DwarfCorp
 
 
         public Economy Economy { get; set; }
-        public ComponentManager Components { get; set; }
+        public ComponentManager Components { get { return PlayState.ComponentManager; }}
 
         public List<BuildOrder> DigDesignations { get; set; }
         public List<BuildOrder> GuardDesignations { get; set; }
@@ -95,8 +95,8 @@ namespace DwarfCorp
 
             List<BuildOrder> removals = (from d in DigDesignations
                                           let vref = d.Vox
-                                          let v = vref.GetVoxel(false)
-                                          where v == null || v.Health <= 0.0f || v.Type.Name == "empty"
+                                          let v = vref
+                                          where v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty"
                                           select d).ToList();
 
             foreach (BuildOrder v in removals)
@@ -117,17 +117,16 @@ namespace DwarfCorp
             removals.Clear();
             foreach (BuildOrder d in GuardDesignations)
             {
-                VoxelRef vref = d.Vox;
-                Voxel v = vref.GetVoxel(false);
+                Voxel v = d.Vox;
 
-                if (v != null && !(v.Health <= 0.0f) && v.Type.Name != "empty")
+                if (!v.IsEmpty && !(v.Health <= 0.0f) && v.Type.Name != "empty")
                 {
                     continue;
                 }
 
                 removals.Add(d);
 
-                if (v != null)
+                if (!v.IsEmpty)
                 {
                     v.Kill();
                 }
@@ -219,21 +218,23 @@ namespace DwarfCorp
 
         public void OnVoxelDestroyed(Voxel v)
         {
-            if(v == null)
+            if(v.IsEmpty)
             {
                 return;
             }
 
-            VoxelRef voxelRef = v.GetReference();
+            Voxel Voxel = v;
 
             RoomBuilder.OnVoxelDestroyed(v);
 
             List<Stockpile> toRemove = new List<Stockpile>();
-            foreach(Stockpile s in Stockpiles)
+            List<Stockpile> currentStockpiles = new List<Stockpile>();
+            currentStockpiles.AddRange(Stockpiles);
+            foreach (Stockpile s in currentStockpiles)
             {
-                if(s.ContainsVoxel(voxelRef))
+                if(s.ContainsVoxel(Voxel))
                 {
-                    s.RemoveVoxel(voxelRef);
+                    s.RemoveVoxel(Voxel);
                 }
 
                 if(s.Voxels.Count == 0)
@@ -314,8 +315,8 @@ namespace DwarfCorp
             BuildOrder closestVoxel = null;
             foreach(BuildOrder designation in DigDesignations)
             {
-                VoxelRef vref = designation.Vox;
-                Voxel v = vref.GetVoxel(false);
+                Voxel vref = designation.Vox;
+                Voxel v = vref;
 
                 float d = (v.Position - position).LengthSquared();
                 if(!(d < closestDist))
@@ -336,8 +337,8 @@ namespace DwarfCorp
             BuildOrder closestVoxel = null;
             foreach(BuildOrder designation in GuardDesignations)
             {
-                VoxelRef vref = designation.Vox;
-                Voxel v = vref.GetVoxel(false);
+                Voxel vref = designation.Vox;
+                Voxel v = vref;
 
                 float d = (v.Position - position).LengthSquared();
                 if(!(d < closestDist))
@@ -356,8 +357,8 @@ namespace DwarfCorp
         {
             return (from d in GuardDesignations
                 let vref = d.Vox
-                let v = vref.GetVoxel(false)
-                where vox == v
+                let v = vref
+                where vox.Equals(v)
                 select d).FirstOrDefault();
         }
 
@@ -365,26 +366,20 @@ namespace DwarfCorp
         {
             return (from d in DigDesignations
                 let vref = d.Vox
-                let v = vref.GetVoxel(false)
-                where vox == v
+                let v = vref
+                where vox.Equals(v)
                 select d).FirstOrDefault();
         }
 
         public bool IsDigDesignation(Voxel vox)
         {
-            return DigDesignations.Select(d => d.Vox).Select(vref => vref.GetVoxel(false)).Any(v => vox == v);
+            return DigDesignations.Select(d => d.Vox).Select(vref => vref).Any(vox.Equals);
         }
 
-        public bool IsGuardDesignation(VoxelRef vox)
-        {
-            Voxel voxel = vox.GetVoxel(false);
-
-            return voxel != null && IsGuardDesignation(voxel);
-        }
 
         public bool IsGuardDesignation(Voxel vox)
         {
-            return GuardDesignations.Select(d => d.Vox).Select(vref => vref.GetVoxel(false)).Any(v => vox == v);
+            return GuardDesignations.Select(d => d.Vox).Select(vref => vref).Any(vox.Equals);
         }
 
         public bool AddResources(ResourceAmount resources)
@@ -413,6 +408,29 @@ namespace DwarfCorp
             }
 
             return false;
+        }
+
+        public Room GetNearestRoomOfType(string typeName, Vector3 position)
+        {
+            List<Room> rooms = GetRooms();
+            Room desiredRoom = null;
+            float nearestDistance = float.MaxValue;
+
+            foreach (Room room in rooms)
+            {
+                if (room.RoomData != RoomLibrary.GetData(typeName)) continue;
+                float dist =
+                    (room.GetNearestVoxel(position).Position - position).LengthSquared();
+
+                if (dist < nearestDistance)
+                {
+                    nearestDistance = dist;
+                    desiredRoom = room;
+                }
+            }
+
+
+            return desiredRoom;
         }
 
 
@@ -458,7 +476,7 @@ namespace DwarfCorp
 
         public bool IsInStockpile(Voxel v)
         {
-            VoxelRef vRef = v.GetReference();
+            Voxel vRef = v;
             return Stockpiles.Any(s => s.ContainsVoxel(vRef));
         }
 
@@ -491,9 +509,9 @@ namespace DwarfCorp
             return Stockpiles.Any(s => !s.IsFull());
         }
 
-        public Item FindNearestItemWithTags(TagList tags, Vector3 location, bool filterReserved)
+        public Body FindNearestItemWithTags(string tag, Vector3 location, bool filterReserved)
         {
-            Item closestItem = null;
+            Body closestItem = null;
             float closestDist = float.MaxValue;
             List<Zone> zones = new List<Zone>();
             zones.AddRange(RoomBuilder.DesignatedRooms);
@@ -501,20 +519,18 @@ namespace DwarfCorp
 
             foreach (Zone s in zones)
             {
-                // TODO: Reimplement
-                /*
-                Item i = s.FindNearestItemWithTags(tags, location, filterReserved);
+                
+                Body i = s.GetNearestBodyWithTag(location, tag, filterReserved);
 
                 if (i != null)
                 {
-                    float d = (i.UserData.GlobalTransform.Translation - location).LengthSquared();
+                    float d = (i.GlobalTransform.Translation - location).LengthSquared();
                     if (d < closestDist)
                     {
                         closestDist = d;
                         closestItem = i;
                     }
                 }
-                 */
             }
 
             
@@ -545,13 +561,23 @@ namespace DwarfCorp
             }
         }
 
-        public List<ResourceAmount> ListResources()
+        public Dictionary<string, ResourceAmount> ListResources()
         {
-            List<ResourceAmount> toReturn = new List<ResourceAmount>();
+            Dictionary<string, ResourceAmount> toReturn = new Dictionary<string, ResourceAmount>();
 
             foreach(Stockpile stockpile in Stockpiles)
             {
-                toReturn.AddRange(stockpile.Resources);
+                foreach (ResourceAmount resource in stockpile.Resources)
+                {
+                    if (toReturn.ContainsKey(resource.ResourceType.ResourceName))
+                    {
+                        toReturn[resource.ResourceType.ResourceName] += resource;
+                    }
+                    else
+                    {
+                        toReturn[resource.ResourceType.ResourceName] = new ResourceAmount(resource);
+                    }
+                }
             }
 
             return toReturn;
@@ -613,8 +639,8 @@ namespace DwarfCorp
 
                 foreach(Vector3 vec in positions)
                 {
-                    Body newEntity = EntityFactory.GenerateComponent(resource.ResourceType.ResourceName, vec + MathFunctions.RandVector3Cube() * 0.5f,
-               PlayState.ComponentManager, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics, PlayState.ChunkManager, PlayState.ComponentManager.Factions, PlayState.Camera);
+                    Body newEntity = EntityFactory.GenerateResource(resource.ResourceType.ResourceName,
+                        vec + MathFunctions.RandVector3Cube()*0.5f);
 
                     TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f), 2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
                     newEntity.AnimationQueue.Add(toss);
@@ -635,7 +661,7 @@ namespace DwarfCorp
 
         public void Hire(Applicant currentApplicant)
         {
-            List<Room> rooms = GetRooms().Where(room => room.RoomType.Name == "BalloonPort").ToList();
+            List<Room> rooms = GetRooms().Where(room => room.RoomData.Name == "BalloonPort").ToList();
 
             if (rooms.Count == 0)
             {
@@ -661,7 +687,7 @@ namespace DwarfCorp
 
         public void DispatchBalloon()
         {
-            List<Room> rooms = GetRooms().Where(room => room.RoomType.Name == "BalloonPort").ToList();
+            List<Room> rooms = GetRooms().Where(room => room.RoomData.Name == "BalloonPort").ToList();
 
             if (rooms.Count == 0)
             {
@@ -699,6 +725,12 @@ namespace DwarfCorp
             }
 
             return toReturn;
+        }
+
+        public List<ResourceAmount> ListResourcesWithTag(Resource.ResourceTags tag)
+        {
+            Dictionary<string, ResourceAmount> resources = ListResources();
+            return (from pair in resources where pair.Value.ResourceType.Tags.Contains(tag) select pair.Value).ToList();
         }
     }
 

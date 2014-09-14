@@ -93,13 +93,17 @@ namespace DwarfCorp
             if(arg.Contains("Wall"))
             {
                 string voxType = BuildPanel.CurrentWallType;
+                if (string.IsNullOrEmpty(voxType)) return;
+
                 Master.Faction.PutDesignator.CurrentVoxelType = VoxelLibrary.GetVoxelType(voxType);
                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                Master.Faction.RoomBuilder.CurrentRoomType = null;
+                Master.Faction.RoomBuilder.CurrentRoomData = null;
             }
-            else if(arg != "")
+            else
             {
-                Master.Faction.RoomBuilder.CurrentRoomType = RoomLibrary.GetType(arg);
+                if (string.IsNullOrEmpty(arg)) return;
+
+                Master.Faction.RoomBuilder.CurrentRoomData = RoomLibrary.GetData(arg);
                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
                 Master.Faction.PutDesignator.CurrentVoxelType = null;
             }

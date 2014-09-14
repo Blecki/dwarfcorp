@@ -33,9 +33,9 @@ namespace DwarfCorp
             }
             else
             {
-                VoxelRef v = TargetZone.GetNearestVoxel(Agent.Position);
+                Voxel v = TargetZone.GetNearestVoxel(Agent.Position);
 
-                if(v != null)
+                if(!v.IsEmpty)
                 {
                     Agent.Blackboard.SetData(OutputVoxel, v);
                     yield return Status.Success;
