@@ -476,137 +476,145 @@ namespace DwarfCorp.GameStates
 
         public void GenerateWorld(int seed, int width, int height)
         {
-            PlayState.Random = new ThreadSafeRandom(Seed);
-            GenerationComplete = false;
-
-            LoadingMessage = "Init..";
-            Overworld.heightNoise = new Perlin(seed);
-            worldMap = new Texture2D(Game.GraphicsDevice, width, height);
-            worldData = new Color[width * height];
-            Overworld.Map = new Overworld.MapData[width, height];
-
-            Progress.Value = 0.01f;
-
-            LoadingMessage = "Height Map ...";
-            Overworld.GenerateHeightMap(width, height, 1.0f, false);
-
-            Progress.Value = 0.05f;
-
-            int numRains = (int)NumRains;
-            int rainLength = 250;
-            int numRainSamples = 3;
-
-            for(int x = 0; x < width; x++)
+            try
             {
-                for(int y = 0; y < height; y++)
+                PlayState.Random = new ThreadSafeRandom(Seed);
+                GenerationComplete = false;
+
+                LoadingMessage = "Init..";
+                Overworld.heightNoise = new Perlin(seed);
+                worldMap = new Texture2D(Game.GraphicsDevice, width, height);
+                worldData = new Color[width * height];
+                Overworld.Map = new Overworld.MapData[width, height];
+
+                Progress.Value = 0.01f;
+
+                LoadingMessage = "Height Map ...";
+                Overworld.GenerateHeightMap(width, height, 1.0f, false);
+
+                Progress.Value = 0.05f;
+
+                int numRains = (int)NumRains;
+                int rainLength = 250;
+                int numRainSamples = 3;
+
+                for (int x = 0; x < width; x++)
                 {
-                    Overworld.Map[x, y].Erosion = 1.0f;
-                    Overworld.Map[x, y].Weathering = 0.0f;
-                    Overworld.Map[x, y].Faults = 1.0f;
+                    for (int y = 0; y < height; y++)
+                    {
+                        Overworld.Map[x, y].Erosion = 1.0f;
+                        Overworld.Map[x, y].Weathering = 0.0f;
+                        Overworld.Map[x, y].Faults = 1.0f;
+                    }
                 }
-            }
 
-            LoadingMessage = "Biomes.";
-            for(int x = 0; x < width; x++)
-            {
-                for(int y = 0; y < height; y++)
+                LoadingMessage = "Biomes.";
+                for (int x = 0; x < width; x++)
                 {
-                    Overworld.Map[x, y].Temperature = Overworld.noise(x, y, 1.0f, 0.001f) * 0.1f + ((float) (y) / (float) (height)) + Overworld.noise(x, y, 10.0f, 0.1f) * 0.05f * TemperatureScale;
-                    Overworld.Map[x, y].Rainfall = Math.Max(Math.Min(Overworld.noise(x, y, 1000.0f, 0.01f) + Overworld.noise(x, y, 100.0f, 0.1f) * 0.05f, 1.0f), 0.0f) * RainfallScale;
+                    for (int y = 0; y < height; y++)
+                    {
+                        Overworld.Map[x, y].Temperature = Overworld.noise(x, y, 1.0f, 0.001f) * 0.1f + ((float)(y) / (float)(height)) + Overworld.noise(x, y, 10.0f, 0.1f) * 0.05f * TemperatureScale;
+                        Overworld.Map[x, y].Rainfall = Math.Max(Math.Min(Overworld.noise(x, y, 1000.0f, 0.01f) + Overworld.noise(x, y, 100.0f, 0.1f) * 0.05f, 1.0f), 0.0f) * RainfallScale;
+                    }
                 }
-            }
 
-            Overworld.Distort(width, height, 60.0f, 0.005f, Overworld.ScalarFieldType.Rainfall);
-            Overworld.Distort(width, height, 30.0f, 0.005f, Overworld.ScalarFieldType.Temperature);
-            for(int x = 0; x < width; x++)
-            {
-                for(int y = 0; y < height; y++)
+                Overworld.Distort(width, height, 60.0f, 0.005f, Overworld.ScalarFieldType.Rainfall);
+                Overworld.Distort(width, height, 30.0f, 0.005f, Overworld.ScalarFieldType.Temperature);
+                for (int x = 0; x < width; x++)
                 {
-                    Overworld.Map[x, y].Temperature = Math.Max(Math.Min(Overworld.Map[x, y].Temperature / (Overworld.Map[x, y].Height * 2.0f), 1.0f), 0.0f);
+                    for (int y = 0; y < height; y++)
+                    {
+                        Overworld.Map[x, y].Temperature = Math.Max(Math.Min(Overworld.Map[x, y].Temperature / (Overworld.Map[x, y].Height * 2.0f), 1.0f), 0.0f);
+                    }
                 }
-            }
 
-            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, width, height, MapPanel.Lock, worldData, worldMap);
+                Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, width, height, MapPanel.Lock, worldData, worldMap);
 
-            MapPanel.Image = new ImageFrame(worldMap, new Rectangle(0, 0, worldMap.Width, worldMap.Height));
-            MapPanel.LocalBounds = new Rectangle(300, 30, worldMap.Width, worldMap.Height);
+                MapPanel.Image = new ImageFrame(worldMap, new Rectangle(0, 0, worldMap.Width, worldMap.Height));
+                MapPanel.LocalBounds = new Rectangle(300, 30, worldMap.Width, worldMap.Height);
 
-            int numVoronoiPoints = (int) NumFaults;
+                int numVoronoiPoints = (int)NumFaults;
 
 
-            Progress.Value = 0.1f;
-            LoadingMessage = "Faults ...";
+                Progress.Value = 0.1f;
+                LoadingMessage = "Faults ...";
 
-            #region voronoi
+                #region voronoi
 
-            Voronoi(width, height, numVoronoiPoints);
+                Voronoi(width, height, numVoronoiPoints);
 
-            #endregion
+                #endregion
 
-            Overworld.GenerateHeightMap(width, height, 1.0f, true);
+                Overworld.GenerateHeightMap(width, height, 1.0f, true);
 
-            Progress.Value = 0.2f;
-            LoadingMessage = "Weathering...";
+                Progress.Value = 0.2f;
+                LoadingMessage = "Weathering...";
 
-            #region weathering
+                #region weathering
 
-            Vector2[] neighbs =
+                Vector2[] neighbs =
             {
                 new Vector2(1, 0),
                 new Vector2(-1, 0),
                 new Vector2(0, 1),
                 new Vector2(0, -1)
             };
-            float[,] buffer = new float[width, height];
-            //Weather(width, height, T, neighbs, buffer); 
+                float[,] buffer = new float[width, height];
+                //Weather(width, height, T, neighbs, buffer); 
 
-            #endregion
+                #endregion
 
-            Overworld.GenerateHeightMap(width, height, 1.0f, true);
+                Overworld.GenerateHeightMap(width, height, 1.0f, true);
 
-            Progress.Value = 0.25f;
-            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, width, height, MapPanel.Lock, worldData, worldMap);
-            LoadingMessage = "Erosion...";
+                Progress.Value = 0.25f;
+                Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, width, height, MapPanel.Lock, worldData, worldMap);
+                LoadingMessage = "Erosion...";
 
-            #region erosion
+                #region erosion
 
-            Erode(width, height, Overworld.Map, numRains, rainLength, numRainSamples, buffer);
-            Overworld.GenerateHeightMap(width, height, 1.0f, true);
+                Erode(width, height, Overworld.Map, numRains, rainLength, numRainSamples, buffer);
+                Overworld.GenerateHeightMap(width, height, 1.0f, true);
 
-            #endregion
+                #endregion
 
-            Progress.Value = 0.9f;
-            MapPanel.Image = new ImageFrame(worldMap, new Rectangle(0, 0, worldMap.Width, worldMap.Height));
-            MapPanel.LocalBounds = new Rectangle(300, 30, worldMap.Width, worldMap.Height);
+                Progress.Value = 0.9f;
+                MapPanel.Image = new ImageFrame(worldMap, new Rectangle(0, 0, worldMap.Width, worldMap.Height));
+                MapPanel.LocalBounds = new Rectangle(300, 30, worldMap.Width, worldMap.Height);
 
-            LoadingMessage = "Blur.";
-            Overworld.Blur(Overworld.Map, width, height, Overworld.ScalarFieldType.Erosion);
-            Overworld.GenerateHeightMap(width, height, 1.0f, true);
+                LoadingMessage = "Blur.";
+                Overworld.Blur(Overworld.Map, width, height, Overworld.ScalarFieldType.Erosion);
+                Overworld.GenerateHeightMap(width, height, 1.0f, true);
 
 
-            for(int x = 0; x < width; x++)
-            {
-                for(int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
                 {
-                    Overworld.Map[x, y].Biome = Overworld.GetBiome(Overworld.Map[x, y].Temperature, Overworld.Map[x, y].Rainfall, Overworld.Map[x, y].Height);
+                    for (int y = 0; y < height; y++)
+                    {
+                        Overworld.Map[x, y].Biome = Overworld.GetBiome(Overworld.Map[x, y].Temperature, Overworld.Map[x, y].Rainfall, Overworld.Map[x, y].Height);
+                    }
                 }
+
+                LoadingMessage = "Volcanoes";
+
+                GenerateVolcanoes(width, height);
+
+                Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, width, height, MapPanel.Lock, worldData, worldMap);
+
+
+                GenerationComplete = true;
+
+                MapPanel.Image = new ImageFrame(worldMap, new Rectangle(0, 0, worldMap.Width, worldMap.Height));
+                MapPanel.LocalBounds = new Rectangle(300, 30, worldMap.Width, worldMap.Height);
+
+
+                Progress.Value = 1.0f;
+                IsGenerating = false;
             }
-
-            LoadingMessage = "Volcanoes";
-
-            GenerateVolcanoes(width, height);
-
-            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, width, height, MapPanel.Lock, worldData, worldMap);
-
-
-            GenerationComplete = true;
-
-            MapPanel.Image = new ImageFrame(worldMap, new Rectangle(0, 0, worldMap.Width, worldMap.Height));
-            MapPanel.LocalBounds = new Rectangle(300, 30, worldMap.Width, worldMap.Height);
-
-
-            Progress.Value = 1.0f;
-            IsGenerating = false;
+            catch (Exception exception)
+            {
+                Program.WriteExceptionLog(exception);
+                throw;
+            }
         }
 
         private void Voronoi(int width, int height, int numVoronoiPoints)
@@ -614,12 +622,14 @@ namespace DwarfCorp.GameStates
             List<List<Vector2>> vPoints = new List<List<Vector2>>();
             List<float> rands = new List<float>();
 
-            List<Vector2> edge = new List<Vector2>();
-            edge.Add(new Vector2(0, 0));
-            edge.Add(new Vector2(width, 0));
-            edge.Add(new Vector2(width, height));
-            edge.Add(new Vector2(0, height));
-            edge.Add(new Vector2(0, 0));
+            List<Vector2> edge = new List<Vector2>
+            {
+                new Vector2(0, 0),
+                new Vector2(width, 0),
+                new Vector2(width, height),
+                new Vector2(0, height),
+                new Vector2(0, 0)
+            };
 
             vPoints.Add(edge);
 

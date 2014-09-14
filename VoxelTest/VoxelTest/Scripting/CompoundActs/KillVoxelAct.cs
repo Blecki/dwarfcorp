@@ -12,7 +12,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class KillVoxelAct : CompoundCreatureAct
     {
-        public VoxelRef Voxel { get; set; }
+        public Voxel Voxel { get; set; }
 
         public KillVoxelAct()
         {
@@ -23,10 +23,10 @@ namespace DwarfCorp
         public IEnumerable<Status> IncrementAssignment( CreatureAI creature, string designation, int amount)
         {
 
-            VoxelRef vref = creature.Blackboard.GetData<VoxelRef>(designation);
+            Voxel vref = creature.Blackboard.GetData<Voxel>(designation);
             if(vref != null)
             {
-                BuildOrder digBuildOrder = creature.Faction.GetDigDesignation(vref.GetVoxel(false));
+                BuildOrder digBuildOrder = creature.Faction.GetDigDesignation(vref);
 
                 if(digBuildOrder != null)
                 {
@@ -35,7 +35,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    yield return Status.Success;
+                    yield return Status.Fail;
                 }
             }
             else
@@ -45,17 +45,38 @@ namespace DwarfCorp
              
         }
 
+        public IEnumerable<Status> CheckIsDigDesignation(CreatureAI creature, string designation)
+        {
+            Voxel vref = creature.Blackboard.GetData<Voxel>(designation);
+            if (vref != null)
+            {
+                BuildOrder digBuildOrder = creature.Faction.GetDigDesignation(vref);
 
-        public KillVoxelAct(VoxelRef voxel, CreatureAI creature) :
+                if (digBuildOrder != null)
+                {
+                    yield return Status.Success;
+                }
+                else
+                {
+                    yield return Status.Fail;
+                }
+
+            }
+
+            yield return Status.Fail;
+        }
+
+        public KillVoxelAct(Voxel voxel, CreatureAI creature) :
             base(creature)
         {
             Voxel = voxel;
-            Name = "Kill Voxel " + voxel.WorldPosition;
+            Name = "Kill Voxel " + voxel.Position;
             Tree = new Sequence(
-                new SetBlackboardData<VoxelRef>(creature, "DigVoxel", voxel),
+                new SetBlackboardData<Voxel>(creature, "DigVoxel", voxel),
                 new Sequence(
                               new Wrap(() => IncrementAssignment(creature, "DigVoxel", 1)),
                               new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, creature),
+                              new Wrap(() => CheckIsDigDesignation(creature, "DigVoxel")),
                               new DigAct(Agent, "DigVoxel"),
                               new ClearBlackboardData(creature, "DigVoxel")
                             ) 

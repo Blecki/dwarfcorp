@@ -12,9 +12,9 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class PlaceVoxelAct : CreatureAct
     {
-        public VoxelRef Voxel { get; set; }
+        public Voxel Voxel { get; set; }
         public ResourceAmount Resource { get; set; }
-        public PlaceVoxelAct(VoxelRef voxel, CreatureAI agent, ResourceAmount resource) :
+        public PlaceVoxelAct(Voxel voxel, CreatureAI agent, ResourceAmount resource) :
             base(agent)
         {
             Agent = agent;

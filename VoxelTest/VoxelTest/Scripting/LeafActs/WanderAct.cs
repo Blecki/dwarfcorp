@@ -36,6 +36,7 @@ namespace DwarfCorp
         {
             WanderTime.Reset(WanderTime.TargetTimeSeconds);
             TurnTime.Reset(TurnTime.TargetTimeSeconds);
+            Creature.LocalTarget = Agent.Position;
             base.Initialize();
         }
 
@@ -43,16 +44,19 @@ namespace DwarfCorp
         public override IEnumerable<Status> Run()
         {
             Vector3 oldPosition = Agent.Position;
-
+            bool firstIter = true;
+            Creature.Controller.Reset();
+            
             while(!WanderTime.HasTriggered)
             {
                 WanderTime.Update(Act.LastTime);
-                if(TurnTime.Update(Act.LastTime) || TurnTime.HasTriggered)
+                if(TurnTime.Update(Act.LastTime) || TurnTime.HasTriggered || firstIter)
                 {
                     Creature.LocalTarget = new Vector3(MathFunctions.Rand() * Radius - Radius / 2.0f, 0.0f, MathFunctions.Rand() * Radius - Radius / 2.0f) + oldPosition;
+                    firstIter = false;
                 }
 
-                Vector3 output = Creature.Controller.GetOutput((float) Act.LastTime.ElapsedGameTime.TotalSeconds, Creature.LocalTarget, Creature.Physics.GlobalTransform.Translation);
+                Vector3 output = Creature.Controller.GetOutput((float) Act.LastTime.ElapsedGameTime.TotalSeconds, Creature.LocalTarget, Agent.Position);
                 output.Y = 0.0f;
 
                 Creature.Physics.ApplyForce(output, (float) Act.LastTime.ElapsedGameTime.TotalSeconds);

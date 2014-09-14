@@ -18,7 +18,7 @@ namespace DwarfCorp
         public Color DesignationColor { get; set; }
         public float GlowRate { get; set; }
 
-        public override void OnVoxelsSelected(List<VoxelRef> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
 
         }

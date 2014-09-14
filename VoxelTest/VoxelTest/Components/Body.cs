@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -28,6 +29,12 @@ namespace DwarfCorp
 
         public CollisionManager.CollisionType CollisionType { get; set; }
 
+        public delegate void BodyDestroyed();
+        public event BodyDestroyed OnDestroyed;
+
+
+        public bool IsReserved = false;
+        public GameComponent ReservedFor = null;
 
         public Matrix GlobalTransform
         {
@@ -72,6 +79,7 @@ namespace DwarfCorp
         public bool DepthSort { get; set; }
         public bool FrustrumCull { get; set; }
         public bool DrawInFrontOfSiblings { get; set; }
+        public bool IsAboveCullPlane { get; set; }
 
         public List<MotionAnimation> AnimationQueue { get; set; } 
 
@@ -99,6 +107,7 @@ namespace DwarfCorp
             return GlobalID;
         }
 
+
         protected Matrix localTransform = Matrix.Identity;
         protected Matrix globalTransform = Matrix.Identity;
         private bool hasMoved = true;
@@ -107,21 +116,30 @@ namespace DwarfCorp
 
         public Body()
         {
-            
+            if(OnDestroyed == null)
+                OnDestroyed +=Body_OnDestroyed;
         }
 
-        public Body(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-            this(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos, true)
+        void Body_OnDestroyed()
+        {
+
+        }
+
+        public Body(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
+            this(name, parent, localTransform, boundingBoxExtents, boundingBoxPos, true)
         {
             AnimationQueue = new List<MotionAnimation>();
             DrawInFrontOfSiblings = false;
             CollisionType = CollisionManager.CollisionType.None;
             DrawScreenRect = false;
+
+            if (OnDestroyed == null)
+                OnDestroyed += Body_OnDestroyed;
         }
 
-        public Body(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToOctree) :
-            base(manager, name, parent)
-        {
+        public Body(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToOctree) :
+            base(name, parent)
+        { 
             AnimationQueue = new List<MotionAnimation>();
             AddToOctree = addToOctree;
             BoundingBoxPos = boundingBoxPos;
@@ -135,8 +153,10 @@ namespace DwarfCorp
             DrawInFrontOfSiblings = false;
             CollisionType = CollisionManager.CollisionType.None;
             DrawScreenRect = false;
-        }
 
+            if (OnDestroyed == null)
+                OnDestroyed += Body_OnDestroyed;
+        }
 
         public Rectangle GetScreenRect(Camera camera)
         {
@@ -187,22 +207,7 @@ namespace DwarfCorp
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
-            /*
-            if ( IsVisible)
-            {
-                VoxelChunk myChunk = chunks.GetVoxelChunkAtWorldLocation(GlobalTransform.Translation);
-
-                if (myChunk == null || !myChunk.IsVisible )
-                {
-                    IsVisible = false;
-                }
-                else
-                {
-                    IsVisible = true;
-                }
-            }
-            */
-
+            IsAboveCullPlane =  GlobalTransform.Translation.Y - GetBoundingBox().Extents().Y > (chunks.ChunkData.MaxViewingLevel + 2);
             if(DrawScreenRect)
             {
                 Drawer2D.DrawRect(GetScreenRect(camera), Color.Transparent, Color.White, 1);
@@ -294,8 +299,16 @@ namespace DwarfCorp
             IsActive = false;
             IsVisible = false;
             HasMoved = false;
-           
+            OnDestroyed.Invoke();
             base.Die();
+        }
+
+
+        public static IEnumerable<Act.Status> UnReserve(Body closestItem)
+        {
+            closestItem.IsReserved = false;
+            closestItem.ReservedFor = null;
+            yield return Act.Status.Success;
         }
     }
 

@@ -26,6 +26,11 @@ namespace DwarfCorp
             Name = "Gather Entity: " + entity.Name + " " + entity.GlobalID;
         }
 
+        public override Task Clone()
+        {
+            return new GatherItemTask(EntityToGather);
+        }
+
         public override Act CreateScript(Creature creature)
         {
             return new GatherItemAct(creature.AI, EntityToGather);

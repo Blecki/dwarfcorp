@@ -25,7 +25,7 @@ namespace DwarfCorp
         }
 
         public Bobber(float mag, float rate, float offset, Body component) :
-            base(component.Manager, "Sinmover", component)
+            base("Sinmover", component)
         {
             Magnitude = mag;
             Rate = rate;

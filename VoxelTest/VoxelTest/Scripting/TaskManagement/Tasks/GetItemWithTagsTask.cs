@@ -19,6 +19,11 @@ namespace DwarfCorp
             Name = "Get Item with Tags: " + tags;
         }
 
+        public override Task Clone()
+        {
+            return new GetItemWithTagsTask(Tags);
+        }
+
         public override Act CreateScript(Creature creature)
         {
             return null;

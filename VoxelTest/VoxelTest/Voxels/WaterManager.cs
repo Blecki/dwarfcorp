@@ -122,17 +122,16 @@ namespace DwarfCorp
 
                 if(transfer.cellFrom.Type == LiquidType.Lava && transfer.cellTo.Type == LiquidType.Water || (transfer.cellFrom.Type == LiquidType.Water && transfer.cellTo.Type == LiquidType.Lava))
                 {
-                    VoxelRef atPos = Chunks.ChunkData.GetVoxelReferenceAtWorldLocation(transfer.worldLocation);
+                    Voxel atPos = Chunks.ChunkData.GetVoxelerenceAtWorldLocation(transfer.worldLocation);
 
                     if(atPos != null)
                     {
-                        VoxelRef v = atPos;
+                        Voxel v = atPos;
 
                         VoxelChunk chunk = Chunks.ChunkData.ChunkMap[v.ChunkID];
-                        chunk.VoxelGrid[(int) v.GridPosition.X][(int) v.GridPosition.Y][(int) v.GridPosition.Z] = new Voxel(v.WorldPosition, VoxelLibrary.GetVoxelType("Stone"), VoxelLibrary.GetPrimitive("Stone"), true);
-                        chunk.VoxelGrid[(int) v.GridPosition.X][(int) v.GridPosition.Y][(int) v.GridPosition.Z].Chunk = Chunks.ChunkData.ChunkMap[v.ChunkID];
-                        chunk.Water[(int) v.GridPosition.X][(int) v.GridPosition.Y][(int) v.GridPosition.Z].Type = LiquidType.None;
-                        chunk.Water[(int) v.GridPosition.X][(int) v.GridPosition.Y][(int) v.GridPosition.Z].WaterLevel = 0;
+                        v.Type = VoxelLibrary.GetVoxelType("Stone");
+                        chunk.Data.Water[v.Index].Type = LiquidType.None;
+                        chunk.Data.Water[v.Index].WaterLevel = 0;
                         chunk.ShouldRebuild = true;
                         chunk.ShouldRecalculateLighting = true;
                     }
@@ -255,25 +254,18 @@ namespace DwarfCorp
 
             bool updateOccurred = false;
 
-            List<Point3> updateList = new List<Point3>();
+            List<int> updateList = new List<int>();
 
-
-            for(int x = 0; x < chunk.SizeX; x++)
+            int maxSize = chunk.SizeX*chunk.SizeY*chunk.SizeZ;
+            for (int i = 0; i < maxSize; i++)
             {
-                for(int y = 0; y < chunk.SizeY; y++)
+                WaterCell cell = chunk.Data.Water[i];
+                // Don't check empty cells or cells we've already modified.
+                if (cell.WaterLevel < 1 || chunk.Data.Types[i] != 0)
                 {
-                    for(int z = 0; z < chunk.SizeZ; z++)
-                    {
-                        WaterCell cell = chunk.Water[x][y][z];
-
-                        // Don't check empty cells or cells we've already modified.
-                        if(cell.WaterLevel < 1 || chunk.VoxelGrid[x][y][z] != null)
-                        {
-                            continue;
-                        }
-                        updateList.Add(new Point3(x, y, z));
-                    }
+                    continue;
                 }
+                updateList.Add(i);
             }
 
             if(updateList.Count == 0)
@@ -287,22 +279,19 @@ namespace DwarfCorp
             // Loop through each cell.
             foreach(int t in indices)
             {
-                Point3 point = updateList[t];
-                int x = point.X;
-                int y = point.Y;
-                int z = point.Z;
-
-                WaterCell cell = chunk.Water[x][y][z];
+                int idx = updateList[indices[t]];
+                WaterCell cell = chunk.Data.Water[idx];
 
                 // Don't check empty cells or cells we've already modified.
-                if(cell.WaterLevel < 1 || chunk.VoxelGrid[x][y][z] != null)
+                if (cell.WaterLevel < 1 || chunk.Data.Types[idx] != 0)
                 {
                     continue;
                 }
 
-                gridCoord.X = x;
-                gridCoord.Y = y;
-                gridCoord.Z = z;
+                gridCoord = chunk.Data.CoordsAt(idx);
+                int x = (int) gridCoord.X;
+                int y = (int) gridCoord.Y;
+                int z = (int) gridCoord.Z;
                 Vector3 worldPos = gridCoord + chunk.Origin;
 
                 if(cell.WaterLevel < EvaporationLevel && PlayState.Random.Next(0, 10) < 5)
@@ -330,9 +319,10 @@ namespace DwarfCorp
                 // Otherwise, we just get the cell immediately beneath us.
                 if(y > 0)
                 {
-                    if(chunk.VoxelGrid[x][y - 1][z] == null)
+                    Voxel voxBelow = chunk.MakeVoxel(x, y - 1, z);
+                    if(voxBelow.IsEmpty)
                     {
-                        cellBelow = chunk.Water[x][y - 1][z];
+                        cellBelow = voxBelow.GetWater();
                         shouldFall = true;
                     }
                 }
@@ -340,9 +330,9 @@ namespace DwarfCorp
                 {
                     if(chunk.Manager.ChunkData.DoesWaterCellExist(worldPos))
                     {
-                        VoxelRef voxelsBelow = chunk.Manager.ChunkData.GetVoxelReferenceAtWorldLocation(chunk, worldPos + new Vector3(0, -1, 0));
+                        Voxel voxelsBelow = chunk.Manager.ChunkData.GetVoxelerenceAtWorldLocation(chunk, worldPos + new Vector3(0, -1, 0));
 
-                        if(voxelsBelow != null && voxelsBelow.TypeName == "empty")
+                        if(voxelsBelow != null && voxelsBelow.IsEmpty)
                         {
                             cellBelow = chunk.Manager.ChunkData.GetWaterCellAtLocation(worldPos + new Vector3(0, -1, 0));
                             shouldFall = true;
@@ -422,7 +412,7 @@ namespace DwarfCorp
 
                 foreach(Vector3 spread in m_spreadNeighbors)
                 {
-                    VoxelRef neighbor = chunk.Manager.ChunkData.GetVoxelReferenceAtWorldLocation(chunk, worldPos + spread);
+                    Voxel neighbor = chunk.Manager.ChunkData.GetVoxelerenceAtWorldLocation(chunk, worldPos + spread);
 
                     if(neighbor == null)
                     {
@@ -434,7 +424,7 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    WaterCell neighborWater = neighbor.GetWater(Chunks);
+                    WaterCell neighborWater = neighbor.GetWater();
 
                     if(neighborWater == null)
                     {

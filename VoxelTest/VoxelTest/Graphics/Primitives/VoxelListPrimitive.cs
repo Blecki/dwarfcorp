@@ -115,25 +115,27 @@ namespace DwarfCorp
 
         public static void UpdateCornerRamps(VoxelChunk chunk)
         {
+            Voxel v = chunk.MakeVoxel(0, 0, 0);
+            Voxel vAbove = chunk.MakeVoxel(0, 0, 0);
+            List<Voxel> diagNeighbors = chunk.AllocateVoxels(VoxelChunk.VertexSuccessorsDiag[VoxelVertex.FrontTopLeft].Count);
             for(int x = 0; x < chunk.SizeX; x++)
             {
                 for(int y = 0; y < chunk.SizeY; y++)
                 {
                     for(int z = 0; z < chunk.SizeZ; z++)
                     {
-                        Voxel v = chunk.VoxelGrid[x][y][z];
+                        v.GridPosition = new Vector3(x, y, z);
                         bool isTop = false;
 
 
                         if(y < chunk.SizeY - 1)
                         {
-                            Voxel vAbove = chunk.VoxelGrid[x][y + 1][z];
+                            vAbove.GridPosition =  new Vector3(x, y + 1, z); 
 
-                            isTop = vAbove == null;
+                            isTop = vAbove.IsEmpty;
                         }
 
-                        List<VoxelRef> diagNeighbors = new List<VoxelRef>();
-                        if(v == null || !v.IsVisible || !isTop || !v.Type.CanRamp)
+                        if(v.IsEmpty || !v.IsVisible || !isTop || !v.Type.CanRamp)
                         {
                             continue;
                         }
@@ -146,12 +148,16 @@ namespace DwarfCorp
                                 continue;
                             }
 
-                            ExtendedVertex[] faceVertices = v.Primitive.GetFace(face, v.Primitive.UVs);
-                            foreach(VoxelVertex bestKey in faceVertices.Select(vertex => VoxelChunk.GetNearestDelta(vertex.Position)))
-                            {
-                                chunk.GetNeighborsVertexDiag(bestKey, x, y, z, diagNeighbors, true);
+                            int faceIndex = 0;
+                            int faceCount = 0;
+                            v.Primitive.GetFace(face, v.Primitive.UVs, out faceIndex, out faceCount);
 
-                                bool emptyFound = diagNeighbors.Any(vox => vox.TypeName == "empty");
+                            for (int idx = faceIndex; idx < faceIndex + faceCount; idx++)
+                            {
+                                VoxelVertex bestKey = VoxelChunk.GetNearestDelta(v.Primitive.Vertices[idx].Position);
+                                chunk.GetNeighborsVertexDiag(bestKey, x, y, z, diagNeighbors);
+
+                                bool emptyFound = diagNeighbors.Any(vox => vox.IsEmpty);
 
                                 if(!emptyFound)
                                 {
@@ -1381,26 +1387,28 @@ namespace DwarfCorp
         {
             Dictionary<BoxFace, bool> faceExists = new Dictionary<BoxFace, bool>();
             Dictionary<BoxFace, bool> faceVisible = new Dictionary<BoxFace, bool>();
-
+            Voxel v = chunk.MakeVoxel(0, 0, 0);
+            Voxel vAbove = chunk.MakeVoxel(0, 0, 0);
+            Voxel voxelOnFace = chunk.MakeVoxel(0, 0, 0);
             for(int x = 0; x < chunk.SizeX; x++)
             {
                 for(int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY); y++)
                 {
                     for(int z = 0; z < chunk.SizeZ; z++)
                     {
-                        Voxel v = chunk.VoxelGrid[x][y][z];
+                        v.GridPosition = new Vector3(x, y, z);
                         bool isTop = false;
 
 
                         if(y < chunk.SizeY - 1)
                         {
-                            Voxel vAbove = chunk.VoxelGrid[x][y + 1][z];
+                            vAbove.GridPosition = new Vector3(x, y + 1, z);
 
-                            isTop = vAbove == null;
+                            isTop = vAbove.IsEmpty;
                         }
 
 
-                        if(isTop && v != null && v.IsVisible && v.Type.CanRamp)
+                        if(isTop && !v.IsEmpty && v.IsVisible && v.Type.CanRamp)
                         {
                             for(int i = 0; i < 6; i++)
                             {
@@ -1416,9 +1424,10 @@ namespace DwarfCorp
 
                                 if(faceExists[face])
                                 {
-                                    Voxel voxelOnFace = chunk.VoxelGrid[x + (int) delta.X][y + (int) delta.Y][z + (int) delta.Z];
+                                    voxelOnFace.GridPosition = new Vector3(x + (int) delta.X, y + (int) delta.Y,
+                                        z + (int) delta.Z);
 
-                                    if(voxelOnFace == null || !voxelOnFace.IsVisible)
+                                    if(voxelOnFace.IsEmpty || !voxelOnFace.IsVisible)
                                     {
                                         faceVisible[face] = true;
                                     }
@@ -1429,9 +1438,9 @@ namespace DwarfCorp
                                 }
                                 else
                                 {
-                                    Voxel voxelOnFace = chunk.Manager.ChunkData.GetNonNullVoxelAtWorldLocation(new Vector3(x + (int)delta.X + 0.5f, y + (int)delta.Y + 0.5f, z + (int)delta.Z + 0.5f) + chunk.Origin);
+                                    Voxel worldVoxel = chunk.Manager.ChunkData.GetNonNullVoxelAtWorldLocation(new Vector3(x + (int)delta.X + 0.5f, y + (int)delta.Y + 0.5f, z + (int)delta.Z + 0.5f) + chunk.Origin);
 
-                                    if (voxelOnFace == null || !voxelOnFace.IsVisible)
+                                    if (worldVoxel == null || !worldVoxel.IsVisible)
                                     {
                                         faceVisible[face] = true;
                                     }
@@ -1453,7 +1462,7 @@ namespace DwarfCorp
                                 v.RampType = RampType.None;
                             }
                         }
-                        else if(v != null && v.IsVisible && v.Type.CanRamp)
+                        else if(!v.IsEmpty && v.IsVisible && v.Type.CanRamp)
                         {
                             v.RampType = RampType.None;
                         }
@@ -1479,17 +1488,19 @@ namespace DwarfCorp
             faceExists.Clear();
             drawFace.Clear();
 
-  
+            Voxel v = chunk.MakeVoxel(0, 0, 0);
+            Voxel voxelOnFace = chunk.MakeVoxel(0, 0, 0);
+            Voxel[] manhattanNeighbors = new Voxel[4];
             for(int x = 0; x < chunk.SizeX; x++)
             {
                 for(int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY); y++)
                 {
                     for(int z = 0; z < chunk.SizeZ; z++)
                     {
-                        Voxel v = chunk.VoxelGrid[x][y][z];
+                        v.GridPosition = new Vector3(x, y, z); 
 
 
-                        if(v == null || !v.IsVisible)
+                        if(v.IsEmpty || !v.IsVisible)
                         {
                             continue;
                         }
@@ -1499,7 +1510,7 @@ namespace DwarfCorp
 
                         if(v.Type.HasTransitionTextures)
                         {
-                            uvs = v.ComputeTransitionTexture();
+                            uvs = v.ComputeTransitionTexture(manhattanNeighbors);
                         }
 
                         float texScale = (float)uvs.m_cellHeight / (float)uvs.m_texHeight;
@@ -1514,14 +1525,14 @@ namespace DwarfCorp
 
                             if(faceExists[face])
                             {
-                                Voxel voxelOnFace = chunk.VoxelGrid[x + (int) delta.X][y + (int) delta.Y][z + (int) delta.Z];
-                                drawFace[face] = voxelOnFace == null || !voxelOnFace.IsVisible || ((voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && IsSideFace(face) && ShouldDrawFace(face, voxelOnFace.RampType, v.RampType)));
+                                voxelOnFace.GridPosition = new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
+                                drawFace[face] =  voxelOnFace.IsEmpty || !voxelOnFace.IsVisible || ((voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && IsSideFace(face) && ShouldDrawFace(face, voxelOnFace.RampType, v.RampType)));
 
                             }
                             else
                             {
-                                Voxel voxelOnFace = chunk.Manager.ChunkData.GetNonNullVoxelAtWorldLocation(new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z) + chunk.Origin);
-                                drawFace[face] = voxelOnFace == null || !voxelOnFace.IsVisible || ((voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && IsSideFace(face) && ShouldDrawFace(face, voxelOnFace.RampType, v.RampType)));
+                                Voxel worldVoxel = chunk.Manager.ChunkData.GetNonNullVoxelAtWorldLocation(new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z) + chunk.Origin);
+                                drawFace[face] = worldVoxel == null || worldVoxel.IsEmpty || !worldVoxel.IsVisible || ((worldVoxel.Type.CanRamp && worldVoxel.RampType != RampType.None && IsSideFace(face) && ShouldDrawFace(face, worldVoxel.RampType, v.RampType)));
                             }
                         }
 
@@ -1533,17 +1544,14 @@ namespace DwarfCorp
                             {
                                 continue;
                             }
-
-                            ExtendedVertex[] faceVertices = primitive.GetFace(face, uvs);
-                            foreach(ExtendedVertex vertex in faceVertices)
+                            int faceIndex = 0;
+                            int faceCount = 0;
+                            primitive.GetFace(face, uvs, out faceIndex, out faceCount);
+                            for(int idx = faceIndex; idx < faceIndex + faceCount; idx++)
                             {
                                 
-                                VoxelVertex bestKey = VoxelChunk.GetNearestDelta(vertex.Position);
-                                //VoxelChunk.CalculateVertexLight(v, bestKey, chunk.Manager, neighborRef, ref colorInfo);
-
-
-                                //Color color = new Color(colorInfo.SunColor,colorInfo.AmbientColor, colorInfo.DynamicColor);
-                                Color color = v.VertexColors[(int) bestKey];
+                                VoxelVertex bestKey = VoxelChunk.GetNearestDelta(primitive.Vertices[idx].Position);
+                                Color color = v.Chunk.Data.GetColor(x, y, z, bestKey);
                                 Vector3 offset = Vector3.Zero;
                                 Vector2 texOffset = Vector2.Zero;
 
@@ -1558,9 +1566,9 @@ namespace DwarfCorp
                                 }
 
 
-                                ExtendedVertex newVertex = new ExtendedVertex((vertex.Position + v.Position + VertexNoise.GetNoiseVectorFromRepeatingTexture(vertex.Position + v.Position) + offset),
+                                ExtendedVertex newVertex = new ExtendedVertex((primitive.Vertices[idx].Position + v.Position + VertexNoise.GetNoiseVectorFromRepeatingTexture(primitive.Vertices[idx].Position + v.Position) + offset),
                                     color,
-                                    vertex.TextureCoordinate + texOffset, vertex.TextureBounds);
+                                    uvs.m_uvs[idx] + texOffset, uvs.Bounds[faceIndex / 6]);
                                 accumulatedVertices.Add(newVertex);
                             }
                         }

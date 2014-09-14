@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -22,17 +23,37 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Economy
     {
-        public float CurrentMoney { get { return Company.Assets; } set { Company.Assets = value; } }
+        public float CurrentMoney {
+            get 
+            {
+                return
+                Company != null ? Company.Assets : 0.0f; 
+            } 
+            set { if(Company != null) {Company.Assets = value;} } }
         public Company Company { get; set; }
         public Faction Faction { get; set; }
         public List<Company> Market { get; set; }
+
+        [JsonIgnore]
         public PlayState PlayState { get; set; }
 
-        public Economy(Faction faction, float currentMoney, PlayState state)
+        public Economy()
+        {
+            
+        }
+
+        public Economy(Faction faction, float currentMoney, PlayState state, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
         {
             PlayState = state;
-            Company = new Company();
-            Company.InitializeFromPlayer();
+            Company = Company.GenerateRandom(currentMoney, 1.0f, Company.Sector.Exploration);
+            Company.Name = companyName;
+            Company.SecondaryColor = Color.White;
+            Company.Logo = companyLogo;
+            Company.Motto = companyMotto;
+            Company.Assets = currentMoney;
+            Company.BaseColor = companyColor;
+
+
             CurrentMoney = currentMoney;
             Faction = faction;
             Market  = new List<Company>
@@ -56,6 +77,11 @@ namespace DwarfCorp
             PlayState.Time.NewDay += Time_NewDay;
         }
 
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            PlayState = GameState.Game.StateManager.GetState<PlayState>("PlayState");
+        }
         public void UpdateStocks(DateTime time)
         {
             float marketBias = (float)Math.Sin(Act.LastTime.TotalGameTime.TotalSeconds * 0.001f) * 0.25f;

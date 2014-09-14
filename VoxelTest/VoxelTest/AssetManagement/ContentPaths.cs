@@ -25,6 +25,8 @@ namespace DwarfCorp
             public static string whoosh = Program.CreatePath("Audio", "whoosh");
             public static string cash = Program.CreatePath("Audio", "cash");
             public static string change = Program.CreatePath("Audio", "change");
+            public static string bird = Program.CreatePath("Audio", "bird");
+            public static string pluck = Program.CreatePath("Audio", "pluck");
 
         }
         public class Particles
@@ -107,7 +109,9 @@ namespace DwarfCorp
                 {
                     public static string dwarf_animations = Program.CreatePath("Entities", "Dwarf", "Sprites", "dwarf_animations");
                     public static string soldier_axe_shield= Program.CreatePath("Entities", "Dwarf", "Sprites", "soldier-axe-shield");
-
+                    public static string dwarf_craft = Program.CreatePath("Entities", "Dwarf", "Sprites", "dwarf-craft");
+                    public static string dwarf_wizard = Program.CreatePath("Entities", "Dwarf", "Sprites", "dwarf-wizard");
+                    public static string dwarf_musket = Program.CreatePath("Entities", "Dwarf", "Sprites", "dwarf-musket");
                 }
 
             }

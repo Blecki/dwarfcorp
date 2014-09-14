@@ -22,14 +22,19 @@ namespace DwarfCorp
         {
             
         }
-        public Dwarf(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, EmployeeClass workerClass, Vector3 position) :
+        public Dwarf(CreatureStats stats, string allies, PlanService planService, Faction faction,  string name, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, EmployeeClass workerClass, Vector3 position) :
             base(stats, allies, planService, faction, 
-            new Physics(manager, "Dwarf", manager.RootComponent, Matrix.CreateTranslation(position), 
+            new Physics( "Dwarf", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position), 
                         new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0)),
-                manager, chunks, graphics, content, name)
+               chunks, graphics, content, name)
         {
             SpriteSheet = workerClass.Animations[0].SpriteSheet;
             Initialize(workerClass);
+        }
+
+        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        {
+            base.Update(gameTime, chunks, camera);
         }
 
         public void Initialize(EmployeeClass dwarfClass)
@@ -41,7 +46,7 @@ namespace DwarfCorp
                 Sprite.AddAnimation(new Animation(animation, animation.SpriteSheet, GameState.Game.GraphicsDevice));
             }
 
-            Hands = new Grabber(Manager, "hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
+            Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
 
             Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
 
@@ -51,7 +56,7 @@ namespace DwarfCorp
 
             Health = new Health(Manager, "HP", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
 
-            Inventory = new Inventory(Manager, "Inventory", Physics)
+            Inventory = new Inventory("Inventory", Physics)
             {
                 Resources = new ResourceContainer
                 {
@@ -104,7 +109,8 @@ namespace DwarfCorp
 
             Stats.FirstName = TextGenerator.GenerateRandom("$DwarfName");
             Stats.LastName = TextGenerator.GenerateRandom("$DwarfFamily");
-            
+            Stats.Size = 5;
+            Stats.CanSleep = true;
         }
     }
 

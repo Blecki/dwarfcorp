@@ -44,7 +44,8 @@ namespace DwarfCorp
         public static event OnMouseReleased MouseReleasedCallback;
         public static event OnMouseClicked MouseClickedCallback;
         public static event OnMouseScrolled MouseScrolledCallback;
-
+        public static Keys[] KeyValues = (Keys[]) Enum.GetValues(typeof (Keys));
+        public static MouseButton[] MouseValues = (MouseButton[]) Enum.GetValues(typeof (MouseButton));
         public static Dictionary<Keys, int> NumberKeys { get; set; }  
 
         private static void OnMouseScrolledCallback(int amount)
@@ -657,7 +658,7 @@ namespace DwarfCorp
 
         public static void KeysInit(KeyboardState keyState)
         {
-            foreach(Keys key in Enum.GetValues(typeof(Keys)))
+            foreach(Keys key in KeyValues)
             {
                 if(keyState.IsKeyDown(key))
                 {
@@ -672,7 +673,7 @@ namespace DwarfCorp
 
         public static void MouseInit(MouseState mouseState)
         {
-            foreach(MouseButton button in Enum.GetValues(typeof(MouseButton)))
+            foreach(MouseButton button in MouseValues)
             {
                 ButtonState state = ButtonState.Pressed;
                 switch(button)
@@ -693,7 +694,7 @@ namespace DwarfCorp
 
         public static void MouseUpate(MouseState mouseState)
         {
-            foreach(MouseButton button in Enum.GetValues(typeof(MouseButton)))
+            foreach(MouseButton button in MouseValues)
             {
                 ButtonState state = ButtonState.Pressed;
                 switch(button)
@@ -732,7 +733,7 @@ namespace DwarfCorp
 
         public static void KeysUpdate(KeyboardState keyState)
         {
-            foreach(Keys key in Enum.GetValues(typeof(Keys)))
+            foreach(Keys key in KeyValues)
             {
                 if(keyState.IsKeyDown(key))
                 {

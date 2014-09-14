@@ -211,7 +211,12 @@ namespace DwarfCorp
                 Viewport viewPort = new Viewport(RenderTarget.Bounds);
                 foreach(MinimapIcon icon in PlayState.ComponentManager.RootComponent.GetChildrenOfTypeRecursive<MinimapIcon>())
                 {
-                    
+
+                    if (!icon.Parent.IsVisible)
+                    {
+                        continue;
+                    }
+
                    Vector3 screenPos = viewPort.Project(icon.GlobalTransform.Translation, Camera.ProjectionMatrix, Camera.ViewMatrix, Matrix.Identity);
 
                     if(RenderTarget.Bounds.Contains((int) screenPos.X, (int) screenPos.Y))

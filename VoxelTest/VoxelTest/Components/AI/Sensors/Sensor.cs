@@ -21,8 +21,8 @@ namespace DwarfCorp
         public Timer FireTimer { get; set; }
         private readonly List<Body> sensedItems = new List<Body>();
 
-        public Sensor(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-            base(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
+        public Sensor(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
+            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             OnSensed += Sensor_OnSensed;
             Tags.Add("Sensor");

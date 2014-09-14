@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading;
 using DwarfCorp.GameStates;
@@ -27,7 +28,7 @@ namespace DwarfCorp
 
         public static Body CreateBalloon(Vector3 target, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ShipmentOrder order, Faction master)
         {
-            Body balloon = new Body(componentManager, "Balloon", componentManager.RootComponent,
+            Body balloon = new Body("Balloon", componentManager.RootComponent,
                 Matrix.CreateTranslation(position), new Vector3(0.5f, 1, 0.5f), new Vector3(0, -2, 0));
 
             Texture2D tex = TextureManager.GetTexture(ContentPaths.Entities.Balloon.Sprites.balloon);
@@ -62,6 +63,14 @@ namespace DwarfCorp
             {
                 return GenerateBerryBush(size, position, offset, componentManager, content, graphics);
             }
+            if (id == "Wheat")
+            {
+                return GenerateWheat(position + new Vector3(0, offset, 0), componentManager, content, graphics);
+            }
+            if (id == "Mushroom")
+            {
+                return GenerateMushroom(position + new Vector3(0, offset, 0), componentManager, content, graphics);
+            }
             return null;
         }
 
@@ -69,13 +78,16 @@ namespace DwarfCorp
         {
             "Crate",
             "Balloon",
-            "Wood",
-            "Iron",
-            "Dirt",
-            "Stone",
-            "Gold",
-            "Mana",
-            "Apple",
+            "Wood Resource",
+            "Iron Resource",
+            "Dirt Resource",
+            "Stone Resource",
+            "Gold Resource",
+            "Coal Resource",
+            "Mana Resource",
+            "Apple Resource",
+            "Grain Resource",
+            "Mushroom Resource",
             "pine",
             "snowpine",
             "palm",
@@ -85,6 +97,8 @@ namespace DwarfCorp
             "Deer",
             "Dwarf",
             "AxeDwarf",
+            "CraftsDwarf",
+             "Wizard",
             "Goblin",
             "Skeleton",
             "Necromancer",
@@ -110,7 +124,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
 
-            Body crate = new Body(PlayState.ComponentManager, "Crate", PlayState.ComponentManager.RootComponent, matrix, new Vector3(0.75f, 0.5f, 1.5f), new Vector3(0.5f, 0.5f, 1.0f));
+            Body crate = new Body("Crate", PlayState.ComponentManager.RootComponent, matrix, new Vector3(0.75f, 0.5f, 1.5f), new Vector3(0.5f, 0.5f, 1.0f));
             Box crateModel = new Box(PlayState.ComponentManager, "Cratebox", crate, Matrix.CreateRotationY(rot), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.5f, 0.5f, 0.5f), PrimitiveLibrary.BoxPrimitives["crate"], spriteSheet);
 
             crate.Tags.Add("Crate");
@@ -133,20 +147,20 @@ namespace DwarfCorp
                     return CreateCrate(position - new Vector3(0.5f, 0.5f, 0.5f), MathFunctions.Rand(-0.1f, 0.1f));
                 case "Balloon":
                     return CreateBalloon(position, position + new Vector3(0, 2, 0), componentManager, content, graphics, new ShipmentOrder(0, null), factions.Factions["Player"]);
-                case "Wood":
-                    return GenerateWoodResource(position, componentManager, content, graphics);
-                case "Iron":
-                    return GenerateIronResource(position, componentManager, content, graphics);
-                case "Dirt":
-                    return GenerateDirtResource(position, componentManager, content, graphics);
-                case "Stone":
-                    return GenerateStoneResource(position, componentManager, content, graphics);
-                case "Gold":
-                    return GenerateGoldResource(position, componentManager, content, graphics);
-                case "Mana":
-                    return GenerateManaResource(position, componentManager, content, graphics);
-                case "Apple":
-                    return GenerateAppleResource(position, componentManager, content, graphics);
+                case "Wood Resource":
+                case "Iron Resource":
+                case "Dirt Resource":
+                case "Stone Resource":
+                case "Gold Resource":
+                case "Mana Resource":
+                case "Apple Resource":
+                case "Grain Resource":
+                case "Coal Resource":
+                case "Mushroom Resource":
+                {
+                    string resourceID = id.Split(' ').First();
+                    return GenerateResource(resourceID, position);   
+                }
                 case "palm":
                 case "snowpine":
                 case "apple_tree":
@@ -160,6 +174,10 @@ namespace DwarfCorp
                     return (Body) GenerateDwarf(position, componentManager, content, graphics, chunks, camera, factions.Factions["Player"], PlayState.PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.Worker], 0);
                 case "AxeDwarf":
                     return (Body) GenerateDwarf(position, componentManager, content, graphics, chunks, camera, factions.Factions["Player"], PlayState.PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.AxeDwarf], 0);
+                case "CraftsDwarf":
+                    return (Body)GenerateDwarf(position, componentManager, content, graphics, chunks, camera, factions.Factions["Player"], PlayState.PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.CraftsDwarf], 0);
+                case "Wizard":
+                    return (Body)GenerateDwarf(position, componentManager, content, graphics, chunks, camera, factions.Factions["Player"], PlayState.PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.Wizard], 0);
                 case "Goblin":
                     return (Body)GenerateGoblin(position, componentManager, content, graphics, chunks, camera, factions.Factions["Goblins"], PlayState.PlanService, "Goblin");
                 case "Skeleton":
@@ -213,123 +231,6 @@ namespace DwarfCorp
             CreatureStats stats = new CreatureStats(new NecromancerClass(), 0);
             return new Necromancer(stats, allies, planService, faction, componentManager, "Necromancer", chunks, graphics, content, position).Physics;
         }
-
-        public static Body GenerateManaResource(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
-        {
-            Matrix matrix = Matrix.Identity;
-            matrix.Translation = position;
-            Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
-
-            Physics stone = new Physics(componentManager, "Mana", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
-
-            List<Point> frames = new List<Point>
-            {
-                new Point(1, 0)
-            };
-            Animation stoneAnimation = new Animation(graphics, spriteSheet, "Mana", 32, 32, frames, false, Color.White, 0.01f, 0.5f, 0.5f, false);
-
-            Sprite sprite = new Sprite(componentManager, "sprite", stone, Matrix.Identity, spriteSheet, false)
-            {
-                OrientationType = Sprite.OrientMode.Spherical
-            };
-            sprite.AddAnimation(stoneAnimation);
-            sprite.LightsWithVoxels = false;
-
-            stoneAnimation.Play();
-
-            stone.Tags.Add("Mana");
-            stone.Tags.Add("Resource");
-            Bobber bobber = new Bobber(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
-            return stone;
-        }
-
-        public static Body GenerateStoneResource(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
-        {
-            Matrix matrix = Matrix.Identity;
-            matrix.Translation = position;
-            Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
-
-            Physics stone = new Physics(componentManager, "Stone", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
-
-            List<Point> frames = new List<Point>
-            {
-                new Point(3, 0)
-            };
-            Animation stoneAnimation = new Animation(graphics, spriteSheet, "Stone", 32, 32, frames, false, Color.White, 0.01f, 0.5f, 0.5f, false);
-
-            Sprite sprite = new Sprite(componentManager, "sprite", stone, Matrix.Identity, spriteSheet, false)
-            {
-                OrientationType = Sprite.OrientMode.Spherical
-            };
-            sprite.AddAnimation(stoneAnimation);
-
-
-            stoneAnimation.Play();
-
-            stone.Tags.Add("Stone");
-            stone.Tags.Add("Resource");
-            Bobber bobber = new Bobber(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
-            return stone;
-        }
-
-        public static Body GenerateGoldResource(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
-        {
-            Matrix matrix = Matrix.Identity;
-            matrix.Translation = position;
-            Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
-
-            Physics stone = new Physics(componentManager, "Gold", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
-
-            List<Point> frames = new List<Point>
-            {
-                new Point(0, 0)
-            };
-            Animation stoneAnimation = new Animation(graphics, spriteSheet, "Gold", 32, 32, frames, false, Color.White, 0.01f, 0.5f, 0.5f, false);
-
-            Sprite sprite = new Sprite(componentManager, "sprite", stone, Matrix.Identity, spriteSheet, false)
-            {
-                OrientationType = Sprite.OrientMode.Spherical
-            };
-            sprite.AddAnimation(stoneAnimation);
-
-
-            stoneAnimation.Play();
-
-            stone.Tags.Add("Gold");
-            stone.Tags.Add("Resource");
-            Bobber bobber = new Bobber(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
-            return stone;
-        }
-
-        public static Body GenerateIronResource(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
-        {
-            Matrix matrix = Matrix.Identity;
-            matrix.Translation = position;
-            Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
-
-            Physics stone = new Physics(componentManager, "Iron", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
-
-            List<Point> frames = new List<Point>
-            {
-                new Point(2, 0)
-            };
-            Animation stoneAnimation = new Animation(graphics, spriteSheet, "Iron", 32, 32, frames, false, Color.White, 0.01f, 0.5f, 0.5f, false);
-
-            Sprite sprite = new Sprite(componentManager, "sprite", stone, Matrix.Identity, spriteSheet, false)
-            {
-                OrientationType = Sprite.OrientMode.Spherical
-            };
-            sprite.AddAnimation(stoneAnimation);
-
-
-            stoneAnimation.Play();
-
-            stone.Tags.Add("Iron");
-            stone.Tags.Add("Resource");
-            Bobber bobber = new Bobber(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
-            return stone;
-        }
-
 
         public static List<InstanceData> GenerateGrassMotes(List<Vector3> positions,
             List<Color> colors,
@@ -386,102 +287,51 @@ namespace DwarfCorp
             }
         }
 
-        public static Body GenerateDirtResource(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
+        public static Body GenerateResource(ResourceLibrary.ResourceType resourceType, Vector3 position)
         {
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
-            Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
+            Resource type = ResourceLibrary.Resources[resourceType];
+            Texture2D spriteSheet = type.Image.Image;
 
-            Physics dirt = new Physics(componentManager, "Dirt", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            Physics physics = new Physics("Physics", PlayState.ComponentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+
+            int frameX = type.Image.SourceRect.X / 32;
+            int frameY = type.Image.SourceRect.Y / 32;
 
             List<Point> frames = new List<Point>
             {
-                new Point(0, 1)
+                new Point(frameX, frameY)
             };
-            Animation dirtAnimation = new Animation(graphics, spriteSheet, "Dirt", 32, 32, frames, false, Color.White, 0.01f, 0.5f, 0.5f, false);
+            Animation animation = new Animation(GameState.Game.GraphicsDevice, spriteSheet, "Animation", 32, 32, frames, false, Color.White, 0.01f, 0.5f, 0.5f, false);
 
-            Sprite sprite = new Sprite(componentManager, "sprite", dirt, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(PlayState.ComponentManager, "Sprite", physics, Matrix.Identity, spriteSheet, false)
             {
-                OrientationType = Sprite.OrientMode.Spherical
+                OrientationType = Sprite.OrientMode.Spherical,
+                LightsWithVoxels = !type.SelfIlluminating
             };
-            sprite.AddAnimation(dirtAnimation);
+            sprite.AddAnimation(animation);
 
 
-            dirtAnimation.Play();
+            animation.Play();
 
-            dirt.Tags.Add("Dirt");
-            dirt.Tags.Add("Resource");
+            physics.Tags.Add(type.ResourceName);
+            physics.Tags.Add("Resource");
             Bobber bobber = new Bobber(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
-            return dirt;
+            return physics;
         }
-
-        public static Body GenerateWoodResource(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
+        
+        public static Body GenerateResource(string name, Vector3 position)
         {
-            Matrix matrix = Matrix.Identity;
-            matrix.Translation = position;
-            Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
-
-            Physics wood = new Physics(componentManager, "Wood", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
-
-            List<Point> frames = new List<Point>
-            {
-                new Point(3, 1)
-            };
-            Animation woodAnimation = new Animation(graphics, spriteSheet, "Wood", 32, 32, frames, false, Color.White, 0.01f, 0.5f, 0.5f, false);
-
-            Sprite sprite = new Sprite(componentManager, "sprite", wood, Matrix.Identity, spriteSheet, false)
-            {
-                OrientationType = Sprite.OrientMode.Spherical
-            };
-            sprite.AddAnimation(woodAnimation);
-
-
-            woodAnimation.Play();
-
-            wood.Tags.Add("Wood");
-            wood.Tags.Add("Resource");
-            Bobber bobber = new Bobber(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
-            return wood;
-        }
-
-        public static Body GenerateAppleResource(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
-        {
-            Matrix matrix = Matrix.Identity;
-            matrix.Translation = position;
-            Texture2D spriteSheet = TextureManager.GetTexture("ResourceSheet");
-
-            Physics apple = new Physics(componentManager, "Apple", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0));
-
-            List<Point> frames = new List<Point>
-            {
-                new Point(2, 1)
-            };
-            Animation appleAnimation = new Animation(graphics, spriteSheet, "Apple", 32, 32, frames, false, Color.White, 0.01f, 0.5f, 0.5f, false);
-
-            Sprite sprite = new Sprite(componentManager, "sprite", apple, Matrix.Identity, spriteSheet, false)
-            {
-                OrientationType = Sprite.OrientMode.Spherical
-            };
-            sprite.AddAnimation(appleAnimation);
-
-            Food food = new Food(componentManager, "Food", apple, 15f);
-
-            appleAnimation.Play();
-
-            apple.Tags.Add("Apple");
-            apple.Tags.Add("Resource");
-            apple.Tags.Add("Food");
-
-            Bobber bobber = new Bobber(0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite);
-
-            return apple;
+            return GenerateResource(ResourceLibrary.GetResourceByName(name).Type, position);
         }
 
         public static Body GenerateChair(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
         {
-            return (Body) GenerateTableLike(position + new Vector3(0, -0.1f, 0), componentManager, content, graphics, new Point(2, 6), new Point(3, 6));
+            Body toReturn =  (Body) GenerateTableLike(position + new Vector3(0, -0.22f, 0), componentManager, content, graphics, new Point(2, 6), new Point(3, 6));
+            toReturn.Tags.Add("Chair");
+            return toReturn;
         }
-
 
         public static Body GenerateBed(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
         {
@@ -489,7 +339,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Furniture.bedtex);
 
-            Body bed = new Body(componentManager, "Bed", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.5f, 1.5f), new Vector3(0.5f, 0.5f, 1.0f));
+            Body bed = new Body("Bed", componentManager.RootComponent, matrix, new Vector3(0.75f, 0.5f, 1.5f), new Vector3(0.5f, 0.5f, 1.0f));
            
             Box bedModel = new Box(componentManager, "bedbox", bed, Matrix.Identity, new Vector3(1.0f, 1.0f, 2.0f), new Vector3(0.5f, 0.5f, 1.0f), PrimitiveLibrary.BoxPrimitives["bed"], spriteSheet);
 
@@ -497,7 +347,7 @@ namespace DwarfCorp
 
             if (voxelUnder != null)
             {
-                VoxelListener listener = new VoxelListener(componentManager, bed, PlayState.ChunkManager, voxelUnder.GetReference());
+                VoxelListener listener = new VoxelListener(componentManager, bed, PlayState.ChunkManager, voxelUnder);
             }
 
             bed.Tags.Add("Bed");
@@ -511,7 +361,7 @@ namespace DwarfCorp
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("InteriorSheet");
-            Body table = new Body(componentManager, "Anvil", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+            Body table = new Body("Anvil", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
             List<Point> frames = new List<Point>
             {
                 new Point(0, 3)
@@ -533,7 +383,7 @@ namespace DwarfCorp
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("InteriorSheet");
-            Body table = new Body(componentManager, "Target", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+            Body table = new Body("Target", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
             List<Point> frames = new List<Point>
             {
                 new Point(0, 5)
@@ -553,9 +403,9 @@ namespace DwarfCorp
         public static GameComponent GenerateStrawman(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
         {
             Matrix matrix = Matrix.Identity;
-            matrix.Translation = position;
+            matrix.Translation = position - new Vector3(0.5f, 0, 0.5f);
             Texture2D spriteSheet = TextureManager.GetTexture("InteriorSheet");
-            Body table = new Body(componentManager, "Strawman", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+            Body table = new Body("Strawman", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
             List<Point> frames = new List<Point>
             {
                 new Point(1, 5)
@@ -577,9 +427,9 @@ namespace DwarfCorp
         public static GameComponent GenerateWheat(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
         {
             Matrix matrix = Matrix.CreateRotationY((float) Math.PI * 0.5f);
-            matrix.Translation = position;
+            matrix.Translation = position + new Vector3(0.5f, 0, 0.5f);
             Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.wheat);
-            Body table = new Body(componentManager, "Wheat", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+            Body table = new Body("Wheat", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
             List<Point> frames = new List<Point>
             {
                 new Point(0, 0)
@@ -592,8 +442,38 @@ namespace DwarfCorp
             };
             sprite.AddAnimation(tableAnimation);
 
+            Sprite sprite2 = new Sprite(componentManager, "sprite2", table, Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
+            {
+                OrientationType = Sprite.OrientMode.Fixed
+            };
+            sprite2.AddAnimation(tableAnimation);
+
+            Voxel voxelUnder = PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position);
+
+            if (voxelUnder != null)
+            {
+                VoxelListener listener = new VoxelListener(componentManager, table, PlayState.ChunkManager, voxelUnder);
+            }
+
+            Inventory inventory = new Inventory("Inventory", table)
+            {
+                Resources = new ResourceContainer()
+                {
+                    MaxResources = 1,
+                    Resources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>()
+                    {
+                        {
+                            ResourceLibrary.ResourceType.Grain,
+                            new ResourceAmount(ResourceLibrary.ResourceType.Grain)
+                        }
+                    }
+                }
+            };
+
+            Health health = new Health(componentManager, "HP", table, 30, 0.0f, 30);
             tableAnimation.Play();
             table.Tags.Add("Wheat");
+            table.Tags.Add("Vegetation");
             table.CollisionType = CollisionManager.CollisionType.Static;
             return table;
         }
@@ -601,9 +481,9 @@ namespace DwarfCorp
         public static GameComponent GenerateMushroom(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
         {
             Matrix matrix = Matrix.CreateRotationY((float) Math.PI * 0.5f);
-            matrix.Translation = position;
+            matrix.Translation = position + new Vector3(0.5f, 0.0f, 0.5f);
             Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.mushroom);
-            Body table = new Body(componentManager, "Mushroom", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+            Body table = new Body("Mushroom", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
             List<Point> frames = new List<Point>
             {
                 new Point(0, 0)
@@ -622,20 +502,45 @@ namespace DwarfCorp
             };
             sprite2.AddAnimation(tableAnimation);
 
+            Voxel voxelUnder = PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position);
+
+            if (voxelUnder != null)
+            {
+                VoxelListener listener = new VoxelListener(componentManager, table, PlayState.ChunkManager, voxelUnder);
+            }
+
+
+            Inventory inventory = new Inventory("Inventory", table)
+            {
+                Resources = new ResourceContainer()
+                {
+                    MaxResources = 1,
+                    Resources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>()
+                    {
+                        {
+                            ResourceLibrary.ResourceType.Mushroom,
+                            new ResourceAmount(ResourceLibrary.ResourceType.Mushroom)
+                        }
+                    }
+                }
+            };
+
+            Health health = new Health(componentManager, "HP", table, 30, 0.0f, 30);
+
 
             tableAnimation.Play();
             table.Tags.Add("Mushroom");
+            table.Tags.Add("Vegetation");
             table.CollisionType = CollisionManager.CollisionType.Static;
             return table;
         }
 
-        // Biar's workspace
         public static GameComponent GenerateSpikeTrap(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
         {
             Matrix matrix = Matrix.CreateRotationY((float) Math.PI * 0.5f);
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("InteriorSheet");
-            Body spikeTrap = new Body(componentManager, "Spikes", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+            Body spikeTrap = new Body("Spikes", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
 
             TrapSensor sensor = new TrapSensor(componentManager, "TrapSensor", spikeTrap, Matrix.Identity, new Vector3(1, 1, 1), Vector3.Zero); // that 20,5,20 is the bounding box
 
@@ -674,7 +579,7 @@ namespace DwarfCorp
             Matrix matrix = Matrix.CreateRotationY((float) Math.PI * 0.5f);
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("InteriorSheet");
-            Body table = new Body(componentManager, "Table", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+            Body table = new Body("Table", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
 
             List<Point> frames = new List<Point>
             {
@@ -710,7 +615,7 @@ namespace DwarfCorp
             Voxel voxelUnder = PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position);
             if (voxelUnder != null)
             {
-                VoxelListener listener = new VoxelListener(componentManager, table, PlayState.ChunkManager, voxelUnder.GetReference());
+                VoxelListener listener = new VoxelListener(componentManager, table, PlayState.ChunkManager, voxelUnder);
             }
 
 
@@ -722,7 +627,7 @@ namespace DwarfCorp
 
         public static GameComponent GenerateTable(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
         {
-            return GenerateTableLike(position + new Vector3(0, 0.2f, 0), componentManager, content, graphics, new Point(0, 6), new Point(1, 6));
+            return GenerateTableLike(position + new Vector3(0, 0.15f, 0), componentManager, content, graphics, new Point(0, 6), new Point(1, 6));
         }
 
 
@@ -761,7 +666,7 @@ namespace DwarfCorp
             Voxel voxelUnder = PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position);
             if (voxelUnder != null)
             {
-                VoxelListener listener = new VoxelListener(componentManager, table, PlayState.ChunkManager, voxelUnder.GetReference());
+                VoxelListener listener = new VoxelListener(componentManager, table, PlayState.ChunkManager, voxelUnder);
             }
 
             table.UpdateTransformsRecursive();
@@ -803,7 +708,7 @@ namespace DwarfCorp
             Voxel voxelUnder = PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position);
             if (voxelUnder != null)
             {
-                VoxelListener listener = new VoxelListener(componentManager, table, PlayState.ChunkManager, voxelUnder.GetReference());
+                VoxelListener listener = new VoxelListener(componentManager, table, PlayState.ChunkManager, voxelUnder);
             }
 
             table.UpdateTransformsRecursive();
@@ -816,7 +721,7 @@ namespace DwarfCorp
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("InteriorSheet");
-            Body flag = new Body(componentManager, "Flag", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+            Body flag = new Body("Flag", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
             List<Point> frames = new List<Point>
             {
                 new Point(0, 2),
@@ -837,7 +742,7 @@ namespace DwarfCorp
             Voxel voxelUnder = PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position);
             if (voxelUnder != null)
             {
-                VoxelListener listener = new VoxelListener(componentManager, flag, PlayState.ChunkManager, voxelUnder.GetReference());
+                VoxelListener listener = new VoxelListener(componentManager, flag, PlayState.ChunkManager, voxelUnder);
             }
 
             lampAnimation.Play();
@@ -852,7 +757,7 @@ namespace DwarfCorp
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("InteriorSheet");
-            Body lamp = new Body(componentManager, "Lamp", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+            Body lamp = new Body("Lamp", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
             List<Point> frames = new List<Point>
             {
                 new Point(0, 1),
@@ -878,11 +783,11 @@ namespace DwarfCorp
             Voxel voxelUnder = PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position);
             if (voxelUnder != null)
             {
-                VoxelListener listener = new VoxelListener(componentManager, lamp, PlayState.ChunkManager, voxelUnder.GetReference());
+                VoxelListener listener = new VoxelListener(componentManager, lamp, PlayState.ChunkManager, voxelUnder);
             }
 
 
-            LightEmitter light = new LightEmitter(componentManager, "light", lamp, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 255, 8)
+            LightEmitter light = new LightEmitter("light", lamp, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 255, 8)
             {
                 HasMoved = true
             };
@@ -895,7 +800,7 @@ namespace DwarfCorp
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
             Texture2D spriteSheet = TextureManager.GetTexture("InteriorSheet");
-            Body lamp = new Body(componentManager, "Forge", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
+            Body lamp = new Body("Forge", componentManager.RootComponent, matrix, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero);
             List<Point> frames = new List<Point>
             {
                 new Point(1, 3),
@@ -919,10 +824,10 @@ namespace DwarfCorp
             Voxel voxelUnder = PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position);
             if (voxelUnder != null)
             {
-                VoxelListener listener = new VoxelListener(componentManager, lamp, PlayState.ChunkManager, voxelUnder.GetReference());
+                VoxelListener listener = new VoxelListener(componentManager, lamp, PlayState.ChunkManager, voxelUnder);
             }
 
-            LightEmitter light = new LightEmitter(componentManager, "light", lamp, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 50, 4)
+            LightEmitter light = new LightEmitter("light", lamp, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 50, 4)
             {
                 HasMoved = true
             };
@@ -934,14 +839,14 @@ namespace DwarfCorp
         {
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
-            Body tree = new Body(componentManager, asset, componentManager.RootComponent, matrix, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), new Vector3(treeSize , treeSize * 1.5f, treeSize));
+            Body tree = new Body(asset, componentManager.RootComponent, matrix, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), new Vector3(treeSize , treeSize * 1.5f, treeSize));
             Mesh modelInstance = new Mesh(componentManager, "Model", tree, Matrix.CreateRotationY((float)(PlayState.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(treeSize * 4, treeSize * 4, treeSize * 4) * Matrix.CreateTranslation(new Vector3(0.7f, treeSize * offset, 0.7f)), asset, false);
 
             Health health = new Health(componentManager, "HP", tree, 100.0f * treeSize, 0.0f, 100.0f * treeSize);
             Flammable flame = new Flammable(componentManager, "Flames", tree, health);
 
 
-            tree.Tags.Add("Tree");
+            tree.Tags.Add("Vegetation");
             tree.Tags.Add("EmitsWood");
 
             MinimapIcon minimapIcon = new MinimapIcon(tree, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 1, 0));
@@ -949,27 +854,10 @@ namespace DwarfCorp
 
             if(voxelUnder != null)
             {
-                VoxelListener listener = new VoxelListener(componentManager, tree, PlayState.ChunkManager, voxelUnder.GetReference());
+                VoxelListener listener = new VoxelListener(componentManager, tree, PlayState.ChunkManager, voxelUnder);
             }
 
-            /*
-            List<Body> woods = new List<Body>();
-
-            for(int i = 0; i < (int) (treeSize * 10); i++)
-            {
-                woods.Add(GenerateWoodResource(position + new Vector3(treeSize, treeSize * 1.5f, treeSize), componentManager, content, graphics));
-            }
-
-            foreach(Body wood in woods)
-            {
-                wood.SetVisibleRecursive(false);
-                wood.SetActiveRecursive(false);
-            }
-
-            DeathComponentSpawner spawner = new DeathComponentSpawner(componentManager, "Component Spawner", tree, Matrix.Identity, new Vector3(treeSize * 2, treeSize, treeSize * 2), Vector3.Zero, woods);
-            */
-
-            Inventory inventory = new Inventory(componentManager, "Inventory", tree)
+            Inventory inventory = new Inventory("Inventory", tree)
             {
                 Resources = new ResourceContainer
                 {
@@ -980,7 +868,7 @@ namespace DwarfCorp
             inventory.Resources.AddResource(new ResourceAmount()
             {
                 NumResources = (int) (treeSize * 10),
-                ResourceType = ResourceLibrary.Resources["Wood"]
+                ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Wood]
             });
             
 
@@ -996,7 +884,7 @@ namespace DwarfCorp
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position + new Vector3(0.5f, 0, 0.5f);
             Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.berrybush);
-            Body tree = new Body(componentManager, "Bush", componentManager.RootComponent, matrix, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero);
+            Body tree = new Body("Bush", componentManager.RootComponent, matrix, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero);
             Mesh modelInstance = new Mesh(componentManager, "Model", tree, Matrix.CreateScale(bushSize, bushSize, bushSize) * Matrix.CreateTranslation(new Vector3(0.0f, bushSize * offset - 0.1f, 0.0f)), "berrybush", false);
 
             Health health = new Health(componentManager, "HP", tree, 30 * bushSize, 0.0f, 30 * bushSize);
@@ -1007,10 +895,10 @@ namespace DwarfCorp
 
             if (voxelUnder != null)
             {
-                VoxelListener listener = new VoxelListener(componentManager, tree, PlayState.ChunkManager, voxelUnder.GetReference());
+                VoxelListener listener = new VoxelListener(componentManager, tree, PlayState.ChunkManager, voxelUnder);
             }
 
-            tree.Tags.Add("Tree");
+            tree.Tags.Add("Vegetation");
             tree.Tags.Add("Bush");
             tree.Tags.Add("EmitsFood");
 
@@ -1033,7 +921,7 @@ namespace DwarfCorp
 
             DeathComponentSpawner spawner = new DeathComponentSpawner(componentManager, "Component Spawner", tree, Matrix.Identity, new Vector3(bushSize * 4, bushSize * 2, bushSize * 4), Vector3.Zero, apples);
             */
-            Inventory inventory = new Inventory(componentManager, "Inventory", tree)
+            Inventory inventory = new Inventory("Inventory", tree)
             {
                 Resources = new ResourceContainer
                 {
@@ -1044,7 +932,7 @@ namespace DwarfCorp
             inventory.Resources.AddResource(new ResourceAmount()
             {
                 NumResources = (int)(bushSize * 5),
-                ResourceType = ResourceLibrary.Resources["Apple"]
+                ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Apple]
             });
 
             tree.AddToOctree = true;
@@ -1084,7 +972,9 @@ namespace DwarfCorp
             Faction faction, PlanService planService, string allies, EmployeeClass dwarfClass, int level)
         {
             CreatureStats stats = new CreatureStats(dwarfClass, level);
-            return new Dwarf(stats, allies, planService, faction, componentManager, "Dwarf", chunkManager, graphics, content, dwarfClass, position).Physics;
+            Dwarf toReturn =  new Dwarf(stats, allies, planService, faction, "Dwarf", chunkManager, graphics, content, dwarfClass, position);
+            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, PlayState.Time.CurrentDate), false);
+            return toReturn.Physics;
         }
 
         public static GameComponent GenerateBird(Vector3 position,

@@ -10,10 +10,10 @@ namespace DwarfCorp
     public class BuildVoxelOrder
     {
         public Room ToBuild { get; set; }
-        public VoxelRef Voxel { get; set; }
+        public Voxel Voxel { get; set; }
         public BuildRoomOrder Order { get; set; }
 
-        public BuildVoxelOrder(BuildRoomOrder order, Room toBuild, VoxelRef voxel)
+        public BuildVoxelOrder(BuildRoomOrder order, Room toBuild, Voxel voxel)
         {
             Order = order;
             ToBuild = toBuild;
@@ -29,16 +29,16 @@ namespace DwarfCorp
 
         public Resource GetNextRequiredResource()
         {
-            IEnumerable<string> randomKeys = Datastructures.RandomKeys<string, ResourceAmount>(ToBuild.RoomType.RequiredResources);
-            foreach(string s in ToBuild.RoomType.RequiredResources.Keys)
+            IEnumerable<ResourceLibrary.ResourceType> randomKeys = Datastructures.RandomKeys<ResourceLibrary.ResourceType, ResourceAmount>(ToBuild.RoomData.RequiredResources);
+            foreach (ResourceLibrary.ResourceType s in ToBuild.RoomData.RequiredResources.Keys)
             {
                 if(!Order.PutResources.ContainsKey(s))
                 {
-                    return ToBuild.RoomType.RequiredResources[s].ResourceType;
+                    return ToBuild.RoomData.RequiredResources[s].ResourceType;
                 }
-                else if(Order.PutResources[s].NumResources < Math.Max((int) (ToBuild.RoomType.RequiredResources[s].NumResources * Order.VoxelOrders.Count), 1))
+                else if(Order.PutResources[s].NumResources < Math.Max((int) (ToBuild.RoomData.RequiredResources[s].NumResources * Order.VoxelOrders.Count * 0.25f), 1))
                 {
-                    return ToBuild.RoomType.RequiredResources[s].ResourceType;
+                    return ToBuild.RoomData.RequiredResources[s].ResourceType;
                 }
             }
 

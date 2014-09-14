@@ -59,14 +59,14 @@ namespace DwarfCorp
             AddInstances("snowpine", snowPine);
 
 
-            CreateBillboard("berrybush", content, (int)(100 * GameSettings.Default.NumMotes));
-            CreateBillboard("grass", content, (int) (100 * GameSettings.Default.NumMotes));
-            CreateBillboard("frostgrass", content, (int) (100 * GameSettings.Default.NumMotes));
-            CreateBillboard("flower", content, (int) (100 * GameSettings.Default.NumMotes));
-            CreateBillboard("deadbush", content, (int) (100 * GameSettings.Default.NumMotes));
-            CreateBillboard("vine", content, (int) (100 * GameSettings.Default.NumMotes));
-            CreateBillboard("gnarled", content, (int) (100 * GameSettings.Default.NumMotes));
-            CreateBillboard("mushroom", content, (int)(100 * GameSettings.Default.NumMotes));
+            CreateBillboard("berrybush", content, (int)(300 * GameSettings.Default.NumMotes));
+            CreateBillboard("grass", content, (int) (300 * GameSettings.Default.NumMotes));
+            CreateBillboard("frostgrass", content, (int) (300 * GameSettings.Default.NumMotes));
+            CreateBillboard("flower", content, (int) (300 * GameSettings.Default.NumMotes));
+            CreateBillboard("deadbush", content, (int) (300 * GameSettings.Default.NumMotes));
+            CreateBillboard("vine", content, (int) (300 * GameSettings.Default.NumMotes));
+            CreateBillboard("gnarled", content, (int) (300 * GameSettings.Default.NumMotes));
+            CreateBillboard("mushroom", content, (int)(300 * GameSettings.Default.NumMotes));
         }
 
         public FixedInstanceArray GetInstances(string name)

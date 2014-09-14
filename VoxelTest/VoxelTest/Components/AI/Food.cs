@@ -14,7 +14,7 @@ namespace DwarfCorp
         public float FoodAmount { get; set; }
 
         public Food(ComponentManager manager, string name, GameComponent parent, float foodAmount) :
-            base(manager, name, parent)
+            base(name, parent)
         {
             FoodAmount = foodAmount;
         }

@@ -16,8 +16,8 @@ namespace DwarfCorp
     {
         public PlanSubscriber Subscriber;
         public CreatureAI Sender;
-        public VoxelRef Goal;
-        public VoxelRef Start;
+        public Voxel Goal;
+        public Voxel Start;
         public int MaxExpansions;
     }
 
@@ -27,7 +27,7 @@ namespace DwarfCorp
     public class AStarPlanResponse
     {
         public bool Success;
-        public List<VoxelRef> Path;
+        public List<Voxel> Path;
     }
 
     /// <summary>
@@ -37,7 +37,7 @@ namespace DwarfCorp
     {
         public override AStarPlanResponse HandleRequest(AstarPlanRequest req)
         {
-            List<VoxelRef> path = AStarPlanner.FindPath(req.Start, req.Goal, PlayState.ChunkManager, req.MaxExpansions);
+            List<Voxel> path = AStarPlanner.FindPath(req.Start, req.Goal, PlayState.ChunkManager, req.MaxExpansions);
 
             AStarPlanResponse res = new AStarPlanResponse
             {

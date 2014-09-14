@@ -57,13 +57,13 @@ namespace DwarfCorp
 
         public WaterRenderer(GraphicsDevice device)
         {
-            int width = device.Viewport.Width;
-            int height = device.Viewport.Height;
+            int width = device.Viewport.Width / 4;
+            int height = device.Viewport.Height / 4;
 
             while(width <= 0 || height <= 0)
             {
-                width = device.Viewport.Width;
-                height = device.Viewport.Height;
+                width = device.Viewport.Width / 4;
+                height = device.Viewport.Height / 4;
                 Thread.Sleep(100);
             }
 
@@ -92,7 +92,7 @@ namespace DwarfCorp
 
             if(vox != null)
             {
-                float h = vox.Chunk.GetTotalWaterHeightCells(vox.GetReference()) - 0.75f;
+                float h = vox.Chunk.GetTotalWaterHeightCells(vox) - 0.75f;
                 if(h < 0.01f)
                 {
                     return defaultHeight;

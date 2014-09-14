@@ -21,6 +21,8 @@ namespace DwarfCorp
         public float CosTime { get; set; }
         public Texture2D MoonTexture { get; set; }
         public Texture2D SunTexture { get; set; }
+        public Vector3 SunPosition { get; set; }
+        public Vector3 SunlightDir { get; set; }
 
         public SkyRenderer(Texture2D moonTexture, Texture2D sunTexture, TextureCube skyTexture, TextureCube nightTexture, Texture2D skyGrad, Model skyMesh, Effect skyEffect)
         {
@@ -85,17 +87,19 @@ namespace DwarfCorp
         public void RenderSunMoon(GameTime time, GraphicsDevice device, Camera camera, Viewport viewPort)
         {
             Matrix rot = Matrix.CreateRotationZ(-(CosTime + 0.5f * (float) Math.PI));
-            Vector3 sunPosition = new Vector3(100000, 0, 0) + camera.Position;
-            Vector3 moonPosition = new Vector3(-100000, 0, 0) + camera.Position;
-            sunPosition = Vector3.Transform(sunPosition, rot);
+            SunPosition = new Vector3(1000, 100, 0);
+            Vector3 moonPosition = new Vector3(-1000, 100, 0);
+            SunPosition = Vector3.Transform(SunPosition, rot);
             moonPosition = Vector3.Transform(moonPosition, rot);
+            SunPosition += camera.Position;
+            moonPosition += camera.Position;
 
 
-            Vector3 cameraFrameSun = Vector3.Transform(sunPosition, camera.ViewMatrix * camera.ProjectionMatrix);
+            Vector3 cameraFrameSun = Vector3.Transform(SunPosition, camera.ViewMatrix * camera.ProjectionMatrix);
             Vector3 cameraFramMoon = Vector3.Transform(moonPosition, camera.ViewMatrix * camera.ProjectionMatrix);
 
 
-            Vector3 unProjectSun = viewPort.Project(sunPosition, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
+            Vector3 unProjectSun = viewPort.Project(SunPosition, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
             Vector3 unProjectMoon = viewPort.Project(moonPosition, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
 
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
@@ -109,6 +113,10 @@ namespace DwarfCorp
                 DwarfGame.SpriteBatch.Draw(MoonTexture, new Vector2(unProjectMoon.X - MoonTexture.Width / 2, unProjectMoon.Y - MoonTexture.Height / 2), Color.White);
             }
             DwarfGame.SpriteBatch.End();
+
+            Vector3 sunDir = (camera.Position - SunPosition);
+            sunDir.Normalize();
+            SunlightDir = sunDir;
         }
     }
 

@@ -162,7 +162,7 @@ namespace DwarfCorp
         {
             List<Room> rooms = Faction.GetRooms();
 
-            bool hasBalloonPort = rooms.Any(room => room.RoomType.Name == "BalloonPort");
+            bool hasBalloonPort = rooms.Any(room => room.RoomData.Name == "BalloonPort");
 
             if (CurrentApplicant.Level.Pay*4 > Faction.Economy.CurrentMoney)
             {

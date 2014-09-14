@@ -19,11 +19,11 @@ namespace DwarfCorp
 
         public Inventory()
         {
-            
+            DrawBoundingBox = true;
         }
 
-        public Inventory(ComponentManager manager, string name, Body parent) :
-            base(manager, name, parent, Matrix.Identity, parent.BoundingBox.Extents(), parent.BoundingBoxPos)
+        public Inventory(string name, Body parent) :
+            base(name, parent, Matrix.Identity, parent.BoundingBox.Extents(), parent.BoundingBoxPos)
         {
             
         }
@@ -60,7 +60,7 @@ namespace DwarfCorp
             (new ResourceAmount
             {
                 NumResources = 1,
-                ResourceType = ResourceLibrary.Resources[item.UserData.Tags[0]]
+                ResourceType = ResourceLibrary.GetResourceByName(item.UserData.Tags[0])
             });
 
             if(!success)
@@ -88,8 +88,8 @@ namespace DwarfCorp
 
             for(int i = 0; i < resources.NumResources; i++)
             {
-                Body newEntity = EntityFactory.GenerateComponent(resources.ResourceType.ResourceName, GlobalTransform.Translation + MathFunctions.RandVector3Cube() * 0.5f,
-                    Manager, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics, PlayState.ChunkManager, Manager.Factions, PlayState.Camera);
+                Body newEntity = EntityFactory.GenerateResource(resources.ResourceType.ResourceName,
+                    GlobalTransform.Translation + MathFunctions.RandVector3Cube()*0.5f);
                 toReturn.Add(newEntity);
             }
 
@@ -104,8 +104,8 @@ namespace DwarfCorp
             {
                 for(int i = 0; i < resource.NumResources; i++)
                 {
-                   Physics item =  EntityFactory.GenerateComponent(resource.ResourceType.ResourceName, MathFunctions.RandVector3Box(GetBoundingBox()), Manager, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics, PlayState.ChunkManager, Manager.Factions, PlayState.Camera) as Physics;
-
+                    Physics item = EntityFactory.GenerateResource(resource.ResourceType.ResourceName,
+                        MathFunctions.RandVector3Box(GetBoundingBox())) as Physics;
                     if(item != null)
                     {
                         item.Velocity = MathFunctions.RandVector3Cube() * 5.0f;

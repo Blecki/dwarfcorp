@@ -10,7 +10,9 @@ namespace DwarfCorp
         public enum JobType
         {
             Worker,
-            AxeDwarf
+            AxeDwarf,
+            Wizard,
+            CraftsDwarf
         }
 
         public static Dictionary<JobType, EmployeeClass> Classes { get; set; }
@@ -20,6 +22,8 @@ namespace DwarfCorp
             Classes = new Dictionary<JobType, EmployeeClass>();
             Classes[JobType.Worker] = new WorkerClass();
             Classes[JobType.AxeDwarf] = new AxeDwarfClass();
+            Classes[JobType.CraftsDwarf] = new CraftDwarfClass();
+            Classes[JobType.Wizard] = new WizardClass();
         }
     }
 }

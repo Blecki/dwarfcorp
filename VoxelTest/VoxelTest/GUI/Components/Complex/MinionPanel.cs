@@ -123,6 +123,7 @@ namespace DwarfCorp
             Minion.Stats.LevelUp();
             SoundManager.PlaySound(ContentPaths.Audio.change);
             UpdatePanel();
+            Minion.AddThought(Thought.ThoughtType.GotPromoted);
         }
 
         private MiniBar CreateStatusBar(string name, GridLayout layout)
@@ -155,6 +156,7 @@ namespace DwarfCorp
             StatLabels["Constitution"].Text = "CON: " + Minion.Stats.Constitution;
             StatLabels["Intelligence"].Text = "INT: " + Minion.Stats.Intelligence;
             StatLabels["Size"].Text = "SIZ: " + Minion.Stats.Size;
+            StatusBars["Happiness"].ToolTip = GetThoughtString(Minion);
 
             foreach(var status in Minion.Status.Statuses)
             {
@@ -188,6 +190,20 @@ namespace DwarfCorp
             PayLabel.Text = "Pay: " + Minion.Stats.CurrentLevel.Pay.ToString("C0") + " / day";
 
 
+        }
+
+        public string GetThoughtString(CreatureAI minion)
+        {
+            if (minion == null) return "";
+
+            string toReturn = "Status: " + minion.Status.Happiness.GetDescription() + "\n";
+
+            foreach (Thought thought in minion.Thoughts)
+            {
+                string sign = thought.HappinessModifier > 0 ? "+" : "-";
+                toReturn += thought.Description + " (" + sign + (int) thought.HappinessModifier + ")" + "\n";
+            }
+            return toReturn;
         }
 
         public void SetMinion(CreatureAI myMinion)

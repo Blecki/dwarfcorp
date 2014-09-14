@@ -16,7 +16,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class BuildTool : PlayerTool
     {
-        public override void OnVoxelsSelected(List<VoxelRef> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
             Player.Faction.RoomBuilder.VoxelsSelected(voxels, button);
             Player.Faction.PutDesignator.VoxelsSelected(voxels, button);

@@ -16,7 +16,7 @@ namespace DwarfCorp
     {
         public Dictionary<string, Faction> Factions { get; set; }
 
-        public void Initialize(PlayState state)
+        public void Initialize(PlayState state, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
         {
             Factions = new Dictionary<string, Faction>();
             Factions["Player"] = new Faction
@@ -25,7 +25,7 @@ namespace DwarfCorp
                 Alliance = "Dwarf",
                 CreatureTypes = new List<string> { "Dwarf", "AxeDwarf"}
             };
-            Factions["Player"].Economy = new Economy(Factions["Player"], 100.0f, state);
+            Factions["Player"].Economy = new Economy(Factions["Player"], 100.0f, state, companyName, companyMotto, companyLogo, companyColor);
 
             Factions["Goblins"] = new Faction
             {

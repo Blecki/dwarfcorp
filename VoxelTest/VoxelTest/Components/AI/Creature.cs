@@ -57,7 +57,9 @@ namespace DwarfCorp
         public CreatureStatus Status { get; set; }
 
         public Timer JumpTimer { get; set; }
-        
+
+        public bool OverrideCharacterMode { get; set; }
+
         protected CharacterMode currentCharacterMode = CharacterMode.Idle;
 
         public CharacterMode CurrentCharacterMode
@@ -65,12 +67,19 @@ namespace DwarfCorp
             get { return currentCharacterMode; }
             set
             {
+                if (OverrideCharacterMode) return;
+                
                 currentCharacterMode = value;
                 if(Sprite != null)
                 {
                     Sprite.SetCurrentAnimation(value.ToString());
                 }
             }
+        }
+
+        public bool IsAsleep
+        {
+            get { return CharacterMode.Sleeping == CurrentCharacterMode; }
         }
 
         public bool IsOnGround { get; set; }
@@ -104,7 +113,7 @@ namespace DwarfCorp
 
         public Creature()
         {
-            
+            OverrideCharacterMode = false;
         }
 
         public Creature(CreatureStats stats,
@@ -112,14 +121,12 @@ namespace DwarfCorp
             PlanService planService,
             Faction faction,
             Physics parent,
-            ComponentManager manager,
             ChunkManager chunks,
             GraphicsDevice graphics,
             ContentManager content,
             string name) :
-                base(parent.Manager, name, parent)
+                base(name, parent)
         {
-            Manager = manager;
             IsOnGround = true;
             Physics = parent;
             Stats = stats;
@@ -135,6 +142,7 @@ namespace DwarfCorp
             Status = new CreatureStatus();
             IsHeadClear = true;
             NoiseMaker = new NoiseMaker();
+            OverrideCharacterMode = false;
             SelectionCircle = new SelectionCircle(Manager, Physics)
             {
                 IsVisible = false
@@ -156,17 +164,15 @@ namespace DwarfCorp
 
         public void CheckNeighborhood(ChunkManager chunks, float dt)
         {
-            VoxelRef voxelBelow =  chunks.ChunkData.GetVoxelReferenceAtWorldLocation(Physics.GlobalTransform.Translation - Vector3.UnitY * 0.8f);
-            VoxelRef voxelAbove = chunks.ChunkData.GetVoxelReferenceAtWorldLocation(Physics.GlobalTransform.Translation + Vector3.UnitY);
-
-
+            Voxel voxelBelow =  chunks.ChunkData.GetVoxelerenceAtWorldLocation(Physics.GlobalTransform.Translation - Vector3.UnitY * 0.8f);
+            Voxel voxelAbove = chunks.ChunkData.GetVoxelerenceAtWorldLocation(Physics.GlobalTransform.Translation + Vector3.UnitY);
 
             if (voxelAbove != null)
             {
-                IsHeadClear = voxelAbove.TypeName == "empty";
+                IsHeadClear = voxelAbove.IsEmpty;
             }
 
-            if(voxelBelow != null && voxelBelow.GetWaterLevel(chunks) > 5)
+            if(voxelBelow != null && voxelBelow.WaterLevel > 5)
             {
                 IsOnGround = false;
                 CurrentCharacterMode = CharacterMode.Swimming;
@@ -257,6 +263,7 @@ namespace DwarfCorp
                 case Message.MessageType.OnHurt:
                     NoiseMaker.MakeNoise("Hurt", AI.Position);
                     this.Sprite.Blink(0.5f);
+                    AI.AddThought(Thought.ThoughtType.TookDamage);
                     PlayState.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 5);
                     break;
             }

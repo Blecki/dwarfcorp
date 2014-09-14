@@ -11,7 +11,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GuardVoxelAct : CompoundCreatureAct
     {
-        public VoxelRef Voxel { get; set; }
+        public Voxel Voxel { get; set; }
 
 
         public GuardVoxelAct()
@@ -24,7 +24,7 @@ namespace DwarfCorp
             return Agent.Faction.IsGuardDesignation(Voxel);
         }
 
-        public GuardVoxelAct(CreatureAI agent, VoxelRef voxel) :
+        public GuardVoxelAct(CreatureAI agent, Voxel voxel) :
             base(agent)
         {
             Voxel = voxel;
