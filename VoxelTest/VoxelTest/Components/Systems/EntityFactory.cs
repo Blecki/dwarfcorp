@@ -1002,7 +1002,21 @@ namespace DwarfCorp
             ChunkManager chunks)
         {
             return new Snake(ContentPaths.Entities.Animals.Snake.snake, position, componentManager, chunks, graphics, content, "Snake").Physics;
-        }    
+        }
+
+        public static Body GenerateCraftItem(CraftLibrary.CraftItemType itemType, Vector3 position)
+        {
+            switch (itemType)
+            {
+                    case CraftLibrary.CraftItemType.BearTrap:
+                        throw new NotImplementedException();
+                        return null;
+                    case CraftLibrary.CraftItemType.Lamp:
+                        return (Body) GenerateLamp(position + new Vector3(0.5f, 0.5f, 0.5f), PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice);
+            }
+
+            return null;
+        }
     }
 
 }

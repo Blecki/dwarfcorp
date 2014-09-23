@@ -253,6 +253,8 @@ namespace DwarfCorp.GameStates
 
         private bool SleepPrompt = false;
 
+        public static CraftLibrary CraftLibrary = null;
+
         #endregion
 
         /// <summary>
@@ -384,6 +386,8 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public void InitializeStaticData(string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
         {
+            CraftLibrary = new CraftLibrary();
+            
             if (SoundManager.Content == null)
             {
                 SoundManager.Content = Content;
@@ -1430,7 +1434,8 @@ namespace DwarfCorp.GameStates
 
             if(Master.CurrentToolMode == GameMaster.ToolMode.Build)
             {
-                Master.Faction.PutDesignator.Render(gameTime, GraphicsDevice, cubeEffect);
+                Master.Faction.WallBuilder.Render(gameTime, GraphicsDevice, cubeEffect);
+                Master.Faction.CraftBuilder.Render(gameTime, GraphicsDevice, cubeEffect);
             }
 
             //ComponentManager.CollisionManager.DebugDraw();

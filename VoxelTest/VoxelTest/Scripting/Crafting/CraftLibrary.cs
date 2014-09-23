@@ -11,7 +11,8 @@ namespace DwarfCorp
     {
         public enum CraftItemType
         {
-            BearTrap
+            BearTrap,
+            Lamp
         };
 
         public static Dictionary<CraftItemType, CraftItem> CraftItems { get; set; }
@@ -45,9 +46,21 @@ namespace DwarfCorp
                         RequiredResources = new List<ResourceAmount>()
                         {
                             new ResourceAmount(ResourceLibrary.ResourceType.Iron, 4)
-                        }
+                        },
+                        BaseCraftTime = 20
                     }
-
+                },
+                {
+                    CraftItemType.Lamp,
+                    new CraftItem()
+                    {
+                        Name = "Lamp",
+                        RequiredResources = new List<ResourceAmount>()
+                        {
+                            new ResourceAmount(ResourceLibrary.ResourceType.Coal, 1)
+                        },
+                        BaseCraftTime = 10
+                    }
                 }
             };
 

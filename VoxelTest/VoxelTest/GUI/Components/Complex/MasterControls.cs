@@ -95,9 +95,19 @@ namespace DwarfCorp
                 string voxType = BuildPanel.CurrentWallType;
                 if (string.IsNullOrEmpty(voxType)) return;
 
-                Master.Faction.PutDesignator.CurrentVoxelType = VoxelLibrary.GetVoxelType(voxType);
+                Master.Faction.WallBuilder.CurrentVoxelType = VoxelLibrary.GetVoxelType(voxType);
                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                 Master.Faction.RoomBuilder.CurrentRoomData = null;
+                Master.Faction.CraftBuilder.IsEnabled = false;
+            }
+            else if (arg.Contains("Craft"))
+            {
+                CraftLibrary.CraftItemType itemType = BuildPanel.CurrentCraftType;
+                Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                Master.Faction.RoomBuilder.CurrentRoomData = null;
+                Master.Faction.WallBuilder.CurrentVoxelType = null;
+                Master.Faction.CraftBuilder.CurrentCraftType = itemType;
+                Master.Faction.CraftBuilder.IsEnabled = true;
             }
             else
             {
@@ -105,7 +115,8 @@ namespace DwarfCorp
 
                 Master.Faction.RoomBuilder.CurrentRoomData = RoomLibrary.GetData(arg);
                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-                Master.Faction.PutDesignator.CurrentVoxelType = null;
+                Master.Faction.WallBuilder.CurrentVoxelType = null;
+                Master.Faction.CraftBuilder.IsEnabled = false;
             }
         }
 

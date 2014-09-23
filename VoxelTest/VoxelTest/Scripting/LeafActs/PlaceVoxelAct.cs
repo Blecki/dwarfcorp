@@ -33,15 +33,15 @@ namespace DwarfCorp
             }
             else
             {
-                if(Creature.Faction.PutDesignator.IsDesignation(Voxel))
+                if(Creature.Faction.WallBuilder.IsDesignation(Voxel))
                 {
                     grabbed.Die();
 
-                    WallBuilder put = Creature.Faction.PutDesignator.GetDesignation(Voxel);
+                    WallBuilder put = Creature.Faction.WallBuilder.GetDesignation(Voxel);
                     put.Put(PlayState.ChunkManager);
 
 
-                    Creature.Faction.PutDesignator.Designations.Remove(put);
+                    Creature.Faction.WallBuilder.Designations.Remove(put);
                     Creature.Stats.NumBlocksPlaced++;
                     yield return Status.Success;
                 }

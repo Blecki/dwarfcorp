@@ -68,14 +68,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1014272">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1025536">
       <assemblyIdentity name="DwarfCorp" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>Z+5Ug3vRIK7y7LTWVpHeujOFVgc=</dsig:DigestValue>
+        <dsig:DigestValue>3gL82KNoqj6T7VsOr7phJamXABY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -451,13 +451,13 @@
       <dsig:DigestValue>OCPQDmfIdgSACwIHzki3hIzkixI=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Entities\Dwarf\Sprites\dwarf-wizard.xnb" size="8336">
+  <file name="Content\Entities\Dwarf\Sprites\dwarf-wizard.xnb" size="14588">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>F/EPks40v2G6FCUjO+v/4ajHWbQ=</dsig:DigestValue>
+      <dsig:DigestValue>ngAiDLfjbkfvWsxlS84CAirF7nM=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Entities\Dwarf\Sprites\soldier-axe-shield.xnb" size="12616">

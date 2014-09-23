@@ -32,7 +32,8 @@ namespace DwarfCorp
             ShipDesignations = new List<ShipOrder>();
             GatherDesignations = new List<Body>();
             RoomBuilder = new RoomBuilder(this);
-            PutDesignator = new PutDesignator(this, TextureManager.GetTexture("TileSet"));
+            WallBuilder = new PutDesignator(this, TextureManager.GetTexture("TileSet"));
+            CraftBuilder = new CraftBuilder(this);
             CreatureTypes = new List<string>();
         }
 
@@ -50,7 +51,8 @@ namespace DwarfCorp
         public List<ShipOrder> ShipDesignations { get; set; }
         public List<string> CreatureTypes { get; set; } 
         public RoomBuilder RoomBuilder { get; set; }
-        public PutDesignator PutDesignator { get; set; }
+        public PutDesignator WallBuilder { get; set; }
+        public CraftBuilder CraftBuilder { get; set; }
         public Color DigDesignationColor { get; set; }
 
         public TaskManager TaskManager { get; set; }

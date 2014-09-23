@@ -19,7 +19,8 @@ namespace DwarfCorp
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
             Player.Faction.RoomBuilder.VoxelsSelected(voxels, button);
-            Player.Faction.PutDesignator.VoxelsSelected(voxels, button);
+            Player.Faction.WallBuilder.VoxelsSelected(voxels, button);
+            Player.Faction.CraftBuilder.VoxelsSelected(voxels, button);
         }
 
         public override void Update(DwarfGame game, GameTime time)
