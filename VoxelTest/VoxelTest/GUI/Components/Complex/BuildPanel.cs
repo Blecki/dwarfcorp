@@ -239,7 +239,6 @@ namespace DwarfCorp
                 WordWrap = true
             };
 
-
             layout.SetComponentPosition(description, 0, 1, 3, 1);
 
             ImagePanel image = new ImagePanel(GUI, layout, Buttons["Craft"].Image)
@@ -269,6 +268,7 @@ namespace DwarfCorp
         private void craftcombo_OnSelectionModified(string arg)
         {
             CurrentCraftType = CraftLibrary.GetType(arg);
+            OnSelectionChanged("Craft");
 
         }
 

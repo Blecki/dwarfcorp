@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using DwarfCorp.Scripting.LeafActs;
 //using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework;
@@ -18,20 +19,27 @@ namespace DwarfCorp
         public GoToTaggedObjectAct()
         {
             Name = "Go to tagged object";
+            ObjectName = "Tagged Object";
         }
 
         public GoToTaggedObjectAct(CreatureAI agent) :
             base(agent)
         {
             Name = "Go to tagged object";
+            ObjectName = "Tagged Object";
         }
 
 
         public override void Initialize()
         {
-            Body closestItem = Agent.Faction.FindNearestItemWithTags(Tag, Agent.Position, true);
+            base.Initialize();
+        }
 
+        public override IEnumerable<Status> Run()
+        {
+            Body closestItem = Agent.Faction.FindNearestItemWithTags(Tag, Agent.Position, false);
 
+            Creature.AI.Blackboard.Erase(ObjectName);
             if (closestItem != null)
             {
                 closestItem.ReservedFor = Agent;
@@ -39,13 +47,14 @@ namespace DwarfCorp
 
                 if (Teleport)
                 {
-                     Tree =
-                    new Sequence
-                    (
-                        new SetBlackboardData<Body>(Creature.AI, ObjectName, closestItem),
-                        new GoToEntityAct(closestItem, Creature.AI),
-                        new TeleportAct(Creature.AI) { Location = TeleportOffset + closestItem.BoundingBox.Center()}
-                    ) | unreserveAct;   
+                    Tree =
+                   new Sequence
+                   (
+                       new SetBlackboardData<Body>(Creature.AI, ObjectName, closestItem),
+                       new GoToEntityAct(closestItem, Creature.AI),
+                       new TeleportAct(Creature.AI) { Location = TeleportOffset + closestItem.BoundingBox.Center() },
+                       unreserveAct
+                   ) | unreserveAct;
                 }
                 else
                 {
@@ -53,15 +62,16 @@ namespace DwarfCorp
                     new Sequence
                     (
                        new SetBlackboardData<Body>(Creature.AI, ObjectName, closestItem),
-                       new GoToEntityAct(closestItem, Creature.AI)
-                    ) | unreserveAct;   
+                       new GoToEntityAct(closestItem, Creature.AI),
+                       unreserveAct
+                    ) | unreserveAct;
                 }
             }
             else
             {
                 Tree = null;
             }
-            base.Initialize();
+            return base.Run();
         }
     }
 }

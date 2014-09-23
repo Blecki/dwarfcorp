@@ -159,16 +159,19 @@
     <Compile Include="Scripting\Classes\SwordGoblinClass.cs" />
     <Compile Include="Scripting\Classes\WizardClass.cs" />
     <Compile Include="Scripting\Classes\WorkerClass.cs" />
+    <Compile Include="Scripting\CompoundActs\CraftItemAct.cs" />
     <Compile Include="Scripting\CompoundActs\FarmAct.cs" />
     <Compile Include="Scripting\CompoundActs\GoToChairAndSitAct.cs" />
     <Compile Include="Scripting\CompoundActs\GoToTaggedObjectAct.cs" />
     <Compile Include="Scripting\Crafting\CraftItem.cs" />
     <Compile Include="Scripting\Crafting\CraftLibrary.cs" />
+    <Compile Include="Scripting\LeafActs\CreateCraftItemAct.cs" />
     <Compile Include="Scripting\LeafActs\TeleportAct.cs" />
     <Compile Include="Scripting\MonsterSpawner.cs" />
     <Compile Include="Scripting\Player\Announcements\Announcement.cs" />
     <Compile Include="Scripting\Player\Announcements\AnnouncementManager.cs" />
     <Compile Include="Scripting\Player\Building\BuildStockpileOrder.cs" />
+    <Compile Include="Scripting\Player\Building\CraftBuilder.cs" />
     <Compile Include="Scripting\Player\Economy\Company.cs" />
     <Compile Include="Scripting\Player\Tools\AttackTool.cs" />
     <Compile Include="Scripting\Rooms\Farm.cs" />
@@ -236,6 +239,7 @@
     <Compile Include="Scripting\Player\Economy\ResourceContainer.cs" />
     <Compile Include="Scripting\Player\Tools\DwarfSelectorTool.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\BuildRoomTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\CraftItemTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\FarmTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\StockResourceTask.cs" />
     <Compile Include="Scripting\Thoughts\Thought.cs" />

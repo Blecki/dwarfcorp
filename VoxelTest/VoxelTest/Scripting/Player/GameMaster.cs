@@ -35,7 +35,8 @@ namespace DwarfCorp
             Guard,
             Attack,
             God,
-            Farm
+            Farm,
+            Craft
         }
 
 

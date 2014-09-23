@@ -37,7 +37,8 @@ namespace DwarfCorp
             GotPromoted,
             JustArrived,
             Other,
-            Farmed
+            Farmed,
+            Crafted
         }
 
         public static Thought CreateStandardThought(ThoughtType type, DateTime time)
@@ -134,6 +135,11 @@ namespace DwarfCorp
                     break;
                 case ThoughtType.KilledThing:
                     description = "I killed somehing!";
+                    happiness = 10.0f;
+                    limit = new TimeSpan(0, 8, 0, 0);
+                    break;
+                case ThoughtType.Crafted:
+                    description = "I crafted something!";
                     happiness = 10.0f;
                     limit = new TimeSpan(0, 8, 0, 0);
                     break;

@@ -137,7 +137,7 @@ namespace DwarfCorp
                 return tasks;
             }
 
-            foreach(WallBuilder put in Faction.PutDesignator.Designations)
+            foreach(WallBuilder put in Faction.WallBuilder.Designations)
             {
                 if(Faction.HasResources(new List<ResourceAmount>()
                 {

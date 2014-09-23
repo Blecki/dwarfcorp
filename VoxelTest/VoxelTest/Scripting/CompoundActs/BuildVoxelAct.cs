@@ -29,7 +29,7 @@ namespace DwarfCorp
                 new ResourceAmount(ResourceLibrary.Resources[type.ResourceToRelease], 1)
             };
 
-            if(Agent.Faction.PutDesignator.IsDesignation(voxel))
+            if(Agent.Faction.WallBuilder.IsDesignation(voxel))
             {
 
                 Tree = new Sequence(new GetResourcesAct(Agent, resources),
@@ -43,18 +43,6 @@ namespace DwarfCorp
 
                 Tree = null;
             }
-            /*
-            if(Agent.Faction.PutDesignator.IsDesignation(voxel))
-            {
-                Tree = new Sequence(new GetItemWithTagsAct(creature, tags),
-                    (new GoToVoxelAct(voxel, PlanAct.PlanType.Into, creature) | new GatherItemAct(creature, "HeldObject")),
-                    (new PlaceVoxelAct(voxel, creature) | new GatherItemAct(creature, "HeldObject")));
-            }
-            else
-            {
-                Tree = null;
-            }
-             */
         }
     }
 
