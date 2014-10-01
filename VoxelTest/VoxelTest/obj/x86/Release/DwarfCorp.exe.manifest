@@ -68,14 +68,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1025536">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1028096">
       <assemblyIdentity name="DwarfCorp" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>3gL82KNoqj6T7VsOr7phJamXABY=</dsig:DigestValue>
+        <dsig:DigestValue>/L70LTcQaVfglMaFN/3Ea1Z0oW4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -433,22 +433,22 @@
       <dsig:DigestValue>8puJy/TbxjBX2Fk2abE2DQujhEA=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Entities\Dwarf\Sprites\dwarf_animations.xnb" size="14568">
+  <file name="Content\Entities\Dwarf\Sprites\dwarf_animations.xnb" size="14576">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>hvwq9i/zZzCr0aLC+QMBQlxWGiM=</dsig:DigestValue>
+      <dsig:DigestValue>pBf0A5lTFCfxfpEXFycYq4rnbfE=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Entities\Dwarf\Sprites\dwarf-craft.xnb" size="7200">
+  <file name="Content\Entities\Dwarf\Sprites\dwarf-craft.xnb" size="12884">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>OCPQDmfIdgSACwIHzki3hIzkixI=</dsig:DigestValue>
+      <dsig:DigestValue>lWasmG8d5rvJl4RL4w16Tnr7xbo=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Entities\Dwarf\Sprites\dwarf-wizard.xnb" size="14588">
@@ -466,7 +466,7 @@
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>G34brMLbAwnYnP9vHzRbz7b5nTs=</dsig:DigestValue>
+      <dsig:DigestValue>C8fCJR1RfTY1qT+kXUjYWZmR2i0=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Entities\DwarfObjects\beartrap.xnb" size="1472">
