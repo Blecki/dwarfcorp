@@ -103,6 +103,7 @@ namespace DwarfCorp
             "Skeleton",
             "Necromancer",
             "Bed",
+            "BearTrap",
             "Lamp",
             "Table",
             "Chair",
@@ -186,6 +187,8 @@ namespace DwarfCorp
                     return (Body)GenerateNecromancer(position, componentManager, content, graphics, chunks, camera, factions.Factions["Undead"], PlayState.PlanService, "Undead");
                 case "Bed":
                     return GenerateBed(position, componentManager, content, graphics);
+                case "BearTrap":
+                    return GenerateCraftItem(CraftLibrary.CraftItemType.BearTrap, position - new Vector3(0.5f, 0.5f, 0.5f));
                 case "Lamp":
                     return (Body) GenerateLamp(position, componentManager, content, graphics);
                 case "Table":
@@ -1009,8 +1012,7 @@ namespace DwarfCorp
             switch (itemType)
             {
                     case CraftLibrary.CraftItemType.BearTrap:
-                        throw new NotImplementedException();
-                        return null;
+                        return new BearTrap(position + new Vector3(0.5f, 0.5f, 0.5f));
                     case CraftLibrary.CraftItemType.Lamp:
                         return (Body) GenerateLamp(position + new Vector3(0.5f, 0.5f, 0.5f), PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice);
             }
