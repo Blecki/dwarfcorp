@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Scripting.LeafActs
@@ -34,17 +35,18 @@ namespace DwarfCorp.Scripting.LeafActs
 
         public override IEnumerable<Status> Run()
         {
-            while(!Creature.Status.Energy.IsSatisfied())
+            while(!Creature.Status.Energy.IsSatisfied() && PlayState.Time.IsNight())
             {
                 if(Teleport)
                 {
                     Creature.AI.Position = TeleportLocation;
                 }
                 Creature.Status.Energy.CurrentValue += Dt * RechargeRate;
+                Creature.Status.Health.CurrentValue = Creature.Status.Health.MaxValue;
                 Creature.Status.IsAsleep = true;
                 yield return Status.Running;
             }
-
+            Creature.AI.AddThought(Thought.ThoughtType.Slept);
             Creature.Status.IsAsleep = false;
             yield return Status.Success;
         }

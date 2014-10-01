@@ -174,7 +174,8 @@ namespace DwarfCorp
                 GameMaster.ToolMode.Chop,
                 GameMaster.ToolMode.Dig,
                 GameMaster.ToolMode.Attack,
-                GameMaster.ToolMode.Gather
+                GameMaster.ToolMode.Gather,
+                GameMaster.ToolMode.Farm
             };
         }
 

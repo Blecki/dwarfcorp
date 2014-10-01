@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Configuration;
 using System.Runtime.Serialization;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Concurrent;
@@ -39,7 +41,7 @@ namespace DwarfCorp
 
         public List<string> Tags { get; set; }
 
-        public ComponentManager Manager { get; set; }
+        public ComponentManager Manager { get { return PlayState.ComponentManager; }}
 
         private static Object globalIdLock = new object();
 
@@ -52,6 +54,11 @@ namespace DwarfCorp
         }
 
 
+        public static void ResetMaxGlobalId(uint value)
+        {
+            maxGlobalID=value;
+        }
+
         public GameComponent()
         {
             Children = new List<GameComponent>();
@@ -61,7 +68,7 @@ namespace DwarfCorp
             Tags = new List<string>();
         }
 
-        public GameComponent(ComponentManager manager)
+        public GameComponent(bool createNew)
         {
             lock (globalIdLock)
             {
@@ -75,17 +82,15 @@ namespace DwarfCorp
             Name = "uninitialized";
             IsVisible = true;
             IsActive = true;
-            Manager = manager;
-
             IsDead = false;
 
-            manager.AddComponent(this);
+            Manager.AddComponent(this);
 
             Tags = new List<string>();
         }
 
-        public GameComponent(ComponentManager manager, string name, GameComponent parent) :
-            this(manager)
+        public GameComponent(string name, GameComponent parent) :
+            this(true)
         {
             Name = name;
             RemoveFromParent();

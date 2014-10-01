@@ -12,12 +12,17 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class GuardVoxelTask : Task
     {
-        public VoxelRef VoxelToGuard = null;
+        public Voxel VoxelToGuard = null;
 
-        public GuardVoxelTask(VoxelRef vox)
+        public GuardVoxelTask(Voxel vox)
         {
-            Name = "Guard Voxel: " + vox.WorldPosition;
+            Name = "Guard Voxel: " + vox.Position;
             VoxelToGuard = vox;
+        }
+
+        public override Task Clone()
+        {
+            return new GuardVoxelTask(VoxelToGuard);
         }
 
         public override Act CreateScript(Creature agent)
@@ -27,7 +32,7 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent)
         {
-            return VoxelToGuard == null ? 1000 : (agent.AI.Position - VoxelToGuard.WorldPosition).LengthSquared();
+            return VoxelToGuard == null ? 1000 : (agent.AI.Position - VoxelToGuard.Position).LengthSquared();
         }
 
         public override void Render(GameTime time)

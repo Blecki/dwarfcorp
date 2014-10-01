@@ -56,14 +56,21 @@ namespace DwarfCorp
 
 
         public Animation(string asset, int frameWidth, int frameHeigt, params int[] frames) :
-             this(GameState.Game.GraphicsDevice, TextureManager.GetTexture(asset), asset, frameWidth, frameHeigt, new List<Point>(), false, Color.White, 15.0f, 1.0f, 1.0f, false)
+             this(0, asset, frameWidth, frameHeigt, frames)
+        {
+
+        }
+
+        public Animation(int row, string asset, int frameWidth, int frameHeigt, params int[] frames) :
+            this(GameState.Game.GraphicsDevice, TextureManager.GetTexture(asset), asset, frameWidth, frameHeigt, new List<Point>(), false, Color.White, 15.0f, 1.0f, 1.0f, false)
         {
             Frames = new List<Point>();
             foreach (int i in frames)
             {
-                Frames.Add(new Point(i, 0));
+                Frames.Add(new Point(i, row));
             }
             CreatePrimitives(GameState.Game.GraphicsDevice);
+ 
         }
 
         public Animation(GraphicsDevice device, Texture2D sheet, string name, int frameWidth, int frameHeight, List<Point> frames, bool loops, Color tint, float frameHZ, float worldWidth, float worldHeight, bool flipped)

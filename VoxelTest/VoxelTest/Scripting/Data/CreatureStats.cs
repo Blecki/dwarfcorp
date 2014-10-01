@@ -41,7 +41,7 @@ namespace DwarfCorp
 
         public float EatSpeed { get { return Size + Strength; }}
 
-        public float HungerGrowth { get { return Size * 0.0025f; } }
+        public float HungerGrowth { get { return Size * 0.025f; } }
 
         public float Tiredness
         {
@@ -49,7 +49,7 @@ namespace DwarfCorp
             {
                 if(CanSleep)
                 {
-                    return 0.25f / Constitution;
+                    return 1.0f / Constitution;
                 }
                 else
                 {
@@ -82,7 +82,7 @@ namespace DwarfCorp
             set
             {
                 xp = value;
-                if (xp > CurrentClass.Levels[LevelIndex + 1].XP)
+                if (IsOverQualified)
                 {
                     if (!announced)
                     {
@@ -94,6 +94,11 @@ namespace DwarfCorp
                 }
             }
         }
+
+        public bool IsOverQualified {
+            get { return XP > CurrentClass.Levels[LevelIndex + 1].XP; }}
+
+        public float BaseFarmSpeed { get { return Intelligence/100.0f + Strength/100.0f; }}
 
         public CreatureStats()
         {

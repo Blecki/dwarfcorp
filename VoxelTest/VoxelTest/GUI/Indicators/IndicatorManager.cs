@@ -62,7 +62,8 @@ namespace DwarfCorp
             DownArrow,
             UpArrow,
             LeftArrow,
-            RightArrow
+            RightArrow,
+            Dots
         }
 
         public static Dictionary<StandardIndicators, ImageFrame> StandardFrames = new Dictionary<StandardIndicators, ImageFrame>(); 
@@ -81,6 +82,7 @@ namespace DwarfCorp
             StandardFrames[StandardIndicators.Exclaim] = new ImageFrame(indicators, 16, 0, 1);
             StandardFrames[StandardIndicators.Heart] = new ImageFrame(indicators, 16, 4, 1);
             StandardFrames[StandardIndicators.Boom] = new ImageFrame(indicators, 16, 2, 1);
+            StandardFrames[StandardIndicators.Dots] = new ImageFrame(indicators, 16, 3, 1);
             StandardFrames[StandardIndicators.DownArrow] = new ImageFrame(indicators, 16, 0, 2);
             StandardFrames[StandardIndicators.UpArrow] = new ImageFrame(indicators, 16, 1, 2);
             StandardFrames[StandardIndicators.LeftArrow] = new ImageFrame(indicators, 16, 2, 2);

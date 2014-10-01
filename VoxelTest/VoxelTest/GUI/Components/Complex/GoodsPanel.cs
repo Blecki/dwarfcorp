@@ -25,14 +25,14 @@ namespace DwarfCorp
         public List<GItem> GetResources(float priceMultiplier)
         {
             return (from r in ResourceLibrary.Resources.Values
-                    select new GItem(r.ResourceName, r.Image, 0, 1000, 1000, r.MoneyValue * priceMultiplier, r.Tags)).ToList();
+                    select new GItem(r.ResourceName, r.Image, 0, 1000, 1000, r.MoneyValue * priceMultiplier)).ToList();
         }
 
         public List<GItem> GetResources(List<ResourceAmount> resources )
         {
             return (from r in resources
                     where r.NumResources > 0
-                    select new GItem(r.ResourceType.ResourceName, r.ResourceType.Image, 0, 1000, r.NumResources, r.ResourceType.MoneyValue, r.ResourceType.Tags)).ToList();
+                    select new GItem(r.ResourceType.ResourceName, r.ResourceType.Image, 0, 1000, r.NumResources, r.ResourceType.MoneyValue)).ToList();
         }
 
         public void CreateBuyTab()
@@ -71,7 +71,8 @@ namespace DwarfCorp
                     ItemSelector.Column.TotalPrice
                 },
                 NoItemsMessage = "No items selected",
-                ToolTip = "Click items to remove them from the shopping cart"
+                ToolTip = "Click items to remove them from the shopping cart",
+                PerItemCost = 1.00f
             };
             ShoppingCart.ReCreateItems();
             buyBoxLayout.SetComponentPosition(ShoppingCart, 2, 0, 2, 9);
@@ -108,7 +109,7 @@ namespace DwarfCorp
                 Faction.AddResources(new ResourceAmount(item.Name) { NumResources = item.CurrentAmount });
             }
 
-            SellSelector.Items = GetResources(Faction.ListResources());
+            SellSelector.Items = GetResources(Faction.ListResources().Values.ToList());
             SellSelector.ReCreateItems();
 
         }
@@ -161,7 +162,8 @@ namespace DwarfCorp
         void shoppingCart_OnItemChanged(GItem item)
         {
             float total = ShoppingCart.ComputeTotal();
-            BuyTotal.Text = "Order Total: " + total.ToString("C");
+            float shipping = ShoppingCart.ComputeShipping();
+            BuyTotal.Text = "Order Total: " + (total).ToString("C") + "\n (" + shipping.ToString("C") + " shipping)";
 
             if(total > Faction.Economy.CurrentMoney)
             {
@@ -177,7 +179,7 @@ namespace DwarfCorp
 
         void SellCart_OnItemChanged(GItem item)
         {
-            SellTotal.Text = "Order Total: " +SellCart.ComputeTotal().ToString("C");
+            SellTotal.Text = "Order Total: " + SellCart.ComputeTotal().ToString("C");
         }
 
 
@@ -203,7 +205,7 @@ namespace DwarfCorp
 
             sellBoxLayout.SetComponentPosition(SellSelector, 0, 0, 2, 10);
 
-            SellSelector.Items.AddRange(GetResources(Faction.ListResources()));
+            SellSelector.Items.AddRange(GetResources(Faction.ListResources().Values.ToList()));
             SellSelector.ReCreateItems();
 
 

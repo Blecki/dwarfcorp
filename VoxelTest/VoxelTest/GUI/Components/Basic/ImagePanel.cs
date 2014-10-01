@@ -30,11 +30,14 @@ namespace DwarfCorp
         public bool KeepAspectRatio { get; set; }
         public bool ConstrainSize { get; set; }
         public bool Highlight { get; set; }
-       
+        public string AssetName { get; set; }
+
+
 
         public ImagePanel(DwarfGUI gui, GUIComponent parent, Texture2D image) :
             base(gui, parent)
         {
+            AssetName = "";
             Highlight = false;
             Lock = new Mutex();
             ConstrainSize = false;
@@ -49,6 +52,7 @@ namespace DwarfCorp
         public ImagePanel(DwarfGUI gui, GUIComponent parent, ImageFrame image) :
             base(gui, parent)
         {
+            AssetName = "";
             Lock = new Mutex();
             Image = image;
             KeepAspectRatio = true;

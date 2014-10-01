@@ -70,29 +70,30 @@ namespace DwarfCorp
             }
         }
 
-        public VoxelRef GetNearestFreeAdjacentVoxel(VoxelRef voxel, Vector3 referenceLocation)
+        public Voxel GetNearestFreeAdjacentVoxel(Voxel voxel, Vector3 referenceLocation)
         {
             if(voxel == null)
             {
                 return null;
             }
 
-            if(voxel.TypeName == "empty")
+            if(voxel.IsEmpty)
             {
                 return voxel;
             }
 
-            List<VoxelRef> neighbors = ChunkMap[voxel.ChunkID].GetNeighborsManhattan((int)voxel.GridPosition.X, (int)voxel.GridPosition.Y, (int)voxel.GridPosition.Z);
+            List<Voxel> neighbors = voxel.Chunk.AllocateVoxels(6);
+            voxel.Chunk.GetNeighborsManhattan((int)voxel.GridPosition.X, (int)voxel.GridPosition.Y, (int)voxel.GridPosition.Z, neighbors);
 
-            VoxelRef closestNeighbor = null;
+            Voxel closestNeighbor = null;
 
             float closestDist = 999;
 
-            foreach(VoxelRef neighbor in neighbors)
+            foreach(Voxel neighbor in neighbors)
             {
-                float d = (neighbor.WorldPosition - referenceLocation).LengthSquared();
+                float d = (neighbor.Position - referenceLocation).LengthSquared();
 
-                if(d < closestDist && neighbor.TypeName == "empty")
+                if(d < closestDist && neighbor.IsEmpty)
                 {
                     closestDist = d;
                     closestNeighbor = neighbor;
@@ -115,7 +116,7 @@ namespace DwarfCorp
 
         public Voxel GetFirstVisibleBlockHitByMouse(MouseState mouse, Camera camera, Viewport viewPort)
         {
-            Voxel vox = GetFirstVisibleBlockHitByScreenCoord(mouse.X, mouse.Y, camera, viewPort, 50.0f);
+             Voxel vox = GetFirstVisibleBlockHitByScreenCoord(mouse.X, mouse.Y, camera, viewPort, 50.0f);
 
             if(vox == null)
             {
@@ -147,10 +148,11 @@ namespace DwarfCorp
 
             for(int y = point.Y; y >= 0; y--)
             {
-                Voxel vox = startChunk.VoxelGrid[point.X][y][point.Z];
-                if(vox != null)
+                int index = startChunk.Data.IndexAt(point.X, y, point.Z);
+              
+                if(startChunk.Data.Types[index] != 0)
                 {
-                    return vox;
+                    return startChunk.MakeVoxel(point.X, y, point.Z);
                 }
             }
 
@@ -298,18 +300,18 @@ namespace DwarfCorp
             return null;
         }
 
-        public VoxelRef GetVoxelReferenceAtWorldLocation(Vector3 worldLocation)
+        public Voxel GetVoxelerenceAtWorldLocation(Vector3 worldLocation)
         {
-            return GetVoxelReferenceAtWorldLocation(null, worldLocation);
+            return GetVoxelerenceAtWorldLocation(null, worldLocation);
 
         }
 
-        public VoxelRef GetVoxelReferenceAtWorldLocation(VoxelChunk checkFirst, Vector3 worldLocation)
+        public Voxel GetVoxelerenceAtWorldLocation(VoxelChunk checkFirst, Vector3 worldLocation)
         {
             while(true)
             {
                 Vector3 grid;
-                VoxelRef newReference;
+                Voxel newReference;
                 if(checkFirst != null)
                 {
                     if(checkFirst.IsWorldLocationValid(worldLocation))
@@ -318,18 +320,11 @@ namespace DwarfCorp
 
                         if(v != null)
                         {
-                            return v.GetReference();
+                            return v;
                         }
 
                         grid = checkFirst.WorldToGrid(worldLocation);
-                        newReference = new VoxelRef
-                        {
-                            ChunkID = checkFirst.ID,
-                            GridPosition = new Vector3((int) grid.X, (int) grid.Y, (int) grid.Z)
-                        };
-                        newReference.WorldPosition = newReference.GridPosition + checkFirst.Origin;
-                        newReference.TypeName = "empty";
-                        newReference.IsValid = true;
+                        newReference = new Voxel(new Point3((int) grid.X, (int) grid.Y, (int) grid.Z), checkFirst);
                         return newReference;
                     }
 
@@ -346,21 +341,7 @@ namespace DwarfCorp
 
                 Voxel got = chunk.GetVoxelAtWorldLocation(worldLocation);
 
-                if(got != null)
-                {
-                    return got.GetReference();
-                }
-
-                grid = chunk.WorldToGrid(worldLocation);
-                newReference = new VoxelRef
-                {
-                    ChunkID = chunk.ID,
-                    GridPosition = new Vector3((int) grid.X, (int) grid.Y, (int) grid.Z),
-                    TypeName = "empty",
-                    IsValid = true
-                };
-                newReference.WorldPosition = newReference.GridPosition + chunk.Origin;
-                return newReference;
+                return got ?? null;
             }
         }
 
@@ -417,7 +398,7 @@ namespace DwarfCorp
 
                 Voxel v = checkFirst.GetVoxelAtWorldLocation(worldLocation);
 
-                if(v != null)
+                if(!v.IsEmpty)
                 {
                     return v;
                 }
@@ -437,7 +418,14 @@ namespace DwarfCorp
             }
 
             Voxel got = chunk.GetVoxelAtWorldLocation(worldLocation);
-            return got ?? null;
+            if (!got.IsEmpty)
+            {
+                return got;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public List<LiquidPrimitive> GetAllLiquidPrimitives()
@@ -468,15 +456,15 @@ namespace DwarfCorp
             }
 
             Vector3 gridPos = chunkAtLocation.WorldToGrid(worldLocation);
-            return chunkAtLocation.Water[(int) gridPos.X][(int) gridPos.Y][(int) gridPos.Z];
+            return chunkAtLocation.Data.Water[chunkAtLocation.Data.IndexAt((int) gridPos.X, (int) gridPos.Y, (int) gridPos.Z)];
         }
 
-        public List<VoxelRef> GetVoxelsIntersecting(BoundingBox box)
+        public List<Voxel> GetVoxelsIntersecting(BoundingBox box)
         {
             HashSet<VoxelChunk> intersects = new HashSet<VoxelChunk>();
             chunkManager.ChunkOctree.Root.GetComponentsIntersecting<VoxelChunk>(box, intersects);
 
-            List<VoxelRef> toReturn = new List<VoxelRef>();
+            List<Voxel> toReturn = new List<Voxel>();
 
             foreach(VoxelChunk chunk in intersects)
             {

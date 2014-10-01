@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
@@ -46,6 +47,32 @@ namespace DwarfCorp
             {
                 currentValue = Math.Max(Math.Min(v, MaxValue), MinValue);
             }
+
+            public string GetDescription()
+            {
+                if (CurrentValue >= MaxValue)
+                {
+                    return "VERY HAPPY";
+                }
+                else if (CurrentValue <= MinValue)
+                {
+                    return "LIVID";
+                }
+                else if (IsSatisfied())
+                {
+                    return "SATISFIED";
+                }
+                else if (IsUnhappy())
+                {
+                    return "UNHAPPY";
+                }
+                else
+                {
+                    return "OK";
+                }
+                
+            }
+
         }
 
         public Dictionary<string, Status> Statuses { get; set; }
@@ -69,7 +96,7 @@ namespace DwarfCorp
                 MaxValue = 100.0f,
                 MinValue = 0.0f,
                 Name = "Hunger",
-                SatisfiedThreshold = 80.0f,
+                SatisfiedThreshold = 95.0f,
                 UnhappyThreshold = 15.0f,
                 CurrentValue = 100.0f
             };
@@ -79,7 +106,7 @@ namespace DwarfCorp
                 MaxValue = 100.0f,
                 MinValue = 0.0f,
                 Name = "Energy",
-                SatisfiedThreshold = 80.0f,
+                SatisfiedThreshold = 99.0f,
                 UnhappyThreshold = 15.0f,
                 CurrentValue = 100.0f
             };
@@ -90,7 +117,7 @@ namespace DwarfCorp
                 MinValue = 0.0f,
                 Name = "Happiness",
                 SatisfiedThreshold = 80.0f,
-                UnhappyThreshold = 15.0f,
+                UnhappyThreshold = 20.0f,
                 CurrentValue = 50.0f
             };
 

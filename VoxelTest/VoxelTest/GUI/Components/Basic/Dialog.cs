@@ -38,6 +38,8 @@ namespace DwarfCorp
         public Label Title { get; set; }
         public Label Message { get; set; }
 
+        public GridLayout Layout { get; set; }
+
         public static Dialog Popup(DwarfGUI gui, string title, string message, ButtonType buttons, int w, int h, GUIComponent parent, int x, int y)
         {
             Dialog d = new Dialog(gui, parent)
@@ -73,16 +75,16 @@ namespace DwarfCorp
             IsModal = true;
             OnClicked += Dialog_OnClicked;
             OnClosed += Dialog_OnClosed;
+            
+            Layout = new GridLayout(GUI, this, 4, 4);
+            Title = new Label(GUI, Layout, title, GUI.DefaultFont);
+            Layout.SetComponentPosition(Title, 0, 0, 1, 1);
 
-            GridLayout layout = new GridLayout(GUI, this, 4, 4);
-            Title = new Label(GUI, layout, title, GUI.DefaultFont);
-            layout.SetComponentPosition(Title, 0, 0, 1, 1);
-
-            Message = new Label(GUI, layout, message, GUI.DefaultFont)
+            Message = new Label(GUI, Layout, message, GUI.DefaultFont)
             {
                 WordWrap = true
             };
-            layout.SetComponentPosition(Message, 0, 1, 4, 2);
+            Layout.SetComponentPosition(Message, 0, 1, 4, 2);
 
 
             bool createOK = false;
@@ -106,15 +108,15 @@ namespace DwarfCorp
 
             if (createOK)
             {
-                Button okButton = new Button(GUI, layout, "OK", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Check));
-                layout.SetComponentPosition(okButton, 2, 3, 2, 1);
+                Button okButton = new Button(GUI, Layout, "OK", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Check));
+                Layout.SetComponentPosition(okButton, 2, 3, 2, 1);
                 okButton.OnClicked += OKButton_OnClicked;
             }
 
             if (createCancel)
             {
-                Button cancelButton = new Button(GUI, layout, "Cancel", GUI.DefaultFont, Button.ButtonMode.PushButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Ex));
-                layout.SetComponentPosition(cancelButton, 0, 3, 2, 1);
+                Button cancelButton = new Button(GUI, Layout, "Cancel", GUI.DefaultFont, Button.ButtonMode.PushButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Ex));
+                Layout.SetComponentPosition(cancelButton, 0, 3, 2, 1);
                 cancelButton.OnClicked += cancelButton_OnClicked;
             }
         }

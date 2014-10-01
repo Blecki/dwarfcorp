@@ -105,6 +105,7 @@ namespace DwarfCorp
                         Creature.Physics.OrientWithVelocity = true;
                         Creature.Physics.Face(Creature.Physics.Velocity + Creature.Physics.GlobalTransform.Translation);
                         Creature.Stats.NumThingsKilled++;
+                        Creature.AI.AddThought(Thought.ThoughtType.KilledThing);
                         yield return Status.Success;
                         targetDead = true;
                         break;
@@ -112,7 +113,6 @@ namespace DwarfCorp
 
 
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
-                    Creature.Status.Energy.CurrentValue -= EnergyLoss * Dt * Creature.Stats.Tiredness;
                 
                 }
 

@@ -36,13 +36,17 @@ namespace DwarfCorp
 
             foreach(CreatureAI minion in Player.SelectedMinions)
             {
+                if (minion.Creature.IsAsleep) continue;
                 if(minion.CurrentTask != null)
                 {
                     minion.Tasks.Add(minion.CurrentTask);
+                    if(minion.CurrentTask.Script != null)
+                        minion.CurrentTask.Script.Initialize();
+                    minion.CurrentTask.SetupScript(minion.Creature);
                     minion.CurrentTask = null;
                 }
 
-                minion.CurrentTask = new GoToVoxelAct(vox.GetReference(), PlanAct.PlanType.Adjacent, minion).AsTask();
+                minion.CurrentTask = new GoToVoxelAct(vox, PlanAct.PlanType.Adjacent, minion).AsTask();
             }
 
             IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.DownArrow, vox.Position + Vector3.One * 0.5f, 0.5f, 2.0f, new Vector2(0, -50), Color.LightGreen);
@@ -54,7 +58,7 @@ namespace DwarfCorp
         {
             
         }
-        public override void OnVoxelsSelected(List<VoxelRef> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
           
         }

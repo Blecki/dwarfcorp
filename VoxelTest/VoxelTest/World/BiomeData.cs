@@ -25,6 +25,9 @@ namespace DwarfCorp
         public string SoilVoxel { get; set; }
         public string SubsurfVoxel { get; set; }
         public string ShoreVoxel { get; set; }
+        public bool ClumpGrass { get; set; }
+        public float ClumpSize { get; set; }
+        public float ClumpTreshold { get; set; }
 
         public BiomeData(Overworld.Biome biome)
         {
@@ -32,6 +35,9 @@ namespace DwarfCorp
             Vegetation = new List<VegetationData>();
             Motes = new List<DetailMoteData>();
             Fauna = new List<FaunaData>();
+            ClumpGrass = false;
+            ClumpSize = 30.0f;
+            ClumpTreshold = 0.75f;
         }
     }
 

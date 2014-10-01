@@ -73,6 +73,10 @@ namespace DwarfCorp
 
         public bool AllowShiftClick { get; set; }
 
+        public ScrollView ScrollArea { get; set; }
+
+        public float PerItemCost { get; set; }
+
         public int ComputeSpace()
         {
             int total = 0;
@@ -86,6 +90,18 @@ namespace DwarfCorp
             return total;
         }
 
+        public float ComputeShipping()
+        {
+            float total = 0;
+
+            foreach (GItem item in Items)
+            {
+                total += PerItemCost * item.CurrentAmount;
+            }
+
+            return total;
+        }
+
         public float ComputeTotal()
         {
             float total = 0;
@@ -93,6 +109,7 @@ namespace DwarfCorp
             foreach(GItem item in Items)
             {
                 total += item.CurrentAmount * item.Price;
+                total += PerItemCost * item.CurrentAmount;
             }
 
             return total;
@@ -109,7 +126,18 @@ namespace DwarfCorp
             };
 
             Items = new List<GItem>();
-            Layout = new GridLayout(gui, this, 14, 5);
+            GridLayout layout = new GridLayout(GUI, this, 1, 1)
+            {
+                EdgePadding = 32
+            };
+            ScrollArea = new ScrollView(GUI, layout)
+            {
+                DrawBorder = false
+            };
+
+            layout.UpdateSizes();
+            layout.SetComponentPosition(ScrollArea, 0, 0, 1, 1);
+            Layout = new GridLayout(gui, ScrollArea, 14, 5);
             OnItemChanged += ItemSelector_OnItemChanged;
             OnItemRemoved += ItemSelector_OnItemRemoved;
             OnItemAdded += ItemSelector_OnItemAdded;
@@ -145,7 +173,7 @@ namespace DwarfCorp
 
             if(existingItem == null)
             {
-                existingItem = new GItem(item.Name, item.Image, 0, 10000, amount, item.Price, item.Tags)
+                existingItem = new GItem(item.Name, item.Image, 0, 10000, amount, item.Price)
                 {
                     CurrentAmount = amount
                 };
@@ -359,7 +387,8 @@ namespace DwarfCorp
 
             if(Items.Count == 0)
             {
-                Layout = new GridLayout(GUI, this, 1, 1);
+                ScrollArea.RemoveChild(Layout);
+                Layout = new GridLayout(GUI, ScrollArea, 1, 1);
                 Label label = new Label(GUI, Layout, NoItemsMessage, GUI.DefaultFont);
 
                 Layout.SetComponentPosition(label, 0, 0, 1, 1);
@@ -368,8 +397,13 @@ namespace DwarfCorp
             }
 
             int rows = Math.Max(toDisplay.Count, 6);
-
-            Layout = new GridLayout(GUI, this, rows + 1, 6);
+            ScrollArea.RemoveChild(Layout);
+            ScrollArea.ResetScroll();
+            Layout = new GridLayout(GUI, ScrollArea, rows + 1, 6)
+            {
+                LocalBounds = new Rectangle(0, 0, Math.Max(ScrollArea.LocalBounds.Width, 512), rows * 64),
+                FitToParent = false
+            };
 
             for(int i = 0; i < toDisplay.Count; i++)
             {

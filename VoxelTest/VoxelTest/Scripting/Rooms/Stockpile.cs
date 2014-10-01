@@ -21,7 +21,8 @@ namespace DwarfCorp
     public class Stockpile : Room
     {
         private static uint maxID = 0;
-        public List<Body> Boxes { get; set; }  
+        public List<Body> Boxes { get; set; }
+        public static string StockpileName = "Stockpile";
 
         public static uint NextID()
         {
@@ -31,7 +32,7 @@ namespace DwarfCorp
 
 
         public Stockpile(string id, ChunkManager chunk) :
-            base(false, new List<VoxelRef>(), RoomLibrary.GetType("Stockpile"), PlayState.ChunkManager)
+            base(false, new List<Voxel>(), RoomLibrary.GetData(StockpileName), PlayState.ChunkManager)
         {
             Boxes = new List<Body>();
             ReplacementType = VoxelLibrary.GetVoxelType("Stockpile");
@@ -83,7 +84,7 @@ namespace DwarfCorp
             {
                 for (int i = Boxes.Count; i < numBoxes; i++)
                 {
-                    CreateBox(Voxels[i].WorldPosition);
+                    CreateBox(Voxels[i].Position);
                 }
             }
         }
@@ -103,11 +104,42 @@ namespace DwarfCorp
         }
 
 
+        public override void Destroy()
+        {
+            BoundingBox box = GetBoundingBox();
+            foreach (ResourceAmount resource in Resources)
+            {
+                for (int i = 0; i < resource.NumResources; i++)
+                {
+                    Physics body = EntityFactory.GenerateResource(resource.ResourceType.Type,
+                        Vector3.Up + MathFunctions.RandVector3Box(box)) as Physics;
+
+                    if (body != null)
+                    {
+                        body.Velocity = MathFunctions.RandVector3Cube();
+                    }
+                }
+            }
+            base.Destroy();
+        }
+
         public override void RecalculateMaxResources()
         {
 
             HandleBoxes();
             base.RecalculateMaxResources();
+        }
+
+        public static RoomData InitializeData()
+        {
+           List<RoomTemplate> stockpileTemplates = new List<RoomTemplate>();
+           Dictionary<ResourceLibrary.ResourceType, ResourceAmount> stockpileResources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
+
+            Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
+            return new RoomData(StockpileName, 0, "Stockpile", stockpileResources, stockpileTemplates, new ImageFrame(roomIcons, 16, 0, 0))
+            {
+                Description = "Dwarves can stock resources here",
+            };
         }
     }
 

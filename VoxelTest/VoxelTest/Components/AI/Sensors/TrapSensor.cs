@@ -15,7 +15,7 @@ namespace DwarfCorp
     class TrapSensor : Sensor
     {
         public TrapSensor(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-            base(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
+            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             OnSensed += TrapSensor_OnSensed;
             Tags.Add("Sensor");

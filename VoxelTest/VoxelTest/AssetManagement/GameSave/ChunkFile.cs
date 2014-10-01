@@ -84,25 +84,9 @@ namespace DwarfCorp
             int chunkSizeY = this.Size.Y;
             int chunkSizeZ = this.Size.Z;
             Vector3 origin = this.Origin;
-            Voxel[][][] voxels = ChunkGenerator.Allocate(chunkSizeX, chunkSizeY, chunkSizeZ);
+            //Voxel[][][] voxels = ChunkGenerator.Allocate(chunkSizeX, chunkSizeY, chunkSizeZ);
             float scaleFator = PlayState.WorldScale;
-
-            for(int x = 0; x < chunkSizeX; x++)
-            {
-                for(int z = 0; z < chunkSizeZ; z++)
-                {
-                    for(int y = 0; y < chunkSizeY; y++)
-                    {
-                        if(Types[x, y, z] > 0)
-                        {
-                            VoxelType t = VoxelType.TypeList[Types[x, y, z]];
-                            voxels[x][y][z] = new Voxel(new Vector3(x, y, z) + origin, t, VoxelLibrary.PrimitiveMap[t], true);
-                        }
-                    }
-                }
-            }
-
-            VoxelChunk c = new VoxelChunk(origin, manager, voxels, ID, 1)
+            VoxelChunk c = new VoxelChunk(manager, origin, 1, ID, chunkSizeX, chunkSizeY, chunkSizeZ)
             {
                 ShouldRebuild = true,
                 ShouldRecalculateLighting = true
@@ -114,12 +98,27 @@ namespace DwarfCorp
                 {
                     for(int y = 0; y < chunkSizeY; y++)
                     {
-                        if(Liquid[x, y, z] > 0)
+                        int index = c.Data.IndexAt(x, y, z);
+                        if(Types[x, y, z] > 0)
                         {
+                            c.Data.Types[index] = (byte) Types[x, y, z];
+                            c.Data.IsVisible[index] = true;
+                            c.Data.Health[index] = (byte)VoxelLibrary.GetVoxelType(Types[x, y, z]).StartingHealth;
                         }
+                    }
+                }
+            }
 
-                        c.Water[x][y][z].WaterLevel = Liquid[x, y, z];
-                        c.Water[x][y][z].Type = (LiquidType) LiquidTypes[x, y, z];
+
+            for(int x = 0; x < chunkSizeX; x++)
+            {
+                for(int z = 0; z < chunkSizeZ; z++)
+                {
+                    for(int y = 0; y < chunkSizeY; y++)
+                    {
+                        int index = c.Data.IndexAt(x, y, z);
+                        c.Data.Water[index].WaterLevel = Liquid[x, y, z];
+                        c.Data.Water[index].Type = (LiquidType) LiquidTypes[x, y, z];
                     }
                 }
             }
@@ -136,8 +135,9 @@ namespace DwarfCorp
                 {
                     for(int z = 0; z < Size.Z; z++)
                     {
-                        Voxel vox = chunk.VoxelGrid[x][y][z];
-                        WaterCell water = chunk.Water[x][y][z];
+                        int index = chunk.Data.IndexAt(x, y, z);
+                        Voxel vox = chunk.MakeVoxel(x, y, z);
+                        WaterCell water = chunk.Data.Water[index];
 
                         if(vox == null)
                         {

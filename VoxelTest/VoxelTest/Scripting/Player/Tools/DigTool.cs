@@ -20,21 +20,21 @@ namespace DwarfCorp
         public Color UnreachableColor { get; set; }
         public float DigDesignationGlowRate { get; set; }
 
-        public override void OnVoxelsSelected(List<VoxelRef> refs, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
         {
 
             if (button == InputManager.MouseButton.Left)
             {
                 List<Task> assignments = new List<Task>();
-                foreach (VoxelRef r in refs)
+                foreach (Voxel r in refs)
                 {
                     if (r == null)
                     {
                         continue;
                     }
 
-                    Voxel v = r.GetVoxel(false);
-                    if (v == null)
+                    Voxel v = r;
+                    if (v.IsEmpty)
                     {
                         continue;
                     }
@@ -51,19 +51,19 @@ namespace DwarfCorp
                     assignments.Add(new KillVoxelTask(r));
                 }
 
-                TaskManager.AssignTasks(assignments, Player.FilterMinionsWithCapability(Player.SelectedMinions, GameMaster.ToolMode.Dig));
+                TaskManager.AssignTasksGreedy(assignments, Player.FilterMinionsWithCapability(Player.SelectedMinions, GameMaster.ToolMode.Dig), 5);
             }
             else
             {
-                foreach (VoxelRef r in refs)
+                foreach (Voxel r in refs)
                 {
                     if (r == null)
                     {
                         continue;
                     }
-                    Voxel v = r.GetVoxel(false);
+                    Voxel v = r;
 
-                    if (v == null)
+                    if (v.IsEmpty)
                     {
                         continue;
                     }
@@ -104,10 +104,9 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
         {
-            /*
             foreach (BuildOrder d in Player.Faction.DigDesignations)
             {
-                VoxelRef v = d.Vox;
+                Voxel v = d.Vox;
 
                 BoundingBox box = v.GetBoundingBox();
 
@@ -124,7 +123,6 @@ namespace DwarfCorp
                 drawColor.B = (byte)(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
                 Drawer3D.DrawBox(box, drawColor, 0.05f, true);
             }
-             */
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)

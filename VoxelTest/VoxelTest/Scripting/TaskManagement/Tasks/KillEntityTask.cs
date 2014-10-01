@@ -19,6 +19,11 @@ namespace DwarfCorp
             EntityToKill = entity;
         }
 
+        public override Task Clone()
+        {
+            return new KillEntityTask(EntityToKill);
+        }
+
         public override Act CreateScript(Creature creature)
         {
             return new KillEntityAct(EntityToKill, creature.AI);

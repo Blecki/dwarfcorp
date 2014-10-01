@@ -12,6 +12,10 @@ namespace DwarfCorp
     /// </summary>
     public static class MathFunctions
     {
+        public static bool RandEvent(float probability)
+        {
+            return Rand(0, 1) < probability;
+        }
         public static float Rand()
         {
             return (float)PlayState.Random.NextDouble();
@@ -20,6 +24,11 @@ namespace DwarfCorp
         public static float Rand(float min, float max)
         {
             return Rand() * (max - min) + min;
+        }
+
+        public static Vector3 PeriodicRand(float time)
+        {
+            return new Vector3((float) Math.Cos(time + Rand() * 0.1f), (float) Math.Sin(time + Rand() * 0.1f), (float) Math.Sin(time - 0.5f + Rand() * 0.1f));
         }
 
         public static Vector3 GetClosestPointOnLineSegment(Vector3 A, Vector3 B, Vector3 P)

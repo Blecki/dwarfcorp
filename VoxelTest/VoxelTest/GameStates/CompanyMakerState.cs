@@ -18,24 +18,29 @@ namespace DwarfCorp.GameStates
         public GridLayout Layout { get; set; }
         public InputManager Input { get; set; }
 
-        public string CompanyName { get; set; }
-        public Texture2D CompanyLogo { get; set; }
         public ImagePanel CompanyLogoPanel { get; set; }
-        public string CompanyMotto { get; set; }
 
         private LineEdit CompanyNameEdit { get; set; }
         private LineEdit CompanyMottoEdit { get; set; }
-        private TextureLoadDialog Loader { get; set; }
+        private ColorPanel CompanyColorPanel { get; set; }
 
         public TextGenerator TextGenerator { get; set; }
-
+        public static Color DefaultColor = Color.DarkRed;
+        public static string DefaultName = "Greybeard & Sons";
+        public static string DefaultMotto = "My beard is in the work!";
+        public static NamedImageFrame DefaultLogo = new NamedImageFrame(ContentPaths.Logos.grebeardlogo);
+        public static string CompanyName { get; set; }
+        public static string CompanyMotto { get; set; }
+        public static NamedImageFrame CompanyLogo { get; set; }
+        public static Color CompanyColor { get; set; }
 
         public CompanyMakerState(DwarfGame game, GameStateManager stateManager) :
             base(game, "CompanyMakerState", stateManager)
         {
-            CompanyName = PlayerSettings.Default.CompanyName;
-            CompanyMotto = PlayerSettings.Default.CompanyMotto;
-            CompanyLogo = TextureManager.GetTexture("CompanyLogo");
+            CompanyName = DefaultName;
+            CompanyMotto = DefaultMotto;
+            CompanyLogo = DefaultLogo;
+            CompanyColor = DefaultColor;
             EdgePadding = 32;
             Input = new InputManager();
             Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
@@ -90,7 +95,8 @@ namespace DwarfCorp.GameStates
 
             CompanyLogoPanel = new ImagePanel(GUI, Layout, CompanyLogo)
             {
-                KeepAspectRatio = true
+                KeepAspectRatio = true,
+                AssetName = CompanyLogo.AssetName
             };
             Layout.SetComponentPosition(CompanyLogoPanel, 1, 3, 1, 1);
 
@@ -102,36 +108,71 @@ namespace DwarfCorp.GameStates
             Layout.SetComponentPosition(selectorButton, 2, 3, 1, 1);
             selectorButton.OnClicked += selectorButton_OnClicked;
 
-            Loader = new TextureLoadDialog(GUI, Layout, "CompanyLogo", CompanyLogo);
-            Layout.SetComponentPosition(Loader, 0, 4, 6, 4);
-            Loader.OnTextureSelected += Loader_OnTextureSelected;
-            Loader.IsVisible = false;
+            Label companyColorLabel = new Label(GUI, Layout, "Color", GUI.DefaultFont);
+            Layout.SetComponentPosition(companyColorLabel, 0, 4, 1, 1);
 
-            Button apply = new Button(GUI, Layout, "Apply", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Check));
-            Layout.SetComponentPosition(apply, 2, 9, 1, 1);
+            CompanyColorPanel = new ColorPanel(GUI, Layout) {CurrentColor = DefaultColor};
+            Layout.SetComponentPosition(CompanyColorPanel, 1, 4, 1, 1);
+            CompanyColorPanel.OnClicked += CompanyColorPanel_OnClicked;
+
+
+            Button apply = new Button(GUI, Layout, "Continue", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Check));
+            Layout.SetComponentPosition(apply, 3, 9, 1, 1);
 
             apply.OnClicked += apply_OnClicked;
 
             Button back = new Button(GUI, Layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.LeftArrow));
-            Layout.SetComponentPosition(back, 3, 9, 1, 1);
+            Layout.SetComponentPosition(back, 2, 9, 1, 1);
 
             back.OnClicked += back_onClicked;
 
             base.OnEnter();
         }
 
-        private void selectorButton_OnClicked()
+        public List<Color> GenerateDefaultColors()
         {
-            Loader.IsVisible = true;
+            List<Color> toReturn = new List<Color>();
+            for (int h = 0; h < 255; h+= 16)
+            {
+                for (int v = 64; v < 255; v += 64)
+                {
+                    toReturn.Add(new HSLColor((float)h, 255.0f, (float)v));   
+                }
+            }
+            return toReturn;
         }
 
-        private void Loader_OnTextureSelected(TextureLoader.TextureFile arg)
+        void CompanyColorPanel_OnClicked()
         {
-            PlayerSettings.Default.CompanyLogo = arg.File;
-            CompanyLogo = arg.Texture;
-            CompanyLogoPanel.Image = new ImageFrame(arg.Texture, new Rectangle(0, 0, arg.Texture.Width, arg.Texture.Height));
-            Loader.IsVisible = false;
+            ColorDialog colorDialog = ColorDialog.Popup(GUI, GenerateDefaultColors());
+            colorDialog.OnColorSelected += colorDialog_OnColorSelected;
         }
+
+        void colorDialog_OnColorSelected(Color arg)
+        {
+            CompanyColor = arg;
+            CompanyColorPanel.CurrentColor = arg;
+        }
+
+        private void selectorButton_OnClicked()
+        {
+            List<SpriteSheet> sprites = new List<SpriteSheet>()
+            {
+                new SpriteSheet(ContentPaths.Logos.grebeardlogo, 32),
+                new SpriteSheet(ContentPaths.Logos.logos, 32)
+            };
+            ImageFrameLoadDialog dialog = ImageFrameLoadDialog.Popup(GUI, sprites);
+            dialog.OnTextureSelected += Loader_OnTextureSelected;
+        }
+
+        
+        private void Loader_OnTextureSelected(NamedImageFrame arg)
+        {
+            CompanyLogo = arg;
+            CompanyLogoPanel.Image = arg;
+            CompanyLogoPanel.AssetName = arg.AssetName;
+        }
+         
 
         private void randomButton2_OnClicked()
         {
@@ -192,7 +233,6 @@ namespace DwarfCorp.GameStates
             templates.Add(thing4);
             templates.Add(thing6);
             CompanyMotto = TextGenerator.GenerateRandom(templates[PlayState.Random.Next(templates.Count)]);
-            PlayerSettings.Default.CompanyMotto = CompanyMotto;
             CompanyMottoEdit.Text = CompanyMotto;
         }
 
@@ -296,19 +336,19 @@ namespace DwarfCorp.GameStates
                 reversed
             };
             CompanyName = TextGenerator.GenerateRandom(templates[PlayState.Random.Next(templates.Count)]);
-            PlayerSettings.Default.CompanyName = CompanyName;
             CompanyNameEdit.Text = CompanyName;
         }
 
         private void companyMottoEdit_OnTextModified(string arg)
         {
             CompanyMotto = arg;
-            PlayerSettings.Default.CompanyMotto = arg;
         }
 
         private void apply_OnClicked()
         {
-            PlayerSettings.Default.Save();
+            CompanyName = CompanyNameEdit.Text;
+            CompanyMotto = CompanyMottoEdit.Text;
+            CompanyLogo = new NamedImageFrame(CompanyLogoPanel.AssetName, CompanyLogoPanel.Image.SourceRect);
             StateManager.PopState();
         }
 
@@ -320,7 +360,6 @@ namespace DwarfCorp.GameStates
         private void companyNameEdit_OnTextModified(string arg)
         {
             CompanyName = arg;
-            PlayerSettings.Default.CompanyName = arg;
         }
 
         public override void Update(GameTime gameTime)

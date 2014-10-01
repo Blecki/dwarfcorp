@@ -26,7 +26,7 @@ namespace DwarfCorp
         }
 
         public ParticleTrigger(string emitter, ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-            base(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos, false)
+            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos, false)
         {
             EmitterName = emitter;
             TriggerOnDeath = true;

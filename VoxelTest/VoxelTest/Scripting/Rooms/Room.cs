@@ -15,43 +15,49 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Room : Zone
     {
-        public List<VoxelRef> Designations { get; set; }
+        public List<Voxel> Designations { get; set; }
 
         public bool IsBuilt { get; set; }
-        public RoomType RoomType { get; set; }
-        private static int Counter = 0;
+        public RoomData RoomData { get; set; }
+        protected static int Counter = 0;
+        public WorldGUIObject GUIObject { get; set; }
 
         public Room() : base()
         {
             
         }
 
-        public Room(bool designation, IEnumerable<VoxelRef> designations, RoomType type, ChunkManager chunks) :
-            base(type.Name + " " + Counter, chunks)
+        public Room(bool designation, IEnumerable<Voxel> designations, RoomData data, ChunkManager chunks) :
+            base(data.Name + " " + Counter, chunks)
         {
-            RoomType = type;
-            ReplacementType = VoxelLibrary.GetVoxelType(RoomType.FloorType);
+            RoomData = data;
+            ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
             Chunks = chunks;
             Counter++;
             Designations = designations.ToList();
             IsBuilt = false;
         }
 
-        public Room(IEnumerable<VoxelRef> voxels, RoomType type, ChunkManager chunks) :
-            base(type.Name + " " + Counter, chunks)
+        public Room(IEnumerable<Voxel> voxels, RoomData data, ChunkManager chunks) :
+            base(data.Name + " " + Counter, chunks)
         {
-            RoomType = type;
-            ReplacementType = VoxelLibrary.GetVoxelType(RoomType.FloorType);
+            RoomData = data;
+            ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
             Chunks = chunks;
 
-            Designations = new List<VoxelRef>();
+            Designations = new List<Voxel>();
             Counter++;
 
             IsBuilt = true;
-            foreach(VoxelRef voxel in voxels)
+            foreach (Voxel voxel in voxels)
             {
                 AddVoxel(voxel);
             }
+        }
+
+        public virtual void OnBuilt()
+        {
+            
         }
 
 
@@ -83,8 +89,8 @@ namespace DwarfCorp
 
             for(int i = 0; i < Designations.Count; i++)
             {
-                VoxelRef v = Designations[i];
-                float d = (v.WorldPosition - worldCoordinate).LengthSquared();
+                Voxel v = Designations[i];
+                float d = (v.Position - worldCoordinate).LengthSquared();
 
                 if(d < closestDist)
                 {

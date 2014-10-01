@@ -127,22 +127,60 @@
             This is a simple GUI component which draws a fancy rectangle thing.
             </summary>
         </member>
-        <member name="T:DwarfCorp.HireDialog">
-            <summary>
-            This GUI component is a window which opens up on top
-            of the GUI, and blocks the game until it gets user input.
-            </summary>
-        </member>
         <member name="T:DwarfCorp.Dialog">
             <summary>
             This GUI component is a window which opens up on top
             of the GUI, and blocks the game until it gets user input.
             </summary>
         </member>
+        <member name="T:DwarfCorp.HireDialog">
+            <summary>
+            This GUI component is a window which opens up on top
+            of the GUI, and blocks the game until it gets user input.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ImageFrameLoadDialog">
+            <summary>
+            This GUI component displays a set of textures from a directory
+            which can be loaded.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.CraftItemAct">
+            <summary>
+            A creature goes to a voxel location, and places an object with the desired tags there to build it.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.CompoundCreatureAct">
+            <summary>
+            A compound act which is associated with a creature.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.CreatureAct">
+            <summary>
+            An act which is assumed to belong to a creature.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Act">
+            <summary>
+            An act is an another Name for a "Behavior". Behaviors are linked together into an "behavior tree". Each behavior is a coroutine
+            which can either be running, succeed, or fail. 
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.TeleportAct">
+            <summary>
+            A creature attacks a voxel until it is destroyed.
+            </summary>
+        </member>
         <member name="T:DwarfCorp.BuildRoomOrder">
             <summary>
             This designation specifies a list of voxels which are to be turned
             into a BuildRoom.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.CraftBuilder">
+            <summary>
+            A designation specifying that a creature should put a voxel of a given type
+            at a location.
             </summary>
         </member>
         <member name="T:DwarfCorp.AttackTool">
@@ -155,6 +193,16 @@
             <summary>
             The player's tools are a state machine. A build tool is a particular player
             state. Contains callbacks to when voxels are selected.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Room">
+            <summary>
+            A BuildRoom is a kind of zone which can be built by creatures.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Zone">
+            <summary>
+            A zone is a collection of voxel storages.
             </summary>
         </member>
         <member name="T:DwarfCorp.VoxelListener">
@@ -254,7 +302,7 @@
             <param name="numDwarves">Number of dwarves to generate</param>
             <param name="c">The chunk the dwarves belong to</param>
         </member>
-        <member name="M:DwarfCorp.GameStates.PlayState.InitializeStaticData">
+        <member name="M:DwarfCorp.GameStates.PlayState.InitializeStaticData(System.String,System.String,DwarfCorp.NamedImageFrame,Microsoft.Xna.Framework.Color)">
             <summary>
             Creates a bunch of stuff (such as the biome library, primitive library etc.) which won't change
             from game to game.
@@ -518,22 +566,6 @@
             for a BuildRoom. (This is used to construct rooms)
             </summary>
         </member>
-        <member name="T:DwarfCorp.CompoundCreatureAct">
-            <summary>
-            A compound act which is associated with a creature.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.CreatureAct">
-            <summary>
-            An act which is assumed to belong to a creature.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.Act">
-            <summary>
-            An act is an another Name for a "Behavior". Behaviors are linked together into an "behavior tree". Each behavior is a coroutine
-            which can either be running, succeed, or fail. 
-            </summary>
-        </member>
         <member name="T:DwarfCorp.FindAndEatFoodAct">
             <summary>
             The creature finds food in a stockpile or BuildRoom, and eats it.
@@ -707,11 +739,6 @@
             Using this tool, the player can specify certain voxels to be guarded.
             </summary>
         </member>
-        <member name="T:DwarfCorp.StockpileTool">
-            <summary>
-            Using this tool, the player specifies regions of voxels to be stockpiles.
-            </summary>
-        </member>
         <member name="T:DwarfCorp.PutItemInZoneTask">
             <summary>
             Tells a creature that it should put the given item in the given voxel zone.
@@ -823,13 +850,6 @@
         <member name="T:DwarfCorp.LiquidAsset">
             <summary>
             Specifies how a liquid is to be rendered.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.VoxelRef">
-            <summary>
-             Intended to be a smaller memory footprint representation
-             that can be passed around. It mainly exists to represent
-             empty voxels.
             </summary>
         </member>
         <member name="T:DwarfCorp.VoxelType">
@@ -1164,11 +1184,6 @@
             <summary>
             A tag list is a list of strings. Arbitrary tag lists can be attached
             to items to modify how scripts interpret the items.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.Zone">
-            <summary>
-            A zone is a collection of voxel storages.
             </summary>
         </member>
         <member name="T:DwarfCorp.BatchBillboardPrimitive">
@@ -1724,9 +1739,9 @@
             rotated to fill more space.
             </summary>
         </member>
-        <member name="T:DwarfCorp.RoomType">
+        <member name="T:DwarfCorp.RoomData">
             <summary>
-            A BuildRoom type has a Name, alters the apperance of voxels, requires resources to build,
+            A BuildRoom data has a Name, alters the apperance of voxels, requires resources to build,
             and has item templates.
             </summary>
         </member>
@@ -1738,11 +1753,6 @@
         <member name="T:DwarfCorp.Stockpile">
             <summary>
             A stockpile is a kind of zone which contains items on top of it.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.Room">
-            <summary>
-            A BuildRoom is a kind of zone which can be built by creatures.
             </summary>
         </member>
         <member name="T:DwarfCorp.MasterControls">
