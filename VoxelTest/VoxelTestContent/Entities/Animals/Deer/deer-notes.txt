@@ -1,0 +1,6 @@
+48x40
+
+animation order:
+stand (idle)
+run
+jump/fall
