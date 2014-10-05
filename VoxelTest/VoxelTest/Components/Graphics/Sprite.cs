@@ -41,7 +41,7 @@ namespace DwarfCorp
         };
 
         public Sprite(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Texture2D spriteSheet, bool addToOctree) :
-            base(manager, name, parent, localTransform, Vector3.Zero, Vector3.Zero, addToOctree)
+            base(name, parent, localTransform, Vector3.Zero, Vector3.Zero, addToOctree)
         {
             SpriteSheet = spriteSheet;
             Animations = new Dictionary<string, Animation>();

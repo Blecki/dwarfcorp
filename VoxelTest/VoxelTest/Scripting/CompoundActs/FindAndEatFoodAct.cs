@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 
 namespace DwarfCorp
 {
@@ -22,23 +23,33 @@ namespace DwarfCorp
             Name = "Find and Eat Food";
         }
 
-    
 
         public override void Initialize()
         {
-            /*
+            
             if(Agent.Status.Hunger.IsUnhappy())
             {
-                Tree = new Sequence(
-                    new GetItemWithTagsAct(Agent, "Food"),
-                    (new ConsumeItemAct(Agent) | new DropItemAct(Agent))
-                    );
+                Room commonRoom = Creature.Faction.GetNearestRoomOfType("CommonRoom", Agent.Position);
+
+                if (commonRoom != null)
+                {
+                    Tree =  (new GoToZoneAct(Agent, commonRoom) & new GoToChairAndSitAct(Agent) & new Wrap(Creature.EatStockedFood));
+                }
+                else
+                {
+                    Stockpile stockRoom = Creature.Faction.GetNearestStockpile(Agent.Position);
+
+                    if (stockRoom != null)
+                    {
+                        Tree = new GoToZoneAct(Agent, stockRoom) & new Wrap(Creature.EatStockedFood);
+                    }
+                }
             }
             else
             {
                 Tree = null;
             }
-             */
+             
             base.Initialize();
         }
     }

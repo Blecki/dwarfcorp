@@ -48,6 +48,18 @@ namespace DwarfCorp
             
         }
 
+        public ResourceAmount(ResourceLibrary.ResourceType type)
+        {
+            ResourceType = ResourceLibrary.Resources[type];
+            NumResources = 1;
+        }
+
+        public ResourceAmount(ResourceAmount other)
+        {
+            ResourceType = other.ResourceType;
+            NumResources = other.NumResources;
+        }
+
         public ResourceAmount(Resource resource)
         {
             ResourceType = resource;
@@ -56,13 +68,13 @@ namespace DwarfCorp
 
         public ResourceAmount(string resource)
         {
-            ResourceType = ResourceLibrary.Resources[resource];
+            ResourceType = ResourceLibrary.GetResourceByName(resource);
             NumResources = 1;
         }
 
         public ResourceAmount(Body component)
         {
-            ResourceType = ResourceLibrary.Resources[component.Tags[0]];
+            ResourceType = ResourceLibrary.GetResourceByName(component.Tags[0]);
             NumResources = 1;
         }
 
@@ -70,6 +82,12 @@ namespace DwarfCorp
         {
             ResourceType = resourceType;
             NumResources = numResources;
+        }
+
+        public ResourceAmount(ResourceLibrary.ResourceType type, int num) :
+            this(ResourceLibrary.Resources[type], num)
+        {
+            
         }
 
 

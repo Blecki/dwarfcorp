@@ -44,8 +44,6 @@ namespace DwarfCorp
                 // The physics component this creature belongs to
                 new Physics
                 (
-                    // We're creating a new physics component that belongs to the component manager
-                    manager, 
                     // It is called "bird"
                     "bird", 
                     // It's attached to the root component of the component manager
@@ -62,7 +60,7 @@ namespace DwarfCorp
                     new Vector3(0, -10, 0)
                 ),
                 // All the rest of the arguments are passed in directly
-                manager, chunks, graphics, content, name
+                chunks, graphics, content, name
             )
         {
             // Called from constructor with appropriate sprite asset as a string
@@ -137,7 +135,7 @@ namespace DwarfCorp
             Sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, 5.0f, frameWidth, frameHeight, 3, 0);
 
             // Used to grab other components
-            Hands = new Grabber(Manager, "hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
+            Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
             
             // Used to sense hostile creatures
             Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
@@ -154,7 +152,7 @@ namespace DwarfCorp
 
 
             // The bird can hold one item at a time in its inventory
-            Inventory = new Inventory(Manager, "Inventory", Physics)
+            Inventory = new Inventory("Inventory", Physics)
             {
                 Resources = new ResourceContainer
                 {
@@ -195,6 +193,8 @@ namespace DwarfCorp
             // that can be used later
             Physics.Tags.Add("Bird");
             Physics.Tags.Add("Animal");
+
+            NoiseMaker.Noises.Add("chirp", new List<string>(){ContentPaths.Audio.bird});
         }
     }
 }

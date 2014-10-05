@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
-using Microsoft.Xna.Framework;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using Newtonsoft.Json;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace DwarfCorp
 {
@@ -40,6 +43,48 @@ namespace DwarfCorp
         public ImageFrame(Texture2D image, Rectangle sourceRect)
         {
             Image = image;
+            SourceRect = sourceRect;
+        }
+    }
+
+    [JsonObject(IsReference = true)]
+    public class NamedImageFrame : ImageFrame
+    {
+        public string AssetName { get; set; }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            Image = TextureManager.GetTexture(AssetName);
+        }
+
+        public NamedImageFrame()
+        {
+            
+        }
+
+        public NamedImageFrame(string name)
+        {
+            AssetName = name;
+            Image = TextureManager.GetTexture(name);
+
+            if (Image != null)
+            {
+                SourceRect = Image.Bounds;
+            }
+        }
+
+        public NamedImageFrame(string name, int frameSize, int x, int y)
+        {
+            AssetName = name;
+            Image = TextureManager.GetTexture(name);
+            SourceRect = new Rectangle(x * frameSize, y * frameSize, frameSize, frameSize);
+        }
+
+        public NamedImageFrame(string name, Rectangle sourceRect)
+        {
+            AssetName = name;
+            Image = TextureManager.GetTexture(name);
             SourceRect = sourceRect;
         }
     }

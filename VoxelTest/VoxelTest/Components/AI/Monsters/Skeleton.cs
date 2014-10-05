@@ -16,8 +16,8 @@ namespace DwarfCorp
     public class Skeleton : Creature
     {
         public Skeleton(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, Vector3 position) :
-            base(stats, allies, planService, faction, new Physics(manager, "Skeleton", manager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0)),
-                manager, chunks, graphics, content, name)
+            base(stats, allies, planService, faction, new Physics("Skeleton", manager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0)),
+                 chunks, graphics, content, name)
         {
             Initialize();
         }
@@ -33,7 +33,7 @@ namespace DwarfCorp
 
 
 
-            Hands = new Grabber(Manager, "hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
+            Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
 
             Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
 
@@ -44,7 +44,7 @@ namespace DwarfCorp
             Health = new Health(Manager, "HP", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
 
 
-            Inventory = new Inventory(Manager, "Inventory", Physics)
+            Inventory = new Inventory("Inventory", Physics)
             {
                 Resources = new ResourceContainer
                 {
@@ -71,7 +71,8 @@ namespace DwarfCorp
             DeathParticleTrigger = new ParticleTrigger("sand_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
-                TriggerAmount = 25
+                TriggerAmount = 25,
+                SoundToPlay = ContentPaths.Audio.gravel
             };
             Flames = new Flammable(Manager, "Flames", Physics, Health);
 
@@ -101,6 +102,7 @@ namespace DwarfCorp
 
             Stats.FirstName = TextGenerator.GenerateRandom("$GoblinName");
             Stats.LastName = TextGenerator.GenerateRandom("$GoblinFamily");
+            Stats.Size = 3;
 
         }
     }

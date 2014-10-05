@@ -8,7 +8,7 @@ namespace DwarfCorp
     /// Tasks construct acts (or behaviors) to solve them. Tasks have costs,
     /// and can either be feasible or infeasible for a crature.
     /// </summary>
-    public class Task
+    public abstract class Task
     {
         public Act Script { get; set; }
 
@@ -25,10 +25,8 @@ namespace DwarfCorp
         public string Name { get; set; }
 
 
-        public Task()
-        {
-            
-        }
+
+        public abstract Task Clone();
 
         public virtual void Render(GameTime time)
         {
@@ -75,10 +73,16 @@ namespace DwarfCorp
             
         }
 
+
         public ActWrapperTask(Act act)
         {
             Script = act;
             Name = Script.Name;
+        }
+
+        public override Task Clone()
+        {
+            return new ActWrapperTask(Script);
         }
 
         public override bool IsFeasible(Creature agent)

@@ -31,6 +31,7 @@ namespace DwarfCorp
             List<Task> assignments = new List<Task>();
             foreach(Body resource in resourcesPickedByMouse.Where(resource => resource.IsActive && resource.IsVisible && resource.Parent == PlayState.ComponentManager.RootComponent))
             {
+                if (!resource.IsVisible || resource.IsAboveCullPlane) continue;
                 Drawer3D.DrawBox(resource.BoundingBox, Color.LightGoldenrodYellow, 0.05f, true);
 
                 if(button == InputManager.MouseButton.Left)
@@ -53,7 +54,7 @@ namespace DwarfCorp
             TaskManager.AssignTasks(assignments, PlayState.Master.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Gather));
         }
 
-        public override void OnVoxelsSelected(List<VoxelRef> voxels, InputManager.MouseButton button)
+        public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
 
         }

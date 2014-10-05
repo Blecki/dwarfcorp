@@ -12,15 +12,15 @@ namespace DwarfCorp
     /// </summary>
     internal class AStarPlanner
     {
-        public static VoxelRef GetVoxelWithMinimumFScore(PriorityQueue<VoxelRef> fScore, HashSet<VoxelRef> openSet)
+        public static Voxel GetVoxelWithMinimumFScore(PriorityQueue<Voxel> fScore, HashSet<Voxel> openSet)
         {
             return fScore.Dequeue();
         }
 
 
-        public static List<VoxelRef> ReconstructPath(Dictionary<VoxelRef, VoxelRef> cameFrom, VoxelRef currentNode)
+        public static List<Voxel> ReconstructPath(Dictionary<Voxel, Voxel> cameFrom, Voxel currentNode)
         {
-            List<VoxelRef> toReturn = new List<VoxelRef>();
+            List<Voxel> toReturn = new List<Voxel>();
             if(cameFrom.ContainsKey(currentNode))
             {
                 toReturn.AddRange(ReconstructPath(cameFrom, cameFrom[currentNode]));
@@ -35,7 +35,7 @@ namespace DwarfCorp
         }
 
 
-        private static bool Path(VoxelRef start, VoxelRef end, ChunkManager chunks, int maxExpansions, ref List<VoxelRef> toReturn, bool reverse)
+        private static bool Path(Voxel start, Voxel end, ChunkManager chunks, int maxExpansions, ref List<Voxel> toReturn, bool reverse)
         {
             VoxelChunk startChunk = chunks.ChunkData.ChunkMap[start.ChunkID];
             VoxelChunk endChunk = chunks.ChunkData.ChunkMap[end.ChunkID];
@@ -47,25 +47,25 @@ namespace DwarfCorp
             }
 
 
-            HashSet<VoxelRef> closedSet = new HashSet<VoxelRef>();
+            HashSet<Voxel> closedSet = new HashSet<Voxel>();
 
-            HashSet<VoxelRef> openSet = new HashSet<VoxelRef>
+            HashSet<Voxel> openSet = new HashSet<Voxel>
             {
                 start
             };
 
-            Dictionary<VoxelRef, VoxelRef> cameFrom = new Dictionary<VoxelRef, VoxelRef>();
-            Dictionary<VoxelRef, float> gScore = new Dictionary<VoxelRef, float>();
-            PriorityQueue<VoxelRef> fScore = new PriorityQueue<VoxelRef>();
+            Dictionary<Voxel, Voxel> cameFrom = new Dictionary<Voxel, Voxel>();
+            Dictionary<Voxel, float> gScore = new Dictionary<Voxel, float>();
+            PriorityQueue<Voxel> fScore = new PriorityQueue<Voxel>();
             gScore[start] = 0.0f;
             fScore.Enqueue(start, gScore[start] + Heuristic(start, end));
 
             int numExpansions = 0;
             while(openSet.Count > 0 && numExpansions < maxExpansions)
             {
-                VoxelRef current = GetVoxelWithMinimumFScore(fScore, openSet);
+                Voxel current = GetVoxelWithMinimumFScore(fScore, openSet);
 
-                if(!current.IsValid)
+                if (current == null)
                 {
                     current = start;
                     numExpansions++;
@@ -74,7 +74,7 @@ namespace DwarfCorp
                 //Drawer3D.DrawBox(current.GetBoundingBox(), Color.Red, 0.1f);
 
                 numExpansions++;
-                if((current.WorldPosition - end.WorldPosition).LengthSquared() < 0.5f)
+                if ((current.Position - end.Position).LengthSquared() < 0.5f)
                 {
                     toReturn = ReconstructPath(cameFrom, current);
                     return true;
@@ -85,21 +85,22 @@ namespace DwarfCorp
 
                 VoxelChunk currentChunk = chunks.ChunkData.ChunkMap[current.ChunkID];
 
-                List<VoxelRef> neighbors = null;
+                List<Voxel> neighbors = null;
 
                 neighbors = !reverse ? currentChunk.GetMovableNeighbors(current) : currentChunk.GetReverseMovableNeighbors(current);
 
-                List<VoxelRef> manhattanNeighbors = currentChunk.GetNeighborsManhattan(current);
+                List<Voxel> manhattanNeighbors = currentChunk.AllocateVoxels(6);
+                currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
 
                 if(manhattanNeighbors.Contains(end))
                 {
-                    List<VoxelRef> subPath = ReconstructPath(cameFrom, current);
+                    List<Voxel> subPath = ReconstructPath(cameFrom, current);
                     subPath.Add(end);
                     toReturn = subPath;
                     return true;
                 }
 
-                foreach(VoxelRef n in neighbors)
+                foreach(Voxel n in neighbors)
                 {
                     if(closedSet.Contains(n))
                     {
@@ -128,7 +129,7 @@ namespace DwarfCorp
             return false;
         }
 
-        public static bool FindReversePath(VoxelRef start, VoxelRef end, ChunkManager chunks, int maxExpansions, ref List<VoxelRef> p)
+        public static bool FindReversePath(Voxel start, Voxel end, ChunkManager chunks, int maxExpansions, ref List<Voxel> p)
         {
             bool success = Path(end, start, chunks, maxExpansions, ref p, true);
 
@@ -143,9 +144,9 @@ namespace DwarfCorp
             }
         }
 
-        public static List<VoxelRef> FindPath(VoxelRef start, VoxelRef end, ChunkManager chunks, int maxExpansions)
+        public static List<Voxel> FindPath(Voxel start, Voxel end, ChunkManager chunks, int maxExpansions)
         {
-            List<VoxelRef> p = new List<VoxelRef>();
+            List<Voxel> p = new List<Voxel>();
             bool success = Path(start, end, chunks, maxExpansions, ref p, false);
 
             if(success)
@@ -160,7 +161,7 @@ namespace DwarfCorp
             /*
             if(p == null || !success)
             {
-                List<VoxelRef> rp = new List<VoxelRef>();
+                List<Voxel> rp = new List<Voxel>();
                 if(FindReversePath(start, end, chunks, maxExpansions, ref rp))
                 {
                     return rp;
@@ -177,7 +178,7 @@ namespace DwarfCorp
              */
         }
 
-        public static float GetDistance(VoxelRef a, VoxelRef b, ChunkManager chunks)
+        public static float GetDistance(Voxel a, Voxel b, ChunkManager chunks)
         {
             if(b.TypeName != "empty")
             {
@@ -185,20 +186,20 @@ namespace DwarfCorp
             }
             else
             {
-                float score = (a.WorldPosition - b.WorldPosition).LengthSquared() + (Math.Abs((b.WorldPosition - a.WorldPosition).Y)) * 10;
+                float score = (a.Position - b.Position).LengthSquared() + (Math.Abs((b.Position - a.Position).Y)) * 10;
 
-                if(b.GetWaterLevel(chunks) > 5)
+                if(b.WaterLevel > 5)
                 {
-                    score += 5 + (Math.Abs((b.WorldPosition - a.WorldPosition).Y)) * 100;
+                    score += 5 + (Math.Abs((b.Position - a.Position).Y)) * 100;
                 }
 
                 return score;
             }
         }
 
-        public static float Heuristic(VoxelRef a, VoxelRef b)
+        public static float Heuristic(Voxel a, Voxel b)
         {
-            return (a.WorldPosition - b.WorldPosition).LengthSquared() + (Math.Abs((b.WorldPosition - a.WorldPosition).Y)) * 10;
+            return (a.Position - b.Position).LengthSquared() + (Math.Abs((b.Position - a.Position).Y)) * 10;
         }
     }
 

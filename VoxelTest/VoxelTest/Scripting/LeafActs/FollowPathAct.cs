@@ -29,25 +29,25 @@ namespace DwarfCorp
             ValidPathTimer = new Timer(.75f, false);
         }
 
-        public List<VoxelRef> GetPath()
+        public List<Voxel> GetPath()
         {
-            return Agent.Blackboard.GetData<List<VoxelRef>>(PathName);
+            return Agent.Blackboard.GetData<List<Voxel>>(PathName);
         }
 
-        public void SetPath(List<VoxelRef> path)
+        public void SetPath(List<Voxel> path)
         {
             Agent.Blackboard.SetData(PathName, path);
         }
 
-        public bool IsPathValid(List<VoxelRef> path)
+        public bool IsPathValid(List<Voxel> path)
         {
             for (int i = 0; i < path.Count - 2; i++)
             {
-                List<VoxelRef> neighbors = Agent.Chunks.ChunkData.ChunkMap[path[i].ChunkID].GetMovableNeighbors(path[i]);
+                List<Voxel> neighbors = Agent.Chunks.ChunkData.ChunkMap[path[i].ChunkID].GetMovableNeighbors(path[i]);
                 bool valid = false;
-                foreach (VoxelRef vr in neighbors)
+                foreach (Voxel vr in neighbors)
                 {
-                    Vector3 dif = vr.WorldPosition - path[i + 1].WorldPosition;
+                    Vector3 dif = vr.Position - path[i + 1].Position;
                     if (dif.Length() < .1)
                     {
                         valid = true;
@@ -64,7 +64,7 @@ namespace DwarfCorp
             {
                 // ERROR CHECKS / INITIALIZING
 
-                List<VoxelRef> path = GetPath();
+                List<Voxel> path = GetPath();
 
                 if(path == null)
                 {
@@ -98,7 +98,7 @@ namespace DwarfCorp
 
                     if(Agent.LocalControlTimeout.HasTriggered)
                     {
-                        Agent.Position = Agent.TargetVoxel.WorldPosition + new Vector3(.5f, .5f, .5f);
+                        Agent.Position = Agent.TargetVoxel.Position + new Vector3(.5f, .5f, .5f);
                         Agent.LocalControlTimeout.Reset(Agent.LocalControlTimeout.TargetTimeSeconds);
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                         yield return Status.Running;
@@ -107,13 +107,13 @@ namespace DwarfCorp
 
                     if(Agent.PreviousTargetVoxel == null)
                     {
-                        Agent.Creature.LocalTarget = Agent.TargetVoxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
+                        Agent.Creature.LocalTarget = Agent.TargetVoxel.Position + new Vector3(0.5f, 0.5f, 0.5f);
                     }
                     else
                     {
                         Agent.Creature.LocalTarget = MathFunctions.ClosestPointToLineSegment(Agent.Position,
-                            Agent.PreviousTargetVoxel.WorldPosition,
-                            Agent.TargetVoxel.WorldPosition, 0.25f) + new Vector3(0.5f, 0.5f, 0.5f);
+                            Agent.PreviousTargetVoxel.Position,
+                            Agent.TargetVoxel.Position, 0.25f) + new Vector3(0.5f, 0.5f, 0.5f);
                     }
 
                     Vector3 output = Agent.Creature.Controller.GetOutput((float) Act.LastTime.ElapsedGameTime.TotalSeconds,
@@ -136,7 +136,7 @@ namespace DwarfCorp
                     {
                         Drawer3D.DrawLineList(new List<Vector3>{Agent.Creature.LocalTarget, Agent.Creature.Physics.GlobalTransform.Translation}, Color.White, 0.01f );
 
-                        List<Vector3> points = path.Select(v => v.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f)).ToList();
+                        List<Vector3> points = path.Select(v => v.Position + new Vector3(0.5f, 0.5f, 0.5f)).ToList();
 
                         Drawer3D.DrawLineList(points, Color.Red, 0.1f);
                     }
@@ -177,7 +177,6 @@ namespace DwarfCorp
                     break;
                 }
 
-                Creature.Status.Energy.CurrentValue -= EnergyLoss * Dt * Creature.Stats.Tiredness;
                 yield return Status.Running;
             }
         }

@@ -11,7 +11,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class SetTargetVoxelAct : CreatureAct
     {
-        public VoxelRef Voxel { get; set; }
+        public Voxel Voxel { get; set; }
         public string VoxelName { get; set; }
 
         public SetTargetVoxelAct(string voxel, CreatureAI creature) :
@@ -23,7 +23,7 @@ namespace DwarfCorp
         }
 
 
-        public SetTargetVoxelAct(VoxelRef voxel, CreatureAI creature) :
+        public SetTargetVoxelAct(Voxel voxel, CreatureAI creature) :
             base(creature)
         {
             Name = "Set Target Voxel";
@@ -44,7 +44,7 @@ namespace DwarfCorp
             }
             else
             {
-                Agent.TargetVoxel = Agent.Blackboard.GetData<VoxelRef>(VoxelName);
+                Agent.TargetVoxel = Agent.Blackboard.GetData<Voxel>(VoxelName);
                 Voxel = Agent.TargetVoxel;
 
                 if(Agent.TargetVoxel != null)

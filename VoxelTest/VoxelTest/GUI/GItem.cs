@@ -18,18 +18,15 @@ namespace DwarfCorp
         public ImageFrame Image { get; set; }
         public int MaxAmount { get; set; }
         public int MinAmount { get; set; }
-        public List<string> Tags { get; set; }
         public int CurrentAmount { get; set; }
         public float Price { get; set; }
 
-        public GItem(string name, ImageFrame imag, int min, int max, int currentAmount, float price, IEnumerable<string> tags)
+        public GItem(string name, ImageFrame imag, int min, int max, int currentAmount, float price)
         {
             Name = name;
             Image = imag;
             MinAmount = min;
             MaxAmount = max;
-            Tags = new List<string>();
-            Tags.AddRange(tags);
             CurrentAmount = currentAmount;
             Price = price;
         }

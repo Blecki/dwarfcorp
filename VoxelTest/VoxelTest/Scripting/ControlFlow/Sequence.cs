@@ -41,6 +41,7 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
+            CurrentChildIndex = 0;
             foreach(Act child in Children)
             {
                 child.Initialize();

@@ -25,8 +25,8 @@ namespace DwarfCorp
             
         }
 
-        public LightEmitter(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, byte intensity, byte range) :
-            base(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
+        public LightEmitter(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, byte intensity, byte range) :
+            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             Intensity = intensity;
             Range = range;
@@ -41,7 +41,7 @@ namespace DwarfCorp
             }
             else
             {
-                Light.Voxel = chunks.ChunkData.GetVoxelReferenceAtWorldLocation(GlobalTransform.Translation);
+                Light.Voxel = chunks.ChunkData.GetVoxelerenceAtWorldLocation(GlobalTransform.Translation);
                 chunks.ChunkData.ChunkMap[Light.Voxel.ChunkID].ShouldRebuild = true;
                 chunks.ChunkData.ChunkMap[Light.Voxel.ChunkID].ShouldRecalculateLighting = true;
             }

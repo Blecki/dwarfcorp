@@ -25,6 +25,9 @@ namespace DwarfCorp
         [JsonIgnore]
         public VertexBuffer VertexBuffer = null;
 
+        [JsonIgnore]
+        private object VertexLock = new object();
+
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
         {
@@ -38,26 +41,29 @@ namespace DwarfCorp
         /// <param Name="device">GPU to draw with.</param>
         public virtual void Render(GraphicsDevice device)
         {
-
-            if(VertexBuffer == null)
+            lock (VertexLock)
             {
-                ResetBuffer(device);
-            }
+                if (VertexBuffer == null)
+                {
+                    ResetBuffer(device);
+                }
 
-            if(Vertices == null || VertexBuffer == null || VertexBuffer.IsDisposed)
-            {
-                return;
-            }
+                if (Vertices == null || VertexBuffer == null || VertexBuffer.IsDisposed || VertexBuffer.VertexCount < 3)
+                {
+                    return;
+                }
 
-            device.SetVertexBuffer(VertexBuffer);
+                device.SetVertexBuffer(VertexBuffer);
 
-            if(Indices != null)
-            {
-                device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, VertexBuffer.VertexCount, 0, VertexBuffer.VertexCount / 3);
-            }
-            else
-            {
-                device.DrawPrimitives(PrimitiveType.TriangleList, 0, Vertices.Length / 3);
+                if (Indices != null)
+                {
+                    device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, VertexBuffer.VertexCount, 0,
+                        VertexBuffer.VertexCount/3);
+                }
+                else
+                {
+                    device.DrawPrimitives(PrimitiveType.TriangleList, 0, Vertices.Length/3);
+                }
             }
         }
 
@@ -67,13 +73,16 @@ namespace DwarfCorp
         /// <param Name="device">GPU to draw with.</param>
         public virtual void RenderWireframe(GraphicsDevice device)
         {
-            RasterizerState state = new RasterizerState();
-            RasterizerState oldState = device.RasterizerState;
-            state.FillMode = FillMode.WireFrame;
-            device.RasterizerState = state;
-            device.SetVertexBuffer(VertexBuffer);
-            device.DrawPrimitives(PrimitiveType.TriangleList, 0, Vertices.Length / 3);
-            device.RasterizerState = oldState;
+            lock (VertexLock)
+            {
+                RasterizerState state = new RasterizerState();
+                RasterizerState oldState = device.RasterizerState;
+                state.FillMode = FillMode.WireFrame;
+                device.RasterizerState = state;
+                device.SetVertexBuffer(VertexBuffer);
+                device.DrawPrimitives(PrimitiveType.TriangleList, 0, Vertices.Length/3);
+                device.RasterizerState = oldState;
+            }
         }
 
         /// <summary>
@@ -86,19 +95,23 @@ namespace DwarfCorp
                 return;
             }
 
-            if(VertexBuffer != null && !VertexBuffer.IsDisposed)
+            lock (VertexLock)
             {
-                VertexBuffer.Dispose();
-                VertexBuffer = null;
-            }
+                if (VertexBuffer != null && !VertexBuffer.IsDisposed)
+                {
+                    VertexBuffer.Dispose();
+                    VertexBuffer = null;
+                }
 
-            if(Vertices == null || Vertices.Length <= 0 || device == null || device.IsDisposed)
-            {
-                return;
-            }
+                if (Vertices == null || Vertices.Length <= 0 || device == null || device.IsDisposed)
+                {
+                    return;
+                }
 
-            VertexBuffer = new VertexBuffer(device, ExtendedVertex.VertexDeclaration, Vertices.Length, BufferUsage.WriteOnly);
-            VertexBuffer.SetData(Vertices);
+                VertexBuffer = new VertexBuffer(device, ExtendedVertex.VertexDeclaration, Vertices.Length,
+                    BufferUsage.WriteOnly);
+                VertexBuffer.SetData(Vertices);
+            }
         }
     }
 

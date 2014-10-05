@@ -21,15 +21,15 @@ namespace DwarfCorp
     /// </summary>
     public class VoxelSelector
     {
-        public delegate VoxelRef OnLeftPressed();
+        public delegate Voxel OnLeftPressed();
 
-        public delegate List<VoxelRef> OnLeftReleased();
+        public delegate List<Voxel> OnLeftReleased();
 
-        public delegate VoxelRef OnRightPressed();
+        public delegate Voxel OnRightPressed();
 
-        public delegate List<VoxelRef> OnRightReleased();
+        public delegate List<Voxel> OnRightReleased();
 
-        public delegate void OnSelected(List<VoxelRef> voxels, InputManager.MouseButton button);
+        public delegate void OnSelected(List<Voxel> voxels, InputManager.MouseButton button);
 
         public Color SelectionColor { get; set; }
         public Color DeleteColor { get; set; }
@@ -45,10 +45,10 @@ namespace DwarfCorp
         public Camera CameraController { get; set; }
         public GraphicsDevice Graphics { get; set; }
         public ChunkManager Chunks { get; set; }
-        public List<VoxelRef> SelectionBuffer { get; set; }
+        public List<Voxel> SelectionBuffer { get; set; }
         private bool isLeftPressed = false;
         private bool isRightPressed = false;
-        public VoxelRef FirstVoxel = default(VoxelRef);
+        public Voxel FirstVoxel = default(Voxel);
         public bool Enabled { get; set; }
         public float BoxYOffset { get; set; }
         public int LastMouseWheel { get; set; }
@@ -63,7 +63,7 @@ namespace DwarfCorp
             CameraController = camera;
             Graphics = graphics;
             Chunks = chunks;
-            SelectionBuffer = new List<VoxelRef>();
+            SelectionBuffer = new List<Voxel>();
             LeftPressed = LeftPressedCallback;
             RightPressed = RightPressedCallback;
             LeftReleased = LeftReleasedCallback;
@@ -80,11 +80,11 @@ namespace DwarfCorp
             MouseState mouse = Mouse.GetState();
             KeyboardState keyboard = Keyboard.GetState();
 
-            VoxelRef underMouse = GetVoxelUnderMouse();
+            Voxel underMouse = GetVoxelUnderMouse();
 
             if(underMouse != null)
             {
-                PlayState.CursorLightPos = underMouse.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
+                PlayState.CursorLightPos = underMouse.Position + new Vector3(0.5f, 0.5f, 0.5f);
             }
 
             if(!Enabled)
@@ -196,7 +196,7 @@ namespace DwarfCorp
             }
         }
 
-        public void SelectedCallback(List<VoxelRef> voxels, InputManager.MouseButton button)
+        public void SelectedCallback(List<Voxel> voxels, InputManager.MouseButton button)
         {
         }
 
@@ -234,14 +234,18 @@ namespace DwarfCorp
             Drawer3D.DrawBox(superset, Mouse.GetState().LeftButton == ButtonState.Pressed ? SelectionColor : DeleteColor, SelectionWidth, false);
         }
 
-        public VoxelRef GetVoxelUnderMouse()
+        public Voxel GetVoxelUnderMouse()
         {
             MouseState mouse = Mouse.GetState();
 
             Voxel v = Chunks.ChunkData.GetFirstVisibleBlockHitByMouse(mouse, CameraController, Graphics.Viewport);
 
+            if (v == null)
+            {
+                return null;
+            }
 
-            if(v != null)
+            if(!v.IsEmpty)
             {
                 if(Keyboard.GetState().IsKeyDown(Keys.Space))
                 {
@@ -260,18 +264,18 @@ namespace DwarfCorp
             switch(SelectionType)
             {
                 case VoxelSelectionType.SelectFilled:
-                    if(v != null)
+                    if(!v.IsEmpty)
                     {
-                        return v.GetReference();
+                        return v;
                     }
                     else
                     {
-                        return default(VoxelRef);
+                        return default(Voxel);
                     }
 
 
                 case VoxelSelectionType.SelectEmpty:
-                    if(v != null)
+                    if(!v.IsEmpty)
                     {
                         Ray mouseRay = Chunks.ChunkData.GetMouseRay(mouse, CameraController, Graphics.Viewport);
                         float? dist = mouseRay.Intersects(v.GetBoundingBox());
@@ -304,7 +308,7 @@ namespace DwarfCorp
                                 break;
                             }
 
-                            VoxelRef atRef = Chunks.ChunkData.GetVoxelReferenceAtWorldLocation(v.Position + new Vector3(0.5f, 0.5f, 0.5f) + antiDelta);
+                            Voxel atRef = Chunks.ChunkData.GetVoxelerenceAtWorldLocation(v.Position + new Vector3(0.5f, 0.5f, 0.5f) + antiDelta);
 
                             if (atRef != null)
                             {
@@ -314,29 +318,29 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        return default(VoxelRef);
+                        return default(Voxel);
                     }
                     break;
             }
 
-            return default(VoxelRef);
+            return default(Voxel);
         }
 
-        public VoxelRef LeftPressedCallback()
+        public Voxel LeftPressedCallback()
         {
             SelectionBuffer.Clear();
             return GetVoxelUnderMouse();
         }
 
-        public VoxelRef RightPressedCallback()
+        public Voxel RightPressedCallback()
         {
             SelectionBuffer.Clear();
             return GetVoxelUnderMouse();
         }
 
-        public List<VoxelRef> LeftReleasedCallback()
+        public List<Voxel> LeftReleasedCallback()
         {
-            List<VoxelRef> toReturn = new List<VoxelRef>();
+            List<Voxel> toReturn = new List<Voxel>();
             if(SelectionBuffer.Count > 0)
             {
                 toReturn.AddRange(SelectionBuffer);
@@ -346,9 +350,9 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public List<VoxelRef> RightReleasedCallback()
+        public List<Voxel> RightReleasedCallback()
         {
-            List<VoxelRef> toReturn = new List<VoxelRef>();
+            List<Voxel> toReturn = new List<Voxel>();
             toReturn.AddRange(SelectionBuffer);
             SelectionBuffer.Clear();
             Selected.Invoke(toReturn, InputManager.MouseButton.Right);

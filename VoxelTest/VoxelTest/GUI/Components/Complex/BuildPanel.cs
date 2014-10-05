@@ -12,12 +12,14 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class BuildPanel : GUIComponent
     {
+        public Panel SelectionPanel { get; set; }
         public Dictionary<string, Button> Buttons { get; set; }
         public Faction Faction { get; set; }
         public Panel InfoPanel { get; set; }
         public string CurrentWallType { get; set; }
         public delegate void SelectionChanged(string selection);
         public event SelectionChanged OnSelectionChanged;
+        public CraftLibrary.CraftItemType CurrentCraftType { get; set; }
 
         protected virtual void OnOnSelectionChanged(string selection)
         {
@@ -43,14 +45,14 @@ namespace DwarfCorp
             Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
             List<string> roomTypes = RoomLibrary.GetRoomTypes().ToList();
             
-            GridLayout layout = new GridLayout(GUI, this,  1, roomTypes.Count + 1);
+            GridLayout layout = new GridLayout(GUI, this,  1, roomTypes.Count + 2);
 
 
             int i = 0; 
             foreach(string s in roomTypes)
             {
-                RoomType type = RoomLibrary.GetType(s);
-                Button roomButton = new Button(GUI, layout, "", GUI.SmallFont, Button.ButtonMode.ImageButton, type.Icon)
+                RoomData data = RoomLibrary.GetData(s);
+                Button roomButton = new Button(GUI, layout, "", GUI.SmallFont, Button.ButtonMode.ImageButton, data.Icon)
                 {
                     ToolTip = "Build a " + s,
                     KeepAspectRatio = true
@@ -69,9 +71,19 @@ namespace DwarfCorp
                 KeepAspectRatio = true
             };
 
+            Button craftbutton = new Button(GUI, layout, "", GUI.SmallFont, Button.ButtonMode.ImageButton, new ImageFrame(roomIcons, 16, 2, 2))
+            {
+                ToolTip = "Craft items",
+                KeepAspectRatio = true
+            };
+
             wallButton.OnClicked += () => roomButton_OnClicked(wallButton);
             Buttons["Wall"] = wallButton;
             layout.SetComponentPosition(wallButton, i, 0, 1, 1);
+
+            craftbutton.OnClicked += () => roomButton_OnClicked(craftbutton);
+            Buttons["Craft"] = craftbutton;
+            layout.SetComponentPosition(craftbutton, i + 1, 0, 1, 1);
 
             Faction = faction;
 
@@ -124,12 +136,12 @@ namespace DwarfCorp
             combo.CurrentValue = combo.Values[0];
             CurrentWallType = combo.CurrentValue;
 
-            combo.OnSelectionModified += combo_OnSelectionModified;
+            combo.OnSelectionModified += wallcombo_OnSelectionModified;
 
             layout.SetComponentPosition(combo, 0, 2, 3, 1);
         }
 
-        void combo_OnSelectionModified(string arg)
+        void wallcombo_OnSelectionModified(string arg)
         {
             CurrentWallType = arg;
             OnSelectionChanged("Wall");
@@ -169,11 +181,16 @@ namespace DwarfCorp
                 SetupWallPanel(layout);
                 return;
             }
+            else if (name == "Craft")
+            {
+                SetupCraftPanel(layout);
+                return;
+            }
 
-            RoomType type = RoomLibrary.GetType(name);
+            RoomData data = RoomLibrary.GetData(name);
 
 
-            Label description = new Label(GUI, layout, type.Description, GUI.SmallFont)
+            Label description = new Label(GUI, layout, data.Description, GUI.SmallFont)
             {
                 TextColor = Color.White,
                 StrokeColor = Color.Transparent,
@@ -183,22 +200,22 @@ namespace DwarfCorp
 
             layout.SetComponentPosition(description, 0, 1, 3, 2);
 
-            ImagePanel image = new ImagePanel(GUI, layout, type.Icon)
+            ImagePanel image = new ImagePanel(GUI, layout, data.Icon)
             {
                 KeepAspectRatio = true
             };
 
             layout.SetComponentPosition(image, 3, 0, 1, 1);
 
-            string requirementsText = "Requires (per tile):\n";
+            string requirementsText = "Requires (per 4 tiles):\n";
 
-            foreach(KeyValuePair<string, ResourceAmount> pair in type.RequiredResources)
+            foreach(KeyValuePair<ResourceLibrary.ResourceType, ResourceAmount> pair in data.RequiredResources)
             {
                 requirementsText += pair.Key + ": " + pair.Value.NumResources + "\n";
             }
 
 
-            if(type.RequiredResources.Count == 0)
+            if(data.RequiredResources.Count == 0)
             {
                 requirementsText += "Nothing";
             }
@@ -214,11 +231,54 @@ namespace DwarfCorp
 
         }
 
-        public void roomButton_OnClicked(Button sender)
+        private void SetupCraftPanel(GridLayout layout)
         {
+            Label description = new Label(GUI, layout, "Build a mechanism of type: ", GUI.SmallFont)
+            {
+                TextColor = Color.White,
+                StrokeColor = Color.Transparent,
+                WordWrap = true
+            };
+
+            layout.SetComponentPosition(description, 0, 1, 3, 1);
+
+            ImagePanel image = new ImagePanel(GUI, layout, Buttons["Craft"].Image)
+            {
+                KeepAspectRatio = true
+            };
+
+            layout.SetComponentPosition(image, 3, 0, 1, 1);
+
+
+            ComboBox combo = new ComboBox(GUI, layout);
+
+            foreach (KeyValuePair<CraftLibrary.CraftItemType, CraftItem> craftitem in CraftLibrary.CraftItems)
+            {
+                combo.AddValue(craftitem.Value.Name);
+            }    
+
+            combo.CurrentIndex = 0;
+            combo.CurrentValue = combo.Values[0];
+            CurrentWallType = combo.CurrentValue;
+
+            combo.OnSelectionModified += craftcombo_OnSelectionModified;
+
+            layout.SetComponentPosition(combo, 0, 2, 3, 1);
+        }
+
+        private void craftcombo_OnSelectionModified(string arg)
+        {
+            CurrentCraftType = CraftLibrary.GetType(arg);
+            OnSelectionChanged("Craft");
+
+        }
+
+        public void roomButton_OnClicked(GUIComponent s)
+        {
+            Button sender = s as Button;
             sender.IsToggled = true;
 
-            foreach(Button button in Buttons.Values.Where(button => button != sender))
+            foreach (Button button in Buttons.Values.Where(button => button != sender))
             {
                 button.IsToggled = false;
             }

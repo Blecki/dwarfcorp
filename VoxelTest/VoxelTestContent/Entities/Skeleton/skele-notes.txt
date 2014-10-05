@@ -1,6 +1,0 @@
-32x40
-
-animation order:
-walk
-jump/fall
-attack

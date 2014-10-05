@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -9,6 +10,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Color = Microsoft.Xna.Framework.Color;
+using Point = Microsoft.Xna.Framework.Point;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace DwarfCorp.GameStates
 {
@@ -61,7 +65,8 @@ namespace DwarfCorp.GameStates
         }
 
         // The current coordinate of the cursor light
-        public static Vector3 CursorLightPos = Vector3.Zero;
+        public static Vector3 CursorLightPos { get { return LightPositions[0]; } set { LightPositions[0] = value; }}
+        public static Vector3[] LightPositions = new Vector3[16];
 
         // True when the game has begun loading. Set to false when the game is exited.
         public static bool HasStarted = false;
@@ -124,6 +129,9 @@ namespace DwarfCorp.GameStates
         // Responsible for drawing the skybox
         public static SkyRenderer Sky;
 
+        // Draws shadow maps
+        public static ShadowRenderer Shadows;
+
         // Used to generate all random numbers in the game.
         public static ThreadSafeRandom Random = new ThreadSafeRandom();
 
@@ -145,6 +153,9 @@ namespace DwarfCorp.GameStates
 
         // When the game is loading, this message is displayed on the screen
         public string LoadingMessage = "";
+
+        // Displays tips when the game is loading.
+        public string LoadingTip = "";
 
         // True if the game's update loop is paused, false otherwise
         public static bool Paused { get; set; }
@@ -214,7 +225,36 @@ namespace DwarfCorp.GameStates
         public AnnounementViewer AnnouncementViewer { get; set; }
 
         public static MonsterSpawner MonsterSpawner { get; set; }
-  
+        public static Company PlayerCompany { get { return Master.Faction.Economy.Company; } }
+        public static Faction PlayerFaction { get { return Master.Faction; } }
+        public static Economy PlayerEconomy { get { return Master.Faction.Economy; } }
+
+        public List<string> LoadingTips = new List<string>()
+        {
+            "Can't get the right angle? Hold SHIFT to move the camera around!",
+            "Need to see tiny dwarves? Use the mousewheel to zoom!",
+            "Press Q to quickly slice the terrain at the height of the cursor.",
+            "Press E to quickly un-slice the terrain.",
+            "The number keys can be used to quickly switch between tools.",
+            "Employees will not work if they are unhappy.",
+            "Monsters got you down? Try hiring some thugs!",
+            "The most lucrative resources are beneath the earth.",
+            "Dwarves can swim!",
+            "Stockpiles are free!",
+            "Make sure to sell your goods before midnight!",
+            "Dwarves prefer to eat in common rooms, but they will eat out stockpiles if necessary.",
+            "The minimap can be closed and opened.",
+            "Monsters are shown on the minimap.",
+            "Axedwarves are better at chopping trees than miners."
+        };
+
+        private Timer TipTimer = new Timer(5, false);
+        private int TipIndex = 0;
+
+        private bool SleepPrompt = false;
+
+        public static CraftLibrary CraftLibrary = null;
+
         #endregion
 
         /// <summary>
@@ -344,8 +384,10 @@ namespace DwarfCorp.GameStates
         /// Creates a bunch of stuff (such as the biome library, primitive library etc.) which won't change
         /// from game to game.
         /// </summary>
-        public void InitializeStaticData()
+        public void InitializeStaticData(string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
         {
+            CraftLibrary = new CraftLibrary();
+            
             if (SoundManager.Content == null)
             {
                 SoundManager.Content = Content;
@@ -380,8 +422,8 @@ namespace DwarfCorp.GameStates
             SoundManager.Content = Content;
             PlanService.Restart();
 
-            ComponentManager = new ComponentManager(this);
-            ComponentManager.RootComponent = new Body(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero, false);
+            ComponentManager = new ComponentManager(this, companyName, companyMotto, companyLogo, companyColor);
+            ComponentManager.RootComponent = new Body("root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero, false);
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);
             ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
@@ -453,15 +495,13 @@ namespace DwarfCorp.GameStates
             Drawer3D.Camera = Camera;
 
             // Creates the terrain management system.
-            ChunkManager = new ChunkManager(Content, (uint) ChunkWidth, (uint) ChunkHeight, (uint) ChunkWidth, Camera, GraphicsDevice, Tilesheet,
+            ChunkManager = new ChunkManager(Content, (uint) ChunkWidth, (uint) ChunkHeight, (uint) ChunkWidth, Camera,
+                GraphicsDevice, Tilesheet,
                 TextureManager.GetTexture(ContentPaths.Terrain.terrain_illumination),
                 TextureManager.GetTexture(ContentPaths.Gradients.sungradient),
                 TextureManager.GetTexture(ContentPaths.Gradients.ambientgradient),
                 TextureManager.GetTexture(ContentPaths.Gradients.torchgradient),
-                ChunkGenerator, 10, 1, 10)
-            {
-                Components = ComponentManager
-            };
+                ChunkGenerator, 10, 1, 10);
 
             // Trying to determine the global offset from overworld coordinates (pixels in the overworld) to
             // voxel coordinates.
@@ -594,6 +634,11 @@ namespace DwarfCorp.GameStates
         }
 
 
+        public void CreateShadows()
+        {
+            Shadows = new ShadowRenderer(GraphicsDevice, 512, 512);
+        }
+
         /// <summary>
         /// Creates the sky renderer and loads all the cube maps
         /// for the sky box
@@ -657,10 +702,10 @@ namespace DwarfCorp.GameStates
 
             GridLayout infoLayout = new GridLayout(GUI, companyInfoComponent, 3, 4);
 
-            CompanyLogoPanel = new ImagePanel(GUI, infoLayout, new ImageFrame(TextureManager.GetTexture(ContentPaths.Logos.grebeardlogo)));
+            CompanyLogoPanel = new ImagePanel(GUI, infoLayout, PlayerCompany.Logo);
             infoLayout.SetComponentPosition(CompanyLogoPanel, 0, 0, 1, 1);
 
-            CompanyNameLabel = new Label(GUI, infoLayout, PlayerSettings.Default.CompanyName, GUI.DefaultFont)
+            CompanyNameLabel = new Label(GUI, infoLayout, PlayerCompany.Name, GUI.DefaultFont)
             {
                 TextColor = Color.White,
                 StrokeColor = new Color(0, 0, 0, 100),
@@ -784,9 +829,8 @@ namespace DwarfCorp.GameStates
                 InstanceManager.Clear();
                 gameFile.LoadComponents(ExistingFile);
                 ComponentManager = gameFile.Data.Components;
+                GameComponent.ResetMaxGlobalId(ComponentManager.GetMaxComponentID() + 1);
                 Master = new GameMaster(ComponentManager.Factions.Factions["Player"], Game, ComponentManager, ChunkManager, Camera, GraphicsDevice, GUI);
-                ChunkManager.Components = ComponentManager;
-                Master.Faction.Components = ComponentManager;
 
                 CreateGUIComponents();
 
@@ -798,34 +842,53 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public void Load()
         {
-            EnableScreensaver = true;
-            LoadingMessage = "Initializing Static Data...";
-            InitializeStaticData();
+            try
+            {
+                EnableScreensaver = true;
+                LoadingMessage = "Initializing Static Data...";
+                InitializeStaticData(CompanyMakerState.CompanyName, CompanyMakerState.CompanyMotto, CompanyMakerState.CompanyLogo,
+                    CompanyMakerState.CompanyColor);
+                LoadingMessage = "Creating ParticleTrigger...";
+                CreateParticles();
 
+                LoadingMessage = "Creating Sky...";
+                CreateSky();
 
-            LoadingMessage = "Creating ParticleTrigger...";
-            CreateParticles();
+                LoadingMessage = "Creating shadows...";
+                CreateShadows();
 
-            LoadingMessage = "Creating Sky...";
-            CreateSky();
+                LoadingMessage = "Creating Liquids..";
+                CreateLiquids();
 
-            LoadingMessage = "Creating Liquids..";
-            CreateLiquids();
+                LoadingMessage = "Generating Initial Terrain Chunks...";
+                GenerateInitialChunks();
 
-            LoadingMessage = "Generating Initial Terrain Chunks...";
-            GenerateInitialChunks();
+                LoadingMessage = "Creating GUI";
+                CreateGUI(string.IsNullOrEmpty(ExistingFile));
 
-            LoadingMessage = "Creating GUI";
-            CreateGUI(string.IsNullOrEmpty(ExistingFile));
+                LoadingMessage = "Embarking.";
+                CreateInitialEmbarkment();
 
-            LoadingMessage = "Embarking.";
-            CreateInitialEmbarkment();
+                GenerateInitialObjects();
 
+                IsInitialized = true;
 
-            IsInitialized = true;
+                LoadingMessage = "Complete.";
+                EnableScreensaver = false;
+            }
+            catch (Exception exception)
+            {
+                Program.WriteExceptionLog(exception);
+            }
+        }
 
-            LoadingMessage = "Complete.";
-            EnableScreensaver = false;
+        private void GenerateInitialObjects()
+        {
+            foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
+            {
+                ChunkManager.ChunkGen.GenerateVegetation(chunk.Value, ComponentManager, Content, GraphicsDevice);
+                ChunkManager.ChunkGen.GenerateFauna(chunk.Value, ComponentManager, Content, GraphicsDevice, ComponentManager.Factions);
+            }
         }
 
         /// <summary>
@@ -868,7 +931,8 @@ namespace DwarfCorp.GameStates
             Vector3 pos = new Vector3(x, ChunkHeight - 1, z);
 
             // First, compute the maximum height of the terrain in a square window.
-            int maxHeight = int.MinValue;
+            int averageHeight = 0;
+            int count = 0;
             for(int dx = -size; dx <= size; dx++)
             {
                 for(int dz = -size; dz <= size; dz++)
@@ -884,16 +948,16 @@ namespace DwarfCorp.GameStates
                     Vector3 gridPos = chunk.WorldToGrid(worldPos);
                     int h = chunk.GetFilledHeightOrWaterAt((int) gridPos.X + dx, (int) gridPos.Y, (int) gridPos.Z + dz);
 
-
-                    if(h >= maxHeight)
-                    {
-                        maxHeight = h;
-                    }
+                    averageHeight += h;
+                    count++;
                 }
             }
 
+            averageHeight = (int) Math.Round(((float) averageHeight/(float) count)) + 2;
+            
+
             // Next, create the balloon port by deciding which voxels to fill.
-            List<VoxelRef> designations = new List<VoxelRef>();
+            List<Voxel> designations = new List<Voxel>();
             for(int dx = -size; dx <= size; dx++)
             {
                 for(int dz = -size; dz <= size; dz++)
@@ -908,27 +972,37 @@ namespace DwarfCorp.GameStates
                         continue;
                     }
 
-                    // Fill from the top height down to the bottom.
-                    for(int y = h - 1; y < maxHeight; y++)
+                    for (int y = averageHeight; y < h; y++)
                     {
-                        Vector3 worldCoord2 = chunk.GridToWorld(new Vector3((int) gridPos.X, y, (int) gridPos.Z));
-                        Voxel v = new Voxel(worldCoord2, VoxelLibrary.GetVoxelType("Scaffold"), VoxelLibrary.GetPrimitive("Scaffold"), true);
-                        ;
-                        chunk.VoxelGrid[(int) gridPos.X][y][(int) gridPos.Z] = v;
-                        chunk.Water[(int) gridPos.X][y][(int) gridPos.Z].WaterLevel = 0;
+                        Voxel v = chunk.MakeVoxel((int)gridPos.X, y, (int)gridPos.Z);
+                        v.Type = VoxelLibrary.GetVoxelType(0);
+                        chunk.Data.Water[v.Index].WaterLevel = 0;
+                    }
+
+                    if (averageHeight < h)
+                    {
+                        h = averageHeight;
+                    }
+
+                    // Fill from the top height down to the bottom.
+                    for (int y = h - 1; y < averageHeight; y++)
+                    {
+                        Voxel v = chunk.MakeVoxel((int) gridPos.X, y, (int) gridPos.Z);
+                        v.Type = VoxelLibrary.GetVoxelType("Scaffold");
+                        chunk.Data.Water[v.Index].WaterLevel = 0;
                         v.Chunk = chunk;
                         v.Chunk.NotifyTotalRebuild(!v.IsInterior);
 
-                        if(y == maxHeight - 1)
+                        if (y == averageHeight - 1)
                         {
-                            designations.Add(v.GetReference());
+                            designations.Add(v);
                         }
                     }
                 }
             }
 
             // Actually create the BuildRoom.
-            Room toBuild = new Room(designations, RoomLibrary.GetType("BalloonPort"), chunkManager);
+            BalloonPort toBuild = new BalloonPort(designations, chunkManager);
             BuildRoomOrder buildDes = new BuildRoomOrder(toBuild, roomDes.Faction);
             buildDes.Build();
             roomDes.DesignatedRooms.Add(toBuild);
@@ -1098,6 +1172,22 @@ namespace DwarfCorp.GameStates
                 Time.Speed = 100;
             }
 
+            if (FastForwardToDay)
+            {
+                if (Time.IsDay())
+                {
+                    FastForwardToDay = false;
+                    foreach (CreatureAI minion in Master.Faction.Minions)
+                    {
+                        minion.Status.Energy.CurrentValue = minion.Status.Energy.MaxValue;
+                    }
+                }
+                else
+                {
+                    Time.Speed = 10000;
+                }
+            }
+
             // If End is pressed, quit the game TODO: Replace with input manager.
             if(Keyboard.GetState().IsKeyDown(Keys.End))
             {
@@ -1144,6 +1234,7 @@ namespace DwarfCorp.GameStates
             // If not paused, we want to just update the rest of the game.
             if (!Paused)
             {
+                FillClosestLights(gameTime);
                 IndicatorManager.Update(gameTime);
                 Time.Update(gameTime);
                 ComponentManager.CollisionManager.Update(gameTime);
@@ -1153,6 +1244,18 @@ namespace DwarfCorp.GameStates
                 Sky.CosTime = (float)(Time.GetTotalHours() * 2 * Math.PI / 24.0f);
                 DefaultShader.Parameters["xTimeOfDay"].SetValue(Sky.TimeOfDay);
                 MonsterSpawner.Update(gameTime);
+                bool allAsleep = Master.AreAllEmployeesAsleep();
+                if (SleepPrompt && allAsleep && !FastForwardToDay && Time.IsNight())
+                {
+                    Dialog sleepingPrompt = Dialog.Popup(GUI, "Employees Asleep",
+                        "All of your employees are asleep. Skip to daytime?", Dialog.ButtonType.OkAndCancel);
+                    SleepPrompt = false;
+                    sleepingPrompt.OnClosed += sleepingPrompt_OnClosed;
+                }
+                else if(!allAsleep)
+                {
+                    SleepPrompt = true;
+                }
             }
 
 
@@ -1180,6 +1283,16 @@ namespace DwarfCorp.GameStates
 
             base.Update(gameTime);
         }
+
+        void sleepingPrompt_OnClosed(Dialog.ReturnStatus status)
+        {
+            if (status == Dialog.ReturnStatus.Ok)
+            {
+                FastForwardToDay = true;
+            }
+        }
+
+        public bool FastForwardToDay { get; set; }
 
 
         /// <summary>
@@ -1321,7 +1434,8 @@ namespace DwarfCorp.GameStates
 
             if(Master.CurrentToolMode == GameMaster.ToolMode.Build)
             {
-                Master.Faction.PutDesignator.Render(gameTime, GraphicsDevice, cubeEffect);
+                Master.Faction.WallBuilder.Render(gameTime, GraphicsDevice, cubeEffect);
+                Master.Faction.CraftBuilder.Render(gameTime, GraphicsDevice, cubeEffect);
             }
 
             //ComponentManager.CollisionManager.DebugDraw();
@@ -1368,17 +1482,56 @@ namespace DwarfCorp.GameStates
         /// <param name="gameTime">The current time</param>
         public override void RenderUnitialized(GameTime gameTime)
         {
+            TipTimer.Update(gameTime);
+            if (TipTimer.HasTriggered)
+            {
+                LoadingTip = LoadingTips[Random.Next(LoadingTips.Count)];
+                TipIndex++;
+            }
+
             DwarfGame.SpriteBatch.Begin();
             float t = (float) (Math.Sin(gameTime.TotalGameTime.TotalSeconds * 2.0f) + 1.0f) * 0.5f + 0.5f;
             Color toDraw = new Color(t, t, t);
             SpriteFont font = Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
             Vector2 measurement = Datastructures.SafeMeasure(font, LoadingMessage);
             Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, LoadingMessage, font, new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - measurement.X / 2, Game.GraphicsDevice.Viewport.Height / 2), toDraw, new Color(50, 50, 50));
+
+            if (!string.IsNullOrEmpty(LoadingTip))
+            {
+                Vector2 tipMeasurement = Datastructures.SafeMeasure(font, LoadingTip);
+                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Tip: " + LoadingTip, font,
+                    new Vector2(Game.GraphicsDevice.Viewport.Width/2 - tipMeasurement.X/2,
+                        Game.GraphicsDevice.Viewport.Height - tipMeasurement.Y*2), toDraw, new Color(50, 50, 50));
+            }
             DwarfGame.SpriteBatch.End();
 
             base.RenderUnitialized(gameTime);
         }
 
+
+        public void FillClosestLights(GameTime time)
+        {
+            List<Vector3> positions = (from chunk in ChunkManager.ChunkData.ChunkMap from light in chunk.Value.DynamicLights select light.Voxel.Position).ToList();
+            positions.Sort((a, b) =>
+            {
+                float dA = (a - Camera.Position).LengthSquared();
+                float dB = (b - Camera.Position).LengthSquared();
+                return dA.CompareTo(dB);
+            });
+
+            for (int i = 1; i < Math.Min(16, positions.Count + 1); i++)
+            {
+                if (i > positions.Count)
+                {
+                    LightPositions[i] = new Vector3(0, 0, 0);
+                }
+                else
+                {
+                    LightPositions[i] = positions[i - 1] + new Vector3(0.5f, 0.5f, 0.5f) +
+                                        MathFunctions.PeriodicRand((float) time.TotalGameTime.TotalSeconds + i * 100)*0.1f;
+                }
+            }
+        }
 
         /// <summary>
         /// Called when a frame is to be drawn to the screen
@@ -1406,14 +1559,22 @@ namespace DwarfCorp.GameStates
             float x = (1.0f - Sky.TimeOfDay);
             x = x * x;
             DefaultShader.Parameters["xFogColor"].SetValue(new Vector3(0.32f * x, 0.58f * x, 0.9f * x));
+            DefaultShader.Parameters["xLightPositions"].SetValue(LightPositions);
 
             // Computes the water height.
             float wHeight = WaterRenderer.GetVisibleWaterHeight(ChunkManager, Camera, GraphicsDevice.Viewport, lastWaterHeight);
             lastWaterHeight = wHeight;
-
             // Draw reflection/refraction images
             WaterRenderer.DrawRefractionMap(gameTime, this, wHeight + 1.0f, Camera.ViewMatrix, DefaultShader, GraphicsDevice);
             WaterRenderer.DrawReflectionMap(gameTime, this, wHeight - 0.1f, GetReflectedCameraMatrix(wHeight), DefaultShader, GraphicsDevice);
+
+            /*
+            Shadows.BindShadowmap(GraphicsDevice);
+            Shadows.PrepareEffect(DefaultShader, false);
+            ChunkManager.SimpleRender(GraphicsDevice, DefaultShader, Tilesheet);
+            Shadows.UnbindShadowmap(GraphicsDevice);
+            Shadows.BindShadowmapEffect(DefaultShader);
+             */
 
             // Start drawing the bloom effect
             if(GameSettings.Default.EnableGlow)
@@ -1518,15 +1679,11 @@ namespace DwarfCorp.GameStates
                 }
             }
 
-            Vector3 frustrumNormal = Camera.GetFrustrum().Far.Normal;
-
-
-
             if(Paused)
             {
                 Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Paused", GUI.DefaultFont, new Vector2(GraphicsDevice.Viewport.Width - 100, 10), Color.White, Color.Black);
             }
-
+            //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, new Rectangle(0, 0, 512, 512), Color.White);
             DwarfGame.SpriteBatch.End();
             Master.Render(Game, gameTime, GraphicsDevice);
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle = DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
@@ -1536,6 +1693,7 @@ namespace DwarfCorp.GameStates
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
 
+            
 
 
             base.Render(gameTime);

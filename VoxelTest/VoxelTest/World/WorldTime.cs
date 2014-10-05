@@ -31,7 +31,7 @@ namespace DwarfCorp
 
         public WorldTime()
         {
-            CurrentDate = new DateTime(1432, 4, 1, 12, 0, 0);
+            CurrentDate = new DateTime(1432, 4, 1, 8, 0, 0);
             Speed = 100.0f;
         }
 

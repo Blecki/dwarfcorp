@@ -67,53 +67,60 @@ namespace DwarfCorp.GameStates
 
         public void WorldLoaderThread(int min, int max)
         {
-            for(int i = min; i < max; i++)
+            try
             {
-                if(ExitThreads)
+                for (int i = min; i < max; i++)
                 {
-                    break;
-                }
-
-                Worlds[i].Lock.WaitOne();
-                if(!Worlds[i].IsLoaded)
-                {
-                    Worlds[i].Lock.ReleaseMutex();
-
-                    //Worlds[i].File = new OverworldFile(Worlds[i].FileName, true);
-                    Worlds[i].File = new OverworldFile();
-                    Worlds[i].File.Data = new OverworldFile.OverworldData();
+                    if (ExitThreads)
+                    {
+                        break;
+                    }
 
                     Worlds[i].Lock.WaitOne();
-                    try
+                    if (!Worlds[i].IsLoaded)
                     {
-                        Worlds[i].File.Data.Screenshot = TextureManager.LoadInstanceTexture(Worlds[i].ScreenshotName);
-                        if(Worlds[i].File.Data.Screenshot != null)
-                        {
-                            Worlds[i].Button.Image = new ImageFrame(Worlds[i].File.Data.Screenshot);
-                            Worlds[i].Button.Mode = Button.ButtonMode.ImageButton;
-                            Worlds[i].Button.KeepAspectRatio = true;
-                            Worlds[i].Button.Text = Worlds[i].WorldName;
-                            Worlds[i].Button.TextColor = Color.White;
-                        }
-                        else
-                        {
-                            Worlds[i].Button.Text = Worlds[i].WorldName;
-                        }
+                        Worlds[i].Lock.ReleaseMutex();
 
+                        //Worlds[i].File = new OverworldFile(Worlds[i].FileName, true);
+                        Worlds[i].File = new OverworldFile();
+                        Worlds[i].File.Data = new OverworldFile.OverworldData();
+
+                        Worlds[i].Lock.WaitOne();
+                        try
+                        {
+                            Worlds[i].File.Data.Screenshot = TextureManager.LoadInstanceTexture(Worlds[i].ScreenshotName);
+                            if (Worlds[i].File.Data.Screenshot != null)
+                            {
+                                Worlds[i].Button.Image = new ImageFrame(Worlds[i].File.Data.Screenshot);
+                                Worlds[i].Button.Mode = Button.ButtonMode.ImageButton;
+                                Worlds[i].Button.KeepAspectRatio = true;
+                                Worlds[i].Button.Text = Worlds[i].WorldName;
+                                Worlds[i].Button.TextColor = Color.White;
+                            }
+                            else
+                            {
+                                Worlds[i].Button.Text = Worlds[i].WorldName;
+                            }
+
+                        }
+                        catch (Exception e)
+                        {
+                            Worlds[i].Button.Text = "ERROR " + Worlds[i].WorldName;
+                            Console.Error.WriteLine(e.Message);
+                        }
+                        Worlds[i].Lock.ReleaseMutex();
                     }
-                    catch(Exception e)
+                    else
                     {
-                        Worlds[i].Button.Text = "ERROR " + Worlds[i].WorldName;
-                        Console.Error.WriteLine(e.Message);
+                        Worlds[i].Lock.ReleaseMutex();
                     }
-                    Worlds[i].Lock.ReleaseMutex();
-                }
-                else
-                {
-                    Worlds[i].Lock.ReleaseMutex();
-                }
 
-                Worlds[i].IsLoaded = true;
+                    Worlds[i].IsLoaded = true;
+                }
+            }
+            catch (Exception exception)
+            {
+                Program.WriteExceptionLog(exception);
             }
         }
 

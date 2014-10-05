@@ -16,7 +16,7 @@ namespace DwarfCorp
     {
         public byte Range { get; set; }
         public byte Intensity { get; set; }
-        public VoxelRef Voxel { get; set; }
+        public Voxel Voxel { get; set; }
 
         [JsonIgnore]
         public ChunkManager Chunks { get; set; }
@@ -33,7 +33,7 @@ namespace DwarfCorp
             
         }
 
-        public DynamicLight(byte range, byte intensity, VoxelRef voxel, ChunkManager chunks)
+        public DynamicLight(byte range, byte intensity, Voxel voxel, ChunkManager chunks)
         {
             Range = range;
             Intensity = intensity;
@@ -50,7 +50,6 @@ namespace DwarfCorp
             {
                 neighbor.ShouldRebuild = true;
                 neighbor.ShouldRecalculateLighting = true;
-                neighbor.ResetDynamicLight(0);
             }
         }
     }

@@ -18,25 +18,36 @@ namespace DwarfCorp
     /// </summary>
     public class Resource
     {
-        public string ResourceName { get; set; }
+        public ResourceLibrary.ResourceType Type { get; set; }
+        public string ResourceName { get { return ResourceLibrary.ResourceNames[Type]; }}
         public float MoneyValue { get; set; }
         public string Description { get; set; }
         public ImageFrame Image { get; set; }
-        public List<string> Tags { get; set; }
+        public List<ResourceTags> Tags { get; set; }
+        public float FoodContent { get; set; }
+        public bool SelfIlluminating { get; set; }
+
+        public enum ResourceTags
+        {
+            Food,
+            Material,
+            Precious
+        }
 
         public Resource()
         {
             
         }
 
-        public Resource(string name, float money, string description, ImageFrame image, params string[] tags)
+        public Resource(ResourceLibrary.ResourceType type, float money, string description, ImageFrame image, params ResourceTags[] tags)
         {
-            ResourceName = name;
+            Type = type;
             MoneyValue = money;
             Description = description;
             Image = image;
-            Tags = new List<string>();
+            Tags = new List<ResourceTags>();
             Tags.AddRange(tags);
+            FoodContent = 0;
         }
     }
 

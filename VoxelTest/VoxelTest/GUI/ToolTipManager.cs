@@ -17,13 +17,22 @@ namespace DwarfCorp
     {
         public DwarfGUI GUI { get; set; }
 
+        public Timer PopupTimer { get; set; }
+
         public Timer HoverTimer { get; set; }
 
+        public string PopupTip { get; set; }
         public string ToolTip { get; set; }
 
         private MouseState LastMouse { get; set; }
 
         public int MovementThreshold { get; set; }
+
+        public enum TipType
+        {
+            TopLeft,
+            BottomRight
+        }
 
         public ToolTipManager(DwarfGUI gui)
         {
@@ -32,6 +41,7 @@ namespace DwarfCorp
             ToolTip = "";
             LastMouse = Mouse.GetState();
             MovementThreshold = 2;
+            PopupTimer = new Timer(2.5f, true);
         }
 
         public void Update(GameTime time)
@@ -58,6 +68,13 @@ namespace DwarfCorp
                 }
             }
 
+            PopupTimer.Update(time);
+
+            if (PopupTimer.HasTriggered)
+            {
+                PopupTip = null;
+            }
+
             LastMouse = currentMouse;
 
         }
@@ -75,45 +92,70 @@ namespace DwarfCorp
             }
         }
 
-        public void Render(GraphicsDevice device, SpriteBatch batch, GameTime time)
+        public void RenderTip(GraphicsDevice device, SpriteBatch batch, string tip, MouseState mouse, TipType tipType)
         {
-            if (string.IsNullOrEmpty(ToolTip) || !GUI.RootComponent.IsVisible)
-            {
-                return;
-            }
-
             Rectangle viewBounds = device.Viewport.Bounds;
 
-            MouseState mouse = Mouse.GetState();
+            Vector2 stringMeasure = Datastructures.SafeMeasure(GUI.SmallFont, tip);
 
-            Vector2 stringMeasure = Datastructures.SafeMeasure(GUI.SmallFont, ToolTip);
+            Rectangle bounds;
+            
+            if(tipType == TipType.BottomRight)
+            { 
+                bounds = new Rectangle(mouse.X + 16, mouse.Y + 16, (int)(stringMeasure.X + 15), (int)(stringMeasure.Y + 15));
+            }
+            else
+            {
+                bounds = new Rectangle(mouse.X - (int)stringMeasure.X - 15, mouse.Y  - (int)stringMeasure.Y - 15, (int)(stringMeasure.X + 15), (int)(stringMeasure.Y + 15));
+            }
 
-            Rectangle bounds = new Rectangle(mouse.X + 16, mouse.Y + 16, (int)(stringMeasure.X + 15), (int)(stringMeasure.Y + 15));
-
-            if(bounds.Left < viewBounds.Left)
+            if (bounds.Left < viewBounds.Left)
             {
                 bounds.X = viewBounds.X;
             }
 
-            if(bounds.Right > viewBounds.Right)
+            if (bounds.Right > viewBounds.Right)
             {
                 bounds.X = viewBounds.Right - bounds.Width;
             }
 
-            if(bounds.Top < viewBounds.Top)
+            if (bounds.Top < viewBounds.Top)
             {
                 bounds.Y = viewBounds.Y;
             }
 
-            if(bounds.Bottom > viewBounds.Bottom)
+            if (bounds.Bottom > viewBounds.Bottom)
             {
                 bounds.Y = viewBounds.Bottom - bounds.Height;
             }
 
             GUI.Skin.RenderToolTip(bounds, batch, Color.White);
-            Drawer2D.DrawAlignedText(batch, ToolTip, GUI.SmallFont, Color.White, Drawer2D.Alignment.Center, bounds);
+            Drawer2D.DrawAlignedText(batch, tip, GUI.SmallFont, Color.White, Drawer2D.Alignment.Center, bounds);
+        }
+
+        public void Render(GraphicsDevice device, SpriteBatch batch, GameTime time)
+        {
+            if (!GUI.RootComponent.IsVisible)
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(PopupTip))
+            {
+                RenderTip(device, batch, PopupTip, Mouse.GetState(), TipType.TopLeft);
+            }
+
+            if (!string.IsNullOrEmpty(ToolTip))
+            {
+                RenderTip(device, batch, ToolTip, Mouse.GetState(), TipType.BottomRight);
+            }
         }
 
 
+        public void Popup(string text)
+        {
+            PopupTip = text;
+            PopupTimer.Reset(PopupTimer.TargetTimeSeconds);
+        }
     }
 }

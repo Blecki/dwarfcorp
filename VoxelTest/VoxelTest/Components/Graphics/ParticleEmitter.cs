@@ -102,7 +102,7 @@ namespace DwarfCorp
         }
 
         public ParticleEmitter(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, EmitterData emitterData) :
-            base(manager, name, parent, localTransform, Vector3.Zero, Vector3.Zero, false)
+            base(name, parent, localTransform, Vector3.Zero, Vector3.Zero, false)
         {
             Particles = new List<Particle>();
 
@@ -233,7 +233,7 @@ namespace DwarfCorp
 
                     BoundingBox b = new BoundingBox(p.Position - Vector3.One * p.Scale * 0.5f, p.Position + Vector3.One * p.Scale * 0.5f);
 
-                    if(v != null)
+                    if(v != null && !v.IsEmpty)
                     {
                         Physics.Contact contact = new Physics.Contact();
                         if(Physics.TestStaticAABBAABB(b, v.GetBoundingBox(), ref contact))

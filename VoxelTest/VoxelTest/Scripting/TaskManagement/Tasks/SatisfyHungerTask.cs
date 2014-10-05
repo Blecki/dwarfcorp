@@ -15,6 +15,11 @@ namespace DwarfCorp
             Name = "Satisfy Hunger";
         }
 
+        public override Task Clone()
+        {
+            return new SatisfyHungerTask();
+        }
+
         public override Act CreateScript(Creature agent)
         {
             return new FindAndEatFoodAct(agent.AI);
@@ -27,7 +32,7 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            return agent.Faction.FindItemsWithTags(new TagList("Food")).Count > 0;
+            return true;
         }
     }
 }

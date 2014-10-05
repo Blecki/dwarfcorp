@@ -210,69 +210,67 @@ namespace DwarfCorp
             return toReturn;
         }
 
-
-        public ExtendedVertex[] GetFace(BoxFace face, BoxPrimitive.BoxTextureCoords uvs)
+        public void GetFace(BoxFace face, BoxPrimitive.BoxTextureCoords uvs, out int index, out int count)
         {
-            switch(face)
+            switch (face)
             {
                 case BoxFace.Back:
-                    return GetBackFace(uvs);
+                    GetBackFace(uvs, out index, out count);
+                    return;
                 case BoxFace.Front:
-                    return GetFrontFace(uvs);
+                    GetFrontFace(uvs, out index, out count);
+                    return;
                 case BoxFace.Left:
-                    return GetLeftFace(uvs);
+                    GetLeftFace(uvs, out index, out count);
+                    return;
                 case BoxFace.Right:
-                    return GetRightFace(uvs);
+                    GetRightFace(uvs, out index, out count);
+                    return;
                 case BoxFace.Top:
-                    return GetTopFace(uvs);
+                    GetTopFace(uvs, out index, out count);
+                    return;
                 case BoxFace.Bottom:
-                    return GetBottomFace(uvs);
+                    GetBottomFace(uvs, out index, out count);
+                    return;
             }
-
-            return null;
+            index = 0;
+            count = 0;
         }
 
-        public ExtendedVertex[] GetFace(BoxPrimitive.BoxTextureCoords uvs, int offset)
+        public void GetFrontFace(BoxPrimitive.BoxTextureCoords uvs, out int idx, out int count)
         {
-            ExtendedVertex[] toReturn = Vertices.SubArray(offset, 6);
-
-            for(int i = 0; i < 6; i++)
-            {
-                toReturn[i].TextureCoordinate = uvs.m_uvs[i + offset];
-                toReturn[i].TextureBounds = uvs.Bounds[offset / 6];
-            }
-
-            return toReturn;
+            idx = 0;
+            count = 6;
         }
 
-        public ExtendedVertex[] GetFrontFace(BoxPrimitive.BoxTextureCoords uvs)
+        public void GetBackFace(BoxPrimitive.BoxTextureCoords uvs, out int idx, out int count)
         {
-            return GetFace(uvs, 0);
+            idx = 6;
+            count = 6;
         }
 
-        public ExtendedVertex[] GetBackFace(BoxPrimitive.BoxTextureCoords uvs)
+        public void GetTopFace(BoxPrimitive.BoxTextureCoords uvs, out int idx, out int count)
         {
-            return GetFace(uvs, 6);
+            idx = 12;
+            count = 6;
         }
 
-        public ExtendedVertex[] GetTopFace(BoxPrimitive.BoxTextureCoords uvs)
+        public void GetBottomFace(BoxPrimitive.BoxTextureCoords uvs, out int idx, out int count)
         {
-            return GetFace(uvs, 12);
+            idx = 18;
+            count = 6;
         }
 
-        public ExtendedVertex[] GetBottomFace(BoxPrimitive.BoxTextureCoords uvs)
+        public void GetLeftFace(BoxPrimitive.BoxTextureCoords uvs, out int idx, out int count)
         {
-            return GetFace(uvs, 18);
+            idx = 24;
+            count = 6;
         }
 
-        public ExtendedVertex[] GetLeftFace(BoxPrimitive.BoxTextureCoords uvs)
+        public void GetRightFace(BoxPrimitive.BoxTextureCoords uvs, out int idx, out int count)
         {
-            return GetFace(uvs, 24);
-        }
-
-        public ExtendedVertex[] GetRightFace(BoxPrimitive.BoxTextureCoords uvs)
-        {
-            return GetFace(uvs, 30);
+            idx = 30;
+            count = 6;
         }
 
         private void CreateVerticies()

@@ -31,8 +31,8 @@
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>http://www.dwarfcorp.com/PreAlpha/Builds/</UpdateUrl>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>32</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -127,38 +127,67 @@
     <Compile Include="Components\AI\Monsters\Snake.cs" />
     <Compile Include="Components\AI\Animals\Deer.cs" />
     <Compile Include="Components\Graphics\SelectionCircle.cs" />
+    <Compile Include="Components\GUI\WorldGUIObject.cs" />
+    <Compile Include="Components\Traps\BearTrap.cs" />
     <Compile Include="GameStates\EconomyState.cs" />
     <Compile Include="GameStates\LoseState.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\AnimatedImagePanel.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\MiniBar.cs" />
+    <Compile Include="Graphics\Drawing\HSLColor.cs" />
+    <Compile Include="Graphics\Drawing\SpriteSheet.cs" />
+    <Compile Include="Graphics\Effects\ShadowRenderer.cs" />
+    <Compile Include="GUI\Components\Basic\AnimatedImagePanel.cs" />
+    <Compile Include="GUI\Components\Basic\ColorPanel.cs" />
+    <Compile Include="GUI\Components\Basic\MiniBar.cs" />
     <Compile Include="GUI\Components\Complex\AnnounementViewer.cs" />
     <Compile Include="GUI\Components\Complex\ApplicationPanel.cs" />
     <Compile Include="GUI\Components\Complex\CapitalPanel.cs" />
+    <Compile Include="GUI\Components\Complex\ColorDialog.cs" />
+    <Compile Include="GUI\Components\Complex\ColorSelector.cs" />
     <Compile Include="GUI\Components\Complex\GoodsPanel.cs" />
     <Compile Include="GUI\Components\Complex\BuildPanel.cs" />
     <Compile Include="GUI\Components\Complex\EmployeeDisplay.cs" />
     <Compile Include="GUI\Components\Complex\HireDialog.cs" />
+    <Compile Include="GUI\Components\Complex\ImageFrameLoadDialog.cs" />
     <Compile Include="GUI\Components\Complex\MinionPanel.cs" />
     <Compile Include="GUI\Components\Complex\StockTicker.cs" />
     <Compile Include="GUI\Components\Complex\TabSelector.cs" />
     <Compile Include="Scripting\Classes\Applicant.cs" />
+    <Compile Include="Scripting\Classes\CraftDwarfClass.cs" />
     <Compile Include="Scripting\Classes\EmployeeClass.cs" />
     <Compile Include="Scripting\Classes\JobLibrary.cs" />
     <Compile Include="Scripting\Classes\AxeDwarfClass.cs" />
     <Compile Include="Scripting\Classes\NecromancerClass.cs" />
     <Compile Include="Scripting\Classes\SkeletonClass.cs" />
     <Compile Include="Scripting\Classes\SwordGoblinClass.cs" />
+    <Compile Include="Scripting\Classes\WizardClass.cs" />
     <Compile Include="Scripting\Classes\WorkerClass.cs" />
+    <Compile Include="Scripting\CompoundActs\CraftItemAct.cs" />
+    <Compile Include="Scripting\CompoundActs\FarmAct.cs" />
+    <Compile Include="Scripting\CompoundActs\GoToChairAndSitAct.cs" />
+    <Compile Include="Scripting\CompoundActs\GoToTaggedObjectAct.cs" />
+    <Compile Include="Scripting\Crafting\CraftItem.cs" />
+    <Compile Include="Scripting\Crafting\CraftLibrary.cs" />
+    <Compile Include="Scripting\LeafActs\CreateCraftItemAct.cs" />
+    <Compile Include="Scripting\LeafActs\TeleportAct.cs" />
     <Compile Include="Scripting\MonsterSpawner.cs" />
     <Compile Include="Scripting\Player\Announcements\Announcement.cs" />
     <Compile Include="Scripting\Player\Announcements\AnnouncementManager.cs" />
     <Compile Include="Scripting\Player\Building\BuildStockpileOrder.cs" />
+    <Compile Include="Scripting\Player\Building\CraftBuilder.cs" />
     <Compile Include="Scripting\Player\Economy\Company.cs" />
     <Compile Include="Scripting\Player\Tools\AttackTool.cs" />
+    <Compile Include="Scripting\Rooms\Farm.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\BalloonPort.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\BedRoom.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\CommonRoom.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\LibraryRoom.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\MushroomFarm.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\TrainingRoom.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\WheatFarm.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\WorkshopRoom.cs" />
     <Compile Include="Scripting\TaskManagement\GatherManager.cs" />
     <Compile Include="Components\AI\Inventory.cs" />
     <Compile Include="Components\AI\Sensors\VoxelListener.cs" />
-    <Compile Include="Components\Graphics\MinimapIcon.cs" />
+    <Compile Include="Components\GUI\MinimapIcon.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\PolygonDrawCommand.cs" />
     <Compile Include="GUI\Components\Complex\ResourceInfoComponent.cs" />
     <Compile Include="Scripting\Player\BodySelector.cs" />
@@ -187,7 +216,7 @@
     <Compile Include="GUI\Indicators\IndicatorManager.cs" />
     <Compile Include="Graphics\Instancing\InstanceData.cs" />
     <Compile Include="Graphics\MotionAnimation\TossMotion.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\ColorKey.cs" />
+    <Compile Include="GUI\Components\Basic\ColorKey.cs" />
     <Compile Include="GUI\Components\Complex\Minimap.cs" />
     <Compile Include="GUI\Layouts\FormEntry.cs" />
     <Compile Include="GUI\Layouts\FormLayout.cs" />
@@ -211,7 +240,10 @@
     <Compile Include="Scripting\Player\Economy\ResourceContainer.cs" />
     <Compile Include="Scripting\Player\Tools\DwarfSelectorTool.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\BuildRoomTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\CraftItemTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\FarmTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\StockResourceTask.cs" />
+    <Compile Include="Scripting\Thoughts\Thought.cs" />
     <Compile Include="Sound\NoiseMaker.cs" />
     <Compile Include="Scripting\Player\Building\BuildOrder.cs" />
     <Compile Include="Scripting\Player\Building\BuildRoomOrder.cs" />
@@ -230,7 +262,6 @@
     <Compile Include="Scripting\Player\Tools\GatherTool.cs" />
     <Compile Include="Scripting\Player\Tools\GuardTool.cs" />
     <Compile Include="Scripting\Player\Tools\PlayerTool.cs" />
-    <Compile Include="Scripting\Player\Tools\StockpileTool.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\PutItemInZoneTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\BuildVoxelTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\GatherItemTask.cs" />
@@ -250,7 +281,6 @@
     <Compile Include="Tools\ServiceArchitecture\Subscriber.cs" />
     <Compile Include="Voxels\ChunkData.cs" />
     <Compile Include="Voxels\LiquidAsset.cs" />
-    <Compile Include="Voxels\VoxelRef.cs" />
     <Compile Include="Voxels\VoxelType.cs" />
     <Compile Include="Voxels\WaterCell.cs" />
     <Compile Include="World\BiomeData.cs" />
@@ -279,9 +309,9 @@
       <DependentUpon>GameSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="GUI\Components\Complex\ActDisplay.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\Dialog.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\DraggableItem.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\DragGrid.cs" />
+    <Compile Include="GUI\Components\Basic\Dialog.cs" />
+    <Compile Include="GUI\Components\Basic\DraggableItem.cs" />
+    <Compile Include="GUI\Components\Basic\DragGrid.cs" />
     <Compile Include="GUI\DragManager.cs" />
     <Compile Include="GUI\GItem.cs" />
     <Compile Include="Graphics\Drawing\ImageFrame.cs" />
@@ -290,10 +320,10 @@
     <Compile Include="GUI\Components\Complex\AIDebugger.cs" />
     <Compile Include="GUI\Components\Complex\AssetManager.cs" />
     <Compile Include="GUI\Components\Complex\ItemSelector.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\KeyEdit.cs" />
+    <Compile Include="GUI\Components\Basic\KeyEdit.cs" />
     <Compile Include="GUI\Components\Complex\KeyEditor.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\ScrollView.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\SpinBox.cs" />
+    <Compile Include="GUI\Components\Basic\ScrollView.cs" />
+    <Compile Include="GUI\Components\Basic\SpinBox.cs" />
     <Compile Include="GUI\Components\Complex\TextureLoadDialog.cs" />
     <Compile Include="Tools\Datastructures\CollisionManager.cs" />
     <Compile Include="Tools\Math\HungarianAlgorithm.cs" />
@@ -306,11 +336,6 @@
     <Compile Include="LanguageGenerator\TextAtom.cs" />
     <Compile Include="LanguageGenerator\TextGenerator.cs" />
     <Compile Include="AssetManagement\TextureManager.cs" />
-    <Compile Include="PlayerSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>PlayerSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="Components\DeathComponentSpawner.cs" />
     <Compile Include="Components\Graphics\ParticleTrigger.cs" />
     <Compile Include="Components\AI\Sensors\EnemySensor.cs" />
@@ -338,22 +363,22 @@
     <Compile Include="Graphics\Primitives\PrimitiveLibrary.cs" />
     <Compile Include="Graphics\Primitives\LiquidPrimitive.cs" />
     <Compile Include="Graphics\Effects\SkyRenderer.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\Button.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\Checkbox.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\ComboBox.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\ComboBoxSelector.cs" />
+    <Compile Include="GUI\Components\Basic\Button.cs" />
+    <Compile Include="GUI\Components\Basic\Checkbox.cs" />
+    <Compile Include="GUI\Components\Basic\ComboBox.cs" />
+    <Compile Include="GUI\Components\Basic\ComboBoxSelector.cs" />
     <Compile Include="GUI\Layouts\GridLayout.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\GroupBox.cs" />
+    <Compile Include="GUI\Components\Basic\GroupBox.cs" />
     <Compile Include="GUI\Skins\GUISkin.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\ImagePanel.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\Label.cs" />
+    <Compile Include="GUI\Components\Basic\ImagePanel.cs" />
+    <Compile Include="GUI\Components\Basic\Label.cs" />
     <Compile Include="GUI\Layouts\Layout.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\LineEdit.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\ListSelector.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\Panel.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\ProgressBar.cs" />
+    <Compile Include="GUI\Components\Basic\LineEdit.cs" />
+    <Compile Include="GUI\Components\Basic\ListSelector.cs" />
+    <Compile Include="GUI\Components\Basic\Panel.cs" />
+    <Compile Include="GUI\Components\Basic\ProgressBar.cs" />
     <Compile Include="GUI\GUIComponent.cs" />
-    <Compile Include="GUI\Components\Complex\Basic\Slider.cs" />
+    <Compile Include="GUI\Components\Basic\Slider.cs" />
     <Compile Include="Tools\Math\Easing.cs" />
     <Compile Include="World\DetailMoteData.cs" />
     <Compile Include="World\FaunaData.cs" />
@@ -380,7 +405,7 @@
     <Compile Include="Scripting\Player\Building\RoomBuilder.cs" />
     <Compile Include="Scripting\Rooms\RoomLibrary.cs" />
     <Compile Include="Scripting\Rooms\RoomTemplate.cs" />
-    <Compile Include="Scripting\Rooms\RoomType.cs" />
+    <Compile Include="Scripting\Rooms\RoomData.cs" />
     <Compile Include="Scripting\Player\Economy\ShipmentOrder.cs" />
     <Compile Include="Scripting\Rooms\Stockpile.cs" />
     <Compile Include="GUI\Components\Complex\MasterControls.cs" />
@@ -510,10 +535,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>GameSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="PlayerSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>PlayerSettings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VoxelTestContent\DwarfCorpXNAContent.contentproj">
@@ -522,6 +543,7 @@
       <XnaReferenceType>Content</XnaReferenceType>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

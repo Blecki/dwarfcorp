@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -73,58 +74,151 @@ namespace DwarfCorp
     /// <summary>
     /// An atomic cube in the world which represents a bit of terrain. 
     /// </summary>
+    [JsonObject(IsReference = true)]
     public class Voxel : IBoundedObject
     {
-        [JsonIgnore]
-        public VoxelChunk Chunk
+        protected bool Equals(Voxel other)
         {
-            get { return chunk; }
-            set
-            {
-                GridPosition = Position - value.Origin;
-                IsInterior = IsInteriorPoint(new Point3(GridPosition), value);
+            return Equals(Chunk, other.Chunk) && GridPosition.Equals(other.GridPosition);
+        }
 
-                chunk = value;
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((Chunk != null ? Chunk.GetHashCode() : 0)*397) ^ GridPosition.GetHashCode();
             }
         }
 
-        public Vector3 Position { get; set; }
-        public VoxelType Type { get; set; }
-        public BoxPrimitive Primitive { get; set; }
-        public bool IsVisible { get; set; }
-        
-        public Color[] VertexColors;
+        [JsonIgnore]
+        public VoxelChunk Chunk { get; set; }
 
-        public Vector3 GridPosition { get; set; }
-        public bool RecalculateLighting { get; set; }
+        [JsonIgnore]
+        public Vector3 Position 
+        {
+            get
+            {
+                return GridPosition + Chunk.Origin;
+            }
+        }
+
+        [JsonIgnore]
+        public byte WaterLevel
+        {
+            get { return Chunk.Data.Water[Index].WaterLevel; }
+            set { Chunk.Data.Water[Index].WaterLevel = value; }
+        }
+
+        [JsonIgnore]
+        public VoxelType Type
+        {
+            get
+            {
+                return VoxelType.TypeList[Chunk.Data.Types[Index]];
+            }
+            set { Chunk.Data.Types[Index] = (byte) value.ID; }
+        }
+
+        [JsonIgnore]
+        public string TypeName
+        {
+            get { return this.Type.Name; }
+        }
+
+        private int index = 0;
+        [JsonIgnore]
+        public int Index
+        {
+            get { return index; }
+        }
+
+        [JsonIgnore]
+        public BoxPrimitive Primitive 
+        {
+            get { return VoxelLibrary.GetPrimitive(Type); }
+        }
+
+        [JsonIgnore]
+        public bool IsVisible 
+        {
+            get { return Chunk.Data.IsVisible[Index]; }
+            set { Chunk.Data.IsVisible[Index] = value; }
+        }
+
+        private Vector3 gridpos = Vector3.Zero;
+
+        public Vector3 GridPosition
+        {
+            get { return gridpos; }
+            set 
+            { 
+                gridpos = value;
+
+                if(Chunk != null)
+                    index = Chunk.Data.IndexAt((int)gridpos.X, (int)gridpos.Y, (int)gridpos.Z); 
+            }
+        }
+
+        [JsonIgnore]
+        public bool RecalculateLighting 
+        {
+            get { return Chunk.Data.RecalculateLighting[Index]; }
+            set { Chunk.Data.RecalculateLighting[Index] = value;  }
+        }
+
+        [JsonIgnore]
         public static List<VoxelVertex> VoxelVertexList { get; set; }
         private static bool staticsCreated;
-        private VoxelChunk chunk;
-        private bool dead;
-        public RampType RampType = RampType.None;
-        public bool IsInterior = false;
+
+        [JsonIgnore]
+        public bool IsDead
+        {
+            get { return Health <= 0; }
+        }
+
+        [JsonIgnore]
+        public RampType RampType
+        {
+            get { return Chunk.Data.RampTypes[Index]; }
+            set { Chunk.Data.RampTypes[Index] = value; }
+        }
+
+        [JsonIgnore]
+        public bool IsInterior
+        {
+            get { return Chunk.IsInterior((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z); }
+        }
         private static readonly Color BlankColor = new Color(0, 255, 0);
 
+        private Point3 chunkID = new Point3(0, 0, 0);
+        public Point3 ChunkID
+        {
+            get { return chunkID; }
+            set { chunkID = value; }
+        }
+
+        [JsonIgnore]
         public float Health
         {
-            get { return health; }
+            get { return (float) Chunk.Data.Health[Index]; }
             set
             {
-                health = value;
+                Chunk.Data.Health[Index] = (byte)value;
 
-                if (health <= 0.0f)
+                if (value <= 0.0f)
                 {
                     Kill();
                 }
             }
         }
 
-        private float health = 10.0f;
-
+      
         public uint GetID()
         {
             return (uint) GetHashCode();
         }
+
 
         public bool IsTopEmpty()
         {
@@ -132,7 +226,9 @@ namespace DwarfCorp
             {
                 return true;
             }
-            return Chunk.VoxelGrid[(int)GridPosition.X][(int)GridPosition.Y + 1][(int)GridPosition.Z] == null;
+            return
+                Chunk.Data.Types[
+                    Chunk.Data.IndexAt((int) GridPosition.X, (int) GridPosition.Y + 1, (int) GridPosition.Z)] == 0;
         }
 
         public bool IsBottomEmpty()
@@ -141,17 +237,14 @@ namespace DwarfCorp
             {
                 return true;
             }
-            return Chunk.VoxelGrid[(int)GridPosition.X][(int)GridPosition.Y - 1][(int)GridPosition.Z] == null;
+            return
+                Chunk.Data.Types[
+                    Chunk.Data.IndexAt((int)GridPosition.X, (int)GridPosition.Y - 1, (int)GridPosition.Z)] == 0;
         }
 
         public static bool IsInteriorPoint(Point3 gridPosition, VoxelChunk chunk)
         {
-            return gridPosition.X != 0 &&
-                   gridPosition.Y != 0 &&
-                   gridPosition.Z != 0 &&
-                   gridPosition.X != chunk.SizeX - 1 &&
-                   gridPosition.Y != chunk.SizeY - 1 &&
-                   gridPosition.Z != chunk.SizeZ - 1;
+            return chunk.IsInterior(gridPosition.X, gridPosition.Y, gridPosition.Z);
         }
 
         public static bool HasFlag(RampType ramp, RampType flag)
@@ -159,6 +252,20 @@ namespace DwarfCorp
             return (ramp & flag) == flag;
         }
 
+        public bool IsEmpty
+        {
+            get { return Type.ID == 0; }
+        }
+
+        public int SunColor { get { return Chunk.Data.SunColors[Index]; }}
+
+        public override bool Equals(object o)
+        {
+            if (ReferenceEquals(null, o)) return false;
+            if (ReferenceEquals(this, o)) return true;
+            if (o.GetType() != this.GetType()) return false;
+            return Equals((Voxel) o);
+        }
 
         public void UpdateStatics()
         {
@@ -185,7 +292,7 @@ namespace DwarfCorp
 
         public void Kill()
         {
-            if(dead || Chunk == null)
+            if (IsEmpty)
             {
                 return;
             }
@@ -202,16 +309,15 @@ namespace DwarfCorp
             }
 
             SoundManager.PlaySound(Type.ExplosionSound, Position);
-            if(Type.ReleasesResource)
+            if (Type.ReleasesResource)
             {
                 float randFloat = MathFunctions.Rand();
 
-                if(randFloat < Type.ProbabilityOfRelease)
+                if (randFloat < Type.ProbabilityOfRelease)
                 {
-                    EntityFactory.GenerateComponent(Type.ResourceToRelease, Position + new Vector3(0.5f, 0.5f, 0.5f), Chunk.Manager.Components, Chunk.Manager.Content, Chunk.Manager.Graphics, Chunk.Manager, null, null);
+                    EntityFactory.GenerateResource(Type.ResourceToRelease, Position + new Vector3(0.5f, 0.5f, 0.5f));
                 }
             }
-
             Chunk.ShouldRebuild = true;
             Chunk.ShouldRecalculateLighting = true;
             Chunk.ReconstructRamps = true;
@@ -221,10 +327,9 @@ namespace DwarfCorp
 
             if(!IsInterior)
             {
-                List<VoxelRef> neighbors = Chunk.GetNeighborsEuclidean((int) this.GridPosition.X, (int) this.GridPosition.Y, (int) this.GridPosition.Z);
-                foreach(VoxelRef v in neighbors)
+                List<Voxel> neighbors = Chunk.GetNeighborsEuclidean((int) this.GridPosition.X, (int) this.GridPosition.Y, (int) this.GridPosition.Z);
+                foreach (Voxel vox in neighbors)
                 {
-                    Voxel vox = v.GetVoxel(true);
                     if(vox == null)
                     {
                         continue;
@@ -237,9 +342,7 @@ namespace DwarfCorp
                 }
             }
 
-            Chunk.VoxelGrid[(int) GridPosition.X][(int) GridPosition.Y][(int) GridPosition.Z] = null;
-
-            dead = true;
+            Chunk.Data.Types[Index] = 0; 
         }
 
         public BoundingSphere GetBoundingSphere()
@@ -253,48 +356,32 @@ namespace DwarfCorp
             return new BoundingBox(pBox.Min + Position, pBox.Max + Position);
         }
 
+        public Voxel()
+        {
+            
+        }
 
-        public Voxel(Vector3 position, VoxelType voxelType, BoxPrimitive primitive, bool isVisible)
+        public Voxel(Point3 gridPosition, VoxelChunk chunk)
         {
             UpdateStatics();
-            Position = position;
-
-
-            Type = voxelType;
-            Primitive = primitive;
-            IsVisible = isVisible;
-            Health = voxelType.StartingHealth;
-            RecalculateLighting = true;
-
-            VertexColors = new Color[8];
-
-            for(int i = 0; i < 8; i++)
-            {
-                VertexColors[i] = BlankColor;
-            }
+            Chunk = chunk;
+            chunkID = chunk.ID;
+            GridPosition = new Vector3(gridPosition.X, gridPosition.Y, gridPosition.Z);
         }
 
-
-        public VoxelRef GetReference()
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
         {
-            VoxelRef toReturn = new VoxelRef
-            {
-                ChunkID = Chunk.ID,
-                GridPosition = GridPosition,
-                WorldPosition = Position,
-                TypeName = Type.Name,
-                IsValid = true
-            };
-
-            return toReturn;
+            Chunk = PlayState.ChunkManager.ChunkData.ChunkMap[chunkID];
+            index = Chunk.Data.IndexAt((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z);
         }
 
-        public TransitionTexture ComputeTransitionValue()
+        public TransitionTexture ComputeTransitionValue(Voxel[] manhattanNeighbors)
         {
-            return Chunk.ComputeTransitionValue((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z);
+            return Chunk.ComputeTransitionValue((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z, manhattanNeighbors);
         }
 
-        public BoxPrimitive.BoxTextureCoords ComputeTransitionTexture()
+        public BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(Voxel[] manhattanNeighbors)
         {
             if(!Type.HasTransitionTextures && Primitive != null)
             {
@@ -306,8 +393,13 @@ namespace DwarfCorp
             }
             else
             {
-                return Type.TransitionTextures[ComputeTransitionValue()];
+                return Type.TransitionTextures[ComputeTransitionValue(manhattanNeighbors)];
             }
+        }
+
+        public WaterCell GetWater()
+        {
+            return Chunk.Data.Water[Index];
         }
     }
 

@@ -17,7 +17,7 @@ namespace DwarfCorp
 
         public Stockpile Stockpile { get { return GetStockpile(); } set { SetStockpile(value);} }
 
-        public VoxelRef Voxel { get { return GetVoxel(); } set { SetVoxel(value);} }
+        public Voxel Voxel { get { return GetVoxel(); } set { SetVoxel(value);} }
 
         public SearchFreeStockpileAct(CreatureAI creature, string stockName, string voxName) :
             base(creature)
@@ -27,13 +27,13 @@ namespace DwarfCorp
             VoxelName = voxName;
         }
 
-        public VoxelRef GetVoxel()
+        public Voxel GetVoxel()
         {
-            return Agent.Blackboard.GetData<VoxelRef>(VoxelName);
+            return Agent.Blackboard.GetData<Voxel>(VoxelName);
         }
 
 
-        public void SetVoxel(VoxelRef value)
+        public void SetVoxel(Voxel value)
         {
             Agent.Blackboard.SetData(VoxelName, value);
         }
@@ -90,9 +90,9 @@ namespace DwarfCorp
                     continue;
                 }
 
-                VoxelRef v = s.GetNearestVoxel(Creature.Physics.GlobalTransform.Translation);
+                Voxel v = s.GetNearestVoxel(Creature.Physics.GlobalTransform.Translation);
 
-                if(v == null)
+                if(v.IsEmpty)
                 {
                     continue;
                 }
