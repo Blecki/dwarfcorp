@@ -88,6 +88,7 @@ namespace DwarfCorp
             "Apple Resource",
             "Grain Resource",
             "Mushroom Resource",
+            "Work Pile",
             "pine",
             "snowpine",
             "palm",
@@ -162,6 +163,8 @@ namespace DwarfCorp
                     string resourceID = id.Split(' ').First();
                     return GenerateResource(resourceID, position);   
                 }
+                case "Work Pile":
+                    return new WorkPile(position);
                 case "palm":
                 case "snowpine":
                 case "apple_tree":

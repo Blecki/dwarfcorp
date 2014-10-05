@@ -37,14 +37,10 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            Body closestItem = Agent.Faction.FindNearestItemWithTags(Tag, Agent.Position, true);
-
-            Creature.AI.Blackboard.Erase(ObjectName);
+            Body closestItem = Agent.Blackboard.GetData<Body>(ObjectName);
             if (closestItem != null)
             {
-                closestItem.ReservedFor = Agent;
-                closestItem.IsReserved = true;
-                Act unreserveAct = new Wrap(() => Body.UnReserve(closestItem));
+                Act unreserveAct = new Wrap(() => Creature.Unreserve(ObjectName));
 
                 if (Teleport)
                 {
@@ -53,8 +49,7 @@ namespace DwarfCorp
                    (
                        new SetBlackboardData<Body>(Creature.AI, ObjectName, closestItem),
                        new GoToEntityAct(closestItem, Creature.AI),
-                       new TeleportAct(Creature.AI) { Location = TeleportOffset + closestItem.BoundingBox.Center() },
-                       unreserveAct
+                       new TeleportAct(Creature.AI) { Location = TeleportOffset + closestItem.BoundingBox.Center() }
                    ) | unreserveAct;
                 }
                 else
@@ -63,8 +58,7 @@ namespace DwarfCorp
                     new Sequence
                     (
                        new SetBlackboardData<Body>(Creature.AI, ObjectName, closestItem),
-                       new GoToEntityAct(closestItem, Creature.AI),
-                       unreserveAct
+                       new GoToEntityAct(closestItem, Creature.AI)
                     ) | unreserveAct;
                 }
             }
