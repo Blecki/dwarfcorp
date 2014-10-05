@@ -22,7 +22,7 @@ namespace DwarfCorp
         };
 
         public Box(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, BoxPrimitive primitive, Texture2D tex) :
-            base(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos, false)
+            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos, false)
         {
             Primitive = primitive;
             Texture = tex;

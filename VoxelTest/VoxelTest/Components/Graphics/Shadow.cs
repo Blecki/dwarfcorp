@@ -40,11 +40,11 @@ namespace DwarfCorp
             {
                 Body p = (Body) Parent;
 
-                VoxelChunk chunk = chunks.ChunkData.GetVoxelChunkAtWorldLocation(GlobalTransform.Translation);
+                VoxelChunk chunk = chunks.ChunkData.GetVoxelChunkAtWorldLocation(p.GlobalTransform.Translation);
 
                 if(chunk != null)
                 {
-                    Vector3 g = chunk.WorldToGrid(p.GlobalTransform.Translation);
+                    Vector3 g = chunk.WorldToGrid(p.GlobalTransform.Translation + Vector3.Down * 0.25f);
 
                     int h = chunk.GetFilledVoxelGridHeightAt((int) g.X, (int) g.Y, (int) g.Z);
 

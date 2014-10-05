@@ -92,8 +92,14 @@ namespace DwarfCorp
             {
                 Initialize();
             }
-
-            Enumerator.MoveNext();
+            if (Enumerator != null)
+            {
+                Enumerator.MoveNext();
+            }
+            else
+            {
+                return Status.Fail;
+            }
             return Enumerator.Current;
         }
 

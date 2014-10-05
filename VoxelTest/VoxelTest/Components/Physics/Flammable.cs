@@ -25,8 +25,13 @@ namespace DwarfCorp
 
         public Timer CheckLavaTimer { get; set; }
 
+        public Flammable()
+        {
+            
+        }
+
         public Flammable(ComponentManager manager, string name, Body parent, Health health) :
-            base(manager, name, parent)
+            base(name, parent)
         {
             LocParent = parent;
             Heat = 0.0f;
@@ -43,11 +48,11 @@ namespace DwarfCorp
 
             BoundingBox expandedBoundingBox = LocParent.BoundingBox.Expand(0.5f);
 
-            List<VoxelRef> voxels = chunks.ChunkData.GetVoxelsIntersecting(expandedBoundingBox);
+            List<Voxel> voxels = chunks.ChunkData.GetVoxelsIntersecting(expandedBoundingBox);
 
             if((from currentVoxel in voxels
                 where currentVoxel != null
-                select currentVoxel.GetWater(chunks)).Any(cell => cell != null && cell.WaterLevel > 0 && cell.Type == LiquidType.Lava))
+                select currentVoxel.GetWater()).Any(cell => cell != null && cell.WaterLevel > 0 && cell.Type == LiquidType.Lava))
             {
                 Heat += 100;
             }

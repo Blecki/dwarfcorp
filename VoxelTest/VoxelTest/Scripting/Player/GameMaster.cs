@@ -34,7 +34,9 @@ namespace DwarfCorp
             Chop,
             Guard,
             Attack,
-            God
+            God,
+            Farm,
+            Craft
         }
 
 
@@ -84,7 +86,6 @@ namespace DwarfCorp
         {
             RoomLibrary.InitializeStatics();
 
-            Faction.Components = components;
             CameraController = camera;
             VoxSelector = new VoxelSelector(CameraController, chunks.Graphics, chunks);
             BodySelector = new BodySelector(CameraController, chunks.Graphics, components);
@@ -149,16 +150,6 @@ namespace DwarfCorp
                 GlowRate = 2.0f
             };
 
-
-            /*
-            Tools[ToolMode.CreateStockpiles] = new StockpileTool
-            {
-                Player = this,
-                DrawColor = Color.LightGoldenrodYellow,
-                GlowRate = 2.0f,
-            };
-             */
-
             Tools[ToolMode.Build] = new BuildTool
             {
                 Player = this
@@ -184,24 +175,50 @@ namespace DwarfCorp
             CurrentTool.OnBodiesSelected(bodies, button);
         }
 
-        public void OnSelected(List<VoxelRef> voxels, InputManager.MouseButton button)
+        public void OnSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
             CurrentTool.OnVoxelsSelected(voxels, button);
+        }
+
+        public bool AreAllEmployeesAsleep()
+        {
+            return (Faction.Minions.Count > 0) && Faction.Minions.All(minion => (!minion.Stats.CanSleep || minion.Creature.IsAsleep) && !minion.IsDead);
         }
 
         public void PayEmployees()
         {
             float total = 0;
+            bool noMoney = false;
             foreach (CreatureAI creature in Faction.Minions)
             {
-                float pay = creature.Stats.CurrentLevel.Pay;
-                total += pay;
-                Faction.Economy.CurrentMoney = Math.Max(Faction.Economy.CurrentMoney - pay, 0);
+                if (creature.Stats.IsOverQualified)
+                {
+                    creature.AddThought(Thought.ThoughtType.IsOverQualified);    
+                }
+
+                if (!noMoney)
+                {
+                    float pay = creature.Stats.CurrentLevel.Pay;
+                    total += pay;
+                    Faction.Economy.CurrentMoney = Math.Max(Faction.Economy.CurrentMoney - pay, 0);
+                }
+                else
+                {
+                    creature.AddThought(Thought.ThoughtType.NotPaid);
+                }
 
                 if (!(Faction.Economy.CurrentMoney > 0))
                 {
-                    PlayState.AnnouncementManager.Announce("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
-                    break;
+                    if (!noMoney)
+                    {
+                        PlayState.AnnouncementManager.Announce("We're bankrupt!",
+                            "If we don't make a profit by tomorrow, our stock will crash!");
+                    }
+                    noMoney = true;
+                }
+                else
+                {
+                    creature.AddThought(Thought.ThoughtType.GotPaid);
                 }
             }
 
@@ -237,6 +254,24 @@ namespace DwarfCorp
             DwarfGame.SpriteBatch.End();
         }
 
+        public void UpdateRooms()
+        {
+            bool hasAnyMinions = SelectedMinions.Count > 0;
+
+
+            foreach (Room room in Faction.GetRooms())
+            {
+                if (room.GUIObject != null && hasAnyMinions)
+                {
+                    room.GUIObject.IsVisible = true;
+                }
+                else if (!hasAnyMinions && room.GUIObject != null)
+                {
+                    room.GUIObject.IsVisible = false;
+                }
+            }
+        }
+
         public void Update(DwarfGame game, GameTime time)
         {
             if(CurrentToolMode != ToolMode.God)
@@ -266,6 +301,18 @@ namespace DwarfCorp
             }
             UpdateInput(game, time);
 
+            if (Faction.Minions.Any(m => m.IsDead))
+            {
+                foreach (CreatureAI minion in Faction.Minions)
+                {
+                    minion.AddThought(Thought.ThoughtType.FriendDied);
+                }
+
+                PlayState.AnnouncementManager.Announce("An employee died!", "One of our employees has died!");
+                Faction.Economy.Company.StockPrice -= MathFunctions.Rand(0, 0.5f);
+            }
+
+            UpdateRooms();
         }
 
         public List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, ToolMode action)
@@ -348,7 +395,7 @@ namespace DwarfCorp
         }
 
         #endregion
-
+        
 
     }
 

@@ -34,33 +34,14 @@ namespace DwarfCorp
 
         public VoxelChunk GenerateEmptyChunk(Vector3 origin, int chunkSizeX, int chunkSizeY, int chunkSizeZ)
         {
-            Voxel[][][] voxels = new Voxel[chunkSizeX][][];
-            voxels[0] = new Voxel[chunkSizeY][];
-
-            for (int x = 0; x < chunkSizeX; x++)
-            {
-                voxels[x] = new Voxel[chunkSizeY][];
-                for (int y = 0; y < chunkSizeY; y++)
-                {
-                    voxels[x][y] = new Voxel[chunkSizeZ];
-                    for (int z = 0; z < chunkSizeZ; z++)
-                    {
-                        voxels[x][y][z] = null;
-                    }
-                }
-            }
-
-            VoxelChunk c = new VoxelChunk(origin, Manager, voxels,
-                Manager.ChunkData.GetChunkID(origin + new Vector3(0.5f, 0.5f, 0.5f)), 2);
-
-
-            return c;
+            return new VoxelChunk(Manager, origin, 1,  Manager.ChunkData.GetChunkID(origin + new Vector3(0.5f, 0.5f, 0.5f)), chunkSizeX, chunkSizeY, chunkSizeZ); 
         }
 
 
         public void GenerateWater(VoxelChunk chunk)
         {
             int waterHeight = (int) (0.17f*chunk.SizeY);
+            Voxel voxel = chunk.MakeVoxel(0, 0, 0);
             for (int x = 0; x < chunk.SizeX; x++)
             {
                 for (int z = 0; z < chunk.SizeZ; z++)
@@ -69,11 +50,12 @@ namespace DwarfCorp
                     for (int y = 0; y < waterHeight; y++)
                     {
                         h = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
-
-                        if (chunk.VoxelGrid[x][y][z] == null && y >= h)
+                        int index = chunk.Data.IndexAt(x, y, z);
+                        voxel.GridPosition = new Vector3(x, y, z);
+                        if (voxel.IsEmpty && y >= h)
                         {
-                            chunk.Water[x][y][z].WaterLevel = 255;
-                            chunk.Water[x][y][z].Type = LiquidType.Water;
+                            chunk.Data.Water[index].WaterLevel = 255;
+                            chunk.Data.Water[index].Type = LiquidType.Water;
                         }
                     }
 
@@ -92,36 +74,20 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    chunk.Water[x][h][z].WaterLevel = 255;
-                    chunk.Water[x][h][z].Type = LiquidType.Lava;
+                    chunk.Data.Water[chunk.Data.IndexAt(x, h, z)].WaterLevel = 255;
+                    chunk.Data.Water[chunk.Data.IndexAt(x, h, z)].Type = LiquidType.Lava;
 
 
                     for (int y = h - 1; y >= 0; y--)
                     {
-                        Voxel v = new Voxel(new Vector3(x, y, z) + chunk.Origin, VoxelLibrary.GetVoxelType("Stone"),
-                            VoxelLibrary.GetPrimitive("Stone"), true);
-                        chunk.VoxelGrid[x][y][z] = v;
-                        chunk.Water[x][y][z].Type = LiquidType.None;
-                        chunk.Water[x][y][z].WaterLevel = 0;
-                        v.Chunk = chunk;
-                        v.Chunk.NotifyTotalRebuild(!v.IsInterior);
+                        voxel.GridPosition = new Vector3(x, y, z);
+                        chunk.Data.Water[voxel.Index].Type = LiquidType.None;
+                        chunk.Data.Water[voxel.Index].WaterLevel = 0;
+                        voxel.Type = VoxelLibrary.GetVoxelType("Stone");
+                        voxel.Chunk = chunk;
+                        voxel.Chunk.NotifyTotalRebuild(!voxel.IsInterior);
                     }
 
-                    /*
-                    if (Overworld.GetWater(Overworld.Map, vec) == Overworld.WaterType.River || Overworld.GetWater(Overworld.Map, vec) == Overworld.WaterType.Lake)
-                    {
-                        int h = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
-
-                        for (int dh = h; dh >= waterHeight; dh--)
-                        {
-                            chunk.VoxelGrid[x][dh][z] = null;
-                        }
-
-
-                        chunk.Water[x][waterHeight][z].WaterLevel = 255;
-                        chunk.Water[x][waterHeight][z].Type = LiquidType.Water;
-                    }
-                     */
                 }
             }
         }
@@ -129,16 +95,18 @@ namespace DwarfCorp
         public void GenerateLava(VoxelChunk chunk)
         {
             int lavaHeight = 2;
+            Voxel voxel = chunk.MakeVoxel(0, 0, 0);
             for (int x = 0; x < chunk.SizeX; x++)
             {
                 for (int z = 0; z < chunk.SizeZ; z++)
                 {
                     for (int y = 0; y < lavaHeight; y++)
                     {
-                        if (chunk.VoxelGrid[x][y][z] == null && chunk.Water[x][y][z].WaterLevel == 0)
+                        voxel.GridPosition = new Vector3(x, y, z);
+                        if (voxel.IsEmpty && chunk.Data.Water[voxel.Index].WaterLevel == 0)
                         {
-                            chunk.Water[x][y][z].WaterLevel = 255;
-                            chunk.Water[x][y][z].Type = LiquidType.Lava;
+                            chunk.Data.Water[voxel.Index].WaterLevel = 255;
+                            chunk.Data.Water[voxel.Index].Type = LiquidType.Lava;
                         }
                     }
                 }
@@ -152,6 +120,7 @@ namespace DwarfCorp
             int chunkSizeX = chunk.SizeX;
             int chunkSizeY = chunk.SizeY;
             int chunkSizeZ = chunk.SizeZ;
+            Voxel v = chunk.MakeVoxel(0, 0, 0);
             for (int x = 0; x < chunkSizeX; x++)
             {
                 for (int z = 0; z < chunkSizeZ; z++)
@@ -164,9 +133,8 @@ namespace DwarfCorp
                         {
                             float s = spawns.Value.VeinSize;
                             float p = spawns.Value.VeinSpawnThreshold;
-
-                            Voxel v = chunk.VoxelGrid[x][y][z];
-                            if (v == null || y >= h - 1 || !(y < spawns.Value.MaximumHeight) ||
+                            v.GridPosition = new Vector3(x, y, z);
+                            if (v.IsEmpty || y >= h - 1 || !(y < spawns.Value.MaximumHeight) ||
                                 !(y > spawns.Value.MinimumHeight) ||
                                 !(PlayState.Random.NextDouble() <= spawns.Value.Probability) || v.Type.Name != "Stone")
                             {
@@ -180,7 +148,6 @@ namespace DwarfCorp
                             if (caviness > p)
                             {
                                 v.Type = VoxelLibrary.GetVoxelType(spawns.Key);
-                                v.Primitive = VoxelLibrary.GetPrimitive(spawns.Key);
                             }
                             continue;
                         }
@@ -192,6 +159,7 @@ namespace DwarfCorp
         public void GenerateFauna(VoxelChunk chunk, ComponentManager components, ContentManager content, GraphicsDevice graphics, FactionLibrary factions)
         {
             int waterHeight = (int)(0.17 * chunk.SizeY);
+            Voxel v = chunk.MakeVoxel(0, 0, 0);
             for (int x = 0; x < chunk.SizeX; x++)
             {
                 for (int z = 0; z < chunk.SizeZ; z++)
@@ -207,9 +175,9 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    Voxel v = chunk.VoxelGrid[x][y][z];
+                    v.GridPosition = new Vector3(x, y, z);
 
-                    if (v != null || chunk.Water[x][y][z].WaterLevel != 0 || y <= waterHeight)
+                    if (chunk.Data.Water[v.Index].WaterLevel != 0 || y <= waterHeight)
                     {
                         continue;
                     }
@@ -233,6 +201,9 @@ namespace DwarfCorp
         public void GenerateVegetation(VoxelChunk chunk, ComponentManager components, ContentManager content, GraphicsDevice graphics)
         {
             int waterHeight = (int) (0.17 * chunk.SizeY);
+            bool updated = false;
+            Voxel v = chunk.MakeVoxel(0, 0, 0);
+            Voxel vUnder = chunk.MakeVoxel(0, 0, 0);
             for(int x = 0; x < chunk.SizeX; x++)
             {
                 for(int z = 0; z < chunk.SizeZ; z++)
@@ -248,36 +219,60 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    Voxel v = chunk.VoxelGrid[x][y][z];
+                    v.GridPosition = new Vector3(x, y, z);
 
-                    if(v != null || chunk.Water[x][y][z].WaterLevel != 0 || y <= waterHeight)
+                    if(!v.IsEmpty || chunk.Data.Water[v.Index].WaterLevel != 0 || y <= waterHeight)
                     {
                         continue;
                     }
 
                     foreach(VegetationData veg in biomeData.Vegetation)
                     {
-                        if(y <= 0 || !(PlayState.Random.NextDouble() < veg.SpawnProbability))
+                        if(y <= 0)
                         {
                             continue;
                         }
 
-                        float treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
-                        EntityFactory.GenerateVegetation(veg.Name, treeSize, veg.VerticalOffset, chunk.Origin + new Vector3(x, y, z), components, content, graphics);
+                        if (!MathFunctions.RandEvent(veg.SpawnProbability))
+                        {
+                            continue;
+                        }
+
+                        if (NoiseGenerator.Noise(vec.X/veg.ClumpSize, veg.NoiseOffset, vec.Y/veg.ClumpSize) < veg.ClumpThreshold)
+                        {
+                            continue;
+                        }
 
                         int yh = chunk.GetFilledVoxelGridHeightAt(x, y, z);
 
                         if(yh > 0)
                         {
-                            Voxel vUnder = chunk.VoxelGrid[x][yh - 1][z];
-
-                            if(vUnder != null)
+                            vUnder.GridPosition = new Vector3(x, yh - 1, z);
+                            if (!vUnder.IsEmpty && vUnder.TypeName == biomeData.GrassVoxel)
+                            {
                                 vUnder.Type = VoxelLibrary.GetVoxelType(biomeData.SoilVoxel);
+                                updated = true;
+                                float offset = veg.VerticalOffset;
+                                if (vUnder.RampType != RampType.None)
+                                {
+                                    offset -= 0.25f;
+                                }
+
+                                float treeSize = MathFunctions.Rand()*veg.SizeVariance + veg.MeanSize;
+                                EntityFactory.GenerateVegetation(veg.Name, treeSize, offset,
+                                    chunk.Origin + new Vector3(x, y, z), components, content, graphics);
+                            }
+
                         }
 
                         break;
                     }
                 }
+            }
+
+            if (updated)
+            {
+                chunk.ShouldRebuild = true;
             }
         }
 
@@ -306,7 +301,7 @@ namespace DwarfCorp
                             continue;
                         }
 
-                        chunk.VoxelGrid[x][y][z] = null;
+                        chunk.Data.Types[chunk.Data.IndexAt(x, y, z)] = 0;
                     }
                 }
             }
@@ -346,9 +341,15 @@ namespace DwarfCorp
 
         public VoxelChunk GenerateChunk(Vector3 origin, int chunkSizeX, int chunkSizeY, int chunkSizeZ, ComponentManager components, ContentManager content, GraphicsDevice graphics)
         {
-            Voxel[][][] voxels = Allocate(chunkSizeX, chunkSizeY, chunkSizeZ);
             const float waterHeight = 0.155f;
+            VoxelChunk c = new VoxelChunk(Manager, origin, 1,
+                Manager.ChunkData.GetChunkID(origin + new Vector3(0.5f, 0.5f, 0.5f)), chunkSizeX, chunkSizeY, chunkSizeZ)
+            {
+                ShouldRebuild = true,
+                ShouldRecalculateLighting = true
+            };
 
+            Voxel voxel = c.MakeVoxel(0, 0, 0);
             for(int x = 0; x < chunkSizeX; x++)
             {
                 for(int z = 0; z < chunkSizeZ; z++)
@@ -367,68 +368,56 @@ namespace DwarfCorp
 
                     for(int y = 0; y < chunkSizeY; y++)
                     {
+                        voxel.GridPosition = new Vector3(x, y, z);
                         if(y == 0)
                         {
-                            voxels[x][y][z] = new Voxel(new Vector3((x + origin.X), (y + origin.Y), (z + origin.Z)),
-                                VoxelLibrary.GetVoxelType("Bedrock"),
-                                VoxelLibrary.GetPrimitive("Bedrock"), true);
+                            voxel.Type = VoxelLibrary.GetVoxelType("Bedrock");
                             continue;
                         }
 
-
                         if(y <= stoneHeight && stoneHeight > 1)
                         {
-                            voxels[x][y][z] = new Voxel(new Vector3((x + origin.X), (y + origin.Y), (z + origin.Z)),
-                                VoxelLibrary.GetVoxelType(biomeData.SubsurfVoxel),
-                                VoxelLibrary.GetPrimitive(biomeData.SubsurfVoxel), true);
-                            voxels[x][y][z].Health = VoxelLibrary.GetVoxelType(biomeData.SubsurfVoxel).StartingHealth;
+                            voxel.Type = VoxelLibrary.GetVoxelType(biomeData.SubsurfVoxel);
+                            voxel.Health = VoxelLibrary.GetVoxelType(biomeData.SubsurfVoxel).StartingHealth;
                         }
 
                         else if((y == (int) h || y == stoneHeight) && hNorm > waterHeight)
                         {
-                            voxels[x][y][z] = new Voxel(new Vector3((x + origin.X), (y + origin.Y),
-                                (z + origin.Z)),
-                                VoxelLibrary.GetVoxelType(biomeData.GrassVoxel),
-                                VoxelLibrary.GetPrimitive(biomeData.GrassVoxel),
-                                true)
+                            if (biomeData.ClumpGrass &&
+                                NoiseGenerator.Noise(pos.X/biomeData.ClumpSize, 0, pos.Y/biomeData.ClumpSize) >
+                                biomeData.ClumpTreshold)
                             {
-                                Health = VoxelLibrary.GetVoxelType(biomeData.GrassVoxel).StartingHealth
-                            };
+                                voxel.Type = VoxelLibrary.GetVoxelType(biomeData.GrassVoxel);
+                                voxel.Health = VoxelLibrary.GetVoxelType(biomeData.GrassVoxel).StartingHealth;   
+                            }
+                            else if(!biomeData.ClumpGrass)
+                            {
+                                voxel.Type = VoxelLibrary.GetVoxelType(biomeData.GrassVoxel);
+                                voxel.Health = VoxelLibrary.GetVoxelType(biomeData.GrassVoxel).StartingHealth; 
+                            }
+                            else
+                            {
+                                voxel.Type = VoxelLibrary.GetVoxelType(biomeData.SoilVoxel);
+                                voxel.Health = VoxelLibrary.GetVoxelType(biomeData.SoilVoxel).StartingHealth;
+                            }
                         }
                         else if(y > h && y > 0)
                         {
-                            voxels[x][y][z] = null;
+                            voxel.Type = VoxelLibrary.GetVoxelType("empty");
                         }
                         else if(hNorm < waterHeight)
                         {
-                            voxels[x][y][z] = new Voxel(
-                                new Vector3((x + origin.X), (y + origin.Y), (z + origin.Z)),
-                                VoxelLibrary.GetVoxelType(biomeData.ShoreVoxel),
-                                VoxelLibrary.GetPrimitive(biomeData.ShoreVoxel),
-                                true)
-                            {
-                                Health = VoxelLibrary.GetVoxelType(biomeData.ShoreVoxel).StartingHealth
-                            };
+                            voxel.Type = VoxelLibrary.GetVoxelType(biomeData.ShoreVoxel);
+                            voxel.Health = VoxelLibrary.GetVoxelType(biomeData.ShoreVoxel).StartingHealth;
                         }
                         else
                         {
-                            voxels[x][y][z] = new Voxel(
-                                new Vector3((x + origin.X), (y + origin.Y), (z + origin.Z)),
-                                VoxelLibrary.GetVoxelType(biomeData.SoilVoxel),
-                                VoxelLibrary.GetPrimitive(biomeData.SoilVoxel), true)
-                            {
-                                Health = VoxelLibrary.GetVoxelType(biomeData.SoilVoxel).StartingHealth
-                            };
+                            voxel.Type = VoxelLibrary.GetVoxelType(biomeData.SoilVoxel);
+                            voxel.Health = VoxelLibrary.GetVoxelType(biomeData.SoilVoxel).StartingHealth;
                         }
                     }
                 }
             }
-
-            VoxelChunk c = new VoxelChunk(origin, Manager, voxels, Manager.ChunkData.GetChunkID(origin + new Vector3(0.5f, 0.5f, 0.5f)), 1)
-            {
-                ShouldRebuild = true,
-                ShouldRecalculateLighting = true
-            };
 
 
             GenerateOres(c, components, content, graphics);

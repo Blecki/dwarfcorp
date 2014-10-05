@@ -32,7 +32,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    Agent.Blackboard.SetData(VoxelOutName, voxel.GetReference());
+                    Agent.Blackboard.SetData(VoxelOutName, voxel);
                     yield return Status.Success;
                 }
             }

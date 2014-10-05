@@ -26,6 +26,11 @@ namespace DwarfCorp
             Zone = zone;
         }
 
+        public override Task Clone()
+        {
+            return new PutItemInZoneTask(Item, Zone);
+        }
+
         public override Act CreateScript(Creature creature)
         {
             return null;

@@ -51,6 +51,7 @@ namespace DwarfCorp
 
         public Slider HorizontalSlider { get; set; }
         public Slider VerticalSlider { get; set; }
+        public bool DrawBorder { get; set; }
 
         public ScrollView(DwarfGUI gui, GUIComponent parent) :
             base(gui, parent)
@@ -103,6 +104,14 @@ namespace DwarfCorp
             childRect = new Rectangle(minX, minY, maxX - minX, maxY - minY);
         }
 
+        public void ResetScroll()
+        {
+            sx = 0;
+            sy = 0;
+            lastSx = sx;
+            lastSy = sy;
+        }
+
         public void UpdateScrollArea()
         {
             int dx = sx - lastSx;
@@ -127,7 +136,7 @@ namespace DwarfCorp
                 return base.IsMouseOverRecursive();
             }
 
-            else return false;
+            return false;
         }
 
         public void UpdateSliders()
@@ -161,7 +170,10 @@ namespace DwarfCorp
                 }
                 batch.GraphicsDevice.ScissorRectangle = originalRect;
 
-                Drawer2D.DrawRect(batch, screenRect, Color.Black, 1);
+                if (DrawBorder)
+                {
+                    Drawer2D.DrawRect(batch, screenRect, Color.Black, 1);
+                }
             }
         }
     }

@@ -22,8 +22,13 @@ namespace DwarfCorp
 
         public BuildRoomTask(BuildRoomOrder zone)
         {
-            Name = "Build BuildRoom " + zone.ToBuild.RoomType.Name + zone.ToBuild.ID;
+            Name = "Build BuildRoom " + zone.ToBuild.RoomData.Name + zone.ToBuild.ID;
             Zone = zone;
+        }
+
+        public override Task Clone()
+        {
+            return new BuildRoomTask(Zone);
         }
 
         public override Act CreateScript(Creature creature)

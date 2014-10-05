@@ -6,7 +6,7 @@
     /// </summary>
     public class BuildOrder
     {
-        public VoxelRef Vox = null;
+        public Voxel Vox = null;
         public int NumCreaturesAssigned = 0;
     }
 

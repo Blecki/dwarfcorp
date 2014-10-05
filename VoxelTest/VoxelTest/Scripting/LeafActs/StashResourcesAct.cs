@@ -27,6 +27,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
+            Timer waitTimer = new Timer(1.0f, true);
             bool removed = Agent.Faction.RemoveResources(Resources, Agent.Position);
 
             if(!removed)
@@ -38,6 +39,12 @@ namespace DwarfCorp
                 foreach(ResourceAmount resource in Resources)
                 {
                     Agent.Creature.Inventory.Resources.AddResource(resource);   
+                }
+
+                while (!waitTimer.HasTriggered)
+                {
+                    waitTimer.Update(Act.LastTime);
+                    yield return Status.Running;
                 }
                 yield return Status.Success;
             }

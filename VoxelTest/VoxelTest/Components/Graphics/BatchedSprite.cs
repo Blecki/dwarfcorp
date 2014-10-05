@@ -67,11 +67,13 @@ namespace DwarfCorp
 
         public void RebuildPrimitive()
         {
-            if(Primitive != null && Primitive.VertexBuffer != null)
+            lock (Primitive.VertexBuffer)
             {
-                Primitive.VertexBuffer.Dispose();
+                if (Primitive != null && Primitive.VertexBuffer != null)
+                {
+                    Primitive.VertexBuffer.Dispose();
+                }
             }
-
             Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet, Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints);
         }
 

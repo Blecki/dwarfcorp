@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using DwarfCorp.GameStates;
@@ -25,13 +26,15 @@ namespace DwarfCorp
         public BuildVoxelOrder TargetBuildVoxelOrder { get; set; }
         public List<string> DesiredTags { get; set; }
         public Body TargetComponent { get; set; }
-        public VoxelRef TargetVoxel { get; set; }
-        public VoxelRef PreviousTargetVoxel { get; set; }
-        public List<VoxelRef> CurrentPath { get; set; }
+        public Voxel TargetVoxel { get; set; }
+        public Voxel PreviousTargetVoxel { get; set; }
+        public List<Voxel> CurrentPath { get; set; }
         public bool DrawPath { get; set; }
         public GatherManager GatherManager { get; set; }
-
-
+        public Timer IdleTimer { get; set; }
+        public List<Thought> Thoughts { get; set; }
+        public Timer SpeakTimer { get; set; }
+            
         [JsonIgnore]
         public Act CurrentAct { get { return CurrentTask.Script;  }}
 
@@ -123,7 +126,7 @@ namespace DwarfCorp
             string name,
             EnemySensor sensor,
             PlanService planService) :
-                base(creature.Manager, name, creature.Physics)
+                base(name, creature.Physics)
         {
             GatherManager = new GatherManager(this);
             Blackboard = new Blackboard();
@@ -151,6 +154,9 @@ namespace DwarfCorp
             Sensor.Creature = this;
             CurrentTask = null;
             Tasks = new List<Task>();
+            Thoughts = new List<Thought>();
+            IdleTimer = new Timer(15.0f, true);
+            SpeakTimer = new Timer(5.0f, true);
         }
 
         public void Say(string message)
@@ -199,6 +205,9 @@ namespace DwarfCorp
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
+            IdleTimer.Update(gameTime);
+            SpeakTimer.Update(gameTime);
+
             if(CurrentTask != null && CurrentAct != null)
             {
                 Act.Status status = CurrentAct.Tick();
@@ -222,29 +231,49 @@ namespace DwarfCorp
             }
             else
             {
-                Task goal = GetEasiestTask(Tasks);
-                if(goal != null)
+                bool tantrum = false;
+                if (Status.Happiness.IsUnhappy())
                 {
-                    if(goal.IsFeasible(Creature))
+                    tantrum = MathFunctions.Rand(0, 1) < 0.25f;
+                }
+
+                    Task goal = GetEasiestTask(Tasks);
+                    if (goal != null)
                     {
-                        goal.SetupScript(Creature);
-                        CurrentTask = goal;
-                        Tasks.Remove(goal);
+                        if (tantrum)
+                        {
+                            Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
+                            if (Creature.Allies == "Dwarf")
+                            {
+                                PlayState.AnnouncementManager.Announce(Stats.FirstName + " " + Stats.LastName + " refuses to work!", "Our employee is unhappy, and would rather not work!");
+                            }
+                            CurrentTask = ActOnIdle();
+                        }
+                        else
+                        {
+                            if (goal.IsFeasible(Creature))
+                            {
+                                IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
+                                goal.SetupScript(Creature);
+                                CurrentTask = goal;
+                                Tasks.Remove(goal);
+                            }
+                            else
+                            {
+                                Tasks.Remove(goal);
+                            }   
+                        }
                     }
                     else
                     {
-                        Tasks.Remove(goal);
-                    }
-                }
-                else
-                {
-                    CurrentTask = ActOnIdle();
-                }
+                        CurrentTask = ActOnIdle();
+                    }   
+                
             }
 
 
             PlannerTimer.Update(gameTime);
-
+            UpdateThoughts();
             base.Update(gameTime, chunks, camera);
         }
 
@@ -252,7 +281,36 @@ namespace DwarfCorp
         {
             if(GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile())
             {
-                return new ActWrapperTask(new WanderAct(this, 2, 0.5f, 1.0f));
+                if (Status.Energy.IsUnhappy() && PlayState.Time.IsNight())
+                {
+                    Task toReturn = new SatisfyTirednessTask();
+                    toReturn.SetupScript(Creature);
+                    return toReturn;
+                }
+
+                if (Status.Hunger.IsUnhappy())
+                {
+                    Task toReturn =  new SatisfyHungerTask();
+                    toReturn.SetupScript(Creature);
+                    return toReturn;
+                }
+
+                List<Room> rooms = Faction.GetRooms();
+              
+                if (IdleTimer.HasTriggered && rooms.Count > 0 && MathFunctions.Rand(0, 1) < 0.1f)
+                {
+                    return
+                        new ActWrapperTask(new GoToZoneAct(this, rooms[PlayState.Random.Next(rooms.Count)]) |
+                                           new WanderAct(this, 2, 0.5f, 1.0f));
+                }
+                else
+                {
+                    if (IdleTimer.HasTriggered && MathFunctions.Rand(0, 1) < 0.25f)
+                    {
+                        return new ActWrapperTask(new GoToChairAndSitAct(this));
+                    }
+                    return new ActWrapperTask(new WanderAct(this, 2, 0.5f, 1.0f));
+                }
             }
             else
             {
@@ -275,9 +333,72 @@ namespace DwarfCorp
             SoundManager.PlaySound(ContentPaths.Audio.jump, Creature.Physics.GlobalTransform.Translation);
         }
 
+        public bool HasThought(Thought.ThoughtType type)
+        {
+            return Thoughts.Any(existingThought => existingThought.Type == type);
+        }
 
+        public void AddThought(Thought.ThoughtType type)
+        {
+            if (!HasThought(type))
+            {
+                AddThought(Thought.CreateStandardThought(type, PlayState.Time.CurrentDate), true);
+            }
+        }
 
+        public void AddThought(Thought thought, bool allowDuplicates)
+        {
+            if (allowDuplicates)
+            {
+                Thoughts.Add(thought);
+            }
+            else
+            {
+                if (HasThought(thought.Type))
+                {
+                    return;
+                }
 
+                Thoughts.Add(thought);
+            }
+        }
+
+        public void UpdateThoughts()
+        {
+            Thoughts.RemoveAll(thought => thought.IsOver(PlayState.Time.CurrentDate));
+            Status.Happiness.CurrentValue = 50.0f;
+
+            foreach (Thought thought in Thoughts)
+            {
+                Status.Happiness.CurrentValue += thought.HappinessModifier;
+            }
+
+            if (Status.IsAsleep)
+            {
+                AddThought(Thought.ThoughtType.Slept);
+            }
+            else if (Status.Energy.IsUnhappy())
+            {
+                AddThought(Thought.ThoughtType.FeltSleepy);
+            }
+
+            if (Status.Hunger.IsUnhappy())
+            {
+                AddThought(Thought.ThoughtType.FeltHungry);
+            }
+           
+        }
+
+        public void Converse(CreatureAI other)
+        {
+            if (SpeakTimer.HasTriggered)
+            {
+                AddThought(Thought.ThoughtType.Talked);
+                Creature.DrawIndicator(IndicatorManager.StandardIndicators.Dots);
+                Creature.Physics.Face(other.Position);
+                SpeakTimer.Reset(SpeakTimer.TargetTimeSeconds);
+            }
+        }
     }
 
 }

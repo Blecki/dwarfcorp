@@ -16,8 +16,9 @@ namespace DwarfCorp
     public class Zone
     {
         public string ID = "";
-        public List<VoxelRef> Voxels = new List<VoxelRef>();
-       
+        public List<Voxel> Voxels = new List<Voxel>();
+        public List<Body> ZoneBodies = new List<Body>();
+            
         [JsonProperty]
         protected int ResPerVoxel = 8;
         public int ResourcesPerVoxel { get { return ResPerVoxel; } set { ResPerVoxel = value; RecalculateMaxResources(); } }
@@ -51,11 +52,69 @@ namespace DwarfCorp
 
         }
 
-
-
-
-        public void Destroy()
+        public Body GetNearestBody(Vector3 location)
         {
+            Body toReturn = null;
+            float nearestDistance = float.MaxValue;
+
+            foreach (Body body in ZoneBodies)
+            {
+                float dist = (location - body.GlobalTransform.Translation).LengthSquared();
+                if (dist < nearestDistance)
+                {
+                    toReturn = body;
+                    nearestDistance = dist;
+                }
+            }
+            return toReturn;
+        }
+
+        public Body GetNearestBodyWithTag(Vector3 location, string tag, bool filterReserved)
+        {
+            Body toReturn = null;
+            float nearestDistance = float.MaxValue;
+
+            foreach (Body body in ZoneBodies)
+            {
+                if (!body.Tags.Contains(tag)) continue;
+                if (filterReserved && (body.IsReserved || body.ReservedFor != null)) continue;
+                float dist = (location - body.GlobalTransform.Translation).LengthSquared();
+                if (dist < nearestDistance)
+                {
+                    toReturn = body;
+                    nearestDistance = dist;
+                }
+            }
+            return toReturn;
+        }
+
+        public void AddBody(Body body)
+        {
+            ZoneBodies.Add(body);
+            body.OnDestroyed += () => body_onDestroyed(body);
+        }
+
+        public void body_onDestroyed(Body body)
+        {
+            ZoneBodies.Remove(body);
+        }
+
+        public virtual void Destroy()
+        {
+            List<Body> toKill = new List<Body>();
+            toKill.AddRange(ZoneBodies);
+            foreach (Body body in toKill)
+            {
+                body.Die();
+            }
+
+            List<Voxel> voxelsToKill = new List<Voxel>();
+            voxelsToKill.AddRange(Voxels);
+            foreach (Voxel voxel in voxelsToKill)
+            {
+                voxel.Kill();
+            }
+
             ClearItems();
             Voxels.Clear();
         }
@@ -63,6 +122,7 @@ namespace DwarfCorp
         public void ClearItems()
         {
             Resources.Clear();
+            ZoneBodies.Clear();
         }
 
         public virtual bool IsFull()
@@ -71,14 +131,14 @@ namespace DwarfCorp
         }
 
         
-        public bool ContainsVoxel(VoxelRef voxel)
+        public bool ContainsVoxel(Voxel voxel)
         {
             return Voxels.Any(store => store.Equals(voxel));
         }
 
-        public virtual void RemoveVoxel(VoxelRef voxel)
+        public virtual void RemoveVoxel(Voxel voxel)
         {
-            VoxelRef toRemove = Voxels.FirstOrDefault(store => store.Equals(voxel));
+            Voxel toRemove = Voxels.FirstOrDefault(store => store.Equals(voxel));
 
             if(toRemove == null)
             {
@@ -89,7 +149,7 @@ namespace DwarfCorp
 
             if(ReplaceVoxelTypes)
             {
-                toRemove.GetVoxel(false).Kill();
+                toRemove.Kill();
             }
 
             RecalculateMaxResources();
@@ -113,7 +173,7 @@ namespace DwarfCorp
             }
         }
 
-        public virtual void AddVoxel(VoxelRef voxel)
+        public virtual void AddVoxel(Voxel voxel)
         {
             if(ContainsVoxel(voxel))
             {
@@ -124,7 +184,7 @@ namespace DwarfCorp
 
             if(ReplaceVoxelTypes)
             {
-                Voxel v = voxel.GetVoxel(false);
+                Voxel v = voxel;
                 v.Type = ReplacementType;
                 v.Chunk.ShouldRebuild = true;
             }
@@ -133,15 +193,15 @@ namespace DwarfCorp
           
         }
 
-        public VoxelRef GetNearestVoxel(Vector3 position)
+        public Voxel GetNearestVoxel(Vector3 position)
         {
-            VoxelRef closest = null;
+            Voxel closest = null;
             Vector3 halfSize = new Vector3(0.5f, 0.5f, 0.5f);
             double closestDist = double.MaxValue;
 
-            foreach (VoxelRef v in Voxels)
+            foreach (Voxel v in Voxels)
             {
-                double d = (v.WorldPosition - position + halfSize).LengthSquared();
+                double d = (v.Position - position + halfSize).LengthSquared();
 
                 if(d < closestDist)
                 {
@@ -156,7 +216,7 @@ namespace DwarfCorp
 
         public virtual bool AddItem(Body component)
         {
-            return Resources.AddItem(component); //AddItem(component, GetNearestFreeVoxel(component.LocalTransform.Translation + component.BoundingBoxPos, false));
+            return Resources.AddItem(component);
         }
 
        

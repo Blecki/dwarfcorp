@@ -60,14 +60,21 @@ namespace DwarfCorp
         }
 
 
+        public override void Initialize()
+        {
+            base.Initialize();
+        }
+
         public override IEnumerable<Status> Run()
         {
+            Creature.AI.Blackboard.Erase("PathToEntity");
+            Creature.AI.Blackboard.Erase("EntityVoxel");
             Tree = new Sequence(new SetTargetEntityAct(Entity, Agent),
-                    InHands() |
-                    new Sequence(new SetTargetVoxelFromEntityAct(Agent, "EntityVoxel"),
-                        new PlanAct(Agent, "PathToEntity", "EntityVoxel", PlanAct.PlanType.Adjacent),
-                        new Parallel(new FollowPathAct(Agent, "PathToEntity"),new Wrap(CollidesWithTarget)) {ReturnOnAllSucces = false},
-                        new StopAct(Agent)));
+        InHands() |
+        new Sequence(new SetTargetVoxelFromEntityAct(Agent, "EntityVoxel"),
+            new PlanAct(Agent, "PathToEntity", "EntityVoxel", PlanAct.PlanType.Adjacent),
+            new Parallel(new FollowPathAct(Agent, "PathToEntity"), new Wrap(CollidesWithTarget)) { ReturnOnAllSucces = false },
+            new StopAct(Agent)));
             Tree.Initialize();
             return base.Run();
         }

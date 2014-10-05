@@ -105,7 +105,7 @@ namespace DwarfCorp.GameStates
             {
                 if(r.ResourceName != "Container")
                 {
-                    GItem gitem = new GItem(r.ResourceName, r.Image, 0, 32, 2, 1, r.Tags);
+                    GItem gitem = new GItem(r.ResourceName, r.Image, 0, 32, 2, 1);
                     gitem.CurrentAmount = 2;
                     dragGrid.AddItem(gitem);
                 }

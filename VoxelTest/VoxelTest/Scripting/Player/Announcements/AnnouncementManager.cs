@@ -51,6 +51,10 @@ namespace DwarfCorp
 
         public void AddAnnouncement(Announcement announcement)
         {
+            if (Announcements.Any(existing => existing.Name == announcement.Name && existing.Message == announcement.Message))
+            {
+                return;
+            }
             Announcements.Add(announcement);
 
             if (Announcements.Count > MaxAnnouncements)

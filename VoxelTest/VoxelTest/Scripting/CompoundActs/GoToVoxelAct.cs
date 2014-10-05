@@ -11,7 +11,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GoToVoxelAct : CompoundCreatureAct
     {
-        public VoxelRef Voxel { get; set; }
+        public Voxel Voxel { get; set; }
 
         public GoToVoxelAct() : base()
         {
@@ -32,7 +32,7 @@ namespace DwarfCorp
                                       new StopAct(Agent));
         }
 
-        public GoToVoxelAct(VoxelRef voxel, PlanAct.PlanType planType, CreatureAI creature) :
+        public GoToVoxelAct(Voxel voxel, PlanAct.PlanType planType, CreatureAI creature) :
             base(creature)
         {
             Voxel = voxel;
@@ -40,7 +40,7 @@ namespace DwarfCorp
             if(Voxel != null)
             {
                 Tree = new Sequence(
-                                      new SetBlackboardData<VoxelRef>(Agent, "TargetVoxel", Voxel),
+                                      new SetBlackboardData<Voxel>(Agent, "TargetVoxel", Voxel),
                                       new PlanAct(Agent, "PathToVoxel", "TargetVoxel", PlanAct.PlanType.Adjacent),
                                       new FollowPathAct(Agent, "PathToVoxel"),
                                       new StopAct(Agent));

@@ -15,6 +15,11 @@ namespace DwarfCorp
             Name = "Satisfy Tiredness";
         }
 
+        public override Task Clone()
+        {
+            return new SatisfyTirednessTask();
+        }
+
         public override Act CreateScript(Creature agent)
         {
             return new FindBedAndSleepAct(agent.AI);

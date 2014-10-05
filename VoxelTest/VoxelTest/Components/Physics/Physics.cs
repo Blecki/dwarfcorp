@@ -37,8 +37,8 @@ namespace DwarfCorp
             
         }
 
-        public Physics(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, float mass, float i, float linearDamping, float angularDamping, Vector3 gravity) :
-            base(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
+        public Physics(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, float mass, float i, float linearDamping, float angularDamping, Vector3 gravity) :
+            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             Mass = mass;
             Velocity = Vector3.Zero;
@@ -137,9 +137,9 @@ namespace DwarfCorp
 
         public void CheckLiquids(ChunkManager chunks, float dt)
         {
-            VoxelRef currentVoxel = chunks.ChunkData.GetVoxelReferenceAtWorldLocation(GlobalTransform.Translation);
+            Voxel currentVoxel = chunks.ChunkData.GetVoxelerenceAtWorldLocation(GlobalTransform.Translation);
             
-            if(currentVoxel != null && currentVoxel.GetWaterLevel(chunks) > 5)
+            if(currentVoxel != null && currentVoxel.WaterLevel > 5)
             {
                 IsInLiquid = true;
                 ApplyForce(new Vector3(0, 25, 0), dt);
@@ -203,9 +203,9 @@ namespace DwarfCorp
             {
                 return;
             }
-            VoxelRef currentVoxel = chunks.ChunkData.GetVoxelReferenceAtWorldLocation(null, LocalTransform.Translation);
+            Voxel currentVoxel = chunks.ChunkData.GetVoxelerenceAtWorldLocation(null, LocalTransform.Translation);
 
-            List<VoxelRef> vs = new List<VoxelRef>
+            List<Voxel> vs = new List<Voxel>
             {
                 currentVoxel
             };
@@ -220,12 +220,12 @@ namespace DwarfCorp
 
             Vector3 grid = chunk.WorldToGrid(LocalTransform.Translation);
             
-            List<VoxelRef> adjacencies = chunk.GetNeighborsEuclidean((int) grid.X, (int) grid.Y, (int) grid.Z);
+            List<Voxel> adjacencies = chunk.GetNeighborsEuclidean((int) grid.X, (int) grid.Y, (int) grid.Z);
             vs.AddRange(adjacencies);
 
-            foreach(VoxelRef v in vs)
+            foreach(Voxel v in vs)
             {
-                if(v == null || v.TypeName == "empty")
+                if(v == null || v.IsEmpty)
                 {
                     continue;
                 }

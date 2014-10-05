@@ -31,7 +31,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            return Creature.ConsumeItem(TargetID);
+            yield return Status.Fail;  //Creature.ConsumeItem(TargetID);
         }
     }
 }

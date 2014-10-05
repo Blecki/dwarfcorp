@@ -38,6 +38,12 @@ namespace DwarfCorp
             return CreateItem(body.Name + body.GlobalID, z, body);
         }
 
+        public static IEnumerable<Act.Status> UnReserve(Item item)
+        {
+            item.ReservedFor = null;
+            yield return Act.Status.Success;
+        }
+
         public static Item CreateItem(string name, Zone z, Body userData)
         {
             if(ItemDictionary.ContainsKey(name))

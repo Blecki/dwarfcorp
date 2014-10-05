@@ -28,6 +28,11 @@ namespace DwarfCorp
             Zone = zone;
         }
 
+        public override Task Clone()
+        {
+            return new PutItemWithTagTask(Tags, Zone);
+        }
+
         public override Act CreateScript(Creature creature)
         {
             Room room = Zone as Room;

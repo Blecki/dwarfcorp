@@ -27,7 +27,7 @@ namespace DwarfCorp
         public float StockPrice { get; set; }
         public float Assets { get; set; }
         public float LastAssets { get; set; }
-        public ImageFrame Logo { get; set; }
+        public NamedImageFrame Logo { get; set; }
         public Color BaseColor { get; set; }
         public Color SecondaryColor { get; set; }
         public string TickerName { get { return GenerateTickerName(Name); } }
@@ -64,7 +64,7 @@ namespace DwarfCorp
                 k++;
             }
 
-    return toReturn;
+        return toReturn;
         }
 
         public static string GenerateMotto()
@@ -359,7 +359,7 @@ namespace DwarfCorp
                     row = 2;
                     break;
             }
-            ImageFrame image = new ImageFrame(texture, 32, PlayState.Random.Next(0, texture.Width / 32), row);
+            NamedImageFrame image = new NamedImageFrame(ContentPaths.Logos.logos, 32, PlayState.Random.Next(0, texture.Width / 32), row);
 
             Color c = new Color(PlayState.Random.Next(0, 255), PlayState.Random.Next(0, 255),
                 PlayState.Random.Next(0, 255));
@@ -378,20 +378,6 @@ namespace DwarfCorp
                 LastAssets = assets
             };
 
-        }
-
-        public void InitializeFromPlayer()
-        {
-            Name = PlayerSettings.Default.CompanyName;
-            Motto = PlayerSettings.Default.CompanyMotto;
-            Logo = new ImageFrame(TextureManager.GetTexture("CorpLogo"));
-            Industry = Sector.Exploration;
-            Assets = 100.0f;
-            StockPrice = 1.0f;
-            BaseColor = Color.DarkRed;
-            SecondaryColor = Color.White;
-            StockHistory = GenerateRandomStockHistory(1.0f, 10);
-            LastAssets = Assets;
         }
 
     }

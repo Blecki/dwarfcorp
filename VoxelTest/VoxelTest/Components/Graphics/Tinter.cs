@@ -29,8 +29,8 @@ namespace DwarfCorp
             
         }
 
-        public Tinter(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool octree) :
-            base(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos, octree)
+        public Tinter(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool octree) :
+            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos, octree)
         {
             LightsWithVoxels = true;
             Tint = Color.White;
@@ -80,23 +80,22 @@ namespace DwarfCorp
             StartTimer.Update(gameTime);
             if(ShouldUpdate())
             {
-                if(entityLighting)
+                if (entityLighting)
                 {
                     Voxel v = chunks.ChunkData.GetFirstVoxelUnder(GlobalTransform.Translation);
 
-                    if(v != null && !v.Chunk.IsRebuilding && v.Chunk.LightingCalculated)
+                    if (v != null && !v.Chunk.IsRebuilding && v.Chunk.LightingCalculated)
                     {
-                        //VoxelVertex bestKey = VoxelChunk.GetNearestDelta(GlobalTransform.Translation - v.Position);
-
-                        Color color = new Color(v.Chunk.SunColors[(int) v.GridPosition.X][(int) v.GridPosition.Y + 1][(int) v.GridPosition.Z], 255, v.Chunk.DynamicColors[(int) v.GridPosition.X][(int) v.GridPosition.Y][(int) v.GridPosition.Z]);
+                        Color color =
+                            new Color(
+                                v.Chunk.Data.SunColors[
+                                    v.Chunk.Data.IndexAt((int) v.GridPosition.X, (int) v.GridPosition.Y + 1,
+                                        (int) v.GridPosition.Z)], 255,
+                                    0);
 
                         TargetTint = color;
                         firstIteration = false;
                         ColorAppplied = true;
-                    }
-                    else
-                    {
-                        TargetTint = new Color(200, 255, 0);
                     }
                 }
                 else
