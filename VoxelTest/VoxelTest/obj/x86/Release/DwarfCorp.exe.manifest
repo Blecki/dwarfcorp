@@ -68,14 +68,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1028096">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1029120">
       <assemblyIdentity name="DwarfCorp" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>/L70LTcQaVfglMaFN/3Ea1Z0oW4=</dsig:DigestValue>
+        <dsig:DigestValue>CNypfaKshbCnCRLMrCvYR9S7uVY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -163,6 +163,15 @@
       <dsig:DigestValue>ixWQ2FT6aKL2q+Z9PFh7DAIKmMo=</dsig:DigestValue>
     </hash>
   </file>
+  <file name="Content\Audio\hammer.xnb" size="42057">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>tm6UUh41fgmR/hz7xjvxXMMsDaI=</dsig:DigestValue>
+    </hash>
+  </file>
   <file name="Content\Audio\hit.xnb" size="4673">
     <hash>
       <dsig:Transforms>
@@ -233,6 +242,24 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
       <dsig:DigestValue>FxozD/sGBA2LzxrM1barhVT8mpE=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Audio\trap.xnb" size="62937">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>qHbeIPa0LxjSGA5yJOs7tg5AOIM=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Audio\vegetation_break.xnb" size="79513">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>ADHXz4kZ64ow+oaKZL6T3527uf0=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Audio\whoosh.xnb" size="64619">
@@ -442,13 +469,13 @@
       <dsig:DigestValue>pBf0A5lTFCfxfpEXFycYq4rnbfE=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Entities\Dwarf\Sprites\dwarf-craft.xnb" size="12884">
+  <file name="Content\Entities\Dwarf\Sprites\dwarf-craft.xnb" size="13100">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>lWasmG8d5rvJl4RL4w16Tnr7xbo=</dsig:DigestValue>
+      <dsig:DigestValue>WShor3rXpdHBbANTSU+lzkIOb2s=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Entities\Dwarf\Sprites\dwarf-wizard.xnb" size="14588">

@@ -19,6 +19,7 @@ namespace DwarfCorp
         public int TriggerAmount { get; set; }
         public bool TriggerInBox { get; set; }
         public int BoxTriggerTimes { get; set; }
+        public string SoundToPlay { get; set; }
 
         public ParticleTrigger()
         {
@@ -28,6 +29,7 @@ namespace DwarfCorp
         public ParticleTrigger(string emitter, ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
             base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos, false)
         {
+            SoundToPlay = ContentPaths.Audio.explode;
             EmitterName = emitter;
             TriggerOnDeath = true;
             TriggerAmount = 10;
@@ -60,7 +62,8 @@ namespace DwarfCorp
         {
             if(TriggerOnDeath)
             {
-                SoundManager.PlaySound(ContentPaths.Audio.explode, GlobalTransform.Translation);
+                if(!string.IsNullOrEmpty(SoundToPlay))
+                    SoundManager.PlaySound(SoundToPlay, GlobalTransform.Translation);
                 Trigger();
             }
             base.Die();

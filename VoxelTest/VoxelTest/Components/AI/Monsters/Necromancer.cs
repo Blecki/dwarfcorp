@@ -71,7 +71,8 @@ namespace DwarfCorp
             DeathParticleTrigger = new ParticleTrigger("sand_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
-                TriggerAmount = 25
+                TriggerAmount = 25,
+                SoundToPlay = ContentPaths.Audio.gravel
             };
             Flames = new Flammable(Manager, "Flames", Physics, Health);
 

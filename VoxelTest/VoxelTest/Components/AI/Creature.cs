@@ -326,6 +326,8 @@ namespace DwarfCorp
                     Drawer2D.DrawLoadBar(AI.Position + Vector3.Up, Color.White, Color.Black, 100, 16, waitTimer.CurrentTimeSeconds / waitTimer.TargetTimeSeconds);
                 }
 
+                Attacks[0].PerformNoDamage(Act.LastTime, AI.Position);
+
                 yield return Act.Status.Running;
             }
 

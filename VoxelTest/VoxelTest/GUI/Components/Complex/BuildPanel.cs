@@ -12,6 +12,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class BuildPanel : GUIComponent
     {
+        public Panel SelectionPanel { get; set; }
         public Dictionary<string, Button> Buttons { get; set; }
         public Faction Faction { get; set; }
         public Panel InfoPanel { get; set; }
@@ -272,11 +273,12 @@ namespace DwarfCorp
 
         }
 
-        public void roomButton_OnClicked(Button sender)
+        public void roomButton_OnClicked(GUIComponent s)
         {
+            Button sender = s as Button;
             sender.IsToggled = true;
 
-            foreach(Button button in Buttons.Values.Where(button => button != sender))
+            foreach (Button button in Buttons.Values.Where(button => button != sender))
             {
                 button.IsToggled = false;
             }
