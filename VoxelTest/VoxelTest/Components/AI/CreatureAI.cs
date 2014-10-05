@@ -219,6 +219,7 @@ namespace DwarfCorp
                     if(CurrentTask.ShouldRetry(Creature))
                     {
                         Tasks.Add(CurrentTask);
+                        CurrentTask.SetupScript(Creature);
                         CurrentTask = ActOnIdle();
                         retried = true;
                     }

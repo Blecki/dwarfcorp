@@ -137,7 +137,9 @@ namespace DwarfCorp
         public override void Initialize()
         {
             Creature.OverrideCharacterMode = false;
-            Tree = new Sequence(new GoToTaggedObjectAct(Creature.AI) {Tag = "Chair", Teleport = true, TeleportOffset = new Vector3(0, 0.1f, 0), ObjectName = "Chair"},
+            Tree = new Sequence(
+                                new Wrap(() => Creature.FindAndReserve("Chair", "Chair")),
+                                new GoToTaggedObjectAct(Creature.AI) {Tag = "Chair", Teleport = true, TeleportOffset = new Vector3(0, 0.1f, 0), ObjectName = "Chair"},
                                 new Wrap(WaitUntilBored),
                                 new Wrap(UnreserveChair)) | new Wrap(UnreserveChair);
             base.Initialize();

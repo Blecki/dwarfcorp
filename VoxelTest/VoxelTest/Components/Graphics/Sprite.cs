@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -52,6 +53,11 @@ namespace DwarfCorp
         public Sprite()
         {
            
+        }
+
+        public void SetSingleFrameAnimation()
+        {
+            AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", new List<Point>() { new Point(0, 0)}, true, Color.White, 10.0f, false));
         }
 
         public void AddAnimation(Animation animation)

@@ -118,3 +118,5 @@ Content\Entities\Dwarf\Sprites\dwarf-wizard.xnb
 Content\Audio\vegetation_break.xnb
 Content\Audio\trap.xnb
 Content\Audio\hammer.xnb
+Content\Entities\DwarfObjects\constructiontape.xnb
+Content\Entities\DwarfObjects\underconstruction.xnb

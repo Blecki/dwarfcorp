@@ -123,6 +123,8 @@ namespace DwarfCorp
             {
                 public static string coinpiles = Program.CreatePath("Entities", "DwarfObjects", "coinpiles");
                 public static string beartrap = Program.CreatePath("Entities", "DwarfObjects", "beartrap");
+                public static string underconstruction = Program.CreatePath("Entities", "DwarfObjects", "underconstruction");
+                public static string constructiontape = Program.CreatePath("Entities", "DwarfObjects", "constructiontape");
             }
 
             public class Furniture

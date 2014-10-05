@@ -70,6 +70,48 @@ namespace DwarfCorp
             }
         }
 
+        public static IEnumerable<Act.Status> FindAndReserve(this Creature agent, string tag, string thing)
+        {
+            Body closestItem = agent.Faction.FindNearestItemWithTags(tag, agent.AI.Position, true);
+
+            if (closestItem != null)
+            {
+                agent.AI.Blackboard.Erase(thing);
+                agent.AI.Blackboard.SetData(thing, closestItem);
+                closestItem.ReservedFor = agent.AI;
+                closestItem.IsReserved = true;
+                yield return Act.Status.Success;
+            }
+
+            yield return Act.Status.Fail;
+        }
+
+        public static IEnumerable<Act.Status> Reserve(this Creature agent, string thing)
+        {
+            Body objectToHit = agent.AI.Blackboard.GetData<Body>(thing);
+
+            if (objectToHit != null && objectToHit.ReservedFor == null && !objectToHit.IsReserved)
+            {
+                objectToHit.IsReserved = true;
+                objectToHit.ReservedFor = agent.AI;
+            }
+
+            yield return Act.Status.Success;
+        }
+
+        public static IEnumerable<Act.Status> Unreserve(this Creature agent, string thing)
+        {
+            Body objectToHit = agent.AI.Blackboard.GetData<Body>(thing);
+
+            if (objectToHit != null && objectToHit.ReservedFor == agent.AI)
+            {
+                objectToHit.IsReserved = false;
+                objectToHit.ReservedFor = null;
+            }
+
+            yield return Act.Status.Success;
+        }
+
         public static IEnumerable<Act.Status> RestockAll(this Creature agent)
         {
             foreach (ResourceAmount resource in agent.Inventory.Resources)
