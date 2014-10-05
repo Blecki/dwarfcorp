@@ -39,7 +39,12 @@ namespace DwarfCorp
             };
             Sensor.OnSensed += Sensor_OnSensed;
             DeathTimer = new Timer(0.6f, true);
-            DeathParticles = new ParticleTrigger("puff", PlayState.ComponentManager, "DeathParticles", this, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero);
+            DeathParticles = new ParticleTrigger("puff", PlayState.ComponentManager, "DeathParticles", this,
+                Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
+            {
+                SoundToPlay = ""
+            };
+
             DamageAmount = 200;
             VoxListener = new VoxelListener(PlayState.ComponentManager, this, PlayState.ChunkManager, PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(pos));
             Sprite = new Sprite(PlayState.ComponentManager, "Sprite", this, Matrix.Identity, TextureManager.GetTexture(ContentPaths.Entities.DwarfObjects.beartrap), false);
@@ -88,7 +93,7 @@ namespace DwarfCorp
         {
             Sprite.SetCurrentAnimation(TriggerAnimation);
             Sprite.CurrentAnimation.Play();
-          
+            SoundManager.PlaySound(ContentPaths.Audio.trap, GlobalTransform.Translation, false);
             ShouldDie = true;
             DeathTimer.Reset(DeathTimer.TargetTimeSeconds);
         }

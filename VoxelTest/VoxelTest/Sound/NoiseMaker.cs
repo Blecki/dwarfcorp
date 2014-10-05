@@ -33,7 +33,13 @@ namespace DwarfCorp
             if (CurrentSound == null || CurrentSound.EffectInstance.IsDisposed || CurrentSound.EffectInstance.State == SoundState.Stopped || CurrentSound.EffectInstance.State == SoundState.Paused)
             {
                 List<string> availableNoises = Noises[noise];
-                CurrentSound = SoundManager.PlaySound(availableNoises[PlayState.Random.Next(availableNoises.Count)], position, randomPitch, volume);
+                int index = PlayState.Random.Next(availableNoises.Count);
+
+                if (index >= 0 && index < availableNoises.Count)
+                {
+                    CurrentSound = SoundManager.PlaySound(availableNoises[index], position, randomPitch, volume);
+                }
+               
             }
 
 

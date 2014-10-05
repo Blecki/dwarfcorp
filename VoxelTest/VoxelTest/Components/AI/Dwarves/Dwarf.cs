@@ -81,7 +81,8 @@ namespace DwarfCorp
             DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
-                TriggerAmount = 100
+                TriggerAmount = 100,
+                SoundToPlay = ContentPaths.Entities.Dwarf.Audio.dwarfhurt1,
             };
             Flames = new Flammable(Manager, "Flames", Physics, Health);
 
@@ -94,7 +95,7 @@ namespace DwarfCorp
             };
 
 
-            NoiseMaker.Noises["Chew"] = new List<string>
+            NoiseMaker.Noises["Chew"] = new List<string> 
             {
                 ContentPaths.Audio.chew
             };

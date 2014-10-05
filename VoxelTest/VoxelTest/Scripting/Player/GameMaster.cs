@@ -182,7 +182,7 @@ namespace DwarfCorp
 
         public bool AreAllEmployeesAsleep()
         {
-            return Faction.Minions.All(minion => !minion.Stats.CanSleep || minion.Creature.IsAsleep);
+            return (Faction.Minions.Count > 0) && Faction.Minions.All(minion => (!minion.Stats.CanSleep || minion.Creature.IsAsleep) && !minion.IsDead);
         }
 
         public void PayEmployees()

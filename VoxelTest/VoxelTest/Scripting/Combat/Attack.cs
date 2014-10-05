@@ -87,6 +87,16 @@ namespace DwarfCorp
             }
         }
 
+        public void PerformNoDamage(GameTime time, Vector3 pos)
+        {
+            RechargeTimer.Update(time);
+
+            if (RechargeTimer.HasTriggered)
+            {
+                PlayNoise(pos);
+            }
+        }
+
         public bool Perform(GameComponent other, GameTime time, float bonus, Vector3 pos)
         {
             RechargeTimer.Update(time);

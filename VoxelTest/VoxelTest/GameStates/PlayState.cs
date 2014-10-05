@@ -1245,7 +1245,7 @@ namespace DwarfCorp.GameStates
                 DefaultShader.Parameters["xTimeOfDay"].SetValue(Sky.TimeOfDay);
                 MonsterSpawner.Update(gameTime);
                 bool allAsleep = Master.AreAllEmployeesAsleep();
-                if (SleepPrompt && allAsleep && !FastForwardToDay)
+                if (SleepPrompt && allAsleep && !FastForwardToDay && Time.IsNight())
                 {
                     Dialog sleepingPrompt = Dialog.Popup(GUI, "Employees Asleep",
                         "All of your employees are asleep. Skip to daytime?", Dialog.ButtonType.OkAndCancel);

@@ -873,9 +873,14 @@ namespace DwarfCorp
                 NumResources = (int) (treeSize * 10),
                 ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Wood]
             });
-            
 
-            ParticleTrigger particleTrigger = new ParticleTrigger("Leaves", componentManager, "LeafEmitter", tree, Matrix.Identity, new Vector3(treeSize * 2, treeSize, treeSize * 2), Vector3.Zero);
+
+            ParticleTrigger particleTrigger = new ParticleTrigger("Leaves", componentManager, "LeafEmitter", tree,
+                Matrix.Identity, new Vector3(treeSize*2, treeSize, treeSize*2), Vector3.Zero)
+            {
+                SoundToPlay = ContentPaths.Audio.vegetation_break
+            };
+
 
             tree.AddToOctree = true;
             tree.CollisionType = CollisionManager.CollisionType.Static;

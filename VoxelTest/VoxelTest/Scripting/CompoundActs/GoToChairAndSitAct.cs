@@ -70,29 +70,36 @@ namespace DwarfCorp
             Timer eatTimer = new Timer(10.0f + MathFunctions.Rand(0, 1), false);
             Vector3 snapPosition = Agent.Position + new Vector3(0, 0.2f, 0);
             Body body = Creature.AI.Blackboard.GetData<Body>("Chair");
+
+            if (body == null || body.IsDead || body.IsReserved)
+            {
+                Creature.OverrideCharacterMode = false;
+                yield return Status.Success;
+                yield break;
+            }
+
+            body.IsReserved = true;
+            
             while (true)
             {
-                if (body == null || body.IsDead)
-                {
-                    Creature.OverrideCharacterMode = false;
-                    yield return Status.Success;
-                }
-
                 if (Creature.AI.Tasks.Count > 0)
                 {
                     Creature.OverrideCharacterMode = false;
+                    body.IsReserved = false;
                     yield return Status.Success;
                 }
 
                 if (Creature.AI.Status.Energy.IsUnhappy())
                 {
                     Creature.OverrideCharacterMode = false;
+                    body.IsReserved = false;
                     yield return Status.Success;
                 }
 
                 if (Creature.AI.Status.Hunger.IsUnhappy())
                 {
                     Creature.OverrideCharacterMode = false;
+                    body.IsReserved = false;
                     yield return Status.Success;
                 }
 
@@ -101,6 +108,7 @@ namespace DwarfCorp
                 if (waitTimer.HasTriggered)
                 {
                     Creature.OverrideCharacterMode = false;
+                    body.IsReserved = false;
                     yield return Status.Success;
                 }
 

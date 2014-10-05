@@ -37,12 +37,13 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            Body closestItem = Agent.Faction.FindNearestItemWithTags(Tag, Agent.Position, false);
+            Body closestItem = Agent.Faction.FindNearestItemWithTags(Tag, Agent.Position, true);
 
             Creature.AI.Blackboard.Erase(ObjectName);
             if (closestItem != null)
             {
                 closestItem.ReservedFor = Agent;
+                closestItem.IsReserved = true;
                 Act unreserveAct = new Wrap(() => Body.UnReserve(closestItem));
 
                 if (Teleport)
