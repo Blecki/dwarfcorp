@@ -115,3 +115,6 @@ Content\Audio\bird.xnb
 Content\Audio\pluck.xnb
 Content\Entities\Dwarf\Sprites\dwarf-craft.xnb
 Content\Entities\Dwarf\Sprites\dwarf-wizard.xnb
+Content\Audio\vegetation_break.xnb
+Content\Audio\trap.xnb
+Content\Audio\hammer.xnb
