@@ -40,8 +40,11 @@ namespace DwarfCorp
                 if(minion.CurrentTask != null)
                 {
                     minion.Tasks.Add(minion.CurrentTask);
-                    if(minion.CurrentTask.Script != null)
+                    if (minion.CurrentTask.Script != null)
+                    {
+                        minion.CurrentAct.OnCanceled();
                         minion.CurrentTask.Script.Initialize();
+                    }
                     minion.CurrentTask.SetupScript(minion.Creature);
                     minion.CurrentTask = null;
                 }
