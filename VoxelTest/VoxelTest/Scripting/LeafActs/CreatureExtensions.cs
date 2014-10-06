@@ -76,11 +76,13 @@ namespace DwarfCorp
 
             if (closestItem != null)
             {
-                agent.AI.Blackboard.Erase(thing);
-                agent.AI.Blackboard.SetData(thing, closestItem);
+                //PlayState.AnnouncementManager.Announce("Creature " + agent.GlobalID + " reserves " + closestItem.Name + " " + closestItem.GlobalID, "");
                 closestItem.ReservedFor = agent.AI;
                 closestItem.IsReserved = true;
+                agent.AI.Blackboard.Erase(thing);
+                agent.AI.Blackboard.SetData(thing, closestItem);
                 yield return Act.Status.Success;
+                yield break;
             }
 
             yield return Act.Status.Fail;
@@ -92,6 +94,7 @@ namespace DwarfCorp
 
             if (objectToHit != null && objectToHit.ReservedFor == null && !objectToHit.IsReserved)
             {
+                //PlayState.AnnouncementManager.Announce("Creature " + agent.GlobalID + " reserves " + objectToHit.Name + " " + objectToHit.GlobalID, "");
                 objectToHit.IsReserved = true;
                 objectToHit.ReservedFor = agent.AI;
             }
@@ -105,6 +108,7 @@ namespace DwarfCorp
 
             if (objectToHit != null && objectToHit.ReservedFor == agent.AI)
             {
+                //PlayState.AnnouncementManager.Announce("Creature " + agent.GlobalID + " unreserves " + objectToHit.Name + " " + objectToHit.GlobalID, "");
                 objectToHit.IsReserved = false;
                 objectToHit.ReservedFor = null;
             }

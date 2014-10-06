@@ -66,6 +66,13 @@ namespace DwarfCorp
                 IsVisible = false
             };
             BuildPanel.OnSelectionChanged += buildBox_OnSelectionModified;
+
+
+            new BuildMenu(GUI, this, Master)
+            {
+                LocalBounds = new Rectangle(0, -256, 512, 256),
+                IsVisible = true
+            };
         }
 
 

@@ -113,7 +113,7 @@ namespace DwarfCorp
         private bool hasMoved = true;
 
         public bool AddToOctree { get; set; }
-
+        public bool DrawReservation { get; set; }
         public Body()
         {
             if(OnDestroyed == null)
@@ -128,6 +128,7 @@ namespace DwarfCorp
         public Body(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
             this(name, parent, localTransform, boundingBoxExtents, boundingBoxPos, true)
         {
+            DrawReservation = false;
             AnimationQueue = new List<MotionAnimation>();
             DrawInFrontOfSiblings = false;
             CollisionType = CollisionManager.CollisionType.None;
@@ -139,7 +140,8 @@ namespace DwarfCorp
 
         public Body(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToOctree) :
             base(name, parent)
-        { 
+        {
+            DrawReservation = false;
             AnimationQueue = new List<MotionAnimation>();
             AddToOctree = addToOctree;
             BoundingBoxPos = boundingBoxPos;
@@ -214,6 +216,11 @@ namespace DwarfCorp
             }
 
             if(DrawBoundingBox)
+            {
+                Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f);
+            }
+
+            if (DrawReservation && IsReserved)
             {
                 Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f);
             }
@@ -303,13 +310,14 @@ namespace DwarfCorp
             base.Die();
         }
 
-
+        /*
         public static IEnumerable<Act.Status> UnReserve(Body closestItem)
         {
             closestItem.IsReserved = false;
             closestItem.ReservedFor = null;
             yield return Act.Status.Success;
         }
+         */
     }
 
 }

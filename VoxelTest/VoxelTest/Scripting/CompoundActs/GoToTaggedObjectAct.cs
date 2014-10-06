@@ -30,43 +30,46 @@ namespace DwarfCorp
         }
 
 
-        public override void Initialize()
+        public IEnumerable<Status> TeleportFunction()
         {
-            base.Initialize();
-        }
+            Body closestItem = Creature.AI.Blackboard.GetData<Body>(ObjectName);
 
-        public override IEnumerable<Status> Run()
-        {
-            Body closestItem = Agent.Blackboard.GetData<Body>(ObjectName);
             if (closestItem != null)
             {
-                Act unreserveAct = new Wrap(() => Creature.Unreserve(ObjectName));
+                TeleportAct act = new TeleportAct(Creature.AI) { Location = TeleportOffset + closestItem.BoundingBox.Center() };
+                act.Initialize();
+                foreach (Act.Status status in act.Run())
+                {
+                    yield return status;
+                }
 
-                if (Teleport)
-                {
-                    Tree =
-                   new Sequence
-                   (
-                       new SetBlackboardData<Body>(Creature.AI, ObjectName, closestItem),
-                       new GoToEntityAct(closestItem, Creature.AI),
-                       new TeleportAct(Creature.AI) { Location = TeleportOffset + closestItem.BoundingBox.Center() }
-                   ) | unreserveAct;
-                }
-                else
-                {
-                    Tree =
+            }
+
+            yield return Status.Fail;
+        }
+
+        public override void Initialize()
+        {
+            if (Teleport)
+            {
+                Tree =
                     new Sequence
-                    (
-                       new SetBlackboardData<Body>(Creature.AI, ObjectName, closestItem),
-                       new GoToEntityAct(closestItem, Creature.AI)
-                    ) | unreserveAct;
-                }
+                        (
+                        new GoToEntityAct(ObjectName, Creature.AI),
+                        new Wrap(TeleportFunction)
+                        );
             }
             else
             {
-                Tree = null;
+                Tree =
+                    new Sequence
+                        (
+                        new GoToEntityAct(ObjectName, Creature.AI)
+                        );
             }
-            return base.Run();
+            base.Initialize();
         }
+
+ 
     }
 }

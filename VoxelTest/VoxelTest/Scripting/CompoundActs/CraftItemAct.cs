@@ -84,6 +84,16 @@ namespace DwarfCorp
             base.Initialize();
         }
 
+
+        public override void OnCanceled()
+        {
+            foreach (var statuses in Creature.Unreserve("Anvil"))
+            {
+                continue;
+            }
+            base.OnCanceled();
+        }
+
        
     }
 }

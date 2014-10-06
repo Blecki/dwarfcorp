@@ -140,6 +140,8 @@
     <Compile Include="GUI\Components\Basic\MiniBar.cs" />
     <Compile Include="GUI\Components\Complex\AnnounementViewer.cs" />
     <Compile Include="GUI\Components\Complex\ApplicationPanel.cs" />
+    <Compile Include="GUI\Components\Complex\BuildMenu.cs" />
+    <Compile Include="GUI\Components\Complex\BuildSelector.cs" />
     <Compile Include="GUI\Components\Complex\CapitalPanel.cs" />
     <Compile Include="GUI\Components\Complex\ColorDialog.cs" />
     <Compile Include="GUI\Components\Complex\ColorSelector.cs" />
