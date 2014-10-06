@@ -100,7 +100,8 @@ namespace DwarfCorp
             Hurt,
             Sleeping,
             Swimming,
-            Flying
+            Flying,
+            Sitting
         }
 
         [OnDeserialized]
