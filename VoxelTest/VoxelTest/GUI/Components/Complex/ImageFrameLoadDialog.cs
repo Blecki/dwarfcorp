@@ -65,12 +65,12 @@ namespace DwarfCorp
 
             if (SpriteLayout == null)
             {
-                SpriteLayout = new GridLayout(GUI, Layout, rc, rc) {FitToParent = false};
+                SpriteLayout = new GridLayout(GUI, Layout, rc, rc) {WidthSizeMode = SizeMode.Fixed, HeightSizeMode = SizeMode.Fixed};
             }
             else
             {
                 RemoveChild(SpriteLayout);
-                SpriteLayout = new GridLayout(GUI, Layout, rc, rc) {FitToParent = false};
+                SpriteLayout = new GridLayout(GUI, Layout, rc, rc) { WidthSizeMode = SizeMode.Fixed, HeightSizeMode = SizeMode.Fixed };
             }
 
             Layout.SetComponentPosition(SpriteLayout, 0, 1, 4, 2);

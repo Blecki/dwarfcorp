@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.IO.Ports;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -25,6 +26,8 @@ namespace DwarfCorp
             public string Name { get; set; }
             public TabSelector Selector { get; set; }
             public int Index { get; set; }
+            public Button Button { get; set; }
+
             public Tab(string name, TabSelector selector, GUIComponent parent) :
                 base(selector.GUI, parent)
             {
@@ -38,7 +41,9 @@ namespace DwarfCorp
             CurrentTab = Tabs[tab];
             foreach (var pair in Tabs)
             {
-                pair.Value.IsVisible = pair.Key == tab;
+                bool isTab = pair.Key == tab;
+                pair.Value.IsVisible = isTab;
+                pair.Value.Button.IsToggled = isTab;
             }
             Layout.SetComponentPosition(Tabs[tab], 0, 1, Layout.Cols, Layout.Rows - 1);
             Layout.UpdateSizes();
@@ -58,7 +63,12 @@ namespace DwarfCorp
                 Index = Tabs.Count
             };
 
-            Button tabButton = new Button(GUI, Layout, name, GUI.SmallFont, Button.ButtonMode.PushButton, null);
+            Button tabButton = new Button(GUI, Layout, name, GUI.SmallFont, Button.ButtonMode.TabButton, null)
+            {
+                DrawFrame = false,
+                CanToggle = true
+            };
+            Tabs[name].Button = tabButton;
             tabButton.OnClicked += () => tabButton_OnClicked(tabButton);
 
             Layout.SetComponentPosition(tabButton, Tabs.Count - 1, 0, 1, 1);

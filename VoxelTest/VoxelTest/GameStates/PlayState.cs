@@ -685,7 +685,8 @@ namespace DwarfCorp.GameStates
             GridLayout layout = new GridLayout(GUI, GUI.RootComponent, 11, 11)
             {
                 LocalBounds = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height),
-                FitToParent =  false
+                WidthSizeMode = GUIComponent.SizeMode.Fixed,
+                HeightSizeMode = GUIComponent.SizeMode.Fixed
             };
 
             GUI.RootComponent.AddChild(Master.Debugger.MainPanel);

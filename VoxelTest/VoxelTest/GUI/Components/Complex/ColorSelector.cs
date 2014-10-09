@@ -31,6 +31,8 @@ namespace DwarfCorp
 
         public void InitializeColorPanels(List<Color> colors)
         {
+            int numRows = GlobalBounds.Height/PanelHeight;
+            int numCols = GlobalBounds.Width/PanelWidth;
             Layout = new GridLayout(GUI, this, GlobalBounds.Height / PanelHeight, GlobalBounds.Width / PanelWidth);
 
             int rc = Math.Max((int)(Math.Sqrt(colors.Count)), 2);
@@ -42,8 +44,8 @@ namespace DwarfCorp
                     CurrentColor = colors[i]
                 };
 
-                int row = i / rc;
-                int col = i % rc;
+                int row = i / numCols;
+                int col = i % numCols;
                 panel.OnClicked += () => panel_OnClicked(panel.CurrentColor);
 
                 Layout.SetComponentPosition(panel, col, row, 1, 1);

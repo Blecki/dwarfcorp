@@ -138,6 +138,7 @@
     <Compile Include="GUI\Components\Basic\AnimatedImagePanel.cs" />
     <Compile Include="GUI\Components\Basic\ColorPanel.cs" />
     <Compile Include="GUI\Components\Basic\MiniBar.cs" />
+    <Compile Include="GUI\Components\Basic\Window.cs" />
     <Compile Include="GUI\Components\Complex\AnnounementViewer.cs" />
     <Compile Include="GUI\Components\Complex\ApplicationPanel.cs" />
     <Compile Include="GUI\Components\Complex\BuildMenu.cs" />
