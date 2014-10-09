@@ -72,9 +72,17 @@ namespace DwarfCorp
 
         private void ScrollView_OnScrolled(int amount)
         {
-            ScrollY = Math.Max(ScrollY + amount, 0);
-            VerticalSlider.SliderValue = Math.Min(Math.Max(((float) ScrollY + (float) ChildRect.Y) / ((float) ChildRect.Height + GetViewRect().Height / 2), 0), 1);
+            if (IsVisible && IsMouseOver && ParentVisibleRecursive())
+            {
+                ScrollY = Math.Max(ScrollY + amount, 0);
+                VerticalSlider.SliderValue =
+                    Math.Min(
+                        Math.Max(
+                            ((float) ScrollY + (float) ChildRect.Y)/((float) ChildRect.Height + GetViewRect().Height/2),
+                            0), 1);
+            }
         }
+
 
         private void VerticalSlider_OnValueModified(float arg)
         {

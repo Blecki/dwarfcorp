@@ -24,7 +24,7 @@ namespace DwarfCorp
         public DwarfGUI GUI { get; set; }
 
         [JsonIgnore]
-        public Panel SelectorPanel { get; set; }
+        public Window SelectorPanel { get; set; }
         [JsonIgnore]
         public ComboBox SelectorBox { get; set; }
 
@@ -60,14 +60,15 @@ namespace DwarfCorp
             GUI = gui;
             Player = master;
             
-            SelectorPanel = new Panel(GUI, gui.RootComponent)
+            SelectorPanel = new Window(GUI, gui.RootComponent)
             {
                 LocalBounds = new Rectangle(80, 140, 300, 100)
             };
 
             SelectorBox = new ComboBox(GUI, SelectorPanel)
             {
-                LocalBounds = new Rectangle(10, 10, 250, 32)
+                LocalBounds = new Rectangle(10, 10, 250, 32),
+                WidthSizeMode = GUIComponent.SizeMode.Fit
             };
 
             IsActive = false;

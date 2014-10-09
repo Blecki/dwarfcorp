@@ -21,7 +21,8 @@ namespace DwarfCorp
         {
             ImageButton,
             PushButton,
-            ToolButton
+            ToolButton,
+            TabButton
         }
 
         public ImageFrame Image { get; set; }
@@ -180,6 +181,12 @@ namespace DwarfCorp
                         Drawer2D.DrawRect(batch, GetImageBounds(), Color.White, 2);
                     }
                     
+                    break;
+                case ButtonMode.TabButton:
+                    GUI.Skin.RenderTab(GlobalBounds, batch, IsToggled ? Color.White : Color.LightGray);
+                    Drawer2D.DrawAlignedStrokedText(batch, Text,
+                        TextFont,
+                        textColor, strokeColor, Drawer2D.Alignment.Top, GlobalBounds);
                     break;
             }
 

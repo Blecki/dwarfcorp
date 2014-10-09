@@ -38,6 +38,7 @@ namespace DwarfCorp
         {
             base.Initialize(buttons, title, message);
             Selector = new ColorSelector(GUI, Layout);
+            Layout.LocalBounds = new Rectangle(0, 0, LocalBounds.Width, LocalBounds.Height);
             Layout.SetComponentPosition(Selector, 0, 1, 4, 2);
             Layout.UpdateSizes();
             Selector.InitializeColorPanels(Colors);

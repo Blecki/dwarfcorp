@@ -52,6 +52,7 @@ namespace DwarfCorp
         public ToolTipManager ToolTipManager { get; set; }
 
         public bool DebugDraw { get; set; }
+        public int LastScrollWheel { get; set; }
 
         public DwarfGUI(DwarfGame game, SpriteFont defaultFont, SpriteFont titleFont, SpriteFont smallFont, InputManager input)
         {
@@ -77,6 +78,7 @@ namespace DwarfCorp
             DefaultStrokeColor = new Color(100, 100, 100, 100);
             DebugDraw = false;
             ToolTipManager = new ToolTipManager(this);
+            LastScrollWheel = 0;
         }
 
 
@@ -93,7 +95,7 @@ namespace DwarfCorp
         {
 
             ToolTipManager.Update(time);
-
+            
             if(!IsMouseVisible)
             {
                 return;
@@ -108,6 +110,8 @@ namespace DwarfCorp
             {
                 FocusComponent.Update(time);
             }
+
+            LastScrollWheel = Mouse.GetState().ScrollWheelValue;
 
         }
 

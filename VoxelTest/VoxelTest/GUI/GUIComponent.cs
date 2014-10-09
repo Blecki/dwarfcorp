@@ -29,7 +29,6 @@ namespace DwarfCorp
         public event MouseScrolledDelegate OnScrolled;
         
 
-        public int LastScrollWheel { get; set; }
         public GUIComponent Parent { get; set; }
         public List<GUIComponent> Children { get; set; }
 
@@ -59,8 +58,27 @@ namespace DwarfCorp
         protected List<GUIComponent> ChildrenToRemove { get; set; }
         protected List<GUIComponent> ChildrenToAdd { get; set; }
 
+        public enum SizeMode
+        {
+            Fixed,
+            Fit
+        };
+
+        public SizeMode WidthSizeMode { get; set; }
+        public SizeMode HeightSizeMode { get; set; }
+        public int MinWidth { get; set; }
+        public int MinHeight { get; set; }
+        public int MaxWidth { get; set; }
+        public int MaxHeight { get; set; }
+
         public GUIComponent(DwarfGUI gui, GUIComponent parent)
         {
+            WidthSizeMode = SizeMode.Fixed;
+            HeightSizeMode = SizeMode.Fixed;
+            MinWidth = -1;
+            MinHeight = -1;
+            MaxWidth = -1;
+            MaxHeight = -1;
             Children = new List<GUIComponent>();
             LocalBounds = new Rectangle();
             GlobalBounds = new Rectangle();
@@ -90,7 +108,6 @@ namespace DwarfCorp
 
             ChildrenToRemove = new List<GUIComponent>();
             ChildrenToAdd = new List<GUIComponent>();
-            LastScrollWheel = 0;
         }
 
 
@@ -177,14 +194,21 @@ namespace DwarfCorp
             }
         }
 
+        public bool ParentVisibleRecursive()
+        {
+            if (Parent != null)
+                return Parent.IsVisible && Parent.ParentVisibleRecursive();
+
+            return true;
+        }
+
         private void HandleClicks(MouseState state)
         {
             if(IsMouseOver)
             {
-                if(state.ScrollWheelValue != LastScrollWheel)
+                if(state.ScrollWheelValue != GUI.LastScrollWheel)
                 {
-                    OnScrolled(LastScrollWheel - state.ScrollWheelValue);
-                    LastScrollWheel = state.ScrollWheelValue;
+                    OnScrolled(GUI.LastScrollWheel - state.ScrollWheelValue);
                 }
             }
 
@@ -243,11 +267,12 @@ namespace DwarfCorp
 
         public virtual void Update(GameTime time)
         {
+           
             if(!IsVisible)
             {
                 return;
             }
-
+            UpdateSize();
             OnUpdate.Invoke();
 
             foreach(GUIComponent child in Children)
@@ -298,9 +323,64 @@ namespace DwarfCorp
                 }
             }
             ChildrenToRemove.Clear();
+
         }
 
-        protected Rectangle ClipToScreen(Rectangle rect, GraphicsDevice device)
+        public virtual void UpdateSize()
+        {
+            int w = LocalBounds.Width;
+            int h = LocalBounds.Height;
+            switch (WidthSizeMode)
+            {
+                case SizeMode.Fixed:
+                    break;
+                case SizeMode.Fit:
+                    w = Parent.LocalBounds.Width;
+                    break;
+            }
+
+            switch (HeightSizeMode)
+            {
+                case SizeMode.Fixed:
+                    break;
+                case SizeMode.Fit:
+                    h = Parent.LocalBounds.Height;
+                    break;   
+            }
+
+            LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, w, h);
+            ClipSizes();
+        }
+
+        public virtual void ClipSizes()
+        {
+            int w = LocalBounds.Width;
+            int h = LocalBounds.Height;
+            if (MinWidth > 0)
+            {
+                w = Math.Max(MinWidth, w);
+            }
+
+            if (MaxWidth > 0)
+            {
+                w = Math.Min(MaxWidth, w);
+            }
+
+            if (MinHeight > 0)
+            {
+                h = Math.Max(MinHeight, h);
+            }
+
+            if (MaxHeight > 0)
+            {
+                h = Math.Min(MaxHeight, h);
+            }
+
+            LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, w, h);
+
+        }
+
+        protected static Rectangle ClipToScreen(Rectangle rect, GraphicsDevice device)
         {
             const int minScreenX = 0;
             const int minScreenY = 0;
