@@ -68,14 +68,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1030656">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1039360">
       <assemblyIdentity name="DwarfCorp" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>1MAISKosWFL5rdjlIPnLMPjAolg=</dsig:DigestValue>
+        <dsig:DigestValue>qEnOGDR0h0Jr9MiEyLnsHqymQaI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -478,13 +478,13 @@
       <dsig:DigestValue>O9edApzr+Fl9t+PtsXA8/HlSaAo=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Entities\Dwarf\Sprites\dwarf-wizard.xnb" size="15602">
+  <file name="Content\Entities\Dwarf\Sprites\dwarf-wizard.xnb" size="16226">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>i4hEmE1fd92HdiPcuL0Qu+Xrt58=</dsig:DigestValue>
+      <dsig:DigestValue>v4OiT2JaMw3xA1ree+dkJO5mOvg=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Entities\Dwarf\Sprites\soldier-axe-shield.xnb" size="13352">
@@ -820,13 +820,13 @@
       <dsig:DigestValue>zqs9C1htKr0g/B/S7+NbDwZT2hs=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\GUI\gui_widgets.xnb" size="11090">
+  <file name="Content\GUI\gui_widgets.xnb" size="12442">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>WEdwbI3ITeVP83a+ctxopdmamxQ=</dsig:DigestValue>
+      <dsig:DigestValue>vK8wFA6+k1sOFQPVJGMBN6AcXWw=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\GUI\icons.xnb" size="6112">
