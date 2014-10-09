@@ -39,12 +39,12 @@ namespace DwarfCorp
             public static string dirt_particle = Program.CreatePath("Particles", "dirt_particle");
             public static string flame = Program.CreatePath("Particles", "flame");
             public static string leaf = Program.CreatePath("Particles", "leaf");
-            public static string puff = Program.CreatePath("Particles", "puff");
+            public static string puff = Program.CreatePath("Particles", "star-particle");
             public static string sand_particle = Program.CreatePath("Particles", "sand_particle");
             public static string splash2 = Program.CreatePath("Particles", "splash2");
             public static string stone_particle = Program.CreatePath("Particles", "stone_particle");
             public static string green_flame = Program.CreatePath("Particles", "green_flame");
-
+            public static string star_particle = Program.CreatePath("Particles", "star-particle");
         }
         public class Effects
         {

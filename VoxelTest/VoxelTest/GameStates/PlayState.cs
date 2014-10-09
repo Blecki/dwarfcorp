@@ -1070,8 +1070,9 @@ namespace DwarfCorp.GameStates
 
             // Various resource explosions
             ParticleManager.CreateGenericExplosion(ContentPaths.Particles.dirt_particle, "dirt_particle");
-            ParticleManager.CreateGenericExplosion(ContentPaths.Particles.stone_particle, "stone_particle");
+            ParticleManager.CreateGenericExplosion(ContentPaths.Particles.star_particle, "star_particle");
             ParticleManager.CreateGenericExplosion(ContentPaths.Particles.sand_particle, "sand_particle");
+            ParticleManager.CreateGenericExplosion(ContentPaths.Particles.dirt_particle, "dirt_particle");
 
             // Blood explosion
             ParticleEmitter b = ParticleManager.CreateGenericExplosion(ContentPaths.Particles.blood_particle, "blood_particle");
