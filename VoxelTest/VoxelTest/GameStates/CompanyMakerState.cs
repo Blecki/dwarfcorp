@@ -132,13 +132,18 @@ namespace DwarfCorp.GameStates
         public List<Color> GenerateDefaultColors()
         {
             List<Color> toReturn = new List<Color>();
-            for (int h = 0; h < 255; h+= 16)
+            for (int h = 0; h < 255; h += 16)
             {
                 for (int v = 64; v < 255; v += 64)
                 {
-                    toReturn.Add(new HSLColor((float)h, 255.0f, (float)v));   
+                    for (int s = 128; s < 255; s += 32)
+                    {
+                        toReturn.Add(new HSLColor((float) h, (float) s, (float) v));
+                    }
+
                 }
             }
+        
             return toReturn;
         }
 

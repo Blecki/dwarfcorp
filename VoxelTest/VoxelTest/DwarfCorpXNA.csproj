@@ -118,17 +118,18 @@
       <DependentUpon>AssetSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="AssetManagement\GameSave\JsonConverters\RectangleConverter.cs" />
-    <Compile Include="Components\AI\Animals\Bird.cs" />
-    <Compile Include="Components\AI\Monsters\Necromancer.cs" />
-    <Compile Include="Components\AI\Monsters\NecromancerAI.cs" />
-    <Compile Include="Components\AI\Monsters\Skeleton.cs" />
-    <Compile Include="Components\AI\Monsters\SnakeAI.cs" />
-    <Compile Include="Components\AI\Animals\BirdAI.cs" />
-    <Compile Include="Components\AI\Monsters\Snake.cs" />
-    <Compile Include="Components\AI\Animals\Deer.cs" />
+    <Compile Include="Entities\Animals\Bird.cs" />
+    <Compile Include="Entities\Fixtures\WorkPile.cs" />
+    <Compile Include="Entities\Monsters\Necromancer.cs" />
+    <Compile Include="Entities\Monsters\NecromancerAI.cs" />
+    <Compile Include="Entities\Monsters\Skeleton.cs" />
+    <Compile Include="Entities\Monsters\SnakeAI.cs" />
+    <Compile Include="Entities\Animals\BirdAI.cs" />
+    <Compile Include="Entities\Monsters\Snake.cs" />
+    <Compile Include="Entities\Animals\Deer.cs" />
     <Compile Include="Components\Graphics\SelectionCircle.cs" />
     <Compile Include="Components\GUI\WorldGUIObject.cs" />
-    <Compile Include="Components\Traps\BearTrap.cs" />
+    <Compile Include="Entities\Traps\BearTrap.cs" />
     <Compile Include="GameStates\EconomyState.cs" />
     <Compile Include="GameStates\LoseState.cs" />
     <Compile Include="Graphics\Drawing\HSLColor.cs" />
@@ -137,8 +138,11 @@
     <Compile Include="GUI\Components\Basic\AnimatedImagePanel.cs" />
     <Compile Include="GUI\Components\Basic\ColorPanel.cs" />
     <Compile Include="GUI\Components\Basic\MiniBar.cs" />
+    <Compile Include="GUI\Components\Basic\Window.cs" />
     <Compile Include="GUI\Components\Complex\AnnounementViewer.cs" />
     <Compile Include="GUI\Components\Complex\ApplicationPanel.cs" />
+    <Compile Include="GUI\Components\Complex\BuildMenu.cs" />
+    <Compile Include="GUI\Components\Complex\BuildSelector.cs" />
     <Compile Include="GUI\Components\Complex\CapitalPanel.cs" />
     <Compile Include="GUI\Components\Complex\ColorDialog.cs" />
     <Compile Include="GUI\Components\Complex\ColorSelector.cs" />
@@ -288,13 +292,13 @@
     <Compile Include="Scripting\Combat\Alliance.cs" />
     <Compile Include="Scripting\Combat\Attack.cs" />
     <Compile Include="Graphics\Primitives\Animation.cs" />
-    <Compile Include="Components\AI\BalloonAI.cs" />
+    <Compile Include="Entities\BalloonAI.cs" />
     <Compile Include="Components\Graphics\BatchedSprite.cs" />
     <Compile Include="Components\Graphics\CharacterSprite.cs" />
     <Compile Include="Components\AI\Creature.cs" />
-    <Compile Include="Components\AI\Dwarves\Dwarf.cs" />
+    <Compile Include="Entities\Dwarves\Dwarf.cs" />
     <Compile Include="Components\Physics\Flammable.cs" />
-    <Compile Include="Components\AI\Monsters\Goblin.cs" />
+    <Compile Include="Entities\Monsters\Goblin.cs" />
     <Compile Include="Components\Graphics\Mesh.cs" />
     <Compile Include="ControlSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -339,7 +343,6 @@
     <Compile Include="Components\DeathComponentSpawner.cs" />
     <Compile Include="Components\Graphics\ParticleTrigger.cs" />
     <Compile Include="Components\AI\Sensors\EnemySensor.cs" />
-    <Compile Include="Components\AI\Food.cs" />
     <Compile Include="Components\Graphics\LightEmitter.cs" />
     <Compile Include="Components\AI\Grabber.cs" />
     <Compile Include="Components\AI\Health.cs" />

@@ -25,6 +25,7 @@ namespace DwarfCorp
         {
             public CraftLibrary.CraftItemType ItemType { get; set; }
             public Voxel Location { get; set; }
+            public Body WorkPile { get; set; }
         }
 
         public Faction Faction { get; set; }
@@ -64,6 +65,9 @@ namespace DwarfCorp
         public void RemoveDesignation(CraftDesignation des)
         {
             Designations.Remove(des);
+
+            if(des.WorkPile != null)
+                des.WorkPile.Die();
         }
 
 
@@ -80,10 +84,6 @@ namespace DwarfCorp
 
         public void Render(GameTime gametime, GraphicsDevice graphics, Effect effect)
         {
-            foreach (CraftDesignation designation in Designations)
-            {
-                Drawer3D.DrawBox(designation.Location.GetBoundingBox(), Color.PaleVioletRed, 0.1f, true);
-            }
         }
 
 
@@ -131,17 +131,27 @@ namespace DwarfCorp
                             }
                             else
                             {
+                                Vector3 pos = r.Position + Vector3.One*0.5f;
+                                Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
+                                Vector3 endPos = pos;
                                 CraftDesignation newDesignation = new CraftDesignation()
                                 {
                                     ItemType = CurrentCraftType,
-                                    Location = r
+                                    Location = r,
+                                    WorkPile = new WorkPile(startPos)
                                 };
+
+                                newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
 
                                 if (IsValid(newDesignation))
                                 {
                                     AddDesignation(newDesignation);
                                     assignments.Add(new CraftItemTask(new Voxel(new Point3(r.GridPosition), r.Chunk),
                                         CurrentCraftType));
+                                }
+                                else
+                                {
+                                    newDesignation.WorkPile.Die();
                                 }
                             }
                         }

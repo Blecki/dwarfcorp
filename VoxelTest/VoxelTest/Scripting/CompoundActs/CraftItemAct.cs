@@ -26,8 +26,10 @@ namespace DwarfCorp
             yield return Status.Success;
         }
 
+
         public IEnumerable<Status> WaitAndHit(float time)
         {
+            Body objectToHit = Creature.AI.Blackboard.GetData<Body>("Anvil");
             Timer timer = new Timer(time, true);
             while (!timer.HasTriggered)
             {
@@ -44,6 +46,12 @@ namespace DwarfCorp
             Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
             Creature.AI.AddThought(Thought.ThoughtType.Crafted);
             Creature.AI.Stats.XP += (int)(time * 5);
+
+            if (objectToHit != null)
+            {
+                objectToHit.IsReserved = false;
+                objectToHit.ReservedFor = null;
+            }
             yield return Status.Success;
         }
 
@@ -56,22 +64,36 @@ namespace DwarfCorp
             Name = "Build craft item";
         }
 
-        private static int x = 0;
         public override void Initialize()
         {
-            x++;
-            PlayState.AnnouncementManager.Announce("Craft Item act! " + x + "VOX: " + Voxel.GridPosition, "");
+            Act unreserveAct = new Wrap(() => Creature.Unreserve("Anvil"));
             float time = CraftLibrary.CraftItems[ItemType].BaseCraftTime / Creature.AI.Stats.Intelligence;
-            Tree = new Sequence(new GetResourcesAct(Agent, CraftLibrary.CraftItems[ItemType].RequiredResources),
-                new Sequence(
-                    new GoToTaggedObjectAct(Agent) { Tag = "Anvil", Teleport = false, TeleportOffset = new Vector3(1, 0, 0) },
-                    new Wrap(() => WaitAndHit(time)),
-                    new Wrap(DestroyResources),
-                    new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
-                    new CreateCraftItemAct(Voxel, Creature.AI, ItemType),
-                    new Wrap(Creature.RestockAll)) | new Wrap(Creature.RestockAll)
-                );
+            Tree = new Sequence(
+                new Wrap(() => Creature.FindAndReserve("Anvil", "Anvil")),
+                new GetResourcesAct(Agent, CraftLibrary.CraftItems[ItemType].RequiredResources),
+                new Sequence
+                    (
+                        new GoToTaggedObjectAct(Agent) { Tag = "Anvil", Teleport = false, TeleportOffset = new Vector3(1, 0, 0), ObjectName = "Anvil"},
+                        new Wrap(() => WaitAndHit(time)),
+                        new Wrap(DestroyResources),
+                        unreserveAct,
+                        new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
+                        new CreateCraftItemAct(Voxel, Creature.AI, ItemType)
+                    ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
+                    ) | new Sequence(unreserveAct, false);
             base.Initialize();
         }
+
+
+        public override void OnCanceled()
+        {
+            foreach (var statuses in Creature.Unreserve("Anvil"))
+            {
+                continue;
+            }
+            base.OnCanceled();
+        }
+
+       
     }
 }

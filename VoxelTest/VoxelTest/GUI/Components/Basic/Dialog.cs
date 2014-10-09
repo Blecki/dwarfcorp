@@ -11,7 +11,7 @@ namespace DwarfCorp
     /// This GUI component is a window which opens up on top
     /// of the GUI, and blocks the game until it gets user input.
     /// </summary>
-    public class Dialog : GUIComponent
+    public class Dialog : Window
     {
         public enum ReturnStatus
         {
@@ -45,7 +45,9 @@ namespace DwarfCorp
             Dialog d = new Dialog(gui, parent)
             {
                 LocalBounds =
-                    new Rectangle(x, y, w, h)
+                    new Rectangle(x, y, w, h),
+                MinWidth =  w - 150,
+                MinHeight = h - 150
             };
 
             d.Initialize(buttons, title, message);
@@ -186,7 +188,6 @@ namespace DwarfCorp
                 return;
             }
 
-            GUI.Skin.RenderPanel(GlobalBounds, batch);
             base.Render(time, batch);
         }
     }

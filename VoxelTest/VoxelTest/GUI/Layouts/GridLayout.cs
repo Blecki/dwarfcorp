@@ -19,7 +19,6 @@ namespace DwarfCorp
         public int Rows { get; set; }
         public int Cols { get; set; }
         public int EdgePadding { get; set; }
-        public bool FitToParent { get; set; }
         public int RowHighlight { get; set; }
         public int ColumnHighlight { get; set; }
         public Color HighlightColor { get; set; }
@@ -32,7 +31,8 @@ namespace DwarfCorp
             Rows = rows;
             Cols = cols;
             EdgePadding = 5;
-            FitToParent = true;
+            HeightSizeMode = SizeMode.Fit;
+            WidthSizeMode = SizeMode.Fit;
             RowHighlight = -1;
             ColumnHighlight = -1;
         }
@@ -71,10 +71,7 @@ namespace DwarfCorp
 
         public override void UpdateSizes()
         {
-            if(FitToParent)
-            {
-                LocalBounds = new Rectangle(EdgePadding, EdgePadding, Parent.LocalBounds.Width - EdgePadding, Parent.LocalBounds.Height - EdgePadding);
-            }
+            UpdateSize();
             int w = LocalBounds.Width;
             int h = LocalBounds.Height;
 
@@ -89,14 +86,14 @@ namespace DwarfCorp
                     {
                         Point offset = GetOffset(comp.Value);
                         comp.Value.LocalBounds = new Rectangle(
-                            comp.Key.X * cellX + offset.X,
-                            comp.Key.Y * cellY + offset.Y, 
+                            comp.Key.X * cellX + offset.X + EdgePadding,
+                            comp.Key.Y * cellY + offset.Y + EdgePadding, 
                             comp.Key.Width * cellX, 
                             comp.Key.Height * cellY);
                     }
                     else
                     {
-                        comp.Value.LocalBounds = new Rectangle(comp.Key.X * cellX, comp.Key.Y * cellY, comp.Key.Width * cellX - 10, comp.Key.Height * cellY - 10);   
+                        comp.Value.LocalBounds = new Rectangle(comp.Key.X * cellX + EdgePadding, comp.Key.Y * cellY + EdgePadding, comp.Key.Width * cellX - 10, comp.Key.Height * cellY - 10);   
                     }
                 }
             }
