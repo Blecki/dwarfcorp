@@ -94,7 +94,7 @@ namespace DwarfCorp
             CreateTools();
 
             InputManager.KeyReleasedCallback += OnKeyReleased;
-            ToolBar = new MasterControls(GUI, GUI.RootComponent, this, TextureManager.GetTexture("IconSheet"), graphics, game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Default")))
+            ToolBar = new MasterControls(GUI, GUI.RootComponent, this, TextureManager.GetTexture("IconSheet"), graphics, game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default))
             {
                 Master = this
             };

@@ -75,7 +75,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>EYMpwnmBYbhv88Ukt1HNFoNhiBo=</dsig:DigestValue>
+        <dsig:DigestValue>FtyWB6ZsBwv6iIfXvKoO6fJBpM0=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -755,6 +755,33 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
       <dsig:DigestValue>QTneboWx043g2BB3Y1sf2+T4CRY=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Fonts\font1-w.xnb" size="1978">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>z6KVcL6j3Qny4JJHHaWUcvOwFek=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Fonts\font1-w-2x.xnb" size="2626">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>1ZPW4Soq4TevOLCpzCjGJMim7cg=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Fonts\font1-w-4x.xnb" size="5814">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>Een37J1hmJPyIjx6FioNQN0+O/Y=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Fonts\Small.xnb" size="4642">

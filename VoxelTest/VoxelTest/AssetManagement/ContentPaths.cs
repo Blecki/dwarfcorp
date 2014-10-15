@@ -211,9 +211,9 @@ namespace DwarfCorp
         }
         public class Fonts
         {
-            public static string Default = Program.CreatePath("Fonts", "Default");
-            public static string Small = Program.CreatePath("Fonts", "Small");
-            public static string Title = Program.CreatePath("Fonts", "Title");
+            public static string Default = Program.CreatePath("Fonts", "font1-w-2x");
+            public static string Small = Program.CreatePath("Fonts", "font1-w");
+            public static string Title = Program.CreatePath("Fonts", "font1-w-4x");
 
         }
         public class Gradients

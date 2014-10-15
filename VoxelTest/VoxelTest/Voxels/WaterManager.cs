@@ -89,7 +89,7 @@ namespace DwarfCorp
                         name = "splash2",
                         numSplashes = 2,
                         position = pos,
-                        sound = Program.CreatePath("Audio", "river")
+                        sound = ContentPaths.Audio.river
                     };
                     Splashes.Enqueue(splash);
                 }
@@ -101,7 +101,7 @@ namespace DwarfCorp
                         name = "flame",
                         numSplashes = 5,
                         position = pos,
-                        sound = Program.CreatePath("Audio", "river")
+                        sound = ContentPaths.Audio.river
                     };
                     Splashes.Enqueue(splash);
                 }

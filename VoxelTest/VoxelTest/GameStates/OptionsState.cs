@@ -40,8 +40,8 @@ namespace DwarfCorp.GameStates
 
         public override void OnEnter()
         {
-            DefaultFont = Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Default"));
-            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts","Title")), Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Small")), Input);
+            DefaultFont = Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
+            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
             IsInitialized = true;
             Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
             MainWindow = new Panel(GUI, GUI.RootComponent)
