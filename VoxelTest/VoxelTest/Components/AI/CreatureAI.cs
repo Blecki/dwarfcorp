@@ -20,12 +20,6 @@ namespace DwarfCorp
     public class CreatureAI : GameComponent
     {
         public Creature Creature { get; set; }
-        public BuildOrder TargetVoxBuildOrder { get; set; }
-        public Stockpile TargetStockpile { get; set; }
-        public Room TargetRoom { get; set; }
-        public BuildVoxelOrder TargetBuildVoxelOrder { get; set; }
-        public List<string> DesiredTags { get; set; }
-        public Body TargetComponent { get; set; }
         public Voxel TargetVoxel { get; set; }
         public Voxel PreviousTargetVoxel { get; set; }
         public List<Voxel> CurrentPath { get; set; }
@@ -134,13 +128,7 @@ namespace DwarfCorp
             TargetVoxel = null;
             CurrentPath = null;
             DrawPath = false;
-            TargetComponent = null;
-            TargetStockpile = null;
-            TargetRoom = null;
             PreviousTargetVoxel = null;
-            TargetBuildVoxelOrder = null;
-            DesiredTags = new List<string>();
-            TargetVoxBuildOrder = null;
             PlannerTimer = new Timer(0.1f, false);
             LocalControlTimeout = new Timer(5, false);
             WanderTimer = new Timer(1, false);
@@ -219,6 +207,7 @@ namespace DwarfCorp
                     if(CurrentTask.ShouldRetry(Creature))
                     {
                         Tasks.Add(CurrentTask);
+                        CurrentTask.SetupScript(Creature);
                         CurrentTask = ActOnIdle();
                         retried = true;
                     }

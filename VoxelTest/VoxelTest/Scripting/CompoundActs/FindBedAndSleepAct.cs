@@ -33,7 +33,8 @@ namespace DwarfCorp
             if (Agent.Status.Energy.IsUnhappy() && closestItem != null)
             {
                 closestItem.ReservedFor = Agent;
-                Act unreserveAct = new Wrap(() => Body.UnReserve(closestItem));
+                Creature.AI.Blackboard.SetData("Bed", closestItem);
+                Act unreserveAct = new Wrap(() => Creature.Unreserve("Bed"));
                 Tree = 
                     new Sequence
                     (

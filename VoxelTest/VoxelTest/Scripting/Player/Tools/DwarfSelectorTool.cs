@@ -40,8 +40,11 @@ namespace DwarfCorp
                 if(minion.CurrentTask != null)
                 {
                     minion.Tasks.Add(minion.CurrentTask);
-                    if(minion.CurrentTask.Script != null)
+                    if (minion.CurrentTask.Script != null)
+                    {
+                        minion.CurrentAct.OnCanceled();
                         minion.CurrentTask.Script.Initialize();
+                    }
                     minion.CurrentTask.SetupScript(minion.Creature);
                     minion.CurrentTask = null;
                 }
@@ -123,7 +126,7 @@ namespace DwarfCorp
             Viewport port = GameState.Game.GraphicsDevice.Viewport;
             foreach (CreatureAI creature in Player.SelectedMinions)
             {
-                Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, creature.Stats.FirstName + " " + creature.Stats.LastName, PlayState.GUI.SmallFont, Color.Black, Drawer2D.Alignment.Right, new Rectangle(port.Width - 300, i * 24, 300, 24));
+                Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, creature.Stats.FirstName + " " + creature.Stats.LastName, PlayState.GUI.SmallFont, Color.White, Drawer2D.Alignment.Right, new Rectangle(port.Width - 300, i * 24, 300, 24));
                 i++;
             }
 

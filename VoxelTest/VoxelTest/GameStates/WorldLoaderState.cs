@@ -235,7 +235,8 @@ namespace DwarfCorp.GameStates
             scrollGrid = new GridLayout(GUI, scroller, rows, cols)
             {
                 LocalBounds = new Rectangle(edgePadding, edgePadding, scroller.LocalBounds.Width - edgePadding, rows * 256),
-                FitToParent = false
+                WidthSizeMode = GUIComponent.SizeMode.Fixed,
+                HeightSizeMode = GUIComponent.SizeMode.Fixed
             };
 
             CreateWorldPictures(scrollGrid, cols);

@@ -56,7 +56,7 @@ namespace DwarfCorp
                 }
             }
 
-            TaskManager.AssignTasks(assignedTasks, PlayState.Master.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Gather));
+            TaskManager.AssignTasks(assignedTasks, Faction.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Gather));
         }
 
         public override void Update(DwarfGame game, GameTime time)

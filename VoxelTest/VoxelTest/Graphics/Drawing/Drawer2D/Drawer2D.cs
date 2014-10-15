@@ -260,7 +260,7 @@ namespace DwarfCorp
         {
             Vector2 size = Datastructures.SafeMeasure(font, text);
 
-            Vector2 pos = new Vector2(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
+            Vector2 pos = new Vector2((int)(bounds.X + bounds.Width / 2), (int)(bounds.Y + bounds.Height / 2));
             Vector2 origin = size * 0.5f;
 
             if(align.HasFlag(Alignment.Left))
@@ -283,10 +283,15 @@ namespace DwarfCorp
                 origin.Y -= bounds.Height / 2 - size.Y / 2;
             }
 
-            SafeDraw(batch, text, font, strokeColor, pos - new Vector2(1, 0), origin);
-            SafeDraw(batch, text, font, strokeColor, pos + new Vector2(1, 0), origin);
-            SafeDraw(batch, text, font, strokeColor, pos - new Vector2(0, 1), origin);
-            SafeDraw(batch, text, font, strokeColor, pos - new Vector2(0, 1), origin);
+            origin.X = (int) origin.X;
+            origin.Y = (int) origin.Y;
+            if (textColor.A > 0)
+            {
+                SafeDraw(batch, text, font, strokeColor, pos - new Vector2(1, 0), origin);
+                SafeDraw(batch, text, font, strokeColor, pos + new Vector2(1, 0), origin);
+                SafeDraw(batch, text, font, strokeColor, pos - new Vector2(0, 1), origin);
+                SafeDraw(batch, text, font, strokeColor, pos - new Vector2(0, 1), origin);
+            }
             SafeDraw(batch, text, font, textColor, pos, origin);
         }
 

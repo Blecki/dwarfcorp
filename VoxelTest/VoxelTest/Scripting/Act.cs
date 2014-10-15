@@ -103,6 +103,11 @@ namespace DwarfCorp
             return Enumerator.Current;
         }
 
+        public virtual void OnCanceled()
+        {
+            
+        }
+
         public virtual void Initialize()
         {
             Enumerator = Run().GetEnumerator();

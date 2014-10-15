@@ -234,7 +234,7 @@ namespace DwarfCorp
                 TaskManager.AssignTasks(new List<Task>()
                 {
                     new BuildRoomTask(order)
-                }, PlayState.Master.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Build));
+                }, Faction.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Build));
             }
         }
 
@@ -247,7 +247,11 @@ namespace DwarfCorp
 
             if(button == InputManager.MouseButton.Left)
             {
-                if (CurrentRoomData.Verify(refs, Faction))
+                if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
+                {
+                    PlayState.GUI.ToolTipManager.Popup("None of the selected units can build rooms.");
+                }
+                else if (CurrentRoomData.Verify(refs, Faction))
                 {
                     BuildNewVoxels(refs);    
                 }

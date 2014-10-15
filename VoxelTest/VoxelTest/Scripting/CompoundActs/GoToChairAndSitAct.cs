@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using Microsoft.Xna.Framework;
 
@@ -23,19 +24,6 @@ namespace DwarfCorp
             SitTime = 30.0f;
         }
 
-        public IEnumerable<Status> UnreserveChair()
-        {
-            Body body = Creature.AI.Blackboard.GetData<Body>("Chair");
-
-            if (body != null)
-            {
-                body.IsReserved = false;
-                body.ReservedFor = null;
-                yield return Status.Success;
-            }
-
-            yield return Status.Fail;
-        }
 
         public void ConverseFriends()
         {
@@ -71,35 +59,30 @@ namespace DwarfCorp
             Vector3 snapPosition = Agent.Position + new Vector3(0, 0.2f, 0);
             Body body = Creature.AI.Blackboard.GetData<Body>("Chair");
 
-            if (body == null || body.IsDead || body.IsReserved)
+            if (body == null || body.IsDead)
             {
                 Creature.OverrideCharacterMode = false;
                 yield return Status.Success;
                 yield break;
             }
 
-            body.IsReserved = true;
-            
             while (true)
             {
-                if (Creature.AI.Tasks.Count > 0)
+                if (Creature.AI.Tasks.Count > 1)
                 {
                     Creature.OverrideCharacterMode = false;
-                    body.IsReserved = false;
                     yield return Status.Success;
                 }
 
                 if (Creature.AI.Status.Energy.IsUnhappy())
                 {
                     Creature.OverrideCharacterMode = false;
-                    body.IsReserved = false;
                     yield return Status.Success;
                 }
 
                 if (Creature.AI.Status.Hunger.IsUnhappy())
                 {
                     Creature.OverrideCharacterMode = false;
-                    body.IsReserved = false;
                     yield return Status.Success;
                 }
 
@@ -108,7 +91,6 @@ namespace DwarfCorp
                 if (waitTimer.HasTriggered)
                 {
                     Creature.OverrideCharacterMode = false;
-                    body.IsReserved = false;
                     yield return Status.Success;
                 }
 
@@ -128,7 +110,7 @@ namespace DwarfCorp
 
                 Agent.Position = snapPosition;
                 Agent.Physics.IsSleeping = true;
-                Creature.CurrentCharacterMode = Creature.CharacterMode.Falling;
+                Creature.CurrentCharacterMode = Creature.CharacterMode.Sitting;
                 Creature.OverrideCharacterMode = true;
                 yield return Status.Running;
             }
@@ -137,10 +119,27 @@ namespace DwarfCorp
         public override void Initialize()
         {
             Creature.OverrideCharacterMode = false;
-            Tree = new Sequence(new GoToTaggedObjectAct(Creature.AI) {Tag = "Chair", Teleport = true, TeleportOffset = new Vector3(0, 0.1f, 0), ObjectName = "Chair"},
+           
+            Tree = new Sequence(new ClearBlackboardData(Creature.AI, "Chair"),
+                                new Wrap(() => Creature.FindAndReserve("Chair", "Chair")),
+                                new GoToTaggedObjectAct(Creature.AI) {Tag = "Chair", Teleport = true, TeleportOffset = new Vector3(0, 0.1f, 0), ObjectName = "Chair"},
                                 new Wrap(WaitUntilBored),
-                                new Wrap(UnreserveChair)) | new Wrap(UnreserveChair);
+                                new Wrap(() => Creature.Unreserve("Chair"))) | new Wrap(() => Creature.Unreserve("Chair"));
             base.Initialize();
+        }
+
+        public override void OnCanceled()
+        {
+            foreach (var statuses in Creature.Unreserve("Chair"))
+            {
+                continue;
+            }
+            base.OnCanceled();
+        }
+
+        public override IEnumerable<Status> Run()
+        {
+            return base.Run();
         }
     }
 }

@@ -44,6 +44,19 @@
             </summary>
             <param name="spriteSheet">The sprite sheet to use for the bird</param>
         </member>
+        <member name="T:DwarfCorp.Body">
+            <summary>
+            This is a special kind of component which has a position and orientation. The global position of an object
+            is computed from its local position relative to its parent. This is known as a "scene graph". Locatable components
+            also live inside an octree for faster access to colliding or nearby objects.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.IBoundedObject">
+            <summary>
+            A bounded object is just anything which has 
+            a bounding box.
+            </summary>
+        </member>
         <member name="T:DwarfCorp.Necromancer">
             <summary>
             Convenience class for initializing Necromancers as creatures.
@@ -85,19 +98,6 @@
         <member name="T:DwarfCorp.Tinter">
             <summary>
             This component has a color tint which can change over time.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.Body">
-            <summary>
-            This is a special kind of component which has a position and orientation. The global position of an object
-            is computed from its local position relative to its parent. This is known as a "scene graph". Locatable components
-            also live inside an octree for faster access to colliding or nearby objects.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.IBoundedObject">
-            <summary>
-            A bounded object is just anything which has 
-            a bounding box.
             </summary>
         </member>
         <member name="T:DwarfCorp.GameStates.EconomyState">
@@ -1118,11 +1118,6 @@
             REQUIRES that the EnemySensor be attached to a creature
             </summary>
         </member>
-        <member name="T:DwarfCorp.Food">
-            <summary>
-            Component which is attached to a food object (like an apple)
-            </summary>
-        </member>
         <member name="T:DwarfCorp.LightEmitter">
             <summary>
             This component dynamically lights up voxels around it with torch light.
@@ -1865,11 +1860,6 @@
             <summary>
             A creature finds a path from point A to point B and fills the blackboard with
             this information.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.SetTargetEntityAct">
-            <summary>
-            A creature sets its target component to the current value.
             </summary>
         </member>
         <member name="T:DwarfCorp.SetTargetVoxelAct">

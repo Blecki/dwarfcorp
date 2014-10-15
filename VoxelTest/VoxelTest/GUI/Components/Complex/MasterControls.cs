@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -21,7 +22,7 @@ namespace DwarfCorp
         public GameMaster Master { get; set; }
         public Dictionary<GameMaster.ToolMode, Button> ToolButtons { get; set; }
         public GameMaster.ToolMode CurrentMode { get; set; }
-        public BuildPanel BuildPanel { get; set; }
+        public BuildMenu BuildPanel { get; set; }
         public Texture2D Icons { get; set; }
         public int IconSize { get; set; }
 
@@ -58,14 +59,13 @@ namespace DwarfCorp
             }
 
       
-         
+        
 
-            BuildPanel = new BuildPanel(GUI, this, Master.Faction)
+            BuildPanel = new BuildMenu(GUI, GUI.RootComponent, Master)
             {
-                LocalBounds = new Rectangle(0, -64, LocalBounds.Width, 64),
+                LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width - 750, PlayState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350),
                 IsVisible = false
             };
-            BuildPanel.OnSelectionChanged += buildBox_OnSelectionModified;
         }
 
 
@@ -88,6 +88,7 @@ namespace DwarfCorp
             return button;
         }
 
+        /*
         private void buildBox_OnSelectionModified(string arg)
         {
             if(arg.Contains("Wall"))
@@ -119,6 +120,7 @@ namespace DwarfCorp
                 Master.Faction.CraftBuilder.IsEnabled = false;
             }
         }
+         */
 
         public void ButtonClicked(Button sender)
         {
@@ -131,14 +133,8 @@ namespace DwarfCorp
                     CurrentMode = pair.Key;
 
                    BuildPanel.IsVisible = CurrentMode == GameMaster.ToolMode.Build;
-
-                   if (BuildPanel.IsVisible && BuildPanel.LocalBounds.Width == 0)
-                   {
-                       BuildPanel.LocalBounds = new Rectangle(0, -32, LocalBounds.Width, 32);
-                       BuildPanel.roomButton_OnClicked(BuildPanel.Buttons["Stockpile"]);
-                   }
-
-                   
+                    BuildPanel.LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width - 750,
+                        PlayState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350);
                 }
                 else
                 {

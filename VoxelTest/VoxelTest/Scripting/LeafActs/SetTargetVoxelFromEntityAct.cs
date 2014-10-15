@@ -9,23 +9,26 @@ namespace DwarfCorp
     public class SetTargetVoxelFromEntityAct : CreatureAct
     {
         public string VoxelOutName { get; set; }
+        public string EntityName { get; set; }
 
-        public SetTargetVoxelFromEntityAct(CreatureAI creature, string voxelOut) :
+        public SetTargetVoxelFromEntityAct(CreatureAI creature, string entityName, string voxelOut) :
             base(creature)
         {
             Name = "Set Target Voxel";
             VoxelOutName = voxelOut;
+            EntityName = entityName;
         }
 
         public override IEnumerable<Status> Run()
         {
-            if(Agent.TargetComponent == null)
+            Body target = Creature.AI.Blackboard.GetData<Body>(EntityName);
+            if (target == null)
             {
                 yield return Status.Fail;
             }
             else
             {
-                Voxel voxel = Creature.Chunks.ChunkData.GetFirstVoxelUnder(Agent.TargetComponent.BoundingBox.Center());
+                Voxel voxel = Creature.Chunks.ChunkData.GetFirstVoxelUnder(target.BoundingBox.Center());
                 if(voxel == null)
                 {
                     yield return Status.Fail;

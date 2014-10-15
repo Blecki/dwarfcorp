@@ -126,13 +126,11 @@ namespace DwarfCorp
             };
 
             Items = new List<GItem>();
-            GridLayout layout = new GridLayout(GUI, this, 1, 1)
-            {
-                EdgePadding = 32
-            };
+            GridLayout layout = new GridLayout(GUI, this, 1, 1);
             ScrollArea = new ScrollView(GUI, layout)
             {
-                DrawBorder = false
+                DrawBorder = false,
+                WidthSizeMode = SizeMode.Fit
             };
 
             layout.UpdateSizes();
@@ -402,7 +400,8 @@ namespace DwarfCorp
             Layout = new GridLayout(GUI, ScrollArea, rows + 1, 6)
             {
                 LocalBounds = new Rectangle(0, 0, Math.Max(ScrollArea.LocalBounds.Width, 512), rows * 64),
-                FitToParent = false
+                WidthSizeMode = SizeMode.Fixed,
+                HeightSizeMode = SizeMode.Fixed
             };
 
             for(int i = 0; i < toDisplay.Count; i++)

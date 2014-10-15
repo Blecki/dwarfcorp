@@ -315,10 +315,6 @@ namespace DwarfCorp
             UpdateRooms();
         }
 
-        public List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, ToolMode action)
-        {
-            return minions.Where(creature => creature.Stats.CurrentClass.HasAction(action)).ToList();
-        }
 
         #region input
 

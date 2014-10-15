@@ -64,6 +64,8 @@ namespace DwarfCorp
                 return false;
             }
 
+            
+
             List<BoundingBox> boxes = refs.Select(voxel => voxel.GetBoundingBox()).ToList();
             BoundingBox box = MathFunctions.GetBoundingBox(boxes);
 
@@ -89,6 +91,7 @@ namespace DwarfCorp
             {
 
                 if (voxel.IsEmpty) continue;
+                if (voxel.Type.IsInvincible) continue;
 
                 if (height == -1)
                 {

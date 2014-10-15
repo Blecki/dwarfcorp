@@ -25,6 +25,7 @@ namespace DwarfCorp
         {
             public CraftLibrary.CraftItemType ItemType { get; set; }
             public Voxel Location { get; set; }
+            public Body WorkPile { get; set; }
         }
 
         public Faction Faction { get; set; }
@@ -64,6 +65,9 @@ namespace DwarfCorp
         public void RemoveDesignation(CraftDesignation des)
         {
             Designations.Remove(des);
+
+            if(des.WorkPile != null)
+                des.WorkPile.Die();
         }
 
 
@@ -80,10 +84,6 @@ namespace DwarfCorp
 
         public void Render(GameTime gametime, GraphicsDevice graphics, Effect effect)
         {
-            foreach (CraftDesignation designation in Designations)
-            {
-                Drawer3D.DrawBox(designation.Location.GetBoundingBox(), Color.PaleVioletRed, 0.1f, true);
-            }
         }
 
 
@@ -122,6 +122,11 @@ namespace DwarfCorp
             {
                 case (InputManager.MouseButton.Left):
                     {
+                        if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Craft).Count == 0)
+                        {
+                            PlayState.GUI.ToolTipManager.Popup("None of the selected units can craft items.");
+                            return;
+                        }
                         List<Task> assignments = new List<Task>();
                         foreach (Voxel r in refs)
                         {
@@ -131,11 +136,17 @@ namespace DwarfCorp
                             }
                             else
                             {
+                                Vector3 pos = r.Position + Vector3.One*0.5f;
+                                Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
+                                Vector3 endPos = pos;
                                 CraftDesignation newDesignation = new CraftDesignation()
                                 {
                                     ItemType = CurrentCraftType,
-                                    Location = r
+                                    Location = r,
+                                    WorkPile = new WorkPile(startPos)
                                 };
+
+                                newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
 
                                 if (IsValid(newDesignation))
                                 {
@@ -143,12 +154,16 @@ namespace DwarfCorp
                                     assignments.Add(new CraftItemTask(new Voxel(new Point3(r.GridPosition), r.Chunk),
                                         CurrentCraftType));
                                 }
+                                else
+                                {
+                                    newDesignation.WorkPile.Die();
+                                }
                             }
                         }
 
                         if (assignments.Count > 0)
                         {
-                            TaskManager.AssignTasks(assignments, PlayState.Master.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Craft));
+                            TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Craft));
                         }
 
                         break;

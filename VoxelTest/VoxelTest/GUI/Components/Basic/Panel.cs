@@ -15,7 +15,8 @@ namespace DwarfCorp
         public enum PanelMode
         {
             Fancy,
-            Simple
+            Simple,
+            Window
         }
 
         public PanelMode Mode { get; set; }
@@ -38,9 +39,13 @@ namespace DwarfCorp
             {
                 GUI.Skin.RenderPanel(GlobalBounds, batch);
             }
-            else
+            else if(Mode == PanelMode.Simple)
             {
                 GUI.Skin.RenderToolTip(GlobalBounds, batch, new Color(255, 255, 255, 150));
+            }
+            else
+            {
+                GUI.Skin.RenderWindow(GlobalBounds, batch);
             }
             base.Render(time, batch);
         }
