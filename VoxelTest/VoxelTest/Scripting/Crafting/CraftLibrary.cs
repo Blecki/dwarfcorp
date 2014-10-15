@@ -42,11 +42,14 @@ namespace DwarfCorp
                     CraftItemType.BearTrap,
                     new CraftItem()
                     {
+                        CraftType = CraftItemType.BearTrap,
                         Name = "Bear Trap",
+                        Description = "Triggers on enemies, doing massive damage before being destroyed",
                         RequiredResources = new List<ResourceAmount>()
                         {
                             new ResourceAmount(ResourceLibrary.ResourceType.Iron, 4)
                         },
+                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.DwarfObjects.beartrap), 32, 0, 0),
                         BaseCraftTime = 20
                     }
                 },
@@ -54,11 +57,14 @@ namespace DwarfCorp
                     CraftItemType.Lamp,
                     new CraftItem()
                     {
+                        CraftType = CraftItemType.Lamp,
                         Name = "Lamp",
+                        Description = "Dwarves need to see sometimes too!",
                         RequiredResources = new List<ResourceAmount>()
                         {
                             new ResourceAmount(ResourceLibrary.ResourceType.Coal, 1)
                         },
+                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 0, 1),
                         BaseCraftTime = 10
                     }
                 }

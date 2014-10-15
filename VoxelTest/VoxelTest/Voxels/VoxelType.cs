@@ -25,6 +25,7 @@ namespace DwarfCorp
         
         public Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords> TransitionTextures { get; set; }
         public bool IsSoil { get; set; }
+        public bool IsInvincible { get; set; }
 
         private static short maxID = 0;
 
@@ -43,6 +44,7 @@ namespace DwarfCorp
             RampSize = 0.0f;
             IsBuildable = false;
             ParticleType = "puff";
+            IsInvincible = false;
             ExplosionSound = ContentPaths.Audio.gravel;
             HasTransitionTextures = false;
             TransitionTextures = new Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords>();

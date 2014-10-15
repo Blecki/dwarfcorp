@@ -85,7 +85,6 @@ namespace DwarfCorp
                 {
                     Creature.Physics.OrientWithVelocity = false;
                     Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
-
                     CurrentAttack.Perform(Target, Act.LastTime, Creature.Stats.Strength + Creature.Stats.Size, Creature.AI.Position);
                     if (Target.IsDead)
                     {

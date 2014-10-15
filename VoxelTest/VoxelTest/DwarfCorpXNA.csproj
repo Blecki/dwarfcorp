@@ -435,7 +435,6 @@
     <Compile Include="Scripting\LeafActs\FollowPathAct.cs" />
     <Compile Include="Scripting\LeafActs\MeleeAct.cs" />
     <Compile Include="Scripting\LeafActs\PlanAct.cs" />
-    <Compile Include="Scripting\LeafActs\SetTargetEntityAct.cs" />
     <Compile Include="Scripting\LeafActs\SetTargetVoxelAct.cs" />
     <Compile Include="Scripting\LeafActs\SetTargetVoxelFromEntityAct.cs" />
     <Compile Include="Scripting\LeafActs\StopAct.cs" />
@@ -459,7 +458,7 @@
     <Compile Include="Components\Systems\ComponentManager.cs" />
     <Compile Include="Graphics\Primitives\BoxPrimitive.cs" />
     <Compile Include="Components\AI\CreatureAI.cs" />
-    <Compile Include="Components\Systems\EntityFactory.cs" />
+    <Compile Include="Entities\EntityFactory.cs" />
     <Compile Include="Components\GameComponent.cs" />
     <Compile Include="Scripting\Player\GameMaster.cs" />
     <Compile Include="Graphics\Primitives\GeometricPrimitive.cs" />

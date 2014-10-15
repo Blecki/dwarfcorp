@@ -102,7 +102,7 @@ namespace DwarfCorp
             
             if(tipType == TipType.BottomRight)
             { 
-                bounds = new Rectangle(mouse.X + 16, mouse.Y + 16, (int)(stringMeasure.X + 15), (int)(stringMeasure.Y + 15));
+                bounds = new Rectangle(mouse.X + 24, mouse.Y + 24, (int)(stringMeasure.X + 15), (int)(stringMeasure.Y + 15));
             }
             else
             {

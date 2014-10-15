@@ -41,6 +41,11 @@ namespace DwarfCorp
 
             Vector3 unprojected = viewport.Project(Position, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
 
+            if (unprojected.Z < 0)
+            {
+                return;
+            }
+
             Rectangle rect = new Rectangle((int) (unprojected.X - extents.X / 2.0f - StrokeWeight), (int) (unprojected.Y - extents.Y / 2.0f - StrokeWeight),
                 (int) (extents.X + StrokeWeight + 5), (int) (extents.Y + StrokeWeight + 5));
 

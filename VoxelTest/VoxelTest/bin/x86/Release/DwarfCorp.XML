@@ -1862,11 +1862,6 @@
             this information.
             </summary>
         </member>
-        <member name="T:DwarfCorp.SetTargetEntityAct">
-            <summary>
-            A creature sets its target component to the current value.
-            </summary>
-        </member>
         <member name="T:DwarfCorp.SetTargetVoxelAct">
             <summary>
             A creature sets its current target voxel to the given item.

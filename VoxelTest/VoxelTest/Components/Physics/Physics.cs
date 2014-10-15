@@ -31,7 +31,6 @@ namespace DwarfCorp
         public bool FixedOrientation { get; set; }
         public bool IsInLiquid { get; set; }
 
-
         public Physics()
         {
             
@@ -59,6 +58,7 @@ namespace DwarfCorp
 
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
+            BoundingBox bounds = chunks.Bounds;
             if(Velocity.LengthSquared() < 0.1f)
             {
                 IsSleeping = true;
@@ -88,7 +88,16 @@ namespace DwarfCorp
 
                 Matrix transform = LocalTransform;
                 PreviousPosition = transform.Translation;
-                transform.Translation = LocalTransform.Translation + Velocity * dt;
+
+                if (bounds.Contains(LocalTransform.Translation + Velocity*dt) == ContainmentType.Contains)
+                {
+                    transform.Translation = LocalTransform.Translation + Velocity*dt;
+                }
+                else
+                {
+                    transform.Translation = LocalTransform.Translation - 2 * Velocity * dt;
+                    Velocity *= -5;
+                }
 
 
                 if(!OrientWithVelocity && !FixedOrientation)

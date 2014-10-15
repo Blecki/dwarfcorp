@@ -122,6 +122,11 @@ namespace DwarfCorp
             {
                 case (InputManager.MouseButton.Left):
                     {
+                        if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Craft).Count == 0)
+                        {
+                            PlayState.GUI.ToolTipManager.Popup("None of the selected units can craft items.");
+                            return;
+                        }
                         List<Task> assignments = new List<Task>();
                         foreach (Voxel r in refs)
                         {
@@ -158,7 +163,7 @@ namespace DwarfCorp
 
                         if (assignments.Count > 0)
                         {
-                            TaskManager.AssignTasks(assignments, PlayState.Master.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Craft));
+                            TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Craft));
                         }
 
                         break;

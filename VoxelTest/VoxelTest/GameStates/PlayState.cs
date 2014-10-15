@@ -709,16 +709,18 @@ namespace DwarfCorp.GameStates
             CompanyNameLabel = new Label(GUI, infoLayout, PlayerCompany.Name, GUI.DefaultFont)
             {
                 TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 100),
-                ToolTip = "Our company Name."
+                StrokeColor = new Color(0, 0, 0, 255),
+                ToolTip = "Our company Name.",
+                Alignment = Drawer2D.Alignment.Top,
             };
             infoLayout.SetComponentPosition(CompanyNameLabel, 1, 0, 1, 1);
 
             MoneyLabel = new Label(GUI, infoLayout, Master.Faction.Economy.CurrentMoney.ToString("C"), GUI.DefaultFont)
             {
                 TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 100),
-                ToolTip = "Amount of money in our treasury."
+                StrokeColor = new Color(0, 0, 0, 255),
+                ToolTip = "Amount of money in our treasury.",
+                Alignment = Drawer2D.Alignment.Top,
             };
             infoLayout.SetComponentPosition(MoneyLabel, 3, 0, 1, 1);
 
@@ -726,7 +728,8 @@ namespace DwarfCorp.GameStates
             TimeLabel = new Label(GUI, layout, Time.CurrentDate.ToShortDateString() + " " + Time.CurrentDate.ToShortTimeString(), GUI.SmallFont)
             {
                 TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 100),
+                StrokeColor = new Color(0, 0, 0, 255),
+                Alignment = Drawer2D.Alignment.Top,
                 ToolTip = "Current time and date."
             };
             layout.SetComponentPosition(TimeLabel, 5, 0, 1, 1);
@@ -734,26 +737,33 @@ namespace DwarfCorp.GameStates
             CurrentLevelLabel = new Label(GUI, infoLayout, "Slice: " + ChunkManager.ChunkData.MaxViewingLevel, GUI.DefaultFont)
             {
                 TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 100),
+                StrokeColor = new Color(0, 0, 0, 255),
                 ToolTip = "The maximum height of visible terrain"
             };
             infoLayout.SetComponentPosition(CurrentLevelLabel, 0, 1, 1, 1);
 
-            CurrentLevelUpButton = new Button(GUI, infoLayout, "up", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
+            CurrentLevelUpButton = new Button(GUI, infoLayout, "", GUI.DefaultFont, Button.ButtonMode.ImageButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowUp))
             {
-                ToolTip = "Go up one level of visible terrain"
+                ToolTip = "Go up one level of visible terrain",
+                KeepAspectRatio = true,
+                DontMakeBigger = true,
+                DontMakeSmaller = true
             };
 
-            infoLayout.SetComponentPosition(CurrentLevelUpButton, 2, 1, 1, 1);
+            infoLayout.SetComponentPosition(CurrentLevelUpButton, 1, 1, 1, 1);
             CurrentLevelUpButton.OnClicked += CurrentLevelUpButton_OnClicked;
 
-            CurrentLevelDownButton = new Button(GUI, infoLayout, "down", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
+            CurrentLevelDownButton = new Button(GUI, infoLayout, "", GUI.DefaultFont, Button.ButtonMode.ImageButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowDown))
             {
-                ToolTip = "Go down one level of visible terrain"
+                ToolTip = "Go down one level of visible terrain",
+                KeepAspectRatio = true,
+                DontMakeBigger = true,
+                DontMakeSmaller = true
             };
-            infoLayout.SetComponentPosition(CurrentLevelDownButton, 1, 1, 1, 1);
+            infoLayout.SetComponentPosition(CurrentLevelDownButton, 1, 2, 1, 1);
             CurrentLevelDownButton.OnClicked += CurrentLevelDownButton_OnClicked;
 
+            /*
             LevelSlider = new Slider(GUI, layout, "", ChunkManager.ChunkData.MaxViewingLevel, 0, ChunkManager.ChunkData.ChunkSizeY, Slider.SliderMode.Integer)
             {
                 Orient = Slider.Orientation.Vertical,
@@ -764,6 +774,7 @@ namespace DwarfCorp.GameStates
             layout.SetComponentPosition(LevelSlider, 0, 1, 1, 6);
             LevelSlider.OnClicked += LevelSlider_OnClicked;
             LevelSlider.InvertValue = true;
+            */
 
             MiniMap = new Minimap(GUI, layout, 192, 192, this, TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap), TextureManager.GetTexture(ContentPaths.GUI.gui_minimap))
             {
@@ -843,7 +854,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public void Load()
         {
-            try
+            //try
             {
                 EnableScreensaver = true;
                 LoadingMessage = "Initializing Static Data...";
@@ -877,9 +888,9 @@ namespace DwarfCorp.GameStates
                 LoadingMessage = "Complete.";
                 EnableScreensaver = false;
             }
-            catch (Exception exception)
+            //catch (Exception exception)
             {
-                Program.WriteExceptionLog(exception);
+            //    Program.WriteExceptionLog(exception);
             }
         }
 
@@ -1020,6 +1031,7 @@ namespace DwarfCorp.GameStates
 
             // Smoke
             EmitterData puff = ParticleManager.CreatePuffLike("puff", ContentPaths.Particles.puff, BlendState.AlphaBlend);
+           
 
             // Bubbles
             EmitterData bubble = ParticleManager.CreatePuffLike("splash2", ContentPaths.Particles.splash2, BlendState.AlphaBlend);
@@ -1070,7 +1082,20 @@ namespace DwarfCorp.GameStates
 
             // Various resource explosions
             ParticleManager.CreateGenericExplosion(ContentPaths.Particles.dirt_particle, "dirt_particle");
-            ParticleManager.CreateGenericExplosion(ContentPaths.Particles.star_particle, "star_particle");
+            EmitterData stars = ParticleManager.CreatePuffLike( "star_particle", ContentPaths.Particles.star_particle, BlendState.Additive);
+            stars.MinAngle = -0.1f;
+            stars.MaxAngle = 0.1f;
+            stars.MinScale = 0.2f;
+            stars.MaxScale = 0.5f;
+            stars.AngularDamping = 0.99f;
+            stars.LinearDamping = 0.999f;
+            stars.GrowthSpeed = -0.8f;
+            stars.EmissionFrequency = 5;
+            stars.CollidesWorld = true;
+
+            ParticleManager.RegisterEffect("star_particle", stars);
+
+            ParticleManager.CreateGenericExplosion(ContentPaths.Particles.stone_particle, "stone_particle");
             ParticleManager.CreateGenericExplosion(ContentPaths.Particles.sand_particle, "sand_particle");
             ParticleManager.CreateGenericExplosion(ContentPaths.Particles.dirt_particle, "dirt_particle");
 
@@ -1278,9 +1303,9 @@ namespace DwarfCorp.GameStates
             }
 
             // Make sure that the slice slider snaps to the current viewing level (an integer)
-            if(!LevelSlider.IsMouseOver)
+            //if(!LevelSlider.IsMouseOver)
             {
-                LevelSlider.SliderValue = ChunkManager.ChunkData.MaxViewingLevel;
+             //   LevelSlider.SliderValue = ChunkManager.ChunkData.MaxViewingLevel;
             }
 
             base.Update(gameTime);
@@ -1520,8 +1545,8 @@ namespace DwarfCorp.GameStates
                 float dB = (b - Camera.Position).LengthSquared();
                 return dA.CompareTo(dB);
             });
-
-            for (int i = 1; i < Math.Min(16, positions.Count + 1); i++)
+            int numLights = Math.Min(16, positions.Count + 1);
+            for (int i = 1; i < numLights; i++)
             {
                 if (i > positions.Count)
                 {
@@ -1532,6 +1557,11 @@ namespace DwarfCorp.GameStates
                     LightPositions[i] = positions[i - 1] + new Vector3(0.5f, 0.5f, 0.5f) +
                                         MathFunctions.PeriodicRand((float) time.TotalGameTime.TotalSeconds + i * 100)*0.1f;
                 }
+            }
+
+            for (int j = numLights; j < 16; j++)
+            {
+                LightPositions[j] = new Vector3(0, 0, 0);
             }
         }
 

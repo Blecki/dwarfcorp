@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -62,7 +63,7 @@ namespace DwarfCorp
 
             BuildPanel = new BuildMenu(GUI, GUI.RootComponent, Master)
             {
-                LocalBounds = new Rectangle(512, 256, 720, 350),
+                LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width - 750, PlayState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350),
                 IsVisible = false
             };
         }
@@ -132,6 +133,8 @@ namespace DwarfCorp
                     CurrentMode = pair.Key;
 
                    BuildPanel.IsVisible = CurrentMode == GameMaster.ToolMode.Build;
+                    BuildPanel.LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width - 750,
+                        PlayState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350);
                 }
                 else
                 {

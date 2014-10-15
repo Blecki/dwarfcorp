@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
@@ -10,11 +11,24 @@ namespace DwarfCorp
     {
         public GameMaster Master { get; set; }
         public TabSelector Selector { get; set; }
-        public Label InfoTitle { get; set; }
-        public Label InfoDescription { get; set; }
-        public Label InfoRequirements { get; set; }
+        public class BuildTab
+        {
+            public ImagePanel InfoImage { get; set; }
+            public Label InfoTitle { get; set; }
+            public Label InfoDescription { get; set; }
+            public Label InfoRequirements { get; set; }
+            public Button BuildButton { get; set; }
+            public TabSelector.Tab Tab { get; set; }
+            public ScrollView Scroller { get; set; }
+        }
+
+        public BuildTab BuildRoomTab { get; set; }
+        public BuildTab BuildItemTab { get; set; }
+        public BuildTab BuildWallTab { get; set; }
         public RoomData SelectedRoom { get; set; }
-        public Button BuildRoomButton { get; set; }
+        public CraftItem SelectedItem { get; set; }
+        public VoxelType SelectedWall { get; set; }
+
 
         public BuildMenu(DwarfGUI gui, GUIComponent parent, GameMaster faction) :
             base(gui, parent, WindowButtons.CloseButton)
@@ -23,15 +37,17 @@ namespace DwarfCorp
             Master = faction;
             Selector = new TabSelector(GUI, layout, 3);
             layout.SetComponentPosition(Selector, 0, 0, 1, 1);
-            TabSelector.Tab roomTab = Selector.AddTab("Rooms");
-            CreateRoomTab(roomTab);
 
-            TabSelector.Tab craftTab = Selector.AddTab("Items");
-            TabSelector.Tab wallTab = Selector.AddTab("Walls");
-            Selector.SetTab(roomTab.Name);
+            SetupBuildRoomTab();
+            SetupBuildItemTab();
+            SetupBuildWallTab();
+
+
+            Selector.SetTab("Rooms");
             MinWidth = 512;
             MinHeight = 256;
         }
+
 
         public override void Update(GameTime time)
         {
@@ -42,10 +58,11 @@ namespace DwarfCorp
         {
             SelectedRoom = room;
 
-            InfoTitle.Text = room.Name;
-            InfoDescription.Text = room.Description;
+            BuildRoomTab.InfoTitle.Text = room.Name;
+            BuildRoomTab.InfoImage.Image = room.Icon;
+            BuildRoomTab.InfoDescription.Text = room.Description;
 
-            BuildRoomButton.IsVisible = true;
+            BuildRoomTab.BuildButton.IsVisible = true;
             string additional = "";
 
             if (!room.CanBuildAboveGround)
@@ -63,7 +80,7 @@ namespace DwarfCorp
                 additional += "\n* Must be built on soil.";
             }
 
-            InfoDescription.Text += additional;
+            BuildRoomTab.InfoDescription.Text += additional;
 
             string requirementsText = "Requires (per 4 tiles):\n";
 
@@ -78,50 +95,40 @@ namespace DwarfCorp
                 requirementsText += "Nothing";
             }
 
-            InfoRequirements.Text = requirementsText;
+            BuildRoomTab.InfoRequirements.Text = requirementsText;
         }
 
-        public void CreateRoomTab(TabSelector.Tab tab)
+        private void WallTabOnClicked(VoxelType wall)
         {
-            GridLayout tabLayout = new GridLayout(GUI, tab, 1, 2)
-            {
-                EdgePadding = 0
-            };
+            SelectedWall = wall;
 
+            BuildWallTab.InfoTitle.Text = wall.Name + " Wall";
+            BuildWallTab.InfoDescription.Text = "";
+
+            BuildWallTab.BuildButton.IsVisible = true;
+            string additional = "";
+
+            additional += "* Wall strength: " + wall.StartingHealth;
+
+            BuildWallTab.InfoDescription.Text += additional;
+
+            string requirementsText = "Requires : " + ResourceLibrary.ResourceNames[wall.ResourceToRelease];
+            BuildWallTab.InfoRequirements.Text = requirementsText;
+        }
+        public void SetupBuildRoomTab()
+        {
+            BuildRoomTab = new BuildTab()
+            {
+                Tab = Selector.AddTab("Rooms")
+            };
+        
+            CreateBuildTab(BuildRoomTab);
+            BuildRoomTab.BuildButton.OnClicked += BuildRoomButton_OnClicked;
             List<string> roomTypes = RoomLibrary.GetRoomTypes().ToList();
 
             int numRooms = roomTypes.Count();
             int numColumns = 1;
-
-            GridLayout infoLayout = new GridLayout(GUI, tabLayout, 4, 2);
-            tabLayout.SetComponentPosition(infoLayout, 1, 0, 1, 1);
-
-            InfoTitle = new Label(GUI, infoLayout, "", GUI.DefaultFont)
-            {
-                StrokeColor = Color.Transparent
-            };
-            infoLayout.SetComponentPosition(InfoTitle, 0, 0, 1, 2);
-
-            InfoDescription = new Label(GUI, infoLayout, "", GUI.SmallFont);
-            infoLayout.SetComponentPosition(InfoDescription, 0, 1, 2, 1);
-
-            InfoRequirements = new Label(GUI, infoLayout, "", GUI.SmallFont);
-            infoLayout.SetComponentPosition(InfoRequirements, 0, 2, 2, 1);
-
-            BuildRoomButton = new Button(GUI, infoLayout, "Build", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetMouseFrame(GUI.Skin.MouseFrames[GUISkin.MousePointer.Build]));
-            infoLayout.SetComponentPosition(BuildRoomButton, 1, 3, 1, 1);
-
-            BuildRoomButton.OnClicked += BuildRoomButton_OnClicked;
-            BuildRoomButton.IsVisible = false;
-
-            ScrollView scrollView = new ScrollView(GUI, tabLayout)
-            {
-                DrawBorder = true
-            };
-            tabLayout.SetComponentPosition(scrollView, 0, 0, 1, 1);
-            tabLayout.UpdateSizes();
-
-            GridLayout layout = new GridLayout(GUI, scrollView, numRooms, numColumns)
+            GridLayout layout = new GridLayout(GUI, BuildRoomTab.Scroller, numRooms, numColumns)
             {
                 LocalBounds = new Rectangle(0, 0, 720, 40 * numRooms),
                 EdgePadding = 0,
@@ -136,17 +143,17 @@ namespace DwarfCorp
 
                 GridLayout roomLayout = new GridLayout(GUI, layout, 1, 3)
                 {
-                    WidthSizeMode = SizeMode.Fixed, 
+                    WidthSizeMode = SizeMode.Fixed,
                     HeightSizeMode = SizeMode.Fixed,
                     EdgePadding = 0
                 };
-               
+
                 roomLayout.OnClicked += () => RoomTabOnClicked(room);
                 int i1 = i;
                 roomLayout.OnHover += () => HoverItem(layout, i1);
 
                 layout.SetComponentPosition(roomLayout, 0, i, 1, 1);
-               
+
                 ImagePanel icon = new ImagePanel(GUI, roomLayout, room.Icon)
                 {
                     KeepAspectRatio = true
@@ -160,8 +167,199 @@ namespace DwarfCorp
                 roomLayout.SetComponentPosition(description, 1, 0, 1, 1);
                 i++;
             }
-            tabLayout.UpdateSizes();
             layout.UpdateSizes();
+        }
+
+        private void SetupBuildItemTab()
+        {
+            BuildItemTab = new BuildTab
+            {
+                Tab = Selector.AddTab("Items")
+            };
+            CreateBuildTab(BuildItemTab);
+            BuildItemTab.BuildButton.OnClicked += BuildItemButton_OnClicked;
+            List<CraftItem> items = CraftLibrary.CraftItems.Values.ToList();
+
+            int numItems = items.Count();
+            int numColumns = 1;
+            GridLayout layout = new GridLayout(GUI, BuildItemTab.Scroller, numItems, numColumns)
+            {
+                LocalBounds = new Rectangle(0, 0, 720, 40 * numItems),
+                EdgePadding = 0,
+                WidthSizeMode = SizeMode.Fit,
+                HeightSizeMode = SizeMode.Fixed
+            };
+
+            int i = 0;
+            foreach (CraftItem itemType in items)
+            {
+                CraftItem item = itemType;
+                GridLayout itemLayout = new GridLayout(GUI, layout, 1, 3)
+                {
+                    WidthSizeMode = SizeMode.Fixed,
+                    HeightSizeMode = SizeMode.Fixed,
+                    EdgePadding = 0
+                };
+
+                itemLayout.OnClicked += () => ItemTabOnClicked(item);
+                int i1 = i;
+                itemLayout.OnHover += () => HoverItem(layout, i1);
+
+                layout.SetComponentPosition(itemLayout, 0, i, 1, 1);
+
+                ImagePanel icon = new ImagePanel(GUI, itemLayout, item.Image)
+                {
+                    KeepAspectRatio = true
+                };
+                itemLayout.SetComponentPosition(icon, 0, 0, 1, 1);
+
+                Label description = new Label(GUI, itemLayout, item.Name, GUI.SmallFont)
+                {
+                    ToolTip = item.Description
+                };
+                itemLayout.SetComponentPosition(description, 1, 0, 1, 1);
+                i++;
+            }
+            layout.UpdateSizes();
+        }
+
+        private void BuildItemButton_OnClicked()
+        {
+            IsVisible = false;
+            Master.Faction.RoomBuilder.CurrentRoomData = null;
+            Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+            Master.Faction.WallBuilder.CurrentVoxelType = null;
+            Master.Faction.CraftBuilder.IsEnabled = true;
+            Master.Faction.CraftBuilder.CurrentCraftType = SelectedItem.CraftType;
+            Master.CurrentToolMode = GameMaster.ToolMode.Build;
+            GUI.ToolTipManager.Popup("Click and drag to build " + SelectedItem.Name);
+        }
+
+        private void ItemTabOnClicked(CraftItem item)
+        {
+            SelectedItem = item;
+
+            BuildItemTab.InfoTitle.Text = item.Name;
+            BuildItemTab.InfoImage.Image = item.Image;
+            BuildItemTab.InfoDescription.Text = item.Description;
+
+            BuildItemTab.BuildButton.IsVisible = true;
+            string additional = "";
+
+            
+            BuildItemTab.InfoDescription.Text += additional;
+
+            string requirementsText = "Requires:\n";
+
+            foreach (ResourceAmount resourceAmount in item.RequiredResources)
+            {
+                requirementsText += resourceAmount.ResourceType.ResourceName + ": " + resourceAmount.NumResources + "\n";
+            }
+
+
+            if (item.RequiredResources.Count == 0)
+            {
+                requirementsText += "Nothing";
+            }
+
+            BuildItemTab.InfoRequirements.Text = requirementsText;
+        }
+
+        private void SetupBuildWallTab()
+        {
+            BuildWallTab = new BuildTab
+            {
+                Tab = Selector.AddTab("Walls")
+            };
+            CreateBuildTab(BuildWallTab);
+            BuildWallTab.BuildButton.OnClicked += WallButton_OnClicked;
+            List<VoxelType> wallTypes = VoxelLibrary.GetTypes().Where(voxel => voxel.IsBuildable).ToList();
+
+            int numItems = wallTypes.Count();
+            int numColumns = 1;
+            GridLayout layout = new GridLayout(GUI, BuildWallTab.Scroller, numItems, numColumns)
+            {
+                LocalBounds = new Rectangle(0, 0, 720, 40 * numItems),
+                EdgePadding = 0,
+                WidthSizeMode = SizeMode.Fit,
+                HeightSizeMode = SizeMode.Fixed
+            };
+
+            int i = 0;
+            foreach (VoxelType wallType in wallTypes)
+            {
+                VoxelType wall = wallType;
+                GridLayout itemLayout = new GridLayout(GUI, layout, 1, 3)
+                {
+                    WidthSizeMode = SizeMode.Fixed,
+                    HeightSizeMode = SizeMode.Fixed,
+                    EdgePadding = 0
+                };
+
+                itemLayout.OnClicked += () => WallTabOnClicked(wall);
+                int i1 = i;
+                itemLayout.OnHover += () => HoverItem(layout, i1);
+
+                layout.SetComponentPosition(itemLayout, 0, i, 1, 1);
+
+                Label description = new Label(GUI, itemLayout, wall.Name + " Wall", GUI.SmallFont);
+
+                itemLayout.SetComponentPosition(description, 1, 0, 1, 1);
+                i++;
+            }
+            layout.UpdateSizes();
+        }
+
+        private void WallButton_OnClicked()
+        {
+            IsVisible = false;
+            Master.Faction.RoomBuilder.CurrentRoomData = null;
+            Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+            Master.Faction.WallBuilder.CurrentVoxelType = SelectedWall;
+            Master.Faction.CraftBuilder.IsEnabled = false;
+            Master.CurrentToolMode = GameMaster.ToolMode.Build;
+            GUI.ToolTipManager.Popup("Click and drag to build " + SelectedWall.Name + " wall.");
+        }
+
+
+        public void CreateBuildTab(BuildTab tab)
+        {
+            GridLayout tabLayout = new GridLayout(GUI, tab.Tab, 1, 3)
+            {
+                EdgePadding = 0
+            };
+
+            GridLayout infoLayout = new GridLayout(GUI, tabLayout, 4, 2);
+            tabLayout.SetComponentPosition(infoLayout, 1, 0, 1, 1);
+            tab.InfoImage = new ImagePanel(GUI, infoLayout, (Texture2D) null)
+            {
+                KeepAspectRatio = true
+            };
+            infoLayout.SetComponentPosition(tab.InfoImage, 1, 0, 1, 1);
+
+            tab.InfoTitle = new Label(GUI, infoLayout, "", GUI.DefaultFont);
+            infoLayout.SetComponentPosition(tab.InfoTitle, 0, 0, 1, 1);
+
+            tab.InfoDescription = new Label(GUI, infoLayout, "", GUI.SmallFont)
+            {
+                WordWrap = true
+            };
+            infoLayout.SetComponentPosition(tab.InfoDescription, 0, 1, 1, 1);
+
+            tab.InfoRequirements = new Label(GUI, infoLayout, "", GUI.SmallFont);
+            infoLayout.SetComponentPosition(tab.InfoRequirements, 0, 2, 2, 1);
+
+            tab.BuildButton = new Button(GUI, infoLayout, "Build", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetMouseFrame(GUI.Skin.MouseFrames[GUISkin.MousePointer.Build]));
+            infoLayout.SetComponentPosition(tab.BuildButton, 0, 3, 1, 1);
+
+            tab.BuildButton.IsVisible = false;
+
+            tab.Scroller = new ScrollView(GUI, tabLayout)
+            {
+                DrawBorder = true
+            };
+            tabLayout.SetComponentPosition(tab.Scroller, 0, 0, 1, 1);
+            tabLayout.UpdateSizes();
         }
 
         void BuildRoomButton_OnClicked()
@@ -172,6 +370,7 @@ namespace DwarfCorp
             Master.Faction.WallBuilder.CurrentVoxelType = null;
             Master.Faction.CraftBuilder.IsEnabled = false;
             Master.CurrentToolMode = GameMaster.ToolMode.Build;
+            GUI.ToolTipManager.Popup("Click and drag to build " + SelectedRoom.Name);
         }
 
         private void HoverItem(GridLayout roomLayout, int i)

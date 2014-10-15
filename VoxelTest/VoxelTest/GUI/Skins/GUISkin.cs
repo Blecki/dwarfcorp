@@ -657,9 +657,9 @@ namespace DwarfCorp
 
         public void RenderTab(Rectangle rect, SpriteBatch spriteBatch, Color tint)
         {
-            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y - TileHeight/4, TileWidth, TileHeight), GetSourceRect(Tile.TabLeft), tint);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + TileWidth, rect.Y - TileHeight/4, rect.Width - TileWidth * 2, TileHeight), GetSourceRect(Tile.TabCenter), tint);
-            spriteBatch.Draw(Texture, new Rectangle(rect.Right - TileWidth, rect.Top - TileHeight / 4, TileWidth, TileHeight), GetSourceRect(Tile.TabRight), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y - TileHeight/4 - 2, TileWidth, TileHeight), GetSourceRect(Tile.TabLeft), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + TileWidth, rect.Y - TileHeight/4 - 2, rect.Width - TileWidth * 2, TileHeight), GetSourceRect(Tile.TabCenter), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.Right - TileWidth, rect.Top - TileHeight / 4 - 2, TileWidth, TileHeight), GetSourceRect(Tile.TabRight), tint);
         }
     }
 

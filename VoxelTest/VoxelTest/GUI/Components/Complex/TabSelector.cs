@@ -60,7 +60,7 @@ namespace DwarfCorp
         {
             Tabs[name] = new Tab(name, this, Layout)
             {
-                Index = Tabs.Count
+                Index = Tabs.Count,
             };
 
             Button tabButton = new Button(GUI, Layout, name, GUI.SmallFont, Button.ButtonMode.TabButton, null)
@@ -73,6 +73,7 @@ namespace DwarfCorp
 
             Layout.SetComponentPosition(tabButton, Tabs.Count - 1, 0, 1, 1);
             Layout.SetComponentPosition(Tabs[name], 0, 1, Layout.Cols, Layout.Rows - 1);
+            Layout.UpdateSizes();
             return Tabs[name];
         }
 

@@ -274,15 +274,15 @@ namespace DwarfCorp
         public GoodsPanel(DwarfGUI gui, GUIComponent parent, Faction faction) 
             : base(gui, parent)
         {
+            LocalBounds = parent.GlobalBounds;
             Faction = faction;
             GridLayout layout = new GridLayout(GUI, this, 8, 4);
-            Tabs = new TabSelector(GUI, layout, 4);
+            Tabs = new TabSelector(GUI, layout, 4)
+            {
+                WidthSizeMode = SizeMode.Fit
+            };
             
-            CreateBuyTab();
-            CreateSellTab();
 
-            Tabs.SetTab("Buy");
-            
             layout.SetComponentPosition(Tabs, 0, 0, 4, 8);
 
             TotalMoney = new Label(GUI, layout, "Total Money: " + Faction.Economy.CurrentMoney.ToString("C"), GUI.DefaultFont)
@@ -305,6 +305,11 @@ namespace DwarfCorp
 
             SpaceLabel.OnUpdate += SpaceLabel_OnUpdate;
 
+            layout.UpdateSizes();
+
+            CreateBuyTab();
+            CreateSellTab();
+            Tabs.SetTab("Buy");
         }
 
         void SpaceLabel_OnUpdate()

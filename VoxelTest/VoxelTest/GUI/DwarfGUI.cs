@@ -75,7 +75,7 @@ namespace DwarfCorp
             Input = input;
             DrawAfter = new List<GUIComponent>();
             DefaultTextColor = new Color(48, 27, 0);
-            DefaultStrokeColor = new Color(100, 100, 100, 100);
+            DefaultStrokeColor = Color.Transparent;
             DebugDraw = false;
             ToolTipManager = new ToolTipManager(this);
             LastScrollWheel = 0;
@@ -147,7 +147,6 @@ namespace DwarfCorp
 
 
             DrawAfter.Clear();
-            ToolTipManager.Render(Graphics, batch, time);
 
             if(DebugDraw)
             {
@@ -159,6 +158,7 @@ namespace DwarfCorp
                 MouseState mouse = Mouse.GetState();
                 Skin.RenderMouse(mouse.X, mouse.Y, MouseScale, MouseMode, batch, MouseTint);
             }
+            ToolTipManager.Render(Graphics, batch, time);
         }
 
 

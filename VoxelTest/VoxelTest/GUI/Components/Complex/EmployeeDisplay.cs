@@ -37,10 +37,11 @@ namespace DwarfCorp
                 Label = "",
                 DrawPanel = false,
                 Mode = ListItem.SelectionMode.Selector,
-                LocalBounds = new Rectangle(0, 0, 256, Faction.Minions.Count * 24)
+                LocalBounds = new Rectangle(0, 0, 256, Faction.Minions.Count * 24),
+                WidthSizeMode = SizeMode.Fit
             };
 
-            boxLayout.SetComponentPosition(scrollView, 0, 1, 4, 6);
+            boxLayout.SetComponentPosition(scrollView, 0, 1, 3, 6);
             panelLayout.SetComponentPosition(employeeBox, 0, 0, 3, 10);
 
             foreach (CreatureAI creature in Faction.Minions)

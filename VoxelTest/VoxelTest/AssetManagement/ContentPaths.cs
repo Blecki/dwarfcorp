@@ -1,4 +1,5 @@
-﻿using DwarfCorp.GameStates;
+﻿using System.Collections.Generic;
+using DwarfCorp.GameStates;
 
 namespace DwarfCorp
 {
@@ -39,12 +40,12 @@ namespace DwarfCorp
             public static string dirt_particle = Program.CreatePath("Particles", "dirt_particle");
             public static string flame = Program.CreatePath("Particles", "flame");
             public static string leaf = Program.CreatePath("Particles", "leaf");
-            public static string puff = Program.CreatePath("Particles", "star-particle");
+            public static string puff = Program.CreatePath("Particles", "puff");
             public static string sand_particle = Program.CreatePath("Particles", "sand_particle");
             public static string splash2 = Program.CreatePath("Particles", "splash2");
             public static string stone_particle = Program.CreatePath("Particles", "stone_particle");
             public static string green_flame = Program.CreatePath("Particles", "green_flame");
-            public static string star_particle = Program.CreatePath("Particles", "star-particle");
+            public static string star_particle = Program.CreatePath("Particles", "bigstar_particle");
         }
         public class Effects
         {
@@ -55,6 +56,31 @@ namespace DwarfCorp
             public static string flash = Program.CreatePath("Effects", "flash");
             public static string rings = Program.CreatePath("Effects", "ring");
         }
+
+        public class Text
+        {
+            public enum TextType
+            {
+                Adjectives,
+                Animals,
+                FirstNames,
+                LastNames,
+                Nouns,
+                Verbs
+            }
+
+            public static Dictionary<TextType, string> Texts = new Dictionary<TextType, string>()
+            {
+                {TextType.Adjectives, Program.CreatePath("Text", "adjectives.txt")},
+                {TextType.Animals,  Program.CreatePath("Text","animals.txt")},
+                {TextType.FirstNames,  Program.CreatePath("Text","firstnames.txt")},
+                {TextType.LastNames,  Program.CreatePath("Text","lastnames.txt")},
+                {TextType.Nouns,  Program.CreatePath("Text","nouns.txt")},
+                {TextType.Verbs,  Program.CreatePath("Text","verbs.txt")}
+
+            };
+        }
+
         public class Entities
         {
             public class Animals
