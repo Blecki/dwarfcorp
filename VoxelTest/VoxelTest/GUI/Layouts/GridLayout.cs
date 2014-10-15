@@ -61,19 +61,27 @@ namespace DwarfCorp
 
         public bool HasOffset(GUIComponent component)
         {
+            if (component == null)
+            {
+                return false;
+            }
             return ComponentOffsets.ContainsKey(component);
         }
 
         public Point GetOffset(GUIComponent component)
         {
+            if (component == null)
+            {
+                return new Point(0, 0);
+            }
             return ComponentOffsets[component];
         }
 
         public override void UpdateSizes()
         {
             UpdateSize();
-            int w = LocalBounds.Width;
-            int h = LocalBounds.Height;
+            int w = LocalBounds.Width - EdgePadding;
+            int h = LocalBounds.Height - EdgePadding;
 
             if(Cols > 0 && Rows > 0)
             {
@@ -82,18 +90,36 @@ namespace DwarfCorp
 
                 foreach(KeyValuePair<Rectangle, GUIComponent> comp in ComponentPositions)
                 {
+                    if (comp.Value == null)
+                    {
+                        continue;
+                    }
+
                     if (HasOffset(comp.Value))
                     {
                         Point offset = GetOffset(comp.Value);
                         comp.Value.LocalBounds = new Rectangle(
-                            comp.Key.X * cellX + offset.X + EdgePadding,
-                            comp.Key.Y * cellY + offset.Y + EdgePadding, 
+                            comp.Key.X * cellX + offset.X,
+                            comp.Key.Y * cellY + offset.Y, 
                             comp.Key.Width * cellX, 
                             comp.Key.Height * cellY);
                     }
                     else
                     {
-                        comp.Value.LocalBounds = new Rectangle(comp.Key.X * cellX + EdgePadding, comp.Key.Y * cellY + EdgePadding, comp.Key.Width * cellX - 10, comp.Key.Height * cellY - 10);   
+                        int lw = comp.Key.Width * cellX - 10;
+                        int lh = comp.Key.Height * cellY - 10;
+                        int lx = comp.Key.X * cellX + EdgePadding;
+                        int ly = comp.Key.Y * cellY + EdgePadding;
+                        if (lx + lw > w)
+                        {
+                            lw = (w - lx);
+                        }
+
+                        if (ly + lh > h)
+                        {
+                            lh = (h - ly);
+                        }
+                        comp.Value.LocalBounds = new Rectangle(lx, ly, lw, lh);   
                     }
                 }
             }
@@ -101,13 +127,13 @@ namespace DwarfCorp
 
         public Rectangle GetRect(Rectangle coords)
         {
-            int w = LocalBounds.Width;
-            int h = LocalBounds.Height;
+            int w = LocalBounds.Width - EdgePadding;
+            int h = LocalBounds.Height - EdgePadding;
             int cellX = w / Cols;
             int cellY = h / Rows;
            return new Rectangle(
-                            coords.X * cellX,
-                            coords.Y * cellY, 
+                            coords.X * cellX + EdgePadding,
+                            coords.Y * cellY + EdgePadding, 
                             coords.Width * cellX, 
                             coords.Height * cellY);
         }

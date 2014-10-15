@@ -193,9 +193,9 @@ namespace DwarfCorp.GameStates
             {
                 "$Interjection",
                 ", the ",
-                "$Color",
+                "$Adjective",
                 " ",
-                "$Animal",
+                "$Noun",
                 "s ",
                 "$Verb",
                 "!"
@@ -204,7 +204,7 @@ namespace DwarfCorp.GameStates
             {
                 "$Verb",
                 " my ",
-                "$Bodypart",
+                "$Noun",
                 ", my ",
                 "$Family",
                 "!"
@@ -226,9 +226,9 @@ namespace DwarfCorp.GameStates
             {
                 "$Interjection",
                 " ... the ",
-                "$Material",
+                "$Adjective",
                 " ",
-                "$Place",
+                "$Noun",
                 "!"
             };
             templates.Add(adverbweverb);
@@ -245,11 +245,11 @@ namespace DwarfCorp.GameStates
         {
             string[] partners =
             {
-                "$MaleName",
+                "$DwarfName",
                 " ",
                 "&",
                 " ",
-                "$MaleName",
+                "$DwarfName",
                 ",",
                 " ",
                 "$Corp"
@@ -262,13 +262,13 @@ namespace DwarfCorp.GameStates
             };
             string[] animalPart =
             {
-                "$Animal",
+                "$Noun",
                 " ",
-                "$Bodypart"
+                "$Noun"
             };
             string[] nameAndSons =
             {
-                "$MaleName",
+                "$DwarfName",
                 " ",
                 "&",
                 " ",
@@ -279,7 +279,7 @@ namespace DwarfCorp.GameStates
             {
                 "$Color",
                 " ",
-                "$Bodypart",
+                "$Noun",
                 " ",
                 "&",
                 " ",
@@ -306,15 +306,15 @@ namespace DwarfCorp.GameStates
             {
                 "$Material",
                 " ",
-                "$Animal",
+                "$Noun",
                 " ",
                 "$Corp"
             };
             string[] materialBody =
             {
-                "$Material",
+                "$Adjective",
                 " ",
-                "$Bodypart",
+                "$Noun",
                 " ",
                 "$Corp"
             };
@@ -322,7 +322,7 @@ namespace DwarfCorp.GameStates
             {
                 "$Corp",
                 " of the ",
-                "$Material",
+                "$Adjective",
                 " ",
                 "$Place",
                 "s"

@@ -30,7 +30,7 @@ namespace DwarfCorp
                 return;
             }
 
-            if (CurrentSound == null || CurrentSound.EffectInstance.IsDisposed || CurrentSound.EffectInstance.State == SoundState.Stopped || CurrentSound.EffectInstance.State == SoundState.Paused)
+            if (CurrentSound == null || CurrentSound.EffectInstance == null || CurrentSound.EffectInstance.IsDisposed || CurrentSound.EffectInstance.State == SoundState.Stopped || CurrentSound.EffectInstance.State == SoundState.Paused)
             {
                 List<string> availableNoises = Noises[noise];
                 int index = PlayState.Random.Next(availableNoises.Count);

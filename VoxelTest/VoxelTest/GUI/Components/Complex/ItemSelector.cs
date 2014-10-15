@@ -126,13 +126,11 @@ namespace DwarfCorp
             };
 
             Items = new List<GItem>();
-            GridLayout layout = new GridLayout(GUI, this, 1, 1)
-            {
-                EdgePadding = 32
-            };
+            GridLayout layout = new GridLayout(GUI, this, 1, 1);
             ScrollArea = new ScrollView(GUI, layout)
             {
-                DrawBorder = false
+                DrawBorder = false,
+                WidthSizeMode = SizeMode.Fit
             };
 
             layout.UpdateSizes();

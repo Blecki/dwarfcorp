@@ -153,6 +153,7 @@ namespace DwarfCorp
                         vox.Type = VoxelLibrary.GetVoxelType(type);
                         vox.IsVisible = true;
                         vox.WaterLevel = 0;
+                        vox.Health = vox.Type.StartingHealth;
                         chunksToRebuild.Add(vox.ChunkID);
                     }
                     else switch(command)

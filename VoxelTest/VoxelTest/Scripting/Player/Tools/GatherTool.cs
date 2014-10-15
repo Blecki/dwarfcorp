@@ -51,7 +51,7 @@ namespace DwarfCorp
                 }
             }
 
-            TaskManager.AssignTasks(assignments, PlayState.Master.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Gather));
+            TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Gather));
         }
 
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)

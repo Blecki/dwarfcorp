@@ -245,4 +245,11 @@ C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Conte
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\hammer.xnb
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\DwarfObjects\constructiontape.xnb
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\DwarfObjects\underconstruction.xnb
-C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\star-particle.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\bigstar_particle.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\star_particle.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Text\animals.txt
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Text\adjectives.txt
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Text\verbs.txt
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Text\nouns.txt
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Text\lastnames.txt
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Text\firstnames.txt

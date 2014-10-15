@@ -48,7 +48,7 @@ namespace DwarfCorp
 
             foreach (var item in originalWords)
             {
-                Vector2 itemMeasure = Datastructures.SafeMeasure(TextFont, item);
+                Vector2 itemMeasure = Datastructures.SafeMeasure(TextFont, item + " ");
                 actualLine.Append(item + " ");
                 actualWidth += (int)itemMeasure.X;
 
