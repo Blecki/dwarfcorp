@@ -506,9 +506,7 @@ namespace DwarfCorp
             {
                 AddChunk(chunk);
             }
-
-
-            
+            chunkManager.UpdateBounds();
             chunkManager.UpdateRebuildList();
             chunkManager.CreateGraphics(ref loadingMessage, this);
         }

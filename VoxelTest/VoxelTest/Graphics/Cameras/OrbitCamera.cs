@@ -274,7 +274,7 @@ namespace DwarfCorp
                 }
             }
 
-            if (mouse.ScrollWheelValue != LastWheel)
+            if (mouse.ScrollWheelValue != LastWheel && !PlayState.GUI.IsMouseOver())
             {
                 int change = mouse.ScrollWheelValue - LastWheel;
 
@@ -296,9 +296,9 @@ namespace DwarfCorp
                         chunks.ChunkData.SetMaxViewingLevel(chunks.ChunkData.MaxViewingLevel + (int) ((float) change * 0.01f), ChunkManager.SliceMode.Y);
                     }
                 }
-
-                LastWheel = mouse.ScrollWheelValue;
             }
+
+            LastWheel = mouse.ScrollWheelValue;
 
             if (!CollidesWithChunks(PlayState.ChunkManager, Target + Velocity))
             {

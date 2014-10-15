@@ -204,6 +204,7 @@ namespace DwarfCorp
             get { return (float) Chunk.Data.Health[Index]; }
             set
             {
+                if (Type.IsInvincible) return;
                 Chunk.Data.Health[Index] = (byte)value;
 
                 if (value <= 0.0f)

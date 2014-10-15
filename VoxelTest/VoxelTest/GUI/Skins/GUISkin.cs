@@ -43,10 +43,19 @@ namespace DwarfCorp
             PanelLowerRight,
             PanelLeft,
             PanelRight,
-            PannelUpper,
             PanelLower,
             PanelCenter,
-            
+
+            WindowUpperLeft,
+            WindowUpperRight,
+            WindowUpper,
+            WindowLowerLeft,
+            WindowLowerRight,
+            WindowLeft,
+            WindowRight,
+            WindowLower,
+            WindowCenter,
+
             CheckboxUnchecked,
             CheckboxChecked,
             
@@ -110,13 +119,16 @@ namespace DwarfCorp
             SmallArrowLeft,
             SmallArrowUp,
             SmallArrowDown,
+            SmallEx,
 
             ZoomIn,
             ZoomOut,
             ZoomHome,
 
-            ButtonFrame
-
+            ButtonFrame,
+            TabLeft,
+            TabCenter,
+            TabRight
         }
 
 
@@ -174,6 +186,16 @@ namespace DwarfCorp
             Frames[Tile.PanelLower] = new Point(1, 2);
             Frames[Tile.PanelLowerRight] = new Point(2, 2);
 
+            Frames[Tile.WindowUpperLeft] = new Point(0, 10);
+            Frames[Tile.WindowUpper] = new Point(1, 10);
+            Frames[Tile.WindowUpperRight] = new Point(2, 10);
+            Frames[Tile.WindowLeft] = new Point(0, 11);
+            Frames[Tile.WindowCenter] = new Point(1, 11);
+            Frames[Tile.WindowRight] = new Point(2, 11);
+            Frames[Tile.WindowLowerLeft] = new Point(0, 12);
+            Frames[Tile.WindowLower] = new Point(1, 12);
+            Frames[Tile.WindowLowerRight] = new Point(2, 12);
+
             Frames[Tile.CheckboxUnchecked] = new Point(3, 0);
             Frames[Tile.CheckboxChecked] = new Point(3, 1);
 
@@ -203,6 +225,10 @@ namespace DwarfCorp
             Frames[Tile.FieldLeft] = new Point(3, 3);
             Frames[Tile.FieldCenter] = new Point(4, 3);
             Frames[Tile.FieldRight] = new Point(5, 3);
+
+            Frames[Tile.TabLeft] = new Point(0, 9);
+            Frames[Tile.TabCenter] = new Point(1, 9);
+            Frames[Tile.TabRight] = new Point(2, 9);
 
             Frames[Tile.DownArrow] = new Point(6, 3);
 
@@ -236,11 +262,11 @@ namespace DwarfCorp
             Frames[Tile.ZoomOut] = new Point(11, 1);
             Frames[Tile.ZoomHome] = new Point(12, 0);
 
-
             Frames[Tile.SmallArrowLeft] = new Point(14, 1);
             Frames[Tile.SmallArrowRight] = new Point(13, 0);
             Frames[Tile.SmallArrowUp] = new Point(12, 1);
             Frames[Tile.SmallArrowDown] = new Point(13, 1);
+            Frames[Tile.SmallEx] = new Point(14, 0);
 
             Frames[Tile.ButtonFrame] = new Point(9, 4);
 
@@ -335,6 +361,70 @@ namespace DwarfCorp
 
             spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, maxY - diffY, diffX, diffY), GetSourceRect(Tile.PanelCenter), Color.White);
         }
+
+        public void RenderWindow(Rectangle rectbounds, SpriteBatch spriteBatch)
+        {
+            Rectangle rect = new Rectangle((int)(rectbounds.X + TileWidth / 4), (int)(rectbounds.Y + TileHeight / 4), rectbounds.Width - TileWidth / 2, rectbounds.Height - TileHeight / 2);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.WindowUpperLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.WindowLowerLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.WindowUpperRight), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.WindowLowerRight), Color.White);
+
+            int maxX = rect.X + rect.Width;
+            int diffX = rect.Width % TileWidth;
+            int maxY = rect.Y + rect.Height;
+            int diffY = rect.Height % TileHeight;
+            int right = maxX - diffX - TileWidth;
+            int bottom = maxY - diffY - TileHeight;
+            int left = rect.X;
+            int top = rect.Y;
+
+            for (int x = left; x <= right; x += TileWidth)
+            {
+                spriteBatch.Draw(Texture, new Rectangle(x, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.WindowUpper), Color.White);
+            }
+
+            spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, rect.Y - TileHeight, diffX, TileHeight), GetSourceRect(Tile.WindowUpper), Color.White);
+
+            for (int y = top; y <= bottom; y += TileHeight)
+            {
+                spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, y, TileWidth, TileHeight), GetSourceRect(Tile.WindowLeft), Color.White);
+            }
+
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, maxY - diffY, TileWidth, diffY), GetSourceRect(Tile.WindowLeft), Color.White);
+
+            for (int x = left; x <= right; x += TileWidth)
+            {
+                spriteBatch.Draw(Texture, new Rectangle(x, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.WindowLower), Color.White);
+            }
+
+
+            spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, rect.Y + rect.Height, diffX, TileHeight), GetSourceRect(Tile.WindowLower), Color.White);
+
+            for (int y = top; y <= bottom; y += TileHeight)
+            {
+                spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, y, TileWidth, TileHeight), GetSourceRect(Tile.WindowRight), Color.White);
+            }
+
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, maxY - diffY, TileWidth, diffY), GetSourceRect(Tile.WindowRight), Color.White);
+
+            for (int x = left; x <= right; x += TileWidth)
+            {
+                for (int y = top; y <= bottom; y += TileHeight)
+                {
+                    spriteBatch.Draw(Texture, new Rectangle(x, y, TileWidth, TileHeight), GetSourceRect(Tile.WindowCenter), Color.White);
+                }
+                spriteBatch.Draw(Texture, new Rectangle(x, maxY - diffY, TileWidth, diffY), GetSourceRect(Tile.WindowCenter), Color.White);
+            }
+
+            for (int y = top; y <= bottom; y += TileHeight)
+            {
+                spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, y, diffX, TileHeight), GetSourceRect(Tile.WindowCenter), Color.White);
+            }
+
+            spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, maxY - diffY, diffX, diffY), GetSourceRect(Tile.WindowCenter), Color.White);
+        }
+
 
         public void RenderButton(Rectangle rectbounds, SpriteBatch spriteBatch)
         {
@@ -563,6 +653,13 @@ namespace DwarfCorp
             Vector2 origin = Datastructures.SafeMeasure(font, toDraw) * 0.5f;
 
             Drawer2D.SafeDraw(spriteBatch, toDraw, font, Color.Black, new Vector2(fieldRect.X + fieldRect.Width / 2, fieldRect.Y + 16), origin);
+        }
+
+        public void RenderTab(Rectangle rect, SpriteBatch spriteBatch, Color tint)
+        {
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y - TileHeight/4 - 2, TileWidth, TileHeight), GetSourceRect(Tile.TabLeft), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + TileWidth, rect.Y - TileHeight/4 - 2, rect.Width - TileWidth * 2, TileHeight), GetSourceRect(Tile.TabCenter), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.Right - TileWidth, rect.Top - TileHeight / 4 - 2, TileWidth, TileHeight), GetSourceRect(Tile.TabRight), tint);
         }
     }
 

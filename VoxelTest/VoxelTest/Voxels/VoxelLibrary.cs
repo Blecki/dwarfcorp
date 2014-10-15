@@ -56,6 +56,8 @@ namespace DwarfCorp
 
         public static void InitializeDefaultLibrary(GraphicsDevice graphics, Texture2D cubeTexture)
         {
+            if (PrimitiveMap.Count > 0) return;
+
             BoxPrimitive grassCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 0), new Point(2, 0), new Point(2, 0));
             BoxPrimitive dirtCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 0), new Point(2, 0), new Point(2, 0));
             BoxPrimitive stoneCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 2), new Point(1, 0), new Point(4, 2));
@@ -69,6 +71,7 @@ namespace DwarfCorp
             BoxPrimitive plankCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 0), new Point(4, 0), new Point(4, 0));
             BoxPrimitive waterCube = CreatePrimitive(graphics, cubeTexture, cubeTexture.Width, cubeTexture.Height, new Point(0, 0), new Point(0, 0), new Point(0, 0));
             BoxPrimitive cobblestoneCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 2), new Point(5, 2), new Point(5, 2));
+            BoxPrimitive bedrockCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 2), new Point(6, 2), new Point(6, 2));
             BoxPrimitive brownTileCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 0), new Point(5, 0), new Point(5, 0));
             BoxPrimitive blueTileCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 0), new Point(6, 0), new Point(6, 0));
             BoxPrimitive tilledSoilCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 1), new Point(2, 0), new Point(2, 0));
@@ -271,7 +274,8 @@ namespace DwarfCorp
             {
                 Name = "Bedrock",
                 StartingHealth = 255,
-                IsBuildable = false
+                IsBuildable = false,
+                IsInvincible = true
             };
 
             VoxelType waterType = new VoxelType
@@ -388,7 +392,7 @@ namespace DwarfCorp
             RegisterType(manaType, manaCube);
             RegisterType(plankType, plankCube);
             RegisterType(scaffoldType, scaffoldCube);
-            RegisterType(bedrockType, cobblestoneCube);
+            RegisterType(bedrockType, bedrockCube);
             RegisterType(coalType, coalCube);
 
             foreach (VoxelType type in VoxelType.TypeList)

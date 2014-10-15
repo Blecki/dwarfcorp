@@ -13,5 +13,7 @@ namespace DwarfCorp
         public List<ResourceAmount> RequiredResources { get; set; }
         public ImageFrame Image { get; set; }
         public float BaseCraftTime { get; set; }
+        public string Description { get; set; }
+        public CraftLibrary.CraftItemType CraftType { get; set; }
     }
 }

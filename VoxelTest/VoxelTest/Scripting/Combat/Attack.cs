@@ -36,6 +36,7 @@ namespace DwarfCorp
         public Timer RechargeTimer { get; set; }
         public float Knockback { get; set; }
         public Animation HitAnimation { get; set; }
+        public string HitParticles { get; set; }
 
         public Attack()
         {
@@ -52,6 +53,7 @@ namespace DwarfCorp
             Mode = other.Mode;
             Knockback = other.Knockback;
             HitAnimation = other.HitAnimation;
+            HitParticles = other.HitParticles;
         }
 
         public Attack(string name, float damage, float time, float range, string noise)
@@ -64,6 +66,7 @@ namespace DwarfCorp
             Mode = AttackMode.Melee;
             Knockback = 0.0f;
             HitAnimation = null;
+            HitParticles = "";
         }
 
         public bool Perform(Voxel other, GameTime time, float bonus)
@@ -79,6 +82,10 @@ namespace DwarfCorp
             {
                 other.Health -= DamageAmount + bonus;
                 PlayNoise(other.Position);
+                if (HitParticles != "")
+                {
+                    PlayState.ParticleManager.Trigger(HitParticles, other.Position, Color.White, 5);
+                }
                 return true;
             }
             else
@@ -94,6 +101,10 @@ namespace DwarfCorp
             if (RechargeTimer.HasTriggered)
             {
                 PlayNoise(pos);
+                if (HitParticles != "")
+                {
+                    PlayState.ParticleManager.Trigger(HitParticles, pos, Color.White, 5);
+                }
             }
         }
 
@@ -114,6 +125,10 @@ namespace DwarfCorp
                 if (body != null)
                 {
                     PlayNoise(body.LocalTransform.Translation);
+                    if (HitParticles != "")
+                    {
+                        PlayState.ParticleManager.Trigger(HitParticles, body.LocalTransform.Translation, Color.White, 5);
+                    }
 
                     if (HitAnimation != null)
                     {

@@ -83,17 +83,22 @@ namespace DwarfCorp
                 yield return Status.Fail;
             }
 
-            if (Zone.AddItem(createdItems[0]))
+            foreach (Body b in createdItems)
             {
-                Creature.NoiseMaker.MakeNoise("Hurt", Creature.AI.Position);
-                Creature.Stats.NumItemsGathered++;
-                yield return Status.Success;
+                if (Zone.AddItem(b))
+                {
+                    Creature.NoiseMaker.MakeNoise("Hurt", Creature.AI.Position);
+                    Creature.Stats.NumItemsGathered++;
+                    yield return Status.Running;
+                }
+                else
+                {
+                    Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                    yield return Status.Fail;
+                }   
             }
-            else
-            {
-                Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                yield return Status.Fail;
-            }
+
+            yield return Status.Success;
         }
     }
 

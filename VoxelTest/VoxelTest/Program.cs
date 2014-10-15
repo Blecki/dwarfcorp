@@ -19,7 +19,7 @@ namespace DwarfCorp
         /// </summary>
         private static void Main(string[] args)
         {
-            try
+            //try
             {
                 using (DwarfGame game = new DwarfGame())
                 {
@@ -28,9 +28,9 @@ namespace DwarfCorp
 
                 SignalShutdown();
             }
-            catch (Exception exception)
+            //catch (Exception exception)
             {
-                WriteExceptionLog(exception);
+                //WriteExceptionLog(exception);
             }
 
         }

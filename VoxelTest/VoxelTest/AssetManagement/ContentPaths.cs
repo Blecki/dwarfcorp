@@ -1,4 +1,5 @@
-﻿using DwarfCorp.GameStates;
+﻿using System.Collections.Generic;
+using DwarfCorp.GameStates;
 
 namespace DwarfCorp
 {
@@ -44,7 +45,7 @@ namespace DwarfCorp
             public static string splash2 = Program.CreatePath("Particles", "splash2");
             public static string stone_particle = Program.CreatePath("Particles", "stone_particle");
             public static string green_flame = Program.CreatePath("Particles", "green_flame");
-
+            public static string star_particle = Program.CreatePath("Particles", "bigstar_particle");
         }
         public class Effects
         {
@@ -55,6 +56,31 @@ namespace DwarfCorp
             public static string flash = Program.CreatePath("Effects", "flash");
             public static string rings = Program.CreatePath("Effects", "ring");
         }
+
+        public class Text
+        {
+            public enum TextType
+            {
+                Adjectives,
+                Animals,
+                FirstNames,
+                LastNames,
+                Nouns,
+                Verbs
+            }
+
+            public static Dictionary<TextType, string> Texts = new Dictionary<TextType, string>()
+            {
+                {TextType.Adjectives, Program.CreatePath("Text", "adjectives.txt")},
+                {TextType.Animals,  Program.CreatePath("Text","animals.txt")},
+                {TextType.FirstNames,  Program.CreatePath("Text","firstnames.txt")},
+                {TextType.LastNames,  Program.CreatePath("Text","lastnames.txt")},
+                {TextType.Nouns,  Program.CreatePath("Text","nouns.txt")},
+                {TextType.Verbs,  Program.CreatePath("Text","verbs.txt")}
+
+            };
+        }
+
         public class Entities
         {
             public class Animals
@@ -123,6 +149,8 @@ namespace DwarfCorp
             {
                 public static string coinpiles = Program.CreatePath("Entities", "DwarfObjects", "coinpiles");
                 public static string beartrap = Program.CreatePath("Entities", "DwarfObjects", "beartrap");
+                public static string underconstruction = Program.CreatePath("Entities", "DwarfObjects", "underconstruction");
+                public static string constructiontape = Program.CreatePath("Entities", "DwarfObjects", "constructiontape");
             }
 
             public class Furniture

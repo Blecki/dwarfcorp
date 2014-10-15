@@ -62,6 +62,12 @@ namespace DwarfCorp
         public string Alliance { get; set; }
         public List<CreatureAI> SelectedMinions { get; set; }
 
+
+        public static List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, GameMaster.ToolMode action)
+        {
+            return minions.Where(creature => creature.Stats.CurrentClass.HasAction(action)).ToList();
+        }
+
         public void CollideMinions(GameTime time)
         {
             foreach (CreatureAI minion in Minions)
@@ -98,7 +104,7 @@ namespace DwarfCorp
             List<BuildOrder> removals = (from d in DigDesignations
                                           let vref = d.Vox
                                           let v = vref
-                                          where v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty"
+                                          where v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty" || v.Type.IsInvincible
                                           select d).ToList();
 
             foreach (BuildOrder v in removals)

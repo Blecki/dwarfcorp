@@ -132,13 +132,18 @@ namespace DwarfCorp.GameStates
         public List<Color> GenerateDefaultColors()
         {
             List<Color> toReturn = new List<Color>();
-            for (int h = 0; h < 255; h+= 16)
+            for (int h = 0; h < 255; h += 16)
             {
                 for (int v = 64; v < 255; v += 64)
                 {
-                    toReturn.Add(new HSLColor((float)h, 255.0f, (float)v));   
+                    for (int s = 128; s < 255; s += 32)
+                    {
+                        toReturn.Add(new HSLColor((float) h, (float) s, (float) v));
+                    }
+
                 }
             }
+        
             return toReturn;
         }
 
@@ -188,9 +193,9 @@ namespace DwarfCorp.GameStates
             {
                 "$Interjection",
                 ", the ",
-                "$Color",
+                "$Adjective",
                 " ",
-                "$Animal",
+                "$Noun",
                 "s ",
                 "$Verb",
                 "!"
@@ -199,7 +204,7 @@ namespace DwarfCorp.GameStates
             {
                 "$Verb",
                 " my ",
-                "$Bodypart",
+                "$Noun",
                 ", my ",
                 "$Family",
                 "!"
@@ -221,9 +226,9 @@ namespace DwarfCorp.GameStates
             {
                 "$Interjection",
                 " ... the ",
-                "$Material",
+                "$Adjective",
                 " ",
-                "$Place",
+                "$Noun",
                 "!"
             };
             templates.Add(adverbweverb);
@@ -240,11 +245,11 @@ namespace DwarfCorp.GameStates
         {
             string[] partners =
             {
-                "$MaleName",
+                "$DwarfName",
                 " ",
                 "&",
                 " ",
-                "$MaleName",
+                "$DwarfName",
                 ",",
                 " ",
                 "$Corp"
@@ -257,13 +262,13 @@ namespace DwarfCorp.GameStates
             };
             string[] animalPart =
             {
-                "$Animal",
+                "$Noun",
                 " ",
-                "$Bodypart"
+                "$Noun"
             };
             string[] nameAndSons =
             {
-                "$MaleName",
+                "$DwarfName",
                 " ",
                 "&",
                 " ",
@@ -274,7 +279,7 @@ namespace DwarfCorp.GameStates
             {
                 "$Color",
                 " ",
-                "$Bodypart",
+                "$Noun",
                 " ",
                 "&",
                 " ",
@@ -301,15 +306,15 @@ namespace DwarfCorp.GameStates
             {
                 "$Material",
                 " ",
-                "$Animal",
+                "$Noun",
                 " ",
                 "$Corp"
             };
             string[] materialBody =
             {
-                "$Material",
+                "$Adjective",
                 " ",
-                "$Bodypart",
+                "$Noun",
                 " ",
                 "$Corp"
             };
@@ -317,7 +322,7 @@ namespace DwarfCorp.GameStates
             {
                 "$Corp",
                 " of the ",
-                "$Material",
+                "$Adjective",
                 " ",
                 "$Place",
                 "s"

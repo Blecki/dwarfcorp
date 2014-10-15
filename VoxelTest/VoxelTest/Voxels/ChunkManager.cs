@@ -906,6 +906,12 @@ namespace DwarfCorp
 
             message = "Cleaning Up.";
         }
+
+        public void UpdateBounds()
+        {
+            List<BoundingBox> boundingBoxes = chunkData.ChunkMap.Select(chunkPair => chunkPair.Value.GetBoundingBox()).ToList();
+            Bounds = MathFunctions.GetBoundingBox(boundingBoxes);
+        }
     }
 
 }

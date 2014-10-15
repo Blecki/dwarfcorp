@@ -117,4 +117,14 @@ Content\Entities\Dwarf\Sprites\dwarf-wizard.xnb
 Content\Audio\vegetation_break.xnb
 Content\Audio\trap.xnb
 Content\Audio\hammer.xnb
+Content\Entities\DwarfObjects\constructiontape.xnb
+Content\Entities\DwarfObjects\underconstruction.xnb
+Content\Particles\bigstar_particle.xnb
+Content\Particles\star_particle.xnb
 Content\Music\dwarfcorp.wma
+Content\Text\animals.txt
+Content\Text\adjectives.txt
+Content\Text\verbs.txt
+Content\Text\nouns.txt
+Content\Text\lastnames.txt
+Content\Text\firstnames.txt

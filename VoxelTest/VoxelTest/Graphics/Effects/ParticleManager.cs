@@ -113,10 +113,11 @@ namespace DwarfCorp
             {
                 new Point(0, 0)
             };
-
+            Texture2D tex = TextureManager.GetTexture(assetName);
             EmitterData data = new EmitterData
             {
-                Animation = new Animation(GameState.Game.GraphicsDevice, TextureManager.GetTexture(assetName), name, 32, 32, frm, true, Color.White, 1.0f, 1.0f, 1.0f, false),
+
+                Animation = new Animation(GameState.Game.GraphicsDevice, tex, name, tex.Width, tex.Height, frm, true, Color.White, 1.0f, 1.0f, 1.0f, false),
                 ConstantAccel = new Vector3(0, 3, 0),
                 LinearDamping = 0.9f,
                 AngularDamping = 0.99f,
