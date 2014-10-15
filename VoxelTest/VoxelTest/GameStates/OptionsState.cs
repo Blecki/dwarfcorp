@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace DwarfCorp.GameStates
 {
@@ -22,7 +24,7 @@ namespace DwarfCorp.GameStates
         public Dictionary<string, DisplayMode> DisplayModes { get; set; }
         public Dictionary<string, int> AAModes { get; set; }
         public GroupBox CurrentBox { get; set; }
-        public ListSelector TabSelector { get; set; }
+        public TabSelector TabSelector { get; set; }
 
         public OptionsState(DwarfGame game, GameStateManager stateManager) :
             base(game, "OptionsState", stateManager)
@@ -53,22 +55,21 @@ namespace DwarfCorp.GameStates
             Label label = new Label(GUI, Layout, "Options", GUI.TitleFont);
             Layout.SetComponentPosition(label, 0, 0, 1, 1);
 
-            TabSelector = new ListSelector(GUI, MainWindow)
-            {
-                LocalBounds = new Rectangle(10, 50, 100, 100),
-                DrawPanel = false
-            };
-            TabSelector.AddItem("Graphics");
-            TabSelector.Label = "- Categories -";
-            TabSelector.OnItemClicked += tabSelector_OnItemClicked;
+            TabSelector = new TabSelector(GUI, Layout, 6);
+            Layout.SetComponentPosition(TabSelector, 0, 1, 6, 8);
 
-            GroupBox graphicsBox = new GroupBox(GUI, Layout, "Graphics");
+            DwarfCorp.TabSelector.Tab graphicsTab = TabSelector.AddTab("Graphics");
+
+            GroupBox graphicsBox = new GroupBox(GUI, graphicsTab, "Graphics")
+            {
+                WidthSizeMode = GUIComponent.SizeMode.Fit,
+                HeightSizeMode = GUIComponent.SizeMode.Fit
+            };
+
             Categories["Graphics"] = graphicsBox;
             CurrentBox = graphicsBox;
 
             GridLayout graphicsLayout = new GridLayout(GUI, graphicsBox, 6, 5);
-
-            Layout.SetComponentPosition(graphicsBox, 1, 0, 5, 8);
 
 
             Label resolutionLabel = new Label(GUI, graphicsLayout, "Resolution", GUI.DefaultFont)
@@ -267,13 +268,14 @@ namespace DwarfCorp.GameStates
             graphicsLayout.SetComponentPosition(particlePhysics, 0, 5, 1, 1);
 
 
-            GroupBox graphicsBox2 = new GroupBox(GUI, Layout, "Graphics II")
+
+            TabSelector.Tab graphics2Tab = TabSelector.AddTab("Graphics II");
+            GroupBox graphicsBox2 = new GroupBox(GUI, graphics2Tab, "Graphics II")
             {
-                IsVisible = false
+                HeightSizeMode = GUIComponent.SizeMode.Fit,
+                WidthSizeMode = GUIComponent.SizeMode.Fit
             };
             Categories["Graphics II"] = graphicsBox2;
-            TabSelector.AddItem("Graphics II");
-
             GridLayout graphicsLayout2 = new GridLayout(GUI, graphicsBox2, 6, 5);
 
             Checkbox moteBox = new Checkbox(GUI, graphicsLayout2, "Generate Motes", GUI.DefaultFont, GameSettings.Default.GrassMotes)
@@ -295,13 +297,14 @@ namespace DwarfCorp.GameStates
             graphicsLayout2.SetComponentPosition(numMotes, 0, 1, 1, 1);
             graphicsLayout2.SetComponentPosition(motesSlider, 1, 1, 1, 1);
             motesSlider.OnValueModified += MotesSlider_OnValueModified;
-
-            GroupBox gameplayBox = new GroupBox(GUI, Layout, "Gameplay")
+            TabSelector.Tab gameplayTab = TabSelector.AddTab("Gameplay");
+            GroupBox gameplayBox = new GroupBox(GUI, gameplayTab, "Gameplay")
             {
-                IsVisible = false
+                WidthSizeMode = GUIComponent.SizeMode.Fit,
+                HeightSizeMode = GUIComponent.SizeMode.Fit
             };
             Categories["Gameplay"] = gameplayBox;
-            TabSelector.AddItem("Gameplay");
+
             GridLayout gameplayLayout = new GridLayout(GUI, gameplayBox, 6, 5);
 
             Label moveSpeedLabel = new Label(GUI, gameplayLayout, "Camera Move Speed", GUI.DefaultFont);
@@ -349,6 +352,7 @@ namespace DwarfCorp.GameStates
             gameplayLayout.SetComponentPosition(introBox, 1, 2, 1, 1);
             introBox.OnCheckModified += IntroBox_OnCheckModified;
 
+            /*
             Label chunkWidthLabel = new Label(GUI, gameplayLayout, "Chunk Width", GUI.DefaultFont);
             Slider chunkWidthSlider = new Slider(GUI, gameplayLayout, "", GameSettings.Default.ChunkWidth, 4, 256, Slider.SliderMode.Integer)
             {
@@ -401,13 +405,17 @@ namespace DwarfCorp.GameStates
             gameplayLayout.SetComponentPosition(worldScaleLabel, 0, 5, 1, 1);
             gameplayLayout.SetComponentPosition(worldScaleSlider, 1, 5, 1, 1);
             worldScaleSlider.OnValueModified += WorldScaleSlider_OnValueModified;
+            */
 
-            GroupBox audioBox = new GroupBox(GUI, Layout, "Audio")
+            TabSelector.Tab audioTab = TabSelector.AddTab("Audio");
+
+            GroupBox audioBox = new GroupBox(GUI, audioTab, "Audio")
             {
-                IsVisible = false
+              WidthSizeMode = GUIComponent.SizeMode.Fit,
+              HeightSizeMode = GUIComponent.SizeMode.Fit
             };
             Categories["Audio"] = audioBox;
-            TabSelector.AddItem("Audio");
+
             GridLayout audioLayout = new GridLayout(GUI, audioBox, 6, 5);
 
             Label masterLabel = new Label(GUI, audioLayout, "Master Volume", GUI.DefaultFont);
@@ -428,20 +436,21 @@ namespace DwarfCorp.GameStates
             audioLayout.SetComponentPosition(musicSlider, 1, 2, 1, 1);
             musicSlider.OnValueModified += MusicSlider_OnValueModified;
 
-            // Keys bug?
-            GroupBox keysBox = new GroupBox(GUI, Layout, "Keys")
+            DwarfCorp.TabSelector.Tab keysTab = TabSelector.AddTab("Keys");
+            GroupBox keysBox = new GroupBox(GUI, keysTab, "Keys")
             {
-                IsVisible = false
+                WidthSizeMode = GUIComponent.SizeMode.Fit,
+                HeightSizeMode = GUIComponent.SizeMode.Fit
             };
             Categories["Keys"] = keysBox;
-            TabSelector.AddItem("Keys");
+
             KeyEditor keyeditor = new KeyEditor(GUI, keysBox, new KeyManager(), 8, 4);
             GridLayout keyLayout = new GridLayout(GUI, keysBox, 1, 1);
             keyLayout.SetComponentPosition(keyeditor, 0, 0, 1, 1);
             keyLayout.UpdateSizes();
             keyeditor.UpdateLayout();
 
-
+            /*
             GroupBox customBox = new GroupBox(GUI, Layout, "Customization")
             {
                 IsVisible = false
@@ -455,6 +464,7 @@ namespace DwarfCorp.GameStates
 
             AssetManager assetManager = new AssetManager(GUI, customBoxLayout, assets);
             customBoxLayout.SetComponentPosition(assetManager, 0, 0, 5, 6);
+            */
 
             Button apply = new Button(GUI, Layout, "Apply", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Check));
             Layout.SetComponentPosition(apply, 5, 9, 1, 1);
@@ -464,7 +474,9 @@ namespace DwarfCorp.GameStates
             Layout.SetComponentPosition(back, 4, 9, 1, 1);
             back.OnClicked += back_OnClicked;
 
-
+            Layout.UpdateSizes();
+            TabSelector.UpdateSize();
+            TabSelector.SetTab("Graphics");
             base.OnEnter();
         }
 
@@ -571,7 +583,7 @@ namespace DwarfCorp.GameStates
         private void tabSelector_OnItemClicked()
         {
             CurrentBox.IsVisible = false;
-            CurrentBox = Categories[TabSelector.SelectedItem.Label];
+            //CurrentBox = Categories[TabSelector.SelectedItem.Label];
             CurrentBox.IsVisible = true;
             Layout.SetComponentPosition(CurrentBox, 1, 0, 5, 8);
         }
