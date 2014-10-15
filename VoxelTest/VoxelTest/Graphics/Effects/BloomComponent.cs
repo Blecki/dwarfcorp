@@ -88,9 +88,9 @@ namespace BloomPostprocess
         protected override void LoadContent()
         {
             spriteBatch = DwarfCorp.DwarfGame.SpriteBatch;
-            bloomExtractEffect = Game.Content.Load<Effect>(Program.CreatePath("Shaders", "BloomExtract"));
-            bloomCombineEffect = Game.Content.Load<Effect>(Program.CreatePath("Shaders","BloomCombine"));
-            gaussianBlurEffect = Game.Content.Load<Effect>(Program.CreatePath("Shaders","GaussianBlur"));
+            bloomExtractEffect = Game.Content.Load<Effect>(ContentPaths.Shaders.BloomExtract);
+            bloomCombineEffect = Game.Content.Load<Effect>(ContentPaths.Shaders.BloomCombine);
+            gaussianBlurEffect = Game.Content.Load<Effect>(ContentPaths.Shaders.GaussianBlur);
 
             // Look up the resolution and format of our main backbuffer.
             PresentationParameters pp = GraphicsDevice.PresentationParameters;

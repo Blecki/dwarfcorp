@@ -88,7 +88,7 @@ namespace DwarfCorp
                 BoxPrimitives["chair"] = new BoxPrimitive(graphics, 0.5f, 0.25f, 0.5f, chairCoords);
                 m_initialized = false;
 
-                Texture2D treeSheet = TextureManager.GetTexture(Program.CreatePath("Entities", "Plants", "pine"));
+                Texture2D treeSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.pine);
                 List<Matrix> treeTransforms = new List<Matrix>();
                 List<Color> treeTints = new List<Color>();
                 treeTransforms.Add(Matrix.Identity);

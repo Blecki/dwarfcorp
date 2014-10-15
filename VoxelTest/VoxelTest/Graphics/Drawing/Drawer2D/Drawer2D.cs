@@ -24,7 +24,7 @@ namespace DwarfCorp
         public Drawer2D(ContentManager content, GraphicsDevice graphics)
         {
             Content = content;
-            DefaultFont = content.Load<SpriteFont>(Program.CreatePath("Fonts", "Default"));
+            DefaultFont = content.Load<SpriteFont>(ContentPaths.Fonts.Default);
             Pixel = new Texture2D(graphics, 1, 1);
             Color[] white = new Color[1];
             white[0] = Color.White;

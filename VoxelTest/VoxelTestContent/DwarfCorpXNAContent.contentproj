@@ -842,6 +842,21 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Fonts\font1-w.bmp">
+      <Name>font1-w</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>FontTextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Fonts\font1-w-2x.bmp">
+      <Name>font1-w-2x</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>FontTextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Fonts\font1-w-4x.bmp">
+      <Name>font1-w-4x</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>FontTextureProcessor</Processor>
+    </Compile>
     <Content Include="Text\animals.txt">
       <Name>animals</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

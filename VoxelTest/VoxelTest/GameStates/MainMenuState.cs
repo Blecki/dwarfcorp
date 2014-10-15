@@ -145,12 +145,12 @@ namespace DwarfCorp.GameStates
         {
             if (!MaintainState)
             {
-                DefaultFont = Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Default"));
+                DefaultFont = Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
                 GUI = new DwarfGUI(Game, DefaultFont,
-                    Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Title")),
-                    Game.Content.Load<SpriteFont>(Program.CreatePath("Fonts", "Small")), Input);
+                    Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default),
+                    Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
                 IsInitialized = true;
-                Logo = TextureManager.GetTexture(Program.CreatePath("Logos", "gamelogo"));
+                Logo = TextureManager.GetTexture(ContentPaths.Logos.gamelogo);
 
                 ListSelect = new ListSelector(GUI, GUI.RootComponent)
                 {
