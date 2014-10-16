@@ -75,7 +75,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>o/x1XgrFQbGhF5d2vAlxGt5WE4Y=</dsig:DigestValue>
+        <dsig:DigestValue>7zaFeOjBB5MVNooaL++fRK8fyQE=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -712,22 +712,22 @@
       <dsig:DigestValue>uJaGOK9AO9PyYGGnPfI641Og14M=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Entities\Plants\wheat.xnb" size="554">
+  <file name="Content\Entities\Plants\wheat.xnb" size="638">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>3W/2/DvJ4qEHEuSbQoXrW69E1zE=</dsig:DigestValue>
+      <dsig:DigestValue>IhnOWWNIk4IArBaBjzoMh19syoA=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Entities\Resources\resources.xnb" size="3596">
+  <file name="Content\Entities\Resources\resources.xnb" size="2864">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>yefCKuep2h4P5xCzNUvi7HXD02c=</dsig:DigestValue>
+      <dsig:DigestValue>GhINC9nl+KLGJJ6tVPAAXy2MCBY=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Entities\Skeleton\necro.xnb" size="6080">
@@ -856,13 +856,13 @@
       <dsig:DigestValue>vK8wFA6+k1sOFQPVJGMBN6AcXWw=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\GUI\icons.xnb" size="6112">
+  <file name="Content\GUI\icons.xnb" size="5436">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>2pkf05jox7WDZE8Vz8WgFIpwlfo=</dsig:DigestValue>
+      <dsig:DigestValue>xLV8uLgtqFa/Z+dtXn70c9lvsss=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\GUI\indicators.xnb" size="1194">
