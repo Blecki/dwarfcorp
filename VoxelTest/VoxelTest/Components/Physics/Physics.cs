@@ -59,6 +59,7 @@ namespace DwarfCorp
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
             BoundingBox bounds = chunks.Bounds;
+            bounds.Max.Y += 50;
             if(Velocity.LengthSquared() < 0.1f)
             {
                 IsSleeping = true;

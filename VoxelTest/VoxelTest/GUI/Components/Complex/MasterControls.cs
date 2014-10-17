@@ -171,10 +171,7 @@ namespace DwarfCorp
      
                 foreach(KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons.Where(pair => pair.Key != GameMaster.ToolMode.SelectUnits))
                 {
-                    if (SelectedUnitsHaveCapability(pair.Key))
-                    {
-                        pair.Value.IsVisible = true;
-                    }
+                    pair.Value.IsVisible = SelectedUnitsHaveCapability(pair.Key);
                 }
                  
             }

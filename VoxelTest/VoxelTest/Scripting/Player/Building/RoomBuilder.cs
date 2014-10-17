@@ -49,7 +49,7 @@ namespace DwarfCorp
         public bool IsInRoom(Voxel v)
         {
             Voxel vRef = v;
-            return DesignatedRooms.Any(r => r.ContainsVoxel(vRef)) || Faction.IsInStockpile(v) || Faction.GetIntersectingRooms(v.GetBoundingBox()).Count > 0;
+            return DesignatedRooms.Any(r => r.ContainsVoxel(vRef)) || Faction.IsInStockpile(v);
         }
 
         public bool IsBuildDesignation(Voxel v)
@@ -163,22 +163,22 @@ namespace DwarfCorp
             List<Room> toDestroy = new List<Room>();
             Voxel vRef = voxDestroyed;
 
-            lock(DesignatedRooms)
+            lock (DesignatedRooms)
             {
-                foreach(Room r in DesignatedRooms)
+                foreach (Room r in DesignatedRooms)
                 {
                     r.RemoveVoxel(vRef);
-                    if(r.Voxels.Count == 0)
+                    if (r.Voxels.Count == 0)
                     {
                         toDestroy.Add(r);
                     }
                 }
-            }
 
-            foreach(Room r in toDestroy)
-            {
-                DesignatedRooms.Remove(r);
-                r.Destroy();
+                foreach (Room r in toDestroy)
+                {
+                    DesignatedRooms.Remove(r);
+                    r.Destroy();
+                }
             }
         }
 

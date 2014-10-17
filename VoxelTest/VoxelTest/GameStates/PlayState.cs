@@ -354,8 +354,12 @@ namespace DwarfCorp.GameStates
         /// </summary>
         /// <param name="numDwarves">Number of dwarves to generate</param>
         /// <param name="c">The chunk the dwarves belong to</param>
-        public void CreateInitialDwarves(int numDwarves, VoxelChunk c)
+        public void CreateInitialDwarves(VoxelChunk c)
         {
+            int numWorkers = 3;
+            int numAxes = 1;
+            int numCrafters = 1;
+
             Vector3 g = c.WorldToGrid(Camera.Position);
             // Find the height of the world at the camera
             float h = c.GetFilledVoxelGridHeightAt((int) g.X, ChunkHeight - 1, (int) g.Z);
@@ -366,11 +370,29 @@ namespace DwarfCorp.GameStates
             Camera.UpdateViewMatrix();
 
             // Spawn the dwarves above the terrain
-            for(int i = 0; i < numDwarves; i++)
+            for (int i = 0; i < numWorkers; i++)
             {
                 Vector3 dorfPos = new Vector3(Camera.Position.X + (float) Random.NextDouble(), h + 10, Camera.Position.Z + (float) Random.NextDouble());
                 Physics creat = (Physics) EntityFactory.GenerateDwarf(dorfPos,
                     ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.Worker], 0);
+
+                creat.Velocity = new Vector3(1, 0, 0);
+            }
+
+            for (int i = 0; i < numAxes; i++)
+            {
+                Vector3 dorfPos = new Vector3(Camera.Position.X + (float)Random.NextDouble(), h + 10, Camera.Position.Z + (float)Random.NextDouble());
+                Physics creat = (Physics)EntityFactory.GenerateDwarf(dorfPos,
+                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.AxeDwarf], 0);
+
+                creat.Velocity = new Vector3(1, 0, 0);
+            }
+
+            for (int i = 0; i < numCrafters; i++)
+            {
+                Vector3 dorfPos = new Vector3(Camera.Position.X + (float)Random.NextDouble(), h + 10, Camera.Position.Z + (float)Random.NextDouble());
+                Physics creat = (Physics)EntityFactory.GenerateDwarf(dorfPos,
+                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.CraftsDwarf], 0);
 
                 creat.Velocity = new Vector3(1, 0, 0);
             }
@@ -830,7 +852,7 @@ namespace DwarfCorp.GameStates
             {
                 VoxelChunk c = ChunkManager.ChunkData.GetVoxelChunkAtWorldLocation(Camera.Position);
                 GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager, Camera.Position.X, Camera.Position.Z, 3);
-                CreateInitialDwarves(5, c);
+                CreateInitialDwarves(c);
                 EntityFactory.CreateBalloon(Camera.Position + new Vector3(0, 1000, 0),  new Vector3(Camera.Position.X, ChunkHeight, Camera.Position.Z), ComponentManager, Content, GraphicsDevice, new ShipmentOrder(0, null), Master.Faction);
             }
 
@@ -849,11 +871,20 @@ namespace DwarfCorp.GameStates
             }
         }
 
+        public void WaitForGraphicsDevice()
+        {
+            while (Game.GraphicsDevice == null)
+            {
+                Thread.Sleep(100);
+            }
+        }
+
         /// <summary>
         /// Executes the entire game loading sequence, and draws loading messages.
         /// </summary>
         public void Load()
         {
+            WaitForGraphicsDevice();
             //try
             {
                 EnableScreensaver = true;
@@ -960,12 +991,15 @@ namespace DwarfCorp.GameStates
                     Vector3 gridPos = chunk.WorldToGrid(worldPos);
                     int h = chunk.GetFilledHeightOrWaterAt((int) gridPos.X + dx, (int) gridPos.Y, (int) gridPos.Z + dz);
 
-                    averageHeight += h;
-                    count++;
+                    if (h > 0)
+                    {
+                        averageHeight += h;
+                        count++;
+                    }
                 }
             }
 
-            averageHeight = (int) Math.Round(((float) averageHeight/(float) count)) + 2;
+            averageHeight = (int) Math.Round(((float) averageHeight/(float) count));
             
 
             // Next, create the balloon port by deciding which voxels to fill.
@@ -976,6 +1010,12 @@ namespace DwarfCorp.GameStates
                 {
                     Vector3 worldPos = new Vector3(pos.X + dx, pos.Y, pos.Z + dz);
                     VoxelChunk chunk = chunkManager.ChunkData.GetVoxelChunkAtWorldLocation(worldPos);
+
+                    if (chunk == null)
+                    {
+                        continue;
+                    }
+
                     Vector3 gridPos = chunk.WorldToGrid(worldPos);
                     int h = chunk.GetFilledVoxelGridHeightAt((int) gridPos.X, (int) gridPos.Y, (int) gridPos.Z);
 
