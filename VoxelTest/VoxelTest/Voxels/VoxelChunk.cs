@@ -1297,15 +1297,13 @@ namespace DwarfCorp
 
         public int GetFilledHeightOrWaterAt(int x, int y, int z)
         {
-            int invalid = -1;
-
             if(!IsCellValid(x, y, z))
             {
-                return invalid;
+                return -1;
             }
             else
             {
-                for(int h = y; h > 0; h--)
+                for(int h = y; h >= 0; h--)
                 {
                     if (Data.Types[Data.IndexAt(x, h, z)] != 0 || Data.Water[Data.IndexAt(x, h, z)].WaterLevel > 1)
                     {
@@ -1314,7 +1312,7 @@ namespace DwarfCorp
                 }
             }
 
-            return invalid;
+            return -1;
         }
 
         public bool NeedsViewingLevelChange()

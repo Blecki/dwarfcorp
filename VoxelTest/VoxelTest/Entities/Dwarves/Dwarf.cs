@@ -62,6 +62,12 @@ namespace DwarfCorp
             CharacterSprite.CreateAnimation(Creature.CharacterMode.Falling, OrientedAnimation.Orientation.Left, dwarfSprites, 15.0f, frameWidth, frameHeight, 5, 1),
             CharacterSprite.CreateAnimation(Creature.CharacterMode.Falling, OrientedAnimation.Orientation.Backward, dwarfSprites, 15.0f, frameWidth, frameHeight, 7, 1),
 
+            CharacterSprite.CreateAnimation(Creature.CharacterMode.Sleeping, OrientedAnimation.Orientation.Forward, dwarfSprites, 4.0f, frameWidth, frameHeight, 0, 4, 5, 6, 7),
+            CharacterSprite.CreateAnimation(Creature.CharacterMode.Sleeping, OrientedAnimation.Orientation.Right, dwarfSprites, 4.0f, frameWidth, frameHeight, 0, 4, 5, 6, 7),
+            CharacterSprite.CreateAnimation(Creature.CharacterMode.Sleeping, OrientedAnimation.Orientation.Left, dwarfSprites, 4.0f, frameWidth, frameHeight, 0, 4, 5, 6, 7),
+            CharacterSprite.CreateAnimation(Creature.CharacterMode.Sleeping, OrientedAnimation.Orientation.Backward, dwarfSprites, 4.0f, frameWidth, frameHeight, 0, 4, 5, 6, 7),
+
+
             CharacterSprite.CreateAnimation(Creature.CharacterMode.Sitting, OrientedAnimation.Orientation.Forward, dwarfSprites, 15.0f, frameWidth, frameHeight, 4, 3),
             CharacterSprite.CreateAnimation(Creature.CharacterMode.Sitting, OrientedAnimation.Orientation.Right, dwarfSprites, 15.0f, frameWidth, frameHeight, 6, 3),
             CharacterSprite.CreateAnimation(Creature.CharacterMode.Sitting, OrientedAnimation.Orientation.Left, dwarfSprites, 15.0f, frameWidth, frameHeight, 5, 3),

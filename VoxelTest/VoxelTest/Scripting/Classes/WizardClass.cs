@@ -169,7 +169,8 @@ namespace DwarfCorp
         {
             Actions = new List<GameMaster.ToolMode>()
             {
-                GameMaster.ToolMode.Gather
+                GameMaster.ToolMode.Gather,
+                GameMaster.ToolMode.Attack
             };
         }
 

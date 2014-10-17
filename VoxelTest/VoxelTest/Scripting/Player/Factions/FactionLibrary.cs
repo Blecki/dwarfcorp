@@ -25,7 +25,7 @@ namespace DwarfCorp
                 Alliance = "Dwarf",
                 CreatureTypes = new List<string> { "Dwarf", "AxeDwarf"}
             };
-            Factions["Player"].Economy = new Economy(Factions["Player"], 100.0f, state, companyName, companyMotto, companyLogo, companyColor);
+            Factions["Player"].Economy = new Economy(Factions["Player"], 300.0f, state, companyName, companyMotto, companyLogo, companyColor);
 
             Factions["Goblins"] = new Faction
             {

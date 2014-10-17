@@ -139,6 +139,7 @@ namespace DwarfCorp
 
             Health.CurrentValue = (creature.Health.Hp - creature.Health.MinHealth) / (creature.Health.MaxHealth - creature.Health.MinHealth);
 
+            Energy.CurrentValue = (float) (100*Math.Sin(PlayState.Time.GetTotalHours()*Math.PI / 24.0f));
             if(!IsAsleep)
             {
                 Energy.CurrentValue -= dt * creature.Stats.Tiredness;

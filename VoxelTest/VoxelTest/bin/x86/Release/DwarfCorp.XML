@@ -295,7 +295,7 @@
             Called by the loading thread just before the game is loaded.
             </summary>
         </member>
-        <member name="M:DwarfCorp.GameStates.PlayState.CreateInitialDwarves(System.Int32,DwarfCorp.VoxelChunk)">
+        <member name="M:DwarfCorp.GameStates.PlayState.CreateInitialDwarves(DwarfCorp.VoxelChunk)">
             <summary>
             Generates a random set of dwarves in the given chunk.
             </summary>

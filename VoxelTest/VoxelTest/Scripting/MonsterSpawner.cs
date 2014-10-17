@@ -20,7 +20,8 @@ namespace DwarfCorp
         }
 
         public List<Faction> SpawnFactions = new List<Faction>();
-        public float SpawnProbability = 0.0001f;
+        public int LastSpawnHour = 0;
+        public int SpawnRate = 2;
 
         public MonsterSpawner()
         {
@@ -33,13 +34,14 @@ namespace DwarfCorp
 
         public void Update(GameTime t)
         {
-            bool shouldSpawn = PlayState.Time.IsNight() && MathFunctions.Rand() < SpawnProbability;
+            bool shouldSpawn = PlayState.Time.IsNight() && Math.Abs(PlayState.Time.CurrentDate.TimeOfDay.Hours - LastSpawnHour) > SpawnRate;
 
             if (shouldSpawn)
             {
                 int numToSpawn = PlayState.Random.Next(5) + 1;
                 Spawn(GenerateSpawnEvent(SpawnFactions[PlayState.Random.Next(SpawnFactions.Count)],
                     PlayState.ComponentManager.Factions.Factions["Player"], numToSpawn));
+                LastSpawnHour = PlayState.Time.CurrentDate.TimeOfDay.Hours;
             }
         }
 

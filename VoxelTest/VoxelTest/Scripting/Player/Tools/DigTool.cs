@@ -39,7 +39,7 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    if(!Player.Faction.IsDigDesignation(v))
+                    if(!Player.Faction.IsDigDesignation(v) && !Player.Faction.RoomBuilder.IsInRoom(v))
                     {
                         BuildOrder d = new BuildOrder
                         {

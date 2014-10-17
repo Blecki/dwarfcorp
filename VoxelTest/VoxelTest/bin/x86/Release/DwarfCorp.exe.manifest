@@ -68,14 +68,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1041920">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1042432">
       <assemblyIdentity name="DwarfCorp" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>7zaFeOjBB5MVNooaL++fRK8fyQE=</dsig:DigestValue>
+        <dsig:DigestValue>DHtWmK2OjRqEIOfBqVHlXeGR2TI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -763,25 +763,25 @@
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>cqrw2zOgXKm+QmvNZlGPwpg8Yxk=</dsig:DigestValue>
+      <dsig:DigestValue>6unxcrmY6jzmBNjzLgwqMl2WjB0=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Fonts\font1-w-2x.xnb" size="2478">
+  <file name="Content\Fonts\font1-w-2x.xnb" size="2560">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>mo2MN3MOuk8jKX5QC5y9NI8pxP0=</dsig:DigestValue>
+      <dsig:DigestValue>B+QvRUVKy3FzB4bjRefdjHSOaK8=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Fonts\font1-w-4x.xnb" size="3304">
+  <file name="Content\Fonts\font1-w-4x.xnb" size="2638">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>xT7FNNV6bpcj8I7MSv00ymTwE4Y=</dsig:DigestValue>
+      <dsig:DigestValue>cNlmSM/4bb/YtOVa+0MmRALDvP0=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Fonts\Small.xnb" size="4642">
