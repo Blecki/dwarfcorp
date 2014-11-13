@@ -75,7 +75,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>5dQt9V9yb4U9aXoIISAB+yVj7hE=</dsig:DigestValue>
+        <dsig:DigestValue>0qQ8EjMpzOa6BRFgzQXJJr/7LRc=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -1216,13 +1216,13 @@
       <dsig:DigestValue>fGfmR+z/SZeXvFE4SQRpy6lL8Pk=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Terrain\terrain_tiles.xnb" size="38872">
+  <file name="Content\Terrain\terrain_tiles.xnb" size="39050">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>zdUU8OeJOtw4qLYTheEpiJu/aRM=</dsig:DigestValue>
+      <dsig:DigestValue>LBD1pNh4QodipFC+7G8+SaL5q4g=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Terrain\water_normal.xnb" size="96976">
