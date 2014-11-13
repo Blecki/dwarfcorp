@@ -857,6 +857,10 @@
       <Importer>TextureImporter</Importer>
       <Processor>FontTextureProcessor</Processor>
     </Compile>
+    <Content Include="Text\adverbs.txt">
+      <Name>adverbs</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Text\animals.txt">
       <Name>animals</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -891,6 +895,12 @@
       <Name>firstnames</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Music\dwarfcorp_ogg.ogg">
+      <Name>dwarfcorp_ogg</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 

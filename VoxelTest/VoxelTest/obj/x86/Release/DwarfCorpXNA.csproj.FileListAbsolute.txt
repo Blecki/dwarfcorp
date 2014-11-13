@@ -216,7 +216,6 @@ C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Dwarf
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\DwarfCorp.exe
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\DwarfCorp.pdb
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Newtonsoft.Json.dll
-C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\obj\x86\Release\DwarfCorpXNA.csprojResolveAssemblyReference.cache
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\obj\x86\Release\Microsoft.Xna.Framework.RuntimeProfile.txt
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\obj\x86\Release\DwarfCorp.exe.manifest
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\obj\x86\Release\DwarfCorp.application
@@ -256,3 +255,6 @@ C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Conte
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\font1-w.xnb
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\font1-w-2x.xnb
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\font1-w-4x.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Text\adverbs.txt
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Music\dwarfcorp_ogg.ogg
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\obj\x86\Release\DwarfCorpXNA.csprojResolveAssemblyReference.cache
