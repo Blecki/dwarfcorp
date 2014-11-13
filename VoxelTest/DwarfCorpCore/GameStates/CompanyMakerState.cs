@@ -69,7 +69,7 @@ namespace DwarfCorp.GameStates
 
             Button randomButton = new Button(GUI, Layout, "Random", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
             {
-                ToolTip = "Randomly generate a motto"
+                ToolTip = "Randomly generate a name"
             };
             Layout.SetComponentPosition(randomButton, 2, 1, 1, 1);
             randomButton.OnClicked += randomButton_OnClicked;
@@ -85,7 +85,7 @@ namespace DwarfCorp.GameStates
 
             Button randomButton2 = new Button(GUI, Layout, "Random", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
             {
-                ToolTip = "Randomly generate a Name"
+                ToolTip = "Randomly generate a motto"
             };
             Layout.SetComponentPosition(randomButton2, 2, 2, 1, 1);
             randomButton2.OnClicked += randomButton2_OnClicked;
