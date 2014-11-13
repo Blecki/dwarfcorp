@@ -166,7 +166,7 @@ namespace DwarfCorp.GameStates
 
             ComboBox aaBox = new ComboBox(GUI, graphicsLayout)
             {
-                ToolTip = "Determines how much antialiasing (smoothing) there is.\nHigher means more smooth, but is slower"
+                ToolTip = "Determines how much antialiasing (smoothing) there is.\nHigher means more smooth, but is slower."
             };
             aaBox.AddValue("None");
             aaBox.AddValue("2");
@@ -201,14 +201,14 @@ namespace DwarfCorp.GameStates
 
             Checkbox reflectEntities = new Checkbox(GUI, graphicsLayout, "Reflect Entities", GUI.DefaultFont, GameSettings.Default.DrawEntityReflected)
             {
-                ToolTip = "When checked, water will reflect tress, dwarves, etc.."
+                ToolTip = "When checked, water will reflect trees, dwarves, etc."
             };
             reflectEntities.OnCheckModified += reflectEntities_OnCheckModified;
             graphicsLayout.SetComponentPosition(reflectEntities, 3, 1, 1, 1);
 
             Checkbox refractEntities = new Checkbox(GUI, graphicsLayout, "Refract Entities", GUI.DefaultFont, GameSettings.Default.DrawEntityReflected)
             {
-                ToolTip = "When checked, water will reflect tress, dwarves, etc.."
+                ToolTip = "When checked, water will reflect trees, dwarves, etc."
             };
             refractEntities.OnCheckModified += refractEntities_OnCheckModified;
             graphicsLayout.SetComponentPosition(refractEntities, 3, 2, 1, 1);
@@ -261,7 +261,7 @@ namespace DwarfCorp.GameStates
 
             Checkbox particlePhysics = new Checkbox(GUI, graphicsLayout, "Particle Body", GUI.DefaultFont, GameSettings.Default.ParticlePhysics)
             {
-                ToolTip = "When checked, some particles will bounce off terrain"
+                ToolTip = "When checked, some particles will bounce off terrain."
             };
 
             particlePhysics.OnCheckModified += particlePhysics_OnCheckModified;
@@ -289,7 +289,7 @@ namespace DwarfCorp.GameStates
             Label numMotes = new Label(GUI, graphicsLayout2, "Num Motes", GUI.DefaultFont);
             Slider motesSlider = new Slider(GUI, graphicsLayout2, "", (int) (GameSettings.Default.NumMotes * 100), 0, 1000, Slider.SliderMode.Integer)
             {
-                ToolTip = "Determines the maximum amount of trees/grass will be visible."
+                ToolTip = "Determines the maximum amount of trees/grass that will be visible."
             };
 
 
@@ -329,7 +329,7 @@ namespace DwarfCorp.GameStates
 
             Checkbox invertZoomBox = new Checkbox(GUI, gameplayLayout, "Invert Zoom", GUI.DefaultFont, GameSettings.Default.InvertZoom)
             {
-                ToolTip = "When checked, the scroll wheel is reveresed\nfor zooming."
+                ToolTip = "When checked, the scroll wheel is reversed\nfor zooming."
             };
 
             gameplayLayout.SetComponentPosition(invertZoomBox, 2, 1, 1, 1);

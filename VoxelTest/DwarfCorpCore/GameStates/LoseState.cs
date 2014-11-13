@@ -46,7 +46,7 @@ namespace DwarfCorp.GameStates
 
             Label text = new Label(GUI, Layout,
                 "The heady days of exploration for " + PlayState.Master.Faction.Economy.Company.Name +
-                " are no more. Our stock is through the floor. Our investors have all jumped ship! \n We are going to have to sell the company.\n If only we had shipped more goods...",
+                " are no more.\n Our stock is through the floor. Our investors have all jumped ship! \n We are going to have to sell the company. If only we had shipped more goods...",
                 GUI.DefaultFont)
             {
                 WordWrap = true

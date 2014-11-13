@@ -172,7 +172,7 @@ namespace DwarfCorp.GameStates
 
             Button genButton = new Button(GUI, layout, "Generate", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
             {
-                ToolTip = "Generatea  new random world."
+                ToolTip = "Generate a new random world."
             };
             layout.SetComponentPosition(genButton, 3, 6, 1, 1);
 

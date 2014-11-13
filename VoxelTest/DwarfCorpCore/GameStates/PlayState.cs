@@ -227,8 +227,8 @@ namespace DwarfCorp.GameStates
             "The most lucrative resources are beneath the earth.",
             "Dwarves can swim!",
             "Stockpiles are free!",
-            "Make sure to sell your goods before midnight!",
-            "Dwarves prefer to eat in common rooms, but they will eat out stockpiles if necessary.",
+            "Payday occurs at midnight. Make sure to sell your goods before then!",
+            "Dwarves prefer to eat in common rooms, but they will eat out of stockpiles if necessary.",
             "The minimap can be closed and opened.",
             "Monsters are shown on the minimap.",
             "Axedwarves are better at chopping trees than miners."

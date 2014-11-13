@@ -60,13 +60,13 @@ namespace DwarfCorp
             string[] firstNames = GetDefaultStrings(ContentPaths.Text.TextType.FirstNames);
             string[] lastNames = GetDefaultStrings(ContentPaths.Text.TextType.LastNames);
             TextAtom animals = new TextAtom("$Animal", GetDefaultStrings(ContentPaths.Text.TextType.Animals));
-            TextAtom bodyparts = new TextAtom("$Bodypart", "Hair", "Ear", "Eye", "Nose", "Teeth", "Tounge", "Chin", "Beard", "Moustache", "Chest", "Shoulders", "Arm", "Hand", "Finger", "Thumb", "Stomach", "Heart", "Liver", "Leg", "Foot", "Toe");
+            TextAtom bodyparts = new TextAtom("$Bodypart", "Hair", "Ear", "Eye", "Nose", "Teeth", "Tongue", "Chin", "Beard", "Moustache", "Chest", "Shoulders", "Arm", "Hand", "Finger", "Thumb", "Stomach", "Heart", "Liver", "Leg", "Foot", "Toe");
             TextAtom family = new TextAtom("$Family", "Father", "Mother", "Son", "Daughter", "Brother", "Sister", "Uncle", "Aunt", "Grandfather", "Grandmother", "Cousin", "Nephew", "Niece");
             TextAtom corp = new TextAtom("$Corp", "Ltd.", "Partnership", "Corp", "Company", "Corporation", "Inc.", "Incorporated", "Holdings");
             TextAtom land = new TextAtom("$Place", "Island", "Peninsula", "Continent", "Realm", "City", "Burg", "Town", "Village", "Mountain", "Hills", "Desert", "Well", "Marsh", "Vale", "Street");
             TextAtom maleName = new TextAtom("$MaleName", firstNames);
-            TextAtom colors = new TextAtom("$Color", "Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Violet", "Indigo", "Black", "Grey", "White");
-            TextAtom materials = new TextAtom("$Material", "Iron", "Stone", "Gold", "Steel", "Wood", "Ice", "Dirt", "Water", "Fire");
+            TextAtom colors = new TextAtom("$Color", "Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Violet", "Indigo", "Black", "Grey", "White", "Pink", "Brown", "Cyan");
+            TextAtom materials = new TextAtom("$Material", "Iron", "Stone", "Gold", "Steel", "Wood", "Ice", "Dirt", "Water", "Fire", "Bronze");
             TextAtom adverb = new TextAtom("$Adverb", GetDefaultStrings(ContentPaths.Text.TextType.Adverbs));
             TextAtom verb = new TextAtom("$Verb", GetDefaultStrings(ContentPaths.Text.TextType.Verbs));
             TextAtom adjective = new TextAtom("$Adjective", GetDefaultStrings(ContentPaths.Text.TextType.Adjectives));
@@ -78,7 +78,7 @@ namespace DwarfCorp
             TextAtom goblinFamily = new TextAtom("$GoblinFamily", "Ugdush", "Gashur", "Balcmurz", "Orgbag", "Azod", "Rat", "Lukil" );
             TextAtom professions = new TextAtom("$Professions", "Urchin", "Homeless", "Fishmonger", "Beggar", "Factory Worker", "Student", "Fugitive", "Convict", "Carpenter", "Roofer", "Ditch Digger", "Disgraced Noble", "Policeman", "Conscript", "Eunuch", "Prostitute", "Grifter", "Bum", "Vagrant", "Vagabond", "Hobo", "Inebriate", "Servant", "Slave", "Congressdwarf", "Mayor", "Councildwarf");
             TextAtom magical = new TextAtom("$Magical", "University", "School", "Magerium", "Magicians", "Arcana", "Institute", "Learning Center", "Library", "Museum");
-            TextAtom military = new TextAtom("$Military", "Thugs", "Band", "Company", "Heroes", "Strongdwarves", "Mercenaries", "Dwarfs-at-arms", "Shield", "Axe", "Sword", "Army", "Fighters", "Knights");
+            TextAtom military = new TextAtom("$Military", "Thugs", "Band", "Company", "Heroes", "Strongdwarves", "Mercenaries", "Dwarves-at-arms", "Shield", "Axe", "Sword", "Army", "Fighters", "Knights");
             TextAtom industrial = new TextAtom("$Industry", "Industries", "Materials", "Techcenter", "Factories", "Machines", "Parts", "Hammers");
             AddAtom(animals);
             AddAtom(bodyparts);

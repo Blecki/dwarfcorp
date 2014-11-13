@@ -31,7 +31,7 @@ namespace DwarfCorp.GameStates
         {
             ListSelect.ClearItems();
             ListSelect.AddItem("Hills World", "Create a hilly (Debug) world.");
-            ListSelect.AddItem("Cliffs World", "Create a hilly (Debug) world.");
+            ListSelect.AddItem("Cliffs World", "Create a cliff-y (Debug) world.");
             ListSelect.AddItem("Flat World", "Create a flat (Debug) world.");
             ListSelect.AddItem("Ocean World", "Create an ocean (Debug) world.");
             ListSelect.AddItem("Back", "Back to the Main Menu");
