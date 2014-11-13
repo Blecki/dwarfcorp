@@ -241,6 +241,10 @@ namespace DwarfCorp
             {
                 CurrentCharacterMode = CharacterMode.Sleeping;
             }
+            else if (currentCharacterMode == CharacterMode.Sleeping)
+            {
+                CurrentCharacterMode = CharacterMode.Idle;
+            }
 
             if (!Status.Energy.IsUnhappy())
             {

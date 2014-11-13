@@ -257,4 +257,3 @@ C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Conte
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\font1-w-4x.xnb
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Text\adverbs.txt
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Music\dwarfcorp_ogg.ogg
-C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\obj\x86\Release\DwarfCorpXNA.csprojResolveAssemblyReference.cache

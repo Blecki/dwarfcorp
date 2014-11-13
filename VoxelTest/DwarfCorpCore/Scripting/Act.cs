@@ -103,10 +103,6 @@ namespace DwarfCorp
             return Enumerator.Current;
         }
 
-        public virtual void OnCanceled()
-        {
-            
-        }
 
         public virtual void Initialize()
         {
@@ -122,6 +118,15 @@ namespace DwarfCorp
         public virtual Task AsTask()
         {
             return new ActWrapperTask(this);
+        }
+
+        public virtual void OnCanceled()
+        {
+            if(Children != null)
+                foreach (Act child in Children)
+                {
+                    child.OnCanceled();
+                }
         }
     }
 

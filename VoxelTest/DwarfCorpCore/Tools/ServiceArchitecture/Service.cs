@@ -33,6 +33,8 @@ namespace DwarfCorp
         [JsonIgnore]
         public Thread ServiceThreadObject = null;
 
+        public bool ExitThreads = false;
+
         public Service()
         {
             Subscribers = new List<Subscriber<TRequest, TResponse>>();
@@ -69,6 +71,12 @@ namespace DwarfCorp
         {
             try
             {
+                if (ServiceThreadObject != null)
+                {
+                    ExitThreads = true;
+                    ServiceThreadObject.Join();
+                    ExitThreads = false;
+                }
                 ServiceThreadObject = new Thread(this.ServiceThread);
                 ServiceThreadObject.Start();
             }
@@ -76,6 +84,16 @@ namespace DwarfCorp
             {
                 Console.Error.WriteLine(e.Message);
             }
+        }
+
+
+
+        public void Die()
+        {
+            ExitThreads = true;
+
+            if(ServiceThreadObject != null)
+                ServiceThreadObject.Join();
         }
 
         public void AddRequest(TRequest request, uint subscriberID)
@@ -91,7 +109,7 @@ namespace DwarfCorp
                 Program.ShutdownEvent
             };
 
-            while (!DwarfGame.ExitGame)
+            while (!DwarfGame.ExitGame && !ExitThreads)
             {
                 EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
 
