@@ -11,14 +11,14 @@ float4x4 xLightView;
 float4x4 xLightProj;
 float4x4 xReflectionView;
 
-float xWaterOpacity = 0.3f;
-float xWaterSloshOpacity = 0.7f;
+float xWaterOpacity;
+float xWaterSloshOpacity;
 
-float xWaterMinOpacity = 0.0f;
+float xWaterMinOpacity;
 
 float4x4 xProjection;
 float4x4 xWorld;
-bool xEnableLighting;
+int xEnableLighting;
 
 Texture xWaterBumpMap;
 
@@ -31,18 +31,19 @@ float xTime;
 float xWindForce;
 float3 xWindDirection;
 float xTimeOfDay;
-bool xEnableFog = true;
+int xEnableFog;
 
-float xFogStart = 50;
-float xFogEnd = 80;
-float3 xFogColor = float3(0.5f, 0.5f, 0.5f);
-float4 xRippleColor = float4(0.1, 0.1, 0.1, 0);
-float4 xFlatColor = float4(0, 0, 0, 0);
+float xFogStart;
+float xFogEnd;
+float3 xFogColor;
+float4 xRippleColor;
+float4 xFlatColor;
+
 //------- Technique: Clipping Plane Fix --------
 
-bool Clipping;
-bool GhostMode;
-bool SelfIllumination;
+int Clipping;
+int GhostMode;
+int SelfIllumination;
 float4 ClipPlane0;
 
 
@@ -80,8 +81,6 @@ Texture xAmbientGradient;
 Texture xTorchGradient;
 Texture xRefractionMap;
 float4 xTint;
-float3 xLightDirection = float3(0, 1, 0);
-
 
 sampler SunSampler = sampler_state { texture = <xSunGradient>; magfilter = POINT; minfilter = POINT; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
 
@@ -255,8 +254,6 @@ TVertexToPixel TexturedVS( float4 inPos : POSITION,  float2 inTexCoords: TEXCOOR
 	Output.Color = inColor * tint;
 	Output.Color.a = tint.a;
 	
-
-	[branch]
 	if(xEnableLighting)
 	{
 		for (int i = 0; i < MAX_LIGHTS; i++)
@@ -269,13 +266,11 @@ TVertexToPixel TexturedVS( float4 inPos : POSITION,  float2 inTexCoords: TEXCOOR
 		}
 	}
 	
-	[branch]
 	if(!xEnableLighting)
 	{
 		Output.Color = saturate(Output.Color + LIGHT_COLOR / 999.0f);
 	}
-	
-	[branch]
+
 	if (xEnableFog)
 		Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
 	
@@ -330,20 +325,17 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
     Output.Color =  tex2D(SunSampler, float2(PSIn.Color.r * (1.0f - xTimeOfDay), 0.5f));
 	Output.Color.a *= PSIn.Color.a;
 	Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.Color.b,  0.5f));
+	Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f));
 	saturate(Output.Color.rgb);
-
-	Output.Color.rgb *=  tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f));
     
 	float4 texColor = tex2D(TextureSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
 	float4 illumColor = tex2D(IllumSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
 
 	Output.Color.rgba *= texColor;
 
-	
 	if(SelfIllumination)
 		Output.Color.rgba = lerp(Output.Color.rgba, texColor, illumColor.r); 
 	
-
 	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
 
 	clip((texColor.a - 0.5));
@@ -460,9 +452,7 @@ WVertexToPixel WaterVS(float4 inPos : POSITION, float2 inTex: TEXCOORD0, float4 
      float4x4 preWorldViewProjection = mul (xWorld, preViewProjection);
      float4x4 preReflectionViewProjection = mul (xReflectionView, xProjection);
      float4x4 preWorldReflectionViewProjection = mul (xWorld, preReflectionViewProjection);
-	 inPos.y += sin(xTime * 2.0f) * sin(inPos.x) * cos(inPos.z + xTime) * 0.05f * (1.0f - inColor.g) ;
-	 inPos.x += cos(xTime * 2.0f) * sin(inPos.x) * cos(inPos.z + xTime) * 0.05f * (1.0f - inColor.g) ;
-	 inPos.z += sin(xTime * 2.0f) * sin(inPos.x) * cos(inPos.z + xTime) * 0.05f * (1.0f - inColor.g) ;
+
      Output.Position = mul(inPos, preWorldViewProjection);
 
      Output.ReflectionMapSamplingPos = mul(inPos, preWorldReflectionViewProjection);
@@ -532,7 +522,6 @@ WPixelToFrame WaterPS(WVertexToPixel PSIn)
     float2 perturbatedRefrTexCoords = ProjectedRefrTexCoords + perturbation;    
     float4 refractiveColor = tex2D(RefractionSampler, perturbatedRefrTexCoords);
 
-
     float3 eyeVector = normalize(xCamPos - PSIn.Position3D);
 
     float3 normalVector = (bumpColor.rbg-0.5f);
@@ -542,19 +531,10 @@ WPixelToFrame WaterPS(WVertexToPixel PSIn)
     
     float4 dullColor = tex2D(WrappedTextureSampler, PSIn.TextureSamplingPos);
     float4 sloshColor = tex2D(WrappedTextureSampler1, PSIn.TextureSamplingPos + perturbation);
-	//float4 puddleColor = tex2D(TextureSampler2, PSIn.UnMovedTextureSamplingPos);
-
 
 	float r = PSIn.Color.r;
     Output.Color = lerp(combinedColor, dullColor, max(xWaterOpacity  * PSIn.Color.b * (1.0f - xTimeOfDay), xWaterMinOpacity));    
     Output.Color = lerp(Output.Color, sloshColor, r * xWaterSloshOpacity * (1.0f - xTimeOfDay));
-
-
-    //float3 reflectionVector = -reflect(xLightDirection, normalVector);
-    //float specular = dot(normalize(reflectionVector), normalize(eyeVector));
-    //specular = pow(abs(specular), 256);        
-    //Output.Color.rgb += specular * (1.0f - xTimeOfDay);
-
 
     Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
 

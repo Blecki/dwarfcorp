@@ -5,13 +5,18 @@ using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+namespace DwarfCorpCore
+{
+    
+}
+
 namespace DwarfCorp
 {
 
 #if WINDOWS || XBOX
     internal static class Program
     {
-        public static string Version = "1 . 1 . 1";
+        public static string Version = "Alpha 1 . 1 . 2";
         public static char DirChar = Path.DirectorySeparatorChar;
 
         /// <summary>
@@ -28,10 +33,12 @@ namespace DwarfCorp
 
                 SignalShutdown();
             }
-            //catch (Exception exception)
+            /*
+            catch (Exception exception)
             {
-                //WriteExceptionLog(exception);
+                WriteExceptionLog(exception);
             }
+             */
 
         }
 
@@ -85,7 +92,7 @@ namespace DwarfCorp
 
         public static ManualResetEvent ShutdownEvent = new ManualResetEvent(false);
 
-        private static void SignalShutdown()
+        public static void SignalShutdown()
         {
             DwarfGame.ExitGame = true;
             ShutdownEvent.Set();

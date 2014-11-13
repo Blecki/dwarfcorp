@@ -43,7 +43,7 @@ namespace DwarfCorp
         public VoxelListener(ComponentManager manager, GameComponent parent, ChunkManager chunkManager, Voxel vref) :
             base("VoxelListener", parent)
         {
-            Chunk = chunkManager.ChunkData.ChunkMap[vref.ChunkID];
+            Chunk = vref.Chunk;
             VoxelID = new Point3(vref.GridPosition);
             Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
             ChunkID = Chunk.ID;
