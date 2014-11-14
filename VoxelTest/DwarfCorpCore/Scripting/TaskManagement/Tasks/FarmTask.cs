@@ -22,14 +22,19 @@ namespace DwarfCorp.Scripting.TaskManagement.Tasks
             Priority = PriorityType.Low;
         }
 
+        public override bool ShouldRetry(Creature agent)
+        {
+            return false;
+        }
+
         public override bool IsFeasible(Creature agent)
         {
-            return true;
+            return FarmToWork != null;
         }
 
         public override Act CreateScript(Creature agent)
         {
-            return new FarmAct(agent.AI) {FarmToWork = FarmToWork};
+            return new FarmAct(agent.AI) {FarmToWork = FarmToWork, Name = "Work " + FarmToWork.ID};
         }
 
         public override float ComputeCost(Creature agent)

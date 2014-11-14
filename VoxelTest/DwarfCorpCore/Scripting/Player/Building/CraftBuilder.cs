@@ -147,7 +147,7 @@ namespace DwarfCorp
                                 };
 
                                 newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
-
+                                PlayState.ParticleManager.Trigger("puff", pos, Color.White, 10);
                                 if (IsValid(newDesignation))
                                 {
                                     AddDesignation(newDesignation);

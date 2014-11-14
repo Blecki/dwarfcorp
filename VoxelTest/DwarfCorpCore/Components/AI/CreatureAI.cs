@@ -215,6 +215,7 @@ namespace DwarfCorp
                 CurrentTask.SetupScript(Creature);
                 CurrentTask = newTask;
                 newTask.SetupScript(Creature);
+                Tasks.Remove(newTask);
             }
         }
 
