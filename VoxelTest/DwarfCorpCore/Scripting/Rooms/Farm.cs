@@ -145,7 +145,10 @@ namespace DwarfCorp
             List<CreatureAI> minions = PlayState.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)).ToList();
             foreach (CreatureAI creature in minions)
             {
-                creature.Tasks.Add(new FarmTask(this));
+                FarmTask task = new FarmTask(this);
+
+                if (!creature.Tasks.Contains(task))
+                    creature.Tasks.Add(task);
             }
 
             if (minions.Count == 0)

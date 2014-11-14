@@ -70,11 +70,11 @@ namespace DwarfCorp
                 Farm.FarmTile closestTile = FarmToWork.GetNearestFreeFarmTile(Creature.AI.Position);
                 if (closestTile != null)
                 {
-                    Tree = new ForLoop(new Sequence(
-                                        new Wrap(GetClosestTile),
-                                        new GoToVoxelAct("ClosestVoxel", PlanAct.PlanType.Adjacent, Creature.AI),
-                                        new StopAct(Creature.AI),
-                                        new Wrap(() => FarmATile("ClosestTile"))), 3, false);
+                    Tree = new Sequence(
+                        new Wrap(GetClosestTile),
+                        new GoToVoxelAct("ClosestVoxel", PlanAct.PlanType.Adjacent, Creature.AI),
+                        new StopAct(Creature.AI),
+                        new Wrap(() => FarmATile("ClosestTile")));
                 }
             }
 

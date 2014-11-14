@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -23,7 +24,7 @@ namespace DwarfCorp
         public override IEnumerable<Status> Run()
         {
             Body item = EntityFactory.GenerateCraftItem(ItemType, Voxel.Position);
-
+            PlayState.ParticleManager.Trigger("puff", Voxel.Position + Vector3.One * 0.5f, Color.White, 10);
             if (item == null)
             {
                 yield return Status.Fail;
