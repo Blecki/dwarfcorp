@@ -1156,11 +1156,11 @@ namespace DwarfCorp
             }
         }
 
-        public void GetSharedVertices(Voxel v, VoxelVertex vertex, List<KeyValuePair<Voxel, List<VoxelVertex>>> vertices)
+        public void GetSharedVertices(Voxel v, VoxelVertex vertex, List<KeyValuePair<Voxel, List<VoxelVertex>>> vertices, List<Voxel> neighbors )
         {
             vertices.Clear();
 
-            List<Voxel> neighbors = new List<Voxel>();
+         
             GetNeighborsVertex(vertex, v, neighbors);
 
             Vector3 myDelta = vertexDeltas[(int) vertex];

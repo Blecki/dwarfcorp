@@ -20,7 +20,7 @@ namespace DwarfCorp.GameStates
     /// <summary>
     /// This is the main game state for actually playing the game.
     /// </summary>
-    public class PlayState : GameState
+    public class PlayState : GameState, IDisposable
     {
         #region fields
         // The random seed of the whole game
@@ -1395,7 +1395,7 @@ namespace DwarfCorp.GameStates
             ChunkManager.Destroy();
             ComponentManager.RootComponent.Delete();
             GC.Collect();
-            
+            PlanService.Die();
             StateManager.States["PlayState"] = new PlayState(Game, StateManager);
             StateManager.CurrentState = "";
             StateManager.PushState("MainMenuState");
@@ -1790,6 +1790,11 @@ namespace DwarfCorp.GameStates
             }
         }
 
+        public void Dispose()
+        {
+            Tilesheet.Dispose();
+            pixel.Dispose();
+        }
     }
 
 }

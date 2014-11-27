@@ -47,7 +47,7 @@ namespace DwarfCorp
         private Thread WaterThread { get; set; }
 
         private readonly Timer generateChunksTimer = new Timer(0.5f, false);
-        private readonly Timer visibilityChunksTimer = new Timer(0.1f, false);
+        private readonly Timer visibilityChunksTimer = new Timer(0.03f, false);
         private readonly Timer waterUpdateTimer = new Timer(0.1f, false);
 
         public BoundingBox Bounds { get; set; }
@@ -153,7 +153,7 @@ namespace DwarfCorp
             generateChunksTimer = new Timer(GameSettings.Default.ChunkGenerateTime, false);
             GameSettings.Default.ChunkRebuildTime = 0.1f;
             Timer rebuildChunksTimer = new Timer(GameSettings.Default.ChunkRebuildTime, false);
-            GameSettings.Default.VisibilityUpdateTime = 0.25f;
+            GameSettings.Default.VisibilityUpdateTime = 0.05f;
             visibilityChunksTimer = new Timer(GameSettings.Default.VisibilityUpdateTime, false);
             generateChunksTimer.HasTriggered = true;
             rebuildChunksTimer.HasTriggered = true;
