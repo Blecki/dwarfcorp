@@ -259,7 +259,6 @@ namespace DwarfCorp
             for(int i = 0; i < toReturn.Count; i ++)
             {
                 VoxelVertex currentVertex = VoxelChunk.GetNearestDelta(toReturn[i].Position);
-                neighborsVertex.Clear();
                 chunk.GetNeighborsVertex(currentVertex, voxel, neighborsVertex);
                 int index = chunk.Data.IndexAt(x, y, z);
                 float averageWaterLevel = chunk.Data.Water[index].WaterLevel;

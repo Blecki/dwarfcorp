@@ -215,6 +215,7 @@ namespace DwarfCorp
                 CurrentTask.SetupScript(Creature);
                 CurrentTask = newTask;
                 newTask.SetupScript(Creature);
+                Tasks.Remove(newTask);
             }
         }
 
@@ -225,6 +226,23 @@ namespace DwarfCorp
 
             OrderEnemyAttack();
             PreEmptTasks();
+
+            if (Status.Energy.IsUnhappy() && PlayState.Time.IsNight())
+            {
+                Task toReturn = new SatisfyTirednessTask();
+                toReturn.SetupScript(Creature);
+                if (!Tasks.Contains(toReturn))
+                    Tasks.Add(toReturn);
+            }
+
+            if (Status.Hunger.IsUnhappy())
+            {
+                Task toReturn = new SatisfyHungerTask();
+                toReturn.SetupScript(Creature);
+                if (!Tasks.Contains(toReturn))
+                    Tasks.Add(toReturn);
+            }
+
 
             if(CurrentTask != null && CurrentAct != null)
             {
@@ -304,20 +322,7 @@ namespace DwarfCorp
         {
             if(GatherManager.VoxelOrders.Count == 0 && (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()))
             {
-                if (Status.Energy.IsUnhappy() && PlayState.Time.IsNight())
-                {
-                    Task toReturn = new SatisfyTirednessTask();
-                    toReturn.SetupScript(Creature);
-                    return toReturn;
-                }
-
-                if (Status.Hunger.IsUnhappy())
-                {
-                    Task toReturn =  new SatisfyHungerTask();
-                    toReturn.SetupScript(Creature);
-                    return toReturn;
-                }
-
+               
                 List<Room> rooms = Faction.GetRooms();
               
                 if (IdleTimer.HasTriggered && rooms.Count > 0 && MathFunctions.Rand(0, 1) < 0.1f)

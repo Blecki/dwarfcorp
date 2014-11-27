@@ -50,16 +50,19 @@ namespace DwarfCorp.Scripting.LeafActs
                 {
                     Creature.AI.Position = TeleportLocation;
                 }
+                Creature.CurrentCharacterMode = Creature.CharacterMode.Sleeping;
                 Creature.Status.Energy.CurrentValue += Dt * RechargeRate;
-                if (Creature.Status.Health.CurrentValue < startingHealth || Creature.Sensors.Enemies.Count > 0)
+                if (Creature.Status.Health.CurrentValue < startingHealth)
                 {
                     Creature.Status.IsAsleep = false;
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                    Creature.OverrideCharacterMode = false;
                     yield return Status.Fail;
                 }
 
                 Creature.Status.Health.CurrentValue = Creature.Status.Health.MaxValue;
                 Creature.Status.IsAsleep = true;
+                Creature.OverrideCharacterMode = false;
                 yield return Status.Running;
             }
             Creature.AI.AddThought(Thought.ThoughtType.Slept);

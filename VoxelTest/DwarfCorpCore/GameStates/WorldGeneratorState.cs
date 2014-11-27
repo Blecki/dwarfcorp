@@ -12,7 +12,7 @@ namespace DwarfCorp.GameStates
     /// <summary>
     /// This game state allows the player to create randomly generated worlds to play in.
     /// </summary>
-    public class WorldGeneratorState : GameState
+    public class WorldGeneratorState : GameState, IDisposable
     {
         public float TemperatureScale { get; set; }
         public float RainfallScale { get; set; }
@@ -1098,6 +1098,11 @@ namespace DwarfCorp.GameStates
 
 
             base.Render(gameTime);
+        }
+
+        public void Dispose()
+        {
+            ImageMutex.Dispose();   
         }
     }
 

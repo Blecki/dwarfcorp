@@ -13,7 +13,7 @@ namespace DwarfCorp
     /// Represents a collection of voxels with a surface mesh. Efficiently culls away
     /// invisible voxels, and properly constructs ramps.
     /// </summary>
-    public class VoxelListPrimitive : GeometricPrimitive
+    public class VoxelListPrimitive : GeometricPrimitive, IDisposable
     {
         public static ConcurrentDictionary<BoxFace, Vector3> FaceDeltas = new ConcurrentDictionary<BoxFace, Vector3>();
         private readonly Dictionary<BoxFace, bool> faceExists = new Dictionary<BoxFace, bool>();
@@ -1604,6 +1604,11 @@ namespace DwarfCorp
             const float epsilon = 0.001f;
 
             return accumulated.Select(vert => (vertexPos1 - (vert.Position)).LengthSquared()).Any(dist => dist < epsilon);
+        }
+
+        public void Dispose()
+        {
+            rebuildMutex.Dispose();
         }
     }
 

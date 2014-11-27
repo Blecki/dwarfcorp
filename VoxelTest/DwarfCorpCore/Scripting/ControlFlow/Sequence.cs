@@ -21,6 +21,8 @@ namespace DwarfCorp
             get { return Children[CurrentChildIndex]; }
         }
 
+  
+
         public Sequence()
         {
             

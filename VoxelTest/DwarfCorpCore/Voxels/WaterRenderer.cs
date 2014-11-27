@@ -16,7 +16,7 @@ namespace DwarfCorp
     /// <summary>
     /// Handles the drawing routines for liquids.
     /// </summary>
-    public class WaterRenderer
+    public class WaterRenderer : IDisposable
     {
         private RenderTarget2D refractionRenderTarget = null;
         private RenderTarget2D reflectionRenderTarget = null;
@@ -266,6 +266,14 @@ namespace DwarfCorp
                     }
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            reflectionRenderTarget.Dispose();
+            refractionRenderTarget.Dispose();
+            ReflectionMap.Dispose();
+            RefractionMap.Dispose();
         }
     }
 

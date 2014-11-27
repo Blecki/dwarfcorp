@@ -68,14 +68,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1065472">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1065984">
       <assemblyIdentity name="DwarfCorp" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>0qQ8EjMpzOa6BRFgzQXJJr/7LRc=</dsig:DigestValue>
+        <dsig:DigestValue>7oVMWPVBYwb4C1rlnXHdSrIcWp0=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -952,7 +952,7 @@
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>+evZQaC0CvXKPqWwvN9ZjsbVIrM=</dsig:DigestValue>
+      <dsig:DigestValue>7H795YmlM30nE9oVQ1qHnHNrgfA=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Music\dwarfcorp.xnb" size="127">
@@ -1081,49 +1081,49 @@
       <dsig:DigestValue>C+zuCrq2TgDV+DgvUw5g9Jjxh8A=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Shaders\BloomCombine.xnb" size="676">
+  <file name="Content\Shaders\BloomCombine.xnb" size="680">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>7NTwxhI+yh4Xpfr+TXpFCiS28XA=</dsig:DigestValue>
+      <dsig:DigestValue>2uDA8bbNavEiUKmYNTBeWskca2E=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Shaders\BloomExtract.xnb" size="600">
+  <file name="Content\Shaders\BloomExtract.xnb" size="594">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>w51NcG1AHGab8/uoEYzGft1ElMw=</dsig:DigestValue>
+      <dsig:DigestValue>ZeV0BJZCAn0j4pwZfgDKPLKIny4=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Shaders\GaussianBlur.xnb" size="676">
+  <file name="Content\Shaders\GaussianBlur.xnb" size="682">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>XTLndJ5+EQMuxD62hfhSAtPc7sM=</dsig:DigestValue>
+      <dsig:DigestValue>jQiQeOG6lABU8cG4ICQpUc5Or/Y=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Shaders\SkySphere.xnb" size="1110">
+  <file name="Content\Shaders\SkySphere.xnb" size="1114">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>K9BcsPh8KaawZQOVTLIzkRuIzYE=</dsig:DigestValue>
+      <dsig:DigestValue>03sV1XVm9R7vWF2ypWGODB7RYC0=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Shaders\TexturedShaders.xnb" size="6312">
+  <file name="Content\Shaders\TexturedShaders.xnb" size="6354">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>sK20av0G+VrtuDVXNZqaQ/w9BVQ=</dsig:DigestValue>
+      <dsig:DigestValue>IgZu1kEfe4RLspuGeAWqhZA0cF0=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Sky\day_sky.xnb" size="521158">
