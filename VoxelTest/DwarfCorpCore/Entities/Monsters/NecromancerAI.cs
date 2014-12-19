@@ -64,7 +64,7 @@ namespace DwarfCorp
             animatePosition.Translation = animatePosition.Translation - new Vector3(0, 1, 0);
             skeleton.Sprite.AnimationQueue.Add(new EaseMotion(1.0f, animatePosition, skeleton.Sprite.LocalTransform.Translation));
             PlayState.ParticleManager.Trigger("green_flame", pos, Color.White, 10);
-            SoundManager.PlaySound(ContentPaths.Audio.fire, pos, true);
+            SoundManager.PlaySound(ContentPaths.Audio.tinkle, pos, true);
         }
 
         public void GatherSkeletons()

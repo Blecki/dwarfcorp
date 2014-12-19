@@ -24,6 +24,8 @@ namespace DwarfCorp
 
         private bool firstIter = false;
 
+        public bool DestroyOnTimer = false;
+        public Timer DestroyTimer { get; set; }
 
 
         [OnDeserialized]
@@ -60,6 +62,18 @@ namespace DwarfCorp
                 }
                 firstIter = false;
             }
+
+            if (DestroyOnTimer)
+            {
+                DestroyTimer.Update(gameTime);
+
+                if (DestroyTimer.HasTriggered)
+                {
+                    Die();
+                    Chunk.MakeVoxel(VoxelID.X, VoxelID.Y, VoxelID.Z).Kill();
+                }
+            }
+
             base.Update(gameTime, chunks, camera);
         }
 

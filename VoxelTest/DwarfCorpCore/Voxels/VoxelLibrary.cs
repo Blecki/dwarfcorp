@@ -71,6 +71,7 @@ namespace DwarfCorp
             BoxPrimitive plankCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 0), new Point(4, 0), new Point(4, 0));
             BoxPrimitive waterCube = CreatePrimitive(graphics, cubeTexture, cubeTexture.Width, cubeTexture.Height, new Point(0, 0), new Point(0, 0), new Point(0, 0));
             BoxPrimitive cobblestoneCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 2), new Point(5, 2), new Point(5, 2));
+            BoxPrimitive magicCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 2), new Point(5, 2), new Point(5, 2));
             BoxPrimitive bedrockCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 2), new Point(6, 2), new Point(6, 2));
             BoxPrimitive brownTileCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 0), new Point(5, 0), new Point(5, 0));
             BoxPrimitive blueTileCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 0), new Point(6, 0), new Point(6, 0));
@@ -160,7 +161,23 @@ namespace DwarfCorp
 
 
             CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 9), new Point(4, 0), new Point(4, 0), plankType.TransitionTextures);
-            
+
+            VoxelType magicType = new VoxelType
+            {
+                Name = "Magic",
+                ProbabilityOfRelease = 0.0f,
+                ResourceToRelease = ResourceLibrary.ResourceType.Mana,
+                StartingHealth = 1,
+                ReleasesResource = true,
+                CanRamp = false,
+                IsBuildable = false,
+                ParticleType = "star_particle",
+                ExplosionSound = ContentPaths.Audio.wurp,
+                HasTransitionTextures = true
+            };
+
+
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 10), new Point(15, 10), new Point(15, 10), magicType.TransitionTextures);
 
 
             VoxelType scaffoldType = new VoxelType
@@ -394,11 +411,20 @@ namespace DwarfCorp
             RegisterType(scaffoldType, scaffoldCube);
             RegisterType(bedrockType, bedrockCube);
             RegisterType(coalType, coalCube);
+            RegisterType(magicType, magicCube);
 
             foreach (VoxelType type in VoxelType.TypeList)
             {
                 Types[type.Name] = type;
             }
+        }
+
+        public static void PlaceType(VoxelType type, Voxel voxel)
+        {
+            voxel.Type = type;
+            voxel.IsVisible = true;
+            voxel.Water = new WaterCell();
+            voxel.Health = voxel.Type.StartingHealth;
         }
 
 
