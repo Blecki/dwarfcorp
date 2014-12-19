@@ -876,6 +876,16 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Audio\wurp.wav">
+      <Name>wurp</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Audio\tinkle.wav">
+      <Name>tinkle</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
     <Content Include="Text\adverbs.txt">
       <Name>adverbs</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

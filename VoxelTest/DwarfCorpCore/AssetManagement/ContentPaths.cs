@@ -33,7 +33,8 @@ namespace DwarfCorp
             public static string trap = ProgramData.CreatePath("Audio", "trap");
             public static string vegetation_break = ProgramData.CreatePath("Audio", "vegetation_break");
             public static string hammer = ProgramData.CreatePath("Audio", "hammer");
-
+            public static string wurp = ProgramData.CreatePath("Audio", "wurp");
+            public static string tinkle = ProgramData.CreatePath("Audio", "tinkle");
         }
         public class Particles
         {

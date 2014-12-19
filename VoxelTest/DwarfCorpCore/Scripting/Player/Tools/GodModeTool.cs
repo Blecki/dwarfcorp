@@ -163,6 +163,18 @@ namespace DwarfCorp
                         vox.IsVisible = true;
                         vox.Water = new WaterCell();
                         vox.Health = vox.Type.StartingHealth;
+
+                        if (type == "Magic")
+                        {
+                            new VoxelListener(PlayState.ComponentManager, PlayState.ComponentManager.RootComponent,
+                                PlayState.ChunkManager, vox)
+                            {
+                                DestroyOnTimer = true,
+                                DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
+                            };
+                        }
+
+
                         chunksToRebuild.Add(vox.ChunkID);
                     }
                     else switch(command)
