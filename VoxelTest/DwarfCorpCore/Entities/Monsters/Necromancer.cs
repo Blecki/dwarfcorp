@@ -28,7 +28,7 @@ namespace DwarfCorp
             Sprite = new CharacterSprite(Graphics, Manager, "Necromancer Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 0.1f, 0)));
             foreach (Animation animation in Stats.CurrentClass.Animations)
             {
-                Sprite.AddAnimation(new Animation(animation, animation.SpriteSheet, GameState.Game.GraphicsDevice));
+                Sprite.AddAnimation(animation.Clone());
             }
 
 

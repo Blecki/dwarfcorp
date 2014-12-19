@@ -48,6 +48,17 @@ namespace DwarfCorp
         }
 
 
+        public override void OnBegin()
+        {
+
+        }
+
+        public override void OnEnd()
+        {
+
+        }
+
+
         public GodModeTool(DwarfGUI gui, GameMaster master)
         {
             GUI = gui;

@@ -423,6 +423,12 @@
     <Compile Include="..\DwarfCorpCore\Graphics\Primitives\BoxPrimitive.cs">
       <Link>Graphics\Primitives\BoxPrimitive.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\Graphics\Primitives\Composite.cs">
+      <Link>Graphics\Primitives\Composite.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Graphics\Primitives\CompositeAnimation.cs">
+      <Link>Graphics\Primitives\CompositeAnimation.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Graphics\Primitives\ExtendedVertex.cs">
       <Link>Graphics\Primitives\ExtendedVertex.cs</Link>
     </Compile>
@@ -525,12 +531,6 @@
     <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\BuildMenu.cs">
       <Link>GUI\Components\Complex\BuildMenu.cs</Link>
     </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\BuildPanel.cs">
-      <Link>GUI\Components\Complex\BuildPanel.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\BuildSelector.cs">
-      <Link>GUI\Components\Complex\BuildSelector.cs</Link>
-    </Compile>
     <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\CapitalPanel.cs">
       <Link>GUI\Components\Complex\CapitalPanel.cs</Link>
     </Compile>
@@ -558,6 +558,9 @@
     <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\KeyEditor.cs">
       <Link>GUI\Components\Complex\KeyEditor.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\MagicMenu.cs">
+      <Link>GUI\Components\Complex\MagicMenu.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\MasterControls.cs">
       <Link>GUI\Components\Complex\MasterControls.cs</Link>
     </Compile>
@@ -569,6 +572,9 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\ResourceInfoComponent.cs">
       <Link>GUI\Components\Complex\ResourceInfoComponent.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\SpellTreeDisplay.cs">
+      <Link>GUI\Components\Complex\SpellTreeDisplay.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\StockTicker.cs">
       <Link>GUI\Components\Complex\StockTicker.cs</Link>
@@ -702,6 +708,9 @@
     <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\GetResourcesAct.cs">
       <Link>Scripting\CompoundActs\GetResourcesAct.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\GoResearchSpellAct.cs">
+      <Link>Scripting\CompoundActs\GoResearchSpellAct.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\GoToChairAndSitAct.cs">
       <Link>Scripting\CompoundActs\GoToChairAndSitAct.cs</Link>
     </Compile>
@@ -828,6 +837,9 @@
     <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\PutResourceInZoneAct.cs">
       <Link>Scripting\LeafActs\PutResourceInZoneAct.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\ResearchSpellAct.cs">
+      <Link>Scripting\LeafActs\ResearchSpellAct.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\SearchFreeStockpileAct.cs">
       <Link>Scripting\LeafActs\SearchFreeStockpileAct.cs</Link>
     </Compile>
@@ -857,6 +869,24 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\WanderAct.cs">
       <Link>Scripting\LeafActs\WanderAct.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\Magic\DestroyBlockSpell.cs">
+      <Link>Scripting\Magic\DestroyBlockSpell.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\Magic\InspectSpell.cs">
+      <Link>Scripting\Magic\InspectSpell.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\Magic\PlaceBlockSpell.cs">
+      <Link>Scripting\Magic\PlaceBlockSpell.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\Magic\Spell.cs">
+      <Link>Scripting\Magic\Spell.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\Magic\SpellLibrary.cs">
+      <Link>Scripting\Magic\SpellLibrary.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\Magic\SpellTree.cs">
+      <Link>Scripting\Magic\SpellTree.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\MonsterSpawner.cs">
       <Link>Scripting\MonsterSpawner.cs</Link>
@@ -953,6 +983,9 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\Player\Tools\GuardTool.cs">
       <Link>Scripting\Player\Tools\GuardTool.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\Player\Tools\MagicTool.cs">
+      <Link>Scripting\Player\Tools\MagicTool.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\Player\Tools\PlayerTool.cs">
       <Link>Scripting\Player\Tools\PlayerTool.cs</Link>

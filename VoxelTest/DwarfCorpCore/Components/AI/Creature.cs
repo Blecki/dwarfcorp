@@ -18,8 +18,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Creature : GameComponent
     {
-
-       
         public CreatureAI AI { get; set; }
         public Physics Physics { get; set; }
         public CharacterSprite Sprite { get; set; }
@@ -357,6 +355,7 @@ namespace DwarfCorp
             CurrentCharacterMode = CharacterMode.Idle;
             yield return Act.Status.Success;
         }
+
     }
 
 }

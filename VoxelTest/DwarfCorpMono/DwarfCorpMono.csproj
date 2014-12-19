@@ -514,12 +514,6 @@
     <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\BuildMenu.cs">
       <Link>GUI\Components\Complex\BuildMenu.cs</Link>
     </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\BuildPanel.cs">
-      <Link>GUI\Components\Complex\BuildPanel.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\BuildSelector.cs">
-      <Link>GUI\Components\Complex\BuildSelector.cs</Link>
-    </Compile>
     <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\CapitalPanel.cs">
       <Link>GUI\Components\Complex\CapitalPanel.cs</Link>
     </Compile>
@@ -546,6 +540,9 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\KeyEditor.cs">
       <Link>GUI\Components\Complex\KeyEditor.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\MagicMenu.cs">
+      <Link>GUI\Components\Complex\MagicMenu.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\MasterControls.cs">
       <Link>GUI\Components\Complex\MasterControls.cs</Link>
@@ -843,6 +840,15 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\WanderAct.cs">
       <Link>Scripting\LeafActs\WanderAct.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\Magic\Spell.cs">
+      <Link>Scripting\Magic\Spell.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\Magic\SpellLibrary.cs">
+      <Link>Scripting\Magic\SpellLibrary.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\Magic\SpellTree.cs">
+      <Link>Scripting\Magic\SpellTree.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\MonsterSpawner.cs">
       <Link>Scripting\MonsterSpawner.cs</Link>

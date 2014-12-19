@@ -32,6 +32,10 @@ namespace DwarfCorp
             public float UnhappyThreshold { get; set; }
             public float SatisfiedThreshold { get; set; }
 
+            public int Percentage
+            {
+                get { return (int)((CurrentValue - MinValue)/(MaxValue - MinValue)*100); }
+            }
 
             public bool IsSatisfied()
             {

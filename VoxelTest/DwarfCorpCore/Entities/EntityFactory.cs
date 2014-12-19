@@ -654,6 +654,7 @@ namespace DwarfCorp
 
             tableAnimation.Play();
             sprite.Tags.Add("Book");
+            sprite.Tags.Add("Research");
             sprite.DrawInFrontOfSiblings = true;
             sprite.CollisionType = CollisionManager.CollisionType.Static;
             return sprite;
@@ -675,6 +676,7 @@ namespace DwarfCorp
 
             table.UpdateTransformsRecursive();
             table.DrawInFrontOfSiblings = true;
+            table.Tags.Add("Research");
             table.CollisionType = CollisionManager.CollisionType.Static;
             return table;
         }
@@ -717,6 +719,7 @@ namespace DwarfCorp
             }
 
             table.UpdateTransformsRecursive();
+            table.Tags.Add("Research");
             table.CollisionType = CollisionManager.CollisionType.Static;
             return table;
         }

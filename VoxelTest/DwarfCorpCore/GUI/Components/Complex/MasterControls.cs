@@ -22,7 +22,6 @@ namespace DwarfCorp
         public GameMaster Master { get; set; }
         public Dictionary<GameMaster.ToolMode, Button> ToolButtons { get; set; }
         public GameMaster.ToolMode CurrentMode { get; set; }
-        public BuildMenu BuildPanel { get; set; }
         public Texture2D Icons { get; set; }
         public int IconSize { get; set; }
 
@@ -35,7 +34,7 @@ namespace DwarfCorp
             CurrentMode = master.CurrentToolMode;
             ToolButtons = new Dictionary<GameMaster.ToolMode, Button>();
 
-            GridLayout layout = new GridLayout(GUI, this, 1, 7)
+            GridLayout layout = new GridLayout(GUI, this, 1, 8)
             {
                 EdgePadding = 0
             };
@@ -43,6 +42,7 @@ namespace DwarfCorp
             CreateButton(layout, GameMaster.ToolMode.SelectUnits, "Select", "Click and drag to select dwarves.", 5, 0);
             CreateButton(layout, GameMaster.ToolMode.Dig, "Mine", "Click and drag to designate mines.\nRight click to erase.", 0, 0);
             CreateButton(layout, GameMaster.ToolMode.Build, "Build", "Click to open build menu.", 2, 0);
+            CreateButton(layout, GameMaster.ToolMode.Magic, "Magic", "Click to open the magic menu.", 6, 1);
             CreateButton(layout, GameMaster.ToolMode.Gather, "Gather", "Click on resources to designate them\nfor gathering. Right click to erase.", 6, 0);
             CreateButton(layout, GameMaster.ToolMode.Chop, "Chop", "Click on trees to designate them\nfor chopping. Right click to erase.", 1, 0);
             CreateButton(layout, GameMaster.ToolMode.Guard, "Guard", "Click and drag to designate guard areas.\nRight click to erase.", 4, 0);
@@ -59,13 +59,7 @@ namespace DwarfCorp
             }
 
       
-        
-
-            BuildPanel = new BuildMenu(GUI, GUI.RootComponent, Master)
-            {
-                LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width - 750, PlayState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350),
-                IsVisible = false
-            };
+       
         }
 
 
@@ -131,10 +125,14 @@ namespace DwarfCorp
                 if(pair.Value == sender)
                 {
                     CurrentMode = pair.Key;
+                   Master.Tools[pair.Key].OnBegin();
 
-                   BuildPanel.IsVisible = CurrentMode == GameMaster.ToolMode.Build;
-                    BuildPanel.LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width - 750,
-                        PlayState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350);
+                    if (Master.CurrentTool != Master.Tools[pair.Key])
+                    {
+                        Master.CurrentTool.OnEnd();
+                    }
+
+                  
                 }
                 else
                 {

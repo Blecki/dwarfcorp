@@ -23,6 +23,16 @@ namespace DwarfCorp
 
         }
 
+        public override void OnBegin()
+        {
+            
+        }
+
+        public override void OnEnd()
+        {
+            
+        }
+
         public override void Update(DwarfGame game, GameTime time)
         {
             if (Player.IsCameraRotationModeActive())

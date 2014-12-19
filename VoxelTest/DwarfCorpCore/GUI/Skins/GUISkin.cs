@@ -31,7 +31,8 @@ namespace DwarfCorp
             Build,
             Chop,
             Guard,
-            Attack
+            Attack,
+            Magic
         }
 
         public enum Tile
@@ -277,6 +278,7 @@ namespace DwarfCorp
             MouseFrames[MousePointer.Chop] = new Point(5, 0);
             MouseFrames[MousePointer.Attack] = new Point(2, 0);
             MouseFrames[MousePointer.Guard] = new Point(3, 0);
+            MouseFrames[MousePointer.Magic] = new Point(0, 1);
 
          }
 

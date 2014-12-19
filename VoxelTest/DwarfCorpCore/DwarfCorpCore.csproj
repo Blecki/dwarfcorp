@@ -152,6 +152,7 @@
     <Compile Include="GameStates\WorldLoaderState.cs" />
     <Compile Include="Graphics\Cameras\Camera.cs" />
     <Compile Include="Graphics\Cameras\OrbitCamera.cs" />
+    <Compile Include="Graphics\Primitives\Composite.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\DrawCommand2D.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\Drawer2D.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\PolygonDrawCommand.cs" />
@@ -182,6 +183,7 @@
     <Compile Include="Graphics\Primitives\BatchBillboardPrimitive.cs" />
     <Compile Include="Graphics\Primitives\BillboardPrimitive.cs" />
     <Compile Include="Graphics\Primitives\BoxPrimitive.cs" />
+    <Compile Include="Graphics\Primitives\CompositeAnimation.cs" />
     <Compile Include="Graphics\Primitives\ExtendedVertex.cs" />
     <Compile Include="Graphics\Primitives\GeometricPrimitive.cs" />
     <Compile Include="Graphics\Primitives\LiquidPrimitive.cs" />
@@ -216,8 +218,6 @@
     <Compile Include="GUI\Components\Complex\ApplicationPanel.cs" />
     <Compile Include="GUI\Components\Complex\AssetManager.cs" />
     <Compile Include="GUI\Components\Complex\BuildMenu.cs" />
-    <Compile Include="GUI\Components\Complex\BuildPanel.cs" />
-    <Compile Include="GUI\Components\Complex\BuildSelector.cs" />
     <Compile Include="GUI\Components\Complex\CapitalPanel.cs" />
     <Compile Include="GUI\Components\Complex\ColorDialog.cs" />
     <Compile Include="GUI\Components\Complex\ColorSelector.cs" />
@@ -227,10 +227,12 @@
     <Compile Include="GUI\Components\Complex\ImageFrameLoadDialog.cs" />
     <Compile Include="GUI\Components\Complex\ItemSelector.cs" />
     <Compile Include="GUI\Components\Complex\KeyEditor.cs" />
+    <Compile Include="GUI\Components\Complex\MagicMenu.cs" />
     <Compile Include="GUI\Components\Complex\MasterControls.cs" />
     <Compile Include="GUI\Components\Complex\Minimap.cs" />
     <Compile Include="GUI\Components\Complex\MinionPanel.cs" />
     <Compile Include="GUI\Components\Complex\ResourceInfoComponent.cs" />
+    <Compile Include="GUI\Components\Complex\SpellTreeDisplay.cs" />
     <Compile Include="GUI\Components\Complex\StockTicker.cs" />
     <Compile Include="GUI\Components\Complex\TabSelector.cs" />
     <Compile Include="GUI\Components\Complex\TextureLoadDialog.cs" />
@@ -276,6 +278,7 @@
     <Compile Include="Scripting\CompoundActs\FindBedAndSleepAct.cs" />
     <Compile Include="Scripting\CompoundActs\GatherItemAct.cs" />
     <Compile Include="Scripting\CompoundActs\GetResourcesAct.cs" />
+    <Compile Include="Scripting\CompoundActs\GoResearchSpellAct.cs" />
     <Compile Include="Scripting\CompoundActs\GoToChairAndSitAct.cs" />
     <Compile Include="Scripting\CompoundActs\GoToEntityAct.cs" />
     <Compile Include="Scripting\CompoundActs\GoToNamedVoxelAct.cs" />
@@ -318,6 +321,7 @@
     <Compile Include="Scripting\LeafActs\PlaceVoxelAct.cs" />
     <Compile Include="Scripting\LeafActs\PlanAct.cs" />
     <Compile Include="Scripting\LeafActs\PutResourceInZoneAct.cs" />
+    <Compile Include="Scripting\LeafActs\ResearchSpellAct.cs" />
     <Compile Include="Scripting\LeafActs\SearchFreeStockpileAct.cs" />
     <Compile Include="Scripting\LeafActs\SetBlackboardData.cs" />
     <Compile Include="Scripting\LeafActs\SetTargetVoxelAct.cs" />
@@ -328,6 +332,12 @@
     <Compile Include="Scripting\LeafActs\StopAct.cs" />
     <Compile Include="Scripting\LeafActs\TeleportAct.cs" />
     <Compile Include="Scripting\LeafActs\WanderAct.cs" />
+    <Compile Include="Scripting\Magic\DestroyBlockSpell.cs" />
+    <Compile Include="Scripting\Magic\InspectSpell.cs" />
+    <Compile Include="Scripting\Magic\PlaceBlockSpell.cs" />
+    <Compile Include="Scripting\Magic\Spell.cs" />
+    <Compile Include="Scripting\Magic\SpellLibrary.cs" />
+    <Compile Include="Scripting\Magic\SpellTree.cs" />
     <Compile Include="Scripting\MonsterSpawner.cs" />
     <Compile Include="Scripting\Player\Announcements\Announcement.cs" />
     <Compile Include="Scripting\Player\Announcements\AnnouncementManager.cs" />
@@ -360,6 +370,7 @@
     <Compile Include="Scripting\Player\Tools\GatherTool.cs" />
     <Compile Include="Scripting\Player\Tools\GodModeTool.cs" />
     <Compile Include="Scripting\Player\Tools\GuardTool.cs" />
+    <Compile Include="Scripting\Player\Tools\MagicTool.cs" />
     <Compile Include="Scripting\Player\Tools\PlayerTool.cs" />
     <Compile Include="Scripting\Player\VoxelSelector.cs" />
     <Compile Include="Scripting\Rooms\Farm.cs" />

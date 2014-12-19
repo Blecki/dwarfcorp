@@ -812,6 +812,12 @@
             A box primitive is just a simple textured rectangular box.
             </summary>
         </member>
+        <member name="T:DwarfCorp.CompositeAnimation">
+            <summary>
+            An animation flips a billboard sprite between several
+            frames on a sprite sheet at a fixed rate.
+            </summary>
+        </member>
         <member name="T:DwarfCorp.LiquidPrimitive">
             <summary>
             Represents a list of liquid surfaces which are to be rendered. Only the top surfaces of liquids
@@ -1142,6 +1148,11 @@
         <member name="T:DwarfCorp.GetResourcesAct">
             <summary>
             A creature finds an item from a stockpile or BuildRoom with the given tags, goes to it, and picks it up.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GoResearchSpellAct">
+            <summary>
+            A creature goes to a voxel location, and places an object with the desired tags there to build it.
             </summary>
         </member>
         <member name="T:DwarfCorp.GoToEntityAct">

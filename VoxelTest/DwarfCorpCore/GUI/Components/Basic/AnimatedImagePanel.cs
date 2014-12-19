@@ -35,6 +35,7 @@ namespace DwarfCorp
             if (Animation != null)
             {
                 Animation.Update(time);
+                Image.Image = Animation.SpriteSheet;
                 Image.SourceRect = Animation.GetCurrentFrameRect();
             }
             base.Update(time);

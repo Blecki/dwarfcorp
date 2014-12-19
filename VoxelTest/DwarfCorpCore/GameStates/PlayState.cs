@@ -394,6 +394,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public void InitializeStaticData(string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
         {
+            CompositeLibrary.Initialize();
             CraftLibrary = new CraftLibrary();
             
             if (SoundManager.Content == null)
@@ -1115,7 +1116,7 @@ namespace DwarfCorp.GameStates
             stars.LinearDamping = 0.999f;
             stars.GrowthSpeed = -0.8f;
             stars.EmissionFrequency = 5;
-            stars.CollidesWorld = true;
+            stars.CollidesWorld = false;
 
             ParticleManager.RegisterEffect("star_particle", stars);
 
@@ -1184,7 +1185,12 @@ namespace DwarfCorp.GameStates
 
                 if(index == 0 || Master.SelectedMinions.Count > 0)
                 {
-                    Master.ToolBar.ToolButtons[modes[index]].InvokeClick();
+                    GameMaster.ToolMode mode = modes[index];
+
+                    if (Master.ToolBar.ToolButtons.ContainsKey(mode))
+                    {
+                        Master.ToolBar.ToolButtons[mode].InvokeClick();
+                    }
 
                     //Master.ToolBar.CurrentMode = modes[index];
                 }
@@ -1206,8 +1212,6 @@ namespace DwarfCorp.GameStates
             {
                 return;
             }
-
-
 
             // Handles time foward + backward TODO: Replace with input manager
             if(Keyboard.GetState().IsKeyDown(ControlSettings.Default.TimeForward))
@@ -1281,8 +1285,6 @@ namespace DwarfCorp.GameStates
                 }
             }
 
-
-
             FillClosestLights(gameTime);
             IndicatorManager.Update(gameTime);
             Camera.Update(gameTime, PlayState.ChunkManager);
@@ -1314,7 +1316,6 @@ namespace DwarfCorp.GameStates
                     SleepPrompt = true;
                 }
             }
-
 
             // These things are updated even when the game is paused
             GUI.Update(gameTime);
@@ -1616,6 +1617,10 @@ namespace DwarfCorp.GameStates
                 base.Render(gameTime);
                 return;
             }
+            CompositeLibrary.Render(GraphicsDevice, DwarfGame.SpriteBatch);
+            CompositeLibrary.Update();
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.BlendState = BlendState.Opaque;
 
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
             // Keeping track of a running FPS buffer (averaged)
@@ -1760,11 +1765,14 @@ namespace DwarfCorp.GameStates
 
             GUI.PostRender(gameTime);
 
+            int dx = 0;
+            foreach (var composite in CompositeLibrary.Composites)
+            {
+                composite.Value.DebugDraw(DwarfGame.SpriteBatch, dx, 128);
+                dx += 256;
+            }
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
-
-            
-
 
             base.Render(gameTime);
         }

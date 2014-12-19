@@ -20,6 +20,17 @@ namespace DwarfCorp
         public Color UnreachableColor { get; set; }
         public float DigDesignationGlowRate { get; set; }
 
+        public override void OnBegin()
+        {
+
+        }
+
+        public override void OnEnd()
+        {
+
+        }
+
+
         public override void OnVoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
         {
 

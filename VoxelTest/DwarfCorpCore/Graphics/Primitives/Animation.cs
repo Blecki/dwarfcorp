@@ -25,14 +25,16 @@ namespace DwarfCorp
         public bool Loops { get; set; }
         public Color Tint { get; set; }
         public float FrameHZ { get; set; }
+        public List<float> Speeds { get; set; } 
         private float FrameTimer { get; set; }
         public float WorldWidth { get; set; }
         public float WorldHeight { get; set; }
         public bool Flipped { get; set; }
 
+        [JsonIgnore]
         public List<BillboardPrimitive> Primitives { get; set; }
 
-
+        [JsonIgnore]
         public Texture2D SpriteSheet { get; set; }
 
 
@@ -41,24 +43,28 @@ namespace DwarfCorp
             Primitives = new List<BillboardPrimitive>();
             SpriteSheet = null;
             Frames = new List<Point>();
+            Speeds = new List<float>();
         }
 
         public Animation(Animation other, Texture2D spriteSheet, GraphicsDevice device)
             : this(device, spriteSheet, other.Name, other.FrameWidth, other.FrameHeight, other.Frames, other.Loops, other.Tint, other.FrameHZ, other.WorldWidth, other.WorldHeight, other.Flipped)
         {
+            Speeds = new List<float>();
+            Speeds.AddRange(other.Speeds);
         }
 
 
         public Animation(GraphicsDevice device, Texture2D sheet, string name, List<Point> frames, bool loops, Color tint, float frameHZ, bool flipped) :
             this(device, sheet, name, sheet.Width, sheet.Height, frames, loops, tint, frameHZ, sheet.Width / 32.0f, sheet.Height / 32.0f, flipped)
         {
+            Speeds = new List<float>();
         }
 
 
         public Animation(string asset, int frameWidth, int frameHeigt, params int[] frames) :
              this(0, asset, frameWidth, frameHeigt, frames)
         {
-
+            Speeds = new List<float>();
         }
 
         public Animation(int row, string asset, int frameWidth, int frameHeigt, params int[] frames) :
@@ -70,6 +76,7 @@ namespace DwarfCorp
                 Frames.Add(new Point(i, row));
             }
             CreatePrimitives(GameState.Game.GraphicsDevice);
+            Speeds = new List<float>();
  
         }
 
@@ -83,7 +90,8 @@ namespace DwarfCorp
             IsPlaying = false;
             Loops = loops;
             Tint = tint;
-            FrameHZ = frameHZ + MathFunctions.Rand();
+            Speeds = new List<float>() {frameHZ + MathFunctions.Rand()};
+            FrameHZ = frameHZ;
             FrameTimer = 0.0f;
             WorldWidth = worldWidth;
             WorldHeight = worldHeight;
@@ -111,7 +119,7 @@ namespace DwarfCorp
             }
         }
 
-        public Rectangle GetCurrentFrameRect()
+        public virtual Rectangle GetCurrentFrameRect()
         {
             Rectangle toReturn = new Rectangle(Frames[CurrentFrame].X * FrameWidth, Frames[CurrentFrame].Y * FrameHeight, FrameWidth, FrameHeight);
             return toReturn;
@@ -151,13 +159,19 @@ namespace DwarfCorp
         }
 
 
-        public void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime)
         {
             if(IsPlaying)
             {
                 FrameTimer += (float) gameTime.ElapsedGameTime.TotalSeconds;
 
-                if(FrameTimer >= 1.0f / FrameHZ)
+                float time = FrameHZ;
+
+                if (Speeds.Count > 0)
+                {
+                    time = Speeds[Math.Min(CurrentFrame, Speeds.Count - 1)];
+                }
+                if(FrameTimer >= 1.0f / time)
                 {
                     NextFrame();
                     FrameTimer = 0.0f;
@@ -165,7 +179,7 @@ namespace DwarfCorp
             }
         }
 
-        public void NextFrame()
+        public virtual void NextFrame()
         {
             CurrentFrame++;
 
@@ -180,6 +194,16 @@ namespace DwarfCorp
                     CurrentFrame = Frames.Count - 1;
                 }
             }
+        }
+
+        public virtual Animation Clone()
+        {
+            return new Animation(this, SpriteSheet, PlayState.Game.GraphicsDevice);
+        }
+
+        public virtual void PreRender()
+        {
+            
         }
     }
 

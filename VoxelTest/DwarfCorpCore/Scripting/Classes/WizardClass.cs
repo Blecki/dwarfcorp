@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -170,14 +172,18 @@ namespace DwarfCorp
             Actions = new List<GameMaster.ToolMode>()
             {
                 GameMaster.ToolMode.Gather,
+                GameMaster.ToolMode.Magic,
                 GameMaster.ToolMode.Attack
             };
         }
 
         void InitializeAnimations()
         {
-            Texture2D dwarfSprites = TextureManager.GetTexture(ContentPaths.Entities.Dwarf.Sprites.dwarf_wizard);
-            Animations = Dwarf.CreateDefaultAnimations(dwarfSprites, 32, 40);
+            CompositeAnimation.Descriptor descriptor =
+    FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
+        ContentPaths.GetFileAsString(ContentPaths.Entities.Dwarf.Sprites.wizard_animation));
+            Animations = new List<Animation>();
+            Animations.AddRange(descriptor.GenerateAnimations(CompositeLibrary.Composites[CompositeLibrary.Dwarf]));
         }
 
         public void InitializeWeapons()

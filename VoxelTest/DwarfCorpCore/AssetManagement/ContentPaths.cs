@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -55,6 +57,20 @@ namespace DwarfCorp
             public static string claws = ProgramData.CreatePath("Effects", "claws");
             public static string flash = ProgramData.CreatePath("Effects", "flash");
             public static string rings = ProgramData.CreatePath("Effects", "ring");
+        }
+
+
+        public static string GetFileAsString(string asset)
+        {
+            string text = "";
+            using (var stream = TitleContainer.OpenStream("Content" + ProgramData.DirChar + asset))
+            {
+                using (var reader = new StreamReader(stream))
+                {
+                    text = reader.ReadToEnd();
+                }
+            }
+            return text;
         }
 
         public class Text
@@ -137,11 +153,20 @@ namespace DwarfCorp
                 }
                 public class Sprites
                 {
-                    public static string dwarf_animations = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "dwarf_animations");
-                    public static string soldier_axe_shield= ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "soldier-axe-shield");
-                    public static string dwarf_craft = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "dwarf-craft");
-                    public static string dwarf_wizard = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "dwarf-wizard");
-                    public static string dwarf_musket = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "dwarf-musket");
+                    public static string crafter_hammer = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "crafter-hammer");
+                    public static string crafter = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "crafter");
+                    public static string soldier_axe = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "soldier-axe");
+                    public static string soldier_shield = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "soldier-shield");
+                    public static string soldier = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "soldier");
+                    public static string wizard_staff = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "wizard-staff");
+                    public static string wizard = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "wizard");
+                    public static string worker_pick = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "worker-pick");
+                    public static string worker = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "worker");
+
+                    public static string worker_animation = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "worker_animation.json");
+                    public static string crafter_animation = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "crafter_animation.json");
+                    public static string wizard_animation = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "wizard_animation.json");
+                    public static string soldier_animation =  ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "soldier_animation.json");
                 }
 
             }

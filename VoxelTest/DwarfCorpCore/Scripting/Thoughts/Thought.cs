@@ -38,7 +38,8 @@ namespace DwarfCorp
             JustArrived,
             Other,
             Farmed,
-            Crafted
+            Crafted,
+            Researched
         }
 
         public static Thought CreateStandardThought(ThoughtType type, DateTime time)
@@ -147,6 +148,11 @@ namespace DwarfCorp
                     description = "I farmed something!";
                     happiness = 10.0f;
                     limit = new TimeSpan(0, 4, 0, 0);
+                    break;
+                case ThoughtType.Researched:
+                    description = "I researched something!";
+                    happiness = 100.0f;
+                    limit = new TimeSpan(0, 8, 0, 0);
                     break;
                 case ThoughtType.Other:
                     return new Thought()

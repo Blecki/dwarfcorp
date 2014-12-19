@@ -51,7 +51,7 @@ namespace DwarfCorp
             VoxListener = new VoxelListener(PlayState.ComponentManager, this, PlayState.ChunkManager, voxUnder);
             Sprite = new Sprite(PlayState.ComponentManager, "Sprite", this, Matrix.Identity, TextureManager.GetTexture(ContentPaths.Entities.DwarfObjects.beartrap), false);
             Sprite.AddAnimation(new Animation(0, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0) {Name = IdleAnimation});
-            Sprite.AddAnimation(new Animation(1, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0, 1, 2, 3) {Name = TriggerAnimation, FrameHZ = 6.6f, Loops = true});
+            Sprite.AddAnimation(new Animation(1, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0, 1, 2, 3) {Name = TriggerAnimation, Speeds =  new List<float>() {6.6f}, Loops = true});
 
         }
 

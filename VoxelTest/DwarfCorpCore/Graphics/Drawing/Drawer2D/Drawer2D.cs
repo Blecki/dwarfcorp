@@ -220,7 +220,8 @@ namespace DwarfCorp
             Left = 1,
             Right = 2,
             Top = 4,
-            Bottom = 8
+            Bottom = 8,
+            Under
         }
 
         public static Rectangle Align(Rectangle bounds, int width, int height, Alignment align)
@@ -250,14 +251,27 @@ namespace DwarfCorp
                 origin.Y -= bounds.Height / 2;
             }
 
+            if (align.HasFlag(Alignment.Under))
+            {
+                origin.Y -= bounds.Height;
+            }
+
             Vector2 corner = origin + pos;
 
             return new Rectangle((int)corner.X, (int)corner.Y, width, height);
 
         }
 
-        public static void DrawAlignedStrokedText(SpriteBatch batch, string text, SpriteFont font, Color textColor, Color strokeColor, Alignment align, Rectangle bounds)
+        public static void DrawAlignedStrokedText(SpriteBatch batch, string origText, SpriteFont font, Color textColor, Color strokeColor, Alignment align, Rectangle bounds, bool wrap = false)
         {
+
+            string text = origText;
+
+            if (wrap)
+            {
+                text = DwarfGUI.WrapLines(text, bounds, font);
+            }
+
             Vector2 size = Datastructures.SafeMeasure(font, text);
 
             Vector2 pos = new Vector2((int)(bounds.X + bounds.Width / 2), (int)(bounds.Y + bounds.Height / 2));
@@ -283,6 +297,11 @@ namespace DwarfCorp
                 origin.Y -= bounds.Height / 2 - size.Y / 2;
             }
 
+            if (align.HasFlag(Alignment.Under))
+            {
+                origin.Y -= bounds.Height - size.Y;
+            }
+
             origin.X = (int) origin.X;
             origin.Y = (int) origin.Y;
             if (textColor.A > 0)
@@ -295,8 +314,15 @@ namespace DwarfCorp
             SafeDraw(batch, text, font, textColor, pos, origin);
         }
 
-        public static void DrawAlignedText(SpriteBatch batch, string text, SpriteFont font, Color textColor, Alignment align, Rectangle bounds)
+        public static void DrawAlignedText(SpriteBatch batch, string origText, SpriteFont font, Color textColor, Alignment align, Rectangle bounds, bool wrap = false)
         {
+            
+            string text = origText;
+
+            if (wrap)
+            {
+                text = DwarfGUI.WrapLines(text, bounds, font);
+            }
             Vector2 size = Datastructures.SafeMeasure(font, text);
 
             Vector2 pos = new Vector2(bounds.X + bounds.Width / 2, bounds.Y + bounds.Height / 2);
@@ -320,6 +346,11 @@ namespace DwarfCorp
             if(align.HasFlag(Alignment.Bottom))
             {
                 origin.Y -= bounds.Height / 2 - size.Y / 2;
+            }
+
+            if (align.HasFlag(Alignment.Under))
+            {
+                origin.Y -= bounds.Height;
             }
 
             SafeDraw(batch, text, font, textColor, pos, origin);

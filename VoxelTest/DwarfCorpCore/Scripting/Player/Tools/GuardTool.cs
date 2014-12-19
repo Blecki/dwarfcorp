@@ -59,6 +59,17 @@ namespace DwarfCorp
             TaskManager.AssignTasks(assignedTasks, Faction.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Gather));
         }
 
+        public override void OnBegin()
+        {
+
+        }
+
+        public override void OnEnd()
+        {
+
+        }
+
+
         public override void Update(DwarfGame game, GameTime time)
         {
             if (Player.IsCameraRotationModeActive())

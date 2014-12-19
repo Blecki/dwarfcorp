@@ -52,7 +52,7 @@ namespace DwarfCorp
             {
                 {
                     RoomTile.None,
-                    RoomTile.None,
+                    RoomTile.Open,
                     RoomTile.None
                 },
                 {
@@ -62,7 +62,7 @@ namespace DwarfCorp
                 },
                 {
                     RoomTile.None,
-                    RoomTile.None,
+                    RoomTile.Open,
                     RoomTile.None
                 }
             };
@@ -92,7 +92,7 @@ namespace DwarfCorp
             {
                 {
                     RoomTile.None,
-                    RoomTile.None,
+                    RoomTile.Open,
                     RoomTile.None
                 },
                 {
@@ -102,7 +102,7 @@ namespace DwarfCorp
                 },
                 {
                     RoomTile.None,
-                    RoomTile.None,
+                    RoomTile.Open,
                     RoomTile.None
                 }
             };

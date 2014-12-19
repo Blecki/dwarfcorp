@@ -88,7 +88,7 @@ namespace DwarfCorp
             
         }
 
-        public BillboardPrimitive(GraphicsDevice device, Texture2D spriteSheet, int frameWidth, int frameHeight, Point frame, float width, float height, bool flipped)
+        public BillboardPrimitive(GraphicsDevice device, Texture2D spriteSheet, int frameWidth, int frameHeight, Point frame, float width, float height, bool flipped = false)
         {
             UVs = new BoardTextureCoords(spriteSheet.Width, spriteSheet.Height, frameWidth, frameHeight, frame, flipped);
             Width = width;
@@ -103,7 +103,19 @@ namespace DwarfCorp
             ResetBuffer(graphics);
         }
 
-        private void CreateVerticies(Color color)
+        public void UpdateVertexUvs()
+        {
+            for(int i = 0; i < NumVertices; i++)
+            {
+                Vertices[i].TextureCoordinate = UVs.UVs[i];
+                Vertices[i].TextureBounds = UVs.Bounds;
+            }
+
+         
+            VertexBuffer.SetData(Vertices);
+        }
+
+        public void CreateVerticies(Color color)
         {
             // Calculate the position of the vertices on the top face.
             Vector3 topLeftFront = new Vector3(-0.5f * Width, 0.5f * Height, 0.0f);

@@ -96,6 +96,7 @@ namespace DwarfCorp
             }
         }
 
+
         public static Animation CreateAnimation(Creature.CharacterMode mode,
             Orientation orient,
             Texture2D texture,
@@ -108,6 +109,24 @@ namespace DwarfCorp
             return CreateAnimation(mode, orient, texture, frameHz, frameWidth, frameHeight, row, cols.ToList());
         }
 
+
+        public static CompositeAnimation CreateCompositeAnimation(Creature.CharacterMode mode,
+            Orientation orient,
+            Composite composite,
+            float frameHz,
+            List<SpriteSheet> layers,
+            List<Color> tints,
+            params int[][] frames
+            )
+        {
+            return new CompositeAnimation(composite, layers, tints, frames)
+            {
+                FrameHZ = frameHz,
+                Name = mode.ToString() + OrientationStrings[(int) orient],
+                Loops = true,
+                CurrentFrame = 0
+            };
+        }
 
         public static Animation CreateAnimation(Creature.CharacterMode mode,
             Orientation orient,
