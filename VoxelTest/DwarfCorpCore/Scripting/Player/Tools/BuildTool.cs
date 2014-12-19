@@ -16,12 +16,29 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class BuildTool : PlayerTool
     {
+        public BuildMenu BuildPanel { get; set; }
+
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
             Player.Faction.RoomBuilder.VoxelsSelected(voxels, button);
             Player.Faction.WallBuilder.VoxelsSelected(voxels, button);
             Player.Faction.CraftBuilder.VoxelsSelected(voxels, button);
         }
+
+        public override void OnBegin()
+        {
+            BuildPanel = new BuildMenu(PlayState.GUI, PlayState.GUI.RootComponent, Player)
+            {
+                LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width - 750, PlayState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350),
+                IsVisible = true
+            };
+        }
+
+        public override void OnEnd()
+        {
+            BuildPanel.Destroy();
+        }
+
 
         public override void Update(DwarfGame game, GameTime time)
         {

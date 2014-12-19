@@ -173,8 +173,11 @@ namespace DwarfCorp
 
         void InitializeAnimations()
         {
-            Texture2D dwarfSprites = TextureManager.GetTexture(ContentPaths.Entities.Dwarf.Sprites.soldier_axe_shield);
-            Animations = Dwarf.CreateDefaultAnimations(dwarfSprites, 48, 40);
+            CompositeAnimation.Descriptor descriptor =
+                FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
+                    ContentPaths.GetFileAsString(ContentPaths.Entities.Dwarf.Sprites.soldier_animation));
+            Animations = new List<Animation>();
+            Animations.AddRange(descriptor.GenerateAnimations(CompositeLibrary.Composites[CompositeLibrary.Dwarf]));
         }
 
         void InitializeActions()

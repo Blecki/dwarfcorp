@@ -18,6 +18,16 @@ namespace DwarfCorp
         public Color ChopDesignationColor { get; set; }
         public float ChopDesignationGlowRate { get; set; }
 
+        public override void OnBegin()
+        {
+
+        }
+
+        public override void OnEnd()
+        {
+
+        }
+
 
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {

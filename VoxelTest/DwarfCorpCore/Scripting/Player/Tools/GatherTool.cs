@@ -24,6 +24,16 @@ namespace DwarfCorp
 
         }
 
+        public override void OnBegin()
+        {
+
+        }
+
+        public override void OnEnd()
+        {
+
+        }
+
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {

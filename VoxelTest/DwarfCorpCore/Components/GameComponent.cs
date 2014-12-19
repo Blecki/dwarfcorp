@@ -199,6 +199,22 @@ namespace DwarfCorp
 
         }
 
+        public virtual string GetDescription()
+        {
+            string toReturn = "";
+            foreach (GameComponent component in Children)
+            {
+                string componentDesc = component.GetDescription();
+
+                if (!String.IsNullOrEmpty(componentDesc))
+                {
+                    toReturn += componentDesc;
+                }
+            }
+
+            return toReturn;
+        }
+
         #region child_operators
 
         public bool HasChildWithType<T>() where T : GameComponent

@@ -24,13 +24,14 @@ namespace DwarfCorp
             SelectUnits,
             Dig,
             Build,
+            Magic,
             Gather,
             Chop,
             Guard,
             Attack,
-            God,
             Farm,
-            Craft
+            Craft,
+            God
         }
 
 
@@ -65,6 +66,9 @@ namespace DwarfCorp
         [JsonIgnore]
         public List<CreatureAI> SelectedMinions { get { return Faction.SelectedMinions; }set { Faction.SelectedMinions = value; } }
 
+        [JsonIgnore]
+        public SpellTree Spells { get; set; }
+
         protected void OnDeserialized(StreamingContext context)
         {
             Initialize(GameState.Game, PlayState.ComponentManager, PlayState.ChunkManager, PlayState.Camera, PlayState.ChunkManager.Graphics,  PlayState.GUI);
@@ -85,6 +89,7 @@ namespace DwarfCorp
             BodySelector = new BodySelector(CameraController, chunks.Graphics, components);
             GUI = gui;
             SelectedMinions = new List<CreatureAI>();
+            Spells = SpellLibrary.CreateSpellTree();
             CreateTools();
 
             InputManager.KeyReleasedCallback += OnKeyReleased;
@@ -95,7 +100,6 @@ namespace DwarfCorp
 
             Debugger = new AIDebugger(GUI, this);
 
-            
         }
 
         private void CreateTools()
@@ -148,6 +152,8 @@ namespace DwarfCorp
             {
                 Player = this
             };
+
+            Tools[ToolMode.Magic] = new MagicTool(this);
         }
 
         public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics, DwarfGUI gui)

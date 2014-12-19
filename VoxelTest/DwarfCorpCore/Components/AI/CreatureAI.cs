@@ -346,7 +346,7 @@ namespace DwarfCorp
                 GatherManager.StockOrders.RemoveAt(0);
                 return new ActWrapperTask(new StockResourceAct(this, order.Resource))
                 {
-                    Priority = DwarfCorp.Task.PriorityType.Low
+                    Priority = Task.PriorityType.Low
                 };
             }
             else
@@ -362,7 +362,7 @@ namespace DwarfCorp
                 GatherManager.VoxelOrders.Clear();
                 return new ActWrapperTask(new BuildVoxelsAct(this, voxels, types))
                 {
-                    Priority = DwarfCorp.Task.PriorityType.Low,
+                    Priority = Task.PriorityType.Low,
                     AutoRetry = true
                 };
 
@@ -462,6 +462,21 @@ namespace DwarfCorp
                 if(!HasTaskWithName(task))
                     Creature.AI.Tasks.Add(task);
             }
+        }
+
+        public override string GetDescription()
+        {
+            string desc = Stats.FirstName + " " + Stats.LastName + ", level " + Stats.CurrentLevel.Index +
+                          " " +
+                          Stats.CurrentClass.Name + "\n    " +
+                          "Happiness: " + Status.Happiness.GetDescription() + ". Health: " + Status.Health.Percentage +
+                          ". Hunger: " + (100 - Status.Hunger.Percentage) + ". Energy: " + Status.Energy.Percentage + "\n";
+            if (CurrentTask != null)
+            {
+                desc += "    Task: " + CurrentTask.Name;
+            }
+
+            return desc;
         }
     }
 

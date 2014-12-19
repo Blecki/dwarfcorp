@@ -28,11 +28,20 @@ namespace DwarfCorp
             public int Index { get; set; }
             public Button Button { get; set; }
 
+            public delegate void SelectedDelegate();
+            public event SelectedDelegate OnSelected;
+
             public Tab(string name, TabSelector selector, GUIComponent parent) :
                 base(selector.GUI, parent)
             {
                 Name = name;
                 Selector = selector;
+                OnSelected = () => { };
+            }
+
+            public void Select()
+            {
+                OnSelected.Invoke();
             }
         }
 
@@ -45,6 +54,7 @@ namespace DwarfCorp
                 pair.Value.IsVisible = isTab;
                 pair.Value.Button.IsToggled = isTab;
             }
+            CurrentTab.Select();
             Layout.SetComponentPosition(Tabs[tab], 0, 1, Layout.Cols, Layout.Rows - 1);
             Layout.UpdateSizes();
         }

@@ -100,6 +100,11 @@ namespace DwarfCorp
                     Velocity *= -5;
                 }
 
+                if (LocalTransform.Translation.Z < -10 || bounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
+                {
+                    Die();
+                }
+
 
                 if(!OrientWithVelocity && !FixedOrientation)
                 {

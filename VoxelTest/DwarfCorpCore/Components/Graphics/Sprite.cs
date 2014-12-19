@@ -129,11 +129,14 @@ namespace DwarfCorp
 
             RasterizerState r = graphicsDevice.RasterizerState;
             graphicsDevice.RasterizerState = RasterState;
-            effect.Parameters["xTexture"].SetValue(SpriteSheet);
 
 
-            if(CurrentAnimation != null)
+            if (CurrentAnimation != null && CurrentAnimation.CurrentFrame >= 0 && CurrentAnimation.CurrentFrame < CurrentAnimation.Primitives.Count)
             {
+                CurrentAnimation.PreRender();
+                SpriteSheet = CurrentAnimation.SpriteSheet;
+                effect.Parameters["xTexture"].SetValue(SpriteSheet);
+
                 if(OrientationType != OrientMode.Fixed)
                 {
                     if(camera.Projection == Camera.ProjectionMode.Perspective)
@@ -183,6 +186,7 @@ namespace DwarfCorp
                 {
                     effect.Parameters["xWorld"].SetValue(GlobalTransform);
                 }
+
 
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {

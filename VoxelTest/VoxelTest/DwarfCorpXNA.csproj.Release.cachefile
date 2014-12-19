@@ -12,7 +12,6 @@ Content\Terrain\foam.xnb
 Content\Gradients\ambientgradient.xnb
 Content\Gradients\sungradient.xnb
 Content\Gradients\torchgradient.xnb
-Content\Entities\Dwarf\Sprites\dwarf_animations.xnb
 Content\Effects\shadowcircle.xnb
 Content\Particles\puff.xnb
 Content\Entities\Plants\grass.xnb
@@ -71,7 +70,6 @@ Content\GUI\gui_minimap.xnb
 Content\Entities\DwarfObjects\coinpiles.xnb
 Content\Entities\DwarfObjects\beartrap.xnb
 Content\Logos\logos.xnb
-Content\Entities\Dwarf\Sprites\soldier-axe-shield.xnb
 Content\Entities\Goblin\Sprites\gob-withsword.xnb
 Content\Effects\slice.xnb
 Content\Entities\Skeleton\necro.xnb
@@ -80,8 +78,6 @@ Content\Particles\green_flame.xnb
 Content\Effects\claws.xnb
 Content\Effects\flash.xnb
 Content\Effects\ring.xnb
-Content\Entities\Dwarf\Sprites\dwarf-craft.xnb
-Content\Entities\Dwarf\Sprites\dwarf-wizard.xnb
 Content\Entities\DwarfObjects\constructiontape.xnb
 Content\Entities\DwarfObjects\underconstruction.xnb
 Content\Particles\bigstar_particle.xnb
@@ -89,6 +85,15 @@ Content\Particles\star_particle.xnb
 Content\Fonts\font1-w.xnb
 Content\Fonts\font1-w-2x.xnb
 Content\Fonts\font1-w-4x.xnb
+Content\Entities\Dwarf\Sprites\crafter-hammer.xnb
+Content\Entities\Dwarf\Sprites\crafter.xnb
+Content\Entities\Dwarf\Sprites\soldier-axe.xnb
+Content\Entities\Dwarf\Sprites\soldier-shield.xnb
+Content\Entities\Dwarf\Sprites\soldier.xnb
+Content\Entities\Dwarf\Sprites\wizard-staff.xnb
+Content\Entities\Dwarf\Sprites\wizard.xnb
+Content\Entities\Dwarf\Sprites\worker-pick.xnb
+Content\Entities\Dwarf\Sprites\worker.xnb
 Content\Shaders\BloomCombine.xnb
 Content\Shaders\BloomExtract.xnb
 Content\Shaders\GaussianBlur.xnb
@@ -132,4 +137,8 @@ Content\Text\verbs.txt
 Content\Text\nouns.txt
 Content\Text\lastnames.txt
 Content\Text\firstnames.txt
+Content\Entities\Dwarf\Sprites\worker_animation.json
+Content\Entities\Dwarf\Sprites\crafter_animation.json
+Content\Entities\Dwarf\Sprites\soldier_animation.json
+Content\Entities\Dwarf\Sprites\wizard_animation.json
 Content\Music\dwarfcorp_ogg.ogg

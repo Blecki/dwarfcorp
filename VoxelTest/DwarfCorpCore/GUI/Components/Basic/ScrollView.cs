@@ -162,21 +162,32 @@ namespace DwarfCorp
             return new Rectangle(GlobalBounds.X, GlobalBounds.Y, GlobalBounds.Width - 32, GlobalBounds.Height - 32);
         }
 
+        public Rectangle StartClip(SpriteBatch batch)
+        {
+            Rectangle originalRect = batch.GraphicsDevice.ScissorRectangle;
+            Rectangle screenRect = ClipToScreen(GetViewRect(), batch.GraphicsDevice);
+            batch.GraphicsDevice.ScissorRectangle = screenRect;
+            return originalRect;
+        }
+
+        public void EndClip(Rectangle originalRect, SpriteBatch batch)
+        {
+            batch.GraphicsDevice.ScissorRectangle = originalRect;
+        }
+
         public override void Render(GameTime time, SpriteBatch batch)
         {
             CalculateChildRect();
             UpdateSliders();
             if(IsVisible)
             {
-                Rectangle originalRect = batch.GraphicsDevice.ScissorRectangle;
+                Rectangle originalRect = StartClip(batch);
                 Rectangle screenRect = ClipToScreen(GetViewRect(), batch.GraphicsDevice);
-
-                batch.GraphicsDevice.ScissorRectangle = screenRect;
                 foreach(GUIComponent child in Children)
                 {
                     child.Render(time, batch);
                 }
-                batch.GraphicsDevice.ScissorRectangle = originalRect;
+                EndClip(originalRect, batch);
 
                 if (DrawBorder)
                 {

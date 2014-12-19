@@ -32,6 +32,25 @@ namespace DwarfCorp
 
         }
 
+
+        public static T LoadJsonFromString<T>(string jsonText)
+        {
+            return JsonConvert.DeserializeObject<T>(jsonText, new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Error,
+                TypeNameHandling = TypeNameHandling.All,
+                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
+                Converters = new List<JsonConverter>
+                    {
+                        new BoxConverter(),
+                        new MatrixConverter(),
+                        new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap),
+                        new RectangleConverter()
+                    }
+            });
+        }
+
         public static T LoadJson<T>(string filePath, bool isCompressed)
         {
             string jsonText = Load(filePath, isCompressed);
@@ -49,6 +68,26 @@ namespace DwarfCorp
                         new RectangleConverter()
                     }
             });
+        }
+
+        public static bool SaveBasicJson<T>(T obj, string filePath)
+        {
+            JsonSerializer serializer = new JsonSerializer
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                TypeNameHandling = TypeNameHandling.Auto,
+                TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
+                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                Formatting = Formatting.Indented
+            };
+
+            serializer.Converters.Add(new BoxConverter());
+            serializer.Converters.Add(new MatrixConverter());
+            serializer.Converters.Add(new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap));
+            serializer.Converters.Add(new RectangleConverter());
+
+            return Save(serializer, obj, filePath, false);
+
         }
 
         public static bool SaveJSon<T>(T obj, string filePath, bool compress)

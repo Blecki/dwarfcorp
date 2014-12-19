@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
@@ -180,8 +182,15 @@ namespace DwarfCorp
 
         void InitializeAnimations()
         {
+            /*
             Texture2D dwarfSprites = TextureManager.GetTexture(ContentPaths.Entities.Dwarf.Sprites.dwarf_animations);
             Animations = Dwarf.CreateDefaultAnimations(dwarfSprites, 32, 40);
+             */
+            CompositeAnimation.Descriptor descriptor =
+                FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
+                    ContentPaths.GetFileAsString(ContentPaths.Entities.Dwarf.Sprites.worker_animation));
+            Animations = new List<Animation>();
+            Animations.AddRange(descriptor.GenerateAnimations(CompositeLibrary.Composites[CompositeLibrary.Dwarf]));
         }
 
         public void InitializeWeapons()

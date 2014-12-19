@@ -43,6 +43,8 @@ namespace DwarfCorp
         public bool DontMakeBigger { get; set; }
         public bool DontMakeSmaller { get; set; }
 
+        public byte Transparency { get; set; }
+
         public Button(DwarfGUI gui, GUIComponent parent, string text, SpriteFont textFont, ButtonMode mode, ImageFrame image) :
             base(gui, parent)
         {
@@ -63,6 +65,7 @@ namespace DwarfCorp
             DontMakeBigger = mode == ButtonMode.ToolButton;
             Mode = mode;
             DontMakeSmaller = false;
+            Transparency = 255;
         }
 
 
@@ -79,6 +82,13 @@ namespace DwarfCorp
             MouseState state = Mouse.GetState();
 
             return base.IsMouseOverRecursive() || (Image != null && GetImageBounds().Contains(state.X, state.Y));
+        }
+
+        public override void Update(GameTime time)
+        {
+            Rectangle bounds = GetImageBounds();
+            LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, Math.Max(bounds.Width, LocalBounds.Width), Math.Max(bounds.Height, LocalBounds.Height));
+            base.Update(time);
         }
 
         public Rectangle GetImageBounds()
@@ -140,6 +150,8 @@ namespace DwarfCorp
                 imageColor = ToggleTint;
             }
 
+            imageColor.A = Transparency;
+
             Rectangle imageBounds = GetImageBounds();
             switch(Mode)
             {
@@ -148,12 +160,13 @@ namespace DwarfCorp
                     {
                         GUI.Skin.RenderButtonFrame(imageBounds, batch);
                     }
+                    Rectangle bounds = !KeepAspectRatio ? globalBounds : imageBounds;
                     if(Image != null && Image.Image != null)
                     {
-                        batch.Draw(Image.Image, !KeepAspectRatio ? globalBounds : imageBounds, Image.SourceRect, imageColor);
+                        batch.Draw(Image.Image, bounds, Image.SourceRect, imageColor);
                     }
-                    
-                    Drawer2D.SafeDraw(batch, Text, TextFont, textColor, new Vector2(imageBounds.X - 5, imageBounds.Y + imageBounds.Height + 1), Vector2.Zero);
+
+                    Drawer2D.DrawAlignedText(batch, Text, TextFont, textColor, Drawer2D.Alignment.Under | Drawer2D.Alignment.Center, new Rectangle(bounds.X, bounds.Y, bounds.Width + 5, bounds.Height), true);
                     if (IsToggled)
                     {
                         Drawer2D.DrawRect(batch, GetImageBounds(), Color.White, 2);
@@ -163,7 +176,7 @@ namespace DwarfCorp
                     GUI.Skin.RenderButton(GlobalBounds, batch);
                     Drawer2D.DrawAlignedStrokedText(batch, Text,
                         TextFont,
-                        textColor, strokeColor, Drawer2D.Alignment.Center, GlobalBounds);
+                        textColor, strokeColor, Drawer2D.Alignment.Center, GlobalBounds, true);
                     break;
                 case ButtonMode.ToolButton:
                     GUI.Skin.RenderButton(GlobalBounds, batch);
@@ -174,7 +187,7 @@ namespace DwarfCorp
                         alignedRect.X += 5;
                         batch.Draw(Image.Image, alignedRect, Image.SourceRect, imageColor);
                     }
-                    Drawer2D.DrawAlignedStrokedText(batch, Text, TextFont, textColor, strokeColor, Drawer2D.Alignment.Center, GlobalBounds);
+                    Drawer2D.DrawAlignedStrokedText(batch, Text, TextFont, textColor, strokeColor, Drawer2D.Alignment.Center, GlobalBounds, true);
 
                     if(IsToggled)
                     {
@@ -186,7 +199,7 @@ namespace DwarfCorp
                     GUI.Skin.RenderTab(GlobalBounds, batch, IsToggled ? Color.White : Color.LightGray);
                     Drawer2D.DrawAlignedStrokedText(batch, Text,
                         TextFont,
-                        textColor, strokeColor, Drawer2D.Alignment.Top, GlobalBounds);
+                        textColor, strokeColor, Drawer2D.Alignment.Top, new Rectangle(GlobalBounds.X, GlobalBounds.Y + 2, GlobalBounds.Width, GlobalBounds.Height), true);
                     break;
             }
 

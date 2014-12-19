@@ -375,6 +375,37 @@ namespace DwarfCorp
             return new BoundingBox(minPos, maxPos);
         }
 
+        public static Rectangle GetBoundingRectangle(IEnumerable<Rectangle> boxes)
+        {
+            Point maxPos = new Point(-int.MaxValue, -int.MaxValue);
+            Point minPos = new Point(int.MaxValue, int.MaxValue);
+
+            foreach (Rectangle box in boxes)
+            {
+                if (box.X <= minPos.X)
+                {
+                    minPos.X = box.X;
+                }
+
+                if (box.Y <= minPos.Y)
+                {
+                    minPos.Y = box.Y;
+                }
+                if (box.Right >= maxPos.X)
+                {
+                    maxPos.X = box.Right;
+                }
+
+                if (box.Bottom >= maxPos.Y)
+                {
+                    maxPos.Y = box.Bottom;
+                }
+
+            }
+
+            return new Rectangle(minPos.X, minPos.Y, maxPos.X - minPos.X, maxPos.Y - minPos.Y);
+        }
+
 
         public static float LinearCombination(float x, float y, float x1, float y1, float x2, float y2, float q11, float q12, float q21, float q22)
         {

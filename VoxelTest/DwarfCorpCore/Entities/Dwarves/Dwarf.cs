@@ -39,9 +39,34 @@ namespace DwarfCorp
 
         public static List<Animation> CreateDefaultAnimations(Texture2D dwarfSprites, int frameWidth, int frameHeight)
         {
+
+            /*
+            List<SpriteSheet> layers = new List<SpriteSheet>()
+            {
+                new SpriteSheet(ContentPaths.Entities.Dwarf.Sprites.fakedwarf_body, 32, 32),
+                new SpriteSheet(ContentPaths.Entities.Dwarf.Sprites.fakedwarf_clothes, 32, 32),
+                new SpriteSheet(ContentPaths.Entities.Dwarf.Sprites.fakedwarf_hair, 32, 32),
+                new SpriteSheet(ContentPaths.Entities.Dwarf.Sprites.fakedwarf_item, 32, 32),
+            };
+
+            List<Color> tints = new List<Color>()
+            {
+                Color.White,
+                new Color(PlayState.Random.Next(0, 255), PlayState.Random.Next(0, 255), PlayState.Random.Next(0, 255)),
+                Color.White,
+                Color.White
+            };
+            */
             return new List<Animation>()
             {
-                
+             /*
+                CharacterSprite.CreateCompositeAnimation(Creature.CharacterMode.Idle, OrientedAnimation.Orientation.Forward, CompositeLibrary.Composites[CompositeLibrary.Dwarf], 1.0f, layers, tints, 
+                new[]{0, 0, 0, 1, 2, 3}, 
+                new[]{0, 0, 0},
+                new[]{0, 0, 0, 1},
+                new[]{0, 0, 0, 1, 2})
+             */
+            
             CharacterSprite.CreateAnimation(Creature.CharacterMode.Walking, OrientedAnimation.Orientation.Forward, dwarfSprites, 15.0f, frameWidth, frameHeight, 0, 0, 1, 2, 1, 0, 1, 2, 3),
             CharacterSprite.CreateAnimation(Creature.CharacterMode.Walking, OrientedAnimation.Orientation.Right, dwarfSprites, 15.0f, frameWidth, frameHeight, 2, 0, 1, 2, 1, 0, 1, 2, 3),
             CharacterSprite.CreateAnimation(Creature.CharacterMode.Walking, OrientedAnimation.Orientation.Left, dwarfSprites, 15.0f, frameWidth, frameHeight, 1, 0, 1, 2, 1, 0, 1, 2, 3),
@@ -83,16 +108,17 @@ namespace DwarfCorp
             CharacterSprite.CreateAnimation(Creature.CharacterMode.Jumping, OrientedAnimation.Orientation.Right, dwarfSprites, 15.0f, frameWidth, frameHeight, 6, 0),
             CharacterSprite.CreateAnimation(Creature.CharacterMode.Jumping, OrientedAnimation.Orientation.Left, dwarfSprites, 15.0f, frameWidth, frameHeight, 5, 0),
             CharacterSprite.CreateAnimation(Creature.CharacterMode.Jumping, OrientedAnimation.Orientation.Backward, dwarfSprites, 15.0f, frameWidth, frameHeight, 7, 0),
+             
             };
         }
 
         public void Initialize(EmployeeClass dwarfClass)
         {
             Physics.OrientWithVelocity = true;
-            Sprite = new CharacterSprite(Graphics, Manager, "Dwarf Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 0.1f, 0)));
+            Sprite = new CharacterSprite(Graphics, Manager, "Dwarf Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 0.3f, 0)));
             foreach (Animation animation in dwarfClass.Animations)
             {
-                Sprite.AddAnimation(new Animation(animation, animation.SpriteSheet, GameState.Game.GraphicsDevice));
+                Sprite.AddAnimation(animation.Clone());
             }
 
             Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);

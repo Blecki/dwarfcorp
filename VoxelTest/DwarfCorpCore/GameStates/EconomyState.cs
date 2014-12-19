@@ -179,6 +179,7 @@ namespace DwarfCorp.GameStates
 
         public override void Update(GameTime gameTime)
         {
+            CompositeLibrary.Update();
             MainWindow.LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2);
             Input.Update();
             GUI.Update(gameTime);

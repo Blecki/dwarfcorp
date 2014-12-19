@@ -21,6 +21,17 @@ namespace DwarfCorp
             InputManager.MouseClickedCallback += InputManager_MouseClickedCallback;
         }
 
+        public override void OnBegin()
+        {
+
+        }
+
+        public override void OnEnd()
+        {
+
+        }
+
+
         void InputManager_MouseClickedCallback(InputManager.MouseButton button)
         {
             if(button != InputManager.MouseButton.Right || Player.CurrentTool != this)

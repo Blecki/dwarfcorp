@@ -30,48 +30,7 @@ namespace DwarfCorp
             WordWrap = false;
         }
 
-        public string WrapLines()
-        {
-            Vector2 measurement = Datastructures.SafeMeasure(TextFont, Text);
-
-            if(measurement.X < LocalBounds.Width)
-            {
-                return Text;
-            }
-
-            string[] originalWords = Text.Split(' ');
-
-            List<string> wrappedLines = new List<string>();
-
-            StringBuilder actualLine = new StringBuilder();
-            double actualWidth = 0;
-
-            foreach (var item in originalWords)
-            {
-                Vector2 itemMeasure = Datastructures.SafeMeasure(TextFont, item + " ");
-                actualLine.Append(item + " ");
-                actualWidth += (int)itemMeasure.X;
-
-                if (actualWidth >= LocalBounds.Width)
-                {
-                    wrappedLines.Add(actualLine.ToString());
-                    actualLine.Clear();
-                    actualWidth = 0;
-                }
-            }
-
-            if (actualLine.Length > 0)
-                wrappedLines.Add(actualLine.ToString());
-
-            string toReturn = "";
-
-            foreach(var line in wrappedLines)
-            {
-                toReturn += line + "\n";
-            }
-
-            return toReturn;
-        }
+      
 
         public override void Render(GameTime time, SpriteBatch batch)
         {
@@ -79,7 +38,7 @@ namespace DwarfCorp
 
             if(WordWrap)
             {
-                text = WrapLines();
+                text = DwarfGUI.WrapLines(Text, LocalBounds, TextFont);
             }
 
             Drawer2D.DrawAlignedStrokedText(batch, text, TextFont, TextColor, StrokeColor, Alignment, GlobalBounds);

@@ -91,6 +91,49 @@ namespace DwarfCorp
                 return new Rectangle(fitArea.X, fitArea.Y, (int)(sourceArea.Width * ratio), (int) (sourceArea.Height * ratio));
         }
 
+        public static string WrapLines(string text, Rectangle bounds, SpriteFont textFont)
+        {
+            Vector2 measurement = Datastructures.SafeMeasure(textFont, text);
+
+            if (measurement.X < bounds.Width)
+            {
+                return text;
+            }
+
+            string[] originalWords = text.Split(' ');
+
+            List<string> wrappedLines = new List<string>();
+
+            StringBuilder actualLine = new StringBuilder();
+            double actualWidth = 0;
+
+            foreach (var item in originalWords)
+            {
+                Vector2 itemMeasure = Datastructures.SafeMeasure(textFont, item + " ");
+                actualLine.Append(item + " ");
+                actualWidth += (int)itemMeasure.X;
+
+                if (actualWidth >= bounds.Width)
+                {
+                    wrappedLines.Add(actualLine.ToString());
+                    actualLine.Clear();
+                    actualWidth = 0;
+                }
+            }
+
+            if (actualLine.Length > 0)
+                wrappedLines.Add(actualLine.ToString());
+
+            string toReturn = "";
+
+            foreach (var line in wrappedLines)
+            {
+                toReturn += line + "\n";
+            }
+
+            return toReturn;
+        }
+
         public void Update(GameTime time)
         {
 
