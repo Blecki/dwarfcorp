@@ -107,7 +107,6 @@ namespace DwarfCorp
             // Add AI
             AI = new SnakeAI(this, "snake AI", Sensors, PlanService);
 
-            Health = new Health(Manager, "HP", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
 
             Attacks = new List<Attack>() {new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick)};
 

@@ -17,13 +17,15 @@ namespace DwarfCorp
     {
         public Point3 VoxelID;
 
-        [JsonIgnore] 
+        [JsonIgnore]
         public VoxelChunk Chunk;
 
         public Point3 ChunkID { get; set; }
 
         private bool firstIter = false;
 
+        public bool DestroyOnTimer = false;
+        public Timer DestroyTimer { get; set; }
 
 
         [OnDeserialized]
@@ -36,14 +38,14 @@ namespace DwarfCorp
 
         public VoxelListener()
         {
-            
+
         }
 
 
         public VoxelListener(ComponentManager manager, GameComponent parent, ChunkManager chunkManager, Voxel vref) :
             base("VoxelListener", parent)
         {
-            Chunk = chunkManager.ChunkData.ChunkMap[vref.ChunkID];
+            Chunk = vref.Chunk;
             VoxelID = new Point3(vref.GridPosition);
             Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
             ChunkID = Chunk.ID;
@@ -60,12 +62,25 @@ namespace DwarfCorp
                 }
                 firstIter = false;
             }
+
+            if (DestroyOnTimer)
+            {
+                DestroyTimer.Update(gameTime);
+
+                if (DestroyTimer.HasTriggered)
+                {
+                    Die();
+                    Chunk.MakeVoxel(VoxelID.X, VoxelID.Y, VoxelID.Z).Kill();
+                }
+            }
+
             base.Update(gameTime, chunks, camera);
         }
 
+
         void VoxelListener_OnVoxelDestroyed(Point3 voxelID)
         {
-            if(voxelID.Equals(VoxelID))
+            if (voxelID.Equals(VoxelID))
             {
                 GetRootComponent().Die();
             }

@@ -813,7 +813,7 @@ namespace DwarfCorp
         {
             if(ReconstructRamps || firstRebuild)
             {
-                VoxelListPrimitive.UpdateRamps(this);
+                //VoxelListPrimitive.UpdateRamps(this);
                 VoxelListPrimitive.UpdateCornerRamps(this);
                 ReconstructRamps = false;
             }
@@ -1008,7 +1008,7 @@ namespace DwarfCorp
             float numChecked = 1;
 
             int index = vox.Index;
-
+            color.DynamicColor = 0;
             color.SunColor += vox.Chunk.Data.SunColors[index];
             vox.Chunk.GetNeighborsVertex(face, vox, neighbors);
 
@@ -1023,6 +1023,7 @@ namespace DwarfCorp
                 color.SunColor += c.Data.SunColors[v.Index]; 
                 if(VoxelLibrary.IsSolid(v))
                 {
+                    if (v.Type.EmitsLight) color.DynamicColor = 255;
                     numHit++;
                     numChecked++;
                 }
@@ -1036,7 +1037,6 @@ namespace DwarfCorp
             float proportionHit = numHit / numChecked;
             color.AmbientColor = (int) Math.Min((1.0f - proportionHit) * 255.0f, 255);
             color.SunColor = (int) Math.Min((float) color.SunColor / (float) numChecked, 255);
-            color.DynamicColor = (int) Math.Min((float) color.DynamicColor / (float) numHit, 255);
         }
 
 
@@ -1187,17 +1187,21 @@ namespace DwarfCorp
             bool ambientOcclusion = GameSettings.Default.AmbientOcclusion;
             Voxel voxel = MakeVoxel(0, 0, 0);
             HashSet<int> indexesToUpdate = new HashSet<int>();
+           
             for(int x = 0; x < SizeX; x++)
             {
                 for(int y = 0; y < Math.Min(Manager.ChunkData.MaxViewingLevel + 1, SizeY); y++)
                 {
                     for(int z = 0; z < SizeZ; z++)
                     {
-                        voxel.GridPosition = new Vector3(x, y, z);                        
+                        voxel.GridPosition = new Vector3(x, y, z);    
+                        
                         if(voxel == null || voxel.IsEmpty)
                         {
                             continue;
                         }
+
+                        VoxelType type = voxel.Type;
 
                         if(VoxelLibrary.IsSolid(voxel) && (voxel.IsVisible || voxel.RecalculateLighting))
                         {
@@ -1208,6 +1212,7 @@ namespace DwarfCorp
                                 {
                                     Color color = Data.GetColor(x, y, z, (VoxelVertex)i);
                                     color.G = m_fogOfWar;
+                                    if (type.EmitsLight) color.B = 255;
                                     Data.SetColor(x, y, z, (VoxelVertex)i, color);
                                 }
                                 voxel.RecalculateLighting = false;
@@ -1223,6 +1228,7 @@ namespace DwarfCorp
                                     {
                                         indexesToUpdate.Add(Data.VertIndex(x, y, z, (VoxelVertex) i));
                                         CalculateVertexLight(voxel, (VoxelVertex) i, Manager, neighbors, ref colorInfo);
+                                        if (type.EmitsLight) colorInfo.DynamicColor= 255;
                                         Data.SetColor(x, y, z, (VoxelVertex) i,
                                             new Color(colorInfo.SunColor, colorInfo.AmbientColor, colorInfo.DynamicColor));
                                     }
@@ -2119,6 +2125,7 @@ namespace DwarfCorp
         }
 
         #endregion neighbors
+
 
     }
 

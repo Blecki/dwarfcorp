@@ -55,7 +55,7 @@ namespace DwarfCorp
 
         public override Body CreatePlant(Vector3 position)
         {
-            return (Body)EntityFactory.GenerateWheat(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice);
+            return EntityFactory.CreateEntity<Body>("Wheat", position);
         }
 
         public override void OnBuilt()

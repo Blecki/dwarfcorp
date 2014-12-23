@@ -80,6 +80,14 @@ namespace DwarfCorp
  
         }
 
+        public Animation(NamedImageFrame frame) :
+            this(GameState.Game.GraphicsDevice, frame.Image, frame.AssetName, frame.SourceRect.Width, frame.SourceRect.Height, new List<Point>(), false, Color.White, 15.0f, frame.SourceRect.Width / 32.0f, frame.SourceRect.Height / 32.0f, false)
+        {
+            Frames.Add(new Point(frame.SourceRect.X / frame.SourceRect.Width, frame.SourceRect.Y / frame.SourceRect.Height));
+            CreatePrimitives(GameState.Game.GraphicsDevice);
+            Speeds = new List<float>();
+        }
+
         public Animation(GraphicsDevice device, Texture2D sheet, string name, int frameWidth, int frameHeight, List<Point> frames, bool loops, Color tint, float frameHZ, float worldWidth, float worldHeight, bool flipped)
         {
             Name = name;

@@ -69,7 +69,7 @@ namespace DwarfCorp
                 if (creature == null) continue;
                 if (Alliance.GetRelationship(creature.Creature.Allies, Allies) == Relationship.Loves) continue;
 
-                creature.Creature.Health.Damage(DamageAmount);
+                creature.Creature.Damage(DamageAmount);
                 creature.Creature.Physics.Velocity *= 0.0f;
                 Trigger();
                 break;

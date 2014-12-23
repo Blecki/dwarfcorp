@@ -70,6 +70,12 @@ namespace DwarfCorp
             }
         }
 
+        [JsonIgnore]
+        public Vector3 Position
+        {
+            get { return GlobalTransform.Translation; }
+        }
+
         public BoundingBox BoundingBox = new BoundingBox();
 
 

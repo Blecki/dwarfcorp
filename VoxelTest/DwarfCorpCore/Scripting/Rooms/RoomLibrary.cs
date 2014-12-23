@@ -158,53 +158,53 @@ namespace DwarfCorp
                     switch(tile)
                     {
                         case RoomTile.Wheat:
-                            createdComponent = (Body) EntityFactory.GenerateWheat(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Wheat", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
                             thingsMade++;
                             break;
 
                         case RoomTile.Mushroom:
-                            createdComponent = (Body)EntityFactory.GenerateMushroom(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Mushroom", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
                             thingsMade++;
                             break;
 
                         case RoomTile.Table:
-                            createdComponent = (Body) EntityFactory.GenerateTable(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Table", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
                             thingsMade++;
                             break;
                         case RoomTile.Lamp:
-                            createdComponent = (Body) EntityFactory.GenerateLamp(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Lamp", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
                             thingsMade++;
                             break;
                         case RoomTile.Flag:
-                            createdComponent = (Body) EntityFactory.GenerateFlag(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Flag", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
                             thingsMade++;
                             break;
                         case RoomTile.Chair:
-                            createdComponent = EntityFactory.GenerateChair(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Chair", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
                             thingsMade++;
                             break;
                         case RoomTile.PotionTable:
-                            createdComponent = (Body) EntityFactory.GeneratePotionTable(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
+                            createdComponent = EntityFactory.CreateEntity<Body>("PotionTable", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
                             thingsMade++;
                             break;
                         case RoomTile.BookTable:
-                            createdComponent = (Body) EntityFactory.GenerateBookTable(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
+                            createdComponent = EntityFactory.CreateEntity<Body>("BookTable", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
                             thingsMade++;
                             break;
                         case RoomTile.Anvil:
-                            createdComponent = (Body) EntityFactory.GenerateAnvil(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Anvil", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
                             thingsMade++;
                             break;
                         case RoomTile.Forge:
-                            createdComponent = (Body) EntityFactory.GenerateForge(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Forge", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
                             thingsMade++;
                             break;
                         case RoomTile.Target:
-                            createdComponent = (Body) EntityFactory.GenerateTarget(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Target", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
                             thingsMade++;
                             break;
                         case RoomTile.Strawman:
-                            createdComponent = (Body) EntityFactory.GenerateStrawman(box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1), componentManager, content, graphics);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Strawman", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
                             thingsMade++;
                             break;
                         case RoomTile.Pillow:
@@ -223,7 +223,7 @@ namespace DwarfCorp
                                         continue;
                                     }
 
-                                    createdComponent = EntityFactory.GenerateBed(box.Min + new Vector3(r - 1, 1.0f, c - 1), componentManager, content, graphics);
+                                    createdComponent = EntityFactory.CreateEntity<Body>("Bed", box.Min + new Vector3(r - 1, 1.0f, c - 1));
 
                                     float angle = (float) Math.Atan2(dx, dy);
 

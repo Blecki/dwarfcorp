@@ -666,7 +666,7 @@ namespace DwarfCorp
 
                 foreach(Vector3 vec in positions)
                 {
-                    Body newEntity = EntityFactory.GenerateResource(resource.ResourceType.ResourceName,
+                    Body newEntity = EntityFactory.CreateEntity<Body>(resource.ResourceType.ResourceName + " Resource",
                         vec + MathFunctions.RandVector3Cube()*0.5f);
 
                     TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f), 2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
@@ -741,13 +741,7 @@ namespace DwarfCorp
                 
                 if (PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position + offset, ref voxel, true))
                 {
-                    toReturn.Add(EntityFactory.GenerateComponent(creature,
-                        position + offset,
-                        PlayState.ComponentManager,
-                        GameState.Game.Content,
-                        GameState.Game.GraphicsDevice,
-                        PlayState.ChunkManager, PlayState.ComponentManager.Factions,
-                        PlayState.Camera));
+                    toReturn.Add(EntityFactory.CreateEntity<Body>(creature, position + offset));
                 }
             }
 

@@ -117,26 +117,11 @@ namespace DwarfCorp
 
                     if(!shipmentGiven)
                     {
-                        foreach(ResourceAmount amount in Shipment.BuyOrder)
-                        {
-                            for(int i = 0; i < amount.NumResources; i++)
-                            {
-                                Vector3 pos = Body.GlobalTransform.Translation + MathFunctions.RandVector3Cube() * 2;
-                                Body loc = EntityFactory.GenerateComponent(amount.ResourceType.ResourceName, pos, Manager, chunks.Content, chunks.Graphics, chunks, Manager.Factions, camera);
-                                Faction.AddGatherDesignation(loc);
-                                Faction.Economy.CurrentMoney -= amount.ResourceType.MoneyValue;
-                            }
-                        }
-
-
+                        
                         shipmentGiven = true;
                     }
                     else
                     {
-                        if(Shipment.Destination != null)
-                        {
-                            Shipment.Destination.ClearItems();
-                        }
                         State = BalloonState.Leaving;
                     }
 

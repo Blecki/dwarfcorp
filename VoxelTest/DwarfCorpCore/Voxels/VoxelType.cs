@@ -22,6 +22,7 @@ namespace DwarfCorp
         public string ParticleType { get; set; }
         public string ExplosionSound { get; set; }
         public bool HasTransitionTextures { get; set; }
+        public bool EmitsLight { get; set; }
         
         public Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords> TransitionTextures { get; set; }
         public bool IsSoil { get; set; }
@@ -49,6 +50,7 @@ namespace DwarfCorp
             HasTransitionTextures = false;
             TransitionTextures = new Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords>();
             IsSoil = false;
+            EmitsLight = false;
             if(!TypeList.Contains(this))
             {
                 TypeList.Add(this);

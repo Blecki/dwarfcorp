@@ -69,6 +69,11 @@
             related to creatures (such as dwarves and goblins). 
             </summary>
         </member>
+        <member name="T:DwarfCorp.Health">
+            <summary>
+            When attached to another component, gives it health. When the health reaches its minimum, the object (and its parents/children) are destroyed.
+            </summary>
+        </member>
         <member name="T:DwarfCorp.GameComponent">
             <summary>
             This class is responsible for handling components. "Components" are one of the most important parts of the 
@@ -102,9 +107,25 @@
             a bounding box.
             </summary>
         </member>
-        <member name="T:DwarfCorp.Health">
+        <member name="T:DwarfCorp.EnemySensor">
             <summary>
-            When attached to another component, gives it health. When the health reaches its minimum, the object (and its parents/children) are destroyed.
+            Component which fires when an enemy creature enters a box. Attached to other components.
+            REQUIRES that the EnemySensor be attached to a creature
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Sensor">
+            <summary>
+            Generic component with a box that fires when other components enter it.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.TrapSensor">
+            <summary>
+            This is a sensor for traps that damages HealthComponents that collide with the sensor
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.VoxelListener">
+            <summary>
+            When a voxel is destroyed, this component kills whatever it is attached to.
             </summary>
         </member>
         <member name="T:DwarfCorp.DeathComponentSpawner">
@@ -2127,27 +2148,6 @@
             <summary>
             This is a wrapper around the DateTime class which allows the game to go faster
             or slower. The days/hours/minutes actually pass in the game.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.EnemySensor">
-            <summary>
-            Component which fires when an enemy creature enters a box. Attached to other components.
-            REQUIRES that the EnemySensor be attached to a creature
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.Sensor">
-            <summary>
-            Generic component with a box that fires when other components enter it.
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.TrapSensor">
-            <summary>
-            This is a sensor for traps that damages HealthComponents that collide with the sensor
-            </summary>
-        </member>
-        <member name="T:DwarfCorp.VoxelListener">
-            <summary>
-            When a voxel is destroyed, this component kills whatever it is attached to.
             </summary>
         </member>
         <member name="M:DwarfCorp.Program.Main(System.String[])">
