@@ -128,10 +128,10 @@ Content\Audio\pluck.xnb
 Content\Audio\vegetation_break.xnb
 Content\Audio\hammer.xnb
 Content\Audio\trap.xnb
-Content\Music\dwarfcorp.xnb
-Content\Music\dwarfcorp.wma
 Content\Audio\wurp.xnb
 Content\Audio\tinkle.xnb
+Content\Music\dwarfcorp.xnb
+Content\Music\dwarfcorp.wma
 Content\Text\adverbs.txt
 Content\Text\animals.txt
 Content\Text\adjectives.txt

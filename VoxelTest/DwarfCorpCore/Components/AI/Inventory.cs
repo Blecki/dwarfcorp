@@ -88,7 +88,7 @@ namespace DwarfCorp
 
             for(int i = 0; i < resources.NumResources; i++)
             {
-                Body newEntity = EntityFactory.GenerateResource(resources.ResourceType.ResourceName,
+                Body newEntity = EntityFactory.CreateEntity<Body>(resources.ResourceType.ResourceName + " Resource",
                     GlobalTransform.Translation + MathFunctions.RandVector3Cube()*0.5f);
                 toReturn.Add(newEntity);
             }
@@ -104,7 +104,7 @@ namespace DwarfCorp
             {
                 for(int i = 0; i < resource.NumResources; i++)
                 {
-                    Physics item = EntityFactory.GenerateResource(resource.ResourceType.ResourceName,
+                    Physics item = EntityFactory.CreateEntity<Physics>(resource.ResourceType.ResourceName + " Resource",
                         MathFunctions.RandVector3Box(GetBoundingBox())) as Physics;
                     if(item != null)
                     {

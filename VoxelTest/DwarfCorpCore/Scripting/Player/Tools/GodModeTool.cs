@@ -89,7 +89,9 @@ namespace DwarfCorp
                 SelectorBox.AddValue("Build " + s);
             }
 
-            foreach(string s in EntityFactory.ComponentList)
+            List<string> strings = EntityFactory.EntityFuncs.Keys.ToList();
+            strings.Sort();
+            foreach (string s in strings)
             {
                 SelectorBox.AddValue(s);
             }
@@ -249,8 +251,7 @@ namespace DwarfCorp
                         default:
                             if(vox.IsEmpty)
                             {
-                                EntityFactory.GenerateComponent(SelectorBox.CurrentValue, vox.Position + new Vector3(0.5f, 0.5f, 0.5f),
-                                    PlayState.ChunkManager.Components, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics, PlayState.ChunkManager, PlayState.ComponentManager.Factions, Player.CameraController);
+                                EntityFactory.CreateEntity<Body>(SelectorBox.CurrentValue, vox.Position + new Vector3(0.5f, 0.5f, 0.5f));
                             }
                             break;
                     }

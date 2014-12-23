@@ -57,7 +57,7 @@ namespace DwarfCorp
         }
         public override Body CreatePlant(Vector3 position)
         {
-            return (Body)EntityFactory.GenerateMushroom(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice);
+            return (Body)EntityFactory.CreateEntity<Body>("Mushroom", position);
         }
         
     }

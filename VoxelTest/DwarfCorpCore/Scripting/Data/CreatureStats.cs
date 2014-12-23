@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json.Linq;
 
 namespace DwarfCorp
@@ -20,7 +21,40 @@ namespace DwarfCorp
             public float Charisma = 5;
             public float Intelligence = 5;
             public float Size = 5;
+
+            public static StatNums operator +(StatNums a, StatNums b)
+            {
+                if (a == null || b == null) return null;
+                return new StatNums()
+                {
+                    Charisma = a.Charisma + b.Charisma,
+                    Constitution = a.Charisma + b.Charisma,
+                    Dexterity = a.Dexterity + b.Dexterity,
+                    Intelligence = a.Intelligence + b.Intelligence,
+                    Size = a.Size + b.Size,
+                    Strength = a.Strength + b.Strength,
+                    Wisdom = a.Wisdom + b.Wisdom
+                };
+            }
+
+            public static StatNums operator -(StatNums a, StatNums b)
+            {
+                if (a == null || b == null) return null;
+                return new StatNums()
+                {
+                    Charisma = a.Charisma - b.Charisma,
+                    Constitution = a.Charisma - b.Charisma,
+                    Dexterity = a.Dexterity - b.Dexterity,
+                    Intelligence = a.Intelligence - b.Intelligence,
+                    Size = a.Size - b.Size,
+                    Strength = a.Strength - b.Strength,
+                    Wisdom = a.Wisdom - b.Wisdom
+                };
+            }
         }
+
+        public StatNums StatBuffs { get; set; }
+
 
         public float Dexterity { get; set; }
         public float Constitution { get; set; }
@@ -28,20 +62,27 @@ namespace DwarfCorp
         public float Wisdom { get; set; }
         public float Charisma { get; set; }
         public float Intelligence { get; set; }
-
         public float Size { get; set; }
 
-        public float MaxSpeed { get { return Dexterity; } }
+        public float BuffedDex { get { return Dexterity + StatBuffs.Dexterity; } }
+        public float BuffedCon { get { return Constitution + StatBuffs.Constitution; } }
+        public float BuffedStr { get { return Strength + StatBuffs.Strength; } }
+        public float BuffedWis { get { return Wisdom + StatBuffs.Wisdom; }}
+        public float BuffedChar { get { return Charisma + StatBuffs.Charisma; } }
+        public float BuffedInt { get { return Intelligence + StatBuffs.Intelligence; }}
+        public float BuffedSiz { get { return Size + StatBuffs.Size; } }
+
+        public float MaxSpeed { get { return BuffedDex; } }
         public float MaxAcceleration { get { return MaxSpeed * 2.0f; }  }
         public float StoppingForce { get { return MaxAcceleration * 6.0f; } }
-        public float BaseDigSpeed { get { return Strength + Size; }}
-        public float BaseChopSpeed { get { return Strength * 3.0f + Dexterity * 1.0f; } }
+        public float BaseDigSpeed { get { return BuffedStr + BuffedSiz; }}
+        public float BaseChopSpeed { get { return BuffedStr * 3.0f + BuffedDex * 1.0f; } }
         public float JumpForce { get { return 1000.0f; } }
-        public float MaxHealth { get { return (Strength + Constitution + Size) * 10.0f; }}
+        public float MaxHealth { get { return (BuffedStr + BuffedCon + BuffedSiz) * 10.0f; }}
 
-        public float EatSpeed { get { return Size + Strength; }}
+        public float EatSpeed { get { return BuffedSiz + BuffedStr; }}
 
-        public float HungerGrowth { get { return Size * 0.025f; } }
+        public float HungerGrowth { get { return BuffedSiz * 0.025f; } }
 
         public float Tiredness
         {
@@ -49,7 +90,7 @@ namespace DwarfCorp
             {
                 if(CanSleep)
                 {
-                    return 1.0f / Constitution;
+                    return 1.0f / BuffedCon;
                 }
                 else
                 {
@@ -58,7 +99,7 @@ namespace DwarfCorp
             }
         } 
 
-        public float HungerResistance { get { return Constitution; } }
+        public float HungerResistance { get { return BuffedCon; } }
 
         public bool CanSleep { get; set; }
 
@@ -98,9 +139,9 @@ namespace DwarfCorp
         public bool IsOverQualified {
             get { return XP > CurrentClass.Levels[LevelIndex + 1].XP; }}
 
-        public float BaseFarmSpeed { get { return Intelligence/100.0f + Strength/100.0f; }}
+        public float BaseFarmSpeed { get { return BuffedInt/100.0f + BuffedStr/100.0f; }}
         public bool CanEat { get; set; }
-
+        
         public CreatureStats()
         {
             CanSleep = false;
@@ -110,6 +151,16 @@ namespace DwarfCorp
             CurrentClass = new WorkerClass();
             LevelIndex = 0;
             XP = 0;
+            StatBuffs = new StatNums()
+            {
+                Charisma = 0,
+                Constitution = 0,
+                Dexterity = 0,
+                Intelligence = 0,
+                Size = 0,
+                Strength = 0,
+                Wisdom = 0
+            };
         }
 
         public CreatureStats(EmployeeClass creatureClass, int level)
@@ -127,6 +178,27 @@ namespace DwarfCorp
             Wisdom = Math.Max(Wisdom, CurrentLevel.BaseStats.Wisdom);
             Charisma = Math.Max(Charisma, CurrentLevel.BaseStats.Charisma);
             Intelligence = Math.Max(Intelligence, CurrentLevel.BaseStats.Intelligence);
+            StatBuffs = new StatNums()
+            {
+                Charisma = 0,
+                Constitution = 0,
+                Dexterity = 0,
+                Intelligence = 0,
+                Size = 0,
+                Strength = 0,
+                Wisdom = 0
+            };
+        }
+
+        public void ResetBuffs()
+        {
+            StatBuffs.Charisma = 0;
+            StatBuffs.Constitution = 0;
+            StatBuffs.Dexterity = 0;
+            StatBuffs.Intelligence = 0;
+            StatBuffs.Size = 0;
+            StatBuffs.Strength = 0;
+            StatBuffs.Wisdom = 0;
         }
 
         public void LevelUp()

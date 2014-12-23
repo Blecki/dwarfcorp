@@ -55,9 +55,14 @@ namespace DwarfCorp
            
         }
 
+        public void SetSingleFrameAnimation(Point frame)
+        {
+            AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", new List<Point>() { frame }, true, Color.White, 10.0f, false));
+        }
+
         public void SetSingleFrameAnimation()
         {
-            AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", new List<Point>() { new Point(0, 0)}, true, Color.White, 10.0f, false));
+            SetSingleFrameAnimation(new Point(0, 0));
         }
 
         public void AddAnimation(Animation animation)

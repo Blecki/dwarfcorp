@@ -39,7 +39,8 @@ namespace DwarfCorp
             Other,
             Farmed,
             Crafted,
-            Researched
+            Researched,
+            Magic
         }
 
         public static Thought CreateStandardThought(ThoughtType type, DateTime time)
@@ -49,6 +50,11 @@ namespace DwarfCorp
             TimeSpan limit = new TimeSpan(0, 1, 0, 0);
             switch (type)
             {
+                case ThoughtType.Magic:
+                    description = "A strange giddiness overcomes me.";
+                    happiness = 100.0f;
+                    limit = new TimeSpan(1, 0, 0, 0);
+                    break;
                 case ThoughtType.Slept:
                     description = "I slept recently.";
                     happiness = 5.0f;

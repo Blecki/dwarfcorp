@@ -18,7 +18,72 @@ namespace DwarfCorp
     {
         public static InstanceManager InstanceManager = null;
 
+        public static Dictionary<string, Func<Vector3, Blackboard, GameComponent>> EntityFuncs { get; set; }
 
+
+        public static void Initialize()
+        {
+            EntityFuncs = new Dictionary<string, Func<Vector3, Blackboard, GameComponent>>();
+            RegisterEntity("Crate", (position, data) => new Crate(position));
+            foreach (var resource in ResourceLibrary.Resources)
+            {
+                ResourceLibrary.ResourceType type = resource.Value.Type;
+                RegisterEntity(resource.Key + " Resource", (position, data) => new ResourceEntity(type, position));
+            }
+            RegisterEntity("Balloon", (position, data) => CreateBalloon(position + new Vector3(0, 1000, 0), position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, null, PlayState.PlayerFaction));
+            RegisterEntity("Work Pile", (position, data) => new WorkPile(position));
+            RegisterEntity("Pine Tree", (position, data) => new Tree(position, "pine", data.GetData("Scale", 1.0f)));
+            RegisterEntity("Snow Pine Tree", (position, data) => new Tree(position, "snowpine", data.GetData("Scale", 1.0f)));
+            RegisterEntity("Palm Tree", (position, data) => new Tree(position, "palm", data.GetData("Scale", 1.0f)));
+            RegisterEntity("Berry Bush", (position, data) => new Bush(position, "berrybush", data.GetData("Scale", 1.0f)));
+            RegisterEntity("Bird", (position, data) => new Bird(ContentPaths.Entities.Animals.Birds.GetRandomBird(), position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Bird"));
+            RegisterEntity("Deer", (position, data) => new Deer(ContentPaths.Entities.Animals.Deer.deer, position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Deer"));
+            RegisterEntity("Dwarf", (position, data) => GenerateDwarf(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.PlayerFaction, PlayState.PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.Worker], 0));
+            RegisterEntity("AxeDwarf", (position, data) => GenerateDwarf(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.PlayerFaction, PlayState.PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.AxeDwarf], 0));
+            RegisterEntity("CraftsDwarf", (position, data) => GenerateDwarf(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.PlayerFaction, PlayState.PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.CraftsDwarf], 0));
+            RegisterEntity("Wizard", (position, data) => GenerateDwarf(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.PlayerFaction, PlayState.PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.Wizard], 0));
+            RegisterEntity("Goblin", (position, data) => GenerateGoblin(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.ComponentManager.Factions.Factions["Goblins"], PlayState.PlanService, "Goblins"));
+            RegisterEntity("Skeleton", (position, data) => GenerateSkeleton(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.ComponentManager.Factions.Factions["Undead"], PlayState.PlanService, "Undead"));
+            RegisterEntity("Necromancer", (position, data) => GenerateNecromancer(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.ComponentManager.Factions.Factions["Undead"], PlayState.PlanService, "Undead"));
+            RegisterEntity("Bed", (position, data) => new Bed(position));
+            RegisterEntity("BearTrap", (position, data) => new BearTrap(position));
+            RegisterEntity("Lamp", (position, data) => new Lamp(position));
+            RegisterEntity("Table", (position, data) => new Table(position));
+            RegisterEntity("Chair", (position, data) => new Chair(position));
+            RegisterEntity("Flag", (position, data) => new Flag(position));
+            RegisterEntity("Mushroom", (position, data) => new Mushroom(position));
+            RegisterEntity("Wheat", (position, data) => new Wheat(position));
+            RegisterEntity("BookTable", (position, data) => new Table(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 4)));
+            RegisterEntity("PotionTable", (position, data) => new Table(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4)));
+            RegisterEntity("Anvil", (position, data) => new Anvil(position));
+            RegisterEntity("Forge", (position, data) => new Forge(position));
+        }
+
+        
+
+        public static void RegisterEntity<T>(string id, Func<Vector3, Blackboard, T> function) where T : GameComponent
+        {
+            EntityFuncs[id] = function;
+        }
+
+        public static T CreateEntity<T>(string id, Vector3 location, Blackboard data = null) where T : GameComponent
+        {
+            if(data == null) data = new Blackboard();
+            if (EntityFuncs.ContainsKey(id))
+            {
+                return EntityFuncs[id].Invoke(location, data) as T;
+            }
+            else
+            {
+                string err = id ?? "null";
+                throw new KeyNotFoundException("Unable to create entity of type " + err);   
+            }
+        }
+
+        public static Func<Vector3, T> GetFunc<T>(string id) where T : GameComponent
+        {
+            return EntityFuncs[id] as Func<Vector3, T>;
+        }
 
         public static Body CreateBalloon(Vector3 target, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ShipmentOrder order, Faction master)
         {
@@ -46,7 +111,7 @@ namespace DwarfCorp
             return balloon;
         }
 
-
+        /*
         public static GameComponent GenerateVegetation(string id, float size, float offset, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
         {
             if(id == "pine" || id == "snowpine" || id == "palm")
@@ -67,6 +132,8 @@ namespace DwarfCorp
             }
             return null;
         }
+         
+
 
         public static string[] ComponentList =
         {
@@ -218,6 +285,7 @@ namespace DwarfCorp
                     return null;
             }
         }
+        */
 
         public static Body GenerateSkeleton(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ChunkManager chunks, Camera camera, Faction faction, PlanService planService, string allies)
         {
@@ -287,6 +355,7 @@ namespace DwarfCorp
             }
         }
 
+        /*
         public static Body GenerateResource(ResourceLibrary.ResourceType resourceType, Vector3 position)
         {
             Matrix matrix = Matrix.Identity;
@@ -321,10 +390,12 @@ namespace DwarfCorp
             return physics;
         }
         
+
         public static Body GenerateResource(string name, Vector3 position)
         {
             return GenerateResource(ResourceLibrary.GetResourceByName(name).Type, position);
         }
+         
 
         public static Body GenerateChair(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
         {
@@ -936,7 +1007,7 @@ namespace DwarfCorp
             apples.AddRange(apples);
 
             DeathComponentSpawner spawner = new DeathComponentSpawner(componentManager, "Component Spawner", tree, Matrix.Identity, new Vector3(bushSize * 4, bushSize * 2, bushSize * 4), Vector3.Zero, apples);
-            */
+            
             Inventory inventory = new Inventory("Inventory", tree)
             {
                 Resources = new ResourceContainer
@@ -955,7 +1026,7 @@ namespace DwarfCorp
             tree.CollisionType = CollisionManager.CollisionType.Static;
             return tree;
         }
-
+        */
 
         public static void CreateIntersectingBillboard(GameComponent component, Texture2D spriteSheet, float xSize, float ySize, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
         {
@@ -1020,6 +1091,7 @@ namespace DwarfCorp
             return new Snake(ContentPaths.Entities.Animals.Snake.snake, position, componentManager, chunks, graphics, content, "Snake").Physics;
         }
 
+        /*
         public static Body GenerateCraftItem(CraftLibrary.CraftItemType itemType, Vector3 position)
         {
             switch (itemType)
@@ -1032,6 +1104,7 @@ namespace DwarfCorp
 
             return null;
         }
+         */
     }
 
 }

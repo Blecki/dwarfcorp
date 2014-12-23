@@ -9,20 +9,16 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class WorkPile : Body
+    public class WorkPile : Fixture
     {
-        public Sprite Sprite { get; set; }
-
         public WorkPile()
         {
             
         }
 
         public WorkPile(Vector3 position) :
-            base("WorkPile", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position), Vector3.One, Vector3.Zero, false)
+            base(position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.underconstruction), new Point(0, 0), PlayState.ComponentManager.RootComponent)
         {
-            Sprite = new Sprite(Manager, "WorkSprite", this, Matrix.Identity, TextureManager.GetTexture(ContentPaths.Entities.DwarfObjects.underconstruction), false);
-            Sprite.SetSingleFrameAnimation();
         }
     }
 }

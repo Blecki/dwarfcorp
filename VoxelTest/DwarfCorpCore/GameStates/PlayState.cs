@@ -443,6 +443,7 @@ namespace DwarfCorp.GameStates
 
             JobLibrary.Initialize();
             MonsterSpawner = new MonsterSpawner();
+            EntityFactory.Initialize();
         }
 
         /// <summary>
@@ -1765,12 +1766,14 @@ namespace DwarfCorp.GameStates
 
             GUI.PostRender(gameTime);
 
+            /*
             int dx = 0;
             foreach (var composite in CompositeLibrary.Composites)
             {
                 composite.Value.DebugDraw(DwarfGame.SpriteBatch, dx, 128);
                 dx += 256;
             }
+             */
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
 
