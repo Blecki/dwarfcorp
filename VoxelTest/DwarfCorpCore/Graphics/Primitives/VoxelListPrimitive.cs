@@ -16,6 +16,7 @@ namespace DwarfCorp
     public class VoxelListPrimitive : GeometricPrimitive, IDisposable
     {
         public static ConcurrentDictionary<BoxFace, Vector3> FaceDeltas = new ConcurrentDictionary<BoxFace, Vector3>();
+        public static Dictionary<VoxelVertex, List<Vector3>> VertexNeighbors2D = new Dictionary<VoxelVertex, List<Vector3>>(); 
         private readonly Dictionary<BoxFace, bool> faceExists = new Dictionary<BoxFace, bool>();
         private readonly Dictionary<BoxFace, bool> drawFace = new Dictionary<BoxFace, bool>();
         private readonly List<ExtendedVertex> accumulatedVertices = new List<ExtendedVertex>();
@@ -33,6 +34,30 @@ namespace DwarfCorp
                 FaceDeltas[BoxFace.Right] = new Vector3(1, 0, 0);
                 FaceDeltas[BoxFace.Top] = new Vector3(0, 1, 0);
                 FaceDeltas[BoxFace.Bottom] = new Vector3(0, -1, 0);
+                VertexNeighbors2D[VoxelVertex.FrontTopLeft] = new List<Vector3>()
+                {
+                    new Vector3(-1, 0, 0),
+                    new Vector3(-1, 0, 1),
+                    new Vector3(0, 0, 1)
+                };
+                VertexNeighbors2D[VoxelVertex.FrontTopRight] = new List<Vector3>()
+                {
+                    new Vector3(0, 0, 1),
+                    new Vector3(1, 0, 1),
+                    new Vector3(1, 0, 0)
+                };
+                VertexNeighbors2D[VoxelVertex.BackTopLeft] = new List<Vector3>()
+                {
+                    new Vector3(-1, 0, 0),
+                    new Vector3(-1, 0, -1),
+                    new Vector3(0, 0, -1)
+                };
+                VertexNeighbors2D[VoxelVertex.BackTopRight] = new List<Vector3>()
+                {
+                    new Vector3(0, 0, -1),
+                    new Vector3(1, 0, -1),
+                    new Vector3(1, 0, 0)
+                };
                 CreateFaceDrawMap();
                 StaticInitialized = true;
             }
@@ -117,7 +142,15 @@ namespace DwarfCorp
         {
             Voxel v = chunk.MakeVoxel(0, 0, 0);
             Voxel vAbove = chunk.MakeVoxel(0, 0, 0);
-            List<Voxel> diagNeighbors = chunk.AllocateVoxels(VoxelChunk.VertexSuccessorsDiag[VoxelVertex.FrontTopLeft].Count);
+            List<Voxel> diagNeighbors = chunk.AllocateVoxels(3);
+            List<VoxelVertex> top = new List<VoxelVertex>()
+            {
+                VoxelVertex.FrontTopLeft,
+                VoxelVertex.FrontTopRight,
+                VoxelVertex.BackTopLeft,
+                VoxelVertex.BackTopRight
+            };
+
             for(int x = 0; x < chunk.SizeX; x++)
             {
                 for(int y = 0; y < chunk.SizeY; y++)
@@ -137,48 +170,37 @@ namespace DwarfCorp
 
                         if(v.IsEmpty || !v.IsVisible || !isTop || !v.Type.CanRamp)
                         {
+                            v.RampType = RampType.None;
                             continue;
                         }
+                        v.RampType = RampType.None;
 
-                        for(int i = 0; i < 6; i++)
+                        foreach (VoxelVertex bestKey in top)
                         {
-                            BoxFace face = (BoxFace) i;
-                            if(face == BoxFace.Bottom)
+                            List<Vector3> neighbors = VertexNeighbors2D[bestKey];
+                            chunk.GetNeighborsSuccessors(neighbors, (int)v.GridPosition.X, (int)v.GridPosition.Y, (int)v.GridPosition.Z, diagNeighbors);
+                        
+                            bool emptyFound = diagNeighbors.Any(vox => vox.IsEmpty);
+
+                            if(!emptyFound)
                             {
                                 continue;
                             }
 
-                            int faceIndex = 0;
-                            int faceCount = 0;
-                            v.Primitive.GetFace(face, v.Primitive.UVs, out faceIndex, out faceCount);
-
-                            for (int idx = faceIndex; idx < faceIndex + faceCount; idx++)
+                            switch(bestKey)
                             {
-                                VoxelVertex bestKey = VoxelChunk.GetNearestDelta(v.Primitive.Vertices[idx].Position);
-                                chunk.GetNeighborsVertexDiag(bestKey, x, y, z, diagNeighbors);
-
-                                bool emptyFound = diagNeighbors.Any(vox => vox.IsEmpty);
-
-                                if(!emptyFound)
-                                {
-                                    continue;
-                                }
-
-                                switch(bestKey)
-                                {
-                                    case VoxelVertex.FrontTopLeft:
-                                        v.RampType |= RampType.TopBackLeft;
-                                        break;
-                                    case VoxelVertex.FrontTopRight:
-                                        v.RampType |= RampType.TopBackRight;
-                                        break;
-                                    case VoxelVertex.BackTopLeft:
-                                        v.RampType |= RampType.TopFrontLeft;
-                                        break;
-                                    case VoxelVertex.BackTopRight:
-                                        v.RampType |= RampType.TopFrontRight;
-                                        break;
-                                }
+                                case VoxelVertex.FrontTopLeft:
+                                    v.RampType |= RampType.TopBackLeft;
+                                    break;
+                                case VoxelVertex.FrontTopRight:
+                                    v.RampType |= RampType.TopBackRight;
+                                    break;
+                                case VoxelVertex.BackTopLeft:
+                                    v.RampType |= RampType.TopFrontLeft;
+                                    break;
+                                case VoxelVertex.BackTopRight:
+                                    v.RampType |= RampType.TopFrontRight;
+                                    break;
                             }
                         }
                     }
@@ -188,1188 +210,152 @@ namespace DwarfCorp
 
         private static readonly bool[,,] FaceDrawMap = new bool[6, (int) RampType.All + 1, (int) RampType.All + 1];
 
+        private static void SetTop(RampType rampType, Dictionary<VoxelVertex, float> top)
+        {
+            float r = 0.5f;
+            List<VoxelVertex> keys = top.Keys.ToList();
+            foreach (VoxelVertex vert in keys)
+            {
+                top[vert] = 1.0f;
+            }
+            if (rampType.HasFlag(RampType.TopFrontLeft))
+            {
+                top[VoxelVertex.FrontTopLeft] = r;
+            }
+
+            if (rampType.HasFlag(RampType.TopFrontRight))
+            {
+                top[VoxelVertex.FrontTopRight] = r;
+            }
+
+            if (rampType.HasFlag(RampType.TopBackLeft))
+            {
+                top[VoxelVertex.BackTopLeft] = r;
+            }
+            if (rampType.HasFlag(RampType.TopBackRight))
+            {
+                top[VoxelVertex.BackTopRight] = r;
+            }
+        }
+
         private static void CreateFaceDrawMap()
         {
-            #region BULLSHIT
+            BoxFace[] faces = (BoxFace[]) Enum.GetValues(typeof (BoxFace));
 
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.None, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.None, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.None, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.None, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.None, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.None, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.None, (int) RampType.TopFrontLeft] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.None, (int) RampType.TopFrontRight] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.None, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.None, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.None, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.None, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.None, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.None, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.All, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.All, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.All, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.All, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.All, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.All, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.All, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.All, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.All, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.All, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.All, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.All, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.All, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.All, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Front, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Front, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Front, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Front, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Front, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Front, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Front, (int) RampType.TopFrontLeft] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Front, (int) RampType.TopFrontRight] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Front, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Front, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Front, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Front, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Front, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Front, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Left, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Left, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Left, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Left, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Left, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Left, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Left, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Left, (int) RampType.TopFrontRight] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Left, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Left, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Left, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Left, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Left, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Left, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Right, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Right, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Right, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Right, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Right, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Right, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Right, (int) RampType.TopFrontLeft] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Right, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Right, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Right, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Right, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Right, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Right, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Right, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Back, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Back, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Back, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Back, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Back, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Back, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Back, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Back, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Back, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Back, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Back, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Back, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Back, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.Back, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontLeft, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontLeft, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontLeft, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontLeft, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontLeft, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontLeft, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontLeft, (int) RampType.TopFrontLeft] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontLeft, (int) RampType.TopFrontRight] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontLeft, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontLeft, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontLeft, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontLeft, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontLeft, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontLeft, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontRight, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontRight, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontRight, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontRight, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontRight, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontRight, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontRight, (int) RampType.TopFrontLeft] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontRight, (int) RampType.TopFrontRight] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontRight, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontRight, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontRight, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontRight, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontRight, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopFrontRight, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackLeft, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackLeft, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackLeft, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackLeft, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackLeft, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackLeft, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackLeft, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackLeft, (int) RampType.TopFrontRight] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackLeft, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackLeft, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackLeft, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackLeft, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackLeft, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackLeft, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackRight, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackRight, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackRight, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackRight, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackRight, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackRight, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackRight, (int) RampType.TopFrontLeft] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackRight, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackRight, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackRight, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackRight, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackRight, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackRight, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) RampType.TopBackRight, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Left), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Left), (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Left), (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Left), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Left), (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Left), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Left), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Left), (int) RampType.TopFrontRight] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Left), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Left), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Left), (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Left), (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Left), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Left), (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Right), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Right), (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Right), (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Right), (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Right), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Right), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Right), (int) RampType.TopFrontLeft] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Right), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Right), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Right), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Right), (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Right), (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Right), (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Front | RampType.Right), (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Left), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Left), (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Left), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Left), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Left), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Left), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Left), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Left), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Left), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Left), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Left), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Left), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Left), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Left), (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Right), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Right), (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Right), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Right), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Right), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Right), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Right), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Right), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Right), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Right), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Right), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Right), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Right), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Back, (int) (RampType.Back | RampType.Right), (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.None, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.None, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.None, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.None, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.None, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.None, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.None, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.None, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.None, (int) RampType.TopBackLeft] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.None, (int) RampType.TopBackRight] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.None, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.None, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.None, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.None, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.All, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.All, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.All, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.All, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.All, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.All, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.All, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.All, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.All, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.All, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.All, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.All, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.All, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.All, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Front, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Front, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Front, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Front, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Front, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Front, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Front, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Front, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Front, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Front, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Front, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Front, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Front, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Front, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Left, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Left, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Left, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Left, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Left, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Left, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Left, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Left, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Left, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Left, (int) RampType.TopBackRight] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Left, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Left, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Left, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Left, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Right, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Right, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Right, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Right, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Right, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Right, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Right, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Right, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Right, (int) RampType.TopBackLeft] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Right, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Right, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Right, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Right, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Right, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Back, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Back, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Back, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Back, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Back, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Back, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Back, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Back, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Back, (int) RampType.TopBackLeft] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Back, (int) RampType.TopBackRight] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Back, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Back, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Back, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.Back, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontLeft, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontLeft, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontLeft, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontLeft, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontLeft, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontLeft, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontLeft, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontLeft, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontLeft, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontLeft, (int) RampType.TopBackRight] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontLeft, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontLeft, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontLeft, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontLeft, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontRight, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontRight, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontRight, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontRight, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontRight, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontRight, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontRight, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontRight, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontRight, (int) RampType.TopBackLeft] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontRight, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontRight, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontRight, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontRight, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopFrontRight, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackLeft, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackLeft, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackLeft, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackLeft, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackLeft, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackLeft, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackLeft, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackLeft, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackLeft, (int) RampType.TopBackLeft] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackLeft, (int) RampType.TopBackRight] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackLeft, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackLeft, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackLeft, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackLeft, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackRight, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackRight, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackRight, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackRight, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackRight, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackRight, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackRight, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackRight, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackRight, (int) RampType.TopBackLeft] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackRight, (int) RampType.TopBackRight] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackRight, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackRight, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackRight, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) RampType.TopBackRight, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Left), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Left), (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Left), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Left), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Left), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Left), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Left), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Left), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Left), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Left), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Left), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Left), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Left), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Left), (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Right), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Right), (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Right), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Right), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Right), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Right), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Right), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Right), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Right), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Right), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Right), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Right), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Right), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Front | RampType.Right), (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Left), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Left), (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Left), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Left), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Left), (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Left), (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Left), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Left), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Left), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Left), (int) RampType.TopBackRight] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Left), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Left), (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Left), (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Left), (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Right), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Right), (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Right), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Right), (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Right), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Right), (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Right), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Right), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Right), (int) RampType.TopBackLeft] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Right), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Right), (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Right), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Right), (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Front, (int) (RampType.Back | RampType.Right), (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.None, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.None, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.None, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.None, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.None, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.None, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.None, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.None, (int) RampType.TopFrontRight] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.None, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.None, (int) RampType.TopBackRight] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.None, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.None, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.None, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.None, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.All, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.All, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.All, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.All, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.All, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.All, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.All, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.All, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.All, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.All, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.All, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.All, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.All, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.All, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Front, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Front, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Front, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Front, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Front, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Front, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Front, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Front, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Front, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Front, (int) RampType.TopBackRight] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Front, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Front, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Front, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Front, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Left, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Left, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Left, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Left, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Left, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Left, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Left, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Left, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Left, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Left, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Left, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Left, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Left, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Left, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Right, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Right, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Right, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Right, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Right, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Right, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Right, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Right, (int) RampType.TopFrontRight] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Right, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Right, (int) RampType.TopBackRight] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Right, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Right, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Right, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Right, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Back, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Back, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Back, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Back, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Back, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Back, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Back, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Back, (int) RampType.TopFrontRight] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Back, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Back, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Back, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Back, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Back, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.Back, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontLeft, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontLeft, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontLeft, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontLeft, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontLeft, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontLeft, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontLeft, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontLeft, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontLeft, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontLeft, (int) RampType.TopBackRight] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontLeft, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontLeft, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontLeft, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontLeft, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontRight, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontRight, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontRight, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontRight, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontRight, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontRight, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontRight, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontRight, (int) RampType.TopFrontRight] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontRight, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontRight, (int) RampType.TopBackRight] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontRight, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontRight, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontRight, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopFrontRight, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackLeft, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackLeft, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackLeft, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackLeft, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackLeft, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackLeft, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackLeft, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackLeft, (int) RampType.TopFrontRight] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackLeft, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackLeft, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackLeft, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackLeft, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackLeft, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackLeft, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackRight, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackRight, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackRight, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackRight, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackRight, (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackRight, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackRight, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackRight, (int) RampType.TopFrontRight] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackRight, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackRight, (int) RampType.TopBackRight] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackRight, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackRight, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackRight, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) RampType.TopBackRight, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Left), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Left), (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Left), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Left), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Left), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Left), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Left), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Left), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Left), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Left), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Left), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Left), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Left), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Left), (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Right), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Right), (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Right), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Right), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Right), (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Right), (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Right), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Right), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Right), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Right), (int) RampType.TopBackRight] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Right), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Right), (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Right), (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Front | RampType.Right), (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Left), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Left), (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Left), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Left), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Left), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Left), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Left), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Left), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Left), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Left), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Left), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Left), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Left), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Left), (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Right), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Right), (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Right), (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Right), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Right), (int) RampType.Right] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Right), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Right), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Right), (int) RampType.TopFrontRight] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Right), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Right), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Right), (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Right), (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Right), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Left, (int) (RampType.Back | RampType.Right), (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.None, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.None, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.None, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.None, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.None, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.None, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.None, (int) RampType.TopFrontLeft] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.None, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.None, (int) RampType.TopBackLeft] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.None, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.None, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.None, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.None, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.None, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.All, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.All, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.All, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.All, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.All, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.All, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.All, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.All, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.All, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.All, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.All, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.All, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.All, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.All, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Front, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Front, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Front, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Front, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Front, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Front, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Front, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Front, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Front, (int) RampType.TopBackLeft] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Front, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Front, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Front, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Front, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Front, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Left, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Left, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Left, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Left, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Left, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Left, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Left, (int) RampType.TopFrontLeft] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Left, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Left, (int) RampType.TopBackLeft] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Left, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Left, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Left, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Left, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Left, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Right, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Right, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Right, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Right, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Right, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Right, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Right, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Right, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Right, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Right, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Right, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Right, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Right, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Right, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Back, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Back, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Back, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Back, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Back, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Back, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Back, (int) RampType.TopFrontLeft] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Back, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Back, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Back, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Back, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Back, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Back, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.Back, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontLeft, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontLeft, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontLeft, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontLeft, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontLeft, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontLeft, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontLeft, (int) RampType.TopFrontLeft] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontLeft, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontLeft, (int) RampType.TopBackLeft] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontLeft, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontLeft, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontLeft, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontLeft, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontLeft, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontRight, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontRight, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontRight, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontRight, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontRight, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontRight, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontRight, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontRight, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontRight, (int) RampType.TopBackLeft] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontRight, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontRight, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontRight, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontRight, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopFrontRight, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackLeft, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackLeft, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackLeft, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackLeft, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackLeft, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackLeft, (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackLeft, (int) RampType.TopFrontLeft] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackLeft, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackLeft, (int) RampType.TopBackLeft] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackLeft, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackLeft, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackLeft, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackLeft, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackLeft, (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackRight, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackRight, (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackRight, (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackRight, (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackRight, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackRight, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackRight, (int) RampType.TopFrontLeft] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackRight, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackRight, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackRight, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackRight, (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackRight, (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackRight, (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) RampType.TopBackRight, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Left), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Left), (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Left), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Left), (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Left), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Left), (int) RampType.Back] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Left), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Left), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Left), (int) RampType.TopBackLeft] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Left), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Left), (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Left), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Left), (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Left), (int) (RampType.Back | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Right), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Right), (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Right), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Right), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Right), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Right), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Right), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Right), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Right), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Right), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Right), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Right), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Right), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Front | RampType.Right), (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Left), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Left), (int) RampType.All] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Left), (int) RampType.Front] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Left), (int) RampType.Left] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Left), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Left), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Left), (int) RampType.TopFrontLeft] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Left), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Left), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Left), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Left), (int) (RampType.Front | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Left), (int) (RampType.Front | RampType.Right)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Left), (int) (RampType.Back | RampType.Left)] = true;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Left), (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Right), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Right), (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Right), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Right), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Right), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Right), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Right), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Right), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Right), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Right), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Right), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Right), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Right), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Right, (int) (RampType.Back | RampType.Right), (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.None, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.None, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.None, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.None, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.None, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.None, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.None, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.None, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.None, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.None, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.None, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.None, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.None, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.None, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.All, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.All, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.All, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.All, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.All, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.All, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.All, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.All, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.All, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.All, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.All, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.All, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.All, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.All, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Front, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Front, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Front, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Front, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Front, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Front, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Front, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Front, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Front, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Front, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Front, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Front, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Front, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Front, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Left, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Left, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Left, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Left, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Left, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Left, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Left, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Left, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Left, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Left, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Left, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Left, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Left, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Left, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Right, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Right, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Right, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Right, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Right, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Right, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Right, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Right, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Right, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Right, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Right, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Right, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Right, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Right, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Back, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Back, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Back, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Back, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Back, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Back, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Back, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Back, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Back, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Back, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Back, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Back, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Back, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.Back, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontLeft, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontLeft, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontLeft, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontLeft, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontLeft, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontLeft, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontLeft, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontLeft, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontLeft, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontLeft, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontLeft, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontLeft, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontLeft, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontLeft, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontRight, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontRight, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontRight, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontRight, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontRight, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontRight, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontRight, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontRight, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontRight, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontRight, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontRight, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontRight, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontRight, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopFrontRight, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackLeft, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackLeft, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackLeft, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackLeft, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackLeft, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackLeft, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackLeft, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackLeft, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackLeft, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackLeft, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackLeft, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackLeft, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackLeft, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackLeft, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackRight, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackRight, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackRight, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackRight, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackRight, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackRight, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackRight, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackRight, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackRight, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackRight, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackRight, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackRight, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackRight, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) RampType.TopBackRight, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Left), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Left), (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Left), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Left), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Left), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Left), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Left), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Left), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Left), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Left), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Left), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Left), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Left), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Left), (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Right), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Right), (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Right), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Right), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Right), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Right), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Right), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Right), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Right), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Right), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Right), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Right), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Right), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Front | RampType.Right), (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Left), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Left), (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Left), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Left), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Left), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Left), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Left), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Left), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Left), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Left), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Left), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Left), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Left), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Left), (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Right), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Right), (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Right), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Right), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Right), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Right), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Right), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Right), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Right), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Right), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Right), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Right), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Right), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Top, (int) (RampType.Back | RampType.Right), (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.None, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.None, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.None, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.None, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.None, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.None, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.None, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.None, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.None, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.None, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.None, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.None, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.None, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.None, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.All, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.All, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.All, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.All, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.All, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.All, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.All, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.All, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.All, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.All, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.All, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.All, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.All, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.All, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Front, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Front, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Front, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Front, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Front, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Front, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Front, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Front, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Front, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Front, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Front, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Front, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Front, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Front, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Left, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Left, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Left, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Left, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Left, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Left, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Left, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Left, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Left, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Left, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Left, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Left, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Left, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Left, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Right, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Right, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Right, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Right, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Right, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Right, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Right, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Right, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Right, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Right, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Right, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Right, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Right, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Right, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Back, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Back, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Back, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Back, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Back, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Back, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Back, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Back, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Back, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Back, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Back, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Back, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Back, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.Back, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontLeft, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontLeft, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontLeft, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontLeft, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontLeft, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontLeft, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontLeft, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontLeft, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontLeft, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontLeft, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontLeft, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontLeft, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontLeft, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontLeft, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontRight, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontRight, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontRight, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontRight, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontRight, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontRight, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontRight, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontRight, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontRight, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontRight, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontRight, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontRight, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontRight, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopFrontRight, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackLeft, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackLeft, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackLeft, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackLeft, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackLeft, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackLeft, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackLeft, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackLeft, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackLeft, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackLeft, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackLeft, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackLeft, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackLeft, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackLeft, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackRight, (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackRight, (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackRight, (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackRight, (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackRight, (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackRight, (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackRight, (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackRight, (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackRight, (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackRight, (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackRight, (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackRight, (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackRight, (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) RampType.TopBackRight, (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Left), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Left), (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Left), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Left), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Left), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Left), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Left), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Left), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Left), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Left), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Left), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Left), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Left), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Left), (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Right), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Right), (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Right), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Right), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Right), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Right), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Right), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Right), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Right), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Right), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Right), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Right), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Right), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Front | RampType.Right), (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Left), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Left), (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Left), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Left), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Left), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Left), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Left), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Left), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Left), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Left), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Left), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Left), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Left), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Left), (int) (RampType.Back | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Right), (int) RampType.None] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Right), (int) RampType.All] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Right), (int) RampType.Front] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Right), (int) RampType.Left] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Right), (int) RampType.Right] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Right), (int) RampType.Back] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Right), (int) RampType.TopFrontLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Right), (int) RampType.TopFrontRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Right), (int) RampType.TopBackLeft] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Right), (int) RampType.TopBackRight] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Right), (int) (RampType.Front | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Right), (int) (RampType.Front | RampType.Right)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Right), (int) (RampType.Back | RampType.Left)] = false;
-            FaceDrawMap[(int) BoxFace.Bottom, (int) (RampType.Back | RampType.Right), (int) (RampType.Back | RampType.Right)] = false;
+            List<RampType> ramps = new List<RampType>()
+            {
+                RampType.None,
+                RampType.TopFrontLeft,
+                RampType.TopFrontRight,
+                RampType.TopBackRight,
+                RampType.TopBackLeft,
+                RampType.Front,
+                RampType.All,
+                RampType.Back,
+                RampType.Left,
+                RampType.Right,
+                RampType.TopFrontLeft | RampType.TopBackRight,
+                RampType.TopFrontRight | RampType.TopBackLeft,
+                RampType.TopBackLeft | RampType.TopBackRight | RampType.TopFrontLeft,
+                RampType.TopBackLeft | RampType.TopBackRight | RampType.TopFrontRight,
+                RampType.TopFrontLeft | RampType.TopFrontRight | RampType.TopBackLeft,
+                RampType.TopFrontLeft | RampType.TopFrontRight | RampType.TopBackRight
+            };
 
-            #endregion
+            Dictionary<VoxelVertex, float> myTop = new Dictionary<VoxelVertex, float>()
+            {
+                {
+                    VoxelVertex.BackTopLeft, 0.0f
+                },
+                {
+                    VoxelVertex.BackTopRight,  0.0f
+                },
+                {
+                    VoxelVertex.FrontTopLeft,  0.0f
+                },
+                {
+                    VoxelVertex.FrontTopRight,  0.0f
+                }
+            };
+
+            Dictionary<VoxelVertex, float> theirTop = new Dictionary<VoxelVertex, float>()
+            {
+                {
+                    VoxelVertex.BackTopLeft,  0.0f
+                },
+                {
+                    VoxelVertex.BackTopRight,  0.0f
+                },
+                {
+                    VoxelVertex.FrontTopLeft,  0.0f
+                },
+                {
+                    VoxelVertex.FrontTopRight, 0.0f
+                }
+            };
+
+            foreach (RampType myRamp in ramps)
+            {
+                SetTop(myRamp, myTop);
+                foreach (RampType neighborRamp in ramps)
+                {
+                    SetTop(neighborRamp, theirTop);
+                    foreach (BoxFace neighborFace in faces)
+                    {
+
+                        if (neighborFace == BoxFace.Bottom || neighborFace == BoxFace.Top)
+                        {
+                            FaceDrawMap[(int) neighborFace, (int) myRamp, (int) neighborRamp] = false;
+                            continue;
+                        }
+
+                        float my1 = 0.0f;
+                        float my2 = 0.0f;
+                        float their1 = 0.0f;
+                        float their2 = 0.0f;
+
+                        switch (neighborFace)
+                        {
+                            case BoxFace.Back:
+                                my1 = myTop[VoxelVertex.BackTopLeft];
+                                my2 = myTop[VoxelVertex.BackTopRight];
+                                their1 = theirTop[VoxelVertex.FrontTopLeft];
+                                their2 = theirTop[VoxelVertex.FrontTopRight];
+                                break;
+                            case BoxFace.Front:
+                                my1 = myTop[VoxelVertex.FrontTopLeft];
+                                my2 = myTop[VoxelVertex.FrontTopRight];
+                                their1 = theirTop[VoxelVertex.BackTopLeft];
+                                their2 = theirTop[VoxelVertex.BackTopRight];
+                                break;
+                            case BoxFace.Left:
+                                my1 = myTop[VoxelVertex.FrontTopLeft];
+                                my2 = myTop[VoxelVertex.BackTopLeft];
+                                their1 = theirTop[VoxelVertex.FrontTopRight];
+                                their2 = theirTop[VoxelVertex.BackTopRight];
+                                break;
+                            case BoxFace.Right:
+                                my1 = myTop[VoxelVertex.FrontTopRight];
+                                my2 = myTop[VoxelVertex.BackTopRight];
+                                their1 = theirTop[VoxelVertex.FrontTopLeft];
+                                their2 = theirTop[VoxelVertex.BackTopLeft];
+                                break;
+                            default:
+                                break;
+                        }
+
+                        if (neighborFace == BoxFace.Back && myRamp == RampType.None &&
+                            neighborRamp == (RampType.TopBackLeft | RampType.TopFrontLeft))
+                        {
+                            Console.Out.Write("Yes");
+                        }
+
+                        FaceDrawMap[(int)neighborFace, (int)myRamp, (int)neighborRamp] = (their1 < my1 || their2 < my2 );
+                    }
+                }
+            }
+
+   
         }
 
         public static bool ShouldDrawFace(BoxFace face, RampType neighborRamp, RampType myRamp)
@@ -1412,6 +398,7 @@ namespace DwarfCorp
 
                         if(isTop && !v.IsEmpty && v.IsVisible && v.Type.CanRamp)
                         {
+
                             for(int i = 0; i < 6; i++)
                             {
                                 BoxFace face = (BoxFace) i;
@@ -1505,7 +492,7 @@ namespace DwarfCorp
                         v.GridPosition = new Vector3(x, y, z); 
 
 
-                        if(v == null || v.IsEmpty || !v.IsVisible)
+                        if(v.IsEmpty || !v.IsVisible)
                         {
                             continue;
                         }
@@ -1535,13 +522,13 @@ namespace DwarfCorp
                             if(faceExists[face])
                             {
                                 voxelOnFace.GridPosition = new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
-                                drawFace[face] =  voxelOnFace.IsEmpty || !voxelOnFace.IsVisible || ((voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && IsSideFace(face) && ShouldDrawFace(face, voxelOnFace.RampType, v.RampType)));
+                                drawFace[face] =  voxelOnFace.IsEmpty || !voxelOnFace.IsVisible || (voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && IsSideFace(face) && ShouldDrawFace(face, voxelOnFace.RampType, v.RampType));
 
                             }
                             else
                             {
                                 bool success = chunk.Manager.ChunkData.GetNonNullVoxelAtWorldLocation(new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z) + chunk.Origin, ref worldVoxel);
-                                drawFace[face] = !success || worldVoxel.IsEmpty || !worldVoxel.IsVisible || ((worldVoxel.Type.CanRamp && worldVoxel.RampType != RampType.None && IsSideFace(face) && ShouldDrawFace(face, worldVoxel.RampType, v.RampType)));
+                                drawFace[face] = !success || worldVoxel.IsEmpty || !worldVoxel.IsVisible || (worldVoxel.Type.CanRamp && worldVoxel.RampType != RampType.None && IsSideFace(face) && ShouldDrawFace(face, worldVoxel.RampType, v.RampType));
                             }
                         }
 

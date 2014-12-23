@@ -141,7 +141,7 @@ namespace DwarfCorp
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Hunger.CurrentValue -= dt * creature.Stats.HungerGrowth;
 
-            Health.CurrentValue = (creature.Health.Hp - creature.Health.MinHealth) / (creature.Health.MaxHealth - creature.Health.MinHealth);
+            Health.CurrentValue = (creature.Hp - creature.MinHealth) / (creature.MaxHealth - creature.MinHealth);
 
             if(creature.Stats.CanSleep)
                 Energy.CurrentValue = (float) (100*Math.Sin(PlayState.Time.GetTotalHours()*Math.PI / 24.0f));
@@ -161,7 +161,7 @@ namespace DwarfCorp
 
                 if(Hunger.CurrentValue <= 1e-12 && (DateTime.Now - LastHungerDamageTime).TotalSeconds > HungerDamageRate)
                 {
-                    creature.Health.Damage(1.0f / (creature.Stats.HungerResistance) * HungerDamageRate);
+                    creature.Damage(1.0f / (creature.Stats.HungerResistance) * HungerDamageRate);
                     LastHungerDamageTime = DateTime.Now;
                 }
             }

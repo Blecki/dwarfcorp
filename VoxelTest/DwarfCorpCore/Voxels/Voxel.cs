@@ -71,6 +71,7 @@ namespace DwarfCorp
     }
 
 
+
     /// <summary>
     /// An atomic cube in the world which represents a bit of terrain. 
     /// </summary>
@@ -332,7 +333,7 @@ namespace DwarfCorp
 
                 if (randFloat < Type.ProbabilityOfRelease)
                 {
-                    EntityFactory.GenerateResource(Type.ResourceToRelease, Position + new Vector3(0.5f, 0.5f, 0.5f));
+                    EntityFactory.CreateEntity<Body>(Type.ResourceToRelease + " Resource", Position + new Vector3(0.5f, 0.5f, 0.5f));
                 }
             }
             Chunk.ShouldRebuild = true;

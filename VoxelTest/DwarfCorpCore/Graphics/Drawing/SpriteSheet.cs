@@ -38,6 +38,14 @@ namespace DwarfCorp
             AssetName = "";
         }
 
+        public SpriteSheet(string name)
+        {
+            AssetName = name;
+            Texture2D tex = TextureManager.GetTexture(name);
+            FrameWidth = tex.Width;
+            FrameHeight = tex.Height;
+        }
+
         public SpriteSheet(string name, int frameWidth, int frameHeight)
         {
             FrameWidth = frameWidth;
@@ -78,7 +86,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public ImageFrame GenerateFrame(Point position)
+        public NamedImageFrame GenerateFrame(Point position)
         {
             return new NamedImageFrame(AssetName, new Rectangle(position.X * FrameWidth, position.Y * FrameHeight, FrameWidth, FrameHeight));
         }

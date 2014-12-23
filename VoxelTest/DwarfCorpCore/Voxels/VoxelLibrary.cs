@@ -173,7 +173,8 @@ namespace DwarfCorp
                 IsBuildable = false,
                 ParticleType = "star_particle",
                 ExplosionSound = ContentPaths.Audio.wurp,
-                HasTransitionTextures = true
+                HasTransitionTextures = true,
+                EmitsLight = true
             };
 
 

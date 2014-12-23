@@ -147,10 +147,6 @@ namespace DwarfCorp
             Attacks = new List<Attack>{new Attack("Peck", 0.1f, 2.0f, 1.0f, ContentPaths.Audio.pick)};
 
 
-            // The creature just has the default amount of health calculated from its stats
-            Health = new Health(Manager, "HP", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
-
-
             // The bird can hold one item at a time in its inventory
             Inventory = new Inventory("Inventory", Physics)
             {
@@ -187,7 +183,7 @@ namespace DwarfCorp
             };
 
             // The bird is flammable, and can die when exposed to fire.
-            Flames = new Flammable(Manager, "Flames", Physics, Health);
+            Flames = new Flammable(Manager, "Flames", Physics, this);
 
             // Tag the physics component with some information 
             // that can be used later

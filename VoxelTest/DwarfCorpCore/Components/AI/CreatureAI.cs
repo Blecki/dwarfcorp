@@ -395,6 +395,11 @@ namespace DwarfCorp
             }
         }
 
+        public void RemoveThought(Thought.ThoughtType thoughtType)
+        {
+            Thoughts.RemoveAll(thought => thought.Type == thoughtType);
+        }
+
         public void AddThought(Thought thought, bool allowDuplicates)
         {
             if (allowDuplicates)
@@ -478,6 +483,8 @@ namespace DwarfCorp
 
             return desc;
         }
+
+
     }
 
 }
