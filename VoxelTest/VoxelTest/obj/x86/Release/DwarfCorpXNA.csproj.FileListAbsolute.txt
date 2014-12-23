@@ -1,0 +1,269 @@
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\Default.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\Small.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\Title.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\pine.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\icons.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Sky\night_sky.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Sky\day_sky.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\water_normal.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\cartoon_water.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\water_normal2.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\foam.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Gradients\ambientgradient.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Gradients\sungradient.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Gradients\torchgradient.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Sprites\dwarf_animations.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Effects\shadowcircle.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\puff.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\grass.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Gradients\skygradient.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\leaf.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\gnarled.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\shrub.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\mushroom.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\snowpine.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\frostgrass.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\vine.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\berrybush.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\gui_widgets.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Balloon\Sprites\balloon.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\flower.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\deadbush.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\wheat.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\lava.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\lavafoam.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Furniture\interior_furniture.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Resources\resources.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\dirt_particle.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\stone_particle.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\sand_particle.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\flame.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Sprites\goblin_animations.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\blood_particle.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Furniture\bedtex.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\splash.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Logos\companylogo.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\splash2.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Logos\grebeardlogo.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Sky\moon.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Sky\sun.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\terrain_tiles.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\terrain_illumination.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\palm.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\indicators.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Logos\gamelogo.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird0.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird1.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird2.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird3.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird4.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird5.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird6.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird7.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Deer\deer.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\terrain_colormap.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\map_icons.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\pointers.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Snake\snake.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\BloomCombine.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\BloomExtract.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\GaussianBlur.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\SkySphere.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\TexturedShaders.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Models\sphereLowPoly.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\hit.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\jump.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\explode.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\ouch.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\gravel.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\pick.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\sword.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\splash.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\fire.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\river.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Audio\dwarfhurt1.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Audio\dwarfhurt2.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Audio\dwarfhurt3.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Audio\dwarfhurt4.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Audio\goblinhurt1.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Audio\goblinhurt2.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Audio\goblinhurt3.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Audio\goblinhurt4.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\chew.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\whoosh.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\dig.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Music\dwarfcorp.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Music\dwarfcorp.wma
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\DwarfCorp.exe.config
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\DwarfCorp.exe.manifest
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\DwarfCorp.application
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\DwarfCorp.XML
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\DwarfCorp.exe
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\DwarfCorp.pdb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Newtonsoft.Json.dll
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\obj\x86\Release\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\obj\x86\Release\DwarfCorp.exe.manifest
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\obj\x86\Release\DwarfCorp.application
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\obj\x86\Release\DwarfCorp.exe
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\obj\x86\Release\DwarfCorp.pdb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\obj\x86\Release\DwarfCorpXNA.csprojResolveAssemblyReference.cache
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\room_icons.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\Effects\selection_circle.xnb
+C:\Users\Mklingen\Documents\Visual Studio 2010\Projects\VoxelTest\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\gui_minimap.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\Default.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\Small.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\Title.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\pine.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\icons.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Sky\night_sky.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Sky\day_sky.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\water_normal.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\cartoon_water.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\water_normal2.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\foam.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Gradients\ambientgradient.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Gradients\sungradient.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Gradients\torchgradient.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Effects\shadowcircle.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\puff.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\grass.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Gradients\skygradient.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\leaf.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\gnarled.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\shrub.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\mushroom.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\snowpine.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\frostgrass.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\vine.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\berrybush.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\gui_widgets.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Balloon\Sprites\balloon.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\flower.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\deadbush.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\wheat.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\lava.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\lavafoam.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Furniture\interior_furniture.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Resources\resources.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\dirt_particle.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\stone_particle.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\sand_particle.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\flame.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Sprites\goblin_animations.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\blood_particle.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Furniture\bedtex.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\splash.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Logos\companylogo.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\splash2.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Logos\grebeardlogo.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Sky\moon.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Sky\sun.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\terrain_tiles.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\terrain_illumination.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Plants\palm.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\indicators.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Logos\gamelogo.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird0.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird1.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird2.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird3.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird4.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird5.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird6.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Birds\bird7.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Deer\deer.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Terrain\terrain_colormap.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\map_icons.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\pointers.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Animals\Snake\snake.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\BloomCombine.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\BloomExtract.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\GaussianBlur.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\SkySphere.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Shaders\TexturedShaders.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Models\sphereLowPoly.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\hit.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\jump.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\explode.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\ouch.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\gravel.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\pick.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\sword.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\splash.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\fire.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\river.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Audio\dwarfhurt1.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Audio\dwarfhurt2.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Audio\dwarfhurt3.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Audio\dwarfhurt4.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Audio\goblinhurt1.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Audio\goblinhurt2.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Audio\goblinhurt3.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Audio\goblinhurt4.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\chew.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\whoosh.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\dig.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Music\dwarfcorp.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\room_icons.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Effects\selection_circle.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\GUI\gui_minimap.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Music\dwarfcorp.wma
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\DwarfCorp.exe.config
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\DwarfCorp.exe.manifest
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\DwarfCorp.application
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\DwarfCorp.XML
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\DwarfCorp.exe
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\DwarfCorp.pdb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Newtonsoft.Json.dll
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\obj\x86\Release\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\obj\x86\Release\DwarfCorp.exe.manifest
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\obj\x86\Release\DwarfCorp.application
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\obj\x86\Release\DwarfCorp.exe
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\obj\x86\Release\DwarfCorp.pdb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\cash.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\change.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\DwarfObjects\coinpiles.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\DwarfObjects\beartrap.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Logos\logos.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Sprites\gob-withsword.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Effects\slice.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Skeleton\necro.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Skeleton\skele.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\green_flame.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Effects\claws.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Effects\flash.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Effects\ring.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\bird.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\pluck.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\vegetation_break.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\trap.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\hammer.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\DwarfObjects\constructiontape.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\DwarfObjects\underconstruction.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\bigstar_particle.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\star_particle.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Text\animals.txt
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Text\adjectives.txt
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Text\verbs.txt
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Text\nouns.txt
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Text\lastnames.txt
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Text\firstnames.txt
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\font1-w.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\font1-w-2x.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Fonts\font1-w-4x.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Text\adverbs.txt
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Music\dwarfcorp_ogg.ogg
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\obj\x86\Release\DwarfCorpXNA.csprojResolveAssemblyReference.cache
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Sprites\crafter-hammer.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Sprites\crafter.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Sprites\soldier-axe.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Sprites\soldier-shield.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Sprites\soldier.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Sprites\wizard-staff.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Sprites\wizard.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Sprites\worker-pick.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Sprites\worker.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Sprites\worker_animation.json
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Sprites\crafter_animation.json
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Sprites\soldier_animation.json
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Dwarf\Sprites\wizard_animation.json
