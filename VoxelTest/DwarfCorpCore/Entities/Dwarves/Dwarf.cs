@@ -129,7 +129,6 @@ namespace DwarfCorp
 
             Attacks = new List<Attack>() {new Attack(dwarfClass.MeleeAttack)};
 
-            Health = new Health(Manager, "HP", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
 
             Inventory = new Inventory("Inventory", Physics)
             {
@@ -159,7 +158,7 @@ namespace DwarfCorp
                 TriggerAmount = 100,
                 SoundToPlay = ContentPaths.Entities.Dwarf.Audio.dwarfhurt1,
             };
-            Flames = new Flammable(Manager, "Flames", Physics, Health);
+            Flames = new Flammable(Manager, "Flames", Physics, this);
 
             NoiseMaker.Noises["Hurt"] = new List<string>
             {

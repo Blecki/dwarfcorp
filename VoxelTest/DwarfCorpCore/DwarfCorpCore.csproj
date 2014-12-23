@@ -124,6 +124,17 @@
     <Compile Include="Entities\BalloonAI.cs" />
     <Compile Include="Entities\Dwarves\Dwarf.cs" />
     <Compile Include="Entities\EntityFactory.cs" />
+    <Compile Include="Entities\Fixtures\Anvil.cs" />
+    <Compile Include="Entities\Fixtures\Bed.cs" />
+    <Compile Include="Entities\Fixtures\Chair.cs" />
+    <Compile Include="Entities\Fixtures\Crate.cs" />
+    <Compile Include="Entities\Fixtures\Fixture.cs" />
+    <Compile Include="Entities\Fixtures\Flag.cs" />
+    <Compile Include="Entities\Fixtures\Forge.cs" />
+    <Compile Include="Entities\Fixtures\Lamp.cs" />
+    <Compile Include="Entities\Fixtures\Strawman.cs" />
+    <Compile Include="Entities\Fixtures\Table.cs" />
+    <Compile Include="Entities\Fixtures\Target.cs" />
     <Compile Include="Entities\Fixtures\WorkPile.cs" />
     <Compile Include="Entities\Monsters\Goblin.cs" />
     <Compile Include="Entities\Monsters\Necromancer.cs" />
@@ -131,6 +142,11 @@
     <Compile Include="Entities\Monsters\Skeleton.cs" />
     <Compile Include="Entities\Monsters\Snake.cs" />
     <Compile Include="Entities\Monsters\SnakeAi.cs" />
+    <Compile Include="Entities\Plants\Bush.cs" />
+    <Compile Include="Entities\Plants\Mushroom.cs" />
+    <Compile Include="Entities\Plants\Tree.cs" />
+    <Compile Include="Entities\Plants\Wheat.cs" />
+    <Compile Include="Entities\Resources\ResourceEntity.cs" />
     <Compile Include="Entities\Traps\BearTrap.cs" />
     <Compile Include="GameSettings.Designer.cs">
       <DependentUpon>GameSettings.settings</DependentUpon>
@@ -332,6 +348,7 @@
     <Compile Include="Scripting\LeafActs\StopAct.cs" />
     <Compile Include="Scripting\LeafActs\TeleportAct.cs" />
     <Compile Include="Scripting\LeafActs\WanderAct.cs" />
+    <Compile Include="Scripting\Magic\BuffSpell.cs" />
     <Compile Include="Scripting\Magic\DestroyBlockSpell.cs" />
     <Compile Include="Scripting\Magic\InspectSpell.cs" />
     <Compile Include="Scripting\Magic\PlaceBlockSpell.cs" />
@@ -472,6 +489,7 @@
   <ItemGroup>
     <None Include="Newtonsoft.Json.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

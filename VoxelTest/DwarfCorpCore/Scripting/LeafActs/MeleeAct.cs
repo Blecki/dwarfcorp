@@ -38,9 +38,8 @@ namespace DwarfCorp
                 yield break;
             }
 
-            bool targetDead = false;
             Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
-            while(!targetDead)
+            while(true)
             {
                 if (Target.IsDead)
                 {
@@ -58,9 +57,6 @@ namespace DwarfCorp
                 Vector3 diff = targetPos - Creature.AI.Position;
 
                 Creature.Physics.Face(targetPos);
-
-
-
 
                 // If we are far away from the target, run toward it
                 if (diff.Length() > 10.0f && !collides)
@@ -85,7 +81,7 @@ namespace DwarfCorp
                 {
                     Creature.Physics.OrientWithVelocity = false;
                     Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
-                    CurrentAttack.Perform(Target, Act.LastTime, Creature.Stats.Strength + Creature.Stats.Size, Creature.AI.Position);
+                    CurrentAttack.Perform(Target, Act.LastTime, Creature.Stats.BuffedStr + Creature.Stats.BuffedSiz, Creature.AI.Position);
                     if (Target.IsDead)
                     {
                         if (Creature.Faction.ChopDesignations.Contains(Target))
@@ -106,7 +102,6 @@ namespace DwarfCorp
                         Creature.Stats.NumThingsKilled++;
                         Creature.AI.AddThought(Thought.ThoughtType.KilledThing);
                         yield return Status.Success;
-                        targetDead = true;
                         break;
                     }
 

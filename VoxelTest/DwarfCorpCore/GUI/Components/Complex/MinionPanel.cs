@@ -150,12 +150,12 @@ namespace DwarfCorp
             }
 
             IsVisible = true;
-            StatLabels["Dexterity"].Text = "DEX: " + Minion.Stats.Dexterity;
-            StatLabels["Strength"].Text = "STR: " + Minion.Stats.Strength;
-            StatLabels["Wisdom"].Text = "WIS: " + Minion.Stats.Wisdom;
-            StatLabels["Constitution"].Text = "CON: " + Minion.Stats.Constitution;
-            StatLabels["Intelligence"].Text = "INT: " + Minion.Stats.Intelligence;
-            StatLabels["Size"].Text = "SIZ: " + Minion.Stats.Size;
+            StatLabels["Dexterity"].Text = "DEX: " + Minion.Stats.BuffedDex;
+            StatLabels["Strength"].Text = "STR: " + Minion.Stats.BuffedStr;
+            StatLabels["Wisdom"].Text = "WIS: " + Minion.Stats.BuffedWis;
+            StatLabels["Constitution"].Text = "CON: " + Minion.Stats.BuffedCon;
+            StatLabels["Intelligence"].Text = "INT: " + Minion.Stats.BuffedInt;
+            StatLabels["Size"].Text = "SIZ: " + Minion.Stats.BuffedSiz;
             StatusBars["Happiness"].ToolTip = GetThoughtString(Minion);
 
             foreach(var status in Minion.Status.Statuses)

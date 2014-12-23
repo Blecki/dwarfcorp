@@ -89,7 +89,9 @@ namespace DwarfCorp
                 SelectorBox.AddValue("Build " + s);
             }
 
-            foreach(string s in EntityFactory.ComponentList)
+            List<string> strings = EntityFactory.EntityFuncs.Keys.ToList();
+            strings.Sort();
+            foreach (string s in strings)
             {
                 SelectorBox.AddValue(s);
             }
@@ -163,6 +165,18 @@ namespace DwarfCorp
                         vox.IsVisible = true;
                         vox.Water = new WaterCell();
                         vox.Health = vox.Type.StartingHealth;
+
+                        if (type == "Magic")
+                        {
+                            new VoxelListener(PlayState.ComponentManager, PlayState.ComponentManager.RootComponent,
+                                PlayState.ChunkManager, vox)
+                            {
+                                DestroyOnTimer = true,
+                                DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
+                            };
+                        }
+
+
                         chunksToRebuild.Add(vox.ChunkID);
                     }
                     else switch(command)
@@ -237,8 +251,7 @@ namespace DwarfCorp
                         default:
                             if(vox.IsEmpty)
                             {
-                                EntityFactory.GenerateComponent(SelectorBox.CurrentValue, vox.Position + new Vector3(0.5f, 0.5f, 0.5f),
-                                    PlayState.ChunkManager.Components, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics, PlayState.ChunkManager, PlayState.ComponentManager.Factions, Player.CameraController);
+                                EntityFactory.CreateEntity<Body>(SelectorBox.CurrentValue, vox.Position + new Vector3(0.5f, 0.5f, 0.5f));
                             }
                             break;
                     }

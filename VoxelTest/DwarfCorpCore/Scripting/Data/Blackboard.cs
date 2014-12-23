@@ -20,21 +20,68 @@ namespace DwarfCorp
             Data = new Dictionary<string, ActData>();
         }
 
+
+        public static implicit operator Blackboard(KeyValuePair<string, object> value)
+        {
+            return Create(value.Key, value.Value);
+        }
+
+        public static implicit operator Blackboard(KeyValuePair<string, float> value)
+        {
+            return Create(value.Key, value.Value);
+        }
+
+        public static implicit operator Blackboard(KeyValuePair<string, int> value)
+        {
+            return Create(value.Key, value.Value);
+        }
+
+        public static implicit operator Blackboard(KeyValuePair<string, bool> value)
+        {
+            return Create(value.Key, value.Value);
+        }
+
+
+        public static Blackboard Create<T>(string tag, T data)
+        {
+            Blackboard toReturn = new Blackboard();
+            toReturn.SetData(tag, data);
+            return toReturn;
+        }
+
+        public static Blackboard CreateDict<T>(Dictionary<string, T> dict)
+        {
+            Blackboard toReturn = new Blackboard();
+            foreach (KeyValuePair<string, T> pair in dict)
+            {
+                toReturn.SetData(pair.Key, pair.Value);
+            }
+
+            return toReturn;
+        }
+
         public void Clear()
         {
             Data.Clear();
         }
 
+        public bool Has(string key)
+        {
+            return Data.ContainsKey(key);
+        }
+
+        public T GetData<T>(string key, T def)
+        {
+            return Has(key) ? Data[key].GetData<T>() : def;
+        }
+
         public T GetData<T>(string key)
         {
-            if(Data.ContainsKey(key))
+            if(Has(key))
             {
                 return Data[key].GetData<T>();
             }
-            else
-            {
-                return default(T);
-            }
+            return default(T);
         }
 
         public void SetData<T>(string key, T value)

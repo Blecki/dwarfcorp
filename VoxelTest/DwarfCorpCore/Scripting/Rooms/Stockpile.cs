@@ -52,7 +52,7 @@ namespace DwarfCorp
             Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
             Vector3 endPos = pos + new Vector3(0.0f, 0.9f, 0.0f);
 
-            Body crate = EntityFactory.CreateCrate(startPos, MathFunctions.Rand(-0.1f, 0.1f));
+            Body crate = EntityFactory.CreateEntity<Body>("Crate", startPos);
             crate.AnimationQueue.Add(new EaseMotion(0.8f, crate.LocalTransform, endPos));
             Boxes.Add(crate);
             SoundManager.PlaySound(ContentPaths.Audio.whoosh, startPos);
@@ -111,7 +111,7 @@ namespace DwarfCorp
             {
                 for (int i = 0; i < resource.NumResources; i++)
                 {
-                    Physics body = EntityFactory.GenerateResource(resource.ResourceType.Type,
+                    Physics body = EntityFactory.CreateEntity<Physics>(resource.ResourceType.Type + " Resource",
                         Vector3.Up + MathFunctions.RandVector3Box(box)) as Physics;
 
                     if (body != null)

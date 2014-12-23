@@ -67,7 +67,7 @@ namespace DwarfCorp
         public override void Initialize()
         {
             Act unreserveAct = new Wrap(() => Creature.Unreserve("Anvil"));
-            float time = CraftLibrary.CraftItems[ItemType].BaseCraftTime / Creature.AI.Stats.Intelligence;
+            float time = CraftLibrary.CraftItems[ItemType].BaseCraftTime / Creature.AI.Stats.BuffedInt;
             Tree = new Sequence(
                 new Wrap(() => Creature.FindAndReserve("Anvil", "Anvil")),
                 new GetResourcesAct(Agent, CraftLibrary.CraftItems[ItemType].RequiredResources),

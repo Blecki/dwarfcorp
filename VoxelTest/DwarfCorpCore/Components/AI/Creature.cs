@@ -16,7 +16,7 @@ namespace DwarfCorp
     /// related to creatures (such as dwarves and goblins). 
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class Creature : GameComponent
+    public class Creature : Health
     {
         public CreatureAI AI { get; set; }
         public Physics Physics { get; set; }
@@ -24,7 +24,6 @@ namespace DwarfCorp
         public SelectionCircle SelectionCircle { get; set; }
         public EnemySensor Sensors { get; set; }
         public Flammable Flames { get; set; }
-        public Health Health { get; set; }
         public ParticleTrigger DeathParticleTrigger { get; set; }
         public Grabber Hands { get; set; }
         public Shadow Shadow { get; set; }
@@ -93,6 +92,9 @@ namespace DwarfCorp
             public MoveType MoveType { get; set; }
             public Vector3 Diff { get; set; }
         }
+
+        public List<Buff> Buffs { get; set; } 
+
         public enum MoveType
         {
             Walk,
@@ -125,6 +127,7 @@ namespace DwarfCorp
         public Creature()
         {
             OverrideCharacterMode = false;
+            Buffs = new List<Buff>();
         }
 
         public Creature(CreatureStats stats,
@@ -136,8 +139,9 @@ namespace DwarfCorp
             GraphicsDevice graphics,
             ContentManager content,
             string name) :
-                base(name, parent)
+                base(parent.Manager, name, parent, stats.MaxHealth, 0.0f, stats.MaxHealth)
         {
+            Buffs = new List<Buff>();
             IsOnGround = true;
             Physics = parent;
             Stats = stats;
@@ -159,15 +163,35 @@ namespace DwarfCorp
             };
         }
 
+        public void AddBuff(Buff buff)
+        {
+            buff.OnApply(this);
+            Buffs.Add(buff);
+        }
+
+        public void HandleBuffs(GameTime time)
+        {
+            foreach (Buff buff in Buffs)
+            {
+                buff.Update(time, this);
+            }
+
+            List<Buff> doneBuffs = Buffs.FindAll(buff => !buff.IsInEffect);
+            foreach (Buff buff in doneBuffs)
+            {
+                buff.OnEnd(this);
+                Buffs.Remove(buff);
+            }
+                
+        }
+
         public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
         {
             CheckNeighborhood(chunks, (float) gameTime.ElapsedGameTime.TotalSeconds);
-            
             UpdateAnimation(gameTime, chunks, camera);
-
             Status.Update(this, gameTime, chunks, camera);
-
             JumpTimer.Update(gameTime);
+            HandleBuffs(gameTime);
 
             base.Update(gameTime, chunks, camera);
         }
@@ -274,6 +298,8 @@ namespace DwarfCorp
             LastIndicatorTime = DateTime.Now;
         }
 
+        
+
         public override void ReceiveMessageRecursive(Message messageToReceive)
         {
             switch(messageToReceive.Type)
@@ -356,6 +382,176 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
+        public override float Damage(float amount, DamageType type = DamageType.Normal)
+        {
+            float damage = base.Damage(amount, type);
+
+            if (damage > 0)
+            {
+                NoiseMaker.MakeNoise("Hurt", AI.Position);
+                this.Sprite.Blink(0.5f);
+                AI.AddThought(Thought.ThoughtType.TookDamage);
+                PlayState.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 5);
+            }
+
+            return damage;
+        }
+
+        public class Buff
+        {
+            public Timer EffectTime { get; set; }
+            public bool IsInEffect { get { return !EffectTime.HasTriggered; } }
+
+            public Buff()
+            {
+
+            }
+
+            public Buff(float time)
+            {
+                EffectTime = new Timer(time, true);
+            }
+
+            public virtual void OnApply(Creature creature)
+            {
+
+            }
+
+            public virtual void OnEnd(Creature creature)
+            {
+
+            }
+
+            public virtual void Update(GameTime time, Creature creature)
+            {
+                EffectTime.Update(time);
+            }
+
+        }
+
+        public class DamageResistBuff : Buff
+        {
+            public Health.DamageType DamageType { get; set; }
+            public float Bonus { get; set; }
+            public DamageResistBuff()
+            {
+                DamageType = DamageType.Normal;
+                Bonus = 0.0f;
+            }
+
+            public override void OnApply(Creature creature)
+            {
+                creature.Resistances[DamageType] += Bonus;
+                base.OnApply(creature);
+            }
+
+            public override void OnEnd(Creature creature)
+            {
+                creature.Resistances[DamageType] -= Bonus;
+                base.OnEnd(creature);
+            }
+        }
+
+        public class StatBuff : Buff
+        {
+            public CreatureStats.StatNums Buffs { get; set; }
+            public StatBuff()
+            {
+                Buffs = new CreatureStats.StatNums();
+            }
+
+            public StatBuff(float time, CreatureStats.StatNums buffs) :
+                base(time)
+            {
+                Buffs = buffs;
+            }
+
+            public override void Update(GameTime time, Creature creature)
+            {
+                base.Update(time, creature);
+            }
+
+            public override void OnApply(Creature creature)
+            {
+                creature.Stats.StatBuffs += Buffs;
+                base.OnApply(creature);
+            }
+
+            public override void OnEnd(Creature creature)
+            {
+                creature.Stats.StatBuffs -= Buffs;
+                base.OnEnd(creature);
+            }
+        }
+
+        public class OngoingDamageBuff : Buff
+        {
+            public DamageType DamageType { get; set; }
+            public float DamagePerSecond { get; set; }
+
+            public OngoingDamageBuff()
+            {
+                
+            }
+
+            public override void Update(GameTime time, Creature creature)
+            {
+                float dt = (float)time.ElapsedGameTime.TotalSeconds;
+                creature.Damage(DamagePerSecond*dt, DamageType);
+                base.Update(time, creature);
+            }
+        }
+
+        public class OngoingHealBuff : Buff
+        {
+            public float DamagePerSecond { get; set; }
+
+            public OngoingHealBuff()
+            {
+                
+            }
+
+            public OngoingHealBuff(float dps, float time) :
+                base(time)
+            {
+                DamagePerSecond = dps;
+            }
+
+            public override void Update(GameTime time, Creature creature)
+            {
+                float dt = (float)time.ElapsedGameTime.TotalSeconds;
+                creature.Heal(dt * DamagePerSecond);
+                base.Update(time, creature);
+            }
+        }
+
+        public class ThoughtBuff : Buff
+        {
+            public Thought.ThoughtType ThoughtType { get; set; }
+
+            public ThoughtBuff()
+            {
+                
+            }
+
+            public ThoughtBuff(float time, Thought.ThoughtType type) :
+                base(time)
+            {
+                ThoughtType = type;
+            }
+
+            public override void OnApply(Creature creature)
+            {
+                creature.AI.AddThought(ThoughtType);
+                base.OnApply(creature);
+            }
+
+            public override void OnEnd(Creature creature)
+            {
+                creature.AI.RemoveThought(ThoughtType);
+                base.OnApply(creature);
+            }
+        }
     }
 
 }

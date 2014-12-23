@@ -95,8 +95,6 @@ namespace DwarfCorp
             // Add AI
             AI = new CreatureAI(this, "Deer AI", Sensors, PlanService);
 
-            Health = new Health(Manager, "HP", Physics, Stats.MaxHealth, 0.0f, Stats.MaxHealth);
-
             Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick)};
 
             Inventory = new Inventory("Inventory", Physics)
@@ -130,7 +128,7 @@ namespace DwarfCorp
             };
 
             // The bird is flammable, and can die when exposed to fire.
-            Flames = new Flammable(Manager, "Flames", Physics, Health);
+            Flames = new Flammable(Manager, "Flames", Physics, this);
 
             // Tag the physics component with some information 
             // that can be used later

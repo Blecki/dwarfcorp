@@ -189,8 +189,8 @@ namespace DwarfCorp
                             continue;
                         }
 
-                    
-                        EntityFactory.GenerateComponent(animal.Name, chunk.Origin + new Vector3(x, y, z) + Vector3.Up * 1.0f, components, content, graphics, PlayState.ChunkManager, factions, PlayState.Camera);
+
+                        EntityFactory.CreateEntity<Body>(animal.Name, chunk.Origin + new Vector3(x, y, z) + Vector3.Up*1.0f);
 
                         break;
                     }
@@ -257,10 +257,8 @@ namespace DwarfCorp
                                 {
                                     offset -= 0.25f;
                                 }
-
                                 float treeSize = MathFunctions.Rand()*veg.SizeVariance + veg.MeanSize;
-                                EntityFactory.GenerateVegetation(veg.Name, treeSize, offset,
-                                    chunk.Origin + new Vector3(x, y, z), components, content, graphics);
+                                EntityFactory.CreateEntity<Body>(veg.Name, chunk.Origin + new Vector3(x, y, z) + new Vector3(0, treeSize * offset, 0), Blackboard.Create("Scale", treeSize));
                             }
 
                         }
