@@ -227,7 +227,7 @@ namespace DwarfCorp
         }
 
 
-        public void Render(DwarfGame game, GameTime time, GraphicsDevice g)
+        public void Render(DwarfGame game, DwarfTime time, GraphicsDevice g)
         {
             CurrentTool.Render(game, g, time);
             VoxSelector.Render();
@@ -275,7 +275,7 @@ namespace DwarfCorp
             }
         }
 
-        public void Update(DwarfGame game, GameTime time)
+        public void Update(DwarfGame game, DwarfTime time)
         {
             if(CurrentToolMode != ToolMode.God)
             {
@@ -327,7 +327,7 @@ namespace DwarfCorp
         }
 
 
-        public void UpdateMouse(MouseState mouseState, KeyboardState keyState, DwarfGame game, GameTime time)
+        public void UpdateMouse(MouseState mouseState, KeyboardState keyState, DwarfGame game, DwarfTime time)
         {
             if(KeyManager.RotationEnabled())
             {
@@ -336,7 +336,7 @@ namespace DwarfCorp
           
         }
 
-        public void UpdateInput(DwarfGame game, GameTime time)
+        public void UpdateInput(DwarfGame game, DwarfTime time)
         {
             KeyboardState keyState = Keyboard.GetState();
             MouseState mouseState = Mouse.GetState();

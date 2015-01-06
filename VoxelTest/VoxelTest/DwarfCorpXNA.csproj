@@ -303,6 +303,12 @@
     <Compile Include="..\DwarfCorpCore\Entities\Fixtures\WorkPile.cs">
       <Link>Entities\Fixtures\WorkPile.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Monsters\Elf.cs">
+      <Link>Entities\Monsters\Elf.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Monsters\Fairy.cs">
+      <Link>Entities\Monsters\Fairy.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Monsters\Goblin.cs">
       <Link>Entities\Monsters\Goblin.cs</Link>
     </Compile>
@@ -332,6 +338,9 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Plants\Wheat.cs">
       <Link>Entities\Plants\Wheat.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Projectiles\Projectile.cs">
+      <Link>Entities\Projectiles\Projectile.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Resources\ResourceEntity.cs">
       <Link>Entities\Resources\ResourceEntity.cs</Link>
@@ -708,8 +717,14 @@
     <Compile Include="..\DwarfCorpCore\Scripting\Classes\CraftDwarfClass.cs">
       <Link>Scripting\Classes\CraftDwarfClass.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\Classes\ElfClass.cs">
+      <Link>Scripting\Classes\ElfClass.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\Classes\EmployeeClass.cs">
       <Link>Scripting\Classes\EmployeeClass.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\Classes\FairyClass.cs">
+      <Link>Scripting\Classes\FairyClass.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\Classes\JobLibrary.cs">
       <Link>Scripting\Classes\JobLibrary.cs</Link>

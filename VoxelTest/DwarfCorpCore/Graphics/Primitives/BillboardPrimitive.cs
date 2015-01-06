@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -13,7 +14,7 @@ namespace DwarfCorp
     /// </summary>
     public sealed class BillboardPrimitive : GeometricPrimitive
     {
-        public const int NumVertices = 6;
+        public const int NumVertices = 4;
 
         public class BoardTextureCoords
         {
@@ -43,11 +44,6 @@ namespace DwarfCorp
                     textureBottomLeft = new Vector2(0.0f, 1.0f);
                 }
 
-                List<Point> cells = new List<Point>
-                {
-                    cell
-                };
-
                 float normalizeX = cellWidth / (float) (totalTextureWidth);
                 float normalizeY = cellHeight / (float) (totalTextureHeight);
 
@@ -57,24 +53,20 @@ namespace DwarfCorp
                     textureTopLeft,
                     textureBottomLeft,
                     textureTopRight,
-                    textureBottomLeft,
                     textureBottomRight,
-                    textureTopRight
                 };
 
 
-                for(int face = 0; face < 1; face++)
-                {
-                    Vector2 pixelCoords = new Vector2(cells[face].X * cellWidth, cells[face].Y * cellHeight);
-                    Vector2 normalizedCoords = new Vector2(pixelCoords.X / (float) totalTextureWidth, pixelCoords.Y / (float) totalTextureHeight);
-                    Bounds = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f, normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
 
-                    for(int vert = 0; vert < NumVertices; vert++)
-                    {
-                        int index = vert + face * 6;
-                        UVs[index] = new Vector2(normalizedCoords.X + baseCoords[index].X * normalizeX, normalizedCoords.Y + baseCoords[index].Y * normalizeY);
-                    }
+                Vector2 pixelCoords = new Vector2(cell.X * cellWidth, cell.Y * cellHeight);
+                Vector2 normalizedCoords = new Vector2(pixelCoords.X / (float) totalTextureWidth, pixelCoords.Y / (float) totalTextureHeight);
+                Bounds = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f, normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
+
+                for(int vert = 0; vert < NumVertices; vert++)
+                {
+                    UVs[vert] = new Vector2(normalizedCoords.X + baseCoords[vert].X * normalizeX, normalizedCoords.Y + baseCoords[vert].Y * normalizeY);
                 }
+                
             }
         }
 
@@ -117,26 +109,25 @@ namespace DwarfCorp
 
         public void CreateVerticies(Color color)
         {
-            // Calculate the position of the vertices on the top face.
             Vector3 topLeftFront = new Vector3(-0.5f * Width, 0.5f * Height, 0.0f);
             Vector3 topRightFront = new Vector3(0.5f * Width, 0.5f * Height, 0.0f);
-
-            // Calculate the position of the vertices on the bottom face.
             Vector3 btmLeftFront = new Vector3(-0.5f * Width, -0.5f * Height, 0.0f);
             Vector3 btmRightFront = new Vector3(0.5f * Width, -0.5f * Height, 0.0f);
 
-
-            // Add the vertices for the FRONT face.
             Vertices = new[]
             {
-                new ExtendedVertex(topLeftFront, color, UVs.UVs[0], UVs.Bounds),
-                new ExtendedVertex(btmLeftFront, color, UVs.UVs[1], UVs.Bounds),
-                new ExtendedVertex(topRightFront, color, UVs.UVs[2], UVs.Bounds),
-                new ExtendedVertex(btmLeftFront, color, UVs.UVs[3], UVs.Bounds),
-                new ExtendedVertex(btmRightFront, color, UVs.UVs[4], UVs.Bounds),
-                new ExtendedVertex(topRightFront, color, UVs.UVs[5], UVs.Bounds)
+                new ExtendedVertex(topLeftFront, color, UVs.UVs[0], UVs.Bounds), // 0
+                new ExtendedVertex(btmLeftFront, color, UVs.UVs[1], UVs.Bounds), // 1
+                new ExtendedVertex(topRightFront, color, UVs.UVs[2], UVs.Bounds), // 2
+                new ExtendedVertex(btmRightFront, color, UVs.UVs[3], UVs.Bounds) // 3
             };
 
+            IndexBuffer = new IndexBuffer(GameState.Game.GraphicsDevice, typeof (short), 6, BufferUsage.None);
+            IndexBuffer.SetData(new short[]
+            {
+                1, 0, 2,
+                1, 2, 3
+            });
         }
     }
 

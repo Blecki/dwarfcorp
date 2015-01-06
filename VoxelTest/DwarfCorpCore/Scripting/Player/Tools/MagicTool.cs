@@ -69,7 +69,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void Update(DwarfGame game, GameTime time)
+        public override void Update(DwarfGame game, DwarfTime time)
         {
             Player.BodySelector.Enabled = false;
             Player.VoxSelector.Enabled = false;
@@ -94,7 +94,7 @@ namespace DwarfCorp
             PlayState.GUI.MouseMode = PlayState.GUI.IsMouseOver() ? GUISkin.MousePointer.Pointer : GUISkin.MousePointer.Magic;
         }
 
-        public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
+        public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
             if (CurrentSpell != null)
             {

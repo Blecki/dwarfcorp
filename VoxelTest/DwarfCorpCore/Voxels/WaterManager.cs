@@ -109,7 +109,7 @@ namespace DwarfCorp
             }
         }
 
-        public void HandleTransfers(GameTime time)
+        public void HandleTransfers(DwarfTime time)
         {
             Voxel atPos = new Voxel();
             while(Transfers.Count > 0)
@@ -140,7 +140,7 @@ namespace DwarfCorp
             }
         }
 
-        public void Splash(GameTime time)
+        public void Splash(DwarfTime time)
         {
             while(Splashes.Count > 0)
             {

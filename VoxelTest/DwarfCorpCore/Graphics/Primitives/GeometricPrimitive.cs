@@ -18,7 +18,8 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class GeometricPrimitive
     {
-        protected short[] Indices = null;
+        [JsonIgnore]
+        public IndexBuffer IndexBuffer = null;
 
         public ExtendedVertex[] Vertices = null;
 
@@ -62,10 +63,10 @@ namespace DwarfCorp
 
                 device.SetVertexBuffer(VertexBuffer);
 
-                if (Indices != null)
+                if (IndexBuffer != null)
                 {
-                    device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, VertexBuffer.VertexCount, 0,
-                        VertexBuffer.VertexCount/3);
+                    device.Indices = IndexBuffer;
+                    device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, VertexBuffer.VertexCount, 0, IndexBuffer.IndexCount / 3);
                 }
                 else
                 {

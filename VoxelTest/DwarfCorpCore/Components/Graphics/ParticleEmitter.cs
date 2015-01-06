@@ -81,7 +81,7 @@ namespace DwarfCorp
         [OnDeserialized]
         protected void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
         {
-            Sprites = new FixedInstanceArray(Name, Data.Animation.Primitives[0].VertexBuffer, Data.Texture, Data.MaxParticles, Data.Blend);
+            Sprites = new FixedInstanceArray(Name, Data.Animation.Primitives[0], Data.Texture, Data.MaxParticles, Data.Blend);
             Data.Animation.Play();
         }
 
@@ -114,7 +114,7 @@ namespace DwarfCorp
 
             Data = emitterData;
             maxParticles = Data.MaxParticles;
-            Sprites = new FixedInstanceArray(name, Data.Animation.Primitives[0].VertexBuffer, emitterData.Texture, Data.MaxParticles, Data.Blend);
+            Sprites = new FixedInstanceArray(name, Data.Animation.Primitives[0], emitterData.Texture, Data.MaxParticles, Data.Blend);
             Data.Animation.Play();
 
             TriggerTimer = new Timer(Data.EmissionFrequency, Data.ReleaseOnce);
@@ -189,19 +189,19 @@ namespace DwarfCorp
             }
         }
 
-        public override void Render(GameTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+        public override void Render(DwarfTime DwarfTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
             Sprites.Render(graphicsDevice, effect, camera, !renderingForWater);
-            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+            base.Render(DwarfTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
             ParticleEmitter.camera = camera;
 
             List<Particle> toRemove = new List<Particle>();
 
-            TriggerTimer.Update(gameTime);
+            TriggerTimer.Update(DwarfTime);
             if(TriggerTimer.HasTriggered && Data.ParticlesPerFrame > 0)
             {
                 Trigger(Data.ParticlesPerFrame, Vector3.Zero, Tint);
@@ -214,16 +214,16 @@ namespace DwarfCorp
             {
                 if(!Data.Sleeps || p.Velocity.LengthSquared() > 0.1f)
                 {
-                    p.Position += p.Velocity * (float) gameTime.ElapsedGameTime.TotalSeconds;
-                    p.Angle += (float) (p.AngularVelocity * gameTime.ElapsedGameTime.TotalSeconds);
-                    p.Velocity += Data.ConstantAccel * (float) gameTime.ElapsedGameTime.TotalSeconds;
+                    p.Position += p.Velocity * (float) DwarfTime.ElapsedGameTime.TotalSeconds;
+                    p.Angle += (float) (p.AngularVelocity * DwarfTime.ElapsedGameTime.TotalSeconds);
+                    p.Velocity += Data.ConstantAccel * (float) DwarfTime.ElapsedGameTime.TotalSeconds;
                     p.Velocity *= Data.LinearDamping;
                     p.AngularVelocity *= Data.AngularDamping;
                 }
 
 
-                p.LifeRemaining -= Data.ParticleDecay * (float) gameTime.ElapsedGameTime.TotalSeconds;
-                p.Scale += Data.GrowthSpeed * (float) gameTime.ElapsedGameTime.TotalSeconds;
+                p.LifeRemaining -= Data.ParticleDecay * (float) DwarfTime.ElapsedGameTime.TotalSeconds;
+                p.Scale += Data.GrowthSpeed * (float) DwarfTime.ElapsedGameTime.TotalSeconds;
 
                 p.Scale = Math.Max(p.Scale, 0.0f);
 
@@ -275,8 +275,8 @@ namespace DwarfCorp
             }
 
 
-            Sprites.Update(gameTime, camera, chunks.Graphics);
-            base.Update(gameTime, chunks, camera);
+            Sprites.Update(DwarfTime, camera, chunks.Graphics);
+            base.Update(DwarfTime, chunks, camera);
         }
     }
 

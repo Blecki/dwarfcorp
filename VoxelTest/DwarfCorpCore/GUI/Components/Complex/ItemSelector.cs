@@ -419,7 +419,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void Update(GameTime time)
+        public override void Update(DwarfTime time)
         {
             if(!IsMouseOver)
             {

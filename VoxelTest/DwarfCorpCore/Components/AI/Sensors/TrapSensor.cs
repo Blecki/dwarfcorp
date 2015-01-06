@@ -27,10 +27,6 @@ namespace DwarfCorp
         {
             foreach (Body lc in sensed)
             {
-                foreach (string t in lc.Tags)
-                {
-                    Console.WriteLine(t);
-                }
                 List<Health> hcList = lc.GetChildrenOfType<Health>();
                 foreach (Health hc in hcList)
                 {

@@ -43,7 +43,7 @@ namespace DwarfCorp
             return Matrix.Identity;
         }
 
-        public virtual void Update(GameTime t)
+        public virtual void Update(DwarfTime t)
         {
             Time.Update(t);
 

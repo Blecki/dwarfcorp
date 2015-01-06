@@ -34,6 +34,13 @@ namespace DwarfCorp
                 CreatureTypes = new List<string> { "Goblin" }
             };
 
+            Factions["Elf"] = new Faction
+            {
+                Name = "Elf",
+                Alliance = "Elf",
+                CreatureTypes = new List<string> { "Elf" }
+            };
+
             Factions["Undead"] = new Faction
             {
                 Name = "Undead",
@@ -59,7 +66,7 @@ namespace DwarfCorp
 
         }
 
-        public void Update(GameTime time)
+        public void Update(DwarfTime time)
         {
             foreach(var faction in Factions)
             {

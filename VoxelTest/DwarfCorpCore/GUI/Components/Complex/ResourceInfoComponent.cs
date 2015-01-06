@@ -74,7 +74,7 @@ namespace DwarfCorp
         }
 
 
-        public override void Update(Microsoft.Xna.Framework.GameTime time)
+        public override void Update(DwarfTime time)
         {
             UpdateTimer.Update(time);
             if(UpdateTimer.HasTriggered)

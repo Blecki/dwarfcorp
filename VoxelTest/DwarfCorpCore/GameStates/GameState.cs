@@ -53,15 +53,15 @@ namespace DwarfCorp.GameStates
         }
 
 
-        public virtual void RenderUnitialized(GameTime gameTime)
+        public virtual void RenderUnitialized(DwarfTime DwarfTime)
         {
         }
 
-        public virtual void Update(GameTime gameTime)
+        public virtual void Update(DwarfTime DwarfTime)
         {
         }
 
-        public virtual void Render(GameTime gameTime)
+        public virtual void Render(DwarfTime DwarfTime)
         {
         }
 

@@ -33,9 +33,9 @@ namespace DwarfCorp
             Component = component;
         }
 
-        public override void Update(Microsoft.Xna.Framework.GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            float x = (float) Math.Sin((gameTime.TotalGameTime.TotalSeconds + Offset) * Rate) * Magnitude;
+            float x = (float)Math.Sin((gameTime.TotalGameTime.TotalSeconds + Offset) * Rate) * Magnitude;
             Matrix trans = Component.LocalTransform;
 
             trans.Translation = new Vector3(trans.Translation.X, x, trans.Translation.Z);

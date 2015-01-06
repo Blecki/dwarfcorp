@@ -66,7 +66,7 @@ namespace DwarfCorp
         {
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
             CalculateCurrentOrientation(camera);
 
@@ -79,7 +79,7 @@ namespace DwarfCorp
                 SpriteSheet = CurrentAnimation.SpriteSheet;
             }
 
-            base.Update(gameTime, chunks, camera);
+            base.Update(DwarfTime, chunks, camera);
         }
 
         public void CalculateCurrentOrientation(Camera camera)

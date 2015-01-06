@@ -68,7 +68,7 @@ namespace DwarfCorp
             return minions.Where(creature => creature.Stats.CurrentClass.HasAction(action)).ToList();
         }
 
-        public void CollideMinions(GameTime time)
+        public void CollideMinions(DwarfTime time)
         {
             foreach (CreatureAI minion in Minions)
             {
@@ -92,7 +92,7 @@ namespace DwarfCorp
         }
 
 
-        public void Update(GameTime time)
+        public void Update(DwarfTime time)
         {
             RoomBuilder.CheckRemovals();
 

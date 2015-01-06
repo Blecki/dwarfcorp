@@ -32,7 +32,7 @@ namespace DwarfCorp
 
         private void CreateBillboard(string name, ContentManager content, int count)
         {
-            FixedInstanceArray arr = new FixedInstanceArray(name, PrimitiveLibrary.BatchBillboardPrimitives[name].VertexBuffer, PrimitiveLibrary.BatchBillboardPrimitives[name].Texture, count, BlendState.AlphaBlend)
+            FixedInstanceArray arr = new FixedInstanceArray(name, PrimitiveLibrary.BatchBillboardPrimitives[name], PrimitiveLibrary.BatchBillboardPrimitives[name].Texture, count, BlendState.AlphaBlend)
             {
                 ShouldRebuild = true
             };
@@ -41,19 +41,19 @@ namespace DwarfCorp
 
         public void CreateStatics(ContentManager content)
         {
-            FixedInstanceArray pinetree = new FixedInstanceArray("pine", PrimitiveLibrary.BatchBillboardPrimitives["tree"].VertexBuffer, TextureManager.GetTexture(ContentPaths.Entities.Plants.pine), (int)(50 * GameSettings.Default.NumMotes), BlendState.AlphaBlend)
+            FixedInstanceArray pinetree = new FixedInstanceArray("pine", PrimitiveLibrary.BatchBillboardPrimitives["tree"], TextureManager.GetTexture(ContentPaths.Entities.Plants.pine), (int)(50 * GameSettings.Default.NumMotes), BlendState.AlphaBlend)
             {
                 ShouldRebuild = true
             };
             AddInstances("pine", pinetree);
 
-            FixedInstanceArray palmTree = new FixedInstanceArray("palm", PrimitiveLibrary.BatchBillboardPrimitives["tree"].VertexBuffer, TextureManager.GetTexture(ContentPaths.Entities.Plants.palm), (int)(50 * GameSettings.Default.NumMotes), BlendState.AlphaBlend)
+            FixedInstanceArray palmTree = new FixedInstanceArray("palm", PrimitiveLibrary.BatchBillboardPrimitives["tree"], TextureManager.GetTexture(ContentPaths.Entities.Plants.palm), (int)(50 * GameSettings.Default.NumMotes), BlendState.AlphaBlend)
             {
                 ShouldRebuild = true
             };
             AddInstances("palm", palmTree);
 
-            FixedInstanceArray snowPine = new FixedInstanceArray("snowpine", PrimitiveLibrary.BatchBillboardPrimitives["tree"].VertexBuffer, TextureManager.GetTexture(ContentPaths.Entities.Plants.snowpine), (int)(50 * GameSettings.Default.NumMotes), BlendState.AlphaBlend)
+            FixedInstanceArray snowPine = new FixedInstanceArray("snowpine", PrimitiveLibrary.BatchBillboardPrimitives["tree"], TextureManager.GetTexture(ContentPaths.Entities.Plants.snowpine), (int)(50 * GameSettings.Default.NumMotes), BlendState.AlphaBlend)
             {
                 ShouldRebuild = true
             };
@@ -146,7 +146,7 @@ namespace DwarfCorp
             }
         }
 
-        public void Update(GameTime time, Camera cam, GraphicsDevice graphics)
+        public void Update(DwarfTime time, Camera cam, GraphicsDevice graphics)
         {
             foreach(FixedInstanceArray list in Instances.Values)
             {

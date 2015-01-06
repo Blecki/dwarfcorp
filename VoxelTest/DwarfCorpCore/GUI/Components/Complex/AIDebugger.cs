@@ -82,7 +82,7 @@ namespace DwarfCorp
              
         }
 
-        public void Update(GameTime time)
+        public void Update(DwarfTime time)
         {
             if(GameSettings.Default.EnableAIDebugger)
             {

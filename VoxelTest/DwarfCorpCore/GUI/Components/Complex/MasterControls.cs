@@ -146,7 +146,7 @@ namespace DwarfCorp
             return Master.Faction.SelectedMinions.Any(minion => minion.Stats.CurrentClass.HasAction(tool));
         }
 
-        public override void Update(GameTime time)
+        public override void Update(DwarfTime time)
         {
 
             if(Master.SelectedMinions.Count == 0)

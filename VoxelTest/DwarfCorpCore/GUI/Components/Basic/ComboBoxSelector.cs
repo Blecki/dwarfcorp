@@ -119,7 +119,7 @@ namespace DwarfCorp
         }
 
 
-        public override void Update(GameTime time)
+        public override void Update(DwarfTime time)
         {
             ClickTimer.Update(time);
             if(IsMouseOver && !IsDead)
@@ -153,7 +153,7 @@ namespace DwarfCorp
         }
 
 
-        public override void Render(Microsoft.Xna.Framework.GameTime time, Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
+        public override void Render(DwarfTime time, Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
         {
             if(Drawn)
             {

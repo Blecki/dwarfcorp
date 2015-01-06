@@ -149,7 +149,7 @@ namespace BloomPostprocess
         /// This is where it all happens. Grabs a scene that has already been rendered,
         /// and uses postprocess magic to add a glowing bloom effect over the top of it.
         /// </summary>
-        public override void Draw(GameTime gameTime)
+        public override void Draw(GameTime dwarfTime)
         {
             GraphicsDevice.SamplerStates[1] = SamplerState.LinearClamp;
 

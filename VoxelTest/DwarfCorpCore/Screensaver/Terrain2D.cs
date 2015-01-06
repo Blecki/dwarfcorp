@@ -127,7 +127,7 @@ namespace DwarfCorp
 
         }
 
-        public void Render(GraphicsDevice graphics, SpriteBatch sprites, GameTime time)
+        public void Render(GraphicsDevice graphics, SpriteBatch sprites, DwarfTime time)
         {
             Bloom.BeginDraw();
             sprites.Begin();
@@ -249,7 +249,7 @@ namespace DwarfCorp
              
             sprites.End();
             
-            Bloom.Draw(time);
+            Bloom.Draw(time.ToGameTime());
 
         }
 

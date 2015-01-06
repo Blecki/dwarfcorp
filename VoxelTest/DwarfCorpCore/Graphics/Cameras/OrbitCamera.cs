@@ -73,7 +73,7 @@ namespace DwarfCorp
             targetPhi = phi;
         }
 
-        public override void Update(GameTime time, ChunkManager chunks)
+        public override void Update(DwarfTime time, ChunkManager chunks)
         {
             switch (Control)
             {
@@ -88,7 +88,7 @@ namespace DwarfCorp
             base.Update(time, chunks);
         }
 
-        private void WalkUpdate(GameTime time, ChunkManager chunks)
+        private void WalkUpdate(DwarfTime time, ChunkManager chunks)
         {
             MouseState mouse = Mouse.GetState();
             KeyboardState keys = Keyboard.GetState();
@@ -234,7 +234,7 @@ namespace DwarfCorp
             UpdateBasisVectors();
         }
 
-        public void OverheadUpdate(GameTime time, ChunkManager chunks)
+        public void OverheadUpdate(DwarfTime time, ChunkManager chunks)
         {
             MouseState mouse = Mouse.GetState();
             KeyboardState keys = Keyboard.GetState();
@@ -247,7 +247,7 @@ namespace DwarfCorp
             }
 
             bool stateChanged = false;
-            float dt = (float)time.ElapsedGameTime.TotalSeconds;
+            float dt = (float)time.ElapsedRealTime.TotalSeconds;
 
             if (KeyManager.RotationEnabled())
             {

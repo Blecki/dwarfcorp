@@ -136,9 +136,9 @@ namespace DwarfCorp
             };
         }
 
-        public void Update(Creature creature, GameTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(Creature creature, DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         { 
-            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float dt = (float)DwarfTime.ElapsedGameTime.TotalSeconds;
             Hunger.CurrentValue -= dt * creature.Stats.HungerGrowth;
 
             Health.CurrentValue = (creature.Hp - creature.MinHealth) / (creature.MaxHealth - creature.MinHealth);

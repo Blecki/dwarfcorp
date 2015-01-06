@@ -109,12 +109,12 @@ namespace DwarfCorp
         }
 
 
-        public override void Update(GameTime time)
+        public override void Update(DwarfTime time)
         {
             base.Update(time);
         }
 
-        public override void Render(GameTime time, SpriteBatch batch)
+        public override void Render(DwarfTime time, SpriteBatch batch)
         {
             Rectangle toDraw = GetImageBounds();
 

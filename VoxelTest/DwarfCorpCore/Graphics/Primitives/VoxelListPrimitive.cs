@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Threading;
@@ -20,6 +21,7 @@ namespace DwarfCorp
         private readonly Dictionary<BoxFace, bool> faceExists = new Dictionary<BoxFace, bool>();
         private readonly Dictionary<BoxFace, bool> drawFace = new Dictionary<BoxFace, bool>();
         private readonly List<ExtendedVertex> accumulatedVertices = new List<ExtendedVertex>();
+        private readonly List<short> accumulatedIndices = new List<short>(); 
         private bool isRebuilding = false;
         private readonly Mutex rebuildMutex = new Mutex();
         public static bool StaticInitialized = false;
@@ -477,6 +479,7 @@ namespace DwarfCorp
 
 
             accumulatedVertices.Clear();
+            accumulatedIndices.Clear();
             faceExists.Clear();
             drawFace.Clear();
 
@@ -542,11 +545,15 @@ namespace DwarfCorp
                             }
                             int faceIndex = 0;
                             int faceCount = 0;
-                            primitive.GetFace(face, uvs, out faceIndex, out faceCount);
-                            for(int idx = faceIndex; idx < faceIndex + faceCount; idx++)
+                            int vertexIndex = 0;
+                            int vertexCount = 0;
+                            primitive.GetFace(face, uvs, out faceIndex, out faceCount, out vertexIndex, out vertexCount);
+
+                            int indexOffset = accumulatedVertices.Count;
+                            for (int vertOffset = 0; vertOffset < vertexCount; vertOffset++)
                             {
-                                
-                                VoxelVertex bestKey = VoxelChunk.GetNearestDelta(primitive.Vertices[idx].Position);
+                                ExtendedVertex vert = primitive.Vertices[vertOffset + vertexIndex];
+                                VoxelVertex bestKey = VoxelChunk.GetNearestDelta(vert.Position);
                                 Color color = v.Chunk.Data.GetColor(x, y, z, bestKey);
                                 Vector3 offset = Vector3.Zero;
                                 Vector2 texOffset = Vector2.Zero;
@@ -562,10 +569,16 @@ namespace DwarfCorp
                                 }
 
 
-                                ExtendedVertex newVertex = new ExtendedVertex((primitive.Vertices[idx].Position + v.Position + VertexNoise.GetNoiseVectorFromRepeatingTexture(primitive.Vertices[idx].Position + v.Position) + offset),
+                                ExtendedVertex newVertex = new ExtendedVertex((vert.Position + v.Position + VertexNoise.GetNoiseVectorFromRepeatingTexture(vert.Position + v.Position) + offset),
                                     color,
-                                    uvs.m_uvs[idx] + texOffset, uvs.Bounds[faceIndex / 6]);
+                                     uvs.Uvs[vertOffset + vertexIndex] + texOffset, uvs.Bounds[faceIndex / 6]);
                                 accumulatedVertices.Add(newVertex);
+                            }
+
+                            for (int idx = faceIndex; idx < faceCount + faceIndex; idx++)
+                            {
+                                int vertexOffset = primitive.Indices[idx];
+                                accumulatedIndices.Add((short)(indexOffset + (vertexOffset - primitive.Indices[faceIndex])));
                             }
                         }
                     }
@@ -575,6 +588,8 @@ namespace DwarfCorp
 
             Vertices = new ExtendedVertex[accumulatedVertices.Count];
             accumulatedVertices.CopyTo(Vertices);
+            IndexBuffer = new IndexBuffer(graphics, typeof(short), accumulatedIndices.Count, BufferUsage.WriteOnly);
+            IndexBuffer.SetData(accumulatedIndices.ToArray());
 
             ResetBuffer(graphics);
             isRebuilding = false;

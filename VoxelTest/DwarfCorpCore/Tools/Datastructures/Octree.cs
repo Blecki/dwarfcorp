@@ -128,7 +128,7 @@ namespace DwarfCorp
             return !ObjectsToNodes.ContainsKey(component) || ObjectsToNodes[component].Bounds.Intersects(component.GetBoundingBox());
         }
 
-        public void Update(GameTime time)
+        public void Update(DwarfTime time)
         {
             UpdateTimer.Update(time);
 

@@ -147,7 +147,7 @@ namespace DwarfCorp
             return PlaySound(name, location, false, volume);
         }
 
-        public static void Update(GameTime time, Camera camera)
+        public static void Update(DwarfTime time, Camera camera)
         {
             List<Sound3D> toRemove = new List<Sound3D>();
 

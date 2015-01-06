@@ -76,10 +76,10 @@ namespace DwarfCorp
             return LightsWithVoxels && ((moved && LightingTimer.HasTriggered) || firstIteration || !ColorAppplied);
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
-            LightingTimer.Update(gameTime);
-            StartTimer.Update(gameTime);
+            LightingTimer.Update(DwarfTime);
+            StartTimer.Update(DwarfTime);
             if(ShouldUpdate())
             {
                 if (entityLighting)
@@ -124,16 +124,16 @@ namespace DwarfCorp
                 Tint = TargetTint;
             }
 
-            base.Update(gameTime, chunks, camera);
+            base.Update(DwarfTime, chunks, camera);
         }
 
-        public override void Render(GameTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+        public override void Render(DwarfTime DwarfTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
             if(IsVisible)
             {
                 effect.Parameters["xTint"].SetValue(new Vector4(Tint.R, Tint.G, Tint.B, Tint.A));
 
-                base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+                base.Render(DwarfTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
             }
         }
     }

@@ -30,11 +30,11 @@ namespace DwarfCorp
             Animation = animtion;
         }
 
-        public override void Update(GameTime time)
+        public override void Update(DwarfTime time)
         {
             if (Animation != null)
             {
-                Animation.Update(time);
+                Animation.Update(time, Timer.TimerMode.Real);
                 Image.Image = Animation.SpriteSheet;
                 Image.SourceRect = Animation.GetCurrentFrameRect();
             }

@@ -28,7 +28,7 @@ namespace DwarfCorp
             ColorEntries = new Dictionary<string, Color>();
         }
 
-        public override void Render(GameTime time, SpriteBatch batch)
+        public override void Render(DwarfTime time, SpriteBatch batch)
         {
             AutoSize();
             Drawer2D.FillRect(batch, GlobalBounds, BackgroundColor);

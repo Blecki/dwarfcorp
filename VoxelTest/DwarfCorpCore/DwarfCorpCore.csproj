@@ -136,6 +136,8 @@
     <Compile Include="Entities\Fixtures\Table.cs" />
     <Compile Include="Entities\Fixtures\Target.cs" />
     <Compile Include="Entities\Fixtures\WorkPile.cs" />
+    <Compile Include="Entities\Monsters\Elf.cs" />
+    <Compile Include="Entities\Monsters\Fairy.cs" />
     <Compile Include="Entities\Monsters\Goblin.cs" />
     <Compile Include="Entities\Monsters\Necromancer.cs" />
     <Compile Include="Entities\Monsters\NecromancerAI.cs" />
@@ -146,6 +148,7 @@
     <Compile Include="Entities\Plants\Mushroom.cs" />
     <Compile Include="Entities\Plants\Tree.cs" />
     <Compile Include="Entities\Plants\Wheat.cs" />
+    <Compile Include="Entities\Projectiles\Projectile.cs" />
     <Compile Include="Entities\Resources\ResourceEntity.cs" />
     <Compile Include="Entities\Traps\BearTrap.cs" />
     <Compile Include="GameSettings.Designer.cs">
@@ -274,7 +277,9 @@
     <Compile Include="Scripting\Classes\Applicant.cs" />
     <Compile Include="Scripting\Classes\AxeDwarfClass.cs" />
     <Compile Include="Scripting\Classes\CraftDwarfClass.cs" />
+    <Compile Include="Scripting\Classes\ElfClass.cs" />
     <Compile Include="Scripting\Classes\EmployeeClass.cs" />
+    <Compile Include="Scripting\Classes\FairyClass.cs" />
     <Compile Include="Scripting\Classes\JobLibrary.cs" />
     <Compile Include="Scripting\Classes\NecromancerClass.cs" />
     <Compile Include="Scripting\Classes\SkeletonClass.cs" />

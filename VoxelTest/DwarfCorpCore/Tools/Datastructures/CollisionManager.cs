@@ -72,7 +72,7 @@ namespace DwarfCorp
             return type != CollisionType.None && Octrees[type].NeedsUpdate(bounded);
         }
 
-        public void Update(GameTime t)
+        public void Update(DwarfTime t)
         {
             foreach(var octree in Octrees)
             {

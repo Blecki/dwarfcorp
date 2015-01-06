@@ -155,7 +155,7 @@ namespace DwarfCorp
         }
 
 
-        public override void Render(GameTime time, SpriteBatch batch)
+        public override void Render(DwarfTime time, SpriteBatch batch)
         {
             if(!IsMinimized)
             {
@@ -170,7 +170,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void PreRender(GameTime time, SpriteBatch sprites)
+        public override void PreRender(DwarfTime time, SpriteBatch sprites)
         {
             if(!HomeSet)
             {

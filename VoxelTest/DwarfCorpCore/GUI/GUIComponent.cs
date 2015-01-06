@@ -265,7 +265,7 @@ namespace DwarfCorp
             }
         }
 
-        public virtual void Update(GameTime time)
+        public virtual void Update(DwarfTime time)
         {
            
             if(!IsVisible)
@@ -394,7 +394,7 @@ namespace DwarfCorp
             return new Rectangle(x, y, Math.Abs(maxX - x), Math.Abs(maxY - y));
         }
 
-        public virtual void PreRender(GameTime time, SpriteBatch sprites)
+        public virtual void PreRender(DwarfTime time, SpriteBatch sprites)
         {
             foreach(GUIComponent child in Children)
             {
@@ -402,7 +402,7 @@ namespace DwarfCorp
             }
         }
 
-        public virtual void PostRender(GameTime time)
+        public virtual void PostRender(DwarfTime time)
         {
             foreach (GUIComponent child in Children)
             {
@@ -410,7 +410,7 @@ namespace DwarfCorp
             }
         }
 
-        public virtual void Render(GameTime time, SpriteBatch batch)
+        public virtual void Render(DwarfTime time, SpriteBatch batch)
         {
             if(!IsVisible)
             {
@@ -425,7 +425,7 @@ namespace DwarfCorp
             }
         }
 
-        public virtual void DebugRender(GameTime time, SpriteBatch batch)
+        public virtual void DebugRender(DwarfTime time, SpriteBatch batch)
         {
             Drawer2D.DrawRect(batch, GlobalBounds, IsMouseOver ? Color.Red : Color.White, 1);
 

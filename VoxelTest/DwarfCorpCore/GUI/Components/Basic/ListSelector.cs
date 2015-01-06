@@ -44,7 +44,7 @@ namespace DwarfCorp
             Mode = SelectionMode.Selector;
         }
 
-        public override void Render(GameTime time, SpriteBatch batch)
+        public override void Render(DwarfTime time, SpriteBatch batch)
         {
             if (!IsVisible)
             {
@@ -181,7 +181,7 @@ namespace DwarfCorp
         }
 
 
-        public override void Render(GameTime time, SpriteBatch batch)
+        public override void Render(DwarfTime time, SpriteBatch batch)
         {
             if(IsVisible)
             {

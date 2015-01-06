@@ -23,20 +23,28 @@ namespace DwarfCorp
         public float Restitution { get; set; }
         public float Friction { get; set; }
         public Vector3 Gravity { get; set; }
-        public bool OrientWithVelocity { get; set; }
         public Vector3 PreviousPosition { get; set; }
         private bool applyGravityThisFrame = true;
         public bool IsSleeping { get; set; }
         private bool overrideSleepThisFrame = true;
-        public bool FixedOrientation { get; set; }
         public bool IsInLiquid { get; set; }
+
+        public OrientMode Orientation { get; set; }
+
+        public enum OrientMode
+        {
+            Physics,
+            Fixed,
+            LookAt,
+            RotateY
+        }
 
         public Physics()
         {
             
         }
 
-        public Physics(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, float mass, float i, float linearDamping, float angularDamping, Vector3 gravity) :
+        public Physics(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, float mass, float i, float linearDamping, float angularDamping, Vector3 gravity, OrientMode orientation = OrientMode.Fixed) :
             base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             Mass = mass;
@@ -48,15 +56,14 @@ namespace DwarfCorp
             Gravity = gravity;
             Restitution = 0.99f;
             Friction = 0.99f;
-            OrientWithVelocity = false;
             IsSleeping = false;
             PreviousPosition = LocalTransform.Translation;
-            FixedOrientation = false;
             IsInLiquid = false;
             CollisionType = CollisionManager.CollisionType.Dynamic;
+            Orientation = orientation;
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
             BoundingBox bounds = chunks.Bounds;
             bounds.Max.Y += 50;
@@ -76,7 +83,7 @@ namespace DwarfCorp
                     overrideSleepThisFrame = false;
                 }
 
-                float dt = (float) (gameTime.ElapsedGameTime.TotalSeconds);
+                float dt = (float) (DwarfTime.ElapsedGameTime.TotalSeconds);
 
                 if(applyGravityThisFrame)
                 {
@@ -106,7 +113,7 @@ namespace DwarfCorp
                 }
 
 
-                if(!OrientWithVelocity && !FixedOrientation)
+                if(Orientation == OrientMode.Physics)
                 {
                     Matrix dA = Matrix.Identity;
                     dA *= Matrix.CreateRotationX(AngularVelocity.X * dt);
@@ -115,13 +122,23 @@ namespace DwarfCorp
 
                     transform = dA * transform;
                 }
-                else if(!FixedOrientation)
+                else if(Orientation != OrientMode.Fixed)
                 {
                     if(Velocity.Length() > 0.4f)
                     {
-                        Matrix newTransform = Matrix.CreateRotationY((float) Math.Atan2(Velocity.X, -Velocity.Z));
-                        newTransform.Translation = transform.Translation;
-                        transform = newTransform;
+                        if (Orientation == OrientMode.LookAt)
+                        {
+                            Matrix newTransform =
+                                Matrix.Invert(Matrix.CreateLookAt(Position, Position + Velocity, Vector3.Down));
+                            newTransform.Translation = transform.Translation;
+                            transform = newTransform;
+                        }
+                        else if (Orientation == OrientMode.RotateY)
+                        {
+                            Matrix newTransform = Matrix.CreateRotationY((float) Math.Atan2(Velocity.X, -Velocity.Z));
+                            newTransform.Translation = transform.Translation;
+                            transform = newTransform;
+                        }
                     }
                 }
 
@@ -137,9 +154,9 @@ namespace DwarfCorp
                 AngularVelocity *= AngularDamping;
                 UpdateBoundingBox();
                 HandleCollisions(chunks, dt);
-                CheckLiquids(chunks, (float) gameTime.ElapsedGameTime.TotalSeconds);
+                CheckLiquids(chunks, (float) DwarfTime.ElapsedGameTime.TotalSeconds);
             }
-            base.Update(gameTime, chunks, camera);
+            base.Update(DwarfTime, chunks, camera);
         }
 
         public void Face(Vector3 target)
@@ -165,6 +182,11 @@ namespace DwarfCorp
             {
                 IsInLiquid = false;
             }
+        }
+
+        public virtual void OnTerrainCollision(Voxel vox)
+        {
+            //
         }
 
         public override void ReceiveMessageRecursive(Message messageToReceive)
@@ -248,7 +270,10 @@ namespace DwarfCorp
                 }
 
                 BoundingBox voxAABB = v.GetBoundingBox();
-                Collide(voxAABB);
+                if (Collide(voxAABB))
+                {
+                    OnTerrainCollision(v);
+                }
             }
         }
 

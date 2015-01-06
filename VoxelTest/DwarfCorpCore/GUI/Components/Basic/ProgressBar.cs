@@ -21,7 +21,7 @@ namespace DwarfCorp
             Value = v;
         }
 
-        public override void Render(GameTime time, SpriteBatch batch)
+        public override void Render(DwarfTime time, SpriteBatch batch)
         {
             Rectangle rectToDraw = new Rectangle(GlobalBounds.X, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width, GUI.Skin.TileHeight);
             GUI.Skin.RenderProgressBar(rectToDraw, Value, batch);

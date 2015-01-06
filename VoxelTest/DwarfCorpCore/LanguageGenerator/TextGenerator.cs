@@ -80,6 +80,8 @@ namespace DwarfCorp
             TextAtom magical = new TextAtom("$Magical", "University", "School", "Magerium", "Magicians", "Arcana", "Institute", "Learning Center", "Library", "Museum");
             TextAtom military = new TextAtom("$Military", "Thugs", "Band", "Company", "Heroes", "Strongdwarves", "Mercenaries", "Dwarves-at-arms", "Shield", "Axe", "Sword", "Army", "Fighters", "Knights");
             TextAtom industrial = new TextAtom("$Industry", "Industries", "Materials", "Techcenter", "Factories", "Machines", "Parts", "Hammers");
+            TextAtom elfName = new TextAtom("$ElfName", "Lolly", "Lilly", "Eelie", "Gumdrop", "Bubblegum" ,"Poppy", "Fizzle", "Pickle", "Elfie", "Candy", "Laddy");
+            TextAtom elfFamily = new TextAtom("$ElfFamily", "McWilly", "Wizzlebum", "Lollyland", "Doopy", "McToetoe", "Whipper", "Elfson", "Gribble", "Nibble");
             AddAtom(animals);
             AddAtom(bodyparts);
             AddAtom(family);
@@ -87,6 +89,8 @@ namespace DwarfCorp
             AddAtom(land);
             AddAtom(maleName);
             AddAtom(colors);
+            AddAtom(elfName);
+            AddAtom(elfFamily);
             AddAtom(dwarfName);
             AddAtom(goblinName);
             AddAtom(dwarfFamily);

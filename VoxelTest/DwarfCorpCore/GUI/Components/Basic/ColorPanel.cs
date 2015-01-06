@@ -19,7 +19,7 @@ namespace DwarfCorp
             
         }
 
-        public override void Render(GameTime time, Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
+        public override void Render(DwarfTime time, Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
         {
             Drawer2D.FillRect(batch, GlobalBounds, CurrentColor);
             if (BorderWidth > 0)

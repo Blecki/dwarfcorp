@@ -213,7 +213,7 @@ namespace DwarfCorp
         }
 
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
             IsAboveCullPlane =  GlobalTransform.Translation.Y - GetBoundingBox().Extents().Y > (chunks.ChunkData.MaxViewingLevel + 2);
             if(DrawScreenRect)
@@ -234,7 +234,7 @@ namespace DwarfCorp
             if(AnimationQueue.Count > 0)
             {
                 MotionAnimation anim = AnimationQueue[0];
-                anim.Update(gameTime);
+                anim.Update(DwarfTime);
 
                 LocalTransform = anim.GetTransform();
 
@@ -244,7 +244,7 @@ namespace DwarfCorp
                 }
             }
 
-            base.Update(gameTime, chunks, camera);
+            base.Update(DwarfTime, chunks, camera);
         }
 
 
@@ -259,7 +259,7 @@ namespace DwarfCorp
             {
                 Body locatable = (Body) Parent;
 
-                if(HasMoved)
+                //if(HasMoved)
                 {
                     GlobalTransform = LocalTransform * locatable.GlobalTransform;
                     hasMoved = false;
@@ -267,7 +267,7 @@ namespace DwarfCorp
             }
             else
             {
-                if(HasMoved)
+                //if(HasMoved)
                 {
                     GlobalTransform = LocalTransform;
                     hasMoved = false;
@@ -277,7 +277,7 @@ namespace DwarfCorp
 
             lock(Children)
             {
-                foreach(Body locatable in Children.OfType<Body>().Where(locatable => locatable.HasMoved))
+                foreach(Body locatable in Children.OfType<Body>())
                 {
                     locatable.UpdateTransformsRecursive();
                 }

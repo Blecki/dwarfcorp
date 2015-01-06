@@ -93,7 +93,7 @@ namespace DwarfCorp.GameStates
             NextState = "";
         }
 
-        public void Update(GameTime time)
+        public void Update(DwarfTime time)
         {
             if(ScreenSaver == null)
             {
@@ -105,7 +105,7 @@ namespace DwarfCorp.GameStates
 
                 if(CurrentState != "" && States[CurrentState].Transitioning != GameState.TransitionMode.Running)
                 {
-                    States[CurrentState].TransitionValue += (float) (TransitionSpeed * time.ElapsedGameTime.TotalSeconds);
+                    States[CurrentState].TransitionValue += (float) (TransitionSpeed * time.ElapsedRealTime.TotalSeconds);
                     States[CurrentState].TransitionValue = Math.Min(States[CurrentState].TransitionValue, 1.001f);
                 }
             }
@@ -116,7 +116,7 @@ namespace DwarfCorp.GameStates
 
                 if(States[NextState].Transitioning != GameState.TransitionMode.Running)
                 {
-                    States[NextState].TransitionValue += (float) (TransitionSpeed * time.ElapsedGameTime.TotalSeconds);
+                    States[NextState].TransitionValue += (float) (TransitionSpeed * time.ElapsedRealTime.TotalSeconds);
                     States[NextState].TransitionValue = Math.Min(States[NextState].TransitionValue, 1.001f);
                     if(States[NextState].TransitionValue >= 1.0)
                     {
@@ -126,7 +126,7 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        public void Render(GameTime time)
+        public void Render(DwarfTime time)
         {
             Game.GraphicsDevice.Clear(Color.Black);
 

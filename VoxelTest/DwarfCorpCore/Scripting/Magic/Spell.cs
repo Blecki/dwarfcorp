@@ -52,12 +52,12 @@ namespace DwarfCorp
             PlayState.GUI.ToolTipManager.Popup(Hint);
         }
 
-        public virtual void OnContinuousUpdate(GameTime time)
+        public virtual void OnContinuousUpdate(DwarfTime time)
         {
             
         }
 
-        public virtual void Update(GameTime time, VoxelSelector voxSelector, BodySelector bodySelector)
+        public virtual void Update(DwarfTime time, VoxelSelector voxSelector, BodySelector bodySelector)
         {
             if(Recharges)
                 RechargeTimer.Update(time);
@@ -90,7 +90,7 @@ namespace DwarfCorp
             }
         }
 
-        public virtual void Render(GameTime time)
+        public virtual void Render(DwarfTime time)
         {
             if (Recharges && !RechargeTimer.HasTriggered)
             {

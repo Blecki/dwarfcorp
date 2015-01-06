@@ -28,6 +28,12 @@ namespace DwarfCorp
             Psychological
         }
 
+        public struct DamageAmount
+        {
+            public float Amount { get; set; }
+            public DamageType DamageType { get; set; }
+        }
+
         public Dictionary<DamageType, float> Resistances { get; set; } 
         public float Hp { get; set; }
         public float MaxHealth { get; set; }
