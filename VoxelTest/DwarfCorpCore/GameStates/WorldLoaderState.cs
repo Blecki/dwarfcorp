@@ -374,11 +374,11 @@ namespace DwarfCorp.GameStates
         private GridLayout scrollGrid;
         private ScrollView scroller;
 
-        public override void Update(GameTime gameTime)
+        public override void Update(DwarfTime DwarfTime)
         {
             iter++;
             Input.Update();
-            GUI.Update(gameTime);
+            GUI.Update(DwarfTime);
             GUI.IsMouseVisible = true;
 
             foreach(WorldLoadDescriptor t in Worlds)
@@ -397,48 +397,48 @@ namespace DwarfCorp.GameStates
                 t.Lock.ReleaseMutex();
             }
 
-            base.Update(gameTime);
+            base.Update(DwarfTime);
         }
 
 
-        private void DrawGUI(GameTime gameTime, float dx)
+        private void DrawGUI(DwarfTime DwarfTime, float dx)
         {
             RasterizerState rasterizerState = new RasterizerState()
             {
                 ScissorTestEnable = true
             };
 
-            GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
+            GUI.PreRender(DwarfTime, DwarfGame.SpriteBatch);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
-            GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
+            GUI.Render(DwarfTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
             DwarfGame.SpriteBatch.End();
 
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle = DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
-            GUI.PostRender(gameTime);
+            GUI.PostRender(DwarfTime);
         }
 
-        public override void Render(GameTime gameTime)
+        public override void Render(DwarfTime DwarfTime)
         {
             switch(Transitioning)
             {
                 case TransitionMode.Running:
-                    DrawGUI(gameTime, 0);
+                    DrawGUI(DwarfTime, 0);
                     break;
                 case TransitionMode.Entering:
                 {
                     float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                    DrawGUI(gameTime, dx);
+                    DrawGUI(DwarfTime, dx);
                 }
                     break;
                 case TransitionMode.Exiting:
                 {
                     float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                    DrawGUI(gameTime, dx);
+                    DrawGUI(DwarfTime, dx);
                 }
                     break;
             }
 
-            base.Render(gameTime);
+            base.Render(DwarfTime);
         }
     }
 

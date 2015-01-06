@@ -24,7 +24,7 @@ namespace DwarfCorp
 
         public void Initialize()
         {
-            Physics.OrientWithVelocity = true;
+            Physics.Orientation = Physics.OrientMode.RotateY;
             Sprite = new CharacterSprite(Graphics, Manager, "Skeleton Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 0.1f, 0)));
             foreach (Animation animation in Stats.CurrentClass.Animations)
             {

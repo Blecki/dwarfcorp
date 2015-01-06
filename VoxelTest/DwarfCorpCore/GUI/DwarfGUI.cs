@@ -134,7 +134,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public void Update(GameTime time)
+        public void Update(DwarfTime time)
         {
 
             ToolTipManager.Update(time);
@@ -158,17 +158,17 @@ namespace DwarfCorp
 
         }
 
-        public void PreRender(GameTime time, SpriteBatch sprites)
+        public void PreRender(DwarfTime time, SpriteBatch sprites)
         {
             RootComponent.PreRender(time, sprites);
         }
 
-        public void PostRender(GameTime time)
+        public void PostRender(DwarfTime time)
         {
             
         }
 
-        public void Render(GameTime time, SpriteBatch batch, Vector2 globalOffset)
+        public void Render(DwarfTime time, SpriteBatch batch, Vector2 globalOffset)
         {
             GlobalOffset = globalOffset;
 

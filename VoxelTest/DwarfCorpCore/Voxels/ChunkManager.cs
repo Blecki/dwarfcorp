@@ -46,9 +46,9 @@ namespace DwarfCorp
 
         private Thread WaterThread { get; set; }
 
-        private readonly Timer generateChunksTimer = new Timer(0.5f, false);
-        private readonly Timer visibilityChunksTimer = new Timer(0.03f, false);
-        private readonly Timer waterUpdateTimer = new Timer(0.1f, false);
+        private readonly Timer generateChunksTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
+        private readonly Timer visibilityChunksTimer = new Timer(0.03f, false, Timer.TimerMode.Real);
+        private readonly Timer waterUpdateTimer = new Timer(0.1f, false, Timer.TimerMode.Real);
 
         public BoundingBox Bounds { get; set; }
 
@@ -150,11 +150,11 @@ namespace DwarfCorp
             ChunkData.MaxViewingLevel = chunkSizeY;
 
             GameSettings.Default.ChunkGenerateTime = 0.5f;
-            generateChunksTimer = new Timer(GameSettings.Default.ChunkGenerateTime, false);
+            generateChunksTimer = new Timer(GameSettings.Default.ChunkGenerateTime, false, Timer.TimerMode.Real);
             GameSettings.Default.ChunkRebuildTime = 0.1f;
-            Timer rebuildChunksTimer = new Timer(GameSettings.Default.ChunkRebuildTime, false);
+            Timer rebuildChunksTimer = new Timer(GameSettings.Default.ChunkRebuildTime, false, Timer.TimerMode.Real);
             GameSettings.Default.VisibilityUpdateTime = 0.05f;
-            visibilityChunksTimer = new Timer(GameSettings.Default.VisibilityUpdateTime, false);
+            visibilityChunksTimer = new Timer(GameSettings.Default.VisibilityUpdateTime, false, Timer.TimerMode.Real);
             generateChunksTimer.HasTriggered = true;
             rebuildChunksTimer.HasTriggered = true;
             visibilityChunksTimer.HasTriggered = true;
@@ -567,7 +567,7 @@ namespace DwarfCorp
             return MathFunctions.GetBoundingBox(toAdd);
         }
 
-        public void RenderAll(Camera renderCamera, GameTime gameTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix, Texture2D tilemap)
+        public void RenderAll(Camera renderCamera, DwarfTime DwarfTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix, Texture2D tilemap)
         {
             effect.Parameters["xIllumination"].SetValue(ChunkData.IllumMap);
             effect.Parameters["xTexture"].SetValue(tilemap);
@@ -585,7 +585,7 @@ namespace DwarfCorp
             }
         }
 
-        public void Render(Camera renderCamera, GameTime gameTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix)
+        public void Render(Camera renderCamera, DwarfTime DwarfTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix)
         {
             effect.Parameters["xIllumination"].SetValue(ChunkData.IllumMap);
             effect.Parameters["xTexture"].SetValue(ChunkData.Tilemap);
@@ -693,18 +693,18 @@ namespace DwarfCorp
             chunks.RemoveWhere(chunk => frustum.Contains(chunk.GetBoundingBox()) == ContainmentType.Disjoint);
         }
 
-        public void Update(GameTime gameTime, Camera camera, GraphicsDevice g)
+        public void Update(DwarfTime DwarfTime, Camera camera, GraphicsDevice g)
         {
             UpdateRenderList(camera);
 
-            if(waterUpdateTimer.Update(gameTime))
+            if(waterUpdateTimer.Update(DwarfTime))
             {
                 WaterUpdateEvent.Set();
             }
 
             UpdateRebuildList();
 
-            generateChunksTimer.Update(gameTime);
+            generateChunksTimer.Update(DwarfTime);
             if(generateChunksTimer.HasTriggered)
             {
                 if(ToGenerate.Count > 0)
@@ -741,7 +741,7 @@ namespace DwarfCorp
             }
 
 
-            visibilityChunksTimer.Update(gameTime);
+            visibilityChunksTimer.Update(DwarfTime);
             if(visibilityChunksTimer.HasTriggered)
             {
                 visibleSet.Clear();
@@ -752,11 +752,11 @@ namespace DwarfCorp
 
             foreach(VoxelChunk chunk in ChunkData.ChunkMap.Values)
             {
-                chunk.Update(gameTime);
+                chunk.Update(DwarfTime);
             }
 
-            Water.Splash(gameTime);
-            Water.HandleTransfers(gameTime);
+            Water.Splash(DwarfTime);
+            Water.HandleTransfers(DwarfTime);
         }
 
         public List<Voxel> GetVoxelsIntersecting(BoundingBox box)

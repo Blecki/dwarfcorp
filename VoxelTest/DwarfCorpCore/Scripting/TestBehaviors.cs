@@ -170,11 +170,11 @@ namespace DwarfCorp
 
             DateTime first = DateTime.Now;
             wait.Initialize();
-            Act.LastTime = new Microsoft.Xna.Framework.GameTime(DateTime.Now - first, DateTime.Now - DateTime.Now);
+            Act.LastTime = new DwarfTime(DateTime.Now - first, DateTime.Now - DateTime.Now);
             DateTime last = DateTime.Now;
             foreach(Act.Status status in wait.Run())
             {
-                Act.LastTime = new Microsoft.Xna.Framework.GameTime(DateTime.Now - first, DateTime.Now - last);
+                Act.LastTime = new DwarfTime(DateTime.Now - first, DateTime.Now - last);
                 Console.Out.WriteLine("Wait status: " + status.ToString() + "," + wait.Time.CurrentTimeSeconds);
                 last = DateTime.Now;
                 System.Threading.Thread.Sleep(10);
@@ -183,7 +183,7 @@ namespace DwarfCorp
             complex.Initialize();
             foreach(Act.Status status in complex.Run())
             {
-                Act.LastTime = new Microsoft.Xna.Framework.GameTime(DateTime.Now - first, DateTime.Now - last);
+                Act.LastTime = new DwarfTime(DateTime.Now - first, DateTime.Now - last);
                 Console.Out.WriteLine("Complex status: " + status.ToString());
                 last = DateTime.Now;
                 System.Threading.Thread.Sleep(10);
@@ -192,7 +192,7 @@ namespace DwarfCorp
             overloader.Initialize();
             foreach(Act.Status status in overloader.Run())
             {
-                Act.LastTime = new Microsoft.Xna.Framework.GameTime(DateTime.Now - first, DateTime.Now - last);
+                Act.LastTime = new DwarfTime(DateTime.Now - first, DateTime.Now - last);
                 Console.Out.WriteLine("Overloader status: " + status.ToString());
                 last = DateTime.Now;
                 System.Threading.Thread.Sleep(10);
@@ -201,7 +201,7 @@ namespace DwarfCorp
             converter.Initialize();
             foreach(Act.Status status in converter.Run())
             {
-                Act.LastTime = new Microsoft.Xna.Framework.GameTime(DateTime.Now - first, DateTime.Now - last);
+                Act.LastTime = new DwarfTime(DateTime.Now - first, DateTime.Now - last);
                 Console.Out.WriteLine("converter status: " + status.ToString());
                 last = DateTime.Now;
                 System.Threading.Thread.Sleep(10);

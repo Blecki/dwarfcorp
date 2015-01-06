@@ -104,7 +104,7 @@ namespace DwarfCorp
                 select des).ToList();
         }
 
-        public void Render(GameTime game, GraphicsDevice graphics)
+        public void Render(DwarfTime game, GraphicsDevice graphics)
         {
             foreach(Room room in DesignatedRooms)
             {
@@ -178,7 +178,7 @@ namespace DwarfCorp
             }
         }
 
-        public void Update(MouseState mouseState, KeyboardState keyState, DwarfGame game, GameTime time)
+        public void Update(MouseState mouseState, KeyboardState keyState, DwarfGame game, DwarfTime time)
         {
             PlayState.GUI.IsMouseVisible = true;
         }

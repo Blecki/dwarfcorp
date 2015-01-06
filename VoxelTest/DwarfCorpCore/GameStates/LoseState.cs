@@ -73,40 +73,40 @@ namespace DwarfCorp.GameStates
             base.OnEnter();
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(DwarfTime DwarfTime)
         {
             MainWindow.LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2);
             Input.Update();
-            GUI.Update(gameTime);
-            base.Update(gameTime);
+            GUI.Update(DwarfTime);
+            base.Update(DwarfTime);
         }
 
 
-        private void DrawGUI(GameTime gameTime, float dx)
+        private void DrawGUI(DwarfTime DwarfTime, float dx)
         {
             RasterizerState rasterizerState = new RasterizerState()
             {
                 ScissorTestEnable = true
             };
 
-            GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
+            GUI.PreRender(DwarfTime, DwarfGame.SpriteBatch);
 
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, rasterizerState);
 
             Drawer2D.FillRect(DwarfGame.SpriteBatch, Game.GraphicsDevice.Viewport.Bounds, new Color(0, 0, 0, 200));
 
-            GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
+            GUI.Render(DwarfTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
 
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
 
             DwarfGame.SpriteBatch.End();
-            GUI.PostRender(gameTime);
+            GUI.PostRender(DwarfTime);
         }
 
-        public override void Render(GameTime gameTime)
+        public override void Render(DwarfTime DwarfTime)
         {
-            DrawGUI(gameTime, 0);
-            base.Render(gameTime);
+            DrawGUI(DwarfTime, 0);
+            base.Render(DwarfTime);
         }
     }
 

@@ -30,10 +30,10 @@ namespace DwarfCorp.GameStates
         }
 
 
-        public override void Update(GameTime gameTime)
+        public override void Update(DwarfTime DwarfTime)
         {
             Game.IsMouseVisible = false;
-            IntroTimer.Update(gameTime);
+            IntroTimer.Update(DwarfTime);
 
             if(IntroTimer.HasTriggered && Transitioning == TransitionMode.Running)
             {
@@ -45,11 +45,11 @@ namespace DwarfCorp.GameStates
                 StateManager.PushState("MainMenuState");
             }
 
-            base.Update(gameTime);
+            base.Update(DwarfTime);
         }
 
 
-        public override void Render(GameTime gameTime)
+        public override void Render(DwarfTime DwarfTime)
         {
 
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
@@ -69,7 +69,7 @@ namespace DwarfCorp.GameStates
             }
             DwarfGame.SpriteBatch.End();
 
-            base.Render(gameTime);
+            base.Render(DwarfTime);
         }
     }
 

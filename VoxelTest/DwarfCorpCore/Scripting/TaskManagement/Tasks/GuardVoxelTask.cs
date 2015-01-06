@@ -41,7 +41,7 @@ namespace DwarfCorp
             return agent.Faction.IsGuardDesignation(VoxelToGuard);
         }
 
-        public override void Render(GameTime time)
+        public override void Render(DwarfTime time)
         {
             BoundingBox box = VoxelToGuard.GetBoundingBox();
 

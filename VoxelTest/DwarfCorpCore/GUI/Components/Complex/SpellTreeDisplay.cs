@@ -119,7 +119,7 @@ namespace DwarfCorp
                 }
             }
 
-            public void Render(GameTime time, SpriteBatch batch)
+            public void Render(DwarfTime time, SpriteBatch batch)
             {
                 bool isResearched = Spell.ResearchProgress >= Spell.ResearchTime;
 
@@ -578,7 +578,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void Render(GameTime time, SpriteBatch batch)
+        public override void Render(DwarfTime time, SpriteBatch batch)
         {
             if (!IsVisible) return;
             Rectangle originalRect = Scroller.StartClip(batch);
@@ -590,7 +590,7 @@ namespace DwarfCorp
             base.Render(time, batch);
         }
 
-        public override void Update(GameTime time)
+        public override void Update(DwarfTime time)
         {
             foreach (SpellButton button in SpellButtons)
             {

@@ -52,7 +52,7 @@ namespace DwarfCorp
             return EntityToGather == null  || EntityToGather.IsDead ? 1000 : (agent.AI.Position - EntityToGather.GlobalTransform.Translation).LengthSquared();
         }
 
-        public override void Render(GameTime time)
+        public override void Render(DwarfTime time)
         {
 
             if (!EntityToGather.IsDead)

@@ -46,9 +46,9 @@ namespace DwarfCorp
 
         private bool firstIter = true;
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
-            base.Update(gameTime, chunks, camera);
+            base.Update(DwarfTime, chunks, camera);
 
             if(Instance != null  && (HasMoved || firstIter || Instance.Color != TargetTint))
             {

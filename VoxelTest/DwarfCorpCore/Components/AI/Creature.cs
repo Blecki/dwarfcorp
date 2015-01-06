@@ -169,7 +169,7 @@ namespace DwarfCorp
             Buffs.Add(buff);
         }
 
-        public void HandleBuffs(GameTime time)
+        public void HandleBuffs(DwarfTime time)
         {
             foreach (Buff buff in Buffs)
             {
@@ -185,15 +185,15 @@ namespace DwarfCorp
                 
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
-            CheckNeighborhood(chunks, (float) gameTime.ElapsedGameTime.TotalSeconds);
-            UpdateAnimation(gameTime, chunks, camera);
-            Status.Update(this, gameTime, chunks, camera);
-            JumpTimer.Update(gameTime);
-            HandleBuffs(gameTime);
+            CheckNeighborhood(chunks, (float) DwarfTime.ElapsedGameTime.TotalSeconds);
+            UpdateAnimation(DwarfTime, chunks, camera);
+            Status.Update(this, DwarfTime, chunks, camera);
+            JumpTimer.Update(DwarfTime);
+            HandleBuffs(DwarfTime);
 
-            base.Update(gameTime, chunks, camera);
+            base.Update(DwarfTime, chunks, camera);
         }
 
         public void CheckNeighborhood(ChunkManager chunks, float dt)
@@ -319,7 +319,7 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        public void UpdateAnimation(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public void UpdateAnimation(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
            
             float veloNorm = Physics.Velocity.Length();
@@ -422,7 +422,7 @@ namespace DwarfCorp
 
             }
 
-            public virtual void Update(GameTime time, Creature creature)
+            public virtual void Update(DwarfTime time, Creature creature)
             {
                 EffectTime.Update(time);
             }
@@ -466,7 +466,7 @@ namespace DwarfCorp
                 Buffs = buffs;
             }
 
-            public override void Update(GameTime time, Creature creature)
+            public override void Update(DwarfTime time, Creature creature)
             {
                 base.Update(time, creature);
             }
@@ -494,7 +494,7 @@ namespace DwarfCorp
                 
             }
 
-            public override void Update(GameTime time, Creature creature)
+            public override void Update(DwarfTime time, Creature creature)
             {
                 float dt = (float)time.ElapsedGameTime.TotalSeconds;
                 creature.Damage(DamagePerSecond*dt, DamageType);
@@ -517,7 +517,7 @@ namespace DwarfCorp
                 DamagePerSecond = dps;
             }
 
-            public override void Update(GameTime time, Creature creature)
+            public override void Update(DwarfTime time, Creature creature)
             {
                 float dt = (float)time.ElapsedGameTime.TotalSeconds;
                 creature.Heal(dt * DamagePerSecond);

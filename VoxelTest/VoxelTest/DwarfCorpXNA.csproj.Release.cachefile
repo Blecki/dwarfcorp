@@ -131,6 +131,10 @@ Content\Audio\trap.xnb
 Content\Audio\wurp.xnb
 Content\Audio\tinkle.xnb
 Content\Music\dwarfcorp.xnb
+Content\Entities\Elf\Sprites\elf-bow.xnb
+Content\Entities\Elf\Sprites\elf.xnb
+Content\Entities\Elf\Sprites\arrow.xnb
+Content\Entities\Dwarf\Sprites\fairy.xnb
 Content\Music\dwarfcorp.wma
 Content\Text\adverbs.txt
 Content\Text\animals.txt
@@ -143,4 +147,6 @@ Content\Entities\Dwarf\Sprites\worker_animation.json
 Content\Entities\Dwarf\Sprites\crafter_animation.json
 Content\Entities\Dwarf\Sprites\soldier_animation.json
 Content\Entities\Dwarf\Sprites\wizard_animation.json
+Content\Entities\Elf\Sprites\elf_animation.json
+Content\Entities\Dwarf\Sprites\fairy_animation.json
 Content\Music\dwarfcorp_ogg.ogg

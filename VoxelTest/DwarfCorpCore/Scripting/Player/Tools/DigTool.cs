@@ -87,7 +87,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void Update(DwarfGame game, GameTime time)
+        public override void Update(DwarfGame game, DwarfTime time)
         {
             if (Player.IsCameraRotationModeActive())
             {
@@ -113,7 +113,7 @@ namespace DwarfCorp
             Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
         }
 
-        public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
+        public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
             foreach (BuildOrder d in Player.Faction.DigDesignations)
             {

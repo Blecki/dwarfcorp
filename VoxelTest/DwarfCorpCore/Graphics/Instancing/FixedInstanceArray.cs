@@ -29,7 +29,7 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public VertexBuffer Model { get; set; }
+        public GeometricPrimitive Model { get; set; }
         public Texture2D Texture { get; set; }
         public bool ShouldRebuild { get; set; }
         public string Name { get; set; }
@@ -107,7 +107,7 @@ namespace DwarfCorp
             Removals = new List<InstanceData>();
         }
 
-        public FixedInstanceArray(string name, VertexBuffer model, Texture2D texture, int numInstances, BlendState blendMode)
+        public FixedInstanceArray(string name, GeometricPrimitive model, Texture2D texture, int numInstances, BlendState blendMode)
         {
             CullDistance = (GameSettings.Default.ChunkDrawDistance * GameSettings.Default.ChunkDrawDistance) - 40;
             Name = name;
@@ -139,7 +139,7 @@ namespace DwarfCorp
             }
         }
 
-        public void Update(GameTime time, Camera cam, GraphicsDevice graphics)
+        public void Update(DwarfTime time, Camera cam, GraphicsDevice graphics)
         {
             if (DwarfGame.ExitGame)
             {
@@ -172,7 +172,10 @@ namespace DwarfCorp
 
                 effect.CurrentTechnique = effect.Techniques["Textured"];
                 effect.Parameters["xEnableLighting"].SetValue(GameSettings.Default.CursorLightEnabled ? 1 : 0);
-                graphics.SetVertexBuffer(Model);
+                graphics.SetVertexBuffer(Model.VertexBuffer);
+
+                bool hasIndex = Model.IndexBuffer != null;
+                graphics.Indices = Model.IndexBuffer;
 
                 BlendState blendState = graphics.BlendState;
                 graphics.BlendState = BlendMode;
@@ -185,7 +188,15 @@ namespace DwarfCorp
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                     {
                         pass.Apply();
-                        graphics.DrawPrimitives(PrimitiveType.TriangleList, 0, Model.VertexCount / 3);
+
+                        if (!hasIndex)
+                        {
+                            graphics.DrawPrimitives(PrimitiveType.TriangleList, 0, Model.VertexBuffer.VertexCount/3);
+                        }
+                        else
+                        {
+                            graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, Model.VertexBuffer.VertexCount, 0, Model.IndexBuffer.IndexCount / 3);
+                        }
                     }
                 }
 

@@ -88,11 +88,11 @@ namespace DwarfCorp
             Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet, Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints);
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
             if(LightsWithVoxels)
             {
-                base.Update(gameTime, chunks, camera);
+                base.Update(DwarfTime, chunks, camera);
             }
         }
 
@@ -103,7 +103,7 @@ namespace DwarfCorp
             return (diff).LengthSquared() < CullDistance;
         }
 
-        public override void Render(GameTime gameTime,
+        public override void Render(DwarfTime DwarfTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,

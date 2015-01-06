@@ -44,7 +44,7 @@ namespace DwarfCorp
             PopupTimer = new Timer(2.5f, true);
         }
 
-        public void Update(GameTime time)
+        public void Update(DwarfTime time)
         {
             MouseState currentMouse = Mouse.GetState();
 
@@ -133,7 +133,7 @@ namespace DwarfCorp
             Drawer2D.DrawAlignedText(batch, tip, GUI.SmallFont, Color.White, Drawer2D.Alignment.Center, bounds);
         }
 
-        public void Render(GraphicsDevice device, SpriteBatch batch, GameTime time)
+        public void Render(GraphicsDevice device, SpriteBatch batch, DwarfTime time)
         {
             if (!GUI.RootComponent.IsVisible)
             {

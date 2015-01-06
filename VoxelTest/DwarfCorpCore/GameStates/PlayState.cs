@@ -141,8 +141,18 @@ namespace DwarfCorp.GameStates
         // Displays tips when the game is loading.
         public string LoadingTip = "";
 
+
+        private static bool paused_ = false;
         // True if the game's update loop is paused, false otherwise
-        public static bool Paused { get; set; }
+        public static bool Paused 
+        { 
+            get { return paused_; } 
+            set { 
+                paused_ = value;
+
+            if(Act.LastTime != null)
+            Act.LastTime.IsPaused = paused_;
+        } }
 
         // Handles a thread which constantly runs A* plans for whoever needs them.
         public static PlanService PlanService = null;
@@ -575,9 +585,9 @@ namespace DwarfCorp.GameStates
                 using (RenderTarget2D renderTarget = new RenderTarget2D(GraphicsDevice, resolution.X, resolution.Y, false, SurfaceFormat.Color, DepthFormat.Depth24))
                 {
                     GraphicsDevice.SetRenderTarget(renderTarget);
-                    DrawSky(new GameTime(), Camera.ViewMatrix, 1.0f);
-                    Draw3DThings(new GameTime(), DefaultShader, Camera.ViewMatrix);
-                    DrawComponents(new GameTime(), DefaultShader, Camera.ViewMatrix, ComponentManager.WaterRenderType.None, 0);
+                    DrawSky(new DwarfTime(), Camera.ViewMatrix, 1.0f);
+                    Draw3DThings(new DwarfTime(), DefaultShader, Camera.ViewMatrix);
+                    DrawComponents(new DwarfTime(), DefaultShader, Camera.ViewMatrix, ComponentManager.WaterRenderType.None, 0);
                     GraphicsDevice.SetRenderTarget(null);
                     renderTarget.SaveAsPng(new FileStream(filename, FileMode.Create), resolution.X, resolution.Y);
                     GraphicsDevice.Textures[0] = null;
@@ -1204,8 +1214,8 @@ namespace DwarfCorp.GameStates
         /// <summary>
         /// Called every frame
         /// </summary>
-        /// <param name="gameTime">The current time</param>
-        public override void Update(GameTime gameTime)
+        /// <param name="DwarfTime">The current time</param>
+        public override void Update(DwarfTime DwarfTime)
         {
             // If this playstate is not supposed to be running,
             // just exit.
@@ -1286,24 +1296,24 @@ namespace DwarfCorp.GameStates
                 }
             }
 
-            FillClosestLights(gameTime);
-            IndicatorManager.Update(gameTime);
-            Camera.Update(gameTime, PlayState.ChunkManager);
+            FillClosestLights(DwarfTime);
+            IndicatorManager.Update(DwarfTime);
+            Camera.Update(DwarfTime, PlayState.ChunkManager);
 
             if (KeyManager.RotationEnabled())
                 Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2, GameState.Game.GraphicsDevice.Viewport.Height / 2);
 
-            Master.Update(Game, gameTime);
+            Master.Update(Game, DwarfTime);
             // If not paused, we want to just update the rest of the game.
             if (!Paused)
             {
-                Time.Update(gameTime);
-                ComponentManager.CollisionManager.Update(gameTime);
-                ComponentManager.Update(gameTime, ChunkManager, Camera);
+                Time.Update(DwarfTime);
+                ComponentManager.CollisionManager.Update(DwarfTime);
+                ComponentManager.Update(DwarfTime, ChunkManager, Camera);
                 Sky.TimeOfDay = Time.GetSkyLightness();
                 Sky.CosTime = (float)(Time.GetTotalHours() * 2 * Math.PI / 24.0f);
                 DefaultShader.Parameters["xTimeOfDay"].SetValue(Sky.TimeOfDay);
-                MonsterSpawner.Update(gameTime);
+                MonsterSpawner.Update(DwarfTime);
                 bool allAsleep = Master.AreAllEmployeesAsleep();
                 if (SleepPrompt && allAsleep && !FastForwardToDay && Time.IsNight())
                 {
@@ -1319,12 +1329,12 @@ namespace DwarfCorp.GameStates
             }
 
             // These things are updated even when the game is paused
-            GUI.Update(gameTime);
-            ChunkManager.Update(gameTime, Camera, GraphicsDevice);
-            InstanceManager.Update(gameTime, Camera, GraphicsDevice);
+            GUI.Update(DwarfTime);
+            ChunkManager.Update(DwarfTime, Camera, GraphicsDevice);
+            InstanceManager.Update(DwarfTime, Camera, GraphicsDevice);
             Input.Update();
 
-            SoundManager.Update(gameTime, Camera);
+            SoundManager.Update(DwarfTime, Camera);
 
             // Updates some of the GUI status
             if(Game.IsActive)
@@ -1340,7 +1350,7 @@ namespace DwarfCorp.GameStates
              //   LevelSlider.SliderValue = ChunkManager.ChunkData.MaxViewingLevel;
             }
 
-            base.Update(gameTime);
+            base.Update(DwarfTime);
         }
 
         void sleepingPrompt_OnClosed(Dialog.ReturnStatus status)
@@ -1478,10 +1488,10 @@ namespace DwarfCorp.GameStates
         /// <summary>
         /// Draws all the 3D terrain and entities
         /// </summary>
-        /// <param name="gameTime">The current time</param>
+        /// <param name="DwarfTime">The current time</param>
         /// <param name="cubeEffect">The textured shader</param>
         /// <param name="view">The view matrix of the camera</param> 
-        public void Draw3DThings(GameTime gameTime, Effect cubeEffect, Matrix view)
+        public void Draw3DThings(DwarfTime DwarfTime, Effect cubeEffect, Matrix view)
         {
             Matrix viewMatrix = Camera.ViewMatrix;
             Camera.ViewMatrix = view;
@@ -1495,13 +1505,13 @@ namespace DwarfCorp.GameStates
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
 
-            ChunkManager.Render(Camera, gameTime, GraphicsDevice, cubeEffect, Matrix.Identity);
+            ChunkManager.Render(Camera, DwarfTime, GraphicsDevice, cubeEffect, Matrix.Identity);
 
 
             if(Master.CurrentToolMode == GameMaster.ToolMode.Build)
             {
-                Master.Faction.WallBuilder.Render(gameTime, GraphicsDevice, cubeEffect);
-                Master.Faction.CraftBuilder.Render(gameTime, GraphicsDevice, cubeEffect);
+                Master.Faction.WallBuilder.Render(DwarfTime, GraphicsDevice, cubeEffect);
+                Master.Faction.CraftBuilder.Render(DwarfTime, GraphicsDevice, cubeEffect);
             }
 
             //ComponentManager.CollisionManager.DebugDraw();
@@ -1512,14 +1522,14 @@ namespace DwarfCorp.GameStates
         /// <summary>
         /// Draws all of the game entities
         /// </summary>
-        /// <param name="gameTime">The current time</param>
+        /// <param name="DwarfTime">The current time</param>
         /// <param name="effect">The shader</param>
         /// <param name="view">The view matrix</param>
         /// <param name="waterRenderType">Whether we are rendering for reflection/refraction or nothing</param>
         /// <param name="waterLevel">The estimated height of water</param>
-        public void DrawComponents(GameTime gameTime, Effect effect, Matrix view, ComponentManager.WaterRenderType waterRenderType, float waterLevel)
+        public void DrawComponents(DwarfTime DwarfTime, Effect effect, Matrix view, ComponentManager.WaterRenderType waterRenderType, float waterLevel)
         {
-            ComponentManager.Render(gameTime, ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, effect, waterRenderType, waterLevel);
+            ComponentManager.Render(DwarfTime, ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, effect, waterRenderType, waterLevel);
 
             bool reset = waterRenderType == ComponentManager.WaterRenderType.None;
 
@@ -1532,7 +1542,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         /// <param name="time">The current time</param>
         /// <param name="view">The camera view matrix</param>
-        public void DrawSky(GameTime time, Matrix view, float scale)
+        public void DrawSky(DwarfTime time, Matrix view, float scale)
         {
             Matrix oldView = Camera.ViewMatrix;
             Camera.ViewMatrix = view;
@@ -1546,10 +1556,10 @@ namespace DwarfCorp.GameStates
         /// <summary>
         /// If the game is not loaded yet, just draws a loading message centered
         /// </summary>
-        /// <param name="gameTime">The current time</param>
-        public override void RenderUnitialized(GameTime gameTime)
+        /// <param name="DwarfTime">The current time</param>
+        public override void RenderUnitialized(DwarfTime DwarfTime)
         {
-            TipTimer.Update(gameTime);
+            TipTimer.Update(DwarfTime);
             if (TipTimer.HasTriggered)
             {
                 LoadingTip = LoadingTips[Random.Next(LoadingTips.Count)];
@@ -1557,7 +1567,7 @@ namespace DwarfCorp.GameStates
             }
 
             DwarfGame.SpriteBatch.Begin();
-            float t = (float) (Math.Sin(gameTime.TotalGameTime.TotalSeconds * 2.0f) + 1.0f) * 0.5f + 0.5f;
+            float t = (float) (Math.Sin(DwarfTime.TotalGameTime.TotalSeconds * 2.0f) + 1.0f) * 0.5f + 0.5f;
             Color toDraw = new Color(t, t, t);
             SpriteFont font = Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
             Vector2 measurement = Datastructures.SafeMeasure(font, LoadingMessage);
@@ -1572,11 +1582,11 @@ namespace DwarfCorp.GameStates
             }
             DwarfGame.SpriteBatch.End();
 
-            base.RenderUnitialized(gameTime);
+            base.RenderUnitialized(DwarfTime);
         }
 
 
-        public void FillClosestLights(GameTime time)
+        public void FillClosestLights(DwarfTime time)
         {
             List<Vector3> positions = (from chunk in ChunkManager.ChunkData.ChunkMap from light in chunk.Value.DynamicLights select light.Voxel.Position).ToList();
             positions.Sort((a, b) =>
@@ -1608,14 +1618,14 @@ namespace DwarfCorp.GameStates
         /// <summary>
         /// Called when a frame is to be drawn to the screen
         /// </summary>
-        /// <param name="gameTime">The current time</param>
-        public override void Render(GameTime gameTime)
+        /// <param name="DwarfTime">The current time</param>
+        public override void Render(DwarfTime DwarfTime)
         {
             // If we are simulating the game before starting, just display black.
             if(!PreSimulateTimer.HasTriggered)
             {
-                PreSimulateTimer.Update(gameTime);
-                base.Render(gameTime);
+                PreSimulateTimer.Update(DwarfTime);
+                base.Render(DwarfTime);
                 return;
             }
             CompositeLibrary.Render(GraphicsDevice, DwarfGame.SpriteBatch);
@@ -1623,7 +1633,7 @@ namespace DwarfCorp.GameStates
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
 
-            GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
+            GUI.PreRender(DwarfTime, DwarfGame.SpriteBatch);
             // Keeping track of a running FPS buffer (averaged)
             if(lastFps.Count > 100)
             {
@@ -1641,8 +1651,8 @@ namespace DwarfCorp.GameStates
             float wHeight = WaterRenderer.GetVisibleWaterHeight(ChunkManager, Camera, GraphicsDevice.Viewport, lastWaterHeight);
             lastWaterHeight = wHeight;
             // Draw reflection/refraction images
-            WaterRenderer.DrawRefractionMap(gameTime, this, wHeight + 1.0f, Camera.ViewMatrix, DefaultShader, GraphicsDevice);
-            WaterRenderer.DrawReflectionMap(gameTime, this, wHeight - 0.1f, GetReflectedCameraMatrix(wHeight), DefaultShader, GraphicsDevice);
+            WaterRenderer.DrawRefractionMap(DwarfTime, this, wHeight + 1.0f, Camera.ViewMatrix, DefaultShader, GraphicsDevice);
+            WaterRenderer.DrawReflectionMap(DwarfTime, this, wHeight - 0.1f, GetReflectedCameraMatrix(wHeight), DefaultShader, GraphicsDevice);
 
             /*
             Shadows.BindShadowmap(GraphicsDevice);
@@ -1660,7 +1670,7 @@ namespace DwarfCorp.GameStates
 
             // Draw the sky
             GraphicsDevice.Clear(new Color(DefaultShader.Parameters["xFogColor"].GetValueVector3()));
-            DrawSky(gameTime, Camera.ViewMatrix, 1.0f);
+            DrawSky(DwarfTime, Camera.ViewMatrix, 1.0f);
 
             // Defines the current slice for the GPU
             float level = ChunkManager.ChunkData.MaxViewingLevel + 1.3f;
@@ -1676,14 +1686,14 @@ namespace DwarfCorp.GameStates
             DefaultShader.Parameters["Clipping"].SetValue(1);
             //Blue ghost effect above the current slice.
             DefaultShader.Parameters["GhostMode"].SetValue(1);
-            Draw3DThings(gameTime, DefaultShader, Camera.ViewMatrix);
+            Draw3DThings(DwarfTime, DefaultShader, Camera.ViewMatrix);
 
             // Now we want to draw the water on top of everything else
             DefaultShader.Parameters["Clipping"].SetValue(1);
             DefaultShader.Parameters["GhostMode"].SetValue(0);
             WaterRenderer.DrawWater(
                 GraphicsDevice,
-                (float) gameTime.TotalGameTime.TotalSeconds,
+                (float) DwarfTime.TotalGameTime.TotalSeconds,
                 DefaultShader,
                 Camera.ViewMatrix,
                 GetReflectedCameraMatrix(wHeight),
@@ -1704,15 +1714,15 @@ namespace DwarfCorp.GameStates
             DefaultShader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
             DefaultShader.Parameters["Clipping"].SetValue(1);
             DefaultShader.Parameters["GhostMode"].SetValue(1);
-            DrawComponents(gameTime, DefaultShader, Camera.ViewMatrix, ComponentManager.WaterRenderType.None, lastWaterHeight);
+            DrawComponents(DwarfTime, DefaultShader, Camera.ViewMatrix, ComponentManager.WaterRenderType.None, lastWaterHeight);
             DefaultShader.Parameters["Clipping"].SetValue(0);
             
             if(GameSettings.Default.EnableGlow)
             {
-                bloom.Draw(gameTime);
+                bloom.Draw(DwarfTime.ToGameTime());
             }
 
-            frameTimer.Update(gameTime);
+            frameTimer.Update(DwarfTime);
 
             if(frameTimer.HasTriggered)
             {
@@ -1737,7 +1747,7 @@ namespace DwarfCorp.GameStates
 
             drawer2D.Render(DwarfGame.SpriteBatch, Camera, GraphicsDevice.Viewport);
 
-            GUI.Render(gameTime, DwarfGame.SpriteBatch, Vector2.Zero);
+            GUI.Render(DwarfTime, DwarfGame.SpriteBatch, Vector2.Zero);
 
 
             bool drawDebugData = GameSettings.Default.DrawDebugData;
@@ -1761,11 +1771,12 @@ namespace DwarfCorp.GameStates
             }
             //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, new Rectangle(0, 0, 512, 512), Color.White);
             DwarfGame.SpriteBatch.End();
-            Master.Render(Game, gameTime, GraphicsDevice);
+            Master.Render(Game, DwarfTime, GraphicsDevice);
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle = DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
 
-            GUI.PostRender(gameTime);
+            GUI.PostRender(DwarfTime);
 
+            
             /*
             int dx = 0;
             foreach (var composite in CompositeLibrary.Composites)
@@ -1773,11 +1784,12 @@ namespace DwarfCorp.GameStates
                 composite.Value.DebugDraw(DwarfGame.SpriteBatch, dx, 128);
                 dx += 256;
             }
-             */
+            */
+
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
 
-            base.Render(gameTime);
+            base.Render(DwarfTime);
         }
 
  

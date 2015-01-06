@@ -33,9 +33,9 @@ namespace DwarfCorp
             OriginalTransform = LocalTransform;
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
-            UpdateTimer.Update(gameTime);
+            UpdateTimer.Update(DwarfTime);
             if(HasMoved && UpdateTimer.HasTriggered)
             {
                 Body p = (Body) Parent;
@@ -65,7 +65,7 @@ namespace DwarfCorp
             }
 
 
-            base.Update(gameTime, chunks, camera);
+            base.Update(DwarfTime, chunks, camera);
         }
     }
 

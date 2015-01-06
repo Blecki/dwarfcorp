@@ -80,7 +80,7 @@ namespace DwarfCorp
         }
 
 
-        public virtual void Update(GameTime time, ChunkManager chunks)
+        public virtual void Update(DwarfTime time, ChunkManager chunks)
         {
             lastPosition = Position;
             UpdateViewMatrix();

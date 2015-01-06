@@ -34,14 +34,14 @@ namespace DwarfCorp
             MaxGrabs = 1;
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
             foreach(GrabbedItem grabbed in GrabbedComponents)
             {
                 grabbed.Component.GlobalTransform = grabbed.LocalTransform * GlobalTransform;
             }
 
-            base.Update(gameTime, chunks, camera);
+            base.Update(DwarfTime, chunks, camera);
         }
 
         public bool IsFull()

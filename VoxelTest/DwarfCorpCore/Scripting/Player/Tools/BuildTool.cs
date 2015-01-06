@@ -40,7 +40,7 @@ namespace DwarfCorp
         }
 
 
-        public override void Update(DwarfGame game, GameTime time)
+        public override void Update(DwarfGame game, DwarfTime time)
         {
             if (Player.IsCameraRotationModeActive())
             {
@@ -57,7 +57,7 @@ namespace DwarfCorp
             PlayState.GUI.MouseMode = PlayState.GUI.IsMouseOver() ? GUISkin.MousePointer.Pointer : GUISkin.MousePointer.Build;
         }
 
-        public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
+        public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
             Player.Faction.RoomBuilder.Render(time, PlayState.ChunkManager.Graphics);
         }

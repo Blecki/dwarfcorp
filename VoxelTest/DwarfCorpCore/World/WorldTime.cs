@@ -35,7 +35,7 @@ namespace DwarfCorp
             Speed = 100.0f;
         }
 
-        public void Update(GameTime t)
+        public void Update(DwarfTime t)
         {
             bool beforeMidnight = CurrentDate.Hour > 0;
             CurrentDate = CurrentDate.Add(new TimeSpan(0, 0, 0, 0, (int)(t.ElapsedGameTime.Milliseconds * Speed)));

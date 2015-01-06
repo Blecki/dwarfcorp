@@ -82,7 +82,7 @@ namespace DwarfCorp
         }
 
 
-        public void Render(GameTime gametime, GraphicsDevice graphics, Effect effect)
+        public void Render(DwarfTime DwarfTime, GraphicsDevice graphics, Effect effect)
         {
         }
 

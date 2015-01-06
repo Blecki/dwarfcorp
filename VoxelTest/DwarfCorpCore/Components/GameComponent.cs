@@ -127,12 +127,12 @@ namespace DwarfCorp
         }
 
 
-        public virtual void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public virtual void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
         }
 
 
-        public virtual void Render(GameTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+        public virtual void Render(DwarfTime DwarfTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
         }
 

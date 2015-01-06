@@ -1033,22 +1033,22 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(DwarfTime DwarfTime)
         {
-            GUI.Update(gameTime);
+            GUI.Update(DwarfTime);
             Input.Update();
 
-            base.Update(gameTime);
+            base.Update(DwarfTime);
         }
 
 
-        private void DrawGUI(GameTime gameTime, float dx)
+        private void DrawGUI(DwarfTime DwarfTime, float dx)
         {
-            GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
+            GUI.PreRender(DwarfTime, DwarfGame.SpriteBatch);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
                 null, null);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
-            GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(0, dx));
+            GUI.Render(DwarfTime, DwarfGame.SpriteBatch, new Vector2(0, dx));
 
 
             if(worldMap != null)
@@ -1075,29 +1075,29 @@ namespace DwarfCorp.GameStates
             }
 
             DwarfGame.SpriteBatch.End();
-            GUI.PostRender(gameTime);
+            GUI.PostRender(DwarfTime);
         }
 
-        public override void Render(GameTime gameTime)
+        public override void Render(DwarfTime DwarfTime)
         {
             if(Transitioning == TransitionMode.Running)
             {
                 Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-                DrawGUI(gameTime, 0);
+                DrawGUI(DwarfTime, 0);
             }
             else if(Transitioning == TransitionMode.Entering)
             {
                 float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Height, Game.GraphicsDevice.Viewport.Height, 1.0f);
-                DrawGUI(gameTime, dx);
+                DrawGUI(DwarfTime, dx);
             }
             else if(Transitioning == TransitionMode.Exiting)
             {
                 float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Height, 1.0f);
-                DrawGUI(gameTime, dx);
+                DrawGUI(DwarfTime, dx);
             }
 
 
-            base.Render(gameTime);
+            base.Render(DwarfTime);
         }
 
         public void Dispose()

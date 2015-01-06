@@ -37,7 +37,7 @@ namespace DwarfCorp
 
         public abstract Task Clone();
 
-        public virtual void Render(GameTime time)
+        public virtual void Render(DwarfTime time)
         {
             
         }

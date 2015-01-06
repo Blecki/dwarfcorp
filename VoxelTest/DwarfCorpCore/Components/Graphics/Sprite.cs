@@ -103,21 +103,21 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
             if(IsActive)
             {
                 if(CurrentAnimation != null)
                 {
-                    CurrentAnimation.Update(gameTime);
+                    CurrentAnimation.Update(DwarfTime);
                 }
             }
 
 
-            base.Update(gameTime, chunks, camera);
+            base.Update(DwarfTime, chunks, camera);
         }
 
-        public override void Render(GameTime gameTime,
+        public override void Render(DwarfTime DwarfTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,
@@ -125,7 +125,7 @@ namespace DwarfCorp
             Effect effect,
             bool renderingForWater)
         {
-            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+            base.Render(DwarfTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
 
             if(!IsVisible)
             {

@@ -116,7 +116,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public void RenderCompanies(GameTime time, SpriteBatch batch)
+        public void RenderCompanies(DwarfTime time, SpriteBatch batch)
         {
             int x = DrawSurface.GlobalBounds.X;
             int y = DrawSurface.GlobalBounds.Y;
@@ -159,7 +159,7 @@ namespace DwarfCorp
             }
         }
 
-        public void RenderAverage(GameTime time, SpriteBatch batch)
+        public void RenderAverage(DwarfTime time, SpriteBatch batch)
         {
             int x = DrawSurface.GlobalBounds.X;
             int y = DrawSurface.GlobalBounds.Y;
@@ -290,7 +290,7 @@ namespace DwarfCorp
         }
 
         private bool firstIter = true;
-        public override void Update(GameTime time)
+        public override void Update(DwarfTime time)
         {
             UpdateMouse();
             base.Update(time);
@@ -303,7 +303,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void Render(GameTime time, SpriteBatch batch)
+        public override void Render(DwarfTime time, SpriteBatch batch)
         {
             int x = DrawSurface.GlobalBounds.X;
             int y = DrawSurface.GlobalBounds.Y;

@@ -259,6 +259,11 @@
             Right now, its just an ugly class for initializing most of the entities in the game.
             </summary>
         </member>
+        <member name="T:DwarfCorp.Elf">
+            <summary>
+            Convenience class for initializing elfs as creatures.
+            </summary>
+        </member>
         <member name="T:DwarfCorp.Goblin">
             <summary>
             Convenience class for initializing goblins as creatures.
@@ -452,11 +457,11 @@
             </summary>
             <param name="key">The keyboard key released</param>
         </member>
-        <member name="M:DwarfCorp.GameStates.PlayState.Update(Microsoft.Xna.Framework.GameTime)">
+        <member name="M:DwarfCorp.GameStates.PlayState.Update(DwarfCorp.DwarfTime)">
             <summary>
             Called every frame
             </summary>
-            <param name="gameTime">The current time</param>
+            <param name="DwarfTime">The current time</param>
         </member>
         <member name="M:DwarfCorp.GameStates.PlayState.OpenPauseMenu">
             <summary>
@@ -482,42 +487,42 @@
             <param name="waterHeight">The height of the water (Y)</param>
             <returns>A reflection matrix</returns>
         </member>
-        <member name="M:DwarfCorp.GameStates.PlayState.Draw3DThings(Microsoft.Xna.Framework.GameTime,Microsoft.Xna.Framework.Graphics.Effect,Microsoft.Xna.Framework.Matrix)">
+        <member name="M:DwarfCorp.GameStates.PlayState.Draw3DThings(DwarfCorp.DwarfTime,Microsoft.Xna.Framework.Graphics.Effect,Microsoft.Xna.Framework.Matrix)">
             <summary>
             Draws all the 3D terrain and entities
             </summary>
-            <param name="gameTime">The current time</param>
+            <param name="DwarfTime">The current time</param>
             <param name="cubeEffect">The textured shader</param>
             <param name="view">The view matrix of the camera</param> 
         </member>
-        <member name="M:DwarfCorp.GameStates.PlayState.DrawComponents(Microsoft.Xna.Framework.GameTime,Microsoft.Xna.Framework.Graphics.Effect,Microsoft.Xna.Framework.Matrix,DwarfCorp.ComponentManager.WaterRenderType,System.Single)">
+        <member name="M:DwarfCorp.GameStates.PlayState.DrawComponents(DwarfCorp.DwarfTime,Microsoft.Xna.Framework.Graphics.Effect,Microsoft.Xna.Framework.Matrix,DwarfCorp.ComponentManager.WaterRenderType,System.Single)">
             <summary>
             Draws all of the game entities
             </summary>
-            <param name="gameTime">The current time</param>
+            <param name="DwarfTime">The current time</param>
             <param name="effect">The shader</param>
             <param name="view">The view matrix</param>
             <param name="waterRenderType">Whether we are rendering for reflection/refraction or nothing</param>
             <param name="waterLevel">The estimated height of water</param>
         </member>
-        <member name="M:DwarfCorp.GameStates.PlayState.DrawSky(Microsoft.Xna.Framework.GameTime,Microsoft.Xna.Framework.Matrix,System.Single)">
+        <member name="M:DwarfCorp.GameStates.PlayState.DrawSky(DwarfCorp.DwarfTime,Microsoft.Xna.Framework.Matrix,System.Single)">
             <summary>
             Draws the sky box
             </summary>
             <param name="time">The current time</param>
             <param name="view">The camera view matrix</param>
         </member>
-        <member name="M:DwarfCorp.GameStates.PlayState.RenderUnitialized(Microsoft.Xna.Framework.GameTime)">
+        <member name="M:DwarfCorp.GameStates.PlayState.RenderUnitialized(DwarfCorp.DwarfTime)">
             <summary>
             If the game is not loaded yet, just draws a loading message centered
             </summary>
-            <param name="gameTime">The current time</param>
+            <param name="DwarfTime">The current time</param>
         </member>
-        <member name="M:DwarfCorp.GameStates.PlayState.Render(Microsoft.Xna.Framework.GameTime)">
+        <member name="M:DwarfCorp.GameStates.PlayState.Render(DwarfCorp.DwarfTime)">
             <summary>
             Called when a frame is to be drawn to the screen
             </summary>
-            <param name="gameTime">The current time</param>
+            <param name="DwarfTime">The current time</param>
         </member>
         <member name="M:DwarfCorp.GameStates.PlayState.GraphicsPreparingDeviceSettings(System.Object,Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs)">
             <summary>

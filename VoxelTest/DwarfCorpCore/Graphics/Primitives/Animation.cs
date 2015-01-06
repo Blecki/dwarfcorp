@@ -167,11 +167,12 @@ namespace DwarfCorp
         }
 
 
-        public virtual void Update(GameTime gameTime)
+        public virtual void Update(DwarfTime DwarfTime, Timer.TimerMode mode = Timer.TimerMode.Game)
         {
             if(IsPlaying)
             {
-                FrameTimer += (float) gameTime.ElapsedGameTime.TotalSeconds;
+                float dt = mode == Timer.TimerMode.Game ? (float)DwarfTime.ElapsedGameTime.TotalSeconds : (float)DwarfTime.ElapsedRealTime.TotalSeconds;
+                FrameTimer += dt;
 
                 float time = FrameHZ;
 

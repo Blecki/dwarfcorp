@@ -56,8 +56,8 @@ namespace DwarfCorp
                 yield return Status.Running;
             }
             Creature.AI.AddThought(Thought.ThoughtType.Researched);
-            Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
             Creature.OverrideCharacterMode = false;
+            Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
             yield return Status.Success;
             yield break;
         }

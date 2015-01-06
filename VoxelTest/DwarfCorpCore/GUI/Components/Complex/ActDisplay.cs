@@ -117,7 +117,7 @@ namespace DwarfCorp
             LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, (int) size.X, (int) size.Y);
         }
 
-        public override void Update(GameTime time)
+        public override void Update(DwarfTime time)
         {
             rebuildTimer.Update(time);
 
@@ -129,7 +129,7 @@ namespace DwarfCorp
             base.Update(time);
         }
 
-        public override void Render(GameTime time, SpriteBatch batch)
+        public override void Render(DwarfTime time, SpriteBatch batch)
         {
             foreach(ActElement element in Elements)
             {

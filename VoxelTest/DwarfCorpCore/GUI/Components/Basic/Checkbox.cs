@@ -50,7 +50,7 @@ namespace DwarfCorp
             OnCheckModified.Invoke(Checked);
         }
 
-        public override void Render(GameTime time, SpriteBatch batch)
+        public override void Render(DwarfTime time, SpriteBatch batch)
         {
             Rectangle globalBounds = GlobalBounds;
 

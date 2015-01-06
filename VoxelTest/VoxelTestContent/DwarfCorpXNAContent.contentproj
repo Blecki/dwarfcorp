@@ -886,6 +886,26 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Elf\Sprites\elf-bow.png">
+      <Name>elf-bow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Elf\Sprites\elf.png">
+      <Name>elf</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Elf\Sprites\arrow.png">
+      <Name>arrow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Sprites\fairy.png">
+      <Name>fairy</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Text\adverbs.txt">
       <Name>adverbs</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -941,6 +961,14 @@
     <Content Include="Entities\Dwarf\Sprites\wizard_animation.json">
       <Name>wizard_animation</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Entities\Elf\Sprites\elf_animation.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>elf_animation</Name>
+    </Content>
+    <Content Include="Entities\Dwarf\Sprites\fairy_animation.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>fairy_animation</Name>
     </Content>
     <None Include="Music\dwarfcorp_ogg.ogg">
       <Name>dwarfcorp_ogg</Name>

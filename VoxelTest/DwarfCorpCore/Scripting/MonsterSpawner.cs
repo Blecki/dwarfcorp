@@ -32,7 +32,7 @@ namespace DwarfCorp
             };
         }
 
-        public void Update(GameTime t)
+        public void Update(DwarfTime t)
         {
             bool shouldSpawn = PlayState.Time.IsNight() && Math.Abs(PlayState.Time.CurrentDate.TimeOfDay.Hours - LastSpawnHour) > SpawnRate;
 

@@ -28,18 +28,18 @@ namespace DwarfCorp
         private bool isCoolingDown = false;
 
 
-        public override void Render(GameTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+        public override void Render(DwarfTime DwarfTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
             if (!isBlinking)
             {
-                base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+                base.Render(DwarfTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
             }
             else
             {
                 if (blinkTimer.CurrentTimeSeconds < 0.5f*blinkTimer.TargetTimeSeconds)
                 {
-                    base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+                    base.Render(DwarfTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
                 }
             }
         }
@@ -182,11 +182,11 @@ namespace DwarfCorp
             blinkTrigger.Reset(blinkTime);
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
             if(isBlinking)
             {
-                blinkTrigger.Update(gameTime);
+                blinkTrigger.Update(DwarfTime);
 
                 if(blinkTrigger.HasTriggered)
                 {
@@ -197,7 +197,7 @@ namespace DwarfCorp
 
             if(isCoolingDown)
             {
-                coolDownTimer.Update(gameTime);
+                coolDownTimer.Update(DwarfTime);
 
                 if(coolDownTimer.HasTriggered)
                 {
@@ -205,10 +205,10 @@ namespace DwarfCorp
                 }
             }
 
-            blinkTimer.Update(gameTime);
+            blinkTimer.Update(DwarfTime);
 
 
-            base.Update(gameTime, chunks, camera);
+            base.Update(DwarfTime, chunks, camera);
         }
     }
 

@@ -22,7 +22,7 @@ namespace DwarfCorp
         public bool Grow = true;
         public bool Flip = false;
 
-        public virtual void Update(GameTime time)
+        public virtual void Update(DwarfTime time)
         {
             CurrentTime.Update(time);
         }
@@ -33,7 +33,7 @@ namespace DwarfCorp
         public Animation Animation;
 
 
-        public override void Update(GameTime time)
+        public override void Update(DwarfTime time)
         {
             base.Update(time);
             Animation.Update(time);
@@ -141,7 +141,7 @@ namespace DwarfCorp
             }
         }
 
-        public static void Update(GameTime time)
+        public static void Update(DwarfTime time)
         {
             lock(IndicatorLock)
             {

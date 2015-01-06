@@ -221,7 +221,7 @@ namespace DwarfCorp
 
         public void InitializeWeapons()
         {
-            MeleeAttack = new Attack("Spark", 2.0f, 1.0f, 1.0f, ContentPaths.Audio.tinkle)
+            MeleeAttack = new Attack("Spark", 2.0f, 1.0f, 1.0f, ContentPaths.Audio.tinkle, "Undead")
             {
                 Knockback = 2.5f,
                 HitAnimation = new Animation(ContentPaths.Effects.rings, 32, 32, 0, 1, 2, 3)

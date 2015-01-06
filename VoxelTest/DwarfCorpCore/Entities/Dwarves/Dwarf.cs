@@ -32,89 +32,14 @@ namespace DwarfCorp
             Initialize(workerClass);
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
-            base.Update(gameTime, chunks, camera);
-        }
-
-        public static List<Animation> CreateDefaultAnimations(Texture2D dwarfSprites, int frameWidth, int frameHeight)
-        {
-
-            /*
-            List<SpriteSheet> layers = new List<SpriteSheet>()
-            {
-                new SpriteSheet(ContentPaths.Entities.Dwarf.Sprites.fakedwarf_body, 32, 32),
-                new SpriteSheet(ContentPaths.Entities.Dwarf.Sprites.fakedwarf_clothes, 32, 32),
-                new SpriteSheet(ContentPaths.Entities.Dwarf.Sprites.fakedwarf_hair, 32, 32),
-                new SpriteSheet(ContentPaths.Entities.Dwarf.Sprites.fakedwarf_item, 32, 32),
-            };
-
-            List<Color> tints = new List<Color>()
-            {
-                Color.White,
-                new Color(PlayState.Random.Next(0, 255), PlayState.Random.Next(0, 255), PlayState.Random.Next(0, 255)),
-                Color.White,
-                Color.White
-            };
-            */
-            return new List<Animation>()
-            {
-             /*
-                CharacterSprite.CreateCompositeAnimation(Creature.CharacterMode.Idle, OrientedAnimation.Orientation.Forward, CompositeLibrary.Composites[CompositeLibrary.Dwarf], 1.0f, layers, tints, 
-                new[]{0, 0, 0, 1, 2, 3}, 
-                new[]{0, 0, 0},
-                new[]{0, 0, 0, 1},
-                new[]{0, 0, 0, 1, 2})
-             */
-            
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Walking, OrientedAnimation.Orientation.Forward, dwarfSprites, 15.0f, frameWidth, frameHeight, 0, 0, 1, 2, 1, 0, 1, 2, 3),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Walking, OrientedAnimation.Orientation.Right, dwarfSprites, 15.0f, frameWidth, frameHeight, 2, 0, 1, 2, 1, 0, 1, 2, 3),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Walking, OrientedAnimation.Orientation.Left, dwarfSprites, 15.0f, frameWidth, frameHeight, 1, 0, 1, 2, 1, 0, 1, 2, 3),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Walking, OrientedAnimation.Orientation.Backward, dwarfSprites, 15.0f, frameWidth, frameHeight, 3, 0, 1, 2, 1),
-
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Swimming, OrientedAnimation.Orientation.Forward, dwarfSprites, 15.0f, frameWidth, frameHeight, 12, 0, 1, 2, 1, 0, 1, 2, 3),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Swimming, OrientedAnimation.Orientation.Right, dwarfSprites, 15.0f, frameWidth, frameHeight, 14, 0, 1, 2, 1, 0, 1, 2, 3),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Swimming, OrientedAnimation.Orientation.Left, dwarfSprites, 15.0f, frameWidth, frameHeight, 13, 0, 1, 2, 1, 0, 1, 2, 3),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Swimming, OrientedAnimation.Orientation.Backward, dwarfSprites, 15.0f, frameWidth, frameHeight, 15, 0, 1, 2, 1),
-
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Idle, OrientedAnimation.Orientation.Forward, dwarfSprites, 0.8f, frameWidth, frameHeight, 0, 1, 3, 1),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Idle, OrientedAnimation.Orientation.Right, dwarfSprites, 0.8f, frameWidth, frameHeight,   2, 1, 3, 1),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Idle, OrientedAnimation.Orientation.Left, dwarfSprites, 0.8f, frameWidth, frameHeight,    1, 1, 3, 1),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Idle, OrientedAnimation.Orientation.Backward, dwarfSprites, 0.8f, frameWidth, frameHeight,3, 1),
-
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Attacking, OrientedAnimation.Orientation.Forward, dwarfSprites, 8.0f, frameWidth, frameHeight, 8, 0, 1, 2, 3),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Attacking, OrientedAnimation.Orientation.Right, dwarfSprites, 8.0f, frameWidth, frameHeight, 10, 0, 1, 2, 3),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Attacking, OrientedAnimation.Orientation.Left, dwarfSprites, 8.0f, frameWidth, frameHeight, 9, 0, 1, 2, 3),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Attacking, OrientedAnimation.Orientation.Backward, dwarfSprites, 8.0f, frameWidth, frameHeight, 11, 0, 1, 2, 3),
-
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Falling, OrientedAnimation.Orientation.Forward, dwarfSprites, 15.0f, frameWidth, frameHeight, 4, 1),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Falling, OrientedAnimation.Orientation.Right, dwarfSprites, 15.0f, frameWidth, frameHeight, 6, 1),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Falling, OrientedAnimation.Orientation.Left, dwarfSprites, 15.0f, frameWidth, frameHeight, 5, 1),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Falling, OrientedAnimation.Orientation.Backward, dwarfSprites, 15.0f, frameWidth, frameHeight, 7, 1),
-
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Sleeping, OrientedAnimation.Orientation.Forward, dwarfSprites, 4.0f, frameWidth, frameHeight, 0, 4, 5, 6, 7),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Sleeping, OrientedAnimation.Orientation.Right, dwarfSprites, 4.0f, frameWidth, frameHeight, 0, 4, 5, 6, 7),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Sleeping, OrientedAnimation.Orientation.Left, dwarfSprites, 4.0f, frameWidth, frameHeight, 0, 4, 5, 6, 7),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Sleeping, OrientedAnimation.Orientation.Backward, dwarfSprites, 4.0f, frameWidth, frameHeight, 0, 4, 5, 6, 7),
-
-
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Sitting, OrientedAnimation.Orientation.Forward, dwarfSprites, 15.0f, frameWidth, frameHeight, 4, 3),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Sitting, OrientedAnimation.Orientation.Right, dwarfSprites, 15.0f, frameWidth, frameHeight, 6, 3),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Sitting, OrientedAnimation.Orientation.Left, dwarfSprites, 15.0f, frameWidth, frameHeight, 5, 3),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Sitting, OrientedAnimation.Orientation.Backward, dwarfSprites, 15.0f, frameWidth, frameHeight, 7, 3),
-
-
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Jumping, OrientedAnimation.Orientation.Forward, dwarfSprites, 15.0f, frameWidth, frameHeight, 4, 0),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Jumping, OrientedAnimation.Orientation.Right, dwarfSprites, 15.0f, frameWidth, frameHeight, 6, 0),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Jumping, OrientedAnimation.Orientation.Left, dwarfSprites, 15.0f, frameWidth, frameHeight, 5, 0),
-            CharacterSprite.CreateAnimation(Creature.CharacterMode.Jumping, OrientedAnimation.Orientation.Backward, dwarfSprites, 15.0f, frameWidth, frameHeight, 7, 0),
-             
-            };
+            base.Update(DwarfTime, chunks, camera);
         }
 
         public void Initialize(EmployeeClass dwarfClass)
         {
-            Physics.OrientWithVelocity = true;
+            Physics.Orientation = Physics.OrientMode.RotateY;
             Sprite = new CharacterSprite(Graphics, Manager, "Dwarf Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 0.3f, 0)));
             foreach (Animation animation in dwarfClass.Animations)
             {

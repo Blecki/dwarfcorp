@@ -47,14 +47,14 @@ namespace DwarfCorp
             }
         }
 
-        public void Render(GameTime time, GraphicsDevice device, Camera camera, float scale)
+        public void Render(DwarfTime time, GraphicsDevice device, Camera camera, float scale)
         {
             RenderNightSky(time, device, camera);
             RenderDaySky(time, device, camera);
             RenderSunMoon(time, device, camera, device.Viewport, scale);
         }
 
-        public void RenderDaySky(GameTime time, GraphicsDevice device, Camera camera)
+        public void RenderDaySky(DwarfTime time, GraphicsDevice device, Camera camera)
         {
             SkyEffect.Parameters["SkyboxTexture"].SetValue(SkyTexture);
             SkyEffect.Parameters["ViewMatrix"].SetValue(camera.ViewMatrix);
@@ -71,7 +71,7 @@ namespace DwarfCorp
             }
         }
 
-        public void RenderNightSky(GameTime time, GraphicsDevice device, Camera camera)
+        public void RenderNightSky(DwarfTime time, GraphicsDevice device, Camera camera)
         {
             SkyEffect.Parameters["SkyboxTexture"].SetValue(NightTexture);
             SkyEffect.Parameters["ViewMatrix"].SetValue(camera.ViewMatrix);
@@ -88,7 +88,7 @@ namespace DwarfCorp
             }
         }
 
-        public void RenderSunMoon(GameTime time, GraphicsDevice device, Camera camera, Viewport viewPort, float scale)
+        public void RenderSunMoon(DwarfTime time, GraphicsDevice device, Camera camera, Viewport viewPort, float scale)
         {
             Matrix rot = Matrix.CreateRotationZ(-(CosTime + 0.5f * (float) Math.PI));
             SunPosition = new Vector3(1000, 100, 0);

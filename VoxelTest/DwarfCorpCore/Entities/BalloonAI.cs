@@ -63,7 +63,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
             Vector3 targetVelocity = TargetPosition - Body.GlobalTransform.Translation;
 
@@ -74,7 +74,7 @@ namespace DwarfCorp
             }
 
             Matrix m = Body.LocalTransform;
-            m.Translation += targetVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            m.Translation += targetVelocity * (float)DwarfTime.ElapsedGameTime.TotalSeconds;
             Body.LocalTransform = m;
             
             Body.HasMoved = true;
@@ -130,7 +130,7 @@ namespace DwarfCorp
             }
 
 
-            base.Update(gameTime, chunks, camera);
+            base.Update(DwarfTime, chunks, camera);
         }
     }
 

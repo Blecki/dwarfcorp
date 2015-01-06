@@ -84,7 +84,7 @@ namespace DwarfCorp
             return base.IsMouseOverRecursive() || (Image != null && GetImageBounds().Contains(state.X, state.Y));
         }
 
-        public override void Update(GameTime time)
+        public override void Update(DwarfTime time)
         {
             Rectangle bounds = GetImageBounds();
             LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, Math.Max(bounds.Width, LocalBounds.Width), Math.Max(bounds.Height, LocalBounds.Height));
@@ -122,7 +122,7 @@ namespace DwarfCorp
             return toDraw;
         }
 
-        public override void Render(GameTime time, SpriteBatch batch)
+        public override void Render(DwarfTime time, SpriteBatch batch)
         {
             if(!IsVisible)
             {

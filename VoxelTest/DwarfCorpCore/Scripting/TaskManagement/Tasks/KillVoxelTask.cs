@@ -83,7 +83,7 @@ namespace DwarfCorp
             return (agent.AI.Position - VoxelToKill.Position).LengthSquared() + 100 * Math.Abs(agent.AI.Position.Y - VoxelToKill.Position.Y) + surroundedValue;
         }
 
-        public override void Render(Microsoft.Xna.Framework.GameTime time)
+        public override void Render(DwarfTime time)
         {
             base.Render(time);
         }

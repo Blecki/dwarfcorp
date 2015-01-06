@@ -175,7 +175,7 @@ namespace DwarfCorp
             batch.GraphicsDevice.ScissorRectangle = originalRect;
         }
 
-        public override void Render(GameTime time, SpriteBatch batch)
+        public override void Render(DwarfTime time, SpriteBatch batch)
         {
             CalculateChildRect();
             UpdateSliders();

@@ -68,8 +68,11 @@ namespace DwarfCorp
             SetRelationship("Carnivore", "Undead", Relationship.Hates);
             SetRelationship("Goblins", "Carnivore", Relationship.Hates);
             SetRelationship("Goblins", "Herbivore", Relationship.Indifferent);
-
-
+            SetRelationship("Elf", "Goblins", Relationship.Hates);
+            SetRelationship("Elf", "Dwarf", Relationship.Hates);
+            SetRelationship("Elf", "Herbivore", Relationship.Loves);
+            SetRelationship("Elf", "Carnivore", Relationship.Indifferent);
+            SetRelationship("Elf", "Undead", Relationship.Hates);
             SetSelfClassLove();
 
             return Relationships;

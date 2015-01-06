@@ -51,19 +51,19 @@ namespace DwarfCorp
             RoomTile[,] bookTemp =
             {
                 {
-                    RoomTile.None,
                     RoomTile.Open,
-                    RoomTile.None
+                    RoomTile.Open,
+                    RoomTile.Open
                 },
                 {
-                    RoomTile.None,
+                    RoomTile.Open,
                     RoomTile.BookTable,
                     RoomTile.Open
                 },
                 {
-                    RoomTile.None,
                     RoomTile.Open,
-                    RoomTile.None
+                    RoomTile.Open,
+                    RoomTile.Open
                 }
             };
 
@@ -77,7 +77,7 @@ namespace DwarfCorp
                 {
                     RoomTile.None,
                     RoomTile.None,
-                    RoomTile.Chair
+                    RoomTile.None
                 },
                 {
                     RoomTile.None,
@@ -91,19 +91,19 @@ namespace DwarfCorp
             RoomTile[,] potionTemp =
             {
                 {
-                    RoomTile.None,
                     RoomTile.Open,
-                    RoomTile.None
+                    RoomTile.Open,
+                    RoomTile.Open
                 },
                 {
-                    RoomTile.None,
+                    RoomTile.Open,
                     RoomTile.PotionTable,
                     RoomTile.Open
                 },
                 {
-                    RoomTile.None,
                     RoomTile.Open,
-                    RoomTile.None
+                    RoomTile.Open,
+                    RoomTile.Open
                 }
             };
 
@@ -117,7 +117,7 @@ namespace DwarfCorp
                 {
                     RoomTile.None,
                     RoomTile.None,
-                    RoomTile.Chair
+                    RoomTile.None
                 },
                 {
                     RoomTile.None,

@@ -23,7 +23,7 @@ namespace DwarfCorp
             Name = "Attack!";
             EnergyLoss = 200.0f;
             Target = target;
-            foreach (Attack attack in agent.Creature.Attacks.Where(attack => attack.Mode == Attack.AttackMode.Melee))
+            foreach (Attack attack in agent.Creature.Attacks)
             {
                 CurrentAttack = attack;
                 break;
@@ -38,13 +38,12 @@ namespace DwarfCorp
                 yield break;
             }
 
-            Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
             while(true)
             {
                 if (Target.IsDead)
                 {
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
-                    Creature.Physics.OrientWithVelocity = true;
+                    Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     yield return Status.Success;
                 }
 
@@ -59,11 +58,11 @@ namespace DwarfCorp
                 Creature.Physics.Face(targetPos);
 
                 // If we are far away from the target, run toward it
-                if (diff.Length() > 10.0f && !collides)
+                if (diff.Length() > CurrentAttack.Range * 2 && !collides)
                 {
                     yield return Status.Fail;
                 }
-                if(diff.Length() > 2.0f && !collides)
+                if(diff.Length() > CurrentAttack.Range && !collides)
                 {
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                     Vector3 output = Creature.Controller.GetOutput(Act.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
@@ -74,14 +73,34 @@ namespace DwarfCorp
                     {
                         Agent.Jump(Act.LastTime);
                     }
-                    Creature.Physics.OrientWithVelocity = true;
+                    Creature.Physics.Orientation = Physics.OrientMode.RotateY;
+                }
+                else if (diff.Length() < CurrentAttack.Range*0.75f)
+                {
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                    Vector3 output = Creature.Controller.GetOutput(Act.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
+                    output.Y = 0.0f;
+                    Creature.Physics.ApplyForce(-output, Act.Dt);
+                    Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                 }
                 // Else, stop and attack
                 else
                 {
-                    Creature.Physics.OrientWithVelocity = false;
+                    Creature.Physics.Orientation = Physics.OrientMode.Fixed;
                     Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
-                    CurrentAttack.Perform(Target, Act.LastTime, Creature.Stats.BuffedStr + Creature.Stats.BuffedSiz, Creature.AI.Position);
+                    Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
+                    CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
+                    while (
+                        !CurrentAttack.Perform(Target, Act.LastTime, Creature.Stats.BuffedStr + Creature.Stats.BuffedSiz,
+                            Creature.AI.Position))
+                    {
+                        Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
+                        yield return Status.Running;
+                    }
+                    CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                    Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     if (Target.IsDead)
                     {
                         if (Creature.Faction.ChopDesignations.Contains(Target))
@@ -96,17 +115,12 @@ namespace DwarfCorp
 
                         Target = null;
                         Agent.Stats.XP += 10;
-                        Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
-                        Creature.Physics.OrientWithVelocity = true;
                         Creature.Physics.Face(Creature.Physics.Velocity + Creature.Physics.GlobalTransform.Translation);
                         Creature.Stats.NumThingsKilled++;
                         Creature.AI.AddThought(Thought.ThoughtType.KilledThing);
                         yield return Status.Success;
                         break;
                     }
-
-
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
                 
                 }
 

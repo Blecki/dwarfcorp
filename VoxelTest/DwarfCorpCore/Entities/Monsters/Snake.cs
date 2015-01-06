@@ -64,7 +64,7 @@ namespace DwarfCorp
 
         public void Initialize(Texture2D spriteSheet)
         {
-            Physics.OrientWithVelocity = false;
+            Physics.Orientation = Physics.OrientMode.Fixed;
 
             const int frameWidth = 32;
             const int frameHeight = 32;
@@ -108,16 +108,16 @@ namespace DwarfCorp
             AI = new SnakeAI(this, "snake AI", Sensors, PlanService);
 
 
-            Attacks = new List<Attack>() {new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick)};
+            Attacks = new List<Attack>() {new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick, "Herbivores")};
 
             Physics.Tags.Add("Snake");
             Physics.Tags.Add("Animal");
 
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
-            base.Update(gameTime, chunks, camera);
+            base.Update(DwarfTime, chunks, camera);
             Physics prev, next;
             prev = null;
             next = Physics;

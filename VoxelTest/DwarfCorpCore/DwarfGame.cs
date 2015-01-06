@@ -85,17 +85,21 @@ namespace DwarfCorp
             base.LoadContent();
         }
 
-        protected override void Update(GameTime gameTime)
+        protected override void Update(GameTime time)
         {
-            Act.LastTime = gameTime;
-            StateManager.Update(gameTime);
-            base.Update(gameTime);
+            if (Act.LastTime == null)
+            {
+                Act.LastTime = new DwarfTime(time);
+            }
+            Act.LastTime.Update(time);
+            StateManager.Update(Act.LastTime);
+            base.Update(time);
         }
 
-        protected override void Draw(GameTime gameTime)
+        protected override void Draw(GameTime time)
         {
-            StateManager.Render(gameTime);
-            base.Draw(gameTime);
+            StateManager.Render(Act.LastTime);
+            base.Draw(time);
         }
 
         protected override void OnExiting(object sender, EventArgs args)

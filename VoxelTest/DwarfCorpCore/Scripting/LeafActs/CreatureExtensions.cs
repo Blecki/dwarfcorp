@@ -175,7 +175,7 @@ namespace DwarfCorp
 
                 agent.Physics.Velocity = new Vector3(agent.Physics.Velocity.X * 0.5f, agent.Physics.Velocity.Y, agent.Physics.Velocity.Z * 0.5f);
 
-                agent.Attacks[0].Perform(vox, Act.LastTime, agent.Stats.BaseDigSpeed);
+                agent.Attacks[0].Perform(agent.Physics.Position, vox, Act.LastTime, agent.Stats.BaseDigSpeed);
                 yield return Act.Status.Running;
             }
 

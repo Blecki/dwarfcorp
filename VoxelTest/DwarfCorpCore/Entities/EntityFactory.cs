@@ -57,6 +57,9 @@ namespace DwarfCorp
             RegisterEntity("PotionTable", (position, data) => new Table(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4)));
             RegisterEntity("Anvil", (position, data) => new Anvil(position));
             RegisterEntity("Forge", (position, data) => new Forge(position));
+            RegisterEntity("Elf", (position, data) => GenerateElf(position, PlayState.ComponentManager.Factions.Factions["Elf"], "Elf"));
+            RegisterEntity("Arrow", (position, data) => new ArrowProjectile(position, data.GetData("Velocity", Vector3.Up*10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData("Faction", "Elf")));
+            RegisterEntity("Fairy", (position, data) => new Fairy("Player", position));
         }
 
         
@@ -1039,6 +1042,12 @@ namespace DwarfCorp
             };
         }
 
+
+        public static Body GenerateElf(Vector3 position, Faction faction, string allies)
+        {
+            CreatureStats stats = new CreatureStats(new ElfClass(), 0);
+            return new Elf(stats, allies, PlayState.PlanService, faction, PlayState.ComponentManager, "Goblin", PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position).Physics;
+        }
 
         public static Body GenerateGoblin(Vector3 position,
             ComponentManager componentManager,

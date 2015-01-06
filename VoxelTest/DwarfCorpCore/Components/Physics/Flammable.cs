@@ -43,7 +43,7 @@ namespace DwarfCorp
 
 
 
-        public void CheckForLava(GameTime gameTime, ChunkManager chunks)
+        public void CheckForLava(DwarfTime DwarfTime, ChunkManager chunks)
         {
 
             BoundingBox expandedBoundingBox = LocParent.BoundingBox.Expand(0.5f);
@@ -58,19 +58,19 @@ namespace DwarfCorp
             }
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
-            CheckLavaTimer.Update(gameTime);
+            CheckLavaTimer.Update(DwarfTime);
 
             if(CheckLavaTimer.HasTriggered)
             {
-                CheckForLava(gameTime, chunks);
+                CheckForLava(DwarfTime, chunks);
             }
 
             if(Heat > Flashpoint)
             {
                 Heat *= 1.01f;
-                Health.Damage(Damage * (float) gameTime.ElapsedGameTime.TotalSeconds);
+                Health.Damage(Damage * (float) DwarfTime.ElapsedGameTime.TotalSeconds);
 
                 double totalSize = (LocParent.BoundingBox.Max - LocParent.BoundingBox.Min).Length();
                 int numFlames = (int) (totalSize / 2.0f) + 1;
@@ -83,7 +83,7 @@ namespace DwarfCorp
                 }
             }
 
-            base.Update(gameTime, chunks, camera);
+            base.Update(DwarfTime, chunks, camera);
         }
     }
 

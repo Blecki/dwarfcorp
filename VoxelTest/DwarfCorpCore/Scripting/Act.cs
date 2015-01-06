@@ -34,7 +34,7 @@ namespace DwarfCorp
         public IEnumerator<Status> Enumerator;
 
         [JsonIgnore]
-        public static GameTime LastTime { get; set; }
+        public static DwarfTime LastTime { get; set; }
 
         [JsonIgnore]
         public static float Dt

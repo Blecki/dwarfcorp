@@ -120,7 +120,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void Update(DwarfGame game, GameTime time)
+        public override void Update(DwarfGame game, DwarfTime time)
         {
             PlayState.GUI.IsMouseVisible = true;
             Player.VoxSelector.Enabled = false;
@@ -130,7 +130,7 @@ namespace DwarfCorp
             PlayState.GUI.MouseMode = GUISkin.MousePointer.Pointer;
         }
 
-        public override void Render(DwarfGame game, GraphicsDevice graphics, GameTime time)
+        public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
             DwarfGame.SpriteBatch.Begin();
             int i = 0;

@@ -75,7 +75,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void Update(GameTime time)
+        public override void Update(DwarfTime time)
         {
             base.Update(time);
         }
@@ -105,7 +105,7 @@ namespace DwarfCorp
             return Text;
         }
 
-        public override void Render(GameTime time, SpriteBatch batch)
+        public override void Render(DwarfTime time, SpriteBatch batch)
         {
             Rectangle fieldRect = new Rectangle(GlobalBounds.X, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width, GUI.Skin.TileHeight);
             Rectangle textRect = new Rectangle(GlobalBounds.X + 5, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width, GUI.Skin.TileHeight);

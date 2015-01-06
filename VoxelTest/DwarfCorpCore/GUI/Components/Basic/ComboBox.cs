@@ -80,7 +80,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void Update(GameTime time)
+        public override void Update(DwarfTime time)
         {
             if (string.IsNullOrEmpty(CurrentValue))
             {
@@ -91,7 +91,7 @@ namespace DwarfCorp
             base.Update(time);
         }
 
-        public override void Render(Microsoft.Xna.Framework.GameTime time, Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
+        public override void Render(DwarfTime time, Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
         {
             Rectangle fieldRect = new Rectangle(GlobalBounds.X, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width - 37, 32);
             GUI.Skin.RenderField(fieldRect, batch);

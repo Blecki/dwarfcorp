@@ -6,6 +6,55 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
+    public class DwarfTime
+    {
+        public bool IsPaused { get; set; }
+        public TimeSpan ElapsedGameTime { get; set; }
+        public TimeSpan TotalGameTime { get; set; }
+        public TimeSpan ElapsedRealTime { get; set; }
+        public TimeSpan TotalRealTime { get; set; }
+
+        public DwarfTime()
+        {
+
+        }
+
+        public DwarfTime(TimeSpan total, TimeSpan elapsed)
+        {
+            ElapsedGameTime = elapsed;
+            TotalGameTime = total;
+            ElapsedRealTime = ElapsedGameTime;
+            TotalRealTime = TotalGameTime;
+        }
+
+        public GameTime ToGameTime()
+        {
+            return new GameTime(TotalGameTime, ElapsedGameTime);
+        }
+
+        public DwarfTime(GameTime time)
+        {
+            ElapsedGameTime = time.ElapsedGameTime;
+            TotalGameTime = time.TotalGameTime;
+            ElapsedRealTime = time.ElapsedGameTime;
+            TotalRealTime = time.TotalGameTime;
+        }
+
+        public void Update(GameTime time)
+        {
+            ElapsedGameTime = new TimeSpan(0);
+            ElapsedRealTime = time.ElapsedGameTime;
+            TotalRealTime = time.TotalGameTime;
+            if (IsPaused) return;
+            else
+            {
+                ElapsedGameTime = time.ElapsedGameTime;
+                TotalGameTime += ElapsedGameTime;
+            }
+        }
+    }
+
     /// <summary>
     /// A timer fires at a fixed interval when updated. Some timers automatically reset.
     /// Other timers need to be manually reset.
@@ -18,7 +67,15 @@ namespace DwarfCorp
         public bool TriggerOnce { get; set; }
         public bool HasTriggered { get; set; }
 
-        public Timer(float targetTimeSeconds, bool triggerOnce)
+        public TimerMode Mode { get; set; }
+
+        public enum TimerMode
+        {
+            Real,
+            Game
+        }
+
+        public Timer(float targetTimeSeconds, bool triggerOnce, TimerMode mode = TimerMode.Game)
         {
             TargetTimeSeconds = targetTimeSeconds;
             CurrentTimeSeconds = 0.0f;
@@ -27,13 +84,14 @@ namespace DwarfCorp
             StartTimeSeconds = -1;
         }
 
-        public bool Update(GameTime t)
+        public bool Update(DwarfTime t)
         {
             if(null == t)
             {
                 return false;
             }
 
+            float seconds = (float)(Mode == TimerMode.Game ? t.TotalGameTime.TotalSeconds : t.TotalRealTime.TotalSeconds);
 
             if(!TriggerOnce && HasTriggered)
             {
@@ -44,10 +102,10 @@ namespace DwarfCorp
 
             if(StartTimeSeconds < 0)
             {
-                StartTimeSeconds = (float) t.TotalGameTime.TotalSeconds;
+                StartTimeSeconds = seconds;
             }
 
-            CurrentTimeSeconds = (float) t.TotalGameTime.TotalSeconds - StartTimeSeconds;
+            CurrentTimeSeconds = seconds - StartTimeSeconds;
 
             if(CurrentTimeSeconds > TargetTimeSeconds)
             {
@@ -56,6 +114,11 @@ namespace DwarfCorp
             }
 
             return false;
+        }
+
+        public void Reset()
+        {
+            Reset(TargetTimeSeconds);
         }
 
         public void Reset(float time)

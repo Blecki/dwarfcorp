@@ -642,7 +642,7 @@ namespace DwarfCorp
             return m_boundingSphere;
         }
 
-        public void Update(GameTime t)
+        public void Update(DwarfTime t)
         {
             //PrimitiveMutex.WaitOne();
             if(NewPrimitiveReceived)

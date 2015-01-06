@@ -142,6 +142,18 @@ namespace DwarfCorp
                 }
 
             }
+
+            public class Elf
+            {
+                public class Sprites
+                {
+                    public static string elf_animation = ProgramData.CreatePath("Entities", "Elf", "Sprites", "elf_animation.json");
+                    public static string elf = ProgramData.CreatePath("Entities", "Elf", "Sprites", "elf");
+                    public static string elf_bow = ProgramData.CreatePath("Entities", "Elf", "Sprites", "elf-bow");
+                    public static string arrow = ProgramData.CreatePath("Entities", "Elf", "Sprites", "arrow");
+                }
+            }
+
             public class Dwarf
             {
                 public class Audio
@@ -168,6 +180,11 @@ namespace DwarfCorp
                     public static string crafter_animation = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "crafter_animation.json");
                     public static string wizard_animation = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "wizard_animation.json");
                     public static string soldier_animation =  ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "soldier_animation.json");
+
+                    public static string fairy = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "fairy");
+
+                    public static string fairy_animation = ProgramData.CreatePath("Entities", "Dwarf", "Sprites",
+                        "fairy_animation.json");
                 }
 
             }

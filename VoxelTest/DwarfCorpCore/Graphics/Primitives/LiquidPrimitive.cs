@@ -247,11 +247,13 @@ namespace DwarfCorp
             List<ExtendedVertex> toReturn = new List<ExtendedVertex>();
             int idx = 0;
             int c = 0;
-            m_canconicalPrimitive.GetFace(face, m_canconicalPrimitive.UVs, out idx, out c);
+            int vertOffset = 0;
+            int numVerts = 0;
+            m_canconicalPrimitive.GetFace(face, m_canconicalPrimitive.UVs, out idx, out c, out vertOffset, out numVerts);
 
             for (int i = idx; i < idx + c; i++)
             {
-                toReturn.Add(m_canconicalPrimitive.Vertices[i]);
+                toReturn.Add(m_canconicalPrimitive.Vertices[m_canconicalPrimitive.Indices[i]]);
             }
 
             Vector3 origin = chunk.Origin + new Vector3(x, y, z);

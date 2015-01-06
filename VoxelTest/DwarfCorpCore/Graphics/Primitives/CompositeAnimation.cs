@@ -143,13 +143,9 @@ namespace DwarfCorp
 
         public void UpdatePrimitive()
         {
-            if (HasValidFrame)
+            if (HasValidFrame && CurrentFrame >= 0 && CurrentFrame < CompositeFrames.Count)
             {
-                if (Primitive == null)
-                {
-                    Primitive = Composite.CreatePrimitive(GameState.Game.GraphicsDevice);    
-                }
-
+                Primitive = Composite.CreatePrimitive(GameState.Game.GraphicsDevice, CurrentOffset);    
                 Composite.ApplyBillboard(Primitive, CurrentOffset);
                 Primitives.Clear();
 
@@ -166,9 +162,9 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(DwarfTime DwarfTime, Timer.TimerMode mode = Timer.TimerMode.Game)
         {
-            base.Update(gameTime);
+            base.Update(DwarfTime, mode);
             CurrentOffset = Composite.PushFrame(CompositeFrames[CurrentFrame]);
             HasValidFrame = true;
             UpdatePrimitive();

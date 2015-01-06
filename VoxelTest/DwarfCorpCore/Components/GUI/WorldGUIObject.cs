@@ -28,7 +28,7 @@ namespace DwarfCorp
             Enabled = false;
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
             if (Enabled && IsVisible && camera.IsInView(GetBoundingBox()))
             {
@@ -42,7 +42,7 @@ namespace DwarfCorp
                 GUIObject.IsVisible = false;
             }
 
-            base.Update(gameTime, chunks, camera);
+            base.Update(DwarfTime, chunks, camera);
         }
 
         public override void Die()

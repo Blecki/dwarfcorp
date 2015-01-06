@@ -54,7 +54,7 @@ namespace DwarfCorp
 
         public void Initialize(Texture2D spriteSheet)
         {
-            Physics.OrientWithVelocity = true;
+            Physics.Orientation = Physics.OrientMode.RotateY;
 
             const int frameWidth = 48;
             const int frameHeight = 40;
@@ -85,7 +85,6 @@ namespace DwarfCorp
             Sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Right, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 10, 0, 1);
             Sprite.AddAnimation(CharacterMode.Jumping, OrientedAnimation.Orientation.Backward, spriteSheet, ANIM_SPEED, frameWidth, frameHeight, 11, 0, 1);
 
-            // TODO: figure out what these numbers mean
             // Add hands
             Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
 
@@ -95,7 +94,7 @@ namespace DwarfCorp
             // Add AI
             AI = new CreatureAI(this, "Deer AI", Sensors, PlanService);
 
-            Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick)};
+            Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick, "Herbivores")};
 
             Inventory = new Inventory("Inventory", Physics)
             {

@@ -219,10 +219,10 @@ namespace DwarfCorp
             }
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
-            IdleTimer.Update(gameTime);
-            SpeakTimer.Update(gameTime);
+            IdleTimer.Update(DwarfTime);
+            SpeakTimer.Update(DwarfTime);
 
             OrderEnemyAttack();
             PreEmptTasks();
@@ -313,9 +313,9 @@ namespace DwarfCorp
             }
 
 
-            PlannerTimer.Update(gameTime);
+            PlannerTimer.Update(DwarfTime);
             UpdateThoughts();
-            base.Update(gameTime, chunks, camera);
+            base.Update(DwarfTime, chunks, camera);
         }
 
         public virtual Task ActOnIdle()
@@ -370,7 +370,7 @@ namespace DwarfCorp
         }
 
 
-        public void Jump(GameTime dt)
+        public void Jump(DwarfTime dt)
         {
             if(!Creature.JumpTimer.HasTriggered)
             {

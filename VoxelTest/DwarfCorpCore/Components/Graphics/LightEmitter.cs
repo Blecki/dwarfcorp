@@ -51,7 +51,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
             if(HasMoved || Light == null)
             {
@@ -59,7 +59,7 @@ namespace DwarfCorp
             }
 
 
-            base.Update(gameTime, chunks, camera);
+            base.Update(DwarfTime, chunks, camera);
         }
 
         public override void Die()

@@ -50,7 +50,7 @@ namespace DwarfCorp
 
         }
 
-        public override void Update(GameTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
             if (firstIter)
             {
@@ -60,7 +60,7 @@ namespace DwarfCorp
                 }
                 firstIter = false;
             }
-            base.Update(gameTime, chunks, camera);
+            base.Update(DwarfTime, chunks, camera);
         }
 
         void VoxelListener_OnVoxelDestroyed(Point3 voxelID)
