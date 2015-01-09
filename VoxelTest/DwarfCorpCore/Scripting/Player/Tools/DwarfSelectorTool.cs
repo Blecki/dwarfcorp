@@ -93,17 +93,17 @@ namespace DwarfCorp
             }
             foreach(Body body in bodies)
             {
-                List<Dwarf> dwarves = body.GetChildrenOfType<Dwarf>();
+                List<Creature> dwarves = body.GetChildrenOfType<Creature>();
 
                 if(dwarves.Count <= 0)
                 {
                     continue;
                 }
 
-                Dwarf dwarf = dwarves[0];
+                Creature dwarf = dwarves[0];
 
 
-                if (!Player.SelectedMinions.Contains(dwarf.AI))
+                if (dwarf.Allies == Player.Faction.Alliance && !Player.SelectedMinions.Contains(dwarf.AI))
                 {
                     Player.SelectedMinions.Add(dwarf.AI);
                 }

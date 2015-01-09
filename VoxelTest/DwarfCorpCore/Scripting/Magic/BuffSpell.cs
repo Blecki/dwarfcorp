@@ -25,12 +25,12 @@ namespace DwarfCorp
             Name = "Buff spell";
             Description = "Apply buffs to selected creatures";
             Hint = "Click and drag to select creatures";
-            ManaCost = 100;
+            ManaCost = 20;
             Image = new NamedImageFrame(ContentPaths.GUI.icons, 32, 0, 2);
         }
 
 
-        public override void OnEntitiesSelected(List<Body> entities)
+        public override void OnEntitiesSelected(SpellTree tree, List<Body> entities)
         {
             foreach (Body body in entities)
             {
@@ -41,11 +41,14 @@ namespace DwarfCorp
                 {
                     foreach (Creature.Buff buff in Buffs)
                     {
-                        creature.AddBuff(buff);
+                        if (OnCast(tree))
+                        {
+                            creature.AddBuff(buff);
+                        }
                     }
                 }
             }
-            base.OnEntitiesSelected(entities);
+            base.OnEntitiesSelected(tree, entities);
         }
     }
 }

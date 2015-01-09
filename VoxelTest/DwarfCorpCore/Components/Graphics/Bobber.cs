@@ -18,6 +18,7 @@ namespace DwarfCorp
         public float Magnitude { get; set; }
         public float Rate { get; set; }
         public float Offset { get; set; }
+        public float OrigY { get; set; }
 
         public Bobber()
         {
@@ -31,6 +32,7 @@ namespace DwarfCorp
             Rate = rate;
             Offset = offset;
             Component = component;
+            OrigY = component.LocalTransform.Translation.Y;
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
@@ -38,7 +40,7 @@ namespace DwarfCorp
             float x = (float)Math.Sin((gameTime.TotalGameTime.TotalSeconds + Offset) * Rate) * Magnitude;
             Matrix trans = Component.LocalTransform;
 
-            trans.Translation = new Vector3(trans.Translation.X, x, trans.Translation.Z);
+            trans.Translation = new Vector3(trans.Translation.X, OrigY + x, trans.Translation.Z);
             Component.LocalTransform = trans;
 
             Component.HasMoved = true;
