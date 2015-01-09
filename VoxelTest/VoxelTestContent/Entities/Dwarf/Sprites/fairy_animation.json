@@ -1,0 +1,23 @@
+{
+   "Animations" : [
+      {
+         "Frames" : [
+              [0, 0, 0],
+              [1, 0, 0],
+              [2, 0, 0],
+              [3, 0, 0]
+          ],
+          "Name" : "IdleFORWARD",
+          "Speed": [0.2]
+      }
+   ],
+   "Layers" : [
+      {
+         "$id" : "1",
+         "AssetName" : "Entities\\Dwarf\\Sprites\\fairy",
+         "FrameHeight" : 32,
+         "FrameWidth" : 32
+      },
+   ],
+   "Tints" : [ "255, 255, 255, 255" ]
+}
