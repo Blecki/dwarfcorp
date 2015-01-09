@@ -68,14 +68,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1110016">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1111552">
       <assemblyIdentity name="DwarfCorp" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>GBBw/gwbzUsP2FbC2zLGEtcDV0g=</dsig:DigestValue>
+        <dsig:DigestValue>5yyA2VIQfOAa6krNXeei3M94m5s=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -505,22 +505,22 @@
       <dsig:DigestValue>7AhWBmaBtmhA52NxpglsO4bnhoM=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Entities\Dwarf\Sprites\fairy.xnb" size="3666">
+  <file name="Content\Entities\Dwarf\Sprites\fairy.xnb" size="678">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>nKU1mbNbRxR4qJ3Y/6AOvH5P3zE=</dsig:DigestValue>
+      <dsig:DigestValue>IsvSe2v/V1Lxcw6TxJnf1qE0KNI=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Entities\Dwarf\Sprites\fairy_animation.json" size="7379">
+  <file name="Content\Entities\Dwarf\Sprites\fairy_animation.json" size="475">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>1CoYvL7Kf/pPvN/X+HDLDbM06Yc=</dsig:DigestValue>
+      <dsig:DigestValue>yMma5kKfpbrBmYAMfY2ldfrLkY4=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Entities\Dwarf\Sprites\soldier.xnb" size="15518">
@@ -649,13 +649,13 @@
       <dsig:DigestValue>1YGVY0MDlz/UErQ6lCei0o8wL54=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Entities\Elf\Sprites\arrow.xnb" size="292">
+  <file name="Content\Entities\Elf\Sprites\arrow.xnb" size="304">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>4VqowWsWNXCJ08wYZsxxxHEAjUw=</dsig:DigestValue>
+      <dsig:DigestValue>iJ6BmtJtYXnqcOFmN8SNvq2c9c8=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Entities\Elf\Sprites\elf.xnb" size="9726">

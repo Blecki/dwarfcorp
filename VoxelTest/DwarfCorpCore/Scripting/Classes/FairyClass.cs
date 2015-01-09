@@ -20,7 +20,11 @@ namespace DwarfCorp
                     Name = "Fairy",
                     Pay = 0,
                     XP = 0,
+                   
                     BaseStats = new CreatureStats.StatNums()
+                    {
+                        Constitution = 0.0f
+                    }
                 }
             };
         }
@@ -48,7 +52,7 @@ namespace DwarfCorp
 
         public void InitializeWeapons()
         {
-            MeleeAttack = new Attack("Fairy Dust", 0.1f, 10.0f, 5.0f, ContentPaths.Audio.tinkle, "Dwarf")
+            MeleeAttack = new Attack("Fairy Dust", 10.0f, 0.2f, 5.0f, ContentPaths.Audio.tinkle, "Dwarf")
             {
                 Knockback = 0.5f,
                 HitAnimation = new Animation(ContentPaths.Effects.rings, 32, 32, 0, 1, 2, 3),

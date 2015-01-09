@@ -1588,7 +1588,7 @@ namespace DwarfCorp.GameStates
 
         public void FillClosestLights(DwarfTime time)
         {
-            List<Vector3> positions = (from chunk in ChunkManager.ChunkData.ChunkMap from light in chunk.Value.DynamicLights select light.Voxel.Position).ToList();
+            List<Vector3> positions = ( from light in DynamicLight.Lights select light.Position).ToList();
             positions.Sort((a, b) =>
             {
                 float dA = (a - Camera.Position).LengthSquared();
@@ -1604,8 +1604,7 @@ namespace DwarfCorp.GameStates
                 }
                 else
                 {
-                    LightPositions[i] = positions[i - 1] + new Vector3(0.5f, 0.5f, 0.5f) +
-                                        MathFunctions.PeriodicRand((float) time.TotalGameTime.TotalSeconds + i * 100)*0.1f;
+                    LightPositions[i] = positions[i - 1];
                 }
             }
 

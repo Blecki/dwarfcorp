@@ -948,6 +948,9 @@
     <Compile Include="..\DwarfCorpCore\Scripting\Magic\BuffSpell.cs">
       <Link>Scripting\Magic\BuffSpell.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\Magic\CreateEntitySpell.cs">
+      <Link>Scripting\Magic\CreateEntitySpell.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\Magic\DestroyBlockSpell.cs">
       <Link>Scripting\Magic\DestroyBlockSpell.cs</Link>
     </Compile>

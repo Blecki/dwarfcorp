@@ -354,6 +354,7 @@
     <Compile Include="Scripting\LeafActs\TeleportAct.cs" />
     <Compile Include="Scripting\LeafActs\WanderAct.cs" />
     <Compile Include="Scripting\Magic\BuffSpell.cs" />
+    <Compile Include="Scripting\Magic\CreateEntitySpell.cs" />
     <Compile Include="Scripting\Magic\DestroyBlockSpell.cs" />
     <Compile Include="Scripting\Magic\InspectSpell.cs" />
     <Compile Include="Scripting\Magic\PlaceBlockSpell.cs" />

@@ -15,8 +15,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     internal class LightEmitter : Body
     {
-        public byte Intensity { get; set; }
-        public byte Range { get; set; }
         public DynamicLight Light { get; set; }
 
 
@@ -25,39 +23,20 @@ namespace DwarfCorp
             
         }
 
-        public LightEmitter(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, byte intensity, byte range) :
+        public LightEmitter(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, float intensity, float range) :
             base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
         {
-            Intensity = intensity;
-            Range = range;
-            Light = null;
+            Light = new DynamicLight(intensity, range);
         }
 
-        public void UpdateLight(ChunkManager chunks)
+        public void UpdateLight()
         {
-            if(Light == null)
-            {
-                Light = chunks.ChunkData.GetVoxelChunkAtWorldLocation(GlobalTransform.Translation).AddLight(GlobalTransform.Translation, Range, Intensity);
-            }
-            else
-            {
-                Voxel vox = new Voxel();
-                if (chunks.ChunkData.GetVoxelerenceAtWorldLocation(GlobalTransform.Translation, ref vox))
-                {
-                    Light.Voxel = vox;
-                    chunks.ChunkData.ChunkMap[Light.Voxel.ChunkID].ShouldRebuild = true;
-                    chunks.ChunkData.ChunkMap[Light.Voxel.ChunkID].ShouldRecalculateLighting = true;
-                }
-            }
+            Light.Position = GlobalTransform.Translation;
         }
 
         public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
-            if(HasMoved || Light == null)
-            {
-                UpdateLight(chunks);
-            }
-
+            UpdateLight();
 
             base.Update(DwarfTime, chunks, camera);
         }

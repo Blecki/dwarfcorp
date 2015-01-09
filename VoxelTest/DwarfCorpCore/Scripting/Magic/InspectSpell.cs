@@ -31,7 +31,7 @@ namespace DwarfCorp
                 case InspectType.InspectBlock:
                 {
                     Image = new ImageFrame(icons, 32, 7, 1);
-                    ManaCost = 10;
+                    ManaCost = 0;
                     Mode = Spell.SpellMode.SelectFilledVoxels;
                     Name = "Inspect Blocks";
                     Description = "Click on a block to get info about it";
@@ -42,7 +42,7 @@ namespace DwarfCorp
                 case InspectType.InspectEntity:
                 {
                     Image = new ImageFrame(icons, 32, 7, 1);
-                    ManaCost = 50;
+                    ManaCost = 0;
                     Mode = Spell.SpellMode.SelectEntities;
                     Name = "Inspect Objects";
                     Description = "Select an entity to get info about it";
@@ -53,7 +53,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void OnEntitiesSelected(List<Body> entities)
+        public override void OnEntitiesSelected(SpellTree tree, List<Body> entities)
         {
             if (this.Type != InspectType.InspectEntity) return;
 
@@ -65,10 +65,10 @@ namespace DwarfCorp
 
             if(desc != "")
                 PlayState.GUI.ToolTipManager.Popup(desc);
-            base.OnEntitiesSelected(entities);
+            base.OnEntitiesSelected(tree, entities);
         }
 
-        public override void OnVoxelsSelected(List<Voxel> voxels)
+        public override void OnVoxelsSelected(SpellTree tree, List<Voxel> voxels)
         {
             if (this.Type != InspectType.InspectBlock) return;
 
@@ -86,7 +86,7 @@ namespace DwarfCorp
             
             if(description != "")
                 PlayState.GUI.ToolTipManager.Popup(description);
-            base.OnVoxelsSelected(voxels);
+            base.OnVoxelsSelected(tree, voxels);
         }
     }
 }
