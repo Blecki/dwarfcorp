@@ -47,8 +47,8 @@ namespace DwarfCorp
             }
             else
             {
-                SoundManager.PlaySound(ContentPaths.Audio.wurp);
-                PlayState.GUI.ToolTipManager.Popup("Not enough mana. Need " + ManaCost + " but only have " + tree.Mana);
+                SoundManager.PlaySound(ContentPaths.Audio.wurp, PlayState.CursorLightPos, true, 0.25f);
+                PlayState.GUI.ToolTipManager.Popup("Not enough mana. Need " + (int)ManaCost + " but only have " + (int)tree.Mana);
             }
             return canCast;
         }

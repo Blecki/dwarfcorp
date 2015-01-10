@@ -53,7 +53,7 @@ namespace DwarfCorp
             RegisterEntity("Flag", (position, data) => new Flag(position));
             RegisterEntity("Mushroom", (position, data) => new Mushroom(position));
             RegisterEntity("Wheat", (position, data) => new Wheat(position));
-            RegisterEntity("BookTable", (position, data) => new Table(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 4)));
+            RegisterEntity("BookTable", (position, data) => new Table(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 4)) {Battery = new Table.ManaBattery() { Charge = 0.0f, MaxCharge = 100.0f }});
             RegisterEntity("PotionTable", (position, data) => new Table(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4)));
             RegisterEntity("Anvil", (position, data) => new Anvil(position));
             RegisterEntity("Forge", (position, data) => new Forge(position));

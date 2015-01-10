@@ -488,7 +488,7 @@ namespace DwarfCorp
             spriteBatch.Draw(Texture, new Rectangle(rect.Right - TileWidth, rect.Top, TileWidth, TileHeight), GetSourceRect(Tile.FieldRight), Color.White);
         }
 
-        public void RenderProgressBar(Rectangle rectBounds, float progress, SpriteBatch spriteBatch)
+        public void RenderProgressBar(Rectangle rectBounds, float progress, Color tint, SpriteBatch spriteBatch)
         {
             float n = (float) Math.Max(Math.Min(progress, 1.0), 0.0);
 
@@ -497,13 +497,13 @@ namespace DwarfCorp
                 Rectangle drawFillRect = new Rectangle(rectBounds.X + TileWidth / 2 - 8, rectBounds.Y, (int) ((rectBounds.Width - TileWidth / 2 - 4) * n) - 8, rectBounds.Height);
                 Rectangle filledRect = GetSourceRect(Tile.ProgressFilled);
                 filledRect.Width = 1;
-                spriteBatch.Draw(Texture, drawFillRect, filledRect, Color.White);
+                spriteBatch.Draw(Texture, drawFillRect, filledRect, tint);
 
                 Rectangle progressRect = GetSourceRect(Tile.ProgressCap);
                 progressRect.Width = 8;
 
                 Rectangle capRect = new Rectangle((int) ((rectBounds.Width - TileWidth / 2 - 4) * n) + rectBounds.X, rectBounds.Y, 8, rectBounds.Height);
-                spriteBatch.Draw(Texture, capRect, progressRect, Color.White);
+                spriteBatch.Draw(Texture, capRect, progressRect, tint);
             }
 
             spriteBatch.Draw(Texture, new Rectangle(rectBounds.X, rectBounds.Y, TileWidth, rectBounds.Height), GetSourceRect(Tile.ProgressLeft), Color.White);

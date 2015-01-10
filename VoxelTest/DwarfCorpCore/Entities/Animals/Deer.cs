@@ -123,7 +123,7 @@ namespace DwarfCorp
             DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
-                TriggerAmount = 100
+                TriggerAmount = 20
             };
 
             // The bird is flammable, and can die when exposed to fire.
