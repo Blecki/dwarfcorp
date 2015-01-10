@@ -68,14 +68,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1111552">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1120768">
       <assemblyIdentity name="DwarfCorp" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>5yyA2VIQfOAa6krNXeei3M94m5s=</dsig:DigestValue>
+        <dsig:DigestValue>A/276R9XmqeAhD/aNEpFDNu4jnM=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -1000,13 +1000,13 @@
       <dsig:DigestValue>zqs9C1htKr0g/B/S7+NbDwZT2hs=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\GUI\gui_widgets.xnb" size="12442">
+  <file name="Content\GUI\gui_widgets.xnb" size="12436">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>vK8wFA6+k1sOFQPVJGMBN6AcXWw=</dsig:DigestValue>
+      <dsig:DigestValue>6ZrwwM+T87Bz/+/AYZFA752rQVc=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\GUI\icons.xnb" size="6610">
@@ -1153,22 +1153,22 @@
       <dsig:DigestValue>Xi/c5qNkkXGwwtc8rH45B5bgMIA=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Particles\flame.xnb" size="504">
+  <file name="Content\Particles\flame.xnb" size="456">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>zZ04w6JGdLAmLemNha0efm1frco=</dsig:DigestValue>
+      <dsig:DigestValue>/KnWP7WPuKfZzaGXgwthsrf8Q0g=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Particles\green_flame.xnb" size="464">
+  <file name="Content\Particles\green_flame.xnb" size="460">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>dnl0hTxxHlN6dC9cY0tQtPOAQh8=</dsig:DigestValue>
+      <dsig:DigestValue>JZnjljdjjl+oy8OxiTjDnaAUrBk=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Particles\leaf.xnb" size="482">

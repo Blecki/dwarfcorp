@@ -109,7 +109,7 @@ namespace DwarfCorp
 
             MinimapIcon minimapIcon = new MinimapIcon(Physics, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 0, 0));
 
-            new LightEmitter("Light Emitter", Sprite, Matrix.Identity, Vector3.One, Vector3.One, 255, 150);
+            //new LightEmitter("Light Emitter", Sprite, Matrix.Identity, Vector3.One, Vector3.One, 255, 150);
             new Bobber(0.25f, 3.0f, MathFunctions.Rand(), Sprite);
           
             Stats.FirstName = TextGenerator.GenerateRandom("$DwarfName");

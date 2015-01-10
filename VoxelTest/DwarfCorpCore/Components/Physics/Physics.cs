@@ -103,8 +103,8 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    transform.Translation = LocalTransform.Translation - 2 * Velocity * dt;
-                    Velocity *= -5;
+                    transform.Translation = LocalTransform.Translation - 0.1f * Velocity * dt;
+                    Velocity = new Vector3(Velocity.X * -0.9f, Velocity.Y, Velocity.Z * -0.9f);
                 }
 
                 if (LocalTransform.Translation.Z < -10 || bounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)

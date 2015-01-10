@@ -42,16 +42,20 @@ namespace DwarfCorp
                     MagicMenu.Master.Spells.Mana/MagicMenu.Master.Spells.MaxMana)
                 {
                     ToolTip = "Remaining Mana Pool",
-                    LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 200, 10, 180, 32)
+                    LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 200, 10, 180, 32),
+                    Tint = Color.Cyan
                 };
                 MagicBar.OnUpdate += MagicBar_OnUpdate;
             }
+
+            MagicBar.IsVisible = true;
         }
 
         void MagicBar_OnUpdate()
         {
             MagicBar.Value = MagicMenu.Master.Spells.Mana/MagicMenu.Master.Spells.MaxMana;
-            MagicBar.ToolTip = "Remaining Mana Pool " + (int) MagicBar.Value;
+            MagicBar.ToolTip = "Remaining Mana Pool " + (int)MagicMenu.Master.Spells.Mana;
+            MagicBar.IsVisible = true;
         }
 
         public override void OnEnd()

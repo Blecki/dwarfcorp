@@ -13,15 +13,16 @@ namespace DwarfCorp
     /// </summary>
     public class Box : Tinter
     {
-        public BoxPrimitive Primitive { get; set; }
+        public OldBoxPrimitive Primitive { get; set; }
         public Texture2D Texture { get; set; }
 
         private static RasterizerState rasterState = new RasterizerState()
         {
-            CullMode = CullMode.CullCounterClockwiseFace
+            CullMode = CullMode.None,
+            FillMode = FillMode.Solid
         };
 
-        public Box(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, BoxPrimitive primitive, Texture2D tex) :
+        public Box(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, OldBoxPrimitive primitive, Texture2D tex) :
             base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos, false)
         {
             Primitive = primitive;

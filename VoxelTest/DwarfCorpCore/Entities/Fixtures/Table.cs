@@ -12,6 +12,77 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Table : Body
     {
+        public ManaBattery Battery { get; set; }
+
+        public class ManaBattery
+        {
+            public ResourceEntity ManaSprite { get; set; }
+            public float Charge { get; set; }
+            public float MaxCharge { get; set; }
+            public static float ChargeRate = 5.0f;
+            public Timer ReCreateTimer { get; set; }
+            public Timer ChargeParticleTimer { get; set; }
+
+            public ManaBattery()
+            {
+                ReCreateTimer = new Timer(3.0f, false);
+                ChargeParticleTimer = new Timer(0.25f, false);
+            }
+
+            public void Update(DwarfTime time)
+            {
+                if (ManaSprite != null && Charge > 0.0f && PlayState.Master.Spells.Mana < PlayState.Master.Spells.MaxMana)
+                {
+                    float amount = (float)time.ElapsedGameTime.TotalSeconds * ChargeRate;
+
+                    Charge -= amount;
+                    PlayState.Master.Spells.Recharge(amount);
+
+                    ChargeParticleTimer.Update(time);
+
+                    if(ChargeParticleTimer.HasTriggered)
+                        PlayState.ParticleManager.Trigger("star_particle", ManaSprite.Position, Color.White, 1);
+                }
+                else if (Charge <= 0.01f)
+                {
+                    ReCreateTimer.Update(time);
+                }
+            }
+
+            public bool CreateNewManaSprite(Faction faction, Vector3 position)
+            {
+                if (ManaSprite != null)
+                {
+                    ManaSprite.Die();  
+                    PlayState.ParticleManager.Trigger("star_particle", position, Color.White, 5);
+                    SoundManager.PlaySound(ContentPaths.Audio.wurp, position, true);
+                    ManaSprite = null;
+                    ReCreateTimer.Reset();
+                }
+                if (ReCreateTimer.HasTriggered)
+                {
+                    if (faction.RemoveResources(
+                        new List<ResourceAmount>() {new ResourceAmount(ResourceLibrary.ResourceType.Mana)}, position + Vector3.Up))
+                    {
+                        ManaSprite = EntityFactory.CreateEntity<ResourceEntity>("Mana Resource", position);
+                        ManaSprite.Gravity = Vector3.Zero;
+                        ManaSprite.Tags.Clear();
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            public void Reset(Faction faction, Vector3 position)
+            {
+                if (CreateNewManaSprite(faction, position))
+                {
+                    Charge = MaxCharge;
+                }
+            }
+        }
+
         public Table()
         {
             
@@ -27,6 +98,20 @@ namespace DwarfCorp
             this(position, new SpriteSheet(asset), Point.Zero)
         {
 
+        }
+
+        public override void Update(DwarfTime time, ChunkManager chunks, Camera camera)
+        {
+            if (Battery != null)
+            {
+                Battery.Update(time);
+
+                if(Battery.Charge <= 0)
+                {
+                    Battery.Reset(PlayState.PlayerFaction, Position + Vector3.Up);
+                }
+            }
+            base.Update(time, chunks, camera);
         }
 
         public Table(Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame) :
