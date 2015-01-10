@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -14,43 +15,27 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class DynamicLight
     {
-        public byte Range { get; set; }
-        public byte Intensity { get; set; }
-        public Voxel Voxel { get; set; }
+        public float Range { get; set; }
+        public float Intensity { get; set; }
+        public Vector3 Position { get; set; }
 
-        [JsonIgnore]
-        public ChunkManager Chunks { get; set; }
-
-        [OnDeserialized]
-        protected void OnDeserialized(StreamingContext context)
-        {
-            Chunks = PlayState.ChunkManager;
-        }
-
+        public static List<DynamicLight> Lights = new List<DynamicLight>();
 
         public DynamicLight()
         {
             
         }
 
-        public DynamicLight(byte range, byte intensity, Voxel voxel, ChunkManager chunks)
+        public DynamicLight(float range, float intensity)
         {
             Range = range;
             Intensity = intensity;
-            Voxel = voxel;
-            Chunks = chunks;
+            Lights.Add(this);
         }
 
         public void Destroy()
         {
-            VoxelChunk chunk = Chunks.ChunkData.ChunkMap[Voxel.ChunkID];
-            chunk.DynamicLights.Remove(this);
-            Chunks.DynamicLights.Remove(this);
-            foreach(VoxelChunk neighbor in chunk.Neighbors.Values)
-            {
-                neighbor.ShouldRebuild = true;
-                neighbor.ShouldRecalculateLighting = true;
-            }
+            Lights.Remove(this);
         }
     }
 

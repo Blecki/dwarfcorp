@@ -58,6 +58,14 @@ namespace DwarfCorp
             }
         }
 
+        public int GetNumTrigger()
+        {
+            return
+                (int)
+                    MathFunctions.Clamp((int) (Math.Abs(1*LocParent.BoundingBox.Max.Y - LocParent.BoundingBox.Min.Y)), 1,
+                        20);
+        }
+
         public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
             CheckLavaTimer.Update(DwarfTime);
@@ -79,7 +87,7 @@ namespace DwarfCorp
                 {
                     Vector3 extents = (LocParent.BoundingBox.Max - LocParent.BoundingBox.Min);
                     Vector3 randomPoint = LocParent.BoundingBox.Min + new Vector3(extents.X * MathFunctions.Rand(), extents.Y * MathFunctions.Rand(), extents.Z * MathFunctions.Rand());
-                    PlayState.ParticleManager.Trigger("flame", randomPoint, Color.White, 1);
+                    PlayState.ParticleManager.Trigger("flame", randomPoint, Color.White, GetNumTrigger());
                 }
             }
 

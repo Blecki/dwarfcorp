@@ -28,7 +28,7 @@ namespace DwarfCorp
                 Hint = "Click and drag to place " + VoxelType;
                 Recharges = false;
                 RechargeTimer = new Timer(5.0f, false);
-                ManaCost = 150;
+                ManaCost = 15;
                 Mode = SpellMode.SelectEmptyVoxels;
             }
             else
@@ -38,20 +38,20 @@ namespace DwarfCorp
                 Hint = "Click and drag to transmute.";
                 Recharges = false;
                 RechargeTimer = new Timer(5.0f, false);
-                ManaCost = 250;
+                ManaCost = 25;
                 Mode = SpellMode.SelectEmptyVoxels;
             }
 
         }
 
-        public override void OnVoxelsSelected(List<Voxel> voxels)
+        public override void OnVoxelsSelected(SpellTree tree, List<Voxel> voxels)
         {
             HashSet<Point3> chunksToRebuild = new HashSet<Point3>();
             bool placed = false;
             foreach (Voxel selected in voxels)
             {
 
-                if (selected != null && ((!Transmute && selected.IsEmpty) || Transmute && !selected.IsEmpty))
+                if (selected != null && ((!Transmute && selected.IsEmpty) || Transmute && !selected.IsEmpty) && OnCast(tree))
                 {
                     PlayState.ParticleManager.Trigger("star_particle", selected.Position + Vector3.One * 0.5f, Color.White, 4);
                     VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType(VoxelType), selected);
@@ -82,7 +82,7 @@ namespace DwarfCorp
             }
 
             RechargeTimer.Reset(RechargeTimer.TargetTimeSeconds);
-            base.OnVoxelsSelected(voxels);
+            base.OnVoxelsSelected(tree, voxels);
         }
     }
 }

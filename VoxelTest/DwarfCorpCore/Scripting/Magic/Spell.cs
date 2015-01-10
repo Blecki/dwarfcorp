@@ -37,12 +37,28 @@ namespace DwarfCorp
             
         }
 
-        public virtual void OnVoxelsSelected(List<Voxel> voxels)
+        public virtual bool OnCast(SpellTree tree)
+        {
+            bool canCast = tree.CanCast(this);
+
+            if (canCast)
+            {
+                tree.UseMagic(ManaCost);
+            }
+            else
+            {
+                SoundManager.PlaySound(ContentPaths.Audio.wurp, PlayState.CursorLightPos, true, 0.25f);
+                PlayState.GUI.ToolTipManager.Popup("Not enough mana. Need " + (int)ManaCost + " but only have " + (int)tree.Mana);
+            }
+            return canCast;
+        }
+
+        public virtual void OnVoxelsSelected(SpellTree tree, List<Voxel> voxels)
         {
             
         }
 
-        public virtual void OnEntitiesSelected(List<Body> entities)
+        public virtual void OnEntitiesSelected(SpellTree tree, List<Body> entities)
         {
             
         }

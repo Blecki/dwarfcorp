@@ -13,28 +13,38 @@ namespace DwarfCorp
 
     public class Fairy : Creature
     {
+
+        public Timer ParticleTimer { get; set; }
         public Fairy()
         {
 
         }
         public Fairy(string allies, Vector3 position) :
-            base(new CreatureStats(), "Dwarf", PlayState.PlanService, PlayState.ComponentManager.Factions.Factions[allies],
+            base( new CreatureStats(new FairyClass(), 0), "Dwarf", PlayState.PlanService, PlayState.ComponentManager.Factions.Factions[allies],
            new Physics("Fairy", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position),
-                       new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0)),
+                       new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, 0, 0)),
               PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Fairy")
         {
+            ParticleTimer = new Timer(0.2f, false);
             Initialize(new FairyClass());
         }
 
         public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
+            if (ParticleTimer.HasTriggered)
+            {
+                PlayState.ParticleManager.Trigger("star_particle", Sprite.Position, Color.White, 1);    
+            }
+            ParticleTimer.Update(DwarfTime);
             base.Update(DwarfTime, chunks, camera);
         }
+
+        
 
         public void Initialize(EmployeeClass dwarfClass)
         {
             Physics.Orientation = Physics.OrientMode.RotateY;
-            Sprite = new CharacterSprite(Graphics, Manager, "Fairy Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 3.0f, 0)));
+            Sprite = new CharacterSprite(Graphics, Manager, "Fairy Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 0.5f, 0)));
             foreach (Animation animation in dwarfClass.Animations)
             {
                 Sprite.AddAnimation(animation.Clone());
@@ -99,9 +109,9 @@ namespace DwarfCorp
 
             MinimapIcon minimapIcon = new MinimapIcon(Physics, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 0, 0));
 
-            new LightEmitter("Light Emitter", Physics, Matrix.Identity, Vector3.One, Vector3.One, 255, 150);
-            new Bobber(0.25f, 0.5f, MathFunctions.Rand(), Sprite);
-
+            //new LightEmitter("Light Emitter", Sprite, Matrix.Identity, Vector3.One, Vector3.One, 255, 150);
+            new Bobber(0.25f, 3.0f, MathFunctions.Rand(), Sprite);
+          
             Stats.FirstName = TextGenerator.GenerateRandom("$DwarfName");
             Stats.LastName = "The Fairy";
             

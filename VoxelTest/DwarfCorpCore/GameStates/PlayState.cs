@@ -1080,9 +1080,25 @@ namespace DwarfCorp.GameStates
             ParticleManager.RegisterEffect("splash2", bubble);
 
             // Fire
-            EmitterData flame = ParticleManager.CreatePuffLike("flame", ContentPaths.Particles.flame, BlendState.Additive);
+            EmitterData flame = ParticleManager.CreatePuffLike("flame", ContentPaths.Particles.flame,
+                BlendState.Additive);
+            flame.ConstantAccel = Vector3.Up*20;
+            flame.EmissionSpeed = 2;
+            flame.GrowthSpeed = -1.9f;
+            flame.MinAngle = -0.2f;
+            flame.MaxAngle = 0.2f;
+            flame.MinAngular = -0.01f;
+            flame.MaxAngular = 0.01f;
             ParticleManager.RegisterEffect("flame", flame);
             EmitterData greenFlame = ParticleManager.CreatePuffLike("green_flame", ContentPaths.Particles.green_flame, BlendState.Additive);
+            greenFlame.ConstantAccel = Vector3.Up * 20;
+            greenFlame.EmissionSpeed = 2;
+            greenFlame.GrowthSpeed = -1.9f;
+            greenFlame.MinAngle = -0.2f;
+            greenFlame.MaxAngle = 0.2f;
+            greenFlame.MinAngular = -0.01f;
+            greenFlame.MaxAngular = 0.01f;
+
             ParticleManager.RegisterEffect("green_flame", greenFlame);
 
             List<Point> frm2 = new List<Point>
@@ -1588,7 +1604,7 @@ namespace DwarfCorp.GameStates
 
         public void FillClosestLights(DwarfTime time)
         {
-            List<Vector3> positions = (from chunk in ChunkManager.ChunkData.ChunkMap from light in chunk.Value.DynamicLights select light.Voxel.Position).ToList();
+            List<Vector3> positions = ( from light in DynamicLight.Lights select light.Position).ToList();
             positions.Sort((a, b) =>
             {
                 float dA = (a - Camera.Position).LengthSquared();
@@ -1604,8 +1620,7 @@ namespace DwarfCorp.GameStates
                 }
                 else
                 {
-                    LightPositions[i] = positions[i - 1] + new Vector3(0.5f, 0.5f, 0.5f) +
-                                        MathFunctions.PeriodicRand((float) time.TotalGameTime.TotalSeconds + i * 100)*0.1f;
+                    LightPositions[i] = positions[i - 1];
                 }
             }
 

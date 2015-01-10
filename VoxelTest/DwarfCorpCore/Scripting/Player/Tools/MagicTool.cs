@@ -15,6 +15,7 @@ namespace DwarfCorp
     {
         public Spell CurrentSpell { get; set; }
         public MagicMenu MagicMenu { get; set; }
+        public ProgressBar MagicBar { get; set; }
 
 
         public MagicTool()
@@ -24,6 +25,7 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
+
             MagicMenu = new MagicMenu(PlayState.GUI, PlayState.GUI.RootComponent, Player)
             {
                 LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width - 750, PlayState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350),
@@ -33,11 +35,33 @@ namespace DwarfCorp
             MagicMenu.IsVisible = true;
             MagicMenu.LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 750,
                 GameState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350);
+
+            if (MagicBar == null)
+            {
+                MagicBar = new ProgressBar(PlayState.GUI, PlayState.GUI.RootComponent,
+                    MagicMenu.Master.Spells.Mana/MagicMenu.Master.Spells.MaxMana)
+                {
+                    ToolTip = "Remaining Mana Pool",
+                    LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 200, 10, 180, 32),
+                    Tint = Color.Cyan
+                };
+                MagicBar.OnUpdate += MagicBar_OnUpdate;
+            }
+
+            MagicBar.IsVisible = true;
+        }
+
+        void MagicBar_OnUpdate()
+        {
+            MagicBar.Value = MagicMenu.Master.Spells.Mana/MagicMenu.Master.Spells.MaxMana;
+            MagicBar.ToolTip = "Remaining Mana Pool " + (int)MagicMenu.Master.Spells.Mana;
+            MagicBar.IsVisible = true;
         }
 
         public override void OnEnd()
         {
             MagicMenu.IsVisible = false;
+            MagicBar.IsVisible = false;
             MagicMenu.Destroy();
             MagicMenu = null;
         }
@@ -57,7 +81,7 @@ namespace DwarfCorp
         {
             if (CurrentSpell != null && (CurrentSpell.Mode == Spell.SpellMode.SelectFilledVoxels || CurrentSpell.Mode == Spell.SpellMode.SelectEmptyVoxels))
             {
-                CurrentSpell.OnVoxelsSelected(voxels);
+                CurrentSpell.OnVoxelsSelected(MagicMenu.SpellTree.Tree, voxels);
             }
         }
 
@@ -65,7 +89,7 @@ namespace DwarfCorp
         {
             if (CurrentSpell != null && CurrentSpell.Mode == Spell.SpellMode.SelectEntities)
             {
-                CurrentSpell.OnEntitiesSelected(bodies);
+                CurrentSpell.OnEntitiesSelected(MagicMenu.SpellTree.Tree, bodies);
             }
         }
 
