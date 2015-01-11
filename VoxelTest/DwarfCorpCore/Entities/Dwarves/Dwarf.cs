@@ -112,6 +112,7 @@ namespace DwarfCorp
             Stats.Size = 5;
             Stats.CanSleep = true;
             Stats.CanEat = true;
+            AI.TriggersMourning = true;
         }
     }
 

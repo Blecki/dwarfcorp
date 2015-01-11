@@ -744,20 +744,15 @@
         <member name="M:DwarfCorp.ParticleManager.CreateGenericExplosion(System.String,System.String)">
             <summary>
             A library function which creates a "explosion" particle effect (bouncy particles)
-            TODO: Move this to a different file
             </summary>
             <param name="assetName">Particle texture name</param>
             <param name="name">Name of the effect</param>
             <returns>A particle emitter which behaves like an explosion.</returns>
         </member>
-        <member name="M:DwarfCorp.ParticleManager.CreatePuffLike(System.String,System.String,Microsoft.Xna.Framework.Graphics.BlendState)">
+        <member name="M:DwarfCorp.ParticleManager.CreatePuffLike(System.String,DwarfCorp.SpriteSheet,Microsoft.Xna.Framework.Point,Microsoft.Xna.Framework.Graphics.BlendState)">
             <summary>
             Creates a generic particle effect which is like a "puff" (cloudy particles which float)
             </summary>
-            <param name="name">Name of the effect</param>
-            <param name="assetName">Texture asset to use</param>
-            <param name="state">Blend mode of the particles (alpha or additive)</param>
-            <returns>A puff emitter</returns>
         </member>
         <member name="T:DwarfCorp.SkyRenderer">
             <summary>

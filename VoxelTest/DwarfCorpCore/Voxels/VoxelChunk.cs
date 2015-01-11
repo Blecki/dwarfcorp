@@ -656,33 +656,16 @@ namespace DwarfCorp
 
         public void Render(Texture2D tilemap, Texture2D illumMap, Texture2D sunMap, Texture2D ambientMap, Texture2D torchMap, GraphicsDevice device, Effect effect, Matrix worldMatrix)
         {
-            effect.Parameters["xEnableLighting"].SetValue(GameSettings.Default.CursorLightEnabled ? 1 : 0);
 
-            if(GameSettings.Default.SelfIlluminationEnabled)
+            if (!RenderWireframe)
             {
-                effect.Parameters["SelfIllumination"].SetValue(1);
+                Primitive.Render(device);
+            }
+            else
+            {
+                Primitive.RenderWireframe(device);
             }
 
-            foreach(EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-
-                if(!RenderWireframe)
-                {
-                    Primitive.Render(device);
-                }
-                else
-                {
-                    Primitive.RenderWireframe(device);
-                }
-            }
-
-            effect.Parameters["SelfIllumination"].SetValue(0);
-
-            //Color color = Color.White;
-
-
-            //Drawer2D.DrawText("" + ID.X + "," + ID.Y + "," + ID.Z + ":" + ID.GetHashCode(), Origin, Color.White, Color.Black);
         }
 
         public void RebuildLiquids(GraphicsDevice g)

@@ -387,15 +387,6 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
     return Output;
 }
 
-technique Textured_2_0
-{
-    pass Pass0
-    {
-        VertexShader = compile vs_2_0 TexturedVS();
-        PixelShader = compile ps_2_0 TexturedPS();
-    }
-}
-
 technique Textured
 {
     pass Pass0

@@ -17,11 +17,8 @@ namespace DwarfCorp
     public class Sprite : Tinter
     {
         public Dictionary<string, Animation> Animations { get; set; }
-
         public Texture2D SpriteSheet { get; set; }
-
         public Animation CurrentAnimation { get; set; }
-
         public OrientMode OrientationType { get; set; }
 
 
@@ -35,11 +32,6 @@ namespace DwarfCorp
         }
 
         public float BillboardRotation { get; set; }
-
-        private static readonly RasterizerState RasterState = new RasterizerState()
-        {
-            CullMode = CullMode.None,
-        };
 
         public Sprite(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Texture2D spriteSheet, bool addToOctree) :
             base(name, parent, localTransform, Vector3.Zero, Vector3.Zero, addToOctree)
@@ -132,10 +124,6 @@ namespace DwarfCorp
                 return;
             }
 
-            RasterizerState r = graphicsDevice.RasterizerState;
-            graphicsDevice.RasterizerState = RasterState;
-
-
             if (CurrentAnimation != null && CurrentAnimation.CurrentFrame >= 0 && CurrentAnimation.CurrentFrame < CurrentAnimation.Primitives.Count)
             {
                 CurrentAnimation.PreRender();
@@ -198,13 +186,6 @@ namespace DwarfCorp
                     pass.Apply();
                     CurrentAnimation.Primitives[CurrentAnimation.CurrentFrame].Render(graphicsDevice);
                 }
-                effect.Parameters["xWorld"].SetValue(Matrix.Identity);
-            }
-
-
-            if(r != null)
-            {
-                graphicsDevice.RasterizerState = r;
             }
         }
     }

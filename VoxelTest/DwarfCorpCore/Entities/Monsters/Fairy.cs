@@ -15,6 +15,7 @@ namespace DwarfCorp
     {
 
         public Timer ParticleTimer { get; set; }
+        public Timer DeathTimer { get; set; }
         public Fairy()
         {
 
@@ -26,6 +27,7 @@ namespace DwarfCorp
               PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Fairy")
         {
             ParticleTimer = new Timer(0.2f, false);
+            DeathTimer = new Timer(30.0f, true);
             Initialize(new FairyClass());
         }
 
@@ -35,7 +37,14 @@ namespace DwarfCorp
             {
                 PlayState.ParticleManager.Trigger("star_particle", Sprite.Position, Color.White, 1);    
             }
+            DeathTimer.Update(DwarfTime);
             ParticleTimer.Update(DwarfTime);
+
+            if (DeathTimer.HasTriggered)
+            {
+                Physics.Die();
+            }
+
             base.Update(DwarfTime, chunks, camera);
         }
 

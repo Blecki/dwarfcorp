@@ -24,18 +24,16 @@ namespace DwarfCorp
             vertices.CopyTo(triangles);
         }
 
-        public override void AccumulateStrips(List<LineStrip> vertices)
+        public override void AccumulateStrips(LineStrip vertices)
         {
             if (triangleCount <= 0 || Points.Count() < 2)
             {
                 return;
             }
-
-            vertices.Add(new LineStrip
-            {
-                Vertices = triangles,
-                NumTriangles = triangleCount - 2
-            });
+            vertices.NumTriangles += triangleCount;
+            vertices.Vertices.Add(triangles[0]);
+            vertices.Vertices.AddRange(triangles);
+            vertices.Vertices.Add(triangles[triangles.Length - 1]);
         }
 
         public override void Render(GraphicsDevice device, Effect effect)

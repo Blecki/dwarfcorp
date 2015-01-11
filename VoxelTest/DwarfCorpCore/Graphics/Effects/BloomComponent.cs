@@ -109,8 +109,8 @@ namespace BloomPostprocess
             // size of the backbuffer, in order to minimize fillrate costs. Reducing
             // the resolution in this way doesn't hurt quality, because we are going
             // to be blurring the bloom images in any case.
-            width /= 2;
-            height /= 2;
+            width /= 4;
+            height /= 4;
 
             renderTarget1 = new RenderTarget2D(GraphicsDevice, width, height, false, format, DepthFormat.None);
             renderTarget2 = new RenderTarget2D(GraphicsDevice, width, height, false, format, DepthFormat.None);
@@ -172,7 +172,7 @@ namespace BloomPostprocess
 
             // Pass 3: draw from rendertarget 2 back into rendertarget 1,
             // using a shader to apply a vertical gaussian blur filter.
-            SetBlurEffectParameters(0, 1.0f / (float) renderTarget1.Height);
+            SetBlurEffectParameters(0, 0.5f / (float) renderTarget1.Height);
 
             DrawFullscreenQuad(renderTarget2, renderTarget1,
                 gaussianBlurEffect,

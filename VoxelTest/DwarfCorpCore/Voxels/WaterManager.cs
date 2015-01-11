@@ -101,7 +101,7 @@ namespace DwarfCorp
                         name = "flame",
                         numSplashes = 5,
                         position = pos,
-                        sound = ContentPaths.Audio.river
+                        sound = ContentPaths.Audio.fire
                     };
                     Splashes.Enqueue(splash);
                 }
@@ -129,8 +129,8 @@ namespace DwarfCorp
                     {
                         Voxel v = atPos;
 
+                        VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType("Stone"), v);
                         VoxelChunk chunk = Chunks.ChunkData.ChunkMap[v.ChunkID];
-                        v.Type = VoxelLibrary.GetVoxelType("Stone");
                         chunk.Data.Water[v.Index].Type = LiquidType.None;
                         chunk.Data.Water[v.Index].WaterLevel = 0;
                         chunk.ShouldRebuild = true;
