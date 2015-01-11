@@ -167,7 +167,6 @@ namespace DwarfCorp
 
             if (SortedData.Data.Count > 0)
             {
-                RasterizerState r = graphics.RasterizerState;
                 graphics.RasterizerState = rasterState;
 
                 effect.CurrentTechnique = effect.Techniques["Textured"];
@@ -181,10 +180,14 @@ namespace DwarfCorp
                 graphics.BlendState = BlendMode;
 
                 effect.Parameters["xTexture"].SetValue(Texture);
+                EffectParameter world = effect.Parameters["xWorld"];
+                EffectParameter tint = effect.Parameters["xTint"];
                 foreach (InstanceData instance in SortedData.Data)
                 {
-                    effect.Parameters["xWorld"].SetValue(instance.Transform);
-                    effect.Parameters["xTint"].SetValue(instance.Color.ToVector4());
+                    if (!instance.ShouldDraw) continue;
+
+                    world.SetValue(instance.Transform);
+                    tint.SetValue(instance.Color.ToVector4());
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                     {
                         pass.Apply();
@@ -200,12 +203,8 @@ namespace DwarfCorp
                     }
                 }
 
-
-
                 effect.CurrentTechnique = effect.Techniques["Textured"];
                 effect.Parameters["xWorld"].SetValue(Matrix.Identity);
-
-                graphics.RasterizerState = r;
                 graphics.BlendState = blendState;
 
             }

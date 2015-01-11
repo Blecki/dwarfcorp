@@ -25,7 +25,7 @@ namespace DwarfCorp
     }
 
     [JsonObject(IsReference = true)]
-    public class EmitterData
+    public class EmitterData : ICloneable
     {
         public int MaxParticles;
         public int ParticlesPerFrame;
@@ -51,6 +51,24 @@ namespace DwarfCorp
         public bool Sleeps = false;
         [JsonIgnore]
         public BlendState Blend = BlendState.AlphaBlend;
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+
+        public EmitterData Clone(SpriteSheet sheet, Point frame)
+        {
+            EmitterData toReturn = Clone() as EmitterData;
+            if (toReturn == null) return null;
+            if (toReturn.Animation != null)
+            {
+                toReturn.Animation = new Animation(GameState.Game.GraphicsDevice,
+                    TextureManager.GetTexture(sheet.AssetName), sheet.AssetName, sheet.FrameWidth, sheet.FrameHeight,
+                    new List<Point>() {frame}, true, Color.White, 1.0f, 1.0f, 1.0f, false);
+            }
+            return toReturn;
+        }
     }
 
     /// <summary>
@@ -76,7 +94,7 @@ namespace DwarfCorp
         public List<Particle> Particles { get; set; }
         public EmitterData Data { get; set; }
         public Timer TriggerTimer { get; set; }
-        private static Camera camera = null;
+        private static Camera _camera = null;
 
         [OnDeserialized]
         protected void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
@@ -85,10 +103,10 @@ namespace DwarfCorp
             Data.Animation.Play();
         }
 
-        public static Matrix MatrixFromParticle(Particle particle, Camera camera)
+        public static Matrix MatrixFromParticle(Particle particle)
         {
             Matrix rot = Matrix.CreateRotationZ(particle.Angle);
-            Matrix bill = Matrix.CreateBillboard(particle.Position, camera.Position, camera.UpVector, null);
+            Matrix bill = Matrix.CreateBillboard(particle.Position, _camera.Position, _camera.UpVector, null);
             Matrix noTransBill = bill;
             noTransBill.Translation = Vector3.Zero;
 
@@ -179,7 +197,7 @@ namespace DwarfCorp
                 return 0;
             }
 
-            if((camera.Position - A.Position).LengthSquared() < (camera.Position - B.Position).LengthSquared())
+            if((_camera.Position - A.Position).LengthSquared() < (_camera.Position - B.Position).LengthSquared())
             {
                 return 1;
             }
@@ -197,7 +215,7 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
-            ParticleEmitter.camera = camera;
+            ParticleEmitter._camera = camera;
 
             List<Particle> toRemove = new List<Particle>();
 
@@ -264,7 +282,7 @@ namespace DwarfCorp
                 else if(p.InstanceData != null)
                 {
                     p.InstanceData.ShouldDraw = true;
-                    p.InstanceData.Transform = MatrixFromParticle(p, camera);
+                    p.InstanceData.Transform = MatrixFromParticle(p);
                     p.InstanceData.Color = p.Tint;
                 }
             }

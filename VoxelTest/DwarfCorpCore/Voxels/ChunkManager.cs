@@ -555,9 +555,15 @@ namespace DwarfCorp
             effect.Parameters["xTorchGradient"].SetValue(ChunkData.TorchMap);
             effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
             effect.Parameters["SelfIllumination"].SetValue(0);
-            foreach (KeyValuePair<Point3, VoxelChunk> chunk in ChunkData.ChunkMap)
+
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
-                chunk.Value.Render(tilemap, ChunkData.IllumMap, ChunkData.SunMap, ChunkData.AmbientMap, ChunkData.TorchMap, graphicsDevice, effect, Matrix.Identity);
+                pass.Apply();
+                foreach (KeyValuePair<Point3, VoxelChunk> chunk in ChunkData.ChunkMap)
+                {
+                    chunk.Value.Render(tilemap, ChunkData.IllumMap, ChunkData.SunMap, ChunkData.AmbientMap,
+                        ChunkData.TorchMap, graphicsDevice, effect, Matrix.Identity);
+                }
             }
         }
 
@@ -576,11 +582,17 @@ namespace DwarfCorp
             effect.Parameters["xTorchGradient"].SetValue(ChunkData.TorchMap);
             effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
             effect.Parameters["SelfIllumination"].SetValue(1);
-            foreach (KeyValuePair<Point3, VoxelChunk> chunk in ChunkData.ChunkMap)
+
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
-                if(renderCamera.GetFrustrum().Intersects(chunk.Value.GetBoundingBox()))
+                pass.Apply();
+                foreach (KeyValuePair<Point3, VoxelChunk> chunk in ChunkData.ChunkMap)
                 {
-                    chunk.Value.Render(tilemap, ChunkData.IllumMap, ChunkData.SunMap, ChunkData.AmbientMap, ChunkData.TorchMap, graphicsDevice, effect, worldMatrix);
+                    if (renderCamera.GetFrustrum().Intersects(chunk.Value.GetBoundingBox()))
+                    {
+                        chunk.Value.Render(tilemap, ChunkData.IllumMap, ChunkData.SunMap, ChunkData.AmbientMap,
+                            ChunkData.TorchMap, graphicsDevice, effect, worldMatrix);
+                    }
                 }
             }
         }
@@ -594,9 +606,15 @@ namespace DwarfCorp
             effect.Parameters["xTorchGradient"].SetValue(ChunkData.TorchMap);
             effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
             effect.Parameters["SelfIllumination"].SetValue(1);
-            foreach(VoxelChunk chunk in RenderList)
+
+            
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
-                chunk.Render(ChunkData.Tilemap, ChunkData.IllumMap, ChunkData.SunMap, ChunkData.AmbientMap, ChunkData.TorchMap, graphicsDevice, effect, worldMatrix);
+                pass.Apply();
+                foreach(VoxelChunk chunk in RenderList)
+                {
+                    chunk.Render(ChunkData.Tilemap, ChunkData.IllumMap, ChunkData.SunMap, ChunkData.AmbientMap, ChunkData.TorchMap, graphicsDevice, effect, worldMatrix);
+                }
             }
 
         }

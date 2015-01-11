@@ -10,14 +10,14 @@
     <framework targetVersion="4.0" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="DwarfCorp.exe.manifest" size="66619">
+    <dependentAssembly dependencyType="install" codebase="DwarfCorp.exe.manifest" size="67013">
       <assemblyIdentity name="DwarfCorp.exe" version="1.1.0.0" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="x86" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>qcwB4gaymXwtlUXl36EHFx6mZPw=</dsig:DigestValue>
+        <dsig:DigestValue>GVOxZ92gZaKuok8lQ2WyQRm1+C8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

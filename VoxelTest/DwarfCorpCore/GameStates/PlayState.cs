@@ -1066,11 +1066,11 @@ namespace DwarfCorp.GameStates
             ParticleManager = new ParticleManager(ComponentManager);
 
             // Smoke
-            EmitterData puff = ParticleManager.CreatePuffLike("puff", ContentPaths.Particles.puff, BlendState.AlphaBlend);
+            EmitterData puff = ParticleManager.CreatePuffLike("puff", new SpriteSheet(ContentPaths.Particles.puff), Point.Zero, BlendState.AlphaBlend);
            
 
             // Bubbles
-            EmitterData bubble = ParticleManager.CreatePuffLike("splash2", ContentPaths.Particles.splash2, BlendState.AlphaBlend);
+            EmitterData bubble = ParticleManager.CreatePuffLike("splash2", new SpriteSheet(ContentPaths.Particles.splash2), Point.Zero, BlendState.AlphaBlend);
             bubble.ConstantAccel = new Vector3(0, -10, 0);
             bubble.EmissionSpeed = 5;
             bubble.LinearDamping = 0.999f;
@@ -1080,8 +1080,8 @@ namespace DwarfCorp.GameStates
             ParticleManager.RegisterEffect("splash2", bubble);
 
             // Fire
-            EmitterData flame = ParticleManager.CreatePuffLike("flame", ContentPaths.Particles.flame,
-                BlendState.Additive);
+            SpriteSheet fireSheet = new SpriteSheet(ContentPaths.Particles.more_flames, 32, 32);
+            EmitterData flame = ParticleManager.CreatePuffLike("flame", fireSheet, Point.Zero, BlendState.AlphaBlend);
             flame.ConstantAccel = Vector3.Up*20;
             flame.EmissionSpeed = 2;
             flame.GrowthSpeed = -1.9f;
@@ -1089,8 +1089,10 @@ namespace DwarfCorp.GameStates
             flame.MaxAngle = 0.2f;
             flame.MinAngular = -0.01f;
             flame.MaxAngular = 0.01f;
-            ParticleManager.RegisterEffect("flame", flame);
-            EmitterData greenFlame = ParticleManager.CreatePuffLike("green_flame", ContentPaths.Particles.green_flame, BlendState.Additive);
+            flame.MaxParticles = 500;
+            ParticleManager.RegisterEffect("flame", flame, flame.Clone(fireSheet, new Point(1, 0)), flame.Clone(fireSheet, new Point(2, 0)), flame.Clone(fireSheet, new Point(3, 0)));
+
+            EmitterData greenFlame = ParticleManager.CreatePuffLike("green_flame", new SpriteSheet(ContentPaths.Particles.green_flame), new Point(0, 0), BlendState.Additive);
             greenFlame.ConstantAccel = Vector3.Up * 20;
             greenFlame.EmissionSpeed = 2;
             greenFlame.GrowthSpeed = -1.9f;
@@ -1134,7 +1136,7 @@ namespace DwarfCorp.GameStates
 
             // Various resource explosions
             ParticleManager.CreateGenericExplosion(ContentPaths.Particles.dirt_particle, "dirt_particle");
-            EmitterData stars = ParticleManager.CreatePuffLike( "star_particle", ContentPaths.Particles.star_particle, BlendState.Additive);
+            EmitterData stars = ParticleManager.CreatePuffLike( "star_particle", new SpriteSheet(ContentPaths.Particles.star_particle), new Point(0, 0),  BlendState.Additive);
             stars.MinAngle = -0.1f;
             stars.MaxAngle = 0.1f;
             stars.MinScale = 0.2f;
@@ -1152,7 +1154,7 @@ namespace DwarfCorp.GameStates
             ParticleManager.CreateGenericExplosion(ContentPaths.Particles.dirt_particle, "dirt_particle");
 
             // Blood explosion
-            ParticleEmitter b = ParticleManager.CreateGenericExplosion(ContentPaths.Particles.blood_particle, "blood_particle");
+            ParticleEmitter b = ParticleManager.CreateGenericExplosion(ContentPaths.Particles.blood_particle, "blood_particle").Emitters[0];
             b.Data.MinScale = 0.1f;
             b.Data.MaxScale = 0.15f;
             b.Data.GrowthSpeed = -0.1f;
@@ -1545,11 +1547,9 @@ namespace DwarfCorp.GameStates
         /// <param name="waterLevel">The estimated height of water</param>
         public void DrawComponents(DwarfTime DwarfTime, Effect effect, Matrix view, ComponentManager.WaterRenderType waterRenderType, float waterLevel)
         {
-            ComponentManager.Render(DwarfTime, ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, effect, waterRenderType, waterLevel);
-
-            bool reset = waterRenderType == ComponentManager.WaterRenderType.None;
-
             effect.Parameters["xView"].SetValue(view);
+            ComponentManager.Render(DwarfTime, ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, effect, waterRenderType, waterLevel);
+            bool reset = waterRenderType == ComponentManager.WaterRenderType.None;
             InstanceManager.Render(GraphicsDevice, effect, Camera, reset);
         }
 

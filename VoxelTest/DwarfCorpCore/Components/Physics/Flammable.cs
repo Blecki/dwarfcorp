@@ -24,6 +24,7 @@ namespace DwarfCorp
         public float Damage { get; set; }
 
         public Timer CheckLavaTimer { get; set; }
+        public Timer SoundTimer { get; set; }
 
         public Flammable()
         {
@@ -39,6 +40,7 @@ namespace DwarfCorp
             Damage = 50.0f;
             Health = health;
             CheckLavaTimer = new Timer(2.5f, false);
+            SoundTimer = new Timer(1.0f, false);
         }
 
 
@@ -69,7 +71,7 @@ namespace DwarfCorp
         public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
             CheckLavaTimer.Update(DwarfTime);
-
+            SoundTimer.Update(DwarfTime);
             if(CheckLavaTimer.HasTriggered)
             {
                 CheckForLava(DwarfTime, chunks);
@@ -78,8 +80,10 @@ namespace DwarfCorp
             if(Heat > Flashpoint)
             {
                 Heat *= 1.01f;
-                Health.Damage(Damage * (float) DwarfTime.ElapsedGameTime.TotalSeconds);
+                Health.Damage(Damage * (float) DwarfTime.ElapsedGameTime.TotalSeconds, Health.DamageType.Fire);
 
+                if(SoundTimer.HasTriggered)
+                    SoundManager.PlaySound(ContentPaths.Audio.fire, LocParent.Position, true, 0.5f);
                 double totalSize = (LocParent.BoundingBox.Max - LocParent.BoundingBox.Min).Length();
                 int numFlames = (int) (totalSize / 2.0f) + 1;
 

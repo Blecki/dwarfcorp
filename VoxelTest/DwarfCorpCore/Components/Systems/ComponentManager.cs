@@ -373,7 +373,7 @@ namespace DwarfCorp
 
 
             effect.Parameters["xEnableLighting"].SetValue(GameSettings.Default.CursorLightEnabled ? 1 : 0);
-
+            graphicsDevice.RasterizerState = RasterizerState.CullNone;
 
             foreach(GameComponent component in componentsToDraw)
             {

@@ -10,9 +10,9 @@ namespace DwarfCorp
     /// </summary>
     public abstract class DrawCommand3D
     {
-        public struct LineStrip
+        public class LineStrip
         {
-            public VertexPositionColor[] Vertices;
+            public List<VertexPositionColor> Vertices;
             public int NumTriangles;
         }
 
@@ -25,7 +25,7 @@ namespace DwarfCorp
 
         public abstract void Render(GraphicsDevice device, Effect effect);
 
-        public abstract void AccumulateStrips(List<LineStrip> vertices);
+        public abstract void AccumulateStrips(LineStrip vertices);
     }
 
 }
