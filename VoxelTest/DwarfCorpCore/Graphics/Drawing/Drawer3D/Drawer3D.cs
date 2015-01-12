@@ -57,23 +57,22 @@ namespace DwarfCorp
             effect.CurrentTechnique = effect.Techniques["Untextured"];
             effect.Parameters["xWorld"].SetValue(Matrix.Identity);
 
-            List<DrawCommand3D.LineStrip> strips = new List<DrawCommand3D.LineStrip>();
+            DrawCommand3D.LineStrip strips = new DrawCommand3D.LineStrip()
+            {
+                Vertices = new List<VertexPositionColor>()
+            };
             foreach(DrawCommand3D command in Commands)
             {
                 command.AccumulateStrips(strips);
 
             }
 
-            if (strips.Count > 0)
+            if (strips.Vertices.Count > 0 && strips.NumTriangles > 0)
             {
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-
-                    foreach(DrawCommand3D.LineStrip strip in strips)
-                    {
-                        device.DrawUserPrimitives(PrimitiveType.TriangleStrip, strip.Vertices, 0, strip.NumTriangles);
-                    }
+                    device.DrawUserPrimitives(PrimitiveType.TriangleStrip, strips.Vertices.ToArray(), 0, strips.NumTriangles);
                 }
             }
 

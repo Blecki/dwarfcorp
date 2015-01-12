@@ -137,7 +137,7 @@ namespace DwarfCorp
         }
 
         public bool IsOverQualified {
-            get { return XP > CurrentClass.Levels[LevelIndex + 1].XP; }}
+            get { return CurrentClass.Levels.Count > 1 && XP > CurrentClass.Levels[LevelIndex + 1].XP; }}
 
         public float BaseFarmSpeed { get { return BuffedInt/100.0f + BuffedStr/100.0f; }}
         public bool CanEat { get; set; }

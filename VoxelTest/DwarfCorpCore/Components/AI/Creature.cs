@@ -311,7 +311,7 @@ namespace DwarfCorp
                     NoiseMaker.MakeNoise("Hurt", AI.Position);
                     this.Sprite.Blink(0.5f);
                     AI.AddThought(Thought.ThoughtType.TookDamage);
-                    PlayState.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 5);
+                    PlayState.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
                     break;
             }
 
@@ -391,7 +391,7 @@ namespace DwarfCorp
                 NoiseMaker.MakeNoise("Hurt", AI.Position);
                 this.Sprite.Blink(0.5f);
                 AI.AddThought(Thought.ThoughtType.TookDamage);
-                PlayState.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 5);
+                PlayState.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
             }
 
             return damage;

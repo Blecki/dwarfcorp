@@ -301,7 +301,7 @@ namespace DwarfCorp
             }
             UpdateInput(game, time);
 
-            if (Faction.Minions.Any(m => m.IsDead))
+            if (Faction.Minions.Any(m => m.IsDead && m.TriggersMourning))
             {
                 foreach (CreatureAI minion in Faction.Minions)
                 {

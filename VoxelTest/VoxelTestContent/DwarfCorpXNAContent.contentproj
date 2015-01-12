@@ -17,6 +17,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup>
     <RootNamespace>VoxelTestContent</RootNamespace>
@@ -903,6 +904,11 @@
     </Compile>
     <Compile Include="Entities\Dwarf\Sprites\fairy.png">
       <Name>fairy</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Particles\moreflames.png">
+      <Name>moreflames</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

@@ -42,6 +42,7 @@ namespace DwarfCorp
             public static string blood_particle = ProgramData.CreatePath("Particles", "blood_particle");
             public static string dirt_particle = ProgramData.CreatePath("Particles", "dirt_particle");
             public static string flame = ProgramData.CreatePath("Particles", "flame");
+            public static string more_flames = ProgramData.CreatePath("Particles", "moreflames");
             public static string leaf = ProgramData.CreatePath("Particles", "leaf");
             public static string puff = ProgramData.CreatePath("Particles", "puff");
             public static string sand_particle = ProgramData.CreatePath("Particles", "sand_particle");

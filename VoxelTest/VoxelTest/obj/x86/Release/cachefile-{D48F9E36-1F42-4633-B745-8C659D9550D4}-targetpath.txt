@@ -136,6 +136,7 @@ Content\Entities\Elf\Sprites\elf-bow.xnb
 Content\Entities\Elf\Sprites\elf.xnb
 Content\Entities\Elf\Sprites\arrow.xnb
 Content\Entities\Dwarf\Sprites\fairy.xnb
+Content\Particles\moreflames.xnb
 Content\Text\adverbs.txt
 Content\Text\animals.txt
 Content\Text\adjectives.txt

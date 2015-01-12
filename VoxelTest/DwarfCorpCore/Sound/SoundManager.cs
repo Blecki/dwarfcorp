@@ -24,7 +24,7 @@ namespace DwarfCorp
         public static AudioListener Listener = new AudioListener();
         public static AudioEmitter Emitter = new AudioEmitter();
         public static ContentManager Content { get; set; }
-        public static int MaxSounds = 20;
+        public static int MaxSounds = 5;
         public static Dictionary<string, int> SoundCounts = new Dictionary<string, int>();
         public static Dictionary<string, SoundEffect> EffectLibrary = new Dictionary<string, SoundEffect>();
 
@@ -79,19 +79,6 @@ namespace DwarfCorp
             }
 
 
-            Sound3D sound = new Sound3D
-            {
-                Position = location,
-                EffectInstance = effect.CreateInstance(),
-                HasStarted = false,
-                Name = name
-            };
-            sound.EffectInstance.IsLooped = false;
-
-            if (randomPitch)
-            {
-                sound.EffectInstance.Pitch = (float)(PlayState.Random.NextDouble() * 1.0f - 0.5f);
-            }
 
 #if MONOGAME_BUILD
             sound.EffectInstance.Volume = Math.Max(Math.Min(5.0f / (PlayState.Camera.Position - location).LengthSquared(), 1.0f), 0.0f);
@@ -105,21 +92,28 @@ namespace DwarfCorp
             if (SoundCounts[name] < MaxSounds)
             {
                 SoundCounts[name]++;
-                ActiveSounds.Add(sound);
-            }
-            else
-            {
-                if (!sound.EffectInstance.IsDisposed)
+
+                Sound3D sound = new Sound3D
                 {
-                    sound.EffectInstance.Stop();
-                    sound.EffectInstance = null;
+                    Position = location,
+                    EffectInstance = effect.CreateInstance(),
+                    HasStarted = false,
+                    Name = name
+                };
+                sound.EffectInstance.IsLooped = false;
+                sound.VolumeMultiplier = volume;
+
+                if (randomPitch)
+                {
+                    sound.EffectInstance.Pitch = (float)(PlayState.Random.NextDouble() * 1.0f - 0.5f);
                 }
+                ActiveSounds.Add(sound);
+
+                return sound;
             }
 
 
-            sound.VolumeMultiplier = volume;
-
-            return sound;
+            return null;
 
         }
 
