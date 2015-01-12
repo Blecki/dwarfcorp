@@ -14,7 +14,7 @@ namespace DwarfCorp
         public Tree() { }
 
         public Tree(Vector3 position, string asset, float treeSize) :
-            base("Tree", PlayState.ComponentManager.RootComponent, Matrix.Identity, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), new Vector3(treeSize, treeSize * 1.5f, treeSize))
+            base("Tree", PlayState.ComponentManager.RootComponent, Matrix.Identity, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), new Vector3(treeSize * 0.5f, treeSize * 0.25f, treeSize * 0.5f))
         {
             ComponentManager componentManager = PlayState.ComponentManager;
             Matrix matrix = Matrix.Identity;

@@ -52,12 +52,30 @@ namespace DwarfCorp
         }
 
         public List<Node> RootSpells { get; set; }
-
+        public float Mana { get; set; }
+        public float MaxMana { get; set; }
       
 
         public SpellTree()
         {
             RootSpells = new List<Node>();
+            Mana = 100.0f;
+            MaxMana = 100.0f;
+        }
+
+        public bool CanCast(Spell spell)
+        {
+            return spell.ManaCost <= Mana;
+        }
+
+        public void Recharge(float amount)
+        {
+            Mana = Math.Min(Mana + amount, MaxMana);
+        }
+
+        public void UseMagic(float amount)
+        {
+            Mana = Math.Max(Mana - amount, 0.0f);
         }
 
         public List<Spell> GetKnownSpells()

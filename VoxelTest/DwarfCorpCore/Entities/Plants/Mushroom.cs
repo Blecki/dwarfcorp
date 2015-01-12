@@ -25,7 +25,7 @@ namespace DwarfCorp
             matrix.Translation = position + new Vector3(0.5f, -0.25f, 0.5f);
             LocalTransform = matrix;
 
-            Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.wheat);
+            Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.mushroom);
 
             List<Point> frames = new List<Point>
             {

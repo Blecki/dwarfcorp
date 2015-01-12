@@ -192,18 +192,18 @@ namespace DwarfCorp
             effect.Parameters["xView"].SetValue(view);
             effect.Parameters["xProjection"].SetValue(projection);
 
-            foreach(KeyValuePair<LiquidType, LiquidAsset> asset in LiquidAssets)
+            foreach (KeyValuePair<LiquidType, LiquidAsset> asset in LiquidAssets)
             {
                 effect.Parameters["xFlatColor"].SetValue(asset.Value.FlatColor);
 
-                foreach(KeyValuePair<Point3, VoxelChunk> chunkpair in chunks.ChunkData.ChunkMap)
-                {
-                    VoxelChunk chunk = chunkpair.Value;
 
-                    foreach(EffectPass pass in effect.CurrentTechnique.Passes)
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    foreach (KeyValuePair<Point3, VoxelChunk> chunkpair in chunks.ChunkData.ChunkMap)
                     {
-                        pass.Apply();
-                        if(chunk.IsVisible)
+                        VoxelChunk chunk = chunkpair.Value;
+                        if (chunk.IsVisible)
                         {
                             //chunk.PrimitiveMutex.WaitOne();
                             chunk.Liquids[asset.Key].Render(device);
@@ -237,7 +237,7 @@ namespace DwarfCorp
             effect.Parameters["xWindDirection"].SetValue(windDirection);
             effect.Parameters["xCamPos"].SetValue(camera.Position);
 
-            foreach(KeyValuePair<LiquidType, LiquidAsset> asset in LiquidAssets)
+            foreach (KeyValuePair<LiquidType, LiquidAsset> asset in LiquidAssets)
             {
                 effect.Parameters["xWaveLength"].SetValue(asset.Value.WaveLength);
                 effect.Parameters["xWaveHeight"].SetValue(asset.Value.WaveHeight);
@@ -250,14 +250,14 @@ namespace DwarfCorp
                 effect.Parameters["xWaterSloshOpacity"].SetValue(asset.Value.SloshOpacity);
                 effect.Parameters["xRippleColor"].SetValue(asset.Value.RippleColor);
 
-                foreach(KeyValuePair<Point3, VoxelChunk> chunkpair in chunks.ChunkData.ChunkMap)
-                {
-                    VoxelChunk chunk = chunkpair.Value;
 
-                    foreach(EffectPass pass in effect.CurrentTechnique.Passes)
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    foreach (KeyValuePair<Point3, VoxelChunk> chunkpair in chunks.ChunkData.ChunkMap)
                     {
-                        pass.Apply();
-                        if(chunk.IsVisible)
+                        VoxelChunk chunk = chunkpair.Value;
+                        if (chunk.IsVisible)
                         {
                             //chunk.PrimitiveMutex.WaitOne();
                             chunk.Liquids[asset.Key].Render(device);

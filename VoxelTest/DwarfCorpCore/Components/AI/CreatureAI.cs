@@ -113,6 +113,7 @@ namespace DwarfCorp
         public Blackboard Blackboard { get; set; }
 
         public List<Task> Tasks { get; set; }
+        public bool TriggersMourning { get; set; }
 
         public CreatureAI()
         {

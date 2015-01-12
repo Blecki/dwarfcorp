@@ -656,33 +656,16 @@ namespace DwarfCorp
 
         public void Render(Texture2D tilemap, Texture2D illumMap, Texture2D sunMap, Texture2D ambientMap, Texture2D torchMap, GraphicsDevice device, Effect effect, Matrix worldMatrix)
         {
-            effect.Parameters["xEnableLighting"].SetValue(GameSettings.Default.CursorLightEnabled ? 1 : 0);
 
-            if(GameSettings.Default.SelfIlluminationEnabled)
+            if (!RenderWireframe)
             {
-                effect.Parameters["SelfIllumination"].SetValue(1);
+                Primitive.Render(device);
+            }
+            else
+            {
+                Primitive.RenderWireframe(device);
             }
 
-            foreach(EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-
-                if(!RenderWireframe)
-                {
-                    Primitive.Render(device);
-                }
-                else
-                {
-                    Primitive.RenderWireframe(device);
-                }
-            }
-
-            effect.Parameters["SelfIllumination"].SetValue(0);
-
-            //Color color = Color.White;
-
-
-            //Drawer2D.DrawText("" + ID.X + "," + ID.Y + "," + ID.Z + ":" + ID.GetHashCode(), Origin, Color.White, Color.Black);
         }
 
         public void RebuildLiquids(GraphicsDevice g)
@@ -947,37 +930,7 @@ namespace DwarfCorp
 
         #region lighting
 
-        public DynamicLight AddLight(Vector3 worldLocation, byte range, byte intensity)
-        {
-            if(IsWorldLocationValid(worldLocation))
-            {
-                ShouldRecalculateLighting = true;
-                ShouldRebuild = true;
-                Voxel voxel = new Voxel();
-                bool success = Manager.ChunkData.GetVoxelerenceAtWorldLocation(this, worldLocation, ref voxel);
-                if (!success)
-                {
-                    return null;
-                }
-
-                DynamicLight light = new DynamicLight(range, intensity, voxel, Manager);
-                DynamicLights.Add(light);
-                Manager.DynamicLights.Add(light);
-                foreach(VoxelChunk chunk in Neighbors.Values)
-                {
-                    if(chunk != this)
-                    {
-                        chunk.ShouldRebuild = true;
-                        chunk.ShouldRecalculateLighting = true;
-                    }
-                }
-
-                return light;
-            }
-
-            return null;
-        }
-
+       
         public void SetAllToRecalculate()
         {
             int numVoxels = sizeX*sizeY*sizeZ;
@@ -994,7 +947,7 @@ namespace DwarfCorp
         public byte GetIntensity(DynamicLight light, byte lightIntensity, Voxel voxel)
         {
             Vector3 vertexPos = voxel.Position;
-            Vector3 diff = vertexPos - (light.Voxel.Position + new Vector3(0.5f, 0.5f, 0.5f));
+            Vector3 diff = vertexPos - (light.Position + new Vector3(0.5f, 0.5f, 0.5f));
             float dist = diff.LengthSquared() * 2;
 
             return (byte) (int) ((Math.Min(1.0f / (dist + 0.0001f), 1.0f)) * (float) light.Intensity);

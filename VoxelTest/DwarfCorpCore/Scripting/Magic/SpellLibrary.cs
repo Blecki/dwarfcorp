@@ -71,6 +71,20 @@ namespace DwarfCorp
                                                 Description = "Makes the selected creatures work harder for 60 seconds (+5 to DEX, STR, INT and WIS)",
                                                 Hint = "Click and drag to select creatures"
                                             },
+                                            Children = new List<SpellTree.Node>()
+                                            {
+                                                new SpellTree.Node()
+                                                {
+                                                    Spell = new CreateEntitySpell("Fairy", false)
+                                                    {
+                                                        Name = "Magic Helper",
+                                                        Description = "Creates a magical helper employee who persists for 30 seconds",
+                                                        Hint = "Click to spawn a helper"
+                                                    },
+                                                    ResearchProgress = 150.0f,
+                                                    ResearchTime = 150.0f
+                                                }
+                                            },
                                             ResearchProgress = 60.0f,
                                             ResearchTime = 60.0f,
                                         },

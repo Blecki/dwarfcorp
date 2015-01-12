@@ -168,25 +168,34 @@ namespace DwarfCorp
 
 
             ClassLabel.Text = "lvl. " + Minion.Stats.LevelIndex + " " + Minion.Stats.CurrentClass.Name + "\n" + Minion.Stats.CurrentLevel.Name;
-            EmployeeClass.Level nextLevel = Minion.Stats.CurrentClass.Levels[Minion.Stats.LevelIndex + 1];
-            int diff = nextLevel.XP - Minion.Stats.XP;
 
-            string diffText = "";
-
-            if(diff > 0)
+            if (Minion.Stats.CurrentClass.Levels.Count > Minion.Stats.LevelIndex + 1)
             {
-                diffText = "(" + diff + " to next lvl)";
-                LevelUpButton.IsVisible = false;
+                EmployeeClass.Level nextLevel = Minion.Stats.CurrentClass.Levels[Minion.Stats.LevelIndex + 1];
+                int diff = nextLevel.XP - Minion.Stats.XP;
+
+                string diffText = "";
+
+                if (diff > 0)
+                {
+                    diffText = "(" + diff + " to next lvl)";
+                    LevelUpButton.IsVisible = false;
+                }
+                else
+                {
+                    diffText = "(Overqualified)";
+                    LevelUpButton.IsVisible = true;
+                    LevelUpButton.ToolTip = "Promote to " + nextLevel.Name;
+
+                }
+
+
+                XpLabel.Text = "XP: " + Minion.Stats.XP + "\n" + diffText;
             }
             else
             {
-                diffText = "(Overqualified)";
-                LevelUpButton.IsVisible = true;
-                LevelUpButton.ToolTip = "Promote to " + nextLevel.Name;
-
+                XpLabel.Text = "XP: " + Minion.Stats.XP;
             }
-
-            XpLabel.Text = "XP: " + Minion.Stats.XP + "\n" + diffText;
             PayLabel.Text = "Pay: " + Minion.Stats.CurrentLevel.Pay.ToString("C0") + " / day";
 
 

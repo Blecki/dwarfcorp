@@ -213,7 +213,7 @@ namespace DwarfCorp
             List<Rectangle> boundingRects = new List<Rectangle>();
             foreach (SpellButton button in SpellButtons)
             {
-                button.ImageButton.LocalBounds = new Rectangle((button.Y - 1) * columnWidth, button.X * rowHeight, button.ImageButton.LocalBounds.Width, button.ImageButton.LocalBounds.Height);
+                button.ImageButton.LocalBounds = new Rectangle((button.Y - 1) * columnWidth, (button.X + 1) * rowHeight, button.ImageButton.LocalBounds.Width, button.ImageButton.LocalBounds.Height);
                 boundingRects.Add(button.ImageButton.LocalBounds);
             }
             MainPanel.LocalBounds = MathFunctions.GetBoundingRectangle(boundingRects);
