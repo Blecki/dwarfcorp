@@ -1090,6 +1090,8 @@ namespace DwarfCorp.GameStates
             flame.MinAngular = -0.01f;
             flame.MaxAngular = 0.01f;
             flame.MaxParticles = 500;
+            flame.MinScale = 0.2f;
+            flame.MaxScale = 2.0f;
             ParticleManager.RegisterEffect("flame", flame, flame.Clone(fireSheet, new Point(1, 0)), flame.Clone(fireSheet, new Point(2, 0)), flame.Clone(fireSheet, new Point(3, 0)));
 
             EmitterData greenFlame = ParticleManager.CreatePuffLike("green_flame", new SpriteSheet(ContentPaths.Particles.green_flame), new Point(0, 0), BlendState.Additive);
