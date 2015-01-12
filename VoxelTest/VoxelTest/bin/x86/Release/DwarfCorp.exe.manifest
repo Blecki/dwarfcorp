@@ -68,14 +68,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1122304">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1122816">
       <assemblyIdentity name="DwarfCorp" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>eNakwBWc1r3UrPSjpqCxKB4log0=</dsig:DigestValue>
+        <dsig:DigestValue>0aTi/ynsTzqd5uAiYkVakwOGaHs=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -1369,22 +1369,22 @@
       <dsig:DigestValue>MbaV1384lD80xqcqDJKxS139ENA=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Terrain\terrain_illumination.xnb" size="5356">
+  <file name="Content\Terrain\terrain_illumination.xnb" size="1456">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>IwErWK4/PDXoWGqCvd4eq1EGPoE=</dsig:DigestValue>
+      <dsig:DigestValue>yPwc3g0qyaNBTWWlJPrOVdEn4xM=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Terrain\terrain_tiles.xnb" size="48084">
+  <file name="Content\Terrain\terrain_tiles.xnb" size="39932">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>9SRtL2FI+WnlXaxZPk/wWu7nieg=</dsig:DigestValue>
+      <dsig:DigestValue>TMKQps/U1LGn0IsXYGh0+5MMSGM=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Terrain\water_normal.xnb" size="96976">

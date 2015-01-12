@@ -446,10 +446,10 @@ namespace DwarfCorp
                     textureBottomLeft,
                     
                     // top
-                    textureBottomLeft,
-                    textureTopRight,
-                    textureTopLeft,
                     textureBottomRight,
+                    textureTopLeft,
+                    textureTopRight,
+                    textureBottomLeft,
                     
                     // bottom
                     textureTopLeft,
@@ -484,7 +484,7 @@ namespace DwarfCorp
                     {
                         int index = vert + face * 4;
       
-                        if(!cells[face].FlipXY)
+                        if(cells[face].FlipXY)
                         {
                             Uvs[index] = new Vector2(normalizedCoords.X + baseCoords[index].Y * normalizeX, normalizedCoords.Y + baseCoords[index].X * normalizeY);
                         }

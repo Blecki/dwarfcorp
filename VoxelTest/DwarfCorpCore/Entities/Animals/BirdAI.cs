@@ -39,6 +39,7 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
+
         // Overrides the default ActOnIdle so we can
         // have the bird act in any way we wish.
         public override Task ActOnIdle()

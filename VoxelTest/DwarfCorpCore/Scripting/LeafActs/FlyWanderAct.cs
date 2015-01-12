@@ -63,6 +63,16 @@ namespace DwarfCorp
             // Use this to determine when to start turning.
             float currentDistance = 999;
 
+            {
+                // Pick a target within a box floating some distance above the surface.
+                float randomX = MathFunctions.Rand()*Radius - Radius/2.0f;
+                float randomZ = MathFunctions.Rand()*Radius - Radius/2.0f;
+                float randomY = (float) PlayState.Random.NextDouble()*YRadius + Altitude + surfaceHeight;
+
+                // Set the target to that random location.
+                LocalTarget = new Vector3(randomX + oldPosition.X, randomY, randomZ + oldPosition.Z);
+            }
+
             // Keep flying until a timer has trigerred.
             while (!WanderTime.HasTriggered)
             {
@@ -95,7 +105,6 @@ namespace DwarfCorp
                 // We apply a linear combination of the force controller and the 
                 // feed forward force to the bird to make it lazily turn around and fly.
                 Creature.Physics.ApplyForce(output * Damping + feedForward * GravityCompensation, (float)LastTime.ElapsedGameTime.TotalSeconds);
-
                 yield return Status.Running;
             }
 

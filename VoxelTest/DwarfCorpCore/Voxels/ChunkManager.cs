@@ -595,6 +595,7 @@ namespace DwarfCorp
                     }
                 }
             }
+            effect.Parameters["SelfIllumination"].SetValue(0);
         }
 
         public void Render(Camera renderCamera, DwarfTime DwarfTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix)
@@ -616,7 +617,7 @@ namespace DwarfCorp
                     chunk.Render(ChunkData.Tilemap, ChunkData.IllumMap, ChunkData.SunMap, ChunkData.AmbientMap, ChunkData.TorchMap, graphicsDevice, effect, worldMatrix);
                 }
             }
-
+            effect.Parameters["SelfIllumination"].SetValue(0);
         }
 
         public void GenerateInitialChunks(OrbitCamera camera, Point3 origin, ref string message)
