@@ -43,7 +43,7 @@ namespace DwarfCorp
                     {
                         if (OnCast(tree))
                         {
-                            creature.AddBuff(buff);
+                            creature.AddBuff(buff.Clone());
                         }
                     }
                 }

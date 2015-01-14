@@ -39,7 +39,7 @@ namespace DwarfCorp
                 Recharges = false;
                 RechargeTimer = new Timer(5.0f, false);
                 ManaCost = 25;
-                Mode = SpellMode.SelectEmptyVoxels;
+                Mode = SpellMode.SelectFilledVoxels;
             }
 
         }

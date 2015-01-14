@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -161,7 +162,9 @@ namespace DwarfCorp
 
             lock (DesignatedRooms)
             {
-                foreach (Room r in DesignatedRooms)
+                List<Room> toCheck = new List<Room>();
+                toCheck.AddRange(DesignatedRooms);
+                foreach (Room r in toCheck)
                 {
                     r.RemoveVoxel(vRef);
                     if (r.Voxels.Count == 0)

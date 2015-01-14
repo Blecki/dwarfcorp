@@ -19,7 +19,7 @@ namespace DwarfCorp
         }
 
         public ResourceEntity(ResourceLibrary.ResourceType resourceType, Vector3 position) :
-            base("Physics", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
+            base(ResourceLibrary.ResourceNames[resourceType], PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
         {
             Resource type = ResourceLibrary.Resources[resourceType];
             Texture2D spriteSheet = type.Image.Image;

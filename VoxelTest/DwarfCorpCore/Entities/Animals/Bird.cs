@@ -45,7 +45,7 @@ namespace DwarfCorp
                 new Physics
                 (
                     // It is called "bird"
-                    "bird", 
+                    "A Bird", 
                     // It's attached to the root component of the component manager
                     manager.RootComponent, 
                     // It is located at a position passed in as an argument
@@ -191,6 +191,14 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
 
             NoiseMaker.Noises.Add("chirp", new List<string>(){ContentPaths.Audio.bird});
+
+            Stats.FirstName = TextGenerator.GenerateRandom("$DwarfName");
+            Stats.LastName = " the Bird";
+            Stats.CurrentClass = new EmployeeClass()
+            {
+                Name = "Bird",
+                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Bird" } }
+            };
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -20,6 +21,7 @@ namespace DwarfCorp
         }
 
         public InspectType Type { get; set; }
+        public Timer SelectionTimer = new Timer(0.25f, false);
 
         public InspectSpell(InspectType type)
         {
@@ -34,8 +36,8 @@ namespace DwarfCorp
                     ManaCost = 0;
                     Mode = Spell.SpellMode.SelectFilledVoxels;
                     Name = "Inspect Blocks";
-                    Description = "Click on a block to get info about it";
-                    Hint = "Click a block for info";
+                    Description = "Mouse over a block to get info about it";
+                    Hint = "Mouse over a block for info";
                     RechargeTimer = new Timer(0.1f, true);
                     break;
                 }
@@ -43,14 +45,40 @@ namespace DwarfCorp
                 {
                     Image = new ImageFrame(icons, 32, 7, 1);
                     ManaCost = 0;
-                    Mode = Spell.SpellMode.SelectEntities;
+                    Mode = Spell.SpellMode.Continuous;
                     Name = "Inspect Objects";
                     Description = "Select an entity to get info about it";
-                    Hint = "Click an entity for info";
+                    Hint = "Mouse over entities for info";
                     RechargeTimer = new Timer(0.1f, true);
                     break;
                 }
             }
+        }
+
+        public override void Update(DwarfTime time, VoxelSelector voxSelector, BodySelector bodySelector)
+        {
+            SelectionTimer.Update(time);
+            if (SelectionTimer.HasTriggered)
+            {
+                if (Type == InspectType.InspectEntity)
+                {
+                    MouseState mouse = Mouse.GetState();
+                    List<Body> selected = bodySelector.SelectBodies(new Rectangle(mouse.X - 10, mouse.Y - 10, 20, 20));
+
+                    if (selected.Count > 0)
+                    {
+                        OnEntitiesSelected(PlayState.Master.Spells, selected);
+                    }
+                }
+                else
+                {
+                    Voxel vox = new Voxel();
+                    PlayState.ChunkManager.ChunkData.GetNonNullVoxelAtWorldLocation(PlayState.CursorLightPos, ref vox);
+
+                    OnVoxelsSelected(PlayState.Master.Spells, new List<Voxel>(){vox});
+                }
+            }
+            base.Update(time, voxSelector, bodySelector);
         }
 
         public override void OnEntitiesSelected(SpellTree tree, List<Body> entities)
@@ -58,13 +86,22 @@ namespace DwarfCorp
             if (this.Type != InspectType.InspectEntity) return;
 
             string desc = "";
+            bool first = true;
             foreach (Body body in entities)
             {
-                desc += body.GetDescription() + "\n";
+                if (!first) desc += "\n";
+                desc += body.GetDescription();
+                first = false;
             }
 
-            if(desc != "")
-                PlayState.GUI.ToolTipManager.Popup(desc);
+            if (desc != "")
+            {
+                PlayState.GUI.ToolTipManager.ToolTip = desc;
+            }
+            else
+            {
+                PlayState.GUI.ToolTipManager.ToolTip = "";
+            }
             base.OnEntitiesSelected(tree, entities);
         }
 
@@ -72,20 +109,33 @@ namespace DwarfCorp
         {
             if (this.Type != InspectType.InspectBlock) return;
 
-            if (!RechargeTimer.HasTriggered) return;
 
             string description = "";
-
+            bool first = true;
             foreach (Voxel selected in voxels)
             {
                 if (!selected.IsEmpty)
                 {
-                    description += selected.TypeName + ". Health: " + selected.Health + "\n";
+                    if (!first)
+                    {
+                        description += "\n";
+                    }
+                    else
+                    {
+                        first = false;
+                    }
+                    description +=  selected.TypeName + " at " + selected.GridPosition + ". Health: " + selected.Health;
                 }
             }
-            
-            if(description != "")
-                PlayState.GUI.ToolTipManager.Popup(description);
+
+            if (description != "")
+            {
+                PlayState.GUI.ToolTipManager.ToolTip = description;
+            }
+            else
+            {
+                PlayState.GUI.ToolTipManager.ToolTip = "";
+            }
             base.OnVoxelsSelected(tree, voxels);
         }
     }

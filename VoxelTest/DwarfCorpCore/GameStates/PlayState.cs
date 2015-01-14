@@ -1079,6 +1079,15 @@ namespace DwarfCorp.GameStates
             ParticleManager.RegisterEffect("puff", puff);
             ParticleManager.RegisterEffect("splash2", bubble);
 
+            EmitterData heart = ParticleManager.CreatePuffLike("heart", new SpriteSheet(ContentPaths.Particles.heart),
+                Point.Zero, BlendState.AlphaBlend);
+            heart.MinAngle = 0.01f;
+            heart.MaxAngle = 0.01f;
+            heart.MinAngular = 0.0f;
+            heart.MinAngular = 0.0f;
+            heart.ConstantAccel = Vector3.Up * 20;
+            ParticleManager.RegisterEffect("heart", heart);
+
             // Fire
             SpriteSheet fireSheet = new SpriteSheet(ContentPaths.Particles.more_flames, 32, 32);
             EmitterData flame = ParticleManager.CreatePuffLike("flame", fireSheet, Point.Zero, BlendState.AlphaBlend);

@@ -38,7 +38,7 @@ namespace DwarfCorp
                 manager.Factions.Factions["Herbivore"],
                 new Physics
                 (
-                    "deer",
+                    "A Deer",
                     manager.RootComponent,
                     Matrix.CreateTranslation(position),
                     new Vector3(1.1f, 1.1f, 1.1f),
@@ -133,6 +133,14 @@ namespace DwarfCorp
             // that can be used later
             Physics.Tags.Add("Deer");
             Physics.Tags.Add("Animal");
+
+            Stats.FirstName = TextGenerator.GenerateRandom("$DwarfName");
+            Stats.LastName = " the Deer";
+            Stats.CurrentClass = new EmployeeClass()
+            {
+                Name = "Deer",
+                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Deer"} }
+            };
 
         }
 

@@ -52,9 +52,9 @@ namespace DwarfCorp
             RoomTile[,] bookTemp =
             {
                 {
+                    RoomTile.None,
                     RoomTile.Open,
-                    RoomTile.Open,
-                    RoomTile.Open
+                    RoomTile.None
                 },
                 {
                     RoomTile.Open,
@@ -62,9 +62,9 @@ namespace DwarfCorp
                     RoomTile.Open
                 },
                 {
+                    RoomTile.None,
                     RoomTile.Open,
-                    RoomTile.Open,
-                    RoomTile.Open
+                    RoomTile.None
                 }
             };
 
@@ -92,9 +92,9 @@ namespace DwarfCorp
             RoomTile[,] potionTemp =
             {
                 {
+                    RoomTile.None,
                     RoomTile.Open,
-                    RoomTile.Open,
-                    RoomTile.Open
+                    RoomTile.None
                 },
                 {
                     RoomTile.Open,
@@ -102,9 +102,9 @@ namespace DwarfCorp
                     RoomTile.Open
                 },
                 {
+                    RoomTile.None,
                     RoomTile.Open,
-                    RoomTile.Open,
-                    RoomTile.Open
+                    RoomTile.None
                 }
             };
 
@@ -135,7 +135,7 @@ namespace DwarfCorp
             Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
             return new RoomData(LibraryRoomName, 4, "BlueTileFloor", roomResources, libraryTemplates, new ImageFrame(roomIcons, 16, 0, 1))
             {
-                Description = "Mage dwarves do magical research here",
+                Description = "Wizards do magical research here. Also holds mana crystals to charge magic spells.",
                 CanBuildAboveGround = false
             };
         }
