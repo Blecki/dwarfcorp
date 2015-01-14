@@ -202,12 +202,18 @@ namespace DwarfCorp
         public virtual string GetDescription()
         {
             string toReturn = "";
+
+            if(Parent == PlayState.ComponentManager.RootComponent)
+                toReturn += Name;
+
             foreach (GameComponent component in Children)
             {
+
                 string componentDesc = component.GetDescription();
 
                 if (!String.IsNullOrEmpty(componentDesc))
                 {
+                    toReturn += "\n ";
                     toReturn += componentDesc;
                 }
             }

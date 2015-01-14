@@ -397,10 +397,16 @@ namespace DwarfCorp
             return damage;
         }
 
-        public class Buff
+        public class Buff 
         {
             public Timer EffectTime { get; set; }
             public bool IsInEffect { get { return !EffectTime.HasTriggered; } }
+            public string Particles { get; set; }
+            public Timer ParticleTimer { get; set; }
+            public string SoundOnStart { get; set; }
+            public string SoundOnEnd { get; set; }
+
+            
 
             public Buff()
             {
@@ -410,29 +416,68 @@ namespace DwarfCorp
             public Buff(float time)
             {
                 EffectTime = new Timer(time, true);
+                ParticleTimer = new Timer(0.25f, false);
             }
 
             public virtual void OnApply(Creature creature)
             {
-
+                if (!string.IsNullOrEmpty(SoundOnStart))
+                {
+                    SoundManager.PlaySound(SoundOnStart, creature.Physics.Position, true, 1.0f);
+                }
             }
 
             public virtual void OnEnd(Creature creature)
             {
-
+                if (!string.IsNullOrEmpty(SoundOnEnd))
+                {
+                    SoundManager.PlaySound(SoundOnEnd, creature.Physics.Position, true, 1.0f);
+                }
             }
 
             public virtual void Update(DwarfTime time, Creature creature)
             {
                 EffectTime.Update(time);
+                ParticleTimer.Update(time);
+
+                if (ParticleTimer.HasTriggered && !string.IsNullOrEmpty(Particles))
+                {
+                    PlayState.ParticleManager.Trigger(Particles, creature.Physics.Position, Color.White, 1);
+                }
             }
 
+            public virtual Buff Clone()
+            {
+                return new Buff()
+                {
+                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
+                    Particles = Particles,
+                    ParticleTimer = new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
+                    SoundOnEnd = SoundOnEnd,
+                    SoundOnStart = SoundOnStart
+                };
+            }
         }
 
         public class DamageResistBuff : Buff
         {
             public Health.DamageType DamageType { get; set; }
             public float Bonus { get; set; }
+
+            public override Buff Clone()
+            {
+                return new DamageResistBuff()
+                {
+                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
+                    Particles = Particles,
+                    ParticleTimer = new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
+                    SoundOnEnd = SoundOnEnd,
+                    SoundOnStart = SoundOnStart,
+                    DamageType = DamageType,
+                    Bonus = Bonus
+                };
+            }
+
             public DamageResistBuff()
             {
                 DamageType = DamageType.Normal;
@@ -464,6 +509,19 @@ namespace DwarfCorp
                 base(time)
             {
                 Buffs = buffs;
+            }
+
+            public override Buff Clone()
+            {
+                return new StatBuff()
+                {
+                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
+                    Particles = Particles,
+                    ParticleTimer = new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
+                    SoundOnEnd = SoundOnEnd,
+                    SoundOnStart = SoundOnStart,
+                    Buffs = Buffs
+                };
             }
 
             public override void Update(DwarfTime time, Creature creature)
@@ -500,6 +558,20 @@ namespace DwarfCorp
                 creature.Damage(DamagePerSecond*dt, DamageType);
                 base.Update(time, creature);
             }
+
+            public override Buff Clone()
+            {
+                return new OngoingDamageBuff()
+                {
+                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
+                    Particles = Particles,
+                    ParticleTimer = new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
+                    SoundOnEnd = SoundOnEnd,
+                    SoundOnStart = SoundOnStart,
+                    DamageType = DamageType,
+                    DamagePerSecond = DamagePerSecond
+                };
+            }
         }
 
         public class OngoingHealBuff : Buff
@@ -522,6 +594,19 @@ namespace DwarfCorp
                 float dt = (float)time.ElapsedGameTime.TotalSeconds;
                 creature.Heal(dt * DamagePerSecond);
                 base.Update(time, creature);
+            }
+
+            public override Buff Clone()
+            {
+                return new OngoingHealBuff()
+                {
+                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
+                    Particles = Particles,
+                    ParticleTimer = new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
+                    SoundOnEnd = SoundOnEnd,
+                    SoundOnStart = SoundOnStart,
+                    DamagePerSecond = DamagePerSecond
+                };
             }
         }
 
@@ -550,6 +635,19 @@ namespace DwarfCorp
             {
                 creature.AI.RemoveThought(ThoughtType);
                 base.OnApply(creature);
+            }
+
+            public override Buff Clone()
+            {
+                return new ThoughtBuff()
+                {
+                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
+                    Particles = Particles,
+                    ParticleTimer = new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
+                    SoundOnEnd = SoundOnEnd,
+                    SoundOnStart = SoundOnStart,
+                    ThoughtType = ThoughtType
+                };
             }
         }
     }

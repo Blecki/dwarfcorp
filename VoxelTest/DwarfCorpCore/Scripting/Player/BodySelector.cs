@@ -69,6 +69,11 @@ namespace DwarfCorp
             SelectionRectangle = new Rectangle(0, 0, 0, 0);
         }
 
+        public List<Body> SelectBodies(Rectangle screenRectangle)
+        {
+            return Components.SelectRootBodiesOnScreen(screenRectangle, CameraController);
+        }
+
         public void Update()
         {
             MouseState mouse = Mouse.GetState();

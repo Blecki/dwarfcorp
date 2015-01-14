@@ -154,8 +154,13 @@ namespace DwarfCorp
 
         public void Popup(string text)
         {
+            Popup(text, 2.5f);
+        }
+
+        public void Popup(string text, float time)
+        {
             PopupTip = text;
-            PopupTimer.Reset(PopupTimer.TargetTimeSeconds);
+            PopupTimer.Reset(time);
         }
     }
 }

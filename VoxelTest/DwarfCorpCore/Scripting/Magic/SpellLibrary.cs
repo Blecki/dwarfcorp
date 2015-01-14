@@ -40,10 +40,10 @@ namespace DwarfCorp
                                         Charisma = 0.0f,
                                         Constitution = 0.0f,
                                         Size = 0.0f
-                                    }) 
+                                    }) {Particles = "star_particle", SoundOnStart = ContentPaths.Audio.powerup, SoundOnEnd = ContentPaths.Audio.wurp}
                                     )
                                 {
-                                    Name = "Minor Focus",
+                                    Name = "Minor Inspire",
                                     Description = "Makes the selected creatures work harder for 30 seconds (+2 to DEX, STR, INT and WIS)",
                                     Hint = "Click and drag to select creatures"
                                 },
@@ -64,10 +64,10 @@ namespace DwarfCorp
                                                     Charisma = 0.0f,
                                                     Constitution = 0.0f,
                                                     Size = 0.0f
-                                                })
+                                                }) {Particles = "star_particle", SoundOnStart = ContentPaths.Audio.powerup, SoundOnEnd = ContentPaths.Audio.wurp}
                                                 )
                                             {
-                                                Name = "Major Focus",
+                                                Name = "Major Inspire",
                                                 Description = "Makes the selected creatures work harder for 60 seconds (+5 to DEX, STR, INT and WIS)",
                                                 Hint = "Click and drag to select creatures"
                                             },
@@ -90,11 +90,12 @@ namespace DwarfCorp
                                         },
                                         new SpellTree.Node()
                                         {
-                                            Spell = new BuffSpell(new Creature.ThoughtBuff(30.0f, Thought.ThoughtType.Magic))
+                                            Spell = new BuffSpell(new Creature.ThoughtBuff(30.0f, Thought.ThoughtType.Magic) {SoundOnStart = ContentPaths.Audio.powerup})
                                             {
                                                 Name = "Minor Happiness",
                                                 Description = "Makes the selected creatures happy for 30 seconds.",
-                                                Hint = "Click and drag to select creatures"
+                                                Hint = "Click and drag to select creatures",
+                                                Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 5, 2)
                                             },
                                             ResearchTime = 60.0f,
                                             ResearchProgress = 60.0f,
@@ -102,11 +103,12 @@ namespace DwarfCorp
                                             {
                                                 new SpellTree.Node()
                                                 {
-                                                    Spell = new BuffSpell(new Creature.ThoughtBuff(60.0f, Thought.ThoughtType.Magic))
+                                                    Spell = new BuffSpell(new Creature.ThoughtBuff(60.0f, Thought.ThoughtType.Magic) {SoundOnStart = ContentPaths.Audio.powerup})
                                                     {
                                                         Name = "Major Happiness",
                                                         Description = "Makes the selected creatures happy for 60 seconds.",
-                                                        Hint = "Click and drag to select creatures"
+                                                        Hint = "Click and drag to select creatures",
+                                                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 5, 2)
                                                     },
                                                     ResearchTime = 120.0f,
                                                     ResearchProgress = 120.0f
@@ -152,7 +154,11 @@ namespace DwarfCorp
                             },
                             new SpellTree.Node()
                             {
-                                Spell = new PlaceBlockSpell("Magic", false),
+                                Spell = new PlaceBlockSpell("Magic", false)
+                                {
+                                     Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 2, 3),
+                                     Description = "Creates a temporary magic wall."
+                                },
                                 ResearchProgress = 50.0f,
                                 ResearchTime = 50.0f,
 
@@ -180,11 +186,12 @@ namespace DwarfCorp
                     },
                     new SpellTree.Node()
                     {
-                        Spell = new BuffSpell(new Creature.OngoingHealBuff(2, 10))
+                        Spell = new BuffSpell(new Creature.OngoingHealBuff(2, 10) { Particles = "heart", SoundOnStart = ContentPaths.Audio.powerup, SoundOnEnd = ContentPaths.Audio.wurp}) 
                         {
                             Name = "Minor Heal",
                             Description = "Heals 2 damage per second for 10 seconds",
-                            Hint = "Click and drag to select creatures"
+                            Hint = "Click and drag to select creatures",
+                            Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 3, 2)
                         },
                         ResearchProgress = 30.0f,
                         ResearchTime = 30.0f,
@@ -192,11 +199,12 @@ namespace DwarfCorp
                         {
                             new SpellTree.Node()
                             {
-                                Spell = new BuffSpell(new Creature.OngoingHealBuff(5, 10))
+                                Spell = new BuffSpell(new Creature.OngoingHealBuff(5, 10){Particles = "heart", SoundOnStart = ContentPaths.Audio.powerup, SoundOnEnd = ContentPaths.Audio.wurp})
                                 {
                                     Name = "Major Heal",
                                     Description = "Heals 5 damage per second for 10 seconds",
-                                    Hint = "Click and drag to select creatures"
+                                    Hint = "Click and drag to select creatures",
+                                    Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 3, 2)
                                 }
                             }
                         }

@@ -20,6 +20,7 @@ namespace DwarfCorp
         public Anvil(Vector3 position) :
             base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 3), PlayState.ComponentManager.RootComponent)
         {
+            Name = "Anvil";
             Tags.Add("Anvil");
         }
     }

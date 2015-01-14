@@ -35,6 +35,7 @@ namespace DwarfCorp
             public static string hammer = ProgramData.CreatePath("Audio", "hammer");
             public static string wurp = ProgramData.CreatePath("Audio", "wurp");
             public static string tinkle = ProgramData.CreatePath("Audio", "tinkle");
+            public static string powerup = ProgramData.CreatePath("Audio", "powerup");
         }
         public class Particles
         {
@@ -50,6 +51,7 @@ namespace DwarfCorp
             public static string stone_particle = ProgramData.CreatePath("Particles", "stone_particle");
             public static string green_flame = ProgramData.CreatePath("Particles", "green_flame");
             public static string star_particle = ProgramData.CreatePath("Particles", "bigstar_particle");
+            public static string heart = ProgramData.CreatePath("Particles", "heart");
         }
         public class Effects
         {
