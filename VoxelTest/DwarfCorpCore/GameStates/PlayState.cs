@@ -834,7 +834,6 @@ namespace DwarfCorp.GameStates
                 GUI.RootComponent.IsVisible = false;
                 StateManager.PushState("EconomyState");
             }
-            Paused = true;
         }
 
 
@@ -1227,7 +1226,9 @@ namespace DwarfCorp.GameStates
                 {
                     GameMaster.ToolMode mode = modes[index];
 
-                    if (Master.ToolBar.ToolButtons.ContainsKey(mode))
+                    List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions, mode);
+
+                    if ((index == 0 || minions.Count > 0) && Master.ToolBar.ToolButtons.ContainsKey(mode))
                     {
                         Master.ToolBar.ToolButtons[mode].InvokeClick();
                     }

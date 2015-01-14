@@ -172,8 +172,6 @@ namespace DwarfCorp.GameStates
      
         private void back_OnClicked()
         {
-            PlayState.Paused = false;
-           
             PlayState.GUI.RootComponent.IsVisible = true;
             StateManager.PopState();
         }
