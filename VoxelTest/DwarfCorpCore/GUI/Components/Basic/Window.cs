@@ -34,7 +34,7 @@ namespace DwarfCorp
 
             if (buttons == WindowButtons.CloseButton)
             {
-                CloseButton = new Button(GUI, this, "", GUI.DefaultFont, Button.ButtonMode.ImageButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallEx));
+                CloseButton = new Button(GUI, this, "", GUI.DefaultFont, Button.ButtonMode.ImageButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.CloseButton));
                 CloseButton.OnClicked += CloseButton_OnClicked;
             }
         }
@@ -138,8 +138,11 @@ namespace DwarfCorp
             DragArea = new Rectangle(GlobalBounds.X - 32, GlobalBounds.Y - 32, GlobalBounds.Width + 64, 48);
             ResizeArea = new Rectangle(GlobalBounds.Right - 32, GlobalBounds.Bottom - 32, 64, 64);
 
-            if(CloseButton != null)
-                CloseButton.LocalBounds = new Rectangle(GlobalBounds.Width - 5, -31,  32, 32);
+            if (CloseButton != null)
+            {
+                CloseButton.LocalBounds = new Rectangle(GlobalBounds.Width - 8, -24, 32, 32);
+            }
         }
     }
 }
+ 

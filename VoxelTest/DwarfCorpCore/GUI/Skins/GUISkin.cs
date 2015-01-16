@@ -122,6 +122,8 @@ namespace DwarfCorp
             SmallArrowDown,
             SmallEx,
 
+            CloseButton,
+
             ZoomIn,
             ZoomOut,
             ZoomHome,
@@ -190,6 +192,7 @@ namespace DwarfCorp
             Frames[Tile.WindowUpperLeft] = new Point(0, 10);
             Frames[Tile.WindowUpper] = new Point(1, 10);
             Frames[Tile.WindowUpperRight] = new Point(2, 10);
+            Frames[Tile.CloseButton] = new Point(3, 10);
             Frames[Tile.WindowLeft] = new Point(0, 11);
             Frames[Tile.WindowCenter] = new Point(1, 11);
             Frames[Tile.WindowRight] = new Point(2, 11);
