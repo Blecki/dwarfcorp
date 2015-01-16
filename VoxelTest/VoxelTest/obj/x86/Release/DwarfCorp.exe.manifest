@@ -75,7 +75,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>jnPHvUcc9YbsCEbsHUwp/RFyrmE=</dsig:DigestValue>
+        <dsig:DigestValue>APpftm8MQjBIBXNQms+dXSUYZcc=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -703,13 +703,13 @@
       <dsig:DigestValue>d294AFdNg9DaMdqPjAwznhdM658=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Entities\Furniture\interior_furniture.xnb" size="6874">
+  <file name="Content\Entities\Furniture\interior_furniture.xnb" size="6886">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>hmoDVl+n/EVTfM4lEBzo4+cvpEk=</dsig:DigestValue>
+      <dsig:DigestValue>UVFgzii9w365v3tXQC2au8XpSYQ=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Entities\Goblin\Audio\goblinhurt1.xnb" size="26573">
@@ -1009,13 +1009,13 @@
       <dsig:DigestValue>zqs9C1htKr0g/B/S7+NbDwZT2hs=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\GUI\gui_widgets.xnb" size="12454">
+  <file name="Content\GUI\gui_widgets.xnb" size="13510">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>c0XR5TRN5nWJfvPjIFk5n4xzb3o=</dsig:DigestValue>
+      <dsig:DigestValue>oAM/ia5FocaK/SYLWN7poOtl0pw=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\GUI\icons.xnb" size="8342">
@@ -1036,22 +1036,22 @@
       <dsig:DigestValue>BP+Y40liLOTcBksrBI7eJr+r2dQ=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\GUI\map_icons.xnb" size="1308">
+  <file name="Content\GUI\map_icons.xnb" size="844">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>DMCPo3n0ldTzzGXWO4P8mKLlFxg=</dsig:DigestValue>
+      <dsig:DigestValue>YzJpDXHfSdRfak7TbXkE3pqmdqk=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\GUI\pointers.xnb" size="968">
+  <file name="Content\GUI\pointers.xnb" size="1126">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>GLXrvA+aXLxqgtRij1Kv6rBla5A=</dsig:DigestValue>
+      <dsig:DigestValue>uRD7f62axsX9bw5hY4B6tnkpUxM=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\GUI\room_icons.xnb" size="2096">
