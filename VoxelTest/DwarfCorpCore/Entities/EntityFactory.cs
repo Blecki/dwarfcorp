@@ -46,7 +46,7 @@ namespace DwarfCorp
             RegisterEntity("Skeleton", (position, data) => GenerateSkeleton(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.ComponentManager.Factions.Factions["Undead"], PlayState.PlanService, "Undead"));
             RegisterEntity("Necromancer", (position, data) => GenerateNecromancer(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.ComponentManager.Factions.Factions["Undead"], PlayState.PlanService, "Undead"));
             RegisterEntity("Bed", (position, data) => new Bed(position));
-            RegisterEntity("BearTrap", (position, data) => new BearTrap(position));
+            RegisterEntity("Bear Trap", (position, data) => new BearTrap(position));
             RegisterEntity("Lamp", (position, data) => new Lamp(position));
             RegisterEntity("Table", (position, data) => new Table(position));
             RegisterEntity("Chair", (position, data) => new Chair(position));
@@ -60,6 +60,8 @@ namespace DwarfCorp
             RegisterEntity("Elf", (position, data) => GenerateElf(position, PlayState.ComponentManager.Factions.Factions["Elf"], "Elf"));
             RegisterEntity("Arrow", (position, data) => new ArrowProjectile(position, data.GetData("Velocity", Vector3.Up*10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData("Faction", "Elf")));
             RegisterEntity("Fairy", (position, data) => new Fairy("Player", position));
+            RegisterEntity("Target", (position, data) => new Target(position));
+            RegisterEntity("Strawman", (position, data) => new Strawman(position));
         }
 
         

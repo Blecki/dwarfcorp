@@ -68,14 +68,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1126400">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1126912">
       <assemblyIdentity name="DwarfCorp" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>dqSIxVaIX9VpCecsn5r5v/vW3dM=</dsig:DigestValue>
+        <dsig:DigestValue>b/Hfxg8qiBQdTtWQsJdQ2PtDqfs=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -703,13 +703,13 @@
       <dsig:DigestValue>d294AFdNg9DaMdqPjAwznhdM658=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Entities\Furniture\interior_furniture.xnb" size="6886">
+  <file name="Content\Entities\Furniture\interior_furniture.xnb" size="6752">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>UVFgzii9w365v3tXQC2au8XpSYQ=</dsig:DigestValue>
+      <dsig:DigestValue>uUGHBZ1+uQFRzBNVsE3m9gIUiZE=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Entities\Goblin\Audio\goblinhurt1.xnb" size="26573">
@@ -1054,13 +1054,13 @@
       <dsig:DigestValue>uRD7f62axsX9bw5hY4B6tnkpUxM=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\GUI\room_icons.xnb" size="1826">
+  <file name="Content\GUI\room_icons.xnb" size="1772">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>t3Kxts7yAMULAWKoO83oaw+rmrA=</dsig:DigestValue>
+      <dsig:DigestValue>vKeBkLiykGK3qO5nHdl4f7Aua6Q=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Logos\companylogo.xnb" size="83106">
