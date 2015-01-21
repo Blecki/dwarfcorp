@@ -150,7 +150,10 @@ namespace DwarfCorpCore
 
                 ImagePanel icon = new ImagePanel(GUI, itemLayout, spell.Image)
                 {
-                    KeepAspectRatio = true
+                    KeepAspectRatio = true,
+                    ConstrainSize = true,
+                    MinWidth = 32,
+                    MinHeight = 32
                 };
                 itemLayout.SetComponentPosition(icon, 0, 0, 1, 1);
 
