@@ -25,13 +25,13 @@ namespace DwarfCorp
             matrix.Translation = position + new Vector3(0.5f, -0.25f, 0.5f);
             LocalTransform = matrix;
 
-            Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.mushroom);
+            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Plants.mushroom);
 
             List<Point> frames = new List<Point>
             {
                 new Point(0, 0)
             };
-            Animation tableAnimation = new Animation(GameState.Game.GraphicsDevice, spriteSheet, "Mushroom", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
+            Animation tableAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Plants.mushroom), "Mushroom", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
             Sprite sprite = new Sprite(PlayState.ComponentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
             {

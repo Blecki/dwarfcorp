@@ -91,20 +91,20 @@ namespace DwarfCorp
 
         public void InitializeStatics()
         {
-            Texture2D tileSheet = TextureManager.GetTexture(ContentPaths.Entities.Resources.resources);
+            string tileSheet = ContentPaths.Entities.Resources.resources;
             Resources = new Dictionary<ResourceType, Resource>();
-            Resources[ResourceType.Wood] = new Resource(ResourceType.Wood, 1.0f, "Sometimes hard to come by! Comes from trees.", new ImageFrame(tileSheet, GetRect(3, 1)), Resource.ResourceTags.Material);
-            Resources[ResourceType.Stone] = new Resource(ResourceType.Stone, 0.5f, "Dwarf's favorite material! Comes from the earth.", new ImageFrame(tileSheet, GetRect(3, 0)), Resource.ResourceTags.Material);
-            Resources[ResourceType.Dirt] = new Resource(ResourceType.Dirt, 0.1f, "Can't get rid of it! Comes from the earth.", new ImageFrame(tileSheet, GetRect(0, 1)), Resource.ResourceTags.Material);
-            Resources[ResourceType.Sand] = new Resource(ResourceType.Sand, 0.2f, "Can't get rid of it! Comes from the earth.", new ImageFrame(tileSheet, GetRect(1, 1)), Resource.ResourceTags.Material);
+            Resources[ResourceType.Wood] = new Resource(ResourceType.Wood, 1.0f, "Sometimes hard to come by! Comes from trees.", new NamedImageFrame(tileSheet, GetRect(3, 1)), Resource.ResourceTags.Material);
+            Resources[ResourceType.Stone] = new Resource(ResourceType.Stone, 0.5f, "Dwarf's favorite material! Comes from the earth.", new NamedImageFrame(tileSheet, GetRect(3, 0)), Resource.ResourceTags.Material);
+            Resources[ResourceType.Dirt] = new Resource(ResourceType.Dirt, 0.1f, "Can't get rid of it! Comes from the earth.", new NamedImageFrame(tileSheet, GetRect(0, 1)), Resource.ResourceTags.Material);
+            Resources[ResourceType.Sand] = new Resource(ResourceType.Sand, 0.2f, "Can't get rid of it! Comes from the earth.", new NamedImageFrame(tileSheet, GetRect(1, 1)), Resource.ResourceTags.Material);
             Resources[ResourceType.Mana] = new Resource(ResourceType.Mana, 100.0f, "Mysterious properties!",
-                new ImageFrame(tileSheet, GetRect(1, 0)), Resource.ResourceTags.Precious) { SelfIlluminating = true };
-            Resources[ResourceType.Gold] = new Resource(ResourceType.Gold, 50.0f, "Shiny!", new ImageFrame(tileSheet, GetRect(0, 0)), Resource.ResourceTags.Precious);
-            Resources[ResourceType.Coal] = new Resource(ResourceType.Coal, 10.0f, "Used as fuel", new ImageFrame(tileSheet, GetRect(2, 2)), Resource.ResourceTags.Material);
-            Resources[ResourceType.Iron] = new Resource(ResourceType.Iron, 5.0f, "Needed to build things.", new ImageFrame(tileSheet, GetRect(2, 0)), Resource.ResourceTags.Material);
-            Resources[ResourceType.Apple] = new Resource(ResourceType.Apple, 0.5f, "Dwarves can eat these.", new ImageFrame(tileSheet, GetRect(2, 1)), Resource.ResourceTags.Food) { FoodContent = 50 };
-            Resources[ResourceType.Mushroom] = new Resource(ResourceType.Mushroom, 0.25f, "Dwarves can eat these.", new ImageFrame(tileSheet, GetRect(1, 2)), Resource.ResourceTags.Food) { FoodContent = 50 };
-            Resources[ResourceType.Grain] = new Resource(ResourceType.Grain, 0.25f, "Dwarves can eat this.", new ImageFrame(tileSheet, GetRect(0, 2)), Resource.ResourceTags.Food) { FoodContent = 100 };
+                new NamedImageFrame(tileSheet, GetRect(1, 0)), Resource.ResourceTags.Precious) { SelfIlluminating = true };
+            Resources[ResourceType.Gold] = new Resource(ResourceType.Gold, 50.0f, "Shiny!", new NamedImageFrame(tileSheet, GetRect(0, 0)), Resource.ResourceTags.Precious);
+            Resources[ResourceType.Coal] = new Resource(ResourceType.Coal, 10.0f, "Used as fuel", new NamedImageFrame(tileSheet, GetRect(2, 2)), Resource.ResourceTags.Material);
+            Resources[ResourceType.Iron] = new Resource(ResourceType.Iron, 5.0f, "Needed to build things.", new NamedImageFrame(tileSheet, GetRect(2, 0)), Resource.ResourceTags.Material);
+            Resources[ResourceType.Apple] = new Resource(ResourceType.Apple, 0.5f, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(2, 1)), Resource.ResourceTags.Food) { FoodContent = 50 };
+            Resources[ResourceType.Mushroom] = new Resource(ResourceType.Mushroom, 0.25f, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(1, 2)), Resource.ResourceTags.Food) { FoodContent = 50 };
+            Resources[ResourceType.Grain] = new Resource(ResourceType.Grain, 0.25f, "Dwarves can eat this.", new NamedImageFrame(tileSheet, GetRect(0, 2)), Resource.ResourceTags.Food) { FoodContent = 100 };
         
         }
 

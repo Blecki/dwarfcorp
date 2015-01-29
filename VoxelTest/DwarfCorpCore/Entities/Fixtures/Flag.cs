@@ -20,7 +20,7 @@ namespace DwarfCorp
         public Flag(Vector3 position) :
             base("Flag", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
-            Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture);
+            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
             List<Point> frames = new List<Point>
             {
                 new Point(0, 2),
@@ -28,7 +28,7 @@ namespace DwarfCorp
                 new Point(2, 2),
                 new Point(1, 2)
             };
-            Animation lampAnimation = new Animation(GameState.Game.GraphicsDevice, spriteSheet, "Flag", 32, 32, frames, true, Color.White, 5.0f + MathFunctions.Rand(), 1f, 1.0f, false);
+            Animation lampAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "Flag", 32, 32, frames, true, Color.White, 5.0f + MathFunctions.Rand(), 1f, 1.0f, false);
 
             Sprite sprite = new Sprite(PlayState.ComponentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
             {

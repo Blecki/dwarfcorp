@@ -29,6 +29,10 @@ namespace DwarfCorp
 
         public int FrameWidth { get; set; }
         public int FrameHeight { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+
+        private Texture2D FixedTexture { get; set; }
         public string AssetName { get; set; }
 
         public SpriteSheet()
@@ -38,12 +42,19 @@ namespace DwarfCorp
             AssetName = "";
         }
 
+        public SpriteSheet(Texture2D texture)
+        {
+            FixedTexture = texture;
+        }
+
         public SpriteSheet(string name)
         {
             AssetName = name;
             Texture2D tex = TextureManager.GetTexture(name);
             FrameWidth = tex.Width;
             FrameHeight = tex.Height;
+            Width = tex.Width;
+            Height = tex.Height;
         }
 
         public SpriteSheet(string name, int frameWidth, int frameHeight)
@@ -51,6 +62,9 @@ namespace DwarfCorp
             FrameWidth = frameWidth;
             FrameHeight = frameHeight;
             AssetName = name;
+            Texture2D tex = TextureManager.GetTexture(name);
+            Width = tex.Width;
+            Height = tex.Height;
         }
 
         public SpriteSheet(string name, int frameSize)
@@ -58,6 +72,9 @@ namespace DwarfCorp
             FrameWidth = frameSize;
             FrameHeight = frameSize;
             AssetName = name;
+            Texture2D tex = TextureManager.GetTexture(name);
+            Width = tex.Width;
+            Height = tex.Height;
         }
 
         public override bool Equals(object obj)
@@ -84,6 +101,13 @@ namespace DwarfCorp
             }
 
             return toReturn;
+        }
+
+        public Texture2D GetTexture()
+        {
+            if (FixedTexture == null)
+                return TextureManager.GetTexture(AssetName);
+            else return FixedTexture;
         }
 
         public NamedImageFrame GenerateFrame(Point position)

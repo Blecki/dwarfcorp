@@ -1121,7 +1121,7 @@ namespace DwarfCorp.GameStates
             // Leaves
             EmitterData testData2 = new EmitterData
             {
-                Animation = new Animation(GraphicsDevice, TextureManager.GetTexture(ContentPaths.Particles.leaf), "leaf", 32, 32, frm2, true, Color.White, 1.0f, 1.0f, 1.0f, false),
+                Animation = new Animation(GraphicsDevice, new SpriteSheet(ContentPaths.Particles.leaf), "leaf", 32, 32, frm2, true, Color.White, 1.0f, 1.0f, 1.0f, false),
                 ConstantAccel = new Vector3(0, -10, 0),
                 LinearDamping = 0.99f,
                 AngularDamping = 0.99f,
@@ -1163,12 +1163,20 @@ namespace DwarfCorp.GameStates
             ParticleManager.CreateGenericExplosion(ContentPaths.Particles.sand_particle, "sand_particle");
             ParticleManager.CreateGenericExplosion(ContentPaths.Particles.dirt_particle, "dirt_particle");
 
+            SpriteSheet bloodSheet = new SpriteSheet(ContentPaths.Particles.gibs, 32, 32);
             // Blood explosion
-            ParticleEmitter b = ParticleManager.CreateGenericExplosion(ContentPaths.Particles.blood_particle, "blood_particle").Emitters[0];
-            b.Data.MinScale = 0.1f;
-            b.Data.MaxScale = 0.15f;
-            b.Data.GrowthSpeed = -0.1f;
-            b.Data.EmissionSpeed = 5f;
+            //ParticleEmitter b = ParticleManager.CreateGenericExplosion(ContentPaths.Particles.blood_particle, "blood_particle").Emitters[0];
+            EmitterData b = ParticleManager.CreatePuffLike("blood_particle", bloodSheet, Point.Zero, BlendState.AlphaBlend);
+            b.MinScale = 1.0f;
+            b.MaxScale = 1.0f;
+            b.GrowthSpeed = -0.5f;
+            b.MaxParticles = 50;
+            b.EmissionSpeed = 5f;
+            b.CollidesWorld = true;
+            b.ConstantAccel = Vector3.Down * 10;
+            b.LinearDamping = 0.95f;
+           
+            ParticleManager.RegisterEffect("blood_particle", b, b.Clone(bloodSheet, new Point(1, 0)), b.Clone(bloodSheet, new Point(2, 0)), b.Clone(bloodSheet, new Point(3, 0)));
         }
 
 

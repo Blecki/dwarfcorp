@@ -64,7 +64,7 @@ namespace DwarfCorp
             if (toReturn.Animation != null)
             {
                 toReturn.Animation = new Animation(GameState.Game.GraphicsDevice,
-                    TextureManager.GetTexture(sheet.AssetName), sheet.AssetName, sheet.FrameWidth, sheet.FrameHeight,
+                    new SpriteSheet(sheet.AssetName), sheet.AssetName, sheet.FrameWidth, sheet.FrameHeight,
                     new List<Point>() {frame}, true, Color.White, 1.0f, 1.0f, 1.0f, false);
             }
             return toReturn;
@@ -99,6 +99,10 @@ namespace DwarfCorp
         [OnDeserialized]
         protected void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
         {
+            if (Data.Animation.Primitives.Count == 0)
+            {
+                Data.Animation.CreatePrimitives(GameState.Game.GraphicsDevice);
+            }
             Sprites = new FixedInstanceArray(Name, Data.Animation.Primitives[0], Data.Texture, Data.MaxParticles, Data.Blend);
             Data.Animation.Play();
         }

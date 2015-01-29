@@ -172,7 +172,7 @@ namespace DwarfCorp
 
         public override void PreRender()
         {
-            SpriteSheet = (Texture2D) Composite.Target;
+            SpriteSheet = new SpriteSheet((Texture2D)Composite.Target);
             base.PreRender();
         }
 

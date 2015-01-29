@@ -59,10 +59,10 @@ namespace DwarfCorp
                     new Vector3(0, -10, 0)
                 );
             }
-            Initialize(TextureManager.GetTexture(sprites));
+            Initialize(new SpriteSheet(sprites));
         }
 
-        public void Initialize(Texture2D spriteSheet)
+        public void Initialize(SpriteSheet spriteSheet)
         {
             Physics.Orientation = Physics.OrientMode.Fixed;
 

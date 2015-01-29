@@ -278,3 +278,4 @@ C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Conte
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\moreflames.xnb
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\heart.xnb
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Audio\powerup.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\gib_particle.xnb
