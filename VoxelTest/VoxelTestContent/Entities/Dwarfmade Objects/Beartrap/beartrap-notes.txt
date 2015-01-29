@@ -1,0 +1,7 @@
+32x32
+
+animation order:
+open
+closing
+closed
+opening

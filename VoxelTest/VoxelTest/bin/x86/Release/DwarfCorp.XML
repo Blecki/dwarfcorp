@@ -1,0 +1,2159 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DwarfCorp</name>
+    </assembly>
+    <members>
+        <member name="T:ContentGenerator.ContentPathGenerator">
+            <summary>
+            This class generates code which can be later copy-pasted into ContentPaths.cs for convenience. Basically,
+            it takes everything from the content directory, and converts it into a compile-time class that can be used with
+            intellisense
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ContentPaths">
+            <summary>
+            This class is auto-generated. It exists to allow intellisense and compile-time awareness
+            for content. This is to prevent inlining of file paths and mis-spellings.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ChunkFile">
+            <summary>
+             Minimal representation of a chunk.
+             Exists to write to and from files.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.FileUtils">
+            <summary>
+            A static class with helper functions for saving/loading data to binary, JSON, and ZIP
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BoxConverter">
+            <summary>
+            Serializes and deserializes BoundingBox objects to JSON.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ContentConverter`1">
+            <summary>
+            Serializes and deserializes content of type T from asset tags.
+            </summary>
+            <typeparam Name="T">The type of the object to convert</typeparam>
+        </member>
+        <member name="T:DwarfCorp.MatrixConverter">
+            <summary>
+            Serializes and deserializes Matrix objects to JSON.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.RectangleConverter">
+            <summary>
+            Serializes and deserializes Rectangle objects to JSON.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.TextureLoader">
+            <summary>
+            This is a helper class designed to help load textures from disk. Can load entire directories of textures.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.TextureManager">
+            <summary>
+            This class exists to provide an abstract interface between asset tags and textures. 
+            Technically, the ContentManager already does this for XNA, but ContentManager is missing a
+            couple of important functions: modability, and storing the *inverse* lookup between tag
+            and texture. Additionally, the TextureManager provides an interface to directly load
+            resources from the disk (rather than going through XNAs content system)
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Creature">
+            <summary>
+            Component which keeps track of a large number of other components (AI, physics, sprites, etc.) 
+            related to creatures (such as dwarves and goblins). 
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Health">
+            <summary>
+            When attached to another component, gives it health. When the health reaches its minimum, the object (and its parents/children) are destroyed.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GameComponent">
+            <summary>
+            This class is responsible for handling components. "Components" are one of the most important parts of the 
+            DwarfCorp engine. Everything in the game is a collection of components. A collection of components is called an "entity".
+            Components live in a tree-like structure, they have parents and children. Most components (called Locatable components)
+            also have a position and orientation.
+            
+            By adding and removing components to an entity, functionality can be changed.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.CreatureAI">
+            <summary>
+            Component which manages the AI, scripting, and status of a particular creature (such as a Dwarf or Goblin)
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Grabber">
+            <summary>
+            This component represents the "Hands" of a creature. It's a generic way of attaching and detaching objects from each other.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Body">
+            <summary>
+            This is a special kind of component which has a position and orientation. The global position of an object
+            is computed from its local position relative to its parent. This is known as a "scene graph". Locatable components
+            also live inside an octree for faster access to colliding or nearby objects.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.IBoundedObject">
+            <summary>
+            A bounded object is just anything which has 
+            a bounding box.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.EnemySensor">
+            <summary>
+            Component which fires when an enemy creature enters a box. Attached to other components.
+            REQUIRES that the EnemySensor be attached to a creature
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Sensor">
+            <summary>
+            Generic component with a box that fires when other components enter it.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.TrapSensor">
+            <summary>
+            This is a sensor for traps that damages HealthComponents that collide with the sensor
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.VoxelListener">
+            <summary>
+            When a voxel is destroyed, this component kills whatever it is attached to.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.DeathComponentSpawner">
+            <summary>
+            When an entity dies, this component releases other components (such as resources)
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BatchedSprite">
+            <summary>
+            This component represents a list of several billboards which are efficiently drawn through state batching.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Sprite">
+            <summary>
+            This is an animated "billboard". Essentially, a simple rectangle is drawn with a texture on it.
+            The rectangle is drawn in such a way that it is always more or less facing the camera.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Tinter">
+            <summary>
+            This component has a color tint which can change over time.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Bobber">
+            <summary>
+            This component causes its parent to move up and down in a sinusoid pattern.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Box">
+            <summary>
+            This component draws a simple textured rectangular box.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.CharacterSprite">
+            <summary>
+            This is a special kind of sprite which assumes that it is attached to a character
+            which has certain animations and can face in four directions. Also provides interfaces to
+            certain effects such as blinking.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.OrientedAnimation">
+            <summary>
+            This is a special kind of billboard which has different animations for facing in
+            four different directions. The correct direction is chosen based on the position
+            of the camera.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.LightEmitter">
+            <summary>
+            This component dynamically lights up voxels around it with torch light.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Mesh">
+            <summary>
+            This component represents an instance of a particular primitive (such as intersecting billboards, or a box), or a mesh. 
+            Efficiently drawn by the instance manager using state batching.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ParticleEmitter">
+            <summary>
+            This component manages a set of particles, and can emit them at certain locations. The particle manager keeps track of a small set of these.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ParticleTrigger">
+            <summary>
+            This component emits particles either on the object's death, or when
+            explicitly triggered.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.SelectionCircle">
+            <summary>
+            This component projects a billboard shadow to the ground below an entity.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Shadow">
+            <summary>
+            This component projects a billboard shadow to the ground below an entity.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Flammable">
+            <summary>
+            Component causes the object its attached to to become flammable. Flammable objects have "heat"
+            when the heat is above a "flashpoint" they get damaged until they are destroyed, and emit flames.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Physics">
+            <summary>
+            Basic physics object. When attached to an entity, it causes it to obey gravity, and collide with stuff.
+            All objects are just axis-aligned boxes that are treated as point masses.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ComponentManager">
+            <summary>
+            This class is responsible for handling components. "Components" are one of the most important parts of the 
+            DwarfCorp engine. Everything in the game is a collection of components. A collection of components is called an "entity".
+            Components live in a tree-like structure, they have parents and children. Most components (called Locatable components)
+            also have a position and orientation.
+            By adding and removing components to an entity, functionality can be changed.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Message">
+            <summary>
+            Components can pass and receive messages. This is just a generic class for representing them.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.Bird.Initialize(DwarfCorp.SpriteSheet)">
+            <summary>
+            Initialize function creates all the required components for the bird.
+            </summary>
+            <param name="spriteSheet">The sprite sheet to use for the bird</param>
+        </member>
+        <member name="T:DwarfCorp.BirdAI">
+            <summary>
+            Extends CreatureAI specifically for
+            bird behavior.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BalloonAI">
+            <summary>
+            A simple hacked AI script for the DwarfCorp balloon. Has a state machine which makes it go up and down.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Dwarf">
+            <summary>
+            Convenience class for initializing Dwarves as Creatures.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.EntityFactory">
+            <summary>
+            This class is used to create entities. It should probably be replaced with a more modular system (or a set of data files)
+            Right now, its just an ugly class for initializing most of the entities in the game.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Elf">
+            <summary>
+            Convenience class for initializing elfs as creatures.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Goblin">
+            <summary>
+            Convenience class for initializing goblins as creatures.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Necromancer">
+            <summary>
+            Convenience class for initializing Necromancers as creatures.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Skeleton">
+            <summary>
+            Convenience class for initializing Skeletons as creatures.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.SnakeAI">
+            <summary>
+            Extends CreatureAI specifically for
+            bird behavior.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GameStates.CompanyMakerState">
+            <summary>
+            This game state allows the player to design their own dwarf company.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GameStates.GameState">
+            <summary>
+            A game state is a generic representation of how the game behaves. Game states live in a stack. The state on the top of the stack is the one currently running.
+            States can be both rendered and updated. There are brief transition periods between states where animations can occur.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GameStates.EconomyState">
+            <summary>
+            This game state allows the player to buy/sell goods from a balloon with a drag/drop interface.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GameStates.GameLoaderState">
+            <summary>
+            This game state allows the player to load saved games.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GameStates.GameStateManager">
+            <summary>
+            Manages a set of game states. A game state is a generic representation of how the game behaves. Game states live in a stack. The state on the top of the stack is the one currently running.
+            States can be both rendered and updated. There are brief transition periods between states where animations can occur.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GameStates.GUITest">
+            <summary>
+            This is a debug state for testing new GUI stuff. 
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GameStates.IntroState">
+            <summary>
+             This game state displays the company and game credits or whatever else needs to go at the beginning of the game.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GameStates.MainMenuState">
+            <summary>
+            This game state is just the set of menus at the start of the game. Allows navigation to other game states.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GameStates.OptionsState">
+            <summary>
+            This game state allows the player to modify game options (stored in the GameSettings file).
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GameStates.PlayState">
+            <summary>
+            This is the main game state for actually playing the game.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.#ctor(DwarfCorp.DwarfGame,DwarfCorp.GameStates.GameStateManager)">
+            <summary>
+            Creates a new play state
+            </summary>
+            <param name="game">The program currently running</param>
+            <param name="stateManager">The game state manager this state will belong to</param>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.OnEnter">
+            <summary>
+            Called when the PlayState is entered from the state manager.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.OnExit">
+            <summary>
+            Called when the PlayState is exited and another state (such as the main menu) is loaded.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.Preload">
+            <summary>
+            Called by the loading thread just before the game is loaded.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.CreateInitialDwarves(DwarfCorp.VoxelChunk)">
+            <summary>
+            Generates a random set of dwarves in the given chunk.
+            </summary>
+            <param name="numDwarves">Number of dwarves to generate</param>
+            <param name="c">The chunk the dwarves belong to</param>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.InitializeStaticData(System.String,System.String,DwarfCorp.NamedImageFrame,Microsoft.Xna.Framework.Color)">
+            <summary>
+            Creates a bunch of stuff (such as the biome library, primitive library etc.) which won't change
+            from game to game.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.GenerateInitialChunks">
+            <summary>
+            Creates the terrain that is immediately around the player's spawn point.
+            If loading from a file, loads the existing terrain from a file.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.TakeScreenshot(System.String,Microsoft.Xna.Framework.Point)">
+            <summary>
+            Creates a screenshot of the game and saves it to a file.
+            </summary>
+            <param name="filename">The file to save the screenshot to</param>
+            <param name="resolution">The width/height of the image</param>
+            <returns>True if the screenshot could be taken, false otherwise</returns>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.CreateLiquids">
+            <summary>
+            Initializes water and lava asset definitions
+            and liquid properties
+            TODO: Move this to another file.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.CreateSky">
+            <summary>
+            Creates the sky renderer and loads all the cube maps
+            for the sky box
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.CreateGUI(System.Boolean)">
+            <summary>
+            Creates the user interface + player controls.
+            </summary>
+            <param name="createMaster">True if the Game Master needs to be created as well.</param>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.CreateGUIComponents">
+            <summary>
+            Creates all of the sub-components of the GUI in for the PlayState (buttons, etc.)
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.CreateInitialEmbarkment">
+            <summary>
+            Creates the balloon, the dwarves, and the initial balloon port.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.Load">
+            <summary>
+            Executes the entire game loading sequence, and draws loading messages.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.LevelSlider_OnClicked">
+            <summary>
+            Called when the slice slider was moved.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.CurrentLevelDownButton_OnClicked">
+            <summary>
+            Called when the "Slice -" button is pressed
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.CurrentLevelUpButton_OnClicked">
+            <summary>
+            Called when the "Slice +" button is pressed
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.GenerateInitialBalloonPort(DwarfCorp.RoomBuilder,DwarfCorp.ChunkManager,System.Single,System.Single,System.Int32)">
+            <summary>
+            Creates a flat, wooden balloon port for the balloon to land on, and Dwarves to sit on.
+            TODO: Fix height to that it's not too tall when on a mountain.
+            </summary>
+            <param name="roomDes">The player's BuildRoom designator (so that we can create a balloon port)</param>
+            <param name="chunkManager">The terrain handler</param>
+            <param name="x">The position of the center of the balloon port</param>
+            <param name="z">The position of the center of the balloon port</param>
+            <param name="size">The size of the (square) balloon port in voxels on a side</param>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.CreateParticles">
+            <summary>
+            Creates all the static particle emitters used in the game.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.InputManager_KeyReleasedCallback(Microsoft.Xna.Framework.Input.Keys)">
+            <summary>
+            Called when the user releases a key
+            </summary>
+            <param name="key">The keyboard key released</param>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.Update(DwarfCorp.DwarfTime)">
+            <summary>
+            Called every frame
+            </summary>
+            <param name="DwarfTime">The current time</param>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.OpenPauseMenu">
+            <summary>
+            Called whenever the escape button is pressed. Opens a small menu for saving/loading, etc.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.pauseSelector_OnItemClicked(DwarfCorp.ListSelector)">
+            <summary>
+            Called whenever the pause menu is clicked.
+            </summary>
+            <param name="selector">The list of things the user could have clicked on.</param>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.SaveGame(System.String)">
+            <summary>
+            Saves the game state to a file.
+            </summary>
+            <param name="filename">The file to save to</param>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.GetReflectedCameraMatrix(System.Single)">
+            <summary>
+            Reflects a camera beneath a water surface for reflection drawing TODO: move to water manager
+            </summary>
+            <param name="waterHeight">The height of the water (Y)</param>
+            <returns>A reflection matrix</returns>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.Draw3DThings(DwarfCorp.DwarfTime,Microsoft.Xna.Framework.Graphics.Effect,Microsoft.Xna.Framework.Matrix)">
+            <summary>
+            Draws all the 3D terrain and entities
+            </summary>
+            <param name="DwarfTime">The current time</param>
+            <param name="cubeEffect">The textured shader</param>
+            <param name="view">The view matrix of the camera</param> 
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.DrawComponents(DwarfCorp.DwarfTime,Microsoft.Xna.Framework.Graphics.Effect,Microsoft.Xna.Framework.Matrix,DwarfCorp.ComponentManager.WaterRenderType,System.Single)">
+            <summary>
+            Draws all of the game entities
+            </summary>
+            <param name="DwarfTime">The current time</param>
+            <param name="effect">The shader</param>
+            <param name="view">The view matrix</param>
+            <param name="waterRenderType">Whether we are rendering for reflection/refraction or nothing</param>
+            <param name="waterLevel">The estimated height of water</param>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.DrawSky(DwarfCorp.DwarfTime,Microsoft.Xna.Framework.Matrix,System.Single)">
+            <summary>
+            Draws the sky box
+            </summary>
+            <param name="time">The current time</param>
+            <param name="view">The camera view matrix</param>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.RenderUnitialized(DwarfCorp.DwarfTime)">
+            <summary>
+            If the game is not loaded yet, just draws a loading message centered
+            </summary>
+            <param name="DwarfTime">The current time</param>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.Render(DwarfCorp.DwarfTime)">
+            <summary>
+            Called when a frame is to be drawn to the screen
+            </summary>
+            <param name="DwarfTime">The current time</param>
+        </member>
+        <member name="M:DwarfCorp.GameStates.PlayState.GraphicsPreparingDeviceSettings(System.Object,Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs)">
+            <summary>
+            Called when the GPU is getting new settings
+            </summary>
+            <param name="sender">The object requesting new device settings</param>
+            <param name="e">The device settings that are getting set</param>
+        </member>
+        <member name="T:DwarfCorp.GameStates.WorldGeneratorState">
+            <summary>
+            This game state allows the player to create randomly generated worlds to play in.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GameStates.WorldLoaderState">
+            <summary>
+            This game state allows the player to load generated worlds from files.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.OrbitCamera">
+            <summary>
+            This is a particular instantiation of the camera class which can rotate and 
+            translate around with the mouse and keyboard.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.DrawCommand2D">
+            <summary>
+            2D draw commands are queued up by the 2D draw manager, and then rendered
+            to the screen. They exist mostly for conveience to draw things like lines, boxes, etc.
+            in the update thread.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Drawer2D">
+            <summary>
+            This is a convenience class for drawing lines, sprites, boxes, etc. to the screen from
+            threads other than the main drawing thread.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.Drawer2D.DrawEllipse(Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Graphics.Texture2D,Microsoft.Xna.Framework.Vector2,System.Single,System.Single,System.Single,Microsoft.Xna.Framework.Color)">
+            <summary>
+            Streches a circle to create the desired ellipse.
+            </summary>
+            <param Name="batch">The sprite batch to use.</param>
+            <param Name="circle">A texture to use for a ellipse.</param>
+            <param Name="center">The center of the ellipse.</param>
+            <param Name="a">The major axis of the ellipse.</param>
+            <param Name="b">The minor axis of the ellipse</param>
+            <param Name="phi">The angle of the major axis with the horizontal</param>
+            <param Name="color">The color of the ellipse</param>
+        </member>
+        <member name="M:DwarfCorp.Drawer2D.FillRect(Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Rectangle,Microsoft.Xna.Framework.Color)">
+            <summary>
+            Fills a solid rectangle.
+            </summary>
+            <param Name="batch">The sprite batch to draw with.</param>
+            <param Name="pixel">Pixel image to use.</param>
+            <param Name="rect">The rectangle to fill.</param>
+            <param Name="backgroundColor">The color of the rectangle.</param>
+        </member>
+        <member name="M:DwarfCorp.Drawer2D.DrawRect(Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Rectangle,Microsoft.Xna.Framework.Color,System.Single)">
+            <summary>
+            Draws the given rectangle's border with a width of 2 pixels
+            </summary>
+            <param Name="batch">The sprite batch to use</param>
+            <param Name="rect">The rectangle to draw.</param>
+            <param Name="borderColor">The color of the border of the rectangle.</param>
+        </member>
+        <member name="M:DwarfCorp.Drawer2D.DrawLine(Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Color,System.Int32)">
+            <summary>
+            Draws a line between two points of the given color and width by scaling and rotating a pixel
+            </summary>
+            <param Name="batch">The sprite batch to use.</param>
+            <param Name="pixel">The pixel image to use.</param>
+            <param Name="point1">The first point of the line.</param>
+            <param Name="point2">The second point of the line.</param>
+            <param Name="lineColor">The color of the line.</param>
+            <param Name="width">The width, in pixels, of the line.</param>
+        </member>
+        <member name="M:DwarfCorp.Drawer2D.DrawPolygon(Microsoft.Xna.Framework.Graphics.SpriteBatch,Microsoft.Xna.Framework.Color,System.Int32,System.Collections.Generic.List{Microsoft.Xna.Framework.Vector2})">
+            <summary>
+            Draws a polygon of lines.
+            </summary>
+            <param Name="spriteBatch">The sprite batch.</param>
+            <param Name="pixel">The pixel image to use.</param>
+            <param Name="lineColor">Color of the lines.</param>
+            <param Name="width">The width of the lines.</param>
+            <param Name="points">The points to connect.</param>
+        </member>
+        <member name="M:DwarfCorp.Drawer2D.DrawStrokedText(Microsoft.Xna.Framework.Graphics.SpriteBatch,System.String,Microsoft.Xna.Framework.Graphics.SpriteFont,Microsoft.Xna.Framework.Vector2,Microsoft.Xna.Framework.Color,Microsoft.Xna.Framework.Color)">
+            <summary>
+            Uses an expensive hack to draw text with a stroke of 1 pixel around it. Just draws the text five times
+            </summary>
+            <param Name="batch">The sprite batch.</param>
+            <param Name="toDisplay">The text to display.</param>
+            <param Name="Font">The font to use.</param>
+            <param Name="textPosition">The text position.</param>
+            <param Name="textColor">Color of the text.</param>
+            <param Name="strokeColor">Color of the stroke outside the text.</param>
+        </member>
+        <member name="T:DwarfCorp.RectDrawCommand">
+            <summary>
+            Draws a rectangle to the screen.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.SpriteDrawCommand">
+            <summary>
+            Draws a sprite to the screen.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.TextBoxDrawCommand">
+            <summary>
+            Draws a box with text inside to the screen.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.TextDrawCommand">
+            <summary>
+            Draws text to the screen
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BoxDrawCommand3D">
+            <summary>
+            Draws a 3D axis aligned box to the screen.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.DrawCommand3D">
+            <summary>
+            Draw commands are queued up to draw simple 3D objects to the screen easily
+            from multiple threads
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Drawer3D">
+            <summary>
+            This is a convenience class for drawing lines, boxes, etc. to the screen from
+            threads other than the main drawing thread. 
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.LineListCommand3D">
+            <summary>
+            Draws a list of lines to the screen.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ImageFrame">
+            <summary>
+            Represents a sub-rectangle inside a 2D texture.
+            </summary>
+        </member>
+        <member name="T:BloomPostprocess.BloomComponent">
+            <summary>
+            Full screen bloom effect from Microsoft
+            </summary>
+        </member>
+        <member name="M:BloomPostprocess.BloomComponent.LoadContent">
+            <summary>
+            Load your graphics content.
+            </summary>
+        </member>
+        <member name="M:BloomPostprocess.BloomComponent.UnloadContent">
+            <summary>
+            Unload your graphics content.
+            </summary>
+        </member>
+        <member name="M:BloomPostprocess.BloomComponent.BeginDraw">
+            <summary>
+            This should be called at the very start of the scene rendering. The bloom
+            component uses it to redirect drawing into its custom rendertarget, so it
+            can capture the scene image in preparation for applying the bloom filter.
+            </summary>
+        </member>
+        <member name="M:BloomPostprocess.BloomComponent.Draw(Microsoft.Xna.Framework.GameTime)">
+            <summary>
+            This is where it all happens. Grabs a scene that has already been rendered,
+            and uses postprocess magic to add a glowing bloom effect over the top of it.
+            </summary>
+        </member>
+        <member name="M:BloomPostprocess.BloomComponent.DrawFullscreenQuad(Microsoft.Xna.Framework.Graphics.Texture2D,Microsoft.Xna.Framework.Graphics.RenderTarget2D,Microsoft.Xna.Framework.Graphics.Effect,BloomPostprocess.BloomComponent.IntermediateBuffer)">
+            <summary>
+            Helper for drawing a texture into a rendertarget, using
+            a custom shader to apply postprocessing effects.
+            </summary>
+        </member>
+        <member name="M:BloomPostprocess.BloomComponent.DrawFullscreenQuad(Microsoft.Xna.Framework.Graphics.Texture2D,System.Int32,System.Int32,Microsoft.Xna.Framework.Graphics.Effect,BloomPostprocess.BloomComponent.IntermediateBuffer)">
+            <summary>
+            Helper for drawing a texture into the current rendertarget,
+            using a custom shader to apply postprocessing effects.
+            </summary>
+        </member>
+        <member name="M:BloomPostprocess.BloomComponent.SetBlurEffectParameters(System.Single,System.Single)">
+            <summary>
+            Computes sample weightings and texture coordinate offsets
+            for one pass of a separable gaussian blur filter.
+            </summary>
+        </member>
+        <member name="M:BloomPostprocess.BloomComponent.ComputeGaussian(System.Single)">
+            <summary>
+            Evaluates a single point on the gaussian falloff curve.
+            Used for setting up the blur filter weightings.
+            </summary>
+        </member>
+        <member name="T:BloomPostprocess.BloomSettings">
+            <summary>
+            Class holds all the settings used to tweak the bloom effect.
+            </summary>
+        </member>
+        <member name="M:BloomPostprocess.BloomSettings.#ctor(System.String,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Constructs a new bloom settings descriptor.
+            </summary>
+        </member>
+        <member name="F:BloomPostprocess.BloomSettings.PresetSettings">
+            <summary>
+            Table of preset bloom settings, used by the sample program.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ParticleManager">
+            <summary>
+            This class manages a set of particle effects, and allows them to be triggered
+            at locations in 3D space.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.ParticleManager.CreateGenericExplosion(System.String,System.String)">
+            <summary>
+            A library function which creates a "explosion" particle effect (bouncy particles)
+            </summary>
+            <param name="assetName">Particle texture name</param>
+            <param name="name">Name of the effect</param>
+            <returns>A particle emitter which behaves like an explosion.</returns>
+        </member>
+        <member name="M:DwarfCorp.ParticleManager.CreatePuffLike(System.String,DwarfCorp.SpriteSheet,Microsoft.Xna.Framework.Point,Microsoft.Xna.Framework.Graphics.BlendState)">
+            <summary>
+            Creates a generic particle effect which is like a "puff" (cloudy particles which float)
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.SkyRenderer">
+            <summary>
+            This class renders a skybox and sky elements (like the sun and moon) to the screen.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.FixedInstanceArray">
+            <summary>
+            A fixed instance array draws the closest K instances of a model. 
+            It constantly sorts and frustrum culls instances en masse.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.InstanceData">
+            <summary>
+            An instance data represents a single instantiation of an object model
+            at a given location, with a given color.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.InstancedVertex">
+            <summary>
+            Extends the vertex declaration to support which instance the vertex
+            refers to. The GPU draws instances based on this information.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.InstanceManager">
+            <summary>
+            The instance manager maintains a set of named instance arrays, and initializes
+            some starting models.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Animation">
+            <summary>
+            An animation flips a billboard sprite between several
+            frames on a sprite sheet at a fixed rate.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BatchBillboardPrimitive">
+            <summary>
+            A batch billboard is a set of billboards which are drawn with the
+            instance manager.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GeometricPrimitive">
+            <summary>
+            Simple class representing a geometric object with verticies, textures, and whatever else.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.GeometricPrimitive.Render(Microsoft.Xna.Framework.Graphics.GraphicsDevice)">
+            <summary>
+            Draws the primitive to the screen.
+            </summary>
+            <param Name="device">GPU to draw with.</param>
+        </member>
+        <member name="M:DwarfCorp.GeometricPrimitive.RenderWireframe(Microsoft.Xna.Framework.Graphics.GraphicsDevice)">
+            <summary>
+            Draws the primitive to the screen.
+            </summary>
+            <param Name="device">GPU to draw with.</param>
+        </member>
+        <member name="M:DwarfCorp.GeometricPrimitive.ResetBuffer(Microsoft.Xna.Framework.Graphics.GraphicsDevice)">
+            <summary>
+            Resets the vertex buffer object from the verticies.
+            <param Name="device">GPU to draw with.</param></summary>
+        </member>
+        <member name="T:DwarfCorp.BillboardPrimitive">
+            <summary>
+            A billboard is a sprite drawn in the world space, and can be made to
+            face the camera constantly.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BoxFace">
+            <summary>
+            Specifies one of the 6 faces of a box.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BoxPrimitive">
+            <summary>
+            A box primitive is just a simple textured rectangular box.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.CompositeAnimation">
+            <summary>
+            An animation flips a billboard sprite between several
+            frames on a sprite sheet at a fixed rate.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.LiquidPrimitive">
+            <summary>
+            Represents a list of liquid surfaces which are to be rendered. Only the top surfaces of liquids
+            get rendered. Liquids are also "smoothed" in terms of their positions.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.PrimitiveLibrary">
+            <summary>
+            A static collection of certain geometric primitives.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.VoxelListPrimitive">
+            <summary>
+            Represents a collection of voxels with a surface mesh. Efficiently culls away
+            invisible voxels, and properly constructs ramps.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ImagePanel">
+            <summary>
+            This is a GUI component which merely draws an image.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GUIComponent">
+            <summary>
+            Every element in the GUI is a GUI component. Components have children and parents. 
+            They have rectangles where they exist on the screen. They may be clicked or accept other inputs.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Button">
+            <summary>
+            This is a basic GUI element which can be clicked. There are three kinds:
+            Image buttons, which are merely sprites, push buttons, which are just rectangles,
+            and tool buttons, which are push buttons that have icons on them.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Checkbox">
+            <summary>
+            This componenet, when clicked, toggles on and off. It also has a 
+            label drawn next to it.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ComboBox">
+            <summary>
+            This GUI component has a list of items which can be selected on
+            a drop down menu.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ComboBoxSelector">
+            <summary>
+            This GUI component is the list found inside the ComboBox
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Dialog">
+            <summary>
+            This GUI component is a window which opens up on top
+            of the GUI, and blocks the game until it gets user input.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Panel">
+            <summary>
+            This is a simple GUI component which draws a fancy rectangle thing.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.DraggableItem">
+            <summary>
+            This is a GUI component which can be moved around on a DragGrid
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.DragGrid">
+            <summary>
+            This is a GUI component which manages DragItems and puts them on a grid.
+            Items can be dragged from one cell of the grid to another.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GroupBox">
+            <summary>
+            This GUI component is a labeled panel which contains other components.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.KeyEdit">
+            <summary>
+            This GUI component takes input and displays a specific keyboard Key.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Label">
+            <summary>
+            This is a GUI component which merely draws text.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.LineEdit">
+            <summary>
+            This GUI component allows simple user text input on a single line.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ListSelector">
+            <summary>
+            This is a GUI component with a list of possible selections,
+            similar to a combo box, except the selections are all visible at
+            the same time, and are pushed like buttons.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ProgressBar">
+            <summary>
+            This GUI component draws a filled bar specifying a certain value.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ScrollView">
+            <summary>
+            This GUI component holds other components, and allows different parts
+            of its viewing area to be accessed by scroll bars.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Slider">
+            <summary>
+            This GUI component has a handle which can be dragged
+            to specify a value.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.SpinBox">
+            <summary>
+            This component shows a floating point value that can be 
+            incremented or decremented with buttons.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ActDisplay">
+            <summary>
+            This is a debug display for behavior trees (acts)
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.AIDebugger">
+            <summary>
+            This is a debug display for Dwarf AI
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.AssetManager">
+            <summary>
+            This GUI element allows the player to modify assets (like texture packs)
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.HireDialog">
+            <summary>
+            This GUI component is a window which opens up on top
+            of the GUI, and blocks the game until it gets user input.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ImageFrameLoadDialog">
+            <summary>
+            This GUI component displays a set of textures from a directory
+            which can be loaded.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ItemSelector">
+             <summary>
+            This GUI component holds a list of items that the player can drag around.
+             </summary>
+        </member>
+        <member name="T:DwarfCorp.KeyEditor">
+            <summary>
+            This GUI component allows the player to edit the keyboard settings.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.MasterControls">
+            <summary>
+            This is the GUI component responsible for deciding which tool
+            the player is using.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.TextureLoadDialog">
+            <summary>
+            This GUI component displays a set of textures from a directory
+            which can be loaded.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.DragManager">
+            <summary>
+            Handles draggable items in the GUI, which can be picked and placed.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.DwarfGUI">
+            <summary>
+            A proprietary GUI system written from scratch. Based loosely on the Qt framework.
+            GUI elements are laid out in a tree. Children are normally drawn after parents.
+            Handles input from the user on its own. Elements are drawn with native XNA drawing functions. 
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GItem">
+            <summary>
+            A graphical item (usually to be placed in a drag grid)
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.IndicatorManager">
+            <summary>
+            This class exists to draw simple sprites (indicators) to the screen. Indicators
+            are just a sprite at a location which grows, shrinks, and disappears over time.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.FormEntry">
+            <summary>
+            A row of a form layout.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.FormLayout">
+            <summary>
+            Has a number of labeled rows with different GUI components 
+            on each row.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Layout">
+            <summary>
+            Abstract class which modifies the size and position of GUI components
+            so that they flow to fit the size of a window.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GridLayout">
+            <summary>
+            Lays out GUI components in a simple grid. Each item occupies a position
+            and extents in teh grid.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GUISkin">
+            <summary>
+            Specifies how a GUI should be drawn. Has a bunch of primitive drawing functions
+            which draw different elements of the GUI.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ToolTipManager">
+            <summary>
+            Tooltips are the little bits of text which appear on the screen when a mouse is hovering
+            over a particular GUI element. Every GUI element can have a tooltip. They are used to help the player
+            understand what certain buttons do.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Language">
+            <summary>
+            This is a weird (probably deprecated) system for making "talky" noises.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.TextAtom">
+            <summary>
+            This represents a particular part of randomly generated text which can change (such as a noun or verb)
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.TextGenerator">
+            <summary>
+            Generates random strings of text based on patterns. Like mad libs.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Terrain2D">
+            <summary>
+            Draws the fancy scrolling background behind the main menu.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Act">
+            <summary>
+            An act is an another Name for a "Behavior". Behaviors are linked together into an "behavior tree". Each behavior is a coroutine
+            which can either be running, succeed, or fail. 
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BehaviorExtensions">
+            <summary>
+            This static class adds implicit functions to acts to allow them to convert to and from
+            boolean or enumerable functions.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Alliance">
+            <summary>
+            Entitites can belong to alliances. Alliances either love, hate, or are indifferent to other
+            entities in different alliances.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Attack">
+            <summary>
+            A weapon allows one entity to attack another. (This is assumed to be a melee weapon). A weapon just has a damage
+            amount, a range, and a hit noise.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BuildRoomAct">
+            <summary>
+            A creature finds an item with a particular tag, and then puts it into a build zone
+            for a BuildRoom. (This is used to construct rooms)
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.CompoundCreatureAct">
+            <summary>
+            A compound act which is associated with a creature.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.CreatureAct">
+            <summary>
+            An act which is assumed to belong to a creature.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BuildVoxelAct">
+            <summary>
+            A creature goes to a voxel location, and places an object with the desired tags there to build it.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BuildVoxelsAct">
+            <summary>
+            A creature goes to a voxel location, and places an object with the desired tags there to build it.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.CompoundAct">
+            <summary>
+            A compound act is an act which just wraps another act tree. (It's a collection of other acts).
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.CraftItemAct">
+            <summary>
+            A creature goes to a voxel location, and places an object with the desired tags there to build it.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.FindAndEatFoodAct">
+            <summary>
+            The creature finds food in a stockpile or BuildRoom, and eats it.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.FindBedAndSleepAct">
+            <summary>
+            A creature finds an item with the tag "bed", goes to it, and sleeps in it.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GatherItemAct">
+            <summary>
+            A creature takes an item to an open stockpile and leaves it there.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GetResourcesAct">
+            <summary>
+            A creature finds an item from a stockpile or BuildRoom with the given tags, goes to it, and picks it up.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GoResearchSpellAct">
+            <summary>
+            A creature goes to a voxel location, and places an object with the desired tags there to build it.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GoToEntityAct">
+            <summary>
+            A creature finds the voxel below a given entity, and goes to it.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GoToNamedVoxelAct">
+            <summary>
+            A creature goes to a voxel named in the blackboard.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GoToVoxelAct">
+            <summary>
+            A creature plans to a voxel and then follows the path to it.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GoToZoneAct">
+            <summary>
+            A creature takes an item to an open stockpile and leaves it there.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GuardVoxelAct">
+            <summary>
+            A creature goes to a voxel, and then waits there until cancelled.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.KillEntityAct">
+            <summary>
+            A creature goes to an entity, and then hits it until the other entity is dead.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.KillVoxelAct">
+            <summary>
+            A creature goes to a voxel, and then hits the voxel until it is destroyed.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.StockResourceAct">
+            <summary>
+            A creature takes an item to an open stockpile and leaves it there.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Condition">
+            <summary>
+            Wraps a boolean function so that it returns success when the function
+            evaluates to "true", and failure otherwise.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ForLoop">
+            <summary>
+            Wraps an act in a loop which occurs over a fixed number of iterations.
+            Restarts its child on each iteration.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Not">
+            <summary>
+            Inverts a child behavior so that it returns success on failure, and vice versa.
+            If the child is running, returns "Running".
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Parallel">
+            <summary>
+            Has a list of children which get ticked in sequence as if they are being run
+            in parallel. Returns success when all of the children return success. Otherwise,
+            continues running until a child returns failure.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Select">
+            <summary>
+            Runs all of its children in sequence  until one of them succeeds (or all of them fail). Returns
+            success if any child succeds. Returns fail if all of them fail.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Sequence">
+            <summary>
+            Runs all of its children in sequence until one of them fails, or all of them succeed. 
+            Returns failure if any child fails, and success if they all succeed.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Wait">
+            <summary>
+            Does nothing for a given number of seconds, and then returns success.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.WhileLoop">
+            <summary>
+            Repeatedly runs a child until a condition is true. Returns failure
+            if the child fails. Returns success when the condition is true, and the child succeeds.
+            Otherwise returns running.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Wrap">
+            <summary>
+            A behavior which wraps a coroutine. (Something which returns IEnumerable(status)))
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ActData">
+            <summary>
+            A generic means of storing data for behaviors. Can store any object.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Blackboard">
+            <summary>
+            A blackboard is a generic collection of named memory references. 
+            Acts should read/write data from the blackboard. This makes data management 
+            clearer and easier to control. All creatures have blackboards.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.CreatureStats">
+            <summary>
+            A set of simple numbers which define how a creature is to behave.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.CreatureStatus">
+            <summary>
+            A creature has a set of "statuses" (such as health, energy, etc.) which get
+            modified over its lifetime. A creature can be "satisfied" or "unsatisfied" depending on its status.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.CreatureStatus.Status">
+            <summary>
+            A creature status is a named value which has minimum and maximum thresholds for satisfaction.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Item">
+            <summary>
+            An item keeps track of an entity in the context of it existing in a zone.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.TagList">
+            <summary>
+            A tag list is a list of strings. Arbitrary tag lists can be attached
+            to items to modify how scripts interpret the items.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ClearBlackboardData">
+            <summary>
+            Erases a specific named value from the blackboard.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ConsumeItemAct">
+            <summary>
+            A creature eats an item in its hands to satisfy its hunger.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.DigAct">
+            <summary>
+            A creature attacks a voxel until it is destroyed.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.DropItemAct">
+            <summary>
+            A creature drops the item currently in its hands.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.FlyWanderAct">
+            <summary>
+            A creature randomly applies force at intervals to itself.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.FollowPathAct">
+            <summary>
+            A creature moves along a planned path until the path is completed, or
+            it detects failure.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GetNearestFreeVoxelInZone">
+            <summary>
+            This act finds the nearest unoccupied and unreserved voxel in a zone,
+            and fills the blackboard with it.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.MeleeAct">
+            <summary>
+            A creature attacks a target until the target is dead.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.PlaceRoomResourcesAct">
+            <summary>
+            A creature uses the item currently in its hands to build a BuildRoom.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.PlaceVoxelAct">
+            <summary>
+            A creature uses the item currently in its hands to construct a voxel.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.PlanAct">
+            <summary>
+            A creature finds a path from point A to point B and fills the blackboard with
+            this information.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.PutResourceInZone">
+            <summary>
+            A creature puts a specified resource (in its inventory) into a zone.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.SearchFreeStockpileAct">
+            <summary>
+            A creature looks for the nearest, free stockpile and puts that information onto the blackboard.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.SetBlackboardData`1">
+            <summary>
+            A creature sets a particular memory location in the blackboard
+            to the given value.
+            </summary>
+            <typeparam Name="TValue">The type of the value.</typeparam>
+        </member>
+        <member name="T:DwarfCorp.Scripting.LeafActs.SleepAct">
+            <summary>
+            A creature remains inactive, recharging its energy until it is satisfied.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.StashAct">
+            <summary>
+            A creature grabs a given item and puts it in their inventory
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.StashResourcesAct">
+            <summary>
+            A creature grabs a given item and puts it in their inventory
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.StopAct">
+            <summary>
+            A creature attempts to slow its velocity until stopped.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.TeleportAct">
+            <summary>
+            A creature attacks a voxel until it is destroyed.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.WanderAct">
+            <summary>
+            A creature randomly applies force at intervals to itself.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BodySelector">
+            <summary>
+            This class handles selecting regions of bodies with the mouse.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BuildOrder">
+            <summary>
+            A designation is just a voxel which can be assigned a number of creatures.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BuildRoomOrder">
+            <summary>
+            This designation specifies a list of voxels which are to be turned
+            into a BuildRoom.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BuildVoxelOrder">
+            <summary>
+            This designation specifies that a given voxel from a given BuildRoom should be built.
+            A BuildRoom build designation is actually a colletion of these.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.CraftBuilder">
+            <summary>
+            A designation specifying that a creature should put a voxel of a given type
+            at a location.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.RoomBuilder">
+            <summary>
+            The BuildRoom designator keeps track of voxels selected by the player and turns
+            them into BuildRoom designations (so that dwarves can build BuildRoom).
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.WallBuilder">
+            <summary>
+            A designation specifying that a creature should put a voxel of a given type
+            at a location.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Economy">
+            <summary>
+            Controls how much money the player has, and whether the player can
+            buy and sell certain things. Controls balloon shipments.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Resource">
+            <summary>
+            A resource is a kind of item that can be bought or sold, and can be used
+            to build things.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ResourceAmount">
+            <summary>
+            This is just a struct of two things: a resource, and a number of that resource.
+            This is used instead of a list, since there is nothing distinguishing resources from each other.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ResourceLibrary">
+            <summary>
+            A static collection of resource types (should eventually be replaced with a file)
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ShipmentOrder">
+            <summary>
+            Specifies that a number of goods should be bought/sold from corporate HQ.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ShipOrder">
+            <summary>
+            This designation specifies that a resource should be shipped to a given port.
+            Creatures will find a resource from stockpiles and move it to the port.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Faction">
+            <summary>
+            A faction is an independent collection of creatures, tied to an economy, rooms, and designations.
+            Examples might be the player's dwarves, or the faction of goblins.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.FactionLibrary">
+            <summary>
+            A static collection of factions.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GameMaster">
+            <summary>
+            Handles the player's controls, tools, and factions.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.InputManager">
+            <summary>
+            Wraps XNA's keyboard/mouse input to allow for a "callback" style instead of a "polling" style.
+            This can be used to have specific functions called when a key is pressed.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.InputManager.TryConvertKeyboardInput(Microsoft.Xna.Framework.Input.Keys,System.Boolean,System.Char@)">
+            <summary>
+            Tries to convert keyboard input to characters and prevents repeatedly returning the 
+            same character if a key was pressed last frame, but not yet unpressed this frame.
+            </summary>
+            <param Name="keyboard">The current KeyboardState</param>
+            <param Name="oldKeyboard">The KeyboardState of the previous frame</param>
+            <param Name="key">When this method returns, contains the correct character if conversion succeeded.
+            Else contains the null, (000), character.</param>
+            <returns>True if conversion was successful</returns>
+        </member>
+        <member name="T:DwarfCorp.KeyManager">
+            <summary>
+            This class describes the keyboard settings used to control the game.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.AttackTool">
+            <summary>
+            When using this tool, the player clicks on creatures to specify that 
+            they should be killed
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.PlayerTool">
+            <summary>
+            The player's tools are a state machine. A build tool is a particular player
+            state. Contains callbacks to when voxels are selected.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BuildTool">
+            <summary>
+            Using this tool, the player can specify regions of voxels to be
+            turned into rooms.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ChopTool">
+            <summary>
+            When using this tool, the player clicks on trees/bushes to specify that 
+            they should be chopped down.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.DigTool">
+            <summary>
+            When using this tool, the player specifies that certain voxels should
+            be mined.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GatherTool">
+            <summary>
+            When using this tool, the player specifies that certain
+            entities should be put into stockpiles.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GodModeTool">
+            <summary>
+            This is the debug tool that allows the player to mess with the engine.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GuardTool">
+            <summary>
+            Using this tool, the player can specify certain voxels to be guarded.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.VoxelSelector">
+            <summary>
+            This class handles selecting regions of voxels with the mouse.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Room">
+            <summary>
+            A BuildRoom is a kind of zone which can be built by creatures.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Zone">
+            <summary>
+            A zone is a collection of voxel storages.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.RoomData">
+            <summary>
+            A BuildRoom data has a Name, alters the apperance of voxels, requires resources to build,
+            and has item templates.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.RoomLibrary">
+            <summary>
+            A static class describing all the kinds of rooms. Can create rooms using templates.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.RoomTemplate">
+            <summary>
+            Describes how a BuildRoom should be populated with items. A template has a number of "required" items,
+            and "accessory" items. Templates will fill up a BuildRoom until no more can be placed. Templates can be
+            rotated to fill more space.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Stockpile">
+            <summary>
+            A stockpile is a kind of zone which contains items on top of it.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Task">
+            <summary>
+            A task is an abstract object which describes a goal for a creature.
+            Tasks construct acts (or behaviors) to solve them. Tasks have costs,
+            and can either be feasible or infeasible for a crature.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.TaskManager">
+            <summary>
+            The task manager attempts to optimally assign tasks to creatures based
+            on feasibility and cost contraints.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BuildRoomTask">
+            <summary>
+            Tells a creature that it should find an item with the specified
+            tags and put it in a given zone.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BuildVoxelTask">
+            <summary>
+            Tells a creature that it should get a resource, and put it into a voxel
+            to build it.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GatherItemTask">
+            <summary>
+            Tells a creature that it should pick up an item and put it in a stockpile.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GetItemWithTagsTask">
+            <summary>
+            Tells a creature that it should find an item with a tag, and pick it up.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.GuardVoxelTask">
+            <summary>
+            Tells a creature that it should guard a voxel.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.KillEntityTask">
+            <summary>
+            Tells a creature that it should kill an entity.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.KillVoxelTask">
+            <summary>
+            Tells a creature that it should destroy a voxel via digging.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.LookInterestingTask">
+            <summary>
+            Tells a creature that it should do something (anything) since there 
+            is nothing else to do.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.PutItemInZoneTask">
+            <summary>
+            Tells a creature that it should put the given item in the given voxel zone.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.PutItemWithTagTask">
+            <summary>
+            Tells a creature that it should find an item with the specified
+            tags and put it in a given zone.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.SatisfyHungerTask">
+            <summary>
+            Tells a creature that it should find food and eat it.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.SatisfyTirednessTask">
+            <summary>
+            Tells a creature that it should find a bed and sleep (or else pass out).
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.StockResourceTask">
+            <summary>
+            Tells a creature that it should pick up an item and put it in a stockpile.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.TestBehaviors">
+            <summary>
+            Functions to test behaviors (or acts)
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.NoiseMaker">
+            <summary>
+            Just holds a collection of noises, and can only make one such noise
+            at a time (used, for instance, to make creatures have noises).
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Sound3D">
+            <summary>
+            Holds a particular instant of a 3D sound, its location, and its volume.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.SoundManager">
+            <summary>
+            Manages and creates 3D sounds.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.CollisionManager">
+            <summary>
+            Maintains a number of labeled octrees, and allows collision
+            queries for different kinds of objects in the world.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Datastructures">
+            <summary>
+            Honestly, this is just a helper class where a bunch of other miscellanious
+            stuff is thrown at this time. Most of it has to do with utilities for certain
+            data structures (such as 2D or 3D arrays).
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.MinBag`1">
+            <summary>
+            This data structure always has the minimum K elements (not necessarily sorted). It throws
+            out all other elements.
+            </summary>
+            <typeparam Name="T">The type of object stored in the bag.</typeparam>
+        </member>
+        <member name="T:DwarfCorp.Octree">
+            <summary>
+            This data structure divides 3D space into 3D octants (8 splits per node) in a tree structure.
+            At the base of the tree are bounded objects. Makes it efficient to query for collisions.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.OctreeNode">
+            <summary>
+            A particular octant in an octree.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.PriorityQueue`1">
+            <summary>
+            Convenience priority queue which assumes float values.
+            </summary>
+            <typeparam Name="TValue">The kind of thing to be stored in the queue.</typeparam>
+        </member>
+        <member name="T:DwarfCorp.PriorityQueue`2">
+            <summary>
+            This data structure maintains a sorted list of items put into it.
+            </summary>
+            <typeparam Name="TValue">The type stored in the queue</typeparam>
+            <typeparam Name="TPriority">The type to be used for comparison</typeparam>
+        </member>
+        <member name="T:DwarfCorp.ThreadSafeRandom">
+            <summary>
+             C# does not have a thread safe Random generator. This one
+             tries to transparently wrap Random in such a way that the
+             same object produces valid random numbers no matter which
+             thread is calling it.
+             Adapted from this Stackoverflow thread:
+             http://stackoverflow.com/questions/3049467/is-c-sharp-random-number-generator-thread-safe
+             </summary>
+        </member>
+        <member name="T:DwarfCorp.Extensions">
+            <summary>
+            A special static class which "extends" several different XNA objects.
+            This is an obscure C# feature which allows you to add methods to existing objects.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ColorStop">
+            <summary>
+            A particular position and color in a gradient.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ColorGradient">
+            <summary>
+            Used for creating colorful textures from a single value. Linearly interpolates
+            between nearby colors.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.VertexNoise">
+            <summary>
+            This is used to apply random perlin noise to the positions of vertices.
+            Used to make fancy, wavy terrain that isn't exactly square.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Easing">
+            <summary>
+            Some static functions for smoothly animating things.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.HungarianAlgorithm.FindAssignments(System.Int32[0:,0:])">
+            <summary>
+            Finds the optimal assignments for a given matrix of agents and costed tasks such that the total cost is
+            minimized.
+            </summary>
+            <param Name="costs">A cost matrix; the element at row <em>i</em> and column <em>j</em> represents the cost of
+            agent <em>i</em> performing task <em>j</em>.</param>
+            <returns>A matrix of assignments; the value of element <em>i</em> is the column of the task assigned to agent
+            <em>i</em>.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref Name="costs"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="T:DwarfCorp.MathFunctions">
+            <summary>
+            Some static helper functions which are primarily mathematical.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.GetAbsoluteTransform(Microsoft.Xna.Framework.Matrix,Microsoft.Xna.Framework.Matrix)">
+            <summary>
+            Gets the absolute transform given a parent transform.
+            </summary>
+            <param Name="parentTransform">The parent transform.</param>
+            <param Name="myTransform">Relative transform of the child.</param>
+            <returns>The absolute transform</returns>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.GetRelativeTransform(Microsoft.Xna.Framework.Matrix,Microsoft.Xna.Framework.Matrix)">
+            <summary>
+            Gets the relative transform given a parent's transform and a child's absolute transform.
+            </summary>
+            <param Name="parentTransform">The parent transform.</param>
+            <param Name="absoluteTransform">The absolute transform of the child.</param>
+            <returns>The relative transform</returns>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.ApplyRotation(System.Single,Microsoft.Xna.Framework.Matrix@)">
+            <summary>
+            Applies a rotation around the z axis to a transform.
+            </summary>
+            <param Name="radians">The radians to rotate by.</param>
+            <param Name="transform">The transform.</param>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.GetTransform(System.Single,Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            Computes a transformation matrix from an angle and a position.
+            </summary>
+            <param Name="angle">The angle.</param>
+            <param Name="position">The position.</param>
+            <returns>A new homogenous transformation matrix</returns>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.GetAngle(Microsoft.Xna.Framework.Matrix)">
+            <summary>
+            Gets the angle of rotation about the Z axis of a matrix.
+            </summary>
+            <param Name="rotationMatrix">The rotation matrix.</param>
+            <returns>The angle of rotation about the Z axis.</returns>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.Clamp(System.Single,System.Single,System.Single)">
+            <summary>
+            Restricts a value to be within a specified range.
+            </summary>
+            <param Name="value">The value to clamp.</param>
+            <param Name="min">The minimum value.</param>
+            <param Name="max">The maximum value.</param>
+            <returns>Returns the clamped value.</returns>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.PitchYawRoll(Microsoft.Xna.Framework.Matrix)">
+            <summary>
+            Gets the Pitch, yaw and roll of a rotation matrix.
+            </summary>
+            <param Name="rotationMatrix">The rotation matrix.</param>
+            <returns>The pitch, yaw, and roll as a vector3</returns>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.PitchYawRoll(Microsoft.Xna.Framework.Quaternion)">
+            <summary>
+            Gets the Pitch, yaw and roll of a quaternion
+            </summary>
+            <param Name="q">The quaternion.</param>
+            <returns>The pitch, yaw and roll as a vector3</returns>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.ClosestPointToLineSegment(Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Vector3,System.Single)">
+            <summary>
+            Gets the closest point to a line segement to a given point.
+            </summary>
+            <param Name="p">The point.</param>
+            <param Name="a">The start of the line segment.</param>
+            <param Name="b">The end of the line segment..</param>
+            <param Name="lookahead">Add this much to the parametric estimate for the closest point (for pure pursuit algorithms).</param>
+            <returns>The closest point on the line segment to the point in question.</returns>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.PolarToRectangular(System.Single,System.Single)">
+            <summary>
+            Converts polar coordinates to a vector2 in rectangular
+            </summary>
+            <param Name="theta">the angle of the polar coordinate</param>
+            <param Name="r">the distance of the polar coordinate</param>
+            <returns>A cartesian representation of this polar coordinate.</returns>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.PolarToRectangular(Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            Converts a polar representation vector into a rectangular one.
+            </summary>
+            <param Name="other">The polar representation vector (angle, distance).</param>
+            <returns>A cartesian representation of this polar coordinate</returns>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.RectangularToPolar(Microsoft.Xna.Framework.Vector2)">
+            <summary>
+            Converts a cartesian (X, Y) vector to a polar (angle, distance) vector.
+            </summary>
+            <param Name="other">The cartesian vector</param>
+            <returns>A polar vector.</returns>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.Average(System.Collections.Generic.List{Microsoft.Xna.Framework.Vector3})">
+            <summary>
+            Averages the specified vectors.
+            </summary>
+            <param Name="vectors">The vectors to average.</param>
+            <returns>Average of the vectors</returns>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.CreateFacing(Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Vector3,Microsoft.Xna.Framework.Vector3)">
+            <summary>
+            Creates a rotation matrix so that the object faces another in 3D space.
+             O is your object's position
+             P is the position of the object to face
+             U is the nominal "up" vector (typically Vector3.Y)
+             Note: this does not work when O is straight below or straight above P
+             </summary>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.PositiveRootOfQuadratic(System.Single,System.Single,System.Single)">
+            <summary>
+            Gets the positive root of a quadratic given by the quadratic formula.
+            </summary>
+            <param Name="a">The A in x = B + SQRT(B^2 - 4AC)/2A.</param>
+            <param Name="b">The B in x = B + SQRT(B^2 - 4AC)/2A.</param>
+            <param Name="c">The C in x = B + SQRT(B^2 - 4AC)/2A.</param>
+            <returns>The positive root of a quadratic</returns>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.NegativeRootOfQuadratic(System.Single,System.Single,System.Single)">
+            <summary>
+            Gets the negative root of a quadratic given by the quadratic formula.
+            </summary>
+            <param Name="a">The A in x = B + SQRT(B^2 - 4AC)/2A.</param>
+            <param Name="b">The B in x = B + SQRT(B^2 - 4AC)/2A.</param>
+            <param Name="c">The C in x = B + SQRT(B^2 - 4AC)/2A.</param>
+        </member>
+        <member name="M:DwarfCorp.Perlin.Generate(System.Single)">
+            <summary>
+            1D simplex noise
+            </summary>
+            <param Name="x"></param>
+            <returns></returns>
+        </member>
+        <member name="M:DwarfCorp.Perlin.Generate(System.Single,System.Single)">
+            <summary>
+            2D simplex noise
+            </summary>
+            <param Name="x"></param>
+            <param Name="y"></param>
+            <returns></returns>
+        </member>
+        <member name="T:DwarfCorp.PIDController">
+            <summary>
+            A simple way of applying forces to things to move them around smoothly.
+            Very robust and easy to create. Uses a proportional (P), Integral (I) and Derivative (D)
+            term to control the force.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Point3">
+            <summary>
+            Just a simple data type with 3 integers (x, y, and z).
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.AStarPlanner">
+            <summary>
+            The classic A star planner, but singled out for use with voxels. It should
+            probably be made generic.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.AstarPlanRequest">
+            <summary>
+            A request to plan from point A to point B
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.AStarPlanResponse">
+            <summary>
+            The result of a plan request (has a path on success)
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.PlanService">
+            <summary>
+            A service call which plans from pointA to pointB voxels.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Service`2">
+            <summary>
+            The Service architecutre divides a task into servers (Service) and subscribers (Subscriber).
+            The server looks at a list of requests, processes them, and then broadcasts the results
+            to subscribers. This all happens in parallel.
+            </summary>
+            <typeparam Name="TRequest">The type of the request.</typeparam>
+            <typeparam Name="TResponse">The type of the response</typeparam>
+        </member>
+        <member name="T:DwarfCorp.PlanSubscriber">
+            <summary>
+            A service subscriber which is used to find paths from pointA to pointB
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Timer">
+            <summary>
+            A timer fires at a fixed interval when updated. Some timers automatically reset.
+            Other timers need to be manually reset.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ChunkData">
+            <summary>
+            Has a collection of voxel chunks, and methods for accessing them.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.ChunkData.GetNonNullVoxelAtWorldLocation(Microsoft.Xna.Framework.Vector3,DwarfCorp.Voxel@)">
+            <summary> 
+            Given a world location, returns the voxel at that location if it exists
+            Otherwise returns null.
+            </summary>
+            <param Name="worldLocation">A floating point vector location in the world space</param>
+            <param Name="depth">unused</param>
+            <returns>The voxel at that location (as a list)</returns>
+        </member>
+        <member name="M:DwarfCorp.ChunkData.GetNonNullVoxelAtWorldLocationCheckFirst(DwarfCorp.VoxelChunk,Microsoft.Xna.Framework.Vector3,DwarfCorp.Voxel@)">
+            <summary>
+            TODO: Get rid of the recursion
+            Recursive function which gets all the voxels at a position in the world, assuming the voxel is in a given chunk
+            </summary>
+            <param Name="checkFirst">The voxel chunk to check first</param>
+            <param Name="worldLocation">The point in the world to check</param>
+            <param Name="toReturn">A list of voxels to get</param>
+            <param Name="depth">The depth of the recursion</param>
+        </member>
+        <member name="T:DwarfCorp.ChunkGenerator">
+            <summary>
+            Creates randomly generated voxel chunks using data from the overworld.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.ChunkManager">
+            <summary>
+            Responsible for keeping track of and accessing large collections of
+            voxels. There is intended to be only one chunk manager. Essentially,
+            it is a virtual memory lookup table for the world's voxels. It imitates
+            a gigantic 3D array.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.DynamicLight">
+            <summary>
+            Lights nearby voxels with torch lights.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.LiquidAsset">
+            <summary>
+            Specifies how a liquid is to be rendered.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.VoxelVertex">
+            <summary>
+            Specifies the location of a vertex on a voxel.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.RampType">
+            <summary>
+            Specifies how a voxel is to be sloped.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.TransitionTexture">
+            <summary> Determines a transition texture type. Each phrase
+            (front, left, back, right) defines whether or not a tile of the same type is
+            on the given face</summary>
+        </member>
+        <member name="T:DwarfCorp.Voxel">
+            <summary>
+            An atomic cube in the world which represents a bit of terrain. 
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.VoxelChunk">
+            <summary>
+            A 3D grid of voxels, water, and light.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.VoxelLibrary">
+            <summary>
+            A static collection of voxel types and their properties.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.VoxelLibrary.ResourceSpawnRate">
+            <summary>
+            Specifies that a specific voxel is a resource which should
+            spawn in veins.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.VoxelType">
+            <summary>
+            Specifies a specific kind of voxel.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.WaterCell">
+            <summary>
+            The equivalent of a voxel, but for storing liquids.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.WaterManager">
+            <summary>
+            Handles the water simulation in the game.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.WaterRenderer">
+            <summary>
+            Handles the drawing routines for liquids.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BiomeData">
+            <summary>
+            A biome defines how chunks are to be generated. Biomes specify
+            what kind of voxels, vegetation, and other bits are included in the generation process.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.BiomeLibrary">
+            <summary>
+            A static collection of biome types.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.DetailMoteData">
+            <summary>
+            A detail mote is a little bit of vegetation or whatever else
+            which is drawn over certain voxels.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.FaunaData">
+            <summary>
+            Fauna data describes how certain animals (such as birds) are to populate
+            a chunk.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Overworld">
+            <summary>
+            The overworld is a 2D map specifying biomes,
+            temperature, terrain height, etc.  Chunks are generated
+            from the overworld.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.VegetationData">
+            <summary>
+            Vegetation data describes how certain plants (such as trees) are to populate
+            a chunk.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.WorldTime">
+            <summary>
+            This is a wrapper around the DateTime class which allows the game to go faster
+            or slower. The days/hours/minutes actually pass in the game.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.Program.Main(System.String[])">
+            <summary>
+            The main entry point for the application.
+            </summary>
+        </member>
+    </members>
+</doc>
