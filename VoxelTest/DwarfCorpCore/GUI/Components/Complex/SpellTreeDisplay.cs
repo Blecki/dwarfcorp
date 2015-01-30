@@ -121,9 +121,10 @@ namespace DwarfCorp
 
             public void Render(DwarfTime time, SpriteBatch batch)
             {
-                bool isResearched = Spell.ResearchProgress >= Spell.ResearchTime;
+                bool isResearched = Spell.IsResearched;
+                bool parentResearched = Spell.Parent == null || Spell.Parent.IsResearched;
 
-                if (!isResearched)
+                if (!isResearched && parentResearched)
                 {
                     float progress = Spell.ResearchProgress/Spell.ResearchTime;
                     Drawer2D.FillRect(batch, new Rectangle(ImageButton.GlobalBounds.X, ImageButton.GlobalBounds.Y - 12, (int)(ImageButton.GlobalBounds.Width * progress), 10), Color.Cyan);
@@ -140,9 +141,9 @@ namespace DwarfCorp
                     }
 
                     Vector2 line2 = new Vector2(child.ImageButton.GlobalBounds.X, child.ImageButton.GlobalBounds.Y + child.ImageButton.GlobalBounds.Height / 2);
-                    
+
                     Drawer2D.DrawLine(batch, line1, line2, drawColor, 4);
-                }
+                }   
             }
 
             public void CountLevelsRecursive(Dictionary<int, List<SpellButton>> levels)
