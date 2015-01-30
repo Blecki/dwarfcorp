@@ -24,8 +24,8 @@ namespace DwarfCorp
             VegetationData grasslandPines = new VegetationData("Pine Tree", 0.5f, 0.5f, 1.7f, 25, 0.8f, 0.01f);
             VegetationData grasslandBushes = new VegetationData("Berry Bush", 1.0f, 0.1f, 0.6f, 30, 0.8f, 0.02f);
             VegetationData grasslandWheat = new VegetationData("Wheat", 1.0f, 1.0f, 0.45f, 50, 0.8f, 0.01f);
-            DetailMoteData greenGrass = new DetailMoteData("grass", ContentPaths.Entities.Plants.grass, 0.1f, 0.6f, 1.0f);
-            DetailMoteData flowers = new DetailMoteData("flower", ContentPaths.Entities.Plants.flower, 0.3f, 0.9f, 0.8f);
+            DetailMoteData greenGrass = new DetailMoteData("grass", ContentPaths.Entities.Plants.grass, 0.1f, 0.6f, 1.2f);
+            DetailMoteData flowers = new DetailMoteData("flower", ContentPaths.Entities.Plants.flower, 0.3f, 0.9f, 1.2f);
             FaunaData grasslandBirds = new FaunaData("Bird", 0.0001f);
             BiomeData grassland = new BiomeData(Overworld.Biome.Grassland)
             {
@@ -45,7 +45,7 @@ namespace DwarfCorp
             VegetationData forestPines = new VegetationData("Pine Tree", 1.0f, 0.5f, 1.7f, 30, 0.5f, 0.02f);
             VegetationData forestBushes = new VegetationData("Berry Bush", 1.0f, 0.1f, 0.6f, 25, 0.8f, 0.01f);
             VegetationData bigForestMushroom = new VegetationData("Mushroom", 1, 1, 0.45f, 35, 0.8f, 0.02f);
-            DetailMoteData forestGrass = new DetailMoteData("grass", ContentPaths.Entities.Plants.grass, 0.1f, 0.6f, 1.0f);
+            DetailMoteData forestGrass = new DetailMoteData("grass", ContentPaths.Entities.Plants.grass, 0.1f, 0.6f, 1.2f);
             FaunaData forestBirds = new FaunaData("Bird", 0.0005f);
             FaunaData forestDeer = new FaunaData("Deer", 0.0005f);
             BiomeData forest = new BiomeData(Overworld.Biome.Forest)
