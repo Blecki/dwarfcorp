@@ -206,7 +206,7 @@
          "$id" : "2",
          "AssetName" : "Entities\\Goblin\\Sprites\\gob-swordsonly",
          "FrameHeight" : 40,
-         "FrameWidth" : 48
+         "FrameWidth" : 64
       }
    ],
    "Tints" : [ "255, 255, 255, 255", "255, 255, 255, 255" ]
