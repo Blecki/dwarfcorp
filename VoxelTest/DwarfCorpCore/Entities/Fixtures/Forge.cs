@@ -20,7 +20,7 @@ namespace DwarfCorp
         public Forge(Vector3 position) :
             base("Forge", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
-            Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture);
+            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
 
             List<Point> frames = new List<Point>
             {
@@ -29,7 +29,7 @@ namespace DwarfCorp
                 new Point(2, 3),
                 new Point(3, 3)
             };
-            Animation lampAnimation = new Animation(GameState.Game.GraphicsDevice, spriteSheet, "Forge", 32, 32, frames, true, Color.White, 3.0f, 1f, 1.0f, false);
+            Animation lampAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "Forge", 32, 32, frames, true, Color.White, 3.0f, 1f, 1.0f, false);
 
             Sprite sprite = new Sprite(PlayState.ComponentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
             {

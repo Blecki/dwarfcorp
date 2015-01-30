@@ -922,6 +922,11 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Particles\gib_particle.png">
+      <Name>gib_particle</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Text\adverbs.txt">
       <Name>adverbs</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

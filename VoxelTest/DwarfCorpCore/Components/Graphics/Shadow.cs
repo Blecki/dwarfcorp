@@ -22,7 +22,7 @@ namespace DwarfCorp
             
         }
 
-        public Shadow(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Texture2D spriteSheet) :
+        public Shadow(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, SpriteSheet spriteSheet) :
             base(manager, name, parent, localTransform, spriteSheet, false)
         {
             OrientationType = OrientMode.Fixed;

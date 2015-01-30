@@ -49,10 +49,10 @@ namespace DwarfCorp
                 chunks, graphics, content, name
             )
         {
-            Initialize(TextureManager.GetTexture(sprites));
+            Initialize(new SpriteSheet(sprites));
         }
 
-        public void Initialize(Texture2D spriteSheet)
+        public void Initialize(SpriteSheet spriteSheet)
         {
             Physics.Orientation = Physics.OrientMode.RotateY;
 
@@ -107,14 +107,14 @@ namespace DwarfCorp
             // Shadow
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -.25f, 0.0f);
-            Texture2D shadowTexture = TextureManager.GetTexture(ContentPaths.Effects.shadowcircle);
+            SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
             Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform, shadowTexture);
 
             List<Point> shP = new List<Point>
             {
                 new Point(0,0)
             };
-            Animation shadowAnimation = new Animation(Graphics, shadowTexture, "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
+            Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
             Shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
             Shadow.SetCurrentAnimation("sh");

@@ -21,7 +21,7 @@ namespace DwarfCorp
         }
 
         public SelectionCircle(ComponentManager manager, Body parent) :
-            base(manager, "Selection", parent, Matrix.CreateRotationX((float)Math.PI), TextureManager.GetTexture(ContentPaths.Effects.selection_circle), false)
+            base(manager, "Selection", parent, Matrix.CreateRotationX((float)Math.PI), new SpriteSheet(ContentPaths.Effects.selection_circle), false)
         {
             LightsWithVoxels = false;
             AddToOctree = false;
@@ -30,7 +30,7 @@ namespace DwarfCorp
             {
                 new Point(0, 0)
             };
-            Animation shadowAnimation = new Animation(GameState.Game.GraphicsDevice, TextureManager.GetTexture(ContentPaths.Effects.selection_circle), "sh", 32, 32, shP, false, Color.White, 1, 1.1f, 1.1f, false);
+            Animation shadowAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Effects.selection_circle), "sh", 32, 32, shP, false, Color.White, 1, 1.1f, 1.1f, false);
             AddAnimation(shadowAnimation);
             shadowAnimation.Play();
             base.SetCurrentAnimation("sh");

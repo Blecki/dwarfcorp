@@ -231,9 +231,16 @@ namespace BloomPostprocess
                 effect = null;
             }
 
-            spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effect);
-            spriteBatch.Draw(texture, new Rectangle(0, 0, width, height), Color.White);
-            spriteBatch.End();
+            try
+            {
+                spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effect);
+                spriteBatch.Draw(texture, new Rectangle(0, 0, width, height), Color.White);
+                spriteBatch.End();
+            }
+            catch (InvalidOperationException operationException)
+            {
+                Console.Error.WriteLine(operationException.Message);
+            }
         }
 
 

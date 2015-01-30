@@ -175,7 +175,7 @@ namespace DwarfCorp
         {
             const int frameWidth = 64;
             const int frameHeight = 40;
-            Texture2D sprites = TextureManager.GetTexture(ContentPaths.Entities.Goblin.Sprites.goblin_withsword);
+            SpriteSheet sprites = new SpriteSheet(ContentPaths.Entities.Goblin.Sprites.goblin_withsword);
 
             Animations = new List<Animation>()
             {

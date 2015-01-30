@@ -50,6 +50,11 @@ namespace DwarfCorp
                     totalResearch = 0.0f;
                 }
 
+                if (Spell.ResearchProgress >= Spell.ResearchTime)
+                {
+                    PlayState.AnnouncementManager.Announce("Researched " + Spell.Spell.Name, Creature.Stats.FirstName + " " + Creature.Stats.LastName + " discovered the " + Spell.Spell.Name + " spell!");
+                }
+
                 starParitcle.Update(Act.LastTime);
                 if(starParitcle.HasTriggered)
                     PlayState.ParticleManager.Trigger("star_particle", Creature.AI.Position, Color.White, 3);

@@ -25,7 +25,7 @@ namespace DwarfCorp
         }
 
         public AnimatedImagePanel(DwarfGUI gui, GUIComponent parent, Animation animtion)
-            :base(gui, parent, new ImageFrame(animtion.SpriteSheet, animtion.GetCurrentFrameRect()))
+            :base(gui, parent, new ImageFrame(animtion.SpriteSheet.GetTexture(), animtion.GetCurrentFrameRect()))
         {
             Animation = animtion;
         }
@@ -35,7 +35,7 @@ namespace DwarfCorp
             if (Animation != null)
             {
                 Animation.Update(time, Timer.TimerMode.Real);
-                Image.Image = Animation.SpriteSheet;
+                Image.Image = Animation.SpriteSheet.GetTexture();
                 Image.SourceRect = Animation.GetCurrentFrameRect();
             }
             base.Update(time);

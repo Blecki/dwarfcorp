@@ -39,7 +39,7 @@ namespace DwarfCorp
             string name,
             GameComponent parent,
             Matrix localTransform,
-            Texture2D spriteSheet,
+            SpriteSheet spriteSheet,
             int numBillboards, GraphicsDevice graphi) :
                 base(manager, name, parent, localTransform, spriteSheet, false)
         {
@@ -74,7 +74,7 @@ namespace DwarfCorp
                     Primitive.VertexBuffer.Dispose();
                 }
             }
-            Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet, Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints);
+            Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints);
         }
 
         public void RemoveTransform(int index)
@@ -85,7 +85,7 @@ namespace DwarfCorp
                 Rotations.RemoveAt(index);
                 Tints.RemoveAt(index);
             }
-            Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet, Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints);
+            Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints);
         }
 
         public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
@@ -112,7 +112,7 @@ namespace DwarfCorp
         {
             if(Primitive == null)
             {
-                Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet, Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints);
+                Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints);
             }
 
 
@@ -129,7 +129,7 @@ namespace DwarfCorp
 
                 RasterizerState r = graphicsDevice.RasterizerState;
                 graphicsDevice.RasterizerState = rasterState;
-                effect.Parameters["xTexture"].SetValue(SpriteSheet);
+                effect.Parameters["xTexture"].SetValue(SpriteSheet.GetTexture());
 
                 DepthStencilState origDepthStencil = graphicsDevice.DepthStencilState;
                 DepthStencilState newDepthStencil = DepthStencilState.DepthRead;

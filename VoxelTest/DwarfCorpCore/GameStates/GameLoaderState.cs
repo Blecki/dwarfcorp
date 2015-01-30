@@ -296,8 +296,11 @@ namespace DwarfCorp.GameStates
 
         private void worldPicture_OnClicked(int picture)
         {
-            SelectedDescriptor = Games[picture];
-            UpdateSelection();
+            if (Games.Count > picture)
+            {
+                SelectedDescriptor = Games[picture];
+                UpdateSelection();
+            }
         }
 
         private void back_OnClicked()
