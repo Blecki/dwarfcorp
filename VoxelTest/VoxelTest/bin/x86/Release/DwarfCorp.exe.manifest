@@ -68,14 +68,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1127936">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1128448">
       <assemblyIdentity name="DwarfCorp" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>PhXPonivW2RbM+ohY8bGVevWPMA=</dsig:DigestValue>
+        <dsig:DigestValue>PUGEP3jkYP6KwNP9eVK8sKpYTfc=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -541,13 +541,13 @@
       <dsig:DigestValue>/Ea+g1fvoQqNOMXtXBkuainWlOg=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Entities\Dwarf\Sprites\soldier_animation.json" size="7694">
+  <file name="Content\Entities\Dwarf\Sprites\soldier_animation.json" size="7716">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>++TAXSsPYyhSMwpzOeD1ofpBpV4=</dsig:DigestValue>
+      <dsig:DigestValue>gp0lXSFdPcXL82e7FvFyk3GNVgM=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Entities\Dwarf\Sprites\soldier-axe.xnb" size="3534">
@@ -610,7 +610,7 @@
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>FhdJmOZ3cAW/6zSQj8otegSN8cE=</dsig:DigestValue>
+      <dsig:DigestValue>4UOqBgoq/xfRyWiIyNG9uXVWckE=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Entities\Dwarf\Sprites\worker-pick.xnb" size="1334">
@@ -1189,13 +1189,13 @@
       <dsig:DigestValue>JZnjljdjjl+oy8OxiTjDnaAUrBk=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Particles\heart.xnb" size="750">
+  <file name="Content\Particles\heart.xnb" size="568">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>xQPRbgVpsKkxiAy5L9jRzQQNKp8=</dsig:DigestValue>
+      <dsig:DigestValue>EqOtiKu0hsX7RcwdgibabYprDdw=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Particles\leaf.xnb" size="482">

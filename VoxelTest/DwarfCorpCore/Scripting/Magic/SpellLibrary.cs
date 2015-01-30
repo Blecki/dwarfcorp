@@ -47,7 +47,7 @@ namespace DwarfCorp
                                     Description = "Makes the selected creatures work harder for 30 seconds (+2 to DEX, STR, INT and WIS)",
                                     Hint = "Click and drag to select creatures"
                                 },
-                                ResearchProgress = 30.0f,
+                                ResearchProgress = 0.0f,
                                 ResearchTime = 30.0f,
 
                                 Children = new List<SpellTree.Node>()
@@ -81,11 +81,11 @@ namespace DwarfCorp
                                                         Description = "Creates a magical helper employee who persists for 30 seconds",
                                                         Hint = "Click to spawn a helper"
                                                     },
-                                                    ResearchProgress = 150.0f,
+                                                    ResearchProgress = 0.0f,
                                                     ResearchTime = 150.0f
                                                 }
                                             },
-                                            ResearchProgress = 60.0f,
+                                            ResearchProgress = 0.0f,
                                             ResearchTime = 60.0f,
                                         },
                                         new SpellTree.Node()
@@ -98,7 +98,7 @@ namespace DwarfCorp
                                                 Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 5, 2)
                                             },
                                             ResearchTime = 60.0f,
-                                            ResearchProgress = 60.0f,
+                                            ResearchProgress = 0.0f,
                                             Children = new List<SpellTree.Node>()
                                             {
                                                 new SpellTree.Node()
@@ -111,7 +111,7 @@ namespace DwarfCorp
                                                         Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 5, 2)
                                                     },
                                                     ResearchTime = 120.0f,
-                                                    ResearchProgress = 120.0f
+                                                    ResearchProgress = 0.0f
                                                 }
                                             }
                                         }
@@ -129,14 +129,14 @@ namespace DwarfCorp
                             new SpellTree.Node()
                             {
                                 Spell = new PlaceBlockSpell("Dirt", false),
-                                ResearchProgress = 50.0f,
+                                ResearchProgress = 0.0f,
                                 ResearchTime = 50.0f,
                                 
                                 Children = new List<SpellTree.Node>()
                                 {
                                     new SpellTree.Node()
                                     {
-                                        ResearchProgress = 100.0f,
+                                        ResearchProgress = 0.0f,
                                         ResearchTime = 100.0f,
                                         Spell = new PlaceBlockSpell("Stone", false),
 
@@ -144,7 +144,7 @@ namespace DwarfCorp
                                         {
                                             new SpellTree.Node()
                                             {
-                                                ResearchProgress = 150.0f,
+                                                ResearchProgress = 0.0f,
                                                 ResearchTime = 150.0f,
                                                 Spell = new DestroyBlockSpell()
                                             }
@@ -159,21 +159,21 @@ namespace DwarfCorp
                                      Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 2, 3),
                                      Description = "Creates a temporary magic wall."
                                 },
-                                ResearchProgress = 50.0f,
+                                ResearchProgress = 0.0f,
                                 ResearchTime = 50.0f,
 
                                 Children = new List<SpellTree.Node>()
                                 {
                                     new SpellTree.Node()
                                     {
-                                        ResearchProgress = 100.0f,
+                                        ResearchProgress = 0.0f,
                                         ResearchTime = 100.0f,
                                         Spell = new PlaceBlockSpell("Iron", true),
                                         Children = new List<SpellTree.Node>()
                                         {
                                             new SpellTree.Node()
                                             {
-                                                ResearchProgress = 150.0f,
+                                                ResearchProgress = 0.0f,
                                                 ResearchTime = 150.0f,
                                                 Spell = new PlaceBlockSpell("Gold", true)
                                             }
@@ -193,7 +193,7 @@ namespace DwarfCorp
                             Hint = "Click and drag to select creatures",
                             Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 3, 2)
                         },
-                        ResearchProgress = 30.0f,
+                        ResearchProgress = 0.0f,
                         ResearchTime = 30.0f,
                         Children = new List<SpellTree.Node>()
                         {
@@ -205,7 +205,9 @@ namespace DwarfCorp
                                     Description = "Heals 5 damage per second for 10 seconds",
                                     Hint = "Click and drag to select creatures",
                                     Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 3, 2)
-                                }
+                                },
+                                ResearchProgress = 0.0f,
+                                ResearchTime = 150.0f
                             }
                         }
                     }
