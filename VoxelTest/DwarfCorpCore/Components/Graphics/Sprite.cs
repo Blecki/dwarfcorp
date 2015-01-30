@@ -18,7 +18,6 @@ namespace DwarfCorp
     {
         public Dictionary<string, Animation> Animations { get; set; }
         
-        [JsonIgnore]
         public SpriteSheet SpriteSheet { get; set; }
         public Animation CurrentAnimation { get; set; }
         public OrientMode OrientationType { get; set; }

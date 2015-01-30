@@ -112,7 +112,7 @@ namespace DwarfCorp
 
         public static CompositeAnimation CreateCompositeAnimation(Creature.CharacterMode mode,
             Orientation orient,
-            Composite composite,
+            string composite,
             float frameHz,
             List<SpriteSheet> layers,
             List<Color> tints,

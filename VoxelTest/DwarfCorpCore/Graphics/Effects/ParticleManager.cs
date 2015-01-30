@@ -24,9 +24,9 @@ namespace DwarfCorp
 
         public void Trigger(int num, Vector3 position, Color tint)
         {
-            foreach (ParticleEmitter emitter in Emitters)
+            for (int i = 0; i < num; i++)
             {
-                emitter.Trigger(Math.Max(num / Emitters.Count, 1), position, tint);
+                Emitters[PlayState.Random.Next(Emitters.Count)].Trigger(1, position, tint);
             }
         }
         

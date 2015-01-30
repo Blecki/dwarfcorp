@@ -22,7 +22,7 @@ namespace DwarfCorp
             Mana,
             Gold,
             Iron,
-            Apple,
+            Berry,
             Mushroom,
             Grain,
             Sand,
@@ -52,7 +52,7 @@ namespace DwarfCorp
                 ResourceType.Iron, "Iron"
             },
             {
-                ResourceType.Apple, "Apple"
+                ResourceType.Berry, "Berry"
             },
             {
                 ResourceType.Mushroom, "Mushroom"
@@ -102,7 +102,7 @@ namespace DwarfCorp
             Resources[ResourceType.Gold] = new Resource(ResourceType.Gold, 50.0f, "Shiny!", new NamedImageFrame(tileSheet, GetRect(0, 0)), Resource.ResourceTags.Precious);
             Resources[ResourceType.Coal] = new Resource(ResourceType.Coal, 10.0f, "Used as fuel", new NamedImageFrame(tileSheet, GetRect(2, 2)), Resource.ResourceTags.Material);
             Resources[ResourceType.Iron] = new Resource(ResourceType.Iron, 5.0f, "Needed to build things.", new NamedImageFrame(tileSheet, GetRect(2, 0)), Resource.ResourceTags.Material);
-            Resources[ResourceType.Apple] = new Resource(ResourceType.Apple, 0.5f, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(2, 1)), Resource.ResourceTags.Food) { FoodContent = 50 };
+            Resources[ResourceType.Berry] = new Resource(ResourceType.Berry, 0.5f, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(2, 1)), Resource.ResourceTags.Food) { FoodContent = 50 };
             Resources[ResourceType.Mushroom] = new Resource(ResourceType.Mushroom, 0.25f, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(1, 2)), Resource.ResourceTags.Food) { FoodContent = 50 };
             Resources[ResourceType.Grain] = new Resource(ResourceType.Grain, 0.25f, "Dwarves can eat this.", new NamedImageFrame(tileSheet, GetRect(0, 2)), Resource.ResourceTags.Food) { FoodContent = 100 };
         

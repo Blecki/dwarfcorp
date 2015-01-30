@@ -151,7 +151,7 @@ namespace DwarfCorp
             "Gold Resource",
             "Coal Resource",
             "Mana Resource",
-            "Apple Resource",
+            "Berry Resource",
             "Grain Resource",
             "Mushroom Resource",
             "Work Pile",
@@ -221,7 +221,7 @@ namespace DwarfCorp
                 case "Stone Resource":
                 case "Gold Resource":
                 case "Mana Resource":
-                case "Apple Resource":
+                case "Berry Resource":
                 case "Grain Resource":
                 case "Coal Resource":
                 case "Mushroom Resource":
@@ -1024,7 +1024,7 @@ namespace DwarfCorp
             inventory.Resources.AddResource(new ResourceAmount()
             {
                 NumResources = (int)(bushSize * 5),
-                ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Apple]
+                ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Berry]
             });
 
             tree.AddToOctree = true;
