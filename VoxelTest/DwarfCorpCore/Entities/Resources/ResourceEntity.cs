@@ -31,7 +31,7 @@ namespace DwarfCorp
             {
                 new Point(frameX, frameY)
             };
-            Animation animation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(type.Image.AssetName), "Animation", 32, 32, frames, false, Color.White, 0.01f, 0.5f, 0.5f, false);
+            Animation animation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(type.Image.AssetName), "Animation", 32, 32, frames, false, Color.White, 0.01f, type.Image.SourceRect.Width / 32.0f, type.Image.SourceRect.Height / 32.0f, false);
 
             Sprite sprite = new Sprite(PlayState.ComponentManager, "Sprite", this, Matrix.Identity, spriteSheet, false)
             {

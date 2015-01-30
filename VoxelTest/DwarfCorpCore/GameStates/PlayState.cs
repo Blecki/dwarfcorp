@@ -1165,7 +1165,7 @@ namespace DwarfCorp.GameStates
 
             SpriteSheet bloodSheet = new SpriteSheet(ContentPaths.Particles.gibs, 32, 32);
             // Blood explosion
-            //ParticleEmitter b = ParticleManager.CreateGenericExplosion(ContentPaths.Particles.blood_particle, "blood_particle").Emitters[0];
+           // ParticleEmitter b = ParticleManager.CreateGenericExplosion(ContentPaths.Particles.blood_particle, "blood_particle").Emitters[0];
             EmitterData b = ParticleManager.CreatePuffLike("blood_particle", bloodSheet, Point.Zero, BlendState.AlphaBlend);
             b.MinScale = 1.0f;
             b.MaxScale = 1.0f;
@@ -1175,6 +1175,7 @@ namespace DwarfCorp.GameStates
             b.CollidesWorld = true;
             b.ConstantAccel = Vector3.Down * 10;
             b.LinearDamping = 0.95f;
+            b.Sleeps = true;
            
             ParticleManager.RegisterEffect("blood_particle", b, b.Clone(bloodSheet, new Point(1, 0)), b.Clone(bloodSheet, new Point(2, 0)), b.Clone(bloodSheet, new Point(3, 0)));
         }

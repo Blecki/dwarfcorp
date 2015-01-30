@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -35,8 +36,9 @@ namespace DwarfCorp
         [JsonIgnore]
         public List<BillboardPrimitive> Primitives { get; set; }
 
-        [JsonIgnore]
         public SpriteSheet SpriteSheet { get; set; }
+
+        
 
         public Animation()
         {
@@ -166,6 +168,11 @@ namespace DwarfCorp
             Loops = false;
         }
 
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            CreatePrimitives(GameState.Game.GraphicsDevice);
+        }
 
         public virtual void Update(DwarfTime DwarfTime, Timer.TimerMode mode = Timer.TimerMode.Game)
         {

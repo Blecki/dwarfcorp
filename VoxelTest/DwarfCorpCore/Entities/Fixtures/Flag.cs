@@ -17,6 +17,11 @@ namespace DwarfCorp
 
         }
 
+        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        {
+            base.Update(DwarfTime, chunks, camera);
+        }
+
         public Flag(Vector3 position) :
             base("Flag", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {

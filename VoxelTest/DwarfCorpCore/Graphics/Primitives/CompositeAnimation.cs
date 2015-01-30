@@ -18,7 +18,9 @@ namespace DwarfCorp
     public class CompositeAnimation : Animation
     {
         [JsonIgnore]
-        public Composite Composite { get; set; }
+        public Composite Composite { get { return CompositeLibrary.Composites[CompositeName]; } }
+
+        public string CompositeName { get; set; }
         public List<Composite.Frame> CompositeFrames { get; set; }
         [JsonIgnore]
         public Point CurrentOffset { get; set; }
@@ -44,7 +46,7 @@ namespace DwarfCorp
 
             public List<AnimationDescriptor> Animations { get; set; }
 
-            public List<CompositeAnimation> GenerateAnimations(Composite composite)
+            public List<CompositeAnimation> GenerateAnimations(string composite)
             {
                 List<CompositeAnimation> toReturn = new List<CompositeAnimation>();
 
@@ -94,10 +96,10 @@ namespace DwarfCorp
             CompositeFrames = new List<Composite.Frame>();
         }
 
-        public CompositeAnimation(Composite composite, List<Composite.Frame> frames) :
+        public CompositeAnimation(string composite, List<Composite.Frame> frames) :
             this()
         {
-            Composite = composite;
+            CompositeName = composite;
             CompositeFrames = frames;
             FrameWidth = Composite.FrameSize.X;
             FrameHeight = Composite.FrameSize.Y;
@@ -105,7 +107,7 @@ namespace DwarfCorp
             UpdatePrimitive();
         }
 
-        public CompositeAnimation(Composite composite, List<SpriteSheet> layers, List<Color> tints,  int[][] frames) :
+        public CompositeAnimation(string composite, List<SpriteSheet> layers, List<Color> tints,  int[][] frames) :
             this(composite, CreateFrames(layers, tints, frames))
         {
             
@@ -127,7 +129,7 @@ namespace DwarfCorp
                 {
                     int layer = frame[j];
                     currFrame.Layers.Add(layers[layer]);
-                    currFrame.Tints.Add(tints[layer]);
+                    currFrame.Tints.Add(tints[Math.Min(Math.Max(layer, 0), tints.Count - 1)]);
                 }
 
                 frameList.Add(currFrame);
@@ -145,7 +147,7 @@ namespace DwarfCorp
         {
             if (HasValidFrame && CurrentFrame >= 0 && CurrentFrame < CompositeFrames.Count)
             {
-                Primitive = Composite.CreatePrimitive(GameState.Game.GraphicsDevice, CurrentOffset);    
+                Primitive = Composite.CreatePrimitive(GameState.Game.GraphicsDevice, CurrentOffset);
                 Composite.ApplyBillboard(Primitive, CurrentOffset);
                 Primitives.Clear();
 
@@ -196,7 +198,7 @@ namespace DwarfCorp
 
         public override Animation Clone()
         {
-            return new CompositeAnimation(Composite, CompositeFrames)
+            return new CompositeAnimation(CompositeName, CompositeFrames)
             {
                 Name = Name,
                 FrameHZ = FrameHZ,
