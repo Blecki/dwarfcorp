@@ -17,7 +17,8 @@ namespace DwarfCorp
     public class Sprite : Tinter
     {
         public Dictionary<string, Animation> Animations { get; set; }
-        public Texture2D SpriteSheet { get; set; }
+        
+        public SpriteSheet SpriteSheet { get; set; }
         public Animation CurrentAnimation { get; set; }
         public OrientMode OrientationType { get; set; }
 
@@ -33,7 +34,7 @@ namespace DwarfCorp
 
         public float BillboardRotation { get; set; }
 
-        public Sprite(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Texture2D spriteSheet, bool addToOctree) :
+        public Sprite(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, SpriteSheet spriteSheet, bool addToOctree) :
             base(name, parent, localTransform, Vector3.Zero, Vector3.Zero, addToOctree)
         {
             SpriteSheet = spriteSheet;
@@ -128,7 +129,7 @@ namespace DwarfCorp
             {
                 CurrentAnimation.PreRender();
                 SpriteSheet = CurrentAnimation.SpriteSheet;
-                effect.Parameters["xTexture"].SetValue(SpriteSheet);
+                effect.Parameters["xTexture"].SetValue(SpriteSheet.GetTexture());
 
                 if(OrientationType != OrientMode.Fixed)
                 {

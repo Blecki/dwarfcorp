@@ -163,7 +163,7 @@ namespace DwarfCorp
                 StatusBars[status.Key].Value = (status.Value.CurrentValue - status.Value.MinValue) / (status.Value.MaxValue - status.Value.MinValue);
             }
 
-            Portrait.Image.Image = Minion.Creature.Sprite.SpriteSheet;
+            Portrait.Image.Image = Minion.Creature.Sprite.SpriteSheet.GetTexture();
             Portrait.Animation = Minion.Creature.Sprite.CurrentAnimation;
 
 

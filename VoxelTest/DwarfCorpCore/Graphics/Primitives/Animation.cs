@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -9,6 +10,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+
     /// <summary>
     /// An animation flips a billboard sprite between several
     /// frames on a sprite sheet at a fixed rate.
@@ -34,9 +36,9 @@ namespace DwarfCorp
         [JsonIgnore]
         public List<BillboardPrimitive> Primitives { get; set; }
 
-        [JsonIgnore]
-        public Texture2D SpriteSheet { get; set; }
+        public SpriteSheet SpriteSheet { get; set; }
 
+        
 
         public Animation()
         {
@@ -46,7 +48,7 @@ namespace DwarfCorp
             Speeds = new List<float>();
         }
 
-        public Animation(Animation other, Texture2D spriteSheet, GraphicsDevice device)
+        public Animation(Animation other, SpriteSheet spriteSheet, GraphicsDevice device)
             : this(device, spriteSheet, other.Name, other.FrameWidth, other.FrameHeight, other.Frames, other.Loops, other.Tint, other.FrameHZ, other.WorldWidth, other.WorldHeight, other.Flipped)
         {
             Speeds = new List<float>();
@@ -54,7 +56,7 @@ namespace DwarfCorp
         }
 
 
-        public Animation(GraphicsDevice device, Texture2D sheet, string name, List<Point> frames, bool loops, Color tint, float frameHZ, bool flipped) :
+        public Animation(GraphicsDevice device, SpriteSheet sheet, string name, List<Point> frames, bool loops, Color tint, float frameHZ, bool flipped) :
             this(device, sheet, name, sheet.Width, sheet.Height, frames, loops, tint, frameHZ, sheet.Width / 32.0f, sheet.Height / 32.0f, flipped)
         {
             Speeds = new List<float>();
@@ -68,7 +70,7 @@ namespace DwarfCorp
         }
 
         public Animation(int row, string asset, int frameWidth, int frameHeigt, params int[] frames) :
-            this(GameState.Game.GraphicsDevice, TextureManager.GetTexture(asset), asset, frameWidth, frameHeigt, new List<Point>(), false, Color.White, 15.0f, 1.0f, 1.0f, false)
+            this(GameState.Game.GraphicsDevice, new SpriteSheet(asset), asset, frameWidth, frameHeigt, new List<Point>(), false, Color.White, 15.0f, 1.0f, 1.0f, false)
         {
             Frames = new List<Point>();
             foreach (int i in frames)
@@ -81,14 +83,14 @@ namespace DwarfCorp
         }
 
         public Animation(NamedImageFrame frame) :
-            this(GameState.Game.GraphicsDevice, frame.Image, frame.AssetName, frame.SourceRect.Width, frame.SourceRect.Height, new List<Point>(), false, Color.White, 15.0f, frame.SourceRect.Width / 32.0f, frame.SourceRect.Height / 32.0f, false)
+            this(GameState.Game.GraphicsDevice, new SpriteSheet(frame.AssetName), frame.AssetName, frame.SourceRect.Width, frame.SourceRect.Height, new List<Point>(), false, Color.White, 15.0f, frame.SourceRect.Width / 32.0f, frame.SourceRect.Height / 32.0f, false)
         {
             Frames.Add(new Point(frame.SourceRect.X / frame.SourceRect.Width, frame.SourceRect.Y / frame.SourceRect.Height));
             CreatePrimitives(GameState.Game.GraphicsDevice);
             Speeds = new List<float>();
         }
 
-        public Animation(GraphicsDevice device, Texture2D sheet, string name, int frameWidth, int frameHeight, List<Point> frames, bool loops, Color tint, float frameHZ, float worldWidth, float worldHeight, bool flipped)
+        public Animation(GraphicsDevice device, SpriteSheet sheet, string name, int frameWidth, int frameHeight, List<Point> frames, bool loops, Color tint, float frameHZ, float worldWidth, float worldHeight, bool flipped)
         {
             Name = name;
             FrameWidth = frameWidth;
@@ -117,10 +119,10 @@ namespace DwarfCorp
         {
             foreach(Point frame in Frames)
             {
-                string key = SpriteSheet.GetHashCode() + ": " + FrameWidth + "," + FrameHeight + frame.ToString() + "," + Flipped;
+                string key = GetHashCode() + ": " + FrameWidth + "," + FrameHeight + frame.ToString() + "," + Flipped;
                 if(!PrimitiveLibrary.BillboardPrimitives.ContainsKey(key))
                 {
-                    PrimitiveLibrary.BillboardPrimitives[key] = new BillboardPrimitive(device, SpriteSheet, FrameWidth, FrameHeight, frame, WorldWidth, WorldHeight, Flipped);
+                    PrimitiveLibrary.BillboardPrimitives[key] = new BillboardPrimitive(device, SpriteSheet.GetTexture(), FrameWidth, FrameHeight, frame, WorldWidth, WorldHeight, Flipped);
                 }
 
                 Primitives.Add(PrimitiveLibrary.BillboardPrimitives[key]);
@@ -166,6 +168,11 @@ namespace DwarfCorp
             Loops = false;
         }
 
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            CreatePrimitives(GameState.Game.GraphicsDevice);
+        }
 
         public virtual void Update(DwarfTime DwarfTime, Timer.TimerMode mode = Timer.TimerMode.Game)
         {
@@ -207,7 +214,7 @@ namespace DwarfCorp
 
         public virtual Animation Clone()
         {
-            return new Animation(this, SpriteSheet, PlayState.Game.GraphicsDevice);
+            return new Animation(this, SpriteSheet, GameState.Game.GraphicsDevice);
         }
 
         public virtual void PreRender()

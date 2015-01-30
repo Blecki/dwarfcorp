@@ -122,7 +122,7 @@ namespace DwarfCorp
     FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
         ContentPaths.GetFileAsString(ContentPaths.Entities.Elf.Sprites.elf_animation));
             Animations = new List<Animation>();
-            Animations.AddRange(descriptor.GenerateAnimations(CompositeLibrary.Composites[CompositeLibrary.Elf]));
+            Animations.AddRange(descriptor.GenerateAnimations(CompositeLibrary.Elf));
         }
 
         public void InitializeWeapons()

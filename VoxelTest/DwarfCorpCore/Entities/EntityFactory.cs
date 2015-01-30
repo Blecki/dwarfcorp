@@ -95,12 +95,12 @@ namespace DwarfCorp
             Body balloon = new Body("Balloon", componentManager.RootComponent,
                 Matrix.CreateTranslation(position), new Vector3(0.5f, 1, 0.5f), new Vector3(0, -2, 0));
 
-            Texture2D tex = TextureManager.GetTexture(ContentPaths.Entities.Balloon.Sprites.balloon);
+            SpriteSheet tex = new SpriteSheet(ContentPaths.Entities.Balloon.Sprites.balloon);
             List<Point> points = new List<Point>
             {
                 new Point(0, 0)
             };
-            Animation balloonAnimation = new Animation(graphics, tex, "balloon", points, false, Color.White, 0.001f, false);
+            Animation balloonAnimation = new Animation(graphics, new SpriteSheet(ContentPaths.Entities.Balloon.Sprites.balloon), "balloon", points, false, Color.White, 0.001f, false);
             Sprite sprite = new Sprite(componentManager, "sprite", balloon, Matrix.Identity, tex, false)
             {
                 OrientationType = Sprite.OrientMode.Spherical
@@ -108,7 +108,7 @@ namespace DwarfCorp
             sprite.AddAnimation(balloonAnimation);
 
             Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI * 0.5f);
-            Shadow shadow = new Shadow(componentManager, "shadow", balloon, shadowTransform, TextureManager.GetTexture(ContentPaths.Effects.shadowcircle));
+            Shadow shadow = new Shadow(componentManager, "shadow", balloon, shadowTransform, new SpriteSheet(ContentPaths.Effects.shadowcircle));
             BalloonAI balloonAI = new BalloonAI(balloon, target, order, master);
 
             MinimapIcon minimapIcon = new MinimapIcon(balloon, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 2, 0));
@@ -151,7 +151,7 @@ namespace DwarfCorp
             "Gold Resource",
             "Coal Resource",
             "Mana Resource",
-            "Apple Resource",
+            "Berry Resource",
             "Grain Resource",
             "Mushroom Resource",
             "Work Pile",
@@ -221,7 +221,7 @@ namespace DwarfCorp
                 case "Stone Resource":
                 case "Gold Resource":
                 case "Mana Resource":
-                case "Apple Resource":
+                case "Berry Resource":
                 case "Grain Resource":
                 case "Coal Resource":
                 case "Mushroom Resource":
@@ -1024,7 +1024,7 @@ namespace DwarfCorp
             inventory.Resources.AddResource(new ResourceAmount()
             {
                 NumResources = (int)(bushSize * 5),
-                ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Apple]
+                ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Berry]
             });
 
             tree.AddToOctree = true;
@@ -1033,7 +1033,7 @@ namespace DwarfCorp
         }
         */
 
-        public static void CreateIntersectingBillboard(GameComponent component, Texture2D spriteSheet, float xSize, float ySize, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
+        public static void CreateIntersectingBillboard(GameComponent component, SpriteSheet spriteSheet, float xSize, float ySize, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics)
         {
             BatchedSprite billboard = new BatchedSprite(componentManager, "BatchedSprite", component, Matrix.Identity, spriteSheet, 2, graphics)
             {

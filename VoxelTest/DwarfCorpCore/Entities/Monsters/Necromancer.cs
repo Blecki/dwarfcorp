@@ -52,7 +52,7 @@ namespace DwarfCorp
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
 
-            Texture2D shadowTexture = TextureManager.GetTexture(ContentPaths.Effects.shadowcircle);
+            SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
 
             Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform, shadowTexture);
             List<Point> shP = new List<Point>

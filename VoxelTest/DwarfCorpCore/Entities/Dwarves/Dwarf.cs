@@ -16,7 +16,7 @@ namespace DwarfCorp
     /// </summary>
     public class Dwarf : Creature
     {
-        public Texture2D SpriteSheet { get; set; }
+        public SpriteSheet SpriteSheet { get; set; }
 
         public Dwarf()
         {
@@ -66,12 +66,12 @@ namespace DwarfCorp
             Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
 
-            Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform, TextureManager.GetTexture(ContentPaths.Effects.shadowcircle));
+            Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform, new SpriteSheet(ContentPaths.Effects.shadowcircle));
             List<Point> shP = new List<Point>
             {
                 new Point(0, 0)
             };
-            Animation shadowAnimation = new Animation(Graphics, TextureManager.GetTexture(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
+            Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
             Shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
             Shadow.SetCurrentAnimation("sh");
@@ -80,7 +80,8 @@ namespace DwarfCorp
             DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
-                TriggerAmount = 30,
+                TriggerAmount = 1,
+                BoxTriggerTimes = 10, 
                 SoundToPlay = ContentPaths.Entities.Dwarf.Audio.dwarfhurt1,
             };
             Flames = new Flammable(Manager, "Flames", Physics, this);

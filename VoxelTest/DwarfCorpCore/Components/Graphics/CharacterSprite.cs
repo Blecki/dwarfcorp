@@ -99,7 +99,7 @@ namespace DwarfCorp
 
         public static Animation CreateAnimation(Creature.CharacterMode mode,
             Orientation orient,
-            Texture2D texture,
+            SpriteSheet texture,
             float frameHz,
             int frameWidth,
             int frameHeight,
@@ -112,7 +112,7 @@ namespace DwarfCorp
 
         public static CompositeAnimation CreateCompositeAnimation(Creature.CharacterMode mode,
             Orientation orient,
-            Composite composite,
+            string composite,
             float frameHz,
             List<SpriteSheet> layers,
             List<Color> tints,
@@ -130,7 +130,7 @@ namespace DwarfCorp
 
         public static Animation CreateAnimation(Creature.CharacterMode mode,
             Orientation orient,
-            Texture2D texture,
+            SpriteSheet texture,
             float frameHz,
             int frameWidth,
             int frameHeight,
@@ -157,7 +157,7 @@ namespace DwarfCorp
 
         public void AddAnimation(Creature.CharacterMode mode,
             Orientation orient,
-            Texture2D texture,
+            SpriteSheet texture,
             float frameHz,
             int frameWidth,
             int frameHeight,

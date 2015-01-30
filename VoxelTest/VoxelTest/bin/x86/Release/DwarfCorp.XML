@@ -231,7 +231,7 @@
             Components can pass and receive messages. This is just a generic class for representing them.
             </summary>
         </member>
-        <member name="M:DwarfCorp.Bird.Initialize(Microsoft.Xna.Framework.Graphics.Texture2D)">
+        <member name="M:DwarfCorp.Bird.Initialize(DwarfCorp.SpriteSheet)">
             <summary>
             Initialize function creates all the required components for the bird.
             </summary>

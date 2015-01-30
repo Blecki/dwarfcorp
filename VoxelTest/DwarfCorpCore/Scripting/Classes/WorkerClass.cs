@@ -190,7 +190,7 @@ namespace DwarfCorp
                 FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
                     ContentPaths.GetFileAsString(ContentPaths.Entities.Dwarf.Sprites.worker_animation));
             Animations = new List<Animation>();
-            Animations.AddRange(descriptor.GenerateAnimations(CompositeLibrary.Composites[CompositeLibrary.Dwarf]));
+            Animations.AddRange(descriptor.GenerateAnimations(CompositeLibrary.Dwarf));
         }
 
         public void InitializeWeapons()
