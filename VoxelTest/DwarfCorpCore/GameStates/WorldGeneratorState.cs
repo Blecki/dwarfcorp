@@ -406,7 +406,8 @@ namespace DwarfCorp.GameStates
                 //System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + OverworldDirectory);
                 //OverworldFile file = new OverworldFile(Overworld.Map, WorldName);
                 //file.WriteFile(worldDirectory.FullName + ProgramData.DirChar + WorldName + "." + OverworldFile.CompressedExtension, true);
-
+                GUI.MouseMode = GUISkin.MousePointer.Wait;
+            
                 StateManager.PushState("PlayState");
                 PlayState play = (PlayState) StateManager.States["PlayState"];
                 MainMenuState menu = (MainMenuState) StateManager.States["MainMenuState"];

@@ -160,13 +160,13 @@ namespace DwarfCorp
                     {
                         GUI.Skin.RenderButtonFrame(imageBounds, batch);
                     }
-                    Rectangle bounds = !KeepAspectRatio ? globalBounds : imageBounds;
+                    Rectangle bounds = imageBounds;
                     if(Image != null && Image.Image != null)
                     {
                         batch.Draw(Image.Image, bounds, Image.SourceRect, imageColor);
                     }
 
-                    Drawer2D.DrawAlignedText(batch, Text, TextFont, textColor, Drawer2D.Alignment.Under | Drawer2D.Alignment.Center, new Rectangle(bounds.X, bounds.Y, bounds.Width + 5, bounds.Height), true);
+                    Drawer2D.DrawAlignedText(batch, Text, TextFont, textColor, Drawer2D.Alignment.Under | Drawer2D.Alignment.Center, new Rectangle(bounds.X + 2, bounds.Y + 4, bounds.Width, bounds.Height), true);
                     if (IsToggled)
                     {
                         Drawer2D.DrawRect(batch, GetImageBounds(), Color.White, 2);

@@ -251,6 +251,8 @@ namespace DwarfCorp.GameStates
 
         public static CraftLibrary CraftLibrary = null;
 
+        public static int GameID = -1;
+
         #endregion
 
         /// <summary>
@@ -284,10 +286,11 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public override void OnEnter()
         {
+         
             // If the game should reset, we initialize everything
             if(ShouldReset)
             {
-
+                Screenshots = new List<Screenshot>();
                 PreSimulateTimer.Reset(3);
                 ShouldReset = false;
 
@@ -326,6 +329,13 @@ namespace DwarfCorp.GameStates
             base.OnEnter();
         }
 
+        public struct Screenshot
+        {
+            public string FileName { get; set; }
+            public Point Resolution { get; set; }
+        }
+
+        public List<Screenshot> Screenshots { get; set; } 
 
         /// <summary>
         /// Called when the PlayState is exited and another state (such as the main menu) is loaded.
@@ -411,7 +421,7 @@ namespace DwarfCorp.GameStates
             {
                 SoundManager.Content = Content;
                 SoundManager.LoadDefaultSounds();
-                SoundManager.PlayMusic(ContentPaths.Music.dwarfcorp);
+                SoundManager.SetActiveSongs(ContentPaths.Music.dwarfcorp, ContentPaths.Music.dwarfcorp_2, ContentPaths.Music.dwarfcorp_3, ContentPaths.Music.dwarfcorp_4);
             }
             new PrimitiveLibrary(GraphicsDevice, Content);
             InstanceManager = new InstanceManager();
@@ -495,6 +505,12 @@ namespace DwarfCorp.GameStates
                     Overworld.CreateUniformLand(Game.GraphicsDevice);
                 }
 
+                GameID = gameFile.Data.GameID;
+
+            }
+            else
+            {
+                GameID = Random.Next(0, 1024);
             }
 
            
@@ -572,6 +588,7 @@ namespace DwarfCorp.GameStates
         }
 
 
+        
         /// <summary>
         /// Creates a screenshot of the game and saves it to a file.
         /// </summary>
@@ -801,21 +818,36 @@ namespace DwarfCorp.GameStates
 
             layout.SetComponentPosition(MiniMap, 0, 8, 4, 4);
             Rectangle rect = layout.GetRect(new Rectangle(0, 8, 4, 4));
-            layout.SetComponentOffset(MiniMap, new Point(0, rect.Height - 250));
+            layout.SetComponentOffset(MiniMap,  new Point(0, rect.Height - 250));
 
 
-            Button moneyButton = new Button(GUI, layout, "", GUI.DefaultFont, Button.ButtonMode.ImageButton, new ImageFrame(TextureManager.GetTexture("IconSheet"), 32, 2, 1))
+            Button moneyButton = new Button(GUI, layout, "Economy", GUI.SmallFont, Button.ButtonMode.ImageButton, new ImageFrame(TextureManager.GetTexture("IconSheet"), 32, 2, 1))
             {
                 KeepAspectRatio = true,
                 ToolTip = "Opens the Economy Menu",
                 DontMakeBigger = true,
-                DrawFrame = true
+                DrawFrame = true,
+                TextColor = Color.White
             };
 
 
             moneyButton.OnClicked += moneyButton_OnClicked;
 
-            layout.SetComponentPosition(moneyButton, 2, 10, 1, 1);
+
+            Button settingsButton = new Button(GUI, layout, "Settings", GUI.SmallFont, Button.ButtonMode.ImageButton, new ImageFrame(TextureManager.GetTexture("IconSheet"), 32, 4, 1))
+            {
+                KeepAspectRatio = true,
+                ToolTip = "Opens the Settings Menu",
+                DontMakeBigger = true,
+                DrawFrame = true,
+                TextColor = Color.White
+            };
+
+            settingsButton.OnClicked += OpenPauseMenu;
+
+            layout.SetComponentPosition(settingsButton, 10, 0, 1, 1);
+
+            layout.SetComponentPosition(moneyButton, 9, 0, 1, 1);
 
 
             InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
@@ -883,16 +915,16 @@ namespace DwarfCorp.GameStates
             //try
             {
                 EnableScreensaver = true;
-                LoadingMessage = "Initializing Static Data...";
+                LoadingMessage = "Initializing...";
                 InitializeStaticData(CompanyMakerState.CompanyName, CompanyMakerState.CompanyMotto, CompanyMakerState.CompanyLogo,
                     CompanyMakerState.CompanyColor);
-                LoadingMessage = "Creating ParticleTrigger...";
+                LoadingMessage = "Creating Particles ...";
                 CreateParticles();
 
                 LoadingMessage = "Creating Sky...";
                 CreateSky();
 
-                LoadingMessage = "Creating shadows...";
+                LoadingMessage = "Creating Shadows...";
                 CreateShadows();
 
                 LoadingMessage = "Creating Liquids..";
@@ -901,12 +933,13 @@ namespace DwarfCorp.GameStates
                 LoadingMessage = "Generating Initial Terrain Chunks...";
                 GenerateInitialChunks();
 
-                LoadingMessage = "Creating GUI";
+                LoadingMessage = "Creating GUI ...";
                 CreateGUI(string.IsNullOrEmpty(ExistingFile));
 
-                LoadingMessage = "Embarking.";
+                LoadingMessage = "Embarking ...";
                 CreateInitialEmbarkment();
 
+                LoadingMessage = "Presimulating ...";
                 GenerateInitialObjects();
 
                 IsInitialized = true;
@@ -957,7 +990,6 @@ namespace DwarfCorp.GameStates
 
         /// <summary>
         /// Creates a flat, wooden balloon port for the balloon to land on, and Dwarves to sit on.
-        /// TODO: Fix height to that it's not too tall when on a mountain.
         /// </summary>
         /// <param name="roomDes">The player's BuildRoom designator (so that we can create a balloon port)</param>
         /// <param name="chunkManager">The terrain handler</param>
@@ -1166,18 +1198,14 @@ namespace DwarfCorp.GameStates
             SpriteSheet bloodSheet = new SpriteSheet(ContentPaths.Particles.gibs, 32, 32);
             // Blood explosion
            // ParticleEmitter b = ParticleManager.CreateGenericExplosion(ContentPaths.Particles.blood_particle, "blood_particle").Emitters[0];
-            EmitterData b = ParticleManager.CreatePuffLike("blood_particle", bloodSheet, Point.Zero, BlendState.AlphaBlend);
-            b.MinScale = 1.0f;
+            EmitterData b = ParticleManager.CreateExplosionLike("blood_particle", bloodSheet, Point.Zero, BlendState.AlphaBlend);
+            b.MinScale = 0.75f;
             b.MaxScale = 1.0f;
-            b.GrowthSpeed = -0.5f;
-            b.MaxParticles = 50;
-            b.EmissionSpeed = 5f;
-            b.CollidesWorld = true;
-            b.ConstantAccel = Vector3.Down * 10;
-            b.LinearDamping = 0.95f;
-            b.Sleeps = true;
+            b.Damping = 0.1f;
+            b.GrowthSpeed = -0.8f;
            
-            ParticleManager.RegisterEffect("blood_particle", b, b.Clone(bloodSheet, new Point(1, 0)), b.Clone(bloodSheet, new Point(2, 0)), b.Clone(bloodSheet, new Point(3, 0)));
+            ParticleManager.RegisterEffect("blood_particle", b);
+            ParticleManager.RegisterEffect("gibs",  b.Clone(bloodSheet, new Point(1, 0)), b.Clone(bloodSheet, new Point(2, 0)), b.Clone(bloodSheet, new Point(3, 0)));
         }
 
 
@@ -1469,7 +1497,7 @@ namespace DwarfCorp.GameStates
                     StateManager.PushState("OptionsState");
                     break;
                 case "Save":
-                    SaveGame(DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss"));
+                    SaveGame(Overworld.Name + "_" + GameID);
                     break;
                 case "Quit":
                     QuitGame();
@@ -1485,22 +1513,60 @@ namespace DwarfCorp.GameStates
         /// <param name="filename">The file to save to</param>
         public void SaveGame(string filename)
         {
+            Dialog dialog = Dialog.Popup(GUI, "Saving/Loading",
+                "Warning: Saving is still an unstable feature. Are you sure you want to continue?",
+                Dialog.ButtonType.OkAndCancel);
+
+            dialog.OnClosed += (status) => savedialog_OnClosed(status, filename);
+
+        
+        }
+
+
+        void SaveThread(string filename)
+        {
             DirectoryInfo worldDirectory = Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Worlds" + Path.DirectorySeparatorChar + Overworld.Name);
 
-            if(Overworld.Name != "flat")
+            OverworldFile file = new OverworldFile(Overworld.Map, Overworld.Name);
+            file.WriteFile(worldDirectory.FullName + Path.DirectorySeparatorChar + "world." + OverworldFile.CompressedExtension, true);
+            file.SaveScreenshot(worldDirectory.FullName + Path.DirectorySeparatorChar + "screenshot.png");
+
+            gameFile = new GameFile(Overworld.Name, GameID);
+            gameFile.WriteFile(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar + filename, true);
+
+            lock (ScreenshotLock)
             {
-                OverworldFile file = new OverworldFile(Overworld.Map, Overworld.Name);
-                file.WriteFile(worldDirectory.FullName + Path.DirectorySeparatorChar + "world." + OverworldFile.CompressedExtension, true);
-                file.SaveScreenshot(worldDirectory.FullName + Path.DirectorySeparatorChar + "screenshot.png");
+                Screenshots.Add(new Screenshot()
+                {
+                    FileName = DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" +
+                               Path.DirectorySeparatorChar + filename + Path.DirectorySeparatorChar + "screenshot.png",
+                    Resolution = new Point(GraphicsDevice.Viewport.Width/4, GraphicsDevice.Viewport.Height/4)
+                });
             }
 
-            gameFile = new GameFile(Overworld.Name);
-            gameFile.WriteFile(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar + filename, true);
-            TakeScreenshot(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar + filename + Path.DirectorySeparatorChar + "screenshot.png", new Point(GraphicsDevice.Viewport.Width / 4, GraphicsDevice.Viewport.Height / 4));
+        }
 
+        private object ScreenshotLock = new object();
 
-            Dialog.Popup(GUI, "Save", "File saved.", Dialog.ButtonType.OK);
-        
+        void savedialog_OnClosed(Dialog.ReturnStatus status, string filename)
+        {
+            switch (status)
+            {
+                case Dialog.ReturnStatus.Ok:
+                {
+                    Paused = true;
+                    WaitState waitforsave = new WaitState(Game, "SaveWait", StateManager,
+                        new Thread(() => SaveThread(filename)), GUI);
+                    waitforsave.OnFinished += waitforsave_OnFinished;
+                    StateManager.PushState(waitforsave);
+                    break;
+                }
+            }
+        }
+
+        void waitforsave_OnFinished()
+        {
+            Dialog.Popup(GUI, "Save", "File saved.", Dialog.ButtonType.OK);            
         }
 
 
@@ -1657,40 +1723,43 @@ namespace DwarfCorp.GameStates
         /// <param name="DwarfTime">The current time</param>
         public override void Render(DwarfTime DwarfTime)
         {
-            // If we are simulating the game before starting, just display black.
-            if(!PreSimulateTimer.HasTriggered)
-            {
-                PreSimulateTimer.Update(DwarfTime);
-                base.Render(DwarfTime);
-                return;
-            }
-            CompositeLibrary.Render(GraphicsDevice, DwarfGame.SpriteBatch);
-            CompositeLibrary.Update();
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            GraphicsDevice.BlendState = BlendState.Opaque;
+                // If we are simulating the game before starting, just display black.
+                if (!PreSimulateTimer.HasTriggered)
+                {
+                    PreSimulateTimer.Update(DwarfTime);
+                    base.Render(DwarfTime);
+                    return;
+                }
+                CompositeLibrary.Render(GraphicsDevice, DwarfGame.SpriteBatch);
+                CompositeLibrary.Update();
+                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                GraphicsDevice.BlendState = BlendState.Opaque;
 
-            GUI.PreRender(DwarfTime, DwarfGame.SpriteBatch);
-            // Keeping track of a running FPS buffer (averaged)
-            if(lastFps.Count > 100)
-            {
-                lastFps.RemoveAt(0);
-            }
+                GUI.PreRender(DwarfTime, DwarfGame.SpriteBatch);
+                // Keeping track of a running FPS buffer (averaged)
+                if (lastFps.Count > 100)
+                {
+                    lastFps.RemoveAt(0);
+                }
 
 
-            // Controls the sky fog
-            float x = (1.0f - Sky.TimeOfDay);
-            x = x * x;
-            DefaultShader.Parameters["xFogColor"].SetValue(new Vector3(0.32f * x, 0.58f * x, 0.9f * x));
-            DefaultShader.Parameters["xLightPositions"].SetValue(LightPositions);
+                // Controls the sky fog
+                float x = (1.0f - Sky.TimeOfDay);
+                x = x*x;
+                DefaultShader.Parameters["xFogColor"].SetValue(new Vector3(0.32f*x, 0.58f*x, 0.9f*x));
+                DefaultShader.Parameters["xLightPositions"].SetValue(LightPositions);
 
-            // Computes the water height.
-            float wHeight = WaterRenderer.GetVisibleWaterHeight(ChunkManager, Camera, GraphicsDevice.Viewport, lastWaterHeight);
-            lastWaterHeight = wHeight;
-            // Draw reflection/refraction images
-            WaterRenderer.DrawRefractionMap(DwarfTime, this, wHeight + 1.0f, Camera.ViewMatrix, DefaultShader, GraphicsDevice);
-            WaterRenderer.DrawReflectionMap(DwarfTime, this, wHeight - 0.1f, GetReflectedCameraMatrix(wHeight), DefaultShader, GraphicsDevice);
+                // Computes the water height.
+                float wHeight = WaterRenderer.GetVisibleWaterHeight(ChunkManager, Camera, GraphicsDevice.Viewport,
+                    lastWaterHeight);
+                lastWaterHeight = wHeight;
+                // Draw reflection/refraction images
+                WaterRenderer.DrawRefractionMap(DwarfTime, this, wHeight + 1.0f, Camera.ViewMatrix, DefaultShader,
+                    GraphicsDevice);
+                WaterRenderer.DrawReflectionMap(DwarfTime, this, wHeight - 0.1f, GetReflectedCameraMatrix(wHeight),
+                    DefaultShader, GraphicsDevice);
 
-            /*
+                /*
             Shadows.BindShadowmap(GraphicsDevice);
             Shadows.PrepareEffect(DefaultShader, false);
             ChunkManager.SimpleRender(GraphicsDevice, DefaultShader, Tilesheet);
@@ -1698,122 +1767,134 @@ namespace DwarfCorp.GameStates
             Shadows.BindShadowmapEffect(DefaultShader);
              */
 
-            // Start drawing the bloom effect
-            if(GameSettings.Default.EnableGlow)
-            {
-                bloom.BeginDraw();
-            }
-
-            // Draw the sky
-            GraphicsDevice.Clear(new Color(DefaultShader.Parameters["xFogColor"].GetValueVector3()));
-            DrawSky(DwarfTime, Camera.ViewMatrix, 1.0f);
-
-            // Defines the current slice for the GPU
-            float level = ChunkManager.ChunkData.MaxViewingLevel + 1.3f;
-            if (level > ChunkManager.ChunkData.ChunkSizeY)
-            {
-                level = 1000;
-            }
-
-            Plane slicePlane = WaterRenderer.CreatePlane(level, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
-
-            // Draw the whole world, and make sure to handle slicing
-            DefaultShader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
-            DefaultShader.Parameters["Clipping"].SetValue(1);
-            //Blue ghost effect above the current slice.
-            DefaultShader.Parameters["GhostMode"].SetValue(1);
-            Draw3DThings(DwarfTime, DefaultShader, Camera.ViewMatrix);
-
-            // Now we want to draw the water on top of everything else
-            DefaultShader.Parameters["Clipping"].SetValue(1);
-            DefaultShader.Parameters["GhostMode"].SetValue(0);
-            WaterRenderer.DrawWater(
-                GraphicsDevice,
-                (float) DwarfTime.TotalGameTime.TotalSeconds,
-                DefaultShader,
-                Camera.ViewMatrix,
-                GetReflectedCameraMatrix(wHeight),
-                Camera.ProjectionMatrix,
-                new Vector3(0.1f, 0.0f, 0.1f),
-                Camera,
-                ChunkManager);
-
-            DefaultShader.CurrentTechnique = DefaultShader.Techniques["Textured"];
-            DefaultShader.Parameters["Clipping"].SetValue(0);
-
-            //Body.CollisionManager.DebugDraw();
-
-            // Render simple geometry (boxes, etc.)
-            Drawer3D.Render(GraphicsDevice, DefaultShader, true);
-
-            // Now draw all of the entities in the game
-            DefaultShader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
-            DefaultShader.Parameters["Clipping"].SetValue(1);
-            DefaultShader.Parameters["GhostMode"].SetValue(1);
-            DrawComponents(DwarfTime, DefaultShader, Camera.ViewMatrix, ComponentManager.WaterRenderType.None, lastWaterHeight);
-            DefaultShader.Parameters["Clipping"].SetValue(0);
-            
-            if(GameSettings.Default.EnableGlow)
-            {
-                bloom.Draw(DwarfTime.ToGameTime());
-            }
-
-            frameTimer.Update(DwarfTime);
-
-            if(frameTimer.HasTriggered)
-            {
-                fps = frameCounter;
-
-                lastFps.Add(fps);
-                frameCounter = 0;
-                frameTimer.Reset(1.0f);
-            }
-            else
-            {
-                frameCounter++;
-            }
-
-            RasterizerState rasterizerState = new RasterizerState()
-            {
-                ScissorTestEnable = true
-            };
-
-
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
-
-            drawer2D.Render(DwarfGame.SpriteBatch, Camera, GraphicsDevice.Viewport);
-
-            GUI.Render(DwarfTime, DwarfGame.SpriteBatch, Vector2.Zero);
-
-
-            bool drawDebugData = GameSettings.Default.DrawDebugData;
-            if(drawDebugData)
-            {
-                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "Num Chunks " + ChunkManager.ChunkData.ChunkMap.Values.Count, new Vector2(5, 5), Color.White);
-                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "Max Viewing Level " + ChunkManager.ChunkData.MaxViewingLevel, new Vector2(5, 20), Color.White);
-                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "FPS " + Math.Round(fps), new Vector2(5, 35), Color.White);
-                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "60", new Vector2(5, 150 - 65), Color.White);
-                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "30", new Vector2(5, 150 - 35), Color.White);
-                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "10", new Vector2(5, 150 - 15), Color.White);
-                for(int i = 0; i < lastFps.Count; i++)
+                // Start drawing the bloom effect
+                if (GameSettings.Default.EnableGlow)
                 {
-                    DwarfGame.SpriteBatch.Draw(pixel, new Rectangle(30 + i * 2, 150 - (int) lastFps[i], 2, (int) lastFps[i]), new Color(1.0f - lastFps[i] / 60.0f, lastFps[i] / 60.0f, 0.0f, 0.5f));
+                    bloom.BeginDraw();
                 }
-            }
 
-            if(Paused)
-            {
-                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Paused", GUI.DefaultFont, new Vector2(GraphicsDevice.Viewport.Width - 100, 10), Color.White, Color.Black);
-            }
-            //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, new Rectangle(0, 0, 512, 512), Color.White);
-            DwarfGame.SpriteBatch.End();
-            Master.Render(Game, DwarfTime, GraphicsDevice);
-            DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle = DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
+                // Draw the sky
+                GraphicsDevice.Clear(new Color(DefaultShader.Parameters["xFogColor"].GetValueVector3()));
+                DrawSky(DwarfTime, Camera.ViewMatrix, 1.0f);
 
-            GUI.PostRender(DwarfTime);
+                // Defines the current slice for the GPU
+                float level = ChunkManager.ChunkData.MaxViewingLevel + 2.0f;
+                if (level > ChunkManager.ChunkData.ChunkSizeY)
+                {
+                    level = 1000;
+                }
 
-            
-            /*
+                Plane slicePlane = WaterRenderer.CreatePlane(level, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
+
+                // Draw the whole world, and make sure to handle slicing
+                DefaultShader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
+                DefaultShader.Parameters["Clipping"].SetValue(1);
+                //Blue ghost effect above the current slice.
+                DefaultShader.Parameters["GhostMode"].SetValue(1);
+                Draw3DThings(DwarfTime, DefaultShader, Camera.ViewMatrix);
+
+                // Now we want to draw the water on top of everything else
+                DefaultShader.Parameters["Clipping"].SetValue(1);
+                DefaultShader.Parameters["GhostMode"].SetValue(0);
+                WaterRenderer.DrawWater(
+                    GraphicsDevice,
+                    (float) DwarfTime.TotalGameTime.TotalSeconds,
+                    DefaultShader,
+                    Camera.ViewMatrix,
+                    GetReflectedCameraMatrix(wHeight),
+                    Camera.ProjectionMatrix,
+                    new Vector3(0.1f, 0.0f, 0.1f),
+                    Camera,
+                    ChunkManager);
+
+                DefaultShader.CurrentTechnique = DefaultShader.Techniques["Textured"];
+                DefaultShader.Parameters["Clipping"].SetValue(0);
+
+                //Body.CollisionManager.DebugDraw();
+
+                // Render simple geometry (boxes, etc.)
+                Drawer3D.Render(GraphicsDevice, DefaultShader, true);
+
+                // Now draw all of the entities in the game
+                DefaultShader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
+                DefaultShader.Parameters["Clipping"].SetValue(1);
+                DefaultShader.Parameters["GhostMode"].SetValue(1);
+                DrawComponents(DwarfTime, DefaultShader, Camera.ViewMatrix, ComponentManager.WaterRenderType.None,
+                    lastWaterHeight);
+                DefaultShader.Parameters["Clipping"].SetValue(0);
+
+                if (GameSettings.Default.EnableGlow)
+                {
+                    bloom.Draw(DwarfTime.ToGameTime());
+                }
+
+                frameTimer.Update(DwarfTime);
+
+                if (frameTimer.HasTriggered)
+                {
+                    fps = frameCounter;
+
+                    lastFps.Add(fps);
+                    frameCounter = 0;
+                    frameTimer.Reset(1.0f);
+                }
+                else
+                {
+                    frameCounter++;
+                }
+
+                RasterizerState rasterizerState = new RasterizerState()
+                {
+                    ScissorTestEnable = true
+                };
+
+
+                DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp,
+                    null, rasterizerState);
+
+                drawer2D.Render(DwarfGame.SpriteBatch, Camera, GraphicsDevice.Viewport);
+
+                GUI.Render(DwarfTime, DwarfGame.SpriteBatch, Vector2.Zero);
+
+
+                bool drawDebugData = GameSettings.Default.DrawDebugData;
+                if (drawDebugData)
+                {
+                    DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"),
+                        "Num Chunks " + ChunkManager.ChunkData.ChunkMap.Values.Count, new Vector2(5, 5), Color.White);
+                    DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"),
+                        "Max Viewing Level " + ChunkManager.ChunkData.MaxViewingLevel, new Vector2(5, 20), Color.White);
+                    DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "FPS " + Math.Round(fps),
+                        new Vector2(5, 35), Color.White);
+                    DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "60",
+                        new Vector2(5, 150 - 65), Color.White);
+                    DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "30",
+                        new Vector2(5, 150 - 35), Color.White);
+                    DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "10",
+                        new Vector2(5, 150 - 15), Color.White);
+                    for (int i = 0; i < lastFps.Count; i++)
+                    {
+                        DwarfGame.SpriteBatch.Draw(pixel,
+                            new Rectangle(30 + i*2, 150 - (int) lastFps[i], 2, (int) lastFps[i]),
+                            new Color(1.0f - lastFps[i]/60.0f, lastFps[i]/60.0f, 0.0f, 0.5f));
+                    }
+                }
+
+                if (Paused)
+                {
+                    Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Paused", GUI.DefaultFont,
+                        new Vector2(GraphicsDevice.Viewport.Width - 100, 10), Color.White, Color.Black);
+                }
+                //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, new Rectangle(0, 0, 512, 512), Color.White);
+                DwarfGame.SpriteBatch.End();
+                Master.Render(Game, DwarfTime, GraphicsDevice);
+                DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle =
+                    DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
+
+                GUI.PostRender(DwarfTime);
+
+
+                /*
             int dx = 0;
             foreach (var composite in CompositeLibrary.Composites)
             {
@@ -1822,11 +1903,23 @@ namespace DwarfCorp.GameStates
             }
             */
 
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            GraphicsDevice.BlendState = BlendState.Opaque;
+                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                GraphicsDevice.BlendState = BlendState.Opaque;
 
-            base.Render(DwarfTime);
-        }
+
+            lock(ScreenshotLock)
+            { 
+                foreach (Screenshot shot in Screenshots)
+                {
+                    TakeScreenshot(shot.FileName, shot.Resolution);
+                }
+
+                Screenshots.Clear();
+            }
+
+                base.Render(DwarfTime);
+            
+    }
 
  
         /// <summary>

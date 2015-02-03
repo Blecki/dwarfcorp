@@ -22,16 +22,13 @@ namespace DwarfCorp
             Mode = Spell.SpellMode.SelectFilledVoxels;
             Name = "Destroy Blocks";
             Hint = "Click and drag to destroy blocks";
-            RechargeTimer = new Timer(5.0f, true);
-            Recharges = true;
+            Recharges = false;
         }
         public override void OnVoxelsSelected(SpellTree tree, List<Voxel> voxels)
         {
-            if (!RechargeTimer.HasTriggered) return;
             bool destroyed = false;
             foreach (Voxel selected in voxels)
             {
-
                 if (!selected.IsEmpty && !selected.Type.IsInvincible)
                 {
                     if (OnCast(tree))

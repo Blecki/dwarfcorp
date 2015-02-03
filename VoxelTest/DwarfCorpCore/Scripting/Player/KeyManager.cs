@@ -83,7 +83,7 @@ namespace DwarfCorp
         {
             KeyboardState keys = Keyboard.GetState();
 
-            return keys.IsKeyDown(ControlSettings.Default.CameraMode);
+            return keys.IsKeyDown(ControlSettings.Default.CameraMode) || keys.IsKeyDown(Keys.RightShift);
         }
 
         public bool IsMapped(Keys keys)

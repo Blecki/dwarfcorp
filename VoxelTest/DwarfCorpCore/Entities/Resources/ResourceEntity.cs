@@ -21,6 +21,8 @@ namespace DwarfCorp
         public ResourceEntity(ResourceLibrary.ResourceType resourceType, Vector3 position) :
             base(ResourceLibrary.ResourceNames[resourceType], PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
         {
+            Restitution = 0.1f;
+            Friction = 0.1f;
             Resource type = ResourceLibrary.Resources[resourceType];
             SpriteSheet spriteSheet = new SpriteSheet(type.Image.AssetName);
 
@@ -31,7 +33,7 @@ namespace DwarfCorp
             {
                 new Point(frameX, frameY)
             };
-            Animation animation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(type.Image.AssetName), "Animation", 32, 32, frames, false, Color.White, 0.01f, type.Image.SourceRect.Width / 32.0f, type.Image.SourceRect.Height / 32.0f, false);
+            Animation animation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(type.Image.AssetName), "Animation", 32, 32, frames, false, Color.White, 0.01f, 0.75f, 0.75f, false);
 
             Sprite sprite = new Sprite(PlayState.ComponentManager, "Sprite", this, Matrix.Identity, spriteSheet, false)
             {

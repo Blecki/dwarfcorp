@@ -798,7 +798,7 @@ namespace DwarfCorp
             Color[] worldData = new Color[size * size];
             WorldGeneratorState.worldMap = new Texture2D(graphics, size, size);
             Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap);
-            Overworld.Name = "hills";
+            Overworld.Name = "hills" + PlayState.Random.Next(9999);
         }
 
         public static void CreateCliffsLand(GraphicsDevice graphicsDevice)
@@ -843,7 +843,7 @@ namespace DwarfCorp
             Color[] worldData = new Color[size * size];
             WorldGeneratorState.worldMap = new Texture2D(graphicsDevice, size, size);
             Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap);
-            Overworld.Name = "hills";
+            Overworld.Name = "Cliffs_" + PlayState.Random.Next(9999);
         }
 
         public static void CreateUniformLand(GraphicsDevice graphics)
@@ -868,7 +868,7 @@ namespace DwarfCorp
             Color[] worldData = new Color[size * size];
             WorldGeneratorState.worldMap = new Texture2D(graphics, size, size);
             Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap);
-            Overworld.Name = "flat";
+            Overworld.Name = "flat_" + PlayState.Random.Next(9999);
         }
 
         public static void CreateOceanLand(GraphicsDevice graphicsDevice)

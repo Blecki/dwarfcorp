@@ -73,7 +73,7 @@ namespace DwarfCorp
 
         public void CreatePlant(FarmTile tile)
         {
-            tile.Plant = CreatePlant(tile.Vox.Position + new Vector3(0.0f, 1.5f, 0.0f));
+            tile.Plant = CreatePlant(tile.Vox.Position + new Vector3(0.0f,1.75f, 0.0f));
             Matrix original = tile.Plant.LocalTransform;
             original.Translation += Vector3.Down;
             tile.Plant.AnimationQueue.Add(new EaseMotion(0.5f, original, tile.Plant.LocalTransform.Translation));

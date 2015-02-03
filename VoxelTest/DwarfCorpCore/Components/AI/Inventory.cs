@@ -104,11 +104,14 @@ namespace DwarfCorp
             {
                 for(int i = 0; i < resource.NumResources; i++)
                 {
+                    Vector3 pos = MathFunctions.RandVector3Box(GetBoundingBox());
                     Physics item = EntityFactory.CreateEntity<Physics>(resource.ResourceType.ResourceName + " Resource",
-                        MathFunctions.RandVector3Box(GetBoundingBox())) as Physics;
+                        pos) as Physics;
                     if(item != null)
                     {
-                        item.Velocity = MathFunctions.RandVector3Cube() * 5.0f;
+                        item.Velocity = pos - GetBoundingBox().Center();
+                        item.Velocity.Normalize();
+                        item.Velocity *= 2.0f;
                     }
                    
                 }

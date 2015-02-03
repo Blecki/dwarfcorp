@@ -328,11 +328,11 @@ namespace DwarfCorp
 
             ResourceSpawns["Iron"] = new ResourceSpawnRate
             {
-                VeinSize = 0.1f,
-                VeinSpawnThreshold = 0.8f,
+                VeinSize = 0.2f,
+                VeinSpawnThreshold = 0.9f,
                 MinimumHeight = -100,
                 MaximumHeight = 100,
-                Probability = 0.9f
+                Probability = 0.5f
             };
 
             VoxelType coalType = new VoxelType
@@ -349,10 +349,10 @@ namespace DwarfCorp
             ResourceSpawns["Coal"] = new ResourceSpawnRate
             {
                 VeinSize = 0.085f,
-                VeinSpawnThreshold = 0.85f,
+                VeinSpawnThreshold = 0.9f,
                 MinimumHeight = -100,
                 MaximumHeight = 100,
-                Probability = 0.6f
+                Probability = 0.5f
             };
 
 
@@ -369,11 +369,11 @@ namespace DwarfCorp
 
             ResourceSpawns["Gold"] = new ResourceSpawnRate
             {
-                VeinSize = 0.055f,
+                VeinSize = 0.07f,
                 VeinSpawnThreshold = 0.8f,
-                MinimumHeight = -100,
-                MaximumHeight = 100,
-                Probability = 0.5f
+                MinimumHeight = -150,
+                MaximumHeight = 15,
+                Probability = 0.6f
             };
 
             VoxelType manaType = new VoxelType
@@ -389,10 +389,10 @@ namespace DwarfCorp
 
             ResourceSpawns["Mana"] = new ResourceSpawnRate
             {
-                VeinSize = 0.03f,
-                VeinSpawnThreshold = 0.86f,
-                MinimumHeight = -1000,
-                MaximumHeight = 1000,
+                VeinSize = 0.05f,
+                VeinSpawnThreshold = 0.85f,
+                MinimumHeight = -800,
+                MaximumHeight = 8,
                 Probability = 0.5f
             };
 
