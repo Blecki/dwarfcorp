@@ -12,7 +12,7 @@ namespace DwarfCorp
         public string ResourceName { get { return ResourceLibrary.ResourceNames[Type]; }}
         public float MoneyValue { get; set; }
         public string Description { get; set; }
-        public ImageFrame Image { get; set; }
+        public NamedImageFrame Image { get; set; }
         public List<ResourceTags> Tags { get; set; }
         public float FoodContent { get; set; }
         public bool SelfIlluminating { get; set; }
@@ -29,7 +29,7 @@ namespace DwarfCorp
             
         }
 
-        public Resource(ResourceLibrary.ResourceType type, float money, string description, ImageFrame image, params ResourceTags[] tags)
+        public Resource(ResourceLibrary.ResourceType type, float money, string description, NamedImageFrame image, params ResourceTags[] tags)
         {
             Type = type;
             MoneyValue = money;

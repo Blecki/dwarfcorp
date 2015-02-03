@@ -821,16 +821,19 @@
       <Name>font1-w</Name>
       <Importer>TextureImporter</Importer>
       <Processor>FontTextureProcessor</Processor>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Fonts\font1-w-2x.bmp">
       <Name>font1-w-2x</Name>
       <Importer>TextureImporter</Importer>
       <Processor>FontTextureProcessor</Processor>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Fonts\font1-w-4x.bmp">
       <Name>font1-w-4x</Name>
       <Importer>TextureImporter</Importer>
       <Processor>FontTextureProcessor</Processor>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Entities\Dwarf\Sprites\crafter-hammer.png">
       <Name>crafter-hammer</Name>
@@ -921,6 +924,26 @@
       <Name>heart</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Particles\gib_particle.png">
+      <Name>gib_particle</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Music\dwarfcorp_2.mp3">
+      <Name>dwarfcorp_2</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SongProcessor</Processor>
+    </Compile>
+    <Compile Include="Music\dwarfcorp_3.mp3">
+      <Name>dwarfcorp_3</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SongProcessor</Processor>
+    </Compile>
+    <Compile Include="Music\dwarfcorp_4.mp3">
+      <Name>dwarfcorp_4</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SongProcessor</Processor>
     </Compile>
     <Content Include="Text\adverbs.txt">
       <Name>adverbs</Name>

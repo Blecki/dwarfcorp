@@ -26,6 +26,8 @@ namespace DwarfCorp
 
             public ComponentManager Components { get; set; }
 
+            public int GameID { get; set; }
+
             public GameData()
             {
                 Metadata = new MetaData();
@@ -54,7 +56,7 @@ namespace DwarfCorp
         public static string Extension = "game";
         public static string CompressedExtension = "zgame";
 
-        public GameFile(string overworld)
+        public GameFile(string overworld, int id)
         {
             Data = new GameData
             {
@@ -66,10 +68,12 @@ namespace DwarfCorp
                     TimeOfDay = PlayState.Sky.TimeOfDay,
                     ChunkHeight = PlayState.ChunkHeight,
                     ChunkWidth = PlayState.ChunkWidth,
+                    GameID = id
                 },
                 Camera = PlayState.Camera,
                 Components = PlayState.ComponentManager,
-                ChunkData = new List<ChunkFile>()
+                ChunkData = new List<ChunkFile>(),
+                GameID = id
             };
 
 
@@ -135,6 +139,7 @@ namespace DwarfCorp
                 if(metaFiles.Length > 0)
                 {
                     Data.Metadata = new MetaData(metaFiles[0], isCompressed);
+                    Data.GameID = Data.Metadata.GameID;
                 }
                 else
                 {
@@ -193,6 +198,7 @@ namespace DwarfCorp
             public int ChunkWidth { get; set; }
             public int ChunkHeight { get; set; }
             public float TimeOfDay { get; set; }
+            public int GameID { get; set; }
 
             public new static string Extension = "meta";
             public new static string CompressedExtension = "zmeta";
@@ -214,6 +220,7 @@ namespace DwarfCorp
                 ChunkWidth = file.ChunkWidth;
                 ChunkHeight = file.ChunkHeight;
                 TimeOfDay = file.TimeOfDay;
+                GameID = file.GameID;
                 OverworldFile = file.OverworldFile;
             }
 

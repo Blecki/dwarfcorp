@@ -39,6 +39,7 @@ namespace DwarfCorp
         }
         public class Particles
         {
+            public static string gibs = ProgramData.CreatePath("Particles", "gib_particle");
             public static string splash = ProgramData.CreatePath("Particles", "splash");
             public static string blood_particle = ProgramData.CreatePath("Particles", "blood_particle");
             public static string dirt_particle = ProgramData.CreatePath("Particles", "dirt_particle");
@@ -298,6 +299,9 @@ namespace DwarfCorp
         {
 #if XNA_BUILD
             public static string dwarfcorp = ProgramData.CreatePath("Music", "dwarfcorp");
+            public static string dwarfcorp_2 = ProgramData.CreatePath("Music", "dwarfcorp_2");
+            public static string dwarfcorp_3 = ProgramData.CreatePath("Music", "dwarfcorp_3");
+            public static string dwarfcorp_4 = ProgramData.CreatePath("Music", "dwarfcorp_4");
 #else
             public static string dwarfcorp = ProgramData.CreatePath("Music", "dwarfcorp_ogg");
 #endif

@@ -96,7 +96,8 @@ namespace DwarfCorp.GameStates
                     Overworld.CreateUniformLand(Game.GraphicsDevice);
                     StateManager.PushState("PlayState");
                     PlayState.WorldSize = new Point3(6, 1, 6);
-
+                    GUI.MouseMode = GUISkin.MousePointer.Wait;
+            
                     IsGameRunning = true;
                 }
                     break;
@@ -106,7 +107,8 @@ namespace DwarfCorp.GameStates
                     Overworld.CreateHillsLand(Game.GraphicsDevice);
                     StateManager.PushState("PlayState");
                     PlayState.WorldSize = new Point3(6, 1, 6);
-
+                    GUI.MouseMode = GUISkin.MousePointer.Wait;
+            
                     IsGameRunning = true;
                 }
                     break;
@@ -116,7 +118,8 @@ namespace DwarfCorp.GameStates
                     Overworld.CreateCliffsLand(Game.GraphicsDevice);
                     StateManager.PushState("PlayState");
                     PlayState.WorldSize = new Point3(6, 1, 6);
-
+                    GUI.MouseMode = GUISkin.MousePointer.Wait;
+            
                     IsGameRunning = true;
                 }
                     break;
@@ -126,7 +129,8 @@ namespace DwarfCorp.GameStates
                     Overworld.CreateOceanLand(Game.GraphicsDevice);
                     StateManager.PushState("PlayState");
                     PlayState.WorldSize = new Point3(6, 1, 6);
-
+                    GUI.MouseMode = GUISkin.MousePointer.Wait;
+            
                     IsGameRunning = true;
                 }
                     break;

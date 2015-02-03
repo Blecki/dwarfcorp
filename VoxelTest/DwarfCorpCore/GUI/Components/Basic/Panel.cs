@@ -16,7 +16,8 @@ namespace DwarfCorp
         {
             Fancy,
             Simple,
-            Window
+            Window,
+            WindowEx
         }
 
         public PanelMode Mode { get; set; }
@@ -45,7 +46,7 @@ namespace DwarfCorp
             }
             else
             {
-                GUI.Skin.RenderWindow(GlobalBounds, batch);
+                GUI.Skin.RenderWindow(GlobalBounds, batch, Mode == PanelMode.WindowEx);
             }
             base.Render(time, batch);
         }

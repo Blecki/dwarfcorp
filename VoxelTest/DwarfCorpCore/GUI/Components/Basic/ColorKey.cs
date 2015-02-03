@@ -41,9 +41,9 @@ namespace DwarfCorp
             {
                 Vector2 measure = Font.MeasureString(entry.Key);
                 Drawer2D.DrawAlignedText(batch, entry.Key, Font, TextColor, Drawer2D.Alignment.Right, new Rectangle(GlobalBounds.X + 18, GlobalBounds.Y + currHeight, LocalBounds.Width - 20, (int)measure.Y));
-                Drawer2D.FillRect(batch, new Rectangle(GlobalBounds.X + 2, GlobalBounds.Y + currHeight, 15, 15), entry.Value);
-                Drawer2D.DrawRect(batch, new Rectangle(GlobalBounds.X + 2, GlobalBounds.Y + currHeight, 15, 15), BorderColor, 1);
-                currHeight += (int)(measure.Y + 1);
+                Drawer2D.FillRect(batch, new Rectangle(GlobalBounds.X + 2, GlobalBounds.Y + currHeight - 5, 10, 10), entry.Value);
+                Drawer2D.DrawRect(batch, new Rectangle(GlobalBounds.X + 2, GlobalBounds.Y + currHeight - 5, 10, 10), BorderColor, 1);
+                currHeight += (int)(measure.Y + 5);
                 
             }
 
@@ -58,7 +58,7 @@ namespace DwarfCorp
 
             foreach(Vector2 measure in ColorEntries.Select(entry => Font.MeasureString(entry.Key)))
             {
-                sumHeight += (int) measure.Y;
+                sumHeight += (int) measure.Y + 5;
                 maxWidth = (int)Math.Max(measure.X, maxWidth);
             }
 

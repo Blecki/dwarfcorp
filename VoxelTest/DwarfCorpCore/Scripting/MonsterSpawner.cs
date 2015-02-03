@@ -28,7 +28,8 @@ namespace DwarfCorp
             SpawnFactions = new List<Faction>()
             {
                 PlayState.ComponentManager.Factions.Factions["Goblins"],
-                PlayState.ComponentManager.Factions.Factions["Undead"]
+                PlayState.ComponentManager.Factions.Factions["Undead"],
+                PlayState.ComponentManager.Factions.Factions["Elf"]
             };
         }
 

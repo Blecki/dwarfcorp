@@ -21,7 +21,7 @@ namespace DwarfCorp
         public Fixture(Vector3 position, SpriteSheet asset, Point frame, GameComponent parent) :
             base("Fixture", parent, Matrix.CreateTranslation(position), Vector3.One, Vector3.Zero, false)
         {
-            Sprite = new Sprite(Manager, "Sprite", this, Matrix.Identity, TextureManager.GetTexture(asset.AssetName), false);
+            Sprite = new Sprite(Manager, "Sprite", this, Matrix.Identity, asset, false);
             Sprite.AddAnimation(new Animation(asset.GenerateFrame(frame)));
             AddToOctree = false;
             CollisionType = CollisionManager.CollisionType.Static;

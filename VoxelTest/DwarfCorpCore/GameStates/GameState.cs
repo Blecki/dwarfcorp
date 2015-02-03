@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Threading;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.GameStates
 {
@@ -65,6 +66,66 @@ namespace DwarfCorp.GameStates
         {
         }
 
+
+        public virtual void OnPopped()
+        {
+            
+        }
+
+    }
+
+    public class WaitState : GameState
+    {
+        public Thread WaitThread { get; set; }
+        public DwarfGUI GUI { get; set; }
+
+        public event Finished OnFinished;
+
+        protected virtual void OnOnFinished()
+        {
+            Finished handler = OnFinished;
+            if (handler != null) handler();
+        }
+        public bool Done { get; protected set; }
+        public delegate void Finished();
+
+        public WaitState(DwarfGame game, string name, GameStateManager stateManager, Thread waitThread, DwarfGUI gui)
+            : base(game, name, stateManager)
+        {
+            WaitThread = waitThread;
+            GUI = gui;
+            OnFinished = () => { };
+            Done = false;
+        }
+
+        public override void OnEnter()
+        {
+            IsInitialized = true;
+            WaitThread.Start();
+            base.OnEnter();
+        }
+
+        public override void OnPopped()
+        {
+            StateManager.States.Remove(Name);
+            OnFinished.Invoke();
+            base.OnPopped();
+        }
+
+
+
+        public override void Update(DwarfTime DwarfTime)
+        {
+            GUI.MouseMode = GUISkin.MousePointer.Wait;
+
+            if (!WaitThread.IsAlive && StateManager.CurrentState == Name && !Done)
+            {
+                StateManager.PopState();
+                Done = true;
+            }
+
+            base.Update(DwarfTime);
+        }
 
     }
 

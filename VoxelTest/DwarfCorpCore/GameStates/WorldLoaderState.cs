@@ -95,7 +95,7 @@ namespace DwarfCorp.GameStates
                                 Worlds[i].Button.Mode = Button.ButtonMode.ImageButton;
                                 Worlds[i].Button.KeepAspectRatio = true;
                                 Worlds[i].Button.Text = Worlds[i].WorldName;
-                                Worlds[i].Button.TextColor = Color.White;
+                                Worlds[i].Button.TextColor = Color.Black;
                             }
                             else
                             {
@@ -146,6 +146,7 @@ namespace DwarfCorp.GameStates
             catch(System.IO.IOException exception)
             {
                 Console.Error.WriteLine(exception.Message);
+                Dialog.Popup(GUI, "Error.", "Error loading worlds:\n" + exception.Message, Dialog.ButtonType.OK);
             }
         }
 
@@ -169,7 +170,9 @@ namespace DwarfCorp.GameStates
                 {
                     overworld.Button = new Button(GUI, parent, overworld.Button.Text, overworld.Button.TextFont, overworld.Button.Mode, overworld.Button.Image)
                     {
-                        TextColor = Color.White
+                        TextColor = Color.Black,
+                        KeepAspectRatio = true,
+                        DontMakeBigger = true
                     };
                 }
             }
@@ -255,31 +258,43 @@ namespace DwarfCorp.GameStates
 
         public void LoadDescriptor(WorldLoadDescriptor descriptor)
         {
-            lock (descriptor.Lock)
+            try
             {
-                if (!descriptor.IsLoaded)
+                lock (descriptor.Lock)
                 {
-                    return;
+                    if (!descriptor.IsLoaded)
+                    {
+                        return;
+                    }
+
+                    descriptor.File = new OverworldFile(descriptor.FileName, true);
+
+                    Overworld.Map = descriptor.File.Data.CreateMap();
+
+                    Overworld.Name = descriptor.File.Data.Name;
+                    PlayState.WorldWidth = Overworld.Map.GetLength(1);
+                    PlayState.WorldHeight = Overworld.Map.GetLength(0);
+
+                    WorldGeneratorState state = (WorldGeneratorState)(StateManager.States["WorldGeneratorState"]);
+
+                    WorldGeneratorState.worldMap = descriptor.File.Data.CreateTexture(Game.GraphicsDevice, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
+                    JoinThreads();
+                    StateManager.PushState("WorldGeneratorState");
+                    state.Progress.Value = 1.0f;
+                    state.GenerationComplete = true;
+                    state.WorldName = descriptor.WorldName;
+                    state.NameEdit.Text = descriptor.WorldName;
+                    state.worldData = new Color[PlayState.WorldWidth * PlayState.WorldHeight];
+                   
+                    Worlds.Clear();
                 }
-
-                descriptor.File = new OverworldFile(descriptor.FileName, true);
-
-                Overworld.Map = descriptor.File.Data.CreateMap();
-                Overworld.Name = descriptor.File.Data.Name;
-                PlayState.WorldWidth = Overworld.Map.GetLength(1);
-                PlayState.WorldHeight = Overworld.Map.GetLength(0);
-
-                WorldGeneratorState state = (WorldGeneratorState)(StateManager.States["WorldGeneratorState"]);
-
-                WorldGeneratorState.worldMap = descriptor.File.Data.CreateTexture(Game.GraphicsDevice, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
-                JoinThreads();
-                StateManager.PushState("WorldGeneratorState");
-                state.Progress.Value = 1.0f;
-                state.GenerationComplete = true;
-                state.WorldName = descriptor.WorldName;
-                state.NameEdit.Text = descriptor.WorldName;
-                Worlds.Clear();
             }
+            catch (Exception e)
+            {
+
+                Dialog.Popup(GUI, "ERROR", "Failed to load world: " + e.Message, Dialog.ButtonType.OK);
+            }
+
         }
 
         private void UpdateSelection()
@@ -314,6 +329,15 @@ namespace DwarfCorp.GameStates
         }
 
         void deleteButton_OnClicked()
+        {
+            Dialog deleteDialog = Dialog.Popup(GUI, "Delete World?",
+                "Are you sure you want to delete " + SelectedDescriptor.Button.Text + "?", Dialog.ButtonType.OkAndCancel);
+
+            deleteDialog.OnClosed += deleteDialog_OnClosed;
+         
+        }
+
+        void deleteDialog_OnClosed(Dialog.ReturnStatus status)
         {
             DeleteDescriptor(SelectedDescriptor);
         }

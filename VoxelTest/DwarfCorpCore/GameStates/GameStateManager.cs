@@ -64,6 +64,12 @@ namespace DwarfCorp.GameStates
         }
 
 
+        public void PushState(GameState state)
+        {
+            States.Add(state.Name, state);
+            PushState(state.Name);
+        }
+
         public void PushState(string state)
         {
             NextState = state;
@@ -86,6 +92,7 @@ namespace DwarfCorp.GameStates
             {
                 States[CurrentState].OnExit();
                 States[CurrentState].Transitioning = GameState.TransitionMode.Exiting;
+                States[CurrentState].OnPopped();
             }
 
             CurrentState = NextState;

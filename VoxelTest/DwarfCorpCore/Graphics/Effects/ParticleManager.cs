@@ -24,9 +24,9 @@ namespace DwarfCorp
 
         public void Trigger(int num, Vector3 position, Color tint)
         {
-            foreach (ParticleEmitter emitter in Emitters)
+            for (int i = 0; i < num; i++)
             {
-                emitter.Trigger(Math.Max(num / Emitters.Count, 1), position, tint);
+                Emitters[PlayState.Random.Next(Emitters.Count)].Trigger(1, position, tint);
             }
         }
         
@@ -103,7 +103,7 @@ namespace DwarfCorp
             Texture2D tex = TextureManager.GetTexture(assetName);
             EmitterData testData = new EmitterData
             {
-                Animation = new Animation(GameState.Game.GraphicsDevice, tex, assetName, tex.Width, tex.Height, frm, true, Color.White, 1.0f, 1.0f, 1.0f, false),
+                Animation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(assetName), assetName, tex.Width, tex.Height, frm, true, Color.White, 1.0f, 1.0f, 1.0f, false),
                 ConstantAccel = new Vector3(0, -10, 0),
                 LinearDamping = 0.9999f,
                 AngularDamping = 0.9f,
@@ -130,6 +130,38 @@ namespace DwarfCorp
             return Effects[name];
         }
 
+        public static EmitterData CreateExplosionLike(string name, SpriteSheet sheet, Point frame, BlendState state)
+        {
+            Texture2D tex = TextureManager.GetTexture(sheet.AssetName);
+            EmitterData data = new EmitterData
+            {
+                Animation = new Animation(GameState.Game.GraphicsDevice, sheet, name, sheet.FrameWidth, sheet.FrameHeight, new List<Point>() { frame }, true, Color.White, 1.0f, 1.0f, 1.0f, false),
+                ConstantAccel = new Vector3(0, -10, 0),
+                LinearDamping = 0.9999f,
+                AngularDamping = 0.9f,
+                EmissionFrequency = 50.0f,
+                EmissionRadius = 1.0f,
+                EmissionSpeed = 5.0f,
+                GrowthSpeed = -0.0f,
+                MaxAngle = 3.14159f,
+                MinAngle = 0.0f,
+                MaxParticles = 1000,
+                MaxScale = 0.2f,
+                MinScale = 0.1f,
+                MinAngular = -5.0f,
+                MaxAngular = 5.0f,
+                ParticleDecay = 0.5f,
+                ParticlesPerFrame = 0,
+                ReleaseOnce = true,
+                Texture = tex,
+                CollidesWorld = true,
+                Sleeps = true,
+                Damping = 0.1f
+            };
+
+            return data;
+        }
+
         /// <summary>
         /// Creates a generic particle effect which is like a "puff" (cloudy particles which float)
         /// </summary>
@@ -138,7 +170,7 @@ namespace DwarfCorp
             Texture2D tex = TextureManager.GetTexture(sheet.AssetName);
             EmitterData data = new EmitterData
             {
-                Animation = new Animation(GameState.Game.GraphicsDevice, tex, name, sheet.FrameWidth, sheet.FrameHeight, new List<Point>(){frame}, true, Color.White, 1.0f, 1.0f, 1.0f, false),
+                Animation = new Animation(GameState.Game.GraphicsDevice, sheet, name, sheet.FrameWidth, sheet.FrameHeight, new List<Point>(){frame}, true, Color.White, 1.0f, 1.0f, 1.0f, false),
                 ConstantAccel = new Vector3(0, 3, 0),
                 LinearDamping = 0.9f,
                 AngularDamping = 0.99f,

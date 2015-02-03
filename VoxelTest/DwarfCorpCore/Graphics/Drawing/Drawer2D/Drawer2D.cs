@@ -221,7 +221,7 @@ namespace DwarfCorp
             Right = 2,
             Top = 4,
             Bottom = 8,
-            Under
+            Under = 16
         }
 
         public static Rectangle Align(Rectangle bounds, int width, int height, Alignment align)
@@ -330,29 +330,28 @@ namespace DwarfCorp
 
             if(align.HasFlag(Alignment.Left))
             {
-                origin.X += bounds.Width / 2 - size.X / 2;
+                pos.X -= bounds.Width / 2 - size.X / 2;
             }
 
             if(align.HasFlag(Alignment.Right))
             {
-                origin.X -= bounds.Width / 2 - size.X / 2;
+                pos.X += bounds.Width / 2 - size.X / 2;
             }
 
             if(align.HasFlag(Alignment.Top))
             {
-                origin.Y += bounds.Height / 2 - size.Y / 2;
+                pos.Y -= bounds.Height / 2 - size.Y / 2;
             }
 
             if(align.HasFlag(Alignment.Bottom))
             {
-                origin.Y -= bounds.Height / 2 - size.Y / 2;
+                pos.Y += bounds.Height / 2 - size.Y / 2;
             }
 
             if (align.HasFlag(Alignment.Under))
             {
-                origin.Y -= bounds.Height;
+                pos.Y += bounds.Height/2 + size.Y/2;
             }
-
             SafeDraw(batch, text, font, textColor, pos, origin);
         }
 
@@ -386,6 +385,11 @@ namespace DwarfCorp
 
         public static void SafeDraw(SpriteBatch batch, string text, SpriteFont font, Color textColor, Vector2 pos, Vector2 origin)
         {
+            pos.X = (int)Math.Round(pos.X);
+            pos.Y = (int)Math.Round(pos.Y);
+            origin.X = (int) Math.Round(origin.X);
+            origin.Y = (int) Math.Round(origin.Y);
+            
             batch.DrawString(font, Internationalize(text, font), pos, textColor, 0, origin, 1, SpriteEffects.None, 0);
         }
     }

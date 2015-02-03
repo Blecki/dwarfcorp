@@ -34,13 +34,13 @@ namespace DwarfCorp
             AddToOctree = false;
 
             Sprite = new Sprite(PlayState.ComponentManager, "Sprite", this, Matrix.CreateRotationY((float)Math.PI * 0.5f),
-                TextureManager.GetTexture(asset), false)
+                new SpriteSheet(asset), false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
             };
             Sprite.SetSingleFrameAnimation(new Point(0, 0));
             Sprite sprite2 = new Sprite(PlayState.ComponentManager, "Sprite2", Sprite, Matrix.CreateRotationX((float)Math.PI * 0.5f),
-                TextureManager.GetTexture(asset), false)
+                new SpriteSheet(asset), false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
             };
