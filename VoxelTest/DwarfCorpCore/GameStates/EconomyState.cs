@@ -64,7 +64,10 @@ namespace DwarfCorp.GameStates
             Panel tabPanel = new Panel(GUI, Layout);
             Layout.SetComponentPosition(tabPanel, 0, 0, 4, 1);
 
-            GridLayout tabLayout = new GridLayout(GUI, tabPanel, 1, 10);
+            GridLayout tabLayout = new GridLayout(GUI, tabPanel, 1, 10)
+            {
+                EdgePadding = 10
+            };
 
 
            CreateTabButton(tabLayout, "Employees", "Hire and fire dwarves", 5, 0);
@@ -94,7 +97,7 @@ namespace DwarfCorp.GameStates
 
         public Button CreateTabButton(GridLayout parent, string name, string tooltip, int x, int y)
         {
-            Button button = new Button(GUI, parent, name, GUI.DefaultFont, Button.ButtonMode.ImageButton, new ImageFrame(Icons, 32, x, y))
+            Button button = new Button(GUI, parent, name, GUI.SmallFont, Button.ButtonMode.ImageButton, new ImageFrame(Icons, 32, x, y))
             {
                 CanToggle = true,
                 IsToggled = false,

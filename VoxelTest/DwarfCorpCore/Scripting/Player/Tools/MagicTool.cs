@@ -42,7 +42,7 @@ namespace DwarfCorp
                     MagicMenu.Master.Spells.Mana/MagicMenu.Master.Spells.MaxMana)
                 {
                     ToolTip = "Remaining Mana Pool",
-                    LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 200, 10, 180, 32),
+                    LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 200, 64, 180, 32),
                     Tint = Color.Cyan
                 };
                 MagicBar.OnUpdate += MagicBar_OnUpdate;

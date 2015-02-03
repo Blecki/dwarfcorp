@@ -130,7 +130,7 @@ namespace DwarfCorp.GameStates
             {
                 if(overworld.Button == null)
                 {
-                    Button image = new Button(GUI, parent, "Loading...", GUI.DefaultFont, Button.ButtonMode.ImageButton, null)
+                    Button image = new Button(GUI, parent, "Loading...", GUI.SmallFont, Button.ButtonMode.ImageButton, null)
                     {
                         TextColor = Color.Black,
                         ToggleTint = new Color(255, 255, 150)
@@ -142,7 +142,9 @@ namespace DwarfCorp.GameStates
                 {
                     overworld.Button = new Button(GUI, parent, overworld.Button.Text, overworld.Button.TextFont, overworld.Button.Mode, overworld.Button.Image)
                     {
-                        TextColor = Color.White
+                        TextColor = Color.Black,
+                        DontMakeBigger =  true,
+                        KeepAspectRatio = true
                     };
                 }
             }
@@ -238,7 +240,8 @@ namespace DwarfCorp.GameStates
 
                 PlayState state = (PlayState)(StateManager.States["PlayState"]);
                 state.ExistingFile = descriptor.FileName;
-
+                GUI.MouseMode = GUISkin.MousePointer.Wait;
+            
                 JoinThreads();
                 StateManager.PushState("PlayState");
                 Games.Clear();
@@ -261,10 +264,12 @@ namespace DwarfCorp.GameStates
             };
             layout.SetComponentPosition(worldPanel, 0, 1, 1, 1);
 
-            Label worldLabel = new Label(GUI, PropertiesPanel, "Selected", GUI.DefaultFont);
+            Label worldLabel = new Label(GUI, PropertiesPanel, SelectedDescriptor.Button.Text, GUI.DefaultFont);
             layout.SetComponentPosition(worldLabel, 0, 2, 1, 1);
 
-            Button loadButton = new Button(GUI, layout, "Load", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Save));
+            Button loadButton = new Button(GUI, layout, "Load", GUI.DefaultFont, Button.ButtonMode.ToolButton,
+                GUI.Skin.GetSpecialFrame(GUISkin.Tile.Save));
+
             layout.SetComponentPosition(loadButton, 0, 3, 1, 1);
 
             loadButton.OnClicked += loadButton_OnClicked;
@@ -275,9 +280,20 @@ namespace DwarfCorp.GameStates
             deleteButton.OnClicked += deleteButton_OnClicked;
         }
 
+
+
         void deleteButton_OnClicked()
         {
-            DeleteDescriptor(SelectedDescriptor);
+            Dialog dialog = Dialog.Popup(GUI, "Delete?","Are you sure you want to delete " + SelectedDescriptor.Button.Text + "?", Dialog.ButtonType.OkAndCancel);
+            dialog.OnClosed += dialog_OnClosed;
+        }
+
+        void dialog_OnClosed(Dialog.ReturnStatus status)
+        {
+            if (status == Dialog.ReturnStatus.Ok)
+            {
+                DeleteDescriptor(SelectedDescriptor);
+            }
         }
 
         public void DeleteDescriptor(GameLoadDescriptor selectedDescriptor)

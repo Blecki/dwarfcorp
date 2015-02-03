@@ -438,7 +438,6 @@
         <member name="M:DwarfCorp.GameStates.PlayState.GenerateInitialBalloonPort(DwarfCorp.RoomBuilder,DwarfCorp.ChunkManager,System.Single,System.Single,System.Int32)">
             <summary>
             Creates a flat, wooden balloon port for the balloon to land on, and Dwarves to sit on.
-            TODO: Fix height to that it's not too tall when on a mountain.
             </summary>
             <param name="roomDes">The player's BuildRoom designator (so that we can create a balloon port)</param>
             <param name="chunkManager">The terrain handler</param>

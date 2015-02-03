@@ -35,7 +35,7 @@ namespace DwarfCorp
         public float MinScale;
         public float MaxScale;
         public float GrowthSpeed;
-        public float Damping;
+        public float Damping = 0.5f;
         public float MinAngle;
         public float MaxAngle;
         public float MinAngular;
@@ -175,7 +175,9 @@ namespace DwarfCorp
                     }
 
                     toAdd.Position = sample + origin;
-                    toAdd.Velocity = RandVec(Data.EmissionSpeed);
+                    toAdd.Velocity = (sample);
+                    toAdd.Velocity.Normalize();
+                    toAdd.Velocity *= Data.EmissionSpeed;
 
                     toAdd.Scale = Rand(Data.MinScale, Data.MaxScale);
                     toAdd.Angle = Rand(Data.MinAngle, Data.MaxAngle);
@@ -234,13 +236,18 @@ namespace DwarfCorp
 
             foreach(Particle p in Particles)
             {
-                if(!Data.Sleeps || p.Velocity.LengthSquared() > 0.1f)
+                float vel = p.Velocity.LengthSquared();
+                if(!Data.Sleeps || vel > 0.2f)
                 {
                     p.Position += p.Velocity * (float) DwarfTime.ElapsedGameTime.TotalSeconds;
                     p.Angle += (float) (p.AngularVelocity * DwarfTime.ElapsedGameTime.TotalSeconds);
                     p.Velocity += Data.ConstantAccel * (float) DwarfTime.ElapsedGameTime.TotalSeconds;
                     p.Velocity *= Data.LinearDamping;
                     p.AngularVelocity *= Data.AngularDamping;
+                }
+                else if (Data.Sleeps && vel < 0.2f)
+                {
+                    p.Velocity = Vector3.Zero;
                 }
 
 
@@ -250,7 +257,7 @@ namespace DwarfCorp
                 p.Scale = Math.Max(p.Scale, 0.0f);
 
 
-                if(Data.CollidesWorld && particlePhysics && p.Velocity.LengthSquared() > 0.1f)
+                if(Data.CollidesWorld && particlePhysics && vel > 0.2f)
                 {
                     Voxel v = new Voxel();
                     bool success = chunks.ChunkData.GetNonNullVoxelAtWorldLocation(p.Position, ref v);
@@ -263,9 +270,8 @@ namespace DwarfCorp
                         if(Physics.TestStaticAABBAABB(b, v.GetBoundingBox(), ref contact))
                         {
                             p.Position += contact.NEnter * contact.Penetration;
-
-                            Vector3 newVelocity = (contact.NEnter * Vector3.Dot(p.Velocity, contact.NEnter));
-                            p.Velocity = (p.Velocity - newVelocity) * 0.5f;
+                            Vector3 newVelocity = Vector3.Reflect(p.Velocity, -contact.NEnter);
+                            p.Velocity = newVelocity * Data.Damping;
                             p.AngularVelocity *= 0.5f;
                         }
                     }
@@ -274,7 +280,7 @@ namespace DwarfCorp
                 if(p.LifeRemaining < 0)
                 {
                     if(p.InstanceData != null)
-                    {
+                    {//
                         p.InstanceData.ShouldDraw = false;
                         p.InstanceData.Transform = Matrix.CreateTranslation(camera.Position + new Vector3(-1000, -1000, -1000));
                         Sprites.Remove(p.InstanceData);

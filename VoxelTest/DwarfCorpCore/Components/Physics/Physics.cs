@@ -54,25 +54,59 @@ namespace DwarfCorp
             LinearDamping = linearDamping;
             AngularDamping = angularDamping;
             Gravity = gravity;
-            Restitution = 0.99f;
+            Restitution = 0.5f;
             Friction = 0.99f;
             IsSleeping = false;
             PreviousPosition = LocalTransform.Translation;
             IsInLiquid = false;
             CollisionType = CollisionManager.CollisionType.Dynamic;
             Orientation = orientation;
+            SleepTimer = new Timer(1.0f, true);
+        }
+
+        public void MoveX(float dt)
+        {
+            Vector3 newPos = new Vector3(LocalTransform.Translation.X + Velocity.X * dt, LocalTransform.Translation.Y, LocalTransform.Translation.Z);
+            Matrix transform = LocalTransform;
+            transform.Translation = newPos;
+            LocalTransform = transform;
+        }
+
+        public void MoveY(float dt)
+        {
+            Vector3 newPos = new Vector3(LocalTransform.Translation.X, LocalTransform.Translation.Y + Velocity.Y * dt, LocalTransform.Translation.Z);
+            Matrix transform = LocalTransform;
+            transform.Translation = newPos;
+            LocalTransform = transform;
+        }
+
+        public void MoveZ(float dt)
+        {
+            Vector3 newPos = new Vector3(LocalTransform.Translation.X, LocalTransform.Translation.Y, LocalTransform.Translation.Z + Velocity.Z * dt);
+            Matrix transform = LocalTransform;
+            transform.Translation = newPos;
+            LocalTransform = transform;
         }
 
         public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
         {
             BoundingBox bounds = chunks.Bounds;
             bounds.Max.Y += 50;
-            if(Velocity.LengthSquared() < 0.1f)
+            if (Velocity.Length() < 0.25f)
             {
-                IsSleeping = true;
+                
+                Velocity *= 0.0f;
+                SleepTimer.Update(DwarfTime);
+                if (SleepTimer.HasTriggered)
+                {
+                    Drawer3D.DrawBox(BoundingBox, Color.White, 0.1f);
+                    IsSleeping = true;
+                }
+
             }
-            else
+            else 
             {
+                SleepTimer.Reset();
                 IsSleeping = false;
             }
 
@@ -85,27 +119,27 @@ namespace DwarfCorp
 
                 float dt = (float) (DwarfTime.ElapsedGameTime.TotalSeconds);
 
-                if(applyGravityThisFrame)
-                {
-                    ApplyForce(Gravity, dt);
-                }
-                else
-                {
-                    applyGravityThisFrame = true;
-                }
+                PreviousPosition = LocalTransform.Translation;
+
+                MoveY(dt);
+                if(Math.Abs(Velocity.Y) > 0.2f)
+                    HandleCollisions(chunks, dt);
+
+                MoveX(dt);
+                if(Math.Abs(Velocity.X) > 0.2f)
+                    HandleCollisions(chunks, dt);
+
+                MoveZ(dt);
+                if(Math.Abs(Velocity.Z) > 0.2f)
+                    HandleCollisions(chunks, dt);
 
                 Matrix transform = LocalTransform;
-                PreviousPosition = transform.Translation;
-
-                if (bounds.Contains(LocalTransform.Translation + Velocity*dt) == ContainmentType.Contains)
-                {
-                    transform.Translation = LocalTransform.Translation + Velocity*dt;
-                }
-                else
+                if (bounds.Contains(LocalTransform.Translation + Velocity*dt) != ContainmentType.Contains)
                 {
                     transform.Translation = LocalTransform.Translation - 0.1f * Velocity * dt;
                     Velocity = new Vector3(Velocity.X * -0.9f, Velocity.Y, Velocity.Z * -0.9f);
                 }
+
 
                 if (LocalTransform.Translation.Z < -10 || bounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
                 {
@@ -150,14 +184,24 @@ namespace DwarfCorp
                     Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
                 }
 
+                if (applyGravityThisFrame)
+                {
+                    ApplyForce(Gravity, dt);
+                }
+                else
+                {
+                    applyGravityThisFrame = true;
+                }
+
                 Velocity *= LinearDamping;
                 AngularVelocity *= AngularDamping;
                 UpdateBoundingBox();
-                HandleCollisions(chunks, dt);
                 CheckLiquids(chunks, (float) DwarfTime.ElapsedGameTime.TotalSeconds);
             }
             base.Update(DwarfTime, chunks, camera);
         }
+
+        public Timer SleepTimer { get; set; }
 
         public void Face(Vector3 target)
         {
@@ -218,16 +262,24 @@ namespace DwarfCorp
             }
 
             Matrix m = LocalTransform;
-            m.Translation += contact.NEnter * contact.Penetration;
+            m.Translation += contact.NEnter * (contact.Penetration);
 
             if (contact.NEnter.Y > 0.9)
             {
                 applyGravityThisFrame = false;
             }
 
-            Vector3 newVelocity = (contact.NEnter * Vector3.Dot(Velocity, contact.NEnter));
-            Velocity = (Velocity - newVelocity) * Restitution;
-
+            //Vector3 newVelocity = (contact.NEnter * Vector3.Dot(Velocity, contact.NEnter));
+            //Velocity = (Velocity - newVelocity) * Restitution;
+            if (Math.Abs(contact.NEnter.Y) > 0.1f)
+            {
+                Velocity = new Vector3(Velocity.X, -Velocity.Y * Restitution, Velocity.Z);
+            }
+            else
+            {
+                Velocity = Vector3.Reflect(Velocity, -contact.NEnter);
+                Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
+            }
 
             LocalTransform = m;
             UpdateBoundingBox();
@@ -237,10 +289,6 @@ namespace DwarfCorp
 
         public virtual void HandleCollisions(ChunkManager chunks, float dt)
         {
-            if(Velocity.LengthSquared() < 0.1f)
-            {
-                return;
-            }
             Voxel currentVoxel = new Voxel();
             bool success = chunks.ChunkData.GetVoxelerenceAtWorldLocation(null, LocalTransform.Translation, ref currentVoxel);
 
