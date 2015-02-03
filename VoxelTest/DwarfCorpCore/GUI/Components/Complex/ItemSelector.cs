@@ -258,7 +258,7 @@ namespace DwarfCorp
             switch(columnType)
             {
                case Column.Amount:
-                    Label amountLabel = new Label(GUI, Layout, item.CurrentAmount.ToString(), GUI.DefaultFont)
+                    Label amountLabel = new Label(GUI, Layout, item.CurrentAmount.ToString(), GUI.SmallFont)
                     {
                         ToolTip = "Total Amount"
                     };
@@ -269,20 +269,21 @@ namespace DwarfCorp
                 case Column.Image:
                     ImagePanel image = new ImagePanel(GUI, Layout, item.Image)
                     {
-                        KeepAspectRatio = true
+                        KeepAspectRatio = true,
+                        ConstrainSize = true
                     };
                     Layout.SetComponentPosition(image, column, row, 1, 1);
 
                     return image;
 
                 case Column.Name:
-                    Label label = new Label(GUI, Layout, item.Name, GUI.DefaultFont);
+                    Label label = new Label(GUI, Layout, item.Name, GUI.SmallFont);
                     Layout.SetComponentPosition(label, column, row, 1, 1);
 
                     return label;
                 
                 case Column.PricePerItem:
-                    Label priceLabel = new Label(GUI, Layout, item.Price.ToString("C"), GUI.DefaultFont)
+                    Label priceLabel = new Label(GUI, Layout, item.Price.ToString("C"), GUI.SmallFont)
                     {
                         ToolTip = "Price per item"
                     };
@@ -292,7 +293,7 @@ namespace DwarfCorp
 
 
                 case Column.TotalPrice:
-                    Label totalLabel = new Label(GUI, Layout, (item.Price * item.CurrentAmount).ToString("C"), GUI.DefaultFont)
+                    Label totalLabel = new Label(GUI, Layout, (item.Price * item.CurrentAmount).ToString("C"), GUI.SmallFont)
                     {
                         ToolTip = "Total price"
                     };

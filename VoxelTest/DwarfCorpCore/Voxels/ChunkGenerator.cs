@@ -134,8 +134,8 @@ namespace DwarfCorp
                             float s = spawns.Value.VeinSize;
                             float p = spawns.Value.VeinSpawnThreshold;
                             v.GridPosition = new Vector3(x, y, z);
-                            if (v.IsEmpty || y >= h - 1 || !(y < spawns.Value.MaximumHeight) ||
-                                !(y > spawns.Value.MinimumHeight) ||
+                            if (v.IsEmpty || y >= h - 1 || !(y - h/2 < spawns.Value.MaximumHeight) ||
+                                !(y - h/2 > spawns.Value.MinimumHeight) ||
                                 !(PlayState.Random.NextDouble() <= spawns.Value.Probability) || v.Type.Name != "Stone")
                             {
                                 continue;
@@ -143,7 +143,7 @@ namespace DwarfCorp
 
                             float caviness = (float) NoiseGenerator.Noise((float) (x + origin.X)*s,
                                 (float) (z + origin.Z)*s,
-                                (float) (y + origin.Y)*s);
+                                (float) (y + origin.Y + h)*s);
 
                             if (caviness > p)
                             {

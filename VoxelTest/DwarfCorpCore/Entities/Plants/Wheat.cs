@@ -25,13 +25,13 @@ namespace DwarfCorp
             matrix.Translation = position + new Vector3(0.5f, -0.25f, 0.5f);
             LocalTransform = matrix;
 
-            Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Plants.wheat);
+            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Plants.wheat);
 
             List<Point> frames = new List<Point>
             {
                 new Point(0, 0)
             };
-            Animation tableAnimation = new Animation(GameState.Game.GraphicsDevice, spriteSheet, "Wheat", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
+            Animation tableAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Plants.wheat), "Wheat", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
             Sprite sprite = new Sprite(PlayState.ComponentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
             {

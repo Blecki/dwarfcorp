@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
@@ -43,6 +44,26 @@ namespace DwarfCorp
         {
             Image = image;
             SourceRect = sourceRect;
+        }
+    }
+
+    [JsonObject(IsReference = true)]
+    public class LayeredImage
+    {
+        public List<NamedImageFrame> Images { get; set; }
+        public List<Color> Tints { get; set; } 
+
+        public LayeredImage()
+        {
+            Images = new List<NamedImageFrame>();
+        }
+
+        public void Render(Rectangle location)
+        {
+            for (int i = 0; i < Images.Count; i++)
+            {
+                DwarfGame.SpriteBatch.Draw(Images[i].Image, location, Images[i].SourceRect, Tints[i]);
+            }
         }
     }
 

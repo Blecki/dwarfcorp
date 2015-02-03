@@ -20,6 +20,7 @@ namespace DwarfCorp
     /// </summary>
     public class SoundManager
     {
+        public static List<Song> ActiveSongs = new List<Song>();
         public static List<Sound3D> ActiveSounds = new List<Sound3D>();
         public static AudioListener Listener = new AudioListener();
         public static AudioEmitter Emitter = new AudioEmitter();
@@ -40,10 +41,20 @@ namespace DwarfCorp
                 ContentPaths.Audio.river
             };
 
-            foreach(string name in defaultSounds)
+            foreach (string name in defaultSounds)
             {
                 SoundEffect effect = Content.Load<SoundEffect>(name);
                 EffectLibrary[name] = effect;
+            }
+        }
+
+        public static void SetActiveSongs(params string[] songs)
+        {
+            ActiveSongs = new List<Song>();
+
+            foreach (string song in songs)
+            {
+                ActiveSongs.Add(Content.Load<Song>(song));
             }
         }
 
@@ -56,8 +67,6 @@ namespace DwarfCorp
             Song song = Content.Load<Song>(name);
             MediaPlayer.Play(song);
             MediaPlayer.Volume = GameSettings.Default.MasterVolume * GameSettings.Default.MusicVolume;
-            MediaPlayer.IsRepeating = true;
-           
         }
 
         public static Sound3D PlaySound(string name, Vector3 location, bool randomPitch, float volume = 1.0f)
@@ -141,6 +150,8 @@ namespace DwarfCorp
             return PlaySound(name, location, false, volume);
         }
 
+
+        private static bool once = true;
         public static void Update(DwarfTime time, Camera camera)
         {
             List<Sound3D> toRemove = new List<Sound3D>();
@@ -170,6 +181,20 @@ namespace DwarfCorp
                     instance.EffectInstance.Play();
                     instance.HasStarted = true;
                 }
+            }
+
+            MediaPlayer.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.MusicVolume;
+            if (MediaPlayer.State == MediaState.Stopped)
+            {
+                if (once)
+                {
+                    MediaPlayer.Play(ActiveSongs[PlayState.Random.Next(ActiveSongs.Count)]);
+                    once = false;
+                }
+            }
+            else
+            {
+                once = true;
             }
 
             foreach(Sound3D r in toRemove)

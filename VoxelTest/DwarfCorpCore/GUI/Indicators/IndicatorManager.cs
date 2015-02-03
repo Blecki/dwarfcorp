@@ -38,7 +38,7 @@ namespace DwarfCorp
             base.Update(time);
             Animation.Update(time);
 
-            Image = new ImageFrame(Animation.SpriteSheet, Animation.GetCurrentFrameRect());
+            Image = new ImageFrame(Animation.SpriteSheet.GetTexture(), Animation.GetCurrentFrameRect());
         }
     }
     /// <summary>

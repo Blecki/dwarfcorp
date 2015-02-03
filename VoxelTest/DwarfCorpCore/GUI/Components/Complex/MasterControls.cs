@@ -65,7 +65,7 @@ namespace DwarfCorp
 
         public Button CreateButton(GUIComponent parent, GameMaster.ToolMode mode, string name, string tooltip, int x, int y)
         {
-            Button button = new Button(GUI, parent, name, GUI.DefaultFont, Button.ButtonMode.ImageButton, new ImageFrame(Icons, IconSize, x, y))
+            Button button = new Button(GUI, parent, name, GUI.SmallFont, Button.ButtonMode.ImageButton, new ImageFrame(Icons, IconSize, x, y))
             {
                 CanToggle = true,
                 IsToggled = false,

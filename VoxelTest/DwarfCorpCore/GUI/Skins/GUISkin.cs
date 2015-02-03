@@ -32,7 +32,8 @@ namespace DwarfCorp
             Chop,
             Guard,
             Attack,
-            Magic
+            Magic,
+            Wait
         }
 
         public enum Tile
@@ -49,6 +50,7 @@ namespace DwarfCorp
 
             WindowUpperLeft,
             WindowUpperRight,
+            WindowUpperRightNoEx,
             WindowUpper,
             WindowLowerLeft,
             WindowLowerRight,
@@ -134,6 +136,8 @@ namespace DwarfCorp
             TabRight
         }
 
+        public Timer MouseTimer { get; set; }
+        public int WaitIndex { get; set; }
 
         public GUISkin(Texture2D texture, int tileWidth, int tileHeight, Texture2D pointerTexture, int pointerWidth, int pointerHeight)
         {
@@ -145,6 +149,8 @@ namespace DwarfCorp
             PointerTexture = pointerTexture;
             MouseFrames = new Dictionary<MousePointer, Point>();
             Frames = new Dictionary<Tile, Point>();
+            MouseTimer = new Timer(0.25f, false, Timer.TimerMode.Real);
+            WaitIndex = 0;
         }
 
         public Rectangle GetRect(Point p, int w, int h)
@@ -164,7 +170,25 @@ namespace DwarfCorp
 
         public ImageFrame GetSpecialFrame(MousePointer key)
         {
-            return GetMouseFrame(MouseFrames[key]);
+            MouseTimer.Update(Act.LastTime);
+
+            if (key == MousePointer.Wait)
+            {
+                Point frame = MouseFrames[key];
+
+                if (MouseTimer.HasTriggered)
+                {
+                    WaitIndex = (WaitIndex + 1)%4;
+                }
+
+                frame.X += WaitIndex;
+                return GetMouseFrame(frame);
+            }
+            else
+            {
+
+                return GetMouseFrame(MouseFrames[key]);
+            }
         }
 
         public ImageFrame GetSpecialFrame(Tile key)
@@ -192,6 +216,7 @@ namespace DwarfCorp
             Frames[Tile.WindowUpperLeft] = new Point(0, 10);
             Frames[Tile.WindowUpper] = new Point(1, 10);
             Frames[Tile.WindowUpperRight] = new Point(2, 10);
+            Frames[Tile.WindowUpperRightNoEx] = new Point(2, 3);
             Frames[Tile.CloseButton] = new Point(3, 10);
             Frames[Tile.WindowLeft] = new Point(0, 11);
             Frames[Tile.WindowCenter] = new Point(1, 11);
@@ -282,6 +307,7 @@ namespace DwarfCorp
             MouseFrames[MousePointer.Attack] = new Point(2, 0);
             MouseFrames[MousePointer.Guard] = new Point(3, 0);
             MouseFrames[MousePointer.Magic] = new Point(0, 1);
+            MouseFrames[MousePointer.Wait] = new Point(3, 1);
 
          }
 
@@ -367,12 +393,14 @@ namespace DwarfCorp
             spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, maxY - diffY, diffX, diffY), GetSourceRect(Tile.PanelCenter), Color.White);
         }
 
-        public void RenderWindow(Rectangle rectbounds, SpriteBatch spriteBatch)
+        public void RenderWindow(Rectangle rectbounds, SpriteBatch spriteBatch, bool ex)
         {
+            Tile upperTile = ex ?  Tile.WindowUpperRight : Tile.WindowUpperRightNoEx;
+    
             Rectangle rect = new Rectangle((int)(rectbounds.X + TileWidth / 4), (int)(rectbounds.Y + TileHeight / 4), rectbounds.Width - TileWidth / 2, rectbounds.Height - TileHeight / 2);
             spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.WindowUpperLeft), Color.White);
             spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.WindowLowerLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.WindowUpperRight), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(upperTile), Color.White);
             spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.WindowLowerRight), Color.White);
 
             int maxX = rect.X + rect.Width;

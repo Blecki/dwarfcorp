@@ -64,14 +64,14 @@ namespace DwarfCorp
             )
         {
             // Called from constructor with appropriate sprite asset as a string
-            Initialize(TextureManager.GetTexture(sprites));
+            Initialize(new SpriteSheet(sprites));
         }
 
         /// <summary>
         /// Initialize function creates all the required components for the bird.
         /// </summary>
         /// <param name="spriteSheet">The sprite sheet to use for the bird</param>
-        public void Initialize(Texture2D spriteSheet)
+        public void Initialize(SpriteSheet spriteSheet)
         {
             // When true, causes the bird to face the direction its moving in
             Physics.Orientation = Physics.OrientMode.RotateY;
@@ -161,7 +161,7 @@ namespace DwarfCorp
             shadowTransform.Translation = new Vector3(0.0f, -0.25f, 0.0f);
             shadowTransform *= Matrix.CreateScale(0.75f);
 
-            Texture2D shadowTexture = TextureManager.GetTexture(ContentPaths.Effects.shadowcircle);
+            SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
             Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform, shadowTexture);
 
             // We set up the shadow's animation so that it's just a static black circle
@@ -170,7 +170,7 @@ namespace DwarfCorp
             {
                 new Point(0, 0)
             };
-            Animation shadowAnimation = new Animation(Graphics, shadowTexture, "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
+            Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
             Shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
             Shadow.SetCurrentAnimation("sh");
@@ -179,7 +179,7 @@ namespace DwarfCorp
             DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
-                TriggerAmount = 10
+                TriggerAmount = 1
             };
 
             // The bird is flammable, and can die when exposed to fire.

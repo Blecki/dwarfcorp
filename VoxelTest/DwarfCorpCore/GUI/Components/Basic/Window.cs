@@ -30,7 +30,7 @@ namespace DwarfCorp
         {
             IsDragging = false;
             IsResizing = false;
-            Mode = PanelMode.Window;
+            Mode = buttons == WindowButtons.NoButtons ? PanelMode.Window : PanelMode.WindowEx;
 
             if (buttons == WindowButtons.CloseButton)
             {

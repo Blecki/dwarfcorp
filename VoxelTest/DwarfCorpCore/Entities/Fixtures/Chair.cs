@@ -27,7 +27,7 @@ namespace DwarfCorp
             matrix.Translation = position - new Vector3(0, 0.22f, 0);
             LocalTransform = matrix;
 
-            Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture);
+            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
             Point topFrame = new Point(2, 6);
             Point sideFrame = new Point(3, 6);
 

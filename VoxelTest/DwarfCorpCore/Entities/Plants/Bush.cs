@@ -47,7 +47,7 @@ namespace DwarfCorp
             inventory.Resources.AddResource(new ResourceAmount()
             {
                 NumResources = (int)(bushSize * 5),
-                ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Apple]
+                ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Berry]
             });
 
             AddToOctree = true;

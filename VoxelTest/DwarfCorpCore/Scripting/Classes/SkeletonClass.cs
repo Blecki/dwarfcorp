@@ -175,7 +175,7 @@ namespace DwarfCorp
         {
             const int frameWidth = 32;
             const int frameHeight = 40;
-            Texture2D sprites = TextureManager.GetTexture(ContentPaths.Entities.Skeleton.Sprites.skele);
+            SpriteSheet sprites = new SpriteSheet(ContentPaths.Entities.Skeleton.Sprites.skele);
 
             Animations = new List<Animation>()
             {
