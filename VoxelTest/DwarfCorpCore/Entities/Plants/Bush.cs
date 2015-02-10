@@ -24,7 +24,8 @@ namespace DwarfCorp
 
             new Mesh(componentManager, "Model", this, Matrix.CreateScale(bushSize, bushSize, bushSize), asset, false);
 
-            new Health(componentManager, "HP", this, 30 * bushSize, 0.0f, 30 * bushSize);
+            Health health = new Health(componentManager, "HP", this, 30 * bushSize, 0.0f, 30 * bushSize);
+            new Flammable(componentManager, "Flames", this, health);
 
             Voxel voxelUnder = new Voxel();
 

@@ -25,6 +25,7 @@ namespace DwarfCorp
 
         public override void Render(SpriteBatch batch, Camera camera, Viewport viewport)
         {
+            if (camera == null) return;
             Vector2 extents = Datastructures.SafeMeasure(Font, Text);
 
             Vector3 unprojected = viewport.Project(Position, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);

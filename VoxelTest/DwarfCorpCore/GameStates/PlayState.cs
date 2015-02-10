@@ -172,6 +172,9 @@ namespace DwarfCorp.GameStates
         // Text displayed on the screen for the current amount of money the player has
         public Label MoneyLabel { get; set; }
 
+        // Text displayed on the screen for the current amount of money the player has
+        public Label StockLabel { get; set; }
+
         // Text displayed on the screen for the current game time
         public Label TimeLabel { get; set; }
 
@@ -750,7 +753,7 @@ namespace DwarfCorp.GameStates
             };
             infoLayout.SetComponentPosition(CompanyNameLabel, 1, 0, 1, 1);
 
-            MoneyLabel = new Label(GUI, infoLayout, Master.Faction.Economy.CurrentMoney.ToString("C"), GUI.DefaultFont)
+            MoneyLabel = new DynamicLabel(GUI, infoLayout, "Money:\n", "", GUI.DefaultFont, "C2", () => Master.Faction.Economy.CurrentMoney)
             {
                 TextColor = Color.White,
                 StrokeColor = new Color(0, 0, 0, 255),
@@ -760,6 +763,17 @@ namespace DwarfCorp.GameStates
             infoLayout.SetComponentPosition(MoneyLabel, 3, 0, 1, 1);
 
 
+            StockLabel = new DynamicLabel(GUI, infoLayout, "Stock:\n", "", GUI.DefaultFont, "C2", () => Master.Faction.Economy.Company.StockPrice)
+            {
+                TextColor = Color.White,
+                StrokeColor = new Color(0, 0, 0, 255),
+                ToolTip = "The price of our company stock.",
+                Alignment = Drawer2D.Alignment.Top,
+            };
+            infoLayout.SetComponentPosition(StockLabel, 5, 0, 1, 1);
+
+
+
             TimeLabel = new Label(GUI, layout, Time.CurrentDate.ToShortDateString() + " " + Time.CurrentDate.ToShortTimeString(), GUI.SmallFont)
             {
                 TextColor = Color.White,
@@ -767,7 +781,7 @@ namespace DwarfCorp.GameStates
                 Alignment = Drawer2D.Alignment.Top,
                 ToolTip = "Current time and date."
             };
-            layout.SetComponentPosition(TimeLabel, 5, 0, 1, 1);
+            layout.SetComponentPosition(TimeLabel, 6, 0, 1, 1);
 
             CurrentLevelLabel = new Label(GUI, infoLayout, "Slice: " + ChunkManager.ChunkData.MaxViewingLevel, GUI.DefaultFont)
             {
@@ -1131,6 +1145,7 @@ namespace DwarfCorp.GameStates
             flame.MaxAngular = 0.01f;
             flame.MaxParticles = 500;
             flame.MinScale = 0.2f;
+            flame.HasLighting = false;
             flame.MaxScale = 2.0f;
             ParticleManager.RegisterEffect("flame", flame, flame.Clone(fireSheet, new Point(1, 0)), flame.Clone(fireSheet, new Point(2, 0)), flame.Clone(fireSheet, new Point(3, 0)));
 
@@ -1142,6 +1157,7 @@ namespace DwarfCorp.GameStates
             greenFlame.MaxAngle = 0.2f;
             greenFlame.MinAngular = -0.01f;
             greenFlame.MaxAngular = 0.01f;
+            greenFlame.HasLighting = false;
 
             ParticleManager.RegisterEffect("green_flame", greenFlame);
 
@@ -1155,12 +1171,12 @@ namespace DwarfCorp.GameStates
             {
                 Animation = new Animation(GraphicsDevice, new SpriteSheet(ContentPaths.Particles.leaf), "leaf", 32, 32, frm2, true, Color.White, 1.0f, 1.0f, 1.0f, false),
                 ConstantAccel = new Vector3(0, -10, 0),
-                LinearDamping = 0.99f,
+                LinearDamping = 0.95f,
                 AngularDamping = 0.99f,
                 EmissionFrequency = 1.0f,
                 EmissionRadius = 2.0f,
                 EmissionSpeed = 5.0f,
-                GrowthSpeed = 0.0f,
+                GrowthSpeed = -0.5f,
                 MaxAngle = 3.14159f,
                 MinAngle = 0.0f,
                 MaxParticles = 1000,
@@ -1170,7 +1186,9 @@ namespace DwarfCorp.GameStates
                 MaxAngular = 5.0f,
                 ParticleDecay = 0.5f,
                 ParticlesPerFrame = 0,
+                Sleeps = true,
                 ReleaseOnce = true,
+                CollidesWorld = true,
                 Texture = TextureManager.GetTexture(ContentPaths.Particles.leaf)
             };
 
@@ -1188,6 +1206,7 @@ namespace DwarfCorp.GameStates
             stars.GrowthSpeed = -0.8f;
             stars.EmissionFrequency = 5;
             stars.CollidesWorld = false;
+            stars.HasLighting = false;
 
             ParticleManager.RegisterEffect("star_particle", stars);
 
@@ -1203,6 +1222,7 @@ namespace DwarfCorp.GameStates
             b.MaxScale = 1.0f;
             b.Damping = 0.1f;
             b.GrowthSpeed = -0.8f;
+            b.RotatesWithVelocity = true;
            
             ParticleManager.RegisterEffect("blood_particle", b);
             ParticleManager.RegisterEffect("gibs",  b.Clone(bloodSheet, new Point(1, 0)), b.Clone(bloodSheet, new Point(2, 0)), b.Clone(bloodSheet, new Point(3, 0)));
@@ -1408,7 +1428,6 @@ namespace DwarfCorp.GameStates
             {
                 CurrentLevelLabel.Text = "Slice: " + ChunkManager.ChunkData.MaxViewingLevel + "/" + ChunkHeight;
                 TimeLabel.Text = Time.CurrentDate.ToShortDateString() + " " + Time.CurrentDate.ToShortTimeString();
-                MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString("C") + " Stock: " + Master.Faction.Economy.Company.StockPrice.ToString("C");
             }
 
             // Make sure that the slice slider snaps to the current viewing level (an integer)
@@ -1723,6 +1742,7 @@ namespace DwarfCorp.GameStates
         /// <param name="DwarfTime">The current time</param>
         public override void Render(DwarfTime DwarfTime)
         {
+               
                 // If we are simulating the game before starting, just display black.
                 if (!PreSimulateTimer.HasTriggered)
                 {
@@ -1730,6 +1750,7 @@ namespace DwarfCorp.GameStates
                     base.Render(DwarfTime);
                     return;
                 }
+
                 CompositeLibrary.Render(GraphicsDevice, DwarfGame.SpriteBatch);
                 CompositeLibrary.Update();
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -1886,6 +1907,7 @@ namespace DwarfCorp.GameStates
                         new Vector2(GraphicsDevice.Viewport.Width - 100, 10), Color.White, Color.Black);
                 }
                 //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, new Rectangle(0, 0, 512, 512), Color.White);
+                IndicatorManager.Render(DwarfTime);
                 DwarfGame.SpriteBatch.End();
                 Master.Render(Game, DwarfTime, GraphicsDevice);
                 DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle =

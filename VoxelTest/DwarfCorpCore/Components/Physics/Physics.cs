@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -28,9 +29,9 @@ namespace DwarfCorp
         public bool IsSleeping { get; set; }
         private bool overrideSleepThisFrame = true;
         public bool IsInLiquid { get; set; }
-
+        public Vector3 PreviousVelocity { get; set; }
         public OrientMode Orientation { get; set; }
-
+        private float Rotation = 0.0f;
         public enum OrientMode
         {
             Physics,
@@ -54,14 +55,15 @@ namespace DwarfCorp
             LinearDamping = linearDamping;
             AngularDamping = angularDamping;
             Gravity = gravity;
-            Restitution = 0.5f;
+            Restitution = 0.01f;
             Friction = 0.99f;
             IsSleeping = false;
             PreviousPosition = LocalTransform.Translation;
+            PreviousVelocity = Vector3.Zero;
             IsInLiquid = false;
             CollisionType = CollisionManager.CollisionType.Dynamic;
             Orientation = orientation;
-            SleepTimer = new Timer(1.0f, true);
+            SleepTimer = new Timer(5.0f, true);
         }
 
         public void MoveX(float dt)
@@ -92,14 +94,13 @@ namespace DwarfCorp
         {
             BoundingBox bounds = chunks.Bounds;
             bounds.Max.Y += 50;
-            if (Velocity.Length() < 0.25f)
+            if (!IsSleeping && (Velocity).Length() < 0.15f)
             {
-                
-                Velocity *= 0.0f;
                 SleepTimer.Update(DwarfTime);
                 if (SleepTimer.HasTriggered)
                 {
-                    Drawer3D.DrawBox(BoundingBox, Color.White, 0.1f);
+                    applyGravityThisFrame = false;
+                    Velocity *= 0.0f;
                     IsSleeping = true;
                 }
 
@@ -119,19 +120,10 @@ namespace DwarfCorp
 
                 float dt = (float) (DwarfTime.ElapsedGameTime.TotalSeconds);
 
-                PreviousPosition = LocalTransform.Translation;
-
                 MoveY(dt);
-                if(Math.Abs(Velocity.Y) > 0.2f)
-                    HandleCollisions(chunks, dt);
-
                 MoveX(dt);
-                if(Math.Abs(Velocity.X) > 0.2f)
-                    HandleCollisions(chunks, dt);
-
                 MoveZ(dt);
-                if(Math.Abs(Velocity.Z) > 0.2f)
-                    HandleCollisions(chunks, dt);
+                HandleCollisions(chunks, dt);
 
                 Matrix transform = LocalTransform;
                 if (bounds.Contains(LocalTransform.Translation + Velocity*dt) != ContainmentType.Contains)
@@ -169,14 +161,19 @@ namespace DwarfCorp
                         }
                         else if (Orientation == OrientMode.RotateY)
                         {
-                            Matrix newTransform = Matrix.CreateRotationY((float) Math.Atan2(Velocity.X, -Velocity.Z));
+                            float oldAngle = Rotation;
+                            Rotation = (float) Math.Atan2(Velocity.X, -Velocity.Z);
+                            Quaternion newRotation = Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationY(Rotation));
+                            Quaternion oldRotation = Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationY(oldAngle));
+                            Quaternion finalRot = Quaternion.Slerp(oldRotation, newRotation, 0.1f);
+                            Matrix newTransform = Matrix.CreateFromQuaternion(finalRot);
                             newTransform.Translation = transform.Translation;
                             transform = newTransform;
                         }
                     }
                 }
 
-
+                transform.Translation = ClampToBounds(transform.Translation);
                 LocalTransform = transform;
 
                 if(Math.Abs(Velocity.Y) < 0.1f)
@@ -198,6 +195,9 @@ namespace DwarfCorp
                 UpdateBoundingBox();
                 CheckLiquids(chunks, (float) DwarfTime.ElapsedGameTime.TotalSeconds);
             }
+            Velocity = (PreviousVelocity * 0.1f + Velocity * 0.9f);
+            PreviousVelocity = Velocity;
+            PreviousPosition = Position;
             base.Update(DwarfTime, chunks, camera);
         }
 
@@ -214,7 +214,7 @@ namespace DwarfCorp
         public void CheckLiquids(ChunkManager chunks, float dt)
         {
             Voxel currentVoxel = new Voxel();
-            bool success = chunks.ChunkData.GetVoxelerenceAtWorldLocation(GlobalTransform.Translation, ref currentVoxel);
+            bool success = chunks.ChunkData.GetVoxel(GlobalTransform.Translation, ref currentVoxel);
             
             if(success && currentVoxel.Water.WaterLevel > 5)
             {
@@ -262,12 +262,8 @@ namespace DwarfCorp
             }
 
             Matrix m = LocalTransform;
-            m.Translation += contact.NEnter * (contact.Penetration);
+            m.Translation += contact.NEnter * (contact.Penetration) * 1.01f;
 
-            if (contact.NEnter.Y > 0.9)
-            {
-                applyGravityThisFrame = false;
-            }
 
             //Vector3 newVelocity = (contact.NEnter * Vector3.Dot(Velocity, contact.NEnter));
             //Velocity = (Velocity - newVelocity) * Restitution;
@@ -290,7 +286,7 @@ namespace DwarfCorp
         public virtual void HandleCollisions(ChunkManager chunks, float dt)
         {
             Voxel currentVoxel = new Voxel();
-            bool success = chunks.ChunkData.GetVoxelerenceAtWorldLocation(null, LocalTransform.Translation, ref currentVoxel);
+            bool success = chunks.ChunkData.GetVoxel(null, LocalTransform.Translation, ref currentVoxel);
 
             List<Voxel> vs = new List<Voxel>
             {
@@ -435,6 +431,11 @@ namespace DwarfCorp
         {
             AngularVelocity += (torque / I) / dt;
             IsSleeping = false;
+        }
+
+        public Vector3 ClampToBounds(Vector3 vector3)
+        {
+            return MathFunctions.Clamp(vector3, PlayState.ChunkManager.Bounds);
         }
     }
 

@@ -32,12 +32,17 @@ namespace DwarfCorp
             SoundToPlay = ContentPaths.Audio.explode;
             EmitterName = emitter;
             TriggerOnDeath = true;
-            TriggerAmount = 10;
+            TriggerAmount = 2;
             BoxTriggerTimes = 10;
             TriggerInBox = true;
         }
 
         public void Trigger()
+        {
+            Trigger(TriggerAmount);
+        }
+
+        public void Trigger(int num)
         {
             Vector3 p = GlobalTransform.Translation;
             if(TriggerInBox)
@@ -49,12 +54,12 @@ namespace DwarfCorp
                         MathFunctions.Rand() * ext.Y,
                         MathFunctions.Rand() * ext.Z)
                         ;
-                    PlayState.ParticleManager.Effects[EmitterName].Trigger(TriggerAmount, triggerPos, Tint);
+                    PlayState.ParticleManager.Effects[EmitterName].Trigger(num, triggerPos, Tint);
                 }
             }
             else
             {
-                PlayState.ParticleManager.Effects[EmitterName].Trigger(TriggerAmount, p, Tint);
+                PlayState.ParticleManager.Effects[EmitterName].Trigger(num, p, Tint);
             }
         }
 

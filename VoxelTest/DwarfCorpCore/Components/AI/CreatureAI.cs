@@ -114,7 +114,7 @@ namespace DwarfCorp
 
         public List<Task> Tasks { get; set; }
         public bool TriggersMourning { get; set; }
-
+        public List<int> XPEvents { get; set; } 
         public CreatureAI()
         {
             
@@ -147,6 +147,12 @@ namespace DwarfCorp
             Thoughts = new List<Thought>();
             IdleTimer = new Timer(15.0f, true);
             SpeakTimer = new Timer(5.0f, true);
+            XPEvents = new List<int>();
+        }
+
+        public void AddXP(int amount)
+        {
+            XPEvents.Add(amount);
         }
 
         public void Say(string message)
@@ -316,31 +322,58 @@ namespace DwarfCorp
 
             PlannerTimer.Update(DwarfTime);
             UpdateThoughts();
+            UpdateXP();
+
             base.Update(DwarfTime, chunks, camera);
+        }
+
+        public void UpdateXP()
+        {
+            foreach (int xp in XPEvents)
+            {
+                Stats.XP += xp;
+                string sign = xp > 0 ? "+" : "";
+
+                IndicatorManager.DrawIndicator(sign + xp.ToString() + " xp", Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, xp > 0 ? Color.Green : Color.Red);
+            }
+            XPEvents.Clear();
         }
 
         public virtual Task ActOnIdle()
         {
             if(GatherManager.VoxelOrders.Count == 0 && (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()))
             {
-               
+                // This is what to do when the unit has not been given any explicit orders.
                 List<Room> rooms = Faction.GetRooms();
-              
-                if (IdleTimer.HasTriggered && rooms.Count > 0 && MathFunctions.Rand(0, 1) < 0.1f)
+
+                // Find a room to train in
+                if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.01f))
+                {
+                    Body closestTraining = Faction.FindNearestItemWithTags("Train", Position, true);
+
+                    if (closestTraining != null)
+                    {
+                        return new ActWrapperTask(new GoTrainAct(this));    
+                    }
+                }
+
+                // Otherwise, either just go to a random room, or move around crazily.
+                if (IdleTimer.HasTriggered && rooms.Count > 0 && MathFunctions.RandEvent(0.1f))
                 {
                     return
                         new ActWrapperTask(new GoToZoneAct(this, rooms[PlayState.Random.Next(rooms.Count)]) |
-                                           new WanderAct(this, 2, 0.5f, 1.0f));
+                                           new WanderAct(this, 2, 0.5f, 1.0f)) {Priority = Task.PriorityType.Eventually};
                 }
                 else
                 {
-                    if (IdleTimer.HasTriggered && MathFunctions.Rand(0, 1) < 0.25f)
+                    if (IdleTimer.HasTriggered && MathFunctions.RandEvent(0.25f))
                     {
-                        return new ActWrapperTask(new GoToChairAndSitAct(this));
+                        return new ActWrapperTask(new GoToChairAndSitAct(this)) { Priority = Task.PriorityType.Eventually };
                     }
-                    return new ActWrapperTask(new WanderAct(this, 2, 0.5f, 1.0f));
+                    return new ActWrapperTask(new WanderAct(this, 2, 0.5f, 1.0f)) { Priority = Task.PriorityType.Eventually };
                 }
             }
+            // If we have no more build orders, look for gather orders
             else if (GatherManager.VoxelOrders.Count == 0)
             {
                 GatherManager.StockOrder order = GatherManager.StockOrders[0];
@@ -350,6 +383,7 @@ namespace DwarfCorp
                     Priority = Task.PriorityType.Low
                 };
             }
+            // Otherwise handle build orders.
             else
             {
                 List<Voxel> voxels = new List<Voxel>();
@@ -416,6 +450,11 @@ namespace DwarfCorp
 
                 Thoughts.Add(thought);
             }
+            bool good = thought.HappinessModifier > 0;
+            Color textColor = good ? Color.Yellow : Color.Red;
+            string prefix = good ? "+" : "";
+            string postfix = good ? ":)" : ":(";
+            IndicatorManager.DrawIndicator(prefix + thought.HappinessModifier + " " + postfix, Position + Vector3.Up + MathFunctions.RandVector3Cube() *0.5f, 1.0f, textColor);
         }
 
         public void UpdateThoughts()
@@ -468,6 +507,16 @@ namespace DwarfCorp
                 if(!HasTaskWithName(task))
                     Creature.AI.Tasks.Add(task);
             }
+        }
+
+        public void AddMoney(float pay)
+        {
+            Status.Money += pay;
+            bool good = pay > 0;
+            Color textColor = good ? Color.Green : Color.Red;
+            string prefix = good ? "+" : "";
+            IndicatorManager.DrawIndicator(prefix + "$" + pay, Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 1.0f, textColor);
+
         }
 
         public override string GetDescription()

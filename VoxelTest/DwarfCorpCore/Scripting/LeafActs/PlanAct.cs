@@ -119,7 +119,7 @@ namespace DwarfCorp
                         break;
                     }
 
-                    chunks.ChunkData.GetVoxelerenceAtWorldLocation(null, voxUnder.Position + new Vector3(0, 1, 0), ref voxAbove);
+                    chunks.ChunkData.GetVoxel(null, voxUnder.Position + new Vector3(0, 1, 0), ref voxAbove);
 
 
                     if(Target == null)

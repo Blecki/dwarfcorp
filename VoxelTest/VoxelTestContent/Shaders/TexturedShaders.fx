@@ -327,9 +327,9 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 	Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.Color.b,  0.5f));
 	Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f));
 	saturate(Output.Color.rgb);
-    
-	float4 texColor = tex2D(TextureSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
-	float4 illumColor = tex2D(IllumSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
+	float2 textureCoords = ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds);
+	float4 texColor = tex2D(TextureSampler, textureCoords);
+	float4 illumColor = tex2D(IllumSampler, textureCoords);
 
 	Output.Color.rgba *= texColor;
 
@@ -364,7 +364,6 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 	if (Clipping)  clip(PSIn.clipDistances);  //MSS - Water Refactor added
     
 	Output.Color =  tex2D(SunSampler, float2(PSIn.Color.r * (1.0f - xTimeOfDay), 0.5f));
-	Output.Color.a *= PSIn.Color.a;
 	Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.Color.b + (sin(xTime * 10.0f) + 1.0f) * 0.01f * PSIn.Color.b, 0.5f));
 	saturate(Output.Color.rgb);
 
@@ -374,15 +373,10 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 	float4 illumColor = tex2D(IllumSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
 
 	Output.Color.rgba *= texColor;
-
-	
 	if(SelfIllumination)
 		Output.Color.rgba = lerp(Output.Color.rgba, texColor, illumColor.r); 
 	
-
-	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
-
-
+	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog), Output.Color.a * PSIn.Color.a);
 
     return Output;
 }

@@ -309,7 +309,7 @@ namespace DwarfCorp
                             }
 
                             Voxel atRef = new Voxel();
-                            if (Chunks.ChunkData.GetVoxelerenceAtWorldLocation(v.Position + new Vector3(0.5f, 0.5f, 0.5f) + antiDelta, ref atRef))
+                            if (Chunks.ChunkData.GetVoxel(v.Position + new Vector3(0.5f, 0.5f, 0.5f) + antiDelta, ref atRef))
                             {
                                 return atRef;
                             }

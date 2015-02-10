@@ -46,11 +46,12 @@ namespace DwarfCorp
                     if(childStatus == Status.Fail)
                     {
                         failEncountered = true;
-                        yield return Status.Fail;
+                        yield return Status.Running;
                         break;
                     }
                     else if(childStatus == Status.Success)
                     {
+                        failEncountered = false;
                         yield return Status.Running;
                         break;
                     }

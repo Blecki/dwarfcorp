@@ -35,7 +35,7 @@ namespace DwarfCorp
 
         public bool HasAction(GameMaster.ToolMode action)
         {
-            return Actions.Contains(action);
+            return Actions != null && Actions.Contains(action);
         }
 
     }

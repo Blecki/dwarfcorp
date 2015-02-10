@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -136,7 +137,7 @@ namespace DwarfCorp
 
         public void Update(DwarfTime time)
         {
-
+            RootComponent.LocalBounds = new Rectangle(0, 0, GameState.Game.GraphicsDevice.Viewport.Width, GameState.Game.GraphicsDevice.Viewport.Height);
             ToolTipManager.Update(time);
             
             if(!IsMouseVisible)

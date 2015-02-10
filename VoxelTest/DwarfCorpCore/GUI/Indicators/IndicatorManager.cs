@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Color = Microsoft.Xna.Framework.Color;
@@ -13,6 +14,11 @@ namespace DwarfCorp
 
     public class Indicator
     {
+        public enum IndicatorMode
+        {
+            Indicator2D,
+            Indicator3D
+        }
         public ImageFrame Image;
         public Vector3 Position;
         public Timer CurrentTime;
@@ -21,11 +27,83 @@ namespace DwarfCorp
         public Color Tint { get; set; }
         public bool Grow = true;
         public bool Flip = false;
+        public float Scale { get; set; }
+        public IndicatorMode Mode { get; set; }
+
+        public Indicator()
+        {
+            Mode = IndicatorMode.Indicator3D;
+        }
 
         public virtual void Update(DwarfTime time)
         {
+            float growTime = CurrentTime.TargetTimeSeconds * 0.5f;
+            float shrinkTime = CurrentTime.TargetTimeSeconds * 0.5f;
+
+            if (CurrentTime.CurrentTimeSeconds < growTime)
+            {
+                Scale = Easing.CubeInOut(CurrentTime.CurrentTimeSeconds, 0.0f, MaxScale, growTime);
+            }
+            else if (CurrentTime.CurrentTimeSeconds > shrinkTime)
+            {
+                Scale = Easing.CubeInOut(CurrentTime.CurrentTimeSeconds - shrinkTime, MaxScale, -MaxScale, CurrentTime.TargetTimeSeconds - shrinkTime);
+            }
+
+            if (!Grow)
+            {
+                Scale = MaxScale;
+            }
             CurrentTime.Update(time);
         }
+
+        public virtual void Render()
+        {
+            switch (Mode)
+            {
+                case IndicatorMode.Indicator3D:
+                    Drawer2D.DrawSprite(Image, Position, new Vector2(Scale, Scale), Offset, Tint, Flip);
+                    break;
+                case IndicatorMode.Indicator2D:
+                   DwarfGame.SpriteBatch.Draw(Image.Image, new Vector2(Position.X, Position.Y), Image.SourceRect, Tint, 0.0f, Offset, new Vector2(Scale, Scale), Flip ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0.0f);
+                    break;
+            }
+            
+        }
+    }
+
+    public class TextIndicator : Indicator
+    {
+        public string Text { get; set; }
+
+        public override void Update(DwarfTime time)
+        {
+            switch (Mode)
+            {
+                    case IndicatorMode.Indicator3D:
+                        Position += Vector3.Up * (float)time.ElapsedGameTime.TotalSeconds;
+                         break;
+                    case IndicatorMode.Indicator2D:
+                        Position += Vector3.Up * (float)time.ElapsedGameTime.TotalSeconds * 50;
+                         break;
+            }
+           
+            Tint = new Color(Tint.R, Tint.G, Tint.B, (byte)(255*(1.0f - CurrentTime.CurrentTimeSeconds/CurrentTime.TargetTimeSeconds)));
+            CurrentTime.Update(time);
+        }
+
+        public override void Render()
+        {
+            switch (Mode)
+            {
+                case IndicatorMode.Indicator2D:
+                    Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, Text, PlayState.GUI.DefaultFont, Tint, Drawer2D.Alignment.Center,  new Rectangle((int)Position.X, (int)Position.Y, 32, 32));
+                    break;
+                case IndicatorMode.Indicator3D:
+                    Drawer2D.DrawText(Text, Position, Tint, Color.Transparent);
+                    break;
+            }
+        }
+       
     }
 
     public class AnimatedIndicator : Indicator
@@ -40,6 +118,8 @@ namespace DwarfCorp
 
             Image = new ImageFrame(Animation.SpriteSheet.GetTexture(), Animation.GetCurrentFrameRect());
         }
+
+       
     }
     /// <summary>
     /// This class exists to draw simple sprites (indicators) to the screen. Indicators
@@ -141,6 +221,17 @@ namespace DwarfCorp
             }
         }
 
+        public static void Render(DwarfTime time)
+        {
+            lock (IndicatorLock)
+            {
+                foreach (Indicator indicator in Indicators)
+                {
+                    indicator.Render();
+                }
+            }
+        }
+
         public static void Update(DwarfTime time)
         {
             lock(IndicatorLock)
@@ -150,25 +241,7 @@ namespace DwarfCorp
                 {
                     indicator.Update(time);
 
-                    float scale = 1.0f;
-                    float growTime = indicator.CurrentTime.TargetTimeSeconds * 0.5f;
-                    float shrinkTime = indicator.CurrentTime.TargetTimeSeconds * 0.5f;
-
-                    if(indicator.CurrentTime.CurrentTimeSeconds < growTime)
-                    {
-                         scale = Easing.CubeInOut(indicator.CurrentTime.CurrentTimeSeconds, 0.0f, indicator.MaxScale, growTime);
-                    }
-                    else if(indicator.CurrentTime.CurrentTimeSeconds > shrinkTime)
-                    {
-                        scale = Easing.CubeInOut(indicator.CurrentTime.CurrentTimeSeconds - shrinkTime, indicator.MaxScale, -indicator.MaxScale, indicator.CurrentTime.TargetTimeSeconds - shrinkTime);
-                    }
-
-                    if (!indicator.Grow)
-                    {
-                        scale = indicator.MaxScale;
-                    }
-
-                    Drawer2D.DrawSprite(indicator.Image, indicator.Position, new Vector2(scale, scale), indicator.Offset, indicator.Tint, indicator.Flip);
+                    
 
                     if(indicator.CurrentTime.HasTriggered)
                     {
@@ -180,6 +253,23 @@ namespace DwarfCorp
                 {
                     Indicators.Remove(indicator);
                 }
+            }
+        }
+
+        public static void DrawIndicator(string indicator, Vector3 position, float time, Color color, Indicator.IndicatorMode mode = Indicator.IndicatorMode.Indicator3D)
+        {
+            lock (IndicatorLock)
+            {
+                Indicators.Add(new TextIndicator()
+                {
+                    Text = indicator,
+                    Tint = color,
+                    CurrentTime = new Timer(time, true),
+                    Image = null,
+                    Position = position,
+                    Grow = false,
+                    Mode = mode
+                });
             }
         }
     }

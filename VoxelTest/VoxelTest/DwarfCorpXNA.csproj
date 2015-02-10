@@ -804,6 +804,9 @@
     <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\GoToZoneAct.cs">
       <Link>Scripting\CompoundActs\GoToZoneAct.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\GoTrainAct.cs">
+      <Link>Scripting\CompoundActs\GoTrainAct.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\GuardVoxelAct.cs">
       <Link>Scripting\CompoundActs\GuardVoxelAct.cs</Link>
     </Compile>
