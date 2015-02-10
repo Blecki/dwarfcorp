@@ -20,19 +20,19 @@ namespace DwarfCorp
             RoomTile[,] targetTemp =
             {
                 {
-                    RoomTile.None,
-                    RoomTile.None,
-                    RoomTile.None
-                },
-                {
-                    RoomTile.None,
-                    RoomTile.Target,
+                    RoomTile.Open,
+                    RoomTile.Open,
                     RoomTile.Open
                 },
                 {
-                    RoomTile.None,
                     RoomTile.Open,
-                    RoomTile.None
+                    RoomTile.Strawman,
+                    RoomTile.Open
+                },
+                {
+                    RoomTile.Open,
+                    RoomTile.Open,
+                    RoomTile.Open
                 }
             };
 
@@ -46,7 +46,7 @@ namespace DwarfCorp
                 {
                     RoomTile.None,
                     RoomTile.None,
-                    RoomTile.Strawman
+                    RoomTile.Target
                 },
                 {
                     RoomTile.None,

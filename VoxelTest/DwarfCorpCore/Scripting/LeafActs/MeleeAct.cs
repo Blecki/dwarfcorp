@@ -16,10 +16,30 @@ namespace DwarfCorp
         public float EnergyLoss { get; set; }
         public Attack CurrentAttack { get; set; }
         public Body Target { get; set; }
+        public bool Training { get; set; }
+        public Timer Timeout { get; set; }
+        public string TargetName { get; set; }
+
+        public MeleeAct(CreatureAI agent, string target) :
+            base(agent)
+        {
+            Timeout = new Timer(100.0f, false);
+            Training = false;
+            Name = "Attack!";
+            EnergyLoss = 200.0f;
+            TargetName = target;
+            foreach (Attack attack in agent.Creature.Attacks)
+            {
+                CurrentAttack = attack;
+                break;
+            }
+        }
 
         public MeleeAct(CreatureAI agent, Body target) :
             base(agent)
         {
+            Timeout = new Timer(100.0f, false);
+            Training = false;
             Name = "Attack!";
             EnergyLoss = 200.0f;
             Target = target;
@@ -38,8 +58,38 @@ namespace DwarfCorp
                 yield break;
             }
 
+            Timeout.Reset();
+
+            if (Target == null && TargetName != null)
+            {
+                Target = Agent.Blackboard.GetData<Body>(TargetName);
+
+                if (Target == null)
+                {
+                    yield return Status.Fail;
+                    yield break;
+                }
+            }
+
             while(true)
             {
+                Timeout.Update(Act.LastTime);
+
+                if (Timeout.HasTriggered)
+                {
+                    if (Training)
+                    {
+                        Agent.AddXP(10);
+                        yield return Status.Success;
+                        yield break;
+                    }
+                    else
+                    {
+                        yield return Status.Fail;
+                        yield break;
+                    }
+                }
+
                 if (Target.IsDead)
                 {
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
@@ -49,7 +99,7 @@ namespace DwarfCorp
 
                 // Find the location of the melee target
                 Vector3 targetPos = new Vector3(Target.GlobalTransform.Translation.X,
-                    Target.GlobalTransform.Translation.Y,
+                    Target.GetBoundingBox().Min.Y,
                     Target.GlobalTransform.Translation.Z);
 
                 bool collides = Creature.Physics.Collide(Target.BoundingBox);
@@ -58,7 +108,7 @@ namespace DwarfCorp
                 Creature.Physics.Face(targetPos);
 
                 // If we are far away from the target, run toward it
-                if (diff.Length() > CurrentAttack.Range * 2 && !collides)
+                if (diff.Length() > CurrentAttack.Range * 8 && !collides)
                 {
                     yield return Status.Fail;
                 }
@@ -114,7 +164,7 @@ namespace DwarfCorp
                         }
 
                         Target = null;
-                        Agent.Stats.XP += 10;
+                        Agent.AddXP(10);
                         Creature.Physics.Face(Creature.Physics.Velocity + Creature.Physics.GlobalTransform.Translation);
                         Creature.Stats.NumThingsKilled++;
                         Creature.AI.AddThought(Thought.ThoughtType.KilledThing);

@@ -201,6 +201,7 @@ namespace DwarfCorp
                     float pay = creature.Stats.CurrentLevel.Pay;
                     total += pay;
                     Faction.Economy.CurrentMoney = Math.Max(Faction.Economy.CurrentMoney - pay, 0);
+                    creature.AddMoney(pay);
                 }
                 else
                 {

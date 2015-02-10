@@ -62,7 +62,6 @@ namespace DwarfCorp
         public string Alliance { get; set; }
         public List<CreatureAI> SelectedMinions { get; set; }
 
-
         public static List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, GameMaster.ToolMode action)
         {
             return minions.Where(creature => creature.Stats.CurrentClass.HasAction(action)).ToList();
@@ -84,7 +83,7 @@ namespace DwarfCorp
 
                     if (dist < 0.25f)
                     {
-                        other.Physics.ApplyForce(meToOther / (dist + 0.01f) * 100, (float)time.ElapsedGameTime.TotalSeconds);
+                        other.Physics.ApplyForce(meToOther / (dist + 0.01f) * 50, (float)time.ElapsedGameTime.TotalSeconds);
                     }
                 }
             }
@@ -707,6 +706,7 @@ namespace DwarfCorp
             newMinion.Stats.LevelUp();
             newMinion.Stats.FirstName = currentApplicant.Name.Split(' ')[0];
             newMinion.Stats.LastName = currentApplicant.Name.Split(' ')[1];
+            newMinion.AI.AddMoney(currentApplicant.Level.Pay * 4);
 
             PlayState.AnnouncementManager.Announce("New Hire!" ,currentApplicant.Name + " was hired as a " + currentApplicant.Level.Name);
 

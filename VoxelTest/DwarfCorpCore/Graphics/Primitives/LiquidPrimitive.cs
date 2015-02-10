@@ -161,7 +161,7 @@ namespace DwarfCorp
                                 Vector3 delta = faceDeltas[face];
 
 
-                                bool success = chunk.Manager.ChunkData.GetVoxelerenceAtWorldLocation(chunk, new Vector3(x + (int)delta.X, y + (int)delta.Y, z + (int)delta.Z) + chunk.Origin, ref vox);
+                                bool success = chunk.Manager.ChunkData.GetVoxel(chunk, new Vector3(x + (int)delta.X, y + (int)delta.Y, z + (int)delta.Z) + chunk.Origin, ref vox);
 
                                 if(success)
                                 {
@@ -187,7 +187,7 @@ namespace DwarfCorp
                                             drawFace[face] = false;
                                         }
 
-                                        bool gotVox = chunk.Manager.ChunkData.GetVoxelerenceAtWorldLocation(chunk, new Vector3(x, y + 1, z) + chunk.Origin, ref vox);
+                                        bool gotVox = chunk.Manager.ChunkData.GetVoxel(chunk, new Vector3(x, y + 1, z) + chunk.Origin, ref vox);
 
                                         isTop = !gotVox || vox.IsEmpty || vox.WaterLevel == 0;
                                     }

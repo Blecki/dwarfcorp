@@ -89,49 +89,10 @@ namespace DwarfCorp
 
             RoomTemplate book = new RoomTemplate(PlacementType.Random, bookTemp, bookAcc);
 
-            RoomTile[,] potionTemp =
-            {
-                {
-                    RoomTile.None,
-                    RoomTile.Open,
-                    RoomTile.None
-                },
-                {
-                    RoomTile.Open,
-                    RoomTile.PotionTable,
-                    RoomTile.Open
-                },
-                {
-                    RoomTile.None,
-                    RoomTile.Open,
-                    RoomTile.None
-                }
-            };
 
-            RoomTile[,] potionAcc =
-            {
-                {
-                    RoomTile.None,
-                    RoomTile.None,
-                    RoomTile.None
-                },
-                {
-                    RoomTile.None,
-                    RoomTile.None,
-                    RoomTile.None
-                },
-                {
-                    RoomTile.None,
-                    RoomTile.None,
-                    RoomTile.None
-                }
-            };
-
-            RoomTemplate potion = new RoomTemplate(PlacementType.Random, potionTemp, potionAcc);
 
             libraryTemplates.Add(lamp);
             libraryTemplates.Add(book);
-            libraryTemplates.Add(potion);
             Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
             return new RoomData(LibraryRoomName, 4, "BlueTileFloor", roomResources, libraryTemplates, new ImageFrame(roomIcons, 16, 0, 1))
             {

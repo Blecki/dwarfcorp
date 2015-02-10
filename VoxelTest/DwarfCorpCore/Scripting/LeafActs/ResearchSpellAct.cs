@@ -46,7 +46,7 @@ namespace DwarfCorp
                 Creature.Physics.Velocity *= 0;
                 if ((int) totalResearch > 0)
                 {
-                    Creature.Stats.XP += (int)(totalResearch);
+                    Creature.AI.AddXP((int)(totalResearch));
                     totalResearch = 0.0f;
                 }
 

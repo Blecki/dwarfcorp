@@ -98,6 +98,13 @@ namespace DwarfCorp
                         {
                             PlayState.ParticleManager.Trigger(HitParticles, other.Position, Color.White, 5);
                         }
+
+                        if (HitAnimation != null)
+                        {
+                            HitAnimation.Reset();
+                            HitAnimation.Play();
+                            IndicatorManager.DrawIndicator(HitAnimation, other.Position + Vector3.One * 0.5f, 0.6f, 2.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
+                        }
                         break;
                     }
                     case AttackMode.Ranged:
@@ -139,6 +146,14 @@ namespace DwarfCorp
                     if (HitParticles != "")
                     {
                         PlayState.ParticleManager.Trigger(HitParticles, pos, Color.White, 5);
+                    }
+
+
+                    if (HitAnimation != null)
+                    {
+                        HitAnimation.Reset();
+                        HitAnimation.Play();
+                        IndicatorManager.DrawIndicator(HitAnimation, pos, 0.6f, 2.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
                     }
                 }
             }

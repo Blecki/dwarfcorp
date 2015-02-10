@@ -63,8 +63,11 @@ namespace DwarfCorp
                 drawColor.R = (byte) (Math.Min(drawColor.R*alpha + 50, 255));
                 drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
                 drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
-
-                Drawer3D.DrawBox(EntityToGather.BoundingBox, drawColor, 0.05f*alpha + 0.05f, true);
+                BoundingBox bounds = EntityToGather.BoundingBox;
+                bounds.Min += Vector3.Up * 0.5f;
+                bounds.Max += Vector3.Up * 0.5f;
+                bounds = bounds.Expand(0.25f);
+                Drawer3D.DrawBox(bounds, drawColor, 0.01f * alpha + 0.01f, true);
             }
 
             base.Render(time);

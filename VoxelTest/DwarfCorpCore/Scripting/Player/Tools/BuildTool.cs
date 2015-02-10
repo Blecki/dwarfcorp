@@ -51,6 +51,7 @@ namespace DwarfCorp
             }
 
             Player.VoxSelector.Enabled = true;
+
             Player.BodySelector.Enabled = false;
             PlayState.GUI.IsMouseVisible = true;
 
