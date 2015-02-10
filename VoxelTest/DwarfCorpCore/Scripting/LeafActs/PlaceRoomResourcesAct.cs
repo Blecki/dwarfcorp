@@ -33,6 +33,7 @@ namespace DwarfCorp
                 BuildRoom.AddResources(Resources);
                 Creature.Inventory.Remove(Resources);
                 Creature.Stats.NumRoomsBuilt++;
+                Creature.AI.AddXP(10);
                 yield return Status.Success;
             }
         }

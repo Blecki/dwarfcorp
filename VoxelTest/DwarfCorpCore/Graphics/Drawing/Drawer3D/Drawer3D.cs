@@ -72,7 +72,7 @@ namespace DwarfCorp
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    device.DrawUserPrimitives(PrimitiveType.TriangleStrip, strips.Vertices.ToArray(), 0, strips.NumTriangles);
+                    device.DrawUserPrimitives(PrimitiveType.TriangleStrip, strips.Vertices.ToArray(), 0, strips.Vertices.Count - 2);
                 }
             }
 
@@ -125,21 +125,16 @@ namespace DwarfCorp
 
 
                 Vector3 p1 = t1 + normal * thickness;
-                triangleCount++;
-
                 Vector3 p2 = t1 - normal * thickness;
-                triangleCount++;
-
                 Vector3 p3 = t2 + normal * thickness;
-                triangleCount++;
-
                 Vector3 p4 = t2 - normal * thickness;
-                triangleCount++;
 
                 list.Add(new VertexPositionColor(p1, color));
                 list.Add(new VertexPositionColor(p2, color));
                 list.Add(new VertexPositionColor(p3, color));
                 list.Add(new VertexPositionColor(p4, color));
+
+                triangleCount += 2;
 
                 lastPoint = points[i];
             }

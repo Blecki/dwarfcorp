@@ -49,6 +49,8 @@ namespace DwarfCorp
         public float ParticleDecay;
         public bool CollidesWorld = false;
         public bool Sleeps = false;
+        public bool HasLighting = true;
+        public bool RotatesWithVelocity = false;
         [JsonIgnore]
         public BlendState Blend = BlendState.AlphaBlend;
 
@@ -183,7 +185,7 @@ namespace DwarfCorp
                     toAdd.Angle = Rand(Data.MinAngle, Data.MaxAngle);
                     toAdd.AngularVelocity = Rand(Data.MinAngular, Data.MaxAngular);
                     toAdd.LifeRemaining = 1.0f;
-                    toAdd.Tint = Color.White;
+                    toAdd.Tint = tint;
                     toAdd.InstanceData = new InstanceData(Matrix.Identity, toAdd.Tint, true);
 
                     Particles.Add(toAdd);
@@ -233,14 +235,26 @@ namespace DwarfCorp
 
 
             bool particlePhysics = GameSettings.Default.ParticlePhysics;
-
+            Voxel v = new Voxel();
             foreach(Particle p in Particles)
             {
                 float vel = p.Velocity.LengthSquared();
                 if(!Data.Sleeps || vel > 0.2f)
                 {
                     p.Position += p.Velocity * (float) DwarfTime.ElapsedGameTime.TotalSeconds;
-                    p.Angle += (float) (p.AngularVelocity * DwarfTime.ElapsedGameTime.TotalSeconds);
+
+                    if (Data.RotatesWithVelocity)
+                    {
+                        Vector3 cameraVel = camera.Project(p.Velocity + camera.Position);
+                        float projectionX = cameraVel.X;
+                        float projectionY = cameraVel.Y;
+                      
+                        p.Angle = (float)Math.Atan2(projectionY, projectionX);
+                    }
+                    else
+                    {
+                        p.Angle += (float)(p.AngularVelocity * DwarfTime.ElapsedGameTime.TotalSeconds);   
+                    }
                     p.Velocity += Data.ConstantAccel * (float) DwarfTime.ElapsedGameTime.TotalSeconds;
                     p.Velocity *= Data.LinearDamping;
                     p.AngularVelocity *= Data.AngularDamping;
@@ -255,15 +269,26 @@ namespace DwarfCorp
                 p.Scale += Data.GrowthSpeed * (float) DwarfTime.ElapsedGameTime.TotalSeconds;
 
                 p.Scale = Math.Max(p.Scale, 0.0f);
+                bool success = false;
 
+
+                if (Data.HasLighting)
+                {
+                    success = chunks.ChunkData.GetVoxel(p.Position, ref v);
+
+                    if (success && v.IsEmpty)
+                    {
+                        p.Tint = new Color(v.SunColor, 255, 0);
+                    }
+                }
 
                 if(Data.CollidesWorld && particlePhysics && vel > 0.2f)
                 {
-                    Voxel v = new Voxel();
-                    bool success = chunks.ChunkData.GetNonNullVoxelAtWorldLocation(p.Position, ref v);
-
+                    if (!Data.HasLighting)
+                    {
+                        success = chunks.ChunkData.GetVoxel(p.Position, ref v);
+                    }
                     BoundingBox b = new BoundingBox(p.Position - Vector3.One * p.Scale * 0.5f, p.Position + Vector3.One * p.Scale * 0.5f);
-
                     if(success && !v.IsEmpty)
                     {
                         Physics.Contact contact = new Physics.Contact();

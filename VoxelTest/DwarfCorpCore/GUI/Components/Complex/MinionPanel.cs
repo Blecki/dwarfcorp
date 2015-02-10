@@ -196,7 +196,7 @@ namespace DwarfCorp
             {
                 XpLabel.Text = "XP: " + Minion.Stats.XP;
             }
-            PayLabel.Text = "Pay: " + Minion.Stats.CurrentLevel.Pay.ToString("C0") + " / day";
+            PayLabel.Text = "Pay: " + Minion.Stats.CurrentLevel.Pay.ToString("C0") + " / day" + "\n" + "Wealth: " + Minion.Status.Money.ToString("C");
 
 
         }

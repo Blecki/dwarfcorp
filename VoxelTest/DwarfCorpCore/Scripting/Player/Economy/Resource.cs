@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DwarfCorp.GameStates;
 
 namespace DwarfCorp
 {
@@ -16,6 +17,7 @@ namespace DwarfCorp
         public List<ResourceTags> Tags { get; set; }
         public float FoodContent { get; set; }
         public bool SelfIlluminating { get; set; }
+        public bool IsFlammable { get; set; }
 
         public enum ResourceTags
         {

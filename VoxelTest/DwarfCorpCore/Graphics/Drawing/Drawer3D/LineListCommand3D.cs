@@ -31,9 +31,14 @@ namespace DwarfCorp
                 return;
             }
             vertices.NumTriangles += triangleCount;
-            vertices.Vertices.Add(triangles[0]);
+            if (vertices.Vertices.Count > 0)
+            {
+                vertices.Vertices.Add(vertices.Vertices.Last());
+                vertices.Vertices.Add(triangles[0]);
+                vertices.NumTriangles += 1;
+            }
             vertices.Vertices.AddRange(triangles);
-            vertices.Vertices.Add(triangles[triangles.Length - 1]);
+
         }
 
         public override void Render(GraphicsDevice device, Effect effect)

@@ -66,7 +66,7 @@ namespace DwarfCorp
             
             SelectorPanel = new Window(GUI, gui.RootComponent)
             {
-                LocalBounds = new Rectangle(80, 140, 300, 100)
+                LocalBounds = new Rectangle(200, 100, 300, 100)
             };
 
             Label label = new Label(GUI, SelectorPanel, "Cheat Mode!", GUI.DefaultFont)

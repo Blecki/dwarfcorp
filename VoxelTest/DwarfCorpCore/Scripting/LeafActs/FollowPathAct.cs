@@ -88,6 +88,7 @@ namespace DwarfCorp
                 // IF WE ARE MOVING
                 if(TargetVoxel != null)
                 {
+                    Agent.Physics.IsSleeping = false;
                     Agent.LocalControlTimeout.Update(LastTime);
                     ValidPathTimer.Update(LastTime);
 
@@ -100,7 +101,14 @@ namespace DwarfCorp
 
                     if(Agent.LocalControlTimeout.HasTriggered)
                     {
-                        Agent.Position = TargetVoxel.Position + new Vector3(.5f, .5f, .5f);
+                        Vector3 target = TargetVoxel.Position + new Vector3(.5f, .5f, .5f);
+                        float distToTarget = (target - Agent.Position).Length();
+                        while (distToTarget > 0.1f)
+                        {
+                            Agent.Position = 0.9f*Agent.Position + 0.1f * target;
+                            distToTarget = (target - Agent.Position).Length();
+                            yield return Status.Running;
+                        }
                         Agent.LocalControlTimeout.Reset(Agent.LocalControlTimeout.TargetTimeSeconds);
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                         yield return Status.Running;

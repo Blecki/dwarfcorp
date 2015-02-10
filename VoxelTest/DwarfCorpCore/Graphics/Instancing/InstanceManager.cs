@@ -41,19 +41,19 @@ namespace DwarfCorp
 
         public void CreateStatics(ContentManager content)
         {
-            FixedInstanceArray pinetree = new FixedInstanceArray("pine", PrimitiveLibrary.BatchBillboardPrimitives["tree"], TextureManager.GetTexture(ContentPaths.Entities.Plants.pine), (int)(50 * GameSettings.Default.NumMotes), BlendState.AlphaBlend)
+            FixedInstanceArray pinetree = new FixedInstanceArray("pine", PrimitiveLibrary.BatchBillboardPrimitives["pine"], TextureManager.GetTexture(ContentPaths.Entities.Plants.pine), (int)(50 * GameSettings.Default.NumMotes), BlendState.AlphaBlend)
             {
                 ShouldRebuild = true
             };
             AddInstances("pine", pinetree);
 
-            FixedInstanceArray palmTree = new FixedInstanceArray("palm", PrimitiveLibrary.BatchBillboardPrimitives["tree"], TextureManager.GetTexture(ContentPaths.Entities.Plants.palm), (int)(50 * GameSettings.Default.NumMotes), BlendState.AlphaBlend)
+            FixedInstanceArray palmTree = new FixedInstanceArray("palm", PrimitiveLibrary.BatchBillboardPrimitives["palm"], TextureManager.GetTexture(ContentPaths.Entities.Plants.palm), (int)(50 * GameSettings.Default.NumMotes), BlendState.AlphaBlend)
             {
                 ShouldRebuild = true
             };
             AddInstances("palm", palmTree);
 
-            FixedInstanceArray snowPine = new FixedInstanceArray("snowpine", PrimitiveLibrary.BatchBillboardPrimitives["tree"], TextureManager.GetTexture(ContentPaths.Entities.Plants.snowpine), (int)(50 * GameSettings.Default.NumMotes), BlendState.AlphaBlend)
+            FixedInstanceArray snowPine = new FixedInstanceArray("snowpine", PrimitiveLibrary.BatchBillboardPrimitives["snowpine"], TextureManager.GetTexture(ContentPaths.Entities.Plants.snowpine), (int)(50 * GameSettings.Default.NumMotes), BlendState.AlphaBlend)
             {
                 ShouldRebuild = true
             };
@@ -160,6 +160,8 @@ namespace DwarfCorp
             {
                 list.Render(device, effect, camera, resetVertices);
             }
+            effect.CurrentTechnique = effect.Techniques["Textured"];
+            effect.Parameters["xWorld"].SetValue(Matrix.Identity);
         }
     }
 

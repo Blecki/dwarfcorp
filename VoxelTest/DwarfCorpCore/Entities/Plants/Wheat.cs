@@ -69,6 +69,8 @@ namespace DwarfCorp
             };
 
             Health health = new Health(PlayState.ComponentManager, "HP", this, 30, 0.0f, 30);
+            new Flammable(PlayState.ComponentManager, "Flames", this, health);
+
             tableAnimation.Play();
             Tags.Add("Wheat");
             Tags.Add("Vegetation");

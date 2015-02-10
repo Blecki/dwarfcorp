@@ -199,9 +199,9 @@ namespace DwarfCorp
         public void CheckNeighborhood(ChunkManager chunks, float dt)
         {
             Voxel voxelBelow = new Voxel();
-            bool belowExists = chunks.ChunkData.GetVoxelerenceAtWorldLocation(Physics.GlobalTransform.Translation - Vector3.UnitY * 0.8f, ref voxelBelow);
+            bool belowExists = chunks.ChunkData.GetVoxel(Physics.GlobalTransform.Translation - Vector3.UnitY * 0.8f, ref voxelBelow);
             Voxel voxelAbove = new Voxel();
-            bool aboveExists = chunks.ChunkData.GetVoxelerenceAtWorldLocation(Physics.GlobalTransform.Translation + Vector3.UnitY, ref voxelAbove);
+            bool aboveExists = chunks.ChunkData.GetVoxel(Physics.GlobalTransform.Translation + Vector3.UnitY, ref voxelAbove);
 
             if (aboveExists)
             {
@@ -224,16 +224,16 @@ namespace DwarfCorp
                 else
                 {
                     IsOnGround = false;
-                    if(Physics.Velocity.Y > 0.1)
+                    if(Physics.Velocity.Y > 0.05)
                     {
-                        if (CurrentCharacterMode == CharacterMode.Walking || CurrentCharacterMode == CharacterMode.Idle)
+                        if (CurrentCharacterMode == CharacterMode.Walking || CurrentCharacterMode == CharacterMode.Idle || CurrentCharacterMode == CharacterMode.Falling)
                         {
                             CurrentCharacterMode = CharacterMode.Jumping;
                         }
                     }
-                    else if(Physics.Velocity.Y < -0.1)
+                    else if(Physics.Velocity.Y < -0.05)
                     {
-                        if (CurrentCharacterMode == CharacterMode.Walking || CurrentCharacterMode == CharacterMode.Idle)
+                        if (CurrentCharacterMode == CharacterMode.Walking || CurrentCharacterMode == CharacterMode.Idle || CurrentCharacterMode == CharacterMode.Jumping)
                         {
                             CurrentCharacterMode = CharacterMode.Falling;
                         }
@@ -342,7 +342,7 @@ namespace DwarfCorp
                 return;
             }
 
-            if(veloNorm < 0.3f || Physics.IsSleeping)
+            if(veloNorm < 0.2f || Physics.IsSleeping)
             {
                 if(CurrentCharacterMode == CharacterMode.Walking)
                 {
@@ -351,9 +351,14 @@ namespace DwarfCorp
             }
             else
             {
-                if(CurrentCharacterMode == CharacterMode.Idle)
+                if (CurrentCharacterMode == CharacterMode.Idle)
                 {
                     CurrentCharacterMode = CharacterMode.Walking;
+                    Animation walk = Sprite.GetAnimation(CharacterMode.Walking, Sprite.CurrentOrientation);
+                    if (walk != null)
+                    {
+                        walk.SpeedMultiplier = veloNorm/Stats.MaxSpeed*4.0f;
+                    }
                 }
             }
         }

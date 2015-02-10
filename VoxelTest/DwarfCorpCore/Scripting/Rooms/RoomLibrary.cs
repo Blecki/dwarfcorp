@@ -183,12 +183,8 @@ namespace DwarfCorp
                             createdComponent = EntityFactory.CreateEntity<Body>("Chair", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
                             thingsMade++;
                             break;
-                        case RoomTile.PotionTable:
-                            createdComponent = EntityFactory.CreateEntity<Body>("PotionTable", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
-                            thingsMade++;
-                            break;
                         case RoomTile.BookTable:
-                            createdComponent = EntityFactory.CreateEntity<Body>("BookTable", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
+                            createdComponent = EntityFactory.CreateEntity<Body>(MathFunctions.RandEvent(0.5f) ? "BookTable" : "PotionTable", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
                             thingsMade++;
                             break;
                         case RoomTile.Anvil:

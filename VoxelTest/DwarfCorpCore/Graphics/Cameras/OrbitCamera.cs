@@ -537,7 +537,7 @@ namespace DwarfCorp
         {
             BoundingBox box = new BoundingBox(pos - new Vector3(0.5f, 0.5f, 0.5f), pos + new Vector3(0.5f, 0.5f, 0.5f));
             Voxel currentVoxel = new Voxel();
-            bool success = chunks.ChunkData.GetVoxelerenceAtWorldLocation(null, pos, ref currentVoxel);
+            bool success = chunks.ChunkData.GetVoxel(null, pos, ref currentVoxel);
 
             List<Voxel> vs = new List<Voxel>
             {

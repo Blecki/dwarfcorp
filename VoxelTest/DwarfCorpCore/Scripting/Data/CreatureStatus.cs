@@ -87,12 +87,13 @@ namespace DwarfCorp
         public Status Energy { get { return Statuses["Energy"]; } set { Statuses["Energy"] = value; } }
         public Status Happiness { get { return Statuses["Happiness"]; } set { Statuses["Happiness"] = value; } }
         public Status Health { get { return Statuses["Health"]; } set { Statuses["Health"] = value; } }
-
+        public float Money { get; set; }
         private float HungerDamageRate = 1.0f;
         private DateTime LastHungerDamageTime = DateTime.Now;
 
         public CreatureStatus()
         {
+            Money = 0;
             IsAsleep = false;
             Statuses = new Dictionary<string, Status>();
             Hunger = new Status

@@ -240,6 +240,16 @@ namespace DwarfCorp
                     Chunk.Data.IndexAt((int) GridPosition.X, (int) GridPosition.Y + 1, (int) GridPosition.Z)] == 0;
         }
 
+        public Voxel GetVoxelAbove()
+        {
+            if (GridPosition.Y >= Chunk.SizeY)
+            {
+                return null;
+            }
+            return
+                Chunk.MakeVoxel((int) GridPosition.X, (int) GridPosition.Y + 1, (int) GridPosition.Z);
+        }
+
         public bool IsBottomEmpty()
         {
             if (GridPosition.Y <= 0)
@@ -317,8 +327,8 @@ namespace DwarfCorp
 
             if(PlayState.ParticleManager != null)
             {
-                PlayState.ParticleManager.Trigger(Type.ParticleType, Position + new Vector3(0.5f, 0.5f, 0.5f), new Color(255, 255, 0), 20);
-                PlayState.ParticleManager.Trigger("puff", Position + new Vector3(0.5f, 0.5f, 0.5f), new Color(255, 255, 0), 20);
+                PlayState.ParticleManager.Trigger(Type.ParticleType, Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                PlayState.ParticleManager.Trigger("puff", Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
             }
 
             if(PlayState.Master != null)
@@ -336,30 +346,8 @@ namespace DwarfCorp
                     EntityFactory.CreateEntity<Body>(Type.ResourceToRelease + " Resource", Position + new Vector3(0.5f, 0.5f, 0.5f));
                 }
             }
-            Chunk.ShouldRebuild = true;
-            Chunk.ShouldRecalculateLighting = true;
-            Chunk.ReconstructRamps = true;
-            Chunk.NotifyDestroyed(new Point3(GridPosition));
-            Chunk.NotifyChangedComponents();
 
-
-            if(!IsInterior)
-            {
-                List<Voxel> neighbors = Chunk.GetNeighborsEuclidean((int) this.GridPosition.X, (int) this.GridPosition.Y, (int) this.GridPosition.Z);
-                foreach (Voxel vox in neighbors)
-                {
-                    if(vox == null)
-                    {
-                        continue;
-                    }
-
-                    vox.RecalculateLighting = true;
-                    vox.Chunk.ShouldRebuild = true;
-                    vox.Chunk.ShouldRecalculateLighting = true;
-                    vox.Chunk.ReconstructRamps = true;
-                }
-            }
-
+            Chunk.Manager.KilledVoxels.Add(this);
             Chunk.Data.Types[Index] = 0; 
         }
 

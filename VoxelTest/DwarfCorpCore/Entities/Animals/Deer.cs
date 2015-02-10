@@ -10,6 +10,54 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
+    [JsonObject(IsReference = true)]
+    public class DeerAI : CreatureAI
+    {
+        public DeerAI()
+        {
+
+        }
+
+        public DeerAI(Creature creature, string name, EnemySensor sensor, PlanService planService) :
+            base(creature, name, sensor, planService)
+        {
+
+        }
+
+
+        public IEnumerable<Act.Status> GoToRandomTarget(float radius)
+        {
+            Vector3 randomVector = MathFunctions.RandVector3Cube()*radius;
+            Vector3 target = Physics.ClampToBounds(Position + randomVector);
+            float dist = (target - Position).Length();
+            Timer timout = new Timer(3.0f, false);
+            while (dist > 3.0f)
+            {
+                timout.Update(Act.LastTime);
+                if (timout.HasTriggered)
+                {
+                    break;
+                }
+                Vector3 output = Creature.Controller.GetOutput(Act.Dt, target, Position);
+                output.Normalize();
+                output *= 10;
+                Physics.ApplyForce(new Vector3(output.X, 0.0f, output.Z), Act.Dt);
+                dist = (target - Position).Length();
+                yield return Act.Status.Running;
+            }
+            yield return Act.Status.Success;
+        }
+
+    // Overrides the default ActOnIdle so we can
+        // have the bird act in any way we wish.
+        public override Task ActOnIdle()
+        {
+            return
+                new ActWrapperTask(new Sequence(new Wrap(() => GoToRandomTarget(10.0f)), new StopAct(this), new Wait(5.0f)));
+        }
+    }
+
     [JsonObject(IsReference = true)]
     public class Deer : Creature
     {
@@ -41,7 +89,7 @@ namespace DwarfCorp
                     "A Deer",
                     manager.RootComponent,
                     Matrix.CreateTranslation(position),
-                    new Vector3(1.1f, 1.1f, 1.1f),
+                    new Vector3(0.3f, 0.3f, 0.3f),
                     new Vector3(0, 0, 0),
                     1.0f, 1.0f, 0.999f, 0.999f,
                     new Vector3(0, -10, 0)
@@ -51,6 +99,7 @@ namespace DwarfCorp
         {
             Initialize(new SpriteSheet(sprites));
         }
+
 
         public void Initialize(SpriteSheet spriteSheet)
         {
@@ -64,7 +113,7 @@ namespace DwarfCorp
                 Manager,
                 "Deer Sprite",
                 Physics,
-                Matrix.Identity
+                Matrix.CreateTranslation(Vector3.Up * 0.6f)
                 );
 
             // Add the idle animation
@@ -92,7 +141,7 @@ namespace DwarfCorp
             Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
 
             // Add AI
-            AI = new CreatureAI(this, "Deer AI", Sensors, PlanService);
+            AI = new DeerAI(this, "Deer AI", Sensors, PlanService);
 
             Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick, "Herbivores")};
 
