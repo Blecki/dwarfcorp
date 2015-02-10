@@ -303,13 +303,13 @@ namespace DwarfCorp
             return null;
         }
 
-        public bool GetVoxelerenceAtWorldLocation(Vector3 worldLocation, ref Voxel voxel)
+        public bool GetVoxel(Vector3 worldLocation, ref Voxel voxel)
         {
-            return GetVoxelerenceAtWorldLocation(null, worldLocation, ref voxel);
+            return GetVoxel(null, worldLocation, ref voxel);
 
         }
 
-        public bool GetVoxelerenceAtWorldLocation(VoxelChunk checkFirst, Vector3 worldLocation, ref Voxel newReference)
+        public bool GetVoxel(VoxelChunk checkFirst, Vector3 worldLocation, ref Voxel newReference)
         {
             while(true)
             {

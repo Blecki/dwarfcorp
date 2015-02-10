@@ -78,6 +78,7 @@ namespace DwarfCorp
             }
             Player.VoxSelector.Enabled = false;
             Player.BodySelector.Enabled = true;
+            Player.BodySelector.AllowRightClickSelection = true;
             PlayState.GUI.IsMouseVisible = true;
 
             if (PlayState.GUI.IsMouseOver())

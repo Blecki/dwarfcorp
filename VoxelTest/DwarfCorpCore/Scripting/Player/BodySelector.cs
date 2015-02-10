@@ -94,9 +94,9 @@ namespace DwarfCorp
                 LastMouseWheel = mouse.ScrollWheelValue;
             }
 
-            if (isLeftPressed)
+            if (isLeftPressed || (isRightPressed && AllowRightClickSelection))
             {
-                if (mouse.LeftButton == ButtonState.Released)
+                if (mouse.LeftButton == ButtonState.Released || (mouse.RightButton == ButtonState.Released && AllowRightClickSelection))
                 {
                     isLeftPressed = false;
                     SelectionBuffer = Components.SelectRootBodiesOnScreen(SelectionRectangle, CameraController);
@@ -109,7 +109,7 @@ namespace DwarfCorp
                     UpdateSelectionRectangle(mouse.X, mouse.Y);
                 }
             }
-            else if (mouse.LeftButton == ButtonState.Pressed)
+            else if (mouse.LeftButton == ButtonState.Pressed || (mouse.RightButton == ButtonState.Pressed && AllowRightClickSelection))
             {
                 isLeftPressed = true;
                 ClickPoint = new Point(mouse.X, mouse.Y);

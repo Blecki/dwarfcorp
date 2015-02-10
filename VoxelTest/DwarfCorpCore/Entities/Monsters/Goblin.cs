@@ -68,7 +68,7 @@ namespace DwarfCorp
             DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
-                TriggerAmount = 30,
+                TriggerAmount = 3,
                 SoundToPlay = ContentPaths.Entities.Goblin.Audio.goblinhurt1
             };
             Flames = new Flammable(Manager, "Flames", Physics, this);

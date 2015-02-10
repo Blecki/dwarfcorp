@@ -152,29 +152,18 @@ namespace DwarfCorp
                 Voxel vox = blackBoardVoxel;
                 if(vox.Health <= 0.0f || !agent.Faction.IsDigDesignation(vox))
                 {
+                    agent.AI.AddXP(Math.Max((int)(VoxelLibrary.GetVoxelType(blackBoardVoxel.TypeName).StartingHealth / 4), 1));
                     if(vox.Health <= 0.0f)
                     {
                         vox.Kill();
                     }
                     agent.Stats.NumBlocksDestroyed++;
-                    agent.Stats.XP += Math.Max((int)(VoxelLibrary.GetVoxelType(blackBoardVoxel.TypeName).StartingHealth / 10), 1);
                     agent.CurrentCharacterMode = Creature.CharacterMode.Idle;
                     yield return Act.Status.Success;
                     break;
                 }
-
-                LocalTarget = vox.Position + new Vector3(0.5f, 0.5f, 0.5f);
-                Vector3 output = agent.Controller.GetOutput((float) Act.LastTime.ElapsedGameTime.TotalSeconds, LocalTarget, agent.Physics.GlobalTransform.Translation);
-                agent.Physics.ApplyForce(output, Act.Dt);
-                output.Y = 0.0f;
-
-                if((LocalTarget - agent.Physics.GlobalTransform.Translation).Y > 0.3)
-                {
-                    agent.AI.Jump(Act.LastTime);
-                }
-
-                agent.Physics.Velocity = new Vector3(agent.Physics.Velocity.X * 0.5f, agent.Physics.Velocity.Y, agent.Physics.Velocity.Z * 0.5f);
-
+                agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
+                agent.Physics.Velocity *= 0.9f;
                 agent.Attacks[0].Perform(agent.Physics.Position, vox, Act.LastTime, agent.Stats.BaseDigSpeed);
                 yield return Act.Status.Running;
             }

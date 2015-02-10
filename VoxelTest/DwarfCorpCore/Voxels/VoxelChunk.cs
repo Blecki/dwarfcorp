@@ -1084,10 +1084,7 @@ namespace DwarfCorp
                         if(Data.Types[index] == 0)
                         {
                             recalculateFound = true;
-                            if (!HasNoNeighbors(reference))
-                            {
-                                Data.SunColors[index] = sunColor;
-                            }
+                            Data.SunColors[index] = sunColor;
                             continue;
                         }
 
@@ -1708,7 +1705,7 @@ namespace DwarfCorp
                         else
                         {
                             Voxel otherVox = new Voxel();
-                            if (Manager.ChunkData.GetVoxelerenceAtWorldLocation(this, new Vector3(nx, ny, nz) + Origin, ref otherVox))
+                            if (Manager.ChunkData.GetVoxel(this, new Vector3(nx, ny, nz) + Origin, ref otherVox))
                             {
                                 toReturn.Add(otherVox);
                             }
@@ -1770,7 +1767,7 @@ namespace DwarfCorp
                         int nx = dx + x;
                         int ny = dy + y;
                         int nz = dz + z;
-                        if (!Manager.ChunkData.GetVoxelerenceAtWorldLocation(this, new Vector3(nx, ny, nz) + Origin,
+                        if (!Manager.ChunkData.GetVoxel(this, new Vector3(nx, ny, nz) + Origin,
                             ref neighborHood[dx + 1, dy + 1, dz + 1]))
                         {
                             neighborHood[dx + 1, dy + 1, dz + 1] = null;

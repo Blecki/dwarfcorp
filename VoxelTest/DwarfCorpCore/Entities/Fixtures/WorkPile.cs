@@ -17,7 +17,7 @@ namespace DwarfCorp
         }
 
         public WorkPile(Vector3 position) :
-            base(position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.underconstruction), new Point(0, 0), PlayState.ComponentManager.RootComponent)
+            base(position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.underconstruction, 32, 32), new Point(0, 0), PlayState.ComponentManager.RootComponent)
         {
         }
     }

@@ -132,6 +132,12 @@ namespace DwarfCorp
             return value;
         }
 
+        public static Vector3 Clamp(Vector3 value, BoundingBox bounds)
+        {
+            return new Vector3(Clamp(value.X, bounds.Min.X, bounds.Max.X), Clamp(value.Y, bounds.Min.Y, bounds.Max.Y), Clamp(value.Z, bounds.Min.Z, bounds.Max.Z));
+        }
+
+
         public static Vector2 Clamp(Vector2 value, Rectangle bounds)
         {
             return new Vector2(Clamp(value.X, bounds.Left, bounds.Right), Clamp(value.Y, bounds.Top, bounds.Bottom));

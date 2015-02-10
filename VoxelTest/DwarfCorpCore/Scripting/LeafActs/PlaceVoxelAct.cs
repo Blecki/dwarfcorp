@@ -55,6 +55,7 @@ namespace DwarfCorp
 
                     Creature.Faction.WallBuilder.Designations.Remove(put);
                     Creature.Stats.NumBlocksPlaced++;
+                    Creature.AI.AddXP(1);
                     yield return Status.Success;
                 }
                 else

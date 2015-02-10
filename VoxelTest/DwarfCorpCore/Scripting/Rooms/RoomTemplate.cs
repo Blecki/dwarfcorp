@@ -24,11 +24,10 @@ namespace DwarfCorp
         Anvil = 1 << 10,
         Forge = 1 << 11,
         BookTable = 1 << 12,
-        PotionTable = 1 << 13,
-        Target = 1 << 14,
-        Strawman = 1 << 15,
-        Wheat = 1 << 16,
-        Mushroom = 1 << 17
+        Target = 1 << 13,
+        Strawman = 1 << 14,
+        Wheat = 1 << 15,
+        Mushroom = 1 << 16
     }
 
     public enum PlacementType

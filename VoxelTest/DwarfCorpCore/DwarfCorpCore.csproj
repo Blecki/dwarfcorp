@@ -306,6 +306,7 @@
     <Compile Include="Scripting\CompoundActs\GoToTaggedObjectAct.cs" />
     <Compile Include="Scripting\CompoundActs\GoToVoxelAct.cs" />
     <Compile Include="Scripting\CompoundActs\GoToZoneAct.cs" />
+    <Compile Include="Scripting\CompoundActs\GoTrainAct.cs" />
     <Compile Include="Scripting\CompoundActs\GuardVoxelAct.cs" />
     <Compile Include="Scripting\CompoundActs\KillEntityAct.cs" />
     <Compile Include="Scripting\CompoundActs\KillVoxelAct.cs" />

@@ -46,4 +46,47 @@ namespace DwarfCorp
         }
     }
 
+    public class DynamicLabel : Label 
+    {
+        public Func<float> ValueFn;
+        public string Prefix;
+        public string Postfix;
+        public string Format;
+        public float LastValue = default(float);
+        public DynamicLabel(DwarfGUI gui, GUIComponent parent, string prefixText, string postfix, SpriteFont textFont, string format, Func<float> valuefn)
+            : base(gui, parent, prefixText, textFont)
+        {
+            ValueFn = valuefn;
+            Prefix = prefixText;
+            Postfix = postfix;
+            Format = format;
+        }
+
+        public override void Update(DwarfTime time)
+        {
+            if (ValueFn != null)
+            {
+                float value = ValueFn();
+
+                if (value.CompareTo(LastValue) != 0)
+                {
+                    string operand = "-";
+                    Color color = Color.Red;
+                    if (value.CompareTo(LastValue) > 0)
+                    {
+                        operand = "+";
+                        color = Color.Green;
+                    }
+
+                    IndicatorManager.DrawIndicator(operand + (value - LastValue).ToString(Format) + Postfix,
+                        new Vector3(GlobalBounds.Center.X, GlobalBounds.Center.Y, 0), 1.0f, color, Indicator.IndicatorMode.Indicator2D);
+                    LastValue = value;
+
+                    Text = Prefix + value.ToString(Format) + Postfix;
+                }
+            }
+            base.Update(time);
+        }
+    }
+
 }

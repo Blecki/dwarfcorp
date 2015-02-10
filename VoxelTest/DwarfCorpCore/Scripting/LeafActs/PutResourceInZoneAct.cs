@@ -89,6 +89,7 @@ namespace DwarfCorp
                 {
                     Creature.NoiseMaker.MakeNoise("Hurt", Creature.AI.Position);
                     Creature.Stats.NumItemsGathered++;
+                    Creature.AI.AddXP(1);
                     yield return Status.Running;
                 }
                 else

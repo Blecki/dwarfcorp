@@ -96,6 +96,7 @@ namespace DwarfCorp
                 {
                     strips.Vertices.Add(strips.Vertices.Last());
                     strips.Vertices.Add(_stripVertices[i][0]);
+                    strips.Vertices.Add(_stripVertices[i][0]);
                     strips.NumTriangles += 1;
                 }
                 strips.Vertices.AddRange(_stripVertices[i]);

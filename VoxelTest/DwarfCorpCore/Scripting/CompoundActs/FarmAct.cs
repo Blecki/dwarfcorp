@@ -46,7 +46,7 @@ namespace DwarfCorp
                 }
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
                 Creature.AI.AddThought(Thought.ThoughtType.Farmed);
-                Creature.AI.Stats.XP += 10;
+                Creature.AI.AddXP(10);
                 yield return Status.Success;
             }
         }

@@ -32,7 +32,7 @@ namespace DwarfCorp
             else
             {
                 Creature.Faction.CraftBuilder.RemoveDesignation(Voxel);
-
+                Creature.AI.AddXP(10);
                 yield return Status.Success;
             }
         }

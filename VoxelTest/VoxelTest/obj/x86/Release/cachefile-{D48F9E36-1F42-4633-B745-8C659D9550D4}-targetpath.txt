@@ -82,6 +82,9 @@ Content\Entities\DwarfObjects\constructiontape.xnb
 Content\Entities\DwarfObjects\underconstruction.xnb
 Content\Particles\bigstar_particle.xnb
 Content\Particles\star_particle.xnb
+Content\Fonts\font1-w.xnb
+Content\Fonts\font1-w-2x.xnb
+Content\Fonts\font1-w-4x.xnb
 Content\Entities\Dwarf\Sprites\crafter-hammer.xnb
 Content\Entities\Dwarf\Sprites\crafter.xnb
 Content\Entities\Dwarf\Sprites\soldier-axe.xnb
@@ -137,9 +140,6 @@ Content\Audio\tinkle.xnb
 Content\Audio\powerup.xnb
 Content\Music\dwarfcorp.xnb
 Content\Music\dwarfcorp.wma
-Content\Fonts\font1-w.xnb
-Content\Fonts\font1-w-2x.xnb
-Content\Fonts\font1-w-4x.xnb
 Content\Music\dwarfcorp_2.xnb
 Content\Music\dwarfcorp_2.wma
 Content\Music\dwarfcorp_3.xnb

@@ -32,6 +32,7 @@ namespace DwarfCorp
         public float WorldWidth { get; set; }
         public float WorldHeight { get; set; }
         public bool Flipped { get; set; }
+        public float SpeedMultiplier { get; set; }
 
         [JsonIgnore]
         public List<BillboardPrimitive> Primitives { get; set; }
@@ -46,6 +47,7 @@ namespace DwarfCorp
             SpriteSheet = null;
             Frames = new List<Point>();
             Speeds = new List<float>();
+            SpeedMultiplier = 1.0f;
         }
 
         public Animation(Animation other, SpriteSheet spriteSheet, GraphicsDevice device)
@@ -53,6 +55,7 @@ namespace DwarfCorp
         {
             Speeds = new List<float>();
             Speeds.AddRange(other.Speeds);
+            SpeedMultiplier = 1.0f;
         }
 
 
@@ -60,6 +63,7 @@ namespace DwarfCorp
             this(device, sheet, name, sheet.Width, sheet.Height, frames, loops, tint, frameHZ, sheet.Width / 32.0f, sheet.Height / 32.0f, flipped)
         {
             Speeds = new List<float>();
+            SpeedMultiplier = 1.0f;
         }
 
 
@@ -67,6 +71,7 @@ namespace DwarfCorp
              this(0, asset, frameWidth, frameHeigt, frames)
         {
             Speeds = new List<float>();
+            SpeedMultiplier = 1.0f;
         }
 
         public Animation(int row, string asset, int frameWidth, int frameHeigt, params int[] frames) :
@@ -88,6 +93,7 @@ namespace DwarfCorp
             Frames.Add(new Point(frame.SourceRect.X / frame.SourceRect.Width, frame.SourceRect.Y / frame.SourceRect.Height));
             CreatePrimitives(GameState.Game.GraphicsDevice);
             Speeds = new List<float>();
+            SpeedMultiplier = 1.0f;
         }
 
         public Animation(GraphicsDevice device, SpriteSheet sheet, string name, int frameWidth, int frameHeight, List<Point> frames, bool loops, Color tint, float frameHZ, float worldWidth, float worldHeight, bool flipped)
@@ -108,7 +114,7 @@ namespace DwarfCorp
             SpriteSheet = sheet;
             Primitives = new List<BillboardPrimitive>();
             Flipped = flipped;
-
+            SpeedMultiplier = 1.0f;
             CreatePrimitives(device);
         }
 
@@ -187,7 +193,7 @@ namespace DwarfCorp
                 {
                     time = Speeds[Math.Min(CurrentFrame, Speeds.Count - 1)];
                 }
-                if(FrameTimer >= 1.0f / time)
+                if(FrameTimer * SpeedMultiplier >= 1.0f / time)
                 {
                     NextFrame();
                     FrameTimer = 0.0f;

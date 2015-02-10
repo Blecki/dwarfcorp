@@ -123,7 +123,7 @@ namespace DwarfCorp
 
                 if(transfer.cellFrom.Type == LiquidType.Lava && transfer.cellTo.Type == LiquidType.Water || (transfer.cellFrom.Type == LiquidType.Water && transfer.cellTo.Type == LiquidType.Lava))
                 {
-                    bool success = Chunks.ChunkData.GetVoxelerenceAtWorldLocation(transfer.worldLocation, ref atPos);
+                    bool success = Chunks.ChunkData.GetVoxel(transfer.worldLocation, ref atPos);
 
                     if(success)
                     {
@@ -333,7 +333,7 @@ namespace DwarfCorp
                 {
                     if(chunk.Manager.ChunkData.DoesWaterCellExist(worldPos))
                     {
-                        Voxel voxelsBelow = chunk.Manager.ChunkData.GetVoxelerenceAtWorldLocation(chunk, worldPos + new Vector3(0, -1, 0));
+                        Voxel voxelsBelow = chunk.Manager.ChunkData.GetVoxel(chunk, worldPos + new Vector3(0, -1, 0));
 
                         if(voxelsBelow != null && voxelsBelow.IsEmpty)
                         {
@@ -422,7 +422,7 @@ namespace DwarfCorp
                 Voxel neighbor = new Voxel();
                 foreach(Vector3 spread in m_spreadNeighbors)
                 {
-                    bool success = chunk.Manager.ChunkData.GetVoxelerenceAtWorldLocation(chunk, worldPos + spread, ref neighbor);
+                    bool success = chunk.Manager.ChunkData.GetVoxel(chunk, worldPos + spread, ref neighbor);
 
                     if(!success)
                     {

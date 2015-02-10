@@ -45,7 +45,7 @@ namespace DwarfCorp
 
             Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
             Creature.AI.AddThought(Thought.ThoughtType.Crafted);
-            Creature.AI.Stats.XP += (int)(time * 5);
+            Creature.AI.AddXP((int)(time * 5));
 
             if (objectToHit != null)
             {

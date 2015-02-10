@@ -116,12 +116,15 @@ namespace DwarfCorp
             get { return chunkData; }
         }
 
+        public List<Voxel> KilledVoxels { get; set; }
+
         public ChunkManager(ContentManager content, 
             uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, 
             Camera camera, GraphicsDevice graphics, Texture2D tilemap, 
             Texture2D illumMap, Texture2D sunMap, Texture2D ambientMap, 
             Texture2D torchMap, ChunkGenerator chunkGen, int maxChunksX, int maxChunksY, int maxChunksZ)
         {
+            KilledVoxels = new List<Voxel>();
             ExitThreads = false;
             drawDistSq = DrawDistance * DrawDistance;
             Content = content;
@@ -303,62 +306,69 @@ namespace DwarfCorp
 
                         Dictionary<Point3, VoxelChunk> toRebuild = new Dictionary<Point3, VoxelChunk>();
                         bool calculateRamps = GameSettings.Default.CalculateRamps;
-                        while (RebuildList.Count > 0)
+                        lock (RebuildList)
                         {
-                            VoxelChunk chunk = null;
-
-                            if (!RebuildList.TryDequeue(out chunk))
+                            while (RebuildList.Count > 0)
                             {
-                                break;
-                            }
+                                VoxelChunk chunk = null;
 
-                            if (chunk == null)
-                            {
-                                continue;
-                            }
+                                if (!RebuildList.TryDequeue(out chunk))
+                                {
+                                    break;
+                                }
 
-                            toRebuild[chunk.ID] = chunk;
+                                if (chunk == null)
+                                {
+                                    continue;
+                                }
 
-                            if (PauseThreads)
-                            {
-                                break;
+                                toRebuild[chunk.ID] = chunk;
+
+                                if (PauseThreads)
+                                {
+                                    break;
+                                }
                             }
                         }
 
                         if (calculateRamps)
-                        {
+                            {
+                                foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
+                                {
+                                    chunk.UpdateRamps();
+                                }
+                            }
+
+
+                            foreach (
+                                VoxelChunk chunk in
+                                    toRebuild.Select(chunkPair => chunkPair.Value)
+                                        .Where(chunk => chunk.ShouldRecalculateLighting))
+                            {
+                                chunk.CalculateGlobalLight();
+                            }
+
                             foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
                             {
-                                chunk.UpdateRamps();
-                            }
-                        }
-
-
-                        foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value).Where(chunk => chunk.ShouldRecalculateLighting))
-                        {
-                            chunk.CalculateGlobalLight();
-                        }
-
-                        foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
-                        {
-                            if (chunk.RebuildPending && chunk.ShouldRebuild)
-                            {
-                                chunk.UpdateMaxViewingLevel();
-
-                                if (chunk.ShouldRecalculateLighting)
+                                if (chunk.RebuildPending && chunk.ShouldRebuild)
                                 {
-                                    chunk.CalculateVertexLighting();
+                                    chunk.UpdateMaxViewingLevel();
+
+                                    if (chunk.ShouldRecalculateLighting)
+                                    {
+                                        chunk.CalculateVertexLighting();
+                                    }
+                                    chunk.Rebuild(Graphics);
+                                    chunk.ShouldRebuild = false;
+                                    chunk.RebuildPending = false;
+                                    chunk.ShouldRecalculateLighting = false;
                                 }
-                                chunk.Rebuild(Graphics);
-                                chunk.ShouldRebuild = false;
-                                chunk.RebuildPending = false;
-                                chunk.ShouldRecalculateLighting = false;
+                                else
+                                {
+                                    chunk.RebuildPending = false;
+                                }
                             }
-                            else
-                            {
-                                chunk.RebuildPending = false;
-                            }
-                        }
+                        
                     }
                 }
             }
@@ -776,6 +786,29 @@ namespace DwarfCorp
 
             Water.Splash(DwarfTime);
             Water.HandleTransfers(DwarfTime);
+
+            HashSet<VoxelChunk> affectedChunks = new HashSet<VoxelChunk>();
+            foreach (Voxel voxel in KilledVoxels)
+            {
+                affectedChunks.Add(voxel.Chunk);
+
+                if (!voxel.IsInterior)
+                {
+                    foreach (KeyValuePair<Point3, VoxelChunk> n in voxel.Chunk.Neighbors)
+                    {
+                        affectedChunks.Add(n.Value);
+                    }
+                }
+            }
+
+            lock (RebuildList)
+            {
+                foreach (VoxelChunk affected in affectedChunks)
+                {
+                    affected.NotifyTotalRebuild(false);
+                }
+            }
+            KilledVoxels.Clear();
         }
 
         public List<Voxel> GetVoxelsIntersecting(BoundingBox box)
@@ -797,6 +830,7 @@ namespace DwarfCorp
         {
             message = "Creating Graphics";
             List<VoxelChunk> toRebuild = new List<VoxelChunk>();
+
             while(RebuildList.Count > 0)
             {
                 VoxelChunk chunk = null;
