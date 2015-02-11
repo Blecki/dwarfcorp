@@ -101,7 +101,7 @@ namespace DwarfCorp
 
                         foreach (CreatureAI minion in Player.Faction.SelectedMinions)
                         {
-                            minion.Tasks.Add(new KillEntityTask(other));
+                            minion.Tasks.Add(new KillEntityTask(other, KillEntityTask.KillType.Attack));
                         }
                     }
                 }

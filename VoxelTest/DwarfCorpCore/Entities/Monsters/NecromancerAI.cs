@@ -96,7 +96,7 @@ namespace DwarfCorp
                                         where dist < AttackRange 
                                         select minion).ToList();
 
-            List<Task> attackTasks = enemies.Select(enemy => new KillEntityTask(enemy.Physics)).Cast<Task>().ToList();
+            List<Task> attackTasks = enemies.Select(enemy => new KillEntityTask(enemy.Physics, KillEntityTask.KillType.Auto)).Cast<Task>().ToList();
             List<CreatureAI> skeletonAis = Skeletons.Select(skeleton => skeleton.AI).ToList();
             if (attackTasks.Count > 0)
             {

@@ -342,7 +342,7 @@ namespace DwarfCorp
                 return;
             }
 
-            if(veloNorm < 0.2f || Physics.IsSleeping)
+            if(veloNorm < 0.3f || Physics.IsSleeping)
             {
                 if(CurrentCharacterMode == CharacterMode.Walking)
                 {
@@ -357,7 +357,7 @@ namespace DwarfCorp
                     Animation walk = Sprite.GetAnimation(CharacterMode.Walking, Sprite.CurrentOrientation);
                     if (walk != null)
                     {
-                        walk.SpeedMultiplier = veloNorm/Stats.MaxSpeed*4.0f;
+                        walk.SpeedMultiplier = MathFunctions.Clamp(veloNorm/Stats.MaxSpeed*4.0f, 0.5f, 2.0f);
                     }
                 }
             }
