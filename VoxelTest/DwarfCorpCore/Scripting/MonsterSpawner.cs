@@ -89,7 +89,7 @@ namespace DwarfCorp
                     CreatureAI enemyMinion = spawnEvent.TargetFaction.GetNearestMinion(creature.Position);
                     if (enemyMinion != null)
                     {
-                        creature.Tasks.Add(new KillEntityTask(enemyMinion.Physics));
+                        creature.Tasks.Add(new KillEntityTask(enemyMinion.Physics, KillEntityTask.KillType.Auto));
                     }
                 }
             }

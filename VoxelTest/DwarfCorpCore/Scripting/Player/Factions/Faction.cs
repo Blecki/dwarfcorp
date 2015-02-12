@@ -189,7 +189,7 @@ namespace DwarfCorp
             {
                 if (threat != null && !threat.IsDead)
                 {
-                    Task g = new KillEntityTask(threat.Physics);
+                    Task g = new KillEntityTask(threat.Physics, KillEntityTask.KillType.Auto);
 
                     if (!IsTaskAssigned(g))
                     {

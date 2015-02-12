@@ -68,14 +68,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1196544">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1198592">
       <assemblyIdentity name="DwarfCorp" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>LTeYEPWkd/+TqLQKnCIK7iv0rto=</dsig:DigestValue>
+        <dsig:DigestValue>OvmqY/KVjlp0v+jIwDHYS/bc+gE=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -1072,13 +1072,13 @@
       <dsig:DigestValue>YzJpDXHfSdRfak7TbXkE3pqmdqk=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\GUI\pointers.xnb" size="1280">
+  <file name="Content\GUI\pointers.xnb" size="1442">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>TTl9ERpFsmu4Zr7e6gZ2kbiffH0=</dsig:DigestValue>
+      <dsig:DigestValue>M9f4uBnZnJ+ix78+0ol2hBdrLbY=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\GUI\room_icons.xnb" size="1802">
@@ -1279,13 +1279,13 @@
       <dsig:DigestValue>EqOtiKu0hsX7RcwdgibabYprDdw=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Particles\leaf.xnb" size="482">
+  <file name="Content\Particles\leaf.xnb" size="384">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>UuTEoT9asp5Ppq0zgZxHLhbUe/U=</dsig:DigestValue>
+      <dsig:DigestValue>U81eFM+HlmbMVI1TXlEjK0ZfLKg=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Particles\moreflames.xnb" size="1104">
