@@ -95,7 +95,7 @@ namespace DwarfCorp
 
                         foreach(CreatureAI creature in Player.Faction.SelectedMinions)
                         {
-                            creature.Tasks.Add(new KillEntityTask(tree) { Priority = Task.PriorityType.Low});
+                            creature.Tasks.Add(new KillEntityTask(tree, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low});
                         }
                     }
                 }

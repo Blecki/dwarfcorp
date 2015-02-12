@@ -503,7 +503,7 @@ namespace DwarfCorp
         {
             foreach (CreatureAI enemy in Sensor.Enemies)
             {
-                Task task = new KillEntityTask(enemy.Physics);
+                Task task = new KillEntityTask(enemy.Physics, KillEntityTask.KillType.Auto);
                 if(!HasTaskWithName(task))
                     Creature.AI.Tasks.Add(task);
             }

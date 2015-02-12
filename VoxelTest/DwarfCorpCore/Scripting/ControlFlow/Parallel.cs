@@ -52,7 +52,7 @@ namespace DwarfCorp
                     if(childStatus == Status.Fail)
                     {
                         yield return Status.Fail;
-                        break;
+                        yield break;
                     }
                     else if (childStatus != Status.Success)
                     {

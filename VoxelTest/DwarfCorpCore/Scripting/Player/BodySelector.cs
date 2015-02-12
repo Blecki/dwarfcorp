@@ -94,9 +94,9 @@ namespace DwarfCorp
                 LastMouseWheel = mouse.ScrollWheelValue;
             }
 
-            if (isLeftPressed || (isRightPressed && AllowRightClickSelection))
+            if (isLeftPressed)
             {
-                if (mouse.LeftButton == ButtonState.Released || (mouse.RightButton == ButtonState.Released && AllowRightClickSelection))
+                if (mouse.LeftButton == ButtonState.Released)
                 {
                     isLeftPressed = false;
                     SelectionBuffer = Components.SelectRootBodiesOnScreen(SelectionRectangle, CameraController);
@@ -109,7 +109,7 @@ namespace DwarfCorp
                     UpdateSelectionRectangle(mouse.X, mouse.Y);
                 }
             }
-            else if (mouse.LeftButton == ButtonState.Pressed || (mouse.RightButton == ButtonState.Pressed && AllowRightClickSelection))
+            else if (mouse.LeftButton == ButtonState.Pressed)
             {
                 isLeftPressed = true;
                 ClickPoint = new Point(mouse.X, mouse.Y);
@@ -117,24 +117,30 @@ namespace DwarfCorp
                 SelectionRectangle = new Rectangle(mouse.X, mouse.Y, 0, 0);
             }
 
-
-            if (isRightPressed && AllowRightClickSelection)
+            if (AllowRightClickSelection)
             {
-                if (mouse.RightButton == ButtonState.Released)
+                if (isRightPressed)
                 {
-                    isRightPressed = false;
-                    SelectionBuffer = Components.SelectRootBodiesOnScreen(SelectionRectangle, CameraController);
-                    RightReleased.Invoke(); 
+                    if (mouse.RightButton == ButtonState.Released)
+                    {
+                        isRightPressed = false;
+                        SelectionBuffer = Components.SelectRootBodiesOnScreen(SelectionRectangle, CameraController);
+                        RightReleased.Invoke();
+                    }
+                    else
+                    {
+                        Vector3 screenPoint = CameraController.Project(ClickPoint3D);
+                        ClickPoint = new Point((int) screenPoint.X, (int) screenPoint.Y);
+                        UpdateSelectionRectangle(mouse.X, mouse.Y);
+                    }
                 }
-                else
+                else if (mouse.RightButton == ButtonState.Pressed)
                 {
-                    UpdateSelectionRectangle(mouse.X, mouse.Y);
+                    isRightPressed = true;
+                    ClickPoint = new Point(mouse.X, mouse.Y);
+                    ClickPoint3D = PlayState.CursorLightPos;
+                    SelectionRectangle = new Rectangle(mouse.X, mouse.Y, 0, 0);
                 }
-            }
-            else if (mouse.RightButton == ButtonState.Pressed && AllowRightClickSelection)
-            {
-                SelectionRectangle = new Rectangle(mouse.X, mouse.Y, 0, 0);
-                isRightPressed = true;
             }
         }
 

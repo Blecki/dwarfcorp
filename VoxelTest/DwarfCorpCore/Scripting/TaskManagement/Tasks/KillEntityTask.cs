@@ -9,12 +9,20 @@ namespace DwarfCorp
     /// Tells a creature that it should kill an entity.
     /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
-    internal class KillEntityTask : Task
+    public class KillEntityTask : Task
     {
-        public Body EntityToKill = null;
-
-        public KillEntityTask(Body entity)
+        public enum KillType
         {
+            Chop,
+            Attack,
+            Auto
+        }
+        public Body EntityToKill = null;
+        public KillType Mode { get; set; }
+
+        public KillEntityTask(Body entity, KillType type)
+        {
+            Mode = type;
             Name = "Kill Entity: " + entity.Name + " " + entity.GlobalID;
             EntityToKill = entity;
             Priority = PriorityType.Urgent;
@@ -22,12 +30,12 @@ namespace DwarfCorp
 
         public override Task Clone()
         {
-            return new KillEntityTask(EntityToKill);
+            return new KillEntityTask(EntityToKill, Mode);
         }
 
         public override Act CreateScript(Creature creature)
         {
-            return new KillEntityAct(EntityToKill, creature.AI);
+            return new KillEntityAct(EntityToKill, creature.AI, Mode);
         }
 
         public override float ComputeCost(Creature agent)
@@ -48,7 +56,32 @@ namespace DwarfCorp
             }
             else
             {
+                if (EntityToKill.IsDead) return false;
+
                 Creature ai = EntityToKill.GetChildrenOfTypeRecursive<Creature>().FirstOrDefault();
+                switch (Mode)
+                {
+                    case KillType.Attack:
+                    {
+                        if (!agent.Faction.AttackDesignations.Contains(EntityToKill)) return false;
+                        return true;
+                        break;
+                    }
+                    case KillType.Chop:
+                    {
+                        if (!agent.Faction.ChopDesignations.Contains(EntityToKill))
+                        {
+                            return false;
+                        }
+                        return true;
+                        break;
+                    }
+                    case KillType.Auto:
+                    {
+                        return true;
+                    }
+                }
+
 
                 if(ai == null)
                 {

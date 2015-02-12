@@ -161,14 +161,23 @@ namespace DwarfCorp
                         }
                         else if (Orientation == OrientMode.RotateY)
                         {
-                            float oldAngle = Rotation;
+              
                             Rotation = (float) Math.Atan2(Velocity.X, -Velocity.Z);
                             Quaternion newRotation = Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationY(Rotation));
-                            Quaternion oldRotation = Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationY(oldAngle));
+                            Quaternion oldRotation = Quaternion.CreateFromRotationMatrix(LocalTransform);
                             Quaternion finalRot = Quaternion.Slerp(oldRotation, newRotation, 0.1f);
+                            finalRot.Normalize();
                             Matrix newTransform = Matrix.CreateFromQuaternion(finalRot);
                             newTransform.Translation = transform.Translation;
+                            newTransform.Right.Normalize();
+                            newTransform.Up.Normalize();
+                            newTransform.Forward.Normalize();
+                            newTransform.M14 = 0;
+                            newTransform.M24 = 0;
+                            newTransform.M34 = 0;
+                            newTransform.M44 = 1;
                             transform = newTransform;
+                            Drawer3D.DrawAxes(newTransform, 1.0f);
                         }
                     }
                 }

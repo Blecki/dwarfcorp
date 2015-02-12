@@ -149,7 +149,7 @@ namespace DwarfCorp
             PointerTexture = pointerTexture;
             MouseFrames = new Dictionary<MousePointer, Point>();
             Frames = new Dictionary<Tile, Point>();
-            MouseTimer = new Timer(0.25f, false, Timer.TimerMode.Real);
+            MouseTimer = new Timer(0.1f, false, Timer.TimerMode.Real);
             WaitIndex = 0;
         }
 
@@ -178,7 +178,7 @@ namespace DwarfCorp
 
                 if (MouseTimer.HasTriggered)
                 {
-                    WaitIndex = (WaitIndex + 1)%4;
+                    WaitIndex = (WaitIndex + 1)%6;
                 }
 
                 frame.X += WaitIndex;
@@ -307,7 +307,7 @@ namespace DwarfCorp
             MouseFrames[MousePointer.Attack] = new Point(2, 0);
             MouseFrames[MousePointer.Guard] = new Point(3, 0);
             MouseFrames[MousePointer.Magic] = new Point(0, 1);
-            MouseFrames[MousePointer.Wait] = new Point(3, 1);
+            MouseFrames[MousePointer.Wait] = new Point(0, 2);
 
          }
 

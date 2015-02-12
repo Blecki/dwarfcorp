@@ -84,7 +84,7 @@ namespace DwarfCorp
             {
                 if(threat != null && !threat.IsDead)
                 {
-                    Task g = new KillEntityTask(threat.Physics);
+                    Task g = new KillEntityTask(threat.Physics, KillEntityTask.KillType.Auto);
 
                     if (!TaskIsAssigned(g) && IsFeasible(g, Faction.Minions))
                     {
@@ -130,7 +130,7 @@ namespace DwarfCorp
 
             tasks.AddRange(Faction.GuardDesignations.Select(i => new GuardVoxelTask(i.Vox)).Where(g => !TaskIsAssigned(g) && IsFeasible(g, Faction.Minions)));
 
-            tasks.AddRange(Faction.ChopDesignations.Select(i => new KillEntityTask(i)).Where(g => !TaskIsAssigned(g) && IsFeasible(g, Faction.Minions)));
+            tasks.AddRange(Faction.ChopDesignations.Select(i => new KillEntityTask(i, KillEntityTask.KillType.Chop)).Where(g => !TaskIsAssigned(g) && IsFeasible(g, Faction.Minions)));
 
             if(Faction.Stockpiles.Count <= 0)
             {
