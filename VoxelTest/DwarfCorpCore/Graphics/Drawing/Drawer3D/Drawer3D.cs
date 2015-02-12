@@ -141,6 +141,14 @@ namespace DwarfCorp
 
             return list;
         }
+
+        public static void DrawAxes(Matrix t, float f)
+        {
+            Vector3 p = t.Translation;
+            DrawLine(p, p + t.Right * f, Color.Red, 0.01f);
+            DrawLine(p, p + t.Up * f, Color.Green, 0.01f);
+            DrawLine(p, p + t.Forward * f, Color.Blue, 0.01f);
+        }
     }
 
 }

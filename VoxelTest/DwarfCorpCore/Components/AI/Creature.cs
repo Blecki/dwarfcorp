@@ -598,6 +598,7 @@ namespace DwarfCorp
             {
                 float dt = (float)time.ElapsedGameTime.TotalSeconds;
                 creature.Heal(dt * DamagePerSecond);
+
                 base.Update(time, creature);
             }
 
