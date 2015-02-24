@@ -50,6 +50,14 @@ namespace DwarfCorp
             }
         }
 
+        public override void OnCanceled()
+        {
+            Creature.Physics.Orientation = Physics.OrientMode.RotateY;
+            Creature.OverrideCharacterMode = false;
+            Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+            base.OnCanceled();
+        }
+
         public override IEnumerable<Status> Run()
         {
             if (CurrentAttack == null)
@@ -80,17 +88,23 @@ namespace DwarfCorp
                     if (Training)
                     {
                         Agent.AddXP(10);
+                        Creature.Physics.Orientation = Physics.OrientMode.RotateY;
+                        Creature.OverrideCharacterMode = false;
+                        Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                         yield return Status.Success;
                         yield break;
                     }
                     else
                     {
+                        Creature.Physics.Orientation = Physics.OrientMode.RotateY;
+                        Creature.OverrideCharacterMode = false;
+                        Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                         yield return Status.Fail;
                         yield break;
                     }
                 }
 
-                if (Target.IsDead)
+                if (Target == null || Target.IsDead)
                 {
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
@@ -110,6 +124,9 @@ namespace DwarfCorp
                 // If we are far away from the target, run toward it
                 if (diff.Length() > CurrentAttack.Range * 8 && !collides)
                 {
+                    Creature.Physics.Orientation = Physics.OrientMode.RotateY;
+                    Creature.OverrideCharacterMode = false;
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                     yield return Status.Fail;
                 }
                 if(diff.Length() > CurrentAttack.Range && !collides)
@@ -168,6 +185,9 @@ namespace DwarfCorp
                         Creature.Physics.Face(Creature.Physics.Velocity + Creature.Physics.GlobalTransform.Translation);
                         Creature.Stats.NumThingsKilled++;
                         Creature.AI.AddThought(Thought.ThoughtType.KilledThing);
+                        Creature.Physics.Orientation = Physics.OrientMode.RotateY;
+                        Creature.OverrideCharacterMode = false;
+                        Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                         yield return Status.Success;
                         break;
                     }

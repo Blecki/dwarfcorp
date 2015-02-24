@@ -30,8 +30,7 @@ namespace DwarfCorp
             {
                 new Point(0, 2),
                 new Point(1, 2),
-                new Point(2, 2),
-                new Point(1, 2)
+                new Point(2, 2)
             };
             Animation lampAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "Flag", 32, 32, frames, true, Color.White, 5.0f + MathFunctions.Rand(), 1f, 1.0f, false);
 

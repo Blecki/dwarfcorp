@@ -64,6 +64,15 @@ namespace DwarfCorp
             public static string rings = ProgramData.CreatePath("Effects", "ring");
         }
 
+        public class World
+        {
+            public static string biomes = ProgramData.CreatePath("World", "biomes.json");
+        }
+
+        public static T LoadFromJson<T>(string asset)
+        {
+            return FileUtils.LoadJsonFromString<T>(ContentPaths.GetFileAsString(asset));
+        }
 
         public static string GetFileAsString(string asset)
         {

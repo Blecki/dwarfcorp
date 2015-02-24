@@ -68,14 +68,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1198592">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1201152">
       <assemblyIdentity name="DwarfCorp" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>OvmqY/KVjlp0v+jIwDHYS/bc+gE=</dsig:DigestValue>
+        <dsig:DigestValue>wlC1fQoIXMkUh36h5v0brs6HjlA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -1315,22 +1315,22 @@
       <dsig:DigestValue>JQGK8/yphrKTftmRiC/QhN2b/+s=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Particles\splash.xnb" size="1774">
+  <file name="Content\Particles\splash.xnb" size="388">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>sCsjQBFfZrqdWgY2YbxCwwJarvE=</dsig:DigestValue>
+      <dsig:DigestValue>go5ZIuKLpCOktDhryeYpLPtM65c=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Particles\splash2.xnb" size="420">
+  <file name="Content\Particles\splash2.xnb" size="388">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>PC6tW0lh0q1f+xX89ihqFj95tFU=</dsig:DigestValue>
+      <dsig:DigestValue>go5ZIuKLpCOktDhryeYpLPtM65c=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Particles\star_particle.xnb" size="224">
@@ -1574,6 +1574,15 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
       <dsig:DigestValue>xvIOknG+uMfvqntflNPDZgoRXRU=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\World\biomes.json" size="8142">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>ZIIml5TKgMpOW7Tfh3Sqz1KeJFk=</dsig:DigestValue>
     </hash>
   </file>
   <file name="DwarfCorp.exe.config" size="11310">
