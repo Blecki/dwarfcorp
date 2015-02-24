@@ -288,3 +288,4 @@ C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Conte
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Music\dwarfcorp_2.wma
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Music\dwarfcorp_3.wma
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Music\dwarfcorp_4.wma
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\World\biomes.json

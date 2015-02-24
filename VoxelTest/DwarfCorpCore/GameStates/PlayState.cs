@@ -1116,11 +1116,14 @@ namespace DwarfCorp.GameStates
 
             // Bubbles
             EmitterData bubble = ParticleManager.CreatePuffLike("splash2", new SpriteSheet(ContentPaths.Particles.splash2), Point.Zero, BlendState.AlphaBlend);
-            bubble.ConstantAccel = new Vector3(0, -10, 0);
-            bubble.EmissionSpeed = 5;
-            bubble.LinearDamping = 0.999f;
-            bubble.GrowthSpeed = 1.05f;
+            bubble.ConstantAccel = new Vector3(0, 2, 0);
+            bubble.EmissionSpeed = 3;
+            bubble.LinearDamping = 0.9f;
+            bubble.GrowthSpeed = -1.5f;
+            bubble.MinScale = 2.0f;
+            bubble.MaxScale = 2.5f;
             bubble.ParticleDecay = 1.5f;
+            bubble.HasLighting = false;
             ParticleManager.RegisterEffect("puff", puff);
             ParticleManager.RegisterEffect("splash2", bubble);
 
@@ -1147,6 +1150,14 @@ namespace DwarfCorp.GameStates
             flame.MinScale = 0.2f;
             flame.HasLighting = false;
             flame.MaxScale = 2.0f;
+            flame.EmitsLight = true;
+            flame.Blend = new BlendState()
+            {
+                AlphaSourceBlend = Blend.One,
+                AlphaDestinationBlend = Blend.InverseSourceAlpha,
+                ColorDestinationBlend = Blend.InverseSourceAlpha,
+                ColorSourceBlend = Blend.One
+            };
             ParticleManager.RegisterEffect("flame", flame, flame.Clone(fireSheet, new Point(1, 0)), flame.Clone(fireSheet, new Point(2, 0)), flame.Clone(fireSheet, new Point(3, 0)));
 
             EmitterData greenFlame = ParticleManager.CreatePuffLike("green_flame", new SpriteSheet(ContentPaths.Particles.green_flame), new Point(0, 0), BlendState.Additive);
@@ -1711,10 +1722,11 @@ namespace DwarfCorp.GameStates
         public void FillClosestLights(DwarfTime time)
         {
             List<Vector3> positions = ( from light in DynamicLight.Lights select light.Position).ToList();
+            positions.AddRange(( from light in DynamicLight.TempLights select light.Position));
             positions.Sort((a, b) =>
             {
-                float dA = (a - Camera.Position).LengthSquared();
-                float dB = (b - Camera.Position).LengthSquared();
+                float dA = MathFunctions.L1(a, Camera.Position);
+                float dB = MathFunctions.L1(b, Camera.Position);
                 return dA.CompareTo(dB);
             });
             int numLights = Math.Min(16, positions.Count + 1);
@@ -1734,6 +1746,8 @@ namespace DwarfCorp.GameStates
             {
                 LightPositions[j] = new Vector3(0, 0, 0);
             }
+
+            DynamicLight.TempLights.Clear();
         }
 
         /// <summary>

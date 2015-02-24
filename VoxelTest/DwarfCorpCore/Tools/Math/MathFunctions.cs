@@ -16,19 +16,21 @@ namespace DwarfCorp
         {
             return Rand(0, 1) < probability;
         }
+
         public static float Rand()
         {
-            return (float)PlayState.Random.NextDouble();
+            return (float) PlayState.Random.NextDouble();
         }
 
         public static float Rand(float min, float max)
         {
-            return Rand() * (max - min) + min;
+            return Rand()*(max - min) + min;
         }
 
         public static Vector3 PeriodicRand(float time)
         {
-            return new Vector3((float) Math.Cos(time + Rand() * 0.1f), (float) Math.Sin(time + Rand() * 0.1f), (float) Math.Sin(time - 0.5f + Rand() * 0.1f));
+            return new Vector3((float) Math.Cos(time + Rand()*0.1f), (float) Math.Sin(time + Rand()*0.1f),
+                (float) Math.Sin(time - 0.5f + Rand()*0.1f));
         }
 
         public static Vector3 GetClosestPointOnLineSegment(Vector3 A, Vector3 B, Vector3 P)
@@ -38,19 +40,19 @@ namespace DwarfCorp
 
             float magnitudeAB = AB.LengthSquared(); //Magnitude of AB vector (it's length squared)     
             float ABAPproduct = Vector3.Dot(AP, AB); //The DOT product of a_to_p and a_to_b     
-            float distance = ABAPproduct / magnitudeAB; //The normalized "distance" from a to your closest point  
+            float distance = ABAPproduct/magnitudeAB; //The normalized "distance" from a to your closest point  
 
-            if(distance < 0) //Check if P projection is over vectorAB     
+            if (distance < 0) //Check if P projection is over vectorAB     
             {
                 return A;
             }
-            else if(distance > 1)
+            else if (distance > 1)
             {
                 return B;
             }
             else
             {
-                return A + AB * distance;
+                return A + AB*distance;
             }
         }
 
@@ -62,7 +64,7 @@ namespace DwarfCorp
         /// <returns>The absolute transform</returns>
         public static Matrix GetAbsoluteTransform(Matrix parentTransform, Matrix myTransform)
         {
-            Matrix result = parentTransform * myTransform;
+            Matrix result = parentTransform*myTransform;
             result.Translation = parentTransform.Translation + myTransform.Translation;
             return result;
         }
@@ -75,7 +77,7 @@ namespace DwarfCorp
         /// <returns>The relative transform</returns>
         public static Matrix GetRelativeTransform(Matrix parentTransform, Matrix absoluteTransform)
         {
-            return absoluteTransform / parentTransform;
+            return absoluteTransform/parentTransform;
         }
 
         /// <summary>
@@ -134,7 +136,8 @@ namespace DwarfCorp
 
         public static Vector3 Clamp(Vector3 value, BoundingBox bounds)
         {
-            return new Vector3(Clamp(value.X, bounds.Min.X, bounds.Max.X), Clamp(value.Y, bounds.Min.Y, bounds.Max.Y), Clamp(value.Z, bounds.Min.Z, bounds.Max.Z));
+            return new Vector3(Clamp(value.X, bounds.Min.X, bounds.Max.X), Clamp(value.Y, bounds.Min.Y, bounds.Max.Y),
+                Clamp(value.Z, bounds.Min.Z, bounds.Max.Z));
         }
 
 
@@ -152,7 +155,10 @@ namespace DwarfCorp
         public static Vector3 PitchYawRoll(Matrix rotationMatrix)
         {
             float alpha = (float) Math.Atan2(rotationMatrix.M21, rotationMatrix.M11);
-            float beta = (float) Math.Atan2(-rotationMatrix.M31, Math.Sqrt(rotationMatrix.M32 * rotationMatrix.M32 + rotationMatrix.M33 * rotationMatrix.M33));
+            float beta =
+                (float)
+                    Math.Atan2(-rotationMatrix.M31,
+                        Math.Sqrt(rotationMatrix.M32*rotationMatrix.M32 + rotationMatrix.M33*rotationMatrix.M33));
             float gamma = (float) Math.Atan2(rotationMatrix.M32, rotationMatrix.M33);
 
             return new Vector3(beta, alpha, gamma);
@@ -166,9 +172,9 @@ namespace DwarfCorp
         /// <returns>The pitch, yaw and roll as a vector3</returns>
         public static Vector3 PitchYawRoll(Quaternion q)
         {
-            float heading = (float) Math.Atan2(2 * q.Y * q.W - 2 * q.X * q.Z, 1 - 2 * (q.Y * q.Y) - 2 * (q.Z * q.Z));
-            float attitude = (float) Math.Asin(2 * q.X * q.Y + 2 * q.Z * q.W);
-            float bank = (float) Math.Atan2(2 * q.X * q.W - 2 * q.Y * q.Z, 1 - 2 * (q.X * q.X) - 2 * (q.Z * q.Z));
+            float heading = (float) Math.Atan2(2*q.Y*q.W - 2*q.X*q.Z, 1 - 2*(q.Y*q.Y) - 2*(q.Z*q.Z));
+            float attitude = (float) Math.Asin(2*q.X*q.Y + 2*q.Z*q.W);
+            float bank = (float) Math.Atan2(2*q.X*q.W - 2*q.Y*q.Z, 1 - 2*(q.X*q.X) - 2*(q.Z*q.Z));
 
             return new Vector3(bank, heading, attitude);
         }
@@ -187,20 +193,20 @@ namespace DwarfCorp
             Vector3 normal = b - a;
             float l = normal.Length();
 
-            if(l <= 1e-12)
+            if (l <= 1e-12)
             {
                 return a;
             }
 
             normal.Normalize();
-            float t = -(Vector3.Dot((a - p), (b - a)) / (b - a).LengthSquared());
+            float t = -(Vector3.Dot((a - p), (b - a))/(b - a).LengthSquared());
             t *= l;
             t += lookahead;
-            if(t > l)
+            if (t > l)
             {
                 t = l;
             }
-            if(t < 0)
+            if (t < 0)
             {
                 t = 0;
             }
@@ -231,7 +237,7 @@ namespace DwarfCorp
 
         public static Vector2 RandVector2Circle()
         {
-            return PolarToRectangular((float) (PlayState.Random.NextDouble() * Math.PI * 2), 1);
+            return PolarToRectangular((float) (PlayState.Random.NextDouble()*Math.PI*2), 1);
         }
 
 
@@ -243,7 +249,7 @@ namespace DwarfCorp
         /// <returns>A cartesian representation of this polar coordinate.</returns>
         public static Vector2 PolarToRectangular(float theta, float r)
         {
-            return new Vector2((float) (r * Math.Cos(theta)), (float) (r * Math.Sin(theta)));
+            return new Vector2((float) (r*Math.Cos(theta)), (float) (r*Math.Sin(theta)));
         }
 
         /// <summary>
@@ -253,7 +259,7 @@ namespace DwarfCorp
         /// <returns>A cartesian representation of this polar coordinate</returns>
         public static Vector2 PolarToRectangular(Vector2 other)
         {
-            return new Vector2((float) (other.Y * Math.Cos(other.X)), (float) (other.Y * Math.Sin(other.X)));
+            return new Vector2((float) (other.Y*Math.Cos(other.X)), (float) (other.Y*Math.Sin(other.X)));
         }
 
         /// <summary>
@@ -294,7 +300,8 @@ namespace DwarfCorp
             Vector3 backwards = Vector3.Cross(right, u);
             Vector3.Normalize(ref backwards, out backwards);
             Vector3 up = Vector3.Cross(backwards, right);
-            Matrix rot = new Matrix(right.X, right.Y, right.Z, 0, up.X, up.Y, up.Z, 0, backwards.X, backwards.Y, backwards.Z, 0, 0, 0, 0, 1);
+            Matrix rot = new Matrix(right.X, right.Y, right.Z, 0, up.X, up.Y, up.Z, 0, backwards.X, backwards.Y,
+                backwards.Z, 0, 0, 0, 0, 1);
             return rot;
         }
 
@@ -307,7 +314,7 @@ namespace DwarfCorp
         /// <returns>The positive root of a quadratic</returns>
         public static float PositiveRootOfQuadratic(float a, float b, float c)
         {
-            return (b + (float) Math.Sqrt(b * b - 4 * a * c)) / (2 * a);
+            return (b + (float) Math.Sqrt(b*b - 4*a*c))/(2*a);
         }
 
         /// <summary>
@@ -318,7 +325,7 @@ namespace DwarfCorp
         /// <param Name="c">The C in x = B + SQRT(B^2 - 4AC)/2A.</param>
         public static float NegativeRootOfQuadratic(float a, float b, float c)
         {
-            return (b - (float) Math.Sqrt(b * b - 4 * a * c)) / (2 * a);
+            return (b - (float) Math.Sqrt(b*b - 4*a*c))/(2*a);
         }
 
 
@@ -345,34 +352,34 @@ namespace DwarfCorp
             Vector3 maxPos = new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue);
             Vector3 minPos = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
 
-            foreach(BoundingBox box in boxes)
+            foreach (BoundingBox box in boxes)
             {
-                if(box.Min.X < minPos.X)
+                if (box.Min.X < minPos.X)
                 {
                     minPos.X = box.Min.X;
                 }
 
-                if(box.Min.Y < minPos.Y)
+                if (box.Min.Y < minPos.Y)
                 {
                     minPos.Y = box.Min.Y;
                 }
 
-                if(box.Min.Z < minPos.Z)
+                if (box.Min.Z < minPos.Z)
                 {
                     minPos.Z = box.Min.Z;
                 }
 
-                if(box.Max.X > maxPos.X)
+                if (box.Max.X > maxPos.X)
                 {
                     maxPos.X = box.Max.X;
                 }
 
-                if(box.Max.Y > maxPos.Y)
+                if (box.Max.Y > maxPos.Y)
                 {
                     maxPos.Y = box.Max.Y;
                 }
 
-                if(box.Max.Z > maxPos.Z)
+                if (box.Max.Z > maxPos.Z)
                 {
                     maxPos.Z = box.Max.Z;
                 }
@@ -413,12 +420,13 @@ namespace DwarfCorp
         }
 
 
-        public static float LinearCombination(float x, float y, float x1, float y1, float x2, float y2, float q11, float q12, float q21, float q22)
+        public static float LinearCombination(float x, float y, float x1, float y1, float x2, float y2, float q11,
+            float q12, float q21, float q22)
         {
-            return (1.0f / ((x2 - x1) * (y2 - y1))) * (q11 * (x2 - x) * (y2 - y) +
-                                                       q21 * (x - x1) * (y2 - y) +
-                                                       q12 * (x2 - x) * (y - y1) +
-                                                       q22 * (x - x1) * (y - y1));
+            return (1.0f/((x2 - x1)*(y2 - y1)))*(q11*(x2 - x)*(y2 - y) +
+                                                 q21*(x - x1)*(y2 - y) +
+                                                 q12*(x2 - x)*(y - y1) +
+                                                 q22*(x - x1)*(y - y1));
         }
 
         public static float LinearInterpolate(Vector2 position, float[,] map)
@@ -430,12 +438,12 @@ namespace DwarfCorp
             float x2 = (int) Clamp((float) Math.Floor(x), 0, map.GetLength(0) - 2);
             float y2 = (int) Clamp((float) Math.Floor(y), 0, map.GetLength(1) - 2);
 
-            if(Math.Abs(x1 - x2) < 0.5f)
+            if (Math.Abs(x1 - x2) < 0.5f)
             {
                 x1 = x1 + 1;
             }
 
-            if(Math.Abs(y1 - y2) < 0.5f)
+            if (Math.Abs(y1 - y2) < 0.5f)
             {
                 y1 = y1 + 1;
             }
@@ -452,55 +460,307 @@ namespace DwarfCorp
 
         public static float PointLineDistance2D(Vector2 v, Vector2 w, Vector2 p)
         {
+            Vector2 dw = w - v;
+            Vector2 dp = p - v;
+
             // Return minimum distance between line segment vw and point p
-            float l2 = (w - v).LengthSquared(); // i.e. |w-v|^2 -  avoid a sqrt
-            if(Math.Abs(l2) < 1e-10)
+            float l2 = dw.LengthSquared(); // i.e. |w-v|^2 -  avoid a sqrt
+            if (Math.Abs(l2) < 1e-10)
             {
-                return (p - v).LengthSquared(); // v == w case
+                return dp.LengthSquared(); // v == w case
             }
 
             // Consider the line extending the segment, parameterized as v + t (w - v).
             // We find projection of point p onto the line. 
             // It falls where t = [(p-v) . (w-v)] / |w-v|^2
-            float t = Vector2.Dot(p - v, w - v) / l2;
-            if(t < 0.0)
+            float t = Vector2.Dot(p - v, w - v)/l2;
+            if (t < 0.0)
             {
-                return (p - v).LengthSquared(); // Beyond the 'v' end of the segment
+                return dp.LengthSquared(); // Beyond the 'v' end of the segment
             }
 
-            if(t > 1.0)
+            if (t > 1.0)
             {
                 return (p - w).LengthSquared(); // Beyond the 'w' end of the segment
             }
 
-            Vector2 projection = v + t * (w - v); // Projection falls on the segment
+            Vector2 projection = v + t*dw; // Projection falls on the segment
             return (p - projection).LengthSquared();
         }
 
-        public static Vector3 Min(params  Vector3[] vecs)
+        public static Vector3 Min(params Vector3[] vecs)
         {
             Vector3 toReturn = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
 
-            for(int i = 0; i < vecs.Length; i++)
+            for (int i = 0; i < vecs.Length; i++)
             {
-                toReturn = new Vector3(Math.Min(toReturn.X, vecs[i].X), Math.Min(toReturn.Y, vecs[i].Y), Math.Min(toReturn.Z, vecs[i].Z));
+                toReturn = new Vector3(Math.Min(toReturn.X, vecs[i].X), Math.Min(toReturn.Y, vecs[i].Y),
+                    Math.Min(toReturn.Z, vecs[i].Z));
             }
 
             return toReturn;
         }
 
-        public static Vector3 Max(params  Vector3[] vecs)
+        public static Vector3 Max(params Vector3[] vecs)
         {
             Vector3 toReturn = new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue);
 
             for (int i = 0; i < vecs.Length; i++)
             {
-                toReturn = new Vector3(Math.Max(toReturn.X, vecs[i].X), Math.Max(toReturn.Y, vecs[i].Y), Math.Max(toReturn.Z, vecs[i].Z));
+                toReturn = new Vector3(Math.Max(toReturn.X, vecs[i].X), Math.Max(toReturn.Y, vecs[i].Y),
+                    Math.Max(toReturn.Z, vecs[i].Z));
             }
 
             return toReturn;
         }
 
-    }
+        public static float L1(Vector3 a, Vector3 b)
+        {
+            return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) + Math.Abs(a.Z - b.Z);
+        }
 
+        public static void SetMinMax(float minValue, float maxValue, ref float currentMin, ref float currentMax)
+        {
+            if (minValue < currentMin)
+            {
+                currentMin = minValue;
+            }
+
+            if (maxValue > currentMax)
+            {
+                currentMax = maxValue;
+            }
+        }
+
+        private static float Mod(float value, float modulus)
+        {
+            return (value%modulus + modulus)%modulus;
+        }
+
+        public static float IntBound(float s, float ds)
+        {
+            while (true)
+            {
+                // Find the smallest positive t such that s+t*ds is an integer.
+                if (ds < 0)
+                {
+                    s = -s;
+                    ds = -ds;
+                }
+                else
+                {
+                    s = Mod(s, 1);
+                    // problem is now s+t*ds = 1
+                    return (1 - s)/ds;
+                }
+            }
+        }
+
+
+        public static IEnumerable<Point3> RasterizeLine(Point3 start, Point3 end)
+        {
+            /*
+            int x1 = start.X;
+            int y1 = start.Y;
+            int z1 = start.Z;
+            int x2 = end.X;
+            int y2 = end.Y;
+            int z2 = end.Z;
+
+            int xd, yd, zd;
+            int x, y, z;
+            int ax, ay, az;
+            int sx, sy, sz;
+            int dx, dy, dz;
+
+            dx = x2 - x1;
+            dy = y2 - y1;
+            dz = z2 - z1;
+
+            ax = Math.Abs(dx) << 1;
+            ay = Math.Abs(dy) << 1;
+            az = Math.Abs(dz) << 1;
+
+            sx = Math.Sign(dx);
+            sy = Math.Sign(dy);
+            sz = Math.Sign(dz);
+
+            x = x1;
+            y = y1;
+            z = z1;
+
+            if (ax >= Math.Max(ay, az)) // x dominant 
+            {
+                yd = ay - (ax >> 1);
+                zd = az - (ax >> 1);
+                for (;;)
+                {
+                    yield return new Point3(x, y, z);
+                    if (x == x2)
+                    {
+                        yield break;
+                    }
+
+                    if (yd >= 0)
+                    {
+                        y += sy;
+                        yd -= ax;
+                    }
+
+                    if (zd >= 0)
+                    {
+                        z += sz;
+                        zd -= ax;
+                    }
+
+                    x += sx;
+                    yd += ay;
+                    zd += az;
+                }
+            }
+            else if (ay >= Math.Max(ax, az)) // y dominant 
+            {
+                xd = ax - (ay >> 1);
+                zd = az - (ay >> 1);
+                for (;;)
+                {
+                    yield return new Point3(x, y, z);
+                    if (y == y2)
+                    {
+                        yield break;
+                    }
+
+                    if (xd >= 0)
+                    {
+                        x += sx;
+                        xd -= ay;
+                    }
+
+                    if (zd >= 0)
+                    {
+                        z += sz;
+                        zd -= ay;
+                    }
+
+                    y += sy;
+                    xd += ax;
+                    zd += az;
+                }
+            }
+            else if (az >= Math.Max(ax, ay)) // z dominant 
+            {
+                xd = ax - (az >> 1);
+                yd = ay - (az >> 1);
+                for (;;)
+                {
+                    yield return new Point3(x, y, z);
+                    if (z == z2)
+                    {
+                        yield break;
+                    }
+
+                    if (xd >= 0)
+                    {
+                        x += sx;
+                        xd -= az;
+                    }
+
+                    if (yd >= 0)
+                    {
+                        y += sy;
+                        yd -= az;
+                    }
+
+                    z += sz;
+                    xd += ax;
+                    yd += ay;
+                }
+            }
+        }
+             */
+            // From "A Fast Voxel Traversal Algorithm for Ray Tracing"
+            // by John Amanatides and Andrew Woo, 1987
+            // <http://www.cse.yorku.ca/~amana/research/grid.pdf>
+            // <http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.42.3443>
+            // Extensions to the described algorithm:
+            //   • Imposed a distance limit.
+            //   • The face passed through to reach the current cube is provided to
+            //     the callback.
+
+            // The foundation of this algorithm is a parameterized representation of
+            // the provided ray,
+            //                    origin + t * direction,
+            // except that t is not actually stored; rather, at any given point in the
+            // traversal, we keep track of the *greater* t values which we would have
+            // if we took a step sufficient to cross a cube boundary along that axis
+            // (i.e. change the integer part of the coordinate) in the variables
+            // tMaxX, tMaxY, and tMaxZ.
+
+            // Cube containing origin point.
+            var x = start.X;
+            var y = start.Y;
+            var z = start.Z;
+            Vector3 direction = new Vector3(end.X, end.Y, end.Z) - new Vector3(start.X, start.Y, start.Z);
+            direction.Normalize();
+            // Break out direction vector.
+            var dx = direction.X;
+            var dy = direction.Y;
+            var dz = direction.Z;
+            // Direction to increment x,y,z when stepping.
+            var stepX = Math.Sign(dx);
+            var stepY = Math.Sign(dy);
+            var stepZ = Math.Sign(dz);
+            // See description above. The initial values depend on the fractional
+            // part of the origin.
+            var tMaxX = IntBound(x, dx);
+            var tMaxY = IntBound(y, dy);
+            var tMaxZ = IntBound(z, dz);
+            // The change in t when taking a step (always positive).
+            var tDeltaX = stepX/dx;
+            var tDeltaY = stepY/dy;
+            var tDeltaZ = stepZ/dz;
+
+
+            while (true)
+            {
+
+                yield return new Point3(x, y, z);
+                if (x == end.X && y == end.Y && z == end.Z) yield break;
+                // tMaxX stores the t-value at which we cross a cube boundary along the
+                // X axis, and similarly for Y and Z. Therefore, choosing the least tMax
+                // chooses the closest cube boundary. Only the first case of the four
+                // has been commented in detail.
+                if (tMaxX < tMaxY)
+                {
+                    if (tMaxX < tMaxZ)
+                    {
+                        // Update which cube we are now in.
+                        x += stepX;
+                        // Adjust tMaxX to the next X-oriented boundary crossing.
+                        tMaxX += tDeltaX;
+                    }
+                    else
+                    {
+                        z += stepZ;
+                        tMaxZ += tDeltaZ;
+                    }
+                }
+                else
+                {
+                    if (tMaxY < tMaxZ)
+                    {
+                        y += stepY;
+                        tMaxY += tDeltaY;
+                    }
+                    else
+                    {
+                        // Identical to the second case, repeated for simplicity in
+                        // the conditionals.
+                        z += stepZ;
+                        tMaxZ += tDeltaZ;
+                    }
+                }
+            }
+        }
+    }
 }

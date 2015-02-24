@@ -196,16 +196,6 @@ namespace DwarfCorp
         }
 
 
-        public static OldBoxPrimitive RetextureTop(BoxPrimitive other, GraphicsDevice graphics, Point newTexture)
-        {
-            OldBoxPrimitive.BoxTextureCoords coords =
-                new OldBoxPrimitive.BoxTextureCoords(other.UVs.m_texWidth,
-                    other.UVs.m_texHeight, other.UVs.m_cellWidth, other.UVs.m_cellHeight, other.UVs.Front,
-                    other.UVs.Back, newTexture, other.UVs.Bottom, other.UVs.Left, other.UVs.Right);
-
-            OldBoxPrimitive toReturn = new OldBoxPrimitive(graphics, other.Width, other.Height, other.Depth, coords);
-            return toReturn;
-        }
 
         public void GetFace(BoxFace face, BoxPrimitive.BoxTextureCoords uvs, out int index, out int count)
         {
@@ -400,10 +390,8 @@ namespace DwarfCorp
             public Point Bottom;
             public int m_texWidth;
             public int m_texHeight;
-            public int m_cellWidth;
-            public int m_cellHeight;
             public Vector4[] Bounds = new Vector4[6];
-
+            public Vector2[] Scales = new Vector2[6];
             public BoxTextureCoords()
             {
                 
@@ -430,6 +418,12 @@ namespace DwarfCorp
                     right
                 };
 
+                int i = 0;
+                foreach (FaceData face in cells)
+                {
+                    Scales[i] = new Vector2(face.Rect.Width / (float)totalTextureWidth, face.Rect.Height / (float)totalTextureHeight);
+                    i++;
+                }
 
                 List<Vector2> baseCoords = new List<Vector2>
                 {

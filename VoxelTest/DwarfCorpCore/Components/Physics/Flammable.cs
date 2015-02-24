@@ -65,7 +65,7 @@ namespace DwarfCorp
             return
                 (int)
                     MathFunctions.Clamp((int) (Math.Abs(1*LocParent.BoundingBox.Max.Y - LocParent.BoundingBox.Min.Y)), 1,
-                        20);
+                        3);
         }
 
         public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
@@ -85,7 +85,7 @@ namespace DwarfCorp
                 if(SoundTimer.HasTriggered)
                     SoundManager.PlaySound(ContentPaths.Audio.fire, LocParent.Position, true, 0.5f);
                 double totalSize = (LocParent.BoundingBox.Max - LocParent.BoundingBox.Min).Length();
-                int numFlames = (int) (totalSize / 2.0f) + 1;
+                int numFlames = (int) (totalSize / 4.0f) + 1;
 
                 for(int i = 0; i < numFlames; i++)
                 {

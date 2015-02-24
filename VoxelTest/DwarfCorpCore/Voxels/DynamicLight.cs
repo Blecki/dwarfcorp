@@ -20,17 +20,22 @@ namespace DwarfCorp
         public Vector3 Position { get; set; }
 
         public static List<DynamicLight> Lights = new List<DynamicLight>();
+        public static List<DynamicLight> TempLights = new List<DynamicLight>(); 
 
         public DynamicLight()
         {
             
         }
 
-        public DynamicLight(float range, float intensity)
+        public DynamicLight(float range, float intensity, bool add = true)
         {
             Range = range;
             Intensity = intensity;
-            Lights.Add(this);
+
+            if (add)
+            {
+                Lights.Add(this);
+            }
         }
 
         public void Destroy()

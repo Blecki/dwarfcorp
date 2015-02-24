@@ -54,6 +54,7 @@ namespace DwarfCorp
             TextureManager = new TextureManager(Content, GraphicsDevice);
 
             PlayState playState = new PlayState(this, StateManager);
+            BiomeLibrary.InitializeStatics();
             StateManager.States["IntroState"] = new IntroState(this, StateManager);
             StateManager.States["PlayState"] = playState;
             StateManager.States["MainMenuState"] = new MainMenuState(this, StateManager);

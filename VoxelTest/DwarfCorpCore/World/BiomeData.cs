@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -28,6 +29,11 @@ namespace DwarfCorp
         public bool ClumpGrass { get; set; }
         public float ClumpSize { get; set; }
         public float ClumpTreshold { get; set; }
+        public Color MapColor { get; set; }
+
+        public float Height { get; set; }
+        public float Temp { get; set; }
+        public float Rain { get; set; }
 
         public BiomeData(Overworld.Biome biome)
         {
@@ -38,6 +44,7 @@ namespace DwarfCorp
             ClumpGrass = false;
             ClumpSize = 30.0f;
             ClumpTreshold = 0.75f;
+            MapColor = Color.White;
         }
     }
 

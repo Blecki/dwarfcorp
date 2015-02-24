@@ -177,7 +177,6 @@ namespace DwarfCorp
                             newTransform.M34 = 0;
                             newTransform.M44 = 1;
                             transform = newTransform;
-                            Drawer3D.DrawAxes(newTransform, 1.0f);
                         }
                     }
                 }
@@ -273,9 +272,11 @@ namespace DwarfCorp
             Matrix m = LocalTransform;
             m.Translation += contact.NEnter * (contact.Penetration) * 1.01f;
 
-
+            Vector3 impulse = (Vector3.Dot(Velocity, -contact.NEnter)*contact.NEnter);
+            Velocity += impulse;
             //Vector3 newVelocity = (contact.NEnter * Vector3.Dot(Velocity, contact.NEnter));
             //Velocity = (Velocity - newVelocity) * Restitution;
+            /*
             if (Math.Abs(contact.NEnter.Y) > 0.1f)
             {
                 Velocity = new Vector3(Velocity.X, -Velocity.Y * Restitution, Velocity.Z);
@@ -285,12 +286,14 @@ namespace DwarfCorp
                 Velocity = Vector3.Reflect(Velocity, -contact.NEnter);
                 Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
             }
+             */
 
             LocalTransform = m;
             UpdateBoundingBox();
 
             return true;
         }
+
 
         public virtual void HandleCollisions(ChunkManager chunks, float dt)
         {
@@ -314,7 +317,8 @@ namespace DwarfCorp
             
             List<Voxel> adjacencies = chunk.GetNeighborsEuclidean((int) grid.X, (int) grid.Y, (int) grid.Z);
             vs.AddRange(adjacencies);
-
+            Vector3 half = Vector3.One*0.5f;
+            vs.Sort((a, b) => (MathFunctions.L1(LocalTransform.Translation, a.Position + half).CompareTo(MathFunctions.L1(LocalTransform.Translation, b.Position + half))));
             foreach(Voxel v in vs)
             {
                 if(v == null || v.IsEmpty)

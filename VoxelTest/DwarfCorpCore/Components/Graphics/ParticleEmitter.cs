@@ -54,6 +54,8 @@ namespace DwarfCorp
         [JsonIgnore]
         public BlendState Blend = BlendState.AlphaBlend;
 
+        public bool EmitsLight = false;
+
         public object Clone()
         {
             return this.MemberwiseClone();
@@ -176,6 +178,7 @@ namespace DwarfCorp
                         }
                     }
 
+
                     toAdd.Position = sample + origin;
                     toAdd.Velocity = (sample);
                     toAdd.Velocity.Normalize();
@@ -241,6 +244,10 @@ namespace DwarfCorp
                 float vel = p.Velocity.LengthSquared();
                 if(!Data.Sleeps || vel > 0.2f)
                 {
+                    if (Data.EmitsLight && p.Scale > 0.1f)
+                    {
+                        DynamicLight.TempLights.Add(new DynamicLight(10.0f, 255.0f, false) { Position = p.Position});
+                    }
                     p.Position += p.Velocity * (float) DwarfTime.ElapsedGameTime.TotalSeconds;
 
                     if (Data.RotatesWithVelocity)

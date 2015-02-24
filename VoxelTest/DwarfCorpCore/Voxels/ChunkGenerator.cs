@@ -77,7 +77,7 @@ namespace DwarfCorp
                     chunk.Data.Water[chunk.Data.IndexAt(x, h, z)].WaterLevel = 255;
                     chunk.Data.Water[chunk.Data.IndexAt(x, h, z)].Type = LiquidType.Lava;
 
-
+                    /*
                     for (int y = h - 1; y >= 0; y--)
                     {
                         voxel.Chunk = chunk;
@@ -87,6 +87,7 @@ namespace DwarfCorp
                         voxel.Type = VoxelLibrary.GetVoxelType("Stone");
                         voxel.Chunk.NotifyTotalRebuild(!voxel.IsInterior);
                     }
+                     */
 
                 }
             }
@@ -339,7 +340,7 @@ namespace DwarfCorp
 
         public VoxelChunk GenerateChunk(Vector3 origin, int chunkSizeX, int chunkSizeY, int chunkSizeZ, ComponentManager components, ContentManager content, GraphicsDevice graphics)
         {
-            const float waterHeight = 0.155f;
+            const float waterHeight = 0.17f;
             VoxelChunk c = new VoxelChunk(Manager, origin, 1,
                 Manager.ChunkData.GetChunkID(origin + new Vector3(0.5f, 0.5f, 0.5f)), chunkSizeX, chunkSizeY, chunkSizeZ)
             {
@@ -354,7 +355,7 @@ namespace DwarfCorp
                 {
                     Vector2 v = new Vector2(x + origin.X, z + origin.Z) / PlayState.WorldScale;
 
-                    Overworld.Biome biome = Overworld.Map[(int) v.X, (int) v.Y].Biome;
+                    Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0)), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1))].Biome;
 
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 

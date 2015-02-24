@@ -116,23 +116,18 @@ namespace DwarfCorp
             return new Ray(pos1, dir);
         }
 
-        public Voxel GetFirstVisibleBlockHitByMouse(MouseState mouse, Camera camera, Viewport viewPort)
+        public Voxel GetFirstVisibleBlockHitByMouse(MouseState mouse, Camera camera, Viewport viewPort, bool selectEmpty = false)
         {
-             Voxel vox = GetFirstVisibleBlockHitByScreenCoord(mouse.X, mouse.Y, camera, viewPort, 150.0f);
-
-            if(vox == null)
-            {
-                return null;
-            }
+            Voxel vox = GetFirstVisibleBlockHitByScreenCoord(mouse.X, mouse.Y, camera, viewPort, 150.0f, selectEmpty);
             return vox;
         }
 
-        public Voxel GetFirstVisibleBlockHitByScreenCoord(int x, int y, Camera camera, Viewport viewPort, float dist)
+        public Voxel GetFirstVisibleBlockHitByScreenCoord(int x, int y, Camera camera, Viewport viewPort, float dist, bool selectEmpty = false)
         {
             Vector3 pos1 = viewPort.Unproject(new Vector3(x, y, 0), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
             Vector3 pos2 = viewPort.Unproject(new Vector3(x, y, 1), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
             Vector3 dir = Vector3.Normalize(pos2 - pos1);
-            Voxel vox = GetFirstVisibleBlockHitByRay(pos1, pos1 + dir * dist, false);
+            Voxel vox = GetFirstVisibleBlockHitByRay(pos1, pos1 + dir * dist, false, selectEmpty);
 
             return vox;
         }
@@ -168,34 +163,39 @@ namespace DwarfCorp
             return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, false);
         }
 
-        public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, bool draw)
+        public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, bool draw, bool selectEmpty)
         {
-            return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, draw);
+            return GetFirstVisibleBlockHitByRay(rayStart, rayEnd, null, draw, selectEmpty);
         }
 
-        public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, Voxel ignore,  bool draw)
+
+        public Voxel GetFirstVisibleBlockHitByRay(Vector3 rayStart, Vector3 rayEnd, Voxel ignore,  bool draw, bool selectEmpty = false)
         {
             Vector3 delta = rayEnd - rayStart;
             float length = delta.Length();
             delta.Normalize();
             Voxel atPos = new Voxel();
-
-            for(float dn = 0.0f; dn < length; dn += 0.2f)
+            Voxel prev = new Voxel();
+            Point3 chunkStart =new Point3(rayStart);
+            Point3 chunkEnd = new Point3(rayEnd);
+            foreach(Point3 coord in MathFunctions.RasterizeLine(chunkStart, chunkEnd))
+            //for(float dn = 0.0f; dn < length; dn += 0.2f)
             {
-                Vector3 pos = rayStart + delta * dn;
+                Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
 
                 bool success = GetNonNullVoxelAtWorldLocationCheckFirst(null, pos, ref atPos);
                 if (draw && success)
                 {
                     Drawer3D.DrawBox(new BoundingBox(pos, pos + new Vector3(0.01f, 0.01f, 0.01f)), Color.White, 0.01f);
                 }
-
+                
                 if (success && atPos.IsVisible)
                 {
-                    return atPos;
+                    return selectEmpty ? prev : atPos;
                 }
+                prev.Chunk = atPos.Chunk;
+                prev.GridPosition = atPos.GridPosition;
 
-          
             }
 
             return null;

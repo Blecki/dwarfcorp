@@ -49,6 +49,9 @@ namespace DwarfCorp
             
             while(!WanderTime.HasTriggered)
             {
+                Creature.OverrideCharacterMode = false;
+                Creature.Physics.Orientation = Physics.OrientMode.RotateY;
+                Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
                 WanderTime.Update(Act.LastTime);
                 if(TurnTime.Update(Act.LastTime) || TurnTime.HasTriggered || firstIter)
                 {

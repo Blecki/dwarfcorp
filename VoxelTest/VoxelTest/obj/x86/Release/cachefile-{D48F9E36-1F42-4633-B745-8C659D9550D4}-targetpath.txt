@@ -159,6 +159,7 @@ Content\Entities\Dwarf\Sprites\soldier_animation.json
 Content\Entities\Dwarf\Sprites\wizard_animation.json
 Content\Entities\Elf\Sprites\elf_animation.json
 Content\Entities\Dwarf\Sprites\fairy_animation.json
+Content\World\biomes.json
 Content\Fonts\font1-w.bmp
 Content\Fonts\font1-w-2x.bmp
 Content\Fonts\font1-w-4x.bmp

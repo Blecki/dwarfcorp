@@ -29,6 +29,12 @@ namespace DwarfCorp
             GUI.Skin.RenderProgressBar(rectToDraw, Value, Tint, batch);
             base.Render(time, batch);
         }
+
+        public override bool IsMouseOverRecursive()
+        {
+            if (!IsVisible) return false;
+            else return base.IsMouseOverRecursive();
+        }
     }
 
 }

@@ -163,19 +163,6 @@ namespace DwarfCorp
             {"Highest", Color.White}
         };
 
-        public static Dictionary<string, Color> BiomeColors = new Dictionary<string, Color>
-        {
-            {"Tundra", new Color(200, 255, 200)},
-            {"Taiga", new Color(200, 200, 200)},
-            {"Forest", new Color(50, 150, 50)},
-            {"Desert", new Color(180, 180, 100)},
-            {"Grassland", new Color(50, 255, 40)},
-            {"Jungle", new Color(20, 100, 20)},
-            {"Waste", new Color(255, 200, 0)},
-            {"Sea", new Color(30, 30, 150)},
-            {"Water", new Color(50, 50, 255)},
-        };
-
         public static Dictionary<string, Color> HeightColors = new Dictionary<string, Color>
         {
             {"Sea", new Color(30, 30, 150)},
@@ -203,9 +190,9 @@ namespace DwarfCorp
             Grassland,
             Forest,
             Tundra,
-            ColdForest,
+            Taiga,
             Jungle,
-            Volcano
+            Waste
         }
 
 
@@ -217,8 +204,26 @@ namespace DwarfCorp
             new Vector2(0, 1)
         };
 
-        public static Biome GetBiome(float temp, float rainfall, float heigh)
+        public static Biome GetBiome(float temp, float rainfall, float height)
         {
+
+            Overworld.Biome closest = Biome.Waste;
+            float closestDist = float.MaxValue;
+            foreach (var pair in BiomeLibrary.Biomes)
+            {
+                float dist = Math.Abs(pair.Value.Temp - temp) + Math.Abs(pair.Value.Rain - rainfall) +
+                             Math.Abs(pair.Value.Height - height);
+
+                if (dist < closestDist)
+                {
+                    closest = pair.Key;
+                    closestDist = dist;
+                }
+            }
+
+            return closest;
+
+            /*
             if(heigh > 0.9f)
             {
                 return Biome.Tundra;
@@ -246,7 +251,7 @@ namespace DwarfCorp
                 }
                 else if(temp < 0.2f)
                 {
-                    return Biome.ColdForest;
+                    return Biome.Taiga;
                 }
                 else if(temp < 0.8f)
                 {
@@ -265,7 +270,7 @@ namespace DwarfCorp
                 }
                 else if(temp < 0.2f)
                 {
-                    return Biome.ColdForest;
+                    return Biome.Taiga;
                 }
                 else if(rainfall < 0.5f)
                 {
@@ -276,6 +281,7 @@ namespace DwarfCorp
                     return Biome.Forest;
                 }
             }
+             */
         }
 
      
@@ -667,7 +673,6 @@ namespace DwarfCorp
             int stepX = map.GetLength(0) / width;
             int stepY = map.GetLength(1) / height;
             string index = "";
-            Dictionary<string, Color> colormap = displayMode == "Height" ? HeightColors : BiomeColors;
             for(int tx = 0; tx < width; tx++)
             {
                 for(int ty = 0; ty < height; ty++)
@@ -676,6 +681,7 @@ namespace DwarfCorp
                     int y = ty * stepY;
    
                     float h1 = map[x, y].GetValue(type);
+                    Biome biome = Map[x, y].Biome;
                     if(h1 < 0.1f)
                     {
                         index = "Sea";
@@ -686,39 +692,7 @@ namespace DwarfCorp
                     }
                     else if(displayMode == "Biomes")
                     {
-                        if(map[x, y].Water == WaterType.River)
-                        {
-                            //index = river;
-                        }
-                        else
-                        {
-                            Biome biome = Map[x, y].Biome;
-
-                            switch(biome)
-                            {
-                                case Biome.ColdForest:
-                                    index = "Taiga";
-                                    break;
-                                case Biome.Forest:
-                                    index = "Forest";
-                                    break;
-                                case Biome.Grassland:
-                                    index = "Grassland";
-                                    break;
-                                case Biome.Jungle:
-                                    index = "Jungle";
-                                    break;
-                                case Biome.Tundra:
-                                    index = "Tundra";
-                                    break;
-                                case Biome.Desert:
-                                    index = "Desert";
-                                    break;
-                                case Biome.Volcano:
-                                    index = "Waste";
-                                    break;
-                            }
-                        }
+                        index = "Biome";
                     }
                     else if(displayMode == "Height")
                     {
@@ -744,16 +718,14 @@ namespace DwarfCorp
                         }
                     }
 
-
                     if(displayMode == "Gray")
                     {
                         Color toDraw = JetGradient.GetColor(h1);
-                        //Color toDraw = new Color(h1, 0.5f * h1, 1.0f - h1 * 0.5f);
                         worldData[y * width + x] = toDraw;
                     }
                     else
                     {
-                        Color ci = colormap[index];
+                        Color ci = displayMode == "Biomes"  && index != "Water" && index != "Sea" ? BiomeLibrary.Biomes[biome].MapColor : HeightColors[index];
                         Color toDraw = new Color((float) (ci.R) * (h1 + 0.5f) / 255.0f, (float) (ci.G * (h1 + 0.5f)) / 255.0f, (float) (ci.B * (h1 + 0.5f)) / 255.0f);
                         worldData[ty * width + tx] = toDraw;
                     }
@@ -765,6 +737,7 @@ namespace DwarfCorp
                 imageMutex.WaitOne();
             }
 
+            GameState.Game.GraphicsDevice.Textures[0] = null;
             worldMap.SetData(worldData);
 
             if(imageMutex != null)
