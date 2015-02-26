@@ -410,9 +410,10 @@ namespace DwarfCorp.GameStates
                 //OverworldFile file = new OverworldFile(Overworld.Map, WorldName);
                 //file.WriteFile(worldDirectory.FullName + ProgramData.DirChar + WorldName + "." + OverworldFile.CompressedExtension, true);
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
-            
+                
+                StateManager.PopState();
                 StateManager.PushState("PlayState");
-                PlayState play = (PlayState) StateManager.States["PlayState"];
+
                 MainMenuState menu = (MainMenuState) StateManager.States["MainMenuState"];
                 menu.IsGameRunning = true;
             }
@@ -1003,32 +1004,33 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        public override void Update(DwarfTime DwarfTime)
+        public override void Update(DwarfTime gameTime)
         {
-
             if (StateManager.CurrentState == Name)
             {
                 if (!IsGenerating)
                 {
-                    GUI.Update(DwarfTime);
+                    GUI.Update(gameTime);
                     Input.Update();
                 }
                 else
-                    GUI.RootComponent.UpdateSizeRecursive();   
+                { 
+                    GUI.RootComponent.UpdateSizeRecursive();  
+                }
             }
+            TransitionValue = 1.0f;
 
-
-            base.Update(DwarfTime);
+            base.Update(gameTime);
         }
 
 
-        private void DrawGUI(DwarfTime DwarfTime, float dx)
+        private void DrawGUI(DwarfTime gameTime, float dx)
         {
-            GUI.PreRender(DwarfTime, DwarfGame.SpriteBatch);
+            GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
                 null, null);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
-            GUI.Render(DwarfTime, DwarfGame.SpriteBatch, new Vector2(0, dx));
+            GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(0, dx));
 
 
             if(!GenerationComplete)
@@ -1062,29 +1064,29 @@ namespace DwarfCorp.GameStates
             }
 
             DwarfGame.SpriteBatch.End();
-            GUI.PostRender(DwarfTime);
+            GUI.PostRender(gameTime);
         }
 
-        public override void Render(DwarfTime DwarfTime)
+        public override void Render(DwarfTime gameTime)
         {
             if(Transitioning == TransitionMode.Running)
             {
                 Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-                DrawGUI(DwarfTime, 0);
+                DrawGUI(gameTime, 0);
             }
             else if(Transitioning == TransitionMode.Entering)
             {
                 float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Height, Game.GraphicsDevice.Viewport.Height, 1.0f);
-                DrawGUI(DwarfTime, dx);
+                DrawGUI(gameTime, dx);
             }
             else if(Transitioning == TransitionMode.Exiting)
             {
                 float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Height, 1.0f);
-                DrawGUI(DwarfTime, dx);
+                DrawGUI(gameTime, dx);
             }
 
 
-            base.Render(DwarfTime);
+            base.Render(gameTime);
         }
 
         public void Dispose()

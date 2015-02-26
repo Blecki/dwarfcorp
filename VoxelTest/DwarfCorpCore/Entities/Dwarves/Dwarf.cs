@@ -32,9 +32,9 @@ namespace DwarfCorp
             Initialize(workerClass);
         }
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            base.Update(DwarfTime, chunks, camera);
+            base.Update(gameTime, chunks, camera);
         }
 
         public void Initialize(EmployeeClass dwarfClass)

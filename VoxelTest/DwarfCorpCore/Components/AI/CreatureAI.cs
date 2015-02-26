@@ -226,10 +226,10 @@ namespace DwarfCorp
             }
         }
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            IdleTimer.Update(DwarfTime);
-            SpeakTimer.Update(DwarfTime);
+            IdleTimer.Update(gameTime);
+            SpeakTimer.Update(gameTime);
 
             OrderEnemyAttack();
             PreEmptTasks();
@@ -242,7 +242,7 @@ namespace DwarfCorp
                     Tasks.Add(toReturn);
             }
 
-            if (Status.Hunger.IsUnhappy())
+            if (Status.Hunger.IsUnhappy() && Faction.FindItemsWithTags("Food").Count > 0)
             {
                 Task toReturn = new SatisfyHungerTask();
                 toReturn.SetupScript(Creature);
@@ -320,11 +320,11 @@ namespace DwarfCorp
             }
 
 
-            PlannerTimer.Update(DwarfTime);
+            PlannerTimer.Update(gameTime);
             UpdateThoughts();
             UpdateXP();
 
-            base.Update(DwarfTime, chunks, camera);
+            base.Update(gameTime, chunks, camera);
         }
 
         public void UpdateXP()
@@ -334,7 +334,7 @@ namespace DwarfCorp
                 Stats.XP += xp;
                 string sign = xp > 0 ? "+" : "";
 
-                IndicatorManager.DrawIndicator(sign + xp.ToString() + " xp", Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, xp > 0 ? Color.Green : Color.Red);
+                IndicatorManager.DrawIndicator(sign + xp.ToString() + " XP", Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, xp > 0 ? Color.Green : Color.Red);
             }
             XPEvents.Clear();
         }

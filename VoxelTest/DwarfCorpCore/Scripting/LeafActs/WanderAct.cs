@@ -52,17 +52,17 @@ namespace DwarfCorp
                 Creature.OverrideCharacterMode = false;
                 Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
-                WanderTime.Update(Act.LastTime);
-                if(TurnTime.Update(Act.LastTime) || TurnTime.HasTriggered || firstIter)
+                WanderTime.Update(DwarfTime.LastTime);
+                if(TurnTime.Update(DwarfTime.LastTime) || TurnTime.HasTriggered || firstIter)
                 {
                     LocalTarget = new Vector3(MathFunctions.Rand() * Radius - Radius / 2.0f, 0.0f, MathFunctions.Rand() * Radius - Radius / 2.0f) + oldPosition;
                     firstIter = false;
                 }
 
-                Vector3 output = Creature.Controller.GetOutput((float) Act.LastTime.ElapsedGameTime.TotalSeconds, LocalTarget, Agent.Position);
+                Vector3 output = Creature.Controller.GetOutput((float) DwarfTime.LastTime.ElapsedGameTime.TotalSeconds, LocalTarget, Agent.Position);
                 output.Y = 0.0f;
 
-                Creature.Physics.ApplyForce(output, (float) Act.LastTime.ElapsedGameTime.TotalSeconds);
+                Creature.Physics.ApplyForce(output, (float) DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
 
                 yield return Status.Running;
             }

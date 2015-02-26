@@ -78,11 +78,11 @@ namespace DwarfCorp
             {
                 // If we hit the ground, switch to walking, otherwise switch to flying.
                 Agent.Creature.CurrentCharacterMode = Creature.IsOnGround ? Creature.CharacterMode.Walking : Creature.CharacterMode.Flying;
-                
-                WanderTime.Update(LastTime);
+
+                WanderTime.Update(DwarfTime.LastTime);
 
                 // If we're near a target, or a timeout occured, pick a new ranodm target.
-                if (TurnTime.Update(LastTime) || TurnTime.HasTriggered || currentDistance < TurnThreshold)
+                if (TurnTime.Update(DwarfTime.LastTime) || TurnTime.HasTriggered || currentDistance < TurnThreshold)
                 {
                     // Pick a target within a box floating some distance above the surface.
                     float randomX = MathFunctions.Rand() * Radius - Radius / 2.0f;
@@ -97,14 +97,14 @@ namespace DwarfCorp
                 currentDistance = (Agent.Position - LocalTarget).Length();
 
                 // Output from the force controller.
-                Vector3 output = Creature.Controller.GetOutput((float)LastTime.ElapsedGameTime.TotalSeconds, LocalTarget, Creature.Physics.GlobalTransform.Translation);
+                Vector3 output = Creature.Controller.GetOutput((float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds, LocalTarget, Creature.Physics.GlobalTransform.Translation);
                 
                 // Feed forward term to cancel gravity.
                 Vector3 feedForward = -Agent.Physics.Gravity;
 
                 // We apply a linear combination of the force controller and the 
                 // feed forward force to the bird to make it lazily turn around and fly.
-                Creature.Physics.ApplyForce(output * Damping + feedForward * GravityCompensation, (float)LastTime.ElapsedGameTime.TotalSeconds);
+                Creature.Physics.ApplyForce(output * Damping + feedForward * GravityCompensation, (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
                 yield return Status.Running;
             }
 

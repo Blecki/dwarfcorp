@@ -34,15 +34,15 @@ namespace DwarfCorp
             Timer timout = new Timer(3.0f, false);
             while (dist > 3.0f)
             {
-                timout.Update(Act.LastTime);
+                timout.Update(DwarfTime.LastTime);
                 if (timout.HasTriggered)
                 {
                     break;
                 }
-                Vector3 output = Creature.Controller.GetOutput(Act.Dt, target, Position);
+                Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, target, Position);
                 output.Normalize();
                 output *= 10;
-                Physics.ApplyForce(new Vector3(output.X, 0.0f, output.Z), Act.Dt);
+                Physics.ApplyForce(new Vector3(output.X, 0.0f, output.Z), DwarfTime.Dt);
                 dist = (target - Position).Length();
                 yield return Act.Status.Running;
             }

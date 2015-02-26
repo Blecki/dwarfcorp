@@ -92,7 +92,7 @@ namespace DwarfCorp
                     yield return Status.Success;
                 }
 
-                waitTimer.Update(Act.LastTime);
+                waitTimer.Update(DwarfTime.LastTime);
 
                 if (waitTimer.HasTriggered)
                 {
@@ -102,7 +102,7 @@ namespace DwarfCorp
 
                 ConverseFriends();
 
-                eatTimer.Update(Act.LastTime);
+                eatTimer.Update(DwarfTime.LastTime);
 
                 if(eatTimer.HasTriggered)
                     foreach (Act.Status status in EatFood())

@@ -33,11 +33,11 @@ namespace DwarfCorp
             Timer timer = new Timer(time, true);
             while (!timer.HasTriggered)
             {
-                timer.Update(Act.LastTime);
+                timer.Update(DwarfTime.LastTime);
 
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
                 Creature.Physics.Velocity *= 0.1f;
-                Creature.Attacks[0].PerformNoDamage(Act.LastTime, Creature.AI.Position);
+                Creature.Attacks[0].PerformNoDamage(DwarfTime.LastTime, Creature.AI.Position);
                 Drawer2D.DrawLoadBar(Agent.Position + Vector3.Up, Color.White, Color.Black, 100, 16, timer.CurrentTimeSeconds / time);
 
                 yield return Status.Running;

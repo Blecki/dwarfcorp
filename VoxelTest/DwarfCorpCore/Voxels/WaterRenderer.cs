@@ -107,7 +107,7 @@ namespace DwarfCorp
             }
         }
 
-        public void DrawRefractionMap(DwarfTime DwarfTime, PlayState game, float waterHeight, Matrix viewMatrix, Effect effect, GraphicsDevice device)
+        public void DrawRefractionMap(DwarfTime gameTime, PlayState game, float waterHeight, Matrix viewMatrix, Effect effect, GraphicsDevice device)
         {
             Plane refractionPlane = CreatePlane(waterHeight, new Vector3(0, -1, 0), viewMatrix, false);
 
@@ -120,22 +120,22 @@ namespace DwarfCorp
 
             if(DrawTerrainRefracted)
             {
-                game.Draw3DThings(DwarfTime, effect, viewMatrix);
+                game.Draw3DThings(gameTime, effect, viewMatrix);
             }
             else
             {
-                game.DrawSky(DwarfTime, viewMatrix, 0.25f);
+                game.DrawSky(gameTime, viewMatrix, 0.25f);
             }
 
             Drawer3D.Render(device, effect, false);
 
             if(DrawComponentsRefracted)
             {
-                game.DrawComponents(DwarfTime, effect, viewMatrix, ComponentManager.WaterRenderType.Refractive, waterHeight);
+                game.DrawComponents(gameTime, effect, viewMatrix, ComponentManager.WaterRenderType.Refractive, waterHeight);
             }
             else
             {
-                game.DrawSky(DwarfTime, viewMatrix, 0.25f);
+                game.DrawSky(gameTime, viewMatrix, 0.25f);
             }
 
 
@@ -145,7 +145,7 @@ namespace DwarfCorp
         }
 
 
-        public void DrawReflectionMap(DwarfTime DwarfTime, PlayState game, float waterHeight, Matrix reflectionViewMatrix, Effect effect, GraphicsDevice device)
+        public void DrawReflectionMap(DwarfTime gameTime, PlayState game, float waterHeight, Matrix reflectionViewMatrix, Effect effect, GraphicsDevice device)
         {
             Plane reflectionPlane = CreatePlane(waterHeight, new Vector3(0, -1, 0), reflectionViewMatrix, true);
 
@@ -162,12 +162,12 @@ namespace DwarfCorp
 
             if(DrawTerrainReflected)
             {
-                game.DrawSky(DwarfTime, reflectionViewMatrix, 0.25f);
-                game.Draw3DThings(DwarfTime, effect, reflectionViewMatrix);
+                game.DrawSky(gameTime, reflectionViewMatrix, 0.25f);
+                game.Draw3DThings(gameTime, effect, reflectionViewMatrix);
             }
             else
             {
-                game.DrawSky(DwarfTime, reflectionViewMatrix, 0.25f);
+                game.DrawSky(gameTime, reflectionViewMatrix, 0.25f);
             }
 
             Drawer3D.Render(device, effect, false);
@@ -175,7 +175,7 @@ namespace DwarfCorp
             if(DrawComponentsReflected)
             {
                 effect.Parameters["xView"].SetValue(reflectionViewMatrix);
-                game.DrawComponents(DwarfTime, effect, reflectionViewMatrix, ComponentManager.WaterRenderType.Reflective, waterHeight);
+                game.DrawComponents(gameTime, effect, reflectionViewMatrix, ComponentManager.WaterRenderType.Reflective, waterHeight);
             }
 
             effect.Parameters["Clipping"].SetValue(0);

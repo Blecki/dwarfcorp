@@ -90,8 +90,8 @@ namespace DwarfCorp
                 if(TargetVoxel != null)
                 {
                     Agent.Physics.IsSleeping = false;
-                    Agent.LocalControlTimeout.Update(LastTime);
-                    ValidPathTimer.Update(LastTime);
+                    Agent.LocalControlTimeout.Update(DwarfTime.LastTime);
+                    ValidPathTimer.Update(DwarfTime.LastTime);
 
                     // Check if the path has been made invalid
                     if (ValidPathTimer.HasTriggered && !IsPathValid(path))
@@ -127,11 +127,11 @@ namespace DwarfCorp
                             TargetVoxel.Position, 0.25f) + new Vector3(0.5f, 0.5f, 0.5f);
                     }
 
-                    Vector3 output = Agent.Creature.Controller.GetOutput((float) Act.LastTime.ElapsedGameTime.TotalSeconds,
+                    Vector3 output = Agent.Creature.Controller.GetOutput((float) DwarfTime.LastTime.ElapsedGameTime.TotalSeconds,
                        LocalTarget,
                         Agent.Creature.Physics.GlobalTransform.Translation);
 
-                    Agent.Creature.Physics.ApplyForce(output, (float) Act.LastTime.ElapsedGameTime.TotalSeconds);
+                    Agent.Creature.Physics.ApplyForce(output, (float) DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
 
                     output.Y = 0.0f;
 
@@ -139,7 +139,7 @@ namespace DwarfCorp
 
                     if(yDifference > 0.1)
                     {
-                        Agent.Jump(LastTime);
+                        Agent.Jump(DwarfTime.LastTime);
                     }
 
 

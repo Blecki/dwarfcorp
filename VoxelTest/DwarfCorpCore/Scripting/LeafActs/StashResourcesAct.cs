@@ -43,7 +43,7 @@ namespace DwarfCorp
 
                 while (!waitTimer.HasTriggered)
                 {
-                    waitTimer.Update(Act.LastTime);
+                    waitTimer.Update(DwarfTime.LastTime);
                     yield return Status.Running;
                 }
                 yield return Status.Success;

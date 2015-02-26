@@ -147,9 +147,9 @@ namespace DwarfCorp
         }
 
 
-        public void Render(DwarfTime DwarfTime, GraphicsDevice graphics, Effect effect)
+        public void Render(DwarfTime gameTime, GraphicsDevice graphics, Effect effect)
         {
-            float t = (float) DwarfTime.TotalGameTime.TotalSeconds;
+            float t = (float)gameTime.TotalGameTime.TotalSeconds;
             float st = (float) Math.Sin(t * 4) * 0.5f + 0.5f;
             effect.Parameters["xTexture"].SetValue(BlockTextures);
             effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 2.0f, 0.5f * st + 0.45f));

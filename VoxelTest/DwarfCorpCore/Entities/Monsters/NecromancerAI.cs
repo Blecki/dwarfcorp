@@ -39,9 +39,9 @@ namespace DwarfCorp
             AttackRange = 10;
         }
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            base.Update(DwarfTime, chunks, camera);
+            base.Update(gameTime, chunks, camera);
         }
 
         public override Task ActOnIdle()
@@ -122,20 +122,20 @@ namespace DwarfCorp
                 {
                     yield return Act.Status.Success;
                 }
-                SummonTimer.Update(Act.LastTime);
+                SummonTimer.Update(DwarfTime.LastTime);
 
                 if (WanderTimer.HasTriggered)
                 {
                     Physics.ApplyForce(MathFunctions.RandVector3Box(-5f, 5f, 0.01f, 0.01f, -5f, 5f), 1f);
                     GatherSkeletons();
                 }
-                WanderTimer.Update(Act.LastTime);
+                WanderTimer.Update(DwarfTime.LastTime);
 
                 if (AttackTimer.HasTriggered)
                 {
                     OrderSkeletonsToAttack();
                 }
-                AttackTimer.Update(Act.LastTime);
+                AttackTimer.Update(DwarfTime.LastTime);
                 yield return Act.Status.Running;
             }
         }

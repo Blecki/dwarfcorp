@@ -39,7 +39,7 @@ namespace DwarfCorp
             ;
         }
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             FireTimer.Update(DwarfTime);
             if(FireTimer.HasTriggered)

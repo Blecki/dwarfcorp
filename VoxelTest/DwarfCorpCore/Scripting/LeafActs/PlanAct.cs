@@ -106,7 +106,7 @@ namespace DwarfCorp
                     break;
                 }
 
-                PlannerTimer.Update(LastTime);
+                PlannerTimer.Update(DwarfTime.LastTime);
 
                 ChunkManager chunks = PlayState.ChunkManager;
                 if(PlannerTimer.HasTriggered || Timeouts == 0)

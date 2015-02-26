@@ -230,21 +230,21 @@ namespace DwarfCorp
             }
         }
 
-        public void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if(RootComponent != null)
             {
                 RootComponent.UpdateTransformsRecursive();
             }
 
-            Factions.Update(DwarfTime);
+            Factions.Update(gameTime);
 
 
             foreach(GameComponent component in Components.Values)
             {
                 if(component.IsActive)
                 {
-                    component.Update(DwarfTime, chunks, camera);
+                    component.Update(gameTime, chunks, camera);
                 }
 
                 if(component.IsDead)
@@ -324,7 +324,7 @@ namespace DwarfCorp
             None
         }
 
-        public void Render(DwarfTime DwarfTime,
+        public void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,
@@ -387,7 +387,7 @@ namespace DwarfCorp
                 }
 
 
-                component.Render(DwarfTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderForWater);
+                component.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderForWater);
             }
 
             effect.Parameters["xEnableLighting"].SetValue(0);

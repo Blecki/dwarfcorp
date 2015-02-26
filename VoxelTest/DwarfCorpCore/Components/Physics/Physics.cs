@@ -90,13 +90,13 @@ namespace DwarfCorp
             LocalTransform = transform;
         }
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             BoundingBox bounds = chunks.Bounds;
             bounds.Max.Y += 50;
             if (!IsSleeping && (Velocity).Length() < 0.15f)
             {
-                SleepTimer.Update(DwarfTime);
+                SleepTimer.Update(gameTime);
                 if (SleepTimer.HasTriggered)
                 {
                     applyGravityThisFrame = false;
@@ -118,7 +118,7 @@ namespace DwarfCorp
                     overrideSleepThisFrame = false;
                 }
 
-                float dt = (float) (DwarfTime.ElapsedGameTime.TotalSeconds);
+                float dt = (float)(gameTime.ElapsedGameTime.TotalSeconds);
 
                 MoveY(dt);
                 MoveX(dt);
@@ -201,12 +201,12 @@ namespace DwarfCorp
                 Velocity *= LinearDamping;
                 AngularVelocity *= AngularDamping;
                 UpdateBoundingBox();
-                CheckLiquids(chunks, (float) DwarfTime.ElapsedGameTime.TotalSeconds);
+                CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             }
             Velocity = (PreviousVelocity * 0.1f + Velocity * 0.9f);
             PreviousVelocity = Velocity;
             PreviousPosition = Position;
-            base.Update(DwarfTime, chunks, camera);
+            base.Update(gameTime, chunks, camera);
         }
 
         public Timer SleepTimer { get; set; }
