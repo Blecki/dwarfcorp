@@ -180,11 +180,11 @@ namespace DwarfCorp
             CreatePrimitives(GameState.Game.GraphicsDevice);
         }
 
-        public virtual void Update(DwarfTime DwarfTime, Timer.TimerMode mode = Timer.TimerMode.Game)
+        public virtual void Update(DwarfTime gameTime, Timer.TimerMode mode = Timer.TimerMode.Game)
         {
             if(IsPlaying)
             {
-                float dt = mode == Timer.TimerMode.Game ? (float)DwarfTime.ElapsedGameTime.TotalSeconds : (float)DwarfTime.ElapsedRealTime.TotalSeconds;
+                float dt = mode == Timer.TimerMode.Game ? (float)gameTime.ElapsedGameTime.TotalSeconds : (float)gameTime.ElapsedRealTime.TotalSeconds;
                 FrameTimer += dt;
 
                 float time = FrameHZ;

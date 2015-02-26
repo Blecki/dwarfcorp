@@ -84,7 +84,7 @@ namespace DwarfCorp
         }
         public void UpdateStocks(DateTime time)
         {
-            float marketBias = (float)Math.Sin(Act.LastTime.TotalGameTime.TotalSeconds * 0.001f) * 0.25f;
+            float marketBias = (float)Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds * 0.001f) * 0.25f;
             float originalStockPrice = Company.StockPrice;
             foreach (Company company in Market)
             {

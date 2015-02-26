@@ -81,7 +81,7 @@ namespace DwarfCorp
 
             while(true)
             {
-                Timeout.Update(Act.LastTime);
+                Timeout.Update(DwarfTime.LastTime);
 
                 if (Timeout.HasTriggered)
                 {
@@ -132,22 +132,22 @@ namespace DwarfCorp
                 if(diff.Length() > CurrentAttack.Range && !collides)
                 {
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
-                    Vector3 output = Creature.Controller.GetOutput(Act.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
+                    Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
                     output.Y = 0.0f;
-                    Creature.Physics.ApplyForce(output, Act.Dt);
+                    Creature.Physics.ApplyForce(output, DwarfTime.Dt);
 
                     if ((targetPos - Creature.AI.Position).Y > 0.3 && Creature.IsOnGround)
                     {
-                        Agent.Jump(Act.LastTime);
+                        Agent.Jump(DwarfTime.LastTime);
                     }
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                 }
                 else if (diff.Length() < CurrentAttack.Range*0.75f)
                 {
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
-                    Vector3 output = Creature.Controller.GetOutput(Act.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
+                    Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
                     output.Y = 0.0f;
-                    Creature.Physics.ApplyForce(-output, Act.Dt);
+                    Creature.Physics.ApplyForce(-output, DwarfTime.Dt);
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                 }
                 // Else, stop and attack
@@ -159,7 +159,7 @@ namespace DwarfCorp
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
                     CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
                     while (
-                        !CurrentAttack.Perform(Target, Act.LastTime, Creature.Stats.BuffedStr + Creature.Stats.BuffedSiz,
+                        !CurrentAttack.Perform(Target, DwarfTime.LastTime, Creature.Stats.BuffedStr + Creature.Stats.BuffedSiz,
                             Creature.AI.Position))
                     {
                         Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);

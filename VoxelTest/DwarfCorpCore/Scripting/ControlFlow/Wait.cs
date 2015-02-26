@@ -35,7 +35,7 @@ namespace DwarfCorp
         {
             while(!Time.HasTriggered)
             {
-                Time.Update(Act.LastTime);
+                Time.Update(DwarfTime.LastTime);
                 yield return Status.Running;
             }
 

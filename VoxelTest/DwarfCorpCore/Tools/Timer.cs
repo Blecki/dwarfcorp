@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -53,6 +54,15 @@ namespace DwarfCorp
                 TotalGameTime += ElapsedGameTime;
             }
         }
+
+        [JsonIgnore]
+        public static DwarfTime LastTime { get; set; }
+
+        [JsonIgnore]
+        public static float Dt
+        {
+            get { return (float) LastTime.ElapsedGameTime.TotalSeconds; }
+        }
     }
 
     /// <summary>
@@ -82,6 +92,7 @@ namespace DwarfCorp
             TriggerOnce = triggerOnce;
             HasTriggered = false;
             StartTimeSeconds = -1;
+            Mode = mode;
         }
 
         public bool Update(DwarfTime t)
