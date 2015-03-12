@@ -48,7 +48,7 @@
             [ 3, 0, 0, 1, 2 ]
          ],
          "Name" : "IdleFORWARD",
-         "Speed" : [ 1, 0.2, 2, 0.1]
+         "Speed" : [ 1, 0.15, 0.15, 0.15]
       },
       {
          "Frames" : [
@@ -58,7 +58,7 @@
             [ 3, 1, 0, 1, 2 ]
          ],
          "Name" : "IdleLEFT",
-         "Speed" : [ 1, 0.2, 2, 0.1]
+         "Speed" : [ 1, 0.15, 0.15, 0.15]
       },
       {
          "Frames" : [
@@ -68,7 +68,7 @@
             [ 3, 2, 0, 1, 2 ]
          ],
          "Name" : "IdleRIGHT",
-         "Speed" : [ 1, 0.2, 2, 0.1]
+         "Speed" : [ 1, 0.15, 0.15, 0.15]
       },
       {
          "Frames" : [
@@ -78,7 +78,7 @@
             [ 3, 3, 0, 1, 2 ]
          ],
          "Name" : "IdleBACKWARD",
-         "Speed" : [ 1, 0.2, 2, 0.1]
+         "Speed" : [ 1, 0.15, 0.15, 0.15]
       },
       {
          "Frames" : [
@@ -145,7 +145,7 @@
             [ 3, 8, 0, 1, 2 ]
          ],
          "Name" : "AttackingFORWARD",
-         "Speed" : [0.25]
+         "Speed" : [0.15]
       },
       {
          "Frames" : [
@@ -155,7 +155,7 @@
             [ 3, 9, 0, 1, 2 ]
          ],
          "Name" : "AttackingLEFT",
-         "Speed" : [0.25]
+         "Speed" : [0.15]
       },
       {
          "Frames" : [
@@ -165,7 +165,7 @@
             [ 3, 10, 0, 1, 2 ]
          ],
          "Name" : "AttackingRIGHT",
-         "Speed" : [0.25]
+         "Speed" : [0.15]
       },
       {
          "Frames" : [
@@ -175,7 +175,7 @@
             [ 3, 11, 0, 1, 2 ]
          ],
          "Name" : "AttackingBACKWARD",
-         "Speed" : [0.25]
+         "Speed" : [0.15]
       },
 
      {
