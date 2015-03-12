@@ -28,7 +28,7 @@ namespace DwarfCorp
             Timer chirpTimer = new Timer(MathFunctions.Rand(6f, 10f), false);
             while (true)
             {
-                chirpTimer.Update(Act.LastTime);
+                chirpTimer.Update(DwarfTime.LastTime);
                 if (chirpTimer.HasTriggered)
                 {
                     Creature.NoiseMaker.MakeNoise("chirp", Creature.AI.Position, true, 0.5f);

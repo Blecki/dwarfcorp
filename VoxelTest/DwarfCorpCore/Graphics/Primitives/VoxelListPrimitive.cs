@@ -511,8 +511,6 @@ namespace DwarfCorp
                             uvs = v.ComputeTransitionTexture(manhattanNeighbors);
                         }
 
-                        float texScale = (float)uvs.m_cellHeight / (float)uvs.m_texHeight;
-
 
                         Voxel worldVoxel = new Voxel();
                         for(int i = 0; i < 6; i++)
@@ -548,6 +546,7 @@ namespace DwarfCorp
                             int vertexIndex = 0;
                             int vertexCount = 0;
                             primitive.GetFace(face, uvs, out faceIndex, out faceCount, out vertexIndex, out vertexCount);
+                            Vector2 texScale = uvs.Scales[i];
 
                             int indexOffset = accumulatedVertices.Count;
                             for (int vertOffset = 0; vertOffset < vertexCount; vertOffset++)
@@ -564,7 +563,7 @@ namespace DwarfCorp
 
                                     if(face != BoxFace.Top && face != BoxFace.Bottom)
                                     {
-                                        texOffset = new Vector2(0, v.Type.RampSize * (texScale));
+                                        texOffset = new Vector2(0, v.Type.RampSize * (texScale.Y));
                                     }
                                 }
 

@@ -213,9 +213,9 @@ namespace DwarfCorp
         }
 
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            IsAboveCullPlane =  GlobalTransform.Translation.Y - GetBoundingBox().Extents().Y > (chunks.ChunkData.MaxViewingLevel + 2);
+            IsAboveCullPlane =  GlobalTransform.Translation.Y - GetBoundingBox().Extents().Y > (chunks.ChunkData.MaxViewingLevel + 5);
             if(DrawScreenRect)
             {
                 Drawer2D.DrawRect(GetScreenRect(camera), Color.Transparent, Color.White, 1);
@@ -234,7 +234,7 @@ namespace DwarfCorp
             if(AnimationQueue.Count > 0)
             {
                 MotionAnimation anim = AnimationQueue[0];
-                anim.Update(DwarfTime);
+                anim.Update(gameTime);
 
                 LocalTransform = anim.GetTransform();
 
@@ -244,7 +244,7 @@ namespace DwarfCorp
                 }
             }
 
-            base.Update(DwarfTime, chunks, camera);
+            base.Update(gameTime, chunks, camera);
         }
 
 

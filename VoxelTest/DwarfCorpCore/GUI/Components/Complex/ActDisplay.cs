@@ -28,7 +28,7 @@ namespace DwarfCorp
         public Color[] DisplayColors { get; set; }
         public int ElementWidth = 50;
         public int ElementHeight = 15;
-        private Timer rebuildTimer = new Timer(2.0f, false);
+        private Timer rebuildTimer = new Timer(2.0f, false, Timer.TimerMode.Real);
 
         public struct ActElement
         {

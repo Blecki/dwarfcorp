@@ -326,6 +326,18 @@ namespace DwarfCorp
 
         }
 
+        public virtual void UpdateSizeRecursive()
+        {
+            UpdateSize();
+
+            foreach(GUIComponent child in Children)
+            {
+                child.UpdateSizeRecursive();
+            }
+
+            UpdateTransformsRecursive();
+        }
+
         public virtual void UpdateSize()
         {
             int w = LocalBounds.Width;

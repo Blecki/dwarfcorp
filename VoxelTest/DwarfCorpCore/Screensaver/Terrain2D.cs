@@ -66,7 +66,7 @@ namespace DwarfCorp
             HeightScale = 0.01f;
             CaveThreshold = 0.5f;
             LavaHeight = 0.6f;
-            TileSize = 32;
+            TileSize = 64;
             Noise = new Perlin(1928);
 
             Texture2D tiles = TextureManager.GetTexture("TileSet");
@@ -130,7 +130,8 @@ namespace DwarfCorp
         public void Render(GraphicsDevice graphics, SpriteBatch sprites, DwarfTime time)
         {
             Bloom.BeginDraw();
-            sprites.Begin();
+            sprites.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
+                DepthStencilState.Default, RasterizerState.CullNone);
             graphics.Clear(Color.SkyBlue);
           
 

@@ -393,6 +393,9 @@ namespace DwarfCorp.GameStates
                 worldMap = null;
                 worldData = null;
             }
+            GUI.RootComponent.ClearChildren();
+            GUI = null;
+            
 
             LoadingMessage = "";
             base.OnExit();
@@ -407,9 +410,10 @@ namespace DwarfCorp.GameStates
                 //OverworldFile file = new OverworldFile(Overworld.Map, WorldName);
                 //file.WriteFile(worldDirectory.FullName + ProgramData.DirChar + WorldName + "." + OverworldFile.CompressedExtension, true);
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
-            
+                
+                StateManager.PopState();
                 StateManager.PushState("PlayState");
-                PlayState play = (PlayState) StateManager.States["PlayState"];
+
                 MainMenuState menu = (MainMenuState) StateManager.States["MainMenuState"];
                 menu.IsGameRunning = true;
             }
@@ -465,7 +469,7 @@ namespace DwarfCorp.GameStates
             }
             else if(type == "Biomes")
             {
-                ColorKeys.ColorEntries = Overworld.BiomeColors;
+                ColorKeys.ColorEntries = BiomeLibrary.CreateBiomeColors();
                 Overworld.TextureFromHeightMap(type, Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap);
             }
             else if(type == "Temp.")
@@ -537,7 +541,7 @@ namespace DwarfCorp.GameStates
 
                         if(dist < volcanoSize)
                         {
-                            Overworld.Map[x, y].Biome = Overworld.Biome.Volcano;
+                            Overworld.Map[x, y].Biome = Overworld.Biome.Waste;
                         }
                     }
                 }
@@ -548,6 +552,8 @@ namespace DwarfCorp.GameStates
         {
             try
             {
+                GUI.MouseMode = GUISkin.MousePointer.Wait;
+               
                 PlayState.Random = new ThreadSafeRandom(Seed);
                 GenerationComplete = false;
 
@@ -578,17 +584,17 @@ namespace DwarfCorp.GameStates
                     }
                 }
 
-                LoadingMessage = "Biomes.";
+                LoadingMessage = "Climate";
                 for (int x = 0; x < width; x++)
                 {
                     for (int y = 0; y < height; y++)
                     {
                         Overworld.Map[x, y].Temperature = Overworld.noise(x, y, 1.0f, 0.001f) * 0.1f + ((float)(y) / (float)(height)) + Overworld.noise(x, y, 10.0f, 0.1f) * 0.05f * TemperatureScale;
-                        Overworld.Map[x, y].Rainfall = Math.Max(Math.Min(Overworld.noise(x, y, 1000.0f, 0.01f) + Overworld.noise(x, y, 100.0f, 0.1f) * 0.05f, 1.0f), 0.0f) * RainfallScale;
+                        //Overworld.Map[x, y].Rainfall = Math.Max(Math.Min(Overworld.noise(x, y, 1000.0f, 0.01f) + Overworld.noise(x, y, 100.0f, 0.1f) * 0.05f, 1.0f), 0.0f) * RainfallScale;
                     }
                 }
 
-                Overworld.Distort(width, height, 60.0f, 0.005f, Overworld.ScalarFieldType.Rainfall);
+                //Overworld.Distort(width, height, 60.0f, 0.005f, Overworld.ScalarFieldType.Rainfall);
                 Overworld.Distort(width, height, 30.0f, 0.005f, Overworld.ScalarFieldType.Temperature);
                 for (int x = 0; x < width; x++)
                 {
@@ -597,11 +603,8 @@ namespace DwarfCorp.GameStates
                         Overworld.Map[x, y].Temperature = Math.Max(Math.Min(Overworld.Map[x, y].Temperature / (Overworld.Map[x, y].Height * 2.0f), 1.0f), 0.0f);
                     }
                 }
-
+        
                 Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, width, height, MapPanel.Lock, worldData, worldMap);
-
-                MapPanel.Image = new ImageFrame(worldMap, new Rectangle(0, 0, worldMap.Width, worldMap.Height));
-                MapPanel.LocalBounds = new Rectangle(300, 30, worldMap.Width, worldMap.Height);
 
                 int numVoronoiPoints = (int)NumFaults;
 
@@ -648,14 +651,19 @@ namespace DwarfCorp.GameStates
                 #endregion
 
                 Progress.Value = 0.9f;
-                MapPanel.Image = new ImageFrame(worldMap, new Rectangle(0, 0, worldMap.Width, worldMap.Height));
-                MapPanel.LocalBounds = new Rectangle(300, 30, worldMap.Width, worldMap.Height);
+
 
                 LoadingMessage = "Blur.";
                 Overworld.Blur(Overworld.Map, width, height, Overworld.ScalarFieldType.Erosion);
+
+                LoadingMessage = "Generate height.";
                 Overworld.GenerateHeightMap(width, height, 1.0f, true);
 
 
+                LoadingMessage = "Rain";
+                CalculateRain(width, height);
+
+                LoadingMessage = "Biome";
                 for (int x = 0; x < width; x++)
                 {
                     for (int y = 0; y < height; y++)
@@ -679,12 +687,39 @@ namespace DwarfCorp.GameStates
 
                 Progress.Value = 1.0f;
                 IsGenerating = false;
+                GUI.MouseMode = GUISkin.MousePointer.Pointer;
             }
             catch (Exception exception)
             {
                 ProgramData.WriteExceptionLog(exception);
                 throw;
             }
+        }
+
+        public void CalculateRain(int width, int height)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                float currentMoisture = RainfallScale * 10;
+                for (int x = 0; x < width; x++)
+                {
+                    float h = Overworld.Map[x, y].Height;
+                    bool isWater = h < 0.17;
+
+                    if (isWater)
+                    {
+                        currentMoisture += MathFunctions.Rand(0.1f, 0.3f);
+                        currentMoisture = Math.Min(currentMoisture, RainfallScale*20);
+                    }
+                    else
+                    {
+                        float rainAmount = currentMoisture * 0.017f * h + currentMoisture * 0.006f;
+                        currentMoisture -= rainAmount;
+                        Overworld.Map[x, y].Rainfall = rainAmount * RainfallScale * 5;
+                    }
+                }
+            }
+
         }
 
         private void Voronoi(int width, int height, int numVoronoiPoints)
@@ -812,74 +847,9 @@ namespace DwarfCorp.GameStates
                     Overworld.MinBlend(Overworld.Map, currentPos, erosionRate * Overworld.GetValue(Overworld.Map, currentPos, Overworld.ScalarFieldType.Erosion), Overworld.ScalarFieldType.Erosion);
 
                     velocity = 0.1f * g + 0.7f * velocity + 0.2f * MathFunctions.RandVector2Circle();
-                    //velocity += g * 0.01f;
-                    //velocity.Length();
                     currentPos += velocity;
                 }
             }
-
-            /*
-            int numReverseRains = 200;
-
-            for(int i = 0; i < numReverseRains; i++)
-            {
-                LoadingMessage = "Rivers " + i + "/" + numReverseRains;
-                Vector2 currentPos = new Vector2(0, 0);
-                Vector2 bestPos = currentPos;
-                float bestHeight = float.MinValue;
-                for(int k = 0; k < 5; k++)
-                {
-                    int randX = PlayState.Random.Next(1, width - 1);
-                    int randY = PlayState.Random.Next(1, height - 1);
-
-                    currentPos = new Vector2(randX, randY);
-                    float h = Overworld.GetHeight(buffer, currentPos);
-
-                    if(h > bestHeight && h > 0.19f)
-                    {
-                        bestHeight = h;
-                        bestPos = currentPos;
-                    }
-                }
-
-                currentPos = bestPos;
-
-                for(int j = 0; j < 10000; j++)
-                {
-                    Vector2 g = Overworld.GetMinNeighbor(buffer, currentPos);
-
-
-                    if(g.Length() < 0.1f)
-                    {
-                        break;
-                    }
-
-                    g += new Vector2(MathFunctions.Rand() - 0.5f, MathFunctions.Rand() - 0.5f);
-
-                    float h = Overworld.GetHeight(buffer, currentPos);
-
-
-                    for(int dx = -1; dx < 1; dx++)
-                    {
-                        for(int dy = -1; dy < 1; dy++)
-                        {
-                            Overworld.SetWater(Overworld.Map, currentPos + new Vector2(dx, dy), Overworld.WaterType.River);
-
-                            float f = 0.19f / h;
-                            Overworld.MinBlend(Overworld.Map, currentPos, f, Overworld.ScalarFieldType.Erosion);
-                        }
-                    }
-
-                    currentPos += g;
-
-
-                    if(h < 0.19f)
-                    {
-                        break;
-                    }
-                }
-            }
-             */
         }
 
         private void Weather(int width, int height, float T, Vector2[] neighbs, float[,] buffer)
@@ -1034,31 +1004,38 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        public override void Update(DwarfTime DwarfTime)
+        public override void Update(DwarfTime gameTime)
         {
-            GUI.Update(DwarfTime);
-            Input.Update();
+            if (StateManager.CurrentState == Name)
+            {
+                if (!IsGenerating)
+                {
+                    GUI.Update(gameTime);
+                    Input.Update();
+                }
+                else
+                { 
+                    GUI.RootComponent.UpdateSizeRecursive();  
+                }
+            }
+            TransitionValue = 1.0f;
 
-            base.Update(DwarfTime);
+            base.Update(gameTime);
         }
 
 
-        private void DrawGUI(DwarfTime DwarfTime, float dx)
+        private void DrawGUI(DwarfTime gameTime, float dx)
         {
-            GUI.PreRender(DwarfTime, DwarfGame.SpriteBatch);
+            GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
                 null, null);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
-            GUI.Render(DwarfTime, DwarfGame.SpriteBatch, new Vector2(0, dx));
+            GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(0, dx));
 
 
-            if(worldMap != null)
-            {
-                Vector2 mapCorner = new Vector2(MapPanel.GlobalBounds.Location.X, MapPanel.GlobalBounds.Location.Y);
-            }
             if(!GenerationComplete)
             {
-                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, LoadingMessage, DefaultFont, new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - 100, Game.GraphicsDevice.Viewport.Height / 2) + new Vector2(0, dx), Color.White, Color.Black);
+                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, LoadingMessage, DefaultFont, new Vector2(Progress.GlobalBounds.Center.X, Progress.GlobalBounds.Center.Y - 8), Color.White, Color.Black);
             }
 
             if(GenerationComplete)
@@ -1068,37 +1045,48 @@ namespace DwarfCorp.GameStates
                 float chunkScale = PlayState.WorldScale;
   
                 Vector2 mapCorner = new Vector2(MapPanel.GetImageBounds().Location.X, MapPanel.GetImageBounds().Location.Y);
+                
                 Vector2 scaledOrigin = PlayState.WorldOrigin;
                 scaledOrigin.X /= scaleX;
                 scaledOrigin.Y /= scaleY;
-                Drawer2D.DrawRect(DwarfGame.SpriteBatch, new Rectangle((int)(PlayState.WorldOrigin.X / scaleX + mapCorner.X - PlayState.WorldSize.X / 2 * chunkScale), (int)(PlayState.WorldOrigin.Y / scaleY + mapCorner.Y - PlayState.WorldSize.Z / 2 * chunkScale), (int)(PlayState.WorldSize.X * chunkScale), (int)(PlayState.WorldSize.Z * chunkScale)), Color.Yellow, 3.0f);
+                int spawnX =
+                    (int) (PlayState.WorldOrigin.X/scaleX + mapCorner.X);
+                int spawnY =
+                    (int) (PlayState.WorldOrigin.Y/scaleY + mapCorner.Y);
+                int spawnWidth = (int) (PlayState.WorldSize.X*chunkScale / scaleX) * 2;
+                int spawnHeight = (int) (PlayState.WorldSize.Z*chunkScale / scaleY) * 2;
+                Drawer2D.DrawRect(DwarfGame.SpriteBatch, new Rectangle(spawnX - spawnWidth / 2 , spawnY - spawnHeight / 2, spawnWidth, spawnHeight), Color.Yellow, 3.0f);
                 Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Spawn", DefaultFont, mapCorner + scaledOrigin - new Vector2(50, 30), Color.White, Color.Black);
+
+                ImageMutex.WaitOne();
+                DwarfGame.SpriteBatch.Draw(MapPanel.Image.Image, new Rectangle(MapPanel.GetImageBounds().Right + 2, MapPanel.GetImageBounds().Top, spawnWidth * 2, spawnHeight * 2), new Rectangle((int)PlayState.WorldOrigin.X - (int)(PlayState.WorldSize.X * chunkScale * 2) / 2, (int)PlayState.WorldOrigin.Y - (int)(PlayState.WorldSize.Z * chunkScale * 2)/2, (int)(PlayState.WorldSize.X * chunkScale * 2), (int)(PlayState.WorldSize.Z * chunkScale * 2)), Color.White);
+                ImageMutex.ReleaseMutex();
             }
 
             DwarfGame.SpriteBatch.End();
-            GUI.PostRender(DwarfTime);
+            GUI.PostRender(gameTime);
         }
 
-        public override void Render(DwarfTime DwarfTime)
+        public override void Render(DwarfTime gameTime)
         {
             if(Transitioning == TransitionMode.Running)
             {
                 Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-                DrawGUI(DwarfTime, 0);
+                DrawGUI(gameTime, 0);
             }
             else if(Transitioning == TransitionMode.Entering)
             {
                 float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Height, Game.GraphicsDevice.Viewport.Height, 1.0f);
-                DrawGUI(DwarfTime, dx);
+                DrawGUI(gameTime, dx);
             }
             else if(Transitioning == TransitionMode.Exiting)
             {
                 float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Height, 1.0f);
-                DrawGUI(DwarfTime, dx);
+                DrawGUI(gameTime, dx);
             }
 
 
-            base.Render(DwarfTime);
+            base.Render(gameTime);
         }
 
         public void Dispose()

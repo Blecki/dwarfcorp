@@ -28,6 +28,7 @@ namespace BloomPostprocess
     {
         #region Fields
 
+        public RenderTarget2D DrawTarget = null;
         private SpriteBatch spriteBatch;
 
         private Effect bloomExtractEffect;
@@ -181,7 +182,7 @@ namespace BloomPostprocess
             // Pass 4: draw both rendertarget 1 and the original scene
             // image back into the main backbuffer, using a shader that
             // combines them to produce the final bloomed result.
-            GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.SetRenderTarget(DrawTarget);
 
             EffectParameterCollection parameters = bloomCombineEffect.Parameters;
 

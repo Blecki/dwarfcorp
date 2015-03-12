@@ -23,9 +23,9 @@ namespace DwarfCorp
             Texture = tex;
         }
 
-        public override void Render(DwarfTime DwarfTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
-            base.Render(DwarfTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
             effect.Parameters["xTexture"].SetValue(Texture);
             effect.Parameters["xWorld"].SetValue(GlobalTransform);
 

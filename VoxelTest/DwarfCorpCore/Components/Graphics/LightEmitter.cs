@@ -34,11 +34,11 @@ namespace DwarfCorp
             Light.Position = GlobalTransform.Translation;
         }
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             UpdateLight();
 
-            base.Update(DwarfTime, chunks, camera);
+            base.Update(gameTime, chunks, camera);
         }
 
         public override void Die()

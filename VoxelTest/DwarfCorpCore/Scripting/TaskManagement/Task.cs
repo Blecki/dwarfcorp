@@ -76,6 +76,11 @@ namespace DwarfCorp
         {
             return AutoRetry;
         }
+
+        public virtual bool ShouldDelete(Creature agent)
+        {
+            return false;
+        }
     }
 
     public class ActWrapperTask : Task

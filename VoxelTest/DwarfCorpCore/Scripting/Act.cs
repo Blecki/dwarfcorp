@@ -33,15 +33,6 @@ namespace DwarfCorp
         [JsonIgnore]
         public IEnumerator<Status> Enumerator;
 
-        [JsonIgnore]
-        public static DwarfTime LastTime { get; set; }
-
-        [JsonIgnore]
-        public static float Dt
-        {
-            get { return (float) LastTime.ElapsedGameTime.TotalSeconds; }
-        }
-
 
         public Act()
         {

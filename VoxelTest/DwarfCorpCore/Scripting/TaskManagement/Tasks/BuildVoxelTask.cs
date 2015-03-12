@@ -29,6 +29,16 @@ namespace DwarfCorp
             Priority = PriorityType.Low;
         }
 
+        public override bool IsFeasible(Creature agent)
+        {
+            return Voxel != null && agent.Faction.WallBuilder.IsDesignation(Voxel);
+        }
+
+        public override bool ShouldDelete(Creature agent)
+        {
+            return Voxel == null || !agent.Faction.WallBuilder.IsDesignation(Voxel);
+        }
+
         public override bool ShouldRetry(Creature agent)
         {
             return Voxel != null && agent.Faction.WallBuilder.IsDesignation(Voxel);
@@ -53,6 +63,15 @@ namespace DwarfCorp
         public override Act CreateScript(Creature creature)
         {
             return new Wrap(() => AddBuildOrder(creature));
+        }
+
+        public override void Render(DwarfTime time)
+        {
+            if (Voxel != null)
+            {
+                
+            }
+            base.Render(time);
         }
     }
 

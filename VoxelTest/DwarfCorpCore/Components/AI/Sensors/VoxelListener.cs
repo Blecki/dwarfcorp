@@ -52,7 +52,7 @@ namespace DwarfCorp
 
         }
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (firstIter)
             {
@@ -65,7 +65,7 @@ namespace DwarfCorp
 
             if (DestroyOnTimer)
             {
-                DestroyTimer.Update(DwarfTime);
+                DestroyTimer.Update(gameTime);
 
                 if (DestroyTimer.HasTriggered)
                 {
@@ -74,7 +74,7 @@ namespace DwarfCorp
                 }
             }
 
-            base.Update(DwarfTime, chunks, camera);
+            base.Update(gameTime, chunks, camera);
         }
 
 

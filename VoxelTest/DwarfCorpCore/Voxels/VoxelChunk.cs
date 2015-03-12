@@ -895,12 +895,12 @@ namespace DwarfCorp
         {
             Vector3 grid = WorldToGrid(worldLocation);
 
-            bool valid = IsCellValid((int) grid.X, (int) grid.Y, (int) grid.Z);
+            bool valid = IsCellValid(MathFunctions.FloorInt(grid.X), MathFunctions.FloorInt(grid.Y), MathFunctions.FloorInt(grid.Z));
 
             if(valid)
             {
                 voxel.Chunk = this;
-                voxel.GridPosition = new Vector3((int)grid.X, (int)grid.Y, (int)grid.Z);
+                voxel.GridPosition = new Vector3(MathFunctions.FloorInt(grid.X), MathFunctions.FloorInt(grid.Y), MathFunctions.FloorInt(grid.Z));
                 return true;
             }
             else

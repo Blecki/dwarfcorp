@@ -72,7 +72,7 @@ namespace DwarfCorp
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    device.DrawUserPrimitives(PrimitiveType.TriangleStrip, strips.Vertices.ToArray(), 0, strips.Vertices.Count - 2);
+                    device.DrawUserPrimitives(PrimitiveType.TriangleStrip, strips.Vertices.ToArray(), 0, Math.Min(strips.Vertices.Count - 2, short.MaxValue));
                 }
             }
 

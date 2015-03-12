@@ -25,6 +25,7 @@ namespace DwarfCorp
 
         public Timer CheckLavaTimer { get; set; }
         public Timer SoundTimer { get; set; }
+        public Timer DamageTimer { get; set; }
 
         public Flammable()
         {
@@ -39,24 +40,34 @@ namespace DwarfCorp
             Flashpoint = 100.0f;
             Damage = 50.0f;
             Health = health;
-            CheckLavaTimer = new Timer(2.5f, false);
+            CheckLavaTimer = new Timer(1.0f, false);
             SoundTimer = new Timer(1.0f, false);
-        }
+            DamageTimer = new Timer(1.0f, false);
+        } 
 
 
 
-        public void CheckForLava(DwarfTime DwarfTime, ChunkManager chunks)
+        public void CheckForLavaAndWater(DwarfTime gameTime, ChunkManager chunks)
         {
 
             BoundingBox expandedBoundingBox = LocParent.BoundingBox.Expand(0.5f);
 
             List<Voxel> voxels = chunks.GetVoxelsIntersecting(expandedBoundingBox);
 
-            if((from currentVoxel in voxels
-                where currentVoxel != null
-                select currentVoxel.Water).Any(cell => cell.WaterLevel > 0 && cell.Type == LiquidType.Lava))
+            foreach(Voxel currentVoxel in voxels)
             {
-                Heat += 100;
+                WaterCell cell = currentVoxel.Water;
+
+                if (cell.WaterLevel == 0) continue;
+                else if (cell.Type == LiquidType.Lava)
+                {
+                    Heat += 100;
+                }
+                else if (cell.Type == LiquidType.Water)
+                {
+                    Heat -= 100;
+                    Heat = Math.Max(0.0f, Heat);
+                }
             }
         }
 
@@ -65,27 +76,30 @@ namespace DwarfCorp
             return
                 (int)
                     MathFunctions.Clamp((int) (Math.Abs(1*LocParent.BoundingBox.Max.Y - LocParent.BoundingBox.Min.Y)), 1,
-                        20);
+                        3);
         }
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            CheckLavaTimer.Update(DwarfTime);
-            SoundTimer.Update(DwarfTime);
+            DamageTimer.Update(gameTime);
+            CheckLavaTimer.Update(gameTime);
+            SoundTimer.Update(gameTime);
             if(CheckLavaTimer.HasTriggered)
             {
-                CheckForLava(DwarfTime, chunks);
+                CheckForLavaAndWater(gameTime, chunks);
             }
 
             if(Heat > Flashpoint)
             {
                 Heat *= 1.01f;
-                Health.Damage(Damage * (float) DwarfTime.ElapsedGameTime.TotalSeconds, Health.DamageType.Fire);
+
+                if(DamageTimer.HasTriggered)
+                    Health.Damage(Damage, Health.DamageType.Fire);
 
                 if(SoundTimer.HasTriggered)
                     SoundManager.PlaySound(ContentPaths.Audio.fire, LocParent.Position, true, 0.5f);
                 double totalSize = (LocParent.BoundingBox.Max - LocParent.BoundingBox.Min).Length();
-                int numFlames = (int) (totalSize / 2.0f) + 1;
+                int numFlames = (int) (totalSize / 4.0f) + 1;
 
                 for(int i = 0; i < numFlames; i++)
                 {
@@ -95,7 +109,7 @@ namespace DwarfCorp
                 }
             }
 
-            base.Update(DwarfTime, chunks, camera);
+            base.Update(gameTime, chunks, camera);
         }
     }
 

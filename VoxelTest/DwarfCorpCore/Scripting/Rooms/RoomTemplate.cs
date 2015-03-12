@@ -27,7 +27,8 @@ namespace DwarfCorp
         Target = 1 << 13,
         Strawman = 1 << 14,
         Wheat = 1 << 15,
-        Mushroom = 1 << 16
+        Mushroom = 1 << 16,
+        BookShelf = 1 << 17
     }
 
     public enum PlacementType
@@ -48,8 +49,9 @@ namespace DwarfCorp
         public RoomTile[,] Accessories { get; set; }
 
         public PlacementType PlacementType { get; set; }
-
+        public float Rotation { get; set; }
         public bool CanRotate { get; set; }
+        public float Probability { get; set; }
 
         public void RotateClockwise(int numRotations)
         {
@@ -57,12 +59,14 @@ namespace DwarfCorp
             {
                 Template = Datastructures.RotateClockwise(Template);
                 Accessories = Datastructures.RotateClockwise(Accessories);
+                Rotation -= (float)Math.PI*0.5f;
             }
         }
 
         public RoomTemplate()
         {
-            
+            Rotation = 0.0f;
+            Probability = 1.0f;
         }
 
         public RoomTemplate(PlacementType type, RoomTile[,] template, RoomTile[,] accessories)
@@ -71,6 +75,8 @@ namespace DwarfCorp
             Template = template;
             Accessories = accessories;
             CanRotate = true;
+            Probability = 1.0f;
+            Rotation = 0.0f;
         }
 
         public RoomTemplate(int sx, int sy)
@@ -86,9 +92,10 @@ namespace DwarfCorp
                     Accessories[x, y] = RoomTile.None;
                 }
             }
+            Probability = 1.0f;
         }
 
-        public int PlaceTemplate(ref RoomTile[,] room, int seedR, int seedC)
+        public int PlaceTemplate(ref RoomTile[,] room, ref float[,] rotations, int seedR, int seedC)
         {
             int nr = room.GetLength(0);
             int nc = room.GetLength(1);
@@ -168,6 +175,7 @@ namespace DwarfCorp
                     if((currentTile == RoomTile.Open || currentTile == RoomTile.Edge) && desiredTile != RoomTile.None && !Has(desiredTile, RoomTile.Edge) && ! Has(desiredTile, RoomTile.Wall) && desiredTile != RoomTile.Open)
                     {
                         room[x, y] = desiredTile;
+                        rotations[x, y] = Rotation;
                         toReturn++;
                     }
 

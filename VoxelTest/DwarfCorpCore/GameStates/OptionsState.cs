@@ -35,9 +35,10 @@ namespace DwarfCorp.GameStates
             DisplayModes = new Dictionary<string, DisplayMode>();
             AAModes = new Dictionary<string, int>();
             AAModes["None"] = 0;
-            AAModes["2"] = 2;
-            AAModes["4"] = 4;
-            AAModes["16"] = 16;
+            AAModes["FXAA"] = -1;
+            AAModes["2x MSAA"] = 2;
+            AAModes["4x MSAA"] = 4;
+            AAModes["16x MSAA"] = 16;
         }
 
         public override void OnEnter()
@@ -169,9 +170,10 @@ namespace DwarfCorp.GameStates
                 ToolTip = "Determines how much antialiasing (smoothing) there is.\nHigher means more smooth, but is slower."
             };
             aaBox.AddValue("None");
-            aaBox.AddValue("2");
-            aaBox.AddValue("4");
-            aaBox.AddValue("16");
+            aaBox.AddValue("FXAA");
+            aaBox.AddValue("2x MSAA");
+            aaBox.AddValue("4x MSAA");
+            aaBox.AddValue("16x MSAA");
 
             foreach(string s in AAModes.Keys.Where(s => AAModes[s] == GameSettings.Default.AntiAliasing))
             {
@@ -669,52 +671,52 @@ namespace DwarfCorp.GameStates
             StateManager.PopState();
         }
 
-        public override void Update(DwarfTime DwarfTime)
+        public override void Update(DwarfTime gameTime)
         {
             MainWindow.LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2);
             Input.Update();
-            GUI.Update(DwarfTime);
-            base.Update(DwarfTime);
+            GUI.Update(gameTime);
+            base.Update(gameTime);
         }
 
 
-        private void DrawGUI(DwarfTime DwarfTime, float dx)
+        private void DrawGUI(DwarfTime gameTime, float dx)
         {
             RasterizerState rasterizerState = new RasterizerState()
             {
                 ScissorTestEnable = true
             };
-            GUI.PreRender(DwarfTime, DwarfGame.SpriteBatch);
+            GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
-            GUI.Render(DwarfTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
+            GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
 
             DwarfGame.SpriteBatch.End();
 
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle = DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
-            GUI.PostRender(DwarfTime);
+            GUI.PostRender(gameTime);
         }
 
-        public override void Render(DwarfTime DwarfTime)
+        public override void Render(DwarfTime gameTime)
         {
             if(Transitioning == TransitionMode.Running)
             {
                 Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-                DrawGUI(DwarfTime, 0);
+                DrawGUI(gameTime, 0);
             }
             else if(Transitioning == TransitionMode.Entering)
             {
                 float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                DrawGUI(DwarfTime, dx);
+                DrawGUI(gameTime, dx);
             }
             else if(Transitioning == TransitionMode.Exiting)
             {
                 float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                DrawGUI(DwarfTime, dx);
+                DrawGUI(gameTime, dx);
             }
 
 
-            base.Render(DwarfTime);
+            base.Render(gameTime);
         }
     }
 

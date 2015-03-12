@@ -26,6 +26,11 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
+            if (!Creature.Faction.WallBuilder.IsDesignation(Voxel))
+            {
+                yield return Status.Fail;
+                yield break;
+            }
 
             foreach (Status status in Creature.HitAndWait(1.0f, true))
             {
@@ -40,6 +45,7 @@ namespace DwarfCorp
             if(grabbed == null)
             {
                 yield return Status.Fail;
+                yield break;
             }
             else
             {

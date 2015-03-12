@@ -101,11 +101,13 @@ Content\Entities\Dwarf\Sprites\fairy.xnb
 Content\Particles\moreflames.xnb
 Content\Particles\heart.xnb
 Content\Particles\gib_particle.xnb
+Content\Entities\Furniture\bookshelf.xnb
 Content\Shaders\BloomCombine.xnb
 Content\Shaders\BloomExtract.xnb
 Content\Shaders\GaussianBlur.xnb
 Content\Shaders\SkySphere.xnb
 Content\Shaders\TexturedShaders.xnb
+Content\Shaders\FXAA.xnb
 Content\Models\sphereLowPoly.xnb
 Content\Audio\hit.xnb
 Content\Audio\jump.xnb
@@ -159,6 +161,7 @@ Content\Entities\Dwarf\Sprites\soldier_animation.json
 Content\Entities\Dwarf\Sprites\wizard_animation.json
 Content\Entities\Elf\Sprites\elf_animation.json
 Content\Entities\Dwarf\Sprites\fairy_animation.json
+Content\World\biomes.json
 Content\Fonts\font1-w.bmp
 Content\Fonts\font1-w-2x.bmp
 Content\Fonts\font1-w-4x.bmp

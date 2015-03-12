@@ -63,7 +63,8 @@ namespace DwarfCorp
             CameraController = camera;
             Graphics = graphics;
             Chunks = chunks;
-            SelectionBuffer = new List<Voxel>();
+            SelectionBuffer =
+ new List<Voxel>();
             LeftPressed = LeftPressedCallback;
             RightPressed = RightPressedCallback;
             LeftReleased = LeftReleasedCallback;
@@ -238,9 +239,9 @@ namespace DwarfCorp
         {
             MouseState mouse = Mouse.GetState();
 
-            Voxel v = Chunks.ChunkData.GetFirstVisibleBlockHitByMouse(mouse, CameraController, Graphics.Viewport);
+            Voxel v = Chunks.ChunkData.GetFirstVisibleBlockHitByMouse(mouse, CameraController, Graphics.Viewport, SelectionType == VoxelSelectionType.SelectEmpty);
 
-            if (v == null)
+            if (v == null || v.Chunk == null)
             {
                 return null;
             }
@@ -275,51 +276,7 @@ namespace DwarfCorp
 
 
                 case VoxelSelectionType.SelectEmpty:
-                    if(!v.IsEmpty)
-                    {
-                        Ray mouseRay = Chunks.ChunkData.GetMouseRay(mouse, CameraController, Graphics.Viewport);
-                        float? dist = mouseRay.Intersects(v.GetBoundingBox());
-
-                        if(dist.HasValue)
-                        {
-                            float length = dist.Value;
-
-                            Vector3 hit = mouseRay.Position + mouseRay.Direction * length;
-
-                            Vector3 antiDelta = new Vector3(0, 0, 0);
-
-                            Vector3 delta = hit - (v.Position + new Vector3(0.5f, 0.5f, 0.5f));
-                            Vector3 absDelta = new Vector3((float) Math.Abs(delta.X), (float) Math.Abs(delta.Y), (float) Math.Abs(delta.Z));
-
-                            if(absDelta.X > absDelta.Y && absDelta.X > absDelta.Z)
-                            {
-                                antiDelta = new Vector3((float) Math.Sign(delta.X), 0, 0);
-                            }
-                            else if(absDelta.Y > absDelta.X && absDelta.Y > absDelta.Z)
-                            {
-                                antiDelta = new Vector3(0, (float) Math.Sign(delta.Y), 0);
-                            }
-                            else if(absDelta.Z > absDelta.Y && absDelta.Z > absDelta.X)
-                            {
-                                antiDelta = new Vector3(0, 0, (float) Math.Sign(delta.Z));
-                            }
-                            else
-                            {
-                                break;
-                            }
-
-                            Voxel atRef = new Voxel();
-                            if (Chunks.ChunkData.GetVoxel(v.Position + new Vector3(0.5f, 0.5f, 0.5f) + antiDelta, ref atRef))
-                            {
-                                return atRef;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        return default(Voxel);
-                    }
-                    break;
+                    return v;
             }
 
             return default(Voxel);
