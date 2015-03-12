@@ -34,6 +34,10 @@ namespace DwarfCorp
             public int Level { get; set; }
             public SpellButton Parent { get; set; }
 
+            public SpellButton()
+            {
+            }
+
             public bool IsLeaf()
             {
                 return this.Children.Count == 0;
@@ -462,7 +466,7 @@ namespace DwarfCorp
 
         private void ImageButton_OnClicked(SpellTree.Node spell)
         {
-            if (spell.IsResearched) return;
+            if (spell.IsResearched || (spell.Parent != null &&  !spell.Parent.IsResearched)) return;
             else
             {
                 List<CreatureAI> wizards = Faction.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Magic);

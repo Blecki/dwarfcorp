@@ -945,6 +945,21 @@
       <Importer>Mp3Importer</Importer>
       <Processor>SongProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Furniture\bookshelf.png">
+      <Name>bookshelf</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <None Include="Shaders\FXAA.fxh">
+      <Name>FXAA</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </None>
+    <Compile Include="Shaders\FXAA.fx">
+      <Name>FXAA</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
     <Content Include="Text\adverbs.txt">
       <Name>adverbs</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -1013,6 +1028,10 @@
       <Name>dwarfcorp_ogg</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="World\biomes.json">
+      <Name>biomes</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!--  To modify your build process, add your task inside one of the targets below and uncomment it. 

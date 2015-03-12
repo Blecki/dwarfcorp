@@ -89,7 +89,7 @@ namespace DwarfCorp
             LocalBounds = new Rectangle(0, parent.GlobalBounds.Height / 2 + GUI.Skin.TileHeight / 2, columnWidth, bestHeight);
             Box = parent;
 
-            ClickTimer = new Timer(0.1f, true);
+            ClickTimer = new Timer(0.1f, true, Timer.TimerMode.Real);
             InputManager.MouseClickedCallback += InputManager_MouseClickedCallback;
             Drawn = true;
         }

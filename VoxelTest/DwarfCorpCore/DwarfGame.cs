@@ -54,6 +54,7 @@ namespace DwarfCorp
             TextureManager = new TextureManager(Content, GraphicsDevice);
 
             PlayState playState = new PlayState(this, StateManager);
+            BiomeLibrary.InitializeStatics();
             StateManager.States["IntroState"] = new IntroState(this, StateManager);
             StateManager.States["PlayState"] = playState;
             StateManager.States["MainMenuState"] = new MainMenuState(this, StateManager);
@@ -87,18 +88,19 @@ namespace DwarfCorp
 
         protected override void Update(GameTime time)
         {
-            if (Act.LastTime == null)
+            if (DwarfTime.LastTime == null)
             {
-                Act.LastTime = new DwarfTime(time);
+                DwarfTime.LastTime = new DwarfTime(time);
             }
-            Act.LastTime.Update(time);
-            StateManager.Update(Act.LastTime);
+            DwarfTime.LastTime.Update(time);
+            StateManager.Update(DwarfTime.LastTime);
             base.Update(time);
         }
 
         protected override void Draw(GameTime time)
         {
-            StateManager.Render(Act.LastTime);
+            StateManager.Render(DwarfTime.LastTime);
+            GraphicsDevice.SetRenderTarget(null);
             base.Draw(time);
         }
 

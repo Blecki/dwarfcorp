@@ -38,12 +38,12 @@ namespace DwarfCorp
             {
                 foreach(ResourceAmount resource in Resources)
                 {
-                    Agent.Creature.Inventory.Resources.AddResource(resource);   
+                    Agent.Creature.Inventory.Resources.AddResource(resource.CloneResource());   
                 }
 
                 while (!waitTimer.HasTriggered)
                 {
-                    waitTimer.Update(Act.LastTime);
+                    waitTimer.Update(DwarfTime.LastTime);
                     yield return Status.Running;
                 }
                 yield return Status.Success;

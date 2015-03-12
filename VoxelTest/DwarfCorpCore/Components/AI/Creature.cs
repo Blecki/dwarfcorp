@@ -185,15 +185,15 @@ namespace DwarfCorp
                 
         }
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            CheckNeighborhood(chunks, (float) DwarfTime.ElapsedGameTime.TotalSeconds);
-            UpdateAnimation(DwarfTime, chunks, camera);
-            Status.Update(this, DwarfTime, chunks, camera);
-            JumpTimer.Update(DwarfTime);
-            HandleBuffs(DwarfTime);
+            CheckNeighborhood(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
+            UpdateAnimation(gameTime, chunks, camera);
+            Status.Update(this, gameTime, chunks, camera);
+            JumpTimer.Update(gameTime);
+            HandleBuffs(gameTime);
 
-            base.Update(DwarfTime, chunks, camera);
+            base.Update(gameTime, chunks, camera);
         }
 
         public void CheckNeighborhood(ChunkManager chunks, float dt)
@@ -319,7 +319,7 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        public void UpdateAnimation(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public void UpdateAnimation(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
            
             float veloNorm = Physics.Velocity.Length();
@@ -327,6 +327,14 @@ namespace DwarfCorp
             {
                 Physics.Velocity = (Physics.Velocity / veloNorm) * Stats.MaxSpeed;
                 if(IsOnGround && CurrentCharacterMode == CharacterMode.Idle)
+                {
+                    CurrentCharacterMode = CharacterMode.Walking;
+                }
+            }
+
+            if (veloNorm > 0.25f)
+            {
+                if (IsOnGround && CurrentCharacterMode == CharacterMode.Idle)
                 {
                     CurrentCharacterMode = CharacterMode.Walking;
                 }
@@ -342,7 +350,7 @@ namespace DwarfCorp
                 return;
             }
 
-            if(veloNorm < 0.3f || Physics.IsSleeping)
+            if(veloNorm < 0.25f || Physics.IsSleeping)
             {
                 if(CurrentCharacterMode == CharacterMode.Walking)
                 {
@@ -357,7 +365,7 @@ namespace DwarfCorp
                     Animation walk = Sprite.GetAnimation(CharacterMode.Walking, Sprite.CurrentOrientation);
                     if (walk != null)
                     {
-                        walk.SpeedMultiplier = MathFunctions.Clamp(veloNorm/Stats.MaxSpeed*4.0f, 0.5f, 2.0f);
+                        walk.SpeedMultiplier = MathFunctions.Clamp(veloNorm/Stats.MaxSpeed*5.0f, 0.5f, 3.0f);
                     }
                 }
             }
@@ -371,14 +379,14 @@ namespace DwarfCorp
             
             while(!waitTimer.HasTriggered)
             {
-                waitTimer.Update(Act.LastTime);
+                waitTimer.Update(DwarfTime.LastTime);
 
                 if(loadBar)
                 {
                     Drawer2D.DrawLoadBar(AI.Position + Vector3.Up, Color.White, Color.Black, 100, 16, waitTimer.CurrentTimeSeconds / waitTimer.TargetTimeSeconds);
                 }
 
-                Attacks[0].PerformNoDamage(Act.LastTime, AI.Position);
+                Attacks[0].PerformNoDamage(DwarfTime.LastTime, AI.Position);
 
                 yield return Act.Status.Running;
             }
@@ -390,6 +398,11 @@ namespace DwarfCorp
         public override float Damage(float amount, DamageType type = DamageType.Normal)
         {
             float damage = base.Damage(amount, type);
+
+            string prefix = damage > 0 ? "-" : "+";
+            Color color = damage > 0 ? Color.Red : Color.Green;
+
+            IndicatorManager.DrawIndicator(prefix + (int)amount + " HP", AI.Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, color, Indicator.IndicatorMode.Indicator3D);
 
             if (damage > 0)
             {

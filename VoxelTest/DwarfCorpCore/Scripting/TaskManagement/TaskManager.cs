@@ -295,6 +295,10 @@ namespace DwarfCorp
                 foreach (Task task in newGoals)
                 {
                     float cost = task.ComputeCost(creature.Creature);
+                    if (!task.IsFeasible(creature.Creature))
+                    {
+                        cost += 1e10f;
+                    }
                     costs.Add(new KeyValuePair<int, float>(index, cost));
                     index++;
                 }

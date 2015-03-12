@@ -36,12 +36,12 @@ namespace DwarfCorp
                 case TeleportType.Jump:
                 {
                     TossMotion motion = new TossMotion(0.6f, 0.9f, Creature.Physics.GlobalTransform, Location);
-                    Creature.AI.Jump(LastTime);
+                    Creature.AI.Jump(DwarfTime.LastTime);
                     
                     while (!motion.IsDone())
                     {
                         Creature.Physics.IsSleeping = true;
-                        motion.Update(LastTime);
+                        motion.Update(DwarfTime.LastTime);
                         Creature.AI.Position = motion.GetTransform().Translation;
                         Creature.CurrentCharacterMode = Creature.CharacterMode.Falling;
                         yield return Status.Running;
@@ -53,7 +53,7 @@ namespace DwarfCorp
                     EaseMotion motion = new EaseMotion(0.6f, Creature.Physics.GlobalTransform, Location);
                     while (!motion.IsDone())
                     {
-                        motion.Update(LastTime);
+                        motion.Update(DwarfTime.LastTime);
                         Creature.AI.Position = motion.GetTransform().Translation;
                         yield return Status.Running;
                     }

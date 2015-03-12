@@ -13,7 +13,7 @@
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
-    <XnaProfile>Reach</XnaProfile>
+    <XnaProfile>HiDef</XnaProfile>
     <XnaCrossPlatformGroupID>39a9f6d8-cd8e-472c-8245-9abf1503f624</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>favicon.ico</ApplicationIcon>
@@ -449,6 +449,9 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\Graphics\Effects\BloomSettings.cs">
       <Link>Graphics\Effects\BloomSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Graphics\Effects\FXAA.cs">
+      <Link>Graphics\Effects\FXAA.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\Graphics\Effects\ParticleManager.cs">
       <Link>Graphics\Effects\ParticleManager.cs</Link>

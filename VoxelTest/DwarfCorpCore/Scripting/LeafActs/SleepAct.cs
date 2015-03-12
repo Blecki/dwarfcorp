@@ -51,7 +51,7 @@ namespace DwarfCorp.Scripting.LeafActs
                     Creature.AI.Position = TeleportLocation;
                 }
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Sleeping;
-                Creature.Status.Energy.CurrentValue += Dt * RechargeRate;
+                Creature.Status.Energy.CurrentValue += DwarfTime.Dt * RechargeRate;
                 if (Creature.Status.Health.CurrentValue < startingHealth)
                 {
                     Creature.Status.IsAsleep = false;

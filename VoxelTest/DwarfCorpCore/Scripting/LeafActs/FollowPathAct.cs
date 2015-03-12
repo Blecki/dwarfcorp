@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Xna.Framework;
 
@@ -61,9 +62,14 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
+            Physics.CollisionMode collisionMode = Agent.Physics.CollideMode;
+            Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+            Creature.OverrideCharacterMode = false;
             while(true)
             {
                 // ERROR CHECKS / INITIALIZING
+                Agent.Physics.Orientation = Physics.OrientMode.RotateY;
+                //Agent.Physics.CollideMode = Physics.CollisionMode.UpDown;
 
                 List<Creature.MoveAction> path = GetPath();
 
@@ -71,6 +77,7 @@ namespace DwarfCorp
                 {
                     SetPath(null);
                     Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                    Agent.Physics.CollideMode = collisionMode;
                     yield return Status.Fail;
                     break;
                 }
@@ -80,6 +87,7 @@ namespace DwarfCorp
                 }
                 else
                 {
+                    Agent.Physics.CollideMode = collisionMode;
                     yield return Status.Success;
                     break;
                 }
@@ -90,13 +98,14 @@ namespace DwarfCorp
                 if(TargetVoxel != null)
                 {
                     Agent.Physics.IsSleeping = false;
-                    Agent.LocalControlTimeout.Update(LastTime);
-                    ValidPathTimer.Update(LastTime);
+                    Agent.LocalControlTimeout.Update(DwarfTime.LastTime);
+                    ValidPathTimer.Update(DwarfTime.LastTime);
 
                     // Check if the path has been made invalid
                     if (ValidPathTimer.HasTriggered && !IsPathValid(path))
                     {
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                        Agent.Physics.CollideMode = collisionMode;
                         yield return Status.Fail;
                     }
 
@@ -127,19 +136,22 @@ namespace DwarfCorp
                             TargetVoxel.Position, 0.25f) + new Vector3(0.5f, 0.5f, 0.5f);
                     }
 
-                    Vector3 output = Agent.Creature.Controller.GetOutput((float) Act.LastTime.ElapsedGameTime.TotalSeconds,
-                       LocalTarget,
-                        Agent.Creature.Physics.GlobalTransform.Translation);
+                    Vector3 desiredVelocity = (LocalTarget - Agent.Position);
+                    desiredVelocity.Normalize();
+                    desiredVelocity *= Creature.Stats.MaxSpeed;
 
-                    Agent.Creature.Physics.ApplyForce(output, (float) Act.LastTime.ElapsedGameTime.TotalSeconds);
+                    Vector3 output = Agent.Creature.Controller.GetOutput((float) DwarfTime.LastTime.ElapsedGameTime.TotalSeconds,
+                        desiredVelocity,
+                        Creature.Physics.Velocity);
 
                     output.Y = 0.0f;
+                    Agent.Creature.Physics.ApplyForce(output * 0.25f, (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
 
-                    float yDifference = (LocalTarget - Agent.Creature.Physics.GlobalTransform.Translation).Y;
+                    float yDifference = (LocalTarget - Agent.Position).Y;
 
                     if(yDifference > 0.1)
                     {
-                        Agent.Jump(LastTime);
+                        Agent.Jump(DwarfTime.LastTime);
                     }
 
 
@@ -155,7 +167,7 @@ namespace DwarfCorp
                     bool goToNextNode;
                     if(path.Count > 1)
                     {
-                        goToNextNode = (yDifference < 0.05 && (LocalTarget - Agent.Creature.Physics.GlobalTransform.Translation).Length() < 0.7f);
+                        goToNextNode = (yDifference < 0.05 && (LocalTarget - Agent.Creature.Physics.GlobalTransform.Translation).Length() < 0.5f);
                     }
                     else
                     {
@@ -175,6 +187,7 @@ namespace DwarfCorp
                         {
                             PreviousTargetVoxel = null;
                             SetPath(null);
+                            Agent.Physics.CollideMode = collisionMode;
                             yield return Status.Success;
                             break;
                         }
@@ -184,6 +197,7 @@ namespace DwarfCorp
                 {
                     PreviousTargetVoxel = null;
                     Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                    Agent.Physics.CollideMode = collisionMode;
                     yield return Status.Fail;
                     break;
                 }

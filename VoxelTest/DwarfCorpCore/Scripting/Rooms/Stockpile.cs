@@ -84,7 +84,7 @@ namespace DwarfCorp
             {
                 for (int i = Boxes.Count; i < numBoxes; i++)
                 {
-                    CreateBox(Voxels[i].Position);
+                    CreateBox(Voxels[i].Position + VertexNoise.GetNoiseVectorFromRepeatingTexture(Voxels[i].Position));
                 }
             }
         }

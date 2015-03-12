@@ -164,7 +164,7 @@ namespace DwarfCorp
                 }
                 agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
                 agent.Physics.Velocity *= 0.9f;
-                agent.Attacks[0].Perform(agent.Physics.Position, vox, Act.LastTime, agent.Stats.BaseDigSpeed);
+                agent.Attacks[0].Perform(agent.Physics.Position, vox, DwarfTime.LastTime, agent.Stats.BaseDigSpeed);
                 yield return Act.Status.Running;
             }
 

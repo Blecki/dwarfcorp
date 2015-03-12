@@ -583,7 +583,7 @@ namespace DwarfCorp
             return MathFunctions.GetBoundingBox(toAdd);
         }
 
-        public void RenderAll(Camera renderCamera, DwarfTime DwarfTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix, Texture2D tilemap)
+        public void RenderAll(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix, Texture2D tilemap)
         {
             effect.Parameters["xIllumination"].SetValue(ChunkData.IllumMap);
             effect.Parameters["xTexture"].SetValue(tilemap);
@@ -608,7 +608,7 @@ namespace DwarfCorp
             effect.Parameters["SelfIllumination"].SetValue(0);
         }
 
-        public void Render(Camera renderCamera, DwarfTime DwarfTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix)
+        public void Render(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix)
         {
             effect.Parameters["xIllumination"].SetValue(ChunkData.IllumMap);
             effect.Parameters["xTexture"].SetValue(ChunkData.Tilemap);
@@ -722,18 +722,18 @@ namespace DwarfCorp
             chunks.RemoveWhere(chunk => frustum.Contains(chunk.GetBoundingBox()) == ContainmentType.Disjoint);
         }
 
-        public void Update(DwarfTime DwarfTime, Camera camera, GraphicsDevice g)
+        public void Update(DwarfTime gameTime, Camera camera, GraphicsDevice g)
         {
             UpdateRenderList(camera);
 
-            if(waterUpdateTimer.Update(DwarfTime))
+            if (waterUpdateTimer.Update(gameTime))
             {
                 WaterUpdateEvent.Set();
             }
 
             UpdateRebuildList();
 
-            generateChunksTimer.Update(DwarfTime);
+            generateChunksTimer.Update(gameTime);
             if(generateChunksTimer.HasTriggered)
             {
                 if(ToGenerate.Count > 0)
@@ -770,7 +770,7 @@ namespace DwarfCorp
             }
 
 
-            visibilityChunksTimer.Update(DwarfTime);
+            visibilityChunksTimer.Update(gameTime);
             if(visibilityChunksTimer.HasTriggered)
             {
                 visibleSet.Clear();
@@ -781,11 +781,11 @@ namespace DwarfCorp
 
             foreach(VoxelChunk chunk in ChunkData.ChunkMap.Values)
             {
-                chunk.Update(DwarfTime);
+                chunk.Update(gameTime);
             }
 
-            Water.Splash(DwarfTime);
-            Water.HandleTransfers(DwarfTime);
+            Water.Splash(gameTime);
+            Water.HandleTransfers(gameTime);
 
             HashSet<VoxelChunk> affectedChunks = new HashSet<VoxelChunk>();
             foreach (Voxel voxel in KilledVoxels)

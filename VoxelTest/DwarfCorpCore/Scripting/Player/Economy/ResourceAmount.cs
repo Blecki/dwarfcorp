@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace DwarfCorp
 {
@@ -7,7 +8,7 @@ namespace DwarfCorp
     /// This is just a struct of two things: a resource, and a number of that resource.
     /// This is used instead of a list, since there is nothing distinguishing resources from each other.
     /// </summary>
-    public class ResourceAmount
+    public class ResourceAmount : ICloneable
     {
         protected bool Equals(ResourceAmount other)
         {
@@ -37,6 +38,16 @@ namespace DwarfCorp
             {
                 return ((ResourceType != null ? ResourceType.GetHashCode() : 0) * 397) ^ NumResources;
             }
+        }
+
+        public object Clone()
+        {
+            return new ResourceAmount(ResourceType, NumResources);
+        }
+
+        public ResourceAmount CloneResource()
+        {
+            return Clone() as ResourceAmount;
         }
 
         public Resource ResourceType { get; set; }

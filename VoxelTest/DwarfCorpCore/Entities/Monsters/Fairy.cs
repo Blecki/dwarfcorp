@@ -31,21 +31,21 @@ namespace DwarfCorp
             Initialize(new FairyClass());
         }
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (ParticleTimer.HasTriggered)
             {
                 PlayState.ParticleManager.Trigger("star_particle", Sprite.Position, Color.White, 1);    
             }
-            DeathTimer.Update(DwarfTime);
-            ParticleTimer.Update(DwarfTime);
+            DeathTimer.Update(gameTime);
+            ParticleTimer.Update(gameTime);
 
             if (DeathTimer.HasTriggered)
             {
                 Physics.Die();
             }
 
-            base.Update(DwarfTime, chunks, camera);
+            base.Update(gameTime, chunks, camera);
         }
 
         

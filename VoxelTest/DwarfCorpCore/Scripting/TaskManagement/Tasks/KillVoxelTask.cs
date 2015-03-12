@@ -57,8 +57,14 @@ namespace DwarfCorp
                 return false;
             }
 
-            agent.Faction.IsDigDesignation(VoxelToKill);
-            return true;
+
+            return agent.Faction.IsDigDesignation(VoxelToKill) && !VoxelToKill.Chunk.IsCompletelySurrounded(VoxelToKill);
+        }
+
+        public override bool ShouldDelete(Creature agent)
+        {
+            return VoxelToKill == null || VoxelToKill.IsEmpty || VoxelToKill.IsDead ||
+                   !agent.Faction.IsDigDesignation(VoxelToKill);
         }
 
         public override float ComputeCost(Creature agent)
@@ -77,15 +83,10 @@ namespace DwarfCorp
             int surroundedValue = 0;
             if(vox.Chunk.IsCompletelySurrounded(VoxelToKill))
             {
-                surroundedValue = 100000;
+                surroundedValue = 10000;
             }
 
             return (agent.AI.Position - VoxelToKill.Position).LengthSquared() + 100 * Math.Abs(agent.AI.Position.Y - VoxelToKill.Position.Y) + surroundedValue;
-        }
-
-        public override void Render(DwarfTime time)
-        {
-            base.Render(time);
         }
     }
 

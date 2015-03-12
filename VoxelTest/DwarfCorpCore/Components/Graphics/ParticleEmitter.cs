@@ -54,6 +54,8 @@ namespace DwarfCorp
         [JsonIgnore]
         public BlendState Blend = BlendState.AlphaBlend;
 
+        public bool EmitsLight = false;
+
         public object Clone()
         {
             return this.MemberwiseClone();
@@ -176,6 +178,7 @@ namespace DwarfCorp
                         }
                     }
 
+
                     toAdd.Position = sample + origin;
                     toAdd.Velocity = (sample);
                     toAdd.Velocity.Normalize();
@@ -215,19 +218,19 @@ namespace DwarfCorp
             }
         }
 
-        public override void Render(DwarfTime DwarfTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
             Sprites.Render(graphicsDevice, effect, camera, !renderingForWater);
-            base.Render(DwarfTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
         }
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             ParticleEmitter._camera = camera;
 
             List<Particle> toRemove = new List<Particle>();
 
-            TriggerTimer.Update(DwarfTime);
+            TriggerTimer.Update(gameTime);
             if(TriggerTimer.HasTriggered && Data.ParticlesPerFrame > 0)
             {
                 Trigger(Data.ParticlesPerFrame, Vector3.Zero, Tint);
@@ -241,7 +244,11 @@ namespace DwarfCorp
                 float vel = p.Velocity.LengthSquared();
                 if(!Data.Sleeps || vel > 0.2f)
                 {
-                    p.Position += p.Velocity * (float) DwarfTime.ElapsedGameTime.TotalSeconds;
+                    if (Data.EmitsLight && p.Scale > 0.1f)
+                    {
+                        DynamicLight.TempLights.Add(new DynamicLight(10.0f, 255.0f, false) { Position = p.Position});
+                    }
+                    p.Position += p.Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                     if (Data.RotatesWithVelocity)
                     {
@@ -253,9 +260,9 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        p.Angle += (float)(p.AngularVelocity * DwarfTime.ElapsedGameTime.TotalSeconds);   
+                        p.Angle += (float)(p.AngularVelocity * gameTime.ElapsedGameTime.TotalSeconds);   
                     }
-                    p.Velocity += Data.ConstantAccel * (float) DwarfTime.ElapsedGameTime.TotalSeconds;
+                    p.Velocity += Data.ConstantAccel * (float)gameTime.ElapsedGameTime.TotalSeconds;
                     p.Velocity *= Data.LinearDamping;
                     p.AngularVelocity *= Data.AngularDamping;
                 }
@@ -265,8 +272,8 @@ namespace DwarfCorp
                 }
 
 
-                p.LifeRemaining -= Data.ParticleDecay * (float) DwarfTime.ElapsedGameTime.TotalSeconds;
-                p.Scale += Data.GrowthSpeed * (float) DwarfTime.ElapsedGameTime.TotalSeconds;
+                p.LifeRemaining -= Data.ParticleDecay * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                p.Scale += Data.GrowthSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 p.Scale = Math.Max(p.Scale, 0.0f);
                 bool success = false;
@@ -328,8 +335,8 @@ namespace DwarfCorp
             }
 
 
-            Sprites.Update(DwarfTime, camera, chunks.Graphics);
-            base.Update(DwarfTime, chunks, camera);
+            Sprites.Update(gameTime, camera, chunks.Graphics);
+            base.Update(gameTime, chunks, camera);
         }
     }
 

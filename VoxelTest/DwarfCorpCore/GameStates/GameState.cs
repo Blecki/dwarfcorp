@@ -54,15 +54,15 @@ namespace DwarfCorp.GameStates
         }
 
 
-        public virtual void RenderUnitialized(DwarfTime DwarfTime)
+        public virtual void RenderUnitialized(DwarfTime gameTime)
         {
         }
 
-        public virtual void Update(DwarfTime DwarfTime)
+        public virtual void Update(DwarfTime gameTime)
         {
         }
 
-        public virtual void Render(DwarfTime DwarfTime)
+        public virtual void Render(DwarfTime gameTime)
         {
         }
 
@@ -114,7 +114,7 @@ namespace DwarfCorp.GameStates
 
 
 
-        public override void Update(DwarfTime DwarfTime)
+        public override void Update(DwarfTime gameTime)
         {
             GUI.MouseMode = GUISkin.MousePointer.Wait;
 
@@ -124,7 +124,7 @@ namespace DwarfCorp.GameStates
                 Done = true;
             }
 
-            base.Update(DwarfTime);
+            base.Update(gameTime);
         }
 
     }
