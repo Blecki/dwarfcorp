@@ -493,23 +493,6 @@ namespace DwarfCorp
             return des.Count == 0 ? null : des[PlayState.Random.Next(0, des.Count)];
         }
 
-        public List<Item> FindItemsWithTags(TagList tags)
-        {
-            List<Item> toReturn = new List<Item>();
-            List<Zone> zones = new List<Zone>();
-            zones.AddRange(RoomBuilder.DesignatedRooms);
-            zones.AddRange(Stockpiles);
-
-            foreach (Zone s in zones)
-            {
-                // TODO: Reimplement
-                //toReturn.AddRange(s.GetItemsWithTags(tags));
-            }
-
-
-
-            return toReturn;
-        }
 
         public bool HasFreeStockpile()
         {
@@ -746,6 +729,19 @@ namespace DwarfCorp
             }
 
             return toReturn;
+        }
+
+        public int CountResourcesWithTag(Resource.ResourceTags tag)
+        {
+            List<ResourceAmount> resources = ListResourcesWithTag(tag);
+            int amounts = 0;
+
+            foreach (ResourceAmount amount in resources)
+            {
+                amounts += amount.NumResources;
+            }
+
+            return amounts;
         }
 
         public List<ResourceAmount> ListResourcesWithTag(Resource.ResourceTags tag)

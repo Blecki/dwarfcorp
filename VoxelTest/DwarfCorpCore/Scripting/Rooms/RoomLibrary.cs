@@ -129,7 +129,7 @@ namespace DwarfCorp
         public static void GenerateRoomComponentsTemplate(Room room, ComponentManager componentManager, Microsoft.Xna.Framework.Content.ContentManager content, GraphicsDevice graphics)
         {
             RoomTile[,] currentTiles = RoomTemplate.CreateFromRoom(room, room.Chunks);
-
+            float[,] rotations = new float[currentTiles.GetLength(0), currentTiles.GetLength(1)];
             foreach (RoomTemplate template in room.RoomData.Templates)
             {
                 for (int r = -2; r < currentTiles.GetLength(0) + 1; r++)
@@ -138,8 +138,11 @@ namespace DwarfCorp
                     {
                         for (int rotation = 0; rotation < 5; rotation++)
                         {
-                            template.PlaceTemplate(ref currentTiles, r, c);
-                            template.RotateClockwise(1);
+                            if (MathFunctions.RandEvent(template.Probability))
+                            {
+                                template.PlaceTemplate(ref currentTiles, ref rotations, r, c);
+                                template.RotateClockwise(1);
+                            }
                         }
                     }
                 }
@@ -154,53 +157,59 @@ namespace DwarfCorp
                 {
                     RoomTile tile = currentTiles[r, c];
                     Body createdComponent = null;
-
+                    Vector3 noise =
+                        VertexNoise.GetNoiseVectorFromRepeatingTexture(box.Min +
+                                                                       new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
                     switch(tile)
                     {
                         case RoomTile.Wheat:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Wheat", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
+                            createdComponent = EntityFactory.CreateEntity<Body>("Wheat", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
 
                         case RoomTile.Mushroom:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Mushroom", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
+                            createdComponent = EntityFactory.CreateEntity<Body>("Mushroom", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
 
                         case RoomTile.Table:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Table", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
+                            createdComponent = EntityFactory.CreateEntity<Body>("Table", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Lamp:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Lamp", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
+                            createdComponent = EntityFactory.CreateEntity<Body>("Lamp", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Flag:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Flag", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
+                            createdComponent = EntityFactory.CreateEntity<Body>("Flag", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Chair:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Chair", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
+                            createdComponent = EntityFactory.CreateEntity<Body>("Chair", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.BookTable:
-                            createdComponent = EntityFactory.CreateEntity<Body>(MathFunctions.RandEvent(0.5f) ? "BookTable" : "PotionTable", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
+                            createdComponent = EntityFactory.CreateEntity<Body>(MathFunctions.RandEvent(0.5f) ? "BookTable" : "PotionTable", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Anvil:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Anvil", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
+                            createdComponent = EntityFactory.CreateEntity<Body>("Anvil", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Forge:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Forge", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
+                            createdComponent = EntityFactory.CreateEntity<Body>("Forge", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Target:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Target", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
+                            createdComponent = EntityFactory.CreateEntity<Body>("Target", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Strawman:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Strawman", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
+                            createdComponent = EntityFactory.CreateEntity<Body>("Strawman", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            thingsMade++;
+                            break;
+                        case RoomTile.BookShelf:
+                            createdComponent = EntityFactory.CreateEntity<Body>("Bookshelf", box.Min + new Vector3(r - 1 + 0.5f, 1.5f, c - 1 + 0.5f) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Pillow:
@@ -219,8 +228,8 @@ namespace DwarfCorp
                                         continue;
                                     }
 
-                                    createdComponent = EntityFactory.CreateEntity<Body>("Bed", box.Min + new Vector3(r - 1, 1.0f, c - 1));
-
+                                    createdComponent = EntityFactory.CreateEntity<Body>("Bed", box.Min + new Vector3(r - 1 + 0.5f, 1.5f, c - 1 + 0.5f) + noise);
+                                    /*
                                     float angle = (float) Math.Atan2(dx, dy);
 
                                     Vector3 translation = createdComponent.LocalTransform.Translation;
@@ -228,7 +237,8 @@ namespace DwarfCorp
                                     createdComponent.LocalTransform = Matrix.CreateTranslation(new Vector3(-0.5f, 0, -0.5f)) * bedRotation * Matrix.CreateTranslation(new Vector3(0.5f, 0, 0.5f)) * Matrix.CreateTranslation(translation);
                                     createdComponent.BoundingBoxPos = Vector3.Transform(createdComponent.BoundingBoxPos, bedRotation);
                                     createdComponent.BoundingBox.Min = Vector3.Transform(createdComponent.BoundingBox.Min - translation, bedRotation) + translation;
-                                    createdComponent.BoundingBox.Max = Vector3.Transform(createdComponent.BoundingBox.Max - translation, bedRotation) + translation; ;
+                                    createdComponent.BoundingBox.Max = Vector3.Transform(createdComponent.BoundingBox.Max - translation, bedRotation) + translation; 
+                                     */
                                     break;
                                 }
                             }
@@ -242,6 +252,7 @@ namespace DwarfCorp
 
                     if(createdComponent != null)
                     {
+                        createdComponent.LocalTransform = Matrix.CreateRotationY(-(rotations[r, c] + (float)Math.PI * 0.5f)) * createdComponent.LocalTransform;
                         Vector3 endPos = createdComponent.LocalTransform.Translation;
                         Matrix offsetTransform = createdComponent.LocalTransform;
                         offsetTransform.Translation += new Vector3(0, -1, 0);

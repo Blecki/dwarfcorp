@@ -21,27 +21,27 @@ namespace DwarfCorp
             public float MaxCharge { get; set; }
             public static float ChargeRate = 5.0f;
             public Timer ReCreateTimer { get; set; }
-            public Timer ChargeParticleTimer { get; set; }
-
+            public Timer ChargeTimer { get; set; }
             public ManaBattery()
             {
                 ReCreateTimer = new Timer(3.0f, false);
-                ChargeParticleTimer = new Timer(0.25f, false);
+                ChargeTimer = new Timer(1.0f, false);
             }
 
             public void Update(DwarfTime time)
             {
+                ChargeTimer.Update(time);
                 if (ManaSprite != null && Charge > 0.0f && PlayState.Master.Spells.Mana < PlayState.Master.Spells.MaxMana)
                 {
-                    float amount = (float)time.ElapsedGameTime.TotalSeconds * ChargeRate;
-
-                    Charge -= amount;
-                    PlayState.Master.Spells.Recharge(amount);
-
-                    ChargeParticleTimer.Update(time);
-
-                    if(ChargeParticleTimer.HasTriggered)
+                    if (ChargeTimer.HasTriggered)
+                    {
+                        SoundManager.PlaySound(ContentPaths.Audio.tinkle, ManaSprite.Position);
+                        IndicatorManager.DrawIndicator("+" + (int)ChargeRate + " M", ManaSprite.Position, 1.0f, Color.Green);
                         PlayState.ParticleManager.Trigger("star_particle", ManaSprite.Position, Color.White, 1);
+                        Charge -= ChargeRate;
+                        PlayState.Master.Spells.Recharge(ChargeRate);
+                    }
+
                 }
                 else if (Charge <= 0.01f)
                 {
@@ -62,10 +62,12 @@ namespace DwarfCorp
                 if (ReCreateTimer.HasTriggered)
                 {
                     if (faction.RemoveResources(
-                        new List<ResourceAmount>() {new ResourceAmount(ResourceLibrary.ResourceType.Mana)}, position + Vector3.Up))
+                        new List<ResourceAmount>() {new ResourceAmount(ResourceLibrary.ResourceType.Mana)}, position + Vector3.Up * 0.5f))
                     {
                         ManaSprite = EntityFactory.CreateEntity<ResourceEntity>("Mana Resource", position);
                         ManaSprite.Gravity = Vector3.Zero;
+                        ManaSprite.CollideMode = Physics.CollisionMode.None;
+                        
                         ManaSprite.Tags.Clear();
                         return true;
                     }

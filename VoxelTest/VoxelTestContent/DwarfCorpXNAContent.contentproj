@@ -945,6 +945,21 @@
       <Importer>Mp3Importer</Importer>
       <Processor>SongProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Furniture\bookshelf.png">
+      <Name>bookshelf</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <None Include="Shaders\FXAA.fxh">
+      <Name>FXAA</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </None>
+    <Compile Include="Shaders\FXAA.fx">
+      <Name>FXAA</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
     <Content Include="Text\adverbs.txt">
       <Name>adverbs</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

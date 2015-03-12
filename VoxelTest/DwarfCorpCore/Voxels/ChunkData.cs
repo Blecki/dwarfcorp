@@ -106,30 +106,62 @@ namespace DwarfCorp
 
         }
 
-        public Ray GetMouseRay(MouseState mouse, Camera camera, Viewport viewPort)
+        public bool GetNeighbors(Vector3 worldPosition, List<Vector3> succ, List<Voxel> toReturn)
         {
-            float x = mouse.X;
-            float y = mouse.Y;
-            Vector3 pos1 = viewPort.Unproject(new Vector3(x, y, 0), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
-            Vector3 pos2 = viewPort.Unproject(new Vector3(x, y, 1), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
-            Vector3 dir = Vector3.Normalize(pos2 - pos1);
-            return new Ray(pos1, dir);
+            toReturn.Clear();
+            VoxelChunk chunk = GetVoxelChunkAtWorldLocation(worldPosition);
+
+            if (chunk == null) return false;
+
+            Vector3 grid = chunk.WorldToGrid(worldPosition);
+
+            chunk.GetNeighborsSuccessors(succ, (int)grid.X, (int)grid.Y, (int)grid.Z, toReturn);
+            return true;
+        }
+
+        public List<Creature.MoveAction> GetMovableNeighbors(Vector3 worldPosition)
+        {
+            VoxelChunk chunk = GetVoxelChunkAtWorldLocation(worldPosition);
+
+            if (chunk == null) return null;
+
+            Vector3 grid = chunk.WorldToGrid(worldPosition);
+
+            return chunk.GetMovableNeighbors((int)grid.X, (int)grid.Y, (int)grid.Z);
         }
 
         public Voxel GetFirstVisibleBlockHitByMouse(MouseState mouse, Camera camera, Viewport viewPort, bool selectEmpty = false)
         {
-            Voxel vox = GetFirstVisibleBlockHitByScreenCoord(mouse.X, mouse.Y, camera, viewPort, 150.0f, selectEmpty);
+            Voxel vox = GetFirstVisibleBlockHitByScreenCoord(mouse.X, mouse.Y, camera, viewPort, 150.0f, false, selectEmpty);
             return vox;
         }
 
-        public Voxel GetFirstVisibleBlockHitByScreenCoord(int x, int y, Camera camera, Viewport viewPort, float dist, bool selectEmpty = false)
+        public Voxel GetFirstVisibleBlockHitByScreenCoord(int x, int y, Camera camera, Viewport viewPort, float dist, bool draw = false, bool selectEmpty = false)
         {
             Vector3 pos1 = viewPort.Unproject(new Vector3(x, y, 0), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
             Vector3 pos2 = viewPort.Unproject(new Vector3(x, y, 1), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
             Vector3 dir = Vector3.Normalize(pos2 - pos1);
-            Voxel vox = GetFirstVisibleBlockHitByRay(pos1, pos1 + dir * dist, false, selectEmpty);
+            Voxel vox = GetFirstVisibleBlockHitByRay(pos1, pos1 + dir * dist, draw, selectEmpty);
 
             return vox;
+        }
+
+        public bool CheckOcclusionRay(Vector3 rayStart, Vector3 rayEnd)
+        {
+            Voxel atPos = new Voxel();
+            foreach (Point3 coord in MathFunctions.RasterizeLine(rayStart, rayEnd))
+            {
+                Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
+
+                bool success = GetNonNullVoxelAtWorldLocationCheckFirst(null, pos, ref atPos);
+
+                if (success && atPos.IsVisible)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public bool GetFirstVoxelUnder(Vector3 rayStart, ref Voxel under, bool considerWater = false)
@@ -176,17 +208,15 @@ namespace DwarfCorp
             delta.Normalize();
             Voxel atPos = new Voxel();
             Voxel prev = new Voxel();
-            Point3 chunkStart =new Point3(rayStart);
-            Point3 chunkEnd = new Point3(rayEnd);
-            foreach(Point3 coord in MathFunctions.RasterizeLine(chunkStart, chunkEnd))
+            foreach (Point3 coord in MathFunctions.RasterizeLine(rayStart, rayEnd))
             //for(float dn = 0.0f; dn < length; dn += 0.2f)
             {
                 Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
 
                 bool success = GetNonNullVoxelAtWorldLocationCheckFirst(null, pos, ref atPos);
-                if (draw && success)
+                if (draw)
                 {
-                    Drawer3D.DrawBox(new BoundingBox(pos, pos + new Vector3(0.01f, 0.01f, 0.01f)), Color.White, 0.01f);
+                    Drawer3D.DrawBox(new BoundingBox(pos, pos + new Vector3(1f, 1f, 1f)), Color.White, 0.01f);
                 }
                 
                 if (success && atPos.IsVisible)
@@ -284,9 +314,9 @@ namespace DwarfCorp
 
         public Vector3 RoundToChunkCoords(Vector3 location)
         {
-            int x = (int) (location.X * InvCSX);
-            int y = (int) (location.Y * InvCSY);
-            int z = (int) (location.Z * InvCSZ);
+            int x = MathFunctions.FloorInt(location.X * InvCSX);
+            int y = MathFunctions.FloorInt(location.Y * InvCSY);
+            int z = MathFunctions.FloorInt(location.Z * InvCSZ);
             return new Vector3(x, y, z);
         }
 
@@ -348,7 +378,7 @@ namespace DwarfCorp
         public Point3 GetChunkID(Vector3 origin)
         {
             origin = RoundToChunkCoords(origin);
-            return new Point3((int)Math.Floor(origin.X), (int)Math.Floor(origin.Y), (int)Math.Floor(origin.Z));
+            return new Point3(MathFunctions.FloorInt(origin.X), MathFunctions.FloorInt(origin.Y), MathFunctions.FloorInt(origin.Z));
         }
 
         /// <summary> 

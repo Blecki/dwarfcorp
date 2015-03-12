@@ -141,7 +141,9 @@ namespace DwarfCorp
 
         public float BaseFarmSpeed { get { return BuffedInt/100.0f + BuffedStr/100.0f; }}
         public bool CanEat { get; set; }
-        
+        public string FullName { get { return FirstName + " " + LastName;  }}
+        public float BuildSpeed { get { return (BuffedInt + BuffedDex)/10.0f; }}
+
         public CreatureStats()
         {
             CanSleep = false;

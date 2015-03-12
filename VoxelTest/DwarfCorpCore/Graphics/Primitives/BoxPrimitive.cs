@@ -654,6 +654,7 @@ namespace DwarfCorp
             Indices[35] = 22;
 
             IndexBuffer = new IndexBuffer(GameState.Game.GraphicsDevice, typeof(short), Indices.Length, BufferUsage.WriteOnly);
+            IndexBuffer.SetData(Indices);
         }
     }
 

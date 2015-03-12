@@ -51,6 +51,17 @@ namespace DwarfCorp
                     new OldBoxPrimitive.FaceData(new Rectangle(24, 24, 48, 16), true),
                     new OldBoxPrimitive.FaceData(new Rectangle(24, 40, 48, 16), true));
                 BoxPrimitives["bed"] = new OldBoxPrimitive(graphics, 0.8f, 0.5f, 1.8f, boxCoords);
+
+                Texture2D bookSheet = TextureManager.GetTexture(ContentPaths.Entities.Furniture.bookshelf);
+                OldBoxPrimitive.BoxTextureCoords bookshelfTexture = new OldBoxPrimitive.BoxTextureCoords(bookSheet.Width, bookSheet.Height,
+                        new OldBoxPrimitive.FaceData(new Rectangle(0, 20, 20, 32), true),
+                        new OldBoxPrimitive.FaceData(new Rectangle(28, 20, 20, 32), true),
+                        new OldBoxPrimitive.FaceData(new Rectangle(20, 0, 8, 20), false),
+                        new OldBoxPrimitive.FaceData(new Rectangle(0, 0, 1, 1), true),
+                        new OldBoxPrimitive.FaceData(new Rectangle(20, 20, 8, 32), true),
+                        new OldBoxPrimitive.FaceData(new Rectangle(20, 52, 8, 32), true));
+                BoxPrimitives["bookshelf"] = new OldBoxPrimitive(graphics, 20.0f / 32.0f, 32.0f / 32.0f, 8.0f / 32.0f, bookshelfTexture);
+
                 m_initialized = false;
 
 

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using BloomPostprocess;
+using DwarfCorp.Graphics.Effects;
 using DwarfCorpCore;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -74,6 +75,11 @@ namespace DwarfCorp.GameStates
             set { GameSettings.Default.AntiAliasing = value; }
         }
 
+        public bool UseFXAA
+        {
+            get { return MultiSamples == -1; }
+        }
+
         // The ratio of width to height in screen pixels. (ie 16/9 or 4/3)
         public static float AspectRatio = 0.0f;
 
@@ -106,6 +112,8 @@ namespace DwarfCorp.GameStates
 
         // A shader which draws fancy light blooming to the screen
         private BloomComponent bloom;
+
+        private FXAA fxaa;
 
         // Responsible for drawing liquids.
         public static WaterRenderer WaterRenderer;
@@ -453,6 +461,9 @@ namespace DwarfCorp.GameStates
             bloom.Initialize();
 
 
+            fxaa = new FXAA();
+            fxaa.Initialize();
+
             SoundManager.Content = Content;
             PlanService.Restart();
 
@@ -738,7 +749,7 @@ namespace DwarfCorp.GameStates
             layout.SetComponentPosition(companyInfoComponent, 0, 0, 4, 2);
 
             GUIComponent resourceInfoComponent = new ResourceInfoComponent(GUI, layout, Master.Faction);
-            layout.SetComponentPosition(resourceInfoComponent, 7, 0, 4, 2);
+            layout.SetComponentPosition(resourceInfoComponent, 7, 0, 2, 2);
 
             GridLayout infoLayout = new GridLayout(GUI, companyInfoComponent, 3, 4);
 
@@ -1633,24 +1644,21 @@ namespace DwarfCorp.GameStates
             Camera.ViewMatrix = view;
 
             GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-
             cubeEffect.Parameters["xView"].SetValue(view);
-
             cubeEffect.Parameters["xProjection"].SetValue(Camera.ProjectionMatrix);
             cubeEffect.CurrentTechnique = cubeEffect.Techniques["Textured"];
-
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
-
             ChunkManager.Render(Camera, gameTime, GraphicsDevice, cubeEffect, Matrix.Identity);
 
-
-            if(Master.CurrentToolMode == GameMaster.ToolMode.Build)
+            if (Master.CurrentToolMode == GameMaster.ToolMode.Build)
             {
+                cubeEffect.Parameters["xView"].SetValue(view);
+                cubeEffect.Parameters["xProjection"].SetValue(Camera.ProjectionMatrix);
+                cubeEffect.CurrentTechnique = cubeEffect.Techniques["Textured"];
+                GraphicsDevice.BlendState = BlendState.AlphaBlend;
                 Master.Faction.WallBuilder.Render(gameTime, GraphicsDevice, cubeEffect);
                 Master.Faction.CraftBuilder.Render(gameTime, GraphicsDevice, cubeEffect);
             }
-
-            //ComponentManager.CollisionManager.DebugDraw();
             Camera.ViewMatrix = viewMatrix;
         }
 
@@ -1808,6 +1816,10 @@ namespace DwarfCorp.GameStates
                 {
                     bloom.BeginDraw();
                 }
+                else if (UseFXAA)
+                {
+                    fxaa.Begin(DwarfTime.LastTime, fxaa.RenderTarget);
+                }
 
                 // Draw the sky
                 GraphicsDevice.Clear(new Color(DefaultShader.Parameters["xFogColor"].GetValueVector3()));
@@ -1861,7 +1873,21 @@ namespace DwarfCorp.GameStates
 
                 if (GameSettings.Default.EnableGlow)
                 {
+                    if(UseFXAA)
+                        bloom.DrawTarget = fxaa.RenderTarget;
+                    else
+                    {
+                        bloom.DrawTarget = null;
+                    }
+
                     bloom.Draw(gameTime.ToGameTime());
+
+                    if(UseFXAA)
+                        fxaa.End(DwarfTime.LastTime, fxaa.RenderTarget);
+                }
+                else if (UseFXAA)
+                {
+                    fxaa.End(DwarfTime.LastTime, fxaa.RenderTarget);
                 }
 
                 frameTimer.Update(gameTime);
@@ -1969,14 +1995,24 @@ namespace DwarfCorp.GameStates
             PresentationParameters pp = e.GraphicsDeviceInformation.PresentationParameters;
             GraphicsAdapter adapter = e.GraphicsDeviceInformation.Adapter;
             SurfaceFormat format = adapter.CurrentDisplayMode.Format;
-            pp.MultiSampleCount = MultiSamples;
 
-            if(bloom != null)
+            if (MultiSamples > 0 && MultiSamples != pp.MultiSampleCount)
             {
-                bloom.sceneRenderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false,
+                pp.MultiSampleCount = MultiSamples;
+            }
+            else if (MultiSamples <= 0 && MultiSamples != pp.MultiSampleCount)
+            {
+                pp.MultiSampleCount = 0;
+            }
+
+            if (bloom != null)
+            {
+                bloom.sceneRenderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight,
+                    false,
                     format, pp.DepthStencilFormat, pp.MultiSampleCount,
                     RenderTargetUsage.DiscardContents);
             }
+            
         }
 
         public void Dispose()

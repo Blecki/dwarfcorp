@@ -62,6 +62,7 @@ namespace DwarfCorp
             RegisterEntity("Fairy", (position, data) => new Fairy("Player", position));
             RegisterEntity("Target", (position, data) => new Target(position));
             RegisterEntity("Strawman", (position, data) => new Strawman(position));
+            RegisterEntity("Bookshelf", (position, data) => new Bookshelf(position));
         }
 
         

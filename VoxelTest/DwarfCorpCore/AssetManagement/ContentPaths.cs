@@ -214,7 +214,7 @@ namespace DwarfCorp
             {
                 public static string bedtex = ProgramData.CreatePath("Entities", "Furniture", "bedtex");
                 public static string interior_furniture = ProgramData.CreatePath("Entities", "Furniture", "interior_furniture");
-
+                public static string bookshelf = ProgramData.CreatePath("Entities", "Furniture", "bookshelf");
             }
             public class Goblin
             {
@@ -324,6 +324,7 @@ namespace DwarfCorp
             public static string GaussianBlur = ProgramData.CreatePath("Shaders", "GaussianBlur");
             public static string SkySphere = ProgramData.CreatePath("Shaders", "SkySphere");
             public static string TexturedShaders = ProgramData.CreatePath("Shaders", "TexturedShaders");
+            public static string FXAA = ProgramData.CreatePath("Shaders", "FXAA");
 #else
             public static string BloomCombine = ProgramData.CreatePath("Shaders", "BloomCombine_Opengl");
             public static string BloomExtract = ProgramData.CreatePath("Shaders", "BloomExtract_Opengl");

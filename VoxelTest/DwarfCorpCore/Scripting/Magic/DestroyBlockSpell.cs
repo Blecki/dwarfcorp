@@ -33,7 +33,9 @@ namespace DwarfCorp
                 {
                     if (OnCast(tree))
                     {
-                        PlayState.ParticleManager.Trigger("star_particle", selected.Position + Vector3.One*0.5f,
+                        Vector3 p = selected.Position + Vector3.One * 0.5f;
+                        IndicatorManager.DrawIndicator("-" + ManaCost + " M", p, 1.0f, Color.Red);
+                        PlayState.ParticleManager.Trigger("star_particle", p,
                             Color.White, 4);
                         selected.Kill();
                         destroyed = true;
@@ -45,7 +47,7 @@ namespace DwarfCorp
             {
                 SoundManager.PlaySound(ContentPaths.Audio.tinkle, PlayState.CursorLightPos, true, 1.0f);
             }
-            RechargeTimer.Reset(RechargeTimer.TargetTimeSeconds);
+
             base.OnVoxelsSelected(tree, voxels);
         }
     }

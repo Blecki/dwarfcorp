@@ -76,6 +76,12 @@ namespace DwarfCorp
                 yield break;
             }
 
+            if (Resource.NumResources <= 0)
+            {
+                yield return Status.Success;
+                yield break;
+            }
+
             List<Body> createdItems = Creature.Inventory.RemoveAndCreate(Resource);
             if(createdItems.Count == 0)
             {

@@ -32,6 +32,15 @@ namespace DwarfCorp
         public Vector3 PreviousVelocity { get; set; }
         public OrientMode Orientation { get; set; }
         private float Rotation = 0.0f;
+        public CollisionMode CollideMode { get; set; }
+        public enum CollisionMode
+        {
+            All,
+            None,
+            UpDown,
+            Sides
+        }
+
         public enum OrientMode
         {
             Physics,
@@ -62,6 +71,7 @@ namespace DwarfCorp
             PreviousVelocity = Vector3.Zero;
             IsInLiquid = false;
             CollisionType = CollisionManager.CollisionType.Dynamic;
+            CollideMode = CollisionMode.All;
             Orientation = orientation;
             SleepTimer = new Timer(5.0f, true);
         }
@@ -297,6 +307,8 @@ namespace DwarfCorp
 
         public virtual void HandleCollisions(ChunkManager chunks, float dt)
         {
+            if (CollideMode == CollisionMode.None) return;
+
             Voxel currentVoxel = new Voxel();
             bool success = chunks.ChunkData.GetVoxel(null, LocalTransform.Translation, ref currentVoxel);
 
@@ -319,9 +331,20 @@ namespace DwarfCorp
             vs.AddRange(adjacencies);
             Vector3 half = Vector3.One*0.5f;
             vs.Sort((a, b) => (MathFunctions.L1(LocalTransform.Translation, a.Position + half).CompareTo(MathFunctions.L1(LocalTransform.Translation, b.Position + half))));
+            int y = (int)Position.Y;
             foreach(Voxel v in vs)
             {
                 if(v == null || v.IsEmpty)
+                {
+                    continue;
+                }
+
+                if (CollideMode == CollisionMode.UpDown && (int)v.GridPosition.Y == y)
+                {
+                    continue;
+                }
+
+                if (CollideMode == CollisionMode.Sides && (int) v.GridPosition.Y != y)
                 {
                     continue;
                 }

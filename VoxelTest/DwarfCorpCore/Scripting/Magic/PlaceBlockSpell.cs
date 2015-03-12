@@ -53,7 +53,9 @@ namespace DwarfCorp
 
                 if (selected != null && ((!Transmute && selected.IsEmpty) || Transmute && !selected.IsEmpty) && OnCast(tree))
                 {
-                    PlayState.ParticleManager.Trigger("star_particle", selected.Position + Vector3.One * 0.5f, Color.White, 4);
+                    Vector3 p = selected.Position + Vector3.One*0.5f;
+                    IndicatorManager.DrawIndicator("-" + ManaCost + " M",p, 1.0f, Color.Red);
+                    PlayState.ParticleManager.Trigger("star_particle", p, Color.White, 4);
                     VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType(VoxelType), selected);
 
                     if (VoxelType == "Magic")

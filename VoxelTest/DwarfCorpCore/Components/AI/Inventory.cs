@@ -81,7 +81,7 @@ namespace DwarfCorp
         {
             List<Body> toReturn = new List<Body>();
 
-            if(!Resources.RemoveResource(resources))
+            if(!Resources.RemoveResource(resources.CloneResource()))
             {
                 return toReturn;
             }
