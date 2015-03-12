@@ -89,9 +89,6 @@ namespace DwarfCorp
 
 
 
-#if MONOGAME_BUILD
-            sound.EffectInstance.Volume = Math.Max(Math.Min(5.0f / (PlayState.Camera.Position - location).LengthSquared(), 1.0f), 0.0f);
-#endif
 
             if (!SoundCounts.ContainsKey(name))
             {
@@ -111,6 +108,7 @@ namespace DwarfCorp
                 };
                 sound.EffectInstance.IsLooped = false;
                 sound.VolumeMultiplier = volume;
+
 
                 if (randomPitch)
                 {
@@ -176,6 +174,10 @@ namespace DwarfCorp
                 {
                     Emitter.Position = instance.Position;
                     instance.EffectInstance.Apply3D(Listener, Emitter);
+
+                    instance.EffectInstance.Volume = GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * 
+                        Math.Max(Math.Min(10.0f / (camera.Position - instance.Position).LengthSquared(), 1.0f), 0.0f);
+
                     instance.EffectInstance.Volume *= (GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * instance.VolumeMultiplier);
 
                     instance.EffectInstance.Play();
@@ -183,7 +185,7 @@ namespace DwarfCorp
                 }
             }
 
-            MediaPlayer.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.MusicVolume;
+            MediaPlayer.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.MusicVolume * 0.1f;
             if (MediaPlayer.State == MediaState.Stopped)
             {
                 if (once)

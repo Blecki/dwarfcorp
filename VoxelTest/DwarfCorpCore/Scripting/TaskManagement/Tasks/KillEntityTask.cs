@@ -48,6 +48,39 @@ namespace DwarfCorp
             else return (agent.AI.Position - EntityToKill.LocalTransform.Translation).LengthSquared() * 0.01f;
         }
 
+        public override bool ShouldDelete(Creature agent)
+        {
+            if (EntityToKill == null || EntityToKill.IsDead)
+            {
+                return true;
+            }
+
+            switch (Mode)
+            {
+                case KillType.Attack:
+                {
+                    if (!agent.Faction.AttackDesignations.Contains(EntityToKill)) return true;
+                        return false;
+                        break;
+                    }
+                case KillType.Chop:
+                    {
+                        if (!agent.Faction.ChopDesignations.Contains(EntityToKill))
+                        {
+                            return true;
+                        }
+                        return false;
+                        break;
+                    }
+                case KillType.Auto:
+                    {
+                        return false;
+                    }
+            }
+
+            return false;
+        }
+
         public override bool IsFeasible(Creature agent)
         {
             if(EntityToKill == null)

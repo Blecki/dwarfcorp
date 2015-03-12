@@ -31,7 +31,7 @@ namespace DwarfCorp
         public StockResourceAct(CreatureAI agent, ResourceAmount item) :
             base(agent)
         {
-            ItemToStock = item;
+            ItemToStock = item.CloneResource();
             Name = "Stock Item";
             Tree = null;
         }
@@ -42,7 +42,19 @@ namespace DwarfCorp
         }
 
 
-
+        public IEnumerable<Status> OnFail()
+        {
+            if (ItemToStock != null && ItemToStock.NumResources >= 0 && Agent.Creature.Inventory.Resources.HasResource(ItemToStock))
+            {
+                Agent.GatherManager.StockOrders.Add(new GatherManager.StockOrder()
+                {
+                    Resource = ItemToStock
+                });
+                yield return Status.Success;
+                yield break;
+            }
+            yield return Status.Fail;
+        }
 
         public override IEnumerable<Status> Run()
         {
@@ -56,36 +68,26 @@ namespace DwarfCorp
 
                 if (ItemToStock != null)
                 {
+
                     Tree = new Sequence(
-                        new SetBlackboardData<ResourceAmount>(Agent, "GatheredResource", ItemToStock),
+                        new SetBlackboardData<ResourceAmount>(Agent, "GatheredResource", ItemToStock.CloneResource()),
                         new SearchFreeStockpileAct(Agent, "TargetStockpile", "FreeVoxel"),
                         
                                         new Select(
                                                     new Sequence(
                                                                     new GoToVoxelAct("FreeVoxel", PlanAct.PlanType.Adjacent, Agent),
                                                                     new PutResourceInZone(Agent, "TargetStockpile", "FreeVoxel", "GatheredResource")
-                                                                ),
-                                                    new DropItemAct(Agent)
+                                                                )
                                                   )
                                          
-                        ) 
+                        ) | new Wrap(OnFail)
                      ;
 
                     Tree.Initialize();
                 }
             }
 
-            if (Tree == null)
-            {
-                yield return Status.Fail;
-            }
-            else
-            {
-                foreach (Status s in base.Run())
-                {
-                    yield return s;
-                }
-            }
+            return base.Run();
         }
     }
 

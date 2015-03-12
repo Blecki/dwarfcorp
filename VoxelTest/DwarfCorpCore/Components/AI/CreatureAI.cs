@@ -191,7 +191,7 @@ namespace DwarfCorp
             {
                 float cost = task.ComputeCost(Creature);
 
-                if(task.Priority >= bestPriority && cost < bestCost)
+                if(task.IsFeasible(Creature) && task.Priority >= bestPriority && cost < bestCost)
                 {
                     bestCost = cost;
                     bestTask = task;
@@ -209,7 +209,7 @@ namespace DwarfCorp
             Task newTask = null;
             foreach (Task task in Tasks)
             {
-                if (task.Priority > CurrentTask.Priority)
+                if (task.Priority > CurrentTask.Priority && task.IsFeasible(Creature))
                 {
                     newTask = task;
                     break;
@@ -218,12 +218,20 @@ namespace DwarfCorp
 
             if (newTask != null)
             {
-                Tasks.Add(CurrentTask);
-                CurrentTask.SetupScript(Creature);
+                if (CurrentTask.ShouldRetry(Creature))
+                {
+                    Tasks.Add(CurrentTask);
+                    CurrentTask.SetupScript(Creature);
+                }
                 CurrentTask = newTask;
                 newTask.SetupScript(Creature);
                 Tasks.Remove(newTask);
             }
+        }
+
+        public void DeleteBadTasks()
+        {
+            Tasks.RemoveAll(task => task.ShouldDelete(Creature));
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
@@ -232,6 +240,7 @@ namespace DwarfCorp
             SpeakTimer.Update(gameTime);
 
             OrderEnemyAttack();
+            DeleteBadTasks();
             PreEmptTasks();
 
             if (Status.Energy.IsUnhappy() && PlayState.Time.IsNight())
@@ -242,7 +251,7 @@ namespace DwarfCorp
                     Tasks.Add(toReturn);
             }
 
-            if (Status.Hunger.IsUnhappy() && Faction.FindItemsWithTags("Food").Count > 0)
+            if (Status.Hunger.IsUnhappy() &&  Faction.CountResourcesWithTag(Resource.ResourceTags.Food) > 0)
             {
                 Task toReturn = new SatisfyHungerTask();
                 toReturn.SetupScript(Creature);
@@ -266,7 +275,6 @@ namespace DwarfCorp
                             CurrentTask.Priority = Task.PriorityType.Eventually;
                             Tasks.Add(CurrentTask);
                             CurrentTask.SetupScript(Creature);
-                            CurrentTask = ActOnIdle();
                             retried = true;
                         }
                     }
@@ -285,37 +293,30 @@ namespace DwarfCorp
                     tantrum = MathFunctions.Rand(0, 1) < 0.25f;
                 }
 
-                    Task goal = GetEasiestTask(Tasks);
-                    if (goal != null)
+                Task goal = GetEasiestTask(Tasks);
+                if (goal != null)
+                {
+                    if (tantrum)
                     {
-                        if (tantrum)
+                        Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
+                        if (Creature.Allies == "Dwarf")
                         {
-                            Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
-                            if (Creature.Allies == "Dwarf")
-                            {
-                                PlayState.AnnouncementManager.Announce(Stats.FirstName + " " + Stats.LastName + " refuses to work!", "Our employee is unhappy, and would rather not work!");
-                            }
-                            CurrentTask = ActOnIdle();
+                            PlayState.AnnouncementManager.Announce(Stats.FirstName + " " + Stats.LastName + " refuses to work!", "Our employee is unhappy, and would rather not work!");
                         }
-                        else
-                        {
-                            if (goal.IsFeasible(Creature))
-                            {
-                                IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
-                                goal.SetupScript(Creature);
-                                CurrentTask = goal;
-                                Tasks.Remove(goal);
-                            }
-                            else
-                            {
-                                Tasks.Remove(goal);
-                            }   
-                        }
+                        CurrentTask = null;
                     }
                     else
                     {
-                        CurrentTask = ActOnIdle();
-                    }   
+                        IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
+                        goal.SetupScript(Creature);
+                        CurrentTask = goal;
+                        Tasks.Remove(goal);
+                    }
+                }
+                else
+                {
+                    CurrentTask = ActOnIdle();
+                }   
                 
             }
 
@@ -362,15 +363,15 @@ namespace DwarfCorp
                 {
                     return
                         new ActWrapperTask(new GoToZoneAct(this, rooms[PlayState.Random.Next(rooms.Count)]) |
-                                           new WanderAct(this, 2, 0.5f, 1.0f)) {Priority = Task.PriorityType.Eventually};
+                                           new WanderAct(this, 2, 1.0f + MathFunctions.Rand(-0.5f, 0.5f), 1.0f)) {Priority = Task.PriorityType.Eventually};
                 }
                 else
                 {
                     if (IdleTimer.HasTriggered && MathFunctions.RandEvent(0.25f))
                     {
-                        return new ActWrapperTask(new GoToChairAndSitAct(this)) { Priority = Task.PriorityType.Eventually };
+                        return new ActWrapperTask(new GoToChairAndSitAct(this)) { Priority = Task.PriorityType.Eventually, AutoRetry = false};
                     }
-                    return new ActWrapperTask(new WanderAct(this, 2, 0.5f, 1.0f)) { Priority = Task.PriorityType.Eventually };
+                    return new ActWrapperTask(new WanderAct(this, 2, 1.0f + MathFunctions.Rand(-0.5f, 0.5f), 1.0f)) { Priority = Task.PriorityType.Eventually };
                 }
             }
             // If we have no more build orders, look for gather orders

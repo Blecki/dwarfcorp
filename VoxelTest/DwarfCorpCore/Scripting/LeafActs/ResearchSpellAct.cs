@@ -46,6 +46,7 @@ namespace DwarfCorp
                 Creature.Physics.Velocity *= 0;
                 if ((int) totalResearch > 0)
                 {
+                    SoundManager.PlaySound(ContentPaths.Audio.tinkle, Creature.AI.Position, true);
                     Creature.AI.AddXP((int)(totalResearch));
                     totalResearch = 0.0f;
                 }

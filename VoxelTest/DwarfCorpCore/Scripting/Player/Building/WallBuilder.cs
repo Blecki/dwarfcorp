@@ -156,6 +156,7 @@ namespace DwarfCorp
             //Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
             foreach(WallBuilder put in Designations)
             {
+                Drawer3D.DrawBox(put.Vox.GetBoundingBox(), Color.LightBlue, st * 0.01f + 0.05f);
                 effect.Parameters["xWorld"].SetValue(Matrix.CreateTranslation(put.Vox.Position));
 
                 foreach(EffectPass pass in effect.CurrentTechnique.Passes)

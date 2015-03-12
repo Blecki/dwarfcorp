@@ -100,6 +100,7 @@ namespace DwarfCorp
         protected override void Draw(GameTime time)
         {
             StateManager.Render(DwarfTime.LastTime);
+            GraphicsDevice.SetRenderTarget(null);
             base.Draw(time);
         }
 

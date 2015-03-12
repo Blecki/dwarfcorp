@@ -35,9 +35,10 @@ namespace DwarfCorp.GameStates
             DisplayModes = new Dictionary<string, DisplayMode>();
             AAModes = new Dictionary<string, int>();
             AAModes["None"] = 0;
-            AAModes["2"] = 2;
-            AAModes["4"] = 4;
-            AAModes["16"] = 16;
+            AAModes["FXAA"] = -1;
+            AAModes["2x MSAA"] = 2;
+            AAModes["4x MSAA"] = 4;
+            AAModes["16x MSAA"] = 16;
         }
 
         public override void OnEnter()
@@ -169,9 +170,10 @@ namespace DwarfCorp.GameStates
                 ToolTip = "Determines how much antialiasing (smoothing) there is.\nHigher means more smooth, but is slower."
             };
             aaBox.AddValue("None");
-            aaBox.AddValue("2");
-            aaBox.AddValue("4");
-            aaBox.AddValue("16");
+            aaBox.AddValue("FXAA");
+            aaBox.AddValue("2x MSAA");
+            aaBox.AddValue("4x MSAA");
+            aaBox.AddValue("16x MSAA");
 
             foreach(string s in AAModes.Keys.Where(s => AAModes[s] == GameSettings.Default.AntiAliasing))
             {

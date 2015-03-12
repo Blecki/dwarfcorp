@@ -173,6 +173,7 @@ namespace DwarfCorp
                     where   screenPos.Z > 0 
                     && (selectionRectangle.Contains((int)screenPos.X, (int)screenPos.Y) || selectionRectangle.Intersects(component.GetScreenRect(camera))) 
                     && camera.GetFrustrum().Contains(component.GlobalTransform.Translation) != ContainmentType.Disjoint
+                    && !PlayState.ChunkManager.ChunkData.CheckOcclusionRay(camera.Position, component.Position)
                     select component).ToList();
         }
 

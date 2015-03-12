@@ -556,8 +556,17 @@ namespace DwarfCorp
             }
         }
 
+        public static int FloorInt(float s)
+        {
+            return (int) Math.Floor(s);
+        }
 
-        public static IEnumerable<Point3> RasterizeLine(Point3 start, Point3 end)
+        public static bool HasNan(Vector3 f)
+        {
+            return float.IsNaN(f.X) || float.IsNaN(f.Y) || float.IsNaN(f.Z);
+        }
+
+        public static IEnumerable<Point3> RasterizeLine(Vector3 start, Vector3 end)
         {
             /*
             int x1 = start.X;
@@ -701,6 +710,14 @@ namespace DwarfCorp
             var y = start.Y;
             var z = start.Z;
             Vector3 direction = new Vector3(end.X, end.Y, end.Z) - new Vector3(start.X, start.Y, start.Z);
+
+            if (L1(start, end) < 1e-12 || HasNan(start) || HasNan(end))
+            {
+                yield break;
+            }
+
+            float d1 = direction.Length();
+
             direction.Normalize();
             // Break out direction vector.
             var dx = direction.X;
@@ -719,13 +736,16 @@ namespace DwarfCorp
             var tDeltaX = stepX/dx;
             var tDeltaY = stepY/dy;
             var tDeltaZ = stepZ/dz;
-
-
+            Vector3 curr = new Vector3(x, y, z);
             while (true)
             {
-
-                yield return new Point3(x, y, z);
-                if (x == end.X && y == end.Y && z == end.Z) yield break;
+                curr.X = x;
+                curr.Y = y;
+                curr.Z = z;
+                float len = (curr - end).Length();
+                yield return new Point3(FloorInt(x), FloorInt(y), FloorInt(z));
+                if (FloorInt(x) == FloorInt(end.X) && FloorInt(y) == FloorInt(end.Y) && FloorInt(z) == FloorInt(end.Z)) yield break;
+                if (len > d1 * 1.1f) yield break;
                 // tMaxX stores the t-value at which we cross a cube boundary along the
                 // X axis, and similarly for Y and Z. Therefore, choosing the least tMax
                 // chooses the closest cube boundary. Only the first case of the four

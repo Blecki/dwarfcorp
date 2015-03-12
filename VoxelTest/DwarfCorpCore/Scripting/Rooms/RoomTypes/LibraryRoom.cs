@@ -48,6 +48,30 @@ namespace DwarfCorp
                 }
             };
 
+            RoomTile[,]  bookshlf =
+            {
+                {
+                    RoomTile.None,
+                    RoomTile.Wall | RoomTile.Edge
+                },
+                {
+                    RoomTile.None,
+                    RoomTile.BookShelf
+                }
+            };
+
+            RoomTile[,] bookshlfAcc =
+            {
+                {
+                    RoomTile.None,
+                    RoomTile.None
+                },
+                {
+                    RoomTile.None,
+                    RoomTile.None
+                }
+            };
+
             RoomTemplate lamp = new RoomTemplate(PlacementType.All, lampTemplate, lampAccessories);
             RoomTile[,] bookTemp =
             {
@@ -90,7 +114,7 @@ namespace DwarfCorp
             RoomTemplate book = new RoomTemplate(PlacementType.Random, bookTemp, bookAcc);
 
 
-
+            libraryTemplates.Add(new RoomTemplate(PlacementType.Random, bookshlf, bookshlfAcc) { Probability = 0.15f});
             libraryTemplates.Add(lamp);
             libraryTemplates.Add(book);
             Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);

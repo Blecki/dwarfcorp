@@ -34,7 +34,7 @@ namespace DwarfCorp
             base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos, octree)
         {
             LightsWithVoxels = true;
-            Tint = Color.White;
+            Tint = new Color(255, 255, 0);
             LightingTimer = new Timer(0.2f, true);
             StartTimer = new Timer(0.5f, true);
             TargetTint = Tint;
@@ -80,6 +80,12 @@ namespace DwarfCorp
         {
             LightingTimer.Update(gameTime);
             StartTimer.Update(gameTime);
+
+            if (!LightsWithVoxels)
+            {
+                Tint = Color.White;
+            }
+
             if(ShouldUpdate())
             {
                 if (entityLighting)

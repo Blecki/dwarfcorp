@@ -40,7 +40,7 @@ namespace DwarfCorp
         public void Initialize(EmployeeClass dwarfClass)
         {
             Physics.Orientation = Physics.OrientMode.RotateY;
-            Sprite = new CharacterSprite(Graphics, Manager, "Dwarf Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 0.3f, 0)));
+            Sprite = new CharacterSprite(Graphics, Manager, "Dwarf Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)));
             foreach (Animation animation in dwarfClass.Animations)
             {
                 Sprite.AddAnimation(animation.Clone());
@@ -66,7 +66,11 @@ namespace DwarfCorp
             Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
 
-            Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform, new SpriteSheet(ContentPaths.Effects.shadowcircle));
+            Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform,
+                new SpriteSheet(ContentPaths.Effects.shadowcircle))
+            {
+                GlobalScale = 1.25f
+            };
             List<Point> shP = new List<Point>
             {
                 new Point(0, 0)
