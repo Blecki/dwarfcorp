@@ -76,7 +76,7 @@ namespace DwarfCorp
 
         public bool IsAsleep
         {
-            get { return CharacterMode.Sleeping == CurrentCharacterMode; }
+            get { return Status.IsAsleep; }
         }
 
         public bool IsOnGround { get; set; }

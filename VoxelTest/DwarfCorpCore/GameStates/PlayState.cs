@@ -391,7 +391,7 @@ namespace DwarfCorp.GameStates
             {
                 Vector3 dorfPos = new Vector3(Camera.Position.X + (float) Random.NextDouble(), h + 10, Camera.Position.Z + (float) Random.NextDouble());
                 Physics creat = (Physics) EntityFactory.GenerateDwarf(dorfPos,
-                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.Worker], 0);
+                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Worker], 0);
 
                 creat.Velocity = new Vector3(1, 0, 0);
             }
@@ -400,7 +400,7 @@ namespace DwarfCorp.GameStates
             {
                 Vector3 dorfPos = new Vector3(Camera.Position.X + (float)Random.NextDouble(), h + 10, Camera.Position.Z + (float)Random.NextDouble());
                 Physics creat = (Physics)EntityFactory.GenerateDwarf(dorfPos,
-                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.AxeDwarf], 0);
+                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.AxeDwarf], 0);
 
                 creat.Velocity = new Vector3(1, 0, 0);
             }
@@ -492,7 +492,7 @@ namespace DwarfCorp.GameStates
 
             // If we already have a file, we need to load all the chunks from it.
             // This is preliminary stuff that just makes sure the file exists and can be loaded.
-            if(fileExists)
+            if (fileExists)
             {
                 LoadingMessage = "Loading " + ExistingFile;
                 gameFile = new GameFile(ExistingFile, true);
@@ -502,12 +502,17 @@ namespace DwarfCorp.GameStates
                 ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
                 ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
 
-                if(gameFile.Data.Metadata.OverworldFile != null && gameFile.Data.Metadata.OverworldFile != "flat")
+                if (gameFile.Data.Metadata.OverworldFile != null && gameFile.Data.Metadata.OverworldFile != "flat")
                 {
                     LoadingMessage = "Loading world " + gameFile.Data.Metadata.OverworldFile;
                     Overworld.Name = gameFile.Data.Metadata.OverworldFile;
-                    DirectoryInfo worldDirectory = Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds" + ProgramData.DirChar + Overworld.Name);
-                    OverworldFile overWorldFile = new OverworldFile(worldDirectory.FullName + ProgramData.DirChar +  "world." + OverworldFile.CompressedExtension, true);
+                    DirectoryInfo worldDirectory =
+                        Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds" +
+                                                  ProgramData.DirChar + Overworld.Name);
+                    OverworldFile overWorldFile =
+                        new OverworldFile(
+                            worldDirectory.FullName + ProgramData.DirChar + "world." + OverworldFile.CompressedExtension,
+                            true);
                     Overworld.Map = overWorldFile.Data.CreateMap();
                     Overworld.Name = overWorldFile.Data.Name;
                     WorldWidth = Overworld.Map.GetLength(1);
@@ -527,8 +532,11 @@ namespace DwarfCorp.GameStates
                 GameID = Random.Next(0, 1024);
             }
 
-           
-            ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f, ChunkHeight / 2.0f);
+
+            ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f, ChunkHeight/2.0f)
+            {
+                SeaLevel = SeaLevel
+            };
 
             Vector3 globalOffset = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y) * WorldScale;
 
@@ -601,8 +609,9 @@ namespace DwarfCorp.GameStates
             ChunkManager.StartThreads();
         }
 
+        public static float SeaLevel { get; set; }
 
-        
+
         /// <summary>
         /// Creates a screenshot of the game and saves it to a file.
         /// </summary>

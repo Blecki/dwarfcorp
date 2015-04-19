@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace DwarfCorp
 {
+   
 
     /// <summary>
     /// A particular position and color in a gradient.

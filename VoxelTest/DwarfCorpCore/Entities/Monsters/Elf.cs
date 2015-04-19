@@ -97,8 +97,8 @@ namespace DwarfCorp
                 ContentPaths.Audio.jump
             };
 
-            Stats.FirstName = TextGenerator.GenerateRandom("$ElfName");
-            Stats.LastName = TextGenerator.GenerateRandom("$ElfFamily");
+            Stats.FirstName = TextGenerator.GenerateRandom("$elfname");
+            Stats.LastName = TextGenerator.GenerateRandom("$elffamily");
             Stats.Size = 4;
 
         }

@@ -224,6 +224,7 @@ namespace DwarfCorp
             if(DrawBoundingBox)
             {
                 Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f);
+                Drawer3D.DrawBox(GetRotatedBoundingBox(), Color.Red, 0.02f);
             }
 
             if (DrawReservation && IsReserved)
@@ -293,11 +294,17 @@ namespace DwarfCorp
             return BoundingBox;
         }
 
+        public BoundingBox GetRotatedBoundingBox()
+        {
+            Vector3 min = Vector3.Transform(BoundingBox.Min - GlobalTransform.Translation, GlobalTransform);
+            Vector3 max = Vector3.Transform(BoundingBox.Max - GlobalTransform.Translation, GlobalTransform);
+            return new BoundingBox(min, max);
+        }
+
 
         public void UpdateBoundingBox()
         {
             Vector3 extents = BoundingBox.Max - BoundingBox.Min;
-            float m = Math.Max(Math.Max(extents.X, extents.Y), extents.Z) * 0.5f;
             BoundingBox.Min = GlobalTransform.Translation - extents / 2.0f + BoundingBoxPos;
             BoundingBox.Max = GlobalTransform.Translation + extents / 2.0f + BoundingBoxPos;
         }

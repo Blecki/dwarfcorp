@@ -396,6 +396,9 @@
     <Compile Include="..\DwarfCorpCore\GameStates\WorldLoaderState.cs">
       <Link>GameStates\WorldLoaderState.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\GameStates\WorldSetupState.cs">
+      <Link>GameStates\WorldSetupState.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Graphics\Cameras\Camera.cs">
       <Link>Graphics\Camera\Camera.cs</Link>
     </Compile>
@@ -1307,6 +1310,9 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\World\DetailMoteData.cs">
       <Link>World\DetailMoteData.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\World\Diplomacy.cs">
+      <Link>World\Diplomacy.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\World\FaunaData.cs">
       <Link>World\FaunaData.cs</Link>

@@ -192,7 +192,7 @@ namespace DwarfCorp
 
             NoiseMaker.Noises.Add("chirp", new List<string>(){ContentPaths.Audio.bird});
 
-            Stats.FirstName = TextGenerator.GenerateRandom("$DwarfName");
+            Stats.FirstName = TextGenerator.GenerateRandom("$firstname");
             Stats.LastName = " the Bird";
             Stats.CurrentClass = new EmployeeClass()
             {

@@ -78,7 +78,7 @@ namespace DwarfCorp.GameStates
                     break;
                 case "Generate World":
                     MaintainState = true;
-                    StateManager.PushState("WorldGeneratorState");
+                    StateManager.PushState("WorldSetupState");
                     break;
                 case "Options":
                     MaintainState = true;

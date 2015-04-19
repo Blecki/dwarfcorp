@@ -85,9 +85,9 @@ namespace DwarfCorp
                 if (creature == null)
                 {
                     continue;
-                }
+                } 
 
-                if (Alliance.GetRelationship(creature.Allies, Player.Faction.Alliance) == Relationship.Loves)
+                if (Alliance.GetRelationship(creature.Allies, Player.Faction.Name) == Relationship.Loves)
                 {
                     continue;
                 }

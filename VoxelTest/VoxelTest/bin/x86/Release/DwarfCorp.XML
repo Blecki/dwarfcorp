@@ -1852,10 +1852,21 @@
             <summary>
             Restricts a value to be within a specified range.
             </summary>
-            <param Name="value">The value to clamp.</param>
-            <param Name="min">The minimum value.</param>
-            <param Name="max">The maximum value.</param>
-            <returns>Returns the clamped value.</returns>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.Clamp(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Restricts a value to be within a specified range.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.Clamp(System.UInt32,System.UInt32,System.UInt32)">
+            <summary>
+            Restricts a value to be within a specified range.
+            </summary>
+        </member>
+        <member name="M:DwarfCorp.MathFunctions.Clamp(System.Byte,System.Byte,System.Byte)">
+            <summary>
+            Restricts a value to be within a specified range.
+            </summary>
         </member>
         <member name="M:DwarfCorp.MathFunctions.PitchYawRoll(Microsoft.Xna.Framework.Matrix)">
             <summary>

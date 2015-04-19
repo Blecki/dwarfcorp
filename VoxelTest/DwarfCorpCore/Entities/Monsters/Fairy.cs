@@ -121,7 +121,7 @@ namespace DwarfCorp
             //new LightEmitter("Light Emitter", Sprite, Matrix.Identity, Vector3.One, Vector3.One, 255, 150);
             new Bobber(0.25f, 3.0f, MathFunctions.Rand(), Sprite);
           
-            Stats.FirstName = TextGenerator.GenerateRandom("$DwarfName");
+            Stats.FirstName = TextGenerator.GenerateRandom("$firstname");
             Stats.LastName = "The Fairy";
             
             Stats.CanSleep = false;

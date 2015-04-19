@@ -39,8 +39,8 @@ namespace DwarfCorp
                     new Sequence
                     (
                         new GoToEntityAct(closestItem, Creature.AI),
-                        new TeleportAct(Creature.AI) {Location = closestItem.BoundingBox.Center() + new Vector3(-0.0f, 0.2f, -0.0f)},
-                        new SleepAct(Creature.AI) { RechargeRate = 1.0f, Teleport = true, TeleportLocation = closestItem.BoundingBox.Center() + new Vector3(-0.0f, 0.2f, -0.0f)},
+                        new TeleportAct(Creature.AI) {Location = closestItem.GetRotatedBoundingBox().Center() + new Vector3(-0.0f, 0.75f, -0.0f)},
+                        new SleepAct(Creature.AI) { RechargeRate = 1.0f, Teleport = true, TeleportLocation = closestItem.GetRotatedBoundingBox().Center() + new Vector3(-0.0f, 0.75f, -0.0f) },
                         unreserveAct
                     ) | unreserveAct;
             }

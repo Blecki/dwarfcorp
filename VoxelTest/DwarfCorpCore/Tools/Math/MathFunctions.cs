@@ -120,17 +120,40 @@ namespace DwarfCorp
         /// <summary>
         /// Restricts a value to be within a specified range.
         /// </summary>
-        /// <param Name="value">The value to clamp.</param>
-        /// <param Name="min">The minimum value.</param>
-        /// <param Name="max">The maximum value.</param>
-        /// <returns>Returns the clamped value.</returns>
         public static float Clamp(float value, float min, float max)
         {
-            // Clamp the value be the min and max values.
             value = value > max ? max : value;
             value = value < min ? min : value;
+            return value;
+        }
 
-            // Return the clamped value.
+        /// <summary>
+        /// Restricts a value to be within a specified range.
+        /// </summary>
+        public static int Clamp(int value, int min, int max)
+        {
+            value = value > max ? max : value;
+            value = value < min ? min : value;
+            return value;
+        }
+
+        /// <summary>
+        /// Restricts a value to be within a specified range.
+        /// </summary>
+        public static uint Clamp(uint value, uint min, uint max)
+        {
+            value = value > max ? max : value;
+            value = value < min ? min : value;
+            return value;
+        }
+
+        /// <summary>
+        /// Restricts a value to be within a specified range.
+        /// </summary>
+        public static byte Clamp(byte value, byte min, byte max)
+        {
+            value = value > max ? max : value;
+            value = value < min ? min : value;
             return value;
         }
 
@@ -781,6 +804,12 @@ namespace DwarfCorp
                     }
                 }
             }
+        }
+
+        public static Rectangle SnapRect(Vector2 vector2, Vector2 measure, Rectangle outer)
+        {
+            Rectangle inner = new Rectangle((int)vector2.X, (int)vector2.Y, (int)measure.X, (int)measure.Y);
+            return new Rectangle(Clamp(inner.X, outer.X, outer.Right - inner.Width), Clamp(inner.Y, outer.Y, outer.Bottom - inner.Height), inner.Width, inner.Height);
         }
     }
 }

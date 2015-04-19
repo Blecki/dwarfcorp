@@ -103,7 +103,7 @@ namespace DwarfCorp
                 Creature dwarf = dwarves[0];
 
 
-                if (dwarf.Allies == Player.Faction.Alliance && !Player.SelectedMinions.Contains(dwarf.AI))
+                if (dwarf.Allies == Player.Faction.Name && !Player.SelectedMinions.Contains(dwarf.AI))
                 {
                     Player.SelectedMinions.Add(dwarf.AI);
                 }

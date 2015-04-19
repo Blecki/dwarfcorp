@@ -218,6 +218,7 @@ namespace DwarfCorp
 
             if (newTask != null)
             {
+                CurrentTask.Cancel();
                 if (CurrentTask.ShouldRetry(Creature))
                 {
                     Tasks.Add(CurrentTask);

@@ -81,6 +81,14 @@ namespace DwarfCorp
         {
             return false;
         }
+
+        public virtual void Cancel()
+        {
+            if (Script != null)
+            {
+                Script.OnCanceled();
+            }
+        }
     }
 
     public class ActWrapperTask : Task

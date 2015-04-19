@@ -97,6 +97,12 @@ namespace DwarfCorp
             }
         }
 
+        public static T SelectRandom<T>(IEnumerable<T> list)
+        {
+            var enumerable = list as IList<T> ?? list.ToList();
+            return enumerable.ElementAt(PlayState.Random.Next(enumerable.Count()));
+        }
+
         public static T[,] RotateClockwise<T>(T[,] A)
         {
             int nr = A.GetLength(0);

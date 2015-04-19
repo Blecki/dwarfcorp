@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Globalization;
+using System.Security.Policy;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json.Converters;
 
 namespace DwarfCorp.GameStates
 {
@@ -14,16 +17,9 @@ namespace DwarfCorp.GameStates
     /// </summary>
     public class WorldGeneratorState : GameState, IDisposable
     {
-        public float TemperatureScale { get; set; }
-        public float RainfallScale { get; set; }
-        public float MountainScale { get; set; }
-        public float NoiseScale { get; set; }
-        public float NumFaults { get; set; }
-        public float NumRains { get; set; }
-        public float NumRivers { get; set; }
-        public float NumVolcanoes { get; set; }
+        public WorldSettings Settings { get; set; }
 
-        public static Texture2D worldMap;
+        public static Texture2D	 worldMap;
         public Color[] worldData;
         public DwarfGUI GUI { get; set; }
         public SpriteFont DefaultFont { get; set; }
@@ -46,10 +42,10 @@ namespace DwarfCorp.GameStates
 
         public ProgressBar Progress { get; set; }
         public string OverworldDirectory = "Worlds";
-        public string WorldName = "world0";
-        public LineEdit NameEdit;
         public ComboBox WorldSizeBox { get; set; }
 
+        public List<Faction> NativeCivilizations = new List<Faction>();
+        public ComboBox ViewSelectionBox;
 
         public WorldGeneratorState(DwarfGame game, GameStateManager stateManager) :
             base(game, "WorldGeneratorState", stateManager)
@@ -57,84 +53,14 @@ namespace DwarfCorp.GameStates
             GenerationComplete = false;
             ImageMutex = new Mutex();
             Input = new InputManager();
-            TemperatureScale = 1.0f;
-            RainfallScale = 1.0f;
-            MountainScale = 1.0f;
-            NoiseScale = 1.0f;
-            NumFaults = 10;
-            NumRains = 8000;
-            NumRivers = 100;
-            NumVolcanoes = 3;
-            GenerateWorldName();
+            Settings = new WorldSettings();
         }
-
-        public void GenerateWorldName()
-        {
-            List<string[]> templates = new List<string[]>
-            {
-                new[]
-                {
-                    "$Place",
-                    " of the ",
-                    "$Color",
-                    " ",
-                    "$Noun"
-                },
-                new[]
-                {
-                    "$Place",
-                    " of the ",
-                    "$Adjective",
-                    " ",
-                    "$Noun"
-                },
-                new[]
-                {
-                    "$Place",
-                    " of the ",
-                    "$Material",
-                    " ",
-                    "$Noun"
-                },
-                new[]
-                {
-                    "$Place",
-                    " of ",
-                    "$Noun"
-                },
-                new[]
-                {
-                    "$Color",
-                    " ",
-                    "$Material",
-                    " ",
-                    "$Place"
-                },
-                new []
-                {
-                    "$Adjective",
-                    "ville"
-                },
-                new []
-                {
-                    "$Adjective",
-                    "burg"
-                },
-                new []
-                {
-                    "$DwarfFamily",
-                    "ton"
-                }
-               
-               
-            };
-
-            WorldName =  TextGenerator.GenerateRandom(templates[PlayState.Random.Next(templates.Count)]); 
-        }
-
 
         public override void OnEnter()
         {
+            PlayState.WorldWidth = Settings.Width;
+            PlayState.WorldHeight = Settings.Height;
+            PlayState.SeaLevel = Settings.SeaLevel;
             PlayState.Random = new ThreadSafeRandom(Seed);
             PlayState.WorldSize = new Point3(8, 1, 8);
 
@@ -169,14 +95,6 @@ namespace DwarfCorp.GameStates
             };
             layout.SetComponentPosition(saveButton, 1, 6, 1, 1);
             saveButton.OnClicked += saveButton_OnClicked;
-
-            Button genButton = new Button(GUI, layout, "Generate", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
-            {
-                ToolTip = "Generate a new random world."
-            };
-            layout.SetComponentPosition(genButton, 3, 6, 1, 1);
-
-            genButton.OnClicked += OnClick;
 
             Button exitButton = new Button(GUI, layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.LeftArrow))
             {
@@ -213,7 +131,7 @@ namespace DwarfCorp.GameStates
 
             layout.UpdateSizes();
 
-            GroupBox mapProperties = new GroupBox(GUI, layout, "Map Properties");
+            GroupBox mapProperties = new GroupBox(GUI, layout, "Map Controls");
 
             GridLayout mapPropertiesLayout = new GridLayout(GUI, mapProperties, 7, 2)
             {
@@ -236,54 +154,21 @@ namespace DwarfCorp.GameStates
             worldSizeBox.OnSelectionModified += worldSizeBox_OnSelectionModified;
             mapPropertiesLayout.SetComponentPosition(worldSizeBox, 0, 0, 2, 1);
 
-            ComboBox selectType = new ComboBox(GUI, mapPropertiesLayout)
+            ViewSelectionBox = new ComboBox(GUI, mapPropertiesLayout)
             {
                 ToolTip = "Display type for the map."
             };
 
-            selectType.AddValue("Height");
-            selectType.AddValue("Biomes");
-            selectType.AddValue("Temp.");
-            selectType.AddValue("Rain");
-            selectType.AddValue("Erosion");
-            selectType.AddValue("Faults");
-            selectType.CurrentIndex = 0;
+            ViewSelectionBox.AddValue("Height");
+            ViewSelectionBox.AddValue("Factions");
+            ViewSelectionBox.AddValue("Biomes");
+            ViewSelectionBox.AddValue("Temp.");
+            ViewSelectionBox.AddValue("Rain");
+            ViewSelectionBox.AddValue("Erosion");
+            ViewSelectionBox.AddValue("Faults");
+            ViewSelectionBox.CurrentIndex = 0;
 
-            mapPropertiesLayout.SetComponentPosition(selectType, 1, 1, 1, 1);
-
-
-            Label rainFallLabel = new Label(GUI, mapPropertiesLayout, "Rain", GUI.DefaultFont);
-            Slider rainFallScaleSlider = new Slider(GUI, mapPropertiesLayout, "", RainfallScale, 0.0f, 2.0f, Slider.SliderMode.Float)
-            {
-                ToolTip = "Controls the amount of rainfall in the world."
-            };
-
-            rainFallScaleSlider.OnValueModified += rainFallScaleSlider_OnValueModified;
-            mapPropertiesLayout.SetComponentPosition(rainFallScaleSlider, 1, 4, 1, 1);
-            mapPropertiesLayout.SetComponentPosition(rainFallLabel, 0, 4, 1, 1);
-
-
-            Label tempLabel = new Label(GUI, mapPropertiesLayout, "Temp.", GUI.DefaultFont);
-            Slider tempScaleSlider = new Slider(GUI, mapPropertiesLayout, "", TemperatureScale, 0.0f, 2.0f, Slider.SliderMode.Float)
-            {
-                ToolTip = "Controls the average temperature of the world."
-            };
-
-            tempScaleSlider.OnValueModified += tempScaleSlider_OnValueModified;
-            mapPropertiesLayout.SetComponentPosition(tempScaleSlider, 1, 5, 1, 1);
-            mapPropertiesLayout.SetComponentPosition(tempLabel, 0, 5, 1, 1);
-
-
-            Label faultLabel = new Label(GUI, mapPropertiesLayout, "Faults", GUI.DefaultFont);
-            Slider numFaultsSlider = new Slider(GUI, mapPropertiesLayout, "", NumFaults, 0, 50, Slider.SliderMode.Integer)
-            {
-                ToolTip = "Controls, roughly, the number of seas."
-            };
-
-            numFaultsSlider.OnValueModified += numFaultsSlider_OnValueModified;
-            mapPropertiesLayout.SetComponentPosition(numFaultsSlider, 1, 6, 1, 1);
-            mapPropertiesLayout.SetComponentPosition(faultLabel, 0, 6, 1, 1);
-
+            mapPropertiesLayout.SetComponentPosition(ViewSelectionBox, 1, 1, 1, 1);
 
             Label selectLabel = new Label(GUI, mapPropertiesLayout, "Display", GUI.DefaultFont);
             mapPropertiesLayout.SetComponentPosition(selectLabel, 0, 1, 1, 1);
@@ -294,29 +179,8 @@ namespace DwarfCorp.GameStates
             Progress = new ProgressBar(GUI, layout, 0.0f);
             layout.SetComponentPosition(Progress, 0, 5, 3, 1);
 
-
-            NameEdit = new LineEdit(GUI, mapPropertiesLayout, WorldName)
-            {
-                ToolTip = "Name of the world."
-            };
-            mapPropertiesLayout.SetComponentPosition(NameEdit, 0, 2, 2, 1);
-
-            NameEdit.OnTextModified += nameEdit_OnTextModified;
-
-
-            Label seedLabel = new Label(GUI, mapPropertiesLayout, "Seed", GUI.DefaultFont);
-            mapPropertiesLayout.SetComponentPosition(seedLabel, 0, 3, 1, 1);
-            seedLabel.Alignment = Drawer2D.Alignment.Right;
-
-            LineEdit seedEdit = new LineEdit(GUI, mapPropertiesLayout, Seed.ToString(CultureInfo.InvariantCulture))
-            {
-                ToolTip = "Global random seed of the whole game."
-            };
-            mapPropertiesLayout.SetComponentPosition(seedEdit, 1, 3, 1, 1);
-
-            seedEdit.OnTextModified += seedEdit_OnTextModified;
-
-            selectType.OnSelectionModified += DisplayModeModified;
+           
+            ViewSelectionBox.OnSelectionModified += DisplayModeModified;
             base.OnEnter();
         }
 
@@ -340,39 +204,23 @@ namespace DwarfCorp.GameStates
                     PlayState.WorldSize = new Point3(24, 1, 24);
                     break;
             }
+            OnMapClick();
         }
 
-        private void nameEdit_OnTextModified(string arg)
-        {
-            WorldName = arg;
-        }
 
         private void saveButton_OnClicked()
         {
             if(GenerationComplete)
             {
-                System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds" + ProgramData.DirChar + WorldName);
-                OverworldFile file = new OverworldFile(Overworld.Map, WorldName);
+                System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds" + ProgramData.DirChar + Settings.Name);
+                OverworldFile file = new OverworldFile(Overworld.Map, Settings.Name);
                 file.WriteFile(worldDirectory.FullName + ProgramData.DirChar + "world." + OverworldFile.CompressedExtension, true);
                 file.SaveScreenshot(worldDirectory.FullName + ProgramData.DirChar + "screenshot.png");
                 Dialog.Popup(GUI, "Save", "File saved.", Dialog.ButtonType.OK);
             }
         }
 
-        private void numFaultsSlider_OnValueModified(float arg)
-        {
-            NumFaults = arg;
-        }
 
-        private void tempScaleSlider_OnValueModified(float arg)
-        {
-            TemperatureScale = arg;
-        }
-
-        private void rainFallScaleSlider_OnValueModified(float arg)
-        {
-            RainfallScale = arg;
-        }
 
         private void seedEdit_OnTextModified(string arg)
         {
@@ -405,10 +253,7 @@ namespace DwarfCorp.GameStates
         {
             if(GenerationComplete)
             {
-                Overworld.Name = WorldName;
-                //System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + OverworldDirectory);
-                //OverworldFile file = new OverworldFile(Overworld.Map, WorldName);
-                //file.WriteFile(worldDirectory.FullName + ProgramData.DirChar + WorldName + "." + OverworldFile.CompressedExtension, true);
+                Overworld.Name = Settings.Name;
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
                 
                 StateManager.PopState();
@@ -424,12 +269,11 @@ namespace DwarfCorp.GameStates
             StateManager.PopState();
         }
 
-        public void OnClick()
+        public void Generate()
         {
+            DoneGenerating = false;
             if(!IsGenerating)
             {
-                GenerateWorldName();
-                NameEdit.Text = WorldName;
                 PlayState.WorldOrigin = new Vector2(PlayState.WorldWidth / 2, PlayState.WorldHeight / 2);
                 genThread = new Thread(unused => GenerateWorld(Seed, (int) PlayState.WorldWidth, (int) PlayState.WorldHeight));
                 genThread.Start();
@@ -441,17 +285,33 @@ namespace DwarfCorp.GameStates
 
         public void OnMapClick()
         {
-            Vector2 mapCorner = new Vector2(MapPanel.GetImageBounds().Location.X, MapPanel.GetImageBounds().Location.Y);
+            Rectangle imageBounds = MapPanel.GetImageBounds();
+            Vector2 mapCorner = new Vector2(imageBounds.Location.X, imageBounds.Location.Y);
             MouseState ms = Mouse.GetState();
-
 
             float dx = ((float) PlayState.WorldWidth / (float) MapPanel.GetImageBounds().Width);
             float dy = ((float) PlayState.WorldHeight / (float) MapPanel.GetImageBounds().Height);
+            float w = PlayState.WorldSize.X * PlayState.WorldScale;
+            float h = PlayState.WorldSize.Z * PlayState.WorldScale;
+            float clickX = ms.X - mapCorner.X;
+            float clickY = ms.Y - mapCorner.Y;
+            clickX *= dx;
+            clickY *= dy;
+            clickX = Math.Max(Math.Min(clickX, PlayState.WorldWidth - w * 2 - 12), 12);
+            clickY = Math.Max(Math.Min(clickY, PlayState.WorldHeight - h * 2 - 12), 12);
+           
+            PlayState.WorldOrigin = new Vector2((int)(clickX + w), (int)(clickY + h));
+        }
 
-            float clickX = Math.Max(Math.Min(ms.X - mapCorner.X, MapPanel.GetImageBounds().Width), 0.0f);
-            float clickY = Math.Max(Math.Min(ms.Y - mapCorner.Y, MapPanel.GetImageBounds().Height), 0.0f);
-
-            PlayState.WorldOrigin = new Vector2(clickX * dx, clickY * dy);
+        public Dictionary<string, Color> GenerateFactionColors()
+        {
+            Dictionary<string, Color> toReturn = new Dictionary<string, Color>();
+            toReturn["Unclaimed"] = Color.Gray;
+            foreach (Faction faction in NativeCivilizations)
+            {
+                toReturn[faction.Name + " (" + faction.Race.Name + ")"] = faction.PrimaryColor;
+            }
+            return toReturn;
         }
 
 
@@ -462,46 +322,45 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
-            if(type == "Height")
+            switch (type)
             {
-                ColorKeys.ColorEntries = Overworld.HeightColors;
-                Overworld.TextureFromHeightMap(type, Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap);
+                case "Height":
+                    ColorKeys.ColorEntries = Overworld.HeightColors;
+                    Overworld.TextureFromHeightMap(type, Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
+                    break;
+                case "Biomes":
+                    ColorKeys.ColorEntries = BiomeLibrary.CreateBiomeColors();
+                    Overworld.TextureFromHeightMap(type, Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
+                    break;
+                case "Temp.":
+                    ColorKeys.ColorEntries = Overworld.JetColors;
+                    Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Temperature, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
+                    break;
+                case "Rain":
+                    ColorKeys.ColorEntries = Overworld.JetColors;
+                    Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Rainfall, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
+                    break;
+                case "Erosion":
+                    ColorKeys.ColorEntries = Overworld.JetColors;
+                    Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Erosion, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
+                    break;
+                case "Faults":
+                    ColorKeys.ColorEntries = Overworld.JetColors;
+                    Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Faults, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
+                    break;
+                case "Factions":
+                    ColorKeys.ColorEntries = GenerateFactionColors();
+                    Overworld.NativeFactions = NativeCivilizations;
+                    Overworld.TextureFromHeightMap(type, Overworld.Map, Overworld.ScalarFieldType.Factions, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
+                    break;
             }
-            else if(type == "Biomes")
-            {
-                ColorKeys.ColorEntries = BiomeLibrary.CreateBiomeColors();
-                Overworld.TextureFromHeightMap(type, Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap);
-            }
-            else if(type == "Temp.")
-            {
-                ColorKeys.ColorEntries = Overworld.JetColors;
-                Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Temperature, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap);
-            }
-            else if(type == "Rain")
-            {
-                ColorKeys.ColorEntries = Overworld.JetColors;
-                Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Rainfall, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap);
-            }
-            else if(type == "Erosion")
-            {
-                ColorKeys.ColorEntries = Overworld.JetColors;
-                Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Erosion, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap);
-            }
-            else if(type == "Faults")
-            {
-                ColorKeys.ColorEntries = Overworld.JetColors;
-                Overworld.TextureFromHeightMap("Gray", Overworld.Map, Overworld.ScalarFieldType.Faults, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), MapPanel.Lock, worldData, worldMap);
-            }
-
-            
         }
-
 
         public void GenerateVolcanoes(int width, int height)
         {
             int volcanoSamples = 4;
             float volcanoSize = 11;
-            for(int i = 0; i < (int) NumVolcanoes; i++)
+            for(int i = 0; i < (int) Settings.NumVolcanoes; i++)
             {
                 Vector2 randomPos = new Vector2((float) (PlayState.Random.NextDouble() * width), (float) (PlayState.Random.NextDouble() * height));
                 float maxFaults = Overworld.Map[(int) randomPos.X, (int) randomPos.Y].Height;
@@ -550,7 +409,7 @@ namespace DwarfCorp.GameStates
 
         public void GenerateWorld(int seed, int width, int height)
         {
-            try
+           // try
             {
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
                
@@ -570,7 +429,7 @@ namespace DwarfCorp.GameStates
 
                 Progress.Value = 0.05f;
 
-                int numRains = (int)NumRains;
+                int numRains = (int)Settings.NumRains;
                 int rainLength = 250;
                 int numRainSamples = 3;
 
@@ -589,7 +448,7 @@ namespace DwarfCorp.GameStates
                 {
                     for (int y = 0; y < height; y++)
                     {
-                        Overworld.Map[x, y].Temperature = Overworld.noise(x, y, 1.0f, 0.001f) * 0.1f + ((float)(y) / (float)(height)) + Overworld.noise(x, y, 10.0f, 0.1f) * 0.05f * TemperatureScale;
+                        Overworld.Map[x, y].Temperature = Overworld.noise(x, y, 1.0f, 0.001f) * 0.1f + ((float)(y) / (float)(height)) + Overworld.noise(x, y, 10.0f, 0.1f) * 0.05f * Settings.TemperatureScale;
                         //Overworld.Map[x, y].Rainfall = Math.Max(Math.Min(Overworld.noise(x, y, 1000.0f, 0.01f) + Overworld.noise(x, y, 100.0f, 0.1f) * 0.05f, 1.0f), 0.0f) * RainfallScale;
                     }
                 }
@@ -604,9 +463,9 @@ namespace DwarfCorp.GameStates
                     }
                 }
         
-                Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, width, height, MapPanel.Lock, worldData, worldMap);
+                Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, width, height, MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
 
-                int numVoronoiPoints = (int)NumFaults;
+                int numVoronoiPoints = (int)Settings.NumFaults;
 
 
                 Progress.Value = 0.1f;
@@ -621,30 +480,16 @@ namespace DwarfCorp.GameStates
                 Overworld.GenerateHeightMap(width, height, 1.0f, true);
 
                 Progress.Value = 0.2f;
-                LoadingMessage = "Weathering...";
-
-                #region weathering
-
-                Vector2[] neighbs =
-            {
-                new Vector2(1, 0),
-                new Vector2(-1, 0),
-                new Vector2(0, 1),
-                new Vector2(0, -1)
-            };
-                float[,] buffer = new float[width, height];
-                //Weather(width, height, T, neighbs, buffer); 
-
-                #endregion
 
                 Overworld.GenerateHeightMap(width, height, 1.0f, true);
 
                 Progress.Value = 0.25f;
-                Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, width, height, MapPanel.Lock, worldData, worldMap);
+                Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, width, height, MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
                 LoadingMessage = "Erosion...";
 
                 #region erosion
 
+                float[,] buffer = new float[width, height];
                 Erode(width, height, Overworld.Map, numRains, rainLength, numRainSamples, buffer);
                 Overworld.GenerateHeightMap(width, height, 1.0f, true);
 
@@ -676,8 +521,31 @@ namespace DwarfCorp.GameStates
 
                 GenerateVolcanoes(width, height);
 
-                Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, width, height, MapPanel.Lock, worldData, worldMap);
+                Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, width, height, MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
 
+                LoadingMessage = "Factions";
+                NativeCivilizations = new List<Faction>();
+                FactionLibrary library = new FactionLibrary();
+                library.Initialize(null, "fake", "fake", null, Color.Blue);
+                for (int i = 0; i < Settings.NumCivilizations; i++)
+                {
+                    NativeCivilizations.Add(library.GenerateFaction(i, Settings.NumCivilizations));
+                }
+                SeedCivs(Overworld.Map, Settings.NumCivilizations, NativeCivilizations);
+                GrowCivs(Overworld.Map, 200, NativeCivilizations);
+
+
+                for (int x = 0; x < width; x++)
+                {
+                    Overworld.Map[x, 0] = Overworld.Map[x, 1];
+                    Overworld.Map[x, height - 1] = Overworld.Map[x, height - 2];
+                }
+
+                for (int y = 0; y < height; y++)
+                {
+                    Overworld.Map[0, y] = Overworld.Map[1, y];
+                    Overworld.Map[width - 1, y] = Overworld.Map[width - 2, y];
+                }
 
                 GenerationComplete = true;
 
@@ -688,11 +556,12 @@ namespace DwarfCorp.GameStates
                 Progress.Value = 1.0f;
                 IsGenerating = false;
                 GUI.MouseMode = GUISkin.MousePointer.Pointer;
+                DoneGenerating = true;
             }
-            catch (Exception exception)
+            //catch (Exception exception)
             {
-                ProgramData.WriteExceptionLog(exception);
-                throw;
+           //     ProgramData.WriteExceptionLog(exception);
+           //     throw;
             }
         }
 
@@ -700,25 +569,27 @@ namespace DwarfCorp.GameStates
         {
             for (int y = 0; y < height; y++)
             {
-                float currentMoisture = RainfallScale * 10;
+                float currentMoisture = Settings.RainfallScale * 10;
                 for (int x = 0; x < width; x++)
                 {
                     float h = Overworld.Map[x, y].Height;
-                    bool isWater = h < 0.17;
+                    bool isWater = h < Settings.SeaLevel;
 
                     if (isWater)
                     {
                         currentMoisture += MathFunctions.Rand(0.1f, 0.3f);
-                        currentMoisture = Math.Min(currentMoisture, RainfallScale*20);
+                        currentMoisture = Math.Min(currentMoisture, Settings.RainfallScale * 20);
                     }
                     else
                     {
                         float rainAmount = currentMoisture * 0.017f * h + currentMoisture * 0.006f;
                         currentMoisture -= rainAmount;
-                        Overworld.Map[x, y].Rainfall = rainAmount * RainfallScale * 5;
+                        Overworld.Map[x, y].Rainfall = rainAmount * Settings.RainfallScale * 5;
                     }
                 }
             }
+
+            Overworld.Distort(width, height, 5.0f, 0.03f, Overworld.ScalarFieldType.Rainfall);
 
         }
 
@@ -727,6 +598,7 @@ namespace DwarfCorp.GameStates
             List<List<Vector2>> vPoints = new List<List<Vector2>>();
             List<float> rands = new List<float>();
 
+            /*
             List<Vector2> edge = new List<Vector2>
             {
                 new Vector2(0, 0),
@@ -736,8 +608,18 @@ namespace DwarfCorp.GameStates
                 new Vector2(0, 0)
             };
 
-            vPoints.Add(edge);
+            List<Vector2> randEdge = new List<Vector2>();
+            for (int i = 1; i < edge.Count; i++)
+            {
+                if (MathFunctions.RandEvent(0.5f))
+                {
+                    randEdge.Add(edge[i]);
+                    randEdge.Add(edge[i - 1]);
+                }
+            }
 
+            vPoints.Add(randEdge);
+             */
             for(int i = 0; i < numVoronoiPoints; i++)
             {
                 Vector2 v = GetEdgePoint(width, height);
@@ -748,7 +630,7 @@ namespace DwarfCorp.GameStates
                     rands.Add(1.0f);
 
                     line.Add(v);
-                    v += new Vector2(MathFunctions.Rand() - 0.5f, MathFunctions.Rand() - 0.5f) * 50;
+                    v += new Vector2(MathFunctions.Rand() - 0.5f, MathFunctions.Rand() - 0.5f) * 150;
                     line.Add(v);
                     vPoints.Add(line);
                 }
@@ -756,13 +638,15 @@ namespace DwarfCorp.GameStates
 
 
             List<VoronoiNode> nodes = new List<VoronoiNode>();
-            for(int i = 0; i < vPoints.Count; i++)
+            foreach (List<Vector2> pts in vPoints)
             {
-                for(int j = 0; j < vPoints[i].Count - 1; j++)
+                for(int j = 0; j < pts.Count - 1; j++)
                 {
-                    VoronoiNode node = new VoronoiNode();
-                    node.pointA = vPoints[i][j];
-                    node.pointB = vPoints[i][j + 1];
+                    VoronoiNode node = new VoronoiNode
+                    {
+                        pointA = pts[j], 
+                        pointB = pts[j + 1]
+                    };
                     nodes.Add(node);
                 }
             }
@@ -777,22 +661,6 @@ namespace DwarfCorp.GameStates
 
             ScaleMap(Overworld.Map, width, height, Overworld.ScalarFieldType.Faults);
             Overworld.Distort(width, height, 20, 0.01f, Overworld.ScalarFieldType.Faults);
-        }
-
-        private float signum(float f)
-        {
-            if(f > 0)
-            {
-                return 1;
-            }
-            else if(f < 0)
-            {
-                return -1;
-            }
-            else
-            {
-                return 0;
-            }
         }
 
         private void Erode(int width, int height, Overworld.MapData[,] heightMap, int numRains, int rainLength, int numRainSamples, float[,] buffer)
@@ -988,19 +856,108 @@ namespace DwarfCorp.GameStates
             return (float) (0.00003f*(maxNode.dist));
         }
 
-        private static int CompareVoronoi(VoronoiNode a, VoronoiNode b)
+
+        public  Point? GetRandomLandPoint(Overworld.MapData[,] map)
         {
-            if(a == b)
+            const int maxIters = 1000;
+            int i = 0;
+            int width = map.GetLength(0);
+            int height = map.GetLength(1);
+            while (i < maxIters)
             {
-                return 0;
+                int x = PlayState.Random.Next(0, width);
+                int y = PlayState.Random.Next(0, height);
+
+                if (map[x, y].Height > Settings.SeaLevel)
+                {
+                    return new Point(x, y);
+                }
+
+                i++;
             }
-            else if(a.dist < b.dist)
+
+            return null;
+        }
+
+        public  void SeedCivs(Overworld.MapData[,] map, int numCivs, List<Faction> civs )
+        {
+            for (int i = 0; i < numCivs; i++)
             {
-                return -1;
+                Point? randomPoint = GetRandomLandPoint(map);
+
+                if (randomPoint == null) continue;
+                else
+                {
+                    map[randomPoint.Value.X, randomPoint.Value.Y].Faction = (byte)(i + 1);
+                    civs[i].StartingPlace = randomPoint.Value;
+                }
             }
-            else
+        }
+
+        public  void GrowCivs(Overworld.MapData[,] map, int iters, List<Faction> civs)
+        {
+            int width = map.GetLength(0);
+            int height = map.GetLength(1);
+            byte[] neighbors = new byte[] {0, 0, 0, 0};
+            float[] neighborheights = new float[] { 0, 0, 0, 0};
+            Point[] deltas = new Point[] { new Point(1, 0), new Point(0, 1), new Point(-1, 0), new Point(1, -1) };
+            for (int i = 0; i < iters; i++)
             {
-                return 1;
+                for (int x = 1; x < width - 1; x++)
+                {
+                    for (int y = 1; y < height - 1; y++)
+                    {
+                        bool isUnclaimed = map[x, y].Faction == 0;
+                        bool isWater = map[x, y].Height < Settings.SeaLevel;
+                        if (!isUnclaimed && !isWater)
+                        {
+                            neighbors[0] = map[x + 1, y].Faction;
+                            neighbors[1] = map[x, y + 1].Faction;
+                            neighbors[2] = map[x - 1, y].Faction;
+                            neighbors[3] = map[x, y - 1].Faction;
+                            neighborheights[0] = map[x + 1, y].Height;
+                            neighborheights[1] = map[x, y + 1].Height;
+                            neighborheights[2] = map[x - 1, y].Height;
+                            neighborheights[3] = map[x, y - 1].Height;
+
+                            int minNeighbor = -1;
+                            float minHeight = float.MaxValue;
+
+                            for (int k = 0; k < 4; k++)
+                            {
+                                if (neighbors[k] == 0 && neighborheights[k] < minHeight && neighborheights[k] > Settings.SeaLevel)
+                                {
+                                    minHeight = neighborheights[k];
+                                    minNeighbor = k;
+                                }
+                            }
+
+                            if (minNeighbor >= 0 && MathFunctions.RandEvent(0.25f / (neighborheights[minNeighbor] + 1e-2f)))
+                            {
+                                map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Faction = map[x, y].Faction;
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (int x = 1; x < width - 1; x++)
+            {
+                for (int y = 1; y < height - 1; y++)
+                {
+                    byte f = map[x, y].Faction;
+                    if (f> 0)
+                    {
+                        civs[f - 1].Center = new Point(x + civs[f - 1].Center.X, y + civs[f - 1].Center.Y);
+                        civs[f - 1].TerritorySize++;
+                    }
+                }
+            }
+
+            foreach (Faction f in civs)
+            {
+                if(f.TerritorySize > 0)
+                    f.Center = new Point(f.Center.X / f.TerritorySize, f.Center.Y / f.TerritorySize);
             }
         }
 
@@ -1008,10 +965,15 @@ namespace DwarfCorp.GameStates
         {
             if (StateManager.CurrentState == Name)
             {
-                if (!IsGenerating)
+
+                if (!IsGenerating && DoneGenerating)
                 {
                     GUI.Update(gameTime);
                     Input.Update();
+                }
+                else if (!IsGenerating && !DoneGenerating)
+                {
+                    Generate();
                 }
                 else
                 { 
@@ -1023,6 +985,26 @@ namespace DwarfCorp.GameStates
             base.Update(gameTime);
         }
 
+        public bool DoneGenerating { get; set; }
+
+        public Rectangle GetSpawnRectangle()
+        {
+            int w = (int) (PlayState.WorldSize.X * PlayState.WorldScale);
+            int h = (int) (PlayState.WorldSize.Z * PlayState.WorldScale);
+            return new Rectangle((int)PlayState.WorldOrigin.X - w, (int)PlayState.WorldOrigin.Y - h, w * 2, h * 2);
+        }
+
+        public Rectangle GetSpawnRectangleOnImage()
+        {
+            Rectangle spawnRect = GetSpawnRectangle();
+            Rectangle imageBounds = MapPanel.GetImageBounds();
+            float scaleX = ((float)imageBounds.Width / (float)PlayState.WorldWidth);
+            float scaleY = ((float)imageBounds.Height / (float)PlayState.WorldHeight);
+            int posX = imageBounds.X;
+            int posY = imageBounds.Y;
+
+            return new Rectangle((int)(spawnRect.X * scaleX + posX), (int)(spawnRect.Y * scaleY + posY), (int)(spawnRect.Width * scaleX), (int)(spawnRect.Height * scaleY));
+        }
 
         private void DrawGUI(DwarfTime gameTime, float dx)
         {
@@ -1032,7 +1014,6 @@ namespace DwarfCorp.GameStates
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(0, dx));
 
-
             if(!GenerationComplete)
             {
                 Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, LoadingMessage, DefaultFont, new Vector2(Progress.GlobalBounds.Center.X, Progress.GlobalBounds.Center.Y - 8), Color.White, Color.Black);
@@ -1040,27 +1021,35 @@ namespace DwarfCorp.GameStates
 
             if(GenerationComplete)
             {
-                float scaleX = ((float) PlayState.WorldWidth / (float) MapPanel.GetImageBounds().Width);
-                float scaleY = ((float) PlayState.WorldHeight / (float) MapPanel.GetImageBounds().Height);
-                float chunkScale = PlayState.WorldScale;
-  
-                Vector2 mapCorner = new Vector2(MapPanel.GetImageBounds().Location.X, MapPanel.GetImageBounds().Location.Y);
-                
-                Vector2 scaledOrigin = PlayState.WorldOrigin;
-                scaledOrigin.X /= scaleX;
-                scaledOrigin.Y /= scaleY;
-                int spawnX =
-                    (int) (PlayState.WorldOrigin.X/scaleX + mapCorner.X);
-                int spawnY =
-                    (int) (PlayState.WorldOrigin.Y/scaleY + mapCorner.Y);
-                int spawnWidth = (int) (PlayState.WorldSize.X*chunkScale / scaleX) * 2;
-                int spawnHeight = (int) (PlayState.WorldSize.Z*chunkScale / scaleY) * 2;
-                Drawer2D.DrawRect(DwarfGame.SpriteBatch, new Rectangle(spawnX - spawnWidth / 2 , spawnY - spawnHeight / 2, spawnWidth, spawnHeight), Color.Yellow, 3.0f);
-                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Spawn", DefaultFont, mapCorner + scaledOrigin - new Vector2(50, 30), Color.White, Color.Black);
+                Rectangle imageBounds = MapPanel.GetImageBounds();
+                float scaleX = ((float)imageBounds.Width / (float)PlayState.WorldWidth);
+                float scaleY = ((float)imageBounds.Height / (float)PlayState.WorldHeight);
+                Rectangle spawnRect = GetSpawnRectangle();
+                Rectangle spawnRectOnImage = GetSpawnRectangleOnImage();
+                Drawer2D.DrawRect(DwarfGame.SpriteBatch, spawnRectOnImage, Color.Yellow, 3.0f);
+                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Spawn", DefaultFont, new Vector2(spawnRectOnImage.X - 5, spawnRectOnImage.Y - 20), Color.White, Color.Black);
 
                 ImageMutex.WaitOne();
-                DwarfGame.SpriteBatch.Draw(MapPanel.Image.Image, new Rectangle(MapPanel.GetImageBounds().Right + 2, MapPanel.GetImageBounds().Top, spawnWidth * 2, spawnHeight * 2), new Rectangle((int)PlayState.WorldOrigin.X - (int)(PlayState.WorldSize.X * chunkScale * 2) / 2, (int)PlayState.WorldOrigin.Y - (int)(PlayState.WorldSize.Z * chunkScale * 2)/2, (int)(PlayState.WorldSize.X * chunkScale * 2), (int)(PlayState.WorldSize.Z * chunkScale * 2)), Color.White);
+                DwarfGame.SpriteBatch.Draw(MapPanel.Image.Image,
+                    new Rectangle(MapPanel.GetImageBounds().Right + 2, MapPanel.GetImageBounds().Top,  spawnRect.Width * 4, spawnRect.Height * 4),
+                   spawnRect, Color.White);
                 ImageMutex.ReleaseMutex();
+
+
+                if (ViewSelectionBox.CurrentValue == "Factions")
+                {
+                    foreach (Faction civ in NativeCivilizations)
+                    {
+                        Point start = civ.Center;
+                        Vector2 measure = Datastructures.SafeMeasure(GUI.SmallFont, civ.Name);
+                        Rectangle snapped =
+                            MathFunctions.SnapRect(
+                                new Vector2(start.X*scaleX + imageBounds.X, start.Y*scaleY + imageBounds.Y) -
+                                measure*0.5f, measure, imageBounds);
+   
+                        Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, civ.Name, GUI.SmallFont, new Vector2(snapped.X, snapped.Y), Color.White, Color.Black);
+                    }
+                }
             }
 
             DwarfGame.SpriteBatch.End();

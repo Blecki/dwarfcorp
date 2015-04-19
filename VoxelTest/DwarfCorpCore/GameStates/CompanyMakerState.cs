@@ -181,133 +181,15 @@ namespace DwarfCorp.GameStates
 
         private void randomButton2_OnClicked()
         {
-            List<string[]> templates = new List<string[]>()
-            {
-                new string[] {"$Noun", " is the ", "$Noun", " of ", "$Noun", "."},
-                new string[] {"Always ", "$Adjective", "."},
-                new string[] {"$Noun", " binds us."},
-                new string[] {"The ", "$Place", " is always ", "$Noun", "."},
-                new string[] {"$Noun", " and ", "$Noun", "."},
-                new string[] {"To ", "$Verb", " and ", "$Verb", "."},
-                new string[] {"Lend a ", "$Noun", "."},
-                new string[] {"$Verb", ", ", "$Verb", ", ", " and ", "$Verb", "."},
-                new string[] {"We ", "$Verb", " ", "$Adverb", "."},
-                new string[] {"$Adjective", " unto Death!"},
-                new string[] {"Strength to ", "$Noun", "!"},
-                new string[] {"$Noun", " . ", "$Noun", " . ", "$Noun", " . "},
-                new string[] {"$Verb", "!"},
-                new string[] {"Keep the ", "$Noun", " ", "$Adjective", "."},
-                new string[] {"$Adjective", "!"},
-                new string[] {"The ", "$Noun", " always ", "$Verb", "s."},
-                new string[] {"To ", "$Verb", " is to ", "$Verb"},
-                new string[] {"$Noun", " or ", "Death", "!"},
-                new string[] {"My Life for ", "$Noun", "!"}
-            };
-
-            CompanyMotto = TextGenerator.GenerateRandom(templates[PlayState.Random.Next(templates.Count)]);
+            List<List<string>> atoms = TextGenerator.GetAtoms(ContentPaths.Text.Templates.mottos);
+            CompanyMotto = TextGenerator.GenerateRandom(Datastructures.SelectRandom(atoms).ToArray());
             CompanyMottoEdit.Text = CompanyMotto;
         }
 
         private void randomButton_OnClicked()
         {
-            string[] partners =
-            {
-                "$DwarfName",
-                " ",
-                "&",
-                " ",
-                "$DwarfName",
-                ",",
-                " ",
-                "$Corp"
-            };
-            string[] animalCorp =
-            {
-                "$Animal",
-                " ",
-                "$Corp"
-            };
-            string[] animalPart =
-            {
-                "$Noun",
-                " ",
-                "$Noun"
-            };
-            string[] nameAndSons =
-            {
-                "$DwarfName",
-                " ",
-                "&",
-                " ",
-                "$Family",
-                "s"
-            };
-            string[] colorPart =
-            {
-                "$Color",
-                " ",
-                "$Noun",
-                " ",
-                "&",
-                " ",
-                "$Family",
-                "s"
-            };
-            string[] colorPlace =
-            {
-                "$Color",
-                " ",
-                "$Place",
-                " ",
-                "$Corp"
-            };
-            string[] colorAnimal =
-            {
-                "$Color",
-                " ",
-                "$Animal",
-                " ",
-                "$Corp"
-            };
-            string[] materialAnimal =
-            {
-                "$Material",
-                " ",
-                "$Noun",
-                " ",
-                "$Corp"
-            };
-            string[] materialBody =
-            {
-                "$Adjective",
-                " ",
-                "$Noun",
-                " ",
-                "$Corp"
-            };
-            string[] reversed =
-            {
-                "$Corp",
-                " of the ",
-                "$Adjective",
-                " ",
-                "$Place",
-                "s"
-            };
-            List<string[]> templates = new List<string[]>
-            {
-                partners,
-                animalCorp,
-                animalPart,
-                nameAndSons,
-                colorPart,
-                colorPlace,
-                colorAnimal,
-                materialAnimal,
-                materialBody,
-                reversed
-            };
-            CompanyName = TextGenerator.GenerateRandom(templates[PlayState.Random.Next(templates.Count)]);
+            var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.company_exploration);
+            CompanyName = DwarfCorp.TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
             CompanyNameEdit.Text = CompanyName;
         }
 
