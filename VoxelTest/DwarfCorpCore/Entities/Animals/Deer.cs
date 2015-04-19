@@ -184,7 +184,7 @@ namespace DwarfCorp
             Physics.Tags.Add("Deer");
             Physics.Tags.Add("Animal");
 
-            Stats.FirstName = TextGenerator.GenerateRandom("$DwarfName");
+            Stats.FirstName = TextGenerator.GenerateRandom("$firstname");
             Stats.LastName = " the Deer";
             Stats.CurrentClass = new EmployeeClass()
             {

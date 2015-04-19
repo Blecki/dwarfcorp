@@ -19,7 +19,7 @@ namespace DwarfCorp
         }
 
         public Bed(Vector3 position) :
-            base("Bed", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.75f, 0.5f, 1.5f), new Vector3(0.5f, 0.5f, 1.0f))
+            base("Bed", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(1.5f, 0.5f, 0.75f), new Vector3(-0.5f + 1.5f * 0.5f, -0.5f + 0.25f, -0.5f + 0.75f * 0.5f))
         {
             Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Furniture.bedtex);
             bedModel = new Box(PlayState.ComponentManager, "bedbox", this, Matrix.CreateTranslation(-0.5f, -0.5f, -0.5f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), new Vector3(1.0f, 1.0f, 2.0f), new Vector3(0.5f, 0.5f, 1.0f), PrimitiveLibrary.BoxPrimitives["bed"], spriteSheet);

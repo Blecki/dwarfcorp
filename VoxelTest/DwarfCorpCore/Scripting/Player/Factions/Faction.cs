@@ -10,6 +10,15 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    [JsonObject(IsReference = true)]
+    public class Race
+    {
+        public string Name { get; set; }
+        public List<string> CreatureTypes { get; set; }
+        public bool IsIntelligent { get; set; }
+        public bool IsNative { get; set; }
+        public List<List<string>> FactionNameTemplates { get; set; } 
+    }
     /// <summary>
     /// A faction is an independent collection of creatures, tied to an economy, rooms, and designations.
     /// Examples might be the player's dwarves, or the faction of goblins.
@@ -34,10 +43,12 @@ namespace DwarfCorp
             RoomBuilder = new RoomBuilder(this);
             WallBuilder = new PutDesignator(this, TextureManager.GetTexture("TileSet"));
             CraftBuilder = new CraftBuilder(this);
-            CreatureTypes = new List<string>();
         }
 
-
+        public Point StartingPlace { get; set; }
+        public Point Center { get; set; }
+        public int TerritorySize { get; set; }
+        public Race Race { get; set; }
         public Economy Economy { get; set; }
         public ComponentManager Components { get { return PlayState.ComponentManager; }}
 
@@ -49,17 +60,17 @@ namespace DwarfCorp
         public List<Stockpile> Stockpiles { get; set; }
         public List<CreatureAI> Minions { get; set; }
         public List<ShipOrder> ShipDesignations { get; set; }
-        public List<string> CreatureTypes { get; set; } 
         public RoomBuilder RoomBuilder { get; set; }
         public PutDesignator WallBuilder { get; set; }
         public CraftBuilder CraftBuilder { get; set; }
         public Color DigDesignationColor { get; set; }
+        public Color PrimaryColor { get; set; }
+        public Color SecondaryColor { get; set; }
 
         public TaskManager TaskManager { get; set; }
         public List<Creature> Threats { get; set; }
 
         public string Name { get; set; }
-        public string Alliance { get; set; }
         public List<CreatureAI> SelectedMinions { get; set; }
 
         public static List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, GameMaster.ToolMode action)
@@ -271,7 +282,7 @@ namespace DwarfCorp
         public int ComputeStockpileSpace()
         {
             int space = 0;
-            foreach(Stockpile pile in Stockpiles)
+            foreach (Stockpile pile in Stockpiles)
             {
                 space += pile.Resources.MaxResources - pile.Resources.CurrentResourceCount;
             }
@@ -299,8 +310,7 @@ namespace DwarfCorp
             }
 
             ShipDesignations.Add(new ShipOrder(resource, port));
-             */
-
+            */
         }
 
         public void AddGatherDesignation(Body resource)
@@ -682,7 +692,7 @@ namespace DwarfCorp
                 EntityFactory.GenerateDwarf(
                     rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15,
                     Components, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager,
-                    PlayState.Camera, this, PlayState.PlanService, "Dwarf", currentApplicant.Class, currentApplicant.Level.Index).GetChildrenOfType<Dwarf>().First();
+                    PlayState.Camera, this, PlayState.PlanService, "Player", currentApplicant.Class, currentApplicant.Level.Index).GetChildrenOfType<Dwarf>().First();
 
             newMinion.Stats.CurrentClass = currentApplicant.Class;
             newMinion.Stats.LevelIndex = currentApplicant.Level.Index - 1;
@@ -710,7 +720,7 @@ namespace DwarfCorp
 
         public List<Body> GenerateRandomSpawn(int numCreatures, Vector3 position)
         {
-            if (CreatureTypes.Count == 0)
+            if (Race.CreatureTypes.Count == 0)
             {
                 return new List<Body>();
             }
@@ -718,7 +728,7 @@ namespace DwarfCorp
             List<Body> toReturn = new List<Body>();
             for (int i = 0; i < numCreatures; i++)
             {
-                string creature = CreatureTypes[PlayState.Random.Next(CreatureTypes.Count)];
+                string creature = Race.CreatureTypes[PlayState.Random.Next(Race.CreatureTypes.Count)];
                 Vector3 offset = MathFunctions.RandVector3Cube() * 5;
                 Voxel voxel = new Voxel();
                 

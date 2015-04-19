@@ -98,8 +98,8 @@ namespace DwarfCorp
                 ContentPaths.Audio.jump
             };
 
-            Stats.FirstName = TextGenerator.GenerateRandom("$GoblinName");
-            Stats.LastName = TextGenerator.GenerateRandom("$GoblinFamily");
+            Stats.FirstName = TextGenerator.GenerateRandom("$goblinname");
+            Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
             Stats.Size = 3;
 
         }

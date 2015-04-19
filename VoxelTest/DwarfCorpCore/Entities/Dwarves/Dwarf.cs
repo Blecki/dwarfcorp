@@ -112,8 +112,8 @@ namespace DwarfCorp
             MinimapIcon minimapIcon = new MinimapIcon(Physics, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 0, 0));
 
 
-            Stats.FirstName = TextGenerator.GenerateRandom("$DwarfName");
-            Stats.LastName = TextGenerator.GenerateRandom("$DwarfFamily");
+            Stats.FirstName = TextGenerator.GenerateRandom("$firstname");
+            Stats.LastName = TextGenerator.GenerateRandom("$lastname");
             Stats.Size = 5;
             Stats.CanSleep = true;
             Stats.CanEat = true;

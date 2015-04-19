@@ -27,7 +27,7 @@ namespace DwarfCorp
             Class = employeeClass;
             Level = Class.Levels[level];
 
-            Name = TextGenerator.GenerateRandom("$DwarfName", " ", "$DwarfFamily");
+            Name = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
             List<string> justifications = new List<string>()
             {
                 "I have many relevant qualities!",
@@ -50,68 +50,68 @@ namespace DwarfCorp
             }
             else
             {
-                FormerProfession = TextGenerator.GenerateRandom("$Professions");
+                FormerProfession = TextGenerator.GenerateRandom("$profession");
             }
 
             List<string[]> templates = new List<string[]>
             {
                 new[]
                 {
-                    "$Place",
+                    "place",
                     " of the ",
-                    "$Color",
+                    "$color",
                     " ",
-                    "$Noun"
+                    "$noun"
                 },
                 new[]
                 {
-                    "$Place",
+                    "$place",
                     " of the ",
-                    "$Adjective",
+                    "$adjective",
                     " ",
-                    "$Noun"
+                    "$noun"
                 },
                 new[]
                 {
-                    "$Place",
+                    "$place",
                     " of the ",
-                    "$Material",
+                    "$material",
                     " ",
-                    "$Noun"
+                    "$noun"
                 },
                 new[]
                 {
-                    "$Place",
+                    "$place",
                     " of ",
-                    "$Noun"
+                    "$noun"
                 },
                 new[]
                 {
-                    "$Color",
+                    "$color",
                     " ",
-                    "$Material",
+                    "$material",
                     " ",
-                    "$Place"
+                    "$place"
                 },
                 new[]
                 {
-                    "$Adjective",
+                    "$adjective",
                     " ",
-                    "$Place"
+                    "$place"
                 },
                 new []
                 {
-                    "$Adjective",
+                    "$adjective",
                     "ville"
                 },
                 new []
                 {
-                    "$Adjective",
+                    "$adjective",
                     "burg"
                 },
                 new []
                 {
-                    "$DwarfFamily",
+                    "$lastname",
                     "ton"
                 }
                

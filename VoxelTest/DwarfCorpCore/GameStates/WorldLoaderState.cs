@@ -283,8 +283,7 @@ namespace DwarfCorp.GameStates
                     StateManager.PushState("WorldGeneratorState");
                     state.Progress.Value = 1.0f;
                     state.GenerationComplete = true;
-                    state.WorldName = descriptor.WorldName;
-                    state.NameEdit.Text = descriptor.WorldName;
+                    state.Settings.Name = descriptor.WorldName;
                     state.worldData = new Color[PlayState.WorldWidth * PlayState.WorldHeight];
                    
                     Worlds.Clear();

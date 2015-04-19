@@ -806,10 +806,7 @@ namespace DwarfCorp
         {
             Vector2 v = new Vector2(Origin.X, Origin.Z) / PlayState.WorldScale;
 
-            Overworld.Biome biome = Overworld.Map[(int) v.X, (int) v.Y].Biome;
-            /*Overworld.GetBiome(Overworld.LinearInterpolate(v, Overworld.Map, Overworld.ScalarFieldType.Temperature),
-                                   Overworld.LinearInterpolate(v, Overworld.Map, Overworld.ScalarFieldType.Rainfall),
-                                   Overworld.LinearInterpolate(v, Overworld.Map, Overworld.ScalarFieldType.Height));*/
+            Overworld.Biome biome = Overworld.Map[(int) MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int) MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
             BuildGrassMotes(biome);
         }
 

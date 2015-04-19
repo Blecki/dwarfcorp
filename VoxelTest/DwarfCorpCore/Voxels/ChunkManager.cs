@@ -520,7 +520,6 @@ namespace DwarfCorp
 
                     //GeneratorLock.WaitOne();
 
-
                     if (!PauseThreads && ToGenerate != null && ToGenerate.Count > 0)
                     {
                         Point3 box = ToGenerate[0];
@@ -637,11 +636,11 @@ namespace DwarfCorp
 
             int i = 0;
             int iters = WorldSize.X * WorldSize.Y * WorldSize.Z;
-            for (int dx = origin.X - WorldSize.X/2; dx <= origin.X + WorldSize.X/2; dx++)
+            for (int dx = origin.X - WorldSize.X/2 + 1; dx < origin.X + WorldSize.X/2; dx++)
             {
                 for (int dy = origin.Y - WorldSize.Y/2; dy <= origin.Y + WorldSize.Y/2; dy++)
                 {
-                    for (int dz = origin.Z - WorldSize.Z/2; dz <= origin.Z + WorldSize.Z/2; dz++)
+                    for (int dz = origin.Z - WorldSize.Z/2 + 1; dz < origin.Z + WorldSize.Z/2; dz++)
                     {
                         message = "Generating : " + (i + 1) + "/" + iters;
                         i++;

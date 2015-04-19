@@ -90,7 +90,7 @@ namespace DwarfCorp
         public void OrderSkeletonsToAttack()
         {
             List<CreatureAI> enemies = (from faction in Creature.Manager.Factions.Factions 
-                                        where Alliance.GetRelationship(Creature.Allies, faction.Value.Alliance) == Relationship.Hates 
+                                        where Alliance.GetRelationship(Creature.Allies, faction.Value.Name) == Relationship.Hates 
                                         from minion in faction.Value.Minions 
                                         let dist = (minion.Position - Creature.AI.Position).Length() 
                                         where dist < AttackRange 

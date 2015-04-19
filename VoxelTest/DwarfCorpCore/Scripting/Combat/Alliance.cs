@@ -58,18 +58,18 @@ namespace DwarfCorp
         public static Dictionary<AlliancePair, Relationship> InitializeRelationships()
         {
             Relationships = new Dictionary<AlliancePair, Relationship>();
-            SetRelationship("Dwarf", "Herbivore", Relationship.Indifferent);
-            SetRelationship("Dwarf", "Carnivore", Relationship.Hates);
+            SetRelationship("Player", "Herbivore", Relationship.Indifferent);
+            SetRelationship("Player", "Carnivore", Relationship.Hates);
             SetRelationship("Herbivore", "Carnivore", Relationship.Hates);
-            SetRelationship("Dwarf", "Undead", Relationship.Hates);
-            SetRelationship("Dwarf", "Goblins", Relationship.Hates);
+            SetRelationship("Player", "Undead", Relationship.Hates);
+            SetRelationship("Player", "Goblins", Relationship.Hates);
             SetRelationship("Goblins", "Undead", Relationship.Hates);
             SetRelationship("Herbivore", "Undead", Relationship.Indifferent);
             SetRelationship("Carnivore", "Undead", Relationship.Hates);
             SetRelationship("Goblins", "Carnivore", Relationship.Hates);
             SetRelationship("Goblins", "Herbivore", Relationship.Indifferent);
             SetRelationship("Elf", "Goblins", Relationship.Hates);
-            SetRelationship("Elf", "Dwarf", Relationship.Hates);
+            SetRelationship("Elf", "Player", Relationship.Hates);
             SetRelationship("Elf", "Herbivore", Relationship.Loves);
             SetRelationship("Elf", "Carnivore", Relationship.Indifferent);
             SetRelationship("Elf", "Undead", Relationship.Hates);
