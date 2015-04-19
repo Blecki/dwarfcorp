@@ -64,6 +64,15 @@ namespace DwarfCorp
             public static string rings = ProgramData.CreatePath("Effects", "ring");
         }
 
+        public class World
+        {
+            public static string biomes = ProgramData.CreatePath("World", "biomes.json");
+        }
+
+        public static T LoadFromJson<T>(string asset)
+        {
+            return FileUtils.LoadJsonFromString<T>(ContentPaths.GetFileAsString(asset));
+        }
 
         public static string GetFileAsString(string asset)
         {
@@ -80,27 +89,21 @@ namespace DwarfCorp
 
         public class Text
         {
-            public enum TextType
+            public class Templates
             {
-                Adjectives,
-                Animals,
-                FirstNames,
-                LastNames,
-                Nouns,
-                Verbs,
-                Adverbs
-            }
+                public static string nations_dwarf = ProgramData.CreatePath("Text", "Templates", "nations_dwarf.txt");
+                public static string nations_elf = ProgramData.CreatePath("Text", "Templates", "nations_elf.txt");
+                public static string nations_goblin = ProgramData.CreatePath("Text", "Templates", "nations_goblin.txt");
+                public static string nations_undead = ProgramData.CreatePath("Text", "Templates", "nations_undead.txt");
+                public static string mottos = ProgramData.CreatePath("Text", "Templates", "mottos.txt");
 
-            public static Dictionary<TextType, string> Texts = new Dictionary<TextType, string>()
-            {
-                {TextType.Adjectives, ProgramData.CreatePath("Text", "adjectives.txt")},
-                {TextType.Animals,  ProgramData.CreatePath("Text","animals.txt")},
-                {TextType.FirstNames,  ProgramData.CreatePath("Text","firstnames.txt")},
-                {TextType.LastNames,  ProgramData.CreatePath("Text","lastnames.txt")},
-                {TextType.Nouns,  ProgramData.CreatePath("Text","nouns.txt")},
-                {TextType.Verbs,  ProgramData.CreatePath("Text","verbs.txt")},
-                {TextType.Adverbs,  ProgramData.CreatePath("Text","adverbs.txt")}
-            };
+                public static string company_exploration = ProgramData.CreatePath("Text", "Templates", "company_exploration.txt");
+                public static string company_finance = ProgramData.CreatePath("Text", "Templates", "company_finance.txt");
+                public static string company_industrial = ProgramData.CreatePath("Text", "Templates", "company_industrial.txt");
+                public static string company_magical = ProgramData.CreatePath("Text", "Templates", "company_magical.txt");
+                public static string company_military = ProgramData.CreatePath("Text", "Templates", "company_military.txt");
+                public static string worlds = ProgramData.CreatePath("Text", "Templates", "worlds.txt");
+            }
         }
 
         public class Entities
@@ -205,7 +208,7 @@ namespace DwarfCorp
             {
                 public static string bedtex = ProgramData.CreatePath("Entities", "Furniture", "bedtex");
                 public static string interior_furniture = ProgramData.CreatePath("Entities", "Furniture", "interior_furniture");
-
+                public static string bookshelf = ProgramData.CreatePath("Entities", "Furniture", "bookshelf");
             }
             public class Goblin
             {
@@ -315,6 +318,7 @@ namespace DwarfCorp
             public static string GaussianBlur = ProgramData.CreatePath("Shaders", "GaussianBlur");
             public static string SkySphere = ProgramData.CreatePath("Shaders", "SkySphere");
             public static string TexturedShaders = ProgramData.CreatePath("Shaders", "TexturedShaders");
+            public static string FXAA = ProgramData.CreatePath("Shaders", "FXAA");
 #else
             public static string BloomCombine = ProgramData.CreatePath("Shaders", "BloomCombine_Opengl");
             public static string BloomExtract = ProgramData.CreatePath("Shaders", "BloomExtract_Opengl");

@@ -806,10 +806,7 @@ namespace DwarfCorp
         {
             Vector2 v = new Vector2(Origin.X, Origin.Z) / PlayState.WorldScale;
 
-            Overworld.Biome biome = Overworld.Map[(int) v.X, (int) v.Y].Biome;
-            /*Overworld.GetBiome(Overworld.LinearInterpolate(v, Overworld.Map, Overworld.ScalarFieldType.Temperature),
-                                   Overworld.LinearInterpolate(v, Overworld.Map, Overworld.ScalarFieldType.Rainfall),
-                                   Overworld.LinearInterpolate(v, Overworld.Map, Overworld.ScalarFieldType.Height));*/
+            Overworld.Biome biome = Overworld.Map[(int) MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int) MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
             BuildGrassMotes(biome);
         }
 
@@ -895,12 +892,12 @@ namespace DwarfCorp
         {
             Vector3 grid = WorldToGrid(worldLocation);
 
-            bool valid = IsCellValid((int) grid.X, (int) grid.Y, (int) grid.Z);
+            bool valid = IsCellValid(MathFunctions.FloorInt(grid.X), MathFunctions.FloorInt(grid.Y), MathFunctions.FloorInt(grid.Z));
 
             if(valid)
             {
                 voxel.Chunk = this;
-                voxel.GridPosition = new Vector3((int)grid.X, (int)grid.Y, (int)grid.Z);
+                voxel.GridPosition = new Vector3(MathFunctions.FloorInt(grid.X), MathFunctions.FloorInt(grid.Y), MathFunctions.FloorInt(grid.Z));
                 return true;
             }
             else

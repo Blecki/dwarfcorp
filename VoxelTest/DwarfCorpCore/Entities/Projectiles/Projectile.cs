@@ -57,7 +57,7 @@ namespace DwarfCorp
             DamageRadius = (float)Math.Pow(size*4, 2);
         }
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             bool got = false;
             foreach (var faction in Manager.Factions.Factions)
@@ -84,7 +84,7 @@ namespace DwarfCorp
                 Die();
             }
 
-            base.Update(DwarfTime, chunks, camera);
+            base.Update(gameTime, chunks, camera);
         }
 
         public override void Die()

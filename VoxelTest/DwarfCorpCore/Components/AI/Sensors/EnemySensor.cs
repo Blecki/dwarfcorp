@@ -51,7 +51,7 @@ namespace DwarfCorp
             List<CreatureAI> collide = new List<CreatureAI>();
             foreach (KeyValuePair<string, Faction> faction in PlayState.ComponentManager.Factions.Factions)
             {
-                if (Alliance.GetRelationship(Creature.Creature.Allies, faction.Value.Alliance) == Relationship.Hates)
+                if (Alliance.GetRelationship(Creature.Creature.Allies, faction.Value.Name) == Relationship.Hates)
                 {
                     foreach (CreatureAI minion in faction.Value.Minions)
                     {
@@ -80,22 +80,22 @@ namespace DwarfCorp
             {
                 Vector3 diff = minion.Position - Creature.Position;
                 diff.Normalize();
-                minion.Physics.ApplyForce(diff * 10, Act.Dt);
-                Creature.Physics.ApplyForce(diff * 10, Act.Dt);
+                minion.Physics.ApplyForce(diff * 10, DwarfTime.Dt);
+                Creature.Physics.ApplyForce(diff * 10, DwarfTime.Dt);
             }
         }
 
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            SenseTimer.Update(DwarfTime);
+            SenseTimer.Update(gameTime);
             
             if (SenseTimer.HasTriggered)
             {
                 Sense();
             }
             Enemies.RemoveAll(ai => ai.IsDead);
-            base.Update(DwarfTime, chunks, camera);
+            base.Update(gameTime, chunks, camera);
         }
 
         private void EnemySensor_OnEnemySensed(List<CreatureAI> enemies)

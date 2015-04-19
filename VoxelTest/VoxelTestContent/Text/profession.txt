@@ -1,0 +1,27 @@
+Urchin
+Homeless
+Fishmonger
+Beggar
+Factory Worker
+Student
+Fugitive
+Convict
+Carpenter
+Roofer
+Ditch Digger
+Disgraced Noble
+Policeman
+Conscript
+Eunuch
+Prostitute
+Grifter
+Bum
+Vagrant
+Vagabond
+Hobo
+Inebriate
+Servant
+Slave
+Congressdwarf
+Mayor
+Councildwarf

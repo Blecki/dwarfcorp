@@ -76,19 +76,19 @@ namespace DwarfCorp
             }
         }
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
 
             if (ShouldDie)
             {
-                DeathTimer.Update(DwarfTime);
+                DeathTimer.Update(gameTime);
 
                 if (DeathTimer.HasTriggered)
                 {
                     Die();
                 }
             }
-            base.Update(DwarfTime, chunks, camera);
+            base.Update(gameTime, chunks, camera);
         }
 
         public void Trigger()

@@ -40,12 +40,13 @@ namespace DwarfCorp
             {
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
                 Creature.OverrideCharacterMode = true;
-                float research = Creature.Stats.BuffedInt * 0.25f * Dt;
+                float research = Creature.Stats.BuffedInt * 0.25f * DwarfTime.Dt;
                 Spell.ResearchProgress += research;
                 totalResearch += research;
                 Creature.Physics.Velocity *= 0;
                 if ((int) totalResearch > 0)
                 {
+                    SoundManager.PlaySound(ContentPaths.Audio.tinkle, Creature.AI.Position, true);
                     Creature.AI.AddXP((int)(totalResearch));
                     totalResearch = 0.0f;
                 }
@@ -55,7 +56,7 @@ namespace DwarfCorp
                     PlayState.AnnouncementManager.Announce("Researched " + Spell.Spell.Name, Creature.Stats.FirstName + " " + Creature.Stats.LastName + " discovered the " + Spell.Spell.Name + " spell!");
                 }
 
-                starParitcle.Update(Act.LastTime);
+                starParitcle.Update(DwarfTime.LastTime);
                 if(starParitcle.HasTriggered)
                     PlayState.ParticleManager.Trigger("star_particle", Creature.AI.Position, Color.White, 3);
                 yield return Status.Running;

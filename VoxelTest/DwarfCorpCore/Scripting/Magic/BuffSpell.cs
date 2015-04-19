@@ -43,6 +43,8 @@ namespace DwarfCorp
                     {
                         if (OnCast(tree))
                         {
+                            Vector3 p = creature.AI.Position + Vector3.Up;
+                            IndicatorManager.DrawIndicator("-" + ManaCost + " M", p, 1.0f, Color.Red);
                             creature.AddBuff(buff.Clone());
                         }
                     }

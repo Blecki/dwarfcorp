@@ -88,7 +88,7 @@ namespace DwarfCorp
         public Status Happiness { get { return Statuses["Happiness"]; } set { Statuses["Happiness"] = value; } }
         public Status Health { get { return Statuses["Health"]; } set { Statuses["Health"] = value; } }
         public float Money { get; set; }
-        private float HungerDamageRate = 1.0f;
+        private float HungerDamageRate = 10.0f;
         private DateTime LastHungerDamageTime = DateTime.Now;
 
         public CreatureStatus()
@@ -137,9 +137,9 @@ namespace DwarfCorp
             };
         }
 
-        public void Update(Creature creature, DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
-        { 
-            float dt = (float)DwarfTime.ElapsedGameTime.TotalSeconds;
+        public void Update(Creature creature, DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        {
+            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Hunger.CurrentValue -= dt * creature.Stats.HungerGrowth;
 
             Health.CurrentValue = (creature.Hp - creature.MinHealth) / (creature.MaxHealth - creature.MinHealth);

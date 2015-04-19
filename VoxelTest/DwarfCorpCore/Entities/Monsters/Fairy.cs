@@ -31,21 +31,21 @@ namespace DwarfCorp
             Initialize(new FairyClass());
         }
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (ParticleTimer.HasTriggered)
             {
                 PlayState.ParticleManager.Trigger("star_particle", Sprite.Position, Color.White, 1);    
             }
-            DeathTimer.Update(DwarfTime);
-            ParticleTimer.Update(DwarfTime);
+            DeathTimer.Update(gameTime);
+            ParticleTimer.Update(gameTime);
 
             if (DeathTimer.HasTriggered)
             {
                 Physics.Die();
             }
 
-            base.Update(DwarfTime, chunks, camera);
+            base.Update(gameTime, chunks, camera);
         }
 
         
@@ -121,7 +121,7 @@ namespace DwarfCorp
             //new LightEmitter("Light Emitter", Sprite, Matrix.Identity, Vector3.One, Vector3.One, 255, 150);
             new Bobber(0.25f, 3.0f, MathFunctions.Rand(), Sprite);
           
-            Stats.FirstName = TextGenerator.GenerateRandom("$DwarfName");
+            Stats.FirstName = TextGenerator.GenerateRandom("$firstname");
             Stats.LastName = "The Fairy";
             
             Stats.CanSleep = false;

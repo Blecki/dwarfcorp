@@ -305,8 +305,7 @@ TPixelToFrame TexturedPS_Colorscale(TVertexToPixel PSIn)
 	{
 		if (GhostMode && PSIn.clipDistances.w < 0.0f)
 		{
-			Output.Color.b = 1.0f;
-			Output.Color *= clamp(-1.0f / (PSIn.clipDistances.w * 0.75f) * 0.25f, 0, 0.6f);
+			Output.Color *= clamp(-1.0f / (PSIn.clipDistances.w * 0.75f) * 0.5f, 0, 1.0f);
 
 			clip((Output.Color.a - 0.1f));
 		}
@@ -344,8 +343,7 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 	{
 		if (GhostMode && PSIn.clipDistances.w < 0.0f)
 		{
-			Output.Color.b = 1.0f;
-			Output.Color *= clamp(-1.0f / (PSIn.clipDistances.w * 0.75f) * 0.25f, 0, 0.6f);
+			Output.Color *= clamp(-1.0f / (PSIn.clipDistances.w * 0.75f) * 0.25f, 0, 1.0f);
 
 			clip((Output.Color.a - 0.1f));
 		}

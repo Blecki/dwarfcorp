@@ -4,6 +4,7 @@ using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Threading;
+using Newtonsoft.Json.Schema;
 
 
 namespace DwarfCorp
@@ -33,7 +34,8 @@ namespace DwarfCorp
             Faults,
             Height,
             Temperature,
-            Rainfall
+            Rainfall,
+            Factions
         }
 
         public struct MapData
@@ -98,6 +100,8 @@ namespace DwarfCorp
                 set { Rainfall_ = (byte)(Math.Min(Math.Max(value * 255.0f, 0.0f), 255.0f)); }
             }
 
+            public byte Faction { get; set; }
+
             private byte Erosion_;
             private byte Weathering_;
             private byte Faults_;
@@ -123,6 +127,8 @@ namespace DwarfCorp
                         return Temperature;
                     case ScalarFieldType.Weathering:
                         return Weathering;
+                    case ScalarFieldType.Factions:
+                        return Faction;
                 }
 
                 return -1.0f;
@@ -150,6 +156,9 @@ namespace DwarfCorp
                     case ScalarFieldType.Weathering:
                         Weathering = value;
                         break;
+                    case ScalarFieldType.Factions:
+                        Faction = (byte) (value*255.0f);
+                        break;
                 }
             }
         }
@@ -161,19 +170,6 @@ namespace DwarfCorp
             {"Med", Color.Yellow},
             {"High", Color.Red},
             {"Highest", Color.White}
-        };
-
-        public static Dictionary<string, Color> BiomeColors = new Dictionary<string, Color>
-        {
-            {"Tundra", new Color(200, 255, 200)},
-            {"Taiga", new Color(200, 200, 200)},
-            {"Forest", new Color(50, 150, 50)},
-            {"Desert", new Color(180, 180, 100)},
-            {"Grassland", new Color(50, 255, 40)},
-            {"Jungle", new Color(20, 100, 20)},
-            {"Waste", new Color(255, 200, 0)},
-            {"Sea", new Color(30, 30, 150)},
-            {"Water", new Color(50, 50, 255)},
         };
 
         public static Dictionary<string, Color> HeightColors = new Dictionary<string, Color>
@@ -191,9 +187,10 @@ namespace DwarfCorp
         public static Perlin heightNoise = new Perlin(PlayState.Random.Next());
 
         public static List<Vector2> Volcanoes { get; set; }
-
+        
         public static MapData[,] Map { get; set; }
         public static string Name { get; set; }
+        public static List<Faction> NativeFactions { get; set; }
 
         public static ColorGradient JetGradient = null;
 
@@ -203,9 +200,9 @@ namespace DwarfCorp
             Grassland,
             Forest,
             Tundra,
-            ColdForest,
+            Taiga,
             Jungle,
-            Volcano
+            Waste
         }
 
 
@@ -217,65 +214,25 @@ namespace DwarfCorp
             new Vector2(0, 1)
         };
 
-        public static Biome GetBiome(float temp, float rainfall, float heigh)
+        public static Biome GetBiome(float temp, float rainfall, float height)
         {
-            if(heigh > 0.9f)
+
+            Overworld.Biome closest = Biome.Waste;
+            float closestDist = float.MaxValue;
+            foreach (var pair in BiomeLibrary.Biomes)
             {
-                return Biome.Tundra;
-            }
-            else if(rainfall < 0.2f)
-            {
-                if(temp < 0.2f || heigh > 0.9f)
+                float dist = Math.Abs(pair.Value.Temp - temp) + Math.Abs(pair.Value.Rain - rainfall) +
+                             Math.Abs(pair.Value.Height - height);
+
+                if (dist < closestDist)
                 {
-                    return Biome.Tundra;
-                }
-                else if(temp > 0.5)
-                {
-                    return Biome.Desert;
-                }
-                else
-                {
-                    return Biome.Grassland;
+                    closest = pair.Key;
+                    closestDist = dist;
                 }
             }
-            else if(rainfall < 0.3f)
-            {
-                if(heigh > 0.9f)
-                {
-                    return Biome.Tundra;
-                }
-                else if(temp < 0.2f)
-                {
-                    return Biome.ColdForest;
-                }
-                else if(temp < 0.8f)
-                {
-                    return Biome.Grassland;
-                }
-                else
-                {
-                    return Biome.Desert;
-                }
-            }
-            else
-            {
-                if(temp + rainfall > 1.7f)
-                {
-                    return Biome.Jungle;
-                }
-                else if(temp < 0.2f)
-                {
-                    return Biome.ColdForest;
-                }
-                else if(rainfall < 0.5f)
-                {
-                    return Biome.Grassland;
-                }
-                else
-                {
-                    return Biome.Forest;
-                }
-            }
+
+            return closest;
+
         }
 
      
@@ -454,10 +411,19 @@ namespace DwarfCorp
             const int kernelSizeY = 10;
 
 
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    b[x, y] = array[x, y].GetValue(type);
+                }
+            }
+
             for(int x = kernelSizeX; x < width - kernelSizeX; x++)
             {
                 for(int y =kernelSizeY; y < height - kernelSizeY; y++)
                 {
+                    b[x, y] = 0.0f;
                     for(int dx = 0; dx < kernelSizeX; dx++)
                     {
                         for(int dy = 0; dy < kernelSizeY; dy++)
@@ -580,10 +546,9 @@ namespace DwarfCorp
             float hill = noise(x, y, 20, hillSize) * 0.02f;
             const float smallNoiseSize = 0.15f;
             float smallnoise = noise(x, y, 100, smallNoiseSize) * 0.01f;
-            const float cliffiness = 0;
 
             float h = pow(clamp((continent * mountain) + hill, 0, 1), 1);
-            h += smallnoise + cliffiness;
+            h += smallnoise;
             h += 0.4f;
 
             if(erode)
@@ -617,7 +582,7 @@ namespace DwarfCorp
             int width, int height,
             Mutex imageMutex,
             Color[] worldData,
-            Texture2D worldMap)
+            Texture2D worldMap, float sealevel)
         {
             if(JetGradient == null)
             {
@@ -667,7 +632,6 @@ namespace DwarfCorp
             int stepX = map.GetLength(0) / width;
             int stepY = map.GetLength(1) / height;
             string index = "";
-            Dictionary<string, Color> colormap = displayMode == "Height" ? HeightColors : BiomeColors;
             for(int tx = 0; tx < width; tx++)
             {
                 for(int ty = 0; ty < height; ty++)
@@ -676,49 +640,18 @@ namespace DwarfCorp
                     int y = ty * stepY;
    
                     float h1 = map[x, y].GetValue(type);
+                    Biome biome = Map[x, y].Biome;
                     if(h1 < 0.1f)
                     {
                         index = "Sea";
                     }
-                    else if(h1 >= 0.1f && h1 <= 0.17f)
+                    else if(h1 >= 0.1f && h1 <= sealevel)
                     {
                         index = "Water";
                     }
                     else if(displayMode == "Biomes")
                     {
-                        if(map[x, y].Water == WaterType.River)
-                        {
-                            //index = river;
-                        }
-                        else
-                        {
-                            Biome biome = Map[x, y].Biome;
-
-                            switch(biome)
-                            {
-                                case Biome.ColdForest:
-                                    index = "Taiga";
-                                    break;
-                                case Biome.Forest:
-                                    index = "Forest";
-                                    break;
-                                case Biome.Grassland:
-                                    index = "Grassland";
-                                    break;
-                                case Biome.Jungle:
-                                    index = "Jungle";
-                                    break;
-                                case Biome.Tundra:
-                                    index = "Tundra";
-                                    break;
-                                case Biome.Desert:
-                                    index = "Desert";
-                                    break;
-                                case Biome.Volcano:
-                                    index = "Waste";
-                                    break;
-                            }
-                        }
+                        index = "Biome";
                     }
                     else if(displayMode == "Height")
                     {
@@ -744,16 +677,47 @@ namespace DwarfCorp
                         }
                     }
 
-
                     if(displayMode == "Gray")
                     {
                         Color toDraw = JetGradient.GetColor(h1);
-                        //Color toDraw = new Color(h1, 0.5f * h1, 1.0f - h1 * 0.5f);
                         worldData[y * width + x] = toDraw;
+                    }
+                    else if (displayMode == "Factions")
+                    {
+                        float h2 = map[x, y].Height;
+                        byte factionColor = map[x, y].Faction;
+                        
+
+                        Color ci = Color.DarkBlue;
+
+                        if (factionColor > 0)
+                        {
+                            bool inside = x > 0 && x < width - 1 && y > 0 && y < height - 1;
+                            ci = NativeFactions[factionColor - 1].PrimaryColor;
+                           if(inside && 
+                               (map[x + 1, y].Faction != factionColor || 
+                               map[x - 1, y].Faction != factionColor || 
+                               map[x, y - 1].Faction != factionColor || 
+                               map[x, y + 1].Faction != factionColor ||
+                               map[x + 1, y + 1].Faction != factionColor ||
+                               map[x - 1, y - 1].Faction != factionColor || 
+                               map[x + 1, y - 1].Faction != factionColor ||
+                               map[x - 1, y + 1].Faction != factionColor))
+                           {
+                                    ci = NativeFactions[factionColor - 1].SecondaryColor;
+                           }
+                        }
+                        else if (h2 > sealevel)
+                        {
+                            ci = Color.Gray;
+                        }
+
+                        Color toDraw = new Color((float)(ci.R) * (h2 + 0.5f) / 255.0f, (float)(ci.G * (h2 + 0.5f)) / 255.0f, (float)(ci.B * (h2 + 0.5f)) / 255.0f);
+                        worldData[ty * width + tx] = toDraw;
                     }
                     else
                     {
-                        Color ci = colormap[index];
+                        Color ci = displayMode == "Biomes"  && index != "Water" && index != "Sea" ? BiomeLibrary.Biomes[biome].MapColor : HeightColors[index];
                         Color toDraw = new Color((float) (ci.R) * (h1 + 0.5f) / 255.0f, (float) (ci.G * (h1 + 0.5f)) / 255.0f, (float) (ci.B * (h1 + 0.5f)) / 255.0f);
                         worldData[ty * width + tx] = toDraw;
                     }
@@ -765,6 +729,7 @@ namespace DwarfCorp
                 imageMutex.WaitOne();
             }
 
+            GameState.Game.GraphicsDevice.Textures[0] = null;
             worldMap.SetData(worldData);
 
             if(imageMutex != null)
@@ -775,6 +740,7 @@ namespace DwarfCorp
 
         public static void CreateHillsLand(GraphicsDevice graphics)
         {
+            PlayState.SeaLevel = 0.17f;
             int size = 512;
             Map = new MapData[size, size];
 
@@ -797,12 +763,13 @@ namespace DwarfCorp
 
             Color[] worldData = new Color[size * size];
             WorldGeneratorState.worldMap = new Texture2D(graphics, size, size);
-            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap);
+            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, PlayState.SeaLevel);
             Overworld.Name = "hills" + PlayState.Random.Next(9999);
         }
 
         public static void CreateCliffsLand(GraphicsDevice graphicsDevice)
         {
+            PlayState.SeaLevel = 0.17f;
             int size = 512;
             Map = new MapData[size, size];
 
@@ -842,12 +809,13 @@ namespace DwarfCorp
 
             Color[] worldData = new Color[size * size];
             WorldGeneratorState.worldMap = new Texture2D(graphicsDevice, size, size);
-            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap);
+            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, PlayState.SeaLevel);
             Overworld.Name = "Cliffs_" + PlayState.Random.Next(9999);
         }
 
         public static void CreateUniformLand(GraphicsDevice graphics)
         {
+            PlayState.SeaLevel = 0.17f;
             int size = 512;
             Map = new MapData[size, size];
 
@@ -867,12 +835,13 @@ namespace DwarfCorp
 
             Color[] worldData = new Color[size * size];
             WorldGeneratorState.worldMap = new Texture2D(graphics, size, size);
-            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap);
+            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, PlayState.SeaLevel);
             Overworld.Name = "flat_" + PlayState.Random.Next(9999);
         }
 
         public static void CreateOceanLand(GraphicsDevice graphicsDevice)
         {
+            PlayState.SeaLevel = 0.17f;
             int size = 512;
             Map = new MapData[size, size];
 
@@ -892,9 +861,10 @@ namespace DwarfCorp
 
             Color[] worldData = new Color[size * size];
             WorldGeneratorState.worldMap = new Texture2D(graphicsDevice, size, size);
-            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap);
+            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, PlayState.SeaLevel);
             Overworld.Name = "flat";
         }
+
     }
 
 }

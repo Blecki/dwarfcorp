@@ -18,7 +18,7 @@ namespace DwarfCorp
         public Perlin NoiseGenerator { get; set; }
         public float NoiseScale { get; set; }
         public float CaveNoiseScale { get; set; }
-
+        public float SeaLevel { get; set; }
         public float MaxMountainHeight { get; set; }
         public ChunkManager Manager { get; set; }
 
@@ -40,7 +40,7 @@ namespace DwarfCorp
 
         public void GenerateWater(VoxelChunk chunk)
         {
-            int waterHeight = (int) (0.17f*chunk.SizeY);
+            int waterHeight = (int) (SeaLevel*chunk.SizeY);
             Voxel voxel = chunk.MakeVoxel(0, 0, 0);
             for (int x = 0; x < chunk.SizeX; x++)
             {
@@ -77,7 +77,7 @@ namespace DwarfCorp
                     chunk.Data.Water[chunk.Data.IndexAt(x, h, z)].WaterLevel = 255;
                     chunk.Data.Water[chunk.Data.IndexAt(x, h, z)].Type = LiquidType.Lava;
 
-
+                    /*
                     for (int y = h - 1; y >= 0; y--)
                     {
                         voxel.Chunk = chunk;
@@ -87,6 +87,7 @@ namespace DwarfCorp
                         voxel.Type = VoxelLibrary.GetVoxelType("Stone");
                         voxel.Chunk.NotifyTotalRebuild(!voxel.IsInterior);
                     }
+                     */
 
                 }
             }
@@ -158,14 +159,14 @@ namespace DwarfCorp
 
         public void GenerateFauna(VoxelChunk chunk, ComponentManager components, ContentManager content, GraphicsDevice graphics, FactionLibrary factions)
         {
-            int waterHeight = (int)(0.17 * chunk.SizeY);
+            int waterHeight = (int)(SeaLevel * chunk.SizeY);
             Voxel v = chunk.MakeVoxel(0, 0, 0);
             for (int x = 0; x < chunk.SizeX; x++)
             {
                 for (int z = 0; z < chunk.SizeZ; z++)
                 {
                     Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z) / PlayState.WorldScale;
-                    Overworld.Biome biome = Overworld.Map[(int)vec.X, (int)vec.Y].Biome;
+                    Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(vec.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(vec.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
                     int y = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
@@ -200,7 +201,7 @@ namespace DwarfCorp
 
         public void GenerateVegetation(VoxelChunk chunk, ComponentManager components, ContentManager content, GraphicsDevice graphics)
         {
-            int waterHeight = (int) (0.17 * chunk.SizeY);
+            int waterHeight = (int) (SeaLevel * chunk.SizeY);
             bool updated = false;
             Voxel v = chunk.MakeVoxel(0, 0, 0);
             Voxel vUnder = chunk.MakeVoxel(0, 0, 0);
@@ -209,7 +210,7 @@ namespace DwarfCorp
                 for(int z = 0; z < chunk.SizeZ; z++)
                 {
                     Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z) / PlayState.WorldScale;
-                    Overworld.Biome biome = Overworld.Map[(int) vec.X, (int) vec.Y].Biome;
+                    Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(vec.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(vec.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
                     int y = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
@@ -339,7 +340,7 @@ namespace DwarfCorp
 
         public VoxelChunk GenerateChunk(Vector3 origin, int chunkSizeX, int chunkSizeY, int chunkSizeZ, ComponentManager components, ContentManager content, GraphicsDevice graphics)
         {
-            const float waterHeight = 0.155f;
+            float waterHeight = SeaLevel;
             VoxelChunk c = new VoxelChunk(Manager, origin, 1,
                 Manager.ChunkData.GetChunkID(origin + new Vector3(0.5f, 0.5f, 0.5f)), chunkSizeX, chunkSizeY, chunkSizeZ)
             {
@@ -354,7 +355,7 @@ namespace DwarfCorp
                 {
                     Vector2 v = new Vector2(x + origin.X, z + origin.Z) / PlayState.WorldScale;
 
-                    Overworld.Biome biome = Overworld.Map[(int) v.X, (int) v.Y].Biome;
+                    Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
 
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 

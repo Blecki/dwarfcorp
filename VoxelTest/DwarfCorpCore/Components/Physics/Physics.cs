@@ -32,6 +32,15 @@ namespace DwarfCorp
         public Vector3 PreviousVelocity { get; set; }
         public OrientMode Orientation { get; set; }
         private float Rotation = 0.0f;
+        public CollisionMode CollideMode { get; set; }
+        public enum CollisionMode
+        {
+            All,
+            None,
+            UpDown,
+            Sides
+        }
+
         public enum OrientMode
         {
             Physics,
@@ -62,6 +71,7 @@ namespace DwarfCorp
             PreviousVelocity = Vector3.Zero;
             IsInLiquid = false;
             CollisionType = CollisionManager.CollisionType.Dynamic;
+            CollideMode = CollisionMode.All;
             Orientation = orientation;
             SleepTimer = new Timer(5.0f, true);
         }
@@ -90,13 +100,13 @@ namespace DwarfCorp
             LocalTransform = transform;
         }
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             BoundingBox bounds = chunks.Bounds;
             bounds.Max.Y += 50;
             if (!IsSleeping && (Velocity).Length() < 0.15f)
             {
-                SleepTimer.Update(DwarfTime);
+                SleepTimer.Update(gameTime);
                 if (SleepTimer.HasTriggered)
                 {
                     applyGravityThisFrame = false;
@@ -118,7 +128,7 @@ namespace DwarfCorp
                     overrideSleepThisFrame = false;
                 }
 
-                float dt = (float) (DwarfTime.ElapsedGameTime.TotalSeconds);
+                float dt = (float)(gameTime.ElapsedGameTime.TotalSeconds);
 
                 MoveY(dt);
                 MoveX(dt);
@@ -177,7 +187,6 @@ namespace DwarfCorp
                             newTransform.M34 = 0;
                             newTransform.M44 = 1;
                             transform = newTransform;
-                            Drawer3D.DrawAxes(newTransform, 1.0f);
                         }
                     }
                 }
@@ -202,12 +211,12 @@ namespace DwarfCorp
                 Velocity *= LinearDamping;
                 AngularVelocity *= AngularDamping;
                 UpdateBoundingBox();
-                CheckLiquids(chunks, (float) DwarfTime.ElapsedGameTime.TotalSeconds);
+                CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             }
             Velocity = (PreviousVelocity * 0.1f + Velocity * 0.9f);
             PreviousVelocity = Velocity;
             PreviousPosition = Position;
-            base.Update(DwarfTime, chunks, camera);
+            base.Update(gameTime, chunks, camera);
         }
 
         public Timer SleepTimer { get; set; }
@@ -273,9 +282,11 @@ namespace DwarfCorp
             Matrix m = LocalTransform;
             m.Translation += contact.NEnter * (contact.Penetration) * 1.01f;
 
-
+            Vector3 impulse = (Vector3.Dot(Velocity, -contact.NEnter)*contact.NEnter);
+            Velocity += impulse;
             //Vector3 newVelocity = (contact.NEnter * Vector3.Dot(Velocity, contact.NEnter));
             //Velocity = (Velocity - newVelocity) * Restitution;
+            /*
             if (Math.Abs(contact.NEnter.Y) > 0.1f)
             {
                 Velocity = new Vector3(Velocity.X, -Velocity.Y * Restitution, Velocity.Z);
@@ -285,6 +296,7 @@ namespace DwarfCorp
                 Velocity = Vector3.Reflect(Velocity, -contact.NEnter);
                 Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
             }
+             */
 
             LocalTransform = m;
             UpdateBoundingBox();
@@ -292,8 +304,11 @@ namespace DwarfCorp
             return true;
         }
 
+
         public virtual void HandleCollisions(ChunkManager chunks, float dt)
         {
+            if (CollideMode == CollisionMode.None) return;
+
             Voxel currentVoxel = new Voxel();
             bool success = chunks.ChunkData.GetVoxel(null, LocalTransform.Translation, ref currentVoxel);
 
@@ -314,10 +329,22 @@ namespace DwarfCorp
             
             List<Voxel> adjacencies = chunk.GetNeighborsEuclidean((int) grid.X, (int) grid.Y, (int) grid.Z);
             vs.AddRange(adjacencies);
-
+            Vector3 half = Vector3.One*0.5f;
+            vs.Sort((a, b) => (MathFunctions.L1(LocalTransform.Translation, a.Position + half).CompareTo(MathFunctions.L1(LocalTransform.Translation, b.Position + half))));
+            int y = (int)Position.Y;
             foreach(Voxel v in vs)
             {
                 if(v == null || v.IsEmpty)
+                {
+                    continue;
+                }
+
+                if (CollideMode == CollisionMode.UpDown && (int)v.GridPosition.Y == y)
+                {
+                    continue;
+                }
+
+                if (CollideMode == CollisionMode.Sides && (int) v.GridPosition.Y != y)
                 {
                     continue;
                 }

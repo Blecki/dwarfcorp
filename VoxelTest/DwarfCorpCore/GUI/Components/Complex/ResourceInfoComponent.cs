@@ -33,7 +33,7 @@ namespace DwarfCorp
 
             int numItems = CurrentResources.Count;
 
-            int wItems = LocalBounds.Width / PanelWidth;
+            int wItems = LocalBounds.Width / PanelWidth - 1;
             int hItems = LocalBounds.Height / PanelHeight;
 
             Layout.Rows = hItems;

@@ -13,7 +13,7 @@
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
-    <XnaProfile>Reach</XnaProfile>
+    <XnaProfile>HiDef</XnaProfile>
     <XnaCrossPlatformGroupID>9d96dd3d-9e43-4af4-97c2-3813c1acb45f</XnaCrossPlatformGroupID>
     <XnaOutputType>Library</XnaOutputType>
   </PropertyGroup>
@@ -169,8 +169,10 @@
     <Compile Include="GameStates\PlayState.cs" />
     <Compile Include="GameStates\WorldGeneratorState.cs" />
     <Compile Include="GameStates\WorldLoaderState.cs" />
+    <Compile Include="GameStates\WorldSetupState.cs" />
     <Compile Include="Graphics\Cameras\Camera.cs" />
     <Compile Include="Graphics\Cameras\OrbitCamera.cs" />
+    <Compile Include="Graphics\Effects\FXAA.cs" />
     <Compile Include="Graphics\Primitives\Composite.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\DrawCommand2D.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\Drawer2D.cs" />
@@ -473,6 +475,7 @@
     <Compile Include="World\BiomeData.cs" />
     <Compile Include="World\BiomeLibrary.cs" />
     <Compile Include="World\DetailMoteData.cs" />
+    <Compile Include="World\Diplomacy.cs" />
     <Compile Include="World\FaunaData.cs" />
     <Compile Include="World\Overworld.cs" />
     <Compile Include="World\VegetationData.cs" />

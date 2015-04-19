@@ -22,7 +22,7 @@ namespace DwarfCorp
 
             public void GetKnownSpellsRecursive(List<Spell> spells)
             {
-                if (ResearchProgress >= ResearchTime)
+                //if (ResearchProgress >= ResearchTime)
                 {
                     spells.Add(Spell);
                 }

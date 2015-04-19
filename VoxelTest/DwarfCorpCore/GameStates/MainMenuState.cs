@@ -78,7 +78,7 @@ namespace DwarfCorp.GameStates
                     break;
                 case "Generate World":
                     MaintainState = true;
-                    StateManager.PushState("WorldGeneratorState");
+                    StateManager.PushState("WorldSetupState");
                     break;
                 case "Options":
                     MaintainState = true;
@@ -178,55 +178,55 @@ namespace DwarfCorp.GameStates
             OnItemClicked(selectedItem);
         }
 
-        public override void Update(DwarfTime DwarfTime)
+        public override void Update(DwarfTime gameTime)
         {
             Input.Update();
-            GUI.Update(DwarfTime);
+            GUI.Update(gameTime);
             GUI.IsMouseVisible = true;
 
-            base.Update(DwarfTime);
+            base.Update(gameTime);
         }
 
 
-        private void DrawGUI(DwarfTime DwarfTime, float dx)
+        private void DrawGUI(DwarfTime gameTime, float dx)
         {
             RasterizerState rasterizerState = new RasterizerState()
             {
                 ScissorTestEnable = true
             };
 
-            GUI.PreRender(DwarfTime, DwarfGame.SpriteBatch);
+            GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
             DwarfGame.SpriteBatch.Draw(Logo, new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - Logo.Width / 2 + dx, 10), null, Color.White);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
-            GUI.Render(DwarfTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
+            GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
 
             DwarfGame.SpriteBatch.DrawString(GUI.DefaultFont, Program.Version, new Vector2(15, 15), Color.White);
 
             DwarfGame.SpriteBatch.End();
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle = DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
-            GUI.PostRender(DwarfTime);
+            GUI.PostRender(gameTime);
         }
 
-        public override void Render(DwarfTime DwarfTime)
+        public override void Render(DwarfTime gameTime)
         {
 
             if(Transitioning == TransitionMode.Running)
             {
-                DrawGUI(DwarfTime, 0);
+                DrawGUI(gameTime, 0);
             }
             else if(Transitioning == TransitionMode.Entering)
             {
                 float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                DrawGUI(DwarfTime, dx);
+                DrawGUI(gameTime, dx);
             }
             else if(Transitioning == TransitionMode.Exiting)
             {
                 float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                DrawGUI(DwarfTime, dx);
+                DrawGUI(gameTime, dx);
             }
 
-            base.Render(DwarfTime);
+            base.Render(gameTime);
         }
     }
 

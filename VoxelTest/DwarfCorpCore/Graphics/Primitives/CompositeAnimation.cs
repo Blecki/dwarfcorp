@@ -164,9 +164,9 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public override void Update(DwarfTime DwarfTime, Timer.TimerMode mode = Timer.TimerMode.Game)
+        public override void Update(DwarfTime gameTime, Timer.TimerMode mode = Timer.TimerMode.Game)
         {
-            base.Update(DwarfTime, mode);
+            base.Update(gameTime, mode);
             CurrentOffset = Composite.PushFrame(CompositeFrames[CurrentFrame]);
             HasValidFrame = true;
             UpdatePrimitive();

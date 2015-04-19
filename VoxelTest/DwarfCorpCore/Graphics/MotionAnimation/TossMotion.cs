@@ -28,7 +28,7 @@ namespace DwarfCorp
             float z = Easing.Ballistic(Time.CurrentTimeSeconds, Time.TargetTimeSeconds, Height);
 
             Vector3 dx = (EndPos - Start.Translation) * t + Start.Translation;
-            dx.Y = Start.Translation.Y + z;
+            dx.Y = Start.Translation.Y * (1 - t) + EndPos.Y * (t) + z;
             Matrix toReturn = Start;
             toReturn.Translation = dx;
             return toReturn;

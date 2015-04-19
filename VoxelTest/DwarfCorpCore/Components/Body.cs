@@ -213,9 +213,9 @@ namespace DwarfCorp
         }
 
 
-        public override void Update(DwarfTime DwarfTime, ChunkManager chunks, Camera camera)
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            IsAboveCullPlane =  GlobalTransform.Translation.Y - GetBoundingBox().Extents().Y > (chunks.ChunkData.MaxViewingLevel + 2);
+            IsAboveCullPlane =  GlobalTransform.Translation.Y - GetBoundingBox().Extents().Y > (chunks.ChunkData.MaxViewingLevel + 5);
             if(DrawScreenRect)
             {
                 Drawer2D.DrawRect(GetScreenRect(camera), Color.Transparent, Color.White, 1);
@@ -224,6 +224,7 @@ namespace DwarfCorp
             if(DrawBoundingBox)
             {
                 Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f);
+                Drawer3D.DrawBox(GetRotatedBoundingBox(), Color.Red, 0.02f);
             }
 
             if (DrawReservation && IsReserved)
@@ -234,7 +235,7 @@ namespace DwarfCorp
             if(AnimationQueue.Count > 0)
             {
                 MotionAnimation anim = AnimationQueue[0];
-                anim.Update(DwarfTime);
+                anim.Update(gameTime);
 
                 LocalTransform = anim.GetTransform();
 
@@ -244,7 +245,7 @@ namespace DwarfCorp
                 }
             }
 
-            base.Update(DwarfTime, chunks, camera);
+            base.Update(gameTime, chunks, camera);
         }
 
 
@@ -293,11 +294,17 @@ namespace DwarfCorp
             return BoundingBox;
         }
 
+        public BoundingBox GetRotatedBoundingBox()
+        {
+            Vector3 min = Vector3.Transform(BoundingBox.Min - GlobalTransform.Translation, GlobalTransform);
+            Vector3 max = Vector3.Transform(BoundingBox.Max - GlobalTransform.Translation, GlobalTransform);
+            return new BoundingBox(min, max);
+        }
+
 
         public void UpdateBoundingBox()
         {
             Vector3 extents = BoundingBox.Max - BoundingBox.Min;
-            float m = Math.Max(Math.Max(extents.X, extents.Y), extents.Z) * 0.5f;
             BoundingBox.Min = GlobalTransform.Translation - extents / 2.0f + BoundingBoxPos;
             BoundingBox.Max = GlobalTransform.Translation + extents / 2.0f + BoundingBoxPos;
         }

@@ -520,7 +520,6 @@ namespace DwarfCorp
 
                     //GeneratorLock.WaitOne();
 
-
                     if (!PauseThreads && ToGenerate != null && ToGenerate.Count > 0)
                     {
                         Point3 box = ToGenerate[0];
@@ -583,7 +582,7 @@ namespace DwarfCorp
             return MathFunctions.GetBoundingBox(toAdd);
         }
 
-        public void RenderAll(Camera renderCamera, DwarfTime DwarfTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix, Texture2D tilemap)
+        public void RenderAll(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix, Texture2D tilemap)
         {
             effect.Parameters["xIllumination"].SetValue(ChunkData.IllumMap);
             effect.Parameters["xTexture"].SetValue(tilemap);
@@ -608,7 +607,7 @@ namespace DwarfCorp
             effect.Parameters["SelfIllumination"].SetValue(0);
         }
 
-        public void Render(Camera renderCamera, DwarfTime DwarfTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix)
+        public void Render(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Effect effect, Matrix worldMatrix)
         {
             effect.Parameters["xIllumination"].SetValue(ChunkData.IllumMap);
             effect.Parameters["xTexture"].SetValue(ChunkData.Tilemap);
@@ -637,11 +636,11 @@ namespace DwarfCorp
 
             int i = 0;
             int iters = WorldSize.X * WorldSize.Y * WorldSize.Z;
-            for (int dx = origin.X - WorldSize.X/2; dx <= origin.X + WorldSize.X/2; dx++)
+            for (int dx = origin.X - WorldSize.X/2 + 1; dx < origin.X + WorldSize.X/2; dx++)
             {
                 for (int dy = origin.Y - WorldSize.Y/2; dy <= origin.Y + WorldSize.Y/2; dy++)
                 {
-                    for (int dz = origin.Z - WorldSize.Z/2; dz <= origin.Z + WorldSize.Z/2; dz++)
+                    for (int dz = origin.Z - WorldSize.Z/2 + 1; dz < origin.Z + WorldSize.Z/2; dz++)
                     {
                         message = "Generating : " + (i + 1) + "/" + iters;
                         i++;
@@ -722,18 +721,18 @@ namespace DwarfCorp
             chunks.RemoveWhere(chunk => frustum.Contains(chunk.GetBoundingBox()) == ContainmentType.Disjoint);
         }
 
-        public void Update(DwarfTime DwarfTime, Camera camera, GraphicsDevice g)
+        public void Update(DwarfTime gameTime, Camera camera, GraphicsDevice g)
         {
             UpdateRenderList(camera);
 
-            if(waterUpdateTimer.Update(DwarfTime))
+            if (waterUpdateTimer.Update(gameTime))
             {
                 WaterUpdateEvent.Set();
             }
 
             UpdateRebuildList();
 
-            generateChunksTimer.Update(DwarfTime);
+            generateChunksTimer.Update(gameTime);
             if(generateChunksTimer.HasTriggered)
             {
                 if(ToGenerate.Count > 0)
@@ -770,7 +769,7 @@ namespace DwarfCorp
             }
 
 
-            visibilityChunksTimer.Update(DwarfTime);
+            visibilityChunksTimer.Update(gameTime);
             if(visibilityChunksTimer.HasTriggered)
             {
                 visibleSet.Clear();
@@ -781,11 +780,11 @@ namespace DwarfCorp
 
             foreach(VoxelChunk chunk in ChunkData.ChunkMap.Values)
             {
-                chunk.Update(DwarfTime);
+                chunk.Update(gameTime);
             }
 
-            Water.Splash(DwarfTime);
-            Water.HandleTransfers(DwarfTime);
+            Water.Splash(gameTime);
+            Water.HandleTransfers(gameTime);
 
             HashSet<VoxelChunk> affectedChunks = new HashSet<VoxelChunk>();
             foreach (Voxel voxel in KilledVoxels)

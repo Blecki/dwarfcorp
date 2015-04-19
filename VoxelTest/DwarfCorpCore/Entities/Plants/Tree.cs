@@ -73,7 +73,7 @@ namespace DwarfCorp
         {
             if (messageToReceive.Type == Message.MessageType.OnHurt)
             {
-                HurtTimer.Update(Act.LastTime);
+                HurtTimer.Update(DwarfTime.LastTime);
 
                 if(HurtTimer.HasTriggered)
                     Particles.Trigger(1);   

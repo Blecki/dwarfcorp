@@ -170,7 +170,7 @@ namespace DwarfCorp
 
         public ImageFrame GetSpecialFrame(MousePointer key)
         {
-            MouseTimer.Update(Act.LastTime);
+            MouseTimer.Update(DwarfTime.LastTime);
 
             if (key == MousePointer.Wait)
             {

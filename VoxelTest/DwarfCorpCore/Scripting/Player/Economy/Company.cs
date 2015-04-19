@@ -69,224 +69,28 @@ namespace DwarfCorp
 
         public static string GenerateMotto()
         {
-            List<string[]> templates = new List<string[]>()
-            {
-                new string[] {"$Noun", " is the ", "$Noun", " of ", "$Noun", "."},
-                new string[] {"Always ", "$Adjective", "."},
-                new string[] {"$Noun", " binds us."},
-                new string[] {"The ", "$Place", " is always ", "$Noun", "."},
-                new string[] {"$Noun", " and ", "$Noun", "."},
-                new string[] {"To ", "$Verb", " and ", "$Verb", "."},
-                new string[] {"Lend a ", "$Noun", "."},
-                new string[] {"$Verb", ", ", "$Verb", ", ", " and ", "$Verb", "."},
-                new string[] {"We ", "$Verb", " ", "$Adverb", "."},
-                new string[] {"$Adjective", " unto Death!"},
-                new string[] {"Strength to ", "$Noun", "!"},
-                new string[] {"$Noun", " . ", "$Noun", " . ", "$Noun", " . "},
-                new string[] {"$Verb", "!"},
-                new string[] {"Keep the ", "$Noun", " ", "$Adjective", "."},
-                new string[] {"$Adjective", "!"},
-                new string[] {"The ", "$Noun", " always ", "$Verb", "s."},
-                new string[] {"To ", "$Verb", " is to ", "$Verb"},
-                new string[] {"$Noun", " or ", "Death", "!"},
-                new string[] {"My Life for ", "$Noun", "!"}
-            };
-
-            return TextGenerator.GenerateRandom(templates[PlayState.Random.Next(0, templates.Count)]);
+            var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.mottos);
+            return DwarfCorp.TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
         }
 
         public static string GenerateName(Sector sector)
         {
-            string[] partners =
-            {
-                "$MaleName",
-                " ",
-                "&",
-                " ",
-                "$MaleName",
-                ",",
-                " ",
-                "$Corp"
-            };
-            string[] animalCorp =
-            {
-                "$Animal",
-                " ",
-                "$Corp"
-            };
-            string[] animalPart =
-            {
-                "$Animal",
-                " ",
-                "$Bodypart"
-            };
-            string[] nameAndSons =
-            {
-                "$MaleName",
-                " ",
-                "&",
-                " ",
-                "$Family",
-                "s"
-            };
-            string[] colorPart =
-            {
-                "$Color",
-                " ",
-                "$Bodypart",
-                " ",
-                "&",
-                " ",
-                "$Family",
-                "s"
-            };
-            string[] colorPlace =
-            {
-                "$Color",
-                " ",
-                "$Place",
-                " ",
-                "$Corp"
-            };
-            string[] colorAnimal =
-            {
-                "$Color",
-                " ",
-                "$Animal",
-                " ",
-                "$Corp"
-            };
-            string[] materialAnimal =
-            {
-                "$Material",
-                " ",
-                "$Animal",
-                " ",
-                "$Corp"
-            };
-            string[] materialBody =
-            {
-                "$Material",
-                " ",
-                "$Bodypart",
-                " ",
-                "$Corp"
-            };
-            string[] reversed =
-            {
-                "$Corp",
-                " of the ",
-                "$Material",
-                " ",
-                "$Place",
-                "s"
-            };
-            string[] magical_color_place =
-            {
-                "$Color",
-                " ",
-                "$Place",
-                " ",
-                "$Magical"
-            };
-            string[] animal_magical =
-            {
-                "$Animal",
-                " ",
-                "$Magical"
-            };
-            string[] materialPlaceMilitary =
-            {
-                "$Material",
-                " ",
-                "$Place",
-                " ",
-                "$Military"
-            };
-            string[] personMilitary =
-            {
-                "$MaleName",
-                "'s",
-                " ",
-                "$Military"
-            };
-            string[] colorPlaceIndustry =
-            {
-                "$Color",
-                " ",
-                "$Place",
-                " ",
-                "$Industry"
-            };
-            string[] colorAnimalIndustry =
-            {
-                "$Color",
-                " ",
-                "$Animal",
-                " ",
-                "$Industry"
-            };
-            string[] materialAnimalIndustry =
-            {
-                "$Material",
-                " ",
-                "$Animal",
-                " ",
-                "$Industry"
-            };
-            string[] materialBodyIndustry =
-            {
-                "$Material",
-                " ",
-                "$Bodypart",
-                " ",
-                "$Industry"
-            };
-            List<string[]> genericTemplates = new List<string[]>
-            {
-                partners,
-                animalCorp,
-                animalPart,
-                nameAndSons,
-                colorPart,
-                colorPlace,
-                colorAnimal,
-                materialAnimal,
-                materialBody,
-                reversed
-            };
-            List<string[]> magicalTemplates = new List<string[]>
-            {
-                magical_color_place,
-                animal_magical
-            };
-            List<string[]> militaryTemplates = new List<string[]>
-            {
-                materialPlaceMilitary,
-                personMilitary
-            };
-            List<string[]> industralTemplates = new List<string[]>
-            {
-                colorPlaceIndustry,
-                colorAnimalIndustry,
-                materialAnimalIndustry,
-                materialBodyIndustry
-            };
 
-            List<string[]> templates = genericTemplates;
+            string templateName = ContentPaths.Text.Templates.company_finance;
             if (sector == Sector.Magic)
             {
-                templates = magicalTemplates;
+                templateName = ContentPaths.Text.Templates.company_magical;
             }
             else if (sector == Sector.Manufacturing)
             {
-                templates = industralTemplates;
+                templateName = ContentPaths.Text.Templates.company_industrial;
             }
             else if (sector == Sector.Military)
             {
-                templates = militaryTemplates;
+                templateName = ContentPaths.Text.Templates.company_military;
             }
-            return TextGenerator.GenerateRandom(templates[PlayState.Random.Next(0, templates.Count)]);
+            var templates = TextGenerator.GetAtoms(templateName);
+            return DwarfCorp.TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
         }
 
         public static List<float> GenerateRandomStockHistory(float current, int length)

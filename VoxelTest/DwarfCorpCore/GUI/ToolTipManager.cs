@@ -37,11 +37,11 @@ namespace DwarfCorp
         public ToolTipManager(DwarfGUI gui)
         {
             GUI = gui;
-            HoverTimer = new Timer(0.8f, true);
+            HoverTimer = new Timer(0.8f, true, Timer.TimerMode.Real);
             ToolTip = "";
             LastMouse = Mouse.GetState();
             MovementThreshold = 2;
-            PopupTimer = new Timer(2.5f, true);
+            PopupTimer = new Timer(2.5f, true, Timer.TimerMode.Real);
         }
 
         public void Update(DwarfTime time)

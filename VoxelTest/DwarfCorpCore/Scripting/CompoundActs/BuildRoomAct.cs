@@ -69,7 +69,7 @@ namespace DwarfCorp
                     new Wrap(() => IsRoomBuildOrder(buildRoom)),
                     new GoToVoxelAct("TargetVoxel", PlanAct.PlanType.Adjacent, Agent),
                     new Wrap(() => IsRoomBuildOrder(buildRoom)),
-                    new Wrap(() => Creature.HitAndWait(buildRoom.VoxelOrders.Count * 0.5f, true)),
+                    new Wrap(() => Creature.HitAndWait(buildRoom.VoxelOrders.Count * 0.5f / agent.Stats.BuildSpeed, true)),
                     new Wrap(() => IsRoomBuildOrder(buildRoom)),
                     new PlaceRoomResourcesAct(Agent, buildRoom, Resources)
                     , new Wrap(Creature.RestockAll)) | new Wrap(Creature.RestockAll)
