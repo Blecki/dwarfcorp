@@ -1,0 +1,7 @@
+Industries
+Materials
+Techcenter
+Factories
+Machines
+Parts
+Hammers
