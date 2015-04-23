@@ -1,0 +1,13 @@
+Thugs
+Band
+Company
+Heroes
+Strongdwarves
+Mercenaries
+Dwarves-at-arms
+Shield
+Axe
+Sword
+Army
+Fighters
+Knights
