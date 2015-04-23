@@ -188,11 +188,13 @@ namespace DwarfCorp
 
         public void InitializeWeapons()
         {
-            MeleeAttack = new Attack("Magic Missile", 0.1f, 1.0f, 1.0f, ContentPaths.Audio.tinkle, "Dwarf")
+            Attacks = new List<Attack>()
             {
-                Knockback = 0.5f,
-                HitAnimation = new Animation(ContentPaths.Effects.rings, 32, 32, 0, 1, 2, 3),
-                HitParticles = "star_particle"
+                new Attack("Magic Missile", 0.1f, 1.0f, 1.0f, ContentPaths.Audio.tinkle, ContentPaths.Effects.rings)
+                {
+                    Knockback = 0.5f,
+                    HitParticles = "star_particle"
+                }
             };
         }
 

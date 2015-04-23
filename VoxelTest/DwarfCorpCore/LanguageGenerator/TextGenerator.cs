@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace DwarfCorp
 {
@@ -168,6 +169,11 @@ namespace DwarfCorp
             string strNewString = string.Join(" ", lstWords);
 
             return strNewString;
+        }
+
+        public static string GenerateRandom(List<List<string>> templates)
+        {
+            return GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
         }
 
         public static string GenerateRandom(params string[] atoms)

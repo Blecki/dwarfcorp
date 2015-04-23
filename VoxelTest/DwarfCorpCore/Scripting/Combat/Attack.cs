@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -24,6 +25,7 @@ namespace DwarfCorp
         }
 
         public float DamageAmount { get; set; }
+        [JsonIgnore]
         public float RechargeRate { get
         {
             if (RechargeTimer != null) return RechargeTimer.TargetTimeSeconds;
@@ -35,11 +37,18 @@ namespace DwarfCorp
         public AttackMode Mode { get; set; }
         public Timer RechargeTimer { get; set; }
         public float Knockback { get; set; }
-        public Animation HitAnimation { get; set; }
+        public string AnimationAsset { get; set; }
+        [JsonIgnore]
+        protected Animation HitAnimation { get; set; }
         public string HitParticles { get; set; }
         public string ProjectileType { get; set; }
         public float LaunchSpeed { get; set; }
-        public string Faction { get; set; }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            CreateHitAnimation();
+        }
 
         public Attack()
         {
@@ -59,10 +68,21 @@ namespace DwarfCorp
             HitParticles = other.HitParticles;
             ProjectileType = other.ProjectileType;
             LaunchSpeed = other.LaunchSpeed;
-            Faction = other.Faction;
+            AnimationAsset = other.AnimationAsset;
         }
 
-        public Attack(string name, float damage, float time, float range, string noise, string faction)
+        public void CreateHitAnimation()
+        {
+            Texture2D text = TextureManager.GetTexture(AnimationAsset);
+            List<int> frames = new List<int>();
+            for (int i = 0; i < text.Width/text.Height; i++)
+            {
+                frames.Add(i);
+            }
+            HitAnimation = new Animation(AnimationAsset, text.Height, text.Height, frames.ToArray());
+        }
+
+        public Attack(string name, float damage, float time, float range, string noise, string animation)
         {
             Name = name;
             DamageAmount = damage;
@@ -74,10 +94,12 @@ namespace DwarfCorp
             HitAnimation = null;
             HitParticles = "";
             ProjectileType = "";
-            Faction = faction;
+            AnimationAsset = animation;
+            CreateHitAnimation();
+            FileUtils.SaveBasicJson(this, name + "_attack.json");
         }
 
-        public bool Perform(Vector3 pos, Voxel other, DwarfTime time, float bonus)
+        public bool Perform(Vector3 pos, Voxel other, DwarfTime time, float bonus, string faction)
         {
             if (other == null)
             {
@@ -109,7 +131,7 @@ namespace DwarfCorp
                     }
                     case AttackMode.Ranged:
                     {
-                        LaunchProjectile(pos, other.Position);
+                        LaunchProjectile(pos, other.Position, faction);
                         break;
                     }
                     
@@ -122,7 +144,7 @@ namespace DwarfCorp
             }
         }
 
-        public void LaunchProjectile(Vector3 start, Vector3 end)
+        public void LaunchProjectile(Vector3 start, Vector3 end, string faction)
         {
             Vector3 velocity = (end - start);
             float dist = velocity.Length();
@@ -130,7 +152,7 @@ namespace DwarfCorp
             velocity = 1.0f/T*(end - start) - 0.5f*Vector3.Down*10*T;
             Blackboard data = new Blackboard();
             data.SetData("Velocity", velocity);
-            data.SetData("Faction", Faction);
+            data.SetData("Faction", faction);
             EntityFactory.CreateEntity<Body>(ProjectileType, start, data);
         }
 
@@ -159,7 +181,7 @@ namespace DwarfCorp
             }
         }
 
-        public bool Perform(Body other, DwarfTime time, float bonus, Vector3 pos)
+        public bool Perform(Body other, DwarfTime time, float bonus, Vector3 pos, string faction)
         {
             RechargeTimer.Update(time);
 
@@ -202,7 +224,7 @@ namespace DwarfCorp
                     case AttackMode.Ranged:
                     {
                         PlayNoise(other.LocalTransform.Translation);
-                        LaunchProjectile(pos, other.Position);
+                        LaunchProjectile(pos, other.Position, faction);
                         break;
                     }
                 }

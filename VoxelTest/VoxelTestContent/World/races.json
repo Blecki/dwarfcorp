@@ -1,0 +1,65 @@
+{
+    "Dwarf": {
+        "Name": "Dwarf",
+        "CreatureTypes": [
+            "Dwarf",
+            "AxeDwarf"
+        ],
+        "IsIntelligent": true,
+        "IsNative": false,
+        "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
+        "NameFile": "Text\\Templates\\names_dwarf.txt"
+    },
+    "Goblins": {
+        "Name": "Goblins",
+        "CreatureTypes": [
+            "Goblin"
+        ],
+        "IsIntelligent": true,
+        "IsNative": true,
+        "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
+        "NameFile": "Text\\Templates\\names_goblin.txt"
+    },
+    "Molemen": {
+        "Name": "Molemen",
+        "CreatureTypes": [
+            "Moleman"
+        ],
+        "IsIntelligent": true,
+        "IsNative": true,
+        "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
+        "NameFile": "Text\\Templates\\names_dwarf.txt"
+    },
+    "Elf": {
+        "Name": "Elf",
+        "CreatureTypes": [
+            "Elf"
+        ],
+        "IsIntelligent": true,
+        "IsNative": true,
+        "FactionNameFile": "Text\\Templates\\nations_elf.txt",
+        "NameFile": "Text\\Templates\\names_elf.txt"
+    },
+    "Undead": {
+        "Name": "Undead",
+        "CreatureTypes": [
+            "Necromancer",
+            "Skeleton"
+        ],
+        "IsIntelligent": true,
+        "IsNative": true,
+        "FactionNameFile": "Text\\Templates\\nations_undead.txt",
+        "NameFile": "Text\\Templates\\names_undead.txt"
+    },
+    "Herbivore": {
+        "Name": "Herbivore",
+        "CreatureTypes": [
+            "Bird",
+            "Deer"
+        ],
+        "IsIntelligent": false,
+        "IsNative": true,
+        "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
+        "NameFile": "Text\\Templates\\names_dwarf.txt"
+    }
+}

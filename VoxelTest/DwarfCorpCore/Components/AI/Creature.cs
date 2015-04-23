@@ -11,6 +11,39 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    [JsonObject(IsReference = true)]
+    public class CreatureDef
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Race { get; set; }
+        public Vector3 Size { get; set; }
+        public bool HasShadow { get; set; }
+        public bool IsFlammable { get; set; }
+        public string BloodParticle { get; set; }
+        public string DeathSound { get; set; }
+        public List<string> HurtSounds { get; set; }
+        public string ChewSound { get; set; }
+        public string JumpSound { get; set; }
+        public bool TriggersMourning { get; set; }
+        public float ShadowScale { get; set; }
+        public float Mass { get; set; }
+        public int InventorySize { get; set; }
+        public Vector3 SpriteOffset { get; set; }
+        public NamedImageFrame MinimapIcon { get; set; }
+        public Vector3 SenseRange { get; set; }
+        public string Classes { get; set; }
+        public bool CanSleep { get; set; }
+        public bool CanEat { get; set; }
+        public List<string> Tags { get; set; }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+           EmployeeClass.AddClasses(Classes);
+        }
+    }
+
     /// <summary>
     /// Component which keeps track of a large number of other components (AI, physics, sprites, etc.) 
     /// related to creatures (such as dwarves and goblins). 
@@ -128,6 +161,94 @@ namespace DwarfCorp
         {
             OverrideCharacterMode = false;
             Buffs = new List<Buff>();
+        }
+
+        public Creature(Vector3 pos, CreatureDef def, string creatureClass, int creatureLevel, string faction) :
+            this(new CreatureStats(EmployeeClass.Classes[creatureClass], creatureLevel), 
+                faction, 
+                PlayState.PlanService, 
+                PlayState.ComponentManager.Factions.Factions[faction], 
+                new Physics(def.Name, PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(pos), def.Size, new Vector3(0, -def.Size.Y * 0.5f, 0), def.Mass, 1.0f, 0.999f, 0.999f, Vector3.UnitY * -10, Physics.OrientMode.RotateY),
+                PlayState.ChunkManager,
+                GameState.Game.GraphicsDevice, 
+                GameState.Game.Content,
+                def.Name)
+        {
+            EmployeeClass employeeClass = EmployeeClass.Classes[creatureClass];
+            Physics.Orientation = Physics.OrientMode.RotateY;
+            Sprite = new CharacterSprite(Graphics, Manager, "Sprite", Physics, Matrix.CreateTranslation(def.SpriteOffset));
+
+            foreach (Animation animation in employeeClass.Animations)
+            {
+                Sprite.AddAnimation(animation.Clone());
+            }
+
+            Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
+
+            Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, def.SenseRange, Vector3.Zero);
+
+            AI = new CreatureAI(this, "AI", Sensors, PlanService);
+
+            Attacks = new List<Attack>();
+
+            foreach (Attack attack in employeeClass.Attacks)
+            {
+                Attacks.Add(new Attack(attack));
+            }
+
+
+            Inventory = new Inventory("Inventory", Physics)
+            {
+                Resources = new ResourceContainer
+                {
+                    MaxResources = def.InventorySize
+                }
+            };
+
+            if (def.HasShadow)
+            {
+                Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI*0.5f);
+                shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
+
+                Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform,
+                    new SpriteSheet(ContentPaths.Effects.shadowcircle))
+                {
+                    GlobalScale = def.ShadowScale
+                };
+                List<Point> shP = new List<Point>
+                {
+                    new Point(0, 0)
+                };
+                Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle),
+                    "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
+                Shadow.AddAnimation(shadowAnimation);
+                shadowAnimation.Play();
+                Shadow.SetCurrentAnimation("sh");
+            }
+            Physics.Tags.AddRange(def.Tags);
+
+            DeathParticleTrigger = new ParticleTrigger(def.BloodParticle, Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 1,
+                BoxTriggerTimes = 10,
+                SoundToPlay = ContentPaths.Entities.Dwarf.Audio.dwarfhurt1,
+            };
+
+            if (def.IsFlammable)
+            {
+                Flames = new Flammable(Manager, "Flames", Physics, this);
+            }
+
+            NoiseMaker.Noises["Hurt"] = def.HurtSounds;
+            NoiseMaker.Noises["Chew"] = new List<string>() {def.ChewSound};
+            NoiseMaker.Noises["Jump"] = new List<string>() {def.JumpSound};
+
+            MinimapIcon minimapIcon = new MinimapIcon(Physics, def.MinimapIcon);
+            Stats.FullName = TextGenerator.GenerateRandom(PlayState.ComponentManager.Factions.Races[def.Race].NameTemplates);
+            Stats.CanSleep = def.CanSleep;
+            Stats.CanEat = def.CanEat;
+            AI.TriggersMourning = def.TriggersMourning;
         }
 
         public Creature(CreatureStats stats,

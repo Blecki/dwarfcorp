@@ -312,6 +312,9 @@
     <Compile Include="..\DwarfCorpCore\Entities\Monsters\Goblin.cs">
       <Link>Entities\Monsters\Goblin.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Monsters\Moleman.cs">
+      <Link>Entities\Monsters\Moleman.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Monsters\Necromancer.cs">
       <Link>Entities\Monsters\Necromancer.cs</Link>
     </Compile>
@@ -734,6 +737,9 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\Classes\JobLibrary.cs">
       <Link>Scripting\Classes\JobLibrary.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\Classes\MolemanMinerClass.cs">
+      <Link>Scripting\Classes\MolemanMinerClass.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\Classes\NecromancerClass.cs">
       <Link>Scripting\Classes\NecromancerClass.cs</Link>

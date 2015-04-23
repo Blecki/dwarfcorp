@@ -143,7 +143,7 @@ namespace DwarfCorp
             // Add AI
             AI = new DeerAI(this, "Deer AI", Sensors, PlanService);
 
-            Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick, "Herbivores")};
+            Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick, ContentPaths.Effects.flash)};
 
             Inventory = new Inventory("Inventory", Physics)
             {
@@ -184,8 +184,7 @@ namespace DwarfCorp
             Physics.Tags.Add("Deer");
             Physics.Tags.Add("Animal");
 
-            Stats.FirstName = TextGenerator.GenerateRandom("$firstname");
-            Stats.LastName = " the Deer";
+            Stats.FullName = TextGenerator.GenerateRandom("$firstname");
             Stats.CurrentClass = new EmployeeClass()
             {
                 Name = "Deer",

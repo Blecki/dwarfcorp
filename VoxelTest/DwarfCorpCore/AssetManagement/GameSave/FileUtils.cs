@@ -44,6 +44,7 @@ namespace DwarfCorp
                 Converters = new List<JsonConverter>
                     {
                         new BoxConverter(),
+                        new Vector3Converter(),
                         new MatrixConverter(),
                         new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap),
                         new RectangleConverter()
@@ -63,6 +64,7 @@ namespace DwarfCorp
                 Converters = new List<JsonConverter>
                     {
                         new BoxConverter(),
+                        new Vector3Converter(),
                         new MatrixConverter(),
                         new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap),
                         new RectangleConverter()
@@ -82,6 +84,7 @@ namespace DwarfCorp
             };
 
             serializer.Converters.Add(new BoxConverter());
+            serializer.Converters.Add(new Vector3Converter());
             serializer.Converters.Add(new MatrixConverter());
             serializer.Converters.Add(new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap));
             serializer.Converters.Add(new RectangleConverter());
@@ -102,6 +105,7 @@ namespace DwarfCorp
             };
 
             serializer.Converters.Add(new BoxConverter());
+            serializer.Converters.Add(new Vector3Converter());
             serializer.Converters.Add(new MatrixConverter());
             serializer.Converters.Add(new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap));
             serializer.Converters.Add(new RectangleConverter());

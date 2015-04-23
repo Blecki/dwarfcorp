@@ -1,0 +1,28 @@
+{
+  "Name": "Dwarf",
+  "Description": "A noble figure; half-formed.",
+  "Classes":  "Entities\\Dwarf\\dwarf_classes.json",
+  "Race": "Dwarf",
+  "Size": "0.5 0.5 0.5",
+  "HasShadow": true,
+  "IsFlammable": true,
+  "BloodParticle": "blood_particle",
+  "DeathSound": "Entities\\Dwarf\\Audio\\dwarfhurt1",
+  "HurtSounds": ["Entities\\Dwarf\\Audio\\dwarfhurt1", "Entities\\Dwarf\\Audio\\dwarfhurt2", "Entities\\Dwarf\\Audio\\dwarfhurt3", "Entities\\Dwarf\\Audio\\dwarfhurt4"],
+  "ChewSound": "Audio\\chew",
+  "JumpSound": "Audio\\jump",
+  "TriggersMourning": true,
+  "ShadowScale": 1.25,
+  "Mass": 1.0,
+  "InventorySize": 128,
+  "SpriteOffset": "0 0.15 0",
+  "MinimapIcon": 
+  {
+      "AssetName":  "GUI\\map_icons",
+      "SourceRect":  "0 0 16 16"
+  },
+  "SenseRange": "20 5 20",
+  "CanSleep" :  true,
+  "CanEat" :  true,
+  "Tags":  ["Dwarf"]
+}

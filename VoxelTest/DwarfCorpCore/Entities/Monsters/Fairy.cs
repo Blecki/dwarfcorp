@@ -66,7 +66,7 @@ namespace DwarfCorp
 
             AI = new CreatureAI(this, "Fairy AI", Sensors, PlanService);
 
-            Attacks = new List<Attack>() { new Attack(dwarfClass.MeleeAttack) };
+            Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
 
             Inventory = new Inventory("Inventory", Physics)
@@ -121,8 +121,8 @@ namespace DwarfCorp
             //new LightEmitter("Light Emitter", Sprite, Matrix.Identity, Vector3.One, Vector3.One, 255, 150);
             new Bobber(0.25f, 3.0f, MathFunctions.Rand(), Sprite);
           
-            Stats.FirstName = TextGenerator.GenerateRandom("$firstname");
-            Stats.LastName = "The Fairy";
+            Stats.FullName = TextGenerator.GenerateRandom("$firstname");
+            //Stats.LastName = "The Fairy";
             
             Stats.CanSleep = false;
             Stats.CanEat = false;

@@ -950,6 +950,18 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Content Include="Entities\Moleman\moleman_animation.json">
+      <Name>moleman_animation</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Entities\Dwarf\dwarf.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>dwarf</Name>
+    </Content>
+    <Content Include="Entities\Dwarf\dwarf_classes.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>dwarf_classes</Name>
+    </Content>
     <None Include="Shaders\FXAA.fxh">
       <Name>FXAA</Name>
       <Importer>EffectImporter</Importer>
@@ -960,9 +972,30 @@
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Moleman\moleman.png">
+      <Name>moleman</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Text\bodypart.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>bodypart</Name>
+    </Content>
+    <Content Include="Text\Templates\names_dwarf.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>names_dwarf</Name>
+    </Content>
+    <Content Include="Text\Templates\names_goblin.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>names_goblin</Name>
+    </Content>
+    <Content Include="Text\Templates\names_elf.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>names_elf</Name>
+    </Content>
+    <Content Include="Text\Templates\names_undead.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>names_undead</Name>
     </Content>
     <Content Include="Text\undeadfamily.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -983,6 +1016,10 @@
     <Content Include="Text\animal.txt">
       <Name>animal</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="World\races.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>races</Name>
     </Content>
   </ItemGroup>
   <ItemGroup>

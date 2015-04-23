@@ -103,8 +103,7 @@ namespace DwarfCorp
 
         public bool CanSleep { get; set; }
 
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string FullName { get; set; }
         public int NumBlocksDestroyed { get; set; }
         public int NumItemsGathered { get; set; }
         public int NumRoomsBuilt { get; set; }
@@ -128,8 +127,8 @@ namespace DwarfCorp
                     if (!announced)
                     {
                         announced = true;
-                        PlayState.AnnouncementManager.Announce(FirstName + " " + LastName + " wants a promotion!",
-                            FirstName + " " + LastName + " can now be promoted to " +
+                        PlayState.AnnouncementManager.Announce(FullName + " wants a promotion!",
+                            FullName + " can now be promoted to " +
                             CurrentClass.Levels[LevelIndex + 1].Name);
                     }
                 }
@@ -141,15 +140,13 @@ namespace DwarfCorp
 
         public float BaseFarmSpeed { get { return BuffedInt/100.0f + BuffedStr/100.0f; }}
         public bool CanEat { get; set; }
-        public string FullName { get { return FirstName + " " + LastName;  }}
         public float BuildSpeed { get { return (BuffedInt + BuffedDex)/10.0f; }}
 
         public CreatureStats()
         {
             CanSleep = false;
             CanEat = false;
-            FirstName = "";
-            LastName = "";
+            FullName = "";
             CurrentClass = new WorkerClass();
             LevelIndex = 0;
             XP = 0;
@@ -169,8 +166,7 @@ namespace DwarfCorp
         {
             CanSleep = false;
             CanEat = false;
-            FirstName = "";
-            LastName = "";
+            FullName = "";
             CurrentClass = creatureClass;
             LevelIndex = level;
             XP = creatureClass.Levels[level].XP;

@@ -127,11 +127,14 @@ namespace DwarfCorp
 
         public void InitializeWeapons()
         {
-            MeleeAttack = new Attack("Elf Bow", 0.1f, 1.0f, 5.0f, ContentPaths.Audio.pluck, "Elf")
+            Attacks = new List<Attack>()
             {
-                Mode = Attack.AttackMode.Ranged,
-                LaunchSpeed = 10.0f,
-                ProjectileType = "Arrow"
+                new Attack("Elf Bow", 0.1f, 1.0f, 5.0f, ContentPaths.Audio.pluck, ContentPaths.Effects.flash)
+                {
+                    Mode = Attack.AttackMode.Ranged,
+                    LaunchSpeed = 10.0f,
+                    ProjectileType = "Arrow"
+                }
             };
         }
 

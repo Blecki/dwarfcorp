@@ -5,7 +5,46 @@ using Newtonsoft.Json.Linq;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// Serializes and deserializes Vector3 objects to JSON.
+    /// </summary>
+    public class Vector3Converter : JsonConverter
+    {
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
 
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            JValue jObject = serializer.Deserialize<JValue>(reader);
+            string[] tokens = jObject.Value.ToString().Split(' ', ',');
+
+            string[] intTokens = new string[3];
+
+            int i = 0;
+            foreach (string s in tokens)
+            {
+                if (s != " " && s != ",")
+                {
+                    intTokens[i] = s;
+                    i++;
+                }
+            }
+
+            return new Vector3(float.Parse(intTokens[0]), float.Parse(intTokens[1]), float.Parse(intTokens[2]));
+        }
+
+        public override bool CanWrite
+        {
+            get { return false; }
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(Vector3);
+        }
+    }
     /// <summary>
     /// Serializes and deserializes BoundingBox objects to JSON.
     /// </summary>

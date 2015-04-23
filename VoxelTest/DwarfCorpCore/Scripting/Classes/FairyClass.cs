@@ -52,11 +52,13 @@ namespace DwarfCorp
 
         public void InitializeWeapons()
         {
-            MeleeAttack = new Attack("Fairy Dust", 10.0f, 0.2f, 5.0f, ContentPaths.Audio.tinkle, "Dwarf")
+            Attacks = new List<Attack>()
             {
-                Knockback = 0.5f,
-                HitAnimation = new Animation(ContentPaths.Effects.rings, 32, 32, 0, 1, 2, 3),
-                HitParticles = "star_particle"
+                new Attack("Fairy Dust", 10.0f, 0.2f, 5.0f, ContentPaths.Audio.tinkle, ContentPaths.Effects.rings)
+                {
+                    Knockback = 0.5f,
+                    HitParticles = "star_particle"
+                }
             };
         }
 

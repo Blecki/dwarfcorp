@@ -46,7 +46,7 @@ namespace DwarfCorp
 
             foreach (CreatureAI creature in Faction.Minions)
             {
-                EmployeeSelector.AddItem(creature.Stats.FirstName + " " + creature.Stats.LastName);
+                EmployeeSelector.AddItem(creature.Stats.FullName);
             }
 
 
@@ -95,7 +95,7 @@ namespace DwarfCorp
 
             foreach (CreatureAI minion in Faction.Minions)
             {
-                EmployeeSelector.AddItem(minion.Stats.FirstName + " " + minion.Stats.LastName);
+                EmployeeSelector.AddItem(minion.Stats.FullName);
             }
 
             OnMinionSelected(Faction.Minions.FirstOrDefault());
@@ -115,7 +115,7 @@ namespace DwarfCorp
             EmployeeSelector.ClearItems();
             foreach (CreatureAI creature in Faction.Minions)
             {
-                EmployeeSelector.AddItem(creature.Stats.FirstName + " " + creature.Stats.LastName);
+                EmployeeSelector.AddItem(creature.Stats.FullName);
             }
 
         }
@@ -132,7 +132,7 @@ namespace DwarfCorp
         {
             if (minion != null)
             {
-                CurrentMinionBox.Title = "Employee: " + minion.Stats.FirstName + " " + minion.Stats.LastName;
+                CurrentMinionBox.Title = "Employee: " + minion.Stats.FullName;
             }
             else
             {

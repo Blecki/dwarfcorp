@@ -20,6 +20,13 @@ namespace DwarfCorp
 
         public static Dictionary<string, Func<Vector3, Blackboard, GameComponent>> EntityFuncs { get; set; }
 
+        public static Body GenerateTestDwarf(Vector3 position)
+        {
+            CreatureDef dwarfDef = ContentPaths.LoadFromJson<CreatureDef>(ContentPaths.Entities.Dwarf.dwarf);
+            Creature toReturn =  new Creature(position, dwarfDef, "Wizard", 0, "Player");
+            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, PlayState.Time.CurrentDate), false);
+            return toReturn.Physics;
+        }
 
         public static void Initialize()
         {
@@ -39,9 +46,11 @@ namespace DwarfCorp
             RegisterEntity("Bird", (position, data) => new Bird(ContentPaths.Entities.Animals.Birds.GetRandomBird(), position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Bird"));
             RegisterEntity("Deer", (position, data) => new Deer(ContentPaths.Entities.Animals.Deer.deer, position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Deer"));
             RegisterEntity("Dwarf", (position, data) => GenerateDwarf(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.PlayerFaction, PlayState.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Worker], 0));
+            RegisterEntity("TestDwarf", (position, data) => GenerateTestDwarf(position));
             RegisterEntity("AxeDwarf", (position, data) => GenerateDwarf(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.PlayerFaction, PlayState.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.AxeDwarf], 0));
             RegisterEntity("CraftsDwarf", (position, data) => GenerateDwarf(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.PlayerFaction, PlayState.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.CraftsDwarf], 0));
             RegisterEntity("Wizard", (position, data) => GenerateDwarf(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.PlayerFaction, PlayState.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Wizard], 0));
+            RegisterEntity("Moleman", (position, data) => GenerateMoleman(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.ComponentManager.Factions.Factions["Molemen"], PlayState.PlanService, "Molemen"));
             RegisterEntity("Goblin", (position, data) => GenerateGoblin(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.ComponentManager.Factions.Factions["Goblins"], PlayState.PlanService, "Goblins"));
             RegisterEntity("Skeleton", (position, data) => GenerateSkeleton(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.ComponentManager.Factions.Factions["Undead"], PlayState.PlanService, "Undead"));
             RegisterEntity("Necromancer", (position, data) => GenerateNecromancer(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.ComponentManager.Factions.Factions["Undead"], PlayState.PlanService, "Undead"));
@@ -1062,6 +1071,18 @@ namespace DwarfCorp
             CreatureStats stats = new CreatureStats(new SwordGoblinClass(), 0);
             return new Goblin(stats, allies, planService, faction, componentManager, "Goblin", chunkManager, graphics, content, position).Physics;
         }
+
+        public static Body GenerateMoleman(Vector3 position,
+            ComponentManager componentManager,
+            ContentManager content,
+            GraphicsDevice graphics,
+            ChunkManager chunkManager, Camera camera,
+            Faction faction, PlanService planService, string allies)
+        {
+            CreatureStats stats = new CreatureStats(new MolemanMinerClass(), 0);
+            return new Moleman(stats, allies, planService, faction, componentManager, "Moleman", chunkManager, graphics, content, position).Physics;
+        }
+
 
         public static GameComponent GenerateDwarf(Vector3 position,
             ComponentManager componentManager,

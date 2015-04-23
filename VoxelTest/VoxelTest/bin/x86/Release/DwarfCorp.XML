@@ -28,6 +28,11 @@
             A static class with helper functions for saving/loading data to binary, JSON, and ZIP
             </summary>
         </member>
+        <member name="T:DwarfCorp.Vector3Converter">
+            <summary>
+            Serializes and deserializes Vector3 objects to JSON.
+            </summary>
+        </member>
         <member name="T:DwarfCorp.BoxConverter">
             <summary>
             Serializes and deserializes BoundingBox objects to JSON.
@@ -265,6 +270,11 @@
             </summary>
         </member>
         <member name="T:DwarfCorp.Goblin">
+            <summary>
+            Convenience class for initializing goblins as creatures.
+            </summary>
+        </member>
+        <member name="T:DwarfCorp.Moleman">
             <summary>
             Convenience class for initializing goblins as creatures.
             </summary>

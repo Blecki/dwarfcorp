@@ -302,7 +302,7 @@ namespace DwarfCorp
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
                         if (Creature.Allies == "Dwarf")
                         {
-                            PlayState.AnnouncementManager.Announce(Stats.FirstName + " " + Stats.LastName + " refuses to work!", "Our employee is unhappy, and would rather not work!");
+                            PlayState.AnnouncementManager.Announce(Stats.FullName + " refuses to work!", "Our employee is unhappy, and would rather not work!");
                         }
                         CurrentTask = null;
                     }
@@ -523,7 +523,7 @@ namespace DwarfCorp
 
         public override string GetDescription()
         {
-            string desc = Stats.FirstName + " " + Stats.LastName + ", level " + Stats.CurrentLevel.Index +
+            string desc = Stats.FullName + ", level " + Stats.CurrentLevel.Index +
                           " " +
                           Stats.CurrentClass.Name + "\n    " +
                           "Happiness: " + Status.Happiness.GetDescription() + ". Health: " + Status.Health.Percentage +
