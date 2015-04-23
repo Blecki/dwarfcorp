@@ -17,7 +17,20 @@ namespace DwarfCorp
         public List<string> CreatureTypes { get; set; }
         public bool IsIntelligent { get; set; }
         public bool IsNative { get; set; }
-        public List<List<string>> FactionNameTemplates { get; set; } 
+        public string FactionNameFile { get; set; }
+        public string NameFile { get; set; }
+        [JsonIgnore]
+        public List<List<string>> FactionNameTemplates { get; set; }
+        [JsonIgnore]
+        public List<List<string>> NameTemplates { get; set; }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            FactionNameTemplates = TextGenerator.GetAtoms(FactionNameFile);
+            NameTemplates = TextGenerator.GetAtoms(NameFile);
+        }
+       
     }
     /// <summary>
     /// A faction is an independent collection of creatures, tied to an economy, rooms, and designations.
@@ -697,8 +710,7 @@ namespace DwarfCorp
             newMinion.Stats.CurrentClass = currentApplicant.Class;
             newMinion.Stats.LevelIndex = currentApplicant.Level.Index - 1;
             newMinion.Stats.LevelUp();
-            newMinion.Stats.FirstName = currentApplicant.Name.Split(' ')[0];
-            newMinion.Stats.LastName = currentApplicant.Name.Split(' ')[1];
+            newMinion.Stats.FullName = currentApplicant.Name;
             newMinion.AI.AddMoney(currentApplicant.Level.Pay * 4);
 
             PlayState.AnnouncementManager.Announce("New Hire!" ,currentApplicant.Name + " was hired as a " + currentApplicant.Level.Name);

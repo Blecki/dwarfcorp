@@ -53,7 +53,7 @@ namespace DwarfCorp
 
                 if (Spell.ResearchProgress >= Spell.ResearchTime)
                 {
-                    PlayState.AnnouncementManager.Announce("Researched " + Spell.Spell.Name, Creature.Stats.FirstName + " " + Creature.Stats.LastName + " discovered the " + Spell.Spell.Name + " spell!");
+                    PlayState.AnnouncementManager.Announce("Researched " + Spell.Spell.Name, Creature.Stats.FullName + " discovered the " + Spell.Spell.Name + " spell!");
                 }
 
                 starParitcle.Update(DwarfTime.LastTime);

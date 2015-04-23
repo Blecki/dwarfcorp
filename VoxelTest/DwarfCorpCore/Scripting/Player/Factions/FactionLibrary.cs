@@ -33,12 +33,15 @@ namespace DwarfCorp
         public void Initialize(PlayState state, string name, string motto, NamedImageFrame logo, Color color)
         {
             Races = new Dictionary<string, Race>();
+            /*
             Races["Dwarf"] = new Race()
             {
                 Name = "Dwarf",
                 CreatureTypes = new List<string> {"Dwarf", "AxeDwarf"},
                 IsIntelligent = true,
                 IsNative = false,
+                FactionNameFile = ContentPaths.Text.Templates.nations_dwarf,
+                NameFile = ContentPaths.Text.Templates.names_dwarf,
                 FactionNameTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.nations_dwarf)
             };
 
@@ -48,6 +51,19 @@ namespace DwarfCorp
                 CreatureTypes = new List<string> { "Goblin"},
                 IsIntelligent = true,
                 IsNative = true,
+                FactionNameFile = ContentPaths.Text.Templates.nations_dwarf,
+                NameFile = ContentPaths.Text.Templates.names_goblin,
+                FactionNameTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.nations_goblin)
+            };
+
+            Races["Molemen"] = new Race()
+            {
+                Name = "Molemen",
+                CreatureTypes = new List<string> { "Moleman" },
+                IsIntelligent = true,
+                IsNative = true,
+                FactionNameFile = ContentPaths.Text.Templates.nations_dwarf,
+                NameFile = ContentPaths.Text.Templates.names_dwarf,
                 FactionNameTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.nations_goblin)
             };
 
@@ -57,6 +73,8 @@ namespace DwarfCorp
                 CreatureTypes = new List<string> { "Elf" },
                 IsIntelligent = true,
                 IsNative = true,
+                FactionNameFile = ContentPaths.Text.Templates.nations_elf,
+                NameFile = ContentPaths.Text.Templates.names_elf,
                 FactionNameTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.nations_elf)
             };
 
@@ -66,6 +84,8 @@ namespace DwarfCorp
                 CreatureTypes = new List<string> { "Necromancer", "Skeleton" },
                 IsIntelligent = true,
                 IsNative = true,
+                FactionNameFile = ContentPaths.Text.Templates.nations_undead,
+                NameFile = ContentPaths.Text.Templates.names_undead,
                 FactionNameTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.nations_undead)
             };
 
@@ -75,8 +95,12 @@ namespace DwarfCorp
                 Name = "Herbivore",
                 CreatureTypes = new List<string> { "Bird", "Deer" },
                 IsIntelligent = false,
-                IsNative = true
+                IsNative = true,
+                FactionNameFile = ContentPaths.Text.Templates.nations_dwarf,
+                NameFile = ContentPaths.Text.Templates.names_dwarf,
             };
+             */
+            Races = ContentPaths.LoadFromJson<Dictionary<string, Race>>(ContentPaths.World.races);
 
             Factions = new Dictionary<string, Faction>();
             Factions["Player"] = new Faction
@@ -108,6 +132,13 @@ namespace DwarfCorp
             {
                 Name = "Herbivore",
                 Race = Races["Herbivore"]
+            };
+
+
+            Factions["Molemen"] = new Faction
+            {
+                Name = "Molemen",
+                Race = Races["Molemen"]
             };
         }
 

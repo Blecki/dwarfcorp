@@ -52,7 +52,7 @@ namespace DwarfCorp
 
             AI = new CreatureAI(this, "Dwarf AI", Sensors, PlanService);
 
-            Attacks = new List<Attack>() {new Attack(dwarfClass.MeleeAttack)};
+            Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
 
             Inventory = new Inventory("Inventory", Physics)
@@ -111,9 +111,8 @@ namespace DwarfCorp
 
             MinimapIcon minimapIcon = new MinimapIcon(Physics, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 0, 0));
 
-
-            Stats.FirstName = TextGenerator.GenerateRandom("$firstname");
-            Stats.LastName = TextGenerator.GenerateRandom("$lastname");
+            Stats.FullName = TextGenerator.GenerateRandom("$firstname");
+            //Stats.LastName = TextGenerator.GenerateRandom("$lastname");
             Stats.Size = 5;
             Stats.CanSleep = true;
             Stats.CanEat = true;

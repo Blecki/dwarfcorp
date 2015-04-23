@@ -169,6 +169,9 @@ namespace DwarfCorp.GameStates
                 Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
                 Input = new InputManager();
             }
+
+            EmployeeClassDef def = new EmployeeClassDef();
+            FileUtils.SaveBasicJson(def, "class.json");
             base.OnEnter();
         }
 

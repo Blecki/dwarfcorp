@@ -39,7 +39,7 @@ namespace DwarfCorp
 
             AI = new CreatureAI(this, "Skeleton AI", Sensors, PlanService);
 
-            Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.MeleeAttack) };
+            Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
 
             Inventory = new Inventory("Inventory", Physics)
@@ -98,8 +98,8 @@ namespace DwarfCorp
                 ContentPaths.Audio.jump
             };
 
-            Stats.FirstName = TextGenerator.GenerateRandom("$goblinname");
-            Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
+            Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
+            //Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
             Stats.Size = 3;
 
         }

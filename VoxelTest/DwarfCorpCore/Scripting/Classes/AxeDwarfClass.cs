@@ -193,8 +193,13 @@ namespace DwarfCorp
 
         public void InitializeWeapons()
         {
-            MeleeAttack = new Attack("Axe", 4.0f, 1.0f, 1.0f, ContentPaths.Audio.sword, "Dwarf") {Knockback = 10.0f, 
-                HitAnimation = new Animation(ContentPaths.Effects.slice, 32, 32, 0, 1, 2, 3)};
+            Attacks = new List<Attack>()
+            {
+                new Attack("Axe", 4.0f, 1.0f, 1.0f, ContentPaths.Audio.sword, ContentPaths.Effects.slice)
+                {
+                    Knockback = 10.0f
+                }
+            };
         }
 
         protected override sealed void InitializeStatics()

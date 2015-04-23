@@ -39,7 +39,7 @@ namespace DwarfCorp
 
             AI = new CreatureAI(this, "Elf AI", Sensors, PlanService);
 
-            Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.MeleeAttack) };
+            Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
             Inventory = new Inventory("Inventory", Physics)
             {
@@ -97,8 +97,8 @@ namespace DwarfCorp
                 ContentPaths.Audio.jump
             };
 
-            Stats.FirstName = TextGenerator.GenerateRandom("$elfname");
-            Stats.LastName = TextGenerator.GenerateRandom("$elffamily");
+            Stats.FullName = TextGenerator.GenerateRandom("$elfname");
+            //Stats.LastName = TextGenerator.GenerateRandom("$elffamily");
             Stats.Size = 4;
 
         }

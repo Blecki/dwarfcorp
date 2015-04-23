@@ -67,6 +67,7 @@ namespace DwarfCorp
         public class World
         {
             public static string biomes = ProgramData.CreatePath("World", "biomes.json");
+            public static string races = ProgramData.CreatePath("World", "races.json");
         }
 
         public static T LoadFromJson<T>(string asset)
@@ -103,6 +104,10 @@ namespace DwarfCorp
                 public static string company_magical = ProgramData.CreatePath("Text", "Templates", "company_magical.txt");
                 public static string company_military = ProgramData.CreatePath("Text", "Templates", "company_military.txt");
                 public static string worlds = ProgramData.CreatePath("Text", "Templates", "worlds.txt");
+                public static string names_dwarf = ProgramData.CreatePath("Text", "Templates", "names_dwarf.txt");
+                public static string names_goblin = ProgramData.CreatePath("Text", "Templates", "names_goblin.txt");
+                public static string names_elf = ProgramData.CreatePath("Text", "Templates", "names_elf.txt");
+                public static string names_undead = ProgramData.CreatePath("Text", "Templates", "names_undead.txt");
             }
         }
 
@@ -163,6 +168,9 @@ namespace DwarfCorp
 
             public class Dwarf
             {
+                public static string dwarf_classes = ProgramData.CreatePath("Entities", "Dwarf", "dwarf_classes.json");
+                public static string dwarf = ProgramData.CreatePath("Entities", "Dwarf", "dwarf.json");
+
                 public class Audio
                 {
                     public static string dwarfhurt1 = ProgramData.CreatePath("Entities", "Dwarf", "Audio", "dwarfhurt1");
@@ -259,6 +267,11 @@ namespace DwarfCorp
 
             }
 
+            public class Moleman
+            {
+                public static string moleman_animations = ProgramData.CreatePath("Entities", "Moleman",
+                    "moleman_animation.json");
+            }
         }
         public class Fonts
         {

@@ -119,6 +119,18 @@ namespace DwarfCorp
             CurrentOffset = new Point(0, 0);
         }
 
+        public Composite(List<Composite.Frame> frames)
+        {
+            CurrentFrames = new Dictionary<Frame, Point>();
+            CurrentOffset = new Point(0, 0);
+
+            FrameSize = new Point(42, 42);
+            TargetSizeFrames  = new Point(16, 16);
+
+            Initialize();
+
+        }
+
         public void Initialize()
         {
             Target = new RenderTarget2D(GameState.Game.GraphicsDevice, FrameSize.X * TargetSizeFrames.X, FrameSize.Y * TargetSizeFrames.Y, false, SurfaceFormat.Color, DepthFormat.None);

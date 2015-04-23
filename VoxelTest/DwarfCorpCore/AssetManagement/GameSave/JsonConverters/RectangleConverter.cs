@@ -19,14 +19,21 @@ namespace DwarfCorp
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             JValue jObject = serializer.Deserialize<JValue>(reader);
-            string[] tokens = jObject.Value.ToString().Split(':', ' ', '{', '}');
-            string minX = tokens[2];
-            string minY = tokens[4];
-            string width = tokens[6];
-            string height = tokens[8];
+            string[] tokens = jObject.Value.ToString().Split(' ', ',');
 
+            string[] intTokens = new string[4];
 
-            return new Rectangle(int.Parse(minX), int.Parse(minY), int.Parse(width), int.Parse(height));
+            int i = 0;
+            foreach (string s in tokens)
+            {
+                if (s != " " && s != ",")
+                {
+                    intTokens[i] = s;
+                    i++;
+                }
+            }
+
+            return new Rectangle(int.Parse(intTokens[0]), int.Parse(intTokens[1]), int.Parse(intTokens[2]), int.Parse(intTokens[3]));
         }
 
         public override bool CanWrite

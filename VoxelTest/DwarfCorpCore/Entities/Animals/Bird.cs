@@ -144,7 +144,7 @@ namespace DwarfCorp
             AI = new BirdAI(this, "Bird AI", Sensors, PlanService);
             
             // The bird can peck at its enemies (0.1 damage)
-            Attacks = new List<Attack>{new Attack("Peck", 0.1f, 2.0f, 1.0f, ContentPaths.Audio.pick, "Herbivores")};
+            Attacks = new List<Attack>{new Attack("Peck", 0.1f, 2.0f, 1.0f, ContentPaths.Audio.pick, ContentPaths.Effects.flash)};
 
 
             // The bird can hold one item at a time in its inventory
@@ -192,8 +192,7 @@ namespace DwarfCorp
 
             NoiseMaker.Noises.Add("chirp", new List<string>(){ContentPaths.Audio.bird});
 
-            Stats.FirstName = TextGenerator.GenerateRandom("$firstname");
-            Stats.LastName = " the Bird";
+            Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the bird";
             Stats.CurrentClass = new EmployeeClass()
             {
                 Name = "Bird",

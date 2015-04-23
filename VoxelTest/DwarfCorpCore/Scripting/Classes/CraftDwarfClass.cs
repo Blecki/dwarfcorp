@@ -188,10 +188,12 @@ namespace DwarfCorp
 
         public void InitializeWeapons()
         {
-            MeleeAttack = new Attack("Hammer", 1.0f, 1.0f, 1.0f, ContentPaths.Audio.hammer, "Dwarf")
+            Attacks = new List<Attack>()
             {
-                Knockback = 2.5f,
-                HitAnimation = new Animation(ContentPaths.Effects.flash, 32, 32, 0, 1, 2, 3)
+                new Attack("Hammer", 1.0f, 1.0f, 1.0f, ContentPaths.Audio.hammer, ContentPaths.Effects.flash)
+                {
+                    Knockback = 2.5f,
+                }
             };
         }
 

@@ -99,6 +99,10 @@ namespace DwarfCorp
         public CompositeAnimation(string composite, List<Composite.Frame> frames) :
             this()
         {
+            if (!CompositeLibrary.Composites.ContainsKey(composite))
+            {
+                CompositeLibrary.Composites[composite] = new Composite(frames);
+            }
             CompositeName = composite;
             CompositeFrames = frames;
             FrameWidth = Composite.FrameSize.X;

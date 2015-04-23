@@ -68,14 +68,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1239552">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1251840">
       <assemblyIdentity name="DwarfCorp" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>IWhZt2dkykycFtrttpOR2yl1YJM=</dsig:DigestValue>
+        <dsig:DigestValue>WeI/ZG9QZqok3wP3UDY0mMnpwL8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -487,6 +487,24 @@
       <dsig:DigestValue>hb9+PPilHrZPHfRE0ES1yNuYtq8=</dsig:DigestValue>
     </hash>
   </file>
+  <file name="Content\Entities\Dwarf\dwarf.json" size="868">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>PkGZ7IawI+rEcj3DiD6wrUBor0E=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Entities\Dwarf\dwarf_classes.json" size="14784">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>ZC9/lfHd3cFaiObjWGmbBZjJP1U=</dsig:DigestValue>
+    </hash>
+  </file>
   <file name="Content\Entities\Dwarf\Sprites\crafter.xnb" size="13418">
     <hash>
       <dsig:Transforms>
@@ -775,6 +793,24 @@
       <dsig:DigestValue>siG81PKHAiupESz4cduQCqU1O2A=</dsig:DigestValue>
     </hash>
   </file>
+  <file name="Content\Entities\Moleman\moleman.xnb" size="9356">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>nckmIroT8rsT/2CkFinGrfn5bLM=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Entities\Moleman\moleman_animation.json" size="4093">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>8jy+REO8IoZ4OgbKrxfhfVCF7oQ=</dsig:DigestValue>
+    </hash>
+  </file>
   <file name="Content\Entities\Plants\berrybush.xnb" size="594">
     <hash>
       <dsig:Transforms>
@@ -910,13 +946,13 @@
       <dsig:DigestValue>znUNimIKCMookOp3HMuCsl/DrzA=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Entities\Skeleton\skele.xnb" size="7756">
+  <file name="Content\Entities\Skeleton\skele.xnb" size="7716">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>b8PZcG/izecZHf/WyQ6CuNORs80=</dsig:DigestValue>
+      <dsig:DigestValue>ouVEdPv4lSIZMvUuohMHUPXww4g=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Fonts\Default.xnb" size="4836">
@@ -1612,22 +1648,22 @@
       <dsig:DigestValue>XCdl3qHW/ZMNXgwzzS+zzGt0okA=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Text\firstname.txt" size="41283">
+  <file name="Content\Text\firstname.txt" size="1351">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>JtFrWz7GGgO4M1t/BmYjS+0JQps=</dsig:DigestValue>
+      <dsig:DigestValue>ewTlArsfqqTiMsMHgchWXqRHWFM=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Text\goblinfamily.txt" size="422">
+  <file name="Content\Text\goblinfamily.txt" size="662">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>fd3vm/rtpHemArrKjD70UjPmK9o=</dsig:DigestValue>
+      <dsig:DigestValue>jHFBhbO9NYiirCVj8J0Oycp0XkU=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Text\goblinname.txt" size="460">
@@ -1648,22 +1684,22 @@
       <dsig:DigestValue>4FJZ0dOR8VhhTk0OcSUTNfL/wbQ=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Text\intejection.txt" size="55">
+  <file name="Content\Text\intejection.txt" size="64">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>//QT4LLTPiXOyQxWnSxImagS+uE=</dsig:DigestValue>
+      <dsig:DigestValue>/bPJQBhJFwiZOeHZawuEBypG33M=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Text\lastname.txt" size="42627">
+  <file name="Content\Text\lastname.txt" size="2298">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>L2mYyGWlqfTR1+SWNvhXtf3slT4=</dsig:DigestValue>
+      <dsig:DigestValue>xqtuXBc1iyGg0yg2GoHsC62rJsE=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Text\magical.txt" size="92">
@@ -1711,13 +1747,13 @@
       <dsig:DigestValue>0sK7Pz+VhdRT82HAgqDtkyNjG4U=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Text\profession.txt" size="248">
+  <file name="Content\Text\profession.txt" size="1406">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>YgtjpAITkUvrlkaX4yCNXQfTacc=</dsig:DigestValue>
+      <dsig:DigestValue>G0GZJe45X9e9xh7iWNITXp0XR10=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Text\Templates\company_exploration.txt" size="423">
@@ -1774,6 +1810,42 @@
       <dsig:DigestValue>mK5ge5ynewTuQZCFq7uS5JoBKfM=</dsig:DigestValue>
     </hash>
   </file>
+  <file name="Content\Text\Templates\names_dwarf.txt" size="539">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>QLdpM1w3ZYXWTtr5rKyWb2fkD6c=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Text\Templates\names_elf.txt" size="166">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>m7SNHUey69PMUqCz6K3e3wZRgyU=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Text\Templates\names_goblin.txt" size="206">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>aHUm5vrAdoPHtabXSfsAUbqjj88=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Text\Templates\names_undead.txt" size="57">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>E5zxZDygwwp6LFBXT9m8HtDvbKI=</dsig:DigestValue>
+    </hash>
+  </file>
   <file name="Content\Text\Templates\nations_dwarf.txt" size="162">
     <hash>
       <dsig:Transforms>
@@ -1819,13 +1891,13 @@
       <dsig:DigestValue>sXEMtVpIM9siP3gh8zqPiLSfb+E=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Text\undeadfamily.txt" size="465">
+  <file name="Content\Text\undeadfamily.txt" size="463">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>xQ0LQFUuOM68jYIMbMM4XOHpCwU=</dsig:DigestValue>
+      <dsig:DigestValue>kCoNhdIo1Q5Ncfrd1bfgNsJ+w0M=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Text\undeadname.txt" size="482">
@@ -1853,6 +1925,15 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
       <dsig:DigestValue>ZIIml5TKgMpOW7Tfh3Sqz1KeJFk=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\World\races.json" size="1849">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>yvLc3uR2TzaYRRU8n2H8u/FG8Uk=</dsig:DigestValue>
     </hash>
   </file>
   <file name="DwarfCorp.exe.config" size="11310">
