@@ -149,7 +149,7 @@ namespace DwarfCorp
 
                     float yDifference = (LocalTarget - Agent.Position).Y;
 
-                    if(yDifference > 0.1)
+                    if(yDifference > 0.25f)
                     {
                         Agent.Jump(DwarfTime.LastTime);
                     }

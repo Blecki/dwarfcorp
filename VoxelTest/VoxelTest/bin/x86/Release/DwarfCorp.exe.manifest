@@ -68,14 +68,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1251840">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DwarfCorp.exe" size="1272832">
       <assemblyIdentity name="DwarfCorp" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>WeI/ZG9QZqok3wP3UDY0mMnpwL8=</dsig:DigestValue>
+        <dsig:DigestValue>XKAMeOgzp7jZuIMtyC29A6M5/YA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -613,22 +613,22 @@
       <dsig:DigestValue>vueI9LHG/4oMnDWQJx3PoWmfE9I=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Entities\Dwarf\Sprites\worker.xnb" size="14310">
+  <file name="Content\Entities\Dwarf\Sprites\worker.xnb" size="14826">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>0U4qgKMJJXTV+JoIR3NtOwPTl4c=</dsig:DigestValue>
+      <dsig:DigestValue>OFqyk4aADloIVbtHKit/amHRNDM=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\Entities\Dwarf\Sprites\worker_animation.json" size="7305">
+  <file name="Content\Entities\Dwarf\Sprites\worker_animation.json" size="7182">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>6evLcXilOiu9TFhIfNlJ++gat0I=</dsig:DigestValue>
+      <dsig:DigestValue>vJCI5p3ulnwQ79UR3ZpOJdEi9cg=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Entities\Dwarf\Sprites\worker-pick.xnb" size="1334">
@@ -775,6 +775,33 @@
       <dsig:DigestValue>HDYeccOflLR8WXpBVLBWa//Ti8g=</dsig:DigestValue>
     </hash>
   </file>
+  <file name="Content\Entities\Goblin\goblin.json" size="897">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>k8aXA6e33dinVe+dHUsOpHBwCOE=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Entities\Goblin\goblin_classes.json" size="3686">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>DYIOXdwt+SQNP+jEagNOr1Xvedg=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Entities\Goblin\Sprites\goblin_animation.json" size="4464">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>17MaLGnhMVQxwhXOn7I+jggG8G4=</dsig:DigestValue>
+    </hash>
+  </file>
   <file name="Content\Entities\Goblin\Sprites\goblin_animations.xnb" size="5780">
     <hash>
       <dsig:Transforms>
@@ -784,6 +811,24 @@
       <dsig:DigestValue>xSggVQQRBLRQ7uy7I9Zd1AITXWA=</dsig:DigestValue>
     </hash>
   </file>
+  <file name="Content\Entities\Goblin\Sprites\gob-nosword.xnb" size="7234">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>0WALcTAHv08ZWkHakyh99AJ7iMU=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Entities\Goblin\Sprites\gob-swordsonly.xnb" size="2832">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>yoVUI7knXHTTTI0F6YXV3ry6TnI=</dsig:DigestValue>
+    </hash>
+  </file>
   <file name="Content\Entities\Goblin\Sprites\gob-withsword.xnb" size="9442">
     <hash>
       <dsig:Transforms>
@@ -791,6 +836,15 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
       <dsig:DigestValue>siG81PKHAiupESz4cduQCqU1O2A=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Entities\Moleman\moleman.json" size="890">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>cKltamlv5rrxUqtOXYnigXooAh8=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Entities\Moleman\moleman.xnb" size="9356">
@@ -809,6 +863,15 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
       <dsig:DigestValue>8jy+REO8IoZ4OgbKrxfhfVCF7oQ=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Entities\Moleman\moleman_classes.json" size="3753">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>UIcUw52u7Kzw73Mm1f5zS1UxZew=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Entities\Plants\berrybush.xnb" size="594">
@@ -946,6 +1009,15 @@
       <dsig:DigestValue>znUNimIKCMookOp3HMuCsl/DrzA=</dsig:DigestValue>
     </hash>
   </file>
+  <file name="Content\Entities\Skeleton\necro_animation.json" size="4101">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>pzDyTrcROXG15peZJP6iTx7cpoM=</dsig:DigestValue>
+    </hash>
+  </file>
   <file name="Content\Entities\Skeleton\skele.xnb" size="7716">
     <hash>
       <dsig:Transforms>
@@ -953,6 +1025,33 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
       <dsig:DigestValue>ouVEdPv4lSIZMvUuohMHUPXww4g=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Entities\Skeleton\skele_animation.json" size="4092">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>Ggtzie1gcEW1LVhgPnLYfMyKzAg=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Entities\Skeleton\skeleton.json" size="891">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>RT48Af+wUr5fQyw3yfuAFGVnYY0=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Entities\Skeleton\skeleton_classes.json" size="3769">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>b/bg/hX1LHRdHh2q92WwuWhs1jw=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Fonts\Default.xnb" size="4836">
@@ -1375,7 +1474,16 @@
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>Von2jNDEE2avz9ZhWaIkO9nJxrg=</dsig:DigestValue>
+      <dsig:DigestValue>6nYQgi+zPQ8HqBC9T8P+u14ngZw=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Particles\splat.xnb" size="328">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>bWIwPNGZUDKr4y7ue5CY9SAqnR4=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Particles\star_particle.xnb" size="224">
@@ -1927,13 +2035,13 @@
       <dsig:DigestValue>ZIIml5TKgMpOW7Tfh3Sqz1KeJFk=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\World\races.json" size="1849">
+  <file name="Content\World\races.json" size="1850">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>yvLc3uR2TzaYRRU8n2H8u/FG8Uk=</dsig:DigestValue>
+      <dsig:DigestValue>0Ml4uZxhWduZsX1/ZHtzYJOCZlc=</dsig:DigestValue>
     </hash>
   </file>
   <file name="DwarfCorp.exe.config" size="11310">

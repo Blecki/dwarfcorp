@@ -17,7 +17,7 @@
         ],
         "IsIntelligent": true,
         "IsNative": true,
-        "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
+        "FactionNameFile": "Text\\Templates\\nations_goblin.txt",
         "NameFile": "Text\\Templates\\names_goblin.txt"
     },
     "Molemen": {

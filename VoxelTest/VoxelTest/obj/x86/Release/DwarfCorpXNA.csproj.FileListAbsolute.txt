@@ -328,3 +328,15 @@ C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Conte
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Text\Templates\names_elf.txt
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Text\Templates\names_undead.txt
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\World\races.json
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Particles\splat.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\goblin_classes.json
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Sprites\goblin_animation.json
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\goblin.json
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Sprites\gob-nosword.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Goblin\Sprites\gob-swordsonly.xnb
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Skeleton\skele_animation.json
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Skeleton\necro_animation.json
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Skeleton\skeleton.json
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Skeleton\skeleton_classes.json
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Moleman\moleman.json
+C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\VoxelTest\bin\x86\Release\Content\Entities\Moleman\moleman_classes.json

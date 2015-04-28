@@ -172,11 +172,17 @@ namespace DwarfCorp
                 }
                 else if(!instance.HasStarted)
                 {
+                    if (float.IsNaN(instance.Position.X) || 
+                        float.IsNaN(instance.Position.Y) ||
+                        float.IsNaN(instance.Position.Z))
+                    {
+                        instance.Position = Vector3.Zero;
+                    }
                     Emitter.Position = instance.Position;
                     instance.EffectInstance.Apply3D(Listener, Emitter);
 
                     instance.EffectInstance.Volume = GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * 
-                        Math.Max(Math.Min(10.0f / (camera.Position - instance.Position).LengthSquared(), 1.0f), 0.0f);
+                        Math.Max(Math.Min(10.0f / (camera.Position - instance.Position).LengthSquared(), 0.999f), 0.001f);
 
                     instance.EffectInstance.Volume *= (GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * instance.VolumeMultiplier);
 

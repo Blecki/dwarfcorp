@@ -33,6 +33,7 @@ namespace DwarfCorp
         public OrientMode Orientation { get; set; }
         private float Rotation = 0.0f;
         public CollisionMode CollideMode { get; set; }
+        public Voxel CurrentVoxel = null;
         public enum CollisionMode
         {
             All,
@@ -74,6 +75,7 @@ namespace DwarfCorp
             CollideMode = CollisionMode.All;
             Orientation = orientation;
             SleepTimer = new Timer(5.0f, true);
+            CurrentVoxel = new Voxel();
         }
 
         public void MoveX(float dt)
@@ -211,8 +213,8 @@ namespace DwarfCorp
                 Velocity *= LinearDamping;
                 AngularVelocity *= AngularDamping;
                 UpdateBoundingBox();
-                CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             }
+            CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             Velocity = (PreviousVelocity * 0.1f + Velocity * 0.9f);
             PreviousVelocity = Velocity;
             PreviousPosition = Position;
@@ -231,14 +233,24 @@ namespace DwarfCorp
 
         public void CheckLiquids(ChunkManager chunks, float dt)
         {
-            Voxel currentVoxel = new Voxel();
-            bool success = chunks.ChunkData.GetVoxel(GlobalTransform.Translation, ref currentVoxel);
-            
-            if(success && currentVoxel.Water.WaterLevel > 5)
+            bool success = chunks.ChunkData.GetVoxel(GlobalTransform.Translation + Vector3.Up * 0.5f, ref CurrentVoxel);
+            Voxel belowVoxel = new Voxel();
+            bool successBelow = chunks.ChunkData.GetVoxel(GlobalTransform.Translation + Vector3.Down * 0.25f, ref belowVoxel);
+
+            if (success && CurrentVoxel.WaterLevel > 5)
             {
-                IsInLiquid = true;
                 ApplyForce(new Vector3(0, 25, 0), dt);
                 Velocity = new Vector3(Velocity.X * 0.9f, Velocity.Y * 0.5f, Velocity.Z * 0.9f);
+            }
+
+            if (IsInLiquid && Velocity.LengthSquared() > 0.5f)
+            {
+                PlayState.ParticleManager.Trigger("splat", Position + MathFunctions.RandVector3Box(-0.5f, 0.5f, 0.1f, 0.25f, -0.5f, 0.5f), Color.White, PlayState.Random.Next(0, 2));
+            }
+
+            if (successBelow && belowVoxel.WaterLevel > 5)
+            {
+                IsInLiquid = true;
             }
             else
             {
