@@ -1,0 +1,19 @@
+<firstname> & <firstname>, <corp>
+<animal> <corp>
+<noun> <noun>
+<firstname> & <family>s
+<color> <noun> <family>
+<color> <place> <corp>
+<color> <noun> & <family>
+<color> <animal> <corp>
+<material> <noun>
+<color> <noun>
+<adjective> <noun> <corp>
+<adjective> <corp>
+<firstname>'s Explorers
+<lastname>'s Group
+<lastname> Colony
+East <place> <corp>
+West <place> <corp>
+North <place> <corp>
+South <place> <corp>
