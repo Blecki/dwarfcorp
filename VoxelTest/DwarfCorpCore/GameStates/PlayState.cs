@@ -1133,20 +1133,36 @@ namespace DwarfCorp.GameStates
 
             // Smoke
             EmitterData puff = ParticleManager.CreatePuffLike("puff", new SpriteSheet(ContentPaths.Particles.puff), Point.Zero, BlendState.AlphaBlend);
-           
+            ParticleManager.RegisterEffect("puff", puff);
 
             // Bubbles
             EmitterData bubble = ParticleManager.CreatePuffLike("splash2", new SpriteSheet(ContentPaths.Particles.splash2), Point.Zero, BlendState.AlphaBlend);
-            bubble.ConstantAccel = new Vector3(0, 2, 0);
+            bubble.ConstantAccel = new Vector3(0, 5, 0);
             bubble.EmissionSpeed = 3;
             bubble.LinearDamping = 0.9f;
-            bubble.GrowthSpeed = -1.5f;
-            bubble.MinScale = 2.0f;
+            bubble.GrowthSpeed = -2.5f;
+            bubble.MinScale = 1.5f;
             bubble.MaxScale = 2.5f;
             bubble.ParticleDecay = 1.5f;
             bubble.HasLighting = false;
-            ParticleManager.RegisterEffect("puff", puff);
             ParticleManager.RegisterEffect("splash2", bubble);
+
+            EmitterData splat = ParticleManager.CreatePuffLike("splat", new SpriteSheet(ContentPaths.Particles.splat), Point.Zero, BlendState.AlphaBlend);
+            splat.ConstantAccel = Vector3.Zero;
+            splat.EmissionRadius = 0.01f;
+            splat.EmissionSpeed = 0.0f;
+            splat.GrowthSpeed = -1.75f;
+            splat.MinAngle = -0.0f;
+            splat.MaxAngle = 0.0f;
+            splat.MinAngular = -0.01f;
+            splat.MaxAngular = 0.01f;
+            splat.MaxParticles = 500;
+            splat.MinScale = 0.05f;
+            splat.ParticleDecay = 1.5f;
+            splat.HasLighting = false;
+            splat.MaxScale = 1.1f;
+            splat.EmitsLight = false;
+            ParticleManager.RegisterEffect("splat", splat);
 
             EmitterData heart = ParticleManager.CreatePuffLike("heart", new SpriteSheet(ContentPaths.Particles.heart),
                 Point.Zero, BlendState.AlphaBlend);

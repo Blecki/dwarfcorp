@@ -182,7 +182,7 @@
    "Layers" : [
       {
          "$id" : "1",
-         "AssetName" : "Entities\\Skeleton\\Sprites\\skele",
+         "AssetName" : "Entities\\Skeleton\\skele",
          "FrameHeight" : 40,
          "FrameWidth" : 32
       },

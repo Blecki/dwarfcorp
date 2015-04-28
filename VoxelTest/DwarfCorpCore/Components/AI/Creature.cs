@@ -329,7 +329,12 @@ namespace DwarfCorp
                 IsHeadClear = voxelAbove.IsEmpty;
             }
 
-            if(belowExists && voxelBelow.Water.WaterLevel > 5)
+            if (!Physics.IsInLiquid && CurrentCharacterMode == CharacterMode.Swimming)
+            {
+                CurrentCharacterMode = CharacterMode.Idle;
+            }
+
+            if(belowExists && Physics.IsInLiquid)
             {
                 IsOnGround = false;
                 CurrentCharacterMode = CharacterMode.Swimming;

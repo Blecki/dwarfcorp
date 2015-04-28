@@ -49,6 +49,7 @@ namespace DwarfCorp
             public static string puff = ProgramData.CreatePath("Particles", "puff");
             public static string sand_particle = ProgramData.CreatePath("Particles", "sand_particle");
             public static string splash2 = ProgramData.CreatePath("Particles", "splash2");
+            public static string splat = ProgramData.CreatePath("Particles", "splat");
             public static string stone_particle = ProgramData.CreatePath("Particles", "stone_particle");
             public static string green_flame = ProgramData.CreatePath("Particles", "green_flame");
             public static string star_particle = ProgramData.CreatePath("Particles", "bigstar_particle");
@@ -220,10 +221,12 @@ namespace DwarfCorp
             }
             public class Goblin
             {
-
+                public static string goblin = ProgramData.CreatePath("Entities", "Goblin",  "goblin.json");
+                public static string goblin_classes = ProgramData.CreatePath("Entities", "Goblin", "goblin_classes.json"); 
                 public class Sprites
                 {
-                    public static string goblin_withsword = ProgramData.CreatePath("Entities", "Goblin", "Sprites", "gob-withsword");                    
+                    public static string goblin_withsword = ProgramData.CreatePath("Entities", "Goblin", "Sprites", "gob-withsword");
+                    public static string goblin_animations = ProgramData.CreatePath("Entities", "Goblin", "Sprites", "goblin_animation.json"); 
                 }
 
                 public class Audio
@@ -238,6 +241,8 @@ namespace DwarfCorp
 
             public class Skeleton
             {
+                public static string skeleton = ProgramData.CreatePath("Entities", "Skeleton", "skeleton.json"); 
+                
                 public class Sprites
                 {
                     public static string skele = ProgramData.CreatePath("Entities", "Skeleton", "skele");
@@ -269,8 +274,8 @@ namespace DwarfCorp
 
             public class Moleman
             {
-                public static string moleman_animations = ProgramData.CreatePath("Entities", "Moleman",
-                    "moleman_animation.json");
+                public static string moleman = ProgramData.CreatePath("Entities", "Moleman", "Moleman.json");
+                public static string moleman_animations = ProgramData.CreatePath("Entities", "Moleman","moleman_animation.json");
             }
         }
         public class Fonts

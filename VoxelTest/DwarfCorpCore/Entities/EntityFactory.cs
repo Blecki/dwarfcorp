@@ -28,6 +28,31 @@ namespace DwarfCorp
             return toReturn.Physics;
         }
 
+        public static Body GenerateTestGoblin(Vector3 position)
+        {
+            CreatureDef dwarfDef = ContentPaths.LoadFromJson<CreatureDef>(ContentPaths.Entities.Goblin.goblin);
+            Creature toReturn = new Creature(position, dwarfDef, "Sword Goblin", 0, "Goblins");
+            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, PlayState.Time.CurrentDate), false);
+            return toReturn.Physics;
+        }
+
+        public static Body GenerateTestSeketon(Vector3 position)
+        {
+            CreatureDef dwarfDef = ContentPaths.LoadFromJson<CreatureDef>(ContentPaths.Entities.Skeleton.skeleton);
+            Creature toReturn = new Creature(position, dwarfDef, "Skeleton", 0, "Undead");
+            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, PlayState.Time.CurrentDate), false);
+            return toReturn.Physics;
+        }
+
+
+        public static Body GenerateTestMoleman(Vector3 position)
+        {
+            CreatureDef dwarfDef = ContentPaths.LoadFromJson<CreatureDef>(ContentPaths.Entities.Moleman.moleman);
+            Creature toReturn = new Creature(position, dwarfDef, "Moleman Miner", 0, "Molemen");
+            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, PlayState.Time.CurrentDate), false);
+            return toReturn.Physics;
+        }
+
         public static void Initialize()
         {
             EntityFuncs = new Dictionary<string, Func<Vector3, Blackboard, GameComponent>>();
@@ -47,6 +72,9 @@ namespace DwarfCorp
             RegisterEntity("Deer", (position, data) => new Deer(ContentPaths.Entities.Animals.Deer.deer, position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Deer"));
             RegisterEntity("Dwarf", (position, data) => GenerateDwarf(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.PlayerFaction, PlayState.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Worker], 0));
             RegisterEntity("TestDwarf", (position, data) => GenerateTestDwarf(position));
+            RegisterEntity("TestGoblin", (position, data) => GenerateTestGoblin(position));
+            RegisterEntity("TestSkeleton", (position, data) => GenerateTestSeketon(position));
+            RegisterEntity("TestMoleman", (position, data) => GenerateTestMoleman(position));
             RegisterEntity("AxeDwarf", (position, data) => GenerateDwarf(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.PlayerFaction, PlayState.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.AxeDwarf], 0));
             RegisterEntity("CraftsDwarf", (position, data) => GenerateDwarf(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.PlayerFaction, PlayState.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.CraftsDwarf], 0));
             RegisterEntity("Wizard", (position, data) => GenerateDwarf(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.PlayerFaction, PlayState.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Wizard], 0));

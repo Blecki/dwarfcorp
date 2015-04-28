@@ -1749,6 +1749,11 @@ namespace DwarfCorp
             }
         }
 
+        private bool IsEmpty(Voxel v)
+        {
+            return v == null || v.IsEmpty;
+        }
+
         public List<Creature.MoveAction> GetMovableNeighbors(int x, int y, int z)
         {
             List<Creature.MoveAction> toReturn = new List<Creature.MoveAction>();
@@ -1793,85 +1798,92 @@ namespace DwarfCorp
             }
 
             List<Creature.MoveAction> successors = new List<Creature.MoveAction>();
-            bool anythingToCatch = standingOnGround;
             if(standingOnGround || inWater)
             {
-                // +- x
-                successors.Add(new Creature.MoveAction()
-                {
-                    Diff = new Vector3(0, 1, 1),
-                    MoveType = Creature.MoveType.Walk
-                });
-                successors.Add(new Creature.MoveAction()
-                {
-                    Diff = new Vector3(2, 1, 1),
-                    MoveType = Creature.MoveType.Walk
-                });    
+                if (IsEmpty(neighborHood[0, 1, 0]))
+                    // +- x
+                    successors.Add(new Creature.MoveAction()
+                    {
+                        Diff = new Vector3(0, 1, 1),
+                        MoveType = Creature.MoveType.Walk
+                    });
 
-                // +- z
-                successors.Add(new Creature.MoveAction()
-                {
-                    Diff = new Vector3(1, 1, 0),
-                    MoveType = Creature.MoveType.Walk
-                });
-                successors.Add(new Creature.MoveAction()
-                {
-                    Diff = new Vector3(1, 1, 2),
-                    MoveType = Creature.MoveType.Walk
-                });
+                if (IsEmpty(neighborHood[2, 1, 1]))
+                    successors.Add(new Creature.MoveAction()
+                    {
+                        Diff = new Vector3(2, 1, 1),
+                        MoveType = Creature.MoveType.Walk
+                    });    
+
+                if (IsEmpty(neighborHood[1, 1, 0]))
+                    // +- z
+                    successors.Add(new Creature.MoveAction()
+                    {
+                        Diff = new Vector3(1, 1, 0),
+                        MoveType = Creature.MoveType.Walk
+                    });
+
+                if(IsEmpty(neighborHood[1, 1, 2]))
+                    successors.Add(new Creature.MoveAction()
+                    {
+                        Diff = new Vector3(1, 1, 2),
+                        MoveType = Creature.MoveType.Walk
+                    });
 
                 if(!hasNeighbors)
                 {
-                    // +x + z
-                    successors.Add(new Creature.MoveAction()
-                    {
-                        Diff = new Vector3(2, 1, 2),
-                        MoveType = Creature.MoveType.Walk
-                    });
-                    successors.Add(new Creature.MoveAction()
+                    if (IsEmpty(neighborHood[2, 1, 2]))
+                        // +x + z
+                        successors.Add(new Creature.MoveAction()
+                        {
+                            Diff = new Vector3(2, 1, 2),
+                            MoveType = Creature.MoveType.Walk
+                        });
+
+                    if (IsEmpty(neighborHood[2, 1, 0]))
+                        successors.Add(new Creature.MoveAction()
                     {
                         Diff = new Vector3(2, 1, 0),
                         MoveType = Creature.MoveType.Walk
                     });
                     
-                    // -x -z
-                    successors.Add(new Creature.MoveAction()
-                    {
-                        Diff = new Vector3(0, 1, 2),
-                        MoveType = Creature.MoveType.Walk
-                    });
-                    successors.Add(new Creature.MoveAction()
-                    {
-                        Diff = new Vector3(0, 1, 0),
-                        MoveType = Creature.MoveType.Walk
-                    });
+                    if(IsEmpty(neighborHood[0, 1, 2]))
+                        // -x -z
+                        successors.Add(new Creature.MoveAction()
+                        {
+                            Diff = new Vector3(0, 1, 2),
+                            MoveType = Creature.MoveType.Walk
+                        });
+
+                    if(IsEmpty(neighborHood[0, 1, 0]))
+                        successors.Add(new Creature.MoveAction()
+                        {
+                            Diff = new Vector3(0, 1, 0),
+                            MoveType = Creature.MoveType.Walk
+                        });
                 }
 
             }
 
             if (!topCovered && (standingOnGround || inWater))
             {
-                // Jumping
-                successors.Add(new Creature.MoveAction()
+                for (int dx = 0; dx <= 2; dx++)
                 {
-                    Diff = new Vector3(0, 2, 1),
-                    MoveType = Creature.MoveType.Jump
-                });
-                successors.Add(new Creature.MoveAction()
-                {
-                    Diff = new Vector3(1, 2, 0),
-                    MoveType = Creature.MoveType.Jump
-                });
-                successors.Add(new Creature.MoveAction()
-                {
-                    Diff = new Vector3(2, 2, 1),
-                    MoveType = Creature.MoveType.Jump
-                });
-                successors.Add(new Creature.MoveAction()
-                {
-                    Diff = new Vector3(1, 2, 2),
-                    MoveType = Creature.MoveType.Jump
-                });
+                    for (int dz = 0; dz <= 2; dz++)
+                    {
+                        if (dx == 1 && dz == 1) continue;
+
+                        if (!IsEmpty(neighborHood[dx, 1, dz]))
+                        {
+                            successors.Add(new Creature.MoveAction()
+                            {
+                                Diff = new Vector3(dx, 2, dz),
+                                MoveType = Creature.MoveType.Jump
+                            });
+                        }
+                    }
+                }
+               
             }
 
 
@@ -1884,7 +1896,6 @@ namespace DwarfCorp
                     MoveType = Creature.MoveType.Climb
                 });
             }
-
 
             foreach(Creature.MoveAction v in successors)
             {

@@ -950,6 +950,16 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Goblin\Sprites\gob-nosword.png">
+      <Name>gob-nosword</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Goblin\Sprites\gob-swordsonly.png">
+      <Name>gob-swordsonly</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Entities\Moleman\moleman_animation.json">
       <Name>moleman_animation</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -961,6 +971,42 @@
     <Content Include="Entities\Dwarf\dwarf_classes.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>dwarf_classes</Name>
+    </Content>
+    <Content Include="Entities\Goblin\goblin_classes.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>goblin_classes</Name>
+    </Content>
+    <Content Include="Entities\Goblin\Sprites\goblin_animation.json">
+      <Name>goblin_animation</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Entities\Goblin\goblin.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>goblin</Name>
+    </Content>
+    <Content Include="Entities\Skeleton\skele_animation.json">
+      <Name>skele_animation</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Entities\Skeleton\necro_animation.json">
+      <Name>necro_animation</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Entities\Skeleton\skeleton.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>skeleton</Name>
+    </Content>
+    <Content Include="Entities\Skeleton\skeleton_classes.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>skeleton_classes</Name>
+    </Content>
+    <Content Include="Entities\Moleman\moleman.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>moleman</Name>
+    </Content>
+    <Content Include="Entities\Moleman\moleman_classes.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>moleman_classes</Name>
     </Content>
     <None Include="Shaders\FXAA.fxh">
       <Name>FXAA</Name>
@@ -974,6 +1020,11 @@
     </Compile>
     <Compile Include="Entities\Moleman\moleman.png">
       <Name>moleman</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Particles\splat.png">
+      <Name>splat</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
