@@ -1,0 +1,7 @@
+<elfname> <elffamily>
+<elfname> <elffamily>
+<elfname> <elffamily>
+<elfname> <elffamily>
+<elfname> <elffamily>
+<elfname> of <elffamily>
+<elfname> the <adjective>
