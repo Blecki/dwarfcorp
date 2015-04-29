@@ -354,12 +354,6 @@
     <Compile Include="..\DwarfCorpCore\GameSettings.Designer.cs">
       <Link>GameSettings.Designer.cs</Link>
     </Compile>
-    <Compile Include="..\DwarfCorpCore\GameSettings1.Designer.cs">
-      <Link>GameSettings1.Designer.cs</Link>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>GameSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="..\DwarfCorpCore\GameStates\CompanyMakerState.cs">
       <Link>GameStates\CompanyMakerState.cs</Link>
     </Compile>
@@ -1339,19 +1333,6 @@
     <Content Include="favicon.ico" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
-    <None Include="..\DwarfCorpCore\AssetSettings.settings">
-      <Link>AssetSettings.settings</Link>
-      <CustomToolNamespace>DwarfCorpCore</CustomToolNamespace>
-    </None>
-    <None Include="..\DwarfCorpCore\ControlSettings.settings">
-      <Link>ControlSettings.settings</Link>
-      <CustomToolNamespace>DwarfCorpCore</CustomToolNamespace>
-    </None>
-    <None Include="..\DwarfCorpCore\GameSettings.settings">
-      <Link>GameSettings.settings</Link>
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>GameSettings1.Designer.cs</LastGenOutput>
-    </None>
     <None Include="Newtonsoft.Json.dll" />
   </ItemGroup>
   <ItemGroup>
@@ -1386,7 +1367,7 @@
     <None Include="DwarfCorp_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\VoxelTestContent\DwarfCorpXNAContent.contentproj">
+    <ProjectReference Include="..\DwarfCorpContent\DwarfCorpXNAContent.contentproj">
       <Project>{D48F9E36-1F42-4633-B745-8C659D9550D4}</Project>
       <Name>DwarfCorpXNAContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>

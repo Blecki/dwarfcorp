@@ -1084,4 +1084,17 @@ namespace DwarfCorp.GameStates
         }
     }
 
+    public class WorldSettings
+    {
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public string Name { get; set; }
+        public int NumCivilizations { get; set; }
+        public int NumRains { get; set; }
+        public int NumVolcanoes { get; set; }
+        public float RainfallScale { get; set; }
+        public int NumFaults { get; set; }
+        public float SeaLevel { get; set; }
+        public float TemperatureScale { get; set; }
+    }
 }

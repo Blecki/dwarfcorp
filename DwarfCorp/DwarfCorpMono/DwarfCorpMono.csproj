@@ -1257,7 +1257,7 @@
     <None Include="DwarfCorp_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\VoxelTestContent\DwarfCorpXNAContent.contentproj">
+    <ProjectReference Include="..\DwarfCorpContent\DwarfCorpXNAContent.contentproj">
       <Project>{D48F9E36-1F42-4633-B745-8C659D9550D4}</Project>
       <Name>DwarfCorpXNAContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>
