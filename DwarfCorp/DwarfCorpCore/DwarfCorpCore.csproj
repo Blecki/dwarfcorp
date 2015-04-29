@@ -169,8 +169,8 @@
     <Compile Include="GameStates\OptionsState.cs" />
     <Compile Include="GameStates\PlayState.cs" />
     <Compile Include="GameStates\WorldGeneratorState.cs" />
-    <Compile Include="GameStates\WorldLoaderState.cs" />
     <Compile Include="GameStates\WorldSetupState.cs" />
+    <Compile Include="GameStates\WorldLoaderState.cs" />
     <Compile Include="Graphics\Cameras\Camera.cs" />
     <Compile Include="Graphics\Cameras\OrbitCamera.cs" />
     <Compile Include="Graphics\Effects\FXAA.cs" />

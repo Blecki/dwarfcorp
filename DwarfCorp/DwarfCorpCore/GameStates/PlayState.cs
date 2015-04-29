@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using BloomPostprocess;
-using DwarfCorp.Graphics.Effects;
 using DwarfCorpCore;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
