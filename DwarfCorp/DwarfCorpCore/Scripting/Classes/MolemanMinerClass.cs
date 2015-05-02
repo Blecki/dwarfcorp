@@ -188,7 +188,7 @@ namespace DwarfCorp
              */
             CompositeAnimation.Descriptor descriptor =
                 FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
-                    ContentPaths.GetFileAsString(ContentPaths.Entities.Dwarf.Sprites.worker_animation));
+                    ContentPaths.GetFileAsString(ContentPaths.Entities.Moleman.moleman_animations));
             Animations = new List<Animation>();
             Animations.AddRange(descriptor.GenerateAnimations(CompositeLibrary.Dwarf));
         }
@@ -197,7 +197,7 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Pickaxe", 1.0f, 1.0f, 1.0f, ContentPaths.Audio.pick, ContentPaths.Effects.flash)
+                new Attack("Claws", 1.0f, 1.0f, 1.0f, ContentPaths.Audio.sword, ContentPaths.Effects.claws)
                 {
                     Knockback = 2.5f,
                 }
@@ -206,7 +206,7 @@ namespace DwarfCorp
 
         protected override sealed void InitializeStatics()
         {
-            Name = "Miner";
+            Name = "Moleman Miner";
             InitializeLevels();
             InitializeAnimations();
             InitializeWeapons();

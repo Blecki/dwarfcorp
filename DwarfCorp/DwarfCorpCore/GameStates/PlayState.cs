@@ -1897,16 +1897,9 @@ namespace DwarfCorp.GameStates
 
                 if (GameSettings.Default.EnableGlow)
                 {
-                    if(UseFXAA)
-                        bloom.DrawTarget = fxaa.RenderTarget;
-                    else
-                    {
-                        bloom.DrawTarget = null;
-                    }
-
+                    bloom.DrawTarget = UseFXAA ? fxaa.RenderTarget : null;
                     bloom.Draw(gameTime.ToGameTime());
-
-                    if(UseFXAA)
+                    if (UseFXAA)
                         fxaa.End(DwarfTime.LastTime, fxaa.RenderTarget);
                 }
                 else if (UseFXAA)

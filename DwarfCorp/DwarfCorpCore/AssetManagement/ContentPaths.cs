@@ -343,6 +343,7 @@ namespace DwarfCorp
             public static string GaussianBlur = ProgramData.CreatePath("Shaders", "GaussianBlur_Opengl");
             public static string SkySphere = ProgramData.CreatePath("Shaders", "SkySphere_Opengl");
             public static string TexturedShaders = ProgramData.CreatePath("Shaders", "TexturedShaders_Opengl");
+            public static string FXAA = ProgramData.CreatePath("Shaders", "FXAA");
 #endif
 
         }
