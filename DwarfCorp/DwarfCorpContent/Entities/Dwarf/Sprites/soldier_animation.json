@@ -2,40 +2,40 @@
    "Animations" : [
       {
          "Frames" : [
-              [4, 0, 0],
-              [5, 0, 0],
-              [6, 0, 0],
-              [7, 0, 0]
+              [4, 0, 0, 3],
+              [5, 0, 0, 3],
+              [6, 0, 0, 3],
+              [7, 0, 0, 3]
           ],
           "Name" : "SleepingFORWARD",
           "Speed": [0.5]
       },
       {
          "Frames" : [
-              [4, 0, 0],
-              [5, 0, 0],
-              [6, 0, 0],
-              [7, 0, 0]
+              [4, 1, 0, 3],
+              [5, 1, 0, 3],
+              [6, 1, 0, 3],
+              [7, 1, 0, 3]
           ],
           "Name" : "SleepingLEFT",
           "Speed": [0.5]
       },
       {
          "Frames" : [
-              [4, 0, 0],
-              [5, 0, 0],
-              [6, 0, 0],
-              [7, 0, 0]
+              [4, 2, 0, 3],
+              [5, 2, 0, 3],
+              [6, 2, 0, 3],
+              [7, 2, 0, 3]
           ],
           "Name" : "SleepingRIGHT",
           "Speed": [0.5]
       },
       {
          "Frames" : [
-              [4, 0, 0],
-              [5, 0, 0],
-              [6, 0, 0],
-              [7, 0, 0]
+              [4, 3, 0, 3],
+              [5, 3, 0, 3],
+              [6, 3, 0, 3],
+              [7, 3, 0, 3]
           ],
           "Name" : "SleepingBACKWARD",
           "Speed":  [0.5]
@@ -321,6 +321,12 @@
          "AssetName" : "Entities\\Dwarf\\Sprites\\soldier-shield",
          "FrameHeight" : 40,
          "FrameWidth" : 32
+      },
+      {
+         "$id" : "4",
+         "AssetName" : "Entities\\Dwarf\\Sprites\\soldier-helmet",
+         "FrameHeight" : 40,
+         "FrameWidth" : 48
       }
    ],
    "Tints" : [ "255, 255, 255, 255", "255, 255, 255, 255", "255, 255, 255, 255" ]
