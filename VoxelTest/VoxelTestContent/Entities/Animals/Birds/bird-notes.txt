@@ -1,5 +1,0 @@
-24x16
-
-animation order:
-walk (hopping along ground, 2 frames, use frame 1 for idle)
-fly (3 frames)
