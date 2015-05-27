@@ -444,7 +444,7 @@ namespace DwarfCorp.GameStates
             pixel = new Texture2D(GraphicsDevice, 1, 1);
             pixel.SetData(white);
 
-            Tilesheet = TextureManager.GetTexture("TileSet");
+            Tilesheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
             AspectRatio = GraphicsDevice.Viewport.AspectRatio;
             DefaultShader = Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders);
             DefaultShader.Parameters["xFogStart"].SetValue(40.0f);
@@ -855,7 +855,7 @@ namespace DwarfCorp.GameStates
             layout.SetComponentOffset(MiniMap,  new Point(0, rect.Height - 250));
 
 
-            Button moneyButton = new Button(GUI, layout, "Economy", GUI.SmallFont, Button.ButtonMode.ImageButton, new ImageFrame(TextureManager.GetTexture("IconSheet"), 32, 2, 1))
+            Button moneyButton = new Button(GUI, layout, "Economy", GUI.SmallFont, Button.ButtonMode.ImageButton, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 2, 1))
             {
                 KeepAspectRatio = true,
                 ToolTip = "Opens the Economy Menu",
@@ -868,7 +868,7 @@ namespace DwarfCorp.GameStates
             moneyButton.OnClicked += moneyButton_OnClicked;
 
 
-            Button settingsButton = new Button(GUI, layout, "Settings", GUI.SmallFont, Button.ButtonMode.ImageButton, new ImageFrame(TextureManager.GetTexture("IconSheet"), 32, 4, 1))
+            Button settingsButton = new Button(GUI, layout, "Settings", GUI.SmallFont, Button.ButtonMode.ImageButton, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 4, 1))
             {
                 KeepAspectRatio = true,
                 ToolTip = "Opens the Settings Menu",
@@ -1282,7 +1282,7 @@ namespace DwarfCorp.GameStates
         /// <param name="key">The keyboard key released</param>
         private void InputManager_KeyReleasedCallback(Keys key)
         {
-            if(key == ControlSettings.Default.Map)
+            if(key == ControlSettings.Mappings.Map)
             {
                 DrawMap = !DrawMap;
                 MiniMap.SetMinimized(!DrawMap);
@@ -1359,11 +1359,11 @@ namespace DwarfCorp.GameStates
             }
 
             // Handles time foward + backward TODO: Replace with input manager
-            if(Keyboard.GetState().IsKeyDown(ControlSettings.Default.TimeForward))
+            if(Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.TimeForward))
             {
                 Time.Speed = 10000;
             }
-            else if(Keyboard.GetState().IsKeyDown(ControlSettings.Default.TimeBackward))
+            else if(Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.TimeBackward))
             {
                 Time.Speed = -10000;
             }
@@ -1397,7 +1397,7 @@ namespace DwarfCorp.GameStates
 
 
             // Handles pausing and unpausing TODO: replace with input manager
-            if(Keyboard.GetState().IsKeyDown(ControlSettings.Default.Pause))
+            if(Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.Pause))
             {
                 if(!pausePressed)
                 {
@@ -1414,7 +1414,7 @@ namespace DwarfCorp.GameStates
             }
 
             // Turns the gui on and off TODO: replace with input manager
-            if(Keyboard.GetState().IsKeyDown(ControlSettings.Default.ToggleGUI))
+            if(Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.ToggleGUI))
             {
                 if(!bPressed)
                 {
@@ -1442,7 +1442,7 @@ namespace DwarfCorp.GameStates
             if (!Paused)
             {
                 Time.Update(gameTime);
-                ComponentManager.CollisionManager.Update(gameTime);
+
                 ComponentManager.Update(gameTime, ChunkManager, Camera);
                 Sky.TimeOfDay = Time.GetSkyLightness();
                 Sky.CosTime = (float)(Time.GetTotalHours() * 2 * Math.PI / 24.0f);
@@ -1827,14 +1827,6 @@ namespace DwarfCorp.GameStates
                 WaterRenderer.DrawReflectionMap(gameTime, this, wHeight - 0.1f, GetReflectedCameraMatrix(wHeight),
                     DefaultShader, GraphicsDevice);
 
-                /*
-            Shadows.BindShadowmap(GraphicsDevice);
-            Shadows.PrepareEffect(DefaultShader, false);
-            ChunkManager.SimpleRender(GraphicsDevice, DefaultShader, Tilesheet);
-            Shadows.UnbindShadowmap(GraphicsDevice);
-            Shadows.BindShadowmapEffect(DefaultShader);
-             */
-
                 // Start drawing the bloom effect
                 if (GameSettings.Default.EnableGlow)
                 {
@@ -1882,7 +1874,7 @@ namespace DwarfCorp.GameStates
                 DefaultShader.CurrentTechnique = DefaultShader.Techniques["Textured"];
                 DefaultShader.Parameters["Clipping"].SetValue(0);
 
-                //Body.CollisionManager.DebugDraw();
+                //ComponentManager.CollisionManager.DebugDraw();
 
                 // Render simple geometry (boxes, etc.)
                 Drawer3D.Render(GraphicsDevice, DefaultShader, true);
@@ -1966,12 +1958,12 @@ namespace DwarfCorp.GameStates
                 }
                 //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, new Rectangle(0, 0, 512, 512), Color.White);
                 IndicatorManager.Render(gameTime);
+                GUI.PostRender(gameTime);
                 DwarfGame.SpriteBatch.End();
                 Master.Render(Game, gameTime, GraphicsDevice);
                 DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle =
                     DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
 
-                GUI.PostRender(gameTime);
 
 
                 /*

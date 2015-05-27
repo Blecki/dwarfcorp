@@ -35,7 +35,7 @@ namespace DwarfCorp
         }
 
 
-        private static bool Path(Voxel start, GoalRegion goal, ChunkManager chunks, int maxExpansions, ref List<Creature.MoveAction> toReturn, bool reverse)
+        private static bool Path(CreatureMovement mover, Voxel start, GoalRegion goal, ChunkManager chunks, int maxExpansions, ref List<Creature.MoveAction> toReturn, bool reverse)
         {
             VoxelChunk startChunk = chunks.ChunkData.ChunkMap[start.ChunkID];
             VoxelChunk endChunk = chunks.ChunkData.ChunkMap[goal.GetVoxel().ChunkID];
@@ -61,6 +61,12 @@ namespace DwarfCorp
             fScore.Enqueue(start, gScore[start] + Heuristic(start, goal.GetVoxel()));
 
             int numExpansions = 0;
+
+            List<Voxel> manhattanNeighbors = new List<Voxel>(6);
+            for (int i = 0; i < 6; i++)
+            {
+                manhattanNeighbors.Add(new Voxel());
+            }
             while(openSet.Count > 0 && numExpansions < maxExpansions)
             {
                 Voxel current = GetVoxelWithMinimumFScore(fScore, openSet);
@@ -89,9 +95,7 @@ namespace DwarfCorp
 
                 List<Creature.MoveAction> neighbors = null;
 
-                neighbors = currentChunk.GetMovableNeighbors(current);
-
-                List<Voxel> manhattanNeighbors = currentChunk.AllocateVoxels(6);
+                neighbors = mover.GetMoveActions(current);
                 currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
 
                 if(manhattanNeighbors.Contains(goal.GetVoxel()))
@@ -119,7 +123,7 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    float tenativeGScore = gScore[current] + GetDistance(current, n.Voxel, chunks);
+                    float tenativeGScore = gScore[current] + GetDistance(current, n.Voxel, n.MoveType, chunks);
 
                     if(openSet.Contains(n.Voxel) && !(tenativeGScore < gScore[n.Voxel]))
                     {
@@ -132,7 +136,7 @@ namespace DwarfCorp
 
                     cameFrom[n.Voxel] = cameAction;
                     gScore[n.Voxel] = tenativeGScore;
-                    fScore.Enqueue(n.Voxel, gScore[n.Voxel] + Heuristic(n.Voxel, goal.GetVoxel()) + (n.MoveType == Creature.MoveType.Climb ? 5 : 0));
+                    fScore.Enqueue(n.Voxel, gScore[n.Voxel] + Heuristic(n.Voxel, goal.GetVoxel()));
                 }
 
                 if(numExpansions >= maxExpansions)
@@ -146,10 +150,10 @@ namespace DwarfCorp
 
 
 
-        public static List<Creature.MoveAction> FindPath(Voxel start, GoalRegion goal, ChunkManager chunks, int maxExpansions)
+        public static List<Creature.MoveAction> FindPath(CreatureMovement mover, Voxel start, GoalRegion goal, ChunkManager chunks, int maxExpansions)
         {
             List<Creature.MoveAction> p = new List<Creature.MoveAction>();
-            bool success = Path(start, goal, chunks, maxExpansions, ref p, false);
+            bool success = Path(mover, start, goal, chunks, maxExpansions, ref p, false);
 
             if(success)
             {
@@ -161,7 +165,7 @@ namespace DwarfCorp
             }
         }
 
-        public static float GetDistance(Voxel a, Voxel b, ChunkManager chunks)
+        public static float GetDistance(Voxel a, Voxel b, Creature.MoveType action, ChunkManager chunks)
         {
             if(!b.IsEmpty)
             {
@@ -169,20 +173,34 @@ namespace DwarfCorp
             }
             else
             {
-                float score = (a.Position - b.Position).LengthSquared() + (Math.Abs((b.Position - a.Position).Y)) * 10;
-
-                if(b.WaterLevel > 5)
-                {
-                    score += 5 + (Math.Abs((b.Position - a.Position).Y)) * 100;
-                }
+                float score = (a.Position - b.Position).LengthSquared() * ActionCost(action);
 
                 return score;
             }
         }
 
+        private static float ActionCost(Creature.MoveType action)
+        {
+            switch (action)
+            {
+                case Creature.MoveType.Walk:
+                    return 1.0f;
+                case Creature.MoveType.Jump:
+                    return 100.0f;
+                case Creature.MoveType.Climb:
+                    return 2.0f;
+                case Creature.MoveType.Swim:
+                    return 50.0f;
+                case Creature.MoveType.Fall:
+                    return 100.0f;
+                default:
+                    return 1.0f;
+            }
+        }
+
         public static float Heuristic(Voxel a, Voxel b)
         {
-            return (a.Position - b.Position).LengthSquared() + (Math.Abs((b.Position - a.Position).Y)) * 10;
+            return (a.Position - b.Position).LengthSquared();
         }
     }
 

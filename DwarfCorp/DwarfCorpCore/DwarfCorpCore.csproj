@@ -48,10 +48,6 @@
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.GamerServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="mscorlib" />
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Desktop\MonogameSDL\DwarfCorpMono\DwarfCorpMono\DwarfCorpMono\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core">
@@ -76,11 +72,6 @@
     <Compile Include="AssetManagement\GameSave\SaveData.cs" />
     <Compile Include="AssetManagement\TextureLoader.cs" />
     <Compile Include="AssetManagement\TextureManager.cs" />
-    <Compile Include="AssetSettings.Designer.cs">
-      <DependentUpon>AssetSettings.settings</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <Compile Include="Components\AI\Creature.cs" />
     <Compile Include="Components\AI\CreatureAI.cs" />
     <Compile Include="Components\AI\Grabber.cs" />
@@ -112,11 +103,7 @@
     <Compile Include="Components\Physics\Physics.cs" />
     <Compile Include="Components\Systems\ComponentManager.cs" />
     <Compile Include="Components\Systems\Message.cs" />
-    <Compile Include="ControlSettings.Designer.cs">
-      <DependentUpon>ControlSettings.settings</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
+    <Compile Include="ControlSettings.cs" />
     <Compile Include="DwarfGame.cs" />
     <Compile Include="Entities\Animals\Bird.cs" />
     <Compile Include="Entities\Animals\BirdAI.cs" />
@@ -128,6 +115,8 @@
     <Compile Include="Entities\Fixtures\Bed.cs" />
     <Compile Include="Entities\Fixtures\Chair.cs" />
     <Compile Include="Entities\Fixtures\Crate.cs" />
+    <Compile Include="Entities\Fixtures\Ladder.cs" />
+    <Compile Include="Entities\Fixtures\Door.cs" />
     <Compile Include="Entities\Fixtures\Fixture.cs" />
     <Compile Include="Entities\Fixtures\Flag.cs" />
     <Compile Include="Entities\Fixtures\Forge.cs" />
@@ -152,11 +141,7 @@
     <Compile Include="Entities\Projectiles\Projectile.cs" />
     <Compile Include="Entities\Resources\ResourceEntity.cs" />
     <Compile Include="Entities\Traps\BearTrap.cs" />
-    <Compile Include="GameSettings.Designer.cs">
-      <DependentUpon>GameSettings.settings</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
+    <Compile Include="GameSettings.cs" />
     <Compile Include="GameStates\CompanyMakerState.cs" />
     <Compile Include="GameStates\EconomyState.cs" />
     <Compile Include="GameStates\GameLoaderState.cs" />
@@ -238,7 +223,6 @@
     <Compile Include="GUI\Components\Complex\AIDebugger.cs" />
     <Compile Include="GUI\Components\Complex\AnnounementViewer.cs" />
     <Compile Include="GUI\Components\Complex\ApplicationPanel.cs" />
-    <Compile Include="GUI\Components\Complex\AssetManager.cs" />
     <Compile Include="GUI\Components\Complex\BuildMenu.cs" />
     <Compile Include="GUI\Components\Complex\CapitalPanel.cs" />
     <Compile Include="GUI\Components\Complex\ColorDialog.cs" />
@@ -482,21 +466,6 @@
     <Compile Include="World\Overworld.cs" />
     <Compile Include="World\VegetationData.cs" />
     <Compile Include="World\WorldTime.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="AssetSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>AssetSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="ControlSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>ControlSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="GameSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>GameSettings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

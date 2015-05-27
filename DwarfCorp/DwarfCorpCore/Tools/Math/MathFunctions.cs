@@ -159,8 +159,9 @@ namespace DwarfCorp
 
         public static Vector3 Clamp(Vector3 value, BoundingBox bounds)
         {
-            return new Vector3(Clamp(value.X, bounds.Min.X, bounds.Max.X), Clamp(value.Y, bounds.Min.Y, bounds.Max.Y),
-                Clamp(value.Z, bounds.Min.Z, bounds.Max.Z));
+            return new Vector3(Clamp(value.X, bounds.Min.X, bounds.Max.X), 
+                               Clamp(value.Y, bounds.Min.Y, bounds.Max.Y),
+                               Clamp(value.Z, bounds.Min.Z, bounds.Max.Z));
         }
 
 
@@ -351,6 +352,10 @@ namespace DwarfCorp
             return (b - (float) Math.Sqrt(b*b - 4*a*c))/(2*a);
         }
 
+        public static BoundingBox GetBoundingBox(BoundingSphere sphere)
+        {
+            return new BoundingBox(sphere.Center - new Vector3(sphere.Radius, sphere.Radius, sphere.Radius), sphere.Center + new Vector3(sphere.Radius, sphere.Radius, sphere.Radius));
+        }
 
         public static BoundingBox GetBoundingBox(IEnumerable<Vector3> points)
         {

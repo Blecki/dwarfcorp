@@ -96,7 +96,6 @@ namespace DwarfCorp
             ProjectileType = "";
             AnimationAsset = animation;
             CreateHitAnimation();
-            FileUtils.SaveBasicJson(this, name + "_attack.json");
         }
 
         public bool Perform(Vector3 pos, Voxel other, DwarfTime time, float bonus, string faction)

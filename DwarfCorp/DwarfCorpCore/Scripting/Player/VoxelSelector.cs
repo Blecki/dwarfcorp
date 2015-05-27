@@ -252,11 +252,11 @@ namespace DwarfCorp
                 {
                     //PlayState.ParticleManager.Trigger("flame", v.Position, new Color(v.SunColors[(int)VoxelVertex.FrontTopRight],  v.AmbientColors[(int)VoxelVertex.FrontTopRight],  v.DynamicColors[(int)VoxelVertex.FrontTopRight]), 5);
                 }
-                else if(Keyboard.GetState().IsKeyDown(ControlSettings.Default.SliceSelected))
+                else if(Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.SliceSelected))
                 {
                     Chunks.ChunkData.SetMaxViewingLevel(v.Position.Y, ChunkManager.SliceMode.Y);
                 }
-                else if(Keyboard.GetState().IsKeyDown(ControlSettings.Default.SliceSelectedUp))
+                else if(Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.Unslice))
                 {
                     Chunks.ChunkData.SetMaxViewingLevel(Chunks.ChunkData.ChunkSizeY, ChunkManager.SliceMode.Y);
                 }

@@ -95,7 +95,7 @@ namespace DwarfCorp.GameStates
                     MaintainState = false;
                     Overworld.CreateUniformLand(Game.GraphicsDevice);
                     StateManager.PushState("PlayState");
-                    PlayState.WorldSize = new Point3(6, 1, 6);
+                    PlayState.WorldSize = new Point3(8, 1, 8);
                     GUI.MouseMode = GUISkin.MousePointer.Wait;
             
                     IsGameRunning = true;
@@ -106,7 +106,7 @@ namespace DwarfCorp.GameStates
                     MaintainState = false;
                     Overworld.CreateHillsLand(Game.GraphicsDevice);
                     StateManager.PushState("PlayState");
-                    PlayState.WorldSize = new Point3(6, 1, 6);
+                    PlayState.WorldSize = new Point3(8, 1, 8);
                     GUI.MouseMode = GUISkin.MousePointer.Wait;
             
                     IsGameRunning = true;
@@ -117,7 +117,7 @@ namespace DwarfCorp.GameStates
                     MaintainState = false;
                     Overworld.CreateCliffsLand(Game.GraphicsDevice);
                     StateManager.PushState("PlayState");
-                    PlayState.WorldSize = new Point3(6, 1, 6);
+                    PlayState.WorldSize = new Point3(8, 1, 8);
                     GUI.MouseMode = GUISkin.MousePointer.Wait;
             
                     IsGameRunning = true;
@@ -128,7 +128,7 @@ namespace DwarfCorp.GameStates
                     MaintainState = false;
                     Overworld.CreateOceanLand(Game.GraphicsDevice);
                     StateManager.PushState("PlayState");
-                    PlayState.WorldSize = new Point3(6, 1, 6);
+                    PlayState.WorldSize = new Point3(8, 1, 8);
                     GUI.MouseMode = GUISkin.MousePointer.Wait;
             
                     IsGameRunning = true;
@@ -170,8 +170,6 @@ namespace DwarfCorp.GameStates
                 Input = new InputManager();
             }
 
-            EmployeeClassDef def = new EmployeeClassDef();
-            FileUtils.SaveBasicJson(def, "class.json");
             base.OnEnter();
         }
 
@@ -205,10 +203,9 @@ namespace DwarfCorp.GameStates
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
 
             DwarfGame.SpriteBatch.DrawString(GUI.DefaultFont, Program.Version, new Vector2(15, 15), Color.White);
-
+            GUI.PostRender(gameTime);
             DwarfGame.SpriteBatch.End();
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle = DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
-            GUI.PostRender(gameTime);
         }
 
         public override void Render(DwarfTime gameTime)

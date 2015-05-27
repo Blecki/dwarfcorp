@@ -35,7 +35,9 @@ namespace DwarfCorp
 
         public bool IsReserved = false;
         public GameComponent ReservedFor = null;
-
+        private BoundingBox lastBounds = new BoundingBox();
+        private Vector3 thresholdPos = new Vector3();
+        
         public Matrix GlobalTransform
         {
             get { return globalTransform; }
@@ -43,18 +45,27 @@ namespace DwarfCorp
             {
                 globalTransform = value;
 
-                if(!AddToOctree)
+                if(!AddToCollisionManager)
                 {
                     return;
                 }
 
-                if(!IsActive || (!HasMoved && wasEverAddedToOctree) || (!Manager.CollisionManager.NeedsUpdate(this, CollisionType)))
+                if(!IsActive || (!HasMoved && wasEverAddedToOctree) )
                 {
                     return;
                 }
 
-                Manager.CollisionManager.UpdateObject(this, CollisionType);
+                if (!ExceedsMovementThreshold && wasEverAddedToOctree)
+                    return;
+
+                Manager.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
+                Manager.CollisionManager.AddObject(this, CollisionType);
+
+                lastBounds = GetBoundingBox();
                 wasEverAddedToOctree = true;
+                HasMoved = false;
+                ExceedsMovementThreshold = false;
+                thresholdPos = Position;
             }
         }
 
@@ -67,6 +78,11 @@ namespace DwarfCorp
             {
                 localTransform = value;
                 HasMoved = true;
+
+                if ((Position - thresholdPos).LengthSquared() > 1.0)
+                {
+                    ExceedsMovementThreshold = true;
+                }
             }
         }
 
@@ -87,7 +103,9 @@ namespace DwarfCorp
         public bool DrawInFrontOfSiblings { get; set; }
         public bool IsAboveCullPlane { get; set; }
 
-        public List<MotionAnimation> AnimationQueue { get; set; } 
+        public List<MotionAnimation> AnimationQueue { get; set; }
+
+        public bool ExceedsMovementThreshold { get; set; }
 
         public bool HasMoved
         {
@@ -95,11 +113,6 @@ namespace DwarfCorp
             set
             {
                 hasMoved = value;
-
-                if(!AddToOctree)
-                {
-                    return;
-                }
 
                 foreach(Body child in Children.OfType<Body>())
                 {
@@ -118,7 +131,7 @@ namespace DwarfCorp
         protected Matrix globalTransform = Matrix.Identity;
         private bool hasMoved = true;
 
-        public bool AddToOctree { get; set; }
+        public bool AddToCollisionManager { get; set; }
         public bool DrawReservation { get; set; }
         public Body()
         {
@@ -142,14 +155,16 @@ namespace DwarfCorp
 
             if (OnDestroyed == null)
                 OnDestroyed += Body_OnDestroyed;
+
+            lastBounds = GetBoundingBox();
         }
 
-        public Body(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToOctree) :
+        public Body(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToCollisionManager) :
             base(name, parent)
         {
             DrawReservation = false;
             AnimationQueue = new List<MotionAnimation>();
-            AddToOctree = addToOctree;
+            AddToCollisionManager = addToCollisionManager;
             BoundingBoxPos = boundingBoxPos;
             DrawBoundingBox = false;
             BoundingBox = new BoundingBox(localTransform.Translation - boundingBoxExtents / 2.0f + boundingBoxPos, localTransform.Translation + boundingBoxExtents / 2.0f + boundingBoxPos);
@@ -164,7 +179,34 @@ namespace DwarfCorp
 
             if (OnDestroyed == null)
                 OnDestroyed += Body_OnDestroyed;
+
+            lastBounds = GetBoundingBox();
         }
+
+        public void OrientToWalls()
+        {
+            Voxel curr = new Voxel();
+            Voxel[] neighbors = new Voxel[4];
+            Vector3 pos = LocalTransform.Translation;
+            if (PlayState.ChunkManager.ChunkData.GetVoxel(pos, ref curr))
+            {
+                
+                curr.Chunk.Get2DManhattanNeighbors(neighbors, (int)curr.GridPosition.X, (int)curr.GridPosition.Y, (int)curr.GridPosition.Z);
+
+                foreach (Voxel neighbor in neighbors)
+                {
+                    if (neighbor != null && !neighbor.IsEmpty)
+                    {
+                        Vector3 diff = neighbor.Position - curr.Position;
+                        Matrix mat = Matrix.CreateRotationY((float)Math.Atan2(diff.X, diff.Z));
+                        mat.Translation = pos;
+                        LocalTransform = mat;
+                        break;
+                    }
+                }
+            }
+        }
+ 
 
         public Rectangle GetScreenRect(Camera camera)
         {
@@ -312,9 +354,9 @@ namespace DwarfCorp
         public override void Die()
         {
             UpdateBoundingBox();
-            if(AddToOctree)
+            if(AddToCollisionManager)
             {
-                Manager.CollisionManager.RemoveObject(this, CollisionType);
+                Manager.CollisionManager.RemoveObject(this, GetBoundingBox(), CollisionType);
             }
             IsActive = false;
             IsVisible = false;
