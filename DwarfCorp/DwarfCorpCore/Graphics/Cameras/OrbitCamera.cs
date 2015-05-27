@@ -178,21 +178,21 @@ namespace DwarfCorp
             }
 
             Vector3 velocityToSet = Vector3.Zero;
-            if (keys.IsKeyDown(ControlSettings.Default.Forward) || keys.IsKeyDown(Keys.Up))
+            if (keys.IsKeyDown(ControlSettings.Mappings.Forward) || keys.IsKeyDown(Keys.Up))
             {
                 Vector3 forward = (Target - Position);
                 forward.Normalize();
 
                 velocityToSet += forward * CameraMoveSpeed * dt;
             }
-            else if (keys.IsKeyDown(ControlSettings.Default.Back) || keys.IsKeyDown(Keys.Down))
+            else if (keys.IsKeyDown(ControlSettings.Mappings.Back) || keys.IsKeyDown(Keys.Down))
             {
                 Vector3 forward = (Target - Position);
                 forward.Normalize();
                 velocityToSet += -forward * CameraMoveSpeed * dt;
             }
 
-            if (keys.IsKeyDown(ControlSettings.Default.Left) || keys.IsKeyDown(Keys.Left))
+            if (keys.IsKeyDown(ControlSettings.Mappings.Left) || keys.IsKeyDown(Keys.Left))
             {
                 Vector3 forward = (Target - Position);
                 forward.Normalize();
@@ -200,7 +200,7 @@ namespace DwarfCorp
                 right.Normalize();
                 velocityToSet += -right * CameraMoveSpeed * dt;
             }
-            else if (keys.IsKeyDown(ControlSettings.Default.Right) || keys.IsKeyDown(Keys.Right))
+            else if (keys.IsKeyDown(ControlSettings.Mappings.Right) || keys.IsKeyDown(Keys.Right))
             {
                 Vector3 forward = (Target - Position);
                 forward.Normalize();
@@ -248,7 +248,7 @@ namespace DwarfCorp
 
             bool stateChanged = false;
             float dt = (float)time.ElapsedRealTime.TotalSeconds;
-
+            SnapToBounds(new BoundingBox(PlayState.ChunkManager.Bounds.Min, PlayState.ChunkManager.Bounds.Max + Vector3.UnitY * 20));
             if (KeyManager.RotationEnabled())
             {
                 if (!shiftPressed)
@@ -324,7 +324,7 @@ namespace DwarfCorp
 
             bool goingBackward = false;
             Vector3 velocityToSet = Vector3.Zero;
-            if (keys.IsKeyDown(ControlSettings.Default.Forward) || keys.IsKeyDown(Keys.Up))
+            if (keys.IsKeyDown(ControlSettings.Mappings.Forward) || keys.IsKeyDown(Keys.Up))
             {
                 Vector3 forward = (Target - Position);
                 forward.Normalize();
@@ -337,7 +337,7 @@ namespace DwarfCorp
 
                 velocityToSet += forward * CameraMoveSpeed * dt;
             }
-            else if (keys.IsKeyDown(ControlSettings.Default.Back) || keys.IsKeyDown(Keys.Down))
+            else if (keys.IsKeyDown(ControlSettings.Mappings.Back) || keys.IsKeyDown(Keys.Down))
             {
                 Vector3 forward = (Target - Position);
                 forward.Normalize();
@@ -353,7 +353,7 @@ namespace DwarfCorp
                 velocityToSet += -forward * CameraMoveSpeed * dt;
             }
 
-            if (keys.IsKeyDown(ControlSettings.Default.Left) || keys.IsKeyDown(Keys.Left))
+            if (keys.IsKeyDown(ControlSettings.Mappings.Left) || keys.IsKeyDown(Keys.Left))
             {
                 Vector3 forward = (Target - Position);
                 forward.Normalize();
@@ -366,7 +366,7 @@ namespace DwarfCorp
 
                 velocityToSet += -right * CameraMoveSpeed * dt;
             }
-            else if (keys.IsKeyDown(ControlSettings.Default.Right) || keys.IsKeyDown(Keys.Right))
+            else if (keys.IsKeyDown(ControlSettings.Mappings.Right) || keys.IsKeyDown(Keys.Right))
             {
                 Vector3 forward = (Target - Position);
                 forward.Normalize();
@@ -531,6 +531,11 @@ namespace DwarfCorp
             Target = p;
 
             return true;
+        }
+
+        public void SnapToBounds(BoundingBox bounds)
+        {
+            Target = MathFunctions.Clamp(Target, bounds);
         }
 
         public bool CollidesWithChunks(ChunkManager chunks, Vector3 pos, bool applyForce)

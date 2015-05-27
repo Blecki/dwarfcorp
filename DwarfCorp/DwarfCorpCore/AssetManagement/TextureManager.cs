@@ -16,7 +16,6 @@ namespace DwarfCorp
     /// </summary>
     public class TextureManager
     {
-        public static Dictionary<string, string> DefaultContent { get; set; }
         public static Dictionary<Texture2D, string> AssetMap { get; set; }
  
         public ContentManager Content { get; set; }
@@ -40,117 +39,26 @@ namespace DwarfCorp
 
         public static void InitializeStatics()
         {
-            DefaultContent = new Dictionary<string, string>();
-            DefaultContent["TileSet"] = ProgramData.CreatePath("Terrain", "terrain_tiles");
-            DefaultContent["DwarfSheet"] = ProgramData.CreatePath("Entities" ,"Dwarf" , "Sprites", "dwarf_animations");
-            DefaultContent["InteriorSheet"] = ProgramData.CreatePath("Entities", "Furniture", "interior_furniture");
-            DefaultContent["GUISheet"] = ProgramData.CreatePath("GUI", "gui_widgets");
-            DefaultContent["GoblinSheet"] = ProgramData.CreatePath("Entities", "Goblin", "Sprites", "goblin_withsword");
-            DefaultContent["IconSheet"] = ContentPaths.GUI.icons;
-            DefaultContent["CompanyLogo"] = ContentPaths.Logos.companylogo;
-            DefaultContent["CorpLogo"] = ContentPaths.Logos.grebeardlogo;
-            DefaultContent["ResourceSheet"] = ProgramData.CreatePath("Entities", "Resources", "resources");
             staticsInitialized = true;
         }
-
-
-
 
         public static Texture2D GetTexture(string asset)
         {
             Texture2D toReturn = Instance.GetInstanceTexture(asset);
-            
-            if(!DefaultContent.ContainsKey(asset))
-            {
-                DefaultContent[asset] = asset;
-            }
-
-            AssetMap[toReturn] = DefaultContent[asset];
             return toReturn;
         }
 
         public static Texture2D LoadTexture(string asset)
         {
             Texture2D toReturn = LoadInstanceTexture(asset);
-
-            if(!DefaultContent.ContainsKey(asset))
-            {
-                DefaultContent[asset] = asset;
-            }
-
-            AssetMap[toReturn] = DefaultContent[asset];
             return toReturn;
-        }
-
-        public static void SetStringValue(string asset, string v)
-        {
-            switch(asset)
-            {
-                case "TileSet":
-                    AssetSettings.Default.TileSet = v;
-                    break;
-                case "DwarfSheet":
-                    AssetSettings.Default.DwarfSheet = v;
-                    break;
-                case "GoblinSheet":
-                    AssetSettings.Default.GoblinSheet = v;
-                    break;
-                case "InteriorSheet":
-                    AssetSettings.Default.InteriorSheet = v;
-                    break;
-                case "IconSheet":
-                    AssetSettings.Default.IconSheet = v;
-                    break;
-                case "GUISheet":
-                    AssetSettings.Default.GUISheet = v;
-                    break;
-                case "CompanyLogo":
-                    break;
-                case "ResourceSheet":
-                    AssetSettings.Default.ResourceSheet = v;
-                    break;
-            }
-        }
-
-
-        public static string GetStringValue(string asset)
-        {
-            switch(asset)
-            {
-                case "TileSet":
-                    return AssetSettings.Default.TileSet;
-                case "DwarfSheet":
-                    return AssetSettings.Default.DwarfSheet;
-                case "GoblinSheet":
-                    return AssetSettings.Default.GoblinSheet;
-                case "InteriorSheet":
-                    return AssetSettings.Default.InteriorSheet;
-                case "IconSheet":
-                    return AssetSettings.Default.IconSheet;
-                case "GUISheet":
-                    return AssetSettings.Default.GUISheet;
-                case "CorpLogo":
-                    return ContentPaths.Logos.grebeardlogo;
-                case "ResourceSheet":
-                    return AssetSettings.Default.ResourceSheet;
-                default:
-                    return "";
-            }
         }
 
         public Texture2D GetInstanceTexture(string asset)
         {
-            string assetValue = GetStringValue(asset);
-
-            switch(assetValue)
-            {
-                case "":
-                    return Content.Load<Texture2D>(asset);
-                default:
-                    return Content.Load<Texture2D>(DefaultContent[asset]);
-               // default:
-               //     return LoadInstanceTexture(assetValue);
-            }
+            Texture2D toReturn =  Content.Load<Texture2D>(asset);
+            AssetMap[toReturn] = asset;
+            return toReturn;
         }
 
         public static Texture2D LoadInstanceTexture(string file)
@@ -159,7 +67,7 @@ namespace DwarfCorp
             FileStream stream = new FileStream(file, FileMode.Open);
             texture = Texture2D.FromStream(GameState.Game.GraphicsDevice, stream);
             stream.Close();
-
+            AssetMap[texture] = file;
             return texture;
         }
     }

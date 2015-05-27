@@ -51,7 +51,7 @@ namespace DwarfCorp
                 ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Berry]
             });
 
-            AddToOctree = true;
+            AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
         }
     }

@@ -147,9 +147,6 @@
     <Compile Include="..\DwarfCorpCore\AssetManagement\TextureManager.cs">
       <Link>AssetManagement\TextureManager.cs</Link>
     </Compile>
-    <Compile Include="..\DwarfCorpCore\AssetSettings.Designer.cs">
-      <Link>AssetSettings.Designer.cs</Link>
-    </Compile>
     <Compile Include="..\DwarfCorpCore\Components\AI\Creature.cs">
       <Link>Components\AI\Creature.cs</Link>
     </Compile>
@@ -243,8 +240,8 @@
     <Compile Include="..\DwarfCorpCore\Components\Systems\Message.cs">
       <Link>Components\Systems\Message.cs</Link>
     </Compile>
-    <Compile Include="..\DwarfCorpCore\ControlSettings.Designer.cs">
-      <Link>ControlSettings.Designer.cs</Link>
+    <Compile Include="..\DwarfCorpCore\ControlSettings.cs">
+      <Link>ControlSettings.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\DwarfGame.cs">
       <Link>DwarfGame.cs</Link>
@@ -279,6 +276,9 @@
     <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Crate.cs">
       <Link>Entities\Fixtures\Crate.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Door.cs">
+      <Link>Entities\Fixtures\Door.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Fixture.cs">
       <Link>Entities\Fixtures\Fixture.cs</Link>
     </Compile>
@@ -287,6 +287,9 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Forge.cs">
       <Link>Entities\Fixtures\Forge.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Ladder.cs">
+      <Link>Entities\Fixtures\Ladder.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Lamp.cs">
       <Link>Entities\Fixtures\Lamp.cs</Link>
@@ -351,8 +354,8 @@
     <Compile Include="..\DwarfCorpCore\Entities\Traps\BearTrap.cs">
       <Link>Entities\Traps\BearTrap.cs</Link>
     </Compile>
-    <Compile Include="..\DwarfCorpCore\GameSettings.Designer.cs">
-      <Link>GameSettings.Designer.cs</Link>
+    <Compile Include="..\DwarfCorpCore\GameSettings.cs">
+      <Link>GameSettings.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\GameStates\CompanyMakerState.cs">
       <Link>GameStates\CompanyMakerState.cs</Link>
@@ -596,9 +599,6 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\ApplicationPanel.cs">
       <Link>GUI\Components\Complex\ApplicationPanel.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\AssetManager.cs">
-      <Link>GUI\Components\Complex\AssetManager.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\BuildMenu.cs">
       <Link>GUI\Components\Complex\BuildMenu.cs</Link>
@@ -1364,13 +1364,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="DwarfCorp_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DwarfCorpContent\DwarfCorpXNAContent.contentproj">
       <Project>{D48F9E36-1F42-4633-B745-8C659D9550D4}</Project>
       <Name>DwarfCorpXNAContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>
+    </ProjectReference>
+    <ProjectReference Include="..\LibNoise\LibNoise.csproj">
+      <Project>{031c8cff-f147-44ea-b7e5-0a5644808a7e}</Project>
+      <Name>LibNoise</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

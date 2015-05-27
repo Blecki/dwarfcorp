@@ -93,7 +93,7 @@ namespace DwarfCorp
             CreateTools();
 
             InputManager.KeyReleasedCallback += OnKeyReleased;
-            ToolBar = new MasterControls(GUI, GUI.RootComponent, this, TextureManager.GetTexture("IconSheet"), graphics, game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default))
+            ToolBar = new MasterControls(GUI, GUI.RootComponent, this, TextureManager.GetTexture(ContentPaths.GUI.icons), graphics, game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default))
             {
                 Master = this
             };
@@ -358,18 +358,18 @@ namespace DwarfCorp
 
         public void OnKeyReleased(Keys key)
         {
-            if(key == ControlSettings.Default.SliceUp)
+            if(key == ControlSettings.Mappings.SliceUp)
             {
                 PlayState.ChunkManager.ChunkData.SetMaxViewingLevel(PlayState.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
             }
 
-            if(key == ControlSettings.Default.SliceDown)
+            if(key == ControlSettings.Mappings.SliceDown)
             {
                 PlayState.ChunkManager.ChunkData.SetMaxViewingLevel(PlayState.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
             }
 
 
-            if(key == ControlSettings.Default.GodMode)
+            if(key == ControlSettings.Mappings.GodMode)
             {
                 if(CurrentToolMode == ToolMode.God)
                 {

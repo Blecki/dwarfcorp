@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{031C8CFF-F147-44EA-B7E5-0A5644808A7E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LibNoise</RootNamespace>
+    <AssemblyName>LibNoise</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\LibNoise.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\Cylinder.cs" />
+    <Compile Include="Models\Line.cs" />
+    <Compile Include="Models\Plane.cs" />
+    <Compile Include="Models\Sphere.cs" />
+    <Compile Include="Modfiers\AbsoluteOutput.cs" />
+    <Compile Include="Modfiers\Add.cs" />
+    <Compile Include="Modfiers\BiasOutput.cs" />
+    <Compile Include="Modfiers\Blend.cs" />
+    <Compile Include="Checkerboard.cs" />
+    <Compile Include="Modfiers\ClampOutput.cs" />
+    <Compile Include="Constant.cs" />
+    <Compile Include="Cylinders.cs" />
+    <Compile Include="FastBillow.cs" />
+    <Compile Include="FastNoiseBasis.cs" />
+    <Compile Include="FastNoise.cs" />
+    <Compile Include="FastRidgedMultifractal.cs" />
+    <Compile Include="FastTurbulence.cs" />
+    <Compile Include="Modfiers\CurveOutput.cs" />
+    <Compile Include="Modfiers\DisplaceInput.cs" />
+    <Compile Include="Modfiers\ExponentialOutput.cs" />
+    <Compile Include="Modfiers\InvertInput.cs" />
+    <Compile Include="Modfiers\InvertOutput.cs" />
+    <Compile Include="Modfiers\LargerOutput.cs" />
+    <Compile Include="Math.cs" />
+    <Compile Include="IModule.cs" />
+    <Compile Include="Modfiers\Multiply.cs" />
+    <Compile Include="Modfiers\Power.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Modfiers\RotateInput.cs" />
+    <Compile Include="Modfiers\ScaleInput.cs" />
+    <Compile Include="Modfiers\ScaleBiasOutput.cs" />
+    <Compile Include="Modfiers\ScaleOutput.cs" />
+    <Compile Include="Modfiers\Select.cs" />
+    <Compile Include="Billow.cs" />
+    <Compile Include="GradientNoiseBasis.cs" />
+    <Compile Include="Perlin.cs" />
+    <Compile Include="RidgedMultifractal.cs" />
+    <Compile Include="Modfiers\SmallerOutput.cs" />
+    <Compile Include="Spheres.cs" />
+    <Compile Include="Modfiers\Terrace.cs" />
+    <Compile Include="Modfiers\TranslateInput.cs" />
+    <Compile Include="Turbulence.cs" />
+    <Compile Include="ValueNoiseBasis.cs" />
+    <Compile Include="Voronoi.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
