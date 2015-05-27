@@ -22,7 +22,7 @@ namespace DwarfCorp
         {
             Icon = icon;
             IconScale = 1.0f;
-            AddToOctree = false;
+            AddToCollisionManager = false;
             FrustrumCull = false;
             IsVisible = false;
         }

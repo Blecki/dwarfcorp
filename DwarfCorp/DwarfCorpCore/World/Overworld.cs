@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DwarfCorp.GameStates;
+using LibNoise;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Threading;
 using Newtonsoft.Json.Schema;
+using Math = System.Math;
 
 
 namespace DwarfCorp
@@ -184,7 +185,15 @@ namespace DwarfCorp
         };
 
 
-        public static Perlin heightNoise = new Perlin(PlayState.Random.Next());
+        public static LibNoise.Perlin heightNoise = new LibNoise.Perlin()
+        {
+            Frequency = 1.5f,
+            Lacunarity = 0.6f,
+            NoiseQuality = NoiseQuality.Standard,
+            OctaveCount = 4,
+            Seed = PlayState.Random.Next(),
+            Persistence = 0.2f
+        };
 
         public static List<Vector2> Volcanoes { get; set; }
         
@@ -353,7 +362,7 @@ namespace DwarfCorp
 
         public static float noise(float x, float y, float z, float s)
         {
-            return (float) heightNoise.Noise(x * s, y * s, z * s);
+            return (float) heightNoise.GetValue(x * s, y * s, z * s);
         }
 
         private static float clamp(float x, float min, float max)
@@ -777,7 +786,7 @@ namespace DwarfCorp
             {
                 for (int y = 0; y < size; y++)
                 {
-                    float height = ComputeHeight(x * 2.0f, y * 2.0f, size, size, 1.6f, false);
+                    float height = ComputeHeight(x * 1.0f, y * 1.0f, size, size, 1.6f, false);
 
                     if (height < 0.3f)
                     {

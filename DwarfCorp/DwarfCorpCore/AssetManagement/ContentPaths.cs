@@ -12,6 +12,9 @@ namespace DwarfCorp
     /// </summary>
     public class ContentPaths
     {
+        public static string controls = ProgramData.CreatePath("controls.json");
+        public static string settings = ProgramData.CreatePath("settings.json");
+
         public class Audio
         {
             public static string chew = ProgramData.CreatePath("Audio", "chew");

@@ -54,7 +54,7 @@ namespace DwarfCorp
             ShipDesignations = new List<ShipOrder>();
             GatherDesignations = new List<Body>();
             RoomBuilder = new RoomBuilder(this);
-            WallBuilder = new PutDesignator(this, TextureManager.GetTexture("TileSet"));
+            WallBuilder = new PutDesignator(this, TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles));
             CraftBuilder = new CraftBuilder(this);
         }
 

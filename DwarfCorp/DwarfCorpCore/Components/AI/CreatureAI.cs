@@ -50,6 +50,8 @@ namespace DwarfCorp
         public int MaxMessages = 10;
         public EnemySensor Sensor { get; set; }
 
+        public CreatureMovement Movement { get; set; }
+
         [JsonIgnore]
         public Grabber Hands
         {
@@ -117,7 +119,7 @@ namespace DwarfCorp
         public List<int> XPEvents { get; set; } 
         public CreatureAI()
         {
-            
+            Movement = new CreatureMovement();
         }
 
         public CreatureAI(Creature creature,
@@ -126,11 +128,12 @@ namespace DwarfCorp
             PlanService planService) :
                 base(name, creature.Physics)
         {
+            Movement = new CreatureMovement();
             GatherManager = new GatherManager(this);
             Blackboard = new Blackboard();
             Creature = creature;
             CurrentPath = null;
-            DrawPath = false;
+            DrawPath = true;
             PlannerTimer = new Timer(0.1f, false);
             LocalControlTimeout = new Timer(5, false);
             WanderTimer = new Timer(1, false);
@@ -537,6 +540,240 @@ namespace DwarfCorp
         }
 
 
+    }
+
+    public class CreatureMovement
+    {
+
+        private Voxel[,,] GetNeighborhood(Voxel voxel)
+        {
+            Voxel[, ,] neighborHood = new Voxel[3, 3, 3];
+            CollisionManager objectHash = PlayState.ComponentManager.CollisionManager;
+
+            VoxelChunk startChunk = voxel.Chunk;
+            int x = (int)voxel.GridPosition.X;
+            int y = (int)voxel.GridPosition.Y;
+            int z = (int)voxel.GridPosition.Z;
+            for (int dx = -1; dx < 2; dx++)
+            {
+                for (int dy = -1; dy < 2; dy++)
+                {
+                    for (int dz = -1; dz < 2; dz++)
+                    {
+                        neighborHood[dx + 1, dy + 1, dz + 1] = new Voxel();
+                        int nx = dx + x;
+                        int ny = dy + y;
+                        int nz = dz + z;
+                        if (!PlayState.ChunkManager.ChunkData.GetVoxel(startChunk, new Vector3(nx, ny, nz) + startChunk.Origin,
+                            ref neighborHood[dx + 1, dy + 1, dz + 1]))
+                        {
+                            neighborHood[dx + 1, dy + 1, dz + 1] = null;
+                        }
+
+                    }
+                }
+            }
+            return neighborHood;
+        }
+
+        bool HasNeighbors(Voxel[,,] neighborHood)
+        {
+            bool hasNeighbors = false;
+            for (int dx = 0; dx < 3; dx++)
+            {
+                for (int dz = 0; dz < 3; dz++)
+                {
+                    if (dx == 1 && dz == 1)
+                    {
+                        continue;
+                    }
+
+                    hasNeighbors = hasNeighbors || (neighborHood[dx, 1, dz] != null && (!neighborHood[dx, 1, dz].IsEmpty));
+                }
+            }
+
+
+            return hasNeighbors;
+        }
+
+        private bool IsEmpty(Voxel v)
+        {
+            return v == null || v.IsEmpty;
+        }
+
+        public List<Creature.MoveAction> GetMoveActions(Vector3 pos)
+        {
+            Voxel vox = new Voxel();
+            PlayState.ChunkManager.ChunkData.GetVoxel(pos, ref vox);
+            return GetMoveActions(vox);
+        }
+
+        public List<Creature.MoveAction> GetMoveActions(Voxel voxel)
+        {
+            List<Creature.MoveAction> toReturn = new List<Creature.MoveAction>();
+           
+            CollisionManager objectHash = PlayState.ComponentManager.CollisionManager;
+
+            Voxel[,,] neighborHood = GetNeighborhood(voxel);
+            int x = (int)voxel.GridPosition.X;
+            int y = (int)voxel.GridPosition.Y;
+            int z = (int)voxel.GridPosition.Z;
+            bool inWater = (neighborHood[1, 1, 1] != null && neighborHood[1, 1, 1].WaterLevel > 5);
+            bool standingOnGround = (neighborHood[1, 0, 1] != null && !neighborHood[1, 0, 1].IsEmpty);
+            bool topCovered = (neighborHood[1, 2, 1] != null && !neighborHood[1, 2, 1].IsEmpty);
+            bool hasNeighbors = HasNeighbors(neighborHood);
+
+
+            List<Creature.MoveAction> successors = new List<Creature.MoveAction>();
+
+            //Climbing ladders
+            List<IBoundedObject> bodiesInside =
+                objectHash.Hashes[CollisionManager.CollisionType.Static].GetItems(
+                    new Point3(MathFunctions.FloorInt(voxel.Position.X),
+                        MathFunctions.FloorInt(voxel.Position.Y),
+                        MathFunctions.FloorInt(voxel.Position.Z)));
+            if (bodiesInside != null)
+            {
+                bool hasLadder =
+                    bodiesInside.OfType<GameComponent>()
+                        .Any(component => component.Tags.Contains("Climbable"));
+                if (hasLadder) ;
+                {
+                    successors.Add(new Creature.MoveAction()
+                    {
+                        Diff = new Vector3(1, 2, 1),
+                        MoveType = Creature.MoveType.Climb
+                    });
+
+                    if (!standingOnGround)
+                    {
+                        successors.Add(new Creature.MoveAction()
+                        {
+                            Diff = new Vector3(1, 0, 1),
+                            MoveType = Creature.MoveType.Climb
+                        });
+                    }
+
+                    standingOnGround = true;
+                }
+            }
+
+
+            if (standingOnGround || inWater)
+            {
+                Creature.MoveType moveType = inWater ? Creature.MoveType.Swim : Creature.MoveType.Walk;
+                if (IsEmpty(neighborHood[0, 1, 0]))
+                    // +- x
+                    successors.Add(new Creature.MoveAction()
+                    {
+                        Diff = new Vector3(0, 1, 1),
+                        MoveType = moveType
+                    });
+
+                if (IsEmpty(neighborHood[2, 1, 1]))
+                    successors.Add(new Creature.MoveAction()
+                    {
+                        Diff = new Vector3(2, 1, 1),
+                        MoveType = moveType
+                    });
+
+                if (IsEmpty(neighborHood[1, 1, 0]))
+                    // +- z
+                    successors.Add(new Creature.MoveAction()
+                    {
+                        Diff = new Vector3(1, 1, 0),
+                        MoveType = moveType
+                    });
+
+                if (IsEmpty(neighborHood[1, 1, 2]))
+                    successors.Add(new Creature.MoveAction()
+                    {
+                        Diff = new Vector3(1, 1, 2),
+                        MoveType = moveType
+                    });
+
+                if (!hasNeighbors)
+                {
+                    if (IsEmpty(neighborHood[2, 1, 2]))
+                        // +x + z
+                        successors.Add(new Creature.MoveAction()
+                        {
+                            Diff = new Vector3(2, 1, 2),
+                            MoveType = moveType
+                        });
+
+                    if (IsEmpty(neighborHood[2, 1, 0]))
+                        successors.Add(new Creature.MoveAction()
+                        {
+                            Diff = new Vector3(2, 1, 0),
+                            MoveType = moveType
+                        });
+
+                    if (IsEmpty(neighborHood[0, 1, 2]))
+                        // -x -z
+                        successors.Add(new Creature.MoveAction()
+                        {
+                            Diff = new Vector3(0, 1, 2),
+                            MoveType = moveType
+                        });
+
+                    if (IsEmpty(neighborHood[0, 1, 0]))
+                        successors.Add(new Creature.MoveAction()
+                        {
+                            Diff = new Vector3(0, 1, 0),
+                            MoveType = moveType
+                        });
+                }
+
+            }
+
+            if (!topCovered && (standingOnGround || inWater))
+            {
+                for (int dx = 0; dx <= 2; dx++)
+                {
+                    for (int dz = 0; dz <= 2; dz++)
+                    {
+                        if (dx == 1 && dz == 1) continue;
+
+                        if (!IsEmpty(neighborHood[dx, 1, dz]))
+                        {
+                            successors.Add(new Creature.MoveAction()
+                            {
+                                Diff = new Vector3(dx, 2, dz),
+                                MoveType = Creature.MoveType.Jump
+                            });
+                        }
+                    }
+                }
+
+            }
+
+
+            // Falling
+            if (!inWater && !standingOnGround)
+            {
+                successors.Add(new Creature.MoveAction()
+                {
+                    Diff = new Vector3(1, 0, 1),
+                    MoveType = Creature.MoveType.Fall
+                });
+            }
+
+
+            foreach (Creature.MoveAction v in successors)
+            {
+                Voxel n = neighborHood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
+                if (n != null && (n.IsEmpty || n.WaterLevel > 0))
+                {
+                    Creature.MoveAction newAction = v;
+                    newAction.Voxel = n;
+                    toReturn.Add(newAction);
+                }
+            }
+
+
+            return toReturn;
+        }
     }
 
 }

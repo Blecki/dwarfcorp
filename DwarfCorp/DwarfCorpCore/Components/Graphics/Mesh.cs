@@ -36,8 +36,8 @@ namespace DwarfCorp
             
         }
 
-        public Mesh(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, string modelType, bool addToOctree) :
-            base(name, parent, localTransform, Vector3.Zero, Vector3.Zero, addToOctree)
+        public Mesh(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, string modelType, bool addToCollisionManager) :
+            base(name, parent, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
         {
             ModelType = modelType;
             Instance = PlayState.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);

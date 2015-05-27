@@ -489,7 +489,7 @@ namespace DwarfCorp.GameStates
 
         private void MotesSlider_OnValueModified(float arg)
         {
-            GameSettings.Default.NumMotes = arg / 100;
+            GameSettings.Default.NumMotes = (int)(arg / 100);
         }
 
         private void MoteBox_OnCheckModified(bool arg)
@@ -515,11 +515,6 @@ namespace DwarfCorp.GameStates
         private void cursorLight_OnCheckModified(bool arg)
         {
             GameSettings.Default.CursorLightEnabled = arg;
-        }
-
-        private void loadDialog_OnTextureSelected(TextureLoader.TextureFile arg)
-        {
-            AssetSettings.Default.TileSet = arg.File;
         }
 
         private void MusicSlider_OnValueModified(float arg)
@@ -635,7 +630,7 @@ namespace DwarfCorp.GameStates
 
         private void apply_OnClicked()
         {
-            GameSettings.Default.Save();
+            GameSettings.Save();
 
             StateManager.Game.Graphics.PreferredBackBufferWidth = GameSettings.Default.ResolutionX;
             StateManager.Game.Graphics.PreferredBackBufferHeight = GameSettings.Default.ResolutionY;
@@ -691,10 +686,10 @@ namespace DwarfCorp.GameStates
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
 
+            GUI.PostRender(gameTime);
             DwarfGame.SpriteBatch.End();
 
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle = DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
-            GUI.PostRender(gameTime);
         }
 
         public override void Render(DwarfTime gameTime)
