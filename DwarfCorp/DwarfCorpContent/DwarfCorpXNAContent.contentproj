@@ -960,6 +960,21 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Dwarf\Sprites\soldier-helmet.png">
+      <Name>soldier-helmet</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Sprites\wizard-hat.png">
+      <Name>wizard-hat</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Sprites\worker-helmet.png">
+      <Name>worker-helmet</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Entities\Moleman\moleman_animation.json">
       <Name>moleman_animation</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
