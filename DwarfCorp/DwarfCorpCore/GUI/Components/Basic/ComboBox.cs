@@ -39,6 +39,11 @@ namespace DwarfCorp
             }
         }
 
+        public void InvokeSelectionModified()
+        {
+            OnSelectionModified.Invoke(CurrentValue);
+        }
+
         private void ComboBox_OnLeftPressed()
         {
             if(Selector == null)

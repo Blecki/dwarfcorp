@@ -75,7 +75,7 @@ namespace DwarfCorp
                     yield break;
                 }
 
-                List<Creature.MoveAction> neighbors = Agent.Chunks.ChunkData.GetMovableNeighbors(Agent.Position);
+                List<Creature.MoveAction> neighbors = Agent.Movement.GetMoveActions(Agent.Position);
                 neighbors.Sort((a, b) =>
                 {
                     if (a.Equals(b)) return 0;

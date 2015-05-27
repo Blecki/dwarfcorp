@@ -24,7 +24,7 @@ namespace DwarfCorp
         {
             Spawns = spawns;
             ThrowSpeed = 5.0f;
-            AddToOctree = false;
+            AddToCollisionManager = false;
         }
 
         public override void Die()
@@ -40,7 +40,7 @@ namespace DwarfCorp
                 locatable.SetActiveRecursive(true);
                 locatable.HasMoved = true;
                 locatable.WasAddedToOctree = false;
-                locatable.AddToOctree = true;
+                locatable.AddToCollisionManager = true;
 
                 var component = locatable as Physics;
                 if(component != null)

@@ -17,43 +17,47 @@ namespace DwarfCorp
 
         public void SaveConfigSettings()
         {
-            ControlSettings.Default.CameraMode = this["Rotate Camera"];
-            ControlSettings.Default.Back = this["Back"];
-            ControlSettings.Default.Forward = this["Forward"];
-            ControlSettings.Default.Left = this["Left"];
-            ControlSettings.Default.Right = this["Right"];
-            ControlSettings.Default.SliceUp = this["Slice Up"];
-            ControlSettings.Default.SliceDown = this["Slice Down"];
-            ControlSettings.Default.SliceSelected = this["Goto Slice"];
-            ControlSettings.Default.SliceSelectedUp = this["Un-Slice"];
-            ControlSettings.Default.GodMode = this["God Mode"];
-            ControlSettings.Default.TimeForward = this["Time +"];
-            ControlSettings.Default.TimeBackward = this["Time -"];
-            ControlSettings.Default.ToggleGUI = this["Toggle GUI"];
-            ControlSettings.Default.OrderScreen = this["Debug Order"];
-            ControlSettings.Default.Map = this["Toggle Map"];
-            ControlSettings.Default.Pause = this["Pause"];
-            ControlSettings.Default.Save();
+            ControlSettings.Reset();
+            ControlSettings.Mappings.CameraMode = this["Rotate Camera"];
+            ControlSettings.Mappings.Back = this["Back"];
+            ControlSettings.Mappings.Forward = this["Forward"];
+            ControlSettings.Mappings.Left = this["Left"];
+            ControlSettings.Mappings.Right = this["Right"];
+            ControlSettings.Mappings.SliceUp = this["Slice Up"];
+            ControlSettings.Mappings.SliceDown = this["Slice Down"];
+            ControlSettings.Mappings.SliceSelected = this["Goto Slice"];
+            ControlSettings.Mappings.Unslice = this["Un-Slice"];
+            ControlSettings.Mappings.GodMode = this["God Mode"];
+            ControlSettings.Mappings.TimeForward = this["Time +"];
+            ControlSettings.Mappings.TimeBackward = this["Time -"];
+            ControlSettings.Mappings.ToggleGUI = this["Toggle GUI"];
+            ControlSettings.Mappings.Map = this["Toggle Map"];
+            ControlSettings.Mappings.Pause = this["Pause"];
+            ControlSettings.Save();
         }
 
         public void LoadConfigSettings()
         {
-            this["Rotate Camera"] = ControlSettings.Default.CameraMode;
-            this["Back"] = ControlSettings.Default.Back;
-            this["Forward"] = ControlSettings.Default.Forward;
-            this["Left"] = ControlSettings.Default.Left;
-            this["Right"] = ControlSettings.Default.Right;
-            this["Slice Up"] = ControlSettings.Default.SliceUp;
-            this["Slice Down"] = ControlSettings.Default.SliceDown;
-            this["Goto Slice"] = ControlSettings.Default.SliceSelected;
-            this["Un-Slice"] = ControlSettings.Default.SliceSelectedUp;
-            this["God Mode"] = ControlSettings.Default.GodMode;
-            this["Time +"] = ControlSettings.Default.TimeForward;
-            this["Time -"] = ControlSettings.Default.TimeBackward;
-            this["Toggle GUI"] = ControlSettings.Default.ToggleGUI;
-            this["Debug Order"] = ControlSettings.Default.OrderScreen;
-            this["Toggle Map"] = ControlSettings.Default.Map;
-            this["Pause"] = ControlSettings.Default.Pause;
+            if (ControlSettings.Mappings == null)
+            {
+                ControlSettings.Load();
+            }
+
+            this["Rotate Camera"] = ControlSettings.Mappings.CameraMode;
+            this["Back"] = ControlSettings.Mappings.Back;
+            this["Forward"] = ControlSettings.Mappings.Forward;
+            this["Left"] = ControlSettings.Mappings.Left;
+            this["Right"] = ControlSettings.Mappings.Right;
+            this["Slice Up"] = ControlSettings.Mappings.SliceUp;
+            this["Slice Down"] = ControlSettings.Mappings.SliceDown;
+            this["Goto Slice"] = ControlSettings.Mappings.SliceSelected;
+            this["Un-Slice"] = ControlSettings.Mappings.Unslice;
+            this["God Mode"] = ControlSettings.Mappings.GodMode;
+            this["Time +"] = ControlSettings.Mappings.TimeForward;
+            this["Time -"] = ControlSettings.Mappings.TimeBackward;
+            this["Toggle GUI"] = ControlSettings.Mappings.ToggleGUI;
+            this["Toggle Map"] = ControlSettings.Mappings.Map;
+            this["Pause"] = ControlSettings.Mappings.Pause;
         }
 
         public KeyManager()
@@ -83,7 +87,7 @@ namespace DwarfCorp
         {
             KeyboardState keys = Keyboard.GetState();
 
-            return keys.IsKeyDown(ControlSettings.Default.CameraMode) || keys.IsKeyDown(Keys.RightShift);
+            return keys.IsKeyDown(ControlSettings.Mappings.CameraMode) || keys.IsKeyDown(Keys.RightShift);
         }
 
         public bool IsMapped(Keys keys)

@@ -33,7 +33,7 @@ namespace DwarfCorp.GameStates
         private ImagePanel MapPanel { get; set; }
         public InputManager Input { get; set; }
         public ColorKey ColorKeys { get; set; }
-
+        public ImagePanel CloseupPanel { get; set; }
         public int Seed
         {
             get { return PlayState.Seed; }
@@ -110,14 +110,22 @@ namespace DwarfCorp.GameStates
                 ToolTip = "Map of the world.\nClick to select a location to embark."
             };
 
-            GridLayout mapLayout = new GridLayout(GUI, MapPanel, 4, 4);
+            GridLayout mapLayout = new GridLayout(GUI, MapPanel, 4, 5);
 
             ColorKeys = new ColorKey(GUI, mapLayout)
             {
                 ColorEntries = Overworld.HeightColors
             };
 
-            mapLayout.SetComponentPosition(ColorKeys, 3, 0, 1, 3);
+            mapLayout.SetComponentPosition(ColorKeys, 3, 0, 1, 1);
+
+            CloseupPanel = new ImagePanel(GUI, mapLayout, new ImageFrame(worldMap, new Rectangle(0, 0, 128, 128)))
+            {
+                KeepAspectRatio = true,
+                ToolTip = "Closeup of the colony location"
+            };
+
+            mapLayout.SetComponentPosition(CloseupPanel, 3, 2, 2, 2);
 
             layout.SetComponentPosition(MapPanel, 0, 0, 3, 5);
 
@@ -140,15 +148,15 @@ namespace DwarfCorp.GameStates
 
             ComboBox worldSizeBox = new ComboBox(GUI, mapPropertiesLayout)
             {
-                ToolTip = "Size of the spawn area."
+                ToolTip = "Size of the colony spawn area."
             };
             
 
-            worldSizeBox.AddValue("Tiny");
-            worldSizeBox.AddValue("Small");
-            worldSizeBox.AddValue("Medium");
-            worldSizeBox.AddValue("Large");
-            worldSizeBox.AddValue("Huge");
+            worldSizeBox.AddValue("Tiny Colony");
+            worldSizeBox.AddValue("Small Colony");
+            worldSizeBox.AddValue("Medium Colony");
+            worldSizeBox.AddValue("Large Colony");
+            worldSizeBox.AddValue("Huge Colony");
             worldSizeBox.CurrentIndex = 1;
 
             worldSizeBox.OnSelectionModified += worldSizeBox_OnSelectionModified;
@@ -188,19 +196,19 @@ namespace DwarfCorp.GameStates
         {
             switch (arg)
             {
-                case "Tiny":
+                case "Tiny Colony":
                     PlayState.WorldSize = new Point3(4, 1, 4);
                     break;
-                case "Small":
+                case "Small Colony":
                     PlayState.WorldSize = new Point3(8, 1, 8);
                     break;
-                case "Medium":
+                case "Medium Colony":
                     PlayState.WorldSize = new Point3(10, 1, 10);
                     break;
-                case "Large":
+                case "Large Colony":
                     PlayState.WorldSize = new Point3(16, 1, 16);
                     break;
-                case "Huge":
+                case "Huge Colony":
                     PlayState.WorldSize = new Point3(24, 1, 24);
                     break;
             }
@@ -417,7 +425,7 @@ namespace DwarfCorp.GameStates
                 GenerationComplete = false;
 
                 LoadingMessage = "Init..";
-                Overworld.heightNoise = new Perlin(seed);
+                Overworld.heightNoise.Seed = Seed;
                 worldMap = new Texture2D(Game.GraphicsDevice, width, height);
                 worldData = new Color[width * height];
                 Overworld.Map = new Overworld.MapData[width, height];
@@ -448,7 +456,7 @@ namespace DwarfCorp.GameStates
                 {
                     for (int y = 0; y < height; y++)
                     {
-                        Overworld.Map[x, y].Temperature = Overworld.noise(x, y, 1.0f, 0.001f) * 0.1f + ((float)(y) / (float)(height)) + Overworld.noise(x, y, 10.0f, 0.1f) * 0.05f * Settings.TemperatureScale;
+                        Overworld.Map[x, y].Temperature = ((float)(y) / (float)(height)) * Settings.TemperatureScale;
                         //Overworld.Map[x, y].Rainfall = Math.Max(Math.Min(Overworld.noise(x, y, 1000.0f, 0.01f) + Overworld.noise(x, y, 100.0f, 0.1f) * 0.05f, 1.0f), 0.0f) * RainfallScale;
                     }
                 }
@@ -459,7 +467,7 @@ namespace DwarfCorp.GameStates
                 {
                     for (int y = 0; y < height; y++)
                     {
-                        Overworld.Map[x, y].Temperature = Math.Max(Math.Min(Overworld.Map[x, y].Temperature / (Overworld.Map[x, y].Height * 2.0f), 1.0f), 0.0f);
+                        Overworld.Map[x, y].Temperature = Math.Max(Math.Min(Overworld.Map[x, y].Temperature, 1.0f), 0.0f);
                     }
                 }
         
@@ -490,7 +498,7 @@ namespace DwarfCorp.GameStates
                 #region erosion
 
                 float[,] buffer = new float[width, height];
-                Erode(width, height, Overworld.Map, numRains, rainLength, numRainSamples, buffer);
+                Erode(width, height, Settings.SeaLevel, Overworld.Map, numRains, rainLength, numRainSamples, buffer);
                 Overworld.GenerateHeightMap(width, height, 1.0f, true);
 
                 #endregion
@@ -579,12 +587,15 @@ namespace DwarfCorp.GameStates
                     {
                         currentMoisture += MathFunctions.Rand(0.1f, 0.3f);
                         currentMoisture = Math.Min(currentMoisture, Settings.RainfallScale * 20);
+                        Overworld.Map[x, y].Rainfall = 0.5f;
                     }
                     else
                     {
-                        float rainAmount = currentMoisture * 0.017f * h + currentMoisture * 0.006f;
+                        float rainAmount = currentMoisture * 0.017f * h + currentMoisture * 0.0006f;
                         currentMoisture -= rainAmount;
-                        Overworld.Map[x, y].Rainfall = rainAmount * Settings.RainfallScale * 5;
+                        float evapAmount = MathFunctions.Rand(0.01f, 0.02f);
+                        currentMoisture += evapAmount;
+                        Overworld.Map[x, y].Rainfall = rainAmount * Settings.RainfallScale * Settings.Width * 0.015f;
                     }
                 }
             }
@@ -630,7 +641,7 @@ namespace DwarfCorp.GameStates
                     rands.Add(1.0f);
 
                     line.Add(v);
-                    v += new Vector2(MathFunctions.Rand() - 0.5f, MathFunctions.Rand() - 0.5f) * 150;
+                    v += new Vector2(MathFunctions.Rand() - 0.5f, MathFunctions.Rand() - 0.5f) * Settings.Width * 0.5f;
                     line.Add(v);
                     vPoints.Add(line);
                 }
@@ -663,7 +674,7 @@ namespace DwarfCorp.GameStates
             Overworld.Distort(width, height, 20, 0.01f, Overworld.ScalarFieldType.Faults);
         }
 
-        private void Erode(int width, int height, Overworld.MapData[,] heightMap, int numRains, int rainLength, int numRainSamples, float[,] buffer)
+        private void Erode(int width, int height, float seaLevel, Overworld.MapData[,] heightMap, int numRains, int rainLength, int numRainSamples, float[,] buffer)
         {
             float remaining = 1.0f - Progress.Value - 0.2f;
             float orig = Progress.Value;
@@ -671,7 +682,7 @@ namespace DwarfCorp.GameStates
             {
                 for(int y = 0; y < height; y++)
                 {
-                    buffer[x, y] = heightMap[x, y].Faults;
+                    buffer[x, y] = heightMap[x, y].Height;
                 }
             }
 
@@ -707,7 +718,7 @@ namespace DwarfCorp.GameStates
 
                     float h = Overworld.GetHeight(buffer, currentPos);
 
-                    if(h < 0.18f || g.LengthSquared() < 1e-12)
+                    if(h < seaLevel|| g.LengthSquared() < 1e-12)
                     {
                         break;
                     }
@@ -853,7 +864,7 @@ namespace DwarfCorp.GameStates
                 return 1.0f;
             }
 
-            return (float) (0.00003f*(maxNode.dist));
+            return (float) (1e-2*(maxNode.dist / Settings.Width));
         }
 
 
@@ -965,19 +976,14 @@ namespace DwarfCorp.GameStates
         {
             if (StateManager.CurrentState == Name)
             {
+                GUI.Update(gameTime);
+                Input.Update();
 
-                if (!IsGenerating && DoneGenerating)
-                {
-                    GUI.Update(gameTime);
-                    Input.Update();
-                }
-                else if (!IsGenerating && !DoneGenerating)
+                GUI.EnableMouseEvents = !IsGenerating;
+
+                if (!IsGenerating && !DoneGenerating)
                 {
                     Generate();
-                }
-                else
-                { 
-                    GUI.RootComponent.UpdateSizeRecursive();  
                 }
             }
             TransitionValue = 1.0f;
@@ -1014,10 +1020,7 @@ namespace DwarfCorp.GameStates
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(0, dx));
 
-            if(!GenerationComplete)
-            {
-                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, LoadingMessage, DefaultFont, new Vector2(Progress.GlobalBounds.Center.X, Progress.GlobalBounds.Center.Y - 8), Color.White, Color.Black);
-            }
+            Progress.Message = !GenerationComplete ? LoadingMessage : "";
 
             if(GenerationComplete)
             {
@@ -1029,11 +1032,15 @@ namespace DwarfCorp.GameStates
                 Drawer2D.DrawRect(DwarfGame.SpriteBatch, spawnRectOnImage, Color.Yellow, 3.0f);
                 Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Spawn", DefaultFont, new Vector2(spawnRectOnImage.X - 5, spawnRectOnImage.Y - 20), Color.White, Color.Black);
 
-                ImageMutex.WaitOne();
+                //ImageMutex.WaitOne();
+                /*
                 DwarfGame.SpriteBatch.Draw(MapPanel.Image.Image,
                     new Rectangle(MapPanel.GetImageBounds().Right + 2, MapPanel.GetImageBounds().Top,  spawnRect.Width * 4, spawnRect.Height * 4),
                    spawnRect, Color.White);
-                ImageMutex.ReleaseMutex();
+                 */
+                //ImageMutex.ReleaseMutex();
+                CloseupPanel.Image.Image = MapPanel.Image.Image;
+                CloseupPanel.Image.SourceRect = spawnRect;
 
 
                 if (ViewSelectionBox.CurrentValue == "Factions")
@@ -1052,8 +1059,8 @@ namespace DwarfCorp.GameStates
                 }
             }
 
-            DwarfGame.SpriteBatch.End();
             GUI.PostRender(gameTime);
+            DwarfGame.SpriteBatch.End();
         }
 
         public override void Render(DwarfTime gameTime)

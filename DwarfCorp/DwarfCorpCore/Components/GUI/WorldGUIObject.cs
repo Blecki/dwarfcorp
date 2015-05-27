@@ -22,7 +22,7 @@ namespace DwarfCorp
             base("GUIObject", parent, Matrix.Identity, Vector3.One, Vector3.Zero)
         {
             GUIObject = guiObject;
-            AddToOctree = false;
+            AddToCollisionManager = false;
             FrustrumCull = false;
             IsVisible = false;
             Enabled = false;
