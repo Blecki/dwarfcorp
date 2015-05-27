@@ -54,9 +54,11 @@ namespace DwarfCorp
 
         public bool DebugDraw { get; set; }
         public int LastScrollWheel { get; set; }
+        public bool EnableMouseEvents { get; set; }
 
         public DwarfGUI(DwarfGame game, SpriteFont defaultFont, SpriteFont titleFont, SpriteFont smallFont, InputManager input)
         {
+            EnableMouseEvents = true;
             IsMouseVisible = true;
             MouseMode = GUISkin.MousePointer.Pointer;
             SmallFont = smallFont;
@@ -68,7 +70,7 @@ namespace DwarfCorp
             };
 
             DefaultFont = defaultFont;
-            Skin = new GUISkin(TextureManager.GetTexture("GUISheet"), 32, 32, TextureManager.GetTexture(ContentPaths.GUI.pointers), 16, 16);
+            Skin = new GUISkin(TextureManager.GetTexture(ContentPaths.GUI.gui_widgets), 32, 32, TextureManager.GetTexture(ContentPaths.GUI.pointers), 16, 16);
             Skin.SetDefaults();
             TitleFont = titleFont;
             GlobalOffset = Vector2.Zero;
@@ -139,12 +141,11 @@ namespace DwarfCorp
         {
             RootComponent.LocalBounds = new Rectangle(0, 0, GameState.Game.GraphicsDevice.Viewport.Width, GameState.Game.GraphicsDevice.Viewport.Height);
             ToolTipManager.Update(time);
-            
+
             if(!IsMouseVisible)
             {
                 return;
             }
-
 
             if(FocusComponent == null)
             {
@@ -166,7 +167,12 @@ namespace DwarfCorp
 
         public void PostRender(DwarfTime time)
         {
-            
+            if (IsMouseVisible)
+            {
+                MouseState mouse = Mouse.GetState();
+                Skin.RenderMouse(mouse.X, mouse.Y, MouseScale, MouseMode, DwarfGame.SpriteBatch, MouseTint);
+            }
+            ToolTipManager.Render(Graphics, DwarfGame.SpriteBatch, time);
         }
 
         public void Render(DwarfTime time, SpriteBatch batch, Vector2 globalOffset)
@@ -197,12 +203,6 @@ namespace DwarfCorp
                 RootComponent.DebugRender(time, batch);
             }
 
-            if(IsMouseVisible)
-            {
-                MouseState mouse = Mouse.GetState();
-                Skin.RenderMouse(mouse.X, mouse.Y, MouseScale, MouseMode, batch, MouseTint);
-            }
-            ToolTipManager.Render(Graphics, batch, time);
         }
 
 

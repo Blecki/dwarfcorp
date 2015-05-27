@@ -84,8 +84,8 @@ namespace DwarfCorp
 
         private static Rectangle GetRect(int x, int y)
         {
-            int tileSheetWidth = AssetSettings.Default.ResourceSheet_tileWidth;
-            int tileSheetHeight = AssetSettings.Default.ResourceSheet_tileHeight;
+            int tileSheetWidth = 32;
+            int tileSheetHeight = 32;
             return new Rectangle(x * tileSheetWidth, y * tileSheetHeight, tileSheetWidth, tileSheetHeight);
         }
 

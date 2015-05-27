@@ -68,8 +68,7 @@ namespace DwarfCorp
             LavaHeight = 0.6f;
             TileSize = 64;
             Noise = new Perlin(1928);
-
-            Texture2D tiles = TextureManager.GetTexture("TileSet");
+            Texture2D tiles = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
 
             Substrate = new TerrainElement
             {

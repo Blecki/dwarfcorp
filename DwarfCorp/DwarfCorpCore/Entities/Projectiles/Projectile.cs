@@ -31,7 +31,7 @@ namespace DwarfCorp
             IsSleeping = false;
             Velocity = initialVelocity;
             Orientation = OrientMode.LookAt;
-            AddToOctree = false;
+            AddToCollisionManager = false;
 
             Sprite = new Sprite(PlayState.ComponentManager, "Sprite", this, Matrix.CreateRotationY((float)Math.PI * 0.5f),
                 new SpriteSheet(asset), false)

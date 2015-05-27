@@ -39,7 +39,7 @@ namespace DwarfCorp
         public int MaxChunks
         {
             get { return (int) GameSettings.Default.MaxChunks; }
-            set { GameSettings.Default.MaxChunks = (ulong) value; }
+            set { GameSettings.Default.MaxChunks = (int) value; }
         }
 
         public float MaxViewingLevel { get; set; }
@@ -119,16 +119,6 @@ namespace DwarfCorp
             return true;
         }
 
-        public List<Creature.MoveAction> GetMovableNeighbors(Vector3 worldPosition)
-        {
-            VoxelChunk chunk = GetVoxelChunkAtWorldLocation(worldPosition);
-
-            if (chunk == null) return null;
-
-            Vector3 grid = chunk.WorldToGrid(worldPosition);
-
-            return chunk.GetMovableNeighbors((int)grid.X, (int)grid.Y, (int)grid.Z);
-        }
 
         public Voxel GetFirstVisibleBlockHitByMouse(MouseState mouse, Camera camera, Viewport viewPort, bool selectEmpty = false)
         {

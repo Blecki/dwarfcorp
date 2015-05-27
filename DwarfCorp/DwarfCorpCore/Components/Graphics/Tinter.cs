@@ -30,8 +30,8 @@ namespace DwarfCorp
             
         }
 
-        public Tinter(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool octree) :
-            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos, octree)
+        public Tinter(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool collisionManager) :
+            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos, collisionManager)
         {
             LightsWithVoxels = true;
             Tint = new Color(255, 255, 0);

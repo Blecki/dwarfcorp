@@ -18,11 +18,14 @@ namespace DwarfCorp
  
         public DwarfGame()
         {
+            GameState.Game = this;
             Content.RootDirectory = "Content";
             StateManager = new GameStateManager(this);
             Graphics = new GraphicsDeviceManager(this);
             Window.Title = "DwarfCorp";
             Window.AllowUserResizing = false;
+            TextureManager = new TextureManager(Content, GraphicsDevice);
+            GameSettings.Load();
             Graphics.IsFullScreen = GameSettings.Default.Fullscreen;
             Graphics.PreferredBackBufferWidth = GameSettings.Default.ResolutionX;
             Graphics.PreferredBackBufferHeight = GameSettings.Default.ResolutionY;
@@ -51,7 +54,6 @@ namespace DwarfCorp
 
         protected override void LoadContent()
         {
-            TextureManager = new TextureManager(Content, GraphicsDevice);
 
             PlayState playState = new PlayState(this, StateManager);
             BiomeLibrary.InitializeStatics();

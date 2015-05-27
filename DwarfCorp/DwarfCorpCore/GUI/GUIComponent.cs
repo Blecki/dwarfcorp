@@ -282,32 +282,33 @@ namespace DwarfCorp
 
             MouseState state = Mouse.GetState();
 
-
-            if(OverrideClickBehavior)
+            if (GUI.EnableMouseEvents)
             {
-                HandleClicks(state);
-            }
-            else if(GlobalBounds.Contains(state.X, state.Y))
-            {
-                if(IsMouseOver)
+                if (OverrideClickBehavior)
                 {
                     HandleClicks(state);
                 }
-
-                if(!IsMouseOver)
+                else if (GlobalBounds.Contains(state.X, state.Y))
                 {
-                    IsMouseOver = true;
-                    OnHover();
+                    if (IsMouseOver)
+                    {
+                        HandleClicks(state);
+                    }
+
+                    if (!IsMouseOver)
+                    {
+                        IsMouseOver = true;
+                        OnHover();
+                    }
+                }
+                else if (IsMouseOver)
+                {
+                    IsMouseOver = false;
+                    OnUnHover();
+                    IsLeftPressed = false;
+                    IsRightPressed = false;
                 }
             }
-            else if(IsMouseOver)
-            {
-                IsMouseOver = false;
-                OnUnHover();
-                IsLeftPressed = false;
-                IsRightPressed = false;
-            }
-
 
             foreach(GUIComponent child in ChildrenToAdd)
             {

@@ -16,8 +16,10 @@
     <XnaProfile>Reach</XnaProfile>
     <XnaCrossPlatformGroupID>39a9f6d8-cd8e-472c-8245-9abf1503f624</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
-    <ApplicationIcon>favicon.ico</ApplicationIcon>
-    <Thumbnail>GameThumbnail.png</Thumbnail>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <Thumbnail>
+    </Thumbnail>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>C:\Users\Mklingen\Desktop\DwarfCorpBuild\</PublishUrl>
     <Install>true</Install>
@@ -1200,32 +1202,6 @@
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="favicon.ico" />
-    <Content Include="FNA.dll" />
-    <Content Include="Game.ico" />
-    <Content Include="GameThumbnail.png" />
-    <Content Include="SDL.dll" />
-    <Content Include="SDL2.dll" />
-    <Content Include="SDL_gfx.dll" />
-    <Content Include="SDL_image.dll" />
-    <Content Include="SDL_mixer.dll" />
-    <Content Include="SDL_net.dll" />
-    <Content Include="SDL_ttf.dll" />
-    <Content Include="TheoraPlay-CS.dll" />
-    <None Include="..\DwarfCorpCore\AssetSettings.settings">
-      <Link>AssetSettings.settings</Link>
-      <CustomToolNamespace>DwarfCorpCore</CustomToolNamespace>
-    </None>
-    <None Include="..\DwarfCorpCore\ControlSettings.settings">
-      <Link>ControlSettings.settings</Link>
-      <CustomToolNamespace>DwarfCorpCore</CustomToolNamespace>
-    </None>
-    <None Include="..\DwarfCorpCore\GameSettings.settings">
-      <Link>GameSettings.settings</Link>
-    </None>
-    <None Include="Newtonsoft.Json.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
@@ -1251,10 +1227,6 @@
       <ProductName>Microsoft XNA Framework Redistributable 4.0</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="DwarfCorp_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DwarfCorpContent\DwarfCorpXNAContent.contentproj">

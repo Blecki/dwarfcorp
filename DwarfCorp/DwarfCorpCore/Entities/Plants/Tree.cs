@@ -65,7 +65,7 @@ namespace DwarfCorp
             };
 
 
-            AddToOctree = true;
+            AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
         }
 

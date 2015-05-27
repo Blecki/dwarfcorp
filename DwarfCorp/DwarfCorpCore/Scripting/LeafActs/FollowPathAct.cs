@@ -45,7 +45,7 @@ namespace DwarfCorp
             for (int i = 0; i < path.Count - 1; i++)
             {
                 if (!path[i].Voxel.IsEmpty) return false;
-                List<Creature.MoveAction> neighbors = Agent.Chunks.ChunkData.ChunkMap[path[i].Voxel.ChunkID].GetMovableNeighbors(path[i].Voxel);
+                List<Creature.MoveAction> neighbors = Agent.Movement.GetMoveActions(path[i].Voxel);
                 bool valid = false;
                 foreach (Creature.MoveAction vr in neighbors)
                 {

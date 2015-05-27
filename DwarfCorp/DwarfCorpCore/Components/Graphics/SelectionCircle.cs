@@ -24,7 +24,7 @@ namespace DwarfCorp
             base(manager, "Selection", parent, Matrix.CreateRotationX((float)Math.PI), new SpriteSheet(ContentPaths.Effects.selection_circle), false)
         {
             LightsWithVoxels = false;
-            AddToOctree = false;
+            AddToCollisionManager = false;
             OrientationType = OrientMode.Fixed;
             List<Point> shP = new List<Point>
             {

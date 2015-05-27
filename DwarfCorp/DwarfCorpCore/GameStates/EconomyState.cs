@@ -204,10 +204,9 @@ namespace DwarfCorp.GameStates
 
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
 
-            Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);   
-
-            DwarfGame.SpriteBatch.End();
+            Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.PostRender(gameTime);
+            DwarfGame.SpriteBatch.End();
         }
 
         public override void Render(DwarfTime gameTime)
