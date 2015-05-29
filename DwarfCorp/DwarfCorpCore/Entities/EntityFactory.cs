@@ -98,7 +98,13 @@ namespace DwarfCorp
             RegisterEntity("Arrow", (position, data) => new ArrowProjectile(position, data.GetData("Velocity", Vector3.Up*10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData("Faction", "Elf")));
             RegisterEntity("Fairy", (position, data) => new Fairy("Player", position));
             RegisterEntity("Target", (position, data) => new Target(position));
-            RegisterEntity("Strawman", (position, data) => new Strawman(position));
+            RegisterEntity("Strawman", (position, data) =>
+            {
+                float value = (float)PlayState.Random.NextDouble();
+                return value < 0.33
+                    ? (Body)(new Strawman(position))
+                    : (value < 0.66 ? (Body)(new WeightRack(position)) : (Body)(new PunchingBag(position)));
+            });
             RegisterEntity("Bookshelf", (position, data) => new Bookshelf(position));
             RegisterEntity("Door", (position, data) => new Door(position));
             RegisterEntity("Ladder", (position, data) => new Ladder(position));

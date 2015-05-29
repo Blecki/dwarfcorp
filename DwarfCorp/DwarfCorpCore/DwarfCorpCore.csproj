@@ -121,6 +121,8 @@
     <Compile Include="Entities\Fixtures\Flag.cs" />
     <Compile Include="Entities\Fixtures\Forge.cs" />
     <Compile Include="Entities\Fixtures\Lamp.cs" />
+    <Compile Include="Entities\Fixtures\WeightRack.cs" />
+    <Compile Include="Entities\Fixtures\PunchingBag.cs" />
     <Compile Include="Entities\Fixtures\Strawman.cs" />
     <Compile Include="Entities\Fixtures\Table.cs" />
     <Compile Include="Entities\Fixtures\Target.cs" />
