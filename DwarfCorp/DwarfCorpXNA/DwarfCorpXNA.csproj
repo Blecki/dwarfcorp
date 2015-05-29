@@ -294,6 +294,9 @@
     <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Lamp.cs">
       <Link>Entities\Fixtures\Lamp.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\PunchingBag.cs">
+      <Link>Entities\Fixtures\PunchingBag.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Strawman.cs">
       <Link>Entities\Fixtures\Strawman.cs</Link>
     </Compile>
@@ -302,6 +305,9 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Target.cs">
       <Link>Entities\Fixtures\Target.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\WeightRack.cs">
+      <Link>Entities\Fixtures\WeightRack.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Fixtures\WorkPile.cs">
       <Link>Entities\Fixtures\WorkPile.cs</Link>
