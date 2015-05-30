@@ -9,6 +9,6 @@ The game is released under a modified MIT licensing agreement. That means all *s
 * Sound Effects
 * Music
 
-No forks, binary redistributions, or other redistributions of this repository may include the proprietary content. It is up to the redistributor to provide their own game content. "Source code" may also include raw text files, JSON library files, and XML configuration files (which are not considered proprietary "game content").
+No forks, binary redistributions, or other redistributions of this repository may include the proprietary game content. It is up to the redistributor to provide their own game content. "Source code" may also include raw text files, JSON library files, and XML configuration files (which are not considered proprietary "game content").
 
 It's complicated. If you have a question about the licensing, raise an issue on the repository.
