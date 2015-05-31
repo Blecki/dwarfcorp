@@ -6,3 +6,5 @@ C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\DwarfCorpCore\bin\x86\Release\D
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\DwarfCorpCore\bin\x86\Release\Newtonsoft.Json.dll
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\DwarfCorpCore\obj\x86\Release\DwarfCorpCore.dll
 C:\Users\matth_000\Documents\DwarfCorp\VoxelTest\DwarfCorpCore\obj\x86\Release\DwarfCorpCore.pdb
+C:\Users\matth_000\Documents\github\dwarfcorp\DwarfCorp\DwarfCorpCore\obj\x86\Release\DwarfCorpCore.csprojResolveAssemblyReference.cache
+C:\Users\matth_000\Documents\github\dwarfcorp\DwarfCorp\DwarfCorpCore\obj\x86\Release\Microsoft.Xna.Framework.RuntimeProfile.txt

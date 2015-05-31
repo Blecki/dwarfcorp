@@ -92,10 +92,6 @@
     <Reference Include="mscorlib">
       <Private>False</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
@@ -1339,7 +1335,6 @@
     <Content Include="favicon.ico" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
-    <None Include="Newtonsoft.Json.dll" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
@@ -1373,6 +1368,10 @@
       <Project>{D48F9E36-1F42-4633-B745-8C659D9550D4}</Project>
       <Name>DwarfCorpXNAContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>
+    </ProjectReference>
+    <ProjectReference Include="..\JsonDotNet\Newtonsoft.Json.Net40.csproj">
+      <Project>{a9ae40ff-1a21-414a-9fe7-3be13644cc6d}</Project>
+      <Name>Newtonsoft.Json.Net40</Name>
     </ProjectReference>
     <ProjectReference Include="..\LibNoise\LibNoise.csproj">
       <Project>{031c8cff-f147-44ea-b7e5-0a5644808a7e}</Project>
