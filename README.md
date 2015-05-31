@@ -19,9 +19,10 @@ To build and run in the game on a windows PC, you must do the following:
 2. Download and install Visual Studio. The project files were created for Visual Studio Professional 2013. Earlier versions may not work. "Express" versions may also not work.
 3. Open `DwarfCorp.sln` in Visual Studio
 4. Set `DwarfCorpXNA` as the `StartUp` project.
-5. Add references to `XNA` and `Json.NET` binaries to the `DwarfCorpXNA` project. They may also need to be added to the `DwarfCorpCore` project. 
-6. Set the build mode to `Release` or `Debug`
-7. Hit `Build Project`
+5. Add references to `XNA` binaries to the `DwarfCorpXNA` project. They may also need to be added to the `DwarfCorpCore` project. 
+6. Build `LibNoise` and `Json.Net` projects
+7. Set the `DwarfCorpXNA` build mode to `Release` or `Debug`
+8. Build `DwarfCorpXNA`
 
 ## Project Structure
 There are several projects under the main folder:
