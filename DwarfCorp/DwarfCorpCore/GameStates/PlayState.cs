@@ -978,7 +978,9 @@ namespace DwarfCorp.GameStates
         public void Load()
         {
             WaitForGraphicsDevice();
-            //try
+#if CREATE_CRASH_LOGS
+            try
+#endif
             {
                 EnableScreensaver = true;
                 LoadingMessage = "Initializing...";
@@ -1013,10 +1015,12 @@ namespace DwarfCorp.GameStates
                 LoadingMessage = "Complete.";
                 EnableScreensaver = false;
             }
-            //catch (Exception exception)
+#if CREATE_CRASH_LOGS
+            catch (Exception exception)
             {
-             //   ProgramData.WriteExceptionLog(exception);
+                ProgramData.WriteExceptionLog(exception);
             }
+#endif
         }
 
         private void GenerateInitialObjects()

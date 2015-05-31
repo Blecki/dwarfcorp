@@ -99,7 +99,9 @@ namespace DwarfCorp.GameStates
 
         public void WorldLoaderThread(int min, int max)
         {
+#if CREATE_CRASH_LOGS
             try
+#endif
             {
                 for (int i = min; i < max; i++)
                 {
@@ -150,10 +152,12 @@ namespace DwarfCorp.GameStates
                     Worlds[i].IsLoaded = true;
                 }
             }
+#if CREATE_CRASH_LOGS
             catch (Exception exception)
             {
                 ProgramData.WriteExceptionLog(exception);
             }
+#endif
         }
 
 

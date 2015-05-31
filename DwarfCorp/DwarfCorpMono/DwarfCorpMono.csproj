@@ -144,9 +144,6 @@
     <Compile Include="..\DwarfCorpCore\AssetManagement\TextureManager.cs">
       <Link>AssetManagement\TextureManager.cs</Link>
     </Compile>
-    <Compile Include="..\DwarfCorpCore\AssetSettings.Designer.cs">
-      <Link>AssetSettings.Designer.cs</Link>
-    </Compile>
     <Compile Include="..\DwarfCorpCore\Components\AI\Creature.cs">
       <Link>Components\AI\Creature.cs</Link>
     </Compile>

@@ -449,7 +449,9 @@ namespace DwarfCorp.GameStates
 
         public void GenerateWorld(int seed, int width, int height)
         {
-           // try
+#if CREATE_CRASH_LOGS
+           try
+#endif
             {
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
                
@@ -598,11 +600,13 @@ namespace DwarfCorp.GameStates
                 GUI.MouseMode = GUISkin.MousePointer.Pointer;
                 DoneGenerating = true;
             }
-            //catch (Exception exception)
+#if CREATE_CRASH_LOGS
+            catch (Exception exception)
             {
-           //     ProgramData.WriteExceptionLog(exception);
-           //     throw;
+                ProgramData.WriteExceptionLog(exception);
+                throw;
             }
+#endif
         }
 
         public void CalculateRain(int width, int height)

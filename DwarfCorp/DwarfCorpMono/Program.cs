@@ -20,7 +20,9 @@ namespace DwarfCorp
         /// </summary>
         private static void Main(string[] args)
         {
-            //try
+#if CREATE_CRASH_LOGS
+            try
+#endif
             {
                 using (DwarfGame game = new DwarfGame())
                 {
@@ -29,10 +31,12 @@ namespace DwarfCorp
 
                 Program.SignalShutdown();
             }
-            //catch (Exception exception)
+#if CREATE_CRASH_LOGS
+            catch (Exception exception)
             {
-            //    ProgramData.WriteExceptionLog(exception);
+                ProgramData.WriteExceptionLog(exception);
             }
+#endif
 
         }
 

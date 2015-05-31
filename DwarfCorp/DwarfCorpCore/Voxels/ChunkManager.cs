@@ -229,7 +229,9 @@ namespace DwarfCorp
                 Program.ShutdownEvent
             };
 
+#if CREATE_CRASH_LOGS
             try
+#endif
             {
                 while (!DwarfGame.ExitGame && !ExitThreads)
                 {
@@ -246,10 +248,12 @@ namespace DwarfCorp
                     }
                 }
             }
+#if CREATE_CRASH_LOGS
             catch (Exception exception)
             {
                 ProgramData.WriteExceptionLog(exception);
             }
+#endif
         }
 
         public void RebuildLiquidsThread()
@@ -260,7 +264,9 @@ namespace DwarfCorp
                 Program.ShutdownEvent
             };
 
+#if CREATE_CRASH_LOGS
             try
+#endif
             {
                 bool shouldExit = false;
                 while (!shouldExit && !DwarfGame.ExitGame && !ExitThreads)
@@ -304,10 +310,12 @@ namespace DwarfCorp
                     }
                 }
             }
+#if CREATE_CRASH_LOGS
             catch (Exception exception)
             {
                 ProgramData.WriteExceptionLog(exception);
             }
+#endif
 
         }
 
@@ -320,7 +328,9 @@ namespace DwarfCorp
                 Program.ShutdownEvent
             };
 
+#if CREATE_CRASH_LOGS
             try
+#endif
             {
                 while (!DwarfGame.ExitGame && !ExitThreads)
                 {
@@ -404,11 +414,13 @@ namespace DwarfCorp
                     }
                 }
             }
+#if CREATE_CRASH_LOGS
             catch (Exception exception)
             {
                 ProgramData.WriteExceptionLog(exception);
                 throw;
             }
+#endif
            
         }
 
@@ -544,7 +556,9 @@ namespace DwarfCorp
                 Program.ShutdownEvent
             };
 
+#if CREATE_CRASH_LOGS
             try
+#endif
             {
                 while (!ExitThreads)
                 {
@@ -577,10 +591,12 @@ namespace DwarfCorp
                     }
                 }
             }
+#if CREATE_CRASH_LOGS
             catch (Exception exception)
             {
                 ProgramData.WriteExceptionLog(exception);
             }
+#endif
 
            
         }
