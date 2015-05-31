@@ -32,6 +32,7 @@ There are several projects under the main folder:
 * **DwarfCorpMono** Contains source code for a MonoGame build. It hasn't been updated in a very long time, and will likely not build for now.
 * **DwarfCorpContent** Contains images, sounds, music, and content configuration files for DwarfCorp. Most assets in this content project may not be redistributed.
 * **LibNoise** Is a fork of LibNosie.NET noise generation library.
+* **JSON.NET** Is a fork of the JSON.NET data serialization library.
 
 ## Licensing
 The game is released under a modified MIT licensing agreement. That means all *source code* is free to use, modify and distribute. However, we have explicitly disallowed modification and redistribution of the following game content (which remains proprietary):
