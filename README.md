@@ -9,7 +9,7 @@ DwarfCorp depends on the following libraries:
 
 * [The XNA 4.0](https://www.microsoft.com/en-us/download/details.aspx?id=23714) library (not included)
 * [LibNoise.NET](https://libnoisedotnet.codeplex.com/) (source code included)
-* [JSON.NET](https://github.com/JamesNK/Newtonsoft.Json) (not included)
+* [JSON.NET](https://github.com/JamesNK/Newtonsoft.Json) (source code included)
 
 ## Building
 
