@@ -694,7 +694,7 @@ namespace DwarfCorp
             if (standingOnGround || inWater)
             {
                 Creature.MoveType moveType = inWater ? Creature.MoveType.Swim : Creature.MoveType.Walk;
-                if (IsEmpty(neighborHood[0, 1, 0]))
+                if (IsEmpty(neighborHood[0, 1, 1]))
                     // +- x
                     successors.Add(new Creature.MoveAction()
                     {
