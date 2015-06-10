@@ -312,7 +312,7 @@ namespace DwarfCorp.GameStates
         public void Generate()
         {
             DoneGenerating = false;
-            if(!IsGenerating)
+            if(!IsGenerating && !DoneGenerating)
             {
                 PlayState.WorldOrigin = new Vector2(PlayState.WorldWidth / 2, PlayState.WorldHeight / 2);
                 genThread = new Thread(unused => GenerateWorld(Seed, (int) PlayState.WorldWidth, (int) PlayState.WorldHeight));

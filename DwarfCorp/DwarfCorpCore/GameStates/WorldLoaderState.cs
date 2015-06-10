@@ -319,8 +319,9 @@ namespace DwarfCorp.GameStates
                     StateManager.PushState("WorldGeneratorState");
                     state.Progress.Value = 1.0f;
                     state.GenerationComplete = true;
+                    state.DoneGenerating = true;
                     state.Settings.Name = descriptor.WorldName;
-                    state.worldData = new Color[PlayState.WorldWidth * PlayState.WorldHeight];
+                    state.worldData = new Color[Overworld.Map.GetLength(0) * Overworld.Map.GetLength(1)];
                    
                     Worlds.Clear();
                 }
@@ -471,8 +472,8 @@ namespace DwarfCorp.GameStates
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
-            DwarfGame.SpriteBatch.End();
             GUI.PostRender(gameTime);
+            DwarfGame.SpriteBatch.End();
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle = DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
         }
 

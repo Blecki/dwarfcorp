@@ -31,6 +31,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Runtime.Serialization.Formatters;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -50,22 +51,30 @@ namespace DwarfCorp
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
+           
             JValue jObject = serializer.Deserialize<JValue>(reader);
-            string[] tokens = jObject.Value.ToString().Split(' ', ',');
+            string jsonString = jObject.Value.ToString();
 
-            string[] intTokens = new string[4];
+            string[] tokens = jsonString.Split(' ', ',', ':');
+            int[] intTokens = new int[4];
 
             int i = 0;
-            foreach (string s in tokens)
+            foreach (string token in tokens)
             {
-                if (s != " " && s != ",")
+                int val = 0;
+                if (int.TryParse(token, out val))
                 {
-                    intTokens[i] = s;
+                    intTokens[i] = val;
                     i++;
+
+                    if (i >= 4)
+                    {
+                        break;
+                    }
                 }
             }
 
-            return new Rectangle(int.Parse(intTokens[0]), int.Parse(intTokens[1]), int.Parse(intTokens[2]), int.Parse(intTokens[3]));
+            return new Rectangle(intTokens[0], intTokens[1], intTokens[2], intTokens[3]);
         }
 
         public override bool CanWrite

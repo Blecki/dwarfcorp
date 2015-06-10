@@ -57,7 +57,7 @@ namespace DwarfCorp
             int i = 0;
             foreach (string s in tokens)
             {
-                if (s != " " && s != ",")
+                if (s != "" && s != " " && s != ",")
                 {
                     intTokens[i] = s;
                     i++;

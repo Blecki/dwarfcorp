@@ -71,6 +71,7 @@ namespace DwarfCorp
         public Mutex RemovalMutex { get; set; }
 
         public  ParticleManager ParticleManager { get; set; }
+        [JsonIgnore]
         public CollisionManager CollisionManager { get; set; }
 
         public FactionLibrary Factions { get; set; }
@@ -83,6 +84,7 @@ namespace DwarfCorp
             RemovalMutex = new Mutex();
             Removals = new List<GameComponent>();
             Additions = new List<GameComponent>();
+            CollisionManager = new CollisionManager(new BoundingBox());
         }
        
 
