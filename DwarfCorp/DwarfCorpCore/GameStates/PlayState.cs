@@ -421,8 +421,7 @@ namespace DwarfCorp.GameStates
             for (int i = 0; i < numWorkers; i++)
             {
                 Vector3 dorfPos = new Vector3(Camera.Position.X + (float) Random.NextDouble(), h + 10, Camera.Position.Z + (float) Random.NextDouble());
-                Physics creat = (Physics) EntityFactory.GenerateDwarf(dorfPos,
-                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Worker], 0);
+                Physics creat = (Physics) EntityFactory.GenerateDwarf(dorfPos, ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Worker], 0);
 
                 creat.Velocity = new Vector3(1, 0, 0);
             }
@@ -440,7 +439,7 @@ namespace DwarfCorp.GameStates
             {
                 Vector3 dorfPos = new Vector3(Camera.Position.X + (float)Random.NextDouble(), h + 10, Camera.Position.Z + (float)Random.NextDouble());
                 Physics creat = (Physics)EntityFactory.GenerateDwarf(dorfPos,
-                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Dwarf", JobLibrary.Classes[JobLibrary.JobType.CraftsDwarf], 0);
+                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.CraftsDwarf], 0);
 
                 creat.Velocity = new Vector3(1, 0, 0);
             }

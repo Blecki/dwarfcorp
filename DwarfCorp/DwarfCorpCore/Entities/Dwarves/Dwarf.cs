@@ -48,8 +48,6 @@ namespace DwarfCorp
     /// </summary>
     public class Dwarf : Creature
     {
-        public SpriteSheet SpriteSheet { get; set; }
-
         public Dwarf()
         {
             
@@ -60,7 +58,6 @@ namespace DwarfCorp
                         new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0)),
                chunks, graphics, content, name)
         {
-            SpriteSheet = workerClass.Animations[0].SpriteSheet;
             Initialize(workerClass);
         }
 
@@ -77,7 +74,9 @@ namespace DwarfCorp
             {
                 Sprite.AddAnimation(animation.Clone());
             }
-
+            Sprite.SpriteSheet = Sprite.Animations.First().Value.SpriteSheet;
+            Sprite.CurrentAnimation = Sprite.Animations.First().Value;
+            Sprite.CurrentAnimation.NextFrame();
             Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
 
             Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
@@ -143,8 +142,7 @@ namespace DwarfCorp
 
             MinimapIcon minimapIcon = new MinimapIcon(Physics, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 0, 0));
 
-            Stats.FullName = TextGenerator.GenerateRandom("$firstname");
-            //Stats.LastName = TextGenerator.GenerateRandom("$lastname");
+            Stats.FullName = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
             Stats.Size = 5;
             Stats.CanSleep = true;
             Stats.CanEat = true;

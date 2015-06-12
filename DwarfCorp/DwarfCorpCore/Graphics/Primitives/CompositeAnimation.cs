@@ -80,7 +80,8 @@ namespace DwarfCorp
                     {
                         Name = descriptor.Name,
                         Speeds = speeds,
-                        Loops = !descriptor.PlayOnce
+                        Loops = !descriptor.PlayOnce,
+                        SpriteSheet = Layers[0]
                     };
 
                     toReturn.Add(animation);
@@ -209,7 +210,8 @@ namespace DwarfCorp
                 Flipped = Flipped,
                 Loops = Loops,
                 CurrentFrame =  CurrentFrame,
-                Speeds = new List<float>(Speeds)
+                Speeds = new List<float>(Speeds),
+                SpriteSheet = SpriteSheet
             };
         }
     }

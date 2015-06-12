@@ -158,7 +158,7 @@ namespace DwarfCorp
                     {
                         if (Creature.Faction == PlayState.Master.Faction)
                         {
-                            PlayState.AnnouncementManager.Announce(Creature.Stats.FullName + " got lost.",
+                            PlayState.AnnouncementManager.Announce(Creature.Stats.FullName + " (" + Creature.Stats.CurrentLevel.Name + ")" + " got lost.",
                                 Creature.Stats.FullName + "'s target was lost.");
                         }
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);

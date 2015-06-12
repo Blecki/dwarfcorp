@@ -304,13 +304,24 @@ namespace DwarfCorp
 
             if (Faction.Minions.Any(m => m.IsDead && m.TriggersMourning))
             {
+                CreatureAI deadMinion = null;
                 foreach (CreatureAI minion in Faction.Minions)
                 {
                     minion.AddThought(Thought.ThoughtType.FriendDied);
+
+                    if (minion.IsDead)
+                    {
+                        deadMinion = minion;
+                    }
                 }
 
-                PlayState.AnnouncementManager.Announce("An employee died!", "One of our employees has died!");
-                Faction.Economy.Company.StockPrice -= MathFunctions.Rand(0, 0.5f);
+                if (deadMinion != null)
+                {
+                    PlayState.AnnouncementManager.Announce(
+                        deadMinion.Stats.FullName + " (" + deadMinion.Stats.CurrentLevel.Name + ")" + " died!",
+                        "One of our employees has died!");
+                    Faction.Economy.Company.StockPrice -= MathFunctions.Rand(0, 0.5f);
+                }
             }
 
             UpdateRooms();

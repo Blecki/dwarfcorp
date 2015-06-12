@@ -337,7 +337,7 @@ namespace DwarfCorp
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
                         if (Creature.Allies == "Dwarf")
                         {
-                            PlayState.AnnouncementManager.Announce(Stats.FullName + " refuses to work!", "Our employee is unhappy, and would rather not work!");
+                            PlayState.AnnouncementManager.Announce(Stats.FullName +  " (" + Stats.CurrentLevel.Name + ")" + " refuses to work!", "Our employee is unhappy, and would rather not work!");
                         }
                         CurrentTask = null;
                     }
@@ -394,21 +394,12 @@ namespace DwarfCorp
                     }
                 }
 
-                // Otherwise, either just go to a random room, or move around crazily.
-                if (IdleTimer.HasTriggered && rooms.Count > 0 && MathFunctions.RandEvent(0.1f))
+                // Otherwise, try to find a chair to sit in
+                if (IdleTimer.HasTriggered && MathFunctions.RandEvent(0.25f))
                 {
-                    return
-                        new ActWrapperTask(new GoToZoneAct(this, rooms[PlayState.Random.Next(rooms.Count)]) |
-                                           new WanderAct(this, 2, 1.0f + MathFunctions.Rand(-0.5f, 0.5f), 1.0f)) {Priority = Task.PriorityType.Eventually};
+                    return new ActWrapperTask(new GoToChairAndSitAct(this)) { Priority = Task.PriorityType.Eventually, AutoRetry = false };
                 }
-                else
-                {
-                    if (IdleTimer.HasTriggered && MathFunctions.RandEvent(0.25f))
-                    {
-                        return new ActWrapperTask(new GoToChairAndSitAct(this)) { Priority = Task.PriorityType.Eventually, AutoRetry = false};
-                    }
-                    return new ActWrapperTask(new WanderAct(this, 2, 1.0f + MathFunctions.Rand(-0.5f, 0.5f), 1.0f)) { Priority = Task.PriorityType.Eventually };
-                }
+                return new ActWrapperTask(new WanderAct(this, 2, 1.0f + MathFunctions.Rand(-0.5f, 0.5f), 1.0f)) { Priority = Task.PriorityType.Eventually };
             }
             // If we have no more build orders, look for gather orders
             else if (GatherManager.VoxelOrders.Count == 0)

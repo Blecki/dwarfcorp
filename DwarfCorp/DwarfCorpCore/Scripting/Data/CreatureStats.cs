@@ -159,7 +159,7 @@ namespace DwarfCorp
                     if (!announced)
                     {
                         announced = true;
-                        PlayState.AnnouncementManager.Announce(FullName + " wants a promotion!",
+                        PlayState.AnnouncementManager.Announce(FullName + " (" + CurrentLevel.Name + ")" + " wants a promotion!",
                             FullName + " can now be promoted to " +
                             CurrentClass.Levels[LevelIndex + 1].Name);
                     }
