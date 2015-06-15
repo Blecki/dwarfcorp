@@ -119,7 +119,7 @@ namespace DwarfCorp
                 });
 
                 neighbors.RemoveAll(
-                    a => a.MoveType == Creature.MoveType.Jump || a.MoveType == DwarfCorp.Creature.MoveType.Climb);
+                    a => a.MoveType == Creature.MoveType.Jump || a.MoveType == Creature.MoveType.Climb);
 
                 if (neighbors.Count == 0)
                 {

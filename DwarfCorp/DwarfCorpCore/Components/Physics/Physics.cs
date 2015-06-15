@@ -138,6 +138,7 @@ namespace DwarfCorp
         {
             BoundingBox bounds = chunks.Bounds;
             bounds.Max.Y += 50;
+
             if (!IsSleeping && (Velocity).Length() < 0.15f)
             {
                 SleepTimer.Update(gameTime);
@@ -163,6 +164,12 @@ namespace DwarfCorp
                 }
 
                 float dt = (float)(gameTime.ElapsedGameTime.TotalSeconds);
+
+
+                if (MathFunctions.HasNan(Velocity))
+                {
+                    Velocity = Vector3.Zero;
+                }
 
                 MoveY(dt);
                 MoveX(dt);

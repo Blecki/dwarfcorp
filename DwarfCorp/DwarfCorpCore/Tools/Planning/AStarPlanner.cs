@@ -218,13 +218,13 @@ namespace DwarfCorp
                 case Creature.MoveType.Walk:
                     return 1.0f;
                 case Creature.MoveType.Jump:
-                    return 100.0f;
+                    return 10.0f;
                 case Creature.MoveType.Climb:
                     return 2.0f;
                 case Creature.MoveType.Swim:
-                    return 50.0f;
+                    return 20.0f;
                 case Creature.MoveType.Fall:
-                    return 100.0f;
+                    return 10.0f;
                 default:
                     return 1.0f;
             }

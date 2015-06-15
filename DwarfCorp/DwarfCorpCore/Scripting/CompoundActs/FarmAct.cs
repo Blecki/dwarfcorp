@@ -57,18 +57,24 @@ namespace DwarfCorp
         {
             Farm.FarmTile tile = Creature.AI.Blackboard.GetData<Farm.FarmTile>(tileName);
             if (tile == null) yield return Status.Fail;
-            else if (!tile.IsFree()) yield return Status.Success;
+            else if (tile.PlantExists())
+            {
+                tile.Farmer = null;
+                yield return Status.Success;
+            }
             else
             {
                 if (tile.Plant != null && tile.Plant.IsDead) tile.Plant = null;
-                while (tile.Progress < 100.0f && tile.IsFree())
+                while (tile.Progress < 100.0f && !tile.PlantExists())
                 {
+
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
                     Creature.Physics.Velocity *= 0.1f;
                     tile.Progress += Creature.Stats.BaseFarmSpeed;
 
-                    Drawer2D.DrawLoadBar(Agent.Position + Vector3.Up, Color.White, Color.Black, 100, 16, tile.Progress / 100.0f);
-                    if (tile.Progress >= 100.0f && tile.IsFree())
+                    Drawer2D.DrawLoadBar(Agent.Position + Vector3.Up, Color.White, Color.Black, 100, 16,
+                        tile.Progress/100.0f);
+                    if (tile.Progress >= 100.0f && !tile.PlantExists())
                     {
                         tile.Progress = 0.0f;
                         FarmToWork.CreatePlant(tile);
@@ -79,6 +85,7 @@ namespace DwarfCorp
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
                 Creature.AI.AddThought(Thought.ThoughtType.Farmed);
                 Creature.AI.AddXP(10);
+                tile.Farmer = null;
                 yield return Status.Success;
             }
         }
@@ -89,10 +96,23 @@ namespace DwarfCorp
             if (closestTile == null) yield return Status.Fail;
             else
             {
+                closestTile.Farmer = Agent;
                 Creature.AI.Blackboard.SetData("ClosestTile", closestTile);
                 Creature.AI.Blackboard.SetData("ClosestVoxel", closestTile.Vox);
                 yield return Status.Success;   
             }
+        }
+
+        public override void OnCanceled()
+        {
+            Farm.FarmTile tile = Creature.AI.Blackboard.GetData<Farm.FarmTile>("ClosestTile");
+
+            if (tile != null)
+            {
+                tile.Farmer = null;
+            }
+
+            base.OnCanceled();
         }
 
         public override void Initialize()

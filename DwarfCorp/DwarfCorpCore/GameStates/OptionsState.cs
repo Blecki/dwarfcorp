@@ -91,7 +91,7 @@ namespace DwarfCorp.GameStates
             TabSelector = new TabSelector(GUI, Layout, 6);
             Layout.SetComponentPosition(TabSelector, 0, 1, 6, 8);
 
-            DwarfCorp.TabSelector.Tab graphicsTab = TabSelector.AddTab("Graphics");
+            TabSelector.Tab graphicsTab = TabSelector.AddTab("Graphics");
 
             GroupBox graphicsBox = new GroupBox(GUI, graphicsTab, "Graphics")
             {
@@ -470,7 +470,7 @@ namespace DwarfCorp.GameStates
             audioLayout.SetComponentPosition(musicSlider, 1, 2, 1, 1);
             musicSlider.OnValueModified += MusicSlider_OnValueModified;
 
-            DwarfCorp.TabSelector.Tab keysTab = TabSelector.AddTab("Keys");
+            TabSelector.Tab keysTab = TabSelector.AddTab("Keys");
             GroupBox keysBox = new GroupBox(GUI, keysTab, "Keys")
             {
                 WidthSizeMode = GUIComponent.SizeMode.Fit,

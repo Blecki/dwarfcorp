@@ -53,7 +53,7 @@ namespace DwarfCorp
 
         }
         public Fairy(string allies, Vector3 position) :
-            base( new CreatureStats(new FairyClass(), 0), "Dwarf", PlayState.PlanService, PlayState.ComponentManager.Factions.Factions[allies],
+            base( new CreatureStats(new FairyClass(), 0), "Player", PlayState.PlanService, PlayState.ComponentManager.Factions.Factions[allies],
            new Physics("Fairy", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position),
                        new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, 0, 0)),
               PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Fairy")

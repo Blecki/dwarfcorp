@@ -83,7 +83,7 @@ namespace DwarfCorp
 
             Camera = new OrbitCamera(0, 0, 0.01f, new Vector3(0, 0, 0), new Vector3(0, 0, 0),  2.5f, 1.0f, 0.1f, 1000.0f)
             {
-                Projection = DwarfCorp.Camera.ProjectionMode.Orthographic
+                Projection = global::DwarfCorp.Camera.ProjectionMode.Orthographic
             };
 
             ZoomInButton = new Button(GUI, this, "", GUI.SmallFont, Button.ButtonMode.ImageButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.ZoomIn))

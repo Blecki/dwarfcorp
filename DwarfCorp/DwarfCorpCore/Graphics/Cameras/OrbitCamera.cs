@@ -567,7 +567,7 @@ namespace DwarfCorp
 
         public void SnapToBounds(BoundingBox bounds)
         {
-            Target = MathFunctions.Clamp(Target, bounds);
+            Target = MathFunctions.Clamp(Target, bounds.Expand(-2.0f));
         }
 
         public bool CollidesWithChunks(ChunkManager chunks, Vector3 pos, bool applyForce)

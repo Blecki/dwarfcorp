@@ -80,22 +80,23 @@ namespace DwarfCorp
 
         public SpawnEvent GenerateSpawnEvent(Faction spawnFaction, Faction targetFaction, int num)
         {
+            float padding = 2.0f;
             int side = PlayState.Random.Next(4);
             BoundingBox bounds = PlayState.ChunkManager.Bounds;
             Vector3 pos = Vector3.Zero;
             switch (side)
             {
                 case 0:
-                    pos = new Vector3(bounds.Min.X + 1, bounds.Max.Y - 1, MathFunctions.Rand(bounds.Min.Z, bounds.Max.Z));
+                    pos = new Vector3(bounds.Min.X + padding, bounds.Max.Y - padding, MathFunctions.Rand(bounds.Min.Z + padding, bounds.Max.Z - padding));
                     break;
                 case 1:
-                    pos = new Vector3(bounds.Max.X - 1, bounds.Max.Y - 1, MathFunctions.Rand(bounds.Min.Z, bounds.Max.Z));
+                    pos = new Vector3(bounds.Max.X - padding, bounds.Max.Y - padding, MathFunctions.Rand(bounds.Min.Z + padding, bounds.Max.Z - padding));
                     break;
                 case 2:
-                    pos = new Vector3(MathFunctions.Rand(bounds.Min.X, bounds.Max.X), bounds.Max.Y - 1, bounds.Min.Z + 1);
+                    pos = new Vector3(MathFunctions.Rand(bounds.Min.X + padding, bounds.Max.X - padding), bounds.Max.Y - padding, bounds.Min.Z + padding);
                     break;
                 case 3:
-                    pos = new Vector3(MathFunctions.Rand(bounds.Min.X, bounds.Max.X), bounds.Max.Y - 1, bounds.Max.Z - 1);
+                    pos = new Vector3(MathFunctions.Rand(bounds.Min.X + padding, bounds.Max.X - padding), bounds.Max.Y - padding, bounds.Max.Z - padding);
                     break;
             }
 

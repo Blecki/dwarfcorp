@@ -47,22 +47,14 @@ namespace DwarfCorp
         public class AnnouncementView : Panel
         {
             public Label Label { get; set; }
-            public ImagePanel Icon { get; set; }
 
             public AnnouncementView(DwarfGUI gui, GUIComponent parent) :
                 base(gui, parent)
             {
                 GridLayout layout = new GridLayout(gui, this, 1, 4);
 
-                Icon = new ImagePanel(GUI, layout, new ImageFrame())
-                {
-                    ConstrainSize = true
-                };
-
-                layout.SetComponentPosition(Icon, 0, 0, 1, 1);
-
                 Label = new Label(GUI, layout,"", GUI.SmallFont);
-                layout.SetComponentPosition(Label, 1, 0, 3, 1);
+                layout.SetComponentPosition(Label, 0, 0, 4, 1);
             }
 
             public void SetAnnouncement(Announcement announcement)
@@ -70,7 +62,6 @@ namespace DwarfCorp
                 ToolTip = announcement.Message;
                 Label.Text = announcement.Name;
                 Label.TextColor = announcement.Color;
-                Icon.Image = announcement.Icon;
             }
         }
 

@@ -123,7 +123,6 @@ namespace DwarfCorp
             Timeouts = 0;
             PlannerTimer.Reset(PlannerTimer.TargetTimeSeconds);
             Voxel voxUnder = new Voxel();
-            Voxel voxAbove = new Voxel();
             while(true)
             {
                 if (Path != null)
@@ -144,14 +143,12 @@ namespace DwarfCorp
                 if(PlannerTimer.HasTriggered || Timeouts == 0)
                 {
 
-                    if (!chunks.ChunkData.GetFirstVoxelUnder(Agent.Position, ref voxUnder, true))
+                    if (!chunks.ChunkData.GetVoxel(Agent.Position, ref voxUnder))
                     {
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                         yield return Status.Fail;
                         break;
                     }
-
-                    chunks.ChunkData.GetVoxel(null, voxUnder.Position + new Vector3(0, 1, 0), ref voxAbove);
 
 
                     if(Target == null)
@@ -166,7 +163,7 @@ namespace DwarfCorp
                         break;
                     }
 
-                    if(voxAbove != null)
+                    if (voxUnder != null)
                     {
                         Path = null;
 
@@ -175,7 +172,7 @@ namespace DwarfCorp
                         AstarPlanRequest aspr = new AstarPlanRequest
                         {
                             Subscriber = PlanSubscriber,
-                            Start = voxAbove,
+                            Start = voxUnder,
                             MaxExpansions = MaxExpansions,
                             Sender = Agent
                         };

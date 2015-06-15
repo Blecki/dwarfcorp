@@ -102,7 +102,7 @@ namespace DwarfCorp
         public static string GenerateMotto()
         {
             var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.mottos);
-            return DwarfCorp.TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
+            return TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
         }
 
         public static string GenerateName(Sector sector)
@@ -122,7 +122,7 @@ namespace DwarfCorp
                 templateName = ContentPaths.Text.Templates.company_military;
             }
             var templates = TextGenerator.GetAtoms(templateName);
-            return DwarfCorp.TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
+            return TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
         }
 
         public static List<float> GenerateRandomStockHistory(float current, int length)

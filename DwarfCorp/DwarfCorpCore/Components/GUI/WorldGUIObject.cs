@@ -60,12 +60,12 @@ namespace DwarfCorp
             Enabled = false;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Microsoft.Xna.Framework.Graphics.GraphicsDevice graphicsDevice, Microsoft.Xna.Framework.Graphics.Effect effect, bool renderingForWater)
         {
             if (Enabled && IsVisible && camera.IsInView(GetBoundingBox()))
             {
                 Vector3 screenPos = camera.Project(GlobalTransform.Translation);
-                GUIObject.LocalBounds = new Rectangle((int)screenPos.X - GUIObject.LocalBounds.Width/2, (int)screenPos.Y - GUIObject.LocalBounds.Height/2, GUIObject.LocalBounds.Width, GUIObject.LocalBounds.Height);
+                GUIObject.LocalBounds = new Rectangle((int)screenPos.X - GUIObject.LocalBounds.Width / 2, (int)screenPos.Y - GUIObject.LocalBounds.Height / 2, GUIObject.LocalBounds.Width, GUIObject.LocalBounds.Height);
 
                 GUIObject.IsVisible = true;
             }
@@ -73,8 +73,7 @@ namespace DwarfCorp
             {
                 GUIObject.IsVisible = false;
             }
-
-            base.Update(gameTime, chunks, camera);
+            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
         }
 
         public override void Die()

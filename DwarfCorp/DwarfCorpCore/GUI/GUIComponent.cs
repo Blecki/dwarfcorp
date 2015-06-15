@@ -89,7 +89,7 @@ namespace DwarfCorp
 
         protected List<GUIComponent> ChildrenToRemove { get; set; }
         protected List<GUIComponent> ChildrenToAdd { get; set; }
-
+        public float DrawOrder { get; set; }
         public enum SizeMode
         {
             Fixed,
@@ -105,6 +105,7 @@ namespace DwarfCorp
 
         public GUIComponent(DwarfGUI gui, GUIComponent parent)
         {
+            DrawOrder = -1;
             WidthSizeMode = SizeMode.Fixed;
             HeightSizeMode = SizeMode.Fixed;
             MinWidth = -1;
@@ -457,6 +458,11 @@ namespace DwarfCorp
 
         public virtual void Render(DwarfTime time, SpriteBatch batch)
         {
+            Children.Sort(
+                (child1, child2) =>
+                {
+                    return child1.DrawOrder.CompareTo(child2.DrawOrder);
+                });
             if(!IsVisible)
             {
                 return;

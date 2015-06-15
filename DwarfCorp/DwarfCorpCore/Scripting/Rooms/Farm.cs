@@ -51,10 +51,15 @@ namespace DwarfCorp
             public Voxel Vox = null;
             public Body Plant = null;
             public float Progress = 0.0f;
-
+            public CreatureAI Farmer = null;
             public bool IsFree()
             {
-                return Plant == null || Plant.IsDead;
+                return (Plant == null || Plant.IsDead) && Farmer == null;
+            }
+
+            public bool PlantExists()
+            {
+                return !(Plant == null || Plant.IsDead);
             }
         }
 
@@ -143,7 +148,8 @@ namespace DwarfCorp
                 LocalBounds = new Rectangle(0, 0, 32, 32),
                 DrawFrame = true,
                 TextColor = Color.White,
-                ToolTip = "Click to make selected employees work this " + RoomData.Name
+                ToolTip = "Click to make selected employees work this " + RoomData.Name,
+                DrawOrder = -100
             };
             FarmButton.OnClicked += farmButton_OnClicked;
             GUIObject = new WorldGUIObject(PlayState.ComponentManager.RootComponent, FarmButton)
@@ -161,7 +167,8 @@ namespace DwarfCorp
                 LocalBounds = new Rectangle(0, 0, 32, 32),
                 DrawFrame = true,
                 TextColor = Color.White,
-                ToolTip = "Click to make selected employees work this " + RoomData.Name
+                ToolTip = "Click to make selected employees work this " + RoomData.Name,
+                DrawOrder = -100
             };
             FarmButton.OnClicked += farmButton_OnClicked;
             GUIObject = new WorldGUIObject(PlayState.ComponentManager.RootComponent, FarmButton)

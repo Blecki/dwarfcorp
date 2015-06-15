@@ -98,7 +98,8 @@ namespace DwarfCorp
             {
                 LocalBounds = new Rectangle(0, 0, 32, 32),
                 DrawFrame = true,
-                TextColor = Color.White
+                TextColor = Color.White,
+                DrawOrder = -100
             };
             farmButton.OnClicked += farmButton_OnClicked;
             GUIObject = new WorldGUIObject(PlayState.ComponentManager.RootComponent, farmButton)

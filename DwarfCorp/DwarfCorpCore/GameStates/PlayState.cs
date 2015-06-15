@@ -969,6 +969,7 @@ namespace DwarfCorp.GameStates
             {
                 Thread.Sleep(100);
             }
+            Thread.Sleep(1000);
         }
 
         /// <summary>
@@ -1467,6 +1468,9 @@ namespace DwarfCorp.GameStates
 
             FillClosestLights(gameTime);
             IndicatorManager.Update(gameTime);
+            AspectRatio = GraphicsDevice.Viewport.AspectRatio;
+            Camera.AspectRatio = AspectRatio;
+            
             Camera.Update(gameTime, PlayState.ChunkManager);
 
             if (KeyManager.RotationEnabled())

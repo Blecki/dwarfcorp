@@ -165,7 +165,7 @@ namespace DwarfCorp
             Blackboard = new Blackboard();
             Creature = creature;
             CurrentPath = null;
-            DrawPath = true;
+            DrawPath = false;
             PlannerTimer = new Timer(0.1f, false);
             LocalControlTimeout = new Timer(5, false);
             WanderTimer = new Timer(1, false);

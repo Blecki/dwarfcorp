@@ -116,6 +116,7 @@ namespace DwarfCorp
         {
             lastPosition = Position;
             UpdateViewMatrix();
+            UpdateProjectionMatrix();
         }
 
         public virtual void UpdateViewMatrix()

@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using DwarfCorp.DwarfCorp;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
@@ -136,7 +137,7 @@ namespace DwarfCorp
                     new ForLoop(
                         new SetTargetVoxelFromEntityAct(Agent, EntityName, "EntityVoxel") &
                         new PlanAct(Agent, "PathToEntity", "EntityVoxel", PlanAct.PlanType.Adjacent) &
-                        new Parallel(new FollowPathAct(Agent, "PathToEntity") * new Wrap(() => TargetMoved("PathToEntity")), new Wrap(CollidesWithTarget)) { ReturnOnAllSucces = false }, 5, true),
+                        new Parallel(new FollowPathAnimationAct(Agent, "PathToEntity") * new Wrap(() => TargetMoved("PathToEntity")), new Wrap(CollidesWithTarget)) { ReturnOnAllSucces = false }, 5, true),
                     new StopAct(Agent)));
             Tree.Initialize();
             base.Initialize();

@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.DwarfCorp;
 
 namespace DwarfCorp
 {
@@ -58,7 +59,7 @@ namespace DwarfCorp
                     new ForLoop(
                         new Sequence(
                                       new PlanAct(Agent, "PathToVoxel", voxel, planType) { Radius = radius},
-                                      new FollowPathAct(Agent, "PathToVoxel")
+                                      new FollowPathAnimationAct(Agent, "PathToVoxel")
                                      )
                                        , 3, true),
                                       new StopAct(Agent));
@@ -74,7 +75,7 @@ namespace DwarfCorp
                 Tree = new Sequence(
                                       new SetBlackboardData<Voxel>(Agent, "TargetVoxel", Voxel),
                                       new PlanAct(Agent, "PathToVoxel", "TargetVoxel", planType) { Radius = radius},
-                                      new FollowPathAct(Agent, "PathToVoxel"),
+                                      new FollowPathAnimationAct(Agent, "PathToVoxel"),
                                       new StopAct(Agent));
             }
 

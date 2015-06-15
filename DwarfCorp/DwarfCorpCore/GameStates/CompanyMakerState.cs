@@ -221,7 +221,7 @@ namespace DwarfCorp.GameStates
         private void randomButton_OnClicked()
         {
             var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.company_exploration);
-            CompanyName = DwarfCorp.TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
+            CompanyName = TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
             CompanyNameEdit.Text = CompanyName;
         }
 

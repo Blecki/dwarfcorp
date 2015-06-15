@@ -123,7 +123,7 @@ namespace DwarfCorp
             List<Composite.Frame> frameList = new List<Composite.Frame>();
             foreach (int[] frame in frames)
             {
-                DwarfCorp.Composite.Frame currFrame = new Composite.Frame();
+                Composite.Frame currFrame = new Composite.Frame();
 
                 int x = frame[0];
                 int y = frame[1];

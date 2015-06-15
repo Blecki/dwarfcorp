@@ -127,6 +127,9 @@ namespace DwarfCorp
         {
             foreach (CreatureAI minion in Minions)
             {
+                if (minion.Physics.CollideMode == Physics.CollisionMode.None) 
+                    continue;
+
                 foreach (CreatureAI other in Minions)
                 {
                     if (minion == other)
@@ -143,7 +146,6 @@ namespace DwarfCorp
                     }
                 }
             }
-
         }
 
 
@@ -271,7 +273,7 @@ namespace DwarfCorp
                Threats.Remove(threat);
             }
 
-            DwarfCorp.TaskManager.AssignTasks(tasks, Minions);
+            TaskManager.AssignTasks(tasks, Minions);
         }
 
         public List<Room> GetRooms()
