@@ -185,9 +185,9 @@ namespace DwarfCorp
             Buy();
 
             ShoppingCart.Items.Clear();
-            ShoppingCart.ClearChildren();
+            ShoppingCart.ReCreateItems();
             ShoppingCart.UpdateItems();
-
+            
             BuyTotal.Text = "Order Total: " + 0.0f.ToString("C");
         }
 
@@ -295,7 +295,7 @@ namespace DwarfCorp
             Sell();
 
             SellCart.Items.Clear();
-            SellCart.ClearChildren();
+            SellCart.ReCreateItems();
             SellCart.UpdateItems();
 
             SellTotal.Text = "Order Total: " + 0.0f.ToString("C");

@@ -1541,6 +1541,9 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public void OpenPauseMenu()
         {
+
+            if (PausePanel != null && PausePanel.IsVisible) return;
+
             Paused = true;
 
             int w = 200;
@@ -1597,6 +1600,8 @@ namespace DwarfCorp.GameStates
                 case "Continue":
                     GUI.RootComponent.RemoveChild(PausePanel);
                     Paused = false;
+                    PausePanel.Destroy();
+                    PausePanel = null;
                     break;
                 case "Options":
                     StateManager.PushState("OptionsState");
