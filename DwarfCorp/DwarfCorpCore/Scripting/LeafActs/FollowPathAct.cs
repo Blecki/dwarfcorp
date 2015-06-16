@@ -87,26 +87,25 @@ namespace DwarfCorp
         /// A creature moves along a planned path until the path is completed, or
         /// it detects failure.
         /// </summary>
+        /// TODO: do this correctly. Time the entire trajectory and index by time rather than having an incremental timer switching between points.
         [Newtonsoft.Json.JsonObject(IsReference = true)]
         public class FollowPathAnimationAct : CreatureAct
         {
             private string PathName { get; set; }
             public Timer ValidPathTimer { get; set; }
-            public Creature.MoveAction CurrentAction { get; set; }
-            public Timer CurrentActionTimer { get; set; }
+
+            public Timer TrajectoryTimer { get; set; }
             public List<Creature.MoveAction> Path { get; set; }
-            public int CurrentActionIndex { get; set; }
-            public Physics.CollisionMode CollisionMode { get; set; }
             public float RandomTimeOffset { get; set; }
-            public List<Vector3> RandomPositionOffsets { get; set; } 
+            public List<Vector3> RandomPositionOffsets { get; set; }
+            public List<float> ActionTimes { get; set; }
+
             public FollowPathAnimationAct(CreatureAI agent, string pathName) :
                 base(agent)
             {
                 Name = "Follow path";
                 PathName = pathName;
                 ValidPathTimer = new Timer(.75f, false);
-                CurrentActionIndex = -1;
-                CollisionMode = Agent.Physics.CollideMode;
                 RandomTimeOffset = MathFunctions.Rand(0.0f, 0.1f);
             }
 
@@ -140,58 +139,47 @@ namespace DwarfCorp
                 return true;
             }
 
-            public void SetActionTimer()
+            public float GetActionTime(Creature.MoveAction action, int index)
             {
-                int nextID = CurrentActionIndex + 1;
-                Creature.MoveAction nextAction = CurrentAction;
+                Creature.MoveAction nextAction = action;
                 bool hasNextAction = false;
                 Vector3 diff = Vector3.Zero;
                 float diffNorm = 0.0f;
                 Vector3 half = Vector3.One * 0.5f;
+                int nextID = index + 1;
                 if (nextID < Path.Count)
                 {
                     hasNextAction = true;
                     nextAction = Path[nextID];
-                    diff = (nextAction.Voxel.Position + half - (CurrentAction.Voxel.Position + half));
+                    diff = (nextAction.Voxel.Position + half - (action.Voxel.Position + half));
                     diffNorm = diff.Length();
                 }
                 float unitTime = 1.25f/(Agent.Stats.Dexterity + 0.001f) + RandomTimeOffset;
                 if (hasNextAction)
                 {
-                    switch (CurrentAction.MoveType)
+                    switch (action.MoveType)
                     {
                         case Creature.MoveType.Walk:
-                            CurrentActionTimer.Reset(unitTime * diffNorm);
+                            return unitTime*diffNorm;
                             break;
                         case Creature.MoveType.Climb:
-                            CurrentActionTimer.Reset(unitTime * diffNorm * 2.5f);
+                            return unitTime*diffNorm*2.5f;
                             break;
                         case Creature.MoveType.Jump:
-                            CurrentActionTimer.Reset(unitTime * diffNorm * 1.5f);
+                            return unitTime * diffNorm * 1.5f;
                             break;
                         case Creature.MoveType.Swim:
-                            CurrentActionTimer.Reset(unitTime * diffNorm * 2.0f);
+                            return unitTime * diffNorm * 2.0f;
                             break;
                         case Creature.MoveType.Fall:
-                            CurrentActionTimer.Reset(unitTime * diffNorm);
+                            return unitTime * diffNorm;
                             break;
                     }
 
                 }
+                return 0.0f;
             }
 
-            public bool NextAction()
-            {
-                if (Path == null) 
-                    return false;
-
-                CurrentActionIndex++;
-                if (Path.Count <= CurrentActionIndex) 
-                    return false;
-                CurrentAction = Path[CurrentActionIndex];
-                SetActionTimer();
-                return true;
-            }
 
 
             public bool InitializePath()
@@ -200,36 +188,41 @@ namespace DwarfCorp
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                 Creature.OverrideCharacterMode = false;
                 Agent.Physics.Orientation = Physics.OrientMode.RotateY;
-                Agent.Physics.CollideMode = Physics.CollisionMode.None;
-                Agent.Physics.Gravity = Vector3.Zero;
-                CurrentActionTimer = new Timer(1.0f, false);
+                ActionTimes = new List<float>();
                 Path = GetPath();
                 if (Path == null)
                 {
                     SetPath(null);
                     Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                    Agent.Physics.CollideMode = CollisionMode;
                     return false;
                 }
                 else if (Path.Count > 0)
                 {
                     RandomPositionOffsets = new List<Vector3>();
+                    int i = 0;
+                    float dt = 0;
+                    float time = 0;
                     foreach (Creature.MoveAction action in Path)
                     {
                         RandomPositionOffsets.Add(MathFunctions.RandVector3Box(-0.1f, 0.1f, 0.0f, 0.0f, -0.1f, 0.1f));
+                        dt = GetActionTime(action, i);
+                        ActionTimes.Add(dt);
+                        time += dt;
+                        i++;
                     }
-                    CurrentActionIndex = -1;
+                    RandomPositionOffsets[0] = Agent.Position - (Path[0].Voxel.Position + Vector3.One * 0.5f);
+                    TrajectoryTimer = new Timer(time, true);
                     return true;
                 }
                 else return true;
             }
 
-            public IEnumerable<Status> SnapToCurrent()
+            public IEnumerable<Status> SnapToFirst()
             {
                 Vector3 half = Vector3.One * 0.5f;
-                if (CurrentAction.Voxel == null) 
+                if (Path[0].Voxel == null) 
                     yield break;
-                Vector3 target = CurrentAction.Voxel.Position + half + RandomPositionOffsets[CurrentActionIndex];
+                Vector3 target = Path[0].Voxel.Position + half + RandomPositionOffsets[0];
                 Matrix transform = Agent.Physics.LocalTransform;
                 do
                 {
@@ -239,26 +232,42 @@ namespace DwarfCorp
                 } while ((target - Agent.Physics.Position).Length() > 0.1f);
             }
 
+            public bool GetCurrentAction(ref Creature.MoveAction action, ref float time, ref int index)
+            {
+                float currentTime = Easing.LinearQuadBlends(TrajectoryTimer.CurrentTimeSeconds,
+                    TrajectoryTimer.TargetTimeSeconds, 0.5f);
+                float sumTime = 0.0f;
+                for (int i = 0; i < ActionTimes.Count; i++)
+                {
+                    sumTime += ActionTimes[i];
+                    if (currentTime < sumTime)
+                    {
+                        action = Path[i];
+                        time = 1.0f - (sumTime - currentTime) / ActionTimes[i];
+                        index = i;
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
             public void PerformCurrentAction()
             {
-                float t = CurrentActionTimer.CurrentTimeSeconds/CurrentActionTimer.TargetTimeSeconds;
-
-                if (CurrentActionIndex == 0)
+                Creature.MoveAction action = Path.First();
+                float t = 0;
+                int currentIndex = 0;
+                if (!GetCurrentAction(ref action, ref t, ref currentIndex))
                 {
-                    t = Easing.SineEaseIn(CurrentActionTimer.CurrentTimeSeconds, 0.0f, 1.0f, CurrentActionTimer.TargetTimeSeconds);
+                    return;
                 }
-                else if (CurrentActionIndex == Path.Count - 2)
-                {
-                    t = Easing.SineEaseOut(CurrentActionTimer.CurrentTimeSeconds, 0.0f, 1.0f, CurrentActionTimer.TargetTimeSeconds);
-                }
-                
 
-                int nextID = CurrentActionIndex + 1;
+                int nextID = currentIndex + 1;
                 bool hasNextAction = false;
                 Vector3 half = Vector3.One * 0.5f;
                 Vector3 nextPosition = Vector3.Zero;
-                Vector3 currPosition = CurrentAction.Voxel.Position + half;
-                currPosition += RandomPositionOffsets[CurrentActionIndex];
+                Vector3 currPosition = action.Voxel.Position + half;
+                currPosition += RandomPositionOffsets[currentIndex];
                 if (nextID < Path.Count)
                 {
                     hasNextAction = true;
@@ -268,7 +277,7 @@ namespace DwarfCorp
                 Matrix transform = Agent.Physics.LocalTransform;
                 Vector3 diff = (nextPosition - currPosition);
 
-                switch (CurrentAction.MoveType)
+                switch (action.MoveType)
                 {
                     case Creature.MoveType.Walk:
                         Creature.OverrideCharacterMode = false;
@@ -298,7 +307,7 @@ namespace DwarfCorp
                         Creature.OverrideCharacterMode = false;
                         if (hasNextAction)
                         {
-                            float z = Easing.Ballistic(CurrentActionTimer.CurrentTimeSeconds, CurrentActionTimer.TargetTimeSeconds, 1.0f);
+                            float z = Easing.Ballistic(t, 1.0f, 1.0f);
                             Vector3 start = currPosition;
                             Vector3 end = nextPosition;
                             Vector3 dx = (end - start) * t + start;
@@ -345,48 +354,33 @@ namespace DwarfCorp
             public override IEnumerable<Status> Run()
             {
                 InitializePath();
-                while (NextAction())
+                if (TrajectoryTimer == null) yield break;
+                while (!TrajectoryTimer.HasTriggered)
                 {
-                    if (CurrentActionIndex >= Path.Count)
+                    TrajectoryTimer.Update(DwarfTime.LastTime);
+                  
+                    PerformCurrentAction();
+
+                    if (Agent.DrawPath)
                     {
-                        break;
+                        List<Vector3> points =
+                            Path.Select((v, i) => v.Voxel.Position + new Vector3(0.5f, 0.5f, 0.5f) + RandomPositionOffsets[i]).ToList();
+                        Drawer3D.DrawLineList(points, Color.Red, 0.1f);
                     }
 
-                    if (CurrentActionIndex == 0)
+
+                    // Check if the path has been made invalid
+                    if (ValidPathTimer.HasTriggered && !IsPathValid(Path))
                     {
-                        foreach (Act.Status status in SnapToCurrent())
-                        {
-                            yield return status;
-                        }
+                        Creature.OverrideCharacterMode = false;
+                        Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                        yield return Status.Fail;
                     }
+                    yield return Status.Running;
 
-                    while (!CurrentActionTimer.HasTriggered)
-                    {
-                        if (Agent.DrawPath)
-                        {
-                            List<Vector3> points =
-                                Path.Select((v, i) => v.Voxel.Position + new Vector3(0.5f, 0.5f, 0.5f) + RandomPositionOffsets[i]).ToList();
-                            Drawer3D.DrawLineList(points, Color.Red, 0.1f);
-                        }
-                        CurrentActionTimer.Update(DwarfTime.LastTime);
-                        ValidPathTimer.Update(DwarfTime.LastTime);
-
-                        PerformCurrentAction();
-
-                        // Check if the path has been made invalid
-                        if (ValidPathTimer.HasTriggered && !IsPathValid(Path))
-                        {
-                            Creature.OverrideCharacterMode = false;
-                            Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                            Agent.Physics.CollideMode = CollisionMode;
-                            yield return Status.Fail;
-                        }
-                        yield return Status.Running;
-                    }
                 }
                 Creature.OverrideCharacterMode = false;
                 SetPath(null);
-                Agent.Physics.CollideMode = CollisionMode;
                 yield return Status.Success;
             }
 
@@ -395,7 +389,6 @@ namespace DwarfCorp
             {
                 Creature.OverrideCharacterMode = false;
                 SetPath(null);
-                Agent.Physics.CollideMode = CollisionMode;
                 base.OnCanceled();
             }
         }
@@ -455,7 +448,6 @@ namespace DwarfCorp
 
             public override IEnumerable<Status> Run()
             {
-                Physics.CollisionMode collisionMode = Agent.Physics.CollideMode;
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                 Creature.OverrideCharacterMode = false;
                 while (true)
@@ -470,7 +462,6 @@ namespace DwarfCorp
                     {
                         SetPath(null);
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                        Agent.Physics.CollideMode = collisionMode;
                         yield return Status.Fail;
                         break;
                     }
@@ -480,7 +471,6 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        Agent.Physics.CollideMode = collisionMode;
                         yield return Status.Success;
                         break;
                     }
@@ -498,7 +488,6 @@ namespace DwarfCorp
                         if (ValidPathTimer.HasTriggered && !IsPathValid(path))
                         {
                             Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                            Agent.Physics.CollideMode = collisionMode;
                             yield return Status.Fail;
                         }
 
@@ -588,7 +577,6 @@ namespace DwarfCorp
                             {
                                 PreviousTargetVoxel = null;
                                 SetPath(null);
-                                Agent.Physics.CollideMode = collisionMode;
                                 yield return Status.Success;
                                 break;
                             }
@@ -598,7 +586,6 @@ namespace DwarfCorp
                     {
                         PreviousTargetVoxel = null;
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                        Agent.Physics.CollideMode = collisionMode;
                         yield return Status.Fail;
                         break;
                     }

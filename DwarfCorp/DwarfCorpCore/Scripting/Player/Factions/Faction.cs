@@ -140,9 +140,9 @@ namespace DwarfCorp
                     Vector3 meToOther = other.Position - minion.Position;
                     float dist = (meToOther).Length();
 
-                    if (dist < 0.25f)
+                    if (!float.IsNaN(dist) && dist < 0.25f)
                     {
-                        other.Physics.ApplyForce(meToOther / (dist + 0.01f) * 50, (float)time.ElapsedGameTime.TotalSeconds);
+                        other.Physics.ApplyForce(meToOther / (dist + 0.05f) * 50, (float)time.ElapsedGameTime.TotalSeconds);
                     }
                 }
             }

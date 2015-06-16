@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace DwarfCorp
@@ -372,6 +373,46 @@ namespace DwarfCorp
         public static float CubicEaseIn(float t, float b, float c, float d)
         {
             return c * (t /= d) * t * t + b;
+        }
+
+        public static float LinearQuadBlends(float time, float maxTime, float blendTime)
+        {
+            // Some initialization. t_1 and t_max can be varied, the other parameters are fixed.
+            float t_1 = Math.Min(maxTime * 0.5f, blendTime);
+            float t_3 = t_1;
+            float t_max = maxTime;
+            float t_2 = t_max - (t_1 + t_3);
+
+
+            // Equations for each of the segments
+            // The first segment is a quadratic which levels off at velocity 1 when t = t_1.
+            Func<float, float> f1 = ((float t) => (float)(1.0f/(2*t_1)*Math.Pow(t, 2.0f)));
+            Func<float, float> f2 = ((float t) =>  t + f1(t_1) - t_1);
+            Func<float, float> f3 =
+                ((float t) => (float)(f2(t_1 + t_2) - (1.0f/(2.0f*t_3))*(Math.Pow(t_max - t, 2.0f)) + 0.5*t_3));
+
+            // This is a correction that forces the easing function to end at 
+            // 1.0. The whole function is multiplied by this.
+            float correction = (t_max / (t_max - t_1));
+
+            // Piecewise elements
+            if (time < t_1)
+            {
+                return correction * f1(time);
+            }
+            else if (time < t_1 + t_2)
+            {
+                return correction * f2(time);
+            }
+            else if (time < t_max)
+            {
+                return correction * f3(time);
+            }
+            else
+            {
+                return t_max;
+            }
+
         }
 
         /// <summary>
