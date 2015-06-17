@@ -1424,14 +1424,6 @@ namespace DwarfCorp.GameStates
                 }
             }
 
-            // If End is pressed, quit the game TODO: Replace with input manager.
-            if(Keyboard.GetState().IsKeyDown(Keys.End))
-            {
-                DwarfGame.ExitGame = true;
-                Game.Exit();
-            }
-
-
             // Handles pausing and unpausing TODO: replace with input manager
             if(Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.Pause))
             {
