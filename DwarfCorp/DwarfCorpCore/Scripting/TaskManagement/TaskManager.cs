@@ -320,36 +320,49 @@ namespace DwarfCorp
                 counts.Add(0);
             }
 
-            foreach (CreatureAI creature in creatures)
+            bool allAssigned = false;
+            List<CreatureAI> randomized = new List<CreatureAI>(creatures);
+            List<KeyValuePair<int, float>> costs = new List<KeyValuePair<int, float>>();
+            while (!allAssigned)
             {
-                int index = 0;
-                List<KeyValuePair<int, float>> costs = new List<KeyValuePair<int, float>>();
-                foreach (Task task in newGoals)
+                randomized.Shuffle();
+                foreach (CreatureAI creature in randomized)
                 {
-                    float cost = task.ComputeCost(creature.Creature);
-                    if (!task.IsFeasible(creature.Creature))
+                    costs.Clear();
+                    int index = 0;
+                    foreach (Task task in newGoals)
                     {
-                        cost += 1e10f;
+                        float cost = task.ComputeCost(creature.Creature);
+                        if (!task.IsFeasible(creature.Creature))
+                        {
+                            cost += 1e10f;
+                        }
+                        costs.Add(new KeyValuePair<int, float>(index, cost));
+                        index++;
                     }
-                    costs.Add(new KeyValuePair<int, float>(index, cost));
-                    index++;
-                }
 
-                costs.Sort((pairA, pairB) =>
-                {
-                    if (pairA.Key == pairB.Key)
+                    costs.Sort((pairA, pairB) =>
                     {
-                        return 0;
+                        if (pairA.Key == pairB.Key)
+                        {
+                            return 0;
+                        }
+                        else return pairA.Value.CompareTo(pairB.Value);
+                    });
+
+                    foreach (KeyValuePair<int, float> taskCost in costs)
+                    {
+                        if (!creature.Tasks.Contains(newGoals[taskCost.Key]) && counts[taskCost.Key] < maxPerGoal)
+                        {
+                            counts[taskCost.Key]++;
+                            creature.Tasks.Add(newGoals[taskCost.Key].Clone());
+                            break;
+                        }
                     }
-                    else return pairA.Value.CompareTo(pairB.Value);
-                });
-
-                foreach (KeyValuePair<int, float> taskCost in costs)
-                {
-                    if (!creature.Tasks.Contains(newGoals[taskCost.Key]) && counts[taskCost.Key] < maxPerGoal)
+                    allAssigned = true;
+                    foreach (int c in counts)
                     {
-                        counts[taskCost.Key]++;
-                        creature.Tasks.Add(newGoals[taskCost.Key].Clone());
+                        if (c == 0) allAssigned = false;
                     }
                 }
             }
