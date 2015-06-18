@@ -838,7 +838,7 @@ namespace DwarfCorp
             foreach (Voxel voxel in KilledVoxels)
             {
                 affectedChunks.Add(voxel.Chunk);
-
+                voxel.Chunk.NotifyDestroyed(new Point3(voxel.GridPosition));
                 if (!voxel.IsInterior)
                 {
                     foreach (KeyValuePair<Point3, VoxelChunk> n in voxel.Chunk.Neighbors)

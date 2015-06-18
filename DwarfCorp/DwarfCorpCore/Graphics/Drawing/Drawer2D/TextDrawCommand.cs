@@ -62,14 +62,21 @@ namespace DwarfCorp
 
             Vector3 unprojected = viewport.Project(Position, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
 
+            if (unprojected.Z > 0 && viewport.Bounds.Contains((int) unprojected.X, (int) unprojected.Y))
+            {
+                Drawer2D.SafeDraw(batch, Text, Font, StrokeColor,
+                    new Vector2(unprojected.X + 1, unprojected.Y) - extents/2.0f, Vector2.Zero);
+                Drawer2D.SafeDraw(batch, Text, Font, StrokeColor,
+                    new Vector2(unprojected.X - 1, unprojected.Y) - extents/2.0f, Vector2.Zero);
 
-            Drawer2D.SafeDraw(batch, Text, Font, StrokeColor, new Vector2(unprojected.X + 1, unprojected.Y) - extents / 2.0f, Vector2.Zero);
-            Drawer2D.SafeDraw(batch, Text, Font, StrokeColor, new Vector2(unprojected.X - 1, unprojected.Y) - extents / 2.0f, Vector2.Zero);
+                Drawer2D.SafeDraw(batch, Text, Font, StrokeColor,
+                    new Vector2(unprojected.X, unprojected.Y + 1) - extents/2.0f, Vector2.Zero);
+                Drawer2D.SafeDraw(batch, Text, Font, StrokeColor,
+                    new Vector2(unprojected.X, unprojected.Y - 1) - extents/2.0f, Vector2.Zero);
 
-            Drawer2D.SafeDraw(batch, Text, Font, StrokeColor, new Vector2(unprojected.X, unprojected.Y + 1) - extents / 2.0f, Vector2.Zero);
-            Drawer2D.SafeDraw(batch, Text, Font, StrokeColor, new Vector2(unprojected.X, unprojected.Y - 1) - extents / 2.0f, Vector2.Zero);
-
-            Drawer2D.SafeDraw(batch, Text, Font, TextColor, new Vector2(unprojected.X, unprojected.Y) - extents / 2.0f, Vector2.Zero);
+                Drawer2D.SafeDraw(batch, Text, Font, TextColor, new Vector2(unprojected.X, unprojected.Y) - extents/2.0f,
+                    Vector2.Zero);
+            }
         }
     }
 

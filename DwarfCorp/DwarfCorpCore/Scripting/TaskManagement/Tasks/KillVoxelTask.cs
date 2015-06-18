@@ -49,7 +49,7 @@ namespace DwarfCorp
 
         public KillVoxelTask()
         {
-            Priority = PriorityType.Low;
+            Priority = PriorityType.Medium;
         }
 
         public KillVoxelTask(Voxel vox)

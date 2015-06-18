@@ -90,6 +90,7 @@ namespace DwarfCorp
                 if (!ExceedsMovementThreshold && wasEverAddedToOctree)
                     return;
 
+                UpdateBoundingBox();
                 Manager.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
                 Manager.CollisionManager.AddObject(this, CollisionType);
 

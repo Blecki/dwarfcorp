@@ -51,7 +51,7 @@ namespace DwarfCorp
         }
 
         public Fixture(Vector3 position, SpriteSheet asset, Point frame, GameComponent parent) :
-            base("Fixture", parent, Matrix.CreateTranslation(position), Vector3.One * 0.45f, Vector3.Zero, false)
+            base("Fixture", parent, Matrix.CreateTranslation(position), Vector3.One * 0.45f, Vector3.Zero, true)
         {
             Sprite = new Sprite(Manager, "Sprite", this, Matrix.Identity, asset, false);
             Sprite.AddAnimation(new Animation(asset.GenerateFrame(frame)));
