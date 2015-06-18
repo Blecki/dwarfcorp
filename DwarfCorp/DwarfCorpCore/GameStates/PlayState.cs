@@ -1008,7 +1008,10 @@ namespace DwarfCorp.GameStates
                 CreateInitialEmbarkment();
 
                 LoadingMessage = "Presimulating ...";
-                GenerateInitialObjects();
+                if (string.IsNullOrEmpty(ExistingFile))
+                {
+                    GenerateInitialObjects();
+                }
 
                 IsInitialized = true;
 

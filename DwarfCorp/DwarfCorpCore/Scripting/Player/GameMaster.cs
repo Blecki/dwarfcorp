@@ -262,6 +262,11 @@ namespace DwarfCorp
 
             foreach (Room room in Faction.GetRooms())
             {
+                if (room.wasDeserialized)
+                {
+                    room.CreateGUIObjects();
+                    room.wasDeserialized = false;
+                }
                 if (room.GUIObject != null && hasAnyMinions)
                 {
                     room.GUIObject.IsVisible = true;
@@ -323,6 +328,8 @@ namespace DwarfCorp
                     Faction.Economy.Company.StockPrice -= MathFunctions.Rand(0, 0.5f);
                 }
             }
+
+            Faction.Minions.RemoveAll(m => m.IsDead);
 
             UpdateRooms();
         }

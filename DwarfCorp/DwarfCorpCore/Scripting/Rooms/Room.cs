@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -53,6 +54,7 @@ namespace DwarfCorp
         public RoomData RoomData { get; set; }
         protected static int Counter = 0;
 
+        public bool wasDeserialized = false;
         [JsonIgnore]
         public WorldGUIObject GUIObject { get; set; }
 
@@ -89,11 +91,24 @@ namespace DwarfCorp
             }
         }
 
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            wasDeserialized = true;
+        }
+
+
         public virtual void OnBuilt()
         {
             
         }
 
+
+        public virtual void CreateGUIObjects()
+        {
+         
+        }
 
         public List<Body> GetComponentsInRoom()
         {

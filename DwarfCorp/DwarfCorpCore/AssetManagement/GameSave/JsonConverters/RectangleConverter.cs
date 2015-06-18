@@ -55,7 +55,7 @@ namespace DwarfCorp
             JValue jObject = serializer.Deserialize<JValue>(reader);
             string jsonString = jObject.Value.ToString();
 
-            string[] tokens = jsonString.Split(' ', ',', ':');
+            string[] tokens = jsonString.Split(' ', ',', ':', '{', '}');
             int[] intTokens = new int[4];
 
             int i = 0;

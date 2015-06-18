@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -43,7 +44,9 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class WorldGUIObject : Body
     {
+        [JsonIgnore]
         public GUIComponent GUIObject { get; set; }
+
         public bool Enabled { get; set; }
         public WorldGUIObject()
         {
@@ -60,31 +63,39 @@ namespace DwarfCorp
             Enabled = false;
         }
 
+
         public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Microsoft.Xna.Framework.Graphics.GraphicsDevice graphicsDevice, Microsoft.Xna.Framework.Graphics.Effect effect, bool renderingForWater)
         {
-            if (Enabled && IsVisible && camera.IsInView(GetBoundingBox()))
+            if (GUIObject != null)
             {
-                Vector3 screenPos = camera.Project(GlobalTransform.Translation);
-                GUIObject.LocalBounds = new Rectangle((int)screenPos.X - GUIObject.LocalBounds.Width / 2, (int)screenPos.Y - GUIObject.LocalBounds.Height / 2, GUIObject.LocalBounds.Width, GUIObject.LocalBounds.Height);
+                if (Enabled && IsVisible && camera.IsInView(GetBoundingBox()))
+                {
+                    Vector3 screenPos = camera.Project(GlobalTransform.Translation);
+                    GUIObject.LocalBounds = new Rectangle((int) screenPos.X - GUIObject.LocalBounds.Width/2,
+                        (int) screenPos.Y - GUIObject.LocalBounds.Height/2, GUIObject.LocalBounds.Width,
+                        GUIObject.LocalBounds.Height);
 
-                GUIObject.IsVisible = true;
-            }
-            else
-            {
-                GUIObject.IsVisible = false;
+                    GUIObject.IsVisible = true;
+                }
+                else
+                {
+                    GUIObject.IsVisible = false;
+                }
             }
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
         }
 
         public override void Die()
         {
-            GUIObject.Destroy();
+            if(GUIObject != null)
+                GUIObject.Destroy();
             base.Die();
         }
 
         public override void Delete()
         {
-            GUIObject.Destroy();
+            if (GUIObject != null)
+                GUIObject.Destroy();
             base.Delete();
         }
 

@@ -59,6 +59,12 @@ namespace DwarfCorp
             
         }
 
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            Lights.Add(this);
+        }
+
         public DynamicLight(float range, float intensity, bool add = true)
         {
             Range = range;

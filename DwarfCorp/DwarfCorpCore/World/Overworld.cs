@@ -818,32 +818,17 @@ namespace DwarfCorp
             {
                 for (int y = 0; y < size; y++)
                 {
-                    float height = ComputeHeight(x * 1.0f, y * 1.0f, size, size, 1.6f, false);
+                    float height = ComputeHeight(x * 1.0f, y * 2.0f, size, size, 1.0f, false);
+                    float level = (int)(height/0.15f) * 0.15f + 0.08f;
 
-                    if (height < 0.3f)
-                    {
-                        height = 0.08f;
-                    }
-                    else if (height < 0.6f)
-                    {
-                        height = 0.3f;
-                    }
-                    else if (height < 0.8f)
-                    {
-                        height = 0.5f;
-                    }
-                    else
-                    {
-                        height = 0.8f;
-                    }
-                    
+
+                    Map[x, y].Height = level;
                     Map[x, y].Biome = Biome.Forest;
                     Map[x, y].Erosion = 1.0f;
                     Map[x, y].Weathering = 0;
                     Map[x, y].Faults = 1.0f;
                     Map[x, y].Temperature = 0.6f;
                     Map[x, y].Rainfall = 0.6f;
-                    Map[x, y].Height = height;
                 }
             }
 

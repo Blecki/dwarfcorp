@@ -62,7 +62,6 @@ namespace DwarfCorp
                 return !(Plant == null || Plant.IsDead);
             }
         }
-
         public List<FarmTile> FarmTiles = new List<FarmTile>();
 
         public virtual Body CreatePlant(Vector3 position)
@@ -139,11 +138,10 @@ namespace DwarfCorp
             return closest;
         }
 
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
+        public override void CreateGUIObjects()
         {
             FarmButton = new Button(PlayState.GUI, PlayState.GUI.RootComponent, "Farm", PlayState.GUI.DefaultFont,
-               Button.ButtonMode.ImageButton, new NamedImageFrame(ContentPaths.GUI.icons, 32, 5, 1))
+ Button.ButtonMode.ImageButton, new NamedImageFrame(ContentPaths.GUI.icons, 32, 5, 1))
             {
                 LocalBounds = new Rectangle(0, 0, 32, 32),
                 DrawFrame = true,
@@ -152,6 +150,12 @@ namespace DwarfCorp
                 DrawOrder = -100
             };
             FarmButton.OnClicked += farmButton_OnClicked;
+
+            if (GUIObject != null)
+            {
+                GUIObject.Die();
+            }
+
             GUIObject = new WorldGUIObject(PlayState.ComponentManager.RootComponent, FarmButton)
             {
                 IsVisible = true,
@@ -161,21 +165,7 @@ namespace DwarfCorp
 
         public override void OnBuilt()
         {
-            FarmButton = new Button(PlayState.GUI, PlayState.GUI.RootComponent, "Farm", PlayState.GUI.DefaultFont,
-                Button.ButtonMode.ImageButton, new NamedImageFrame(ContentPaths.GUI.icons, 32, 5, 1))
-            {
-                LocalBounds = new Rectangle(0, 0, 32, 32),
-                DrawFrame = true,
-                TextColor = Color.White,
-                ToolTip = "Click to make selected employees work this " + RoomData.Name,
-                DrawOrder = -100
-            };
-            FarmButton.OnClicked += farmButton_OnClicked;
-            GUIObject = new WorldGUIObject(PlayState.ComponentManager.RootComponent, FarmButton)
-            {
-                IsVisible = true,
-                LocalTransform = Matrix.CreateTranslation(GetBoundingBox().Center())
-            };
+            CreateGUIObjects();
             base.OnBuilt();
         }
 
