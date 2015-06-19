@@ -122,6 +122,8 @@ namespace DwarfCorp.GameStates
                     continue;
                 }
 
+                if (mode.Width <= 640) continue;
+
                 string s = mode.Width + " x " + mode.Height;
                 DisplayModes[s] = mode;
                 if(mode.Width == GameSettings.Default.ResolutionX && mode.Height == GameSettings.Default.ResolutionY)

@@ -55,14 +55,14 @@ namespace DwarfCorp
     {
         public class CraftDesignation
         {
-            public CraftLibrary.CraftItemType ItemType { get; set; }
+            public string ItemType { get; set; }
             public Voxel Location { get; set; }
             public Body WorkPile { get; set; }
         }
 
         public Faction Faction { get; set; }
         public List<CraftDesignation> Designations { get; set; }
-        public CraftLibrary.CraftItemType CurrentCraftType { get; set; }
+        public string CurrentCraftType { get; set; }
         public bool IsEnabled { get; set; }
 
         public CraftBuilder()

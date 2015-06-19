@@ -262,7 +262,7 @@ namespace DwarfCorp
             Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
             Master.Faction.WallBuilder.CurrentVoxelType = null;
             Master.Faction.CraftBuilder.IsEnabled = true;
-            Master.Faction.CraftBuilder.CurrentCraftType = SelectedItem.CraftType;
+            Master.Faction.CraftBuilder.CurrentCraftType = SelectedItem.Name;
             Master.CurrentToolMode = GameMaster.ToolMode.Build;
             GUI.ToolTipManager.Popup("Click and drag to build " + SelectedItem.Name);
         }

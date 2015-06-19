@@ -172,7 +172,7 @@ namespace DwarfCorp
                             return unitTime * diffNorm * 2.0f;
                             break;
                         case Creature.MoveType.Fall:
-                            return unitTime * diffNorm;
+                            return unitTime * diffNorm * 0.5f;
                             break;
                     }
 

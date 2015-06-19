@@ -45,7 +45,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class CraftItemAct : CompoundCreatureAct
     {
-        public CraftLibrary.CraftItemType ItemType { get; set; }
+        public string ItemType { get; set; }
         public Voxel Voxel { get; set; }
         public CraftItemAct()
         {
@@ -88,7 +88,7 @@ namespace DwarfCorp
         }
 
 
-        public CraftItemAct(CreatureAI creature, Voxel voxel, CraftLibrary.CraftItemType type) :
+        public CraftItemAct(CreatureAI creature, Voxel voxel, string type) :
             base(creature)
         {
             ItemType = type;

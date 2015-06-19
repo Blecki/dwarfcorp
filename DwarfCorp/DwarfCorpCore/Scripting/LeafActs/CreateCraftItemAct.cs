@@ -43,8 +43,8 @@ namespace DwarfCorp
     public class CreateCraftItemAct : CreatureAct
     {
         public Voxel Voxel { get; set; }
-        public CraftLibrary.CraftItemType ItemType { get; set; }
-        public CreateCraftItemAct(Voxel voxel, CreatureAI agent, CraftLibrary.CraftItemType itemType) :
+        public string ItemType { get; set; }
+        public CreateCraftItemAct(Voxel voxel, CreatureAI agent, string itemType) :
             base(agent)
         {
             Agent = agent;

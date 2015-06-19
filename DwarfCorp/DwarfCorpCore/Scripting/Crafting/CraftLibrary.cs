@@ -41,13 +41,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CraftLibrary
     {
-        public enum CraftItemType
-        {
-            BearTrap,
-            Lamp
-        };
-
-        public static Dictionary<CraftItemType, CraftItem> CraftItems { get; set; }
+        public static Dictionary<string, CraftItem> CraftItems { get; set; }
         private static bool staticsInitialized = false;
 
 
@@ -56,10 +50,6 @@ namespace DwarfCorp
             Initialize();
         }
 
-        public static CraftItemType GetType(string name)
-        {
-            return (from item in CraftItems where item.Value.Name == name select item.Key).FirstOrDefault();
-        }
 
         public static void Initialize()
         {
@@ -68,13 +58,12 @@ namespace DwarfCorp
                 return;
             }
 
-            CraftItems = new Dictionary<CraftItemType, CraftItem>()
+            CraftItems = new Dictionary<string, CraftItem>()
             {
                 {
-                    CraftItemType.BearTrap,
+                   "Bear Trap",
                     new CraftItem()
                     {
-                        CraftType = CraftItemType.BearTrap,
                         Name = "Bear Trap",
                         Description = "Triggers on enemies, doing massive damage before being destroyed",
                         RequiredResources = new List<ResourceAmount>()
@@ -86,10 +75,9 @@ namespace DwarfCorp
                     }
                 },
                 {
-                    CraftItemType.Lamp,
+                    "Lamp",
                     new CraftItem()
                     {
-                        CraftType = CraftItemType.Lamp,
                         Name = "Lamp",
                         Description = "Dwarves need to see sometimes too!",
                         RequiredResources = new List<ResourceAmount>()
@@ -97,6 +85,34 @@ namespace DwarfCorp
                             new ResourceAmount(ResourceLibrary.ResourceType.Coal, 1)
                         },
                         Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 0, 1),
+                        BaseCraftTime = 10
+                    }
+                },
+                {
+                    "Ladder",
+                    new CraftItem()
+                    {
+                        Name = "Ladder",
+                        Description = "Allows dwarves to climb up and down",
+                        RequiredResources = new List<ResourceAmount>()
+                        {
+                            new ResourceAmount(ResourceLibrary.ResourceType.Wood, 1)
+                        },
+                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 2, 0),
+                        BaseCraftTime = 10
+                    }
+                },
+                {
+                    "Door",
+                    new CraftItem()
+                    {
+                        Name = "Door",
+                        Description = "Keep monsters out, and dwarves in. (Note: Does nothing right now)",
+                        RequiredResources = new List<ResourceAmount>()
+                        {
+                            new ResourceAmount(ResourceLibrary.ResourceType.Wood, 1)
+                        },
+                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 3, 1),
                         BaseCraftTime = 10
                     }
                 }
