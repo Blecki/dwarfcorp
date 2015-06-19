@@ -30,7 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -40,6 +43,7 @@ namespace DwarfCorp
     /// Tasks construct acts (or behaviors) to solve them. Tasks have costs,
     /// and can either be feasible or infeasible for a crature.
     /// </summary>
+    [JsonObject(IsReference = true)]
     public abstract class Task
     {
         public enum PriorityType
@@ -52,6 +56,7 @@ namespace DwarfCorp
         }
 
         public PriorityType Priority { get; set; }
+        [JsonIgnore]
         public Act Script { get; set; }
         public bool AutoRetry = false;
 
