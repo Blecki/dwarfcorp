@@ -156,7 +156,7 @@ namespace DwarfCorp
                         if (Creature.Faction == PlayState.Master.Faction)
                         {
                             PlayState.AnnouncementManager.Announce(Creature.Stats.FullName + " (" + Creature.Stats.CurrentLevel.Name + ")" + " got lost.",
-                                Creature.Stats.FullName + "'s target was lost.");
+                                Creature.Stats.FullName + "'s target was lost.", () => Agent.ZoomToMe());
                         }
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                         yield return Status.Fail;
@@ -203,7 +203,7 @@ namespace DwarfCorp
                         if (Creature.Faction == PlayState.Master.Faction)
                         {
                             PlayState.AnnouncementManager.Announce(Creature.Stats.FullName + " got lost.",
-                                Creature.Stats.FullName + " couldn't find a path. The target was invalid.");
+                                Creature.Stats.FullName + " couldn't find a path. The target was invalid.", () => Agent.ZoomToMe());
                         }
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                         yield return Status.Fail;
@@ -238,7 +238,7 @@ namespace DwarfCorp
                             if (Creature.Faction == PlayState.Master.Faction)
                             {
                                 PlayState.AnnouncementManager.Announce(Creature.Stats.FullName + " got lost.",
-                                    Creature.Stats.FullName + " couldn't find a path in time.");
+                                    Creature.Stats.FullName + " couldn't find a path in time.", Agent.ZoomToMe);
                             }
                             Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                             statusResult = Status.Fail;

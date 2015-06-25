@@ -260,7 +260,7 @@ namespace DwarfCorp.GameStates
 
         public static AnnouncementManager AnnouncementManager = new AnnouncementManager();
 
-        public AnnounementViewer AnnouncementViewer { get; set; }
+        public AnnouncementViewer AnnouncementViewer { get; set; }
 
         public static MonsterSpawner MonsterSpawner { get; set; }
         public static Company PlayerCompany { get { return Master.Faction.Economy.Company; } }
@@ -447,6 +447,7 @@ namespace DwarfCorp.GameStates
             // Turn the camera to face the dwarves
             Camera.Target = new Vector3(Camera.Position.X, h + 10, Camera.Position.Z + 10);
             Camera.Phi = -(float) Math.PI * 0.3f;
+           
         }
 
         /// <summary>
@@ -918,13 +919,13 @@ namespace DwarfCorp.GameStates
             InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
 
-            AnnouncementViewer = new AnnounementViewer(GUI, layout, AnnouncementManager);
+            AnnouncementViewer = new AnnouncementViewer(GUI, layout, AnnouncementManager);
             layout.SetComponentPosition(AnnouncementViewer, 3, 10, 3, 1);
             layout.UpdateSizes();
 
         }
 
-        void moneyButton_OnClicked()
+        public void moneyButton_OnClicked()
         {
             if (StateManager.NextState == "")
             {
@@ -1516,7 +1517,6 @@ namespace DwarfCorp.GameStates
             {
              //   LevelSlider.SliderValue = ChunkManager.ChunkData.MaxViewingLevel;
             }
-
             base.Update(gameTime);
         }
 

@@ -147,8 +147,9 @@ namespace DwarfCorp
 
         void ZoomHomeButton_OnClicked()
         {
-            PlayState.Camera.Target = HomePosition;
             PlayState.Camera.UpdateViewMatrix();
+            PlayState.Camera.ZoomTargets.Clear();
+            PlayState.Camera.ZoomTargets.Add(HomePosition);
         }
 
         bool IsOverButtons(int x, int y)
@@ -171,7 +172,12 @@ namespace DwarfCorp
             forward.Normalize();
 
             Vector3 pos = viewPort.Unproject(new Vector3(mouseState.X - imageBounds.X, mouseState.Y - imageBounds.Y, 0), Camera.ProjectionMatrix, Camera.ViewMatrix, Matrix.Identity) - forward * 10;
-            PlayState.Camera.Target = new Vector3(pos.X, PlayState.Camera.Target.Y, pos.Z);
+            Vector3 target = new Vector3(pos.X, PlayState.Camera.Target.Y, pos.Z);
+            float height = PlayState.ChunkManager.ChunkData.GetFilledVoxelGridHeightAt(target.X, target.Y, target.Z);
+            target.Y = Math.Max(height + 15, target.Y);
+            target = MathFunctions.Clamp(target, PlayState.ChunkManager.Bounds);
+            PlayState.Camera.ZoomTargets.Clear();
+            PlayState.Camera.ZoomTargets.Add(target);
         }
 
         void zoomOutButton_OnClicked()

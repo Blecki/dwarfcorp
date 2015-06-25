@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Policy;
 using System.Text;
 using DwarfCorp.GameStates;
 using DwarfCorpCore;
@@ -82,6 +83,8 @@ namespace DwarfCorp
         public Vector3 PushVelocity = Vector3.Zero;
         public ControlType Control = ControlType.Overhead;
 
+        public List<Vector3> ZoomTargets { get; set; } 
+       
         public OrbitCamera() : base()
         {
             
@@ -96,6 +99,7 @@ namespace DwarfCorp
             LastWheel = Mouse.GetState().ScrollWheelValue;
             targetTheta = theta;
             targetPhi = phi;
+            ZoomTargets = new List<Vector3>();
         }
 
 
@@ -266,10 +270,30 @@ namespace DwarfCorp
             UpdateBasisVectors();
         }
 
+        public void ZoomTo(Vector3 pos)
+        {
+            ZoomTargets.Clear();
+            ZoomTargets.Add(pos);
+        }
+
+
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)
         {
             MouseState mouse = Mouse.GetState();
             KeyboardState keys = Keyboard.GetState();
+
+            if (ZoomTargets.Count > 0)
+            {
+                Vector3 currTarget = ZoomTargets.First();
+                if (Vector3.DistanceSquared(Target, currTarget) > 5)
+                {
+                    Target = 0.8f * Target + 0.2f * currTarget;
+                }
+                else
+                {
+                    ZoomTargets.RemoveAt(0);
+                }
+            }
 
             int edgePadding = -10000;
 

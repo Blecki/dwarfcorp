@@ -270,6 +270,12 @@ namespace DwarfCorp
             Tasks.RemoveAll(task => task.ShouldDelete(Creature));
         }
 
+        public void ZoomToMe()
+        {
+            PlayState.Camera.ZoomTo(Position + Vector3.Up * 8.0f);
+            PlayState.ChunkManager.ChunkData.SetMaxViewingLevel((int)Position.Y, ChunkManager.SliceMode.Y);
+        }
+
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             IdleTimer.Update(gameTime);
@@ -337,7 +343,8 @@ namespace DwarfCorp
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
                         if (Creature.Allies == "Dwarf")
                         {
-                            PlayState.AnnouncementManager.Announce(Stats.FullName +  " (" + Stats.CurrentLevel.Name + ")" + " refuses to work!", "Our employee is unhappy, and would rather not work!");
+                            PlayState.AnnouncementManager.Announce(Stats.FullName +  " (" + Stats.CurrentLevel.Name + ")" + " refuses to work!", 
+                                "Our employee is unhappy, and would rather not work!", ZoomToMe);
                         }
                         CurrentTask = null;
                     }

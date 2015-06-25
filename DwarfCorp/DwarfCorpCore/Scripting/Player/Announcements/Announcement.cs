@@ -47,6 +47,23 @@ namespace DwarfCorp
         public Color Color { get; set; }
         public ImageFrame Icon { get; set; }
 
+        public delegate void Clicked();
+        public event Clicked OnClicked;
+
+        protected virtual void OnOnClicked()
+        {
+            Clicked handler = OnClicked;
+            if (handler != null) handler();
+        }
+
+        public void ActivateClick()
+        {
+            if (OnClicked != null)
+            {
+                OnClicked.Invoke();
+            }
+        }
+
         public Announcement()
         {
             
@@ -54,4 +71,6 @@ namespace DwarfCorp
 
 
     }
+
+
 }

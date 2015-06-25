@@ -161,7 +161,7 @@ namespace DwarfCorp
                         announced = true;
                         PlayState.AnnouncementManager.Announce(FullName + " (" + CurrentLevel.Name + ")" + " wants a promotion!",
                             FullName + " can now be promoted to " +
-                            CurrentClass.Levels[LevelIndex + 1].Name);
+                            CurrentClass.Levels[LevelIndex + 1].Name, GameState.Game.StateManager.GetState<PlayState>("PlayState").moneyButton_OnClicked);
                     }
                 }
             }

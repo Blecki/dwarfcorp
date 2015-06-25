@@ -1,4 +1,4 @@
-﻿// AnnounementViewer.cs
+﻿// AnnouncementViewer.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -41,7 +41,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class AnnounementViewer : GUIComponent
+    public class AnnouncementViewer : GUIComponent
     {
 
         public class AnnouncementView : Panel
@@ -62,6 +62,8 @@ namespace DwarfCorp
                 ToolTip = announcement.Message;
                 Label.Text = announcement.Name;
                 Label.TextColor = announcement.Color;
+   
+                OnClicked += announcement.ActivateClick;
             }
         }
 
@@ -73,7 +75,7 @@ namespace DwarfCorp
 
         public List<AnnouncementView> AnnouncementViews { get; set; } 
 
-        public AnnounementViewer(DwarfGUI gui, GUIComponent parent, AnnouncementManager manager) :
+        public AnnouncementViewer(DwarfGUI gui, GUIComponent parent, AnnouncementManager manager) :
             base(gui, parent)
         {
             Manager = manager;
@@ -82,7 +84,6 @@ namespace DwarfCorp
             Manager.OnRemoved += Manager_OnRemoved;
 
             IsMaximized = false;
-
 
             AnnouncementViews = new List<AnnouncementView>();
             MaxViews = 4;

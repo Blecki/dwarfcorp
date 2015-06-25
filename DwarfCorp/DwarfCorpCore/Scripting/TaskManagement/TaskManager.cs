@@ -323,9 +323,11 @@ namespace DwarfCorp
             bool allAssigned = false;
             List<CreatureAI> randomized = new List<CreatureAI>(creatures);
             List<KeyValuePair<int, float>> costs = new List<KeyValuePair<int, float>>();
-            while (!allAssigned)
+            int iters = 0;
+            while (!allAssigned && iters < newGoals.Count * creatures.Count)
             {
                 randomized.Shuffle();
+                iters++;
                 foreach (CreatureAI creature in randomized)
                 {
                     costs.Clear();

@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -70,15 +71,22 @@ namespace DwarfCorp
             MaxAnnouncements = 32;
         }
 
-        public void Announce(string title, string message)
+        public void Announce(string title, string message, Announcement.Clicked clickAction = null)
         {
-            AddAnnouncement(new Announcement
+            Announcement toAdd = new Announcement
             {
                 Color = Color.White,
                 Icon = null,
                 Message = message,
                 Name = title
-            });
+            };
+
+            if (clickAction != null)
+            {
+                toAdd.OnClicked += clickAction;
+            }
+
+            AddAnnouncement(toAdd);
         }
 
         public void AddAnnouncement(Announcement announcement)
@@ -97,6 +105,11 @@ namespace DwarfCorp
             }
 
             OnAdded(announcement);
+
+            if (Announcements.Count > 25)
+            {
+                Announcements.RemoveAt(0);
+            }
         }
 
     }
