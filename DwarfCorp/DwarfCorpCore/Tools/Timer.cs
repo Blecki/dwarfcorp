@@ -142,6 +142,11 @@ namespace DwarfCorp
                 CurrentTimeSeconds = 0.0f;
                 StartTimeSeconds = -1;
             }
+            
+            if (HasTriggered && TriggerOnce)
+            {
+                return true;
+            }
 
             if(StartTimeSeconds < 0)
             {
@@ -153,6 +158,7 @@ namespace DwarfCorp
             if(CurrentTimeSeconds > TargetTimeSeconds)
             {
                 HasTriggered = true;
+                CurrentTimeSeconds = TargetTimeSeconds;
                 return true;
             }
 

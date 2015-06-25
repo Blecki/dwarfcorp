@@ -49,7 +49,8 @@ namespace DwarfCorp
             Fancy,
             Simple,
             Window,
-            WindowEx
+            WindowEx,
+            SpeechBubble
         }
 
         public PanelMode Mode { get; set; }
@@ -75,6 +76,10 @@ namespace DwarfCorp
             else if(Mode == PanelMode.Simple)
             {
                 GUI.Skin.RenderToolTip(GlobalBounds, batch, new Color(255, 255, 255, 150));
+            }
+            else if (Mode == PanelMode.SpeechBubble)
+            {
+                GUI.Skin.RenderSpeechBubble(GlobalBounds, batch);
             }
             else
             {

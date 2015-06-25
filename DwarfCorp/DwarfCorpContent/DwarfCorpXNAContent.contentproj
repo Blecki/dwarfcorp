@@ -22,7 +22,7 @@
   <PropertyGroup>
     <RootNamespace>VoxelTestContent</RootNamespace>
   </PropertyGroup>
-  <ItemGroup> 
+  <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.EffectImporter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL">
       <Private>False</Private>
     </Reference>
@@ -1020,6 +1020,11 @@
     </Compile>
     <Compile Include="Particles\splat.png">
       <Name>splat</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="GUI\diplo-dorf.png">
+      <Name>diplo-dorf</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

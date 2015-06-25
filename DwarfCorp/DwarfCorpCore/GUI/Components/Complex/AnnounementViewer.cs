@@ -44,26 +44,35 @@ namespace DwarfCorp
     public class AnnouncementViewer : GUIComponent
     {
 
-        public class AnnouncementView : Panel
+        public class AnnouncementView : Label
         {
-            public Label Label { get; set; }
-
+            public Color AnnouncementColor { get; set; }
             public AnnouncementView(DwarfGUI gui, GUIComponent parent) :
-                base(gui, parent)
+                base(gui, parent, "", gui.SmallFont)
             {
-                GridLayout layout = new GridLayout(gui, this, 1, 4);
-
-                Label = new Label(GUI, layout,"", GUI.SmallFont);
-                layout.SetComponentPosition(Label, 0, 0, 4, 1);
             }
 
             public void SetAnnouncement(Announcement announcement)
             {
+                AnnouncementColor = announcement.Color;
                 ToolTip = announcement.Message;
-                Label.Text = announcement.Name;
-                Label.TextColor = announcement.Color;
-   
+                Text = announcement.Name;
+                TextColor = announcement.Color;
+                    
                 OnClicked += announcement.ActivateClick;
+            }
+
+            public override void Update(DwarfTime time)
+            {
+                if (IsMouseOver)
+                {
+                    TextColor = Color.DarkRed;
+                }
+                else
+                {
+                    TextColor = AnnouncementColor;
+                }
+                base.Update(time);
             }
         }
 
@@ -73,11 +82,27 @@ namespace DwarfCorp
         public Timer WaitTimer { get; set; }
         public int MaxViews { get; set; }
 
-        public List<AnnouncementView> AnnouncementViews { get; set; } 
+        public List<AnnouncementView> AnnouncementViews { get; set; }
+
+        public Panel SpeechBubble { get; set; }
+        public AnimatedImagePanel Talker { get; set; }
+        Animation animation = new Animation(ContentPaths.GUI.dorf_diplo, 64, 64, 0, 1);
+
+        public Timer TweenTimer { get; set; }
+        public Timer TweenOutTimer { get; set; }
+        public bool TweenState { get; set; }
 
         public AnnouncementViewer(DwarfGUI gui, GUIComponent parent, AnnouncementManager manager) :
             base(gui, parent)
         {
+            TweenTimer = new Timer(0.5f, true);
+            TweenOutTimer = new Timer(0.5f, true);
+            SpeechBubble = new Panel(gui, this)
+            {
+                Mode = Panel.PanelMode.SpeechBubble,
+                DrawOrder = -2
+            };
+            SpeechBubble.IsVisible = false;
             Manager = manager;
 
             Manager.OnAdded += Manager_OnAdded;
@@ -88,6 +113,10 @@ namespace DwarfCorp
             AnnouncementViews = new List<AnnouncementView>();
             MaxViews = 4;
             WaitTimer = new Timer(5, true);
+            Talker = new AnimatedImagePanel(GUI, this, animation);
+            animation.Play();
+            animation.Loops = true;
+            animation.FrameHZ = 2.0f;
         }
 
         void Manager_OnRemoved(Announcement announcement)
@@ -97,10 +126,7 @@ namespace DwarfCorp
 
         void Manager_OnAdded(Announcement announcement)
         {
-            AnnouncementView view = new AnnouncementView(GUI, this)
-            {
-                Mode = Panel.PanelMode.Simple
-            };
+            AnnouncementView view = new AnnouncementView(GUI, this);
             AnnouncementViews.Insert(0, view);
             view.SetAnnouncement(announcement);
 
@@ -117,18 +143,37 @@ namespace DwarfCorp
 
         void UpdateLayout()
         {
+            float t = -(Easing.CubicEaseInOut(TweenTimer.CurrentTimeSeconds, 0.0f, 1.0f, TweenTimer.TargetTimeSeconds) * 128.0f - 128.0f);
+
+            if (TweenState == false)
+            {
+                t = Easing.CubicEaseInOut(TweenOutTimer.CurrentTimeSeconds, 0.0f, 1.0f, TweenOutTimer.TargetTimeSeconds) * 128.0f;
+            }
+            List<Rectangle> rects = new List<Rectangle>();
             int i = 0;
             foreach (AnnouncementView view in AnnouncementViews)
             {
-                view.LocalBounds = new Rectangle(0, -(LocalBounds.Height / 2) * i, LocalBounds.Width, LocalBounds.Height / 2 - 7);
+                view.LocalBounds = new Rectangle(0, -(LocalBounds.Height / 2) * i + (int)(t), LocalBounds.Width, LocalBounds.Height / 2 - 7);
+                rects.Add(view.LocalBounds);
                 i++;
             }
+            if (AnnouncementViews.Count > 0)
+            {
+                SpeechBubble.LocalBounds = MathFunctions.GetBoundingRectangle(rects);
+                Talker.LocalBounds = new Rectangle(SpeechBubble.LocalBounds.X - 128, (int)t - 64, 128, 128);
+            }
+            else
+            {
+                Talker.LocalBounds = new Rectangle(-128, (int)t - 64, 128, 128);
+            }
+           
         }
 
         public override void Update(DwarfTime time)
         {
+            TweenState = AnnouncementViews.Count > 0;
             WaitTimer.Update(time);
-
+            animation.Update(time);
             if (WaitTimer.HasTriggered)
             {
                 if (AnnouncementViews.Count > 0)
@@ -136,13 +181,43 @@ namespace DwarfCorp
                     AnnouncementView view = AnnouncementViews.ElementAt(AnnouncementViews.Count - 1);
                     RemoveChild(view);
                     AnnouncementViews.RemoveAt(AnnouncementViews.Count - 1);
-                    UpdateLayout();
-
                     if (AnnouncementViews.Count > 0)
                     {
-                        WaitTimer.Reset(5);
+                        WaitTimer.Reset();
+                    }
+                    else
+                    {
+                        TweenTimer.Reset();
+                        TweenOutTimer.Reset();
+                        TweenState = true;
                     }
                 }
+            }
+
+
+            if (!SpeechBubble.IsVisible && AnnouncementViews.Count > 0)
+            {
+                TweenTimer.Reset();
+            }
+            
+            if (SpeechBubble.IsVisible && AnnouncementViews.Count == 0)
+            {
+                TweenOutTimer.Reset();
+            }
+
+            if(TweenState)
+                TweenTimer.Update(time);
+            else
+                TweenOutTimer.Update(time);
+
+
+
+            SpeechBubble.IsVisible = AnnouncementViews.Count > 0;
+            Talker.IsVisible = SpeechBubble.IsVisible || TweenState == false;
+
+            if (SpeechBubble.IsVisible || Talker.IsVisible)
+            {
+                UpdateLayout();
             }
 
             base.Update(time);

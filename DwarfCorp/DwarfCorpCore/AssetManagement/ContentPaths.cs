@@ -337,6 +337,7 @@ namespace DwarfCorp
             public static string pointers = ProgramData.CreatePath("GUI", "pointers");
             public static string room_icons = ProgramData.CreatePath("GUI", "room_icons");
             public static string gui_minimap = ProgramData.CreatePath("GUI", "gui_minimap");
+            public static string dorf_diplo = ProgramData.CreatePath("GUI", "diplo-dorf");
         }
         public class Logos
         {

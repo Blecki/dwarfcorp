@@ -165,7 +165,17 @@ namespace DwarfCorp
             ButtonFrame,
             TabLeft,
             TabCenter,
-            TabRight
+            TabRight,
+
+            SpeechBubbleUpperLeft,
+            SpeechBubbleUpperRight,
+            SpeechBubbleCenter,
+            SpeechBubbleLowerLeft,
+            SpeechBubbleLowerRight,
+            SpeechBubbleLeft,
+            SpeechBubbleRight,
+            SpeechBubbleUpper,
+            SpeechBubbleLower
         }
 
         public Timer MouseTimer { get; set; }
@@ -306,6 +316,17 @@ namespace DwarfCorp
             Frames[Tile.GroupLowerLeft] = new Point(0, 8);
             Frames[Tile.GroupLower] = new Point(1, 8);
             Frames[Tile.GroupLowerRight] = new Point(2, 8);
+
+
+            Frames[Tile.SpeechBubbleUpperLeft] = new Point(8, 6);
+            Frames[Tile.SpeechBubbleUpper]     = new Point(9, 6);
+            Frames[Tile.SpeechBubbleCenter] = new Point(9, 7);
+            Frames[Tile.SpeechBubbleUpperRight] = new Point(10, 6);
+            Frames[Tile.SpeechBubbleLeft] = new Point(8, 7);
+            Frames[Tile.SpeechBubbleRight] = new Point(10, 7);
+            Frames[Tile.SpeechBubbleLowerLeft] = new Point(8, 8);
+            Frames[Tile.SpeechBubbleLower] = new Point(9, 8);
+            Frames[Tile.SpeechBubbleLowerRight] = new Point(10, 8);
 
             Frames[Tile.ProgressLeft] = new Point(3, 6);
             Frames[Tile.ProgressFilled] = new Point(7, 6);
@@ -509,6 +530,26 @@ namespace DwarfCorp
             spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height), GetSourceRect(Tile.ButtonRight), Color.White);
             spriteBatch.Draw(Texture, rect, GetSourceRect(Tile.ButtonCenter), Color.White);
         }
+
+        public void RenderSpeechBubble(Rectangle rectbounds, SpriteBatch spriteBatch)
+        {
+            int w = Math.Max(rectbounds.Width - TileWidth / 4, TileWidth / 4);
+            int h = Math.Max(rectbounds.Height - TileHeight / 4, TileHeight / 4);
+            Rectangle rect = new Rectangle((int)(rectbounds.X + TileWidth / 8),
+                (int)(rectbounds.Y + TileHeight / 8),
+                w,
+                h);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.SpeechBubbleUpperLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.SpeechBubbleLowerLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.SpeechBubbleUpperRight), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.SpeechBubbleLowerRight), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y - TileHeight, rect.Width, TileHeight), GetSourceRect(Tile.SpeechBubbleUpper), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y, TileWidth, rect.Height), GetSourceRect(Tile.SpeechBubbleLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y + rect.Height, rect.Width, TileHeight), GetSourceRect(Tile.SpeechBubbleLower), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height), GetSourceRect(Tile.SpeechBubbleRight), Color.White);
+            spriteBatch.Draw(Texture, rect, GetSourceRect(Tile.SpeechBubbleCenter), Color.White);
+        }
+
 
         public void RenderToolTip(Rectangle rectbounds, SpriteBatch spriteBatch, Color tint)
         {
