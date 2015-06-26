@@ -1548,7 +1548,7 @@ namespace DwarfCorp.GameStates
             {
                 LocalBounds = new Rectangle(GraphicsDevice.Viewport.Width / 2 - w / 2, GraphicsDevice.Viewport.Height / 2 - h / 2, w, h)
             };
-
+       
             GridLayout pauseLayout = new GridLayout(GUI, PausePanel, 1, 1);
 
             ListSelector pauseSelector = new ListSelector(GUI, pauseLayout)

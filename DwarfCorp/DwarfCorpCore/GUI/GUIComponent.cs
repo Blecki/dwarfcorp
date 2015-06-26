@@ -103,6 +103,55 @@ namespace DwarfCorp
         public int MaxWidth { get; set; }
         public int MaxHeight { get; set; }
 
+        public class GUITween
+        {
+            public Func<float, float, float, float, float> TweenFn { get; set; }
+            public Timer TweenTimer { get; set; }
+
+            public enum TweenType
+            {
+                TweenIn,
+                TweenOut,
+                TweenAnimate
+            }
+
+            public TweenType Tween { get; set; }
+
+            public Rectangle Start { get; set; }
+            public Rectangle End { get; set; }
+
+            public GUITween()
+            {
+                
+            }
+
+            public GUITween(float time)
+            {
+                TweenTimer = new Timer(time, true, Timer.TimerMode.Real);
+            }
+
+            public Rectangle GetCurrentRect()
+            {
+                if (TweenTimer.HasTriggered)
+                {
+                    return End;
+                }
+                else
+                {
+                    float t = TweenFn(TweenTimer.CurrentTimeSeconds, 0.0f, 1.0f, TweenTimer.TargetTimeSeconds);
+                    return MathFunctions.Lerp(Start, End, t);
+                }
+            }
+
+            public void Update(DwarfTime time)
+            {
+                TweenTimer.Update(time);
+            }
+            
+        }
+
+        public List<GUITween> Tweens { get; set; } 
+
         public GUIComponent(DwarfGUI gui, GUIComponent parent)
         {
             DrawOrder = -1;
@@ -141,6 +190,7 @@ namespace DwarfCorp
 
             ChildrenToRemove = new List<GUIComponent>();
             ChildrenToAdd = new List<GUIComponent>();
+            Tweens = new List<GUITween>();
         }
 
 
@@ -298,14 +348,115 @@ namespace DwarfCorp
             }
         }
 
+        public void TweenIn(Drawer2D.Alignment alignment, float time = 0.5f, Func<float, float, float, float, float> tweenFn = null)
+        {
+            Point start = new Point(0, 0);
+            switch (alignment)
+            {
+                   case Drawer2D.Alignment.Bottom:
+                    start = new Point(LocalBounds.X, Parent.LocalBounds.Height);
+                    break;
+                   case Drawer2D.Alignment.Top:
+                    start = new Point(LocalBounds.X, -LocalBounds.Height);
+                    break;
+                   case Drawer2D.Alignment.Left:
+                    start = new Point(-LocalBounds.Width, LocalBounds.Y);
+                    break;
+                   case Drawer2D.Alignment.Right:
+                    start = new Point(Parent.LocalBounds.Width, LocalBounds.Y);
+                    break;
+            }
+            TweenIn(start, time, tweenFn);
+        }
+
+        public void TweenOut(Drawer2D.Alignment alignment, float time = 0.5f, Func<float, float, float, float, float> tweenFn = null)
+        {
+            Point end = new Point(0, 0);
+            switch (alignment)
+            {
+                case Drawer2D.Alignment.Bottom:
+                    end = new Point(LocalBounds.X, Parent.LocalBounds.Height);
+                    break;
+                case Drawer2D.Alignment.Top:
+                    end = new Point(LocalBounds.X, -LocalBounds.Height);
+                    break;
+                case Drawer2D.Alignment.Left:
+                    end = new Point(-LocalBounds.Width, LocalBounds.Y);
+                    break;
+                case Drawer2D.Alignment.Right:
+                    end = new Point(Parent.LocalBounds.Width, LocalBounds.Y);
+                    break;
+            }
+            TweenOut(end, time, tweenFn);
+        }
+
+        public void TweenIn(Point start, float time = 0.5f,  Func<float, float, float, float, float> tweenFn = null)
+        {
+            if (tweenFn == null)
+            {
+                tweenFn = Easing.CubicEaseInOut;
+            }
+            GUITween guiTween = new GUITween(time + MathFunctions.Rand()*0.1f)
+            {
+                End = LocalBounds,
+                Start = new Rectangle(start.X, start.Y, LocalBounds.Width, LocalBounds.Height),
+                Tween = GUITween.TweenType.TweenIn,
+                TweenFn = tweenFn
+            };
+            
+            Tweens.Add(guiTween);
+            LocalBounds = guiTween.Start;
+            IsVisible = true;
+        }
+
+        public void TweenOut(Point end, float time = 0.5f, Func<float, float, float, float, float> tweenFn = null)
+        {
+            if (tweenFn == null)
+            {
+                tweenFn = Easing.CubicEaseInOut;
+            }
+
+            Tweens.Add(new GUITween(time + MathFunctions.Rand() * 0.1f)
+            {
+                Start = LocalBounds,
+                End = new Rectangle(end.X, end.Y, LocalBounds.Width, LocalBounds.Height),
+                Tween = GUITween.TweenType.TweenOut,
+                TweenFn = tweenFn
+            });
+        }
+
         public virtual void Update(DwarfTime time)
         {
-           
             if(!IsVisible)
             {
                 return;
             }
+
             UpdateSize();
+
+            if (Tweens.Count > 0)
+            {
+                GUITween currTween = Tweens.First();
+                currTween.Update(time);
+                LocalBounds = currTween.GetCurrentRect();
+                if (currTween.TweenTimer.HasTriggered)
+                {
+                    switch (currTween.Tween)
+                    {
+                        case GUITween.TweenType.TweenAnimate:
+                            break;
+                        case GUITween.TweenType.TweenIn:
+                            break;
+                        case GUITween.TweenType.TweenOut:
+                            IsVisible = false;
+                            LocalBounds = currTween.Start;
+                            break;
+                    }
+
+                    Tweens.RemoveAt(0);
+                }
+            }
+
             OnUpdate.Invoke();
 
             foreach(GUIComponent child in Children)

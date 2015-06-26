@@ -59,16 +59,22 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
+            if (BuildPanel != null)
+            {
+                BuildPanel.Destroy();
+            }
             BuildPanel = new BuildMenu(PlayState.GUI, PlayState.GUI.RootComponent, Player)
             {
                 LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width - 750, PlayState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350),
-                IsVisible = true
+                IsVisible = true,
+                DrawOrder = 2
             };
+            BuildPanel.TweenIn(Drawer2D.Alignment.Right, 0.25f);
         }
 
         public override void OnEnd()
         {
-            BuildPanel.Destroy();
+            BuildPanel.TweenOut(Drawer2D.Alignment.Right, 0.25f);
         }
 
 

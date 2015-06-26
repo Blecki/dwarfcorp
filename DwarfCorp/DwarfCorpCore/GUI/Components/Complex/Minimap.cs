@@ -131,11 +131,13 @@ namespace DwarfCorp
             {
                 MinimizeButton.Image = GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowUp);
                 MinimizeButton.LocalBounds = new Rectangle(RenderWidth - 32, RenderHeight - 32, 32, 32);
+                TweenOut(Drawer2D.Alignment.Bottom);
             }
             else
             {
                 MinimizeButton.Image = GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowDown);
                 MinimizeButton.LocalBounds = new Rectangle(RenderWidth - 32, 0, 32, 32);
+                TweenIn(Drawer2D.Alignment.Bottom);
             }
         }
 
@@ -192,19 +194,30 @@ namespace DwarfCorp
             Camera.UpdateProjectionMatrix();
         }
 
+        public override void Update(DwarfTime time)
+        {
+            if (IsMinimized)
+            {
+                MinimizeButton.Update(time);
+            }
+            base.Update(time);
+        }
 
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
-            if(!IsMinimized)
+            base.Render(time, batch);
+
+            if (IsVisible)
             {
-                base.Render(time, batch);
                 Rectangle imageBounds = GetImageBounds();
-                Rectangle frameBounds = new Rectangle(imageBounds.X, imageBounds.Y + imageBounds.Height - Frame.Height, Frame.Width, Frame.Height);
+                Rectangle frameBounds = new Rectangle(imageBounds.X, imageBounds.Y + imageBounds.Height - Frame.Height,
+                    Frame.Width, Frame.Height);
                 batch.Draw(Frame, frameBounds, Color.White);
             }
-            else
+            else if (IsMinimized)
             {
                 MinimizeButton.Render(time, batch);
+                MinimizeButton.IsVisible = true;
             }
         }
 

@@ -127,6 +127,12 @@ namespace DwarfCorp
                 return false;
             }
 
+            if (Faction.GetNearestRoomOfType(WorkshopRoom.WorkshopName, designation.Location.Position) == null)
+            {
+                PlayState.GUI.ToolTipManager.Popup("Can't build, no workshops!");
+                return false;
+            }
+
             if (!Faction.HasResources(CraftLibrary.CraftItems[designation.ItemType].RequiredResources))
             {
                 string neededResources = "";

@@ -88,15 +88,9 @@ namespace DwarfCorp
         public AnimatedImagePanel Talker { get; set; }
         Animation animation = new Animation(ContentPaths.GUI.dorf_diplo, 64, 64, 0, 1);
 
-        public Timer TweenTimer { get; set; }
-        public Timer TweenOutTimer { get; set; }
-        public bool TweenState { get; set; }
-
         public AnnouncementViewer(DwarfGUI gui, GUIComponent parent, AnnouncementManager manager) :
             base(gui, parent)
         {
-            TweenTimer = new Timer(0.5f, true);
-            TweenOutTimer = new Timer(0.5f, true);
             SpeechBubble = new Panel(gui, this)
             {
                 Mode = Panel.PanelMode.SpeechBubble,
@@ -113,7 +107,10 @@ namespace DwarfCorp
             AnnouncementViews = new List<AnnouncementView>();
             MaxViews = 4;
             WaitTimer = new Timer(5, true);
-            Talker = new AnimatedImagePanel(GUI, this, animation);
+            Talker = new AnimatedImagePanel(GUI, this, animation)
+            {
+                LocalBounds = new Rectangle(-128, -64, 128, 128)
+            };
             animation.Play();
             animation.Loops = true;
             animation.FrameHZ = 2.0f;
@@ -143,35 +140,22 @@ namespace DwarfCorp
 
         void UpdateLayout()
         {
-            float t = -(Easing.CubicEaseInOut(TweenTimer.CurrentTimeSeconds, 0.0f, 1.0f, TweenTimer.TargetTimeSeconds) * 128.0f - 128.0f);
-
-            if (TweenState == false)
-            {
-                t = Easing.CubicEaseInOut(TweenOutTimer.CurrentTimeSeconds, 0.0f, 1.0f, TweenOutTimer.TargetTimeSeconds) * 128.0f;
-            }
             List<Rectangle> rects = new List<Rectangle>();
             int i = 0;
             foreach (AnnouncementView view in AnnouncementViews)
             {
-                view.LocalBounds = new Rectangle(0, -(LocalBounds.Height / 2) * i + (int)(t), LocalBounds.Width, LocalBounds.Height / 2 - 7);
+                view.LocalBounds = new Rectangle(0, -(LocalBounds.Height / 2) * i, LocalBounds.Width, LocalBounds.Height / 2 - 7);
                 rects.Add(view.LocalBounds);
                 i++;
             }
             if (AnnouncementViews.Count > 0)
             {
                 SpeechBubble.LocalBounds = MathFunctions.GetBoundingRectangle(rects);
-                Talker.LocalBounds = new Rectangle(SpeechBubble.LocalBounds.X - 128, (int)t - 64, 128, 128);
             }
-            else
-            {
-                Talker.LocalBounds = new Rectangle(-128, (int)t - 64, 128, 128);
-            }
-           
         }
 
         public override void Update(DwarfTime time)
         {
-            TweenState = AnnouncementViews.Count > 0;
             WaitTimer.Update(time);
             animation.Update(time);
             if (WaitTimer.HasTriggered)
@@ -187,33 +171,18 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        TweenTimer.Reset();
-                        TweenOutTimer.Reset();
-                        TweenState = true;
+                        Talker.TweenOut(Drawer2D.Alignment.Bottom);
                     }
                 }
             }
 
 
-            if (!SpeechBubble.IsVisible && AnnouncementViews.Count > 0)
+            if (AnnouncementViews.Count > 0 && !Talker.IsVisible)
             {
-                TweenTimer.Reset();
+                Talker.TweenIn(Drawer2D.Alignment.Bottom);
             }
-            
-            if (SpeechBubble.IsVisible && AnnouncementViews.Count == 0)
-            {
-                TweenOutTimer.Reset();
-            }
-
-            if(TweenState)
-                TweenTimer.Update(time);
-            else
-                TweenOutTimer.Update(time);
-
-
 
             SpeechBubble.IsVisible = AnnouncementViews.Count > 0;
-            Talker.IsVisible = SpeechBubble.IsVisible || TweenState == false;
 
             if (SpeechBubble.IsVisible || Talker.IsVisible)
             {

@@ -57,10 +57,15 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
+            if (MagicMenu != null)
+            {
+                MagicMenu.Destroy();
+            }
 
             MagicMenu = new MagicMenu(PlayState.GUI, PlayState.GUI.RootComponent, Player)
             {
                 LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width - 750, PlayState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350),
+                DrawOrder = 3
             };
             MagicMenu.SpellTriggered += MagicMenu_SpellTriggered;
 
@@ -68,34 +73,38 @@ namespace DwarfCorp
             MagicMenu.LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 750,
                 GameState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350);
 
-            if (MagicBar == null)
+            if (MagicBar != null)
             {
-                MagicBar = new ProgressBar(PlayState.GUI, PlayState.GUI.RootComponent,
-                    MagicMenu.Master.Spells.Mana/MagicMenu.Master.Spells.MaxMana)
-                {
-                    ToolTip = "Remaining Mana Pool",
-                    LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 200, 64, 180, 32),
-                    Tint = Color.Cyan
-                };
-                MagicBar.OnUpdate += MagicBar_OnUpdate;
+                MagicBar.Destroy();
             }
 
+            MagicBar = new ProgressBar(PlayState.GUI, PlayState.GUI.RootComponent, MagicMenu.Master.Spells.Mana / MagicMenu.Master.Spells.MaxMana)
+            {
+                ToolTip = "Remaining Mana Pool",
+                LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 200, 64, 180, 32),
+                Tint = Color.Cyan,
+                DrawOrder = 4
+            };
+            MagicBar.OnUpdate += MagicBar_OnUpdate;
+
             MagicBar.IsVisible = true;
+            MagicMenu.TweenIn(Drawer2D.Alignment.Right, 0.25f);
+            MagicBar.TweenIn(Drawer2D.Alignment.Right, 0.25f);
         }
 
         void MagicBar_OnUpdate()
         {
-            MagicBar.Value = MagicMenu.Master.Spells.Mana/MagicMenu.Master.Spells.MaxMana;
-            MagicBar.ToolTip = "Remaining Mana Pool " + (int)MagicMenu.Master.Spells.Mana;
-            MagicBar.IsVisible = true;
+            if (MagicBar.IsVisible)
+            {
+                MagicBar.Value = MagicMenu.Master.Spells.Mana/MagicMenu.Master.Spells.MaxMana;
+                MagicBar.ToolTip = "Remaining Mana Pool " + (int) MagicMenu.Master.Spells.Mana;
+            }
         }
 
         public override void OnEnd()
         {
-            MagicMenu.IsVisible = false;
-            MagicBar.IsVisible = false;
-            MagicMenu.Destroy();
-            MagicMenu = null;
+            MagicMenu.TweenOut(Drawer2D.Alignment.Right);
+            MagicBar.TweenOut(Drawer2D.Alignment.Right);
         }
 
 

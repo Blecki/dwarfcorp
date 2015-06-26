@@ -848,5 +848,15 @@ namespace DwarfCorp
             Rectangle inner = new Rectangle((int)vector2.X, (int)vector2.Y, (int)measure.X, (int)measure.Y);
             return new Rectangle(Clamp(inner.X, outer.X, outer.Right - inner.Width), Clamp(inner.Y, outer.Y, outer.Bottom - inner.Height), inner.Width, inner.Height);
         }
+
+        public static float Lerp(float a, float b, float t)
+        {
+            return t*b + (1 - t)*a;
+        }
+
+        public static Rectangle Lerp(Rectangle start, Rectangle end, float t)
+        {
+            return new Rectangle((int)Lerp(start.X, end.X, t), (int)Lerp(start.Y, end.Y, t), (int)Lerp(start.Width, end.Width, t), (int)Lerp(start.Height, end.Height, t));
+        }
     }
 }
