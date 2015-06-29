@@ -295,13 +295,40 @@ namespace DwarfCorp.GameStates
             {
                 Overworld.Name = Settings.Name;
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
-                
+                List<Faction> factionsInSpawn = GetFactionsInSpawn();    
                 StateManager.PopState();
                 StateManager.PushState("PlayState");
 
                 MainMenuState menu = (MainMenuState) StateManager.States["MainMenuState"];
                 menu.IsGameRunning = true;
+
+                PlayState.Natives = factionsInSpawn;
             }
+        }
+
+        public List<Faction> GetFactionsInSpawn()
+        {
+            Rectangle spawnRect = GetSpawnRectangle();
+            List<Faction> toReturn = new List<Faction>();
+            for (int x = spawnRect.X; x < spawnRect.X + spawnRect.Width; x++)
+            {
+                for (int y = spawnRect.Y; y < spawnRect.Y + spawnRect.Height; y++)
+                {
+                    byte factionIdx = Overworld.Map[x, y].Faction;
+
+                    if (factionIdx > 0)
+                    {
+                        Faction faction = NativeCivilizations[factionIdx - 1];
+
+                        if (!toReturn.Contains(faction))
+                        {
+                            toReturn.Add(faction);
+                        }
+                        
+                    }
+                }
+            }
+            return toReturn;
         }
 
         public void ExitButtonOnClick()

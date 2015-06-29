@@ -145,6 +145,7 @@
     <Compile Include="Entities\Traps\BearTrap.cs" />
     <Compile Include="GameSettings.cs" />
     <Compile Include="GameStates\CompanyMakerState.cs" />
+    <Compile Include="GameStates\DiplomacyState.cs" />
     <Compile Include="GameStates\EconomyState.cs" />
     <Compile Include="GameStates\GameLoaderState.cs" />
     <Compile Include="GameStates\GameState.cs" />

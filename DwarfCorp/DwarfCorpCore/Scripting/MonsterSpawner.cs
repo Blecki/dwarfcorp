@@ -49,6 +49,7 @@ namespace DwarfCorp
             public Faction TargetFaction;
             public Vector3 WorldLocation;
             public int NumCreatures;
+            public bool Attack;
         }
 
         public List<Faction> SpawnFactions = new List<Faction>();
@@ -57,12 +58,7 @@ namespace DwarfCorp
 
         public MonsterSpawner()
         {
-            SpawnFactions = new List<Faction>()
-            {
-                PlayState.ComponentManager.Factions.Factions["Goblins"],
-                PlayState.ComponentManager.Factions.Factions["Undead"],
-                PlayState.ComponentManager.Factions.Factions["Elf"]
-            };
+            SpawnFactions = new List<Faction>();
         }
 
         public void Update(DwarfTime t)
@@ -71,14 +67,16 @@ namespace DwarfCorp
 
             if (shouldSpawn)
             {
+                /*
                 int numToSpawn = PlayState.Random.Next(5) + 1;
                 Spawn(GenerateSpawnEvent(SpawnFactions[PlayState.Random.Next(SpawnFactions.Count)],
                     PlayState.ComponentManager.Factions.Factions["Player"], numToSpawn));
                 LastSpawnHour = PlayState.Time.CurrentDate.TimeOfDay.Hours;
+                 */
             }
         }
 
-        public SpawnEvent GenerateSpawnEvent(Faction spawnFaction, Faction targetFaction, int num)
+        public SpawnEvent GenerateSpawnEvent(Faction spawnFaction, Faction targetFaction, int num, bool attack=true)
         {
             float padding = 2.0f;
             int side = PlayState.Random.Next(4);
@@ -105,27 +103,42 @@ namespace DwarfCorp
                 NumCreatures = num,
                 SpawnFaction = spawnFaction,
                 TargetFaction = targetFaction,
-                WorldLocation = pos
+                WorldLocation = pos,
+                Attack = attack
             };
         }
 
-        public void Spawn(SpawnEvent spawnEvent)
+        public List<CreatureAI> Spawn(SpawnEvent spawnEvent)
         {
             List<Body> bodies = 
             spawnEvent.SpawnFaction.GenerateRandomSpawn(spawnEvent.NumCreatures, spawnEvent.WorldLocation);
-
+            List<CreatureAI> toReturn = new List<CreatureAI>();
             foreach (Body body in bodies)
             {
                 List<CreatureAI> creatures = body.GetChildrenOfTypeRecursive<CreatureAI>();
                 foreach (CreatureAI creature in creatures)
                 {
-                    CreatureAI enemyMinion = spawnEvent.TargetFaction.GetNearestMinion(creature.Position);
-                    if (enemyMinion != null)
+                    if (spawnEvent.Attack)
                     {
-                        creature.Tasks.Add(new KillEntityTask(enemyMinion.Physics, KillEntityTask.KillType.Auto));
+                        CreatureAI enemyMinion = spawnEvent.TargetFaction.GetNearestMinion(creature.Position);
+                        if (enemyMinion != null)
+                        {
+                            creature.Tasks.Add(new KillEntityTask(enemyMinion.Physics, KillEntityTask.KillType.Auto));
+                        }
                     }
+                    else
+                    {
+                        Room nearestRoom = spawnEvent.TargetFaction.GetNearestRoom(creature.Position);
+                        if (nearestRoom != null)
+                        {
+                            creature.Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, nearestRoom)));
+                        }
+                    }
+                    toReturn.Add(creature);
                 }
             }
+
+            return toReturn;
         }
     }
 }

@@ -48,6 +48,7 @@ namespace DwarfCorp
         private static readonly ConcurrentBag<DrawCommand3D> Commands = new ConcurrentBag<DrawCommand3D>();
         public static OrbitCamera Camera = null;
 
+
         public static void DrawLine(Vector3 p1, Vector3 p2, Color color, float thickness)
         {
             DrawLineList(new List<Vector3>(){p1, p2}, color, thickness);

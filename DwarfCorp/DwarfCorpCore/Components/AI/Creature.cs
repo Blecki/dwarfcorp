@@ -536,7 +536,6 @@ namespace DwarfCorp
             Timer waitTimer = new Timer(f, true);
 
             CurrentCharacterMode = CharacterMode.Attacking;
-            
             while(!waitTimer.HasTriggered)
             {
                 waitTimer.Update(DwarfTime.LastTime);
@@ -547,10 +546,9 @@ namespace DwarfCorp
                 }
 
                 Attacks[0].PerformNoDamage(DwarfTime.LastTime, AI.Position);
-
+                Physics.Velocity = Vector3.Zero;
                 yield return Act.Status.Running;
             }
-
             CurrentCharacterMode = CharacterMode.Idle;
             yield return Act.Status.Success;
         }

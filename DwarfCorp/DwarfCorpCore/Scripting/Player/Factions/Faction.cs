@@ -45,12 +45,24 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Race
     {
+        public class RaceSpeech
+        {
+            public List<string> Greetings { get; set; }
+            public List<string> Farewells { get; set; }
+            public List<string> GoodTrades { get; set; }
+            public List<string> BadTrades { get; set; }
+            public List<string> WarDeclarations { get; set; }
+            public List<string> PeaceDeclarations { get; set; } 
+        }
+
         public string Name { get; set; }
         public List<string> CreatureTypes { get; set; }
         public bool IsIntelligent { get; set; }
         public bool IsNative { get; set; }
         public string FactionNameFile { get; set; }
         public string NameFile { get; set; }
+        public Animation.SimpleDescriptor TalkAnimation { get; set; }
+        public RaceSpeech Speech  { get; set; }
         [JsonIgnore]
         public List<List<string>> FactionNameTemplates { get; set; }
         [JsonIgnore]
@@ -88,6 +100,7 @@ namespace DwarfCorp
             RoomBuilder = new RoomBuilder(this);
             WallBuilder = new PutDesignator(this, TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles));
             CraftBuilder = new CraftBuilder(this);
+            IsRaceFaction = false;
         }
 
         public Point StartingPlace { get; set; }
@@ -117,6 +130,7 @@ namespace DwarfCorp
 
         public string Name { get; set; }
         public List<CreatureAI> SelectedMinions { get; set; }
+        public bool IsRaceFaction { get; set; }
 
         public static List<CreatureAI> FilterMinionsWithCapability(List<CreatureAI> minions, GameMaster.ToolMode action)
         {
@@ -804,6 +818,28 @@ namespace DwarfCorp
         {
             Dictionary<string, ResourceAmount> resources = ListResources();
             return (from pair in resources where pair.Value.ResourceType.Tags.Contains(tag) select pair.Value).ToList();
+        }
+
+        public Room GetNearestRoom(Vector3 position)
+        {
+            List<Room> rooms = GetRooms();
+            Room desiredRoom = null;
+            float nearestDistance = float.MaxValue;
+
+            foreach (Room room in rooms)
+            {
+                float dist =
+                    (room.GetNearestVoxel(position).Position - position).LengthSquared();
+
+                if (dist < nearestDistance)
+                {
+                    nearestDistance = dist;
+                    desiredRoom = room;
+                }
+            }
+
+
+            return desiredRoom;
         }
     }
 

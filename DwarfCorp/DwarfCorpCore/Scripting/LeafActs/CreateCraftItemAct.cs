@@ -55,6 +55,11 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
+            if (!Creature.Faction.CraftBuilder.IsDesignation(Voxel))
+            {
+                yield return Status.Fail;
+            }
+
             Body item = EntityFactory.CreateEntity<Body>(CraftLibrary.CraftItems[ItemType].Name, Voxel.Position + Vector3.One * 0.5f);
             PlayState.ParticleManager.Trigger("puff", Voxel.Position + Vector3.One * 0.5f, Color.White, 10);
             if (item == null)

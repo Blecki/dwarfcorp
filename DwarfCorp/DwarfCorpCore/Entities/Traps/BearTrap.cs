@@ -50,7 +50,7 @@ namespace DwarfCorp
         public float DamageAmount { get; set; }
         public static string IdleAnimation = "Idle";
         public static string TriggerAnimation = "Trigger";
-        public string Allies { get; set; }
+        public Faction Allies { get; set; }
         public bool ShouldDie = false;
         public Timer DeathTimer { get; set; }
 
@@ -64,7 +64,7 @@ namespace DwarfCorp
             "BearTrap", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(pos),
             new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, true)
         {
-            Allies = "Dwarf";
+            Allies = PlayState.PlayerFaction;
             Sensor = new Sensor("Sensor", this, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
             {
                 FireTimer = new Timer(0.5f, false)
@@ -99,7 +99,7 @@ namespace DwarfCorp
                 CreatureAI creature = body.GetChildrenOfTypeRecursive<CreatureAI>().FirstOrDefault();
 
                 if (creature == null) continue;
-                if (Alliance.GetRelationship(creature.Creature.Allies, Allies) == Relationship.Loves) continue;
+                if (PlayState.Diplomacy.GetPolitics(creature.Creature.Faction, Allies).GetCurrentRelationship() == Relationship.Loves) continue;
 
                 creature.Creature.Damage(DamageAmount);
                 creature.Creature.Physics.Velocity *= 0.0f;

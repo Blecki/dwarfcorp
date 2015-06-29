@@ -539,8 +539,17 @@ namespace DwarfCorp
             foreach (CreatureAI enemy in Sensor.Enemies)
             {
                 Task task = new KillEntityTask(enemy.Physics, KillEntityTask.KillType.Auto);
-                if(!HasTaskWithName(task))
+                if (!HasTaskWithName(task))
+                {
                     Creature.AI.Tasks.Add(task);
+
+                    if (Faction == PlayState.PlayerFaction)
+                    {
+                        PlayState.AnnouncementManager.Announce(Stats.FullName + " is fighting a " + enemy.Creature.Name, 
+                            Stats.FullName + " the " + Stats.CurrentLevel.Name + " is fighting a " + enemy.Stats.CurrentLevel.Name + " " + enemy.Faction.Race.Name, 
+                            ZoomToMe);
+                    }
+                }
             }
         }
 

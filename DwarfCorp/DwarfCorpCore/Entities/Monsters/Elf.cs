@@ -95,7 +95,7 @@ namespace DwarfCorp
             Shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
             Shadow.SetCurrentAnimation("sh");
-            Physics.Tags.Add("Goblin");
+            Physics.Tags.Add("Elf");
 
             DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
             {

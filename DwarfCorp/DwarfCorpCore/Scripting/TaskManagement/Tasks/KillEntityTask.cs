@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 
 namespace DwarfCorp
 {
@@ -152,10 +153,8 @@ namespace DwarfCorp
                 {
                     return true;
                 }
-
-                Relationship relation = Alliance.Relationships[new Alliance.AlliancePair
-                {AllianceA =  ai.Allies, AllianceB = agent.Allies}];
-
+                Relationship relation =
+                    PlayState.Diplomacy.GetPolitics(ai.Faction, agent.Faction).GetCurrentRelationship();
                 return relation == Relationship.Hates || relation == Relationship.Indifferent;
             }
         }

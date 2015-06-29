@@ -39,6 +39,15 @@ namespace DwarfCorp
 
         public SpriteSheet SpriteSheet { get; set; }
 
+
+        public struct SimpleDescriptor
+        {
+            public string AssetName;
+            public int Width;
+            public int Height;
+            public List<int> Frames;
+            public float Speed;
+        }
         
 
         public Animation()
@@ -48,6 +57,13 @@ namespace DwarfCorp
             Frames = new List<Point>();
             Speeds = new List<float>();
             SpeedMultiplier = 1.0f;
+        }
+
+        public Animation(SimpleDescriptor descriptor) :
+            this(descriptor.AssetName, descriptor.Width, descriptor.Height, descriptor.Frames.ToArray())
+        {
+            SpeedMultiplier = descriptor.Speed;
+            Play();
         }
 
         public Animation(Animation other, SpriteSheet spriteSheet, GraphicsDevice device)

@@ -362,6 +362,9 @@
     <Compile Include="..\DwarfCorpCore\GameStates\CompanyMakerState.cs">
       <Link>GameStates\CompanyMakerState.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\GameStates\DiplomacyState.cs">
+      <Link>GameStates\DiplomacyState.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\GameStates\EconomyState.cs">
       <Link>GameStates\EconomyState.cs</Link>
     </Compile>

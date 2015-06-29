@@ -266,7 +266,9 @@ namespace DwarfCorp.GameStates
         public static Company PlayerCompany { get { return Master.Faction.Economy.Company; } }
         public static Faction PlayerFaction { get { return Master.Faction; } }
         public static Economy PlayerEconomy { get { return Master.Faction.Economy; } }
-
+        public static Diplomacy Diplomacy { get; set; }
+        public static List<Faction> Natives { get; set; }
+ 
         public List<string> LoadingTips = new List<string>()
         {
             "Can't get the right angle? Hold SHIFT to move the camera around!",
@@ -454,7 +456,7 @@ namespace DwarfCorp.GameStates
         /// Creates a bunch of stuff (such as the biome library, primitive library etc.) which won't change
         /// from game to game.
         /// </summary>
-        public void InitializeStaticData(string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
+        public void InitializeStaticData(string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor, List<Faction> natives )
         {
             CompositeLibrary.Initialize();
             CraftLibrary = new CraftLibrary();
@@ -498,13 +500,11 @@ namespace DwarfCorp.GameStates
             SoundManager.Content = Content;
             PlanService.Restart();
 
-            ComponentManager = new ComponentManager(this, companyName, companyMotto, companyLogo, companyColor);
+            ComponentManager = new ComponentManager(this, companyName, companyMotto, companyLogo, companyColor, natives);
             ComponentManager.RootComponent = new Body("root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero, false);
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);
             ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
-
-            Alliance.Relationships = Alliance.InitializeRelationships();
 
             JobLibrary.Initialize();
             MonsterSpawner = new MonsterSpawner();
@@ -761,6 +761,8 @@ namespace DwarfCorp.GameStates
             }
 
             Master = new GameMaster(ComponentManager.Factions.Factions["Player"], Game, ComponentManager, ChunkManager, Camera, GraphicsDevice, GUI);
+            Diplomacy = new Diplomacy(ComponentManager.Factions);
+            Diplomacy.Initialize(Time.CurrentDate);
             CreateGUIComponents();
             GUI.MouseMode = GUISkin.MousePointer.Wait;
         }
@@ -986,7 +988,7 @@ namespace DwarfCorp.GameStates
                 EnableScreensaver = true;
                 LoadingMessage = "Initializing...";
                 InitializeStaticData(CompanyMakerState.CompanyName, CompanyMakerState.CompanyMotto, CompanyMakerState.CompanyLogo,
-                    CompanyMakerState.CompanyColor);
+                    CompanyMakerState.CompanyColor, Natives);
                 LoadingMessage = "Creating Particles ...";
                 CreateParticles();
 
@@ -1477,7 +1479,7 @@ namespace DwarfCorp.GameStates
             if (!Paused)
             {
                 Time.Update(gameTime);
-
+                Diplomacy.Update(gameTime, Time.CurrentDate);
                 ComponentManager.Update(gameTime, ChunkManager, Camera);
                 Sky.TimeOfDay = Time.GetSkyLightness();
                 Sky.CosTime = (float)(Time.GetTotalHours() * 2 * Math.PI / 24.0f);

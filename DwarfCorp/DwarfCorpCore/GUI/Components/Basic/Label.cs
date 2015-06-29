@@ -32,10 +32,14 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json.Converters;
+using Color = Microsoft.Xna.Framework.Color;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace DwarfCorp
 {
@@ -75,6 +79,13 @@ namespace DwarfCorp
 
             Drawer2D.DrawAlignedStrokedText(batch, text, TextFont, TextColor, StrokeColor, Alignment, GlobalBounds);
             base.Render(time, batch);
+        }
+
+        public void GetLocalBoundsFromText()
+        {
+            Vector2 measure = Datastructures.SafeMeasure(TextFont, Text);
+
+            LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, (int)measure.X + 4, (int)measure.Y + 4);
         }
     }
 

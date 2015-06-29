@@ -278,7 +278,7 @@ namespace DwarfCorp
         public static Body GenerateElf(Vector3 position, Faction faction, string allies)
         {
             CreatureStats stats = new CreatureStats(new ElfClass(), 0);
-            return new Elf(stats, allies, PlayState.PlanService, faction, PlayState.ComponentManager, "Goblin", PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position).Physics;
+            return new Elf(stats, allies, PlayState.PlanService, faction, PlayState.ComponentManager, "Elf", PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position).Physics;
         }
 
         public static Body GenerateGoblin(Vector3 position,

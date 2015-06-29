@@ -95,7 +95,7 @@ namespace DwarfCorp
             foreach (var faction in Manager.Factions.Factions)
             {
                 if (faction.Value.Name == Faction.Name) continue;
-                else if (Alliance.GetRelationship(faction.Value.Name, Faction.Name) != Relationship.Loves)
+                else if (PlayState.Diplomacy.GetPolitics(Faction, faction.Value).GetCurrentRelationship() != Relationship.Loves)
                 {
                     foreach (CreatureAI creature in faction.Value.Minions)
                     {

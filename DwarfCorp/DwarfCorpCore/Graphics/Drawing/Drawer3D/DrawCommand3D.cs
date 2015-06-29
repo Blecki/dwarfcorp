@@ -49,7 +49,6 @@ namespace DwarfCorp
         }
 
         public Color ColorToDraw = Color.White;
-
         protected DrawCommand3D(Color color)
         {
             ColorToDraw = color;

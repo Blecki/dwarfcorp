@@ -1028,6 +1028,21 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="GUI\diplo-elf.png">
+      <Name>diplo-elf</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="GUI\diplo-goblin.png">
+      <Name>diplo-goblin</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="GUI\diplo-necro.png">
+      <Name>diplo-necro</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Text\bodypart.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>bodypart</Name>

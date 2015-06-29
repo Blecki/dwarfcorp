@@ -44,7 +44,7 @@ namespace DwarfCorp
         Loves,
         Hates
     }
-    
+    /*
     /// <summary>
     /// Entitites can belong to alliances. Alliances either love, hate, or are indifferent to other
     /// entities in different alliances.
@@ -143,6 +143,8 @@ namespace DwarfCorp
 
             else return Relationship.Indifferent;
         }
+        
     }
+     */
 
 }

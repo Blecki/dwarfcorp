@@ -62,116 +62,66 @@ namespace DwarfCorp
             };
         }
 
-        public void Initialize(PlayState state, string name, string motto, NamedImageFrame logo, Color color)
+        public void InitializeRaces()
         {
             Races = new Dictionary<string, Race>();
-            /*
-            Races["Dwarf"] = new Race()
-            {
-                Name = "Dwarf",
-                CreatureTypes = new List<string> {"Dwarf", "AxeDwarf"},
-                IsIntelligent = true,
-                IsNative = false,
-                FactionNameFile = ContentPaths.Text.Templates.nations_dwarf,
-                NameFile = ContentPaths.Text.Templates.names_dwarf,
-                FactionNameTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.nations_dwarf)
-            };
-
-            Races["Goblins"] = new Race()
-            {
-                Name = "Goblins",
-                CreatureTypes = new List<string> { "Goblin"},
-                IsIntelligent = true,
-                IsNative = true,
-                FactionNameFile = ContentPaths.Text.Templates.nations_dwarf,
-                NameFile = ContentPaths.Text.Templates.names_goblin,
-                FactionNameTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.nations_goblin)
-            };
-
-            Races["Molemen"] = new Race()
-            {
-                Name = "Molemen",
-                CreatureTypes = new List<string> { "Moleman" },
-                IsIntelligent = true,
-                IsNative = true,
-                FactionNameFile = ContentPaths.Text.Templates.nations_dwarf,
-                NameFile = ContentPaths.Text.Templates.names_dwarf,
-                FactionNameTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.nations_goblin)
-            };
-
-            Races["Elf"] = new Race()
-            {
-                Name = "Elf",
-                CreatureTypes = new List<string> { "Elf" },
-                IsIntelligent = true,
-                IsNative = true,
-                FactionNameFile = ContentPaths.Text.Templates.nations_elf,
-                NameFile = ContentPaths.Text.Templates.names_elf,
-                FactionNameTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.nations_elf)
-            };
-
-            Races["Undead"] = new Race()
-            {
-                Name = "Undead",
-                CreatureTypes = new List<string> { "Necromancer", "Skeleton" },
-                IsIntelligent = true,
-                IsNative = true,
-                FactionNameFile = ContentPaths.Text.Templates.nations_undead,
-                NameFile = ContentPaths.Text.Templates.names_undead,
-                FactionNameTemplates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.nations_undead)
-            };
-
-
-            Races["Herbivore"] = new Race()
-            {
-                Name = "Herbivore",
-                CreatureTypes = new List<string> { "Bird", "Deer" },
-                IsIntelligent = false,
-                IsNative = true,
-                FactionNameFile = ContentPaths.Text.Templates.nations_dwarf,
-                NameFile = ContentPaths.Text.Templates.names_dwarf,
-            };
-             */
             Races = ContentPaths.LoadFromJson<Dictionary<string, Race>>(ContentPaths.World.races);
+        }
 
-            Factions = new Dictionary<string, Faction>();
-            Factions["Player"] = new Faction
+        public void Initialize(PlayState state, string name, string motto, NamedImageFrame logo, Color color)
+        {
+            if (Races == null)
             {
-                Name = "Player",
-                Race = Races["Dwarf"]
-            };
-            Factions["Player"].Economy = new Economy(Factions["Player"], 300.0f, state, name, motto, logo, color);
+                InitializeRaces();
+            }
+
+            if (Factions == null)
+            {
+                Factions = new Dictionary<string, Faction>();
+                Factions["Player"] = new Faction
+                {
+                    Name = "Player",
+                    Race = Races["Dwarf"]
+                };
+            }
 
             Factions["Goblins"] = new Faction
             {
                 Name = "Goblins",
-                Race = Races["Goblins"]
+                Race = Races["Goblins"],
+                IsRaceFaction = true
             };
 
             Factions["Elf"] = new Faction
             {
                 Name = "Elf",
-                Race = Races["Elf"]
+                Race = Races["Elf"],
+                IsRaceFaction = true
             };
 
             Factions["Undead"] = new Faction
             {
                 Name = "Undead",
-                Race = Races["Undead"]
+                Race = Races["Undead"],
+                IsRaceFaction = true
             };
 
             Factions["Herbivore"] = new Faction
             {
                 Name = "Herbivore",
-                Race = Races["Herbivore"]
+                Race = Races["Herbivore"],
+                IsRaceFaction = true
             };
 
 
             Factions["Molemen"] = new Faction
             {
                 Name = "Molemen",
-                Race = Races["Molemen"]
+                Race = Races["Molemen"],
+                IsRaceFaction = true
             };
+            
+            Factions["Player"].Economy = new Economy(Factions["Player"], 300.0f, state, name, motto, logo, color);
         }
 
 
@@ -186,6 +136,29 @@ namespace DwarfCorp
             foreach(var faction in Factions)
             {
                 faction.Value.Update(time);
+            }
+        }
+
+        public void AddFactions(List<Faction> factionsInSpawn)
+        {
+            if (Factions == null)
+            {
+                Factions = new Dictionary<string, Faction>();
+
+                if (Races == null)
+                {
+                    InitializeRaces();
+                }
+
+                Factions["Player"] = new Faction
+                {
+                    Name = "Player",
+                    Race = Races["Dwarf"]
+                };
+            }
+            foreach (Faction faction in factionsInSpawn)
+            {
+                Factions[faction.Name] = faction;
             }
         }
     }

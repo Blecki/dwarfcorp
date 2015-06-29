@@ -93,7 +93,7 @@ namespace DwarfCorp
             
         }
 
-        public ComponentManager(PlayState state, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
+        public ComponentManager(PlayState state, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor, List<Faction> natives )
         {
             Components = new Dictionary<uint, GameComponent>();
             Removals = new List<GameComponent>();
@@ -102,6 +102,10 @@ namespace DwarfCorp
             AdditionMutex = new Mutex();
             RemovalMutex = new Mutex();
             Factions = new FactionLibrary();
+            if (natives != null && natives.Count > 0)
+            {
+                Factions.AddFactions(natives);
+            }
             Factions.Initialize(state, companyName, companyMotto, companyLogo, companyColor);
         }
 

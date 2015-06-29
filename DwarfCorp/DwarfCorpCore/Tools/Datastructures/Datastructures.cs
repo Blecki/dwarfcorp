@@ -43,6 +43,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DwarfCorp
 {
 
+
     /// <summary>
     /// Honestly, this is just a helper class where a bunch of other miscellanious
     /// stuff is thrown at this time. Most of it has to do with utilities for certain
@@ -166,6 +167,63 @@ namespace DwarfCorp
             T temp = a;
             a = b;
             b = temp;
+        }
+    }
+
+    /// <summary>
+    /// Class is a pair of type T. The pair is commutative, so Pair(A, B) == Pair(B, A)
+    /// </summary>
+    /// <typeparam name="T">The type of the pair.</typeparam>
+    public class Pair<T>
+    {
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                // this is a bad hashcode, but its necessary because Hash(A, B) must equal Hash(B, A)
+                return EqualityComparer<T>.Default.GetHashCode(First) + EqualityComparer<T>.Default.GetHashCode(Second);
+            }
+        }
+
+        public T First { get; set; }
+        public T Second { get; set; }
+
+        public Pair()
+        {
+            
+        }
+
+        public Pair(T first, T second)
+        {
+            First = first;
+            Second = second;
+        }
+
+        public Pair(Pair<T> other) :
+            this(other.First, other.Second)
+        {
+            
+        }
+
+        public bool IsSelfPair()
+        {
+            return First.Equals(Second);
+        }
+
+        public bool Contains(T obj)
+        {
+            return First.Equals(obj) || Second.Equals(obj);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Pair<T> && Equals((Pair<T>) (obj));
+        }
+
+        public bool Equals(Pair<T> other)
+        {
+            return (other.First.Equals(First) && other.Second.Equals(Second)) ||
+                   (other.First.Equals(Second) && other.Second.Equals(First));
         }
     }
 
