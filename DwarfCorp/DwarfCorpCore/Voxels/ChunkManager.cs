@@ -394,8 +394,6 @@ namespace DwarfCorp
                             {
                                 if (chunk.RebuildPending && chunk.ShouldRebuild)
                                 {
-                                    chunk.UpdateMaxViewingLevel();
-
                                     if (chunk.ShouldRecalculateLighting)
                                     {
                                         chunk.CalculateVertexLighting();
@@ -717,6 +715,8 @@ namespace DwarfCorp
                 }
             }
 
+            ChunkData.Reveal(GeneratedChunks.First().MakeVoxel(0, (int)ChunkData.ChunkSizeY - 1, 0));
+
             UpdateRebuildList();
             GenerateDistance = origBuildRadius;
 
@@ -835,6 +835,7 @@ namespace DwarfCorp
             Water.HandleTransfers(gameTime);
 
             HashSet<VoxelChunk> affectedChunks = new HashSet<VoxelChunk>();
+            
             foreach (Voxel voxel in KilledVoxels)
             {
                 affectedChunks.Add(voxel.Chunk);
@@ -846,6 +847,11 @@ namespace DwarfCorp
                         affectedChunks.Add(n.Value);
                     }
                 }
+            }
+
+            if (GameSettings.Default.FogofWar)
+            {
+                ChunkData.Reveal(KilledVoxels);
             }
 
             lock (RebuildList)
@@ -892,12 +898,6 @@ namespace DwarfCorp
                 }
 
                 toRebuild.Add(chunk);
-            }
-
-            message = "Creating Graphics : Updating Max Viewing Level";
-            foreach(VoxelChunk chunk in toRebuild)
-            {
-                chunk.UpdateMaxViewingLevel();
             }
 
             message = "Creating Graphics : Updating Ramps";
@@ -950,6 +950,8 @@ namespace DwarfCorp
 
             message = "Cleaning Up.";
         }
+
+       
 
         public void UpdateBounds()
         {

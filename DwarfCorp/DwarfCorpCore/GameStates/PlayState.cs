@@ -1131,6 +1131,7 @@ namespace DwarfCorp.GameStates
                     {
                         Voxel v = chunk.MakeVoxel((int)gridPos.X, y, (int)gridPos.Z);
                         v.Type = VoxelLibrary.GetVoxelType(0);
+                        chunk.Manager.ChunkData.Reveal(v);
                         chunk.Data.Water[v.Index].WaterLevel = 0;
                     }
 
@@ -1157,7 +1158,7 @@ namespace DwarfCorp.GameStates
             }
 
             // Actually create the BuildRoom.
-            BalloonPort toBuild = new BalloonPort(designations, chunkManager);
+            BalloonPort toBuild = new BalloonPort(PlayerFaction, designations, chunkManager);
             BuildRoomOrder buildDes = new BuildRoomOrder(toBuild, roomDes.Faction);
             buildDes.Build();
             roomDes.DesignatedRooms.Add(toBuild);

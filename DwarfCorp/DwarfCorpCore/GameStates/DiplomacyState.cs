@@ -80,7 +80,7 @@ namespace DwarfCorp
         public class SpeechAction
         {
             public string Text { get; set; }
-            public Func<SpeechNode> Action { get; set; } 
+            public Func<IEnumerable<SpeechNode> > Action { get; set; } 
         }
 
         /// <summary>
@@ -90,7 +90,13 @@ namespace DwarfCorp
         /// <summary>
         /// A list of outgoing links to other nodes.
         /// </summary>
-        public List<SpeechAction> Actions { get; set; } 
+        public List<SpeechAction> Actions { get; set; }
+
+        public static IEnumerable<SpeechNode> Echo(SpeechNode other)
+        {
+            yield return other;
+            yield break;
+        }
     }
 
     /// <summary>
@@ -114,13 +120,15 @@ namespace DwarfCorp
         {
             get { return PlayState.PlayerFaction; }
         }
-
         public Panel SpeechBubble { get; set; }
         public Label SpeechLabel { get; set; }
         public string TalkerName { get; set; }
-
+        public TradeEvent LastEvent { get; set; }
         public ListSelector DialougeSelector { get; set; }
-
+        public SpeechNode.SpeechAction CurrentAction { get; set; }
+        public IEnumerable<SpeechNode> CurrentCoroutine { get; set; }
+        public IEnumerator<SpeechNode> CurrentEnumerator { get; set; }
+ 
         public Diplomacy.Politics Politics
         {
             get { return PlayState.Diplomacy.GetPolitics(PlayState.PlayerFaction, Faction); }
@@ -135,7 +143,69 @@ namespace DwarfCorp
             EnableScreensaver = false;
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
             Faction = faction;
-            
+              
+        }
+
+        public void DoTrade(TradeEvent trade)
+        {
+            PlayerFation.RemoveResources(trade.GoodsSent, Vector3.Zero, false);
+
+            foreach (ResourceAmount resource in trade.GoodsReceived)
+            {
+                PlayerFation.AddResources(resource);
+            }
+        }
+
+        IEnumerable<SpeechNode> WaitForTrade()
+        {
+            TradeDialog dialog = TradeDialog.Popup(GUI, Layout, Faction);
+
+            LastEvent = null;
+            dialog.OnTraded += dialog_OnClicked;
+            while (LastEvent == null && dialog.IsVisible)
+            {
+                yield return null;
+            }
+
+            if (LastEvent != null)
+            {
+                TradeEvent.Profit profit = LastEvent.GetProfit();
+
+                if (profit.PercentProfit > 0.25f)
+                {
+                    DoTrade(LastEvent);
+                    yield return new SpeechNode()
+                    {
+                        Text = GetGoodTradeText(),
+                        Actions = new List<SpeechNode.SpeechAction>()
+                        {
+                            new SpeechNode.SpeechAction()
+                            {
+                                Text = "Ok",
+                                Action = () => SpeechNode.Echo(DialougeTree)
+                            }
+                        }
+                    };
+                }
+                else
+                {
+                    yield return new SpeechNode()
+                    {
+                        Text = GetBadTradeText(),
+                        Actions = new List<SpeechNode.SpeechAction>()
+                        {
+                            new SpeechNode.SpeechAction()
+                            {
+                                Text = "Sorry.",
+                                Action = () => SpeechNode.Echo(DialougeTree)
+                            }
+                        }
+                    };
+                }
+                yield break;
+            }
+            else yield return DialougeTree;
+            yield break;
         }
 
         void Initialize()
@@ -183,66 +253,36 @@ namespace DwarfCorp
                     new SpeechNode.SpeechAction()
                     {
                         Text = "Let's trade.",
-                        Action = () => new SpeechNode()
-                        {
-                            Text = "Dummy trade text.",
-                            Actions = new List<SpeechNode.SpeechAction>()
-                            {
-                                new SpeechNode.SpeechAction()
-                                {
-                                    Text = "Good trade",
-                                    Action = () => new SpeechNode()
-                                    {
-                                        Text = GetGoodTradeText(),
-                                        Actions = new List<SpeechNode.SpeechAction>()
-                                        {
-                                            new SpeechNode.SpeechAction()
-                                            {
-                                                Text = "Back to start", 
-                                                Action = () => DialougeTree
-                                            }
-                                        }
-                                    }
-                                },
-                                new SpeechNode.SpeechAction()
-                                {
-                                    Text = "Bad trade",
-                                    Action = () => new SpeechNode()
-                                    {
-                                        Text = GetBadTradeText(),
-                                        Actions = new List<SpeechNode.SpeechAction>()
-                                        {
-                                            new SpeechNode.SpeechAction()
-                                            {
-                                                Text = "Back to start", 
-                                                Action = () => DialougeTree
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        Action = WaitForTrade
                     },
                     new SpeechNode.SpeechAction()
                     {
-                        Text = "No thanks.",
-                        Action = () => new SpeechNode()
+                        Text = "Goodbye.",
+                        Action = () => SpeechNode.Echo(new SpeechNode()
                         {
                             Text = GetFarewell(),
                             Actions = new List<SpeechNode.SpeechAction>()
-                        }
+                        })
                     }
                 }
             };
+
             Transition(DialougeTree);
             Politics.HasMet = true;
+
+            PlayerFation.AddResources(new ResourceAmount(ResourceLibrary.ResourceType.Mana, 64));
+        }
+
+        void dialog_OnClicked(TradeEvent e)
+        {
+            LastEvent = e;
         }
 
         void DialougeSelector_OnItemSelected(int index, ListItem item)
         {
             if (CurrentNode != null)
             {
-                Transition(CurrentNode.Actions[index].Action());
+                CurrentAction = CurrentNode.Actions[index];
             }
         }
 
@@ -283,17 +323,6 @@ namespace DwarfCorp
             return greeting;
         }
 
-        void Greet()
-        {
-            string greeting = "";
-            greeting = Datastructures.SelectRandom(Faction.Race.Speech.Greetings);
-
-            greeting += " I am " + TalkerName + " of " + Faction.Name + ". We have come to trade.";
-            Talker.Say(greeting);
-            Politics.HasMet = true;
-        }
-
-
         void InputManager_KeyReleasedCallback(Microsoft.Xna.Framework.Input.Keys key)
         {
             if (!IsActiveState)
@@ -311,8 +340,16 @@ namespace DwarfCorp
         public override void OnEnter()
         {
             PlayState.GUI.ToolTipManager.ToolTip = "";
+            PlayState.Paused = true;
             Initialize();
+            
             base.OnEnter();
+        }
+
+        public override void OnExit()
+        {
+            PlayState.Paused = false;
+            base.OnExit();
         }
 
 
@@ -328,6 +365,38 @@ namespace DwarfCorp
             MainWindow.LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2);
             Input.Update();
             GUI.Update(gameTime);
+
+            if (CurrentAction != null)
+            {
+                if (CurrentCoroutine == null)
+                {
+                    CurrentCoroutine = CurrentAction.Action();
+                    CurrentEnumerator = CurrentCoroutine.GetEnumerator();
+                }
+
+                if (CurrentCoroutine != null)
+                {
+                    SpeechNode node = CurrentEnumerator.Current;
+                   
+                    if (node != null)
+                    {
+                        Transition(node);
+                        CurrentCoroutine = null;
+                        CurrentAction = null;
+                    }
+                    else
+                    {
+                        if (!CurrentEnumerator.MoveNext())
+                        {
+                            CurrentCoroutine = null;
+                            CurrentAction = null;
+                            CurrentEnumerator = null;
+                            Transition(DialougeTree);
+                        }
+                    }
+                }
+            }
+
             base.Update(gameTime);
         }
 

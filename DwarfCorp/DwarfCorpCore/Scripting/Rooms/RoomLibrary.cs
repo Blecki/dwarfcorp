@@ -109,11 +109,11 @@ namespace DwarfCorp
             return b.Any(p => FurnitureIntersects(a, p));
         }
 
-        public static Room CreateRoom(string name, List<Voxel> designations, bool blueprint)
+        public static Room CreateRoom(Faction faction, string name, List<Voxel> designations, bool blueprint)
         {
             if (name == BalloonPort.BalloonPortName)
             {
-                return blueprint ? new BalloonPort(true, designations, PlayState.ChunkManager) : new BalloonPort(designations, PlayState.ChunkManager);
+                return blueprint ? new BalloonPort(faction, true, designations, PlayState.ChunkManager) : new BalloonPort(faction, designations, PlayState.ChunkManager);
             } 
             else if (name == BedRoom.BedRoomName)
             {
@@ -145,7 +145,7 @@ namespace DwarfCorp
             }
             else if (name == Stockpile.StockpileName)
             {
-                Stockpile toBuild = new Stockpile("Stockpile " + Stockpile.NextID(), PlayState.ChunkManager);
+                Stockpile toBuild = new Stockpile(faction);
                 foreach (Voxel voxel in designations)
                 {
                     toBuild.AddVoxel(voxel);

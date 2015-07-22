@@ -176,15 +176,10 @@ namespace DwarfCorp
             if(command.Contains("Build "))
             {
                 string type = command.Substring(6);
-                BuildRoomOrder des = new BuildRoomOrder(RoomLibrary.CreateRoom(type, refs, false), Player.Faction);
+                BuildRoomOrder des = new BuildRoomOrder(RoomLibrary.CreateRoom(Player.Faction, type, refs, false), Player.Faction);
                 Player.Faction.RoomBuilder.BuildDesignations.Add(des);
                 Player.Faction.RoomBuilder.DesignatedRooms.Add(des.ToBuild);
                 des.Build();
-
-                if (type == Stockpile.StockpileName)
-                {
-                    Player.Faction.Stockpiles.Add((Stockpile)des.ToBuild);
-                }
             }
             else
             {
@@ -194,7 +189,6 @@ namespace DwarfCorp
                     {
                         string type = command.Substring(6);
                         vox.Type = VoxelLibrary.GetVoxelType(type);
-                        vox.IsVisible = true;
                         vox.Water = new WaterCell();
                         vox.Health = vox.Type.StartingHealth;
 

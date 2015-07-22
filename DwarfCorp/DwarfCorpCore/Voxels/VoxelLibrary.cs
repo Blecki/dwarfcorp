@@ -455,7 +455,6 @@ namespace DwarfCorp
         public static void PlaceType(VoxelType type, Voxel voxel)
         {
             voxel.Type = type;
-            voxel.IsVisible = true;
             voxel.Water = new WaterCell();
             voxel.Health = voxel.Type.StartingHealth;
         }

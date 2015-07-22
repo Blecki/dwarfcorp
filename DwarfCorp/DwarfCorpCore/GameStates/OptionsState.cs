@@ -388,6 +388,16 @@ namespace DwarfCorp.GameStates
             gameplayLayout.SetComponentPosition(introBox, 1, 2, 1, 1);
             introBox.OnCheckModified += IntroBox_OnCheckModified;
 
+            Checkbox fogOfWarBox = new Checkbox(GUI, gameplayLayout, "Fog of War", GUI.DefaultFont, GameSettings.Default.FogofWar)
+            {
+                ToolTip = "When checked, unexplored blocks will be blacked out"
+            };
+
+            gameplayLayout.SetComponentPosition(fogOfWarBox, 2, 2, 1, 1);
+
+            fogOfWarBox.OnCheckModified += fogOfWarBox_OnCheckModified;
+
+
             /*
             Label chunkWidthLabel = new Label(GUI, gameplayLayout, "Chunk Width", GUI.DefaultFont);
             Slider chunkWidthSlider = new Slider(GUI, gameplayLayout, "", GameSettings.Default.ChunkWidth, 4, 256, Slider.SliderMode.Integer)
@@ -514,6 +524,11 @@ namespace DwarfCorp.GameStates
             TabSelector.UpdateSize();
             TabSelector.SetTab("Graphics");
             base.OnEnter();
+        }
+
+        void fogOfWarBox_OnCheckModified(bool arg)
+        {
+            GameSettings.Default.FogofWar = arg;
         }
 
         private void InvertZoomBox_OnCheckModified(bool arg)

@@ -665,7 +665,7 @@ namespace DwarfCorp
             return true;
         }
 
-        public bool RemoveResources(List<ResourceAmount> resources, Vector3 position)
+        public bool RemoveResources(List<ResourceAmount> resources, Vector3 position, bool createItems = true)
         {
             Dictionary<ResourceLibrary.ResourceType, ResourceAmount> amounts = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
 
@@ -716,16 +716,20 @@ namespace DwarfCorp
 
                 }
 
-
-                foreach(Vector3 vec in positions)
+                if (createItems)
                 {
-                    Body newEntity = EntityFactory.CreateEntity<Body>(resource.ResourceType.ResourceName + " Resource",
-                        vec + MathFunctions.RandVector3Cube()*0.5f);
+                    foreach (Vector3 vec in positions)
+                    {
+                        Body newEntity =
+                            EntityFactory.CreateEntity<Body>(resource.ResourceType.ResourceName + " Resource",
+                                vec + MathFunctions.RandVector3Cube()*0.5f);
 
-                    TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f), 2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
-                    newEntity.AnimationQueue.Add(toss);
-                    toss.OnComplete += () => toss_OnComplete(newEntity);
+                        TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f),
+                            2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
+                        newEntity.AnimationQueue.Add(toss);
+                        toss.OnComplete += () => toss_OnComplete(newEntity);
 
+                    }
                 }
 
             }

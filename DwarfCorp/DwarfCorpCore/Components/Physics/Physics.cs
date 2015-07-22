@@ -380,8 +380,10 @@ namespace DwarfCorp
             
             List<Voxel> adjacencies = chunk.GetNeighborsEuclidean((int) grid.X, (int) grid.Y, (int) grid.Z);
             vs.AddRange(adjacencies);
-            Vector3 half = Vector3.One*0.5f;
-            vs.Sort((a, b) => (MathFunctions.L1(LocalTransform.Translation, a.Position + half).CompareTo(MathFunctions.L1(LocalTransform.Translation, b.Position + half))));
+            
+            // TODO: Find a faster way to do this
+            // Vector3 half = Vector3.One*0.5f;
+            //vs.Sort((a, b) => (MathFunctions.L1(LocalTransform.Translation, a.Position + half).CompareTo(MathFunctions.L1(LocalTransform.Translation, b.Position + half))));
             int y = (int)Position.Y;
             foreach(Voxel v in vs)
             {

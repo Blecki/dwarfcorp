@@ -182,8 +182,14 @@ namespace DwarfCorp
         [JsonIgnore]
         public bool IsVisible 
         {
-            get { return Chunk.Data.IsVisible[Index]; }
-            set { Chunk.Data.IsVisible[Index] = value; }
+            get { return  GridPosition.Y <= Chunk.Manager.ChunkData.MaxViewingLevel; }
+        }
+
+        [JsonIgnore]
+        public bool IsExplored
+        {
+            get { return !GameSettings.Default.FogofWar || Chunk.Data.IsExplored[Index]; }
+            set { Chunk.Data.IsExplored[Index] = value; }
         }
 
         private Vector3 gridpos = Vector3.Zero;
@@ -200,12 +206,6 @@ namespace DwarfCorp
             }
         }
 
-        [JsonIgnore]
-        public bool RecalculateLighting 
-        {
-            get { return Chunk.Data.RecalculateLighting[Index]; }
-            set { Chunk.Data.RecalculateLighting[Index] = value;  }
-        }
 
         [JsonIgnore]
         public static List<VoxelVertex> VoxelVertexList { get; set; }

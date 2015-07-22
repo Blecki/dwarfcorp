@@ -50,7 +50,6 @@ namespace DwarfCorp
         public override void Build()
         {
             base.Build();
-            Faction.Stockpiles.Add(ToBuild as Stockpile);
         }
     }
 }

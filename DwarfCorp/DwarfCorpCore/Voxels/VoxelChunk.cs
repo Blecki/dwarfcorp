@@ -55,8 +55,7 @@ namespace DwarfCorp
 
         public class VoxelData
         {
-            public bool[] IsVisible;
-            public bool[] RecalculateLighting;
+            public bool[] IsExplored;
             public byte[] Health;
             public byte[] Types;
             public byte[] SunColors;
@@ -473,8 +472,7 @@ namespace DwarfCorp
             VoxelData toReturn = new VoxelData()
             {
                 Health = new byte[numVoxels],
-                RecalculateLighting = new bool[numVoxels],
-                IsVisible = new bool[numVoxels],
+                IsExplored = new bool[numVoxels],
                 SunColors = new byte[numVoxels],
                 Types = new byte[numVoxels],
                 Water = new WaterCell[numVoxels],
@@ -960,17 +958,7 @@ namespace DwarfCorp
         #region lighting
 
        
-        public void SetAllToRecalculate()
-        {
-            int numVoxels = sizeX*sizeY*sizeZ;
-            for (int i = 0; i < numVoxels; i++)
-            {
-                if (Data.Types[i] != 0)
-                {
-                    Data.RecalculateLighting[i] = true;
-                }
-            }
-        }
+
 
 
         public byte GetIntensity(DynamicLight light, byte lightIntensity, Voxel voxel)
@@ -1101,7 +1089,6 @@ namespace DwarfCorp
                 for(int z = 0; z < SizeZ; z++)
                 {
                     bool rayHit = false;
-                    bool recalculateFound = false;
                     for(int y = SizeY - 1; y >= 0; y--)
                     {
                         if(rayHit)
@@ -1112,14 +1099,7 @@ namespace DwarfCorp
                         int index = Data.IndexAt(x, y, z);
                         if(Data.Types[index] == 0)
                         {
-                            recalculateFound = true;
                             Data.SunColors[index] = sunColor;
-                            continue;
-                        }
-
-                        recalculateFound = recalculateFound || reference.RecalculateLighting;
-                        if(!recalculateFound)
-                        {
                             continue;
                         }
 
@@ -1175,16 +1155,16 @@ namespace DwarfCorp
                     {
                         voxel.GridPosition = new Vector3(x, y, z);    
                         
-                        if(voxel == null || voxel.IsEmpty)
+                        if(voxel.IsEmpty)
                         {
                             continue;
                         }
 
                         VoxelType type = voxel.Type;
 
-                        if(VoxelLibrary.IsSolid(voxel) && (voxel.IsVisible || voxel.RecalculateLighting))
+                        if(VoxelLibrary.IsSolid(voxel) && voxel.IsVisible)
                         {
-                            if(IsCompletelySurrounded(voxel, true))
+                            if(IsCompletelySurrounded(voxel, true) || !voxel.IsExplored)
                             {
                                 Data.SunColors[Data.IndexAt(x, y, z)] = 0;
                                 for(int i = 0; i < 8; i++)
@@ -1194,7 +1174,6 @@ namespace DwarfCorp
                                     if (type.EmitsLight) color.B = 255;
                                     Data.SetColor(x, y, z, (VoxelVertex)i, color);
                                 }
-                                voxel.RecalculateLighting = false;
                                 continue;
                             }
 
@@ -1212,7 +1191,6 @@ namespace DwarfCorp
                                             new Color(colorInfo.SunColor, colorInfo.AmbientColor, colorInfo.DynamicColor));
                                     }
                                 }
-                                voxel.RecalculateLighting = false;
                             }
                             else
                             {
@@ -1226,13 +1204,11 @@ namespace DwarfCorp
                                         Data.SetColor(x, y, z, (VoxelVertex) i, new Color(sunColor, 128, 0));
                                     }
                                 }
-                                voxel.RecalculateLighting = false;
                             }
                         }
-                        else if(voxel.IsVisible && voxel.RecalculateLighting)
+                        else if(voxel.IsVisible)
                         {
                             Data.SunColors[Data.IndexAt((int)voxel.GridPosition.X, (int)voxel.GridPosition.Y, (int)voxel.GridPosition.Z)] = 0;
-                            voxel.RecalculateLighting = false;
                             for(int i = 0; i < 8; i++)
                             {
                                 int vertIndex = Data.VertIndex(x, y, z, (VoxelVertex) i);
@@ -1316,9 +1292,9 @@ namespace DwarfCorp
             int my = SizeY;
             int mz = SizeZ;
             Voxel voxel = MakeVoxel(0, 0, 0);
-            for(int x = 0; x < mx; x++)
+            for(int y = 0; y < my; y++)
             {
-                for(int y = 0; y < my; y++)
+                for(int x = 0; x < mx; x++)
                 {
                     for(int z = 0; z < mz; z++)
                     {
@@ -1338,11 +1314,7 @@ namespace DwarfCorp
                         }
 
                         voxel.GridPosition = new Vector3(x, y, z);
-                        if(test > level && voxel.IsVisible && !voxel.IsEmpty)
-                        {
-                            return true;
-                        }
-                        else if(test <= level && !voxel.IsVisible && !voxel.IsEmpty)
+                        if(test > level  && !voxel.IsEmpty)
                         {
                             return true;
                         }
@@ -1355,66 +1327,7 @@ namespace DwarfCorp
 
         }
 
-        public void UpdateMaxViewingLevel()
-        {
-            float level = Manager.ChunkData.MaxViewingLevel;
 
-            int mx = SizeX;
-            int my = SizeY;
-            int mz = SizeZ;
-            Voxel voxel = MakeVoxel(0, 0, 0);
-            for(int x = 0; x < mx; x++)
-            {
-                for(int y = 0; y < my; y++)
-                {
-                    for(int z = 0; z < mz; z++)
-                    {
-                        float test = 0.0f;
-
-                        switch(Manager.ChunkData.Slice)
-                        {
-                            case ChunkManager.SliceMode.X:
-                                test = x + Origin.X;
-                                break;
-                            case ChunkManager.SliceMode.Y:
-                                test = y + Origin.Y;
-                                break;
-                            case ChunkManager.SliceMode.Z:
-                                test = z + Origin.Z;
-                                break;
-                        }
-
-                        voxel.GridPosition = new Vector3(x, y, z);
-
-                        if (test > level && voxel.IsVisible && !voxel.IsEmpty)
-                        {
-                            voxel.IsVisible = false;
-                        }
-                        else if (test <= level && !voxel.IsVisible && !voxel.IsEmpty)
-                        {
-                            voxel.IsVisible = true;
-                        }
-                    }
-                }
-            }
-
-            ShouldRebuildWater = true;
-            ShouldRebuild = true;
-        }
-
-
-        public void MakeAllVoxelsVisible()
-        {
-            int numVoxels = Data.SizeX*Data.SizeY*Data.SizeZ;
-            for (int i = 0; i < numVoxels; i++)
-            {
-                if (Data.Types[i] != 0)
-                {
-                    Data.IsVisible[i] = true;
-                }
-            }
-          
-        }
 
         #endregion
 
@@ -1764,7 +1677,6 @@ namespace DwarfCorp
         public void NotifyTotalRebuild(bool neighbors)
         {
             ShouldRebuild = true;
-            SetAllToRecalculate();
             ShouldRecalculateLighting = true;
             ShouldRebuildWater = true;
             ReconstructRamps = true;
@@ -1775,7 +1687,6 @@ namespace DwarfCorp
                 {
                     chunk.ShouldRebuild = true;
                     chunk.ShouldRecalculateLighting = true;
-                    chunk.SetAllToRecalculate();
                     chunk.ShouldRebuildWater = true;
                 }
             }

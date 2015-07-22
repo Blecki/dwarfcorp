@@ -97,11 +97,77 @@ namespace DwarfCorp
             Slice = slice;
             MaxViewingLevel = Math.Max(Math.Min(level, ChunkSizeY), 1);
 
-            foreach(VoxelChunk c in ChunkMap.Select(chunks => chunks.Value).Where(c => c.NeedsViewingLevelChange()))
+            foreach(VoxelChunk c in ChunkMap.Select(chunks => chunks.Value))
             {
                 c.ShouldRecalculateLighting = false;
                 c.ShouldRebuild = true;
             }
+        }
+
+        public void Reveal(Voxel voxel)
+        {
+            Reveal(new List<Voxel>() { voxel });
+        }
+
+        public void Reveal(IEnumerable<Voxel> voxels)
+        {
+            if (!GameSettings.Default.FogofWar) return;
+            List<Point3> affectedChunks = new List<Point3>();
+            Queue<Voxel> q = new Queue<Voxel>(128);
+
+            foreach(Voxel voxel in voxels)
+            { 
+                if(voxel != null)
+                    q.Enqueue(voxel);
+            }
+            List<Voxel> neighbors = new List<Voxel>();
+            while (q.Count > 0)
+            {
+                Voxel v = q.Dequeue();
+                if (v == null) continue;
+
+                if (!affectedChunks.Contains(v.ChunkID))
+                {
+                    affectedChunks.Add(v.ChunkID);
+                }
+                v.Chunk.GetNeighborsManhattan(v, neighbors);
+                foreach (Voxel nextVoxel in neighbors)
+                {
+                    if (nextVoxel == null) continue;
+                   
+                    if (nextVoxel.IsExplored) continue;
+
+                    if (!nextVoxel.IsEmpty)
+                    {
+                        if (!nextVoxel.IsExplored)
+                        {
+                            nextVoxel.IsExplored = true;
+                            if (!affectedChunks.Contains(nextVoxel.ChunkID))
+                            {
+                                affectedChunks.Add(nextVoxel.ChunkID);
+                            }
+                        }
+                        continue;
+                    }
+
+                    if(!v.IsExplored)
+                        q.Enqueue(new Voxel(new Point3(nextVoxel.GridPosition), nextVoxel.Chunk));
+                }
+
+                v.IsExplored = true;
+
+            }
+
+            foreach (Point3 chunkID in affectedChunks)
+            {
+                VoxelChunk chunk = ChunkMap[chunkID];
+
+                if (!chunk.ShouldRebuild)
+                {
+                    chunk.ShouldRebuild = true;
+                }
+            }
+            
         }
 
         public Voxel GetNearestFreeAdjacentVoxel(Voxel voxel, Vector3 referenceLocation)

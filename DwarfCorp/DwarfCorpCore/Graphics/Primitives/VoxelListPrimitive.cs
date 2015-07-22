@@ -495,15 +495,18 @@ namespace DwarfCorp
                         v.GridPosition = new Vector3(x, y, z); 
 
 
-                        if(v.IsEmpty || !v.IsVisible)
+                        if((v.IsExplored && v.IsEmpty) || !v.IsVisible)
                         {
                             continue;
                         }
 
                         BoxPrimitive primitive = VoxelLibrary.GetPrimitive(v.Type);
 
-                        if (primitive == null) continue;
-
+                        if (v.IsExplored && primitive == null) continue;
+                        else if (!v.IsExplored)
+                        {
+                            primitive = VoxelLibrary.GetPrimitive("Bedrock");
+                        }
                         BoxPrimitive.BoxTextureCoords uvs = primitive.UVs;
 
                         if (v.Type.HasTransitionTextures)
@@ -529,7 +532,10 @@ namespace DwarfCorp
                             else
                             {
                                 bool success = chunk.Manager.ChunkData.GetNonNullVoxelAtWorldLocation(new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z) + chunk.Origin, ref worldVoxel);
-                                drawFace[face] = !success || worldVoxel.IsEmpty || !worldVoxel.IsVisible || (worldVoxel.Type.CanRamp && worldVoxel.RampType != RampType.None && IsSideFace(face) && ShouldDrawFace(face, worldVoxel.RampType, v.RampType));
+                                    drawFace[face] = !success || worldVoxel.IsEmpty || !worldVoxel.IsVisible ||
+                                                     (worldVoxel.Type.CanRamp && worldVoxel.RampType != RampType.None &&
+                                                      IsSideFace(face) &&
+                                                      ShouldDrawFace(face, worldVoxel.RampType, v.RampType));
                             }
                         }
 

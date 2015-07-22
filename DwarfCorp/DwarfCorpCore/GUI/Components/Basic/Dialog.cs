@@ -79,7 +79,8 @@ namespace DwarfCorp
                 LocalBounds =
                     new Rectangle(x, y, w, h),
                 MinWidth =  w - 150,
-                MinHeight = h - 150
+                MinHeight = h - 150,
+                DrawOrder = 100
             };
 
             d.Initialize(buttons, title, message);
@@ -97,8 +98,8 @@ namespace DwarfCorp
         }
 
         public 
-            Dialog(DwarfGUI gui, GUIComponent parent) :
-            base(gui, parent)
+            Dialog(DwarfGUI gui, GUIComponent parent, WindowButtons button = WindowButtons.NoButtons) :
+            base(gui, parent, button)
         {
            
         }
@@ -196,7 +197,8 @@ namespace DwarfCorp
             isClosed = true;
             IsVisible = false;
 
-            OnClosed.Invoke(status);
+            if(OnClosed != null)
+                OnClosed.Invoke(status);
             Parent.RemoveChild(this);
         }
 

@@ -243,7 +243,7 @@ namespace DwarfCorp
                 {
                     if(CurrentRoomData != RoomLibrary.GetData("Stockpile"))
                     {
-                        Room toBuild = RoomLibrary.CreateRoom(CurrentRoomData.Name, designations.ToList(), true);
+                        Room toBuild = RoomLibrary.CreateRoom(Faction, CurrentRoomData.Name, designations.ToList(), true);
                         DesignatedRooms.Add(toBuild);
                         order = new BuildRoomOrder(toBuild, this.Faction);
                         order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
@@ -251,7 +251,7 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        Stockpile toBuild = new Stockpile("Stockpile " + Stockpile.NextID(), PlayState.ChunkManager);
+                        Stockpile toBuild = new Stockpile(Faction);
                         DesignatedRooms.Add(toBuild);
                         order = new BuildStockpileOrder(toBuild, this.Faction);
                         order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));

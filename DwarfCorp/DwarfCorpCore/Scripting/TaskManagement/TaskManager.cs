@@ -197,22 +197,6 @@ namespace DwarfCorp
                 }
 
 
-                foreach(Stockpile s in Faction.Stockpiles)
-                {
-                    for(int i = componentsToShip.Count; i < remaining; i++)
-                    {
-                        // TODO: Reimplement
-                        /*
-                        Body r = s.FindItemWithTag(ship.Resource.ResourceType.ResourceName, componentsToShip);
-
-                        if(r != null)
-                        {
-                            componentsToShip.Add(r);
-                        }
-                         */
-                    }
-                }
-
                 foreach(Body loc in componentsToShip)
                 {
                     // TODO: Reimplement

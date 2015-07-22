@@ -55,19 +55,43 @@ namespace DwarfCorp
         private static uint maxID = 0;
         public List<Body> Boxes { get; set; }
         public static string StockpileName = "Stockpile";
-
+        public Faction Faction { get; set; }
         public static uint NextID()
         {
             maxID++;
             return maxID;
         }
 
+        public Stockpile()
+        {
+            Boxes = new List<Body>();
+            ReplacementType = VoxelLibrary.GetVoxelType("Stockpile");
+        }
 
-        public Stockpile(string id, ChunkManager chunk) :
+
+        public Stockpile(Faction faction) :
             base(false, new List<Voxel>(), RoomLibrary.GetData(StockpileName), PlayState.ChunkManager)
         {
             Boxes = new List<Body>();
             ReplacementType = VoxelLibrary.GetVoxelType("Stockpile");
+            faction.Stockpiles.Add(this);
+            Faction = faction;
+        }
+
+        public Stockpile(Faction faction, IEnumerable<Voxel> voxels, RoomData data, ChunkManager chunks) :
+            base(voxels, data, chunks)
+        {
+            Boxes = new List<Body>();
+            faction.Stockpiles.Add(this);
+            Faction = faction;
+        }
+
+        public Stockpile(Faction faction, bool designation, IEnumerable<Voxel> designations, RoomData data, ChunkManager chunks) :
+            base(designation, designations, data, chunks)
+        {
+            Boxes = new List<Body>();
+            faction.Stockpiles.Add(this);
+            Faction = faction;
         }
 
         public void KillBox(Body component)
@@ -93,6 +117,16 @@ namespace DwarfCorp
 
         public void HandleBoxes()
         {
+            if (Voxels == null)
+            {
+               Voxels = new List<Voxel>();
+            }
+
+            if (Boxes == null)
+            {
+                Boxes = new List<Body>();
+            }
+
             if(Voxels.Count == 0)
             {
                 foreach(Body component in Boxes)
@@ -151,6 +185,11 @@ namespace DwarfCorp
                         body.Velocity = MathFunctions.RandVector3Cube();
                     }
                 }
+            }
+
+            if (Faction != null)
+            {
+                Faction.Stockpiles.Remove(this);
             }
             base.Destroy();
         }

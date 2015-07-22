@@ -84,6 +84,7 @@ namespace DwarfCorp
             public bool DrawDebugData = false;
             public float VisibilityUpdateTime = 0.1f;
             public float ChunkGenerateTime = 0.5f;
+            public bool FogofWar = true;
         }
 
         public static Settings Default { get; set; }

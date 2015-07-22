@@ -134,7 +134,6 @@ namespace DwarfCorp
                         if(Types[x, y, z] > 0)
                         {
                             c.Data.Types[index] = (byte) Types[x, y, z];
-                            c.Data.IsVisible[index] = true;
                             c.Data.Health[index] = (byte)VoxelLibrary.GetVoxelType(Types[x, y, z]).StartingHealth;
                         }
                     }

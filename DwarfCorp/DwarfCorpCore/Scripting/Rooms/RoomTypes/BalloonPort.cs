@@ -40,12 +40,12 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class BalloonPort : Room
+    public class BalloonPort : Stockpile
     {
         public static string BalloonPortName { get { return "BalloonPort"; } }
         public static RoomData BalloonPortData { get { return RoomLibrary.GetData(BalloonPortName); } }
 
-        public static RoomData InitializeData()
+        public new static RoomData InitializeData()
         {
             Dictionary<ResourceLibrary.ResourceType, ResourceAmount> balloonPortResources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
             ResourceAmount balloonStoneRequired = new ResourceAmount
@@ -96,16 +96,15 @@ namespace DwarfCorp
 
         public BalloonPort()
         {
-            RoomData = BalloonPortData;
         }
 
-        public BalloonPort(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
-            base(designation, designations, BalloonPortData, chunks)
+        public BalloonPort(Faction faction, bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
+            base(faction, designation, designations, BalloonPortData, chunks)
         {
         }
 
-        public BalloonPort(IEnumerable<Voxel> voxels, ChunkManager chunks) :
-            base(voxels, BalloonPortData, chunks)
+        public BalloonPort(Faction faction, IEnumerable<Voxel> voxels, ChunkManager chunks) :
+            base(faction, voxels, BalloonPortData, chunks)
         {
             OnBuilt();
         }
