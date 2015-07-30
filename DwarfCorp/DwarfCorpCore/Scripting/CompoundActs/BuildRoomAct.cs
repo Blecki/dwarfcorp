@@ -45,7 +45,7 @@ namespace DwarfCorp
     public class BuildRoomAct : CompoundCreatureAct
     {
         public BuildRoomOrder BuildRoom { get; set; }
-        public List<ResourceAmount> Resources { get; set; } 
+        public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; } 
 
         public IEnumerable<Status> SetTargetVoxelFromRoom(BuildRoomOrder buildRoom, string target)
         {

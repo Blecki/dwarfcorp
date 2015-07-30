@@ -32,6 +32,7 @@
 // THE SOFTWARE.
 using System.Collections.Generic;
 using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -42,20 +43,34 @@ namespace DwarfCorp
     public class Resource
     {
         public ResourceLibrary.ResourceType Type { get; set; }
-        public string ResourceName { get { return ResourceLibrary.ResourceNames[Type]; }}
+        public string ResourceName { get { return Type; }}
         public float MoneyValue { get; set; }
         public string Description { get; set; }
         public NamedImageFrame Image { get; set; }
         public List<ResourceTags> Tags { get; set; }
         public float FoodContent { get; set; }
-        public bool SelfIlluminating { get; set; }
-        public bool IsFlammable { get; set; }
+        public bool SelfIlluminating { get { return Tags.Contains(ResourceTags.SelfIlluminating); }}
+        public bool IsFlammable { get { return Tags.Contains(ResourceTags.Flammable); }}
 
+        public Color Tint { get; set; }
         public enum ResourceTags
         {
             Food,
             Material,
-            Precious
+            Precious,
+            Flammable,
+            SelfIlluminating,
+            Wood,
+            Metal,
+            Stone,
+            Fuel,
+            Magical,
+            Soil,
+            Grain,
+            Fungus,
+            None,
+            AnimalProduct,
+            Meat
         }
 
         public Resource()
@@ -63,15 +78,46 @@ namespace DwarfCorp
             
         }
 
-        public Resource(ResourceLibrary.ResourceType type, float money, string description, NamedImageFrame image, params ResourceTags[] tags)
+        public Resource(Resource other)
+        {;
+            Type = other.Type;
+            MoneyValue = other.MoneyValue;
+            Description = new string(other.Description.ToCharArray());
+            Image = other.Image;
+            Tint = other.Tint;
+            Tags = new List<ResourceTags>();
+            Tags.AddRange(other.Tags);
+            FoodContent = other.FoodContent;
+        }
+
+        public Resource(ResourceLibrary.ResourceType type,  float money, string description, NamedImageFrame image, Color tint, params ResourceTags[] tags)
         {
             Type = type;
             MoneyValue = money;
             Description = description;
             Image = image;
+            Tint = tint;
             Tags = new List<ResourceTags>();
             Tags.AddRange(tags);
             FoodContent = 0;
+        }
+
+        public string GetTagDescription(string delimiter)
+        {
+            string s = "";
+
+            for (int i = 0; i < Tags.Count; i++)
+            {
+                string tag = Tags[i].ToString();
+                s += tag.ToString();
+
+                if (i < Tags.Count - 1)
+                {
+                    s += delimiter;
+                }
+            }
+
+            return s;
         }
     }
 

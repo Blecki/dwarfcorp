@@ -203,7 +203,7 @@ namespace DwarfCorp
 
             if(existingItem == null)
             {
-                existingItem = new GItem(item.Name, item.Image, 0, 10000, amount, item.Price)
+                existingItem = new GItem(item.Name, item.Image, item.Tint, 0, 10000, amount, item.Price)
                 {
                     CurrentAmount = amount
                 };
@@ -250,7 +250,7 @@ namespace DwarfCorp
                     if (image == null) break;
 
                     image.Image = item.Image;
-
+                    image.Tint = item.Tint;
                     break;
 
                 case Column.Name:
@@ -302,7 +302,8 @@ namespace DwarfCorp
                     ImagePanel image = new ImagePanel(GUI, Layout, item.Image)
                     {
                         KeepAspectRatio = true,
-                        ConstrainSize = true
+                        ConstrainSize = true,
+                        Tint = item.Tint
                     };
                     Layout.SetComponentPosition(image, column, row, 1, 1);
 

@@ -234,6 +234,7 @@ float2 TextureCoords: TEXCOORD1;
 float4 clipDistances     : TEXCOORD5;
 float Fog : TEXCOORD7;	
 float4 TextureBounds: TEXCOORD6;
+float3 ColorTint : COLOR1;
 };
 
 struct TPixelToFrame
@@ -242,7 +243,7 @@ struct TPixelToFrame
 };
 
 
-TVertexToPixel TexturedVS( float4 inPos : POSITION,  float2 inTexCoords: TEXCOORD0, float4 inColor : COLOR0, float4 inTexSource : TEXCOORD1, float4x4 world : BLENDWEIGHT, float4 tint : COLOR1)
+TVertexToPixel TexturedVS( float4 inPos : POSITION,  float2 inTexCoords: TEXCOORD0, float4 inColor : COLOR0, float4 inTexSource : TEXCOORD1, float4x4 world : BLENDWEIGHT, float4 lightTint : COLOR1, float3 tint)
 {
     TVertexToPixel Output = (TVertexToPixel)0;
 	float4 worldPosition = mul(inPos, world);
@@ -251,9 +252,9 @@ TVertexToPixel TexturedVS( float4 inPos : POSITION,  float2 inTexCoords: TEXCOOR
 
     Output.TextureCoords = inTexCoords;
     Output.clipDistances = dot(worldPosition, ClipPlane0);
-	Output.Color = inColor * tint;
-	Output.Color.a = tint.a;
-	
+	Output.Color = inColor * lightTint;
+	Output.Color.a = lightTint.a;
+	Output.ColorTint = tint;
 	if(xEnableLighting)
 	{
 		for (int i = 0; i < MAX_LIGHTS; i++)
@@ -278,14 +279,14 @@ TVertexToPixel TexturedVS( float4 inPos : POSITION,  float2 inTexCoords: TEXCOOR
     return Output;
 }
 
-TVertexToPixel TexturedVSNonInstanced( float4 inPos : POSITION,  float2 inTexCoords: TEXCOORD0, float4 inColor : COLOR0, float4 inTexSource : TEXCOORD1)
+TVertexToPixel TexturedVSNonInstanced( float4 inPos : POSITION,  float2 inTexCoords: TEXCOORD0, float4 inColor : COLOR0, float4 inTexSource : TEXCOORD1, float3 vertColor : COLOR1)
 {
-	return TexturedVS(inPos, inTexCoords, inColor, inTexSource, xWorld, xTint);
+	return TexturedVS(inPos, inTexCoords, inColor, inTexSource, xWorld, xTint, vertColor);
 }
 
-TVertexToPixel TexturedVSInstanced( float4 inPos : POSITION,  float2 inTexCoords: TEXCOORD0, float4 inColor : COLOR0, float4 inTexSource : TEXCOORD1, float4 tint : COLOR1, float4x4 transform : BLENDWEIGHT)
+TVertexToPixel TexturedVSInstanced( float4 inPos : POSITION,  float2 inTexCoords: TEXCOORD0, float4 inColor : COLOR0, float4 inTexSource : TEXCOORD1, float4 tint : COLOR1, float4x4 transform : BLENDWEIGHT, float3 vertColor : COLOR2)
 {
-	return TexturedVS(inPos, inTexCoords, inColor, inTexSource, transpose(transform), tint);
+	return TexturedVS(inPos, inTexCoords, inColor, inTexSource, transpose(transform), tint, vertColor);
 }
 
 
@@ -331,7 +332,7 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 	float4 illumColor = tex2D(IllumSampler, textureCoords);
 
 	Output.Color.rgba *= texColor;
-
+	Output.Color.rgb *= PSIn.ColorTint;
 	if(SelfIllumination)
 		Output.Color.rgba = lerp(Output.Color.rgba, texColor, illumColor.r); 
 	
@@ -366,7 +367,7 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 	saturate(Output.Color.rgb);
 
 	Output.Color.rgb *=  tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f));
-    
+	Output.Color.rgb *= PSIn.ColorTint;
 	float4 texColor = tex2D(TextureSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
 	float4 illumColor = tex2D(IllumSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
 

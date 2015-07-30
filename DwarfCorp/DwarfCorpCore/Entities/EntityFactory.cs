@@ -87,13 +87,7 @@ namespace DwarfCorp
 
         public static void Initialize()
         {
-            EntityFuncs = new Dictionary<string, Func<Vector3, Blackboard, GameComponent>>();
             RegisterEntity("Crate", (position, data) => new Crate(position));
-            foreach (var resource in ResourceLibrary.Resources)
-            {
-                ResourceLibrary.ResourceType type = resource.Value.Type;
-                RegisterEntity(resource.Key + " Resource", (position, data) => new ResourceEntity(type, position));
-            }
             RegisterEntity("Balloon", (position, data) => CreateBalloon(position + new Vector3(0, 1000, 0), position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, null, PlayState.PlayerFaction));
             RegisterEntity("Work Pile", (position, data) => new WorkPile(position));
             RegisterEntity("Pine Tree", (position, data) => new Tree(position, "pine", data.GetData("Scale", 1.0f)));
@@ -146,6 +140,10 @@ namespace DwarfCorp
 
         public static void RegisterEntity<T>(string id, Func<Vector3, Blackboard, T> function) where T : GameComponent
         {
+            if (EntityFuncs == null)
+            {
+                EntityFuncs = new Dictionary<string, Func<Vector3, Blackboard, GameComponent>>();
+            }
             EntityFuncs[id] = function;
         }
 

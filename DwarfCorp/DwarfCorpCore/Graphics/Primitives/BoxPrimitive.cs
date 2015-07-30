@@ -290,52 +290,52 @@ namespace DwarfCorp
 
             // Add the vertices for the FRONT face.
 
-            Vertices[0] = new ExtendedVertex(topLeftFront, Color.White, UVs.m_uvs[0], UVs.Bounds[0]);
-            Vertices[1] = new ExtendedVertex(btmLeftFront, Color.White, UVs.m_uvs[1], UVs.Bounds[0]);
-            Vertices[2] = new ExtendedVertex(topRightFront, Color.White, UVs.m_uvs[2], UVs.Bounds[0]);
-            Vertices[3] = new ExtendedVertex(btmLeftFront, Color.White, UVs.m_uvs[3], UVs.Bounds[0]);
-            Vertices[4] = new ExtendedVertex(btmRightFront, Color.White, UVs.m_uvs[4], UVs.Bounds[0]);
-            Vertices[5] = new ExtendedVertex(topRightFront, Color.White, UVs.m_uvs[5], UVs.Bounds[0]);
+            Vertices[0] = new ExtendedVertex(topLeftFront, Color.White, Color.White, UVs.m_uvs[0], UVs.Bounds[0]);
+            Vertices[1] = new ExtendedVertex(btmLeftFront, Color.White, Color.White, UVs.m_uvs[1], UVs.Bounds[0]);
+            Vertices[2] = new ExtendedVertex(topRightFront, Color.White, Color.White, UVs.m_uvs[2], UVs.Bounds[0]);
+            Vertices[3] = new ExtendedVertex(btmLeftFront, Color.White, Color.White, UVs.m_uvs[3], UVs.Bounds[0]);
+            Vertices[4] = new ExtendedVertex(btmRightFront, Color.White, Color.White, UVs.m_uvs[4], UVs.Bounds[0]);
+            Vertices[5] = new ExtendedVertex(topRightFront, Color.White, Color.White, UVs.m_uvs[5], UVs.Bounds[0]);
 
             // Add the vertices for the BACK face.
-            Vertices[6] = new ExtendedVertex(topLeftBack, Color.White, UVs.m_uvs[6], UVs.Bounds[1]);
-            Vertices[7] = new ExtendedVertex(topRightBack, Color.White, UVs.m_uvs[7], UVs.Bounds[1]);
-            Vertices[8] = new ExtendedVertex(btmLeftBack, Color.White, UVs.m_uvs[8], UVs.Bounds[1]);
-            Vertices[9] = new ExtendedVertex(btmLeftBack, Color.White, UVs.m_uvs[9], UVs.Bounds[1]);
-            Vertices[10] = new ExtendedVertex(topRightBack, Color.White, UVs.m_uvs[10], UVs.Bounds[1]);
-            Vertices[11] = new ExtendedVertex(btmRightBack, Color.White, UVs.m_uvs[11], UVs.Bounds[1]);
+            Vertices[6] = new ExtendedVertex(topLeftBack, Color.White, Color.White, UVs.m_uvs[6], UVs.Bounds[1]);
+            Vertices[7] = new ExtendedVertex(topRightBack, Color.White, Color.White, UVs.m_uvs[7], UVs.Bounds[1]);
+            Vertices[8] = new ExtendedVertex(btmLeftBack, Color.White, Color.White, UVs.m_uvs[8], UVs.Bounds[1]);
+            Vertices[9] = new ExtendedVertex(btmLeftBack, Color.White, Color.White, UVs.m_uvs[9], UVs.Bounds[1]);
+            Vertices[10] = new ExtendedVertex(topRightBack, Color.White, Color.White, UVs.m_uvs[10], UVs.Bounds[1]);
+            Vertices[11] = new ExtendedVertex(btmRightBack, Color.White, Color.White, UVs.m_uvs[11], UVs.Bounds[1]);
 
             // Add the vertices for the TOP face.
-            Vertices[12] = new ExtendedVertex(topLeftFront, Color.White, UVs.m_uvs[12], UVs.Bounds[2]);
-            Vertices[13] = new ExtendedVertex(topRightBack, Color.White, UVs.m_uvs[13], UVs.Bounds[2]);
-            Vertices[14] = new ExtendedVertex(topLeftBack, Color.White, UVs.m_uvs[14], UVs.Bounds[2]);
-            Vertices[15] = new ExtendedVertex(topLeftFront, Color.White, UVs.m_uvs[15], UVs.Bounds[2]);
-            Vertices[16] = new ExtendedVertex(topRightFront, Color.White, UVs.m_uvs[16], UVs.Bounds[2]);
-            Vertices[17] = new ExtendedVertex(topRightBack, Color.White, UVs.m_uvs[17], UVs.Bounds[2]);
+            Vertices[12] = new ExtendedVertex(topLeftFront, Color.White, Color.White, UVs.m_uvs[12], UVs.Bounds[2]);
+            Vertices[13] = new ExtendedVertex(topRightBack, Color.White, Color.White, UVs.m_uvs[13], UVs.Bounds[2]);
+            Vertices[14] = new ExtendedVertex(topLeftBack, Color.White, Color.White, UVs.m_uvs[14], UVs.Bounds[2]);
+            Vertices[15] = new ExtendedVertex(topLeftFront, Color.White, Color.White, UVs.m_uvs[15], UVs.Bounds[2]);
+            Vertices[16] = new ExtendedVertex(topRightFront, Color.White, Color.White, UVs.m_uvs[16], UVs.Bounds[2]);
+            Vertices[17] = new ExtendedVertex(topRightBack, Color.White, Color.White, UVs.m_uvs[17], UVs.Bounds[2]);
 
             // Add the vertices for the BOTTOM face. 
-            Vertices[18] = new ExtendedVertex(btmLeftFront, Color.White, UVs.m_uvs[18], UVs.Bounds[3]);
-            Vertices[19] = new ExtendedVertex(btmLeftBack, Color.White, UVs.m_uvs[19], UVs.Bounds[3]);
-            Vertices[20] = new ExtendedVertex(btmRightBack, Color.White, UVs.m_uvs[20], UVs.Bounds[3]);
-            Vertices[21] = new ExtendedVertex(btmLeftFront, Color.White, UVs.m_uvs[21], UVs.Bounds[3]);
-            Vertices[22] = new ExtendedVertex(btmRightBack, Color.White, UVs.m_uvs[22], UVs.Bounds[3]);
-            Vertices[23] = new ExtendedVertex(btmRightFront, Color.White, UVs.m_uvs[23], UVs.Bounds[3]);
+            Vertices[18] = new ExtendedVertex(btmLeftFront, Color.White, Color.White, UVs.m_uvs[18], UVs.Bounds[3]);
+            Vertices[19] = new ExtendedVertex(btmLeftBack, Color.White, Color.White, UVs.m_uvs[19], UVs.Bounds[3]);
+            Vertices[20] = new ExtendedVertex(btmRightBack, Color.White, Color.White, UVs.m_uvs[20], UVs.Bounds[3]);
+            Vertices[21] = new ExtendedVertex(btmLeftFront, Color.White, Color.White, UVs.m_uvs[21], UVs.Bounds[3]);
+            Vertices[22] = new ExtendedVertex(btmRightBack, Color.White, Color.White, UVs.m_uvs[22], UVs.Bounds[3]);
+            Vertices[23] = new ExtendedVertex(btmRightFront, Color.White, Color.White, UVs.m_uvs[23], UVs.Bounds[3]);
 
             // Add the vertices for the LEFT face.
-            Vertices[24] = new ExtendedVertex(topLeftFront, Color.White, UVs.m_uvs[24], UVs.Bounds[4]);
-            Vertices[25] = new ExtendedVertex(btmLeftBack, Color.White, UVs.m_uvs[25], UVs.Bounds[4]);
-            Vertices[26] = new ExtendedVertex(btmLeftFront, Color.White, UVs.m_uvs[26], UVs.Bounds[4]);
-            Vertices[27] = new ExtendedVertex(topLeftBack, Color.White, UVs.m_uvs[27], UVs.Bounds[4]);
-            Vertices[28] = new ExtendedVertex(btmLeftBack, Color.White, UVs.m_uvs[28], UVs.Bounds[4]);
-            Vertices[29] = new ExtendedVertex(topLeftFront, Color.White, UVs.m_uvs[29], UVs.Bounds[4]);
+            Vertices[24] = new ExtendedVertex(topLeftFront, Color.White,  Color.White, UVs.m_uvs[24], UVs.Bounds[4]);
+            Vertices[25] = new ExtendedVertex(btmLeftBack, Color.White, Color.White, UVs.m_uvs[25], UVs.Bounds[4]);
+            Vertices[26] = new ExtendedVertex(btmLeftFront, Color.White, Color.White, UVs.m_uvs[26], UVs.Bounds[4]);
+            Vertices[27] = new ExtendedVertex(topLeftBack, Color.White, Color.White, UVs.m_uvs[27], UVs.Bounds[4]);
+            Vertices[28] = new ExtendedVertex(btmLeftBack, Color.White, Color.White, UVs.m_uvs[28], UVs.Bounds[4]);
+            Vertices[29] = new ExtendedVertex(topLeftFront, Color.White, Color.White, UVs.m_uvs[29], UVs.Bounds[4]);
 
             // Add the vertices for the RIGHT face. 
-            Vertices[30] = new ExtendedVertex(topRightFront, Color.White, UVs.m_uvs[30], UVs.Bounds[5]);
-            Vertices[31] = new ExtendedVertex(btmRightFront, Color.White, UVs.m_uvs[31], UVs.Bounds[5]);
-            Vertices[32] = new ExtendedVertex(btmRightBack, Color.White, UVs.m_uvs[32], UVs.Bounds[5]);
-            Vertices[33] = new ExtendedVertex(topRightBack, Color.White, UVs.m_uvs[33], UVs.Bounds[5]);
-            Vertices[34] = new ExtendedVertex(topRightFront, Color.White, UVs.m_uvs[34], UVs.Bounds[5]);
-            Vertices[35] = new ExtendedVertex(btmRightBack, Color.White, UVs.m_uvs[35], UVs.Bounds[5]);
+            Vertices[30] = new ExtendedVertex(topRightFront, Color.White, Color.White, UVs.m_uvs[30], UVs.Bounds[5]);
+            Vertices[31] = new ExtendedVertex(btmRightFront, Color.White, Color.White, UVs.m_uvs[31], UVs.Bounds[5]);
+            Vertices[32] = new ExtendedVertex(btmRightBack, Color.White, Color.White, UVs.m_uvs[32], UVs.Bounds[5]);
+            Vertices[33] = new ExtendedVertex(topRightBack, Color.White, Color.White, UVs.m_uvs[33], UVs.Bounds[5]);
+            Vertices[34] = new ExtendedVertex(topRightFront, Color.White, Color.White, UVs.m_uvs[34], UVs.Bounds[5]);
+            Vertices[35] = new ExtendedVertex(btmRightBack, Color.White, Color.White, UVs.m_uvs[35], UVs.Bounds[5]);
         }
     }
 
@@ -576,10 +576,10 @@ namespace DwarfCorp
 
 
             // Add the vertices for the FRONT face.
-            Vertices[0] = new ExtendedVertex(topLeftFront, Color.White, UVs.Uvs[0], UVs.Bounds[0]);
-            Vertices[1] = new ExtendedVertex(btmLeftFront, Color.White, UVs.Uvs[1], UVs.Bounds[0]);
-            Vertices[2] = new ExtendedVertex(topRightFront, Color.White, UVs.Uvs[2], UVs.Bounds[0]);
-            Vertices[3] = new ExtendedVertex(btmRightFront, Color.White, UVs.Uvs[3], UVs.Bounds[0]);
+            Vertices[0] = new ExtendedVertex(topLeftFront, Color.White, Color.White, UVs.Uvs[0], UVs.Bounds[0]);
+            Vertices[1] = new ExtendedVertex(btmLeftFront, Color.White, Color.White, UVs.Uvs[1], UVs.Bounds[0]);
+            Vertices[2] = new ExtendedVertex(topRightFront, Color.White, Color.White, UVs.Uvs[2], UVs.Bounds[0]);
+            Vertices[3] = new ExtendedVertex(btmRightFront, Color.White, Color.White, UVs.Uvs[3], UVs.Bounds[0]);
 
             Indices[0] = 0;
             Indices[1] = 1;
@@ -589,10 +589,10 @@ namespace DwarfCorp
             Indices[5] = 3;
 
             // Add the vertices for the BACK face.
-            Vertices[4] = new ExtendedVertex(topLeftBack, Color.White, UVs.Uvs[4], UVs.Bounds[1]);
-            Vertices[5] = new ExtendedVertex(topRightBack, Color.White, UVs.Uvs[5], UVs.Bounds[1]);
-            Vertices[6] = new ExtendedVertex(btmLeftBack, Color.White, UVs.Uvs[6], UVs.Bounds[1]);
-            Vertices[7] = new ExtendedVertex(btmRightBack, Color.White, UVs.Uvs[7], UVs.Bounds[1]);
+            Vertices[4] = new ExtendedVertex(topLeftBack, Color.White, Color.White, UVs.Uvs[4], UVs.Bounds[1]);
+            Vertices[5] = new ExtendedVertex(topRightBack, Color.White, Color.White, UVs.Uvs[5], UVs.Bounds[1]);
+            Vertices[6] = new ExtendedVertex(btmLeftBack, Color.White, Color.White, UVs.Uvs[6], UVs.Bounds[1]);
+            Vertices[7] = new ExtendedVertex(btmRightBack, Color.White, Color.White, UVs.Uvs[7], UVs.Bounds[1]);
 
             Indices[6] = 4;
             Indices[7] = 5;
@@ -602,10 +602,10 @@ namespace DwarfCorp
             Indices[11] = 5;
 
             // Add the vertices for the TOP face.
-            Vertices[8] = new ExtendedVertex(topLeftFront, Color.White, UVs.Uvs[8], UVs.Bounds[2]);
-            Vertices[9] = new ExtendedVertex(topRightBack, Color.White, UVs.Uvs[9], UVs.Bounds[2]);
-            Vertices[10] = new ExtendedVertex(topLeftBack, Color.White, UVs.Uvs[10], UVs.Bounds[2]);
-            Vertices[11] = new ExtendedVertex(topRightFront, Color.White, UVs.Uvs[11], UVs.Bounds[2]);
+            Vertices[8] = new ExtendedVertex(topLeftFront, Color.White,Color.White, UVs.Uvs[8], UVs.Bounds[2]);
+            Vertices[9] = new ExtendedVertex(topRightBack, Color.White,Color.White, UVs.Uvs[9], UVs.Bounds[2]);
+            Vertices[10] = new ExtendedVertex(topLeftBack, Color.White,Color.White, UVs.Uvs[10], UVs.Bounds[2]);
+            Vertices[11] = new ExtendedVertex(topRightFront, Color.White,Color.White, UVs.Uvs[11], UVs.Bounds[2]);
 
             Indices[12] = 8;
             Indices[13] = 9;
@@ -615,10 +615,10 @@ namespace DwarfCorp
             Indices[17] = 11;
 
             // Add the vertices for the BOTTOM face. 
-            Vertices[12] = new ExtendedVertex(btmLeftFront, Color.White, UVs.Uvs[12], UVs.Bounds[3]);
-            Vertices[13] = new ExtendedVertex(btmLeftBack, Color.White, UVs.Uvs[13], UVs.Bounds[3]);
-            Vertices[14] = new ExtendedVertex(btmRightBack, Color.White, UVs.Uvs[14], UVs.Bounds[3]);
-            Vertices[15] = new ExtendedVertex(btmRightFront, Color.White, UVs.Uvs[15], UVs.Bounds[3]);
+            Vertices[12] = new ExtendedVertex(btmLeftFront, Color.White,Color.White, UVs.Uvs[12], UVs.Bounds[3]);
+            Vertices[13] = new ExtendedVertex(btmLeftBack, Color.White,Color.White, UVs.Uvs[13], UVs.Bounds[3]);
+            Vertices[14] = new ExtendedVertex(btmRightBack, Color.White,Color.White, UVs.Uvs[14], UVs.Bounds[3]);
+            Vertices[15] = new ExtendedVertex(btmRightFront, Color.White,Color.White, UVs.Uvs[15], UVs.Bounds[3]);
 
             Indices[18] = 12;
             Indices[19] = 13;
@@ -628,10 +628,10 @@ namespace DwarfCorp
             Indices[23] = 14;
 
             // Add the vertices for the LEFT face.
-            Vertices[16] = new ExtendedVertex(topLeftFront, Color.White, UVs.Uvs[16], UVs.Bounds[4]);
-            Vertices[17] = new ExtendedVertex(btmLeftBack, Color.White, UVs.Uvs[17], UVs.Bounds[4]);
-            Vertices[18] = new ExtendedVertex(btmLeftFront, Color.White, UVs.Uvs[18], UVs.Bounds[4]);
-            Vertices[19] = new ExtendedVertex(topLeftBack, Color.White, UVs.Uvs[19], UVs.Bounds[4]);
+            Vertices[16] = new ExtendedVertex(topLeftFront, Color.White,Color.White, UVs.Uvs[16], UVs.Bounds[4]);
+            Vertices[17] = new ExtendedVertex(btmLeftBack, Color.White,Color.White, UVs.Uvs[17], UVs.Bounds[4]);
+            Vertices[18] = new ExtendedVertex(btmLeftFront, Color.White,Color.White, UVs.Uvs[18], UVs.Bounds[4]);
+            Vertices[19] = new ExtendedVertex(topLeftBack, Color.White,Color.White, UVs.Uvs[19], UVs.Bounds[4]);
 
             Indices[24] = 16;
             Indices[25] = 17;
@@ -641,10 +641,10 @@ namespace DwarfCorp
             Indices[29] = 19;
 
             // Add the vertices for the RIGHT face. 
-            Vertices[20] = new ExtendedVertex(topRightFront, Color.White, UVs.Uvs[20], UVs.Bounds[5]);
-            Vertices[21] = new ExtendedVertex(btmRightFront, Color.White, UVs.Uvs[21], UVs.Bounds[5]);
-            Vertices[22] = new ExtendedVertex(btmRightBack, Color.White, UVs.Uvs[22], UVs.Bounds[5]);
-            Vertices[23] = new ExtendedVertex(topRightBack, Color.White, UVs.Uvs[23], UVs.Bounds[5]);
+            Vertices[20] = new ExtendedVertex(topRightFront, Color.White,Color.White, UVs.Uvs[20], UVs.Bounds[5]);
+            Vertices[21] = new ExtendedVertex(btmRightFront, Color.White,Color.White, UVs.Uvs[21], UVs.Bounds[5]);
+            Vertices[22] = new ExtendedVertex(btmRightBack, Color.White,Color.White, UVs.Uvs[22], UVs.Bounds[5]);
+            Vertices[23] = new ExtendedVertex(topRightBack, Color.White,Color.White, UVs.Uvs[23], UVs.Bounds[5]);
 
             Indices[30] = 20;
             Indices[31] = 21;

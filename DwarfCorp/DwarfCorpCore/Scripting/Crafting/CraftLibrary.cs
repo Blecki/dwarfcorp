@@ -66,9 +66,9 @@ namespace DwarfCorp
                     {
                         Name = "Bear Trap",
                         Description = "Triggers on enemies, doing massive damage before being destroyed",
-                        RequiredResources = new List<ResourceAmount>()
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>
                         {
-                            new ResourceAmount(ResourceLibrary.ResourceType.Iron, 4)
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 4)
                         },
                         Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.DwarfObjects.beartrap), 32, 0, 0),
                         BaseCraftTime = 20
@@ -80,9 +80,9 @@ namespace DwarfCorp
                     {
                         Name = "Lamp",
                         Description = "Dwarves need to see sometimes too!",
-                        RequiredResources = new List<ResourceAmount>()
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
                         {
-                            new ResourceAmount(ResourceLibrary.ResourceType.Coal, 1)
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Fuel, 1)
                         },
                         Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 0, 1),
                         BaseCraftTime = 10
@@ -94,9 +94,9 @@ namespace DwarfCorp
                     {
                         Name = "Ladder",
                         Description = "Allows dwarves to climb up and down",
-                        RequiredResources = new List<ResourceAmount>()
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
                         {
-                            new ResourceAmount(ResourceLibrary.ResourceType.Wood, 1)
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 1)
                         },
                         Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 2, 0),
                         BaseCraftTime = 10
@@ -108,9 +108,9 @@ namespace DwarfCorp
                     {
                         Name = "Door",
                         Description = "Keep monsters out, and dwarves in. (Note: Does nothing right now)",
-                        RequiredResources = new List<ResourceAmount>()
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
                         {
-                            new ResourceAmount(ResourceLibrary.ResourceType.Wood, 1)
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 1)
                         },
                         Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 3, 1),
                         BaseCraftTime = 10

@@ -48,13 +48,15 @@ namespace DwarfCorp
     {
         public string Name { get; set; }
         public ImageFrame Image { get; set; }
+        public Color Tint { get; set; }
         public int MaxAmount { get; set; }
         public int MinAmount { get; set; }
         public int CurrentAmount { get; set; }
         public float Price { get; set; }
 
-        public GItem(string name, ImageFrame imag, int min, int max, int currentAmount, float price)
+        public GItem(string name, ImageFrame imag, Color tint, int min, int max, int currentAmount, float price)
         {
+            Tint = tint;
             Name = name;
             Image = imag;
             MinAmount = min;

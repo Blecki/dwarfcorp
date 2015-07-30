@@ -49,7 +49,7 @@ namespace DwarfCorp
         public string Name { get; set; }
         public uint ID { get; set; }
         public string FloorType { get; set; }
-        public Dictionary<ResourceLibrary.ResourceType, ResourceAmount> RequiredResources { get; set; }
+        public Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> RequiredResources { get; set; }
         public List<RoomTemplate> Templates { get; set; }
         public ImageFrame Icon { get; set; }
         public string Description { get; set; }
@@ -60,7 +60,7 @@ namespace DwarfCorp
         public int MinimumSideLength = 3;
         public int MinimumSideWidth = 3;
 
-        public RoomData(string name, uint id, string floorTexture, Dictionary<ResourceLibrary.ResourceType, ResourceAmount> requiredResources, List<RoomTemplate> templates, ImageFrame icon)
+        public RoomData(string name, uint id, string floorTexture, Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> requiredResources, List<RoomTemplate> templates, ImageFrame icon)
         {
             Name = name;
             ID = id;
@@ -73,13 +73,13 @@ namespace DwarfCorp
 
         public bool HasAvailableResources(int numVoxels, Faction faction)
         {
-            foreach (KeyValuePair<ResourceLibrary.ResourceType, ResourceAmount> resources in RequiredResources)
+            foreach (var resources in RequiredResources)
             {
-                ResourceAmount required = new ResourceAmount(resources.Value)
+                Quantitiy<Resource.ResourceTags> required = new Quantitiy<Resource.ResourceTags>(resources.Value)
                 {
                     NumResources = (int) (numVoxels*resources.Value.NumResources*0.25f)
                 };
-                if (!faction.HasResources(new List<ResourceAmount>() {required}))
+                if (!faction.HasResources(new List<Quantitiy<Resource.ResourceTags>>() { required }))
                 {
                     return false;
                 }

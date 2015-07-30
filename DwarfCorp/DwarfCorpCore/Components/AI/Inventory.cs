@@ -65,6 +65,10 @@ namespace DwarfCorp
             return Resources.AddResource(resourceAmount);
         }
 
+        public bool Remove(IEnumerable<Quantitiy<Resource.ResourceTags>> amount)
+        {
+            return amount.Aggregate(true, (current, resource) => current && Resources.RemoveResource(resource));
+        }
 
         public bool Remove(IEnumerable<ResourceAmount> resourceAmount)
         {
@@ -143,7 +147,8 @@ namespace DwarfCorp
                     {
                         item.Velocity = pos - GetBoundingBox().Center();
                         item.Velocity.Normalize();
-                        item.Velocity *= 2.0f;
+                        item.Velocity *= 5.0f;
+                        item.IsSleeping = false;
                     }
                    
                 }

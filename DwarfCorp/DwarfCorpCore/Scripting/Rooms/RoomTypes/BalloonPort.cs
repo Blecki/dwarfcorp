@@ -47,13 +47,12 @@ namespace DwarfCorp
 
         public new static RoomData InitializeData()
         {
-            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> balloonPortResources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
-            ResourceAmount balloonStoneRequired = new ResourceAmount
+            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> balloonPortResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>();
+            balloonPortResources[Resource.ResourceTags.Stone] = new Quantitiy<Resource.ResourceTags>()
             {
-                ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Wood],
+                ResourceType = Resource.ResourceTags.Stone,
                 NumResources = 1
             };
-            balloonPortResources[ResourceLibrary.ResourceType.Wood] = balloonStoneRequired;
 
             RoomTile[,] flagTemplate =
             {

@@ -23,7 +23,7 @@ namespace Microsoft.Xna.Framework.Graphics
         // Summary:
         //     The vertex color.
         [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Color Color;
-
+        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Color VertColor;
         [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Vector4 TextureBounds;
 
 
@@ -35,7 +35,8 @@ namespace Microsoft.Xna.Framework.Graphics
             new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
             new VertexElement(System.Runtime.InteropServices.Marshal.SizeOf(Vector3.Zero), VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
             new VertexElement(System.Runtime.InteropServices.Marshal.SizeOf(Vector3.Zero) + System.Runtime.InteropServices.Marshal.SizeOf(Vector2.Zero), VertexElementFormat.Color, VertexElementUsage.Color, 0),
-            new VertexElement(System.Runtime.InteropServices.Marshal.SizeOf(Vector3.Zero) + System.Runtime.InteropServices.Marshal.SizeOf(Vector2.Zero) + System.Runtime.InteropServices.Marshal.SizeOf(Color.White), VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1)
+                        new VertexElement(System.Runtime.InteropServices.Marshal.SizeOf(Vector3.Zero) + System.Runtime.InteropServices.Marshal.SizeOf(Vector2.Zero) + System.Runtime.InteropServices.Marshal.SizeOf(Color.White), VertexElementFormat.Color, VertexElementUsage.Color, 1),
+            new VertexElement(System.Runtime.InteropServices.Marshal.SizeOf(Vector3.Zero) + System.Runtime.InteropServices.Marshal.SizeOf(Vector2.Zero) + System.Runtime.InteropServices.Marshal.SizeOf(Color.White) * 2, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1)
             );
 
         VertexDeclaration IVertexType.VertexDeclaration
@@ -56,10 +57,11 @@ namespace Microsoft.Xna.Framework.Graphics
         //
         //   textureCoordinate:
         //     Texture coordinate of the vertex.
-        public ExtendedVertex(Vector3 position, Color color, Vector2 textureCoordinate, Vector4 textureBounds)
+        public ExtendedVertex(Vector3 position, Color color, Color vertColor, Vector2 textureCoordinate, Vector4 textureBounds)
         {
             Position = position;
             Color = color;
+            VertColor = vertColor;
             TextureCoordinate = textureCoordinate;
             TextureBounds = textureBounds;
         }
@@ -75,7 +77,7 @@ namespace Microsoft.Xna.Framework.Graphics
         //     Object to the right of the inequality operator.
         public static bool operator !=(ExtendedVertex left, ExtendedVertex right)
         {
-            return !(left.Color == right.Color && left.Position == right.Position && left.TextureBounds == right.TextureBounds && left.TextureCoordinate == right.TextureCoordinate);
+            return !(left.Color == right.Color && left.Position == right.Position && left.TextureBounds == right.TextureBounds && left.TextureCoordinate == right.TextureCoordinate && left.VertColor == right.VertColor);
         }
 
         //

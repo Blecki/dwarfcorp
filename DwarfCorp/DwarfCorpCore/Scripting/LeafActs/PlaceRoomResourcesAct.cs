@@ -44,9 +44,9 @@ namespace DwarfCorp
     public class PlaceRoomResourcesAct : CreatureAct
     {
         public BuildRoomOrder BuildRoom { get; set; }
-        public List<ResourceAmount> Resources { get; set; } 
+        public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; } 
 
-        public PlaceRoomResourcesAct(CreatureAI agent, BuildRoomOrder buildRoom, List<ResourceAmount> resources) :
+        public PlaceRoomResourcesAct(CreatureAI agent, BuildRoomOrder buildRoom, List<Quantitiy<Resource.ResourceTags>> resources) :
             base(agent)
         {
             Name = "Place BuildRoom resources";

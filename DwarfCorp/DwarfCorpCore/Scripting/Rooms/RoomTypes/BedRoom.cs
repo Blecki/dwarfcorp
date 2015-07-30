@@ -47,13 +47,11 @@ namespace DwarfCorp
 
         public static RoomData InitializeData()
         {
-            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> bedroomResources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
-            ResourceAmount woodRequired = new ResourceAmount
+            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
             {
-                ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Wood],
-                NumResources = 1
+                {Resource.ResourceTags.Wood, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood)},
             };
-            bedroomResources[ResourceLibrary.ResourceType.Wood] = woodRequired;
+
 
             List<RoomTemplate> bedroomTemplates = new List<RoomTemplate>();
 
@@ -125,7 +123,7 @@ namespace DwarfCorp
             bedroomTemplates.Add(lamp);
             bedroomTemplates.Add(bed);
             Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(BedRoomName, 0, "BrownTileFloor", bedroomResources, bedroomTemplates, new ImageFrame(roomIcons, 16, 2, 1))
+            return new RoomData(BedRoomName, 0, "BrownTileFloor", roomResources, bedroomTemplates, new ImageFrame(roomIcons, 16, 2, 1))
             {
                 Description = "Dwarves relax and rest here",
                 CanBuildAboveGround = false

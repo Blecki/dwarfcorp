@@ -49,6 +49,7 @@ namespace DwarfCorp
         public List<Matrix> LocalTransforms { get; set; }
         public List<float> Rotations { get; set; }
         public List<Color> Tints { get; set; }
+        public List<Color> Colors { get; set; } 
         public float CullDistance = 1000.0f;
         public BatchBillboardPrimitive Primitive;
         private Point Frame;
@@ -78,6 +79,7 @@ namespace DwarfCorp
             LocalTransforms = new List<Matrix>(numBillboards);
             Rotations = new List<float>(numBillboards);
             Tints = new List<Color>(numBillboards);
+            Colors = new List<Color>(numBillboards);
             FrustrumCull = false;
             Width = spriteSheet.Width;
             Height = spriteSheet.Height;
@@ -86,11 +88,12 @@ namespace DwarfCorp
             LightsWithVoxels = false;
         }
 
-        public void AddTransform(Matrix transform, float rotation, Color tint, bool rebuild)
+        public void AddTransform(Matrix transform, float rotation, Color tint, Color color, bool rebuild)
         {
             LocalTransforms.Add(transform * Matrix.Invert(GlobalTransform));
             Rotations.Add(rotation);
             Tints.Add(tint);
+            Colors.Add(color);
             if(rebuild)
             {
                 RebuildPrimitive();
@@ -106,7 +109,7 @@ namespace DwarfCorp
                     Primitive.VertexBuffer.Dispose();
                 }
             }
-            Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints);
+            Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints, Colors);
         }
 
         public void RemoveTransform(int index)
@@ -117,7 +120,7 @@ namespace DwarfCorp
                 Rotations.RemoveAt(index);
                 Tints.RemoveAt(index);
             }
-            Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints);
+            Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints, Colors);
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
@@ -144,7 +147,7 @@ namespace DwarfCorp
         {
             if(Primitive == null)
             {
-                Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints);
+                Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints, Colors);
             }
 
 

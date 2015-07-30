@@ -116,7 +116,7 @@ namespace DwarfCorp
 
             string requirementsText = "Requires (per 4 tiles):\n";
 
-            foreach (KeyValuePair<ResourceLibrary.ResourceType, ResourceAmount> pair in room.RequiredResources)
+            foreach (KeyValuePair<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> pair in room.RequiredResources)
             {
                 requirementsText += pair.Key + ": " + pair.Value.NumResources + "\n";
             }
@@ -144,7 +144,7 @@ namespace DwarfCorp
 
             BuildWallTab.InfoDescription.Text += additional;
 
-            string requirementsText = "Requires : " + ResourceLibrary.ResourceNames[wall.ResourceToRelease];
+            string requirementsText = "Requires : " + ResourceLibrary.Resources[wall.ResourceToRelease].ResourceName;
             BuildWallTab.InfoRequirements.Text = requirementsText;
         }
         public void SetupBuildRoomTab()
@@ -283,9 +283,9 @@ namespace DwarfCorp
 
             string requirementsText = "Requires:\n";
 
-            foreach (ResourceAmount resourceAmount in item.RequiredResources)
+            foreach (Quantitiy<Resource.ResourceTags> resourceAmount in item.RequiredResources)
             {
-                requirementsText += resourceAmount.ResourceType.ResourceName + ": " + resourceAmount.NumResources + "\n";
+                requirementsText += resourceAmount.ResourceType.ToString() + ": " + resourceAmount.NumResources + "\n";
             }
 
 

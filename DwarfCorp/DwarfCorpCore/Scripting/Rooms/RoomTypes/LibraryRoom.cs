@@ -48,12 +48,12 @@ namespace DwarfCorp
 
         public static RoomData InitializeData()
         {
-            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> roomResources = new Dictionary
-                <ResourceLibrary.ResourceType, ResourceAmount>()
+            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
             {
-                {ResourceLibrary.ResourceType.Stone, new ResourceAmount(ResourceLibrary.ResourceType.Stone)},
-                {ResourceLibrary.ResourceType.Mana, new ResourceAmount(ResourceLibrary.ResourceType.Mana)},
+                {Resource.ResourceTags.Magical, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Magical)},
+                {Resource.ResourceTags.Stone, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone)},
             };
+
 
             List<RoomTemplate> libraryTemplates = new List<RoomTemplate>();
             RoomTile[,] lampTemplate =

@@ -501,7 +501,7 @@ namespace DwarfCorp
                         }
 
                         BoxPrimitive primitive = VoxelLibrary.GetPrimitive(v.Type);
-
+                        Color tint = v.Type.Tint;
                         if (v.IsExplored && primitive == null) continue;
                         else if (!v.IsExplored)
                         {
@@ -576,6 +576,7 @@ namespace DwarfCorp
 
                                 ExtendedVertex newVertex = new ExtendedVertex((vert.Position + v.Position + VertexNoise.GetNoiseVectorFromRepeatingTexture(vert.Position + v.Position) + offset),
                                     color,
+                                    tint,
                                      uvs.Uvs[vertOffset + vertexIndex] + texOffset, uvs.Bounds[faceIndex / 6]);
                                 accumulatedVertices.Add(newVertex);
                             }

@@ -92,7 +92,8 @@ namespace DwarfCorp
         public ParticleTrigger DeathParticleTrigger { get; set; }
         public Grabber Hands { get; set; }
         public Shadow Shadow { get; set; }
-
+        public bool HasMeat { get; set; }
+        public bool HasBones { get; set; }
         public NoiseMaker NoiseMaker { get; set; }
 
         public Inventory Inventory { get; set; }
@@ -195,6 +196,8 @@ namespace DwarfCorp
         {
             OverrideCharacterMode = false;
             Buffs = new List<Buff>();
+            HasMeat = true;
+            HasBones = true;
         }
 
         public Creature(Vector3 pos, CreatureDef def, string creatureClass, int creatureLevel, string faction) :
@@ -208,6 +211,8 @@ namespace DwarfCorp
                 GameState.Game.Content,
                 def.Name)
         {
+            HasMeat = true;
+            HasBones = true;
             EmployeeClass employeeClass = EmployeeClass.Classes[creatureClass];
             Physics.Orientation = Physics.OrientMode.RotateY;
             Sprite = new CharacterSprite(Graphics, Manager, "Sprite", Physics, Matrix.CreateTranslation(def.SpriteOffset));
@@ -296,6 +301,8 @@ namespace DwarfCorp
             string name) :
                 base(parent.Manager, name, parent, stats.MaxHealth, 0.0f, stats.MaxHealth)
         {
+            HasMeat = true;
+            HasBones = true;
             Buffs = new List<Buff>();
             IsOnGround = true;
             Physics = parent;
@@ -435,14 +442,54 @@ namespace DwarfCorp
         }
 
 
-        public void DrawIndicator(ImageFrame image)
+        public override void Die()
+        {
+            Inventory.Resources.MaxResources = 99999;
+            CreateMeatAndBones();
+            base.Die();
+        }
+
+        public virtual void CreateMeatAndBones()
+        {
+            if (HasMeat)
+            {
+                ResourceLibrary.ResourceType type = Name + " " + ResourceLibrary.ResourceType.Meat;
+
+                if (!ResourceLibrary.Resources.ContainsKey(type))
+                {
+                    ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Meat])
+                    {
+                        Type = type
+                    });
+                }
+               
+                Inventory.Resources.AddResource(new ResourceAmount(type, 1));
+            }
+
+            if (HasBones)
+            {
+                ResourceLibrary.ResourceType type = Name + " " + ResourceLibrary.ResourceType.Bones;
+
+                if (!ResourceLibrary.Resources.ContainsKey(type))
+                {
+                    ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Bones])
+                    {
+                        Type = type
+                    });
+                }
+               
+                Inventory.Resources.AddResource(new ResourceAmount(type, 1));
+            }
+        }
+
+        public void DrawIndicator(ImageFrame image, Color tint)
         {
             if (!((DateTime.Now - LastIndicatorTime).TotalSeconds >= IndicatorRateLimit))
             {
                 return;
             }
 
-            IndicatorManager.DrawIndicator(image, AI.Position + new Vector3(0, 0.5f, 0), 1, 1.5f, new Vector2(image.SourceRect.Width / 2.0f, -image.SourceRect.Height / 2.0f));
+            IndicatorManager.DrawIndicator(image, AI.Position + new Vector3(0, 0.5f, 0), 1, 1.5f, new Vector2(image.SourceRect.Width / 2.0f, -image.SourceRect.Height / 2.0f), tint);
             LastIndicatorTime = DateTime.Now;
         }
 

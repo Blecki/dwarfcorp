@@ -63,12 +63,13 @@ namespace DwarfCorp
         public bool ConstrainSize { get; set; }
         public bool Highlight { get; set; }
         public string AssetName { get; set; }
-
+        public Color Tint { get; set; }
 
 
         public ImagePanel(DwarfGUI gui, GUIComponent parent, Texture2D image) :
             base(gui, parent)
         {
+            Tint = Color.White;
             AssetName = "";
             Highlight = false;
             Lock = new Mutex();
@@ -84,6 +85,7 @@ namespace DwarfCorp
         public ImagePanel(DwarfGUI gui, GUIComponent parent, ImageFrame image) :
             base(gui, parent)
         {
+            Tint = Color.White;
             AssetName = "";
             Lock = new Mutex();
             Image = image;
@@ -143,7 +145,7 @@ namespace DwarfCorp
 
                 if(!Highlight)
                 {
-                    batch.Draw(imageFrame.Image, toDraw, imageFrame.SourceRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
+                    batch.Draw(imageFrame.Image, toDraw, imageFrame.SourceRect, Tint, 0, Vector2.Zero, SpriteEffects.None, 0);
                 }
                 else
                 {
@@ -153,7 +155,7 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        batch.Draw(imageFrame.Image, toDraw, imageFrame.SourceRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
+                        batch.Draw(imageFrame.Image, toDraw, imageFrame.SourceRect, Tint, 0, Vector2.Zero, SpriteEffects.None, 0);
                     }
                 }
                 

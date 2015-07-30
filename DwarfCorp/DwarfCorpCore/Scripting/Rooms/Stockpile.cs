@@ -204,10 +204,11 @@ namespace DwarfCorp
         public static RoomData InitializeData()
         {
            List<RoomTemplate> stockpileTemplates = new List<RoomTemplate>();
-           Dictionary<ResourceLibrary.ResourceType, ResourceAmount> stockpileResources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
-
+           Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
+            {
+            };
             Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(StockpileName, 0, "Stockpile", stockpileResources, stockpileTemplates, new ImageFrame(roomIcons, 16, 0, 0))
+            return new RoomData(StockpileName, 0, "Stockpile", roomResources, stockpileTemplates, new ImageFrame(roomIcons, 16, 0, 0))
             {
                 Description = "Dwarves can stock resources here",
             };

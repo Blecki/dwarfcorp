@@ -115,13 +115,11 @@ namespace DwarfCorp
             RoomTemplate lamp = new RoomTemplate(PlacementType.All, lampTemplate, lampAccessories);
             trainingTemplates.Add(lamp);
             trainingTemplates.Add(straw);
-            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> roomResources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
-            ResourceAmount woodRequired = new ResourceAmount
+            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
             {
-                ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Stone],
-                NumResources = 1
+                {Resource.ResourceTags.Stone, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone)},
             };
-            roomResources[ResourceLibrary.ResourceType.Stone] = woodRequired;
+
             Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
             return new RoomData(TrainingRoomName, 3, "CobblestoneFloor", roomResources, trainingTemplates, new ImageFrame(roomIcons, 16, 3, 0))
             {

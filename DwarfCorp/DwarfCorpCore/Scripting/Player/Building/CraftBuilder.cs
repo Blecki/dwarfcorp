@@ -137,9 +137,9 @@ namespace DwarfCorp
             {
                 string neededResources = "";
 
-                foreach (ResourceAmount amount in CraftLibrary.CraftItems[designation.ItemType].RequiredResources)
+                foreach (Quantitiy<Resource.ResourceTags> amount in CraftLibrary.CraftItems[designation.ItemType].RequiredResources)
                 {
-                    neededResources += "" + amount.NumResources + " " + amount.ResourceType.ResourceName + " ";
+                    neededResources += "" + amount.NumResources + " " + amount.ResourceType.ToString() + " ";
                 }
 
                 PlayState.GUI.ToolTipManager.Popup("Not enough resources! Need " + neededResources + ".");

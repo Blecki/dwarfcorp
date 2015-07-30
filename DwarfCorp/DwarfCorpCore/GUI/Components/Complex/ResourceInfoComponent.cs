@@ -70,7 +70,9 @@ namespace DwarfCorp
 
             Layout.Rows = hItems;
             Layout.Cols = wItems;
-
+            List<ImagePanel> panels = new List<ImagePanel>();
+            List<int> counts = new List<int>();
+            List<Label> labels = new List<Label>();
             int itemIndex = 0;
             for(int i = 0; i < numItems; i++)
             {
@@ -81,13 +83,36 @@ namespace DwarfCorp
                     continue;
                 }
 
+
+                bool exists = false;
+                int k = 0;
+                foreach (ImagePanel imgPanel in panels)
+                {
+                    if (imgPanel.Image == amount.ResourceType.Image)
+                    {
+                        imgPanel.ToolTip = imgPanel.ToolTip + "\n" +
+                                             "* " + amount.NumResources.ToString() + " " + amount.ResourceType.ResourceName + "\n" +
+                                           amount.ResourceType.Description + "\n Props: " +
+                                           amount.ResourceType.GetTagDescription(", ");
+                        exists = true;
+
+                        counts[k] += amount.NumResources;
+                        labels[k].Text = counts[k].ToString();
+                        break;
+                    }
+                    k++;
+                }
+
+                if (exists) continue;
+
                 int r = itemIndex / wItems;
                 int c = itemIndex % wItems;
 
                 ImagePanel panel = new ImagePanel(GUI, Layout, amount.ResourceType.Image)
                 {
                     KeepAspectRatio = true,
-                    ToolTip = amount.ResourceType.ResourceName + "\n" + amount.ResourceType.Description
+                    ToolTip = "* " + amount.NumResources.ToString() + " " + amount.ResourceType.ResourceName + "\n" + amount.ResourceType.Description + "\n Props: " + amount.ResourceType.GetTagDescription(", "),
+                    Tint = amount.ResourceType.Tint
                 };
 
                 Layout.SetComponentPosition(panel, c, r, 1, 1);
@@ -98,6 +123,11 @@ namespace DwarfCorp
                     LocalBounds = new Rectangle(0, 0, PanelWidth, PanelHeight),
                     TextColor = Color.White
                 };
+
+                panels.Add(panel);
+                labels.Add(panelLabel);
+                counts.Add(amount.NumResources);
+
 
                 itemIndex++;
 

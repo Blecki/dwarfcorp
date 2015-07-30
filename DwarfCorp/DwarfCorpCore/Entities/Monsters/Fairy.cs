@@ -58,6 +58,8 @@ namespace DwarfCorp
                        new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, 0, 0)),
               PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Fairy")
         {
+            HasMeat = false;
+            HasBones = false;
             ParticleTimer = new Timer(0.2f, false);
             DeathTimer = new Timer(30.0f, true);
             Initialize(new FairyClass());

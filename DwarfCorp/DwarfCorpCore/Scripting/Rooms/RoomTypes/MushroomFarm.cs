@@ -50,10 +50,11 @@ namespace DwarfCorp
 
         public static RoomData InitializeData()
         {
-            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> mushroomFarmResources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
-            mushroomFarmResources[ResourceLibrary.ResourceType.Mushroom] = new ResourceAmount()
+            
+            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> mushroomFarmResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>();
+            mushroomFarmResources[Resource.ResourceTags.Fungus] = new Quantitiy<Resource.ResourceTags>()
             {
-                ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Mushroom],
+                ResourceType = Resource.ResourceTags.Fungus,
                 NumResources = 1
             };
 

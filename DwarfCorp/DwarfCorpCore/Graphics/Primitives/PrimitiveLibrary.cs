@@ -35,7 +35,8 @@ namespace DwarfCorp
             bushColors.Add(Color.White);
             bushColors.Add(Color.White);
 
-            BatchBillboardPrimitives[name] = new BatchBillboardPrimitive(graphics, bushSheet, bushSheet.Width, bushSheet.Height, new Point(0, 0), 1.0f, 1.0f, false, bushTransforms, bushColors);
+
+            BatchBillboardPrimitives[name] = new BatchBillboardPrimitive(graphics, bushSheet, bushSheet.Width, bushSheet.Height, new Point(0, 0), 1.0f, 1.0f, false, bushTransforms, bushColors, bushColors);
         }
 
         public void Initialize(GraphicsDevice graphics, ContentManager content)
@@ -86,9 +87,9 @@ namespace DwarfCorp
                 treeTints.Add(Color.White);
                 treeTints.Add(Color.White);
 
-                BatchBillboardPrimitives["pine"] = new BatchBillboardPrimitive(graphics, treeSheet, treeSheet.Width, treeSheet.Height, new Point(0, 0), treeSheet.Width / 32.0f, treeSheet.Height / 32.0f, false, treeTransforms, treeTints);
-                BatchBillboardPrimitives["snowpine"] = new BatchBillboardPrimitive(graphics, snowpineSheet, snowpineSheet.Width, snowpineSheet.Height, new Point(0, 0), snowpineSheet.Width / 32.0f, snowpineSheet.Height / 32.0f, false, treeTransforms, treeTints);
-                BatchBillboardPrimitives["palm"] = new BatchBillboardPrimitive(graphics, palmSheet, palmSheet.Width, palmSheet.Height, new Point(0, 0), palmSheet.Width / 32.0f, palmSheet.Height / 32.0f, false, treeTransforms, treeTints);
+                BatchBillboardPrimitives["pine"] = new BatchBillboardPrimitive(graphics, treeSheet, treeSheet.Width, treeSheet.Height, new Point(0, 0), treeSheet.Width / 32.0f, treeSheet.Height / 32.0f, false, treeTransforms, treeTints, treeTints);
+                BatchBillboardPrimitives["snowpine"] = new BatchBillboardPrimitive(graphics, snowpineSheet, snowpineSheet.Width, snowpineSheet.Height, new Point(0, 0), snowpineSheet.Width / 32.0f, snowpineSheet.Height / 32.0f, false, treeTransforms, treeTints, treeTints);
+                BatchBillboardPrimitives["palm"] = new BatchBillboardPrimitive(graphics, palmSheet, palmSheet.Width, palmSheet.Height, new Point(0, 0), palmSheet.Width / 32.0f, palmSheet.Height / 32.0f, false, treeTransforms, treeTints, treeTints);
 
 
 

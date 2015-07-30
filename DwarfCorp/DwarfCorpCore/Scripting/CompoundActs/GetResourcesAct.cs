@@ -43,14 +43,22 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GetResourcesAct : CompoundCreatureAct
     {
-        public List<ResourceAmount> Resources { get; set; }
- 
+        public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; }
+        public List<ResourceAmount> ResourcesToStash { get; set; }
         public GetResourcesAct()
         {
 
         }
 
-        public GetResourcesAct(CreatureAI agent, List<ResourceAmount> resources ) :
+        public GetResourcesAct(CreatureAI agent, List<ResourceAmount> resources) :
+            base(agent)
+        {
+            Name = "Get Resources";
+            ResourcesToStash = resources;
+
+        }
+
+        public GetResourcesAct(CreatureAI agent, List<Quantitiy<Resource.ResourceTags>> resources ) :
             base(agent)
         {
             Name = "Get Resources";
@@ -69,13 +77,27 @@ namespace DwarfCorp
 
             bool hasAllResources = true;
 
-
-            foreach(ResourceAmount resource in Resources)
+            if (Resources != null)
             {
-             
-                if (!Creature.Inventory.Resources.HasResource(resource))
+
+                foreach (Quantitiy<Resource.ResourceTags> resource in Resources)
                 {
-                    hasAllResources = false;
+
+                    if (!Creature.Inventory.Resources.HasResource(resource))
+                    {
+                        hasAllResources = false;
+                    }
+                }
+            }
+            else if (ResourcesToStash != null)
+            {
+                foreach (ResourceAmount resource in ResourcesToStash)
+                {
+
+                    if (!Creature.Inventory.Resources.HasResource(resource))
+                    {
+                        hasAllResources = false;
+                    }
                 }
             }
 
@@ -83,6 +105,9 @@ namespace DwarfCorp
             if(!hasAllResources)
             { 
                 Stockpile nearestStockpile = Agent.Faction.GetNearestStockpile(Agent.Position);
+
+                if(ResourcesToStash == null && Resources != null)
+                    ResourcesToStash = Agent.Faction.GetResourcesWithTags(Resources);
 
                 if(nearestStockpile == null)
                 {
@@ -92,7 +117,7 @@ namespace DwarfCorp
                 else
                 {
                     Tree = new Sequence(new GoToZoneAct(Agent, nearestStockpile),
-                                        new StashResourcesAct(Agent, Resources)
+                                        new StashResourcesAct(Agent, ResourcesToStash)
                                         );
                 }
             }

@@ -135,12 +135,9 @@ namespace DwarfCorp.GameStates
 
             foreach(Resource r in ResourceLibrary.Resources.Values)
             {
-                if(r.ResourceName != "Container")
-                {
-                    GItem gitem = new GItem(r.ResourceName, r.Image, 0, 32, 2, 1);
-                    gitem.CurrentAmount = 2;
-                    dragGrid.AddItem(gitem);
-                }
+                GItem gitem = new GItem(r.ResourceName, r.Image, r.Tint, 0, 32, 2, 1);
+                gitem.CurrentAmount = 2;
+                dragGrid.AddItem(gitem);
             }
 
             ProgressBar progress = new ProgressBar(GUI, Layout, 0.7f);

@@ -46,10 +46,12 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class ResourceLibrary
     {
+        /*
         public enum ResourceType
         {
             Wood,
             Stone,
+            Limestone,
             Dirt,
             Mana,
             Gold,
@@ -58,47 +60,48 @@ namespace DwarfCorp
             Mushroom,
             Grain,
             Sand,
-            Coal
+            Coal,
+            Meat,
+            Bones
+        }
+         */
+
+        public struct ResourceType
+        {
+            private string _value;
+
+            public static ResourceType Wood = "Wood";
+            public static ResourceType Stone = "Stone";
+            public static ResourceType Limestone = "Limestone";
+            public static ResourceType Dirt = "Dirt";
+            public static ResourceType Mana = "Mana";
+            public static ResourceType Gold = "Gold";
+            public static ResourceType Iron = "Iron";
+            public static ResourceType Berry = "Berry";
+            public static ResourceType Mushroom = "Mushroom";
+            public static ResourceType Grain = "Grain";
+            public static ResourceType Sand = "Sand";
+            public static ResourceType Coal = "Coal";
+            public static ResourceType Meat = "Meat";
+            public static ResourceType Bones = "Bones";
+            public static ResourceType Gem = "Gem";
+            public static implicit operator ResourceType(string value)
+            {
+                return new ResourceType { _value = new string(value.ToCharArray()) };
+            }
+
+            public static implicit operator string(ResourceType value)
+            {
+                return value._value;
+            }
+
+            public override string ToString()
+            {
+                return _value;
+            }
         }
 
         public static Dictionary<ResourceType, Resource> Resources = new Dictionary<ResourceType, Resource>();
-
-        public static Dictionary<ResourceType, string> ResourceNames = new Dictionary<ResourceType, string>()
-        {
-            {
-                ResourceType.Wood, "Wood"
-            },
-            {
-                ResourceType.Stone, "Stone"
-            },
-            {
-                ResourceType.Dirt, "Dirt"
-            },
-            {
-                ResourceType.Mana, "Mana"
-            },
-            {
-                ResourceType.Gold, "Gold"
-            },
-            {
-                ResourceType.Iron, "Iron"
-            },
-            {
-                ResourceType.Berry, "Berry"
-            },
-            {
-                ResourceType.Mushroom, "Mushroom"
-            },
-            {
-                ResourceType.Grain, "Grain"
-            },
-            {
-                ResourceType.Sand, "Sand"
-            },
-            {
-                ResourceType.Coal, "Coal"
-            }
-        };
 
 
         [OnDeserialized]
@@ -110,7 +113,7 @@ namespace DwarfCorp
 
         public static Resource GetResourceByName(string name)
         {
-            return (from pair in ResourceNames where pair.Value == name select Resources[pair.Key]).FirstOrDefault();
+            return (from pair in Resources where pair.Value.ResourceName == name select pair.Value).FirstOrDefault();
         }
 
 
@@ -121,23 +124,56 @@ namespace DwarfCorp
             return new Rectangle(x * tileSheetWidth, y * tileSheetHeight, tileSheetWidth, tileSheetHeight);
         }
 
+        public static void Add(Resource resource)
+        {
+            Resources[resource.ResourceName] = resource;
+
+            EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new ResourceEntity(resource.Type, position));
+        }
+
         public void InitializeStatics()
         {
             string tileSheet = ContentPaths.Entities.Resources.resources;
             Resources = new Dictionary<ResourceType, Resource>();
-            Resources[ResourceType.Wood] = new Resource(ResourceType.Wood, 1.0f, "Sometimes hard to come by! Comes from trees.", new NamedImageFrame(tileSheet, GetRect(3, 1)), Resource.ResourceTags.Material) {IsFlammable = true};
-            Resources[ResourceType.Stone] = new Resource(ResourceType.Stone, 0.5f, "Dwarf's favorite material! Comes from the earth.", new NamedImageFrame(tileSheet, GetRect(3, 0)), Resource.ResourceTags.Material);
-            Resources[ResourceType.Dirt] = new Resource(ResourceType.Dirt, 0.1f, "Can't get rid of it! Comes from the earth.", new NamedImageFrame(tileSheet, GetRect(0, 1)), Resource.ResourceTags.Material);
-            Resources[ResourceType.Sand] = new Resource(ResourceType.Sand, 0.2f, "Can't get rid of it! Comes from the earth.", new NamedImageFrame(tileSheet, GetRect(1, 1)), Resource.ResourceTags.Material);
-            Resources[ResourceType.Mana] = new Resource(ResourceType.Mana, 100.0f, "Mysterious properties!",
-                new NamedImageFrame(tileSheet, GetRect(1, 0)), Resource.ResourceTags.Precious) { SelfIlluminating = true };
-            Resources[ResourceType.Gold] = new Resource(ResourceType.Gold, 50.0f, "Shiny!", new NamedImageFrame(tileSheet, GetRect(0, 0)), Resource.ResourceTags.Precious);
-            Resources[ResourceType.Coal] = new Resource(ResourceType.Coal, 10.0f, "Used as fuel", new NamedImageFrame(tileSheet, GetRect(2, 2)), Resource.ResourceTags.Material) {IsFlammable = true};
-            Resources[ResourceType.Iron] = new Resource(ResourceType.Iron, 5.0f, "Needed to build things.", new NamedImageFrame(tileSheet, GetRect(2, 0)), Resource.ResourceTags.Material);
-            Resources[ResourceType.Berry] = new Resource(ResourceType.Berry, 0.5f, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(2, 1)), Resource.ResourceTags.Food) { FoodContent = 50, IsFlammable = true};
-            Resources[ResourceType.Mushroom] = new Resource(ResourceType.Mushroom, 0.25f, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(1, 2)), Resource.ResourceTags.Food) { FoodContent = 50, IsFlammable = true};
-            Resources[ResourceType.Grain] = new Resource(ResourceType.Grain, 0.25f, "Dwarves can eat this.", new NamedImageFrame(tileSheet, GetRect(0, 2)), Resource.ResourceTags.Food) { FoodContent = 100, IsFlammable = true};
-        
+            Add(new Resource(ResourceType.Wood, 1.0f, "Sometimes hard to come by! Comes from trees.", new NamedImageFrame(tileSheet, GetRect(3, 1)), Color.White, Resource.ResourceTags.Wood, Resource.ResourceTags.Material, Resource.ResourceTags.Flammable));
+            Add(new Resource(ResourceType.Stone, 0.5f, "Dwarf's favorite material! Comes from the earth.", new NamedImageFrame(tileSheet, GetRect(3, 0)), Color.White, Resource.ResourceTags.Stone, Resource.ResourceTags.Material));
+            Add(new Resource(Resources[ResourceType.Stone])
+            {
+                Type = ResourceType.Limestone,
+                Tint = Color.Yellow
+            });
+            Add(new Resource(ResourceType.Dirt, 0.1f, "Can't get rid of it! Comes from the earth.",
+                new NamedImageFrame(tileSheet, GetRect(0, 1)), Color.White, Resource.ResourceTags.Soil,
+                Resource.ResourceTags.Material));
+            Add(new Resource(ResourceType.Sand,  0.2f, "Can't get rid of it! Comes from the earth.", new NamedImageFrame(tileSheet, GetRect(1, 1)), Color.White, Resource.ResourceTags.Soil, Resource.ResourceTags.Material));
+            Add(new Resource(ResourceType.Mana, 100.0f, "Mysterious properties!",
+                new NamedImageFrame(tileSheet, GetRect(1, 0)), Color.White, Resource.ResourceTags.Magical, Resource.ResourceTags.Precious, Resource.ResourceTags.SelfIlluminating));
+            Add(new Resource(ResourceType.Gold, 50.0f, "Shiny!", new NamedImageFrame(tileSheet, GetRect(0, 0)), Color.White, Resource.ResourceTags.Metal, Resource.ResourceTags.Precious));
+            Add(new Resource(ResourceType.Coal, 10.0f, "Used as fuel", new NamedImageFrame(tileSheet, GetRect(2, 2)), Color.White, Resource.ResourceTags.Fuel, Resource.ResourceTags.Flammable, Resource.ResourceTags.Material));
+            Add(new Resource(ResourceType.Iron, 5.0f, "Needed to build things.", new NamedImageFrame(tileSheet, GetRect(2, 0)), Color.White, Resource.ResourceTags.Metal, Resource.ResourceTags.Material));
+            Add(new Resource(ResourceType.Berry, 0.5f, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(2, 1)), Color.White, Resource.ResourceTags.Food, Resource.ResourceTags.Flammable) { FoodContent = 50});
+            Add(new Resource(ResourceType.Mushroom, 0.25f, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(1, 2)), Color.White, Resource.ResourceTags.Food, Resource.ResourceTags.Fungus, Resource.ResourceTags.Flammable) { FoodContent = 50});
+            Add(new Resource(ResourceType.Grain,  0.25f, "Dwarves can eat this.", new NamedImageFrame(tileSheet, GetRect(0, 2)), Color.White, Resource.ResourceTags.Food, Resource.ResourceTags.Grain,  Resource.ResourceTags.Flammable) { FoodContent = 100});
+            Add(new Resource(ResourceType.Bones,  15.0f, "Came from an animal.", new NamedImageFrame(tileSheet, GetRect(0, 3)), Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.AnimalProduct));
+            Add(new Resource(ResourceType.Meat,  25.0f, "Came from an animal.",
+                new NamedImageFrame(tileSheet, GetRect(3, 2)), Color.White, Resource.ResourceTags.Food,
+                Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.Meat) {FoodContent = 250});
+            Add(new Resource(ResourceType.Gem, 35.0f, "Shiny!", new NamedImageFrame(tileSheet, GetRect(2, 3)), Color.White, Resource.ResourceTags.Precious));
+            Add(new Resource(Resources[ResourceType.Gem])
+            {
+                Type = "Ruby",
+                Tint = Color.Red
+            });
+            Add(new Resource(Resources[ResourceType.Gem])
+            {
+                Type = "Emerald",
+                Tint = Color.Green
+            });
+            Add(new Resource(Resources[ResourceType.Gem])
+            {
+                Type = "Amethyst",
+                Tint = Color.Purple
+            });
         }
 
         public ResourceLibrary()

@@ -229,7 +229,7 @@ namespace DwarfCorp
 
                     if (!Verify(validRefs, CurrentVoxelType.ResourceToRelease))
                     {
-                        PlayState.GUI.ToolTipManager.Popup("Can't build this! Need at least " + validRefs.Count + " " + ResourceLibrary.ResourceNames[CurrentVoxelType.ResourceToRelease] + ".");
+                        PlayState.GUI.ToolTipManager.Popup("Can't build this! Need at least " + validRefs.Count + " " + ResourceLibrary.Resources[CurrentVoxelType.ResourceToRelease].ResourceName + ".");
                         return;
                     }
 

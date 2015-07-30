@@ -144,7 +144,7 @@ namespace DwarfCorp
                 string key = GetHashCode() + ": " + FrameWidth + "," + FrameHeight + frame.ToString() + "," + Flipped;
                 if(!PrimitiveLibrary.BillboardPrimitives.ContainsKey(key))
                 {
-                    PrimitiveLibrary.BillboardPrimitives[key] = new BillboardPrimitive(device, SpriteSheet.GetTexture(), FrameWidth, FrameHeight, frame, WorldWidth, WorldHeight, Flipped);
+                    PrimitiveLibrary.BillboardPrimitives[key] = new BillboardPrimitive(device, SpriteSheet.GetTexture(), FrameWidth, FrameHeight, frame, WorldWidth, WorldHeight, Tint, Flipped);
                 }
 
                 Primitives.Add(PrimitiveLibrary.BillboardPrimitives[key]);

@@ -206,8 +206,8 @@ namespace DwarfCorp
                                 IEnumerable<ExtendedVertex> vertices = CreateWaterFace(myVoxel, face, chunk, x, y, z, totalDepth[x, y, z], isTop);
 
 
-                                foreach(ExtendedVertex newVertex in vertices.Select(vertex => new ExtendedVertex(vertex.Position + VertexNoise.GetRandomNoiseVector(vertex.Position),
-                                    vertex.Color, vertex.TextureCoordinate, vertex.TextureBounds)))
+                                foreach(ExtendedVertex newVertex in vertices.Select(vertex => new ExtendedVertex(vertex.Position + VertexNoise.GetRandomNoiseVector(vertex.Position), 
+                                    vertex.Color, vertex.VertColor, vertex.TextureCoordinate, vertex.TextureBounds)))
                                 {
                                     accumulatedVertices.Add(newVertex);
                                 }
@@ -312,6 +312,7 @@ namespace DwarfCorp
                 {
                     toReturn[i] = new ExtendedVertex(toReturn[i].Position + origin + new Vector3(0, (averageWaterHeight * 0.4f - 1.0f), 0),
                         new Color(foaminess, puddleness, (float) totalDepth / 512.0f, 1.0f),
+                        Color.White,
                         uv, bounds);
                 }
                 else
@@ -336,7 +337,7 @@ namespace DwarfCorp
                             break;
                     }
 
-                    toReturn[i] = new ExtendedVertex(toReturn[i].Position + origin + offset, new Color(foaminess, 0.0f, 1.0f, 1.0f), uv, bounds);
+                    toReturn[i] = new ExtendedVertex(toReturn[i].Position + origin + offset, new Color(foaminess, 0.0f, 1.0f, 1.0f), Color.White, uv, bounds);
                 }
             }
 

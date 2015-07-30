@@ -31,6 +31,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -59,10 +60,38 @@ namespace DwarfCorp
         public Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords> TransitionTextures { get; set; }
         public bool IsSoil { get; set; }
         public bool IsInvincible { get; set; }
+        public Color Tint { get; set; }
 
         private static short maxID = 0;
 
         public static List<VoxelType> TypeList = new List<VoxelType>();
+
+        public VoxelType(VoxelType parent, string subtype)
+        {
+            ID = maxID;
+            maxID++;
+            Name = subtype;
+            ReleasesResource = parent.ReleasesResource;
+            ResourceToRelease = parent.ResourceToRelease;
+            StartingHealth = parent.StartingHealth;
+            ProbabilityOfRelease = parent.ProbabilityOfRelease;
+            CanRamp = parent.CanRamp;
+            RampSize = parent.RampSize;
+            IsBuildable = parent.IsBuildable;
+            ParticleType = parent.ParticleType;
+            IsInvincible = parent.IsInvincible;
+            ExplosionSound = parent.ExplosionSound;
+            HasTransitionTextures = parent.HasTransitionTextures;
+            TransitionTextures = parent.TransitionTextures;
+            IsSoil = parent.IsSoil;
+            EmitsLight = parent.EmitsLight;
+            Tint = parent.Tint;
+          
+            if (!TypeList.Contains(this))
+            {
+                TypeList.Add(this);
+            }
+        }
 
         public VoxelType()
         {
@@ -83,6 +112,7 @@ namespace DwarfCorp
             TransitionTextures = new Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords>();
             IsSoil = false;
             EmitsLight = false;
+            Tint = Color.White;
             if(!TypeList.Contains(this))
             {
                 TypeList.Add(this);

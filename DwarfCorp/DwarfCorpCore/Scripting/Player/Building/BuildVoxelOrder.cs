@@ -59,10 +59,10 @@ namespace DwarfCorp
             Order.Build();
         }
 
-        public Resource GetNextRequiredResource()
+        public Resource.ResourceTags GetNextRequiredResource()
         {
  
-            foreach (ResourceLibrary.ResourceType s in ToBuild.RoomData.RequiredResources.Keys)
+            foreach (var s in ToBuild.RoomData.RequiredResources.Keys)
             {
                 if(!Order.PutResources.ContainsKey(s))
                 {
@@ -74,7 +74,7 @@ namespace DwarfCorp
                 }
             }
 
-            return null;
+            return Resource.ResourceTags.None;
         }
 
 

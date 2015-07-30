@@ -80,18 +80,18 @@ namespace DwarfCorp
             
         }
 
-        public BillboardPrimitive(GraphicsDevice device, Texture2D spriteSheet, int frameWidth, int frameHeight, Point frame, float width, float height, bool flipped = false)
+        public BillboardPrimitive(GraphicsDevice device, Texture2D spriteSheet, int frameWidth, int frameHeight, Point frame, float width, float height, Color tint, bool flipped = false)
         {
             UVs = new BoardTextureCoords(spriteSheet.Width, spriteSheet.Height, frameWidth, frameHeight, frame, flipped);
             Width = width;
             Height = height;
-            CreateVerticies(Color.White);
+            CreateVerticies(Color.White, tint);
             ResetBuffer(device);
         }
 
-        public void ResetColor(Color color, GraphicsDevice graphics)
+        public void ResetColor(Color color, Color tint, GraphicsDevice graphics)
         {
-            CreateVerticies(color);
+            CreateVerticies(color, tint);
             ResetBuffer(graphics);
         }
 
@@ -107,7 +107,7 @@ namespace DwarfCorp
             VertexBuffer.SetData(Vertices);
         }
 
-        public void CreateVerticies(Color color)
+        public void CreateVerticies(Color color, Color vertColor)
         {
             Vector3 topLeftFront = new Vector3(-0.5f * Width, 0.5f * Height, 0.0f);
             Vector3 topRightFront = new Vector3(0.5f * Width, 0.5f * Height, 0.0f);
@@ -116,10 +116,10 @@ namespace DwarfCorp
 
             Vertices = new[]
             {
-                new ExtendedVertex(topLeftFront, color, UVs.UVs[0], UVs.Bounds), // 0
-                new ExtendedVertex(btmLeftFront, color, UVs.UVs[1], UVs.Bounds), // 1
-                new ExtendedVertex(topRightFront, color, UVs.UVs[2], UVs.Bounds), // 2
-                new ExtendedVertex(btmRightFront, color, UVs.UVs[3], UVs.Bounds) // 3
+                new ExtendedVertex(topLeftFront, color, vertColor, UVs.UVs[0], UVs.Bounds), // 0
+                new ExtendedVertex(btmLeftFront, color, vertColor,UVs.UVs[1], UVs.Bounds), // 1
+                new ExtendedVertex(topRightFront, color, vertColor,UVs.UVs[2], UVs.Bounds), // 2
+                new ExtendedVertex(btmRightFront, color, vertColor,UVs.UVs[3], UVs.Bounds) // 3
             };
 
             IndexBuffer = new IndexBuffer(GameState.Game.GraphicsDevice, typeof (short), 6, BufferUsage.None);

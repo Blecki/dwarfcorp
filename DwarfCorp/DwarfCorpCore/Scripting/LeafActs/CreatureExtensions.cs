@@ -85,7 +85,7 @@ namespace DwarfCorp
                         }
                         else
                         {
-                            agent.DrawIndicator(resource.ResourceType.Image);
+                            agent.DrawIndicator(resource.ResourceType.Image, resource.ResourceType.Tint);
                             agent.AI.AddThought(Thought.ThoughtType.AteFood);
                             yield return Act.Status.Success;
                         }

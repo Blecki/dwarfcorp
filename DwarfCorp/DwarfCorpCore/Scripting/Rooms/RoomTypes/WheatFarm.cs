@@ -51,10 +51,10 @@ namespace DwarfCorp
         {
             List<RoomTemplate> wheatTemplates = new List<RoomTemplate>();
 
-            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> wheatFarmResources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
-            wheatFarmResources[ResourceLibrary.ResourceType.Grain] = new ResourceAmount()
+            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> wheatFarmResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>();
+            wheatFarmResources[Resource.ResourceTags.Grain] = new Quantitiy<Resource.ResourceTags>()
             {
-                ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Grain],
+                ResourceType = Resource.ResourceTags.Grain,
                 NumResources = 1
             };
 

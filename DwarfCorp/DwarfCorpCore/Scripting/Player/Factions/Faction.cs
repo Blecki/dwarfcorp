@@ -35,6 +35,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using DwarfCorp.GameStates;
+using LibNoise;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -644,6 +645,70 @@ namespace DwarfCorp
             return toReturn;
         }
 
+        public List<ResourceAmount> GetResourcesWithTags(List<Quantitiy<Resource.ResourceTags>> tags)
+        {
+            Dictionary<Resource.ResourceTags, int> tagsRequired = new Dictionary<Resource.ResourceTags, int>();
+            Dictionary<Resource.ResourceTags, int> tagsGot = new Dictionary<Resource.ResourceTags, int>();
+            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> amounts = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
+
+            foreach (Quantitiy<Resource.ResourceTags> quantity in tags)
+            {
+                tagsRequired[quantity.ResourceType] = quantity.NumResources;
+                tagsGot[quantity.ResourceType] = 0;
+            }
+
+            foreach (Stockpile stockpile in Stockpiles)
+            {
+                foreach (ResourceAmount resource in stockpile.Resources)
+                {
+                    foreach (var requirement in tagsRequired)
+                    {
+                        int got = tagsGot[requirement.Key];
+
+                        if (requirement.Value <= got) continue;
+
+                        if (!resource.ResourceType.Tags.Contains(requirement.Key)) continue;
+
+                        int amountToRemove = System.Math.Min(resource.NumResources, requirement.Value - got);
+
+                        if (amountToRemove <= 0) continue;
+
+                        tagsGot[requirement.Key] += amountToRemove;
+
+                        if (amounts.ContainsKey(resource.ResourceType.Type))
+                        {
+                            amounts[resource.ResourceType.Type].NumResources += amountToRemove;
+                        }
+                        else
+                        {
+                            amounts[resource.ResourceType.Type] = new ResourceAmount(resource.ResourceType.Type, amountToRemove);
+                        }
+                    }
+                }
+            }
+
+            return amounts.Values.ToList();
+        }
+
+        public bool HasResources(Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> resources)
+        {
+            return HasResources(resources.Values);
+        }
+
+        public bool HasResources(IEnumerable<Quantitiy<Resource.ResourceTags>> resources)
+        {
+            foreach (Quantitiy<Resource.ResourceTags> resource in resources)
+            {
+                int count = Stockpiles.Sum(stock => stock.Resources.GetResourceCount(resource.ResourceType));
+
+                if (count < resource.NumResources)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
 
         public bool HasResources(Dictionary<ResourceLibrary.ResourceType, ResourceAmount> resources)
         {

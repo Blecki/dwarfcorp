@@ -49,11 +49,10 @@ namespace DwarfCorp
 
         public static RoomData InitializeData()
         {
-            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> roomResources = new Dictionary
-                <ResourceLibrary.ResourceType, ResourceAmount>()
+            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
             {
-                {ResourceLibrary.ResourceType.Iron, new ResourceAmount(ResourceLibrary.ResourceType.Iron)},
-                {ResourceLibrary.ResourceType.Coal, new ResourceAmount(ResourceLibrary.ResourceType.Coal)},
+                {Resource.ResourceTags.Metal, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal)},
+                {Resource.ResourceTags.Fuel, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Fuel)},
             };
 
             List<RoomTemplate> workshopTemplates = new List<RoomTemplate>();

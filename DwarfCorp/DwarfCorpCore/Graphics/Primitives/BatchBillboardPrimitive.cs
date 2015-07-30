@@ -21,18 +21,20 @@ namespace DwarfCorp
 
         public List<Matrix> RelativeTransforms;
         public List<Color> Tints;
+        public List<Color> VertColors; 
 
         public BatchBillboardPrimitive(GraphicsDevice device,
             Texture2D spriteSheet,
             int frameWidth,
             int frameHeight,
             Point frame,
-            float width, float height, bool flipped, List<Matrix> relativeTransforms, List<Color> tints)
+            float width, float height, bool flipped, List<Matrix> relativeTransforms, List<Color> tints, List<Color> vertColors )
         {
             RelativeTransforms = relativeTransforms;
             UVs = new BillboardPrimitive.BoardTextureCoords(spriteSheet.Width, spriteSheet.Height, frameWidth, frameHeight, frame, flipped);
             Width = width;
             Tints = tints;
+            VertColors = vertColors;
             Height = height;
             CreateVerticies(Color.White);
             ResetBuffer(device);
@@ -54,10 +56,10 @@ namespace DwarfCorp
             for(int i = 0; i < RelativeTransforms.Count; i++)
             {
                 int vertOffset = i*4;
-                Vertices[vertOffset + 0] = new ExtendedVertex(Vector3.Transform(topLeftFront, RelativeTransforms[i]), Tints[i], UVs.UVs[0], UVs.Bounds);
-                Vertices[vertOffset + 1] = new ExtendedVertex(Vector3.Transform(btmLeftFront, RelativeTransforms[i]), Tints[i], UVs.UVs[1], UVs.Bounds);
-                Vertices[vertOffset + 2] = new ExtendedVertex(Vector3.Transform(topRightFront, RelativeTransforms[i]), Tints[i], UVs.UVs[2], UVs.Bounds);
-                Vertices[vertOffset + 3] = new ExtendedVertex(Vector3.Transform(btmRightFront, RelativeTransforms[i]), Tints[i], UVs.UVs[3], UVs.Bounds);
+                Vertices[vertOffset + 0] = new ExtendedVertex(Vector3.Transform(topLeftFront, RelativeTransforms[i]), Tints[i], VertColors[i], UVs.UVs[0], UVs.Bounds);
+                Vertices[vertOffset + 1] = new ExtendedVertex(Vector3.Transform(btmLeftFront, RelativeTransforms[i]), Tints[i], VertColors[i], UVs.UVs[1], UVs.Bounds);
+                Vertices[vertOffset + 2] = new ExtendedVertex(Vector3.Transform(topRightFront, RelativeTransforms[i]), Tints[i], VertColors[i], UVs.UVs[2], UVs.Bounds);
+                Vertices[vertOffset + 3] = new ExtendedVertex(Vector3.Transform(btmRightFront, RelativeTransforms[i]), Tints[i], VertColors[i], UVs.UVs[3], UVs.Bounds);
 
 
                 int indOffset = i*6;

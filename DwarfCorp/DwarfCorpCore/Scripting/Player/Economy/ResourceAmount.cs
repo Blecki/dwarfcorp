@@ -37,70 +37,169 @@ namespace DwarfCorp
 {
 
     /// <summary>
-    /// This is just a struct of two things: a resource, and a number of that resource.
+    /// This is just a struct of two things: a resource tag, and a number of that resource.
     /// This is used instead of a list, since there is nothing distinguishing resources from each other.
     /// </summary>
-    public class ResourceAmount : ICloneable
+    public class Quantitiy<T> : ICloneable
     {
-        protected bool Equals(ResourceAmount other)
+        protected bool Equals(Quantitiy<T> other)
         {
             return Equals(ResourceType, other.ResourceType) && NumResources == other.NumResources;
         }
 
         public override bool Equals(object obj)
         {
-            if(ReferenceEquals(null, obj))
+            if (ReferenceEquals(null, obj))
             {
                 return false;
             }
-            if(ReferenceEquals(this, obj))
+            if (ReferenceEquals(this, obj))
             {
                 return true;
             }
-            if(obj.GetType() != this.GetType())
+            if (obj.GetType() != this.GetType())
             {
                 return false;
             }
-            return Equals((ResourceAmount) obj);
+            return Equals((Quantitiy<T>)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return ((ResourceType != null ? ResourceType.GetHashCode() : 0) * 397) ^ NumResources;
+                return (ResourceType.GetHashCode() * 397) ^ NumResources;
             }
         }
 
-        public object Clone()
+        public virtual object Clone()
         {
-            return new ResourceAmount(ResourceType, NumResources);
+            return new Quantitiy<T>(ResourceType, NumResources);
         }
 
-        public ResourceAmount CloneResource()
+        public virtual Quantitiy<T> CloneQuantity()
         {
-            return Clone() as ResourceAmount;
+            return Clone() as Quantitiy<T>;
         }
 
-        public Resource ResourceType { get; set; }
+        public T ResourceType { get; set; }
         public int NumResources { get; set; }
 
 
-        public ResourceAmount()
+        public Quantitiy()
         {
-            
+
+        }
+
+        public Quantitiy(T type)
+        {
+            ResourceType = type;
+            NumResources = 1;
+        }
+
+        public Quantitiy(Quantitiy<T> other)
+        {
+            ResourceType = other.ResourceType;
+            NumResources = other.NumResources;
+        }
+
+        public Quantitiy(T resourceType, int numResources)
+        {
+            ResourceType = resourceType;
+            NumResources = numResources;
+        }
+
+
+        public static Quantitiy<T> operator +(int a, Quantitiy<T> b)
+        {
+            return new Quantitiy<T>()
+            {
+                ResourceType = b.ResourceType,
+                NumResources = b.NumResources + a
+            };
+        }
+
+        public static Quantitiy<T> operator -(int b, Quantitiy<T> a)
+        {
+            return new Quantitiy<T>()
+            {
+                ResourceType = a.ResourceType,
+                NumResources = a.NumResources - b
+            };
+        }
+
+        public static Quantitiy<T> operator +(Quantitiy<T> a, int b)
+        {
+            return new Quantitiy<T>()
+            {
+                ResourceType = a.ResourceType,
+                NumResources = a.NumResources + b
+            };
+        }
+
+        public static Quantitiy<T> operator -(Quantitiy<T> a, int b)
+        {
+            return new Quantitiy<T>()
+            {
+                ResourceType = a.ResourceType,
+                NumResources = a.NumResources - b
+            };
+        }
+
+        public static bool operator ==(Quantitiy<T> a, Quantitiy<T> b)
+        {
+            if (ReferenceEquals(a, null) && !ReferenceEquals(b, null))
+            {
+                return true;
+            }
+
+            if (!ReferenceEquals(a, null) && ReferenceEquals(b, null))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
+            {
+                return true;
+            }
+
+            return a.ResourceType.Equals(b.ResourceType) && (a.NumResources == b.NumResources);
+        }
+
+        public static bool operator !=(Quantitiy<T> a, Quantitiy<T> b)
+        {
+            return !(a == b);
+        }
+
+        public static bool operator <(Quantitiy<T> a, Quantitiy<T> b)
+        {
+            return (a.ResourceType.Equals(b.ResourceType)) && (a.NumResources < b.NumResources);
+        }
+
+        public static bool operator >(Quantitiy<T> a, Quantitiy<T> b)
+        {
+            return (a.ResourceType.Equals(b.ResourceType)) && (a.NumResources > b.NumResources);
+        }
+    }
+
+
+    /// <summary>
+    /// This is just a struct of two things: a resource, and a number of that resource.
+    /// This is used instead of a list, since there is nothing distinguishing resources from each other.
+    /// </summary>
+    public class ResourceAmount : Quantitiy<Resource>
+    {
+
+        public ResourceAmount(ResourceAmount amount)
+        {
+            ResourceType = amount.ResourceType;
+            NumResources = amount.NumResources;
         }
 
         public ResourceAmount(ResourceLibrary.ResourceType type)
         {
             ResourceType = ResourceLibrary.Resources[type];
             NumResources = 1;
-        }
-
-        public ResourceAmount(ResourceAmount other)
-        {
-            ResourceType = other.ResourceType;
-            NumResources = other.NumResources;
         }
 
         public ResourceAmount(Resource resource)
@@ -133,76 +232,14 @@ namespace DwarfCorp
             
         }
 
-
-        public static ResourceAmount operator +(int a, ResourceAmount b)
+        public ResourceAmount()
         {
-            return new ResourceAmount()
-            {
-                ResourceType = b.ResourceType,
-                NumResources = b.NumResources + a
-            };
+            
         }
 
-        public static ResourceAmount operator -(int b, ResourceAmount a)
+        public ResourceAmount CloneResource()
         {
-            return new ResourceAmount()
-            {
-                ResourceType = a.ResourceType,
-                NumResources = a.NumResources - b
-            };
-        }
-
-        public static ResourceAmount operator +(ResourceAmount a, int b)
-        {
-            return new ResourceAmount()
-            {
-                ResourceType = a.ResourceType,
-                NumResources = a.NumResources + b
-            };
-        }
-
-        public static ResourceAmount operator -(ResourceAmount a, int b)
-        {
-            return new ResourceAmount()
-            {
-                ResourceType = a.ResourceType,
-                NumResources = a.NumResources - b
-            };
-        }
-
-        public static bool operator ==(ResourceAmount a, ResourceAmount b)
-        {
-            if(ReferenceEquals(a , null) && !ReferenceEquals(b ,null))
-            {
-                return true;
-            }
-
-            if(!ReferenceEquals(a ,null) && ReferenceEquals(b, null))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
-            {
-                return true;
-            }
-
-            return a.ResourceType == b.ResourceType && a.NumResources == b.NumResources;
-        }
-
-        public static bool operator !=(ResourceAmount a, ResourceAmount b)
-        {
-            return !(a == b);
-        }
-
-        public static bool operator <(ResourceAmount a, ResourceAmount b)
-        {
-            return (a.ResourceType == b.ResourceType) && (a.NumResources < b.NumResources);
-        }
-
-        public static bool operator >(ResourceAmount a, ResourceAmount b)
-        {
-            return (a.ResourceType == b.ResourceType) && (a.NumResources > b.NumResources);
+            return new ResourceAmount(ResourceType, NumResources);
         }
     }
 

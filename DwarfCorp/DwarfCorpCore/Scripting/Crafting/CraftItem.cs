@@ -42,7 +42,7 @@ namespace DwarfCorp
     public class CraftItem
     {
         public string Name { get; set; }
-        public List<ResourceAmount> RequiredResources { get; set; }
+        public List<Quantitiy<Resource.ResourceTags>> RequiredResources { get; set; }
         public ImageFrame Image { get; set; }
         public float BaseCraftTime { get; set; }
         public string Description { get; set; }
