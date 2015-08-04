@@ -675,7 +675,52 @@ namespace DwarfCorp
             effect.Parameters["SelfIllumination"].SetValue(0);
         }
 
-        public void GenerateInitialChunks(OrbitCamera camera, Point3 origin, ref string message)
+        public void GenerateOres()
+        {
+            foreach (VoxelType type in VoxelLibrary.GetTypes())
+            {
+                if (type.SpawnClusters || type.SpawnVeins)
+                {
+                    int numEvents = (int)MathFunctions.Rand(75*(1.0f - type.Rarity), 100*(1.0f - type.Rarity));
+                    for (int i = 0; i < numEvents; i++)
+                    {
+                        BoundingBox clusterBounds = new BoundingBox
+                        {
+                            Max = new Vector3(Bounds.Max.X, type.MaxSpawnHeight, Bounds.Max.Z),
+                            Min = new Vector3(Bounds.Min.X, type.MinSpawnHeight, Bounds.Min.Z)
+                        };
+
+                        if (type.SpawnClusters)
+                        {
+
+                            OreCluster cluster = new OreCluster()
+                            {
+                                Size =
+                                    new Vector3(MathFunctions.Rand(type.ClusterSize*0.25f, type.ClusterSize),
+                                        MathFunctions.Rand(type.ClusterSize*0.25f, type.ClusterSize),
+                                        MathFunctions.Rand(type.ClusterSize*0.25f, type.ClusterSize)),
+                                Transform = MathFunctions.RandomTransform(clusterBounds),
+                                Type = type
+                            };
+                            ChunkGen.GenerateCluster(cluster, ChunkData);
+                        }
+
+                        if (type.SpawnVeins)
+                        {
+                            OreVein vein = new OreVein()
+                            {
+                                Length = MathFunctions.Rand(type.VeinLength*0.75f, type.VeinLength*1.25f),
+                                Start = MathFunctions.RandVector3Box(clusterBounds),
+                                Type = type
+                            };
+                            ChunkGen.GenerateVein(vein, ChunkData);
+                        }
+                    }
+                }
+            }
+        }
+
+        public void GenerateInitialChunks(Point3 origin, ref string message)
         {
             float origBuildRadius = GenerateDistance;
             GenerateDistance = origBuildRadius * 2.0f;
@@ -714,7 +759,12 @@ namespace DwarfCorp
                     }
                 }
             }
+            RecalculateBounds();
+            message = "Generating Ores...";
 
+            GenerateOres();
+
+            message = "Fog of war...";
             ChunkData.Reveal(GeneratedChunks.First().MakeVoxel(0, (int)ChunkData.ChunkSizeY - 1, 0));
 
             UpdateRebuildList();

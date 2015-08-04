@@ -41,6 +41,21 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
+
+    public struct OreCluster
+    {
+        public VoxelType Type { get; set; }
+        public Vector3 Size { get; set; }
+        public Matrix Transform { get; set; }
+    }
+
+    public struct OreVein
+    {
+        public VoxelType Type { get; set; }
+        public Vector3 Start { get; set; }
+        public float Length { get; set; }
+    }
+
     /// <summary>
     /// Creates randomly generated voxel chunks using data from the overworld.
     /// </summary>
@@ -54,6 +69,7 @@ namespace DwarfCorp
         public float MaxMountainHeight { get; set; }
         public ChunkManager Manager { get; set; }
 
+
         public ChunkGenerator(VoxelLibrary voxLibrary, int randomSeed, float noiseScale, float maxMountainHeight)
         {
             NoiseGenerator = new Perlin(randomSeed);
@@ -62,6 +78,65 @@ namespace DwarfCorp
             MaxMountainHeight = maxMountainHeight;
             VoxLibrary = voxLibrary;
             CaveNoiseScale = noiseScale*2.0f;
+        }
+
+        public void GenerateCluster(OreCluster cluster, ChunkData chunks)
+        {
+            Voxel vox = new Voxel();
+            for (float x = -cluster.Size.X*0.5f; x < cluster.Size.X*0.5f; x += 1.0f)
+            {
+                for (float y = -cluster.Size.Y*0.5f; y < cluster.Size.Y*0.5f; y += 1.0f)
+                {
+                    for (float z = -cluster.Size.Z*0.5f; z < cluster.Size.Z*0.5f; z += 1.0f)
+                    {
+                        float radius = (float)(Math.Pow(x/cluster.Size.X, 2.0f) + Math.Pow(y/cluster.Size.Y, 2.0f) +
+                                       Math.Pow(z/cluster.Size.Z, 2.0f));
+
+                        if (radius > 1.0f + MathFunctions.Rand(0.0f, 0.25f)) continue;
+                        Vector3 locPosition = new Vector3(x, y, z);
+
+                        Vector3 globalPosition = Vector3.Transform(locPosition, cluster.Transform);
+
+                        if (globalPosition.Y > cluster.Type.MaxSpawnHeight ||
+                            globalPosition.Y < cluster.Type.MinSpawnHeight) continue;
+
+                        if (!chunks.GetVoxel(globalPosition, ref vox)) continue;
+
+                        if (vox.IsEmpty) continue;
+
+                        if (!cluster.Type.SpawnInSoil && vox.Type.IsSoil) continue;
+
+                        if (!MathFunctions.RandEvent(cluster.Type.SpawnProbability)) continue;
+
+                        vox.Type = cluster.Type;
+                    }
+                }
+            }
+        }
+
+        public void GenerateVein(OreVein vein, ChunkData chunks)
+        {
+            Voxel vox = new Voxel();
+            Vector3 curr = vein.Start;
+            Vector3 directionBias = MathFunctions.RandVector3Box(-1, 1, -0.1f, 0.1f, -1, 1);
+            for (float t = 0; t < vein.Length; t++)
+            {
+                if (curr.Y > vein.Type.MaxSpawnHeight ||
+                    curr.Y < vein.Type.MinSpawnHeight) continue;
+                Vector3 p = new Vector3(curr.X , curr.Y, curr.Z);
+                if (!chunks.GetVoxel(p, ref vox)) continue;
+
+                if (vox.IsEmpty) continue;
+
+                if (!MathFunctions.RandEvent(vein.Type.SpawnProbability)) continue;
+
+                if (!vein.Type.SpawnInSoil && vox.Type.IsSoil) continue;
+
+                vox.Type = vein.Type;
+                Vector3 step = directionBias + MathFunctions.RandVector3Box(-1, 1, -1, 1, -1, 1)*0.25f;
+                step.Normalize();
+                curr += step;
+            }
         }
 
         public VoxelChunk GenerateEmptyChunk(Vector3 origin, int chunkSizeX, int chunkSizeY, int chunkSizeZ)
@@ -146,6 +221,7 @@ namespace DwarfCorp
             }
         }
 
+        /*
         public void GenerateOres(VoxelChunk chunk, ComponentManager components, ContentManager content,
             GraphicsDevice graphics)
         {
@@ -188,6 +264,7 @@ namespace DwarfCorp
                 }
             }
         }
+         */
 
         public void GenerateFauna(VoxelChunk chunk, ComponentManager components, ContentManager content, GraphicsDevice graphics, FactionLibrary factions)
         {
@@ -451,7 +528,6 @@ namespace DwarfCorp
             }
 
 
-            GenerateOres(c, components, content, graphics);
             GenerateCaves(c);
             GenerateWater(c);
 

@@ -858,5 +858,15 @@ namespace DwarfCorp
         {
             return new Rectangle((int)Lerp(start.X, end.X, t), (int)Lerp(start.Y, end.Y, t), (int)Lerp(start.Width, end.Width, t), (int)Lerp(start.Height, end.Height, t));
         }
+
+        public static Matrix RandomTransform(BoundingBox bounds)
+        {
+            Matrix tf = Matrix.Identity;
+            tf *= Matrix.CreateRotationX(Rand((float)-Math.PI, (float)Math.PI));
+            tf *= Matrix.CreateRotationY(Rand((float)-Math.PI, (float)Math.PI));
+            tf *= Matrix.CreateRotationZ(Rand((float)-Math.PI, (float)Math.PI));
+            tf.Translation = RandVector3Box(bounds);
+            return tf;
+        }
     }
 }

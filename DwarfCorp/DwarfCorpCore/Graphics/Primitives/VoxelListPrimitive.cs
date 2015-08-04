@@ -573,7 +573,6 @@ namespace DwarfCorp
                                     }
                                 }
 
-
                                 ExtendedVertex newVertex = new ExtendedVertex((vert.Position + v.Position + VertexNoise.GetNoiseVectorFromRepeatingTexture(vert.Position + v.Position) + offset),
                                     color,
                                     tint,

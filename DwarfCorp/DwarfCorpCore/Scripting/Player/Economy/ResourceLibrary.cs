@@ -46,25 +46,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class ResourceLibrary
     {
-        /*
-        public enum ResourceType
-        {
-            Wood,
-            Stone,
-            Limestone,
-            Dirt,
-            Mana,
-            Gold,
-            Iron,
-            Berry,
-            Mushroom,
-            Grain,
-            Sand,
-            Coal,
-            Meat,
-            Bones
-        }
-         */
 
         public struct ResourceType
         {
@@ -72,7 +53,6 @@ namespace DwarfCorp
 
             public static ResourceType Wood = "Wood";
             public static ResourceType Stone = "Stone";
-            public static ResourceType Limestone = "Limestone";
             public static ResourceType Dirt = "Dirt";
             public static ResourceType Mana = "Mana";
             public static ResourceType Gold = "Gold";
@@ -85,6 +65,7 @@ namespace DwarfCorp
             public static ResourceType Meat = "Meat";
             public static ResourceType Bones = "Bones";
             public static ResourceType Gem = "Gem";
+
             public static implicit operator ResourceType(string value)
             {
                 return new ResourceType { _value = new string(value.ToCharArray()) };
@@ -137,11 +118,6 @@ namespace DwarfCorp
             Resources = new Dictionary<ResourceType, Resource>();
             Add(new Resource(ResourceType.Wood, 1.0f, "Sometimes hard to come by! Comes from trees.", new NamedImageFrame(tileSheet, GetRect(3, 1)), Color.White, Resource.ResourceTags.Wood, Resource.ResourceTags.Material, Resource.ResourceTags.Flammable));
             Add(new Resource(ResourceType.Stone, 0.5f, "Dwarf's favorite material! Comes from the earth.", new NamedImageFrame(tileSheet, GetRect(3, 0)), Color.White, Resource.ResourceTags.Stone, Resource.ResourceTags.Material));
-            Add(new Resource(Resources[ResourceType.Stone])
-            {
-                Type = ResourceType.Limestone,
-                Tint = Color.Yellow
-            });
             Add(new Resource(ResourceType.Dirt, 0.1f, "Can't get rid of it! Comes from the earth.",
                 new NamedImageFrame(tileSheet, GetRect(0, 1)), Color.White, Resource.ResourceTags.Soil,
                 Resource.ResourceTags.Material));
@@ -158,21 +134,41 @@ namespace DwarfCorp
             Add(new Resource(ResourceType.Meat,  25.0f, "Came from an animal.",
                 new NamedImageFrame(tileSheet, GetRect(3, 2)), Color.White, Resource.ResourceTags.Food,
                 Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.Meat) {FoodContent = 250});
-            Add(new Resource(ResourceType.Gem, 35.0f, "Shiny!", new NamedImageFrame(tileSheet, GetRect(2, 3)), Color.White, Resource.ResourceTags.Precious));
+            Add(new Resource(ResourceType.Gem, 35.0f, "Shiny!", new NamedImageFrame(tileSheet, GetRect(0, 3)), Color.White, Resource.ResourceTags.Precious));
             Add(new Resource(Resources[ResourceType.Gem])
             {
                 Type = "Ruby",
-                Tint = Color.Red
+                Image = new NamedImageFrame(tileSheet, GetRect(0, 3))
             });
+
             Add(new Resource(Resources[ResourceType.Gem])
             {
                 Type = "Emerald",
-                Tint = Color.Green
+                Image = new NamedImageFrame(tileSheet, GetRect(0, 4))
             });
+
             Add(new Resource(Resources[ResourceType.Gem])
             {
                 Type = "Amethyst",
-                Tint = Color.Purple
+                Image = new NamedImageFrame(tileSheet, GetRect(2, 4))
+            });
+
+            Add(new Resource(Resources[ResourceType.Gem])
+            {
+                Type = "Garnet",
+                Image = new NamedImageFrame(tileSheet, GetRect(1, 3))
+            });
+
+            Add(new Resource(Resources[ResourceType.Gem])
+            {
+                Type = "Citrine",
+                Image = new NamedImageFrame(tileSheet, GetRect(2, 3))
+            });
+
+            Add(new Resource(Resources[ResourceType.Gem])
+            {
+                Type = "Sapphire",
+                Image = new NamedImageFrame(tileSheet, GetRect(1, 4))
             });
         }
 

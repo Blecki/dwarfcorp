@@ -616,7 +616,7 @@ namespace DwarfCorp.GameStates
             // If there's no file, we have to initialize the first chunk coordinate
             if(gameFile == null)
             {
-                ChunkManager.GenerateInitialChunks(Camera, ChunkManager.ChunkData.GetChunkID(new Vector3(0, 0, 0) + globalOffset), ref LoadingMessage);
+                ChunkManager.GenerateInitialChunks(ChunkManager.ChunkData.GetChunkID(new Vector3(0, 0, 0) + globalOffset), ref LoadingMessage);
             }
             // Otherwise, we just load all the chunks from the file.
             else

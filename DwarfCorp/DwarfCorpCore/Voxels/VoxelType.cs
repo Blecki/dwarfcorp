@@ -56,12 +56,19 @@ namespace DwarfCorp
         public string ExplosionSound { get; set; }
         public bool HasTransitionTextures { get; set; }
         public bool EmitsLight { get; set; }
-        
+        public float MinSpawnHeight { get; set; }
+        public float MaxSpawnHeight { get; set; }
+        public float SpawnProbability { get; set; }
+        public float Rarity { get; set; }
+        public bool SpawnVeins { get; set; }
+        public bool SpawnClusters { get; set; }
+        public float ClusterSize { get; set; }
+        public float VeinLength { get; set; }
         public Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords> TransitionTextures { get; set; }
         public bool IsSoil { get; set; }
         public bool IsInvincible { get; set; }
         public Color Tint { get; set; }
-
+        public bool SpawnInSoil { get; set; }
         private static short maxID = 0;
 
         public static List<VoxelType> TypeList = new List<VoxelType>();
@@ -91,6 +98,16 @@ namespace DwarfCorp
             {
                 TypeList.Add(this);
             }
+
+            MinSpawnHeight = -999;
+            MaxSpawnHeight = 999;
+            SpawnProbability = 1.0f;
+            ClusterSize = 0.0f;
+            VeinLength = 0.0f;
+            SpawnClusters = false;
+            SpawnVeins = false;
+            Rarity = 1.0f;
+            SpawnInSoil = false;
         }
 
         public VoxelType()
@@ -117,6 +134,15 @@ namespace DwarfCorp
             {
                 TypeList.Add(this);
             }
+            MinSpawnHeight = -999;
+            MaxSpawnHeight = 999;
+            SpawnProbability = 1.0f;
+            ClusterSize = 0.0f;
+            VeinLength = 0.0f;
+            SpawnClusters = false;
+            SpawnVeins = false;
+            Rarity = 1.0f;
+            SpawnInSoil = false;
         }
     }
 

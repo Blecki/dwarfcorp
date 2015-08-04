@@ -62,7 +62,7 @@ namespace DwarfCorp
 
         public static Dictionary<VoxelType, BoxPrimitive> PrimitiveMap = new Dictionary<VoxelType, BoxPrimitive>();
         public static VoxelType emptyType = null;
-        public static Dictionary<string, ResourceSpawnRate> ResourceSpawns = new Dictionary<string, ResourceSpawnRate>();
+
         public static Dictionary<string, VoxelType> Types = new Dictionary<string, VoxelType>(); 
 
         public VoxelLibrary()
@@ -108,9 +108,13 @@ namespace DwarfCorp
             BoxPrimitive brownTileCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 0), new Point(5, 0), new Point(5, 0));
             BoxPrimitive blueTileCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 0), new Point(6, 0), new Point(6, 0));
             BoxPrimitive tilledSoilCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 1), new Point(2, 0), new Point(2, 0));
-            BoxPrimitive greenGemCube  = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(9, 2), new Point(9, 2), new Point(9, 2));
-            BoxPrimitive redGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(10, 2), new Point(10, 2), new Point(10, 2));
-            BoxPrimitive purpleGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(11, 2), new Point(11, 2), new Point(11, 2));
+
+            BoxPrimitive redGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 11), new Point(0, 12), new Point(0, 11));
+            BoxPrimitive orangeGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(1, 11), new Point(1, 12), new Point(1, 11));
+            BoxPrimitive yellowGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 11), new Point(2, 12), new Point(2, 11));
+            BoxPrimitive greenGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 11), new Point(3, 12), new Point(3, 11));
+            BoxPrimitive blueGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 11), new Point(4, 12), new Point(4, 11));
+            BoxPrimitive purpleGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 11), new Point(5, 12), new Point(5, 11));
             
             emptyType = new VoxelType
             {
@@ -323,12 +327,6 @@ namespace DwarfCorp
                 ParticleType = "stone_particle"
             };
 
-            VoxelType limestoneType = new VoxelType(stoneType, "Limestone")
-            {
-                Tint = new Color(1.0f, 1.0f, 0.0f),
-                ResourceToRelease = ResourceLibrary.ResourceType.Limestone
-            };
-
             VoxelType bedrockType = new VoxelType
             {
                 Name = "Bedrock",
@@ -364,18 +362,18 @@ namespace DwarfCorp
                 ResourceToRelease = ResourceLibrary.ResourceType.Iron,
                 StartingHealth = 80,
                 IsBuildable = false,
-                ParticleType = "stone_particle"
+                ParticleType = "stone_particle",
+                SpawnClusters = true,
+                ClusterSize = 5,
+                SpawnVeins = true,
+                VeinLength = 10,
+                Rarity = 0.0f,
+                MinSpawnHeight = 8,
+                MaxSpawnHeight = 40,
+                SpawnProbability = 0.99f
             };
 
-            ResourceSpawns["Iron"] = new ResourceSpawnRate
-            {
-                VeinSize = 0.2f,
-                VeinSpawnThreshold = 0.9f,
-                MinimumHeight = -100,
-                MaximumHeight = 100,
-                Probability = 0.5f
-            };
-
+           
             VoxelType coalType = new VoxelType
             {
                 Name = "Coal",
@@ -384,16 +382,14 @@ namespace DwarfCorp
                 ResourceToRelease = ResourceLibrary.ResourceType.Coal,
                 StartingHealth = 75,
                 IsBuildable = false,
-                ParticleType = "stone_particle"
-            };
-
-            ResourceSpawns["Coal"] = new ResourceSpawnRate
-            {
-                VeinSize = 0.085f,
-                VeinSpawnThreshold = 0.9f,
-                MinimumHeight = -100,
-                MaximumHeight = 100,
-                Probability = 0.5f
+                ParticleType = "stone_particle",
+                SpawnClusters = true,
+                ClusterSize = 5,
+                MinSpawnHeight = 15,
+                MaxSpawnHeight = 50,
+                SpawnProbability = 0.3f,
+                Rarity = 0.05f,
+                SpawnInSoil = true
             };
 
 
@@ -405,7 +401,13 @@ namespace DwarfCorp
                 ResourceToRelease = ResourceLibrary.ResourceType.Gold,
                 StartingHealth = 90,
                 IsBuildable = false,
-                ParticleType = "stone_particle"
+                ParticleType = "stone_particle",
+                SpawnVeins = true,
+                VeinLength = 20,
+                Rarity = 0.2f,
+                MinSpawnHeight = 0,
+                MaxSpawnHeight = 20,
+                SpawnProbability = 0.99f
             };
 
             VoxelType greenGem = new VoxelType
@@ -416,7 +418,13 @@ namespace DwarfCorp
                 ResourceToRelease = "Emerald",
                 StartingHealth = 90,
                 IsBuildable = false,
-                ParticleType = "stone_particle"
+                ParticleType = "stone_particle",
+                SpawnClusters = true,
+                ClusterSize = 3,
+                MinSpawnHeight = 0,
+                MaxSpawnHeight = 18,
+                SpawnProbability = 0.8f,
+                Rarity = 0.9f
             };
 
             VoxelType redGem = new VoxelType
@@ -427,7 +435,13 @@ namespace DwarfCorp
                 ResourceToRelease = "Ruby",
                 StartingHealth = 90,
                 IsBuildable = false,
-                ParticleType = "stone_particle"
+                ParticleType = "stone_particle",
+                SpawnClusters = true,
+                ClusterSize = 3,
+                MinSpawnHeight = 0,
+                MaxSpawnHeight = 18,
+                SpawnProbability = 0.8f,
+                Rarity = 0.9f
             };
 
 
@@ -439,46 +453,67 @@ namespace DwarfCorp
                 ResourceToRelease = "Amethyst",
                 StartingHealth = 90,
                 IsBuildable = false,
-                ParticleType = "stone_particle"
+                ParticleType = "stone_particle",
+                ClusterSize = 3,
+                SpawnClusters = true,
+                MinSpawnHeight = 0,
+                MaxSpawnHeight = 18,
+                SpawnProbability = 0.8f,
+                Rarity = 0.9f
             };
 
-            ResourceSpawns["Emerald"] = new ResourceSpawnRate
+            VoxelType blueGem = new VoxelType
             {
-                VeinSize = 0.075f,
-                VeinSpawnThreshold = 0.65f,
-                MinimumHeight = -150,
-                MaximumHeight = 15,
-                Probability = 0.6f
+                Name = "Sapphire",
+                ProbabilityOfRelease = 1.0f,
+                ReleasesResource = true,
+                ResourceToRelease = "Sapphire",
+                StartingHealth = 90,
+                IsBuildable = false,
+                ParticleType = "stone_particle",
+                SpawnClusters = true,
+                ClusterSize = 3,
+                MinSpawnHeight = 0,
+                MaxSpawnHeight = 18,
+                SpawnProbability = 0.8f,
+                Rarity = 0.9f
             };
 
-            ResourceSpawns["Ruby"] = new ResourceSpawnRate
+            VoxelType yellowGem = new VoxelType
             {
-                VeinSize = 0.067f,
-                VeinSpawnThreshold = 0.85f,
-                MinimumHeight = -150,
-                MaximumHeight = 15,
-                Probability = 0.6f
+                Name = "Citrine",
+                ProbabilityOfRelease = 1.0f,
+                ReleasesResource = true,
+                ResourceToRelease = "Citrine",
+                StartingHealth = 90,
+                IsBuildable = false,
+                ParticleType = "stone_particle",
+                SpawnClusters = true,
+                ClusterSize = 3,
+                MinSpawnHeight = 0,
+                MaxSpawnHeight = 18,
+                SpawnProbability = 0.8f,
+                Rarity = 0.9f
             };
 
-            ResourceSpawns["Amethyst"] = new ResourceSpawnRate
+            VoxelType orangeGem = new VoxelType
             {
-                VeinSize = 0.075f,
-                VeinSpawnThreshold = 0.75f,
-                MinimumHeight = -150,
-                MaximumHeight = 15,
-                Probability = 0.6f
+                Name = "Garnet",
+                ProbabilityOfRelease = 1.0f,
+                ReleasesResource = true,
+                ResourceToRelease = "Garnet",
+                StartingHealth = 90,
+                IsBuildable = false,
+                ParticleType = "stone_particle",
+                SpawnClusters = true,
+                ClusterSize = 3,
+                MinSpawnHeight = 0,
+                MaxSpawnHeight = 18,
+                SpawnProbability = 0.8f,
+                Rarity = 0.9f
             };
-            
-            ResourceSpawns["Gold"] = new ResourceSpawnRate
-            {
-                VeinSize = 0.07f,
-                VeinSpawnThreshold = 0.8f,
-                MinimumHeight = -150,
-                MaximumHeight = 15,
-                Probability = 0.6f
-            };
-             
 
+         
             VoxelType manaType = new VoxelType
             {
                 Name = "Mana",
@@ -487,30 +522,22 @@ namespace DwarfCorp
                 ResourceToRelease = ResourceLibrary.ResourceType.Mana,
                 StartingHealth = 200,
                 IsBuildable = false,
-                ParticleType = "stone_particle"
-            };
-
-            ResourceSpawns["Mana"] = new ResourceSpawnRate
-            {
-                VeinSize = 0.05f,
-                VeinSpawnThreshold = 0.85f,
-                MinimumHeight = -800,
-                MaximumHeight = 8,
-                Probability = 0.5f
-            };
-
-            ResourceSpawns["Limestone"] = new ResourceSpawnRate()
-            {
-                VeinSize = 0.07f,
-                VeinSpawnThreshold = 0.8f,
-                MinimumHeight = -150,
-                MaximumHeight = 15,
-                Probability = 0.6f
+                ParticleType = "stone_particle",
+                SpawnVeins = true,
+                VeinLength = 25,
+                Rarity = 0.1f,
+                MinSpawnHeight = 0,
+                MaxSpawnHeight = 14,
+                SpawnProbability = 0.99f
             };
 
             RegisterType(greenGem, greenGemCube);
             RegisterType(redGem, redGemCube);
             RegisterType(purpleGem, purpleGemCube);
+            RegisterType(blueGem, blueGemCube);
+            RegisterType(orangeGem, orangeGemCube);
+            RegisterType(yellowGem, yellowGemCube);
+
             RegisterType(grassType, grassCube);
             RegisterType(frostType, frostCube);
             RegisterType(desertGrass, grassCube);
@@ -518,7 +545,6 @@ namespace DwarfCorp
             RegisterType(emptyType, null);
             RegisterType(dirtType, dirtCube);
             RegisterType(stoneType, stoneCube);
-           RegisterType(limestoneType, stoneCube);
             RegisterType(waterType, waterCube);
             RegisterType(sandType, sandCube);
             RegisterType(ironType, ironCube);
