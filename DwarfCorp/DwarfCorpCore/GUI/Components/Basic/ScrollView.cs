@@ -142,6 +142,11 @@ namespace DwarfCorp
             }
 
             childRect = new Rectangle(minX, minY, maxX - minX, maxY - minY);
+
+            foreach (GUIComponent child in Children)
+            {
+                child.ClipRecursive(GlobalBounds);
+            }
         }
 
         public void ResetScroll()
@@ -226,6 +231,7 @@ namespace DwarfCorp
                     Drawer2D.DrawRect(batch, screenRect, Color.Black, 1);
                 }
             }
+
         }
     }
 

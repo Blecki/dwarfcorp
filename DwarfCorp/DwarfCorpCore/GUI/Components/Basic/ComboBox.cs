@@ -83,7 +83,7 @@ namespace DwarfCorp
                 Rectangle fieldRect = new Rectangle(GlobalBounds.X, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width, 32);
                 if(fieldRect.Contains(Mouse.GetState().X, Mouse.GetState().Y))
                 {
-                    Selector = new ComboBoxSelector(GUI, this, Values, CurrentValue);
+                    Selector = new ComboBoxSelector(GUI, this, ComboBoxSelector.CreateEntries(Values));
                     GUI.FocusComponent = Selector;
                     Selector.OnSelectionModified += Selector_OnSelectionModified;
                 }
@@ -92,8 +92,9 @@ namespace DwarfCorp
 
         private void Selector_OnSelectionModified(string value)
         {
-            CurrentIndex = Selector.GetCurrentIndex();
+            CurrentIndex = Values.IndexOf(value);
             OnSelectionModified.Invoke(value);
+            Selector = null;
         }
 
         public bool HasValue(string value)
@@ -121,8 +122,6 @@ namespace DwarfCorp
         {
             if (string.IsNullOrEmpty(CurrentValue))
             {
-                if(Selector != null)
-                    Selector.CurrentValue = Values[CurrentIndex];
                 CurrentValue = Values[CurrentIndex];
             }
             base.Update(time);

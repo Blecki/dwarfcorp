@@ -118,19 +118,19 @@ namespace DwarfCorp
 
             foreach(string s in RoomLibrary.GetRoomTypes())
             {
-                SelectorBox.AddValue("Build " + s);
+                SelectorBox.AddValue("Build/" + s);
             }
 
             List<string> strings = EntityFactory.EntityFuncs.Keys.ToList();
             strings.Sort();
             foreach (string s in strings)
             {
-                SelectorBox.AddValue(s);
+                SelectorBox.AddValue("Spawn/" + s);
             }
 
             foreach(VoxelType type in VoxelLibrary.PrimitiveMap.Keys.Where(type => type.Name != "empty" && type.Name != "water"))
             {
-                SelectorBox.AddValue("Place " + type.Name);
+                SelectorBox.AddValue("Place/" + type.Name);
             }
 
 
@@ -173,7 +173,7 @@ namespace DwarfCorp
 
             HashSet<Point3> chunksToRebuild = new HashSet<Point3>();
 
-            if(command.Contains("Build "))
+            if(command.Contains("Build/"))
             {
                 string type = command.Substring(6);
                 BuildRoomOrder des = new BuildRoomOrder(RoomLibrary.CreateRoom(Player.Faction, type, refs, false), Player.Faction);
@@ -181,11 +181,22 @@ namespace DwarfCorp
                 Player.Faction.RoomBuilder.DesignatedRooms.Add(des.ToBuild);
                 des.Build();
             }
+            else if (command.Contains("Spawn/"))
+            {
+                string type = command.Substring(6);
+                foreach (Voxel vox in refs.Where(vox => vox != null))
+                {
+                    if (vox.IsEmpty)
+                    {
+                        EntityFactory.CreateEntity<Body>(type, vox.Position + new Vector3(0.5f, 0.5f, 0.5f));
+                    }
+                }
+            }
             else
             {
                 foreach(Voxel vox in refs.Where(vox => vox != null))
                 {
-                    if(command.Contains("Place "))
+                    if(command.Contains("Place/"))
                     {
                         string type = command.Substring(6);
                         vox.Type = VoxelLibrary.GetVoxelType(type);
@@ -275,10 +286,6 @@ namespace DwarfCorp
                         }
                             break;
                         default:
-                            if(vox.IsEmpty)
-                            {
-                                EntityFactory.CreateEntity<Body>(SelectorBox.CurrentValue, vox.Position + new Vector3(0.5f, 0.5f, 0.5f));
-                            }
                             break;
                     }
                 }

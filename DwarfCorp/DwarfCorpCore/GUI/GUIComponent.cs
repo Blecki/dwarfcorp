@@ -103,6 +103,8 @@ namespace DwarfCorp
         public int MaxWidth { get; set; }
         public int MaxHeight { get; set; }
 
+        public bool IsClipped { get; set; }
+
         public class GUITween
         {
             public Func<float, float, float, float, float> TweenFn { get; set; }
@@ -168,6 +170,7 @@ namespace DwarfCorp
             IsMouseOver = false;
             IsLeftPressed = false;
             IsRightPressed = false;
+            IsClipped = false;
             Parent = parent;
             IsVisible = true;
             OverrideClickBehavior = false;
@@ -253,16 +256,6 @@ namespace DwarfCorp
             }
 
             bool mouseOver =  (IsMouseOver && this != GUI.RootComponent) || Children.Any(child => child.IsMouseOverRecursive());
-            
-            /*
-            List<GUIComponent> childrenMouseOver = Children.FindAll(child => child.IsMouseOverRecursive());
-
-            if(childrenMouseOver.Count > 0)
-            {
-                return true;
-            }
-            */
-
             return mouseOver;
         }
 
@@ -425,6 +418,16 @@ namespace DwarfCorp
             });
         }
 
+        public void ClipRecursive(Rectangle clip)
+        {
+            IsClipped = !GlobalBounds.Intersects(clip);
+
+            foreach (GUIComponent component in Children)
+            {
+                component.ClipRecursive(clip);
+            }
+        }
+
         public virtual void Update(DwarfTime time)
         {
             if(!IsVisible)
@@ -472,7 +475,7 @@ namespace DwarfCorp
                 {
                     HandleClicks(state);
                 }
-                else if (GlobalBounds.Contains(state.X, state.Y))
+                else if (!IsClipped  && GlobalBounds.Contains(state.X, state.Y))
                 {
                     if (IsMouseOver)
                     {
@@ -547,6 +550,7 @@ namespace DwarfCorp
 
             LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, w, h);
             ClipSizes();
+
         }
 
         public virtual void ClipSizes()
@@ -609,6 +613,7 @@ namespace DwarfCorp
 
         public virtual void Render(DwarfTime time, SpriteBatch batch)
         {
+            UpdateSize();
             Children.Sort(
                 (child1, child2) =>
                 {

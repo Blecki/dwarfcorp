@@ -76,6 +76,9 @@ namespace DwarfCorp
 
         public string NoItemsMessage { get; set; }
 
+
+        public LineEdit SearchBox { get; set; }
+
         protected virtual void OnOnItemAdded(GItem item, int amount)
         {
             ItemAdded handler = OnItemAdded;
@@ -108,6 +111,8 @@ namespace DwarfCorp
         public ScrollView ScrollArea { get; set; }
 
         public float PerItemCost { get; set; }
+
+        public List<GItem> FilteredItems { get; set; }
 
         public int ComputeSpace()
         {
@@ -158,7 +163,11 @@ namespace DwarfCorp
             };
 
             Items = new List<GItem>();
-            GridLayout layout = new GridLayout(GUI, this, 1, 1);
+            FilteredItems = new List<GItem>();
+            GridLayout layout = new GridLayout(GUI, this, 10, 1);
+            SearchBox = new LineEdit(GUI, layout, "");
+            layout.SetComponentPosition(SearchBox, 0, 9, 1, 1);
+            SearchBox.OnTextModified += SearchBox_OnTextModified;
             ScrollArea = new ScrollView(GUI, layout)
             {
                 DrawBorder = false,
@@ -166,13 +175,34 @@ namespace DwarfCorp
             };
 
             layout.UpdateSizes();
-            layout.SetComponentPosition(ScrollArea, 0, 0, 1, 1);
+            layout.SetComponentPosition(ScrollArea, 0, 0, 1, 9);
             Layout = new GridLayout(gui, ScrollArea, 14, 5);
             OnItemChanged += ItemSelector_OnItemChanged;
             OnItemRemoved += ItemSelector_OnItemRemoved;
             OnItemAdded += ItemSelector_OnItemAdded;
             Behavior = ClickBehavior.RemoveItem;
             AllowShiftClick = true;
+        }
+
+        void Filter()
+        {
+            FilteredItems = new List<GItem>();
+
+            foreach (GItem item in Items)
+            {
+                if (SearchBox.Text == "" || item.Name.ToUpper().Contains(SearchBox.Text.ToUpper()) && item.CurrentAmount > 0)
+                {
+                    FilteredItems.Add(item);
+                }
+            }
+
+   
+        }
+
+        void SearchBox_OnTextModified(string arg)
+        {
+            Filter();
+            ReCreateItems();
         }
 
         void ItemSelector_OnItemAdded(GItem item, int amount)
@@ -196,7 +226,6 @@ namespace DwarfCorp
             UpdateItems();
         }
 
-
         public void AddItem(GItem item, int amount)
         {
             GItem existingItem = Items.FirstOrDefault(myItem => myItem.Name == item.Name);
@@ -208,6 +237,7 @@ namespace DwarfCorp
                     CurrentAmount = amount
                 };
                 Items.Add(existingItem);
+                Filter();
                 ReCreateItems();
                 OnItemChanged(existingItem);
                 return;
@@ -215,11 +245,9 @@ namespace DwarfCorp
             else
             {
                 existingItem.CurrentAmount += amount;
-                UpdateItems();
+                ReCreateItems();
                 OnItemChanged(existingItem);
             }
-
- 
         }
 
         public void UpdateItem(Column columnType, int row, int column)
@@ -230,7 +258,7 @@ namespace DwarfCorp
             {
                 return;
             }
-            GItem item = Items[row - 1];
+            GItem item = FilteredItems[row - 1];
             GUIComponent component = Layout.ComponentPositions[key];
 
             switch (columnType)
@@ -379,11 +407,11 @@ namespace DwarfCorp
                     case ClickBehavior.RemoveItem:
                         item.CurrentAmount -= amount;
 
-                    if(item.CurrentAmount <= 0)
-                    {
-                        Items.Remove(item);
-                        ReCreateItems();
-                    }
+                        if(item.CurrentAmount <= 0)
+                        {
+                            Items.Remove(item);
+                            ReCreateItems();
+                        }
 
                         OnItemRemoved(item, amount);
                         OnItemChanged(item);
@@ -412,10 +440,11 @@ namespace DwarfCorp
 
         public void ReCreateItems()
         {
+            if (FilteredItems.Count == 0)
+            {
+                Filter();
+            }
             RemoveChild(Layout);
-
-            List<GItem> toDisplay = Items;
-
 
             if(Items.Count == 0)
             {
@@ -428,7 +457,7 @@ namespace DwarfCorp
                 return;
             }
 
-            int rows = Math.Max(toDisplay.Count, 6);
+            int rows = Math.Max(FilteredItems.Count, 6);
             ScrollArea.RemoveChild(Layout);
             ScrollArea.ResetScroll();
             Layout = new GridLayout(GUI, ScrollArea, rows + 1, 6)
@@ -438,19 +467,21 @@ namespace DwarfCorp
                 HeightSizeMode = SizeMode.Fixed
             };
 
-            for(int i = 0; i < toDisplay.Count; i++)
+            for (int i = 0; i < FilteredItems.Count; i++)
             {
-                GItem currentResource = toDisplay[i];
+                GItem currentResource = FilteredItems[i];
                 int j = 0;
                 foreach(Column column in Columns)
                 {
-                    GUIComponent item = CreateItem(column, toDisplay[i], i + 1, j);
+                    GUIComponent item = CreateItem(column, FilteredItems[i], i + 1, j);
                     item.OnClicked += () => ItemClicked(currentResource);
                     int row = i;
                     item.OnHover += () => HighlightRow(row + 1);
                     j++;
                 }
             }
+
+            Layout.UpdateSizeRecursive();
         }
 
         public override void Update(DwarfTime time)

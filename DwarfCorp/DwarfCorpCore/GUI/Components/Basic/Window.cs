@@ -162,7 +162,7 @@ namespace DwarfCorp
             MouseState mouseState = Mouse.GetState();
             Rectangle expanded = GlobalBounds;
             expanded.Inflate(32, 32);
-            return IsVisible && (expanded.Contains(mouseState.X, mouseState.Y) || DragArea.Contains(mouseState.X, mouseState.Y) || ResizeArea.Contains(mouseState.X, mouseState.Y) || base.IsMouseOverRecursive());
+            return this != GUI.RootComponent && IsVisible && (expanded.Contains(mouseState.X, mouseState.Y) || DragArea.Contains(mouseState.X, mouseState.Y) || ResizeArea.Contains(mouseState.X, mouseState.Y) || base.IsMouseOverRecursive());
         }
 
         public virtual void UpdateAreas()

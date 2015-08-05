@@ -84,11 +84,15 @@ namespace DwarfCorp
         public void SetComponentPosition(GUIComponent component, int x, int y, int w, int h)
         {
             ComponentPositions[new Rectangle(x, y, w, h)] = component;
+            UpdateSizes();
+            UpdateSizeRecursive();
         }
 
         public void SetComponentOffset(GUIComponent component, Point offset)
         {
             ComponentOffsets[component] = offset;
+            UpdateSizes();
+            UpdateSizeRecursive();
         }
 
         public bool HasOffset(GUIComponent component)
