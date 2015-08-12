@@ -134,9 +134,21 @@ namespace DwarfCorp
             RegisterEntity("Bookshelf", (position, data) => new Bookshelf(position));
             RegisterEntity("Door", (position, data) => new Door(position));
             RegisterEntity("Ladder", (position, data) => new Ladder(position));
+            RegisterEntity("RandTrinket", (position, data) => CreateRandomTrinket(position));
         }
 
-        
+
+        public static ResourceEntity CreateRandomTrinket(Vector3 pos)
+        {
+            Resource randResource = ResourceLibrary.GenerateTrinket("Gold", MathFunctions.Rand(0.1f, 3.5f));
+
+            if (MathFunctions.RandEvent(0.5f))
+            {
+                randResource = ResourceLibrary.EncrustTrinket(randResource, "Emerald");
+            }
+
+            return new ResourceEntity(randResource.Type, pos);
+        }
 
         public static void RegisterEntity<T>(string id, Func<Vector3, Blackboard, T> function) where T : GameComponent
         {

@@ -459,7 +459,8 @@ namespace DwarfCorp
                 {
                     ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Meat])
                     {
-                        Type = type
+                        Type = type,
+                        ShortName = type
                     });
                 }
                
@@ -474,7 +475,8 @@ namespace DwarfCorp
                 {
                     ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Bones])
                     {
-                        Type = type
+                        Type = type,
+                        ShortName = type
                     });
                 }
                

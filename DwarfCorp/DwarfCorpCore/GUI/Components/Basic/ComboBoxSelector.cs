@@ -65,9 +65,12 @@ namespace DwarfCorp
         private ComboBox Box { get; set; }
         private Timer ClickTimer { get; set; }
         public bool Drawn { get; set; }
+        public SpriteFont Font { get; set; }
+
         public bool IsDead = false;
         public float MaxHeight = 500;
         private int ColumnWidth = 0;
+
 
         public static List<Entry> CreateEntries(List<string> values)
         {
@@ -147,6 +150,7 @@ namespace DwarfCorp
         public ComboBoxSelector(DwarfGUI gui, ComboBox parent, List<Entry> values, int posX = -1, int posY = -1) :
             base(gui, parent)
         {
+            Font = gui.DefaultFont;
             Columns = new List<List<Entry>>();
             Values = values;
             CurrentValue = values.FirstOrDefault();
@@ -163,7 +167,7 @@ namespace DwarfCorp
             foreach (Entry s in values)
             {
                 List<Entry> column = Columns[currentColumn];
-                Vector2 measure = Datastructures.SafeMeasure(GUI.DefaultFont, s.LocalName);
+                Vector2 measure = Datastructures.SafeMeasure(Font, s.LocalName);
                 height += (int) measure.Y;
                 column.Add(s);
 
@@ -211,8 +215,8 @@ namespace DwarfCorp
             Vector2 toReturn = Vector2.Zero;
             foreach (Entry s in column)
             {
-                toReturn.Y += Datastructures.SafeMeasure(GUI.DefaultFont, s.LocalName).Y;
-                toReturn.X = (float)Math.Max(toReturn.X, Datastructures.SafeMeasure(GUI.DefaultFont, s.LocalName).X);
+                toReturn.Y += Datastructures.SafeMeasure(Font, s.LocalName).Y;
+                toReturn.X = (float)Math.Max(toReturn.X, Datastructures.SafeMeasure(Font, s.LocalName).X);
             }
             return toReturn;
         }
@@ -222,14 +226,14 @@ namespace DwarfCorp
         {
             if(ClickTimer.HasTriggered && !IsDead)
             {
-                if (CurrentValue.Children == null || CurrentValue.Children.Count == 0)
+                if (CurrentValue != null && (CurrentValue.Children == null || CurrentValue.Children.Count == 0))
                 {
                     OnSelectionModified.Invoke(CurrentValue.GlobalName);
                     Parent.RemoveChild(this);
                     IsDead = true;
                     InputManager.MouseClickedCallback -= InputManager_MouseClickedCallback;
                 }
-                else
+                else if (CurrentValue != null)
                 {
                     if (CurrentValue.ChildSelector == null || CurrentValue.ChildSelector.IsDead)
                     {
@@ -317,7 +321,7 @@ namespace DwarfCorp
 
                     foreach(Entry s in column)
                     {
-                        Vector2 measure = Datastructures.SafeMeasure(GUI.DefaultFont, s.LocalName);
+                        Vector2 measure = Datastructures.SafeMeasure(Font, s.LocalName);
 
                         Color c = Color.Black;
 
@@ -326,7 +330,7 @@ namespace DwarfCorp
                             c = Color.DarkRed;
                         }
 
-                        Drawer2D.DrawAlignedText(batch, s.LocalName, GUI.DefaultFont, c, Drawer2D.Alignment.Left, new Rectangle(GlobalBounds.X + 10 + x, GlobalBounds.Y + h + 5, GlobalBounds.Width, (int)measure.Y + 5));
+                        Drawer2D.DrawAlignedText(batch, s.LocalName, Font, c, Drawer2D.Alignment.Left, new Rectangle(GlobalBounds.X + 10 + x, GlobalBounds.Y + h + 5, GlobalBounds.Width, (int)measure.Y + 5));
 
                         h += PixelsPerValue;
                     }

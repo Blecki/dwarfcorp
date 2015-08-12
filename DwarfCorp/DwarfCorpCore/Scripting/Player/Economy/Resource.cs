@@ -51,6 +51,16 @@ namespace DwarfCorp
         public float FoodContent { get; set; }
         public bool SelfIlluminating { get { return Tags.Contains(ResourceTags.SelfIlluminating); }}
         public bool IsFlammable { get { return Tags.Contains(ResourceTags.Flammable); }}
+        private string shortName = null;
+        public string ShortName 
+        { 
+            get
+            {
+                if (shortName == null) return ResourceName;
+                else return shortName;
+            }
+            set { shortName = value; }
+        }
 
         public Color Tint { get; set; }
         public enum ResourceTags
@@ -70,7 +80,10 @@ namespace DwarfCorp
             Fungus,
             None,
             AnimalProduct,
-            Meat
+            Meat,
+            Gem,
+            Craft,
+            Encrustable
         }
 
         public Resource()
@@ -79,7 +92,7 @@ namespace DwarfCorp
         }
 
         public Resource(Resource other)
-        {;
+        {
             Type = other.Type;
             MoneyValue = other.MoneyValue;
             Description = new string(other.Description.ToCharArray());
@@ -88,6 +101,7 @@ namespace DwarfCorp
             Tags = new List<ResourceTags>();
             Tags.AddRange(other.Tags);
             FoodContent = other.FoodContent;
+            ShortName = other.ShortName;
         }
 
         public Resource(ResourceLibrary.ResourceType type,  float money, string description, NamedImageFrame image, Color tint, params ResourceTags[] tags)

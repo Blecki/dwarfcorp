@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
@@ -56,10 +57,12 @@ namespace DwarfCorp
         public int RowHeight { get; set; }
 
         public int ColumnWidth { get; set; }
+        public SpriteFont LabelFont { get; set; }
 
         public FormLayout(DwarfGUI gui, GUIComponent parent) :
             base(gui, parent)
         {
+            LabelFont = GUI.DefaultFont;
             NumColumns = 1;
             MaxRows = 30; 
             FitToParent = true;
@@ -74,7 +77,7 @@ namespace DwarfCorp
             Items[label] = new FormEntry
             {
                 Component = item,
-                Label = new Label(GUI, this, label, GUI.DefaultFont)
+                Label = new Label(GUI, this, label, LabelFont)
                 {
                     Alignment = Drawer2D.Alignment.Right
                 }

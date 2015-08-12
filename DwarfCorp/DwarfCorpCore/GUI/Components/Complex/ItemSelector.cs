@@ -410,6 +410,7 @@ namespace DwarfCorp
                         if(item.CurrentAmount <= 0)
                         {
                             Items.Remove(item);
+                            Filter();
                             ReCreateItems();
                         }
 

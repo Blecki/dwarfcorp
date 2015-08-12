@@ -115,7 +115,40 @@ namespace DwarfCorp
                         Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 3, 1),
                         BaseCraftTime = 10
                     }
-                }
+                },
+                {
+                    "Trinket",
+                    new CraftItem()
+                    {
+                        Name = "Trinket",
+                        Description = "Get creative juices flowing and make a work of art.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Material, 3)
+                        },
+                        Image = new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, 0, 1),
+                        BaseCraftTime = 15,
+                        Type = CraftItem.CraftType.Resource,
+                        ResourceCreated = "Trinket"
+                    }
+                },
+                {
+                    "Gem-set Trinket",
+                    new CraftItem()
+                    {
+                        Name = "Gem-set Trinket",
+                        Description = "Encrust a work of art with gems.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Encrustable, 1),
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Gem, 1)
+                        },
+                        Image = new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, 1, 1),
+                        BaseCraftTime = 15,
+                        Type = CraftItem.CraftType.Resource,
+                        ResourceCreated = "Gem-set Trinket"
+                    }
+                },
             };
 
             staticsInitialized = true;

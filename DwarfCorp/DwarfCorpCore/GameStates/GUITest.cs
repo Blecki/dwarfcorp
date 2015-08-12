@@ -135,7 +135,7 @@ namespace DwarfCorp.GameStates
 
             foreach(Resource r in ResourceLibrary.Resources.Values)
             {
-                GItem gitem = new GItem(r.ResourceName, r.Image, r.Tint, 0, 32, 2, 1);
+                GItem gitem = new GItem(r.ShortName, r.Image, r.Tint, 0, 32, 2, 1);
                 gitem.CurrentAmount = 2;
                 dragGrid.AddItem(gitem);
             }

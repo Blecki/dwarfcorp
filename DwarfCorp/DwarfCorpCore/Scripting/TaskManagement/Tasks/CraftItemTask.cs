@@ -41,7 +41,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class CraftItemTask : Task
     {
-        public string CraftType { get; set; }
+        public CraftItem CraftType { get; set; }
         public Voxel Voxel { get; set; }
 
         public CraftItemTask()
@@ -49,7 +49,7 @@ namespace DwarfCorp
             Priority = PriorityType.Low;
         }
 
-        public CraftItemTask(Voxel voxel, string type)
+        public CraftItemTask(Voxel voxel, CraftItem type)
         {
             Name = "Craft item " + voxel.GridPosition + " " + voxel.ChunkID.X + " " + voxel.ChunkID.Y + " " + voxel.ChunkID.Z;
             Voxel = voxel;
@@ -81,6 +81,27 @@ namespace DwarfCorp
             }
 
             return true;
+        }
+    }
+
+    class CraftResourceTask : Task
+    {
+        public CraftItem Item { get; set; }
+        public CraftResourceTask(CraftItem selectedResource)
+        {
+            Item = selectedResource;
+            Name = "Craft " + Item.Name;
+            Priority = PriorityType.Low;
+        }
+
+        public override Act CreateScript(Creature creature)
+        {
+            return new CraftItemAct(creature.AI, Item);
+        }
+
+        public override Task Clone()
+        {
+            return new CraftResourceTask(Item);
         }
     }
 

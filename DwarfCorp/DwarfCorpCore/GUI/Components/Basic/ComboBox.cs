@@ -51,11 +51,14 @@ namespace DwarfCorp
         public int CurrentIndex { get; set; }
         public bool IsOpen { get; set; }
         public ComboBoxSelector Selector { get; set; }
+        public SpriteFont Font { get; set; }
+
         public event ComboBoxSelector.Modified OnSelectionModified;
 
         public ComboBox(DwarfGUI gui, GUIComponent parent) :
             base(gui, parent)
         {
+            Font = gui.DefaultFont;
             Values = new List<string>();
             CurrentValue = "";
             OnLeftClicked += ComboBox_OnLeftPressed;
@@ -83,7 +86,10 @@ namespace DwarfCorp
                 Rectangle fieldRect = new Rectangle(GlobalBounds.X, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width, 32);
                 if(fieldRect.Contains(Mouse.GetState().X, Mouse.GetState().Y))
                 {
-                    Selector = new ComboBoxSelector(GUI, this, ComboBoxSelector.CreateEntries(Values));
+                    Selector = new ComboBoxSelector(GUI, this, ComboBoxSelector.CreateEntries(Values))
+                    {
+                        Font = Font
+                    };
                     GUI.FocusComponent = Selector;
                     Selector.OnSelectionModified += Selector_OnSelectionModified;
                 }
@@ -120,7 +126,7 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime time)
         {
-            if (string.IsNullOrEmpty(CurrentValue))
+            if (string.IsNullOrEmpty(CurrentValue) && Values.Count > 0)
             {
                 CurrentValue = Values[CurrentIndex];
             }
@@ -129,9 +135,16 @@ namespace DwarfCorp
 
         public override void Render(DwarfTime time, Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
         {
+            Rectangle clipBounds = batch.GraphicsDevice.ScissorRectangle;
+  
             Rectangle fieldRect = new Rectangle(GlobalBounds.X, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width - 37, 32);
             GUI.Skin.RenderField(fieldRect, batch);
-            Drawer2D.DrawAlignedText(batch, CurrentValue, GUI.DefaultFont, Color.Black, Drawer2D.Alignment.Center, fieldRect);
+
+            batch.GraphicsDevice.ScissorRectangle = fieldRect;
+            
+            Drawer2D.DrawAlignedText(batch, CurrentValue, Font, Color.Black, Drawer2D.Alignment.Center, fieldRect);
+
+            batch.GraphicsDevice.ScissorRectangle = clipBounds;
             GUI.Skin.RenderDownArrow(new Rectangle(GlobalBounds.X + GlobalBounds.Width - 32, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, 32, 32), batch);
             base.Render(time, batch);
         }

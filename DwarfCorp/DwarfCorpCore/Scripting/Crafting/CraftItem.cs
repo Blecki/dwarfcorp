@@ -41,10 +41,31 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CraftItem
     {
+        public enum CraftType
+        {
+            Object,
+            Resource
+        }
+
         public string Name { get; set; }
         public List<Quantitiy<Resource.ResourceTags>> RequiredResources { get; set; }
         public ImageFrame Image { get; set; }
         public float BaseCraftTime { get; set; }
         public string Description { get; set; }
+        public CraftType Type { get; set; }
+        public ResourceLibrary.ResourceType ResourceCreated { get; set; }
+        public List<ResourceAmount> SelectedResources { get; set; }
+ 
+        public CraftItem()
+        {
+            Name = "";
+            RequiredResources = new List<Quantitiy<Resource.ResourceTags>>();
+            Image = null;
+            BaseCraftTime = 0.0f;
+            Description = "";
+            Type = CraftType.Object;
+            ResourceCreated = "";
+            SelectedResources = new List<ResourceAmount>();
+        }
     }
 }

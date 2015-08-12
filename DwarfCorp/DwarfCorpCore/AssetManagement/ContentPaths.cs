@@ -246,6 +246,7 @@ namespace DwarfCorp
                 public static string beartrap = ProgramData.CreatePath("Entities", "DwarfObjects", "beartrap");
                 public static string underconstruction = ProgramData.CreatePath("Entities", "DwarfObjects", "underconstruction");
                 public static string constructiontape = ProgramData.CreatePath("Entities", "DwarfObjects", "constructiontape");
+                public static string crafts = ProgramData.CreatePath("Entities", "DwarfObjects", "crafts");
             }
 
             public class Furniture

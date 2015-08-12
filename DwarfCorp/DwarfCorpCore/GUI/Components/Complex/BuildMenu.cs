@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -52,8 +53,10 @@ namespace DwarfCorp
             public Button BuildButton { get; set; }
             public TabSelector.Tab Tab { get; set; }
             public ScrollView Scroller { get; set; }
+            public FormLayout SelectedResourcesLayout { get; set; }
+            public List<ComboBox> SelectedResourceBoxes { get; set; } 
         }
-
+        public BuildTab BuildResourceTab { get; set; }
         public BuildTab BuildRoomTab { get; set; }
         public BuildTab BuildItemTab { get; set; }
         public BuildTab BuildWallTab { get; set; }
@@ -67,17 +70,99 @@ namespace DwarfCorp
         {
             GridLayout layout = new GridLayout(GUI, this, 1, 1);
             Master = faction;
-            Selector = new TabSelector(GUI, layout, 3);
+            Selector = new TabSelector(GUI, layout, 4);
             layout.SetComponentPosition(Selector, 0, 0, 1, 1);
 
             SetupBuildRoomTab();
             SetupBuildItemTab();
+            SetupBuildResourceTab();
             SetupBuildWallTab();
+            
 
 
             Selector.SetTab("Rooms");
             MinWidth = 512;
             MinHeight = 256;
+        }
+
+        private void SetupBuildResourceTab()
+        {
+            BuildResourceTab = new BuildTab
+            {
+                Tab = Selector.AddTab("Assets")
+            };
+            CreateBuildTab(BuildResourceTab);
+            BuildResourceTab.BuildButton.OnClicked += BuildResource_OnClicked;
+            List<CraftItem> items = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource).ToList();
+
+            int numItems = items.Count();
+            int numColumns = 1;
+            GridLayout layout = new GridLayout(GUI, BuildResourceTab.Scroller, numItems, numColumns)
+            {
+                LocalBounds = new Rectangle(0, 0, 720, 40 * numItems),
+                EdgePadding = 0,
+                WidthSizeMode = SizeMode.Fit,
+                HeightSizeMode = SizeMode.Fixed
+            };
+
+            int i = 0;
+            foreach (CraftItem itemType in items)
+            {
+                CraftItem item = itemType;
+                GridLayout itemLayout = new GridLayout(GUI, layout, 1, 3)
+                {
+                    WidthSizeMode = SizeMode.Fixed,
+                    HeightSizeMode = SizeMode.Fixed,
+                    EdgePadding = 0
+                };
+
+                itemLayout.OnClicked += () => ResourceTabOnClicked(item);
+                int i1 = i;
+                itemLayout.OnHover += () => HoverItem(layout, i1);
+
+                layout.SetComponentPosition(itemLayout, 0, i, 1, 1);
+
+                ImagePanel icon = new ImagePanel(GUI, itemLayout, item.Image)
+                {
+                    KeepAspectRatio = true
+                };
+                itemLayout.SetComponentPosition(icon, 0, 0, 1, 1);
+
+                Label description = new Label(GUI, itemLayout, item.Name, GUI.SmallFont)
+                {
+                    ToolTip = item.Description
+                };
+                itemLayout.SetComponentPosition(description, 1, 0, 1, 1);
+                i++;
+            }
+            layout.UpdateSizes();
+
+            BuildResourceTab.SelectedResourceBoxes = new List<ComboBox>();
+        }
+
+        private void BuildResource_OnClicked()
+        {
+            List<Task> assignments = new List<Task>();
+            SelectedResource.SelectedResources = new List<ResourceAmount>();
+
+            for (int i = 0; i < BuildResourceTab.SelectedResourceBoxes.Count; i++)
+            {
+                ComboBox box = BuildResourceTab.SelectedResourceBoxes[i];
+
+                if (box.CurrentValue == "<Not enough!>")
+                {
+                    return;
+                }
+
+                Quantitiy<Resource.ResourceTags> tags = SelectedResource.RequiredResources[i];
+                SelectedResource.SelectedResources.Add(new ResourceAmount(box.CurrentValue, tags.NumResources));
+            }
+
+            assignments.Add(new CraftResourceTask(SelectedResource));
+            if (assignments.Count > 0)
+            {
+                TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(Master.SelectedMinions, GameMaster.ToolMode.Craft));
+            }
         }
 
 
@@ -206,11 +291,11 @@ namespace DwarfCorp
         {
             BuildItemTab = new BuildTab
             {
-                Tab = Selector.AddTab("Items")
+                Tab = Selector.AddTab("Objects")
             };
             CreateBuildTab(BuildItemTab);
             BuildItemTab.BuildButton.OnClicked += BuildItemButton_OnClicked;
-            List<CraftItem> items = CraftLibrary.CraftItems.Values.ToList();
+            List<CraftItem> items = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Object).ToList();
 
             int numItems = items.Count();
             int numColumns = 1;
@@ -266,6 +351,67 @@ namespace DwarfCorp
             Master.CurrentToolMode = GameMaster.ToolMode.Build;
             GUI.ToolTipManager.Popup("Click and drag to build " + SelectedItem.Name);
         }
+
+        public CraftItem SelectedResource { get; set; }
+
+
+        private void ResourceTabOnClicked(CraftItem item)
+        {
+            SelectedResource = item;
+
+            BuildResourceTab.InfoTitle.Text = item.Name;
+            BuildResourceTab.InfoImage.Image = item.Image;
+            BuildResourceTab.InfoDescription.Text = item.Description;
+            BuildResourceTab.SelectedResourceBoxes = new List<ComboBox>();
+            BuildResourceTab.BuildButton.IsVisible = true;
+            string additional = "";
+
+
+            BuildResourceTab.InfoDescription.Text += additional;
+            if (BuildResourceTab.SelectedResourcesLayout != null)
+                BuildResourceTab.SelectedResourcesLayout.ClearChildren();
+            BuildResourceTab.SelectedResourceBoxes.Clear();
+            BuildResourceTab.SelectedResourcesLayout = new FormLayout(GUI, BuildResourceTab.InfoRequirements)
+            {
+                EdgePadding = 0,
+                LabelFont = GUI.SmallFont
+            };
+            string requirementsText = "Requires:\n";
+
+            foreach (Quantitiy<Resource.ResourceTags> resourceAmount in item.RequiredResources)
+            {
+                //requirementsText += resourceAmount.ResourceType.ToString() + ": " + resourceAmount.NumResources + "\n";
+                ComboBox box = new ComboBox(GUI, BuildResourceTab.SelectedResourcesLayout)
+                {
+                    Font = GUI.SmallFont
+                };
+
+                List<ResourceAmount> resources = Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType);
+
+                foreach (ResourceAmount resource in resources)
+                {
+                    if (resource.NumResources >= resourceAmount.NumResources)
+                        box.AddValue(resource.ResourceType.ResourceName);
+                }
+
+                if (resources.Count == 0 || box.Values.Count == 0)
+                {
+                    box.AddValue("<Not enough!>");
+                }
+
+                BuildResourceTab.SelectedResourcesLayout.AddItem(resourceAmount.NumResources + " " + resourceAmount.ResourceType.ToString(), box);
+                BuildResourceTab.SelectedResourceBoxes.Add(box);
+            }
+
+
+            if (item.RequiredResources.Count == 0)
+            {
+                requirementsText += "Nothing";
+            }
+
+            BuildResourceTab.InfoRequirements.Text = requirementsText;
+        }
+
 
         private void ItemTabOnClicked(CraftItem item)
         {
@@ -361,8 +507,12 @@ namespace DwarfCorp
                 EdgePadding = 0
             };
 
-            GridLayout infoLayout = new GridLayout(GUI, tabLayout, 4, 2);
-            tabLayout.SetComponentPosition(infoLayout, 1, 0, 1, 1);
+            GridLayout infoLayout = new GridLayout(GUI, tabLayout, 4, 2)
+            {
+                WidthSizeMode = SizeMode.Fixed,
+                HeightSizeMode = SizeMode.Fixed
+            };
+            tabLayout.SetComponentPosition(infoLayout, 1, 0, 2, 1);
             tab.InfoImage = new ImagePanel(GUI, infoLayout, (Texture2D) null)
             {
                 KeepAspectRatio = true
@@ -410,4 +560,5 @@ namespace DwarfCorp
             roomLayout.HighlightRow(i, new Color(255, 100, 100, 200));
         }
     }
+
 }

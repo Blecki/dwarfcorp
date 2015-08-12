@@ -109,7 +109,7 @@ namespace DwarfCorp
                 if(ResourcesToStash == null && Resources != null)
                     ResourcesToStash = Agent.Faction.GetResourcesWithTags(Resources);
 
-                if(nearestStockpile == null)
+                if(nearestStockpile == null || ResourcesToStash.Count == 0)
                 {
                     Tree = null;
                     return;
@@ -117,7 +117,8 @@ namespace DwarfCorp
                 else
                 {
                     Tree = new Sequence(new GoToZoneAct(Agent, nearestStockpile),
-                                        new StashResourcesAct(Agent, ResourcesToStash)
+                                        new StashResourcesAct(Agent, ResourcesToStash),
+                                        new SetBlackboardData<List<ResourceAmount>>(Agent, "ResourcesStashed", ResourcesToStash)
                                         );
                 }
             }

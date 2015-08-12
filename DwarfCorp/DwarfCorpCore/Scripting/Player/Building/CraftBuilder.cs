@@ -190,7 +190,7 @@ namespace DwarfCorp
                                 {
                                     AddDesignation(newDesignation);
                                     assignments.Add(new CraftItemTask(new Voxel(new Point3(r.GridPosition), r.Chunk),
-                                        CurrentCraftType));
+                                        CraftLibrary.CraftItems[CurrentCraftType]));
                                 }
                                 else
                                 {

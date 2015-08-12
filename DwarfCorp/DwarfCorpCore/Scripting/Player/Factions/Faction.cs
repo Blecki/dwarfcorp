@@ -695,6 +695,7 @@ namespace DwarfCorp
             return HasResources(resources.Values);
         }
 
+
         public bool HasResources(IEnumerable<Quantitiy<Resource.ResourceTags>> resources)
         {
             foreach (Quantitiy<Resource.ResourceTags> resource in resources)

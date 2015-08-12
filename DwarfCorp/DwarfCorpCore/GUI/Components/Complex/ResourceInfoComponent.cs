@@ -88,7 +88,7 @@ namespace DwarfCorp
                 int k = 0;
                 foreach (ImagePanel imgPanel in panels)
                 {
-                    if (imgPanel.Image == amount.ResourceType.Image)
+                    if (imgPanel.Image.Equals(amount.ResourceType.Image))
                     {
                         imgPanel.ToolTip = imgPanel.ToolTip + "\n" +
                                              "* " + amount.NumResources.ToString() + " " + amount.ResourceType.ResourceName + "\n" +

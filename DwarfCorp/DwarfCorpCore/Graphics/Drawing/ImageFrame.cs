@@ -51,6 +51,19 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class ImageFrame
     {
+        protected bool Equals(ImageFrame other)
+        {
+            return Equals(Image, other.Image) && SourceRect.Equals(other.SourceRect);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((Image != null ? Image.GetHashCode() : 0)*397) ^ SourceRect.GetHashCode();
+            }
+        }
+
         public Texture2D Image { get; set; }
         public Rectangle SourceRect { get; set; }
 
@@ -77,6 +90,12 @@ namespace DwarfCorp
             Image = image;
             SourceRect = sourceRect;
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is ImageFrame && Equals((ImageFrame) obj);
+        }
+
     }
 
     [JsonObject(IsReference = true)]
