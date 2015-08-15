@@ -196,4 +196,123 @@ namespace DwarfCorp
         }
     }
 
+    public class AlignLayout : Layout
+    {
+        public enum Alignment
+        {
+            None,
+            Center,
+            Top,
+            Left,
+            Right,
+            Bottom
+        }
+
+        protected struct Aligner
+        {
+            public GUIComponent Child { get; set; }
+            public Alignment XAlignment { get; set; }
+            public Alignment YAlignment { get; set; }
+            public Vector2 OriginalPos { get; set; }
+        }
+
+        protected List<Aligner> Aligners { get; set; } 
+
+        public enum PositionMode
+        {
+            Pixels,
+            Percent
+        }
+
+        public PositionMode Mode { get; set; }
+
+        public AlignLayout(DwarfGUI gui, GUIComponent parent) : base(gui, parent)
+        {
+            Aligners = new List<Aligner>();
+        }
+
+        public void Add(GUIComponent child, Alignment xalignment, Alignment yAlignment, Vector2 originalPos)
+        {
+            Aligners.Add(new Aligner()
+            {
+                Child = child,
+                XAlignment = xalignment,
+                YAlignment = yAlignment,
+                OriginalPos = originalPos
+            });
+            Children.Add(child);
+        }
+
+        public void Remove(GUIComponent child)
+        {
+            Children.Remove(child);
+
+            Aligners.RemoveAll((aligner) => aligner.Child == child);
+        }
+
+        public void Clear()
+        {
+            Children.Clear();
+            Aligners.Clear();
+        }
+
+        public Vector2 PercentToPixels(Vector2 percent)
+        {
+            return new Vector2(percent.X * LocalBounds.Width, percent.Y * LocalBounds.Y);
+        }
+
+
+        protected void Align(Aligner aligner)
+        {
+            Vector2 pos = aligner.OriginalPos;
+
+            if (Mode == PositionMode.Percent)
+            {
+                pos = PercentToPixels(pos);
+            }
+            Rectangle bounds = aligner.Child.LocalBounds;
+            switch (aligner.XAlignment)
+            {
+                case Alignment.Center:
+                    pos.X = 0.5f*LocalBounds.Width - bounds.Width*0.5f;
+                    break;
+                case Alignment.Left:
+                    pos.X = 0;
+                    break;
+                case Alignment.Right:
+                    pos.X = LocalBounds.Width - bounds.Width;
+                    break;
+                default:
+                    break;
+            }
+
+            switch (aligner.YAlignment)
+            {
+                case Alignment.Center:
+                    pos.Y = 0.5f*LocalBounds.Height - bounds.Height*0.5f;
+                    break;
+                case Alignment.Bottom:
+                    pos.Y = LocalBounds.Height - bounds.Height;
+                    break;
+                case Alignment.Top:
+                    pos.Y = 0;
+                    break;
+                default:
+                    break;
+            }
+
+            aligner.Child.LocalBounds = new Rectangle((int)pos.X, (int)pos.Y, bounds.Width, bounds.Height);
+        }
+
+        public override void UpdateSizes()
+        {
+            UpdateSize();
+
+            foreach (Aligner aligner in Aligners)
+            {
+                Align(aligner);
+            }
+        }
+    }
+
 }

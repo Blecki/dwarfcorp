@@ -140,7 +140,7 @@ namespace DwarfCorp
             Rectangle fieldRect = new Rectangle(GlobalBounds.X, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width - 37, 32);
             GUI.Skin.RenderField(fieldRect, batch);
 
-            batch.GraphicsDevice.ScissorRectangle = fieldRect;
+            batch.GraphicsDevice.ScissorRectangle = MathFunctions.Clamp(fieldRect, batch.GraphicsDevice.Viewport.Bounds);
             
             Drawer2D.DrawAlignedText(batch, CurrentValue, Font, Color.Black, Drawer2D.Alignment.Center, fieldRect);
 

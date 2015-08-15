@@ -278,7 +278,7 @@ namespace DwarfCorp
          
                 sprites.End();
                 PlayState.GraphicsDevice.BlendState = BlendState.AlphaBlend;
-                PlayState.GraphicsDevice.DepthStencilState = DepthStencilState.None;
+                PlayState.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                 PlayState.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
                 PlayState.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
                 PlayState.GraphicsDevice.SetRenderTarget(null);

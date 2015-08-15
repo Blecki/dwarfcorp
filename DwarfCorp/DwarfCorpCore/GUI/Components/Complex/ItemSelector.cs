@@ -232,7 +232,7 @@ namespace DwarfCorp
 
             if(existingItem == null)
             {
-                existingItem = new GItem(item.Name, item.Image, item.Tint, 0, 10000, amount, item.Price)
+                existingItem = new GItem(item.ResourceType, item.Image, item.Tint, 0, 10000, amount, item.Price)
                 {
                     CurrentAmount = amount
                 };
@@ -260,7 +260,13 @@ namespace DwarfCorp
             }
             GItem item = FilteredItems[row - 1];
             GUIComponent component = Layout.ComponentPositions[key];
+            string tooltip = item.ResourceType.Type + "\n" + item.ResourceType.Description + "\n" +
+                             item.ResourceType.GetTagDescription(" , ");
 
+            if (item.ResourceType.FoodContent > 0)
+            {
+                tooltip += "\n" + item.ResourceType.FoodContent + " energy";
+            }
             switch (columnType)
             {
                 case Column.Amount:
@@ -279,6 +285,7 @@ namespace DwarfCorp
 
                     image.Image = item.Image;
                     image.Tint = item.Tint;
+                    image.ToolTip = tooltip;
                     break;
 
                 case Column.Name:
@@ -287,7 +294,7 @@ namespace DwarfCorp
                     if (label == null) break;
 
                     label.Text = item.Name;
-
+                    label.ToolTip = tooltip;
                     break;
 
                 case Column.PricePerItem:
@@ -315,6 +322,14 @@ namespace DwarfCorp
 
         public GUIComponent CreateItem(Column columnType, GItem item, int row, int column)
         {
+            string tooltip = item.ResourceType.Type + "\n" + item.ResourceType.Description + "\n" +
+                 item.ResourceType.GetTagDescription(" , ");
+
+            if (item.ResourceType.FoodContent > 0)
+            {
+                tooltip += "\n" + item.ResourceType.FoodContent + " energy";
+            }
+
             switch(columnType)
             {
                case Column.Amount:
@@ -331,14 +346,19 @@ namespace DwarfCorp
                     {
                         KeepAspectRatio = true,
                         ConstrainSize = true,
-                        Tint = item.Tint
+                        Tint = item.Tint,
+                        ToolTip = tooltip,
                     };
                     Layout.SetComponentPosition(image, column, row, 1, 1);
 
                     return image;
 
                 case Column.Name:
-                    Label label = new Label(GUI, Layout, item.Name, GUI.SmallFont);
+                    Label label = new Label(GUI, Layout, item.Name, GUI.SmallFont)
+                    {
+                        ToolTip = tooltip
+                    };
+                                            
                     Layout.SetComponentPosition(label, column, row, 1, 1);
 
                     return label;

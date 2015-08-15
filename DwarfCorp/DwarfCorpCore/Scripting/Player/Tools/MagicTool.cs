@@ -81,7 +81,7 @@ namespace DwarfCorp
             MagicBar = new ProgressBar(PlayState.GUI, PlayState.GUI.RootComponent, MagicMenu.Master.Spells.Mana / MagicMenu.Master.Spells.MaxMana)
             {
                 ToolTip = "Remaining Mana Pool",
-                LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 200, 64, 180, 32),
+                LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 200, 68, 180, 32),
                 Tint = Color.Cyan,
                 DrawOrder = 4
             };

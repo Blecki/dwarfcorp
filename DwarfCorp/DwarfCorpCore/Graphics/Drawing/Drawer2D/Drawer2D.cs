@@ -253,7 +253,8 @@ namespace DwarfCorp
             Right = 2,
             Top = 4,
             Bottom = 8,
-            Under = 16
+            Under = 16,
+            None = 32
         }
 
         public static Rectangle Align(Rectangle bounds, int width, int height, Alignment align)

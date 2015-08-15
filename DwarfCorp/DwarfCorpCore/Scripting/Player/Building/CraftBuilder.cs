@@ -55,14 +55,14 @@ namespace DwarfCorp
     {
         public class CraftDesignation
         {
-            public string ItemType { get; set; }
+            public CraftItem ItemType { get; set; }
             public Voxel Location { get; set; }
             public Body WorkPile { get; set; }
         }
 
         public Faction Faction { get; set; }
         public List<CraftDesignation> Designations { get; set; }
-        public string CurrentCraftType { get; set; }
+        public CraftItem CurrentCraftType { get; set; }
         public bool IsEnabled { get; set; }
 
         public CraftBuilder()
@@ -133,11 +133,11 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (!Faction.HasResources(CraftLibrary.CraftItems[designation.ItemType].RequiredResources))
+            if (!Faction.HasResources(designation.ItemType.RequiredResources))
             {
                 string neededResources = "";
 
-                foreach (Quantitiy<Resource.ResourceTags> amount in CraftLibrary.CraftItems[designation.ItemType].RequiredResources)
+                foreach (Quantitiy<Resource.ResourceTags> amount in designation.ItemType.RequiredResources)
                 {
                     neededResources += "" + amount.NumResources + " " + amount.ResourceType.ToString() + " ";
                 }
@@ -190,7 +190,7 @@ namespace DwarfCorp
                                 {
                                     AddDesignation(newDesignation);
                                     assignments.Add(new CraftItemTask(new Voxel(new Point3(r.GridPosition), r.Chunk),
-                                        CraftLibrary.CraftItems[CurrentCraftType]));
+                                        CurrentCraftType));
                                 }
                                 else
                                 {

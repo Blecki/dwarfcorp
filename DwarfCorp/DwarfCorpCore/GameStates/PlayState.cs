@@ -774,28 +774,46 @@ namespace DwarfCorp.GameStates
         public void CreateGUIComponents()
         {
             GUI.RootComponent.ClearChildren();
-            GridLayout layout = new GridLayout(GUI, GUI.RootComponent, 11, 11)
+            AlignLayout layout = new AlignLayout(GUI, GUI.RootComponent)
             {
                 LocalBounds = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height),
-                WidthSizeMode = GUIComponent.SizeMode.Fixed,
-                HeightSizeMode = GUIComponent.SizeMode.Fixed
+                WidthSizeMode = GUIComponent.SizeMode.Fit,
+                HeightSizeMode = GUIComponent.SizeMode.Fit,
+                Mode = AlignLayout.PositionMode.Percent
             };
 
             GUI.RootComponent.AddChild(Master.Debugger.MainPanel);
             layout.AddChild(Master.ToolBar);
             Master.ToolBar.Parent = layout;
-            layout.SetComponentPosition(Master.ToolBar, 7, 10, 4, 1);
+            Master.ToolBar.LocalBounds = new Rectangle(0, 0, 450, 68);
+            Master.ToolBar.TriggerMouseOver = false;
+            layout.Add(Master.ToolBar, AlignLayout.Alignment.Right, AlignLayout.Alignment.Bottom, Vector2.Zero);
+            //layout.SetComponentPosition(Master.ToolBar, 7, 10, 4, 1);
 
-            GUIComponent companyInfoComponent = new GUIComponent(GUI, layout);
+            GUIComponent companyInfoComponent = new GUIComponent(GUI, layout)
+            {
+                LocalBounds = new Rectangle(0, 0, 350, 200),
+                TriggerMouseOver = false
+            };
 
-            layout.SetComponentPosition(companyInfoComponent, 0, 0, 4, 2);
+            layout.Add(companyInfoComponent, AlignLayout.Alignment.Left, AlignLayout.Alignment.Top, Vector2.Zero);
+            //layout.SetComponentPosition(companyInfoComponent, 0, 0, 4, 2);
 
-            GUIComponent resourceInfoComponent = new ResourceInfoComponent(GUI, layout, Master.Faction);
-            layout.SetComponentPosition(resourceInfoComponent, 7, 0, 2, 2);
+            GUIComponent resourceInfoComponent = new ResourceInfoComponent(GUI, layout, Master.Faction)
+            {
+                LocalBounds = new Rectangle(0, 0, 400, 256),
+                TriggerMouseOver = false
+            };
+            layout.Add(resourceInfoComponent, AlignLayout.Alignment.None, AlignLayout.Alignment.Top, new Vector2(0.55f, 0.0f));
+            //layout.SetComponentPosition(resourceInfoComponent, 7, 0, 2, 2);
 
             GridLayout infoLayout = new GridLayout(GUI, companyInfoComponent, 3, 4);
 
-            CompanyLogoPanel = new ImagePanel(GUI, infoLayout, PlayerCompany.Logo);
+            CompanyLogoPanel = new ImagePanel(GUI, infoLayout, PlayerCompany.Logo)
+            {
+                ConstrainSize = true,
+                KeepAspectRatio = true
+            };
             infoLayout.SetComponentPosition(CompanyLogoPanel, 0, 0, 1, 1);
 
             CompanyNameLabel = new Label(GUI, infoLayout, PlayerCompany.Name, GUI.DefaultFont)
@@ -813,6 +831,7 @@ namespace DwarfCorp.GameStates
                 StrokeColor = new Color(0, 0, 0, 255),
                 ToolTip = "Amount of money in our treasury.",
                 Alignment = Drawer2D.Alignment.Top,
+                TriggerMouseOver = false
             };
             infoLayout.SetComponentPosition(MoneyLabel, 3, 0, 1, 1);
 
@@ -835,7 +854,8 @@ namespace DwarfCorp.GameStates
                 Alignment = Drawer2D.Alignment.Top,
                 ToolTip = "Current time and date."
             };
-            layout.SetComponentPosition(TimeLabel, 6, 0, 1, 1);
+            layout.Add(TimeLabel, AlignLayout.Alignment.Center, AlignLayout.Alignment.Top, Vector2.Zero);
+            //layout.SetComponentPosition(TimeLabel, 6, 0, 1, 1);
 
             CurrentLevelLabel = new Label(GUI, infoLayout, "Slice: " + ChunkManager.ChunkData.MaxViewingLevel, GUI.DefaultFont)
             {
@@ -845,25 +865,25 @@ namespace DwarfCorp.GameStates
             };
             infoLayout.SetComponentPosition(CurrentLevelLabel, 0, 1, 1, 1);
 
-            CurrentLevelUpButton = new Button(GUI, infoLayout, "", GUI.DefaultFont, Button.ButtonMode.ImageButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowUp))
+            CurrentLevelUpButton = new Button(GUI, CurrentLevelLabel, "", GUI.DefaultFont, Button.ButtonMode.ImageButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowUp))
             {
                 ToolTip = "Go up one level of visible terrain",
                 KeepAspectRatio = true,
                 DontMakeBigger = true,
-                DontMakeSmaller = true
+                DontMakeSmaller = true,
+                LocalBounds = new Rectangle(100, 16, 32, 32)
             };
 
-            infoLayout.SetComponentPosition(CurrentLevelUpButton, 1, 1, 1, 1);
             CurrentLevelUpButton.OnClicked += CurrentLevelUpButton_OnClicked;
 
-            CurrentLevelDownButton = new Button(GUI, infoLayout, "", GUI.DefaultFont, Button.ButtonMode.ImageButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowDown))
+            CurrentLevelDownButton = new Button(GUI, CurrentLevelLabel, "", GUI.DefaultFont, Button.ButtonMode.ImageButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowDown))
             {
                 ToolTip = "Go down one level of visible terrain",
                 KeepAspectRatio = true,
                 DontMakeBigger = true,
-                DontMakeSmaller = true
+                DontMakeSmaller = true,
+                LocalBounds = new Rectangle(140, 16, 32, 32)
             };
-            infoLayout.SetComponentPosition(CurrentLevelDownButton, 1, 2, 1, 1);
             CurrentLevelDownButton.OnClicked += CurrentLevelDownButton_OnClicked;
 
             /*
@@ -881,48 +901,58 @@ namespace DwarfCorp.GameStates
 
             MiniMap = new Minimap(GUI, layout, 192, 192, this, TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap), TextureManager.GetTexture(ContentPaths.GUI.gui_minimap))
             {
-                IsVisible =  true
+                IsVisible =  true,
+                LocalBounds = new Rectangle(0, 0, 192, 192)
+            };
+            layout.Add(MiniMap, AlignLayout.Alignment.Left, AlignLayout.Alignment.Bottom, Vector2.Zero);
+            //layout.SetComponentPosition(MiniMap, 0, 8, 4, 4);
+            //Rectangle rect = layout.GetRect(new Rectangle(0, 8, 4, 4));
+            //layout.SetComponentOffset(MiniMap,  new Point(0, rect.Height - 250));
+
+
+            GUIComponent topRightTray = new GUIComponent(GUI, layout)
+            {
+                LocalBounds = new Rectangle(0, 0, 132, 68)
             };
 
-            layout.SetComponentPosition(MiniMap, 0, 8, 4, 4);
-            Rectangle rect = layout.GetRect(new Rectangle(0, 8, 4, 4));
-            layout.SetComponentOffset(MiniMap,  new Point(0, rect.Height - 250));
-
-
-            Button moneyButton = new Button(GUI, layout, "Economy", GUI.SmallFont, Button.ButtonMode.ImageButton, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 2, 1))
+            Button moneyButton = new Button(GUI, topRightTray, "Economy", GUI.SmallFont, Button.ButtonMode.ImageButton, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 2, 1))
             {
                 KeepAspectRatio = true,
                 ToolTip = "Opens the Economy Menu",
                 DontMakeBigger = true,
                 DrawFrame = true,
-                TextColor = Color.White
+                TextColor = Color.White,
+                LocalBounds = new Rectangle(0, 4, 32, 32)
             };
 
 
             moneyButton.OnClicked += moneyButton_OnClicked;
 
 
-            Button settingsButton = new Button(GUI, layout, "Settings", GUI.SmallFont, Button.ButtonMode.ImageButton, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 4, 1))
+            Button settingsButton = new Button(GUI, topRightTray, "Settings", GUI.SmallFont, Button.ButtonMode.ImageButton, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 4, 1))
             {
                 KeepAspectRatio = true,
                 ToolTip = "Opens the Settings Menu",
                 DontMakeBigger = true,
                 DrawFrame = true,
-                TextColor = Color.White
+                TextColor = Color.White,
+                LocalBounds = new Rectangle(64, 4, 32, 32)
             };
 
             settingsButton.OnClicked += OpenPauseMenu;
 
-            layout.SetComponentPosition(settingsButton, 10, 0, 1, 1);
-
-            layout.SetComponentPosition(moneyButton, 9, 0, 1, 1);
-
+            layout.Add(topRightTray, AlignLayout.Alignment.Right, AlignLayout.Alignment.Top, Vector2.Zero);
+          
 
             InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
 
-            AnnouncementViewer = new AnnouncementViewer(GUI, layout, AnnouncementManager);
-            layout.SetComponentPosition(AnnouncementViewer, 3, 10, 3, 1);
+            AnnouncementViewer = new AnnouncementViewer(GUI, layout, AnnouncementManager)
+            {
+                LocalBounds = new Rectangle(0, 0, 350, 80)
+            };
+            layout.Add(AnnouncementViewer, AlignLayout.Alignment.Center, AlignLayout.Alignment.Bottom, Vector2.Zero);
+            //layout.SetComponentPosition(AnnouncementViewer, 3, 10, 3, 1);
             layout.UpdateSizes();
 
         }

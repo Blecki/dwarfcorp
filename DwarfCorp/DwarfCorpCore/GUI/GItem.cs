@@ -46,6 +46,7 @@ namespace DwarfCorp
     /// </summary>
     public class GItem
     {
+        public Resource ResourceType { get; set; }
         public string Name { get; set; }
         public ImageFrame Image { get; set; }
         public Color Tint { get; set; }
@@ -54,10 +55,11 @@ namespace DwarfCorp
         public int CurrentAmount { get; set; }
         public float Price { get; set; }
 
-        public GItem(string name, ImageFrame imag, Color tint, int min, int max, int currentAmount, float price)
+        public GItem(Resource resource, ImageFrame imag, Color tint, int min, int max, int currentAmount, float price)
         {
             Tint = tint;
-            Name = name;
+            Name = resource.ShortName;
+            ResourceType = resource;
             Image = imag;
             MinAmount = min;
             MaxAmount = max;

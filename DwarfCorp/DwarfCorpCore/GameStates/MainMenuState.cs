@@ -187,14 +187,35 @@ namespace DwarfCorp.GameStates
                     Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
                 IsInitialized = true;
                 Logo = TextureManager.GetTexture(ContentPaths.Logos.gamelogo);
+                GUIComponent mainComponent = new GUIComponent(GUI, GUI.RootComponent)
+                {
+                    LocalBounds = new Rectangle(0, 0, Logo.Width, Logo.Height + 180)
+                };
 
-                ListSelect = new ListSelector(GUI, GUI.RootComponent)
+                AlignLayout layout = new AlignLayout(GUI, GUI.RootComponent)
+                {
+                    HeightSizeMode = GUIComponent.SizeMode.Fit,
+                    WidthSizeMode = GUIComponent.SizeMode.Fit,
+                    Mode = AlignLayout.PositionMode.Percent
+                };
+
+                ListSelect = new ListSelector(GUI, mainComponent)
                 {
                     Label = "- Main Menu -",
                     LocalBounds =
-                        new Rectangle(Game.GraphicsDevice.Viewport.Width/2 - 100, Game.GraphicsDevice.Viewport.Height/2,
+                        new Rectangle(Logo.Width/2 - 150/2, Logo.Height + 20,
                             150, 150)
                 };
+
+
+                ImagePanel logoPanel = new ImagePanel(GUI, mainComponent, Logo)
+                {
+                    KeepAspectRatio = true,
+                    ConstrainSize = true,
+                    LocalBounds = new Rectangle(0, 0, Logo.Width, Logo.Height)
+                };
+
+                layout.Add(mainComponent, AlignLayout.Alignment.Center, AlignLayout.Alignment.Top, Vector2.Zero);
                 DefaultItems();
 
                 ListSelect.OnItemClicked += ItemClicked;
@@ -230,10 +251,8 @@ namespace DwarfCorp.GameStates
 
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
-            DwarfGame.SpriteBatch.Draw(Logo, new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - Logo.Width / 2 + dx, 10), null, Color.White);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
-
             DwarfGame.SpriteBatch.DrawString(GUI.DefaultFont, Program.Version, new Vector2(15, 15), Color.White);
             GUI.PostRender(gameTime);
             DwarfGame.SpriteBatch.End();

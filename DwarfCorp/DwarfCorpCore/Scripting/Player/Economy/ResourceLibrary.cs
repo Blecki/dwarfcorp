@@ -236,7 +236,7 @@ namespace DwarfCorp
 
             string name = names[item];
             Point tile = tiles[item];
-            toReturn.MoneyValue = values[item]*Resources[baseMaterial].MoneyValue * quality;
+            toReturn.MoneyValue = values[item]*Resources[baseMaterial].MoneyValue * 3 * quality;
 
             string qualityType = "";
 

@@ -59,14 +59,14 @@ namespace DwarfCorp
         public List<GItem> GetResources(float priceMultiplier)
         {
             return (from r in ResourceLibrary.Resources.Values
-                    select new GItem(r.ShortName, r.Image, r.Tint, 0, 1000, 1000, r.MoneyValue * priceMultiplier)).ToList();
+                    select new GItem(r, r.Image, r.Tint, 0, 1000, 1000, r.MoneyValue * priceMultiplier)).ToList();
         }
 
         public List<GItem> GetResources(List<ResourceAmount> resources )
         {
             return (from r in resources
                     where r.NumResources > 0
-                    select new GItem(r.ResourceType.ShortName, r.ResourceType.Image, r.ResourceType.Tint, 0, 1000, r.NumResources, r.ResourceType.MoneyValue)).ToList();
+                    select new GItem(r.ResourceType, r.ResourceType.Image, r.ResourceType.Tint, 0, 1000, r.NumResources, r.ResourceType.MoneyValue)).ToList();
         }
 
         public void CreateBuyTab()
@@ -477,14 +477,14 @@ namespace DwarfCorp
         public List<GItem> GetResources(float priceMultiplier)
         {
             return (from r in ResourceLibrary.Resources.Values
-                    select new GItem(r.ShortName, r.Image, r.Tint, 0, 1000, 1000, r.MoneyValue * priceMultiplier)).ToList();
+                    select new GItem(r, r.Image, r.Tint, 0, 1000, 1000, r.MoneyValue * priceMultiplier)).ToList();
         }
 
         public List<GItem> GetResources(List<ResourceAmount> resources)
         {
             return (from r in resources
                     where r.NumResources > 0
-                    select new GItem(r.ResourceType.ShortName, r.ResourceType.Image, r.ResourceType.Tint, 0, 1000, r.NumResources, r.ResourceType.MoneyValue)).ToList();
+                    select new GItem(r.ResourceType, r.ResourceType.Image, r.ResourceType.Tint, 0, 1000, r.NumResources, r.ResourceType.MoneyValue)).ToList();
         }
 
         

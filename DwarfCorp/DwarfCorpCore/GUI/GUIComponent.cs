@@ -96,6 +96,7 @@ namespace DwarfCorp
             Fit
         };
 
+
         public SizeMode WidthSizeMode { get; set; }
         public SizeMode HeightSizeMode { get; set; }
         public int MinWidth { get; set; }
@@ -104,7 +105,7 @@ namespace DwarfCorp
         public int MaxHeight { get; set; }
 
         public bool IsClipped { get; set; }
-
+        public bool TriggerMouseOver { get; set; }
         public class GUITween
         {
             public Func<float, float, float, float, float> TweenFn { get; set; }
@@ -156,6 +157,7 @@ namespace DwarfCorp
 
         public GUIComponent(DwarfGUI gui, GUIComponent parent)
         {
+            TriggerMouseOver = true;
             DrawOrder = -1;
             WidthSizeMode = SizeMode.Fixed;
             HeightSizeMode = SizeMode.Fixed;
@@ -250,7 +252,7 @@ namespace DwarfCorp
 
         public virtual bool IsMouseOverRecursive()
         {
-            if(!IsVisible)
+            if(!IsVisible || !TriggerMouseOver)
             {
                 return false;
             }

@@ -205,7 +205,7 @@ namespace DwarfCorp
         {
             if(!Slots.ContainsKey(slot))
             {
-                DraggableItem currentItem = new DraggableItem(item.GUI, slot, new GItem(item.Item.Name, item.Item.Image, item.Item.Tint, item.Item.MinAmount, item.Item.MaxAmount, item.Item.CurrentAmount, item.Item.Price));
+                DraggableItem currentItem = new DraggableItem(item.GUI, slot, new GItem(item.Item.ResourceType, item.Item.Image, item.Item.Tint, item.Item.MinAmount, item.Item.MaxAmount, item.Item.CurrentAmount, item.Item.Price));
                 GItem gItem = currentItem.Item;
 
 
@@ -246,7 +246,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    DraggableItem ditem = new DraggableItem(item.GUI, slot, new GItem(item.Item.Name, item.Item.Image, item.Item.Tint, item.Item.MinAmount, item.Item.MaxAmount, 0, item.Item.Price));
+                    DraggableItem ditem = new DraggableItem(item.GUI, slot, new GItem(item.Item.ResourceType, item.Item.Image, item.Item.Tint, item.Item.MinAmount, item.Item.MaxAmount, 0, item.Item.Price));
                     Slots[slot] = ditem;
                     ditem.LocalBounds = new Rectangle(0, 0, 32, 32);
                     ditem.Item.CurrentAmount += amount;

@@ -203,6 +203,16 @@ namespace DwarfCorp
         }
 
 
+        public static Rectangle Clamp(Rectangle inner, Rectangle outer)
+        {
+            Rectangle rect = inner;
+            rect.X = Clamp(inner.X, outer.X, outer.X + outer.Width);
+            rect.Y = Clamp(inner.Y, outer.Y, outer.Y + outer.Height);
+            rect.Width = Clamp(rect.Width, 0, outer.Width - rect.X);
+            rect.Height = Clamp(rect.Height, 0, outer.Height - rect.Y);
+            return rect;
+        }
+
         /// <summary>
         /// Gets the Pitch, yaw and roll of a rotation matrix.
         /// </summary>

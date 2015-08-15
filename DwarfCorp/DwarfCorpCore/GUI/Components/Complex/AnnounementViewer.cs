@@ -109,7 +109,7 @@ namespace DwarfCorp
             WaitTimer = new Timer(5, true);
             Talker = new AnimatedImagePanel(GUI, this, animation)
             {
-                LocalBounds = new Rectangle(-128, -64, 128, 128)
+                LocalBounds = new Rectangle(-128, -48, 128, 128)
             };
             animation.Play();
             animation.Loops = true;
@@ -156,12 +156,14 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime time)
         {
+           
             WaitTimer.Update(time);
             animation.Update(time);
             if (WaitTimer.HasTriggered)
             {
                 if (AnnouncementViews.Count > 0)
                 {
+                    TriggerMouseOver = true;
                     AnnouncementView view = AnnouncementViews.ElementAt(AnnouncementViews.Count - 1);
                     RemoveChild(view);
                     AnnouncementViews.RemoveAt(AnnouncementViews.Count - 1);
@@ -173,6 +175,10 @@ namespace DwarfCorp
                     {
                         Talker.TweenOut(Drawer2D.Alignment.Bottom);
                     }
+                }
+                else
+                {
+                    TriggerMouseOver = false;
                 }
             }
 

@@ -169,7 +169,7 @@ namespace DwarfCorp
             Viewport port = GameState.Game.GraphicsDevice.Viewport;
             foreach (CreatureAI creature in Player.SelectedMinions)
             {
-                Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, creature.Stats.FullName, PlayState.GUI.SmallFont, Color.White, Drawer2D.Alignment.Right, new Rectangle(port.Width - 300, i * 24, 300, 24));
+                Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, creature.Stats.FullName, PlayState.GUI.SmallFont, Color.White, Drawer2D.Alignment.Right, new Rectangle(port.Width - 300, 68 + i * 24, 300, 24));
                 i++;
             }
 

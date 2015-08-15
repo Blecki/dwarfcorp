@@ -338,16 +338,31 @@ namespace DwarfCorp
                 i++;
             }
             layout.UpdateSizes();
+            BuildItemTab.SelectedResourceBoxes = new List<ComboBox>();
         }
 
         private void BuildItemButton_OnClicked()
         {
+            SelectedItem.SelectedResources = new List<ResourceAmount>();
+
+            for (int i = 0; i < BuildItemTab.SelectedResourceBoxes.Count; i++)
+            {
+                ComboBox box = BuildItemTab.SelectedResourceBoxes[i];
+
+                if (box.CurrentValue == "<Not enough!>")
+                {
+                    return;
+                }
+
+                Quantitiy<Resource.ResourceTags> tags = SelectedItem.RequiredResources[i];
+                SelectedItem.SelectedResources.Add(new ResourceAmount(box.CurrentValue, tags.NumResources));
+            }
             IsVisible = false;
             Master.Faction.RoomBuilder.CurrentRoomData = null;
             Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
             Master.Faction.WallBuilder.CurrentVoxelType = null;
             Master.Faction.CraftBuilder.IsEnabled = true;
-            Master.Faction.CraftBuilder.CurrentCraftType = SelectedItem.Name;
+            Master.Faction.CraftBuilder.CurrentCraftType = SelectedItem;
             Master.CurrentToolMode = GameMaster.ToolMode.Build;
             GUI.ToolTipManager.Popup("Click and drag to build " + SelectedItem.Name);
         }
@@ -426,12 +441,39 @@ namespace DwarfCorp
 
             
             BuildItemTab.InfoDescription.Text += additional;
-
+            if (BuildItemTab.SelectedResourcesLayout != null)
+                BuildItemTab.SelectedResourcesLayout.ClearChildren();
+            BuildItemTab.SelectedResourceBoxes.Clear();
+            BuildItemTab.SelectedResourcesLayout = new FormLayout(GUI, BuildItemTab.InfoRequirements)
+            {
+                EdgePadding = 0,
+                LabelFont = GUI.SmallFont
+            };
             string requirementsText = "Requires:\n";
 
             foreach (Quantitiy<Resource.ResourceTags> resourceAmount in item.RequiredResources)
             {
-                requirementsText += resourceAmount.ResourceType.ToString() + ": " + resourceAmount.NumResources + "\n";
+                //requirementsText += resourceAmount.ResourceType.ToString() + ": " + resourceAmount.NumResources + "\n";
+                ComboBox box = new ComboBox(GUI, BuildItemTab.SelectedResourcesLayout)
+                {
+                    Font = GUI.SmallFont
+                };
+
+                List<ResourceAmount> resources = Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType);
+
+                foreach (ResourceAmount resource in resources)
+                {
+                    if (resource.NumResources >= resourceAmount.NumResources)
+                        box.AddValue(resource.ResourceType.ResourceName);
+                }
+
+                if (resources.Count == 0 || box.Values.Count == 0)
+                {
+                    box.AddValue("<Not enough!>");
+                }
+
+                BuildItemTab.SelectedResourcesLayout.AddItem(resourceAmount.NumResources + " " + resourceAmount.ResourceType.ToString(), box);
+                BuildItemTab.SelectedResourceBoxes.Add(box);
             }
 
 
