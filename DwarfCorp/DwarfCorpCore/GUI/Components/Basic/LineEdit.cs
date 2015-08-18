@@ -49,7 +49,7 @@ namespace DwarfCorp
         public delegate void Modified(string arg);
 
         public event Modified OnTextModified;
-
+        public string Prompt { get; set; }
         public string Text { get; set; }
         public bool HasKeyboardFocus { get; set; }
         public int Carat { get; set; }
@@ -65,6 +65,7 @@ namespace DwarfCorp
             Carat = text.Length;
             OnTextModified += LineEdit_OnTextModified;
             IsEditable = true;
+            Prompt = "";
         }
 
         private void LineEdit_OnTextModified(string arg)
@@ -161,24 +162,34 @@ namespace DwarfCorp
             Rectangle fieldRect = new Rectangle(GlobalBounds.X, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width, GUI.Skin.TileHeight);
             Rectangle textRect = new Rectangle(GlobalBounds.X + 5, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width, GUI.Skin.TileHeight);
             GUI.Skin.RenderField(fieldRect, batch);
-            string toShow = GetSubstringToShow();
-            Carat = MathFunctions.Clamp(Carat, 0, toShow.Length);
-            string first = toShow.Substring(0, Carat);
-            string last = toShow.Substring(Carat, toShow.Length - Carat);
-            if(!HasKeyboardFocus)
+
+
+            if (string.IsNullOrEmpty(Text) && !HasKeyboardFocus)
             {
-                Drawer2D.DrawAlignedText(batch, " " + toShow, GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
+                Drawer2D.DrawAlignedText(batch, " " + Prompt, GUI.DefaultFont, Color.Brown, Drawer2D.Alignment.Left, textRect);
             }
             else
             {
-                if(time.TotalGameTime.TotalMilliseconds % 1000 < 500)
+                string toShow = GetSubstringToShow();
+                Carat = MathFunctions.Clamp(Carat, 0, toShow.Length);
+                string first = toShow.Substring(0, Carat);
+                string last = toShow.Substring(Carat, toShow.Length - Carat);
+
+                if (!HasKeyboardFocus)
                 {
-                    Drawer2D.DrawAlignedText(batch, " " + first + "|" + last, GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
+                    Drawer2D.DrawAlignedText(batch, " " + toShow, GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
                 }
                 else
                 {
-                    Drawer2D.DrawAlignedText(batch, " " + first + " " + last, GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
-                }
+                    if (time.TotalGameTime.TotalMilliseconds % 1000 < 500)
+                    {
+                        Drawer2D.DrawAlignedText(batch, " " + first + "|" + last, GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
+                    }
+                    else
+                    {
+                        Drawer2D.DrawAlignedText(batch, " " + first + " " + last, GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
+                    }
+                }   
             }
 
             base.Render(time, batch);

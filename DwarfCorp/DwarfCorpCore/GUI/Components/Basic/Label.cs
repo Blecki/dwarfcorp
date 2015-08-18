@@ -54,6 +54,7 @@ namespace DwarfCorp
         public SpriteFont TextFont { get; set; }
         public Drawer2D.Alignment Alignment { get; set; }
         public bool WordWrap { get; set; }
+        public bool Truncate { get; set; }
 
         public Label(DwarfGUI gui, GUIComponent parent, string text, SpriteFont textFont) :
             base(gui, parent)
@@ -64,6 +65,7 @@ namespace DwarfCorp
             TextFont = textFont;
             Alignment = Drawer2D.Alignment.Left;
             WordWrap = false;
+            Truncate = false;
         }
 
       
@@ -75,6 +77,17 @@ namespace DwarfCorp
             if(WordWrap)
             {
                 text = DwarfGUI.WrapLines(Text, LocalBounds, TextFont);
+            }
+
+            if (Truncate)
+            {
+                Vector2 measure = Datastructures.SafeMeasure(TextFont, text);
+                Vector2 wMeasure = Datastructures.SafeMeasure(TextFont, "W");
+                if (measure.X > GlobalBounds.Width)
+                {
+                    int numLetters = GlobalBounds.Width/(int)wMeasure.X;
+                    text = Text.Substring(0, Math.Min(numLetters, Text.Length)) + "...";
+                }
             }
 
             Drawer2D.DrawAlignedStrokedText(batch, text, TextFont, TextColor, StrokeColor, Alignment, GlobalBounds);

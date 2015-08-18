@@ -40,6 +40,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace DwarfCorp
 {
@@ -55,6 +56,7 @@ namespace DwarfCorp
             public List<string> WarDeclarations { get; set; }
             public List<string> PeaceDeclarations { get; set; } 
         }
+
 
         public string Name { get; set; }
         public List<string> CreatureTypes { get; set; }
@@ -74,6 +76,88 @@ namespace DwarfCorp
         {
             FactionNameTemplates = TextGenerator.GetAtoms(FactionNameFile);
             NameTemplates = TextGenerator.GetAtoms(NameFile);
+        }
+
+        public List<ResourceAmount> GenerateResources()
+        {
+            List<ResourceAmount> toReturn = new List<ResourceAmount>
+            {
+                new ResourceAmount(ResourceLibrary.ResourceType.Wood, (int) MathFunctions.Rand(1, 32)),
+                new ResourceAmount(ResourceLibrary.ResourceType.Stone, (int) MathFunctions.Rand(1, 32)),
+                new ResourceAmount(ResourceLibrary.ResourceType.Gold, (int) MathFunctions.Rand(1, 32)),
+                new ResourceAmount(ResourceLibrary.ResourceType.Berry, (int) MathFunctions.Rand(1, 32)),
+                new ResourceAmount(ResourceLibrary.ResourceType.Mana, (int) MathFunctions.Rand(1, 32)),
+                new ResourceAmount(ResourceLibrary.ResourceType.Grain, (int) MathFunctions.Rand(1, 32)),
+                new ResourceAmount(ResourceLibrary.ResourceType.Mushroom, (int) MathFunctions.Rand(1, 32)),
+                new ResourceAmount(ResourceLibrary.ResourceType.Coal, (int) MathFunctions.Rand(1, 32))
+            };
+
+
+            int numGemTypes = (int)MathFunctions.Rand(0, 3);
+            List<Resource> gemTypes = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.Gem);
+            for (int i = 0; i < numGemTypes; i++)
+            {
+                int numGems = (int) MathFunctions.Rand(1, 32);
+                toReturn.Add(new ResourceAmount(Datastructures.SelectRandom(gemTypes), numGems));
+
+            }
+
+
+            int numTrinkets = (int) MathFunctions.Rand(0, 15);
+            List<Resource> materialTypes = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.Material);
+
+
+            for (int i = 0; i < numTrinkets; i++)
+            {
+                Resource resource = ResourceLibrary.GenerateTrinket(Datastructures.SelectRandom(materialTypes).Type,
+                    MathFunctions.Rand(0.01f, 4.0f));
+
+                bool encrust = MathFunctions.RandEvent(0.25f);
+
+                if (encrust)
+                {
+                    resource = ResourceLibrary.EncrustTrinket(resource, Datastructures.SelectRandom(gemTypes).Type);
+                }
+
+                toReturn.Add(new ResourceAmount(resource));
+            }
+
+
+            int numMeats = (int) MathFunctions.Rand(0, 20);
+            
+            for (int i = 0; i < numMeats; i++)
+            {
+                int numOfThisMeat = (int) MathFunctions.Rand(1, 32);
+                string animal = TextGenerator.GenerateRandom("$animal");
+
+                bool ismeat = MathFunctions.RandEvent(0.5f);
+
+
+                if (ismeat)
+                {
+                    Resource meat = new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Meat])
+                    {
+                        Type = animal + " Meat",
+                        ShortName = animal + " Meat"
+                    };
+                    ResourceLibrary.Add(meat);
+
+                    toReturn.Add(new ResourceAmount(meat, numOfThisMeat));
+                }
+                else
+                {
+                    Resource meat = new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Bones])
+                    {
+                        Type = animal + " Bone",
+                        ShortName = animal + " Bone"
+                    };
+                    ResourceLibrary.Add(meat);
+
+                    toReturn.Add(new ResourceAmount(meat, numOfThisMeat));
+                }
+            }
+
+            return toReturn;
         }
        
     }

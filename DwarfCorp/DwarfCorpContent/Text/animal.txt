@@ -1,6 +1,6 @@
 Aardvark 
-African Elephant 
-African Tree Pangolin 
+Elephant 
+Pangolin 
 Albatross 
 Alligator 
 Alpaca 
@@ -11,10 +11,7 @@ Anteater
 Antelope 
 Archer Fish 
 Armadillo 
-Asian Elephant 
-Atlantic Puffin 
 Aye-Aye 
-Arab horse 
 Baboon 
 Badger 
 Bald Eagle 
@@ -24,23 +21,20 @@ Barnacle
 Barracuda 
 Basilisk 
 Bass 
-Basset Hound 
+Hound 
 Bat 
-Bearded Dragon 
+Dragon 
 Beaver 
 Bee 
 Beetle 
-Beluga Whale 
+Whale 
 Bird 
-Big-horned sheep 
-Bird of paradise 
+Sheep
 Bison 
-Billy goat 
 Black Bear 
 Black Fly 
 Black Rhino 
-Black Footed Rhino 
-Black Widow Spider 
+Black Widow
 Blackbird 
 Blowfish 
 Blue Jay 
@@ -49,8 +43,8 @@ Boa
 Boar 
 Bob-Cat 
 Bonobo 
-Bottle-Nose dolphin 
-Bornean Orang-utan 
+Bottle-Nose
+Orangutan 
 Boxer dog 
 Brown Bear 
 Buck 
@@ -58,15 +52,11 @@ Budgie
 Buffalo 
 Bull 
 Bull frog 
-Bull Mastiff 
+Mastiff 
 Butterfly 
 Buzzard 
-Border Collie 
 Caribou 
 Cheetah 
-Common Dolphin 
-Common seal 
-Caiman lizard 
 Camel 
 Canary 
 Carp 
@@ -85,7 +75,6 @@ Clam
 Chupacabra 
 Clown Fish 
 Cobra 
-Cocker Spaniel 
 Cockatiel 
 Cockatoo 
 Cockroach 
@@ -112,14 +101,13 @@ Dacshund
 Damsel fly 
 Dart Frog 
 Degus 
-Devi Fish (Giant Sting ray) 
-Diamond back rattler 
+Devi
+Diamondback
 Dik-dik 
 Dingo 
 Dinosaur 
-Doberman Pinscher 
+Doberman
 Dodo bird 
-Dogue de Bordeaux 
 Dolphin 
 Dolly Varden 
 Donkey 
@@ -130,9 +118,9 @@ Dove
 Dragonfly 
 Drake 
 Duck 
-Duckbill Platypus 
+Platypus 
 Dung beetle 
-Eurasian Lynx 
+Lynx 
 Eagle 
 Earthworm 
 Earwig 
@@ -154,12 +142,12 @@ Flatworm
 Fly 
 Ferret 
 Fox 
-Fresh Water Crocodile / Alligator 
+Alligator 
 Frog 
-Galapagos Land Iguana 
-Galapagos Tortoise 
+Iguana 
+Tortoise 
 Gazelle 
-Giant Anteater 
+Anteater 
 Giant panda 
 Giraffe 
 Gnat 
@@ -170,11 +158,9 @@ Gorilla
 Grasshopper 
 Green fly 
 Grey Whale 
-Great White Shark 
-Green poison dart frog 
-Green Sea Turtle 
+Shark 
 Groundhog 
-Hammerhead shark 
+Hammerhead 
 Hare 
 Hawk 
 Hedgehog 
@@ -184,7 +170,7 @@ Hippopotamus
 Horse 
 Hyena 
 Hyrax 
-Irrawaddy Dolphin 
+Irrawaddy 
 Iguana 
 Iguanodon 
 Impala 
@@ -203,15 +189,15 @@ Koala
 Komodo Dragon 
 Kookaburra 
 Krill 
-Lama 
+Llama 
 Lamb 
 Lancelet 
-Leatherback sea turtle 
+Leatherback
 Leech 
 Lemming 
 Lemur 
 Leopard 
-Lice 
+Louse 
 Lion 
 Lionfish 
 Llama 
@@ -225,8 +211,8 @@ Marsupials
 Meerkat 
 Mink 
 Mole 
-Mollusks 
-Monarch Butterfly 
+Mollusk 
+Butterfly 
 Mongoose 
 Monkey 
 Moose 
@@ -252,7 +238,6 @@ Osprey
 Ostrich 
 Otter 
 Owl 
-Orang-utan 
 Ox 
 Panda 
 Panther
@@ -268,7 +253,6 @@ Porcupine
 Praying Mantis
 Prawn
 Puma
-Przewalski's Wild horse 
 Quail 
 Quetzal 
 Rabbit
@@ -283,31 +267,28 @@ Robin
 Rooster
 Roundworm
 Salmon
-Salt water alligator / Crocodile
 Sandpiper
 Seahorse
 Seal
-Sea anemone
+Sea Anemone
 Sea Lion
-Sea urchin
+Sea Urchin
 Scallop
 Scorpion
 Shark
 Sheep
 Shrimp
-Siberian Husky 
-Siberian Tiger
-Skunks 
+Tiger
+Skunk 
 Slender Loris
 Sloth
 Sloth bear
-Slugs 
-Snails 
+Slug 
+Snail 
 Snake 
 Snow Hare 
 Snow Fox 
 Snow Leopard 
-Somali Wild Ass 
 Sponge 
 Spectacled Bear 
 Squid
@@ -317,15 +298,12 @@ Stork
 Swan
 Swordfish
 Tapir
-Tasmanian Devil
 Tiger 
 Tadpole 
 Tamarin 
 Tapeworm 
 Tarantula 
 Tarpan 
-Tazmanian devil 
-Tazmanian tiger 
 Terrapin 
 Tick
 Tiger shark
@@ -351,13 +329,13 @@ Warbler
 Warthog 
 Wasp 
 Water Buffalo 
-Water Dragons
+Water Dragon
 Wallaby 
 Whale 
 Whale Shark 
 White Rhino
 Whippet 
-White tailed dear 
+White-Tailed Deer 
 Whooper 
 Whooping Crane 
 Weasel 
@@ -374,14 +352,13 @@ Wildcat
 Wildebeest
 Xantus 
 Xenop 
-Xiphactinus Audax 
-Ray fish 
+Xiphactinus 
+Ray Fish 
 Yak 
-Yellow Bellied Marmot 
-Yellow belly sapsucker 
-Yellow finned tuna 
+Yellow-Bellied Marmot 
+Yellow-Belly Sapsucker 
+Yellow-Finned Tuna 
 Yeti 
-Yorkshire terrier 
 Zander 
 Zebra 
 Zebra Finch 

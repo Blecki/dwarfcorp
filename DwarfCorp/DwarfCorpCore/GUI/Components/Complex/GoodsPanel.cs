@@ -474,11 +474,6 @@ namespace DwarfCorp
             if (handler != null) handler(e);
         }
 
-        public List<GItem> GetResources(float priceMultiplier)
-        {
-            return (from r in ResourceLibrary.Resources.Values
-                    select new GItem(r, r.Image, r.Tint, 0, 1000, 1000, r.MoneyValue * priceMultiplier)).ToList();
-        }
 
         public List<GItem> GetResources(List<ResourceAmount> resources)
         {
@@ -525,6 +520,7 @@ namespace DwarfCorp
                 {
                     ItemSelector.Column.Image,
                     ItemSelector.Column.Name,
+                    ItemSelector.Column.Amount,
                     ItemSelector.Column.PricePerItem,
                     ItemSelector.Column.ArrowRight
                 },
@@ -534,7 +530,7 @@ namespace DwarfCorp
 
             Layout.SetComponentPosition(TheirGoods, 0, 0, 2, 9);
 
-            TheirGoods.Items.AddRange(GetResources(1.0f));
+            TheirGoods.Items.AddRange(GetResources(OtherFaction.Race.GenerateResources()));
             TheirGoods.ReCreateItems();
 
 
@@ -582,12 +578,12 @@ namespace DwarfCorp
 
         void MyGoods_OnItemAdded(GItem item, int amount)
         {
-            GoodsReceived.Add(new ResourceAmount(ResourceLibrary.GetResourceByName(item.Name), amount));
+            GoodsReceived.Add(new ResourceAmount(item.ResourceType, amount));
         }
 
         void TheirGoods_OnItemAdded(GItem item, int amount)
         {
-            GoodsSent.Add(new ResourceAmount(ResourceLibrary.GetResourceByName(item.Name), amount));
+            GoodsSent.Add(new ResourceAmount(item.ResourceType, amount));
         }
 
         public TradePanel(DwarfGUI gui, GUIComponent parent, Faction faction, Faction otherFaction)

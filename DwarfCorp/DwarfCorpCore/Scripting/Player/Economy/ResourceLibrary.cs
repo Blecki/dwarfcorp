@@ -93,7 +93,12 @@ namespace DwarfCorp
         {
             InitializeStatics();
         }
-       
+
+
+        public static List<Resource> GetResourcesByTag(Resource.ResourceTags tag)
+        {
+            return Resources.Values.Where(resource => resource.Tags.Contains(tag)).ToList();
+        }
 
         public static Resource GetResourceByName(string name)
         {

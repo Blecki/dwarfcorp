@@ -77,7 +77,6 @@ namespace DwarfCorp
         }
 
         public Rectangle GlobalBounds { get; set; }
-
         public DwarfGUI GUI { get; set; }
         public bool IsMouseOver { get; set; }
         public bool IsLeftPressed { get; set; }

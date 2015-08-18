@@ -165,7 +165,11 @@ namespace DwarfCorp
             Items = new List<GItem>();
             FilteredItems = new List<GItem>();
             GridLayout layout = new GridLayout(GUI, this, 10, 1);
-            SearchBox = new LineEdit(GUI, layout, "");
+            SearchBox = new LineEdit(GUI, layout, "")
+            {
+                Prompt = "Search...",
+                ToolTip = "Type to search for keywords"
+            };
             layout.SetComponentPosition(SearchBox, 0, 9, 1, 1);
             SearchBox.OnTextModified += SearchBox_OnTextModified;
             ScrollArea = new ScrollView(GUI, layout)
@@ -356,7 +360,8 @@ namespace DwarfCorp
                 case Column.Name:
                     Label label = new Label(GUI, Layout, item.Name, GUI.SmallFont)
                     {
-                        ToolTip = tooltip
+                        ToolTip = tooltip,
+                        Truncate = true
                     };
                                             
                     Layout.SetComponentPosition(label, column, row, 1, 1);

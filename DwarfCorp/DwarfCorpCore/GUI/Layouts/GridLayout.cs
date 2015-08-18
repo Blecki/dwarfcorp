@@ -179,11 +179,62 @@ namespace DwarfCorp
             base.Update(time);
         }
 
+        public Rectangle GetGlobalRectOfRow(int row)
+        {
+            List<Rectangle> rects = new List<Rectangle>();
+            int w = LocalBounds.Width - EdgePadding;
+            int h = LocalBounds.Height - EdgePadding;
+            int cellX = w / Cols;
+            int cellY = h / Rows;
+
+            foreach (KeyValuePair<Rectangle, GUIComponent> comp in ComponentPositions)
+            {
+                if (comp.Value == null)
+                {
+                    continue;
+                }
+
+                if (comp.Key.Y != row) continue;
+
+                if (HasOffset(comp.Value))
+                {
+                    Point offset = GetOffset(comp.Value);
+                    rects.Add(new Rectangle(
+                        comp.Key.X * cellX + offset.X,
+                        comp.Key.Y * cellY + offset.Y,
+                        comp.Key.Width * cellX,
+                        comp.Key.Height * cellY));
+                }
+                else
+                {
+                    int lw = comp.Key.Width * cellX - 10;
+                    int lh = comp.Key.Height * cellY - 10;
+                    int lx = comp.Key.X * cellX + EdgePadding;
+                    int ly = comp.Key.Y * cellY + EdgePadding;
+                    if (lx + lw > w)
+                    {
+                        lw = (w - lx);
+                    }
+
+                    if (ly + lh > h)
+                    {
+                        lh = (h - ly);
+                    }
+                    rects.Add(new Rectangle(lx, ly, lw, lh));
+                }
+            }
+
+            Rectangle bound = MathFunctions.GetBoundingRectangle(rects);
+            bound.X += GlobalBounds.X;
+            bound.Y += GlobalBounds.Y;
+            return bound;
+        }
+
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
             if(RowHighlight >= 0)
             {
-                Rectangle rect = new Rectangle(GlobalBounds.X, GlobalBounds.Y + RowHighlight * (GlobalBounds.Height / Rows), GlobalBounds.Width, (GlobalBounds.Height / Rows));
+                Rectangle rect = GetGlobalRectOfRow(RowHighlight);
                 Drawer2D.FillRect(batch, rect, HighlightColor);
             }
 

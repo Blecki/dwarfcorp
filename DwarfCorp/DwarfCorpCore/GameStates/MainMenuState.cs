@@ -30,6 +30,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -151,7 +153,14 @@ namespace DwarfCorp.GameStates
                     StateManager.PushState("PlayState");
                     PlayState.WorldSize = new Point3(8, 1, 8);
                     GUI.MouseMode = GUISkin.MousePointer.Wait;
-            
+                    PlayState.Natives = new List<Faction>();
+                    FactionLibrary library = new FactionLibrary();
+                    library.Initialize(null, "fake", "fake", null, Color.Blue);
+                    for (int i = 0; i < 10; i++)
+                    {
+                        PlayState.Natives.Add(library.GenerateFaction(i, 10));
+                    }
+
                     IsGameRunning = true;
                 }
                     break;
