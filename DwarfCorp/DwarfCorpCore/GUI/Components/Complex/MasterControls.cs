@@ -114,40 +114,6 @@ namespace DwarfCorp
             return button;
         }
 
-        /*
-        private void buildBox_OnSelectionModified(string arg)
-        {
-            if(arg.Contains("Wall"))
-            {
-                string voxType = BuildPanel.CurrentWallType;
-                if (string.IsNullOrEmpty(voxType)) return;
-
-                Master.Faction.WallBuilder.CurrentVoxelType = VoxelLibrary.GetVoxelType(voxType);
-                Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                Master.Faction.RoomBuilder.CurrentRoomData = null;
-                Master.Faction.CraftBuilder.IsEnabled = false;
-            }
-            else if (arg.Contains("Craft"))
-            {
-                CraftLibrary.CraftItemType itemType = BuildPanel.CurrentCraftType;
-                Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                Master.Faction.RoomBuilder.CurrentRoomData = null;
-                Master.Faction.WallBuilder.CurrentVoxelType = null;
-                Master.Faction.CraftBuilder.CurrentCraftType = itemType;
-                Master.Faction.CraftBuilder.IsEnabled = true;
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(arg)) return;
-
-                Master.Faction.RoomBuilder.CurrentRoomData = RoomLibrary.GetData(arg);
-                Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-                Master.Faction.WallBuilder.CurrentVoxelType = null;
-                Master.Faction.CraftBuilder.IsEnabled = false;
-            }
-        }
-         */
-
         public void ButtonClicked(Button sender)
         {
             sender.IsToggled = true;
@@ -171,6 +137,23 @@ namespace DwarfCorp
                     pair.Value.IsToggled = false;
                 }
             }
+        }
+
+        public override void Render(DwarfTime time, SpriteBatch batch)
+        {
+            Rectangle rect = GlobalBounds;
+            rect.Inflate(24, 24);
+            GUI.Skin.RenderTray(rect, batch);
+
+            foreach (KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons)
+            {
+                if (!pair.Value.IsVisible)
+                {
+                    GUI.Skin.RenderButtonFrame(pair.Value.GetImageBounds(), batch);
+                }
+            }
+
+            base.Render(time, batch);
         }
 
         public bool SelectedUnitsHaveCapability(GameMaster.ToolMode tool)

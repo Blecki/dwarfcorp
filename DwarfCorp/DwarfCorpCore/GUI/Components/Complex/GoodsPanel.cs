@@ -542,7 +542,7 @@ namespace DwarfCorp
                     ItemSelector.Column.Image,
                     ItemSelector.Column.Name,
                     ItemSelector.Column.Amount,
-                    ItemSelector.Column.TotalPrice
+                    ItemSelector.Column.PricePerItem
                 },
                 NoItemsMessage = "No items selected",
                 ToolTip = "Click items to offer them for trade.",

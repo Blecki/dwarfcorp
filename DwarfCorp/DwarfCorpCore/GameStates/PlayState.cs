@@ -785,8 +785,8 @@ namespace DwarfCorp.GameStates
             GUI.RootComponent.AddChild(Master.Debugger.MainPanel);
             layout.AddChild(Master.ToolBar);
             Master.ToolBar.Parent = layout;
-            Master.ToolBar.LocalBounds = new Rectangle(0, 0, 450, 68);
-            Master.ToolBar.TriggerMouseOver = false;
+            Master.ToolBar.LocalBounds = new Rectangle(0, 0, 432, 48);
+
             layout.Add(Master.ToolBar, AlignLayout.Alignment.Right, AlignLayout.Alignment.Bottom, Vector2.Zero);
             //layout.SetComponentPosition(Master.ToolBar, 7, 10, 4, 1);
 
