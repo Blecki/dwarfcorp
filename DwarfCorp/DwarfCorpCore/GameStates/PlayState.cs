@@ -785,8 +785,8 @@ namespace DwarfCorp.GameStates
             GUI.RootComponent.AddChild(Master.Debugger.MainPanel);
             layout.AddChild(Master.ToolBar);
             Master.ToolBar.Parent = layout;
-            Master.ToolBar.LocalBounds = new Rectangle(0, 0, 450, 68);
-            Master.ToolBar.TriggerMouseOver = false;
+            Master.ToolBar.LocalBounds = new Rectangle(0, 0, 432, 48);
+
             layout.Add(Master.ToolBar, AlignLayout.Alignment.Right, AlignLayout.Alignment.Bottom, Vector2.Zero);
             //layout.SetComponentPosition(Master.ToolBar, 7, 10, 4, 1);
 
@@ -910,9 +910,10 @@ namespace DwarfCorp.GameStates
             //layout.SetComponentOffset(MiniMap,  new Point(0, rect.Height - 250));
 
 
-            GUIComponent topRightTray = new GUIComponent(GUI, layout)
+            Tray topRightTray = new Tray(GUI, layout)
             {
-                LocalBounds = new Rectangle(0, 0, 132, 68)
+                LocalBounds = new Rectangle(0, 0, 132, 68),
+                TrayPosition = Tray.Position.TopRight
             };
 
             Button moneyButton = new Button(GUI, topRightTray, "Economy", GUI.SmallFont, Button.ButtonMode.ImageButton, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 2, 1))
@@ -922,7 +923,7 @@ namespace DwarfCorp.GameStates
                 DontMakeBigger = true,
                 DrawFrame = true,
                 TextColor = Color.White,
-                LocalBounds = new Rectangle(0, 4, 32, 32)
+                LocalBounds = new Rectangle(8, 6, 32, 32)
             };
 
 
@@ -936,7 +937,7 @@ namespace DwarfCorp.GameStates
                 DontMakeBigger = true,
                 DrawFrame = true,
                 TextColor = Color.White,
-                LocalBounds = new Rectangle(64, 4, 32, 32)
+                LocalBounds = new Rectangle(64 + 8, 6, 32, 32)
             };
 
             settingsButton.OnClicked += OpenPauseMenu;

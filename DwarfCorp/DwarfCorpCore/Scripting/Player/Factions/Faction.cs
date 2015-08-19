@@ -92,6 +92,39 @@ namespace DwarfCorp
                 new ResourceAmount(ResourceLibrary.ResourceType.Coal, (int) MathFunctions.Rand(1, 32))
             };
 
+            int numMeats = (int)MathFunctions.Rand(0, 20);
+
+            for (int i = 0; i < numMeats; i++)
+            {
+                int numOfThisMeat = (int)MathFunctions.Rand(1, 32);
+                string animal = TextGenerator.GenerateRandom("$animal");
+
+                bool ismeat = MathFunctions.RandEvent(0.5f);
+
+
+                if (ismeat)
+                {
+                    Resource meat = new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Meat])
+                    {
+                        Type = animal + " Meat",
+                        ShortName = animal + " Meat"
+                    };
+                    ResourceLibrary.Add(meat);
+
+                    toReturn.Add(new ResourceAmount(meat, numOfThisMeat));
+                }
+                else
+                {
+                    Resource meat = new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Bones])
+                    {
+                        Type = animal + " Bone",
+                        ShortName = animal + " Bone"
+                    };
+                    ResourceLibrary.Add(meat);
+
+                    toReturn.Add(new ResourceAmount(meat, numOfThisMeat));
+                }
+            }
 
             int numGemTypes = (int)MathFunctions.Rand(0, 3);
             List<Resource> gemTypes = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.Gem);
@@ -122,40 +155,6 @@ namespace DwarfCorp
                 toReturn.Add(new ResourceAmount(resource));
             }
 
-
-            int numMeats = (int) MathFunctions.Rand(0, 20);
-            
-            for (int i = 0; i < numMeats; i++)
-            {
-                int numOfThisMeat = (int) MathFunctions.Rand(1, 32);
-                string animal = TextGenerator.GenerateRandom("$animal");
-
-                bool ismeat = MathFunctions.RandEvent(0.5f);
-
-
-                if (ismeat)
-                {
-                    Resource meat = new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Meat])
-                    {
-                        Type = animal + " Meat",
-                        ShortName = animal + " Meat"
-                    };
-                    ResourceLibrary.Add(meat);
-
-                    toReturn.Add(new ResourceAmount(meat, numOfThisMeat));
-                }
-                else
-                {
-                    Resource meat = new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Bones])
-                    {
-                        Type = animal + " Bone",
-                        ShortName = animal + " Bone"
-                    };
-                    ResourceLibrary.Add(meat);
-
-                    toReturn.Add(new ResourceAmount(meat, numOfThisMeat));
-                }
-            }
 
             return toReturn;
         }

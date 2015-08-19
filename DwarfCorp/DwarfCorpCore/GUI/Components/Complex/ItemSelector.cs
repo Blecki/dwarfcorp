@@ -180,7 +180,7 @@ namespace DwarfCorp
 
             layout.UpdateSizes();
             layout.SetComponentPosition(ScrollArea, 0, 0, 1, 9);
-            Layout = new GridLayout(gui, ScrollArea, 14, 5);
+            Layout = new GridLayout(gui, ScrollArea, 14, Columns.Count);
             OnItemChanged += ItemSelector_OnItemChanged;
             OnItemRemoved += ItemSelector_OnItemRemoved;
             OnItemAdded += ItemSelector_OnItemAdded;
@@ -485,8 +485,7 @@ namespace DwarfCorp
 
             int rows = Math.Max(FilteredItems.Count, 6);
             ScrollArea.RemoveChild(Layout);
-            ScrollArea.ResetScroll();
-            Layout = new GridLayout(GUI, ScrollArea, rows + 1, 6)
+            Layout = new GridLayout(GUI, ScrollArea, rows + 1, Columns.Count)
             {
                 LocalBounds = new Rectangle(0, 0, Math.Max(ScrollArea.LocalBounds.Width, 512), rows * 64),
                 WidthSizeMode = SizeMode.Fixed,

@@ -49,7 +49,7 @@ namespace DwarfCorp
     /// This is the GUI component responsible for deciding which tool
     /// the player is using.
     /// </summary>
-    public class MasterControls : GUIComponent
+    public class MasterControls : Tray
     {
         public GameMaster Master { get; set; }
         public Dictionary<GameMaster.ToolMode, Button> ToolButtons { get; set; }
@@ -60,6 +60,7 @@ namespace DwarfCorp
         public MasterControls(DwarfGUI gui, GUIComponent parent, GameMaster master, Texture2D icons, GraphicsDevice device, SpriteFont font) :
             base(gui, parent)
         {
+            TrayPosition = Position.BottomRight;
             Master = master;
             Icons = icons;
             IconSize = 32;
@@ -114,40 +115,6 @@ namespace DwarfCorp
             return button;
         }
 
-        /*
-        private void buildBox_OnSelectionModified(string arg)
-        {
-            if(arg.Contains("Wall"))
-            {
-                string voxType = BuildPanel.CurrentWallType;
-                if (string.IsNullOrEmpty(voxType)) return;
-
-                Master.Faction.WallBuilder.CurrentVoxelType = VoxelLibrary.GetVoxelType(voxType);
-                Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                Master.Faction.RoomBuilder.CurrentRoomData = null;
-                Master.Faction.CraftBuilder.IsEnabled = false;
-            }
-            else if (arg.Contains("Craft"))
-            {
-                CraftLibrary.CraftItemType itemType = BuildPanel.CurrentCraftType;
-                Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                Master.Faction.RoomBuilder.CurrentRoomData = null;
-                Master.Faction.WallBuilder.CurrentVoxelType = null;
-                Master.Faction.CraftBuilder.CurrentCraftType = itemType;
-                Master.Faction.CraftBuilder.IsEnabled = true;
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(arg)) return;
-
-                Master.Faction.RoomBuilder.CurrentRoomData = RoomLibrary.GetData(arg);
-                Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-                Master.Faction.WallBuilder.CurrentVoxelType = null;
-                Master.Faction.CraftBuilder.IsEnabled = false;
-            }
-        }
-         */
-
         public void ButtonClicked(Button sender)
         {
             sender.IsToggled = true;
@@ -171,6 +138,19 @@ namespace DwarfCorp
                     pair.Value.IsToggled = false;
                 }
             }
+        }
+
+        public override void Render(DwarfTime time, SpriteBatch batch)
+        {
+            base.Render(time, batch);
+            foreach (KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons)
+            {
+                if (!pair.Value.IsVisible)
+                {
+                    GUI.Skin.RenderButtonFrame(pair.Value.GetImageBounds(), batch);
+                }
+            }
+
         }
 
         public bool SelectedUnitsHaveCapability(GameMaster.ToolMode tool)

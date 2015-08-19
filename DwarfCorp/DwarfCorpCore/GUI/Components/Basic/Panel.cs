@@ -89,4 +89,32 @@ namespace DwarfCorp
         }
     }
 
+    public class Tray : GUIComponent
+    {
+        public enum Position
+        {
+            BottomLeft,
+            BottomRight,
+            TopLeft,
+            TopRight
+        }
+
+        public Position TrayPosition { get; set; }
+
+
+        public Tray(DwarfGUI gui, GUIComponent parent) :
+            base(gui, parent)
+        {
+            TrayPosition = Position.BottomRight;
+        }
+
+        public override void Render(DwarfTime time, SpriteBatch batch)
+        {
+            Rectangle rect = GlobalBounds;
+            rect.Inflate(24, 24);
+            GUI.Skin.RenderTray(TrayPosition, rect, batch);
+            base.Render(time, batch);
+        }
+    }
+
 }

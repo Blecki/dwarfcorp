@@ -175,7 +175,17 @@ namespace DwarfCorp
             SpeechBubbleLeft,
             SpeechBubbleRight,
             SpeechBubbleUpper,
-            SpeechBubbleLower
+            SpeechBubbleLower,
+
+            TrayUpperLeft,
+            TrayUpperRight,
+            TrayBottomLeft,
+            TrayBottomRight,
+            TrayCenterTop,
+            TrayCenterLeft,
+            TrayBackground,
+            TrayCenterBottom,
+            TrayCenterRight
         }
 
         public Timer MouseTimer { get; set; }
@@ -351,6 +361,16 @@ namespace DwarfCorp
             Frames[Tile.SmallEx] = new Point(14, 0);
 
             Frames[Tile.ButtonFrame] = new Point(9, 4);
+            
+            Frames[Tile.TrayUpperLeft] = new Point(11, 3);
+            Frames[Tile.TrayUpperRight] = new Point(12, 3);
+            Frames[Tile.TrayBottomLeft] = new Point(11, 4);
+            Frames[Tile.TrayBottomRight] = new Point(12, 4);
+            Frames[Tile.TrayCenterTop] = new Point(11, 5);
+            Frames[Tile.TrayCenterLeft] = new Point(13, 3);
+            Frames[Tile.TrayCenterBottom] = new Point(13, 5);
+            Frames[Tile.TrayCenterRight] = new Point(15, 3);
+            Frames[Tile.TrayBackground] = new Point(13, 2);
 
             MouseFrames[MousePointer.Pointer] = new Point(0, 0);
             MouseFrames[MousePointer.Dig] = new Point(1, 0);
@@ -381,6 +401,129 @@ namespace DwarfCorp
         public void RenderTile(Rectangle screenRect, Tile tile, SpriteBatch batch, Color tint)
         {
             batch.Draw(Texture, screenRect, GetSpecialFrame(tile).SourceRect, tint);
+        }
+
+        public void RenderTray(Tray.Position trayPosition, Rectangle rectbounds, SpriteBatch spriteBatch)
+        {
+            Rectangle rect = rectbounds;
+            int newHeight = TileHeight*(rect.Height/TileHeight);
+            rect.Height = newHeight;
+            int xPos = 0;
+            int yPos = 0;
+            int xSize = rect.Width;
+            int ySize = rect.Height;
+            switch (trayPosition)
+            {
+                case Tray.Position.BottomLeft:
+                    xPos = 0;
+                    yPos = -TileHeight/2;
+                    xSize = rect.Width;
+                    ySize = rect.Height;
+                    break;
+                case Tray.Position.BottomRight:
+                    xPos = TileWidth / 2;
+                    yPos = TileHeight / 2;
+                    xSize = rect.Width;
+                    ySize = rect.Height;
+                    break;
+                case Tray.Position.TopLeft:
+                    xPos = -TileWidth / 2;
+                    yPos = -TileHeight / 2;
+                    xSize = rect.Width;
+                    ySize = rect.Height - TileHeight;
+                    break;
+                case Tray.Position.TopRight:
+                    xPos = TileWidth / 2;
+                    yPos = -TileHeight / 2;
+                    xSize = rect.Width;
+                    ySize = rect.Height - TileHeight;
+                    break;
+
+            }
+
+            for (int x = xPos; x < xSize; x += TileWidth)
+            {
+                for (int y = yPos; y < ySize; y += TileHeight)
+                {
+                    spriteBatch.Draw(Texture, new Rectangle(x + rect.X, y + rect.Y, TileWidth, TileHeight), GetSourceRect(Tile.TrayBackground), Color.White);
+                }
+            }
+
+
+            if (trayPosition == Tray.Position.BottomRight)
+            {
+                spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y, TileWidth, TileHeight),
+                    GetSourceRect(Tile.TrayUpperLeft), Color.White);
+            }
+            else if (trayPosition == Tray.Position.BottomLeft)
+            {
+                spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width - TileWidth, rect.Y, TileWidth, TileHeight), GetSourceRect(Tile.TrayUpperRight), Color.White);
+            }
+            else if (trayPosition == Tray.Position.TopLeft)
+            {
+                spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width - TileWidth, rect.Y + rect.Height - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.TrayBottomRight), Color.White);
+            }
+            else if (trayPosition == Tray.Position.TopRight)
+            {
+                spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y + rect.Height - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.TrayBottomLeft), Color.White);
+            }
+
+
+            if (trayPosition == Tray.Position.BottomRight || trayPosition == Tray.Position.TopRight)
+            {
+                Rectangle leftBounds = GetSourceRect(Tile.TrayCenterLeft);
+                leftBounds.Height *= 2;
+                int yStart = trayPosition == Tray.Position.BottomRight ? TileHeight : 0;
+                int yEnd = trayPosition == Tray.Position.BottomRight ? rect.Height : rect.Height - TileHeight * 2;
+                for (int y = yStart; y < yEnd; y += TileHeight)
+                {
+                    spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y + y, leftBounds.Width, leftBounds.Height),
+                        leftBounds, Color.White);
+                }
+            }
+
+
+            if (trayPosition == Tray.Position.BottomRight || trayPosition == Tray.Position.BottomLeft)
+            {
+                Rectangle topBounds = GetSourceRect(Tile.TrayCenterTop);
+                topBounds.Width *= 2;
+                int xStart = trayPosition == Tray.Position.BottomRight ? TileWidth : 0;
+                int xEnd = trayPosition == Tray.Position.BottomRight ? rect.Width : rect.Width - TileWidth;
+                for (int x = xStart; x < xEnd; x += TileWidth)
+                {
+                    spriteBatch.Draw(Texture, new Rectangle(rect.X + x, rect.Y, topBounds.Width, topBounds.Height),
+                        topBounds, Color.White);
+                }
+            }
+
+
+            if (trayPosition == Tray.Position.BottomLeft || trayPosition == Tray.Position.TopLeft)
+            {
+                Rectangle rightBounds = GetSourceRect(Tile.TrayCenterRight);
+                rightBounds.Height *= 2;
+                int yStart = trayPosition == Tray.Position.BottomLeft ? TileHeight : 0;
+                int yEnd = trayPosition == Tray.Position.BottomLeft ? rect.Height : rect.Height - TileHeight;
+                for (int y = yStart; y < yEnd; y += TileHeight)
+                {
+                    spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width - TileWidth, rect.Y + y, rightBounds.Width, rightBounds.Height),
+                        rightBounds, Color.White);
+                }
+            }
+
+
+            if (trayPosition == Tray.Position.TopLeft || trayPosition == Tray.Position.TopRight)
+            {
+                Rectangle bottomBounds = GetSourceRect(Tile.TrayCenterBottom);
+                bottomBounds.Width *= 2;
+                int xStart = trayPosition == Tray.Position.TopRight ? TileWidth : 0;
+                int xEnd = trayPosition == Tray.Position.TopRight ? rect.Width : rect.Width - TileWidth;
+                for (int x = xStart; x < xEnd; x += TileWidth)
+                {
+                    spriteBatch.Draw(Texture, new Rectangle(rect.X + x, rect.Y + rect.Height - TileHeight, bottomBounds.Width, bottomBounds.Height),
+                        bottomBounds, Color.White);
+                }
+            }
+
         }
 
         public void RenderPanel(Rectangle rectbounds, SpriteBatch spriteBatch)
