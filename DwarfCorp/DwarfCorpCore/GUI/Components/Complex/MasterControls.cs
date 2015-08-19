@@ -49,7 +49,7 @@ namespace DwarfCorp
     /// This is the GUI component responsible for deciding which tool
     /// the player is using.
     /// </summary>
-    public class MasterControls : GUIComponent
+    public class MasterControls : Tray
     {
         public GameMaster Master { get; set; }
         public Dictionary<GameMaster.ToolMode, Button> ToolButtons { get; set; }
@@ -60,6 +60,7 @@ namespace DwarfCorp
         public MasterControls(DwarfGUI gui, GUIComponent parent, GameMaster master, Texture2D icons, GraphicsDevice device, SpriteFont font) :
             base(gui, parent)
         {
+            TrayPosition = Position.BottomRight;
             Master = master;
             Icons = icons;
             IconSize = 32;
@@ -141,10 +142,7 @@ namespace DwarfCorp
 
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
-            Rectangle rect = GlobalBounds;
-            rect.Inflate(24, 24);
-            GUI.Skin.RenderTray(rect, batch);
-
+            base.Render(time, batch);
             foreach (KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons)
             {
                 if (!pair.Value.IsVisible)
@@ -153,7 +151,6 @@ namespace DwarfCorp
                 }
             }
 
-            base.Render(time, batch);
         }
 
         public bool SelectedUnitsHaveCapability(GameMaster.ToolMode tool)
