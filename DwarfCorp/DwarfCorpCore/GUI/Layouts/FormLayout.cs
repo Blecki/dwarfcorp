@@ -45,7 +45,7 @@ namespace DwarfCorp
     /// </summary>
     public class FormLayout : Layout
     {
-        public Dictionary<string, FormEntry> Items { get; set; }
+        public List<FormEntry> Items { get; set; }
 
         public int NumColumns { get; set; }
 
@@ -69,34 +69,24 @@ namespace DwarfCorp
             EdgePadding = 0;
             RowHeight = 32;
             ColumnWidth = 400;
-            Items = new Dictionary<string, FormEntry>();
+            Items = new List<FormEntry>();
         }
 
         public void AddItem(string label, GUIComponent item)
         {
-            Items[label] = new FormEntry
+            Items.Add(new FormEntry
             {
                 Component = item,
                 Label = new Label(GUI, this, label, LabelFont)
                 {
                     Alignment = Drawer2D.Alignment.Right
                 }
-            };
+            });
 
             UpdateSizes();
         }
 
-        public void RemoveItem(string label)
-        {
-            Items.Remove(label);
-            UpdateSizes();
-        }
 
-
-        public GUIComponent GetItem(string label)
-        {
-            return Items[label].Component;
-        }
 
 
         public override void UpdateSizes()
@@ -116,12 +106,12 @@ namespace DwarfCorp
             }
 
 
-            foreach (KeyValuePair<string, FormEntry> item in Items)
+            foreach (FormEntry item in Items)
             {
-                item.Value.Label.LocalBounds
+                item.Label.LocalBounds
                     = new Rectangle(EdgePadding + c * ColumnWidth, EdgePadding + r * RowHeight, ColumnWidth / 2, RowHeight);
 
-                item.Value.Component.LocalBounds
+                item.Component.LocalBounds
                     = new Rectangle(EdgePadding + c * ColumnWidth + ColumnWidth / 2, EdgePadding + r * RowHeight, ColumnWidth / 2, RowHeight);
                 r++;
 

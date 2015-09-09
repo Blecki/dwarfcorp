@@ -64,7 +64,6 @@ namespace DwarfCorp
             "+",
             "-",
             "%",
-            "#",
             "_",
             "@",
             "$",
@@ -76,7 +75,7 @@ namespace DwarfCorp
             "\'"
         };
 
-        public static List<List<string> > GetAtoms(string type)
+        public static List<List<string>> GetAtoms(string type)
         {
             string text = "";
             using (var stream = TitleContainer.OpenStream("Content" + ProgramData.DirChar + type))
@@ -125,7 +124,7 @@ namespace DwarfCorp
                         current.Add(word);
                     }
 
-                    
+
                 }
 
                 toReturn.Add(current);
@@ -137,13 +136,13 @@ namespace DwarfCorp
         public static string[] GetDefaultStrings(string type)
         {
             string text = "";
-            using (var stream = TitleContainer.OpenStream("Content" + ProgramData.DirChar + type))  
-            {  
-                using (var reader = new StreamReader(stream))  
-                {  
-                    text = reader.ReadToEnd();  
-                }  
-            }  
+            using (var stream = TitleContainer.OpenStream("Content" + ProgramData.DirChar + type))
+            {
+                using (var reader = new StreamReader(stream))
+                {
+                    text = reader.ReadToEnd();
+                }
+            }
             return text.Split('\n', '\r').Where(a => a != "" && a != " " && a != "\r" && a != "\n").ToArray();
         }
 
@@ -167,7 +166,8 @@ namespace DwarfCorp
 
                 if (match.Success)
                 {
-                    AddAtom(new TextAtom("$" + match.Groups[1].Value, GetDefaultStrings("Text" + ProgramData.DirChar + info.Name)));
+                    AddAtom(new TextAtom("$" + match.Groups[1].Value,
+                        GetDefaultStrings("Text" + ProgramData.DirChar + info.Name)));
                 }
             }
         }
@@ -208,7 +208,35 @@ namespace DwarfCorp
             return GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
         }
 
+        public static string GenerateRandom(List<string> arguments, List<List<string>> templates)
+        {
+            return GenerateRandom(arguments, Datastructures.SelectRandom(templates).ToArray());
+        }
+
         public static string GenerateRandom(params string[] atoms)
+        {
+            return GenerateRandom(new List<string>(), atoms);
+        }
+
+
+        public static int GetArgument(string literal)
+        {
+            if (Regex.Match(literal, @"#(\d+)").Success)
+            {
+                try
+                {
+                    return int.Parse(Regex.Match(literal, @"#(\d+)").Groups[1].Value);
+                }
+                catch (Exception exception)
+                {
+                    return -1;
+                }
+            }
+
+            return -1;
+        }
+
+        public static string GenerateRandom(List<string> arguments, params string[] atoms)
         {
             if(!staticsInitialized)
             {
@@ -217,7 +245,12 @@ namespace DwarfCorp
             string toReturn = "";
             foreach(string s in atoms)
             {
-                if(Literals.Contains(s))
+                int argument = GetArgument(s) - 1;
+                if (argument >= 0 && argument < arguments.Count)
+                {
+                    toReturn += Regex.Replace(s, @"#\d+", arguments[argument]);
+                }
+                else if(Literals.Contains(s))
                 {
                     toReturn += s;
                 }
@@ -230,8 +263,8 @@ namespace DwarfCorp
                     string match = Regex.Match(s, @"\${(.*?)}").Groups[1].Value;
                     string[] splits = match.Split(',');
 
-                    if(splits.Length > 0)
-                        toReturn += splits[PlayState.Random.Next(splits.Length)];
+                    if (splits.Length > 0)
+                        toReturn += Datastructures.SelectRandom(splits);
                 }
                 else
                 {

@@ -49,7 +49,7 @@ namespace DwarfCorp
     public class BuildTool : PlayerTool
     {
         public BuildMenu BuildPanel { get; set; }
-
+        public BuildMenu.BuildType BuildType { get; set; }
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
             Player.Faction.RoomBuilder.VoxelsSelected(voxels, button);
@@ -63,9 +63,11 @@ namespace DwarfCorp
             {
                 BuildPanel.Destroy();
             }
-            BuildPanel = new BuildMenu(PlayState.GUI, PlayState.GUI.RootComponent, Player)
+            int w = 600;
+            int h = 350;
+            BuildPanel = new BuildMenu(PlayState.GUI, PlayState.GUI.RootComponent, Player, BuildType)
             {
-                LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width - 750, PlayState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350),
+                LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width/2 - w/2, PlayState.Game.GraphicsDevice.Viewport.Height/2 - h/2, w, h),
                 IsVisible = true,
                 DrawOrder = 2
             };

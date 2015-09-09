@@ -144,6 +144,7 @@ namespace DwarfCorp
                 public static string names_goblin = ProgramData.CreatePath("Text", "Templates", "names_goblin.txt");
                 public static string names_elf = ProgramData.CreatePath("Text", "Templates", "names_elf.txt");
                 public static string names_undead = ProgramData.CreatePath("Text", "Templates", "names_undead.txt");
+                public static string food = ProgramData.CreatePath("Text", "Templates", "foods.txt");
             }
         }
 

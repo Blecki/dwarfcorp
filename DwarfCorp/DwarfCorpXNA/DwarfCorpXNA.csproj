@@ -620,6 +620,9 @@
     <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\EmployeeDisplay.cs">
       <Link>GUI\Components\Complex\EmployeeDisplay.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\FarmingPanel.cs">
+      <Link>GUI\Components\Complex\FarmingPanel.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\GoodsPanel.cs">
       <Link>GUI\Components\Complex\GoodsPanel.cs</Link>
     </Compile>
@@ -1070,6 +1073,9 @@
     <Compile Include="..\DwarfCorpCore\Scripting\Player\Tools\DwarfSelectorTool.cs">
       <Link>Scripting\Player\Tools\DwarfSelectorTool.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\Player\Tools\FarmTool.cs">
+      <Link>Scripting\Player\Tools\FarmTool.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\Player\Tools\GatherTool.cs">
       <Link>Scripting\Player\Tools\GatherTool.cs</Link>
     </Compile>
@@ -1111,6 +1117,9 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\Rooms\RoomTypes\CommonRoom.cs">
       <Link>Scripting\Rooms\RoomTypes\CommonRoom.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\Rooms\RoomTypes\Kitchen.cs">
+      <Link>Scripting\Rooms\RoomTypes\Kitchen.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\Rooms\RoomTypes\LibraryRoom.cs">
       <Link>Scripting\Rooms\RoomTypes\LibraryRoom.cs</Link>

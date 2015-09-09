@@ -149,6 +149,58 @@ namespace DwarfCorp
                         ResourceCreated = "Gem-set Trinket"
                     }
                 },
+                {
+                    "Meal",
+                    new CraftItem()
+                    {
+                        Name = "Meal",
+                        Description = "Take raw food and cook something",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.RawFood, 1),
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.RawFood, 1),
+                        },
+                        Image = new NamedImageFrame(ContentPaths.Entities.Resources.resources, 32, 5, 2),
+                        BaseCraftTime = 15,
+                        Type = CraftItem.CraftType.Resource,
+                        ResourceCreated = "Meal",
+                        CraftLocation = "Cutting Board"
+                    }
+                },
+                {
+                    "Bread",
+                    new CraftItem()
+                    {
+                        Name = "Bread",
+                        Description = "Turn bakeable food into bread.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Bakeable, 1)
+                        },
+                        Image = new NamedImageFrame(ContentPaths.Entities.Resources.resources, 32, 6, 2),
+                        BaseCraftTime = 15,
+                        Type = CraftItem.CraftType.Resource,
+                        ResourceCreated = "Bread",
+                        CraftLocation = "Stove"
+                    }
+                },
+                {
+                    "Ale",
+                    new CraftItem()
+                    {
+                        Name = "Ale",
+                        Description = "Turn brewable food into alcohol",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Brewable, 1)
+                        },
+                        Image = new NamedImageFrame(ContentPaths.Entities.Resources.resources, 32, 4, 2),
+                        BaseCraftTime = 15,
+                        Type = CraftItem.CraftType.Resource,
+                        ResourceCreated = "Ale",
+                        CraftLocation = "Barrel"
+                    }
+                }
             };
 
             staticsInitialized = true;

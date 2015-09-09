@@ -60,7 +60,9 @@ namespace DwarfCorp
         Strawman = 1 << 14,
         Wheat = 1 << 15,
         Mushroom = 1 << 16,
-        BookShelf = 1 << 17
+        BookShelf = 1 << 17,
+        KitchenTable = 1 << 18,
+        Stove = 1 << 19
     }
 
     public enum PlacementType

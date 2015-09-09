@@ -1208,6 +1208,20 @@ namespace DwarfCorp.GameStates
             EmitterData puff = ParticleManager.CreatePuffLike("puff", new SpriteSheet(ContentPaths.Particles.puff), Point.Zero, BlendState.AlphaBlend);
             ParticleManager.RegisterEffect("puff", puff);
 
+            EmitterData smoke = ParticleManager.CreatePuffLike("smoke", new SpriteSheet(ContentPaths.Particles.puff), Point.Zero, BlendState.AlphaBlend);
+            smoke.ConstantAccel = Vector3.Up * 2;
+            smoke.GrowthSpeed = -0.1f;
+            smoke.MaxAngular = 0.01f;
+            smoke.MinAngular = -0.01f;
+            smoke.MinScale = 0.2f;
+            smoke.MaxScale = 0.6f;
+            smoke.LinearDamping = 0.9999f;
+            smoke.EmissionRadius = 0.1f;
+            smoke.CollidesWorld = true;
+            smoke.EmissionSpeed = 0.2f;
+            
+            ParticleManager.RegisterEffect("smoke", smoke);
+
             // Bubbles
             EmitterData bubble = ParticleManager.CreatePuffLike("splash2", new SpriteSheet(ContentPaths.Particles.splash2), Point.Zero, BlendState.AlphaBlend);
             bubble.ConstantAccel = new Vector3(0, 5, 0);

@@ -46,13 +46,13 @@ namespace DwarfCorp
 
         public FindAndEatFoodAct()
         {
-            Name = "Find and Eat Food";
+            Name = "Find and Eat Edible";
         }
 
         public FindAndEatFoodAct(CreatureAI agent) :
             base(agent)
         {
-            Name = "Find and Eat Food";
+            Name = "Find and Eat Edible";
         }
 
 

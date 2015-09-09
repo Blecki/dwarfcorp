@@ -205,7 +205,8 @@ namespace DwarfCorp
                 GameMaster.ToolMode.Attack,
                 GameMaster.ToolMode.Gather,
                 GameMaster.ToolMode.Farm,
-                GameMaster.ToolMode.Craft
+                GameMaster.ToolMode.Craft,
+                GameMaster.ToolMode.Cook
             };
         }
 

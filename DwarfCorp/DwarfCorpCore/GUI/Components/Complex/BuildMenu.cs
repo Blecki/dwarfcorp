@@ -56,6 +56,19 @@ namespace DwarfCorp
             public FormLayout SelectedResourcesLayout { get; set; }
             public List<ComboBox> SelectedResourceBoxes { get; set; } 
         }
+
+        [Flags]
+        public enum BuildType
+        {
+            Room = 1,
+            Wall = 2,
+            Item = 4,
+            Craft = 8,
+            Cook = 16
+        }
+
+        public BuildType Build { get; set; }
+
         public BuildTab BuildResourceTab { get; set; }
         public BuildTab BuildRoomTab { get; set; }
         public BuildTab BuildItemTab { get; set; }
@@ -65,33 +78,44 @@ namespace DwarfCorp
         public VoxelType SelectedWall { get; set; }
 
 
-        public BuildMenu(DwarfGUI gui, GUIComponent parent, GameMaster faction) :
+        public BuildMenu(DwarfGUI gui, GUIComponent parent, GameMaster faction, BuildType type) :
             base(gui, parent, WindowButtons.CloseButton)
         {
             GridLayout layout = new GridLayout(GUI, this, 1, 1);
             Master = faction;
             Selector = new TabSelector(GUI, layout, 4);
             layout.SetComponentPosition(Selector, 0, 0, 1, 1);
+            Build = type;
 
-            SetupBuildRoomTab();
-            SetupBuildItemTab();
-            SetupBuildResourceTab();
-            SetupBuildWallTab();
+            if (type.HasFlag(BuildType.Room))
+                SetupBuildRoomTab();
+            
+            if (type.HasFlag(BuildType.Item))
+                SetupBuildItemTab();
+            
+            if (type.HasFlag(BuildType.Craft) || type.HasFlag(BuildType.Cook))
+                SetupBuildResourceTab();
+            
+            if (type.HasFlag(BuildType.Wall))
+                SetupBuildWallTab();
             
 
+            if (Selector.Tabs.Count > 0)
+                Selector.SetTab(Selector.Tabs.First().Key);
 
-            Selector.SetTab("Rooms");
             MinWidth = 512;
             MinHeight = 256;
         }
 
         private void SetupBuildResourceTab()
         {
+            bool hasCook = Build.HasFlag(BuildType.Cook);
+            string name = Build.HasFlag(BuildType.Cook) ? "Food" : "Crafts";
             BuildResourceTab = new BuildTab
             {
-                Tab = Selector.AddTab("Assets")
+                Tab = Selector.AddTab(name)
             };
-            CreateBuildTab(BuildResourceTab);
+            CreateBuildTab(BuildResourceTab, hasCook ? BuildType.Cook : BuildType.Craft);
             BuildResourceTab.BuildButton.OnClicked += BuildResource_OnClicked;
             List<CraftItem> items = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource).ToList();
 
@@ -109,12 +133,23 @@ namespace DwarfCorp
             foreach (CraftItem itemType in items)
             {
                 CraftItem item = itemType;
+                bool isEdible = ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) &&
+                    ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible);
+                if (!hasCook && isEdible)
+                    continue;
+                else if (hasCook && !isEdible)
+                    continue;
+
                 GridLayout itemLayout = new GridLayout(GUI, layout, 1, 3)
                 {
                     WidthSizeMode = SizeMode.Fixed,
                     HeightSizeMode = SizeMode.Fixed,
                     EdgePadding = 0
                 };
+                if (i == 0)
+                {
+                    ResourceTabOnClicked(item);
+                }
 
                 itemLayout.OnClicked += () => ResourceTabOnClicked(item);
                 int i1 = i;
@@ -239,7 +274,7 @@ namespace DwarfCorp
                 Tab = Selector.AddTab("Rooms")
             };
         
-            CreateBuildTab(BuildRoomTab);
+            CreateBuildTab(BuildRoomTab, BuildType.Room);
             BuildRoomTab.BuildButton.OnClicked += BuildRoomButton_OnClicked;
             List<string> roomTypes = RoomLibrary.GetRoomTypes().ToList();
 
@@ -264,6 +299,11 @@ namespace DwarfCorp
                     HeightSizeMode = SizeMode.Fixed,
                     EdgePadding = 0
                 };
+
+                if (i == 0)
+                {
+                    RoomTabOnClicked(room);
+                }
 
                 roomLayout.OnClicked += () => RoomTabOnClicked(room);
                 int i1 = i;
@@ -293,7 +333,8 @@ namespace DwarfCorp
             {
                 Tab = Selector.AddTab("Objects")
             };
-            CreateBuildTab(BuildItemTab);
+            BuildItemTab.SelectedResourceBoxes = new List<ComboBox>();
+            CreateBuildTab(BuildItemTab, BuildType.Item);
             BuildItemTab.BuildButton.OnClicked += BuildItemButton_OnClicked;
             List<CraftItem> items = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Object).ToList();
 
@@ -317,7 +358,8 @@ namespace DwarfCorp
                     HeightSizeMode = SizeMode.Fixed,
                     EdgePadding = 0
                 };
-
+                if (i == 0)
+                    ItemTabOnClicked(item);
                 itemLayout.OnClicked += () => ItemTabOnClicked(item);
                 int i1 = i;
                 itemLayout.OnHover += () => HoverItem(layout, i1);
@@ -338,7 +380,6 @@ namespace DwarfCorp
                 i++;
             }
             layout.UpdateSizes();
-            BuildItemTab.SelectedResourceBoxes = new List<ComboBox>();
         }
 
         private void BuildItemButton_OnClicked()
@@ -372,6 +413,8 @@ namespace DwarfCorp
 
         private void ResourceTabOnClicked(CraftItem item)
         {
+            bool hasCook = Build.HasFlag(BuildType.Cook);
+
             SelectedResource = item;
 
             BuildResourceTab.InfoTitle.Text = item.Name;
@@ -391,31 +434,47 @@ namespace DwarfCorp
                 EdgePadding = 0,
                 LabelFont = GUI.SmallFont
             };
-            string requirementsText = "Requires:\n";
 
-            foreach (Quantitiy<Resource.ResourceTags> resourceAmount in item.RequiredResources)
+            Body nearest = PlayState.PlayerFaction.FindNearestItemWithTags(item.CraftLocation, Vector3.Zero, false);
+
+
+            string requirementsText = "Requires: " + item.CraftLocation + ",\n";
+
+            if (nearest == null)
             {
-                //requirementsText += resourceAmount.ResourceType.ToString() + ": " + resourceAmount.NumResources + "\n";
-                ComboBox box = new ComboBox(GUI, BuildResourceTab.SelectedResourcesLayout)
+                if (!hasCook)
+                    requirementsText = "Needs " + item.CraftLocation + " to build!";
+                else
                 {
-                    Font = GUI.SmallFont
-                };
-
-                List<ResourceAmount> resources = Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType);
-
-                foreach (ResourceAmount resource in resources)
-                {
-                    if (resource.NumResources >= resourceAmount.NumResources)
-                        box.AddValue(resource.ResourceType.ResourceName);
+                    requirementsText = "Needs " + item.CraftLocation + " to cook!";
                 }
-
-                if (resources.Count == 0 || box.Values.Count == 0)
+            }
+            else
+            {
+                foreach (Quantitiy<Resource.ResourceTags> resourceAmount in item.RequiredResources)
                 {
-                    box.AddValue("<Not enough!>");
-                }
+                    ComboBox box = new ComboBox(GUI, BuildResourceTab.SelectedResourcesLayout)
+                    {
+                        Font = GUI.SmallFont
+                    };
 
-                BuildResourceTab.SelectedResourcesLayout.AddItem(resourceAmount.NumResources + " " + resourceAmount.ResourceType.ToString(), box);
-                BuildResourceTab.SelectedResourceBoxes.Add(box);
+                    List<ResourceAmount> resources = Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType);
+
+                    foreach (ResourceAmount resource in resources)
+                    {
+                        if (resource.NumResources >= resourceAmount.NumResources)
+                            box.AddValue(resource.ResourceType.ResourceName);
+                    }
+
+                    if (resources.Count == 0 || box.Values.Count == 0)
+                    {
+                        box.AddValue("<Not enough!>");
+                    }
+
+                    BuildResourceTab.SelectedResourcesLayout.AddItem(
+                        resourceAmount.NumResources + " " + resourceAmount.ResourceType.ToString(), box);
+                    BuildResourceTab.SelectedResourceBoxes.Add(box);
+                }
             }
 
 
@@ -425,6 +484,18 @@ namespace DwarfCorp
             }
 
             BuildResourceTab.InfoRequirements.Text = requirementsText;
+
+            if (nearest == null)
+            {
+                BuildResourceTab.InfoRequirements.TextColor = Color.DarkRed;
+                BuildResourceTab.BuildButton.IsVisible = false;
+            }
+            else
+            {
+                BuildResourceTab.InfoRequirements.TextColor = Color.Black;
+                BuildResourceTab.BuildButton.IsVisible = true;
+            }
+
         }
 
 
@@ -451,31 +522,40 @@ namespace DwarfCorp
             };
             string requirementsText = "Requires:\n";
 
-            foreach (Quantitiy<Resource.ResourceTags> resourceAmount in item.RequiredResources)
+            Body nearest = PlayState.PlayerFaction.FindNearestItemWithTags(item.CraftLocation, Vector3.Zero, false);
+
+            if (nearest == null)
             {
-                //requirementsText += resourceAmount.ResourceType.ToString() + ": " + resourceAmount.NumResources + "\n";
-                ComboBox box = new ComboBox(GUI, BuildItemTab.SelectedResourcesLayout)
-                {
-                    Font = GUI.SmallFont
-                };
-
-                List<ResourceAmount> resources = Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType);
-
-                foreach (ResourceAmount resource in resources)
-                {
-                    if (resource.NumResources >= resourceAmount.NumResources)
-                        box.AddValue(resource.ResourceType.ResourceName);
-                }
-
-                if (resources.Count == 0 || box.Values.Count == 0)
-                {
-                    box.AddValue("<Not enough!>");
-                }
-
-                BuildItemTab.SelectedResourcesLayout.AddItem(resourceAmount.NumResources + " " + resourceAmount.ResourceType.ToString(), box);
-                BuildItemTab.SelectedResourceBoxes.Add(box);
+                requirementsText = "Needs " + item.CraftLocation + " to build!";
             }
+            else
+            {
+                foreach (Quantitiy<Resource.ResourceTags> resourceAmount in item.RequiredResources)
+                {
+                    //requirementsText += resourceAmount.ResourceType.ToString() + ": " + resourceAmount.NumResources + "\n";
+                    ComboBox box = new ComboBox(GUI, BuildItemTab.SelectedResourcesLayout)
+                    {
+                        Font = GUI.SmallFont
+                    };
 
+                    List<ResourceAmount> resources = Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType);
+
+                    foreach (ResourceAmount resource in resources)
+                    {
+                        if (resource.NumResources >= resourceAmount.NumResources)
+                            box.AddValue(resource.ResourceType.ResourceName);
+                    }
+
+                    if (resources.Count == 0 || box.Values.Count == 0)
+                    {
+                        box.AddValue("<Not enough!>");
+                    }
+
+                    BuildItemTab.SelectedResourcesLayout.AddItem(resourceAmount.NumResources + " " + resourceAmount.ResourceType.ToString(), box);
+                    BuildItemTab.SelectedResourceBoxes.Add(box);
+                }
+   
+            }
 
             if (item.RequiredResources.Count == 0)
             {
@@ -483,6 +563,17 @@ namespace DwarfCorp
             }
 
             BuildItemTab.InfoRequirements.Text = requirementsText;
+
+            if (nearest == null)
+            {
+                BuildItemTab.InfoRequirements.TextColor = Color.DarkRed;
+                BuildItemTab.BuildButton.IsVisible = false;
+            }
+            else
+            {
+                BuildItemTab.InfoRequirements.TextColor = Color.Black;
+                BuildItemTab.BuildButton.IsVisible = true;
+            }
         }
 
         private void SetupBuildWallTab()
@@ -491,7 +582,7 @@ namespace DwarfCorp
             {
                 Tab = Selector.AddTab("Walls")
             };
-            CreateBuildTab(BuildWallTab);
+            CreateBuildTab(BuildWallTab, BuildType.Wall);
             BuildWallTab.BuildButton.OnClicked += WallButton_OnClicked;
             List<VoxelType> wallTypes = VoxelLibrary.GetTypes().Where(voxel => voxel.IsBuildable).ToList();
 
@@ -542,7 +633,7 @@ namespace DwarfCorp
         }
 
 
-        public void CreateBuildTab(BuildTab tab)
+        public void CreateBuildTab(BuildTab tab, BuildType type)
         {
             GridLayout tabLayout = new GridLayout(GUI, tab.Tab, 1, 3)
             {
@@ -573,7 +664,20 @@ namespace DwarfCorp
             tab.InfoRequirements = new Label(GUI, infoLayout, "", GUI.SmallFont);
             infoLayout.SetComponentPosition(tab.InfoRequirements, 0, 2, 2, 1);
 
-            tab.BuildButton = new Button(GUI, infoLayout, "Build", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetMouseFrame(GUI.Skin.MouseFrames[GUISkin.MousePointer.Build]));
+            switch (type)
+            {
+                case BuildType.Craft:
+                    tab.BuildButton = new Button(GUI, infoLayout, "Craft", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetMouseFrame(GUI.Skin.MouseFrames[GUISkin.MousePointer.Build]));
+                    break;
+                case BuildType.Item:
+                case BuildType.Room:
+                case BuildType.Wall:
+                    tab.BuildButton = new Button(GUI, infoLayout, "Build", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetMouseFrame(GUI.Skin.MouseFrames[GUISkin.MousePointer.Build]));
+                    break;
+                case BuildType.Cook:
+                    tab.BuildButton = new Button(GUI, infoLayout, "Cook", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetMouseFrame(GUI.Skin.MouseFrames[GUISkin.MousePointer.Chop]));
+                    break;
+            }
             infoLayout.SetComponentPosition(tab.BuildButton, 0, 3, 1, 1);
 
             tab.BuildButton.IsVisible = false;

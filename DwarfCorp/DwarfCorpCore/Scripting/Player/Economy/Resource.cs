@@ -62,11 +62,14 @@ namespace DwarfCorp
             set { shortName = value; }
         }
 
+        public string PlantToGenerate { get; set; }
+
         public Color Tint { get; set; }
         public enum ResourceTags
         {
-            Food,
+            Edible,
             Material,
+            HardMaterial,
             Precious,
             Flammable,
             SelfIlluminating,
@@ -83,12 +86,20 @@ namespace DwarfCorp
             Meat,
             Gem,
             Craft,
-            Encrustable
+            Encrustable,
+            Alcohol,
+            Brewable,
+            Bakeable,
+            RawFood,
+            PreparedFood,
+            Plantable,
+            AboveGroundPlant,
+            BelowGroundPlant
         }
 
         public Resource()
         {
-            
+            PlantToGenerate = "";
         }
 
         public Resource(Resource other)
@@ -102,6 +113,7 @@ namespace DwarfCorp
             Tags.AddRange(other.Tags);
             FoodContent = other.FoodContent;
             ShortName = other.ShortName;
+            PlantToGenerate = other.PlantToGenerate;
         }
 
         public Resource(ResourceLibrary.ResourceType type,  float money, string description, NamedImageFrame image, Color tint, params ResourceTags[] tags)

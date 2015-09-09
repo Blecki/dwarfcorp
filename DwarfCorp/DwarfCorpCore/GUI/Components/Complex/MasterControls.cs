@@ -67,7 +67,7 @@ namespace DwarfCorp
             CurrentMode = master.CurrentToolMode;
             ToolButtons = new Dictionary<GameMaster.ToolMode, Button>();
 
-            GridLayout layout = new GridLayout(GUI, this, 1, 8)
+            GridLayout layout = new GridLayout(GUI, this, 1, 10)
             {
                 EdgePadding = 0
             };
@@ -75,14 +75,13 @@ namespace DwarfCorp
             CreateButton(layout, GameMaster.ToolMode.SelectUnits, "Select", "Click and drag to select dwarves.", 5, 0);
             CreateButton(layout, GameMaster.ToolMode.Dig, "Mine", "Click and drag to designate mines.\nRight click to erase.", 0, 0);
             CreateButton(layout, GameMaster.ToolMode.Build, "Build", "Click to open build menu.", 2, 0);
+            CreateButton(layout, GameMaster.ToolMode.Cook, "Cook", "Click to open cooking menu.", 3, 3);
+            CreateButton(layout, GameMaster.ToolMode.Farm, "Farm", "Click to open farming menu.", 5, 1);
             CreateButton(layout, GameMaster.ToolMode.Magic, "Magic", "Click to open the magic menu.", 6, 1);
             CreateButton(layout, GameMaster.ToolMode.Gather, "Gather", "Click on resources to designate them\nfor gathering. Right click to erase.", 6, 0);
             CreateButton(layout, GameMaster.ToolMode.Chop, "Chop", "Click on trees to designate them\nfor chopping. Right click to erase.", 1, 0);
             CreateButton(layout, GameMaster.ToolMode.Guard, "Guard", "Click and drag to designate guard areas.\nRight click to erase.", 4, 0);
             CreateButton(layout, GameMaster.ToolMode.Attack, "Attack", "Click and drag to attack entities.\nRight click to cancel.", 3, 0);
-            //CreateButton(layout, GameMaster.ToolMode.CreateStockpiles, "Stock", "Click and drag to designate stockpiles.\nRight click to erase.", 7, 0);
-          
-
 
             int i = 0;
             foreach(Button b in ToolButtons.Values)
@@ -90,9 +89,6 @@ namespace DwarfCorp
                 layout.SetComponentPosition(b, i, 0, 1, 1);
                 i++;
             }
-
-      
-       
         }
 
 

@@ -66,6 +66,9 @@ namespace DwarfCorp
             public static ResourceType Meat = "Meat";
             public static ResourceType Bones = "Bone";
             public static ResourceType Gem = "Gem";
+            public static ResourceType Meal = "Meal";
+            public static ResourceType Ale = "Ale";
+            public static ResourceType Bread = "Bread";
             public static ResourceType Trinket = "Trinket";
             public static ResourceType GemTrinket = "Gem-set Trinket";
 
@@ -124,61 +127,69 @@ namespace DwarfCorp
         {
             string tileSheet = ContentPaths.Entities.Resources.resources;
             Resources = new Dictionary<ResourceType, Resource>();
-            Add(new Resource(ResourceType.Wood, 1.0f, "Sometimes hard to come by! Comes from trees.", new NamedImageFrame(tileSheet, GetRect(3, 1)), Color.White, Resource.ResourceTags.Wood, Resource.ResourceTags.Material, Resource.ResourceTags.Flammable));
-            Add(new Resource(ResourceType.Stone, 0.5f, "Dwarf's favorite material! Comes from the earth.", new NamedImageFrame(tileSheet, GetRect(3, 0)), Color.White, Resource.ResourceTags.Stone, Resource.ResourceTags.Material));
+            Add(new Resource(ResourceType.Wood, 1.0f, "Sometimes hard to come by! Comes from trees.", new NamedImageFrame(tileSheet, GetRect(3, 1)), Color.White, Resource.ResourceTags.Wood, Resource.ResourceTags.Material, Resource.ResourceTags.Flammable, Resource.ResourceTags.HardMaterial));
+            Add(new Resource(ResourceType.Stone, 0.5f, "Dwarf's favorite material! Comes from the earth.", new NamedImageFrame(tileSheet, GetRect(3, 0)), Color.White, Resource.ResourceTags.Stone, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial));
             Add(new Resource(ResourceType.Dirt, 0.1f, "Can't get rid of it! Comes from the earth.",
                 new NamedImageFrame(tileSheet, GetRect(0, 1)), Color.White, Resource.ResourceTags.Soil,
                 Resource.ResourceTags.Material));
             Add(new Resource(ResourceType.Sand,  0.2f, "Can't get rid of it! Comes from the earth.", new NamedImageFrame(tileSheet, GetRect(1, 1)), Color.White, Resource.ResourceTags.Soil, Resource.ResourceTags.Material));
             Add(new Resource(ResourceType.Mana, 40.0f, "Mysterious properties!",
                 new NamedImageFrame(tileSheet, GetRect(1, 0)), Color.White, Resource.ResourceTags.Magical, Resource.ResourceTags.Precious, Resource.ResourceTags.SelfIlluminating));
-            Add(new Resource(ResourceType.Gold, 50.0f, "Shiny!", new NamedImageFrame(tileSheet, GetRect(0, 0)), Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.Metal, Resource.ResourceTags.Precious));
-            Add(new Resource(ResourceType.Coal, 10.0f, "Used as fuel", new NamedImageFrame(tileSheet, GetRect(2, 2)), Color.White, Resource.ResourceTags.Fuel, Resource.ResourceTags.Flammable, Resource.ResourceTags.Material));
-            Add(new Resource(ResourceType.Iron, 5.0f, "Needed to build things.", new NamedImageFrame(tileSheet, GetRect(2, 0)), Color.White, Resource.ResourceTags.Metal, Resource.ResourceTags.Material));
-            Add(new Resource(ResourceType.Berry, 0.5f, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(2, 1)), Color.White, Resource.ResourceTags.Food, Resource.ResourceTags.Flammable) { FoodContent = 50});
-            Add(new Resource(ResourceType.Mushroom, 0.25f, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(1, 2)), Color.White, Resource.ResourceTags.Food, Resource.ResourceTags.Fungus, Resource.ResourceTags.Flammable) { FoodContent = 50});
-            Add(new Resource(ResourceType.Grain,  0.25f, "Dwarves can eat this.", new NamedImageFrame(tileSheet, GetRect(0, 2)), Color.White, Resource.ResourceTags.Food, Resource.ResourceTags.Grain,  Resource.ResourceTags.Flammable) { FoodContent = 100});
-            Add(new Resource(ResourceType.Bones,  15.0f, "Came from an animal.", new NamedImageFrame(tileSheet, GetRect(3, 3)), Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.AnimalProduct));
+            Add(new Resource(ResourceType.Gold, 50.0f, "Shiny!", new NamedImageFrame(tileSheet, GetRect(0, 0)), Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.Metal, Resource.ResourceTags.Precious, Resource.ResourceTags.HardMaterial));
+            Add(new Resource(ResourceType.Coal, 10.0f, "Used as fuel", new NamedImageFrame(tileSheet, GetRect(2, 2)), Color.White, Resource.ResourceTags.Fuel, Resource.ResourceTags.Flammable));
+            Add(new Resource(ResourceType.Iron, 5.0f, "Needed to build things.", new NamedImageFrame(tileSheet, GetRect(2, 0)), Color.White, Resource.ResourceTags.Metal, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial));
+            Add(new Resource(ResourceType.Berry, 0.5f, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(2, 1)), Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Plantable, Resource.ResourceTags.AboveGroundPlant) { FoodContent = 50, PlantToGenerate = "Berry Bush"});
+            Add(new Resource(ResourceType.Mushroom, 0.25f, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(1, 2)), Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Fungus, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Brewable, Resource.ResourceTags.Plantable, Resource.ResourceTags.BelowGroundPlant) { FoodContent = 50, PlantToGenerate = "Mushroom" });
+            Add(new Resource(ResourceType.Grain, 0.25f, "Dwarves can eat this.", new NamedImageFrame(tileSheet, GetRect(0, 2)), Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Grain, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Brewable, Resource.ResourceTags.Bakeable, Resource.ResourceTags.Plantable, Resource.ResourceTags.AboveGroundPlant) { FoodContent = 100, PlantToGenerate = "Wheat" });
+            Add(new Resource(ResourceType.Bones,  15.0f, "Came from an animal.", new NamedImageFrame(tileSheet, GetRect(3, 3)), Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.HardMaterial));
             Add(new Resource(ResourceType.Meat,  25.0f, "Came from an animal.",
-                new NamedImageFrame(tileSheet, GetRect(3, 2)), Color.White, Resource.ResourceTags.Food,
-                Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.Meat) {FoodContent = 250});
-            Add(new Resource(ResourceType.Gem, 35.0f, "Shiny!", new NamedImageFrame(tileSheet, GetRect(0, 3)), Color.White, Resource.ResourceTags.Precious, Resource.ResourceTags.Gem));
-            Add(new Resource(Resources[ResourceType.Gem])
+                new NamedImageFrame(tileSheet, GetRect(3, 2)), Color.White, Resource.ResourceTags.Edible,
+                Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.Meat, Resource.ResourceTags.RawFood) {FoodContent = 250});
+        
+            Add(new Resource(ResourceType.Bread, 15.0f, "A nutritious dwarf meal.", new NamedImageFrame(tileSheet, GetRect(6, 2)), Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Flammable, Resource.ResourceTags.PreparedFood)
             {
-                Type = "Ruby",
-                ShortName = "Ruby",
-                Image = new NamedImageFrame(tileSheet, GetRect(0, 3))
+                FoodContent = 350
             });
-
-            Add(new Resource(Resources[ResourceType.Gem])
+            Add(new Resource(ResourceType.Meal, 3.0f, "A nutritious dwarf meal.", new NamedImageFrame(tileSheet, GetRect(5, 2)), Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Flammable, Resource.ResourceTags.PreparedFood)
+            {
+                FoodContent = 500
+            });
+            Add(new Resource(ResourceType.Ale, 10.0f, "All dwarves need to drink.",
+                new NamedImageFrame(tileSheet, GetRect(4, 2)), Color.White, Resource.ResourceTags.Edible,
+                Resource.ResourceTags.Flammable)
+            {
+                FoodContent = 150
+            });
+            Add(new Resource("Ruby", 35.0f, "Shiny!", new NamedImageFrame(tileSheet, GetRect(0, 3)), Color.White, Resource.ResourceTags.Precious, Resource.ResourceTags.Gem, Resource.ResourceTags.HardMaterial));
+            Add(new Resource(Resources["Ruby"])
             {
                 Type = "Emerald",
                 ShortName = "Emerald",
                 Image = new NamedImageFrame(tileSheet, GetRect(0, 4))
             });
 
-            Add(new Resource(Resources[ResourceType.Gem])
+            Add(new Resource(Resources["Ruby"])
             {
                 Type = "Amethyst",
                 ShortName = "Amethyst",
                 Image = new NamedImageFrame(tileSheet, GetRect(2, 4))
             });
 
-            Add(new Resource(Resources[ResourceType.Gem])
+            Add(new Resource(Resources["Ruby"])
             {
                 Type = "Garnet",
                 ShortName = "Garnet",
                 Image = new NamedImageFrame(tileSheet, GetRect(1, 3))
             });
 
-            Add(new Resource(Resources[ResourceType.Gem])
+            Add(new Resource(Resources["Ruby"])
             {
                 Type = "Citrine",
                 ShortName = "Citrine",
                 Image = new NamedImageFrame(tileSheet, GetRect(2, 3))
             });
 
-            Add(new Resource(Resources[ResourceType.Gem])
+            Add(new Resource(Resources["Ruby"])
             {
                 Type = "Sapphire",
                 ShortName = "Sapphire",
@@ -187,6 +198,37 @@ namespace DwarfCorp
 
             Add((new Resource(ResourceType.Trinket, 100.0f, "A crafted item.",
                     new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, 0, 0), Color.White, Resource.ResourceTags.Craft, Resource.ResourceTags.Encrustable)));
+        }
+
+        public static Resource CreateAle(Resource component)
+        {
+            Resource toReturn = new Resource(Resources[ResourceType.Ale])
+            {
+                Type = component.Type + " Ale"
+            };
+            toReturn.ShortName = toReturn.Type;
+
+            if (!Resources.ContainsKey(toReturn.Type))
+                Add(toReturn);
+
+            return toReturn;
+        }
+
+        public static Resource CreateMeal(Resource componentA, Resource componentB)
+        {
+            Resource toReturn = new Resource(Resources[ResourceType.Meal])
+            {
+                FoodContent = componentA.FoodContent + componentB.FoodContent,
+                Type =
+                    TextGenerator.GenerateRandom(new List<string>() {componentA.ResourceName, componentB.ResourceName}, TextGenerator.GetAtoms(ContentPaths.Text.Templates.food)),
+                MoneyValue = 2*(componentA.MoneyValue + componentB.MoneyValue)
+            };
+            toReturn.ShortName = toReturn.Type;
+
+            if (!Resources.ContainsKey(toReturn.Type))
+                Add(toReturn);
+
+            return toReturn;
         }
 
         public static Resource EncrustTrinket(Resource resource, ResourceType gemType)
@@ -293,6 +335,19 @@ namespace DwarfCorp
         }
 
 
+        public static Resource CreateBread(Resource component)
+        {
+            Resource toReturn = new Resource(Resources[ResourceType.Bread])
+            {
+                Type = component.Type + " Bread"
+            };
+            toReturn.ShortName = toReturn.Type;
+
+            if (!Resources.ContainsKey(toReturn.Type))
+                Add(toReturn);
+
+            return toReturn;
+        }
     }
 
 }

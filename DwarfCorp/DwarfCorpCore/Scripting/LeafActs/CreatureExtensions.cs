@@ -58,7 +58,7 @@ namespace DwarfCorp
 
         public static IEnumerable<Act.Status> EatStockedFood(this Creature agent)
         {
-            List<ResourceAmount> foods = agent.Faction.ListResourcesWithTag(Resource.ResourceTags.Food);
+            List<ResourceAmount> foods = agent.Faction.ListResourcesWithTag(Resource.ResourceTags.Edible);
 
             if (foods.Count == 0)
             {

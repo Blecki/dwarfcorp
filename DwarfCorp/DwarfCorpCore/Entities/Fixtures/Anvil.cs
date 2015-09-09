@@ -56,4 +56,56 @@ namespace DwarfCorp
             Tags.Add("Anvil");
         }
     }
+
+    [JsonObject(IsReference = true)]
+    public class Stove : Fixture
+    {
+
+        public Stove()
+        {
+
+        }
+
+        public Stove(Vector3 position) :
+            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 4), PlayState.ComponentManager.RootComponent)
+        {
+            Name = "Stove";
+            Tags.Add("Stove");
+
+
+            /*
+            new LightEmitter("light", this, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 5, 4)
+            {
+                HasMoved = true
+            };
+             */
+        }
+
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        {
+            if (MathFunctions.RandEvent(0.01f))
+            {
+                PlayState.ParticleManager.Trigger("smoke", GlobalTransform.Translation + Vector3.Up * .5f, Color.White, 1);
+            }
+            base.Update(gameTime, chunks, camera);
+        }
+    }
+
+
+    [JsonObject(IsReference = true)]
+    public class Barrel : Fixture
+    {
+
+        public Barrel()
+        {
+
+        }
+
+        public Barrel(Vector3 position) :
+            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 0), PlayState.ComponentManager.RootComponent)
+        {
+            Name = "Barrel";
+            Tags.Add("Barrel");
+        }
+    }
 }

@@ -81,7 +81,7 @@ namespace DwarfCorp
 
         private void ComboBox_OnLeftPressed()
         {
-            if(Selector == null)
+            if(Selector == null && Values.Count > 0)
             {
                 Rectangle fieldRect = new Rectangle(GlobalBounds.X, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width, 32);
                 if(fieldRect.Contains(Mouse.GetState().X, Mouse.GetState().Y))

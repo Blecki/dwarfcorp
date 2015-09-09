@@ -55,7 +55,7 @@ namespace DwarfCorp
         public CraftType Type { get; set; }
         public ResourceLibrary.ResourceType ResourceCreated { get; set; }
         public List<ResourceAmount> SelectedResources { get; set; }
- 
+        public string CraftLocation { get; set; }
         public CraftItem()
         {
             Name = "";
@@ -66,6 +66,7 @@ namespace DwarfCorp
             Type = CraftType.Object;
             ResourceCreated = "";
             SelectedResources = new List<ResourceAmount>();
+            CraftLocation = "Anvil";
         }
     }
 }

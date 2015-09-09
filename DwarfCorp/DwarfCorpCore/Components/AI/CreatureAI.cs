@@ -293,7 +293,7 @@ namespace DwarfCorp
                     Tasks.Add(toReturn);
             }
 
-            if (Status.Hunger.IsUnhappy() &&  Faction.CountResourcesWithTag(Resource.ResourceTags.Food) > 0)
+            if (Status.Hunger.IsUnhappy() &&  Faction.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
             {
                 Task toReturn = new SatisfyHungerTask();
                 toReturn.SetupScript(Creature);

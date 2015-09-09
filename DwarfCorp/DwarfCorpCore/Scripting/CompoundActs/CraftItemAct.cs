@@ -69,6 +69,26 @@ namespace DwarfCorp
                     (Agent.Stats.Dexterity + Agent.Stats.Intelligence)/15.0f*MathFunctions.Rand(0.5f, 1.75f));
                 ItemType.ResourceCreated = craft.Type;
             }
+            else if (ItemType.Name == ResourceLibrary.ResourceType.Meal)
+            {
+                if (stashed.Count < 2)
+                {
+                    yield return Act.Status.Fail;
+                    yield break;
+                }
+                Resource craft = ResourceLibrary.CreateMeal(stashed.ElementAt(0).ResourceType, stashed.ElementAt(1).ResourceType);
+                ItemType.ResourceCreated = craft.Type;
+            }
+            else if (ItemType.Name == ResourceLibrary.ResourceType.Ale)
+            {
+                Resource craft = ResourceLibrary.CreateAle(stashed.ElementAt(0).ResourceType);
+                ItemType.ResourceCreated = craft.Type;
+            }
+            else if (ItemType.Name == ResourceLibrary.ResourceType.Bread)
+            {
+                Resource craft = ResourceLibrary.CreateBread(stashed.ElementAt(0).ResourceType);
+                ItemType.ResourceCreated = craft.Type;
+            }
             else if (ItemType.Name == ResourceLibrary.ResourceType.GemTrinket)
             {
                 Resource gem = null;
@@ -104,7 +124,7 @@ namespace DwarfCorp
 
         public IEnumerable<Status> WaitAndHit(float time)
         {
-            Body objectToHit = Creature.AI.Blackboard.GetData<Body>("Anvil");
+            Body objectToHit = Creature.AI.Blackboard.GetData<Body>(ItemType.CraftLocation);
             Timer timer = new Timer(time, true);
             while (!timer.HasTriggered)
             {
@@ -149,7 +169,7 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            Act unreserveAct = new Wrap(() => Creature.Unreserve("Anvil"));
+            Act unreserveAct = new Wrap(() => Creature.Unreserve(ItemType.CraftLocation));
             float time = ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt;
             Act getResources = null;
             if (ItemType.SelectedResources == null || ItemType.SelectedResources.Count == 0)
@@ -164,16 +184,16 @@ namespace DwarfCorp
             if (ItemType.Type == CraftItem.CraftType.Object)
             {
                 Tree = new Sequence(
-                    new Wrap(() => Creature.FindAndReserve("Anvil", "Anvil")),
+                    new Wrap(() => Creature.FindAndReserve(ItemType.CraftLocation, ItemType.CraftLocation)),
                     getResources,
                     new Sequence
                         (
                         new GoToTaggedObjectAct(Agent)
                         {
-                            Tag = "Anvil",
+                            Tag = ItemType.CraftLocation,
                             Teleport = false,
                             TeleportOffset = new Vector3(1, 0, 0),
-                            ObjectName = "Anvil"
+                            ObjectName = ItemType.CraftLocation
                         },
                         new Wrap(() => WaitAndHit(time)),
                         new Wrap(DestroyResources),
@@ -186,16 +206,16 @@ namespace DwarfCorp
             else
             {
                 Tree = new Sequence(
-                    new Wrap(() => Creature.FindAndReserve("Anvil", "Anvil")),
+                    new Wrap(() => Creature.FindAndReserve(ItemType.CraftLocation, ItemType.CraftLocation)),
                     getResources,
                     new Sequence
                         (
                         new GoToTaggedObjectAct(Agent)
                         {
-                            Tag = "Anvil",
+                            Tag = ItemType.CraftLocation,
                             Teleport = false,
                             TeleportOffset = new Vector3(1, 0, 0),
-                            ObjectName = "Anvil"
+                            ObjectName = ItemType.CraftLocation
                         },
                         new Wrap(() => WaitAndHit(time)),
                         new Wrap(DestroyResources),
@@ -211,7 +231,7 @@ namespace DwarfCorp
 
         public override void OnCanceled()
         {
-            foreach (var statuses in Creature.Unreserve("Anvil"))
+            foreach (var statuses in Creature.Unreserve(ItemType.CraftLocation))
             {
                 continue;
             }

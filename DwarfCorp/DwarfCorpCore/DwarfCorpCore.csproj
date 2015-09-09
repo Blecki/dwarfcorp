@@ -382,6 +382,7 @@
     <Compile Include="Scripting\Player\Tools\ChopTool.cs" />
     <Compile Include="Scripting\Player\Tools\DigTool.cs" />
     <Compile Include="Scripting\Player\Tools\DwarfSelectorTool.cs" />
+    <Compile Include="Scripting\Player\Tools\FarmTool.cs" />
     <Compile Include="Scripting\Player\Tools\GatherTool.cs" />
     <Compile Include="Scripting\Player\Tools\GodModeTool.cs" />
     <Compile Include="Scripting\Player\Tools\GuardTool.cs" />
@@ -400,6 +401,7 @@
     <Compile Include="Scripting\Rooms\RoomTypes\MushroomFarm.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\TrainingRoom.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\WheatFarm.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\Kitchen.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\WorkshopRoom.cs" />
     <Compile Include="Scripting\Rooms\Stockpile.cs" />
     <Compile Include="Scripting\Rooms\Zone.cs" />

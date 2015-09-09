@@ -208,7 +208,8 @@ namespace DwarfCorp
                 GameMaster.ToolMode.Dig,
                 GameMaster.ToolMode.Attack,
                 GameMaster.ToolMode.Gather,
-                GameMaster.ToolMode.Farm
+                GameMaster.ToolMode.Farm,
+                GameMaster.ToolMode.Cook
             };
         }
 

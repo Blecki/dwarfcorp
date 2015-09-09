@@ -24,6 +24,7 @@ namespace DwarfCorp
             SelectUnits,
             Dig,
             Build,
+            Cook,
             Magic,
             Gather,
             Chop,
@@ -109,6 +110,11 @@ namespace DwarfCorp
 
             Tools[ToolMode.SelectUnits] = new DwarfSelectorTool(this);
 
+            Tools[ToolMode.Farm] = new FarmTool()
+            {
+                Player = this
+            };
+
             
             Tools[ToolMode.Dig] = new DigTool
             {
@@ -150,10 +156,17 @@ namespace DwarfCorp
 
             Tools[ToolMode.Build] = new BuildTool
             {
-                Player = this
+                Player = this,
+                BuildType = BuildMenu.BuildType.Craft | BuildMenu.BuildType.Item | BuildMenu.BuildType.Room | BuildMenu.BuildType.Wall
             };
 
             Tools[ToolMode.Magic] = new MagicTool(this);
+
+            Tools[ToolMode.Cook] = new BuildTool
+            {
+                Player = this,
+                BuildType = BuildMenu.BuildType.Cook
+            };
         }
 
         public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics, DwarfGUI gui)

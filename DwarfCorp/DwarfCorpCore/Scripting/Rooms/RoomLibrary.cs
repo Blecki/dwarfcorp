@@ -73,6 +73,7 @@ namespace DwarfCorp
             RegisterType(TrainingRoom.InitializeData());
             RegisterType(WheatFarm.InitializeData());
             RegisterType(WorkshopRoom.InitializeData());
+            RegisterType(Kitchen.InitializeData());
             staticIntialized = true;
         }
 
@@ -143,6 +144,10 @@ namespace DwarfCorp
             {
                 return blueprint ? new WorkshopRoom(true, designations, PlayState.ChunkManager) : new WorkshopRoom(designations, PlayState.ChunkManager); 
             }
+            else if (name == Kitchen.KitchenName)
+            {
+                return blueprint ? new Kitchen(true, designations, PlayState.ChunkManager) : new Kitchen(designations, PlayState.ChunkManager); 
+            }
             else if (name == Stockpile.StockpileName)
             {
                 Stockpile toBuild = new Stockpile(faction);
@@ -194,6 +199,10 @@ namespace DwarfCorp
                                                                        new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
                     switch(tile)
                     {
+                        case RoomTile.Barrel:
+                            createdComponent = EntityFactory.CreateEntity<Body>("Barrel", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            thingsMade++;
+                            break;
                         case RoomTile.Wheat:
                             createdComponent = EntityFactory.CreateEntity<Body>("Wheat", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
@@ -206,6 +215,14 @@ namespace DwarfCorp
 
                         case RoomTile.Table:
                             createdComponent = EntityFactory.CreateEntity<Body>("Table", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            thingsMade++;
+                            break;
+                        case RoomTile.Stove:
+                            createdComponent = EntityFactory.CreateEntity<Body>("Stove", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            thingsMade++;
+                            break;
+                        case RoomTile.KitchenTable:
+                            createdComponent = EntityFactory.CreateEntity<Body>("KitchenTable", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Lamp:
@@ -261,16 +278,6 @@ namespace DwarfCorp
                                     }
 
                                     createdComponent = EntityFactory.CreateEntity<Body>("Bed", box.Min + new Vector3(r - 1 + 0.5f, 1.5f, c - 1 + 0.5f) + noise);
-                                    /*
-                                    float angle = (float) Math.Atan2(dx, dy);
-
-                                    Vector3 translation = createdComponent.LocalTransform.Translation;
-                                    Matrix bedRotation = Matrix.CreateRotationY(angle);
-                                    createdComponent.LocalTransform = Matrix.CreateTranslation(new Vector3(-0.5f, 0, -0.5f)) * bedRotation * Matrix.CreateTranslation(new Vector3(0.5f, 0, 0.5f)) * Matrix.CreateTranslation(translation);
-                                    createdComponent.BoundingBoxPos = Vector3.Transform(createdComponent.BoundingBoxPos, bedRotation);
-                                    createdComponent.BoundingBox.Min = Vector3.Transform(createdComponent.BoundingBox.Min - translation, bedRotation) + translation;
-                                    createdComponent.BoundingBox.Max = Vector3.Transform(createdComponent.BoundingBox.Max - translation, bedRotation) + translation; 
-                                     */
                                     break;
                                 }
                             }

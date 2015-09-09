@@ -1,4 +1,4 @@
-﻿// LibraryRoom.cs
+﻿// WorkshopRoom.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -35,96 +35,87 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class LibraryRoom : Room
+    public class Kitchen : Room
     {
-        public static string LibraryRoomName { get { return "LibraryRoom"; } }
-        public static RoomData LibraryRoomData { get { return RoomLibrary.GetData(LibraryRoomName); } }
+        public static string KitchenName { get { return "Kitchen"; } }
+        public static RoomData KitchenRoomData { get { return RoomLibrary.GetData(KitchenName); } }
 
         public static RoomData InitializeData()
         {
             Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
             {
-                {Resource.ResourceTags.Magical, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Magical)},
                 {Resource.ResourceTags.Stone, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone)},
+                {Resource.ResourceTags.Fuel, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Fuel)},
             };
 
+            List<RoomTemplate> workshopTemplates = new List<RoomTemplate>();
 
-            List<RoomTemplate> libraryTemplates = new List<RoomTemplate>();
-            RoomTile[,] lampTemplate =
+            RoomTile[,] template =
             {
                 {
                     RoomTile.None,
-                    RoomTile.Wall | RoomTile.Edge
+                    RoomTile.None,
+                    RoomTile.None
                 },
                 {
                     RoomTile.Wall | RoomTile.Edge,
-                    RoomTile.Lamp
-                }
-            };
-
-            RoomTile[,] lampAccessories =
-            {
-                {
-                    RoomTile.None,
+                    RoomTile.KitchenTable,
                     RoomTile.None
                 },
                 {
+                    RoomTile.None,
                     RoomTile.None,
                     RoomTile.None
                 }
             };
 
-            RoomTile[,]  bookshlf =
+            RoomTile[,] accessories =
             {
                 {
                     RoomTile.None,
-                    RoomTile.Wall | RoomTile.Edge
-                },
-                {
-                    RoomTile.None,
-                    RoomTile.BookShelf
-                }
-            };
-
-            RoomTile[,] bookshlfAcc =
-            {
-                {
                     RoomTile.None,
                     RoomTile.None
                 },
                 {
                     RoomTile.None,
+                    RoomTile.None,
+                    RoomTile.None
+                },
+                {
+                    RoomTile.None,
+                    RoomTile.Barrel,
                     RoomTile.None
                 }
             };
 
-            RoomTemplate lamp = new RoomTemplate(PlacementType.All, lampTemplate, lampAccessories);
-            RoomTile[,] bookTemp =
+
+            RoomTile[,] stovetemp =
             {
-                {
-                    RoomTile.None,
-                    RoomTile.Open,
-                    RoomTile.None
-                },
                 {
                     RoomTile.Open,
-                    RoomTile.BookTable,
+                    RoomTile.Open,
                     RoomTile.Open
                 },
                 {
-                    RoomTile.None,
                     RoomTile.Open,
-                    RoomTile.None
+                    RoomTile.Stove,
+                    RoomTile.Open
+                },
+                {
+                    RoomTile.Open,
+                    RoomTile.Open,
+                    RoomTile.Open
                 }
             };
 
-            RoomTile[,] bookAcc =
+            RoomTile[,] stoveacc =
             {
                 {
                     RoomTile.None,
@@ -143,35 +134,39 @@ namespace DwarfCorp
                 }
             };
 
-            RoomTemplate book = new RoomTemplate(PlacementType.Random, bookTemp, bookAcc)
+            RoomTemplate barrel = new RoomTemplate(PlacementType.All, template, accessories)
             {
-                Probability = 0.5f
+                Probability = 0.2f
             };
 
+            RoomTemplate stove = new RoomTemplate(PlacementType.All, stovetemp, stoveacc)
+            {
+                Probability = 1.0f
+            };
+            
+            workshopTemplates.Add(stove);
+            workshopTemplates.Add(barrel);
 
-            libraryTemplates.Add(new RoomTemplate(PlacementType.Random, bookshlf, bookshlfAcc) { Probability = 0.15f});
-            libraryTemplates.Add(lamp);
-            libraryTemplates.Add(book);
             Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(LibraryRoomName, 4, "BlueTileFloor", roomResources, libraryTemplates, new ImageFrame(roomIcons, 16, 0, 1))
+            return new RoomData(KitchenName, 2, "BlueTileFloor", roomResources, workshopTemplates, new ImageFrame(roomIcons, 16, 3, 2))
             {
-                Description = "Wizards do magical research here. Also holds mana crystals to charge magic spells.",
+                Description = "Cooking is done here",
                 CanBuildAboveGround = false
             };
         }
 
-        public LibraryRoom()
+        public Kitchen()
         {
-            RoomData = LibraryRoomData;
+            RoomData = KitchenRoomData;
         }
 
-        public LibraryRoom(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
-            base(designation, designations, LibraryRoomData, chunks)
+        public Kitchen(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
+            base(designation, designations, KitchenRoomData, chunks)
         {
         }
 
-        public LibraryRoom(IEnumerable<Voxel> voxels, ChunkManager chunks) :
-            base(voxels, LibraryRoomData, chunks)
+        public Kitchen(IEnumerable<Voxel> voxels, ChunkManager chunks) :
+            base(voxels, KitchenRoomData, chunks)
         {
             OnBuilt();
         }
