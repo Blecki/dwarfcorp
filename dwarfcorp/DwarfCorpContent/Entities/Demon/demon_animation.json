@@ -123,60 +123,39 @@
       },
       {
          "Frames" : [
-            [ 0, 4, 0 ]
+            [ 0, 4, 0 ],
+            [ 1, 4, 0 ],
+            [ 2, 4, 0 ]
          ],
-         "Name" : "JumpingFORWARD",
-         "Speed" : [1]
+         "Name" : "FlyingFORWARD",
+         "Speed" : [0.15]
       },
       {
          "Frames" : [
-            [ 0, 5, 0 ]
+            [ 0, 5, 0 ],
+            [ 1, 5, 0 ],
+            [ 2, 5, 0 ]
          ],
-         "Name" : "JumpingLEFT",
-         "Speed" : [1]
+         "Name" : "FlyingLEFT",
+         "Speed" : [0.15]
       },
       {
          "Frames" : [
-            [ 0, 6, 0 ]
+            [ 0, 6, 0 ],
+            [ 1, 6, 0 ],
+            [ 2, 6, 0 ]
          ],
-         "Name" : "JumpingRIGHT",
-         "Speed" : [1]
+         "Name" : "FlyingRIGHT",
+         "Speed" : [0.15]
       },
       {
          "Frames" : [
-            [ 0, 7, 0 ]
+            [ 0, 7, 0 ],
+            [ 1, 7, 0 ],
+            [ 2, 7, 0 ]
          ],
-         "Name" : "JumpingBACKWARD",
-         "Speed" : [1]
-      },
-
-      {
-         "Frames" : [
-            [ 1, 4, 0 ]
-         ],
-         "Name" : "FallingFORWARD",
-         "Speed" : [1]
-      },
-      {
-         "Frames" : [
-            [ 1, 5, 0 ]
-         ],
-         "Name" : "FallingLEFT",
-         "Speed" : [1]
-      },
-      {
-         "Frames" : [
-            [ 1, 6, 0 ]
-         ],
-         "Name" : "FallingRIGHT",
-         "Speed" : [1]
-      },
-      {
-         "Frames" : [
-            [ 1, 7, 0 ]
-         ],
-         "Name" : "FallingBACKWARD",
-         "Speed" : [1]
+         "Name" : "FlyingBACKWARD",
+         "Speed" : [0.15]
       }
    ],
    "Layers" : [
