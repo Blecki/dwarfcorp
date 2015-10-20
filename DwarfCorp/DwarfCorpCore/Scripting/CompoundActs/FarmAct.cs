@@ -40,7 +40,16 @@ namespace DwarfCorp
 {
     public class FarmAct : CompoundCreatureAct
     {
-        public Farm FarmToWork { get; set; }
+        public FarmTool.FarmTile FarmToWork { get; set; }
+        public string PlantToCreate { get; set; }
+        public List<ResourceAmount> Resources { get; set; }   
+        public enum FarmMode 
+        {
+            Till,
+            Plant
+        }
+
+        public FarmMode Mode { get; set; }
 
         public FarmAct()
         {
@@ -53,9 +62,21 @@ namespace DwarfCorp
             Name = "Work a farm";
         }
 
-        public IEnumerable<Status> FarmATile(string tileName)
+        bool Satisfied()
         {
-            Farm.FarmTile tile = Creature.AI.Blackboard.GetData<Farm.FarmTile>(tileName);
+            if (Mode == FarmMode.Plant)
+            {
+                return FarmToWork.PlantExists();
+            }
+            else
+            {
+                return FarmToWork.IsTilled();
+            }
+        }
+
+        public IEnumerable<Status> FarmATile()
+        {
+            FarmTool.FarmTile tile = FarmToWork;
             if (tile == null) yield return Status.Fail;
             else if (tile.PlantExists())
             {
@@ -65,7 +86,7 @@ namespace DwarfCorp
             else
             {
                 if (tile.Plant != null && tile.Plant.IsDead) tile.Plant = null;
-                while (tile.Progress < 100.0f && !tile.PlantExists())
+                while (tile.Progress < 100.0f && !Satisfied())
                 {
 
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
@@ -74,10 +95,19 @@ namespace DwarfCorp
 
                     Drawer2D.DrawLoadBar(Agent.Position + Vector3.Up, Color.White, Color.Black, 100, 16,
                         tile.Progress/100.0f);
-                    if (tile.Progress >= 100.0f && !tile.PlantExists())
+                    if (tile.Progress >= 100.0f && !Satisfied())
                     {
                         tile.Progress = 0.0f;
-                        FarmToWork.CreatePlant(tile);
+                        if (Mode == FarmAct.FarmMode.Plant)
+                        {
+                            FarmToWork.CreatePlant(PlantToCreate);
+                            DestroyResources();
+                        }
+                        else
+                        {
+                            FarmToWork.Vox.Type = VoxelLibrary.GetVoxelType("TilledSoil");
+                            FarmToWork.Vox.Chunk.ShouldRebuild = true;
+                        }
                     }
 
                     yield return Status.Running;
@@ -87,19 +117,6 @@ namespace DwarfCorp
                 Creature.AI.AddXP(10);
                 tile.Farmer = null;
                 yield return Status.Success;
-            }
-        }
-
-        public IEnumerable<Status> GetClosestTile()
-        {
-            Farm.FarmTile closestTile = FarmToWork.GetNearestFreeFarmTile(Creature.AI.Position);
-            if (closestTile == null) yield return Status.Fail;
-            else
-            {
-                closestTile.Farmer = Agent;
-                Creature.AI.Blackboard.SetData("ClosestTile", closestTile);
-                Creature.AI.Blackboard.SetData("ClosestVoxel", closestTile.Vox);
-                yield return Status.Success;   
             }
         }
 
@@ -115,18 +132,26 @@ namespace DwarfCorp
             base.OnCanceled();
         }
 
+        public void DestroyResources()
+        {
+            Agent.Creature.Inventory.Remove(Resources);
+        }
+
         public override void Initialize()
         {
             if (FarmToWork != null)
             {
-                Farm.FarmTile closestTile = FarmToWork.GetNearestFreeFarmTile(Creature.AI.Position);
-                if (closestTile != null)
+                if (FarmToWork.Vox != null)
                 {
                     Tree = new Sequence(
-                        new Wrap(GetClosestTile),
-                        new GoToVoxelAct("ClosestVoxel", PlanAct.PlanType.Adjacent, Creature.AI),
+                        new GoToVoxelAct(FarmToWork.Vox, PlanAct.PlanType.Adjacent, Creature.AI),
                         new StopAct(Creature.AI),
-                        new Wrap(() => FarmATile("ClosestTile")));
+                        new Wrap(FarmATile));
+
+                    if (Mode == FarmMode.Plant)
+                    {
+                        Tree.Children.Insert(0, new Sequence(new GetResourcesAct(Agent, Resources)));
+                    }
                 }
             }
 

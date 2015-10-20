@@ -167,7 +167,8 @@ namespace DwarfCorp
             Jump,
             Climb,
             Swim,
-            Fall
+            Fall,
+            Fly
         }
 
         public enum CharacterMode

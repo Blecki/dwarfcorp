@@ -139,6 +139,7 @@ namespace DwarfCorp
                             comp.Key.Y * cellY + offset.Y, 
                             comp.Key.Width * cellX, 
                             comp.Key.Height * cellY);
+                        comp.Value.UpdateSize();
                     }
                     else
                     {
@@ -155,7 +156,8 @@ namespace DwarfCorp
                         {
                             lh = (h - ly);
                         }
-                        comp.Value.LocalBounds = new Rectangle(lx, ly, lw, lh);   
+                        comp.Value.LocalBounds = new Rectangle(lx, ly, lw, lh);  
+                        comp.Value.UpdateSize();
                     }
                 }
             }

@@ -148,7 +148,7 @@ namespace DwarfCorp
                 actualLine.Append(item + " ");
                 actualWidth += (int)itemMeasure.X;
 
-                if (actualWidth >= bounds.Width)
+                if (actualWidth >= bounds.Width - itemMeasure.X)
                 {
                     wrappedLines.Add(actualLine.ToString());
                     actualLine.Clear();

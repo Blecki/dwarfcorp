@@ -40,17 +40,20 @@ namespace DwarfCorp.Scripting.TaskManagement.Tasks
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class FarmTask : Task
     {
-        public Farm FarmToWork { get; set; }
+        public FarmTool.FarmTile FarmToWork { get; set; }
+        public FarmAct.FarmMode Mode { get; set; }
+        public string Plant { get; set; }
+        public List<ResourceAmount> RequiredResources { get; set; } 
 
         public FarmTask()
         {
             Priority = PriorityType.Low;
         }
 
-        public FarmTask(Farm farmToWork)
+        public FarmTask(FarmTool.FarmTile farmToWork)
         {
             FarmToWork = farmToWork;
-            Name = "Work " + FarmToWork.ID;
+            Name = "Work " + FarmToWork.Vox.Position;
             Priority = PriorityType.Low;
         }
 
@@ -66,7 +69,7 @@ namespace DwarfCorp.Scripting.TaskManagement.Tasks
 
         public override Act CreateScript(Creature agent)
         {
-            return new FarmAct(agent.AI) {FarmToWork = FarmToWork, Name = "Work " + FarmToWork.ID};
+            return new FarmAct(agent.AI) {Resources = RequiredResources, PlantToCreate = Plant, Mode = Mode, FarmToWork = FarmToWork, Name = "Work " + FarmToWork.Vox.Position};
         }
 
         public override float ComputeCost(Creature agent)
@@ -74,13 +77,13 @@ namespace DwarfCorp.Scripting.TaskManagement.Tasks
             if (FarmToWork == null) return float.MaxValue;
             else
             {
-                return (FarmToWork.GetBoundingBox().Center() - agent.AI.Position).LengthSquared();
+                return (FarmToWork.Vox.Position - agent.AI.Position).LengthSquared();
             }
         }
 
         public override Task Clone()
         {
-            return new FarmTask() {FarmToWork = FarmToWork};
+            return new FarmTask() { RequiredResources = RequiredResources, FarmToWork = FarmToWork, Name = Name, Mode = Mode, Plant = Plant, Priority = Priority };
         }
     }
 }

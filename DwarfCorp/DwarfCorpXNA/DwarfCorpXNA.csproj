@@ -42,7 +42,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\x86\Debug</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WINDOWS XNA_BUILD</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
@@ -307,6 +307,9 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Fixtures\WorkPile.cs">
       <Link>Entities\Fixtures\WorkPile.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Monsters\Demon.cs">
+      <Link>Entities\Monsters\Demon.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Monsters\Elf.cs">
       <Link>Entities\Monsters\Elf.cs</Link>

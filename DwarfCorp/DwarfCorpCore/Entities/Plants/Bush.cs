@@ -73,13 +73,13 @@ namespace DwarfCorp
             {
                 Resources = new ResourceContainer
                 {
-                    MaxResources = (int)(bushSize * 5)
+                    MaxResources = 4
                 }
             };
 
             inventory.Resources.AddResource(new ResourceAmount()
             {
-                NumResources = (int)(bushSize * 5),
+                NumResources = MathFunctions.RandInt(1, 4),
                 ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Berry]
             });
 

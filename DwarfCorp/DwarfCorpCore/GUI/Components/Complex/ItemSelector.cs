@@ -76,7 +76,7 @@ namespace DwarfCorp
 
         public string NoItemsMessage { get; set; }
 
-
+        public MoneyEditor MoneyEdit { get; set; }
         public LineEdit SearchBox { get; set; }
 
         protected virtual void OnOnItemAdded(GItem item, int amount)
@@ -107,13 +107,16 @@ namespace DwarfCorp
         public ClickBehavior Behavior { get; set; }
 
         public bool AllowShiftClick { get; set; }
+        public bool AllowControlClick { get; set; }
+        public bool AllowAltClick { get; set; }
 
         public ScrollView ScrollArea { get; set; }
 
         public float PerItemCost { get; set; }
 
         public List<GItem> FilteredItems { get; set; }
-
+        public List<Resource.ResourceTags> LikedThings { get; set; }
+        public List<Resource.ResourceTags> HatedThings { get; set; } 
         public int ComputeSpace()
         {
             int total = 0;
@@ -152,9 +155,22 @@ namespace DwarfCorp
             return total;
         }
 
-        public ItemSelector(DwarfGUI gui, GUIComponent parent, string title) :
+        bool IsLiked(Resource resource)
+        {
+            return LikedThings.Any(tags => resource.Tags.Contains(tags));
+        }
+
+        bool IsHated(Resource resource)
+        {
+            return HatedThings.Any(tags => resource.Tags.Contains(tags));
+        }
+
+        public ItemSelector(DwarfGUI gui, GUIComponent parent, string title, bool hasMoney, bool moneyEditable) :
             base(gui, parent, title)
         {
+            LikedThings = new List<Resource.ResourceTags>();
+            HatedThings = new List<Resource.ResourceTags>();
+
             Columns = new List<Column>()
             {
                 Column.Image,
@@ -164,13 +180,23 @@ namespace DwarfCorp
 
             Items = new List<GItem>();
             FilteredItems = new List<GItem>();
-            GridLayout layout = new GridLayout(GUI, this, 10, 1);
+            GridLayout layout = new GridLayout(GUI, this, 11, 1);
+
+            if (hasMoney)
+            {
+                MoneyEdit = new MoneyEditor(GUI, layout, moneyEditable, 100.0f, 50.0f)
+                {
+                    ToolTip = "Money to trade"
+                };
+                layout.SetComponentPosition(MoneyEdit, 0, 9, 1, 1);
+            }
+
             SearchBox = new LineEdit(GUI, layout, "")
             {
                 Prompt = "Search...",
                 ToolTip = "Type to search for keywords"
             };
-            layout.SetComponentPosition(SearchBox, 0, 9, 1, 1);
+            layout.SetComponentPosition(SearchBox, 0, 10, 1, 1);
             SearchBox.OnTextModified += SearchBox_OnTextModified;
             ScrollArea = new ScrollView(GUI, layout)
             {
@@ -180,12 +206,14 @@ namespace DwarfCorp
 
             layout.UpdateSizes();
             layout.SetComponentPosition(ScrollArea, 0, 0, 1, 9);
-            Layout = new GridLayout(gui, ScrollArea, 14, Columns.Count);
+            ReCreateItems();
             OnItemChanged += ItemSelector_OnItemChanged;
             OnItemRemoved += ItemSelector_OnItemRemoved;
             OnItemAdded += ItemSelector_OnItemAdded;
             Behavior = ClickBehavior.RemoveItem;
             AllowShiftClick = true;
+            AllowControlClick = true;
+            AllowAltClick = true;
         }
 
         void Filter()
@@ -199,12 +227,11 @@ namespace DwarfCorp
                     FilteredItems.Add(item);
                 }
             }
-
-   
         }
 
         void SearchBox_OnTextModified(string arg)
         {
+            ScrollArea.ResetScroll();
             Filter();
             ReCreateItems();
         }
@@ -252,6 +279,21 @@ namespace DwarfCorp
                 ReCreateItems();
                 OnItemChanged(existingItem);
             }
+        }
+
+        public float GetPrice(GItem item)
+        {
+            float price = item.Price;
+            if (IsLiked(item.ResourceType))
+            {
+                price *= 2;
+            }
+            else if (IsHated(item.ResourceType))
+            {
+                price *= 0.1f;
+            }
+
+            return price;
         }
 
         public void UpdateItem(Column columnType, int row, int column)
@@ -305,8 +347,8 @@ namespace DwarfCorp
                     Label priceLabel = component as Label;
 
                     if (priceLabel == null) break;
-
-                    priceLabel.Text = item.Price.ToString("C");
+                    float price = GetPrice(item);
+                    priceLabel.Text = price.ToString("C");
 
                     break;
 
@@ -316,7 +358,7 @@ namespace DwarfCorp
 
                     if (totalpriceLabel == null) break;
 
-                    totalpriceLabel.Text = (item.CurrentAmount * item.Price).ToString("C");
+                    totalpriceLabel.Text = (item.CurrentAmount * GetPrice(item)).ToString("C");
 
                     break;
 
@@ -339,7 +381,8 @@ namespace DwarfCorp
                case Column.Amount:
                     Label amountLabel = new Label(GUI, Layout, item.CurrentAmount.ToString(), GUI.SmallFont)
                     {
-                        ToolTip = "Total Amount"
+                        ToolTip = "Total Amount",
+                        Alignment = Drawer2D.Alignment.Right
                     };
                    
                     Layout.SetComponentPosition(amountLabel, column, row, 1, 1);
@@ -360,8 +403,7 @@ namespace DwarfCorp
                 case Column.Name:
                     Label label = new Label(GUI, Layout, item.Name, GUI.SmallFont)
                     {
-                        ToolTip = tooltip,
-                        Truncate = true
+                        ToolTip = tooltip
                     };
                                             
                     Layout.SetComponentPosition(label, column, row, 1, 1);
@@ -369,9 +411,9 @@ namespace DwarfCorp
                     return label;
                 
                 case Column.PricePerItem:
-                    Label priceLabel = new Label(GUI, Layout, item.Price.ToString("C"), GUI.SmallFont)
+                    Label priceLabel = new Label(GUI, Layout, GetPrice(item).ToString("C"), GUI.SmallFont)
                     {
-                        ToolTip = "Price per item"
+                        ToolTip = "Price per item",
                     };
                     Layout.SetComponentPosition(priceLabel, column, row, 1, 1);
 
@@ -379,7 +421,7 @@ namespace DwarfCorp
 
 
                 case Column.TotalPrice:
-                    Label totalLabel = new Label(GUI, Layout, (item.Price * item.CurrentAmount).ToString("C"), GUI.SmallFont)
+                    Label totalLabel = new Label(GUI, Layout, (GetPrice(item) * item.CurrentAmount).ToString("C"), GUI.SmallFont)
                     {
                         ToolTip = "Total price"
                     };
@@ -414,9 +456,26 @@ namespace DwarfCorp
             KeyboardState state = Keyboard.GetState();
 
             bool shiftPressed = state.IsKeyDown(Keys.LeftShift) || state.IsKeyDown(Keys.RightShift);
+            bool altPressed = state.IsKeyDown(Keys.LeftAlt) || state.IsKeyDown(Keys.RightAlt);
+            bool controlPressed = state.IsKeyDown(Keys.LeftControl) || state.IsKeyDown(Keys.RightControl);
+            
+            int amount = 1;
 
-
-            int amount = (shiftPressed && AllowShiftClick) ? item.CurrentAmount : 1;
+            if (shiftPressed && AllowShiftClick)
+            {
+                amount = item.CurrentAmount;
+                GUI.ToolTipManager.Popup("Moved " + amount, 1.0f);
+            }
+            else if (controlPressed && AllowControlClick)
+            {
+                amount = Math.Min(item.CurrentAmount, 5);
+                GUI.ToolTipManager.Popup("Moved " + amount, 1.0f);
+            }
+            else if (altPressed && AllowAltClick)
+            {
+                amount = Math.Min(item.CurrentAmount, 10);
+                GUI.ToolTipManager.Popup("Moved " + amount, 1.0f);
+            }
 
             switch(Behavior)
             {
@@ -485,13 +544,13 @@ namespace DwarfCorp
 
             int rows = Math.Max(FilteredItems.Count, 6);
             ScrollArea.RemoveChild(Layout);
+ 
             Layout = new GridLayout(GUI, ScrollArea, rows + 1, Columns.Count)
             {
-                LocalBounds = new Rectangle(0, 0, Math.Max(ScrollArea.LocalBounds.Width, 512), rows * 64),
-                WidthSizeMode = SizeMode.Fixed,
+                LocalBounds = new Rectangle(-ScrollArea.ScrollX, -ScrollArea.ScrollY, Math.Max(ScrollArea.LocalBounds.Width - 64, 200), rows * 40),
                 HeightSizeMode = SizeMode.Fixed
             };
-
+            
             for (int i = 0; i < FilteredItems.Count; i++)
             {
                 GItem currentResource = FilteredItems[i];
@@ -507,6 +566,7 @@ namespace DwarfCorp
             }
 
             Layout.UpdateSizeRecursive();
+
         }
 
         public override void Update(DwarfTime time)
@@ -519,6 +579,97 @@ namespace DwarfCorp
         }
 
 
+    }
+
+    public class MoneyEditor : GUIComponent
+    {
+        public float MaxMoney { get; set; }
+        public float CurrentMoney 
+        {
+            get { return _money; }
+            set
+            {
+                _money = Math.Max(0, Math.Min(value, MaxMoney));
+
+                if (Editor != null)
+                {
+                    Editor.Text = ((int) (_money)).ToString("D");
+                }
+            }
+        }
+
+        private float _money;
+        public LineEdit Editor { get; set; }
+        public ImagePanel Image { get; set; }
+        public Label Text { get; set; }
+
+        public delegate void MoneyChanged(float amount);
+
+        public event MoneyChanged OnMoneyChanged;
+
+        protected virtual void InvokeMoneyChanged(float amount)
+        {
+            MoneyChanged handler = OnMoneyChanged;
+            if (handler != null) handler(amount);
+        }
+
+        public MoneyEditor(DwarfGUI	gui, GUIComponent parent, bool editable, float maxmoney, float currentMoney) :
+            base(gui, parent)
+        {
+            MaxMoney = maxmoney;
+            
+            GridLayout layout = new GridLayout(GUI, this, 1, 5);
+            Editor = new LineEdit(GUI, layout, "0")
+            {
+                TextMode = LineEdit.Mode.Numeric,
+                Prefix = "$",
+                IsEditable = editable
+            };
+            CurrentMoney = currentMoney;
+
+            Editor.OnTextModified += Editor_OnTextModified;
+            layout.SetComponentPosition(Editor, 2, 0, 3, 1);
+
+            Image = new ImagePanel(GUI, layout,
+                new NamedImageFrame(ContentPaths.Entities.DwarfObjects.coinpiles, 32, 1, 0))
+            {
+                KeepAspectRatio = true,
+                ConstrainSize = true
+            };
+
+            layout.SetComponentPosition(Image, 0, 0, 1, 1);
+
+            Text = new Label(GUI, layout, "Money: ", GUI.SmallFont)
+            {
+                WordWrap = false,
+                Truncate = false
+            };
+
+            layout.SetComponentPosition(Text, 1, 0, 1, 1);
+            
+        }
+
+        void Editor_OnTextModified(string arg)
+        {
+            float result = 0;
+            if (float.TryParse(arg, out result))
+            {
+                _money = result;
+
+                if (_money > MaxMoney)
+                {
+                    _money = MaxMoney;
+                    Editor.Text = ((int)(MaxMoney)).ToString("D");
+                }
+                else if (_money < 0)
+                {
+                    _money = 0;
+                    Editor.Text = "0";
+                }
+
+                InvokeMoneyChanged(_money);
+            }
+        }
     }
 
 }

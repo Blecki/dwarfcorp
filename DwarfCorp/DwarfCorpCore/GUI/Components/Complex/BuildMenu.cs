@@ -113,7 +113,8 @@ namespace DwarfCorp
             string name = Build.HasFlag(BuildType.Cook) ? "Food" : "Crafts";
             BuildResourceTab = new BuildTab
             {
-                Tab = Selector.AddTab(name)
+                Tab = Selector.AddTab(name),
+                SelectedResourceBoxes = new List<ComboBox>()
             };
             CreateBuildTab(BuildResourceTab, hasCook ? BuildType.Cook : BuildType.Craft);
             BuildResourceTab.BuildButton.OnClicked += BuildResource_OnClicked;
@@ -159,7 +160,9 @@ namespace DwarfCorp
 
                 ImagePanel icon = new ImagePanel(GUI, itemLayout, item.Image)
                 {
-                    KeepAspectRatio = true
+                    KeepAspectRatio = true,
+                    MinWidth = 32,
+                    MinHeight = 32
                 };
                 itemLayout.SetComponentPosition(icon, 0, 0, 1, 1);
 
@@ -172,7 +175,6 @@ namespace DwarfCorp
             }
             layout.UpdateSizes();
 
-            BuildResourceTab.SelectedResourceBoxes = new List<ComboBox>();
         }
 
         private void BuildResource_OnClicked()
@@ -313,7 +315,9 @@ namespace DwarfCorp
 
                 ImagePanel icon = new ImagePanel(GUI, roomLayout, room.Icon)
                 {
-                    KeepAspectRatio = true
+                    KeepAspectRatio = true,
+                    MinWidth = 32,
+                    MinHeight = 32
                 };
                 roomLayout.SetComponentPosition(icon, 0, 0, 1, 1);
 
@@ -368,7 +372,9 @@ namespace DwarfCorp
 
                 ImagePanel icon = new ImagePanel(GUI, itemLayout, item.Image)
                 {
-                    KeepAspectRatio = true
+                    KeepAspectRatio = true,
+                    MinWidth = 32,
+                    MinHeight = 32
                 };
                 itemLayout.SetComponentPosition(icon, 0, 0, 1, 1);
 
@@ -648,7 +654,9 @@ namespace DwarfCorp
             tabLayout.SetComponentPosition(infoLayout, 1, 0, 2, 1);
             tab.InfoImage = new ImagePanel(GUI, infoLayout, (Texture2D) null)
             {
-                KeepAspectRatio = true
+                KeepAspectRatio = true,
+                MinWidth = 32,
+                MinHeight = 32
             };
             infoLayout.SetComponentPosition(tab.InfoImage, 1, 0, 1, 1);
 
@@ -675,7 +683,7 @@ namespace DwarfCorp
                     tab.BuildButton = new Button(GUI, infoLayout, "Build", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetMouseFrame(GUI.Skin.MouseFrames[GUISkin.MousePointer.Build]));
                     break;
                 case BuildType.Cook:
-                    tab.BuildButton = new Button(GUI, infoLayout, "Cook", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetMouseFrame(GUI.Skin.MouseFrames[GUISkin.MousePointer.Chop]));
+                    tab.BuildButton = new Button(GUI, infoLayout, "Cook", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetMouseFrame(GUI.Skin.MouseFrames[GUISkin.MousePointer.Cook]));
                     break;
             }
             infoLayout.SetComponentPosition(tab.BuildButton, 0, 3, 1, 1);

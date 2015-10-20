@@ -89,12 +89,12 @@ namespace DwarfCorp
             {
                 Resources = new ResourceContainer()
                 {
-                    MaxResources = 1,
+                    MaxResources = 4,
                     Resources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>()
                     {
                         {
                             ResourceLibrary.ResourceType.Grain,
-                            new ResourceAmount(ResourceLibrary.ResourceType.Grain)
+                            new ResourceAmount(ResourceLibrary.ResourceType.Grain, MathFunctions.RandInt(1, 5))
                         }
                     }
                 }

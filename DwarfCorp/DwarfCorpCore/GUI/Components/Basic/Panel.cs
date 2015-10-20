@@ -89,6 +89,42 @@ namespace DwarfCorp
         }
     }
 
+    public class ScrollingAnimation : GUIComponent
+    {
+        public NamedImageFrame Image { get; set; }
+        public Color Tint { get; set; }
+        public Vector2 ScrollSpeed { get; set; }
+        public Vector2 Scroll { get; set; }
+
+        public ScrollingAnimation(DwarfGUI gui, GUIComponent parent):
+            base(gui, parent)
+        {
+            Tint = Color.White;
+        }
+
+        public override void Render(DwarfTime time, SpriteBatch batch)
+        {
+            if (Image != null && Image.Image != null)
+            {
+                Rectangle sourceRect = Image.SourceRect;
+                sourceRect.X = (int)(sourceRect.X + Scroll.X);
+                sourceRect.Y = (int) (sourceRect.Y + Scroll.Y);
+                sourceRect.Width = GlobalBounds.Width;
+                sourceRect.Height = GlobalBounds.Height;
+                batch.Draw(Image.Image, GlobalBounds, sourceRect, Tint);
+
+            }
+            base.Render(time, batch);
+        }
+
+        public override void Update(DwarfTime time)
+        {
+            Scroll += ScrollSpeed*(float)time.ElapsedRealTime.TotalSeconds;
+            base.Update(time);
+        }
+    }
+
+
     public class Tray : GUIComponent
     {
         public enum Position

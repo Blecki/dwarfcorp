@@ -77,6 +77,8 @@ namespace DwarfCorp
             return objectType == typeof(Vector3);
         }
     }
+
+
     /// <summary>
     /// Serializes and deserializes BoundingBox objects to JSON.
     /// </summary>

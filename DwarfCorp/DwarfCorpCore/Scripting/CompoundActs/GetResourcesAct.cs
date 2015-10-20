@@ -124,7 +124,7 @@ namespace DwarfCorp
             }
             else
             {
-                Tree = new Wrap(AlwaysTrue);
+                Tree = new SetBlackboardData<List<ResourceAmount>>(Agent, "ResourcesStashed", ResourcesToStash);
             }
           
             base.Initialize();

@@ -83,7 +83,7 @@ namespace DwarfCorp
             List<CreatureAI> collide = new List<CreatureAI>();
             foreach (KeyValuePair<string, Faction> faction in PlayState.ComponentManager.Factions.Factions)
             {
-                if (PlayState.Diplomacy.GetPolitics(Creature.Faction, faction.Value).GetCurrentRelationship() == Relationship.Hates)
+                if (PlayState.Diplomacy.GetPolitics(Creature.Faction, faction.Value).GetCurrentRelationship() == Relationship.Hateful)
                 {
                     foreach (CreatureAI minion in faction.Value.Minions)
                     {

@@ -11,7 +11,7 @@ namespace DwarfCorp
         public delegate void TillDelegate();
         public event TillDelegate OnTill;
 
-        public delegate void PlantDelegate(string plantType);
+        public delegate void PlantDelegate(string plantType, string resource);
         public event PlantDelegate OnPlant;
 
         public delegate void HarvestDelegate();
@@ -48,10 +48,13 @@ namespace DwarfCorp
             List<ResourceAmount> resources = PlayState.Master.Faction.ListResourcesWithTag(Resource.ResourceTags.Plantable);
             foreach (ResourceAmount resource in resources)
             {
-                PlantSelector.AddValue(resource.ResourceType.Type);
+                if (resource.NumResources > 0)
+                {
+                    PlantSelector.AddValue(resource.ResourceType.Type);
+                }
             }
 
-            if (resources.Count > 0)
+            if (resources.Count > 0 && PlantSelector.Values.Count > 0)
             {
                 PlantSelector.CurrentIndex = 0;
                 PlantSelector.CurrentValue = PlantSelector.Values.ElementAt(0);
@@ -79,10 +82,14 @@ namespace DwarfCorp
 
         void PlantButton_OnClicked()
         {
-            if (OnPlant != null && !string.IsNullOrEmpty(PlantSelector.CurrentValue))
+            if (OnPlant != null && !string.IsNullOrEmpty(PlantSelector.CurrentValue) && PlantSelector.CurrentValue != "<No plantable items!>")
             {
-                OnPlant.Invoke(PlantSelector.CurrentValue);
+                OnPlant.Invoke(PlantSelector.CurrentValue, PlantSelector.CurrentValue);
                 CloseButton.InvokeClick();
+            }
+            else
+            {
+                GUI.ToolTipManager.Popup("Nothing to plant.");
             }
         }
 

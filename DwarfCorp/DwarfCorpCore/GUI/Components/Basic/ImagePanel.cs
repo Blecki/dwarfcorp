@@ -129,9 +129,9 @@ namespace DwarfCorp
             if(ConstrainSize)
             {
                 toDraw.Width = Math.Min(Image.SourceRect.Width, toDraw.Width);
-                //toDraw.Y += (toDraw.Height - Image.SourceRect.Height);
                 toDraw.Height = Math.Min(Image.SourceRect.Height, toDraw.Height);
-
+                toDraw.Width = Math.Max(Image.SourceRect.Width, toDraw.Width);
+                toDraw.Height = Math.Max(Image.SourceRect.Height, toDraw.Height);
             }
 
             return toDraw;

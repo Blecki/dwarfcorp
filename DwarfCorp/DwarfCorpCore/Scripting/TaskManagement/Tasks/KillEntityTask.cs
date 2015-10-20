@@ -155,7 +155,7 @@ namespace DwarfCorp
                 }
                 Relationship relation =
                     PlayState.Diplomacy.GetPolitics(ai.Faction, agent.Faction).GetCurrentRelationship();
-                return relation == Relationship.Hates || relation == Relationship.Indifferent;
+                return relation == Relationship.Hateful || relation == Relationship.Indifferent;
             }
         }
     }

@@ -95,6 +95,8 @@ namespace DwarfCorp
             RegisterEntity("Palm Tree", (position, data) => new Tree(position, "palm", data.GetData("Scale", 1.0f)));
             RegisterEntity("Berry Bush", (position, data) => new Bush(position, "berrybush", data.GetData("Scale", 1.0f)));
             RegisterEntity("Bird", (position, data) => new Bird(ContentPaths.Entities.Animals.Birds.GetRandomBird(), position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Bird"));
+            RegisterEntity("Brown Rabbit", (position, data) => new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit0_animation, position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Rabbit"));
+            RegisterEntity("White Rabbit", (position, data) => new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit1_animation, position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Rabbit"));
             RegisterEntity("Deer", (position, data) => new Deer(ContentPaths.Entities.Animals.Deer.deer, position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Deer"));
             RegisterEntity("Dwarf", (position, data) => GenerateDwarf(position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager, PlayState.Camera, PlayState.PlayerFaction, PlayState.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Worker], 0));
             RegisterEntity("TestDwarf", (position, data) => GenerateTestDwarf(position));
@@ -123,7 +125,9 @@ namespace DwarfCorp
             RegisterEntity("Anvil", (position, data) => new Anvil(position));
             RegisterEntity("Forge", (position, data) => new Forge(position));
             RegisterEntity("Elf", (position, data) => GenerateElf(position, PlayState.ComponentManager.Factions.Factions["Elf"], "Elf"));
+            RegisterEntity("Demon", (position, data) => GenerateDemon(position, PlayState.ComponentManager.Factions.Factions["Demon"], "Demon"));
             RegisterEntity("Arrow", (position, data) => new ArrowProjectile(position, data.GetData("Velocity", Vector3.Up*10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData("Faction", "Elf")));
+            RegisterEntity("Fireball", (position, data) => new FireballProjectile(position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData("Faction", "Demon")));
             RegisterEntity("Fairy", (position, data) => new Fairy("Player", position));
             RegisterEntity("Target", (position, data) => new Target(position));
             RegisterEntity("Stove", (position, data) => new Stove(position));
@@ -302,6 +306,13 @@ namespace DwarfCorp
         {
             CreatureStats stats = new CreatureStats(new ElfClass(), 0);
             return new Elf(stats, allies, PlayState.PlanService, faction, PlayState.ComponentManager, "Elf", PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position).Physics;
+        }
+
+
+        public static Body GenerateDemon(Vector3 position, Faction faction, string allies)
+        {
+            CreatureStats stats = new CreatureStats(new DemonClass(), 0);
+            return new Demon(stats, allies, PlayState.PlanService, faction, PlayState.ComponentManager, "Demon", PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position).Physics;
         }
 
         public static Body GenerateGoblin(Vector3 position,

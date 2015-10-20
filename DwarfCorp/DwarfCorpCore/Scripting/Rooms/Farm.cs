@@ -140,8 +140,7 @@ namespace DwarfCorp
 
         public override void CreateGUIObjects()
         {
-            FarmButton = new Button(PlayState.GUI, PlayState.GUI.RootComponent, "Farm", PlayState.GUI.DefaultFont,
- Button.ButtonMode.ImageButton, new NamedImageFrame(ContentPaths.GUI.icons, 32, 5, 1))
+            FarmButton = new Button(PlayState.GUI, PlayState.GUI.RootComponent, "Farm", PlayState.GUI.DefaultFont, Button.ButtonMode.ImageButton, new NamedImageFrame(ContentPaths.GUI.icons, 32, 5, 1))
             {
                 LocalBounds = new Rectangle(0, 0, 32, 32),
                 DrawFrame = true,
@@ -171,6 +170,7 @@ namespace DwarfCorp
 
         void farmButton_OnClicked()
         {
+            /*
             List<CreatureAI> minions = PlayState.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)).ToList();
             foreach (CreatureAI creature in minions)
             {
@@ -183,7 +183,7 @@ namespace DwarfCorp
             if (minions.Count == 0)
             {
                 PlayState.GUI.ToolTipManager.Popup("None of the selected units can farm.");
-            }
+            }*/
         }
 
         public override void Destroy()

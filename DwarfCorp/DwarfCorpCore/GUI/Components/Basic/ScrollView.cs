@@ -155,7 +155,10 @@ namespace DwarfCorp
             sy = 0;
             lastSx = sx;
             lastSy = sy;
+            VerticalSlider.SliderValue = 0;
+            HorizontalSlider.SliderValue = 0;
         }
+
 
         public void UpdateScrollArea()
         {

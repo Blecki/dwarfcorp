@@ -118,6 +118,7 @@ namespace DwarfCorp
                 List<CreatureAI> creatures = body.GetChildrenOfTypeRecursive<CreatureAI>();
                 foreach (CreatureAI creature in creatures)
                 {
+                   
                     if (spawnEvent.Attack)
                     {
                         CreatureAI enemyMinion = spawnEvent.TargetFaction.GetNearestMinion(creature.Position);

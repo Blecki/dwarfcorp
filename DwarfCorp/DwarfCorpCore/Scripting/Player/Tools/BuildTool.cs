@@ -90,12 +90,29 @@ namespace DwarfCorp
                 return;
             }
 
-            Player.VoxSelector.Enabled = true;
 
-            Player.BodySelector.Enabled = false;
-            PlayState.GUI.IsMouseVisible = true;
+            bool hasCook = this.BuildType == BuildMenu.BuildType.Cook;
 
-            PlayState.GUI.MouseMode = PlayState.GUI.IsMouseOver() ? GUISkin.MousePointer.Pointer : GUISkin.MousePointer.Build;
+            if (!hasCook)
+            {
+                Player.VoxSelector.Enabled = true;
+                Player.BodySelector.Enabled = false;
+                PlayState.GUI.IsMouseVisible = true;
+
+                PlayState.GUI.MouseMode = PlayState.GUI.IsMouseOver()
+                    ? GUISkin.MousePointer.Pointer
+                    : GUISkin.MousePointer.Build;
+            }
+            else
+            {
+                Player.VoxSelector.Enabled = false;
+                Player.BodySelector.Enabled = false;
+                PlayState.GUI.IsMouseVisible = true;
+
+                PlayState.GUI.MouseMode = PlayState.GUI.IsMouseOver()
+                    ? GUISkin.MousePointer.Pointer
+                    : GUISkin.MousePointer.Cook;
+            }
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)

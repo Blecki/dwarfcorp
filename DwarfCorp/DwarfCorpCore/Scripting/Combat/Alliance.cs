@@ -41,8 +41,8 @@ namespace DwarfCorp
     public enum Relationship
     {
         Indifferent,
-        Loves,
-        Hates
+        Loving,
+        Hateful
     }
     /*
     /// <summary>
@@ -91,23 +91,23 @@ namespace DwarfCorp
         {
             Relationships = new Dictionary<AlliancePair, Relationship>();
             SetRelationship("Player", "Herbivore", Relationship.Indifferent);
-            SetRelationship("Player", "Carnivore", Relationship.Hates);
-            SetRelationship("Herbivore", "Carnivore", Relationship.Hates);
-            SetRelationship("Player", "Undead", Relationship.Hates);
-            SetRelationship("Player", "Goblins", Relationship.Hates);
-            SetRelationship("Goblins", "Undead", Relationship.Hates);
+            SetRelationship("Player", "Carnivore", Relationship.Hateful);
+            SetRelationship("Herbivore", "Carnivore", Relationship.Hateful);
+            SetRelationship("Player", "Undead", Relationship.Hateful);
+            SetRelationship("Player", "Goblins", Relationship.Hateful);
+            SetRelationship("Goblins", "Undead", Relationship.Hateful);
             SetRelationship("Herbivore", "Undead", Relationship.Indifferent);
-            SetRelationship("Carnivore", "Undead", Relationship.Hates);
-            SetRelationship("Goblins", "Carnivore", Relationship.Hates);
+            SetRelationship("Carnivore", "Undead", Relationship.Hateful);
+            SetRelationship("Goblins", "Carnivore", Relationship.Hateful);
             SetRelationship("Goblins", "Herbivore", Relationship.Indifferent);
-            SetRelationship("Elf", "Goblins", Relationship.Hates);
-            SetRelationship("Elf", "Player", Relationship.Hates);
-            SetRelationship("Elf", "Herbivore", Relationship.Loves);
+            SetRelationship("Elf", "Goblins", Relationship.Hateful);
+            SetRelationship("Elf", "Player", Relationship.Hateful);
+            SetRelationship("Elf", "Herbivore", Relationship.Loving);
             SetRelationship("Elf", "Carnivore", Relationship.Indifferent);
-            SetRelationship("Elf", "Undead", Relationship.Hates);
-            SetRelationship("Molemen", "Goblins", Relationship.Hates);
-            SetRelationship("Molemen", "Player", Relationship.Hates);
-            SetRelationship("Molemen", "Undead", Relationship.Hates);
+            SetRelationship("Elf", "Undead", Relationship.Hateful);
+            SetRelationship("Molemen", "Goblins", Relationship.Hateful);
+            SetRelationship("Molemen", "Player", Relationship.Hateful);
+            SetRelationship("Molemen", "Undead", Relationship.Hateful);
             SetSelfClassLove();
 
             return Relationships;
@@ -119,8 +119,8 @@ namespace DwarfCorp
             relationships.AddRange(Relationships.Keys);
             foreach(AlliancePair a in relationships)
             {
-                SetRelationship(a.AllianceA, a.AllianceA, Relationship.Loves);
-                SetRelationship(a.AllianceB, a.AllianceB, Relationship.Loves);
+                SetRelationship(a.AllianceA, a.AllianceA, Relationship.Loving);
+                SetRelationship(a.AllianceB, a.AllianceB, Relationship.Loving);
             }
         }
 

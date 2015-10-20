@@ -89,6 +89,7 @@ namespace DwarfCorp
             public static string green_flame = ProgramData.CreatePath("Particles", "green_flame");
             public static string star_particle = ProgramData.CreatePath("Particles", "bigstar_particle");
             public static string heart = ProgramData.CreatePath("Particles", "heart");
+            public static string fireball = ProgramData.CreatePath("Particles", "fireball");
         }
         public class Effects
         {
@@ -169,6 +170,14 @@ namespace DwarfCorp
                     {
                         return bird_prefix + PlayState.Random.Next(8);
                     }
+                }
+
+                public class Rabbit
+                {
+                    public static string rabbit0 = ProgramData.CreatePath("Entities", "Animals", "Rabbit", "rabbit0");
+                    public static string rabbit1 = ProgramData.CreatePath("Entities", "Animals", "Rabbit", "rabbit1");
+                    public static string rabbit0_animation = ProgramData.CreatePath("Entities", "Animals", "Rabbit", "rabbit0_animation.json");
+                    public static string rabbit1_animation = ProgramData.CreatePath("Entities", "Animals", "Rabbit", "rabbit1_animation.json");
                 }
 
                 public class Deer
@@ -314,6 +323,12 @@ namespace DwarfCorp
                 public static string moleman = ProgramData.CreatePath("Entities", "Moleman", "Moleman.json");
                 public static string moleman_animations = ProgramData.CreatePath("Entities", "Moleman","moleman_animation.json");
             }
+
+            public class Demon
+            {
+                public static string demon = ProgramData.CreatePath("Entities", "Demon", "demon");
+                public static string demon_animations = ProgramData.CreatePath("Entities", "Demon", "demon_animation.json");
+            }
         }
         public class Fonts
         {
@@ -340,6 +355,8 @@ namespace DwarfCorp
             public static string room_icons = ProgramData.CreatePath("GUI", "room_icons");
             public static string gui_minimap = ProgramData.CreatePath("GUI", "gui_minimap");
             public static string dorf_diplo = ProgramData.CreatePath("GUI", "diplo-dorf");
+            public static string checker = ProgramData.CreatePath("GUI", "checker");
+            public static string background = ProgramData.CreatePath("GUI", "background");
         }
         public class Logos
         {
@@ -361,6 +378,7 @@ namespace DwarfCorp
             public static string dwarfcorp_2 = ProgramData.CreatePath("Music", "dwarfcorp_2");
             public static string dwarfcorp_3 = ProgramData.CreatePath("Music", "dwarfcorp_3");
             public static string dwarfcorp_4 = ProgramData.CreatePath("Music", "dwarfcorp_4");
+            public static string dwarfcorp_5 = ProgramData.CreatePath("Music", "dwarfcorp_5");
 #else
             public static string dwarfcorp = ProgramData.CreatePath("Music", "dwarfcorp_ogg");
 #endif

@@ -593,7 +593,7 @@ namespace DwarfCorp
             int maxX = Math.Max(Math.Min(rect.Right, maxScreenX), minScreenX);
             int maxY = Math.Max(Math.Min(rect.Bottom, maxScreenY), minScreenY);
 
-            return new Rectangle(x, y, Math.Abs(maxX - x), Math.Abs(maxY - y));
+            return new Rectangle(x, y, Math.Max(maxX - x, 0), Math.Max(maxY - y, 0));
         }
 
         public virtual void PreRender(DwarfTime time, SpriteBatch sprites)

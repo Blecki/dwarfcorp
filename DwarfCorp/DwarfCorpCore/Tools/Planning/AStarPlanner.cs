@@ -225,6 +225,8 @@ namespace DwarfCorp
                     return 20.0f;
                 case Creature.MoveType.Fall:
                     return 10.0f;
+                case Creature.MoveType.Fly:
+                    return 2.0f;
                 default:
                     return 1.0f;
             }

@@ -174,6 +174,9 @@ namespace DwarfCorp
                         case Creature.MoveType.Fall:
                             return unitTime * diffNorm * 0.5f;
                             break;
+                        case Creature.MoveType.Fly:
+                            return unitTime*diffNorm*0.6f;
+                            break;
                     }
 
                 }
@@ -333,12 +336,26 @@ namespace DwarfCorp
                         }
                         break;
                     case Creature.MoveType.Climb:
-                        Creature.OverrideCharacterMode = true;
+                        Creature.OverrideCharacterMode = false;
                         Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
-                        
+                        Creature.OverrideCharacterMode = true;
                         if (hasNextAction)
                         {
                             transform.Translation = diff*t + currPosition;
+                            Agent.Physics.Velocity = diff;
+                        }
+                        else
+                        {
+                            transform.Translation = currPosition;
+                        }
+                        break;
+                    case Creature.MoveType.Fly:
+                        Creature.OverrideCharacterMode = false;
+                        Creature.CurrentCharacterMode = Creature.CharacterMode.Flying;
+                        Creature.OverrideCharacterMode = true;
+                        if (hasNextAction)
+                        {
+                            transform.Translation = diff * t + currPosition;
                             Agent.Physics.Velocity = diff;
                         }
                         else

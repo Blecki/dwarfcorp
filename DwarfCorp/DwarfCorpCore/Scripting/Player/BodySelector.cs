@@ -47,6 +47,7 @@ namespace DwarfCorp
         public Rectangle SelectionRectangle { get; set; }
 
         public bool AllowRightClickSelection { get; set; }
+        public Timer MouseOverTimer { get; set; }
 
         public BodySelector(Camera camera, GraphicsDevice graphics, ComponentManager components)
         {
@@ -67,11 +68,27 @@ namespace DwarfCorp
             BoxYOffset = 0;
             LastMouseWheel = 0;
             SelectionRectangle = new Rectangle(0, 0, 0, 0);
+            MouseOverTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
         }
 
         public List<Body> SelectBodies(Rectangle screenRectangle)
         {
             return Components.SelectRootBodiesOnScreen(screenRectangle, CameraController);
+        }
+
+        public void OnMouseOver(IEnumerable<Body> entities)
+        {
+           
+            string desc = "";
+            bool first = true;
+            foreach (Body body in entities)
+            {
+                if (!first) desc += "\n";
+                desc += body.GetDescription();
+                first = false;
+            }
+
+            PlayState.GUI.ToolTipManager.ToolTip = desc != "" ? desc : "";
         }
 
         public void Update()
@@ -92,6 +109,17 @@ namespace DwarfCorp
             else
             {
                 LastMouseWheel = mouse.ScrollWheelValue;
+            }
+
+            MouseOverTimer.Update(DwarfTime.LastTime);
+            if (MouseOverTimer.HasTriggered)
+            {
+                List<Body> selected = SelectBodies(new Rectangle(mouse.X - 10, mouse.Y - 10, 20, 20));
+
+                if (selected.Count > 0)
+                {
+                    OnMouseOver(selected);
+                }
             }
 
             if (isLeftPressed)

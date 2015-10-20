@@ -63,8 +63,7 @@ namespace DwarfCorp
             CameraController = camera;
             Graphics = graphics;
             Chunks = chunks;
-            SelectionBuffer =
- new List<Voxel>();
+            SelectionBuffer = new List<Voxel>();
             LeftPressed = LeftPressedCallback;
             RightPressed = RightPressedCallback;
             LeftReleased = LeftReleasedCallback;
@@ -86,6 +85,20 @@ namespace DwarfCorp
             if(underMouse != null)
             {
                 PlayState.CursorLightPos = underMouse.Position + new Vector3(0.5f, 0.5f, 0.5f);
+
+                if (Enabled && underMouse.TypeName != "empty")
+                {
+                    PlayState.GUI.ToolTipManager.ToolTip = underMouse.TypeName;
+
+                    if (PlayState.PlayerFaction.RoomBuilder.IsInRoom(underMouse))
+                    {
+                        Room room = PlayState.PlayerFaction.RoomBuilder.GetMostLikelyRoom(underMouse);
+
+                        if (room != null)
+                            PlayState.GUI.ToolTipManager.ToolTip += " (" + room.ID + ")";
+                    }
+
+                }
             }
 
             if(!Enabled)

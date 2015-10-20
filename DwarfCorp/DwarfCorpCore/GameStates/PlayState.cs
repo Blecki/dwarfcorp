@@ -465,7 +465,9 @@ namespace DwarfCorp.GameStates
             {
                 SoundManager.Content = Content;
                 SoundManager.LoadDefaultSounds();
-                SoundManager.SetActiveSongs(ContentPaths.Music.dwarfcorp, ContentPaths.Music.dwarfcorp_2, ContentPaths.Music.dwarfcorp_3, ContentPaths.Music.dwarfcorp_4);
+#if XNA_BUILD
+                SoundManager.SetActiveSongs(ContentPaths.Music.dwarfcorp, ContentPaths.Music.dwarfcorp_2, ContentPaths.Music.dwarfcorp_3, ContentPaths.Music.dwarfcorp_4, ContentPaths.Music.dwarfcorp_5);
+#endif
             }
             new PrimitiveLibrary(GraphicsDevice, Content);
             InstanceManager = new InstanceManager();
@@ -785,7 +787,7 @@ namespace DwarfCorp.GameStates
             GUI.RootComponent.AddChild(Master.Debugger.MainPanel);
             layout.AddChild(Master.ToolBar);
             Master.ToolBar.Parent = layout;
-            Master.ToolBar.LocalBounds = new Rectangle(0, 0, 432, 48);
+            Master.ToolBar.LocalBounds = new Rectangle(0, 0, 256, 100);
 
             layout.Add(Master.ToolBar, AlignLayout.Alignment.Right, AlignLayout.Alignment.Bottom, Vector2.Zero);
             //layout.SetComponentPosition(Master.ToolBar, 7, 10, 4, 1);

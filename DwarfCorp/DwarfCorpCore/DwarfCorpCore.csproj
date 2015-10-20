@@ -127,6 +127,7 @@
     <Compile Include="Entities\Fixtures\Table.cs" />
     <Compile Include="Entities\Fixtures\Target.cs" />
     <Compile Include="Entities\Fixtures\WorkPile.cs" />
+    <Compile Include="Entities\Monsters\Demon.cs" />
     <Compile Include="Entities\Monsters\Elf.cs" />
     <Compile Include="Entities\Monsters\Fairy.cs" />
     <Compile Include="Entities\Monsters\Goblin.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="GUI\Components\Complex\ColorDialog.cs" />
     <Compile Include="GUI\Components\Complex\ColorSelector.cs" />
     <Compile Include="GUI\Components\Complex\EmployeeDisplay.cs" />
+    <Compile Include="GUI\Components\Complex\FarmingPanel.cs" />
     <Compile Include="GUI\Components\Complex\GoodsPanel.cs" />
     <Compile Include="GUI\Components\Complex\HireDialog.cs" />
     <Compile Include="GUI\Components\Complex\ImageFrameLoadDialog.cs" />

@@ -56,6 +56,13 @@ namespace DwarfCorp
             public Faction Faction { get; set; }
             public List<PoliticalEvent> RecentEvents { get; set; }
             public bool HasMet { get; set; }
+            public bool WasAtWar { get; set; }
+
+            public Politics()
+            {
+                WasAtWar = false;
+                HasMet = false;
+            }
 
             public Relationship GetCurrentRelationship()
             {
@@ -63,7 +70,7 @@ namespace DwarfCorp
 
                 if (feeling < -0.5f)
                 {
-                    return Relationship.Hates;
+                    return Relationship.Hateful;
                 }
                 else if (feeling < 0.5f)
                 {
@@ -71,8 +78,13 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    return Relationship.Loves;
+                    return Relationship.Loving;
                 }
+            }
+
+            public bool HasEvent(string text)
+            {
+                return RecentEvents.Any(e => e.Description == text);
             }
 
             public float GetCurrentFeeling()
@@ -123,7 +135,7 @@ namespace DwarfCorp
                                 new PoliticalEvent()
                                 {
                                     Change = 1.0f,
-                                    Description = "We belong to the same faction.", 
+                                    Description = "we are of the same faction", 
                                     Duration = forever,
                                     Time = now
                                 }
@@ -144,17 +156,33 @@ namespace DwarfCorp
                             politics.RecentEvents.Add(new PoliticalEvent()
                             {
                                 Change = 0.5f,
-                                Description = "We belong to the same race.",
+                                Description = "we are the same race",
                                 Duration = forever,
                                 Time = now
                             });
 
                         }
+
+                        if (faction.Value.Race.NaturalEnemies.Any(name => name == otherFaction.Value.Race.Name))
+                        {
+                            if (!politics.HasEvent("we are naturally hostile"))
+                            {
+                                politics.RecentEvents.Add(new PoliticalEvent()
+                                {
+                                    Change = -2.0f,
+                                    Description = "we are naturally hostile",
+                                    Duration = forever,
+                                    Time = now
+                                });
+                            }
+                        }
+
                         FactionPolitics[pair] = politics;
                     }
 
                 }
             }
+            
         }
 
         public void SendTradeEnvoy(Faction natives)
@@ -164,18 +192,37 @@ namespace DwarfCorp
 
             if (playState.IsActiveState)
             {
-                List<CreatureAI> creatures =
-                    PlayState.MonsterSpawner.Spawn(PlayState.MonsterSpawner.GenerateSpawnEvent(natives,
-                        PlayState.PlayerFaction, PlayState.Random.Next(4) + 1, false));
-
-                if (creatures.Count > 0)
+                if (natives.Race.IsNative)
                 {
-                    PlayState.AnnouncementManager.Announce("Trade envoy from " + natives.Name + " has arrived!",
-                        "Click to zoom to location", creatures.First().ZoomToMe);
+                    List<CreatureAI> creatures =
+                        PlayState.MonsterSpawner.Spawn(PlayState.MonsterSpawner.GenerateSpawnEvent(natives,
+                            PlayState.PlayerFaction, PlayState.Random.Next(4) + 1, false));
+
+                    if (creatures.Count > 0)
+                    {
+                        PlayState.AnnouncementManager.Announce("Trade envoy from " + natives.Name + " has arrived!",
+                            "Click to zoom to location", creatures.First().ZoomToMe);
+                    }
+                }
+                else
+                {
+                    PlayState.PlayerFaction.DispatchBalloon();
+
+                    PlayState.AnnouncementManager.Announce("Trade envoy from " + natives.Name + " has arrived!", "Trade with " + natives.Name);
                 }
 
-                GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game, GameState.Game.StateManager,
-                    (PlayState) GameState.Game.StateManager.GetState<PlayState>("PlayState"), natives) { Name = "DiplomacyState_" + natives.Name});
+                if (GameState.Game.StateManager.States.ContainsKey("DiplomacyState_" + natives.Name))
+                {
+                    GameState.Game.StateManager.PushState("DiplomacyState_" + natives.Name);
+                }
+                else
+                {
+                    GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game, GameState.Game.StateManager,
+                        (PlayState) GameState.Game.StateManager.GetState<PlayState>("PlayState"), natives)
+                    {
+                        Name = "DiplomacyState_" + natives.Name
+                    });
+                }
             }
         }
 
@@ -184,6 +231,7 @@ namespace DwarfCorp
             // todo
             PlayState.AnnouncementManager.Announce("War party from " + natives.Name + " has arrived!", "");
             Politics politics = GetPolitics(natives, PlayState.PlayerFaction);
+            politics.WasAtWar = true;
             PlayState.MonsterSpawner.Spawn(PlayState.MonsterSpawner.GenerateSpawnEvent(natives, PlayState.PlayerFaction, PlayState.Random.Next(5) + 1, true));
         }
 
@@ -202,12 +250,12 @@ namespace DwarfCorp
                     Race race = otherFaction.Race;
                     Politics relation = mypolitics.Value;
 
-                    if (race.IsIntelligent && race.IsNative && !otherFaction.IsRaceFaction && !relation.HasMet && MathFunctions.RandEvent(1e-2f))
+                    if (race.IsIntelligent  && !otherFaction.IsRaceFaction && relation.GetCurrentRelationship() != Relationship.Hateful && MathFunctions.RandEvent(0.5f))
                     {
                         SendTradeEnvoy(otherFaction);
                     }
 
-                    if (race.IsIntelligent && race.IsNative && !otherFaction.IsRaceFaction && relation.GetCurrentRelationship() == Relationship.Hates && MathFunctions.RandEvent(1e-7f))
+                    if (race.IsIntelligent  && !otherFaction.IsRaceFaction && relation.GetCurrentRelationship() == Relationship.Hateful && MathFunctions.RandEvent(1e-3f))
                     {
                         SendWarParty(otherFaction);
                     }

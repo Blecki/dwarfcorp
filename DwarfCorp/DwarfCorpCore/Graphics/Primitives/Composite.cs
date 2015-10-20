@@ -230,12 +230,14 @@ namespace DwarfCorp
     public class CompositeLibrary
     {
         public static Dictionary<string, Composite> Composites { get; set; }
+
         public static bool IsInitialized = false;
 
         public static string Dwarf = "Dwarf";
         public static string Goblin = "Goblin";
         public static string Skeleton = "Skeleton";
         public static string Elf = "Elf";
+        public static string Demon = "Demon";
 
         public static void Initialize()
         {
@@ -260,6 +262,14 @@ namespace DwarfCorp
                 },
                 {
                     Elf,
+                    new Composite()
+                    {
+                        FrameSize = new Point(48, 48),
+                        TargetSizeFrames = new Point(4, 4)
+                    }
+                },
+                {
+                    Demon,
                     new Composite()
                     {
                         FrameSize = new Point(48, 48),

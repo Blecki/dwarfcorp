@@ -75,7 +75,7 @@ namespace DwarfCorp
 
             GridLayout buyBoxLayout = new GridLayout(GUI, buyTab, 10, 4);
 
-            BuySelector = new ItemSelector(GUI, buyBoxLayout, "Items")
+            BuySelector = new ItemSelector(GUI, buyBoxLayout, "Items", false, false)
             {
                 Columns = new List<ItemSelector.Column>()
                 {
@@ -94,7 +94,7 @@ namespace DwarfCorp
             BuySelector.ReCreateItems();
 
 
-            ShoppingCart = new ItemSelector(GUI, buyBoxLayout, "Order")
+            ShoppingCart = new ItemSelector(GUI, buyBoxLayout, "Order", false, false)
             {
                 Columns = new List<ItemSelector.Column>()
                 {
@@ -104,7 +104,7 @@ namespace DwarfCorp
                     ItemSelector.Column.Amount,
                     ItemSelector.Column.TotalPrice
                 },
-                NoItemsMessage = "No items selected",
+                NoItemsMessage = "Nothing",
                 ToolTip = "Click items to remove them from the shopping cart",
                 PerItemCost = 1.00f
             };
@@ -224,7 +224,7 @@ namespace DwarfCorp
 
             GridLayout sellBoxLayout = new GridLayout(GUI, sellTab, 10, 4);
 
-            SellSelector = new ItemSelector(GUI, sellBoxLayout, "Items")
+            SellSelector = new ItemSelector(GUI, sellBoxLayout, "Items", false, false)
             {
                 Columns = new List<ItemSelector.Column>()
                 {
@@ -244,7 +244,7 @@ namespace DwarfCorp
             SellSelector.ReCreateItems();
 
 
-            SellCart = new ItemSelector(GUI, sellBoxLayout, "Order")
+            SellCart = new ItemSelector(GUI, sellBoxLayout, "Order", false, false)
             {
                 Columns = new List<ItemSelector.Column>()
                 {
@@ -364,6 +364,19 @@ namespace DwarfCorp
     {
        public List<ResourceAmount> GoodsReceived { get; set; } 
        public List<ResourceAmount> GoodsSent { get; set; }
+       public float MoneyReceived { get; set; }
+       public float MoneySent { get; set; }
+       public List<Resource.ResourceTags> LikedThings { get; set; }
+       public List<Resource.ResourceTags> HatedThings { get; set; }
+
+
+        public TradeEvent()
+        {
+            LikedThings = new List<Resource.ResourceTags>();
+            HatedThings = new List<Resource.ResourceTags>();
+            MoneyReceived = 0.0f;
+            MoneySent = 0.0f;
+        }
 
         public struct Profit
         {
@@ -379,16 +392,51 @@ namespace DwarfCorp
             {
                 get
                 {
-                    if (OurValue + TheirValue > 0) return TotalProfit/(OurValue + TheirValue);
+                    if (TheirValue > 0) return TotalProfit/(TheirValue);
                     else return 0.0f;
                 }
             }
         }
 
+        bool IsLiked(Resource resource)
+        {
+            return LikedThings.Any(tags => resource.Tags.Contains(tags));
+        }
+
+        bool IsHated(Resource resource)
+        {
+            return HatedThings.Any(tags => resource.Tags.Contains(tags));
+        }
+
+        public float GetPrice(Resource item)
+        {
+            float price = item.MoneyValue;
+            if (IsLiked(item))
+            {
+                price *= 2;
+            }
+            else if (IsHated(item))
+            {
+                price *= 0.1f;
+            }
+
+            return price;
+        }
+
+        public bool IsHate()
+        {
+            return GoodsSent.Any(amount => IsHated(amount.ResourceType));
+        }
+
+        public bool IsLike()
+        {
+            return GoodsSent.Any(amount => IsLiked(amount.ResourceType));
+        }
+
         public Profit GetProfit()
         {
-            float ourAmount = GoodsReceived.Sum(amount => amount.NumResources*amount.ResourceType.MoneyValue);
-            float theirAmount = GoodsSent.Sum(amount => amount.NumResources * amount.ResourceType.MoneyValue);
+            float ourAmount = GoodsReceived.Sum(amount => amount.NumResources*GetPrice(amount.ResourceType)) + MoneyReceived;
+            float theirAmount = GoodsSent.Sum(amount => amount.NumResources * GetPrice(amount.ResourceType)) + MoneySent;
 
             return new Profit() { OurValue = ourAmount, TheirValue = theirAmount };
         }
@@ -412,12 +460,20 @@ namespace DwarfCorp
         public TradeDialog(DwarfGUI gui, GUIComponent parent, Faction otherFaction, WindowButtons buttons)
             : base(gui, parent,buttons)
         {
+            IsResizeable = false;
+            IsDraggable = false;
             TradePanel = new TradePanel(GUI, this, PlayState.PlayerFaction, otherFaction)
             {
                 WidthSizeMode = SizeMode.Fit,
                 HeightSizeMode = SizeMode.Fit
             };
             TradePanel.OnTraded += TradePanel_OnTraded;
+            TradePanel.OnCanceled += TradePanel_OnCanceled;
+        }
+
+        void TradePanel_OnCanceled()
+        {
+            Close(ReturnStatus.Canceled);
         }
 
         void TradePanel_OnTraded(TradeEvent e)
@@ -430,10 +486,9 @@ namespace DwarfCorp
         {
             TradeDialog d = new TradeDialog(gui, parent, faction, buttons)
             {
-                LocalBounds =
-                    new Rectangle(x, y, w, h),
-                MinWidth = w - 150,
-                MinHeight = h - 150,
+                LocalBounds = new Rectangle(x, y, w, h),
+                MinWidth = w,
+                MinHeight = h,
                 DrawOrder = 100,
                 IsModal = true
             };
@@ -443,10 +498,10 @@ namespace DwarfCorp
 
         public static TradeDialog Popup(DwarfGUI gui, GUIComponent parent, Faction faction, WindowButtons buttons = WindowButtons.CloseButton)
         {
-            int w = gui.Graphics.Viewport.Width - 200;
-            int h = gui.Graphics.Viewport.Height - 200;
-            int x = gui.Graphics.Viewport.Width / 2 - w / 2;
-            int y = gui.Graphics.Viewport.Height / 2 - h / 2;
+            int w = gui.Graphics.Viewport.Width;
+            int h = gui.Graphics.Viewport.Height;
+            int x = 0;
+            int y = 0;
             return Popup(gui, w, h, parent, x, y, buttons, faction);
         }
 
@@ -461,12 +516,23 @@ namespace DwarfCorp
         public Label SpaceLabel { get; set; }
         public ItemSelector TheirGoods { get; set; }
         public ItemSelector MyGoods { get; set; }
+        public ItemSelector TheirTrades { get; set; }
+        public ItemSelector MyTrades { get; set; }
         public Faction OtherFaction { get; set; }
         public List<ResourceAmount> GoodsSent { get; set; }
         public List<ResourceAmount> GoodsReceived { get; set; } 
         public delegate void OnTrade(TradeEvent e);
-
         public event OnTrade OnTraded;
+
+        public delegate void OnCancel();
+        public event OnCancel OnCanceled;
+
+        protected virtual void InvokeCancel()
+        {
+            OnCancel handler = OnCanceled;
+            if (handler != null) handler();
+        }
+
 
         protected virtual void OnOnTraded(TradeEvent e)
         {
@@ -482,39 +548,134 @@ namespace DwarfCorp
                     select new GItem(r.ResourceType, r.ResourceType.Image, r.ResourceType.Tint, 0, 1000, r.NumResources, r.ResourceType.MoneyValue)).ToList();
         }
 
-        
+
+        public void RecomputeTrade()
+        {
+            GoodsReceived.Clear();
+            GoodsSent.Clear();
+
+            foreach (GItem item in MyTrades.Items)
+            {
+                GoodsSent.Add(new ResourceAmount(item.ResourceType, item.CurrentAmount));
+            }
+
+            foreach (GItem item in TheirTrades.Items)
+            {
+                GoodsReceived.Add(new ResourceAmount(item.ResourceType, item.CurrentAmount));
+            }
+
+            TradeEvent trade =
+                (new TradeEvent()
+                {
+                    GoodsReceived = GoodsReceived,
+                    GoodsSent = GoodsSent,
+                    LikedThings = TheirGoods.LikedThings,
+                    HatedThings = TheirGoods.HatedThings,
+                    MoneyReceived = TheirTrades.MoneyEdit.CurrentMoney,
+                    MoneySent = MyTrades.MoneyEdit.CurrentMoney
+                });
+
+            float total = trade.GetProfit().TotalProfit;
+
+            if (total >= 0)
+            {
+                BuyTotal.Text = "Their Profit: " + (total).ToString("C");
+
+                if (trade.GetProfit().PercentProfit > 0.25f)
+                {
+                    BuyTotal.TextColor = Color.DarkGreen;
+                }
+                else
+                {
+                    BuyTotal.TextColor = Color.Black;
+                }
+
+            }
+            else
+            {
+                BuyTotal.Text = "Their Loss: " + (total).ToString("C");
+                BuyTotal.TextColor = total < 0 ? Color.DarkRed : Color.Black;
+            }
+
+            BuyTotal.ToolTip = "They will need a profit of at least 25% to accept the trade. The current profit is " +
+                               (int) (trade.GetProfit().PercentProfit * 100) + "%";
+
+        }
 
         public void Buy()
         {
-            OnTraded.Invoke(new TradeEvent(){GoodsReceived = GoodsReceived, GoodsSent = GoodsSent});
+            RecomputeTrade();
+            TradeEvent trade = (new TradeEvent()
+            {
+                GoodsReceived = GoodsReceived,
+                GoodsSent = GoodsSent,
+                LikedThings = TheirGoods.LikedThings,
+                HatedThings = TheirGoods.HatedThings,
+                MoneyReceived = TheirTrades.MoneyEdit.CurrentMoney,
+                MoneySent = MyTrades.MoneyEdit.CurrentMoney
+            });
+            OnTraded.Invoke(trade);
         }
 
 
         void buyButton_OnClicked()
         {
-            if (Faction.ComputeStockpileSpace() < MyGoods.ComputeSpace())
+            if (Faction.ComputeStockpileSpace() < MyGoods.ComputeSpace() + TheirTrades.ComputeSpace())
             {
                 GUI.ToolTipManager.Popup("Not enough stockpile space!");
                 return;
             }
 
-            MyGoods.Items.Clear();
-            MyGoods.ReCreateItems();
-            MyGoods.UpdateItems();
             Buy();
-        }
-
-        void shoppingCart_OnItemChanged(GItem item)
-        {
-            TradeEvent trade = new TradeEvent() {GoodsReceived = GoodsReceived, GoodsSent = GoodsSent};
-            float total = trade.GetProfit().TotalProfit;
-            BuyTotal.Text = "Total Profit: " + (total).ToString("C");
         }
 
 
         public void CreateSelector()
         {
-            TheirGoods = new ItemSelector(GUI, Layout, "Their Items")
+            TheirGoods = new ItemSelector(GUI, Layout, "Their Items", true, false)
+            {
+                Columns = new List<ItemSelector.Column>()
+                {
+                    ItemSelector.Column.Image,
+                    ItemSelector.Column.Name,
+                    ItemSelector.Column.Amount,
+                    ItemSelector.Column.PricePerItem
+                },
+                NoItemsMessage = "Nothing to buy",
+                ToolTip = "Click items to trade for them.",
+                LikedThings = OtherFaction.Race.LikedResources,
+                HatedThings = OtherFaction.Race.HatedResources
+            };
+            TheirGoods.MoneyEdit.MaxMoney = OtherFaction.TradeMoney;
+            TheirGoods.MoneyEdit.CurrentMoney = OtherFaction.TradeMoney;
+
+            Layout.SetComponentPosition(TheirGoods, 0, 0, 1, 9);
+
+            TheirGoods.Items.AddRange(GetResources(OtherFaction.Race.GenerateResources()));
+            TheirGoods.ReCreateItems();
+
+            TheirTrades = new ItemSelector(GUI, Layout, "They Offer", true, true)
+            {
+                Columns = new List<ItemSelector.Column>()
+                {
+                    ItemSelector.Column.Image,
+                    ItemSelector.Column.Name,
+                    ItemSelector.Column.Amount,
+                    ItemSelector.Column.PricePerItem
+                },
+                NoItemsMessage = "Nothing",
+                ToolTip = "Click items to cancel the trade",
+                LikedThings = OtherFaction.Race.LikedResources,
+                HatedThings = OtherFaction.Race.HatedResources
+            };
+            TheirTrades.MoneyEdit.MaxMoney = OtherFaction.TradeMoney;
+            TheirTrades.MoneyEdit.CurrentMoney = 0.0f;
+            TheirTrades.MoneyEdit.OnMoneyChanged += MoneyEdit_OnMoneyChanged;
+            TheirTrades.ReCreateItems();
+
+            Layout.SetComponentPosition(TheirTrades, 1, 0, 1, 9);
+
+            MyTrades = new ItemSelector(GUI, Layout, "We Offer", true, true)
             {
                 Columns = new List<ItemSelector.Column>()
                 {
@@ -522,68 +683,88 @@ namespace DwarfCorp
                     ItemSelector.Column.Name,
                     ItemSelector.Column.Amount,
                     ItemSelector.Column.PricePerItem,
-                    ItemSelector.Column.ArrowRight
                 },
-                NoItemsMessage = "Nothing to buy",
-                ToolTip = "Click items to trade for them."
+                NoItemsMessage = "Nothing",
+                ToolTip = "Click to cancel trade",
+                PerItemCost = 1.00f,
+                LikedThings = OtherFaction.Race.LikedResources,
+                HatedThings = OtherFaction.Race.HatedResources
             };
+            MyTrades.MoneyEdit.MaxMoney = Faction.Economy.CurrentMoney;
+            MyTrades.MoneyEdit.CurrentMoney = 0.0f;
+            MyTrades.MoneyEdit.OnMoneyChanged += MyTrades_MoneyEdit_Onchanged;
+            MyTrades.ReCreateItems();
+            Layout.SetComponentPosition(MyTrades, 2, 0, 1, 9);
 
-            Layout.SetComponentPosition(TheirGoods, 0, 0, 2, 9);
-
-            TheirGoods.Items.AddRange(GetResources(OtherFaction.Race.GenerateResources()));
-            TheirGoods.ReCreateItems();
-
-
-            MyGoods = new ItemSelector(GUI, Layout, "Our Items")
+            MyGoods = new ItemSelector(GUI, Layout, "Our Items", true, false)
             {
                 Columns = new List<ItemSelector.Column>()
                 {
-                    ItemSelector.Column.ArrowLeft,
                     ItemSelector.Column.Image,
                     ItemSelector.Column.Name,
                     ItemSelector.Column.Amount,
                     ItemSelector.Column.PricePerItem
                 },
-                NoItemsMessage = "No items selected",
+                NoItemsMessage = "Nothing",
                 ToolTip = "Click items to offer them for trade.",
                 PerItemCost = 1.00f
             };
-            MyGoods.Items.AddRange(GetResources(PlayState.PlayerFaction.ListResources().Values.ToList()));
+            MyGoods.MoneyEdit.MaxMoney = Faction.Economy.CurrentMoney;
+            MyGoods.MoneyEdit.CurrentMoney = Faction.Economy.CurrentMoney;
+            MyGoods.Items.AddRange(GetResources(Faction.ListResources().Values.ToList()));
             MyGoods.ReCreateItems();
-            Layout.SetComponentPosition(MyGoods, 2, 0, 2, 9);
+        
+            Layout.SetComponentPosition(MyGoods, 3, 0, 1, 9);
 
-            TheirGoods.OnItemRemoved += MyGoods.AddItem;
-            MyGoods.OnItemRemoved += TheirGoods.AddItem;
-            MyGoods.OnItemChanged += shoppingCart_OnItemChanged;
-            MyGoods.OnItemRemoved += TheirGoods_OnItemAdded;
-            TheirGoods.OnItemRemoved += MyGoods_OnItemAdded;
+            TheirGoods.OnItemRemoved += TheirTrades.AddItem;
+            MyGoods.OnItemRemoved += MyTrades.AddItem;
+            TheirTrades.OnItemRemoved += TheirGoods.AddItem;
+            MyTrades.OnItemRemoved += MyGoods.AddItem;
+            MyTrades.OnItemChanged += (item) => RecomputeTrade();
+            TheirTrades.OnItemChanged += (item) => RecomputeTrade();
+
+
             Button buyButton = new Button(GUI, Layout, "Offer Trade", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
             {
                 ToolTip = "Click to offer up a trade."
             };
 
-            Layout.SetComponentPosition(buyButton, 3, 9, 1, 2);
+            Layout.SetComponentPosition(buyButton, 3, 9, 1, 1);
 
-            BuyTotal = new Label(GUI, Layout, "Profit: $0.00", GUI.DefaultFont)
+            Button cancelButton = new Button(GUI, Layout, "Cancel", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
+            {
+                ToolTip = "Cancel trading"
+            };
+            cancelButton.OnClicked += cancelButton_OnClicked;
+            Layout.SetComponentPosition(cancelButton, 2, 9, 1, 1);
+
+            BuyTotal = new Label(GUI, Layout, "Their Profit: $0.00", GUI.DefaultFont)
             {
                 WordWrap = true,
                 ToolTip = "Their profit from the trade."
             };
 
 
-            Layout.SetComponentPosition(BuyTotal, 0, 9, 1, 2);
+            Layout.SetComponentPosition(BuyTotal, 0, 9, 1, 1);
 
             buyButton.OnClicked += buyButton_OnClicked;
         }
 
-        void MyGoods_OnItemAdded(GItem item, int amount)
+        void cancelButton_OnClicked()
         {
-            GoodsReceived.Add(new ResourceAmount(item.ResourceType, amount));
+            InvokeCancel();
         }
 
-        void TheirGoods_OnItemAdded(GItem item, int amount)
+        private void MyTrades_MoneyEdit_Onchanged(float amount)
         {
-            GoodsSent.Add(new ResourceAmount(item.ResourceType, amount));
+            MyGoods.MoneyEdit.CurrentMoney = MyGoods.MoneyEdit.MaxMoney - amount;
+            RecomputeTrade();
+        }
+
+        void MoneyEdit_OnMoneyChanged(float amount)
+        {
+            TheirGoods.MoneyEdit.CurrentMoney = TheirGoods.MoneyEdit.MaxMoney - amount;
+            RecomputeTrade();
         }
 
         public TradePanel(DwarfGUI gui, GUIComponent parent, Faction faction, Faction otherFaction)
@@ -602,7 +783,7 @@ namespace DwarfCorp
                 WordWrap = true
             };
 
-            Layout.SetComponentPosition(SpaceLabel, 2, 9, 1, 1);
+            Layout.SetComponentPosition(SpaceLabel, 1, 9, 1, 1);
 
             SpaceLabel.OnUpdate += SpaceLabel_OnUpdate;
 

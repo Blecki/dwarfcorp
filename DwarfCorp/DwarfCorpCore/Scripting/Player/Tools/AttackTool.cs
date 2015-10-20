@@ -119,7 +119,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                if (PlayState.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() == Relationship.Loves)
+                if (PlayState.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() == Relationship.Loving)
                 {
                     continue;
                 }

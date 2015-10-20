@@ -46,6 +46,8 @@ namespace DwarfCorp
         public Rectangle ResizeArea { get; set; }
         public bool IsDragging { get; set; }
         public bool IsResizing { get; set; }
+        public bool IsDraggable { get; set; }
+        public bool IsResizeable { get; set; }
         public Point DragStart { get; set; }
         public Point ResizeStartSize { get; set; }
         public Point ResizeStartPosition { get; set; }
@@ -60,6 +62,8 @@ namespace DwarfCorp
         public Window(DwarfGUI gui, GUIComponent parent, WindowButtons buttons = WindowButtons.NoButtons) 
             : base(gui, parent)
         {
+            IsDraggable = true;
+            IsResizeable = true;
             IsDragging = false;
             IsResizing = false;
             Mode = buttons == WindowButtons.NoButtons ? PanelMode.Window : PanelMode.WindowEx;
@@ -126,6 +130,8 @@ namespace DwarfCorp
 
         public void Resize()
         {
+            if (!IsResizeable) return;
+
             MouseState mouseState = Mouse.GetState();
             if (mouseState.LeftButton != ButtonState.Pressed)
             {
@@ -142,6 +148,8 @@ namespace DwarfCorp
 
         public void Drag()
         {
+            if (!IsDraggable) return;
+
             MouseState mouseState = Mouse.GetState();
             if (mouseState.LeftButton != ButtonState.Pressed)
             {
@@ -167,7 +175,7 @@ namespace DwarfCorp
 
         public virtual void UpdateAreas()
         {
-            DragArea = new Rectangle(GlobalBounds.X - 32, GlobalBounds.Y - 32, GlobalBounds.Width + 64, 48);
+            DragArea = new Rectangle(GlobalBounds.X - 32, GlobalBounds.Y - 32, GlobalBounds.Width + 32, 31);
             ResizeArea = new Rectangle(GlobalBounds.Right - 32, GlobalBounds.Bottom - 32, 64, 64);
 
             if (CloseButton != null)

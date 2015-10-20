@@ -583,6 +583,15 @@ namespace DwarfCorp
 
     public class CreatureMovement
     {
+        public bool CanFly { get; set; }
+        public bool CanSwim { get; set; }
+        public bool CanClimb { get; set; }
+        public CreatureMovement()
+        {
+            CanFly = false;
+            CanSwim = true;
+            CanClimb = true;
+        }
 
         private Voxel[,,] GetNeighborhood(Voxel voxel)
         {
@@ -671,12 +680,12 @@ namespace DwarfCorp
                     new Point3(MathFunctions.FloorInt(voxel.Position.X),
                         MathFunctions.FloorInt(voxel.Position.Y),
                         MathFunctions.FloorInt(voxel.Position.Z)));
-            if (bodiesInside != null)
+            if (CanClimb && bodiesInside != null)
             {
                 bool hasLadder =
                     bodiesInside.OfType<GameComponent>()
                         .Any(component => component.Tags.Contains("Climbable"));
-                if (hasLadder) ;
+                if (hasLadder) 
                 {
                     successors.Add(new Creature.MoveAction()
                     {
@@ -698,7 +707,7 @@ namespace DwarfCorp
             }
 
 
-            if (standingOnGround || inWater)
+            if (standingOnGround || (CanSwim && inWater))
             {
                 Creature.MoveType moveType = inWater ? Creature.MoveType.Swim : Creature.MoveType.Walk;
                 if (IsEmpty(neighborHood[0, 1, 1]))
@@ -766,7 +775,7 @@ namespace DwarfCorp
 
             }
 
-            if (!topCovered && (standingOnGround || inWater))
+            if (!topCovered && (standingOnGround || (CanSwim && inWater)))
             {
                 for (int dx = 0; dx <= 2; dx++)
                 {
@@ -796,6 +805,29 @@ namespace DwarfCorp
                     Diff = new Vector3(1, 0, 1),
                     MoveType = Creature.MoveType.Fall
                 });
+            }
+
+            if (CanFly)
+            {
+                for (int dx = 0; dx <= 2; dx++)
+                {
+                    for (int dz = 0; dz <= 2; dz++)
+                    {
+                        for (int dy = 0; dy <= 2; dy++)
+                        {
+                            if (dx == 1 && dz == 1 && dy == 1) continue;
+
+                            if (IsEmpty(neighborHood[dx, 1, dz]))
+                            {
+                                successors.Add(new Creature.MoveAction()
+                                {
+                                    Diff = new Vector3(dx, dy, dz),
+                                    MoveType = Creature.MoveType.Fly
+                                });
+                            }
+                        }
+                    }
+                }
             }
 
 

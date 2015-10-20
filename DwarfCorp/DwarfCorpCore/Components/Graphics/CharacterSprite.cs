@@ -101,6 +101,10 @@ namespace DwarfCorp
 
         public List<Animation> GetAnimations(Creature.CharacterMode mode)
         {
+            if (mode == Creature.CharacterMode.Flying)
+            {
+                Console.Out.WriteLine("Hi");
+            }
             return
                 OrientationStrings.Where((t, i) => HasAnimation(mode, (Orientation) i))
                     .Select(t => Animations[mode.ToString() + t])

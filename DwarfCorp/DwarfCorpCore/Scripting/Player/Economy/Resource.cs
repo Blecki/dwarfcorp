@@ -94,7 +94,8 @@ namespace DwarfCorp
             PreparedFood,
             Plantable,
             AboveGroundPlant,
-            BelowGroundPlant
+            BelowGroundPlant,
+            Bone
         }
 
         public Resource()

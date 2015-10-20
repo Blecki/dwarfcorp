@@ -70,7 +70,7 @@ namespace DwarfCorp
             LocParent = parent;
             Heat = 0.0f;
             Flashpoint = 100.0f;
-            Damage = 50.0f;
+            Damage = 5.0f;
             Health = health;
             CheckLavaTimer = new Timer(1.0f, false);
             SoundTimer = new Timer(1.0f, false);
@@ -120,11 +120,10 @@ namespace DwarfCorp
             {
                 CheckForLavaAndWater(gameTime, chunks);
             }
+            Heat *= 0.999f;
 
             if(Heat > Flashpoint)
             {
-                Heat *= 1.01f;
-
                 if(DamageTimer.HasTriggered)
                     Health.Damage(Damage, Health.DamageType.Fire);
 

@@ -58,7 +58,8 @@ namespace DwarfCorp
                 Race = race,
                 Name = TextGenerator.GenerateRandom(Datastructures.SelectRandom(race.FactionNameTemplates).ToArray()),
                 PrimaryColor = new HSLColor(idx * (255.0f / n), 255.0, MathFunctions.Rand(100.0f, 200.0f)),
-                SecondaryColor = new HSLColor(MathFunctions.Rand(0, 255.0f), 255.0, MathFunctions.Rand(100.0f, 200.0f))
+                SecondaryColor = new HSLColor(MathFunctions.Rand(0, 255.0f), 255.0, MathFunctions.Rand(100.0f, 200.0f)),
+                TradeMoney = MathFunctions.Rand(250.0f, 20000.0f)
             };
         }
 
@@ -83,7 +84,16 @@ namespace DwarfCorp
                     Name = "Player",
                     Race = Races["Dwarf"]
                 };
+
+                Factions["Motherland"] = new Faction()
+                {
+                    Name = "Motherland",
+                    Race = Races["Dwarf"],
+                    IsRaceFaction = false,
+                    TradeMoney = 10000
+                };
             }
+
 
             Factions["Goblins"] = new Faction
             {
@@ -103,6 +113,13 @@ namespace DwarfCorp
             {
                 Name = "Undead",
                 Race = Races["Undead"],
+                IsRaceFaction = true
+            };
+
+            Factions["Demon"] = new Faction
+            {
+                Name = "Demon",
+                Race = Races["Demon"],
                 IsRaceFaction = true
             };
 
@@ -154,6 +171,13 @@ namespace DwarfCorp
                 {
                     Name = "Player",
                     Race = Races["Dwarf"]
+                };
+
+                Factions["Motherland"] = new Faction()
+                {
+                    Name = "Motherland",
+                    Race = Races["Dwarf"],
+                    IsRaceFaction = false
                 };
             }
             foreach (Faction faction in factionsInSpawn)

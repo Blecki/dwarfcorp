@@ -55,6 +55,15 @@ namespace DwarfCorp
         public int Carat { get; set; }
         public bool IsEditable { get; set; }
 
+        public Mode TextMode { get; set; }
+        public string Prefix { get; set; }
+
+        public enum Mode
+        {
+            Text,
+            Numeric
+        }
+
         public LineEdit(DwarfGUI gui, GUIComponent parent, string text) :
             base(gui, parent)
         {
@@ -66,6 +75,8 @@ namespace DwarfCorp
             OnTextModified += LineEdit_OnTextModified;
             IsEditable = true;
             Prompt = "";
+            TextMode = Mode.Text;
+            Prefix = "";
         }
 
         private void LineEdit_OnTextModified(string arg)
@@ -78,10 +89,10 @@ namespace DwarfCorp
             {
                 if(key == Keys.Back || key == Keys.Delete)
                 {
-                    if(Text.Length > 0)
+                    if(Text.Length > 0 && Carat > 0)
                     {
-                        Text = Text.Remove(Carat - 1, 1);
                         Carat = MathFunctions.Clamp(Carat - 1, 0, Text.Length);
+                        Text = Text.Remove(Carat, 1);
                     }
                 }
                 else if (key == Keys.Left)
@@ -92,14 +103,46 @@ namespace DwarfCorp
                 {
                     Carat = MathFunctions.Clamp(Carat + 1, 0, Text.Length);
                 }
+                else if (TextMode == Mode.Numeric && (key == Keys.Up || key == Keys.OemPlus))
+                {
+                    int value;
+                    if (int.TryParse(Text, out value))
+                    {
+                        value++;
+                        Text = value.ToString("D");
+                    }
+                }
+                else if (TextMode == Mode.Numeric && (key == Keys.Down || key == Keys.OemMinus))
+                {
+                    int value;
+                    if (int.TryParse(Text, out value))
+                    {
+                        value--;
+                        Text = value.ToString("D");
+                    }
+                }
                 else
                 {
                     char k = ' ';
                     if(InputManager.TryConvertKeyboardInput(key, Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift), out k))
                     {
+                        if (TextMode != Mode.Text && !char.IsDigit(k)) return;
+
+                        if (TextMode == Mode.Numeric && Text == "0")
+                        {
+                            Text = "";
+                            Carat = 0;
+                        }
+
                         Text = Text.Insert(Carat, k.ToString());
                         Carat = MathFunctions.Clamp(Carat + 1, 0, Text.Length);
                     }
+                }
+
+                if (TextMode == Mode.Numeric && string.IsNullOrEmpty(Text))
+                {
+                    Text = "0";
+                    Carat = Text.Length;
                 }
 
                 OnTextModified.Invoke(Text);
@@ -177,17 +220,17 @@ namespace DwarfCorp
 
                 if (!HasKeyboardFocus)
                 {
-                    Drawer2D.DrawAlignedText(batch, " " + toShow, GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
+                    Drawer2D.DrawAlignedText(batch, " " + Prefix + toShow, GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
                 }
                 else
                 {
-                    if (time.TotalGameTime.TotalMilliseconds % 1000 < 500)
+                    if (time.TotalRealTime.TotalMilliseconds % 1000 < 500)
                     {
-                        Drawer2D.DrawAlignedText(batch, " " + first + "|" + last, GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
+                        Drawer2D.DrawAlignedText(batch, " " + Prefix + first + "|" + last, GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
                     }
                     else
                     {
-                        Drawer2D.DrawAlignedText(batch, " " + first + " " + last, GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
+                        Drawer2D.DrawAlignedText(batch, " " + Prefix + first + " " + last, GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
                     }
                 }   
             }

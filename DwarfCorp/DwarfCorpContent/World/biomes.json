@@ -54,6 +54,14 @@
       {
         "Name": "Bird",
         "SpawnProbability": 0.0001
+      },
+      {
+        "Name": "Brown Rabbit",
+        "SpawnProbability": 0.0001
+      },
+      {
+        "Name": "White Rabbit",
+        "SpawnProbability": 0.00001
       }
     ],
     "GrassVoxel": "Grass",
@@ -120,6 +128,14 @@
       {
         "Name": "Deer",
         "SpawnProbability": 0.0005
+      },
+      {
+        "Name": "Brown Rabbit",
+        "SpawnProbability": 0.0005
+      },
+      {
+        "Name": "White Rabbit",
+        "SpawnProbability": 0.00005
       }
     ],
     "GrassVoxel": "Grass",
@@ -162,6 +178,10 @@
       {
         "Name": "Bird",
         "SpawnProbability": 0.0001
+      },
+      {
+        "Name": "White Rabbit",
+        "SpawnProbability": 0.0005
       }
     ],
     "GrassVoxel": "Frost",
@@ -243,7 +263,11 @@
         "Asset": "Entities\\Plants\\gnarled"
       }
     ],
-    "Fauna": [],
+    "Fauna": [
+      {
+        "Name": "White Rabbit",
+        "SpawnProbability": 0.0005
+      }],
     "GrassVoxel": "DesertGrass",
     "SoilVoxel": "Sand",
     "SubsurfVoxel": "Stone",
@@ -331,7 +355,11 @@
         "Asset": "Entities\\Plants\\gnarled"
       }
     ],
-    "Fauna": [],
+    "Fauna": [
+      {
+        "Name": "Demon",
+        "SpawnProbability": 0.005
+      }],
     "GrassVoxel": "Stone",
     "SoilVoxel": "Stone",
     "SubsurfVoxel": "Stone",

@@ -65,7 +65,9 @@ namespace DwarfCorp
             Guard,
             Attack,
             Magic,
-            Wait
+            Wait,
+            Cook,
+            Farm
         }
 
         public enum Tile
@@ -377,6 +379,8 @@ namespace DwarfCorp
             MouseFrames[MousePointer.Build] = new Point(4, 0);
             MouseFrames[MousePointer.Gather] = new Point(6, 0);
             MouseFrames[MousePointer.Chop] = new Point(5, 0);
+            MouseFrames[MousePointer.Cook] = new Point(3, 1);
+            MouseFrames[MousePointer.Farm] = new Point(4, 1);
             MouseFrames[MousePointer.Attack] = new Point(2, 0);
             MouseFrames[MousePointer.Guard] = new Point(3, 0);
             MouseFrames[MousePointer.Magic] = new Point(0, 1);

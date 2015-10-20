@@ -878,5 +878,10 @@ namespace DwarfCorp
             tf.Translation = RandVector3Box(bounds);
             return tf;
         }
+
+        public static int RandInt(int min, int max)
+        {
+            return PlayState.Random.Next(min, max);
+        }
     }
 }

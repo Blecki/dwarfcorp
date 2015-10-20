@@ -45,6 +45,7 @@ namespace DwarfCorp
     {
 
         public Sprite Sprite { get; set; }
+        public Sprite Sprite2 { get; set; }
         public ParticleTrigger HitParticles { get; set; }
         public Health.DamageAmount Damage { get; set; }
         public Faction Faction { get; set; }
@@ -71,12 +72,12 @@ namespace DwarfCorp
                 OrientationType = Sprite.OrientMode.Fixed
             };
             Sprite.SetSingleFrameAnimation(new Point(0, 0));
-            Sprite sprite2 = new Sprite(PlayState.ComponentManager, "Sprite2", Sprite, Matrix.CreateRotationX((float)Math.PI * 0.5f),
+            Sprite2 = new Sprite(PlayState.ComponentManager, "Sprite2", Sprite, Matrix.CreateRotationX((float)Math.PI * 0.5f),
                 new SpriteSheet(asset), false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
             };
-            sprite2.SetSingleFrameAnimation(new Point(0, 0));
+            Sprite2.SetSingleFrameAnimation(new Point(0, 0));
 
             Damage = damage;
             HitParticles = new ParticleTrigger(hitParticles, PlayState.ComponentManager, "Hit Particles", this,
@@ -95,13 +96,19 @@ namespace DwarfCorp
             foreach (var faction in Manager.Factions.Factions)
             {
                 if (faction.Value.Name == Faction.Name) continue;
-                else if (PlayState.Diplomacy.GetPolitics(Faction, faction.Value).GetCurrentRelationship() != Relationship.Loves)
+                else if (PlayState.Diplomacy.GetPolitics(Faction, faction.Value).GetCurrentRelationship() != Relationship.Loving)
                 {
                     foreach (CreatureAI creature in faction.Value.Minions)
                     {
                         if ((creature.Position - Position).LengthSquared() < DamageRadius)
                         {
                             creature.Creature.Damage(Damage.Amount, Damage.DamageType);
+
+                            if (Damage.DamageType == Health.DamageType.Fire)
+                            {
+                                creature.Creature.Flames.Heat += 50.0f;
+                            }
+
                             got = true;
                             break;
                         }
@@ -144,6 +151,23 @@ namespace DwarfCorp
         }
 
         
+    }
+
+    [JsonObject(IsReference = true)]
+    public class FireballProjectile : Projectile
+    {
+        public FireballProjectile()
+        {
+            
+        }
+
+        public FireballProjectile(Vector3 position, Vector3 initialVelocity, string faction) :
+            base(position, initialVelocity, new Health.DamageAmount() { Amount = 15.0f, DamageType = Health.DamageType.Fire }, 0.25f, ContentPaths.Particles.fireball, "flame", ContentPaths.Audio.fire, faction)
+        {
+            HitAnimation = new Animation(ContentPaths.Effects.flash, 32, 32, 0, 1, 2, 3);
+            Sprite.LightsWithVoxels = false;
+            Sprite2.LightsWithVoxels = false;
+        }
     }
 
     [JsonObject(IsReference = true)]

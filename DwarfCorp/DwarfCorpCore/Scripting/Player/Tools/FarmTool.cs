@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using DwarfCorp.Scripting.TaskManagement.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -51,7 +52,7 @@ namespace DwarfCorp
         public FarmingPanel FarmPanel { get; set; }
         public BuildMenu.BuildType BuildType { get; set; }
         public string PlantType { get; set; }
-
+        public List<ResourceAmount> RequiredResources { get; set; } 
         public enum FarmMode
         {
             Tilling,
@@ -61,26 +62,110 @@ namespace DwarfCorp
 
         public FarmMode Mode { get; set; }
 
+        public class FarmTile
+        {
+            public Voxel Vox = null;
+            public Body Plant = null;
+            public float Progress = 0.0f;
+            public CreatureAI Farmer = null;
+
+            public bool IsTilled()
+            {
+                return (Vox != null) && Vox.TypeName == "TilledSoil";
+            }
+
+            public bool IsFree()
+            {
+                return (Plant == null || Plant.IsDead) && Farmer == null;
+            }
+
+            public bool PlantExists()
+            {
+                return !(Plant == null || Plant.IsDead);
+            }
+
+            public void CreatePlant(string plantToCreate)
+            {
+                Plant = EntityFactory.CreateEntity<Body>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Vox.Position + Vector3.Up * 1.5f);
+                Matrix original = Plant.LocalTransform;
+                original.Translation += Vector3.Down;
+                Plant.AnimationQueue.Add(new EaseMotion(0.5f, original, Plant.LocalTransform.Translation));
+                PlayState.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
+                SoundManager.PlaySound(ContentPaths.Audio.pluck, Vox.Position, true);
+            }
+        }
+
+        public List<FarmTile> FarmTiles = new List<FarmTile>();
+
+        public bool HasTile(Voxel vox)
+        {
+            return FarmTiles.Any(f => f.Vox.Equals(vox));
+        }
+
+
+        public bool HasPlant(Voxel vox)
+        {
+            return HasTile(vox) && FarmTiles.Any(f => f.Vox.Equals(vox) && f.PlantExists());
+        }
 
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
+            List<CreatureAI> minions = PlayState.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)).ToList();
+            List<Task> goals = new List<Task>();
             switch (Mode)
             {
                 case FarmMode.Tilling:
                     foreach (Voxel voxel in voxels)
                     {
-                        if (!voxel.Type.IsSoil)
+                        if (button == InputManager.MouseButton.Left)
                         {
-                            PlayState.GUI.ToolTipManager.Popup("Can only till soil!");
-                            break;
+                            if (!voxel.Type.IsSoil)
+                            {
+                                PlayState.GUI.ToolTipManager.Popup("Can only till soil!");
+                                continue;
+                            }
+                            if (voxel.TypeName == "TilledSoil")
+                            {
+                                PlayState.GUI.ToolTipManager.Popup("Soil already tilled!");
+                                continue;
+                            }
+                            if (!HasTile(voxel))
+                            {
+                                FarmTile tile = new FarmTile() {Vox = voxel};
+                                goals.Add(new FarmTask(tile) {Mode = FarmAct.FarmMode.Till, Plant = PlantType});
+                                FarmTiles.Add(tile);
+                            }
+                            else
+                            {
+                                goals.Add(new FarmTask(FarmTiles.Find(tile => tile.Vox.Equals(voxel)))
+                                {
+                                    Mode = FarmAct.FarmMode.Till,
+                                    Plant = PlantType
+                                });
+                            }
                         }
-                        voxel.Type = VoxelLibrary.GetVoxelType("TilledSoil");
-                        voxel.Chunk.ShouldRebuild = true;
+                        else
+                        {
+                            if (HasTile(voxel) && !HasPlant(voxel))
+                            {
+                                FarmTiles.RemoveAll(tile => tile.Vox.Equals(voxel));
+                            }
+                        }
                     }
+                    TaskManager.AssignTasksGreedy(goals, minions, 1);
                     break;
                 case FarmMode.Planting:
+                    int currentAmount =
+                        Player.Faction.ListResources()
+                        .Sum(resource => resource.Key == PlantType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
                     foreach (Voxel voxel in voxels)
                     {
+
+                        if (currentAmount == 0)
+                        {
+                            PlayState.GUI.ToolTipManager.Popup("Not enough " + PlantType + " in stocks!");
+                            break;
+                        }
                         if (voxel.TypeName != "TilledSoil")
                         {
                             PlayState.GUI.ToolTipManager.Popup("Can only plant on tilled soil!");
@@ -106,8 +191,20 @@ namespace DwarfCorp
                             }
                         }
 
-                        EntityFactory.CreateEntity<Body>(ResourceLibrary.Resources[PlantType].PlantToGenerate, voxel.Position + Vector3.Up * 1.5f);
+                        if (!HasPlant(voxel))
+                        {
+                            FarmTile tile = new FarmTile() { Vox = voxel };
+                            goals.Add(new FarmTask(tile) {  Mode = FarmAct.FarmMode.Plant, Plant = PlantType, RequiredResources = RequiredResources});
+                            FarmTiles.Add(tile);
+                            currentAmount--;
+                        }
+                        else
+                        {
+                            PlayState.GUI.ToolTipManager.Popup("Something is already planted here!");
+                            continue;
+                        }
                     }
+                    TaskManager.AssignTasksGreedy(goals, minions, 1);
                     break;
             }
         }
@@ -117,9 +214,32 @@ namespace DwarfCorp
         {
             if (Mode == FarmMode.Harvesting)
             {
-                foreach (Body body in bodies)
+                List<Body> treesPickedByMouse = ComponentManager.FilterComponentsWithTag("Vegetation", bodies);
+
+                foreach (Body tree in treesPickedByMouse)
                 {
-                   body.Die();
+                    if (!tree.IsVisible || tree.IsAboveCullPlane) continue;
+
+                    Drawer3D.DrawBox(tree.BoundingBox, Color.LightGreen, 0.1f, false);
+                    if (button == InputManager.MouseButton.Left)
+                    {
+                        if (!Player.Faction.ChopDesignations.Contains(tree))
+                        {
+                            Player.Faction.ChopDesignations.Add(tree);
+
+                            foreach (CreatureAI creature in Player.Faction.SelectedMinions)
+                            {
+                                creature.Tasks.Add(new KillEntityTask(tree, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low });
+                            }
+                        }
+                    }
+                    else if (button == InputManager.MouseButton.Right)
+                    {
+                        if (Player.Faction.ChopDesignations.Contains(tree))
+                        {
+                            Player.Faction.ChopDesignations.Remove(tree);
+                        }
+                    }
                 }
             }
         }
@@ -151,11 +271,12 @@ namespace DwarfCorp
             Mode = FarmMode.Tilling;
         }
 
-        void FarmPanel_OnPlant(string plantType)
+        void FarmPanel_OnPlant(string plantType, string resource)
         {
             PlayState.GUI.ToolTipManager.Popup("Click and drag to plant " + plantType + ".");
             Mode = FarmMode.Planting;
             PlantType = plantType;
+            RequiredResources = new List<ResourceAmount>() {new ResourceAmount(resource)};
         }
 
         void FarmPanel_OnHarvest()
@@ -199,12 +320,63 @@ namespace DwarfCorp
             }
             PlayState.GUI.IsMouseVisible = true;
 
-            PlayState.GUI.MouseMode = PlayState.GUI.IsMouseOver() ? GUISkin.MousePointer.Pointer : GUISkin.MousePointer.Build;
+            PlayState.GUI.MouseMode = PlayState.GUI.IsMouseOver() ? GUISkin.MousePointer.Pointer : GUISkin.MousePointer.Farm;
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-       
+            switch (Mode)
+            {
+                case FarmMode.Tilling:
+                {
+                    Color drawColor = Color.PaleGoldenrod;
+
+                    float alpha = (float) Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*2.0f));
+                    drawColor.R = (byte) (Math.Min(drawColor.R*alpha + 50, 255));
+                    drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
+                    drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
+
+                    foreach (BoundingBox box in FarmTiles.Where(tile => !tile.IsTilled()).Select(tile => tile.Vox.GetBoundingBox()))
+                    {
+                        Drawer3D.DrawBox(box, drawColor, 0.05f*alpha + 0.05f, true);
+                    }
+
+                    break;
+                }
+                case FarmMode.Planting:
+                {
+                    Color drawColor = Color.LimeGreen;
+
+                    float alpha = (float)Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * 2.0f));
+                    drawColor.R = (byte)(Math.Min(drawColor.R * alpha + 50, 255));
+                    drawColor.G = (byte)(Math.Min(drawColor.G * alpha + 50, 255));
+                    drawColor.B = (byte)(Math.Min(drawColor.B * alpha + 50, 255));
+
+
+                    foreach (BoundingBox box in FarmTiles.Where(tile => tile.IsTilled() && !tile.PlantExists() && tile.Farmer == null).Select(tile => tile.Vox.GetBoundingBox()))
+                    {
+                        Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
+                    }
+
+                    break;
+                }
+
+                case FarmMode.Harvesting:
+                {
+                    Color drawColor = Color.LimeGreen;
+
+                    float alpha = (float) Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*2.0f));
+                    drawColor.R = (byte) (Math.Min(drawColor.R*alpha + 50, 255));
+                    drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
+                    drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
+
+                    foreach (BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
+                    {
+                        Drawer3D.DrawBox(box, drawColor, 0.05f*alpha + 0.05f, true);
+                    }
+                    break;
+                }
+            }
         }
 
     }

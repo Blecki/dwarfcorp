@@ -49,7 +49,7 @@ namespace DwarfCorp
             Selector,
             ButtonList
         }
-
+        public bool DrawButton { get; set; }
         public string Label { get; set; }
         public Texture2D Texture { get; set; }
         public Rectangle TextureBounds { get; set; }
@@ -64,6 +64,7 @@ namespace DwarfCorp
         public ListItem(DwarfGUI gui, GUIComponent parent, string label, Texture2D tex, Rectangle texBounds) :
             base(gui, parent)
         {
+            DrawButton = false;
             Label = label;
             Texture = tex;
             TextureBounds = texBounds;
@@ -82,21 +83,26 @@ namespace DwarfCorp
             {
                 return;
             }
+            Drawer2D.Alignment alignment = DrawButton ? Drawer2D.Alignment.Center : Drawer2D.Alignment.Left;
+            if (DrawButton)
+            {
+                GUI.Skin.RenderButton(GlobalBounds, batch);
+            }
 
             //Drawer2D.DrawRect(GlobalBounds, Color.White, Color.Black, 1.0f);
             if(IsMouseOver)
             {
-                Drawer2D.DrawStrokedText(batch, Label, GUI.DefaultFont, new Vector2(GlobalBounds.Left, GlobalBounds.Top), HoverColor, TextStrokeColor);
+                Drawer2D.DrawAlignedStrokedText(batch, Label, GUI.DefaultFont, HoverColor, TextStrokeColor, alignment, GlobalBounds);
             }
             else
             {
                 if(!IsToggled || Mode == SelectionMode.ButtonList)
                 {
-                    Drawer2D.DrawStrokedText(batch, Label, GUI.DefaultFont, new Vector2(GlobalBounds.Left, GlobalBounds.Top), TextColor, TextStrokeColor);
+                    Drawer2D.DrawAlignedStrokedText(batch, Label, GUI.DefaultFont, TextColor, TextStrokeColor, alignment, GlobalBounds);
                 }
                 else
                 {
-                    Drawer2D.DrawStrokedText(batch, Label, GUI.DefaultFont, new Vector2(GlobalBounds.Left, GlobalBounds.Top), ToggledColor, TextStrokeColor);
+                    Drawer2D.DrawAlignedStrokedText(batch, Label, GUI.DefaultFont, ToggledColor, TextStrokeColor, alignment, GlobalBounds);
                 }
             }
 
@@ -139,7 +145,9 @@ namespace DwarfCorp
         public Color LabelStroke { get; set; }
         public ListItem.SelectionMode Mode { get; set; }
         public bool DrawPanel { get; set; }
-   
+        public bool DrawButtons { get; set; }
+        public int ItemHeight { get; set; }
+        public int Padding { get; set; }
 
         public ListSelector(DwarfGUI gui, GUIComponent parent) :
             base(gui, parent)
@@ -147,7 +155,7 @@ namespace DwarfCorp
             Items = new List<ListItem>();
             SelectedItem = null;
             BackgroundColor = new Color(0, 0, 0, 200);
-
+            DrawButtons = false;
             DrawPanel = true;
             StrokeColor = gui.DefaultStrokeColor;
             StrokeWeight = 2;
@@ -155,6 +163,8 @@ namespace DwarfCorp
             LabelStroke = gui.DefaultStrokeColor;
             Mode = ListItem.SelectionMode.Selector;
             OnItemClicked += ItemClicked;
+            ItemHeight = 25;
+            Padding = 0;
         }
 
         public void ClearItems()
@@ -175,14 +185,15 @@ namespace DwarfCorp
 
         public void AddItem(string text, string tooltip = "")
         {
-            int top = 30 + 25 * Items.Count;
+            int top = 30 + (ItemHeight + Padding) * Items.Count;
             int left = 5;
 
             ListItem item = new ListItem(GUI, this, text, null, new Rectangle())
             {
                 Toggleable = true,
-                LocalBounds = new Rectangle(left, top, Math.Max(LocalBounds.Width, text.Length * 8), 25),
-                ToolTip = tooltip
+                LocalBounds = new Rectangle(left, top, Math.Max(LocalBounds.Width, text.Length * 8), ItemHeight),
+                ToolTip = tooltip,
+                DrawButton = DrawButtons
             };
 
             item.OnClicked += () => item_OnClicked(item);

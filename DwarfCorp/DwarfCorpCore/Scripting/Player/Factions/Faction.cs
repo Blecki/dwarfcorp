@@ -60,6 +60,7 @@ namespace DwarfCorp
 
         public string Name { get; set; }
         public List<string> CreatureTypes { get; set; }
+        public List<string> NaturalEnemies { get; set; } 
         public bool IsIntelligent { get; set; }
         public bool IsNative { get; set; }
         public string FactionNameFile { get; set; }
@@ -71,6 +72,11 @@ namespace DwarfCorp
         [JsonIgnore]
         public List<List<string>> NameTemplates { get; set; }
 
+        public List<Resource.ResourceTags> LikedResources { get; set; }
+        public List<Resource.ResourceTags> HatedResources { get; set; }
+
+        public Dictionary<Resource.ResourceTags, int> TradeGoods { get; set; }
+            
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
@@ -80,83 +86,33 @@ namespace DwarfCorp
 
         public List<ResourceAmount> GenerateResources()
         {
-            List<ResourceAmount> toReturn = new List<ResourceAmount>
+            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> toReturn =
+                new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
+
+            foreach (var tags in TradeGoods)
             {
-                new ResourceAmount(ResourceLibrary.ResourceType.Wood, (int) MathFunctions.Rand(1, 32)),
-                new ResourceAmount(ResourceLibrary.ResourceType.Stone, (int) MathFunctions.Rand(1, 32)),
-                new ResourceAmount(ResourceLibrary.ResourceType.Gold, (int) MathFunctions.Rand(1, 32)),
-                new ResourceAmount(ResourceLibrary.ResourceType.Berry, (int) MathFunctions.Rand(1, 32)),
-                new ResourceAmount(ResourceLibrary.ResourceType.Mana, (int) MathFunctions.Rand(1, 32)),
-                new ResourceAmount(ResourceLibrary.ResourceType.Grain, (int) MathFunctions.Rand(1, 32)),
-                new ResourceAmount(ResourceLibrary.ResourceType.Mushroom, (int) MathFunctions.Rand(1, 32)),
-                new ResourceAmount(ResourceLibrary.ResourceType.Coal, (int) MathFunctions.Rand(1, 32))
-            };
+                int num = MathFunctions.RandInt(tags.Value - 5, tags.Value + 5);
+                List<Resource> resources = ResourceLibrary.GetResourcesByTag(tags.Key);
 
-            int numMeats = (int)MathFunctions.Rand(0, 20);
+                if (resources.Count <= 0) continue;
 
-            for (int i = 0; i < numMeats; i++)
-            {
-                int numOfThisMeat = (int)MathFunctions.Rand(1, 32);
-                string animal = TextGenerator.GenerateRandom("$animal");
-
-                bool ismeat = MathFunctions.RandEvent(0.5f);
-
-
-                if (ismeat)
+                for (int i = 0; i < num; i++)
                 {
-                    Resource meat = new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Meat])
+                    Resource randResource = Datastructures.SelectRandom(resources);
+
+                    if (!toReturn.ContainsKey(randResource.Type))
                     {
-                        Type = animal + " Meat",
-                        ShortName = animal + " Meat"
-                    };
-                    ResourceLibrary.Add(meat);
-
-                    toReturn.Add(new ResourceAmount(meat, numOfThisMeat));
-                }
-                else
-                {
-                    Resource meat = new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Bones])
+                        toReturn[randResource.Type] = new ResourceAmount(randResource.Type, 1);
+                    }
+                    else
                     {
-                        Type = animal + " Bone",
-                        ShortName = animal + " Bone"
-                    };
-                    ResourceLibrary.Add(meat);
-
-                    toReturn.Add(new ResourceAmount(meat, numOfThisMeat));
+                        toReturn[randResource.Type].NumResources += 1;
+                    }
                 }
             }
 
-            int numGemTypes = (int)MathFunctions.Rand(0, 3);
-            List<Resource> gemTypes = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.Gem);
-            for (int i = 0; i < numGemTypes; i++)
-            {
-                int numGems = (int) MathFunctions.Rand(1, 32);
-                toReturn.Add(new ResourceAmount(Datastructures.SelectRandom(gemTypes), numGems));
-
-            }
-
-
-            int numTrinkets = (int) MathFunctions.Rand(0, 15);
-            List<Resource> materialTypes = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.Material);
-
-
-            for (int i = 0; i < numTrinkets; i++)
-            {
-                Resource resource = ResourceLibrary.GenerateTrinket(Datastructures.SelectRandom(materialTypes).Type,
-                    MathFunctions.Rand(0.01f, 4.0f));
-
-                bool encrust = MathFunctions.RandEvent(0.25f);
-
-                if (encrust)
-                {
-                    resource = ResourceLibrary.EncrustTrinket(resource, Datastructures.SelectRandom(gemTypes).Type);
-                }
-
-                toReturn.Add(new ResourceAmount(resource));
-            }
-
-
-            return toReturn;
+            List<ResourceAmount> resList = toReturn.Select(amount => amount.Value).ToList();
+            return resList;
         }
        
     }
@@ -185,8 +141,10 @@ namespace DwarfCorp
             WallBuilder = new PutDesignator(this, TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles));
             CraftBuilder = new CraftBuilder(this);
             IsRaceFaction = false;
+            TradeMoney = 0.0f;
         }
 
+        public float TradeMoney { get; set; }
         public Point StartingPlace { get; set; }
         public Point Center { get; set; }
         public int TerritorySize { get; set; }
@@ -918,17 +876,18 @@ namespace DwarfCorp
 
         }
 
-        public void DispatchBalloon()
+        public bool DispatchBalloon()
         {
             List<Room> rooms = GetRooms().Where(room => room.RoomData.Name == "BalloonPort").ToList();
 
             if (rooms.Count == 0)
             {
-                return;
+                return false;
             }
 
             Vector3 pos = rooms.First().GetBoundingBox().Center();
             EntityFactory.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, Components, GameState.Game.Content, GameState.Game.GraphicsDevice, new ShipmentOrder(0, null), this);
+            return true;
         }
 
         public List<Body> GenerateRandomSpawn(int numCreatures, Vector3 position)
@@ -947,7 +906,19 @@ namespace DwarfCorp
                 
                 if (PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position + offset, ref voxel, true))
                 {
-                    toReturn.Add(EntityFactory.CreateEntity<Body>(creature, position + offset));
+                    Body body = EntityFactory.CreateEntity<Body>(creature, position + offset);
+                    CreatureAI ai = body.GetChildrenOfType<CreatureAI>().FirstOrDefault();
+                    
+                    if (ai != null)
+                    {
+                        ai.Faction.Minions.Remove(ai);
+                        
+                        Minions.Add(ai);
+                        ai.Faction = this;
+                        ai.Creature.Allies = Name;
+                    }
+
+                    toReturn.Add(body);
                 }
             }
 

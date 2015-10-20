@@ -75,6 +75,42 @@ namespace DwarfCorp
             "\'"
         };
 
+        public static bool IsVowel(char character)
+        {
+            return character == 'a' || character == 'i' || character == 'e' || character == 'o' || character == 'u' ||
+                   character == 'y';
+        }
+
+        public static string IndefiniteArticle(string item)
+        {
+            if (item.Length > 0)
+            {
+                return IsVowel(item[0]) ? "an " + item : "a " + item;
+            }
+
+            return item;
+        }
+
+        public static string GetListString(List<string> tokens)
+        {
+            string list = "";
+            for (int i = 0; i < tokens.Count; i++)
+            {
+                list += tokens[i];
+
+                if (i == tokens.Count - 2 && tokens.Count > 1)
+                {
+                    list += " and ";
+                }
+                else if (tokens.Count > 1 && i < tokens.Count - 1)
+                {
+                    list += ", ";
+                }
+            }
+
+            return list;
+        }
+
         public static List<List<string>> GetAtoms(string type)
         {
             string text = "";

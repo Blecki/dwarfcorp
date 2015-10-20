@@ -56,10 +56,14 @@ namespace DwarfCorp
         public GameMaster.ToolMode CurrentMode { get; set; }
         public Texture2D Icons { get; set; }
         public int IconSize { get; set; }
+        public int NumRows { get; set; }
+        public int NumColumns { get; set; }
 
         public MasterControls(DwarfGUI gui, GUIComponent parent, GameMaster master, Texture2D icons, GraphicsDevice device, SpriteFont font) :
             base(gui, parent)
         {
+            NumRows = 2;
+            NumColumns = 5;
             TrayPosition = Position.BottomRight;
             Master = master;
             Icons = icons;
@@ -67,7 +71,7 @@ namespace DwarfCorp
             CurrentMode = master.CurrentToolMode;
             ToolButtons = new Dictionary<GameMaster.ToolMode, Button>();
 
-            GridLayout layout = new GridLayout(GUI, this, 1, 10)
+            GridLayout layout = new GridLayout(GUI, this, NumRows, NumColumns)
             {
                 EdgePadding = 0
             };
@@ -86,7 +90,7 @@ namespace DwarfCorp
             int i = 0;
             foreach(Button b in ToolButtons.Values)
             {
-                layout.SetComponentPosition(b, i, 0, 1, 1);
+                layout.SetComponentPosition(b, i % NumColumns, i / NumColumns, 1, 1);
                 i++;
             }
         }
