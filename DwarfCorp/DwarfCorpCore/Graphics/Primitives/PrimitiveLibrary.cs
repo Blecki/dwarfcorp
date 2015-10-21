@@ -96,6 +96,7 @@ namespace DwarfCorp
                 List<string> motes = new List<string>
                 {
                     "berrybush",
+                    "cactus",
                     "frostgrass",
                     "flower",
                     "grass",

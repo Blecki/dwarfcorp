@@ -61,6 +61,7 @@ namespace DwarfCorp
 
 
             CreateBillboard("berrybush", content, (int)(300 * GameSettings.Default.NumMotes));
+            CreateBillboard("cactus", content, (int)(300 * GameSettings.Default.NumMotes));
             CreateBillboard("grass", content, (int) (300 * GameSettings.Default.NumMotes));
             CreateBillboard("frostgrass", content, (int) (300 * GameSettings.Default.NumMotes));
             CreateBillboard("flower", content, (int) (300 * GameSettings.Default.NumMotes));

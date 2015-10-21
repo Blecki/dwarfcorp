@@ -180,7 +180,7 @@ namespace DwarfCorp
             CurrentTask = null;
             Tasks = new List<Task>();
             Thoughts = new List<Thought>();
-            IdleTimer = new Timer(15.0f, true);
+            IdleTimer = new Timer(5.0f, true);
             SpeakTimer = new Timer(5.0f, true);
             XPEvents = new List<int>();
         }
@@ -406,7 +406,15 @@ namespace DwarfCorp
                 {
                     return new ActWrapperTask(new GoToChairAndSitAct(this)) { Priority = Task.PriorityType.Eventually, AutoRetry = false };
                 }
-                return new ActWrapperTask(new WanderAct(this, 2, 1.0f + MathFunctions.Rand(-0.5f, 0.5f), 1.0f)) { Priority = Task.PriorityType.Eventually };
+                else if (IdleTimer.HasTriggered)
+                {
+                    IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
+                    return new ActWrapperTask(new WanderAct(this, 2, 1.0f + MathFunctions.Rand(-0.5f, 0.5f), 1.0f))
+                    {
+                        Priority = Task.PriorityType.Eventually
+                    };
+                }
+                else return null;
             }
             // If we have no more build orders, look for gather orders
             else if (GatherManager.VoxelOrders.Count == 0)

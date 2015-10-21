@@ -38,7 +38,9 @@
             "Fungus" :  32,
             "Stone" :  64,
             "Metal" :  64
-        }
+        },
+        "Crafts" :  ["Metal"],
+        "Encrustings":  ["Precious"]
     },
     "Goblins": {
         "Name": "Goblins",
@@ -69,8 +71,11 @@
         "HatedResources" :  ["Craft", "Soil", "Magical"],
         "TradeGoods" : 
         {
-            "AnimalProduct" :  32
-        }
+            "AnimalProduct" :  32,
+            "Craft" :  3
+        },
+        "Crafts" :  ["Bone"],
+        "Encrustings":  []
     },
     "Molemen": {
         "Name": "Molemen",
@@ -105,8 +110,11 @@
             "Metal" :  32,
             "Stone" :  64,
             "Fungus" :  32,
-            "Soil" :  64
-        }
+            "Soil" :  64,
+            "Craft" :  2
+        },
+        "Crafts" :  ["Stone"],
+        "Encrustings":  ["Gem"]
     },
     "Elf": {
         "Name": "Elf",
@@ -140,8 +148,11 @@
             "AboveGroundPlant" :  64,
             "BelowGroundPlant" :  16,
             "Magical" :  8,
-            "Precious" :  5
-        }
+            "Precious" :  5,
+            "Craft" :  16
+        },
+        "Crafts" :  ["Wood", "AboveGroundPlant"],
+        "Encrustings":  ["Precious"]
     },
     "Undead": {
         "Name": "Undead",
@@ -175,8 +186,11 @@
         {
             "Bone" :  128,
             "Magical" :  64,
-            "Precious" :  5
-        }
+            "Precious" :  5,
+            "Craft" :  16
+        },
+        "Crafts" :  ["Bone"],
+        "Encrustings":  ["Magical"]
     },
     "Demon": {
         "Name": "Demon",

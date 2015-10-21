@@ -975,6 +975,16 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Animals\Frog\frog0.png">
+      <Name>frog0</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Animals\Frog\frog1.png">
+      <Name>frog1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Entities\Moleman\moleman_animation.json">
       <Name>moleman_animation</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -999,6 +1009,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>goblin</Name>
     </Content>
+    <Compile Include="Entities\Plants\cactus.png">
+      <Name>cactus</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Entities\Skeleton\skele_animation.json">
       <Name>skele_animation</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -1033,6 +1048,14 @@
     </Content>
     <Content Include="Entities\Animals\Rabbit\rabbit1_animation.json">
       <Name>rabbit1_animation</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Entities\Animals\Frog\frog0_animation.json">
+      <Name>frog0_animation</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Entities\Animals\Frog\frog1_animation.json">
+      <Name>frog1_animation</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Shaders\FXAA.fxh">

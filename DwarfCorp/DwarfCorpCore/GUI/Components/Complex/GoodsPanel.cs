@@ -456,13 +456,13 @@ namespace DwarfCorp
             if (handler != null) handler(e);
         }
 
-
-        public TradeDialog(DwarfGUI gui, GUIComponent parent, Faction otherFaction, WindowButtons buttons)
+        public TradeDialog(DwarfGUI gui, GUIComponent parent, Faction otherFaction, List<ResourceAmount> resources, WindowButtons buttons)
             : base(gui, parent,buttons)
         {
+            
             IsResizeable = false;
             IsDraggable = false;
-            TradePanel = new TradePanel(GUI, this, PlayState.PlayerFaction, otherFaction)
+            TradePanel = new TradePanel(GUI, this, PlayState.PlayerFaction, otherFaction, resources)
             {
                 WidthSizeMode = SizeMode.Fit,
                 HeightSizeMode = SizeMode.Fit
@@ -482,9 +482,9 @@ namespace DwarfCorp
             Close(ReturnStatus.Ok);
         }
 
-        public static TradeDialog Popup(DwarfGUI gui, int w, int h, GUIComponent parent, int x, int y, WindowButtons buttons, Faction faction)
+        public static TradeDialog Popup(DwarfGUI gui, int w, int h, GUIComponent parent, int x, int y, WindowButtons buttons, Faction faction, List<ResourceAmount> resources)
         {
-            TradeDialog d = new TradeDialog(gui, parent, faction, buttons)
+            TradeDialog d = new TradeDialog(gui, parent, faction, resources, buttons)
             {
                 LocalBounds = new Rectangle(x, y, w, h),
                 MinWidth = w,
@@ -496,13 +496,13 @@ namespace DwarfCorp
             return d;
         }
 
-        public static TradeDialog Popup(DwarfGUI gui, GUIComponent parent, Faction faction, WindowButtons buttons = WindowButtons.CloseButton)
+        public static TradeDialog Popup(DwarfGUI gui, GUIComponent parent, Faction faction, List<ResourceAmount> resources, WindowButtons buttons = WindowButtons.CloseButton)
         {
             int w = gui.Graphics.Viewport.Width;
             int h = gui.Graphics.Viewport.Height;
             int x = 0;
             int y = 0;
-            return Popup(gui, w, h, parent, x, y, buttons, faction);
+            return Popup(gui, w, h, parent, x, y, buttons, faction, resources);
         }
 
     }
@@ -520,7 +520,8 @@ namespace DwarfCorp
         public ItemSelector MyTrades { get; set; }
         public Faction OtherFaction { get; set; }
         public List<ResourceAmount> GoodsSent { get; set; }
-        public List<ResourceAmount> GoodsReceived { get; set; } 
+        public List<ResourceAmount> GoodsReceived { get; set; }
+        public List<ResourceAmount> Resources { get; set; } 
         public delegate void OnTrade(TradeEvent e);
         public event OnTrade OnTraded;
 
@@ -651,7 +652,8 @@ namespace DwarfCorp
 
             Layout.SetComponentPosition(TheirGoods, 0, 0, 1, 9);
 
-            TheirGoods.Items.AddRange(GetResources(OtherFaction.Race.GenerateResources()));
+
+            TheirGoods.Items.AddRange(GetResources(Resources));
             TheirGoods.ReCreateItems();
 
             TheirTrades = new ItemSelector(GUI, Layout, "They Offer", true, true)
@@ -767,9 +769,10 @@ namespace DwarfCorp
             RecomputeTrade();
         }
 
-        public TradePanel(DwarfGUI gui, GUIComponent parent, Faction faction, Faction otherFaction)
+        public TradePanel(DwarfGUI gui, GUIComponent parent, Faction faction, Faction otherFaction, List<ResourceAmount> resources)
             : base(gui, parent)
         {
+            Resources = resources;
             GoodsSent = new List<ResourceAmount>();
             GoodsReceived = new List<ResourceAmount>();
             LocalBounds = parent.GlobalBounds;

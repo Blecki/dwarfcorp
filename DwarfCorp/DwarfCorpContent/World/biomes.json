@@ -134,6 +134,10 @@
         "SpawnProbability": 0.0005
       },
       {
+        "Name": "Frog",
+        "SpawnProbability": 0.0001
+      },
+      {
         "Name": "White Rabbit",
         "SpawnProbability": 0.00005
       }
@@ -232,9 +236,19 @@
         "ClumpThreshold": 0.8,
         "MeanSize": 0.5,
         "SizeVariance": 0.1,
-        "VerticalOffset": 0.45,
+        "VerticalOffset": 0.7,
         "NoiseOffset": 51.2956276,
         "SpawnProbability": 0.02
+      },
+      {
+        "Name": "Cactus",
+        "ClumpSize": 90.0,
+        "ClumpThreshold": 0.6,
+        "MeanSize": 0.5,
+        "SizeVariance": 0.1,
+        "VerticalOffset": 0.8,
+        "NoiseOffset": 99.2956276,
+        "SpawnProbability": 0.06
       },
       {
         "Name": "Palm Tree",
@@ -265,7 +279,7 @@
     ],
     "Fauna": [
       {
-        "Name": "White Rabbit",
+        "Name": "Brown Rabbit",
         "SpawnProbability": 0.0005
       }],
     "GrassVoxel": "DesertGrass",
@@ -328,6 +342,10 @@
       {
         "Name": "Bird",
         "SpawnProbability": 0.001
+      },
+      {
+        "Name": "Tree Frog",
+        "SpawnProbability": 0.001
       }
     ],
     "GrassVoxel": "JungleGrass",
@@ -358,7 +376,7 @@
     "Fauna": [
       {
         "Name": "Demon",
-        "SpawnProbability": 0.005
+        "SpawnProbability": 0.0005
       }],
     "GrassVoxel": "Stone",
     "SoilVoxel": "Stone",

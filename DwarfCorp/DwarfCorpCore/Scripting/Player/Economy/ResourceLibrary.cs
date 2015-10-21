@@ -32,6 +32,7 @@
 // THE SOFTWARE.
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -155,7 +156,7 @@ namespace DwarfCorp
                 FoodContent = 500
             });
             Add(new Resource(ResourceType.Ale, 10.0f, "All dwarves need to drink.",
-                new NamedImageFrame(tileSheet, GetRect(4, 2)), Color.White, Resource.ResourceTags.Edible,
+                new NamedImageFrame(tileSheet, GetRect(4, 2)), Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Alcohol,
                 Resource.ResourceTags.Flammable)
             {
                 FoodContent = 150
@@ -198,6 +199,82 @@ namespace DwarfCorp
 
             Add((new Resource(ResourceType.Trinket, 100.0f, "A crafted item.",
                     new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, 0, 0), Color.White, Resource.ResourceTags.Craft, Resource.ResourceTags.Encrustable)));
+        
+            GenerateAnimalProducts();
+            GenerateFoods();
+        }
+
+        public static void GenerateFoods()
+        {
+            List<Resource> toAdd = new List<Resource>();
+            foreach (Resource resource in Resources.Values)
+            {
+                if (resource.Tags.Contains(Resource.ResourceTags.Brewable))
+                {
+                    Resource toReturn = new Resource(Resources[ResourceType.Ale])
+                    {
+                        Type = resource.Type + " Ale"
+                    };
+                    toReturn.ShortName = toReturn.Type;
+
+                    if (!Resources.ContainsKey(toReturn.Type))
+                    {
+                        toAdd.Add(toReturn);
+                    }
+                }
+
+                if (resource.Tags.Contains(Resource.ResourceTags.Bakeable))
+                {
+                    Resource toReturn = new Resource(Resources[ResourceType.Bread])
+                    {
+                        Type = resource.Type + " Bread"
+                    };
+                    toReturn.ShortName = toReturn.Type;
+
+                    if (!Resources.ContainsKey(toReturn.Type))
+                    {
+                        toAdd.Add(toReturn);
+                    }
+                }
+            }
+
+            foreach (Resource resource in toAdd)
+            {
+                Add(resource);
+            }
+
+            Resources.Remove(ResourceType.Ale);
+            Resources.Remove(ResourceType.Bread);
+        }
+
+        public static void GenerateAnimalProducts()
+        {
+            string[] animals = TextGenerator.GetDefaultStrings("Text" + ProgramData.DirChar + "animal.txt");
+
+            foreach (string animal in animals)
+            {
+                Resource resource = new Resource(Resources[ResourceType.Meat])
+                {
+                    Type = animal + " Meat"
+                };
+                resource.ShortName = resource.Type;
+
+                if (!Resources.ContainsKey(resource.Type))
+                    Add(resource);
+
+                Resource boneResource = new Resource(Resources[ResourceType.Bones])
+                {
+                    Type = animal + " Bone"
+                };
+                boneResource.ShortName = boneResource.Type;
+
+                if (!Resources.ContainsKey(boneResource.Type))
+                    Add(boneResource);
+
+            }
+
+            Resources.Remove(ResourceType.Meat);
+            Resources.Remove(ResourceType.Bones);
         }
 
         public static Resource CreateAle(Resource component)

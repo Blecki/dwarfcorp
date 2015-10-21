@@ -42,6 +42,39 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
+    public class Cactus : Body
+    {
+        public Cactus() { }
+
+        public Cactus(Vector3 position, string asset, float bushSize) :
+            base("Cactus", PlayState.ComponentManager.RootComponent, Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero)
+        {
+            ComponentManager componentManager = PlayState.ComponentManager;
+            Matrix matrix = Matrix.Identity;
+            matrix.Translation = position + new Vector3(0.5f, -0.2f, 0.5f);
+            LocalTransform = matrix;
+
+            new Mesh(componentManager, "Model", this, Matrix.CreateScale(bushSize, bushSize, bushSize), asset, false);
+
+            Health health = new Health(componentManager, "HP", this, 30 * bushSize, 0.0f, 30 * bushSize);
+            new Flammable(componentManager, "Flames", this, health);
+
+            Voxel voxelUnder = new Voxel();
+
+            if (PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            {
+                VoxelListener listener = new VoxelListener(componentManager, this, PlayState.ChunkManager, voxelUnder);
+            }
+
+            Tags.Add("Vegetation");
+            Tags.Add("Cactus");
+
+            AddToCollisionManager = true;
+            CollisionType = CollisionManager.CollisionType.Static;
+        }
+    }
+
+    [JsonObject(IsReference = true)]
     public class Bush : Body
     {
         public Bush() { }

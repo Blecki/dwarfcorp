@@ -177,7 +177,8 @@ namespace DwarfCorp
                 {
                     Name = "Motherland",
                     Race = Races["Dwarf"],
-                    IsRaceFaction = false
+                    IsRaceFaction = false,
+                    TradeMoney = 10000
                 };
             }
             foreach (Faction faction in factionsInSpawn)

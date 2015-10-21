@@ -76,7 +76,9 @@ namespace DwarfCorp
         public List<Resource.ResourceTags> HatedResources { get; set; }
 
         public Dictionary<Resource.ResourceTags, int> TradeGoods { get; set; }
-            
+        public List<Resource.ResourceTags> Crafts { get; set; }
+        public List<Resource.ResourceTags> Encrustings { get; set; } 
+ 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
@@ -92,6 +94,8 @@ namespace DwarfCorp
             foreach (var tags in TradeGoods)
             {
                 int num = MathFunctions.RandInt(tags.Value - 5, tags.Value + 5);
+
+
                 List<Resource> resources = ResourceLibrary.GetResourcesByTag(tags.Key);
 
                 if (resources.Count <= 0) continue;
@@ -99,6 +103,29 @@ namespace DwarfCorp
                 for (int i = 0; i < num; i++)
                 {
                     Resource randResource = Datastructures.SelectRandom(resources);
+
+                    if (randResource.Type == ResourceLibrary.ResourceType.Trinket ||
+                        randResource.Type == ResourceLibrary.ResourceType.GemTrinket ||
+                        tags.Key == Resource.ResourceTags.Craft)
+                    {
+                        Resource.ResourceTags craftTag = Datastructures.SelectRandom(Crafts);
+                        List<Resource> availableCrafts = ResourceLibrary.GetResourcesByTag(craftTag);
+
+                        Resource trinket = ResourceLibrary.GenerateTrinket(
+                            Datastructures.SelectRandom(availableCrafts).Type, MathFunctions.Rand(0.1f, 3.0f));
+
+                        if (MathFunctions.RandEvent(0.3f) && Encrustings.Count > 0)
+                        {
+                            List<Resource> availableGems =
+                                ResourceLibrary.GetResourcesByTag(Datastructures.SelectRandom(Encrustings));
+                            randResource = ResourceLibrary.EncrustTrinket(trinket,
+                                Datastructures.SelectRandom(availableGems).Type);
+                        }
+                        else
+                        {
+                            randResource = trinket;
+                        }
+                    }
 
                     if (!toReturn.ContainsKey(randResource.Type))
                     {

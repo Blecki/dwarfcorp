@@ -159,6 +159,8 @@ namespace DwarfCorp
         public IEnumerable<SpeechNode> CurrentCoroutine { get; set; }
         public IEnumerator<SpeechNode> CurrentEnumerator { get; set; }
         public SpeechNode PreeTree { get; set; }
+        public List<ResourceAmount> Resources { get; set; }
+ 
         public Diplomacy.Politics Politics
         {
             get { return PlayState.Diplomacy.GetPolitics(PlayState.PlayerFaction, Faction); }
@@ -175,7 +177,7 @@ namespace DwarfCorp
             EnableScreensaver = false;
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
             Faction = faction;
-              
+            Resources = faction.Race.GenerateResources();
         }
 
 
@@ -186,6 +188,37 @@ namespace DwarfCorp
             foreach (ResourceAmount resource in trade.GoodsReceived)
             {
                 PlayerFation.AddResources(resource);
+
+                List<ResourceAmount> removals = new List<ResourceAmount>();
+                foreach (ResourceAmount other in Resources)
+                {
+                    if (other.ResourceType.Type != resource.ResourceType.Type) continue;
+                    other.NumResources -= resource.NumResources;
+
+                    if (other.NumResources <= 0)
+                    {
+                        removals.Add(other);
+                    }
+                }
+
+                Resources.RemoveAll(removals.Contains);
+            }
+
+            foreach (ResourceAmount other in trade.GoodsSent)
+            {
+                if (Resources.All(r => r.ResourceType.Type != other.ResourceType.Type))
+                {
+                    Resources.Add(other);
+                }
+                else
+                {
+                    ResourceAmount other1 = other;
+                    foreach (
+                        ResourceAmount r in Resources.Where(k => k.ResourceType.Type == other1.ResourceType.Type))
+                    {
+                        r.NumResources += other.NumResources;
+                    }
+                }
             }
             PlayerFation.Economy.CurrentMoney -= trade.MoneySent;
             PlayerFation.Economy.CurrentMoney += trade.MoneyReceived;
@@ -195,7 +228,7 @@ namespace DwarfCorp
 
         IEnumerable<SpeechNode> WaitForTrade()
         {
-            TradeDialog dialog = TradeDialog.Popup(GUI, GUI.RootComponent, Faction);
+            TradeDialog dialog = TradeDialog.Popup(GUI, GUI.RootComponent, Faction, Resources);
 
             LastEvent = null;
             dialog.OnTraded += dialog_OnClicked;
