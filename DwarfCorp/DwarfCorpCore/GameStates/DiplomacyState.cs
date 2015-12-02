@@ -160,12 +160,13 @@ namespace DwarfCorp
         public IEnumerator<SpeechNode> CurrentEnumerator { get; set; }
         public SpeechNode PreeTree { get; set; }
         public List<ResourceAmount> Resources { get; set; }
- 
+    
         public Diplomacy.Politics Politics
         {
             get { return PlayState.Diplomacy.GetPolitics(PlayState.PlayerFaction, Faction); }
         }
         public Button BackButton { get; set; }
+        public Faction.TradeEnvoy Envoy { get; set; }
 
         public DiplomacyState(DwarfGame game, GameStateManager stateManager, PlayState play, Faction faction) :
             base(game, "DiplomacyState", stateManager)
@@ -178,6 +179,7 @@ namespace DwarfCorp
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
             Faction = faction;
             Resources = faction.Race.GenerateResources();
+            
         }
 
 
@@ -381,6 +383,8 @@ namespace DwarfCorp
                         Action = () =>
                         {
                             BackButton.IsVisible = true;
+                            if(Envoy != null)
+                                Faction.RecallEnvoy(Envoy);
                             return SpeechNode.Echo(new SpeechNode()
                             {
                                 Text = GetFarewell(),

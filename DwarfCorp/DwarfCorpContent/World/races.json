@@ -16,7 +16,7 @@
             "Frames" :  [0, 1],
             "Speed" : 0.15
         },
-        "NaturalEnemies" :  ["Demon"],
+        "NaturalEnemies" :  ["Demon", "Carnivore", "Elf"],
         "Speech" : {
             "Greetings" :  ["Hello!", "Well met.", "Greetings!", "Salutations!", "Good to see you, fellow Dwarf!"],
             "Farewells" :  ["Goodbye!", "Deep mining!", "Seleprak be with you!", "For the motherland!", "King and colony!"],
@@ -47,7 +47,7 @@
         "CreatureTypes": [
             "Goblin"
         ],
-        "NaturalEnemies" :  ["Demon", "Elf", "Undead"],
+        "NaturalEnemies" :  ["Demon", "Elf", "Undead", "Carnivore"],
         "IsIntelligent": true,
         "IsNative": true,
         "FactionNameFile": "Text\\Templates\\nations_goblin.txt",
@@ -82,7 +82,7 @@
         "CreatureTypes": [
             "Moleman"
         ],
-        "NaturalEnemies" :  ["Demon"],
+        "NaturalEnemies" :  ["Demon", "Carnivore"],
         "IsIntelligent": true,
         "IsNative": true,
         "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
@@ -132,7 +132,7 @@
             "Frames" :  [0, 1],
             "Speed" : 0.5
         },
-        "NaturalEnemies" :  ["Demon", "Undead", "Goblins"],
+        "NaturalEnemies" :  ["Demon", "Undead", "Goblins", "Carnivore", "Dwarf"],
         "Speech" : {
             "Greetings" :  ["Falalala!", "Ooh, hi!", "Joyus jumping jellybeans!", "Teehee, you look like sugarplums.", "Well, fiddle-dee-dee!", "Look, garden gnomes!", "We've frolicked here to meet you!", "We come bearing tasty treats!"],
             "Farewells" :  ["Until we meet again.", "I tip my hat to you!", "Happy trails!", "Buhbye!", "Bye!", "<The elf frolicks away>"],
@@ -171,7 +171,7 @@
             "Frames" :  [0, 1],
             "Speed" : 0.5
         },
-        "NaturalEnemies" :  ["Demon", "Elf", "Goblins"],
+        "NaturalEnemies" :  ["Demon", "Elf", "Goblins", "Carnivore"],
         "Speech" : {
             "Greetings" :  ["We have been watching you.", "Don't be alarmed. Inside, we're all the same.", "Good day. We are interested in your crafts.", "Your reputation precedes you, fleshy Dwarves.", "We hear whispers from the grave."],
             "Farewells" :  ["Remember. While you sleep, we wait.", "We grow stronger night by night.", "I see you are afraid. We will not bother you any longer.", "Another time, then.", "See you next century."],
@@ -208,7 +208,7 @@
             "Frames" :  [0, 1],
             "Speed" : 0.5
         },
-        "NaturalEnemies" :  ["Undead", "Player", "Herbivore", "Elf", "Goblins"],
+        "NaturalEnemies" :  ["Undead", "Player", "Herbivore", "Elf", "Goblins", "Carnivore"],
         "Speech" : {
             "Greetings" :  ["We have been watching you.", "Don't be alarmed. Inside, we're all the same.", "Good day. We are interested in your crafts.", "Your reputation precedes you, fleshy Dwarves.", "We hear whispers from the grave."],
             "Farewells" :  ["Remember. While you sleep, we wait.", "We grow stronger night by night.", "I see you are afraid. We will not bother you any longer.", "Another time, then.", "See you next century."],
@@ -224,9 +224,34 @@
         "Name": "Herbivore",
         "CreatureTypes": [
             "Bird",
-            "Deer"
+            "Deer",
+            "Brown Rabbit",
+            "White Rabbit",
+            "Frog",
+            "Tree Frog"
         ],
-        "NaturalEnemies" :  ["Demon"],
+        "NaturalEnemies" :  ["Demon", "Carnivore"],
+        "IsIntelligent": false,
+        "IsNative": true,
+        "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
+        "NameFile": "Text\\Templates\\names_dwarf.txt",
+        "Speech" : {
+            "Greetings" :  [""],
+            "Farewells" :  [""],
+            "GoodTrades" :  [""],
+            "BadTrades" :  [""],
+            "WarDeclarations" :  [""],
+            "PeaceDeclarations" :  [""]
+       },
+        "LikedResources" :  [],
+        "HatedResources" :  []
+    },
+    "Carnivore": {
+        "Name": "Carnivore",
+        "CreatureTypes": [
+            "Scorpion"
+        ],
+        "NaturalEnemies" :  ["Demon", "Herbivore", "Dwarf", "Goblin", "Elf", "Molemen", "Undead"],
         "IsIntelligent": false,
         "IsNative": true,
         "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",

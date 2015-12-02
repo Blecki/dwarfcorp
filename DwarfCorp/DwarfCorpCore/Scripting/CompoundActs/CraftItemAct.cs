@@ -132,7 +132,7 @@ namespace DwarfCorp
 
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
                 Creature.Physics.Velocity = Vector3.Zero;
-                Creature.Attacks[0].PerformNoDamage(DwarfTime.LastTime, Creature.AI.Position);
+                Creature.Attacks[0].PerformNoDamage(Creature, DwarfTime.LastTime, Creature.AI.Position);
                 Drawer2D.DrawLoadBar(Agent.Position + Vector3.Up, Color.White, Color.Black, 100, 16, timer.CurrentTimeSeconds / time);
                
                 yield return Status.Running;

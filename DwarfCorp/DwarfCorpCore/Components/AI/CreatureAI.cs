@@ -148,7 +148,8 @@ namespace DwarfCorp
 
         public List<Task> Tasks { get; set; }
         public bool TriggersMourning { get; set; }
-        public List<int> XPEvents { get; set; } 
+        public List<int> XPEvents { get; set; }
+
         public CreatureAI()
         {
             Movement = new CreatureMovement();
@@ -553,7 +554,7 @@ namespace DwarfCorp
 
                     if (Faction == PlayState.PlayerFaction)
                     {
-                        PlayState.AnnouncementManager.Announce(Stats.FullName + " is fighting a " + enemy.Creature.Name, 
+                        PlayState.AnnouncementManager.Announce(Stats.FullName + " is fighting " + TextGenerator.IndefiniteArticle(enemy.Creature.Name), 
                             Stats.FullName + " the " + Stats.CurrentLevel.Name + " is fighting a " + enemy.Stats.CurrentLevel.Name + " " + enemy.Faction.Race.Name, 
                             ZoomToMe);
                     }

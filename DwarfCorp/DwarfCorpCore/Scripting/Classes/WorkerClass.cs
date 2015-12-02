@@ -233,6 +233,8 @@ namespace DwarfCorp
                 new Attack("Pickaxe", 1.0f, 1.0f, 1.0f, ContentPaths.Audio.pick, ContentPaths.Effects.flash)
                 {
                     Knockback = 2.5f,
+                    TriggerMode = Attack.AttackTrigger.Animation,
+                    TriggerFrame = 2
                 }
             };
         }

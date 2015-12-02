@@ -165,7 +165,9 @@ namespace DwarfCorp
                 {
                     Mode = Attack.AttackMode.Ranged,
                     LaunchSpeed = 10.0f,
-                    ProjectileType = "Arrow"
+                    ProjectileType = "Arrow",
+                    TriggerMode = Attack.AttackTrigger.Animation,
+                    TriggerFrame = 3
                 }
             };
         }

@@ -200,8 +200,8 @@ namespace DwarfCorp
             Add((new Resource(ResourceType.Trinket, 100.0f, "A crafted item.",
                     new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, 0, 0), Color.White, Resource.ResourceTags.Craft, Resource.ResourceTags.Encrustable)));
         
-            GenerateAnimalProducts();
-            GenerateFoods();
+            //GenerateAnimalProducts();
+            //GenerateFoods();
         }
 
         public static void GenerateFoods()

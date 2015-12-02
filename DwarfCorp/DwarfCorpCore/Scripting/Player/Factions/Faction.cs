@@ -30,6 +30,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -162,13 +164,28 @@ namespace DwarfCorp
             GuardDesignations = new List<BuildOrder>();
             ChopDesignations = new List<Body>();
             AttackDesignations = new List<Body>();
-            ShipDesignations = new List<ShipOrder>();
             GatherDesignations = new List<Body>();
+            TradeEnvoys = new List<TradeEnvoy>();
+            WarParties = new List<WarParty>();
             RoomBuilder = new RoomBuilder(this);
             WallBuilder = new PutDesignator(this, TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles));
             CraftBuilder = new CraftBuilder(this);
             IsRaceFaction = false;
             TradeMoney = 0.0f;
+        }
+
+        public class TradeEnvoy
+        {
+            public List<CreatureAI> Creatures { get; set; }
+            public Faction OtherFaction { get; set; }
+            public bool ShouldRemove { get; set; }
+        }
+
+        public class WarParty
+        {
+            public List<CreatureAI> Creatures { get; set; }
+            public Faction OtherFaction { get; set; }
+            public bool ShouldRemove { get; set; }
         }
 
         public float TradeMoney { get; set; }
@@ -179,6 +196,8 @@ namespace DwarfCorp
         public Economy Economy { get; set; }
         public ComponentManager Components { get { return PlayState.ComponentManager; }}
 
+        public List<TradeEnvoy> TradeEnvoys { get; set; }
+        public List<WarParty> WarParties { get; set; } 
         public List<BuildOrder> DigDesignations { get; set; }
         public List<BuildOrder> GuardDesignations { get; set; }
         public List<Body> ChopDesignations { get; set; }
@@ -186,7 +205,6 @@ namespace DwarfCorp
         public List<Body> GatherDesignations { get; set; }
         public List<Stockpile> Stockpiles { get; set; }
         public List<CreatureAI> Minions { get; set; }
-        public List<ShipOrder> ShipDesignations { get; set; }
         public RoomBuilder RoomBuilder { get; set; }
         public PutDesignator WallBuilder { get; set; }
         public CraftBuilder CraftBuilder { get; set; }
@@ -300,6 +318,9 @@ namespace DwarfCorp
             }
 
             HandleThreats();
+
+            UpdateTradeEnvoys();
+            UpdateWarParties();
         }
 
         public bool IsTaskAssigned(Task task)
@@ -411,36 +432,7 @@ namespace DwarfCorp
 
         public int ComputeStockpileSpace()
         {
-            int space = 0;
-            foreach (Stockpile pile in Stockpiles)
-            {
-                space += pile.Resources.MaxResources - pile.Resources.CurrentResourceCount;
-            }
-
-            return space;
-        }
-
-        public void AddShipDesignation(ResourceAmount resource, Room port)
-        {
-            // TODO: Reimplement
-            /*
-            List<Body> componentsToShip = new List<Body>();
-
-            foreach (Stockpile s in Stockpiles)
-            {
-                for (int i = componentsToShip.Count; i < resource.NumResources; i++)
-                {
-                    Body r = s.FindItemWithTag(resource.ResourceType.ResourceName, componentsToShip);
-
-                    if (r != null)
-                    {
-                        componentsToShip.Add(r);
-                    }
-                }
-            }
-
-            ShipDesignations.Add(new ShipOrder(resource, port));
-            */
+            return Stockpiles.Sum(pile => pile.Resources.MaxResources - pile.Resources.CurrentResourceCount);
         }
 
         public void AddGatherDesignation(Body resource)
@@ -992,6 +984,86 @@ namespace DwarfCorp
 
             return desiredRoom;
         }
+
+        public void UpdateTradeEnvoys()
+        {
+            foreach (TradeEnvoy envoy in TradeEnvoys)
+            {
+                Diplomacy.Politics politics = PlayState.Diplomacy.GetPolitics(this, envoy.OtherFaction);
+                if (politics.GetCurrentRelationship() == Relationship.Hateful)
+                {
+                    RecallEnvoy(envoy);
+                }
+                else
+                {
+                    if (!envoy.Creatures.Any(creature => envoy.OtherFaction.AttackDesignations.Contains(creature.Physics))) continue;
+                    
+                    if (!politics.HasEvent("You attacked our trade delegates"))
+                    {
+                        politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                        {
+                            Change = -1.0f,
+                            Description = "You attacked our trade delegates",
+                            Duration = new TimeSpan(1, 0, 0, 0),
+                            Time = PlayState.Time.CurrentDate
+                        });
+                    }
+                    else
+                    {
+                        politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                        {
+                            Change = -2.0f,
+                            Description = "You attacked our trade delegates more than once",
+                            Duration = new TimeSpan(1, 0, 0, 0),
+                            Time = PlayState.Time.CurrentDate
+                        });
+                    }
+                }
+
+                if (envoy.Creatures.All(creature => creature.IsDead)) envoy.ShouldRemove = true;
+            }
+
+            TradeEnvoys.RemoveAll(t => t.ShouldRemove);
+        }
+
+        public void UpdateWarParties()
+        {
+            foreach (WarParty party in WarParties)
+            {
+                Diplomacy.Politics politics = PlayState.Diplomacy.GetPolitics(this, party.OtherFaction);
+                if (politics.GetCurrentRelationship() != Relationship.Hateful)
+                {
+                    RecallWarParty(party);
+                }
+
+                if (party.Creatures.All(creature => creature.IsDead)) party.ShouldRemove = true;
+            }
+
+            WarParties.RemoveAll(w => w.ShouldRemove);
+        }
+
+        public void RecallEnvoy(TradeEnvoy envoy)
+        {
+            // TODO: do ths more naturally
+            envoy.ShouldRemove = true;
+            foreach (CreatureAI creature in envoy.Creatures)
+            {
+                creature.GetRootComponent().Delete();
+            }
+        }
+
+        public void RecallWarParty(WarParty party)
+        {
+            // TODO: do ths more naturally
+            party.ShouldRemove = true;
+            foreach (CreatureAI creature in party.Creatures)
+            {
+                creature.GetRootComponent().Delete();
+            }
+        }
+
+
+       
     }
 
 }

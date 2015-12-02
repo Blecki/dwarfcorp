@@ -96,6 +96,7 @@ namespace DwarfCorp
             RegisterEntity("Cactus", (position, data) => new Cactus(position, "cactus", data.GetData("Scale", 1.0f)));
             RegisterEntity("Berry Bush", (position, data) => new Bush(position, "berrybush", data.GetData("Scale", 1.0f)));
             RegisterEntity("Bird", (position, data) => new Bird(ContentPaths.Entities.Animals.Birds.GetRandomBird(), position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Bird"));
+            RegisterEntity("Scorpion", (position, data) => new Scorpion(ContentPaths.Entities.Animals.Scorpion.scorption_animation, position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Frog"));
             RegisterEntity("Frog", (position, data) => new Frog(ContentPaths.Entities.Animals.Frog.frog0_animation, position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Frog"));
             RegisterEntity("Tree Frog", (position, data) => new Frog(ContentPaths.Entities.Animals.Frog.frog1_animation, position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Frog"));
             RegisterEntity("Brown Rabbit", (position, data) => new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit0_animation, position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Rabbit"));

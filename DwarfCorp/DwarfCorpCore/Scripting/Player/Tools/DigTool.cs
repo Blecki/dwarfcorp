@@ -94,7 +94,9 @@ namespace DwarfCorp
                     assignments.Add(new KillVoxelTask(r));
                 }
 
-                TaskManager.AssignTasksGreedy(assignments, Faction.FilterMinionsWithCapability(Player.SelectedMinions, GameMaster.ToolMode.Dig), 5);
+                List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.SelectedMinions,GameMaster.ToolMode.Dig);
+                TaskManager.AssignTasksGreedy(assignments, minions, 5);
+                OnConfirm(minions);
             }
             else
             {

@@ -71,6 +71,27 @@ namespace DwarfCorp
             public static string wurp = ProgramData.CreatePath("Audio", "wurp");
             public static string tinkle = ProgramData.CreatePath("Audio", "tinkle");
             public static string powerup = ProgramData.CreatePath("Audio", "powerup");
+            public static string frog = ProgramData.CreatePath("Audio", "frog");
+            public static string bunny = ProgramData.CreatePath("Audio", "bunny");
+            public static string demon_attack = ProgramData.CreatePath("Audio", "demon_attack");
+            public static string demon0 = ProgramData.CreatePath("Audio", "demon0");
+            public static string demon1 = ProgramData.CreatePath("Audio", "demon1");
+            public static string demon2= ProgramData.CreatePath("Audio", "demon2");
+            public static string demon3 = ProgramData.CreatePath("Audio", "demon3");
+            public static string elf0 = ProgramData.CreatePath("Audio", "elf0");
+            public static string elf1 = ProgramData.CreatePath("Audio", "elf1");
+            public static string elf2 = ProgramData.CreatePath("Audio", "elf2");
+            public static string elf3 = ProgramData.CreatePath("Audio", "elf3");
+            public static string mole0 = ProgramData.CreatePath("Audio", "mole0");
+            public static string mole1 = ProgramData.CreatePath("Audio", "mole1");
+            public static string mole2 = ProgramData.CreatePath("Audio", "mole2");
+            public static string ok0 = ProgramData.CreatePath("Audio", "ok0");
+            public static string ok1 = ProgramData.CreatePath("Audio", "ok1");
+            public static string ok2 = ProgramData.CreatePath("Audio", "ok3");
+            public static string skel0 = ProgramData.CreatePath("Audio", "skel0");
+            public static string skel1 = ProgramData.CreatePath("Audio", "skel1");
+            public static string skel2 = ProgramData.CreatePath("Audio", "skel2");
+            public static string hiss = ProgramData.CreatePath("Audio", "hiss");
         }
         public class Particles
         {
@@ -186,6 +207,13 @@ namespace DwarfCorp
                     public static string frog1 = ProgramData.CreatePath("Entities", "Animals", "Frog", "frog1");
                     public static string frog0_animation = ProgramData.CreatePath("Entities", "Animals", "Frog", "frog0_animation.json");
                     public static string frog1_animation = ProgramData.CreatePath("Entities", "Animals", "Frog", "frog1_animation.json");
+                }
+
+
+                public class Scorpion
+                {
+                    public static string scorpion = ProgramData.CreatePath("Entities", "Animals", "scorpion");
+                    public static string scorption_animation = ProgramData.CreatePath("Entities", "Animals", "scorpion_animation.json");
                 }
 
                 public class Deer

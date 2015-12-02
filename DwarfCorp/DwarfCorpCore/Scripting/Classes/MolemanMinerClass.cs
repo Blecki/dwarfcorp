@@ -232,6 +232,8 @@ namespace DwarfCorp
                 new Attack("Claws", 1.0f, 1.0f, 1.0f, ContentPaths.Audio.sword, ContentPaths.Effects.claws)
                 {
                     Knockback = 2.5f,
+                    TriggerMode = Attack.AttackTrigger.Animation,
+                    TriggerFrame = 2
                 }
             };
         }

@@ -114,6 +114,9 @@ namespace DwarfCorp
 
             List<Body> treesPickedByMouse = ComponentManager.FilterComponentsWithTag("Vegetation", bodies);
 
+            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.Faction.SelectedMinions,
+                GameMaster.ToolMode.Chop);
+            List<Task> tasks = new List<Task>();
             foreach (Body tree in treesPickedByMouse)
             {
                 if (!tree.IsVisible || tree.IsAboveCullPlane) continue;
@@ -124,11 +127,7 @@ namespace DwarfCorp
                     if (!Player.Faction.ChopDesignations.Contains(tree))
                     {
                         Player.Faction.ChopDesignations.Add(tree);
-
-                        foreach(CreatureAI creature in Player.Faction.SelectedMinions)
-                        {
-                            creature.Tasks.Add(new KillEntityTask(tree, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low});
-                        }
+                        tasks.Add(new KillEntityTask(tree, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low });
                     }
                 }
                 else if (button == InputManager.MouseButton.Right)
@@ -138,6 +137,12 @@ namespace DwarfCorp
                         Player.Faction.ChopDesignations.Remove(tree);
                     }
                 }
+            }
+           
+            if (tasks.Count > 0 && minions.Count > 0)
+            {
+                TaskManager.AssignTasks(tasks, minions);
+                OnConfirm(minions);
             }
         }
     }

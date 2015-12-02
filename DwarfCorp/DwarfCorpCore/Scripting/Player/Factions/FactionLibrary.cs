@@ -130,6 +130,13 @@ namespace DwarfCorp
                 IsRaceFaction = true
             };
 
+            Factions["Carnivore"] = new Faction
+            {
+                Name = "Carnivore",
+                Race = Races["Carnivore"],
+                IsRaceFaction = true
+            };
+
 
             Factions["Molemen"] = new Faction
             {
@@ -179,6 +186,20 @@ namespace DwarfCorp
                     Race = Races["Dwarf"],
                     IsRaceFaction = false,
                     TradeMoney = 10000
+                };
+
+                Factions["Herbivore"] = new Faction
+                {
+                    Name = "Herbivore",
+                    Race = Races["Herbivore"],
+                    IsRaceFaction = true
+                };
+
+                Factions["Carnivore"] = new Faction
+                {
+                    Name = "Carnivore",
+                    Race = Races["Carnivore"],
+                    IsRaceFaction = true
                 };
             }
             foreach (Faction faction in factionsInSpawn)

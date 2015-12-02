@@ -108,10 +108,10 @@ namespace DwarfCorp
 
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
-                ContentPaths.Entities.Goblin.Audio.goblinhurt1,
-                ContentPaths.Entities.Goblin.Audio.goblinhurt2,
-                ContentPaths.Entities.Goblin.Audio.goblinhurt3,
-                ContentPaths.Entities.Goblin.Audio.goblinhurt4,
+                ContentPaths.Audio.elf0,
+                ContentPaths.Audio.elf1,
+                ContentPaths.Audio.elf2,
+                ContentPaths.Audio.elf3,
             };
 
 

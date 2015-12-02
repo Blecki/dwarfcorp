@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using LibNoise.Modifiers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -94,6 +95,7 @@ namespace DwarfCorp
 
                 minion.CurrentTask = new GoToVoxelAct(vox, PlanAct.PlanType.Adjacent, minion).AsTask();
             }
+            OnConfirm(Player.SelectedMinions);
 
             IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.DownArrow, vox.Position + Vector3.One * 0.5f, 0.5f, 2.0f, new Vector2(0, -50), Color.LightGreen);
         }
@@ -123,6 +125,7 @@ namespace DwarfCorp
 
 
             }
+            List<CreatureAI> newDwarves = new List<CreatureAI>();
             foreach(Body body in bodies)
             {
                 List<Creature> dwarves = body.GetChildrenOfType<Creature>();
@@ -138,8 +141,10 @@ namespace DwarfCorp
                 if (dwarf.Allies == Player.Faction.Name && !Player.SelectedMinions.Contains(dwarf.AI))
                 {
                     Player.SelectedMinions.Add(dwarf.AI);
+                    newDwarves.Add(dwarf.AI);
                 }
             }
+            OnConfirm(newDwarves);
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)

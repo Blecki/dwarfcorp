@@ -54,5 +54,19 @@ namespace DwarfCorp
         public abstract void OnBegin();
         public abstract void OnEnd();
 
+        public virtual void OnConfirm(List<CreatureAI> minions)
+        {
+            if (minions.Count > 0)
+            {
+                Vector3 avgPostiion = Vector3.Zero;
+                foreach (CreatureAI creature in minions)
+                {
+                    avgPostiion += creature.Position;
+                }
+                avgPostiion /= minions.Count;
+                minions.First().Creature.NoiseMaker.MakeNoise("Ok", avgPostiion);
+            }
+        }
+
     }
 }

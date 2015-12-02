@@ -89,7 +89,9 @@ namespace DwarfCorp
                 new Attack("Fairy Dust", 10.0f, 0.2f, 5.0f, ContentPaths.Audio.tinkle, ContentPaths.Effects.rings)
                 {
                     Knockback = 0.5f,
-                    HitParticles = "star_particle"
+                    HitParticles = "star_particle",
+                    TriggerMode = Attack.AttackTrigger.Animation,
+                    TriggerFrame = 2
                 }
             };
         }

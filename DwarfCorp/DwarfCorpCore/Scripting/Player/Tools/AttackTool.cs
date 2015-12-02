@@ -135,6 +135,8 @@ namespace DwarfCorp
                         {
                             minion.Tasks.Add(new KillEntityTask(other, KillEntityTask.KillType.Attack));
                         }
+
+                        OnConfirm(Player.Faction.SelectedMinions);
                     }
                 }
                 else if (button == InputManager.MouseButton.Right)

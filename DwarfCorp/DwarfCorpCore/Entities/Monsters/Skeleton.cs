@@ -110,11 +110,11 @@ namespace DwarfCorp
 
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
-                ContentPaths.Entities.Goblin.Audio.goblinhurt1,
-                ContentPaths.Entities.Goblin.Audio.goblinhurt2,
-                ContentPaths.Entities.Goblin.Audio.goblinhurt3,
-                ContentPaths.Entities.Goblin.Audio.goblinhurt4,
+                ContentPaths.Audio.skel0,
+                ContentPaths.Audio.skel1,
+                ContentPaths.Audio.skel2
             };
+
 
 
             MinimapIcon minimapIcon = new MinimapIcon(Physics, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 3, 0));

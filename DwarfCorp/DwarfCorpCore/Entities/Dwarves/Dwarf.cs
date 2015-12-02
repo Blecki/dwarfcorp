@@ -129,6 +129,13 @@ namespace DwarfCorp
                 ContentPaths.Entities.Dwarf.Audio.dwarfhurt4,
             };
 
+            NoiseMaker.Noises["Ok"] = new List<string>()
+            {
+                ContentPaths.Audio.ok0,
+                ContentPaths.Audio.ok1,
+                ContentPaths.Audio.ok2
+            };
+
 
             NoiseMaker.Noises["Chew"] = new List<string> 
             {

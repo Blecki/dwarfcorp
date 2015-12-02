@@ -23,6 +23,7 @@ namespace DwarfCorp
         public string Name { get; set; }
         public List<Point> Frames { get; set; }
         public int CurrentFrame { get; set; }
+        public int LastFrame { get; set; }
         public bool IsPlaying { get; set; }
         public bool Loops { get; set; }
         public Color Tint { get; set; }
@@ -39,6 +40,36 @@ namespace DwarfCorp
 
         public SpriteSheet SpriteSheet { get; set; }
 
+
+        public delegate void NextFrameEvent(int frame);
+        public event NextFrameEvent OnNextFrame;
+
+        public delegate void EndEvent();
+        public event EndEvent OnAnimationCompleted;
+
+        public delegate void LoopEvent();
+        public event LoopEvent OnAnimationLooped;
+
+        protected virtual void InvokeAnimationLooped()
+        {
+            LoopEvent handler = OnAnimationLooped;
+            if (handler != null) handler.Invoke();
+        }
+
+        protected virtual void InvokeAnimationCompleted()
+        {
+            EndEvent handler = OnAnimationCompleted;
+            if (handler != null) OnAnimationCompleted.Invoke();
+        }
+
+        protected virtual void InvokeNextFrame(int frame)
+        {
+            NextFrameEvent handler = OnNextFrame;
+            if (handler != null)
+            {
+                handler.Invoke(frame);
+            }
+        }
 
         public struct SimpleDescriptor
         {
@@ -200,6 +231,7 @@ namespace DwarfCorp
         {
             if(IsPlaying)
             {
+                LastFrame = CurrentFrame;
                 float dt = mode == Timer.TimerMode.Game ? (float)gameTime.ElapsedGameTime.TotalSeconds : (float)gameTime.ElapsedRealTime.TotalSeconds;
                 FrameTimer += dt;
 
@@ -220,15 +252,18 @@ namespace DwarfCorp
         public virtual void NextFrame()
         {
             CurrentFrame++;
+            InvokeNextFrame(CurrentFrame);
 
             if(CurrentFrame >= Frames.Count)
             {
                 if(Loops)
                 {
+                    InvokeAnimationLooped();
                     CurrentFrame = 0;
                 }
                 else
                 {
+                    InvokeAnimationCompleted();
                     CurrentFrame = Frames.Count - 1;
                 }
             }
@@ -242,6 +277,11 @@ namespace DwarfCorp
         public virtual void PreRender()
         {
             
+        }
+
+        public bool IsDone()
+        {
+            return CurrentFrame >= Frames.Count - 1;
         }
     }
 

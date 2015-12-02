@@ -225,7 +225,9 @@ namespace DwarfCorp
                 new Attack("Magic Missile", 0.1f, 1.0f, 1.0f, ContentPaths.Audio.tinkle, ContentPaths.Effects.rings)
                 {
                     Knockback = 0.5f,
-                    HitParticles = "star_particle"
+                    HitParticles = "star_particle",
+                    TriggerMode = Attack.AttackTrigger.Animation,
+                    TriggerFrame = 2
                 }
             };
         }

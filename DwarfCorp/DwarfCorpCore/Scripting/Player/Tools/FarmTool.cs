@@ -153,6 +153,12 @@ namespace DwarfCorp
                         }
                     }
                     TaskManager.AssignTasksGreedy(goals, minions, 1);
+
+                    foreach (CreatureAI creature in minions)
+                    {
+                        creature.Creature.NoiseMaker.MakeNoise("Ok", creature.Position);
+                    }
+
                     break;
                 case FarmMode.Planting:
                     int currentAmount =
@@ -205,6 +211,7 @@ namespace DwarfCorp
                         }
                     }
                     TaskManager.AssignTasksGreedy(goals, minions, 1);
+                    OnConfirm(minions);
                     break;
             }
         }
@@ -226,11 +233,6 @@ namespace DwarfCorp
                         if (!Player.Faction.ChopDesignations.Contains(tree))
                         {
                             Player.Faction.ChopDesignations.Add(tree);
-
-                            foreach (CreatureAI creature in Player.Faction.SelectedMinions)
-                            {
-                                creature.Tasks.Add(new KillEntityTask(tree, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low });
-                            }
                         }
                     }
                     else if (button == InputManager.MouseButton.Right)

@@ -56,6 +56,12 @@ namespace DwarfCorp
             Area
         }
 
+        public enum AttackTrigger
+        {
+            Timer,
+            Animation
+        }
+
         public float DamageAmount { get; set; }
         [JsonIgnore]
         public float RechargeRate { get
@@ -75,6 +81,10 @@ namespace DwarfCorp
         public string HitParticles { get; set; }
         public string ProjectileType { get; set; }
         public float LaunchSpeed { get; set; }
+
+        public AttackTrigger TriggerMode { get; set; }
+        public int TriggerFrame { get; set; }
+
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
@@ -101,6 +111,8 @@ namespace DwarfCorp
             ProjectileType = other.ProjectileType;
             LaunchSpeed = other.LaunchSpeed;
             AnimationAsset = other.AnimationAsset;
+            TriggerMode = other.TriggerMode;
+            TriggerFrame = other.TriggerFrame;
         }
 
         public void CreateHitAnimation()
@@ -130,49 +142,55 @@ namespace DwarfCorp
             CreateHitAnimation();
         }
 
-        public bool Perform(Vector3 pos, Voxel other, DwarfTime time, float bonus, string faction)
+        public bool Perform(Creature performer, Vector3 pos, Voxel other, DwarfTime time, float bonus, string faction)
         {
             if (other == null)
             {
                 return false;
             }
 
-            RechargeTimer.Update(time);
-
-            if (RechargeTimer.HasTriggered)
+            switch (TriggerMode)
             {
-                switch (Mode)
+                case AttackTrigger.Timer:
+                    RechargeTimer.Update(time);
+                    if (!RechargeTimer.HasTriggered) return false;
+                    break;
+                case AttackTrigger.Animation:
+                    if (performer.Sprite.CurrentAnimation == null || performer.Sprite.CurrentAnimation.CurrentFrame != TriggerFrame)
+                    {
+                        return false;
+                    }
+                    break;
+            }
+            switch (Mode)
+            {
+                case AttackMode.Melee:
                 {
-                    case AttackMode.Melee:
+                    other.Health -= DamageAmount + bonus;
+                    PlayNoise(other.Position);
+                    if (HitParticles != "")
                     {
-                        other.Health -= DamageAmount + bonus;
-                        PlayNoise(other.Position);
-                        if (HitParticles != "")
-                        {
-                            PlayState.ParticleManager.Trigger(HitParticles, other.Position, Color.White, 5);
-                        }
+                        PlayState.ParticleManager.Trigger(HitParticles, other.Position, Color.White, 5);
+                    }
 
-                        if (HitAnimation != null)
-                        {
-                            HitAnimation.Reset();
-                            HitAnimation.Play();
-                            IndicatorManager.DrawIndicator(HitAnimation, other.Position + Vector3.One * 0.5f, 0.6f, 2.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
-                        }
-                        break;
-                    }
-                    case AttackMode.Ranged:
+                    if (HitAnimation != null)
                     {
-                        LaunchProjectile(pos, other.Position, faction);
-                        break;
+                        HitAnimation.Reset();
+                        HitAnimation.Play();
+                        IndicatorManager.DrawIndicator(HitAnimation, other.Position + Vector3.One * 0.5f, 0.6f, 2.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
                     }
-                    
+                    break;
                 }
-                return true;
+                case AttackMode.Ranged:
+                {
+                    LaunchProjectile(pos, other.Position, faction);
+                    break;
+                }
+                    
             }
-            else
-            {
-                return false;
-            }
+            return true;
+            
+
         }
 
         public void LaunchProjectile(Vector3 start, Vector3 end, string faction)
@@ -187,40 +205,57 @@ namespace DwarfCorp
             EntityFactory.CreateEntity<Body>(ProjectileType, start, data);
         }
 
-        public void PerformNoDamage(DwarfTime time, Vector3 pos)
+        public void PerformNoDamage(Creature performer, DwarfTime time, Vector3 pos)
         {
-            RechargeTimer.Update(time);
-
-            if (RechargeTimer.HasTriggered)
+            switch (TriggerMode)
             {
-                if (Mode == AttackMode.Melee)
+                case AttackTrigger.Timer:
+                    RechargeTimer.Update(time);
+                    if (!RechargeTimer.HasTriggered) return;
+                    break;
+                case AttackTrigger.Animation:
+                    if (performer.Sprite.CurrentAnimation == null ||
+                        performer.Sprite.CurrentAnimation.CurrentFrame != TriggerFrame)
+                        return;
+                    break;
+            }
+
+            if (Mode == AttackMode.Melee)
+            {
+                PlayNoise(pos);
+                if (HitParticles != "")
                 {
-                    PlayNoise(pos);
-                    if (HitParticles != "")
-                    {
-                        PlayState.ParticleManager.Trigger(HitParticles, pos, Color.White, 5);
-                    }
+                    PlayState.ParticleManager.Trigger(HitParticles, pos, Color.White, 5);
+                }
 
 
-                    if (HitAnimation != null)
-                    {
-                        HitAnimation.Reset();
-                        HitAnimation.Play();
-                        IndicatorManager.DrawIndicator(HitAnimation, pos, 0.6f, 2.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
-                    }
+                if (HitAnimation != null)
+                {
+                    HitAnimation.Reset();
+                    HitAnimation.Play();
+                    IndicatorManager.DrawIndicator(HitAnimation, pos, 0.6f, 2.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
                 }
             }
         }
 
-        public bool Perform(Body other, DwarfTime time, float bonus, Vector3 pos, string faction)
+        public bool Perform(Creature performer, Body other, DwarfTime time, float bonus, Vector3 pos, string faction)
         {
-            RechargeTimer.Update(time);
 
-            if (RechargeTimer.HasTriggered)
+            switch (TriggerMode)
             {
-                switch (Mode)
-                {
-                    case AttackMode.Melee:
+                case AttackTrigger.Timer:
+                    RechargeTimer.Update(time);
+                    if (!RechargeTimer.HasTriggered) return false;
+                    break;
+                case AttackTrigger.Animation:
+                    if (performer.Sprite.CurrentAnimation == null ||
+                        performer.Sprite.CurrentAnimation.CurrentFrame != TriggerFrame)
+                        return false;
+                    break;
+            }
+            switch (Mode)
+            {
+                case AttackMode.Melee:
                     {
                         Health health = other.GetChildrenOfType<Health>().FirstOrDefault();
                         if (health != null)
@@ -249,23 +284,18 @@ namespace DwarfCorp
                             force.Normalize();
                             physics.ApplyForce(force * Knockback, 1.0f);
                         }
-                        
+
                         break;
                     }
-                    case AttackMode.Ranged:
+                case AttackMode.Ranged:
                     {
                         PlayNoise(other.LocalTransform.Translation);
                         LaunchProjectile(pos, other.Position, faction);
                         break;
                     }
-                }
+            }
 
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return true;
         }
 
         public void PlayNoise(Vector3 position)

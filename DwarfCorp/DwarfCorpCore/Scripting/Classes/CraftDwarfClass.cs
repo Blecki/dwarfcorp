@@ -226,6 +226,8 @@ namespace DwarfCorp
                 new Attack("Hammer", 1.0f, 1.0f, 1.0f, ContentPaths.Audio.hammer, ContentPaths.Effects.flash)
                 {
                     Knockback = 2.5f,
+                    TriggerMode = Attack.AttackTrigger.Animation,
+                    TriggerFrame = 2
                 }
             };
         }

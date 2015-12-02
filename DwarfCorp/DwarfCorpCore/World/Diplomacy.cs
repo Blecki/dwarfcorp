@@ -101,6 +101,7 @@ namespace DwarfCorp
         public FactionLibrary Factions { get; set; }
         public Dictionary<Pair<Faction>, Politics> FactionPolitics { get; set; }
 
+
         public Diplomacy(FactionLibrary factions)
         {
             Factions = factions;
@@ -156,7 +157,7 @@ namespace DwarfCorp
                             politics.RecentEvents.Add(new PoliticalEvent()
                             {
                                 Change = 0.5f,
-                                Description = "we are the same race",
+                                Description = "we are of the same people",
                                 Duration = forever,
                                 Time = now
                             });
@@ -165,12 +166,12 @@ namespace DwarfCorp
 
                         if (faction.Value.Race.NaturalEnemies.Any(name => name == otherFaction.Value.Race.Name))
                         {
-                            if (!politics.HasEvent("we are naturally hostile"))
+                            if (!politics.HasEvent("we are taught to hate your kind"))
                             {
                                 politics.RecentEvents.Add(new PoliticalEvent()
                                 {
                                     Change = -2.0f,
-                                    Description = "we are naturally hostile",
+                                    Description = "we are taught to hate your kind",
                                     Duration = forever,
                                     Time = now
                                 });
@@ -187,42 +188,52 @@ namespace DwarfCorp
 
         public void SendTradeEnvoy(Faction natives)
         {
-            // todo
             PlayState playState = (PlayState) GameState.Game.StateManager.GetState<PlayState>("PlayState");
 
-            if (playState.IsActiveState)
+            if (!playState.IsActiveState) return;
+            Faction.TradeEnvoy envoy = null;
+            if (natives.Race.IsNative)
             {
-                if (natives.Race.IsNative)
+                List<CreatureAI> creatures =
+                    PlayState.MonsterSpawner.Spawn(PlayState.MonsterSpawner.GenerateSpawnEvent(natives,
+                        PlayState.PlayerFaction, PlayState.Random.Next(4) + 1, false));
+                if (creatures.Count > 0)
                 {
-                    List<CreatureAI> creatures =
-                        PlayState.MonsterSpawner.Spawn(PlayState.MonsterSpawner.GenerateSpawnEvent(natives,
-                            PlayState.PlayerFaction, PlayState.Random.Next(4) + 1, false));
-
-                    if (creatures.Count > 0)
+                    envoy = new Faction.TradeEnvoy()
                     {
-                        PlayState.AnnouncementManager.Announce("Trade envoy from " + natives.Name + " has arrived!",
-                            "Click to zoom to location", creatures.First().ZoomToMe);
-                    }
+                        Creatures = creatures,
+                        OtherFaction = PlayState.PlayerFaction,
+                        ShouldRemove = false
+                    };
+                    natives.TradeEnvoys.Add(envoy);
+                    PlayState.AnnouncementManager.Announce("Trade envoy from " + natives.Name + " has arrived!",
+                        "Click to zoom to location", creatures.First().ZoomToMe);
                 }
-                else
+            }
+            else
+            {
+                PlayState.PlayerFaction.DispatchBalloon();
+                envoy = new Faction.TradeEnvoy()
                 {
-                    PlayState.PlayerFaction.DispatchBalloon();
+                    Creatures = new List<CreatureAI>(),
+                    OtherFaction = PlayState.PlayerFaction,
+                    ShouldRemove = false
+                };
+                PlayState.AnnouncementManager.Announce("Trade envoy from " + natives.Name + " has arrived!", "Trade with " + natives.Name);
+            }
 
-                    PlayState.AnnouncementManager.Announce("Trade envoy from " + natives.Name + " has arrived!", "Trade with " + natives.Name);
-                }
-
-                if (GameState.Game.StateManager.States.ContainsKey("DiplomacyState_" + natives.Name))
+            if (GameState.Game.StateManager.States.ContainsKey("DiplomacyState_" + natives.Name))
+            {
+                GameState.Game.StateManager.PushState("DiplomacyState_" + natives.Name);
+            }
+            else
+            {
+                GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game, GameState.Game.StateManager,
+                    (PlayState) GameState.Game.StateManager.GetState<PlayState>("PlayState"), natives)
                 {
-                    GameState.Game.StateManager.PushState("DiplomacyState_" + natives.Name);
-                }
-                else
-                {
-                    GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game, GameState.Game.StateManager,
-                        (PlayState) GameState.Game.StateManager.GetState<PlayState>("PlayState"), natives)
-                    {
-                        Name = "DiplomacyState_" + natives.Name
-                    });
-                }
+                    Name = "DiplomacyState_" + natives.Name,
+                    Envoy = envoy
+                });
             }
         }
 
@@ -232,7 +243,15 @@ namespace DwarfCorp
             PlayState.AnnouncementManager.Announce("War party from " + natives.Name + " has arrived!", "");
             Politics politics = GetPolitics(natives, PlayState.PlayerFaction);
             politics.WasAtWar = true;
-            PlayState.MonsterSpawner.Spawn(PlayState.MonsterSpawner.GenerateSpawnEvent(natives, PlayState.PlayerFaction, PlayState.Random.Next(5) + 1, true));
+            List<CreatureAI> creatures = PlayState.MonsterSpawner.Spawn(PlayState.MonsterSpawner.GenerateSpawnEvent(natives, PlayState.PlayerFaction, PlayState.Random.Next(5) + 1, true));
+
+            natives.WarParties.Add(new Faction.WarParty()
+            {
+                Creatures = creatures,
+                OtherFaction = PlayState.PlayerFaction,
+                ShouldRemove = false
+            });
+
         }
 
 
@@ -250,7 +269,7 @@ namespace DwarfCorp
                     Race race = otherFaction.Race;
                     Politics relation = mypolitics.Value;
 
-                    if (race.IsIntelligent  && !otherFaction.IsRaceFaction && relation.GetCurrentRelationship() != Relationship.Hateful && MathFunctions.RandEvent(0.5f))
+                    if (race.IsIntelligent  && !otherFaction.IsRaceFaction && relation.GetCurrentRelationship() != Relationship.Hateful && MathFunctions.RandEvent(1e-3f))
                     {
                         SendTradeEnvoy(otherFaction);
                     }

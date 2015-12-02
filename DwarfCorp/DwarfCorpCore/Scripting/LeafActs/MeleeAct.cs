@@ -245,14 +245,20 @@ namespace DwarfCorp
                     Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
                     CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
-                    while (
-                        !CurrentAttack.Perform(Target, DwarfTime.LastTime, Creature.Stats.BuffedStr + Creature.Stats.BuffedSiz,
+
+                    while (!CurrentAttack.Perform(Creature, Target, DwarfTime.LastTime, Creature.Stats.BuffedStr + Creature.Stats.BuffedSiz,
                             Creature.AI.Position, Creature.Faction.Name))
                     {
                         Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
                         yield return Status.Running;
                     }
                     CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
+
+                    while (!Agent.Creature.Sprite.CurrentAnimation.IsDone())
+                    {
+                        yield return Status.Running;
+                    }
+                    
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     if (Target.IsDead)

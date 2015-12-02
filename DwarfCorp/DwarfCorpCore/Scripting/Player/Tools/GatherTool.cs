@@ -93,7 +93,11 @@ namespace DwarfCorp
                 }
             }
 
-            TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Gather));
+            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(PlayState.Master.SelectedMinions,
+                GameMaster.ToolMode.Gather);
+            TaskManager.AssignTasks(assignments, minions);
+
+            OnConfirm(minions);
         }
 
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)

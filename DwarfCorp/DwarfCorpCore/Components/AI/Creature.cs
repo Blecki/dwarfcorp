@@ -531,6 +531,10 @@ namespace DwarfCorp
 
         public void UpdateAnimation(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            if (CurrentCharacterMode == CharacterMode.Attacking)
+            {
+                return;
+            }
            
             float veloNorm = Physics.Velocity.Length();
             if(veloNorm > Stats.MaxSpeed)
@@ -548,11 +552,6 @@ namespace DwarfCorp
                 {
                     CurrentCharacterMode = CharacterMode.Walking;
                 }
-            }
-
-            if(CurrentCharacterMode == CharacterMode.Attacking)
-            {
-                return;
             }
 
             if(!IsOnGround)
@@ -595,7 +594,7 @@ namespace DwarfCorp
                     Drawer2D.DrawLoadBar(AI.Position + Vector3.Up, Color.White, Color.Black, 100, 16, waitTimer.CurrentTimeSeconds / waitTimer.TargetTimeSeconds);
                 }
 
-                Attacks[0].PerformNoDamage(DwarfTime.LastTime, AI.Position);
+                Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, AI.Position);
                 Physics.Velocity = Vector3.Zero;
                 yield return Act.Status.Running;
             }

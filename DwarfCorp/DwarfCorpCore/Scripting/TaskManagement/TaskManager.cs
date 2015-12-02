@@ -186,39 +186,6 @@ namespace DwarfCorp
                 }
             }
 
-            foreach(ShipOrder ship in Faction.ShipDesignations)
-            {
-                List<Body> componentsToShip = new List<Body>();
-                int remaining = ship.GetRemainingNumResources();
-
-                if(remaining == 0)
-                {
-                    continue;
-                }
-
-
-                foreach(Body loc in componentsToShip)
-                {
-                    // TODO: Reimplement
-                    /*
-                    if(ship.Port.ContainsItem(loc))
-                    {
-                        continue;
-                    }
-                     */
-
-                    Task g = new PutItemInZoneTask(Item.FindItem(loc), ship.Port);
-                    
-                    if(TaskIsAssigned(g) || !IsFeasible(g, Faction.Minions))
-                    {
-                        continue;
-                    }
-
-                    ship.Assignments.Add(g);
-                    tasks.Add(g);
-                }
-            }
-
             return tasks;
         }
 
