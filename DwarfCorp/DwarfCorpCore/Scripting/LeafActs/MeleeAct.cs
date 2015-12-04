@@ -242,9 +242,21 @@ namespace DwarfCorp
                 {
                     Creature.Physics.Orientation = Physics.OrientMode.Fixed;
                     Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
-                    Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
                     CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
+
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
+                    Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
+                   
+                    while (!CurrentAttack.RechargeTimer.HasTriggered)
+                    {
+                        Creature.Sprite.PauseAnimations(Creature.CharacterMode.Attacking);
+                        CurrentAttack.RechargeTimer.Update(DwarfTime.LastTime);
+                        Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
+                        yield return Status.Running;
+                    }
+
+                    Creature.Sprite.PlayAnimations(Creature.CharacterMode.Attacking);
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
 
                     while (!CurrentAttack.Perform(Creature, Target, DwarfTime.LastTime, Creature.Stats.BuffedStr + Creature.Stats.BuffedSiz,
                             Creature.AI.Position, Creature.Faction.Name))
@@ -252,6 +264,7 @@ namespace DwarfCorp
                         Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
                         yield return Status.Running;
                     }
+
                     CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
 
                     while (!Agent.Creature.Sprite.CurrentAnimation.IsDone())

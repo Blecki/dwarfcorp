@@ -82,7 +82,7 @@ namespace DwarfCorp
             {
                 Creature.OverrideCharacterMode = false;
                 Creature.Physics.Orientation = Physics.OrientMode.RotateY;
-                Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                 WanderTime.Update(DwarfTime.LastTime);
 
                 if (!Creature.IsOnGround)
@@ -92,21 +92,7 @@ namespace DwarfCorp
                 }
                 if(TurnTime.Update(DwarfTime.LastTime) || TurnTime.HasTriggered || firstIter)
                 {
-                    
                     LocalTarget = new Vector3(MathFunctions.Rand() * Radius - Radius / 2.0f, 0.0f, MathFunctions.Rand() * Radius - Radius / 2.0f) + oldPosition;
-                     
-
-                    /*
-                    List<Creature.MoveAction> neighbors = Agent.Chunks.ChunkData.GetMovableNeighbors(Agent.Position);
-                    neighbors.RemoveAll(
-                    a => a.MoveType == Creature.MoveType.Jump || a.MoveType == DwarfCorp.Creature.MoveType.Climb);
-
-                    if (neighbors.Count > 0)
-                    {
-                        LocalTarget = neighbors[PlayState.Random.Next(0, neighbors.Count)].Voxel.Position +
-                                      Vector3.One*0.5f;
-                    }
-                     */
                     firstIter = false;
                 }
 
@@ -114,7 +100,7 @@ namespace DwarfCorp
 
                 if (origDist > Radius)
                 {
-                    Creature.Physics.Velocity *= 0.9f;
+                    Creature.Physics.Velocity *= 0.01f;
                     yield return Status.Running;
                     continue;
                 }
@@ -123,7 +109,8 @@ namespace DwarfCorp
 
                 if (dist < Radius*0.25f)
                 {
-                    Creature.Physics.Velocity *= 0.9f;
+                    Creature.Physics.Velocity *= 0.01f;
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
                 }
                 else
                 {
@@ -134,11 +121,12 @@ namespace DwarfCorp
                     output.Y = 0.0f;
 
                     Creature.Physics.ApplyForce(output * 0.5f, (float) DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                 }
 
                 yield return Status.Running;
             }
-
+            Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
             yield return Status.Success;
         }
     }

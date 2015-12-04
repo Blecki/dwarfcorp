@@ -163,10 +163,8 @@ namespace DwarfCorp
             Flipped = flipped;
             SpeedMultiplier = 1.0f;
             CreatePrimitives(device);
+            Play();
         }
-
-
-
 
         public void CreatePrimitives(GraphicsDevice device)
         {
@@ -279,7 +277,7 @@ namespace DwarfCorp
             
         }
 
-        public bool IsDone()
+        public virtual bool IsDone()
         {
             return CurrentFrame >= Frames.Count - 1;
         }

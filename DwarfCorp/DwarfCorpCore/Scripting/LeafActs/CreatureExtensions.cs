@@ -172,6 +172,9 @@ namespace DwarfCorp
             while(true)
             {
                 agent.CurrentCharacterMode = Creature.CharacterMode.Attacking;
+                agent.Sprite.ResetAnimations(agent.CurrentCharacterMode);
+                agent.Sprite.PlayAnimations(agent.CurrentCharacterMode);
+
                 Voxel blackBoardVoxel = agent.AI.Blackboard.GetData<Voxel>(voxel);
 
                 if(blackBoardVoxel == null)
@@ -196,7 +199,16 @@ namespace DwarfCorp
                 }
                 agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
                 agent.Physics.Velocity *= 0.9f;
+
                 agent.Attacks[0].Perform(agent, agent.Physics.Position, vox, DwarfTime.LastTime, agent.Stats.BaseDigSpeed, agent.Faction.Name);
+
+                while (!agent.Sprite.CurrentAnimation.IsDone())
+                {
+                    yield return Act.Status.Running;
+                }
+                agent.Sprite.PauseAnimations(agent.CurrentCharacterMode);
+                agent.CurrentCharacterMode = Creature.CharacterMode.Idle;
+
                 yield return Act.Status.Running;
             }
 

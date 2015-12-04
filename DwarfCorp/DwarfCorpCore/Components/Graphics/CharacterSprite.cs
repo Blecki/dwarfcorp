@@ -242,6 +242,26 @@ namespace DwarfCorp
 
             base.Update(gameTime, chunks, camera);
         }
+
+        public void PauseAnimations(Creature.CharacterMode mode)
+        {
+            List<Animation> animations = GetAnimations(mode);
+            foreach (Animation a in animations)
+            {
+                a.IsPlaying = false;
+            }
+
+        }
+
+        public void PlayAnimations(Creature.CharacterMode mode)
+        {
+            List<Animation> animations = GetAnimations(mode);
+            foreach (Animation a in animations)
+            {
+                a.IsPlaying = true;
+            }
+
+        }
     }
 
 }

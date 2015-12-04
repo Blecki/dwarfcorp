@@ -48,7 +48,8 @@
               [3, 2, 0]
           ],
           "Name" : "AttackingLEFT",
-          "Speed": [0.1, 0.1, 0.3, 0.1]
+          "Speed": [0.1, 0.1, 0.3, 0.1],
+          "PlayOnce" :  true
       },
       {
          "Frames" : [
@@ -58,7 +59,8 @@
               [3, 3, 0]
           ],
           "Name" : "AttackingRIGHT",
-          "Speed": [0.1, 0.1, 0.3, 0.1]
+          "Speed": [0.1, 0.1, 0.3, 0.1],
+          "PlayOnce" :  true
       },
             {
          "Frames" : [
@@ -68,7 +70,8 @@
               [3, 2, 0]
           ],
           "Name" : "AttackingFORWARD",
-          "Speed": [0.1, 0.1, 0.3, 0.1]
+          "Speed": [0.1, 0.1, 0.3, 0.1],
+          "PlayOnce" :  true
       },
       {
          "Frames" : [
@@ -78,7 +81,8 @@
               [3, 3, 0]
           ],
           "Name" : "AttackingBACKWARD",
-          "Speed": [0.1, 0.1, 0.3, 0.1]
+          "Speed": [0.1, 0.1, 0.3, 0.1],
+          "PlayOnce" :  true
       }
    ],
    "Layers" : [

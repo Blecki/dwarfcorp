@@ -118,10 +118,6 @@ namespace DwarfCorp
                 if (!Animations.ContainsKey(animationName)) continue;
 
                 Animation animation = Animations[animationName];
-                if (!animation.IsPlaying)
-                {
-                    animation.Play();
-                }
                 animation.Update(gameTime);
             }
 
