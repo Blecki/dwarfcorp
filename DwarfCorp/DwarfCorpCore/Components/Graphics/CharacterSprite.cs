@@ -84,7 +84,7 @@ namespace DwarfCorp
 
         public CharacterSprite()
         {
-
+            currentMode = "Idle";
         }
 
         public CharacterSprite(GraphicsDevice graphics, ComponentManager manager, string name, GameComponent parent,
@@ -92,6 +92,7 @@ namespace DwarfCorp
                 base(manager, name, parent, localTransform)
         {
             Graphics = graphics;
+            currentMode = "Idle";
         }
 
         public bool HasAnimation(Creature.CharacterMode mode, Orientation orient)

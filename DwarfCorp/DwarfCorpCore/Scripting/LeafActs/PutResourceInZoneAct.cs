@@ -128,15 +128,25 @@ namespace DwarfCorp
                     Creature.NoiseMaker.MakeNoise("Hurt", Creature.AI.Position);
                     Creature.Stats.NumItemsGathered++;
                     Creature.AI.AddXP(1);
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
+                    Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
+                    Creature.Sprite.PlayAnimations(Creature.CharacterMode.Attacking);
+
+                    while (!Creature.Sprite.CurrentAnimation.IsDone())
+                    {
+                        yield return Status.Running;
+                    }
+
                     yield return Status.Running;
                 }
                 else
                 {
                     Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
                     yield return Status.Fail;
                 }   
             }
-
+            Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
             yield return Status.Success;
         }
     }

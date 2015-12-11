@@ -76,7 +76,7 @@ namespace DwarfCorp
 
         public Orientation CurrentOrientation { get; set; }
 
-        private string currentMode = "";
+        protected string currentMode = "";
 
         public override void SetCurrentAnimation(string name)
         {

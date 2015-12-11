@@ -303,7 +303,14 @@ namespace DwarfCorp
 
         public static Vector2 RandVector2Circle()
         {
-            return PolarToRectangular((float) (PlayState.Random.NextDouble()*Math.PI*2), 1);
+            Vector2 toReturn;
+            do
+            {
+                toReturn.X = Rand(-1, 1);
+                toReturn.Y = Rand(-1, 1);
+            } while (toReturn.Length() > 1);
+            toReturn.Normalize();
+            return toReturn;
         }
 
 

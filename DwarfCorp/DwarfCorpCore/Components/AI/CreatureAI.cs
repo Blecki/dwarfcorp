@@ -181,7 +181,7 @@ namespace DwarfCorp
             CurrentTask = null;
             Tasks = new List<Task>();
             Thoughts = new List<Thought>();
-            IdleTimer = new Timer(5.0f, true);
+            IdleTimer = new Timer(2.0f, true);
             SpeakTimer = new Timer(5.0f, true);
             XPEvents = new List<int>();
         }
@@ -410,7 +410,7 @@ namespace DwarfCorp
                 else if (IdleTimer.HasTriggered)
                 {
                     IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
-                    return new ActWrapperTask(new WanderAct(this, 2, 1.0f + MathFunctions.Rand(-0.5f, 0.5f), 1.0f))
+                    return new ActWrapperTask(new WanderAct(this, 2, 0.5f + MathFunctions.Rand(-0.25f, 0.25f), 1.0f))
                     {
                         Priority = Task.PriorityType.Eventually
                     };

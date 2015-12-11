@@ -195,6 +195,8 @@ namespace DwarfCorp
 
         public Creature()
         {
+            CurrentCharacterMode = CharacterMode.Idle;
+            
             OverrideCharacterMode = false;
             Buffs = new List<Buff>();
             HasMeat = true;
@@ -383,11 +385,25 @@ namespace DwarfCorp
                 if(IsOnGround)
                 {
                     IsOnGround = false;
-                    if(CurrentCharacterMode != CharacterMode.Flying)
-                    {
-                        CurrentCharacterMode = Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling;
-                    }
                 }
+            }
+
+            if (!IsOnGround)
+            {
+                if (CurrentCharacterMode != CharacterMode.Flying)
+                {
+                    CurrentCharacterMode = Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling;
+                }
+
+                if (Physics.IsInLiquid)
+                {
+                    CurrentCharacterMode = CharacterMode.Swimming;
+                }
+            }
+
+            if (CurrentCharacterMode == CharacterMode.Falling && IsOnGround)
+            {
+                CurrentCharacterMode = CharacterMode.Idle;
             }
 
             if(Status.IsAsleep)
