@@ -222,7 +222,7 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Magic Missile", 0.1f, 1.0f, 1.0f, ContentPaths.Audio.tinkle, ContentPaths.Effects.rings)
+                new Attack("Magic Missile", 1.0f, 0.5f, 1.0f, ContentPaths.Audio.tinkle, ContentPaths.Effects.rings)
                 {
                     Knockback = 0.5f,
                     HitParticles = "star_particle",

@@ -244,17 +244,7 @@ namespace DwarfCorp
                     Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
                     CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
 
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
                     Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
-                   
-                    while (!CurrentAttack.RechargeTimer.HasTriggered)
-                    {
-                        Creature.Sprite.PauseAnimations(Creature.CharacterMode.Attacking);
-                        CurrentAttack.RechargeTimer.Update(DwarfTime.LastTime);
-                        Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
-                        yield return Status.Running;
-                    }
-
                     Creature.Sprite.PlayAnimations(Creature.CharacterMode.Attacking);
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
 
@@ -265,13 +255,24 @@ namespace DwarfCorp
                         yield return Status.Running;
                     }
 
-                    CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
-
                     while (!Agent.Creature.Sprite.CurrentAnimation.IsDone())
                     {
                         yield return Status.Running;
                     }
-                    
+
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
+                    Creature.Sprite.PauseAnimations(Creature.CharacterMode.Attacking);
+
+                    CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
+
+                    while (!CurrentAttack.RechargeTimer.HasTriggered)
+                    {
+                        Creature.Sprite.PauseAnimations(Creature.CharacterMode.Attacking);
+                        CurrentAttack.RechargeTimer.Update(DwarfTime.LastTime);
+                        Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
+                        yield return Status.Running;
+                    }
+
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     if (Target.IsDead)

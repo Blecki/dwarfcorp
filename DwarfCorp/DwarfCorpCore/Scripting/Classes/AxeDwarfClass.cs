@@ -227,7 +227,7 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Axe", 4.0f, 1.0f, 1.0f, ContentPaths.Audio.sword, ContentPaths.Effects.slice)
+                new Attack("Axe", 4.0f, 0.5f, 1.0f, ContentPaths.Audio.sword, ContentPaths.Effects.slice)
                 {
                     Knockback = 10.0f,
                     TriggerMode = Attack.AttackTrigger.Animation,

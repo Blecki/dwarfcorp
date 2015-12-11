@@ -274,7 +274,7 @@ namespace DwarfCorp
                 Name = "DesertGrass",
                 ProbabilityOfRelease = 0.1f,
                 ResourceToRelease = ResourceLibrary.ResourceType.Sand,
-                StartingHealth = 10,
+                StartingHealth = 20,
                 ReleasesResource = true,
                 CanRamp = true,
                 RampSize = 0.5f,
@@ -290,7 +290,7 @@ namespace DwarfCorp
                 Name = "JungleGrass",
                 ProbabilityOfRelease = 0.1f,
                 ResourceToRelease = ResourceLibrary.ResourceType.Dirt,
-                StartingHealth = 10,
+                StartingHealth = 30,
                 ReleasesResource = true,
                 CanRamp = true,
                 RampSize = 0.5f,
@@ -322,7 +322,7 @@ namespace DwarfCorp
                 ProbabilityOfRelease = 0.5f,
                 ReleasesResource = true,
                 ResourceToRelease = ResourceLibrary.ResourceType.Stone,
-                StartingHealth = 30,
+                StartingHealth = 40,
                 IsBuildable = true,
                 ParticleType = "stone_particle"
             };
@@ -347,7 +347,7 @@ namespace DwarfCorp
             {
                 Name = "Sand",
                 ReleasesResource = false,
-                StartingHealth = 5,
+                StartingHealth = 15,
                 CanRamp = true,
                 RampSize = 0.5f,
                 IsBuildable = false,

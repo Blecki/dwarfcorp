@@ -157,7 +157,14 @@ namespace DwarfCorp
                 if (Chunk == null) return VoxelType.TypeList[0];
                 return VoxelType.TypeList[Chunk.Data.Types[Index]];
             }
-            set { if(Chunk != null) Chunk.Data.Types[Index] = (byte) value.ID; }
+            set
+            {
+                if (Chunk != null)
+                {
+                    Chunk.Data.Types[Index] = (byte) value.ID;
+                    Chunk.Data.Health[Index] = (byte) value.StartingHealth;
+                }
+            }
         }
 
         [JsonIgnore]
@@ -245,7 +252,7 @@ namespace DwarfCorp
             set
             {
                 if (Type.IsInvincible) return;
-                Chunk.Data.Health[Index] = (byte)value;
+                Chunk.Data.Health[Index] = (byte)(Math.Max(Math.Min(value, 255.0f), 0.0f));
 
                 if (value <= 0.0f)
                 {
