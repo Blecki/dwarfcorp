@@ -124,9 +124,106 @@ namespace DwarfCorp
             }
         }
 
+        public IEnumerable<Status> TrackMovingTarget()
+        {
+            while (true)
+            {
+                Creature.AI.Blackboard.Erase("EntityVoxel");
+                Act.Status status = SetTargetVoxelFromEntityAct.SetTarget("EntityVoxel", EntityName, Creature);
+                Body entity = Agent.Blackboard.GetData<Body>(EntityName);
+
+                if (entity == null || entity.IsDead)
+                {
+                    yield return Status.Success;
+                    yield break;
+                }
+
+                if (status != Status.Success)
+                {
+                    yield return Act.Status.Running;
+                }
+                Creature.AI.Blackboard.Erase("PathToEntity");
+                PlanAct planAct = new PlanAct(Creature.AI, "PathToEntity", "EntityVoxel", PlanAct.PlanType.Adjacent);
+                planAct.Initialize();
+
+                bool planSucceeded = false;
+                while (true)
+                {
+                    Act.Status planStatus = planAct.Tick();
+
+                    if (planStatus == Status.Fail)
+                    {
+                        yield return Act.Status.Running;
+                        break;
+                    }
+
+                    else if (planStatus == Status.Running)
+                    {
+                        yield return Act.Status.Running;
+                    }
+
+                    else if (planStatus == Status.Success)
+                    {
+                        planSucceeded = true;
+                        break;
+                    }
+
+                }
+
+                if (!planSucceeded)
+                {
+                    yield return Act.Status.Running;
+                    continue;
+                }
+
+
+                FollowPathAnimationAct followPath = new FollowPathAnimationAct(Creature.AI, "PathToEntity");
+                followPath.Initialize();
+
+                while (true)
+                {
+                    Act.Status pathStatus = followPath.Tick();
+
+                    if (pathStatus == Status.Fail)
+                    {
+                        break;
+                    }
+
+                    else if (pathStatus == Status.Running)
+                    {
+                        yield return Act.Status.Running;
+
+                        List<Creature.MoveAction> path = Agent.Blackboard.GetData<List<Creature.MoveAction>>("PathToEntity");
+                        if (path.Count > 0 && (path.Last().Voxel.Position - entity.LocalTransform.Translation).Length() > 4)
+                        {
+                            break;
+                        }
+
+                        if ((Creature.Physics.Position - entity.Position).Length() < 2)
+                        {
+                            yield return Status.Success;
+                            yield break;
+                        }
+
+                        continue;
+                    }
+
+                    else if (pathStatus == Status.Success)
+                    {
+                        yield return Act.Status.Success;
+                        yield break;
+                    }
+
+                }
+                
+                yield return Act.Status.Running;
+            }
+        }
+
 
         public override void Initialize()
         {
+            /*
             Creature.AI.Blackboard.Erase("PathToEntity");
             Creature.AI.Blackboard.Erase("EntityVoxel");
             Tree = new Sequence(
@@ -135,11 +232,22 @@ namespace DwarfCorp
                 InHands() |
                  new Sequence(
                     new ForLoop(
-                        new SetTargetVoxelFromEntityAct(Agent, EntityName, "EntityVoxel") &
-                        new PlanAct(Agent, "PathToEntity", "EntityVoxel", PlanAct.PlanType.Adjacent) &
-                        new Parallel(new FollowPathAnimationAct(Agent, "PathToEntity") * new Wrap(() => TargetMoved("PathToEntity")), new Wrap(CollidesWithTarget)) { ReturnOnAllSucces = false }, 5, true),
+                        new Sequence( 
+                            new SetTargetVoxelFromEntityAct(Agent, EntityName, "EntityVoxel"),
+                            new PlanAct(Agent, "PathToEntity", "EntityVoxel", PlanAct.PlanType.Adjacent),
+                            new Parallel( new FollowPathAnimationAct(Agent, "PathToEntity"), 
+                                          new Wrap(() => TargetMoved("PathToEntity")), 
+                                          new Wrap(CollidesWithTarget)) { ReturnOnAllSucces = false }
+                                     ), 
+                                5, true),
                     new StopAct(Agent)));
-            Tree.Initialize();
+             */
+            Tree = new Sequence(
+                new Wrap(TrackMovingTarget),
+                new StopAct(Agent)
+                );
+
+        Tree.Initialize();
             base.Initialize();
         }
 

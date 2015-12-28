@@ -87,8 +87,16 @@ namespace DwarfCorp
             Mode = mode;
             Entity = entity;
             Name = "Kill Entity";
-            Tree = new ForLoop(new Parallel(new Sequence(new GoToEntityAct(entity, creature),
-                                new MeleeAct(Agent, entity)), new Wrap(Verify)), 5, true);
+            Tree = new ForLoop(
+                                new Parallel(
+                                    new Sequence(
+                                        new GoToEntityAct(entity, creature),
+                                        new MeleeAct(Agent, entity)
+                                    ), 
+                                    new Wrap(Verify)
+                                    ), 
+                                10, 
+                                true);
         }
     }
 

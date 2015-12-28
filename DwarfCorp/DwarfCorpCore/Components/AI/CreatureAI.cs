@@ -388,9 +388,6 @@ namespace DwarfCorp
         {
             if(GatherManager.VoxelOrders.Count == 0 && (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()))
             {
-                // This is what to do when the unit has not been given any explicit orders.
-                List<Room> rooms = Faction.GetRooms();
-
                 // Find a room to train in
                 if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.01f))
                 {
@@ -415,7 +412,8 @@ namespace DwarfCorp
                         Priority = Task.PriorityType.Eventually
                     };
                 }
-                else return null;
+                Physics.Velocity *= 0.0f;
+                return null;
             }
             // If we have no more build orders, look for gather orders
             else if (GatherManager.VoxelOrders.Count == 0)
@@ -554,8 +552,8 @@ namespace DwarfCorp
 
                     if (Faction == PlayState.PlayerFaction)
                     {
-                        PlayState.AnnouncementManager.Announce(Stats.FullName + " is fighting " + TextGenerator.IndefiniteArticle(enemy.Creature.Name), 
-                            Stats.FullName + " the " + Stats.CurrentLevel.Name + " is fighting a " + enemy.Stats.CurrentLevel.Name + " " + enemy.Faction.Race.Name, 
+                        PlayState.AnnouncementManager.Announce(Stats.FullName + " is fighting " + TextGenerator.IndefiniteArticle(enemy.Creature.Name),
+                            Stats.FullName + " the " + Stats.CurrentLevel.Name + " is fighting " + TextGenerator.IndefiniteArticle(enemy.Stats.CurrentLevel.Name) + " " + enemy.Faction.Race.Name, 
                             ZoomToMe);
                     }
                 }

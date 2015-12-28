@@ -51,27 +51,32 @@ namespace DwarfCorp
             EntityName = entityName;
         }
 
-        public override IEnumerable<Status> Run()
+        public static Act.Status SetTarget(string voxelOutName, string entityName, Creature creature)
         {
-            Body target = Creature.AI.Blackboard.GetData<Body>(EntityName);
+            Body target = creature.AI.Blackboard.GetData<Body>(entityName);
             if (target == null)
             {
-                yield return Status.Fail;
+                return Status.Fail;
             }
             else
             {
                 Voxel voxel = new Voxel();
-               
-                if(!Creature.Chunks.ChunkData.GetFirstVoxelUnder(target.BoundingBox.Center(), ref voxel, true))
+
+                if (!creature.Chunks.ChunkData.GetFirstVoxelUnder(target.BoundingBox.Center(), ref voxel, true))
                 {
-                    yield return Status.Fail;
+                    return Status.Fail;
                 }
                 else
                 {
-                    Agent.Blackboard.SetData(VoxelOutName, voxel);
-                    yield return Status.Success;
+                    creature.AI.Blackboard.SetData(voxelOutName, voxel);
+                    return Status.Success;
                 }
             }
+        }
+
+        public override IEnumerable<Status> Run()
+        {
+            yield return SetTarget(VoxelOutName, EntityName, Creature);
         }
     }
 

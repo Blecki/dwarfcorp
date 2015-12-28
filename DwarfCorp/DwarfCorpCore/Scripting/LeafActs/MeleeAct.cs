@@ -90,15 +90,23 @@ namespace DwarfCorp
             base.OnCanceled();
         }
 
-        public IEnumerable<Status> AvoidTarget(float range)
+        public IEnumerable<Status> AvoidTarget(float range, float time)
         {
             if (Target == null)
             {
                 yield return Status.Fail;
                 yield break;
             }
+            Timer avoidTimer = new Timer(time, true, Timer.TimerMode.Game);
             while (true)
             {
+                avoidTimer.Update(DwarfTime.LastTime);
+
+                if (avoidTimer.HasTriggered)
+                {
+                    yield return Status.Success;
+                }
+
                 float dist = (Target.Position - Agent.Position).Length();
 
                 if (dist > range)
@@ -128,10 +136,20 @@ namespace DwarfCorp
                 }
 
                 Creature.MoveAction furthest = neighbors.Last();
-
-                Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, furthest.Voxel.Position + Vector3.One*0.5f, Agent.Position);
-                Creature.Physics.ApplyForce(output, DwarfTime.Dt);
-                yield return Status.Success;
+                bool reachedTarget = false;
+                while (!reachedTarget)
+                {
+                    Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, furthest.Voxel.Position + Vector3.One*0.5f,
+                        Agent.Position);
+                    Creature.Physics.ApplyForce(output, DwarfTime.Dt);
+                    yield return Status.Running;
+                    if ((furthest.Voxel.Position - Agent.Position).Length() < 1)
+                    {
+                        reachedTarget = true;
+                    }
+                    Agent.Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                }
+            yield return Status.Success;
                 yield break;
             }
         }
@@ -157,6 +175,7 @@ namespace DwarfCorp
                 }
             }
 
+            bool avoided = false;
             while(true)
             {
                 Timeout.Update(DwarfTime.LastTime);
@@ -220,8 +239,8 @@ namespace DwarfCorp
                     }
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                 }
-                else if (CurrentAttack.Mode != Attack.AttackMode.Melee &&
-                    diff.Length() < CurrentAttack.Range*0.75f && !collides)
+                else if (!avoided && (CurrentAttack.Mode != Attack.AttackMode.Melee &&
+                    diff.Length() < CurrentAttack.Range*0.75f && !collides))
                 {
                     /*
                    
@@ -232,14 +251,16 @@ namespace DwarfCorp
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     */
-                    foreach (Act.Status stat in AvoidTarget(CurrentAttack.Range))
+                    foreach (Act.Status stat in AvoidTarget(CurrentAttack.Range, 3.0f))
                     {
                         yield return Status.Running;
                     }
+                    avoided = true;
                 }
                 // Else, stop and attack
                 else
                 {
+                    avoided = false;
                     Creature.Physics.Orientation = Physics.OrientMode.Fixed;
                     Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
                     CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);

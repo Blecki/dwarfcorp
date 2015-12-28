@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using LibNoise.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -83,30 +84,37 @@ namespace DwarfCorp
             List<CreatureAI> collide = new List<CreatureAI>();
             foreach (KeyValuePair<string, Faction> faction in PlayState.ComponentManager.Factions.Factions)
             {
-                if (PlayState.Diplomacy.GetPolitics(Creature.Faction, faction.Value).GetCurrentRelationship() == Relationship.Hateful)
+                if (PlayState.Diplomacy.GetPolitics(Creature.Faction, faction.Value).GetCurrentRelationship() !=
+                    Relationship.Hateful) continue;
+
+                foreach (CreatureAI minion in faction.Value.Minions)
                 {
-                    foreach (CreatureAI minion in faction.Value.Minions)
+                    if (minion.Sensor.Enemies.Contains(Creature))
                     {
-                        float dist = (minion.Position - GlobalTransform.Translation).LengthSquared();
+                        sensed.Add(minion);
+                        continue;
+                    }
 
-                        if (dist < SenseRadius)
-                        {
-                            sensed.Add(minion);
-                        }
+                    float dist = (minion.Position - GlobalTransform.Translation).LengthSquared();
 
-                        if (dist < 1.0f)
-                        {
-                            collide.Add(minion);
-                        }
+                    if (dist < SenseRadius && !PlayState.ChunkManager.ChunkData.CheckOcclusionRay(Position, minion.Position))
+                    {
+                        sensed.Add(minion);
+                    }
+
+                    if (dist < 1.0f)
+                    {
+                        collide.Add(minion);
                     }
                 }
-
             }
+
 
             if (sensed.Count > 0)
             {
                 OnEnemySensed.Invoke(sensed);
             }
+             
 
             foreach (CreatureAI minion in collide)
             {
@@ -117,7 +125,6 @@ namespace DwarfCorp
             }
         }
 
-
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             SenseTimer.Update(gameTime);
@@ -127,6 +134,7 @@ namespace DwarfCorp
                 Sense();
             }
             Enemies.RemoveAll(ai => ai.IsDead);
+
             base.Update(gameTime, chunks, camera);
         }
 

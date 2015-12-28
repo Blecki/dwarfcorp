@@ -153,11 +153,6 @@ namespace DwarfCorp
 
                     if(Target == null)
                     {
-                        if (Creature.Faction == PlayState.Master.Faction)
-                        {
-                            PlayState.AnnouncementManager.Announce(Creature.Stats.FullName + " (" + Creature.Stats.CurrentLevel.Name + ")" + " got lost.",
-                                Creature.Stats.FullName + "'s target was lost.", () => Agent.ZoomToMe());
-                        }
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                         yield return Status.Fail;
                         break;
@@ -166,9 +161,6 @@ namespace DwarfCorp
                     if (voxUnder != null)
                     {
                         Path = null;
-
-                   
-
                         AstarPlanRequest aspr = new AstarPlanRequest
                         {
                             Subscriber = PlanSubscriber,
@@ -200,11 +192,6 @@ namespace DwarfCorp
                     else
                     {
                         Path = null;
-                        if (Creature.Faction == PlayState.Master.Faction)
-                        {
-                            PlayState.AnnouncementManager.Announce(Creature.Stats.FullName + " got lost.",
-                                Creature.Stats.FullName + " couldn't find a path. The target was invalid.", () => Agent.ZoomToMe());
-                        }
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                         yield return Status.Fail;
                         break;
@@ -235,11 +222,6 @@ namespace DwarfCorp
                         }
                         else
                         {
-                            if (Creature.Faction == PlayState.Master.Faction)
-                            {
-                                PlayState.AnnouncementManager.Announce(Creature.Stats.FullName + " got lost.",
-                                    Creature.Stats.FullName + " couldn't find a path in time.", Agent.ZoomToMe);
-                            }
                             Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                             statusResult = Status.Fail;
 
