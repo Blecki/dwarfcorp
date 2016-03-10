@@ -195,6 +195,8 @@ namespace DwarfCorp
 
         public Creature()
         {
+            CurrentCharacterMode = CharacterMode.Idle;
+            
             OverrideCharacterMode = false;
             Buffs = new List<Buff>();
             HasMeat = true;
@@ -370,61 +372,38 @@ namespace DwarfCorp
             {
                 IsHeadClear = voxelAbove.IsEmpty;
             }
-
-            if (!Physics.IsInLiquid && CurrentCharacterMode == CharacterMode.Swimming)
-            {
-                CurrentCharacterMode = CharacterMode.Idle;
-            }
-
             if(belowExists && Physics.IsInLiquid)
             {
                 IsOnGround = false;
-                CurrentCharacterMode = CharacterMode.Swimming;
             }
             else if(belowExists)
             {
-                if(!voxelBelow.IsEmpty)
-                {
-                    IsOnGround = true;
-
-                    if(CurrentCharacterMode != CharacterMode.Attacking) CurrentCharacterMode = CharacterMode.Idle;
-                }
-                else
-                {
-                    IsOnGround = false;
-                    if(Physics.Velocity.Y > 0.05)
-                    {
-                        if (CurrentCharacterMode == CharacterMode.Walking || CurrentCharacterMode == CharacterMode.Idle || CurrentCharacterMode == CharacterMode.Falling)
-                        {
-                            CurrentCharacterMode = CharacterMode.Jumping;
-                        }
-                    }
-                    else if(Physics.Velocity.Y < -0.05)
-                    {
-                        if (CurrentCharacterMode == CharacterMode.Walking || CurrentCharacterMode == CharacterMode.Idle || CurrentCharacterMode == CharacterMode.Jumping)
-                        {
-                            CurrentCharacterMode = CharacterMode.Falling;
-                        }
-                    }
-                    else
-                    {
-                        if(CurrentCharacterMode == CharacterMode.Walking || CurrentCharacterMode == CharacterMode.Idle)
-                        {
-                            currentCharacterMode = CharacterMode.Idle;
-                        }
-                    }
-                }
+                IsOnGround = !voxelBelow.IsEmpty;
             }
             else
             {
                 if(IsOnGround)
                 {
                     IsOnGround = false;
-                    if(CurrentCharacterMode != CharacterMode.Flying)
-                    {
-                        CurrentCharacterMode = Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling;
-                    }
                 }
+            }
+
+            if (!IsOnGround)
+            {
+                if (CurrentCharacterMode != CharacterMode.Flying)
+                {
+                    CurrentCharacterMode = Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling;
+                }
+
+                if (Physics.IsInLiquid)
+                {
+                    CurrentCharacterMode = CharacterMode.Swimming;
+                }
+            }
+
+            if (CurrentCharacterMode == CharacterMode.Falling && IsOnGround)
+            {
+                CurrentCharacterMode = CharacterMode.Idle;
             }
 
             if(Status.IsAsleep)
@@ -540,44 +519,9 @@ namespace DwarfCorp
             if(veloNorm > Stats.MaxSpeed)
             {
                 Physics.Velocity = (Physics.Velocity / veloNorm) * Stats.MaxSpeed;
-                if(IsOnGround && CurrentCharacterMode == CharacterMode.Idle)
-                {
-                    CurrentCharacterMode = CharacterMode.Walking;
-                }
             }
 
-            if (veloNorm > 0.25f)
-            {
-                if (IsOnGround && CurrentCharacterMode == CharacterMode.Idle)
-                {
-                    CurrentCharacterMode = CharacterMode.Walking;
-                }
-            }
-
-            if(!IsOnGround)
-            {
-                return;
-            }
-
-            if(veloNorm < 0.25f || Physics.IsSleeping)
-            {
-                if(CurrentCharacterMode == CharacterMode.Walking)
-                {
-                    CurrentCharacterMode = CharacterMode.Idle;
-                }
-            }
-            else
-            {
-                if (CurrentCharacterMode == CharacterMode.Idle)
-                {
-                    CurrentCharacterMode = CharacterMode.Walking;
-                    Animation walk = Sprite.GetAnimation(CharacterMode.Walking, Sprite.CurrentOrientation);
-                    if (walk != null)
-                    {
-                        walk.SpeedMultiplier = MathFunctions.Clamp(veloNorm/Stats.MaxSpeed*5.0f, 0.5f, 3.0f);
-                    }
-                }
-            }
+           
         }
 
         public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar)

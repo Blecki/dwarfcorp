@@ -171,7 +171,7 @@ namespace DwarfCorp
             agent.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
             while(true)
             {
-                agent.CurrentCharacterMode = Creature.CharacterMode.Attacking;
+
                 Voxel blackBoardVoxel = agent.AI.Blackboard.GetData<Voxel>(voxel);
 
                 if(blackBoardVoxel == null)
@@ -196,7 +196,38 @@ namespace DwarfCorp
                 }
                 agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
                 agent.Physics.Velocity *= 0.9f;
-                agent.Attacks[0].Perform(agent, agent.Physics.Position, vox, DwarfTime.LastTime, agent.Stats.BaseDigSpeed, agent.Faction.Name);
+
+                agent.CurrentCharacterMode = Creature.CharacterMode.Attacking;
+                agent.Sprite.ResetAnimations(agent.CurrentCharacterMode);
+                agent.Sprite.PlayAnimations(agent.CurrentCharacterMode);
+
+                while (!agent.Attacks[0].Perform(agent, agent.Physics.Position, vox, DwarfTime.LastTime, agent.Stats.BaseDigSpeed, agent.Faction.Name))
+                {
+                    agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
+                    agent.Physics.Velocity *= 0.9f;
+                    yield return Act.Status.Running;
+                }
+
+                while (!agent.Sprite.CurrentAnimation.IsDone())
+                {
+                    agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
+                    agent.Physics.Velocity *= 0.9f;
+                    yield return Act.Status.Running;
+                }
+                agent.Sprite.PauseAnimations(agent.CurrentCharacterMode);
+
+
+                agent.Attacks[0].RechargeTimer.Reset();
+                while (!agent.Attacks[0].RechargeTimer.HasTriggered)
+                {
+                    agent.Attacks[0].RechargeTimer.Update(DwarfTime.LastTime);
+                    agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
+                    agent.Physics.Velocity *= 0.9f;
+                    yield return Act.Status.Running;
+                }
+
+                agent.CurrentCharacterMode = Creature.CharacterMode.Idle;
+
                 yield return Act.Status.Running;
             }
 

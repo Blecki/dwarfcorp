@@ -269,6 +269,7 @@ namespace DwarfCorp
                     Race race = otherFaction.Race;
                     Politics relation = mypolitics.Value;
 
+                    /*
                     if (race.IsIntelligent  && !otherFaction.IsRaceFaction && relation.GetCurrentRelationship() != Relationship.Hateful && MathFunctions.RandEvent(1e-3f))
                     {
                         SendTradeEnvoy(otherFaction);
@@ -278,6 +279,7 @@ namespace DwarfCorp
                     {
                         SendWarParty(otherFaction);
                     }
+                     */
                 }
                 mypolitics.Value.UpdateEvents(currentDate);
             }

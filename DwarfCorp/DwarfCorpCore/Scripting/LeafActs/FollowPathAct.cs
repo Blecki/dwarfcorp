@@ -284,6 +284,7 @@ namespace DwarfCorp
                 {
                     case Creature.MoveType.Walk:
                         Creature.OverrideCharacterMode = false;
+                        Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                         if (hasNextAction)
                         {
                             transform.Translation = diff*t + currPosition;
@@ -296,6 +297,7 @@ namespace DwarfCorp
                         break;
                     case Creature.MoveType.Swim:
                         Creature.OverrideCharacterMode = false;
+                        Creature.CurrentCharacterMode = Creature.CharacterMode.Swimming;
                         if (hasNextAction)
                         {
                             transform.Translation = diff*t + currPosition;
@@ -308,6 +310,7 @@ namespace DwarfCorp
                         break;
                     case Creature.MoveType.Jump:
                         Creature.OverrideCharacterMode = false;
+                        Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0 ? Creature.CharacterMode.Jumping : Creature.CharacterMode.Falling;
                         if (hasNextAction)
                         {
                             float z = Easing.Ballistic(t, 1.0f, 1.0f);
@@ -325,6 +328,7 @@ namespace DwarfCorp
                         break;
                     case Creature.MoveType.Fall:
                         Creature.OverrideCharacterMode = false;
+                        Creature.CurrentCharacterMode = Creature.CharacterMode.Falling;
                         if (hasNextAction)
                         {
                             transform.Translation = diff*t + currPosition;

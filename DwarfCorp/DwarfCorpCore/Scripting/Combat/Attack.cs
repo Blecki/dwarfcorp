@@ -162,6 +162,7 @@ namespace DwarfCorp
                     }
                     break;
             }
+
             switch (Mode)
             {
                 case AttackMode.Melee:

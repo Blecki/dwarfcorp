@@ -110,6 +110,7 @@ namespace DwarfCorp
             FrameHeight = Composite.FrameSize.Y;
             CreatePrimitive();
             UpdatePrimitive();
+            Play();
         }
 
         public CompositeAnimation(string composite, List<SpriteSheet> layers, List<Color> tints,  int[][] frames) :
@@ -186,19 +187,26 @@ namespace DwarfCorp
         public override void NextFrame()
         {
             CurrentFrame++;
-
+            InvokeNextFrame(CurrentFrame);
             if (CurrentFrame >= CompositeFrames.Count)
             {
                 if (Loops)
                 {
                     CurrentFrame = 0;
+                    InvokeAnimationLooped();
                 }
                 else
                 {
                     CurrentFrame = CompositeFrames.Count - 1;
+                    InvokeAnimationCompleted();
                 }
             }
             UpdatePrimitive();
+        }
+
+        public override bool IsDone()
+        {
+            return CurrentFrame >= CompositeFrames.Count - 1;
         }
 
         public override Animation Clone()

@@ -84,7 +84,7 @@ namespace DwarfCorp
 
         public CharacterSprite()
         {
-
+            currentMode = "Idle";
         }
 
         public CharacterSprite(GraphicsDevice graphics, ComponentManager manager, string name, GameComponent parent,
@@ -92,6 +92,7 @@ namespace DwarfCorp
                 base(manager, name, parent, localTransform)
         {
             Graphics = graphics;
+            currentMode = "Idle";
         }
 
         public bool HasAnimation(Creature.CharacterMode mode, Orientation orient)
@@ -241,6 +242,26 @@ namespace DwarfCorp
 
 
             base.Update(gameTime, chunks, camera);
+        }
+
+        public void PauseAnimations(Creature.CharacterMode mode)
+        {
+            List<Animation> animations = GetAnimations(mode);
+            foreach (Animation a in animations)
+            {
+                a.IsPlaying = false;
+            }
+
+        }
+
+        public void PlayAnimations(Creature.CharacterMode mode)
+        {
+            List<Animation> animations = GetAnimations(mode);
+            foreach (Animation a in animations)
+            {
+                a.IsPlaying = true;
+            }
+
         }
     }
 

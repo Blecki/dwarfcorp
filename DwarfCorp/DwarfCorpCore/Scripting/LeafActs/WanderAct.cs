@@ -82,7 +82,7 @@ namespace DwarfCorp
             {
                 Creature.OverrideCharacterMode = false;
                 Creature.Physics.Orientation = Physics.OrientMode.RotateY;
-                Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                 WanderTime.Update(DwarfTime.LastTime);
 
                 if (!Creature.IsOnGround)
@@ -92,38 +92,21 @@ namespace DwarfCorp
                 }
                 if(TurnTime.Update(DwarfTime.LastTime) || TurnTime.HasTriggered || firstIter)
                 {
-                    
-                    LocalTarget = new Vector3(MathFunctions.Rand() * Radius - Radius / 2.0f, 0.0f, MathFunctions.Rand() * Radius - Radius / 2.0f) + oldPosition;
-                     
-
-                    /*
-                    List<Creature.MoveAction> neighbors = Agent.Chunks.ChunkData.GetMovableNeighbors(Agent.Position);
-                    neighbors.RemoveAll(
-                    a => a.MoveType == Creature.MoveType.Jump || a.MoveType == DwarfCorp.Creature.MoveType.Climb);
-
-                    if (neighbors.Count > 0)
-                    {
-                        LocalTarget = neighbors[PlayState.Random.Next(0, neighbors.Count)].Voxel.Position +
-                                      Vector3.One*0.5f;
-                    }
-                     */
+                    Vector2 randTarget = MathFunctions.RandVector2Circle()*Radius;
+                    LocalTarget = new Vector3(randTarget.X, 0, randTarget.Y) + oldPosition;
                     firstIter = false;
-                }
-
-                float origDist = (oldPosition - LocalTarget).Length();
-
-                if (origDist > Radius)
-                {
-                    Creature.Physics.Velocity *= 0.9f;
-                    yield return Status.Running;
-                    continue;
+                    TurnTime.Reset(TurnTime.TargetTimeSeconds + MathFunctions.Rand(-0.1f, 0.1f));
                 }
 
                 float dist = (LocalTarget - Agent.Position).Length();
 
-                if (dist < Radius*0.25f)
+
+                if (dist < 0.5f)
                 {
-                    Creature.Physics.Velocity *= 0.9f;
+                    Creature.Physics.Velocity *= 0.0f;
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                    yield return Status.Running;
+                    break;
                 }
                 else
                 {
@@ -134,11 +117,12 @@ namespace DwarfCorp
                     output.Y = 0.0f;
 
                     Creature.Physics.ApplyForce(output * 0.5f, (float) DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                 }
 
                 yield return Status.Running;
             }
-
+            Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
             yield return Status.Success;
         }
     }

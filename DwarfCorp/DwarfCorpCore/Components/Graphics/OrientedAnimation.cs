@@ -76,7 +76,7 @@ namespace DwarfCorp
 
         public Orientation CurrentOrientation { get; set; }
 
-        private string currentMode = "";
+        protected string currentMode = "";
 
         public override void SetCurrentAnimation(string name)
         {
@@ -118,10 +118,6 @@ namespace DwarfCorp
                 if (!Animations.ContainsKey(animationName)) continue;
 
                 Animation animation = Animations[animationName];
-                if (!animation.IsPlaying)
-                {
-                    animation.Play();
-                }
                 animation.Update(gameTime);
             }
 

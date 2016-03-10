@@ -230,7 +230,7 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Pickaxe", 1.0f, 1.0f, 1.0f, ContentPaths.Audio.pick, ContentPaths.Effects.flash)
+                new Attack("Pickaxe", 1.0f, 0.5f, 1.0f, ContentPaths.Audio.pick, ContentPaths.Effects.flash)
                 {
                     Knockback = 2.5f,
                     TriggerMode = Attack.AttackTrigger.Animation,
