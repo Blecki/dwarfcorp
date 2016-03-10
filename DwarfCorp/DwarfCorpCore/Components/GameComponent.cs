@@ -91,6 +91,7 @@ namespace DwarfCorp
             maxGlobalID=value;
         }
 
+
         public GameComponent()
         {
             Children = new List<GameComponent>();
@@ -143,6 +144,11 @@ namespace DwarfCorp
             return maxLocalID++;
         }
 
+
+        public T GetComponent<T>(bool self=true) where T : GameComponent
+        {
+            return GetRootComponent().GetChildrenOfType<T>(self).FirstOrDefault();
+        }
 
         public List<GameComponent> GetAllChildrenRecursive()
         {
@@ -260,11 +266,17 @@ namespace DwarfCorp
             return Children.OfType<T>().Any();
         }
 
-        public List<T> GetChildrenOfType<T>() where T : GameComponent
+        public List<T> GetChildrenOfType<T>(bool includeSelf = false) where T : GameComponent
         {
-            return (from child in Children
+            List<T> toReturn = (from child in Children
                 where child is T
                 select (T) child).ToList();
+
+            if (includeSelf && this is T)
+            {
+                toReturn.Add((T)this);
+            }
+            return toReturn;
         }
 
         public bool HasChildWithName(string name)
@@ -409,6 +421,7 @@ namespace DwarfCorp
         }
 
         #endregion
+
     }
 
 }

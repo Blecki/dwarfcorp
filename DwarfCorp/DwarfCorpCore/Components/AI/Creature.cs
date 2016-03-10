@@ -157,6 +157,7 @@ namespace DwarfCorp
             public Voxel Voxel { get; set; }
             public MoveType MoveType { get; set; }
             public Vector3 Diff { get; set; }
+            public GameComponent InteractObject { get; set; }
         }
 
         public List<Buff> Buffs { get; set; } 
@@ -168,7 +169,8 @@ namespace DwarfCorp
             Climb,
             Swim,
             Fall,
-            Fly
+            Fly,
+            DestroyObject
         }
 
         public enum CharacterMode
@@ -352,6 +354,8 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            if (!IsActive) return;
+
             CheckNeighborhood(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             UpdateAnimation(gameTime, chunks, camera);
             Status.Update(this, gameTime, chunks, camera);
@@ -529,6 +533,11 @@ namespace DwarfCorp
             Timer waitTimer = new Timer(f, true);
 
             CurrentCharacterMode = CharacterMode.Attacking;
+            Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
+            Sprite.PlayAnimations(Creature.CharacterMode.Attacking);
+           
+            CurrentCharacterMode = Creature.CharacterMode.Attacking;
+
             while(!waitTimer.HasTriggered)
             {
                 waitTimer.Update(DwarfTime.LastTime);
@@ -540,8 +549,10 @@ namespace DwarfCorp
 
                 Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, AI.Position);
                 Physics.Velocity = Vector3.Zero;
+                Sprite.ReloopAnimations(Creature.CharacterMode.Attacking);
                 yield return Act.Status.Running;
             }
+            Sprite.PauseAnimations(Creature.CharacterMode.Attacking);
             CurrentCharacterMode = CharacterMode.Idle;
             yield return Act.Status.Success;
         }
@@ -818,6 +829,23 @@ namespace DwarfCorp
                     SoundOnStart = SoundOnStart,
                     ThoughtType = ThoughtType
                 };
+            }
+        }
+
+        public void Gather(Body item)
+        {
+            GatherItemTask gatherTask = new GatherItemTask(item)
+            {
+                Priority = Task.PriorityType.High
+            };
+
+            if (!AI.Tasks.Contains(gatherTask))
+            {
+                if (!AI.Faction.GatherDesignations.Contains(item))
+                {
+                    AI.Faction.GatherDesignations.Add(item);
+                }
+                AI.Tasks.Add(gatherTask);
             }
         }
     }

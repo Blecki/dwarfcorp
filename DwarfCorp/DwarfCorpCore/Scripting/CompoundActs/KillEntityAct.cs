@@ -90,7 +90,10 @@ namespace DwarfCorp
             Tree = new ForLoop(
                                 new Parallel(
                                     new Sequence(
-                                        new GoToEntityAct(entity, creature),
+                                        new GoToEntityAct(entity, creature)
+                                        {
+                                            MovingTarget = mode != KillEntityTask.KillType.Chop
+                                        },
                                         new MeleeAct(Agent, entity)
                                     ), 
                                     new Wrap(Verify)

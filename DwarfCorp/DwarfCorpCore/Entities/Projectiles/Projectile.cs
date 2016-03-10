@@ -48,7 +48,7 @@ namespace DwarfCorp
         public Sprite Sprite2 { get; set; }
         public ParticleTrigger HitParticles { get; set; }
         public Health.DamageAmount Damage { get; set; }
-        public Faction Faction { get; set; }
+        public Body Target { get; set; }
         public float DamageRadius { get; set; }
         public Animation HitAnimation { get; set; }
         public Projectile()
@@ -56,16 +56,16 @@ namespace DwarfCorp
             
         }
 
-        public Projectile(Vector3 position, Vector3 initialVelocity, Health.DamageAmount damage, float size, string asset, string hitParticles, string hitNoise, string faction) : 
+        public Projectile(Vector3 position, Vector3 initialVelocity, Health.DamageAmount damage, float size, string asset, string hitParticles, string hitNoise, Body target) : 
             base("Projectile", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0) )
         {
-            Faction = PlayState.ComponentManager.Factions.Factions[faction];
+            Target = target;
             HitAnimation = null;
             IsSleeping = false;
             Velocity = initialVelocity;
             Orientation = OrientMode.LookAt;
             AddToCollisionManager = false;
-
+            CollideMode = Physics.CollisionMode.None;
             Sprite = new Sprite(PlayState.ComponentManager, "Sprite", this, Matrix.CreateRotationY((float)Math.PI * 0.5f),
                 new SpriteSheet(asset), false)
             {
@@ -92,33 +92,26 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            bool got = false;
-            foreach (var faction in Manager.Factions.Factions)
+            if (Target != null && (Target.Position - Position).LengthSquared() < DamageRadius)
             {
-                if (faction.Value.Name == Faction.Name) continue;
-                else if (PlayState.Diplomacy.GetPolitics(Faction, faction.Value).GetCurrentRelationship() != Relationship.Loving)
+                Health health = Target.GetComponent<Health>();
+
+                if (health != null)
                 {
-                    foreach (CreatureAI creature in faction.Value.Minions)
-                    {
-                        if ((creature.Position - Position).LengthSquared() < DamageRadius)
-                        {
-                            creature.Creature.Damage(Damage.Amount, Damage.DamageType);
-
-                            if (Damage.DamageType == Health.DamageType.Fire)
-                            {
-                                creature.Creature.Flames.Heat += 50.0f;
-                            }
-
-                            got = true;
-                            break;
-                        }
-                    }
+                    health.Damage(Damage.Amount, Damage.DamageType);
                 }
 
-                if (got) break;
-            }
+                if (Damage.DamageType == Health.DamageType.Fire)
+                {
+                    Flammable flammabe = Target.GetComponent<Flammable>();
 
-            if (got)
+                    if (flammabe != null)
+                        flammabe.Heat += 50.0f;
+                }
+
+                Die();
+            }
+            else if (Target != null && (Target.Position.Y - Position.Y) > 1 && Velocity.Y < 0)
             {
                 Die();
             }
@@ -140,12 +133,15 @@ namespace DwarfCorp
 
         public override void OnTerrainCollision(Voxel vox)
         {
-            Matrix transform = LocalTransform;
-            transform.Translation -= Velocity;
-            LocalTransform = transform;
+            if (Target == null || Target.IsDead)
+            {
+                Matrix transform = LocalTransform;
+                transform.Translation -= Velocity;
+                LocalTransform = transform;
 
-            if(!IsDead)
-                Die();
+                if (!IsDead)
+                    Die();
+            }
 
             base.OnTerrainCollision(vox);
         }
@@ -161,8 +157,8 @@ namespace DwarfCorp
             
         }
 
-        public FireballProjectile(Vector3 position, Vector3 initialVelocity, string faction) :
-            base(position, initialVelocity, new Health.DamageAmount() { Amount = 15.0f, DamageType = Health.DamageType.Fire }, 0.25f, ContentPaths.Particles.fireball, "flame", ContentPaths.Audio.fire, faction)
+        public FireballProjectile(Vector3 position, Vector3 initialVelocity, Body target) :
+            base(position, initialVelocity, new Health.DamageAmount() { Amount = 15.0f, DamageType = Health.DamageType.Fire }, 0.25f, ContentPaths.Particles.fireball, "flame", ContentPaths.Audio.fire, target)
         {
             HitAnimation = new Animation(ContentPaths.Effects.flash, 32, 32, 0, 1, 2, 3);
             Sprite.LightsWithVoxels = false;
@@ -178,8 +174,8 @@ namespace DwarfCorp
             
         }
 
-        public ArrowProjectile(Vector3 position, Vector3 initialVelocity, string faction) :
-            base(position, initialVelocity, new Health.DamageAmount() { Amount = 10.0f, DamageType = Health.DamageType.Slashing }, 0.25f, ContentPaths.Entities.Elf.Sprites.arrow, "puff", ContentPaths.Audio.hit, faction)
+        public ArrowProjectile(Vector3 position, Vector3 initialVelocity, Body target) :
+            base(position, initialVelocity, new Health.DamageAmount() { Amount = 10.0f, DamageType = Health.DamageType.Slashing }, 0.25f, ContentPaths.Entities.Elf.Sprites.arrow, "puff", ContentPaths.Audio.hit, target)
         {
             HitAnimation = new Animation(ContentPaths.Effects.flash, 32, 32, 0, 1, 2, 3);
         }

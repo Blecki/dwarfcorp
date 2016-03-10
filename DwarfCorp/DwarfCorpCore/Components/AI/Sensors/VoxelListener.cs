@@ -130,4 +130,61 @@ namespace DwarfCorp
             base.Delete();
         }
     }
+
+    [JsonObject(IsReference = true)]
+    public class ExploredListener : GameComponent
+    {
+        public Point3 VoxelID;
+
+        [JsonIgnore]
+        public VoxelChunk Chunk;
+
+        public Point3 ChunkID { get; set; }
+
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            Chunk = PlayState.ChunkManager.ChunkData.ChunkMap[ChunkID];
+            Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
+        }
+
+        public ExploredListener()
+        {
+
+        }
+
+
+        public ExploredListener(ComponentManager manager, GameComponent parent, ChunkManager chunkManager, Voxel vref) :
+            base("ExploredListener", parent)
+        {
+            Chunk = vref.Chunk;
+            VoxelID = new Point3(vref.GridPosition);
+            Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
+            ChunkID = Chunk.ID;
+
+        }
+
+        void ExploredListener_OnVoxelExplored(Point3 voxelID)
+        {
+            if (voxelID.Equals(VoxelID))
+            {
+                GetRootComponent().SetActiveRecursive(true);
+                GetRootComponent().SetVisibleRecursive(true);
+                Delete();
+            }
+        }
+
+        public override void Die()
+        {
+            Chunk.OnVoxelExplored -= ExploredListener_OnVoxelExplored;
+            base.Die();
+        }
+
+        public override void Delete()
+        {
+            Chunk.OnVoxelExplored -= ExploredListener_OnVoxelExplored;
+            base.Delete();
+        }
+    }
 }

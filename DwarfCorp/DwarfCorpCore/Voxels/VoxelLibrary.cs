@@ -131,7 +131,8 @@ namespace DwarfCorp
                 CanRamp = true,
                 IsBuildable = false,
                 ParticleType = "dirt_particle",
-                IsSoil = true
+                IsSoil = true,
+                IsSurface = true
             };
             RegisterType(tilledSoil, tilledSoilCube);
 
@@ -245,7 +246,8 @@ namespace DwarfCorp
                 IsBuildable = false,
                 ParticleType = "dirt_particle",
                 HasTransitionTextures = true,
-                IsSoil = true
+                IsSoil = true,
+                IsSurface = true
             };
 
             CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 3), new Point(2, 0), new Point(2, 0), grassType.TransitionTextures);
@@ -263,7 +265,8 @@ namespace DwarfCorp
                 RampSize = 0.5f,
                 IsBuildable = false,
                 ParticleType = "dirt_particle",
-                HasTransitionTextures = true
+                HasTransitionTextures = true,
+                IsSurface = true
             };
 
             CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 4), new Point(2, 0), new Point(2, 0), frostType.TransitionTextures);
@@ -280,7 +283,9 @@ namespace DwarfCorp
                 RampSize = 0.5f,
                 IsBuildable = false,
                 ParticleType = "sand_particle",
-                HasTransitionTextures = true
+                HasTransitionTextures = true,
+                IsSurface = true,
+                IsSoil = true
             };
 
             CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 6), new Point(1, 1), new Point(1, 1), desertGrass.TransitionTextures);
@@ -296,10 +301,31 @@ namespace DwarfCorp
                 RampSize = 0.5f,
                 IsBuildable = false,
                 ParticleType = "dirt_particle",
-                HasTransitionTextures = true
+                HasTransitionTextures = true,
+                IsSurface = true,
+                IsSoil = true
             };
 
             CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 5), new Point(2, 0), new Point(2, 0), jungleGrass.TransitionTextures);
+
+
+            VoxelType caveFungus = new VoxelType
+            {
+                Name = "CaveFungus",
+                ProbabilityOfRelease = 0.25f,
+                ResourceToRelease = ResourceLibrary.ResourceType.Stone,
+                StartingHealth = 30,
+                ReleasesResource = true,
+                CanRamp = false,
+                RampSize = 0.5f,
+                IsBuildable = false,
+                ParticleType = "stone_particle",
+                HasTransitionTextures = true,
+                IsSurface = false,
+                IsSoil = true
+            };
+
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 13), new Point(1, 0), new Point(1, 0), caveFungus.TransitionTextures);
 
 
             VoxelType dirtType = new VoxelType
@@ -351,7 +377,8 @@ namespace DwarfCorp
                 CanRamp = true,
                 RampSize = 0.5f,
                 IsBuildable = false,
-                ParticleType = "sand_particle"
+                ParticleType = "sand_particle",
+                IsSurface = true
             };
 
             VoxelType ironType = new VoxelType
@@ -389,7 +416,7 @@ namespace DwarfCorp
                 MaxSpawnHeight = 50,
                 SpawnProbability = 0.3f,
                 Rarity = 0.05f,
-                SpawnInSoil = true
+                SpawnOnSurface = true
             };
 
 
@@ -542,6 +569,7 @@ namespace DwarfCorp
             RegisterType(frostType, frostCube);
             RegisterType(desertGrass, grassCube);
             RegisterType(jungleGrass, grassCube);
+            RegisterType(caveFungus, grassCube);
             RegisterType(emptyType, null);
             RegisterType(dirtType, dirtCube);
             RegisterType(stoneType, stoneCube);

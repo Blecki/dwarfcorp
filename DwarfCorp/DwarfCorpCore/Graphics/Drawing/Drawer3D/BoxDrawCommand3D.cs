@@ -32,6 +32,7 @@
 // THE SOFTWARE.
 using System.Collections.Generic;
 using System.Linq;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -154,4 +155,70 @@ namespace DwarfCorp
         }
     }
 
+    /// <summary>
+    /// Draws a 3D axis aligned box to the screen.
+    /// </summary>
+    internal class PlaneDrawCommand : DrawCommand3D
+    {
+        public Matrix PlaneTransform { get; set; }
+
+        public static VertexBuffer VertBuffer = null;
+        public static IndexBuffer IndexBuffer = null;
+
+        private static readonly Vector3 TopLeftFront = new Vector3(0.0f, 0.0f, 0.0f);
+        private static readonly Vector3 TopLeftBack = new Vector3(0.0f, 0.0f, 1.0f);
+        private static readonly Vector3 TopRightFront = new Vector3(1.0f, 0.0f, 0.0f);
+        private static readonly Vector3 TopRightBack = new Vector3(1.0f, 0.0f, 1.0f);
+
+        private static readonly VertexPositionColor[] TopFace =
+        {
+            new VertexPositionColor() {Position = TopRightFront, Color = Color.White },
+            new VertexPositionColor() {Position = TopRightBack, Color = Color.White },
+            new VertexPositionColor() {Position = TopLeftBack, Color = Color.White },
+            new VertexPositionColor() {Position = TopLeftFront, Color = Color.White },
+        };
+
+        private static readonly short[] Idx =
+        {
+            0, 1, 2, 
+            0, 3, 2
+        };
+
+        public PlaneDrawCommand(Vector3 pos, Vector3 scale, Color color) :
+            base(color)
+        {
+            DrawAccumlatedStrips = false;
+            if (VertBuffer == null)
+            {
+                VertBuffer = new VertexBuffer(PlayState.GUI.Graphics, VertexPositionColor.VertexDeclaration, 4, BufferUsage.None);
+                IndexBuffer = new IndexBuffer(PlayState.GUI.Graphics, typeof(short), 6, BufferUsage.None);
+                VertBuffer.SetData(TopFace);
+                IndexBuffer.SetData(Idx);
+            }
+            PlaneTransform = Matrix.CreateScale(scale)*Matrix.CreateTranslation(pos - scale * 0.5f);
+
+        }
+
+
+        public override void Render(GraphicsDevice device, Effect effect)
+        {
+
+            effect.Parameters["xWorld"].SetValue(PlaneTransform);
+            effect.Parameters["xTint"].SetValue(ColorToDraw.ToVector4());
+            effect.CurrentTechnique = effect.Techniques["Untextured"];
+            device.SetVertexBuffer(VertBuffer);
+            device.Indices = IndexBuffer;
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 4, 0, 2);
+            }
+            effect.CurrentTechnique = effect.Techniques["Textured"];
+        }
+
+        public override void AccumulateStrips(LineStrip vertices)
+        {
+           
+        }
+    }
 }

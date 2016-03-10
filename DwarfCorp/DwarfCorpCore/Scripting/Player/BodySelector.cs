@@ -88,7 +88,7 @@ namespace DwarfCorp
                 first = false;
             }
 
-            PlayState.GUI.ToolTipManager.ToolTip = desc != "" ? desc : "";
+            PlayState.GUI.ToolTipManager.PopupInfo(desc);
         }
 
         public void Update()

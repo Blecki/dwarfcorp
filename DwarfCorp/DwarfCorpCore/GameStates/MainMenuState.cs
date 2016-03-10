@@ -57,6 +57,8 @@ namespace DwarfCorp.GameStates
             base(game, "MainMenuState", stateManager)
         {
             ResourceLibrary library = new ResourceLibrary();
+            Embarkment.Initialize();
+            VoxelChunk.InitializeStatics();
             IsGameRunning = false;
             MaintainState = false;
         }
@@ -112,7 +114,7 @@ namespace DwarfCorp.GameStates
                     break;
                 case "Generate World":
                     MaintainState = true;
-                    StateManager.PushState("WorldSetupState");
+                    StateManager.PushState("WorldGeneratorState");
                     break;
                 case "Options":
                     MaintainState = true;

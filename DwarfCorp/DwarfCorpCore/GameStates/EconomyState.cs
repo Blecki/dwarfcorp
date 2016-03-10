@@ -109,13 +109,6 @@ namespace DwarfCorp.GameStates
             };
             Tabs["Employees"] = employeeDisplay;
            
-           CreateTabButton(tabLayout, "Assets", "Buy/Sell goods", 3, 1);
-           GoodsPanel assetsPanel = new GoodsPanel(GUI, Layout, PlayState.Master.Faction)
-           {
-               IsVisible = false
-           };
-           Tabs["Assets"] = assetsPanel;
-
 
            CreateTabButton(tabLayout, "Capital", "Financial report", 2, 1);
            CapitalPanel capitalPanel = new CapitalPanel(GUI, Layout, PlayState.Master.Faction)

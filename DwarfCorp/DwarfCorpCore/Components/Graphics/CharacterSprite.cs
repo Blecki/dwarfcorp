@@ -108,6 +108,18 @@ namespace DwarfCorp
                     .ToList();
         }
 
+        public void ReloopAnimations(Creature.CharacterMode mode)
+        {
+            List<Animation> animations = GetAnimations(mode);
+            foreach (Animation a in animations)
+            {
+                if (a.IsDone())
+                {
+                    a.Reset();
+                }
+            }
+        }
+
         public void ResetAnimations(Creature.CharacterMode mode)
         {
             List<Animation> animations = GetAnimations(mode);

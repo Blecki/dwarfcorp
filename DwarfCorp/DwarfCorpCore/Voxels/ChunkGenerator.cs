@@ -30,14 +30,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using LibNoise;
+using LibNoise.Modifiers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Math = System.Math;
 
 namespace DwarfCorp
 {
@@ -63,12 +66,21 @@ namespace DwarfCorp
     {
         public VoxelLibrary VoxLibrary { get; set; }
         public Perlin NoiseGenerator { get; set; }
+        public LibNoise.FastRidgedMultifractal CaveNoise { get; set; }
         public float NoiseScale { get; set; }
         public float CaveNoiseScale { get; set; }
         public float SeaLevel { get; set; }
         public float MaxMountainHeight { get; set; }
+        public LibNoise.FastRidgedMultifractal AquiferNoise { get; set; }
+        public LibNoise.FastRidgedMultifractal LavaNoise { get; set; }
         public ChunkManager Manager { get; set; }
-
+        public List<int> CaveLevels { get; set; }
+        public List<float> CaveFrequencies { get; set; } 
+        public List<int> AquiverLevels { get; set; }
+        public List<int> LavaLevels { get; set; } 
+        public float CaveSize { get; set; }
+        public float AquiferSize { get; set; }
+        public float LavaSize { get; set; }
 
         public ChunkGenerator(VoxelLibrary voxLibrary, int randomSeed, float noiseScale, float maxMountainHeight)
         {
@@ -77,7 +89,42 @@ namespace DwarfCorp
 
             MaxMountainHeight = maxMountainHeight;
             VoxLibrary = voxLibrary;
-            CaveNoiseScale = noiseScale*2.0f;
+            CaveNoiseScale = noiseScale*10.0f;
+            CaveSize = 0.03f;
+            CaveLevels = new List<int>(){4, 8, 11, 16};
+            CaveFrequencies = new List<float>(){0.5f, 0.7f, 0.9f, 1.0f};
+
+            CaveNoise = new FastRidgedMultifractal(randomSeed)
+            {
+                Frequency = 0.5f,
+                Lacunarity = 0.5f,
+                NoiseQuality = NoiseQuality.Standard,
+                OctaveCount = 1,
+                Seed = randomSeed
+            };
+
+            AquiverLevels = new List<int>() {5};
+
+            AquiferSize = 0.02f;
+            AquiferNoise = new FastRidgedMultifractal(randomSeed + 100)
+            {
+                Frequency = 0.25f,
+                Lacunarity = 0.5f,
+                NoiseQuality = NoiseQuality.Standard,
+                OctaveCount = 1,
+                Seed = randomSeed
+            };
+
+            LavaLevels = new List<int>() { 1, 2 };
+            LavaSize = 0.01f;
+            LavaNoise = new FastRidgedMultifractal(randomSeed + 200)
+            {
+                Frequency = 0.15f,
+                Lacunarity = 0.5f,
+                NoiseQuality = NoiseQuality.Standard,
+                OctaveCount = 1,
+                Seed = randomSeed
+            };
         }
 
         public void GenerateCluster(OreCluster cluster, ChunkData chunks)
@@ -104,7 +151,7 @@ namespace DwarfCorp
 
                         if (vox.IsEmpty) continue;
 
-                        if (!cluster.Type.SpawnInSoil && vox.Type.IsSoil) continue;
+                        if (!cluster.Type.SpawnOnSurface && vox.Type.IsSurface) continue;
 
                         if (!MathFunctions.RandEvent(cluster.Type.SpawnProbability)) continue;
 
@@ -130,7 +177,7 @@ namespace DwarfCorp
 
                 if (!MathFunctions.RandEvent(vein.Type.SpawnProbability)) continue;
 
-                if (!vein.Type.SpawnInSoil && vox.Type.IsSoil) continue;
+                if (!vein.Type.SpawnOnSurface && vox.Type.IsSurface) continue;
 
                 vox.Type = vein.Type;
                 Vector3 step = directionBias + MathFunctions.RandVector3Box(-1, 1, -1, 1, -1, 1)*0.25f;
@@ -154,14 +201,14 @@ namespace DwarfCorp
                 for (int z = 0; z < chunk.SizeZ; z++)
                 {
                     int h;
-                    for (int y = 0; y < waterHeight; y++)
+                    for (int y = 0; y <= waterHeight; y++)
                     {
                         h = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
                         int index = chunk.Data.IndexAt(x, y, z);
                         voxel.GridPosition = new Vector3(x, y, z);
                         if (voxel.IsEmpty && y >= h)
                         {
-                            chunk.Data.Water[index].WaterLevel = 255;
+                            chunk.Data.Water[index].WaterLevel = 8;
                             chunk.Data.Water[index].Type = LiquidType.Water;
                         }
                     }
@@ -181,21 +228,8 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    chunk.Data.Water[chunk.Data.IndexAt(x, h, z)].WaterLevel = 255;
+                    chunk.Data.Water[chunk.Data.IndexAt(x, h, z)].WaterLevel = 8;
                     chunk.Data.Water[chunk.Data.IndexAt(x, h, z)].Type = LiquidType.Lava;
-
-                    /*
-                    for (int y = h - 1; y >= 0; y--)
-                    {
-                        voxel.Chunk = chunk;
-                        voxel.GridPosition = new Vector3(x, y, z);
-                        chunk.Data.Water[voxel.Index].Type = LiquidType.None;
-                        chunk.Data.Water[voxel.Index].WaterLevel = 0;
-                        voxel.Type = VoxelLibrary.GetVoxelType("Stone");
-                        voxel.Chunk.NotifyTotalRebuild(!voxel.IsInterior);
-                    }
-                     */
-
                 }
             }
         }
@@ -213,7 +247,7 @@ namespace DwarfCorp
                         voxel.GridPosition = new Vector3(x, y, z);
                         if (voxel.IsEmpty && chunk.Data.Water[voxel.Index].WaterLevel == 0)
                         {
-                            chunk.Data.Water[voxel.Index].WaterLevel = 255;
+                            chunk.Data.Water[voxel.Index].WaterLevel = 8;
                             chunk.Data.Water[voxel.Index].Type = LiquidType.Lava;
                         }
                     }
@@ -221,50 +255,6 @@ namespace DwarfCorp
             }
         }
 
-        /*
-        public void GenerateOres(VoxelChunk chunk, ComponentManager components, ContentManager content,
-            GraphicsDevice graphics)
-        {
-            Vector3 origin = chunk.Origin;
-            int chunkSizeX = chunk.SizeX;
-            int chunkSizeY = chunk.SizeY;
-            int chunkSizeZ = chunk.SizeZ;
-            Voxel v = chunk.MakeVoxel(0, 0, 0);
-            for (int x = 0; x < chunkSizeX; x++)
-            {
-                for (int z = 0; z < chunkSizeZ; z++)
-                {
-                    int h = chunk.GetFilledVoxelGridHeightAt(x, chunkSizeY - 1, z);
-                    for (int y = 1; y < chunkSizeY; y++)
-                    {
-                        foreach (
-                            KeyValuePair<string, VoxelLibrary.ResourceSpawnRate> spawns in VoxelLibrary.ResourceSpawns)
-                        {
-                            float s = spawns.Value.VeinSize;
-                            float p = spawns.Value.VeinSpawnThreshold;
-                            v.GridPosition = new Vector3(x, y, z);
-                            if (v.IsEmpty || y >= h - 1 || !(y - h/2 < spawns.Value.MaximumHeight) ||
-                                !(y - h/2 > spawns.Value.MinimumHeight) ||
-                                !(PlayState.Random.NextDouble() <= spawns.Value.Probability) || v.Type.Name != "Stone")
-                            {
-                                continue;
-                            }
-
-                            float caviness = (float) NoiseGenerator.Noise((float) (x + origin.X)*s,
-                                (float) (z + origin.Z)*s,
-                                (float) (y + origin.Y + h)*s);
-
-                            if (caviness > p)
-                            {
-                                v.Type = VoxelLibrary.GetVoxelType(spawns.Key);
-                            }
-                            continue;
-                        }
-                    }
-                }
-            }
-        }
-         */
 
         public void GenerateFauna(VoxelChunk chunk, ComponentManager components, ContentManager content, GraphicsDevice graphics, FactionLibrary factions)
         {
@@ -298,7 +288,6 @@ namespace DwarfCorp
                         {
                             continue;
                         }
-
 
                         EntityFactory.CreateEntity<Body>(animal.Name, chunk.Origin + new Vector3(x, y, z) + Vector3.Up*1.0f);
 
@@ -384,6 +373,35 @@ namespace DwarfCorp
             }
         }
 
+        public void GenerateLavaTubes(VoxelChunk chunk)
+        {
+            Vector3 origin = chunk.Origin;
+            int chunkSizeX = chunk.SizeX;
+            int chunkSizeY = chunk.SizeY;
+            int chunkSizeZ = chunk.SizeZ;
+            for (int x = 0; x < chunkSizeX; x++)
+            {
+                for (int z = 0; z < chunkSizeZ; z++)
+                {
+                    int h = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
+                    for (int i = 0; i < LavaLevels.Count; i++)
+                    {
+                        int y = LavaLevels[i];
+                        if (y <= 0 || y >= h) continue;
+
+                        double caveNoise = LavaNoise.GetValue((x + origin.X) * CaveNoiseScale, (y + origin.Y) * 3.0f, (z + origin.Z) * CaveNoiseScale);
+
+
+                        if (caveNoise > LavaSize)
+                        {
+                            chunk.Data.Types[chunk.Data.IndexAt(x, y, z)] = 0;
+                            chunk.Data.Water[chunk.Data.IndexAt(x, y, z)].WaterLevel = 8;
+                            chunk.Data.Water[chunk.Data.IndexAt(x, y, z)].Type = LiquidType.Lava;
+                        }
+                    }
+                }
+            }
+        }
 
         public void GenerateCaves(VoxelChunk chunk)
         {
@@ -391,25 +409,137 @@ namespace DwarfCorp
             int chunkSizeX = chunk.SizeX;
             int chunkSizeY = chunk.SizeY;
             int chunkSizeZ = chunk.SizeZ;
-            for(int x = 0; x < chunkSizeX; x++)
+            BiomeData biome = BiomeLibrary.Biomes[Overworld.Biome.Cave];
+            List<Voxel> neighbors = new List<Voxel>();
+            Voxel vUnder = chunk.MakeVoxel(0, 0, 0);
+            for (int x = 0; x < chunkSizeX; x++)
             {
-                for(int z = 0; z < chunkSizeZ; z++)
+                for (int z = 0; z < chunkSizeZ; z++)
                 {
-                    int h = chunk.GetFilledVoxelGridHeightAt(x, chunkSizeY - 1, z);
-                    for(int y = 1; y < chunkSizeY; y++)
+                    int h = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
+                    for (int i = 0; i < CaveLevels.Count; i++)
                     {
-                        if(y >= h - 5)
-                        {
-                            continue;
-                        }
+                        int y = CaveLevels[i];
+                        if (y <= 0 || y >= h - 1) continue;
+                        Vector3 vec = new Vector3(x, y, z) + chunk.Origin;
+                        double caveNoise = CaveNoise.GetValue((x + origin.X) * CaveNoiseScale * CaveFrequencies[i],
+                            (y + origin.Y) * CaveNoiseScale * 3.0f, (z + origin.Z) * CaveNoiseScale * CaveFrequencies[i]);
 
-                        float caviness = (float) NoiseGenerator.Noise((float) (x + origin.X) * CaveNoiseScale, (float) (z + origin.Z) * CaveNoiseScale, (float) (y + origin.Y) * CaveNoiseScale);
-                        if(!(caviness > 0.9f))
-                        {
-                            continue;
-                        }
+                        double heightnoise = NoiseGenerator.Noise((x + origin.X)*NoiseScale*CaveFrequencies[i],
+                            (y + origin.Y) * NoiseScale * 3.0f, (z + origin.Z) * NoiseScale * CaveFrequencies[i]);
 
-                        chunk.Data.Types[chunk.Data.IndexAt(x, y, z)] = 0;
+                        int caveHeight = Math.Min(Math.Max((int) (heightnoise*5), 1), 3);
+                        
+                        if (caveNoise > CaveSize)
+                        {
+                            bool waterFound = false;
+                            for (int dy = 0; dy < caveHeight; dy++)
+                            {
+                                int index = chunk.Data.IndexAt(x, y - dy, z);
+                                chunk.GetNeighborsManhattan(x, y - dy, z, neighbors);
+
+                                if (neighbors.Any(v => v.WaterLevel > 0))
+                                {
+                                    waterFound = true;
+                                }
+
+                                if (waterFound)
+                                    break;
+
+                                chunk.Data.Types[index] = 0;
+                            }
+
+                            if (!waterFound && caveNoise > CaveSize*1.8f && y - caveHeight > 0)
+                            {
+                                int indexunder = chunk.Data.IndexAt(x, y - caveHeight, z);
+                                chunk.Data.Types[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassVoxel).ID;
+                                chunk.Data.Health[indexunder] = (byte)VoxelLibrary.GetVoxelType(biome.GrassVoxel).StartingHealth;
+                                chunk.Data.IsExplored[indexunder] = false;
+                                foreach (VegetationData veg in biome.Vegetation)
+                                {
+                                    if (!MathFunctions.RandEvent(veg.SpawnProbability))
+                                    {
+                                        continue;
+                                    }
+
+                                    if (NoiseGenerator.Noise(vec.X / veg.ClumpSize, veg.NoiseOffset, vec.Y / veg.ClumpSize) < veg.ClumpThreshold)
+                                    {
+                                        continue;
+                                    }
+
+
+                                    vUnder.GridPosition = new Vector3(x, y - 1, z);
+                                    if (!vUnder.IsEmpty && vUnder.TypeName == biome.GrassVoxel)
+                                    {
+                                        vUnder.Type = VoxelLibrary.GetVoxelType(biome.SoilVoxel);
+                                        float offset = veg.VerticalOffset;
+                                        if (vUnder.RampType != RampType.None)
+                                        {
+                                            offset -= 0.25f;
+                                        }
+                                        float treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
+                                        GameComponent entity = EntityFactory.CreateEntity<GameComponent>(veg.Name, chunk.Origin + new Vector3(x, y, z) + new Vector3(0, treeSize * offset, 0), Blackboard.Create("Scale", treeSize));
+                                        entity.GetRootComponent().SetActiveRecursive(false);
+                                        entity.GetRootComponent().SetVisibleRecursive(false);
+                                        if (GameSettings.Default.FogofWar)
+                                        {
+                                            ExploredListener listener = new ExploredListener(
+                                                PlayState.ComponentManager, entity, PlayState.ChunkManager, vUnder);
+                                        }
+                                    }
+                                }
+                            }
+
+                            foreach (FaunaData animal in biome.Fauna)
+                            {
+                                if (y <= 0 || !(PlayState.Random.NextDouble() < animal.SpawnProbability))
+                                {
+                                    continue;
+                                }
+
+
+                                var entity = EntityFactory.CreateEntity<GameComponent>(animal.Name, chunk.Origin + new Vector3(x, y, z) + Vector3.Up * 1.0f);
+                                entity.GetRootComponent().SetActiveRecursive(false);
+                                entity.GetRootComponent().SetVisibleRecursive(false);
+
+                                if (GameSettings.Default.FogofWar)
+                                {
+                                    ExploredListener listener = new ExploredListener(PlayState.ComponentManager, entity,
+                                        PlayState.ChunkManager, chunk.MakeVoxel(x, y, z));
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public void GenerateAquifers(VoxelChunk chunk)
+        {
+            Vector3 origin = chunk.Origin;
+            int chunkSizeX = chunk.SizeX;
+            int chunkSizeY = chunk.SizeY;
+            int chunkSizeZ = chunk.SizeZ;
+            for (int x = 0; x < chunkSizeX; x++)
+            {
+                for (int z = 0; z < chunkSizeZ; z++)
+                {
+                    int h = chunk.GetFilledVoxelGridHeightAt(x, chunk.SizeY - 1, z);
+                    for (int i = 0; i < AquiverLevels.Count; i++)
+                    {
+                        int y = AquiverLevels[i];
+                        if (y <= 0 || y >= h) continue;
+
+                        double caveNoise = AquiferNoise.GetValue((x + origin.X) * CaveNoiseScale, (y + origin.Y) * 3.0f, (z + origin.Z) * CaveNoiseScale);
+
+
+                        if (caveNoise > AquiferSize)
+                        {
+                            chunk.Data.Types[chunk.Data.IndexAt(x, y, z)] = 0;
+                            chunk.Data.Water[chunk.Data.IndexAt(x, y, z)].WaterLevel = 8;
+                            chunk.Data.Water[chunk.Data.IndexAt(x, y, z)].Type = LiquidType.Water;
+                        }
                     }
                 }
             }
@@ -469,7 +599,7 @@ namespace DwarfCorp
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
                     Vector2 pos = new Vector2(x + origin.X, z + origin.Z) / PlayState.WorldScale;
-                    float hNorm = Overworld.GetValue(Overworld.Map, pos, Overworld.ScalarFieldType.Height);
+                    float hNorm = Overworld.LinearInterpolate(pos, Overworld.Map, Overworld.ScalarFieldType.Height);
                     float h = MathFunctions.Clamp(hNorm * chunkSizeY, 0.0f, chunkSizeY - 2);
                     int stoneHeight = (int) Math.Max(h - 2, 1);
 
@@ -480,7 +610,7 @@ namespace DwarfCorp
                         if(y == 0)
                         {
                             voxel.Type = VoxelLibrary.GetVoxelType("Bedrock");
-                            voxel.Health = 255;
+                            voxel.Health = 8;
                             continue;
                         }
 
@@ -529,13 +659,14 @@ namespace DwarfCorp
             }
 
 
-            GenerateCaves(c);
             GenerateWater(c);
-
             GenerateLava(c);
+            GenerateCaves(c);
+            //GenerateAquifers(c);
+            //GenerateLavaTubes(c);
 
-   
 
+            c.ShouldRecalculateLighting = true;
             c.ShouldRebuildWater = true;
             return c;
         }

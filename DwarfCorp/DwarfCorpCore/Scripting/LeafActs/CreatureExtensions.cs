@@ -65,7 +65,7 @@ namespace DwarfCorp
 
                 if (agent.Allies == "Dwarf")
                 {
-                    PlayState.AnnouncementManager.Announce("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
+                    PlayState.AnnouncementManager.Announce(Drawer2D.WrapColor("We're out of food!", Color.DarkRed), "Our stockpiles don't have any food. Our employees will starve!");
                 }
                 yield return Act.Status.Fail;
                 yield break;
@@ -95,7 +95,7 @@ namespace DwarfCorp
 
                 if (agent.Allies == "Dwarf")
                 {
-                    PlayState.AnnouncementManager.Announce("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
+                    PlayState.AnnouncementManager.Announce(Drawer2D.WrapColor("We're out of food!", Color.DarkRed), "Our stockpiles don't have any food. Our employees will starve!");
                 }
 
                 yield return Act.Status.Fail;
@@ -185,10 +185,6 @@ namespace DwarfCorp
                 if(vox.Health <= 0.0f || !agent.Faction.IsDigDesignation(vox))
                 {
                     agent.AI.AddXP(Math.Max((int)(VoxelLibrary.GetVoxelType(blackBoardVoxel.TypeName).StartingHealth / 4), 1));
-                    if(vox.Health <= 0.0f)
-                    {
-                        vox.Kill();
-                    }
                     agent.Stats.NumBlocksDestroyed++;
                     agent.CurrentCharacterMode = Creature.CharacterMode.Idle;
                     yield return Act.Status.Success;
@@ -205,7 +201,22 @@ namespace DwarfCorp
                 {
                     agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
                     agent.Physics.Velocity *= 0.9f;
+
                     yield return Act.Status.Running;
+                }
+
+                if (vox.Health <= 0.0f)
+                {
+                    List<Body> items = vox.Kill();
+
+                    if (items != null)
+                    {
+                        foreach (Body item in items)
+                        {
+                            agent.Gather(item);
+                        }
+                    }
+
                 }
 
                 while (!agent.Sprite.CurrentAnimation.IsDone())

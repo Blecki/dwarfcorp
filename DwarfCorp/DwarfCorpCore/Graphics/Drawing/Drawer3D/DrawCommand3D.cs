@@ -48,10 +48,12 @@ namespace DwarfCorp
             public int NumTriangles;
         }
 
+        public bool DrawAccumlatedStrips;
         public Color ColorToDraw = Color.White;
         protected DrawCommand3D(Color color)
         {
             ColorToDraw = color;
+            DrawAccumlatedStrips = true;
         }
 
         public abstract void Render(GraphicsDevice device, Effect effect);

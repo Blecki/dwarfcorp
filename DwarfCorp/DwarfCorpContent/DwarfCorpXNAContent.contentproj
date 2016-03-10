@@ -1285,6 +1285,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>races</Name>
     </Content>
+    <Content Include="World\embarkments.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Name>embarkments</Name>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Text\adjective.txt">

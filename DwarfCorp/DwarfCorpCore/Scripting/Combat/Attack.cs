@@ -184,7 +184,7 @@ namespace DwarfCorp
                 }
                 case AttackMode.Ranged:
                 {
-                    LaunchProjectile(pos, other.Position, faction);
+                    LaunchProjectile(pos, other.Position, null);
                     break;
                 }
                     
@@ -194,7 +194,7 @@ namespace DwarfCorp
 
         }
 
-        public void LaunchProjectile(Vector3 start, Vector3 end, string faction)
+        public void LaunchProjectile(Vector3 start, Vector3 end, Body target)
         {
             Vector3 velocity = (end - start);
             float dist = velocity.Length();
@@ -202,7 +202,7 @@ namespace DwarfCorp
             velocity = 1.0f/T*(end - start) - 0.5f*Vector3.Down*10*T;
             Blackboard data = new Blackboard();
             data.SetData("Velocity", velocity);
-            data.SetData("Faction", faction);
+            data.SetData("Target", target);
             EntityFactory.CreateEntity<Body>(ProjectileType, start, data);
         }
 
@@ -258,7 +258,7 @@ namespace DwarfCorp
             {
                 case AttackMode.Melee:
                     {
-                        Health health = other.GetChildrenOfType<Health>().FirstOrDefault();
+                        Health health = other.GetRootComponent().GetChildrenOfType<Health>(true).FirstOrDefault();
                         if (health != null)
                         {
                             health.Damage(DamageAmount + bonus);
@@ -291,7 +291,7 @@ namespace DwarfCorp
                 case AttackMode.Ranged:
                     {
                         PlayNoise(other.LocalTransform.Translation);
-                        LaunchProjectile(pos, other.Position, faction);
+                        LaunchProjectile(pos, other.Position, other);
                         break;
                     }
             }

@@ -53,4 +53,20 @@ namespace DwarfCorp
         {
         }
     }
+
+    [JsonObject(IsReference = true)]
+    public class WorkFence : Fixture
+    {
+        public WorkFence()
+        {
+            
+        }
+
+        public WorkFence(Vector3 position, float orientation) :
+            base(position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.constructiontape, 32, 32), new Point(0, 0), PlayState.ComponentManager.RootComponent)
+        {
+            this.Sprite.OrientationType = Sprite.OrientMode.Fixed;
+            this.Sprite.LocalTransform = Matrix.CreateRotationY(orientation);
+        }
+    }
 }

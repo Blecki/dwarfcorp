@@ -66,6 +66,7 @@ namespace DwarfCorp
         private float Rotation = 0.0f;
         public CollisionMode CollideMode { get; set; }
         public Voxel CurrentVoxel = null;
+        public List<Voxel> Neighbors = new List<Voxel>(); 
         public enum CollisionMode
         {
             All,
@@ -110,6 +111,7 @@ namespace DwarfCorp
             CurrentVoxel = new Voxel();
         }
 
+
         public void MoveX(float dt)
         {
             Vector3 newPos = new Vector3(LocalTransform.Translation.X + Velocity.X * dt, LocalTransform.Translation.Y, LocalTransform.Translation.Z);
@@ -136,6 +138,8 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            if (!IsActive) return;
+
             BoundingBox bounds = chunks.Bounds;
             bounds.Max.Y += 50;
 
@@ -156,14 +160,14 @@ namespace DwarfCorp
                 IsSleeping = false;
             }
 
-            if(!IsSleeping || overrideSleepThisFrame)
+            if (!IsSleeping || overrideSleepThisFrame)
             {
-                if(overrideSleepThisFrame)
+                if (overrideSleepThisFrame)
                 {
                     overrideSleepThisFrame = false;
                 }
 
-                float dt = (float)(gameTime.ElapsedGameTime.TotalSeconds);
+                float dt = (float) (gameTime.ElapsedGameTime.TotalSeconds);
 
 
                 if (MathFunctions.HasNan(Velocity))
@@ -174,6 +178,12 @@ namespace DwarfCorp
                 MoveY(dt);
                 MoveX(dt);
                 MoveZ(dt);
+                chunks.ChunkData.GetVoxel(Position, ref CurrentVoxel);
+                if (CurrentVoxel != null && CurrentVoxel.Chunk != null)
+                {
+                    Vector3 gridPos = CurrentVoxel.GridPosition;
+                    CurrentVoxel.Chunk.GetNeighborsSuccessors(VoxelChunk.ManhattanSuccessors, (int)gridPos.X, (int)gridPos.Y, (int)gridPos.Z, Neighbors);
+                }
                 HandleCollisions(chunks, dt);
 
                 Matrix transform = LocalTransform;
@@ -360,26 +370,12 @@ namespace DwarfCorp
         {
             if (CollideMode == CollisionMode.None) return;
 
-            Voxel currentVoxel = new Voxel();
-            bool success = chunks.ChunkData.GetVoxel(null, LocalTransform.Translation, ref currentVoxel);
 
             List<Voxel> vs = new List<Voxel>
             {
-                currentVoxel
+                CurrentVoxel
             };
-
-            VoxelChunk chunk = chunks.ChunkData.GetVoxelChunkAtWorldLocation(LocalTransform.Translation);
-
-
-            if (!success || currentVoxel == null || chunk == null)
-            {
-                return;
-            }
-
-            Vector3 grid = chunk.WorldToGrid(LocalTransform.Translation);
-            
-            List<Voxel> adjacencies = chunk.GetNeighborsEuclidean((int) grid.X, (int) grid.Y, (int) grid.Z);
-            vs.AddRange(adjacencies);
+            vs.AddRange(Neighbors);
             
             // TODO: Find a faster way to do this
             // Vector3 half = Vector3.One*0.5f;
@@ -387,7 +383,7 @@ namespace DwarfCorp
             int y = (int)Position.Y;
             foreach(Voxel v in vs)
             {
-                if(v == null || v.IsEmpty)
+                if(v == null || v.Chunk == null || v.IsEmpty)
                 {
                     continue;
                 }

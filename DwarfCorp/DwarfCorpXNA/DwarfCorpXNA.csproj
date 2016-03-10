@@ -191,6 +191,9 @@
     <Compile Include="..\DwarfCorpCore\Components\Graphics\CharacterSprite.cs">
       <Link>Components\Graphics\CharacterSprite.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\Components\Graphics\Follower.cs">
+      <Link>Components\Graphics\Follower.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Components\Graphics\LightEmitter.cs">
       <Link>Components\Graphics\LightEmitter.cs</Link>
     </Compile>
@@ -250,6 +253,15 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Animals\Deer.cs">
       <Link>Entities\Animals\Deer.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Animals\Frog.cs">
+      <Link>Entities\Animals\Frog.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Animals\Rabbit.cs">
+      <Link>Entities\Animals\Rabbit.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Animals\Scorpion.cs">
+      <Link>Entities\Animals\Scorpion.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\BalloonAI.cs">
       <Link>Entities\BalloonAI.cs</Link>
@@ -356,8 +368,14 @@
     <Compile Include="..\DwarfCorpCore\Entities\Resources\ResourceEntity.cs">
       <Link>Entities\Resources\ResourceEntity.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Resources\ResourcePack.cs">
+      <Link>Entities\Resources\ResourcePack.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Traps\BearTrap.cs">
       <Link>Entities\Traps\BearTrap.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Traps\TurretTrap.cs">
+      <Link>Entities\Traps\TurretTrap.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\GameSettings.cs">
       <Link>GameSettings.cs</Link>
@@ -1396,6 +1414,9 @@
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>(if exist "$(TargetDir)*old.pdb" del "$(TargetDir)*old.pdb") &amp; (if exist "$(TargetDir)*.pdb" ren "$(TargetDir)*.pdb" *.old.pdb)</PreBuildEvent>
+  </PropertyGroup>
   <!--
       To modify your build process, add your task inside one of the targets below and uncomment it. 
       Other similar extension points exist, see Microsoft.Common.targets.

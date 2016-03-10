@@ -68,16 +68,10 @@ namespace DwarfCorp
 
         public void InitializeFromChunk(VoxelChunk chunk, GraphicsDevice graphics)
         {
-            //chunk.PrimitiveMutex.WaitOne();
-            if(!chunk.IsVisible || IsBuilding)
-            {
-               // chunk.PrimitiveMutex.ReleaseMutex();
+            if (IsBuilding)
                 return;
-            }
 
             IsBuilding = true;
-            //chunk.PrimitiveMutex.ReleaseMutex();
-
             accumulatedVertices.Clear();
             faceExists.Clear();
             drawFace.Clear();
@@ -92,6 +86,7 @@ namespace DwarfCorp
 
                     for(int y = 0; y < chunk.SizeY; y++)
                     {
+                        if (GameSettings.Default.FogofWar && !chunk.Data.IsExplored[chunk.Data.IndexAt(x, y, z)]) continue;
                         WaterCell cell = chunk.Data.Water[chunk.Data.IndexAt(x, y, z)];
                         byte waterLevel = cell.WaterLevel;
 
@@ -127,12 +122,7 @@ namespace DwarfCorp
                 }
             }
 
-            int maxY = chunk.SizeY;
-
-            if(chunk.Manager.ChunkData.Slice == ChunkManager.SliceMode.Y)
-            {
-                maxY = (int) Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY);
-            }
+            int maxY = (int)Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY);
 
 
             Voxel myVoxel = chunk.MakeVoxel(0, 0, 0);
@@ -144,6 +134,8 @@ namespace DwarfCorp
                     for(int z = 0; z < chunk.SizeZ; z++)
                     {
                         int index = chunk.Data.IndexAt(x, y, z);
+                        if (GameSettings.Default.FogofWar && !chunk.Data.IsExplored[index]) continue;
+
                         if(chunk.Data.Water[index].WaterLevel > 0 && chunk.Data.Water[index].Type == LiqType)
                         {
                             bool isTop = false;
@@ -217,28 +209,27 @@ namespace DwarfCorp
                 }
             }
 
-
-            try
+            if (accumulatedVertices.Count > 0)
             {
-                ExtendedVertex[] vertex = new ExtendedVertex[accumulatedVertices.Count];
-
-                for(int i = 0; i < accumulatedVertices.Count; i++)
+                try
                 {
-                    vertex[i] = accumulatedVertices[i];
+                    chunk.PrimitiveMutex.WaitOne();
+                    Vertices = accumulatedVertices.ToArray();
+                    ResetBuffer(graphics);
+                    chunk.PrimitiveMutex.ReleaseMutex();
                 }
-
-
-                Vertices = vertex;
-
+                catch (System.Threading.AbandonedMutexException e)
+                {
+                    Console.Error.WriteLine(e.Message);
+                }
+            }
+            else
+            {
                 chunk.PrimitiveMutex.WaitOne();
-                ResetBuffer(graphics);
+                this.VertexBuffer = null;
+                this.IndexBuffer = null;
                 chunk.PrimitiveMutex.ReleaseMutex();
             }
-            catch(System.Threading.AbandonedMutexException e)
-            {
-                Console.Error.WriteLine(e.Message);
-            }
-
             IsBuilding = false;
         }
 
@@ -280,7 +271,7 @@ namespace DwarfCorp
 
                 averageWaterLevel = averageWaterLevel / count;
 
-                float averageWaterHeight = (float) averageWaterLevel / 255.0f;
+                float averageWaterHeight = (float) averageWaterLevel / 8.0f;
                 float puddleness = 0;
                 Vector2 uv;
 
@@ -311,7 +302,7 @@ namespace DwarfCorp
                 if(face == BoxFace.Top)
                 {
                     toReturn[i] = new ExtendedVertex(toReturn[i].Position + origin + new Vector3(0, (averageWaterHeight * 0.4f - 1.0f), 0),
-                        new Color(foaminess, puddleness, (float) totalDepth / 512.0f, 1.0f),
+                        new Color(foaminess, puddleness, (float) totalDepth / 16.0f, 1.0f),
                         Color.White,
                         uv, bounds);
                 }

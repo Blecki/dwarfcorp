@@ -174,6 +174,7 @@ namespace DwarfCorp
             Faction = faction;
             Initialize(game, components, chunks, camera, graphics, gui);
             VoxSelector.Selected += OnSelected;
+            VoxSelector.Dragged += OnDrag;
             BodySelector.Selected += OnBodiesSelected;
             PlayState.Time.NewDay += Time_NewDay;
         }
@@ -186,6 +187,11 @@ namespace DwarfCorp
         public void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
             CurrentTool.OnBodiesSelected(bodies, button);
+        }
+
+        public void OnDrag(List<Voxel> voxels, InputManager.MouseButton button)
+        {
+            CurrentTool.OnVoxelsDragged(voxels, button);
         }
 
         public void OnSelected(List<Voxel> voxels, InputManager.MouseButton button)
@@ -225,7 +231,7 @@ namespace DwarfCorp
                 {
                     if (!noMoney)
                     {
-                        PlayState.AnnouncementManager.Announce("We're bankrupt!",
+                        PlayState.AnnouncementManager.Announce(Drawer2D.WrapColor("We're bankrupt!", Color.DarkRed),
                             "If we don't make a profit by tomorrow, our stock will crash!");
                     }
                     noMoney = true;
@@ -336,7 +342,7 @@ namespace DwarfCorp
                 if (deadMinion != null)
                 {
                     PlayState.AnnouncementManager.Announce(
-                        deadMinion.Stats.FullName + " (" + deadMinion.Stats.CurrentLevel.Name + ")" + " died!",
+                        deadMinion.Stats.FullName + " (" + deadMinion.Stats.CurrentLevel.Name + ")" + Drawer2D.WrapColor(" died!", Color.DarkRed),
                         "One of our employees has died!");
                     Faction.Economy.Company.StockPrice -= MathFunctions.Rand(0, 0.5f);
                 }

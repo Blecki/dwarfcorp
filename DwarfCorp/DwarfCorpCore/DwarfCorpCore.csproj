@@ -88,6 +88,7 @@
     <Compile Include="Components\Graphics\Bobber.cs" />
     <Compile Include="Components\Graphics\Box.cs" />
     <Compile Include="Components\Graphics\CharacterSprite.cs" />
+    <Compile Include="Components\Graphics\Follower.cs" />
     <Compile Include="Components\Graphics\LightEmitter.cs" />
     <Compile Include="Components\Graphics\Mesh.cs" />
     <Compile Include="Components\Graphics\OrientedAnimation.cs" />
@@ -108,6 +109,9 @@
     <Compile Include="Entities\Animals\Bird.cs" />
     <Compile Include="Entities\Animals\BirdAI.cs" />
     <Compile Include="Entities\Animals\Deer.cs" />
+    <Compile Include="Entities\Animals\Frog.cs" />
+    <Compile Include="Entities\Animals\Rabbit.cs" />
+    <Compile Include="Entities\Animals\Scorpion.cs" />
     <Compile Include="Entities\BalloonAI.cs" />
     <Compile Include="Entities\Dwarves\Dwarf.cs" />
     <Compile Include="Entities\EntityFactory.cs" />
@@ -143,7 +147,9 @@
     <Compile Include="Entities\Plants\Wheat.cs" />
     <Compile Include="Entities\Projectiles\Projectile.cs" />
     <Compile Include="Entities\Resources\ResourceEntity.cs" />
+    <Compile Include="Entities\Resources\ResourcePack.cs" />
     <Compile Include="Entities\Traps\BearTrap.cs" />
+    <Compile Include="Entities\Traps\TurretTrap.cs" />
     <Compile Include="GameSettings.cs" />
     <Compile Include="GameStates\CompanyMakerState.cs" />
     <Compile Include="GameStates\DiplomacyState.cs" />

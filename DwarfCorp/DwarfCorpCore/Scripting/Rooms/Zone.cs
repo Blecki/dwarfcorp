@@ -274,6 +274,14 @@ namespace DwarfCorp
         {
             return GetBoundingBox().Contains(worldCoordinate) != ContainmentType.Disjoint;
         }
+
+        public bool IsRestingOnZone(Vector3 worldCoordinate, float expansion=1.0f)
+        {
+            BoundingBox box = GetBoundingBox();
+            box.Max.Y += 1;
+            box = box.Expand(expansion);
+            return box.Contains(worldCoordinate) != ContainmentType.Disjoint;
+        }
     }
 
 }

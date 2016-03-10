@@ -43,22 +43,111 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Door : Fixture
     {
+        public Faction TeamFaction { get; set; }
+        public Matrix ClosedTransform { get; set; }
+        public Timer OpenTimer { get; set; }
+        bool IsOpen { get; set; }
+        bool IsMoving { get; set; }
         public Door()
         {
-
+            IsOpen = false;
         }
 
-        public Door(Vector3 position) :
+        public Door(Vector3 position, Faction team) :
             base(
             position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 1),
             PlayState.ComponentManager.RootComponent)
         {
+            IsMoving = false;
+            IsOpen = false;
+            OpenTimer = new Timer(0.5f, false);
+            TeamFaction = team;
             Name = "Door";
             Tags.Add("Door");
             this.Sprite.OrientationType = Sprite.OrientMode.Fixed;
             Sprite.OrientationType = Sprite.OrientMode.Fixed;
             Sprite.LocalTransform = Matrix.CreateRotationY(0.5f * (float)Math.PI);
             OrientToWalls();
+            ClosedTransform = LocalTransform;
+            AddToCollisionManager = true;
+            CollisionType = CollisionManager.CollisionType.Static;
+            Health health = new Health(PlayState.ComponentManager, "Health", this, 50.0f, 0.0f, 50.0f);
+           
+        }
+
+        public Matrix CreateHingeTransform(float angle)
+        {
+            Vector3 hinge = new Vector3(0, 0, 0.5f);
+            Vector3 center = new Vector3((float)Math.Sin(angle) * 0.5f, 0, (float)Math.Cos(angle) * 0.5f);
+            return  Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(center - hinge);
+        }
+
+        public void Open()
+        {
+            if (!IsOpen)
+            {
+                IsMoving = true;
+                OpenTimer.Reset();
+            }
+
+            IsOpen = true;
+        }
+
+        public void Close()
+        {
+            if (IsOpen)
+            {
+                IsMoving = true;
+                OpenTimer.Reset();
+            }
+            IsOpen = false;
+        }
+
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        {
+            if (IsMoving)
+            {
+                OpenTimer.Update(gameTime);
+                if (OpenTimer.HasTriggered)
+                {
+                    IsMoving = false;
+                }
+                else
+                {
+                    float t = Easing.CubicEaseInOut(OpenTimer.CurrentTimeSeconds, 0.0f, 1.0f,
+                        OpenTimer.TargetTimeSeconds);
+                    if (IsOpen)
+                    {
+                        LocalTransform = CreateHingeTransform(t*1.57f)*ClosedTransform;
+                    }
+                    else
+                    {
+                        LocalTransform = CreateHingeTransform((1.0f - t)*1.57f)*ClosedTransform;
+                    }
+                }
+            }
+            else
+            {
+                bool anyInside = false;
+                foreach (CreatureAI minion in TeamFaction.Minions)
+                {
+                    if ((minion.Physics.Position - Position).LengthSquared() < 1)
+                    {
+                        if (!IsOpen)
+                        {
+                            Open();
+                        }
+                        anyInside = true;
+                        break;
+                    }
+                }
+
+                if (!IsMoving && !anyInside && IsOpen)
+                {
+                    Close();
+                }
+            }
+            base.Update(gameTime, chunks, camera);
         }
     }
 

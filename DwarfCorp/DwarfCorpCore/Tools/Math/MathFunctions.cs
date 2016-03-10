@@ -465,6 +465,13 @@ namespace DwarfCorp
             return new BoundingBox(minPos, maxPos);
         }
 
+        public static float Dist2D(BoundingBox bounds, Vector3 pos)
+        {
+            float dx = Math.Min(Math.Abs(pos.X - bounds.Min.X), Math.Abs(bounds.Max.X - pos.X));
+            float dz = Math.Min(Math.Abs(pos.Z - bounds.Min.Z), Math.Abs(bounds.Max.Z - pos.Z));
+            return Math.Min(dx, dz);
+        }
+
         public static Rectangle GetBoundingRectangle(IEnumerable<Rectangle> boxes)
         {
             Point maxPos = new Point(-int.MaxValue, -int.MaxValue);

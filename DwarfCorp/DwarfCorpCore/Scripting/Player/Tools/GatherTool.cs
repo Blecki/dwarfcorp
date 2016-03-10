@@ -105,6 +105,11 @@ namespace DwarfCorp
 
         }
 
+        public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
+        {
+
+        }
+
         public override void Update(DwarfGame game, DwarfTime time)
         {
            

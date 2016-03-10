@@ -54,6 +54,7 @@ namespace DwarfCorp
 
         public event EnemySensed OnEnemySensed;
 
+        public Faction Allies { get; set; }
         public CreatureAI Creature { get; set; }
         public List<CreatureAI> Enemies { get; set; }
         public Timer SenseTimer { get; set; }
@@ -80,16 +81,23 @@ namespace DwarfCorp
 
         public void Sense()
         {
+            if (Allies == null && Creature != null)
+            {
+                Allies = Creature.Faction;
+            }
+
             List<CreatureAI> sensed = new List<CreatureAI>();
             List<CreatureAI> collide = new List<CreatureAI>();
             foreach (KeyValuePair<string, Faction> faction in PlayState.ComponentManager.Factions.Factions)
             {
-                if (PlayState.Diplomacy.GetPolitics(Creature.Faction, faction.Value).GetCurrentRelationship() !=
+                if (PlayState.Diplomacy.GetPolitics(Allies, faction.Value).GetCurrentRelationship() !=
                     Relationship.Hateful) continue;
 
                 foreach (CreatureAI minion in faction.Value.Minions)
                 {
-                    if (minion.Sensor.Enemies.Contains(Creature))
+                    if (!minion.IsActive) continue;
+
+                    if (Creature != null && minion.Sensor.Enemies.Contains(Creature))
                     {
                         sensed.Add(minion);
                         continue;
@@ -97,7 +105,7 @@ namespace DwarfCorp
 
                     float dist = (minion.Position - GlobalTransform.Translation).LengthSquared();
 
-                    if (dist < SenseRadius && !PlayState.ChunkManager.ChunkData.CheckOcclusionRay(Position, minion.Position))
+                    if (dist < SenseRadius && !PlayState.ChunkManager.ChunkData.CheckRaySolid(Position, minion.Position))
                     {
                         sensed.Add(minion);
                     }
@@ -113,15 +121,6 @@ namespace DwarfCorp
             if (sensed.Count > 0)
             {
                 OnEnemySensed.Invoke(sensed);
-            }
-             
-
-            foreach (CreatureAI minion in collide)
-            {
-                Vector3 diff = minion.Position - Creature.Position;
-                diff.Normalize();
-                minion.Physics.ApplyForce(diff * 10, DwarfTime.Dt);
-                Creature.Physics.ApplyForce(diff * 10, DwarfTime.Dt);
             }
         }
 

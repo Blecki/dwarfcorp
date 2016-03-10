@@ -47,6 +47,7 @@ namespace DwarfCorp
     ///  Minimal representation of a chunk.
     ///  Exists to write to and from files.
     /// </summary>
+    [Serializable]
     public class ChunkFile 
     {
         public short[,,] Types;
@@ -74,9 +75,9 @@ namespace DwarfCorp
             FillDataFromChunk(chunk);
         }
 
-        public ChunkFile(string fileName, bool compressed)
+        public ChunkFile(string fileName, bool compressed, bool binary)
         {
-            ReadFile(fileName, compressed);
+            ReadFile(fileName, compressed, binary);
         }
 
 
@@ -90,24 +91,41 @@ namespace DwarfCorp
             this.Types = chunkFile.Types;
         }
 
-        public bool ReadFile(string filePath, bool isCompressed)
+        public bool ReadFile(string filePath, bool isCompressed, bool isBinary)
         {
-            ChunkFile chunkFile = FileUtils.LoadJson<ChunkFile>(filePath, isCompressed);
-
-            if(chunkFile == null)
+            if (!isBinary)
             {
-                return false;
+                ChunkFile chunkFile = FileUtils.LoadJson<ChunkFile>(filePath, isCompressed);
+
+                if (chunkFile == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    CopyFrom(chunkFile);
+                    return true;
+                }
             }
             else
             {
+                ChunkFile chunkFile = FileUtils.LoadBinary<ChunkFile>(filePath);
+
+                if (chunkFile == null)
+                {
+                    return false;
+                }
                 CopyFrom(chunkFile);
                 return true;
             }
         }
 
-        public bool WriteFile(string filePath, bool compress)
+        public bool WriteFile(string filePath, bool compress, bool binary)
         {
-            return FileUtils.SaveJSon<ChunkFile>(this, filePath, compress);
+            if (!binary)
+                return FileUtils.SaveJSon<ChunkFile>(this, filePath, compress);
+            else
+                return FileUtils.SaveBinary(this, filePath);
         }
 
         public VoxelChunk ToChunk(ChunkManager manager)

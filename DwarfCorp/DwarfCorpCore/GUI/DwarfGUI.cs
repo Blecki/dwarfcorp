@@ -57,6 +57,7 @@ namespace DwarfCorp
     public delegate void ReleasedDelegate();
 
     public delegate void MouseScrolledDelegate(int amount);
+    public delegate void MouseDraggedDelegate(InputManager.MouseButton button, Vector2 delta);
 
     /// <summary>
     /// A proprietary GUI system written from scratch. Based loosely on the Qt framework.
@@ -83,10 +84,12 @@ namespace DwarfCorp
         public int MouseScale = 2;
         public Color MouseTint = Color.White;
         public ToolTipManager ToolTipManager { get; set; }
-
+       
         public bool DebugDraw { get; set; }
         public int LastScrollWheel { get; set; }
         public bool EnableMouseEvents { get; set; }
+        public float LastMouseX { get; set; }
+        public float LastMouseY { get; set; }
 
         public DwarfGUI(DwarfGame game, SpriteFont defaultFont, SpriteFont titleFont, SpriteFont smallFont, InputManager input)
         {
@@ -114,6 +117,8 @@ namespace DwarfCorp
             DebugDraw = false;
             ToolTipManager = new ToolTipManager(this);
             LastScrollWheel = 0;
+            LastMouseX = 0;
+            LastMouseY = 0;
         }
 
 
@@ -189,7 +194,8 @@ namespace DwarfCorp
             }
 
             LastScrollWheel = Mouse.GetState().ScrollWheelValue;
-
+            LastMouseX = Mouse.GetState().X;
+            LastMouseY = Mouse.GetState().Y;
         }
 
         public void PreRender(DwarfTime time, SpriteBatch sprites)

@@ -1,9 +1,16 @@
 {
     "Dwarf": {
         "Name": "Dwarf",
-        "CreatureTypes": [
+        "CreatureTypes": 
+        [
             "Dwarf",
             "AxeDwarf"
+        ],
+        "TradeEnvoys": 
+        [["CraftDwarf", "AxeDwarf", "AxeDwarf"]],
+        "WarParties": 
+        [["AxeDwarf", "AxeDwarf", "AxeDwarf"],
+         ["AxeDwarf", "AxeDwarf", "AxeDwarf", "AxeDwarf"]
         ],
         "IsIntelligent": true,
         "IsNative": false,
@@ -16,16 +23,19 @@
             "Frames" :  [0, 1],
             "Speed" : 0.15
         },
-        "NaturalEnemies" :  ["Demon", "Carnivore", "Elf"],
-        "Speech" : {
+        "NaturalEnemies" :  ["Demon", "Carnivore"],
+        "Speech" : 
+        {
             "Greetings" :  ["Hello!", "Well met.", "Greetings!", "Salutations!", "Good to see you, fellow Dwarf!"],
             "Farewells" :  ["Goodbye!", "Deep mining!", "Seleprak be with you!", "For the motherland!", "King and colony!"],
             "GoodTrades" :  ["This is profitable.", "The Dwarfbux rain down on us today!", "The balloon is weighed down with riches.", "Incredible work!", "Thank Seleprak for mercantilism."],
             "BadTrades" :  ["Do you take me for a fool?", "I should not have come all this way for such treatment.", "I thought we could trust one another. Give me a better deal!", "I don't have the space for such trinkets."],
             "WarDeclarations" :  ["Consider this war!", "We will lay waste to your rebellious colony!", "Prepare to be arrested by representatives of the king!", "This is a dark day for the dwarven empire."],
             "PeaceDeclarations" :  ["We wish to make peace.", "The king has grown tired of your rebellion. Make peace.", "War of this kind is not profitable."]
-      },
+        },
         "LikedResources" :  ["Metal", "Precious", "Gem", "Craft"],
+        "CommonResources" :  ["Stone", "Metal", "Fungus", "Alcohol"],
+        "RareResources" :  ["Magical", "Wood", "Gem", "Precious", "Craft"],
         "HatedResources" :  [],
         "TradeGoods" : 
         {
@@ -46,6 +56,12 @@
         "Name": "Goblins",
         "CreatureTypes": [
             "Goblin"
+        ],
+        "TradeEnvoys": 
+        [["Goblin", "Goblin", "Goblin"]],
+        "WarParties": 
+        [["Goblin", "Goblin", "Goblin"],
+         ["Goblin", "Goblin", "Goblin", "Goblin"]
         ],
         "NaturalEnemies" :  ["Demon", "Elf", "Undead", "Carnivore"],
         "IsIntelligent": true,
@@ -69,6 +85,8 @@
       },
         "LikedResources" :  ["Metal", "Precious", "Gem", "Alcohol"],
         "HatedResources" :  ["Craft", "Soil", "Magical"],
+        "CommonResources" :  ["AnimalProduct"],
+        "RareResources" :  ["Metal", "Gem", "Precious", "Craft", "Alcohol"],
         "TradeGoods" : 
         {
             "AnimalProduct" :  32,
@@ -81,6 +99,12 @@
         "Name": "Molemen",
         "CreatureTypes": [
             "Moleman"
+        ],
+        "TradeEnvoys": 
+        [["Moleman", "Moleman", "Moleman"]],
+        "WarParties": 
+        [["Moleman", "Moleman", "Moleman"],
+         ["Moleman", "Moleman", "Moleman", "Moleman"]
         ],
         "NaturalEnemies" :  ["Demon", "Carnivore"],
         "IsIntelligent": true,
@@ -102,12 +126,13 @@
             "WarDeclarations" :  ["<The moleman extends his claws>", "<The moleman sweats profusely>", "<It is clear the moleman is now angry.>"],
             "PeaceDeclarations" :  ["<The moleman sheds a tear>", "<The moleman kneels>", "<The moleman removes his helmet>"]
        },
-        "LikedResources" :  ["Soil", "Stone", "Precious", "Gem"],
-        "HatedResources" :  ["AnimalProduct", "AboveGroundPlant"],
+        "LikedResources" :  ["Soil", "Stone", "Precious", "Gem", "Metal"],
+        "HatedResources" :  ["AnimalProduct", "AboveGroundPlant", "Alcohol"],
+        "CommonResources" :  ["Gem", "Fungus", "Soil", "Stone"],
+        "RareResources" :  ["Alcohol", "Craft", "Magical", "Wood", "Metal"],
         "TradeGoods" : 
         {
             "Gem" :  64,
-            "Metal" :  32,
             "Stone" :  64,
             "Fungus" :  32,
             "Soil" :  64,
@@ -121,6 +146,12 @@
         "CreatureTypes": [
             "Elf"
         ],
+        "TradeEnvoys": 
+        [["Elf", "Elf", "Elf"]],
+        "WarParties": 
+        [["Elf", "Elf", "Elf"],
+         ["Elf", "Elf", "Elf", "Elf"]
+        ],
         "IsIntelligent": true,
         "IsNative": true,
         "FactionNameFile": "Text\\Templates\\nations_elf.txt",
@@ -132,7 +163,7 @@
             "Frames" :  [0, 1],
             "Speed" : 0.5
         },
-        "NaturalEnemies" :  ["Demon", "Undead", "Goblins", "Carnivore", "Dwarf"],
+        "NaturalEnemies" :  ["Demon", "Undead", "Goblins", "Carnivore"],
         "Speech" : {
             "Greetings" :  ["Falalala!", "Ooh, hi!", "Joyus jumping jellybeans!", "Teehee, you look like sugarplums.", "Well, fiddle-dee-dee!", "Look, garden gnomes!", "We've frolicked here to meet you!", "We come bearing tasty treats!"],
             "Farewells" :  ["Until we meet again.", "I tip my hat to you!", "Happy trails!", "Buhbye!", "Bye!", "<The elf frolicks away>"],
@@ -143,6 +174,8 @@
        },
         "LikedResources" :  ["Magical", "Craft", "RawFood"],
         "HatedResources" :  ["AnimalProduct", "Wood", "Alcohol", "PreparedFood"],
+        "CommonResources" :  ["Wood", "Craft", "AboveGroundPlant",  "Magical"],
+        "RareResources" :  ["Metal", "Gem", "Precious"],
         "TradeGoods" : 
         {
             "AboveGroundPlant" :  64,
@@ -159,6 +192,12 @@
         "CreatureTypes": [
             "Necromancer",
             "Skeleton"
+        ],
+        "TradeEnvoys": 
+        [["Necromancer", "Skeleton", "Skeleton"]],
+        "WarParties": 
+        [["Necromancer", "Skeleton", "Skeleton"],
+         ["Skeleton", "Skeleton", "Skeleton", "Skeleton"]
         ],
         "IsIntelligent": true,
         "IsNative": true,
@@ -182,6 +221,8 @@
        },
        "LikedResources" :  ["AnimalProduct", "Magical"],
         "HatedResources" :  ["AboveGroundPlant", "BelowGroundPlant"],
+        "CommonResources" :  ["Bone", "Magical"],
+        "RareResources" :  ["RawFood", "AnimalProduct", "Metal", "Gem"],
         "TradeGoods" : 
         {
             "Bone" :  128,
@@ -196,6 +237,12 @@
         "Name": "Demon",
         "CreatureTypes": [
             "Demon"
+        ],
+        "TradeEnvoys": 
+        [["Demon", "Demon", "Demon"]],
+        "WarParties": 
+        [["Demon", "Demon", "Demon"],
+         ["Demon", "Demon", "Demon", "Demon"]
         ],
         "IsIntelligent": false,
         "IsNative": true,
@@ -218,7 +265,9 @@
             "PeaceDeclarations" :  ["This war bores us. Shall we normalize relations?", "We have to give you credit for ingenuity. Shall we make peace?", "On second thought, we have made a glaring error. End the war?"]
        },
        "LikedResources" :  ["AnimalProduct", "Magical"],
-        "HatedResources" :  ["AboveGroundPlant", "BelowGroundPlant"]
+       "HatedResources" :  ["AboveGroundPlant", "BelowGroundPlant"],
+       "CommonResources" :  ["Bone", "Magical"],
+       "RareResources" :  ["RawFood", "AnimalProduct", "Metal", "Gem"],
     },
     "Herbivore": {
         "Name": "Herbivore",

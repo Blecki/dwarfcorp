@@ -320,8 +320,8 @@ namespace DwarfCorp.GameStates
 
         public void InvokeLoss()
         {
-            Paused = true;
-            StateManager.PushState("LoseState");
+            //Paused = true;
+            //StateManager.PushState("LoseState");
         }
 
 
@@ -406,9 +406,7 @@ namespace DwarfCorp.GameStates
         /// <param name="c">The chunk the dwarves belong to</param>
         public void CreateInitialDwarves(VoxelChunk c)
         {
-            int numWorkers = 3;
-            int numAxes = 1;
-            int numCrafters = 1;
+
 
             Vector3 g = c.WorldToGrid(Camera.Position);
             // Find the height of the world at the camera
@@ -419,37 +417,15 @@ namespace DwarfCorp.GameStates
             Camera.UpdateProjectionMatrix();
             Camera.UpdateViewMatrix();
 
-            // Spawn the dwarves above the terrain
-            for (int i = 0; i < numWorkers; i++)
+            foreach (string ent in InitialEmbark.Party)
             {
                 Vector3 dorfPos = new Vector3(Camera.Position.X + (float) Random.NextDouble(), h + 10, Camera.Position.Z + (float) Random.NextDouble());
-                Physics creat = (Physics) EntityFactory.GenerateDwarf(dorfPos, ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Worker], 0);
-
+                Physics creat = (Physics) EntityFactory.CreateEntity<Physics>(ent, dorfPos);
                 creat.Velocity = new Vector3(1, 0, 0);
             }
 
-            for (int i = 0; i < numAxes; i++)
-            {
-                Vector3 dorfPos = new Vector3(Camera.Position.X + (float)Random.NextDouble(), h + 10, Camera.Position.Z + (float)Random.NextDouble());
-                Physics creat = (Physics)EntityFactory.GenerateDwarf(dorfPos,
-                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.AxeDwarf], 0);
-
-                creat.Velocity = new Vector3(1, 0, 0);
-            }
-
-            for (int i = 0; i < numCrafters; i++)
-            {
-                Vector3 dorfPos = new Vector3(Camera.Position.X + (float)Random.NextDouble(), h + 10, Camera.Position.Z + (float)Random.NextDouble());
-                Physics creat = (Physics)EntityFactory.GenerateDwarf(dorfPos,
-                    ComponentManager, Content, GraphicsDevice, ChunkManager, Camera, ComponentManager.Factions.Factions["Player"], PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.CraftsDwarf], 0);
-
-                creat.Velocity = new Vector3(1, 0, 0);
-            }
-
-            // Turn the camera to face the dwarves
             Camera.Target = new Vector3(Camera.Position.X, h + 10, Camera.Position.Z + 10);
-            Camera.Phi = -(float) Math.PI * 0.3f;
-           
+            Camera.Phi = -(float)Math.PI * 0.3f;
         }
 
         /// <summary>
@@ -545,7 +521,7 @@ namespace DwarfCorp.GameStates
                     OverworldFile overWorldFile =
                         new OverworldFile(
                             worldDirectory.FullName + ProgramData.DirChar + "world." + OverworldFile.CompressedExtension,
-                            true);
+                            true, true);
                     Overworld.Map = overWorldFile.Data.CreateMap();
                     Overworld.Name = overWorldFile.Data.Name;
                     WorldWidth = Overworld.Map.GetLength(1);
@@ -756,7 +732,9 @@ namespace DwarfCorp.GameStates
             IndicatorManager.SetupStandards();
 
             GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
-         
+
+            GUI.ToolTipManager.InfoLocation = new Point(GraphicsDevice.Viewport.Width/2, GraphicsDevice.Viewport.Height);
+
             if(!createMaster)
             {
                 return;
@@ -979,9 +957,16 @@ namespace DwarfCorp.GameStates
             if(string.IsNullOrEmpty(ExistingFile))
             {
                 VoxelChunk c = ChunkManager.ChunkData.GetVoxelChunkAtWorldLocation(Camera.Position);
-                GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager, Camera.Position.X, Camera.Position.Z, 3);
+                BalloonPort port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager, Camera.Position.X, Camera.Position.Z, 3);
                 CreateInitialDwarves(c);
+                PlayState.PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
+
+                foreach (var res in InitialEmbark.Resources)
+                {
+                    PlayerFaction.AddResources(new ResourceAmount(res.Key, res.Value));
+                }
                 EntityFactory.CreateBalloon(new Vector3(Camera.Position.X, ChunkHeight - 2, Camera.Position.Z) + new Vector3(0, 1000, 0), new Vector3(Camera.Position.X, ChunkHeight - 2, Camera.Position.Z), ComponentManager, Content, GraphicsDevice, new ShipmentOrder(0, null), Master.Faction);
+           
             }
 
             // Otherwise, we unfortunately need to take care of preliminaries to make sure
@@ -1105,7 +1090,7 @@ namespace DwarfCorp.GameStates
         /// <param name="x">The position of the center of the balloon port</param>
         /// <param name="z">The position of the center of the balloon port</param>
         /// <param name="size">The size of the (square) balloon port in voxels on a side</param>
-        public void GenerateInitialBalloonPort(RoomBuilder roomDes, ChunkManager chunkManager, float x, float z, int size)
+        public BalloonPort GenerateInitialBalloonPort(RoomBuilder roomDes, ChunkManager chunkManager, float x, float z, int size)
         {
             Vector3 pos = new Vector3(x, ChunkHeight - 1, z);
 
@@ -1173,6 +1158,34 @@ namespace DwarfCorp.GameStates
                         h = averageHeight;
                     }
 
+                    bool isPosX = (dx == size && dz == 0);
+                    bool isPosZ = (dz == size & dx == 0);
+                    bool isNegX = (dx == -size && dz == 0);
+                    bool isNegZ = (dz == -size && dz == 0);
+                    bool isSide = (isPosX || isNegX || isPosZ || isNegZ);
+
+                    Vector3 offset = Vector3.Zero;
+
+                    if (isSide)
+                    {
+                        if (isPosX)
+                        {
+                            offset = Vector3.UnitX;
+                        }
+                        else if (isPosZ)
+                        {
+                            offset = Vector3.UnitZ;
+                        }
+                        else if (isNegX)
+                        {
+                            offset = -Vector3.UnitX;
+                        }
+                        else if (isNegZ)
+                        {
+                            offset = -Vector3.UnitZ;
+                        }
+                    }
+
                     // Fill from the top height down to the bottom.
                     for (int y = h - 1; y < averageHeight; y++)
                     {
@@ -1186,15 +1199,28 @@ namespace DwarfCorp.GameStates
                         {
                             designations.Add(v);
                         }
+
+                        if (isSide)
+                        {
+                            Voxel ladderVox = new Voxel();
+                            
+                            Vector3 center = new Vector3(worldPos.X, y, worldPos.Z) + offset + Vector3.One * .5f;
+                            if (chunk.Manager.ChunkData.GetVoxel(center, ref ladderVox) && ladderVox.IsEmpty)
+                            {
+                                EntityFactory.CreateEntity<Ladder>("Ladder", center);
+                            }
+                        }
                     }
                 }
             }
+
 
             // Actually create the BuildRoom.
             BalloonPort toBuild = new BalloonPort(PlayerFaction, designations, chunkManager);
             BuildRoomOrder buildDes = new BuildRoomOrder(toBuild, roomDes.Faction);
             buildDes.Build();
             roomDes.DesignatedRooms.Add(toBuild);
+            return toBuild;
         }
 
       
@@ -1402,12 +1428,10 @@ namespace DwarfCorp.GameStates
             {
                 int index = InputManager.GetNum(key) - 1;
 
-                List<GameMaster.ToolMode> modes = Enum.GetValues(typeof(GameMaster.ToolMode)).Cast<GameMaster.ToolMode>().ToList();
-
-                // Last index reserved for god mode
-                if(index < 0 || index >= modes.Count - 1)
+           
+                if(index < 0)
                 {
-                    return;
+                    index = 9;
                 }
 
                 // In this special case, all dwarves are selected
@@ -1415,16 +1439,23 @@ namespace DwarfCorp.GameStates
                 {
                     Master.SelectedMinions.AddRange(Master.Faction.Minions);
                 }
-
+                int i = 0;
                 if(index == 0 || Master.SelectedMinions.Count > 0)
                 {
-                    GameMaster.ToolMode mode = modes[index];
 
-                    List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions, mode);
-
-                    if ((index == 0 || minions.Count > 0) && Master.ToolBar.ToolButtons.ContainsKey(mode))
+                    foreach (var pair in Master.ToolBar.ToolButtons)
                     {
-                        Master.ToolBar.ToolButtons[mode].InvokeClick();
+                        if (i == index)
+                        {
+                            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions, pair.Key);
+
+                            if ((index == 0 || minions.Count > 0))
+                            {
+                                pair.Value.InvokeClick();
+                                break;
+                            }
+                        }
+                        i++;
                     }
 
                     //Master.ToolBar.CurrentMode = modes[index];
@@ -1511,7 +1542,7 @@ namespace DwarfCorp.GameStates
                     GUI.RootComponent.IsVisible = !GUI.RootComponent.IsVisible;
                 }
             }
-
+            //Drawer3D.DrawPlane(0, Camera.Position.X - 1500, Camera.Position.Z - 1500, Camera.Position.X + 1500, Camera.Position.Z + 1500, Color.Black);
             FillClosestLights(gameTime);
             IndicatorManager.Update(gameTime);
             AspectRatio = GraphicsDevice.Viewport.AspectRatio;
@@ -1579,6 +1610,7 @@ namespace DwarfCorp.GameStates
         }
 
         public bool FastForwardToDay { get; set; }
+        public static Embarkment InitialEmbark { get; set; }
 
 
         /// <summary>
@@ -1683,7 +1715,7 @@ namespace DwarfCorp.GameStates
             DirectoryInfo worldDirectory = Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Worlds" + Path.DirectorySeparatorChar + Overworld.Name);
 
             OverworldFile file = new OverworldFile(Overworld.Map, Overworld.Name);
-            file.WriteFile(worldDirectory.FullName + Path.DirectorySeparatorChar + "world." + OverworldFile.CompressedExtension, true);
+            file.WriteFile(worldDirectory.FullName + Path.DirectorySeparatorChar + "world." + OverworldFile.CompressedExtension, true, true);
             file.SaveScreenshot(worldDirectory.FullName + Path.DirectorySeparatorChar + "screenshot.png");
 
             gameFile = new GameFile(Overworld.Name, GameID);
@@ -1760,6 +1792,7 @@ namespace DwarfCorp.GameStates
             cubeEffect.Parameters["xView"].SetValue(view);
             cubeEffect.Parameters["xProjection"].SetValue(Camera.ProjectionMatrix);
             cubeEffect.CurrentTechnique = cubeEffect.Techniques["Textured"];
+            cubeEffect.Parameters["Clipping"].SetValue(1);
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             ChunkManager.Render(Camera, gameTime, GraphicsDevice, cubeEffect, Matrix.Identity);
 
@@ -1773,6 +1806,7 @@ namespace DwarfCorp.GameStates
                 Master.Faction.CraftBuilder.Render(gameTime, GraphicsDevice, cubeEffect);
             }
             Camera.ViewMatrix = viewMatrix;
+            cubeEffect.Parameters["Clipping"].SetValue(1);
         }
 
 
@@ -1925,7 +1959,7 @@ namespace DwarfCorp.GameStates
                 {
                     fxaa.Begin(DwarfTime.LastTime, fxaa.RenderTarget);
                 }
-
+             
                 // Draw the sky
                 GraphicsDevice.Clear(new Color(DefaultShader.Parameters["xFogColor"].GetValueVector3()));
                 DrawSky(gameTime, Camera.ViewMatrix, 1.0f);
@@ -2016,7 +2050,6 @@ namespace DwarfCorp.GameStates
 
                 GUI.Render(gameTime, DwarfGame.SpriteBatch, Vector2.Zero);
 
-
                 bool drawDebugData = GameSettings.Default.DrawDebugData;
                 if (drawDebugData)
                 {
@@ -2049,12 +2082,15 @@ namespace DwarfCorp.GameStates
                 IndicatorManager.Render(gameTime);
                 GUI.PostRender(gameTime);
                 DwarfGame.SpriteBatch.End();
+                //CompositeLibrary.Composites["Elf"].DebugDraw(DwarfGame.SpriteBatch, 0, 0);
                 Master.Render(Game, gameTime, GraphicsDevice);
                 DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle =
                     DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;
 
-
-
+            
+            //DwarfGame.SpriteBatch.Begin();
+            //DwarfGame.SpriteBatch.Draw(WaterRenderer.ReflectionMap, Vector2.Zero, Color.White);
+            //DwarfGame.SpriteBatch.End();
                 /*
             int dx = 0;
             foreach (var composite in CompositeLibrary.Composites)

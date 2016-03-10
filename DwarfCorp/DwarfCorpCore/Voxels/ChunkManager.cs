@@ -356,7 +356,7 @@ namespace DwarfCorp
 
                                 if (!RebuildList.TryDequeue(out chunk))
                                 {
-                                    break;
+                                    continue;
                                 }
 
                                 if (chunk == null)
@@ -374,12 +374,12 @@ namespace DwarfCorp
                         }
 
                         if (calculateRamps)
+                        {
+                            foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
                             {
-                                foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
-                                {
-                                    chunk.UpdateRamps();
-                                }
+                                chunk.UpdateRamps();
                             }
+                        }
 
 
                             foreach (

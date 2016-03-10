@@ -51,10 +51,11 @@ namespace DwarfCorp
         public bool Training { get; set; }
         public Timer Timeout { get; set; }
         public string TargetName { get; set; }
-
+        public Timer FailTimer { get; set; }
         public MeleeAct(CreatureAI agent, string target) :
             base(agent)
         {
+            FailTimer = new Timer(5.0f, false);
             Timeout = new Timer(100.0f, false);
             Training = false;
             Name = "Attack!";
@@ -70,6 +71,7 @@ namespace DwarfCorp
         public MeleeAct(CreatureAI agent, Body target) :
             base(agent)
         {
+            FailTimer = new Timer(5.0f, false);
             Timeout = new Timer(100.0f, false);
             Training = false;
             Name = "Attack!";
@@ -163,7 +165,7 @@ namespace DwarfCorp
             }
 
             Timeout.Reset();
-
+            FailTimer.Reset();
             if (Target == null && TargetName != null)
             {
                 Target = Agent.Blackboard.GetData<Body>(TargetName);
@@ -175,11 +177,26 @@ namespace DwarfCorp
                 }
             }
 
+            Inventory targetInventory = Target.GetComponent<Inventory>();
+
+            if (targetInventory != null)
+            {
+                targetInventory.OnDeath += targetInventory_OnDeath;
+            }
+
             bool avoided = false;
             while(true)
             {
                 Timeout.Update(DwarfTime.LastTime);
-
+                FailTimer.Update(DwarfTime.LastTime);
+                if (FailTimer.HasTriggered)
+                {
+                    Creature.Physics.Orientation = Physics.OrientMode.RotateY;
+                    Creature.OverrideCharacterMode = false;
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                    yield return Status.Fail;
+                    yield break;
+                }
                 if (Timeout.HasTriggered)
                 {
                     if (Training)
@@ -213,20 +230,19 @@ namespace DwarfCorp
                     Target.GetBoundingBox().Min.Y,
                     Target.GlobalTransform.Translation.Z);
 
-                bool collides = Creature.Physics.Collide(Target.BoundingBox);
                 Vector3 diff = targetPos - Creature.AI.Position;
 
                 Creature.Physics.Face(targetPos);
 
                 // If we are far away from the target, run toward it
-                if (diff.Length() > CurrentAttack.Range * 8 && !collides)
+                if (diff.Length() > CurrentAttack.Range * 8)
                 {
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                     yield return Status.Fail;
                 }
-                if(diff.Length() > CurrentAttack.Range && !collides)
+                if(diff.Length() > CurrentAttack.Range)
                 {
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                     Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
@@ -240,7 +256,7 @@ namespace DwarfCorp
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                 }
                 else if (!avoided && (CurrentAttack.Mode != Attack.AttackMode.Melee &&
-                    diff.Length() < CurrentAttack.Range*0.75f && !collides))
+                    diff.Length() < CurrentAttack.Range*0.75f))
                 {
                     /*
                    
@@ -251,6 +267,7 @@ namespace DwarfCorp
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     */
+                    FailTimer.Reset();
                     foreach (Act.Status stat in AvoidTarget(CurrentAttack.Range, 3.0f))
                     {
                         yield return Status.Running;
@@ -260,6 +277,7 @@ namespace DwarfCorp
                 // Else, stop and attack
                 else
                 {
+                    FailTimer.Reset();
                     avoided = false;
                     Creature.Physics.Orientation = Physics.OrientMode.Fixed;
                     Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
@@ -323,6 +341,16 @@ namespace DwarfCorp
                 }
 
                 yield return Status.Running;
+            }
+        }
+
+        void targetInventory_OnDeath(List<Body> items)
+        {
+            if (items == null) return;
+
+            foreach (Body item in items)
+            {
+                Agent.Creature.Gather(item);
             }
         }
     }

@@ -75,8 +75,7 @@ namespace DwarfCorp
             CheckLavaTimer = new Timer(1.0f, false);
             SoundTimer = new Timer(1.0f, false);
             DamageTimer = new Timer(1.0f, false);
-        } 
-
+        }
 
 
         public void CheckForLavaAndWater(DwarfTime gameTime, ChunkManager chunks)
@@ -113,6 +112,7 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            if (!IsActive) return;
             DamageTimer.Update(gameTime);
             CheckLavaTimer.Update(gameTime);
             SoundTimer.Update(gameTime);

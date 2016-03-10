@@ -47,7 +47,7 @@ namespace DwarfCorp
     public class GoToEntityAct : CompoundCreatureAct
     {
         public Body Entity { get { return Agent.Blackboard.GetData<Body>(EntityName);  } set {Agent.Blackboard.SetData(EntityName, value);} }
-
+        public bool MovingTarget { get; set; }
         public string EntityName { get; set; }
 
         public GoToEntityAct()
@@ -70,6 +70,7 @@ namespace DwarfCorp
         {
             Name = "Go to entity " + entity;
             EntityName = entity;
+            MovingTarget = true;
         }
 
         public GoToEntityAct(Body entity, CreatureAI creature) :
@@ -78,6 +79,7 @@ namespace DwarfCorp
             Name = "Go to entity";
             EntityName = "TargetEntity";
             Entity = entity;
+            MovingTarget = true;
         }
 
         public IEnumerable<Status> CollidesWithTarget()
@@ -199,7 +201,7 @@ namespace DwarfCorp
                             break;
                         }
 
-                        if ((Creature.Physics.Position - entity.Position).Length() < 2)
+                        if (MovingTarget && (Creature.Physics.Position - entity.Position).Length() < 2)
                         {
                             yield return Status.Success;
                             yield break;

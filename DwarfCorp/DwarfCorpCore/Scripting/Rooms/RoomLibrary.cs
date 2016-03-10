@@ -69,9 +69,7 @@ namespace DwarfCorp
             RegisterType(BedRoom.InitializeData());
             RegisterType(CommonRoom.InitializeData());
             RegisterType(LibraryRoom.InitializeData());
-            RegisterType(MushroomFarm.InitializeData());
             RegisterType(TrainingRoom.InitializeData());
-            RegisterType(WheatFarm.InitializeData());
             RegisterType(WorkshopRoom.InitializeData());
             RegisterType(Kitchen.InitializeData());
             staticIntialized = true;
@@ -128,17 +126,9 @@ namespace DwarfCorp
             {
                 return blueprint ? new LibraryRoom(true, designations, PlayState.ChunkManager) : new LibraryRoom(designations, PlayState.ChunkManager);
             }
-            else if (name == MushroomFarm.MushroomFarmName)
-            {
-                return blueprint ? new MushroomFarm(true, designations, PlayState.ChunkManager) : new MushroomFarm(designations, PlayState.ChunkManager);
-            }
             else if (name == TrainingRoom.TrainingRoomName)
             {
                 return blueprint ? new TrainingRoom(true, designations, PlayState.ChunkManager) : new TrainingRoom(designations, PlayState.ChunkManager); 
-            }
-            else if (name == WheatFarm.WheatFarmName)
-            {
-                return blueprint ? new WheatFarm(true, designations, PlayState.ChunkManager) : new WheatFarm(designations, PlayState.ChunkManager); 
             }
             else if (name == WorkshopRoom.WorkshopName)
             {

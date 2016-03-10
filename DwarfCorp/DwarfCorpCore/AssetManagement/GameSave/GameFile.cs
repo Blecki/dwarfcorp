@@ -72,7 +72,7 @@ namespace DwarfCorp
 
                 foreach(ChunkFile chunk in ChunkData)
                 {
-                    chunk.WriteFile(directory + ProgramData.DirChar + "Chunks" + ProgramData.DirChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + "." + ChunkFile.CompressedExtension, true);
+                    chunk.WriteFile(directory + ProgramData.DirChar + "Chunks" + ProgramData.DirChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + "." + ChunkFile.CompressedExtension, true, true);
                 }
 
                 Metadata.WriteFile(directory + ProgramData.DirChar + "MetaData." + MetaData.CompressedExtension, true);
@@ -198,7 +198,7 @@ namespace DwarfCorp
                     Data.ChunkData = new List<ChunkFile>();
                     foreach(string chunk in chunks)
                     {
-                        Data.ChunkData.Add(new ChunkFile(chunk, isCompressed));
+                        Data.ChunkData.Add(new ChunkFile(chunk, isCompressed, true));
                     }
                 }
                 else

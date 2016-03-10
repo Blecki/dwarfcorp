@@ -30,6 +30,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -51,6 +53,26 @@ namespace DwarfCorp
     /// </summary>
     public static class FileUtils
     {
+
+        public static T LoadBinary<T>(string filepath)
+        {
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.None);
+            T toReturn = default(T);
+            try
+            {
+                toReturn = (T) formatter.Deserialize(stream);
+            }
+            catch (InvalidCastException exception)
+            {
+                
+            }
+
+            stream.Close();
+            return toReturn;
+        }
+
+
         public static bool SaveBinary<T>(T obj, string filepath)
         {
 
