@@ -122,34 +122,6 @@ namespace DwarfCorp
             yield return Status.Success;
         }
 
-        public IEnumerable<Status> WaitAndHit(float time)
-        {
-            Body objectToHit = Creature.AI.Blackboard.GetData<Body>(ItemType.CraftLocation);
-            Timer timer = new Timer(time, true);
-            while (!timer.HasTriggered)
-            {
-                timer.Update(DwarfTime.LastTime);
-
-                Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
-                Creature.Physics.Velocity = Vector3.Zero;
-                Creature.Attacks[0].PerformNoDamage(Creature, DwarfTime.LastTime, Creature.AI.Position);
-                Drawer2D.DrawLoadBar(Agent.Position + Vector3.Up, Color.White, Color.Black, 100, 16, timer.CurrentTimeSeconds / time);
-               
-                yield return Status.Running;
-            }
-
-            Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
-            Creature.AI.AddThought(Thought.ThoughtType.Crafted);
-            Creature.AI.AddXP((int)(time * 5));
-
-            if (objectToHit != null)
-            {
-                objectToHit.IsReserved = false;
-                objectToHit.ReservedFor = null;
-            }
-            yield return Status.Success;
-        }
-
 
         public CraftItemAct(CreatureAI creature, CraftItem type) :
             base(creature)
@@ -195,7 +167,7 @@ namespace DwarfCorp
                             TeleportOffset = new Vector3(1, 0, 0),
                             ObjectName = ItemType.CraftLocation
                         },
-                        new Wrap(() => WaitAndHit(time)),
+                        new Wrap(() => Creature.HitAndWait(time, true)),
                         new Wrap(DestroyResources),
                         unreserveAct,
                         new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
@@ -217,7 +189,7 @@ namespace DwarfCorp
                             TeleportOffset = new Vector3(1, 0, 0),
                             ObjectName = ItemType.CraftLocation
                         },
-                        new Wrap(() => WaitAndHit(time)),
+                        new Wrap(() => Creature.HitAndWait(time, true)),
                         new Wrap(DestroyResources),
                         unreserveAct,
                         new Wrap(CreateResources),

@@ -89,7 +89,14 @@ namespace DwarfCorp
                 }
             }
 
-            Drawer2D.DrawAlignedStrokedText(batch, text, TextFont, TextColor, StrokeColor, Alignment, GlobalBounds);
+            if (StrokeColor.A > 0)
+            {
+                Drawer2D.DrawAlignedStrokedText(batch, text, TextFont, TextColor, StrokeColor, Alignment, GlobalBounds);
+            }
+            else
+            {
+                Drawer2D.DrawAlignedText(batch, text, TextFont, TextColor, Alignment, GlobalBounds);
+            }
             base.Render(time, batch);
         }
 

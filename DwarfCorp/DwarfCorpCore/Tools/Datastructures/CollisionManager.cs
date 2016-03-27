@@ -229,12 +229,14 @@ namespace DwarfCorp
                     break;
             }
 
+            BoundingBox frustumBox = MathFunctions.GetBoundingBox(frustum.GetCorners());
+
             foreach (var obj in 
                 from hash 
                     in hashes 
                 from pair 
-                    in hash.HashMap 
-                where pair.Value != null && frustum.Contains(pair.Key.ToVector3()) == ContainmentType.Contains
+                    in hash.HashMap
+                where pair.Value != null && frustumBox.Contains(pair.Key.ToVector3()) == ContainmentType.Contains
                 from obj in pair.Value
                 where obj is TObject && !set.Contains((TObject)obj) && obj.GetBoundingBox().Intersects(frustum) 
                 select obj)

@@ -115,15 +115,11 @@ namespace DwarfCorp
         {
             KeyboardState keyState = Keyboard.GetState();
 
+            
+
             if(!keyState.IsKeyDown(Keys.LeftShift))
             {
-                foreach(CreatureAI creature in Player.SelectedMinions)
-                {
-                    creature.Creature.SelectionCircle.IsVisible = false;
-                }
                 Player.SelectedMinions.Clear();
-
-
             }
             List<CreatureAI> newDwarves = new List<CreatureAI>();
             foreach(Body body in bodies)
@@ -180,6 +176,11 @@ namespace DwarfCorp
 
             DwarfGame.SpriteBatch.End();
              
+        }
+
+        public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
+        {
+
         }
     }
 }

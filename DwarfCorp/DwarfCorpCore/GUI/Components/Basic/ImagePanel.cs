@@ -164,4 +164,113 @@ namespace DwarfCorp
         }
     }
 
+    /// <summary>
+    /// This is a GUI component which merely draws an image.
+    /// </summary>
+    public class RenderPanel : GUIComponent
+    {
+        public RenderTarget2D Image
+        {
+            get { return imageFrame; }
+            set
+            {
+                Lock.WaitOne();
+                imageFrame = value;
+                Lock.ReleaseMutex();
+            }
+        }
+
+        private RenderTarget2D imageFrame = null;
+        public Mutex Lock { get; set; }
+        public bool KeepAspectRatio { get; set; }
+        public bool ConstrainSize { get; set; }
+        public bool Highlight { get; set; }
+        public string AssetName { get; set; }
+        public Color Tint { get; set; }
+
+
+        public RenderPanel(DwarfGUI gui, GUIComponent parent, RenderTarget2D image) :
+            base(gui, parent)
+        {
+            Tint = Color.White;
+            AssetName = "";
+            Highlight = false;
+            Lock = new Mutex();
+            ConstrainSize = false;
+            Image = image;
+            KeepAspectRatio = true;
+        }
+
+        public override bool IsMouseOverRecursive()
+        {
+
+            if (!IsVisible)
+            {
+                return false;
+            }
+
+            MouseState mouse = Mouse.GetState();
+
+
+            bool mouseOver = (IsMouseOver && this != GUI.RootComponent) || Children.Any(child => child.IsMouseOverRecursive());
+
+            return GetImageBounds().Contains(mouse.X, mouse.Y) || Children.Any(child => child.IsMouseOverRecursive());
+        }
+
+
+
+        public Rectangle GetImageBounds()
+        {
+            Rectangle toDraw = GlobalBounds;
+
+            if (!KeepAspectRatio)
+            {
+                return toDraw;
+            }
+
+            if (Image == null)
+            {
+                return toDraw;
+            }
+
+            toDraw = DwarfGUI.AspectRatioFit(Image.Bounds, toDraw);
+
+            if (ConstrainSize)
+            {
+                toDraw.Width = Math.Min(Image.Bounds.Width, toDraw.Width);
+                toDraw.Height = Math.Min(Image.Bounds.Height, toDraw.Height);
+                toDraw.Width = Math.Max(Image.Width, toDraw.Width);
+                toDraw.Height = Math.Max(Image.Bounds.Height, toDraw.Height);
+            }
+
+            return toDraw;
+        }
+
+        public override void Render(DwarfTime time, SpriteBatch batch)
+        {
+            if (Image != null && Image != null && IsVisible)
+            {
+                Rectangle toDraw = GetImageBounds();
+
+                if (!Highlight)
+                {
+                    batch.Draw(imageFrame, toDraw, imageFrame.Bounds, Tint, 0, Vector2.Zero, SpriteEffects.None, 0);
+                }
+                else
+                {
+                    if (IsMouseOver)
+                    {
+                        batch.Draw(imageFrame, toDraw, imageFrame.Bounds, Color.Orange, 0, Vector2.Zero, SpriteEffects.None, 0);
+                    }
+                    else
+                    {
+                        batch.Draw(imageFrame, toDraw, imageFrame.Bounds, Tint, 0, Vector2.Zero, SpriteEffects.None, 0);
+                    }
+                }
+
+            }
+            base.Render(time, batch);
+        }
+    }
+
 }

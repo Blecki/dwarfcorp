@@ -43,6 +43,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    /*
     [JsonObject(IsReference = true)]
     public class Farm : Room
     {
@@ -170,7 +171,7 @@ namespace DwarfCorp
 
         void farmButton_OnClicked()
         {
-            /*
+            
             List<CreatureAI> minions = PlayState.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)).ToList();
             foreach (CreatureAI creature in minions)
             {
@@ -183,7 +184,7 @@ namespace DwarfCorp
             if (minions.Count == 0)
             {
                 PlayState.GUI.ToolTipManager.Popup("None of the selected units can farm.");
-            }*/
+            }
         }
 
         public override void Destroy()
@@ -195,4 +196,5 @@ namespace DwarfCorp
             base.Destroy();
         }
     }
+     */
 }

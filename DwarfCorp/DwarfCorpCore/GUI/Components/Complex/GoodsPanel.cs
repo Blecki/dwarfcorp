@@ -368,7 +368,8 @@ namespace DwarfCorp
        public float MoneySent { get; set; }
        public List<Resource.ResourceTags> LikedThings { get; set; }
        public List<Resource.ResourceTags> HatedThings { get; set; }
-
+       public List<Resource.ResourceTags> RareThings { get; set; }
+       public List<Resource.ResourceTags> CommonThings { get; set; }
 
         public TradeEvent()
         {
@@ -398,6 +399,16 @@ namespace DwarfCorp
             }
         }
 
+        bool IsCommon(Resource resource)
+        {
+            return CommonThings.Any(tags => resource.Tags.Contains(tags));
+        }
+
+        bool IsRare(Resource resource)
+        {
+            return RareThings.Any(tags => resource.Tags.Contains(tags));
+        }
+
         bool IsLiked(Resource resource)
         {
             return LikedThings.Any(tags => resource.Tags.Contains(tags));
@@ -411,13 +422,13 @@ namespace DwarfCorp
         public float GetPrice(Resource item)
         {
             float price = item.MoneyValue;
-            if (IsLiked(item))
+            if (IsRare(item))
             {
                 price *= 2;
             }
-            else if (IsHated(item))
+            else if (IsCommon(item))
             {
-                price *= 0.1f;
+                price *= 0.5f;
             }
 
             return price;
@@ -572,6 +583,8 @@ namespace DwarfCorp
                     GoodsSent = GoodsSent,
                     LikedThings = TheirGoods.LikedThings,
                     HatedThings = TheirGoods.HatedThings,
+                    RareThings = TheirGoods.RareThings,
+                    CommonThings = TheirGoods.CommonThings,
                     MoneyReceived = TheirTrades.MoneyEdit.CurrentMoney,
                     MoneySent = MyTrades.MoneyEdit.CurrentMoney
                 });
@@ -612,6 +625,8 @@ namespace DwarfCorp
                 GoodsSent = GoodsSent,
                 LikedThings = TheirGoods.LikedThings,
                 HatedThings = TheirGoods.HatedThings,
+                RareThings = TheirGoods.RareThings,
+                CommonThings = TheirGoods.CommonThings,
                 MoneyReceived = TheirTrades.MoneyEdit.CurrentMoney,
                 MoneySent = MyTrades.MoneyEdit.CurrentMoney
             });
@@ -645,7 +660,9 @@ namespace DwarfCorp
                 NoItemsMessage = "Nothing to buy",
                 ToolTip = "Click items to trade for them.",
                 LikedThings = OtherFaction.Race.LikedResources,
-                HatedThings = OtherFaction.Race.HatedResources
+                HatedThings = OtherFaction.Race.HatedResources,
+                RareThings = OtherFaction.Race.RareResources,
+                CommonThings = OtherFaction.Race.CommonResources
             };
             TheirGoods.MoneyEdit.MaxMoney = OtherFaction.TradeMoney;
             TheirGoods.MoneyEdit.CurrentMoney = OtherFaction.TradeMoney;
@@ -668,7 +685,9 @@ namespace DwarfCorp
                 NoItemsMessage = "Nothing",
                 ToolTip = "Click items to cancel the trade",
                 LikedThings = OtherFaction.Race.LikedResources,
-                HatedThings = OtherFaction.Race.HatedResources
+                HatedThings = OtherFaction.Race.HatedResources,
+                RareThings = OtherFaction.Race.RareResources,
+                CommonThings = OtherFaction.Race.CommonResources
             };
             TheirTrades.MoneyEdit.MaxMoney = OtherFaction.TradeMoney;
             TheirTrades.MoneyEdit.CurrentMoney = 0.0f;
@@ -690,7 +709,9 @@ namespace DwarfCorp
                 ToolTip = "Click to cancel trade",
                 PerItemCost = 1.00f,
                 LikedThings = OtherFaction.Race.LikedResources,
-                HatedThings = OtherFaction.Race.HatedResources
+                HatedThings = OtherFaction.Race.HatedResources,
+                RareThings = OtherFaction.Race.RareResources,
+                CommonThings = OtherFaction.Race.CommonResources
             };
             MyTrades.MoneyEdit.MaxMoney = Faction.Economy.CurrentMoney;
             MyTrades.MoneyEdit.CurrentMoney = 0.0f;

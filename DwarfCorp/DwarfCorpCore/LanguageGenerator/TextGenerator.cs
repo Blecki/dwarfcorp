@@ -78,7 +78,7 @@ namespace DwarfCorp
         public static bool IsVowel(char character)
         {
             return character == 'a' || character == 'i' || character == 'e' || character == 'o' || character == 'u' ||
-                   character == 'y';
+                   character == 'y' || character == 'A' || character == 'E' || character == 'I' || character == 'U' || character == 'Y';
         }
 
         public static string IndefiniteArticle(string item)

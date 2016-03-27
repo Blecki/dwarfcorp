@@ -139,6 +139,7 @@ namespace DwarfCorp
 
         public void Render(DwarfTime game, GraphicsDevice graphics)
         {
+            /*
             foreach(Room room in DesignatedRooms)
             {
                 if(room.IsBuilt)
@@ -175,6 +176,7 @@ namespace DwarfCorp
                 Vector3 textLocation = (roomBox.Max - roomBox.Min) / 2.0f + roomBox.Min + new Vector3(0, 2.0f, 0);
                 Drawer2D.DrawTextBox(roomDesignation.GetTextDisplay(), textLocation);
             }
+             */
         }
 
         public void CheckRemovals()
@@ -230,6 +232,11 @@ namespace DwarfCorp
                     continue;
                 }
 
+                if (!v.GetVoxelAbove().IsEmpty)
+                {
+                    continue;
+                }
+
                 if(order == null)
                 {
                     order = GetMostLikelyDesignation(v);
@@ -262,10 +269,51 @@ namespace DwarfCorp
 
             if(order != null)
             {
+                order.CreateFences();
                 TaskManager.AssignTasks(new List<Task>()
                 {
                     new BuildRoomTask(order)
                 }, Faction.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Build));
+            }
+        }
+
+        public void OnVoxelsDragged(List<Voxel> refs, InputManager.MouseButton button)
+        {
+            if (CurrentRoomData == null)
+            {
+                return;
+            }
+
+            if (button == InputManager.MouseButton.Left)
+            {
+                if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
+                {
+                    PlayState.GUI.ToolTipManager.ToolTip = Drawer2D.WrapColor("None of the selected units can build rooms.", Color.Red);
+                }
+                else if (CurrentRoomData.Verify(refs, Faction))
+                {
+                    List<Quantitiy<Resource.ResourceTags>> requirements =
+                        CurrentRoomData.GetRequiredResources(refs.Count, Faction);
+
+                    string tip = "Needs ";
+
+
+                    if (requirements.Count == 0)
+                    {
+                        tip = "";
+                    }
+                    int i = 0;
+                    foreach (var requirement in requirements)
+                    {
+                        i++;
+                        tip += requirement.NumResources.ToString();
+                        tip += " ";
+                        tip += requirement.ResourceType;
+                        tip += "\n";
+                    }
+
+                    PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor(tip + "Release to build here.", Color.Green));
+                }
             }
         }
 
@@ -280,7 +328,7 @@ namespace DwarfCorp
             {
                 if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                 {
-                    PlayState.GUI.ToolTipManager.Popup("None of the selected units can build rooms.");
+                    PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("None of the selected units can build rooms.", Color.Red));
                 }
                 else if (CurrentRoomData.Verify(refs, Faction))
                 {
@@ -313,7 +361,7 @@ namespace DwarfCorp
                     }
 
                     Dialog destroyDialog = Dialog.Popup(PlayState.GUI, "Destroy room?",
-                        "Do you want to destroy this " + existingRoom.RoomData.Name + "?", Dialog.ButtonType.OkAndCancel);
+                        "Do you want to destroy this " + Drawer2D.WrapColor(existingRoom.RoomData.Name, Color.DarkRed) + "?", Dialog.ButtonType.OkAndCancel);
                     destroyDialog.OnClosed += (status) => destroyDialog_OnClosed(status, existingRoom);
                     break;
                 }

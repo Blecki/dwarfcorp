@@ -32,11 +32,13 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using DwarfCorp.DwarfCorp;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -152,7 +154,7 @@ namespace DwarfCorp
 
         public CreatureAI()
         {
-            Movement = new CreatureMovement();
+            Movement = new CreatureMovement(this.Creature);
         }
 
         public CreatureAI(Creature creature,
@@ -161,7 +163,7 @@ namespace DwarfCorp
             PlanService planService) :
                 base(name, creature.Physics)
         {
-            Movement = new CreatureMovement();
+            Movement = new CreatureMovement(creature);
             GatherManager = new GatherManager(this);
             Blackboard = new Blackboard();
             Creature = creature;
@@ -279,6 +281,8 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            if (!IsActive) return;
+
             IdleTimer.Update(gameTime);
             SpeakTimer.Update(gameTime);
 
@@ -344,7 +348,7 @@ namespace DwarfCorp
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
                         if (Creature.Allies == "Dwarf")
                         {
-                            PlayState.AnnouncementManager.Announce(Stats.FullName +  " (" + Stats.CurrentLevel.Name + ")" + " refuses to work!", 
+                            PlayState.AnnouncementManager.Announce(Stats.FullName +  " (" + Stats.CurrentLevel.Name + ")" + Drawer2D.WrapColor(" refuses to work!", Color.DarkRed), 
                                 "Our employee is unhappy, and would rather not work!", ZoomToMe);
                         }
                         CurrentTask = null;
@@ -388,9 +392,6 @@ namespace DwarfCorp
         {
             if(GatherManager.VoxelOrders.Count == 0 && (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()))
             {
-                // This is what to do when the unit has not been given any explicit orders.
-                List<Room> rooms = Faction.GetRooms();
-
                 // Find a room to train in
                 if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.01f))
                 {
@@ -415,7 +416,8 @@ namespace DwarfCorp
                         Priority = Task.PriorityType.Eventually
                     };
                 }
-                else return null;
+                Physics.Velocity *= 0.0f;
+                return null;
             }
             // If we have no more build orders, look for gather orders
             else if (GatherManager.VoxelOrders.Count == 0)
@@ -501,6 +503,97 @@ namespace DwarfCorp
             IndicatorManager.DrawIndicator(prefix + thought.HappinessModifier + " " + postfix, Position + Vector3.Up + MathFunctions.RandVector3Cube() *0.5f, 1.0f, textColor);
         }
 
+        public class LeaveWorldTask : Task
+        {
+
+            public IEnumerable<Act.Status> GreedyFallbackBehavior(Creature agent)
+            {
+                EdgeGoalRegion edgeGoal = new EdgeGoalRegion();
+
+                while (true)
+                {
+                    Voxel creatureVoxel = agent.Physics.CurrentVoxel;
+
+                    if (edgeGoal.IsInGoalRegion(creatureVoxel))
+                    {
+                        yield return Act.Status.Success;
+                        yield break;
+                    }
+
+                    List<Creature.MoveAction> actions = agent.AI.Movement.GetMoveActions(creatureVoxel);
+
+                    float minCost = float.MaxValue;
+                    Creature.MoveAction minAction = new Creature.MoveAction();
+                    bool hasMinAction = false;
+                    foreach (Creature.MoveAction action in actions)
+                    {
+                        Voxel vox = action.Voxel;
+
+                        float cost = edgeGoal.Heuristic(vox) + MathFunctions.Rand(0.0f, 5.0f);
+
+                        if (cost < minCost)
+                        {
+                            minAction = action;
+                            minCost = cost;
+                            hasMinAction = true;
+                        }
+                    }
+
+                    if (hasMinAction)
+                    {
+                        Creature.MoveAction nullAction = new Creature.MoveAction()
+                        {
+                            Diff = minAction.Diff,
+                            MoveType = Creature.MoveType.Walk,
+                            Voxel = creatureVoxel
+                        };
+
+                        agent.AI.Blackboard.SetData("GreedyPath", new List<Creature.MoveAction>(){nullAction, minAction});
+                        FollowPathAnimationAct pathAct = new FollowPathAnimationAct(agent.AI, "GreedyPath");
+                        pathAct.Initialize();
+
+                        foreach (Act.Status status in pathAct.Run())
+                        {
+                            yield return Act.Status.Running;
+                        }
+                    }
+
+                    yield return Act.Status.Running;
+                }
+            }
+
+            public override Act CreateScript(Creature agent)
+            {
+                return new Select(
+                    new GoToVoxelAct("", PlanAct.PlanType.Edge, agent.AI),
+                    new Wrap(() => GreedyFallbackBehavior(agent))
+                );
+            }
+
+            public override Task Clone()
+            {
+                return new LeaveWorldTask();
+            }
+        }
+
+        public void Kill(Body entity)
+        {
+            KillEntityTask killTask = new KillEntityTask(entity, KillEntityTask.KillType.Auto);
+            if (!Tasks.Contains(killTask))
+                Tasks.Add(killTask);
+        }
+
+        public void LeaveWorld()
+        {
+            Task leaveTask = new LeaveWorldTask()
+            {
+                Priority = Task.PriorityType.Urgent,
+                AutoRetry = true,
+                Name = "Leave the world."
+            };
+            Tasks.Add(leaveTask);
+        }
+
         public void UpdateThoughts()
         {
             Thoughts.RemoveAll(thought => thought.IsOver(PlayState.Time.CurrentDate));
@@ -554,8 +647,8 @@ namespace DwarfCorp
 
                     if (Faction == PlayState.PlayerFaction)
                     {
-                        PlayState.AnnouncementManager.Announce(Stats.FullName + " is fighting " + TextGenerator.IndefiniteArticle(enemy.Creature.Name), 
-                            Stats.FullName + " the " + Stats.CurrentLevel.Name + " is fighting a " + enemy.Stats.CurrentLevel.Name + " " + enemy.Faction.Race.Name, 
+                        PlayState.AnnouncementManager.Announce(Stats.FullName + Drawer2D.WrapColor(" is fighting ", Color.DarkRed) + TextGenerator.IndefiniteArticle(enemy.Creature.Name),
+                            Stats.FullName + " the " + Stats.CurrentLevel.Name + " is fighting " + TextGenerator.IndefiniteArticle(enemy.Stats.CurrentLevel.Name) + " " + enemy.Faction.Race.Name, 
                             ZoomToMe);
                     }
                 }
@@ -595,8 +688,11 @@ namespace DwarfCorp
         public bool CanFly { get; set; }
         public bool CanSwim { get; set; }
         public bool CanClimb { get; set; }
-        public CreatureMovement()
+        public Creature Creature { get; set; }
+
+        public CreatureMovement(Creature creature)
         {
+            Creature = creature;
             CanFly = false;
             CanSwim = true;
             CanClimb = true;
@@ -684,34 +780,100 @@ namespace DwarfCorp
             List<Creature.MoveAction> successors = new List<Creature.MoveAction>();
 
             //Climbing ladders
-            List<IBoundedObject> bodiesInside =
+            IEnumerable<IBoundedObject> objectsInside =
                 objectHash.Hashes[CollisionManager.CollisionType.Static].GetItems(
                     new Point3(MathFunctions.FloorInt(voxel.Position.X),
                         MathFunctions.FloorInt(voxel.Position.Y),
                         MathFunctions.FloorInt(voxel.Position.Z)));
-            if (CanClimb && bodiesInside != null)
-            {
-                bool hasLadder =
-                    bodiesInside.OfType<GameComponent>()
-                        .Any(component => component.Tags.Contains("Climbable"));
-                if (hasLadder) 
-                {
-                    successors.Add(new Creature.MoveAction()
-                    {
-                        Diff = new Vector3(1, 2, 1),
-                        MoveType = Creature.MoveType.Climb
-                    });
 
-                    if (!standingOnGround)
+            bool blockedByObject = false;
+            if (objectsInside != null)
+            {
+                var bodies = objectsInside.OfType<GameComponent>();
+                var enumerable = bodies as IList<GameComponent> ?? bodies.ToList();
+                // TODO: This is supposed to be done when the door is a NEIGHBOR of this voxel only!!
+                foreach (GameComponent body in enumerable)
+                {
+                    Door door = body.GetRootComponent().GetChildrenOfType<Door>(true).FirstOrDefault();
+
+                    if (door != null)
+                    {
+                        if (
+                            PlayState.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction).GetCurrentRelationship() ==
+                            Relationship.Hateful)
+                        {
+
+                            if (IsEmpty(neighborHood[0, 1, 1]))
+                                // +- x
+                                successors.Add(new Creature.MoveAction()
+                                {
+                                    Diff = new Vector3(0, 1, 1),
+                                    MoveType = Creature.MoveType.DestroyObject,
+                                    InteractObject = door,
+                                    Voxel = neighborHood[0, 1, 1]
+                                });
+
+                            if (IsEmpty(neighborHood[2, 1, 1]))
+                                successors.Add(new Creature.MoveAction()
+                                {
+                                    Diff = new Vector3(2, 1, 1),
+                                    MoveType = Creature.MoveType.DestroyObject,
+                                    InteractObject = door,
+                                    Voxel = neighborHood[2, 1, 1]
+                                });
+
+                            if (IsEmpty(neighborHood[1, 1, 0]))
+                                // +- z
+                                successors.Add(new Creature.MoveAction()
+                                {
+                                    Diff = new Vector3(1, 1, 0),
+                                    MoveType = Creature.MoveType.DestroyObject,
+                                    InteractObject = door,
+                                    Voxel = neighborHood[1, 1, 0]
+                                });
+
+                            if (IsEmpty(neighborHood[1, 1, 2]))
+                                successors.Add(new Creature.MoveAction()
+                                {
+                                    Diff = new Vector3(1, 1, 2),
+                                    MoveType = Creature.MoveType.DestroyObject,
+                                    InteractObject = door,
+                                    Voxel = neighborHood[1, 1, 2]
+                                });
+
+
+                            blockedByObject = true;
+                        }
+                    }
+                }
+
+                if (blockedByObject)
+                {
+                    return successors;
+                }
+
+                if (CanClimb)
+                {
+                    bool hasLadder = enumerable.Any(component => component.Tags.Contains("Climbable"));
+                    if (hasLadder)
                     {
                         successors.Add(new Creature.MoveAction()
                         {
-                            Diff = new Vector3(1, 0, 1),
+                            Diff = new Vector3(1, 2, 1),
                             MoveType = Creature.MoveType.Climb
                         });
-                    }
 
-                    standingOnGround = true;
+                        if (!standingOnGround)
+                        {
+                            successors.Add(new Creature.MoveAction()
+                            {
+                                Diff = new Vector3(1, 0, 1),
+                                MoveType = Creature.MoveType.Climb
+                            });
+                        }
+
+                        standingOnGround = true;
+                    }
                 }
             }
 

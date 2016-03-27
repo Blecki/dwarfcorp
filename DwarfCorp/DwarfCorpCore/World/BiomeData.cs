@@ -62,7 +62,7 @@ namespace DwarfCorp
         public float ClumpSize { get; set; }
         public float ClumpTreshold { get; set; }
         public Color MapColor { get; set; }
-
+        public bool Underground { get; set; }
         public float Height { get; set; }
         public float Temp { get; set; }
         public float Rain { get; set; }
@@ -77,6 +77,7 @@ namespace DwarfCorp
             ClumpSize = 30.0f;
             ClumpTreshold = 0.75f;
             MapColor = Color.White;
+            Underground = false;
         }
     }
 

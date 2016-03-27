@@ -41,6 +41,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    /*
     [JsonObject(IsReference = true)]
     public class WheatFarm : Farm
     {
@@ -124,4 +125,5 @@ namespace DwarfCorp
             base.Destroy();
         }
     }
+     */
 }

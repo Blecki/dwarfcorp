@@ -50,7 +50,7 @@ namespace DwarfCorp
         public Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> PutResources { get; set; }
         public List<BuildVoxelOrder> VoxelOrders { get; set; }
         public Faction Faction { get; set; }
-
+        public List<GameComponent> WorkObjects = new List<GameComponent>(); 
         public bool IsBuilt { get; set; }
 
         public BuildRoomOrder(Room toBuild, Faction faction)
@@ -62,6 +62,44 @@ namespace DwarfCorp
             Faction = faction;
         }
 
+
+        public void CreateFences()
+        {
+            Voxel neighbor = new Voxel();
+
+            Vector3 half = Vector3.One*0.5f;
+            Vector3 off = half + Vector3.Up;
+            foreach (BuildVoxelOrder order in VoxelOrders)
+            {
+                Voxel voxel = order.Voxel;
+                if (voxel.GetNeighbor(new Vector3(0, 0, 1), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
+                {
+                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(0, 0, 0.45f), (float)Math.Atan2(0, 1)));
+                }
+
+                if (voxel.GetNeighbor(new Vector3(0, 0, -1), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
+                {
+                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(0, 0, -0.45f), (float)Math.Atan2(0, -1)));
+                }
+
+
+                if (voxel.GetNeighbor(new Vector3(1, 0, 0), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
+                {
+                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(0.45f, 0, 0.0f), (float)Math.Atan2(1, 0)));
+                }
+
+
+                if (voxel.GetNeighbor(new Vector3(-1, 0, 0), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
+                {
+                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(-0.45f, 0, 0.0f), (float)Math.Atan2(-1, 0)));
+                }
+
+                if (MathFunctions.RandEvent(0.1f))
+                {
+                    WorkObjects.Add(new WorkPile(voxel.Position + off));
+                }
+            }
+        }
 
         public void AddResources(List<Quantitiy<Resource.ResourceTags>> resources)
         {
@@ -124,6 +162,11 @@ namespace DwarfCorp
             ToBuild.OnBuilt();
 
             PlayState.AnnouncementManager.Announce("Built room!", ToBuild.ID + " was built");
+
+            foreach (GameComponent fence in WorkObjects)
+            {
+                fence.Die();
+            }
         }
 
         public BoundingBox GetBoundingBox()

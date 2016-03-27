@@ -71,6 +71,22 @@ namespace DwarfCorp
             Description = "";
         }
 
+        public List<Quantitiy<Resource.ResourceTags> > GetRequiredResources(int numVoxels, Faction faction)
+        {
+            List<Quantitiy<Resource.ResourceTags> > toReturn = new List<Quantitiy<Resource.ResourceTags>>();
+            foreach (var resources in RequiredResources)
+            {
+                Quantitiy<Resource.ResourceTags> required = new Quantitiy<Resource.ResourceTags>(resources.Value)
+                {
+                    NumResources = (int)(numVoxels * resources.Value.NumResources * 0.25f)
+                };
+
+                toReturn.Add(required);
+            }
+
+            return toReturn;
+        }
+
         public bool HasAvailableResources(int numVoxels, Faction faction)
         {
             foreach (var resources in RequiredResources)
@@ -79,6 +95,7 @@ namespace DwarfCorp
                 {
                     NumResources = (int) (numVoxels*resources.Value.NumResources*0.25f)
                 };
+
                 if (!faction.HasResources(new List<Quantitiy<Resource.ResourceTags>>() { required }))
                 {
                     return false;
@@ -108,13 +125,13 @@ namespace DwarfCorp
 
             if (maxExtents < MinimumSideLength || minExtents < MinimumSideWidth)
             {
-                PlayState.GUI.ToolTipManager.Popup("Room is too small (minimum is " + MinimumSideLength + " x " + MinimumSideWidth +")!");
+                PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Room is too small", Color.Red) + " (minimum is " + MinimumSideLength + " x " + MinimumSideWidth +")!");
                 return false;
             }
 
             if (!HasAvailableResources(refs.Count, faction))
             {
-                PlayState.GUI.ToolTipManager.Popup("Not enough resources for this room.");
+                PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Not enough resources for this room.", Color.Red));
                 return false;
             }
 
@@ -131,7 +148,7 @@ namespace DwarfCorp
                 }
                 else if (height != (int) voxel.GridPosition.Y && !CanBuildOnMultipleLevels)
                 {
-                    PlayState.GUI.ToolTipManager.Popup("Room must be on flat ground!");
+                    PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Room must be on flat ground!", Color.Red));
                     return false;
                 }
 
@@ -139,7 +156,7 @@ namespace DwarfCorp
                 {
                     if (!voxel.Type.IsSoil)
                     {
-                        PlayState.GUI.ToolTipManager.Popup("Room must be built on soil!");
+                        PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Room must be built on soil!", Color.Red));
                         return false;
                     }
                 }
@@ -148,14 +165,14 @@ namespace DwarfCorp
                 {
                     if (voxel.Chunk.Data.SunColors[voxel.Index] <= 5) continue;
 
-                    PlayState.GUI.ToolTipManager.Popup("Room can't be built aboveground!");
+                    PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Room can't be built aboveground!", Color.Red));
                     return false;
                 } 
                 else if (!CanBuildBelowGround)
                 {
                     if (voxel.Chunk.Data.SunColors[voxel.Index] >= 5) continue;
 
-                    PlayState.GUI.ToolTipManager.Popup("Room can't be built belowground!");
+                    PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Room can't be built belowground!", Color.Red));
                     return false;
                 }
 

@@ -486,6 +486,7 @@ namespace DwarfCorp
             Voxel v = chunk.MakeVoxel(0, 0, 0);
             Voxel voxelOnFace = chunk.MakeVoxel(0, 0, 0);
             Voxel[] manhattanNeighbors = new Voxel[4];
+            BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
             for(int x = 0; x < chunk.SizeX; x++)
             {
                 for(int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY); y++)
@@ -501,15 +502,16 @@ namespace DwarfCorp
                         }
 
                         BoxPrimitive primitive = VoxelLibrary.GetPrimitive(v.Type);
-                        Color tint = v.Type.Tint;
                         if (v.IsExplored && primitive == null) continue;
-                        else if (!v.IsExplored)
+                        if (!v.IsExplored)
                         {
-                            primitive = VoxelLibrary.GetPrimitive("Bedrock");
+                            primitive = bedrockModel;
                         }
+
+                        Color tint = v.Type.Tint;
                         BoxPrimitive.BoxTextureCoords uvs = primitive.UVs;
 
-                        if (v.Type.HasTransitionTextures)
+                        if (v.Type.HasTransitionTextures && v.IsExplored)
                         {
                             uvs = v.ComputeTransitionTexture(manhattanNeighbors);
                         }
@@ -526,13 +528,15 @@ namespace DwarfCorp
                             if(faceExists[face])
                             {
                                 voxelOnFace.GridPosition = new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
-                                drawFace[face] =  voxelOnFace.IsEmpty || !voxelOnFace.IsVisible || (voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && IsSideFace(face) && ShouldDrawFace(face, voxelOnFace.RampType, v.RampType));
+                                drawFace[face] =  (voxelOnFace.IsExplored && voxelOnFace.IsEmpty) || !voxelOnFace.IsVisible || 
+                                    (voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && IsSideFace(face) && 
+                                    ShouldDrawFace(face, voxelOnFace.RampType, v.RampType));
 
                             }
                             else
                             {
                                 bool success = chunk.Manager.ChunkData.GetNonNullVoxelAtWorldLocation(new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z) + chunk.Origin, ref worldVoxel);
-                                    drawFace[face] = !success || worldVoxel.IsEmpty || !worldVoxel.IsVisible ||
+                                    drawFace[face] = !success || (worldVoxel.IsExplored && worldVoxel.IsEmpty) || !worldVoxel.IsVisible ||
                                                      (worldVoxel.Type.CanRamp && worldVoxel.RampType != RampType.None &&
                                                       IsSideFace(face) &&
                                                       ShouldDrawFace(face, worldVoxel.RampType, v.RampType));
@@ -558,7 +562,7 @@ namespace DwarfCorp
                             for (int vertOffset = 0; vertOffset < vertexCount; vertOffset++)
                             {
                                 ExtendedVertex vert = primitive.Vertices[vertOffset + vertexIndex];
-                                VoxelVertex bestKey = VoxelChunk.GetNearestDelta(vert.Position);
+                                VoxelVertex bestKey = primitive.Deltas[vertOffset + vertexIndex];
                                 Color color = v.Chunk.Data.GetColor(x, y, z, bestKey);
                                 Vector3 offset = Vector3.Zero;
                                 Vector2 texOffset = Vector2.Zero;
@@ -590,12 +594,13 @@ namespace DwarfCorp
                 }
             }
 
-
-            Vertices = new ExtendedVertex[accumulatedVertices.Count];
-            accumulatedVertices.CopyTo(Vertices);
-            IndexBuffer = new IndexBuffer(graphics, typeof(short), accumulatedIndices.Count, BufferUsage.WriteOnly);
-            IndexBuffer.SetData(accumulatedIndices.ToArray());
-
+            if (accumulatedIndices.Count > 0 && accumulatedIndices.Count > 0)
+            {
+                Vertices = new ExtendedVertex[accumulatedVertices.Count];
+                accumulatedVertices.CopyTo(Vertices);
+                IndexBuffer = new IndexBuffer(graphics, typeof (short), accumulatedIndices.Count, BufferUsage.WriteOnly);
+                IndexBuffer.SetData(accumulatedIndices.ToArray());
+            }
             ResetBuffer(graphics);
             isRebuilding = false;
 

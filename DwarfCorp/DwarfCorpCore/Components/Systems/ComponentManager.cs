@@ -107,6 +107,10 @@ namespace DwarfCorp
                 Factions.AddFactions(natives);
             }
             Factions.Initialize(state, companyName, companyMotto, companyLogo, companyColor);
+            Point playerOrigin = new Point((int)(PlayState.WorldOrigin.X), (int)(PlayState.WorldOrigin.Y));
+
+            Factions.Factions["Player"].Center = playerOrigin;
+            Factions.Factions["Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
         }
 
         #region picking

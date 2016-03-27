@@ -66,9 +66,10 @@ namespace DwarfCorp
         public float VeinLength { get; set; }
         public Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords> TransitionTextures { get; set; }
         public bool IsSoil { get; set; }
+        public bool IsSurface { get; set; }
         public bool IsInvincible { get; set; }
         public Color Tint { get; set; }
-        public bool SpawnInSoil { get; set; }
+        public bool SpawnOnSurface { get; set; }
         private static short maxID = 0;
 
         public static List<VoxelType> TypeList = new List<VoxelType>();
@@ -93,7 +94,7 @@ namespace DwarfCorp
             IsSoil = parent.IsSoil;
             EmitsLight = parent.EmitsLight;
             Tint = parent.Tint;
-          
+            IsSurface = parent.IsSurface;
             if (!TypeList.Contains(this))
             {
                 TypeList.Add(this);
@@ -107,7 +108,7 @@ namespace DwarfCorp
             SpawnClusters = false;
             SpawnVeins = false;
             Rarity = 1.0f;
-            SpawnInSoil = false;
+            SpawnOnSurface = false;
         }
 
         public VoxelType()
@@ -115,6 +116,7 @@ namespace DwarfCorp
             ID = maxID;
             maxID++;
             Name = "";
+            IsSurface = false;
             ReleasesResource = false;
             ResourceToRelease = ResourceLibrary.ResourceType.Dirt;
             StartingHealth = 0.0f;
@@ -142,7 +144,7 @@ namespace DwarfCorp
             SpawnClusters = false;
             SpawnVeins = false;
             Rarity = 1.0f;
-            SpawnInSoil = false;
+            SpawnOnSurface = false;
         }
     }
 

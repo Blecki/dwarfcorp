@@ -137,6 +137,8 @@ namespace DwarfCorp
                    
                     if (nextVoxel.IsExplored) continue;
 
+                    nextVoxel.Chunk.NotifyExplored(new Point3(nextVoxel.GridPosition));
+
                     if (!nextVoxel.IsEmpty)
                     {
                         if (!nextVoxel.IsExplored)
@@ -164,6 +166,8 @@ namespace DwarfCorp
 
                 if (!chunk.ShouldRebuild)
                 {
+                    chunk.ShouldRecalculateLighting = true;
+                    chunk.ShouldRebuildWater = true;
                     chunk.ShouldRebuild = true;
                 }
             }
@@ -233,6 +237,25 @@ namespace DwarfCorp
 
             return vox;
         }
+
+        public bool CheckRaySolid(Vector3 rayStart, Vector3 rayEnd)
+        {
+            Voxel atPos = new Voxel();
+            foreach (Point3 coord in MathFunctions.RasterizeLine(rayStart, rayEnd))
+            {
+                Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
+
+                bool success = GetNonNullVoxelAtWorldLocationCheckFirst(null, pos, ref atPos);
+
+                if (success && !atPos.IsEmpty)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
 
         public bool CheckOcclusionRay(Vector3 rayStart, Vector3 rayEnd)
         {
@@ -592,7 +615,7 @@ namespace DwarfCorp
                     fileName += ".jch";
                 }
 
-                if(!chunkFile.WriteFile(fileName, compress))
+                if(!chunkFile.WriteFile(fileName, compress, true))
                 {
                     return false;
                 }

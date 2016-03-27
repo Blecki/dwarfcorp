@@ -90,6 +90,8 @@ namespace DwarfCorp
                 {
 
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
+                    Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
+                    Creature.Sprite.PlayAnimations(Creature.CharacterMode.Attacking);
                     Creature.Physics.Velocity *= 0.1f;
                     tile.Progress += Creature.Stats.BaseFarmSpeed;
 
@@ -116,13 +118,14 @@ namespace DwarfCorp
                 Creature.AI.AddThought(Thought.ThoughtType.Farmed);
                 Creature.AI.AddXP(10);
                 tile.Farmer = null;
+                Creature.Sprite.PauseAnimations(Creature.CharacterMode.Attacking);
                 yield return Status.Success;
             }
         }
 
         public override void OnCanceled()
         {
-            Farm.FarmTile tile = Creature.AI.Blackboard.GetData<Farm.FarmTile>("ClosestTile");
+            FarmTool.FarmTile tile = Creature.AI.Blackboard.GetData<FarmTool.FarmTile>("ClosestTile");
 
             if (tile != null)
             {

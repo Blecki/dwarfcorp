@@ -124,5 +124,10 @@ namespace DwarfCorp
         {
             
         }
+
+        public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
+        {
+            Player.Faction.RoomBuilder.OnVoxelsDragged(voxels, button);
+        }
     }
 }

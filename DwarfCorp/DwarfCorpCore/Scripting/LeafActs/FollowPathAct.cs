@@ -87,7 +87,6 @@ namespace DwarfCorp
         /// A creature moves along a planned path until the path is completed, or
         /// it detects failure.
         /// </summary>
-        /// TODO: do this correctly. Time the entire trajectory and index by time rather than having an incremental timer switching between points.
         [Newtonsoft.Json.JsonObject(IsReference = true)]
         public class FollowPathAnimationAct : CreatureAct
         {
@@ -177,6 +176,9 @@ namespace DwarfCorp
                         case Creature.MoveType.Fly:
                             return unitTime*diffNorm*0.6f;
                             break;
+                        case Creature.MoveType.DestroyObject:
+                            return unitTime * diffNorm;
+                            break;
                     }
 
                 }
@@ -239,7 +241,7 @@ namespace DwarfCorp
             {
                 float currentTime = Easing.LinearQuadBlends(TrajectoryTimer.CurrentTimeSeconds,
                     TrajectoryTimer.TargetTimeSeconds, 0.5f);
-                float sumTime = 0.0f;
+                float sumTime = 0.001f;
                 for (int i = 0; i < ActionTimes.Count; i++)
                 {
                     sumTime += ActionTimes[i];
@@ -255,14 +257,14 @@ namespace DwarfCorp
                 return false;
             }
 
-            public void PerformCurrentAction()
+            public IEnumerable<Status> PerformCurrentAction()
             {
                 Creature.MoveAction action = Path.First();
                 float t = 0;
                 int currentIndex = 0;
                 if (!GetCurrentAction(ref action, ref t, ref currentIndex))
                 {
-                    return;
+                    yield break;
                 }
 
                 int nextID = currentIndex + 1;
@@ -367,9 +369,45 @@ namespace DwarfCorp
                             transform.Translation = currPosition;
                         }
                         break;
+                    case Creature.MoveType.DestroyObject:
+
+                        if (action.InteractObject.IsDead)
+                        {
+                            Creature.OverrideCharacterMode = false;
+                            Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                            if (hasNextAction)
+                            {
+                                transform.Translation = diff * t + currPosition;
+                                Agent.Physics.Velocity = diff;
+                            }
+                            else
+                            {
+                                transform.Translation = currPosition;
+                            }
+                            break;
+                        }
+                        else
+                        {
+                            float current = (TrajectoryTimer.CurrentTimeSeconds);
+                            Matrix transformMatrix = Agent.Physics.LocalTransform;
+                            MeleeAct act = new MeleeAct(Creature.AI, action.InteractObject.GetRootComponent().GetChildrenOfType<Body>(true).FirstOrDefault());
+                            act.Initialize();
+
+                            foreach (Act.Status status in act.Run())
+                            {
+                                Agent.Physics.LocalTransform = transformMatrix;
+                                TrajectoryTimer.StartTimeSeconds = (float)DwarfTime.LastTime.TotalGameTime.TotalSeconds -
+                                                                   current;
+                                yield return status;
+                            }
+                            
+   
+                        }
+                        break;
                 }
                 
                 Agent.Physics.LocalTransform = transform;
+                yield break;
             }
 
             public override IEnumerable<Status> Run()
@@ -379,8 +417,19 @@ namespace DwarfCorp
                 while (!TrajectoryTimer.HasTriggered)
                 {
                     TrajectoryTimer.Update(DwarfTime.LastTime);
-                  
-                    PerformCurrentAction();
+
+                    foreach (Act.Status status in PerformCurrentAction())
+                    {
+                        if (status == Status.Fail)
+                        {
+                            yield return Act.Status.Fail;
+                        }
+                        else if (status == Status.Success)
+                        {
+                            break;
+                        }
+                        yield return Act.Status.Running;
+                    }
 
                     if (Agent.DrawPath)
                     {

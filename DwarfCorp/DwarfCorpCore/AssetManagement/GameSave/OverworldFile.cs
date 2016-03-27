@@ -42,9 +42,10 @@ using System.IO.Compression;
 
 namespace DwarfCorp
 {
-
+    [Serializable]
     public class OverworldFile
     {
+        [Serializable]
         public class OverworldData
         {
             public string Name { get; set; }
@@ -57,8 +58,7 @@ namespace DwarfCorp
             public int[,] Water { get; set; }
             public float[,] Weathering { get; set; }
 
-            [Newtonsoft.Json.JsonIgnore]
-            public Texture2D Screenshot { get; set; }
+            [Newtonsoft.Json.JsonIgnore] [NonSerialized] public Texture2D Screenshot;
 
             public Overworld.MapData[,] CreateMap()
             {
@@ -152,9 +152,9 @@ namespace DwarfCorp
             Data = new OverworldData(map, name);
         }
 
-        public OverworldFile(string fileName, bool isCompressed)
+        public OverworldFile(string fileName, bool isCompressed, bool isBinary)
         {
-            ReadFile(fileName, isCompressed);
+            ReadFile(fileName, isCompressed, isBinary);
         }
 
 
@@ -163,18 +163,35 @@ namespace DwarfCorp
             Data = file.Data;
         }
 
-        public  bool ReadFile(string filePath, bool isCompressed)
+        public  bool ReadFile(string filePath, bool isCompressed, bool isBinary)
         {
-            OverworldFile file = FileUtils.LoadJson<OverworldFile>(filePath, isCompressed);
-
-            if(file == null)
+            if (!isBinary)
             {
-                return false;
+                OverworldFile file = FileUtils.LoadJson<OverworldFile>(filePath, isCompressed);
+
+                if (file == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    CopyFrom(file);
+                    return true;
+                }
             }
             else
             {
-                CopyFrom(file);
-                return true;
+                OverworldFile file = FileUtils.LoadBinary<OverworldFile>(filePath);
+
+                if (file == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    CopyFrom(file);
+                    return true;
+                }
             }
         }
 
@@ -183,10 +200,14 @@ namespace DwarfCorp
             Data.Screenshot.SaveAsPng(new System.IO.FileStream(filename, System.IO.FileMode.Create), Data.Screenshot.Width, Data.Screenshot.Height);
         }
 
-        public bool WriteFile(string filePath, bool compress)
+        public bool WriteFile(string filePath, bool compress, bool binary)
         {
-
-            return FileUtils.SaveJSon<OverworldFile>(this, filePath, compress);
+            if (!binary)
+                return FileUtils.SaveJSon<OverworldFile>(this, filePath, compress);
+            else
+            {
+                return FileUtils.SaveBinary<OverworldFile>(this, filePath);
+            }
         }
     }
 

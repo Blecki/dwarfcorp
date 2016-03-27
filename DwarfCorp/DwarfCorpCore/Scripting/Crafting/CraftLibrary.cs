@@ -71,7 +71,8 @@ namespace DwarfCorp
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 4)
                         },
                         Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.DwarfObjects.beartrap), 32, 0, 0),
-                        BaseCraftTime = 20
+                        BaseCraftTime = 20,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround}
                     }
                 },
                 {
@@ -85,7 +86,8 @@ namespace DwarfCorp
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Fuel, 1)
                         },
                         Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 0, 1),
-                        BaseCraftTime = 10
+                        BaseCraftTime = 10,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround}
                     }
                 },
                 {
@@ -99,7 +101,8 @@ namespace DwarfCorp
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 1)
                         },
                         Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 2, 0),
-                        BaseCraftTime = 10
+                        BaseCraftTime = 10,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
                     }
                 },
                 {
@@ -107,13 +110,14 @@ namespace DwarfCorp
                     new CraftItem()
                     {
                         Name = "Door",
-                        Description = "Keep monsters out, and dwarves in. (Note: Does nothing right now)",
+                        Description = "Keep monsters out, and dwarves in.",
                         RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
                         {
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 1)
                         },
                         Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 3, 1),
-                        BaseCraftTime = 10
+                        BaseCraftTime = 10,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
                     }
                 },
                 {
@@ -199,6 +203,22 @@ namespace DwarfCorp
                         Type = CraftItem.CraftType.Resource,
                         ResourceCreated = "Ale",
                         CraftLocation = "Barrel"
+                    }
+                },
+                {
+                    "Turret",
+                    new CraftItem()
+                    {
+                        Name = "Turret",
+                        Description = "Crossbow automatically targets enemies with magical power.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 2),
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Magical, 1),
+                        },
+                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 1, 7),
+                        BaseCraftTime = 30,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround}
                     }
                 }
             };

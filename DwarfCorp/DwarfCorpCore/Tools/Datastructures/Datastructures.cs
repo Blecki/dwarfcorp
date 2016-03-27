@@ -62,7 +62,46 @@ namespace DwarfCorp
 
             try
             {
-                extents = font.MeasureString(text);
+                if (text.Contains("[color:"))
+                {
+                    // how far in x to offset from position
+                    int currentOffset = 0;
+                    int maxY = 0;
+                    string[] splits = text.Split(new string[] { "[color:" }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var str in splits)
+                    {
+                        // if this section starts with a color
+                        if (str.StartsWith("#"))
+                        {
+                            // any subsequent msgs after the [/color] tag are defaultColor
+                            string[] msgs = str.Substring(10).Split(new string[] { "[/color]" }, StringSplitOptions.RemoveEmptyEntries);
+                            Vector2 measure = font.MeasureString(msgs[0]);
+                            //
+                            currentOffset += (int)measure.X;
+                            maxY = Math.Max((int)measure.Y, maxY);
+                            // there should only ever be one other string or none
+                            if (msgs.Length == 2)
+                            {
+                                Vector2 measure1 = font.MeasureString(msgs[1]);
+                                currentOffset += (int)measure1.X;
+                                maxY = Math.Max((int)measure1.Y, maxY);
+                            }
+                        }
+                        else
+                        {
+                            Vector2 measure2 = font.MeasureString(str);
+                            currentOffset += (int)measure2.X;
+                            maxY = Math.Max((int)measure2.Y, maxY);
+                        }
+                    }
+
+                    extents.X = currentOffset;
+                    extents.Y = maxY;
+                }
+                else
+                {
+                    extents = font.MeasureString(text);
+                }
             }
             catch(ArgumentException e)
             {

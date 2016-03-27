@@ -108,11 +108,11 @@ namespace DwarfCorp
 
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
 
-            if(unProjectSun.Z > 0 && cameraFrameSun.Z > 0)
+            if(unProjectSun.Z < 0.999f && cameraFrameSun.Z < 0.999f)
             {
                 DwarfGame.SpriteBatch.Draw(SunTexture, new Vector2(unProjectSun.X - SunTexture.Width / 2 * scale, unProjectSun.Y - SunTexture.Height / 2 * scale), null, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
             }
-            if(unProjectMoon.Z > 0 && cameraFramMoon.Z > 0)
+            if(unProjectMoon.Z < 0.999f && cameraFramMoon.Z < 0.999f)
             {
                 DwarfGame.SpriteBatch.Draw(MoonTexture, new Vector2(unProjectMoon.X - SunTexture.Width / 2 * scale, unProjectMoon.Y - SunTexture.Height / 2 * scale), null, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
             }

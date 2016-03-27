@@ -50,12 +50,13 @@ namespace DwarfCorp
         public DwarfGUI GUI { get; set; }
 
         public Timer PopupTimer { get; set; }
-
+        public Timer InfoTimer { get; set; }
         public Timer HoverTimer { get; set; }
 
         public string PopupTip { get; set; }
         public string ToolTip { get; set; }
-
+        public string Info { get; set; }
+        public Point InfoLocation { get; set; }
         private MouseState LastMouse { get; set; }
 
         public int MovementThreshold { get; set; }
@@ -71,9 +72,12 @@ namespace DwarfCorp
             GUI = gui;
             HoverTimer = new Timer(0.8f, true, Timer.TimerMode.Real);
             ToolTip = "";
+            Info = "";
             LastMouse = Mouse.GetState();
             MovementThreshold = 2;
             PopupTimer = new Timer(2.5f, true, Timer.TimerMode.Real);
+            InfoLocation = new Point(100, 100);
+            InfoTimer = new Timer(2.5f, true, Timer.TimerMode.Real);
         }
 
         public void Update(DwarfTime time)
@@ -101,6 +105,12 @@ namespace DwarfCorp
             }
 
             PopupTimer.Update(time);
+            InfoTimer.Update(time);
+
+            if (InfoTimer.HasTriggered)
+            {
+                Info = null;
+            }
 
             if (PopupTimer.HasTriggered)
             {
@@ -126,19 +136,24 @@ namespace DwarfCorp
 
         public void RenderTip(GraphicsDevice device, SpriteBatch batch, string tip, MouseState mouse, TipType tipType)
         {
+            RenderTip(device, batch, tip, new Point(mouse.X, mouse.Y), tipType);
+        }
+
+        public void RenderTip(GraphicsDevice device, SpriteBatch batch, string tip, Point mouse, TipType tipType)
+        {
             Rectangle viewBounds = device.Viewport.Bounds;
 
             Vector2 stringMeasure = Datastructures.SafeMeasure(GUI.SmallFont, tip);
 
             Rectangle bounds;
-            
-            if(tipType == TipType.BottomRight)
-            { 
+
+            if (tipType == TipType.BottomRight)
+            {
                 bounds = new Rectangle(mouse.X + 24, mouse.Y + 24, (int)(stringMeasure.X + 15), (int)(stringMeasure.Y + 15));
             }
             else
             {
-                bounds = new Rectangle(mouse.X - (int)stringMeasure.X - 15, mouse.Y  - (int)stringMeasure.Y - 15, (int)(stringMeasure.X + 15), (int)(stringMeasure.Y + 15));
+                bounds = new Rectangle(mouse.X - (int)stringMeasure.X - 15, mouse.Y - (int)stringMeasure.Y - 15, (int)(stringMeasure.X + 15), (int)(stringMeasure.Y + 15));
             }
 
             if (bounds.Left < viewBounds.Left)
@@ -181,6 +196,11 @@ namespace DwarfCorp
             {
                 RenderTip(device, batch, ToolTip, Mouse.GetState(), TipType.BottomRight);
             }
+
+            if (!string.IsNullOrEmpty(Info))
+            {
+                RenderTip(device, batch, Info, InfoLocation, TipType.BottomRight);
+            }
         }
 
 
@@ -193,6 +213,12 @@ namespace DwarfCorp
         {
             PopupTip = text;
             PopupTimer.Reset(time);
+        }
+
+        public void PopupInfo(string info)
+        {
+            Info = info;
+            InfoTimer.Reset();
         }
     }
 }

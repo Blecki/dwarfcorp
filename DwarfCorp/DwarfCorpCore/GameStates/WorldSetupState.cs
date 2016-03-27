@@ -68,10 +68,6 @@ namespace DwarfCorp
             base(game, "WorldSetupState", stateManager)
         {
             IsInitialized = false;
-        }
-
-        public void CreateGUI()
-        {
             Settings = new WorldSettings()
             {
                 Width = 512,
@@ -85,6 +81,10 @@ namespace DwarfCorp
                 SeaLevel = 0.17f,
                 TemperatureScale = 1.0f
             };
+        }
+
+        public void CreateGUI()
+        {
             Input = new InputManager();
             GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default), 
                                       Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), 
@@ -345,7 +345,7 @@ namespace DwarfCorp
             return box;
         }
 
-        string GetRandomWorldName()
+        public static string GetRandomWorldName()
         {
             List<List<string>> templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.worlds);
             return TextGenerator.GenerateRandom(templates);
@@ -370,7 +370,7 @@ namespace DwarfCorp
             {
                 state.Settings = Settings;
             }
-            StateManager.PushState("WorldGeneratorState");
+            StateManager.PopState();
         }
 
         void BackButton_OnClicked()

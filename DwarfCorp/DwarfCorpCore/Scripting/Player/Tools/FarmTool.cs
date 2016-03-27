@@ -108,6 +108,11 @@ namespace DwarfCorp
             return HasTile(vox) && FarmTiles.Any(f => f.Vox.Equals(vox) && f.PlantExists());
         }
 
+        public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
+        {
+
+        }
+
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
             List<CreatureAI> minions = PlayState.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)).ToList();

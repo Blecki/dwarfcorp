@@ -66,11 +66,14 @@ namespace DwarfCorp
 
         public float Radius { get; set; }
 
+        public List<float> Weights { get; set; } 
+
         public enum PlanType
         {
             Adjacent,
             Into,
-            Radius
+            Radius,
+            Edge
         }
 
 
@@ -95,6 +98,7 @@ namespace DwarfCorp
             MaxTimeouts = 4;
             Timeouts = 0;
             Radius = 0;
+            Weights = new List<float> {10.0f, 20.0f, 30.0f, 40.0f};
         }
 
         public Voxel GetTarget()
@@ -151,13 +155,8 @@ namespace DwarfCorp
                     }
 
 
-                    if(Target == null)
+                    if(Target == null && Type != PlanType.Edge)
                     {
-                        if (Creature.Faction == PlayState.Master.Faction)
-                        {
-                            PlayState.AnnouncementManager.Announce(Creature.Stats.FullName + " (" + Creature.Stats.CurrentLevel.Name + ")" + " got lost.",
-                                Creature.Stats.FullName + "'s target was lost.", () => Agent.ZoomToMe());
-                        }
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                         yield return Status.Fail;
                         break;
@@ -166,30 +165,30 @@ namespace DwarfCorp
                     if (voxUnder != null)
                     {
                         Path = null;
-
-                   
-
                         AstarPlanRequest aspr = new AstarPlanRequest
                         {
                             Subscriber = PlanSubscriber,
                             Start = voxUnder,
                             MaxExpansions = MaxExpansions,
-                            Sender = Agent
+                            Sender = Agent,
+                            HeuristicWeight = Weights[Timeouts]
                         };
 
-                        if (Type == PlanType.Radius)
+                        switch (Type)
                         {
-                            aspr.GoalRegion = new SphereGoalRegion(Target, Radius);   
+                            case PlanType.Radius:
+                                aspr.GoalRegion = new SphereGoalRegion(Target, Radius);
+                                break;
+                            case PlanType.Into:
+                                aspr.GoalRegion = new VoxelGoalRegion(Target);
+                                break;
+                            case PlanType.Adjacent:
+                                aspr.GoalRegion = new AdjacentVoxelGoalRegion2D(Target);
+                                break;
+                            case PlanType.Edge:
+                                aspr.GoalRegion = new EdgeGoalRegion();
+                                break;
                         }
-                        else if ( Type == PlanType.Into)
-                        {
-                            aspr.GoalRegion = new VoxelGoalRegion(Target);
-                        }
-                        else if (Type == PlanType.Adjacent)
-                        {
-                            aspr.GoalRegion = new AdjacentVoxelGoalRegion2D(Target);
-                        }
-                        
 
                         PlanSubscriber.SendRequest(aspr);
                         PlannerTimer.Reset(PlannerTimer.TargetTimeSeconds);
@@ -200,11 +199,6 @@ namespace DwarfCorp
                     else
                     {
                         Path = null;
-                        if (Creature.Faction == PlayState.Master.Faction)
-                        {
-                            PlayState.AnnouncementManager.Announce(Creature.Stats.FullName + " got lost.",
-                                Creature.Stats.FullName + " couldn't find a path. The target was invalid.", () => Agent.ZoomToMe());
-                        }
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                         yield return Status.Fail;
                         break;
@@ -235,11 +229,6 @@ namespace DwarfCorp
                         }
                         else
                         {
-                            if (Creature.Faction == PlayState.Master.Faction)
-                            {
-                                PlayState.AnnouncementManager.Announce(Creature.Stats.FullName + " got lost.",
-                                    Creature.Stats.FullName + " couldn't find a path in time.", Agent.ZoomToMe);
-                            }
                             Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                             statusResult = Status.Fail;
 
