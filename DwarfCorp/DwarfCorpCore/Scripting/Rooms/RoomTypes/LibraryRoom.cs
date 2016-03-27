@@ -114,7 +114,7 @@ namespace DwarfCorp
                 },
                 {
                     RoomTile.Open,
-                    RoomTile.BookTable,
+                    RoomTile.Books,
                     RoomTile.Open
                 },
                 {

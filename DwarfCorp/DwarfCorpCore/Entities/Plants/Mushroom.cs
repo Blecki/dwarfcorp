@@ -50,32 +50,37 @@ namespace DwarfCorp
 
         }
 
-        public Mushroom(Vector3 position) :
+        public Mushroom(Vector3 position, 
+                        string asset, 
+                        ResourceLibrary.ResourceType resource, 
+                        int numRelease, bool selfIlluminate) :
             base("Mushroom", PlayState.ComponentManager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
             Matrix matrix = Matrix.CreateRotationY(MathFunctions.Rand(-0.1f, 0.1f));
             matrix.Translation = position + new Vector3(0.5f, -0.25f, 0.5f);
             LocalTransform = matrix;
 
-            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Plants.mushroom);
+            SpriteSheet spriteSheet = new SpriteSheet(asset);
 
             List<Point> frames = new List<Point>
             {
                 new Point(0, 0)
             };
-            Animation tableAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Plants.mushroom), "Mushroom", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
+            Animation animation = new Animation(GameState.Game.GraphicsDevice, spriteSheet, "Mushroom", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
             Sprite sprite = new Sprite(PlayState.ComponentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
             {
-                OrientationType = Sprite.OrientMode.Fixed
+                OrientationType = Sprite.OrientMode.Fixed,
+                LightsWithVoxels = !selfIlluminate
             };
-            sprite.AddAnimation(tableAnimation);
+            sprite.AddAnimation(animation);
 
             Sprite sprite2 = new Sprite(PlayState.ComponentManager, "sprite2", this, Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
             {
-                OrientationType = Sprite.OrientMode.Fixed
+                OrientationType = Sprite.OrientMode.Fixed,
+                LightsWithVoxels = !selfIlluminate
             };
-            sprite2.AddAnimation(tableAnimation);
+            sprite2.AddAnimation(animation);
 
             Voxel voxelUnder = new Voxel();
             bool success = PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder);
@@ -89,21 +94,21 @@ namespace DwarfCorp
             {
                 Resources = new ResourceContainer()
                 {
-                    MaxResources = 4,
+                    MaxResources = 2,
                     Resources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>()
                     {
                         {
-                            ResourceLibrary.ResourceType.Mushroom,
-                            new ResourceAmount(ResourceLibrary.ResourceType.Mushroom, MathFunctions.RandInt(1, 4))
+                            resource,
+                            new ResourceAmount(resource, numRelease)
                         }
                     }
                 }
             };
-
+            
             Health health = new Health(PlayState.ComponentManager, "HP", this, 30, 0.0f, 30);
             new Flammable(PlayState.ComponentManager, "Flames", this, health);
 
-            tableAnimation.Play();
+            animation.Play();
             Tags.Add("Mushroom");
             Tags.Add("Vegetation");
             CollisionType = CollisionManager.CollisionType.Static;

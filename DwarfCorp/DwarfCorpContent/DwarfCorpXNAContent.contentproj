@@ -1124,6 +1124,11 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Plants\caveshroom.png">
+      <Name>caveshroom</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Entities\Skeleton\skele_animation.json">
       <Name>skele_animation</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

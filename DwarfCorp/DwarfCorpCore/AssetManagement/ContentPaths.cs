@@ -340,6 +340,7 @@ namespace DwarfCorp
                 public static string gnarled = ProgramData.CreatePath("Entities", "Plants", "gnarled");
                 public static string grass = ProgramData.CreatePath("Entities", "Plants", "grass");
                 public static string mushroom = ProgramData.CreatePath("Entities", "Plants", "mushroom");
+                public static string cavemushroom = ProgramData.CreatePath("Entities", "Plants", "cavemushroom");
                 public static string palm = ProgramData.CreatePath("Entities", "Plants", "palm");
                 public static string pine = ProgramData.CreatePath("Entities", "Plants", "pine");
                 public static string shrub = ProgramData.CreatePath("Entities", "Plants", "shrub");
