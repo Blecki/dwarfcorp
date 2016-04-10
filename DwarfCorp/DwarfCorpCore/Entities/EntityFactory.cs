@@ -144,8 +144,12 @@ namespace DwarfCorp
                     : (value < 0.66 ? (Body)(new WeightRack(position)) : (Body)(new PunchingBag(position)));
             });
             RegisterEntity("Bookshelf", (position, data) => new Bookshelf(position));
-            RegisterEntity("Door", (position, data) => new Door(position, PlayState.PlayerFaction));
-            RegisterEntity("Ladder", (position, data) => new Ladder(position));
+            RegisterEntity("Wooden Door", (position, data) => new Door(position, PlayState.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 1), 50));
+            RegisterEntity("Metal Door", (position, data) => new Door(position, PlayState.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 8), 100));
+            RegisterEntity("Stone Door", (position, data) => new Door(position, PlayState.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 8), 75));
+            RegisterEntity("Wooden Ladder", (position, data) => new Ladder(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 0)));
+            RegisterEntity("Stone Ladder", (position, data) => new Ladder(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 8)));
+            RegisterEntity("Metal Ladder", (position, data) => new Ladder(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 8)));
             RegisterEntity("RandTrinket", (position, data) => CreateRandomTrinket(position));
             RegisterEntity("RandFood", (position, data) => CreateRandomFood(position));
             RegisterEntity("Turret", (position, data) => new TurretTrap(position, PlayState.PlayerFaction));

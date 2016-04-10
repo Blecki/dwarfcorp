@@ -211,7 +211,7 @@ namespace DwarfCorp
                             createdComponent = EntityFactory.CreateEntity<Body>("Stove", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
-                        case RoomTile.Kitchen Table:
+                        case RoomTile.KitchenTable:
                             createdComponent = EntityFactory.CreateEntity<Body>("Kitchen Table", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;

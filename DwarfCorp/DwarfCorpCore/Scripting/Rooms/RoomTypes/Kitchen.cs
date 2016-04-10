@@ -66,7 +66,7 @@ namespace DwarfCorp
                 },
                 {
                     RoomTile.Wall | RoomTile.Edge,
-                    RoomTile.Kitchen Table,
+                    RoomTile.KitchenTable,
                     RoomTile.None
                 },
                 {

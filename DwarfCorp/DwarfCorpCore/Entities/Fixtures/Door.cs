@@ -53,9 +53,9 @@ namespace DwarfCorp
             IsOpen = false;
         }
 
-        public Door(Vector3 position, Faction team) :
+        public Door(Vector3 position, Faction team, SpriteSheet sheet, Point frame, float hp) :
             base(
-            position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 1),
+            position, sheet, frame,
             PlayState.ComponentManager.RootComponent)
         {
             IsMoving = false;
@@ -71,7 +71,7 @@ namespace DwarfCorp
             ClosedTransform = LocalTransform;
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
-            Health health = new Health(PlayState.ComponentManager, "Health", this, 50.0f, 0.0f, 50.0f);
+            Health health = new Health(PlayState.ComponentManager, "Health", this, hp, 0.0f, hp);
            
         }
 

@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
@@ -86,17 +87,18 @@ namespace DwarfCorp
             else
             {
                 if (tile.Plant != null && tile.Plant.IsDead) tile.Plant = null;
+                Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
+                Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
+                Creature.Sprite.PlayAnimations(Creature.CharacterMode.Attacking);
                 while (tile.Progress < 100.0f && !Satisfied())
                 {
 
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
-                    Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
-                    Creature.Sprite.PlayAnimations(Creature.CharacterMode.Attacking);
                     Creature.Physics.Velocity *= 0.1f;
                     tile.Progress += Creature.Stats.BaseFarmSpeed;
 
                     Drawer2D.DrawLoadBar(Agent.Position + Vector3.Up, Color.White, Color.Black, 100, 16,
                         tile.Progress/100.0f);
+
                     if (tile.Progress >= 100.0f && !Satisfied())
                     {
                         tile.Progress = 0.0f;
@@ -108,15 +110,17 @@ namespace DwarfCorp
                         else
                         {
                             FarmToWork.Vox.Type = VoxelLibrary.GetVoxelType("TilledSoil");
-                            FarmToWork.Vox.Chunk.ShouldRebuild = true;
+                            FarmToWork.Vox.Chunk.NotifyTotalRebuild(true);
                         }
                     }
-
+                    if (MathFunctions.RandEvent(0.01f))
+                        PlayState.ParticleManager.Trigger("dirt_particle", Creature.AI.Position, Color.White, 1);
                     yield return Status.Running;
+                    Creature.Sprite.ReloopAnimations(Creature.CharacterMode.Attacking);
                 }
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
                 Creature.AI.AddThought(Thought.ThoughtType.Farmed);
-                Creature.AI.AddXP(10);
+                Creature.AI.AddXP(1);
                 tile.Farmer = null;
                 Creature.Sprite.PauseAnimations(Creature.CharacterMode.Attacking);
                 yield return Status.Success;

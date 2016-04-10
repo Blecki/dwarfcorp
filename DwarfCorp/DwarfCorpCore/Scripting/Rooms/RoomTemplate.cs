@@ -61,7 +61,7 @@ namespace DwarfCorp
         Wheat = 1 << 15,
         Mushroom = 1 << 16,
         BookShelf = 1 << 17,
-        Kitchen Table = 1 << 18,
+        KitchenTable = 1 << 18,
         Stove = 1 << 19
     }
 

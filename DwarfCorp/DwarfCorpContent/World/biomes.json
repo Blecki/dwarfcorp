@@ -396,14 +396,14 @@
     "Underground": true,
     "Vegetation": [
       {
-        "Name": "Mushroom",
+        "Name": "Cave Mushroom",
         "ClumpSize": 4.0,
-        "ClumpThreshold": 0.25,
+        "ClumpThreshold": 0.6,
         "MeanSize": 1.0,
         "SizeVariance": 1.0,
         "VerticalOffset": 0.5,
         "NoiseOffset": 265.476837,
-        "SpawnProbability": 0.01
+        "SpawnProbability": 0.2
       }],
     "Motes": [
       {

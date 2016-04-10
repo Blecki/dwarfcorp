@@ -82,7 +82,7 @@ namespace DwarfCorp
         public static void DrawLoadBar(Vector3 worldPos, Color backgroundColor, Color strokeColor, int width, int height, float progress)
         {
             Drawer2D.DrawRect(worldPos, new Rectangle(0, 0, width + 1, height + 1), Color.Transparent, strokeColor, 1);
-            Drawer2D.DrawRect(worldPos, new Rectangle(width - (int)(width * (progress)), 0, (int)(width * (progress)), height), backgroundColor, Color.Transparent, 1);
+            Drawer2D.DrawRect(worldPos, new Rectangle((int)(width * (progress))/2 - width /2, 0, (int)(width * (progress)), height), backgroundColor, Color.Transparent, 1);
         }
 
         public static void DrawRect(Vector3 worldPos, Rectangle screenRect, Color backgroundColor, Color strokeColor, float strokewidth)
@@ -90,10 +90,10 @@ namespace DwarfCorp
             
             Vector3 screenPos = GameState.Game.GraphicsDevice.Viewport.Project(worldPos, PlayState.Camera.ProjectionMatrix, PlayState.Camera.ViewMatrix, Matrix.Identity);
 
-            if (screenPos.Z > 0.999f)
+            if (screenPos.Z < 0.999f)
             {
-                Rectangle rect = new Rectangle((int) (screenPos.X - screenRect.Width/2),
-                    (int) (screenPos.Y - screenRect.Height/2), screenRect.Width, screenRect.Height);
+                Rectangle rect = new Rectangle((int) (screenPos.X - screenRect.Width/2) + screenRect.X,
+                    (int) (screenPos.Y - screenRect.Height/2) + screenRect.Y, screenRect.Width, screenRect.Height);
 
                 DrawCommands.Enqueue(new RectDrawCommand(backgroundColor, strokeColor, strokewidth, rect));
             }

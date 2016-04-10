@@ -91,10 +91,10 @@ namespace DwarfCorp
                     }
                 },
                 {
-                    "Ladder",
+                    "Wooden Ladder",
                     new CraftItem()
                     {
-                        Name = "Ladder",
+                        Name = "Wooden Ladder",
                         Description = "Allows dwarves to climb up and down",
                         RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
                         {
@@ -106,16 +106,76 @@ namespace DwarfCorp
                     }
                 },
                 {
-                    "Door",
+                    "Stone Ladder",
                     new CraftItem()
                     {
-                        Name = "Door",
+                        Name = "Stone Ladder",
+                        Description = "Allows dwarves to climb up and down",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone, 1)
+                        },
+                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 2, 8),
+                        BaseCraftTime = 10,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
+                    }
+                },
+                {
+                    "Metal Ladder",
+                    new CraftItem()
+                    {
+                        Name = "Metal Ladder",
+                        Description = "Allows dwarves to climb up and down",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 1)
+                        },
+                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 3, 8),
+                        BaseCraftTime = 10,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
+                    }
+                },
+                {
+                    "Wooden Door",
+                    new CraftItem()
+                    {
+                        Name = "Wooden Door",
                         Description = "Keep monsters out, and dwarves in.",
                         RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
                         {
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 1)
                         },
                         Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 3, 1),
+                        BaseCraftTime = 10,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
+                    }
+                },
+                {
+                    "Stone Door",
+                    new CraftItem()
+                    {
+                        Name = "Stone Door",
+                        Description = "Keep monsters out, and dwarves in.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone, 1)
+                        },
+                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 0, 8),
+                        BaseCraftTime = 10,
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
+                    }
+                },
+                {
+                    "Metal Door",
+                    new CraftItem()
+                    {
+                        Name = "Metal Door",
+                        Description = "Keep monsters out, and dwarves in.",
+                        RequiredResources = new List<Quantitiy<Resource.ResourceTags>>()
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 1)
+                        },
+                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 1, 8),
                         BaseCraftTime = 10,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
                     }

@@ -1207,7 +1207,7 @@ namespace DwarfCorp.GameStates
                             Vector3 center = new Vector3(worldPos.X, y, worldPos.Z) + offset + Vector3.One * .5f;
                             if (chunk.Manager.ChunkData.GetVoxel(center, ref ladderVox) && ladderVox.IsEmpty)
                             {
-                                EntityFactory.CreateEntity<Ladder>("Ladder", center);
+                                EntityFactory.CreateEntity<Ladder>("Wooden Ladder", center);
                             }
                         }
                     }
