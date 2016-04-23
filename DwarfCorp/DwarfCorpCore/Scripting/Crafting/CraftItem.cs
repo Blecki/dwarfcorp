@@ -47,18 +47,26 @@ namespace DwarfCorp
             Resource
         }
 
+        public enum CraftPrereq
+        {
+            OnGround,
+            NearWall
+        }
+
         public string Name { get; set; }
         public List<Quantitiy<Resource.ResourceTags>> RequiredResources { get; set; }
         public ImageFrame Image { get; set; }
         public float BaseCraftTime { get; set; }
         public string Description { get; set; }
         public CraftType Type { get; set; }
+        public List<CraftPrereq> Prerequisites { get; set; }
         public ResourceLibrary.ResourceType ResourceCreated { get; set; }
         public List<ResourceAmount> SelectedResources { get; set; }
         public string CraftLocation { get; set; }
         public CraftItem()
         {
             Name = "";
+            Prerequisites = new List<CraftPrereq>();
             RequiredResources = new List<Quantitiy<Resource.ResourceTags>>();
             Image = null;
             BaseCraftTime = 0.0f;

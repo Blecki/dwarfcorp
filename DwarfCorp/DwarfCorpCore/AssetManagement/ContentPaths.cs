@@ -126,6 +126,7 @@ namespace DwarfCorp
         {
             public static string biomes = ProgramData.CreatePath("World", "biomes.json");
             public static string races = ProgramData.CreatePath("World", "races.json");
+            public static string embarks = ProgramData.CreatePath("World", "embarkments.json");
         }
 
         public static T LoadFromJson<T>(string asset)
@@ -340,6 +341,7 @@ namespace DwarfCorp
                 public static string gnarled = ProgramData.CreatePath("Entities", "Plants", "gnarled");
                 public static string grass = ProgramData.CreatePath("Entities", "Plants", "grass");
                 public static string mushroom = ProgramData.CreatePath("Entities", "Plants", "mushroom");
+                public static string cavemushroom = ProgramData.CreatePath("Entities", "Plants", "caveshroom");
                 public static string palm = ProgramData.CreatePath("Entities", "Plants", "palm");
                 public static string pine = ProgramData.CreatePath("Entities", "Plants", "pine");
                 public static string shrub = ProgramData.CreatePath("Entities", "Plants", "shrub");

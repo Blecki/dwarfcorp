@@ -74,6 +74,7 @@ namespace DwarfCorp
             IsBuilt = false;
         }
 
+
         public Room(IEnumerable<Voxel> voxels, RoomData data, ChunkManager chunks) :
             base(data.Name + " " + Counter, chunks)
         {

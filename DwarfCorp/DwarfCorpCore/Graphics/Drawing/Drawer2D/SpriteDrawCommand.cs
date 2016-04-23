@@ -84,7 +84,7 @@ namespace DwarfCorp
             }
 
             Vector3 screenCoord = viewport.Project(WorldPosition, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
-            if(viewport.Bounds.Contains((int) screenCoord.X, (int) screenCoord.Y) && screenCoord.Z > 0 && Image != null)
+            if(viewport.Bounds.Contains((int) screenCoord.X, (int) screenCoord.Y) && screenCoord.Z < 0.999f && Image != null)
             {
                 batch.Draw(Image.Image, new Vector2(screenCoord.X, screenCoord.Y) + Offset, Image.SourceRect, Tint, Rotation, new Vector2(Image.SourceRect.Width / 2.0f, Image.SourceRect.Height / 2.0f), Scale, Effects, 0.0f);
             }

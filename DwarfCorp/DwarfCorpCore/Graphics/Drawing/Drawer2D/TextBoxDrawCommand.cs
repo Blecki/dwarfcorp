@@ -73,7 +73,7 @@ namespace DwarfCorp
 
             Vector3 unprojected = viewport.Project(Position, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
 
-            if (unprojected.Z < 0)
+            if (unprojected.Z > 0.999f)
             {
                 return;
             }

@@ -40,6 +40,21 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    [JsonObject(IsReference = false)]
+    public class Embarkment
+    {
+        public static Dictionary<string, Embarkment> EmbarkmentLibrary { get; set; } 
+        public List<string> Party;
+        public Dictionary<ResourceLibrary.ResourceType, int> Resources;
+        public float Money;
+
+        public static void Initialize()
+        {
+            EmbarkmentLibrary = ContentPaths.LoadFromJson<Dictionary<string, Embarkment>>(ContentPaths.World.embarks);
+            PlayState.InitialEmbark = EmbarkmentLibrary["Normal"];
+        }
+    }
+
     /// <summary>
     /// A static collection of factions.
     /// </summary>
@@ -48,7 +63,7 @@ namespace DwarfCorp
     {
         public Dictionary<string, Faction> Factions { get; set; }
         public Dictionary<string, Race> Races { get; set; }
-
+        
         public Faction GenerateFaction(int idx , int n)
         {
             Race race = Datastructures.SelectRandom(Races.Values.Where(r => r.IsIntelligent && r.IsNative));

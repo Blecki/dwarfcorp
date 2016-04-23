@@ -90,6 +90,11 @@ namespace DwarfCorp
 
         }
 
+        public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
+        {
+
+        }
+
 
         public GodModeTool(DwarfGUI gui, GameMaster master)
         {
@@ -246,7 +251,7 @@ namespace DwarfCorp
                         {
                             if (vox.IsEmpty)
                             {
-                                vox.WaterLevel = 255;
+                                vox.WaterLevel = 8;
                                 vox.Chunk.Data.Water[vox.Index].Type = LiquidType.Water;
                                 chunksToRebuild.Add(vox.ChunkID);
                             }
@@ -257,7 +262,7 @@ namespace DwarfCorp
                             Vector3 gridPos = vox.GridPosition;
                             if (vox.IsEmpty)
                             {
-                                vox.WaterLevel = 255;
+                                vox.WaterLevel = 8;
                                 vox.Chunk.Data.Water[vox.Index].Type = LiquidType.Lava;
                                 chunksToRebuild.Add(vox.ChunkID);
                             }

@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using DwarfCorpCore;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
@@ -54,10 +55,12 @@ namespace DwarfCorp
         }
         public Dwarf(CreatureStats stats, string allies, PlanService planService, Faction faction,  string name, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, EmployeeClass workerClass, Vector3 position) :
             base(stats, allies, planService, faction, 
-            new Physics( "A Dwarf", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position), 
+            new Physics( "Dwarf", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position), 
                         new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0)),
                chunks, graphics, content, name)
         {
+            HasMeat = false;
+            HasBones = false;
             Initialize(workerClass);
         }
 
@@ -84,7 +87,6 @@ namespace DwarfCorp
             AI = new CreatureAI(this, "Dwarf AI", Sensors, PlanService);
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
-
 
             Inventory = new Inventory("Inventory", Physics)
             {

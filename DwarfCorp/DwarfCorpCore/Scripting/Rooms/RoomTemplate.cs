@@ -55,7 +55,7 @@ namespace DwarfCorp
         Flag = 1 << 9,
         Anvil = 1 << 10,
         Forge = 1 << 11,
-        BookTable = 1 << 12,
+        Books = 1 << 12,
         Target = 1 << 13,
         Strawman = 1 << 14,
         Wheat = 1 << 15,

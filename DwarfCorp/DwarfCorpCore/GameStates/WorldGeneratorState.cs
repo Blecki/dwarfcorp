@@ -50,10 +50,14 @@ namespace DwarfCorp.GameStates
     public class WorldGeneratorState : GameState, IDisposable
     {
         public WorldSettings Settings { get; set; }
-
+        public VertexBuffer LandMesh { get; set; }
+        public IndexBuffer LandIndex { get; set; }
         public static Texture2D	 worldMap;
+        public static BasicEffect simpleEffect;
         public Color[] worldData;
         public DwarfGUI GUI { get; set; }
+        public Matrix ViewMatrix { get; set; }
+        public Matrix ProjMatrix { get; set; }
         public SpriteFont DefaultFont { get; set; }
         public Drawer2D Drawer { get; set; }
         public bool GenerationComplete { get; set; }
@@ -61,11 +65,17 @@ namespace DwarfCorp.GameStates
         public Mutex ImageMutex;
         private Thread genThread;
         public Panel MainWindow { get; set; }
-        public int EdgePadding = 32;
-        private ImagePanel MapPanel { get; set; }
+        public int EdgePadding = 16;
+        private RenderPanel MapPanel { get; set; }
         public InputManager Input { get; set; }
         public ColorKey ColorKeys { get; set; }
         public ImagePanel CloseupPanel { get; set; }
+
+        private float phi = 1.2f;
+        private float theta = -0.25f;
+        private float zoom = 0.9f;
+        private Vector3 cameraTarget = new Vector3(0.5f, 0.0f, 0.5f);
+        private Vector3 newTarget = new Vector3(0.5f, 0, 0.5f);
         public int Seed
         {
             get { return PlayState.Seed; }
@@ -85,11 +95,153 @@ namespace DwarfCorp.GameStates
             GenerationComplete = false;
             ImageMutex = new Mutex();
             Input = new InputManager();
-            Settings = new WorldSettings();
+            Settings = new WorldSettings()
+            {
+                Width = 512,
+                Height = 512,
+                Name = WorldSetupState.GetRandomWorldName(),
+                NumCivilizations = 5,
+                NumFaults = 3,
+                NumRains = 1000,
+                NumVolcanoes = 3,
+                RainfallScale = 1.0f,
+                SeaLevel = 0.17f,
+                TemperatureScale = 1.0f
+            };
+        }
+
+        private int[] SetUpTerrainIndices(int width, int height)
+        {
+            int[] indices = new int[(width - 1) * (height - 1) * 6];
+            int counter = 0;
+            for (int y = 0; y < height - 1; y++)
+            {
+                for (int x = 0; x < width - 1; x++)
+                {
+                    int lowerLeft = x + y * width;
+                    int lowerRight = (x + 1) + y * width;
+                    int topLeft = x + (y + 1) * width;
+                    int topRight = (x + 1) + (y + 1) * width;
+
+                    indices[counter++] = topLeft;
+                    indices[counter++] = lowerRight;
+                    indices[counter++] = lowerLeft;
+
+                    indices[counter++] = topLeft;
+                    indices[counter++] = topRight;
+                    indices[counter++] = lowerRight;
+                }
+            }
+
+            return indices;
+        }
+
+        public void CreateMesh()
+        {
+            simpleEffect = new BasicEffect(GUI.Graphics);
+            simpleEffect.EnableDefaultLighting();
+            simpleEffect.LightingEnabled = false;
+            simpleEffect.AmbientLightColor = new Vector3(1, 1, 1);
+            simpleEffect.FogEnabled = false;
+            
+
+           int resolution = 4;
+           int width = Overworld.Map.GetLength(0);
+           int height = Overworld.Map.GetLength(1);
+           int numVerts = (width * height) / resolution;
+           LandMesh = new VertexBuffer(GUI.Graphics, VertexPositionTexture.VertexDeclaration, numVerts, BufferUsage.None);
+           VertexPositionTexture[] verts = new VertexPositionTexture[numVerts];
+
+            int i = 0;
+            for (int x = 0; x < width; x += resolution)
+            {
+                for (int y = 0; y < height; y += resolution)
+                {
+                    float landHeight = Overworld.Map[x, y].Height;
+                    verts[i].Position = new Vector3((float)x / width, landHeight * 0.05f, (float)y / height);
+                    verts[i].TextureCoordinate = new Vector2(((float)x) / width, ((float)y) / height);
+                    i++;
+                }
+            }
+            LandMesh.SetData(verts);
+            int[] indices = SetUpTerrainIndices(width / resolution, height / resolution);
+            LandIndex = new IndexBuffer(GUI.Graphics, typeof(int), indices.Length, BufferUsage.None);
+            LandIndex.SetData(indices);
+        }
+
+        public Point ScreenToWorld(Vector2 screenCoord)
+        {
+            Rectangle imageBounds = MapPanel.GetImageBounds();
+            Viewport port = new Viewport(imageBounds);
+            port.MinDepth = 0.0f;
+            port.MaxDepth = 1.0f;
+            Vector3 rayStart = port.Unproject(new Vector3(screenCoord.X, screenCoord.Y, 0.0f), ProjMatrix,
+    ViewMatrix, Matrix.Identity);
+            Vector3 rayEnd = port.Unproject(new Vector3(screenCoord.X, screenCoord.Y, 1.0f), ProjMatrix,
+                ViewMatrix, Matrix.Identity);
+            Vector3 bearing = (rayEnd - rayStart);
+            bearing.Normalize();
+            Ray ray = new Ray(rayStart, bearing);
+            Plane worldPlane = new Plane(Vector3.Zero, Vector3.Forward, Vector3.Right);
+            float? dist = ray.Intersects(worldPlane);
+
+            if (dist.HasValue)
+            {
+                Vector3 pos = rayStart + bearing * dist.Value;
+                return new Point((int)(pos.X * Overworld.Map.GetLength(0)), (int)(pos.Z * Overworld.Map.GetLength(1)));
+            }
+            else
+            {
+                return new Point(0, 0);
+            }
+        }
+
+        public Point WorldToScreen(Point worldCoord, ref bool valid)
+        {
+            Rectangle imageBounds = MapPanel.GetImageBounds();
+            Viewport port = new Viewport(imageBounds);
+            Vector3 worldSpace = new Vector3((float)worldCoord.X / Overworld.Map.GetLength(0), 0, (float)worldCoord.Y / Overworld.Map.GetLength(1));
+            Vector3 screenSpace = port.Project(worldSpace, ProjMatrix, ViewMatrix, Matrix.Identity);
+            valid = screenSpace.Z < 0.999f;
+            return new Point((int)screenSpace.X, (int)screenSpace.Y);
+        }
+
+
+        public void DrawMesh(GameTime time)
+        {
+            if (simpleEffect != null && DoneGenerating && !IsGenerating)
+            {
+                GUI.Graphics.SetRenderTarget(MapPanel.Image);
+                simpleEffect.World = Matrix.Identity;
+                Matrix cameraRotation = Matrix.CreateRotationX(phi) * Matrix.CreateRotationY(theta);
+                ViewMatrix = Matrix.CreateLookAt(zoom * Vector3.Transform(Vector3.Forward, cameraRotation) + cameraTarget, cameraTarget, Vector3.Up);
+                cameraTarget = newTarget*0.1f + cameraTarget*0.9f;
+                ProjMatrix = Matrix.CreatePerspectiveFieldOfView(1.5f, (float)MapPanel.GetImageBounds().Width / (float)MapPanel.GetImageBounds().Height, 0.01f, 3.0f);
+                simpleEffect.View = ViewMatrix;
+                simpleEffect.Projection = ProjMatrix;
+                simpleEffect.TextureEnabled = true;
+                simpleEffect.Texture = worldMap;
+                GUI.Graphics.Clear(ClearOptions.Target, Color.Transparent, 3.0f, 0);
+
+                foreach (EffectPass pass in simpleEffect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    GUI.Graphics.SetVertexBuffer(LandMesh);
+                    GUI.Graphics.Indices = LandIndex;
+                    GUI.Graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, LandMesh.VertexCount, 0,
+                        LandIndex.IndexCount/3);
+                }
+                GUI.Graphics.SetRenderTarget(null);
+                GUI.Graphics.Textures[0] = null;
+                GUI.Graphics.Indices = null;
+                GUI.Graphics.SetVertexBuffer(null);
+            }
         }
 
         public override void OnEnter()
         {
+            IsGenerating = false;
+            DoneGenerating = false;
             PlayState.WorldWidth = Settings.Width;
             PlayState.WorldHeight = Settings.Height;
             PlayState.SeaLevel = Settings.SeaLevel;
@@ -105,10 +257,13 @@ namespace DwarfCorp.GameStates
             GenerationComplete = false;
             MainWindow = new Panel(GUI, GUI.RootComponent)
             {
+                Mode = Panel.PanelMode.Fancy,
                 LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2)
             };
 
-            GridLayout layout = new GridLayout(GUI, MainWindow, 7, 4)
+            int layoutWidth = 8;
+            int layoutHeight = 12;
+            GridLayout layout = new GridLayout(GUI, MainWindow, layoutHeight, layoutWidth)
             {
                 LocalBounds = new Rectangle(0, 0, MainWindow.LocalBounds.Width, MainWindow.LocalBounds.Height)
             };
@@ -118,65 +273,65 @@ namespace DwarfCorp.GameStates
                 ToolTip = "Start the game with the currently generated world."
             };
 
-            layout.SetComponentPosition(startButton, 2, 6, 1, 1);
             startButton.OnClicked += StartButtonOnClick;
 
             Button saveButton = new Button(GUI, layout, "Save", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Save))
             {
                 ToolTip = "Save the generated world to a file."
             };
-            layout.SetComponentPosition(saveButton, 1, 6, 1, 1);
             saveButton.OnClicked += saveButton_OnClicked;
 
             Button exitButton = new Button(GUI, layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.LeftArrow))
             {
                 ToolTip = "Back to the main menu."
             };
-            layout.SetComponentPosition(exitButton, 0, 6, 1, 1);
 
             exitButton.OnClicked += ExitButtonOnClick;
 
 
-            MapPanel = new ImagePanel(GUI, layout, worldMap)
+            MapPanel = new RenderPanel(GUI, layout, new RenderTarget2D(GUI.Graphics, 1280, 720, false, SurfaceFormat.Color, DepthFormat.Depth16))
             {
-                ToolTip = "Map of the world.\nClick to select a location to embark."
+                ToolTip = "Map of the world.\nClick to select a location to embark.",
+                KeepAspectRatio = true
             };
+            MapPanel.OnScrolled += MapPanel_OnScrolled;
+            MapPanel.OnDragged += MapPanel_OnDragged;
 
-            GridLayout mapLayout = new GridLayout(GUI, MapPanel, 4, 5);
-
+            AlignLayout mapLayout = new AlignLayout(GUI, MapPanel)
+            {
+                HeightSizeMode = GUIComponent.SizeMode.Fit,
+                WidthSizeMode = GUIComponent.SizeMode.Fit,
+                Mode = AlignLayout.PositionMode.Percent
+            };
+            Label nameLabel = new Label(GUI, mapLayout, Settings.Name, GUI.DefaultFont)
+            {
+                TextColor = Color.Black,
+                StrokeColor = Color.Transparent
+            };
+            mapLayout.Add(nameLabel, AlignLayout.Alignment.Left, AlignLayout.Alignment.Top, Vector2.Zero);
             ColorKeys = new ColorKey(GUI, mapLayout)
             {
                 ColorEntries = Overworld.HeightColors
             };
+            mapLayout.Add(ColorKeys, AlignLayout.Alignment.Right, AlignLayout.Alignment.Top, Vector2.Zero);
 
-            mapLayout.SetComponentPosition(ColorKeys, 3, 0, 1, 1);
 
             CloseupPanel = new ImagePanel(GUI, mapLayout, new ImageFrame(worldMap, new Rectangle(0, 0, 128, 128)))
             {
                 KeepAspectRatio = true,
+                LocalBounds = new Rectangle(0, 0, 128, 128),
                 ToolTip = "Closeup of the colony location"
             };
-
-            mapLayout.SetComponentPosition(CloseupPanel, 3, 2, 2, 2);
-
-            layout.SetComponentPosition(MapPanel, 0, 0, 3, 5);
-
-            if(worldMap != null)
-            {
-                MapPanel.Image = new ImageFrame(worldMap);
-            }
+            mapLayout.Add(CloseupPanel, AlignLayout.Alignment.Right, AlignLayout.Alignment.Bottom, Vector2.Zero);
 
 
-            MapPanel.OnClicked += OnMapClick;
+            MapPanel.OnLeftClicked += OnMapClick;
 
             layout.UpdateSizes();
 
-            GroupBox mapProperties = new GroupBox(GUI, layout, "Map Controls");
+            GroupBox mapProperties = new GroupBox(GUI, layout, "");
 
-            GridLayout mapPropertiesLayout = new GridLayout(GUI, mapProperties, 7, 2)
-            {
-                LocalBounds = new Rectangle(mapProperties.LocalBounds.X, mapProperties.LocalBounds.Y + 32, mapProperties.LocalBounds.Width, mapProperties.LocalBounds.Height)
-            };
+            FormLayout mapPropertiesLayout = new FormLayout(GUI, mapProperties);
 
             ComboBox worldSizeBox = new ComboBox(GUI, mapPropertiesLayout)
             {
@@ -184,15 +339,15 @@ namespace DwarfCorp.GameStates
             };
             
 
-            worldSizeBox.AddValue("Tiny Colony");
-            worldSizeBox.AddValue("Small Colony");
-            worldSizeBox.AddValue("Medium Colony");
-            worldSizeBox.AddValue("Large Colony");
-            worldSizeBox.AddValue("Huge Colony");
+            worldSizeBox.AddValue("Tiny");
+            worldSizeBox.AddValue("Small");
+            worldSizeBox.AddValue("Medium");
+            worldSizeBox.AddValue("Large");
+            worldSizeBox.AddValue("Huge");
             worldSizeBox.CurrentIndex = 1;
 
             worldSizeBox.OnSelectionModified += worldSizeBox_OnSelectionModified;
-            mapPropertiesLayout.SetComponentPosition(worldSizeBox, 0, 0, 2, 1);
+            mapPropertiesLayout.AddItem("Colony Size ", worldSizeBox);
 
             ViewSelectionBox = new ComboBox(GUI, mapPropertiesLayout)
             {
@@ -207,44 +362,119 @@ namespace DwarfCorp.GameStates
             ViewSelectionBox.AddValue("Erosion");
             ViewSelectionBox.AddValue("Faults");
             ViewSelectionBox.CurrentIndex = 0;
-
-            mapPropertiesLayout.SetComponentPosition(ViewSelectionBox, 1, 1, 1, 1);
-
-            Label selectLabel = new Label(GUI, mapPropertiesLayout, "Display", GUI.DefaultFont);
-            mapPropertiesLayout.SetComponentPosition(selectLabel, 0, 1, 1, 1);
-            selectLabel.Alignment = Drawer2D.Alignment.Right;
-
-            layout.SetComponentPosition(mapProperties, 3, 0, 1, 6);
+            mapPropertiesLayout.AddItem("Display", ViewSelectionBox);
 
             Progress = new ProgressBar(GUI, layout, 0.0f);
-            layout.SetComponentPosition(Progress, 0, 5, 3, 1);
 
-           
+            ComboBox embarkCombo = new ComboBox(GUI, mapPropertiesLayout);
+
+            foreach (var embark in Embarkment.EmbarkmentLibrary)
+            {
+                embarkCombo.AddValue(embark.Key);
+            }
+
+            embarkCombo.OnSelectionModified += embarkCombo_OnSelectionModified;
+
+
+            mapPropertiesLayout.AddItem("Difficulty", embarkCombo);
+
+            embarkCombo.CurrentValue = "Normal";
+            embarkCombo.InvokeSelectionModified();
+
             ViewSelectionBox.OnSelectionModified += DisplayModeModified;
+
+
+            Button advancedButton = new Button(GUI, mapPropertiesLayout, "Advanced...", GUI.DefaultFont,
+                Button.ButtonMode.PushButton, null)
+            {
+                ToolTip = "Advanced map generation settings"
+            };
+            advancedButton.OnClicked += advancedButton_OnClicked;
+            mapPropertiesLayout.AddItem("", advancedButton);
+
+            Button regenButton = new Button(GUI, mapPropertiesLayout, "Roll the dice!", GUI.DefaultFont,
+                Button.ButtonMode.PushButton, null)
+            {
+                ToolTip = "Regenerate the map"
+            };
+         
+            regenButton.OnClicked += regenButton_OnClicked;
+            mapPropertiesLayout.AddItem("", regenButton);
+
+
+            layout.SetComponentPosition(MapPanel, 0, 0, layoutWidth - 2, layoutHeight - 2);
+            layout.SetComponentPosition(exitButton, 0, layoutHeight - 1, 1, 1);
+            layout.SetComponentPosition(saveButton, 1, layoutHeight - 1, 1, 1);
+            layout.SetComponentPosition(startButton, 2, layoutHeight - 1, 1, 1);
+            layout.SetComponentPosition(mapProperties, layoutWidth - 2, 0, 2, layoutHeight);
+            layout.SetComponentPosition(Progress, 0, layoutHeight - 2, layoutWidth - 2, 1);
             base.OnEnter();
+        }
+
+        void regenButton_OnClicked()
+        {
+            IsGenerating = false;
+            DoneGenerating = false;
+        }
+
+        void advancedButton_OnClicked()
+        {
+            WorldSetupState setup = StateManager.GetState<WorldSetupState>("WorldSetupState");
+
+            if (setup != null)
+            {
+                setup.Settings = Settings;
+            }
+           StateManager.PushState("WorldSetupState");
+        }
+
+        void embarkCombo_OnSelectionModified(string arg)
+        {
+            PlayState.InitialEmbark = Embarkment.EmbarkmentLibrary[arg];
+        }
+
+        void MapPanel_OnDragged(InputManager.MouseButton button, Vector2 delta)
+        {
+            if (button == InputManager.MouseButton.Right)
+            {
+                phi += delta.Y * 0.01f;
+                theta -= delta.X * 0.01f;
+                phi = Math.Max(phi, 0.5f);
+                phi = Math.Min(phi, 1.5f);
+            }
+        }
+
+        void MapPanel_OnScrolled(int amount)
+        {
+            zoom = Math.Min((float)Math.Max(zoom + amount*0.001f, 0.1f), 1.5f);
         }
 
         void worldSizeBox_OnSelectionModified(string arg)
         {
             switch (arg)
             {
-                case "Tiny Colony":
+                case "Tiny":
                     PlayState.WorldSize = new Point3(4, 1, 4);
                     break;
-                case "Small Colony":
+                case "Small":
                     PlayState.WorldSize = new Point3(8, 1, 8);
                     break;
-                case "Medium Colony":
+                case "Medium":
                     PlayState.WorldSize = new Point3(10, 1, 10);
                     break;
-                case "Large Colony":
+                case "Large":
                     PlayState.WorldSize = new Point3(16, 1, 16);
                     break;
-                case "Huge Colony":
+                case "Huge":
                     PlayState.WorldSize = new Point3(24, 1, 24);
                     break;
             }
-            OnMapClick();
+            float w = PlayState.WorldSize.X * PlayState.WorldScale;
+            float h = PlayState.WorldSize.Z * PlayState.WorldScale;
+            float clickX = Math.Max(Math.Min(PlayState.WorldOrigin.X, PlayState.WorldWidth - w - 1), w + 1);
+            float clickY = Math.Max(Math.Min(PlayState.WorldOrigin.Y, PlayState.WorldHeight - h - 1), h + 1);
+
+            PlayState.WorldOrigin = new Vector2((int)(clickX), (int)(clickY));
         }
 
 
@@ -254,7 +484,7 @@ namespace DwarfCorp.GameStates
             {
                 System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds" + ProgramData.DirChar + Settings.Name);
                 OverworldFile file = new OverworldFile(Overworld.Map, Settings.Name);
-                file.WriteFile(worldDirectory.FullName + ProgramData.DirChar + "world." + OverworldFile.CompressedExtension, true);
+                file.WriteFile(worldDirectory.FullName + ProgramData.DirChar + "world." + OverworldFile.CompressedExtension, true, true);
                 file.SaveScreenshot(worldDirectory.FullName + ProgramData.DirChar + "screenshot.png");
                 Dialog.Popup(GUI, "Save", "File saved.", Dialog.ButtonType.OK);
             }
@@ -295,14 +525,13 @@ namespace DwarfCorp.GameStates
             {
                 Overworld.Name = Settings.Name;
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
-                List<Faction> factionsInSpawn = GetFactionsInSpawn();    
                 StateManager.PopState();
                 StateManager.PushState("PlayState");
 
                 MainMenuState menu = (MainMenuState) StateManager.States["MainMenuState"];
                 menu.IsGameRunning = true;
 
-                PlayState.Natives = factionsInSpawn;
+                PlayState.Natives = NativeCivilizations;
             }
         }
 
@@ -353,21 +582,22 @@ namespace DwarfCorp.GameStates
         public void OnMapClick()
         {
             Rectangle imageBounds = MapPanel.GetImageBounds();
-            Vector2 mapCorner = new Vector2(imageBounds.Location.X, imageBounds.Location.Y);
             MouseState ms = Mouse.GetState();
+            if (!imageBounds.Contains(ms.X, ms.Y))
+            {
+                return;
+            }
 
-            float dx = ((float) PlayState.WorldWidth / (float) MapPanel.GetImageBounds().Width);
-            float dy = ((float) PlayState.WorldHeight / (float) MapPanel.GetImageBounds().Height);
+            Point worldPos = ScreenToWorld(new Vector2(ms.X, ms.Y));
+
             float w = PlayState.WorldSize.X * PlayState.WorldScale;
             float h = PlayState.WorldSize.Z * PlayState.WorldScale;
-            float clickX = ms.X - mapCorner.X;
-            float clickY = ms.Y - mapCorner.Y;
-            clickX *= dx;
-            clickY *= dy;
-            clickX = Math.Max(Math.Min(clickX, PlayState.WorldWidth - w * 2 - 12), 12);
-            clickY = Math.Max(Math.Min(clickY, PlayState.WorldHeight - h * 2 - 12), 12);
+            float clickX = worldPos.X;
+            float clickY = worldPos.Y;
+            clickX = Math.Max(Math.Min(clickX, PlayState.WorldWidth - w - 1), w + 1);
+            clickY = Math.Max(Math.Min(clickY, PlayState.WorldHeight - h - 1), h + 1 );
            
-            PlayState.WorldOrigin = new Vector2((int)(clickX + w), (int)(clickY + h));
+            PlayState.WorldOrigin = new Vector2((int)(clickX), (int)(clickY));
         }
 
         public Dictionary<string, Color> GenerateFactionColors()
@@ -618,14 +848,15 @@ namespace DwarfCorp.GameStates
 
                 GenerationComplete = true;
 
-                MapPanel.Image = new ImageFrame(worldMap, new Rectangle(0, 0, worldMap.Width, worldMap.Height));
                 MapPanel.LocalBounds = new Rectangle(300, 30, worldMap.Width, worldMap.Height);
 
 
                 Progress.Value = 1.0f;
-                IsGenerating = false;
                 GUI.MouseMode = GUISkin.MousePointer.Pointer;
+                CreateMesh();
+                IsGenerating = false;
                 DoneGenerating = true;
+
             }
 #if CREATE_CRASH_LOGS
             catch (Exception exception)
@@ -1050,7 +1281,9 @@ namespace DwarfCorp.GameStates
                 }
             }
             TransitionValue = 1.0f;
-
+            GUI.Graphics.DepthStencilState = DepthStencilState.Default;
+            GUI.Graphics.BlendState = BlendState.Opaque;
+            DrawMesh(gameTime.ToGameTime());
             base.Update(gameTime);
         }
 
@@ -1063,20 +1296,28 @@ namespace DwarfCorp.GameStates
             return new Rectangle((int)PlayState.WorldOrigin.X - w, (int)PlayState.WorldOrigin.Y - h, w * 2, h * 2);
         }
 
-        public Rectangle GetSpawnRectangleOnImage()
+        public void GetSpawnRectangleOnImage(ref Point a, ref Point b, ref Point c, ref Point d, ref bool valid)
         {
             Rectangle spawnRect = GetSpawnRectangle();
-            Rectangle imageBounds = MapPanel.GetImageBounds();
-            float scaleX = ((float)imageBounds.Width / (float)PlayState.WorldWidth);
-            float scaleY = ((float)imageBounds.Height / (float)PlayState.WorldHeight);
-            int posX = imageBounds.X;
-            int posY = imageBounds.Y;
-
-            return new Rectangle((int)(spawnRect.X * scaleX + posX), (int)(spawnRect.Y * scaleY + posY), (int)(spawnRect.Width * scaleX), (int)(spawnRect.Height * scaleY));
+            Point worldA = new Point(spawnRect.X, spawnRect.Y);
+            Point worldB = new Point(spawnRect.X + spawnRect.Width, spawnRect.Y);
+            Point worldC = new Point(spawnRect.X + spawnRect.Width, spawnRect.Height + spawnRect.Y);
+            Point worldD = new Point(spawnRect.X, spawnRect.Height + spawnRect.Y);
+            newTarget = new Vector3((worldA.X + worldC.X) / (float)Overworld.Map.GetLength(0), 0, (worldA.Y + worldC.Y) / (float)(Overworld.Map.GetLength(1))) * 0.5f;
+            bool validA = true;
+            bool validB = true;
+            bool validC = true;
+            bool validD = true;
+            a = WorldToScreen(worldA, ref validA);
+            b = WorldToScreen(worldB, ref validB);
+            c = WorldToScreen(worldC, ref validC);
+            d = WorldToScreen(worldD, ref validD);
+            valid = validA && validB && validC && validD;
         }
 
         private void DrawGUI(DwarfTime gameTime, float dx)
         {
+            GUI.Graphics.SetRenderTarget(null);
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
                 null, null);
@@ -1091,10 +1332,23 @@ namespace DwarfCorp.GameStates
                 float scaleX = ((float)imageBounds.Width / (float)PlayState.WorldWidth);
                 float scaleY = ((float)imageBounds.Height / (float)PlayState.WorldHeight);
                 Rectangle spawnRect = GetSpawnRectangle();
-                Rectangle spawnRectOnImage = GetSpawnRectangleOnImage();
-                Drawer2D.DrawRect(DwarfGame.SpriteBatch, spawnRectOnImage, Color.Yellow, 3.0f);
-                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Spawn", DefaultFont, new Vector2(spawnRectOnImage.X - 5, spawnRectOnImage.Y - 20), Color.White, Color.Black);
-
+                Point a = new Point(), b = new Point(), c= new Point(), d = new Point();
+                bool valid = true;
+                GetSpawnRectangleOnImage(ref a, ref b, ref c, ref d, ref valid);
+                if (valid)
+                {
+                    Drawer2D.DrawPolygon(DwarfGame.SpriteBatch, Color.Yellow, 1,
+                        new List<Vector2>()
+                        {
+                            new Vector2(a.X, a.Y),
+                            new Vector2(b.X, b.Y),
+                            new Vector2(c.X, c.Y),
+                            new Vector2(d.X, d.Y),
+                            new Vector2(a.X, a.Y)
+                        });
+                    Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Spawn", DefaultFont, new Vector2(a.X - 5, a.Y - 20),
+                        Color.White, Color.Black);
+                }
                 //ImageMutex.WaitOne();
                 /*
                 DwarfGame.SpriteBatch.Draw(MapPanel.Image.Image,
@@ -1102,7 +1356,7 @@ namespace DwarfCorp.GameStates
                    spawnRect, Color.White);
                  */
                 //ImageMutex.ReleaseMutex();
-                CloseupPanel.Image.Image = MapPanel.Image.Image;
+                CloseupPanel.Image.Image = worldMap;
                 CloseupPanel.Image.SourceRect = spawnRect;
 
 
@@ -1110,14 +1364,20 @@ namespace DwarfCorp.GameStates
                 {
                     foreach (Faction civ in NativeCivilizations)
                     {
-                        Point start = civ.Center;
-                        Vector2 measure = Datastructures.SafeMeasure(GUI.SmallFont, civ.Name);
-                        Rectangle snapped =
-                            MathFunctions.SnapRect(
-                                new Vector2(start.X*scaleX + imageBounds.X, start.Y*scaleY + imageBounds.Y) -
-                                measure*0.5f, measure, imageBounds);
-   
-                        Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, civ.Name, GUI.SmallFont, new Vector2(snapped.X, snapped.Y), Color.White, Color.Black);
+                        bool validProj = false;
+                        Point start = WorldToScreen(civ.Center, ref validProj);
+
+                        if (validProj)
+                        {
+                            Vector2 measure = Datastructures.SafeMeasure(GUI.SmallFont, civ.Name);
+                            Rectangle snapped =
+                                MathFunctions.SnapRect(
+                                    new Vector2(start.X, start.Y) -
+                                    measure*0.5f, measure, imageBounds);
+
+                            Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, civ.Name, GUI.SmallFont,
+                                new Vector2(snapped.X, snapped.Y), Color.White, Color.Black);
+                        }
                     }
                 }
             }
@@ -1125,7 +1385,7 @@ namespace DwarfCorp.GameStates
             GUI.PostRender(gameTime);
             DwarfGame.SpriteBatch.End();
         }
-
+      
         public override void Render(DwarfTime gameTime)
         {
             if(Transitioning == TransitionMode.Running)
@@ -1143,8 +1403,6 @@ namespace DwarfCorp.GameStates
                 float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Height, 1.0f);
                 DrawGUI(gameTime, dx);
             }
-
-
             base.Render(gameTime);
         }
 

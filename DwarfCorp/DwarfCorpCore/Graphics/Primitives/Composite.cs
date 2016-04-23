@@ -119,13 +119,14 @@ namespace DwarfCorp
             CurrentOffset = new Point(0, 0);
         }
 
+
         public Composite(List<Composite.Frame> frames)
         {
             CurrentFrames = new Dictionary<Frame, Point>();
             CurrentOffset = new Point(0, 0);
 
-            FrameSize = new Point(42, 42);
-            TargetSizeFrames  = new Point(16, 16);
+            FrameSize = new Point(32, 32);
+            TargetSizeFrames  = new Point(8, 8);
 
             Initialize();
 
@@ -142,7 +143,6 @@ namespace DwarfCorp
             if (!PrimitiveLibrary.BillboardPrimitives.ContainsKey(key))
             {
                 PrimitiveLibrary.BillboardPrimitives[key] = new BillboardPrimitive(device, (Texture2D)Target, FrameSize.X, FrameSize.Y, new Point(0, 0), FrameSize.X / 32.0f, FrameSize.Y / 32.0f, Color.White);
-                
             }
 
             return PrimitiveLibrary.BillboardPrimitives[key];
@@ -156,17 +156,36 @@ namespace DwarfCorp
 
         public Point PushFrame(Frame frame)
         {
+            bool resize = false;
             if (!CurrentFrames.ContainsKey(frame))
             {
+                foreach (var layer in frame.Layers)
+                {
+                    if (layer.FrameWidth > FrameSize.X || layer.FrameHeight > FrameSize.Y)
+                    {
+                        FrameSize = new Point(Math.Max(layer.FrameWidth, FrameSize.X), Math.Max(layer.FrameHeight, FrameSize.Y));
+                        resize = true;
+                    }
+                }
                 Point toReturn = CurrentOffset;
                 CurrentOffset.X += 1;
-                if (CurrentOffset.X >=TargetSizeFrames.X)
+                if (CurrentOffset.X >= TargetSizeFrames.X)
                 {
                     CurrentOffset.X = 0;
                     CurrentOffset.Y += 1;
                 }
+                if (CurrentOffset.Y >= TargetSizeFrames.Y)
+                {
+                    resize = true;
+                    TargetSizeFrames = new Point(TargetSizeFrames.X * 2, TargetSizeFrames.Y * 2);
+                }
                 CurrentFrames[frame] = toReturn;
-               
+
+                if (resize)
+                {
+                    Initialize();
+                }
+
                 return toReturn;
             }
             else return CurrentFrames[frame];

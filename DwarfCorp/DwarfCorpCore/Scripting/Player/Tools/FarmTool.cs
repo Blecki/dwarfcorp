@@ -65,7 +65,7 @@ namespace DwarfCorp
         public class FarmTile
         {
             public Voxel Vox = null;
-            public Body Plant = null;
+            public Plant Plant = null;
             public float Progress = 0.0f;
             public CreatureAI Farmer = null;
 
@@ -86,12 +86,17 @@ namespace DwarfCorp
 
             public void CreatePlant(string plantToCreate)
             {
-                Plant = EntityFactory.CreateEntity<Body>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Vox.Position + Vector3.Up * 1.5f);
+                Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Vox.Position + Vector3.Up * 1.5f);
+                Seedling seed = Plant.BecomeSeedling();
+                
                 Matrix original = Plant.LocalTransform;
                 original.Translation += Vector3.Down;
-                Plant.AnimationQueue.Add(new EaseMotion(0.5f, original, Plant.LocalTransform.Translation));
+                seed.AnimationQueue.Add(new EaseMotion(0.5f, original, Plant.LocalTransform.Translation));
+                 
                 PlayState.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
-                SoundManager.PlaySound(ContentPaths.Audio.pluck, Vox.Position, true);
+                
+                 SoundManager.PlaySound(ContentPaths.Audio.pluck, Vox.Position, true);
+                
             }
         }
 
@@ -106,6 +111,11 @@ namespace DwarfCorp
         public bool HasPlant(Voxel vox)
         {
             return HasTile(vox) && FarmTiles.Any(f => f.Vox.Equals(vox) && f.PlantExists());
+        }
+
+        public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
+        {
+
         }
 
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)

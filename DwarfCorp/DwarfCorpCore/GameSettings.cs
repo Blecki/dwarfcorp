@@ -65,7 +65,7 @@ namespace DwarfCorp
             public bool EnableEdgeScroll = false;
             public int ChunkWidth = 24;
             public int ChunkHeight = 48;
-            public float WorldScale = 2.0f;
+            public float WorldScale = 8.0f;
             public bool DisplayIntro = true;
             public float MasterVolume = 1.0f;
             public float SoundEffectVolume = 1.0f;

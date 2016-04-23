@@ -47,17 +47,27 @@ namespace DwarfCorp
     public class Inventory : Body
     {
         public ResourceContainer Resources { get; set; }
+        public float DropRate { get; set; }
 
+        public delegate void DieDelegate(List<Body> items);
+
+        public event DieDelegate OnDeath;
+
+        protected virtual void OnOnDeath(List<Body> items)
+        {
+            DieDelegate handler = OnDeath;
+            if (handler != null) handler(items);
+        }
 
         public Inventory()
         {
-            DrawBoundingBox = true;
+            DropRate = 0.75f;
         }
 
         public Inventory(string name, Body parent) :
             base(name, parent, Matrix.Identity, parent.BoundingBox.Extents(), parent.BoundingBoxPos)
         {
-            
+            DropRate = 0.75f;
         }
 
         public bool Pickup(ResourceAmount resourceAmount)
@@ -136,23 +146,31 @@ namespace DwarfCorp
  
         public override void Die()
         {
+            List<Body> release = new List<Body>();
             foreach(var resource in Resources.Where(resource => resource.NumResources > 0))
             {
                 for(int i = 0; i < resource.NumResources; i++)
                 {
-                    Vector3 pos = MathFunctions.RandVector3Box(GetBoundingBox());
-                    Physics item = EntityFactory.CreateEntity<Physics>(resource.ResourceType.ResourceName + " Resource",
-                        pos) as Physics;
-                    if(item != null)
+                    if (MathFunctions.RandEvent(DropRate))
                     {
-                        item.Velocity = pos - GetBoundingBox().Center();
-                        item.Velocity.Normalize();
-                        item.Velocity *= 5.0f;
-                        item.IsSleeping = false;
+                        Vector3 pos = MathFunctions.RandVector3Box(GetBoundingBox());
+                        Physics item =
+                            EntityFactory.CreateEntity<Physics>(resource.ResourceType.ResourceName + " Resource",
+                                pos) as Physics;
+                        if (item != null)
+                        {
+                            release.Add(item);
+                            item.Velocity = pos - GetBoundingBox().Center();
+                            item.Velocity.Normalize();
+                            item.Velocity *= 5.0f;
+                            item.IsSleeping = false;
+                        }
                     }
-                   
+
                 }
             }
+
+            OnOnDeath(release);
             base.Die();
         }
     }

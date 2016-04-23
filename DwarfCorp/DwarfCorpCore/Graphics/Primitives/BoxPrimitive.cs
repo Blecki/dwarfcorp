@@ -350,7 +350,10 @@ namespace DwarfCorp
         public float Depth { get; set; }
         public BoxTextureCoords UVs { get; set; }
 
+
         private const int NumVertices = 24;
+
+        public VoxelVertex[] Deltas { get; set; }
 
         public BoundingBox BoundingBox;
         public short[] Indices { get; set; }
@@ -505,11 +508,15 @@ namespace DwarfCorp
             Width = width;
             Height = height;
             Depth = depth;
-
+            Deltas = new VoxelVertex[NumVertices];
             UVs = uvs;
             CreateVerticies();
             ResetBuffer(device);
             BoundingBox = new BoundingBox(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(width, height, depth));
+            for (int i = 0; i < NumVertices; i++)
+            {
+                Deltas[i] = VoxelChunk.GetNearestDelta(Vertices[i].Position);
+            }
         }
 
         public override void Render(GraphicsDevice device)

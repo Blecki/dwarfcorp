@@ -144,7 +144,7 @@ namespace DwarfCorp
             int i = 0;
             foreach (AnnouncementView view in AnnouncementViews)
             {
-                view.LocalBounds = new Rectangle(0, -(LocalBounds.Height / 2) * i, LocalBounds.Width, LocalBounds.Height / 2 - 7);
+                view.LocalBounds = new Rectangle(0, -(LocalBounds.Height / 4) * i, LocalBounds.Width, LocalBounds.Height / 4 - 7);
                 rects.Add(view.LocalBounds);
                 i++;
             }

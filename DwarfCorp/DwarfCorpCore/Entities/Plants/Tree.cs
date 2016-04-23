@@ -41,8 +41,108 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+
     [JsonObject(IsReference = true)]
-    public class Tree : Body
+    public class Seedling : Fixture
+    {
+        public DateTime FullyGrownDay { get; set; }
+        public DateTime Birthday { get; set; }
+        public Body Adult { get; set; }
+        public bool IsGrown { get; set; }
+        public Seedling()
+        {
+            IsGrown = false;
+        }
+
+        public Seedling(Body adult, Vector3 position, SpriteSheet asset, Point frame) :
+            base(position, asset, frame, PlayState.ComponentManager.RootComponent)
+        {
+            IsGrown = false;
+            Adult = adult;
+            Name = adult.Name + " seedling";
+            Health health = new Health(PlayState.ComponentManager, "HP", this, 1.0f, 0.0f, 1.0f);
+            new Flammable(PlayState.ComponentManager, "Flames", this, health);
+            Voxel voxelUnder = new Voxel();
+
+            if (PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            {
+                VoxelListener listener = new VoxelListener(PlayState.ComponentManager, this, PlayState.ChunkManager, voxelUnder);
+            }
+        }
+
+        public override void Delete()
+        {
+            if (!IsGrown)
+            {
+                Adult.Delete();
+            }
+            base.Delete();
+        }
+
+        public override void Die()
+        {
+            if (!IsGrown)
+            {
+                Adult.Delete();
+            }
+            base.Die();
+        }
+
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        {
+            if (PlayState.Time.CurrentDate >= FullyGrownDay)
+            {
+                CreateAdult();
+            }
+            base.Update(gameTime, chunks, camera);
+        }
+
+        public void CreateAdult()
+        {
+            IsGrown = true;
+            Adult.SetVisibleRecursive(true);
+            Adult.SetActiveRecursive(true);
+            Die();
+        }
+    }
+
+    [JsonObject(IsReference = true)]
+    public class Plant : Body
+    {
+        public SpriteSheet Seedlingsheet { get; set; }
+        public Point SeedlingFrame { get; set; }
+        public int GrowthDays { get; set; }
+        public int GrowthHours { get; set; }
+
+        public Plant()
+        {
+            GrowthDays = 0;
+            GrowthHours = 12;
+        }
+
+        public Plant(string name, GameComponent manager, Matrix localTransform, Vector3 bboxSize,
+            Vector3 bboxLocation) :
+            base(name, manager, localTransform, bboxSize, bboxLocation)
+        {
+            GrowthDays = 0;
+            GrowthHours = 12;
+        }
+
+        public virtual Seedling BecomeSeedling()
+        {
+            UpdateTransformsRecursive();
+            SetActiveRecursive(false);
+            SetVisibleRecursive(false);
+
+            return new Seedling(this, LocalTransform.Translation, Seedlingsheet, SeedlingFrame)
+            {
+                FullyGrownDay = PlayState.Time.CurrentDate.AddHours(GrowthHours).AddDays(GrowthDays)
+            };
+        }
+    }
+
+    [JsonObject(IsReference = true)]
+    public class Tree : Plant
     {
         public Timer HurtTimer { get; set; }
         public ParticleTrigger Particles { get; set; }
@@ -51,6 +151,8 @@ namespace DwarfCorp
         public Tree(Vector3 position, string asset, float treeSize) :
             base("Tree", PlayState.ComponentManager.RootComponent, Matrix.Identity, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), new Vector3(treeSize * 0.5f, treeSize * 0.25f, treeSize * 0.5f))
         {
+            Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
+            SeedlingFrame = new Point(0, 0);
             HurtTimer = new Timer(1.0f, false);
             ComponentManager componentManager = PlayState.ComponentManager;
             Matrix matrix = Matrix.Identity;

@@ -71,6 +71,7 @@ namespace DwarfCorp
             public static ResourceType Ale = "Ale";
             public static ResourceType Bread = "Bread";
             public static ResourceType Trinket = "Trinket";
+            public static ResourceType CaveMushroom = "Cave Mushroom";
             public static ResourceType GemTrinket = "Gem-set Trinket";
 
             public static implicit operator ResourceType(string value)
@@ -141,6 +142,7 @@ namespace DwarfCorp
             Add(new Resource(ResourceType.Iron, 5.0f, "Needed to build things.", new NamedImageFrame(tileSheet, GetRect(2, 0)), Color.White, Resource.ResourceTags.Metal, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial));
             Add(new Resource(ResourceType.Berry, 0.5f, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(2, 1)), Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Plantable, Resource.ResourceTags.AboveGroundPlant) { FoodContent = 50, PlantToGenerate = "Berry Bush"});
             Add(new Resource(ResourceType.Mushroom, 0.25f, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(1, 2)), Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Fungus, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Brewable, Resource.ResourceTags.Plantable, Resource.ResourceTags.BelowGroundPlant) { FoodContent = 50, PlantToGenerate = "Mushroom" });
+            Add(new Resource(ResourceType.CaveMushroom, 0.35f, "Dwarves can eat these.", new NamedImageFrame(tileSheet, GetRect(4, 1)), Color.White, Resource.ResourceTags.SelfIlluminating, Resource.ResourceTags.Edible, Resource.ResourceTags.Fungus, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Brewable, Resource.ResourceTags.Plantable, Resource.ResourceTags.BelowGroundPlant) { FoodContent = 30, PlantToGenerate = "Cave Mushroom" });
             Add(new Resource(ResourceType.Grain, 0.25f, "Dwarves can eat this.", new NamedImageFrame(tileSheet, GetRect(0, 2)), Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Grain, Resource.ResourceTags.Flammable, Resource.ResourceTags.RawFood, Resource.ResourceTags.Brewable, Resource.ResourceTags.Bakeable, Resource.ResourceTags.Plantable, Resource.ResourceTags.AboveGroundPlant) { FoodContent = 100, PlantToGenerate = "Wheat" });
             Add(new Resource(ResourceType.Bones,  15.0f, "Came from an animal.", new NamedImageFrame(tileSheet, GetRect(3, 3)), Color.White, Resource.ResourceTags.Bone, Resource.ResourceTags.Material, Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.HardMaterial));
             Add(new Resource(ResourceType.Meat,  25.0f, "Came from an animal.",

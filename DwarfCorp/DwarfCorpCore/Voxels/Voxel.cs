@@ -154,16 +154,12 @@ namespace DwarfCorp
         {
             get
             {
-                if (Chunk == null) return VoxelType.TypeList[0];
                 return VoxelType.TypeList[Chunk.Data.Types[Index]];
             }
             set
             {
-                if (Chunk != null)
-                {
-                    Chunk.Data.Types[Index] = (byte) value.ID;
-                    Chunk.Data.Health[Index] = (byte) value.StartingHealth;
-                }
+                Chunk.Data.Types[Index] = (byte) value.ID;
+                Chunk.Data.Health[Index] = (byte) value.StartingHealth;
             }
         }
 
@@ -195,6 +191,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public bool IsExplored
         {
+            //get { return true; }
             get { return !GameSettings.Default.FogofWar || Chunk.Data.IsExplored[Index]; }
             set { Chunk.Data.IsExplored[Index] = value; }
         }
@@ -253,11 +250,6 @@ namespace DwarfCorp
             {
                 if (Type.IsInvincible) return;
                 Chunk.Data.Health[Index] = (byte)(Math.Max(Math.Min(value, 255.0f), 0.0f));
-
-                if (value <= 0.0f)
-                {
-                    Kill();
-                }
             }
         }
 
@@ -357,11 +349,11 @@ namespace DwarfCorp
 
 
 
-        public void Kill()
+        public List<Body> Kill()
         {
             if (IsEmpty)
             {
-                return;
+                return null;
             }
 
             if(PlayState.ParticleManager != null)
@@ -376,18 +368,25 @@ namespace DwarfCorp
             }
 
             SoundManager.PlaySound(Type.ExplosionSound, Position);
+
+            List<Body> emittedResources = null;
             if (Type.ReleasesResource)
             {
                 float randFloat = MathFunctions.Rand();
 
                 if (randFloat < Type.ProbabilityOfRelease)
                 {
-                    EntityFactory.CreateEntity<Body>(Type.ResourceToRelease + " Resource", Position + new Vector3(0.5f, 0.5f, 0.5f));
+                    emittedResources = new List<Body>
+                    {
+                        EntityFactory.CreateEntity<Body>(Type.ResourceToRelease + " Resource",
+                            Position + new Vector3(0.5f, 0.5f, 0.5f))
+                    };
                 }
             }
 
             Chunk.Manager.KilledVoxels.Add(this);
-            Chunk.Data.Types[Index] = 0; 
+            Chunk.Data.Types[Index] = 0;
+            return emittedResources;
         }
 
         public BoundingSphere GetBoundingSphere()
@@ -397,8 +396,8 @@ namespace DwarfCorp
 
         public BoundingBox GetBoundingBox()
         {
-            BoundingBox pBox = Primitive != null ? Primitive.BoundingBox : new BoundingBox(Vector3.Zero, new Vector3(1, 1, 1));
-            return new BoundingBox(pBox.Min + Position, pBox.Max + Position);
+            var pos = Position;
+            return new BoundingBox(pos, pos + Vector3.One);
         }
 
         public Voxel()
@@ -462,6 +461,11 @@ namespace DwarfCorp
                 cell.WaterLevel = value;
                 Chunk.Data.Water[Index] = cell;
             }
+        }
+
+        public bool GetNeighbor(Vector3 dir, ref Voxel vox)
+        {
+            return Chunk.Manager.ChunkData.GetVoxel(Position + dir, ref vox);
         }
     }
 

@@ -67,12 +67,9 @@ namespace DwarfCorp
         }
 
 
-        private static bool Path(CreatureMovement mover, Voxel start, GoalRegion goal, ChunkManager chunks, int maxExpansions, ref List<Creature.MoveAction> toReturn, bool reverse)
+        private static bool Path(CreatureMovement mover, Voxel start, GoalRegion goal, ChunkManager chunks, int maxExpansions, ref List<Creature.MoveAction> toReturn, bool reverse, float weight)
         {
-            VoxelChunk startChunk = chunks.ChunkData.ChunkMap[start.ChunkID];
-            VoxelChunk endChunk = chunks.ChunkData.ChunkMap[goal.GetVoxel().ChunkID];
-
-            if(startChunk.IsCompletelySurrounded(start) || endChunk.IsCompletelySurrounded(goal.GetVoxel()))
+            if(!goal.IsPossible())
             {
                 toReturn = null;
                 return false;
@@ -90,7 +87,7 @@ namespace DwarfCorp
             Dictionary<Voxel, float> gScore = new Dictionary<Voxel, float>();
             PriorityQueue<Voxel> fScore = new PriorityQueue<Voxel>();
             gScore[start] = 0.0f;
-            fScore.Enqueue(start, gScore[start] + Heuristic(start, goal.GetVoxel()));
+            fScore.Enqueue(start, gScore[start] + weight * goal.Heuristic(start));
 
             int numExpansions = 0;
 
@@ -168,7 +165,7 @@ namespace DwarfCorp
 
                     cameFrom[n.Voxel] = cameAction;
                     gScore[n.Voxel] = tenativeGScore;
-                    fScore.Enqueue(n.Voxel, gScore[n.Voxel] + Heuristic(n.Voxel, goal.GetVoxel()));
+                    fScore.Enqueue(n.Voxel, gScore[n.Voxel] + weight * goal.Heuristic(n.Voxel));
                 }
 
                 if(numExpansions >= maxExpansions)
@@ -182,10 +179,10 @@ namespace DwarfCorp
 
 
 
-        public static List<Creature.MoveAction> FindPath(CreatureMovement mover, Voxel start, GoalRegion goal, ChunkManager chunks, int maxExpansions)
+        public static List<Creature.MoveAction> FindPath(CreatureMovement mover, Voxel start, GoalRegion goal, ChunkManager chunks, int maxExpansions, float weight)
         {
             List<Creature.MoveAction> p = new List<Creature.MoveAction>();
-            bool success = Path(mover, start, goal, chunks, maxExpansions, ref p, false);
+            bool success = Path(mover, start, goal, chunks, maxExpansions, ref p, false, weight);
 
             if(success)
             {
@@ -227,14 +224,11 @@ namespace DwarfCorp
                     return 10.0f;
                 case Creature.MoveType.Fly:
                     return 2.0f;
+                case Creature.MoveType.DestroyObject:
+                    return 30.0f;
                 default:
                     return 1.0f;
             }
-        }
-
-        public static float Heuristic(Voxel a, Voxel b)
-        {
-            return (a.Position - b.Position).LengthSquared();
         }
     }
 

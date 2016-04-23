@@ -64,6 +64,8 @@ namespace DwarfCorp
             }
 
 
+            HasMeat = false;
+            HasBones = false;
 
             Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
 

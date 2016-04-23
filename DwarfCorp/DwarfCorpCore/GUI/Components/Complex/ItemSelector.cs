@@ -116,7 +116,9 @@ namespace DwarfCorp
 
         public List<GItem> FilteredItems { get; set; }
         public List<Resource.ResourceTags> LikedThings { get; set; }
-        public List<Resource.ResourceTags> HatedThings { get; set; } 
+        public List<Resource.ResourceTags> HatedThings { get; set; }
+        public List<Resource.ResourceTags> CommonThings { get; set; }
+        public List<Resource.ResourceTags> RareThings { get; set; }
         public int ComputeSpace()
         {
             int total = 0;
@@ -155,6 +157,16 @@ namespace DwarfCorp
             return total;
         }
 
+        bool IsCommon(Resource resource)
+        {
+            return CommonThings.Any(tags => resource.Tags.Contains(tags));
+        }
+
+        bool IsRare(Resource resource)
+        {
+            return RareThings.Any(tags => resource.Tags.Contains(tags));
+        }
+
         bool IsLiked(Resource resource)
         {
             return LikedThings.Any(tags => resource.Tags.Contains(tags));
@@ -170,6 +182,8 @@ namespace DwarfCorp
         {
             LikedThings = new List<Resource.ResourceTags>();
             HatedThings = new List<Resource.ResourceTags>();
+            CommonThings = new List<Resource.ResourceTags>();
+            RareThings = new List<Resource.ResourceTags>();
 
             Columns = new List<Column>()
             {
@@ -284,13 +298,13 @@ namespace DwarfCorp
         public float GetPrice(GItem item)
         {
             float price = item.Price;
-            if (IsLiked(item.ResourceType))
+            if (IsRare(item.ResourceType))
             {
                 price *= 2;
             }
-            else if (IsHated(item.ResourceType))
+            else if (IsCommon(item.ResourceType))
             {
-                price *= 0.1f;
+                price *= 0.5f;
             }
 
             return price;

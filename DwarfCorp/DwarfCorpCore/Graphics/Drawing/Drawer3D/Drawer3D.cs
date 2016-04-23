@@ -77,6 +77,11 @@ namespace DwarfCorp
             Commands.Add(new BoxDrawCommand3D(box, color, thickness, warp));
         }
 
+        public static void DrawPlane(float y, float minX, float minZ, float maxX, float maxZ, Color color)
+        {
+            Commands.Add(new PlaneDrawCommand(new Vector3((maxX + minX) * 0.5f, y, (maxZ + minZ) * 0.5f), new Vector3((maxX - minX), 1.0f, (maxZ - minZ)), color));
+        }
+
         public static void Render(GraphicsDevice device, Effect effect, bool delete)
         {
 
@@ -96,8 +101,8 @@ namespace DwarfCorp
             };
             foreach(DrawCommand3D command in Commands)
             {
-                command.AccumulateStrips(strips);
-
+                if (command.DrawAccumlatedStrips)
+                    command.AccumulateStrips(strips);
             }
 
             if (strips.Vertices.Count > 0 && strips.NumTriangles > 0)
@@ -111,6 +116,14 @@ namespace DwarfCorp
 
 
             effect.CurrentTechnique = effect.Techniques["Textured"];
+
+            foreach (DrawCommand3D command in Commands)
+            {
+                if (!command.DrawAccumlatedStrips)
+                {
+                    command.Render(device, effect);
+                }
+            }
 
             if(oldState != null)
             {
@@ -175,12 +188,12 @@ namespace DwarfCorp
             return list;
         }
 
-        public static void DrawAxes(Matrix t, float f)
+        public static void DrawAxes(Matrix t, float length)
         {
             Vector3 p = t.Translation;
-            DrawLine(p, p + t.Right * f, Color.Red, 0.01f);
-            DrawLine(p, p + t.Up * f, Color.Green, 0.01f);
-            DrawLine(p, p + t.Forward * f, Color.Blue, 0.01f);
+            DrawLine(p, p + t.Right * length, Color.Red, 0.01f);
+            DrawLine(p, p + t.Up * length, Color.Green, 0.01f);
+            DrawLine(p, p + t.Forward * length, Color.Blue, 0.01f);
         }
     }
 

@@ -59,7 +59,7 @@ namespace DwarfCorp
         public event ReleasedDelegate OnRelease;
         public event MouseUnHoveredDelegate OnUnHover;
         public event MouseScrolledDelegate OnScrolled;
-        
+        public event MouseDraggedDelegate OnDragged;
 
         public GUIComponent Parent { get; set; }
         public List<GUIComponent> Children { get; set; }
@@ -190,11 +190,17 @@ namespace DwarfCorp
             OnUnHover += dummy;
             OnUpdate += dummy;
             OnRender += dummy;
+            OnDragged += GUIComponent_OnDragged;
             OnScrolled += SillyGUIComponent_OnScrolled;
 
             ChildrenToRemove = new List<GUIComponent>();
             ChildrenToAdd = new List<GUIComponent>();
             Tweens = new List<GUITween>();
+        }
+
+        void GUIComponent_OnDragged(InputManager.MouseButton button, Vector2 delta)
+        {
+    
         }
 
 
@@ -286,6 +292,22 @@ namespace DwarfCorp
                 if(state.ScrollWheelValue != GUI.LastScrollWheel)
                 {
                     OnScrolled(GUI.LastScrollWheel - state.ScrollWheelValue);
+                }
+
+                if (state.LeftButton == ButtonState.Pressed)
+                {
+                    OnDragged(InputManager.MouseButton.Left, new Vector2(state.X - GUI.LastMouseX, state.Y - GUI.LastMouseY));
+                }
+
+
+                if (state.RightButton == ButtonState.Pressed)
+                {
+                    OnDragged(InputManager.MouseButton.Right, new Vector2(state.X - GUI.LastMouseX, state.Y - GUI.LastMouseY));
+                }
+
+                if (state.MiddleButton == ButtonState.Pressed)
+                {
+                    OnDragged(InputManager.MouseButton.Middle, new Vector2(state.X - GUI.LastMouseX, state.Y - GUI.LastMouseY));
                 }
             }
 

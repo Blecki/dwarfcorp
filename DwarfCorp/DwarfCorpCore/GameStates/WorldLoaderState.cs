@@ -303,7 +303,7 @@ namespace DwarfCorp.GameStates
                         return;
                     }
 
-                    descriptor.File = new OverworldFile(descriptor.FileName, true);
+                    descriptor.File = new OverworldFile(descriptor.FileName, true, true);
 
                     Overworld.Map = descriptor.File.Data.CreateMap();
 

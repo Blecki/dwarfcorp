@@ -177,6 +177,7 @@ namespace DwarfCorp
 
         }
 
+
         public Body(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
             this(name, parent, localTransform, boundingBoxExtents, boundingBoxPos, true)
         {
@@ -398,14 +399,6 @@ namespace DwarfCorp
             base.Die();
         }
 
-        /*
-        public static IEnumerable<Act.Status> UnReserve(Body closestItem)
-        {
-            closestItem.IsReserved = false;
-            closestItem.ReservedFor = null;
-            yield return Act.Status.Success;
-        }
-         */
     }
 
 }

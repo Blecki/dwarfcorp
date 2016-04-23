@@ -219,8 +219,8 @@ namespace DwarfCorp
 
         public static LibNoise.Perlin heightNoise = new LibNoise.Perlin()
         {
-            Frequency = 1.5f,
-            Lacunarity = 0.6f,
+            Frequency = 0.7f,
+            Lacunarity = 0.8f,
             NoiseQuality = NoiseQuality.Standard,
             OctaveCount = 4,
             Seed = PlayState.Random.Next(),
@@ -243,7 +243,8 @@ namespace DwarfCorp
             Tundra,
             Taiga,
             Jungle,
-            Waste
+            Waste,
+            Cave
         }
 
 

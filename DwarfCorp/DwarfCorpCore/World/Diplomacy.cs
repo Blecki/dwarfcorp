@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using DwarfCorpCore;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
@@ -57,11 +58,39 @@ namespace DwarfCorp
             public List<PoliticalEvent> RecentEvents { get; set; }
             public bool HasMet { get; set; }
             public bool WasAtWar { get; set; }
+            public TimeSpan DistanceToCapital { get; set; }
+            public DateTimer WarPartyTimer { get; set; }
+            public DateTimer TradePartyTimer { get; set; }
 
             public Politics()
             {
                 WasAtWar = false;
                 HasMet = false;
+                WarPartyTimer = new DateTimer(PlayState.Time.CurrentDate, DistanceToCapital)
+                {
+                    TriggerOnce = true
+                };
+
+                TradePartyTimer = new DateTimer(PlayState.Time.CurrentDate, DistanceToCapital)
+                {
+                    TriggerOnce = true
+                };
+            }
+
+            public void DispatchNewTradeEnvoy()
+            {
+                TradePartyTimer = new DateTimer(PlayState.Time.CurrentDate, DistanceToCapital)
+                {
+                    TriggerOnce = true
+                };
+            }
+
+            public void DispatchNewWarParty()
+            {
+                WarPartyTimer = new DateTimer(PlayState.Time.CurrentDate, DistanceToCapital)
+                {
+                    TriggerOnce = true
+                };
             }
 
             public Relationship GetCurrentRelationship()
@@ -145,12 +174,21 @@ namespace DwarfCorp
                     }
                     else
                     {
+                        Point c1 = faction.Value.Center;
+                        Point c2 = otherFaction.Value.Center;
+                        double dist = Math.Sqrt(Math.Pow(c1.X - c2.X, 2) + Math.Pow(c1.Y - c2.Y, 2));
+                        // Time always takes between 1 and 4 days of travel.
+                        double timeInMinutes = Math.Min(Math.Max(dist * 8.0f, 1440), 1440 * 4);
+
                         Politics politics = new Politics()
                         {
                             Faction = otherFaction.Value,
                             HasMet = false,
-                            RecentEvents = new List<PoliticalEvent>()
+                            RecentEvents = new List<PoliticalEvent>(),
+                            DistanceToCapital = new TimeSpan(0, (int)(timeInMinutes), 0)
                         };
+
+                        politics.DispatchNewTradeEnvoy();
 
                         if (faction.Value.Race == otherFaction.Value.Race)
                         {
@@ -203,8 +241,18 @@ namespace DwarfCorp
                     {
                         Creatures = creatures,
                         OtherFaction = PlayState.PlayerFaction,
-                        ShouldRemove = false
+                        ShouldRemove = false,
+                        OwnerFaction = natives,
+                        TradeGoods = natives.Race.GenerateResources(),
+                        TradeMoney = natives.TradeMoney
                     };
+
+                    foreach (CreatureAI creature in envoy.Creatures)
+                    {
+                        ResourcePack resources = new ResourcePack(creature.Physics);
+                    }
+                    envoy.DistributeGoods();
+
                     natives.TradeEnvoys.Add(envoy);
                     PlayState.AnnouncementManager.Announce("Trade envoy from " + natives.Name + " has arrived!",
                         "Click to zoom to location", creatures.First().ZoomToMe);
@@ -212,35 +260,49 @@ namespace DwarfCorp
             }
             else
             {
-                PlayState.PlayerFaction.DispatchBalloon();
-                envoy = new Faction.TradeEnvoy()
+
+                List<CreatureAI> creatures =
+                    PlayState.MonsterSpawner.Spawn(PlayState.MonsterSpawner.GenerateSpawnEvent(natives,
+                        PlayState.PlayerFaction, PlayState.Random.Next(4) + 1, false));
+
+
+                if (creatures.Count > 0)
                 {
-                    Creatures = new List<CreatureAI>(),
-                    OtherFaction = PlayState.PlayerFaction,
-                    ShouldRemove = false
-                };
-                PlayState.AnnouncementManager.Announce("Trade envoy from " + natives.Name + " has arrived!", "Trade with " + natives.Name);
+                    Body balloon = PlayState.PlayerFaction.DispatchBalloon();
+
+                    foreach (CreatureAI creature in creatures)
+                    {
+                        Matrix tf = creature.Physics.LocalTransform;
+                        tf.Translation = balloon.LocalTransform.Translation;
+                        creature.Physics.LocalTransform = tf;
+                    }
+
+                    envoy = new Faction.TradeEnvoy()
+                    {
+                        Creatures = creatures,
+                        OtherFaction = PlayState.PlayerFaction,
+                        ShouldRemove = false,
+                        OwnerFaction = natives,
+                        TradeGoods = natives.Race.GenerateResources(),
+                        TradeMoney = natives.TradeMoney
+                    };
+                    foreach (CreatureAI creature in envoy.Creatures)
+                    {
+                        ResourcePack resources = new ResourcePack(creature.Physics);
+                    }
+                    envoy.DistributeGoods();
+                    natives.TradeEnvoys.Add(envoy);
+                    PlayState.AnnouncementManager.Announce("Trade envoy from " + natives.Name + " has arrived!",
+                        "Click to zoom to location", creatures.First().ZoomToMe);
+                }
             }
 
-            if (GameState.Game.StateManager.States.ContainsKey("DiplomacyState_" + natives.Name))
-            {
-                GameState.Game.StateManager.PushState("DiplomacyState_" + natives.Name);
-            }
-            else
-            {
-                GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game, GameState.Game.StateManager,
-                    (PlayState) GameState.Game.StateManager.GetState<PlayState>("PlayState"), natives)
-                {
-                    Name = "DiplomacyState_" + natives.Name,
-                    Envoy = envoy
-                });
-            }
         }
 
         public void SendWarParty(Faction natives)
         {
             // todo
-            PlayState.AnnouncementManager.Announce("War party from " + natives.Name + " has arrived!", "");
+            PlayState.AnnouncementManager.Announce(Drawer2D.WrapColor("War party from " + natives.Name + " has arrived!", Color.DarkRed), "");
             Politics politics = GetPolitics(natives, PlayState.PlayerFaction);
             politics.WasAtWar = true;
             List<CreatureAI> creatures = PlayState.MonsterSpawner.Spawn(PlayState.MonsterSpawner.GenerateSpawnEvent(natives, PlayState.PlayerFaction, PlayState.Random.Next(5) + 1, true));
@@ -262,27 +324,215 @@ namespace DwarfCorp
                 Pair<Faction> pair = mypolitics.Key;
                 if (!pair.IsSelfPair() && pair.Contains(PlayState.PlayerFaction))
                 {
+                   
                     Faction otherFaction = null;
 
                     otherFaction = pair.First.Equals(PlayState.PlayerFaction) ? pair.Second : pair.First;
-
+                    UpdateTradeEnvoys(otherFaction);
+                    UpdateWarParties(otherFaction);
                     Race race = otherFaction.Race;
                     Politics relation = mypolitics.Value;
 
-                    /*
-                    if (race.IsIntelligent  && !otherFaction.IsRaceFaction && relation.GetCurrentRelationship() != Relationship.Hateful && MathFunctions.RandEvent(1e-3f))
+                    
+                    if (race.IsIntelligent  && !otherFaction.IsRaceFaction && 
+                        relation.GetCurrentRelationship() != Relationship.Hateful)
                     {
-                        SendTradeEnvoy(otherFaction);
-                    }
+                        if (otherFaction.TradeEnvoys.Count == 0 && !relation.TradePartyTimer.HasTriggered)
+                        {
+                            relation.TradePartyTimer.Update(currentDate);
 
-                    if (race.IsIntelligent  && !otherFaction.IsRaceFaction && relation.GetCurrentRelationship() == Relationship.Hateful && MathFunctions.RandEvent(1e-3f))
-                    {
-                        SendWarParty(otherFaction);
+                            if (relation.TradePartyTimer.HasTriggered)
+                            {
+                                SendTradeEnvoy(otherFaction);
+                            }
+                        }
+                        else if (otherFaction.TradeEnvoys.Count == 0)
+                        {
+                            relation.DispatchNewTradeEnvoy();
+                        }
+
                     }
-                     */
+                    else if (race.IsIntelligent && !otherFaction.IsRaceFaction &&
+                             relation.GetCurrentRelationship() == Relationship.Hateful)
+                    {
+                        if (otherFaction.WarParties.Count == 0 && !relation.WarPartyTimer.HasTriggered)
+                        {
+                            relation.WarPartyTimer.Update(currentDate);
+
+                            if (relation.WarPartyTimer.HasTriggered)
+                            {
+                                SendWarParty(otherFaction);
+                            }
+                        }
+                        else if (otherFaction.WarParties.Count == 0)
+                        {
+                            relation.DispatchNewWarParty();
+                        }
+                    }
                 }
                 mypolitics.Value.UpdateEvents(currentDate);
             }
         }
+
+
+        public void UpdateTradeEnvoys(Faction faction)
+        {
+            foreach (Faction.TradeEnvoy envoy in faction.TradeEnvoys)
+            {
+                if (envoy.DeathTimer.Update(PlayState.Time.CurrentDate))
+                {
+                    envoy.Creatures.ForEach((creature) => creature.GetRootComponent().Die());
+                }
+
+                Diplomacy.Politics politics = PlayState.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
+                if (politics.GetCurrentRelationship() == Relationship.Hateful)
+                {
+                    RecallEnvoy(envoy);
+                }
+                else
+                {
+                    if (envoy.Creatures.Any(
+                        creature => envoy.OtherFaction.AttackDesignations.Contains(creature.Physics)))
+                    {
+
+                        if (!politics.HasEvent("You attacked our trade delegates"))
+                        {
+                            politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                            {
+                                Change = -1.0f,
+                                Description = "You attacked our trade delegates",
+                                Duration = new TimeSpan(1, 0, 0, 0),
+                                Time = PlayState.Time.CurrentDate
+                            });
+                        }
+                        else
+                        {
+                            politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                            {
+                                Change = -2.0f,
+                                Description = "You attacked our trade delegates more than once",
+                                Duration = new TimeSpan(1, 0, 0, 0),
+                                Time = PlayState.Time.CurrentDate
+                            });
+                        }
+                    }
+                }
+
+                if (!envoy.ShouldRemove && envoy.ExpiditionState == Faction.Expidition.State.Arriving)
+                {
+                    foreach (CreatureAI creature in envoy.Creatures)
+                    {
+                       
+                        Room tradePort = envoy.OtherFaction.GetNearestRoomOfType(BalloonPort.BalloonPortName,
+                            creature.Position);
+
+                        if (creature.Tasks.Count == 0)
+                        {
+                            creature.Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, tradePort)) { Name = "Go to trade port.", Priority = Task.PriorityType.Urgent});
+                        }
+
+                        if (!tradePort.IsRestingOnZone(creature.Position)) continue;
+
+                        envoy.ExpiditionState = Faction.Expidition.State.Trading;
+                        if (GameState.Game.StateManager.States.ContainsKey("DiplomacyState_" +faction.Name))
+                        {
+                            DiplomacyState state = GameState.Game.StateManager.States["DiplomacyState_" + faction.Name] as DiplomacyState;
+                            if (state != null)
+                            {
+                                state.Envoy = envoy;
+                                state.Resources = envoy.TradeGoods;
+                            }
+                            GameState.Game.StateManager.PushState("DiplomacyState_" + faction.Name);
+                        }
+                        else
+                        {
+                            GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game,
+                                GameState.Game.StateManager,
+                                (PlayState) GameState.Game.StateManager.GetState<PlayState>("PlayState"), envoy)
+                            {
+                                Name = "DiplomacyState_" + faction.Name,
+                                Envoy = envoy
+                            });
+                        }
+                        break;
+                    }
+                }
+                else if (envoy.ExpiditionState == Faction.Expidition.State.Leaving)
+                {
+                    BoundingBox worldBBox = PlayState.ChunkManager.Bounds;
+
+                    foreach (CreatureAI creature in envoy.Creatures)
+                    {
+                        if (creature.Tasks.Count == 0)
+                        {
+                            creature.LeaveWorld();
+                        }
+                    }
+
+                    foreach (CreatureAI creature in envoy.Creatures)
+                    {
+                        if (MathFunctions.Dist2D(worldBBox, creature.Position) < 2.0f)
+                        {
+                            creature.GetRootComponent().Delete();
+                            creature.IsDead = true;
+                        }
+                    }
+                }
+
+                if (envoy.Creatures.All(creature => creature.IsDead))
+                {
+                    envoy.ShouldRemove = true;
+                }
+
+               
+            }
+
+            faction.TradeEnvoys.RemoveAll(t => t.ShouldRemove);
+        }
+
+        public void UpdateWarParties(Faction faction)
+        {
+            foreach (Faction.WarParty party in faction.WarParties)
+            {
+                if (party.DeathTimer.Update(PlayState.Time.CurrentDate))
+                {
+                    party.Creatures.ForEach((creature) => creature.Die());
+                }
+
+                Diplomacy.Politics politics = PlayState.Diplomacy.GetPolitics(faction, party.OtherFaction);
+                if (politics.GetCurrentRelationship() != Relationship.Hateful)
+                {
+                    RecallWarParty(party);
+                }
+
+                if (party.Creatures.All(creature => creature.IsDead))
+                {
+                    party.ShouldRemove = true;
+                }
+            }
+
+            faction.WarParties.RemoveAll(w => w.ShouldRemove);
+        }
+
+        public static void RecallEnvoy(Faction.TradeEnvoy envoy)
+        {
+            // TODO: do ths more naturally
+            envoy.ExpiditionState = Faction.Expidition.State.Leaving;
+            foreach (CreatureAI creature in envoy.Creatures)
+            {
+                creature.LeaveWorld();
+            }
+        }
+
+        public static void RecallWarParty(Faction.WarParty party)
+        {
+            // TODO: do ths more naturally
+            party.ExpiditionState = Faction.Expidition.State.Leaving;
+            foreach (CreatureAI creature in party.Creatures)
+            {
+                creature.LeaveWorld();
+            }
+        }
+
     }
 }

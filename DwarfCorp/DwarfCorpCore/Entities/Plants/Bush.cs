@@ -42,13 +42,15 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class Cactus : Body
+    public class Cactus : Plant
     {
         public Cactus() { }
 
         public Cactus(Vector3 position, string asset, float bushSize) :
             base("Cactus", PlayState.ComponentManager.RootComponent, Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero)
         {
+            Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
+            SeedlingFrame = new Point(0, 0);
             ComponentManager componentManager = PlayState.ComponentManager;
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position + new Vector3(0.5f, -0.2f, 0.5f);
@@ -75,13 +77,15 @@ namespace DwarfCorp
     }
 
     [JsonObject(IsReference = true)]
-    public class Bush : Body
+    public class Bush : Plant
     {
         public Bush() { }
 
         public Bush(Vector3 position, string asset, float bushSize) :
             base("Bush", PlayState.ComponentManager.RootComponent, Matrix.Identity, new Vector3(bushSize, bushSize, bushSize),Vector3.Zero)
         {
+            Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
+            SeedlingFrame = new Point(0, 0);
             ComponentManager componentManager = PlayState.ComponentManager;
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position + new Vector3(0.5f, -0.2f, 0.5f);
@@ -112,7 +116,7 @@ namespace DwarfCorp
 
             inventory.Resources.AddResource(new ResourceAmount()
             {
-                NumResources = MathFunctions.RandInt(1, 4),
+                NumResources = 3,
                 ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Berry]
             });
 

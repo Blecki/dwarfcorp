@@ -46,6 +46,12 @@ int GhostMode;
 int SelfIllumination;
 float4 ClipPlane0;
 
+float4 GetNoise(float4 pos)
+{
+	float mag = dot(pos, pos);
+	return float4(cos(mag * 1e-5) * 0.2, sin(mag * 1e-4) * 0.5, sin(-mag * 1e-5) * 0.2, 0);
+}
+
 
 //------- Technique: Clipping Plane Fix --------
 
@@ -110,14 +116,15 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = P
 	float4 Color : COLOR0;
 	};
 
-	UTVertexToPixel UTexturedVS( float4 inPos : POSITION,  float4 inColor : COLOR0)
+	UTVertexToPixel UTexturedVS( float4 inPos_ : POSITION,  float4 inColor : COLOR0)
 	{
 		UTVertexToPixel Output = (UTVertexToPixel)0;
+		float4 inPos = inPos_ + GetNoise(inPos_);
 		float4x4 preViewProjection = mul (xView, xProjection);
 		float4x4 preWorldViewProjection = mul (xWorld, preViewProjection);
 
 		Output.Position = mul(inPos, preWorldViewProjection);
-		Output.Color = inColor;
+		Output.Color = inColor * xTint;
 
 
 		if(Clipping)
@@ -173,6 +180,7 @@ struct SMapPixelToFrame
 {
 	float4 Color : COLOR0;
 };
+
 
 SMapVertexToPixel ShadowMapVS(float4 inPos : POSITION, float2 inTexCoords : TEXCOORD0, float4x4 world : BLENDWEIGHT)
 {
@@ -247,6 +255,7 @@ TVertexToPixel TexturedVS( float4 inPos : POSITION,  float2 inTexCoords: TEXCOOR
 {
     TVertexToPixel Output = (TVertexToPixel)0;
 	float4 worldPosition = mul(inPos, world);
+	worldPosition += GetNoise(worldPosition);
     float4 viewPosition = mul(worldPosition, xView);
     Output.Position = mul(viewPosition, xProjection);
 
@@ -428,8 +437,9 @@ struct WPixelToFrame
      float4 Color : COLOR0;
 };
 
-WVertexToPixel WaterVS(float4 inPos : POSITION, float2 inTex: TEXCOORD0, float4 inColor : COLOR0)
+WVertexToPixel WaterVS(float4 inPos_ : POSITION, float2 inTex: TEXCOORD0, float4 inColor : COLOR0)
 {    
+	float4 inPos = inPos_ + GetNoise(inPos_);
      WVertexToPixel Output = (WVertexToPixel)0;
 
      float4x4 preViewProjection = mul (xView, xProjection);

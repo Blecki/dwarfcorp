@@ -69,9 +69,7 @@ namespace DwarfCorp
             RegisterType(BedRoom.InitializeData());
             RegisterType(CommonRoom.InitializeData());
             RegisterType(LibraryRoom.InitializeData());
-            RegisterType(MushroomFarm.InitializeData());
             RegisterType(TrainingRoom.InitializeData());
-            RegisterType(WheatFarm.InitializeData());
             RegisterType(WorkshopRoom.InitializeData());
             RegisterType(Kitchen.InitializeData());
             staticIntialized = true;
@@ -128,17 +126,9 @@ namespace DwarfCorp
             {
                 return blueprint ? new LibraryRoom(true, designations, PlayState.ChunkManager) : new LibraryRoom(designations, PlayState.ChunkManager);
             }
-            else if (name == MushroomFarm.MushroomFarmName)
-            {
-                return blueprint ? new MushroomFarm(true, designations, PlayState.ChunkManager) : new MushroomFarm(designations, PlayState.ChunkManager);
-            }
             else if (name == TrainingRoom.TrainingRoomName)
             {
                 return blueprint ? new TrainingRoom(true, designations, PlayState.ChunkManager) : new TrainingRoom(designations, PlayState.ChunkManager); 
-            }
-            else if (name == WheatFarm.WheatFarmName)
-            {
-                return blueprint ? new WheatFarm(true, designations, PlayState.ChunkManager) : new WheatFarm(designations, PlayState.ChunkManager); 
             }
             else if (name == WorkshopRoom.WorkshopName)
             {
@@ -222,7 +212,7 @@ namespace DwarfCorp
                             thingsMade++;
                             break;
                         case RoomTile.KitchenTable:
-                            createdComponent = EntityFactory.CreateEntity<Body>("KitchenTable", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Kitchen Table", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Lamp:
@@ -237,8 +227,8 @@ namespace DwarfCorp
                             createdComponent = EntityFactory.CreateEntity<Body>("Chair", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
-                        case RoomTile.BookTable:
-                            createdComponent = EntityFactory.CreateEntity<Body>(MathFunctions.RandEvent(0.5f) ? "BookTable" : "PotionTable", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                        case RoomTile.Books:
+                            createdComponent = EntityFactory.CreateEntity<Body>(MathFunctions.RandEvent(0.5f) ? "Books" : "Potions", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Anvil:

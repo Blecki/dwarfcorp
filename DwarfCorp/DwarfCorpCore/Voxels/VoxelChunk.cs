@@ -53,6 +53,10 @@ namespace DwarfCorp
         public delegate void VoxelDestroyed(Point3 voxelID);
         public event VoxelDestroyed OnVoxelDestroyed;
 
+        public delegate void VoxelExplored(Point3 voxelID);
+
+        public event VoxelExplored OnVoxelExplored;
+
         public class VoxelData
         {
             public bool[] IsExplored;
@@ -245,7 +249,7 @@ namespace DwarfCorp
 
         #region statics
 
-        private static void InitializeStatics()
+        public static void InitializeStatics()
         {
             if(staticsInitialized)
             {
@@ -458,6 +462,14 @@ namespace DwarfCorp
 
         #endregion
 
+        public void NotifyExplored(Point3 voxel)
+        {
+            if (OnVoxelExplored != null)
+            {
+                OnVoxelExplored.Invoke(voxel);
+            }
+        }
+
         public void NotifyDestroyed(Point3 voxel)
         {
             if(OnVoxelDestroyed != null)
@@ -608,7 +620,7 @@ namespace DwarfCorp
 
         public static VoxelVertex GetNearestDelta(Vector3 position)
         {
-            float bestDist = 10000000;
+            float bestDist = float.MaxValue;
             VoxelVertex bestKey = VoxelVertex.BackTopRight;
             for(int i = 0; i < 8; i++)
             {
@@ -686,7 +698,7 @@ namespace DwarfCorp
 
         public void Render(Texture2D tilemap, Texture2D illumMap, Texture2D sunMap, Texture2D ambientMap, Texture2D torchMap, GraphicsDevice device, Effect effect, Matrix worldMatrix)
         {
-
+           
             if (!RenderWireframe)
             {
                 Primitive.Render(device);
@@ -854,10 +866,9 @@ namespace DwarfCorp
             BuildGrassMotes();
             if(firstRebuild)
             {
-                RebuildLiquids(g);
                 firstRebuild = false;
             }
-
+            RebuildLiquids(g);
             IsRebuilding = false;
 
             if(ShouldRecalculateLighting)
@@ -1061,7 +1072,7 @@ namespace DwarfCorp
             for(int y = (int) voxRef.GridPosition.Y; y < SizeY; y++)
             {
                 int index = Data.IndexAt(x, y, z);
-                tot += (Data.Water[index].WaterLevel) / 255.0f;
+                tot += (Data.Water[index].WaterLevel) / 8.0f;
 
                 if (Data.Water[index].WaterLevel == 0 && y > (int)voxRef.GridPosition.Y)
                 {
@@ -1858,7 +1869,6 @@ namespace DwarfCorp
         }
 
         #endregion neighbors
-
 
     }
 

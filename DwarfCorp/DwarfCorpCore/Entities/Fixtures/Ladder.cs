@@ -46,9 +46,9 @@ namespace DwarfCorp
 
         }
 
-        public Ladder(Vector3 position) :
+        public Ladder(Vector3 position, SpriteSheet sprites, Point frame) :
             base(
-            position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 0),
+            position, sprites, frame,
             PlayState.ComponentManager.RootComponent)
         {
             AddToCollisionManager = true;

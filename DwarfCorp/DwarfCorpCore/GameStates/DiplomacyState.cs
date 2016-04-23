@@ -168,7 +168,7 @@ namespace DwarfCorp
         public Button BackButton { get; set; }
         public Faction.TradeEnvoy Envoy { get; set; }
 
-        public DiplomacyState(DwarfGame game, GameStateManager stateManager, PlayState play, Faction faction) :
+        public DiplomacyState(DwarfGame game, GameStateManager stateManager, PlayState play, Faction.TradeEnvoy envoy) :
             base(game, "DiplomacyState", stateManager)
         {
 
@@ -177,9 +177,8 @@ namespace DwarfCorp
             PlayState = play;
             EnableScreensaver = false;
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
-            Faction = faction;
-            Resources = faction.Race.GenerateResources();
-            
+            Faction = envoy.OwnerFaction;
+            Resources = envoy.TradeGoods;
         }
 
 
@@ -222,10 +221,11 @@ namespace DwarfCorp
                     }
                 }
             }
+            Envoy.DistributeGoods();
             PlayerFation.Economy.CurrentMoney -= trade.MoneySent;
             PlayerFation.Economy.CurrentMoney += trade.MoneyReceived;
-            Faction.TradeMoney -= trade.MoneyReceived;
-            Faction.TradeMoney += trade.MoneySent;
+            Envoy.TradeMoney -= trade.MoneyReceived;
+            Envoy.TradeMoney += trade.MoneySent;
         }
 
         IEnumerable<SpeechNode> WaitForTrade()
@@ -318,8 +318,8 @@ namespace DwarfCorp
 
         void Initialize()
         {
-            Faction.TradeMoney += MathFunctions.Rand(-100.0f, 100.0f);
-            Faction.TradeMoney = Math.Max(Faction.TradeMoney, 0.0f);
+            Envoy.TradeMoney = Faction.TradeMoney + MathFunctions.Rand(-100.0f, 100.0f);
+            Envoy.TradeMoney = Math.Max(Envoy.TradeMoney, 0.0f);
             TalkerName = TextGenerator.GenerateRandom(Datastructures.SelectRandom(Faction.Race.NameTemplates).ToArray());
             Tabs = new Dictionary<string, GUIComponent>();
             GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default), 
@@ -384,7 +384,7 @@ namespace DwarfCorp
                         {
                             BackButton.IsVisible = true;
                             if(Envoy != null)
-                                Faction.RecallEnvoy(Envoy);
+                                Diplomacy.RecallEnvoy(Envoy);
                             return SpeechNode.Echo(new SpeechNode()
                             {
                                 Text = GetFarewell(),
@@ -509,6 +509,8 @@ namespace DwarfCorp
             };
         }
 
+
+
         private IEnumerable<SpeechNode> WhatGoods()
         {
             string goods = "We desire ";
@@ -534,7 +536,42 @@ namespace DwarfCorp
                 {
                     new SpeechNode.SpeechAction()
                     {
-                        Text = "Interesting",
+                        Text = "Tell me more",
+                        Action = () => CommonGoods()
+                    },
+                    new SpeechNode.SpeechAction()
+                    {
+                        Text = "OK",
+                        Action = () => SpeechNode.Echo(DialougeTree)
+                    }
+                }
+            };
+        }
+
+
+        private IEnumerable<SpeechNode> CommonGoods()
+        {
+            string goods = "We already have a lot of ";
+
+            List<string> goodList = Faction.Race.CommonResources.Select(tags => tags.ToString()).ToList();
+
+            goods += TextGenerator.GetListString(goodList);
+            goods += " things";
+
+            goods += ". We don't have many ";
+            goodList = Faction.Race.RareResources.Select(tags => tags.ToString()).ToList();
+            goods += TextGenerator.GetListString(goodList);
+            goods += " goods";
+            goods += ".";
+
+            yield return new SpeechNode()
+            {
+                Text = goods,
+                Actions = new List<SpeechNode.SpeechAction>()
+                {
+                    new SpeechNode.SpeechAction()
+                    {
+                        Text = "OK",
                         Action = () => SpeechNode.Echo(DialougeTree)
                     }
                 }

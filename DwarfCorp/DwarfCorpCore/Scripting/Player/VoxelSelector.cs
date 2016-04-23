@@ -29,6 +29,9 @@ namespace DwarfCorp
 
         public delegate List<Voxel> OnRightReleased();
 
+
+
+        public delegate void OnDragged(List<Voxel> voxels, InputManager.MouseButton button);
         public delegate void OnSelected(List<Voxel> voxels, InputManager.MouseButton button);
 
         public Color SelectionColor { get; set; }
@@ -41,6 +44,8 @@ namespace DwarfCorp
         public event OnRightPressed RightPressed;
         public event OnLeftReleased LeftReleased;
         public event OnRightReleased RightReleased;
+        public event OnDragged Dragged;
+
         public OnSelected Selected { get; set; }
         public Camera CameraController { get; set; }
         public GraphicsDevice Graphics { get; set; }
@@ -49,6 +54,7 @@ namespace DwarfCorp
         private bool isLeftPressed = false;
         private bool isRightPressed = false;
         public Voxel FirstVoxel = default(Voxel);
+        public Voxel VoxelUnderMouse = default(Voxel);
         public bool Enabled { get; set; }
         public float BoxYOffset { get; set; }
         public int LastMouseWheel { get; set; }
@@ -68,6 +74,7 @@ namespace DwarfCorp
             RightPressed = RightPressedCallback;
             LeftReleased = LeftReleasedCallback;
             RightReleased = RightReleasedCallback;
+            Dragged = DraggedCallback;
             Selected = SelectedCallback;
             Enabled = true;
             DeleteColor = Color.Red;
@@ -81,23 +88,26 @@ namespace DwarfCorp
             KeyboardState keyboard = Keyboard.GetState();
 
             Voxel underMouse = GetVoxelUnderMouse();
+            bool newVoxel = underMouse != null && !underMouse.Equals(VoxelUnderMouse);
 
             if(underMouse != null)
             {
+                VoxelUnderMouse = underMouse;
                 PlayState.CursorLightPos = underMouse.Position + new Vector3(0.5f, 0.5f, 0.5f);
 
-                if (Enabled && underMouse.TypeName != "empty")
+                if (Enabled && underMouse.TypeName != "empty" && underMouse.IsExplored)
                 {
-                    PlayState.GUI.ToolTipManager.ToolTip = underMouse.TypeName;
+                    string info = underMouse.TypeName;
+
 
                     if (PlayState.PlayerFaction.RoomBuilder.IsInRoom(underMouse))
                     {
                         Room room = PlayState.PlayerFaction.RoomBuilder.GetMostLikelyRoom(underMouse);
 
                         if (room != null)
-                            PlayState.GUI.ToolTipManager.ToolTip += " (" + room.ID + ")";
+                            info += " (" + room.ID + ")";
                     }
-
+                    PlayState.GUI.ToolTipManager.PopupInfo(info);
                 }
             }
 
@@ -110,6 +120,7 @@ namespace DwarfCorp
             {
                 BoxYOffset += (float) (mouse.ScrollWheelValue - LastMouseWheel) * 0.01f;
                 LastMouseWheel = mouse.ScrollWheelValue;
+                newVoxel = true;
             }
             else
             {
@@ -156,6 +167,9 @@ namespace DwarfCorp
                         }
 
                         SelectionBuffer = Chunks.GetVoxelsIntersecting(buffer);
+
+                        if (newVoxel)
+                            Dragged.Invoke(SelectionBuffer, InputManager.MouseButton.Left);
                     }
                 }
             }
@@ -199,6 +213,8 @@ namespace DwarfCorp
 
 
                         SelectionBuffer = Chunks.GetVoxelsIntersecting(buffer);
+                        if (newVoxel)
+                         Dragged.Invoke(SelectionBuffer, InputManager.MouseButton.Right);
                     }
                 }
             }
@@ -209,6 +225,11 @@ namespace DwarfCorp
                 isRightPressed = true;
             }
         }
+
+        public void DraggedCallback(List<Voxel> voxels, InputManager.MouseButton button)
+        {
+        }
+
 
         public void SelectedCallback(List<Voxel> voxels, InputManager.MouseButton button)
         {

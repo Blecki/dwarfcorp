@@ -123,13 +123,13 @@ namespace DwarfCorp
         {
             if (IsDesignation(designation.Location))
             {
-                PlayState.GUI.ToolTipManager.Popup("Something is already being built there!");
+                PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Something is already being built there!", Color.Red));
                 return false;
             }
 
             if (Faction.GetNearestRoomOfType(WorkshopRoom.WorkshopName, designation.Location.Position) == null)
             {
-                PlayState.GUI.ToolTipManager.Popup("Can't build, no workshops!");
+                PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Can't build, no workshops!", Color.Red));
                 return false;
             }
 
@@ -142,8 +142,43 @@ namespace DwarfCorp
                     neededResources += "" + amount.NumResources + " " + amount.ResourceType.ToString() + " ";
                 }
 
-                PlayState.GUI.ToolTipManager.Popup("Not enough resources! Need " + neededResources + ".");
+                PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Not enough resources! Need " + neededResources + ".", Color.Red));
                 return false;
+            }
+
+            Voxel[] neighbors = new Voxel[4];
+            foreach (CraftItem.CraftPrereq req in designation.ItemType.Prerequisites)
+            {
+                switch (req)
+                {
+                    case CraftItem.CraftPrereq.NearWall:
+                    {
+                        designation.Location.Chunk.Get2DManhattanNeighbors(neighbors, (int)designation.Location.GridPosition.X,
+                            (int)designation.Location.GridPosition.Y, (int)designation.Location.GridPosition.Z);
+
+                        bool neighborFound = neighbors.Any(voxel => voxel != null && !voxel.IsEmpty);
+
+                        if (!neighborFound)
+                        {
+                            PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Must be built next to wall!", Color.Red));
+                            return false;
+                        }
+
+                        break;
+                    }
+                    case CraftItem.CraftPrereq.OnGround:
+                    {
+                        Voxel below = new Voxel();
+                        designation.Location.GetNeighbor(Vector3.Down, ref below);
+
+                        if (below.IsEmpty)
+                        {
+                            PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Must be built on solid ground!", Color.Red));
+                            return false;
+                        }
+                        break;
+                    }
+                }
             }
 
             return true;

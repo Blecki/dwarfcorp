@@ -356,7 +356,7 @@ namespace DwarfCorp
 
                                 if (!RebuildList.TryDequeue(out chunk))
                                 {
-                                    break;
+                                    continue;
                                 }
 
                                 if (chunk == null)
@@ -374,12 +374,12 @@ namespace DwarfCorp
                         }
 
                         if (calculateRamps)
+                        {
+                            foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
                             {
-                                foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
-                                {
-                                    chunk.UpdateRamps();
-                                }
+                                chunk.UpdateRamps();
                             }
+                        }
 
 
                             foreach (
@@ -1018,6 +1018,39 @@ namespace DwarfCorp
             RebuildThread.Join();
             WaterThread.Join();
             ChunkData.ChunkMap.Clear();
+        }
+
+        public List<Voxel> BreadthFirstSearch(Voxel seed, float radiusSquared, bool searchEmpty = true)
+        {
+            Queue<Voxel> queue = new Queue<Voxel>();
+            queue.Enqueue(seed);
+            List<Voxel> outList = new List<Voxel>();
+            Func<Voxel, bool> searchQuery = (Voxel v) => v.IsEmpty;
+            if (!searchEmpty)
+            {
+                searchQuery = v => !v.IsEmpty;
+            }
+            
+
+            while (queue.Count > 0)
+            {
+                Voxel curr = queue.Dequeue();
+                if (curr != null && searchQuery(curr) && !outList.Contains(curr) && (curr.Position - seed.Position).LengthSquared() < radiusSquared)
+                {
+                    outList.Add(curr);
+                    List<Voxel> neighbors = new List<Voxel>(6);
+                    curr.Chunk.GetNeighborsManhattan((int)curr.GridPosition.X, (int)curr.GridPosition.Y, (int)curr.GridPosition.Z, neighbors);
+
+                    foreach (Voxel voxel in neighbors)
+                    {
+                        if (voxel != null && !outList.Contains(voxel)  && searchQuery(voxel))
+                        {
+                            queue.Enqueue(voxel);
+                        }
+                    }
+                }
+            }
+            return outList;
         }
     }
 

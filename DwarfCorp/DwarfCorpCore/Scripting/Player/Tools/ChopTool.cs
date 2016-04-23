@@ -109,6 +109,11 @@ namespace DwarfCorp
             }
         }
 
+        public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
+        {
+
+        }
+
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
 

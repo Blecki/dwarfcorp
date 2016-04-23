@@ -174,22 +174,22 @@ namespace DwarfCorp
                     break;
                 case ThoughtType.KilledThing:
                     description = "I killed somehing!";
-                    happiness = 10.0f;
+                    happiness = 0.0f;
                     limit = new TimeSpan(0, 8, 0, 0);
                     break;
                 case ThoughtType.Crafted:
                     description = "I crafted something!";
-                    happiness = 10.0f;
+                    happiness = 1.0f;
                     limit = new TimeSpan(0, 8, 0, 0);
                     break;
                 case ThoughtType.Farmed:
                     description = "I farmed something!";
-                    happiness = 10.0f;
+                    happiness = 1.0f;
                     limit = new TimeSpan(0, 4, 0, 0);
                     break;
                 case ThoughtType.Researched:
                     description = "I researched something!";
-                    happiness = 100.0f;
+                    happiness = 10.0f;
                     limit = new TimeSpan(0, 8, 0, 0);
                     break;
                 case ThoughtType.Other:

@@ -82,7 +82,7 @@ namespace DwarfCorp
         public static void DrawLoadBar(Vector3 worldPos, Color backgroundColor, Color strokeColor, int width, int height, float progress)
         {
             Drawer2D.DrawRect(worldPos, new Rectangle(0, 0, width + 1, height + 1), Color.Transparent, strokeColor, 1);
-            Drawer2D.DrawRect(worldPos, new Rectangle(0, 0, (int)(width * (progress)), height), backgroundColor, Color.Transparent, 1);
+            Drawer2D.DrawRect(worldPos, new Rectangle((int)(width * (progress))/2 - width /2, 0, (int)(width * (progress)), height), backgroundColor, Color.Transparent, 1);
         }
 
         public static void DrawRect(Vector3 worldPos, Rectangle screenRect, Color backgroundColor, Color strokeColor, float strokewidth)
@@ -90,9 +90,14 @@ namespace DwarfCorp
             
             Vector3 screenPos = GameState.Game.GraphicsDevice.Viewport.Project(worldPos, PlayState.Camera.ProjectionMatrix, PlayState.Camera.ViewMatrix, Matrix.Identity);
 
-            Rectangle rect = new Rectangle((int)(screenPos.X - screenRect.Width/2), (int)(screenPos.Y - screenRect.Height/2), screenRect.Width, screenRect.Height);
-            
-            DrawCommands.Enqueue(new RectDrawCommand(backgroundColor, strokeColor, strokewidth, rect));
+            if (screenPos.Z < 0.999f)
+            {
+                Rectangle rect = new Rectangle((int) (screenPos.X - screenRect.Width/2) + screenRect.X,
+                    (int) (screenPos.Y - screenRect.Height/2) + screenRect.Y, screenRect.Width, screenRect.Height);
+
+                DrawCommands.Enqueue(new RectDrawCommand(backgroundColor, strokeColor, strokewidth, rect));
+            }
+
         }
 
         public static void DrawPolygon(List<Vector2> points, Color color, int width, bool closed)
@@ -238,10 +243,10 @@ namespace DwarfCorp
                 toDisplay = "null";
             }
 
-            SafeDraw(batch, toDisplay, Font, strokeColor, textPosition - new Vector2(1, 0), Vector2.Zero);
-            SafeDraw(batch, toDisplay, Font, strokeColor, textPosition + new Vector2(1, 0), Vector2.Zero);
-            SafeDraw(batch, toDisplay, Font, strokeColor, textPosition - new Vector2(0, 1), Vector2.Zero);
-            SafeDraw(batch, toDisplay, Font, strokeColor, textPosition + new Vector2(0, 1), Vector2.Zero);
+            SafeDraw(batch, toDisplay, Font, strokeColor, textPosition - new Vector2(1, 0), Vector2.Zero, false);
+            SafeDraw(batch, toDisplay, Font, strokeColor, textPosition + new Vector2(1, 0), Vector2.Zero, false);
+            SafeDraw(batch, toDisplay, Font, strokeColor, textPosition - new Vector2(0, 1), Vector2.Zero, false);
+            SafeDraw(batch, toDisplay, Font, strokeColor, textPosition + new Vector2(0, 1), Vector2.Zero, false);
             SafeDraw(batch, toDisplay, Font, textColor, textPosition, Vector2.Zero);
         }
 
@@ -339,10 +344,10 @@ namespace DwarfCorp
             origin.Y = (int) origin.Y;
             if (textColor.A > 0)
             {
-                SafeDraw(batch, text, font, strokeColor, pos - new Vector2(1, 0), origin);
-                SafeDraw(batch, text, font, strokeColor, pos + new Vector2(1, 0), origin);
-                SafeDraw(batch, text, font, strokeColor, pos - new Vector2(0, 1), origin);
-                SafeDraw(batch, text, font, strokeColor, pos - new Vector2(0, 1), origin);
+                SafeDraw(batch, text, font, strokeColor, pos - new Vector2(1, 0), origin, false);
+                SafeDraw(batch, text, font, strokeColor, pos + new Vector2(1, 0), origin, false);
+                SafeDraw(batch, text, font, strokeColor, pos - new Vector2(0, 1), origin, false);
+                SafeDraw(batch, text, font, strokeColor, pos - new Vector2(0, 1), origin, false);
             }
             SafeDraw(batch, text, font, textColor, pos, origin);
         }
@@ -416,14 +421,71 @@ namespace DwarfCorp
             return new string(arr);
         }
 
-        public static void SafeDraw(SpriteBatch batch, string text, SpriteFont font, Color textColor, Vector2 pos, Vector2 origin)
+
+        public static string WrapColor(string text, Color color)
         {
-            pos.X = (int)Math.Round(pos.X);
-            pos.Y = (int)Math.Round(pos.Y);
+            string toReturn = "[color:";
+            toReturn += color.ToHex(true);
+            toReturn += "]";
+            toReturn += text;
+            toReturn += "[/color]";
+            return toReturn;
+        }
+
+
+        public static void SafeDraw(SpriteBatch batch, string text, SpriteFont font, Color textColor, Vector2 pos,
+            Vector2 origin, bool useCustomColor = true)
+        {
+            pos.X = (int) Math.Round(pos.X);
+            pos.Y = (int) Math.Round(pos.Y);
             origin.X = (int) Math.Round(origin.X);
             origin.Y = (int) Math.Round(origin.Y);
-            
-            batch.DrawString(font, Internationalize(text, font), pos, textColor, 0, origin, 1, SpriteEffects.None, 0);
+            string toDraw = Internationalize(text, font);
+            // only bother if we have color commands involved
+            if (text.Contains("[color:"))
+            {
+                // how far in x to offset from position
+                int currentOffset = 0;
+
+                // example: 
+                // string.Format("You attempt to hit the [color:#FFFF0000]{0}[/color] but [color:{1}]MISS[/color]!", 
+                // currentMonster.Name, Color.Red.ToHex(true));
+                string[] splits = text.Split(new string[] { "[color:" }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var str in splits)
+                {
+                    // if this section starts with a color
+                    if (str.StartsWith("#"))
+                    {
+                        // #AARRGGBB
+                        // #FFFFFFFFF
+                        // #123456789
+                        string color = str.Substring(0, 9);
+
+                        // any subsequent msgs after the [/color] tag are defaultColor
+                        string[] msgs = str.Substring(10).Split(new string[] { "[/color]" }, StringSplitOptions.RemoveEmptyEntries);
+
+                        // always draw [0] there should be at least one
+                        batch.DrawString(font, msgs[0], pos + new Vector2(currentOffset, 0), useCustomColor ? color.ToColor() : textColor, 0, origin, 1, SpriteEffects.None, 0);
+                        currentOffset += (int)font.MeasureString(msgs[0]).X;
+
+                        // there should only ever be one other string or none
+                        if (msgs.Length == 2)
+                        {
+                            batch.DrawString(font, msgs[1], pos + new Vector2(currentOffset, 0), textColor, 0, origin, 1, SpriteEffects.None, 0);
+                            currentOffset += (int)font.MeasureString(msgs[1]).X;
+                        }
+                    }
+                    else
+                    {
+                        batch.DrawString(font, str, pos + new Vector2(currentOffset, 0), textColor, 0, origin, 1, SpriteEffects.None, 0);
+                        currentOffset += (int)font.MeasureString(str).X;
+                    }
+                }
+            }
+            else
+            {
+                batch.DrawString(font, toDraw, pos, textColor, 0, origin, 1, SpriteEffects.None, 0);   
+            }
         }
     }
 

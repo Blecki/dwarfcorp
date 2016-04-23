@@ -1,4 +1,4 @@
-﻿// PlayerTool.cs
+﻿// Bobber.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -32,42 +32,53 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     /// <summary>
-    /// The player's tools are a state machine. A build tool is a particular player
-    /// state. Contains callbacks to when voxels are selected.
+    /// This component follows its parent at a specified radius;
     /// </summary>
-    public abstract class PlayerTool
+    public class Follower : Body
     {
-        public GameMaster Player { get; set; }
-
-        public abstract void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button);
-        public abstract void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button);
-        public abstract void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button);
-        public abstract void Update(DwarfGame game, DwarfTime time);
-        public abstract void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time);
-        public abstract void OnBegin();
-        public abstract void OnEnd();
-
-        public virtual void OnConfirm(List<CreatureAI> minions)
+        public Body ParentBody { get; set; }
+        public float FollowRadius { get; set;  }
+        public Vector3 TargetPos { get; set; }
+        public float FollowRate { get; set; }
+        public Follower()
         {
-            if (minions.Count > 0)
-            {
-                Vector3 avgPostiion = Vector3.Zero;
-                foreach (CreatureAI creature in minions)
-                {
-                    avgPostiion += creature.Position;
-                }
-                avgPostiion /= minions.Count;
-                minions.First().Creature.NoiseMaker.MakeNoise("Ok", avgPostiion);
-            }
+
         }
 
+        public Follower(Body parentBody) :
+            base("Follower", parentBody, Matrix.Identity, Vector3.One, Vector3.Zero, false)
+        {
+            ParentBody = parentBody;
+            FollowRadius = 1.5f;
+            TargetPos = ParentBody.Position;
+            FollowRate = 0.1f;
+        }
+
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        {
+            Vector3 parentCurrentPos = ParentBody.Position;
+            if ((parentCurrentPos - TargetPos).Length() > FollowRadius)
+            {
+                TargetPos = parentCurrentPos;
+            }
+            Vector3 newPos = (Position*(1.0f - FollowRate) + TargetPos*(FollowRate));
+            Matrix newTransform = GlobalTransform;
+            newTransform.Translation = newPos;
+            newTransform = newTransform * Matrix.Invert(ParentBody.GlobalTransform);
+            LocalTransform = newTransform;
+            base.Update(gameTime, chunks, camera);
+        }
     }
+
 }
