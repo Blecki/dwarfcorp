@@ -67,7 +67,7 @@ namespace DwarfCorp
 
             Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
 
-            AI = new CreatureAI(this, "Demon AI", Sensors, PlanService) {Movement = {CanFly = true, CanSwim = false}};
+            AI = new PacingCreatureAI(this, "Demon AI", Sensors, PlanService) { Movement = { CanFly = true, CanSwim = false } };
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 

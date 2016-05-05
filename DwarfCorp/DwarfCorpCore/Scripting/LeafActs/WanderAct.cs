@@ -33,7 +33,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using DwarfCorp.DwarfCorp;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -124,6 +126,62 @@ namespace DwarfCorp
             }
             Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
             yield return Status.Success;
+        }
+    }
+
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    public class LongWanderAct : CompoundCreatureAct
+    {
+        public int PathLength { get; set; }
+        public float Radius { get; set; }
+
+        public LongWanderAct()
+        {
+            
+        }
+
+        public LongWanderAct(CreatureAI creature) : base(creature)
+        {
+            
+        }
+
+        public IEnumerable<Status> FindRandomPath()
+        {
+            Vector3 target = MathFunctions.RandVector3Cube()*Radius + Creature.AI.Position;
+            List<Creature.MoveAction> path = new List<Creature.MoveAction>();
+            Voxel curr = Creature.Physics.CurrentVoxel;
+            for (int i = 0; i < PathLength; i++)
+            {
+                List<Creature.MoveAction> actions = 
+                    Creature.AI.Movement.GetMoveActions(curr);
+
+                Creature.MoveAction? bestAction = null;
+                float bestDist = float.MaxValue;
+                foreach (Creature.MoveAction action in actions)
+                {
+                    float dist = (action.Voxel.Position - target).LengthSquared();
+
+                    if (dist < bestDist)
+                    {
+                        bestDist = dist;
+                        bestAction = action;
+                    }
+                }
+
+                if (bestAction.HasValue)
+                {
+                    path.Add(bestAction.Value);
+                    curr = bestAction.Value.Voxel;
+                }
+            }
+            Creature.AI.Blackboard.SetData("RandomPath", path);
+            yield return Status.Success;
+        }
+
+        public override void Initialize()
+        {
+            Tree = new Sequence(new Wrap(FindRandomPath), new FollowPathAnimationAct(Creature.AI, "RandomPath"));
+            base.Initialize();
         }
     }
 

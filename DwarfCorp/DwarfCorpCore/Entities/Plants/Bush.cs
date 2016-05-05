@@ -68,6 +68,23 @@ namespace DwarfCorp
                 VoxelListener listener = new VoxelListener(componentManager, this, PlayState.ChunkManager, voxelUnder);
             }
 
+
+            Inventory inventory = new Inventory("Inventory", this)
+            {
+                Resources = new ResourceContainer
+                {
+                    MaxResources = 2
+                }
+            };
+
+            inventory.Resources.AddResource(new ResourceAmount()
+            {
+                NumResources = 2,
+                ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Cactus]
+            });
+
+
+
             Tags.Add("Vegetation");
             Tags.Add("Cactus");
 

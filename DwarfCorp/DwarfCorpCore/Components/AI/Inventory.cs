@@ -118,7 +118,12 @@ namespace DwarfCorp
             {
                 item.Zone = null;
             }
-            item.UserData.GetRootComponent().Delete();
+         
+            
+            TossMotion toss = new TossMotion(0.5f + MathFunctions.Rand(0.05f, 0.08f),
+                1.0f, item.UserData.GlobalTransform, Position);
+            item.UserData.AnimationQueue.Add(toss);
+            toss.OnComplete += () => item.UserData.GetRootComponent().Delete();
 
             return true;
         }

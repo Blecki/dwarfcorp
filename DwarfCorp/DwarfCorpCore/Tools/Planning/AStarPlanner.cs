@@ -99,13 +99,13 @@ namespace DwarfCorp
             while(openSet.Count > 0 && numExpansions < maxExpansions)
             {
                 Voxel current = GetVoxelWithMinimumFScore(fScore, openSet);
-
                 if (current == null)
                 {
                     current = start;
                     numExpansions++;
                 }
                 numExpansions++;
+                
                 if (goal.IsInGoalRegion(current))
                 {
                     Creature.MoveAction first = new Creature.MoveAction()
@@ -158,6 +158,7 @@ namespace DwarfCorp
                     {
                         continue;
                     }
+
 
                     openSet.Add(n.Voxel);
                     Creature.MoveAction cameAction = n;

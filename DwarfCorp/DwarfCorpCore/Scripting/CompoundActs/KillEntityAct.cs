@@ -45,10 +45,11 @@ namespace DwarfCorp
     {
         public Body Entity { get; set; }
         public KillEntityTask.KillType Mode { get; set; }
-
+        public bool PathExists { get; set; }
+        
         public KillEntityAct()
         {
-
+            PathExists = false;
         }
 
         public IEnumerable<Act.Status> Verify()
@@ -87,19 +88,18 @@ namespace DwarfCorp
             Mode = mode;
             Entity = entity;
             Name = "Kill Entity";
-            Tree = new ForLoop(
-                                new Parallel(
-                                    new Sequence(
-                                        new GoToEntityAct(entity, creature)
-                                        {
-                                            MovingTarget = mode != KillEntityTask.KillType.Chop
-                                        },
-                                        new MeleeAct(Agent, entity)
-                                    ), 
-                                    new Wrap(Verify)
-                                    ), 
-                                10, 
-                                true);
+            Tree =
+                new Parallel(
+                    new Sequence
+                    (
+                        new GoToEntityAct(entity, creature)
+                        {
+                            MovingTarget = mode != KillEntityTask.KillType.Chop
+                        },
+                        new MeleeAct(Agent, entity)
+                    ),
+                    new Wrap(Verify)
+                    );
         }
     }
 

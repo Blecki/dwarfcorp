@@ -45,6 +45,9 @@ namespace DwarfCorp
     public class GoToVoxelAct : CompoundCreatureAct
     {
         public Voxel Voxel { get; set; }
+        public string VoxelName { get; set; }
+        public PlanAct.PlanType PlanType { get; set; }
+        public float Radius { get; set; }
 
         public GoToVoxelAct() : base()
         {
@@ -54,31 +57,43 @@ namespace DwarfCorp
         public GoToVoxelAct(string voxel, PlanAct.PlanType planType, CreatureAI creature, float radius = 0.0f) :
             base(creature)
         {
+            Radius = radius;
+            PlanType = planType;
+            VoxelName = voxel;
             Name = "Go to Voxel " + voxel;
-            Tree = new Sequence(
-                    new ForLoop(
-                        new Sequence(
-                                      new PlanAct(Agent, "PathToVoxel", voxel, planType) { Radius = radius},
-                                      new FollowPathAnimationAct(Agent, "PathToVoxel")
-                                     )
-                                       , 3, true),
-                                      new StopAct(Agent));
+
         }
 
         public GoToVoxelAct(Voxel voxel, PlanAct.PlanType planType, CreatureAI creature, float radius = 0.0f) :
             base(creature)
         {
+            Radius = radius;
             Voxel = voxel;
             Name = "Go to Voxel";
-            if(Voxel != null)
+            PlanType = planType;
+
+        }
+
+        public override void Initialize()
+        {
+            if (VoxelName != null)
             {
                 Tree = new Sequence(
-                                      new SetBlackboardData<Voxel>(Agent, "TargetVoxel", Voxel),
-                                      new PlanAct(Agent, "PathToVoxel", "TargetVoxel", planType) { Radius = radius},
-                                      new FollowPathAnimationAct(Agent, "PathToVoxel"),
-                                      new StopAct(Agent));
+            new Sequence(
+                          new PlanAct(Agent, "PathToVoxel", VoxelName, PlanType) { Radius = Radius },
+                          new FollowPathAnimationAct(Agent, "PathToVoxel")
+                         ),
+                          new StopAct(Agent));
             }
-
+            else if (Voxel != null)
+            {
+                Tree = new Sequence(
+                      new SetBlackboardData<Voxel>(Agent, "TargetVoxel", Voxel),
+                      new PlanAct(Agent, "PathToVoxel", "TargetVoxel", PlanType) { Radius = Radius },
+                      new FollowPathAnimationAct(Agent, "PathToVoxel"),
+                      new StopAct(Agent));
+            }
+            base.Initialize();
         }
 
 

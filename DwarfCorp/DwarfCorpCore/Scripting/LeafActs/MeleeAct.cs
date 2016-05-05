@@ -61,11 +61,7 @@ namespace DwarfCorp
             Name = "Attack!";
             EnergyLoss = 200.0f;
             TargetName = target;
-            foreach (Attack attack in agent.Creature.Attacks)
-            {
-                CurrentAttack = attack;
-                break;
-            }
+            CurrentAttack = Datastructures.SelectRandom(agent.Creature.Attacks);
         }
 
         public MeleeAct(CreatureAI agent, Body target) :
@@ -77,11 +73,7 @@ namespace DwarfCorp
             Name = "Attack!";
             EnergyLoss = 200.0f;
             Target = target;
-            foreach (Attack attack in agent.Creature.Attacks)
-            {
-                CurrentAttack = attack;
-                break;
-            }
+            CurrentAttack = Datastructures.SelectRandom(agent.Creature.Attacks);
         }
 
         public override void OnCanceled()
@@ -184,6 +176,10 @@ namespace DwarfCorp
                 targetInventory.OnDeath += targetInventory_OnDeath;
             }
 
+            Creature.CharacterMode defaultCharachterMode = Creature.AI.Movement.CanFly
+                ? Creature.CharacterMode.Flying
+                : Creature.CharacterMode.Walking;
+
             bool avoided = false;
             while(true)
             {
@@ -193,10 +189,11 @@ namespace DwarfCorp
                 {
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                    Creature.CurrentCharacterMode = defaultCharachterMode;
                     yield return Status.Fail;
                     yield break;
                 }
+
                 if (Timeout.HasTriggered)
                 {
                     if (Training)
@@ -204,7 +201,7 @@ namespace DwarfCorp
                         Agent.AddXP(10);
                         Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                         Creature.OverrideCharacterMode = false;
-                        Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                        Creature.CurrentCharacterMode = defaultCharachterMode;
                         yield return Status.Success;
                         yield break;
                     }
@@ -212,7 +209,7 @@ namespace DwarfCorp
                     {
                         Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                         Creature.OverrideCharacterMode = false;
-                        Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                        Creature.CurrentCharacterMode = defaultCharachterMode;
                         yield return Status.Fail;
                         yield break;
                     }
@@ -220,7 +217,7 @@ namespace DwarfCorp
 
                 if (Target == null || Target.IsDead)
                 {
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                    Creature.CurrentCharacterMode = defaultCharachterMode;
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     yield return Status.Success;
                 }
@@ -239,12 +236,13 @@ namespace DwarfCorp
                 {
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                    Creature.CurrentCharacterMode = defaultCharachterMode;
                     yield return Status.Fail;
                 }
+
                 if(diff.Length() > CurrentAttack.Range)
                 {
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                    Creature.CurrentCharacterMode = defaultCharachterMode;
                     Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
                     output.Y = 0.0f;
                     Creature.Physics.ApplyForce(output, DwarfTime.Dt);
@@ -255,7 +253,7 @@ namespace DwarfCorp
                     }
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                 }
-                else if (!avoided && (CurrentAttack.Mode != Attack.AttackMode.Melee &&
+                else if (!avoided && (CurrentAttack.Mode == Attack.AttackMode.Ranged &&
                     diff.Length() < CurrentAttack.Range*0.75f))
                 {
                     /*
@@ -304,15 +302,26 @@ namespace DwarfCorp
 
                     CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
 
-                    while (!CurrentAttack.RechargeTimer.HasTriggered)
+                    Vector3 dogfightTarget = Vector3.Zero;
+                    while (!CurrentAttack.RechargeTimer.HasTriggered && !Target.IsDead)
                     {
-                        Creature.Sprite.PauseAnimations(Creature.CharacterMode.Attacking);
                         CurrentAttack.RechargeTimer.Update(DwarfTime.LastTime);
-                        Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
+                        if (CurrentAttack.Mode == Attack.AttackMode.Dogfight)
+                        {
+                            Creature.CurrentCharacterMode = Creature.CharacterMode.Flying;
+                            dogfightTarget += MathFunctions.RandVector3Cube()*0.1f;
+                            Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, dogfightTarget + Target.Position, Creature.Physics.GlobalTransform.Translation) * 0.9f;
+                            Creature.Physics.ApplyForce(output - Creature.Physics.Gravity, DwarfTime.Dt);
+                        }
+                        else
+                        {
+                            Creature.Sprite.PauseAnimations(Creature.CharacterMode.Attacking);
+                            Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
+                        }
                         yield return Status.Running;
                     }
 
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                    Creature.CurrentCharacterMode = defaultCharachterMode;
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     if (Target.IsDead)
                     {
@@ -333,7 +342,7 @@ namespace DwarfCorp
                         Creature.AI.AddThought(Thought.ThoughtType.KilledThing);
                         Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                         Creature.OverrideCharacterMode = false;
-                        Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
+                        Creature.CurrentCharacterMode = defaultCharachterMode;
                         yield return Status.Success;
                         break;
                     }

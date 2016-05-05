@@ -180,4 +180,19 @@ namespace DwarfCorp
             HitAnimation = new Animation(ContentPaths.Effects.flash, 32, 32, 0, 1, 2, 3);
         }
     }
+
+    [JsonObject(IsReference = true)]
+    public class WebProjectile : Projectile
+    {
+        public WebProjectile()
+        {
+
+        }
+
+        public WebProjectile(Vector3 position, Vector3 initialVelocity, Body target) :
+            base(position, initialVelocity, new Health.DamageAmount() { Amount = 10.0f, DamageType = Health.DamageType.Acid }, 0.25f, ContentPaths.Entities.Animals.Spider.webshot, "puff", ContentPaths.Audio.whoosh, target)
+        {
+            HitAnimation = new Animation(ContentPaths.Entities.Animals.Spider.webstick, 32, 32, 0);
+        }
+    }
 }

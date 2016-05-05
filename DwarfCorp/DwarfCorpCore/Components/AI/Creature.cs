@@ -396,7 +396,14 @@ namespace DwarfCorp
             {
                 if (CurrentCharacterMode != CharacterMode.Flying)
                 {
-                    CurrentCharacterMode = Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling;
+                    if (Physics.Velocity.Y > 0.05)
+                    {
+                        CurrentCharacterMode = CharacterMode.Jumping;
+                    }
+                    else if (Physics.Velocity.Y < -0.05)
+                    {
+                        CurrentCharacterMode = CharacterMode.Falling;
+                    }
                 }
 
                 if (Physics.IsInLiquid)

@@ -98,7 +98,7 @@ namespace DwarfCorp
             public float RandomTimeOffset { get; set; }
             public List<Vector3> RandomPositionOffsets { get; set; }
             public List<float> ActionTimes { get; set; }
-
+            
             public FollowPathAnimationAct(CreatureAI agent, string pathName) :
                 base(agent)
             {
@@ -145,6 +145,7 @@ namespace DwarfCorp
                 Vector3 diff = Vector3.Zero;
                 float diffNorm = 0.0f;
                 Vector3 half = Vector3.One * 0.5f;
+                half.Y = Creature.Physics.BoundingBox.Extents().Y * 1.5f;
                 int nextID = index + 1;
                 if (nextID < Path.Count)
                 {
@@ -225,6 +226,7 @@ namespace DwarfCorp
             public IEnumerable<Status> SnapToFirst()
             {
                 Vector3 half = Vector3.One * 0.5f;
+                half.Y = Creature.Physics.BoundingBox.Extents().Y * 1.5f;
                 if (Path[0].Voxel == null) 
                     yield break;
                 Vector3 target = Path[0].Voxel.Position + half + RandomPositionOffsets[0];
@@ -270,8 +272,10 @@ namespace DwarfCorp
                 int nextID = currentIndex + 1;
                 bool hasNextAction = false;
                 Vector3 half = Vector3.One * 0.5f;
+                half.Y = Creature.Physics.BoundingBox.Extents().Y * 1.5f;
                 Vector3 nextPosition = Vector3.Zero;
                 Vector3 currPosition = action.Voxel.Position + half;
+
                 currPosition += RandomPositionOffsets[currentIndex];
                 if (nextID < Path.Count)
                 {
@@ -279,6 +283,10 @@ namespace DwarfCorp
                     nextPosition = Path[nextID].Voxel.Position;
                     nextPosition += RandomPositionOffsets[nextID] + half;
                 }
+
+                currPosition += VertexNoise.GetNoiseVectorFromRepeatingTexture(currPosition);
+                nextPosition += VertexNoise.GetNoiseVectorFromRepeatingTexture(nextPosition);
+
                 Matrix transform = Agent.Physics.LocalTransform;
                 Vector3 diff = (nextPosition - currPosition);
 
@@ -417,7 +425,7 @@ namespace DwarfCorp
                 while (!TrajectoryTimer.HasTriggered)
                 {
                     TrajectoryTimer.Update(DwarfTime.LastTime);
-
+                    ValidPathTimer.Update(DwarfTime.LastTime);
                     foreach (Act.Status status in PerformCurrentAction())
                     {
                         if (status == Status.Fail)

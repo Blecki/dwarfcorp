@@ -245,6 +245,9 @@
     <Compile Include="..\DwarfCorpCore\DwarfGame.cs">
       <Link>DwarfGame.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Animals\Bat.cs">
+      <Link>Entities\Animals\Bat.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Animals\Bird.cs">
       <Link>Entities\Animals\Bird.cs</Link>
     </Compile>
@@ -262,6 +265,9 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Animals\Scorpion.cs">
       <Link>Entities\Animals\Scorpion.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Animals\Spider.cs">
+      <Link>Entities\Animals\Spider.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\BalloonAI.cs">
       <Link>Entities\BalloonAI.cs</Link>

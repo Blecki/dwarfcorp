@@ -175,6 +175,20 @@ namespace DwarfCorp
         {
             public class Animals
             {
+                public class Bat
+                {
+                    public static string bat = ProgramData.CreatePath("Entities", "Animals", "bat");
+                    public static string bat_animations = ProgramData.CreatePath("Entities", "Animals", "bat_animation.json");
+                }
+
+                public class Spider
+                {
+                    public static string spider = ProgramData.CreatePath("Entities", "Animals", "Spider", "spider");
+                    public static string spider_animation = ProgramData.CreatePath("Entities", "Animals", "Spider", "spider_animation.json");
+                    public static string webstick = ProgramData.CreatePath("Entities", "Animals", "Spider", "webstick");
+                    public static string webshot = ProgramData.CreatePath("Entities", "Animals", "Spider", "webshot");
+                }
+
                 public class Birds
                 {
                     public static string bird_prefix = ProgramData.CreatePath("Entities", "Animals", "Birds", "bird");

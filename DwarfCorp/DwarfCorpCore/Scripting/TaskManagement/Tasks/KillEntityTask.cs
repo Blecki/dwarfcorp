@@ -83,7 +83,7 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            if (EntityToKill == null || EntityToKill.IsDead)
+            if (EntityToKill == null || EntityToKill.IsDead || (EntityToKill.Position - agent.AI.Position).Length() > 100)
             {
                 return true;
             }
@@ -116,14 +116,12 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            if(EntityToKill == null)
+            if(EntityToKill == null || EntityToKill.IsDead)
             {
                 return false;
             }
             else
             {
-                if (EntityToKill.IsDead) return false;
-
                 Creature ai = EntityToKill.GetChildrenOfTypeRecursive<Creature>().FirstOrDefault();
                 switch (Mode)
                 {
@@ -146,6 +144,13 @@ namespace DwarfCorp
                     {
                         return true;
                     }
+                }
+
+                Voxel target = new Voxel();
+                bool voxExists = PlayState.ChunkManager.ChunkData.GetVoxel(EntityToKill.Position, ref target);
+                if (!voxExists || !PlanAct.PathExists(agent.Physics.CurrentVoxel, target, agent.AI))
+                {
+                    return false;
                 }
 
 

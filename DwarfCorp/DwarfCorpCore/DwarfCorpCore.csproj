@@ -106,11 +106,13 @@
     <Compile Include="Components\Systems\Message.cs" />
     <Compile Include="ControlSettings.cs" />
     <Compile Include="DwarfGame.cs" />
+    <Compile Include="Entities\Animals\Bat.cs" />
     <Compile Include="Entities\Animals\Bird.cs" />
     <Compile Include="Entities\Animals\BirdAI.cs" />
     <Compile Include="Entities\Animals\Deer.cs" />
     <Compile Include="Entities\Animals\Frog.cs" />
     <Compile Include="Entities\Animals\Rabbit.cs" />
+    <Compile Include="Entities\Animals\Spider.cs" />
     <Compile Include="Entities\Animals\Scorpion.cs" />
     <Compile Include="Entities\BalloonAI.cs" />
     <Compile Include="Entities\Dwarves\Dwarf.cs" />

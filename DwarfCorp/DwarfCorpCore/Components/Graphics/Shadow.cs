@@ -68,7 +68,7 @@ namespace DwarfCorp
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             UpdateTimer.Update(gameTime);
-            if(HasMoved && UpdateTimer.HasTriggered)
+            if(UpdateTimer.HasTriggered)
             {
                 Body p = (Body) Parent;
 

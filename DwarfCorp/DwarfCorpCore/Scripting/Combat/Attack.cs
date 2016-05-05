@@ -53,7 +53,8 @@ namespace DwarfCorp
         {
             Melee,
             Ranged,
-            Area
+            Area,
+            Dogfight
         }
 
         public enum AttackTrigger
@@ -257,6 +258,7 @@ namespace DwarfCorp
             switch (Mode)
             {
                 case AttackMode.Melee:
+                case AttackMode.Dogfight:
                     {
                         Health health = other.GetRootComponent().GetChildrenOfType<Health>(true).FirstOrDefault();
                         if (health != null)
@@ -282,8 +284,12 @@ namespace DwarfCorp
                         if (physics != null)
                         {
                             Vector3 force = other.Position - pos;
-                            force.Normalize();
-                            physics.ApplyForce(force * Knockback, 1.0f);
+
+                            if (force.LengthSquared() > 0.01f)
+                            {
+                                force.Normalize();
+                                physics.ApplyForce(force*Knockback, 1.0f);
+                            }
                         }
 
                         break;

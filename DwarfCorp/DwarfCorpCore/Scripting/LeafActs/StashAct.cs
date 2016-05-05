@@ -136,10 +136,15 @@ namespace DwarfCorp
                         {
                             Creature.Faction.GatherDesignations.Remove(Target);
                         }
+                        else
+                        {
+                            yield return Status.Fail;
+                            break;
+                        }
 
                         ResourceAmount resource = new ResourceAmount(Target);
                         Agent.Blackboard.SetData(StashedItemOut, resource);
-                        Creature.DrawIndicator(resource.ResourceType.Image, resource.ResourceType.Tint);
+                        //Creature.DrawIndicator(resource.ResourceType.Image, resource.ResourceType.Tint);
                         SoundManager.PlaySound(ContentPaths.Audio.dig, Agent.Position);
                         yield return Status.Success;
                         break;
