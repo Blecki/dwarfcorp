@@ -865,78 +865,11 @@ namespace DwarfCorp
             List<Creature.MoveAction> successors = new List<Creature.MoveAction>();
 
             //Climbing ladders
-            IEnumerable<IBoundedObject> objectsInside =
-                objectHash.Hashes[CollisionManager.CollisionType.Static].GetItems(
-                    new Point3(MathFunctions.FloorInt(voxel.Position.X),
-                        MathFunctions.FloorInt(voxel.Position.Y),
-                        MathFunctions.FloorInt(voxel.Position.Z)));
-
-            bool blockedByObject = false;
+            IEnumerable<IBoundedObject> objectsInside = objectHash.GetObjectsAt(voxel, CollisionManager.CollisionType.Static);
             if (objectsInside != null)
             {
                 var bodies = objectsInside.OfType<GameComponent>();
                 var enumerable = bodies as IList<GameComponent> ?? bodies.ToList();
-                // TODO: This is supposed to be done when the door is a NEIGHBOR of this voxel only!!
-                foreach (GameComponent body in enumerable)
-                {
-                    Door door = body.GetRootComponent().GetChildrenOfType<Door>(true).FirstOrDefault();
-
-                    if (door != null)
-                    {
-                        if (
-                            PlayState.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction).GetCurrentRelationship() ==
-                            Relationship.Hateful)
-                        {
-
-                            if (IsEmpty(neighborHood[0, 1, 1]))
-                                // +- x
-                                successors.Add(new Creature.MoveAction()
-                                {
-                                    Diff = new Vector3(0, 1, 1),
-                                    MoveType = Creature.MoveType.DestroyObject,
-                                    InteractObject = door,
-                                    Voxel = neighborHood[0, 1, 1]
-                                });
-
-                            if (IsEmpty(neighborHood[2, 1, 1]))
-                                successors.Add(new Creature.MoveAction()
-                                {
-                                    Diff = new Vector3(2, 1, 1),
-                                    MoveType = Creature.MoveType.DestroyObject,
-                                    InteractObject = door,
-                                    Voxel = neighborHood[2, 1, 1]
-                                });
-
-                            if (IsEmpty(neighborHood[1, 1, 0]))
-                                // +- z
-                                successors.Add(new Creature.MoveAction()
-                                {
-                                    Diff = new Vector3(1, 1, 0),
-                                    MoveType = Creature.MoveType.DestroyObject,
-                                    InteractObject = door,
-                                    Voxel = neighborHood[1, 1, 0]
-                                });
-
-                            if (IsEmpty(neighborHood[1, 1, 2]))
-                                successors.Add(new Creature.MoveAction()
-                                {
-                                    Diff = new Vector3(1, 1, 2),
-                                    MoveType = Creature.MoveType.DestroyObject,
-                                    InteractObject = door,
-                                    Voxel = neighborHood[1, 1, 2]
-                                });
-
-
-                            blockedByObject = true;
-                        }
-                    }
-                }
-
-                if (blockedByObject)
-                {
-                    return successors;
-                }
-
                 if (CanClimb)
                 {
                     bool hasLadder = enumerable.Any(component => component.Tags.Contains("Climbable"));
@@ -962,7 +895,6 @@ namespace DwarfCorp
                         standingOnGround = true;
                     }
                 }
-
             }
 
             if (CanClimbWalls && !topCovered)
@@ -1122,9 +1054,45 @@ namespace DwarfCorp
                 Voxel n = neighborHood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
                 if (n != null && (n.IsEmpty || n.WaterLevel > 0))
                 {
-                    Creature.MoveAction newAction = v;
-                    newAction.Voxel = n;
-                    toReturn.Add(newAction);
+                    bool blockedByObject = false;
+                    List<IBoundedObject> objectsAtNeighbor = PlayState.ComponentManager.CollisionManager.GetObjectsAt(
+                        n, CollisionManager.CollisionType.Static);
+
+                    if (objectsAtNeighbor != null)
+                    {
+                        var bodies = objectsAtNeighbor.OfType<GameComponent>();
+                        var enumerable = bodies as IList<GameComponent> ?? bodies.ToList();
+
+                        foreach (GameComponent body in enumerable)
+                        {
+                            Door door = body.GetRootComponent().GetChildrenOfType<Door>(true).FirstOrDefault();
+
+                            if (door != null)
+                            {
+                                if (
+                                    PlayState.ComponentManager.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction)
+                                        .GetCurrentRelationship() !=
+                                    Relationship.Loving)
+                                {
+
+                                    toReturn.Add(new Creature.MoveAction()
+                                    {
+                                        Diff = v.Diff,
+                                        MoveType = Creature.MoveType.DestroyObject,
+                                        InteractObject = door,
+                                        Voxel = n
+                                    });
+                                    blockedByObject = true;
+                                }
+                            }
+                        }
+                    }
+                    if (!blockedByObject)
+                    {
+                        Creature.MoveAction newAction = v;
+                        newAction.Voxel = n;
+                        toReturn.Add(newAction);
+                    }
                 }
             }
 

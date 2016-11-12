@@ -168,7 +168,7 @@ namespace DwarfCorp
                     }
                 }
 
-                if (bestAction.HasValue)
+                if (bestAction.HasValue && !path.Any(p => p.Voxel.Equals(bestAction.Value.Voxel) && p.MoveType == bestAction.Value.MoveType))
                 {
                     path.Add(bestAction.Value);
                     curr = bestAction.Value.Voxel;

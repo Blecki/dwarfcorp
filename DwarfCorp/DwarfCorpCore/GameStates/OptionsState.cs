@@ -33,6 +33,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DwarfCorpCore;
+using LibNoise;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
@@ -83,256 +84,36 @@ namespace DwarfCorp.GameStates
             {
                 LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2)
             };
-            Layout = new GridLayout(GUI, MainWindow, 10, 6);
+            Layout = new GridLayout(GUI, MainWindow, 12, 6);
 
             Label label = new Label(GUI, Layout, "Options", GUI.TitleFont);
             Layout.SetComponentPosition(label, 0, 0, 1, 1);
 
             TabSelector = new TabSelector(GUI, Layout, 6);
-            Layout.SetComponentPosition(TabSelector, 0, 1, 6, 8);
+            Layout.SetComponentPosition(TabSelector, 0, 1, 6, 10);
 
-            TabSelector.Tab graphicsTab = TabSelector.AddTab("Graphics");
-
-            GroupBox graphicsBox = new GroupBox(GUI, graphicsTab, "Graphics")
+            TabSelector.Tab simpleGraphicsTab = TabSelector.AddTab("Graphics");
+            GroupBox simpleGraphicsBox = new GroupBox(GUI, simpleGraphicsTab, "Graphics")
             {
                 WidthSizeMode = GUIComponent.SizeMode.Fit,
                 HeightSizeMode = GUIComponent.SizeMode.Fit
             };
+            FormLayout simpleGraphicsLayout = new FormLayout(GUI, simpleGraphicsBox);
+            ComboBox simpleGraphicsSelector = new ComboBox(GUI, simpleGraphicsLayout);
+            simpleGraphicsSelector.AddValue("Custom");
+            simpleGraphicsSelector.AddValue("Lowest");
+            simpleGraphicsSelector.AddValue("Low");
+            simpleGraphicsSelector.AddValue("Medium");
+            simpleGraphicsSelector.AddValue("High");
+            simpleGraphicsSelector.AddValue("Highest");
 
-            Categories["Graphics"] = graphicsBox;
-            CurrentBox = graphicsBox;
+            simpleGraphicsLayout.AddItem("Graphics Quality", simpleGraphicsSelector);
 
-            GridLayout graphicsLayout = new GridLayout(GUI, graphicsBox, 6, 5);
-
-
-            Label resolutionLabel = new Label(GUI, graphicsLayout, "Resolution", GUI.DefaultFont)
-            {
-                Alignment = Drawer2D.Alignment.Right
-            };
-
-            ComboBox resolutionBox = new ComboBox(GUI, graphicsLayout)
-            {
-                ToolTip = "Sets the size of the screen.\nSmaller for higher framerates."
-            };
-
-            foreach(DisplayMode mode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes)
-            {
-                if(mode.Format != SurfaceFormat.Color)
-                {
-                    continue;
-                }
-
-                if (mode.Width <= 640) continue;
-
-                string s = mode.Width + " x " + mode.Height;
-                DisplayModes[s] = mode;
-                if(mode.Width == GameSettings.Default.ResolutionX && mode.Height == GameSettings.Default.ResolutionY)
-                {
-                    resolutionBox.AddValue(s);
-                    resolutionBox.CurrentValue = s;
-                }
-                else
-                {
-                    resolutionBox.AddValue(s);
-                }
-            }
-
-            graphicsLayout.SetComponentPosition(resolutionLabel, 0, 0, 1, 1);
-            graphicsLayout.SetComponentPosition(resolutionBox, 1, 0, 1, 1);
+            simpleGraphicsSelector.OnSelectionModified += simpleGraphicsSelector_OnSelectionModified;
 
 
-            resolutionBox.OnSelectionModified += resolutionBox_OnSelectionModified;
+            CreateGraphicsTab();
 
-            Checkbox fullscreenCheck = new Checkbox(GUI, graphicsLayout, "Fullscreen", GUI.DefaultFont, GameSettings.Default.Fullscreen)
-            {
-                ToolTip = "If this is checked, the game takes up the whole screen."
-            };
-
-            graphicsLayout.SetComponentPosition(fullscreenCheck, 0, 1, 1, 1);
-
-            fullscreenCheck.OnCheckModified += fullscreenCheck_OnClicked;
-
-
-            Label drawDistance = new Label(GUI, graphicsLayout, "Draw Distance", GUI.DefaultFont);
-            Slider chunkDrawSlider = new Slider(GUI, graphicsLayout, "", GameSettings.Default.ChunkDrawDistance, 1, 1000, Slider.SliderMode.Integer)
-            {
-                ToolTip = "Maximum distance at which terrain will be drawn\nSmaller for faster."
-            };
-
-
-            graphicsLayout.SetComponentPosition(drawDistance, 0, 2, 1, 1);
-            graphicsLayout.SetComponentPosition(chunkDrawSlider, 1, 2, 1, 1);
-            chunkDrawSlider.OnValueModified += ChunkDrawSlider_OnValueModified;
-
-            Label cullDistance = new Label(GUI, graphicsLayout, "Cull Distance", GUI.DefaultFont);
-            Slider cullSlider = new Slider(GUI, graphicsLayout, "", GameSettings.Default.VertexCullDistance, 0.1f, 1000, Slider.SliderMode.Integer)
-            {
-                ToolTip = "Maximum distance at which anything will be drawn\n Smaller for faster."
-            };
-
-            cullSlider.OnValueModified += CullSlider_OnValueModified;
-
-            graphicsLayout.SetComponentPosition(cullDistance, 0, 3, 1, 1);
-            graphicsLayout.SetComponentPosition(cullSlider, 1, 3, 1, 1);
-
-            Label generateDistance = new Label(GUI, graphicsLayout, "Generate Distance", GUI.DefaultFont);
-            Slider generateSlider = new Slider(GUI, graphicsLayout, "", GameSettings.Default.ChunkGenerateDistance, 1, 1000, Slider.SliderMode.Integer)
-            {
-                ToolTip = "Maximum distance at which terrain will be generated."
-            };
-
-            generateSlider.OnValueModified += GenerateSlider_OnValueModified;
-
-            graphicsLayout.SetComponentPosition(generateDistance, 0, 4, 1, 1);
-            graphicsLayout.SetComponentPosition(generateSlider, 1, 4, 1, 1);
-
-            Checkbox glowBox = new Checkbox(GUI, graphicsLayout, "Enable Glow", GUI.DefaultFont, GameSettings.Default.EnableGlow)
-            {
-                ToolTip = "When checked, there will be a fullscreen glow effect."
-            };
-
-            graphicsLayout.SetComponentPosition(glowBox, 1, 1, 1, 1);
-            glowBox.OnCheckModified += glowBox_OnCheckModified;
-
-            Label aaLabel = new Label(GUI, graphicsLayout, "Antialiasing", GUI.DefaultFont)
-            {
-                Alignment = Drawer2D.Alignment.Right
-            };
-
-            ComboBox aaBox = new ComboBox(GUI, graphicsLayout)
-            {
-                ToolTip = "Determines how much antialiasing (smoothing) there is.\nHigher means more smooth, but is slower."
-            };
-            aaBox.AddValue("None");
-            aaBox.AddValue("FXAA");
-            aaBox.AddValue("2x MSAA");
-            aaBox.AddValue("4x MSAA");
-            aaBox.AddValue("16x MSAA");
-
-            foreach(string s in AAModes.Keys.Where(s => AAModes[s] == GameSettings.Default.AntiAliasing))
-            {
-                aaBox.CurrentValue = s;
-            }
-
-
-            aaBox.OnSelectionModified += AABox_OnSelectionModified;
-
-            graphicsLayout.SetComponentPosition(aaLabel, 2, 0, 1, 1);
-            graphicsLayout.SetComponentPosition(aaBox, 3, 0, 1, 1);
-
-
-            Checkbox reflectTerrainBox = new Checkbox(GUI, graphicsLayout, "Reflect Chunks", GUI.DefaultFont, GameSettings.Default.DrawChunksReflected)
-            {
-                ToolTip = "When checked, water will reflect terrain."
-            };
-            reflectTerrainBox.OnCheckModified += reflectTerrainBox_OnCheckModified;
-            graphicsLayout.SetComponentPosition(reflectTerrainBox, 2, 1, 1, 1);
-
-            Checkbox refractTerrainBox = new Checkbox(GUI, graphicsLayout, "Refract Chunks", GUI.DefaultFont, GameSettings.Default.DrawChunksRefracted)
-            {
-                ToolTip = "When checked, water will refract terrain."
-            };
-            refractTerrainBox.OnCheckModified += refractTerrainBox_OnCheckModified;
-            graphicsLayout.SetComponentPosition(refractTerrainBox, 2, 2, 1, 1);
-
-            Checkbox reflectEntities = new Checkbox(GUI, graphicsLayout, "Reflect Entities", GUI.DefaultFont, GameSettings.Default.DrawEntityReflected)
-            {
-                ToolTip = "When checked, water will reflect trees, dwarves, etc."
-            };
-            reflectEntities.OnCheckModified += reflectEntities_OnCheckModified;
-            graphicsLayout.SetComponentPosition(reflectEntities, 3, 1, 1, 1);
-
-            Checkbox refractEntities = new Checkbox(GUI, graphicsLayout, "Refract Entities", GUI.DefaultFont, GameSettings.Default.DrawEntityReflected)
-            {
-                ToolTip = "When checked, water will reflect trees, dwarves, etc."
-            };
-            refractEntities.OnCheckModified += refractEntities_OnCheckModified;
-            graphicsLayout.SetComponentPosition(refractEntities, 3, 2, 1, 1);
-
-            Checkbox sunlight = new Checkbox(GUI, graphicsLayout, "Sunlight", GUI.DefaultFont, GameSettings.Default.CalculateSunlight)
-            {
-                ToolTip = "When checked, terrain will be lit/shadowed by the sun."
-            };
-            sunlight.OnCheckModified += sunlight_OnCheckModified;
-            graphicsLayout.SetComponentPosition(sunlight, 2, 3, 1, 1);
-
-            Checkbox ao = new Checkbox(GUI, graphicsLayout, "Ambient Occlusion", GUI.DefaultFont, GameSettings.Default.AmbientOcclusion)
-            {
-                ToolTip = "When checked, terrain will smooth shading effects."
-            };
-            ao.OnCheckModified += AO_OnCheckModified;
-            graphicsLayout.SetComponentPosition(ao, 3, 3, 1, 1);
-
-            Checkbox ramps = new Checkbox(GUI, graphicsLayout, "Ramps", GUI.DefaultFont, GameSettings.Default.CalculateRamps)
-            {
-                ToolTip = "When checked, some terrain will have smooth ramps."
-            };
-
-            ramps.OnCheckModified += ramps_OnCheckModified;
-            graphicsLayout.SetComponentPosition(ramps, 2, 4, 1, 1);
-
-            Checkbox cursorLight = new Checkbox(GUI, graphicsLayout, "Cursor Light", GUI.DefaultFont, GameSettings.Default.CursorLightEnabled)
-            {
-                ToolTip = "When checked, a light will follow the player cursor."
-            };
-
-            cursorLight.OnCheckModified += cursorLight_OnCheckModified;
-            graphicsLayout.SetComponentPosition(cursorLight, 2, 5, 1, 1);
-
-            Checkbox entityLight = new Checkbox(GUI, graphicsLayout, "Entity Lighting", GUI.DefaultFont, GameSettings.Default.EntityLighting)
-            {
-                ToolTip = "When checked, dwarves, objects, etc. will be lit\nby the sun, lamps, etc."
-            };
-
-            entityLight.OnCheckModified += entityLight_OnCheckModified;
-            graphicsLayout.SetComponentPosition(entityLight, 3, 4, 1, 1);
-
-            Checkbox selfIllum = new Checkbox(GUI, graphicsLayout, "Ore Glow", GUI.DefaultFont, GameSettings.Default.SelfIlluminationEnabled)
-            {
-                ToolTip = "When checked, some terrain elements will glow."
-            };
-
-            selfIllum.OnCheckModified += selfIllum_OnCheckModified;
-            graphicsLayout.SetComponentPosition(selfIllum, 3, 5, 1, 1);
-
-            Checkbox particlePhysics = new Checkbox(GUI, graphicsLayout, "Particle Body", GUI.DefaultFont, GameSettings.Default.ParticlePhysics)
-            {
-                ToolTip = "When checked, some particles will bounce off terrain."
-            };
-
-            particlePhysics.OnCheckModified += particlePhysics_OnCheckModified;
-            graphicsLayout.SetComponentPosition(particlePhysics, 0, 5, 1, 1);
-
-
-
-            TabSelector.Tab graphics2Tab = TabSelector.AddTab("Graphics II");
-            GroupBox graphicsBox2 = new GroupBox(GUI, graphics2Tab, "Graphics II")
-            {
-                HeightSizeMode = GUIComponent.SizeMode.Fit,
-                WidthSizeMode = GUIComponent.SizeMode.Fit
-            };
-            Categories["Graphics II"] = graphicsBox2;
-            GridLayout graphicsLayout2 = new GridLayout(GUI, graphicsBox2, 6, 5);
-
-            Checkbox moteBox = new Checkbox(GUI, graphicsLayout2, "Generate Motes", GUI.DefaultFont, GameSettings.Default.GrassMotes)
-            {
-                ToolTip = "When checked, trees, grass, etc. will be visible."
-            };
-
-            moteBox.OnCheckModified += MoteBox_OnCheckModified;
-            graphicsLayout2.SetComponentPosition(moteBox, 1, 2, 1, 1);
-
-            Label numMotes = new Label(GUI, graphicsLayout2, "Num Motes", GUI.DefaultFont);
-            Slider motesSlider = new Slider(GUI, graphicsLayout2, "", (int) (GameSettings.Default.NumMotes * 100), 0, 1000, Slider.SliderMode.Integer)
-            {
-                ToolTip = "Determines the maximum amount of trees/grass that will be visible."
-            };
-
-
-
-            graphicsLayout2.SetComponentPosition(numMotes, 0, 1, 1, 1);
-            graphicsLayout2.SetComponentPosition(motesSlider, 1, 1, 1, 1);
-            motesSlider.OnValueModified += MotesSlider_OnValueModified;
             TabSelector.Tab gameplayTab = TabSelector.AddTab("Gameplay");
             GroupBox gameplayBox = new GroupBox(GUI, gameplayTab, "Gameplay")
             {
@@ -351,7 +132,7 @@ namespace DwarfCorp.GameStates
 
             gameplayLayout.SetComponentPosition(moveSpeedLabel, 0, 0, 1, 1);
             gameplayLayout.SetComponentPosition(moveSlider, 1, 0, 1, 1);
-            moveSlider.OnValueModified += MoveSlider_OnValueModified;
+            moveSlider.OnValueModified  += check => { GameSettings.Default.CameraScrollSpeed = check; };
 
             Label zoomSpeedLabel = new Label(GUI, gameplayLayout, "Zoom Speed", GUI.DefaultFont);
             Slider zoomSlider = new Slider(GUI, gameplayLayout, "", GameSettings.Default.CameraZoomSpeed, 0.0f, 2.0f, Slider.SliderMode.Float)
@@ -361,7 +142,7 @@ namespace DwarfCorp.GameStates
 
             gameplayLayout.SetComponentPosition(zoomSpeedLabel, 0, 1, 1, 1);
             gameplayLayout.SetComponentPosition(zoomSlider, 1, 1, 1, 1);
-            zoomSlider.OnValueModified += ZoomSlider_OnValueModified;
+            zoomSlider.OnValueModified += check => { GameSettings.Default.CameraZoomSpeed = check; };
 
             Checkbox invertZoomBox = new Checkbox(GUI, gameplayLayout, "Invert Zoom", GUI.DefaultFont, GameSettings.Default.InvertZoom)
             {
@@ -369,7 +150,7 @@ namespace DwarfCorp.GameStates
             };
 
             gameplayLayout.SetComponentPosition(invertZoomBox, 2, 1, 1, 1);
-            invertZoomBox.OnCheckModified += InvertZoomBox_OnCheckModified;
+            invertZoomBox.OnCheckModified += check => { GameSettings.Default.InvertZoom = check; };
 
 
             Checkbox edgeScrollBox = new Checkbox(GUI, gameplayLayout, "Edge Scrolling", GUI.DefaultFont, GameSettings.Default.EnableEdgeScroll)
@@ -378,7 +159,7 @@ namespace DwarfCorp.GameStates
             };
 
             gameplayLayout.SetComponentPosition(edgeScrollBox, 0, 2, 1, 1);
-            edgeScrollBox.OnCheckModified += EdgeScrollBox_OnCheckModified;
+            edgeScrollBox.OnCheckModified += check => { GameSettings.Default.EnableEdgeScroll = check; };
 
             Checkbox introBox = new Checkbox(GUI, gameplayLayout, "Play Intro", GUI.DefaultFont, GameSettings.Default.DisplayIntro)
             {
@@ -386,7 +167,7 @@ namespace DwarfCorp.GameStates
             };
 
             gameplayLayout.SetComponentPosition(introBox, 1, 2, 1, 1);
-            introBox.OnCheckModified += IntroBox_OnCheckModified;
+            introBox.OnCheckModified += check => { GameSettings.Default.DisplayIntro = check; };
 
             Checkbox fogOfWarBox = new Checkbox(GUI, gameplayLayout, "Fog of War", GUI.DefaultFont, GameSettings.Default.FogofWar)
             {
@@ -395,7 +176,7 @@ namespace DwarfCorp.GameStates
 
             gameplayLayout.SetComponentPosition(fogOfWarBox, 2, 2, 1, 1);
 
-            fogOfWarBox.OnCheckModified += fogOfWarBox_OnCheckModified;
+            fogOfWarBox.OnCheckModified += check => { GameSettings.Default.FogofWar = check; };
 
 
             /*
@@ -468,19 +249,19 @@ namespace DwarfCorp.GameStates
             Slider masterSlider = new Slider(GUI, audioLayout, "", GameSettings.Default.MasterVolume, 0.0f, 1.0f, Slider.SliderMode.Float);
             audioLayout.SetComponentPosition(masterLabel, 0, 0, 1, 1);
             audioLayout.SetComponentPosition(masterSlider, 1, 0, 1, 1);
-            masterSlider.OnValueModified += MasterSlider_OnValueModified;
+            masterSlider.OnValueModified += value => { GameSettings.Default.MasterVolume = value; };
 
             Label sfxLabel = new Label(GUI, audioLayout, "SFX Volume", GUI.DefaultFont);
             Slider sfxSlider = new Slider(GUI, audioLayout, "", GameSettings.Default.SoundEffectVolume, 0.0f, 1.0f, Slider.SliderMode.Float);
             audioLayout.SetComponentPosition(sfxLabel, 0, 1, 1, 1);
             audioLayout.SetComponentPosition(sfxSlider, 1, 1, 1, 1);
-            sfxSlider.OnValueModified += SFXSlider_OnValueModified;
+            sfxSlider.OnValueModified += check => { GameSettings.Default.SoundEffectVolume = check; };
 
             Label musicLabel = new Label(GUI, audioLayout, "Music Volume", GUI.DefaultFont);
             Slider musicSlider = new Slider(GUI, audioLayout, "", GameSettings.Default.MusicVolume, 0.0f, 1.0f, Slider.SliderMode.Float);
             audioLayout.SetComponentPosition(musicLabel, 0, 2, 1, 1);
             audioLayout.SetComponentPosition(musicSlider, 1, 2, 1, 1);
-            musicSlider.OnValueModified += MusicSlider_OnValueModified;
+            musicSlider.OnValueModified += check => { GameSettings.Default.MusicVolume = check; };
 
             TabSelector.Tab keysTab = TabSelector.AddTab("Keys");
             GroupBox keysBox = new GroupBox(GUI, keysTab, "Keys")
@@ -513,11 +294,11 @@ namespace DwarfCorp.GameStates
             */
 
             Button apply = new Button(GUI, Layout, "Apply", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Check));
-            Layout.SetComponentPosition(apply, 5, 9, 1, 1);
+            Layout.SetComponentPosition(apply, 5, 11, 1, 1);
             apply.OnClicked += apply_OnClicked;
 
             Button back = new Button(GUI, Layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.LeftArrow));
-            Layout.SetComponentPosition(back, 4, 9, 1, 1);
+            Layout.SetComponentPosition(back, 4, 11, 1, 1);
             back.OnClicked += back_OnClicked;
 
             Layout.UpdateSizes();
@@ -526,85 +307,386 @@ namespace DwarfCorp.GameStates
             base.OnEnter();
         }
 
-        void fogOfWarBox_OnCheckModified(bool arg)
+        void simpleGraphicsSelector_OnSelectionModified(string arg)
         {
-            GameSettings.Default.FogofWar = arg;
+            switch (arg)
+            {
+                case "Custom":
+                    break;
+                case "Lowest":
+                    GameSettings.Default.AmbientOcclusion = false;
+                    GameSettings.Default.AntiAliasing = 0;
+                    GameSettings.Default.CalculateRamps = false;
+                    GameSettings.Default.CalculateSunlight = false;
+                    GameSettings.Default.CursorLightEnabled = false;
+                    GameSettings.Default.DrawChunksReflected = false;
+                    GameSettings.Default.DrawEntityReflected = false;
+                    GameSettings.Default.DrawSkyReflected = false;
+                    GameSettings.Default.UseLightmaps = false;
+                    GameSettings.Default.UseDynamicShadows = false;
+                    GameSettings.Default.EntityLighting = false;
+                    GameSettings.Default.EnableGlow = false;
+                    GameSettings.Default.SelfIlluminationEnabled = false;
+                    GameSettings.Default.NumMotes = 100;
+                    GameSettings.Default.GrassMotes = false;
+                    GameSettings.Default.ParticlePhysics = false;
+                    CreateGraphicsTab();
+                    break;
+                case "Low":
+                    GameSettings.Default.AmbientOcclusion = false;
+                    GameSettings.Default.AntiAliasing = 0;
+                    GameSettings.Default.CalculateRamps = true;
+                    GameSettings.Default.CalculateSunlight = true;
+                    GameSettings.Default.CursorLightEnabled = false;
+                    GameSettings.Default.DrawChunksReflected = false;
+                    GameSettings.Default.DrawEntityReflected = false;
+                    GameSettings.Default.DrawSkyReflected = true;
+                    GameSettings.Default.UseLightmaps = false;
+                    GameSettings.Default.UseDynamicShadows = false;
+                    GameSettings.Default.EntityLighting = true;
+                    GameSettings.Default.EnableGlow = false;
+                    GameSettings.Default.SelfIlluminationEnabled = false;
+                    GameSettings.Default.NumMotes = 300;
+                    GameSettings.Default.GrassMotes = false;
+                    GameSettings.Default.ParticlePhysics = false;
+                    CreateGraphicsTab();
+                    break;
+                case "Medium":
+                    GameSettings.Default.AmbientOcclusion = true;
+                    GameSettings.Default.AntiAliasing = 4;
+                    GameSettings.Default.CalculateRamps = true;
+                    GameSettings.Default.CalculateSunlight = true;
+                    GameSettings.Default.CursorLightEnabled = true;
+                    GameSettings.Default.DrawChunksReflected = true;
+                    GameSettings.Default.DrawEntityReflected = false;
+                    GameSettings.Default.DrawSkyReflected = true;
+                    GameSettings.Default.UseLightmaps = false;
+                    GameSettings.Default.UseDynamicShadows = false;
+                    GameSettings.Default.EntityLighting = true;
+                    GameSettings.Default.EnableGlow = false;
+                    GameSettings.Default.SelfIlluminationEnabled = true;
+                    GameSettings.Default.NumMotes = 500;
+                    GameSettings.Default.GrassMotes = true;
+                    GameSettings.Default.ParticlePhysics = true;
+                    CreateGraphicsTab();
+                    break;
+                case "High":
+                    GameSettings.Default.AmbientOcclusion = true;
+                    GameSettings.Default.AntiAliasing = 16;
+                    GameSettings.Default.CalculateRamps = true;
+                    GameSettings.Default.CalculateSunlight = true;
+                    GameSettings.Default.CursorLightEnabled = true;
+                    GameSettings.Default.DrawChunksReflected = true;
+                    GameSettings.Default.DrawEntityReflected = true;
+                    GameSettings.Default.DrawSkyReflected = true;
+                    GameSettings.Default.UseLightmaps = true;
+                    GameSettings.Default.UseDynamicShadows = false;
+                    GameSettings.Default.EntityLighting = true;
+                    GameSettings.Default.EnableGlow = true;
+                    GameSettings.Default.SelfIlluminationEnabled = true;
+                    GameSettings.Default.NumMotes = 1500;
+                    GameSettings.Default.GrassMotes = true;
+                    GameSettings.Default.ParticlePhysics = true;
+                    CreateGraphicsTab();
+                    break;
+                case "Highest":
+                    GameSettings.Default.AmbientOcclusion = true;
+                    GameSettings.Default.AntiAliasing = -1;
+                    GameSettings.Default.CalculateRamps = true;
+                    GameSettings.Default.CalculateSunlight = true;
+                    GameSettings.Default.CursorLightEnabled = true;
+                    GameSettings.Default.DrawChunksReflected = true;
+                    GameSettings.Default.DrawEntityReflected = false;
+                    GameSettings.Default.DrawSkyReflected = true;
+                    GameSettings.Default.UseLightmaps = true;
+                    GameSettings.Default.UseDynamicShadows = true;
+                    GameSettings.Default.EntityLighting = true;
+                    GameSettings.Default.EnableGlow = true;
+                    GameSettings.Default.SelfIlluminationEnabled = true;
+                    GameSettings.Default.NumMotes = 2048;
+                    GameSettings.Default.GrassMotes = true;
+                    GameSettings.Default.ParticlePhysics = true;
+                    CreateGraphicsTab();
+                    break;
+            }
         }
 
-        private void InvertZoomBox_OnCheckModified(bool arg)
+        private void CreateGraphicsTab()
         {
-            GameSettings.Default.InvertZoom = arg;
+            TabSelector.Tab graphicsTab = null;
+
+            if (!TabSelector.Tabs.ContainsKey("Advanced Graphics"))
+            {
+                graphicsTab = TabSelector.AddTab("Advanced Graphics");
+            }
+            else
+            {
+                graphicsTab = TabSelector.Tabs["Advanced Graphics"];
+                graphicsTab.Reset();
+            }
+            GridLayout tabLayout = new GridLayout(GUI, graphicsTab, 1, 1);
+
+            ScrollView graphicsView = new ScrollView(GUI, tabLayout);
+            tabLayout.SetComponentPosition(graphicsView, 0, 0, 1, 1);
+
+            GroupBox graphicsBox = new GroupBox(GUI, graphicsView, "Advanced Graphics")
+            {
+                WidthSizeMode = GUIComponent.SizeMode.Fit,
+                HeightSizeMode = GUIComponent.SizeMode.Fixed,
+                MinHeight = 640,
+                MaxHeight = 640
+            };
+
+            Categories["Advanced Graphics"] = graphicsBox;
+            CurrentBox = graphicsBox;
+
+            GridLayout graphicsLayout = new GridLayout(GUI, graphicsBox, 10, 5);
+
+
+            Label resolutionLabel = new Label(GUI, graphicsLayout, "Resolution", GUI.DefaultFont)
+            {
+                Alignment = Drawer2D.Alignment.Right
+            };
+
+            ComboBox resolutionBox = new ComboBox(GUI, graphicsLayout)
+            {
+                ToolTip = "Sets the size of the screen.\nSmaller for higher framerates."
+            };
+
+            foreach (DisplayMode mode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes)
+            {
+                if (mode.Format != SurfaceFormat.Color)
+                {
+                    continue;
+                }
+
+                if (mode.Width <= 640) continue;
+
+                string s = mode.Width + " x " + mode.Height;
+                DisplayModes[s] = mode;
+                if (mode.Width == GameSettings.Default.ResolutionX && mode.Height == GameSettings.Default.ResolutionY)
+                {
+                    resolutionBox.AddValue(s);
+                    resolutionBox.CurrentValue = s;
+                }
+                else
+                {
+                    resolutionBox.AddValue(s);
+                }
+            }
+
+            graphicsLayout.SetComponentPosition(resolutionLabel, 0, 0, 1, 1);
+            graphicsLayout.SetComponentPosition(resolutionBox, 1, 0, 1, 1);
+
+
+            resolutionBox.OnSelectionModified += s =>
+            {
+                GameSettings.Default.ResolutionX = DisplayModes[s].Width;
+                GameSettings.Default.ResolutionY = DisplayModes[s].Height;
+            };
+
+            Checkbox fullscreenCheck = new Checkbox(GUI, graphicsLayout, "Fullscreen", GUI.DefaultFont,
+                GameSettings.Default.Fullscreen)
+            {
+                ToolTip = "If this is checked, the game takes up the whole screen."
+            };
+
+            graphicsLayout.SetComponentPosition(fullscreenCheck, 0, 1, 1, 1);
+
+            fullscreenCheck.OnCheckModified += b => { GameSettings.Default.Fullscreen = b; };
+
+
+            Label drawDistance = new Label(GUI, graphicsLayout, "Draw Distance", GUI.DefaultFont);
+            Slider chunkDrawSlider = new Slider(GUI, graphicsLayout, "", GameSettings.Default.ChunkDrawDistance, 1, 1000,
+                Slider.SliderMode.Integer)
+            {
+                ToolTip = "Maximum distance at which terrain will be drawn\nSmaller for faster."
+            };
+
+
+            graphicsLayout.SetComponentPosition(drawDistance, 0, 2, 1, 1);
+            graphicsLayout.SetComponentPosition(chunkDrawSlider, 1, 2, 1, 1);
+            chunkDrawSlider.OnValueModified += b => { GameSettings.Default.ChunkDrawDistance = b; };
+
+            Label cullDistance = new Label(GUI, graphicsLayout, "Cull Distance", GUI.DefaultFont);
+            Slider cullSlider = new Slider(GUI, graphicsLayout, "", GameSettings.Default.VertexCullDistance, 0.1f, 1000,
+                Slider.SliderMode.Integer)
+            {
+                ToolTip = "Maximum distance at which anything will be drawn\n Smaller for faster."
+            };
+
+            cullSlider.OnValueModified += v => { GameSettings.Default.VertexCullDistance = v; };
+
+            graphicsLayout.SetComponentPosition(cullDistance, 0, 3, 1, 1);
+            graphicsLayout.SetComponentPosition(cullSlider, 1, 3, 1, 1);
+
+            Label generateDistance = new Label(GUI, graphicsLayout, "Generate Distance", GUI.DefaultFont);
+            Slider generateSlider = new Slider(GUI, graphicsLayout, "", GameSettings.Default.ChunkGenerateDistance, 1, 1000,
+                Slider.SliderMode.Integer)
+            {
+                ToolTip = "Maximum distance at which terrain will be generated."
+            };
+
+            generateSlider.OnValueModified += v => { GameSettings.Default.ChunkGenerateDistance = v; };
+
+            graphicsLayout.SetComponentPosition(generateDistance, 0, 4, 1, 1);
+            graphicsLayout.SetComponentPosition(generateSlider, 1, 4, 1, 1);
+
+            Checkbox glowBox = new Checkbox(GUI, graphicsLayout, "Enable Glow", GUI.DefaultFont, GameSettings.Default.EnableGlow)
+            {
+                ToolTip = "When checked, there will be a fullscreen glow effect."
+            };
+
+            graphicsLayout.SetComponentPosition(glowBox, 1, 1, 1, 1);
+            glowBox.OnCheckModified += b => { GameSettings.Default.EnableGlow = b; };
+
+            Label aaLabel = new Label(GUI, graphicsLayout, "Antialiasing", GUI.DefaultFont)
+            {
+                Alignment = Drawer2D.Alignment.Right
+            };
+
+            ComboBox aaBox = new ComboBox(GUI, graphicsLayout)
+            {
+                ToolTip = "Determines how much antialiasing (smoothing) there is.\nHigher means more smooth, but is slower."
+            };
+            aaBox.AddValue("None");
+            aaBox.AddValue("FXAA");
+            aaBox.AddValue("2x MSAA");
+            aaBox.AddValue("4x MSAA");
+            aaBox.AddValue("16x MSAA");
+
+            foreach (string s in AAModes.Keys.Where(s => AAModes[s] == GameSettings.Default.AntiAliasing))
+            {
+                aaBox.CurrentValue = s;
+            }
+
+
+            aaBox.OnSelectionModified += s => { GameSettings.Default.AntiAliasing = AAModes[s]; };
+
+            graphicsLayout.SetComponentPosition(aaLabel, 2, 0, 1, 1);
+            graphicsLayout.SetComponentPosition(aaBox, 3, 0, 1, 1);
+
+
+            Checkbox reflectTerrainBox = new Checkbox(GUI, graphicsLayout, "Reflect Chunks", GUI.DefaultFont,
+                GameSettings.Default.DrawChunksReflected)
+            {
+                ToolTip = "When checked, water will reflect terrain."
+            };
+            reflectTerrainBox.OnCheckModified += b => { GameSettings.Default.DrawChunksReflected = b; };
+            graphicsLayout.SetComponentPosition(reflectTerrainBox, 2, 1, 1, 1);
+
+            Checkbox reflectEntities = new Checkbox(GUI, graphicsLayout, "Reflect Entities", GUI.DefaultFont,
+                GameSettings.Default.DrawEntityReflected)
+            {
+                ToolTip = "When checked, water will reflect trees, dwarves, etc."
+            };
+            reflectEntities.OnCheckModified += b => { GameSettings.Default.DrawEntityReflected = b; };
+            graphicsLayout.SetComponentPosition(reflectEntities, 3, 1, 1, 1);
+
+            Checkbox sunlight = new Checkbox(GUI, graphicsLayout, "Sunlight", GUI.DefaultFont,
+                GameSettings.Default.CalculateSunlight)
+            {
+                ToolTip = "When checked, terrain will be lit/shadowed by the sun."
+            };
+            sunlight.OnCheckModified += b => { GameSettings.Default.CalculateSunlight = b; };
+            graphicsLayout.SetComponentPosition(sunlight, 2, 3, 1, 1);
+
+            Checkbox ao = new Checkbox(GUI, graphicsLayout, "Ambient Occlusion", GUI.DefaultFont,
+                GameSettings.Default.AmbientOcclusion)
+            {
+                ToolTip = "When checked, terrain will smooth shading effects."
+            };
+            ao.OnCheckModified += b => { GameSettings.Default.AmbientOcclusion = b; };
+            graphicsLayout.SetComponentPosition(ao, 3, 3, 1, 1);
+
+            Checkbox ramps = new Checkbox(GUI, graphicsLayout, "Ramps", GUI.DefaultFont, GameSettings.Default.CalculateRamps)
+            {
+                ToolTip = "When checked, some terrain will have smooth ramps."
+            };
+
+            ramps.OnCheckModified += b => { GameSettings.Default.CalculateRamps = b; };
+            graphicsLayout.SetComponentPosition(ramps, 2, 4, 1, 1);
+
+            Checkbox cursorLight = new Checkbox(GUI, graphicsLayout, "Cursor Light", GUI.DefaultFont,
+                GameSettings.Default.CursorLightEnabled)
+            {
+                ToolTip = "When checked, a light will follow the player cursor."
+            };
+
+            cursorLight.OnCheckModified += b => { GameSettings.Default.CursorLightEnabled = b; };
+            graphicsLayout.SetComponentPosition(cursorLight, 2, 5, 1, 1);
+
+            Checkbox entityLight = new Checkbox(GUI, graphicsLayout, "Entity Lighting", GUI.DefaultFont,
+                GameSettings.Default.EntityLighting)
+            {
+                ToolTip = "When checked, dwarves, objects, etc. will be lit\nby the sun, lamps, etc."
+            };
+
+            entityLight.OnCheckModified += b => { GameSettings.Default.EntityLighting = b; };
+            graphicsLayout.SetComponentPosition(entityLight, 3, 4, 1, 1);
+
+            Checkbox selfIllum = new Checkbox(GUI, graphicsLayout, "Ore Glow", GUI.DefaultFont,
+                GameSettings.Default.SelfIlluminationEnabled)
+            {
+                ToolTip = "When checked, some terrain elements will glow."
+            };
+
+            selfIllum.OnCheckModified += b => { GameSettings.Default.SelfIlluminationEnabled = b; };
+            graphicsLayout.SetComponentPosition(selfIllum, 3, 5, 1, 1);
+
+            Checkbox particlePhysics = new Checkbox(GUI, graphicsLayout, "Particle Body", GUI.DefaultFont,
+                GameSettings.Default.ParticlePhysics)
+            {
+                ToolTip = "When checked, some particles will bounce off terrain."
+            };
+
+            particlePhysics.OnCheckModified += b => { GameSettings.Default.ParticlePhysics = b; };
+            graphicsLayout.SetComponentPosition(particlePhysics, 0, 5, 1, 1);
+
+            Checkbox moteBox = new Checkbox(GUI, graphicsLayout, "Generate Motes", GUI.DefaultFont,
+                GameSettings.Default.GrassMotes)
+            {
+                ToolTip = "When checked, small detail vegetation will be visible."
+            };
+
+            moteBox.OnCheckModified += check => { GameSettings.Default.GrassMotes = check; };
+            graphicsLayout.SetComponentPosition(moteBox, 0, 6, 1, 1);
+
+            Label numMotes = new Label(GUI, graphicsLayout, "Num Motes", GUI.DefaultFont);
+            Slider motesSlider = new Slider(GUI, graphicsLayout, "", (int) (GameSettings.Default.NumMotes), 100, 2048,
+                Slider.SliderMode.Integer)
+            {
+                ToolTip = "Determines the maximum amount of trees/grass that will be visible."
+            };
+            graphicsLayout.SetComponentPosition(numMotes, 0, 7, 1, 1);
+            graphicsLayout.SetComponentPosition(motesSlider, 1, 7, 1, 1);
+
+
+            Checkbox lightMapBox = new Checkbox(GUI, graphicsLayout, "Light Maps", GUI.DefaultFont,
+                GameSettings.Default.UseLightmaps)
+            {
+                ToolTip = "When checked, terrain will be rendered using light maps."
+            };
+            lightMapBox.OnCheckModified += check => { GameSettings.Default.UseLightmaps = check; };
+
+            graphicsLayout.SetComponentPosition(lightMapBox, 0, 8, 1, 1);
+
+
+            Checkbox shadowBox = new Checkbox(GUI, graphicsLayout, "Dynamic Shadows", GUI.DefaultFont,
+                GameSettings.Default.UseLightmaps)
+            {
+                ToolTip = "When checked, terrain casts dynamic shadows"
+            };
+            shadowBox.OnCheckModified += check => { GameSettings.Default.UseDynamicShadows = check; };
+
+            graphicsLayout.SetComponentPosition(shadowBox, 0, 9, 1, 1);
+
+            motesSlider.OnValueModified += MotesSlider_OnValueModified;
         }
 
         private void MotesSlider_OnValueModified(float arg)
         {
-            GameSettings.Default.NumMotes = (int)(arg / 100);
-        }
-
-        private void MoteBox_OnCheckModified(bool arg)
-        {
-            GameSettings.Default.GrassMotes = arg;
-        }
-
-        private void particlePhysics_OnCheckModified(bool arg)
-        {
-            GameSettings.Default.ParticlePhysics = arg;
-        }
-
-        private void selfIllum_OnCheckModified(bool arg)
-        {
-            GameSettings.Default.SelfIlluminationEnabled = arg;
-        }
-
-        private void entityLight_OnCheckModified(bool arg)
-        {
-            GameSettings.Default.EntityLighting = arg;
-        }
-
-        private void cursorLight_OnCheckModified(bool arg)
-        {
-            GameSettings.Default.CursorLightEnabled = arg;
-        }
-
-        private void MusicSlider_OnValueModified(float arg)
-        {
-            GameSettings.Default.MusicVolume = arg;
-        }
-
-        private void SFXSlider_OnValueModified(float arg)
-        {
-            GameSettings.Default.SoundEffectVolume = arg;
-        }
-
-        private void MasterSlider_OnValueModified(float arg)
-        {
-            GameSettings.Default.MasterVolume = arg;
-        }
-
-        private void IntroBox_OnCheckModified(bool arg)
-        {
-            GameSettings.Default.DisplayIntro = arg;
-        }
-
-        private void WorldScaleSlider_OnValueModified(float arg)
-        {
-            GameSettings.Default.WorldScale = (int) arg;
-        }
-
-
-        private void EdgeScrollBox_OnCheckModified(bool arg)
-        {
-            GameSettings.Default.EnableEdgeScroll = arg;
-        }
-
-        private void ZoomSlider_OnValueModified(float arg)
-        {
-            GameSettings.Default.CameraZoomSpeed = arg;
-        }
-
-        private void MoveSlider_OnValueModified(float arg)
-        {
-            GameSettings.Default.CameraScrollSpeed = arg;
+            GameSettings.Default.NumMotes = Math.ClampValue((int)(arg), 100, 2048);
         }
 
         private void tabSelector_OnItemClicked()
@@ -613,68 +695,6 @@ namespace DwarfCorp.GameStates
             //CurrentBox = Categories[TabSelector.SelectedItem.Label];
             CurrentBox.IsVisible = true;
             Layout.SetComponentPosition(CurrentBox, 1, 0, 5, 8);
-        }
-
-        private void ramps_OnCheckModified(bool arg)
-        {
-            GameSettings.Default.CalculateRamps = arg;
-        }
-
-        private void AO_OnCheckModified(bool arg)
-        {
-            GameSettings.Default.AmbientOcclusion = arg;
-        }
-
-        private void sunlight_OnCheckModified(bool arg)
-        {
-            GameSettings.Default.CalculateSunlight = arg;
-        }
-
-
-        private void refractEntities_OnCheckModified(bool arg)
-        {
-            GameSettings.Default.DrawEntityRefracted = arg;
-        }
-
-
-        private void reflectEntities_OnCheckModified(bool arg)
-        {
-            GameSettings.Default.DrawEntityReflected = arg;
-        }
-
-        private void refractTerrainBox_OnCheckModified(bool arg)
-        {
-            GameSettings.Default.DrawChunksRefracted = arg;
-        }
-
-        private void reflectTerrainBox_OnCheckModified(bool arg)
-        {
-            GameSettings.Default.DrawChunksReflected = arg;
-        }
-
-        private void AABox_OnSelectionModified(string arg)
-        {
-            GameSettings.Default.AntiAliasing = AAModes[arg];
-        }
-
-        private void glowBox_OnCheckModified(bool arg)
-        {
-            GameSettings.Default.EnableGlow = arg;
-        }
-
-        private void GenerateSlider_OnValueModified(float arg)
-        {
-            GameSettings.Default.ChunkGenerateDistance = arg;
-        }
-
-        private void CullSlider_OnValueModified(float arg)
-        {
-            GameSettings.Default.VertexCullDistance = arg;
-        }
-
-        private void ChunkDrawSlider_OnValueModified(float arg)
-        {
-            GameSettings.Default.ChunkDrawDistance = arg;
         }
 
         private void apply_OnClicked()
@@ -731,7 +751,7 @@ namespace DwarfCorp.GameStates
                 ScissorTestEnable = true
             };
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, null, rasterizerState);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
 

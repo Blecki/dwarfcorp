@@ -45,10 +45,10 @@ namespace DwarfCorp
     /// </summary>
     public class Box : Tinter
     {
-        public OldBoxPrimitive Primitive { get; set; }
+        public string Primitive { get; set; }
         public Texture2D Texture { get; set; }
 
-        public Box(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, OldBoxPrimitive primitive, Texture2D tex) :
+        public Box(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, string primitive, Texture2D tex) :
             base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos, false)
         {
             Primitive = primitive;
@@ -64,7 +64,7 @@ namespace DwarfCorp
             foreach(EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                Primitive.Render(graphicsDevice);
+                PrimitiveLibrary.BoxPrimitives[Primitive].Render(graphicsDevice);
             }
         }
     }

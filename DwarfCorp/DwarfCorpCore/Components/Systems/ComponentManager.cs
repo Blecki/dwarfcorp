@@ -75,7 +75,7 @@ namespace DwarfCorp
         public CollisionManager CollisionManager { get; set; }
 
         public FactionLibrary Factions { get; set; }
-
+        public Diplomacy Diplomacy { get; set; }
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
@@ -336,23 +336,12 @@ namespace DwarfCorp
         private HashSet<Body> visibleComponents = new HashSet<Body>();
         private List<GameComponent> componentsToDraw = new List<GameComponent>();
 
-        public bool RenderRefractive(GameComponent component, float waterLevel)
-        {
-            if(component is Body)
-            {
-                return ((Body) component).GetBoundingBox().Min.Y < waterLevel + 2;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
         public bool RenderReflective(GameComponent component, float waterLevel)
         {
-            if(component is Body)
+            var body = component as Body;
+            if(body != null)
             {
-                return ((Body) component).GetBoundingBox().Min.Y > waterLevel - 2;
+                return body.GetBoundingBox().Min.Y > waterLevel - 2;
             }
             else
             {
@@ -363,7 +352,6 @@ namespace DwarfCorp
         public enum WaterRenderType
         {
             Reflective,
-            Refractive,
             None
         }
 
@@ -390,7 +378,7 @@ namespace DwarfCorp
                 }
                  
 
-                ComponentManager.Camera = camera;
+                Camera = camera;
                 foreach(GameComponent component in Components.Values)
                 {
                     bool isLocatable = component is Body;
@@ -424,12 +412,6 @@ namespace DwarfCorp
                 {
                     continue;
                 }
-                else if(waterRenderMode == WaterRenderType.Refractive && !RenderRefractive(component, waterLevel))
-                {
-                    continue;
-                }
-
-
                 component.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderForWater);
             }
 

@@ -43,6 +43,9 @@
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LumenWorks.Framework.IO">
+      <HintPath>..\DwarfCorpXNA\LumenWorks.Framework.IO.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
@@ -154,6 +157,7 @@
     <Compile Include="Entities\Traps\TurretTrap.cs" />
     <Compile Include="GameSettings.cs" />
     <Compile Include="GameStates\CompanyMakerState.cs" />
+    <Compile Include="GameStates\CreditsState.cs" />
     <Compile Include="GameStates\DiplomacyState.cs" />
     <Compile Include="GameStates\EconomyState.cs" />
     <Compile Include="GameStates\GameLoaderState.cs" />
@@ -480,6 +484,7 @@
     <Compile Include="World\FaunaData.cs" />
     <Compile Include="World\Overworld.cs" />
     <Compile Include="World\VegetationData.cs" />
+    <Compile Include="World\Weather.cs" />
     <Compile Include="World\WorldTime.cs" />
   </ItemGroup>
   <ItemGroup>

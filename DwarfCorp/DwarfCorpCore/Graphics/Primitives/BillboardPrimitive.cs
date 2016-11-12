@@ -122,12 +122,14 @@ namespace DwarfCorp
                 new ExtendedVertex(btmRightFront, color, vertColor,UVs.UVs[3], UVs.Bounds) // 3
             };
 
-            IndexBuffer = new IndexBuffer(GameState.Game.GraphicsDevice, typeof (short), 6, BufferUsage.None);
-            IndexBuffer.SetData(new short[]
+            Indexes = new ushort[]
             {
                 1, 0, 2,
                 1, 2, 3
-            });
+            };
+
+            IndexBuffer = new IndexBuffer(GameState.Game.GraphicsDevice, typeof (ushort), 6, BufferUsage.None);
+            IndexBuffer.SetData(Indexes);
         }
     }
 

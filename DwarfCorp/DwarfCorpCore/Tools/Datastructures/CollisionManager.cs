@@ -58,6 +58,13 @@ namespace DwarfCorp
             else return null;
         }
 
+        public List<T> GetItems(Voxel voxel)
+        {
+            return GetItems(new Point3(MathFunctions.FloorInt(voxel.Position.X),
+                        MathFunctions.FloorInt(voxel.Position.Y),
+                        MathFunctions.FloorInt(voxel.Position.Z)));
+        }
+
         public void GetItemsInBox<TObject>(BoundingBox box, HashSet<TObject> items) where TObject : T
         {
             Point3 minPoint = new Point3(MathFunctions.FloorInt(box.Min.X), MathFunctions.FloorInt(box.Min.Y), MathFunctions.FloorInt(box.Min.Z));
@@ -196,6 +203,30 @@ namespace DwarfCorp
                     }
                 }
             }
+        }
+
+        public List<IBoundedObject> GetObjectsAt(Voxel voxel, CollisionType queryType)
+        {
+            return GetObjectsAt(new Point3(MathFunctions.FloorInt(voxel.Position.X),
+                MathFunctions.FloorInt(voxel.Position.Y), MathFunctions.FloorInt(voxel.Position.Z)), queryType);
+        }
+
+
+        public List<IBoundedObject> GetObjectsAt(Point3 pos, CollisionType queryType)
+        {
+            List<IBoundedObject> toReturn = new List<IBoundedObject>();
+            switch ((int)queryType)
+            {
+                case (int)CollisionType.Static:
+                case (int)CollisionType.Dynamic:
+                    toReturn = Hashes[queryType].GetItems(pos);
+                    break;
+                case ((int)CollisionType.Static | (int)CollisionType.Dynamic):
+                    toReturn.AddRange(Hashes[CollisionType.Static].GetItems(pos));
+                    toReturn.AddRange(Hashes[CollisionType.Dynamic].GetItems(pos));
+                    break;
+            }
+            return toReturn;
         }
 
 

@@ -175,8 +175,7 @@ namespace DwarfCorp.GameStates
             Viewport port = new Viewport(imageBounds);
             port.MinDepth = 0.0f;
             port.MaxDepth = 1.0f;
-            Vector3 rayStart = port.Unproject(new Vector3(screenCoord.X, screenCoord.Y, 0.0f), ProjMatrix,
-    ViewMatrix, Matrix.Identity);
+            Vector3 rayStart = port.Unproject(new Vector3(screenCoord.X, screenCoord.Y, 0.0f), ProjMatrix, ViewMatrix, Matrix.Identity);
             Vector3 rayEnd = port.Unproject(new Vector3(screenCoord.X, screenCoord.Y, 1.0f), ProjMatrix,
                 ViewMatrix, Matrix.Identity);
             Vector3 bearing = (rayEnd - rayStart);
@@ -505,15 +504,18 @@ namespace DwarfCorp.GameStates
                 genThread.Join();
             }
 
-            if (worldMap != null)
+            if (worldMap != null && !worldMap.IsDisposed)
             {
                 worldMap.Dispose();
                 worldMap = null;
                 worldData = null;
             }
-            GUI.RootComponent.ClearChildren();
-            GUI = null;
-            
+            if (GUI != null)
+            {
+                GUI.RootComponent.ClearChildren();
+                GUI = null;
+            }
+
 
             LoadingMessage = "";
             base.OnExit();
@@ -1281,9 +1283,12 @@ namespace DwarfCorp.GameStates
                 }
             }
             TransitionValue = 1.0f;
-            GUI.Graphics.DepthStencilState = DepthStencilState.Default;
-            GUI.Graphics.BlendState = BlendState.Opaque;
-            DrawMesh(gameTime.ToGameTime());
+            if (!GUI.Graphics.IsDisposed)
+            {
+                GUI.Graphics.DepthStencilState = DepthStencilState.Default;
+                GUI.Graphics.BlendState = BlendState.Opaque;
+                DrawMesh(gameTime.ToGameTime());
+            }
             base.Update(gameTime);
         }
 
@@ -1319,7 +1324,7 @@ namespace DwarfCorp.GameStates
         {
             GUI.Graphics.SetRenderTarget(null);
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
                 null, null);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(0, dx));
@@ -1408,7 +1413,10 @@ namespace DwarfCorp.GameStates
 
         public void Dispose()
         {
-            ImageMutex.Dispose();   
+            if (ImageMutex != null)
+                ImageMutex.Dispose();   
+            if (!worldMap.IsDisposed)
+                worldMap.Dispose();
         }
     }
 

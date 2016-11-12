@@ -34,6 +34,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using DwarfCorp.GameStates;
 using LibNoise;
 using LibNoise.Modifiers;
@@ -255,6 +256,19 @@ namespace DwarfCorp
             }
         }
 
+        public static BiomeData GetBiomeAt(Vector3 worldPosition)
+        {
+            Vector2 vec = new Vector2(worldPosition.X, worldPosition.Z) / PlayState.WorldScale;
+            Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(vec.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(vec.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
+            return BiomeLibrary.Biomes[biome];
+        }
+
+        public static float GetValueAt(Vector3 worldPosition, Overworld.ScalarFieldType T)
+        {
+            Vector2 vec = new Vector2(worldPosition.X, worldPosition.Z) / PlayState.WorldScale;
+            return Overworld.GetValue(Overworld.Map, new Vector2(MathFunctions.Clamp(vec.X, 0, Overworld.Map.GetLength(0) - 1),
+                MathFunctions.Clamp(vec.Y, 0, Overworld.Map.GetLength(1) - 1)), T);
+        }
 
         public void GenerateFauna(VoxelChunk chunk, ComponentManager components, ContentManager content, GraphicsDevice graphics, FactionLibrary factions)
         {

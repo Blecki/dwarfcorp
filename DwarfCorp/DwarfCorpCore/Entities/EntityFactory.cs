@@ -156,6 +156,14 @@ namespace DwarfCorp
             RegisterEntity("RandTrinket", (position, data) => CreateRandomTrinket(position));
             RegisterEntity("RandFood", (position, data) => CreateRandomFood(position));
             RegisterEntity("Turret", (position, data) => new TurretTrap(position, PlayState.PlayerFaction));
+            RegisterEntity("Snow Cloud", (position, data) => new Weather.Cloud(0.1f, 50, 40, position) {TypeofStorm = Weather.StormType.SnowStorm});
+            RegisterEntity("Rain Cloud", (position, data) => new Weather.Cloud(0.1f, 50, 40, position) { TypeofStorm = Weather.StormType.RainStorm });
+            RegisterEntity("Storm", (position, data) =>
+            {
+                Weather.CreateForecast(3); 
+                Weather.CreateStorm(MathFunctions.RandVector3Cube() * 10, MathFunctions.Rand(0.05f, 1.0f));
+                                                            return new Weather.Cloud(0.1f, 50, 40, position);
+            });
         }
 
         private static GameComponent CreateRandomFood(Vector3 position)

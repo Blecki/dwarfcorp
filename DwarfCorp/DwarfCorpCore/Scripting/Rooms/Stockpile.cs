@@ -43,6 +43,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -50,6 +51,7 @@ namespace DwarfCorp
     /// <summary>
     /// A stockpile is a kind of zone which contains items on top of it.
     /// </summary>
+    [JsonObject(IsReference = true)]
     public class Stockpile : Room
     {
         private static uint maxID = 0;

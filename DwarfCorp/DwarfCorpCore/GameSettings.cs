@@ -54,9 +54,6 @@ namespace DwarfCorp
             public bool DrawSkyReflected = true;
             public bool DrawChunksReflected = true;
             public bool DrawEntityReflected = true;
-            public bool DrawSkyRefracted = false;
-            public bool DrawChunksRefracted = true;
-            public bool DrawEntityRefracted = true;
             public bool CalculateSunlight = true;
             public bool AmbientOcclusion = true;
             public bool CalculateRamps = true;
@@ -85,6 +82,8 @@ namespace DwarfCorp
             public float VisibilityUpdateTime = 0.1f;
             public float ChunkGenerateTime = 0.5f;
             public bool FogofWar = true;
+            public bool UseDynamicShadows = false;
+            public bool UseLightmaps = false;
         }
 
         public static Settings Default { get; set; }

@@ -42,7 +42,9 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class BalloonPort : Stockpile
     {
+        [JsonIgnore]
         public static string BalloonPortName { get { return "BalloonPort"; } }
+        [JsonIgnore]
         public static RoomData BalloonPortData { get { return RoomLibrary.GetData(BalloonPortName); } }
 
         public new static RoomData InitializeData()

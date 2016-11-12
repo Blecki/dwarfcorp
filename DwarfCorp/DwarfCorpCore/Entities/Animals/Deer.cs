@@ -128,7 +128,7 @@ namespace DwarfCorp
             // Add AI
             AI = new PacingCreatureAI(this, "Deer AI", Sensors, PlanService);
 
-            Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick, ContentPaths.Effects.flash)};
+            Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick, ContentPaths.Effects.hit)};
 
             Inventory = new Inventory("Inventory", Physics)
             {

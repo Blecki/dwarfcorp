@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.IO;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
@@ -111,15 +112,23 @@ namespace DwarfCorp
             public static string star_particle = ProgramData.CreatePath("Particles", "bigstar_particle");
             public static string heart = ProgramData.CreatePath("Particles", "heart");
             public static string fireball = ProgramData.CreatePath("Particles", "fireball");
+            public static string raindrop = ProgramData.CreatePath("Particles", "raindrop");
+            public static string stormclouds = ProgramData.CreatePath("Sky", "stormclouds");
+            public static string snow_particle = ProgramData.CreatePath("Particles", "snow_particle");
         }
         public class Effects
         {
             public static string shadowcircle = ProgramData.CreatePath("Effects", "shadowcircle");
             public static string selection_circle = ProgramData.CreatePath("Effects", "selection_circle");
             public static string slice = ProgramData.CreatePath("Effects", "slice");
+            public static string slash = ProgramData.CreatePath("Effects", "slash");
+            public static string claw = ProgramData.CreatePath("Effects", "claw");
             public static string claws = ProgramData.CreatePath("Effects", "claws");
             public static string flash = ProgramData.CreatePath("Effects", "flash");
             public static string rings = ProgramData.CreatePath("Effects", "ring");
+            public static string bite = ProgramData.CreatePath("Effects", "bite");
+            public static string pierce = ProgramData.CreatePath("Effects", "pierce");
+            public static string hit = ProgramData.CreatePath("Effects", "hit");
         }
 
         public class World
@@ -395,7 +404,7 @@ namespace DwarfCorp
             public static string skygradient = ProgramData.CreatePath("Gradients", "skygradient");
             public static string sungradient = ProgramData.CreatePath("Gradients", "sungradient");
             public static string torchgradient = ProgramData.CreatePath("Gradients", "torchgradient");
-
+            public static string shoregradient = ProgramData.CreatePath("Gradients", "shoregradient");
         }
         public class GUI
         {

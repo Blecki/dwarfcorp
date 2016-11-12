@@ -53,6 +53,7 @@ namespace DwarfCorp
             
         [JsonProperty]
         protected int ResPerVoxel = 8;
+        [JsonIgnore]
         public int ResourcesPerVoxel { get { return ResPerVoxel; } set { ResPerVoxel = value; RecalculateMaxResources(); } }
         
         public bool ReplaceVoxelTypes
@@ -189,6 +190,7 @@ namespace DwarfCorp
 
         public virtual void RecalculateMaxResources()
         {
+            if (Voxels == null) return;
             int newResources = Voxels.Count * ResourcesPerVoxel;
 
             if (Resources != null)

@@ -51,6 +51,12 @@ namespace DwarfCorp
             get { return Biome.ToString(); }
         }
 
+        public struct Layer
+        {
+            public string VoxelType { get; set; }
+            public int Depth { get; set; }
+        }
+
         public List<VegetationData> Vegetation { get; set; }
         public List<DetailMoteData> Motes { get; set; }
         public List<FaunaData> Fauna { get; set; } 

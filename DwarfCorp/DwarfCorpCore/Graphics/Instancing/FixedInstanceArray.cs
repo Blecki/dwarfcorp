@@ -170,7 +170,7 @@ namespace DwarfCorp
                 graphics.RasterizerState = rasterState;
 
                 effect.CurrentTechnique = effect.Techniques["Textured"];
-                effect.Parameters["xEnableLighting"].SetValue(GameSettings.Default.CursorLightEnabled ? 1 : 0);
+                effect.Parameters["xEnableLighting"].SetValue(1);
                 graphics.SetVertexBuffer(Model.VertexBuffer);
 
                 bool hasIndex = Model.IndexBuffer != null;

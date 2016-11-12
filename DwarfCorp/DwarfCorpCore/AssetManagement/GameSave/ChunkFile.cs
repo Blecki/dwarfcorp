@@ -50,9 +50,10 @@ namespace DwarfCorp
     [Serializable]
     public class ChunkFile 
     {
-        public short[,,] Types;
-        public short[,,] LiquidTypes;
+        public byte[,,] Types;
+        public byte[, ,] LiquidTypes;
         public byte[,,] Liquid;
+        public bool[,,] Explored;
         public Point3 Size;
         public Point3 ID;
         public Vector3 Origin;
@@ -68,9 +69,10 @@ namespace DwarfCorp
         {
             Size = new Point3(chunk.SizeX, chunk.SizeY, chunk.SizeZ);
             ID = chunk.ID;
-            Types = new short[Size.X, Size.Y, Size.Z];
-            LiquidTypes = new short[Size.X, Size.Y, Size.Z];
+            Types = new byte[Size.X, Size.Y, Size.Z];
+            LiquidTypes = new byte[Size.X, Size.Y, Size.Z];
             Liquid = new byte[Size.X, Size.Y, Size.Z];
+            Explored = new bool[Size.X, Size.Y, Size.Z];
             Origin = chunk.Origin;
             FillDataFromChunk(chunk);
         }
@@ -89,6 +91,7 @@ namespace DwarfCorp
             this.Origin = chunkFile.Origin;
             this.Size = chunkFile.Size;
             this.Types = chunkFile.Types;
+            this.Explored = chunkFile.Explored;
         }
 
         public bool ReadFile(string filePath, bool isCompressed, bool isBinary)
@@ -154,6 +157,7 @@ namespace DwarfCorp
                             c.Data.Types[index] = (byte) Types[x, y, z];
                             c.Data.Health[index] = (byte)VoxelLibrary.GetVoxelType(Types[x, y, z]).StartingHealth;
                         }
+                        c.Data.IsExplored[index] = Explored[x, y, z];
                     }
                 }
             }
@@ -185,22 +189,14 @@ namespace DwarfCorp
                     for(int z = 0; z < Size.Z; z++)
                     {
                         int index = chunk.Data.IndexAt(x, y, z);
-                        Voxel vox = chunk.MakeVoxel(x, y, z);
                         WaterCell water = chunk.Data.Water[index];
-
-                        if(vox == null)
-                        {
-                            Types[x, y, z] = 0;
-                        }
-                        else
-                        {
-                            Types[x, y, z] = vox.Type.ID;
-                        }
+                        Types[x, y, z] = chunk.Data.Types[index];
+                        Explored[x, y, z] = chunk.Data.IsExplored[index];
 
                         if(water.WaterLevel > 0)
                         {
                             Liquid[x, y, z] = water.WaterLevel;
-                            LiquidTypes[x, y, z] = (short) water.Type;
+                            LiquidTypes[x, y, z] = (byte)water.Type;
                         }
                         else
                         {

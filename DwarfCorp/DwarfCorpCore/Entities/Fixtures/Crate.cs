@@ -54,7 +54,7 @@ namespace DwarfCorp
         {
             Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
 
-            Box crateModel = new Box(PlayState.ComponentManager, "Cratebox", this, Matrix.CreateRotationY(MathFunctions.Rand(-0.25f, 0.25f)), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.5f, 0.5f, 0.5f), PrimitiveLibrary.BoxPrimitives["crate"], spriteSheet);
+            Box crateModel = new Box(PlayState.ComponentManager, "Cratebox", this, Matrix.CreateRotationY(MathFunctions.Rand(-0.25f, 0.25f)), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.5f, 0.5f, 0.5f), "crate", spriteSheet);
 
             Tags.Add("Crate");
             CollisionType = CollisionManager.CollisionType.Static;

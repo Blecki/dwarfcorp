@@ -159,7 +159,7 @@ namespace DwarfCorp
                     return true;
                 }
                 Relationship relation =
-                    PlayState.Diplomacy.GetPolitics(ai.Faction, agent.Faction).GetCurrentRelationship();
+                    PlayState.ComponentManager.Diplomacy.GetPolitics(ai.Faction, agent.Faction).GetCurrentRelationship();
                 return relation == Relationship.Hateful || relation == Relationship.Indifferent;
             }
         }

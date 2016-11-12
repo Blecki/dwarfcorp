@@ -86,8 +86,7 @@ namespace DwarfCorp
         public static bool RotationEnabled()
         {
             KeyboardState keys = Keyboard.GetState();
-
-            return keys.IsKeyDown(ControlSettings.Mappings.CameraMode) || keys.IsKeyDown(Keys.RightShift);
+            return keys.IsKeyDown(ControlSettings.Mappings.CameraMode) || keys.IsKeyDown(Keys.RightShift) || Mouse.GetState().MiddleButton == ButtonState.Pressed;
         }
 
         public bool IsMapped(Keys keys)

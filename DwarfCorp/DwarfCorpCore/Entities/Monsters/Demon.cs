@@ -253,7 +253,7 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Fireball", 0.1f, 1.0f, 5.0f, ContentPaths.Audio.demon_attack, ContentPaths.Effects.flash)
+                new Attack("Fireball", 0.1f, 1.0f, 5.0f, ContentPaths.Audio.demon_attack, ContentPaths.Effects.hit)
                 {
                     Mode = Attack.AttackMode.Ranged,
                     LaunchSpeed = 10.0f,

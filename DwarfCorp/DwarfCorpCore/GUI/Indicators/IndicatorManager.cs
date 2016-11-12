@@ -33,7 +33,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.AccessControl;
 using System.Text;
 using DwarfCorp.GameStates;
@@ -62,8 +64,11 @@ namespace DwarfCorp
         public float Scale { get; set; }
         public IndicatorMode Mode { get; set; }
 
+        public bool ShouldDelete { get; set; }
+
         public Indicator()
         {
+            ShouldDelete = false;
             Mode = IndicatorMode.Indicator3D;
         }
 
@@ -149,6 +154,11 @@ namespace DwarfCorp
             Animation.Update(time);
 
             Image = new ImageFrame(Animation.SpriteSheet.GetTexture(), Animation.GetCurrentFrameRect());
+
+            if (Animation.IsDone())
+            {
+                ShouldDelete = true;
+            }
         }
 
        
@@ -268,22 +278,10 @@ namespace DwarfCorp
         {
             lock(IndicatorLock)
             {
-                List<Indicator> removals = new List<Indicator>();
-                foreach(Indicator indicator in Indicators)
+                Indicators.RemoveAll(indicator => indicator.CurrentTime.HasTriggered || indicator.ShouldDelete);
+                foreach (Indicator indicator in Indicators)
                 {
                     indicator.Update(time);
-
-                    
-
-                    if(indicator.CurrentTime.HasTriggered)
-                    {
-                        removals.Add(indicator);
-                    }
-                }
-
-                foreach(Indicator indicator in removals)
-                {
-                    Indicators.Remove(indicator);
                 }
             }
         }

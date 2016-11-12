@@ -51,6 +51,7 @@ namespace DwarfCorp
 
         public struct ResourceType
         {
+            [JsonProperty]
             private string _value;
 
             public static ResourceType Wood = "Wood";

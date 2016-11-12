@@ -314,6 +314,7 @@ namespace DwarfCorp.GameStates
                     WorldGeneratorState state = (WorldGeneratorState)(StateManager.States["WorldGeneratorState"]);
 
                     WorldGeneratorState.worldMap = descriptor.File.Data.CreateTexture(Game.GraphicsDevice, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
+
                     JoinThreads();
                     StateManager.PopState();
                     StateManager.PushState("WorldGeneratorState");
@@ -322,7 +323,7 @@ namespace DwarfCorp.GameStates
                     state.DoneGenerating = true;
                     state.Settings.Name = descriptor.WorldName;
                     state.worldData = new Color[Overworld.Map.GetLength(0) * Overworld.Map.GetLength(1)];
-                   
+                    state.CreateMesh();
                     Worlds.Clear();
                 }
             }
@@ -470,7 +471,7 @@ namespace DwarfCorp.GameStates
             };
 
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, null, rasterizerState);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
             GUI.PostRender(gameTime);
             DwarfGame.SpriteBatch.End();

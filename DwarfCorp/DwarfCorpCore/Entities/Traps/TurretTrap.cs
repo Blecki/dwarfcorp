@@ -27,7 +27,7 @@ namespace DwarfCorp
         {
             Allies = faction;
             SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32);
-            Weapon = new Attack("BowAttack", 5.0f, 1.0f, 5.0f, ContentPaths.Audio.trap, ContentPaths.Effects.flash)
+            Weapon = new Attack("BowAttack", 5.0f, 1.0f, 5.0f, ContentPaths.Audio.trap, ContentPaths.Effects.pierce)
             {
                 ProjectileType = "Arrow",
                 Mode = Attack.AttackMode.Ranged,

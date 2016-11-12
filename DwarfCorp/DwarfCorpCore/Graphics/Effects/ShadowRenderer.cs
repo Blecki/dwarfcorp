@@ -23,7 +23,7 @@ namespace DwarfCorp
 
         public ShadowRenderer(GraphicsDevice device, int width, int height)
         {
-            LightDir = Vector3.Down;
+            LightDir = new Vector3(0.2f, -1, 0.5f);
             LightView = Matrix.Identity;
             LightProj = Matrix.Identity;
             ShadowWith = width;
@@ -40,7 +40,7 @@ namespace DwarfCorp
 
         public void InitializeShadowMap(GraphicsDevice device)
         {
-            ShadowMap = new RenderTarget2D(device, ShadowWith, ShadowHeight, true, device.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
+            ShadowMap = new RenderTarget2D(device, ShadowWith, ShadowHeight, true, SurfaceFormat.Rg32, DepthFormat.Depth16);
         }
 
         public void SetupViewProj(BoundingBox worldBBox)
@@ -55,15 +55,25 @@ namespace DwarfCorp
                 transformedCorners[i] = Vector3.Transform(corners[i], LightView);
             }
 
-            BoundingBox transformedBBox = new BoundingBox { Min = MathFunctions.Min(transformedCorners), Max = MathFunctions.Max(transformedCorners) };
+            BoundingBox transformedBBox = new BoundingBox { Min = MathFunctions.Min(transformedCorners), 
+                                                           Max = MathFunctions.Max(transformedCorners) };
 
             float width = transformedBBox.Max.X - transformedBBox.Min.X;
             float height = transformedBBox.Max.Y - transformedBBox.Min.Y;
-            float near = transformedBBox.Min.Z - 10;
+            float near = transformedBBox.Min.Z - 5;
             float far = transformedBBox.Max.Z + 10;
             LightProj = Matrix.CreateOrthographic(width, height, near, far);
-            //LightProj = Matrix.CreatePerspective(ShadowWith, ShadowHeight, 0.1f, 10000);
-            //LightProj = Matrix.CreatePerspectiveFieldOfView(MathHelper.Pi - 0.5f, 1f, 1f, 1000f);
+        }
+
+        public void ClearEdges(GraphicsDevice device)
+        {
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp,
+                DepthStencilState.None, RasterizerState.CullNone);
+            DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(0, 0, ShadowMap.Width, 2), Color.Black);
+            DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(0, 0, 2, ShadowMap.Height), Color.Black);
+            DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(ShadowMap.Width - 2, 0, 2, ShadowMap.Height), Color.Black);
+            DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(0, ShadowMap.Height - 2, ShadowMap.Width, 2), Color.Black);
+            DwarfGame.SpriteBatch.End();
         }
 
         public void UnbindShadowmap(GraphicsDevice device)
@@ -76,15 +86,24 @@ namespace DwarfCorp
 
         public void BindShadowmapEffect(Effect effect)
         {
-            effect.Parameters["xShadowMap"].SetValue(ShadowTexture);
+            effect.Parameters["xShadowMap" +
+                              ""].SetValue(ShadowTexture);
             effect.Parameters["xLightView"].SetValue(LightView);
             effect.Parameters["xLightProj"].SetValue(LightProj);
         }
 
         public void BindShadowmap(GraphicsDevice device)
         {
+            device.Textures[0] = null;
+            device.Indices = null;
+            device.SetVertexBuffer(null);
+            device.BlendState = BlendState.NonPremultiplied;
+            device.DepthStencilState = DepthStencilState.Default;
+            device.RasterizerState = RasterizerState.CullCounterClockwise;
+            device.SamplerStates[0] = SamplerState.PointClamp;
+            device.SetRenderTarget(null);
             device.SetRenderTarget(ShadowMap);
-            device.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.White, 1.0f, 0);
+            device.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);
             OldDepthState = device.DepthStencilState;
             OldBlendState = device.BlendState;
             device.DepthStencilState = DepthState;
@@ -96,6 +115,7 @@ namespace DwarfCorp
             effect.CurrentTechnique = instanced ? effect.Techniques["ShadowInstanced"] : effect.Techniques["Shadow"];
             effect.Parameters["xView"].SetValue(LightView);
             effect.Parameters["xProjection"].SetValue(LightProj);
+            effect.Parameters["xEnableFog"].SetValue(0);
         }
 
     }

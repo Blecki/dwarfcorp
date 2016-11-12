@@ -226,7 +226,8 @@ namespace DwarfCorp
             public IEnumerable<Status> SnapToFirst()
             {
                 Vector3 half = Vector3.One * 0.5f;
-                half.Y = Creature.Physics.BoundingBox.Extents().Y * 1.5f;
+                half.Y = Creature.Physics.BoundingBox.Extents().Y*2.0f;
+
                 if (Path[0].Voxel == null) 
                     yield break;
                 Vector3 target = Path[0].Voxel.Position + half + RandomPositionOffsets[0];
@@ -272,9 +273,15 @@ namespace DwarfCorp
                 int nextID = currentIndex + 1;
                 bool hasNextAction = false;
                 Vector3 half = Vector3.One * 0.5f;
-                half.Y = Creature.Physics.BoundingBox.Extents().Y * 1.5f;
+                half.Y = Creature.Physics.BoundingBox.Extents().Y * 2;
                 Vector3 nextPosition = Vector3.Zero;
                 Vector3 currPosition = action.Voxel.Position + half;
+                Vector3 prevPosition = currPosition;
+
+                if (currentIndex > 0 && Path.Count > 0)
+                {
+                    prevPosition = Path.ElementAt(currentIndex - 1).Voxel.Position + half;
+                }
 
                 currPosition += RandomPositionOffsets[currentIndex];
                 if (nextID < Path.Count)
@@ -283,9 +290,6 @@ namespace DwarfCorp
                     nextPosition = Path[nextID].Voxel.Position;
                     nextPosition += RandomPositionOffsets[nextID] + half;
                 }
-
-                currPosition += VertexNoise.GetNoiseVectorFromRepeatingTexture(currPosition);
-                nextPosition += VertexNoise.GetNoiseVectorFromRepeatingTexture(nextPosition);
 
                 Matrix transform = Agent.Physics.LocalTransform;
                 Vector3 diff = (nextPosition - currPosition);
@@ -310,7 +314,7 @@ namespace DwarfCorp
                         Creature.CurrentCharacterMode = Creature.CharacterMode.Swimming;
                         if (hasNextAction)
                         {
-                            transform.Translation = diff*t + currPosition;
+                            transform.Translation = diff*t + currPosition + new Vector3(0, 0.5f, 0);
                             Agent.Physics.Velocity = diff;
                         }
                         else
@@ -398,6 +402,7 @@ namespace DwarfCorp
                         {
                             float current = (TrajectoryTimer.CurrentTimeSeconds);
                             Matrix transformMatrix = Agent.Physics.LocalTransform;
+                            transformMatrix.Translation = prevPosition;
                             MeleeAct act = new MeleeAct(Creature.AI, action.InteractObject.GetRootComponent().GetChildrenOfType<Body>(true).FirstOrDefault());
                             act.Initialize();
 

@@ -128,18 +128,26 @@ namespace DwarfCorp
         }
 
         public FactionLibrary Factions { get; set; }
-        public Dictionary<Pair<Faction>, Politics> FactionPolitics { get; set; }
+
+
+        [JsonArrayAttribute]
+        public class PoliticsDictionary : Dictionary<Pair<string>, Politics>
+        {
+            // Empty class needed to deserialize dictionary of string pairs.
+        }
+
+        public PoliticsDictionary FactionPolitics { get; set; }
 
 
         public Diplomacy(FactionLibrary factions)
         {
             Factions = factions;
-            FactionPolitics = new Dictionary<Pair<Faction>, Politics>();
+            FactionPolitics = new PoliticsDictionary();
         }
 
         public Politics GetPolitics(Faction factionA, Faction factionB)
         {
-            return FactionPolitics[new Pair<Faction>(factionA, factionB)];
+            return FactionPolitics[new Pair<string>(factionA.Name, factionB.Name)];
         }
 
         public void Initialize(DateTime now)
@@ -149,7 +157,7 @@ namespace DwarfCorp
             {
                 foreach (var otherFaction in Factions.Factions)
                 {
-                    Pair<Faction> pair = new Pair<Faction>(faction.Value, otherFaction.Value);
+                    Pair<string> pair = new Pair<string>(faction.Value.Name, otherFaction.Value.Name);
 
                     if (FactionPolitics.ContainsKey(pair)) 
                         continue;
@@ -321,13 +329,13 @@ namespace DwarfCorp
         {
             foreach (var mypolitics in FactionPolitics)
             {
-                Pair<Faction> pair = mypolitics.Key;
-                if (!pair.IsSelfPair() && pair.Contains(PlayState.PlayerFaction))
+                Pair<string> pair = mypolitics.Key;
+                if (!pair.IsSelfPair() && pair.Contains(PlayState.PlayerFaction.Name))
                 {
                    
                     Faction otherFaction = null;
 
-                    otherFaction = pair.First.Equals(PlayState.PlayerFaction) ? pair.Second : pair.First;
+                    otherFaction = pair.First.Equals(PlayState.PlayerFaction.Name) ? Factions.Factions[pair.Second] : Factions.Factions[pair.First];
                     UpdateTradeEnvoys(otherFaction);
                     UpdateWarParties(otherFaction);
                     Race race = otherFaction.Race;
@@ -384,7 +392,7 @@ namespace DwarfCorp
                     envoy.Creatures.ForEach((creature) => creature.GetRootComponent().Die());
                 }
 
-                Diplomacy.Politics politics = PlayState.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
+                Diplomacy.Politics politics = PlayState.ComponentManager.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
                 if (politics.GetCurrentRelationship() == Relationship.Hateful)
                 {
                     RecallEnvoy(envoy);
@@ -499,7 +507,7 @@ namespace DwarfCorp
                     party.Creatures.ForEach((creature) => creature.Die());
                 }
 
-                Diplomacy.Politics politics = PlayState.Diplomacy.GetPolitics(faction, party.OtherFaction);
+                Diplomacy.Politics politics =  PlayState.ComponentManager.Diplomacy.GetPolitics(faction, party.OtherFaction);
                 if (politics.GetCurrentRelationship() != Relationship.Hateful)
                 {
                     RecallWarParty(party);

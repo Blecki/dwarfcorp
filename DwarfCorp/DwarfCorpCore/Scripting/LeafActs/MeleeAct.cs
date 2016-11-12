@@ -131,13 +131,16 @@ namespace DwarfCorp
 
                 Creature.MoveAction furthest = neighbors.Last();
                 bool reachedTarget = false;
+                Timer timeout = new Timer(2.0f, true);
                 while (!reachedTarget)
                 {
                     Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, furthest.Voxel.Position + Vector3.One*0.5f,
                         Agent.Position);
                     Creature.Physics.ApplyForce(output, DwarfTime.Dt);
+                    timeout.Update(DwarfTime.LastTime);
+
                     yield return Status.Running;
-                    if ((furthest.Voxel.Position - Agent.Position).Length() < 1)
+                    if (timeout.HasTriggered || (furthest.Voxel.Position - Agent.Position).Length() < 1)
                     {
                         reachedTarget = true;
                     }

@@ -350,13 +350,13 @@ namespace DwarfCorp
         public float Depth { get; set; }
         public BoxTextureCoords UVs { get; set; }
 
-
         private const int NumVertices = 24;
 
         public VoxelVertex[] Deltas { get; set; }
 
         public BoundingBox BoundingBox;
-        public short[] Indices { get; set; }
+
+        public ushort[] FlippedIndexes = null;
 
         public class FaceData
         {
@@ -406,10 +406,10 @@ namespace DwarfCorp
                 m_texWidth = totalTextureWidth;
                 m_texHeight = totalTextureHeight;
 
-                Vector2 textureTopLeft = new Vector2(0.0f, 0.0f);
-                Vector2 textureTopRight = new Vector2(1.0f, 0.0f);
-                Vector2 textureBottomLeft = new Vector2(0.0f, 1.0f);
-                Vector2 textureBottomRight = new Vector2(1.0f, 1.0f);
+                Vector2 textureTopLeft = new Vector2(1.0f, 0.0f);
+                Vector2 textureTopRight = new Vector2(0.0f, 0.0f);
+                Vector2 textureBottomLeft = new Vector2(1.0f, 1.0f);
+                Vector2 textureBottomRight = new Vector2(0.0f, 1.0f);
 
                 List<FaceData> cells = new List<FaceData>
                 {
@@ -433,21 +433,21 @@ namespace DwarfCorp
                     // front
                     textureTopLeft,
                     textureBottomLeft,
-                    textureTopRight,
                     textureBottomRight,
+                    textureTopRight,
 
                     // back
-                    textureTopRight,
                     textureTopLeft,
-                    textureBottomRight,
                     textureBottomLeft,
+                    textureBottomRight,
+                    textureTopRight,
                     
                     // top
-                    textureBottomRight,
                     textureTopLeft,
-                    textureTopRight,
                     textureBottomLeft,
-                    
+                    textureBottomRight,
+                    textureTopRight,
+
                     // bottom
                     textureTopLeft,
                     textureBottomLeft,
@@ -455,10 +455,10 @@ namespace DwarfCorp
                     textureTopRight,
 
                     // left
-                    textureTopRight,
+                    textureTopLeft,
                     textureBottomLeft,
                     textureBottomRight,
-                    textureTopLeft,
+                    textureTopRight,
                     
                     // right
                     textureTopLeft,
@@ -563,7 +563,8 @@ namespace DwarfCorp
 
         private void CreateVerticies()
         {
-            Indices = new short[36];
+            Indexes = new ushort[36];
+            FlippedIndexes = new ushort[36];
             Vertices = new ExtendedVertex[NumVertices];
 
             // Calculate the position of the vertices on the top face.
@@ -571,7 +572,6 @@ namespace DwarfCorp
             Vector3 topLeftBack = new Vector3(0.0f, Height, Depth);
             Vector3 topRightFront = new Vector3(Width, Height, 0.0f);
             Vector3 topRightBack = new Vector3(Width, Height, Depth);
-            
 
             // Calculate the position of the vertices on the bottom face.
             Vector3 btmLeftFront = new Vector3(0.0f, 0.0f, 0.0f);
@@ -585,41 +585,107 @@ namespace DwarfCorp
             // Add the vertices for the FRONT face.
             Vertices[0] = new ExtendedVertex(topLeftFront, Color.White, Color.White, UVs.Uvs[0], UVs.Bounds[0]);
             Vertices[1] = new ExtendedVertex(btmLeftFront, Color.White, Color.White, UVs.Uvs[1], UVs.Bounds[0]);
-            Vertices[2] = new ExtendedVertex(topRightFront, Color.White, Color.White, UVs.Uvs[2], UVs.Bounds[0]);
-            Vertices[3] = new ExtendedVertex(btmRightFront, Color.White, Color.White, UVs.Uvs[3], UVs.Bounds[0]);
+            Vertices[2] = new ExtendedVertex(btmRightFront, Color.White, Color.White, UVs.Uvs[2], UVs.Bounds[0]);
+            Vertices[3] = new ExtendedVertex(topRightFront, Color.White, Color.White, UVs.Uvs[3], UVs.Bounds[0]);
 
-            Indices[0] = 0;
-            Indices[1] = 1;
-            Indices[2] = 2;
-            Indices[3] = 2;
-            Indices[4] = 1;
-            Indices[5] = 3;
+            /* 
+             *  0 . . . 3
+                .     . .
+                .   .   .
+                . .     .
+                1 . . . 2
+             */
+            Indexes[0] = 0;
+            Indexes[1] = 1;
+            Indexes[2] = 3;
+            Indexes[3] = 3;
+            Indexes[4] = 1;
+            Indexes[5] = 2;
+
+            /* 
+             *  0 . . . 3
+                . .     .
+                .   .   .
+                .     . .
+                1 . . . 2
+             */
+            FlippedIndexes[0] = 0;
+            FlippedIndexes[1] = 1;
+            FlippedIndexes[2] = 2;
+            FlippedIndexes[3] = 3;
+            FlippedIndexes[4] = 0;
+            FlippedIndexes[5] = 2;
 
             // Add the vertices for the BACK face.
-            Vertices[4] = new ExtendedVertex(topLeftBack, Color.White, Color.White, UVs.Uvs[4], UVs.Bounds[1]);
-            Vertices[5] = new ExtendedVertex(topRightBack, Color.White, Color.White, UVs.Uvs[5], UVs.Bounds[1]);
-            Vertices[6] = new ExtendedVertex(btmLeftBack, Color.White, Color.White, UVs.Uvs[6], UVs.Bounds[1]);
+            Vertices[4] = new ExtendedVertex(btmLeftBack, Color.White, Color.White, UVs.Uvs[4], UVs.Bounds[1]);
+            Vertices[5] = new ExtendedVertex(topLeftBack, Color.White, Color.White, UVs.Uvs[5], UVs.Bounds[1]);
+            Vertices[6] = new ExtendedVertex(topRightBack, Color.White, Color.White, UVs.Uvs[6], UVs.Bounds[1]);
             Vertices[7] = new ExtendedVertex(btmRightBack, Color.White, Color.White, UVs.Uvs[7], UVs.Bounds[1]);
 
-            Indices[6] = 4;
-            Indices[7] = 5;
-            Indices[8] = 6;
-            Indices[9] = 7;
-            Indices[10] = 6;
-            Indices[11] = 5;
+
+            /*  
+             *  4 . . . 7
+                .     . .
+                .   .   .
+                . .     .
+                5 . . . 6
+             */
+            Indexes[6] = 4;
+            Indexes[7] = 5;
+            Indexes[8] = 7;
+            Indexes[9] = 7;
+            Indexes[10] = 5;
+            Indexes[11] = 6;
+
+            /*             
+             *  4 . . . 7
+                . .     .
+                .   .   .
+                .     . .
+                5 . . . 6
+             */
+            FlippedIndexes[6] = 4;
+            FlippedIndexes[7] = 5;
+            FlippedIndexes[8] = 6;
+            FlippedIndexes[9] = 6;
+            FlippedIndexes[10] = 7;
+            FlippedIndexes[11] = 4;
 
             // Add the vertices for the TOP face.
-            Vertices[8] = new ExtendedVertex(topLeftFront, Color.White,Color.White, UVs.Uvs[8], UVs.Bounds[2]);
-            Vertices[9] = new ExtendedVertex(topRightBack, Color.White,Color.White, UVs.Uvs[9], UVs.Bounds[2]);
-            Vertices[10] = new ExtendedVertex(topLeftBack, Color.White,Color.White, UVs.Uvs[10], UVs.Bounds[2]);
-            Vertices[11] = new ExtendedVertex(topRightFront, Color.White,Color.White, UVs.Uvs[11], UVs.Bounds[2]);
+            Vertices[8] = new ExtendedVertex(topLeftBack, Color.White,Color.White, UVs.Uvs[8], UVs.Bounds[2]);
+            Vertices[9] = new ExtendedVertex(topLeftFront, Color.White,Color.White, UVs.Uvs[9], UVs.Bounds[2]);
+            Vertices[10] = new ExtendedVertex(topRightFront, Color.White, Color.White, UVs.Uvs[10], UVs.Bounds[2]);
+            Vertices[11] = new ExtendedVertex(topRightBack, Color.White,Color.White, UVs.Uvs[11], UVs.Bounds[2]);
+       
 
-            Indices[12] = 8;
-            Indices[13] = 9;
-            Indices[14] = 10;
-            Indices[15] = 9;
-            Indices[16] = 8;
-            Indices[17] = 11;
+            /* 
+             *  8 . . .11
+                .     . .
+                .   .   .
+                .  .    .
+                9 . . . 10
+             */
+            Indexes[12] = 8;
+            Indexes[13] = 9;
+            Indexes[14] = 11;
+            Indexes[15] = 10;
+            Indexes[16] = 11;
+            Indexes[17] = 9;
+
+
+            /* 
+             *  8 . . .11
+                . .     .
+                .   .   .
+                .     . .
+                9 . . .10
+             */
+            FlippedIndexes[12] = 8;
+            FlippedIndexes[13] = 10;
+            FlippedIndexes[14] = 11;
+            FlippedIndexes[15] = 10;
+            FlippedIndexes[16] = 8;
+            FlippedIndexes[17] = 9;
 
             // Add the vertices for the BOTTOM face. 
             Vertices[12] = new ExtendedVertex(btmLeftFront, Color.White,Color.White, UVs.Uvs[12], UVs.Bounds[3]);
@@ -627,25 +693,72 @@ namespace DwarfCorp
             Vertices[14] = new ExtendedVertex(btmRightBack, Color.White,Color.White, UVs.Uvs[14], UVs.Bounds[3]);
             Vertices[15] = new ExtendedVertex(btmRightFront, Color.White,Color.White, UVs.Uvs[15], UVs.Bounds[3]);
 
-            Indices[18] = 12;
-            Indices[19] = 13;
-            Indices[20] = 14;
-            Indices[21] = 15;
-            Indices[22] = 12;
-            Indices[23] = 14;
+
+            /* 
+             *  12. . .15
+                .     . .
+                .   .   .
+                .  .    .
+                13. . .14
+             */
+
+            Indexes[18] = 12;
+            Indexes[19] = 13;
+            Indexes[20] = 15;
+            Indexes[21] = 15;
+            Indexes[22] = 13;
+            Indexes[23] = 14;
+
+
+            /* 
+             *  12. . .15
+                . .     .
+                .   .   .
+                .     . .
+                13. . .14
+             */
+            FlippedIndexes[18] = 12;
+            FlippedIndexes[19] = 13;
+            FlippedIndexes[20] = 14;
+            FlippedIndexes[21] = 15;
+            FlippedIndexes[22] = 12;
+            FlippedIndexes[23] = 14;
 
             // Add the vertices for the LEFT face.
-            Vertices[16] = new ExtendedVertex(topLeftFront, Color.White,Color.White, UVs.Uvs[16], UVs.Bounds[4]);
-            Vertices[17] = new ExtendedVertex(btmLeftBack, Color.White,Color.White, UVs.Uvs[17], UVs.Bounds[4]);
-            Vertices[18] = new ExtendedVertex(btmLeftFront, Color.White,Color.White, UVs.Uvs[18], UVs.Bounds[4]);
-            Vertices[19] = new ExtendedVertex(topLeftBack, Color.White,Color.White, UVs.Uvs[19], UVs.Bounds[4]);
+            Vertices[16] = new ExtendedVertex(btmLeftFront, Color.White,Color.White, UVs.Uvs[16], UVs.Bounds[4]);
+            Vertices[17] = new ExtendedVertex(topLeftFront, Color.White, Color.White, UVs.Uvs[17], UVs.Bounds[4]);
+            Vertices[18] = new ExtendedVertex(topLeftBack, Color.White,Color.White, UVs.Uvs[18], UVs.Bounds[4]);
+            Vertices[19] = new ExtendedVertex(btmLeftBack, Color.White,Color.White, UVs.Uvs[19], UVs.Bounds[4]);
 
-            Indices[24] = 16;
-            Indices[25] = 17;
-            Indices[26] = 18;
-            Indices[27] = 17;
-            Indices[28] = 16;
-            Indices[29] = 19;
+            /* 
+             *  16. . .19
+                .     . .
+                .   .   .
+                .  .    .
+                17. . .18
+             */
+            Indexes[24] = 16;
+            Indexes[25] = 17;
+            Indexes[26] = 19;
+            Indexes[27] = 18;
+            Indexes[28] = 19;
+            Indexes[29] = 17;
+
+
+            /* 
+             *  16. . .19
+                . .     .
+                .   .   .
+                .     . .
+                17. . .18
+             */
+            FlippedIndexes[24] = 16;
+            FlippedIndexes[25] = 17;
+            FlippedIndexes[26] = 18;
+            FlippedIndexes[27] = 18;
+            FlippedIndexes[28] = 19;
+            FlippedIndexes[29] = 16;
+
 
             // Add the vertices for the RIGHT face. 
             Vertices[20] = new ExtendedVertex(topRightFront, Color.White,Color.White, UVs.Uvs[20], UVs.Bounds[5]);
@@ -653,15 +766,36 @@ namespace DwarfCorp
             Vertices[22] = new ExtendedVertex(btmRightBack, Color.White,Color.White, UVs.Uvs[22], UVs.Bounds[5]);
             Vertices[23] = new ExtendedVertex(topRightBack, Color.White,Color.White, UVs.Uvs[23], UVs.Bounds[5]);
 
-            Indices[30] = 20;
-            Indices[31] = 21;
-            Indices[32] = 22;
-            Indices[33] = 23;
-            Indices[34] = 20;
-            Indices[35] = 22;
+            /* 
+             *  20. . .23
+                .     . .
+                .   .   .
+                .  .    .
+                21. . .22
+             */
+            Indexes[30] = 20;
+            Indexes[31] = 21;
+            Indexes[32] = 23;
+            Indexes[33] = 23;
+            Indexes[34] = 21;
+            Indexes[35] = 22;
 
-            IndexBuffer = new IndexBuffer(GameState.Game.GraphicsDevice, typeof(short), Indices.Length, BufferUsage.WriteOnly);
-            IndexBuffer.SetData(Indices);
+            /* 
+             *  20. . .23
+                . .     .
+                .   .   .
+                .     . .
+                21. . .22
+             */
+            FlippedIndexes[30] = 20;
+            FlippedIndexes[31] = 21;
+            FlippedIndexes[32] = 22;
+            FlippedIndexes[33] = 23;
+            FlippedIndexes[34] = 20;
+            FlippedIndexes[35] = 22;
+
+            IndexBuffer = new IndexBuffer(GameState.Game.GraphicsDevice, typeof(ushort), Indexes.Length, BufferUsage.WriteOnly);
+            IndexBuffer.SetData(Indexes);
         }
     }
 

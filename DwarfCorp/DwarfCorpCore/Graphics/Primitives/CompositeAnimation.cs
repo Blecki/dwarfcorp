@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
 using DwarfCorp.GameStates;
@@ -18,7 +19,14 @@ namespace DwarfCorp
     public class CompositeAnimation : Animation
     {
         [JsonIgnore]
-        public Composite Composite { get { return CompositeLibrary.Composites[CompositeName]; } }
+        public Composite Composite 
+        { 
+            get 
+            { 
+                return CompositeLibrary.Composites.ContainsKey(CompositeName) ? 
+                    CompositeLibrary.Composites[CompositeName] : null; 
+            } 
+        }
 
         public string CompositeName { get; set; }
         public List<Composite.Frame> CompositeFrames { get; set; }
@@ -89,6 +97,15 @@ namespace DwarfCorp
 
                 return toReturn;
 
+            }
+        }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            if (!CompositeLibrary.Composites.ContainsKey(CompositeName))
+            {
+                CompositeLibrary.Composites[CompositeName] = new Composite(CompositeFrames);
             }
         }
 

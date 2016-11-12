@@ -85,6 +85,7 @@ namespace DwarfCorp.GameStates
             ListSelect.AddItem("New Game", "Start a new game of DwarfCorp.");
             ListSelect.AddItem("Load Game", "Load DwarfCorp game from a file.");
             ListSelect.AddItem("Options", "Change game settings.");
+            ListSelect.AddItem("Credits", "View the credits");
             ListSelect.AddItem("Quit", "Exit the game.");
         }
 
@@ -108,6 +109,14 @@ namespace DwarfCorp.GameStates
                     PlayItems();
                     StateManager.PushState("CompanyMakerState");
                     MaintainState = true;
+                    break;
+                case "Credits":
+                    if (StateManager.States.ContainsKey("CreditsState"))
+                    {
+                        StateManager.PushState("CreditsState");
+                    }
+                    else
+                        StateManager.PushState(new CreditsState(GameState.Game, "CreditsState", StateManager));
                     break;
                 case "Quit":
                     Game.Exit();
@@ -261,7 +270,7 @@ namespace DwarfCorp.GameStates
             };
 
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, null, rasterizerState);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
             DwarfGame.SpriteBatch.DrawString(GUI.DefaultFont, Program.Version, new Vector2(15, 15), Color.White);

@@ -203,6 +203,7 @@ namespace DwarfCorp
 
                         if (vox.WaterLevel > 0)
                         {
+                            yield return Act.Status.Running;
                             continue;
                         }
 
