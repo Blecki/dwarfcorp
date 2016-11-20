@@ -447,22 +447,13 @@ namespace DwarfCorp
         }
         public class Shaders
         {
-#if XNA_BUILD
+
             public static string BloomCombine = ProgramData.CreatePath("Shaders", "BloomCombine");
             public static string BloomExtract = ProgramData.CreatePath("Shaders", "BloomExtract");
             public static string GaussianBlur = ProgramData.CreatePath("Shaders", "GaussianBlur");
             public static string SkySphere = ProgramData.CreatePath("Shaders", "SkySphere");
             public static string TexturedShaders = ProgramData.CreatePath("Shaders", "TexturedShaders");
             public static string FXAA = ProgramData.CreatePath("Shaders", "FXAA");
-#else
-            public static string BloomCombine = ProgramData.CreatePath("Shaders", "BloomCombine_Opengl");
-            public static string BloomExtract = ProgramData.CreatePath("Shaders", "BloomExtract_Opengl");
-            public static string GaussianBlur = ProgramData.CreatePath("Shaders", "GaussianBlur_Opengl");
-            public static string SkySphere = ProgramData.CreatePath("Shaders", "SkySphere_Opengl");
-            public static string TexturedShaders = ProgramData.CreatePath("Shaders", "TexturedShaders_Opengl");
-            public static string FXAA = ProgramData.CreatePath("Shaders", "FXAA");
-#endif
-
         }
         public class Sky
         {

@@ -65,9 +65,7 @@ namespace DwarfCorp
             SkyEffect.Parameters["xTint"].SetValue(TimeOfDay);
             foreach(ModelMesh mesh in SkyMesh.Meshes)
             {
-#if XNA_BUILD
                 mesh.Draw();
-#endif
             }
         }
 
@@ -82,9 +80,7 @@ namespace DwarfCorp
             SkyEffect.CurrentTechnique = SkyEffect.Techniques[0];
             foreach(ModelMesh mesh in SkyMesh.Meshes)
             {
-#if XNA_BUILD
                 mesh.Draw();
-#endif
             }
         }
 

@@ -730,14 +730,14 @@ namespace DwarfCorp
 
         public void Update(DwarfTime t)
         {
-            //PrimitiveMutex.WaitOne();
+            PrimitiveMutex.WaitOne();
             if(NewPrimitiveReceived)
             {
                 Primitive = NewPrimitive;
                 NewPrimitive = null;
                 NewPrimitiveReceived = false;
             }
-            //PrimitiveMutex.ReleaseMutex();
+            PrimitiveMutex.ReleaseMutex();
         }
 
         public void Render(GraphicsDevice device)
@@ -753,11 +753,11 @@ namespace DwarfCorp
 
         }
 
-        public void RebuildLiquids(GraphicsDevice g)
+        public void RebuildLiquids()
         {
             foreach(KeyValuePair<LiquidType, LiquidPrimitive> primitive in Liquids)
             {
-                primitive.Value.InitializeFromChunk(this, g);
+                primitive.Value.InitializeFromChunk(this);
             }
             ShouldRebuildWater = false;
         }
@@ -911,7 +911,7 @@ namespace DwarfCorp
             {
                 firstRebuild = false;
             }
-            RebuildLiquids(g);
+            RebuildLiquids();
             IsRebuilding = false;
 
             if(ShouldRecalculateLighting)

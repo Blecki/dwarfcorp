@@ -65,7 +65,7 @@ namespace DwarfCorp
             }
         }
 
-        public void InitializeFromChunk(VoxelChunk chunk, GraphicsDevice graphics)
+        public void InitializeFromChunk(VoxelChunk chunk)
         {
             if (IsBuilding)
                 return;
@@ -169,10 +169,11 @@ namespace DwarfCorp
             {
                 try
                 {
-                    chunk.PrimitiveMutex.WaitOne();
-                    MaxVertex = maxVertex;
-                    ResetBuffer(graphics);
-                    chunk.PrimitiveMutex.ReleaseMutex();
+                    lock (VertexLock)
+                    {
+                        MaxVertex = maxVertex;
+                        VertexBuffer = null;
+                    }
                 }
                 catch (System.Threading.AbandonedMutexException e)
                 {
@@ -183,10 +184,12 @@ namespace DwarfCorp
             {
                 try
                 {
-                    chunk.PrimitiveMutex.WaitOne();
-                    MaxVertex = -1;
-                    MaxIndex = -1;
-                    chunk.PrimitiveMutex.ReleaseMutex();
+                    lock (VertexLock)
+                    {
+                        VertexBuffer = null;
+                        MaxVertex = -1;
+                        MaxIndex = -1;
+                    }
                 }
                 catch (System.Threading.AbandonedMutexException e)
                 {

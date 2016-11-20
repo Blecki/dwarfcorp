@@ -620,7 +620,6 @@ namespace DwarfCorp
             MaxIndex = maxIndex;
             MaxVertex = maxVertex;
             GenerateLightmap(PlayState.ChunkManager.ChunkData.Tilemap.Bounds);
-            ResetBuffer(graphics);
             isRebuilding = false;
 
             //chunk.PrimitiveMutex.WaitOne();

@@ -1442,6 +1442,9 @@
   <PropertyGroup>
     <PreBuildEvent>(if exist "$(TargetDir)*old.pdb" del "$(TargetDir)*old.pdb") &amp; (if exist "$(TargetDir)*.pdb" ren "$(TargetDir)*.pdb" *.old.pdb)</PreBuildEvent>
   </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>MKDIR $(SolutionDir)DwarfCorpFNA\bin\$(ConfigurationName)\Content  &amp; XCOPY $(ProjectDir)$(OutDir)Content $(SolutionDir)DwarfCorpFNA\bin\$(ConfigurationName)\Content /Y /E</PostBuildEvent>
+  </PropertyGroup>
   <!--
       To modify your build process, add your task inside one of the targets below and uncomment it. 
       Other similar extension points exist, see Microsoft.Common.targets.

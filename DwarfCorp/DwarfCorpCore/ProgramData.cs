@@ -94,5 +94,6 @@ namespace DwarfCorp
         public static char DirChar = Path.DirectorySeparatorChar;
 
     }
+
 #endif
 }

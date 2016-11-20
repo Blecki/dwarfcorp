@@ -21,7 +21,7 @@ namespace DwarfCorp
         private List<InstanceData> Additions { get; set; }
         private List<InstanceData> Removals { get; set; }
         private int numInstances = 0;
-
+        private int numActiveInstances = 0;
         public int NumInstances
         {
             get { return numInstances; }
@@ -44,6 +44,9 @@ namespace DwarfCorp
 
         public BlendState BlendMode { get; set; }
         public float CullDistance = 100 * 100;
+
+        private DynamicVertexBuffer instanceBuffer;
+        private InstancedVertex[] instanceVertexes;
 
         public void Clear()
         {
@@ -155,23 +158,51 @@ namespace DwarfCorp
                 sortTimer.Reset(sortTimer.TargetTimeSeconds);
             }
 
-            //RebuildVertices();
-            //InstanceBuffer.SetData(Vertices);
             AddRemove();
+
+
+            if (instanceVertexes == null)
+            {
+                instanceVertexes = new InstancedVertex[numInstances];
+            }
+            int j = 0;
+            foreach (InstanceData t in SortedData.Data)
+            {
+                if (t.ShouldDraw)
+                {
+                    instanceVertexes[j].Transform = t.Transform;
+                    instanceVertexes[j].Color = t.Color;
+                    j++;
+                }
+            }
+            numActiveInstances = j;
         }
 
         public void Render(GraphicsDevice graphics, Effect effect, Camera cam, bool rebuildVertices)
         {
             Camera = cam;
 
+            if (instanceBuffer == null)
+            {
+                instanceBuffer = new DynamicVertexBuffer(graphics, InstancedVertex.VertexDeclaration, numInstances,
+                    BufferUsage.None);
+            }
 
-            if (SortedData.Data.Count > 0)
+            if (SortedData.Data.Count > 0 && numActiveInstances > 0)
             {
                 graphics.RasterizerState = rasterState;
 
-                effect.CurrentTechnique = effect.Techniques["Textured"];
+                effect.CurrentTechnique = effect.Techniques["Instanced"];
                 effect.Parameters["xEnableLighting"].SetValue(1);
-                graphics.SetVertexBuffer(Model.VertexBuffer);
+
+                if (Model.VertexBuffer == null || Model.IndexBuffer == null)
+                {
+                    Model.ResetBuffer(graphics);
+                }
+
+                instanceBuffer.SetData(instanceVertexes, 0, SortedData.Data.Count, SetDataOptions.Discard);
+
+                graphics.SetVertexBuffers(Model.VertexBuffer, new VertexBufferBinding(instanceBuffer, 0, 1));
 
                 bool hasIndex = Model.IndexBuffer != null;
                 graphics.Indices = Model.IndexBuffer;
@@ -180,17 +211,18 @@ namespace DwarfCorp
                 graphics.BlendState = BlendMode;
 
                 effect.Parameters["xTexture"].SetValue(Texture);
-                EffectParameter world = effect.Parameters["xWorld"];
-                EffectParameter tint = effect.Parameters["xTint"];
-                foreach (InstanceData instance in SortedData.Data)
+                effect.Parameters["xTint"].SetValue(Vector4.One);
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
-                    if (!instance.ShouldDraw) continue;
-
-                    world.SetValue(instance.Transform);
-                    tint.SetValue(instance.Color.ToVector4());
-                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                    pass.Apply();
+                    graphics.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0,
+                                        Model.MaxVertex, 0,
+                                        Model.Indexes.Length / 3,
+                                        numActiveInstances);
+                    /*
+                    foreach (InstanceData instance in SortedData.Data)
                     {
-                        pass.Apply();
+                        if (!instance.ShouldDraw) continue;
 
                         if (!hasIndex)
                         {
@@ -198,9 +230,11 @@ namespace DwarfCorp
                         }
                         else
                         {
-                            graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, Model.VertexBuffer.VertexCount, 0, Model.IndexBuffer.IndexCount / 3);
+                            graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0,
+                                Model.VertexBuffer.VertexCount, 0, Model.IndexBuffer.IndexCount/3);
                         }
                     }
+                     */
                 }
 
                 effect.CurrentTechnique = effect.Techniques["Textured"];

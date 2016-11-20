@@ -152,16 +152,15 @@ namespace DwarfCorp
 
         public ChunkManager(ContentManager content, 
             uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, 
-            Camera camera, GraphicsDevice graphics, Texture2D tilemap, 
-            Texture2D illumMap, Texture2D sunMap, Texture2D ambientMap, 
-            Texture2D torchMap, ChunkGenerator chunkGen, int maxChunksX, int maxChunksY, int maxChunksZ)
+            Camera camera, GraphicsDevice graphics,
+            ChunkGenerator chunkGen, int maxChunksX, int maxChunksY, int maxChunksZ)
         {
             KilledVoxels = new List<Voxel>();
             ExitThreads = false;
             drawDistSq = DrawDistance * DrawDistance;
             Content = content;
 
-            chunkData = new ChunkData(chunkSizeX, chunkSizeY, chunkSizeZ, 1.0f / chunkSizeX, 1.0f / chunkSizeY, 1.0f / chunkSizeZ, tilemap, illumMap, this);
+            chunkData = new ChunkData(chunkSizeX, chunkSizeY, chunkSizeZ, 1.0f / chunkSizeX, 1.0f / chunkSizeY, 1.0f / chunkSizeZ, this);
             ChunkData.ChunkMap = new ConcurrentDictionary<Point3, VoxelChunk>();
             RenderList = new ConcurrentQueue<VoxelChunk>();
             RebuildList = new ConcurrentQueue<VoxelChunk>();
@@ -196,10 +195,6 @@ namespace DwarfCorp
             this.camera = camera;
 
             Water = new WaterManager(this);
-
-            ChunkData.SunMap = sunMap;
-            ChunkData.AmbientMap = ambientMap;
-            ChunkData.TorchMap = torchMap;
 
             DynamicLights = new List<DynamicLight>();
 
@@ -297,7 +292,7 @@ namespace DwarfCorp
 
                         try
                         {
-                            chunk.RebuildLiquids(Graphics);
+                            chunk.RebuildLiquids();
                             chunk.RebuildLiquidPending = false;
                             chunk.ShouldRebuildWater = false;
                         }

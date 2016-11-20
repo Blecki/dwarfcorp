@@ -384,7 +384,21 @@ namespace DwarfCorp.GameStates
                 Game.Graphics.PreparingDeviceSettings -= GraphicsPreparingDeviceSettings;
                 Game.Graphics.PreparingDeviceSettings += GraphicsPreparingDeviceSettings;
                 PlanService = new PlanService();
+                LoadingMessage = "Initializing...";
+                InitializeStaticData(CompanyMakerState.CompanyName, CompanyMakerState.CompanyMotto,
+                    CompanyMakerState.CompanyLogo,
+                    CompanyMakerState.CompanyColor, Natives);
+                LoadingMessage = "Creating Particles ...";
+                CreateParticles();
 
+                LoadingMessage = "Creating Sky...";
+                CreateSky();
+
+                LoadingMessage = "Creating Shadows...";
+                CreateShadows();
+
+                LoadingMessage = "Creating Liquids..";
+                CreateLiquids();
                 LoadingThread = new Thread(Load);
                 LoadingThread.Start();
             }
@@ -596,11 +610,7 @@ namespace DwarfCorp.GameStates
 
             // Creates the terrain management system.
             ChunkManager = new ChunkManager(Content, (uint) ChunkWidth, (uint) ChunkHeight, (uint) ChunkWidth, Camera,
-                GraphicsDevice, Tilesheet,
-                TextureManager.GetTexture(ContentPaths.Terrain.terrain_illumination),
-                TextureManager.GetTexture(ContentPaths.Gradients.sungradient),
-                TextureManager.GetTexture(ContentPaths.Gradients.ambientgradient),
-                TextureManager.GetTexture(ContentPaths.Gradients.torchgradient),
+                GraphicsDevice,
                 ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
 
             // Trying to determine the global offset from overworld coordinates (pixels in the overworld) to
@@ -1057,21 +1067,6 @@ namespace DwarfCorp.GameStates
 #endif
             {
                 EnableScreensaver = true;
-                LoadingMessage = "Initializing...";
-                InitializeStaticData(CompanyMakerState.CompanyName, CompanyMakerState.CompanyMotto,
-                    CompanyMakerState.CompanyLogo,
-                    CompanyMakerState.CompanyColor, Natives);
-                LoadingMessage = "Creating Particles ...";
-                CreateParticles();
-
-                LoadingMessage = "Creating Sky...";
-                CreateSky();
-
-                LoadingMessage = "Creating Shadows...";
-                CreateShadows();
-
-                LoadingMessage = "Creating Liquids..";
-                CreateLiquids();
 
                 LoadingMessage = "Generating Initial Terrain Chunks...";
                 GenerateInitialChunks();

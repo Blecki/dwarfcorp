@@ -511,7 +511,6 @@ namespace DwarfCorp
             Deltas = new VoxelVertex[NumVertices];
             UVs = uvs;
             CreateVerticies();
-            ResetBuffer(device);
             BoundingBox = new BoundingBox(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(width, height, depth));
             for (int i = 0; i < NumVertices; i++)
             {

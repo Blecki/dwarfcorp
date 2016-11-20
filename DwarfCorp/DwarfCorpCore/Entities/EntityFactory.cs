@@ -263,7 +263,7 @@ namespace DwarfCorp
         {
             if (!GameSettings.Default.GrassMotes)
             {
-                return null;
+                return new List<InstanceData>();
             }
 
             try

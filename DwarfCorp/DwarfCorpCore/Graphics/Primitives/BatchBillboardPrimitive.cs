@@ -37,7 +37,6 @@ namespace DwarfCorp
             VertColors = vertColors;
             Height = height;
             CreateVerticies(Color.White);
-            ResetBuffer(device);
             Texture = spriteSheet;
         }
 
@@ -71,8 +70,6 @@ namespace DwarfCorp
                 Indexes[indOffset + 5] = (ushort)(vertOffset + 3);
 
             }
-            IndexBuffer = new IndexBuffer(GameState.Game.GraphicsDevice, typeof(ushort), RelativeTransforms.Count * 6, BufferUsage.None);
-            IndexBuffer.SetData(Indexes);
         }
     }
 

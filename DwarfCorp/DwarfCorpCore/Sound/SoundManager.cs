@@ -224,7 +224,7 @@ namespace DwarfCorp
             MediaPlayer.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.MusicVolume * 0.1f;
             if (MediaPlayer.State == MediaState.Stopped)
             {
-                if (once)
+                if (once  && ActiveSongs.Count > 0)
                 {
                     MediaPlayer.Play(ActiveSongs[PlayState.Random.Next(ActiveSongs.Count)]);
                     once = false;

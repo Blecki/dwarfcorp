@@ -49,8 +49,11 @@ float4 ClipPlane0;
 
 float4 GetNoise(float4 pos)
 {
-	float mag = dot(pos, pos);
-	return float4(cos(mag * 1e-5) * 0.2, sin(mag * 1e-4) * 0.5, sin(-mag * 1e-5) * 0.2, 0);
+	pos.w = 0;
+	float mag = dot(pos, pos) * 0.00001;
+	float sm = sin(mag + 0.1);
+	float cm = cos(mag);
+	return float4(cm * 0.2 + sm * 0.1, sm * 0.5 + cm * 0.1, sm * 0.2 + cm * 0.1, 0);
 }
 
 
@@ -63,23 +66,23 @@ Texture xIllumination;
 
 sampler IllumSampler = sampler_state { texture = <xIllumination> ;  magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = clamp; AddressV = clamp;};
 
-sampler TextureSampler = sampler_state { texture = <xTexture> ; magfilter = POINT; minfilter = ANISOTROPIC; mipfilter=POINT; AddressU = clamp; AddressV = clamp;};
+sampler TextureSampler = sampler_state { texture = <xTexture> ; magfilter = POINT; minfilter = LINEAR; mipfilter=POINT; AddressU = clamp; AddressV = clamp;};
 
-sampler ColorscaleSampler = sampler_state { texture = <xTexture>; magfilter = POINT; minfilter = ANISOTROPIC; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
+sampler ColorscaleSampler = sampler_state { texture = <xTexture>; magfilter = POINT; minfilter = LINEAR; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
 Texture xTexture0;
 
 Texture xTexture1;
-sampler TextureSampler1 = sampler_state { texture = <xTexture1>; magfilter = POINT; minfilter = ANISOTROPIC; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
+sampler TextureSampler1 = sampler_state { texture = <xTexture1>; magfilter = POINT; minfilter = LINEAR; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
 
 Texture xTexture2;
-sampler TextureSampler2 = sampler_state { texture = <xTexture2>; magfilter = POINT; minfilter = ANISOTROPIC; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
+sampler TextureSampler2 = sampler_state { texture = <xTexture2>; magfilter = POINT; minfilter = LINEAR; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
 
 Texture xTexture3;
-sampler TextureSampler3 = sampler_state { texture = <xTexture3>; magfilter = POINT; minfilter = ANISOTROPIC; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
+sampler TextureSampler3 = sampler_state { texture = <xTexture3>; magfilter = POINT; minfilter = LINEAR; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
 
-sampler WrappedTextureSampler = sampler_state { texture = <xTexture>; magfilter = POINT; minfilter = ANISOTROPIC; mipfilter = POINT; AddressU = wrap; AddressV = wrap; };
+sampler WrappedTextureSampler = sampler_state { texture = <xTexture>; magfilter = POINT; minfilter = LINEAR; mipfilter = POINT; AddressU = wrap; AddressV = wrap; };
 
-sampler WrappedTextureSampler1 = sampler_state { texture = <xTexture1>; magfilter = POINT; minfilter = ANISOTROPIC; mipfilter = POINT; AddressU = wrap; AddressV = wrap; };
+sampler WrappedTextureSampler1 = sampler_state { texture = <xTexture1>; magfilter = POINT; minfilter = LINEAR; mipfilter = POINT; AddressU = wrap; AddressV = wrap; };
 
 Texture xReflectionMap;
 float xWaterReflective;
@@ -92,7 +95,7 @@ Texture xShoreGradient;
 Texture xLightmap;
 float4 xTint;
 
-sampler LightmapSampler = sampler_state { texture = <xLightmap>; magfilter = POINT; minfilter = ANISOTROPIC; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
+sampler LightmapSampler = sampler_state { texture = <xLightmap>; magfilter = POINT; minfilter = LINEAR; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
 
 sampler SunSampler = sampler_state { texture = <xSunGradient>; magfilter = LINEAR; minfilter = LINEAR; mipfilter = LINEAR; AddressU = clamp; AddressV = clamp; };
 
@@ -458,9 +461,15 @@ TVertexToPixel TexturedVSNonInstanced( float4 inPos : POSITION,  float2 inTexCoo
 	return TexturedVS(inPos, inTexCoords, inColor, inTexSource, xWorld, xTint, vertColor);
 }
 
-TVertexToPixel TexturedVSInstanced( float4 inPos : POSITION,  float2 inTexCoords: TEXCOORD0, float4 inColor : COLOR0, float4 inTexSource : TEXCOORD1, float4 tint : COLOR1, float4x4 transform : BLENDWEIGHT, float3 vertColor : COLOR2)
+TVertexToPixel TexturedVSInstanced( float4 inPos : POSITION,  
+								    float2 inTexCoords: TEXCOORD0, 
+									float4 inColor : COLOR0, 
+									float4 inTexSource : TEXCOORD1, 
+									float4 tint : COLOR1, 
+									float4x4 transform : BLENDWEIGHT, 
+									float4 instanceColor : COLOR2)
 {
-	return TexturedVS(inPos, inTexCoords, inColor, inTexSource, transpose(transform), tint, vertColor);
+	return TexturedVS(inPos, inTexCoords, inColor, inTexSource, transpose(transform), instanceColor, float4(1, 1, 1, 1));
 }
 
 

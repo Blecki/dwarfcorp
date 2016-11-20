@@ -32,7 +32,7 @@ namespace DwarfCorp
         public VertexBuffer VertexBuffer = null;
 
         [JsonIgnore]
-        private object VertexLock = new object();
+        protected object VertexLock = new object();
 
         [JsonIgnore] public RenderTarget2D Lightmap = null;
 
@@ -53,20 +53,20 @@ namespace DwarfCorp
             lock (VertexLock)
             {
 #if MONOGAME_BUILD
-                device.SamplerStates[0].Filter = TextureFilter.Point;
-                device.SamplerStates[1].Filter = TextureFilter.Point;
-                device.SamplerStates[2].Filter = TextureFilter.Point;
-                device.SamplerStates[3].Filter = TextureFilter.Point;
-                device.SamplerStates[4].Filter = TextureFilter.Point;
+                device.SamplerStates[0].Filter = TextureFilter.MinLinearMagPointMipLinear;
+                device.SamplerStates[1].Filter = TextureFilter.MinLinearMagPointMipLinear;
+                device.SamplerStates[2].Filter = TextureFilter.MinLinearMagPointMipLinear;
+                device.SamplerStates[3].Filter = TextureFilter.MinLinearMagPointMipLinear;
+                device.SamplerStates[4].Filter = TextureFilter.MinLinearMagPointMipLinear;
 #endif
-                if (VertexBuffer == null)
+                if (Vertices == null || Vertices.Length < 3)
                 {
                     return;
                 }
 
-                if (Vertices == null || VertexBuffer == null || Vertices.Length < 3 ||  VertexBuffer.IsDisposed || VertexBuffer.VertexCount < 3)
+                if (VertexBuffer == null ||  VertexBuffer.IsDisposed)
                 {
-                    return;
+                    ResetBuffer(device);
                 }
 
                 if (MaxVertex <= 0)
@@ -79,17 +79,15 @@ namespace DwarfCorp
                     MaxIndex = Indexes.Length;
                 }
 
-
                 device.SetVertexBuffer(VertexBuffer);
-
                 if (IndexBuffer != null)
                 {
                     device.Indices = IndexBuffer;
                     device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, MaxVertex, 0, MaxIndex / 3);
                 }
-                else
+                else if (Indexes == null || Indexes.Length == 0)
                 {
-                    device.DrawPrimitives(PrimitiveType.TriangleList, 0, MaxVertex / 3);
+                    device.DrawPrimitives(PrimitiveType.TriangleList, 0, MaxVertex/3);
                 }
             }
         }

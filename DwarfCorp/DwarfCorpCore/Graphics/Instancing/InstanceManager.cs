@@ -102,7 +102,7 @@ namespace DwarfCorp
 
         public void RemoveInstances(string name, List<InstanceData> instances)
         {
-            if(!Instances.ContainsKey(name))
+            if(!Instances.ContainsKey(name) || instances == null)
             {
                 return;
             }
