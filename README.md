@@ -8,6 +8,7 @@
 DwarfCorp depends on the following libraries:
 
 * [The XNA 4.0](https://www.microsoft.com/en-us/download/details.aspx?id=23714) library (not included)
+* [XNA-FNA](https://github.com/FNA-XNA/FNA) for cross-platform development (forked)
 * [LibNoise.NET](https://libnoisedotnet.codeplex.com/) (source code included)
 * [JSON.NET](https://github.com/JamesNK/Newtonsoft.Json) (source code included)
 
@@ -15,6 +16,7 @@ DwarfCorp depends on the following libraries:
 
 To build and run in the game on a windows PC, you must do the following:
 
+### Building for XNA on Windows
 1. Download and install the XNA Game Studio 4.0 library
 2. Download and install Visual Studio. The project files were created for Visual Studio Professional 2013. Earlier versions may not work. "Express" versions may also not work.
 3. Open `DwarfCorp.sln` in Visual Studio
@@ -24,15 +26,22 @@ To build and run in the game on a windows PC, you must do the following:
 7. Set the `DwarfCorpXNA` build mode to `Release` or `Debug`
 8. Build `DwarfCorpXNA`
 
+### Building for FNA on Windows
+1. Open 'DwarfCorpFNA.sln' in Visual Studio
+2. Build for XNA first. This will create the content files needed by FNA. Do this from within DwarfCorpFNA.sln
+3. Set 'DwarfCorpFNA' as the 'StartUp' project.
+4. Build DwarfCorpFNA.
+
 ## Project Structure
 There are several projects under the main folder:
 
 * **DwarfCorpCore** contains the core source code of the game, and is intended to be more-or-less platform independent.
 * **DwarfCorpXNA** contains source code for XNA builds of the game. Most source files here should just be symbolic links to **DwarfCorpCore**.
-* **DwarfCorpMono** Contains source code for a MonoGame build. It hasn't been updated in a very long time, and will likely not build for now.
+* **DwarfCorpFNA** Contains source code for the FNA build. Most of the files in here are symbolic links to **DwarfCorpCore** in a flat directory structure.
 * **DwarfCorpContent** Contains images, sounds, music, and content configuration files for DwarfCorp. Most assets in this content project may not be redistributed.
 * **LibNoise** Is a fork of LibNosie.NET noise generation library.
 * **JSON.NET** Is a fork of the JSON.NET data serialization library.
+* **FNA** is a fork of XNA-FNA.
 
 ## Licensing
 The game is released under a modified MIT licensing agreement. That means all *source code* is free to use, modify and distribute. However, we have explicitly disallowed modification and redistribution of the following game content (which remains proprietary):
