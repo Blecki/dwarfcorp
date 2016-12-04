@@ -1328,9 +1328,9 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>echo "Building for OSX"
-XCOPY "$(ProjectDir)\FNA_libs\osx\*" "$(ProjectDir)\build\osx\DwarfCorpFNA.app\Contents\MacOS" /Y /E /V
-XCOPY "$(ProjectDir)\FNA_libs\mono\*" "$(ProjectDir)\build\osx\DwarfCorpFNA.app\Contents\MacOS" /Y /E /V
-XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\osx\DwarfCorpFNA.app\Contents\MacOS" /Y /E /V
+XCOPY "$(ProjectDir)\FNA_libs\osx\*" "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
+XCOPY "$(ProjectDir)\FNA_libs\mono\*" "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
+XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
 
 echo "Building for linux 32"
 MD "$(ProjectDir)\build\linux32"
