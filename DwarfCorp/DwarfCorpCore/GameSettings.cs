@@ -119,6 +119,14 @@ namespace DwarfCorp
                 Default = new Settings();
                 Save();
             }
+            catch (Exception otherException)
+            {
+                Console.Error.WriteLine("Failed to load settings file {0} : {1}", file, otherException.ToString());
+                Default = new Settings();
+                Save();
+            }
+            
         }
+    }
     }
 }
