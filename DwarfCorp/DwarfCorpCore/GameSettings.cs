@@ -105,7 +105,18 @@ namespace DwarfCorp
 
         public static void Save(string file)
         {
-            FileUtils.SaveBasicJson(Default, file);
+            try
+            {
+                FileUtils.SaveBasicJson(Default, file);
+            }
+            catch (Exception exception)
+            {
+                Console.Error.WriteLine("Failed to save settings: {0}", exception.ToString());
+                if (exception.InnerException != null)
+                {
+                    Console.Error.WriteLine("Inner exception: {0}", exception.InnerException.ToString()); 
+                }
+            }
         }
 
         public static void Load(string file)
@@ -116,12 +127,17 @@ namespace DwarfCorp
             }
             catch (FileNotFoundException fileLoad)
             {
+                Console.Error.WriteLine("Settings file does not exist. Using default settings.");
                 Default = new Settings();
                 Save();
             }
             catch (Exception otherException)
-            {
+            { 
                 Console.Error.WriteLine("Failed to load settings file {0} : {1}", file, otherException.ToString());
+                if (otherException.InnerException != null)
+                {
+                    Console.Error.WriteLine("Inner exception: {0}", otherException.InnerException.ToString());
+                }
                 Default = new Settings();
                 Save();
             }
