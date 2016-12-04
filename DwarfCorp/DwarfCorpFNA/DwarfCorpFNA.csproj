@@ -40,7 +40,7 @@
     <Reference Include="System.Data.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\FNA\FNA.csproj">
+    <ProjectReference Include="..\..\FNA\FNA.csproj">
       <Project>{35253ce1-c864-4cd3-8249-4d1319748e8f}</Project>
       <Name>FNA</Name>
     </ProjectReference>
@@ -1327,7 +1327,35 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>XCOPY "$(ProjectDir)\FNA_libs\win32\*" "$(ProjectDir)\$(OutDir)" /Y /E</PostBuildEvent>
+    <PostBuildEvent>#Build for OSX.
+echo "Building for OSX"
+XCOPY "$(ProjectDir)\FNA_libs\osx\*" "$(ProjectDir)\build\osx\DwarfCorpFNA.app\Contents\MacOS" /Y /E /V
+XCOPY "$(ProjectDir)\FNA_libs\mono\*" "$(ProjectDir)\build\osx\DwarfCorpFNA.app\Contents\MacOS" /Y /E /V
+XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\osx\DwarfCorpFNA.app\Contents\MacOS" /Y /E /V
+
+#Build for Linux32
+echo "Building for linux 32"
+XCOPY "$(ProjectDir)\FNA_libs\lib\*" "$(ProjectDir)\build\linux32" /Y /E /V
+XCOPY "$(ProjectDir)\FNA_libs\mono\*" "$(ProjectDir)\build\linux32" /Y /E /V
+XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\linux32" /Y /E /V
+
+#Build for Linux64
+echo "Building for linux 64"
+XCOPY "$(ProjectDir)\FNA_libs\lib64\*" "$(ProjectDir)\build\linux64" /Y /E /V
+XCOPY "$(ProjectDir)\FNA_libs\mono\*" "$(ProjectDir)\build\linux64" /Y /E /V
+XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\linux64" /Y /E /V
+
+# Build for Windows
+echo "Building for windows"
+XCOPY "$(ProjectDir)\FNA_libs\win32\*" "$(ProjectDir)\$(OutDir)" /Y /E /V
+XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)build\win32" /Y /E /V</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>RD /S /Q "$(ProjectDir)$(OutDir)
+MD $(ProjectDir)$(OutDir)
+MD $(ProjectDir)$(OutDir)Content
+ECHO "$(ProjectDir)..\DwarfCorpXNA\bin\x86\$(ConfigurationName)\Content" 
+XCOPY "$(ProjectDir)\..\DwarfCorpXNA\bin\x86\$(ConfigurationName)\Content" "$(ProjectDir)$(OutDir)Content" /Y /E</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
