@@ -356,6 +356,23 @@ namespace DwarfCorp
             }
         }
 
+        public void Reset()
+        {
+            foreach (GUIComponent child in Children)
+            {
+                child.ClearChildren();
+            }
+
+            foreach (GUIComponent child in ChildrenToAdd)
+            {
+                child.ClearChildren();
+            }
+
+            Children.Clear();
+            ChildrenToAdd.Clear();
+            ChildrenToRemove.Clear();
+        }
+
         public void ClearChildren()
         {
             foreach(GUIComponent child in Children)

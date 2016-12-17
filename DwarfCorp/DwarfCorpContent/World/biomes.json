@@ -418,7 +418,12 @@
       {
         "Name": "Scorpion",
         "SpawnProbability": 0.005
-      }],
+      },
+      {
+        "Name": "Bat",
+        "SpawnProbability": 0.008
+      }
+    ],
     "GrassVoxel": "CaveFungus",
     "SoilVoxel": "CaveFungus",
     "SubsurfVoxel": "Stone",

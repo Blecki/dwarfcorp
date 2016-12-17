@@ -140,7 +140,7 @@ namespace DwarfCorp
             AI = new SnakeAI(this, "snake AI", Sensors, PlanService);
 
 
-            Attacks = new List<Attack>() {new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick, ContentPaths.Effects.rings)};
+            Attacks = new List<Attack>() {new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick, ContentPaths.Effects.hit)};
 
             Physics.Tags.Add("Snake");
             Physics.Tags.Add("Animal");

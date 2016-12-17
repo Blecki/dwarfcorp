@@ -15,23 +15,22 @@ namespace DwarfCorp
     public class LiquidPrimitive : GeometricPrimitive
     {
         public LiquidType LiqType { get; set; }
-        private Dictionary<BoxFace, Vector3> faceDeltas = new Dictionary<BoxFace, Vector3>();
-        private Dictionary<BoxFace, bool> faceExists = new Dictionary<BoxFace, bool>();
-        private Dictionary<BoxFace, bool> drawFace = new Dictionary<BoxFace, bool>();
-        private List<ExtendedVertex> accumulatedVertices = new List<ExtendedVertex>();
-        private static BoxPrimitive m_canconicalPrimitive = VoxelLibrary.GetPrimitive("water");
+        private Vector3[] faceDeltas = new Vector3[6];
+        private bool[] faceExists = new bool[6];
+        private bool[] drawFace = new bool[6];
+        private static readonly BoxPrimitive primitive = VoxelLibrary.GetPrimitive("water");
         public bool IsBuilding = false;
 
         public LiquidPrimitive(LiquidType type) :
             base()
         {
             LiqType = type;
-            faceDeltas[BoxFace.Back] = new Vector3(0, 0, 1);
-            faceDeltas[BoxFace.Front] = new Vector3(0, 0, -1);
-            faceDeltas[BoxFace.Left] = new Vector3(-1, 0, 0);
-            faceDeltas[BoxFace.Right] = new Vector3(1, 0, 0);
-            faceDeltas[BoxFace.Top] = new Vector3(0, 1, 0);
-            faceDeltas[BoxFace.Bottom] = new Vector3(0, -1, 0);
+            faceDeltas[(int)BoxFace.Back] = new Vector3(0, 0, 1);
+            faceDeltas[(int)BoxFace.Front] = new Vector3(0, 0, -1);
+            faceDeltas[(int)BoxFace.Left] = new Vector3(-1, 0, 0);
+            faceDeltas[(int)BoxFace.Right] = new Vector3(1, 0, 0);
+            faceDeltas[(int)BoxFace.Top] = new Vector3(0, 1, 0);
+            faceDeltas[(int)BoxFace.Bottom] = new Vector3(0, -1, 0);
         }
 
 
@@ -41,11 +40,11 @@ namespace DwarfCorp
             public int y;
             public int z;
 
-            public IntVector(Vector3 Vec)
+            public IntVector(Vector3 vec)
             {
-                x = (int) Vec.X;
-                y = (int) Vec.Y;
-                z = (int) Vec.Z;
+                x = (int) vec.X;
+                y = (int) vec.Y;
+                z = (int) vec.Z;
             }
 
             public override bool Equals(object obj)
@@ -66,67 +65,19 @@ namespace DwarfCorp
             }
         }
 
-        public void InitializeFromChunk(VoxelChunk chunk, GraphicsDevice graphics)
+        public void InitializeFromChunk(VoxelChunk chunk)
         {
             if (IsBuilding)
                 return;
 
             IsBuilding = true;
-            accumulatedVertices.Clear();
-            faceExists.Clear();
-            drawFace.Clear();
-
-            int[,,] totalDepth = new int[chunk.SizeX, chunk.SizeY, chunk.SizeZ];
-            for(int x = 0; x < chunk.SizeX; x++)
-            {
-                for(int z = 0; z < chunk.SizeZ; z++)
-                {
-                    bool drynessEncountered = false;
-                    int previousSum = 0;
-
-                    for(int y = 0; y < chunk.SizeY; y++)
-                    {
-                        if (GameSettings.Default.FogofWar && !chunk.Data.IsExplored[chunk.Data.IndexAt(x, y, z)]) continue;
-                        WaterCell cell = chunk.Data.Water[chunk.Data.IndexAt(x, y, z)];
-                        byte waterLevel = cell.WaterLevel;
-
-                        if(cell.Type != LiqType)
-                        {
-                            waterLevel = 0;
-                        }
-
-                        if(drynessEncountered)
-                        {
-                            if(waterLevel > 0)
-                            {
-                                drynessEncountered = false;
-                                previousSum += waterLevel;
-                                totalDepth[x, y, z] = previousSum;
-                            }
-                        }
-                        else
-                        {
-                            if(waterLevel > 0)
-                            {
-                                previousSum += waterLevel;
-                                totalDepth[x, y, z] = previousSum;
-                            }
-                            else
-                            {
-                                drynessEncountered = true;
-                                previousSum = 0;
-                                totalDepth[x, y, z] = 0;
-                            }
-                        }
-                    }
-                }
-            }
 
             int maxY = (int)Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY);
 
 
             Voxel myVoxel = chunk.MakeVoxel(0, 0, 0);
             Voxel vox = chunk.MakeVoxel(0, 0, 0);
+            int maxVertex = 0;
             for(int x = 0; x < chunk.SizeX; x++)
             {
                 for(int y = 0; y < maxY; y++)
@@ -144,13 +95,24 @@ namespace DwarfCorp
 
                             for(int i = 0; i < 6; i++)
                             {
+                                if (Vertices == null)
+                                {
+                                    Vertices = new ExtendedVertex[256];
+                                }
+                                else if (Vertices.Length <= maxVertex + 6)
+                                {
+                                    ExtendedVertex[] newVerts = new ExtendedVertex[Vertices.Length * 2];
+                                    Vertices.CopyTo(newVerts, 0);
+                                    Vertices = newVerts;
+                                }
+
                                 BoxFace face = (BoxFace) i;
                                 if(face == BoxFace.Bottom)
                                 {
                                     continue;
                                 }
 
-                                Vector3 delta = faceDeltas[face];
+                                Vector3 delta = faceDeltas[(int)face];
 
 
                                 bool success = chunk.Manager.ChunkData.GetVoxel(chunk, new Vector3(x + (int)delta.X, y + (int)delta.Y, z + (int)delta.Z) + chunk.Origin, ref vox);
@@ -161,22 +123,22 @@ namespace DwarfCorp
                                     {
                                         if(vox.WaterLevel == 0 || y == (int) chunk.Manager.ChunkData.MaxViewingLevel)
                                         {
-                                            drawFace[face] = true;
+                                            drawFace[(int)face] = true;
                                         }
                                         else
                                         {
-                                            drawFace[face] = false;
+                                            drawFace[(int)face] = false;
                                         }
                                     }
                                     else
                                     {
                                         if(vox.WaterLevel == 0 && vox.IsEmpty)
                                         {
-                                            drawFace[face] = true;
+                                            drawFace[(int)face] = true;
                                         }
                                         else
                                         {
-                                            drawFace[face] = false;
+                                            drawFace[(int)face] = false;
                                         }
 
                                         bool gotVox = chunk.Manager.ChunkData.GetVoxel(chunk, new Vector3(x, y + 1, z) + chunk.Origin, ref vox);
@@ -186,37 +148,32 @@ namespace DwarfCorp
                                 }
                                 else
                                 {
-                                    drawFace[face] = true;
+                                    drawFace[(int)face] = true;
                                 }
 
 
-                                if(!drawFace[face])
+                                if(!drawFace[(int)face])
                                 {
                                     continue;
                                 }
 
-                                IEnumerable<ExtendedVertex> vertices = CreateWaterFace(myVoxel, face, chunk, x, y, z, totalDepth[x, y, z], isTop);
-
-
-                                foreach(ExtendedVertex newVertex in vertices.Select(vertex => new ExtendedVertex(vertex.Position + VertexNoise.GetRandomNoiseVector(vertex.Position), 
-                                    vertex.Color, vertex.VertColor, vertex.TextureCoordinate, vertex.TextureBounds)))
-                                {
-                                    accumulatedVertices.Add(newVertex);
-                                }
+                                CreateWaterFace(myVoxel, face, chunk, x, y, z, isTop, Vertices, maxVertex);
+                                maxVertex += 6;
                             }
                         }
                     }
                 }
             }
 
-            if (accumulatedVertices.Count > 0)
+            if (maxVertex > 0)
             {
                 try
                 {
-                    chunk.PrimitiveMutex.WaitOne();
-                    Vertices = accumulatedVertices.ToArray();
-                    ResetBuffer(graphics);
-                    chunk.PrimitiveMutex.ReleaseMutex();
+                    lock (VertexLock)
+                    {
+                        MaxVertex = maxVertex;
+                        VertexBuffer = null;
+                    }
                 }
                 catch (System.Threading.AbandonedMutexException e)
                 {
@@ -225,33 +182,49 @@ namespace DwarfCorp
             }
             else
             {
-                chunk.PrimitiveMutex.WaitOne();
-                this.VertexBuffer = null;
-                this.IndexBuffer = null;
-                chunk.PrimitiveMutex.ReleaseMutex();
+                try
+                {
+                    lock (VertexLock)
+                    {
+                        VertexBuffer = null;
+                        MaxVertex = -1;
+                        MaxIndex = -1;
+                    }
+                }
+                catch (System.Threading.AbandonedMutexException e)
+                {
+                    Console.Error.WriteLine(e.Message);
+                }
             }
             IsBuilding = false;
         }
 
-        private static IEnumerable<ExtendedVertex> CreateWaterFace(Voxel voxel, BoxFace face, VoxelChunk chunk, int x, int y, int z, int totalDepth, bool top)
+        private static void CreateWaterFace(Voxel voxel, 
+                                            BoxFace face, 
+                                            VoxelChunk chunk, 
+                                            int x, int y, int z, 
+                                            bool top, 
+                                            ExtendedVertex[] vertices, 
+                                            int startVertex)
         {
-            List<ExtendedVertex> toReturn = new List<ExtendedVertex>();
+
             int idx = 0;
-            int c = 0;
+            int vertexCount = 0;
             int vertOffset = 0;
             int numVerts = 0;
-            m_canconicalPrimitive.GetFace(face, m_canconicalPrimitive.UVs, out idx, out c, out vertOffset, out numVerts);
+            primitive.GetFace(face, primitive.UVs, out idx, out vertexCount, out vertOffset, out numVerts);
 
-            for (int i = idx; i < idx + c; i++)
+            for (int i = idx; i < idx + vertexCount; i++)
             {
-                toReturn.Add(m_canconicalPrimitive.Vertices[m_canconicalPrimitive.Indices[i]]);
+                vertices[i + startVertex - idx] = primitive.Vertices[primitive.Indexes[i]];
             }
 
             Vector3 origin = chunk.Origin + new Vector3(x, y, z);
             List<Voxel> neighborsVertex = new List<Voxel>();
-            for(int i = 0; i < toReturn.Count; i ++)
+
+            for(int i = 0; i < vertexCount; i ++)
             {
-                VoxelVertex currentVertex = VoxelChunk.GetNearestDelta(toReturn[i].Position);
+                VoxelVertex currentVertex = VoxelChunk.GetNearestDelta(vertices[i + startVertex].Position);
                 chunk.GetNeighborsVertex(currentVertex, voxel, neighborsVertex);
                 int index = chunk.Data.IndexAt(x, y, z);
                 float averageWaterLevel = chunk.Data.Water[index].WaterLevel;
@@ -271,10 +244,7 @@ namespace DwarfCorp
 
                 averageWaterLevel = averageWaterLevel / count;
 
-                float averageWaterHeight = (float) averageWaterLevel / 8.0f;
-                float puddleness = 0;
-                Vector2 uv;
-
+                float averageWaterHeight = (float)averageWaterLevel / 8.0f;
                 float foaminess = emptyNeighbors / count;
 
                 if(foaminess <= 0.5f)
@@ -282,57 +252,44 @@ namespace DwarfCorp
                     foaminess = 0.0f;
                 }
 
-                if(totalDepth < 5)
-                {
-                    foaminess = 0.75f;
-                    puddleness = 0;
-                    uv = new Vector2((toReturn[i].Position.X + origin.X) / 80.0f, (toReturn[i].Position.Z + origin.Z) / 80.0f);
-                }
-                else
-                {
-                    uv = new Vector2((toReturn[i].Position.X + origin.X) / 80.0f, (toReturn[i].Position.Z + origin.Z) / 80.0f);
-                }
-                Vector4 bounds = new Vector4(0, 0, 1, 1);
-
+                /*
                 if(chunk.Data.Water[index].IsFalling || !top)
                 {
                     averageWaterHeight = 1.0f;
                 }
+                 */
 
-                if(face == BoxFace.Top)
-                {
-                    toReturn[i] = new ExtendedVertex(toReturn[i].Position + origin + new Vector3(0, (averageWaterHeight * 0.4f - 1.0f), 0),
-                        new Color(foaminess, puddleness, (float) totalDepth / 16.0f, 1.0f),
-                        Color.White,
-                        uv, bounds);
-                }
-                else
-                {
-                    Vector3 offset = Vector3.Zero;
-                    switch(face)
-                    {
-                        case BoxFace.Back:
-                        case BoxFace.Front:
-                            uv = new Vector2((Math.Abs(toReturn[i].Position.X + origin.X) / 80.0f), (Math.Abs(toReturn[i].Position.Y + origin.Y) / 80.0f));
-                            foaminess = 1.0f;
-                            offset = new Vector3(0, -0.5f, 0);
-                            break;
-                        case BoxFace.Right:
-                        case BoxFace.Left:
-                            uv = new Vector2((Math.Abs(toReturn[i].Position.Z + origin.Z) / 80.0f), (Math.Abs(toReturn[i].Position.Y + origin.Y) / 80.0f));
-                            foaminess = 1.0f;
-                            offset = new Vector3(0, -0.5f, 0);
-                            break;
-                        case BoxFace.Top:
-                            offset = new Vector3(0, -0.5f, 0);
-                            break;
-                    }
+                Vector3 pos = vertices[i + startVertex].Position;
+                pos.Y *= averageWaterHeight;
+                pos += origin;
 
-                    toReturn[i] = new ExtendedVertex(toReturn[i].Position + origin + offset, new Color(foaminess, 0.0f, 1.0f, 1.0f), Color.White, uv, bounds);
+                switch (face)
+                {
+                    case BoxFace.Back:
+                    case BoxFace.Front:
+                        vertices[i + startVertex].Set(pos,
+                                                      new Color(foaminess, 0.0f, 1.0f, 1.0f),
+                                                      Color.White,
+                                                      new Vector2(pos.X, pos.Y),
+                                                      new Vector4(0, 0, 1, 1));
+                        break;
+                    case BoxFace.Right:
+                    case BoxFace.Left:
+                        vertices[i + startVertex].Set(pos,
+                                                    new Color(foaminess, 0.0f, 1.0f, 1.0f),
+                                                    Color.White,
+                                                    new Vector2(pos.Z, pos.Y),
+                                                    new Vector4(0, 0, 1, 1));
+                        break;
+                    case BoxFace.Top:
+                        vertices[i + startVertex].Set(pos,
+                                            new Color(foaminess, 0.0f, 1.0f, 1.0f),
+                                            Color.White,
+                                            new Vector2(pos.X, pos.Z),
+                                            new Vector4(0, 0, 1, 1));
+                        break;
                 }
             }
-
-            return toReturn;
         }
     }
 

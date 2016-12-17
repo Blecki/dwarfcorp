@@ -16,12 +16,10 @@ namespace DwarfCorp
     /// </summary>
     public class VoxelListPrimitive : GeometricPrimitive, IDisposable
     {
-        public static ConcurrentDictionary<BoxFace, Vector3> FaceDeltas = new ConcurrentDictionary<BoxFace, Vector3>();
-        public static Dictionary<VoxelVertex, List<Vector3>> VertexNeighbors2D = new Dictionary<VoxelVertex, List<Vector3>>(); 
-        private readonly Dictionary<BoxFace, bool> faceExists = new Dictionary<BoxFace, bool>();
-        private readonly Dictionary<BoxFace, bool> drawFace = new Dictionary<BoxFace, bool>();
-        private readonly List<ExtendedVertex> accumulatedVertices = new List<ExtendedVertex>();
-        private readonly List<short> accumulatedIndices = new List<short>(); 
+        public static Vector3[] FaceDeltas = new Vector3[6];
+        public static List<Vector3>[] VertexNeighbors2D = new List<Vector3>[8];
+        private readonly bool[] faceExists = new bool[6];
+        private readonly bool[] drawFace = new bool[6];
         private bool isRebuilding = false;
         private readonly Mutex rebuildMutex = new Mutex();
         public static bool StaticInitialized = false;
@@ -30,31 +28,31 @@ namespace DwarfCorp
         {
             if(!StaticInitialized)
             {
-                FaceDeltas[BoxFace.Back] = new Vector3(0, 0, 1);
-                FaceDeltas[BoxFace.Front] = new Vector3(0, 0, -1);
-                FaceDeltas[BoxFace.Left] = new Vector3(-1, 0, 0);
-                FaceDeltas[BoxFace.Right] = new Vector3(1, 0, 0);
-                FaceDeltas[BoxFace.Top] = new Vector3(0, 1, 0);
-                FaceDeltas[BoxFace.Bottom] = new Vector3(0, -1, 0);
-                VertexNeighbors2D[VoxelVertex.FrontTopLeft] = new List<Vector3>()
+                FaceDeltas[(int)BoxFace.Back] = new Vector3(0, 0, 1);
+                FaceDeltas[(int)BoxFace.Front] = new Vector3(0, 0, -1);
+                FaceDeltas[(int)BoxFace.Left] = new Vector3(-1, 0, 0);
+                FaceDeltas[(int)BoxFace.Right] = new Vector3(1, 0, 0);
+                FaceDeltas[(int)BoxFace.Top] = new Vector3(0, 1, 0);
+                FaceDeltas[(int)BoxFace.Bottom] = new Vector3(0, -1, 0);
+                VertexNeighbors2D[(int)VoxelVertex.FrontTopLeft] = new List<Vector3>()
                 {
                     new Vector3(-1, 0, 0),
                     new Vector3(-1, 0, 1),
                     new Vector3(0, 0, 1)
                 };
-                VertexNeighbors2D[VoxelVertex.FrontTopRight] = new List<Vector3>()
+                VertexNeighbors2D[(int)VoxelVertex.FrontTopRight] = new List<Vector3>()
                 {
                     new Vector3(0, 0, 1),
                     new Vector3(1, 0, 1),
                     new Vector3(1, 0, 0)
                 };
-                VertexNeighbors2D[VoxelVertex.BackTopLeft] = new List<Vector3>()
+                VertexNeighbors2D[(int)VoxelVertex.BackTopLeft] = new List<Vector3>()
                 {
                     new Vector3(-1, 0, 0),
                     new Vector3(-1, 0, -1),
                     new Vector3(0, 0, -1)
                 };
-                VertexNeighbors2D[VoxelVertex.BackTopRight] = new List<Vector3>()
+                VertexNeighbors2D[(int)VoxelVertex.BackTopRight] = new List<Vector3>()
                 {
                     new Vector3(0, 0, -1),
                     new Vector3(1, 0, -1),
@@ -179,7 +177,7 @@ namespace DwarfCorp
 
                         foreach (VoxelVertex bestKey in top)
                         {
-                            List<Vector3> neighbors = VertexNeighbors2D[bestKey];
+                            List<Vector3> neighbors = VertexNeighbors2D[(int)bestKey];
                             chunk.GetNeighborsSuccessors(neighbors, (int)v.GridPosition.X, (int)v.GridPosition.Y, (int)v.GridPosition.Z, diagNeighbors);
                         
                             bool emptyFound = diagNeighbors.Any(vox => vox.IsEmpty);
@@ -346,12 +344,6 @@ namespace DwarfCorp
                                 break;
                         }
 
-                        if (neighborFace == BoxFace.Back && myRamp == RampType.None &&
-                            neighborRamp == (RampType.TopBackLeft | RampType.TopFrontLeft))
-                        {
-                            Console.Out.Write("Yes");
-                        }
-
                         FaceDrawMap[(int)neighborFace, (int)myRamp, (int)neighborRamp] = (their1 < my1 || their2 < my2 );
                     }
                 }
@@ -409,7 +401,7 @@ namespace DwarfCorp
                                     continue;
                                 }
 
-                                Vector3 delta = FaceDeltas[face];
+                                Vector3 delta = FaceDeltas[(int)face];
                                 faceExists[face] = chunk.IsCellValid(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
                                 faceVisible[face] = true;
 
@@ -476,20 +468,28 @@ namespace DwarfCorp
 
             isRebuilding = true;
             rebuildMutex.ReleaseMutex();
-
-
-            accumulatedVertices.Clear();
-            accumulatedIndices.Clear();
-            faceExists.Clear();
-            drawFace.Clear();
-
+            int[] ambientValues = new int[4];
+            int maxIndex = 0;
+            int maxVertex = 0;
             Voxel v = chunk.MakeVoxel(0, 0, 0);
             Voxel voxelOnFace = chunk.MakeVoxel(0, 0, 0);
             Voxel[] manhattanNeighbors = new Voxel[4];
             BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
-            for(int x = 0; x < chunk.SizeX; x++)
+            Voxel worldVoxel = new Voxel();
+
+            if (Vertices == null)
             {
-                for(int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY); y++)
+                Vertices = new ExtendedVertex[1024];
+            }
+
+            if (Indexes == null)
+            {
+                Indexes = new ushort[512];
+            }
+
+            for (int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, chunk.SizeY); y++)
+            {
+                for(int x = 0; x < chunk.SizeX; x++)
                 {
                     for(int z = 0; z < chunk.SizeZ; z++)
                     {
@@ -516,19 +516,17 @@ namespace DwarfCorp
                             uvs = v.ComputeTransitionTexture(manhattanNeighbors);
                         }
 
-
-                        Voxel worldVoxel = new Voxel();
                         for(int i = 0; i < 6; i++)
                         {
                             BoxFace face = (BoxFace) i;
-                            Vector3 delta = FaceDeltas[face];
-                            faceExists[face] = chunk.IsCellValid(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
-                            drawFace[face] = true;
+                            Vector3 delta = FaceDeltas[(int)face];
+                            faceExists[(int)face] = chunk.IsCellValid(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
+                            drawFace[(int)face] = true;
 
-                            if(faceExists[face])
+                            if(faceExists[(int)face])
                             {
                                 voxelOnFace.GridPosition = new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z);
-                                drawFace[face] =  (voxelOnFace.IsExplored && voxelOnFace.IsEmpty) || !voxelOnFace.IsVisible || 
+                                drawFace[(int)face] =  (voxelOnFace.IsExplored && voxelOnFace.IsEmpty) || !voxelOnFace.IsVisible || 
                                     (voxelOnFace.Type.CanRamp && voxelOnFace.RampType != RampType.None && IsSideFace(face) && 
                                     ShouldDrawFace(face, voxelOnFace.RampType, v.RampType));
 
@@ -536,7 +534,7 @@ namespace DwarfCorp
                             else
                             {
                                 bool success = chunk.Manager.ChunkData.GetNonNullVoxelAtWorldLocation(new Vector3(x + (int) delta.X, y + (int) delta.Y, z + (int) delta.Z) + chunk.Origin, ref worldVoxel);
-                                    drawFace[face] = !success || (worldVoxel.IsExplored && worldVoxel.IsEmpty) || !worldVoxel.IsVisible ||
+                                    drawFace[(int)face] = !success || (worldVoxel.IsExplored && worldVoxel.IsEmpty) || !worldVoxel.IsVisible ||
                                                      (worldVoxel.Type.CanRamp && worldVoxel.RampType != RampType.None &&
                                                       IsSideFace(face) &&
                                                       ShouldDrawFace(face, worldVoxel.RampType, v.RampType));
@@ -547,10 +545,12 @@ namespace DwarfCorp
                         for(int i = 0; i < 6; i++)
                         {
                             BoxFace face = (BoxFace) i;
-                            if(!drawFace[face])
+                            if(!drawFace[(int)face])
                             {
                                 continue;
                             }
+
+                          
                             int faceIndex = 0;
                             int faceCount = 0;
                             int vertexIndex = 0;
@@ -558,12 +558,13 @@ namespace DwarfCorp
                             primitive.GetFace(face, uvs, out faceIndex, out faceCount, out vertexIndex, out vertexCount);
                             Vector2 texScale = uvs.Scales[i];
 
-                            int indexOffset = accumulatedVertices.Count;
+                            int indexOffset = maxVertex;
                             for (int vertOffset = 0; vertOffset < vertexCount; vertOffset++)
                             {
                                 ExtendedVertex vert = primitive.Vertices[vertOffset + vertexIndex];
                                 VoxelVertex bestKey = primitive.Deltas[vertOffset + vertexIndex];
                                 Color color = v.Chunk.Data.GetColor(x, y, z, bestKey);
+                                ambientValues[vertOffset] = color.G;
                                 Vector3 offset = Vector3.Zero;
                                 Vector2 texOffset = Vector2.Zero;
 
@@ -577,31 +578,48 @@ namespace DwarfCorp
                                     }
                                 }
 
-                                ExtendedVertex newVertex = new ExtendedVertex((vert.Position + v.Position + VertexNoise.GetNoiseVectorFromRepeatingTexture(vert.Position + v.Position) + offset),
-                                    color,
-                                    tint,
-                                     uvs.Uvs[vertOffset + vertexIndex] + texOffset, uvs.Bounds[faceIndex / 6]);
-                                accumulatedVertices.Add(newVertex);
+                                if (maxVertex >= Vertices.Length)
+                                {
+                                    ExtendedVertex[] newVertices = new ExtendedVertex[Vertices.Length * 2];
+                                    Vertices.CopyTo(newVertices, 0);
+                                    Vertices = newVertices;
+                                }
+
+
+                                Vertices[maxVertex].Position = vert.Position + v.Position +
+                                                               VertexNoise.GetNoiseVectorFromRepeatingTexture(
+                                                                   vert.Position + v.Position) + offset;
+                                Vertices[maxVertex].Color = color;
+                                Vertices[maxVertex].VertColor = tint;
+                                Vertices[maxVertex].TextureCoordinate = uvs.Uvs[vertOffset + vertexIndex] + texOffset;
+                                Vertices[maxVertex].TextureBounds = uvs.Bounds[faceIndex/6];
+                                maxVertex++;
                             }
 
+                            bool flippedQuad = ambientValues[0] + ambientValues[2] > 
+                                               ambientValues[1] + ambientValues[3];
                             for (int idx = faceIndex; idx < faceCount + faceIndex; idx++)
                             {
-                                int vertexOffset = primitive.Indices[idx];
-                                accumulatedIndices.Add((short)(indexOffset + (vertexOffset - primitive.Indices[faceIndex])));
+                                if (maxIndex >= Indexes.Length)
+                                {
+                                    ushort[] indexes = new ushort[Indexes.Length * 2];
+                                    Indexes.CopyTo(indexes, 0);
+                                    Indexes = indexes;
+                                }
+
+                                ushort vertexOffset = flippedQuad ? primitive.FlippedIndexes[idx] : primitive.Indexes[idx];
+                                ushort vertexOffset0 = flippedQuad? primitive.FlippedIndexes[faceIndex] : primitive.Indexes[faceIndex];
+                                Indexes[maxIndex] =
+                                    (ushort) ((int)indexOffset + (int)((int)vertexOffset - (int)vertexOffset0));
+                                maxIndex++;
                             }
                         }
                     }
                 }
             }
-
-            if (accumulatedIndices.Count > 0 && accumulatedIndices.Count > 0)
-            {
-                Vertices = new ExtendedVertex[accumulatedVertices.Count];
-                accumulatedVertices.CopyTo(Vertices);
-                IndexBuffer = new IndexBuffer(graphics, typeof (short), accumulatedIndices.Count, BufferUsage.WriteOnly);
-                IndexBuffer.SetData(accumulatedIndices.ToArray());
-            }
-            ResetBuffer(graphics);
+            MaxIndex = maxIndex;
+            MaxVertex = maxVertex;
+            GenerateLightmap(PlayState.ChunkManager.ChunkData.Tilemap.Bounds);
             isRebuilding = false;
 
             //chunk.PrimitiveMutex.WaitOne();

@@ -53,7 +53,7 @@ namespace DwarfCorp
         public SpriteSheet SpriteSheet { get; set; }
         public Animation CurrentAnimation { get; set; }
         public OrientMode OrientationType { get; set; }
-
+        public bool DistortPosition { get; set; }
 
         public enum OrientMode
         {
@@ -73,11 +73,12 @@ namespace DwarfCorp
             Animations = new Dictionary<string, Animation>();
             OrientationType = OrientMode.Spherical;
             BillboardRotation = 0.0f;
+            DistortPosition = true;
         }
 
         public Sprite()
         {
-           
+            DistortPosition = true;
         }
 
         public void SetSingleFrameAnimation(Point frame)
@@ -178,7 +179,7 @@ namespace DwarfCorp
                             noTransBill.Translation = Vector3.Zero;
 
                             Matrix worldRot = Matrix.CreateScale(new Vector3(xscale, yscale, zscale)) * rot * noTransBill;
-                            worldRot.Translation = bill.Translation;
+                            worldRot.Translation = DistortPosition ? bill.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(bill.Translation) : bill.Translation;
                             effect.Parameters["xWorld"].SetValue(worldRot);
                         }
                         else
@@ -199,18 +200,22 @@ namespace DwarfCorp
                             }
 
                             Matrix worldRot = Matrix.CreateConstrainedBillboard(GlobalTransform.Translation, camera.Position, axis, null, null);
+                            worldRot.Translation = DistortPosition ? worldRot.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(worldRot.Translation) : worldRot.Translation;
                             effect.Parameters["xWorld"].SetValue(worldRot);
                         }
                     }
                     else
                     {
                         Matrix rotation = Matrix.CreateRotationY(-(float) Math.PI * 0.25f) * Matrix.CreateTranslation(GlobalTransform.Translation);
+                        rotation.Translation = DistortPosition ? rotation.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(rotation.Translation) : rotation.Translation;
                         effect.Parameters["xWorld"].SetValue(rotation);
                     }
                 }
                 else
                 {
-                    effect.Parameters["xWorld"].SetValue(GlobalTransform);
+                    Matrix rotation = GlobalTransform;
+                    rotation.Translation = DistortPosition ? rotation.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(rotation.Translation) : rotation.Translation;
+                    effect.Parameters["xWorld"].SetValue(rotation);
                 }
 
 

@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.IO;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
@@ -111,15 +112,23 @@ namespace DwarfCorp
             public static string star_particle = ProgramData.CreatePath("Particles", "bigstar_particle");
             public static string heart = ProgramData.CreatePath("Particles", "heart");
             public static string fireball = ProgramData.CreatePath("Particles", "fireball");
+            public static string raindrop = ProgramData.CreatePath("Particles", "raindrop");
+            public static string stormclouds = ProgramData.CreatePath("Sky", "stormclouds");
+            public static string snow_particle = ProgramData.CreatePath("Particles", "snow_particle");
         }
         public class Effects
         {
             public static string shadowcircle = ProgramData.CreatePath("Effects", "shadowcircle");
             public static string selection_circle = ProgramData.CreatePath("Effects", "selection_circle");
             public static string slice = ProgramData.CreatePath("Effects", "slice");
+            public static string slash = ProgramData.CreatePath("Effects", "slash");
+            public static string claw = ProgramData.CreatePath("Effects", "claw");
             public static string claws = ProgramData.CreatePath("Effects", "claws");
             public static string flash = ProgramData.CreatePath("Effects", "flash");
             public static string rings = ProgramData.CreatePath("Effects", "ring");
+            public static string bite = ProgramData.CreatePath("Effects", "bite");
+            public static string pierce = ProgramData.CreatePath("Effects", "pierce");
+            public static string hit = ProgramData.CreatePath("Effects", "hit");
         }
 
         public class World
@@ -175,6 +184,20 @@ namespace DwarfCorp
         {
             public class Animals
             {
+                public class Bat
+                {
+                    public static string bat = ProgramData.CreatePath("Entities", "Animals", "bat");
+                    public static string bat_animations = ProgramData.CreatePath("Entities", "Animals", "bat_animation.json");
+                }
+
+                public class Spider
+                {
+                    public static string spider = ProgramData.CreatePath("Entities", "Animals", "Spider", "spider");
+                    public static string spider_animation = ProgramData.CreatePath("Entities", "Animals", "Spider", "spider_animation.json");
+                    public static string webstick = ProgramData.CreatePath("Entities", "Animals", "Spider", "webstick");
+                    public static string webshot = ProgramData.CreatePath("Entities", "Animals", "Spider", "webshot");
+                }
+
                 public class Birds
                 {
                     public static string bird_prefix = ProgramData.CreatePath("Entities", "Animals", "Birds", "bird");
@@ -381,7 +404,7 @@ namespace DwarfCorp
             public static string skygradient = ProgramData.CreatePath("Gradients", "skygradient");
             public static string sungradient = ProgramData.CreatePath("Gradients", "sungradient");
             public static string torchgradient = ProgramData.CreatePath("Gradients", "torchgradient");
-
+            public static string shoregradient = ProgramData.CreatePath("Gradients", "shoregradient");
         }
         public class GUI
         {
@@ -424,22 +447,13 @@ namespace DwarfCorp
         }
         public class Shaders
         {
-#if XNA_BUILD
+
             public static string BloomCombine = ProgramData.CreatePath("Shaders", "BloomCombine");
             public static string BloomExtract = ProgramData.CreatePath("Shaders", "BloomExtract");
             public static string GaussianBlur = ProgramData.CreatePath("Shaders", "GaussianBlur");
             public static string SkySphere = ProgramData.CreatePath("Shaders", "SkySphere");
             public static string TexturedShaders = ProgramData.CreatePath("Shaders", "TexturedShaders");
             public static string FXAA = ProgramData.CreatePath("Shaders", "FXAA");
-#else
-            public static string BloomCombine = ProgramData.CreatePath("Shaders", "BloomCombine_Opengl");
-            public static string BloomExtract = ProgramData.CreatePath("Shaders", "BloomExtract_Opengl");
-            public static string GaussianBlur = ProgramData.CreatePath("Shaders", "GaussianBlur_Opengl");
-            public static string SkySphere = ProgramData.CreatePath("Shaders", "SkySphere_Opengl");
-            public static string TexturedShaders = ProgramData.CreatePath("Shaders", "TexturedShaders_Opengl");
-            public static string FXAA = ProgramData.CreatePath("Shaders", "FXAA");
-#endif
-
         }
         public class Sky
         {

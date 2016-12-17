@@ -214,7 +214,7 @@ namespace DwarfCorp
             {
                 device.SetRenderTarget(Target);
                 device.Clear(ClearOptions.Target, Color.Transparent, 1.0f, 0);
-                batch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp,
+                batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
                     DepthStencilState.None, RasterizerState.CullNone);
                 foreach (KeyValuePair<Frame, Point> framePair in CurrentFrames)
                 {

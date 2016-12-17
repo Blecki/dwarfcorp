@@ -39,6 +39,7 @@ using System.Collections.Concurrent;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -213,6 +214,7 @@ namespace DwarfCorp
     /// Class is a pair of type T. The pair is commutative, so Pair(A, B) == Pair(B, A)
     /// </summary>
     /// <typeparam name="T">The type of the pair.</typeparam>
+    [JsonObject(IsReference = false)]
     public class Pair<T>
     {
         public override int GetHashCode()

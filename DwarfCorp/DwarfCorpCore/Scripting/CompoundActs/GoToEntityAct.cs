@@ -128,6 +128,8 @@ namespace DwarfCorp
 
         public IEnumerable<Status> TrackMovingTarget()
         {
+            int maxFailures = 10;
+            int currentFailures = 0;
             while (true)
             {
                 Creature.AI.Blackboard.Erase("EntityVoxel");
@@ -174,7 +176,16 @@ namespace DwarfCorp
 
                 if (!planSucceeded)
                 {
+                    currentFailures++;
                     yield return Act.Status.Running;
+                    Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+                    Creature.Physics.Velocity = Vector3.Zero;
+                    if (currentFailures > maxFailures)
+                    {
+                        yield return Act.Status.Fail;
+                        yield break;
+                    }
+
                     continue;
                 }
 

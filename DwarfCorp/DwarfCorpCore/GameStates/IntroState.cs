@@ -84,7 +84,7 @@ namespace DwarfCorp.GameStates
         public override void Render(DwarfTime gameTime)
         {
 
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied);
 
             Vector2 screenCenter = new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - Logo.Width / 2, Game.GraphicsDevice.Viewport.Height / 2 - Logo.Height / 2);
             switch(Transitioning)

@@ -273,13 +273,24 @@ namespace DwarfCorp
 
         public Voxel GetVoxelAbove()
         {
-            if (GridPosition.Y >= Chunk.SizeY)
+            if (Chunk == null || GridPosition.Y >= Chunk.SizeY - 1)
             {
                 return null;
             }
             return
                 Chunk.MakeVoxel((int) GridPosition.X, (int) GridPosition.Y + 1, (int) GridPosition.Z);
         }
+
+        public Voxel GetVoxelBelow()
+        {
+            if (GridPosition.Y <=0)
+            {
+                return null;
+            }
+            return
+                Chunk.MakeVoxel((int)GridPosition.X, (int)GridPosition.Y - 1, (int)GridPosition.Z);
+        }
+
 
         public bool IsBottomEmpty()
         {

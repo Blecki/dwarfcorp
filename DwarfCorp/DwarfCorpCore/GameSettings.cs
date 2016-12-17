@@ -54,9 +54,6 @@ namespace DwarfCorp
             public bool DrawSkyReflected = true;
             public bool DrawChunksReflected = true;
             public bool DrawEntityReflected = true;
-            public bool DrawSkyRefracted = false;
-            public bool DrawChunksRefracted = true;
-            public bool DrawEntityRefracted = true;
             public bool CalculateSunlight = true;
             public bool AmbientOcclusion = true;
             public bool CalculateRamps = true;
@@ -65,7 +62,7 @@ namespace DwarfCorp
             public bool EnableEdgeScroll = false;
             public int ChunkWidth = 24;
             public int ChunkHeight = 48;
-            public float WorldScale = 8.0f;
+            public float WorldScale = 2.0f;
             public bool DisplayIntro = true;
             public float MasterVolume = 1.0f;
             public float SoundEffectVolume = 1.0f;
@@ -85,6 +82,8 @@ namespace DwarfCorp
             public float VisibilityUpdateTime = 0.1f;
             public float ChunkGenerateTime = 0.5f;
             public bool FogofWar = true;
+            public bool UseDynamicShadows = false;
+            public bool UseLightmaps = false;
         }
 
         public static Settings Default { get; set; }
@@ -106,7 +105,18 @@ namespace DwarfCorp
 
         public static void Save(string file)
         {
-            FileUtils.SaveBasicJson(Default, file);
+            try
+            {
+                FileUtils.SaveBasicJson(Default, file);
+            }
+            catch (Exception exception)
+            {
+                Console.Error.WriteLine("Failed to save settings: {0}", exception.ToString());
+                if (exception.InnerException != null)
+                {
+                    Console.Error.WriteLine("Inner exception: {0}", exception.InnerException.ToString()); 
+                }
+            }
         }
 
         public static void Load(string file)
@@ -117,9 +127,21 @@ namespace DwarfCorp
             }
             catch (FileNotFoundException fileLoad)
             {
+                Console.Error.WriteLine("Settings file does not exist. Using default settings.");
                 Default = new Settings();
                 Save();
             }
+            catch (Exception otherException)
+            { 
+                Console.Error.WriteLine("Failed to load settings file {0} : {1}", file, otherException.ToString());
+                if (otherException.InnerException != null)
+                {
+                    Console.Error.WriteLine("Inner exception: {0}", otherException.InnerException.ToString());
+                }
+                Default = new Settings();
+                Save();
+            }
+            
         }
     }
 }

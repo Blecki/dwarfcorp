@@ -44,53 +44,6 @@ namespace DwarfCorp
 {
 
     [JsonObject(IsReference = true)]
-    public class DeerAI : CreatureAI
-    {
-        public DeerAI()
-        {
-
-        }
-
-        public DeerAI(Creature creature, string name, EnemySensor sensor, PlanService planService) :
-            base(creature, name, sensor, planService)
-        {
-
-        }
-
-
-        public IEnumerable<Act.Status> GoToRandomTarget(float radius)
-        {
-            Vector3 randomVector = MathFunctions.RandVector3Cube()*radius;
-            Vector3 target = Physics.ClampToBounds(Position + randomVector);
-            float dist = (target - Position).Length();
-            Timer timout = new Timer(3.0f, false);
-            while (dist > 3.0f)
-            {
-                timout.Update(DwarfTime.LastTime);
-                if (timout.HasTriggered)
-                {
-                    break;
-                }
-                Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, target, Position);
-                output.Normalize();
-                output *= 10;
-                Physics.ApplyForce(new Vector3(output.X, 0.0f, output.Z), DwarfTime.Dt);
-                dist = (target - Position).Length();
-                yield return Act.Status.Running;
-            }
-            yield return Act.Status.Success;
-        }
-
-    // Overrides the default ActOnIdle so we can
-        // have the bird act in any way we wish.
-        public override Task ActOnIdle()
-        {
-            return
-                new ActWrapperTask(new Sequence(new Wrap(() => GoToRandomTarget(10.0f)), new StopAct(this), new Wait(5.0f)));
-        }
-    }
-
-    [JsonObject(IsReference = true)]
     public class Deer : Creature
     {
         private float ANIM_SPEED = 5.0f;
@@ -173,9 +126,9 @@ namespace DwarfCorp
             Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
 
             // Add AI
-            AI = new DeerAI(this, "Deer AI", Sensors, PlanService);
+            AI = new PacingCreatureAI(this, "Deer AI", Sensors, PlanService);
 
-            Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick, ContentPaths.Effects.flash)};
+            Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.pick, ContentPaths.Effects.hit)};
 
             Inventory = new Inventory("Inventory", Physics)
             {

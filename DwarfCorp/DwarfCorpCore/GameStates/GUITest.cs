@@ -175,7 +175,7 @@ namespace DwarfCorp.GameStates
         private void DrawGUI(DwarfTime gameTime, float dx)
         {
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, null, null);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
             GUI.PostRender(gameTime);

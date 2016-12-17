@@ -161,7 +161,7 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Elf Bow", 0.1f, 1.0f, 5.0f, ContentPaths.Audio.pluck, ContentPaths.Effects.flash)
+                new Attack("Elf Bow", 0.1f, 1.0f, 5.0f, ContentPaths.Audio.pluck, ContentPaths.Effects.hit)
                 {
                     Mode = Attack.AttackMode.Ranged,
                     LaunchSpeed = 10.0f,

@@ -231,14 +231,15 @@ namespace DwarfCorp
 
             if(IsVisible && !IsMinimized && GUI.RootComponent.IsVisible)
             {
-                Viewport originalViewport = PlayState.GraphicsDevice.Viewport;
+                
                 Camera.Update(time, PlayState.ChunkManager);
                 Camera.Target = PlayState.Camera.Target + Vector3.Up * 50;
                 Camera.Phi = -(float) Math.PI * 0.5f;
                 Camera.Theta = PlayState.Camera.Theta;
                 Camera.UpdateProjectionMatrix();
-
+                
                 PlayState.GraphicsDevice.SetRenderTarget(RenderTarget);
+                
                 PlayState.GraphicsDevice.Clear(ClearOptions.Target, Color.Black, 0, 0);
                 PlayState.DefaultShader.Parameters["xView"].SetValue(Camera.ViewMatrix);
                 PlayState.DefaultShader.Parameters["xEnableFog"].SetValue(0);
@@ -246,18 +247,17 @@ namespace DwarfCorp
                 PlayState.DefaultShader.Parameters["xProjection"].SetValue(Camera.ProjectionMatrix);
                 PlayState.DefaultShader.CurrentTechnique = PlayState.DefaultShader.Techniques["Textured_colorscale"];
 
-                PlayState.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+                PlayState.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
 
                 PlayState.ChunkManager.RenderAll(Camera, time, PlayState.GraphicsDevice, PlayState.DefaultShader, Matrix.Identity, ColorMap);
                 PlayState.WaterRenderer.DrawWaterFlat(PlayState.GraphicsDevice, Camera.ViewMatrix, Camera.ProjectionMatrix, PlayState.DefaultShader, PlayState.ChunkManager);
-
-
                 PlayState.GraphicsDevice.Textures[0] = null;
                 PlayState.GraphicsDevice.Indices = null;
                 PlayState.GraphicsDevice.SetVertexBuffer(null);
+
                 PlayState.DefaultShader.Parameters["xEnableFog"].SetValue(1);
 
-                DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, RasterizerState.CullNone);
+                DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, null, RasterizerState.CullNone);
                 Viewport viewPort = new Viewport(RenderTarget.Bounds);
                 foreach(MinimapIcon icon in PlayState.ComponentManager.RootComponent.GetChildrenOfTypeRecursive<MinimapIcon>())
                 {
@@ -271,17 +271,19 @@ namespace DwarfCorp
 
                     if(RenderTarget.Bounds.Contains((int) screenPos.X, (int) screenPos.Y))
                     {
-                        sprites.Draw(icon.Icon.Image, new Vector2(screenPos.X, screenPos.Y), icon.Icon.SourceRect, Color.White, 0.0f, new Vector2(icon.Icon.SourceRect.Width / 2.0f, icon.Icon.SourceRect.Height / 2.0f), icon.IconScale, SpriteEffects.None, 0);
+                        DwarfGame.SpriteBatch.Draw(icon.Icon.Image, new Vector2(screenPos.X, screenPos.Y), icon.Icon.SourceRect, Color.White, 0.0f, new Vector2(icon.Icon.SourceRect.Width / 2.0f, icon.Icon.SourceRect.Height / 2.0f), icon.IconScale, SpriteEffects.None, 0);
                     }
                 }
 
          
-                sprites.End();
-                PlayState.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+                DwarfGame.SpriteBatch.End();
+
+                PlayState.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
                 PlayState.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                 PlayState.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
                 PlayState.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
                 PlayState.GraphicsDevice.SetRenderTarget(null);
+
                 
             }
 

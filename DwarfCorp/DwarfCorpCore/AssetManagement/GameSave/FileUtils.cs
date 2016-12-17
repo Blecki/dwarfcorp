@@ -75,15 +75,11 @@ namespace DwarfCorp
 
         public static bool SaveBinary<T>(T obj, string filepath)
         {
-
             IFormatter formatter = new BinaryFormatter();
             Stream stream = new FileStream(filepath, FileMode.Create, FileAccess.Write, FileShare.None);
             formatter.Serialize(stream, obj);
             stream.Close();
-
-
             return true;
-
         }
 
 

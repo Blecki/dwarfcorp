@@ -90,13 +90,15 @@ namespace DwarfCorp
             RegisterEntity("Crate", (position, data) => new Crate(position));
             RegisterEntity("Balloon", (position, data) => CreateBalloon(position + new Vector3(0, 1000, 0), position, PlayState.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, null, PlayState.PlayerFaction));
             RegisterEntity("Work Pile", (position, data) => new WorkPile(position));
-            RegisterEntity("Pine Tree", (position, data) => new Tree(position, "pine", data.GetData("Scale", 1.0f)));
-            RegisterEntity("Snow Pine Tree", (position, data) => new Tree(position, "snowpine", data.GetData("Scale", 1.0f)));
-            RegisterEntity("Palm Tree", (position, data) => new Tree(position, "palm", data.GetData("Scale", 1.0f)));
+            RegisterEntity("Pine Tree", (position, data) => new Tree(position, "pine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f)));
+            RegisterEntity("Snow Pine Tree", (position, data) => new Tree(position, "snowpine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f)));
+            RegisterEntity("Palm Tree", (position, data) => new Tree(position, "palm", ResourceLibrary.ResourceType.Coconut, data.GetData("Scale", 1.0f)));
             RegisterEntity("Cactus", (position, data) => new Cactus(position, "cactus", data.GetData("Scale", 1.0f)));
             RegisterEntity("Berry Bush", (position, data) => new Bush(position, "berrybush", data.GetData("Scale", 1.0f)));
             RegisterEntity("Bird", (position, data) => new Bird(ContentPaths.Entities.Animals.Birds.GetRandomBird(), position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Bird"));
+            RegisterEntity("Bat", (position, data) => new Bat(position));
             RegisterEntity("Scorpion", (position, data) => new Scorpion(ContentPaths.Entities.Animals.Scorpion.scorption_animation, position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Scorpion"));
+            RegisterEntity("Spider", (position, data) => new Spider(ContentPaths.Entities.Animals.Spider.spider_animation, position));
             RegisterEntity("Frog", (position, data) => new Frog(ContentPaths.Entities.Animals.Frog.frog0_animation, position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Frog"));
             RegisterEntity("Tree Frog", (position, data) => new Frog(ContentPaths.Entities.Animals.Frog.frog1_animation, position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Frog"));
             RegisterEntity("Brown Rabbit", (position, data) => new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit0_animation, position, PlayState.ComponentManager, PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Brown Rabbit"));
@@ -132,6 +134,7 @@ namespace DwarfCorp
             RegisterEntity("Elf", (position, data) => GenerateElf(position, PlayState.ComponentManager.Factions.Factions["Elf"], "Elf"));
             RegisterEntity("Demon", (position, data) => GenerateDemon(position, PlayState.ComponentManager.Factions.Factions["Demon"], "Demon"));
             RegisterEntity("Arrow", (position, data) => new ArrowProjectile(position, data.GetData("Velocity", Vector3.Up*10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
+            RegisterEntity("Web", (position, data) => new WebProjectile(position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
             RegisterEntity("Fireball", (position, data) => new FireballProjectile(position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
             RegisterEntity("Fairy", (position, data) => new Fairy("Player", position));
             RegisterEntity("Target", (position, data) => new Target(position));
@@ -153,6 +156,14 @@ namespace DwarfCorp
             RegisterEntity("RandTrinket", (position, data) => CreateRandomTrinket(position));
             RegisterEntity("RandFood", (position, data) => CreateRandomFood(position));
             RegisterEntity("Turret", (position, data) => new TurretTrap(position, PlayState.PlayerFaction));
+            RegisterEntity("Snow Cloud", (position, data) => new Weather.Cloud(0.1f, 50, 40, position) {TypeofStorm = Weather.StormType.SnowStorm});
+            RegisterEntity("Rain Cloud", (position, data) => new Weather.Cloud(0.1f, 50, 40, position) { TypeofStorm = Weather.StormType.RainStorm });
+            RegisterEntity("Storm", (position, data) =>
+            {
+                Weather.CreateForecast(3); 
+                Weather.CreateStorm(MathFunctions.RandVector3Cube() * 10, MathFunctions.Rand(0.05f, 1.0f));
+                                                            return new Weather.Cloud(0.1f, 50, 40, position);
+            });
         }
 
         private static GameComponent CreateRandomFood(Vector3 position)
@@ -252,7 +263,7 @@ namespace DwarfCorp
         {
             if (!GameSettings.Default.GrassMotes)
             {
-                return null;
+                return new List<InstanceData>();
             }
 
             try

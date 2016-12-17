@@ -280,6 +280,13 @@ namespace DwarfCorp
             LocalTransform = newTransform;
         }
 
+        public void SetPosition(Vector3 pos)
+        {
+            Matrix tf = LocalTransform;
+            tf.Translation = pos;
+            LocalTransform = tf;
+        }
+
         public void CheckLiquids(ChunkManager chunks, float dt)
         {
             bool success = chunks.ChunkData.GetVoxel(GlobalTransform.Translation + Vector3.Up * 0.5f, ref CurrentVoxel);

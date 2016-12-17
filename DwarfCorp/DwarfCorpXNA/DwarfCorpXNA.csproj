@@ -95,6 +95,8 @@
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Core">
       <Private>False</Private>
@@ -245,6 +247,9 @@
     <Compile Include="..\DwarfCorpCore\DwarfGame.cs">
       <Link>DwarfGame.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Animals\Bat.cs">
+      <Link>Entities\Animals\Bat.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Animals\Bird.cs">
       <Link>Entities\Animals\Bird.cs</Link>
     </Compile>
@@ -262,6 +267,9 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\Animals\Scorpion.cs">
       <Link>Entities\Animals\Scorpion.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Entities\Animals\Spider.cs">
+      <Link>Entities\Animals\Spider.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\Entities\BalloonAI.cs">
       <Link>Entities\BalloonAI.cs</Link>
@@ -382,6 +390,9 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\GameStates\CompanyMakerState.cs">
       <Link>GameStates\CompanyMakerState.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\GameStates\CreditsState.cs">
+      <Link>GameStates\CreditsState.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\GameStates\DiplomacyState.cs">
       <Link>GameStates\DiplomacyState.cs</Link>
@@ -1358,6 +1369,9 @@
     <Compile Include="..\DwarfCorpCore\World\VegetationData.cs">
       <Link>World\VegetationData.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\World\Weather.cs">
+      <Link>World\Weather.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\World\WorldTime.cs">
       <Link>World\WorldTime.cs</Link>
     </Compile>
@@ -1368,6 +1382,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
+    <Content Include="LumenWorks.Framework.IO.dll" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
@@ -1411,11 +1426,24 @@
       <Name>LibNoise</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>7</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <PropertyGroup>
     <PreBuildEvent>(if exist "$(TargetDir)*old.pdb" del "$(TargetDir)*old.pdb") &amp; (if exist "$(TargetDir)*.pdb" ren "$(TargetDir)*.pdb" *.old.pdb)</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>MKDIR $(SolutionDir)DwarfCorpFNA\bin\$(ConfigurationName)\Content  &amp; XCOPY $(ProjectDir)$(OutDir)Content $(SolutionDir)DwarfCorpFNA\bin\$(ConfigurationName)\Content /Y /E</PostBuildEvent>
   </PropertyGroup>
   <!--
       To modify your build process, add your task inside one of the targets below and uncomment it. 

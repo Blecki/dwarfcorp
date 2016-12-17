@@ -86,7 +86,6 @@ namespace DwarfCorp
             Width = width;
             Height = height;
             CreateVerticies(Color.White, tint);
-            ResetBuffer(device);
         }
 
         public void ResetColor(Color color, Color tint, GraphicsDevice graphics)
@@ -102,9 +101,12 @@ namespace DwarfCorp
                 Vertices[i].TextureCoordinate = UVs.UVs[i];
                 Vertices[i].TextureBounds = UVs.Bounds;
             }
-
-         
-            VertexBuffer.SetData(Vertices);
+            if (VertexBuffer == null)
+                ResetBuffer(GameState.Game.GraphicsDevice);
+            else
+            {
+                VertexBuffer.SetData(Vertices);
+            }
         }
 
         public void CreateVerticies(Color color, Color vertColor)
@@ -122,12 +124,11 @@ namespace DwarfCorp
                 new ExtendedVertex(btmRightFront, color, vertColor,UVs.UVs[3], UVs.Bounds) // 3
             };
 
-            IndexBuffer = new IndexBuffer(GameState.Game.GraphicsDevice, typeof (short), 6, BufferUsage.None);
-            IndexBuffer.SetData(new short[]
+            Indexes = new ushort[]
             {
                 1, 0, 2,
                 1, 2, 3
-            });
+            };
         }
     }
 

@@ -84,9 +84,10 @@ namespace DwarfCorp
         public bool HasLighting = true;
         public bool RotatesWithVelocity = false;
         [JsonIgnore]
-        public BlendState Blend = BlendState.AlphaBlend;
+        public BlendState Blend = BlendState.NonPremultiplied;
 
         public bool EmitsLight = false;
+        public bool UseManualControl = false;
 
         public object Clone()
         {
@@ -132,6 +133,7 @@ namespace DwarfCorp
         public Timer TriggerTimer { get; set; }
         private static Camera _camera = null;
 
+
         [OnDeserialized]
         protected void OnDeserialized(System.Runtime.Serialization.StreamingContext context)
         {
@@ -157,7 +159,7 @@ namespace DwarfCorp
 
         public ParticleEmitter() : base()
         {
-           
+
         }
 
         public ParticleEmitter(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, EmitterData emitterData) :
@@ -169,7 +171,6 @@ namespace DwarfCorp
             {
                 return;
             }
-
             Data = emitterData;
             maxParticles = Data.MaxParticles;
             Sprites = new FixedInstanceArray(name, Data.Animation.Primitives[0], emitterData.Texture, Data.MaxParticles, Data.Blend);
@@ -194,8 +195,6 @@ namespace DwarfCorp
             {
                 if(Particles.Count < Data.MaxParticles)
                 {
-                    Particle toAdd = new Particle();
-
                     bool sampleFound = false;
 
                     Vector3 sample = new Vector3(99999, 99999, 9999);
@@ -211,24 +210,11 @@ namespace DwarfCorp
                     }
 
 
-                    toAdd.Position = sample + origin;
-                    toAdd.Velocity = (sample);
-                    toAdd.Velocity.Normalize();
-                    toAdd.Velocity *= Data.EmissionSpeed;
-
-                    toAdd.Scale = Rand(Data.MinScale, Data.MaxScale);
-                    toAdd.Angle = Rand(Data.MinAngle, Data.MaxAngle);
-                    toAdd.AngularVelocity = Rand(Data.MinAngular, Data.MaxAngular);
-                    toAdd.LifeRemaining = 1.0f;
-                    toAdd.Tint = tint;
-                    toAdd.InstanceData = new InstanceData(Matrix.Identity, toAdd.Tint, true);
-
-                    Particles.Add(toAdd);
-
-                    if(toAdd.InstanceData != null)
-                    {
-                        Sprites.Add(toAdd.InstanceData);
-                    }
+                    Vector3 position = sample + origin;
+                    Vector3 velocity = (sample);
+                    velocity.Normalize();
+                    velocity *= Data.EmissionSpeed;
+                    CreateParticle(position, velocity, tint);
                 }
             }
         }
@@ -250,10 +236,40 @@ namespace DwarfCorp
             }
         }
 
+        
+
         public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
             Sprites.Render(graphicsDevice, effect, camera, !renderingForWater);
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+        }
+
+        public Particle CreateParticle(Vector3 pos, Vector3 velocity, Color tint)
+        {
+            Particle toAdd = new Particle
+            {
+                Velocity = velocity,
+                Scale = Rand(Data.MinScale, Data.MaxScale),
+                Angle = Rand(Data.MinAngle, Data.MaxAngle),
+                AngularVelocity = Rand(Data.MinAngular, Data.MaxAngular),
+                LifeRemaining = 1.0f,
+                Tint = tint,
+                Position = pos
+            };
+            toAdd.InstanceData = new InstanceData(Matrix.Identity, toAdd.Tint, true);
+
+            Particles.Add(toAdd);
+
+            if (toAdd.InstanceData != null)
+            {
+                Sprites.Add(toAdd.InstanceData);
+            }
+            return toAdd;
+        }
+
+        public void RemoveParticle(Particle p)
+        {
+            p.LifeRemaining = -1;
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
@@ -304,7 +320,11 @@ namespace DwarfCorp
                 }
 
 
-                p.LifeRemaining -= Data.ParticleDecay * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (!Data.UseManualControl)
+                {
+                    p.LifeRemaining -= Data.ParticleDecay*(float) gameTime.ElapsedGameTime.TotalSeconds;
+                }
+
                 p.Scale += Data.GrowthSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 p.Scale = Math.Max(p.Scale, 0.0f);
@@ -344,7 +364,7 @@ namespace DwarfCorp
                 if(p.LifeRemaining < 0)
                 {
                     if(p.InstanceData != null)
-                    {//
+                    {
                         p.InstanceData.ShouldDraw = false;
                         p.InstanceData.Transform = Matrix.CreateTranslation(camera.Position + new Vector3(-1000, -1000, -1000));
                         Sprites.Remove(p.InstanceData);

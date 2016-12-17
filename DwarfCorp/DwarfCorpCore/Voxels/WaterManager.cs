@@ -92,7 +92,7 @@ namespace DwarfCorp
         public WaterManager(ChunkManager chunks)
         {
             Chunks = chunks;
-            EvaporationLevel = 0;
+            EvaporationLevel = 1;
             Splashes = new ConcurrentQueue<SplashType>();
             Transfers = new ConcurrentQueue<Transfer>();
             splashNoiseLimiter["splash2"] = new Timer(0.1f, false);
@@ -331,7 +331,7 @@ namespace DwarfCorp
                 int z = (int) gridCoord.Z;
                 Vector3 worldPos = gridCoord + chunk.Origin;
 
-                if (chunk.Data.Water[idx].WaterLevel <= EvaporationLevel)
+                if (chunk.Data.Water[idx].WaterLevel <= EvaporationLevel && MathFunctions.RandEvent(0.01f))
                 {
                     if (chunk.Data.Water[idx].WaterLevel > 1)
                     {

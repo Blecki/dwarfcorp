@@ -163,7 +163,7 @@ namespace DwarfCorp
     
         public Diplomacy.Politics Politics
         {
-            get { return PlayState.Diplomacy.GetPolitics(PlayState.PlayerFaction, Faction); }
+            get { return PlayState.ComponentManager.Diplomacy.GetPolitics(PlayState.PlayerFaction, Faction); }
         }
         public Button BackButton { get; set; }
         public Faction.TradeEnvoy Envoy { get; set; }
@@ -596,7 +596,7 @@ namespace DwarfCorp
 
         private IEnumerable<SpeechNode> WhatDoYouThink()
         {
-            Diplomacy.Politics p = PlayState.Diplomacy.GetPolitics(Faction, PlayerFation);
+            Diplomacy.Politics p = PlayState.ComponentManager.Diplomacy.GetPolitics(Faction, PlayerFation);
             Relationship r = p.GetCurrentRelationship();
             string relationship = "So far, our relationship has been " + r;
 
@@ -768,7 +768,7 @@ namespace DwarfCorp
 
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
 
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, rasterizerState);
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap, DepthStencilState.None, rasterizerState);
 
             Drawer2D.FillRect(DwarfGame.SpriteBatch, Game.GraphicsDevice.Viewport.Bounds, new Color(0, 0, 0, 150));
 

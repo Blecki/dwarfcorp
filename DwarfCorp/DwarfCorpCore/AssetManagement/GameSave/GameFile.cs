@@ -100,12 +100,13 @@ namespace DwarfCorp
                     TimeOfDay = PlayState.Sky.TimeOfDay,
                     ChunkHeight = PlayState.ChunkHeight,
                     ChunkWidth = PlayState.ChunkWidth,
-                    GameID = id
+                    GameID = id,
+                    Time = PlayState.Time
                 },
                 Camera = PlayState.Camera,
                 Components = PlayState.ComponentManager,
                 ChunkData = new List<ChunkFile>(),
-                GameID = id
+                GameID = id,
             };
 
 
@@ -168,6 +169,7 @@ namespace DwarfCorp
                 string[] screenshots = SaveData.GetFilesInDirectory(filePath, false, "png", "png");
                 string[] metaFiles = SaveData.GetFilesInDirectory(filePath, isCompressed, GameFile.MetaData.CompressedExtension, GameFile.MetaData.Extension);
                 string[] cameraFiles = SaveData.GetFilesInDirectory(filePath, false, "json", "json");
+
                 if(metaFiles.Length > 0)
                 {
                     Data.Metadata = new MetaData(metaFiles[0], isCompressed);
@@ -186,7 +188,6 @@ namespace DwarfCorp
                 {
                     return false;
                 }
-
 
                 string[] chunkDirs = System.IO.Directory.GetDirectories(filePath, "Chunks");
 
@@ -231,7 +232,7 @@ namespace DwarfCorp
             public int ChunkHeight { get; set; }
             public float TimeOfDay { get; set; }
             public int GameID { get; set; }
-
+            public WorldTime Time { get; set; }
             public new static string Extension = "meta";
             public new static string CompressedExtension = "zmeta";
 
@@ -254,6 +255,7 @@ namespace DwarfCorp
                 TimeOfDay = file.TimeOfDay;
                 GameID = file.GameID;
                 OverworldFile = file.OverworldFile;
+                Time = file.Time;
             }
 
             public  bool ReadFile(string filePath, bool isCompressed)

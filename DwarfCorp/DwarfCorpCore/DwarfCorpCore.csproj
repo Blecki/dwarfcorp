@@ -43,6 +43,9 @@
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LumenWorks.Framework.IO">
+      <HintPath>..\DwarfCorpXNA\LumenWorks.Framework.IO.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
@@ -106,11 +109,13 @@
     <Compile Include="Components\Systems\Message.cs" />
     <Compile Include="ControlSettings.cs" />
     <Compile Include="DwarfGame.cs" />
+    <Compile Include="Entities\Animals\Bat.cs" />
     <Compile Include="Entities\Animals\Bird.cs" />
     <Compile Include="Entities\Animals\BirdAI.cs" />
     <Compile Include="Entities\Animals\Deer.cs" />
     <Compile Include="Entities\Animals\Frog.cs" />
     <Compile Include="Entities\Animals\Rabbit.cs" />
+    <Compile Include="Entities\Animals\Spider.cs" />
     <Compile Include="Entities\Animals\Scorpion.cs" />
     <Compile Include="Entities\BalloonAI.cs" />
     <Compile Include="Entities\Dwarves\Dwarf.cs" />
@@ -152,6 +157,7 @@
     <Compile Include="Entities\Traps\TurretTrap.cs" />
     <Compile Include="GameSettings.cs" />
     <Compile Include="GameStates\CompanyMakerState.cs" />
+    <Compile Include="GameStates\CreditsState.cs" />
     <Compile Include="GameStates\DiplomacyState.cs" />
     <Compile Include="GameStates\EconomyState.cs" />
     <Compile Include="GameStates\GameLoaderState.cs" />
@@ -478,6 +484,7 @@
     <Compile Include="World\FaunaData.cs" />
     <Compile Include="World\Overworld.cs" />
     <Compile Include="World\VegetationData.cs" />
+    <Compile Include="World\Weather.cs" />
     <Compile Include="World\WorldTime.cs" />
   </ItemGroup>
   <ItemGroup>

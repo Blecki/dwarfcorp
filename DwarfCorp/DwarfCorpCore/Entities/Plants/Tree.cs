@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -148,7 +149,7 @@ namespace DwarfCorp
         public ParticleTrigger Particles { get; set; }
         public Tree() { }
 
-        public Tree(Vector3 position, string asset, float treeSize) :
+        public Tree(Vector3 position, string asset, ResourceLibrary.ResourceType seed, float treeSize) :
             base("Tree", PlayState.ComponentManager.RootComponent, Matrix.Identity, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), new Vector3(treeSize * 0.5f, treeSize * 0.25f, treeSize * 0.5f))
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
@@ -169,7 +170,7 @@ namespace DwarfCorp
             Tags.Add("Vegetation");
             Tags.Add("EmitsWood");
 
-            new MinimapIcon(this, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 1, 0));
+            //new MinimapIcon(this, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 1, 0));
             Voxel voxelUnder = new Voxel();
 
             if (PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
@@ -181,7 +182,7 @@ namespace DwarfCorp
             {
                 Resources = new ResourceContainer
                 {
-                    MaxResources = (int)(treeSize * 10)
+                    MaxResources = 500
                 }
             };
 
@@ -189,6 +190,13 @@ namespace DwarfCorp
             {
                 NumResources = (int)(treeSize * 10),
                 ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Wood]
+            });
+
+
+            inventory.Resources.AddResource(new ResourceAmount()
+            {
+                NumResources = (int)(treeSize * 2),
+                ResourceType = ResourceLibrary.Resources[seed]
             });
 
 

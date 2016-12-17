@@ -32,7 +32,7 @@ namespace DwarfCorp
             new VertexElement(32, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 2),
             new VertexElement(48, VertexElementFormat.Vector4, VertexElementUsage.BlendWeight, 3),
             //Colour Data
-            new VertexElement(64, VertexElementFormat.Color, VertexElementUsage.Color, 1)
+            new VertexElement(64, VertexElementFormat.Color, VertexElementUsage.Color, 2)
             );
     }
 

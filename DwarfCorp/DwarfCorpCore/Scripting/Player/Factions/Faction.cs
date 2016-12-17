@@ -163,7 +163,7 @@ namespace DwarfCorp
             Threats = new List<Creature>();
             Minions = new List<CreatureAI>();
             SelectedMinions = new List<CreatureAI>();
-            TaskManager = new TaskManager(this);
+            TaskManager = new TaskManager();
             Stockpiles = new List<Stockpile>();
             DigDesignations = new List<BuildOrder>();
             GuardDesignations = new List<BuildOrder>();

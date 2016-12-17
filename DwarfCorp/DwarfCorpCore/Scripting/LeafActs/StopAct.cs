@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -54,17 +55,9 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            while(true)
-            {
-                if(Agent.Velocity.LengthSquared() < 1.5f)
-                {
-                    yield return Status.Success;
-                    break;
-                }
-
-                Agent.Velocity /= StopForce;
-                yield return Status.Running;
-            }
+            Agent.Velocity = Vector3.Zero;
+            Agent.Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
+            yield return Status.Success;
         }
     }
 

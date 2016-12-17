@@ -37,7 +37,6 @@ namespace DwarfCorp
             VertColors = vertColors;
             Height = height;
             CreateVerticies(Color.White);
-            ResetBuffer(device);
             Texture = spriteSheet;
         }
 
@@ -51,7 +50,7 @@ namespace DwarfCorp
             Vector3 btmLeftFront = new Vector3(-0.5f * Width, -0.5f * Height, 0.0f);
             Vector3 btmRightFront = new Vector3(0.5f * Width, -0.5f * Height, 0.0f);
 
-            short[] indices = new short[RelativeTransforms.Count * 6];
+            Indexes = new ushort[RelativeTransforms.Count * 6];
 
             for(int i = 0; i < RelativeTransforms.Count; i++)
             {
@@ -63,16 +62,14 @@ namespace DwarfCorp
 
 
                 int indOffset = i*6;
-                indices[indOffset + 0] = (short)(vertOffset + 1);
-                indices[indOffset + 1] = (short)(vertOffset + 0);
-                indices[indOffset + 2] = (short)(vertOffset + 2);
-                indices[indOffset + 3] = (short)(vertOffset + 1);
-                indices[indOffset + 4] = (short)(vertOffset + 2);
-                indices[indOffset + 5] = (short)(vertOffset + 3);
+                Indexes[indOffset + 0] = (ushort)(vertOffset + 1);
+                Indexes[indOffset + 1] = (ushort)(vertOffset + 0);
+                Indexes[indOffset + 2] = (ushort)(vertOffset + 2);
+                Indexes[indOffset + 3] = (ushort)(vertOffset + 1);
+                Indexes[indOffset + 4] = (ushort)(vertOffset + 2);
+                Indexes[indOffset + 5] = (ushort)(vertOffset + 3);
 
             }
-            IndexBuffer = new IndexBuffer(GameState.Game.GraphicsDevice, typeof(short), RelativeTransforms.Count * 6, BufferUsage.None);
-            IndexBuffer.SetData(indices);
         }
     }
 

@@ -86,7 +86,7 @@ namespace DwarfCorp
         {
 
             BlendState origBlen = device.BlendState;
-            device.BlendState = BlendState.AlphaBlend;
+            device.BlendState = BlendState.NonPremultiplied;
 
             RasterizerState newState = RasterizerState.CullNone;
             RasterizerState oldState = device.RasterizerState;

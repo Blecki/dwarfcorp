@@ -36,12 +36,15 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
     /// Just a simple data type with 3 integers (x, y, and z).
     /// </summary>
+    [JsonObject(IsReference = false)]
+    [Serializable]
     public struct Point3 : IEquatable<Point3>
     {
         public int X;

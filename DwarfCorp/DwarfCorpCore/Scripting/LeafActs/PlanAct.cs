@@ -121,6 +121,12 @@ namespace DwarfCorp
             Agent.Blackboard.SetData(PathOut, path);
         }
 
+        public static bool PathExists(Voxel voxA, Voxel voxB, CreatureAI creature)
+        {
+            var path = AStarPlanner.FindPath(creature.Movement, voxA, new VoxelGoalRegion(voxB), PlayState.ChunkManager, 1000, 10);
+            return path != null && path.Count > 0;
+        }
+
         public override IEnumerable<Status> Run()
         {
             Path = null;

@@ -53,7 +53,8 @@ namespace DwarfCorp
         {
             Melee,
             Ranged,
-            Area
+            Area,
+            Dogfight
         }
 
         public enum AttackTrigger
@@ -72,6 +73,7 @@ namespace DwarfCorp
         public string Name { get; set; }
         public float Range { get; set; }
         public string HitNoise { get; set; }
+        public Color HitColor { get; set; }
         public AttackMode Mode { get; set; }
         public Timer RechargeTimer { get; set; }
         public float Knockback { get; set; }
@@ -108,6 +110,7 @@ namespace DwarfCorp
             Knockback = other.Knockback;
             HitAnimation = other.HitAnimation;
             HitParticles = other.HitParticles;
+            HitColor = other.HitColor;
             ProjectileType = other.ProjectileType;
             LaunchSpeed = other.LaunchSpeed;
             AnimationAsset = other.AnimationAsset;
@@ -136,6 +139,7 @@ namespace DwarfCorp
             Mode = AttackMode.Melee;
             Knockback = 0.0f;
             HitAnimation = null;
+            HitColor = Color.White;
             HitParticles = "";
             ProjectileType = "";
             AnimationAsset = animation;
@@ -178,7 +182,7 @@ namespace DwarfCorp
                     {
                         HitAnimation.Reset();
                         HitAnimation.Play();
-                        IndicatorManager.DrawIndicator(HitAnimation, other.Position + Vector3.One * 0.5f, 0.6f, 2.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
+                        IndicatorManager.DrawIndicator(HitAnimation.Clone(), other.Position + Vector3.One * 0.5f, 10.0f, 1.0f, MathFunctions.RandVector2Circle() * 10, HitColor, MathFunctions.Rand() > 0.5f);
                     }
                     break;
                 }
@@ -257,6 +261,7 @@ namespace DwarfCorp
             switch (Mode)
             {
                 case AttackMode.Melee:
+                case AttackMode.Dogfight:
                     {
                         Health health = other.GetRootComponent().GetChildrenOfType<Health>(true).FirstOrDefault();
                         if (health != null)
@@ -264,7 +269,7 @@ namespace DwarfCorp
                             health.Damage(DamageAmount + bonus);
                         }
 
-                        PlayNoise(other.LocalTransform.Translation);
+                        PlayNoise(other.GlobalTransform.Translation);
                         if (HitParticles != "")
                         {
                             PlayState.ParticleManager.Trigger(HitParticles, other.LocalTransform.Translation, Color.White, 5);
@@ -274,7 +279,7 @@ namespace DwarfCorp
                         {
                             HitAnimation.Reset();
                             HitAnimation.Play();
-                            IndicatorManager.DrawIndicator(HitAnimation, other.BoundingBox.Center(), 0.6f, 2.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
+                            IndicatorManager.DrawIndicator(HitAnimation.Clone(), other.BoundingBox.Center(), 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
                         }
 
                         Physics physics = other as Physics;
@@ -282,15 +287,19 @@ namespace DwarfCorp
                         if (physics != null)
                         {
                             Vector3 force = other.Position - pos;
-                            force.Normalize();
-                            physics.ApplyForce(force * Knockback, 1.0f);
+
+                            if (force.LengthSquared() > 0.01f)
+                            {
+                                force.Normalize();
+                                physics.ApplyForce(force*Knockback, 1.0f);
+                            }
                         }
 
                         break;
                     }
                 case AttackMode.Ranged:
                     {
-                        PlayNoise(other.LocalTransform.Translation);
+                        PlayNoise(other.GlobalTransform.Translation);
                         LaunchProjectile(pos, other.Position, other);
                         break;
                     }

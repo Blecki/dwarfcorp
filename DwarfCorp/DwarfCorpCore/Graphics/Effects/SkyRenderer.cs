@@ -65,9 +65,7 @@ namespace DwarfCorp
             SkyEffect.Parameters["xTint"].SetValue(TimeOfDay);
             foreach(ModelMesh mesh in SkyMesh.Meshes)
             {
-#if XNA_BUILD
                 mesh.Draw();
-#endif
             }
         }
 
@@ -77,30 +75,28 @@ namespace DwarfCorp
             SkyEffect.Parameters["ViewMatrix"].SetValue(camera.ViewMatrix);
             SkyEffect.Parameters["ProjectionMatrix"].SetValue(camera.ProjectionMatrix);
             SkyEffect.Parameters["xTransparency"].SetValue(TimeOfDay);
-            SkyEffect.Parameters["xRot"].SetValue(Matrix.CreateRotationZ(-(CosTime + 0.5f)));
+            SkyEffect.Parameters["xRot"].SetValue(Matrix.CreateRotationZ(-(CosTime + 0.5f) * (float) Math.PI));
             SkyEffect.Parameters["xTint"].SetValue(0.0f);
             SkyEffect.CurrentTechnique = SkyEffect.Techniques[0];
             foreach(ModelMesh mesh in SkyMesh.Meshes)
             {
-#if XNA_BUILD
                 mesh.Draw();
-#endif
             }
         }
 
         public void RenderSunMoon(DwarfTime time, GraphicsDevice device, Camera camera, Viewport viewPort, float scale)
         {
-            Matrix rot = Matrix.CreateRotationZ(-(CosTime + 0.5f * (float) Math.PI));
-            SunPosition = new Vector3(1000, 100, 0);
-            Vector3 moonPosition = new Vector3(-1000, 100, 0);
+            Matrix rot = Matrix.CreateRotationZ((-CosTime + 0.5f * (float) Math.PI));
+            SunPosition = new Vector3(-1000, 100, 0);
+            Vector3 moonPosition = new Vector3(1000, 100, 0);
             SunPosition = Vector3.Transform(SunPosition, rot);
             moonPosition = Vector3.Transform(moonPosition, rot);
             SunPosition += camera.Position;
             moonPosition += camera.Position;
 
 
-            Vector3 cameraFrameSun = Vector3.Transform(SunPosition, camera.ViewMatrix * camera.ProjectionMatrix);
-            Vector3 cameraFramMoon = Vector3.Transform(moonPosition, camera.ViewMatrix * camera.ProjectionMatrix);
+            Vector3 cameraFrameSun = Vector3.Transform(SunPosition, camera.ViewMatrix);
+            Vector3 cameraFramMoon = Vector3.Transform(moonPosition, camera.ViewMatrix);
 
 
             Vector3 unProjectSun = viewPort.Project(SunPosition, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
@@ -108,11 +104,11 @@ namespace DwarfCorp
 
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Matrix.Identity);
 
-            if(unProjectSun.Z < 0.999f && cameraFrameSun.Z < 0.999f)
+            if (cameraFrameSun.Z > 0.999f)
             {
                 DwarfGame.SpriteBatch.Draw(SunTexture, new Vector2(unProjectSun.X - SunTexture.Width / 2 * scale, unProjectSun.Y - SunTexture.Height / 2 * scale), null, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
             }
-            if(unProjectMoon.Z < 0.999f && cameraFramMoon.Z < 0.999f)
+            if (cameraFramMoon.Z > 0.999f)
             {
                 DwarfGame.SpriteBatch.Draw(MoonTexture, new Vector2(unProjectMoon.X - SunTexture.Width / 2 * scale, unProjectMoon.Y - SunTexture.Height / 2 * scale), null, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
             }

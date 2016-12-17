@@ -19,25 +19,41 @@ namespace Microsoft.Xna.Framework.Graphics
         // Summary:
         //     UV texture coordinates.
         [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Vector2 TextureCoordinate;
+        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Vector2 LightmapCoordinate;
 
         // Summary:
         //     The vertex color.
         [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Color Color;
         [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Color VertColor;
         [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Vector4 TextureBounds;
-
+        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Vector4 LightmapBounds;
 
         //
         // Summary:
         //     Vertex declaration, which defines per-vertex data.
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")] public static readonly VertexDeclaration VertexDeclaration = new VertexDeclaration
             (
+            //Position
             new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-            new VertexElement(System.Runtime.InteropServices.Marshal.SizeOf(Vector3.Zero), VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
-            new VertexElement(System.Runtime.InteropServices.Marshal.SizeOf(Vector3.Zero) + System.Runtime.InteropServices.Marshal.SizeOf(Vector2.Zero), VertexElementFormat.Color, VertexElementUsage.Color, 0),
-                        new VertexElement(System.Runtime.InteropServices.Marshal.SizeOf(Vector3.Zero) + System.Runtime.InteropServices.Marshal.SizeOf(Vector2.Zero) + System.Runtime.InteropServices.Marshal.SizeOf(Color.White), VertexElementFormat.Color, VertexElementUsage.Color, 1),
-            new VertexElement(System.Runtime.InteropServices.Marshal.SizeOf(Vector3.Zero) + System.Runtime.InteropServices.Marshal.SizeOf(Vector2.Zero) + System.Runtime.InteropServices.Marshal.SizeOf(Color.White) * 2, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1)
+            // Texture Coordinate
+            new VertexElement(SizeOf(Vector3.Zero), VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
+            // Lightmap coordinate
+            new VertexElement(SizeOf(Vector3.Zero) + SizeOf(Vector2.Zero), VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 2),
+            // Color
+            new VertexElement(SizeOf(Vector3.Zero) + SizeOf(Vector2.Zero) * 2, VertexElementFormat.Color, VertexElementUsage.Color, 0),
+            // Vertex tint
+            new VertexElement(SizeOf(Vector3.Zero) + SizeOf(Vector2.Zero) * 2 + SizeOf(Color.White), VertexElementFormat.Color, VertexElementUsage.Color, 1),
+            // Texture bounds
+            new VertexElement(SizeOf(Vector3.Zero) + SizeOf(Vector2.Zero) * 2 + SizeOf(Color.White) * 2, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1),
+            // Lightmap bounds
+            new VertexElement(SizeOf(Vector3.Zero) + SizeOf(Vector2.Zero) * 2 + SizeOf(Color.White) * 2 + SizeOf(Vector4.Zero), VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 3)
             );
+
+
+        public static int SizeOf<T>(T obj)
+        {
+            return System.Runtime.InteropServices.Marshal.SizeOf(obj);
+        }
 
         VertexDeclaration IVertexType.VertexDeclaration
         {
@@ -64,6 +80,8 @@ namespace Microsoft.Xna.Framework.Graphics
             VertColor = vertColor;
             TextureCoordinate = textureCoordinate;
             TextureBounds = textureBounds;
+            LightmapCoordinate = Vector2.Zero;
+            LightmapBounds = Vector4.Zero;
         }
 
         // Summary:
@@ -77,7 +95,12 @@ namespace Microsoft.Xna.Framework.Graphics
         //     Object to the right of the inequality operator.
         public static bool operator !=(ExtendedVertex left, ExtendedVertex right)
         {
-            return !(left.Color == right.Color && left.Position == right.Position && left.TextureBounds == right.TextureBounds && left.TextureCoordinate == right.TextureCoordinate && left.VertColor == right.VertColor);
+            return !(left.Color == right.Color && left.Position == right.Position 
+                && left.TextureBounds == right.TextureBounds 
+                && left.TextureCoordinate == right.TextureCoordinate 
+                && left.VertColor == right.VertColor
+                && left.LightmapCoordinate == right.LightmapCoordinate
+                && left.LightmapBounds == right.LightmapBounds);
         }
 
         //
@@ -128,6 +151,36 @@ namespace Microsoft.Xna.Framework.Graphics
         public override string ToString()
         {
             return "Extended Vertex: " + Position.ToString();
+        }
+
+        public void Set(Vector3 position, 
+                       Color color, 
+                       Color vertColor, 
+                       Vector2 textureCoordinate, 
+                       Vector4 textureBounds,
+                       Vector2 lightmapCoordinates,
+                       Vector4 lightmapBounds)
+        {
+            Position = position;
+            Color = color;
+            VertColor = vertColor;
+            TextureCoordinate = textureCoordinate;
+            TextureBounds = textureBounds;
+            LightmapCoordinate = lightmapCoordinates;
+            LightmapBounds = lightmapBounds;
+        }
+
+        public void Set(Vector3 position,
+                       Color color,
+                       Color vertColor,
+                       Vector2 textureCoordinate,
+                       Vector4 textureBounds)
+        {
+            Position = position;
+            Color = color;
+            VertColor = vertColor;
+            TextureCoordinate = textureCoordinate;
+            TextureBounds = textureBounds;
         }
     }
 

@@ -51,6 +51,7 @@ namespace DwarfCorp
 
         public struct ResourceType
         {
+            [JsonProperty]
             private string _value;
 
             public static ResourceType Wood = "Wood";
@@ -73,6 +74,9 @@ namespace DwarfCorp
             public static ResourceType Trinket = "Trinket";
             public static ResourceType CaveMushroom = "Cave Mushroom";
             public static ResourceType GemTrinket = "Gem-set Trinket";
+            public static ResourceType PineCone = "Pine Cone";
+            public static ResourceType Coconut = "Coconut";
+            public static ResourceType Cactus = "Cactus";
 
             public static implicit operator ResourceType(string value)
             {
@@ -148,7 +152,25 @@ namespace DwarfCorp
             Add(new Resource(ResourceType.Meat,  25.0f, "Came from an animal.",
                 new NamedImageFrame(tileSheet, GetRect(3, 2)), Color.White, Resource.ResourceTags.Edible,
                 Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.Meat, Resource.ResourceTags.RawFood) {FoodContent = 250});
-        
+
+            Add(new Resource(ResourceType.PineCone, 0.5f, "Grows pine trees.",
+                new NamedImageFrame(tileSheet, GetRect(6, 1)), Color.White, Resource.ResourceTags.Plantable,
+                Resource.ResourceTags.Flammable, Resource.ResourceTags.AboveGroundPlant)
+            {
+                PlantToGenerate = "Pine Tree"
+            });
+            Add(new Resource(ResourceType.Coconut, 1.0f, "Grows palm trees.",
+                new NamedImageFrame(tileSheet, GetRect(5, 1)), Color.White, Resource.ResourceTags.Plantable,
+                 Resource.ResourceTags.Flammable, Resource.ResourceTags.AboveGroundPlant, Resource.ResourceTags.Edible)
+            {
+                PlantToGenerate = "Palm Tree"
+            });
+            Add(new Resource(ResourceType.Cactus, 0.9f, "Grows cacti.",
+                new NamedImageFrame(tileSheet, GetRect(7, 1)), Color.White, Resource.ResourceTags.Plantable,
+                Resource.ResourceTags.Flammable, Resource.ResourceTags.AboveGroundPlant, Resource.ResourceTags.Edible)
+            {
+                PlantToGenerate = "Cactus"
+            });
             Add(new Resource(ResourceType.Bread, 15.0f, "A nutritious dwarf meal.", new NamedImageFrame(tileSheet, GetRect(6, 2)), Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.Flammable, Resource.ResourceTags.PreparedFood)
             {
                 FoodContent = 350

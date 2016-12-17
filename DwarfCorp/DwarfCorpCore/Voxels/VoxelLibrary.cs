@@ -99,6 +99,8 @@ namespace DwarfCorp
             BoxPrimitive coalCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 2), new Point(2, 2), new Point(2, 2));
             BoxPrimitive manaCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(7, 1), new Point(6, 1), new Point(7, 1));
             BoxPrimitive frostCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 1), new Point(2, 1), new Point(2, 0));
+            BoxPrimitive snowCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 7), new Point(3, 7), new Point(3, 7));
+            BoxPrimitive iceCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 7), new Point(2, 7), new Point(2, 7));
             BoxPrimitive scaffoldCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(7, 0), new Point(7, 0), new Point(7, 0));
             BoxPrimitive plankCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 0), new Point(4, 0), new Point(4, 0));
             BoxPrimitive waterCube = CreatePrimitive(graphics, cubeTexture, cubeTexture.Width, cubeTexture.Height, new Point(0, 0), new Point(0, 0), new Point(0, 0));
@@ -270,6 +272,35 @@ namespace DwarfCorp
             };
 
             CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 4), new Point(2, 0), new Point(2, 0), frostType.TransitionTextures);
+
+            VoxelType snowType = new VoxelType
+            {
+                Name = "Snow",
+                StartingHealth = 1,
+                ReleasesResource = false,
+                CanRamp = true,
+                RampSize = 0.5f,
+                IsBuildable = false,
+                ParticleType = "snow_particle",
+                HasTransitionTextures = false,
+                IsSurface = true,
+                IsSoil = false
+            };
+            RegisterType(snowType, snowCube);
+
+            VoxelType iceType = new VoxelType
+            {
+                Name = "Ice",
+                StartingHealth = 1,
+                ReleasesResource = false,
+                CanRamp = false,
+                IsBuildable = false,
+                ParticleType = "snow_particle",
+                HasTransitionTextures = false,
+                IsSurface = true,
+                IsSoil = false
+            };
+            RegisterType(iceType, iceCube);
 
 
             VoxelType desertGrass = new VoxelType

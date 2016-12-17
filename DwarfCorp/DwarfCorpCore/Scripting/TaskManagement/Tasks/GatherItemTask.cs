@@ -71,12 +71,18 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            return EntityToGather != null && !EntityToGather.IsDead && !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather) && !agent.Inventory.Resources.IsFull();
+            return EntityToGather != null
+                   && !EntityToGather.IsDead
+                   && !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather)
+                   && !agent.Inventory.Resources.IsFull();
         }
 
         public override bool ShouldRetry(Creature agent)
         {
-            return EntityToGather != null && !EntityToGather.IsDead && !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather);
+            return EntityToGather != null && !EntityToGather.IsDead && !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather) 
+                                && PlanAct.PathExists(EntityToGather.GetComponent<Physics>().CurrentVoxel, 
+                                      agent.Physics.CurrentVoxel, 
+                                      agent.AI);
         }
 
         public override float ComputeCost(Creature agent)

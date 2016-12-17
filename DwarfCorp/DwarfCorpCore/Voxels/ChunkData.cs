@@ -38,6 +38,7 @@ using System.Linq;
 using System.Threading;
 using DwarfCorpCore;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -51,7 +52,7 @@ namespace DwarfCorp
         private ChunkManager chunkManager;
 
         public ChunkData(uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, float invCSX, float invCSY, float invCSZ, 
-            Texture2D tilemap, Texture2D illumMap, ChunkManager chunkManager)
+             ChunkManager chunkManager)
         {
             ChunkSizeX = chunkSizeX;
             ChunkSizeY = chunkSizeY;
@@ -59,14 +60,12 @@ namespace DwarfCorp
             InvCSX = invCSX;
             InvCSY = invCSY;
             InvCSZ = invCSZ;
-            Tilemap = tilemap;
-            IllumMap = illumMap;
             this.chunkManager = chunkManager;
         }
 
         public ConcurrentDictionary<Point3, VoxelChunk> ChunkMap { get; set; }
-        public Texture2D Tilemap { get; set; }
-        public Texture2D IllumMap { get; set; }
+        public Texture2D Tilemap { get { return TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles); } }
+        public Texture2D IllumMap { get { return TextureManager.GetTexture(ContentPaths.Terrain.terrain_illumination); } }
 
         public int MaxChunks
         {
@@ -76,9 +75,9 @@ namespace DwarfCorp
 
         public float MaxViewingLevel { get; set; }
         public ChunkManager.SliceMode Slice { get; set; }
-        public Texture2D SunMap { get; set; }
-        public Texture2D AmbientMap { get; set; }
-        public Texture2D TorchMap { get; set; }
+        public Texture2D SunMap { get { return TextureManager.GetTexture(ContentPaths.Gradients.sungradient); }}
+        public Texture2D AmbientMap { get { return TextureManager.GetTexture(ContentPaths.Gradients.ambientgradient); } }
+        public Texture2D TorchMap { get { return TextureManager.GetTexture(ContentPaths.Gradients.torchgradient); } }
         public uint ChunkSizeX { get; set; }
         public uint ChunkSizeY { get; set; }
         public uint ChunkSizeZ { get; set; }

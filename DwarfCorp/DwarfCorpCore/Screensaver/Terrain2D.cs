@@ -161,7 +161,7 @@ namespace DwarfCorp
         public void Render(GraphicsDevice graphics, SpriteBatch sprites, DwarfTime time)
         {
             Bloom.BeginDraw();
-            sprites.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
+            sprites.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
                 DepthStencilState.Default, RasterizerState.CullNone);
             graphics.Clear(Color.SkyBlue);
           

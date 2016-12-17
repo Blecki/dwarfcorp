@@ -359,6 +359,8 @@ namespace DwarfCorp
 
                 switch(vertex)
                 {
+                    // Back = -z, bottom = -y, left = -x
+                    // Successors are all in the -1 to 0 range.
                     case VoxelVertex.BackBottomLeft:
                         nXLim = -1;
                         xlim = 1;
@@ -369,6 +371,11 @@ namespace DwarfCorp
                         nZLim = -1;
                         zlim = 1;
                         break;
+
+                    // Back = -z, Bottom = -y, Right = +x
+                    // z Successors are [-1, 0]
+                    // y successors are [-1, 0]
+                    // x Successors are [0, 1]
                     case VoxelVertex.BackBottomRight:
                         nXLim = 0;
                         xlim = 2;
@@ -379,39 +386,71 @@ namespace DwarfCorp
                         nZLim = -1;
                         zlim = 1;
                         break;
+
+                    // Back = -z, Top = +y, Left = -x
+                    // z Successors are [-1, 0]
+                    // y successors are [0, 1]
+                    // x Successors are [-1, 1]
                     case VoxelVertex.BackTopLeft:
                         nXLim = -1;
                         xlim = 1;
+
                         nYLim = 0;
                         ylim = 2;
-                        nZLim = -1;
-                        zlim = 1;
-                        break;
-                    case VoxelVertex.BackTopRight:
-                        nXLim = 0;
-                        xlim = 2;
-                        nYLim = 0;
-                        ylim = 2;
+
                         nZLim = -1;
                         zlim = 1;
                         break;
 
+                    // Back = -z, Top = +y, Right = +x
+                    // z Successors are [-1, 0]
+                    // y successors are [0, 1]
+                    // x Successors are [0, 1]
+                    case VoxelVertex.BackTopRight:
+                        nXLim = 0;
+                        xlim = 2;
+
+                        nYLim = 0;
+                        ylim = 2;
+
+                        nZLim = -1;
+                        zlim = 1;
+                        break;
+
+                    // Front = +z, Bottom = -y, Left = -x
+                    // z Successors are [0, 1]
+                    // y successors are [-1, 0]
+                    // x Successors are [-1, 0]
                     case VoxelVertex.FrontBottomLeft:
                         nXLim = -1;
                         xlim = 1;
+
                         nYLim = -1;
                         ylim = 1;
+
                         nZLim = 0;
                         zlim = 2;
                         break;
+
+                    // Front = +z, Bottom = -y, Right = +x
+                    // z Successors are [0, 1]
+                    // y successors are [-1, 0]
+                    // x Successors are [0, 1]
                     case VoxelVertex.FrontBottomRight:
                         nXLim = 0;
                         xlim = 2;
+
                         nYLim = -1;
                         ylim = 1;
+
                         nZLim = 0;
                         zlim = 2;
                         break;
+
+                    // Front = +z, Top = +y, Left = -x
+                    // z Successors are [0, 1]
+                    // y successors are [0, 1]
+                    // x Successors are [-1, 0]
                     case VoxelVertex.FrontTopLeft:
                         nXLim = -1;
                         xlim = 1;
@@ -420,6 +459,11 @@ namespace DwarfCorp
                         nZLim = 0;
                         zlim = 2;
                         break;
+
+                    // Front = +z, Top = +y, Right = +x
+                    // z Successors are [0, 1]
+                    // y successors are [0, 1]
+                    // x Successors are [0, 1]
                     case VoxelVertex.FrontTopRight:
                         nXLim = 0;
                         xlim = 2;
@@ -686,19 +730,18 @@ namespace DwarfCorp
 
         public void Update(DwarfTime t)
         {
-            //PrimitiveMutex.WaitOne();
+            PrimitiveMutex.WaitOne();
             if(NewPrimitiveReceived)
             {
                 Primitive = NewPrimitive;
                 NewPrimitive = null;
                 NewPrimitiveReceived = false;
             }
-            //PrimitiveMutex.ReleaseMutex();
+            PrimitiveMutex.ReleaseMutex();
         }
 
-        public void Render(Texture2D tilemap, Texture2D illumMap, Texture2D sunMap, Texture2D ambientMap, Texture2D torchMap, GraphicsDevice device, Effect effect, Matrix worldMatrix)
+        public void Render(GraphicsDevice device)
         {
-           
             if (!RenderWireframe)
             {
                 Primitive.Render(device);
@@ -710,11 +753,11 @@ namespace DwarfCorp
 
         }
 
-        public void RebuildLiquids(GraphicsDevice g)
+        public void RebuildLiquids()
         {
             foreach(KeyValuePair<LiquidType, LiquidPrimitive> primitive in Liquids)
             {
-                primitive.Value.InitializeFromChunk(this, g);
+                primitive.Value.InitializeFromChunk(this);
             }
             ShouldRebuildWater = false;
         }
@@ -868,7 +911,7 @@ namespace DwarfCorp
             {
                 firstRebuild = false;
             }
-            RebuildLiquids(g);
+            RebuildLiquids();
             IsRebuilding = false;
 
             if(ShouldRecalculateLighting)
@@ -1002,7 +1045,7 @@ namespace DwarfCorp
 
                 VoxelChunk c = chunks.ChunkData.ChunkMap[v.Chunk.ID];
                 color.SunColor += c.Data.SunColors[v.Index]; 
-                if(VoxelLibrary.IsSolid(v))
+                if(VoxelLibrary.IsSolid(v) || !v.IsExplored)
                 {
                     if (v.Type.EmitsLight) color.DynamicColor = 255;
                     numHit++;
@@ -1175,18 +1218,6 @@ namespace DwarfCorp
 
                         if(VoxelLibrary.IsSolid(voxel) && voxel.IsVisible)
                         {
-                            if(IsCompletelySurrounded(voxel, true) || !voxel.IsExplored)
-                            {
-                                Data.SunColors[Data.IndexAt(x, y, z)] = 0;
-                                for(int i = 0; i < 8; i++)
-                                {
-                                    Color color = Data.GetColor(x, y, z, (VoxelVertex)i);
-                                    color.G = m_fogOfWar;
-                                    if (type.EmitsLight) color.B = 255;
-                                    Data.SetColor(x, y, z, (VoxelVertex)i, color);
-                                }
-                                continue;
-                            }
 
                             if(ambientOcclusion)
                             {

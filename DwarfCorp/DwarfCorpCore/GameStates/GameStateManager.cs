@@ -167,6 +167,10 @@ namespace DwarfCorp.GameStates
 
         public void Render(DwarfTime time)
         {
+            if (Game.GraphicsDevice.IsDisposed || 
+                DwarfGame.SpriteBatch.IsDisposed || 
+                DwarfGame.SpriteBatch.GraphicsDevice.IsDisposed) return;
+
             Game.GraphicsDevice.Clear(Color.Black);
 
             if(CurrentState != "" && States[CurrentState].EnableScreensaver)
@@ -176,7 +180,7 @@ namespace DwarfCorp.GameStates
             for(int i = StateStack.Count - 1; i >= 0; i--)
             {
                 GameState state = States[StateStack[i]];
-
+               
                 if(state.RenderUnderneath || i == 0 || state.Name == CurrentState || state.Name == NextState)
                 {
                     if(state.IsInitialized)

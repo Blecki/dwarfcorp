@@ -176,7 +176,7 @@ namespace DwarfCorp
             AI = new BirdAI(this, "Bird AI", Sensors, PlanService);
             
             // The bird can peck at its enemies (0.1 damage)
-            Attacks = new List<Attack>{new Attack("Peck", 0.1f, 2.0f, 1.0f, ContentPaths.Audio.bird, ContentPaths.Effects.flash)};
+            Attacks = new List<Attack> { new Attack("Peck", 0.1f, 2.0f, 1.0f, ContentPaths.Audio.bird, ContentPaths.Effects.pierce) { Mode = Attack.AttackMode.Dogfight } };
 
 
             // The bird can hold one item at a time in its inventory
@@ -230,6 +230,10 @@ namespace DwarfCorp
                 Name = "Bird",
                 Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Bird" } }
             };
+
+            AI.Movement.CanFly = true;
+            AI.Movement.CanWalk = false;
+            AI.Movement.CanClimb = false;
         }
     }
 }

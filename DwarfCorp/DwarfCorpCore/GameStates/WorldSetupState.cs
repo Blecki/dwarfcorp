@@ -405,7 +405,7 @@ namespace DwarfCorp
             };
 
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, rasterizerState);
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, null, rasterizerState);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
             GUI.PostRender(gameTime);
             DwarfGame.SpriteBatch.End();

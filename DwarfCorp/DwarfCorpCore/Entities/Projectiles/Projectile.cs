@@ -36,6 +36,7 @@ using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -125,7 +126,15 @@ namespace DwarfCorp
             {
                 HitAnimation.Reset();
                 HitAnimation.Play();
-                IndicatorManager.DrawIndicator(HitAnimation, Position, HitAnimation.FrameHZ * HitAnimation.Frames.Count, 1.0f, Vector2.Zero, Color.White, false);
+                if (Target != null)
+                {
+                    Vector3 camvelocity0 = GameState.Game.GraphicsDevice.Viewport.Project( Position,
+                        PlayState.Camera.ProjectionMatrix, PlayState.Camera.ViewMatrix, Matrix.Identity);
+                    Vector3 camvelocity1 = GameState.Game.GraphicsDevice.Viewport.Project(Position + Velocity,
+                        PlayState.Camera.ProjectionMatrix, PlayState.Camera.ViewMatrix, Matrix.Identity);
+                    IndicatorManager.DrawIndicator(HitAnimation, Target.Position,
+                        HitAnimation.FrameHZ*HitAnimation.Frames.Count + 1.0f, 1.0f, Vector2.Zero, Color.White, camvelocity1.X - camvelocity0.X > 0);
+                }
             }
             base.Die();
         }
@@ -160,7 +169,7 @@ namespace DwarfCorp
         public FireballProjectile(Vector3 position, Vector3 initialVelocity, Body target) :
             base(position, initialVelocity, new Health.DamageAmount() { Amount = 15.0f, DamageType = Health.DamageType.Fire }, 0.25f, ContentPaths.Particles.fireball, "flame", ContentPaths.Audio.fire, target)
         {
-            HitAnimation = new Animation(ContentPaths.Effects.flash, 32, 32, 0, 1, 2, 3);
+            HitAnimation = new Animation(ContentPaths.Effects.pierce, 32, 32, 0, 1, 2, 3);
             Sprite.LightsWithVoxels = false;
             Sprite2.LightsWithVoxels = false;
         }
@@ -177,7 +186,22 @@ namespace DwarfCorp
         public ArrowProjectile(Vector3 position, Vector3 initialVelocity, Body target) :
             base(position, initialVelocity, new Health.DamageAmount() { Amount = 10.0f, DamageType = Health.DamageType.Slashing }, 0.25f, ContentPaths.Entities.Elf.Sprites.arrow, "puff", ContentPaths.Audio.hit, target)
         {
-            HitAnimation = new Animation(ContentPaths.Effects.flash, 32, 32, 0, 1, 2, 3);
+            HitAnimation = new Animation(ContentPaths.Effects.pierce, 32, 32, 0, 1, 2);
+        }
+    }
+
+    [JsonObject(IsReference = true)]
+    public class WebProjectile : Projectile
+    {
+        public WebProjectile()
+        {
+
+        }
+
+        public WebProjectile(Vector3 position, Vector3 initialVelocity, Body target) :
+            base(position, initialVelocity, new Health.DamageAmount() { Amount = 10.0f, DamageType = Health.DamageType.Acid }, 0.25f, ContentPaths.Entities.Animals.Spider.webshot, "puff", ContentPaths.Audio.whoosh, target)
+        {
+            HitAnimation = new Animation(ContentPaths.Entities.Animals.Spider.webstick, 32, 32, 0);
         }
     }
 }
