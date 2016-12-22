@@ -5,9 +5,10 @@
 [DwarfCorp](www.dwarfcorp.com) from [Completely Fair Games](www.completelyfairgames.com) is a single player tycoon/strategy game for PC. In the game, the player manages a corporate colony of dwarves. The dwarves must mine resources, build structures, and contend with the natives to survive.
 
 ## External Dependencies
-DwarfCorp depends on the following libraries:
+To develop DwarfCorp, you need the following libraries. If you just want to play the game, download one of the packages on our releases page.
 
 * [The XNA 4.0](https://www.microsoft.com/en-us/download/details.aspx?id=23714) library (not included)
+* Note: If you are running Windows 8 or higher, you will need to download [MXA](https://mxa.codeplex.com/) instead.
 * [XNA-FNA](https://github.com/FNA-XNA/FNA) for cross-platform development (forked)
 * [LibNoise.NET](https://libnoisedotnet.codeplex.com/) (source code included)
 * [JSON.NET](https://github.com/JamesNK/Newtonsoft.Json) (source code included)
@@ -17,7 +18,7 @@ DwarfCorp depends on the following libraries:
 To build and run in the game on a windows PC, you must do the following:
 
 ### Building for XNA on Windows
-1. Download and install the XNA Game Studio 4.0 library
+1. Download and install the XNA Game Studio 4.0 library (or [MXA](https://mxa.codeplex.com/) if you are running Windows 8 or higher)
 2. Download and install Visual Studio. The project files were created for Visual Studio Professional 2013. Earlier versions may not work. "Express" versions may also not work.
 3. Open `DwarfCorp.sln` in Visual Studio
 4. Set `DwarfCorpXNA` as the `StartUp` project.
@@ -35,7 +36,7 @@ To build and run in the game on a windows PC, you must do the following:
 ## Project Structure
 There are several projects under the main folder:
 
-* **DwarfCorpCore** contains the core source code of the game, and is intended to be more-or-less platform independent.
+* **DwarfCorpCore** contains the core source code of the game, and is intended to be more-or-less platform independent. This is **not to be compiled.**
 * **DwarfCorpXNA** contains source code for XNA builds of the game. Most source files here should just be symbolic links to **DwarfCorpCore**.
 * **DwarfCorpFNA** Contains source code for the FNA build. Most of the files in here are symbolic links to **DwarfCorpCore** in a flat directory structure.
 * **DwarfCorpContent** Contains images, sounds, music, and content configuration files for DwarfCorp. Most assets in this content project may not be redistributed.
