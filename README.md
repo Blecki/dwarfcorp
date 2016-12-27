@@ -27,6 +27,30 @@ To build and run in the game on a windows PC, you must do the following:
 7. Set the `DwarfCorpXNA` build mode to `Release` or `Debug`
 8. Build `DwarfCorpXNA`
 
+### Problems and Solutions with building for XNA on Windows
+* **I opened the solution but I don't see anything**
+    View->Solution Explorer
+* **I can't install xna on windows 10**
+    * Install xna refresh https://mxa.codeplex.com/releases/view/618279
+    * (you may find that google marks this download as malware. We do not endorse this binary but we have a programmer using it and virustotal seems to find no malware scanning the file)
+* **I can't download from the mxa website because chrome says it's malware**
+    * Use another browser or temporarily disable malware/phishing protection on chrome
+* **'Unable to find manifest signing certificate in the certificate store'**
+    * Project->DwarfCorpXNA properties-> Signing-> Create Test Certificate 
+    * You can use whatever password you want
+* **'Cannot find wrapper assembly for type library "Microsoft.Office.Core"'**
+    I think this is error is caused if you don't have Microsoft Office.
+    1. Remove broken Microsoft.Office.Core reference.
+        * In the Solution Explorer tab under DwarfCorpXNA expand References. Right click 'Microsoft.Office.Core' and select Remove
+    2. Add working Microsoft.Office.Core reference.
+        * Project->Add Reference..->COM 
+        * search "microsoft office" which should turn up 'Microsoft Office 15.0 Object Library'. Add that and press OK
+* **'Could not find file 'LumenWorks.Framework.IO.dll'**
+    * Project->Manage NuGet Packages..->search for 'LumenWorks.Framework'
+    * This should turn up 'LumenWorks.Framework.IO'. Click Install. If given a prompt, just check DwarfCorpXNA.
+    * In the Solution Explorer tab under DwarfCorpXNA you will find LumenWorks.Framework.IO. Delete this file. Note: There will be reference to LumenWorks.Framework.IO under References. Do /not/ delete that reference.
+    
+
 ### Building for FNA on Windows
 1. Open 'DwarfCorpFNA.sln' in Visual Studio
 2. Build for XNA first. This will create the content files needed by FNA. Do this from within DwarfCorpFNA.sln
