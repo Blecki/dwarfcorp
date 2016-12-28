@@ -46,42 +46,145 @@ namespace DwarfCorp
     /// </summary>
     public class VoxelChunk : IBoundedObject
     {
+        /// <summary> Called whenever a voxel at the given coordinate is destroyed </summary>
         public delegate void VoxelDestroyed(Point3 voxelID);
 
+        /// <summary> Called whenever a voxel at the given coordinate is revealed (fog of war cleared) </summary>
         public delegate void VoxelExplored(Point3 voxelID);
-
+        
+        /// <summary> ambient lighting for voxels that are hidden by fog of war </summary>
         public static byte m_fogOfWar = 1;
+        /// <sumarry> if true, the static data for all VoxelChunks has been initialized </summary>
         private static bool staticsInitialized;
+        /// <summary> cache of the offsets from the leastmost corner of the voxel to the origin of each of its 8 vertices </summary>
         private static readonly Vector3[] vertexDeltas = new Vector3[8];
+        /// <summary> cache of the offsets from the leastmost corner of the voxel to the center of each of its 6 faces </summary>
         private static readonly Vector3[] faceDeltas = new Vector3[6];
 
+        /// <summary> 
+        /// A dictionary caching a map from each of the voxel's 8 vertices to a list of neighbors
+        /// which touch that vertex. This is useful for determining which vertices are visible
+        /// from which voxels (a necessary computation for lighting).
+        /// Maps VoxelVertex to normalized directions corresponding to the neighbors.
+        /// </summary>
         public static readonly Dictionary<VoxelVertex, List<Vector3>> VertexSuccessors =
             new Dictionary<VoxelVertex, List<Vector3>>();
 
+        /// <summary>
+        /// A dictionary caching a map from each of the voxel's 8 vertices to a list of neighbors
+        /// adjacent to that vertex, and which have the same Y value as the voxel in question.
+        /// This is useful for determining which vertices are visible
+        /// from which voxels (a necessary computation for lighting).
+        /// Maps VoxelVertex to normalized directions corresponding to the neighbors.
+        /// </summary>
         public static readonly Dictionary<VoxelVertex, List<Vector3>> VertexSuccessorsDiag =
             new Dictionary<VoxelVertex, List<Vector3>>();
 
+        /// <summary>
+        /// A dictionary caching a map from each of the voxel's 6 faces to a list of 4 vertices.
+        /// This is useful for determining which vertices are visible on a face, allowing us to 
+        /// hide invisible vertices.
+        /// </summary>
         public static readonly Dictionary<BoxFace, VoxelVertex[]> FaceVertices =
             new Dictionary<BoxFace, VoxelVertex[]>();
 
+        /// <summary>
+        /// A list of normalized offsets corresponding to the 6 neighbors of a voxel
+        /// which touch exactly one of the voxel's faces.
+        /// (That is [1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1])
+        /// This is done for caching.
+        /// </summary>
         public static List<Vector3> ManhattanSuccessors;
+        
+        /// <summary>
+        /// Caches a list of 4 offsets corresponding to the neighbors of a voxel
+        /// which touch its x or z faces and which have the same y coordinate.
+        /// </summary>
         public static List<Vector3> Manhattan2DSuccessors;
+        
+        /// <summary>
+        /// This takes the neighbors stored in Manhattan2DSuccessors and turns them into a 
+        /// binary hash. Using this hash, we can index into a texture to determine which texture
+        /// to draw on each voxel face. For example, if all four of the neighbors are filled, 
+        /// the binary hash is 1111 = 15. If all of the neighbors but one is filled, the hash might
+        /// be 0111 = 7, or 1011 = 11, and so on. That means there are 2^4 = 16 unique textures that
+        /// might be displayed on the top of a voxel, making for cool looking transitions.
+        /// The same hash is used to determine how much a voxel slopes.
+        /// </summary>
         private static int[] manhattan2DMultipliers;
+        
+        
+        /// <summary>
+        /// This perlin noise determines how dense detail grass motes are, giving us smooth clumps of
+        /// grass.
+        /// </summary>
         public static Perlin MoteNoise = new Perlin(0);
+        
+        /// <sumarry>
+        /// This Perlin noise determines how much detail grass motes get scaled, giving us smooth
+        /// transitions between large and small blades of grass.
+        /// </summary>
         public static Perlin MoteScaleNoise = new Perlin(250);
+        
+        /// <summary> The number of voxels in the X direction </summary>
         private readonly int sizeX = -1;
+        /// <summary> The number of voxels in the Y direction </summary>
         private readonly int sizeY = -1;
+        /// <summary> The number of voxels in the Z direction </summary>
         private readonly int sizeZ = -1;
+        /// <summary> 
+        /// If true, the water manager has updated the liquid stored in this chunk (water, lava, etc.).
+        /// This means we must update the geometry of the chunk.
+        /// </summary>
         public bool NewLiquidReceived = false;
+        /// <summary>
+        /// When the ChunkManager updates the geometry of this chunk, it puts the new
+        /// vertex buffer here, rather than directly setting the vertex buffer. This is 
+        /// to help with cases where the ChunkManager destroys the vertex buffer as it is
+        /// being drawn, or other craziness that can happen with threading.
+        /// </summary>
         public VoxelListPrimitive NewPrimitive = null;
+        /// <summary>
+        /// If the chunk has received a new vertex buffer, this is set to true.
+        /// </summary>
         public bool NewPrimitiveReceived = false;
+        /// <summary>
+        /// This is true the very first time that the chunks' vertex buffer has been built.
+        /// It is false afterwards.
+        /// </summary>
         private bool firstRebuild = true;
+        /// <summary>
+        /// This is a BoundingBox completely containing this chunk and all its voxels
+        /// </summary>
         private BoundingBox m_boundingBox;
+        /// <summary>
+        /// This is set to true if the BoundingBox has been initialized
+        /// </summary>
         private bool m_boundingBoxCreated;
+        /// <summary>
+        /// This is a BoundingSphere completely containing this chunk and all its voxels.
+        /// </summary>
         private BoundingSphere m_boundingSphere;
+        /// <summary>
+        /// This is set to true if the BoundingSphere has been initialized.
+        /// </summary>
         private bool m_boundingSphereCreated;
+        /// <summary>
+        /// This is an integer number of voxels per game unit.
+        /// It should always be set to one! (TODO: get rid of this)
+        /// </summary>
         private int tileSize = -1;
 
+        /// <summary>
+        /// Construct a new VoxelChunk
+        /// </summary>
+        /// <param name="manager"> The chunk manager </param>
+        /// <param name="origin"> The leastmost coordinate of the chunk </param>
+        /// <param name="tileSize"> The number of voxels per coordinate (should be exactly 1) </param>
+        /// <param name="id"> Integer id of the chunk </param>
+        /// <param name="sizeX"> The number of voxels in the X direction </param>
+        /// <param name="sizeY"> The number of voxels in the Y direction </param>
+        /// <param name="sizeZ"> The number of voxels in the Z direction </param>
         public VoxelChunk(ChunkManager manager, Vector3 origin, int tileSize, Point3 id, int sizeX, int sizeY, int sizeZ)
         {
             FirstWaterIter = true;
@@ -118,60 +221,95 @@ namespace DwarfCorp
             ReconstructRamps = true;
         }
 
+        /// <summary>
+        /// For each kind of detail mode, contains a list of positions and colors
+        /// associated with this chunk.
+        /// </summary>
         public Dictionary<string, List<InstanceData>> Motes { get; set; }
+        /// <summary>
+        /// The vertex buffer associated with this chunk's geometry.
+        /// </summary>
         public VoxelListPrimitive Primitive { get; set; }
+        /// <summary>
+        /// Contains a dictionary from liquid type (water, lava, etc.) to vertex buffers for this chunk.
+        /// </summary>
         public Dictionary<LiquidType, LiquidPrimitive> Liquids { get; set; }
-
-
+        
+        /// <summary>
+        /// The raw data associated with this chunk's voxels.
+        /// </summary>
         public VoxelData Data { get; set; }
+        
+        /// <summary>
+        /// DEPRECATED. Springs were originally sources of liquid.
+        /// They were removed because they caused excessive flooding.
+        /// </summary>
         public ConcurrentDictionary<Voxel, byte> Springs { get; set; }
 
+        /// <summary> get the number of voxels in the X direction </summary>
         public int SizeX
         {
             get { return sizeX; }
         }
 
+        /// <summary> get the number of voxels in the Y direction </summary>
         public int SizeY
         {
             get { return sizeY; }
         }
 
+        /// <summary> get the number of voxels in the Z direction </summary>
         public int SizeZ
         {
             get { return sizeZ; }
         }
 
+        /// <summary> If true, the chunk should be drawn this frame. </summary>
         public bool IsVisible { get; set; }
+        /// <summary> If true, the chunk manager should rebuild the vertex buffer for this chunk </summary>
         public bool ShouldRebuild { get; set; }
+        /// <summary> If true, the chunk manager is currently rebuilding this chunk </summary>
         public bool IsRebuilding { get; set; }
+        /// <summary> gets the least most coordinate of this chunk in world space </summary>
         public Vector3 Origin { get; set; }
+        /// <summary> gets a vector which is half the width of a voxel </summary>
         private Vector3 HalfLength { get; set; }
+        /// <summary> If true, renders a wireframe representation of the chunk's mesh instead of the real geometry </summary>
         public bool RenderWireframe { get; set; }
+        /// <summary> gets the ChunkManager </summary>
         public ChunkManager Manager { get; set; }
+        /// <summary> Unnecessary, deprecated. TODO: remove </summary>
         public bool IsActive { get; set; }
+        /// <summary> If true, water hasn't yet been updated for this chunk </summary>
         public bool FirstWaterIter { get; set; }
-
+        /// <summary> Mutex which controls access to the chunk's vertex buffer mesh </summary>
         public Mutex PrimitiveMutex { get; set; }
+        /// <summary> If true, sunlight, ambient light, and torchlight should be computed for this voxel.
         public bool ShouldRecalculateLighting { get; set; }
+        /// <summary> If true, the vertex buffers associated with this chunk's liquids should be rebuilt </summary>
         public bool ShouldRebuildWater { get; set; }
-
+        /// <summary> Concurrent dictionary caching the 8-connected neighbors of this chunk </summary>
         public ConcurrentDictionary<Point3, VoxelChunk> Neighbors { get; set; }
+        /// <summary> List of torchlight producing sources in this chunk </summary>
         public List<DynamicLight> DynamicLights { get; set; }
-
+        /// <summary> If true, sunlight, dynamic light and ambient light have already been calculated for this chunk </summary>
         public bool LightingCalculated { get; set; }
-
-
+        /// <summary> If true, the chunk manager knows about this chunk, but has not yet rebuilt its vertex buffer. </summary>
         public bool RebuildPending { get; set; }
+        /// <summary> If true, the chunk manager knows about this chunk, but has not yet rebuilt its liquid (water, lava) vertex buffers </summary>
         public bool RebuildLiquidPending { get; set; }
+        /// <summary> Global identifier of this chunk </summary>
         public Point3 ID { get; set; }
-
+        /// <summary> If true, the chunk manager will recalculate the slopes of ramping voxels (like dirt) for this chunk </summary>
         public bool ReconstructRamps { get; set; }
 
+        /// <summary> Convert the chunk's 3D ID into a linear hash value </summary>
         public uint GetID()
         {
             return (uint) ID.GetHashCode();
         }
 
+        /// <summary> Get the bounding box completely containing this chunk and all its voxels </summary>
         public BoundingBox GetBoundingBox()
         {
             if (!m_boundingBoxCreated)
@@ -186,6 +324,7 @@ namespace DwarfCorp
 
         #region statics
 
+        /// <summary> Generate static data for all VoxelChunk instances </summary>
         public static void InitializeStatics()
         {
             if (staticsInitialized)
@@ -193,6 +332,8 @@ namespace DwarfCorp
                 return;
             }
 
+            // Vertex deltas tell us the offset from a voxel's leastmost corner
+            // to each of its 8 vertices.
             vertexDeltas[(int) VoxelVertex.BackBottomLeft] = new Vector3(0, 0, 0);
             vertexDeltas[(int) VoxelVertex.BackTopLeft] = new Vector3(0, 1.0f, 0);
             vertexDeltas[(int) VoxelVertex.BackBottomRight] = new Vector3(1.0f, 0, 0);
@@ -203,6 +344,8 @@ namespace DwarfCorp
             vertexDeltas[(int) VoxelVertex.FrontBottomRight] = new Vector3(1.0f, 0, 1.0f);
             vertexDeltas[(int) VoxelVertex.FrontTopRight] = new Vector3(1.0f, 1.0f, 1.0f);
 
+            // Neighbor directions for neighbors which only touch one face
+            // of a voxel.
             ManhattanSuccessors = new List<Vector3>
             {
                 new Vector3(1.0f, 0, 0),
@@ -213,6 +356,8 @@ namespace DwarfCorp
                 new Vector3(0, 0, 1.0f)
             };
 
+            // Neighbor directions for neighbors which touch either the X or Z
+            // faces of a voxel.
             Manhattan2DSuccessors = new List<Vector3>
             {
                 new Vector3(-1.0f, 0, 0),
@@ -221,6 +366,7 @@ namespace DwarfCorp
                 new Vector3(0, 0, 1.0f)
             };
 
+            // For each of the 2D successors, defines a binary hash.
             manhattan2DMultipliers = new[]
             {
                 2,
@@ -230,6 +376,8 @@ namespace DwarfCorp
             };
 
 
+            // Defines the center of each face w.r.t the leastmost corner 
+            // of a voxel.
             faceDeltas[(int) BoxFace.Top] = new Vector3(0.5f, 0.0f, 0.5f);
             faceDeltas[(int) BoxFace.Bottom] = new Vector3(0.5f, 1.0f, 0.5f);
             faceDeltas[(int) BoxFace.Left] = new Vector3(1.0f, 0.5f, 0.5f);
@@ -237,7 +385,7 @@ namespace DwarfCorp
             faceDeltas[(int) BoxFace.Front] = new Vector3(0.5f, 0.5f, 0.0f);
             faceDeltas[(int) BoxFace.Back] = new Vector3(0.5f, 0.5f, 1.0f);
 
-
+            // Define all the vertices associated with each face.
             FaceVertices[BoxFace.Top] = new[]
             {
                 VoxelVertex.BackTopLeft,
@@ -281,10 +429,14 @@ namespace DwarfCorp
                 VoxelVertex.BackBottomRight
             };
 
+            // Find all of the voxels which touch each vertex. Store them in caches.
             for (int i = 0; i < 8; i++)
             {
+                // The vertex we are considering.
                 var vertex = (VoxelVertex) (i);
+                // All the voxels which touch this vertex.
                 var successors = new List<Vector3>();
+                // All the voxels which touch this vertex but which have the same Y height
                 var diagSuccessors = new List<Vector3>();
                 int xlim = 0;
                 int ylim = 0;
@@ -410,17 +562,15 @@ namespace DwarfCorp
                         break;
                 }
 
+                // Loop through all the voxels adjacent to this vertex.
                 for (int dx = nXLim; dx < xlim; dx++)
                 {
                     for (int dy = nYLim; dy < ylim; dy++)
                     {
                         for (int dz = nZLim; dz < zlim; dz++)
                         {
-                            if (dx == 0 && dy == 0 && dz == 0)
-                            {
-                            }
                             successors.Add(new Vector3(dx, dy, dz));
-
+                            // Only add successors with the same Y height.
                             if ((dx != 0 && dz != 0 && dy == 0))
                             {
                                 diagSuccessors.Add(new Vector3(dx, dy, dz));
@@ -438,9 +588,13 @@ namespace DwarfCorp
 
         #endregion
 
+        /// <summary> called whenever a specific voxel in this chunk is destroyed </summary>
         public event VoxelDestroyed OnVoxelDestroyed;
+        /// <summary> called whenever a specific voxel in this chunk is revealed </summary>
         public event VoxelExplored OnVoxelExplored;
 
+        /// <summary> notify all subscribers that the given voxel has been explored </summary>
+        /// <param name="voxel"> The chunk-relative coordinates of the voxel in question </param>
         public void NotifyExplored(Point3 voxel)
         {
             if (OnVoxelExplored != null)
@@ -448,7 +602,9 @@ namespace DwarfCorp
                 OnVoxelExplored.Invoke(voxel);
             }
         }
-
+        
+        /// <summary> notify all subscribers that the given voxel has been destroyed </summary>
+        /// <param name="voxel"> The chunk-relative coordinates of the voxel in question </param>
         public void NotifyDestroyed(Point3 voxel)
         {
             if (OnVoxelDestroyed != null)
@@ -457,6 +613,10 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary> Allocate the raw data associated with this voxel. </summary>
+        /// <param name="sx"> The number of voxels in X </param>
+        /// <param name="sy"> The number of voxels in Y </param>
+        /// <param name="sz"> The number of voxels in Z </param>
         public static VoxelData AllocateData(int sx, int sy, int sz)
         {
             int numVoxels = sx*sy*sz;
@@ -483,6 +643,7 @@ namespace DwarfCorp
         }
 
 
+        /// <summary> DEPRECATED. DO NOT USE. Water data is now stored inside VoxelData! </summary>
         public static WaterCell[][][] WaterAllocate(int sx, int sy, int sz)
         {
             var w = new WaterCell[sx][][];
@@ -505,6 +666,10 @@ namespace DwarfCorp
             return w;
         }
 
+        /// <summary>
+        /// Given some position relative to a voxel's leastmost coordinate,
+        /// returns the vertex closest to that position.
+        /// </summary>
         public static VoxelVertex GetNearestDelta(Vector3 position)
         {
             float bestDist = float.MaxValue;
@@ -523,6 +688,10 @@ namespace DwarfCorp
             return bestKey;
         }
 
+        /// <summary>
+        /// Given a position relative to a voxel's leastmost coordinate,
+        /// returns the face closest to that position.
+        /// </summary>
         public static BoxFace GetNearestFace(Vector3 position)
         {
             float bestDist = 10000000;
@@ -541,6 +710,10 @@ namespace DwarfCorp
             return bestKey;
         }
 
+        /// <summary> 
+        /// Computes a sphere centered on this voxel chunk which
+        /// completely encompasses the chunk.
+        /// </summary>
         public BoundingSphere GetBoundingSphere()
         {
             if (!m_boundingSphereCreated)
@@ -554,8 +727,12 @@ namespace DwarfCorp
             return m_boundingSphere;
         }
 
+        /// <summary>
+        /// Updates the chunk.
+        /// </summary>
         public void Update(DwarfTime t)
         {
+            // Wait for new data from the chunk manager.
             PrimitiveMutex.WaitOne();
             if (NewPrimitiveReceived)
             {
@@ -566,6 +743,9 @@ namespace DwarfCorp
             PrimitiveMutex.ReleaseMutex();
         }
 
+        /// <summary>
+        /// Renders the chunk to the screen.
+        /// </summary>
         public void Render(GraphicsDevice device)
         {
             if (!RenderWireframe)
@@ -578,6 +758,10 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Rebuilds the liquid vertex buffers (water, lava, etc.)
+        /// ascciated with this chunk.
+        /// </summary>
         public void RebuildLiquids()
         {
             foreach (var primitive in Liquids)
@@ -587,6 +771,9 @@ namespace DwarfCorp
             ShouldRebuildWater = false;
         }
 
+        /// <summary>
+        /// Gets the maximum byte in a list of bytes.
+        /// </summary>
         private byte getMax(byte[] values)
         {
             byte max = 0;
@@ -602,6 +789,7 @@ namespace DwarfCorp
             return max;
         }
 
+        /// <summary> Clamps a float v to be between -a and a. </summary>
         private float Clamp(float v, float a)
         {
             if (v > a)
@@ -616,7 +804,8 @@ namespace DwarfCorp
 
             return v;
         }
-
+        
+        /// <summary> Clamps the components of vector v to be between -a and a </summary>
         private Vector3 ClampVector(Vector3 v, float a)
         {
             v.X = Clamp(v.X, a);
@@ -625,11 +814,16 @@ namespace DwarfCorp
             return v;
         }
 
+        /// <summary> Creates a new voxel referencing the one stored at x, y, z in this chunk </summary>
         public Voxel MakeVoxel(int x, int y, int z)
         {
             return new Voxel(new Point3(x, y, z), this);
         }
 
+        /// <summary> 
+        /// Construct the detail motes associated with this chunk
+        /// and a particular biome. 
+        /// </summary>
         public void BuildGrassMotes(Overworld.Biome biome)
         {
             BiomeData biomeData = BiomeLibrary.Biomes[biome];
