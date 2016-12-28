@@ -30,16 +30,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// Functions to test behaviors (or acts)
+    ///     Functions to test behaviors (or acts)
     /// </summary>
     public class TestBehaviors
     {
@@ -55,7 +54,7 @@ namespace DwarfCorp
 
         public static IEnumerable<Act.Status> BusyLoop()
         {
-            for(long i = 0; i < 10; i++)
+            for (long i = 0; i < 10; i++)
             {
                 yield return Act.Status.Running;
             }
@@ -65,7 +64,7 @@ namespace DwarfCorp
 
         public static IEnumerable<Act.Status> BusyFail()
         {
-            for(long i = 0; i < 10; i++)
+            for (long i = 0; i < 10; i++)
             {
                 yield return Act.Status.Running;
             }
@@ -76,21 +75,21 @@ namespace DwarfCorp
         public static Act SimpleSequence()
         {
             return new Sequence(
-                new Wrap(TestBehaviors.AlwaysTrue),
-                new Wrap(TestBehaviors.AlwaysTrue),
-                new Wrap(TestBehaviors.AlwaysTrue)
+                new Wrap(AlwaysTrue),
+                new Wrap(AlwaysTrue),
+                new Wrap(AlwaysTrue)
                 );
         }
 
         public static Act SimpleSelect()
         {
             return new Select(
-                new Wrap(TestBehaviors.AlwaysFalse),
-                new Wrap(TestBehaviors.AlwaysFalse),
-                new Wrap(TestBehaviors.AlwaysTrue),
-                new Wrap(TestBehaviors.AlwaysTrue),
-                new Wrap(TestBehaviors.AlwaysTrue),
-                new Wrap(TestBehaviors.AlwaysTrue)
+                new Wrap(AlwaysFalse),
+                new Wrap(AlwaysFalse),
+                new Wrap(AlwaysTrue),
+                new Wrap(AlwaysTrue),
+                new Wrap(AlwaysTrue),
+                new Wrap(AlwaysTrue)
                 );
         }
 
@@ -98,19 +97,19 @@ namespace DwarfCorp
         {
             return new Parallel
                 (
-                new Wrap(TestBehaviors.AlwaysTrue),
-                new Wrap(TestBehaviors.BusyLoop)
+                new Wrap(AlwaysTrue),
+                new Wrap(BusyLoop)
                 );
         }
 
         public static Act SimpleFor()
         {
-            return new ForLoop(new Wrap(TestBehaviors.AlwaysTrue), 10, false);
+            return new ForLoop(new Wrap(AlwaysTrue), 10, false);
         }
 
         public static Act SimpleWhile()
         {
-            return new WhileLoop(new Wrap(TestBehaviors.AlwaysTrue), new Wrap(TestBehaviors.BusyFail));
+            return new WhileLoop(new Wrap(AlwaysTrue), new Wrap(BusyFail));
         }
 
         public static Act ComplexBehavior()
@@ -134,7 +133,7 @@ namespace DwarfCorp
         {
             return SimpleSequence()
                    & (5 > 4)
-                   & new Func<bool>(TestBehaviors.SimpleCondition)
+                   & new Func<bool>(SimpleCondition)
                    & new Func<IEnumerable<Act.Status>>(AlwaysTrue);
         }
 
@@ -146,7 +145,8 @@ namespace DwarfCorp
 
         public static Act OverloaderTest()
         {
-            return ((SimpleFor() & SimpleSequence()) | (SimpleWhile() | SimpleSequence())) * new Wait(5) & new Func<bool>(SimpleCondition).GetAct();
+            return ((SimpleFor() & SimpleSequence()) | (SimpleWhile() | SimpleSequence()))*new Wait(5) &
+                   new Func<bool>(SimpleCondition).GetAct();
         }
 
         public static void RunTests()
@@ -156,89 +156,88 @@ namespace DwarfCorp
             Act par = SimpleParallel();
             Act forLoop = SimpleFor();
             Act whileLoop = SimpleWhile();
-            Wait wait = new Wait(5.0f);
-            Condition cond = new Condition(() => { return 1 > 2 || 5 == 3 || 1 + 1 == 2; });
+            var wait = new Wait(5.0f);
+            var cond = new Condition(() => { return 1 > 2 || 5 == 3 || 1 + 1 == 2; });
 
             Act complex = ComplexBehavior();
             Act overloader = OverloaderTest();
             Act converter = Convertor();
 
             seq.Initialize();
-            foreach(Act.Status status in seq.Run())
+            foreach (Act.Status status in seq.Run())
             {
-                Console.Out.WriteLine("Seq status: " + status.ToString());
+                Console.Out.WriteLine("Seq status: " + status);
             }
 
             select.Initialize();
-            foreach(Act.Status status in select.Run())
+            foreach (Act.Status status in select.Run())
             {
-                Console.Out.WriteLine("select status: " + status.ToString());
+                Console.Out.WriteLine("select status: " + status);
             }
 
             par.Initialize();
-            foreach(Act.Status status in par.Run())
+            foreach (Act.Status status in par.Run())
             {
-                Console.Out.WriteLine("par status: " + status.ToString());
+                Console.Out.WriteLine("par status: " + status);
             }
 
             forLoop.Initialize();
-            foreach(Act.Status status in forLoop.Run())
+            foreach (Act.Status status in forLoop.Run())
             {
-                Console.Out.WriteLine("for status: " + status.ToString());
+                Console.Out.WriteLine("for status: " + status);
             }
 
             whileLoop.Initialize();
-            foreach(Act.Status status in whileLoop.Run())
+            foreach (Act.Status status in whileLoop.Run())
             {
-                Console.Out.WriteLine("while status: " + status.ToString());
+                Console.Out.WriteLine("while status: " + status);
             }
 
             cond.Initialize();
 
-            foreach(Act.Status status in cond.Run())
+            foreach (Act.Status status in cond.Run())
             {
-                Console.Out.WriteLine("cond status: " + status.ToString());
+                Console.Out.WriteLine("cond status: " + status);
             }
 
             DateTime first = DateTime.Now;
             wait.Initialize();
             DwarfTime.LastTime = new DwarfTime(DateTime.Now - first, DateTime.Now - DateTime.Now);
             DateTime last = DateTime.Now;
-            foreach(Act.Status status in wait.Run())
+            foreach (Act.Status status in wait.Run())
             {
                 DwarfTime.LastTime = new DwarfTime(DateTime.Now - first, DateTime.Now - last);
-                Console.Out.WriteLine("Wait status: " + status.ToString() + "," + wait.Time.CurrentTimeSeconds);
+                Console.Out.WriteLine("Wait status: " + status + "," + wait.Time.CurrentTimeSeconds);
                 last = DateTime.Now;
-                System.Threading.Thread.Sleep(10);
+                Thread.Sleep(10);
             }
 
             complex.Initialize();
-            foreach(Act.Status status in complex.Run())
+            foreach (Act.Status status in complex.Run())
             {
                 DwarfTime.LastTime = new DwarfTime(DateTime.Now - first, DateTime.Now - last);
-                Console.Out.WriteLine("Complex status: " + status.ToString());
+                Console.Out.WriteLine("Complex status: " + status);
                 last = DateTime.Now;
-                System.Threading.Thread.Sleep(10);
+                Thread.Sleep(10);
             }
 
             overloader.Initialize();
-            foreach(Act.Status status in overloader.Run())
+            foreach (Act.Status status in overloader.Run())
             {
                 DwarfTime.LastTime = new DwarfTime(DateTime.Now - first, DateTime.Now - last);
-                Console.Out.WriteLine("Overloader status: " + status.ToString());
+                Console.Out.WriteLine("Overloader status: " + status);
                 last = DateTime.Now;
-                System.Threading.Thread.Sleep(10);
+                Thread.Sleep(10);
             }
 
             converter.Initialize();
-            foreach(Act.Status status in converter.Run())
+            foreach (Act.Status status in converter.Run())
             {
                 DwarfTime.LastTime = new DwarfTime(DateTime.Now - first, DateTime.Now - last);
-                Console.Out.WriteLine("converter status: " + status.ToString());
+                Console.Out.WriteLine("converter status: " + status);
                 last = DateTime.Now;
-                System.Threading.Thread.Sleep(10);
+                Thread.Sleep(10);
             }
         }
     }
-
 }

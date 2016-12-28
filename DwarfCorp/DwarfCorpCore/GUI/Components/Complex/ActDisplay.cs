@@ -30,45 +30,22 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This is a debug display for behavior trees (acts)
+    ///     This is a debug display for behavior trees (acts). It just draws a tree of named Acts.
     /// </summary>
     public class ActDisplay : GUIComponent
     {
-        private Act m_act = null;
-
-        public Act CurrentAct
-        {
-            get { return m_act; }
-            set
-            {
-                m_act = value;
-                InitAct();
-            }
-        }
-
-        public Color[] DisplayColors { get; set; }
-        public int ElementWidth = 50;
+        private readonly Timer rebuildTimer = new Timer(2.0f, false, Timer.TimerMode.Real);
         public int ElementHeight = 15;
-        private Timer rebuildTimer = new Timer(2.0f, false, Timer.TimerMode.Real);
-
-        public struct ActElement
-        {
-            public Act act;
-            public Vector2 position;
-        }
-
-        public List<ActElement> Elements { get; set; }
+        public int ElementWidth = 50;
+        private Act m_act;
 
         public ActDisplay(DwarfGUI gui, GUIComponent parent) :
             base(gui, parent)
@@ -81,48 +58,58 @@ namespace DwarfCorp
             Elements = new List<ActElement>();
         }
 
+        public Act CurrentAct
+        {
+            get { return m_act; }
+            set
+            {
+                m_act = value;
+                InitAct();
+            }
+        }
+
+        public Color[] DisplayColors { get; set; }
+
+        public List<ActElement> Elements { get; set; }
+
 
         private void CreateSubtreeRecursive(Act root, ref Vector2 lastPosition, ref Vector2 size)
         {
-            if(root == null)
+            if (root == null)
             {
-                return;
             }
-            else
+            var element = new ActElement();
+            element.act = root;
+            element.position = lastPosition;
+
+            Elements.Add(element);
+
+            lastPosition.Y += ElementHeight;
+            lastPosition.X += ElementWidth;
+
+            size += Datastructures.SafeMeasure(GUI.DefaultFont, element.act.Name);
+            size.X += ElementWidth;
+            size.Y += ElementHeight;
+
+            if (root.Children != null && root.Enumerator.Current != Act.Status.Success)
             {
-                ActElement element = new ActElement();
-                element.act = root;
-                element.position = lastPosition;
-
-                Elements.Add(element);
-
-                lastPosition.Y += ElementHeight;
-                lastPosition.X += ElementWidth;
-
-                size += Datastructures.SafeMeasure(GUI.DefaultFont, element.act.Name);
-                size.X += ElementWidth;
-                size.Y += ElementHeight;
-
-                if(root.Children != null && root.Enumerator.Current != Act.Status.Success)
+                foreach (Act child in root.Children)
                 {
-                    foreach(Act child in root.Children)
-                    {
-                        CreateSubtreeRecursive(child, ref lastPosition, ref size);
-                    }
+                    CreateSubtreeRecursive(child, ref lastPosition, ref size);
                 }
-
-                lastPosition.X -= ElementWidth;
             }
+
+            lastPosition.X -= ElementWidth;
         }
 
         private void InitAct()
         {
-            Vector2 lastPosition = new Vector2(5, 5);
-            Vector2 size = new Vector2(0, 0);
+            var lastPosition = new Vector2(5, 5);
+            var size = new Vector2(0, 0);
 
-            if(CurrentAct != null && CurrentAct.IsInitialized)
+            if (CurrentAct != null && CurrentAct.IsInitialized)
             {
-                ActElement element = new ActElement();
+                var element = new ActElement();
                 element.act = CurrentAct;
                 element.position = lastPosition;
                 Elements.Clear();
@@ -132,15 +119,15 @@ namespace DwarfCorp
                 size.X += ElementWidth;
                 size.Y += ElementHeight;
 
-                if(CurrentAct.Children != null)
+                if (CurrentAct.Children != null)
                 {
-                    foreach(Act child in CurrentAct.Children)
+                    foreach (Act child in CurrentAct.Children)
                     {
                         CreateSubtreeRecursive(child, ref lastPosition, ref size);
                     }
                 }
             }
-            else if(CurrentAct != null)
+            else if (CurrentAct != null)
             {
                 CurrentAct = null;
             }
@@ -153,7 +140,7 @@ namespace DwarfCorp
         {
             rebuildTimer.Update(time);
 
-            if(rebuildTimer.HasTriggered)
+            if (rebuildTimer.HasTriggered)
             {
                 InitAct();
             }
@@ -163,22 +150,28 @@ namespace DwarfCorp
 
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
-            foreach(ActElement element in Elements)
+            foreach (ActElement element in Elements)
             {
                 string toDraw = element.act.Name;
                 Color color = DisplayColors[(int) (element.act.Enumerator.Current)];
 
-                if(element.act.Children.Count == 0 && element.act.Enumerator.Current == Act.Status.Running)
+                if (element.act.Children.Count == 0 && element.act.Enumerator.Current == Act.Status.Running)
                 {
                     toDraw = ">" + toDraw;
                     color = Color.Blue;
                 }
 
-                batch.DrawString(GUI.SmallFont, toDraw, element.position + new Vector2(GlobalBounds.X, GlobalBounds.Y), color);
+                batch.DrawString(GUI.SmallFont, toDraw, element.position + new Vector2(GlobalBounds.X, GlobalBounds.Y),
+                    color);
             }
 
             base.Render(time, batch);
         }
-    }
 
+        public struct ActElement
+        {
+            public Act act;
+            public Vector2 position;
+        }
+    }
 }

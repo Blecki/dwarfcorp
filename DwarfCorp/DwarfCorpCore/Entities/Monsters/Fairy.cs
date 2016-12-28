@@ -30,33 +30,28 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
     public class Fairy : Creature
     {
-
-        public Timer ParticleTimer { get; set; }
-        public Timer DeathTimer { get; set; }
         public Fairy()
         {
-
         }
+
         public Fairy(string allies, Vector3 position) :
-            base( new CreatureStats(new FairyClass(), 0), "Player", PlayState.PlanService, PlayState.ComponentManager.Factions.Factions[allies],
-           new Physics("Fairy", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position),
-                       new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, 0, 0)),
-              PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Fairy")
+            base(
+            new CreatureStats(new FairyClass(), 0), "Player", PlayState.PlanService,
+            PlayState.ComponentManager.Factions.Factions[allies],
+            new Physics("Fairy", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position),
+                new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f,
+                new Vector3(0, 0, 0)),
+            PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Fairy")
         {
             HasMeat = false;
             HasBones = false;
@@ -65,11 +60,14 @@ namespace DwarfCorp
             Initialize(new FairyClass());
         }
 
+        public Timer ParticleTimer { get; set; }
+        public Timer DeathTimer { get; set; }
+
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (ParticleTimer.HasTriggered)
             {
-                PlayState.ParticleManager.Trigger("star_particle", Sprite.Position, Color.White, 1);    
+                PlayState.ParticleManager.Trigger("star_particle", Sprite.Position, Color.White, 1);
             }
             DeathTimer.Update(gameTime);
             ParticleTimer.Update(gameTime);
@@ -82,12 +80,12 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
 
-        
 
         public void Initialize(EmployeeClass dwarfClass)
         {
             Physics.Orientation = Physics.OrientMode.RotateY;
-            Sprite = new CharacterSprite(Graphics, Manager, "Fairy Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 0.5f, 0)));
+            Sprite = new CharacterSprite(Graphics, Manager, "Fairy Sprite", Physics,
+                Matrix.CreateTranslation(new Vector3(0, 0.5f, 0)));
             foreach (Animation animation in dwarfClass.Animations)
             {
                 Sprite.AddAnimation(animation.Clone());
@@ -96,11 +94,12 @@ namespace DwarfCorp
 
             Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
 
-            Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
+            Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20),
+                Vector3.Zero);
 
             AI = new CreatureAI(this, "Fairy AI", Sensors, PlanService);
 
-            Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
+            Attacks = new List<Attack> {new Attack(Stats.CurrentClass.Attacks[0])};
 
 
             Inventory = new Inventory("Inventory", Physics)
@@ -111,36 +110,38 @@ namespace DwarfCorp
                 }
             };
 
-            Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
+            Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI*0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
 
-            Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform, new SpriteSheet(ContentPaths.Effects.shadowcircle));
-            List<Point> shP = new List<Point>
+            Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform,
+                new SpriteSheet(ContentPaths.Effects.shadowcircle));
+            var shP = new List<Point>
             {
                 new Point(0, 0)
             };
-            Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
+            var shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32,
+                32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
             Shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
             Shadow.SetCurrentAnimation("sh");
             Physics.Tags.Add("Dwarf");
 
 
-
-            DeathParticleTrigger = new ParticleTrigger("star_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
+            DeathParticleTrigger = new ParticleTrigger("star_particle", Manager, "Death Gibs", Physics, Matrix.Identity,
+                Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
                 SoundToPlay = ContentPaths.Audio.wurp,
             };
-          
+
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
                 ContentPaths.Audio.tinkle
             };
 
 
-            NoiseMaker.Noises["Chew"] = new List<string> 
+            NoiseMaker.Noises["Chew"] = new List<string>
             {
                 ContentPaths.Audio.tinkle
             };
@@ -150,17 +151,17 @@ namespace DwarfCorp
                 ContentPaths.Audio.tinkle
             };
 
-            MinimapIcon minimapIcon = new MinimapIcon(Physics, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 0, 0));
+            var minimapIcon = new MinimapIcon(Physics,
+                new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 0, 0));
 
             //new LightEmitter("Light Emitter", Sprite, Matrix.Identity, Vector3.One, Vector3.One, 255, 150);
             new Bobber(0.25f, 3.0f, MathFunctions.Rand(), Sprite);
-          
+
             Stats.FullName = TextGenerator.GenerateRandom("$firstname");
             //Stats.LastName = "The Fairy";
-            
+
             Stats.CanSleep = false;
             Stats.CanEat = false;
         }
     }
-
 }

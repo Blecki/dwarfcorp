@@ -30,19 +30,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     public class GoToChairAndSitAct : CompoundCreatureAct
     {
-        public float SitTime { get; set; }
-
         public GoToChairAndSitAct()
         {
             Name = "Go to chair and sit";
@@ -55,6 +50,8 @@ namespace DwarfCorp
             Name = "Go to chair and sit";
             SitTime = 30.0f;
         }
+
+        public float SitTime { get; set; }
 
 
         public void ConverseFriends()
@@ -81,15 +78,14 @@ namespace DwarfCorp
             {
                 yield return status;
             }
-
         }
 
         public IEnumerable<Status> WaitUntilBored()
         {
-            Timer waitTimer = new Timer(SitTime, false);
-            Timer eatTimer = new Timer(10.0f + MathFunctions.Rand(0, 1), false);
+            var waitTimer = new Timer(SitTime, false);
+            var eatTimer = new Timer(10.0f + MathFunctions.Rand(0, 1), false);
             Vector3 snapPosition = Agent.Position + new Vector3(0, 0.2f, 0);
-            Body body = Creature.AI.Blackboard.GetData<Body>("Chair");
+            var body = Creature.AI.Blackboard.GetData<Body>("Chair");
 
             if (body == null || body.IsDead)
             {
@@ -136,13 +132,13 @@ namespace DwarfCorp
 
                 eatTimer.Update(DwarfTime.LastTime);
 
-                if(eatTimer.HasTriggered)
-                    foreach (Act.Status status in EatFood())
+                if (eatTimer.HasTriggered)
+                    foreach (Status status in EatFood())
                     {
-                        if (status == Act.Status.Running)
+                        if (status == Status.Running)
                         {
                             Creature.OverrideCharacterMode = false;
-                            yield return Act.Status.Running;
+                            yield return Status.Running;
                         }
                     }
 
@@ -157,20 +153,25 @@ namespace DwarfCorp
         public override void Initialize()
         {
             Creature.OverrideCharacterMode = false;
-           
+
             Tree = new Sequence(new ClearBlackboardData(Creature.AI, "Chair"),
-                                new Wrap(() => Creature.FindAndReserve("Chair", "Chair")),
-                                new GoToTaggedObjectAct(Creature.AI) {Tag = "Chair", Teleport = true, TeleportOffset = new Vector3(0, 0.1f, 0), ObjectName = "Chair"},
-                                new Wrap(WaitUntilBored),
-                                new Wrap(() => Creature.Unreserve("Chair"))) | new Wrap(() => Creature.Unreserve("Chair"));
+                new Wrap(() => Creature.FindAndReserve("Chair", "Chair")),
+                new GoToTaggedObjectAct(Creature.AI)
+                {
+                    Tag = "Chair",
+                    Teleport = true,
+                    TeleportOffset = new Vector3(0, 0.1f, 0),
+                    ObjectName = "Chair"
+                },
+                new Wrap(WaitUntilBored),
+                new Wrap(() => Creature.Unreserve("Chair"))) | new Wrap(() => Creature.Unreserve("Chair"));
             base.Initialize();
         }
 
         public override void OnCanceled()
         {
-            foreach (var statuses in Creature.Unreserve("Chair"))
+            foreach (Status statuses in Creature.Unreserve("Chair"))
             {
-                continue;
             }
             base.OnCanceled();
         }

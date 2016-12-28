@@ -30,33 +30,37 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using System.Runtime.Serialization.Formatters;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// Serializes and deserializes Rectangle objects to JSON.
+    ///     Serializes and deserializes Rectangle objects to JSON.
     /// </summary>
     public class RectangleConverter : JsonConverter
     {
+        public override bool CanWrite
+        {
+            get { return false; }
+        }
+
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             throw new NotImplementedException();
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+            JsonSerializer serializer)
         {
-           
-            JValue jObject = serializer.Deserialize<JValue>(reader);
+            var jObject = serializer.Deserialize<JValue>(reader);
             string jsonString = jObject.Value.ToString();
 
             string[] tokens = jsonString.Split(' ', ',', ':', '{', '}');
-            int[] intTokens = new int[4];
+            var intTokens = new int[4];
 
             int i = 0;
             foreach (string token in tokens)
@@ -77,15 +81,9 @@ namespace DwarfCorp
             return new Rectangle(intTokens[0], intTokens[1], intTokens[2], intTokens[3]);
         }
 
-        public override bool CanWrite
-        {
-            get { return false; }
-        }
-
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(Rectangle);
+            return objectType == typeof (Rectangle);
         }
     }
-
 }

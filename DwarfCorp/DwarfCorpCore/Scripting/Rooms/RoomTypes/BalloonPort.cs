@@ -30,71 +30,21 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    ///     A balloon port is a special kind of room that handles trade. Trade envoys try to get to the balloon port to trade
+    ///     goods with the
+    ///     player. Balloons (duh) also land at the balloon port.
+    /// </summary>
     [JsonObject(IsReference = true)]
     public class BalloonPort : Stockpile
     {
-        [JsonIgnore]
-        public static string BalloonPortName { get { return "BalloonPort"; } }
-        [JsonIgnore]
-        public static RoomData BalloonPortData { get { return RoomLibrary.GetData(BalloonPortName); } }
-
-        public new static RoomData InitializeData()
-        {
-            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> balloonPortResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>();
-            balloonPortResources[Resource.ResourceTags.Stone] = new Quantitiy<Resource.ResourceTags>()
-            {
-                ResourceType = Resource.ResourceTags.Stone,
-                NumResources = 1
-            };
-
-            RoomTile[,] flagTemplate =
-            {
-                {
-                    RoomTile.None,
-                    RoomTile.Wall | RoomTile.Edge
-                },
-                {
-                    RoomTile.Wall | RoomTile.Edge,
-                    RoomTile.Flag
-                }
-            };
-
-            RoomTile[,] flagAccesories =
-            {
-                {
-                    RoomTile.None,
-                    RoomTile.None
-                },
-                {
-                    RoomTile.None,
-                    RoomTile.None
-                }
-            };
-
-            RoomTemplate flag = new RoomTemplate(PlacementType.All, flagTemplate, flagAccesories);
-
-
-            List<RoomTemplate> balloonTemplates = new List<RoomTemplate>
-            {
-                flag
-            };
-            Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(BalloonPortName, 0, "Stockpile", balloonPortResources, balloonTemplates, new ImageFrame(roomIcons, 16, 1, 0))
-            {
-                Description = "Balloons pick up / drop off resources here.",
-                CanBuildBelowGround = false
-            };
-        }
-
         public BalloonPort()
         {
         }
@@ -110,5 +60,78 @@ namespace DwarfCorp
             OnBuilt();
         }
 
+        /// <summary>
+        ///     I kept misspelling "BaloonPort" so I put it here as static data.
+        /// </summary>
+        [JsonIgnore]
+        public static string BalloonPortName
+        {
+            get { return "BalloonPort"; }
+        }
+
+        /// <summary>
+        ///     Convenience function for getting the room info.
+        /// </summary>
+        [JsonIgnore]
+        public static RoomData BalloonPortData
+        {
+            get { return RoomLibrary.GetData(BalloonPortName); }
+        }
+
+        /// <summary>
+        ///     Create data associated with balloon ports.
+        /// </summary>
+        /// <returns>Information about how to create a baloon port.</returns>
+        public new static RoomData InitializeData()
+        {
+            // Resources required to create a balloon port.
+            var balloonPortResources =
+                new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>();
+            balloonPortResources[Resource.ResourceTags.Stone] = new Quantitiy<Resource.ResourceTags>
+            {
+                ResourceType = Resource.ResourceTags.Stone,
+                NumResources = 1
+            };
+
+            // Create flags at the edges of the balloon port.
+            RoomTile[,] flagTemplate =
+            {
+                {
+                    RoomTile.None, RoomTile.Wall | RoomTile.Edge
+                },
+                {
+                    RoomTile.Wall | RoomTile.Edge, RoomTile.Flag
+                }
+            };
+
+            // No need for anything else
+            RoomTile[,] flagAccesories =
+            {
+                {
+                    RoomTile.None, RoomTile.None
+                },
+                {
+                    RoomTile.None, RoomTile.None
+                }
+            };
+
+            // Create flags at the corners.
+            var flag = new RoomTemplate(PlacementType.All, flagTemplate, flagAccesories);
+
+
+            var balloonTemplates = new List<RoomTemplate>
+            {
+                flag
+            };
+
+            // Defines how to generate a baloon port.
+            Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
+            return new RoomData(BalloonPortName, 0, "Stockpile", balloonPortResources, balloonTemplates,
+                new ImageFrame(roomIcons, 16, 1, 0))
+            {
+                Description = "Balloons pick up / drop off resources here.",
+                CanBuildBelowGround = false
+            };
+        }
     }
 }

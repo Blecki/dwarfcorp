@@ -30,37 +30,31 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A BuildRoom data has a Name, alters the apperance of voxels, requires resources to build,
-    /// and has item templates.
+    ///     A BuildRoom data has a Name, alters the apperance of voxels, requires resources to build,
+    ///     and has item templates.
     /// </summary>
     public class RoomData
     {
-        public string Name { get; set; }
-        public uint ID { get; set; }
-        public string FloorType { get; set; }
-        public Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> RequiredResources { get; set; }
-        public List<RoomTemplate> Templates { get; set; }
-        public ImageFrame Icon { get; set; }
-        public string Description { get; set; }
         public bool CanBuildAboveGround = true;
         public bool CanBuildBelowGround = true;
         public bool CanBuildOnMultipleLevels = false;
-        public bool MustBeBuiltOnSoil = false;
         public int MinimumSideLength = 3;
         public int MinimumSideWidth = 3;
+        public bool MustBeBuiltOnSoil = false;
 
-        public RoomData(string name, uint id, string floorTexture, Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> requiredResources, List<RoomTemplate> templates, ImageFrame icon)
+        public RoomData(string name, uint id, string floorTexture,
+            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> requiredResources,
+            List<RoomTemplate> templates, ImageFrame icon)
         {
             Name = name;
             ID = id;
@@ -71,14 +65,22 @@ namespace DwarfCorp
             Description = "";
         }
 
-        public List<Quantitiy<Resource.ResourceTags> > GetRequiredResources(int numVoxels, Faction faction)
+        public string Name { get; set; }
+        public uint ID { get; set; }
+        public string FloorType { get; set; }
+        public Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> RequiredResources { get; set; }
+        public List<RoomTemplate> Templates { get; set; }
+        public ImageFrame Icon { get; set; }
+        public string Description { get; set; }
+
+        public List<Quantitiy<Resource.ResourceTags>> GetRequiredResources(int numVoxels, Faction faction)
         {
-            List<Quantitiy<Resource.ResourceTags> > toReturn = new List<Quantitiy<Resource.ResourceTags>>();
+            var toReturn = new List<Quantitiy<Resource.ResourceTags>>();
             foreach (var resources in RequiredResources)
             {
-                Quantitiy<Resource.ResourceTags> required = new Quantitiy<Resource.ResourceTags>(resources.Value)
+                var required = new Quantitiy<Resource.ResourceTags>(resources.Value)
                 {
-                    NumResources = (int)(numVoxels * resources.Value.NumResources * 0.25f)
+                    NumResources = (int) (numVoxels*resources.Value.NumResources*0.25f)
                 };
 
                 toReturn.Add(required);
@@ -91,12 +93,12 @@ namespace DwarfCorp
         {
             foreach (var resources in RequiredResources)
             {
-                Quantitiy<Resource.ResourceTags> required = new Quantitiy<Resource.ResourceTags>(resources.Value)
+                var required = new Quantitiy<Resource.ResourceTags>(resources.Value)
                 {
                     NumResources = (int) (numVoxels*resources.Value.NumResources*0.25f)
                 };
 
-                if (!faction.HasResources(new List<Quantitiy<Resource.ResourceTags>>() { required }))
+                if (!faction.HasResources(new List<Quantitiy<Resource.ResourceTags>> {required}))
                 {
                     return false;
                 }
@@ -113,7 +115,6 @@ namespace DwarfCorp
                 return false;
             }
 
-            
 
             List<BoundingBox> boxes = refs.Select(voxel => voxel.GetBoundingBox()).ToList();
             BoundingBox box = MathFunctions.GetBoundingBox(boxes);
@@ -125,7 +126,8 @@ namespace DwarfCorp
 
             if (maxExtents < MinimumSideLength || minExtents < MinimumSideWidth)
             {
-                PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Room is too small", Color.Red) + " (minimum is " + MinimumSideLength + " x " + MinimumSideWidth +")!");
+                PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Room is too small", Color.Red) + " (minimum is " +
+                                                   MinimumSideLength + " x " + MinimumSideWidth + ")!");
                 return false;
             }
 
@@ -138,13 +140,12 @@ namespace DwarfCorp
             int height = -1;
             foreach (Voxel voxel in refs)
             {
-
                 if (voxel.IsEmpty) continue;
                 if (voxel.Type.IsInvincible) continue;
 
                 if (height == -1)
                 {
-                    height = (int)voxel.GridPosition.Y;
+                    height = (int) voxel.GridPosition.Y;
                 }
                 else if (height != (int) voxel.GridPosition.Y && !CanBuildOnMultipleLevels)
                 {
@@ -167,20 +168,17 @@ namespace DwarfCorp
 
                     PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Room can't be built aboveground!", Color.Red));
                     return false;
-                } 
-                else if (!CanBuildBelowGround)
+                }
+                if (!CanBuildBelowGround)
                 {
                     if (voxel.Chunk.Data.SunColors[voxel.Index] >= 5) continue;
 
                     PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Room can't be built belowground!", Color.Red));
                     return false;
                 }
-
-
             }
 
             return true;
         }
     }
-
 }

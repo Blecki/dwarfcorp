@@ -30,47 +30,27 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using System.Runtime.Serialization;
-using System.Text;
 using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// When a voxel is destroyed, this component kills whatever it is attached to.
+    ///     When a voxel is destroyed, this component kills whatever it is attached to.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class VoxelListener : GameComponent
     {
-        public Point3 VoxelID;
-
-        [JsonIgnore]
-        public VoxelChunk Chunk;
-
-        public Point3 ChunkID { get; set; }
-
-        private bool firstIter = false;
+        [JsonIgnore] public VoxelChunk Chunk;
 
         public bool DestroyOnTimer = false;
-        public Timer DestroyTimer { get; set; }
-
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            Chunk = PlayState.ChunkManager.ChunkData.ChunkMap[ChunkID];
-            firstIter = true;
-            Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
-        }
+        public Point3 VoxelID;
+        private bool firstIter;
 
         public VoxelListener()
         {
-
         }
 
 
@@ -81,7 +61,18 @@ namespace DwarfCorp
             VoxelID = new Point3(vref.GridPosition);
             Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
             ChunkID = Chunk.ID;
+        }
 
+        public Point3 ChunkID { get; set; }
+        public Timer DestroyTimer { get; set; }
+
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            Chunk = PlayState.ChunkManager.ChunkData.ChunkMap[ChunkID];
+            firstIter = true;
+            Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
@@ -110,7 +101,7 @@ namespace DwarfCorp
         }
 
 
-        void VoxelListener_OnVoxelDestroyed(Point3 voxelID)
+        private void VoxelListener_OnVoxelDestroyed(Point3 voxelID)
         {
             if (voxelID.Equals(VoxelID))
             {
@@ -134,10 +125,22 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class ExploredListener : GameComponent
     {
+        [JsonIgnore] public VoxelChunk Chunk;
         public Point3 VoxelID;
 
-        [JsonIgnore]
-        public VoxelChunk Chunk;
+        public ExploredListener()
+        {
+        }
+
+
+        public ExploredListener(ComponentManager manager, GameComponent parent, ChunkManager chunkManager, Voxel vref) :
+            base("ExploredListener", parent)
+        {
+            Chunk = vref.Chunk;
+            VoxelID = new Point3(vref.GridPosition);
+            Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
+            ChunkID = Chunk.ID;
+        }
 
         public Point3 ChunkID { get; set; }
 
@@ -149,23 +152,7 @@ namespace DwarfCorp
             Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
         }
 
-        public ExploredListener()
-        {
-
-        }
-
-
-        public ExploredListener(ComponentManager manager, GameComponent parent, ChunkManager chunkManager, Voxel vref) :
-            base("ExploredListener", parent)
-        {
-            Chunk = vref.Chunk;
-            VoxelID = new Point3(vref.GridPosition);
-            Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
-            ChunkID = Chunk.ID;
-
-        }
-
-        void ExploredListener_OnVoxelExplored(Point3 voxelID)
+        private void ExploredListener_OnVoxelExplored(Point3 voxelID)
         {
             if (voxelID.Equals(VoxelID))
             {

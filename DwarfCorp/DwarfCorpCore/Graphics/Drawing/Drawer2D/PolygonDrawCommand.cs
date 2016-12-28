@@ -30,26 +30,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-  
     public class PolygonDrawCommand : DrawCommand2D
     {
-
-        public List<Vector2> Points { get; set; }
-        public bool IsClosed { get; set; }
-        public Color LineColor { get; set; }
-        public int LineWidth { get; set; }
-
         public PolygonDrawCommand()
         {
             Points = new List<Vector2>();
@@ -69,11 +60,12 @@ namespace DwarfCorp
             Points = new List<Vector2>();
 
             BoundingFrustum cameraFrustrum = PlayState.Camera.GetFrustrum();
-            foreach(Vector3 point in points)
+            foreach (Vector3 point in points)
             {
-                if(cameraFrustrum.Contains(point) == ContainmentType.Contains)
+                if (cameraFrustrum.Contains(point) == ContainmentType.Contains)
                 {
-                    Vector3 screenVec = GameState.Game.GraphicsDevice.Viewport.Project(point, PlayState.Camera.ProjectionMatrix, PlayState.Camera.ViewMatrix, Matrix.Identity);
+                    Vector3 screenVec = GameState.Game.GraphicsDevice.Viewport.Project(point,
+                        PlayState.Camera.ProjectionMatrix, PlayState.Camera.ViewMatrix, Matrix.Identity);
                     Points.Add(new Vector2(screenVec.X, screenVec.Y));
                 }
             }
@@ -83,19 +75,24 @@ namespace DwarfCorp
             LineWidth = lineWidth;
         }
 
+        public List<Vector2> Points { get; set; }
+        public bool IsClosed { get; set; }
+        public Color LineColor { get; set; }
+        public int LineWidth { get; set; }
+
         public override void Render(SpriteBatch batch, Camera camera, Viewport viewport)
         {
-            if(Points.Count <= 1)
+            if (Points.Count <= 1)
             {
                 return;
             }
 
-            for(int i = 0; i < Points.Count - 1; i++)
+            for (int i = 0; i < Points.Count - 1; i++)
             {
                 Drawer2D.DrawLine(batch, Points[i], Points[i + 1], LineColor, LineWidth);
             }
 
-            if(IsClosed && Points.Count > 2)
+            if (IsClosed && Points.Count > 2)
             {
                 Drawer2D.DrawLine(batch, Points.Last(), Points.First(), LineColor, LineWidth);
             }

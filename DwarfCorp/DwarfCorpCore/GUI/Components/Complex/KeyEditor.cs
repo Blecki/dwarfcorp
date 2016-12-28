@@ -30,36 +30,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This GUI component allows the player to edit the keyboard settings.
+    ///     This GUI component allows the player to edit the keyboard settings.
     /// </summary>
     public class KeyEditor : GUIComponent
     {
-        public KeyManager KeyManager { get; set; }
-        public GridLayout Layout { get; set; }
-        public List<Keys> ReservedKeys { get; set; }
-
-        public bool IsReserved(Keys key)
-        {
-            return ReservedKeys.Contains(key);
-        }
-
-        public void UpdateLayout()
-        {
-            Layout.UpdateSizes();
-        }
-
-
         public KeyEditor(DwarfGUI gui, GUIComponent parent, KeyManager keyManager, int numRows, int numColumns) :
             base(gui, parent)
         {
@@ -82,23 +63,23 @@ namespace DwarfCorp
 
             KeyManager = keyManager;
 
-            Layout = new GridLayout(gui, this, numRows, numColumns * 2);
+            Layout = new GridLayout(gui, this, numRows, numColumns*2);
 
             int r = 0;
             int c = 0;
 
-            foreach(KeyValuePair<string, Keys> button in KeyManager.Buttons)
+            foreach (var button in KeyManager.Buttons)
             {
-                if(r == numRows)
+                if (r == numRows)
                 {
                     r = 0;
                     c++;
                 }
 
-                Label keyLabel = new Label(gui, Layout, button.Key, gui.DefaultFont);
-                KeyEdit editor = new KeyEdit(gui, Layout, button.Value);
-                Layout.SetComponentPosition(keyLabel, c * 2, r, 1, 1);
-                Layout.SetComponentPosition(editor, c * 2 + 1, r, 1, 1);
+                var keyLabel = new Label(gui, Layout, button.Key, gui.DefaultFont);
+                var editor = new KeyEdit(gui, Layout, button.Value);
+                Layout.SetComponentPosition(keyLabel, c*2, r, 1, 1);
+                Layout.SetComponentPosition(editor, c*2 + 1, r, 1, 1);
 
 
                 string name = button.Key;
@@ -109,9 +90,24 @@ namespace DwarfCorp
             }
         }
 
+        public KeyManager KeyManager { get; set; }
+        public GridLayout Layout { get; set; }
+        public List<Keys> ReservedKeys { get; set; }
+
+        public bool IsReserved(Keys key)
+        {
+            return ReservedKeys.Contains(key);
+        }
+
+        public void UpdateLayout()
+        {
+            Layout.UpdateSizes();
+        }
+
+
         private void editor_OnKeyModified(string name, Keys prevKey, Keys arg, KeyEdit editor)
         {
-            if(!KeyManager.IsMapped(arg))
+            if (!KeyManager.IsMapped(arg))
             {
                 KeyManager[name] = arg;
                 KeyManager.SaveConfigSettings();
@@ -120,10 +116,8 @@ namespace DwarfCorp
             {
                 editor.Key = prevKey;
                 editor.Text = prevKey.ToString();
-                Dialog.Popup(GUI, "Key assigned!", "Key " + arg.ToString() + " already assigned.", Dialog.ButtonType.OK);
-
+                Dialog.Popup(GUI, "Key assigned!", "Key " + arg + " already assigned.", Dialog.ButtonType.OK);
             }
         }
     }
-
 }

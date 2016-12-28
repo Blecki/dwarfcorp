@@ -30,10 +30,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 
@@ -43,7 +40,6 @@ namespace DwarfCorp
     {
         public Ladder()
         {
-
         }
 
         public Ladder(Vector3 position, SpriteSheet sprites, Point frame) :
@@ -53,13 +49,12 @@ namespace DwarfCorp
         {
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
-            
+
             Name = "Ladder";
             Tags.Add("Climbable");
             Sprite.OrientationType = Sprite.OrientMode.Fixed;
-            Sprite.LocalTransform = Matrix.CreateTranslation(new Vector3(0, 0, 0.45f)) * Matrix.CreateRotationY(0.0f);
+            Sprite.LocalTransform = Matrix.CreateTranslation(new Vector3(0, 0, 0.45f))*Matrix.CreateRotationY(0.0f);
             OrientToWalls();
         }
     }
-
 }

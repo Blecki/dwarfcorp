@@ -30,17 +30,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This is a simple GUI component which draws a fancy rectangle thing.
+    ///     This is a simple GUI component which draws a fancy rectangle thing.
     /// </summary>
     public class Panel : GUIComponent
     {
@@ -53,27 +50,26 @@ namespace DwarfCorp
             SpeechBubble
         }
 
-        public PanelMode Mode { get; set; }
-
         public Panel(DwarfGUI gui, GUIComponent parent) :
             base(gui, parent)
         {
             Mode = PanelMode.Fancy;
-            
         }
+
+        public PanelMode Mode { get; set; }
 
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
-            if(!IsVisible)
+            if (!IsVisible)
             {
                 return;
             }
 
-            if(Mode == PanelMode.Fancy)
+            if (Mode == PanelMode.Fancy)
             {
                 GUI.Skin.RenderPanel(GlobalBounds, batch);
             }
-            else if(Mode == PanelMode.Simple)
+            else if (Mode == PanelMode.Simple)
             {
                 GUI.Skin.RenderToolTip(GlobalBounds, batch, new Color(255, 255, 255, 150));
             }
@@ -91,35 +87,34 @@ namespace DwarfCorp
 
     public class ScrollingAnimation : GUIComponent
     {
-        public NamedImageFrame Image { get; set; }
-        public Color Tint { get; set; }
-        public Vector2 ScrollSpeed { get; set; }
-        public Vector2 Scroll { get; set; }
-
-        public ScrollingAnimation(DwarfGUI gui, GUIComponent parent):
+        public ScrollingAnimation(DwarfGUI gui, GUIComponent parent) :
             base(gui, parent)
         {
             Tint = Color.White;
         }
+
+        public NamedImageFrame Image { get; set; }
+        public Color Tint { get; set; }
+        public Vector2 ScrollSpeed { get; set; }
+        public Vector2 Scroll { get; set; }
 
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
             if (Image != null && Image.Image != null)
             {
                 Rectangle sourceRect = Image.SourceRect;
-                sourceRect.X = (int)(sourceRect.X + Scroll.X);
+                sourceRect.X = (int) (sourceRect.X + Scroll.X);
                 sourceRect.Y = (int) (sourceRect.Y + Scroll.Y);
                 sourceRect.Width = GlobalBounds.Width;
                 sourceRect.Height = GlobalBounds.Height;
                 batch.Draw(Image.Image, GlobalBounds, sourceRect, Tint);
-
             }
             base.Render(time, batch);
         }
 
         public override void Update(DwarfTime time)
         {
-            Scroll += ScrollSpeed*(float)time.ElapsedRealTime.TotalSeconds;
+            Scroll += ScrollSpeed*(float) time.ElapsedRealTime.TotalSeconds;
             base.Update(time);
         }
     }
@@ -135,14 +130,14 @@ namespace DwarfCorp
             TopRight
         }
 
-        public Position TrayPosition { get; set; }
-
 
         public Tray(DwarfGUI gui, GUIComponent parent) :
             base(gui, parent)
         {
             TrayPosition = Position.BottomRight;
         }
+
+        public Position TrayPosition { get; set; }
 
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
@@ -152,5 +147,4 @@ namespace DwarfCorp
             base.Render(time, batch);
         }
     }
-
 }

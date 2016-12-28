@@ -30,14 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using DwarfCorp;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -45,15 +41,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Spell
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public ImageFrame Image { get; set; }
-        public float ManaCost { get; set; }
-        public SpellMode Mode { get; set; }
-        public Timer RechargeTimer { get; set; }
-        public string Hint { get; set; }
-        public bool Recharges { get; set; }
-
         public enum SpellMode
         {
             SelectFilledVoxels,
@@ -63,11 +50,15 @@ namespace DwarfCorp
             Continuous
         }
 
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public ImageFrame Image { get; set; }
+        public float ManaCost { get; set; }
+        public SpellMode Mode { get; set; }
+        public Timer RechargeTimer { get; set; }
+        public string Hint { get; set; }
+        public bool Recharges { get; set; }
 
-        public Spell()
-        {
-            
-        }
 
         public virtual bool OnCast(SpellTree tree)
         {
@@ -80,19 +71,18 @@ namespace DwarfCorp
             else
             {
                 SoundManager.PlaySound(ContentPaths.Audio.wurp, PlayState.CursorLightPos, true, 0.25f);
-                PlayState.GUI.ToolTipManager.Popup("Not enough mana. Need " + (int)ManaCost + " but only have " + (int)tree.Mana);
+                PlayState.GUI.ToolTipManager.Popup("Not enough mana. Need " + (int) ManaCost + " but only have " +
+                                                   (int) tree.Mana);
             }
             return canCast;
         }
 
         public virtual void OnVoxelsSelected(SpellTree tree, List<Voxel> voxels)
         {
-            
         }
 
         public virtual void OnEntitiesSelected(SpellTree tree, List<Body> entities)
         {
-            
         }
 
         public virtual void OnButtonTriggered()
@@ -102,12 +92,11 @@ namespace DwarfCorp
 
         public virtual void OnContinuousUpdate(DwarfTime time)
         {
-            
         }
 
         public virtual void Update(DwarfTime time, VoxelSelector voxSelector, BodySelector bodySelector)
         {
-            if(Recharges)
+            if (Recharges)
                 RechargeTimer.Update(time);
 
             switch (Mode)
@@ -134,7 +123,8 @@ namespace DwarfCorp
 
             if (!Recharges || RechargeTimer.HasTriggered)
             {
-                PlayState.ParticleManager.Trigger("star_particle", PlayState.CursorLightPos + Vector3.Up * 0.5f, Color.White, 2);
+                PlayState.ParticleManager.Trigger("star_particle", PlayState.CursorLightPos + Vector3.Up*0.5f,
+                    Color.White, 2);
             }
         }
 
@@ -142,11 +132,10 @@ namespace DwarfCorp
         {
             if (Recharges && !RechargeTimer.HasTriggered)
             {
-                Drawer2D.DrawLoadBar(PlayState.CursorLightPos - Vector3.Up, Color.White, Color.Black, 150, 20, RechargeTimer.CurrentTimeSeconds / RechargeTimer.TargetTimeSeconds);
-                Drawer2D.DrawTextBox("Charging...", PlayState.CursorLightPos + Vector3.Up * 2);
+                Drawer2D.DrawLoadBar(PlayState.CursorLightPos - Vector3.Up, Color.White, Color.Black, 150, 20,
+                    RechargeTimer.CurrentTimeSeconds/RechargeTimer.TargetTimeSeconds);
+                Drawer2D.DrawTextBox("Charging...", PlayState.CursorLightPos + Vector3.Up*2);
             }
         }
-
-
     }
 }

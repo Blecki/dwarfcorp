@@ -30,10 +30,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 using DwarfCorpCore;
 using Microsoft.Xna.Framework;
@@ -45,15 +43,19 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class MagicTool : PlayerTool
     {
+        public MagicTool()
+        {
+        }
+
+        public MagicTool(GameMaster master)
+        {
+            Player = master;
+        }
+
         public Spell CurrentSpell { get; set; }
         public MagicMenu MagicMenu { get; set; }
         public ProgressBar MagicBar { get; set; }
 
-
-        public MagicTool()
-        {
-            
-        }
 
         public override void OnBegin()
         {
@@ -64,7 +66,9 @@ namespace DwarfCorp
 
             MagicMenu = new MagicMenu(PlayState.GUI, PlayState.GUI.RootComponent, Player)
             {
-                LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width - 750, PlayState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350),
+                LocalBounds =
+                    new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 750,
+                        GameState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350),
                 DrawOrder = 3
             };
             MagicMenu.SpellTriggered += MagicMenu_SpellTriggered;
@@ -78,7 +82,8 @@ namespace DwarfCorp
                 MagicBar.Destroy();
             }
 
-            MagicBar = new ProgressBar(PlayState.GUI, PlayState.GUI.RootComponent, MagicMenu.Master.Spells.Mana / MagicMenu.Master.Spells.MaxMana)
+            MagicBar = new ProgressBar(PlayState.GUI, PlayState.GUI.RootComponent,
+                MagicMenu.Master.Spells.Mana/MagicMenu.Master.Spells.MaxMana)
             {
                 ToolTip = "Remaining Mana Pool",
                 LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 200, 68, 180, 32),
@@ -92,7 +97,7 @@ namespace DwarfCorp
             MagicBar.TweenIn(Drawer2D.Alignment.Right, 0.25f);
         }
 
-        void MagicBar_OnUpdate()
+        private void MagicBar_OnUpdate()
         {
             if (MagicBar.IsVisible)
             {
@@ -108,19 +113,16 @@ namespace DwarfCorp
         }
 
 
-        public MagicTool(GameMaster master)
-        {
-            Player = master;
-        }
-
-        void MagicMenu_SpellTriggered(Spell spell)
+        private void MagicMenu_SpellTriggered(Spell spell)
         {
             CurrentSpell = spell;
         }
 
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
-            if (CurrentSpell != null && (CurrentSpell.Mode == Spell.SpellMode.SelectFilledVoxels || CurrentSpell.Mode == Spell.SpellMode.SelectEmptyVoxels))
+            if (CurrentSpell != null &&
+                (CurrentSpell.Mode == Spell.SpellMode.SelectFilledVoxels ||
+                 CurrentSpell.Mode == Spell.SpellMode.SelectEmptyVoxels))
             {
                 CurrentSpell.OnVoxelsSelected(MagicMenu.SpellTree.Tree, voxels);
             }
@@ -138,7 +140,7 @@ namespace DwarfCorp
         {
             Player.BodySelector.Enabled = false;
             Player.VoxSelector.Enabled = false;
-            
+
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
@@ -146,17 +148,16 @@ namespace DwarfCorp
                 Player.BodySelector.Enabled = false;
                 return;
             }
-            else
-            {
-                PlayState.GUI.IsMouseVisible = true;
-            }
+            PlayState.GUI.IsMouseVisible = true;
 
             if (CurrentSpell != null)
             {
                 CurrentSpell.Update(time, Player.VoxSelector, Player.BodySelector);
             }
 
-            PlayState.GUI.MouseMode = PlayState.GUI.IsMouseOver() ? GUISkin.MousePointer.Pointer : GUISkin.MousePointer.Magic;
+            PlayState.GUI.MouseMode = PlayState.GUI.IsMouseOver()
+                ? GUISkin.MousePointer.Pointer
+                : GUISkin.MousePointer.Magic;
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
@@ -169,8 +170,6 @@ namespace DwarfCorp
 
         public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
         {
-
         }
-
     }
 }

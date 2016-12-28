@@ -30,27 +30,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
     public class DwarfTime
     {
-        public bool IsPaused { get; set; }
-        public TimeSpan ElapsedGameTime { get; set; }
-        public TimeSpan TotalGameTime { get; set; }
-        public TimeSpan ElapsedRealTime { get; set; }
-        public TimeSpan TotalRealTime { get; set; }
-
         public DwarfTime()
         {
-
         }
 
         public DwarfTime(TimeSpan total, TimeSpan elapsed)
@@ -61,11 +51,6 @@ namespace DwarfCorp
             TotalRealTime = TotalGameTime;
         }
 
-        public GameTime ToGameTime()
-        {
-            return new GameTime(TotalGameTime, ElapsedGameTime);
-        }
-
         public DwarfTime(GameTime time)
         {
             ElapsedGameTime = time.ElapsedGameTime;
@@ -74,18 +59,11 @@ namespace DwarfCorp
             TotalRealTime = time.TotalGameTime;
         }
 
-        public void Update(GameTime time)
-        {
-            ElapsedGameTime = new TimeSpan(0);
-            ElapsedRealTime = time.ElapsedGameTime;
-            TotalRealTime = time.TotalGameTime;
-            if (IsPaused) return;
-            else
-            {
-                ElapsedGameTime = time.ElapsedGameTime;
-                TotalGameTime += ElapsedGameTime;
-            }
-        }
+        public bool IsPaused { get; set; }
+        public TimeSpan ElapsedGameTime { get; set; }
+        public TimeSpan TotalGameTime { get; set; }
+        public TimeSpan ElapsedRealTime { get; set; }
+        public TimeSpan TotalRealTime { get; set; }
 
         [JsonIgnore]
         public static DwarfTime LastTime { get; set; }
@@ -95,22 +73,29 @@ namespace DwarfCorp
         {
             get { return (float) LastTime.ElapsedGameTime.TotalSeconds; }
         }
+
+        public GameTime ToGameTime()
+        {
+            return new GameTime(TotalGameTime, ElapsedGameTime);
+        }
+
+        public void Update(GameTime time)
+        {
+            ElapsedGameTime = new TimeSpan(0);
+            ElapsedRealTime = time.ElapsedGameTime;
+            TotalRealTime = time.TotalGameTime;
+            if (IsPaused) return;
+            ElapsedGameTime = time.ElapsedGameTime;
+            TotalGameTime += ElapsedGameTime;
+        }
     }
 
     /// <summary>
-    /// A timer fires at a fixed interval when updated. Some timers automatically reset.
-    /// Other timers need to be manually reset.
+    ///     A timer fires at a fixed interval when updated. Some timers automatically reset.
+    ///     Other timers need to be manually reset.
     /// </summary>
     public class Timer
     {
-        public float StartTimeSeconds { get; set; }
-        public float TargetTimeSeconds { get; set; }
-        public float CurrentTimeSeconds { get; set; }
-        public bool TriggerOnce { get; set; }
-        public bool HasTriggered { get; set; }
-
-        public TimerMode Mode { get; set; }
-
         public enum TimerMode
         {
             Real,
@@ -127,35 +112,43 @@ namespace DwarfCorp
             Mode = mode;
         }
 
+        public float StartTimeSeconds { get; set; }
+        public float TargetTimeSeconds { get; set; }
+        public float CurrentTimeSeconds { get; set; }
+        public bool TriggerOnce { get; set; }
+        public bool HasTriggered { get; set; }
+
+        public TimerMode Mode { get; set; }
+
         public bool Update(DwarfTime t)
         {
-            if(null == t)
+            if (null == t)
             {
                 return false;
             }
 
-            float seconds = (float)(Mode == TimerMode.Game ? t.TotalGameTime.TotalSeconds : t.TotalRealTime.TotalSeconds);
+            var seconds = (float) (Mode == TimerMode.Game ? t.TotalGameTime.TotalSeconds : t.TotalRealTime.TotalSeconds);
 
-            if(!TriggerOnce && HasTriggered)
+            if (!TriggerOnce && HasTriggered)
             {
                 HasTriggered = false;
                 CurrentTimeSeconds = 0.0f;
                 StartTimeSeconds = -1;
             }
-            
+
             if (HasTriggered && TriggerOnce)
             {
                 return true;
             }
 
-            if(StartTimeSeconds < 0)
+            if (StartTimeSeconds < 0)
             {
                 StartTimeSeconds = seconds;
             }
 
             CurrentTimeSeconds = seconds - StartTimeSeconds;
 
-            if(CurrentTimeSeconds > TargetTimeSeconds)
+            if (CurrentTimeSeconds > TargetTimeSeconds)
             {
                 HasTriggered = true;
                 CurrentTimeSeconds = TargetTimeSeconds;
@@ -181,15 +174,8 @@ namespace DwarfCorp
 
     public class DateTimer
     {
-        public TimeSpan TargetSpan { get; set; }
-        public DateTime StartTime { get; set; }
-        public TimeSpan CurrentTime { get; set; }
-        public bool HasTriggered { get; set; }
-        public bool TriggerOnce { get; set; }
-
         public DateTimer()
         {
-            
         }
 
         public DateTimer(DateTime now, TimeSpan target)
@@ -199,6 +185,12 @@ namespace DwarfCorp
             HasTriggered = false;
             TriggerOnce = true;
         }
+
+        public TimeSpan TargetSpan { get; set; }
+        public DateTime StartTime { get; set; }
+        public TimeSpan CurrentTime { get; set; }
+        public bool HasTriggered { get; set; }
+        public bool TriggerOnce { get; set; }
 
         public void Reset(DateTime now)
         {
@@ -225,7 +217,5 @@ namespace DwarfCorp
 
             return false;
         }
-
     }
-
 }

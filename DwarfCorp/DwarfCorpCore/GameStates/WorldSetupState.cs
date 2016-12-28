@@ -30,45 +30,30 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// This game state allows the player to load generated worlds from files.
+    ///     This game state allows the player to load generated worlds from files.
     /// </summary>
     public class WorldSetupState : GameState
     {
-        public Panel MainPanel { get; set; }
-        public GridLayout Layout { get; set; }
-        public Label NameLabel { get; set; }
-        public LineEdit NameEdit { get; set; }
-        public Button NameRandomButton { get; set; }
-        public ScrollView OptionsView { get; set; }
-        public FormLayout OptionsLayout { get; set; }
-        public Button BackButton { get; set; }
-        public Button AcceptButton { get; set; }
-        public WorldSettings Settings { get; set; }
-        public DwarfGUI GUI { get; set; }
-        public InputManager Input { get; set; }
         private const string VeryLow = "Very Low";
         private const string Low = "Low";
         private const string Medium = "Medium";
         private const string High = "High";
-        private const string VeryHigh = "Very High"; 
+        private const string VeryHigh = "Very High";
 
         public WorldSetupState(DwarfGame game, GameStateManager stateManager) :
             base(game, "WorldSetupState", stateManager)
         {
             IsInitialized = false;
-            Settings = new WorldSettings()
+            Settings = new WorldSettings
             {
                 Width = 512,
                 Height = 512,
@@ -83,20 +68,33 @@ namespace DwarfCorp
             };
         }
 
+        public Panel MainPanel { get; set; }
+        public GridLayout Layout { get; set; }
+        public Label NameLabel { get; set; }
+        public LineEdit NameEdit { get; set; }
+        public Button NameRandomButton { get; set; }
+        public ScrollView OptionsView { get; set; }
+        public FormLayout OptionsLayout { get; set; }
+        public Button BackButton { get; set; }
+        public Button AcceptButton { get; set; }
+        public WorldSettings Settings { get; set; }
+        public DwarfGUI GUI { get; set; }
+        public InputManager Input { get; set; }
+
         public void CreateGUI()
         {
             Input = new InputManager();
-            GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default), 
-                                      Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), 
-                                      Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), 
-                                      Input);
+            GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default),
+                Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title),
+                Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small),
+                Input);
             MainPanel = new Panel(GUI, GUI.RootComponent)
             {
                 LocalBounds =
                     new Rectangle(128, 64, Game.GraphicsDevice.Viewport.Width - 256,
                         Game.GraphicsDevice.Viewport.Height - 128)
             };
-            
+
             Layout = new GridLayout(GUI, MainPanel, 8, 6)
             {
                 HeightSizeMode = GUIComponent.SizeMode.Fit,
@@ -134,7 +132,7 @@ namespace DwarfCorp
             nativeBox.OnSelectionModified += nativeBox_OnSelectionModified;
             nativeBox.InvokeSelectionModified();
 
-            ComboBox faultBox = CreateOptionsBox("Faults",  "Number of straights, seas, etc.", OptionsLayout);
+            ComboBox faultBox = CreateOptionsBox("Faults", "Number of straights, seas, etc.", OptionsLayout);
             faultBox.OnSelectionModified += faultBox_OnSelectionModified;
             faultBox.InvokeSelectionModified();
 
@@ -154,14 +152,16 @@ namespace DwarfCorp
             temp.OnSelectionModified += temp_OnSelectionModified;
             temp.InvokeSelectionModified();
 
-            BackButton = new Button(GUI, Layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.LeftArrow))
+            BackButton = new Button(GUI, Layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton,
+                GUI.Skin.GetSpecialFrame(GUISkin.Tile.LeftArrow))
             {
                 ToolTip = "Back to the main menu."
             };
             Layout.SetComponentPosition(BackButton, 0, 7, 1, 1);
             BackButton.OnClicked += BackButton_OnClicked;
 
-            AcceptButton = new Button(GUI, Layout, "Next", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.RightArrow))
+            AcceptButton = new Button(GUI, Layout, "Next", GUI.DefaultFont, Button.ButtonMode.ToolButton,
+                GUI.Skin.GetSpecialFrame(GUISkin.Tile.RightArrow))
             {
                 ToolTip = "Generate a world with these settings"
             };
@@ -169,7 +169,7 @@ namespace DwarfCorp
             Layout.SetComponentPosition(AcceptButton, 5, 7, 1, 1);
         }
 
-        void erosionBox_OnSelectionModified(string arg)
+        private void erosionBox_OnSelectionModified(string arg)
         {
             switch (arg)
             {
@@ -191,7 +191,7 @@ namespace DwarfCorp
             }
         }
 
-        void temp_OnSelectionModified(string arg)
+        private void temp_OnSelectionModified(string arg)
         {
             switch (arg)
             {
@@ -213,7 +213,7 @@ namespace DwarfCorp
             }
         }
 
-        void seaBox_OnSelectionModified(string arg)
+        private void seaBox_OnSelectionModified(string arg)
         {
             switch (arg)
             {
@@ -235,7 +235,7 @@ namespace DwarfCorp
             }
         }
 
-        void rainBox_OnSelectionModified(string arg)
+        private void rainBox_OnSelectionModified(string arg)
         {
             switch (arg)
             {
@@ -257,7 +257,7 @@ namespace DwarfCorp
             }
         }
 
-        void faultBox_OnSelectionModified(string arg)
+        private void faultBox_OnSelectionModified(string arg)
         {
             switch (arg)
             {
@@ -279,7 +279,7 @@ namespace DwarfCorp
             }
         }
 
-        void nativeBox_OnSelectionModified(string arg)
+        private void nativeBox_OnSelectionModified(string arg)
         {
             switch (arg)
             {
@@ -301,7 +301,7 @@ namespace DwarfCorp
             }
         }
 
-        void sizeBox_OnSelectionModified(string arg)
+        private void sizeBox_OnSelectionModified(string arg)
         {
             switch (arg)
             {
@@ -328,9 +328,9 @@ namespace DwarfCorp
             }
         }
 
-        ComboBox CreateOptionsBox(string label, string tooltip, FormLayout layout)
+        private ComboBox CreateOptionsBox(string label, string tooltip, FormLayout layout)
         {
-            ComboBox box = new ComboBox(GUI, layout)
+            var box = new ComboBox(GUI, layout)
             {
                 ToolTip = tooltip
             };
@@ -351,20 +351,20 @@ namespace DwarfCorp
             return TextGenerator.GenerateRandom(templates);
         }
 
-        void NameRandomButton_OnClicked()
+        private void NameRandomButton_OnClicked()
         {
             Settings.Name = GetRandomWorldName();
             NameEdit.Text = Settings.Name;
         }
 
-        void NameEdit_OnTextModified(string arg)
+        private void NameEdit_OnTextModified(string arg)
         {
             Settings.Name = arg;
         }
 
-        void AcceptButton_OnClicked()
+        private void AcceptButton_OnClicked()
         {
-            WorldGeneratorState state = StateManager.GetState<WorldGeneratorState>("WorldGeneratorState");
+            var state = StateManager.GetState<WorldGeneratorState>("WorldGeneratorState");
 
             if (state != null)
             {
@@ -373,7 +373,7 @@ namespace DwarfCorp
             StateManager.PopState();
         }
 
-        void BackButton_OnClicked()
+        private void BackButton_OnClicked()
         {
             StateManager.PopState();
         }
@@ -389,6 +389,7 @@ namespace DwarfCorp
         {
             base.OnExit();
         }
+
         public override void Update(DwarfTime gameTime)
         {
             Input.Update();
@@ -399,13 +400,14 @@ namespace DwarfCorp
 
         private void DrawGUI(DwarfTime gameTime, float dx)
         {
-            RasterizerState rasterizerState = new RasterizerState()
+            var rasterizerState = new RasterizerState
             {
                 ScissorTestEnable = true
             };
 
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, null, rasterizerState);
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
+                null, rasterizerState);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
             GUI.PostRender(gameTime);
             DwarfGame.SpriteBatch.End();
@@ -413,14 +415,15 @@ namespace DwarfCorp
 
         public override void Render(DwarfTime gameTime)
         {
-            switch(Transitioning)
+            switch (Transitioning)
             {
                 case TransitionMode.Running:
                     DrawGUI(gameTime, 0);
                     break;
                 case TransitionMode.Entering:
                 {
-                    float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Width, 1.0f);
+                    float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width,
+                        Game.GraphicsDevice.Viewport.Width, 1.0f);
                     DrawGUI(gameTime, dx);
                 }
                     break;
@@ -435,5 +438,4 @@ namespace DwarfCorp
             base.Render(gameTime);
         }
     }
-
 }

@@ -30,31 +30,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// This component causes its parent to move up and down in a sinusoid pattern.
+    ///     This component causes its parent to move up and down in a sinusoid pattern.
     /// </summary>
     public class Bobber : GameComponent
     {
-        public Body Component { get; set; }
-        public float Magnitude { get; set; }
-        public float Rate { get; set; }
-        public float Offset { get; set; }
-        public float OrigY { get; set; }
-
         public Bobber()
         {
-            
         }
 
         public Bobber(float mag, float rate, float offset, Body component) :
@@ -67,9 +55,34 @@ namespace DwarfCorp
             OrigY = component.LocalTransform.Translation.Y;
         }
 
+        /// <summary>
+        ///     Component to move up and down.
+        /// </summary>
+        public Body Component { get; set; }
+
+        /// <summary>
+        ///     Magnitude of the motion in voxels.
+        /// </summary>
+        public float Magnitude { get; set; }
+
+        /// <summary>
+        ///     Rate (in Hz) that the thing bobs up and down.
+        /// </summary>
+        public float Rate { get; set; }
+
+        /// <summary>
+        ///     Time-varying offset for bobbing.
+        /// </summary>
+        public float Offset { get; set; }
+
+        /// <summary>
+        ///     The origin of the object in Y (voxels).
+        /// </summary>
+        public float OrigY { get; set; }
+
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            float x = (float)Math.Sin((gameTime.TotalGameTime.TotalSeconds + Offset) * Rate) * Magnitude;
+            float x = (float) Math.Sin((gameTime.TotalGameTime.TotalSeconds + Offset)*Rate)*Magnitude;
             Matrix trans = Component.LocalTransform;
 
             trans.Translation = new Vector3(trans.Translation.X, OrigY + x, trans.Translation.Z);
@@ -77,7 +90,7 @@ namespace DwarfCorp
 
             Component.HasMoved = true;
 
-            if(Component.Parent is Body)
+            if (Component.Parent is Body)
             {
                 (Component.Parent as Body).HasMoved = true;
             }
@@ -86,5 +99,4 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
     }
-
 }

@@ -30,33 +30,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This componenet, when clicked, toggles on and off. It also has a 
-    /// label drawn next to it.
+    ///     This componenet, when clicked, toggles on and off. It also has a
+    ///     label drawn next to it.
     /// </summary>
     public class Checkbox : GUIComponent
     {
-        public string Text { get; set; }
-        public Color TextColor { get; set; }
-        public Color StrokeColor { get; set; }
-        public Color HoverTextColor { get; set; }
-        public SpriteFont TextFont { get; set; }
-        public bool Checked { get; set; }
-
         public delegate void CheckModified(bool arg);
-
-        public event CheckModified OnCheckModified;
 
         public Checkbox(DwarfGUI gui, GUIComponent parent, string text, SpriteFont textFont, bool check) :
             base(gui, parent)
@@ -70,6 +56,15 @@ namespace DwarfCorp
             HoverTextColor = Color.DarkRed;
             OnCheckModified += CheckBox_OnCheckModified;
         }
+
+        public string Text { get; set; }
+        public Color TextColor { get; set; }
+        public Color StrokeColor { get; set; }
+        public Color HoverTextColor { get; set; }
+        public SpriteFont TextFont { get; set; }
+        public bool Checked { get; set; }
+
+        public event CheckModified OnCheckModified;
 
         private void CheckBox_OnCheckModified(bool arg)
         {
@@ -88,12 +83,12 @@ namespace DwarfCorp
 
             Color c = TextColor;
 
-            if(IsMouseOver)
+            if (IsMouseOver)
             {
                 c = HoverTextColor;
             }
 
-            Rectangle checkboxBounds = new Rectangle(GlobalBounds.Right - 32, GlobalBounds.Top + 1, 32, 32);
+            var checkboxBounds = new Rectangle(GlobalBounds.Right - 32, GlobalBounds.Top + 1, 32, 32);
 
             GUI.Skin.RenderCheckbox(checkboxBounds, Checked, batch);
             Vector2 measure = Datastructures.SafeMeasure(GUI.DefaultFont, Text);
@@ -108,5 +103,4 @@ namespace DwarfCorp
             base.Render(time, batch);
         }
     }
-
 }

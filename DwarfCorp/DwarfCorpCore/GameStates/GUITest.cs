@@ -30,17 +30,24 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp.GameStates
 {
-
     /// <summary>
-    /// This is a debug state for testing new GUI stuff. 
+    ///     This is a debug state for testing new GUI stuff.
     /// </summary>
     public class GUITest : GameState
     {
+        public GUITest(DwarfGame game, GameStateManager stateManager) :
+            base(game, "GUITest", stateManager)
+        {
+            EdgePadding = 32;
+            Input = new InputManager();
+        }
+
         public DwarfGUI GUI { get; set; }
         public SpriteFont DefaultFont { get; set; }
         public Drawer2D Drawer { get; set; }
@@ -49,50 +56,45 @@ namespace DwarfCorp.GameStates
         public GridLayout Layout { get; set; }
         public InputManager Input { get; set; }
 
-        public GUITest(DwarfGame game, GameStateManager stateManager) :
-            base(game, "GUITest", stateManager)
-        {
-            EdgePadding = 32;
-            Input = new InputManager();
-        }
-
         public override void OnEnter()
         {
             DefaultFont = Game.Content.Load<SpriteFont>("Default");
-            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"), Game.Content.Load<SpriteFont>("Small"), Input);
+            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>("Title"),
+                Game.Content.Load<SpriteFont>("Small"), Input);
             IsInitialized = true;
             Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
             MainWindow = new Panel(GUI, GUI.RootComponent);
-            MainWindow.LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2);
+            MainWindow.LocalBounds = new Rectangle(EdgePadding, EdgePadding,
+                Game.GraphicsDevice.Viewport.Width - EdgePadding*2, Game.GraphicsDevice.Viewport.Height - EdgePadding*2);
             Layout = new GridLayout(GUI, MainWindow, 10, 4);
-            Label label = new Label(GUI, Layout, "GUI Elements", GUI.TitleFont);
+            var label = new Label(GUI, Layout, "GUI Elements", GUI.TitleFont);
             Layout.SetComponentPosition(label, 0, 0, 1, 1);
 
-            Checkbox check = new Checkbox(GUI, Layout, "Check 1", GUI.DefaultFont, true);
+            var check = new Checkbox(GUI, Layout, "Check 1", GUI.DefaultFont, true);
             Layout.SetComponentPosition(check, 0, 1, 1, 1);
 
-            Checkbox check2 = new Checkbox(GUI, Layout, "Check 2", GUI.DefaultFont, true);
+            var check2 = new Checkbox(GUI, Layout, "Check 2", GUI.DefaultFont, true);
             Layout.SetComponentPosition(check2, 0, 2, 1, 1);
 
-            Button apply = new Button(GUI, Layout, "Apply", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
+            var apply = new Button(GUI, Layout, "Apply", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
             Layout.SetComponentPosition(apply, 2, 9, 1, 1);
 
-            Button back = new Button(GUI, Layout, "Back", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
+            var back = new Button(GUI, Layout, "Back", GUI.DefaultFont, Button.ButtonMode.PushButton, null);
             Layout.SetComponentPosition(back, 3, 9, 1, 1);
 
-            Label sliderLabel = new Label(GUI, Layout, "Slider", GUI.DefaultFont);
+            var sliderLabel = new Label(GUI, Layout, "Slider", GUI.DefaultFont);
             Layout.SetComponentPosition(sliderLabel, 0, 3, 1, 1);
             sliderLabel.Alignment = Drawer2D.Alignment.Right;
 
-            Slider slider = new Slider(GUI, Layout, "Slider", 0, -1000, 1000, Slider.SliderMode.Integer);
+            var slider = new Slider(GUI, Layout, "Slider", 0, -1000, 1000, Slider.SliderMode.Integer);
             Layout.SetComponentPosition(slider, 1, 3, 1, 1);
 
-            Label comboLabel = new Label(GUI, Layout, "Combobox", GUI.DefaultFont);
+            var comboLabel = new Label(GUI, Layout, "Combobox", GUI.DefaultFont);
             comboLabel.Alignment = Drawer2D.Alignment.Right;
 
             Layout.SetComponentPosition(comboLabel, 0, 4, 1, 1);
 
-            ComboBox combo = new ComboBox(GUI, Layout);
+            var combo = new ComboBox(GUI, Layout);
             combo.AddValue("Foo");
             combo.AddValue("Bar");
             combo.AddValue("Baz");
@@ -102,7 +104,7 @@ namespace DwarfCorp.GameStates
 
             back.OnClicked += back_OnClicked;
 
-            GroupBox groupBox = new GroupBox(GUI, Layout, "");
+            var groupBox = new GroupBox(GUI, Layout, "");
             Layout.SetComponentPosition(groupBox, 2, 1, 2, 6);
             Layout.UpdateSizes();
 
@@ -117,13 +119,13 @@ namespace DwarfCorp.GameStates
             imageLabel.Alignment = Drawer2D.Alignment.Top | Drawer2D.Alignment.Left;
             */
 
-            GridLayout groupLayout = new GridLayout(GUI, groupBox, 1, 2);
+            var groupLayout = new GridLayout(GUI, groupBox, 1, 2);
 
 
-            DragManager dragManager = new DragManager();
+            var dragManager = new DragManager();
 
-            DragGrid dragGrid = new DragGrid(GUI, groupLayout, dragManager, 32, 32);
-            DragGrid dragGrid2 = new DragGrid(GUI, groupLayout, dragManager, 32, 32);
+            var dragGrid = new DragGrid(GUI, groupLayout, dragManager, 32, 32);
+            var dragGrid2 = new DragGrid(GUI, groupLayout, dragManager, 32, 32);
 
             groupLayout.SetComponentPosition(dragGrid, 0, 0, 1, 1);
             groupLayout.SetComponentPosition(dragGrid2, 1, 0, 1, 1);
@@ -133,23 +135,23 @@ namespace DwarfCorp.GameStates
             dragGrid2.SetupLayout();
 
 
-            foreach(Resource r in ResourceLibrary.Resources.Values)
+            foreach (Resource r in ResourceLibrary.Resources.Values)
             {
-                GItem gitem = new GItem(r, r.Image, r.Tint, 0, 32, 2, 1);
+                var gitem = new GItem(r, r.Image, r.Tint, 0, 32, 2, 1);
                 gitem.CurrentAmount = 2;
                 dragGrid.AddItem(gitem);
             }
 
-            ProgressBar progress = new ProgressBar(GUI, Layout, 0.7f);
-            Label progressLabel = new Label(GUI, Layout, "Progress Bar", GUI.DefaultFont);
+            var progress = new ProgressBar(GUI, Layout, 0.7f);
+            var progressLabel = new Label(GUI, Layout, "Progress Bar", GUI.DefaultFont);
             progressLabel.Alignment = Drawer2D.Alignment.Right;
 
             Layout.SetComponentPosition(progressLabel, 0, 5, 1, 1);
             Layout.SetComponentPosition(progress, 1, 5, 1, 1);
 
 
-            LineEdit line = new LineEdit(GUI, Layout, "");
-            Label lineLabel = new Label(GUI, Layout, "Line Edit", GUI.DefaultFont);
+            var line = new LineEdit(GUI, Layout, "");
+            var lineLabel = new Label(GUI, Layout, "Line Edit", GUI.DefaultFont);
             lineLabel.Alignment = Drawer2D.Alignment.Right;
 
             Layout.SetComponentPosition(lineLabel, 0, 6, 1, 1);
@@ -165,7 +167,8 @@ namespace DwarfCorp.GameStates
 
         public override void Update(DwarfTime gameTime)
         {
-            MainWindow.LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2);
+            MainWindow.LocalBounds = new Rectangle(EdgePadding, EdgePadding,
+                Game.GraphicsDevice.Viewport.Width - EdgePadding*2, Game.GraphicsDevice.Viewport.Height - EdgePadding*2);
             Input.Update();
             GUI.Update(gameTime);
             base.Update(gameTime);
@@ -175,7 +178,8 @@ namespace DwarfCorp.GameStates
         private void DrawGUI(DwarfTime gameTime, float dx)
         {
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, null, null);
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
+                null, null);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
             GUI.PostRender(gameTime);
@@ -184,18 +188,19 @@ namespace DwarfCorp.GameStates
 
         public override void Render(DwarfTime gameTime)
         {
-            if(Transitioning == TransitionMode.Running)
+            if (Transitioning == TransitionMode.Running)
             {
                 Game.GraphicsDevice.Clear(Color.Black);
                 Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
                 DrawGUI(gameTime, 0);
             }
-            else if(Transitioning == TransitionMode.Entering)
+            else if (Transitioning == TransitionMode.Entering)
             {
-                float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Width, 1.0f);
+                float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width,
+                    Game.GraphicsDevice.Viewport.Width, 1.0f);
                 DrawGUI(gameTime, dx);
             }
-            else if(Transitioning == TransitionMode.Exiting)
+            else if (Transitioning == TransitionMode.Exiting)
             {
                 float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Width, 1.0f);
                 DrawGUI(gameTime, dx);
@@ -205,5 +210,4 @@ namespace DwarfCorp.GameStates
             base.Render(gameTime);
         }
     }
-
 }

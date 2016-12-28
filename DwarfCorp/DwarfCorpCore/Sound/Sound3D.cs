@@ -30,25 +30,23 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    
     /// <summary>
-    /// Holds a particular instant of a 3D sound, its location, and its volume.
+    ///     Holds a particular instant of a 3D sound, its location, and its volume.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class Sound3D
     {
-        [JsonIgnore]
-        public SoundEffectInstance EffectInstance;
-        public Vector3 Position;
+        [JsonIgnore] public SoundEffectInstance EffectInstance;
         public bool HasStarted;
         public string Name;
+        public Vector3 Position;
         public float VolumeMultiplier { get; set; }
     }
-
 }

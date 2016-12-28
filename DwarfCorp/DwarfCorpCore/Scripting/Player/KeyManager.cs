@@ -1,19 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This class describes the keyboard settings used to control the game.
+    ///     This class describes the keyboard settings used to control the game.
     /// </summary>
     public class KeyManager
     {
+        public KeyManager()
+        {
+            Buttons = new Dictionary<string, Keys>();
+            LoadConfigSettings();
+        }
+
         public Dictionary<string, Keys> Buttons { get; set; }
+
+        public Keys this[string key]
+        {
+            get { return GetKey(key); }
+            set { Buttons[key] = value; }
+        }
 
         public void SaveConfigSettings()
         {
@@ -60,15 +68,9 @@ namespace DwarfCorp
             this["Pause"] = ControlSettings.Mappings.Pause;
         }
 
-        public KeyManager()
-        {
-            Buttons = new Dictionary<string, Keys>();
-            LoadConfigSettings();
-        }
-
         public Keys GetKey(string name)
         {
-            if(!Buttons.ContainsKey(name))
+            if (!Buttons.ContainsKey(name))
             {
                 throw new KeyNotFoundException();
             }
@@ -77,16 +79,11 @@ namespace DwarfCorp
         }
 
 
-        public Keys this[string key]
-        {
-            get { return GetKey(key); }
-            set { Buttons[key] = value; }
-        }
-
         public static bool RotationEnabled()
         {
             KeyboardState keys = Keyboard.GetState();
-            return keys.IsKeyDown(ControlSettings.Mappings.CameraMode) || keys.IsKeyDown(Keys.RightShift) || Mouse.GetState().MiddleButton == ButtonState.Pressed;
+            return keys.IsKeyDown(ControlSettings.Mappings.CameraMode) || keys.IsKeyDown(Keys.RightShift) ||
+                   Mouse.GetState().MiddleButton == ButtonState.Pressed;
         }
 
         public bool IsMapped(Keys keys)
@@ -94,5 +91,4 @@ namespace DwarfCorp
             return Buttons.Any(keyPair => keyPair.Value == keys);
         }
     }
-
 }

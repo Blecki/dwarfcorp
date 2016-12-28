@@ -30,41 +30,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System.Collections.Generic;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A resource is a kind of item that can be bought or sold, and can be used
-    /// to build things.
+    ///     A resource is a kind of item that can be bought or sold, and can be used
+    ///     to build things.
     /// </summary>
     public class Resource
     {
-        public ResourceLibrary.ResourceType Type { get; set; }
-        public string ResourceName { get { return Type; }}
-        public float MoneyValue { get; set; }
-        public string Description { get; set; }
-        public NamedImageFrame Image { get; set; }
-        public List<ResourceTags> Tags { get; set; }
-        public float FoodContent { get; set; }
-        public bool SelfIlluminating { get { return Tags.Contains(ResourceTags.SelfIlluminating); }}
-        public bool IsFlammable { get { return Tags.Contains(ResourceTags.Flammable); }}
-        private string shortName = null;
-        public string ShortName 
-        { 
-            get
-            {
-                if (shortName == null) return ResourceName;
-                else return shortName;
-            }
-            set { shortName = value; }
-        }
-
-        public string PlantToGenerate { get; set; }
-
-        public Color Tint { get; set; }
         public enum ResourceTags
         {
             Edible,
@@ -98,6 +75,8 @@ namespace DwarfCorp
             Bone
         }
 
+        private string shortName;
+
         public Resource()
         {
             PlantToGenerate = "";
@@ -117,7 +96,8 @@ namespace DwarfCorp
             PlantToGenerate = other.PlantToGenerate;
         }
 
-        public Resource(ResourceLibrary.ResourceType type,  float money, string description, NamedImageFrame image, Color tint, params ResourceTags[] tags)
+        public Resource(ResourceLibrary.ResourceType type, float money, string description, NamedImageFrame image,
+            Color tint, params ResourceTags[] tags)
         {
             Type = type;
             MoneyValue = money;
@@ -129,6 +109,43 @@ namespace DwarfCorp
             FoodContent = 0;
         }
 
+        public ResourceLibrary.ResourceType Type { get; set; }
+
+        public string ResourceName
+        {
+            get { return Type; }
+        }
+
+        public float MoneyValue { get; set; }
+        public string Description { get; set; }
+        public NamedImageFrame Image { get; set; }
+        public List<ResourceTags> Tags { get; set; }
+        public float FoodContent { get; set; }
+
+        public bool SelfIlluminating
+        {
+            get { return Tags.Contains(ResourceTags.SelfIlluminating); }
+        }
+
+        public bool IsFlammable
+        {
+            get { return Tags.Contains(ResourceTags.Flammable); }
+        }
+
+        public string ShortName
+        {
+            get
+            {
+                if (shortName == null) return ResourceName;
+                return shortName;
+            }
+            set { shortName = value; }
+        }
+
+        public string PlantToGenerate { get; set; }
+
+        public Color Tint { get; set; }
+
         public string GetTagDescription(string delimiter)
         {
             string s = "";
@@ -136,7 +153,7 @@ namespace DwarfCorp
             for (int i = 0; i < Tags.Count; i++)
             {
                 string tag = Tags[i].ToString();
-                s += tag.ToString();
+                s += tag;
 
                 if (i < Tags.Count - 1)
                 {
@@ -147,5 +164,4 @@ namespace DwarfCorp
             return s;
         }
     }
-
 }

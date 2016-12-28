@@ -30,18 +30,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
+
 using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// Abstract class which modifies the size and position of GUI components
-    /// so that they flow to fit the size of a window.
+    ///     Abstract class which modifies the size and position of GUI components
+    ///     so that they flow to fit the size of a window.
     /// </summary>
     public class Layout : GUIComponent
     {
@@ -59,12 +55,10 @@ namespace DwarfCorp
             UpdateSizes();
             base.Update(time);
         }
-        
+
         public override bool IsMouseOverRecursive()
         {
             return Children.Any(child => child.IsMouseOverRecursive());
         }
-         
     }
-
 }

@@ -30,22 +30,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A compound act which is associated with a creature.
+    ///     A compound act which is associated with a creature.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class CompoundCreatureAct : CreatureAct
     {
-        public Act Tree { get; set; }
-
-
         public CompoundCreatureAct(CreatureAI creature) :
             base(creature)
         {
@@ -55,12 +51,13 @@ namespace DwarfCorp
 
         public CompoundCreatureAct()
         {
-
         }
+
+        public Act Tree { get; set; }
 
         public override void Initialize()
         {
-            if(Tree != null)
+            if (Tree != null)
             {
                 Children.Clear();
                 Tree.Initialize();
@@ -72,18 +69,17 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if(Tree == null)
+            if (Tree == null)
             {
                 yield return Status.Fail;
             }
             else
             {
-                foreach(Status s in Tree.Run())
+                foreach (Status s in Tree.Run())
                 {
                     yield return s;
                 }
             }
         }
     }
-
 }

@@ -1,14 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
     public class ShadowRenderer
     {
+        public ShadowRenderer(GraphicsDevice device, int width, int height)
+        {
+            LightDir = new Vector3(0.2f, -1, 0.5f);
+            LightView = Matrix.Identity;
+            LightProj = Matrix.Identity;
+            ShadowWith = width;
+            ShadowHeight = height;
+            DepthState = new DepthStencilState
+            {
+                DepthBufferFunction = CompareFunction.LessEqual
+            };
+
+            BlendMode = BlendState.Opaque;
+
+            InitializeShadowMap(device);
+        }
+
         public Vector3 LightDir { get; set; }
         public Matrix LightView { get; set; }
         public Matrix LightProj { get; set; }
@@ -21,26 +34,10 @@ namespace DwarfCorp
         public BlendState BlendMode { get; set; }
         public BlendState OldBlendState { get; set; }
 
-        public ShadowRenderer(GraphicsDevice device, int width, int height)
-        {
-            LightDir = new Vector3(0.2f, -1, 0.5f);
-            LightView = Matrix.Identity;
-            LightProj = Matrix.Identity;
-            ShadowWith = width;
-            ShadowHeight = height;
-            DepthState = new DepthStencilState()
-            {
-                DepthBufferFunction = CompareFunction.LessEqual
-            };
-
-            BlendMode = BlendState.Opaque;
-
-            InitializeShadowMap(device);
-        }
-
         public void InitializeShadowMap(GraphicsDevice device)
         {
-            ShadowMap = new RenderTarget2D(device, ShadowWith, ShadowHeight, true, SurfaceFormat.Rg32, DepthFormat.Depth16);
+            ShadowMap = new RenderTarget2D(device, ShadowWith, ShadowHeight, true, SurfaceFormat.Rg32,
+                DepthFormat.Depth16);
         }
 
         public void SetupViewProj(BoundingBox worldBBox)
@@ -49,14 +46,17 @@ namespace DwarfCorp
             Vector3 up = Vector3.Up;
             LightView = Matrix.CreateLookAt(lightPos, worldBBox.Center(), up);
             Vector3[] corners = worldBBox.GetCorners();
-            Vector3[] transformedCorners = new Vector3[8];
-            for(int i = 0; i < 8; i++)
+            var transformedCorners = new Vector3[8];
+            for (int i = 0; i < 8; i++)
             {
                 transformedCorners[i] = Vector3.Transform(corners[i], LightView);
             }
 
-            BoundingBox transformedBBox = new BoundingBox { Min = MathFunctions.Min(transformedCorners), 
-                                                           Max = MathFunctions.Max(transformedCorners) };
+            var transformedBBox = new BoundingBox
+            {
+                Min = MathFunctions.Min(transformedCorners),
+                Max = MathFunctions.Max(transformedCorners)
+            };
 
             float width = transformedBBox.Max.X - transformedBBox.Min.X;
             float height = transformedBBox.Max.Y - transformedBBox.Min.Y;
@@ -71,15 +71,17 @@ namespace DwarfCorp
                 DepthStencilState.None, RasterizerState.CullNone);
             DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(0, 0, ShadowMap.Width, 2), Color.Black);
             DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(0, 0, 2, ShadowMap.Height), Color.Black);
-            DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(ShadowMap.Width - 2, 0, 2, ShadowMap.Height), Color.Black);
-            DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(0, ShadowMap.Height - 2, ShadowMap.Width, 2), Color.Black);
+            DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(ShadowMap.Width - 2, 0, 2, ShadowMap.Height),
+                Color.Black);
+            DwarfGame.SpriteBatch.Draw(Drawer2D.Pixel, new Rectangle(0, ShadowMap.Height - 2, ShadowMap.Width, 2),
+                Color.Black);
             DwarfGame.SpriteBatch.End();
         }
 
         public void UnbindShadowmap(GraphicsDevice device)
         {
             device.SetRenderTarget(null);
-            ShadowTexture = (Texture2D)ShadowMap;
+            ShadowTexture = ShadowMap;
             device.DepthStencilState = OldDepthState;
             device.BlendState = OldBlendState;
         }
@@ -117,6 +119,5 @@ namespace DwarfCorp
             effect.Parameters["xProjection"].SetValue(LightProj);
             effect.Parameters["xEnableFog"].SetValue(0);
         }
-
     }
 }

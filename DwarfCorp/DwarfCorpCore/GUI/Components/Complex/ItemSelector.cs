@@ -30,22 +30,32 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///This GUI component holds a list of items that the player can drag around.
+    ///     This GUI component holds a list of items that the player can drag around.
     /// </summary>
     public class ItemSelector : GroupBox
     {
+        public delegate void ItemAdded(GItem item, int amount);
+
+        public delegate void ItemChanged(GItem item);
+
+        public delegate void ItemRemoved(GItem item, int amount);
+
+        public enum ClickBehavior
+        {
+            RemoveItem,
+            AddItem,
+            None
+        }
 
         public enum Column
         {
@@ -58,125 +68,6 @@ namespace DwarfCorp
             ArrowLeft
         }
 
-        public enum ClickBehavior
-        {
-            RemoveItem,
-            AddItem,
-            None
-        }
-
-        public delegate void ItemChanged(GItem item);
-
-        public delegate void ItemRemoved(GItem item, int amount);
-
-        public delegate void ItemAdded(GItem item, int amount);
-
-        public event ItemChanged OnItemChanged;
-        public event ItemAdded OnItemAdded;
-
-        public string NoItemsMessage { get; set; }
-
-        public MoneyEditor MoneyEdit { get; set; }
-        public LineEdit SearchBox { get; set; }
-
-        protected virtual void OnOnItemAdded(GItem item, int amount)
-        {
-            ItemAdded handler = OnItemAdded;
-            if(handler != null)
-            {
-                handler(item, amount);
-            }
-        }
-
-        public event ItemRemoved OnItemRemoved;
-
-        protected virtual void OnOnItemRemoved(GItem item, int amount)
-        {
-            ItemRemoved handler = OnItemRemoved;
-            if(handler != null)
-            {
-                handler(item, amount);
-            }
-        }
-
-        public List<GItem> Items { get; set; }
-        public GridLayout Layout { get; set; }
-
-        public List<Column> Columns { get; set; }
-
-        public ClickBehavior Behavior { get; set; }
-
-        public bool AllowShiftClick { get; set; }
-        public bool AllowControlClick { get; set; }
-        public bool AllowAltClick { get; set; }
-
-        public ScrollView ScrollArea { get; set; }
-
-        public float PerItemCost { get; set; }
-
-        public List<GItem> FilteredItems { get; set; }
-        public List<Resource.ResourceTags> LikedThings { get; set; }
-        public List<Resource.ResourceTags> HatedThings { get; set; }
-        public List<Resource.ResourceTags> CommonThings { get; set; }
-        public List<Resource.ResourceTags> RareThings { get; set; }
-        public int ComputeSpace()
-        {
-            int total = 0;
-
-            foreach (GItem item in Items)
-            {
-                total += item.CurrentAmount;
-            }
-
-
-            return total;
-        }
-
-        public float ComputeShipping()
-        {
-            float total = 0;
-
-            foreach (GItem item in Items)
-            {
-                total += PerItemCost * item.CurrentAmount;
-            }
-
-            return total;
-        }
-
-        public float ComputeTotal()
-        {
-            float total = 0;
-
-            foreach(GItem item in Items)
-            {
-                total += item.CurrentAmount * item.Price;
-                total += PerItemCost * item.CurrentAmount;
-            }
-
-            return total;
-        }
-
-        bool IsCommon(Resource resource)
-        {
-            return CommonThings.Any(tags => resource.Tags.Contains(tags));
-        }
-
-        bool IsRare(Resource resource)
-        {
-            return RareThings.Any(tags => resource.Tags.Contains(tags));
-        }
-
-        bool IsLiked(Resource resource)
-        {
-            return LikedThings.Any(tags => resource.Tags.Contains(tags));
-        }
-
-        bool IsHated(Resource resource)
-        {
-            return HatedThings.Any(tags => resource.Tags.Contains(tags));
-        }
-
         public ItemSelector(DwarfGUI gui, GUIComponent parent, string title, bool hasMoney, bool moneyEditable) :
             base(gui, parent, title)
         {
@@ -185,7 +76,7 @@ namespace DwarfCorp
             CommonThings = new List<Resource.ResourceTags>();
             RareThings = new List<Resource.ResourceTags>();
 
-            Columns = new List<Column>()
+            Columns = new List<Column>
             {
                 Column.Image,
                 Column.Name,
@@ -194,7 +85,7 @@ namespace DwarfCorp
 
             Items = new List<GItem>();
             FilteredItems = new List<GItem>();
-            GridLayout layout = new GridLayout(GUI, this, 11, 1);
+            var layout = new GridLayout(GUI, this, 11, 1);
 
             if (hasMoney)
             {
@@ -230,34 +121,139 @@ namespace DwarfCorp
             AllowAltClick = true;
         }
 
-        void Filter()
+        public string NoItemsMessage { get; set; }
+
+        public MoneyEditor MoneyEdit { get; set; }
+        public LineEdit SearchBox { get; set; }
+
+        public List<GItem> Items { get; set; }
+        public GridLayout Layout { get; set; }
+
+        public List<Column> Columns { get; set; }
+
+        public ClickBehavior Behavior { get; set; }
+
+        public bool AllowShiftClick { get; set; }
+        public bool AllowControlClick { get; set; }
+        public bool AllowAltClick { get; set; }
+
+        public ScrollView ScrollArea { get; set; }
+
+        public float PerItemCost { get; set; }
+
+        public List<GItem> FilteredItems { get; set; }
+        public List<Resource.ResourceTags> LikedThings { get; set; }
+        public List<Resource.ResourceTags> HatedThings { get; set; }
+        public List<Resource.ResourceTags> CommonThings { get; set; }
+        public List<Resource.ResourceTags> RareThings { get; set; }
+        public event ItemChanged OnItemChanged;
+        public event ItemAdded OnItemAdded;
+
+        protected virtual void OnOnItemAdded(GItem item, int amount)
+        {
+            ItemAdded handler = OnItemAdded;
+            if (handler != null)
+            {
+                handler(item, amount);
+            }
+        }
+
+        public event ItemRemoved OnItemRemoved;
+
+        protected virtual void OnOnItemRemoved(GItem item, int amount)
+        {
+            ItemRemoved handler = OnItemRemoved;
+            if (handler != null)
+            {
+                handler(item, amount);
+            }
+        }
+
+        public int ComputeSpace()
+        {
+            int total = 0;
+
+            foreach (GItem item in Items)
+            {
+                total += item.CurrentAmount;
+            }
+
+
+            return total;
+        }
+
+        public float ComputeShipping()
+        {
+            float total = 0;
+
+            foreach (GItem item in Items)
+            {
+                total += PerItemCost*item.CurrentAmount;
+            }
+
+            return total;
+        }
+
+        public float ComputeTotal()
+        {
+            float total = 0;
+
+            foreach (GItem item in Items)
+            {
+                total += item.CurrentAmount*item.Price;
+                total += PerItemCost*item.CurrentAmount;
+            }
+
+            return total;
+        }
+
+        private bool IsCommon(Resource resource)
+        {
+            return CommonThings.Any(tags => resource.Tags.Contains(tags));
+        }
+
+        private bool IsRare(Resource resource)
+        {
+            return RareThings.Any(tags => resource.Tags.Contains(tags));
+        }
+
+        private bool IsLiked(Resource resource)
+        {
+            return LikedThings.Any(tags => resource.Tags.Contains(tags));
+        }
+
+        private bool IsHated(Resource resource)
+        {
+            return HatedThings.Any(tags => resource.Tags.Contains(tags));
+        }
+
+        private void Filter()
         {
             FilteredItems = new List<GItem>();
 
             foreach (GItem item in Items)
             {
-                if (SearchBox.Text == "" || item.Name.ToUpper().Contains(SearchBox.Text.ToUpper()) && item.CurrentAmount > 0)
+                if (SearchBox.Text == "" ||
+                    item.Name.ToUpper().Contains(SearchBox.Text.ToUpper()) && item.CurrentAmount > 0)
                 {
                     FilteredItems.Add(item);
                 }
             }
         }
 
-        void SearchBox_OnTextModified(string arg)
+        private void SearchBox_OnTextModified(string arg)
         {
             ScrollArea.ResetScroll();
             Filter();
             ReCreateItems();
         }
 
-        void ItemSelector_OnItemAdded(GItem item, int amount)
+        private void ItemSelector_OnItemAdded(GItem item, int amount)
         {
-          
         }
 
-        void ItemSelector_OnItemRemoved(GItem item, int amount)
+        private void ItemSelector_OnItemRemoved(GItem item, int amount)
         {
-         
         }
 
         public void SetItemNumber(GItem item, float number)
@@ -275,7 +271,7 @@ namespace DwarfCorp
         {
             GItem existingItem = Items.FirstOrDefault(myItem => myItem.Name == item.Name);
 
-            if(existingItem == null)
+            if (existingItem == null)
             {
                 existingItem = new GItem(item.ResourceType, item.Image, item.Tint, 0, 10000, amount, item.Price)
                 {
@@ -285,14 +281,10 @@ namespace DwarfCorp
                 Filter();
                 ReCreateItems();
                 OnItemChanged(existingItem);
-                return;
             }
-            else
-            {
-                existingItem.CurrentAmount += amount;
-                ReCreateItems();
-                OnItemChanged(existingItem);
-            }
+            existingItem.CurrentAmount += amount;
+            ReCreateItems();
+            OnItemChanged(existingItem);
         }
 
         public float GetPrice(GItem item)
@@ -312,9 +304,9 @@ namespace DwarfCorp
 
         public void UpdateItem(Column columnType, int row, int column)
         {
-            Rectangle key = new Rectangle(column, row, 1, 1);
+            var key = new Rectangle(column, row, 1, 1);
 
-            if(!Layout.ComponentPositions.ContainsKey(key))
+            if (!Layout.ComponentPositions.ContainsKey(key))
             {
                 return;
             }
@@ -330,16 +322,16 @@ namespace DwarfCorp
             switch (columnType)
             {
                 case Column.Amount:
-                    Label amountLabel = component as Label;
+                    var amountLabel = component as Label;
 
-                    if(amountLabel == null) break;
+                    if (amountLabel == null) break;
 
                     amountLabel.Text = item.CurrentAmount.ToString();
 
                     break;
 
                 case Column.Image:
-                    ImagePanel image = component as ImagePanel;
+                    var image = component as ImagePanel;
 
                     if (image == null) break;
 
@@ -349,7 +341,7 @@ namespace DwarfCorp
                     break;
 
                 case Column.Name:
-                    Label label = component as Label;
+                    var label = component as Label;
 
                     if (label == null) break;
 
@@ -358,7 +350,7 @@ namespace DwarfCorp
                     break;
 
                 case Column.PricePerItem:
-                    Label priceLabel = component as Label;
+                    var priceLabel = component as Label;
 
                     if (priceLabel == null) break;
                     float price = GetPrice(item);
@@ -368,42 +360,40 @@ namespace DwarfCorp
 
 
                 case Column.TotalPrice:
-                    Label totalpriceLabel = component as Label;
+                    var totalpriceLabel = component as Label;
 
                     if (totalpriceLabel == null) break;
 
-                    totalpriceLabel.Text = (item.CurrentAmount * GetPrice(item)).ToString("C");
+                    totalpriceLabel.Text = (item.CurrentAmount*GetPrice(item)).ToString("C");
 
                     break;
-
-               
             }
         }
 
         public GUIComponent CreateItem(Column columnType, GItem item, int row, int column)
         {
             string tooltip = item.ResourceType.Type + "\n" + item.ResourceType.Description + "\n" +
-                 item.ResourceType.GetTagDescription(" , ");
+                             item.ResourceType.GetTagDescription(" , ");
 
             if (item.ResourceType.FoodContent > 0)
             {
                 tooltip += "\n" + item.ResourceType.FoodContent + " energy";
             }
 
-            switch(columnType)
+            switch (columnType)
             {
-               case Column.Amount:
-                    Label amountLabel = new Label(GUI, Layout, item.CurrentAmount.ToString(), GUI.SmallFont)
+                case Column.Amount:
+                    var amountLabel = new Label(GUI, Layout, item.CurrentAmount.ToString(), GUI.SmallFont)
                     {
                         ToolTip = "Total Amount",
                         Alignment = Drawer2D.Alignment.Right
                     };
-                   
+
                     Layout.SetComponentPosition(amountLabel, column, row, 1, 1);
                     return amountLabel;
-                    
+
                 case Column.Image:
-                    ImagePanel image = new ImagePanel(GUI, Layout, item.Image)
+                    var image = new ImagePanel(GUI, Layout, item.Image)
                     {
                         KeepAspectRatio = true,
                         ConstrainSize = true,
@@ -415,17 +405,17 @@ namespace DwarfCorp
                     return image;
 
                 case Column.Name:
-                    Label label = new Label(GUI, Layout, item.Name, GUI.SmallFont)
+                    var label = new Label(GUI, Layout, item.Name, GUI.SmallFont)
                     {
                         ToolTip = tooltip
                     };
-                                            
+
                     Layout.SetComponentPosition(label, column, row, 1, 1);
 
                     return label;
-                
+
                 case Column.PricePerItem:
-                    Label priceLabel = new Label(GUI, Layout, GetPrice(item).ToString("C"), GUI.SmallFont)
+                    var priceLabel = new Label(GUI, Layout, GetPrice(item).ToString("C"), GUI.SmallFont)
                     {
                         ToolTip = "Price per item",
                     };
@@ -435,7 +425,8 @@ namespace DwarfCorp
 
 
                 case Column.TotalPrice:
-                    Label totalLabel = new Label(GUI, Layout, (GetPrice(item) * item.CurrentAmount).ToString("C"), GUI.SmallFont)
+                    var totalLabel = new Label(GUI, Layout, (GetPrice(item)*item.CurrentAmount).ToString("C"),
+                        GUI.SmallFont)
                     {
                         ToolTip = "Total price"
                     };
@@ -444,7 +435,7 @@ namespace DwarfCorp
                     return totalLabel;
 
                 case Column.ArrowRight:
-                    ImagePanel panel = new ImagePanel(GUI, Layout, GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowRight))
+                    var panel = new ImagePanel(GUI, Layout, GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowRight))
                     {
                         KeepAspectRatio = true,
                         ConstrainSize = true
@@ -453,7 +444,7 @@ namespace DwarfCorp
                     return panel;
 
                 case Column.ArrowLeft:
-                    ImagePanel panelLeft = new ImagePanel(GUI, Layout, GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowLeft))
+                    var panelLeft = new ImagePanel(GUI, Layout, GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowLeft))
                     {
                         KeepAspectRatio = true,
                         ConstrainSize = true
@@ -465,14 +456,14 @@ namespace DwarfCorp
             return null;
         }
 
-        void ItemClicked(GItem item)
+        private void ItemClicked(GItem item)
         {
             KeyboardState state = Keyboard.GetState();
 
             bool shiftPressed = state.IsKeyDown(Keys.LeftShift) || state.IsKeyDown(Keys.RightShift);
             bool altPressed = state.IsKeyDown(Keys.LeftAlt) || state.IsKeyDown(Keys.RightAlt);
             bool controlPressed = state.IsKeyDown(Keys.LeftControl) || state.IsKeyDown(Keys.RightControl);
-            
+
             int amount = 1;
 
             if (shiftPressed && AllowShiftClick)
@@ -491,40 +482,39 @@ namespace DwarfCorp
                 GUI.ToolTipManager.Popup("Moved " + amount, 1.0f);
             }
 
-            switch(Behavior)
+            switch (Behavior)
             {
-                    case ClickBehavior.AddItem:
-                        item.CurrentAmount += amount;
-                        OnItemAdded(item, amount);
-                        OnItemChanged(item);
-                        break;
+                case ClickBehavior.AddItem:
+                    item.CurrentAmount += amount;
+                    OnItemAdded(item, amount);
+                    OnItemChanged(item);
+                    break;
 
-                    case ClickBehavior.None:
-                        break;
+                case ClickBehavior.None:
+                    break;
 
-                    case ClickBehavior.RemoveItem:
-                        item.CurrentAmount -= amount;
+                case ClickBehavior.RemoveItem:
+                    item.CurrentAmount -= amount;
 
-                        if(item.CurrentAmount <= 0)
-                        {
-                            Items.Remove(item);
-                            Filter();
-                            ReCreateItems();
-                        }
+                    if (item.CurrentAmount <= 0)
+                    {
+                        Items.Remove(item);
+                        Filter();
+                        ReCreateItems();
+                    }
 
-                        OnItemRemoved(item, amount);
-                        OnItemChanged(item);
-                        break;
+                    OnItemRemoved(item, amount);
+                    OnItemChanged(item);
+                    break;
             }
         }
 
         public void UpdateItems()
         {
-            for(int i = 0; i < Items.Count; i++)
+            for (int i = 0; i < Items.Count; i++)
             {
-
                 int j = 0;
-                foreach(Column column in Columns)
+                foreach (Column column in Columns)
                 {
                     UpdateItem(column, i + 1, j);
                     j++;
@@ -545,11 +535,11 @@ namespace DwarfCorp
             }
             RemoveChild(Layout);
 
-            if(Items.Count == 0)
+            if (Items.Count == 0)
             {
                 ScrollArea.RemoveChild(Layout);
                 Layout = new GridLayout(GUI, ScrollArea, 1, 1);
-                Label label = new Label(GUI, Layout, NoItemsMessage, GUI.DefaultFont);
+                var label = new Label(GUI, Layout, NoItemsMessage, GUI.DefaultFont);
 
                 Layout.SetComponentPosition(label, 0, 0, 1, 1);
 
@@ -558,18 +548,20 @@ namespace DwarfCorp
 
             int rows = Math.Max(FilteredItems.Count, 6);
             ScrollArea.RemoveChild(Layout);
- 
+
             Layout = new GridLayout(GUI, ScrollArea, rows + 1, Columns.Count)
             {
-                LocalBounds = new Rectangle(-ScrollArea.ScrollX, -ScrollArea.ScrollY, Math.Max(ScrollArea.LocalBounds.Width - 64, 200), rows * 40),
+                LocalBounds =
+                    new Rectangle(-ScrollArea.ScrollX, -ScrollArea.ScrollY,
+                        Math.Max(ScrollArea.LocalBounds.Width - 64, 200), rows*40),
                 HeightSizeMode = SizeMode.Fixed
             };
-            
+
             for (int i = 0; i < FilteredItems.Count; i++)
             {
                 GItem currentResource = FilteredItems[i];
                 int j = 0;
-                foreach(Column column in Columns)
+                foreach (Column column in Columns)
                 {
                     GUIComponent item = CreateItem(column, FilteredItems[i], i + 1, j);
                     item.OnClicked += () => ItemClicked(currentResource);
@@ -580,59 +572,30 @@ namespace DwarfCorp
             }
 
             Layout.UpdateSizeRecursive();
-
         }
 
         public override void Update(DwarfTime time)
         {
-            if(!IsMouseOver)
+            if (!IsMouseOver)
             {
                 Layout.RowHighlight = -1;
             }
             base.Update(time);
         }
-
-
     }
 
     public class MoneyEditor : GUIComponent
     {
-        public float MaxMoney { get; set; }
-        public float CurrentMoney 
-        {
-            get { return _money; }
-            set
-            {
-                _money = Math.Max(0, Math.Min(value, MaxMoney));
-
-                if (Editor != null)
-                {
-                    Editor.Text = ((int) (_money)).ToString("D");
-                }
-            }
-        }
-
-        private float _money;
-        public LineEdit Editor { get; set; }
-        public ImagePanel Image { get; set; }
-        public Label Text { get; set; }
-
         public delegate void MoneyChanged(float amount);
 
-        public event MoneyChanged OnMoneyChanged;
+        private float _money;
 
-        protected virtual void InvokeMoneyChanged(float amount)
-        {
-            MoneyChanged handler = OnMoneyChanged;
-            if (handler != null) handler(amount);
-        }
-
-        public MoneyEditor(DwarfGUI	gui, GUIComponent parent, bool editable, float maxmoney, float currentMoney) :
+        public MoneyEditor(DwarfGUI gui, GUIComponent parent, bool editable, float maxmoney, float currentMoney) :
             base(gui, parent)
         {
             MaxMoney = maxmoney;
-            
-            GridLayout layout = new GridLayout(GUI, this, 1, 5);
+
+            var layout = new GridLayout(GUI, this, 1, 5);
             Editor = new LineEdit(GUI, layout, "0")
             {
                 TextMode = LineEdit.Mode.Numeric,
@@ -660,10 +623,37 @@ namespace DwarfCorp
             };
 
             layout.SetComponentPosition(Text, 1, 0, 1, 1);
-            
         }
 
-        void Editor_OnTextModified(string arg)
+        public float MaxMoney { get; set; }
+
+        public float CurrentMoney
+        {
+            get { return _money; }
+            set
+            {
+                _money = Math.Max(0, Math.Min(value, MaxMoney));
+
+                if (Editor != null)
+                {
+                    Editor.Text = ((int) (_money)).ToString("D");
+                }
+            }
+        }
+
+        public LineEdit Editor { get; set; }
+        public ImagePanel Image { get; set; }
+        public Label Text { get; set; }
+
+        public event MoneyChanged OnMoneyChanged;
+
+        protected virtual void InvokeMoneyChanged(float amount)
+        {
+            MoneyChanged handler = OnMoneyChanged;
+            if (handler != null) handler(amount);
+        }
+
+        private void Editor_OnTextModified(string arg)
         {
             float result = 0;
             if (float.TryParse(arg, out result))
@@ -673,7 +663,7 @@ namespace DwarfCorp
                 if (_money > MaxMoney)
                 {
                     _money = MaxMoney;
-                    Editor.Text = ((int)(MaxMoney)).ToString("D");
+                    Editor.Text = ((int) (MaxMoney)).ToString("D");
                 }
                 else if (_money < 0)
                 {
@@ -685,5 +675,4 @@ namespace DwarfCorp
             }
         }
     }
-
 }

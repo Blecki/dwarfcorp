@@ -1,29 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// Extends the vertex declaration to support which instance the vertex
-    /// refers to. The GPU draws instances based on this information.
+    ///     Extends the vertex declaration to support which instance the vertex
+    ///     refers to. The GPU draws instances based on this information.
     /// </summary>
     public struct InstancedVertex
     {
-        public Matrix Transform;
-        public Color Color;
-
-
-        public InstancedVertex(Matrix world, Color colour)
-        {
-            Transform = world;
-            Color = colour;
-        }
-
         public static readonly VertexDeclaration VertexDeclaration = new VertexDeclaration
             (
             // World Matrix Data
@@ -34,6 +19,15 @@ namespace DwarfCorp
             //Colour Data
             new VertexElement(64, VertexElementFormat.Color, VertexElementUsage.Color, 2)
             );
-    }
 
+        public Color Color;
+        public Matrix Transform;
+
+
+        public InstancedVertex(Matrix world, Color colour)
+        {
+            Transform = world;
+            Color = colour;
+        }
+    }
 }

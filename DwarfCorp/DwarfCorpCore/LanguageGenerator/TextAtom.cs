@@ -30,28 +30,23 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This represents a particular part of randomly generated text which can change (such as a noun or verb)
+    ///     This represents a particular part of randomly generated text which can change (such as a noun or verb)
     /// </summary>
     public class TextAtom
     {
-        public string Name { get; set; }
-        public List<string> Terms { get; set; }
-
         public TextAtom(string name, params string[] terms)
         {
             Name = name;
             Terms = new List<string>();
 
-            for(int i = 0; i < terms.Length; i++)
+            for (int i = 0; i < terms.Length; i++)
             {
                 Terms.Add(terms[i]);
             }
@@ -63,11 +58,13 @@ namespace DwarfCorp
             Terms = terms;
         }
 
+        public string Name { get; set; }
+        public List<string> Terms { get; set; }
+
 
         public string GetRandom()
         {
             return Terms[PlayState.Random.Next(Terms.Count)];
         }
     }
-
 }

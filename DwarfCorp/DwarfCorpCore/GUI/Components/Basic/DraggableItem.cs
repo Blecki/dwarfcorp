@@ -30,37 +30,21 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// This is a GUI component which can be moved around on a DragGrid
+    ///     This is a GUI component which can be moved around on a DragGrid
     /// </summary>
     public class DraggableItem : GUIComponent
     {
-        public delegate void DragStarted();
-
-        public event DragStarted OnDragStarted;
-
         public delegate void DragEnded();
 
-        public event DragEnded OnDragEnded;
-
-        public GItem Item { get; set; }
-        public bool IsDragging { get; set; }
-
-        public bool IsHighlighting { get; set; }
-
-        public bool KeepAspectRatio { get; set; }
+        public delegate void DragStarted();
 
         public DraggableItem(DwarfGUI gui, GUIComponent parent, GItem item) :
             base(gui, parent)
@@ -76,6 +60,15 @@ namespace DwarfCorp
             IsHighlighting = false;
             KeepAspectRatio = true;
         }
+
+        public GItem Item { get; set; }
+        public bool IsDragging { get; set; }
+
+        public bool IsHighlighting { get; set; }
+
+        public bool KeepAspectRatio { get; set; }
+        public event DragStarted OnDragStarted;
+        public event DragEnded OnDragEnded;
 
         private void DraggableItem_OnUnHover()
         {
@@ -103,7 +96,7 @@ namespace DwarfCorp
 
         private void DraggableItem_OnRelease()
         {
-            if(IsDragging)
+            if (IsDragging)
             {
                 IsDragging = false;
                 OnDragEnded.Invoke();
@@ -112,7 +105,7 @@ namespace DwarfCorp
 
         private void DraggableItem_OnPressed()
         {
-            if(!IsDragging)
+            if (!IsDragging)
             {
                 IsDragging = true;
                 OnDragStarted.Invoke();
@@ -124,17 +117,17 @@ namespace DwarfCorp
             Rectangle toDraw = GlobalBounds;
 
 
-            if(KeepAspectRatio)
+            if (KeepAspectRatio)
             {
-                if(toDraw.Width < toDraw.Height)
+                if (toDraw.Width < toDraw.Height)
                 {
-                    float wPh = (float) toDraw.Width / (float) toDraw.Height;
-                    toDraw = new Rectangle(toDraw.X, toDraw.Y, toDraw.Width, (int) (toDraw.Height * wPh));
+                    float wPh = toDraw.Width/(float) toDraw.Height;
+                    toDraw = new Rectangle(toDraw.X, toDraw.Y, toDraw.Width, (int) (toDraw.Height*wPh));
                 }
                 else
                 {
-                    float wPh = (float) toDraw.Height / (float) toDraw.Width;
-                    toDraw = new Rectangle(toDraw.X, toDraw.Y, (int) (toDraw.Width * wPh), toDraw.Height);
+                    float wPh = toDraw.Height/(float) toDraw.Width;
+                    toDraw = new Rectangle(toDraw.X, toDraw.Y, (int) (toDraw.Width*wPh), toDraw.Height);
                 }
             }
             return toDraw;
@@ -151,32 +144,40 @@ namespace DwarfCorp
             Rectangle toDraw = GetImageBounds();
 
             MouseState m = Mouse.GetState();
-            if(IsDragging)
+            if (IsDragging)
             {
-                toDraw.Y = m.Y - toDraw.Height / 2;
-                toDraw.X = m.X - toDraw.Width / 2;
-                batch.Draw(Item.Image.Image, GetImageBounds(), Item.Image.SourceRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
+                toDraw.Y = m.Y - toDraw.Height/2;
+                toDraw.X = m.X - toDraw.Width/2;
+                batch.Draw(Item.Image.Image, GetImageBounds(), Item.Image.SourceRect, Color.White, 0, Vector2.Zero,
+                    SpriteEffects.None, 0);
             }
 
             //if (Item.CurrentAmount > 0)
             {
-                if(!IsHighlighting)
+                if (!IsHighlighting)
                 {
-                    batch.Draw(Item.Image.Image, toDraw, Item.Image.SourceRect, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
+                    batch.Draw(Item.Image.Image, toDraw, Item.Image.SourceRect, Color.White, 0, Vector2.Zero,
+                        SpriteEffects.None, 0);
                 }
                 else
                 {
-                    batch.Draw(Item.Image.Image, toDraw, Item.Image.SourceRect, IsMouseOver ? Color.Orange : Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
+                    batch.Draw(Item.Image.Image, toDraw, Item.Image.SourceRect, IsMouseOver ? Color.Orange : Color.White,
+                        0, Vector2.Zero, SpriteEffects.None, 0);
                 }
 
-                if(Item.CurrentAmount < 256)
+                if (Item.CurrentAmount < 256)
                 {
-                    Drawer2D.DrawStrokedText(batch, "" + Item.CurrentAmount, GUI.SmallFont, new Vector2(GetImageBounds().X, GetImageBounds().Y), Color.White, Color.Black);
-                    Drawer2D.DrawStrokedText(batch, "" + (Item.CurrentAmount * Item.Price).ToString("C"), GUI.SmallFont, new Vector2(GetImageBounds().X + GetImageBounds().Width / 2, GetImageBounds().Y + GetImageBounds().Height - 20), Color.White, Color.Black);
+                    Drawer2D.DrawStrokedText(batch, "" + Item.CurrentAmount, GUI.SmallFont,
+                        new Vector2(GetImageBounds().X, GetImageBounds().Y), Color.White, Color.Black);
+                    Drawer2D.DrawStrokedText(batch, "" + (Item.CurrentAmount*Item.Price).ToString("C"), GUI.SmallFont,
+                        new Vector2(GetImageBounds().X + GetImageBounds().Width/2,
+                            GetImageBounds().Y + GetImageBounds().Height - 20), Color.White, Color.Black);
                 }
                 else
                 {
-                    Drawer2D.DrawStrokedText(batch, "" + Item.Price.ToString("C"), GUI.SmallFont, new Vector2(GetImageBounds().X + GetImageBounds().Width / 2, GetImageBounds().Y + GetImageBounds().Height - 20), Color.White, Color.Black);
+                    Drawer2D.DrawStrokedText(batch, "" + Item.Price.ToString("C"), GUI.SmallFont,
+                        new Vector2(GetImageBounds().X + GetImageBounds().Width/2,
+                            GetImageBounds().Y + GetImageBounds().Height - 20), Color.White, Color.Black);
                 }
                 //batch.DrawString(GUI.SmallFont, "" + Item.CurrentAmount, new Vector2(GetImageBounds().X, GetImageBounds().Y), Color.Black);
             }
@@ -184,5 +185,4 @@ namespace DwarfCorp
             base.Render(time, batch);
         }
     }
-
 }

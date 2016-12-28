@@ -30,12 +30,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
@@ -44,18 +40,41 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Kitchen : Room
     {
-        public static string KitchenName { get { return "Kitchen"; } }
-        public static RoomData KitchenRoomData { get { return RoomLibrary.GetData(KitchenName); } }
+        public Kitchen()
+        {
+            RoomData = KitchenRoomData;
+        }
+
+        public Kitchen(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
+            base(designation, designations, KitchenRoomData, chunks)
+        {
+        }
+
+        public Kitchen(IEnumerable<Voxel> voxels, ChunkManager chunks) :
+            base(voxels, KitchenRoomData, chunks)
+        {
+            OnBuilt();
+        }
+
+        public static string KitchenName
+        {
+            get { return "Kitchen"; }
+        }
+
+        public static RoomData KitchenRoomData
+        {
+            get { return RoomLibrary.GetData(KitchenName); }
+        }
 
         public static RoomData InitializeData()
         {
-            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
+            var roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>
             {
                 {Resource.ResourceTags.Stone, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone)},
                 {Resource.ResourceTags.Fuel, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Fuel)},
             };
 
-            List<RoomTemplate> workshopTemplates = new List<RoomTemplate>();
+            var workshopTemplates = new List<RoomTemplate>();
 
             RoomTile[,] template =
             {
@@ -134,42 +153,26 @@ namespace DwarfCorp
                 }
             };
 
-            RoomTemplate barrel = new RoomTemplate(PlacementType.All, template, accessories)
+            var barrel = new RoomTemplate(PlacementType.All, template, accessories)
             {
                 Probability = 0.2f
             };
 
-            RoomTemplate stove = new RoomTemplate(PlacementType.All, stovetemp, stoveacc)
+            var stove = new RoomTemplate(PlacementType.All, stovetemp, stoveacc)
             {
                 Probability = 1.0f
             };
-            
+
             workshopTemplates.Add(stove);
             workshopTemplates.Add(barrel);
 
             Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(KitchenName, 2, "BlueTileFloor", roomResources, workshopTemplates, new ImageFrame(roomIcons, 16, 3, 2))
+            return new RoomData(KitchenName, 2, "BlueTileFloor", roomResources, workshopTemplates,
+                new ImageFrame(roomIcons, 16, 3, 2))
             {
                 Description = "Cooking is done here",
                 CanBuildAboveGround = false
             };
         }
-
-        public Kitchen()
-        {
-            RoomData = KitchenRoomData;
-        }
-
-        public Kitchen(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
-            base(designation, designations, KitchenRoomData, chunks)
-        {
-        }
-
-        public Kitchen(IEnumerable<Voxel> voxels, ChunkManager chunks) :
-            base(voxels, KitchenRoomData, chunks)
-        {
-            OnBuilt();
-        }
-
     }
 }

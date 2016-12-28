@@ -30,11 +30,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -52,7 +49,6 @@ namespace DwarfCorp
             InspectEntity
         }
 
-        public InspectType Type { get; set; }
         public Timer SelectionTimer = new Timer(0.25f, false);
 
         public InspectSpell(InspectType type)
@@ -66,7 +62,7 @@ namespace DwarfCorp
                 {
                     Image = new ImageFrame(icons, 32, 7, 1);
                     ManaCost = 0;
-                    Mode = Spell.SpellMode.SelectFilledVoxels;
+                    Mode = SpellMode.SelectFilledVoxels;
                     Name = "Inspect Blocks";
                     Description = "Mouse over a block to get info about it";
                     Hint = "Mouse over a block for info";
@@ -77,7 +73,7 @@ namespace DwarfCorp
                 {
                     Image = new ImageFrame(icons, 32, 7, 1);
                     ManaCost = 0;
-                    Mode = Spell.SpellMode.Continuous;
+                    Mode = SpellMode.Continuous;
                     Name = "Inspect Objects";
                     Description = "Select an entity to get info about it";
                     Hint = "Mouse over entities for info";
@@ -86,6 +82,8 @@ namespace DwarfCorp
                 }
             }
         }
+
+        public InspectType Type { get; set; }
 
         public override void Update(DwarfTime time, VoxelSelector voxSelector, BodySelector bodySelector)
         {
@@ -104,10 +102,10 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    Voxel vox = new Voxel();
+                    var vox = new Voxel();
                     PlayState.ChunkManager.ChunkData.GetNonNullVoxelAtWorldLocation(PlayState.CursorLightPos, ref vox);
 
-                    OnVoxelsSelected(PlayState.Master.Spells, new List<Voxel>(){vox});
+                    OnVoxelsSelected(PlayState.Master.Spells, new List<Voxel> {vox});
                 }
             }
             base.Update(time, voxSelector, bodySelector);
@@ -115,7 +113,7 @@ namespace DwarfCorp
 
         public override void OnEntitiesSelected(SpellTree tree, List<Body> entities)
         {
-            if (this.Type != InspectType.InspectEntity) return;
+            if (Type != InspectType.InspectEntity) return;
 
             string desc = "";
             bool first = true;
@@ -139,7 +137,7 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(SpellTree tree, List<Voxel> voxels)
         {
-            if (this.Type != InspectType.InspectBlock) return;
+            if (Type != InspectType.InspectBlock) return;
 
 
             string description = "";
@@ -156,7 +154,7 @@ namespace DwarfCorp
                     {
                         first = false;
                     }
-                    description +=  selected.TypeName + " at " + selected.GridPosition + ". Health: " + selected.Health;
+                    description += selected.TypeName + " at " + selected.GridPosition + ". Health: " + selected.Health;
                 }
             }
 

@@ -30,19 +30,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// A creature drops the item currently in its hands.
+    ///     A creature drops the item currently in its hands.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class DropItemAct : CreatureAct
     {
         public DropItemAct(CreatureAI creature) :
@@ -55,7 +53,7 @@ namespace DwarfCorp
         {
             Body grabbed = Creature.Hands.GetFirstGrab();
 
-            if(grabbed == null)
+            if (grabbed == null)
             {
                 Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                 yield return Status.Fail;
@@ -74,5 +72,4 @@ namespace DwarfCorp
             }
         }
     }
-
 }

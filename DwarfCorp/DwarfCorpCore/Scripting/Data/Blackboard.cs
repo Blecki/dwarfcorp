@@ -30,61 +30,107 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A blackboard is a generic collection of named memory references. 
-    /// Acts should read/write data from the blackboard. This makes data management 
-    /// clearer and easier to control. All creatures have blackboards.
+    ///     A blackboard is a generic collection of named memory references.
+    ///     Acts should read/write data from the blackboard. This makes data management
+    ///     clearer and easier to control. All creatures have blackboards.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class Blackboard
     {
-        public Dictionary<string, ActData> Data { get; set; }
-
         public Blackboard()
         {
             Data = new Dictionary<string, ActData>();
         }
 
+        /// <summary>
+        ///     Generic mapping from name to object.
+        /// </summary>
+        public Dictionary<string, ActData> Data { get; set; }
 
+        /// <summary>
+        ///     Generic accessor for a named data value.
+        /// </summary>
+        /// <param name="key">The name of the data.</param>
+        /// <returns>The data if it exists. Throws KeyNotFound exception otherwise.</returns>
+        public ActData this[string key]
+        {
+            get { return Data[key]; }
+            set { Data[key] = value; }
+        }
+
+
+        /// <summary>
+        ///     Create a blackboard using a single key-value pair.
+        /// </summary>
+        /// <param name="value">Name-to-object mapping.</param>
+        /// <returns>A new blackboard containing just one key-value pair.</returns>
         public static implicit operator Blackboard(KeyValuePair<string, object> value)
         {
             return Create(value.Key, value.Value);
         }
 
+        /// <summary>
+        ///     Create a blackboard using a single key-value pair.
+        /// </summary>
+        /// <param name="value">Name-to-object mapping.</param>
+        /// <returns>A new blackboard containing just one key-value pair.</returns>
         public static implicit operator Blackboard(KeyValuePair<string, float> value)
         {
             return Create(value.Key, value.Value);
         }
 
+        /// <summary>
+        ///     Create a blackboard using a single key-value pair.
+        /// </summary>
+        /// <param name="value">Name-to-object mapping.</param>
+        /// <returns>A new blackboard containing just one key-value pair.</returns>
         public static implicit operator Blackboard(KeyValuePair<string, int> value)
         {
             return Create(value.Key, value.Value);
         }
 
+        /// <summary>
+        ///     Create a blackboard using a single key-value pair.
+        /// </summary>
+        /// <param name="value">Name-to-object mapping.</param>
+        /// <returns>A new blackboard containing just one key-value pair.</returns>
         public static implicit operator Blackboard(KeyValuePair<string, bool> value)
         {
             return Create(value.Key, value.Value);
         }
 
 
+        /// <summary>
+        ///     Create a new blackboard using a single key-value pair.
+        /// </summary>
+        /// <typeparam name="T">The data type</typeparam>
+        /// <param name="tag">The name of the data.</param>
+        /// <param name="data">The generic data to store.</param>
+        /// <returns>A blackboard containing just a name-value pair.</returns>
         public static Blackboard Create<T>(string tag, T data)
         {
-            Blackboard toReturn = new Blackboard();
+            var toReturn = new Blackboard();
             toReturn.SetData(tag, data);
             return toReturn;
         }
 
+        /// <summary>
+        ///     Creates a blackboard from a dictionary of key-value pairs.
+        /// </summary>
+        /// <typeparam name="T">The type of data</typeparam>
+        /// <param name="dict">The dictionary containing a mapping from names to values.</param>
+        /// <returns>A new blackboard whose data comes from the dictionary.</returns>
         public static Blackboard CreateDict<T>(Dictionary<string, T> dict)
         {
-            Blackboard toReturn = new Blackboard();
-            foreach (KeyValuePair<string, T> pair in dict)
+            var toReturn = new Blackboard();
+            foreach (var pair in dict)
             {
                 toReturn.SetData(pair.Key, pair.Value);
             }
@@ -92,49 +138,69 @@ namespace DwarfCorp
             return toReturn;
         }
 
+        /// <summary>
+        ///     Erase all data in the blackboard.
+        /// </summary>
         public void Clear()
         {
             Data.Clear();
         }
 
+        /// <summary>
+        ///     Whether or not the given key is in the blackboard.
+        /// </summary>
+        /// <param name="key">Name of the data to obtain.</param>
+        /// <returns>True if the blackboard has the data, false otherwise.</returns>
         public bool Has(string key)
         {
             return Data.ContainsKey(key);
         }
 
+        /// <summary>
+        ///     Returns the value of the data with the given key.
+        /// </summary>
+        /// <typeparam name="T">Type of the data</typeparam>
+        /// <param name="key">Name of the data</param>
+        /// <param name="def">Default to use if data doesn't exist</param>
+        /// <returns>The data, if it exists. def otherwise.</returns>
         public T GetData<T>(string key, T def)
         {
             return Has(key) ? Data[key].GetData<T>() : def;
         }
 
+        /// <summary>
+        ///     Returns the value of the data with the given key.
+        /// </summary>
+        /// <typeparam name="T">The data type</typeparam>
+        /// <param name="key">The name of the data.</param>
+        /// <returns>The stored data, if it exists. default(T) otherwise.</returns>
         public T GetData<T>(string key)
         {
-            if(Has(key))
-            {
-                return Data[key].GetData<T>();
-            }
-            return default(T);
+            return GetData(key, default(T));
         }
 
+        /// <summary>
+        ///     Set the generic blackboard data. Overwrites existing data.
+        /// </summary>
+        /// <typeparam name="T">Type of data.</typeparam>
+        /// <param name="key">Name of data</param>
+        /// <param name="value">value to set.</param>
         public void SetData<T>(string key, T value)
         {
             Data[key] = new ActData(value);
         }
 
 
+        /// <summary>
+        ///     Erases the blackboard data with the given key.
+        /// </summary>
+        /// <param name="key">Name of the data.</param>
         public void Erase(string key)
         {
-            if(Data.ContainsKey(key))
+            if (Data.ContainsKey(key))
             {
                 Data.Remove(key);
             }
         }
-
-        public ActData this[string key]
-        {
-            get { return Data[key]; }
-            set { Data[key] = value; }
-        }
     }
-
 }

@@ -30,27 +30,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This GUI component is a window which opens up on top
-    /// of the GUI, and blocks the game until it gets user input.
+    ///     This GUI component is a window which opens up on top
+    ///     of the GUI, and blocks the game until it gets user input.
     /// </summary>
     public class Dialog : Window
     {
-        public enum ReturnStatus
-        {
-            None,
-            Ok,
-            Canceled
-        }
+        public delegate void Closed(ReturnStatus status);
 
         public enum ButtonType
         {
@@ -60,25 +52,37 @@ namespace DwarfCorp
             OkAndCancel
         }
 
+        public enum ReturnStatus
+        {
+            None,
+            Ok,
+            Canceled
+        }
+
+        private bool isClosed;
+
+        public
+            Dialog(DwarfGUI gui, GUIComponent parent, WindowButtons button = WindowButtons.NoButtons) :
+                base(gui, parent, button)
+        {
+        }
+
         public bool IsModal { get; set; }
-        private bool isClosed = false;
-
-        public delegate void Closed(ReturnStatus status);
-
-        public event Closed OnClosed;
 
         public Label Title { get; set; }
         public Label Message { get; set; }
 
         public GridLayout Layout { get; set; }
+        public event Closed OnClosed;
 
-        public static Dialog Popup(DwarfGUI gui, string title, string message, ButtonType buttons, int w, int h, GUIComponent parent, int x, int y)
+        public static Dialog Popup(DwarfGUI gui, string title, string message, ButtonType buttons, int w, int h,
+            GUIComponent parent, int x, int y)
         {
-            Dialog d = new Dialog(gui, parent)
+            var d = new Dialog(gui, parent)
             {
                 LocalBounds =
                     new Rectangle(x, y, w, h),
-                MinWidth =  w - 150,
+                MinWidth = w - 150,
                 MinHeight = h - 150,
                 DrawOrder = 100
             };
@@ -90,18 +94,11 @@ namespace DwarfCorp
 
         public static Dialog Popup(DwarfGUI gui, string title, string message, ButtonType buttons)
         {
-            int w = message.Length * 8 + 150;
+            int w = message.Length*8 + 150;
             int h = 150;
             int x = gui.Graphics.Viewport.Width/2 - w/2;
-            int y = gui.Graphics.Viewport.Height / 2 - h / 2;
+            int y = gui.Graphics.Viewport.Height/2 - h/2;
             return Popup(gui, title, message, buttons, w, h, gui.RootComponent, x, y);
-        }
-
-        public 
-            Dialog(DwarfGUI gui, GUIComponent parent, WindowButtons button = WindowButtons.NoButtons) :
-            base(gui, parent, button)
-        {
-           
         }
 
 
@@ -110,7 +107,7 @@ namespace DwarfCorp
             IsModal = true;
             OnClicked += Dialog_OnClicked;
             OnClosed += Dialog_OnClosed;
-            
+
             Layout = new GridLayout(GUI, this, 4, 4);
             Title = new Label(GUI, Layout, title, GUI.DefaultFont);
             Layout.SetComponentPosition(Title, 0, 0, 1, 1);
@@ -143,19 +140,21 @@ namespace DwarfCorp
 
             if (createOK)
             {
-                Button okButton = new Button(GUI, Layout, "OK", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Check));
+                var okButton = new Button(GUI, Layout, "OK", GUI.DefaultFont, Button.ButtonMode.ToolButton,
+                    GUI.Skin.GetSpecialFrame(GUISkin.Tile.Check));
                 Layout.SetComponentPosition(okButton, 2, 3, 2, 1);
                 okButton.OnClicked += OKButton_OnClicked;
             }
 
             if (createCancel)
             {
-                Button cancelButton = new Button(GUI, Layout, "Cancel", GUI.DefaultFont, Button.ButtonMode.PushButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Ex));
+                var cancelButton = new Button(GUI, Layout, "Cancel", GUI.DefaultFont, Button.ButtonMode.PushButton,
+                    GUI.Skin.GetSpecialFrame(GUISkin.Tile.Ex));
                 Layout.SetComponentPosition(cancelButton, 0, 3, 2, 1);
                 cancelButton.OnClicked += cancelButton_OnClicked;
             }
         }
-      
+
         private void cancelButton_OnClicked()
         {
             Close(ReturnStatus.Canceled);
@@ -166,20 +165,20 @@ namespace DwarfCorp
             Close(ReturnStatus.Ok);
         }
 
-        private void Dialog_OnClosed(Dialog.ReturnStatus status)
+        private void Dialog_OnClosed(ReturnStatus status)
         {
             // nothing
         }
 
         private void Dialog_OnClicked()
         {
-            if(IsMouseOver)
+            if (IsMouseOver)
             {
                 GUI.FocusComponent = this;
             }
-            else if(!IsModal)
+            else if (!IsModal)
             {
-                if(GUI.FocusComponent == this)
+                if (GUI.FocusComponent == this)
                 {
                     GUI.FocusComponent = null;
                 }
@@ -189,7 +188,7 @@ namespace DwarfCorp
 
         public virtual void Close(ReturnStatus status)
         {
-            if(GUI.FocusComponent == this)
+            if (GUI.FocusComponent == this)
             {
                 GUI.FocusComponent = null;
             }
@@ -197,18 +196,18 @@ namespace DwarfCorp
             isClosed = true;
             IsVisible = false;
 
-            if(OnClosed != null)
+            if (OnClosed != null)
                 OnClosed.Invoke(status);
             Parent.RemoveChild(this);
         }
 
         public override void Update(DwarfTime time)
         {
-            if(IsModal && !isClosed && IsVisible)
+            if (IsModal && !isClosed && IsVisible)
             {
                 GUI.FocusComponent = this;
             }
-            else if(GUI.FocusComponent == this)
+            else if (GUI.FocusComponent == this)
             {
                 GUI.FocusComponent = null;
             }
@@ -217,7 +216,7 @@ namespace DwarfCorp
 
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
-            if(!IsVisible)
+            if (!IsVisible)
             {
                 return;
             }
@@ -225,5 +224,4 @@ namespace DwarfCorp
             base.Render(time, batch);
         }
     }
-
 }

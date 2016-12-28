@@ -30,24 +30,23 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A special static class which "extends" several different XNA objects.
-    /// This is an obscure C# feature which allows you to add methods to existing objects.
+    ///     A special static class which "extends" several different XNA objects.
+    ///     This is an obscure C# feature which allows you to add methods to existing objects.
     /// </summary>
     public static class Extensions
     {
         public static T[] SubArray<T>(this T[] data, int index, int length)
         {
-            T[] result = new T[length];
+            var result = new T[length];
             Array.Copy(data, index, result, 0, length);
             return result;
         }
@@ -63,17 +62,17 @@ namespace DwarfCorp
 
         public static Vector3 Center(this BoundingBox box)
         {
-            return (box.Max + box.Min) * 0.5f;
+            return (box.Max + box.Min)*0.5f;
         }
 
         public static Vector3 Extents(this BoundingBox box)
         {
-            return (box.Max - box.Min) * 0.5f;
+            return (box.Max - box.Min)*0.5f;
         }
 
         public static void Shuffle<T>(this IList<T> list)
         {
-            Random rng = new Random();
+            var rng = new Random();
             int n = list.Count;
             while (n > 1)
             {
@@ -87,50 +86,52 @@ namespace DwarfCorp
 
 
         /// <summary>
-        /// Creates an ARGB hex string representation of the <see cref="Color"/> value.
+        ///     Creates an ARGB hex string representation of the <see cref="Color" /> value.
         /// </summary>
-        /// <param name="color">The <see cref="Color"/> value to parse.</param>
+        /// <param name="color">The <see cref="Color" /> value to parse.</param>
         /// <param name="includeHash">Determines whether to include the hash mark (#) character in the string.</param>
-        /// <returns>A hex string representation of the specified <see cref="Color"/> value.</returns>
+        /// <returns>A hex string representation of the specified <see cref="Color" /> value.</returns>
         public static string ToHex(this Color color, bool includeHash)
         {
-            string[] argb = 
+            string[] argb =
             {
                 color.A.ToString("X2"),
                 color.R.ToString("X2"),
                 color.G.ToString("X2"),
-                color.B.ToString("X2"),
+                color.B.ToString("X2")
             };
             return (includeHash ? "#" : string.Empty) + string.Join(string.Empty, argb);
         }
 
         // <summary>
-        /// Creates a <see cref="Color"/> value from an ARGB or RGB hex string.  The string may
+        /// Creates a
+        /// <see cref="Color" />
+        /// value from an ARGB or RGB hex string.  The string may
         /// begin with or without the hash mark (#) character.
         /// </summary>
         /// <param name="hexString">The ARGB hex string to parse.</param>
         /// <returns>
-        /// A <see cref="Color"/> value as defined by the ARGB or RGB hex string.
+        ///     A <see cref="Color" /> value as defined by the ARGB or RGB hex string.
         /// </returns>
         /// <exception cref="InvalidOperationException">Thrown if the string is not a valid ARGB or RGB hex value.</exception>
         public static Color ToColor(this string hexString)
         {
             if (hexString.StartsWith("#"))
                 hexString = hexString.Substring(1);
-            uint hex = uint.Parse(hexString, System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+            uint hex = uint.Parse(hexString, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
             Color color = Color.White;
             if (hexString.Length == 8)
             {
-                color.A = (byte)(hex >> 24);
-                color.R = (byte)(hex >> 16);
-                color.G = (byte)(hex >> 8);
-                color.B = (byte)(hex);
+                color.A = (byte) (hex >> 24);
+                color.R = (byte) (hex >> 16);
+                color.G = (byte) (hex >> 8);
+                color.B = (byte) (hex);
             }
             else if (hexString.Length == 6)
             {
-                color.R = (byte)(hex >> 16);
-                color.G = (byte)(hex >> 8);
-                color.B = (byte)(hex);
+                color.R = (byte) (hex >> 16);
+                color.G = (byte) (hex >> 8);
+                color.B = (byte) (hex);
             }
             else
             {

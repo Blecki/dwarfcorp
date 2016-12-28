@@ -30,19 +30,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// The equivalent of a voxel, but for storing liquids.
+    ///     The equivalent of a voxel, but for storing liquids.
     /// </summary>
     public struct WaterCell
     {
-        public byte WaterLevel;
         public bool HasChanged;
         public bool IsFalling;
         public LiquidType Type;
+        public byte WaterLevel;
     }
-
 }

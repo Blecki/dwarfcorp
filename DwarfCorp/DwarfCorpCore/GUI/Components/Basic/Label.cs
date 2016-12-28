@@ -30,31 +30,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json.Converters;
-using Color = Microsoft.Xna.Framework.Color;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This is a GUI component which merely draws text.
+    ///     This is a GUI component which merely draws text.
     /// </summary>
     public class Label : GUIComponent
     {
-        public string Text { get; set; }
-        public Color TextColor { get; set; }
-        public Color StrokeColor { get; set; }
-        public SpriteFont TextFont { get; set; }
-        public Drawer2D.Alignment Alignment { get; set; }
-        public bool WordWrap { get; set; }
-        public bool Truncate { get; set; }
-
         public Label(DwarfGUI gui, GUIComponent parent, string text, SpriteFont textFont) :
             base(gui, parent)
         {
@@ -67,13 +54,20 @@ namespace DwarfCorp
             Truncate = false;
         }
 
-      
+        public string Text { get; set; }
+        public Color TextColor { get; set; }
+        public Color StrokeColor { get; set; }
+        public SpriteFont TextFont { get; set; }
+        public Drawer2D.Alignment Alignment { get; set; }
+        public bool WordWrap { get; set; }
+        public bool Truncate { get; set; }
+
 
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
             string text = Text;
 
-            if(WordWrap)
+            if (WordWrap)
             {
                 text = DwarfGUI.WrapLines(Text, LocalBounds, TextFont);
             }
@@ -84,7 +78,7 @@ namespace DwarfCorp
                 Vector2 wMeasure = Datastructures.SafeMeasure(TextFont, "W");
                 if (measure.X > GlobalBounds.Width)
                 {
-                    int numLetters = GlobalBounds.Width/(int)wMeasure.X;
+                    int numLetters = GlobalBounds.Width/(int) wMeasure.X;
                     text = Text.Substring(0, Math.Min(numLetters, Text.Length)) + "...";
                 }
             }
@@ -104,18 +98,20 @@ namespace DwarfCorp
         {
             Vector2 measure = Datastructures.SafeMeasure(TextFont, Text);
 
-            LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, (int)measure.X + 4, (int)measure.Y + 4);
+            LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, (int) measure.X + 4, (int) measure.Y + 4);
         }
     }
 
-    public class DynamicLabel : Label 
+    public class DynamicLabel : Label
     {
-        public Func<float> ValueFn;
-        public string Prefix;
-        public string Postfix;
         public string Format;
         public float LastValue = default(float);
-        public DynamicLabel(DwarfGUI gui, GUIComponent parent, string prefixText, string postfix, SpriteFont textFont, string format, Func<float> valuefn)
+        public string Postfix;
+        public string Prefix;
+        public Func<float> ValueFn;
+
+        public DynamicLabel(DwarfGUI gui, GUIComponent parent, string prefixText, string postfix, SpriteFont textFont,
+            string format, Func<float> valuefn)
             : base(gui, parent, prefixText, textFont)
         {
             ValueFn = valuefn;
@@ -141,7 +137,8 @@ namespace DwarfCorp
                     }
 
                     IndicatorManager.DrawIndicator(operand + (value - LastValue).ToString(Format) + Postfix,
-                        new Vector3(GlobalBounds.Center.X, GlobalBounds.Center.Y, 0), 1.0f, color, Indicator.IndicatorMode.Indicator2D);
+                        new Vector3(GlobalBounds.Center.X, GlobalBounds.Center.Y, 0), 1.0f, color,
+                        Indicator.IndicatorMode.Indicator2D);
                     LastValue = value;
 
                     Text = Prefix + value.ToString(Format) + Postfix;
@@ -150,5 +147,4 @@ namespace DwarfCorp
             base.Update(time);
         }
     }
-
 }

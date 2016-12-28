@@ -1,35 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 
 namespace DwarfCorp
 {
     public class FarmingPanel : Window
     {
-        public delegate void TillDelegate();
-        public event TillDelegate OnTill;
+        public delegate void HarvestDelegate();
 
         public delegate void PlantDelegate(string plantType, string resource);
-        public event PlantDelegate OnPlant;
 
-        public delegate void HarvestDelegate();
-        public event HarvestDelegate OnHarvest;
+        public delegate void TillDelegate();
 
-        public GridLayout Layout { get; set; }
-        public Button TillButton { get; set; }
-        public Button PlantButton { get; set; }
-        public ComboBox PlantSelector { get; set; }
-        public Button HarvestButton { get; set; }
-
-        public FarmingPanel(DwarfGUI gui, GUIComponent parent, WindowButtons buttons = WindowButtons.CloseButton) 
+        public FarmingPanel(DwarfGUI gui, GUIComponent parent, WindowButtons buttons = WindowButtons.CloseButton)
             : base(gui, parent, buttons)
         {
             MinWidth = 512;
             MinHeight = 256;
             Setup();
         }
+
+        public GridLayout Layout { get; set; }
+        public Button TillButton { get; set; }
+        public Button PlantButton { get; set; }
+        public ComboBox PlantSelector { get; set; }
+        public Button HarvestButton { get; set; }
+        public event TillDelegate OnTill;
+        public event PlantDelegate OnPlant;
+        public event HarvestDelegate OnHarvest;
 
         public void Setup()
         {
@@ -45,7 +43,8 @@ namespace DwarfCorp
             PlantButton.OnClicked += PlantButton_OnClicked;
 
             PlantSelector = new ComboBox(GUI, Layout);
-            List<ResourceAmount> resources = PlayState.Master.Faction.ListResourcesWithTag(Resource.ResourceTags.Plantable);
+            List<ResourceAmount> resources =
+                PlayState.Master.Faction.ListResourcesWithTag(Resource.ResourceTags.Plantable);
             foreach (ResourceAmount resource in resources)
             {
                 if (resource.NumResources > 0)
@@ -71,7 +70,7 @@ namespace DwarfCorp
             HarvestButton.OnClicked += HarvestButton_OnClicked;
         }
 
-        void HarvestButton_OnClicked()
+        private void HarvestButton_OnClicked()
         {
             if (OnHarvest != null)
             {
@@ -80,9 +79,10 @@ namespace DwarfCorp
             }
         }
 
-        void PlantButton_OnClicked()
+        private void PlantButton_OnClicked()
         {
-            if (OnPlant != null && !string.IsNullOrEmpty(PlantSelector.CurrentValue) && PlantSelector.CurrentValue != "<No plantable items!>")
+            if (OnPlant != null && !string.IsNullOrEmpty(PlantSelector.CurrentValue) &&
+                PlantSelector.CurrentValue != "<No plantable items!>")
             {
                 OnPlant.Invoke(PlantSelector.CurrentValue, PlantSelector.CurrentValue);
                 CloseButton.InvokeClick();
@@ -93,7 +93,7 @@ namespace DwarfCorp
             }
         }
 
-        void TillButton_OnClicked()
+        private void TillButton_OnClicked()
         {
             if (OnTill != null)
             {

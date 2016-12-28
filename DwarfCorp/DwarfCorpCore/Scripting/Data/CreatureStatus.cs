@@ -30,96 +30,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// A creature has a set of "statuses" (such as health, energy, etc.) which get
-    /// modified over its lifetime. A creature can be "satisfied" or "unsatisfied" depending on its status.
+    ///     A creature has a set of "statuses" (such as health, energy, etc.) which get
+    ///     modified over its lifetime. A creature can be "satisfied" or "unsatisfied" depending on its status.
     /// </summary>
     public class CreatureStatus
     {
-        /// <summary>
-        /// A creature status is a named value which has minimum and maximum thresholds for satisfaction.
-        /// </summary>
-        public class Status
-        {
-            private float currentValue;
-
-            public string Name { get; set; }
-
-            public float CurrentValue
-            {
-                get { return currentValue; }
-                set { SetValue(value); }
-            }
-
-            public float MinValue { get; set; }
-            public float MaxValue { get; set; }
-            public float UnhappyThreshold { get; set; }
-            public float SatisfiedThreshold { get; set; }
-
-            public int Percentage
-            {
-                get { return (int)((CurrentValue - MinValue)/(MaxValue - MinValue)*100); }
-            }
-
-            public bool IsSatisfied()
-            {
-                return CurrentValue >= SatisfiedThreshold;
-            }
-
-            public bool IsUnhappy()
-            {
-                return CurrentValue <= UnhappyThreshold;
-            }
-
-            public void SetValue(float v)
-            {
-                currentValue = Math.Max(Math.Min(v, MaxValue), MinValue);
-            }
-
-            public string GetDescription()
-            {
-                if (CurrentValue >= MaxValue)
-                {
-                    return "VERY HAPPY";
-                }
-                else if (CurrentValue <= MinValue)
-                {
-                    return "LIVID";
-                }
-                else if (IsSatisfied())
-                {
-                    return "SATISFIED";
-                }
-                else if (IsUnhappy())
-                {
-                    return "UNHAPPY";
-                }
-                else
-                {
-                    return "OK";
-                }
-                
-            }
-
-        }
-
-        public Dictionary<string, Status> Statuses { get; set; }
-
-        public bool IsAsleep { get; set; }
-
-        public Status Hunger { get { return Statuses["Hunger"]; } set { Statuses["Hunger"] = value; } }
-        public Status Energy { get { return Statuses["Energy"]; } set { Statuses["Energy"] = value; } }
-        public Status Happiness { get { return Statuses["Happiness"]; } set { Statuses["Happiness"] = value; } }
-        public Status Health { get { return Statuses["Health"]; } set { Statuses["Health"] = value; } }
-        public float Money { get; set; }
         private float HungerDamageRate = 10.0f;
         private DateTime LastHungerDamageTime = DateTime.Now;
 
@@ -169,36 +92,128 @@ namespace DwarfCorp
             };
         }
 
+        public Dictionary<string, Status> Statuses { get; set; }
+
+        public bool IsAsleep { get; set; }
+
+        public Status Hunger
+        {
+            get { return Statuses["Hunger"]; }
+            set { Statuses["Hunger"] = value; }
+        }
+
+        public Status Energy
+        {
+            get { return Statuses["Energy"]; }
+            set { Statuses["Energy"] = value; }
+        }
+
+        public Status Happiness
+        {
+            get { return Statuses["Happiness"]; }
+            set { Statuses["Happiness"] = value; }
+        }
+
+        public Status Health
+        {
+            get { return Statuses["Health"]; }
+            set { Statuses["Health"] = value; }
+        }
+
+        public float Money { get; set; }
+
         public void Update(Creature creature, DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            Hunger.CurrentValue -= dt * creature.Stats.HungerGrowth;
+            var dt = (float) gameTime.ElapsedGameTime.TotalSeconds;
+            Hunger.CurrentValue -= dt*creature.Stats.HungerGrowth;
 
-            Health.CurrentValue = (creature.Hp - creature.MinHealth) / (creature.MaxHealth - creature.MinHealth);
+            Health.CurrentValue = (creature.Hp - creature.MinHealth)/(creature.MaxHealth - creature.MinHealth);
 
-            if(creature.Stats.CanSleep)
-                Energy.CurrentValue = (float) (100*Math.Sin(PlayState.Time.GetTotalHours()*Math.PI / 24.0f));
+            if (creature.Stats.CanSleep)
+                Energy.CurrentValue = (float) (100*Math.Sin(PlayState.Time.GetTotalHours()*Math.PI/24.0f));
             else
             {
                 Energy.CurrentValue = 100.0f;
             }
 
-            if(Energy.IsUnhappy())
+            if (Energy.IsUnhappy())
             {
                 creature.DrawIndicator(IndicatorManager.StandardIndicators.Sleepy);
             }
 
-            if(creature.Stats.CanEat && Hunger.IsUnhappy())
+            if (creature.Stats.CanEat && Hunger.IsUnhappy())
             {
                 creature.DrawIndicator(IndicatorManager.StandardIndicators.Hungry);
 
-                if(Hunger.CurrentValue <= 1e-12 && (DateTime.Now - LastHungerDamageTime).TotalSeconds > HungerDamageRate)
+                if (Hunger.CurrentValue <= 1e-12 &&
+                    (DateTime.Now - LastHungerDamageTime).TotalSeconds > HungerDamageRate)
                 {
-                    creature.Damage(1.0f / (creature.Stats.HungerResistance) * HungerDamageRate);
+                    creature.Damage(1.0f/(creature.Stats.HungerResistance)*HungerDamageRate);
                     LastHungerDamageTime = DateTime.Now;
                 }
             }
         }
-    }
 
+        /// <summary>
+        ///     A creature status is a named value which has minimum and maximum thresholds for satisfaction.
+        /// </summary>
+        public class Status
+        {
+            private float currentValue;
+
+            public string Name { get; set; }
+
+            public float CurrentValue
+            {
+                get { return currentValue; }
+                set { SetValue(value); }
+            }
+
+            public float MinValue { get; set; }
+            public float MaxValue { get; set; }
+            public float UnhappyThreshold { get; set; }
+            public float SatisfiedThreshold { get; set; }
+
+            public int Percentage
+            {
+                get { return (int) ((CurrentValue - MinValue)/(MaxValue - MinValue)*100); }
+            }
+
+            public bool IsSatisfied()
+            {
+                return CurrentValue >= SatisfiedThreshold;
+            }
+
+            public bool IsUnhappy()
+            {
+                return CurrentValue <= UnhappyThreshold;
+            }
+
+            public void SetValue(float v)
+            {
+                currentValue = Math.Max(Math.Min(v, MaxValue), MinValue);
+            }
+
+            public string GetDescription()
+            {
+                if (CurrentValue >= MaxValue)
+                {
+                    return "VERY HAPPY";
+                }
+                if (CurrentValue <= MinValue)
+                {
+                    return "LIVID";
+                }
+                if (IsSatisfied())
+                {
+                    return "SATISFIED";
+                }
+                if (IsUnhappy())
+                {
+                    return "UNHAPPY";
+                }
+                return "OK";
+            }
+        }
+    }
 }

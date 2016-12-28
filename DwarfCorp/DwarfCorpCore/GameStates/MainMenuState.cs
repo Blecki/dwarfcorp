@@ -37,12 +37,21 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp.GameStates
 {
-
     /// <summary>
-    /// This game state is just the set of menus at the start of the game. Allows navigation to other game states.
+    ///     This game state is just the set of menus at the start of the game. Allows navigation to other game states.
     /// </summary>
     public class MainMenuState : GameState
     {
+        public MainMenuState(DwarfGame game, GameStateManager stateManager) :
+            base(game, "MainMenuState", stateManager)
+        {
+            var library = new ResourceLibrary();
+            Embarkment.Initialize();
+            VoxelChunk.InitializeStatics();
+            IsGameRunning = false;
+            MaintainState = false;
+        }
+
         public Texture2D Logo { get; set; }
         public DwarfGUI GUI { get; set; }
         public SpriteFont DefaultFont { get; set; }
@@ -52,16 +61,6 @@ namespace DwarfCorp.GameStates
         public bool IsGameRunning { get; set; }
         public bool MaintainState { get; set; }
 
-
-        public MainMenuState(DwarfGame game, GameStateManager stateManager) :
-            base(game, "MainMenuState", stateManager)
-        {
-            ResourceLibrary library = new ResourceLibrary();
-            Embarkment.Initialize();
-            VoxelChunk.InitializeStatics();
-            IsGameRunning = false;
-            MaintainState = false;
-        }
 
         public void DebugWorldItems()
         {
@@ -77,7 +76,7 @@ namespace DwarfCorp.GameStates
         {
             ListSelect.ClearItems();
 
-            if(IsGameRunning)
+            if (IsGameRunning)
             {
                 ListSelect.AddItem("Continue Game", "Keep playing DwarfCorp");
             }
@@ -116,7 +115,7 @@ namespace DwarfCorp.GameStates
                         StateManager.PushState("CreditsState");
                     }
                     else
-                        StateManager.PushState(new CreditsState(GameState.Game, "CreditsState", StateManager));
+                        StateManager.PushState(new CreditsState(Game, "CreditsState", StateManager));
                     break;
                 case "Quit":
                     Game.Exit();
@@ -142,7 +141,7 @@ namespace DwarfCorp.GameStates
                     StateManager.PushState("PlayState");
                     PlayState.WorldSize = new Point3(8, 1, 8);
                     GUI.MouseMode = GUISkin.MousePointer.Wait;
-            
+
                     IsGameRunning = true;
                 }
                     break;
@@ -153,7 +152,7 @@ namespace DwarfCorp.GameStates
                     StateManager.PushState("PlayState");
                     PlayState.WorldSize = new Point3(8, 1, 8);
                     GUI.MouseMode = GUISkin.MousePointer.Wait;
-            
+
                     IsGameRunning = true;
                 }
                     break;
@@ -165,7 +164,7 @@ namespace DwarfCorp.GameStates
                     PlayState.WorldSize = new Point3(8, 1, 8);
                     GUI.MouseMode = GUISkin.MousePointer.Wait;
                     PlayState.Natives = new List<Faction>();
-                    FactionLibrary library = new FactionLibrary();
+                    var library = new FactionLibrary();
                     library.Initialize(null, "fake", "fake", null, Color.Blue);
                     for (int i = 0; i < 10; i++)
                     {
@@ -182,7 +181,7 @@ namespace DwarfCorp.GameStates
                     StateManager.PushState("PlayState");
                     PlayState.WorldSize = new Point3(8, 1, 8);
                     GUI.MouseMode = GUISkin.MousePointer.Wait;
-            
+
                     IsGameRunning = true;
                 }
                     break;
@@ -207,12 +206,12 @@ namespace DwarfCorp.GameStates
                     Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
                 IsInitialized = true;
                 Logo = TextureManager.GetTexture(ContentPaths.Logos.gamelogo);
-                GUIComponent mainComponent = new GUIComponent(GUI, GUI.RootComponent)
+                var mainComponent = new GUIComponent(GUI, GUI.RootComponent)
                 {
                     LocalBounds = new Rectangle(0, 0, Logo.Width, Logo.Height + 180)
                 };
 
-                AlignLayout layout = new AlignLayout(GUI, GUI.RootComponent)
+                var layout = new AlignLayout(GUI, GUI.RootComponent)
                 {
                     HeightSizeMode = GUIComponent.SizeMode.Fit,
                     WidthSizeMode = GUIComponent.SizeMode.Fit,
@@ -228,7 +227,7 @@ namespace DwarfCorp.GameStates
                 };
 
 
-                ImagePanel logoPanel = new ImagePanel(GUI, mainComponent, Logo)
+                var logoPanel = new ImagePanel(GUI, mainComponent, Logo)
                 {
                     KeepAspectRatio = true,
                     ConstrainSize = true,
@@ -264,13 +263,14 @@ namespace DwarfCorp.GameStates
 
         private void DrawGUI(DwarfTime gameTime, float dx)
         {
-            RasterizerState rasterizerState = new RasterizerState()
+            var rasterizerState = new RasterizerState
             {
                 ScissorTestEnable = true
             };
 
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, null, rasterizerState);
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp,
+                null, rasterizerState);
             Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
             DwarfGame.SpriteBatch.DrawString(GUI.DefaultFont, Program.Version, new Vector2(15, 15), Color.White);
@@ -281,17 +281,17 @@ namespace DwarfCorp.GameStates
 
         public override void Render(DwarfTime gameTime)
         {
-
-            if(Transitioning == TransitionMode.Running)
+            if (Transitioning == TransitionMode.Running)
             {
                 DrawGUI(gameTime, 0);
             }
-            else if(Transitioning == TransitionMode.Entering)
+            else if (Transitioning == TransitionMode.Entering)
             {
-                float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Width, 1.0f);
+                float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width,
+                    Game.GraphicsDevice.Viewport.Width, 1.0f);
                 DrawGUI(gameTime, dx);
             }
-            else if(Transitioning == TransitionMode.Exiting)
+            else if (Transitioning == TransitionMode.Exiting)
             {
                 float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Width, 1.0f);
                 DrawGUI(gameTime, dx);
@@ -300,5 +300,4 @@ namespace DwarfCorp.GameStates
             base.Render(gameTime);
         }
     }
-
 }

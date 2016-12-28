@@ -30,23 +30,53 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature puts a specified resource (in its inventory) into a zone.
+    ///     A creature puts a specified resource (in its inventory) into a zone.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class PutResourceInZone : CreatureAct
     {
+        public PutResourceInZone(CreatureAI agent, string stockpileName, string voxelname, string resourceName) :
+            base(agent)
+        {
+            VoxelName = voxelname;
+            Name = "Put Item";
+            StockpileName = stockpileName;
+            ResourceName = resourceName;
+        }
+
         [JsonIgnore]
-        public Zone Zone { get { return GetZone(); } set { SetZone(value); } }
+        public Zone Zone
+        {
+            get { return GetZone(); }
+            set { SetZone(value); }
+        }
+
+
+        [JsonIgnore]
+        public Voxel Voxel
+        {
+            get { return GetVoxel(); }
+            set { SetVoxel(value); }
+        }
+
+        public string StockpileName { get; set; }
+        public string VoxelName { get; set; }
+
+        [JsonIgnore]
+        public ResourceAmount Resource
+        {
+            get { return GetResource(); }
+            set { SetResource(value); }
+        }
+
+        public string ResourceName { get; set; }
 
         public Zone GetZone()
         {
@@ -58,10 +88,6 @@ namespace DwarfCorp
             Agent.Blackboard.SetData(StockpileName, pile);
         }
 
-
-        [JsonIgnore]
-        public Voxel Voxel { get { return GetVoxel(); } set { SetVoxel(value); } }
-
         public Voxel GetVoxel()
         {
             return Agent.Blackboard.GetData<Voxel>(VoxelName);
@@ -72,12 +98,6 @@ namespace DwarfCorp
             Agent.Blackboard.SetData(VoxelName, voxel);
         }
 
-        public string StockpileName { get; set; }
-        public string VoxelName { get; set; }
-
-        [JsonIgnore]
-        public ResourceAmount Resource { get { return GetResource(); } set { SetResource(value); } }
-
         public ResourceAmount GetResource()
         {
             return Agent.Blackboard.GetData<ResourceAmount>(ResourceName);
@@ -86,17 +106,6 @@ namespace DwarfCorp
         public void SetResource(ResourceAmount amount)
         {
             Agent.Blackboard.SetData(ResourceName, amount);
-        }
-
-        public string ResourceName { get; set; }
-
-        public PutResourceInZone(CreatureAI agent, string stockpileName, string voxelname, string resourceName) :
-            base(agent)
-        {
-            VoxelName = voxelname;
-            Name = "Put Item";
-            StockpileName = stockpileName;
-            ResourceName = resourceName;
         }
 
         public override IEnumerable<Status> Run()
@@ -115,7 +124,7 @@ namespace DwarfCorp
             }
 
             List<Body> createdItems = Creature.Inventory.RemoveAndCreate(Resource);
-            if(createdItems.Count == 0)
+            if (createdItems.Count == 0)
             {
                 Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                 yield return Status.Fail;
@@ -144,11 +153,10 @@ namespace DwarfCorp
                     Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
                     yield return Status.Fail;
-                }   
+                }
             }
             Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
             yield return Status.Success;
         }
     }
-
 }

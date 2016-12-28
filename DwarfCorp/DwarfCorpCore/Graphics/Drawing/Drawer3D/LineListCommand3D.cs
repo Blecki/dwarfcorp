@@ -30,6 +30,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -38,20 +39,21 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DwarfCorp
 {
     /// <summary>
-    /// Draws a list of lines to the screen.
+    ///     Draws a list of lines to the screen.
     /// </summary>
     internal class LineListCommand3D : DrawCommand3D
     {
-        public Vector3[] Points;
+        private readonly int triangleCount;
         private readonly VertexPositionColor[] triangles;
-        private readonly int triangleCount = 0;
+        public Vector3[] Points;
 
         public LineListCommand3D(Vector3[] points, Color color, float thickness) :
             base(color)
         {
-            this.Points = points;
+            Points = points;
             Matrix worldMatrix = Matrix.Identity;
-            List<VertexPositionColor> vertices = Drawer3D.GetTriangleStrip(points, thickness, color, ref triangleCount, worldMatrix);
+            List<VertexPositionColor> vertices = Drawer3D.GetTriangleStrip(points, thickness, color, ref triangleCount,
+                worldMatrix);
             triangles = new VertexPositionColor[vertices.Count];
             vertices.CopyTo(triangles);
         }
@@ -70,27 +72,24 @@ namespace DwarfCorp
                 vertices.NumTriangles += 1;
             }
             vertices.Vertices.AddRange(triangles);
-
         }
 
         public override void Render(GraphicsDevice device, Effect effect)
         {
-            if(triangleCount <= 0 || Points.Count() < 2)
+            if (triangleCount <= 0 || Points.Count() < 2)
             {
                 return;
             }
             Matrix w = Matrix.Identity;
             effect.Parameters["xWorld"].SetValue(w);
             effect.CurrentTechnique = effect.Techniques["Untextured"];
-            foreach(EffectPass pass in effect.CurrentTechnique.Passes)
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
 
-                device.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, triangles, 0, triangleCount - 2);
+                device.DrawUserPrimitives(PrimitiveType.TriangleStrip, triangles, 0, triangleCount - 2);
             }
             effect.CurrentTechnique = effect.Techniques["Textured"];
-
         }
     }
-
 }

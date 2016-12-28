@@ -30,36 +30,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
+
 using System.IO;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
     public class ControlSettings
     {
-        public class KeyMappings
-        {
-            public Keys Forward = Keys.W;
-            public Keys Left = Keys.A;
-            public Keys Right = Keys.D;
-            public Keys Back = Keys.S;
-            public Keys CameraMode = Keys.LeftShift;
-            public Keys GodMode = Keys.G;
-            public Keys TimeForward = Keys.X;
-            public Keys TimeBackward = Keys.Z;
-            public Keys SliceUp = Keys.PageUp;
-            public Keys SliceDown = Keys.PageDown;
-            public Keys Pause = Keys.P;
-            public Keys Map = Keys.M;
-            public Keys SliceSelected = Keys.Q;
-            public Keys Unslice = Keys.E;
-            public Keys ToggleGUI = Keys.B;
-        }
-
         public static KeyMappings Mappings { get; set; }
 
         public static void Reset()
@@ -93,6 +71,25 @@ namespace DwarfCorp
                 Mappings = new KeyMappings();
                 Save();
             }
+        }
+
+        public class KeyMappings
+        {
+            public Keys Back = Keys.S;
+            public Keys CameraMode = Keys.LeftShift;
+            public Keys Forward = Keys.W;
+            public Keys GodMode = Keys.G;
+            public Keys Left = Keys.A;
+            public Keys Map = Keys.M;
+            public Keys Pause = Keys.P;
+            public Keys Right = Keys.D;
+            public Keys SliceDown = Keys.PageDown;
+            public Keys SliceSelected = Keys.Q;
+            public Keys SliceUp = Keys.PageUp;
+            public Keys TimeBackward = Keys.Z;
+            public Keys TimeForward = Keys.X;
+            public Keys ToggleGUI = Keys.B;
+            public Keys Unslice = Keys.E;
         }
     }
 }

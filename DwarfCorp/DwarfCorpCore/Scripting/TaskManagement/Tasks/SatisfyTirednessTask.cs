@@ -30,15 +30,11 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// Tells a creature that it should find a bed and sleep (or else pass out).
+    ///     Tells a creature that it should find a bed and sleep (or else pass out).
     /// </summary>
     public class SatisfyTirednessTask : Task
     {
@@ -67,6 +63,5 @@ namespace DwarfCorp
         {
             return agent.Status.Hunger.IsUnhappy() ? 0.0f : 1e13f;
         }
-
     }
 }

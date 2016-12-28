@@ -30,11 +30,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
@@ -43,19 +40,42 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class LibraryRoom : Room
     {
-        public static string LibraryRoomName { get { return "LibraryRoom"; } }
-        public static RoomData LibraryRoomData { get { return RoomLibrary.GetData(LibraryRoomName); } }
+        public LibraryRoom()
+        {
+            RoomData = LibraryRoomData;
+        }
+
+        public LibraryRoom(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
+            base(designation, designations, LibraryRoomData, chunks)
+        {
+        }
+
+        public LibraryRoom(IEnumerable<Voxel> voxels, ChunkManager chunks) :
+            base(voxels, LibraryRoomData, chunks)
+        {
+            OnBuilt();
+        }
+
+        public static string LibraryRoomName
+        {
+            get { return "LibraryRoom"; }
+        }
+
+        public static RoomData LibraryRoomData
+        {
+            get { return RoomLibrary.GetData(LibraryRoomName); }
+        }
 
         public static RoomData InitializeData()
         {
-            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
+            var roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>
             {
                 {Resource.ResourceTags.Magical, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Magical)},
                 {Resource.ResourceTags.Stone, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone)},
             };
 
 
-            List<RoomTemplate> libraryTemplates = new List<RoomTemplate>();
+            var libraryTemplates = new List<RoomTemplate>();
             RoomTile[,] lampTemplate =
             {
                 {
@@ -80,7 +100,7 @@ namespace DwarfCorp
                 }
             };
 
-            RoomTile[,]  bookshlf =
+            RoomTile[,] bookshlf =
             {
                 {
                     RoomTile.None,
@@ -104,7 +124,7 @@ namespace DwarfCorp
                 }
             };
 
-            RoomTemplate lamp = new RoomTemplate(PlacementType.All, lampTemplate, lampAccessories);
+            var lamp = new RoomTemplate(PlacementType.All, lampTemplate, lampAccessories);
             RoomTile[,] bookTemp =
             {
                 {
@@ -143,38 +163,22 @@ namespace DwarfCorp
                 }
             };
 
-            RoomTemplate book = new RoomTemplate(PlacementType.Random, bookTemp, bookAcc)
+            var book = new RoomTemplate(PlacementType.Random, bookTemp, bookAcc)
             {
                 Probability = 0.5f
             };
 
 
-            libraryTemplates.Add(new RoomTemplate(PlacementType.Random, bookshlf, bookshlfAcc) { Probability = 0.15f});
+            libraryTemplates.Add(new RoomTemplate(PlacementType.Random, bookshlf, bookshlfAcc) {Probability = 0.15f});
             libraryTemplates.Add(lamp);
             libraryTemplates.Add(book);
             Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(LibraryRoomName, 4, "BlueTileFloor", roomResources, libraryTemplates, new ImageFrame(roomIcons, 16, 0, 1))
+            return new RoomData(LibraryRoomName, 4, "BlueTileFloor", roomResources, libraryTemplates,
+                new ImageFrame(roomIcons, 16, 0, 1))
             {
                 Description = "Wizards do magical research here. Also holds mana crystals to charge magic spells.",
                 CanBuildAboveGround = false
             };
         }
-
-        public LibraryRoom()
-        {
-            RoomData = LibraryRoomData;
-        }
-
-        public LibraryRoom(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
-            base(designation, designations, LibraryRoomData, chunks)
-        {
-        }
-
-        public LibraryRoom(IEnumerable<Voxel> voxels, ChunkManager chunks) :
-            base(voxels, LibraryRoomData, chunks)
-        {
-            OnBuilt();
-        }
-
     }
 }

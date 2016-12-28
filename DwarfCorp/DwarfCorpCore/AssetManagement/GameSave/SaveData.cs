@@ -30,18 +30,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
+using System.IO;
 
 namespace DwarfCorp
 {
-
     public class SaveData
     {
-    
-
         public static string Extension = "json";
         public static string CompressedExtension = "zip";
 
@@ -55,17 +50,14 @@ namespace DwarfCorp
             return false;
         }
 
-        public static string[] GetFilesInDirectory(string dir, bool compressed, string compressedExtension, string extension)
+        public static string[] GetFilesInDirectory(string dir, bool compressed, string compressedExtension,
+            string extension)
         {
-            if(compressed)
+            if (compressed)
             {
-                return System.IO.Directory.GetFiles(dir, "*." + compressedExtension);
+                return Directory.GetFiles(dir, "*." + compressedExtension);
             }
-            else
-            {
-                return System.IO.Directory.GetFiles(dir, "*." + extension);
-            }
+            return Directory.GetFiles(dir, "*." + extension);
         }
     }
-
 }

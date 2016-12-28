@@ -30,18 +30,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
-
     public class ListItem : GUIComponent
     {
         public enum SelectionMode
@@ -49,17 +45,6 @@ namespace DwarfCorp
             Selector,
             ButtonList
         }
-        public bool DrawButton { get; set; }
-        public string Label { get; set; }
-        public Texture2D Texture { get; set; }
-        public Rectangle TextureBounds { get; set; }
-        public Color TextColor { get; set; }
-        public Color TextStrokeColor { get; set; }
-        public Color ToggledColor { get; set; }
-        public Color HoverColor { get; set; }
-        public bool Toggleable { get; set; }
-        public bool IsToggled { get; set; }
-        public SelectionMode Mode { get; set; }
 
         public ListItem(DwarfGUI gui, GUIComponent parent, string label, Texture2D tex, Rectangle texBounds) :
             base(gui, parent)
@@ -77,6 +62,18 @@ namespace DwarfCorp
             Mode = SelectionMode.Selector;
         }
 
+        public bool DrawButton { get; set; }
+        public string Label { get; set; }
+        public Texture2D Texture { get; set; }
+        public Rectangle TextureBounds { get; set; }
+        public Color TextColor { get; set; }
+        public Color TextStrokeColor { get; set; }
+        public Color ToggledColor { get; set; }
+        public Color HoverColor { get; set; }
+        public bool Toggleable { get; set; }
+        public bool IsToggled { get; set; }
+        public SelectionMode Mode { get; set; }
+
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
             if (!IsVisible)
@@ -90,25 +87,29 @@ namespace DwarfCorp
             }
 
             //Drawer2D.DrawRect(GlobalBounds, Color.White, Color.Black, 1.0f);
-            if(IsMouseOver)
+            if (IsMouseOver)
             {
-                Drawer2D.DrawAlignedStrokedText(batch, Label, GUI.DefaultFont, HoverColor, TextStrokeColor, alignment, GlobalBounds);
+                Drawer2D.DrawAlignedStrokedText(batch, Label, GUI.DefaultFont, HoverColor, TextStrokeColor, alignment,
+                    GlobalBounds);
             }
             else
             {
-                if(!IsToggled || Mode == SelectionMode.ButtonList)
+                if (!IsToggled || Mode == SelectionMode.ButtonList)
                 {
-                    Drawer2D.DrawAlignedStrokedText(batch, Label, GUI.DefaultFont, TextColor, TextStrokeColor, alignment, GlobalBounds);
+                    Drawer2D.DrawAlignedStrokedText(batch, Label, GUI.DefaultFont, TextColor, TextStrokeColor, alignment,
+                        GlobalBounds);
                 }
                 else
                 {
-                    Drawer2D.DrawAlignedStrokedText(batch, Label, GUI.DefaultFont, ToggledColor, TextStrokeColor, alignment, GlobalBounds);
+                    Drawer2D.DrawAlignedStrokedText(batch, Label, GUI.DefaultFont, ToggledColor, TextStrokeColor,
+                        alignment, GlobalBounds);
                 }
             }
 
-            if(Texture != null)
+            if (Texture != null)
             {
-                batch.Draw(Texture, new Vector2(GlobalBounds.Top, GlobalBounds.Left - 10), TextureBounds, Color.White, 0.0f, Vector2.Zero, Vector2.Zero, SpriteEffects.None, 0);
+                batch.Draw(Texture, new Vector2(GlobalBounds.Top, GlobalBounds.Left - 10), TextureBounds, Color.White,
+                    0.0f, Vector2.Zero, Vector2.Zero, SpriteEffects.None, 0);
             }
 
             base.Render(time, batch);
@@ -116,38 +117,13 @@ namespace DwarfCorp
     }
 
     /// <summary>
-    /// This is a GUI component with a list of possible selections,
-    /// similar to a combo box, except the selections are all visible at
-    /// the same time, and are pushed like buttons.
+    ///     This is a GUI component with a list of possible selections,
+    ///     similar to a combo box, except the selections are all visible at
+    ///     the same time, and are pushed like buttons.
     /// </summary>
     public class ListSelector : GUIComponent
     {
-        public event ClickedDelegate OnItemClicked;
         public delegate void ItemSelected(int index, ListItem item);
-        public event ItemSelected OnItemSelected;
-
-        protected virtual void OnOnItemSelected(int index, ListItem item)
-        {
-            ItemSelected handler = OnItemSelected;
-            if(handler != null)
-            {
-                handler(index, item);
-            }
-        }
-
-        public List<ListItem> Items { get; set; }
-        public ListItem SelectedItem { get; set; }
-        public Color BackgroundColor { get; set; }
-        public Color StrokeColor { get; set; }
-        public float StrokeWeight { get; set; }
-        public string Label { get; set; }
-        public Color LabelColor { get; set; }
-        public Color LabelStroke { get; set; }
-        public ListItem.SelectionMode Mode { get; set; }
-        public bool DrawPanel { get; set; }
-        public bool DrawButtons { get; set; }
-        public int ItemHeight { get; set; }
-        public int Padding { get; set; }
 
         public ListSelector(DwarfGUI gui, GUIComponent parent) :
             base(gui, parent)
@@ -167,9 +143,34 @@ namespace DwarfCorp
             Padding = 0;
         }
 
+        public List<ListItem> Items { get; set; }
+        public ListItem SelectedItem { get; set; }
+        public Color BackgroundColor { get; set; }
+        public Color StrokeColor { get; set; }
+        public float StrokeWeight { get; set; }
+        public string Label { get; set; }
+        public Color LabelColor { get; set; }
+        public Color LabelStroke { get; set; }
+        public ListItem.SelectionMode Mode { get; set; }
+        public bool DrawPanel { get; set; }
+        public bool DrawButtons { get; set; }
+        public int ItemHeight { get; set; }
+        public int Padding { get; set; }
+        public event ClickedDelegate OnItemClicked;
+        public event ItemSelected OnItemSelected;
+
+        protected virtual void OnOnItemSelected(int index, ListItem item)
+        {
+            ItemSelected handler = OnItemSelected;
+            if (handler != null)
+            {
+                handler(index, item);
+            }
+        }
+
         public void ClearItems()
         {
-            foreach(ListItem item in Items)
+            foreach (ListItem item in Items)
             {
                 RemoveChild(item);
             }
@@ -185,13 +186,13 @@ namespace DwarfCorp
 
         public void AddItem(string text, string tooltip = "")
         {
-            int top = 30 + (ItemHeight + Padding) * Items.Count;
+            int top = 30 + (ItemHeight + Padding)*Items.Count;
             int left = 5;
 
-            ListItem item = new ListItem(GUI, this, text, null, new Rectangle())
+            var item = new ListItem(GUI, this, text, null, new Rectangle())
             {
                 Toggleable = true,
-                LocalBounds = new Rectangle(left, top, Math.Max(LocalBounds.Width, text.Length * 8), ItemHeight),
+                LocalBounds = new Rectangle(left, top, Math.Max(LocalBounds.Width, text.Length*8), ItemHeight),
                 ToolTip = tooltip,
                 DrawButton = DrawButtons
             };
@@ -199,7 +200,7 @@ namespace DwarfCorp
             item.OnClicked += () => item_OnClicked(item);
             AddItem(item);
 
-            if(SelectedItem == null)
+            if (SelectedItem == null)
             {
                 SelectedItem = item;
                 item.IsToggled = true;
@@ -214,7 +215,7 @@ namespace DwarfCorp
 
         private void item_OnClicked(ListItem item)
         {
-            if(SelectedItem != null)
+            if (SelectedItem != null)
             {
                 SelectedItem.IsToggled = false;
             }
@@ -226,18 +227,18 @@ namespace DwarfCorp
 
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
-            if(IsVisible)
+            if (IsVisible)
             {
-                if(DrawPanel)
+                if (DrawPanel)
                 {
                     GUI.Skin.RenderPanel(GlobalBounds, batch);
                 }
 
-                Drawer2D.DrawStrokedText(batch, Label, GUI.DefaultFont, new Vector2(GlobalBounds.X + 5, GlobalBounds.Y + 5), LabelColor, LabelStroke);
+                Drawer2D.DrawStrokedText(batch, Label, GUI.DefaultFont,
+                    new Vector2(GlobalBounds.X + 5, GlobalBounds.Y + 5), LabelColor, LabelStroke);
                 //Drawer2D.DrawRect(GlobalBounds, BackgroundColor, StrokeColor, StrokeWeight);
             }
             base.Render(time, batch);
         }
     }
-
 }

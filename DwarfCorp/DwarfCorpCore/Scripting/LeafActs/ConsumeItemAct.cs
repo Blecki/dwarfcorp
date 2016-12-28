@@ -30,15 +30,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature eats an item in its hands to satisfy its hunger.
+    ///     A creature eats an item in its hands to satisfy its hunger.
     /// </summary>
     public class ConsumeItemAct : CreatureAct
     {
@@ -52,18 +50,17 @@ namespace DwarfCorp
 
         public ConsumeItemAct()
         {
-            
         }
 
         public ConsumeItemAct(CreatureAI agent) :
             base(agent)
         {
             Name = "Consume " + TargetID;
-        } 
+        }
 
         public override IEnumerable<Status> Run()
         {
-            yield return Status.Fail;  //Creature.ConsumeItem(TargetID);
+            yield return Status.Fail; //Creature.ConsumeItem(TargetID);
         }
     }
 }

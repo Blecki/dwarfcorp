@@ -30,15 +30,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    ///     Displays an Applicant for a job at the Dwarf Corporation to the user for review.
+    /// </summary>
     public class ApplicationPanel : GUIComponent
     {
+        public ApplicationPanel(GUIComponent parent) :
+            base(parent.GUI, parent)
+        {
+            Initialize();
+        }
+
         public Label NameLabel { get; set; }
         public Label PositionLabel { get; set; }
         public Label PayLabel { get; set; }
@@ -47,15 +52,9 @@ namespace DwarfCorp
         public Label FormerPositionLabel { get; set; }
         public Label HomeTownLabel { get; set; }
 
-        public ApplicationPanel(GUIComponent parent) :
-            base(parent.GUI, parent)
-        {
-            Initialize();
-        }
-
         public void Initialize()
         {
-            GridLayout layout = new GridLayout(GUI, this, 6, 4);
+            var layout = new GridLayout(GUI, this, 6, 4);
             NameLabel = new Label(GUI, layout, "", GUI.TitleFont)
             {
                 WordWrap = true
@@ -83,10 +82,9 @@ namespace DwarfCorp
             layout.SetComponentPosition(PositionLabel, 0, 1, 1, 1);
             layout.SetComponentPosition(FormerPositionLabel, 0, 5, 2, 1);
             layout.SetComponentPosition(HomeTownLabel, 2, 5, 2, 1);
-            layout.SetComponentPosition(PayLabel , 0, 2, 1, 1);
+            layout.SetComponentPosition(PayLabel, 0, 2, 1, 1);
             layout.SetComponentPosition(BonusLabel, 2, 2, 1, 1);
             layout.SetComponentPosition(LetterLabel, 0, 3, 3, 2);
-
         }
 
         public void SetApplicant(Applicant applicant)
@@ -99,6 +97,5 @@ namespace DwarfCorp
             HomeTownLabel.Text = "Hometown: " + applicant.HomeTown;
             FormerPositionLabel.Text = "Last Job: " + applicant.FormerProfession;
         }
-
     }
 }

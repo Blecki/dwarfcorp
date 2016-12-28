@@ -30,27 +30,54 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Policy;
-using System.Text;
 using DwarfCorp.GameStates;
-using DwarfCorpCore;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// This is a particular instantiation of the camera class which can rotate and 
-    /// translate around with the mouse and keyboard.
+    ///     This is a particular instantiation of the camera class which can rotate and
+    ///     translate around with the mouse and keyboard.
     /// </summary>
     public class OrbitCamera : Camera
     {
+        public enum ControlType
+        {
+            Overhead,
+            Walk
+        }
+
+        private readonly Timer moveTimer = new Timer(0.25f, true);
+        public ControlType Control = ControlType.Overhead;
+        public Vector3 PushVelocity = Vector3.Zero;
+        private bool isLeftPressed;
+        private bool isRightPressed;
+        private bool shiftPressed;
+        private float targetPhi;
+        private float targetTheta;
+
+        public OrbitCamera()
+        {
+        }
+
+        public OrbitCamera(float theta, float phi, float radius, Vector3 target, Vector3 position, float fov,
+            float aspectRatio, float nearPlane, float farPlane) :
+                base(target, position, fov, aspectRatio, nearPlane, farPlane)
+        {
+            Theta = theta;
+            Phi = phi;
+            Radius = radius;
+            LastWheel = Mouse.GetState().ScrollWheelValue;
+            targetTheta = theta;
+            targetPhi = phi;
+            ZoomTargets = new List<Vector3>();
+        }
+
         public float Theta { get; set; }
         public float Phi { get; set; }
         public float Radius { get; set; }
@@ -67,40 +94,9 @@ namespace DwarfCorp
             set { GameSettings.Default.CameraZoomSpeed = value; }
         }
 
-        public enum ControlType
-        {
-            Overhead,
-            Walk
-        }
-
         public Physics PhysicsObject { get; set; }
-        private bool isLeftPressed = false;
-        private bool isRightPressed = false;
-        private readonly Timer moveTimer = new Timer(0.25f, true);
-        private float targetTheta = 0.0f;
-        private float targetPhi = 0.0f;
-        private bool shiftPressed = false;
-        public Vector3 PushVelocity = Vector3.Zero;
-        public ControlType Control = ControlType.Overhead;
 
-        public List<Vector3> ZoomTargets { get; set; } 
-       
-        public OrbitCamera() : base()
-        {
-            
-        }
-
-        public OrbitCamera(float theta, float phi, float radius, Vector3 target, Vector3 position, float fov, float aspectRatio, float nearPlane, float farPlane) :
-            base(target, position, fov, aspectRatio, nearPlane, farPlane)
-        {
-            Theta = theta;
-            Phi = phi;
-            Radius = radius;
-            LastWheel = Mouse.GetState().ScrollWheelValue;
-            targetTheta = theta;
-            targetPhi = phi;
-            ZoomTargets = new List<Vector3>();
-        }
+        public List<Vector3> ZoomTargets { get; set; }
 
 
         public void SetTargetRotation(float theta, float phi)
@@ -113,7 +109,7 @@ namespace DwarfCorp
         {
             switch (Control)
             {
-              case ControlType.Overhead:
+                case ControlType.Overhead:
                     OverheadUpdate(time, chunks);
                     break;
 
@@ -132,13 +128,15 @@ namespace DwarfCorp
 
             if (PhysicsObject == null)
             {
-                PhysicsObject = new Physics("CameraPhysics", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(Target), new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero, 1.0f, 1.0f, 0.999f, 1.0f, Vector3.Down * 10);
+                PhysicsObject = new Physics("CameraPhysics", PlayState.ComponentManager.RootComponent,
+                    Matrix.CreateTranslation(Target), new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero, 1.0f, 1.0f, 0.999f,
+                    1.0f, Vector3.Down*10);
                 PhysicsObject.IsSleeping = false;
                 PhysicsObject.Velocity = Vector3.Down*0.01f;
             }
 
             bool stateChanged = false;
-            float dt = (float)time.ElapsedGameTime.TotalSeconds;
+            var dt = (float) time.ElapsedGameTime.TotalSeconds;
 
             if (KeyManager.RotationEnabled())
             {
@@ -172,31 +170,32 @@ namespace DwarfCorp
 
                 if (stateChanged)
                 {
-                    Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2, GameState.Game.GraphicsDevice.Viewport.Height / 2);
+                    Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width/2,
+                        GameState.Game.GraphicsDevice.Viewport.Height/2);
                     mouse = Mouse.GetState();
                 }
 
 
-                float diffX = mouse.X - GameState.Game.GraphicsDevice.Viewport.Width / 2;
-                float diffY = mouse.Y - GameState.Game.GraphicsDevice.Viewport.Height / 2;
+                float diffX = mouse.X - GameState.Game.GraphicsDevice.Viewport.Width/2;
+                float diffY = mouse.Y - GameState.Game.GraphicsDevice.Viewport.Height/2;
 
 
-                float filterDiffX = (float)(diffX * dt);
-                float filterDiffY = (float)(diffY * dt);
+                float filterDiffX = diffX*dt;
+                float filterDiffY = diffY*dt;
                 if (Math.Abs(filterDiffX) > 1.0f)
                 {
-                    filterDiffX = 1.0f * Math.Sign(filterDiffX);
+                    filterDiffX = 1.0f*Math.Sign(filterDiffX);
                 }
 
                 if (Math.Abs(filterDiffY) > 1.0f)
                 {
-                    filterDiffY = 1.0f * Math.Sign(filterDiffY);
+                    filterDiffY = 1.0f*Math.Sign(filterDiffY);
                 }
 
                 targetTheta = Theta - (filterDiffX);
                 targetPhi = Phi - (filterDiffY);
-                Theta = targetTheta * 0.5f + Theta * 0.5f;
-                Phi = targetPhi * 0.5f + Phi * 0.5f;
+                Theta = targetTheta*0.5f + Theta*0.5f;
+                Phi = targetPhi*0.5f + Phi*0.5f;
 
 
                 if (Phi < -1.5f)
@@ -219,13 +218,13 @@ namespace DwarfCorp
                 Vector3 forward = (Target - Position);
                 forward.Normalize();
 
-                velocityToSet += forward * CameraMoveSpeed * dt;
+                velocityToSet += forward*CameraMoveSpeed*dt;
             }
             else if (keys.IsKeyDown(ControlSettings.Mappings.Back) || keys.IsKeyDown(Keys.Down))
             {
                 Vector3 forward = (Target - Position);
                 forward.Normalize();
-                velocityToSet += -forward * CameraMoveSpeed * dt;
+                velocityToSet += -forward*CameraMoveSpeed*dt;
             }
 
             if (keys.IsKeyDown(ControlSettings.Mappings.Left) || keys.IsKeyDown(Keys.Left))
@@ -234,7 +233,7 @@ namespace DwarfCorp
                 forward.Normalize();
                 Vector3 right = Vector3.Cross(forward, UpVector);
                 right.Normalize();
-                velocityToSet += -right * CameraMoveSpeed * dt;
+                velocityToSet += -right*CameraMoveSpeed*dt;
             }
             else if (keys.IsKeyDown(ControlSettings.Mappings.Right) || keys.IsKeyDown(Keys.Right))
             {
@@ -242,14 +241,13 @@ namespace DwarfCorp
                 forward.Normalize();
                 Vector3 right = Vector3.Cross(forward, UpVector);
                 right.Normalize();
-                velocityToSet += right * CameraMoveSpeed * dt;
+                velocityToSet += right*CameraMoveSpeed*dt;
             }
 
             if (velocityToSet.LengthSquared() > 0)
             {
-                Velocity = Velocity * 0.5f + velocityToSet * 0.5f;
+                Velocity = Velocity*0.5f + velocityToSet*0.5f;
             }
-
 
 
             LastWheel = mouse.ScrollWheelValue;
@@ -263,9 +261,9 @@ namespace DwarfCorp
             }
 
             //CollidesWithChunks(PlayState.ChunkManager, Target, true);
-            PhysicsObject.ApplyForce(Velocity * 20, dt);
-         
-            Target = PhysicsObject.GlobalTransform.Translation + Vector3.Up * 0.5f;
+            PhysicsObject.ApplyForce(Velocity*20, dt);
+
+            Target = PhysicsObject.GlobalTransform.Translation + Vector3.Up*0.5f;
             Velocity *= 0.8f;
             UpdateBasisVectors();
         }
@@ -287,7 +285,7 @@ namespace DwarfCorp
                 Vector3 currTarget = ZoomTargets.First();
                 if (Vector3.DistanceSquared(Target, currTarget) > 5)
                 {
-                    Target = 0.8f * Target + 0.2f * currTarget;
+                    Target = 0.8f*Target + 0.2f*currTarget;
                 }
                 else
                 {
@@ -303,8 +301,9 @@ namespace DwarfCorp
             }
 
             bool stateChanged = false;
-            float dt = (float)time.ElapsedRealTime.TotalSeconds;
-            SnapToBounds(new BoundingBox(PlayState.ChunkManager.Bounds.Min, PlayState.ChunkManager.Bounds.Max + Vector3.UnitY * 20));
+            var dt = (float) time.ElapsedRealTime.TotalSeconds;
+            SnapToBounds(new BoundingBox(PlayState.ChunkManager.Bounds.Min,
+                PlayState.ChunkManager.Bounds.Max + Vector3.UnitY*20));
             if (KeyManager.RotationEnabled())
             {
                 if (!shiftPressed)
@@ -337,31 +336,32 @@ namespace DwarfCorp
 
                 if (stateChanged)
                 {
-                    Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2, GameState.Game.GraphicsDevice.Viewport.Height / 2);
+                    Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width/2,
+                        GameState.Game.GraphicsDevice.Viewport.Height/2);
                     mouse = Mouse.GetState();
                 }
 
 
-                float diffX = mouse.X - GameState.Game.GraphicsDevice.Viewport.Width / 2;
-                float diffY = mouse.Y - GameState.Game.GraphicsDevice.Viewport.Height / 2;
+                float diffX = mouse.X - GameState.Game.GraphicsDevice.Viewport.Width/2;
+                float diffY = mouse.Y - GameState.Game.GraphicsDevice.Viewport.Height/2;
 
 
-                float filterDiffX = (float)(diffX * dt);
-                float filterDiffY = (float)(diffY * dt);
+                float filterDiffX = diffX*dt;
+                float filterDiffY = diffY*dt;
                 if (Math.Abs(filterDiffX) > 1.0f)
                 {
-                    filterDiffX = 1.0f * Math.Sign(filterDiffX);
+                    filterDiffX = 1.0f*Math.Sign(filterDiffX);
                 }
 
                 if (Math.Abs(filterDiffY) > 1.0f)
                 {
-                    filterDiffY = 1.0f * Math.Sign(filterDiffY);
+                    filterDiffY = 1.0f*Math.Sign(filterDiffY);
                 }
 
                 targetTheta = Theta - (filterDiffX);
                 targetPhi = Phi - (filterDiffY);
-                Theta = targetTheta * 0.5f + Theta * 0.5f;
-                Phi = targetPhi * 0.5f + Phi * 0.5f;
+                Theta = targetTheta*0.5f + Theta*0.5f;
+                Phi = targetPhi*0.5f + Phi*0.5f;
 
 
                 if (Phi < -1.5f)
@@ -391,7 +391,7 @@ namespace DwarfCorp
                 }
                 forward.Normalize();
 
-                velocityToSet += forward * CameraMoveSpeed * dt;
+                velocityToSet += forward*CameraMoveSpeed*dt;
             }
             else if (keys.IsKeyDown(ControlSettings.Mappings.Back) || keys.IsKeyDown(Keys.Down))
             {
@@ -406,7 +406,7 @@ namespace DwarfCorp
 
                 forward.Normalize();
 
-                velocityToSet += -forward * CameraMoveSpeed * dt;
+                velocityToSet += -forward*CameraMoveSpeed*dt;
             }
 
             if (keys.IsKeyDown(ControlSettings.Mappings.Left) || keys.IsKeyDown(Keys.Left))
@@ -420,7 +420,7 @@ namespace DwarfCorp
                     //right *= -1;
                 }
 
-                velocityToSet += -right * CameraMoveSpeed * dt;
+                velocityToSet += -right*CameraMoveSpeed*dt;
             }
             else if (keys.IsKeyDown(ControlSettings.Mappings.Right) || keys.IsKeyDown(Keys.Right))
             {
@@ -432,7 +432,7 @@ namespace DwarfCorp
                 {
                     //right *= -1;
                 }
-                velocityToSet += right * CameraMoveSpeed * dt;
+                velocityToSet += right*CameraMoveSpeed*dt;
             }
 
             if (velocityToSet.LengthSquared() > 0)
@@ -464,7 +464,7 @@ namespace DwarfCorp
                         Vector3 forward = (Target - Position);
                         forward.Normalize();
                         Vector3 right = Vector3.Cross(forward, UpVector);
-                        Vector3 delta = right * CameraMoveSpeed * dir * dt;
+                        Vector3 delta = right*CameraMoveSpeed*dir*dt;
                         delta.Y = 0;
                         Velocity = -delta;
                     }
@@ -491,7 +491,7 @@ namespace DwarfCorp
                         forward.Normalize();
                         Vector3 right = Vector3.Cross(forward, UpVector);
                         Vector3 up = Vector3.Cross(right, forward);
-                        Vector3 delta = up * CameraMoveSpeed * dir * dt;
+                        Vector3 delta = up*CameraMoveSpeed*dir*dt;
                         delta.Y = 0;
                         Velocity = -delta;
                     }
@@ -510,18 +510,19 @@ namespace DwarfCorp
                 {
                     if (!keys.IsKeyDown(Keys.LeftControl))
                     {
-                        Vector3 delta = new Vector3(0, change, 0);
+                        var delta = new Vector3(0, change, 0);
 
                         if (GameSettings.Default.InvertZoom)
                         {
                             delta *= -1;
                         }
 
-                        Velocity = delta * CameraZoomSpeed * dt;
+                        Velocity = delta*CameraZoomSpeed*dt;
                     }
                     else
                     {
-                        chunks.ChunkData.SetMaxViewingLevel(chunks.ChunkData.MaxViewingLevel + (int)((float)change * 0.01f), ChunkManager.SliceMode.Y);
+                        chunks.ChunkData.SetMaxViewingLevel(chunks.ChunkData.MaxViewingLevel + (int) (change*0.01f),
+                            ChunkManager.SliceMode.Y);
                     }
                 }
             }
@@ -535,7 +536,7 @@ namespace DwarfCorp
             }
             else
             {
-                PushVelocity += Vector3.Up * 0.05f;
+                PushVelocity += Vector3.Up*0.05f;
                 Target += PushVelocity;
             }
 
@@ -550,14 +551,13 @@ namespace DwarfCorp
 
         public override void UpdateViewMatrix()
         {
+            Matrix cameraRotation = Matrix.CreateRotationX(Phi)*Matrix.CreateRotationY(Theta);
 
-            Matrix cameraRotation = Matrix.CreateRotationX(Phi) * Matrix.CreateRotationY(Theta);
-
-            Vector3 cameraOriginalTarget = new Vector3(0, 0, -1);
+            var cameraOriginalTarget = new Vector3(0, 0, -1);
             Vector3 cameraRotatedTarget = Vector3.Transform(cameraOriginalTarget, cameraRotation);
             Vector3 cameraFinalTarget = Position + cameraRotatedTarget;
 
-            Vector3 cameraOriginalUpVector = new Vector3(0, 1, 0);
+            var cameraOriginalUpVector = new Vector3(0, 1, 0);
             Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, cameraRotation);
 
             ViewMatrix = Matrix.CreateLookAt(Position, cameraFinalTarget, cameraRotatedUpVector);
@@ -571,7 +571,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            Physics.Contact contact = new Physics.Contact();
+            var contact = new Physics.Contact();
 
             if (!Physics.TestStaticAABBAABB(box, box, ref contact))
             {
@@ -579,9 +579,9 @@ namespace DwarfCorp
             }
 
             Vector3 p = Target;
-            p += contact.NEnter * contact.Penetration;
+            p += contact.NEnter*contact.Penetration;
 
-            Vector3 newVelocity = (contact.NEnter * Vector3.Dot(Velocity, contact.NEnter));
+            Vector3 newVelocity = (contact.NEnter*Vector3.Dot(Velocity, contact.NEnter));
             Velocity = (Velocity - newVelocity);
 
             Target = p;
@@ -596,11 +596,11 @@ namespace DwarfCorp
 
         public bool CollidesWithChunks(ChunkManager chunks, Vector3 pos, bool applyForce)
         {
-            BoundingBox box = new BoundingBox(pos - new Vector3(0.5f, 0.5f, 0.5f), pos + new Vector3(0.5f, 0.5f, 0.5f));
-            Voxel currentVoxel = new Voxel();
+            var box = new BoundingBox(pos - new Vector3(0.5f, 0.5f, 0.5f), pos + new Vector3(0.5f, 0.5f, 0.5f));
+            var currentVoxel = new Voxel();
             bool success = chunks.ChunkData.GetVoxel(null, pos, ref currentVoxel);
 
-            List<Voxel> vs = new List<Voxel>
+            var vs = new List<Voxel>
             {
                 currentVoxel
             };
@@ -615,7 +615,7 @@ namespace DwarfCorp
 
             Vector3 grid = chunk.WorldToGrid(pos);
 
-            List<Voxel> adjacencies = chunk.GetNeighborsEuclidean((int)grid.X, (int)grid.Y, (int)grid.Z);
+            List<Voxel> adjacencies = chunk.GetNeighborsEuclidean((int) grid.X, (int) grid.Y, (int) grid.Z);
             vs.AddRange(adjacencies);
 
             bool gotCollision = false;
@@ -643,5 +643,4 @@ namespace DwarfCorp
             return gotCollision;
         }
     }
-
 }

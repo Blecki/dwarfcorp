@@ -30,24 +30,22 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
+
 using System.Linq;
-using System.Text;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A Panel that shows the player's money and the stock market.
+    /// </summary>
+    /// <seealso cref="Panel" />
     public class CapitalPanel : Panel
     {
-        public Label CurrentMoneyLabel { get; set; }
-        public Label TotalPayLabel { get; set; }
-        public Faction Faction { get; set; }
-        public StockTicker Stocks { get; set; }
         public CapitalPanel(DwarfGUI gui, GUIComponent parent, Faction faction) :
             base(gui, parent)
         {
             Faction = faction;
-            GridLayout layout = new GridLayout(gui, this, 4, 4);
+            var layout = new GridLayout(gui, this, 4, 4);
             CurrentMoneyLabel = new Label(gui, layout, "Treasury: ", GUI.TitleFont);
             layout.SetComponentPosition(CurrentMoneyLabel, 0, 0, 2, 1);
 
@@ -60,7 +58,12 @@ namespace DwarfCorp
             layout.SetComponentPosition(Stocks, 0, 1, 4, 3);
         }
 
-        void CurrentMoneyLabel_OnUpdate()
+        public Label CurrentMoneyLabel { get; set; }
+        public Label TotalPayLabel { get; set; }
+        public Faction Faction { get; set; }
+        public StockTicker Stocks { get; set; }
+
+        private void CurrentMoneyLabel_OnUpdate()
         {
             CurrentMoneyLabel.Text = "Treasury: " + Faction.Economy.CurrentMoney.ToString("C");
 

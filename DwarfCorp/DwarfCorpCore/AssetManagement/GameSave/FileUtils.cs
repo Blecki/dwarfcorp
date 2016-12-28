@@ -34,26 +34,22 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.IO.Compression;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using DwarfCorp.GameStates;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Microsoft.Xna.Framework.Graphics;
-using System.IO.Compression;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// A static class with helper functions for saving/loading data to binary, JSON, and ZIP
+    ///     A static class with helper functions for saving/loading data to binary, JSON, and ZIP
     /// </summary>
     public static class FileUtils
     {
-
         public static T LoadBinary<T>(string filepath)
         {
             IFormatter formatter = new BinaryFormatter();
@@ -65,7 +61,6 @@ namespace DwarfCorp
             }
             catch (InvalidCastException exception)
             {
-                
             }
 
             stream.Close();
@@ -85,46 +80,46 @@ namespace DwarfCorp
 
         public static T LoadJsonFromString<T>(string jsonText)
         {
-            return JsonConvert.DeserializeObject<T>(jsonText, new JsonSerializerSettings()
+            return JsonConvert.DeserializeObject<T>(jsonText, new JsonSerializerSettings
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Error,
                 TypeNameHandling = TypeNameHandling.All,
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
                 TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
                 Converters = new List<JsonConverter>
-                    {
-                        new BoxConverter(),
-                        new Vector3Converter(),
-                        new MatrixConverter(),
-                        new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap),
-                        new RectangleConverter()
-                    }
+                {
+                    new BoxConverter(),
+                    new Vector3Converter(),
+                    new MatrixConverter(),
+                    new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap),
+                    new RectangleConverter()
+                }
             });
         }
 
         public static T LoadJson<T>(string filePath, bool isCompressed)
         {
             string jsonText = Load(filePath, isCompressed);
-            return JsonConvert.DeserializeObject<T>(jsonText, new JsonSerializerSettings()
+            return JsonConvert.DeserializeObject<T>(jsonText, new JsonSerializerSettings
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Error,
                 TypeNameHandling = TypeNameHandling.All,
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
                 TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
                 Converters = new List<JsonConverter>
-                    {
-                        new BoxConverter(),
-                        new Vector3Converter(),
-                        new MatrixConverter(),
-                        new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap),
-                        new RectangleConverter()
-                    }
+                {
+                    new BoxConverter(),
+                    new Vector3Converter(),
+                    new MatrixConverter(),
+                    new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap),
+                    new RectangleConverter()
+                }
             });
         }
 
         public static bool SaveBasicJson<T>(T obj, string filePath)
         {
-            JsonSerializer serializer = new JsonSerializer
+            var serializer = new JsonSerializer
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 TypeNameHandling = TypeNameHandling.Auto,
@@ -140,12 +135,11 @@ namespace DwarfCorp
             serializer.Converters.Add(new RectangleConverter());
 
             return Save(serializer, obj, filePath, false);
-
         }
 
         public static bool SaveJSon<T>(T obj, string filePath, bool compress)
         {
-            JsonSerializer serializer = new JsonSerializer
+            var serializer = new JsonSerializer
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Error,
                 TypeNameHandling = TypeNameHandling.All,
@@ -161,53 +155,45 @@ namespace DwarfCorp
             serializer.Converters.Add(new RectangleConverter());
 
             return Save(serializer, obj, filePath, compress);
-
         }
 
         public static bool Save<T>(JsonSerializer serializer, T obj, string filePath, bool compress)
         {
-
             if (!compress)
             {
-                using (StreamWriter filestream = new StreamWriter(filePath))
+                using (var filestream = new StreamWriter(filePath))
                 using (JsonWriter writer = new JsonTextWriter(filestream))
                 {
                     serializer.Serialize(writer, obj);
                     return true;
                 }
             }
-            else
+            using (var zip = new GZipStream(new FileStream(filePath, FileMode.OpenOrCreate), CompressionMode.Compress))
+            using (JsonWriter writer = new JsonTextWriter(new StreamWriter(zip)))
             {
-                using (GZipStream zip = new GZipStream(new FileStream(filePath, FileMode.OpenOrCreate), CompressionMode.Compress))
-                using (JsonWriter writer = new JsonTextWriter(new StreamWriter(zip)))
-                {
-                    serializer.Serialize(writer, obj);
-                    return true;
-                }
+                serializer.Serialize(writer, obj);
+                return true;
             }
         }
 
 
         public static bool Save(string output, string filePath, bool isCompressed)
         {
-            if(!isCompressed)
+            if (!isCompressed)
             {
-                using(StreamWriter filestream = new StreamWriter(filePath))
+                using (var filestream = new StreamWriter(filePath))
                 {
                     filestream.Write(output);
                     filestream.Close();
                     return true;
                 }
             }
-            else
+            using (var zip = new GZipStream(new FileStream(filePath, FileMode.OpenOrCreate), CompressionMode.Compress))
             {
-                using(GZipStream zip = new GZipStream(new FileStream(filePath, FileMode.OpenOrCreate), CompressionMode.Compress))
-                {
-                    byte[] data = Encoding.UTF8.GetBytes(output.ToCharArray());
-                    zip.Write(data, 0, data.Length);
-                    zip.Close();
-                    return true;
-                }
+                byte[] data = Encoding.UTF8.GetBytes(output.ToCharArray());
+                zip.Write(data, 0, data.Length);
+                zip.Close();
+                return true;
             }
         }
 
@@ -221,21 +207,21 @@ namespace DwarfCorp
 
         public static byte[] Decompress(byte[] gzip)
         {
-            using(GZipStream stream = new GZipStream(new MemoryStream(gzip), CompressionMode.Decompress))
+            using (var stream = new GZipStream(new MemoryStream(gzip), CompressionMode.Decompress))
             {
                 const int size = 4096;
-                byte[] buffer = new byte[size];
-                using(MemoryStream memory = new MemoryStream())
+                var buffer = new byte[size];
+                using (var memory = new MemoryStream())
                 {
                     int count = 0;
                     do
                     {
                         count = stream.Read(buffer, 0, size);
-                        if(count > 0)
+                        if (count > 0)
                         {
                             memory.Write(buffer, 0, count);
                         }
-                    } while(count > 0);
+                    } while (count > 0);
                     return memory.ToArray();
                 }
             }
@@ -254,5 +240,4 @@ namespace DwarfCorp
             return encoding.GetString(decompressed);
         }
     }
-
 }

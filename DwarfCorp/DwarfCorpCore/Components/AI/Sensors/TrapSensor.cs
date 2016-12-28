@@ -30,24 +30,22 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This is a sensor for traps that damages HealthComponents that collide with the sensor
+    ///     This is a sensor for traps that damages HealthComponents that collide with the sensor
     /// </summary>
     [JsonObject(IsReference = true)]
-    class TrapSensor : Sensor
+    internal class TrapSensor : Sensor
     {
-        public TrapSensor(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
+        public TrapSensor(ComponentManager manager, string name, GameComponent parent, Matrix localTransform,
+            Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
+                base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             OnSensed += TrapSensor_OnSensed;
             Tags.Add("Sensor");

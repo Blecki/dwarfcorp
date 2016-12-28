@@ -30,24 +30,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature finds an item from a stockpile or BuildRoom with the given tags, goes to it, and picks it up.
+    ///     A creature finds an item from a stockpile or BuildRoom with the given tags, goes to it, and picks it up.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class GetResourcesAct : CompoundCreatureAct
     {
-        public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; }
-        public List<ResourceAmount> ResourcesToStash { get; set; }
         public GetResourcesAct()
         {
-
         }
 
         public GetResourcesAct(CreatureAI agent, List<ResourceAmount> resources) :
@@ -55,16 +51,17 @@ namespace DwarfCorp
         {
             Name = "Get Resources";
             ResourcesToStash = resources;
-
         }
 
-        public GetResourcesAct(CreatureAI agent, List<Quantitiy<Resource.ResourceTags>> resources ) :
+        public GetResourcesAct(CreatureAI agent, List<Quantitiy<Resource.ResourceTags>> resources) :
             base(agent)
         {
             Name = "Get Resources";
             Resources = resources;
-
         }
+
+        public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; }
+        public List<ResourceAmount> ResourcesToStash { get; set; }
 
 
         public IEnumerable<Status> AlwaysTrue()
@@ -74,15 +71,12 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-
             bool hasAllResources = true;
 
             if (Resources != null)
             {
-
-                foreach (Quantitiy<Resource.ResourceTags> resource in Resources)
+                foreach (var resource in Resources)
                 {
-
                     if (!Creature.Inventory.Resources.HasResource(resource))
                     {
                         hasAllResources = false;
@@ -93,7 +87,6 @@ namespace DwarfCorp
             {
                 foreach (ResourceAmount resource in ResourcesToStash)
                 {
-
                     if (!Creature.Inventory.Resources.HasResource(resource))
                     {
                         hasAllResources = false;
@@ -102,33 +95,29 @@ namespace DwarfCorp
             }
 
 
-            if(!hasAllResources)
-            { 
+            if (!hasAllResources)
+            {
                 Stockpile nearestStockpile = Agent.Faction.GetNearestStockpile(Agent.Position);
 
-                if(ResourcesToStash == null && Resources != null)
+                if (ResourcesToStash == null && Resources != null)
                     ResourcesToStash = Agent.Faction.GetResourcesWithTags(Resources);
 
-                if(nearestStockpile == null || ResourcesToStash.Count == 0)
+                if (nearestStockpile == null || ResourcesToStash.Count == 0)
                 {
                     Tree = null;
                     return;
                 }
-                else
-                {
-                    Tree = new Sequence(new GoToZoneAct(Agent, nearestStockpile),
-                                        new StashResourcesAct(Agent, ResourcesToStash),
-                                        new SetBlackboardData<List<ResourceAmount>>(Agent, "ResourcesStashed", ResourcesToStash)
-                                        );
-                }
+                Tree = new Sequence(new GoToZoneAct(Agent, nearestStockpile),
+                    new StashResourcesAct(Agent, ResourcesToStash),
+                    new SetBlackboardData<List<ResourceAmount>>(Agent, "ResourcesStashed", ResourcesToStash)
+                    );
             }
             else
             {
                 Tree = new SetBlackboardData<List<ResourceAmount>>(Agent, "ResourcesStashed", ResourcesToStash);
             }
-          
+
             base.Initialize();
         }
     }
-
 }

@@ -30,25 +30,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature takes an item to an open stockpile and leaves it there.
+    ///     A creature takes an item to an open stockpile and leaves it there.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class StockResourceAct : CompoundCreatureAct
     {
-        public ResourceAmount ItemToStock { get; set; }
-        public string ItemID { get; set; }
-
         public StockResourceAct()
         {
-
         }
 
         public StockResourceAct(CreatureAI agent, string item) :
@@ -68,6 +63,9 @@ namespace DwarfCorp
             Tree = null;
         }
 
+        public ResourceAmount ItemToStock { get; set; }
+        public string ItemID { get; set; }
+
         public override void Initialize()
         {
             base.Initialize();
@@ -76,9 +74,10 @@ namespace DwarfCorp
 
         public IEnumerable<Status> OnFail()
         {
-            if (ItemToStock != null && ItemToStock.NumResources >= 0 && Agent.Creature.Inventory.Resources.HasResource(ItemToStock))
+            if (ItemToStock != null && ItemToStock.NumResources >= 0 &&
+                Agent.Creature.Inventory.Resources.HasResource(ItemToStock))
             {
-                Agent.GatherManager.StockOrders.Add(new GatherManager.StockOrder()
+                Agent.GatherManager.StockOrders.Add(new GatherManager.StockOrder
                 {
                     Resource = ItemToStock
                 });
@@ -100,20 +99,17 @@ namespace DwarfCorp
 
                 if (ItemToStock != null)
                 {
-
                     Tree = new Sequence(
                         new SetBlackboardData<ResourceAmount>(Agent, "GatheredResource", ItemToStock.CloneResource()),
                         new SearchFreeStockpileAct(Agent, "TargetStockpile", "FreeVoxel"),
-                        
-                                        new Select(
-                                                    new Sequence(
-                                                                    new GoToVoxelAct("FreeVoxel", PlanAct.PlanType.Adjacent, Agent),
-                                                                    new PutResourceInZone(Agent, "TargetStockpile", "FreeVoxel", "GatheredResource")
-                                                                )
-                                                  )
-                                         
+                        new Select(
+                            new Sequence(
+                                new GoToVoxelAct("FreeVoxel", PlanAct.PlanType.Adjacent, Agent),
+                                new PutResourceInZone(Agent, "TargetStockpile", "FreeVoxel", "GatheredResource")
+                                )
+                            )
                         ) | new Wrap(OnFail)
-                     ;
+                        ;
 
                     Tree.Initialize();
                 }
@@ -122,5 +118,4 @@ namespace DwarfCorp
             return base.Run();
         }
     }
-
 }

@@ -30,34 +30,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Management.Instrumentation;
-using System.Security.AccessControl;
-using System.Text;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference=true)]
+    [JsonObject(IsReference = true)]
     public class Inventory : Body
     {
-        public ResourceContainer Resources { get; set; }
-        public float DropRate { get; set; }
-
         public delegate void DieDelegate(List<Body> items);
-
-        public event DieDelegate OnDeath;
-
-        protected virtual void OnOnDeath(List<Body> items)
-        {
-            DieDelegate handler = OnDeath;
-            if (handler != null) handler(items);
-        }
 
         public Inventory()
         {
@@ -68,6 +52,17 @@ namespace DwarfCorp
             base(name, parent, Matrix.Identity, parent.BoundingBox.Extents(), parent.BoundingBoxPos)
         {
             DropRate = 0.75f;
+        }
+
+        public ResourceContainer Resources { get; set; }
+        public float DropRate { get; set; }
+
+        public event DieDelegate OnDeath;
+
+        protected virtual void OnOnDeath(List<Body> items)
+        {
+            DieDelegate handler = OnDeath;
+            if (handler != null) handler(items);
         }
 
         public bool Pickup(ResourceAmount resourceAmount)
@@ -97,30 +92,30 @@ namespace DwarfCorp
 
         public bool Pickup(Item item)
         {
-            if(item == null || item.UserData == null || item.UserData.IsDead)
+            if (item == null || item.UserData == null || item.UserData.IsDead)
             {
                 return false;
             }
 
-            bool success =  Resources.AddResource
-            (new ResourceAmount
-            {
-                NumResources = 1,
-                ResourceType = ResourceLibrary.GetResourceByName(item.UserData.Tags[0])
-            });
+            bool success = Resources.AddResource
+                (new ResourceAmount
+                {
+                    NumResources = 1,
+                    ResourceType = ResourceLibrary.GetResourceByName(item.UserData.Tags[0])
+                });
 
-            if(!success)
+            if (!success)
             {
                 return false;
             }
 
-            if(item.IsInZone)
+            if (item.IsInZone)
             {
                 item.Zone = null;
             }
-         
-            
-            TossMotion toss = new TossMotion(0.5f + MathFunctions.Rand(0.05f, 0.08f),
+
+
+            var toss = new TossMotion(0.5f + MathFunctions.Rand(0.05f, 0.08f),
                 1.0f, item.UserData.GlobalTransform, Position);
             item.UserData.AnimationQueue.Add(toss);
             toss.OnComplete += () => item.UserData.GetRootComponent().Delete();
@@ -130,16 +125,16 @@ namespace DwarfCorp
 
         public List<Body> RemoveAndCreate(ResourceAmount resources)
         {
-            List<Body> toReturn = new List<Body>();
+            var toReturn = new List<Body>();
 
-            if(!Resources.RemoveResource(resources.CloneResource()))
+            if (!Resources.RemoveResource(resources.CloneResource()))
             {
                 return toReturn;
             }
 
-            for(int i = 0; i < resources.NumResources; i++)
+            for (int i = 0; i < resources.NumResources; i++)
             {
-                Body newEntity = EntityFactory.CreateEntity<Body>(resources.ResourceType.ResourceName + " Resource",
+                var newEntity = EntityFactory.CreateEntity<Body>(resources.ResourceType.ResourceName + " Resource",
                     GlobalTransform.Translation + MathFunctions.RandVector3Cube()*0.5f);
                 toReturn.Add(newEntity);
             }
@@ -148,20 +143,19 @@ namespace DwarfCorp
         }
 
 
- 
         public override void Die()
         {
-            List<Body> release = new List<Body>();
-            foreach(var resource in Resources.Where(resource => resource.NumResources > 0))
+            var release = new List<Body>();
+            foreach (ResourceAmount resource in Resources.Where(resource => resource.NumResources > 0))
             {
-                for(int i = 0; i < resource.NumResources; i++)
+                for (int i = 0; i < resource.NumResources; i++)
                 {
                     if (MathFunctions.RandEvent(DropRate))
                     {
                         Vector3 pos = MathFunctions.RandVector3Box(GetBoundingBox());
-                        Physics item =
+                        var item =
                             EntityFactory.CreateEntity<Physics>(resource.ResourceType.ResourceName + " Resource",
-                                pos) as Physics;
+                                pos);
                         if (item != null)
                         {
                             release.Add(item);
@@ -171,7 +165,6 @@ namespace DwarfCorp
                             item.IsSleeping = false;
                         }
                     }
-
                 }
             }
 

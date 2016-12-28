@@ -30,10 +30,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
@@ -42,12 +40,35 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class TrainingRoom : Room
     {
-        public static string TrainingRoomName { get { return "TrainingRoom"; } }
-        public static RoomData TrainingRoomData { get { return RoomLibrary.GetData(TrainingRoomName); } }
+        public TrainingRoom()
+        {
+            RoomData = TrainingRoomData;
+        }
+
+        public TrainingRoom(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
+            base(designation, designations, TrainingRoomData, chunks)
+        {
+        }
+
+        public TrainingRoom(IEnumerable<Voxel> voxels, ChunkManager chunks) :
+            base(voxels, TrainingRoomData, chunks)
+        {
+            OnBuilt();
+        }
+
+        public static string TrainingRoomName
+        {
+            get { return "TrainingRoom"; }
+        }
+
+        public static RoomData TrainingRoomData
+        {
+            get { return RoomLibrary.GetData(TrainingRoomName); }
+        }
 
         public static RoomData InitializeData()
         {
-            List<RoomTemplate> trainingTemplates = new List<RoomTemplate>();
+            var trainingTemplates = new List<RoomTemplate>();
 
             RoomTile[,] targetTemp =
             {
@@ -87,7 +108,7 @@ namespace DwarfCorp
                 }
             };
 
-            RoomTemplate straw = new RoomTemplate(PlacementType.All, targetTemp, strawAcc);
+            var straw = new RoomTemplate(PlacementType.All, targetTemp, strawAcc);
             RoomTile[,] lampTemplate =
             {
                 {
@@ -112,37 +133,20 @@ namespace DwarfCorp
                 }
             };
 
-            RoomTemplate lamp = new RoomTemplate(PlacementType.All, lampTemplate, lampAccessories);
+            var lamp = new RoomTemplate(PlacementType.All, lampTemplate, lampAccessories);
             trainingTemplates.Add(lamp);
             trainingTemplates.Add(straw);
-            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
+            var roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>
             {
                 {Resource.ResourceTags.Stone, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone)},
             };
 
             Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(TrainingRoomName, 3, "CobblestoneFloor", roomResources, trainingTemplates, new ImageFrame(roomIcons, 16, 3, 0))
+            return new RoomData(TrainingRoomName, 3, "CobblestoneFloor", roomResources, trainingTemplates,
+                new ImageFrame(roomIcons, 16, 3, 0))
             {
                 Description = "Military dwarves train here"
             };
-
         }
-
-        public TrainingRoom()
-        {
-            RoomData = TrainingRoomData;
-        }
-
-        public TrainingRoom(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
-            base(designation, designations, TrainingRoomData, chunks)
-        {
-        }
-
-        public TrainingRoom(IEnumerable<Voxel> voxels, ChunkManager chunks) :
-            base(voxels, TrainingRoomData, chunks)
-        {
-            OnBuilt();
-        }
-
     }
 }

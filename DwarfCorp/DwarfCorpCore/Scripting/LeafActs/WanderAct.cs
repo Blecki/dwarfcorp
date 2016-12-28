@@ -30,31 +30,23 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using DwarfCorp.DwarfCorp;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature randomly applies force at intervals to itself.
+    ///     A creature randomly applies force at intervals to itself.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class WanderAct : CreatureAct
     {
-        public Timer WanderTime { get; set; }
-        public Timer TurnTime { get; set; }
-        public float Radius { get; set; }
-        public Vector3 LocalTarget { get; set; }
         public WanderAct()
         {
-            
         }
 
         public WanderAct(CreatureAI creature, float seconds, float turnTime, float radius) :
@@ -65,6 +57,11 @@ namespace DwarfCorp
             TurnTime = new Timer(turnTime, false);
             Radius = radius;
         }
+
+        public Timer WanderTime { get; set; }
+        public Timer TurnTime { get; set; }
+        public float Radius { get; set; }
+        public Vector3 LocalTarget { get; set; }
 
         public override void Initialize()
         {
@@ -80,7 +77,7 @@ namespace DwarfCorp
             Vector3 oldPosition = Agent.Position;
             bool firstIter = true;
             Creature.Controller.Reset();
-            while(!WanderTime.HasTriggered)
+            while (!WanderTime.HasTriggered)
             {
                 Creature.OverrideCharacterMode = false;
                 Creature.Physics.Orientation = Physics.OrientMode.RotateY;
@@ -92,7 +89,7 @@ namespace DwarfCorp
                     yield return Status.Running;
                     continue;
                 }
-                if(TurnTime.Update(DwarfTime.LastTime) || TurnTime.HasTriggered || firstIter)
+                if (TurnTime.Update(DwarfTime.LastTime) || TurnTime.HasTriggered || firstIter)
                 {
                     Vector2 randTarget = MathFunctions.RandVector2Circle()*Radius;
                     LocalTarget = new Vector3(randTarget.X, 0, randTarget.Y) + oldPosition;
@@ -110,17 +107,13 @@ namespace DwarfCorp
                     yield return Status.Running;
                     break;
                 }
-                else
-                {
-                    
-                    Vector3 output =
-                        Creature.Controller.GetOutput((float) DwarfTime.LastTime.ElapsedGameTime.TotalSeconds,
-                            LocalTarget, Agent.Position);
-                    output.Y = 0.0f;
+                Vector3 output =
+                    Creature.Controller.GetOutput((float) DwarfTime.LastTime.ElapsedGameTime.TotalSeconds,
+                        LocalTarget, Agent.Position);
+                output.Y = 0.0f;
 
-                    Creature.Physics.ApplyForce(output * 0.5f, (float) DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
-                }
+                Creature.Physics.ApplyForce(output*0.5f, (float) DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
+                Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
 
                 yield return Status.Running;
             }
@@ -129,30 +122,28 @@ namespace DwarfCorp
         }
     }
 
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class LongWanderAct : CompoundCreatureAct
     {
-        public int PathLength { get; set; }
-        public float Radius { get; set; }
-
         public LongWanderAct()
         {
-            
         }
 
         public LongWanderAct(CreatureAI creature) : base(creature)
         {
-            
         }
+
+        public int PathLength { get; set; }
+        public float Radius { get; set; }
 
         public IEnumerable<Status> FindRandomPath()
         {
             Vector3 target = MathFunctions.RandVector3Cube()*Radius + Creature.AI.Position;
-            List<Creature.MoveAction> path = new List<Creature.MoveAction>();
+            var path = new List<Creature.MoveAction>();
             Voxel curr = Creature.Physics.CurrentVoxel;
             for (int i = 0; i < PathLength; i++)
             {
-                List<Creature.MoveAction> actions = 
+                List<Creature.MoveAction> actions =
                     Creature.AI.Movement.GetMoveActions(curr);
 
                 Creature.MoveAction? bestAction = null;
@@ -168,7 +159,8 @@ namespace DwarfCorp
                     }
                 }
 
-                if (bestAction.HasValue && !path.Any(p => p.Voxel.Equals(bestAction.Value.Voxel) && p.MoveType == bestAction.Value.MoveType))
+                if (bestAction.HasValue &&
+                    !path.Any(p => p.Voxel.Equals(bestAction.Value.Voxel) && p.MoveType == bestAction.Value.MoveType))
                 {
                     path.Add(bestAction.Value);
                     curr = bestAction.Value.Voxel;
@@ -184,5 +176,4 @@ namespace DwarfCorp
             base.Initialize();
         }
     }
-
 }

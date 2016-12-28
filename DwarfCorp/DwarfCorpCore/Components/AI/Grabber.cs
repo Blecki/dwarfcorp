@@ -30,47 +30,39 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// This component represents the "Hands" of a creature. It's a generic way of attaching and detaching objects from each other.
+    ///     This component represents the "Hands" of a creature. It's a generic way of attaching and detaching objects from
+    ///     each other.
     /// </summary>
     public class Grabber : Body
     {
-        public struct GrabbedItem
-        {
-            public Body Component;
-            public Matrix LocalTransform;
-        }
-
-        public List<GrabbedItem> GrabbedComponents { get; set; }
-        public int MaxGrabs { get; set; }
-
         public Grabber()
         {
-            
         }
 
-        public Grabber(string name, GameComponent parent, Matrix localTrans, Vector3 boundingboxExtents, Vector3 boundingBoxCenter) :
-            base(name, parent, localTrans, boundingboxExtents, boundingBoxCenter, false)
+        public Grabber(string name, GameComponent parent, Matrix localTrans, Vector3 boundingboxExtents,
+            Vector3 boundingBoxCenter) :
+                base(name, parent, localTrans, boundingboxExtents, boundingBoxCenter, false)
         {
             GrabbedComponents = new List<GrabbedItem>();
             MaxGrabs = 1;
         }
 
+        public List<GrabbedItem> GrabbedComponents { get; set; }
+        public int MaxGrabs { get; set; }
+
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            foreach(GrabbedItem grabbed in GrabbedComponents)
+            foreach (GrabbedItem grabbed in GrabbedComponents)
             {
-                grabbed.Component.GlobalTransform = grabbed.LocalTransform * GlobalTransform;
+                grabbed.Component.GlobalTransform = grabbed.LocalTransform*GlobalTransform;
             }
 
             base.Update(gameTime, chunks, camera);
@@ -83,7 +75,7 @@ namespace DwarfCorp
 
         public override void Die()
         {
-            foreach(GrabbedItem item in GrabbedComponents)
+            foreach (GrabbedItem item in GrabbedComponents)
             {
                 UnGrab(item.Component);
             }
@@ -98,17 +90,17 @@ namespace DwarfCorp
 
         public bool Grab(Body other)
         {
-            if(!IsGrabbed(other) && GrabbedComponents.Count < MaxGrabs)
+            if (!IsGrabbed(other) && GrabbedComponents.Count < MaxGrabs)
             {
                 Matrix m = Matrix.Identity;
                 m = GlobalTransform;
                 m.Translation = GlobalTransform.Translation + new Vector3(0, 0.0f, 0.5f);
                 other.GlobalTransform = m;
 
-                GrabbedItem item = new GrabbedItem
+                var item = new GrabbedItem
                 {
                     Component = other,
-                    LocalTransform = Matrix.Invert(GlobalTransform) * other.GlobalTransform
+                    LocalTransform = Matrix.Invert(GlobalTransform)*other.GlobalTransform
                 };
 
                 GrabbedComponents.Add(item);
@@ -117,19 +109,16 @@ namespace DwarfCorp
                 AddChild(other);
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         private void RemoveComponent(Body component)
         {
             int i = 0;
             int index = -1;
-            foreach(GrabbedItem grabbed in GrabbedComponents)
+            foreach (GrabbedItem grabbed in GrabbedComponents)
             {
-                if(grabbed.Component == component)
+                if (grabbed.Component == component)
                 {
                     index = i;
                     break;
@@ -137,7 +126,7 @@ namespace DwarfCorp
                 i++;
             }
 
-            if(index >= 0)
+            if (index >= 0)
             {
                 GrabbedComponents.RemoveAt(index);
             }
@@ -145,7 +134,7 @@ namespace DwarfCorp
 
         public bool UnGrab(Body other)
         {
-            if(!IsGrabbed(other))
+            if (!IsGrabbed(other))
             {
                 return false;
             }
@@ -171,6 +160,11 @@ namespace DwarfCorp
         {
             return GrabbedComponents.Count <= 0 ? null : GrabbedComponents.First().Component;
         }
-    }
 
+        public struct GrabbedItem
+        {
+            public Body Component;
+            public Matrix LocalTransform;
+        }
+    }
 }

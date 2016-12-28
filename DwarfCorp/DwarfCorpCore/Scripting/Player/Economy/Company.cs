@@ -30,10 +30,9 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -62,8 +61,13 @@ namespace DwarfCorp
         public NamedImageFrame Logo { get; set; }
         public Color BaseColor { get; set; }
         public Color SecondaryColor { get; set; }
-        public string TickerName { get { return GenerateTickerName(Name); } }
-        public List<float> StockHistory { get; set; } 
+
+        public string TickerName
+        {
+            get { return GenerateTickerName(Name); }
+        }
+
+        public List<float> StockHistory { get; set; }
 
         public static string GenerateTickerName(string longName)
         {
@@ -76,7 +80,7 @@ namespace DwarfCorp
                 {
                     continue;
                 }
-                if(t.Length > 0)
+                if (t.Length > 0)
                     toReturn += t.First().ToString().ToUpper();
                 symbols++;
 
@@ -89,25 +93,24 @@ namespace DwarfCorp
             int k = 1;
             for (int j = symbols; j < 3; j++)
             {
-                if(splits.Length > 0 && k < splits.Last().Length)
+                if (splits.Length > 0 && k < splits.Last().Length)
                 {
                     toReturn += splits.Last()[k].ToString().ToUpper();
                 }
                 k++;
             }
 
-        return toReturn;
+            return toReturn;
         }
 
         public static string GenerateMotto()
         {
-            var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.mottos);
+            List<List<string>> templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.mottos);
             return TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
         }
 
         public static string GenerateName(Sector sector)
         {
-
             string templateName = ContentPaths.Text.Templates.company_finance;
             if (sector == Sector.Magic)
             {
@@ -121,18 +124,18 @@ namespace DwarfCorp
             {
                 templateName = ContentPaths.Text.Templates.company_military;
             }
-            var templates = TextGenerator.GetAtoms(templateName);
+            List<List<string>> templates = TextGenerator.GetAtoms(templateName);
             return TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
         }
 
         public static List<float> GenerateRandomStockHistory(float current, int length)
         {
-            List<float> history = new List<float>();
-            float startPrice = current + (float)PlayState.Random.NextDouble()*current*0.5f - current * 0.5f;
-            float slope = (current - startPrice) / length;
+            var history = new List<float>();
+            float startPrice = current + (float) PlayState.Random.NextDouble()*current*0.5f - current*0.5f;
+            float slope = (current - startPrice)/length;
             for (int i = 0; i < length - 1; i++)
             {
-                history.Add((float)PlayState.Random.NextDouble() * 0.5f + slope * i + startPrice);
+                history.Add((float) PlayState.Random.NextDouble()*0.5f + slope*i + startPrice);
             }
             history.Add(current);
             return history;
@@ -161,12 +164,13 @@ namespace DwarfCorp
                     row = 2;
                     break;
             }
-            NamedImageFrame image = new NamedImageFrame(ContentPaths.Logos.logos, 32, PlayState.Random.Next(0, texture.Width / 32), row);
+            var image = new NamedImageFrame(ContentPaths.Logos.logos, 32, PlayState.Random.Next(0, texture.Width/32),
+                row);
 
-            Color c = new Color(PlayState.Random.Next(0, 255), PlayState.Random.Next(0, 255),
+            var c = new Color(PlayState.Random.Next(0, 255), PlayState.Random.Next(0, 255),
                 PlayState.Random.Next(0, 255));
-                
-            return new Company()
+
+            return new Company
             {
                 Assets = assets,
                 StockPrice = stockPrice,
@@ -175,12 +179,10 @@ namespace DwarfCorp
                 Name = GenerateName(industry),
                 Motto = GenerateMotto(),
                 BaseColor = c,
-                SecondaryColor  = c,
+                SecondaryColor = c,
                 StockHistory = GenerateRandomStockHistory(stockPrice, 10),
                 LastAssets = assets
             };
-
         }
-
     }
 }

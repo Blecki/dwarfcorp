@@ -30,10 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -42,24 +42,23 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     /// <summary>
-    /// Using this tool, the player can specify certain voxels to be guarded.
+    ///     Using this tool, the player can specify certain voxels to be guarded.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class GuardTool : PlayerTool
     {
-
         public Color GuardDesignationColor { get; set; }
         public float GuardDesignationGlowRate { get; set; }
         public Color UnreachableColor { get; set; }
 
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
-            List<Task> assignedTasks = new List<Task>();
+            var assignedTasks = new List<Task>();
 
 
             foreach (Voxel v in from r in voxels
-                                where r != null
-                                select r)
+                where r != null
+                select r)
             {
                 if (button == InputManager.MouseButton.Left)
                 {
@@ -68,7 +67,7 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    BuildOrder d = new BuildOrder
+                    var d = new BuildOrder
                     {
                         Vox = v
                     };
@@ -84,29 +83,25 @@ namespace DwarfCorp
                     }
 
                     Player.Faction.GuardDesignations.Remove(Player.Faction.GetGuardDesignation(v));
-
                 }
             }
 
-            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Gather);
+            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(PlayState.Master.SelectedMinions,
+                GameMaster.ToolMode.Gather);
             TaskManager.AssignTasks(assignedTasks, minions);
             OnConfirm(minions);
-
         }
 
         public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
         {
-
         }
 
         public override void OnBegin()
         {
-
         }
 
         public override void OnEnd()
         {
-
         }
 
 
@@ -155,16 +150,27 @@ namespace DwarfCorp
                     drawColor = UnreachableColor;
                 }
 
-                drawColor.R = (byte)(Math.Min(drawColor.R * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GuardDesignationGlowRate)) + 50, 255));
-                drawColor.G = (byte)(Math.Min(drawColor.G * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GuardDesignationGlowRate)) + 50, 255));
-                drawColor.B = (byte)(Math.Min(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GuardDesignationGlowRate)) + 50, 255));
+                drawColor.R =
+                    (byte)
+                        (Math.Min(
+                            drawColor.R*Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*GuardDesignationGlowRate)) +
+                            50, 255));
+                drawColor.G =
+                    (byte)
+                        (Math.Min(
+                            drawColor.G*Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*GuardDesignationGlowRate)) +
+                            50, 255));
+                drawColor.B =
+                    (byte)
+                        (Math.Min(
+                            drawColor.B*Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*GuardDesignationGlowRate)) +
+                            50, 255));
                 Drawer3D.DrawBox(box, drawColor, 0.05f, true);
             }
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
-            
         }
     }
 }

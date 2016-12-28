@@ -30,28 +30,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature attacks a target until the target is dead.
+    ///     A creature attacks a target until the target is dead.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class MeleeAct : CreatureAct
     {
-        public float EnergyLoss { get; set; }
-        public Attack CurrentAttack { get; set; }
-        public Body Target { get; set; }
-        public bool Training { get; set; }
-        public Timer Timeout { get; set; }
-        public string TargetName { get; set; }
-        public Timer FailTimer { get; set; }
         public MeleeAct(CreatureAI agent, string target) :
             base(agent)
         {
@@ -76,6 +68,14 @@ namespace DwarfCorp
             CurrentAttack = Datastructures.SelectRandom(agent.Creature.Attacks);
         }
 
+        public float EnergyLoss { get; set; }
+        public Attack CurrentAttack { get; set; }
+        public Body Target { get; set; }
+        public bool Training { get; set; }
+        public Timer Timeout { get; set; }
+        public string TargetName { get; set; }
+        public Timer FailTimer { get; set; }
+
         public override void OnCanceled()
         {
             Creature.Physics.Orientation = Physics.OrientMode.RotateY;
@@ -91,7 +91,7 @@ namespace DwarfCorp
                 yield return Status.Fail;
                 yield break;
             }
-            Timer avoidTimer = new Timer(time, true, Timer.TimerMode.Game);
+            var avoidTimer = new Timer(time, true, Timer.TimerMode.Game);
             while (true)
             {
                 avoidTimer.Update(DwarfTime.LastTime);
@@ -131,10 +131,11 @@ namespace DwarfCorp
 
                 Creature.MoveAction furthest = neighbors.Last();
                 bool reachedTarget = false;
-                Timer timeout = new Timer(2.0f, true);
+                var timeout = new Timer(2.0f, true);
                 while (!reachedTarget)
                 {
-                    Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, furthest.Voxel.Position + Vector3.One*0.5f,
+                    Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt,
+                        furthest.Voxel.Position + Vector3.One*0.5f,
                         Agent.Position);
                     Creature.Physics.ApplyForce(output, DwarfTime.Dt);
                     timeout.Update(DwarfTime.LastTime);
@@ -146,7 +147,7 @@ namespace DwarfCorp
                     }
                     Agent.Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                 }
-            yield return Status.Success;
+                yield return Status.Success;
                 yield break;
             }
         }
@@ -172,7 +173,7 @@ namespace DwarfCorp
                 }
             }
 
-            Inventory targetInventory = Target.GetComponent<Inventory>();
+            var targetInventory = Target.GetComponent<Inventory>();
 
             if (targetInventory != null)
             {
@@ -184,7 +185,7 @@ namespace DwarfCorp
                 : Creature.CharacterMode.Walking;
 
             bool avoided = false;
-            while(true)
+            while (true)
             {
                 Timeout.Update(DwarfTime.LastTime);
                 FailTimer.Update(DwarfTime.LastTime);
@@ -208,14 +209,11 @@ namespace DwarfCorp
                         yield return Status.Success;
                         yield break;
                     }
-                    else
-                    {
-                        Creature.Physics.Orientation = Physics.OrientMode.RotateY;
-                        Creature.OverrideCharacterMode = false;
-                        Creature.CurrentCharacterMode = defaultCharachterMode;
-                        yield return Status.Fail;
-                        yield break;
-                    }
+                    Creature.Physics.Orientation = Physics.OrientMode.RotateY;
+                    Creature.OverrideCharacterMode = false;
+                    Creature.CurrentCharacterMode = defaultCharachterMode;
+                    yield return Status.Fail;
+                    yield break;
                 }
 
                 if (Target == null || Target.IsDead)
@@ -226,7 +224,7 @@ namespace DwarfCorp
                 }
 
                 // Find the location of the melee target
-                Vector3 targetPos = new Vector3(Target.GlobalTransform.Translation.X,
+                var targetPos = new Vector3(Target.GlobalTransform.Translation.X,
                     Target.GetBoundingBox().Min.Y,
                     Target.GlobalTransform.Translation.Z);
 
@@ -235,7 +233,7 @@ namespace DwarfCorp
                 Creature.Physics.Face(targetPos);
 
                 // If we are far away from the target, run toward it
-                if (diff.Length() > CurrentAttack.Range * 8)
+                if (diff.Length() > CurrentAttack.Range*8)
                 {
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     Creature.OverrideCharacterMode = false;
@@ -243,10 +241,12 @@ namespace DwarfCorp
                     yield return Status.Fail;
                 }
 
-                if(diff.Length() > CurrentAttack.Range)
+                if (diff.Length() > CurrentAttack.Range)
                 {
                     Creature.CurrentCharacterMode = defaultCharachterMode;
-                    Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
+                    Vector3 output =
+                        Creature.Controller.GetOutput(DwarfTime.Dt, targetPos,
+                            Creature.Physics.GlobalTransform.Translation)*0.9f;
                     output.Y = 0.0f;
                     Creature.Physics.ApplyForce(output, DwarfTime.Dt);
 
@@ -257,7 +257,7 @@ namespace DwarfCorp
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                 }
                 else if (!avoided && (CurrentAttack.Mode == Attack.AttackMode.Ranged &&
-                    diff.Length() < CurrentAttack.Range*0.75f))
+                                      diff.Length() < CurrentAttack.Range*0.75f))
                 {
                     /*
                    
@@ -269,29 +269,33 @@ namespace DwarfCorp
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     */
                     FailTimer.Reset();
-                    foreach (Act.Status stat in AvoidTarget(CurrentAttack.Range, 3.0f))
+                    foreach (Status stat in AvoidTarget(CurrentAttack.Range, 3.0f))
                     {
                         yield return Status.Running;
                     }
                     avoided = true;
                 }
-                // Else, stop and attack
+                    // Else, stop and attack
                 else
                 {
                     FailTimer.Reset();
                     avoided = false;
                     Creature.Physics.Orientation = Physics.OrientMode.Fixed;
-                    Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
+                    Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X*0.9f,
+                        Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z*0.9f);
                     CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
 
                     Creature.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
                     Creature.Sprite.PlayAnimations(Creature.CharacterMode.Attacking);
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
 
-                    while (!CurrentAttack.Perform(Creature, Target, DwarfTime.LastTime, Creature.Stats.BuffedStr + Creature.Stats.BuffedSiz,
-                            Creature.AI.Position, Creature.Faction.Name))
+                    while (
+                        !CurrentAttack.Perform(Creature, Target, DwarfTime.LastTime,
+                            Creature.Stats.BuffedStr + Creature.Stats.BuffedSiz,
+                            Creature.AI.Position))
                     {
-                        Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
+                        Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X*0.9f,
+                            Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z*0.9f);
                         yield return Status.Running;
                     }
 
@@ -313,13 +317,16 @@ namespace DwarfCorp
                         {
                             Creature.CurrentCharacterMode = Creature.CharacterMode.Flying;
                             dogfightTarget += MathFunctions.RandVector3Cube()*0.1f;
-                            Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, dogfightTarget + Target.Position, Creature.Physics.GlobalTransform.Translation) * 0.9f;
+                            Vector3 output =
+                                Creature.Controller.GetOutput(DwarfTime.Dt, dogfightTarget + Target.Position,
+                                    Creature.Physics.GlobalTransform.Translation)*0.9f;
                             Creature.Physics.ApplyForce(output - Creature.Physics.Gravity, DwarfTime.Dt);
                         }
                         else
                         {
                             Creature.Sprite.PauseAnimations(Creature.CharacterMode.Attacking);
-                            Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
+                            Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X*0.9f,
+                                Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z*0.9f);
                         }
                         yield return Status.Running;
                     }
@@ -349,14 +356,13 @@ namespace DwarfCorp
                         yield return Status.Success;
                         break;
                     }
-                
                 }
 
                 yield return Status.Running;
             }
         }
 
-        void targetInventory_OnDeath(List<Body> items)
+        private void targetInventory_OnDeath(List<Body> items)
         {
             if (items == null) return;
 
@@ -366,5 +372,4 @@ namespace DwarfCorp
             }
         }
     }
-
 }

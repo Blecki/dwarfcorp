@@ -30,65 +30,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using System.Diagnostics;
 
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// This is just a struct of two things: a resource tag, and a number of that resource.
-    /// This is used instead of a list, since there is nothing distinguishing resources from each other.
+    ///     This is just a struct of two things: a resource tag, and a number of that resource.
+    ///     This is used instead of a list, since there is nothing distinguishing resources from each other.
     /// </summary>
     public class Quantitiy<T> : ICloneable
     {
-        protected bool Equals(Quantitiy<T> other)
-        {
-            return Equals(ResourceType, other.ResourceType) && NumResources == other.NumResources;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-            if (obj.GetType() != this.GetType())
-            {
-                return false;
-            }
-            return Equals((Quantitiy<T>)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return (ResourceType.GetHashCode() * 397) ^ NumResources;
-            }
-        }
-
-        public virtual object Clone()
-        {
-            return new Quantitiy<T>(ResourceType, NumResources);
-        }
-
-        public virtual Quantitiy<T> CloneQuantity()
-        {
-            return Clone() as Quantitiy<T>;
-        }
-
-        public T ResourceType { get; set; }
-        public int NumResources { get; set; }
-
-
         public Quantitiy()
         {
-
         }
 
         public Quantitiy(T type)
@@ -109,10 +63,53 @@ namespace DwarfCorp
             NumResources = numResources;
         }
 
+        public T ResourceType { get; set; }
+        public int NumResources { get; set; }
+
+        public virtual object Clone()
+        {
+            return new Quantitiy<T>(ResourceType, NumResources);
+        }
+
+        protected bool Equals(Quantitiy<T> other)
+        {
+            return Equals(ResourceType, other.ResourceType) && NumResources == other.NumResources;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj.GetType() != GetType())
+            {
+                return false;
+            }
+            return Equals((Quantitiy<T>) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (ResourceType.GetHashCode()*397) ^ NumResources;
+            }
+        }
+
+        public virtual Quantitiy<T> CloneQuantity()
+        {
+            return Clone() as Quantitiy<T>;
+        }
+
 
         public static Quantitiy<T> operator +(int a, Quantitiy<T> b)
         {
-            return new Quantitiy<T>()
+            return new Quantitiy<T>
             {
                 ResourceType = b.ResourceType,
                 NumResources = b.NumResources + a
@@ -121,7 +118,7 @@ namespace DwarfCorp
 
         public static Quantitiy<T> operator -(int b, Quantitiy<T> a)
         {
-            return new Quantitiy<T>()
+            return new Quantitiy<T>
             {
                 ResourceType = a.ResourceType,
                 NumResources = a.NumResources - b
@@ -130,7 +127,7 @@ namespace DwarfCorp
 
         public static Quantitiy<T> operator +(Quantitiy<T> a, int b)
         {
-            return new Quantitiy<T>()
+            return new Quantitiy<T>
             {
                 ResourceType = a.ResourceType,
                 NumResources = a.NumResources + b
@@ -139,7 +136,7 @@ namespace DwarfCorp
 
         public static Quantitiy<T> operator -(Quantitiy<T> a, int b)
         {
-            return new Quantitiy<T>()
+            return new Quantitiy<T>
             {
                 ResourceType = a.ResourceType,
                 NumResources = a.NumResources - b
@@ -184,12 +181,11 @@ namespace DwarfCorp
 
 
     /// <summary>
-    /// This is just a struct of two things: a resource, and a number of that resource.
-    /// This is used instead of a list, since there is nothing distinguishing resources from each other.
+    ///     This is just a struct of two things: a resource, and a number of that resource.
+    ///     This is used instead of a list, since there is nothing distinguishing resources from each other.
     /// </summary>
     public class ResourceAmount : Quantitiy<Resource>
     {
-
         public ResourceAmount(ResourceAmount amount)
         {
             ResourceType = amount.ResourceType;
@@ -229,12 +225,10 @@ namespace DwarfCorp
         public ResourceAmount(ResourceLibrary.ResourceType type, int num) :
             this(ResourceLibrary.Resources[type], num)
         {
-            
         }
 
         public ResourceAmount()
         {
-            
         }
 
         public ResourceAmount CloneResource()
@@ -242,5 +236,4 @@ namespace DwarfCorp
             return new ResourceAmount(ResourceType, NumResources);
         }
     }
-
 }

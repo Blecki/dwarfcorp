@@ -30,10 +30,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -41,39 +39,64 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     /// <summary>
-    /// This component represents a list of several billboards which are efficiently drawn through state batching.
+    ///     Draw aggregate (hundreds or thousands) of 3D sprites using a batch billboard primitive. This is for
+    ///     STATIC sprites. It is used to draw hundreds to thousands of little grass motes.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class BatchedSprite : Sprite
     {
-        public List<Matrix> LocalTransforms { get; set; }
-        public List<float> Rotations { get; set; }
-        public List<Color> Tints { get; set; }
-        public List<Color> Colors { get; set; } 
-        public float CullDistance = 1000.0f;
-        public BatchBillboardPrimitive Primitive;
-        private Point Frame;
-        private int Width = 32;
-        private int Height = 32;
-
-        private static RasterizerState rasterState = new RasterizerState()
+        /// <summary>
+        ///     Don't cull billboards so they are visible from both sides.
+        /// </summary>
+        private static readonly RasterizerState rasterState = new RasterizerState
         {
             CullMode = CullMode.None,
         };
 
-        private GraphicsDevice graphicsDevice;
+        /// <summary>
+        ///     (x, y) position in the texture to draw the geometry from.
+        /// </summary>
+        private readonly Point Frame;
+
+        /// <summary>
+        ///     Height of the frame in pixels.
+        /// </summary>
+        private readonly int Height = 32;
+
+        /// <summary>
+        ///     Width of the frame in pixels.
+        /// </summary>
+        private readonly int Width = 32;
+
+        /// <summary>
+        ///     Do not attempt to draw geometry if it is further away than this amount (in squared voxels)
+        /// </summary>
+        public float CullDistance = 1000.0f;
+
+        /// <summary>
+        ///     Giant vertex buffer containing all the geometry.
+        /// </summary>
+        public BatchBillboardPrimitive Primitive;
 
         public BatchedSprite()
         {
-            
         }
 
+        /// <summary>
+        ///     Create a batched sprite component with respect to the parent component.
+        /// </summary>
+        /// <param name="manager">Manager that owns this component.</param>
+        /// <param name="name">Name of the batched sprite.</param>
+        /// <param name="parent">Parent to attach the batched sprite to.</param>
+        /// <param name="localTransform">Transform of the batched sprite w.r.t the parent.</param>
+        /// <param name="spriteSheet">Sprites to use for the batched sprite.</param>
+        /// <param name="numBillboards">Number of child sprites to draw.</param>
         public BatchedSprite(ComponentManager manager,
             string name,
             GameComponent parent,
             Matrix localTransform,
             SpriteSheet spriteSheet,
-            int numBillboards, GraphicsDevice graphi) :
+            int numBillboards) :
                 base(manager, name, parent, localTransform, spriteSheet, false)
         {
             LocalTransforms = new List<Matrix>(numBillboards);
@@ -84,22 +107,52 @@ namespace DwarfCorp
             Width = spriteSheet.Width;
             Height = spriteSheet.Height;
             Frame = new Point(0, 0);
-            graphicsDevice = graphi;
             LightsWithVoxels = false;
         }
 
+        /// <summary>
+        ///     List of transforms of all the child geometry.
+        /// </summary>
+        public List<Matrix> LocalTransforms { get; set; }
+
+        /// <summary>
+        ///     Rotations around the z axis of all the child geometry.
+        /// </summary>
+        public List<float> Rotations { get; set; }
+
+        /// <summary>
+        ///     Light tings of all the child geometry.
+        /// </summary>
+        public List<Color> Tints { get; set; }
+
+        /// <summary>
+        ///     Vertex colors of all the child geometry.
+        /// </summary>
+        public List<Color> Colors { get; set; }
+
+        /// <summary>
+        ///     Adds a new sprite to the batched sprite. Optionally rebuilds the geometry.
+        /// </summary>
+        /// <param name="transform">The relative transform of the child geometry.</param>
+        /// <param name="rotation">The rotation around Z of the child geometry.</param>
+        /// <param name="tint">The light tint of the child geometry.</param>
+        /// <param name="color">The vertex color of the child geometry.</param>
+        /// <param name="rebuild">If true, rebuilds the static vertex buffer.</param>
         public void AddTransform(Matrix transform, float rotation, Color tint, Color color, bool rebuild)
         {
-            LocalTransforms.Add(transform * Matrix.Invert(GlobalTransform));
+            LocalTransforms.Add(transform*Matrix.Invert(GlobalTransform));
             Rotations.Add(rotation);
             Tints.Add(tint);
             Colors.Add(color);
-            if(rebuild)
+            if (rebuild)
             {
                 RebuildPrimitive();
             }
         }
 
+        /// <summary>
+        ///     Rebuild the static vertex buffer using new geometry. This should be called as infrequently as possible.
+        /// </summary>
         public void RebuildPrimitive()
         {
             lock (Primitive.VertexBuffer)
@@ -109,28 +162,39 @@ namespace DwarfCorp
                     Primitive.VertexBuffer.Dispose();
                 }
             }
-            Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints, Colors);
+            Primitive = new BatchBillboardPrimitive(SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f, false,
+                LocalTransforms, Tints, Colors);
         }
 
+        /// <summary>
+        ///     Deletes a child sprite at the given index. Rebuilds the geometry.
+        /// </summary>
+        /// <param name="index">The index of the child sprite to remove.</param>
         public void RemoveTransform(int index)
         {
-            if(index >= 0 && index < LocalTransforms.Count)
+            if (index >= 0 && index < LocalTransforms.Count)
             {
                 LocalTransforms.RemoveAt(index);
                 Rotations.RemoveAt(index);
                 Tints.RemoveAt(index);
+                Primitive = new BatchBillboardPrimitive(SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f,
+                    false, LocalTransforms, Tints, Colors);
             }
-            Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints, Colors);
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if(LightsWithVoxels)
+            if (LightsWithVoxels)
             {
                 base.Update(gameTime, chunks, camera);
             }
         }
 
+        /// <summary>
+        ///     Use a simplified test to see if we should draw this sprite.
+        /// </summary>
+        /// <param name="camera">Camera drawing the sprite.</param>
+        /// <returns>True if the sprite should be drawn.</returns>
         public bool ShouldDraw(Camera camera)
         {
             Vector3 diff = (GlobalTransform.Translation - camera.Position);
@@ -145,54 +209,39 @@ namespace DwarfCorp
             GraphicsDevice graphicsDevice,
             Effect effect, bool renderingForWater)
         {
-            if(Primitive == null)
+            if (!IsVisible || !ShouldDraw(camera)) return;
+
+            // If we still don't have a static vertex buffer, create one.
+            if (Primitive == null)
             {
-                Primitive = new BatchBillboardPrimitive(graphicsDevice, SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f, false, LocalTransforms, Tints, Colors);
+                Primitive = new BatchBillboardPrimitive(SpriteSheet.GetTexture(), Width, Height, Frame, 1.0f, 1.0f,
+                    false, LocalTransforms, Tints, Colors);
             }
 
+            // Either tint the entire batched primitive, or ignore the tint altogether.
+            effect.Parameters["xTint"].SetValue(!LightsWithVoxels ? new Vector4(1, 1, 1, 1) : Tint.ToVector4());
 
-            if(IsVisible && ShouldDraw(camera))
+            // Make sure to draw the backs of the primitives.
+            RasterizerState r = graphicsDevice.RasterizerState;
+            graphicsDevice.RasterizerState = rasterState;
+
+            effect.Parameters["xTexture"].SetValue(SpriteSheet.GetTexture());
+
+            effect.Parameters["xWorld"].SetValue(GlobalTransform);
+
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
-                if(!LightsWithVoxels)
-                {
-                    effect.Parameters["xTint"].SetValue(new Vector4(1, 1, 1, 1));
-                }
-                else
-                {
-                    effect.Parameters["xTint"].SetValue(Tint.ToVector4());
-                }
+                pass.Apply();
+                Primitive.Render(graphicsDevice);
+            }
 
-                RasterizerState r = graphicsDevice.RasterizerState;
-                graphicsDevice.RasterizerState = rasterState;
-                effect.Parameters["xTexture"].SetValue(SpriteSheet.GetTexture());
+            effect.Parameters["xWorld"].SetValue(Matrix.Identity);
 
-                DepthStencilState origDepthStencil = graphicsDevice.DepthStencilState;
-                DepthStencilState newDepthStencil = DepthStencilState.DepthRead;
-                graphicsDevice.DepthStencilState = newDepthStencil;
-
-
-                //Matrix oldWorld = effect.Parameters["xWorld"].GetValueMatrix();
-                effect.Parameters["xWorld"].SetValue(GlobalTransform);
-
-                foreach(EffectPass pass in effect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    Primitive.Render(graphicsDevice);
-                }
-
-                effect.Parameters["xWorld"].SetValue(Matrix.Identity);
-
-                if(origDepthStencil != null)
-                {
-                    graphicsDevice.DepthStencilState = origDepthStencil;
-                }
-
-                if(r != null)
-                {
-                    graphicsDevice.RasterizerState = r;
-                }
+            // Reset the graphics rasterizer state.
+            if (r != null)
+            {
+                graphicsDevice.RasterizerState = r;
             }
         }
     }
-
 }

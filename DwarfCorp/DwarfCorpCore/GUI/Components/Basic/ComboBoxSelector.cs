@@ -30,33 +30,89 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// This GUI component is the list found inside the ComboBox
+    ///     This GUI component is the list found inside the ComboBox
     /// </summary>
     public class ComboBoxSelector : GUIComponent
     {
-        public class Entry
-        {
-            public string LocalName { get; set; }
-            public string GlobalName { get; set; }
-            public List<Entry> Children { get; set; }
-            public ComboBoxSelector ChildSelector { get; set; }
-        }
-
         public delegate void Modified(string arg);
 
-        public event Modified OnSelectionModified;
+        private readonly int ColumnWidth;
+        public bool IsDead = false;
+        public float MaxHeight = 500;
+
+        public ComboBoxSelector(DwarfGUI gui, ComboBox parent, List<Entry> values, int posX = -1, int posY = -1) :
+            base(gui, parent)
+        {
+            Font = gui.DefaultFont;
+            Columns = new List<List<Entry>>();
+            Values = values;
+            CurrentValue = values.FirstOrDefault();
+
+            int height = 0;
+            Columns.Add(new List<Entry>());
+            int currentColumn = 0;
+            int columnWidth = parent.GlobalBounds.Width - 37;
+            ColumnWidth = columnWidth;
+            int bestHeight = 0;
+            int x = posX > 0 ? posX : 0;
+            Box = parent;
+            int y = posY > 0 ? posY : parent.GlobalBounds.Height/2 + GUI.Skin.TileHeight/2;
+            foreach (Entry s in values)
+            {
+                List<Entry> column = Columns[currentColumn];
+                Vector2 measure = Datastructures.SafeMeasure(Font, s.LocalName);
+                height += (int) measure.Y;
+                column.Add(s);
+
+                if (height > bestHeight)
+                {
+                    bestHeight = height;
+                }
+
+                if (height >= MaxHeight || height + y + Box.GlobalBounds.Y + 32 > GameSettings.Default.ResolutionY)
+                {
+                    height = 0;
+                    Columns.Add(new List<Entry>());
+                    currentColumn++;
+                    columnWidth += ColumnWidth;
+                }
+            }
+
+            var removals = new List<List<Entry>>();
+
+            foreach (var column in Columns)
+            {
+                if (column.Count == 0)
+                {
+                    removals.Add(column);
+                }
+            }
+
+            foreach (var column in removals)
+            {
+                Columns.Remove(column);
+                columnWidth -= ColumnWidth;
+            }
+
+            bestHeight += 15;
+
+            LocalBounds = new Rectangle(x, y, columnWidth, bestHeight);
+
+            ClickTimer = new Timer(0.1f, true, Timer.TimerMode.Real);
+            InputManager.MouseClickedCallback += InputManager_MouseClickedCallback;
+            Drawn = true;
+        }
 
         private List<Entry> Values { get; set; }
         private List<List<Entry>> Columns { get; set; }
@@ -66,16 +122,13 @@ namespace DwarfCorp
         private Timer ClickTimer { get; set; }
         public bool Drawn { get; set; }
         public SpriteFont Font { get; set; }
-
-        public bool IsDead = false;
-        public float MaxHeight = 500;
-        private int ColumnWidth = 0;
+        public event Modified OnSelectionModified;
 
 
         public static List<Entry> CreateEntries(List<string> values)
         {
-            Dictionary<string, Entry> entryDict  = new Dictionary<string, Entry>();
-            List<Entry> toReturn = new List<Entry>();
+            var entryDict = new Dictionary<string, Entry>();
+            var toReturn = new List<Entry>();
             foreach (string s in values)
             {
                 List<string> subvalues = s.Split('/').ToList();
@@ -89,7 +142,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    entry = new Entry()
+                    entry = new Entry
                     {
                         GlobalName = s,
                         LocalName = subvalues[0]
@@ -100,10 +153,7 @@ namespace DwarfCorp
                     {
                         continue;
                     }
-                    else
-                    {
-                        entry.LocalName += " >";
-                    }
+                    entry.LocalName += " >";
                 }
 
                 string curr = subvalues.FirstOrDefault();
@@ -122,7 +172,7 @@ namespace DwarfCorp
                     else
                     {
                         parentEntry = subentry;
-                        subentry = new Entry()
+                        subentry = new Entry
                         {
                             GlobalName = curr,
                             LocalName = subvalue
@@ -147,76 +197,13 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public ComboBoxSelector(DwarfGUI gui, ComboBox parent, List<Entry> values, int posX = -1, int posY = -1) :
-            base(gui, parent)
-        {
-            Font = gui.DefaultFont;
-            Columns = new List<List<Entry>>();
-            Values = values;
-            CurrentValue = values.FirstOrDefault();
-
-            int height = 0;
-            Columns.Add(new List<Entry>());
-            int currentColumn = 0;
-            int columnWidth = parent.GlobalBounds.Width - 37;
-            ColumnWidth = columnWidth;
-            int bestHeight = 0;
-            int x = posX > 0 ? posX : 0;
-            Box = parent;
-            int y = posY > 0 ? posY : parent.GlobalBounds.Height / 2 + GUI.Skin.TileHeight / 2;
-            foreach (Entry s in values)
-            {
-                List<Entry> column = Columns[currentColumn];
-                Vector2 measure = Datastructures.SafeMeasure(Font, s.LocalName);
-                height += (int) measure.Y;
-                column.Add(s);
-
-                if(height > bestHeight)
-                {
-                    bestHeight = height;
-                }
-
-                if(height >= MaxHeight || height + y + Box.GlobalBounds.Y + 32 > GameSettings.Default.ResolutionY)
-                {
-                    height = 0;
-                    Columns.Add(new List<Entry>());
-                    currentColumn++;
-                    columnWidth += ColumnWidth;
-                }
-            }
-
-            List<List<Entry>> removals = new List<List<Entry>>();
-
-            foreach (List<Entry> column in Columns)
-            {
-                if(column.Count == 0)
-                {
-                    removals.Add(column);
-                }
-            }
-
-            foreach (List<Entry> column in removals)
-            {
-                Columns.Remove(column);
-                columnWidth -= ColumnWidth;
-            }
-
-            bestHeight += 15;
-
-            LocalBounds = new Rectangle(x,y,columnWidth, bestHeight);
-
-            ClickTimer = new Timer(0.1f, true, Timer.TimerMode.Real);
-            InputManager.MouseClickedCallback += InputManager_MouseClickedCallback;
-            Drawn = true;
-        }
-
         private Vector2 MeasureColumn(IEnumerable<Entry> column)
         {
             Vector2 toReturn = Vector2.Zero;
             foreach (Entry s in column)
             {
                 toReturn.Y += Datastructures.SafeMeasure(Font, s.LocalName).Y;
-                toReturn.X = (float)Math.Max(toReturn.X, Datastructures.SafeMeasure(Font, s.LocalName).X);
+                toReturn.X = Math.Max(toReturn.X, Datastructures.SafeMeasure(Font, s.LocalName).X);
             }
             return toReturn;
         }
@@ -224,7 +211,7 @@ namespace DwarfCorp
 
         private void InputManager_MouseClickedCallback(InputManager.MouseButton button)
         {
-            if(ClickTimer.HasTriggered && !IsDead)
+            if (ClickTimer.HasTriggered && !IsDead)
             {
                 if (CurrentValue != null && (CurrentValue.Children == null || CurrentValue.Children.Count == 0))
                 {
@@ -238,16 +225,18 @@ namespace DwarfCorp
                     if (CurrentValue.ChildSelector == null || CurrentValue.ChildSelector.IsDead)
                     {
                         MouseState mouse = Mouse.GetState();
-                        CurrentValue.ChildSelector = new ComboBoxSelector(GUI, Box, CurrentValue.Children, mouse.X - Box.GlobalBounds.X, mouse.Y - Box.GlobalBounds.Y);
+                        CurrentValue.ChildSelector = new ComboBoxSelector(GUI, Box, CurrentValue.Children,
+                            mouse.X - Box.GlobalBounds.X, mouse.Y - Box.GlobalBounds.Y);
                         GUI.FocusComponent = CurrentValue.ChildSelector;
                         Entry value = CurrentValue;
-                        CurrentValue.ChildSelector.OnSelectionModified += (string arg) => ChildSelector_OnSelectionModified(arg, value);
+                        CurrentValue.ChildSelector.OnSelectionModified +=
+                            (string arg) => ChildSelector_OnSelectionModified(arg, value);
                     }
                 }
             }
         }
 
-        void ChildSelector_OnSelectionModified(string arg, Entry entry)
+        private void ChildSelector_OnSelectionModified(string arg, Entry entry)
         {
             CurrentValue = entry;
             OnSelectionModified.Invoke(arg);
@@ -261,30 +250,26 @@ namespace DwarfCorp
         public override void Update(DwarfTime time)
         {
             ClickTimer.Update(time);
-            if(IsMouseOver && !IsDead)
+            if (IsMouseOver && !IsDead)
             {
                 //GUI.FocusComponent = Parent;
                 MouseState mouse = Mouse.GetState();
 
-                float normalizedX = Math.Min(Math.Max(((float) mouse.X - (float) GlobalBounds.X) / GlobalBounds.Width, 0), 1.0f);
-                int nearestColumn = (int) (normalizedX * Columns.Count);
+                float normalizedX = Math.Min(Math.Max((mouse.X - (float) GlobalBounds.X)/GlobalBounds.Width, 0), 1.0f);
+                var nearestColumn = (int) (normalizedX*Columns.Count);
 
-                if(nearestColumn >= 0 && nearestColumn < Columns.Count)
+                if (nearestColumn >= 0 && nearestColumn < Columns.Count)
                 {
                     Vector2 colMeasure = MeasureColumn(Columns[nearestColumn]);
-                    float normalizedY = Math.Min(Math.Max(((float) mouse.Y - (float) GlobalBounds.Y) / colMeasure.Y, 0), 1.0f);
-                    int nearestRow = (int) (normalizedY * Columns[nearestColumn].Count);
+                    float normalizedY = Math.Min(Math.Max((mouse.Y - (float) GlobalBounds.Y)/colMeasure.Y, 0), 1.0f);
+                    var nearestRow = (int) (normalizedY*Columns[nearestColumn].Count);
 
-                    if(nearestRow >= 0 && nearestRow < Columns[nearestColumn].Count)
+                    if (nearestRow >= 0 && nearestRow < Columns[nearestColumn].Count)
                     {
                         CurrentValue = Columns[nearestColumn][nearestRow];
                         Box.CurrentValue = CurrentValue.GlobalName;
                     }
                 }
-            }
-            else
-            {
-                //GUI.FocusComponent = null;
             }
 
 
@@ -292,11 +277,11 @@ namespace DwarfCorp
         }
 
 
-        public override void Render(DwarfTime time, Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
+        public override void Render(DwarfTime time, SpriteBatch batch)
         {
-            if(Drawn)
+            if (Drawn)
             {
-                if(!GUI.DrawAfter.Contains(this))
+                if (!GUI.DrawAfter.Contains(this))
                 {
                     GUI.DrawAfter.Add(this);
                     Drawn = false;
@@ -308,29 +293,31 @@ namespace DwarfCorp
 
 
                 int x = 0;
-                foreach(List<Entry> column in Columns)
+                foreach (var column in Columns)
                 {
-                    if(column.Count == 0)
+                    if (column.Count == 0)
                     {
                         continue;
                     }
 
                     float columnMeasure = MeasureColumn(column).Y;
-                    PixelsPerValue = (int) columnMeasure / column.Count;
+                    PixelsPerValue = (int) columnMeasure/column.Count;
                     int h = 0;
 
-                    foreach(Entry s in column)
+                    foreach (Entry s in column)
                     {
                         Vector2 measure = Datastructures.SafeMeasure(Font, s.LocalName);
 
                         Color c = Color.Black;
 
-                        if(s == CurrentValue)
+                        if (s == CurrentValue)
                         {
                             c = Color.DarkRed;
                         }
 
-                        Drawer2D.DrawAlignedText(batch, s.LocalName, Font, c, Drawer2D.Alignment.Left, new Rectangle(GlobalBounds.X + 10 + x, GlobalBounds.Y + h + 5, GlobalBounds.Width, (int)measure.Y + 5));
+                        Drawer2D.DrawAlignedText(batch, s.LocalName, Font, c, Drawer2D.Alignment.Left,
+                            new Rectangle(GlobalBounds.X + 10 + x, GlobalBounds.Y + h + 5, GlobalBounds.Width,
+                                (int) measure.Y + 5));
 
                         h += PixelsPerValue;
                     }
@@ -341,6 +328,13 @@ namespace DwarfCorp
                 base.Render(time, batch);
             }
         }
-    }
 
+        public class Entry
+        {
+            public string LocalName { get; set; }
+            public string GlobalName { get; set; }
+            public List<Entry> Children { get; set; }
+            public ComboBoxSelector ChildSelector { get; set; }
+        }
+    }
 }

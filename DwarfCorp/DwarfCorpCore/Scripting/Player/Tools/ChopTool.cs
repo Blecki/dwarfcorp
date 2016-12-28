@@ -30,20 +30,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// When using this tool, the player clicks on trees/bushes to specify that 
-    /// they should be chopped down.
+    ///     When using this tool, the player clicks on trees/bushes to specify that
+    ///     they should be chopped down.
     /// </summary>
     public class ChopTool : PlayerTool
     {
@@ -52,18 +51,15 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-
         }
 
         public override void OnEnd()
         {
-
         }
 
 
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
-
         }
 
         public override void Update(DwarfGame game, DwarfTime time)
@@ -89,39 +85,34 @@ namespace DwarfCorp
             {
                 PlayState.GUI.MouseMode = GUISkin.MousePointer.Chop;
             }
-
-
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-
             Color drawColor = ChopDesignationColor;
 
-            float alpha = (float)Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * ChopDesignationGlowRate));
-            drawColor.R = (byte)(Math.Min(drawColor.R * alpha + 50, 255));
-            drawColor.G = (byte)(Math.Min(drawColor.G * alpha + 50, 255));
-            drawColor.B = (byte)(Math.Min(drawColor.B * alpha + 50, 255));
+            var alpha = (float) Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*ChopDesignationGlowRate));
+            drawColor.R = (byte) (Math.Min(drawColor.R*alpha + 50, 255));
+            drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
+            drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
 
-            foreach(BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
+            foreach (BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
             {
-                Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
+                Drawer3D.DrawBox(box, drawColor, 0.05f*alpha + 0.05f, true);
             }
         }
 
         public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
         {
-
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
-
             List<Body> treesPickedByMouse = ComponentManager.FilterComponentsWithTag("Vegetation", bodies);
 
             List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.Faction.SelectedMinions,
                 GameMaster.ToolMode.Chop);
-            List<Task> tasks = new List<Task>();
+            var tasks = new List<Task>();
             foreach (Body tree in treesPickedByMouse)
             {
                 if (!tree.IsVisible || tree.IsAboveCullPlane) continue;
@@ -132,7 +123,10 @@ namespace DwarfCorp
                     if (!Player.Faction.ChopDesignations.Contains(tree))
                     {
                         Player.Faction.ChopDesignations.Add(tree);
-                        tasks.Add(new KillEntityTask(tree, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low });
+                        tasks.Add(new KillEntityTask(tree, KillEntityTask.KillType.Chop)
+                        {
+                            Priority = Task.PriorityType.Low
+                        });
                     }
                 }
                 else if (button == InputManager.MouseButton.Right)
@@ -143,7 +137,7 @@ namespace DwarfCorp
                     }
                 }
             }
-           
+
             if (tasks.Count > 0 && minions.Count > 0)
             {
                 TaskManager.AssignTasks(tasks, minions);

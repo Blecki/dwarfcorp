@@ -30,11 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
@@ -43,12 +42,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class ResourceInfoComponent : GUIComponent
     {
-        public Faction Faction { get; set; }
-        public Timer UpdateTimer { get; set; }
-        public List<ResourceAmount> CurrentResources { get; set; }
-        public GridLayout Layout { get; set; }
-        public int PanelWidth { get; set; }
-        public int PanelHeight { get; set; }
         public ResourceInfoComponent(DwarfGUI gui, GUIComponent parent, Faction faction) : base(gui, parent)
         {
             Faction = faction;
@@ -59,26 +52,33 @@ namespace DwarfCorp
             PanelHeight = 40;
         }
 
+        public Faction Faction { get; set; }
+        public Timer UpdateTimer { get; set; }
+        public List<ResourceAmount> CurrentResources { get; set; }
+        public GridLayout Layout { get; set; }
+        public int PanelWidth { get; set; }
+        public int PanelHeight { get; set; }
+
         public void CreateResourcePanels()
         {
             Layout.ClearChildren();
 
             int numItems = CurrentResources.Count;
 
-            int wItems = LocalBounds.Width / PanelWidth - 1;
-            int hItems = LocalBounds.Height / PanelHeight;
+            int wItems = LocalBounds.Width/PanelWidth - 1;
+            int hItems = LocalBounds.Height/PanelHeight;
 
             Layout.Rows = hItems;
             Layout.Cols = wItems;
-            List<ImagePanel> panels = new List<ImagePanel>();
-            List<int> counts = new List<int>();
-            List<Label> labels = new List<Label>();
+            var panels = new List<ImagePanel>();
+            var counts = new List<int>();
+            var labels = new List<Label>();
             int itemIndex = 0;
-            for(int i = 0; i < numItems; i++)
+            for (int i = 0; i < numItems; i++)
             {
                 ResourceAmount amount = CurrentResources[i];
-              
-                if(amount.NumResources == 0)
+
+                if (amount.NumResources == 0)
                 {
                     continue;
                 }
@@ -91,7 +91,7 @@ namespace DwarfCorp
                     if (imgPanel.Image.Equals(amount.ResourceType.Image))
                     {
                         imgPanel.ToolTip = imgPanel.ToolTip + "\n" +
-                                             "* " + amount.NumResources.ToString() + " " + amount.ResourceType.ResourceName + "\n" +
+                                           "* " + amount.NumResources + " " + amount.ResourceType.ResourceName + "\n" +
                                            amount.ResourceType.Description + "\n Props: " +
                                            amount.ResourceType.GetTagDescription(", ");
                         exists = true;
@@ -105,19 +105,22 @@ namespace DwarfCorp
 
                 if (exists) continue;
 
-                int r = itemIndex / wItems;
-                int c = itemIndex % wItems;
+                int r = itemIndex/wItems;
+                int c = itemIndex%wItems;
 
-                ImagePanel panel = new ImagePanel(GUI, Layout, amount.ResourceType.Image)
+                var panel = new ImagePanel(GUI, Layout, amount.ResourceType.Image)
                 {
                     KeepAspectRatio = true,
-                    ToolTip = "* " + amount.NumResources.ToString() + " " + amount.ResourceType.ResourceName + "\n" + amount.ResourceType.Description + "\n Props: " + amount.ResourceType.GetTagDescription(", "),
+                    ToolTip =
+                        "* " + amount.NumResources + " " + amount.ResourceType.ResourceName + "\n" +
+                        amount.ResourceType.Description + "\n Props: " + amount.ResourceType.GetTagDescription(", "),
                     Tint = amount.ResourceType.Tint
                 };
 
                 Layout.SetComponentPosition(panel, c, r, 1, 1);
 
-                Label panelLabel = new Label(GUI, panel, amount.NumResources.ToString(CultureInfo.InvariantCulture), GUI.SmallFont)
+                var panelLabel = new Label(GUI, panel, amount.NumResources.ToString(CultureInfo.InvariantCulture),
+                    GUI.SmallFont)
                 {
                     Alignment = Drawer2D.Alignment.Bottom,
                     LocalBounds = new Rectangle(0, 0, PanelWidth, PanelHeight),
@@ -130,22 +133,22 @@ namespace DwarfCorp
 
 
                 itemIndex++;
-
             }
-
         }
 
 
         public override void Update(DwarfTime time)
         {
             UpdateTimer.Update(time);
-            if(UpdateTimer.HasTriggered)
+            if (UpdateTimer.HasTriggered)
             {
                 List<ResourceAmount> currentResources = Faction.ListResources().Values.ToList();
-                bool isDifferent = CurrentResources.Count != currentResources.Count || currentResources.Where((t, i) => t.NumResources != CurrentResources[i].NumResources).Any();
+                bool isDifferent = CurrentResources.Count != currentResources.Count ||
+                                   currentResources.Where((t, i) => t.NumResources != CurrentResources[i].NumResources)
+                                       .Any();
 
 
-                if(isDifferent)
+                if (isDifferent)
                 {
                     CurrentResources.Clear();
                     CurrentResources.AddRange(currentResources);
@@ -154,6 +157,5 @@ namespace DwarfCorp
             }
             base.Update(time);
         }
-       
     }
 }

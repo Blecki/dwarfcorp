@@ -30,30 +30,22 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// Runs all of its children in sequence  until one of them succeeds (or all of them fail). Returns
-    /// success if any child succeds. Returns fail if all of them fail.
+    ///     Runs all of its children in sequence  until one of them succeeds (or all of them fail). Returns
+    ///     success if any child succeds. Returns fail if all of them fail.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class Select : Act
     {
-        public int CurrentChildIndex { get; set; }
-
-        public Act CurrentChild
-        {
-            get { if (CurrentChildIndex >= 0 && CurrentChildIndex < Children.Count) { return Children[CurrentChildIndex]; } else { return null; } }
-        }
-
         public Select()
         {
-
         }
 
         public Select(params Act[] children) :
@@ -69,12 +61,26 @@ namespace DwarfCorp
             CurrentChildIndex = 0;
         }
 
+        public int CurrentChildIndex { get; set; }
+
+        public Act CurrentChild
+        {
+            get
+            {
+                if (CurrentChildIndex >= 0 && CurrentChildIndex < Children.Count)
+                {
+                    return Children[CurrentChildIndex];
+                }
+                return null;
+            }
+        }
+
         public override void Initialize()
         {
             CurrentChildIndex = 0;
-            foreach(Act child in Children)
+            foreach (Act child in Children)
             {
-                if(child != null)
+                if (child != null)
                     child.Initialize();
             }
 
@@ -84,26 +90,23 @@ namespace DwarfCorp
         public override IEnumerable<Status> Run()
         {
             bool failed = false;
-            while(CurrentChildIndex < Children.Count)
+            while (CurrentChildIndex < Children.Count)
             {
                 Status childStatus = CurrentChild.Tick();
 
-                if(childStatus == Status.Fail)
+                if (childStatus == Status.Fail)
                 {
                     CurrentChildIndex++;
 
-                    if(Children.Count <= CurrentChildIndex)
+                    if (Children.Count <= CurrentChildIndex)
                     {
                         failed = true;
                         yield return Status.Fail;
                         break;
                     }
-                    else
-                    {
-                        yield return Status.Running;
-                    }
+                    yield return Status.Running;
                 }
-                else if(childStatus == Status.Success)
+                else if (childStatus == Status.Success)
                 {
                     CurrentChildIndex++;
                     yield return Status.Success;
@@ -115,7 +118,7 @@ namespace DwarfCorp
                 }
             }
 
-            if(failed)
+            if (failed)
             {
                 yield return Status.Fail;
             }
@@ -125,5 +128,4 @@ namespace DwarfCorp
             }
         }
     }
-
 }

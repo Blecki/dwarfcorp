@@ -30,25 +30,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This component shows a floating point value that can be 
-    /// incremented or decremented with buttons.
+    ///     This component shows a floating point value that can be
+    ///     incremented or decremented with buttons.
     /// </summary>
     public class SpinBox : GUIComponent
     {
         public delegate void ValueChangedDelegate(SpinBox box);
-
-        public event ValueChangedDelegate OnValueChanged;
 
         public enum SpinMode
         {
@@ -56,18 +49,9 @@ namespace DwarfCorp
             Float
         }
 
-        public float SpinValue { get; set; }
-        public float MaxValue { get; set; }
-        public float MinValue { get; set; }
-        public float Increment { get; set; }
-        public SpinMode Mode { get; set; }
-        public GridLayout Layout { get; set; }
-        public Button PlusButton { get; set; }
-        public Button MinusButton { get; set; }
-        public LineEdit ValueBox { get; set; }
-
-        public SpinBox(DwarfGUI gui, GUIComponent parent, string label, float value, float minValue, float maxValue, SpinMode mode) :
-            base(gui, parent)
+        public SpinBox(DwarfGUI gui, GUIComponent parent, string label, float value, float minValue, float maxValue,
+            SpinMode mode) :
+                base(gui, parent)
         {
             Increment = 1.0f;
             SpinValue = value;
@@ -75,12 +59,14 @@ namespace DwarfCorp
             MaxValue = maxValue;
             Mode = mode;
             Layout = new GridLayout(GUI, this, 1, 4);
-            PlusButton = new Button(GUI, Layout, "", GUI.DefaultFont, Button.ButtonMode.ImageButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.ZoomIn))
+            PlusButton = new Button(GUI, Layout, "", GUI.DefaultFont, Button.ButtonMode.ImageButton,
+                GUI.Skin.GetSpecialFrame(GUISkin.Tile.ZoomIn))
             {
                 KeepAspectRatio = true,
                 DontMakeSmaller = true
             };
-            MinusButton = new Button(GUI, Layout, "", GUI.DefaultFont, Button.ButtonMode.ImageButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.ZoomOut))
+            MinusButton = new Button(GUI, Layout, "", GUI.DefaultFont, Button.ButtonMode.ImageButton,
+                GUI.Skin.GetSpecialFrame(GUISkin.Tile.ZoomOut))
             {
                 KeepAspectRatio = true,
                 DontMakeSmaller = true
@@ -98,6 +84,17 @@ namespace DwarfCorp
             OnValueChanged += SpinBox_OnValueChanged;
         }
 
+        public float SpinValue { get; set; }
+        public float MaxValue { get; set; }
+        public float MinValue { get; set; }
+        public float Increment { get; set; }
+        public SpinMode Mode { get; set; }
+        public GridLayout Layout { get; set; }
+        public Button PlusButton { get; set; }
+        public Button MinusButton { get; set; }
+        public LineEdit ValueBox { get; set; }
+        public event ValueChangedDelegate OnValueChanged;
+
         private void SpinBox_OnValueChanged(SpinBox value)
         {
         }
@@ -108,7 +105,7 @@ namespace DwarfCorp
 
             SpinValue = Math.Min(Math.Max(SpinValue, MinValue), MaxValue);
 
-            if(Mode == SpinMode.Integer)
+            if (Mode == SpinMode.Integer)
             {
                 SpinValue = (int) SpinValue;
             }
@@ -121,7 +118,7 @@ namespace DwarfCorp
         {
             SpinValue += Increment;
             SpinValue = Math.Min(Math.Max(SpinValue, MinValue), MaxValue);
-            if(Mode == SpinMode.Integer)
+            if (Mode == SpinMode.Integer)
             {
                 SpinValue = (int) SpinValue;
             }
@@ -130,5 +127,4 @@ namespace DwarfCorp
             OnValueChanged.Invoke(this);
         }
     }
-
 }

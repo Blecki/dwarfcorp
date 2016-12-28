@@ -30,10 +30,9 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using BloomPostprocess;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -41,51 +40,10 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DwarfCorp
 {
     /// <summary>
-    /// Draws the fancy scrolling background behind the main menu.
+    ///     Draws the fancy scrolling background behind the main menu.
     /// </summary>
     public class Terrain2D
     {
-
-
-
-        public struct TerrainElement
-        {
-            public string Name;
-            public ImageFrame Image;
-            public float SpawnScale;
-            public float SpawnThreshold;
-        }
-
-        public TerrainElement Soil { get; set; }
-
-        public TerrainElement Grass { get; set; }
-
-        public TerrainElement Substrate { get; set; }
-
-        public TerrainElement Cave { get; set; }
-
-
-
-        public List<TerrainElement> Ores { get; set; }
-
-        public float CaveScale { get; set; }
-        public float CaveThreshold { get; set; }
-
-
-        public int TileSize { get; set; }
-
-        public float LavaHeight { get; set; }
-
-        public Perlin Noise { get; set; }
-
-        public float HeightScale { get; set; }
-
-        public float SoilHeight { get; set; }
-
-        public TerrainElement Lava { get; set; }
-
-        public BloomComponent Bloom { get; set; }
-
         public float MinHeight = 0.45f;
 
         public Terrain2D(DwarfGame game)
@@ -135,7 +93,6 @@ namespace DwarfCorp
             };
 
 
-
             Ores = new List<TerrainElement>
             {
                 new TerrainElement
@@ -155,8 +112,36 @@ namespace DwarfCorp
             };
 
             Bloom.Initialize();
-
         }
+
+        public TerrainElement Soil { get; set; }
+
+        public TerrainElement Grass { get; set; }
+
+        public TerrainElement Substrate { get; set; }
+
+        public TerrainElement Cave { get; set; }
+
+
+        public List<TerrainElement> Ores { get; set; }
+
+        public float CaveScale { get; set; }
+        public float CaveThreshold { get; set; }
+
+
+        public int TileSize { get; set; }
+
+        public float LavaHeight { get; set; }
+
+        public Perlin Noise { get; set; }
+
+        public float HeightScale { get; set; }
+
+        public float SoilHeight { get; set; }
+
+        public TerrainElement Lava { get; set; }
+
+        public BloomComponent Bloom { get; set; }
 
         public void Render(GraphicsDevice graphics, SpriteBatch sprites, DwarfTime time)
         {
@@ -164,82 +149,83 @@ namespace DwarfCorp
             sprites.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
                 DepthStencilState.Default, RasterizerState.CullNone);
             graphics.Clear(Color.SkyBlue);
-          
+
 
             Rectangle screenRect = graphics.Viewport.Bounds;
 
-            int maxX = screenRect.Width / TileSize + 2;
-            int maxY = screenRect.Width / TileSize;
+            int maxX = screenRect.Width/TileSize + 2;
+            int maxY = screenRect.Width/TileSize;
 
-            
 
-            float t = (float)time.TotalGameTime.TotalSeconds;
+            var t = (float) time.TotalGameTime.TotalSeconds;
 
-            float offsetX = t * 2.0f;
+            float offsetX = t*2.0f;
             float offsetY = 0.0f;
-            
-            float st = (float)Math.Abs(Math.Sin(t));
+
+            var st = (float) Math.Abs(Math.Sin(t));
 
             float lava = LavaHeight;
             int backSize = 2;
-            
-            for(int ix = 0; ix < maxX * backSize; ix++)
+
+            for (int ix = 0; ix < maxX*backSize; ix++)
             {
-                float x = ix + (int)(offsetX * 0.6f);
+                float x = ix + (int) (offsetX*0.6f);
 
-                float height = Noise.Noise(x * HeightScale * 3, 0, 100) * 0.5f + 0.6f;
-                for (int iy = 0; iy < maxY * backSize; iy++)
+                float height = Noise.Noise(x*HeightScale*3, 0, 100)*0.5f + 0.6f;
+                for (int iy = 0; iy < maxY*backSize; iy++)
                 {
-                    float y = iy + (int)offsetY;
-                    float normalizedY = (1.0f) - (float)y / (float)(maxY * backSize);
+                    float y = iy + (int) offsetY;
+                    float normalizedY = (1.0f) - y/(maxY*backSize);
 
-                    if(normalizedY < height)
+                    if (normalizedY < height)
                     {
-                        float tileX = ix * (TileSize / backSize) - ((offsetX * 0.6f) * (TileSize / backSize)) % (TileSize / backSize);
-                        float tileY = iy * (TileSize / backSize);
+                        float tileX = ix*(TileSize/backSize) - ((offsetX*0.6f)*(TileSize/backSize))%(TileSize/backSize);
+                        float tileY = iy*(TileSize/backSize);
 
-                        Drawer2D.FillRect(sprites, new Rectangle((int)tileX, (int)tileY, TileSize / backSize, TileSize / backSize), new Color((int)(Color.SkyBlue.R * normalizedY * 0.8f), (int)(Color.SkyBlue.G * normalizedY * 0.8f), (int)(Color.SkyBlue.B * normalizedY)));
+                        Drawer2D.FillRect(sprites,
+                            new Rectangle((int) tileX, (int) tileY, TileSize/backSize, TileSize/backSize),
+                            new Color((int) (Color.SkyBlue.R*normalizedY*0.8f), (int) (Color.SkyBlue.G*normalizedY*0.8f),
+                                (int) (Color.SkyBlue.B*normalizedY)));
                     }
-
                 }
             }
-            
-            
-            for(int ix = 0; ix < maxX; ix++)
+
+
+            for (int ix = 0; ix < maxX; ix++)
             {
-                float x = ix + (int)offsetX;
-                float height = Noise.Noise(x * HeightScale, 0, 0) * 0.8f + MinHeight;
+                float x = ix + (int) offsetX;
+                float height = Noise.Noise(x*HeightScale, 0, 0)*0.8f + MinHeight;
                 for (int iy = 0; iy < maxY; iy++)
                 {
-                    float y = iy + (int)offsetY;
-                    float normalizedY = (1.0f) - (float) y / (float) maxY;
+                    float y = iy + (int) offsetY;
+                    float normalizedY = (1.0f) - y/maxY;
 
-                    if(Math.Abs(normalizedY - height) < 0.01f)
+                    if (Math.Abs(normalizedY - height) < 0.01f)
                     {
-                        Color tint = new Color(normalizedY, normalizedY, normalizedY);
+                        var tint = new Color(normalizedY, normalizedY, normalizedY);
 
                         RenderTile(Grass, sprites, ix, iy, offsetX, t, tint);
                     }
-                    else if(normalizedY > height - 0.1f && normalizedY < height)
+                    else if (normalizedY > height - 0.1f && normalizedY < height)
                     {
-                        Color tint = new Color((float)Math.Pow(normalizedY, 1.5f), (float)Math.Pow(normalizedY, 1.6f), normalizedY);
+                        var tint = new Color((float) Math.Pow(normalizedY, 1.5f), (float) Math.Pow(normalizedY, 1.6f),
+                            normalizedY);
 
                         RenderTile(Soil, sprites, ix, iy, offsetX, t, tint);
                     }
-                    else if(normalizedY < height)
+                    else if (normalizedY < height)
                     {
-                        float caviness = Noise.Noise(x * CaveScale, y * CaveScale, 0);
+                        float caviness = Noise.Noise(x*CaveScale, y*CaveScale, 0);
 
                         if (caviness < CaveThreshold)
                         {
-
                             TerrainElement? oreFound = null;
 
                             int i = 0;
                             foreach (TerrainElement ore in Ores)
                             {
                                 i++;
-                                float oreNess = Noise.Noise(x * ore.SpawnScale, y * ore.SpawnScale, i);
+                                float oreNess = Noise.Noise(x*ore.SpawnScale, y*ore.SpawnScale, i);
 
                                 if (oreNess > ore.SpawnThreshold)
                                 {
@@ -247,7 +233,8 @@ namespace DwarfCorp
                                 }
                             }
 
-                            Color tint = new Color((float)Math.Pow(normalizedY, 1.5f) * 0.5f, (float)Math.Pow(normalizedY, 1.6f) * 0.5f, normalizedY * 0.5f);
+                            var tint = new Color((float) Math.Pow(normalizedY, 1.5f)*0.5f,
+                                (float) Math.Pow(normalizedY, 1.6f)*0.5f, normalizedY*0.5f);
 
                             if (oreFound == null)
                             {
@@ -260,37 +247,46 @@ namespace DwarfCorp
                         }
                         else
                         {
-
                             if (normalizedY < lava)
                             {
-                                float glowiness = Noise.Noise(x * CaveScale * 2, y * CaveScale * 2, t);
-                                RenderTile(Lava, sprites, ix, iy, offsetX, t, new Color(0.5f * glowiness + 0.5f, 0.7f * glowiness + 0.3f * st, glowiness));
+                                float glowiness = Noise.Noise(x*CaveScale*2, y*CaveScale*2, t);
+                                RenderTile(Lava, sprites, ix, iy, offsetX, t,
+                                    new Color(0.5f*glowiness + 0.5f, 0.7f*glowiness + 0.3f*st, glowiness));
                             }
                             else
                             {
-                                RenderTile(Cave, sprites, ix, iy, offsetX, t, new Color((float)Math.Pow(normalizedY, 1.5f) * (1.0f - caviness) * 0.8f, (float)Math.Pow(normalizedY, 1.6f) * (1.0f - caviness) * 0.8f, normalizedY * (1.0f - caviness)));
+                                RenderTile(Cave, sprites, ix, iy, offsetX, t,
+                                    new Color((float) Math.Pow(normalizedY, 1.5f)*(1.0f - caviness)*0.8f,
+                                        (float) Math.Pow(normalizedY, 1.6f)*(1.0f - caviness)*0.8f,
+                                        normalizedY*(1.0f - caviness)));
                             }
-
                         }
                     }
-                    
                 }
-             
             }
-             
-             
-            sprites.End();
-            
-            Bloom.Draw(time.ToGameTime());
 
+
+            sprites.End();
+
+            Bloom.Draw(time.ToGameTime());
         }
 
-        public void RenderTile(TerrainElement element, SpriteBatch sprites, int ix, int iy, float x, float originX, Color tint)
+        public void RenderTile(TerrainElement element, SpriteBatch sprites, int ix, int iy, float x, float originX,
+            Color tint)
         {
-            float tileX = ix * TileSize - ((x) * TileSize) % TileSize;
-            float tileY = iy * TileSize;
+            float tileX = ix*TileSize - ((x)*TileSize)%TileSize;
+            float tileY = iy*TileSize;
 
-            sprites.Draw(element.Image.Image, new Rectangle((int)tileX, (int)tileY, TileSize, TileSize), element.Image.SourceRect, tint);
+            sprites.Draw(element.Image.Image, new Rectangle((int) tileX, (int) tileY, TileSize, TileSize),
+                element.Image.SourceRect, tint);
+        }
+
+        public struct TerrainElement
+        {
+            public ImageFrame Image;
+            public string Name;
+            public float SpawnScale;
+            public float SpawnThreshold;
         }
     }
 }

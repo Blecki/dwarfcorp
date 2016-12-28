@@ -30,10 +30,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 
@@ -41,16 +39,11 @@ namespace DwarfCorp
 {
     public class FarmAct : CompoundCreatureAct
     {
-        public FarmTool.FarmTile FarmToWork { get; set; }
-        public string PlantToCreate { get; set; }
-        public List<ResourceAmount> Resources { get; set; }   
-        public enum FarmMode 
+        public enum FarmMode
         {
             Till,
             Plant
         }
-
-        public FarmMode Mode { get; set; }
 
         public FarmAct()
         {
@@ -63,16 +56,19 @@ namespace DwarfCorp
             Name = "Work a farm";
         }
 
-        bool Satisfied()
+        public FarmTool.FarmTile FarmToWork { get; set; }
+        public string PlantToCreate { get; set; }
+        public List<ResourceAmount> Resources { get; set; }
+
+        public FarmMode Mode { get; set; }
+
+        private bool Satisfied()
         {
             if (Mode == FarmMode.Plant)
             {
                 return FarmToWork.PlantExists();
             }
-            else
-            {
-                return FarmToWork.IsTilled();
-            }
+            return FarmToWork.IsTilled();
         }
 
         public IEnumerable<Status> FarmATile()
@@ -92,7 +88,6 @@ namespace DwarfCorp
                 Creature.Sprite.PlayAnimations(Creature.CharacterMode.Attacking);
                 while (tile.Progress < 100.0f && !Satisfied())
                 {
-
                     Creature.Physics.Velocity *= 0.1f;
                     tile.Progress += Creature.Stats.BaseFarmSpeed;
 
@@ -102,7 +97,7 @@ namespace DwarfCorp
                     if (tile.Progress >= 100.0f && !Satisfied())
                     {
                         tile.Progress = 0.0f;
-                        if (Mode == FarmAct.FarmMode.Plant)
+                        if (Mode == FarmMode.Plant)
                         {
                             FarmToWork.CreatePlant(PlantToCreate);
                             DestroyResources();
@@ -129,7 +124,7 @@ namespace DwarfCorp
 
         public override void OnCanceled()
         {
-            FarmTool.FarmTile tile = Creature.AI.Blackboard.GetData<FarmTool.FarmTile>("ClosestTile");
+            var tile = Creature.AI.Blackboard.GetData<FarmTool.FarmTile>("ClosestTile");
 
             if (tile != null)
             {

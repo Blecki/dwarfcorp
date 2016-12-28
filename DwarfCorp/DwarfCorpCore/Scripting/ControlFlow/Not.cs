@@ -30,27 +30,26 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// Inverts a child behavior so that it returns success on failure, and vice versa.
-    /// If the child is running, returns "Running".
+    ///     Inverts a child behavior so that it returns success on failure, and vice versa.
+    ///     If the child is running, returns "Running".
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class Not : Act
     {
-        private Act Child { get; set; }
-
         public Not(Act behavior)
         {
             Name = "Not";
             Child = behavior;
         }
+
+        private Act Child { get; set; }
 
         public override void Initialize()
         {
@@ -64,21 +63,21 @@ namespace DwarfCorp
         {
             bool done = false;
 
-            while(!done)
+            while (!done)
             {
                 Status childStatus = Child.Tick();
 
-                if(childStatus == Status.Running)
+                if (childStatus == Status.Running)
                 {
                     yield return Status.Running;
                 }
-                else if(childStatus == Status.Success)
+                else if (childStatus == Status.Success)
                 {
                     yield return Status.Fail;
                     done = true;
                     break;
                 }
-                else if(childStatus == Status.Fail)
+                else if (childStatus == Status.Fail)
                 {
                     yield return Status.Success;
                     done = true;
@@ -87,5 +86,4 @@ namespace DwarfCorp
             }
         }
     }
-
 }

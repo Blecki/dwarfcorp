@@ -30,6 +30,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,19 +41,22 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     /// <summary>
-    /// This designation specifies a list of voxels which are to be turned
-    /// into a BuildRoom.
+    ///     This designation specifies a list of voxels which are to be turned
+    ///     into a built room and the resources to put into the room's construction.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class BuildRoomOrder
     {
-        public Room ToBuild { get; set; }
-        public Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> PutResources { get; set; }
-        public List<BuildVoxelOrder> VoxelOrders { get; set; }
-        public Faction Faction { get; set; }
-        public List<GameComponent> WorkObjects = new List<GameComponent>(); 
-        public bool IsBuilt { get; set; }
+        /// <summary>
+        ///     Decorations that appear around the construction site.
+        /// </summary>
+        public List<GameComponent> WorkObjects = new List<GameComponent>();
 
+        /// <summary>
+        ///     Create a build room order.
+        /// </summary>
+        /// <param name="toBuild">The room type to create.</param>
+        /// <param name="faction">The faction that owns the room.</param>
         public BuildRoomOrder(Room toBuild, Faction faction)
         {
             ToBuild = toBuild;
@@ -62,36 +66,76 @@ namespace DwarfCorp
             Faction = faction;
         }
 
+        /// <summary>
+        ///     The kind of room to create.
+        /// </summary>
+        public Room ToBuild { get; set; }
 
+        /// <summary>
+        ///     The resources required to build the room.
+        /// </summary>
+        public Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> PutResources { get; set; }
+
+        /// <summary>
+        ///     The voxels that make up the room.
+        /// </summary>
+        public List<BuildVoxelOrder> VoxelOrders { get; set; }
+
+        /// <summary>
+        ///     The faction the room belongs to.
+        /// </summary>
+        public Faction Faction { get; set; }
+
+        /// <summary>
+        ///     If true, the room has been constructed.
+        /// </summary>
+        public bool IsBuilt { get; set; }
+
+
+        /// <summary>
+        ///     Creates a bunch of work fences around the room during construction.
+        ///     These are delted after the room has been built.
+        /// </summary>
         public void CreateFences()
         {
-            Voxel neighbor = new Voxel();
+            var neighbor = new Voxel();
 
             Vector3 half = Vector3.One*0.5f;
             Vector3 off = half + Vector3.Up;
+
+            // Check each voxel and determine if it is on an edge of the room.
+            // For each edge voxel, put a fence along its border.
             foreach (BuildVoxelOrder order in VoxelOrders)
             {
                 Voxel voxel = order.Voxel;
-                if (voxel.GetNeighbor(new Vector3(0, 0, 1), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
+                if (voxel.GetNeighbor(new Vector3(0, 0, 1), ref neighbor) &&
+                    !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
                 {
-                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(0, 0, 0.45f), (float)Math.Atan2(0, 1)));
+                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(0, 0, 0.45f),
+                        (float) Math.Atan2(0, 1)));
                 }
 
-                if (voxel.GetNeighbor(new Vector3(0, 0, -1), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
+                if (voxel.GetNeighbor(new Vector3(0, 0, -1), ref neighbor) &&
+                    !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
                 {
-                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(0, 0, -0.45f), (float)Math.Atan2(0, -1)));
+                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(0, 0, -0.45f),
+                        (float) Math.Atan2(0, -1)));
                 }
 
 
-                if (voxel.GetNeighbor(new Vector3(1, 0, 0), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
+                if (voxel.GetNeighbor(new Vector3(1, 0, 0), ref neighbor) &&
+                    !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
                 {
-                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(0.45f, 0, 0.0f), (float)Math.Atan2(1, 0)));
+                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(0.45f, 0, 0.0f),
+                        (float) Math.Atan2(1, 0)));
                 }
 
 
-                if (voxel.GetNeighbor(new Vector3(-1, 0, 0), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
+                if (voxel.GetNeighbor(new Vector3(-1, 0, 0), ref neighbor) &&
+                    !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
                 {
-                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(-0.45f, 0, 0.0f), (float)Math.Atan2(-1, 0)));
+                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(-0.45f, 0, 0.0f),
+                        (float) Math.Atan2(-1, 0)));
                 }
 
                 if (MathFunctions.RandEvent(0.1f))
@@ -101,18 +145,23 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        ///     Takes a list of resources and destroys them, putting them into the room construction site.
+        ///     Once all the required resources have been found, the room can be built.
+        /// </summary>
+        /// <param name="resources">The resources to put into the construction site.</param>
         public void AddResources(List<Quantitiy<Resource.ResourceTags>> resources)
         {
-            foreach (Quantitiy<Resource.ResourceTags> resource in resources)
+            foreach (var resource in resources)
             {
-                if(PutResources.ContainsKey(resource.ResourceType))
+                if (PutResources.ContainsKey(resource.ResourceType))
                 {
                     Quantitiy<Resource.ResourceTags> amount = PutResources[resource.ResourceType];
                     amount.NumResources += resource.NumResources;
                 }
                 else
                 {
-                    Quantitiy<Resource.ResourceTags> amount = new Quantitiy<Resource.ResourceTags>();
+                    var amount = new Quantitiy<Resource.ResourceTags>();
                     amount.NumResources += resource.NumResources;
                     amount.ResourceType = resource.ResourceType;
 
@@ -120,13 +169,16 @@ namespace DwarfCorp
                 }
             }
 
-            if(MeetsBuildRequirements())
+            if (MeetsBuildRequirements())
             {
                 Build();
             }
         }
 
-
+        /// <summary>
+        ///     Determine if the room can be built already.
+        /// </summary>
+        /// <returns>If the room has all the required resources, returns true.</returns>
         public bool MeetsBuildRequirements()
         {
             bool toReturn = true;
@@ -136,29 +188,33 @@ namespace DwarfCorp
                 {
                     return false;
                 }
-                else
-                {
-                    toReturn = toReturn && (PutResources[s].NumResources >= Math.Max((int)(ToBuild.RoomData.RequiredResources[s].NumResources * VoxelOrders.Count * 0.25f), 1));
-                }
+                toReturn = toReturn &&
+                           (PutResources[s].NumResources >=
+                            Math.Max(
+                                (int) (ToBuild.RoomData.RequiredResources[s].NumResources*VoxelOrders.Count*0.25f), 1));
             }
 
             return toReturn;
         }
 
+        /// <summary>
+        ///     Create the room, destroying any construction related decorations.
+        /// </summary>
         public virtual void Build()
         {
-            if(IsBuilt)
+            if (IsBuilt)
             {
                 return;
             }
 
-            foreach(BuildVoxelOrder vox in VoxelOrders)
+            foreach (BuildVoxelOrder vox in VoxelOrders)
             {
                 ToBuild.AddVoxel(vox.Voxel);
             }
             IsBuilt = true;
             ToBuild.IsBuilt = true;
-            RoomLibrary.GenerateRoomComponentsTemplate(ToBuild, Faction.Components, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics);
+            RoomLibrary.GenerateRoomComponentsTemplate(ToBuild, Faction.Components, PlayState.ChunkManager.Content,
+                PlayState.ChunkManager.Graphics);
             ToBuild.OnBuilt();
 
             PlayState.AnnouncementManager.Announce("Built room!", ToBuild.ID + " was built");
@@ -169,6 +225,10 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        ///     Get the room's bounding box.
+        /// </summary>
+        /// <returns>A box encompassing all the room's voxels.</returns>
         public BoundingBox GetBoundingBox()
         {
             List<BoundingBox> components = VoxelOrders.Select(vox => vox.Voxel.GetBoundingBox()).ToList();
@@ -176,63 +236,57 @@ namespace DwarfCorp
             return MathFunctions.GetBoundingBox(components);
         }
 
+        /// <summary>
+        ///     Determine if the construction site has enough of the required resources.
+        /// </summary>
+        /// <param name="name">The resource tag that must be satisfied.</param>
+        /// <returns>True if the construciton site has enough of the resource, False otherwise.</returns>
         public bool IsResourceSatisfied(Resource.ResourceTags name)
         {
             int required = GetNumRequiredResources(name);
             int current = 0;
 
-            if(PutResources.ContainsKey(name))
+            if (PutResources.ContainsKey(name))
             {
-                current = (int) PutResources[name].NumResources;
+                current = PutResources[name].NumResources;
             }
 
             return current >= required;
         }
 
+        /// <summary>
+        ///     Gets the number of a specific kind of resource required to build the room.
+        /// </summary>
+        /// <param name="name">The kind of resource needed to build the room.</param>
+        /// <returns>The number of resources of that kind needed.</returns>
         public int GetNumRequiredResources(Resource.ResourceTags name)
         {
-            if(ToBuild.RoomData.RequiredResources.ContainsKey(name))
+            if (ToBuild.RoomData.RequiredResources.ContainsKey(name))
             {
-                return Math.Max((int) (ToBuild.RoomData.RequiredResources[name].NumResources * VoxelOrders.Count * 0.25f), 1);
+                return Math.Max((int) (ToBuild.RoomData.RequiredResources[name].NumResources*VoxelOrders.Count*0.25f), 1);
             }
-            else
-            {
-                return 0;
-            }
+            return 0;
         }
 
-        public string GetTextDisplay()
-        {
-            string toReturn = ToBuild.RoomData.Name;
-
-            foreach (Quantitiy<Resource.ResourceTags> amount in ToBuild.RoomData.RequiredResources.Values)
-            {
-                toReturn += "\n";
-                int numResource = 0;
-                if(PutResources.ContainsKey(amount.ResourceType))
-                {
-                    numResource = (int) (PutResources[amount.ResourceType].NumResources);
-                }
-                toReturn += amount.ResourceType.ToString() + " : " + numResource + "/" + Math.Max((int) (amount.NumResources * VoxelOrders.Count * 0.25f), 1);
-            }
-
-            return toReturn;
-        }
-
+        /// <summary>
+        ///     Gets a list of resource tags needed by this room.
+        /// </summary>
+        /// <returns>A list of resource tags required to build the room.</returns>
         public List<Quantitiy<Resource.ResourceTags>> ListRequiredResources()
         {
-            List<Quantitiy<Resource.ResourceTags>> toReturn = new List<Quantitiy<Resource.ResourceTags>>();
+            var toReturn = new List<Quantitiy<Resource.ResourceTags>>();
             foreach (Resource.ResourceTags s in ToBuild.RoomData.RequiredResources.Keys)
             {
-                int needed = Math.Max((int) (ToBuild.RoomData.RequiredResources[s].NumResources * VoxelOrders.Count * 0.25f), 1);
+                int needed = Math.Max(
+                    (int) (ToBuild.RoomData.RequiredResources[s].NumResources*VoxelOrders.Count*0.25f), 1);
                 int currentResources = 0;
 
-                if(PutResources.ContainsKey(s))
+                if (PutResources.ContainsKey(s))
                 {
                     currentResources = PutResources[s].NumResources;
                 }
 
-                if(currentResources >= needed)
+                if (currentResources >= needed)
                 {
                     continue;
                 }
@@ -243,5 +297,4 @@ namespace DwarfCorp
             return toReturn;
         }
     }
-
 }

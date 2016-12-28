@@ -30,21 +30,47 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    ///     The announcement manager handles sending messages to the player on events.
+    /// </summary>
     [JsonObject(IsReference = true)]
     public class AnnouncementManager
     {
+        /// <summary>
+        ///     Delegate called whenever an announcement is added to the view.
+        /// </summary>
+        /// <param name="announcement">The announcement to add.</param>
         public delegate void AnnouncementAdded(Announcement announcement);
+
+        /// <summary>
+        ///     Delegate called whenever an announcement is removed from view.
+        /// </summary>
+        /// <param name="announcement">The announcement to remove.</param>
         public delegate void AnnouncementRemoved(Announcement announcement);
+
+        public AnnouncementManager()
+        {
+            Announcements = new List<Announcement>();
+            MaxAnnouncements = 32;
+        }
+
+        /// <summary>
+        ///     Maximum number of announcements displayed to the user at any time.
+        /// </summary>
+        public int MaxAnnouncements { get; set; }
+
+        /// <summary>
+        ///     List of all announcements displayed to the user.
+        /// </summary>
+        public List<Announcement> Announcements { get; set; }
 
         public event AnnouncementAdded OnAdded;
 
@@ -62,18 +88,15 @@ namespace DwarfCorp
             if (handler != null) handler(announcement);
         }
 
-        public int MaxAnnouncements { get; set; }
-        public List<Announcement> Announcements { get; set; }
-
-        public AnnouncementManager()
-        {
-            Announcements = new List<Announcement>();
-            MaxAnnouncements = 32;
-        }
-
+        /// <summary>
+        ///     Creates a new Announcement with te gven title and message.
+        /// </summary>
+        /// <param name="title">The short text displayed to the user.</param>
+        /// <param name="message">Longer text displayed to the user whenever they mouse over the message.</param>
+        /// <param name="clickAction">Delegate to call whenever an announcement is clicked.</param>
         public void Announce(string title, string message, Announcement.Clicked clickAction = null)
         {
-            Announcement toAdd = new Announcement
+            var toAdd = new Announcement
             {
                 Color = Color.Black,
                 Icon = null,
@@ -89,6 +112,10 @@ namespace DwarfCorp
             AddAnnouncement(toAdd);
         }
 
+        /// <summary>
+        ///     Add an announcement to the list. Removes old announcements that are no longer relevant.
+        /// </summary>
+        /// <param name="announcement">The announcement to add.</param>
         public void AddAnnouncement(Announcement announcement)
         {
             Announcements.Add(announcement);
@@ -101,12 +128,6 @@ namespace DwarfCorp
             }
 
             OnAdded(announcement);
-
-            if (Announcements.Count > 25)
-            {
-                Announcements.RemoveAt(0);
-            }
         }
-
     }
 }

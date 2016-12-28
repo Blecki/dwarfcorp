@@ -30,21 +30,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This GUI component is a window which opens up on top
-    /// of the GUI, and blocks the game until it gets user input.
+    ///     This GUI component is a window which opens up on top
+    ///     of the GUI, and blocks the game until it gets user input.
     /// </summary>
     public class HireDialog : Dialog
     {
+        public delegate void HiredDelegate(Applicant applicant);
+
+        public HireDialog(DwarfGUI gui, GUIComponent parent)
+            : base(gui, parent)
+        {
+        }
 
         public ListSelector ApplicantSelector { get; set; }
         public ApplicationPanel ApplicantPanel { get; set; }
@@ -53,8 +57,6 @@ namespace DwarfCorp
         public Button HireButton { get; set; }
         public Faction Faction { get; set; }
         public bool WasSomeoneHired { get; set; }
-       
-        public delegate void HiredDelegate(Applicant applicant);
 
         public event HiredDelegate OnHired;
 
@@ -62,14 +64,13 @@ namespace DwarfCorp
         {
             HiredDelegate handler = OnHired;
             if (handler != null) handler(applicant);
-            
         }
 
         public static HireDialog Popup(DwarfGUI gui, Faction faction)
         {
             int w = gui.Graphics.Viewport.Width - 64;
             int h = gui.Graphics.Viewport.Height - 64;
-            HireDialog toReturn = new HireDialog(gui, gui.RootComponent)
+            var toReturn = new HireDialog(gui, gui.RootComponent)
             {
                 Faction = faction,
                 LocalBounds =
@@ -79,28 +80,22 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public HireDialog(DwarfGUI gui, GUIComponent parent) 
-            : base(gui, parent)
-        {
-        }
-
         public void GenerateApplicants()
         {
             Applicants = new List<Applicant>();
 
-            foreach (KeyValuePair<JobLibrary.JobType, EmployeeClass> employeeType in JobLibrary.Classes)
+            foreach (var employeeType in JobLibrary.Classes)
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    Applicant applicant = new Applicant();
+                    var applicant = new Applicant();
                     applicant.GenerateRandom(employeeType.Value, 0);
-                    Applicants.Add(applicant);   
+                    Applicants.Add(applicant);
                 }
             }
-           
         }
 
-        public override void Initialize(Dialog.ButtonType buttons, string title, string message)
+        public override void Initialize(ButtonType buttons, string title, string message)
         {
             WasSomeoneHired = false;
             GenerateApplicants();
@@ -110,24 +105,24 @@ namespace DwarfCorp
 
             int w = LocalBounds.Width;
             int h = LocalBounds.Height;
-            int rows = h / 64;
+            int rows = h/64;
             int cols = 8;
-            
-            GridLayout layout = new GridLayout(GUI, this, rows, cols);
+
+            var layout = new GridLayout(GUI, this, rows, cols);
             Title = new Label(GUI, layout, title, GUI.TitleFont);
             layout.SetComponentPosition(Title, 0, 0, 2, 1);
 
 
-            GroupBox applicantSelectorBox = new GroupBox(GUI, layout, "");
-            layout.SetComponentPosition(applicantSelectorBox, 0, 1, rows / 2 - 1, cols - 1);
+            var applicantSelectorBox = new GroupBox(GUI, layout, "");
+            layout.SetComponentPosition(applicantSelectorBox, 0, 1, rows/2 - 1, cols - 1);
 
-            GridLayout selectorLayout = new GridLayout(GUI, applicantSelectorBox, 1, 1);
-            ScrollView view = new ScrollView(GUI, selectorLayout);
+            var selectorLayout = new GridLayout(GUI, applicantSelectorBox, 1, 1);
+            var view = new ScrollView(GUI, selectorLayout);
             ApplicantSelector = new ListSelector(GUI, view)
             {
                 Label = "-Applicants-"
             };
-            
+
             selectorLayout.SetComponentPosition(view, 0, 0, 1, 1);
 
             foreach (Applicant applicant in Applicants)
@@ -136,16 +131,16 @@ namespace DwarfCorp
             }
 
             ApplicantSelector.DrawPanel = false;
-            ApplicantSelector.LocalBounds = new Rectangle(0, 0, 128, Applicants.Count * 24);
+            ApplicantSelector.LocalBounds = new Rectangle(0, 0, 128, Applicants.Count*24);
 
             ApplicantSelector.OnItemSelected += ApplicantSelector_OnItemSelected;
 
             CurrentApplicant = Applicants[0];
 
-            GroupBox applicantPanel = new GroupBox(GUI, layout, "");
-            layout.SetComponentPosition(applicantPanel, rows / 2 - 1, 1, rows / 2 - 1, cols - 1);
+            var applicantPanel = new GroupBox(GUI, layout, "");
+            layout.SetComponentPosition(applicantPanel, rows/2 - 1, 1, rows/2 - 1, cols - 1);
 
-            GridLayout applicantLayout = new GridLayout(GUI, applicantPanel, 1, 1);
+            var applicantLayout = new GridLayout(GUI, applicantPanel, 1, 1);
 
             ApplicantPanel = new ApplicationPanel(applicantLayout);
             applicantLayout.SetComponentPosition(ApplicantPanel, 0, 0, 1, 1);
@@ -172,25 +167,28 @@ namespace DwarfCorp
 
             if (createOK)
             {
-                Button okButton = new Button(GUI, layout, "OK", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Check));
-                layout.SetComponentPosition(okButton, cols - 2, rows - 1 , 2, 1);
+                var okButton = new Button(GUI, layout, "OK", GUI.DefaultFont, Button.ButtonMode.ToolButton,
+                    GUI.Skin.GetSpecialFrame(GUISkin.Tile.Check));
+                layout.SetComponentPosition(okButton, cols - 2, rows - 1, 2, 1);
                 okButton.OnClicked += okButton_OnClicked;
             }
 
             if (createCancel)
             {
-                Button cancelButton = new Button(GUI, layout, "Cancel", GUI.DefaultFont, Button.ButtonMode.PushButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Ex));
+                var cancelButton = new Button(GUI, layout, "Cancel", GUI.DefaultFont, Button.ButtonMode.PushButton,
+                    GUI.Skin.GetSpecialFrame(GUISkin.Tile.Ex));
                 layout.SetComponentPosition(cancelButton, cols - 4, rows - 1, 2, 1);
                 cancelButton.OnClicked += cancelButton_OnClicked;
             }
 
-            HireButton = new Button(GUI, layout, "Hire", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.ZoomIn));
+            HireButton = new Button(GUI, layout, "Hire", GUI.DefaultFont, Button.ButtonMode.ToolButton,
+                GUI.Skin.GetSpecialFrame(GUISkin.Tile.ZoomIn));
             layout.SetComponentPosition(HireButton, cols - 1, rows - 2, 1, 1);
 
             HireButton.OnClicked += HireButton_OnClicked;
         }
 
-        void HireButton_OnClicked()
+        private void HireButton_OnClicked()
         {
             List<Room> rooms = Faction.GetRooms();
 
@@ -198,13 +196,15 @@ namespace DwarfCorp
 
             if (CurrentApplicant.Level.Pay*4 > Faction.Economy.CurrentMoney)
             {
-                Dialog.Popup(GUI, "Can't hire!",
-                    "We can't afford the signing bonus. Our treasury: " + Faction.Economy.CurrentMoney.ToString("C"), ButtonType.OK, 500, 300, this, LocalBounds.Width / 2 - 250, LocalBounds.Height/2 - 150);
+                Popup(GUI, "Can't hire!",
+                    "We can't afford the signing bonus. Our treasury: " + Faction.Economy.CurrentMoney.ToString("C"),
+                    ButtonType.OK, 500, 300, this, LocalBounds.Width/2 - 250, LocalBounds.Height/2 - 150);
             }
             else if (!hasBalloonPort)
             {
-                Dialog.Popup(GUI, "Can't hire!",
-                  "We can't hire anyone when there are no balloon ports.", ButtonType.OK, 500, 300, this, LocalBounds.Width / 2 - 250, LocalBounds.Height / 2 - 150);
+                Popup(GUI, "Can't hire!",
+                    "We can't hire anyone when there are no balloon ports.", ButtonType.OK, 500, 300, this,
+                    LocalBounds.Width/2 - 250, LocalBounds.Height/2 - 150);
             }
             else
             {
@@ -225,18 +225,18 @@ namespace DwarfCorp
             }
         }
 
-        void ApplicantSelector_OnItemSelected(int index, ListItem item)
+        private void ApplicantSelector_OnItemSelected(int index, ListItem item)
         {
             CurrentApplicant = Applicants[index];
             ApplicantPanel.SetApplicant(CurrentApplicant);
         }
 
-        void cancelButton_OnClicked()
+        private void cancelButton_OnClicked()
         {
             Close(ReturnStatus.Ok);
         }
 
-        void okButton_OnClicked()
+        private void okButton_OnClicked()
         {
             if (WasSomeoneHired)
             {
@@ -248,13 +248,11 @@ namespace DwarfCorp
         }
 
 
-
-        void HireDialog_OnClosed(Dialog.ReturnStatus status)
+        private void HireDialog_OnClosed(ReturnStatus status)
         {
-          
         }
 
-        void HireDialog_OnClicked()
+        private void HireDialog_OnClicked()
         {
             if (IsMouseOver)
             {

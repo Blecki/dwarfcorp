@@ -30,49 +30,40 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using DwarfCorp.Tools.ServiceArchitecture;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// The Service architecutre divides a task into servers (Service) and subscribers (Subscriber).
-    /// The server looks at a list of requests, processes them, and then broadcasts the results
-    /// to subscribers. This all happens in parallel.
+    ///     The Service architecutre divides a task into servers (Service) and subscribers (Subscriber).
+    ///     The server looks at a list of requests, processes them, and then broadcasts the results
+    ///     to subscribers. This all happens in parallel.
     /// </summary>
     /// <typeparam Name="TRequest">The type of the request.</typeparam>
     /// <typeparam Name="TResponse">The type of the response</typeparam>
     [JsonObject(IsReference = true)]
-    public class Service <TRequest, TResponse> : IDisposable
+    public class Service<TRequest, TResponse> : IDisposable
     {
-        [JsonIgnore]
-        public ConcurrentQueue<KeyValuePair<uint, TRequest> > Requests { get; set; }
-
         private readonly Object subscriberlock = new object();
-
-        protected List<Subscriber<TRequest, TResponse>> Subscribers { get; set; }
-
-        [JsonIgnore]
-        public AutoResetEvent NeedsServiceEvent = null;
-
-        [JsonIgnore]
-        public Thread ServiceThreadObject = null;
-
         public bool ExitThreads = false;
+
+        [JsonIgnore] public AutoResetEvent NeedsServiceEvent = null;
+
+        [JsonIgnore] public Thread ServiceThreadObject = null;
 
         public Service()
         {
             Subscribers = new List<Subscriber<TRequest, TResponse>>();
 
             NeedsServiceEvent = new AutoResetEvent(false);
-            
+
             if (Requests == null)
             {
                 Requests = new ConcurrentQueue<KeyValuePair<uint, TRequest>>();
@@ -82,9 +73,20 @@ namespace DwarfCorp
             Restart();
         }
 
+        [JsonIgnore]
+        public ConcurrentQueue<KeyValuePair<uint, TRequest>> Requests { get; set; }
+
+        protected List<Subscriber<TRequest, TResponse>> Subscribers { get; set; }
+
+        public void Dispose()
+        {
+            if (NeedsServiceEvent != null)
+                NeedsServiceEvent.Dispose();
+        }
+
         public void AddSubscriber(Subscriber<TRequest, TResponse> subscriber)
         {
-            lock(subscriberlock)
+            lock (subscriberlock)
             {
                 Subscribers.Add(subscriber);
             }
@@ -92,7 +94,7 @@ namespace DwarfCorp
 
         public void RemoveSubscriber(Subscriber<TRequest, TResponse> subscriber)
         {
-            lock(subscriberlock)
+            lock (subscriberlock)
             {
                 Subscribers.Remove(subscriber);
             }
@@ -109,22 +111,21 @@ namespace DwarfCorp
                     ServiceThreadObject.Join();
                     ExitThreads = false;
                 }
-                ServiceThreadObject = new Thread(this.ServiceThread);
+                ServiceThreadObject = new Thread(ServiceThread);
                 ServiceThreadObject.Start();
             }
-            catch (System.AccessViolationException e)
+            catch (AccessViolationException e)
             {
                 Console.Error.WriteLine(e.Message);
             }
         }
 
 
-
         public void Die()
         {
             ExitThreads = true;
 
-            if(ServiceThreadObject != null)
+            if (ServiceThreadObject != null)
                 ServiceThreadObject.Join();
         }
 
@@ -161,9 +162,9 @@ namespace DwarfCorp
 
         public void BroadcastResponse(TResponse response, uint id)
         {
-            lock(subscriberlock)
+            lock (subscriberlock)
             {
-                foreach(Subscriber<TRequest, TResponse> subscriber in Subscribers.Where(subscriber => subscriber.ID == id))
+                foreach (var subscriber in Subscribers.Where(subscriber => subscriber.ID == id))
                 {
                     subscriber.Responses.Enqueue(response);
                 }
@@ -183,12 +184,6 @@ namespace DwarfCorp
                 TResponse response = HandleRequest(req.Value);
                 BroadcastResponse(response, req.Key);
             }
-        }
-
-        public void Dispose()
-        {
-            if(NeedsServiceEvent != null)
-                NeedsServiceEvent.Dispose();
         }
     }
 }

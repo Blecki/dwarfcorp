@@ -30,10 +30,9 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -41,47 +40,34 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     /// <summary>
-    /// A static collection of voxel types and their properties.
+    ///     A static collection of voxel types and their properties.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class VoxelLibrary
     {
-        /// <summary>
-        /// Specifies that a specific voxel is a resource which should
-        /// spawn in veins.
-        /// </summary>
-        public class ResourceSpawnRate
-        {
-            public float VeinSize;
-            public float VeinSpawnThreshold;
-            public float MinimumHeight;
-            public float MaximumHeight;
-            public float Probability;
-        }
-
-
         public static Dictionary<VoxelType, BoxPrimitive> PrimitiveMap = new Dictionary<VoxelType, BoxPrimitive>();
         public static VoxelType emptyType = null;
 
-        public static Dictionary<string, VoxelType> Types = new Dictionary<string, VoxelType>(); 
+        public static Dictionary<string, VoxelType> Types = new Dictionary<string, VoxelType>();
 
-        public VoxelLibrary()
+        public static void CreateTransitionUVs(GraphicsDevice graphics, Texture2D textureMap, int width, int height,
+            Point top, Point sides, Point bottom,
+            Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords> transitionTextures)
         {
-        }
-
-        public static void CreateTransitionUVs(GraphicsDevice graphics, Texture2D textureMap, int width, int height, Point top, Point sides, Point bottom, Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords> transitionTextures)
-        {
-            for(int i = 0; i < 16; i++)
+            for (int i = 0; i < 16; i++)
             {
-                Point topPoint = new Point(top.X + i, top.Y);
-                transitionTextures[(TransitionTexture)i] = new BoxPrimitive.BoxTextureCoords(textureMap.Width, textureMap.Height, width, height, sides, sides, topPoint, bottom, sides, sides);
+                var topPoint = new Point(top.X + i, top.Y);
+                transitionTextures[(TransitionTexture) i] = new BoxPrimitive.BoxTextureCoords(textureMap.Width,
+                    textureMap.Height, width, height, sides, sides, topPoint, bottom, sides, sides);
             }
         }
 
-        public static BoxPrimitive CreatePrimitive(GraphicsDevice graphics, Texture2D textureMap, int width, int height, Point top, Point sides, Point bottom)
+        public static BoxPrimitive CreatePrimitive(GraphicsDevice graphics, Texture2D textureMap, int width, int height,
+            Point top, Point sides, Point bottom)
         {
-            BoxPrimitive.BoxTextureCoords coords = new BoxPrimitive.BoxTextureCoords(textureMap.Width, textureMap.Height, width, height, sides, sides, top, bottom, sides, sides);
-            BoxPrimitive cube = new BoxPrimitive(graphics, 1.0f, 1.0f, 1.0f, coords);
+            var coords = new BoxPrimitive.BoxTextureCoords(textureMap.Width, textureMap.Height, width, height, sides,
+                sides, top, bottom, sides, sides);
+            var cube = new BoxPrimitive(1.0f, 1.0f, 1.0f, coords);
 
             return cube;
         }
@@ -90,34 +76,60 @@ namespace DwarfCorp
         {
             if (PrimitiveMap.Count > 0) return;
 
-            BoxPrimitive grassCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 0), new Point(2, 0), new Point(2, 0));
-            BoxPrimitive dirtCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 0), new Point(2, 0), new Point(2, 0));
-            BoxPrimitive stoneCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 2), new Point(1, 0), new Point(4, 2));
-            BoxPrimitive sandCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(1, 1), new Point(1, 1), new Point(1, 1));
-            BoxPrimitive ironCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 1), new Point(1, 2), new Point(4, 1));
-            BoxPrimitive goldCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 1), new Point(0, 2), new Point(3, 1));
-            BoxPrimitive coalCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 2), new Point(2, 2), new Point(2, 2));
-            BoxPrimitive manaCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(7, 1), new Point(6, 1), new Point(7, 1));
-            BoxPrimitive frostCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 1), new Point(2, 1), new Point(2, 0));
-            BoxPrimitive snowCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 7), new Point(3, 7), new Point(3, 7));
-            BoxPrimitive iceCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 7), new Point(2, 7), new Point(2, 7));
-            BoxPrimitive scaffoldCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(7, 0), new Point(7, 0), new Point(7, 0));
-            BoxPrimitive plankCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 0), new Point(4, 0), new Point(4, 0));
-            BoxPrimitive waterCube = CreatePrimitive(graphics, cubeTexture, cubeTexture.Width, cubeTexture.Height, new Point(0, 0), new Point(0, 0), new Point(0, 0));
-            BoxPrimitive cobblestoneCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 2), new Point(5, 2), new Point(5, 2));
-            BoxPrimitive magicCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 10), new Point(0, 10), new Point(0, 10));
-            BoxPrimitive bedrockCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 2), new Point(6, 2), new Point(6, 2));
-            BoxPrimitive brownTileCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 0), new Point(5, 0), new Point(5, 0));
-            BoxPrimitive blueTileCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 0), new Point(6, 0), new Point(6, 0));
-            BoxPrimitive tilledSoilCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 1), new Point(2, 0), new Point(2, 0));
+            BoxPrimitive grassCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 0), new Point(2, 0),
+                new Point(2, 0));
+            BoxPrimitive dirtCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 0), new Point(2, 0),
+                new Point(2, 0));
+            BoxPrimitive stoneCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 2), new Point(1, 0),
+                new Point(4, 2));
+            BoxPrimitive sandCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(1, 1), new Point(1, 1),
+                new Point(1, 1));
+            BoxPrimitive ironCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 1), new Point(1, 2),
+                new Point(4, 1));
+            BoxPrimitive goldCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 1), new Point(0, 2),
+                new Point(3, 1));
+            BoxPrimitive coalCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 2), new Point(2, 2),
+                new Point(2, 2));
+            BoxPrimitive manaCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(7, 1), new Point(6, 1),
+                new Point(7, 1));
+            BoxPrimitive frostCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 1), new Point(2, 1),
+                new Point(2, 0));
+            BoxPrimitive snowCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 7), new Point(3, 7),
+                new Point(3, 7));
+            BoxPrimitive iceCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 7), new Point(2, 7),
+                new Point(2, 7));
+            BoxPrimitive scaffoldCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(7, 0), new Point(7, 0),
+                new Point(7, 0));
+            BoxPrimitive plankCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 0), new Point(4, 0),
+                new Point(4, 0));
+            BoxPrimitive waterCube = CreatePrimitive(graphics, cubeTexture, cubeTexture.Width, cubeTexture.Height,
+                new Point(0, 0), new Point(0, 0), new Point(0, 0));
+            BoxPrimitive cobblestoneCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 2),
+                new Point(5, 2), new Point(5, 2));
+            BoxPrimitive magicCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 10), new Point(0, 10),
+                new Point(0, 10));
+            BoxPrimitive bedrockCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 2), new Point(6, 2),
+                new Point(6, 2));
+            BoxPrimitive brownTileCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 0), new Point(5, 0),
+                new Point(5, 0));
+            BoxPrimitive blueTileCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(6, 0), new Point(6, 0),
+                new Point(6, 0));
+            BoxPrimitive tilledSoilCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 1),
+                new Point(2, 0), new Point(2, 0));
 
-            BoxPrimitive redGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 11), new Point(0, 12), new Point(0, 11));
-            BoxPrimitive orangeGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(1, 11), new Point(1, 12), new Point(1, 11));
-            BoxPrimitive yellowGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 11), new Point(2, 12), new Point(2, 11));
-            BoxPrimitive greenGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 11), new Point(3, 12), new Point(3, 11));
-            BoxPrimitive blueGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 11), new Point(4, 12), new Point(4, 11));
-            BoxPrimitive purpleGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 11), new Point(5, 12), new Point(5, 11));
-            
+            BoxPrimitive redGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(0, 11), new Point(0, 12),
+                new Point(0, 11));
+            BoxPrimitive orangeGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(1, 11),
+                new Point(1, 12), new Point(1, 11));
+            BoxPrimitive yellowGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(2, 11),
+                new Point(2, 12), new Point(2, 11));
+            BoxPrimitive greenGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(3, 11),
+                new Point(3, 12), new Point(3, 11));
+            BoxPrimitive blueGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(4, 11), new Point(4, 12),
+                new Point(4, 11));
+            BoxPrimitive purpleGemCube = CreatePrimitive(graphics, cubeTexture, 32, 32, new Point(5, 11),
+                new Point(5, 12), new Point(5, 11));
+
             emptyType = new VoxelType
             {
                 Name = "empty",
@@ -125,7 +137,7 @@ namespace DwarfCorp
                 IsBuildable = false
             };
 
-            VoxelType tilledSoil = new VoxelType
+            var tilledSoil = new VoxelType
             {
                 Name = "TilledSoil",
                 ReleasesResource = false,
@@ -138,7 +150,7 @@ namespace DwarfCorp
             };
             RegisterType(tilledSoil, tilledSoilCube);
 
-            VoxelType brownTileFloor = new VoxelType
+            var brownTileFloor = new VoxelType
             {
                 Name = "BrownTileFloor",
                 ReleasesResource = false,
@@ -149,7 +161,7 @@ namespace DwarfCorp
             };
             RegisterType(brownTileFloor, brownTileCube);
 
-            VoxelType blueTileFloor = new VoxelType
+            var blueTileFloor = new VoxelType
             {
                 Name = "BlueTileFloor",
                 ReleasesResource = false,
@@ -160,7 +172,7 @@ namespace DwarfCorp
             };
             RegisterType(blueTileFloor, blueTileCube);
 
-            VoxelType cobblestoneFloor = new VoxelType
+            var cobblestoneFloor = new VoxelType
             {
                 Name = "CobblestoneFloor",
                 ReleasesResource = false,
@@ -171,9 +183,10 @@ namespace DwarfCorp
                 HasTransitionTextures = true
             };
             RegisterType(cobblestoneFloor, cobblestoneCube);
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 8), new Point(5, 2), new Point(5, 2), cobblestoneFloor.TransitionTextures);
-            
-            VoxelType stockpileType = new VoxelType
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 8), new Point(5, 2), new Point(5, 2),
+                cobblestoneFloor.TransitionTextures);
+
+            var stockpileType = new VoxelType
             {
                 Name = "Stockpile",
                 ReleasesResource = false,
@@ -185,9 +198,10 @@ namespace DwarfCorp
             };
             RegisterType(stockpileType, plankCube);
 
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 9), new Point(4, 0), new Point(4, 0), stockpileType.TransitionTextures);
-            
-            VoxelType plankType = new VoxelType
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 9), new Point(4, 0), new Point(4, 0),
+                stockpileType.TransitionTextures);
+
+            var plankType = new VoxelType
             {
                 Name = "Plank",
                 ProbabilityOfRelease = 1.0f,
@@ -202,9 +216,10 @@ namespace DwarfCorp
             };
 
 
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 9), new Point(4, 0), new Point(4, 0), plankType.TransitionTextures);
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 9), new Point(4, 0), new Point(4, 0),
+                plankType.TransitionTextures);
 
-            VoxelType magicType = new VoxelType
+            var magicType = new VoxelType
             {
                 Name = "Magic",
                 ProbabilityOfRelease = 0.0f,
@@ -220,10 +235,11 @@ namespace DwarfCorp
             };
 
 
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 10), new Point(15, 10), new Point(15, 10), magicType.TransitionTextures);
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 10), new Point(15, 10), new Point(15, 10),
+                magicType.TransitionTextures);
 
 
-            VoxelType scaffoldType = new VoxelType
+            var scaffoldType = new VoxelType
             {
                 Name = "Scaffold",
                 StartingHealth = 20,
@@ -236,7 +252,7 @@ namespace DwarfCorp
                 ParticleType = "stone_particle"
             };
 
-            VoxelType grassType = new VoxelType
+            var grassType = new VoxelType
             {
                 Name = "Grass",
                 ProbabilityOfRelease = 0.1f,
@@ -252,11 +268,11 @@ namespace DwarfCorp
                 IsSurface = true
             };
 
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 3), new Point(2, 0), new Point(2, 0), grassType.TransitionTextures);
-            
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 3), new Point(2, 0), new Point(2, 0),
+                grassType.TransitionTextures);
 
 
-            VoxelType frostType = new VoxelType
+            var frostType = new VoxelType
             {
                 Name = "Frost",
                 ProbabilityOfRelease = 0.1f,
@@ -271,9 +287,10 @@ namespace DwarfCorp
                 IsSurface = true
             };
 
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 4), new Point(2, 0), new Point(2, 0), frostType.TransitionTextures);
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 4), new Point(2, 0), new Point(2, 0),
+                frostType.TransitionTextures);
 
-            VoxelType snowType = new VoxelType
+            var snowType = new VoxelType
             {
                 Name = "Snow",
                 StartingHealth = 1,
@@ -288,7 +305,7 @@ namespace DwarfCorp
             };
             RegisterType(snowType, snowCube);
 
-            VoxelType iceType = new VoxelType
+            var iceType = new VoxelType
             {
                 Name = "Ice",
                 StartingHealth = 1,
@@ -303,7 +320,7 @@ namespace DwarfCorp
             RegisterType(iceType, iceCube);
 
 
-            VoxelType desertGrass = new VoxelType
+            var desertGrass = new VoxelType
             {
                 Name = "DesertGrass",
                 ProbabilityOfRelease = 0.1f,
@@ -319,9 +336,10 @@ namespace DwarfCorp
                 IsSoil = true
             };
 
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 6), new Point(1, 1), new Point(1, 1), desertGrass.TransitionTextures);
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 6), new Point(1, 1), new Point(1, 1),
+                desertGrass.TransitionTextures);
 
-            VoxelType jungleGrass = new VoxelType
+            var jungleGrass = new VoxelType
             {
                 Name = "JungleGrass",
                 ProbabilityOfRelease = 0.1f,
@@ -337,10 +355,11 @@ namespace DwarfCorp
                 IsSoil = true
             };
 
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 5), new Point(2, 0), new Point(2, 0), jungleGrass.TransitionTextures);
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 5), new Point(2, 0), new Point(2, 0),
+                jungleGrass.TransitionTextures);
 
 
-            VoxelType caveFungus = new VoxelType
+            var caveFungus = new VoxelType
             {
                 Name = "CaveFungus",
                 ProbabilityOfRelease = 0.25f,
@@ -356,10 +375,11 @@ namespace DwarfCorp
                 IsSoil = true
             };
 
-            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 13), new Point(1, 0), new Point(1, 0), caveFungus.TransitionTextures);
+            CreateTransitionUVs(graphics, cubeTexture, 32, 32, new Point(0, 13), new Point(1, 0), new Point(1, 0),
+                caveFungus.TransitionTextures);
 
 
-            VoxelType dirtType = new VoxelType
+            var dirtType = new VoxelType
             {
                 Name = "Dirt",
                 ReleasesResource = true,
@@ -373,7 +393,7 @@ namespace DwarfCorp
                 IsSoil = true
             };
 
-            VoxelType stoneType = new VoxelType
+            var stoneType = new VoxelType
             {
                 Name = "Stone",
                 ProbabilityOfRelease = 0.5f,
@@ -384,7 +404,7 @@ namespace DwarfCorp
                 ParticleType = "stone_particle"
             };
 
-            VoxelType bedrockType = new VoxelType
+            var bedrockType = new VoxelType
             {
                 Name = "Bedrock",
                 StartingHealth = 255,
@@ -392,7 +412,7 @@ namespace DwarfCorp
                 IsInvincible = true
             };
 
-            VoxelType waterType = new VoxelType
+            var waterType = new VoxelType
             {
                 Name = "water",
                 ReleasesResource = false,
@@ -400,7 +420,7 @@ namespace DwarfCorp
                 StartingHealth = 255
             };
 
-            VoxelType sandType = new VoxelType
+            var sandType = new VoxelType
             {
                 Name = "Sand",
                 ReleasesResource = false,
@@ -412,7 +432,7 @@ namespace DwarfCorp
                 IsSurface = true
             };
 
-            VoxelType ironType = new VoxelType
+            var ironType = new VoxelType
             {
                 Name = "Iron",
                 ProbabilityOfRelease = 0.99f,
@@ -431,8 +451,8 @@ namespace DwarfCorp
                 SpawnProbability = 0.99f
             };
 
-           
-            VoxelType coalType = new VoxelType
+
+            var coalType = new VoxelType
             {
                 Name = "Coal",
                 ProbabilityOfRelease = 0.99f,
@@ -451,7 +471,7 @@ namespace DwarfCorp
             };
 
 
-            VoxelType goldType = new VoxelType
+            var goldType = new VoxelType
             {
                 Name = "Gold",
                 ProbabilityOfRelease = 1.0f,
@@ -468,7 +488,7 @@ namespace DwarfCorp
                 SpawnProbability = 0.99f
             };
 
-            VoxelType greenGem = new VoxelType
+            var greenGem = new VoxelType
             {
                 Name = "Emerald",
                 ProbabilityOfRelease = 1.0f,
@@ -485,7 +505,7 @@ namespace DwarfCorp
                 Rarity = 0.9f
             };
 
-            VoxelType redGem = new VoxelType
+            var redGem = new VoxelType
             {
                 Name = "Ruby",
                 ProbabilityOfRelease = 1.0f,
@@ -503,7 +523,7 @@ namespace DwarfCorp
             };
 
 
-            VoxelType purpleGem = new VoxelType
+            var purpleGem = new VoxelType
             {
                 Name = "Amethyst",
                 ProbabilityOfRelease = 1.0f,
@@ -520,7 +540,7 @@ namespace DwarfCorp
                 Rarity = 0.9f
             };
 
-            VoxelType blueGem = new VoxelType
+            var blueGem = new VoxelType
             {
                 Name = "Sapphire",
                 ProbabilityOfRelease = 1.0f,
@@ -537,7 +557,7 @@ namespace DwarfCorp
                 Rarity = 0.9f
             };
 
-            VoxelType yellowGem = new VoxelType
+            var yellowGem = new VoxelType
             {
                 Name = "Citrine",
                 ProbabilityOfRelease = 1.0f,
@@ -554,7 +574,7 @@ namespace DwarfCorp
                 Rarity = 0.9f
             };
 
-            VoxelType orangeGem = new VoxelType
+            var orangeGem = new VoxelType
             {
                 Name = "Garnet",
                 ProbabilityOfRelease = 1.0f,
@@ -571,8 +591,8 @@ namespace DwarfCorp
                 Rarity = 0.9f
             };
 
-         
-            VoxelType manaType = new VoxelType
+
+            var manaType = new VoxelType
             {
                 Name = "Mana",
                 ProbabilityOfRelease = 1.0f,
@@ -659,14 +679,11 @@ namespace DwarfCorp
 
         public static BoxPrimitive GetPrimitive(VoxelType type)
         {
-            if(PrimitiveMap.ContainsKey(type))
+            if (PrimitiveMap.ContainsKey(type))
             {
                 return PrimitiveMap[type];
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         public static BoxPrimitive GetPrimitive(short id)
@@ -678,6 +695,18 @@ namespace DwarfCorp
         {
             return PrimitiveMap.Keys.ToList();
         }
-    }
 
+        /// <summary>
+        ///     Specifies that a specific voxel is a resource which should
+        ///     spawn in veins.
+        /// </summary>
+        public class ResourceSpawnRate
+        {
+            public float MaximumHeight;
+            public float MinimumHeight;
+            public float Probability;
+            public float VeinSize;
+            public float VeinSpawnThreshold;
+        }
+    }
 }

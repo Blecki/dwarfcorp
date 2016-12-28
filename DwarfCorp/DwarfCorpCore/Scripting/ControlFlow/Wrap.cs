@@ -30,28 +30,26 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A behavior which wraps a coroutine. (Something which returns IEnumerable(status)))
+    ///     A behavior which wraps a coroutine. (Something which returns IEnumerable(status)))
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class Wrap : Act
     {
-        private Func<IEnumerable<Status>> Function { get; set; }
-
         public Wrap(Func<IEnumerable<Status>> fn)
         {
             Name = fn.Method.Name;
             Function = fn;
         }
+
+        private Func<IEnumerable<Status>> Function { get; set; }
 
         public override void Initialize()
         {
@@ -63,5 +61,4 @@ namespace DwarfCorp
             return Function();
         }
     }
-
 }

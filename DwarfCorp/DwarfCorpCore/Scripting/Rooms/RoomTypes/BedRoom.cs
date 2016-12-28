@@ -30,31 +30,64 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    ///     A room containing beds and furniture that dwarves sleep in.
+    /// </summary>
     [JsonObject(IsReference = true)]
     public class BedRoom : Room
     {
-        public static string BedRoomName { get { return "BedRoom"; } }
-        public static RoomData BedRoomData { get { return RoomLibrary.GetData(BedRoomName); } }
+        public BedRoom()
+        {
+            RoomData = BedRoomData;
+        }
 
+        public BedRoom(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
+            base(designation, designations, BedRoomData, chunks)
+        {
+        }
+
+        public BedRoom(IEnumerable<Voxel> voxels, ChunkManager chunks) :
+            base(voxels, BedRoomData, chunks)
+        {
+            OnBuilt();
+        }
+
+        /// <summary>
+        ///     I kept mispelling "BedRoom" so I just made it a static var.
+        /// </summary>
+        public static string BedRoomName
+        {
+            get { return "BedRoom"; }
+        }
+
+        public static RoomData BedRoomData
+        {
+            get { return RoomLibrary.GetData(BedRoomName); }
+        }
+
+        /// <summary>
+        ///     Initializes the descriptor for all bed rooms.
+        /// </summary>
+        /// <returns>Data describing how to create a bed room.</returns>
         public static RoomData InitializeData()
         {
-            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
+            // Resources required for a bed room.
+            var roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>
             {
                 {Resource.ResourceTags.Wood, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood)},
             };
 
 
-            List<RoomTemplate> bedroomTemplates = new List<RoomTemplate>();
+            var bedroomTemplates = new List<RoomTemplate>();
 
+            // Beds must be placed next to a wall with at least one open space nearby.
             RoomTile[,] bedTemplate =
             {
                 {
@@ -74,6 +107,7 @@ namespace DwarfCorp
                 }
             };
 
+            // We can put a chair next to a bed if we like.
             RoomTile[,] bedAccessories =
             {
                 {
@@ -92,8 +126,9 @@ namespace DwarfCorp
                     RoomTile.None
                 }
             };
-            RoomTemplate bed = new RoomTemplate(PlacementType.All, bedTemplate, bedAccessories);
+            var bed = new RoomTemplate(PlacementType.All, bedTemplate, bedAccessories);
 
+            // Lamps get generated in the bed room corners.
             RoomTile[,] lampTemplate =
             {
                 {
@@ -118,33 +153,19 @@ namespace DwarfCorp
                 }
             };
 
-            RoomTemplate lamp = new RoomTemplate(PlacementType.All, lampTemplate, lampAccessories);
+            var lamp = new RoomTemplate(PlacementType.All, lampTemplate, lampAccessories);
 
             bedroomTemplates.Add(lamp);
             bedroomTemplates.Add(bed);
+
+            // Create info about generating the room.
             Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(BedRoomName, 0, "BrownTileFloor", roomResources, bedroomTemplates, new ImageFrame(roomIcons, 16, 2, 1))
+            return new RoomData(BedRoomName, 0, "BrownTileFloor", roomResources, bedroomTemplates,
+                new ImageFrame(roomIcons, 16, 2, 1))
             {
                 Description = "Dwarves relax and rest here",
                 CanBuildAboveGround = false
             };
         }
-
-        public BedRoom()
-        {
-            RoomData = BedRoomData;
-        }
-
-        public BedRoom(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
-            base(designation, designations, BedRoomData, chunks)
-        {
-        }
-
-        public BedRoom(IEnumerable<Voxel> voxels, ChunkManager chunks) :
-            base(voxels, BedRoomData, chunks)
-        {
-            OnBuilt();
-        }
-
     }
 }

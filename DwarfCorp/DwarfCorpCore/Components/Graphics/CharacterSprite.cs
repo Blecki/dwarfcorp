@@ -30,11 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -43,22 +42,50 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     /// <summary>
-    /// This is a special kind of sprite which assumes that it is attached to a character
-    /// which has certain animations and can face in four directions. Also provides interfaces to
-    /// certain effects such as blinking.
+    ///     This is a special kind of Sprite which assumes that it is attached to a character
+    ///     which has certain animations and can face in four directions. Also provides interfaces to
+    ///     certain effects such as blinking.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class CharacterSprite : OrientedAnimation
     {
+        /// <summary>
+        /// Timer that triggers whenever the sprite should blink on and off.
+        /// </summary>
+        private readonly Timer blinkTimer = new Timer(0.1f, false);
+        /// <summary>
+        /// Timer that triggers whenever the sprite begins blinking.
+        /// </summary>
+        private readonly Timer blinkTrigger = new Timer(0.0f, true);
+        /// <summary>
+        /// Timer that prevents the character sprite from blinking.
+        /// </summary>
+        private readonly Timer coolDownTimer = new Timer(1.0f, false);
+        /// <summary>
+        /// If the character sprite is blinking, this is true.
+        /// </summary>
+        private bool isBlinking;
+        /// <summary>
+        /// If the character sprite is no longer blinking, but is cooling down.
+        /// </summary>
+        private bool isCoolingDown;
+
+
+        public CharacterSprite()
+        {
+            currentMode = "Idle";
+        }
+
+        public CharacterSprite(GraphicsDevice graphics, ComponentManager manager, string name, GameComponent parent,
+            Matrix localTransform) :
+                base(manager, name, parent, localTransform)
+        {
+            Graphics = graphics;
+            currentMode = "Idle";
+        }
+
         [JsonIgnore]
         public GraphicsDevice Graphics { get; set; }
-
-        private Timer blinkTimer = new Timer(0.1f, false);
-        private Timer coolDownTimer = new Timer(1.0f, false);
-        private Timer blinkTrigger = new Timer(0.0f, true);
-        private bool isBlinking = false;
-        private bool isCoolingDown = false;
-
 
         public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
@@ -76,30 +103,34 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Called when the sprite is deserialized from JSON.
+        /// </summary>
+        /// <param name="context">The context.</param>
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
             Graphics = PlayState.ChunkManager.Graphics;
         }
 
-        public CharacterSprite()
-        {
-            currentMode = "Idle";
-        }
-
-        public CharacterSprite(GraphicsDevice graphics, ComponentManager manager, string name, GameComponent parent,
-            Matrix localTransform) :
-                base(manager, name, parent, localTransform)
-        {
-            Graphics = graphics;
-            currentMode = "Idle";
-        }
-
+        /// <summary>
+        /// Determines whether the specified mode has animation.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="orient">The orientation</param>
+        /// <returns>
+        ///   <c>true</c> if the specified mode has animation; otherwise, <c>false</c>.
+        /// </returns>
         public bool HasAnimation(Creature.CharacterMode mode, Orientation orient)
         {
-            return Animations.ContainsKey(mode.ToString() + OrientationStrings[(int) orient]);
+            return Animations.ContainsKey(mode + OrientationStrings[(int) orient]);
         }
 
+        /// <summary>
+        /// Gets the animations for the specified mode.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <returns></returns>
         public List<Animation> GetAnimations(Creature.CharacterMode mode)
         {
             return
@@ -108,6 +139,10 @@ namespace DwarfCorp
                     .ToList();
         }
 
+        /// <summary>
+        /// For each animation, determines if it is done, and resets it if it is.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
         public void ReloopAnimations(Creature.CharacterMode mode)
         {
             List<Animation> animations = GetAnimations(mode);
@@ -120,6 +155,10 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Resets all animations.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
         public void ResetAnimations(Creature.CharacterMode mode)
         {
             List<Animation> animations = GetAnimations(mode);
@@ -129,19 +168,34 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Gets the animation corresponding to a mode and orientation.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="orient">The orientation</param>
+        /// <returns>The animation corresponding to the mode and orientation</returns>
         public Animation GetAnimation(Creature.CharacterMode mode, Orientation orient)
         {
             if (HasAnimation(mode, orient))
             {
-                return Animations[mode.ToString() + OrientationStrings[(int) orient]];
+                return Animations[mode + OrientationStrings[(int) orient]];
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
 
+        /// <summary>
+        /// Creates a new animation.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="orient">The orientation</param>
+        /// <param name="texture">The texture.</param>
+        /// <param name="frameHz">The framerate hz.</param>
+        /// <param name="frameWidth">Width of the frame in pixels.</param>
+        /// <param name="frameHeight">Height of the frame in pixels.</param>
+        /// <param name="row">The row of the sprite sheet</param>
+        /// <param name="cols">The columns of the animation in the sprite sheet.</param>
+        /// <returns>A new animation for the character.</returns>
         public static Animation CreateAnimation(Creature.CharacterMode mode,
             Orientation orient,
             SpriteSheet texture,
@@ -155,6 +209,17 @@ namespace DwarfCorp
         }
 
 
+        /// <summary>
+        /// Creates a composite (layered) animation.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="orient">The orientation.</param>
+        /// <param name="composite">The composite from <see cref="CompositeLibrary"/></param>
+        /// <param name="frameHz">The framerate in hz.</param>
+        /// <param name="layers">The layers of the animation</param>
+        /// <param name="tints">The tints of the layers.</param>
+        /// <param name="frames">The frames of the animation.</param>
+        /// <returns>A new animation for the character.</returns>
         public static CompositeAnimation CreateCompositeAnimation(Creature.CharacterMode mode,
             Orientation orient,
             string composite,
@@ -167,12 +232,24 @@ namespace DwarfCorp
             return new CompositeAnimation(composite, layers, tints, frames)
             {
                 FrameHZ = frameHz,
-                Name = mode.ToString() + OrientationStrings[(int) orient],
+                Name = mode + OrientationStrings[(int) orient],
                 Loops = true,
                 CurrentFrame = 0
             };
         }
 
+        /// <summary>
+        /// Creates an animation for the specified mode and orientation.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="orient">The orienttation</param>
+        /// <param name="texture">The texture sprite sheet.</param>
+        /// <param name="frameHz">The framerate in hz.</param>
+        /// <param name="frameWidth">Width of the frame in pixels.</param>
+        /// <param name="frameHeight">Height of the frame in pixels.</param>
+        /// <param name="row">The row of the spritesheet for the animation.</param>
+        /// <param name="cols">The columns of the frames in the animation.</param>
+        /// <returns>A new animation.</returns>
         public static Animation CreateAnimation(Creature.CharacterMode mode,
             Orientation orient,
             SpriteSheet texture,
@@ -182,8 +259,8 @@ namespace DwarfCorp
             int row,
             List<int> cols)
         {
-            List<Point> frames = new List<Point>();
-            int numCols = texture.Width / frameWidth;
+            var frames = new List<Point>();
+            int numCols = texture.Width/frameWidth;
 
             if (cols.Count == 0)
             {
@@ -197,9 +274,22 @@ namespace DwarfCorp
                 frames.AddRange(cols.Select(c => new Point(c, row)));
             }
 
-            return new Animation(GameState.Game.GraphicsDevice, texture, mode.ToString() + OrientationStrings[(int)orient], frameWidth, frameHeight, frames, true, Color.White, frameHz, (float)frameWidth / 35.0f, (float)frameHeight / 35.0f, false);
+            return new Animation(GameState.Game.GraphicsDevice, texture, mode + OrientationStrings[(int) orient],
+                frameWidth, frameHeight, frames, true, Color.White, frameHz, frameWidth/35.0f, frameHeight/35.0f, false);
         }
 
+
+        /// <summary>
+        /// Creates a new animation for the given character mode and orientation.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
+        /// <param name="orient">The orientation</param>
+        /// <param name="texture">The texture sprite sheet.</param>
+        /// <param name="frameHz">The framerate in hz.</param>
+        /// <param name="frameWidth">Width of the frame in pixels.</param>
+        /// <param name="frameHeight">Height of the frame in pixels.</param>
+        /// <param name="row">The row of the spritesheet.</param>
+        /// <param name="cols">The frame columns of the spritesheet.</param>
         public void AddAnimation(Creature.CharacterMode mode,
             Orientation orient,
             SpriteSheet texture,
@@ -209,16 +299,20 @@ namespace DwarfCorp
             int row,
             params int[] cols)
         {
-            List<int> ints = new List<int>();
+            var ints = new List<int>();
             ints.AddRange(cols);
             Animation animation = CreateAnimation(mode, orient, texture, frameHz, frameWidth, frameHeight, row, ints);
-            Animations[mode.ToString() + OrientationStrings[(int) orient]] = animation;
+            Animations[mode + OrientationStrings[(int) orient]] = animation;
             animation.Play();
         }
 
+        /// <summary>
+        /// Blinks for the specified blink time in seconds.
+        /// </summary>
+        /// <param name="blinkTime">The blink time.</param>
         public void Blink(float blinkTime)
         {
-            if(isBlinking || isCoolingDown)
+            if (isBlinking || isCoolingDown)
             {
                 return;
             }
@@ -227,24 +321,30 @@ namespace DwarfCorp
             blinkTrigger.Reset(blinkTime);
         }
 
+        /// <summary>
+        /// Updates the character sprite.
+        /// </summary>
+        /// <param name="gameTime">The game time.</param>
+        /// <param name="chunks">The chunks.</param>
+        /// <param name="camera">The camera.</param>
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if(isBlinking)
+            if (isBlinking)
             {
                 blinkTrigger.Update(gameTime);
 
-                if(blinkTrigger.HasTriggered)
+                if (blinkTrigger.HasTriggered)
                 {
                     isBlinking = false;
                     isCoolingDown = true;
                 }
             }
 
-            if(isCoolingDown)
+            if (isCoolingDown)
             {
                 coolDownTimer.Update(gameTime);
 
-                if(coolDownTimer.HasTriggered)
+                if (coolDownTimer.HasTriggered)
                 {
                     isCoolingDown = false;
                 }
@@ -256,6 +356,10 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
 
+        /// <summary>
+        /// Pauses the animations for the gven mode.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
         public void PauseAnimations(Creature.CharacterMode mode)
         {
             List<Animation> animations = GetAnimations(mode);
@@ -263,9 +367,12 @@ namespace DwarfCorp
             {
                 a.IsPlaying = false;
             }
-
         }
 
+        /// <summary>
+        /// Plays the animations for the given mode.
+        /// </summary>
+        /// <param name="mode">The mode.</param>
         public void PlayAnimations(Creature.CharacterMode mode)
         {
             List<Animation> animations = GetAnimations(mode);
@@ -273,8 +380,6 @@ namespace DwarfCorp
             {
                 a.IsPlaying = true;
             }
-
         }
     }
-
 }

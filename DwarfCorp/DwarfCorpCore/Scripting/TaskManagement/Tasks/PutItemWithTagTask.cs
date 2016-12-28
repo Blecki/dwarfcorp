@@ -30,23 +30,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
+
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// Tells a creature that it should find an item with the specified
-    /// tags and put it in a given zone.
+    ///     Tells a creature that it should find an item with the specified
+    ///     tags and put it in a given zone.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     internal class PutItemWithTagTask : Task
     {
-        public Zone Zone;
         public TagList Tags;
+        public Zone Zone;
 
         public PutItemWithTagTask()
         {
@@ -68,26 +65,26 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
-            Room room = Zone as Room;
-            if(room == null)
+            var room = Zone as Room;
+            if (room == null)
             {
                 return null;
             }
 
-            if(!creature.Faction.RoomBuilder.IsBuildDesignation(room))
+            if (!creature.Faction.RoomBuilder.IsBuildDesignation(room))
             {
                 return null;
             }
 
             BuildVoxelOrder voxVoxelOrder = creature.Faction.RoomBuilder.GetBuildDesignation(room);
 
-            if(voxVoxelOrder == null)
+            if (voxVoxelOrder == null)
             {
                 return null;
             }
 
             BuildRoomOrder designation = voxVoxelOrder.Order;
-            return  new BuildRoomAct(creature.AI, designation);
+            return new BuildRoomAct(creature.AI, designation);
         }
 
         public override float ComputeCost(Creature agent)
@@ -95,5 +92,4 @@ namespace DwarfCorp
             return (Zone == null) ? 1000 : 1.0f;
         }
     }
-
 }

@@ -30,21 +30,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A tag list is a list of strings. Arbitrary tag lists can be attached
-    /// to items to modify how scripts interpret the items.
+    ///     A tag list is a list of strings. Arbitrary tag lists can be attached
+    ///     to items to modify how scripts interpret the items.
     /// </summary>
     public class TagList : IEquatable<TagList>
     {
-        public List<string> Tags { get; set; }
-
         public TagList(params string[] args)
         {
             Tags = new List<string>();
@@ -57,13 +55,20 @@ namespace DwarfCorp
             Tags.AddRange(args);
         }
 
+        public List<string> Tags { get; set; }
+
+        public bool Equals(TagList obj)
+        {
+            return Equals((object) obj);
+        }
+
         public override int GetHashCode()
         {
             int maxCode = 0;
 
-            foreach(string s in Tags)
+            foreach (string s in Tags)
             {
-                if(Math.Abs(s.GetHashCode()) > Math.Abs(maxCode))
+                if (Math.Abs(s.GetHashCode()) > Math.Abs(maxCode))
                 {
                     maxCode = s.GetHashCode();
                 }
@@ -76,7 +81,7 @@ namespace DwarfCorp
         {
             string toReturn = "{";
 
-            foreach(string t in Tags)
+            foreach (string t in Tags)
             {
                 toReturn += t;
                 toReturn += " ";
@@ -93,11 +98,6 @@ namespace DwarfCorp
         }
 
 
-        public bool Equals(TagList obj)
-        {
-            return Equals((object) obj);
-        }
-
         public static implicit operator TagList(string tag)
         {
             return new TagList(tag);
@@ -113,22 +113,18 @@ namespace DwarfCorp
         public override bool Equals(object obj)
         {
             var list = obj as TagList;
-            if(list != null)
+            if (list != null)
             {
                 TagList other = list;
 
-                if(Tags.Any(s => other.Tags.Contains(s)))
+                if (Tags.Any(s => other.Tags.Contains(s)))
                 {
                     return true;
                 }
 
                 return other.Tags.Any(s => Tags.Contains(s));
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
     }
-
 }

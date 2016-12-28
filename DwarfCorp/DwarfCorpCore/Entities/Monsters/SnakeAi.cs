@@ -30,30 +30,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// Extends CreatureAI specifically for
-    /// bird behavior.
+    ///     Extends CreatureAI specifically for
+    ///     bird behavior.
     /// </summary>
     public class SnakeAI : CreatureAI
     {
         public SnakeAI()
         {
-            
         }
 
         public SnakeAI(Creature creature, string name, EnemySensor sensor, PlanService planService) :
             base(creature, name, sensor, planService)
         {
-            
         }
 
         // Overrides the default ActOnIdle so we can
@@ -67,9 +62,9 @@ namespace DwarfCorp
         {
             while (true)
             {
-                
-               Creature.Physics.ApplyForce(0.1f *(PlayState.CursorLightPos - this.Creature.AI.Position) - 0.1f * Creature.Physics.Velocity, 1);
-               yield return Act.Status.Running;
+                Creature.Physics.ApplyForce(
+                    0.1f*(PlayState.CursorLightPos - Creature.AI.Position) - 0.1f*Creature.Physics.Velocity, 1);
+                yield return Act.Status.Running;
             }
         }
     }

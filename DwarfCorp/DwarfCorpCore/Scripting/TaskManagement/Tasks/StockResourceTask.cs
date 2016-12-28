@@ -30,17 +30,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// Tells a creature that it should pick up an item and put it in a stockpile.
+    ///     Tells a creature that it should pick up an item and put it in a stockpile.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     internal class StockResourceTask : Task
     {
         public ResourceAmount EntityToGather = null;
@@ -77,8 +75,5 @@ namespace DwarfCorp
         {
             return 1.0f;
         }
-
-
     }
-
 }

@@ -30,30 +30,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
+
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// This component follows its parent at a specified radius;
+    ///     This component follows its parent at a specified radius;
     /// </summary>
     public class Follower : Body
     {
-        public Body ParentBody { get; set; }
-        public float FollowRadius { get; set;  }
-        public Vector3 TargetPos { get; set; }
-        public float FollowRate { get; set; }
         public Follower()
         {
-
         }
 
         public Follower(Body parentBody) :
@@ -65,6 +53,11 @@ namespace DwarfCorp
             FollowRate = 0.1f;
         }
 
+        public Body ParentBody { get; set; }
+        public float FollowRadius { get; set; }
+        public Vector3 TargetPos { get; set; }
+        public float FollowRate { get; set; }
+
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             Vector3 parentCurrentPos = ParentBody.Position;
@@ -75,10 +68,9 @@ namespace DwarfCorp
             Vector3 newPos = (Position*(1.0f - FollowRate) + TargetPos*(FollowRate));
             Matrix newTransform = GlobalTransform;
             newTransform.Translation = newPos;
-            newTransform = newTransform * Matrix.Invert(ParentBody.GlobalTransform);
+            newTransform = newTransform*Matrix.Invert(ParentBody.GlobalTransform);
             LocalTransform = newTransform;
             base.Update(gameTime, chunks, camera);
         }
     }
-
 }

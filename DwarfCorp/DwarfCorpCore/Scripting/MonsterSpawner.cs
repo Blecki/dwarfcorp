@@ -30,10 +30,9 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -43,17 +42,8 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class MonsterSpawner
     {
-        public struct SpawnEvent
-        {
-            public Faction SpawnFaction;
-            public Faction TargetFaction;
-            public Vector3 WorldLocation;
-            public int NumCreatures;
-            public bool Attack;
-        }
-
-        public List<Faction> SpawnFactions = new List<Faction>();
         public int LastSpawnHour = 0;
+        public List<Faction> SpawnFactions = new List<Faction>();
         public int SpawnRate = 4;
 
         public MonsterSpawner()
@@ -63,7 +53,8 @@ namespace DwarfCorp
 
         public void Update(DwarfTime t)
         {
-            bool shouldSpawn = PlayState.Time.IsNight() && Math.Abs(PlayState.Time.CurrentDate.TimeOfDay.Hours - LastSpawnHour) > SpawnRate;
+            bool shouldSpawn = PlayState.Time.IsNight() &&
+                               Math.Abs(PlayState.Time.CurrentDate.TimeOfDay.Hours - LastSpawnHour) > SpawnRate;
 
             if (shouldSpawn)
             {
@@ -76,7 +67,7 @@ namespace DwarfCorp
             }
         }
 
-        public SpawnEvent GenerateSpawnEvent(Faction spawnFaction, Faction targetFaction, int num, bool attack=true)
+        public SpawnEvent GenerateSpawnEvent(Faction spawnFaction, Faction targetFaction, int num, bool attack = true)
         {
             float padding = 2.0f;
             int side = PlayState.Random.Next(4);
@@ -85,20 +76,24 @@ namespace DwarfCorp
             switch (side)
             {
                 case 0:
-                    pos = new Vector3(bounds.Min.X + padding, bounds.Max.Y - padding, MathFunctions.Rand(bounds.Min.Z + padding, bounds.Max.Z - padding));
+                    pos = new Vector3(bounds.Min.X + padding, bounds.Max.Y - padding,
+                        MathFunctions.Rand(bounds.Min.Z + padding, bounds.Max.Z - padding));
                     break;
                 case 1:
-                    pos = new Vector3(bounds.Max.X - padding, bounds.Max.Y - padding, MathFunctions.Rand(bounds.Min.Z + padding, bounds.Max.Z - padding));
+                    pos = new Vector3(bounds.Max.X - padding, bounds.Max.Y - padding,
+                        MathFunctions.Rand(bounds.Min.Z + padding, bounds.Max.Z - padding));
                     break;
                 case 2:
-                    pos = new Vector3(MathFunctions.Rand(bounds.Min.X + padding, bounds.Max.X - padding), bounds.Max.Y - padding, bounds.Min.Z + padding);
+                    pos = new Vector3(MathFunctions.Rand(bounds.Min.X + padding, bounds.Max.X - padding),
+                        bounds.Max.Y - padding, bounds.Min.Z + padding);
                     break;
                 case 3:
-                    pos = new Vector3(MathFunctions.Rand(bounds.Min.X + padding, bounds.Max.X - padding), bounds.Max.Y - padding, bounds.Max.Z - padding);
+                    pos = new Vector3(MathFunctions.Rand(bounds.Min.X + padding, bounds.Max.X - padding),
+                        bounds.Max.Y - padding, bounds.Max.Z - padding);
                     break;
             }
 
-            return new SpawnEvent()
+            return new SpawnEvent
             {
                 NumCreatures = num,
                 SpawnFaction = spawnFaction,
@@ -110,15 +105,14 @@ namespace DwarfCorp
 
         public List<CreatureAI> Spawn(SpawnEvent spawnEvent)
         {
-            List<Body> bodies = 
-            spawnEvent.SpawnFaction.GenerateRandomSpawn(spawnEvent.NumCreatures, spawnEvent.WorldLocation);
-            List<CreatureAI> toReturn = new List<CreatureAI>();
+            List<Body> bodies =
+                spawnEvent.SpawnFaction.GenerateRandomSpawn(spawnEvent.NumCreatures, spawnEvent.WorldLocation);
+            var toReturn = new List<CreatureAI>();
             foreach (Body body in bodies)
             {
                 List<CreatureAI> creatures = body.GetChildrenOfTypeRecursive<CreatureAI>();
                 foreach (CreatureAI creature in creatures)
                 {
-                   
                     if (spawnEvent.Attack)
                     {
                         CreatureAI enemyMinion = spawnEvent.TargetFaction.GetNearestMinion(creature.Position);
@@ -140,6 +134,15 @@ namespace DwarfCorp
             }
 
             return toReturn;
+        }
+
+        public struct SpawnEvent
+        {
+            public bool Attack;
+            public int NumCreatures;
+            public Faction SpawnFaction;
+            public Faction TargetFaction;
+            public Vector3 WorldLocation;
         }
     }
 }

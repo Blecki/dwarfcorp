@@ -43,9 +43,6 @@
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LumenWorks.Framework.IO">
-      <HintPath>..\DwarfCorpXNA\LumenWorks.Framework.IO.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
@@ -290,6 +287,7 @@
     <Compile Include="Scripting\Classes\SkeletonClass.cs" />
     <Compile Include="Scripting\Classes\SwordGoblinClass.cs" />
     <Compile Include="Scripting\Classes\WizardClass.cs" />
+    <Compile Include="Scripting\Classes\MusketDwarfClass.cs" />
     <Compile Include="Scripting\Classes\WorkerClass.cs" />
     <Compile Include="Scripting\Combat\Alliance.cs" />
     <Compile Include="Scripting\Combat\Attack.cs" />

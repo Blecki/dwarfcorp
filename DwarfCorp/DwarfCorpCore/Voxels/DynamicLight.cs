@@ -30,39 +30,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// Lights nearby voxels with torch lights.
+    ///     Lights nearby voxels with torch lights.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class DynamicLight
     {
-        public float Range { get; set; }
-        public float Intensity { get; set; }
-        public Vector3 Position { get; set; }
-
         public static List<DynamicLight> Lights = new List<DynamicLight>();
-        public static List<DynamicLight> TempLights = new List<DynamicLight>(); 
+        public static List<DynamicLight> TempLights = new List<DynamicLight>();
 
         public DynamicLight()
         {
-            
-        }
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            Lights.Add(this);
         }
 
         public DynamicLight(float range, float intensity, bool add = true)
@@ -76,10 +62,19 @@ namespace DwarfCorp
             }
         }
 
+        public float Range { get; set; }
+        public float Intensity { get; set; }
+        public Vector3 Position { get; set; }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            Lights.Add(this);
+        }
+
         public void Destroy()
         {
             Lights.Remove(this);
         }
     }
-
 }

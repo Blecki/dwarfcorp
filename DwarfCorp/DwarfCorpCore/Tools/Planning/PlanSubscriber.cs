@@ -30,18 +30,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Collections.Concurrent;
+
 using DwarfCorp.Tools.ServiceArchitecture;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A service subscriber which is used to find paths from pointA to pointB
+    ///     A service subscriber which is used to find paths from pointA to pointB
     /// </summary>
     public class PlanSubscriber : Subscriber<AstarPlanRequest, AStarPlanResponse>
     {
@@ -50,7 +45,5 @@ namespace DwarfCorp
             Service = service;
             Service.AddSubscriber(this);
         }
-
     }
-
 }

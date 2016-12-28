@@ -1,10 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.Xna.Framework.Graphics
 {
-
     // Summary:
     //     Describes a custom vertex format structure that contains position, color,
     //     and one set of texture coordinates.
@@ -14,23 +13,6 @@ namespace Microsoft.Xna.Framework.Graphics
         //
         // Summary:
         //     XYZ position.
-        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Vector3 Position;
-        //
-        // Summary:
-        //     UV texture coordinates.
-        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Vector2 TextureCoordinate;
-        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Vector2 LightmapCoordinate;
-
-        // Summary:
-        //     The vertex color.
-        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Color Color;
-        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Color VertColor;
-        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Vector4 TextureBounds;
-        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Vector4 LightmapBounds;
-
-        //
-        // Summary:
-        //     Vertex declaration, which defines per-vertex data.
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")] public static readonly VertexDeclaration VertexDeclaration = new VertexDeclaration
             (
             //Position
@@ -38,27 +20,38 @@ namespace Microsoft.Xna.Framework.Graphics
             // Texture Coordinate
             new VertexElement(SizeOf(Vector3.Zero), VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
             // Lightmap coordinate
-            new VertexElement(SizeOf(Vector3.Zero) + SizeOf(Vector2.Zero), VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 2),
+            new VertexElement(SizeOf(Vector3.Zero) + SizeOf(Vector2.Zero), VertexElementFormat.Vector2,
+                VertexElementUsage.TextureCoordinate, 2),
             // Color
-            new VertexElement(SizeOf(Vector3.Zero) + SizeOf(Vector2.Zero) * 2, VertexElementFormat.Color, VertexElementUsage.Color, 0),
+            new VertexElement(SizeOf(Vector3.Zero) + SizeOf(Vector2.Zero)*2, VertexElementFormat.Color,
+                VertexElementUsage.Color, 0),
             // Vertex tint
-            new VertexElement(SizeOf(Vector3.Zero) + SizeOf(Vector2.Zero) * 2 + SizeOf(Color.White), VertexElementFormat.Color, VertexElementUsage.Color, 1),
+            new VertexElement(SizeOf(Vector3.Zero) + SizeOf(Vector2.Zero)*2 + SizeOf(Color.White),
+                VertexElementFormat.Color, VertexElementUsage.Color, 1),
             // Texture bounds
-            new VertexElement(SizeOf(Vector3.Zero) + SizeOf(Vector2.Zero) * 2 + SizeOf(Color.White) * 2, VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1),
+            new VertexElement(SizeOf(Vector3.Zero) + SizeOf(Vector2.Zero)*2 + SizeOf(Color.White)*2,
+                VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 1),
             // Lightmap bounds
-            new VertexElement(SizeOf(Vector3.Zero) + SizeOf(Vector2.Zero) * 2 + SizeOf(Color.White) * 2 + SizeOf(Vector4.Zero), VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 3)
+            new VertexElement(
+                SizeOf(Vector3.Zero) + SizeOf(Vector2.Zero)*2 + SizeOf(Color.White)*2 + SizeOf(Vector4.Zero),
+                VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 3)
             );
 
+        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Color Color;
+        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Vector4 LightmapBounds;
 
-        public static int SizeOf<T>(T obj)
-        {
-            return System.Runtime.InteropServices.Marshal.SizeOf(obj);
-        }
+        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Vector2
+            LightmapCoordinate;
 
-        VertexDeclaration IVertexType.VertexDeclaration
-        {
-            get { return VertexDeclaration; }
-        }
+        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Vector3 Position;
+        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Vector4 TextureBounds;
+        //
+        // Summary:
+        //     UV texture coordinates.
+        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Vector2
+            TextureCoordinate;
+
+        [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")] public Color VertColor;
 
         //
         // Summary:
@@ -73,7 +66,8 @@ namespace Microsoft.Xna.Framework.Graphics
         //
         //   textureCoordinate:
         //     Texture coordinate of the vertex.
-        public ExtendedVertex(Vector3 position, Color color, Color vertColor, Vector2 textureCoordinate, Vector4 textureBounds)
+        public ExtendedVertex(Vector3 position, Color color, Color vertColor, Vector2 textureCoordinate,
+            Vector4 textureBounds)
         {
             Position = position;
             Color = color;
@@ -82,6 +76,16 @@ namespace Microsoft.Xna.Framework.Graphics
             TextureBounds = textureBounds;
             LightmapCoordinate = Vector2.Zero;
             LightmapBounds = Vector4.Zero;
+        }
+
+        VertexDeclaration IVertexType.VertexDeclaration
+        {
+            get { return VertexDeclaration; }
+        }
+
+        public static int SizeOf<T>(T obj)
+        {
+            return Marshal.SizeOf(obj);
         }
 
         // Summary:
@@ -95,12 +99,12 @@ namespace Microsoft.Xna.Framework.Graphics
         //     Object to the right of the inequality operator.
         public static bool operator !=(ExtendedVertex left, ExtendedVertex right)
         {
-            return !(left.Color == right.Color && left.Position == right.Position 
-                && left.TextureBounds == right.TextureBounds 
-                && left.TextureCoordinate == right.TextureCoordinate 
-                && left.VertColor == right.VertColor
-                && left.LightmapCoordinate == right.LightmapCoordinate
-                && left.LightmapBounds == right.LightmapBounds);
+            return !(left.Color == right.Color && left.Position == right.Position
+                     && left.TextureBounds == right.TextureBounds
+                     && left.TextureCoordinate == right.TextureCoordinate
+                     && left.VertColor == right.VertColor
+                     && left.LightmapCoordinate == right.LightmapCoordinate
+                     && left.LightmapBounds == right.LightmapBounds);
         }
 
         //
@@ -127,14 +131,11 @@ namespace Microsoft.Xna.Framework.Graphics
         //     The Object to compare with the current VertexPositionColorTexture.
         public override bool Equals(object obj)
         {
-            if(obj is ExtendedVertex)
+            if (obj is ExtendedVertex)
             {
                 return this == (ExtendedVertex) obj;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         //
@@ -150,16 +151,16 @@ namespace Microsoft.Xna.Framework.Graphics
         //     Retrieves a string representation of this object.
         public override string ToString()
         {
-            return "Extended Vertex: " + Position.ToString();
+            return "Extended Vertex: " + Position;
         }
 
-        public void Set(Vector3 position, 
-                       Color color, 
-                       Color vertColor, 
-                       Vector2 textureCoordinate, 
-                       Vector4 textureBounds,
-                       Vector2 lightmapCoordinates,
-                       Vector4 lightmapBounds)
+        public void Set(Vector3 position,
+            Color color,
+            Color vertColor,
+            Vector2 textureCoordinate,
+            Vector4 textureBounds,
+            Vector2 lightmapCoordinates,
+            Vector4 lightmapBounds)
         {
             Position = position;
             Color = color;
@@ -171,10 +172,10 @@ namespace Microsoft.Xna.Framework.Graphics
         }
 
         public void Set(Vector3 position,
-                       Color color,
-                       Color vertColor,
-                       Vector2 textureCoordinate,
-                       Vector4 textureBounds)
+            Color color,
+            Color vertColor,
+            Vector2 textureCoordinate,
+            Vector4 textureBounds)
         {
             Position = position;
             Color = color;
@@ -183,5 +184,4 @@ namespace Microsoft.Xna.Framework.Graphics
             TextureBounds = textureBounds;
         }
     }
-
 }

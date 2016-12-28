@@ -30,47 +30,45 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature grabs a given item and puts it in their inventory
+    ///     A creature grabs a given item and puts it in their inventory
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class StashResourcesAct : CreatureAct
     {
-        public List<ResourceAmount> Resources { get; set; }
-
         public StashResourcesAct()
         {
-
         }
 
         public StashResourcesAct(CreatureAI agent, List<ResourceAmount> resources) :
             base(agent)
         {
             Resources = resources;
-            Name = "Stash " + Resources.ToString();
+            Name = "Stash " + Resources;
         }
+
+        public List<ResourceAmount> Resources { get; set; }
 
         public override IEnumerable<Status> Run()
         {
-            Timer waitTimer = new Timer(1.0f, true);
+            var waitTimer = new Timer(1.0f, true);
             bool removed = Agent.Faction.RemoveResources(Resources, Agent.Position);
 
-            if(!removed)
+            if (!removed)
             {
                 yield return Status.Fail;
             }
             else
             {
-                foreach(ResourceAmount resource in Resources)
+                foreach (ResourceAmount resource in Resources)
                 {
-                    Agent.Creature.Inventory.Resources.AddResource(resource.CloneResource());   
+                    Agent.Creature.Inventory.Resources.AddResource(resource.CloneResource());
                 }
 
                 while (!waitTimer.HasTriggered)
@@ -80,10 +78,6 @@ namespace DwarfCorp
                 }
                 yield return Status.Success;
             }
-
         }
-
     }
-
 }
-

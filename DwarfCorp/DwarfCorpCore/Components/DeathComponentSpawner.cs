@@ -30,43 +30,39 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// When an entity dies, this component releases other components (such as resources)
+    ///     When an entity dies, this component releases other components (such as resources)
     /// </summary>
     [JsonObject(IsReference = true)]
     public class DeathComponentSpawner : Body
     {
-        public List<Body> Spawns { get; set; }
-        public float ThrowSpeed { get; set; }
-
-        public DeathComponentSpawner(string name, GameComponent parent, Matrix localTransform, Vector3 boundingExtents, Vector3 boundingBoxPos, List<Body> spawns) :
-            base(name, parent, localTransform, boundingExtents, boundingBoxPos, false)
+        public DeathComponentSpawner(string name, GameComponent parent, Matrix localTransform, Vector3 boundingExtents,
+            Vector3 boundingBoxPos, List<Body> spawns) :
+                base(name, parent, localTransform, boundingExtents, boundingBoxPos, false)
         {
             Spawns = spawns;
             ThrowSpeed = 5.0f;
             AddToCollisionManager = false;
         }
 
+        public List<Body> Spawns { get; set; }
+        public float ThrowSpeed { get; set; }
+
         public override void Die()
         {
-            if(IsDead)
+            if (IsDead)
             {
                 return;
             }
 
-            foreach(Body locatable in Spawns)
+            foreach (Body locatable in Spawns)
             {
                 locatable.SetVisibleRecursive(true);
                 locatable.SetActiveRecursive(true);
@@ -75,9 +71,9 @@ namespace DwarfCorp
                 locatable.AddToCollisionManager = true;
 
                 var component = locatable as Physics;
-                if(component != null)
+                if (component != null)
                 {
-                    Vector3 radialThrow = MathFunctions.RandVector3Cube() * ThrowSpeed;
+                    Vector3 radialThrow = MathFunctions.RandVector3Cube()*ThrowSpeed;
                     component.Velocity += radialThrow;
                 }
 
@@ -88,5 +84,4 @@ namespace DwarfCorp
             base.Die();
         }
     }
-
 }

@@ -30,10 +30,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -43,11 +41,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Door : Fixture
     {
-        public Faction TeamFaction { get; set; }
-        public Matrix ClosedTransform { get; set; }
-        public Timer OpenTimer { get; set; }
-        bool IsOpen { get; set; }
-        bool IsMoving { get; set; }
         public Door()
         {
             IsOpen = false;
@@ -64,22 +57,27 @@ namespace DwarfCorp
             TeamFaction = team;
             Name = "Door";
             Tags.Add("Door");
-            this.Sprite.OrientationType = Sprite.OrientMode.Fixed;
             Sprite.OrientationType = Sprite.OrientMode.Fixed;
-            Sprite.LocalTransform = Matrix.CreateRotationY(0.5f * (float)Math.PI);
+            Sprite.OrientationType = Sprite.OrientMode.Fixed;
+            Sprite.LocalTransform = Matrix.CreateRotationY(0.5f*(float) Math.PI);
             OrientToWalls();
             ClosedTransform = LocalTransform;
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
-            Health health = new Health(PlayState.ComponentManager, "Health", this, hp, 0.0f, hp);
-           
+            var health = new Health(PlayState.ComponentManager, "Health", this, hp, 0.0f, hp);
         }
+
+        public Faction TeamFaction { get; set; }
+        public Matrix ClosedTransform { get; set; }
+        public Timer OpenTimer { get; set; }
+        private bool IsOpen { get; set; }
+        private bool IsMoving { get; set; }
 
         public Matrix CreateHingeTransform(float angle)
         {
-            Vector3 hinge = new Vector3(0, 0, 0.5f);
-            Vector3 center = new Vector3((float)Math.Sin(angle) * 0.5f, 0, (float)Math.Cos(angle) * 0.5f);
-            return  Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(center - hinge);
+            var hinge = new Vector3(0, 0, 0.5f);
+            var center = new Vector3((float) Math.Sin(angle)*0.5f, 0, (float) Math.Cos(angle)*0.5f);
+            return Matrix.CreateRotationY(angle)*Matrix.CreateTranslation(center - hinge);
         }
 
         public void Open()
@@ -150,5 +148,4 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
     }
-
 }

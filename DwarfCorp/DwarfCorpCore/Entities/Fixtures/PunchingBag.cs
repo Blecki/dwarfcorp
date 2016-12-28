@@ -30,10 +30,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -45,11 +42,12 @@ namespace DwarfCorp
     {
         public PunchingBag()
         {
-
         }
 
         public PunchingBag(Vector3 position) :
-            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 5), PlayState.ComponentManager.RootComponent)
+            base(
+            position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 5),
+            PlayState.ComponentManager.RootComponent)
         {
             Name = "PunchingBag";
             Tags.Add("PunchingBag");

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 
@@ -16,12 +13,12 @@ namespace DwarfCorp
             RainStorm
         }
 
-        public List<Storm> Forecast { get; set; }
-
         public Weather()
         {
-            Forecast= new List<Storm>();
+            Forecast = new List<Storm>();
         }
+
+        public List<Storm> Forecast { get; set; }
 
         public void Update()
         {
@@ -43,97 +40,11 @@ namespace DwarfCorp
             }
         }
 
-        public class Storm
-        {
-            public Vector3 WindSpeed { get; set; }
-            public float Intensity { get; set; }
-            public DateTime Date { get; set; }
-            public bool IsInitialized { get; set; }
-            public StormType TypeofStorm { get; set; }
-
-            public struct StormProperties
-            {
-                public ParticleEffect RainEffect { get; set; }
-                public ParticleEffect HitEffect { get; set; }
-                public float RainSpeed { get; set; }
-                public float RainRandom { get; set; }
-                public bool CreatesLiquid { get; set; }
-                public LiquidType LiquidToCreate { get; set; }
-                public bool CreatesVoxel { get; set; }
-                public VoxelType VoxelToCreate { get; set; }
-            }
-
-            public static Dictionary<StormType, StormProperties> Properties { get; set; }
-
-            static Storm()
-            {
-                Properties = new Dictionary<StormType, StormProperties>()
-                {
-                    {
-                        StormType.RainStorm, new StormProperties()
-                        {
-                            RainEffect = PlayState.ParticleManager.Effects["rain"],
-                            HitEffect = PlayState.ParticleManager.Effects["splat"],
-                            RainSpeed = 30,
-                            CreatesLiquid = true,
-                            LiquidToCreate = LiquidType.Water
-                        }
-                    },
-                    {
-                        StormType.SnowStorm, new StormProperties()
-                        {
-                            RainEffect = PlayState.ParticleManager.Effects["snowflake"],
-                            HitEffect = PlayState.ParticleManager.Effects["snow_particle"],
-                            RainSpeed = 10,
-                            RainRandom = 10f,
-                            CreatesVoxel = true,
-                            VoxelToCreate = VoxelLibrary.GetVoxelType("Snow")
-                        }
-                    }
-                };
-            }
-
-            public Storm()
-            {
-                IsInitialized = false;
-                TypeofStorm = StormType.RainStorm;
-            }
-
-            public bool IsDone()
-            {
-                return IsInitialized && PlayState.Time.CurrentDate > Date;
-            }
-
-            public void Start()
-            {
-                PlayState.AnnouncementManager.Announce("A storm is coming!", "A storm is incoming.");
-                BoundingBox bounds = PlayState.ChunkManager.Bounds;
-                Vector3 extents = bounds.Extents();
-                Vector3 center = bounds.Center();
-                Vector3 windNormalized = WindSpeed / WindSpeed.Length();
-                Vector3 offset = new Vector3(-windNormalized.X * extents.X + center.X, bounds.Max.Y + 5, -windNormalized.Z * extents.Z + center.Z);
-                Vector3 perp = new Vector3(-windNormalized.Z, 0, windNormalized.X);
-                int numClouds = (int)(MathFunctions.RandInt(10, 100) * Intensity);
-
-                for (int i = 0; i < numClouds; i++)
-                {
-                    Vector3 cloudPos = offset + perp * 5 * (i - numClouds / 2) + MathFunctions.RandVector3Cube() * 10;
-
-                    Cloud cloud = new Cloud(Intensity, 5, offset.Y + MathFunctions.Rand(-3.0f, 3.0f), cloudPos)
-                    {
-                        Velocity = WindSpeed,
-                        TypeofStorm = TypeofStorm
-                    };
-                }
-                IsInitialized = true;
-            }
-        }
-
 
         public static Storm CreateStorm(Vector3 windSpeed, float intensity)
         {
             windSpeed.Y = 0;
-            Storm storm = new Storm()
+            var storm = new Storm
             {
                 WindSpeed = windSpeed,
                 Intensity = intensity,
@@ -144,7 +55,7 @@ namespace DwarfCorp
 
         public static List<Storm> CreateForecast(int days)
         {
-            List<Storm> foreCast = new List<Storm>();
+            var foreCast = new List<Storm>();
             DateTime date = PlayState.Time.CurrentDate;
             for (int i = 0; i < days; i++)
             {
@@ -153,14 +64,14 @@ namespace DwarfCorp
                 float rain = ChunkGenerator.GetValueAt(randomSample, Overworld.ScalarFieldType.Rainfall);
                 float temperature = ChunkGenerator.GetValueAt(randomSample, Overworld.ScalarFieldType.Temperature);
                 // Generate storms according to the rainfall in the biome. Up to 4 storms per day.
-                int numStorms = (int) MathFunctions.Rand(0, rain*4);
+                var numStorms = (int) MathFunctions.Rand(0, rain*4);
 
                 // Space out the storms by a few hours
                 int stormHour = MathFunctions.RandInt(0, 6);
                 for (int j = 0; j < numStorms; j++)
                 {
                     bool isSnow = MathFunctions.RandEvent(1.0f - temperature);
-                    Storm storm = new Storm
+                    var storm = new Storm
                     {
                         WindSpeed = MathFunctions.RandVector3Cube()*5,
                         Intensity = MathFunctions.Rand(rain, rain*2),
@@ -178,23 +89,6 @@ namespace DwarfCorp
 
         public class Cloud : Fixture
         {
-            public float Raininess { get; set; }
-            public float Height { get; set; }
-            public int MaxRainDrops { get; set; }
-            public Vector3 Velocity { get; set; }
-
-
-            public struct Rain
-            {
-                public Vector3 Pos;
-                public Vector3 Vel;
-                public bool IsAlive;
-                public Particle Particle;
-            }
-
-            public Rain[] RainDrops { get; set; }
-            public StormType TypeofStorm { get; set; }
-
             public Cloud()
             {
                 MaxRainDrops = 0;
@@ -203,7 +97,9 @@ namespace DwarfCorp
             }
 
             public Cloud(float raininess, int maxRain, float height, Vector3 pos) :
-                base(pos, new SpriteSheet(ContentPaths.Particles.stormclouds), new Point(0, 0), PlayState.ComponentManager.RootComponent)
+                base(
+                pos, new SpriteSheet(ContentPaths.Particles.stormclouds), new Point(0, 0),
+                PlayState.ComponentManager.RootComponent)
             {
                 Matrix tf = LocalTransform;
                 tf.Translation = new Vector3(pos.X, height, pos.Z);
@@ -214,6 +110,15 @@ namespace DwarfCorp
                 RainDrops = new Rain[MaxRainDrops];
                 Velocity = new Vector3(1, 0, 0);
             }
+
+            public float Raininess { get; set; }
+            public float Height { get; set; }
+            public int MaxRainDrops { get; set; }
+            public Vector3 Velocity { get; set; }
+
+
+            public Rain[] RainDrops { get; set; }
+            public StormType TypeofStorm { get; set; }
 
             public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
             {
@@ -239,12 +144,12 @@ namespace DwarfCorp
                             RainDrops[i].IsAlive = true;
                             RainDrops[i].Pos = MathFunctions.RandVector3Box(BoundingBox);
                             RainDrops[i].Pos = new Vector3(RainDrops[i].Pos.X, BoundingBox.Min.Y - 1, RainDrops[i].Pos.Z);
-                            RainDrops[i].Vel = Vector3.Down * Storm.Properties[TypeofStorm].RainSpeed + Velocity;
+                            RainDrops[i].Vel = Vector3.Down*Storm.Properties[TypeofStorm].RainSpeed + Velocity;
                             break;
                         }
                     }
 
-                Voxel test = new Voxel();
+                var test = new Voxel();
                 Storm.StormProperties stormProperties = Storm.Properties[TypeofStorm];
                 for (int i = 0; i < MaxRainDrops; i++)
                 {
@@ -254,8 +159,8 @@ namespace DwarfCorp
 
                     if (stormProperties.RainRandom > 0)
                     {
-                        RainDrops[i].Vel.X += MathFunctions.Rand(-1, 1) * stormProperties.RainRandom * DwarfTime.Dt;
-                        RainDrops[i].Vel.Z += MathFunctions.Rand(-1, 1) * stormProperties.RainRandom * DwarfTime.Dt;
+                        RainDrops[i].Vel.X += MathFunctions.Rand(-1, 1)*stormProperties.RainRandom*DwarfTime.Dt;
+                        RainDrops[i].Vel.Z += MathFunctions.Rand(-1, 1)*stormProperties.RainRandom*DwarfTime.Dt;
                     }
 
                     if (RainDrops[i].Pos.Y < 0)
@@ -283,20 +188,21 @@ namespace DwarfCorp
                     if (test == null || test.IsEmpty || test.WaterLevel > 0) continue;
 
                     RainDrops[i].IsAlive = false;
-                    stormProperties.HitEffect.Trigger(1, RainDrops[i].Pos + Vector3.UnitY * 0.5f, Color.White);
+                    stormProperties.HitEffect.Trigger(1, RainDrops[i].Pos + Vector3.UnitY*0.5f, Color.White);
 
                     if (!MathFunctions.RandEvent(0.1f)) continue;
 
                     Voxel above = test.IsEmpty ? test : test.GetVoxelAbove();
 
                     if (above == null) continue;
-                    if (stormProperties.CreatesLiquid && 
-                        (above.WaterLevel < 8 && (above.Water.Type == LiquidType.Water || above.Water.Type == LiquidType.None)))
+                    if (stormProperties.CreatesLiquid &&
+                        (above.WaterLevel < 8 &&
+                         (above.Water.Type == LiquidType.Water || above.Water.Type == LiquidType.None)))
                     {
                         WaterCell water = above.Water;
                         water.WaterLevel++;
                         water.Type = stormProperties.LiquidToCreate;
-                                   
+
                         above.Water = water;
                         above.Chunk.ShouldRebuildWater = true;
                     }
@@ -307,9 +213,7 @@ namespace DwarfCorp
                         above.Health = above.Type.StartingHealth;
                         above.Chunk.NotifyTotalRebuild(!above.IsInterior);
                     }
-
                 }
-
 
 
                 Matrix tf = LocalTransform;
@@ -327,7 +231,7 @@ namespace DwarfCorp
                         raindrop.Particle.LifeRemaining = -1;
                     }
                 }
-             
+
                 base.Die();
             }
 
@@ -340,8 +244,103 @@ namespace DwarfCorp
                         raindrop.Particle.LifeRemaining = -1;
                     }
                 }
-                
+
                 base.Delete();
+            }
+
+            public struct Rain
+            {
+                public bool IsAlive;
+                public Particle Particle;
+                public Vector3 Pos;
+                public Vector3 Vel;
+            }
+        }
+
+        public class Storm
+        {
+            static Storm()
+            {
+                Properties = new Dictionary<StormType, StormProperties>
+                {
+                    {
+                        StormType.RainStorm, new StormProperties
+                        {
+                            RainEffect = PlayState.ParticleManager.Effects["rain"],
+                            HitEffect = PlayState.ParticleManager.Effects["splat"],
+                            RainSpeed = 30,
+                            CreatesLiquid = true,
+                            LiquidToCreate = LiquidType.Water
+                        }
+                    },
+                    {
+                        StormType.SnowStorm, new StormProperties
+                        {
+                            RainEffect = PlayState.ParticleManager.Effects["snowflake"],
+                            HitEffect = PlayState.ParticleManager.Effects["snow_particle"],
+                            RainSpeed = 10,
+                            RainRandom = 10f,
+                            CreatesVoxel = true,
+                            VoxelToCreate = VoxelLibrary.GetVoxelType("Snow")
+                        }
+                    }
+                };
+            }
+
+            public Storm()
+            {
+                IsInitialized = false;
+                TypeofStorm = StormType.RainStorm;
+            }
+
+            public Vector3 WindSpeed { get; set; }
+            public float Intensity { get; set; }
+            public DateTime Date { get; set; }
+            public bool IsInitialized { get; set; }
+            public StormType TypeofStorm { get; set; }
+
+            public static Dictionary<StormType, StormProperties> Properties { get; set; }
+
+            public bool IsDone()
+            {
+                return IsInitialized && PlayState.Time.CurrentDate > Date;
+            }
+
+            public void Start()
+            {
+                PlayState.AnnouncementManager.Announce("A storm is coming!", "A storm is incoming.");
+                BoundingBox bounds = PlayState.ChunkManager.Bounds;
+                Vector3 extents = bounds.Extents();
+                Vector3 center = bounds.Center();
+                Vector3 windNormalized = WindSpeed/WindSpeed.Length();
+                var offset = new Vector3(-windNormalized.X*extents.X + center.X, bounds.Max.Y + 5,
+                    -windNormalized.Z*extents.Z + center.Z);
+                var perp = new Vector3(-windNormalized.Z, 0, windNormalized.X);
+                var numClouds = (int) (MathFunctions.RandInt(10, 100)*Intensity);
+
+                for (int i = 0; i < numClouds; i++)
+                {
+                    Vector3 cloudPos = offset + perp*5*(i - numClouds/2) + MathFunctions.RandVector3Cube()*10;
+
+                    var cloud = new Cloud(Intensity, 5, offset.Y + MathFunctions.Rand(-3.0f, 3.0f), cloudPos)
+                    {
+                        Velocity = WindSpeed,
+                        TypeofStorm = TypeofStorm
+                    };
+                }
+                IsInitialized = true;
+            }
+
+            public struct StormProperties
+            {
+                public ParticleEffect RainEffect { get; set; }
+                public ParticleEffect HitEffect { get; set; }
+                public float RainSpeed { get; set; }
+                public float RainRandom { get; set; }
+                public bool CreatesLiquid { get; set; }
+                public LiquidType LiquidToCreate { get; set; }
+                public bool CreatesVoxel { get; set; }
+                public VoxelType VoxelToCreate { get; set; }
             }
         }
     }

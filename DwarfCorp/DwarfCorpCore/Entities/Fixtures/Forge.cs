@@ -30,41 +30,40 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-  
     [JsonObject(IsReference = true)]
     public class Forge : Body
     {
         public Forge()
         {
-
         }
 
         public Forge(Vector3 position) :
-            base("Forge", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+            base(
+            "Forge", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position),
+            new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
-            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
+            var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
 
-            List<Point> frames = new List<Point>
+            var frames = new List<Point>
             {
                 new Point(1, 3),
                 new Point(3, 3),
                 new Point(2, 3),
                 new Point(3, 3)
             };
-            Animation lampAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "Forge", 32, 32, frames, true, Color.White, 3.0f, 1f, 1.0f, false);
+            var lampAnimation = new Animation(GameState.Game.GraphicsDevice,
+                new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "Forge", 32, 32, frames, true,
+                Color.White, 3.0f, 1f, 1.0f, false);
 
-            Sprite sprite = new Sprite(PlayState.ComponentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
+            var sprite = new Sprite(PlayState.ComponentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
             {
                 LightsWithVoxels = false
             };
@@ -75,7 +74,7 @@ namespace DwarfCorp
             Tags.Add("Forge");
 
 
-            Voxel voxelUnder = new Voxel();
+            var voxelUnder = new Voxel();
 
             if (PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {

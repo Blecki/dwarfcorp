@@ -30,25 +30,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     public class ColorSelector : GUIComponent
     {
-        public GridLayout Layout { get; set; }
-        public int PanelWidth = 32;
-        public int PanelHeight = 32;
-        public Color CurrentColor { get; set; }
         public delegate void ColorSelected(Color arg);
 
-        public event ColorSelected OnColorSelected;
-
+        public int PanelHeight = 32;
+        public int PanelWidth = 32;
 
         public ColorSelector(DwarfGUI gui, GUIComponent parent) :
             base(gui, parent)
@@ -56,35 +50,41 @@ namespace DwarfCorp
             OnColorSelected += ColorSelector_OnColorSelected;
         }
 
-        void ColorSelector_OnColorSelected(Color arg)
+        public GridLayout Layout { get; set; }
+
+        public Color CurrentColor { get; set; }
+
+        public event ColorSelected OnColorSelected;
+
+
+        private void ColorSelector_OnColorSelected(Color arg)
         {
-           
         }
 
         public void InitializeColorPanels(List<Color> colors)
         {
             int numRows = GlobalBounds.Height/PanelHeight;
             int numCols = GlobalBounds.Width/PanelWidth;
-            Layout = new GridLayout(GUI, this, GlobalBounds.Height / PanelHeight, GlobalBounds.Width / PanelWidth);
+            Layout = new GridLayout(GUI, this, GlobalBounds.Height/PanelHeight, GlobalBounds.Width/PanelWidth);
 
-            int rc = Math.Max((int)(Math.Sqrt(colors.Count)), 2);
+            int rc = Math.Max((int) (Math.Sqrt(colors.Count)), 2);
 
             for (int i = 0; i < colors.Count; i++)
             {
-                ColorPanel panel = new ColorPanel(GUI, Layout)
+                var panel = new ColorPanel(GUI, Layout)
                 {
                     CurrentColor = colors[i]
                 };
 
-                int row = i / numCols;
-                int col = i % numCols;
+                int row = i/numCols;
+                int col = i%numCols;
                 panel.OnClicked += () => panel_OnClicked(panel.CurrentColor);
 
                 Layout.SetComponentPosition(panel, col, row, 1, 1);
             }
         }
 
-        void panel_OnClicked(Color color)
+        private void panel_OnClicked(Color color)
         {
             CurrentColor = color;
             OnColorSelected.Invoke(color);

@@ -30,15 +30,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -72,107 +71,17 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-           EmployeeClass.AddClasses(Classes);
+            EmployeeClass.AddClasses(Classes);
         }
     }
 
     /// <summary>
-    /// Component which keeps track of a large number of other components (AI, physics, sprites, etc.) 
-    /// related to creatures (such as dwarves and goblins). 
+    ///     Component which keeps track of a large number of other components (AI, physics, sprites, etc.)
+    ///     related to creatures (such as dwarves and goblins).
     /// </summary>
     [JsonObject(IsReference = true)]
     public class Creature : Health
     {
-        public CreatureAI AI { get; set; }
-        public Physics Physics { get; set; }
-        public CharacterSprite Sprite { get; set; }
-        public SelectionCircle SelectionCircle { get; set; }
-        public EnemySensor Sensors { get; set; }
-        public Flammable Flames { get; set; }
-        public ParticleTrigger DeathParticleTrigger { get; set; }
-        public Grabber Hands { get; set; }
-        public Shadow Shadow { get; set; }
-        public bool HasMeat { get; set; }
-        public bool HasBones { get; set; }
-        public NoiseMaker NoiseMaker { get; set; }
-
-        public Inventory Inventory { get; set; }
-
-        [JsonIgnore]
-        public GraphicsDevice Graphics { get; set; }
-
-        [JsonIgnore]
-        public ChunkManager Chunks { get; set; }
-
-        public List<Attack> Attacks { get; set; }
-            
-        [JsonIgnore]
-        public ContentManager Content { get; set; }
-
-        public Faction Faction { get; set; }
-
-        public PlanService PlanService { get; set; }
-
-        public string Allies { get; set; }
-
-        public PIDController Controller { get; set; }
-        public CreatureStats Stats { get; set; }
-        public CreatureStatus Status { get; set; }
-
-        public Timer JumpTimer { get; set; }
-
-        public bool OverrideCharacterMode { get; set; }
-
-        protected CharacterMode currentCharacterMode = CharacterMode.Idle;
-
-        public CharacterMode CurrentCharacterMode
-        {
-            get { return currentCharacterMode; }
-            set
-            {
-                if (OverrideCharacterMode) return;
-                
-                currentCharacterMode = value;
-                if(Sprite != null)
-                {
-                    Sprite.SetCurrentAnimation(value.ToString());
-                }
-            }
-        }
-
-        public bool IsAsleep
-        {
-            get { return Status.IsAsleep; }
-        }
-
-        public bool IsOnGround { get; set; }
-        public bool IsHeadClear { get; set; }
-
-
-        private float IndicatorRateLimit = 2.0f;
-        private DateTime LastIndicatorTime = DateTime.Now;
-
-        public struct MoveAction
-        {
-            public Voxel Voxel { get; set; }
-            public MoveType MoveType { get; set; }
-            public Vector3 Diff { get; set; }
-            public GameComponent InteractObject { get; set; }
-        }
-
-        public List<Buff> Buffs { get; set; } 
-
-        public enum MoveType
-        {
-            Walk,
-            Jump,
-            Climb,
-            Swim,
-            Fall,
-            Fly,
-            DestroyObject
-        }
-
         public enum CharacterMode
         {
             Walking,
@@ -187,18 +96,26 @@ namespace DwarfCorp
             Sitting
         }
 
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
+        public enum MoveType
         {
-            Graphics = PlayState.ChunkManager.Graphics;
-            Content = PlayState.ChunkManager.Content;
-            Chunks = PlayState.ChunkManager;
+            Walk,
+            Jump,
+            Climb,
+            Swim,
+            Fall,
+            Fly,
+            DestroyObject,
+            ClimbWalls
         }
+
+        private float IndicatorRateLimit = 2.0f;
+        private DateTime LastIndicatorTime = DateTime.Now;
+        protected CharacterMode currentCharacterMode = CharacterMode.Idle;
 
         public Creature()
         {
             CurrentCharacterMode = CharacterMode.Idle;
-            
+
             OverrideCharacterMode = false;
             Buffs = new List<Buff>();
             HasMeat = true;
@@ -206,13 +123,15 @@ namespace DwarfCorp
         }
 
         public Creature(Vector3 pos, CreatureDef def, string creatureClass, int creatureLevel, string faction) :
-            this(new CreatureStats(EmployeeClass.Classes[creatureClass], creatureLevel), 
-                faction, 
-                PlayState.PlanService, 
-                PlayState.ComponentManager.Factions.Factions[faction], 
-                new Physics(def.Name, PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(pos), def.Size, new Vector3(0, -def.Size.Y * 0.5f, 0), def.Mass, 1.0f, 0.999f, 0.999f, Vector3.UnitY * -10, Physics.OrientMode.RotateY),
+            this(new CreatureStats(EmployeeClass.Classes[creatureClass], creatureLevel),
+                faction,
+                PlayState.PlanService,
+                PlayState.ComponentManager.Factions.Factions[faction],
+                new Physics(def.Name, PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(pos), def.Size,
+                    new Vector3(0, -def.Size.Y*0.5f, 0), def.Mass, 1.0f, 0.999f, 0.999f, Vector3.UnitY*-10,
+                    Physics.OrientMode.RotateY),
                 PlayState.ChunkManager,
-                GameState.Game.GraphicsDevice, 
+                GameState.Game.GraphicsDevice,
                 GameState.Game.Content,
                 def.Name)
         {
@@ -220,7 +139,8 @@ namespace DwarfCorp
             HasBones = true;
             EmployeeClass employeeClass = EmployeeClass.Classes[creatureClass];
             Physics.Orientation = Physics.OrientMode.RotateY;
-            Sprite = new CharacterSprite(Graphics, Manager, "Sprite", Physics, Matrix.CreateTranslation(def.SpriteOffset));
+            Sprite = new CharacterSprite(Graphics, Manager, "Sprite", Physics,
+                Matrix.CreateTranslation(def.SpriteOffset));
 
             foreach (Animation animation in employeeClass.Animations)
             {
@@ -259,11 +179,11 @@ namespace DwarfCorp
                 {
                     GlobalScale = def.ShadowScale
                 };
-                List<Point> shP = new List<Point>
+                var shP = new List<Point>
                 {
                     new Point(0, 0)
                 };
-                Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle),
+                var shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle),
                     "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
                 Shadow.AddAnimation(shadowAnimation);
                 shadowAnimation.Play();
@@ -271,7 +191,8 @@ namespace DwarfCorp
             }
             Physics.Tags.AddRange(def.Tags);
 
-            DeathParticleTrigger = new ParticleTrigger(def.BloodParticle, Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
+            DeathParticleTrigger = new ParticleTrigger(def.BloodParticle, Manager, "Death Gibs", Physics,
+                Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 1,
@@ -285,11 +206,12 @@ namespace DwarfCorp
             }
 
             NoiseMaker.Noises["Hurt"] = def.HurtSounds;
-            NoiseMaker.Noises["Chew"] = new List<string>() {def.ChewSound};
-            NoiseMaker.Noises["Jump"] = new List<string>() {def.JumpSound};
+            NoiseMaker.Noises["Chew"] = new List<string> {def.ChewSound};
+            NoiseMaker.Noises["Jump"] = new List<string> {def.JumpSound};
 
-            MinimapIcon minimapIcon = new MinimapIcon(Physics, def.MinimapIcon);
-            Stats.FullName = TextGenerator.GenerateRandom(PlayState.ComponentManager.Factions.Races[def.Race].NameTemplates);
+            var minimapIcon = new MinimapIcon(Physics, def.MinimapIcon);
+            Stats.FullName =
+                TextGenerator.GenerateRandom(PlayState.ComponentManager.Factions.Races[def.Race].NameTemplates);
             Stats.CanSleep = def.CanSleep;
             Stats.CanEat = def.CanEat;
             AI.TriggersMourning = def.TriggersMourning;
@@ -318,7 +240,7 @@ namespace DwarfCorp
             Faction = faction;
             PlanService = planService;
             Allies = allies;
-            Controller = new PIDController(Stats.MaxAcceleration, Stats.StoppingForce * 2, 0.0f);
+            Controller = new PIDController(Stats.MaxAcceleration, Stats.StoppingForce*2, 0.0f);
             JumpTimer = new Timer(0.2f, true);
             Status = new CreatureStatus();
             IsHeadClear = true;
@@ -328,6 +250,80 @@ namespace DwarfCorp
             {
                 IsVisible = false
             };
+        }
+
+        public CreatureAI AI { get; set; }
+        public Physics Physics { get; set; }
+        public CharacterSprite Sprite { get; set; }
+        public SelectionCircle SelectionCircle { get; set; }
+        public EnemySensor Sensors { get; set; }
+        public Flammable Flames { get; set; }
+        public ParticleTrigger DeathParticleTrigger { get; set; }
+        public Grabber Hands { get; set; }
+        public Shadow Shadow { get; set; }
+        public bool HasMeat { get; set; }
+        public bool HasBones { get; set; }
+        public NoiseMaker NoiseMaker { get; set; }
+
+        public Inventory Inventory { get; set; }
+
+        [JsonIgnore]
+        public GraphicsDevice Graphics { get; set; }
+
+        [JsonIgnore]
+        public ChunkManager Chunks { get; set; }
+
+        public List<Attack> Attacks { get; set; }
+
+        [JsonIgnore]
+        public ContentManager Content { get; set; }
+
+        public Faction Faction { get; set; }
+
+        public PlanService PlanService { get; set; }
+
+        public string Allies { get; set; }
+
+        public PIDController Controller { get; set; }
+        public CreatureStats Stats { get; set; }
+        public CreatureStatus Status { get; set; }
+
+        public Timer JumpTimer { get; set; }
+
+        public bool OverrideCharacterMode { get; set; }
+
+        public CharacterMode CurrentCharacterMode
+        {
+            get { return currentCharacterMode; }
+            set
+            {
+                if (OverrideCharacterMode) return;
+
+                currentCharacterMode = value;
+                if (Sprite != null)
+                {
+                    Sprite.SetCurrentAnimation(value.ToString());
+                }
+            }
+        }
+
+        public bool IsAsleep
+        {
+            get { return Status.IsAsleep; }
+        }
+
+        public bool IsOnGround { get; set; }
+        public bool IsHeadClear { get; set; }
+
+
+        public List<Buff> Buffs { get; set; }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            Graphics = PlayState.ChunkManager.Graphics;
+            Content = PlayState.ChunkManager.Content;
+            Chunks = PlayState.ChunkManager;
         }
 
         public void AddBuff(Buff buff)
@@ -349,14 +345,13 @@ namespace DwarfCorp
                 buff.OnEnd(this);
                 Buffs.Remove(buff);
             }
-                
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!IsActive) return;
 
-            CheckNeighborhood(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
+            CheckNeighborhood(chunks, (float) gameTime.ElapsedGameTime.TotalSeconds);
             UpdateAnimation(gameTime, chunks, camera);
             Status.Update(this, gameTime, chunks, camera);
             JumpTimer.Update(gameTime);
@@ -367,26 +362,28 @@ namespace DwarfCorp
 
         public void CheckNeighborhood(ChunkManager chunks, float dt)
         {
-            Voxel voxelBelow = new Voxel();
-            bool belowExists = chunks.ChunkData.GetVoxel(Physics.GlobalTransform.Translation - Vector3.UnitY * 0.8f, ref voxelBelow);
-            Voxel voxelAbove = new Voxel();
-            bool aboveExists = chunks.ChunkData.GetVoxel(Physics.GlobalTransform.Translation + Vector3.UnitY, ref voxelAbove);
+            var voxelBelow = new Voxel();
+            bool belowExists = chunks.ChunkData.GetVoxel(Physics.GlobalTransform.Translation - Vector3.UnitY*0.8f,
+                ref voxelBelow);
+            var voxelAbove = new Voxel();
+            bool aboveExists = chunks.ChunkData.GetVoxel(Physics.GlobalTransform.Translation + Vector3.UnitY,
+                ref voxelAbove);
 
             if (aboveExists)
             {
                 IsHeadClear = voxelAbove.IsEmpty;
             }
-            if(belowExists && Physics.IsInLiquid)
+            if (belowExists && Physics.IsInLiquid)
             {
                 IsOnGround = false;
             }
-            else if(belowExists)
+            else if (belowExists)
             {
                 IsOnGround = !voxelBelow.IsEmpty;
             }
             else
             {
-                if(IsOnGround)
+                if (IsOnGround)
                 {
                     IsOnGround = false;
                 }
@@ -417,7 +414,7 @@ namespace DwarfCorp
                 CurrentCharacterMode = CharacterMode.Idle;
             }
 
-            if(Status.IsAsleep)
+            if (Status.IsAsleep)
             {
                 CurrentCharacterMode = CharacterMode.Sleeping;
             }
@@ -454,7 +451,7 @@ namespace DwarfCorp
                         ShortName = type
                     });
                 }
-               
+
                 Inventory.Resources.AddResource(new ResourceAmount(type, 1));
             }
 
@@ -470,7 +467,7 @@ namespace DwarfCorp
                         ShortName = type
                     });
                 }
-               
+
                 Inventory.Resources.AddResource(new ResourceAmount(type, 1));
             }
         }
@@ -482,14 +479,15 @@ namespace DwarfCorp
                 return;
             }
 
-            IndicatorManager.DrawIndicator(image, AI.Position + new Vector3(0, 0.5f, 0), 1, 1.5f, new Vector2(image.SourceRect.Width / 2.0f, -image.SourceRect.Height / 2.0f), tint);
+            IndicatorManager.DrawIndicator(image, AI.Position + new Vector3(0, 0.5f, 0), 1, 1.5f,
+                new Vector2(image.SourceRect.Width/2.0f, -image.SourceRect.Height/2.0f), tint);
             LastIndicatorTime = DateTime.Now;
         }
 
 
         public void DrawIndicator(IndicatorManager.StandardIndicators indicator)
         {
-            if(!((DateTime.Now - LastIndicatorTime).TotalSeconds >= IndicatorRateLimit))
+            if (!((DateTime.Now - LastIndicatorTime).TotalSeconds >= IndicatorRateLimit))
             {
                 return;
             }
@@ -498,24 +496,23 @@ namespace DwarfCorp
             LastIndicatorTime = DateTime.Now;
         }
 
-        
 
         public override void ReceiveMessageRecursive(Message messageToReceive)
         {
-            switch(messageToReceive.Type)
+            switch (messageToReceive.Type)
             {
                 case Message.MessageType.OnChunkModified:
                     break;
-                
+
                 case Message.MessageType.OnHurt:
                     NoiseMaker.MakeNoise("Hurt", AI.Position);
-                    this.Sprite.Blink(0.5f);
+                    Sprite.Blink(0.5f);
                     AI.AddThought(Thought.ThoughtType.TookDamage);
                     PlayState.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
                     break;
             }
 
-            
+
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
@@ -525,41 +522,40 @@ namespace DwarfCorp
             {
                 return;
             }
-           
-            float veloNorm = Physics.Velocity.Length();
-            if(veloNorm > Stats.MaxSpeed)
-            {
-                Physics.Velocity = (Physics.Velocity / veloNorm) * Stats.MaxSpeed;
-            }
 
-           
+            float veloNorm = Physics.Velocity.Length();
+            if (veloNorm > Stats.MaxSpeed)
+            {
+                Physics.Velocity = (Physics.Velocity/veloNorm)*Stats.MaxSpeed;
+            }
         }
 
         public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar)
         {
-            Timer waitTimer = new Timer(f, true);
+            var waitTimer = new Timer(f, true);
 
             CurrentCharacterMode = CharacterMode.Attacking;
-            Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
-            Sprite.PlayAnimations(Creature.CharacterMode.Attacking);
-           
-            CurrentCharacterMode = Creature.CharacterMode.Attacking;
+            Sprite.ResetAnimations(CharacterMode.Attacking);
+            Sprite.PlayAnimations(CharacterMode.Attacking);
 
-            while(!waitTimer.HasTriggered)
+            CurrentCharacterMode = CharacterMode.Attacking;
+
+            while (!waitTimer.HasTriggered)
             {
                 waitTimer.Update(DwarfTime.LastTime);
 
-                if(loadBar)
+                if (loadBar)
                 {
-                    Drawer2D.DrawLoadBar(AI.Position + Vector3.Up, Color.White, Color.Black, 100, 16, waitTimer.CurrentTimeSeconds / waitTimer.TargetTimeSeconds);
+                    Drawer2D.DrawLoadBar(AI.Position + Vector3.Up, Color.White, Color.Black, 100, 16,
+                        waitTimer.CurrentTimeSeconds/waitTimer.TargetTimeSeconds);
                 }
 
                 Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, AI.Position);
                 Physics.Velocity = Vector3.Zero;
-                Sprite.ReloopAnimations(Creature.CharacterMode.Attacking);
+                Sprite.ReloopAnimations(CharacterMode.Attacking);
                 yield return Act.Status.Running;
             }
-            Sprite.PauseAnimations(Creature.CharacterMode.Attacking);
+            Sprite.PauseAnimations(CharacterMode.Attacking);
             CurrentCharacterMode = CharacterMode.Idle;
             yield return Act.Status.Success;
         }
@@ -571,12 +567,14 @@ namespace DwarfCorp
             string prefix = damage > 0 ? "-" : "+";
             Color color = damage > 0 ? Color.Red : Color.Green;
 
-            IndicatorManager.DrawIndicator(prefix + (int)amount + " HP", AI.Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, color, Indicator.IndicatorMode.Indicator3D);
+            IndicatorManager.DrawIndicator(prefix + (int) amount + " HP",
+                AI.Position + Vector3.Up + MathFunctions.RandVector3Cube()*0.5f, 0.5f, color,
+                Indicator.IndicatorMode.Indicator3D);
 
             if (damage > 0)
             {
                 NoiseMaker.MakeNoise("Hurt", AI.Position);
-                this.Sprite.Blink(0.5f);
+                Sprite.Blink(0.5f);
                 AI.AddThought(Thought.ThoughtType.TookDamage);
                 PlayState.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
             }
@@ -584,20 +582,27 @@ namespace DwarfCorp
             return damage;
         }
 
-        public class Buff 
+        public void Gather(Body item)
         {
-            public Timer EffectTime { get; set; }
-            public bool IsInEffect { get { return !EffectTime.HasTriggered; } }
-            public string Particles { get; set; }
-            public Timer ParticleTimer { get; set; }
-            public string SoundOnStart { get; set; }
-            public string SoundOnEnd { get; set; }
+            var gatherTask = new GatherItemTask(item)
+            {
+                Priority = Task.PriorityType.High
+            };
 
-            
+            if (!AI.Tasks.Contains(gatherTask))
+            {
+                if (!AI.Faction.GatherDesignations.Contains(item))
+                {
+                    AI.Faction.GatherDesignations.Add(item);
+                }
+                AI.Tasks.Add(gatherTask);
+            }
+        }
 
+        public class Buff
+        {
             public Buff()
             {
-
             }
 
             public Buff(float time)
@@ -605,6 +610,19 @@ namespace DwarfCorp
                 EffectTime = new Timer(time, true);
                 ParticleTimer = new Timer(0.25f, false);
             }
+
+            public Timer EffectTime { get; set; }
+
+            public bool IsInEffect
+            {
+                get { return !EffectTime.HasTriggered; }
+            }
+
+            public string Particles { get; set; }
+            public Timer ParticleTimer { get; set; }
+            public string SoundOnStart { get; set; }
+            public string SoundOnEnd { get; set; }
+
 
             public virtual void OnApply(Creature creature)
             {
@@ -635,11 +653,12 @@ namespace DwarfCorp
 
             public virtual Buff Clone()
             {
-                return new Buff()
+                return new Buff
                 {
                     EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
                     Particles = Particles,
-                    ParticleTimer = new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
+                    ParticleTimer =
+                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
                     SoundOnEnd = SoundOnEnd,
                     SoundOnStart = SoundOnStart
                 };
@@ -648,27 +667,28 @@ namespace DwarfCorp
 
         public class DamageResistBuff : Buff
         {
-            public Health.DamageType DamageType { get; set; }
+            public DamageResistBuff()
+            {
+                DamageType = DamageType.Normal;
+                Bonus = 0.0f;
+            }
+
+            public DamageType DamageType { get; set; }
             public float Bonus { get; set; }
 
             public override Buff Clone()
             {
-                return new DamageResistBuff()
+                return new DamageResistBuff
                 {
                     EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
                     Particles = Particles,
-                    ParticleTimer = new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
+                    ParticleTimer =
+                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
                     SoundOnEnd = SoundOnEnd,
                     SoundOnStart = SoundOnStart,
                     DamageType = DamageType,
                     Bonus = Bonus
                 };
-            }
-
-            public DamageResistBuff()
-            {
-                DamageType = DamageType.Normal;
-                Bonus = 0.0f;
             }
 
             public override void OnApply(Creature creature)
@@ -684,9 +704,81 @@ namespace DwarfCorp
             }
         }
 
+        public struct MoveAction
+        {
+            public Voxel Voxel { get; set; }
+            public MoveType MoveType { get; set; }
+            public Vector3 Diff { get; set; }
+            public GameComponent InteractObject { get; set; }
+        }
+
+        public class OngoingDamageBuff : Buff
+        {
+            public DamageType DamageType { get; set; }
+            public float DamagePerSecond { get; set; }
+
+            public override void Update(DwarfTime time, Creature creature)
+            {
+                var dt = (float) time.ElapsedGameTime.TotalSeconds;
+                creature.Damage(DamagePerSecond*dt, DamageType);
+                base.Update(time, creature);
+            }
+
+            public override Buff Clone()
+            {
+                return new OngoingDamageBuff
+                {
+                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
+                    Particles = Particles,
+                    ParticleTimer =
+                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
+                    SoundOnEnd = SoundOnEnd,
+                    SoundOnStart = SoundOnStart,
+                    DamageType = DamageType,
+                    DamagePerSecond = DamagePerSecond
+                };
+            }
+        }
+
+        public class OngoingHealBuff : Buff
+        {
+            public OngoingHealBuff()
+            {
+            }
+
+            public OngoingHealBuff(float dps, float time) :
+                base(time)
+            {
+                DamagePerSecond = dps;
+            }
+
+            public float DamagePerSecond { get; set; }
+
+            public override void Update(DwarfTime time, Creature creature)
+            {
+                var dt = (float) time.ElapsedGameTime.TotalSeconds;
+                creature.Heal(dt*DamagePerSecond);
+
+                base.Update(time, creature);
+            }
+
+            public override Buff Clone()
+            {
+                return new OngoingHealBuff
+                {
+                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
+                    Particles = Particles,
+                    ParticleTimer =
+                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
+                    SoundOnEnd = SoundOnEnd,
+                    SoundOnStart = SoundOnStart,
+                    DamagePerSecond = DamagePerSecond
+                };
+            }
+        }
+
         public class StatBuff : Buff
         {
-            public CreatureStats.StatNums Buffs { get; set; }
             public StatBuff()
             {
                 Buffs = new CreatureStats.StatNums();
@@ -698,13 +790,16 @@ namespace DwarfCorp
                 Buffs = buffs;
             }
 
+            public CreatureStats.StatNums Buffs { get; set; }
+
             public override Buff Clone()
             {
-                return new StatBuff()
+                return new StatBuff
                 {
                     EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
                     Particles = Particles,
-                    ParticleTimer = new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
+                    ParticleTimer =
+                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
                     SoundOnEnd = SoundOnEnd,
                     SoundOnStart = SoundOnStart,
                     Buffs = Buffs
@@ -729,82 +824,10 @@ namespace DwarfCorp
             }
         }
 
-        public class OngoingDamageBuff : Buff
-        {
-            public DamageType DamageType { get; set; }
-            public float DamagePerSecond { get; set; }
-
-            public OngoingDamageBuff()
-            {
-                
-            }
-
-            public override void Update(DwarfTime time, Creature creature)
-            {
-                float dt = (float)time.ElapsedGameTime.TotalSeconds;
-                creature.Damage(DamagePerSecond*dt, DamageType);
-                base.Update(time, creature);
-            }
-
-            public override Buff Clone()
-            {
-                return new OngoingDamageBuff()
-                {
-                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
-                    Particles = Particles,
-                    ParticleTimer = new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
-                    SoundOnEnd = SoundOnEnd,
-                    SoundOnStart = SoundOnStart,
-                    DamageType = DamageType,
-                    DamagePerSecond = DamagePerSecond
-                };
-            }
-        }
-
-        public class OngoingHealBuff : Buff
-        {
-            public float DamagePerSecond { get; set; }
-
-            public OngoingHealBuff()
-            {
-                
-            }
-
-            public OngoingHealBuff(float dps, float time) :
-                base(time)
-            {
-                DamagePerSecond = dps;
-            }
-
-            public override void Update(DwarfTime time, Creature creature)
-            {
-                float dt = (float)time.ElapsedGameTime.TotalSeconds;
-                creature.Heal(dt * DamagePerSecond);
-
-                base.Update(time, creature);
-            }
-
-            public override Buff Clone()
-            {
-                return new OngoingHealBuff()
-                {
-                    EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
-                    Particles = Particles,
-                    ParticleTimer = new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
-                    SoundOnEnd = SoundOnEnd,
-                    SoundOnStart = SoundOnStart,
-                    DamagePerSecond = DamagePerSecond
-                };
-            }
-        }
-
         public class ThoughtBuff : Buff
         {
-            public Thought.ThoughtType ThoughtType { get; set; }
-
             public ThoughtBuff()
             {
-                
             }
 
             public ThoughtBuff(float time, Thought.ThoughtType type) :
@@ -812,6 +835,8 @@ namespace DwarfCorp
             {
                 ThoughtType = type;
             }
+
+            public Thought.ThoughtType ThoughtType { get; set; }
 
             public override void OnApply(Creature creature)
             {
@@ -827,34 +852,17 @@ namespace DwarfCorp
 
             public override Buff Clone()
             {
-                return new ThoughtBuff()
+                return new ThoughtBuff
                 {
                     EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
                     Particles = Particles,
-                    ParticleTimer = new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
+                    ParticleTimer =
+                        new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
                     SoundOnEnd = SoundOnEnd,
                     SoundOnStart = SoundOnStart,
                     ThoughtType = ThoughtType
                 };
             }
         }
-
-        public void Gather(Body item)
-        {
-            GatherItemTask gatherTask = new GatherItemTask(item)
-            {
-                Priority = Task.PriorityType.High
-            };
-
-            if (!AI.Tasks.Contains(gatherTask))
-            {
-                if (!AI.Faction.GatherDesignations.Contains(item))
-                {
-                    AI.Faction.GatherDesignations.Add(item);
-                }
-                AI.Tasks.Add(gatherTask);
-            }
-        }
     }
-
 }

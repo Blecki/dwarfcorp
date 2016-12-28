@@ -30,56 +30,21 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature goes to an entity, and then hits it until the other entity is dead.
+    ///     A creature goes to an entity, and then hits it until the other entity is dead.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class KillEntityAct : CompoundCreatureAct
     {
-        public Body Entity { get; set; }
-        public KillEntityTask.KillType Mode { get; set; }
-        public bool PathExists { get; set; }
-        
         public KillEntityAct()
         {
             PathExists = false;
-        }
-
-        public IEnumerable<Act.Status> Verify()
-        {
-            while (true)
-            {
-                switch (Mode)
-                {
-                    case KillEntityTask.KillType.Auto:
-                    {
-                        if (Entity != null && !Entity.IsDead) yield return Act.Status.Running;
-                        else yield return Act.Status.Fail;
-                        break;
-                    }
-                    case KillEntityTask.KillType.Attack:
-                    {
-                        if (Entity != null && !Entity.IsDead && Creature.Faction.AttackDesignations.Contains(Entity))
-                            yield return Act.Status.Running;
-                        else yield return Act.Status.Fail;
-                        break;
-                    }
-                    case KillEntityTask.KillType.Chop:
-                    {
-                        if (Entity != null && !Entity.IsDead && Creature.Faction.ChopDesignations.Contains(Entity))
-                            yield return Act.Status.Running;
-                        else yield return Act.Status.Fail;
-                        break;
-                    }
-                }
-            }
         }
 
         public KillEntityAct(Body entity, CreatureAI creature, KillEntityTask.KillType mode) :
@@ -91,16 +56,49 @@ namespace DwarfCorp
             Tree =
                 new Parallel(
                     new Sequence
-                    (
+                        (
                         new GoToEntityAct(entity, creature)
                         {
                             MovingTarget = mode != KillEntityTask.KillType.Chop
                         },
                         new MeleeAct(Agent, entity)
-                    ),
+                        ),
                     new Wrap(Verify)
                     );
         }
-    }
 
+        public Body Entity { get; set; }
+        public KillEntityTask.KillType Mode { get; set; }
+        public bool PathExists { get; set; }
+
+        public IEnumerable<Status> Verify()
+        {
+            while (true)
+            {
+                switch (Mode)
+                {
+                    case KillEntityTask.KillType.Auto:
+                    {
+                        if (Entity != null && !Entity.IsDead) yield return Status.Running;
+                        else yield return Status.Fail;
+                        break;
+                    }
+                    case KillEntityTask.KillType.Attack:
+                    {
+                        if (Entity != null && !Entity.IsDead && Creature.Faction.AttackDesignations.Contains(Entity))
+                            yield return Status.Running;
+                        else yield return Status.Fail;
+                        break;
+                    }
+                    case KillEntityTask.KillType.Chop:
+                    {
+                        if (Entity != null && !Entity.IsDead && Creature.Faction.ChopDesignations.Contains(Entity))
+                            yield return Status.Running;
+                        else yield return Status.Fail;
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }

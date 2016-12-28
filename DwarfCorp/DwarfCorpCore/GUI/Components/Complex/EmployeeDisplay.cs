@@ -30,10 +30,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
+
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
@@ -42,13 +40,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class EmployeeDisplay : Panel
     {
-
-        public Faction Faction { get; set; }
-        public ListSelector EmployeeSelector { get; set; }
-
-        public GroupBox CurrentMinionBox { get; set; }
-        public MinionPanel CurrentMinionPanel { get; set; }
-
         public EmployeeDisplay(DwarfGUI gui, GUIComponent parent, Faction faction) :
             base(gui, parent)
         {
@@ -56,20 +47,26 @@ namespace DwarfCorp
             Initialize();
         }
 
+        public Faction Faction { get; set; }
+        public ListSelector EmployeeSelector { get; set; }
+
+        public GroupBox CurrentMinionBox { get; set; }
+        public MinionPanel CurrentMinionPanel { get; set; }
+
         public void Initialize()
         {
             ClearChildren();
 
-            GridLayout panelLayout = new GridLayout(GUI, this, 10, 10);
-            GroupBox employeeBox = new GroupBox(GUI, panelLayout, "Employees");
-            GridLayout boxLayout = new GridLayout(GUI, employeeBox, 8, 4);
-            ScrollView scrollView = new ScrollView(GUI, boxLayout);
+            var panelLayout = new GridLayout(GUI, this, 10, 10);
+            var employeeBox = new GroupBox(GUI, panelLayout, "Employees");
+            var boxLayout = new GridLayout(GUI, employeeBox, 8, 4);
+            var scrollView = new ScrollView(GUI, boxLayout);
             EmployeeSelector = new ListSelector(GUI, scrollView)
             {
                 Label = "",
                 DrawPanel = false,
                 Mode = ListItem.SelectionMode.Selector,
-                LocalBounds = new Rectangle(0, 0, 256, Faction.Minions.Count * 24),
+                LocalBounds = new Rectangle(0, 0, 256, Faction.Minions.Count*24),
                 WidthSizeMode = SizeMode.Fit
             };
 
@@ -84,19 +81,19 @@ namespace DwarfCorp
 
             EmployeeSelector.OnItemSelected += EmployeeSelector_OnItemSelected;
 
-            Button hireButton = new Button(GUI, boxLayout, "Hire new", GUI.DefaultFont, Button.ButtonMode.ToolButton,
+            var hireButton = new Button(GUI, boxLayout, "Hire new", GUI.DefaultFont, Button.ButtonMode.ToolButton,
                 GUI.Skin.GetSpecialFrame(GUISkin.Tile.ZoomIn))
             {
                 ToolTip = "Hire new employees"
             };
 
             boxLayout.SetComponentPosition(hireButton, 0, 7, 2, 1);
-            
+
             hireButton.OnClicked += hireButton_OnClicked;
 
             CurrentMinionBox = new GroupBox(GUI, panelLayout, "");
 
-            GridLayout minionLayout = new GridLayout(GUI, CurrentMinionBox, 10, 10);
+            var minionLayout = new GridLayout(GUI, CurrentMinionBox, 10, 10);
             CurrentMinionPanel = new MinionPanel(GUI, minionLayout, Faction.Minions.FirstOrDefault());
             CurrentMinionPanel.Fire += CurrentMinionPanel_Fire;
             minionLayout.EdgePadding = 0;
@@ -108,12 +105,9 @@ namespace DwarfCorp
             {
                 OnMinionSelected(Faction.Minions[0]);
             }
-
-
-
         }
 
-        void CurrentMinionPanel_Fire(CreatureAI creature)
+        private void CurrentMinionPanel_Fire(CreatureAI creature)
         {
             SoundManager.PlaySound(ContentPaths.Audio.change);
             creature.GetRootComponent().Delete();
@@ -131,36 +125,32 @@ namespace DwarfCorp
             }
 
             OnMinionSelected(Faction.Minions.FirstOrDefault());
-            
-
         }
 
 
-        void hireButton_OnClicked()
+        private void hireButton_OnClicked()
         {
             HireDialog dialog = HireDialog.Popup(GUI, Faction);
             dialog.OnHired += dialog_OnHired;
         }
 
-        void dialog_OnHired(Applicant applicant)
+        private void dialog_OnHired(Applicant applicant)
         {
             EmployeeSelector.ClearItems();
             foreach (CreatureAI creature in Faction.Minions)
             {
                 EmployeeSelector.AddItem(creature.Stats.FullName);
             }
-
         }
 
 
-
-        void EmployeeSelector_OnItemSelected(int index, ListItem item)
+        private void EmployeeSelector_OnItemSelected(int index, ListItem item)
         {
             CreatureAI selectedMinion = Faction.Minions[index];
             OnMinionSelected(selectedMinion);
         }
 
-        void OnMinionSelected(CreatureAI minion)
+        private void OnMinionSelected(CreatureAI minion)
         {
             if (minion != null)
             {
@@ -172,7 +162,5 @@ namespace DwarfCorp
             }
             CurrentMinionPanel.Minion = minion;
         }
-
-
     }
 }

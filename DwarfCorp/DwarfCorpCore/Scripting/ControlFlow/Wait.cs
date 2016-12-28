@@ -30,21 +30,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// Does nothing for a given number of seconds, and then returns success.
+    ///     Does nothing for a given number of seconds, and then returns success.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class Wait : Act
     {
-        public Timer Time { get; set; }
-
         public Wait(float time)
         {
             Name = "Wait " + time;
@@ -57,6 +54,8 @@ namespace DwarfCorp
             Time = time;
         }
 
+        public Timer Time { get; set; }
+
         public override void Initialize()
         {
             Time.Reset(Time.TargetTimeSeconds);
@@ -65,7 +64,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            while(!Time.HasTriggered)
+            while (!Time.HasTriggered)
             {
                 Time.Update(DwarfTime.LastTime);
                 yield return Status.Running;
@@ -74,5 +73,4 @@ namespace DwarfCorp
             yield return Status.Success;
         }
     }
-
 }

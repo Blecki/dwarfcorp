@@ -30,6 +30,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -37,19 +38,14 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DwarfCorp
 {
     /// <summary>
-    /// Draw commands are queued up to draw simple 3D objects to the screen easily
-    /// from multiple threads
+    ///     Draw commands are queued up to draw simple 3D objects to the screen easily
+    ///     from multiple threads
     /// </summary>
     public abstract class DrawCommand3D
     {
-        public class LineStrip
-        {
-            public List<VertexPositionColor> Vertices;
-            public int NumTriangles;
-        }
-
-        public bool DrawAccumlatedStrips;
         public Color ColorToDraw = Color.White;
+        public bool DrawAccumlatedStrips;
+
         protected DrawCommand3D(Color color)
         {
             ColorToDraw = color;
@@ -59,6 +55,11 @@ namespace DwarfCorp
         public abstract void Render(GraphicsDevice device, Effect effect);
 
         public abstract void AccumulateStrips(LineStrip vertices);
-    }
 
+        public class LineStrip
+        {
+            public int NumTriangles;
+            public List<VertexPositionColor> Vertices;
+        }
+    }
 }

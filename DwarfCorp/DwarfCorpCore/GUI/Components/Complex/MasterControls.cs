@@ -30,37 +30,23 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This is the GUI component responsible for deciding which tool
-    /// the player is using.
+    ///     This is the GUI component responsible for deciding which tool
+    ///     the player is using.
     /// </summary>
     public class MasterControls : Tray
     {
-        public GameMaster Master { get; set; }
-        public Dictionary<GameMaster.ToolMode, Button> ToolButtons { get; set; }
-        public GameMaster.ToolMode CurrentMode { get; set; }
-        public Texture2D Icons { get; set; }
-        public int IconSize { get; set; }
-        public int NumRows { get; set; }
-        public int NumColumns { get; set; }
-
-        public MasterControls(DwarfGUI gui, GUIComponent parent, GameMaster master, Texture2D icons, GraphicsDevice device, SpriteFont font) :
-            base(gui, parent)
+        public MasterControls(DwarfGUI gui, GUIComponent parent, GameMaster master, Texture2D icons,
+            GraphicsDevice device, SpriteFont font) :
+                base(gui, parent)
         {
             NumRows = 2;
             NumColumns = 5;
@@ -71,34 +57,49 @@ namespace DwarfCorp
             CurrentMode = master.CurrentToolMode;
             ToolButtons = new Dictionary<GameMaster.ToolMode, Button>();
 
-            GridLayout layout = new GridLayout(GUI, this, NumRows, NumColumns)
+            var layout = new GridLayout(GUI, this, NumRows, NumColumns)
             {
                 EdgePadding = 0
             };
 
             CreateButton(layout, GameMaster.ToolMode.SelectUnits, "Select", "Click and drag to select dwarves.", 5, 0);
-            CreateButton(layout, GameMaster.ToolMode.Dig, "Mine", "Click and drag to designate mines.\nRight click to erase.", 0, 0);
+            CreateButton(layout, GameMaster.ToolMode.Dig, "Mine",
+                "Click and drag to designate mines.\nRight click to erase.", 0, 0);
             CreateButton(layout, GameMaster.ToolMode.Build, "Build", "Click to open build menu.", 2, 0);
             CreateButton(layout, GameMaster.ToolMode.Cook, "Cook", "Click to open cooking menu.", 3, 3);
             CreateButton(layout, GameMaster.ToolMode.Farm, "Farm", "Click to open farming menu.", 5, 1);
             CreateButton(layout, GameMaster.ToolMode.Magic, "Magic", "Click to open the magic menu.", 6, 1);
-            CreateButton(layout, GameMaster.ToolMode.Gather, "Gather", "Click on resources to designate them\nfor gathering. Right click to erase.", 6, 0);
-            CreateButton(layout, GameMaster.ToolMode.Chop, "Chop", "Click on trees to designate them\nfor chopping. Right click to erase.", 1, 0);
-            CreateButton(layout, GameMaster.ToolMode.Guard, "Guard", "Click and drag to designate guard areas.\nRight click to erase.", 4, 0);
-            CreateButton(layout, GameMaster.ToolMode.Attack, "Attack", "Click and drag to attack entities.\nRight click to cancel.", 3, 0);
+            CreateButton(layout, GameMaster.ToolMode.Gather, "Gather",
+                "Click on resources to designate them\nfor gathering. Right click to erase.", 6, 0);
+            CreateButton(layout, GameMaster.ToolMode.Chop, "Chop",
+                "Click on trees to designate them\nfor chopping. Right click to erase.", 1, 0);
+            CreateButton(layout, GameMaster.ToolMode.Guard, "Guard",
+                "Click and drag to designate guard areas.\nRight click to erase.", 4, 0);
+            CreateButton(layout, GameMaster.ToolMode.Attack, "Attack",
+                "Click and drag to attack entities.\nRight click to cancel.", 3, 0);
 
             int i = 0;
-            foreach(Button b in ToolButtons.Values)
+            foreach (Button b in ToolButtons.Values)
             {
-                layout.SetComponentPosition(b, i % NumColumns, i / NumColumns, 1, 1);
+                layout.SetComponentPosition(b, i%NumColumns, i/NumColumns, 1, 1);
                 i++;
             }
         }
 
+        public GameMaster Master { get; set; }
+        public Dictionary<GameMaster.ToolMode, Button> ToolButtons { get; set; }
+        public GameMaster.ToolMode CurrentMode { get; set; }
+        public Texture2D Icons { get; set; }
+        public int IconSize { get; set; }
+        public int NumRows { get; set; }
+        public int NumColumns { get; set; }
 
-        public Button CreateButton(GUIComponent parent, GameMaster.ToolMode mode, string name, string tooltip, int x, int y)
+
+        public Button CreateButton(GUIComponent parent, GameMaster.ToolMode mode, string name, string tooltip, int x,
+            int y)
         {
-            Button button = new Button(GUI, parent, name, GUI.SmallFont, Button.ButtonMode.ImageButton, new ImageFrame(Icons, IconSize, x, y))
+            var button = new Button(GUI, parent, name, GUI.SmallFont, Button.ButtonMode.ImageButton,
+                new ImageFrame(Icons, IconSize, x, y))
             {
                 CanToggle = true,
                 IsToggled = false,
@@ -118,20 +119,18 @@ namespace DwarfCorp
         public void ButtonClicked(Button sender)
         {
             sender.IsToggled = true;
-            
-            foreach(KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons)
+
+            foreach (var pair in ToolButtons)
             {
-                if(pair.Value == sender)
+                if (pair.Value == sender)
                 {
                     CurrentMode = pair.Key;
-                   Master.Tools[pair.Key].OnBegin();
+                    Master.Tools[pair.Key].OnBegin();
 
                     if (Master.CurrentTool != Master.Tools[pair.Key])
                     {
                         Master.CurrentTool.OnEnd();
                     }
-
-                  
                 }
                 else
                 {
@@ -143,14 +142,13 @@ namespace DwarfCorp
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
             base.Render(time, batch);
-            foreach (KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons)
+            foreach (var pair in ToolButtons)
             {
                 if (!pair.Value.IsVisible)
                 {
                     GUI.Skin.RenderButtonFrame(pair.Value.GetImageBounds(), batch);
                 }
             }
-
         }
 
         public bool SelectedUnitsHaveCapability(GameMaster.ToolMode tool)
@@ -160,34 +158,28 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime time)
         {
-
-            if(Master.SelectedMinions.Count == 0)
+            if (Master.SelectedMinions.Count == 0)
             {
-
-                if(Master.CurrentToolMode != GameMaster.ToolMode.God)
+                if (Master.CurrentToolMode != GameMaster.ToolMode.God)
                 {
                     Master.CurrentToolMode = GameMaster.ToolMode.SelectUnits;
                 }
 
 
-                foreach(KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons.Where(pair => pair.Key != GameMaster.ToolMode.SelectUnits))
+                foreach (var pair in ToolButtons.Where(pair => pair.Key != GameMaster.ToolMode.SelectUnits))
                 {
                     pair.Value.IsVisible = false;
                 }
-
             }
             else
             {
-     
-                foreach(KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons.Where(pair => pair.Key != GameMaster.ToolMode.SelectUnits))
+                foreach (var pair in ToolButtons.Where(pair => pair.Key != GameMaster.ToolMode.SelectUnits))
                 {
                     pair.Value.IsVisible = SelectedUnitsHaveCapability(pair.Key);
                 }
-                 
             }
 
             base.Update(time);
         }
     }
-
 }

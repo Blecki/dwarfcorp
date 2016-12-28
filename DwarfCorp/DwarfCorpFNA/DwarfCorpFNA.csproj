@@ -723,6 +723,9 @@
     <Compile Include="..\DwarfCorpCore\Scripting\Classes\MolemanMinerClass.cs">
       <Link>MolemanMinerClass.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\Scripting\Classes\MusketDwarfClass.cs">
+      <Link>MusketDwarfClass.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Scripting\Classes\NecromancerClass.cs">
       <Link>NecromancerClass.cs</Link>
     </Compile>

@@ -30,56 +30,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace DwarfCorp
 {
-
-    ///<summary>
-    /// C# does not have a thread safe Random generator. This one
-    /// tries to transparently wrap Random in such a way that the
-    /// same object produces valid random numbers no matter which
-    /// thread is calling it.
-    /// Adapted from this Stackoverflow thread:
-    /// http://stackoverflow.com/questions/3049467/is-c-sharp-random-number-generator-thread-safe
+    /// <summary>
+    ///     C# does not have a thread safe Random generator. This one
+    ///     tries to transparently wrap Random in such a way that the
+    ///     same object produces valid random numbers no matter which
+    ///     thread is calling it.
+    ///     Adapted from this Stackoverflow thread:
+    ///     http://stackoverflow.com/questions/3049467/is-c-sharp-random-number-generator-thread-safe
     /// </summary>
-   
     public class ThreadSafeRandom
     {
         private static readonly Random seedGenerator = new Random();
-        private bool hasSeed = false;
-        private int lastSeed = -1;
-
         [ThreadStatic] private static Random generator;
-
-        // If we've entered a new thread, it's possible that
-        // this RNG needs to be re-created.
-        // Before each random sample we need to call this.
-        // Additionally, we need to generate *random* seeds.
-        public void CheckThreadGenerator()
-        {
-            if(generator == null)
-            {
-                int seed;
-
-                if(!hasSeed)
-                {
-                    lock(seedGenerator)
-                    {
-                        seed = seedGenerator.Next();
-                    }
-                }
-                else
-                {
-                    seed = lastSeed;
-                }
-
-                generator = new Random(seed);
-            }
-        }
+        private readonly bool hasSeed;
+        private readonly int lastSeed = -1;
 
         public ThreadSafeRandom()
         {
@@ -91,8 +60,30 @@ namespace DwarfCorp
         {
             hasSeed = true;
             lastSeed = seed;
-            if(generator == null)
+            if (generator == null)
             {
+                generator = new Random(seed);
+            }
+        }
+
+        public void CheckThreadGenerator()
+        {
+            if (generator == null)
+            {
+                int seed;
+
+                if (!hasSeed)
+                {
+                    lock (seedGenerator)
+                    {
+                        seed = seedGenerator.Next();
+                    }
+                }
+                else
+                {
+                    seed = lastSeed;
+                }
+
                 generator = new Random(seed);
             }
         }
@@ -123,5 +114,4 @@ namespace DwarfCorp
 
         // TODO: Wrap more functions.
     }
-
 }

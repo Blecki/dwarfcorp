@@ -30,21 +30,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature sets a particular memory location in the blackboard
-    /// to the given value.
+    ///     A creature sets a particular memory location in the blackboard
+    ///     to the given value.
     /// </summary>
     /// <typeparam Name="TValue">The type of the value.</typeparam>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    internal class SetBlackboardData <TValue> : CreatureAct
+    [JsonObject(IsReference = true)]
+    internal class SetBlackboardData<TValue> : CreatureAct
     {
-        private string DataKey { get; set; }
-        private TValue Value { get; set; }
-
         public SetBlackboardData(CreatureAI creature, string data, TValue value) :
             base(creature)
         {
@@ -53,9 +52,12 @@ namespace DwarfCorp
             Value = value;
         }
 
+        private string DataKey { get; set; }
+        private TValue Value { get; set; }
+
         public override IEnumerable<Status> Run()
         {
-            if(DataKey == null)
+            if (DataKey == null)
             {
                 yield return Status.Fail;
             }
@@ -66,5 +68,4 @@ namespace DwarfCorp
             }
         }
     }
-
 }

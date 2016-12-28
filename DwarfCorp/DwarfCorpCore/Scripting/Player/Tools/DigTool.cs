@@ -30,10 +30,9 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -42,8 +41,8 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     /// <summary>
-    /// When using this tool, the player specifies that certain voxels should
-    /// be mined.
+    ///     When using this tool, the player specifies that certain voxels should
+    ///     be mined.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class DigTool : PlayerTool
@@ -54,21 +53,18 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-
         }
 
         public override void OnEnd()
         {
-
         }
 
 
         public override void OnVoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
         {
-
             if (button == InputManager.MouseButton.Left)
             {
-                List<Task> assignments = new List<Task>();
+                var assignments = new List<Task>();
                 foreach (Voxel r in refs)
                 {
                     if (r == null)
@@ -82,9 +78,9 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    if(!Player.Faction.IsDigDesignation(v) && !Player.Faction.RoomBuilder.IsInRoom(v))
+                    if (!Player.Faction.IsDigDesignation(v) && !Player.Faction.RoomBuilder.IsInRoom(v))
                     {
-                        BuildOrder d = new BuildOrder
+                        var d = new BuildOrder
                         {
                             Vox = r
                         };
@@ -94,7 +90,8 @@ namespace DwarfCorp
                     assignments.Add(new KillVoxelTask(r));
                 }
 
-                List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.SelectedMinions,GameMaster.ToolMode.Dig);
+                List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.SelectedMinions,
+                    GameMaster.ToolMode.Dig);
                 TaskManager.AssignTasksGreedy(assignments, minions, 5);
                 OnConfirm(minions);
             }
@@ -134,7 +131,7 @@ namespace DwarfCorp
             Player.VoxSelector.Enabled = true;
             PlayState.GUI.IsMouseVisible = true;
 
-            if(PlayState.GUI.IsMouseOver())
+            if (PlayState.GUI.IsMouseOver())
             {
                 PlayState.GUI.MouseMode = GUISkin.MousePointer.Pointer;
             }
@@ -163,21 +160,22 @@ namespace DwarfCorp
                     drawColor = UnreachableColor;
                 }
 
-                drawColor.R = (byte)(drawColor.R * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
-                drawColor.G = (byte)(drawColor.G * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
-                drawColor.B = (byte)(drawColor.B * Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * DigDesignationGlowRate)) + 50);
+                drawColor.R =
+                    (byte) (drawColor.R*Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*DigDesignationGlowRate)) + 50);
+                drawColor.G =
+                    (byte) (drawColor.G*Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*DigDesignationGlowRate)) + 50);
+                drawColor.B =
+                    (byte) (drawColor.B*Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*DigDesignationGlowRate)) + 50);
                 Drawer3D.DrawBox(box, drawColor, 0.05f, true);
             }
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
-            
         }
 
         public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
         {
-
         }
     }
 }

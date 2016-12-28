@@ -30,24 +30,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This act finds the nearest unoccupied and unreserved voxel in a zone,
-    /// and fills the blackboard with it.
+    ///     This act finds the nearest unoccupied and unreserved voxel in a zone,
+    ///     and fills the blackboard with it.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     internal class GetNearestFreeVoxelInZone : CreatureAct
     {
-        public Zone TargetZone { get; set; }
-        public string OutputVoxel { get; set; }
-        public bool ReserveVoxel { get; set; }
-
         public GetNearestFreeVoxelInZone(CreatureAI agent, Zone targetZone, string outputVoxel, bool reserve) :
             base(agent)
         {
@@ -57,9 +52,13 @@ namespace DwarfCorp
             ReserveVoxel = reserve;
         }
 
+        public Zone TargetZone { get; set; }
+        public string OutputVoxel { get; set; }
+        public bool ReserveVoxel { get; set; }
+
         public override IEnumerable<Status> Run()
         {
-            if(TargetZone == null)
+            if (TargetZone == null)
             {
                 yield return Status.Fail;
             }
@@ -67,7 +66,7 @@ namespace DwarfCorp
             {
                 Voxel v = TargetZone.GetNearestVoxel(Agent.Position);
 
-                if(!v.IsEmpty)
+                if (!v.IsEmpty)
                 {
                     Agent.Blackboard.SetData(OutputVoxel, v);
                     yield return Status.Success;
@@ -80,5 +79,4 @@ namespace DwarfCorp
             }
         }
     }
-
 }

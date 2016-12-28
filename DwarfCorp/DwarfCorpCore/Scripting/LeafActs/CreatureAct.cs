@@ -30,21 +30,27 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// An act which is assumed to belong to a creature.
+    ///     An act which is assumed to belong to a creature.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class CreatureAct : Act
     {
+        public CreatureAct(CreatureAI agent)
+        {
+            Agent = agent;
+            Name = "Creature Act";
+        }
+
+        public CreatureAct()
+        {
+        }
+
         public CreatureAI Agent { get; set; }
 
 
@@ -53,21 +59,5 @@ namespace DwarfCorp
         {
             get { return Agent.Creature; }
         }
-
-
-        public CreatureAct(CreatureAI agent)
-        {
-            Agent = agent;
-            Name = "Creature Act";
-        }
-
-        public  CreatureAct()
-        {
-
-        }
-
-  
-
     }
-
 }

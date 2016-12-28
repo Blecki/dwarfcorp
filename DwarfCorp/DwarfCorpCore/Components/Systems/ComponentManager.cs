@@ -30,70 +30,47 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using DwarfCorp.GameStates;
-using DwarfCorpCore;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Graphics;
 using System.Threading;
+using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This class is responsible for handling components. "Components" are one of the most important parts of the 
-    /// DwarfCorp engine. Everything in the game is a collection of components. A collection of components is called an "entity".
-    /// Components live in a tree-like structure, they have parents and children. Most components (called Locatable components)
-    /// also have a position and orientation.
-    /// By adding and removing components to an entity, functionality can be changed.
+    ///     This class is responsible for handling components. "Components" are one of the most important parts of the
+    ///     DwarfCorp engine. Everything in the game is a collection of components. A collection of components is called an
+    ///     "entity".
+    ///     Components live in a tree-like structure, they have parents and children. Most components (called Locatable
+    ///     components)
+    ///     also have a position and orientation.
+    ///     By adding and removing components to an entity, functionality can be changed.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class ComponentManager
     {
-        public Dictionary<uint, GameComponent> Components { get; set; }
-
-        private List<GameComponent> Removals { get; set; }
-       
-        private List<GameComponent> Additions { get; set; }
-
-        public Body RootComponent { get; set; }
-
-        private static Camera Camera { get; set; }
-
-        [JsonIgnore]
-        public Mutex AdditionMutex { get; set; }
-        [JsonIgnore]
-        public Mutex RemovalMutex { get; set; }
-
-        public  ParticleManager ParticleManager { get; set; }
-        [JsonIgnore]
-        public CollisionManager CollisionManager { get; set; }
-
-        public FactionLibrary Factions { get; set; }
-        public Diplomacy Diplomacy { get; set; }
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
+        public enum WaterRenderType
         {
-            AdditionMutex = new Mutex();
-            RemovalMutex = new Mutex();
-            Removals = new List<GameComponent>();
-            Additions = new List<GameComponent>();
-            CollisionManager = new CollisionManager(new BoundingBox());
+            Reflective,
+            None
         }
-       
+
+        private readonly List<GameComponent> componentsToDraw = new List<GameComponent>();
+        private readonly HashSet<Body> visibleComponents = new HashSet<Body>();
 
         public ComponentManager()
         {
-            
         }
 
-        public ComponentManager(PlayState state, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor, List<Faction> natives )
+        public ComponentManager(PlayState state, string companyName, string companyMotto, NamedImageFrame companyLogo,
+            Color companyColor, List<Faction> natives)
         {
             Components = new Dictionary<uint, GameComponent>();
             Removals = new List<GameComponent>();
@@ -107,7 +84,7 @@ namespace DwarfCorp
                 Factions.AddFactions(natives);
             }
             Factions.Initialize(state, companyName, companyMotto, companyLogo, companyColor);
-            Point playerOrigin = new Point((int)(PlayState.WorldOrigin.X), (int)(PlayState.WorldOrigin.Y));
+            var playerOrigin = new Point((int) (PlayState.WorldOrigin.X), (int) (PlayState.WorldOrigin.Y));
 
             Factions.Factions["Player"].Center = playerOrigin;
             Factions.Factions["Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
@@ -127,12 +104,14 @@ namespace DwarfCorp
 
         public bool IsUnderMouse(Body component, MouseState mouse, Camera camera, Viewport viewPort)
         {
-            List<Body> viewable = new List<Body>();
-            Vector3 pos1 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 0), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
-            Vector3 pos2 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 1), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
+            var viewable = new List<Body>();
+            Vector3 pos1 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 0), camera.ProjectionMatrix,
+                camera.ViewMatrix, Matrix.Identity);
+            Vector3 pos2 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 1), camera.ProjectionMatrix,
+                camera.ViewMatrix, Matrix.Identity);
             Vector3 dir = Vector3.Normalize(pos2 - pos1);
 
-            Ray toCast = new Ray(pos1, dir);
+            var toCast = new Ray(pos1, dir);
 
             return component.Intersects(toCast);
         }
@@ -140,53 +119,59 @@ namespace DwarfCorp
 
         public void GetBodiesUnderMouse(MouseState mouse, Camera camera, Viewport viewPort, List<Body> components)
         {
-            Vector3 pos1 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 0), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
-            Vector3 pos2 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 1), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
+            Vector3 pos1 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 0), camera.ProjectionMatrix,
+                camera.ViewMatrix, Matrix.Identity);
+            Vector3 pos2 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 1), camera.ProjectionMatrix,
+                camera.ViewMatrix, Matrix.Identity);
             Vector3 dir = Vector3.Normalize(pos2 - pos1);
 
-            Ray toCast = new Ray(pos1, dir);
-            HashSet<Body> set = new HashSet<Body>();
-            CollisionManager.GetObjectsIntersecting(toCast, set, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
+            var toCast = new Ray(pos1, dir);
+            var set = new HashSet<Body>();
+            CollisionManager.GetObjectsIntersecting(toCast, set,
+                CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
             components.AddRange(set);
         }
 
         public bool IsVisibleToCamera(Body component, Camera camera)
         {
-            BoundingFrustum frustrum = new BoundingFrustum(camera.ViewMatrix * camera.ProjectionMatrix);
+            var frustrum = new BoundingFrustum(camera.ViewMatrix*camera.ProjectionMatrix);
             return (component.Intersects(frustrum));
         }
 
         public void GetBodiesVisibleToCamera(Camera camera, List<Body> components)
         {
-            BoundingFrustum frustrum = new BoundingFrustum(camera.ViewMatrix * camera.ProjectionMatrix);
-            GetBodiesIntersecting(frustrum, components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
+            var frustrum = new BoundingFrustum(camera.ViewMatrix*camera.ProjectionMatrix);
+            GetBodiesIntersecting(frustrum, components,
+                CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
         }
 
         public void GetBodiesInvisibleToCamera(Camera camera, List<Body> components)
         {
-            BoundingFrustum frustrum = new BoundingFrustum(camera.ViewMatrix * camera.ProjectionMatrix);
+            var frustrum = new BoundingFrustum(camera.ViewMatrix*camera.ProjectionMatrix);
 
-            foreach(GameComponent c in Components.Values)
+            foreach (GameComponent c in Components.Values)
             {
-                if(c is Body && !((Body) c).Intersects(frustrum))
+                if (c is Body && !((Body) c).Intersects(frustrum))
                 {
                     components.Add((Body) c);
                 }
             }
         }
 
-        public void GetBodiesIntersecting(BoundingSphere sphere, List<Body> components, CollisionManager.CollisionType type)
+        public void GetBodiesIntersecting(BoundingSphere sphere, List<Body> components,
+            CollisionManager.CollisionType type)
         {
-            HashSet<Body> set = new HashSet<Body>();
+            var set = new HashSet<Body>();
             CollisionManager.GetObjectsIntersecting(sphere, set, type);
 
             components.AddRange(set);
         }
 
-        public void GetBodiesIntersecting(BoundingFrustum frustrum, List<Body> components, CollisionManager.CollisionType type)
+        public void GetBodiesIntersecting(BoundingFrustum frustrum, List<Body> components,
+            CollisionManager.CollisionType type)
         {
-            HashSet<Body> set = new HashSet<Body>();
+            var set = new HashSet<Body>();
             CollisionManager.GetObjectsIntersecting(frustrum, set, type);
 
             components.AddRange(set);
@@ -194,7 +179,7 @@ namespace DwarfCorp
 
         public void GetBodiesIntersecting(BoundingBox box, List<Body> components, CollisionManager.CollisionType type)
         {
-            HashSet<Body> set = new HashSet<Body>();
+            var set = new HashSet<Body>();
             CollisionManager.GetObjectsIntersecting(box, set, type);
 
             components.AddRange(set);
@@ -202,7 +187,7 @@ namespace DwarfCorp
 
         public void GetBodiesIntersecting(Ray ray, List<Body> components, CollisionManager.CollisionType type)
         {
-            HashSet<Body> set = new HashSet<Body>();
+            var set = new HashSet<Body>();
             CollisionManager.GetObjectsIntersecting(ray, set, type);
 
             components.AddRange(set);
@@ -211,23 +196,62 @@ namespace DwarfCorp
         public List<Body> SelectRootBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
         {
             return (from component in RootComponent.Children.OfType<Body>()
-                    let screenPos = camera.Project(component.GlobalTransform.Translation)
-                    where   screenPos.Z > 0 
-                    && (selectionRectangle.Contains((int)screenPos.X, (int)screenPos.Y) || selectionRectangle.Intersects(component.GetScreenRect(camera))) 
-                    && camera.GetFrustrum().Contains(component.GlobalTransform.Translation) != ContainmentType.Disjoint
-                    && !PlayState.ChunkManager.ChunkData.CheckOcclusionRay(camera.Position, component.Position)
-                    select component).ToList();
+                let screenPos = camera.Project(component.GlobalTransform.Translation)
+                where screenPos.Z > 0
+                      &&
+                      (selectionRectangle.Contains((int) screenPos.X, (int) screenPos.Y) ||
+                       selectionRectangle.Intersects(component.GetScreenRect(camera)))
+                      &&
+                      camera.GetFrustrum().Contains(component.GlobalTransform.Translation) != ContainmentType.Disjoint
+                      && !PlayState.ChunkManager.ChunkData.CheckOcclusionRay(camera.Position, component.Position)
+                select component).ToList();
         }
 
         public List<Body> SelectAllBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
         {
             return (from component in Components.Values.OfType<Body>()
-                    let screenPos = camera.Project(component.GlobalTransform.Translation)
-                    where selectionRectangle.Contains((int)screenPos.X, (int)screenPos.Y) || selectionRectangle.Intersects(component.GetScreenRect(camera)) && screenPos.Z > 0
-                    select component).ToList();
+                let screenPos = camera.Project(component.GlobalTransform.Translation)
+                where
+                    selectionRectangle.Contains((int) screenPos.X, (int) screenPos.Y) ||
+                    selectionRectangle.Intersects(component.GetScreenRect(camera)) && screenPos.Z > 0
+                select component).ToList();
         }
 
         #endregion
+
+        public Dictionary<uint, GameComponent> Components { get; set; }
+
+        private List<GameComponent> Removals { get; set; }
+
+        private List<GameComponent> Additions { get; set; }
+
+        public Body RootComponent { get; set; }
+
+        private static Camera Camera { get; set; }
+
+        [JsonIgnore]
+        public Mutex AdditionMutex { get; set; }
+
+        [JsonIgnore]
+        public Mutex RemovalMutex { get; set; }
+
+        public ParticleManager ParticleManager { get; set; }
+
+        [JsonIgnore]
+        public CollisionManager CollisionManager { get; set; }
+
+        public FactionLibrary Factions { get; set; }
+        public Diplomacy Diplomacy { get; set; }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            AdditionMutex = new Mutex();
+            RemovalMutex = new Mutex();
+            Removals = new List<GameComponent>();
+            Additions = new List<GameComponent>();
+            CollisionManager = new CollisionManager(new BoundingBox());
+        }
 
 
         public void AddComponent(GameComponent component)
@@ -246,7 +270,7 @@ namespace DwarfCorp
 
         private void RemoveComponentImmediate(GameComponent component)
         {
-            if(!Components.ContainsKey(component.GlobalID))
+            if (!Components.ContainsKey(component.GlobalID))
             {
                 return;
             }
@@ -255,7 +279,7 @@ namespace DwarfCorp
 
             List<GameComponent> children = component.GetAllChildrenRecursive();
 
-            foreach(GameComponent child in children)
+            foreach (GameComponent child in children)
             {
                 Components.Remove(child.GlobalID);
             }
@@ -267,15 +291,15 @@ namespace DwarfCorp
             {
                 throw new IndexOutOfRangeException("Component was added that already exists.");
             }
-            else if (!Components.ContainsKey(component.GlobalID))
+            if (!Components.ContainsKey(component.GlobalID))
             {
-                Components[component.GlobalID] = component;   
+                Components[component.GlobalID] = component;
             }
         }
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if(RootComponent != null)
+            if (RootComponent != null)
             {
                 RootComponent.UpdateTransformsRecursive();
             }
@@ -283,14 +307,14 @@ namespace DwarfCorp
             Factions.Update(gameTime);
 
 
-            foreach(GameComponent component in Components.Values)
+            foreach (GameComponent component in Components.Values)
             {
-                if(component.IsActive)
+                if (component.IsActive)
                 {
                     component.Update(gameTime, chunks, camera);
                 }
 
-                if(component.IsDead)
+                if (component.IsDead)
                 {
                     Removals.Add(component);
                     component.IsActive = false;
@@ -306,7 +330,7 @@ namespace DwarfCorp
         public void HandleAddRemoves()
         {
             AdditionMutex.WaitOne();
-            foreach(GameComponent component in Additions)
+            foreach (GameComponent component in Additions)
             {
                 AddComponentImmediate(component);
             }
@@ -315,7 +339,7 @@ namespace DwarfCorp
             AdditionMutex.ReleaseMutex();
 
             RemovalMutex.WaitOne();
-            foreach(GameComponent component in Removals)
+            foreach (GameComponent component in Removals)
             {
                 RemoveComponentImmediate(component);
             }
@@ -327,32 +351,21 @@ namespace DwarfCorp
 
         public List<Body> FrustrumCullLocatableComponents(Camera camera)
         {
-            List<Body> visible = CollisionManager.GetVisibleObjects<Body>(camera.GetFrustrum(), CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
-              
+            List<Body> visible = CollisionManager.GetVisibleObjects<Body>(camera.GetFrustrum(),
+                CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
+
             return visible;
         }
 
 
-        private HashSet<Body> visibleComponents = new HashSet<Body>();
-        private List<GameComponent> componentsToDraw = new List<GameComponent>();
-
         public bool RenderReflective(GameComponent component, float waterLevel)
         {
             var body = component as Body;
-            if(body != null)
+            if (body != null)
             {
                 return body.GetBoundingBox().Min.Y > waterLevel - 2;
             }
-            else
-            {
-                return true;
-            }
-        }
-
-        public enum WaterRenderType
-        {
-            Reflective,
-            None
+            return true;
         }
 
         public void Render(DwarfTime gameTime,
@@ -365,31 +378,33 @@ namespace DwarfCorp
         {
             bool renderForWater = (waterRenderMode != WaterRenderType.None);
 
-            if(!renderForWater)
+            if (!renderForWater)
             {
                 visibleComponents.Clear();
                 componentsToDraw.Clear();
-                
-                
+
+
                 List<Body> list = FrustrumCullLocatableComponents(camera);
-                foreach(Body component in list)
+                foreach (Body component in list)
                 {
                     visibleComponents.Add(component);
                 }
-                 
+
 
                 Camera = camera;
-                foreach(GameComponent component in Components.Values)
+                foreach (GameComponent component in Components.Values)
                 {
                     bool isLocatable = component is Body;
 
-                    if(isLocatable)
+                    if (isLocatable)
                     {
-                        Body loc = (Body) component;
+                        var loc = (Body) component;
 
 
-                        if(((loc.GlobalTransform.Translation - camera.Position).LengthSquared() < chunks.DrawDistanceSquared &&
-                            visibleComponents.Contains(loc) || !(loc.FrustrumCull) || !(loc.WasAddedToOctree) && !loc.IsAboveCullPlane)
+                        if (((loc.GlobalTransform.Translation - camera.Position).LengthSquared() <
+                             chunks.DrawDistanceSquared &&
+                             visibleComponents.Contains(loc) || !(loc.FrustrumCull) ||
+                             !(loc.WasAddedToOctree) && !loc.IsAboveCullPlane)
                             )
                         {
                             componentsToDraw.Add(component);
@@ -406,9 +421,9 @@ namespace DwarfCorp
             effect.Parameters["xEnableLighting"].SetValue(GameSettings.Default.CursorLightEnabled ? 1 : 0);
             graphicsDevice.RasterizerState = RasterizerState.CullNone;
 
-            foreach(GameComponent component in componentsToDraw)
+            foreach (GameComponent component in componentsToDraw)
             {
-                if(waterRenderMode == WaterRenderType.Reflective && !RenderReflective(component, waterLevel))
+                if (waterRenderMode == WaterRenderType.Reflective && !RenderReflective(component, waterLevel))
                 {
                     continue;
                 }
@@ -420,33 +435,31 @@ namespace DwarfCorp
 
         public static int CompareZDepth(Body A, Body B)
         {
-            if(A == B)
+            if (A == B)
             {
                 return 0;
             }
 
-            else if(A.Parent == B.Parent && A.DrawInFrontOfSiblings)
+            if (A.Parent == B.Parent && A.DrawInFrontOfSiblings)
             {
                 return 1;
             }
-            else if(B.Parent == A.Parent && B.DrawInFrontOfSiblings)
+            if (B.Parent == A.Parent && B.DrawInFrontOfSiblings)
             {
                 return -1;
             }
-            else if((Camera.Position - A.GlobalTransform.Translation).LengthSquared() < (Camera.Position - B.GlobalTransform.Translation).LengthSquared())
+            if ((Camera.Position - A.GlobalTransform.Translation).LengthSquared() <
+                (Camera.Position - B.GlobalTransform.Translation).LengthSquared())
             {
                 return 1;
             }
-            else
-            {
-                return -1;
-            }
+            return -1;
         }
 
         public uint GetMaxComponentID()
         {
-            return Components.Aggregate<KeyValuePair<uint, GameComponent>, uint>(0, (current, component) => Math.Max(current, component.Value.GlobalID));
+            return Components.Aggregate<KeyValuePair<uint, GameComponent>, uint>(0,
+                (current, component) => Math.Max(current, component.Value.GlobalID));
         }
     }
-
 }

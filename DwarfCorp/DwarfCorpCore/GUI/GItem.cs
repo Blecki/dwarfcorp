@@ -30,31 +30,16 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A graphical item (usually to be placed in a drag grid)
+    ///     A graphical item (usually to be placed in a drag grid)
     /// </summary>
     public class GItem
     {
-        public Resource ResourceType { get; set; }
-        public string Name { get; set; }
-        public ImageFrame Image { get; set; }
-        public Color Tint { get; set; }
-        public int MaxAmount { get; set; }
-        public int MinAmount { get; set; }
-        public int CurrentAmount { get; set; }
-        public float Price { get; set; }
-
         public GItem(Resource resource, ImageFrame imag, Color tint, int min, int max, int currentAmount, float price)
         {
             Tint = tint;
@@ -66,6 +51,14 @@ namespace DwarfCorp
             CurrentAmount = currentAmount;
             Price = price;
         }
-    }
 
+        public Resource ResourceType { get; set; }
+        public string Name { get; set; }
+        public ImageFrame Image { get; set; }
+        public Color Tint { get; set; }
+        public int MaxAmount { get; set; }
+        public int MinAmount { get; set; }
+        public int CurrentAmount { get; set; }
+        public float Price { get; set; }
+    }
 }

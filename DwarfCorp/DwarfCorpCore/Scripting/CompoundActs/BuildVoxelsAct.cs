@@ -30,30 +30,34 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature goes to a voxel location, and places an object with the desired tags there to build it.
+    ///     A creature goes to a voxel location, and places an object with the desired tags there to build it.
+    ///     This is the aggregate version of BuildVoxelAct -- the difference being that the Dwarf may choose to
+    ///     gather the resources required for all voxels before building them.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     internal class BuildVoxelsAct : CompoundCreatureAct
     {
-        public List<KeyValuePair<Voxel, VoxelType> > Voxels { get; set; }
-
         public BuildVoxelsAct()
         {
-
         }
 
+        /// <summary>
+        ///     Create a BuildVoxelsAct.
+        /// </summary>
+        /// <param name="creature">The creature to build a voxel.</param>
+        /// <param name="voxels">List of voxels to build.</param>
+        /// <param name="types">List of voxel types to place at the voxels (1-1 mapping)</param>
         public BuildVoxelsAct(CreatureAI creature, List<Voxel> voxels, List<VoxelType> types) :
             base(creature)
         {
-
             Voxels = new List<KeyValuePair<Voxel, VoxelType>>();
             for (int i = 0; i < voxels.Count; i++)
             {
@@ -62,32 +66,45 @@ namespace DwarfCorp
             Name = "Build voxels";
         }
 
+        /// <summary>
+        ///     A list of voxels to place a new voxel wall type at.
+        /// </summary>
+        public List<KeyValuePair<Voxel, VoxelType>> Voxels { get; set; }
+
+        /// <summary>
+        ///     Initialize the Act tree based on the voxels and types.
+        /// </summary>
         public override void Initialize()
         {
+            // Get the list of all required resources to build the voxels.
+            List<ResourceAmount> resources =
+                Voxels.Select(pair => new ResourceAmount(ResourceLibrary.Resources[pair.Value.ResourceToRelease], 1))
+                    .ToList();
 
-            List<ResourceAmount> resources = Voxels.Select(pair => new ResourceAmount(ResourceLibrary.Resources[pair.Value.ResourceToRelease], 1)).ToList();
-
-            List<Act> children = new List<Act>()
+            // Start with an Act that just tells the dwarf to get the resources.
+            var children = new List<Act>
             {
                 new GetResourcesAct(Agent, resources)
             };
 
-
-
+            // Now, for each voxel, go to it and place it.
             int i = 0;
-            foreach (KeyValuePair<Voxel, VoxelType> pair in Voxels)
+            foreach (var pair in Voxels)
             {
                 children.Add(new GoToVoxelAct(pair.Key, PlanAct.PlanType.Radius, Agent, 3.0f));
                 children.Add(new PlaceVoxelAct(pair.Key, Creature.AI, resources[i]));
                 i++;
             }
 
-            children.Add(new Wrap(Creature.RestockAll));
-
-            Tree = new Sequence(children);
+            // If anything at all fails, put all the resources back.
+            Tree = new Select(new Sequence(children), new Wrap(Creature.RestockAll));
             base.Initialize();
         }
 
+        /// <summary>
+        ///     If the Act is cancelled, remove from the list any and all walls that are not currently
+        ///     designations.
+        /// </summary>
         public override void OnCanceled()
         {
             Voxels.RemoveAll(pair => !Creature.Faction.WallBuilder.IsDesignation(pair.Key));
@@ -99,5 +116,4 @@ namespace DwarfCorp
             return base.Run();
         }
     }
-
 }

@@ -30,30 +30,64 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using DwarfCorp.DwarfCorp;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 
 {
-
     /// <summary>
-    /// Component which manages the AI, scripting, and status of a particular creature (such as a Dwarf or Goblin)
+    ///     Component which manages the AI, scripting, and status of a particular creature (such as a Dwarf or Goblin)
     /// </summary>
     [JsonObject(IsReference = true)]
     public class CreatureAI : GameComponent
     {
+        public int MaxMessages = 10;
+        public List<string> MessageBuffer = new List<string>();
+
+        public CreatureAI()
+        {
+            Movement = new CreatureMovement(Creature);
+            History = new Dictionary<string, TaskHistory>();
+        }
+
+        public CreatureAI(Creature creature,
+            string name,
+            EnemySensor sensor,
+            PlanService planService) :
+                base(name, creature.Physics)
+        {
+            History = new Dictionary<string, TaskHistory>();
+            Movement = new CreatureMovement(creature);
+            GatherManager = new GatherManager(this);
+            Blackboard = new Blackboard();
+            Creature = creature;
+            CurrentPath = null;
+            DrawPath = false;
+            PlannerTimer = new Timer(0.1f, false);
+            LocalControlTimeout = new Timer(5, false);
+            WanderTimer = new Timer(1, false);
+            Creature.Faction.Minions.Add(this);
+            DrawAIPlan = false;
+            WaitingOnResponse = false;
+            PlanSubscriber = new PlanSubscriber(planService);
+            ServiceTimeout = new Timer(2, false);
+            Sensor = sensor;
+            Sensor.OnEnemySensed += Sensor_OnEnemySensed;
+            Sensor.Creature = this;
+            CurrentTask = null;
+            Tasks = new List<Task>();
+            Thoughts = new List<Thought>();
+            IdleTimer = new Timer(2.0f, true);
+            SpeakTimer = new Timer(5.0f, true);
+            XPEvents = new List<int>();
+        }
+
         public Creature Creature { get; set; }
         public List<Voxel> CurrentPath { get; set; }
         public bool DrawPath { get; set; }
@@ -61,13 +95,16 @@ namespace DwarfCorp
         public Timer IdleTimer { get; set; }
         public List<Thought> Thoughts { get; set; }
         public Timer SpeakTimer { get; set; }
-            
+
         [JsonIgnore]
-        public Act CurrentAct { get
+        public Act CurrentAct
         {
-            if (CurrentTask != null) return CurrentTask.Script;
-            else return null;
-        }}
+            get
+            {
+                if (CurrentTask != null) return CurrentTask.Script;
+                return null;
+            }
+        }
 
         [JsonIgnore]
         public Task CurrentTask { get; set; }
@@ -80,8 +117,6 @@ namespace DwarfCorp
 
         public PlanSubscriber PlanSubscriber { get; set; }
         public bool WaitingOnResponse { get; set; }
-        public List<string> MessageBuffer = new List<string>();
-        public int MaxMessages = 10;
         public EnemySensor Sensor { get; set; }
 
         public CreatureMovement Movement { get; set; }
@@ -132,8 +167,8 @@ namespace DwarfCorp
         public Vector3 Position
         {
             get { return Creature.Physics.GlobalTransform.Translation; }
-            set 
-            { 
+            set
+            {
                 Matrix newTransform = Creature.Physics.LocalTransform;
                 newTransform.Translation = value;
                 Creature.Physics.LocalTransform = newTransform;
@@ -147,41 +182,6 @@ namespace DwarfCorp
         }
 
         public Blackboard Blackboard { get; set; }
-        public class TaskHistory
-        {
-            public static float LockoutTime;
-            public static int MaxFailures;
-            public int NumFailures;
-            public Timer LockoutTimer;
-
-            static TaskHistory()
-            {
-                LockoutTime = 30.0f;
-                MaxFailures = 3;
-
-            }
-
-            public bool IsLocked
-            {
-                get { return NumFailures >= MaxFailures && !LockoutTimer.HasTriggered; }
-            }
-
-            public TaskHistory()
-            {
-                NumFailures = 0;
-                LockoutTimer = new Timer(LockoutTime, true);
-            }
-
-            public void Update()
-            {
-                LockoutTimer.Update(DwarfTime.LastTime);
-                if (LockoutTimer.HasTriggered)
-                {
-                    LockoutTimer.Reset(LockoutTime * 1.5f);
-                    NumFailures = 0;
-                }
-            }
-        }
 
         [JsonIgnore]
         public Dictionary<string, TaskHistory> History { get; set; }
@@ -191,44 +191,6 @@ namespace DwarfCorp
         public bool TriggersMourning { get; set; }
         public List<int> XPEvents { get; set; }
 
-        public CreatureAI()
-        {
-            Movement = new CreatureMovement(this.Creature);
-            History = new Dictionary<string, TaskHistory>();
-        }
-
-        public CreatureAI(Creature creature,
-            string name,
-            EnemySensor sensor,
-            PlanService planService) :
-                base(name, creature.Physics)
-        {
-            History = new Dictionary<string, TaskHistory>();
-            Movement = new CreatureMovement(creature);
-            GatherManager = new GatherManager(this);
-            Blackboard = new Blackboard();
-            Creature = creature;
-            CurrentPath = null;
-            DrawPath = false;
-            PlannerTimer = new Timer(0.1f, false);
-            LocalControlTimeout = new Timer(5, false);
-            WanderTimer = new Timer(1, false);
-            Creature.Faction.Minions.Add(this);
-            DrawAIPlan = false;
-            WaitingOnResponse = false;
-            PlanSubscriber = new PlanSubscriber(planService);
-            ServiceTimeout = new Timer(2, false);
-            Sensor = sensor;
-            Sensor.OnEnemySensed += Sensor_OnEnemySensed;
-            Sensor.Creature = this;
-            CurrentTask = null;
-            Tasks = new List<Task>();
-            Thoughts = new List<Thought>();
-            IdleTimer = new Timer(2.0f, true);
-            SpeakTimer = new Timer(5.0f, true);
-            XPEvents = new List<int>();
-        }
-
         public void AddXP(int amount)
         {
             XPEvents.Add(amount);
@@ -237,7 +199,7 @@ namespace DwarfCorp
         public void Say(string message)
         {
             MessageBuffer.Add(message);
-            if(MessageBuffer.Count > MaxMessages)
+            if (MessageBuffer.Count > MaxMessages)
             {
                 MessageBuffer.RemoveAt(0);
             }
@@ -245,9 +207,9 @@ namespace DwarfCorp
 
         private void Sensor_OnEnemySensed(List<CreatureAI> enemies)
         {
-            if(enemies.Count > 0)
+            if (enemies.Count > 0)
             {
-                foreach(CreatureAI threat in enemies.Where(threat => !Faction.Threats.Contains(threat.Creature)))
+                foreach (CreatureAI threat in enemies.Where(threat => !Faction.Threats.Contains(threat.Creature)))
                 {
                     Faction.Threats.Add(threat.Creature);
                 }
@@ -256,17 +218,17 @@ namespace DwarfCorp
 
         public Task GetEasiestTask(List<Task> tasks)
         {
-            if(tasks == null)
+            if (tasks == null)
             {
                 return null;
             }
 
             float bestCost = float.MaxValue;
             Task bestTask = null;
-            Task.PriorityType bestPriority = Task.PriorityType.Eventually;
-            
+            var bestPriority = Task.PriorityType.Eventually;
 
-            foreach(Task task in tasks)
+
+            foreach (Task task in tasks)
             {
                 if (History.ContainsKey(task.Name) && History[task.Name].IsLocked)
                 {
@@ -275,7 +237,7 @@ namespace DwarfCorp
 
                 float cost = task.ComputeCost(Creature);
 
-                if(task.IsFeasible(Creature) && task.Priority >= bestPriority && cost < bestCost)
+                if (task.IsFeasible(Creature) && task.Priority >= bestPriority && cost < bestCost)
                 {
                     bestCost = cost;
                     bestTask = task;
@@ -321,8 +283,8 @@ namespace DwarfCorp
 
         public void ZoomToMe()
         {
-            PlayState.Camera.ZoomTo(Position + Vector3.Up * 8.0f);
-            PlayState.ChunkManager.ChunkData.SetMaxViewingLevel((int)Position.Y, ChunkManager.SliceMode.Y);
+            PlayState.Camera.ZoomTo(Position + Vector3.Up*8.0f);
+            PlayState.ChunkManager.ChunkData.SetMaxViewingLevel((int) Position.Y, ChunkManager.SliceMode.Y);
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
@@ -344,7 +306,7 @@ namespace DwarfCorp
                     Tasks.Add(toReturn);
             }
 
-            if (Status.Hunger.IsUnhappy() &&  Faction.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
+            if (Status.Hunger.IsUnhappy() && Faction.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
             {
                 Task toReturn = new SatisfyHungerTask();
                 toReturn.SetupScript(Creature);
@@ -353,13 +315,13 @@ namespace DwarfCorp
             }
 
 
-            if(CurrentTask != null && CurrentAct != null)
+            if (CurrentTask != null && CurrentAct != null)
             {
                 Act.Status status = CurrentAct.Tick();
 
 
                 bool retried = false;
-                if(status == Act.Status.Fail)
+                if (status == Act.Status.Fail)
                 {
                     if (History.ContainsKey(CurrentTask.Name))
                     {
@@ -370,7 +332,7 @@ namespace DwarfCorp
                         History[CurrentTask.Name] = new TaskHistory();
                     }
 
-                    if(CurrentTask.ShouldRetry(Creature) && !History[CurrentTask.Name].IsLocked)
+                    if (CurrentTask.ShouldRetry(Creature) && !History[CurrentTask.Name].IsLocked)
                     {
                         if (!Tasks.Contains(CurrentTask))
                         {
@@ -389,7 +351,7 @@ namespace DwarfCorp
                     }
                 }
 
-                if(status != Act.Status.Running && !retried)
+                if (status != Act.Status.Running && !retried)
                 {
                     CurrentTask = null;
                 }
@@ -410,7 +372,9 @@ namespace DwarfCorp
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
                         if (Creature.Allies == "Dwarf")
                         {
-                            PlayState.AnnouncementManager.Announce(Stats.FullName +  " (" + Stats.CurrentLevel.Name + ")" + Drawer2D.WrapColor(" refuses to work!", Color.DarkRed), 
+                            PlayState.AnnouncementManager.Announce(
+                                Stats.FullName + " (" + Stats.CurrentLevel.Name + ")" +
+                                Drawer2D.WrapColor(" refuses to work!", Color.DarkRed),
                                 "Our employee is unhappy, and would rather not work!", ZoomToMe);
                         }
                         CurrentTask = null;
@@ -426,8 +390,7 @@ namespace DwarfCorp
                 else
                 {
                     CurrentTask = ActOnIdle();
-                }   
-                
+                }
             }
 
 
@@ -460,7 +423,8 @@ namespace DwarfCorp
                 Stats.XP += xp;
                 string sign = xp > 0 ? "+" : "";
 
-                IndicatorManager.DrawIndicator(sign + xp.ToString() + " XP", Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, xp > 0 ? Color.Green : Color.Red);
+                IndicatorManager.DrawIndicator(sign + xp + " XP",
+                    Position + Vector3.Up + MathFunctions.RandVector3Cube()*0.5f, 0.5f, xp > 0 ? Color.Green : Color.Red);
             }
             XPEvents.Clear();
         }
@@ -472,7 +436,8 @@ namespace DwarfCorp
 
         public virtual Task ActOnIdle()
         {
-            if(GatherManager.VoxelOrders.Count == 0 && (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()))
+            if (GatherManager.VoxelOrders.Count == 0 &&
+                (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()))
             {
                 // Find a room to train in
                 if (Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack) && MathFunctions.RandEvent(0.01f))
@@ -481,16 +446,20 @@ namespace DwarfCorp
 
                     if (closestTraining != null)
                     {
-                        return new ActWrapperTask(new GoTrainAct(this));    
+                        return new ActWrapperTask(new GoTrainAct(this));
                     }
                 }
 
                 // Otherwise, try to find a chair to sit in
                 if (IdleTimer.HasTriggered && MathFunctions.RandEvent(0.25f))
                 {
-                    return new ActWrapperTask(new GoToChairAndSitAct(this)) { Priority = Task.PriorityType.Eventually, AutoRetry = false };
+                    return new ActWrapperTask(new GoToChairAndSitAct(this))
+                    {
+                        Priority = Task.PriorityType.Eventually,
+                        AutoRetry = false
+                    };
                 }
-                else if (IdleTimer.HasTriggered)
+                if (IdleTimer.HasTriggered)
                 {
                     IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
                     return new ActWrapperTask(ActOnWander())
@@ -501,8 +470,8 @@ namespace DwarfCorp
                 Physics.Velocity *= 0.0f;
                 return null;
             }
-            // If we have no more build orders, look for gather orders
-            else if (GatherManager.VoxelOrders.Count == 0)
+                // If we have no more build orders, look for gather orders
+            if (GatherManager.VoxelOrders.Count == 0)
             {
                 GatherManager.StockOrder order = GatherManager.StockOrders[0];
                 GatherManager.StockOrders.RemoveAt(0);
@@ -511,36 +480,32 @@ namespace DwarfCorp
                     Priority = Task.PriorityType.Low
                 };
             }
-            // Otherwise handle build orders.
-            else
+                // Otherwise handle build orders.
+            var voxels = new List<Voxel>();
+            var types = new List<VoxelType>();
+            foreach (GatherManager.BuildVoxelOrder order in GatherManager.VoxelOrders)
             {
-                List<Voxel> voxels = new List<Voxel>();
-                List<VoxelType> types = new List<VoxelType>();
-                foreach (GatherManager.BuildVoxelOrder order in GatherManager.VoxelOrders)
-                {
-                   voxels.Add(order.Voxel);
-                    types.Add(order.Type);
-                }
-
-                GatherManager.VoxelOrders.Clear();
-                return new ActWrapperTask(new BuildVoxelsAct(this, voxels, types))
-                {
-                    Priority = Task.PriorityType.Low,
-                    AutoRetry = true
-                };
-
+                voxels.Add(order.Voxel);
+                types.Add(order.Type);
             }
+
+            GatherManager.VoxelOrders.Clear();
+            return new ActWrapperTask(new BuildVoxelsAct(this, voxels, types))
+            {
+                Priority = Task.PriorityType.Low,
+                AutoRetry = true
+            };
         }
 
 
         public void Jump(DwarfTime dt)
         {
-            if(!Creature.JumpTimer.HasTriggered)
+            if (!Creature.JumpTimer.HasTriggered)
             {
                 return;
             }
 
-            Creature.Physics.ApplyForce(Vector3.Up * Creature.Stats.JumpForce, (float) dt.ElapsedGameTime.TotalSeconds);
+            Creature.Physics.ApplyForce(Vector3.Up*Creature.Stats.JumpForce, (float) dt.ElapsedGameTime.TotalSeconds);
             Creature.JumpTimer.Reset(Creature.JumpTimer.TargetTimeSeconds);
             SoundManager.PlaySound(ContentPaths.Audio.jump, Creature.Physics.GlobalTransform.Translation);
         }
@@ -582,92 +547,20 @@ namespace DwarfCorp
             Color textColor = good ? Color.Yellow : Color.Red;
             string prefix = good ? "+" : "";
             string postfix = good ? ":)" : ":(";
-            IndicatorManager.DrawIndicator(prefix + thought.HappinessModifier + " " + postfix, Position + Vector3.Up + MathFunctions.RandVector3Cube() *0.5f, 1.0f, textColor);
-        }
-
-        public class LeaveWorldTask : Task
-        {
-
-            public IEnumerable<Act.Status> GreedyFallbackBehavior(Creature agent)
-            {
-                EdgeGoalRegion edgeGoal = new EdgeGoalRegion();
-
-                while (true)
-                {
-                    Voxel creatureVoxel = agent.Physics.CurrentVoxel;
-
-                    if (edgeGoal.IsInGoalRegion(creatureVoxel))
-                    {
-                        yield return Act.Status.Success;
-                        yield break;
-                    }
-
-                    List<Creature.MoveAction> actions = agent.AI.Movement.GetMoveActions(creatureVoxel);
-
-                    float minCost = float.MaxValue;
-                    Creature.MoveAction minAction = new Creature.MoveAction();
-                    bool hasMinAction = false;
-                    foreach (Creature.MoveAction action in actions)
-                    {
-                        Voxel vox = action.Voxel;
-
-                        float cost = edgeGoal.Heuristic(vox) + MathFunctions.Rand(0.0f, 5.0f);
-
-                        if (cost < minCost)
-                        {
-                            minAction = action;
-                            minCost = cost;
-                            hasMinAction = true;
-                        }
-                    }
-
-                    if (hasMinAction)
-                    {
-                        Creature.MoveAction nullAction = new Creature.MoveAction()
-                        {
-                            Diff = minAction.Diff,
-                            MoveType = Creature.MoveType.Walk,
-                            Voxel = creatureVoxel
-                        };
-
-                        agent.AI.Blackboard.SetData("GreedyPath", new List<Creature.MoveAction>(){nullAction, minAction});
-                        FollowPathAnimationAct pathAct = new FollowPathAnimationAct(agent.AI, "GreedyPath");
-                        pathAct.Initialize();
-
-                        foreach (Act.Status status in pathAct.Run())
-                        {
-                            yield return Act.Status.Running;
-                        }
-                    }
-
-                    yield return Act.Status.Running;
-                }
-            }
-
-            public override Act CreateScript(Creature agent)
-            {
-                return new Select(
-                    new GoToVoxelAct("", PlanAct.PlanType.Edge, agent.AI),
-                    new Wrap(() => GreedyFallbackBehavior(agent))
-                );
-            }
-
-            public override Task Clone()
-            {
-                return new LeaveWorldTask();
-            }
+            IndicatorManager.DrawIndicator(prefix + thought.HappinessModifier + " " + postfix,
+                Position + Vector3.Up + MathFunctions.RandVector3Cube()*0.5f, 1.0f, textColor);
         }
 
         public void Kill(Body entity)
         {
-            KillEntityTask killTask = new KillEntityTask(entity, KillEntityTask.KillType.Auto);
+            var killTask = new KillEntityTask(entity, KillEntityTask.KillType.Auto);
             if (!Tasks.Contains(killTask))
                 Tasks.Add(killTask);
         }
 
         public void LeaveWorld()
         {
-            Task leaveTask = new LeaveWorldTask()
+            Task leaveTask = new LeaveWorldTask
             {
                 Priority = Task.PriorityType.Urgent,
                 AutoRetry = true,
@@ -699,7 +592,6 @@ namespace DwarfCorp
             {
                 AddThought(Thought.ThoughtType.FeltHungry);
             }
-           
         }
 
         public void Converse(CreatureAI other)
@@ -729,8 +621,12 @@ namespace DwarfCorp
 
                     if (Faction == PlayState.PlayerFaction)
                     {
-                        PlayState.AnnouncementManager.Announce(Stats.FullName + Drawer2D.WrapColor(" is fighting ", Color.DarkRed) + TextGenerator.IndefiniteArticle(enemy.Creature.Name),
-                            Stats.FullName + " the " + Stats.CurrentLevel.Name + " is fighting " + TextGenerator.IndefiniteArticle(enemy.Stats.CurrentLevel.Name) + " " + enemy.Faction.Race.Name, 
+                        PlayState.AnnouncementManager.Announce(
+                            Stats.FullName + Drawer2D.WrapColor(" is fighting ", Color.DarkRed) +
+                            TextGenerator.IndefiniteArticle(enemy.Creature.Name),
+                            Stats.FullName + " the " + Stats.CurrentLevel.Name + " is fighting " +
+                            TextGenerator.IndefiniteArticle(enemy.Stats.CurrentLevel.Name) + " " +
+                            enemy.Faction.Race.Name,
                             ZoomToMe);
                     }
                 }
@@ -743,8 +639,8 @@ namespace DwarfCorp
             bool good = pay > 0;
             Color textColor = good ? Color.Green : Color.Red;
             string prefix = good ? "+" : "";
-            IndicatorManager.DrawIndicator(prefix + "$" + pay, Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 1.0f, textColor);
-
+            IndicatorManager.DrawIndicator(prefix + "$" + pay,
+                Position + Vector3.Up + MathFunctions.RandVector3Cube()*0.5f, 1.0f, textColor);
         }
 
         public override string GetDescription()
@@ -753,7 +649,8 @@ namespace DwarfCorp
                           " " +
                           Stats.CurrentClass.Name + "\n    " +
                           "Happiness: " + Status.Happiness.GetDescription() + ". Health: " + Status.Health.Percentage +
-                          ". Hunger: " + (100 - Status.Hunger.Percentage) + ". Energy: " + Status.Energy.Percentage + "\n";
+                          ". Hunger: " + (100 - Status.Hunger.Percentage) + ". Energy: " + Status.Energy.Percentage +
+                          "\n";
             if (CurrentTask != null)
             {
                 desc += "    Task: " + CurrentTask.Name;
@@ -762,36 +659,273 @@ namespace DwarfCorp
             return desc;
         }
 
+        public class LeaveWorldTask : Task
+        {
+            public IEnumerable<Act.Status> GreedyFallbackBehavior(Creature agent)
+            {
+                var edgeGoal = new EdgeGoalRegion();
 
+                while (true)
+                {
+                    Voxel creatureVoxel = agent.Physics.CurrentVoxel;
+
+                    if (edgeGoal.IsInGoalRegion(creatureVoxel))
+                    {
+                        yield return Act.Status.Success;
+                        yield break;
+                    }
+
+                    List<Creature.MoveAction> actions = agent.AI.Movement.GetMoveActions(creatureVoxel);
+
+                    float minCost = float.MaxValue;
+                    var minAction = new Creature.MoveAction();
+                    bool hasMinAction = false;
+                    foreach (Creature.MoveAction action in actions)
+                    {
+                        Voxel vox = action.Voxel;
+
+                        float cost = edgeGoal.Heuristic(vox) + MathFunctions.Rand(0.0f, 5.0f);
+
+                        if (cost < minCost)
+                        {
+                            minAction = action;
+                            minCost = cost;
+                            hasMinAction = true;
+                        }
+                    }
+
+                    if (hasMinAction)
+                    {
+                        var nullAction = new Creature.MoveAction
+                        {
+                            Diff = minAction.Diff,
+                            MoveType = Creature.MoveType.Walk,
+                            Voxel = creatureVoxel
+                        };
+
+                        agent.AI.Blackboard.SetData("GreedyPath", new List<Creature.MoveAction> {nullAction, minAction});
+                        var pathAct = new FollowPathAnimationAct(agent.AI, "GreedyPath");
+                        pathAct.Initialize();
+
+                        foreach (Act.Status status in pathAct.Run())
+                        {
+                            yield return Act.Status.Running;
+                        }
+                    }
+
+                    yield return Act.Status.Running;
+                }
+            }
+
+            public override Act CreateScript(Creature agent)
+            {
+                return new Select(
+                    new GoToVoxelAct("", PlanAct.PlanType.Edge, agent.AI),
+                    new Wrap(() => GreedyFallbackBehavior(agent))
+                    );
+            }
+
+            public override Task Clone()
+            {
+                return new LeaveWorldTask();
+            }
+        }
+
+        public class TaskHistory
+        {
+            public static float LockoutTime;
+            public static int MaxFailures;
+            public Timer LockoutTimer;
+            public int NumFailures;
+
+            static TaskHistory()
+            {
+                LockoutTime = 30.0f;
+                MaxFailures = 3;
+            }
+
+            public TaskHistory()
+            {
+                NumFailures = 0;
+                LockoutTimer = new Timer(LockoutTime, true);
+            }
+
+            public bool IsLocked
+            {
+                get { return NumFailures >= MaxFailures && !LockoutTimer.HasTriggered; }
+            }
+
+            public void Update()
+            {
+                LockoutTimer.Update(DwarfTime.LastTime);
+                if (LockoutTimer.HasTriggered)
+                {
+                    LockoutTimer.Reset(LockoutTime*1.5f);
+                    NumFailures = 0;
+                }
+            }
+        }
     }
 
     public class CreatureMovement
     {
-        public bool CanFly { get; set; }
-        public bool CanSwim { get; set; }
-        public bool CanClimb { get; set; }
-        public Creature Creature { get; set; }
-        public bool CanClimbWalls { get; set; }
-        public bool CanWalk { get; set; }
         public CreatureMovement(Creature creature)
         {
-            CanWalk = true;
-            Creature = creature;
-            CanFly = false;
-            CanSwim = true;
-            CanClimb = true;
-            CanClimbWalls = false;
+            Actions = new Dictionary<Creature.MoveType, ActionStats>
+            {
+                {
+                    Creature.MoveType.Climb,
+                    new ActionStats
+                    {
+                        CanMove = true,
+                        Cost = 2.0f,
+                        Speed = 0.5f
+                    }
+                },
+                {
+                    Creature.MoveType.Walk,
+                    new ActionStats
+                    {
+                        CanMove = true,
+                        Cost = 1.0f,
+                        Speed = 1.0f
+                    }
+                },
+                {
+                    Creature.MoveType.Swim,
+                    new ActionStats
+                    {
+                        CanMove = true,
+                        Cost = 2.0f,
+                        Speed = 0.5f
+                    }
+                },
+                {
+                    Creature.MoveType.Jump,
+                    new ActionStats
+                    {
+                        CanMove = true,
+                        Cost = 1.0f,
+                        Speed = 1.0f
+                    }
+                },
+                {
+                    Creature.MoveType.Fly,
+                    new ActionStats
+                    {
+                        CanMove = false,
+                        Cost = 1.0f,
+                        Speed = 1.0f
+                    }
+                },
+                {
+                    Creature.MoveType.Fall,
+                    new ActionStats
+                    {
+                        CanMove = true,
+                        Cost = 5.0f,
+                        Speed = 1.0f
+                    }
+                },
+                {
+                    Creature.MoveType.DestroyObject,
+                    new ActionStats
+                    {
+                        CanMove = true,
+                        Cost = 30.0f,
+                        Speed = 1.0f
+                    }
+                },
+                {
+                    Creature.MoveType.ClimbWalls,
+                    new ActionStats
+                    {
+                        CanMove = false,
+                        Cost = 10.0f,
+                        Speed = 1.0f
+                    }
+                },
+            };
+        }
+
+        public Creature Creature { get; set; }
+
+        [JsonIgnore]
+        public bool CanFly
+        {
+            get { return Can(Creature.MoveType.Fly); }
+            set { SetCan(Creature.MoveType.Fly, value); }
+        }
+
+        [JsonIgnore]
+        public bool CanSwim
+        {
+            get { return Can(Creature.MoveType.Swim); }
+            set { SetCan(Creature.MoveType.Swim, value); }
+        }
+
+        [JsonIgnore]
+        public bool CanClimb
+        {
+            get { return Can(Creature.MoveType.Climb); }
+            set { SetCan(Creature.MoveType.Climb, value); }
+        }
+
+        [JsonIgnore]
+        public bool CanClimbWalls
+        {
+            get { return Can(Creature.MoveType.ClimbWalls); }
+            set { SetCan(Creature.MoveType.ClimbWalls, value); }
+        }
+
+        [JsonIgnore]
+        public bool CanWalk
+        {
+            get { return Can(Creature.MoveType.Walk); }
+            set { SetCan(Creature.MoveType.Walk, value); }
+        }
+
+        public Dictionary<Creature.MoveType, ActionStats> Actions { get; set; }
+
+        public bool Can(Creature.MoveType type)
+        {
+            return Actions[type].CanMove;
+        }
+
+        public float Cost(Creature.MoveType type)
+        {
+            return Actions[type].Cost;
+        }
+
+        public float Speed(Creature.MoveType type)
+        {
+            return Actions[type].Speed;
+        }
+
+        public void SetCan(Creature.MoveType type, bool value)
+        {
+            Actions[type].CanMove = value;
+        }
+
+        public void SetCost(Creature.MoveType type, float value)
+        {
+            Actions[type].Cost = value;
+        }
+
+        public void SetSpeed(Creature.MoveType type, float value)
+        {
+            Actions[type].Speed = value;
         }
 
         private Voxel[,,] GetNeighborhood(Voxel voxel)
         {
-            Voxel[, ,] neighborHood = new Voxel[3, 3, 3];
+            var neighborHood = new Voxel[3, 3, 3];
             CollisionManager objectHash = PlayState.ComponentManager.CollisionManager;
 
             VoxelChunk startChunk = voxel.Chunk;
-            int x = (int)voxel.GridPosition.X;
-            int y = (int)voxel.GridPosition.Y;
-            int z = (int)voxel.GridPosition.Z;
+            var x = (int) voxel.GridPosition.X;
+            var y = (int) voxel.GridPosition.Y;
+            var z = (int) voxel.GridPosition.Z;
             for (int dx = -1; dx < 2; dx++)
             {
                 for (int dy = -1; dy < 2; dy++)
@@ -802,19 +936,20 @@ namespace DwarfCorp
                         int nx = dx + x;
                         int ny = dy + y;
                         int nz = dz + z;
-                        if (!PlayState.ChunkManager.ChunkData.GetVoxel(startChunk, new Vector3(nx, ny, nz) + startChunk.Origin,
-                            ref neighborHood[dx + 1, dy + 1, dz + 1]))
+                        if (
+                            !PlayState.ChunkManager.ChunkData.GetVoxel(startChunk,
+                                new Vector3(nx, ny, nz) + startChunk.Origin,
+                                ref neighborHood[dx + 1, dy + 1, dz + 1]))
                         {
                             neighborHood[dx + 1, dy + 1, dz + 1] = null;
                         }
-
                     }
                 }
             }
             return neighborHood;
         }
 
-        bool HasNeighbors(Voxel[,,] neighborHood)
+        private bool HasNeighbors(Voxel[,,] neighborHood)
         {
             bool hasNeighbors = false;
             for (int dx = 0; dx < 3; dx++)
@@ -826,7 +961,8 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    hasNeighbors = hasNeighbors || (neighborHood[dx, 1, dz] != null && (!neighborHood[dx, 1, dz].IsEmpty));
+                    hasNeighbors = hasNeighbors ||
+                                   (neighborHood[dx, 1, dz] != null && (!neighborHood[dx, 1, dz].IsEmpty));
                 }
             }
 
@@ -841,41 +977,42 @@ namespace DwarfCorp
 
         public List<Creature.MoveAction> GetMoveActions(Vector3 pos)
         {
-            Voxel vox = new Voxel();
+            var vox = new Voxel();
             PlayState.ChunkManager.ChunkData.GetVoxel(pos, ref vox);
             return GetMoveActions(vox);
         }
 
         public List<Creature.MoveAction> GetMoveActions(Voxel voxel)
         {
-            List<Creature.MoveAction> toReturn = new List<Creature.MoveAction>();
-           
+            var toReturn = new List<Creature.MoveAction>();
+
             CollisionManager objectHash = PlayState.ComponentManager.CollisionManager;
 
             Voxel[,,] neighborHood = GetNeighborhood(voxel);
-            int x = (int)voxel.GridPosition.X;
-            int y = (int)voxel.GridPosition.Y;
-            int z = (int)voxel.GridPosition.Z;
+            var x = (int) voxel.GridPosition.X;
+            var y = (int) voxel.GridPosition.Y;
+            var z = (int) voxel.GridPosition.Z;
             bool inWater = (neighborHood[1, 1, 1] != null && neighborHood[1, 1, 1].WaterLevel > 5);
             bool standingOnGround = (neighborHood[1, 0, 1] != null && !neighborHood[1, 0, 1].IsEmpty);
             bool topCovered = (neighborHood[1, 2, 1] != null && !neighborHood[1, 2, 1].IsEmpty);
             bool hasNeighbors = HasNeighbors(neighborHood);
             bool isClimbing = false;
 
-            List<Creature.MoveAction> successors = new List<Creature.MoveAction>();
+            var successors = new List<Creature.MoveAction>();
 
             //Climbing ladders
-            IEnumerable<IBoundedObject> objectsInside = objectHash.GetObjectsAt(voxel, CollisionManager.CollisionType.Static);
+            IEnumerable<IBoundedObject> objectsInside = objectHash.GetObjectsAt(voxel,
+                CollisionManager.CollisionType.Static);
             if (objectsInside != null)
             {
-                var bodies = objectsInside.OfType<GameComponent>();
-                var enumerable = bodies as IList<GameComponent> ?? bodies.ToList();
+                IEnumerable<GameComponent> bodies = objectsInside.OfType<GameComponent>();
+                IList<GameComponent> enumerable = bodies as IList<GameComponent> ?? bodies.ToList();
                 if (CanClimb)
                 {
                     bool hasLadder = enumerable.Any(component => component.Tags.Contains("Climbable"));
                     if (hasLadder)
                     {
-                        successors.Add(new Creature.MoveAction()
+                        successors.Add(new Creature.MoveAction
                         {
                             Diff = new Vector3(1, 2, 1),
                             MoveType = Creature.MoveType.Climb
@@ -885,7 +1022,7 @@ namespace DwarfCorp
 
                         if (!standingOnGround)
                         {
-                            successors.Add(new Creature.MoveAction()
+                            successors.Add(new Creature.MoveAction
                             {
                                 Diff = new Vector3(1, 0, 1),
                                 MoveType = Creature.MoveType.Climb
@@ -907,22 +1044,21 @@ namespace DwarfCorp
                 if (nearWall)
                 {
                     isClimbing = true;
-                    successors.Add(new Creature.MoveAction()
+                    successors.Add(new Creature.MoveAction
                     {
                         Diff = new Vector3(1, 2, 1),
-                        MoveType = Creature.MoveType.Climb
+                        MoveType = Creature.MoveType.ClimbWalls
                     });
                 }
 
                 if (nearWall && !standingOnGround)
                 {
-                    successors.Add(new Creature.MoveAction()
+                    successors.Add(new Creature.MoveAction
                     {
                         Diff = new Vector3(1, 0, 1),
-                        MoveType = Creature.MoveType.Climb
+                        MoveType = Creature.MoveType.ClimbWalls
                     });
                 }
-
             }
 
             if ((CanWalk && standingOnGround) || (CanSwim && inWater))
@@ -930,14 +1066,14 @@ namespace DwarfCorp
                 Creature.MoveType moveType = inWater ? Creature.MoveType.Swim : Creature.MoveType.Walk;
                 if (IsEmpty(neighborHood[0, 1, 1]))
                     // +- x
-                    successors.Add(new Creature.MoveAction()
+                    successors.Add(new Creature.MoveAction
                     {
                         Diff = new Vector3(0, 1, 1),
                         MoveType = moveType
                     });
 
                 if (IsEmpty(neighborHood[2, 1, 1]))
-                    successors.Add(new Creature.MoveAction()
+                    successors.Add(new Creature.MoveAction
                     {
                         Diff = new Vector3(2, 1, 1),
                         MoveType = moveType
@@ -945,14 +1081,14 @@ namespace DwarfCorp
 
                 if (IsEmpty(neighborHood[1, 1, 0]))
                     // +- z
-                    successors.Add(new Creature.MoveAction()
+                    successors.Add(new Creature.MoveAction
                     {
                         Diff = new Vector3(1, 1, 0),
                         MoveType = moveType
                     });
 
                 if (IsEmpty(neighborHood[1, 1, 2]))
-                    successors.Add(new Creature.MoveAction()
+                    successors.Add(new Creature.MoveAction
                     {
                         Diff = new Vector3(1, 1, 2),
                         MoveType = moveType
@@ -962,14 +1098,14 @@ namespace DwarfCorp
                 {
                     if (IsEmpty(neighborHood[2, 1, 2]))
                         // +x + z
-                        successors.Add(new Creature.MoveAction()
+                        successors.Add(new Creature.MoveAction
                         {
                             Diff = new Vector3(2, 1, 2),
                             MoveType = moveType
                         });
 
                     if (IsEmpty(neighborHood[2, 1, 0]))
-                        successors.Add(new Creature.MoveAction()
+                        successors.Add(new Creature.MoveAction
                         {
                             Diff = new Vector3(2, 1, 0),
                             MoveType = moveType
@@ -977,20 +1113,19 @@ namespace DwarfCorp
 
                     if (IsEmpty(neighborHood[0, 1, 2]))
                         // -x -z
-                        successors.Add(new Creature.MoveAction()
+                        successors.Add(new Creature.MoveAction
                         {
                             Diff = new Vector3(0, 1, 2),
                             MoveType = moveType
                         });
 
                     if (IsEmpty(neighborHood[0, 1, 0]))
-                        successors.Add(new Creature.MoveAction()
+                        successors.Add(new Creature.MoveAction
                         {
                             Diff = new Vector3(0, 1, 0),
                             MoveType = moveType
                         });
                 }
-
             }
 
             if (!topCovered && (standingOnGround || (CanSwim && inWater) || isClimbing))
@@ -1003,7 +1138,7 @@ namespace DwarfCorp
 
                         if (!IsEmpty(neighborHood[dx, 1, dz]))
                         {
-                            successors.Add(new Creature.MoveAction()
+                            successors.Add(new Creature.MoveAction
                             {
                                 Diff = new Vector3(dx, 2, dz),
                                 MoveType = Creature.MoveType.Jump
@@ -1011,14 +1146,13 @@ namespace DwarfCorp
                         }
                     }
                 }
-
             }
 
 
             // Falling
             if (!inWater && !standingOnGround)
             {
-                successors.Add(new Creature.MoveAction()
+                successors.Add(new Creature.MoveAction
                 {
                     Diff = new Vector3(1, 0, 1),
                     MoveType = Creature.MoveType.Fall
@@ -1037,7 +1171,7 @@ namespace DwarfCorp
 
                             if (IsEmpty(neighborHood[dx, 1, dz]))
                             {
-                                successors.Add(new Creature.MoveAction()
+                                successors.Add(new Creature.MoveAction
                                 {
                                     Diff = new Vector3(dx, dy, dz),
                                     MoveType = Creature.MoveType.Fly
@@ -1051,7 +1185,7 @@ namespace DwarfCorp
 
             foreach (Creature.MoveAction v in successors)
             {
-                Voxel n = neighborHood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
+                Voxel n = neighborHood[(int) v.Diff.X, (int) v.Diff.Y, (int) v.Diff.Z];
                 if (n != null && (n.IsEmpty || n.WaterLevel > 0))
                 {
                     bool blockedByObject = false;
@@ -1060,8 +1194,8 @@ namespace DwarfCorp
 
                     if (objectsAtNeighbor != null)
                     {
-                        var bodies = objectsAtNeighbor.OfType<GameComponent>();
-                        var enumerable = bodies as IList<GameComponent> ?? bodies.ToList();
+                        IEnumerable<GameComponent> bodies = objectsAtNeighbor.OfType<GameComponent>();
+                        IList<GameComponent> enumerable = bodies as IList<GameComponent> ?? bodies.ToList();
 
                         foreach (GameComponent body in enumerable)
                         {
@@ -1074,14 +1208,14 @@ namespace DwarfCorp
                                         .GetCurrentRelationship() !=
                                     Relationship.Loving)
                                 {
-
-                                    toReturn.Add(new Creature.MoveAction()
-                                    {
-                                        Diff = v.Diff,
-                                        MoveType = Creature.MoveType.DestroyObject,
-                                        InteractObject = door,
-                                        Voxel = n
-                                    });
+                                    if (Can(Creature.MoveType.DestroyObject))
+                                        toReturn.Add(new Creature.MoveAction
+                                        {
+                                            Diff = v.Diff,
+                                            MoveType = Creature.MoveType.DestroyObject,
+                                            InteractObject = door,
+                                            Voxel = n
+                                        });
                                     blockedByObject = true;
                                 }
                             }
@@ -1099,6 +1233,12 @@ namespace DwarfCorp
 
             return toReturn;
         }
-    }
 
+        public class ActionStats
+        {
+            public bool CanMove = false;
+            public float Cost = 1.0f;
+            public float Speed = 1.0f;
+        }
+    }
 }

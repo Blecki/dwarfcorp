@@ -30,10 +30,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
@@ -42,8 +40,31 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CommonRoom : Room
     {
-        public static string CommonRoomName { get { return "CommonRoom"; } }
-        public static RoomData CommonRoomData { get { return RoomLibrary.GetData(CommonRoomName); } }
+        public CommonRoom()
+        {
+            RoomData = CommonRoomData;
+        }
+
+        public CommonRoom(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
+            base(designation, designations, CommonRoomData, chunks)
+        {
+        }
+
+        public CommonRoom(IEnumerable<Voxel> voxels, ChunkManager chunks) :
+            base(voxels, CommonRoomData, chunks)
+        {
+            OnBuilt();
+        }
+
+        public static string CommonRoomName
+        {
+            get { return "CommonRoom"; }
+        }
+
+        public static RoomData CommonRoomData
+        {
+            get { return RoomLibrary.GetData(CommonRoomName); }
+        }
 
         public static RoomData InitializeData()
         {
@@ -71,15 +92,15 @@ namespace DwarfCorp
                 }
             };
 
-            RoomTemplate lamp = new RoomTemplate(PlacementType.All, lampTemplate, lampAccessories);
-            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
+            var lamp = new RoomTemplate(PlacementType.All, lampTemplate, lampAccessories);
+            var roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>
             {
                 {Resource.ResourceTags.Wood, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood)},
                 {Resource.ResourceTags.Stone, new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone)},
             };
 
 
-            List<RoomTemplate> commonRoomTemplates = new List<RoomTemplate>();
+            var commonRoomTemplates = new List<RoomTemplate>();
 
             RoomTile[,] tableTemps =
             {
@@ -118,34 +139,17 @@ namespace DwarfCorp
                     RoomTile.None
                 }
             };
-            RoomTemplate table = new RoomTemplate(PlacementType.All, tableTemps, tableAcc);
+            var table = new RoomTemplate(PlacementType.All, tableTemps, tableAcc);
 
             commonRoomTemplates.Add(lamp);
             commonRoomTemplates.Add(table);
             Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(CommonRoomName, 1, "CobblestoneFloor", roomResources, commonRoomTemplates, new ImageFrame(roomIcons, 16, 2, 0))
+            return new RoomData(CommonRoomName, 1, "CobblestoneFloor", roomResources, commonRoomTemplates,
+                new ImageFrame(roomIcons, 16, 2, 0))
             {
                 Description = "Dwarves come here to socialize and drink",
                 CanBuildAboveGround = false
             };
-
         }
-
-        public CommonRoom()
-        {
-            RoomData = CommonRoomData;
-        }
-
-        public CommonRoom(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
-            base(designation, designations, CommonRoomData, chunks)
-        {
-        }
-
-        public CommonRoom(IEnumerable<Voxel> voxels, ChunkManager chunks) :
-            base(voxels, CommonRoomData, chunks)
-        {
-            OnBuilt();
-        }
-
     }
 }

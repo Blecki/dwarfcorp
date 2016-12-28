@@ -30,17 +30,16 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature grabs a given item and puts it in their inventory
+    ///     A creature grabs a given item and puts it in their inventory
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class StashAct : CreatureAct
     {
         public enum PickUpType
@@ -50,20 +49,8 @@ namespace DwarfCorp
             Room
         }
 
-        public Zone Zone { get; set; }
-
-        public PickUpType PickType { get; set; }
-
-        public string TargetName { get; set; }
-
-        public string StashedItemOut { get; set; }
-
-        [Newtonsoft.Json.JsonIgnore]
-        public Body Target { get { return GetTarget(); } set { SetTarget(value); } }
-
         public StashAct()
         {
-
         }
 
         public StashAct(CreatureAI agent, PickUpType type, Zone zone, string targetName, string stashedItemOut) :
@@ -74,6 +61,21 @@ namespace DwarfCorp
             Zone = zone;
             TargetName = targetName;
             StashedItemOut = stashedItemOut;
+        }
+
+        public Zone Zone { get; set; }
+
+        public PickUpType PickType { get; set; }
+
+        public string TargetName { get; set; }
+
+        public string StashedItemOut { get; set; }
+
+        [JsonIgnore]
+        public Body Target
+        {
+            get { return GetTarget(); }
+            set { SetTarget(value); }
         }
 
         public Body GetTarget()
@@ -89,7 +91,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if(Target == null)
+            if (Target == null)
             {
                 yield return Status.Fail;
             }
@@ -98,61 +100,58 @@ namespace DwarfCorp
             {
                 case (PickUpType.Room):
                 case (PickUpType.Stockpile):
+                {
+                    if (Zone == null)
                     {
-                        if (Zone == null)
-                        {
-                            yield return Status.Fail;
-                            break;
-                        }
-                        bool removed = Zone.Resources.RemoveResource(new ResourceAmount(Target.Tags[0]));
+                        yield return Status.Fail;
+                        break;
+                    }
+                    bool removed = Zone.Resources.RemoveResource(new ResourceAmount(Target.Tags[0]));
 
-                        if (removed)
+                    if (removed)
+                    {
+                        if (Creature.Inventory.Pickup(Target))
                         {
-                            if(Creature.Inventory.Pickup(Target))
-                            {
-                                Agent.Blackboard.SetData(StashedItemOut, new ResourceAmount(Target));
-                                SoundManager.PlaySound(ContentPaths.Audio.dig, Agent.Position);
-                                yield return Status.Success;
-                            }
-                            else
-                            {
-                                yield return Status.Fail;
-                            }
+                            Agent.Blackboard.SetData(StashedItemOut, new ResourceAmount(Target));
+                            SoundManager.PlaySound(ContentPaths.Audio.dig, Agent.Position);
+                            yield return Status.Success;
                         }
                         else
                         {
                             yield return Status.Fail;
                         }
-                        break;
                     }
+                    else
+                    {
+                        yield return Status.Fail;
+                    }
+                    break;
+                }
                 case (PickUpType.None):
+                {
+                    if (!Creature.Inventory.Pickup(Target))
                     {
-                        if (!Creature.Inventory.Pickup(Target))
-                        {
-                            yield return Status.Fail;
-                        }
+                        yield return Status.Fail;
+                    }
 
-                        if (Creature.Faction.GatherDesignations.Contains(Target))
-                        {
-                            Creature.Faction.GatherDesignations.Remove(Target);
-                        }
-                        else
-                        {
-                            yield return Status.Fail;
-                            break;
-                        }
-
-                        ResourceAmount resource = new ResourceAmount(Target);
-                        Agent.Blackboard.SetData(StashedItemOut, resource);
-                        //Creature.DrawIndicator(resource.ResourceType.Image, resource.ResourceType.Tint);
-                        SoundManager.PlaySound(ContentPaths.Audio.dig, Agent.Position);
-                        yield return Status.Success;
+                    if (Creature.Faction.GatherDesignations.Contains(Target))
+                    {
+                        Creature.Faction.GatherDesignations.Remove(Target);
+                    }
+                    else
+                    {
+                        yield return Status.Fail;
                         break;
                     }
+
+                    var resource = new ResourceAmount(Target);
+                    Agent.Blackboard.SetData(StashedItemOut, resource);
+                    //Creature.DrawIndicator(resource.ResourceType.Image, resource.ResourceType.Tint);
+                    SoundManager.PlaySound(ContentPaths.Audio.dig, Agent.Position);
+                    yield return Status.Success;
+                    break;
+                }
             }
         }
-        
     }
-    
 }
-

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,18 +8,10 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
-
     public class SpeakerComponent : GUIComponent
     {
-        public AnimatedImagePanel Actor { get; set; }
-        public Panel SpeechBubble { get; set; }
-        public Label SpeechLabel { get; set; }
-        public int ActorSize { get; set; }
-        public Timer SayTimer { get; set; }
-        public Panel ActorPanel { get; set; }
         public SpeakerComponent()
         {
-            
         }
 
         public SpeakerComponent(DwarfGUI gui, GUIComponent parent, Animation animation) :
@@ -34,8 +25,8 @@ namespace DwarfCorp
                 DrawOrder = -2,
                 Mode = Panel.PanelMode.Simple
             };
-           
-            ScrollingAnimation anim = new ScrollingAnimation(GUI, ActorPanel)
+
+            var anim = new ScrollingAnimation(GUI, ActorPanel)
             {
                 Image = new NamedImageFrame(ContentPaths.GUI.background),
                 ScrollSpeed = new Vector2(10, 0),
@@ -60,8 +51,14 @@ namespace DwarfCorp
                 Alignment = Drawer2D.Alignment.Center,
                 WordWrap = true
             };
-
         }
+
+        public AnimatedImagePanel Actor { get; set; }
+        public Panel SpeechBubble { get; set; }
+        public Label SpeechLabel { get; set; }
+        public int ActorSize { get; set; }
+        public Timer SayTimer { get; set; }
+        public Panel ActorPanel { get; set; }
 
         public override void Update(DwarfTime time)
         {
@@ -76,8 +73,10 @@ namespace DwarfCorp
             }
             Actor.LocalBounds = new Rectangle(0, LocalBounds.Height - ActorSize, ActorSize, ActorSize);
             ActorPanel.LocalBounds = Actor.LocalBounds;
-            SpeechBubble.LocalBounds = new Rectangle(ActorSize, 0, LocalBounds.Width - ActorSize, LocalBounds.Height - ActorSize/2);
-            SpeechLabel.LocalBounds = new Rectangle(10, 10, SpeechBubble.LocalBounds.Width - 10, SpeechBubble.LocalBounds.Height - 10);
+            SpeechBubble.LocalBounds = new Rectangle(ActorSize, 0, LocalBounds.Width - ActorSize,
+                LocalBounds.Height - ActorSize/2);
+            SpeechLabel.LocalBounds = new Rectangle(10, 10, SpeechBubble.LocalBounds.Width - 10,
+                SpeechBubble.LocalBounds.Height - 10);
             base.Update(time);
         }
 
@@ -85,7 +84,7 @@ namespace DwarfCorp
         {
             SpeechLabel.Text = text;
             Actor.Animation.Play();
-            SayTimer.Reset(0.1f * text.Length);
+            SayTimer.Reset(0.1f*text.Length);
         }
 
         public void Stop()
@@ -95,45 +94,55 @@ namespace DwarfCorp
             SpeechBubble.IsVisible = false;
             Actor.Animation.Stop();
         }
-
-
     }
 
     /// <summary>
-    /// A node in a dialouge tree.
+    ///     A node in a dialouge tree.
     /// </summary>
     public class SpeechNode
     {
         /// <summary>
-        /// A link between speech nodes. Uses an arbitrary function as a link.
-        /// </summary>
-        public class SpeechAction
-        {
-            public string Text { get; set; }
-            public Func<IEnumerable<SpeechNode> > Action { get; set; } 
-        }
-
-        /// <summary>
-        /// The text to display during the dialouge.
+        ///     The text to display during the dialouge.
         /// </summary>
         public string Text { get; set; }
+
         /// <summary>
-        /// A list of outgoing links to other nodes.
+        ///     A list of outgoing links to other nodes.
         /// </summary>
         public List<SpeechAction> Actions { get; set; }
 
         public static IEnumerable<SpeechNode> Echo(SpeechNode other)
         {
             yield return other;
-            yield break;
+        }
+
+        /// <summary>
+        ///     A link between speech nodes. Uses an arbitrary function as a link.
+        /// </summary>
+        public class SpeechAction
+        {
+            public string Text { get; set; }
+            public Func<IEnumerable<SpeechNode>> Action { get; set; }
         }
     }
 
     /// <summary>
-    /// This game state allows the player to buy/sell goods from a balloon with a drag/drop interface.
+    ///     This game state allows the player to buy/sell goods from a balloon with a drag/drop interface.
     /// </summary>
     public class DiplomacyState : GameState
     {
+        public DiplomacyState(DwarfGame game, GameStateManager stateManager, PlayState play, Faction.TradeEnvoy envoy) :
+            base(game, "DiplomacyState", stateManager)
+        {
+            EdgePadding = 128;
+            Input = new InputManager();
+            PlayState = play;
+            EnableScreensaver = false;
+            InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
+            Faction = envoy.OwnerFaction;
+            Resources = envoy.TradeGoods;
+        }
+
         public DwarfGUI GUI { get; set; }
         public Drawer2D Drawer { get; set; }
         public GUIComponent MainWindow { get; set; }
@@ -146,10 +155,12 @@ namespace DwarfCorp
         public SpeakerComponent Talker { get; set; }
         public SpeechNode DialougeTree { get; set; }
         public SpeechNode CurrentNode { get; set; }
+
         public Faction PlayerFation
         {
             get { return PlayState.PlayerFaction; }
         }
+
         public Panel SpeechBubble { get; set; }
         public Label SpeechLabel { get; set; }
         public string TalkerName { get; set; }
@@ -160,26 +171,14 @@ namespace DwarfCorp
         public IEnumerator<SpeechNode> CurrentEnumerator { get; set; }
         public SpeechNode PreeTree { get; set; }
         public List<ResourceAmount> Resources { get; set; }
-    
+
         public Diplomacy.Politics Politics
         {
             get { return PlayState.ComponentManager.Diplomacy.GetPolitics(PlayState.PlayerFaction, Faction); }
         }
+
         public Button BackButton { get; set; }
         public Faction.TradeEnvoy Envoy { get; set; }
-
-        public DiplomacyState(DwarfGame game, GameStateManager stateManager, PlayState play, Faction.TradeEnvoy envoy) :
-            base(game, "DiplomacyState", stateManager)
-        {
-
-            EdgePadding = 128;
-            Input = new InputManager();
-            PlayState = play;
-            EnableScreensaver = false;
-            InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
-            Faction = envoy.OwnerFaction;
-            Resources = envoy.TradeGoods;
-        }
 
 
         public void DoTrade(TradeEvent trade)
@@ -190,7 +189,7 @@ namespace DwarfCorp
             {
                 PlayerFation.AddResources(resource);
 
-                List<ResourceAmount> removals = new List<ResourceAmount>();
+                var removals = new List<ResourceAmount>();
                 foreach (ResourceAmount other in Resources)
                 {
                     if (other.ResourceType.Type != resource.ResourceType.Type) continue;
@@ -228,13 +227,12 @@ namespace DwarfCorp
             Envoy.TradeMoney += trade.MoneySent;
         }
 
-        IEnumerable<SpeechNode> WaitForTrade()
+        private IEnumerable<SpeechNode> WaitForTrade()
         {
             TradeDialog dialog = TradeDialog.Popup(GUI, GUI.RootComponent, Faction, Resources);
 
             LastEvent = null;
             dialog.OnTraded += dialog_OnClicked;
-
 
 
             while (LastEvent == null && dialog.IsVisible)
@@ -248,7 +246,7 @@ namespace DwarfCorp
 
                 if (LastEvent.IsHate() && !Politics.HasEvent("you tried to give us something offensive"))
                 {
-                    Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                    Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent
                     {
                         Change = -0.25f,
                         Description = "you tried to give us something offensive",
@@ -256,9 +254,10 @@ namespace DwarfCorp
                         Time = PlayState.Time.CurrentDate
                     });
                 }
-                else if ((!LastEvent.IsHate() && LastEvent.IsLike()) && !Politics.HasEvent("you gave us something we liked"))
+                else if ((!LastEvent.IsHate() && LastEvent.IsLike()) &&
+                         !Politics.HasEvent("you gave us something we liked"))
                 {
-                    Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                    Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent
                     {
                         Change = 0.25f,
                         Description = "you gave us something we liked",
@@ -273,7 +272,7 @@ namespace DwarfCorp
 
                     if (!Politics.HasEvent("we had profitable trade"))
                     {
-                        Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                        Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent
                         {
                             Change = 0.25f,
                             Description = "we had profitable trade",
@@ -282,12 +281,12 @@ namespace DwarfCorp
                         });
                     }
 
-                    yield return new SpeechNode()
+                    yield return new SpeechNode
                     {
                         Text = GetGoodTradeText(),
-                        Actions = new List<SpeechNode.SpeechAction>()
+                        Actions = new List<SpeechNode.SpeechAction>
                         {
-                            new SpeechNode.SpeechAction()
+                            new SpeechNode.SpeechAction
                             {
                                 Text = "Ok",
                                 Action = () => SpeechNode.Echo(DialougeTree)
@@ -297,12 +296,12 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    yield return new SpeechNode()
+                    yield return new SpeechNode
                     {
                         Text = GetBadTradeText(),
-                        Actions = new List<SpeechNode.SpeechAction>()
+                        Actions = new List<SpeechNode.SpeechAction>
                         {
-                            new SpeechNode.SpeechAction()
+                            new SpeechNode.SpeechAction
                             {
                                 Text = "Sorry.",
                                 Action = () => SpeechNode.Echo(DialougeTree)
@@ -312,18 +311,17 @@ namespace DwarfCorp
                 }
                 yield break;
             }
-            else yield return DialougeTree;
-            yield break;
+            yield return DialougeTree;
         }
 
-        void Initialize()
+        private void Initialize()
         {
             Envoy.TradeMoney = Faction.TradeMoney + MathFunctions.Rand(-100.0f, 100.0f);
             Envoy.TradeMoney = Math.Max(Envoy.TradeMoney, 0.0f);
             TalkerName = TextGenerator.GenerateRandom(Datastructures.SelectRandom(Faction.Race.NameTemplates).ToArray());
             Tabs = new Dictionary<string, GUIComponent>();
-            GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default), 
-                Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), 
+            GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default),
+                Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title),
                 Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input)
             {
                 DebugDraw = false
@@ -332,7 +330,9 @@ namespace DwarfCorp
             Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
             MainWindow = new GUIComponent(GUI, GUI.RootComponent)
             {
-                LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2)
+                LocalBounds =
+                    new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding*2,
+                        Game.GraphicsDevice.Viewport.Height - EdgePadding*2)
             };
 
             Layout = new GridLayout(GUI, MainWindow, 11, 4);
@@ -353,45 +353,45 @@ namespace DwarfCorp
             DialougeSelector.OnItemSelected += DialougeSelector_OnItemSelected;
             Layout.SetComponentPosition(DialougeSelector, 2, 3, 1, 8);
 
-            BackButton = new Button(GUI, Layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.LeftArrow));
+            BackButton = new Button(GUI, Layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton,
+                GUI.Skin.GetSpecialFrame(GUISkin.Tile.LeftArrow));
             Layout.SetComponentPosition(BackButton, 2, 10, 1, 1);
             BackButton.OnClicked += back_OnClicked;
             BackButton.IsVisible = false;
-            DialougeTree = new SpeechNode()
+            DialougeTree = new SpeechNode
             {
                 Text = GetGreeting(),
-                Actions = new List<SpeechNode.SpeechAction>()
+                Actions = new List<SpeechNode.SpeechAction>
                 {
-                    new SpeechNode.SpeechAction()
+                    new SpeechNode.SpeechAction
                     {
                         Text = "Trade...",
                         Action = WaitForTrade
                     },
-                    new SpeechNode.SpeechAction()
+                    new SpeechNode.SpeechAction
                     {
                         Text = "Ask a question...",
                         Action = AskAQuestion
                     },
-                    new SpeechNode.SpeechAction()
+                    new SpeechNode.SpeechAction
                     {
                         Text = "Declare war!",
                         Action = DeclareWar
                     },
-                    new SpeechNode.SpeechAction()
+                    new SpeechNode.SpeechAction
                     {
                         Text = "Leave",
                         Action = () =>
                         {
                             BackButton.IsVisible = true;
-                            if(Envoy != null)
+                            if (Envoy != null)
                                 Diplomacy.RecallEnvoy(Envoy);
-                            return SpeechNode.Echo(new SpeechNode()
+                            return SpeechNode.Echo(new SpeechNode
                             {
                                 Text = GetFarewell(),
                                 Actions = new List<SpeechNode.SpeechAction>()
                             });
                         }
-
                     }
                 }
             };
@@ -399,20 +399,19 @@ namespace DwarfCorp
 
             if (Politics.WasAtWar)
             {
-                PreeTree = new SpeechNode()
+                PreeTree = new SpeechNode
                 {
                     Text = Datastructures.SelectRandom(Faction.Race.Speech.PeaceDeclarations),
-                    Actions = new List<SpeechNode.SpeechAction>()
+                    Actions = new List<SpeechNode.SpeechAction>
                     {
-                        new SpeechNode.SpeechAction()
+                        new SpeechNode.SpeechAction
                         {
                             Text = "Make peace with " + Faction.Name,
                             Action = () =>
                             {
                                 if (!Politics.HasEvent("you made peace with us"))
                                 {
-
-                                    Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                                    Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent
                                     {
                                         Change = 0.4f,
                                         Description = "you made peace with us",
@@ -423,7 +422,7 @@ namespace DwarfCorp
                                 return SpeechNode.Echo(DialougeTree);
                             }
                         },
-                        new SpeechNode.SpeechAction()
+                        new SpeechNode.SpeechAction
                         {
                             Text = "Continue the war with " + Faction.Name,
                             Action = DeclareWar
@@ -435,7 +434,7 @@ namespace DwarfCorp
             }
             else
             {
-                Transition(DialougeTree);                
+                Transition(DialougeTree);
             }
 
 
@@ -443,7 +442,7 @@ namespace DwarfCorp
             {
                 Politics.HasMet = true;
 
-                Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent
                 {
                     Change = 0.0f,
                     Description = "we just met",
@@ -462,7 +461,7 @@ namespace DwarfCorp
             BackButton.IsVisible = true;
             if (!Politics.HasEvent("you declared war on us"))
             {
-                Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent
                 {
                     Change = -2.0f,
                     Description = "you declared war on us",
@@ -471,7 +470,7 @@ namespace DwarfCorp
                 });
                 Politics.WasAtWar = true;
             }
-            yield return new SpeechNode()
+            yield return new SpeechNode
             {
                 Text = Datastructures.SelectRandom(Faction.Race.Speech.WarDeclarations),
                 Actions = new List<SpeechNode.SpeechAction>()
@@ -480,27 +479,27 @@ namespace DwarfCorp
 
         private IEnumerable<SpeechNode> AskAQuestion()
         {
-            yield return new SpeechNode()
+            yield return new SpeechNode
             {
                 Text = "Ask...",
-                Actions = new List<SpeechNode.SpeechAction>()
+                Actions = new List<SpeechNode.SpeechAction>
                 {
-                    new SpeechNode.SpeechAction()
+                    new SpeechNode.SpeechAction
                     {
                         Text = "What do you think of us?",
                         Action = WhatDoYouThink
                     },
-                    new SpeechNode.SpeechAction()
+                    new SpeechNode.SpeechAction
                     {
                         Text = "What's the news?",
                         Action = WhatsTheNews
                     },
-                    new SpeechNode.SpeechAction()
+                    new SpeechNode.SpeechAction
                     {
                         Text = "What goods do you want?",
                         Action = WhatGoods
                     },
-                    new SpeechNode.SpeechAction()
+                    new SpeechNode.SpeechAction
                     {
                         Text = "Nevermind",
                         Action = () => SpeechNode.Echo(DialougeTree)
@@ -508,7 +507,6 @@ namespace DwarfCorp
                 }
             };
         }
-
 
 
         private IEnumerable<SpeechNode> WhatGoods()
@@ -529,17 +527,17 @@ namespace DwarfCorp
             }
             goods += ".";
 
-            yield return new SpeechNode()
+            yield return new SpeechNode
             {
                 Text = goods,
-                Actions = new List<SpeechNode.SpeechAction>()
+                Actions = new List<SpeechNode.SpeechAction>
                 {
-                    new SpeechNode.SpeechAction()
+                    new SpeechNode.SpeechAction
                     {
                         Text = "Tell me more",
                         Action = () => CommonGoods()
                     },
-                    new SpeechNode.SpeechAction()
+                    new SpeechNode.SpeechAction
                     {
                         Text = "OK",
                         Action = () => SpeechNode.Echo(DialougeTree)
@@ -564,12 +562,12 @@ namespace DwarfCorp
             goods += " goods";
             goods += ".";
 
-            yield return new SpeechNode()
+            yield return new SpeechNode
             {
                 Text = goods,
-                Actions = new List<SpeechNode.SpeechAction>()
+                Actions = new List<SpeechNode.SpeechAction>
                 {
-                    new SpeechNode.SpeechAction()
+                    new SpeechNode.SpeechAction
                     {
                         Text = "OK",
                         Action = () => SpeechNode.Echo(DialougeTree)
@@ -580,12 +578,12 @@ namespace DwarfCorp
 
         private IEnumerable<SpeechNode> WhatsTheNews()
         {
-            yield return new SpeechNode()
+            yield return new SpeechNode
             {
                 Text = "The world is the same as ever.",
-                Actions = new List<SpeechNode.SpeechAction>()
+                Actions = new List<SpeechNode.SpeechAction>
                 {
-                    new SpeechNode.SpeechAction()
+                    new SpeechNode.SpeechAction
                     {
                         Text = "Interesting",
                         Action = () => SpeechNode.Echo(DialougeTree)
@@ -608,27 +606,26 @@ namespace DwarfCorp
             }
 
             relationship += ".";
-            yield return new SpeechNode()
+            yield return new SpeechNode
             {
                 Text = relationship,
-                Actions = new List<SpeechNode.SpeechAction>()
+                Actions = new List<SpeechNode.SpeechAction>
+                {
+                    new SpeechNode.SpeechAction
                     {
-                        new SpeechNode.SpeechAction()
-                        {
-                            Text = "Interesting",
-                            Action = () => SpeechNode.Echo(DialougeTree)
-                        }
+                        Text = "Interesting",
+                        Action = () => SpeechNode.Echo(DialougeTree)
                     }
+                }
             };
-
         }
 
-        void dialog_OnClicked(TradeEvent e)
+        private void dialog_OnClicked(TradeEvent e)
         {
             LastEvent = e;
         }
 
-        void DialougeSelector_OnItemSelected(int index, ListItem item)
+        private void DialougeSelector_OnItemSelected(int index, ListItem item)
         {
             if (CurrentNode != null)
             {
@@ -649,7 +646,7 @@ namespace DwarfCorp
 
         private string GetGoodTradeText()
         {
-            return  Datastructures.SelectRandom(Faction.Race.Speech.GoodTrades);
+            return Datastructures.SelectRandom(Faction.Race.Speech.GoodTrades);
         }
 
         private string GetBadTradeText()
@@ -679,7 +676,7 @@ namespace DwarfCorp
             return greeting;
         }
 
-        void InputManager_KeyReleasedCallback(Microsoft.Xna.Framework.Input.Keys key)
+        private void InputManager_KeyReleasedCallback(Keys key)
         {
             if (!IsActiveState)
             {
@@ -720,7 +717,8 @@ namespace DwarfCorp
         public override void Update(DwarfTime gameTime)
         {
             CompositeLibrary.Update();
-            MainWindow.LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2);
+            MainWindow.LocalBounds = new Rectangle(EdgePadding, EdgePadding,
+                Game.GraphicsDevice.Viewport.Width - EdgePadding*2, Game.GraphicsDevice.Viewport.Height - EdgePadding*2);
             Input.Update();
             GUI.Update(gameTime);
 
@@ -735,7 +733,7 @@ namespace DwarfCorp
                 if (CurrentCoroutine != null)
                 {
                     SpeechNode node = CurrentEnumerator.Current;
-                   
+
                     if (node != null)
                     {
                         Transition(node);
@@ -761,14 +759,15 @@ namespace DwarfCorp
 
         private void DrawGUI(DwarfTime gameTime, float dx)
         {
-            RasterizerState rasterizerState = new RasterizerState()
+            var rasterizerState = new RasterizerState
             {
                 ScissorTestEnable = true
             };
 
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
 
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap, DepthStencilState.None, rasterizerState);
+            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap,
+                DepthStencilState.None, rasterizerState);
 
             Drawer2D.FillRect(DwarfGame.SpriteBatch, Game.GraphicsDevice.Viewport.Bounds, new Color(0, 0, 0, 150));
 
@@ -785,5 +784,4 @@ namespace DwarfCorp
             base.Render(gameTime);
         }
     }
-
 }

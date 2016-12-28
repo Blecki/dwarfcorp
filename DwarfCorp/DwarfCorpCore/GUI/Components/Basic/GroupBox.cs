@@ -30,24 +30,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This GUI component is a labeled panel which contains other components.
+    ///     This GUI component is a labeled panel which contains other components.
     /// </summary>
     public class GroupBox : GUIComponent
     {
-        public string Title { get; set; }
-        public bool DrawBounds { get; set; }
-
         public GroupBox(DwarfGUI gui, GUIComponent parent, string title) :
             base(gui, parent)
         {
@@ -55,20 +48,23 @@ namespace DwarfCorp
             DrawBounds = true;
         }
 
+        public string Title { get; set; }
+        public bool DrawBounds { get; set; }
+
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
-            if(!IsVisible)
+            if (!IsVisible)
             {
                 return;
             }
 
-            if(DrawBounds)
+            if (DrawBounds)
             {
                 GUI.Skin.RenderGroup(GlobalBounds, batch);
             }
-            Drawer2D.DrawAlignedText(batch, Title, GUI.DefaultFont, Color.Black, Drawer2D.Alignment.Top | Drawer2D.Alignment.Left, GlobalBounds);
+            Drawer2D.DrawAlignedText(batch, Title, GUI.DefaultFont, Color.Black,
+                Drawer2D.Alignment.Top | Drawer2D.Alignment.Left, GlobalBounds);
             base.Render(time, batch);
         }
     }
-
 }

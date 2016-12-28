@@ -30,12 +30,11 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Collections.Concurrent;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -43,12 +42,10 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
-
     /// <summary>
-    /// Honestly, this is just a helper class where a bunch of other miscellanious
-    /// stuff is thrown at this time. Most of it has to do with utilities for certain
-    /// data structures (such as 2D or 3D arrays).
+    ///     Honestly, this is just a helper class where a bunch of other miscellanious
+    ///     stuff is thrown at this time. Most of it has to do with utilities for certain
+    ///     data structures (such as 2D or 3D arrays).
     /// </summary>
     internal class Datastructures
     {
@@ -56,7 +53,7 @@ namespace DwarfCorp
         {
             Vector2 extents = Vector2.One;
 
-            if(text == null)
+            if (text == null)
             {
                 return extents;
             }
@@ -68,31 +65,32 @@ namespace DwarfCorp
                     // how far in x to offset from position
                     int currentOffset = 0;
                     int maxY = 0;
-                    string[] splits = text.Split(new string[] { "[color:" }, StringSplitOptions.RemoveEmptyEntries);
-                    foreach (var str in splits)
+                    string[] splits = text.Split(new[] {"[color:"}, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string str in splits)
                     {
                         // if this section starts with a color
                         if (str.StartsWith("#"))
                         {
                             // any subsequent msgs after the [/color] tag are defaultColor
-                            string[] msgs = str.Substring(10).Split(new string[] { "[/color]" }, StringSplitOptions.RemoveEmptyEntries);
+                            string[] msgs = str.Substring(10)
+                                .Split(new[] {"[/color]"}, StringSplitOptions.RemoveEmptyEntries);
                             Vector2 measure = font.MeasureString(msgs[0]);
                             //
-                            currentOffset += (int)measure.X;
-                            maxY = Math.Max((int)measure.Y, maxY);
+                            currentOffset += (int) measure.X;
+                            maxY = Math.Max((int) measure.Y, maxY);
                             // there should only ever be one other string or none
                             if (msgs.Length == 2)
                             {
                                 Vector2 measure1 = font.MeasureString(msgs[1]);
-                                currentOffset += (int)measure1.X;
-                                maxY = Math.Max((int)measure1.Y, maxY);
+                                currentOffset += (int) measure1.X;
+                                maxY = Math.Max((int) measure1.Y, maxY);
                             }
                         }
                         else
                         {
                             Vector2 measure2 = font.MeasureString(str);
-                            currentOffset += (int)measure2.X;
-                            maxY = Math.Max((int)measure2.Y, maxY);
+                            currentOffset += (int) measure2.X;
+                            maxY = Math.Max((int) measure2.Y, maxY);
                         }
                     }
 
@@ -104,10 +102,10 @@ namespace DwarfCorp
                     extents = font.MeasureString(text);
                 }
             }
-            catch(ArgumentException e)
+            catch (ArgumentException e)
             {
                 Console.Error.WriteLine(e.Message);
-                extents.X = text.Length * 20;
+                extents.X = text.Length*20;
             }
 
             return extents;
@@ -117,16 +115,16 @@ namespace DwarfCorp
         {
             int iHandle = WaitHandle.WaitAny(waitHandles, 500);
 
-            if (iHandle == System.Threading.WaitHandle.WaitTimeout)
+            if (iHandle == WaitHandle.WaitTimeout)
             {
                 return null;
             }
 
             if (iHandle > 0 && iHandle < waitHandles.Length)
             {
-                EventWaitHandle wh = (EventWaitHandle) waitHandles[iHandle];
+                var wh = (EventWaitHandle) waitHandles[iHandle];
 
-                return wh;   
+                return wh;
             }
 
             return null;
@@ -134,15 +132,15 @@ namespace DwarfCorp
 
         public static List<int> RandomIndices(int max)
         {
-            List<int> toReturn = new List<int>(max);
-            List<int> indices = new List<int>(max);
+            var toReturn = new List<int>(max);
+            var indices = new List<int>(max);
 
-            for(int i = 0; i < max; i++)
+            for (int i = 0; i < max; i++)
             {
                 indices.Add(i);
             }
 
-            for(int i = 0; i < max; i++)
+            for (int i = 0; i < max; i++)
             {
                 int r = PlayState.Random.Next(indices.Count);
 
@@ -155,15 +153,15 @@ namespace DwarfCorp
 
         public static IEnumerable<TKey> RandomKeys<TKey, TValue>(IDictionary<TKey, TValue> dict)
         {
-            Random rand = new Random();
-            List<TKey> values = Enumerable.ToList(dict.Keys);
+            var rand = new Random();
+            List<TKey> values = dict.Keys.ToList();
 
 
             int size = dict.Count;
 
-            if(size > 0)
+            if (size > 0)
             {
-                while(true)
+                while (true)
                 {
                     yield return values[rand.Next(size)];
                 }
@@ -172,7 +170,7 @@ namespace DwarfCorp
 
         public static T SelectRandom<T>(IEnumerable<T> list)
         {
-            var enumerable = list as IList<T> ?? list.ToList();
+            IList<T> enumerable = list as IList<T> ?? list.ToList();
             return enumerable.ElementAt(PlayState.Random.Next(enumerable.Count()));
         }
 
@@ -181,19 +179,19 @@ namespace DwarfCorp
             int nr = A.GetLength(0);
             int nc = A.GetLength(1);
 
-            T[,] toReturn = new T[nc, nr];
+            var toReturn = new T[nc, nr];
 
-            for(int r = 0; r < nc; r++)
+            for (int r = 0; r < nc; r++)
             {
-                for(int c = 0; c < nr; c++)
+                for (int c = 0; c < nr; c++)
                 {
                     toReturn[r, c] = A[c, r];
                 }
             }
 
-            for(int r = 0; r < nc; r++)
+            for (int r = 0; r < nc; r++)
             {
-                for(int c = 0; c < nr / 2; c++)
+                for (int c = 0; c < nr/2; c++)
                 {
                     Swap(ref toReturn[r, c], ref toReturn[r, nr - c - 1]);
                 }
@@ -211,27 +209,14 @@ namespace DwarfCorp
     }
 
     /// <summary>
-    /// Class is a pair of type T. The pair is commutative, so Pair(A, B) == Pair(B, A)
+    ///     Class is a pair of type T. The pair is commutative, so Pair(A, B) == Pair(B, A)
     /// </summary>
     /// <typeparam name="T">The type of the pair.</typeparam>
     [JsonObject(IsReference = false)]
     public class Pair<T>
     {
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                // this is a bad hashcode, but its necessary because Hash(A, B) must equal Hash(B, A)
-                return EqualityComparer<T>.Default.GetHashCode(First) + EqualityComparer<T>.Default.GetHashCode(Second);
-            }
-        }
-
-        public T First { get; set; }
-        public T Second { get; set; }
-
         public Pair()
         {
-            
         }
 
         public Pair(T first, T second)
@@ -243,7 +228,18 @@ namespace DwarfCorp
         public Pair(Pair<T> other) :
             this(other.First, other.Second)
         {
-            
+        }
+
+        public T First { get; set; }
+        public T Second { get; set; }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                // this is a bad hashcode, but its necessary because Hash(A, B) must equal Hash(B, A)
+                return EqualityComparer<T>.Default.GetHashCode(First) + EqualityComparer<T>.Default.GetHashCode(Second);
+            }
         }
 
         public bool IsSelfPair()
@@ -267,5 +263,4 @@ namespace DwarfCorp
                    (other.First.Equals(Second) && other.Second.Equals(First));
         }
     }
-
 }

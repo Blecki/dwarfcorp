@@ -30,21 +30,52 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature randomly applies force at intervals to itself.
+    ///     A creature randomly applies force at intervals to itself.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class FlyWanderAct : CreatureAct
     {
+        public enum FlyState
+        {
+            Wandering,
+            SearchingForPerch,
+            Perching
+        }
+
+        public FlyWanderAct()
+        {
+        }
+
+        public FlyWanderAct(CreatureAI creature, float seconds, float turnTime, float radius, float altitude,
+            float perchTime) :
+                base(creature)
+        {
+            Altitude = altitude;
+            Name = "FlyWander " + seconds;
+            WanderTime = new Timer(seconds, false);
+            TurnTime = new Timer(turnTime, false);
+            PerchTime = new Timer(perchTime, false);
+            Radius = radius;
+            YRadius = 2.0f;
+            GravityCompensation = 0.1f;
+            Damping = 0.25f;
+            TurnThreshold = 2.0f;
+            OriginalGravity = creature.Physics.Gravity;
+            CanPerchOnWalls = false;
+            CanPerchOnGround = true;
+            CanPerchOnObjects = true;
+            State = FlyState.Wandering;
+        }
+
         public Timer WanderTime { get; set; }
         public Timer TurnTime { get; set; }
         public Timer PerchTime { get; set; }
@@ -62,39 +93,6 @@ namespace DwarfCorp
         public bool CanPerchOnObjects { get; set; }
 
         public FlyState State { get; set; }
-
-        public enum FlyState
-        {
-            Wandering,
-            SearchingForPerch,
-            Perching
-        }
-
-        public FlyWanderAct()
-        {
-
-        }
-
-        public FlyWanderAct(CreatureAI creature, float seconds, float turnTime, float radius, float altitude, float perchTime) :
-            base(creature)
-        {
-            Altitude = altitude;
-            Name = "FlyWander " + seconds;
-            WanderTime = new Timer(seconds, false);
-            TurnTime = new Timer(turnTime, false);
-            PerchTime = new Timer(perchTime, false);
-            Radius = radius;
-            YRadius = 2.0f;
-            GravityCompensation = 0.1f;
-            Damping = 0.25f;
-            TurnThreshold = 2.0f;
-            OriginalGravity = creature.Physics.Gravity;
-            CanPerchOnWalls = false;
-            CanPerchOnGround = true;
-            CanPerchOnObjects = true;
-            State = FlyState.Wandering;
-            
-        }
 
         public override void Initialize()
         {
@@ -125,12 +123,12 @@ namespace DwarfCorp
                         Agent.Creature.Physics.Velocity = Vector3.Zero;
                         Agent.Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
                         PerchTime.Update(DwarfTime.LastTime);
-                        yield return Act.Status.Running;
+                        yield return Status.Running;
                     }
                     // When we're done flying, go back to walking and just fall.
                     Agent.Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
                     Agent.Creature.Physics.Gravity = OriginalGravity;
-                    yield return Act.Status.Success;
+                    yield return Status.Success;
                 }
 
                 Agent.Creature.Physics.Gravity = Vector3.Zero;
@@ -157,9 +155,10 @@ namespace DwarfCorp
                     LocalTarget = new Vector3(randomX + oldPosition.X, randomY, randomZ + oldPosition.Z);
                 }
 
-                
+
                 // Keep flying until a timer has trigerred.
-                while ((!WanderTime.HasTriggered && State == FlyState.Wandering) || (State == FlyState.SearchingForPerch))
+                while ((!WanderTime.HasTriggered && State == FlyState.Wandering) ||
+                       (State == FlyState.SearchingForPerch))
                 {
                     // If we hit the ground, switch to walking, otherwise switch to flying.
                     Agent.Creature.CurrentCharacterMode = Creature.CharacterMode.Flying;
@@ -203,13 +202,14 @@ namespace DwarfCorp
 
                         if (vox.WaterLevel > 0)
                         {
-                            yield return Act.Status.Running;
+                            yield return Status.Running;
                             continue;
                         }
 
                         if (CanPerchOnGround)
                         {
-                            Creature.Physics.ApplyForce(OriginalGravity, (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
+                            Creature.Physics.ApplyForce(OriginalGravity,
+                                (float) DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
                             Voxel below = vox.GetVoxelBelow();
 
                             if (below != null && !below.IsEmpty && below.WaterLevel == 0)
@@ -226,7 +226,6 @@ namespace DwarfCorp
                                 if (n != null && n.GridPosition.Y >= vox.GridPosition.Y && !n.IsEmpty)
                                 {
                                     State = FlyState.Perching;
-                                    continue;
                                 }
                             }
                         }
@@ -244,16 +243,13 @@ namespace DwarfCorp
                             }
                         }
                          */
-                        
                     }
 
                     yield return Status.Running;
-
                 }
 
                 yield return Status.Running;
             }
         }
     }
-
 }

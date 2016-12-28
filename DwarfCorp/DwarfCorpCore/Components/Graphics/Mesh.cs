@@ -30,31 +30,43 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+
 using System.Runtime.Serialization;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This component represents an instance of a particular primitive (such as intersecting billboards, or a box), or a mesh. 
-    /// Efficiently drawn by the instance manager using state batching.
+    ///     This component represents an instance of a particular primitive (such as intersecting billboards, or a box), or a
+    ///     mesh.
+    ///     Efficiently drawn by the instance manager using state batching.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class Mesh : Tinter
     {
+        private bool checkHeight;
+        private bool firstIter = true;
+        private bool instanceVisible = true;
+
+        public Mesh()
+        {
+        }
+
+        public Mesh(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, string modelType,
+            bool addToCollisionManager) :
+                base(name, parent, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
+        {
+            ModelType = modelType;
+            Instance = PlayState.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
+            instanceVisible = true;
+        }
+
         public string ModelType { get; set; }
+
         [JsonIgnore]
         public InstanceData Instance { get; set; }
-        private bool instanceVisible = true;
-        private bool checkHeight = false;
 
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
@@ -63,38 +75,23 @@ namespace DwarfCorp
             instanceVisible = true;
         }
 
-        public Mesh()
-        {
-            
-        }
-
-        public Mesh(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, string modelType, bool addToCollisionManager) :
-            base(name, parent, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
-        {
-            ModelType = modelType;
-            Instance = PlayState.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
-            instanceVisible = true;
-        }
-
-        private bool firstIter = true;
-
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
 
-            if(Instance != null  && (HasMoved || firstIter || Instance.Color != TargetTint))
+            if (Instance != null && (HasMoved || firstIter || Instance.Color != TargetTint))
             {
                 Instance.Color = TargetTint;
                 Instance.Transform = GlobalTransform;
                 firstIter = false;
             }
 
-            if(checkHeight)
+            if (checkHeight)
             {
                 checkHeight = false;
             }
 
-            if(IsVisible != instanceVisible)
+            if (IsVisible != instanceVisible)
             {
                 SetVisible(IsVisible);
             }
@@ -108,13 +105,13 @@ namespace DwarfCorp
 
         public void SetVisible(bool value)
         {
-            if(Instance != null)
+            if (Instance != null)
             {
-                if(value && !instanceVisible)
+                if (value && !instanceVisible)
                 {
                     PlayState.InstanceManager.Instances[ModelType].Add(Instance);
                 }
-                else if(!value && instanceVisible)
+                else if (!value && instanceVisible)
                 {
                     PlayState.InstanceManager.Instances[ModelType].Remove(Instance);
                 }
@@ -125,12 +122,11 @@ namespace DwarfCorp
 
         public override void ReceiveMessageRecursive(Message messageToReceive)
         {
-            if(messageToReceive.MessageString == "Chunk Modified")
+            if (messageToReceive.MessageString == "Chunk Modified")
             {
                 checkHeight = true;
             }
             base.ReceiveMessageRecursive(messageToReceive);
         }
     }
-
 }

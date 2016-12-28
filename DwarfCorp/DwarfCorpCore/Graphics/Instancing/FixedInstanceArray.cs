@@ -1,27 +1,65 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using DwarfCorpCore;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Threading;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A fixed instance array draws the closest K instances of a model. 
-    /// It constantly sorts and frustrum culls instances en masse.
+    ///     A fixed instance array draws the closest K instances of a model.
+    ///     It constantly sorts and frustrum culls instances en masse.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class FixedInstanceArray
     {
+        private static readonly RasterizerState rasterState = new RasterizerState
+        {
+            CullMode = CullMode.None,
+        };
+
+        private readonly Timer sortTimer = new Timer(0.1f, false);
+        public Camera Camera;
+        public float CullDistance = 100*100;
+
+        private DynamicVertexBuffer instanceBuffer;
+        private InstancedVertex[] instanceVertexes;
+        private int numActiveInstances;
+        private int numInstances;
+
+        public FixedInstanceArray()
+        {
+            Data = new List<InstanceData>();
+            Additions = new List<InstanceData>();
+            Removals = new List<InstanceData>();
+        }
+
+        public FixedInstanceArray(string name, GeometricPrimitive model, Texture2D texture, int numInstances,
+            BlendState blendMode)
+        {
+            CullDistance = (GameSettings.Default.ChunkDrawDistance*GameSettings.Default.ChunkDrawDistance) - 40;
+            Name = name;
+            Model = model;
+            Data = new List<InstanceData>();
+            Additions = new List<InstanceData>();
+            Removals = new List<InstanceData>();
+
+            SortedData = new MinBag<InstanceData>(numInstances);
+            NumInstances = numInstances;
+
+            ShouldRebuild = true;
+            Texture = texture;
+            DataLock = new Mutex();
+
+            BlendMode = blendMode;
+        }
+
         private MinBag<InstanceData> SortedData { get; set; }
         private List<InstanceData> Data { get; set; }
         private List<InstanceData> Additions { get; set; }
         private List<InstanceData> Removals { get; set; }
-        private int numInstances = 0;
-        private int numActiveInstances = 0;
+
         public int NumInstances
         {
             get { return numInstances; }
@@ -30,23 +68,13 @@ namespace DwarfCorp
 
         [JsonIgnore]
         public GeometricPrimitive Model { get; set; }
+
         public Texture2D Texture { get; set; }
         public bool ShouldRebuild { get; set; }
         public string Name { get; set; }
         private Mutex DataLock { get; set; }
 
-        private static RasterizerState rasterState = new RasterizerState()
-        {
-            CullMode = CullMode.None,
-        };
-
-        public Camera Camera;
-
         public BlendState BlendMode { get; set; }
-        public float CullDistance = 100 * 100;
-
-        private DynamicVertexBuffer instanceBuffer;
-        private InstancedVertex[] instanceVertexes;
 
         public void Clear()
         {
@@ -73,10 +101,9 @@ namespace DwarfCorp
 
                 if (instance.Depth < CullDistance)
                 {
-
                     // Half plane test. Faster. Much less accurate.
                     //if (Vector3.Dot(z, forward) > 0)
-                    if(box.Contains(instance.Transform.Translation) != ContainmentType.Contains)
+                    if (box.Contains(instance.Transform.Translation) != ContainmentType.Contains)
                     {
                         instance.Depth *= 100;
                     }
@@ -88,8 +115,6 @@ namespace DwarfCorp
             }
         }
 
-        private Timer sortTimer = new Timer(0.1f, false);
-
         public void SortDistances()
         {
             CreateDepths(Camera);
@@ -99,34 +124,6 @@ namespace DwarfCorp
             {
                 SortedData.Add(t, t.Depth);
             }
-        }
-
-
-
-        public FixedInstanceArray()
-        {
-            Data = new List<InstanceData>();
-            Additions = new List<InstanceData>();
-            Removals = new List<InstanceData>();
-        }
-
-        public FixedInstanceArray(string name, GeometricPrimitive model, Texture2D texture, int numInstances, BlendState blendMode)
-        {
-            CullDistance = (GameSettings.Default.ChunkDrawDistance * GameSettings.Default.ChunkDrawDistance) - 40;
-            Name = name;
-            Model = model;
-            Data = new List<InstanceData>();
-            Additions = new List<InstanceData>();
-            Removals = new List<InstanceData>();
-
-            SortedData = new MinBag<InstanceData>(numInstances);
-            NumInstances = numInstances;
-
-            ShouldRebuild = true;
-            Texture = texture;
-            DataLock = new Mutex();
-
-            BlendMode = blendMode;
         }
 
 
@@ -216,9 +213,9 @@ namespace DwarfCorp
                 {
                     pass.Apply();
                     graphics.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0,
-                                        Model.MaxVertex, 0,
-                                        Model.Indexes.Length / 3,
-                                        numActiveInstances);
+                        Model.MaxVertex, 0,
+                        Model.Indexes.Length/3,
+                        numActiveInstances);
                     /*
                     foreach (InstanceData instance in SortedData.Data)
                     {
@@ -240,7 +237,6 @@ namespace DwarfCorp
                 effect.CurrentTechnique = effect.Techniques["Textured"];
                 effect.Parameters["xWorld"].SetValue(Matrix.Identity);
                 graphics.BlendState = blendState;
-
             }
         }
 
@@ -281,5 +277,4 @@ namespace DwarfCorp
             numInstances = nInstances;
         }
     }
-
 }

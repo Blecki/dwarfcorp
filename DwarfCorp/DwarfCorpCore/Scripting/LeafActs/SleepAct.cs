@@ -30,26 +30,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Scripting.LeafActs
 {
     /// <summary>
-    /// A creature remains inactive, recharging its energy until it is satisfied.
+    ///     A creature remains inactive, recharging its energy until it is satisfied.
     /// </summary>
     public class SleepAct : CreatureAct
     {
-        public float RechargeRate { get; set; }
-
-        public bool Teleport { get; set; }
-
-        public Vector3 TeleportLocation { get; set; }
-
         public SleepAct()
         {
             Name = "Sleep";
@@ -65,6 +57,12 @@ namespace DwarfCorp.Scripting.LeafActs
             Teleport = false;
         }
 
+        public float RechargeRate { get; set; }
+
+        public bool Teleport { get; set; }
+
+        public Vector3 TeleportLocation { get; set; }
+
         public override void OnCanceled()
         {
             Creature.Status.IsAsleep = false;
@@ -76,14 +74,14 @@ namespace DwarfCorp.Scripting.LeafActs
         public override IEnumerable<Status> Run()
         {
             float startingHealth = Creature.Status.Health.CurrentValue;
-            while(!Creature.Status.Energy.IsSatisfied() && PlayState.Time.IsNight())
+            while (!Creature.Status.Energy.IsSatisfied() && PlayState.Time.IsNight())
             {
-                if(Teleport)
+                if (Teleport)
                 {
                     Creature.AI.Position = TeleportLocation;
                 }
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Sleeping;
-                Creature.Status.Energy.CurrentValue += DwarfTime.Dt * RechargeRate;
+                Creature.Status.Energy.CurrentValue += DwarfTime.Dt*RechargeRate;
                 if (Creature.Status.Health.CurrentValue < startingHealth)
                 {
                     Creature.Status.IsAsleep = false;

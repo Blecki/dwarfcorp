@@ -30,10 +30,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -41,28 +39,18 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CraftItem
     {
-        public enum CraftType
-        {
-            Object,
-            Resource
-        }
-
         public enum CraftPrereq
         {
             OnGround,
             NearWall
         }
 
-        public string Name { get; set; }
-        public List<Quantitiy<Resource.ResourceTags>> RequiredResources { get; set; }
-        public ImageFrame Image { get; set; }
-        public float BaseCraftTime { get; set; }
-        public string Description { get; set; }
-        public CraftType Type { get; set; }
-        public List<CraftPrereq> Prerequisites { get; set; }
-        public ResourceLibrary.ResourceType ResourceCreated { get; set; }
-        public List<ResourceAmount> SelectedResources { get; set; }
-        public string CraftLocation { get; set; }
+        public enum CraftType
+        {
+            Object,
+            Resource
+        }
+
         public CraftItem()
         {
             Name = "";
@@ -76,5 +64,16 @@ namespace DwarfCorp
             SelectedResources = new List<ResourceAmount>();
             CraftLocation = "Anvil";
         }
+
+        public string Name { get; set; }
+        public List<Quantitiy<Resource.ResourceTags>> RequiredResources { get; set; }
+        public ImageFrame Image { get; set; }
+        public float BaseCraftTime { get; set; }
+        public string Description { get; set; }
+        public CraftType Type { get; set; }
+        public List<CraftPrereq> Prerequisites { get; set; }
+        public ResourceLibrary.ResourceType ResourceCreated { get; set; }
+        public List<ResourceAmount> SelectedResources { get; set; }
+        public string CraftLocation { get; set; }
     }
 }

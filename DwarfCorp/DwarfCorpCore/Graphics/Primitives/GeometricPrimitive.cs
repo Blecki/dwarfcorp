@@ -1,40 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
-
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// Simple class representing a geometric object with verticies, textures, and whatever else.
+    ///     Simple class representing a geometric object with verticies, textures, and whatever else.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class GeometricPrimitive
     {
+        [JsonIgnore] public IndexBuffer IndexBuffer = null;
+
+        public ushort[] Indexes = null;
+        [JsonIgnore] public RenderTarget2D Lightmap = null;
         public int MaxIndex = 0;
         public int MaxVertex = 0;
 
-        [JsonIgnore]
-        public IndexBuffer IndexBuffer = null;
+        [JsonIgnore] public VertexBuffer VertexBuffer = null;
 
-        public ushort[] Indexes = null;
-
+        [JsonIgnore] protected object VertexLock = new object();
         public ExtendedVertex[] Vertices = null;
-
-        [JsonIgnore]
-        public VertexBuffer VertexBuffer = null;
-
-        [JsonIgnore]
-        protected object VertexLock = new object();
-
-        [JsonIgnore] public RenderTarget2D Lightmap = null;
 
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
@@ -43,9 +32,8 @@ namespace DwarfCorp
         }
 
 
-
         /// <summary>
-        /// Draws the primitive to the screen.
+        ///     Draws the primitive to the screen.
         /// </summary>
         /// <param Name="device">GPU to draw with.</param>
         public virtual void Render(GraphicsDevice device)
@@ -64,7 +52,7 @@ namespace DwarfCorp
                     return;
                 }
 
-                if (VertexBuffer == null ||  VertexBuffer.IsDisposed)
+                if (VertexBuffer == null || VertexBuffer.IsDisposed)
                 {
                     ResetBuffer(device);
                 }
@@ -83,7 +71,7 @@ namespace DwarfCorp
                 if (IndexBuffer != null)
                 {
                     device.Indices = IndexBuffer;
-                    device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, MaxVertex, 0, MaxIndex / 3);
+                    device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, MaxVertex, 0, MaxIndex/3);
                 }
                 else if (Indexes == null || Indexes.Length == 0)
                 {
@@ -93,14 +81,14 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        /// Draws the primitive to the screen.
+        ///     Draws the primitive to the screen.
         /// </summary>
         /// <param Name="device">GPU to draw with.</param>
         public virtual void RenderWireframe(GraphicsDevice device)
         {
             lock (VertexLock)
             {
-                RasterizerState state = new RasterizerState();
+                var state = new RasterizerState();
                 RasterizerState oldState = device.RasterizerState;
                 state.FillMode = FillMode.WireFrame;
                 device.RasterizerState = state;
@@ -116,12 +104,12 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        /// Generates a lightmap UV unwrapping, and provides new UV bounds.
+        ///     Generates a lightmap UV unwrapping, and provides new UV bounds.
         /// </summary>
         /// <returns></returns>
         public virtual BoundingBox GenerateLightmapUVs()
         {
-            BoundingBox bounds = new BoundingBox(Vector3.Zero, Vector3.One);
+            var bounds = new BoundingBox(Vector3.Zero, Vector3.One);
 
             bool success = false;
 
@@ -131,16 +119,15 @@ namespace DwarfCorp
 
                 if (!success)
                 {
-                    bounds = new BoundingBox(bounds.Min, bounds.Max * 1.25f);
+                    bounds = new BoundingBox(bounds.Min, bounds.Max*1.25f);
                 }
-            } 
-            while (!success);
+            } while (!success);
             return bounds;
         }
 
 
         /// <summary>
-        /// Creates a light map texture for the given bounds, and original UV texture bounds.
+        ///     Creates a light map texture for the given bounds, and original UV texture bounds.
         /// </summary>
         /// <param name="bounds">New bounds in UV space of the lightmap</param>
         /// <param name="textureBounds">The bounds of the texture used to draw the primitive</param>
@@ -148,8 +135,8 @@ namespace DwarfCorp
         {
             float widthScale = bounds.Max.X - bounds.Min.X;
             float heightScale = bounds.Max.Y - bounds.Min.Y;
-            int newWidth = (int)Math.Ceiling((widthScale) * textureBounds.Width);
-            int newHeight = (int)Math.Ceiling((heightScale) * textureBounds.Height);
+            var newWidth = (int) Math.Ceiling((widthScale)*textureBounds.Width);
+            var newHeight = (int) Math.Ceiling((heightScale)*textureBounds.Height);
 
 
             if (Lightmap == null || Lightmap.Width < newWidth || Lightmap.Height < newHeight)
@@ -162,23 +149,23 @@ namespace DwarfCorp
                 newWidth = Lightmap.Width;
                 newHeight = Lightmap.Height;
             }
-            widthScale = newWidth/((float)textureBounds.Width);
+            widthScale = newWidth/((float) textureBounds.Width);
             heightScale = newHeight/((float) textureBounds.Height);
             for (int i = 0; i < Vertices.Length; i++)
             {
-                Vertices[i].LightmapCoordinate = new Vector2(Vertices[i].LightmapCoordinate.X /widthScale, Vertices[i].LightmapCoordinate.Y /heightScale);
-                Vertices[i].LightmapBounds = new Vector4(Vertices[i].LightmapBounds.X / widthScale,
-                                                         Vertices[i].LightmapBounds.Y / heightScale,
-                                                         Vertices[i].LightmapBounds.Z / widthScale,
-                                                         Vertices[i].LightmapBounds.W / heightScale);
+                Vertices[i].LightmapCoordinate = new Vector2(Vertices[i].LightmapCoordinate.X/widthScale,
+                    Vertices[i].LightmapCoordinate.Y/heightScale);
+                Vertices[i].LightmapBounds = new Vector4(Vertices[i].LightmapBounds.X/widthScale,
+                    Vertices[i].LightmapBounds.Y/heightScale,
+                    Vertices[i].LightmapBounds.Z/widthScale,
+                    Vertices[i].LightmapBounds.W/heightScale);
             }
-
         }
 
         /// <summary>
-        /// Generates UV map for the model for a light map with given bounds.
-        /// Returns false if the triangles could not fit within the bounds.
-        /// Bounds Y coordinates will not be used.
+        ///     Generates UV map for the model for a light map with given bounds.
+        ///     Returns false if the triangles could not fit within the bounds.
+        ///     Bounds Y coordinates will not be used.
         /// </summary>
         /// <param name="bounds">Bounding box in the image (0, 1 space)</param>
         public virtual bool GenerateLightmapUVsInBounds(BoundingBox bounds)
@@ -191,18 +178,17 @@ namespace DwarfCorp
             float drawnHeight = 0;
 
             // For each 4-vertex quad...
-            for (int quad = 0; quad < MaxVertex / 4; quad++)
+            for (int quad = 0; quad < MaxVertex/4; quad++)
             {
-
                 // Compute the bounds of the quad
                 float minQuadUvx = float.MaxValue;
                 float minQuadUvy = float.MaxValue;
                 float maxQuadUvx = float.MinValue;
                 float maxQuadUvy = float.MinValue;
-                
+
                 for (int vertex = 0; vertex < 4; vertex++)
                 {
-                    int index = quad * 4 + vertex;
+                    int index = quad*4 + vertex;
                     minQuadUvx = Math.Min(minQuadUvx, Vertices[index].TextureCoordinate.X);
                     minQuadUvy = Math.Min(minQuadUvy, Vertices[index].TextureCoordinate.Y);
                     maxQuadUvx = Math.Max(maxQuadUvx, Vertices[index].TextureCoordinate.X);
@@ -232,15 +218,16 @@ namespace DwarfCorp
                 // For each vertex, try to draw it to the UV bounds.
                 for (int vertex = 0; vertex < 4; vertex++)
                 {
-                    int index = quad * 4 + vertex;
+                    int index = quad*4 + vertex;
                     // The coordinate is whatever the pen coordinate was plus the original UV coordinate, minus the
                     // top left corner of the quad.
-                    Vertices[index].LightmapCoordinate = new Vector2(penX + (Vertices[index].TextureCoordinate.X - minQuadUvx), 
-                                                                     penY + (Vertices[index].TextureCoordinate.Y - minQuadUvy));
+                    Vertices[index].LightmapCoordinate =
+                        new Vector2(penX + (Vertices[index].TextureCoordinate.X - minQuadUvx),
+                            penY + (Vertices[index].TextureCoordinate.Y - minQuadUvy));
                     Vertices[index].LightmapBounds = new Vector4(penX + Vertices[index].TextureBounds.X - minQuadUvx,
-                                                                 penY + Vertices[index].TextureBounds.Y - minQuadUvy,
-                                                                 penX + Vertices[index].TextureBounds.Z - minQuadUvx,
-                                                                 penY + Vertices[index].TextureBounds.W - minQuadUvy);
+                        penY + Vertices[index].TextureBounds.Y - minQuadUvy,
+                        penX + Vertices[index].TextureBounds.Z - minQuadUvx,
+                        penY + Vertices[index].TextureBounds.W - minQuadUvy);
                 }
 
                 // Move the pen over if any of the vertexes were drawn.
@@ -252,11 +239,12 @@ namespace DwarfCorp
 
 
         /// <summary>
-        /// Resets the vertex buffer object from the verticies.
-        /// <param Name="device">GPU to draw with.</param></summary>
+        ///     Resets the vertex buffer object from the verticies.
+        ///     <param Name="device">GPU to draw with.</param>
+        /// </summary>
         public virtual void ResetBuffer(GraphicsDevice device)
         {
-            if(DwarfGame.ExitGame)
+            if (DwarfGame.ExitGame)
             {
                 return;
             }
@@ -286,10 +274,9 @@ namespace DwarfCorp
                 }
 
 
-
                 if (Vertices != null)
                 {
-                    VertexBuffer newBuff = new VertexBuffer(device, ExtendedVertex.VertexDeclaration, Vertices.Length,
+                    var newBuff = new VertexBuffer(device, ExtendedVertex.VertexDeclaration, Vertices.Length,
                         BufferUsage.WriteOnly);
                     newBuff.SetData(Vertices);
                     VertexBuffer = newBuff;
@@ -297,14 +284,11 @@ namespace DwarfCorp
 
                 if (Indexes != null)
                 {
-                    IndexBuffer newIndexBuff = new IndexBuffer(device, typeof (ushort), Indexes.Length, BufferUsage.None);
+                    var newIndexBuff = new IndexBuffer(device, typeof (ushort), Indexes.Length, BufferUsage.None);
                     newIndexBuff.SetData(Indexes);
                     IndexBuffer = newIndexBuff;
                 }
-
             }
-
         }
     }
-
 }

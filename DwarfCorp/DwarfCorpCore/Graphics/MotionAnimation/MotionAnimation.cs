@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -11,9 +7,6 @@ namespace DwarfCorp
     public class MotionAnimation
     {
         public delegate void Completed();
-        public event Completed OnComplete;
-
-        public Timer Time { get; set; }
 
         public MotionAnimation(float time, bool loop)
         {
@@ -21,21 +14,20 @@ namespace DwarfCorp
             OnComplete += MotionAnimation_OnComplete;
         }
 
-        void MotionAnimation_OnComplete()
+        public Timer Time { get; set; }
+        public event Completed OnComplete;
+
+        private void MotionAnimation_OnComplete()
         {
-       
         }
 
         public virtual bool IsDone()
         {
-            if(Time.TriggerOnce && Time.HasTriggered)
+            if (Time.TriggerOnce && Time.HasTriggered)
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         public virtual Matrix GetTransform()
@@ -47,7 +39,7 @@ namespace DwarfCorp
         {
             Time.Update(t);
 
-            if(IsDone())
+            if (IsDone())
             {
                 OnComplete.Invoke();
             }

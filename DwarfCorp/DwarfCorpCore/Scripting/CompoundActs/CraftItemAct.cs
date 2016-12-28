@@ -30,27 +30,42 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature goes to a voxel location, and places an object with the desired tags there to build it.
+    ///     A creature goes to a voxel location, and places an object with the desired tags there to build it.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     internal class CraftItemAct : CompoundCreatureAct
     {
-        public CraftItem ItemType { get; set; }
-        public Voxel Voxel { get; set; }
         public CraftItemAct()
         {
-
         }
+
+        public CraftItemAct(CreatureAI creature, CraftItem type) :
+            base(creature)
+        {
+            ItemType = type;
+            Voxel = null;
+            Name = "Build craft item";
+        }
+
+        public CraftItemAct(CreatureAI creature, Voxel voxel, CraftItem type) :
+            base(creature)
+        {
+            ItemType = type;
+            Voxel = voxel;
+            Name = "Build craft item";
+        }
+
+        public CraftItem ItemType { get; set; }
+        public Voxel Voxel { get; set; }
 
         public IEnumerable<Status> DestroyResources()
         {
@@ -61,7 +76,7 @@ namespace DwarfCorp
 
         public IEnumerable<Status> CreateResources()
         {
-            List<ResourceAmount> stashed = Agent.Blackboard.GetData<List<ResourceAmount>>("ResourcesStashed");
+            var stashed = Agent.Blackboard.GetData<List<ResourceAmount>>("ResourcesStashed");
             ItemType.SelectedResources = stashed;
             if (ItemType.Name == ResourceLibrary.ResourceType.Trinket)
             {
@@ -73,10 +88,11 @@ namespace DwarfCorp
             {
                 if (stashed.Count < 2)
                 {
-                    yield return Act.Status.Fail;
+                    yield return Status.Fail;
                     yield break;
                 }
-                Resource craft = ResourceLibrary.CreateMeal(stashed.ElementAt(0).ResourceType, stashed.ElementAt(1).ResourceType);
+                Resource craft = ResourceLibrary.CreateMeal(stashed.ElementAt(0).ResourceType,
+                    stashed.ElementAt(1).ResourceType);
                 ItemType.ResourceCreated = craft.Type;
             }
             else if (ItemType.Name == ResourceLibrary.ResourceType.Ale)
@@ -123,26 +139,10 @@ namespace DwarfCorp
         }
 
 
-        public CraftItemAct(CreatureAI creature, CraftItem type) :
-            base(creature)
-        {
-            ItemType = type;
-            Voxel = null;
-            Name = "Build craft item";
-        }
-
-        public CraftItemAct(CreatureAI creature, Voxel voxel, CraftItem type) :
-            base(creature)
-        {
-            ItemType = type;
-            Voxel = voxel;
-            Name = "Build craft item";
-        }
-
         public override void Initialize()
         {
             Act unreserveAct = new Wrap(() => Creature.Unreserve(ItemType.CraftLocation));
-            float time = ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt;
+            float time = ItemType.BaseCraftTime/Creature.AI.Stats.BuffedInt;
             Act getResources = null;
             if (ItemType.SelectedResources == null || ItemType.SelectedResources.Count == 0)
             {
@@ -203,13 +203,10 @@ namespace DwarfCorp
 
         public override void OnCanceled()
         {
-            foreach (var statuses in Creature.Unreserve(ItemType.CraftLocation))
+            foreach (Status statuses in Creature.Unreserve(ItemType.CraftLocation))
             {
-                continue;
             }
             base.OnCanceled();
         }
-
-       
     }
 }

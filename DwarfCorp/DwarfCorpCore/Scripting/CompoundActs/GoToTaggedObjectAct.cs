@@ -30,24 +30,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
-using DwarfCorp.Scripting.LeafActs;
+
 //using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     public class GoToTaggedObjectAct : CompoundCreatureAct
     {
-        public string Tag { get; set; }
-        public string ObjectName { get; set; }
-        public bool Teleport { get; set; }
-        public Vector3 TeleportOffset { get; set; }
-
         public GoToTaggedObjectAct()
         {
             Name = "Go to tagged object";
@@ -61,20 +52,24 @@ namespace DwarfCorp
             ObjectName = "Tagged Object";
         }
 
+        public string Tag { get; set; }
+        public string ObjectName { get; set; }
+        public bool Teleport { get; set; }
+        public Vector3 TeleportOffset { get; set; }
+
 
         public IEnumerable<Status> TeleportFunction()
         {
-            Body closestItem = Creature.AI.Blackboard.GetData<Body>(ObjectName);
+            var closestItem = Creature.AI.Blackboard.GetData<Body>(ObjectName);
 
             if (closestItem != null)
             {
-                TeleportAct act = new TeleportAct(Creature.AI) { Location = TeleportOffset + closestItem.BoundingBox.Center() };
+                var act = new TeleportAct(Creature.AI) {Location = TeleportOffset + closestItem.BoundingBox.Center()};
                 act.Initialize();
-                foreach (Act.Status status in act.Run())
+                foreach (Status status in act.Run())
                 {
                     yield return status;
                 }
-
             }
 
             yield return Status.Fail;
@@ -101,7 +96,5 @@ namespace DwarfCorp
             }
             base.Initialize();
         }
-
- 
     }
 }

@@ -30,28 +30,21 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DwarfCorp.DwarfCorp;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature plans to a voxel and then follows the path to it.
+    ///     A creature plans to a voxel and then follows the path to it.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class GoToVoxelAct : CompoundCreatureAct
     {
-        public Voxel Voxel { get; set; }
-        public string VoxelName { get; set; }
-        public PlanAct.PlanType PlanType { get; set; }
-        public float Radius { get; set; }
-
-        public GoToVoxelAct() : base()
+        public GoToVoxelAct()
         {
-            
         }
 
         public GoToVoxelAct(string voxel, PlanAct.PlanType planType, CreatureAI creature, float radius = 0.0f) :
@@ -61,7 +54,6 @@ namespace DwarfCorp
             PlanType = planType;
             VoxelName = voxel;
             Name = "Go to Voxel " + voxel;
-
         }
 
         public GoToVoxelAct(Voxel voxel, PlanAct.PlanType planType, CreatureAI creature, float radius = 0.0f) :
@@ -71,37 +63,39 @@ namespace DwarfCorp
             Voxel = voxel;
             Name = "Go to Voxel";
             PlanType = planType;
-
         }
+
+        public Voxel Voxel { get; set; }
+        public string VoxelName { get; set; }
+        public PlanAct.PlanType PlanType { get; set; }
+        public float Radius { get; set; }
 
         public override void Initialize()
         {
             if (VoxelName != null)
             {
                 Tree = new Sequence(
-            new Sequence(
-                          new PlanAct(Agent, "PathToVoxel", VoxelName, PlanType) { Radius = Radius },
-                          new FollowPathAnimationAct(Agent, "PathToVoxel")
-                         ),
-                          new StopAct(Agent));
+                    new Sequence(
+                        new PlanAct(Agent, "PathToVoxel", VoxelName, PlanType) {Radius = Radius},
+                        new FollowPathAnimationAct(Agent, "PathToVoxel")
+                        ),
+                    new StopAct(Agent));
             }
             else if (Voxel != null)
             {
                 Tree = new Sequence(
-                      new SetBlackboardData<Voxel>(Agent, "TargetVoxel", Voxel),
-                      new PlanAct(Agent, "PathToVoxel", "TargetVoxel", PlanType) { Radius = Radius },
-                      new FollowPathAnimationAct(Agent, "PathToVoxel"),
-                      new StopAct(Agent));
+                    new SetBlackboardData<Voxel>(Agent, "TargetVoxel", Voxel),
+                    new PlanAct(Agent, "PathToVoxel", "TargetVoxel", PlanType) {Radius = Radius},
+                    new FollowPathAnimationAct(Agent, "PathToVoxel"),
+                    new StopAct(Agent));
             }
             base.Initialize();
         }
 
 
-        public override IEnumerable<Act.Status> Run()
+        public override IEnumerable<Status> Run()
         {
             return base.Run();
         }
-
     }
-
 }

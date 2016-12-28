@@ -30,10 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -41,26 +41,12 @@ using Microsoft.Xna.Framework.Input;
 namespace DwarfCorp
 {
     /// <summary>
-    /// Tooltips are the little bits of text which appear on the screen when a mouse is hovering
-    /// over a particular GUI element. Every GUI element can have a tooltip. They are used to help the player
-    /// understand what certain buttons do.
+    ///     Tooltips are the little bits of text which appear on the screen when a mouse is hovering
+    ///     over a particular GUI element. Every GUI element can have a tooltip. They are used to help the player
+    ///     understand what certain buttons do.
     /// </summary>
     public class ToolTipManager
     {
-        public DwarfGUI GUI { get; set; }
-
-        public Timer PopupTimer { get; set; }
-        public Timer InfoTimer { get; set; }
-        public Timer HoverTimer { get; set; }
-
-        public string PopupTip { get; set; }
-        public string ToolTip { get; set; }
-        public string Info { get; set; }
-        public Point InfoLocation { get; set; }
-        private MouseState LastMouse { get; set; }
-
-        public int MovementThreshold { get; set; }
-
         public enum TipType
         {
             TopLeft,
@@ -80,24 +66,38 @@ namespace DwarfCorp
             InfoTimer = new Timer(2.5f, true, Timer.TimerMode.Real);
         }
 
+        public DwarfGUI GUI { get; set; }
+
+        public Timer PopupTimer { get; set; }
+        public Timer InfoTimer { get; set; }
+        public Timer HoverTimer { get; set; }
+
+        public string PopupTip { get; set; }
+        public string ToolTip { get; set; }
+        public string Info { get; set; }
+        public Point InfoLocation { get; set; }
+        private MouseState LastMouse { get; set; }
+
+        public int MovementThreshold { get; set; }
+
         public void Update(DwarfTime time)
         {
             MouseState currentMouse = Mouse.GetState();
 
             int movement = Math.Abs(LastMouse.X - currentMouse.X) + Math.Abs(LastMouse.Y - currentMouse.Y);
 
-            if(ToolTip != "" && movement > MovementThreshold)
+            if (ToolTip != "" && movement > MovementThreshold)
             {
                 ToolTip = "";
                 HoverTimer.Reset(HoverTimer.TargetTimeSeconds);
             }
-            else if(ToolTip == "" && movement < MovementThreshold)
+            else if (ToolTip == "" && movement < MovementThreshold)
             {
                 HoverTimer.Update(time);
 
-                if(HoverTimer.HasTriggered)
+                if (HoverTimer.HasTriggered)
                 {
-                    List<string> tips = new List<string>();
+                    var tips = new List<string>();
                     GetToolTipsUnderMouseRecursive(GUI.RootComponent, tips);
 
                     ToolTip = tips.Count > 0 ? tips.Last() : "";
@@ -118,19 +118,18 @@ namespace DwarfCorp
             }
 
             LastMouse = currentMouse;
-
         }
 
         public void GetToolTipsUnderMouseRecursive(GUIComponent root, List<string> tips)
         {
-            if(root.IsMouseOver && !string.IsNullOrEmpty(root.ToolTip))
+            if (root.IsMouseOver && !string.IsNullOrEmpty(root.ToolTip))
             {
                 tips.Add(root.ToolTip);
             }
 
-            foreach(GUIComponent component in root.Children)
+            foreach (GUIComponent component in root.Children)
             {
-                GetToolTipsUnderMouseRecursive(component, tips);   
+                GetToolTipsUnderMouseRecursive(component, tips);
             }
         }
 
@@ -149,11 +148,13 @@ namespace DwarfCorp
 
             if (tipType == TipType.BottomRight)
             {
-                bounds = new Rectangle(mouse.X + 24, mouse.Y + 24, (int)(stringMeasure.X + 15), (int)(stringMeasure.Y + 15));
+                bounds = new Rectangle(mouse.X + 24, mouse.Y + 24, (int) (stringMeasure.X + 15),
+                    (int) (stringMeasure.Y + 15));
             }
             else
             {
-                bounds = new Rectangle(mouse.X - (int)stringMeasure.X - 15, mouse.Y - (int)stringMeasure.Y - 15, (int)(stringMeasure.X + 15), (int)(stringMeasure.Y + 15));
+                bounds = new Rectangle(mouse.X - (int) stringMeasure.X - 15, mouse.Y - (int) stringMeasure.Y - 15,
+                    (int) (stringMeasure.X + 15), (int) (stringMeasure.Y + 15));
             }
 
             if (bounds.Left < viewBounds.Left)

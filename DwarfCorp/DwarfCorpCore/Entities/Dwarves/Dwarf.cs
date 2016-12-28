@@ -30,34 +30,34 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
-using DwarfCorpCore;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-using Newtonsoft.Json;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-
     /// <summary>
-    /// Convenience class for initializing Dwarves as Creatures.
+    ///     Convenience class for initializing Dwarves as Creatures.
     /// </summary>
     public class Dwarf : Creature
     {
         public Dwarf()
         {
-            
         }
-        public Dwarf(CreatureStats stats, string allies, PlanService planService, Faction faction,  string name, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, EmployeeClass workerClass, Vector3 position) :
-            base(stats, allies, planService, faction, 
-            new Physics( "Dwarf", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position), 
-                        new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0)),
-               chunks, graphics, content, name)
+
+        public Dwarf(CreatureStats stats, string allies, PlanService planService, Faction faction, string name,
+            ChunkManager chunks, GraphicsDevice graphics, ContentManager content, EmployeeClass workerClass,
+            Vector3 position) :
+                base(stats, allies, planService, faction,
+                    new Physics("Dwarf", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position),
+                        new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f,
+                        new Vector3(0, -10, 0)),
+                    chunks, graphics, content, name)
         {
             HasMeat = false;
             HasBones = false;
@@ -72,7 +72,8 @@ namespace DwarfCorp
         public void Initialize(EmployeeClass dwarfClass)
         {
             Physics.Orientation = Physics.OrientMode.RotateY;
-            Sprite = new CharacterSprite(Graphics, Manager, "Dwarf Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)));
+            Sprite = new CharacterSprite(Graphics, Manager, "Dwarf Sprite", Physics,
+                Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)));
             foreach (Animation animation in dwarfClass.Animations)
             {
                 Sprite.AddAnimation(animation.Clone());
@@ -82,11 +83,12 @@ namespace DwarfCorp
             Sprite.CurrentAnimation.NextFrame();
             Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
 
-            Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
+            Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20),
+                Vector3.Zero);
 
             AI = new CreatureAI(this, "Dwarf AI", Sensors, PlanService);
 
-            Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
+            Attacks = new List<Attack> {new Attack(Stats.CurrentClass.Attacks[0])};
 
             Inventory = new Inventory("Inventory", Physics)
             {
@@ -96,7 +98,7 @@ namespace DwarfCorp
                 }
             };
 
-            Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI * 0.5f);
+            Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI*0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
 
             Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform,
@@ -104,21 +106,23 @@ namespace DwarfCorp
             {
                 GlobalScale = 1.25f
             };
-            List<Point> shP = new List<Point>
+            var shP = new List<Point>
             {
                 new Point(0, 0)
             };
-            Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
+            var shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32,
+                32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
             Shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
             Shadow.SetCurrentAnimation("sh");
             Physics.Tags.Add("Dwarf");
 
-            DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
+            DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity,
+                Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 1,
-                BoxTriggerTimes = 10, 
+                BoxTriggerTimes = 10,
                 SoundToPlay = ContentPaths.Entities.Dwarf.Audio.dwarfhurt1,
             };
             Flames = new Flammable(Manager, "Flames", Physics, this);
@@ -131,7 +135,7 @@ namespace DwarfCorp
                 ContentPaths.Entities.Dwarf.Audio.dwarfhurt4,
             };
 
-            NoiseMaker.Noises["Ok"] = new List<string>()
+            NoiseMaker.Noises["Ok"] = new List<string>
             {
                 ContentPaths.Audio.ok0,
                 ContentPaths.Audio.ok1,
@@ -139,7 +143,7 @@ namespace DwarfCorp
             };
 
 
-            NoiseMaker.Noises["Chew"] = new List<string> 
+            NoiseMaker.Noises["Chew"] = new List<string>
             {
                 ContentPaths.Audio.chew
             };
@@ -149,14 +153,17 @@ namespace DwarfCorp
                 ContentPaths.Audio.jump
             };
 
-            MinimapIcon minimapIcon = new MinimapIcon(Physics, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 0, 0));
+            var minimapIcon = new MinimapIcon(Physics,
+                new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 0, 0));
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
             Stats.Size = 5;
             Stats.CanSleep = true;
             Stats.CanEat = true;
             AI.TriggersMourning = true;
+            AI.Movement.CanClimbWalls = true;
+            AI.Movement.SetCost(MoveType.ClimbWalls, 30.0f);
+            AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.25f);
         }
     }
-
 }

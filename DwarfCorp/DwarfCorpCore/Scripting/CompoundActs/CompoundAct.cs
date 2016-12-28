@@ -30,21 +30,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A compound act is an act which just wraps another act tree. (It's a collection of other acts).
+    ///     A compound act is an act which just wraps another act tree. (It's a collection of other acts).
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class CompoundAct : Act
     {
-        public Act Tree { get; set; }
-
         public CompoundAct()
         {
             Children = new List<Act>();
@@ -55,6 +52,8 @@ namespace DwarfCorp
             Name = Tree.Name;
             Tree = tree;
         }
+
+        public Act Tree { get; set; }
 
         public override void Initialize()
         {
@@ -69,5 +68,4 @@ namespace DwarfCorp
             return Tree.Run();
         }
     }
-
 }

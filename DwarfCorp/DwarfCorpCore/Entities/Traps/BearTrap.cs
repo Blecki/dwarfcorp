@@ -30,33 +30,38 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    ///     Trap that when triggered does damage to an enemy.
+    /// </summary>
     [JsonObject(IsReference = true)]
     public class BearTrap : Body
     {
-        public Sensor Sensor { get; set; }
-        public Sprite Sprite { get; set; }
-        public VoxelListener VoxListener { get; set; }
-        public ParticleTrigger DeathParticles { get; set; }
-        public float DamageAmount { get; set; }
+        /// <summary>
+        ///     When the trap is sitting around doing nothing, this is the animation to play.
+        /// </summary>
         public static string IdleAnimation = "Idle";
+
+        /// <summary>
+        ///     When the trap is triggered, this is the animation to play.
+        /// </summary>
         public static string TriggerAnimation = "Trigger";
-        public Faction Allies { get; set; }
+
+        /// <summary>
+        ///     If true, a death animation will be played.
+        /// </summary>
         public bool ShouldDie = false;
-        public Timer DeathTimer { get; set; }
 
         public BearTrap()
         {
-            
         }
 
         public BearTrap(Vector3 pos) :
@@ -78,30 +83,79 @@ namespace DwarfCorp
             };
 
             DamageAmount = 200;
-            Voxel voxUnder = new Voxel();
+            var voxUnder = new Voxel();
             PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(pos, ref voxUnder);
             VoxListener = new VoxelListener(PlayState.ComponentManager, this, PlayState.ChunkManager, voxUnder);
-            Sprite = new Sprite(PlayState.ComponentManager, "Sprite", this, Matrix.Identity, new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap), false);
-            Sprite.AddAnimation(new Animation(0, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0) {Name = IdleAnimation});
-            Sprite.AddAnimation(new Animation(1, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0, 1, 2, 3) {Name = TriggerAnimation, Speeds =  new List<float>() {6.6f}, Loops = true});
-
+            Sprite = new Sprite(PlayState.ComponentManager, "Sprite", this, Matrix.Identity,
+                new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap), false);
+            Sprite.AddAnimation(new Animation(0, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32, 0)
+            {
+                Name = IdleAnimation
+            });
+            Sprite.AddAnimation(new Animation(1, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32, 0, 1, 2, 3)
+            {
+                Name = TriggerAnimation,
+                Speeds = new List<float> {6.6f},
+                Loops = true
+            });
         }
 
-        void Sensor_OnSensed(List<Body> sensed)
+        /// <summary>
+        ///     Sensor that fires whenever an enemy enteres it.
+        /// </summary>
+        public Sensor Sensor { get; set; }
+
+        /// <summary>
+        ///     The sprite of the trap.
+        /// </summary>
+        public Sprite Sprite { get; set; }
+
+        /// <summary>
+        ///     The trap gets destroyed whenever the voxel underneath it is destroyed
+        /// </summary>
+        public VoxelListener VoxListener { get; set; }
+
+        /// <summary>
+        ///     When the trap is destroyed, death particles are created there.
+        /// </summary>
+        public ParticleTrigger DeathParticles { get; set; }
+
+        /// <summary>
+        ///     Amount of damage (in HP) to apply to the enemy.
+        /// </summary>
+        public float DamageAmount { get; set; }
+
+        /// <summary>
+        ///     The trap is allied with this faction. It damages all enemies of this.
+        /// </summary>
+        public Faction Allies { get; set; }
+
+        /// <summary>
+        ///     Time between when death is triggered and the trap disappears.
+        /// </summary>
+        public Timer DeathTimer { get; set; }
+
+        private void Sensor_OnSensed(List<Body> sensed)
         {
             if (ShouldDie)
             {
                 return;
             }
 
+            // Look for all the bodies that are enemies, and trigger if we found one!
             foreach (Body body in sensed)
             {
                 CreatureAI creature = body.GetChildrenOfTypeRecursive<CreatureAI>().FirstOrDefault();
 
                 if (creature == null) continue;
-                if (PlayState.ComponentManager.Diplomacy.GetPolitics(creature.Creature.Faction, Allies).GetCurrentRelationship() == Relationship.Loving) continue;
+                // Only damage enemies. How does the trap know what the politics of the world are? Magic.
+                if (
+                    PlayState.ComponentManager.Diplomacy.GetPolitics(creature.Creature.Faction, Allies)
+                        .GetCurrentRelationship() == Relationship.Loving) continue;
 
+                // It damages the creature.
                 creature.Creature.Damage(DamageAmount);
+                // The trap stops the enemy creature in its tracks.
                 creature.Creature.Physics.Velocity *= 0.0f;
                 Trigger();
                 break;
@@ -110,7 +164,6 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-
             if (ShouldDie)
             {
                 DeathTimer.Update(gameTime);
@@ -131,7 +184,5 @@ namespace DwarfCorp
             ShouldDie = true;
             DeathTimer.Reset(DeathTimer.TargetTimeSeconds);
         }
-
-
     }
 }

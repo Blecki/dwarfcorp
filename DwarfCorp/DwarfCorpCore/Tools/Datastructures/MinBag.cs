@@ -30,23 +30,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// This data structure always has the minimum K elements (not necessarily sorted). It throws
-    /// out all other elements.
+    ///     This data structure always has the minimum K elements (not necessarily sorted). It throws
+    ///     out all other elements.
     /// </summary>
     /// <typeparam Name="T">The type of object stored in the bag.</typeparam>
     public class MinBag<T>
     {
-        public int MaxSize { get; set; }
-        public PriorityQueue<T, float> Queue { get; set; }
-        public List<T> Data { get; set; }
         private KeyValuePair<T, float> Max;
 
         public MinBag(int maxSize)
@@ -55,6 +50,10 @@ namespace DwarfCorp
             Queue = new PriorityQueue<T, float>();
             Data = new List<T>();
         }
+
+        public int MaxSize { get; set; }
+        public PriorityQueue<T, float> Queue { get; set; }
+        public List<T> Data { get; set; }
 
 
         public void Clear()
@@ -65,7 +64,7 @@ namespace DwarfCorp
 
         public bool Add(T element, float value)
         {
-            if(Queue.Count < MaxSize)
+            if (Queue.Count < MaxSize)
             {
                 Queue.Enqueue(element, -value);
                 Data.Add(element);
@@ -73,7 +72,7 @@ namespace DwarfCorp
                 return true;
             }
 
-            if(!(value < -Max.Value))
+            if (!(value < -Max.Value))
             {
                 return false;
             }
@@ -86,5 +85,4 @@ namespace DwarfCorp
             return true;
         }
     }
-
 }

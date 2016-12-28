@@ -30,24 +30,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    /// A creature takes an item to an open stockpile and leaves it there.
+    ///     A creature takes an item to an open stockpile and leaves it there.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    [JsonObject(IsReference = true)]
     public class GoToZoneAct : CompoundCreatureAct
     {
-        public Zone Destination { get; set; }
-
         public GoToZoneAct()
         {
-
         }
 
         public GoToZoneAct(CreatureAI agent, Zone zone) :
@@ -58,12 +54,12 @@ namespace DwarfCorp
             Destination = zone;
         }
 
+        public Zone Destination { get; set; }
+
         public override void Initialize()
         {
             base.Initialize();
         }
-
-
 
 
         public override IEnumerable<Status> Run()
@@ -90,5 +86,4 @@ namespace DwarfCorp
             }
         }
     }
-
 }

@@ -30,13 +30,9 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using DwarfCorp.GameStates;
+
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -44,10 +40,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class WorldGUIObject : Body
     {
-        [JsonIgnore]
-        public GUIComponent GUIObject { get; set; }
-
-        public bool Enabled { get; set; }
         public WorldGUIObject()
         {
             Enabled = false;
@@ -63,8 +55,14 @@ namespace DwarfCorp
             Enabled = false;
         }
 
+        [JsonIgnore]
+        public GUIComponent GUIObject { get; set; }
 
-        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Microsoft.Xna.Framework.Graphics.GraphicsDevice graphicsDevice, Microsoft.Xna.Framework.Graphics.Effect effect, bool renderingForWater)
+        public bool Enabled { get; set; }
+
+
+        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+            GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
             if (GUIObject != null)
             {
@@ -87,7 +85,7 @@ namespace DwarfCorp
 
         public override void Die()
         {
-            if(GUIObject != null)
+            if (GUIObject != null)
                 GUIObject.Destroy();
             base.Die();
         }
@@ -98,8 +96,5 @@ namespace DwarfCorp
                 GUIObject.Destroy();
             base.Delete();
         }
-
-        
     }
 }
-
