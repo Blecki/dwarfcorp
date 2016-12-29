@@ -47,7 +47,9 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CreatureAI : GameComponent
     {
+        /// <summary> maximum number of messages the creature has in its mind </summary>
         public int MaxMessages = 10;
+        /// <summary> As a way of debugging creature AI, creatures can say arbitrary strings which are stored in this buffer </summary>
         public List<string> MessageBuffer = new List<string>();
 
         public CreatureAI()
@@ -87,15 +89,22 @@ namespace DwarfCorp
             SpeakTimer = new Timer(5.0f, true);
             XPEvents = new List<int>();
         }
-
+        /// <summary> The creature this AI is controlling </summary>
         public Creature Creature { get; set; }
+        /// <summary> The current path of voxels the AI is following </summary>
         public List<Voxel> CurrentPath { get; set; }
+        /// <summary> If this is set to true, the creature will draw the path it is following </summary>
         public bool DrawPath { get; set; }
+        /// <summary> The gather manager handles gathering/building tasks </summary>
         public GatherManager GatherManager { get; set; }
+        /// <summary> When this timer times out, the creature will awake from Idle mode and attempt to find something to do </summary>
         public Timer IdleTimer { get; set; }
+        /// <summary> A creature has a list of thoughts in its mind. Toughts affect the emotional state of a creature. Try not to think disturbing thoughts, little dwarfs. </summary>
         public List<Thought> Thoughts { get; set; }
+        /// <summary> When this timer triggers, the creature will attempt to speak to its neighbors, inducing thoughts. </summary>
         public Timer SpeakTimer { get; set; }
 
+        /// <summary> Gets the Act that the creature is currently performing if it exists. </summary>
         [JsonIgnore]
         public Act CurrentAct
         {
@@ -106,21 +115,31 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary> Gets the current Task the creature is trying to perform </summary>
         [JsonIgnore]
         public Task CurrentTask { get; set; }
 
+        /// <summary> When this timer triggers, the creature will poll the PlanService for replanning paths </summary>
         public Timer PlannerTimer { get; set; }
+        /// <summary> When this timer triggers, the creature will stop trying to reach a local target (if it is blocked by a voxel for instance </summary>
         public Timer LocalControlTimeout { get; set; }
+        /// <summary> When this timer triggers, the creature will wander in a new direction when it has nothing to do. </sumamry>
         public Timer WanderTimer { get; set; }
+        /// <summary> This is the timeout for waiting on services (like the path planning service) </summary>
         public Timer ServiceTimeout { get; set; }
+        /// <summary> TODO(mklingen): DEPRECATED. REMOVE </summary>
         public bool DrawAIPlan { get; set; }
 
+        /// <summary> This is a Subscriber which waits for new paths from the A* planner </summary>
         public PlanSubscriber PlanSubscriber { get; set; }
+        /// <summary> If true, the AI is waiting on a plan from the PlanSubscriber </summary>
         public bool WaitingOnResponse { get; set; }
+        /// <summary>The AI uses this sensor to search for nearby enemies </summary>
         public EnemySensor Sensor { get; set; }
-
+        /// <summary> This defines how the creature can move from voxel to voxel. </summary>
         public CreatureMovement Movement { get; set; }
 
+        /// <summary> Wrapper around Creature.Hands </summary>
         [JsonIgnore]
         public Grabber Hands
         {
@@ -128,6 +147,7 @@ namespace DwarfCorp
             set { Creature.Hands = value; }
         }
 
+        /// <summary> Wrapper around Creature.Physics </summary>
         [JsonIgnore]
         public Physics Physics
         {
@@ -135,6 +155,7 @@ namespace DwarfCorp
             set { Creature.Physics = value; }
         }
 
+        /// <summary> Wrapper around Creature.Faction </summary>
         [JsonIgnore]
         public Faction Faction
         {
@@ -142,6 +163,7 @@ namespace DwarfCorp
             set { Creature.Faction = value; }
         }
 
+        /// <summary> Wrapper around Creature.Stats </summary>
         [JsonIgnore]
         public CreatureStats Stats
         {
@@ -149,6 +171,7 @@ namespace DwarfCorp
             set { Creature.Stats = value; }
         }
 
+        /// <summary> Wrapper around Creature.Status </summary>
         [JsonIgnore]
         public CreatureStatus Status
         {
@@ -156,6 +179,7 @@ namespace DwarfCorp
             set { Creature.Status = value; }
         }
 
+        /// <summary> Wrapper around Creature.Physics.Velocity </summary>
         [JsonIgnore]
         public Vector3 Velocity
         {
@@ -163,6 +187,7 @@ namespace DwarfCorp
             set { Creature.Physics.Velocity = value; }
         }
 
+        /// <summary> Wrapper around Creature.Physics.GlobalTransform.Translation </summary>
         [JsonIgnore]
         public Vector3 Position
         {
@@ -175,27 +200,42 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary> Wrapper around Playstate.ChunkManager </summary>
         [JsonIgnore]
         public ChunkManager Chunks
         {
             get { return PlayState.ChunkManager; }
         }
 
+        /// <summary> Blackboard used for Acts. </summary>
         public Blackboard Blackboard { get; set; }
 
+        /// <summary> 
+        /// Tells us which tasks the creature has performed in the past. Maps task names to their histories.
+        /// This is useful for determining how many times a task has failed or succeeded.
+        /// </summary>
         [JsonIgnore]
         public Dictionary<string, TaskHistory> History { get; set; }
 
-
+        /// <summary>
+        /// Queue of tasks that the creature is currently performing.
+        /// </summary>
         public List<Task> Tasks { get; set; }
+        
+        /// <summary>
+        /// If true, whent he creature dies its friends will mourn its death, generating unhappy Thoughts
+        /// </summary>
         public bool TriggersMourning { get; set; }
+        /// <summary> List of changes to the creatures XP over time.</summary>
         public List<int> XPEvents { get; set; }
 
+        /// <summary> Add exprience points to the creature. It will level up from time to time </summary>
         public void AddXP(int amount)
         {
             XPEvents.Add(amount);
         }
 
+        /// <summary> Get the creature to say a debug message. </summary>
         public void Say(string message)
         {
             MessageBuffer.Add(message);
@@ -205,6 +245,7 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary> Called whenever a list of enemies has been sensed by the creature </summary>
         private void Sensor_OnEnemySensed(List<CreatureAI> enemies)
         {
             if (enemies.Count > 0)
@@ -216,6 +257,7 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary> Find the task from the list of tasks which is easiest to perform. </summary>
         public Task GetEasiestTask(List<Task> tasks)
         {
             if (tasks == null)
@@ -230,6 +272,8 @@ namespace DwarfCorp
 
             foreach (Task task in tasks)
             {
+                // A bit janky, but tasks are indexed by name. Look for any task that we have a history of
+                // and if the task is locked (because it was found to be impossible), don't try it.
                 if (History.ContainsKey(task.Name) && History[task.Name].IsLocked)
                 {
                     continue;
@@ -248,6 +292,7 @@ namespace DwarfCorp
             return bestTask;
         }
 
+        /// <summary> Looks for any tasks with higher priority than the current task. Cancel the current task and do that one instead. </summary>
         public void PreEmptTasks()
         {
             if (CurrentTask == null) return;
@@ -276,17 +321,20 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary> remove any impossible or already completed tasks </summary>
         public void DeleteBadTasks()
         {
             Tasks.RemoveAll(task => task.ShouldDelete(Creature));
         }
 
+        /// <summary> Animate the PlayState Camera to look at this creature </summary>
         public void ZoomToMe()
         {
             PlayState.Camera.ZoomTo(Position + Vector3.Up*8.0f);
             PlayState.ChunkManager.ChunkData.SetMaxViewingLevel((int) Position.Y, ChunkManager.SliceMode.Y);
         }
 
+        /// <summary> Update this creature </summary>
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!IsActive) return;
@@ -298,6 +346,7 @@ namespace DwarfCorp
             DeleteBadTasks();
             PreEmptTasks();
 
+            // Try to go to sleep if we are low on energy and it is night time.
             if (Status.Energy.IsUnhappy() && PlayState.Time.IsNight())
             {
                 Task toReturn = new SatisfyTirednessTask();
@@ -306,6 +355,7 @@ namespace DwarfCorp
                     Tasks.Add(toReturn);
             }
 
+            // Try to find food if we are hungry.
             if (Status.Hunger.IsUnhappy() && Faction.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
             {
                 Task toReturn = new SatisfyHungerTask();
@@ -315,11 +365,12 @@ namespace DwarfCorp
             }
 
 
+            // Update the current task.
             if (CurrentTask != null && CurrentAct != null)
             {
                 Act.Status status = CurrentAct.Tick();
 
-
+                // Update the task history on failure or success. 
                 bool retried = false;
                 if (status == Act.Status.Fail)
                 {
@@ -336,6 +387,7 @@ namespace DwarfCorp
                     {
                         if (!Tasks.Contains(CurrentTask))
                         {
+                            // Lower the priority of failed tasks.
                             CurrentTask.Priority = Task.PriorityType.Eventually;
                             Tasks.Add(CurrentTask);
                             CurrentTask.SetupScript(Creature);
@@ -345,6 +397,7 @@ namespace DwarfCorp
                 }
                 else if (status == Act.Status.Success)
                 {
+                    // Remove completed tasks.
                     if (History.ContainsKey(CurrentTask.Name))
                     {
                         History.Remove(CurrentTask.Name);
@@ -356,14 +409,17 @@ namespace DwarfCorp
                     CurrentTask = null;
                 }
             }
+            // Otherwise, we don't have any tasks at the moment.
             else
             {
+                // Throw a tantrum if we're unhappy.
                 bool tantrum = false;
                 if (Status.Happiness.IsUnhappy())
                 {
                     tantrum = MathFunctions.Rand(0, 1) < 0.25f;
                 }
 
+                // Otherwise, find a new task to perform.
                 Task goal = GetEasiestTask(Tasks);
                 if (goal != null)
                 {
@@ -398,6 +454,7 @@ namespace DwarfCorp
             UpdateThoughts();
             UpdateXP();
 
+            // With a small probability, the creature will drown if its under water.
             if (MathFunctions.RandEvent(0.01f))
             {
                 Voxel above = Physics.CurrentVoxel.GetVoxelAbove();
@@ -416,6 +473,7 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
 
+        /// <summary> updates the creature's experience points. </summary>
         public void UpdateXP()
         {
             foreach (int xp in XPEvents)
@@ -429,11 +487,17 @@ namespace DwarfCorp
             XPEvents.Clear();
         }
 
+        /// <summary> The Act that the creature performs when its told to "wander" (when it has nothing to do) </summary>
         public virtual Act ActOnWander()
         {
             return new WanderAct(this, 2, 0.5f + MathFunctions.Rand(-0.25f, 0.25f), 1.0f);
         }
 
+        /// <summary> 
+        /// Task the creature performs when it has no more tasks. In this case the creature will gather any necessary
+        /// resources and place any blocks. If it doesn't have anything to do, it may wander somewhere or use an item
+        /// to improve its wellbeing.
+        /// </summary>
         public virtual Task ActOnIdle()
         {
             if (GatherManager.VoxelOrders.Count == 0 &&
@@ -498,6 +562,7 @@ namespace DwarfCorp
         }
 
 
+        /// <summary> Tell the creature to jump straight up </summary>
         public void Jump(DwarfTime dt)
         {
             if (!Creature.JumpTimer.HasTriggered)
@@ -510,11 +575,13 @@ namespace DwarfCorp
             SoundManager.PlaySound(ContentPaths.Audio.jump, Creature.Physics.GlobalTransform.Translation);
         }
 
+        /// <summary> returns whether or not the creature already has a thought of the given type. </summary>
         public bool HasThought(Thought.ThoughtType type)
         {
             return Thoughts.Any(existingThought => existingThought.Type == type);
         }
 
+        /// <summary> Add a standard thought to the creature. </summary>
         public void AddThought(Thought.ThoughtType type)
         {
             if (!HasThought(type))
@@ -523,11 +590,13 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary> Remove a standard thought from the creature. </summary>
         public void RemoveThought(Thought.ThoughtType thoughtType)
         {
             Thoughts.RemoveAll(thought => thought.Type == thoughtType);
         }
 
+        /// <summary> Add a custom thought to the creature </summary>
         public void AddThought(Thought thought, bool allowDuplicates)
         {
             if (allowDuplicates)
@@ -551,6 +620,7 @@ namespace DwarfCorp
                 Position + Vector3.Up + MathFunctions.RandVector3Cube()*0.5f, 1.0f, textColor);
         }
 
+        /// <summary> Tell the creature to kill the given body. </summary>
         public void Kill(Body entity)
         {
             var killTask = new KillEntityTask(entity, KillEntityTask.KillType.Auto);
@@ -558,6 +628,7 @@ namespace DwarfCorp
                 Tasks.Add(killTask);
         }
 
+        /// <summary> Tell the creature to find a path to the edge of the world and leave it. </summary>
         public void LeaveWorld()
         {
             Task leaveTask = new LeaveWorldTask
@@ -569,6 +640,7 @@ namespace DwarfCorp
             Tasks.Add(leaveTask);
         }
 
+        /// <summary> Updates the thoughts in the creature's head. </summary>
         public void UpdateThoughts()
         {
             Thoughts.RemoveAll(thought => thought.IsOver(PlayState.Time.CurrentDate));
@@ -594,6 +666,7 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary> Tell the creature to speak with another </summary>
         public void Converse(CreatureAI other)
         {
             if (SpeakTimer.HasTriggered)
@@ -605,11 +678,13 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary> Returns whether or not the creature has a task with the same name as another </summary>
         public bool HasTaskWithName(Task other)
         {
             return Tasks.Any(task => task.Name == other.Name);
         }
 
+        /// <summary> For any enemy that this creature's enemy sensor knows about, order the creature to attack these enemies </summary>
         public void OrderEnemyAttack()
         {
             foreach (CreatureAI enemy in Sensor.Enemies)
@@ -633,6 +708,7 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary> Pay the creature this amount of money. The money goes into the creature's wallet. </summary>
         public void AddMoney(float pay)
         {
             Status.Money += pay;
@@ -643,6 +719,7 @@ namespace DwarfCorp
                 Position + Vector3.Up + MathFunctions.RandVector3Cube()*0.5f, 1.0f, textColor);
         }
 
+        /// <summary> gets a description of the creature to display to the player </summary>
         public override string GetDescription()
         {
             string desc = Stats.FullName + ", level " + Stats.CurrentLevel.Index +
@@ -659,6 +736,7 @@ namespace DwarfCorp
             return desc;
         }
 
+        /// <summary> Task telling the creature to exit the world. </summary>
         public class LeaveWorldTask : Task
         {
             public IEnumerable<Act.Status> GreedyFallbackBehavior(Creature agent)
@@ -731,11 +809,16 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary> History of a certain task that keeps track of how many times its failed </summary>
         public class TaskHistory
         {
+            /// <summary> Tasks are locked for this amount of time before being tried again </summary>
             public static float LockoutTime;
+            /// <summary> If a Task has failed this many times, it will be locked. </summary>
             public static int MaxFailures;
+            /// <summary> While the timer is active, the creature will not try to perform the task again. </summary>
             public Timer LockoutTimer;
+            /// <summary> Number of times the task has failed </summary>
             public int NumFailures;
 
             static TaskHistory()
@@ -767,6 +850,7 @@ namespace DwarfCorp
         }
     }
 
+    /// <summary> defines how a creature moves from voxel to voxel </summary>
     public class CreatureMovement
     {
         public CreatureMovement(Creature creature)
@@ -848,8 +932,10 @@ namespace DwarfCorp
             };
         }
 
+        /// <summary> The creature associated with this AI </summary>
         public Creature Creature { get; set; }
 
+        /// <summary> Wrapper around the creature's fly movement </summary>
         [JsonIgnore]
         public bool CanFly
         {
@@ -857,6 +943,7 @@ namespace DwarfCorp
             set { SetCan(Creature.MoveType.Fly, value); }
         }
 
+        /// <summary> Wrapper aroound the creature's swim movement </summary>
         [JsonIgnore]
         public bool CanSwim
         {
