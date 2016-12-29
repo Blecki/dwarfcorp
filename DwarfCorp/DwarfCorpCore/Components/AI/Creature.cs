@@ -738,25 +738,35 @@ namespace DwarfCorp
             {
             }
 
+            /// <summary>
+            /// Create a buff which persists for the specified time.
+            /// </summary>
             public Buff(float time)
             {
                 EffectTime = new Timer(time, true);
                 ParticleTimer = new Timer(0.25f, false);
             }
 
+            /// <summary> Time that the effect persists for </summary>
             public Timer EffectTime { get; set; }
 
+            /// <summary> If true, the buff is active. </summary>
             public bool IsInEffect
             {
                 get { return !EffectTime.HasTriggered; }
             }
 
+            /// <summary> Particles to generate during the buff. </summary>
             public string Particles { get; set; }
+            /// <summary> Every time this triggers, a particle gets released </summary>
             public Timer ParticleTimer { get; set; }
+            /// <summary> Sound to play when the buff starts </summary>
             public string SoundOnStart { get; set; }
+            /// <summary> Sound to play when the buff ends </summary>
             public string SoundOnEnd { get; set; }
 
 
+            /// <summary> Called when the Buff is added to a Creature </summary>
             public virtual void OnApply(Creature creature)
             {
                 if (!string.IsNullOrEmpty(SoundOnStart))
@@ -765,6 +775,7 @@ namespace DwarfCorp
                 }
             }
 
+            /// <summary> Called when the Buff is removed from a Creature </summary>
             public virtual void OnEnd(Creature creature)
             {
                 if (!string.IsNullOrEmpty(SoundOnEnd))
@@ -773,6 +784,7 @@ namespace DwarfCorp
                 }
             }
 
+            /// <summary> Updates the Buff </summary>
             public virtual void Update(DwarfTime time, Creature creature)
             {
                 EffectTime.Update(time);
@@ -784,6 +796,7 @@ namespace DwarfCorp
                 }
             }
 
+            /// <summary> Creates a new Buff that is a deep copy of this one. </summary>
             public virtual Buff Clone()
             {
                 return new Buff
@@ -797,7 +810,7 @@ namespace DwarfCorp
                 };
             }
         }
-
+        ///<summary> A Buff which allows the creature to resist some amount of damage of a specific kind </summary>
         public class DamageResistBuff : Buff
         {
             public DamageResistBuff()
@@ -806,7 +819,9 @@ namespace DwarfCorp
                 Bonus = 0.0f;
             }
 
+            /// <summary> The kind of damage to ignore </summary>
             public DamageType DamageType { get; set; }
+            /// <summary> The amount of damage to ignore. </summary>
             public float Bonus { get; set; }
 
             public override Buff Clone()
@@ -837,17 +852,30 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// A move action is a link between two voxels and a type of motion
+        /// used to get between them.
+        /// </summary>
         public struct MoveAction
         {
+            /// <summary> The destination voxel of the motion </summary>
             public Voxel Voxel { get; set; }
+            /// <summary> The type of motion applied to get to the voxel </summary>
             public MoveType MoveType { get; set; }
+            /// <summary> The offset between the start and destination </summary>
             public Vector3 Diff { get; set; }
+            /// <summary> And object to interact with to get between the start and destination </summary>
             public GameComponent InteractObject { get; set; }
         }
 
+        /// <summary>
+        /// Applies damage to the creature over time.
+        /// </summary>
         public class OngoingDamageBuff : Buff
         {
+            /// <summary> The type of damage to apply </summary>
             public DamageType DamageType { get; set; }
+            /// <summary> The amount of damage to take in HP per second </summary>
             public float DamagePerSecond { get; set; }
 
             public override void Update(DwarfTime time, Creature creature)
@@ -873,6 +901,9 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Heals the creature continuously over time.
+        /// </summary>
         public class OngoingHealBuff : Buff
         {
             public OngoingHealBuff()
@@ -885,6 +916,7 @@ namespace DwarfCorp
                 DamagePerSecond = dps;
             }
 
+            /// <summary> Amount to heal the creature in HP per second </summary>
             public float DamagePerSecond { get; set; }
 
             public override void Update(DwarfTime time, Creature creature)
@@ -910,6 +942,7 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary> Increases the creature's stats for a time </summary>
         public class StatBuff : Buff
         {
             public StatBuff()
@@ -923,6 +956,7 @@ namespace DwarfCorp
                 Buffs = buffs;
             }
 
+            /// <summary> The amount to add to the creature's stats </summary>
             public CreatureStats.StatNums Buffs { get; set; }
 
             public override Buff Clone()
@@ -957,6 +991,7 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary> Causes the creature to have a Thought for a specified time </summary>
         public class ThoughtBuff : Buff
         {
             public ThoughtBuff()
@@ -969,6 +1004,7 @@ namespace DwarfCorp
                 ThoughtType = type;
             }
 
+            /// <summary> The Thought the creature has during the buff </summary>
             public Thought.ThoughtType ThoughtType { get; set; }
 
             public override void OnApply(Creature creature)
