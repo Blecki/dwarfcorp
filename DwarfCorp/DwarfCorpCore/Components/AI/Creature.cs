@@ -42,32 +42,61 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
+   ///<summary>
+   /// CreatureDef defines a creature to be loaded from JSON files. When
+   /// deserialized, it can be converted into a creature directly.
+   /// </summary>
+   [JsonObject(IsReference = true)]
     public class CreatureDef
     {
+        /// <summary> Name of the creature used for spawning </summary>
         public string Name { get; set; }
+        /// <summary> Description of the creature displayed when the player mouses over it </summary>
         public string Description { get; set; }
+        /// <summary> Race that the creature belongs to </summary>
         public string Race { get; set; }
+        /// <summary> Size of the creature's bounding box in voxels </summary>
         public Vector3 Size { get; set; }
+        /// <summary> If true, a shadow will be rendered under the creature </summary>
         public bool HasShadow { get; set; }
+        /// <summary> If true, the creature takes fire damage and lights on fire from lava </summary>
         public bool IsFlammable { get; set; }
+        /// <summary> Name of the particle effect to trigger when the creature gets hurt </summary>
         public string BloodParticle { get; set; }
+        /// <summary> Sound the creature makes when it dies </summary>
         public string DeathSound { get; set; }
+        /// <summary> Sounds the creature makes when hurt </summary>
         public List<string> HurtSounds { get; set; }
+        /// <summary> Sound the creature makes when chewing food </summary>
         public string ChewSound { get; set; }
+        /// <summary> Sound the creature makes when jumping </summary>
         public string JumpSound { get; set; }
+        /// <summary> If true, when the creature dies, all of the other members of its race will mourn </summary>
         public bool TriggersMourning { get; set; }
+        /// <summary> The size of the creature's shadow in voxels </summary>
         public float ShadowScale { get; set; }
+        /// <summary> How much the creature resists external forces </summary>
         public float Mass { get; set; }
+        /// <summary> The number of objects in the creature's inventory </summary>
         public int InventorySize { get; set; }
+        /// <summary> Offset between the creature's origin and its sprite </summary>
         public Vector3 SpriteOffset { get; set; }
+        /// <summary> The icon to draw on the minimap for the creature </summary>
         public NamedImageFrame MinimapIcon { get; set; }
+        /// <summary> Bounding box in which the creature can see </summary>
         public Vector3 SenseRange { get; set; }
+        /// <summary> Identifier path to a JSON file containing all the creature's classes </summary>
         public string Classes { get; set; }
+        /// <summary> If true, the creature will sleep when tired. </summary>
         public bool CanSleep { get; set; }
+        /// <summary> If true, the creature will eat when hungry </summary>
         public bool CanEat { get; set; }
+        /// <summary> Arbitrary tags assigned to the creature </summary>
         public List<string> Tags { get; set; }
 
+        /// <summary>
+        /// Called when the creature definition is deserialized from JSON.
+        /// </summary>
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
@@ -82,6 +111,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Creature : Health
     {
+        /// <summary> Enum describing the character's current action (used for animation) </summary>
         public enum CharacterMode
         {
             Walking,
@@ -96,20 +126,41 @@ namespace DwarfCorp
             Sitting
         }
 
+        /// <summary> Describes the way in which a creature can move from one location to another </summary>
         public enum MoveType
         {
+            /// <summary> Move along a horizontal surface </summary>
             Walk,
+            /// <summary> Jump from one voxel to another. </summary>
             Jump,
+            /// <summary> Climb up a climbable object </summary>
             Climb,
+            /// <summary> Move through water </summary>
             Swim,
+            /// <summary> Fall vertically through space </summary>
             Fall,
+            /// <summary> Move from one empty voxel to another </summary>
             Fly,
+            /// <summary> Attack a blocking object until it is destroyed </summary>
             DestroyObject,
+            /// <summary> Move along a vertical surface. </summary>
             ClimbWalls
         }
 
+        /// <summary> 
+        /// Creatures can draw indicators showing the user what they're thinking.
+        /// This is the minimum time in seconds between which indicators will be drawn.
+        /// </summary>
         private float IndicatorRateLimit = 2.0f;
+        
+        /// <summary>
+        /// This is the last time that the creature produced an indicator.
+        /// This is compared against the rate limit to determine if a new indicator
+        /// can be drawn.
+        /// </summary>
         private DateTime LastIndicatorTime = DateTime.Now;
+        
+        /// <summary> This is what the character is currently doing (used for animation) </summary>
         protected CharacterMode currentCharacterMode = CharacterMode.Idle;
 
         public Creature()
@@ -251,47 +302,77 @@ namespace DwarfCorp
                 IsVisible = false
             };
         }
-
+        
+        /// <summary> The creature's AI determines how it will behave. </summary>
         public CreatureAI AI { get; set; }
+        /// <summary> The crature's physics determines how it moves around </summary>
         public Physics Physics { get; set; }
+        /// <summary> The sprite draws the character and handles animations </summary>
         public CharacterSprite Sprite { get; set; }
+        /// <summary> The selection circle is drawn when the character is selected </summary>
         public SelectionCircle SelectionCircle { get; set; }
+        /// <summary> Finds enemies nearby and triggers when it sees them </summary>
         public EnemySensor Sensors { get; set; }
+        /// <summary> Spawns fire and kills the creature when it is damaged </summary>
         public Flammable Flames { get; set; }
+        /// <summary> Creates particles when the creature dies. </summary>
         public ParticleTrigger DeathParticleTrigger { get; set; }
+        /// <summary> Allows the creature to grab other objects </summary>
         public Grabber Hands { get; set; }
+        /// <summary> Drawn beneath the creature </summary>
         public Shadow Shadow { get; set; }
+        /// <summary> If true, the creature will generate meat when it dies. </summary>
         public bool HasMeat { get; set; }
+        /// <summary> If true, the creature will generate bones when it dies. </summary>
         public bool HasBones { get; set; }
+        /// <summary> Used to make sounds for the creature </summary>
         public NoiseMaker NoiseMaker { get; set; }
-
+        /// <summary> The creature can hold objects in its inventory </summary>
         public Inventory Inventory { get; set; }
 
+        /// <summary> Reference to the graphics device. </summary>
         [JsonIgnore]
         public GraphicsDevice Graphics { get; set; }
 
+        /// <summary> Reference to the chunk manager. </summary>
         [JsonIgnore]
         public ChunkManager Chunks { get; set; }
 
+        /// <summary> List of attacks the creature can perform. </summary>
         public List<Attack> Attacks { get; set; }
 
+        /// <summary> Reference to the content manager </summary>
         [JsonIgnore]
         public ContentManager Content { get; set; }
 
+        /// <summary> Faction that the creature belongs to </summary>
         public Faction Faction { get; set; }
 
+        /// <summary> Reference to the planning service for path planning </summary>
         public PlanService PlanService { get; set; }
 
+        /// <summary> DEPRECATED. TODO(mklingen): DELETE </summary>
         public string Allies { get; set; }
 
+        /// <summary> Used to smoothly apply forces to the creature </summary>
         public PIDController Controller { get; set; }
+        /// <summary> The creature's stat numbers (WIS, DEX, STR etc.) </summary>
         public CreatureStats Stats { get; set; }
+        /// <summary> The creature's current status (energy, hunger, happiness, etc.) </summary>
         public CreatureStatus Status { get; set; }
 
+        /// <summary> Timer that rate-limits how quickly the creature can jump. DEPRECATED TODO(mklingen): DELETE </summary>
         public Timer JumpTimer { get; set; }
 
+        /// <summary>
+        /// If true, the character mode will not be updated automatically by the creature's movement.
+        /// This is used to make the character animate in a certain way without interference.
+        /// </summary> 
         public bool OverrideCharacterMode { get; set; }
 
+        /// <summary>
+        /// Gets or sets the current character mode for animations.
+        /// </summary>
         public CharacterMode CurrentCharacterMode
         {
             get { return currentCharacterMode; }
@@ -307,17 +388,22 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary> Convenience wrapper around Status.IsAsleep </summary>
         public bool IsAsleep
         {
             get { return Status.IsAsleep; }
         }
 
+        /// <summary> If true there is a filled voxel immediately beneath this creature </summary>
         public bool IsOnGround { get; set; }
+        /// <summary> If true there is an empty voxel immediately above this creature </summary>
         public bool IsHeadClear { get; set; }
 
 
+        /// <summary> List of ongoing effects the creature is sustaining </summary>
         public List<Buff> Buffs { get; set; }
 
+        /// <summary> Called when the creature is deserialized from JSON </summary>
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
@@ -326,12 +412,15 @@ namespace DwarfCorp
             Chunks = PlayState.ChunkManager;
         }
 
+        /// <summary> Adds the specified ongoing effect. </summary>
+        /// <param name="buff"> The onging effect to add </param>
         public void AddBuff(Buff buff)
         {
             buff.OnApply(this);
             Buffs.Add(buff);
         }
 
+        /// <summary> Updates the creature's ongoing effects </summary>
         public void HandleBuffs(DwarfTime time)
         {
             foreach (Buff buff in Buffs)
@@ -347,6 +436,7 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary> Updates the creature </summary>
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!IsActive) return;
@@ -360,6 +450,10 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
 
+        /// <summary> 
+        /// Checks the voxels around the creature and reacts to changes in its immediate environment.
+        /// For example this function determines when the creature is standing on solid ground.
+        /// </summary>
         public void CheckNeighborhood(ChunkManager chunks, float dt)
         {
             var voxelBelow = new Voxel();
@@ -430,13 +524,23 @@ namespace DwarfCorp
         }
 
 
+        /// <summary>
+        /// Kills the creature and releases its resources.
+        /// </summary>
         public override void Die()
         {
+            // This is just a silly hack to make sure that creatures
+            // carrying resources to a trade depot release their resources
+            // when they die.
             Inventory.Resources.MaxResources = 99999;
             CreateMeatAndBones();
             base.Die();
         }
 
+        /// <summary>
+        /// If the creature has meat or bones, creates resources
+        /// which get released when the creature dies.
+        /// </summary>
         public virtual void CreateMeatAndBones()
         {
             if (HasMeat)
@@ -472,6 +576,10 @@ namespace DwarfCorp
             }
         }
 
+
+        /// <summary>
+        /// Draws an indicator image over the creature telling us what its thinking.
+        /// </summary>
         public void DrawIndicator(ImageFrame image, Color tint)
         {
             if (!((DateTime.Now - LastIndicatorTime).TotalSeconds >= IndicatorRateLimit))
@@ -485,6 +593,9 @@ namespace DwarfCorp
         }
 
 
+        /// <summary>
+        /// Draws an indicator above the creature from the list of standard indicators.
+        /// </summary>
         public void DrawIndicator(IndicatorManager.StandardIndicators indicator)
         {
             if (!((DateTime.Now - LastIndicatorTime).TotalSeconds >= IndicatorRateLimit))
@@ -497,6 +608,11 @@ namespace DwarfCorp
         }
 
 
+        /// <summary>
+        /// Called when the creature receives an event message from another source.
+        /// This somewhat janky messaging system is rarely used anymore and should
+        /// probably be removed for clarity.
+        /// </summary>
         public override void ReceiveMessageRecursive(Message messageToReceive)
         {
             switch (messageToReceive.Type)
@@ -516,6 +632,9 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
+        /// <summary>
+        /// Updates the creature's animation based on its current state.
+        /// </summary>
         public void UpdateAnimation(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (CurrentCharacterMode == CharacterMode.Attacking)
@@ -530,6 +649,10 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Basic Act that causes the creature to wait for the specified time.
+        /// Also draws a loading bar above the creature's head when relevant.
+        /// </summary>
         public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar)
         {
             var waitTimer = new Timer(f, true);
@@ -560,6 +683,9 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
+        /// <summary>
+        /// Called whenever the creature takes damage.
+        /// </summary>
         public override float Damage(float amount, DamageType type = DamageType.Normal)
         {
             float damage = base.Damage(amount, type);
@@ -582,6 +708,9 @@ namespace DwarfCorp
             return damage;
         }
 
+        /// <summary>
+        /// Adds a body to the creature's list of gather designations.
+        /// </summary>
         public void Gather(Body item)
         {
             var gatherTask = new GatherItemTask(item)
@@ -599,6 +728,10 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// A buff is an ongoing effect applied to a creature. This can heal the creature,
+        /// damage it, or apply any other kind of effect.
+        /// </summary>
         public class Buff
         {
             public Buff()
