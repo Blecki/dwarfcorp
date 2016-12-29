@@ -951,6 +951,7 @@ namespace DwarfCorp
             set { SetCan(Creature.MoveType.Swim, value); }
         }
 
+        /// <summary> wrapper around creature's climb movement </summary>
         [JsonIgnore]
         public bool CanClimb
         {
@@ -958,6 +959,7 @@ namespace DwarfCorp
             set { SetCan(Creature.MoveType.Climb, value); }
         }
 
+        /// <summary> wrapper around creature's climb walls movement </summary>
         [JsonIgnore]
         public bool CanClimbWalls
         {
@@ -965,6 +967,7 @@ namespace DwarfCorp
             set { SetCan(Creature.MoveType.ClimbWalls, value); }
         }
 
+        /// <summary> wrapper around creature's walk movement </summary>
         [JsonIgnore]
         public bool CanWalk
         {
@@ -972,38 +975,49 @@ namespace DwarfCorp
             set { SetCan(Creature.MoveType.Walk, value); }
         }
 
+        /// <summary> List of move actions that the creature can take </summary>
         public Dictionary<Creature.MoveType, ActionStats> Actions { get; set; }
 
+        /// <summary> determines whether the creature can move using the given move type. </summary>
         public bool Can(Creature.MoveType type)
         {
             return Actions[type].CanMove;
         }
 
+        /// <summary> gets the cost of a creature's movement for a particular type </summary>
         public float Cost(Creature.MoveType type)
         {
             return Actions[type].Cost;
         }
 
+        /// <summary> gets the speed multiplier of a creature's movement for a particular type </summary>
         public float Speed(Creature.MoveType type)
         {
             return Actions[type].Speed;
         }
 
+        /// <summary> Sets whether the creature can move using the given type </summary>
         public void SetCan(Creature.MoveType type, bool value)
         {
             Actions[type].CanMove = value;
         }
 
+        /// <summary> sets the cost of moving using a given movement type </summary>
         public void SetCost(Creature.MoveType type, float value)
         {
             Actions[type].Cost = value;
         }
 
+        /// <summary> Sets the movement speed of a particular move type </summary>
         public void SetSpeed(Creature.MoveType type, float value)
         {
             Actions[type].Speed = value;
         }
 
+        /// <summary> 
+        /// Returns a 3 x 3 x 3 voxel grid corresponding to the immediate neighborhood
+        /// around the given voxel..
+        /// </summary>
         private Voxel[,,] GetNeighborhood(Voxel voxel)
         {
             var neighborHood = new Voxel[3, 3, 3];
@@ -1036,6 +1050,7 @@ namespace DwarfCorp
             return neighborHood;
         }
 
+        /// <summary> Determines whether the voxel has any neighbors in X or Z directions </summary>
         private bool HasNeighbors(Voxel[,,] neighborHood)
         {
             bool hasNeighbors = false;
@@ -1056,12 +1071,14 @@ namespace DwarfCorp
 
             return hasNeighbors;
         }
-
+        
+        /// <summary> Determines whether the given voxel is null or empty </summary>
         private bool IsEmpty(Voxel v)
         {
             return v == null || v.IsEmpty;
         }
 
+        /// <summary> gets a list of actions that the creature can take from the given position </summary>
         public List<Creature.MoveAction> GetMoveActions(Vector3 pos)
         {
             var vox = new Voxel();
@@ -1069,6 +1086,7 @@ namespace DwarfCorp
             return GetMoveActions(vox);
         }
 
+        /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
         public List<Creature.MoveAction> GetMoveActions(Voxel voxel)
         {
             var toReturn = new List<Creature.MoveAction>();
@@ -1087,7 +1105,7 @@ namespace DwarfCorp
 
             var successors = new List<Creature.MoveAction>();
 
-            //Climbing ladders
+            //Climbing ladders.
             IEnumerable<IBoundedObject> objectsInside = objectHash.GetObjectsAt(voxel,
                 CollisionManager.CollisionType.Static);
             if (objectsInside != null)
@@ -1097,6 +1115,8 @@ namespace DwarfCorp
                 if (CanClimb)
                 {
                     bool hasLadder = enumerable.Any(component => component.Tags.Contains("Climbable"));
+                    // if the creature can climb objects and a ladder is in this voxel,
+                    /// then add a climb action.
                     if (hasLadder)
                     {
                         successors.Add(new Creature.MoveAction
@@ -1121,13 +1141,16 @@ namespace DwarfCorp
                 }
             }
 
+            // If the creature can climb walls and is not blocked by a voxl above.
             if (CanClimbWalls && !topCovered)
             {
+                // Determine if the creature is adjacent to a wall.
                 bool nearWall = (neighborHood[2, 1, 1] != null && !neighborHood[2, 1, 1].IsEmpty) ||
                                 (neighborHood[0, 1, 1] != null && !neighborHood[0, 1, 1].IsEmpty) ||
                                 (neighborHood[1, 1, 2] != null && !neighborHood[1, 1, 2].IsEmpty) ||
                                 (neighborHood[1, 1, 0] != null && !neighborHood[1, 1, 0].IsEmpty);
 
+                // If we're near a wall, we can climb upwards.
                 if (nearWall)
                 {
                     isClimbing = true;
@@ -1137,7 +1160,7 @@ namespace DwarfCorp
                         MoveType = Creature.MoveType.ClimbWalls
                     });
                 }
-
+                // If we're near a wall and not blocked from below, we can climb downward.
                 if (nearWall && !standingOnGround)
                 {
                     successors.Add(new Creature.MoveAction
@@ -1147,9 +1170,12 @@ namespace DwarfCorp
                     });
                 }
             }
-
+            
+            // If the creature either can walk or is in water, add the 
+            // eight-connected free neighbors around the voxel.
             if ((CanWalk && standingOnGround) || (CanSwim && inWater))
             {
+                // If the creature is in water, it can swim. Otherwise, it will walk.
                 Creature.MoveType moveType = inWater ? Creature.MoveType.Swim : Creature.MoveType.Walk;
                 if (IsEmpty(neighborHood[0, 1, 1]))
                     // +- x
@@ -1181,6 +1207,8 @@ namespace DwarfCorp
                         MoveType = moveType
                     });
 
+                // Only bother worrying about 8-connected movement if there are
+                // no full neighbors around the voxel.
                 if (!hasNeighbors)
                 {
                     if (IsEmpty(neighborHood[2, 1, 2]))
@@ -1215,6 +1243,9 @@ namespace DwarfCorp
                 }
             }
 
+            // If the creature's head is free, and it is standing on ground,
+            // or if it is in water, or if it is climbing, it can also jump
+            // to voxels that are 1 cell away and 1 cell up.
             if (!topCovered && (standingOnGround || (CanSwim && inWater) || isClimbing))
             {
                 for (int dx = 0; dx <= 2; dx++)
@@ -1236,7 +1267,8 @@ namespace DwarfCorp
             }
 
 
-            // Falling
+            // If the creature is not in water and is not standing on ground,
+            // it can fall one voxel downward in free space.
             if (!inWater && !standingOnGround)
             {
                 successors.Add(new Creature.MoveAction
@@ -1246,6 +1278,8 @@ namespace DwarfCorp
                 });
             }
 
+            // If the creature can fly and is not underwater, it can fly
+            // to any adjacent empty cell.
             if (CanFly && !inWater)
             {
                 for (int dx = 0; dx <= 2; dx++)
@@ -1269,16 +1303,18 @@ namespace DwarfCorp
                 }
             }
 
-
+            // Now, validate each move action that the creature might take.
             foreach (Creature.MoveAction v in successors)
             {
                 Voxel n = neighborHood[(int) v.Diff.X, (int) v.Diff.Y, (int) v.Diff.Z];
                 if (n != null && (n.IsEmpty || n.WaterLevel > 0))
                 {
+                    // Do one final check to see if there is an object blocking the motion.
                     bool blockedByObject = false;
                     List<IBoundedObject> objectsAtNeighbor = PlayState.ComponentManager.CollisionManager.GetObjectsAt(
                         n, CollisionManager.CollisionType.Static);
 
+                    // If there is an object blocking the motion, determine if it can be passed through.
                     if (objectsAtNeighbor != null)
                     {
                         IEnumerable<GameComponent> bodies = objectsAtNeighbor.OfType<GameComponent>();
@@ -1287,7 +1323,7 @@ namespace DwarfCorp
                         foreach (GameComponent body in enumerable)
                         {
                             Door door = body.GetRootComponent().GetChildrenOfType<Door>(true).FirstOrDefault();
-
+                            // If there is an enemy door blocking movement, we can destroy it to get through.
                             if (door != null)
                             {
                                 if (
@@ -1308,6 +1344,7 @@ namespace DwarfCorp
                             }
                         }
                     }
+                    // If no object blocked us, we can move freely as normal.
                     if (!blockedByObject)
                     {
                         Creature.MoveAction newAction = v;
@@ -1317,10 +1354,10 @@ namespace DwarfCorp
                 }
             }
 
-
+            // Return the list of all validated actions that the creature can take.
             return toReturn;
         }
-
+        /// <summary> Each action has a cost, a speed, and a validity check </summary>
         public class ActionStats
         {
             public bool CanMove = false;
