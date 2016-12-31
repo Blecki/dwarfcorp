@@ -41,7 +41,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A designation specifying that a creature should put a voxel of a given type
+    ///     A designation specifying that a creature should put an item of a given type
     ///     at a location.
     /// </summary>
     [JsonObject(IsReference = true)]

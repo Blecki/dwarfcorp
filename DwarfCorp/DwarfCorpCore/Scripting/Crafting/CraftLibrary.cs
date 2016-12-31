@@ -36,6 +36,9 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// Static library of all the things that can be crafted.
+    /// </summary>
     [JsonObject(IsReference = true)]
     public class CraftLibrary
     {
@@ -47,6 +50,12 @@ namespace DwarfCorp
             Initialize();
         }
 
+        /// <summary>
+        /// Dictionary mapping an arbitrary name to a type of item that can be crafted.
+        /// </summary>
+        /// <value>
+        /// The craft items.
+        /// </value>
         public static Dictionary<string, CraftItem> CraftItems { get; set; }
 
 
@@ -56,7 +65,9 @@ namespace DwarfCorp
             {
                 return;
             }
-
+            
+            // The big ole list of everything that can be crafted.
+            // Should probably be in a JSON file eventually.
             CraftItems = new Dictionary<string, CraftItem>
             {
                 {

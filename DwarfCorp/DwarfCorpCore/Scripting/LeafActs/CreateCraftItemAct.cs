@@ -38,6 +38,11 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// Lowest level act in the crafting tree. Creates a new object based
+    /// on a tag.
+    /// </summary>
+    /// <seealso cref="CreatureAct" />
     [JsonObject(IsReference = true)]
     public class CreateCraftItemAct : CreatureAct
     {

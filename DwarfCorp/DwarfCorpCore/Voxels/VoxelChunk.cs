@@ -54,7 +54,7 @@ namespace DwarfCorp
         
         /// <summary> ambient lighting for voxels that are hidden by fog of war </summary>
         public static byte m_fogOfWar = 1;
-        /// <sumarry> if true, the static data for all VoxelChunks has been initialized </summary>
+        /// <summary> if true, the static data for all VoxelChunks has been initialized </summary>
         private static bool staticsInitialized;
         /// <summary> cache of the offsets from the leastmost corner of the voxel to the origin of each of its 8 vertices </summary>
         private static readonly Vector3[] vertexDeltas = new Vector3[8];
@@ -119,8 +119,8 @@ namespace DwarfCorp
         /// grass.
         /// </summary>
         public static Perlin MoteNoise = new Perlin(0);
-        
-        /// <sumarry>
+
+        /// <summary>
         /// This Perlin noise determines how much detail grass motes get scaled, giving us smooth
         /// transitions between large and small blades of grass.
         /// </summary>
@@ -901,6 +901,9 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Updates the sloping voxels ramp state.
+        /// </summary>
         public void UpdateRamps()
         {
             if (ReconstructRamps || firstRebuild)
@@ -911,6 +914,9 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Builds the grass detail motes and determines the chunk's biome.
+        /// </summary>
         public void BuildGrassMotes()
         {
             Vector2 v = new Vector2(Origin.X, Origin.Z)/PlayState.WorldScale;
@@ -922,10 +928,12 @@ namespace DwarfCorp
             BuildGrassMotes(biome);
         }
 
+        /// <summary>
+        /// Rebuilds the vertex buffer, grass motes, and other details of the chunk.
+        /// </summary>
+        /// <param name="g">The graphics device.</param>
         public void Rebuild(GraphicsDevice g)
         {
-            //Drawer3D.DrawBox(GetBoundingBox(), Color.White, 0.1f);
-
             if (g == null || g.IsDisposed)
             {
                 return;
@@ -948,13 +956,19 @@ namespace DwarfCorp
             ShouldRebuild = false;
         }
 
+        /// <summary>
+        /// Creates a new vertex buffer for this chunk.
+        /// </summary>
+        /// <param name="g">The graphics device</param>
         public void BuildPrimitive(GraphicsDevice g)
         {
-            //Primitive.InitializeFromChunk(this, g);
             var primitive = new VoxelListPrimitive();
             primitive.InitializeFromChunk(this, g);
         }
 
+        /// <summary>
+        /// Finds and notifies all components that are inside the chunk that the chunk has been modified.
+        /// </summary>
         public void NotifyChangedComponents()
         {
             var componentsInside = new HashSet<IBoundedObject>();
@@ -972,6 +986,10 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Destroys the primitive and associated detail motes.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
         public void Destroy(GraphicsDevice device)
         {
             if (Primitive != null)
@@ -993,13 +1011,23 @@ namespace DwarfCorp
 
         #region transformations
 
+        /// <summary>
+        /// Transforms a vector from world coordinates to chunk-relative coordinates.
+        /// </summary>
+        /// <param name="worldLocation">The world location.</param>
+        /// <returns>A floating-point vector relative to the chunk's origin.</returns>
         public Vector3 WorldToGrid(Vector3 worldLocation)
         {
             Vector3 grid = (worldLocation - Origin);
             return grid;
         }
 
-
+        /// <summary>
+        /// Gets the voxel at a world location.
+        /// </summary>
+        /// <param name="worldLocation">The world location.</param>
+        /// <param name="voxel">The voxel to return.</param>
+        /// <returns>True if a voxel exists in this chunk at the given location. False otherwise.</returns>
         public bool GetVoxelAtWorldLocation(Vector3 worldLocation, ref Voxel voxel)
         {
             Vector3 grid = WorldToGrid(worldLocation);
@@ -1017,11 +1045,25 @@ namespace DwarfCorp
             return false;
         }
 
+        /// <summary>
+        /// Determines whether the grid position (relative to the chunk's origin) is inside the chunk.
+        /// </summary>
+        /// <param name="grid">The grid position (relative to the chunk's origin)</param>
+        /// <returns>
+        ///   <c>true</c> if [is grid position valid] [the specified grid]; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsGridPositionValid(Vector3 grid)
         {
             return IsCellValid((int) grid.X, (int) grid.Y, (int) grid.Z);
         }
 
+        /// <summary>
+        /// Determines whether a specified position in world coordinates is inside the chunk.
+        /// </summary>
+        /// <param name="worldLocation">The world location.</param>
+        /// <returns>
+        ///   <c>true</c> if [is world location valid] [the specified world location]; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsWorldLocationValid(Vector3 worldLocation)
         {
             Vector3 grid = WorldToGrid(worldLocation);
@@ -1029,6 +1071,15 @@ namespace DwarfCorp
             return IsCellValid((int) grid.X, (int) grid.Y, (int) grid.Z);
         }
 
+        /// <summary>
+        /// Determines whether the voxel at [x, y, z] exists.
+        /// </summary>
+        /// <param name="x">The x coordinate of the voxel in the chunk.</param>
+        /// <param name="y">The y coordinate of the voxel in the chunk.</param>
+        /// <param name="z">The z coordinate of the voxel in the chunk.</param>
+        /// <returns>
+        ///   <c>true</c> if the coordinates are inside the chunk; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsCellValid(int x, int y, int z)
         {
             return x >= 0 && y >= 0 && z >= 0 && x < SizeX && y < SizeY && z < SizeZ;
@@ -1038,6 +1089,13 @@ namespace DwarfCorp
 
         #region lighting
 
+        /// <summary>
+        /// Gets the brightness of a dynamic light at the given voxel..
+        /// </summary>
+        /// <param name="light">The light.</param>
+        /// <param name="lightIntensity">The light intensity.</param>
+        /// <param name="voxel">The voxel.</param>
+        /// <returns>The intensity of the light as observed from the given voxel.</returns>
         public byte GetIntensity(DynamicLight light, byte lightIntensity, Voxel voxel)
         {
             Vector3 vertexPos = voxel.Position;
@@ -1048,6 +1106,14 @@ namespace DwarfCorp
         }
 
 
+        /// <summary>
+        /// Calculates the vertex color for a specified voxel and vertex 
+        /// </summary>
+        /// <param name="vox">The voxel.</param>
+        /// <param name="face">The vertex to find the light for.</param>
+        /// <param name="chunks">The chunks manager</param>
+        /// <param name="neighbors">The neighbors of the vertex. This will be computed inside and allocated/shared outside the fn.</param>
+        /// <param name="color">The color to return</param>
         public static void CalculateVertexLight(Voxel vox, VoxelVertex face,
             ChunkManager chunks, List<Voxel> neighbors, ref VertexColorInfo color)
         {
@@ -1059,6 +1125,7 @@ namespace DwarfCorp
             color.SunColor += vox.Chunk.Data.SunColors[index];
             vox.Chunk.GetNeighborsVertex(face, vox, neighbors);
 
+            // Calculate ambient light by summing up the number of occupied voxels around the vertex.
             foreach (Voxel v in neighbors)
             {
                 if (!chunks.ChunkData.ChunkMap.ContainsKey(v.Chunk.ID))
@@ -1087,6 +1154,11 @@ namespace DwarfCorp
         }
 
 
+        /// <summary>
+        /// Resets the sunlight of the voxels in the chunk without considering
+        /// chunk edges to the specified intensity.
+        /// </summary>
+        /// <param name="sunColor">Intensity of the sun.</param>
         public void ResetSunlightIgnoreEdges(byte sunColor)
         {
             for (int x = 1; x < SizeX - 1; x++)
@@ -1102,6 +1174,10 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Resets the sunlight of the voxels in the chunk to the specified intensity.
+        /// </summary>
+        /// <param name="sunColor">Color of the sun.</param>
         public void ResetSunlight(byte sunColor)
         {
             int numVoxels = sizeX*sizeY*sizeZ;
@@ -1111,6 +1187,12 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Gets the total height of water above the given voxel by summing up
+        /// all of the water levels for voxels above this one.
+        /// </summary>
+        /// <param name="voxRef">The vox reference.</param>
+        /// <returns>The sum of the water height above the current voxel.</returns>
         public float GetTotalWaterHeight(Voxel voxRef)
         {
             float tot = 0;
@@ -1130,25 +1212,21 @@ namespace DwarfCorp
             return tot;
         }
 
+        /// <summary>
+        /// Gets the total water height in voxels above the current voxel.
+        /// </summary>
+        /// <param name="voxRef">The vox reference.</param>
+        /// <returns>The total height of the water in voxels at and above this one.</returns>
         public float GetTotalWaterHeightCells(Voxel voxRef)
         {
-            float tot = 0;
-            var x = (int) voxRef.GridPosition.X;
-            var z = (int) voxRef.GridPosition.Z;
-            for (var y = (int) voxRef.GridPosition.Y; y < SizeY; y++)
-            {
-                int index = Data.IndexAt(x, y, z);
-                tot += (Data.Water[index].WaterLevel)/8.0f;
-
-                if (Data.Water[index].WaterLevel == 0 && y > (int) voxRef.GridPosition.Y)
-                {
-                    return tot;
-                }
-            }
-
-            return tot;
+            return GetTotalWaterHeight(voxRef)/8.0f;
         }
 
+        /// <summary>
+        /// Calculates the sunlight for all cells in the chunk by casting
+        /// rays of sunlight downward from the sky.
+        /// </summary>
+        /// <param name="sunColor">Intensity of the sun.</param>
         public void UpdateSunlight(byte sunColor)
         {
             LightingCalculated = false;
@@ -1161,21 +1239,19 @@ namespace DwarfCorp
             ResetSunlight(0);
             Voxel reference = MakeVoxel(0, 0, 0);
 
+            // For each voxel in the XZ plane.
             for (int x = 0; x < SizeX; x++)
             {
                 for (int z = 0; z < SizeZ; z++)
                 {
-                    bool rayHit = false;
+                    // Cast a ray down from the top of the chunk.
                     for (int y = SizeY - 1; y >= 0; y--)
                     {
-                        if (rayHit)
-                        {
-                            break;
-                        }
                         reference.GridPosition = new Vector3(x, y, z);
                         int index = Data.IndexAt(x, y, z);
                         if (Data.Types[index] == 0)
                         {
+                            // Fill empty voxels with sunlight.
                             Data.SunColors[index] = sunColor;
                             continue;
                         }
@@ -1185,19 +1261,25 @@ namespace DwarfCorp
                             continue;
                         }
 
+                        // If we hit a voxel, set its color and break.
                         Data.SunColors[reference.Index] = sunColor;
-                        rayHit = true;
+                        break;
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// Gets the shared vertices between a voxel and all its neighbors that touch a given vertex of that voxel.
+        /// </summary>
+        /// <param name="v">The voxel.</param>
+        /// <param name="vertex">The vertex to check.</param>
+        /// <param name="vertices">A list containing the voxels and for each filled voxel a list of vertices that touch the given vertex.</param>
+        /// <param name="neighbors">The neighbors of the voxel vertex (pre-allocated outside the function)</param>
         public void GetSharedVertices(Voxel v, VoxelVertex vertex, List<KeyValuePair<Voxel, List<VoxelVertex>>> vertices,
             List<Voxel> neighbors)
         {
             vertices.Clear();
-
-
             GetNeighborsVertex(vertex, v, neighbors);
 
             Vector3 myDelta = vertexDeltas[(int) vertex];
@@ -1217,12 +1299,18 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Calculates the vertex lighting for all voxels in the chunk.
+        /// </summary>
         public void CalculateVertexLighting()
         {
             var neighbors = new List<Voxel>();
             var colorInfo = new VertexColorInfo();
             bool ambientOcclusion = GameSettings.Default.AmbientOcclusion;
             Voxel voxel = MakeVoxel(0, 0, 0);
+            // Store a set of all vertex indexes that have been updated already.
+            // Only update each vertex once. This is important because each vertex 
+            // must have a consistent color.
             var indexesToUpdate = new HashSet<int>();
 
             for (int x = 0; x < SizeX; x++)
@@ -1247,14 +1335,12 @@ namespace DwarfCorp
                                 for (int i = 0; i < 8; i++)
                                 {
                                     int vertIndex = Data.VertIndex(x, y, z, (VoxelVertex) i);
-                                    if (!indexesToUpdate.Contains(vertIndex))
-                                    {
-                                        indexesToUpdate.Add(Data.VertIndex(x, y, z, (VoxelVertex) i));
-                                        CalculateVertexLight(voxel, (VoxelVertex) i, Manager, neighbors, ref colorInfo);
-                                        if (type.EmitsLight) colorInfo.DynamicColor = 255;
-                                        Data.SetColor(x, y, z, (VoxelVertex) i,
-                                            new Color(colorInfo.SunColor, colorInfo.AmbientColor, colorInfo.DynamicColor));
-                                    }
+                                    if (indexesToUpdate.Contains(vertIndex)) continue;
+                                    indexesToUpdate.Add(Data.VertIndex(x, y, z, (VoxelVertex) i));
+                                    CalculateVertexLight(voxel, (VoxelVertex) i, Manager, neighbors, ref colorInfo);
+                                    if (type.EmitsLight) colorInfo.DynamicColor = 255;
+                                    Data.SetColor(x, y, z, (VoxelVertex) i,
+                                        new Color(colorInfo.SunColor, colorInfo.AmbientColor, colorInfo.DynamicColor));
                                 }
                             }
                             else
@@ -1282,11 +1368,9 @@ namespace DwarfCorp
                             for (int i = 0; i < 8; i++)
                             {
                                 int vertIndex = Data.VertIndex(x, y, z, (VoxelVertex) i);
-                                if (!indexesToUpdate.Contains(vertIndex))
-                                {
-                                    indexesToUpdate.Add(vertIndex);
-                                    Data.SetColor(x, y, z, (VoxelVertex) i, new Color(0, m_fogOfWar, 0));
-                                }
+                                if (indexesToUpdate.Contains(vertIndex)) continue;
+                                indexesToUpdate.Add(vertIndex);
+                                Data.SetColor(x, y, z, (VoxelVertex) i, new Color(0, m_fogOfWar, 0));
                             }
                         }
                     }
@@ -1296,6 +1380,10 @@ namespace DwarfCorp
             LightingCalculated = true;
         }
 
+
+        /// <summary>
+        /// Calculates thhe sunlight.
+        /// </summary>
         public void CalculateGlobalLight()
         {
             if (GameSettings.Default.CalculateSunlight)
@@ -1312,9 +1400,16 @@ namespace DwarfCorp
 
         #region visibility
 
+        /// <summary>
+        /// Gets the height of the first filled voxel beneath the specified coordinates.
+        /// </summary>
+        /// <param name="x">The x coordinate.</param>
+        /// <param name="y">The y coordinate</param>
+        /// <param name="z">The z coordinate</param>
+        /// <returns>The height of the first filled voxel beneath this one if it exists, or -1 otherwise.</returns>
         public int GetFilledVoxelGridHeightAt(int x, int y, int z)
         {
-            int invalid = -1;
+            const int invalid = -1;
 
             if (!IsCellValid(x, y, z))
             {
@@ -1331,6 +1426,14 @@ namespace DwarfCorp
             return invalid;
         }
 
+
+        /// <summary>
+        /// Gets the height of the first filled voxel beneath the specified coordinates, considering any cell with water "filled".
+        /// </summary>
+        /// <param name="x">The x coordinate.</param>
+        /// <param name="y">The y coordinate</param>
+        /// <param name="z">The z coordinate</param>
+        /// <returns>The height of the first filled voxel beneath this one if it exists, or -1 otherwise.</returns>
         public int GetFilledHeightOrWaterAt(int x, int y, int z)
         {
             if (!IsCellValid(x, y, z))
@@ -1348,6 +1451,10 @@ namespace DwarfCorp
             return -1;
         }
 
+        /// <summary>
+        /// Returns whether or not this chunk was affected by the chunk slice changing.
+        /// </summary>
+        /// <returns>True if any filled voxel exists above the viewing slice. False otherwise.</returns>
         public bool NeedsViewingLevelChange()
         {
             float level = Manager.ChunkData.MaxViewingLevel;
@@ -1394,104 +1501,42 @@ namespace DwarfCorp
 
         #region neighbors
 
-        //-------------------------
+        /// <summary>
+        /// Gets a list of neighboring voxels of a vertex.
+        /// </summary>
+        /// <param name="vertex">The vertex of a voxel.</param>
+        /// <param name="v">The voxel to check.</param>
+        /// <param name="toReturn">A list of voxels adjacent to that vertex.</param>
         public void GetNeighborsVertex(VoxelVertex vertex, Voxel v, List<Voxel> toReturn)
         {
             Vector3 grid = v.GridPosition;
             GetNeighborsVertex(vertex, (int) grid.X, (int) grid.Y, (int) grid.Z, toReturn);
         }
 
-
+        /// <summary>
+        /// Determines whether the specified x, y and z grid coordinate is inside
+        /// the chunk, or if it lies on the border.
+        /// </summary>
+        /// <param name="x">The x coordinate.</param>
+        /// <param name="y">The y coordinate</param>
+        /// <param name="z">The z coordinate</param>
+        /// <returns>
+        ///   <c>true</c> if the specified coordinate is not on the edge of the chunk; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsInterior(int x, int y, int z)
         {
             return (x != 0 && y != 0 && z != 0 && x != SizeX - 1 && y != SizeY - 1 && z != SizeZ - 1);
         }
 
-        /*
-        public void GetNeighborsSuccessors(List<Vector3> succ, int x, int y, int z, List<Voxel> toReturn, bool considerEmpties)
-        {
-            toReturn.Clear();
-
-            Vector3 successor = Vector3.Zero;
-            bool isInterior = IsInterior(x, y, z);
-            int count = succ.Count;
-            for(int i = 0; i < count; i++)
-            {
-                successor = succ[i];
-                int nx = (int) successor.X + x;
-                int ny = (int) successor.Y + y;
-                int nz = (int) successor.Z + z;
-
-                if(isInterior || IsCellValid(nx, ny, nz))
-                {
-                    Voxel v = MakeVoxel(nx, ny, nz);
-                    if(!v.IsEmpty)
-                    {
-                        toReturn.Add(v);
-                    }
-                    else if(considerEmpties)
-                    {
-                        toReturn.Add(null);
-                    }
-                }
-                else
-                {
-                    Point3 chunkID = ID;
-                    if(nx >= SizeZ)
-                    {
-                        chunkID.X += 1;
-                        nx = 0;
-                    }
-                    else if(nx < 0)
-                    {
-                        chunkID.X -= 1;
-                        nx = SizeX - 1;
-                    }
-
-                    if(ny >= SizeY)
-                    {
-                        chunkID.Y += 1;
-                        ny = 0;
-                    }
-                    else if(ny < 0)
-                    {
-                        chunkID.Y -= 1;
-                        ny = SizeY - 1;
-                    }
-
-                    if(nz >= SizeZ)
-                    {
-                        chunkID.Z += 1;
-                        nz = 0;
-                    }
-                    else if(nz < 0)
-                    {
-                        chunkID.Z -= 1;
-                        nz = SizeZ - 1;
-                    }
-
-
-                    if(!Manager.ChunkData.ChunkMap.ContainsKey(chunkID))
-                    {
-                        continue;
-                    }
-
-                    VoxelChunk chunk = Manager.ChunkData.ChunkMap[chunkID];
-                    Voxel n = chunk.MakeVoxel(nx, ny, nz);
-
-                    if(n != null)
-                    {
-                        toReturn.Add(n);
-                    }
-                    else if(considerEmpties)
-                    {
-                        toReturn.Add(null);
-                    }
-                }
-            }
-        }
-        */
-
+        /// <summary>
+        /// Computes a binary hash of the voxel at [x, y, z] telling us which transition texture
+        /// to use for the top of the voxel.
+        /// </summary>
+        /// <param name="x">The x coordinate of the voxel.</param>
+        /// <param name="y">The y coordinate of the voxel.</param>
+        /// <param name="z">The z coordinate of the voxel.</param>
+        /// <param name="neighbors">The neighbors of the voxel (preallocated)</param>
+        /// <returns>A transition texture for the top of the voxel.</returns>
         public TransitionTexture ComputeTransitionValue(int x, int y, int z, Voxel[] neighbors)
         {
             VoxelType type = VoxelLibrary.GetVoxelType(Data.Types[Data.IndexAt(x, y, z)]);
@@ -1509,6 +1554,13 @@ namespace DwarfCorp
             return toReturn;
         }
 
+        /// <summary>
+        /// Gets the neighbors of a voxel that touch its x or z faces.
+        /// </summary>
+        /// <param name="neighbors">The neighbors of the voxel (preallocated). Fills with null if no neighbor exists.</param>
+        /// <param name="x">The x coordinate of the voxel.</param>
+        /// <param name="y">The y coordinate of the voxel</param>
+        /// <param name="z">The z coordinate of the voxel.</param>
         public void Get2DManhattanNeighbors(Voxel[] neighbors, int x, int y, int z)
         {
             List<Vector3> succ = Manhattan2DSuccessors;
@@ -1590,6 +1642,14 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Gets the neighbors of a voxel given an arbitrary successors list.
+        /// </summary>
+        /// <param name="succ">The successors of a voxel (as incremental directions)</param>
+        /// <param name="x">The x coordinate of the voxel.</param>
+        /// <param name="y">The y coordinate of the voxel.</param>
+        /// <param name="z">The z coordinate of the voxel.</param>
+        /// <param name="toReturn">A list of voxels adjacent to the given voxel given the successor list.</param>
         public void GetNeighborsSuccessors(List<Vector3> succ, int x, int y, int z, List<Voxel> toReturn)
         {
             if (succ.Count != toReturn.Count)
@@ -1664,22 +1724,49 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Gets the neighbors of a vertex.
+        /// </summary>
+        /// <param name="vertex">The vertex to get neighbors of.</param>
+        /// <param name="x">The x coordinate of the voxel.</param>
+        /// <param name="y">The y coordinate of the voxel.</param>
+        /// <param name="z">The z coordinate of the voxel.</param>
+        /// <param name="toReturn">List of voxels adjacent to the vertex of the voxel.</param>
         public void GetNeighborsVertex(VoxelVertex vertex, int x, int y, int z, List<Voxel> toReturn)
         {
             GetNeighborsSuccessors(VertexSuccessors[vertex], x, y, z, toReturn);
         }
 
+        /// <summary>
+        /// Gets the neighbors a vertex that also share its Y coordinate.
+        /// </summary>
+        /// <param name="vertex">The vertex to get neighbors of.</param>
+        /// <param name="x">The x coordinate of the voxel.</param>
+        /// <param name="y">The y coordinate of the voxel.</param>
+        /// <param name="z">The z coordinate of the voxel.</param>
+        /// <param name="toReturn">List of voxels adjacent to the vertex of the voxel..</param>
         public void GetNeighborsVertexDiag(VoxelVertex vertex, int x, int y, int z, List<Voxel> toReturn)
         {
             GetNeighborsSuccessors(VertexSuccessorsDiag[vertex], x, y, z, toReturn);
         }
 
+        /// <summary>
+        /// Gets the 26 neighbors that touch the given voxel.
+        /// </summary>
+        /// <param name="v">The voxel to get neighbors of.</param>
+        /// <returns>All the neighbors that touch this voxel.</returns>
         public List<Voxel> GetNeighborsEuclidean(Voxel v)
         {
             Vector3 gridCoord = v.GridPosition;
             return GetNeighborsEuclidean((int) gridCoord.X, (int) gridCoord.Y, (int) gridCoord.Z);
         }
-
+        /// <summary>
+        /// Gets the 26 neighbors that touch the given voxel.
+        /// </summary>
+        /// <param name="x">The x coordinate of the voxel.</param>
+        /// <param name="y">The y coordinate of the voxel.</param>
+        /// <param name="z">The z coordinate of the voxel.</param>
+        /// <returns>All the neighbors that touch this voxel.</returns>
         public List<Voxel> GetNeighborsEuclidean(int x, int y, int z)
         {
             var toReturn = new List<Voxel>();
@@ -1717,6 +1804,11 @@ namespace DwarfCorp
             return toReturn;
         }
 
+        /// <summary>
+        /// Creates a fixed number of voxels.
+        /// </summary>
+        /// <param name="num">The number of voxels to create.</param>
+        /// <returns>A list containing a number of voxels assigned to this chunk.</returns>
         public List<Voxel> AllocateVoxels(int num)
         {
             var toReturn = new List<Voxel>();
@@ -1728,11 +1820,23 @@ namespace DwarfCorp
             return toReturn;
         }
 
+        /// <summary>
+        /// Gets the 6 neighbors that touch the faces of this voxel.
+        /// </summary>
+        /// <param name="x">The x coordinate of the voxel..</param>
+        /// <param name="y">The y coordinate of hte voxel.</param>
+        /// <param name="z">The z coordinate of the voxel</param>
+        /// <param name="neighbors">The neighbors.</param>
         public void GetNeighborsManhattan(int x, int y, int z, List<Voxel> neighbors)
         {
             GetNeighborsSuccessors(ManhattanSuccessors, x, y, z, neighbors);
         }
 
+        /// <summary>
+        /// Notify the chunk that it should completely rebuild its vertex buffer,
+        /// liquid primitives, ramps, and other properties.
+        /// </summary>
+        /// <param name="neighbors">if set to <c>true</c> also rebuild the neighboring chunks.</param>
         public void NotifyTotalRebuild(bool neighbors)
         {
             ShouldRebuild = true;
@@ -1740,22 +1844,22 @@ namespace DwarfCorp
             ShouldRebuildWater = true;
             ReconstructRamps = true;
 
-            if (neighbors)
+            if (!neighbors) return;
+            foreach (VoxelChunk chunk in Neighbors.Values)
             {
-                foreach (VoxelChunk chunk in Neighbors.Values)
-                {
-                    chunk.ShouldRebuild = true;
-                    chunk.ShouldRecalculateLighting = true;
-                    chunk.ShouldRebuildWater = true;
-                }
+                chunk.ShouldRebuild = true;
+                chunk.ShouldRecalculateLighting = true;
+                chunk.ShouldRebuildWater = true;
             }
         }
 
-        private bool IsEmpty(Voxel v)
-        {
-            return v == null || v.IsEmpty;
-        }
-
+        /// <summary>
+        /// Determines whether the given voxel has no filled neighbors.
+        /// </summary>
+        /// <param name="v">The voxel to check.</param>
+        /// <returns>
+        ///   <c>true</c> if the voxel has no filled neighbors; otherwise, <c>false</c>.
+        /// </returns>
         public bool HasNoNeighbors(Voxel v)
         {
             Vector3 pos = v.Position;
@@ -1770,7 +1874,6 @@ namespace DwarfCorp
             var gridPoint = new Point3(gridPos);
 
             bool interior = Voxel.IsInteriorPoint(gridPoint, chunk);
-
 
             if (interior)
             {
@@ -1817,7 +1920,14 @@ namespace DwarfCorp
             return true;
         }
 
-
+        /// <summary>
+        /// Determines whether the specified voxel is completely surrounded by other filled voxels.
+        /// </summary>
+        /// <param name="v">The voxel to check</param>
+        /// <param name="ramps">if set to <c>true</c> consider any ramping voxel to be "empty". This is for lighting calculations.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified voxel is completely surrounded; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsCompletelySurrounded(Voxel v, bool ramps)
         {
             if (!Manager.ChunkData.ChunkMap.ContainsKey(v.ChunkID))
@@ -1862,17 +1972,31 @@ namespace DwarfCorp
             return true;
         }
 
+        /// <summary>
+        /// Determines whether the specified voxel is completely surrounded by other filled voxels.
+        /// </summary>
+        /// <param name="v">The voxel.</param>
+        /// <returns>
+        ///   <c>true</c> if the voxel is completely surrounded; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsCompletelySurrounded(Voxel v)
         {
             return IsCompletelySurrounded(v, false);
         }
 
+        /// <summary>
+        /// Gets the 6 neighbors that are coincident to the voxel's faces.
+        /// </summary>
+        /// <param name="v">The voxel to check.</param>
+        /// <param name="toReturn">A list of voxels touching the voxel's faces.</param>
         public void GetNeighborsManhattan(Voxel v, List<Voxel> toReturn)
         {
             GetNeighborsManhattan((int) v.GridPosition.X, (int) v.GridPosition.Y, (int) v.GridPosition.Z, toReturn);
         }
 
-
+        /// <summary>
+        /// Resets the state of water cells in the chunk.
+        /// </summary>
         public void ResetWaterBuffer()
         {
             int numVoxels = sizeX*sizeY*sizeZ;
@@ -1884,13 +2008,21 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Gets the world coordinates of a specified chunk-relative grid coordinate.
+        /// </summary>
+        /// <param name="gridCoord">The grid coordinate relative to the chunk.</param>
+        /// <returns>A world-relative coordinate.</returns>
         public Vector3 GridToWorld(Vector3 gridCoord)
         {
             return gridCoord + Origin;
         }
 
-        //-------------------------
-
+        /// <summary>
+        /// Gets the voxels intersecting the given bounding box.
+        /// </summary>
+        /// <param name="box">The box to test.</param>
+        /// <returns>A list of voxels intersecting that box.</returns>
         public List<Voxel> GetVoxelsIntersecting(BoundingBox box)
         {
             if (!GetBoundingBox().Intersects(box) && GetBoundingBox().Contains(box) != ContainmentType.Disjoint)
@@ -1917,6 +2049,9 @@ namespace DwarfCorp
 
         #endregion neighbors
 
+        /// <summary>
+        /// Colors are lookups into a ramp (0-255) for ambient light, dynamic light and sunlight.
+        /// </summary>
         public struct VertexColorInfo
         {
             public int AmbientColor;
@@ -1924,29 +2059,86 @@ namespace DwarfCorp
             public int SunColor;
         }
 
+        /// <summary>
+        /// VoxelData contains the raw data associated with the VoxelChunk
+        /// </summary>
         public class VoxelData
         {
+            /// <summary>
+            /// The health of each voxel (0-255)
+            /// </summary>
             public byte[] Health;
+            /// <summary>
+            /// Whether or not each voxel is explored or is obscured by fog of war.
+            /// </summary>
             public bool[] IsExplored;
+            /// <summary>
+            /// The state of ramps of each voxel (all, forward, backward, etc.)
+            /// </summary>
             public RampType[] RampTypes;
+            /// <summary>
+            /// The number of voxels in X.
+            /// </summary>
             public int SizeX;
+            /// <summary>
+            /// The number of voxels in Y.
+            /// </summary>
             public int SizeY;
+            /// <summary>
+            /// The number of voxels in Z.
+            /// </summary>
             public int SizeZ;
+            /// <summary>
+            /// The intensity of sunlight at each voxel.
+            /// </summary>
             public byte[] SunColors;
+            /// <summary>
+            /// The type index of each voxel.
+            /// </summary>
             public byte[] Types;
+            /// <summary>
+            /// For each vertex of each voxel, a color (sunlight, ambient, dynamic)
+            /// </summary>
             public Color[] VertexColors;
+            /// <summary>
+            /// The water at each voxel.
+            /// </summary>
             public WaterCell[] Water;
 
+            /// <summary>
+            /// Sets the color of a vertex of a specified voxel to a color.
+            /// </summary>
+            /// <param name="x">The x coord of the voxel.</param>
+            /// <param name="y">The y coord of the voxel.</param>
+            /// <param name="z">The z coord of the voxel.</param>
+            /// <param name="v">The vertex.</param>
+            /// <param name="color">The color to set the vertex to.</param>
             public void SetColor(int x, int y, int z, VoxelVertex v, Color color)
             {
                 VertexColors[VertIndex(x, y, z, v)] = color;
             }
 
+            /// <summary>
+            /// Gets the color of the specified voxel vertex.
+            /// </summary>
+            /// <param name="x">The x coordinate of the voxel.</param>
+            /// <param name="y">The y coordinate of the voxel.</param>
+            /// <param name="z">The z coordinate of the voxel.</param>
+            /// <param name="v">The vertex.</param>
+            /// <returns>The color at that vertex.</returns>
             public Color GetColor(int x, int y, int z, VoxelVertex v)
             {
                 return VertexColors[VertIndex(x, y, z, v)];
             }
 
+            /// <summary>
+            /// Gets the linear index of the voxel vertex.
+            /// </summary>
+            /// <param name="x">The x coordinate of the voxel.</param>
+            /// <param name="y">The y coordinate of the voxel.</param>
+            /// <param name="z">The z coordinate of the voxel.</param>
+            /// <param name="v">The vertex.</param>
+            /// <returns>A linear coordinate of the verex.</returns>
             public int VertIndex(int x, int y, int z, VoxelVertex v)
             {
                 int cornerX = x;
@@ -2006,16 +2198,37 @@ namespace DwarfCorp
                 return CornerIndexAt(cornerX, cornerY, cornerZ);
             }
 
+            /// <summary>
+            /// Superimpose a sub-grid onto the voxel grid such that each vertex
+            /// is in the center of a grid cell. This returns the linear coordinate 
+            /// of the x, y, z coordinate of that grid cell.
+            /// </summary>
+            /// <param name="x">The x coordinate of the vertex.</param>
+            /// <param name="y">The y coordinate of the vertex.</param>
+            /// <param name="z">The z coordinate of the vertex.</param>
+            /// <returns>The linear index of the vertex at that coordinate.</returns>
             public int CornerIndexAt(int x, int y, int z)
             {
                 return (z*(SizeY + 1) + y)*(SizeX + 1) + x;
             }
 
+            /// <summary>
+            /// Gets the linear index of a voxel at the specified coordinate.
+            /// </summary>
+            /// <param name="x">The x coordinate of the voxel.</param>
+            /// <param name="y">The y coordinate of the voxel.</param>
+            /// <param name="z">The z coordinate of the voxel.</param>
+            /// <returns>A linear index of the voxel at that coordinate.</returns>
             public int IndexAt(int x, int y, int z)
             {
                 return (z*SizeY + y)*SizeX + x;
             }
 
+            /// <summary>
+            /// Inverse of IndexAt
+            /// </summary>
+            /// <param name="idx">The linear index.</param>
+            /// <returns>A grid position of the voxel at the given index.</returns>
             public Vector3 CoordsAt(int idx)
             {
                 int x = idx%(SizeX);

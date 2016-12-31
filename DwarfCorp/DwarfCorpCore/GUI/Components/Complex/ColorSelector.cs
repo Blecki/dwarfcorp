@@ -37,6 +37,10 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// This is a widget allowing us to select a color from a list of colors.
+    /// </summary>
+    /// <seealso cref="GUIComponent" />
     public class ColorSelector : GUIComponent
     {
         public delegate void ColorSelected(Color arg);

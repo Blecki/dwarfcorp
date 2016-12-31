@@ -36,6 +36,10 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// A class allowing us to select colors.
+    /// </summary>
+    /// <seealso cref="Dialog" />
     public class ColorDialog : Dialog
     {
         public delegate void ColorSelected(Color arg);

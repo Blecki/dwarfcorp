@@ -39,6 +39,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// This is a legend for a map which maps names to colors on the map.
+    /// </summary>
+    /// <seealso cref="GUIComponent" />
     public class ColorKey : GUIComponent
     {
         public ColorKey(DwarfGUI gui, GUIComponent parent)

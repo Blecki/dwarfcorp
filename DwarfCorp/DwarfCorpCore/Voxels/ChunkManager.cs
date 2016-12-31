@@ -51,6 +51,9 @@ namespace DwarfCorp
     /// </summary>
     public class ChunkManager
     {
+        /// <summary>
+        /// Directions that the user can slice in.
+        /// </summary>
         public enum SliceMode
         {
             X,
@@ -58,19 +61,64 @@ namespace DwarfCorp
             Z
         }
 
+        /// <summary>
+        /// Called every time we want to update the flow of water/lava.
+        /// </summary>
         private static readonly AutoResetEvent WaterUpdateEvent = new AutoResetEvent(true);
+        /// <summary>
+        /// Called every time we want to generate new chunks.
+        /// </summary>
         private static readonly AutoResetEvent NeedsGenerationEvent = new AutoResetEvent(false);
+        /// <summary>
+        /// Called every time we want to rebuild chunk vertex buffers.
+        /// </summary>
         private static readonly AutoResetEvent NeedsRebuildEvent = new AutoResetEvent(false);
+        /// <summary>
+        /// Called every time we want to rebuild liquid vertex buffers.
+        /// </summary>
         private static readonly AutoResetEvent NeedsLiquidEvent = new AutoResetEvent(false);
+        /// <summary>
+        /// The camera
+        /// </summary>
         private readonly Camera camera;
+        /// <summary>
+        /// The chunk data (holds the actual data for chunks).
+        /// </summary>
         private readonly ChunkData chunkData;
+        /// <summary>
+        /// Timer which when triggered causes new chunks to be generated.
+        /// </summary>
         private readonly Timer generateChunksTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
+        /// <summary>
+        /// Timer which when triggered frustum culls voxel chunks.
+        /// </summary>
         private readonly Timer visibilityChunksTimer = new Timer(0.03f, false, Timer.TimerMode.Real);
+        /// <summary>
+        /// The set of all Voxel Chunks to draw this frame.
+        /// </summary>
         private readonly HashSet<VoxelChunk> visibleSet = new HashSet<VoxelChunk>();
+        /// <summary>
+        /// Every time this triggers, water/lava gets updated.
+        /// </summary>
         private readonly Timer waterUpdateTimer = new Timer(0.1f, false, Timer.TimerMode.Real);
-        public List<VoxelChunk> RebuildTest = new List<VoxelChunk>();
+        /// <summary>
+        /// The square of the maximum draw distance in voxels.
+        /// </summary>
         protected float drawDistSq = 0;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ChunkManager"/> class.
+        /// </summary>
+        /// <param name="content">The content manager.</param>
+        /// <param name="chunkSizeX">The number of voxels in a chunk in the X direction.</param>
+        /// <param name="chunkSizeY">The number of voxels in a chunk in the Y direction.</param>
+        /// <param name="chunkSizeZ">The number of voxels in a chunk in the Z direction.</param>
+        /// <param name="camera">The camera.</param>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="chunkGen">The chunk generator.</param>
+        /// <param name="maxChunksX">The maximum number of chunks in x.</param>
+        /// <param name="maxChunksY">The maximum number of chunks in y.</param>
+        /// <param name="maxChunksZ">The maximum number of chunks in z.</param>
         public ChunkManager(ContentManager content,
             uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ,
             Camera camera, GraphicsDevice graphics,
@@ -131,26 +179,103 @@ namespace DwarfCorp
             Bounds = new BoundingBox(minBounds, maxBounds);
         }
 
+        /// <summary>
+        /// The current list of chunks to render.
+        /// </summary>
+        /// <value>
+        /// The render list.
+        /// </value>
         public ConcurrentQueue<VoxelChunk> RenderList { get; set; }
+        /// <summary>
+        /// The current list of chunks whose vertex buffers are to be rebuilt.
+        /// </summary>
+        /// <value>
+        /// The rebuild list.
+        /// </value>
         public ConcurrentQueue<VoxelChunk> RebuildList { get; set; }
+        /// <summary>
+        /// The current list of chunks whose liquid (water/lava) vertex buffers are to be rebuilt.
+        /// </summary>
+        /// <value>
+        /// The rebuild liquids list.
+        /// </value>
         public ConcurrentQueue<VoxelChunk> RebuildLiquidsList { get; set; }
 
+        /// <summary>
+        /// Gets or sets the size of the world in chunks.
+        /// </summary>
+        /// <value>
+        /// The size of the world in chunks.
+        /// </value>
         public Point3 WorldSize { get; set; }
 
+        /// <summary>
+        /// Gets or sets the chunk generator.
+        /// </summary>
+        /// <value>
+        /// The chunk generator.
+        /// </value>
         public ChunkGenerator ChunkGen { get; set; }
+        /// <summary>
+        /// List of chunks that were newly generated.
+        /// </summary>
+        /// <value>
+        /// The generated chunks.
+        /// </value>
         public ConcurrentQueue<VoxelChunk> GeneratedChunks { get; set; }
+        /// <summary>
+        /// List of new chunk IDs to generate.
+        /// </summary>
+        /// <value>
+        /// To generate.
+        /// </value>
         public List<Point3> ToGenerate { get; set; }
 
+        /// <summary>
+        /// Thread responsible for generating new chunks.
+        /// </summary>
+        /// <value>
+        /// The generator thread.
+        /// </value>
         private Thread GeneratorThread { get; set; }
 
+        /// <summary>
+        /// Thread responsible for rebuilding chunks' vertex buffers.
+        /// </summary>
+        /// <value>
+        /// The rebuild thread.
+        /// </value>
         private Thread RebuildThread { get; set; }
+        /// <summary>
+        /// Thread responsible for rebuildling chunks' liquid (water/lava) vertex buffers.
+        /// </summary>
+        /// <value>
+        /// The rebuild liquid thread.
+        /// </value>
         private Thread RebuildLiquidThread { get; set; }
 
-
+        /// <summary>
+        /// Thread for updating the flow of water.
+        /// </summary>
+        /// <value>
+        /// The water thread.
+        /// </value>
         private Thread WaterThread { get; set; }
 
+        /// <summary>
+        /// The bounding box of the whole world.
+        /// </summary>
+        /// <value>
+        /// The bounds.
+        /// </value>
         public BoundingBox Bounds { get; set; }
 
+        /// <summary>
+        /// Gets or sets the draw distance in voxels. Chunks are not drawn beyond this distance.
+        /// </summary>
+        /// <value>
+        /// The draw distance.
+        /// </value>
         public float DrawDistance
         {
             get { return GameSettings.Default.ChunkDrawDistance; }
@@ -161,6 +286,12 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Gets or sets the draw distance squared.
+        /// </summary>
+        /// <value>
+        /// The draw distance squared.
+        /// </value>
         public float DrawDistanceSquared
         {
             get { return drawDistSq; }
@@ -171,43 +302,111 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Chunks are deleted from memory if they are further than this amount from the camera.
+        /// </summary>
+        /// <value>
+        /// The remove distance.
+        /// </value>
         public float RemoveDistance
         {
             get { return GameSettings.Default.ChunkUnloadDistance; }
             set { GameSettings.Default.ChunkDrawDistance = value; }
         }
 
+        /// <summary>
+        /// New chunks are generated within this distance to the camera.
+        /// </summary>
+        /// <value>
+        /// The generate distance.
+        /// </value>
         public float GenerateDistance
         {
             get { return GameSettings.Default.ChunkGenerateDistance; }
             set { GameSettings.Default.ChunkDrawDistance = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the graphics device.
+        /// </summary>
+        /// <value>
+        /// The graphics.
+        /// </value>
         public GraphicsDevice Graphics { get; set; }
 
+        /// <summary>
+        /// If this value is true, the generation/update threads are paused.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [pause threads]; otherwise, <c>false</c>.
+        /// </value>
         public bool PauseThreads { get; set; }
 
-
+        /// <summary>
+        /// If this value is true, the generation/update threads are destroyed.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [exit threads]; otherwise, <c>false</c>.
+        /// </value>
         public bool ExitThreads { get; set; }
 
+        /// <summary>
+        /// Gets the component manager.
+        /// </summary>
+        /// <value>
+        /// The components.
+        /// </value>
         public ComponentManager Components
         {
             get { return PlayState.ComponentManager; }
         }
 
+        /// <summary>
+        /// Gets or sets the content manager.
+        /// </summary>
+        /// <value>
+        /// The content.
+        /// </value>
         public ContentManager Content { get; set; }
 
+        /// <summary>
+        /// Gets or sets the water manager.
+        /// </summary>
+        /// <value>
+        /// The water.
+        /// </value>
         public WaterManager Water { get; set; }
 
+        /// <summary>
+        /// Gets or sets the dynamic lights.
+        /// </summary>
+        /// <value>
+        /// The dynamic lights.
+        /// </value>
         public List<DynamicLight> DynamicLights { get; set; }
 
+        /// <summary>
+        /// Gets the chunk data (containing the actual data inside chunks)
+        /// </summary>
+        /// <value>
+        /// The chunk data.
+        /// </value>
         public ChunkData ChunkData
         {
             get { return chunkData; }
         }
 
+        /// <summary>
+        /// Gets or sets the list of voxels destroyed during this frame.
+        /// </summary>
+        /// <value>
+        /// The killed voxels.
+        /// </value>
         public List<Voxel> KilledVoxels { get; set; }
 
+        /// <summary>
+        /// Starts the threads.
+        /// </summary>
         public void StartThreads()
         {
             GeneratorThread.Start();
@@ -216,6 +415,9 @@ namespace DwarfCorp
             RebuildLiquidThread.Start();
         }
 
+        /// <summary>
+        /// Updates the water thread.
+        /// </summary>
         public void UpdateWaterThread()
         {
             EventWaitHandle[] waitHandles =
@@ -230,8 +432,10 @@ namespace DwarfCorp
             {
                 while (!DwarfGame.ExitGame && !ExitThreads)
                 {
+                    // Wait until we've been told to update.
                     EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
 
+                    // Wait for a program shutdown...
                     if (wh == Program.ShutdownEvent)
                     {
                         break;
@@ -251,6 +455,9 @@ namespace DwarfCorp
 #endif
         }
 
+        /// <summary>
+        /// Thread that rebuilds liquid vertex buffers.
+        /// </summary>
         public void RebuildLiquidsThread()
         {
             EventWaitHandle[] waitHandles =
@@ -266,6 +473,7 @@ namespace DwarfCorp
                 bool shouldExit = false;
                 while (!shouldExit && !DwarfGame.ExitGame && !ExitThreads)
                 {
+                    // Wait until we get an update event.
                     EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
 
                     if (wh == Program.ShutdownEvent)
@@ -276,14 +484,11 @@ namespace DwarfCorp
                     while (!PauseThreads && RebuildLiquidsList.Count > 0)
                     {
                         VoxelChunk chunk = null;
-
-                        //LiquidLock.WaitOne();
+                        // Get the next chunk to rebuild.
                         if (!RebuildLiquidsList.TryDequeue(out chunk))
                         {
-                            //LiquidLock.ReleaseMutex();
                             break;
                         }
-                        //LiquidLock.ReleaseMutex();
 
                         if (chunk == null)
                         {
@@ -313,7 +518,9 @@ namespace DwarfCorp
 #endif
         }
 
-
+        /// <summary>
+        /// Thread that rebuilds the voxel vertex buffers.
+        /// </summary>
         public void RebuildVoxelsThread()
         {
             EventWaitHandle[] waitHandles =
@@ -328,8 +535,10 @@ namespace DwarfCorp
             {
                 while (!DwarfGame.ExitGame && !ExitThreads)
                 {
+                    // Wait until we've been told to rebuild the voxels primities.
                     EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
 
+                    // If shutting down, break.
                     if (wh == Program.ShutdownEvent)
                     {
                         break;
@@ -339,7 +548,7 @@ namespace DwarfCorp
                         {
                             continue;
                         }
-
+                        // Create a dictionary from chunk type to whether or not it should be rebuilt.
                         var toRebuild = new Dictionary<Point3, VoxelChunk>();
                         bool calculateRamps = GameSettings.Default.CalculateRamps;
                         lock (RebuildList)
@@ -367,6 +576,7 @@ namespace DwarfCorp
                             }
                         }
 
+                        // First, calculate new ramp states for all voxels.
                         if (calculateRamps)
                         {
                             foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
@@ -376,6 +586,7 @@ namespace DwarfCorp
                         }
 
 
+                        // Then, calculate the sunlight values.
                         foreach (
                             VoxelChunk chunk in
                                 toRebuild.Select(chunkPair => chunkPair.Value)
@@ -384,14 +595,17 @@ namespace DwarfCorp
                             chunk.CalculateGlobalLight();
                         }
 
+                        // Now, for each voxel chunk, try to rebuild its vertex buffer.
                         foreach (VoxelChunk chunk in toRebuild.Select(chunkPair => chunkPair.Value))
                         {
                             if (chunk.RebuildPending && chunk.ShouldRebuild)
                             {
+                                // Calculate light for each vertex.
                                 if (chunk.ShouldRecalculateLighting)
                                 {
                                     chunk.CalculateVertexLighting();
                                 }
+                                // Rebuild the chunk.
                                 chunk.Rebuild(Graphics);
                                 chunk.ShouldRebuild = false;
                                 chunk.RebuildPending = false;
@@ -414,6 +628,12 @@ namespace DwarfCorp
 #endif
         }
 
+        /// <summary>
+        /// Comparator that compares the distance to the camera of two chunks a and b.
+        /// </summary>
+        /// <param name="a">The first chunk</param>
+        /// <param name="b">The second chunk.</param>
+        /// <returns>Comparison between a and b's distance.</returns>
         public int CompareChunkDistance(VoxelChunk a, VoxelChunk b)
         {
             if (a == b || !a.IsVisible && !b.IsVisible)
@@ -444,9 +664,13 @@ namespace DwarfCorp
             return 1;
         }
 
-
+        /// <summary>
+        /// Updates a list of voxel chunks to render given a camera
+        /// </summary>
+        /// <param name="camera">The camera.</param>
         public void UpdateRenderList(Camera camera)
         {
+            // Remove everything from the current render list.
             while (RenderList.Count > 0)
             {
                 VoxelChunk result;
@@ -456,7 +680,7 @@ namespace DwarfCorp
                 }
             }
 
-
+            // Determine which chunks are visible to the camera.
             foreach (VoxelChunk chunk in visibleSet)
             {
                 BoundingBox box = chunk.GetBoundingBox();
@@ -473,11 +697,15 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Updates the list of chunks to rebuild.
+        /// </summary>
         public void UpdateRebuildList()
         {
             var toRebuild = new List<VoxelChunk>();
             var toRebuildLiquids = new List<VoxelChunk>();
-            RebuildTest = toRebuild;
+
+            // Construct a list of chunks to rebuild.
             foreach (VoxelChunk chunk in ChunkData.ChunkMap.Select(chunks => chunks.Value))
             {
                 if (chunk.ShouldRebuild && ! chunk.RebuildPending)
@@ -494,29 +722,26 @@ namespace DwarfCorp
             }
 
 
+            // Sort the rebuild list by distance to the camera (so that nearer chunks get updated first)
             if (toRebuild.Count > 0)
             {
                 toRebuild.Sort(CompareChunkDistance);
-                //RebuildLock.WaitOne();
                 foreach (VoxelChunk chunk in toRebuild)
                 {
                     RebuildList.Enqueue(chunk);
                 }
-                //RebuildLock.ReleaseMutex();
             }
 
+            // Do the same for chunks whose liquid vertex buffers need to be rebuilt as well.
             if (toRebuildLiquids.Count > 0)
             {
                 toRebuildLiquids.Sort(CompareChunkDistance);
 
-                //LiquidLock.WaitOne();
                 foreach (VoxelChunk chunk in toRebuildLiquids.Where(chunk => !RebuildLiquidsList.Contains(chunk)))
                 {
                     RebuildLiquidsList.Enqueue(chunk);
                 }
-                //LiquidLock.ReleaseMutex();
             }
-
 
             if (RebuildList.Count > 0)
             {
@@ -529,6 +754,11 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Determines whether or not the given bounding box intersects any existing chunk.
+        /// </summary>
+        /// <param name="box">The box.</param>
+        /// <returns>true if the box intersects the world, false otherwise.</returns>
         public bool BoundingBoxIntersectsWorld(BoundingBox box)
         {
             var chunksIntersecting = new HashSet<VoxelChunk>();
@@ -537,6 +767,9 @@ namespace DwarfCorp
             return chunksIntersecting.Count > 0 || GeneratedChunks.Any(chunk => chunk.GetBoundingBox().Intersects(box));
         }
 
+        /// <summary>
+        /// Thread that generates new chunks.
+        /// </summary>
         public void GenerateThread()
         {
             EventWaitHandle[] waitHandles =
@@ -551,14 +784,16 @@ namespace DwarfCorp
             {
                 while (!ExitThreads)
                 {
+                    // Wait for the periodic signal to generate new chunks.
                     EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
 
-                    //GeneratorLock.WaitOne();
-
+                    // If we are to generate chunks...
                     if (!PauseThreads && ToGenerate != null && ToGenerate.Count > 0)
                     {
+                        // Determine if the chunk already exists.
                         Point3 box = ToGenerate[0];
 
+                        // If it does not generate a new chunk there.
                         if (!ChunkData.ChunkMap.ContainsKey(box))
                         {
                             var worldPos = new Vector3(box.X*ChunkData.ChunkSizeX, box.Y*ChunkData.ChunkSizeY,
@@ -574,8 +809,6 @@ namespace DwarfCorp
                         ToGenerate.Remove(box);
                     }
 
-
-                    //GeneratorLock.ReleaseMutex();
                     if (wh == Program.ShutdownEvent)
                     {
                         break;
@@ -591,6 +824,12 @@ namespace DwarfCorp
         }
 
 
+        /// <summary>
+        /// Renders all of the chunks using the given shader.
+        /// </summary>
+        /// <param name="graphicsDevice">The graphics device.</param>
+        /// <param name="effect">The effect.</param>
+        /// <param name="tilemap">The tilemap.</param>
         public void SimpleRender(GraphicsDevice graphicsDevice, Effect effect, Texture2D tilemap)
         {
             effect.Parameters["xIllumination"].SetValue(ChunkData.IllumMap);
@@ -611,12 +850,24 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Gets a bounding box whih is the union of all chunk bounding boxes.
+        /// </summary>
         public BoundingBox GetVisibileBoundingBox()
         {
             List<BoundingBox> toAdd = ChunkData.ChunkMap.Select(chunk => chunk.Value.GetBoundingBox()).ToList();
             return MathFunctions.GetBoundingBox(toAdd);
         }
 
+        /// <summary>
+        /// Renders all the chunks which intersect the given camera's frustum.
+        /// </summary>
+        /// <param name="renderCamera">The camera to render from.</param>
+        /// <param name="gameTime">The game time.</param>
+        /// <param name="graphicsDevice">The graphics device.</param>
+        /// <param name="effect">The shader.</param>
+        /// <param name="worldMatrix">The world matrix.</param>
+        /// <param name="tilemap">The tilemap.</param>
         public void RenderAll(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Effect effect,
             Matrix worldMatrix, Texture2D tilemap)
         {
@@ -642,6 +893,14 @@ namespace DwarfCorp
             effect.Parameters["SelfIllumination"].SetValue(0);
         }
 
+        /// <summary>
+        /// Renders a shadow map for all the visible chunks.
+        /// </summary>
+        /// <param name="effect">The effect.</param>
+        /// <param name="graphicsDevice">The graphics device.</param>
+        /// <param name="shadowRenderer">The shadow renderer.</param>
+        /// <param name="worldMatrix">The world matrix.</param>
+        /// <param name="tilemap">The tilemap.</param>
         public void RenderShadowmap(Effect effect,
             GraphicsDevice graphicsDevice,
             ShadowRenderer shadowRenderer,
@@ -676,6 +935,14 @@ namespace DwarfCorp
             effect.Parameters["SelfIllumination"].SetValue(0);
         }
 
+        /// <summary>
+        /// Renders light maps for all the chunks.
+        /// </summary>
+        /// <param name="renderCamera">The render camera.</param>
+        /// <param name="gameTime">The game time.</param>
+        /// <param name="graphicsDevice">The graphics device.</param>
+        /// <param name="effect">The effect.</param>
+        /// <param name="worldMatrix">The world matrix.</param>
         public void RenderLightmaps(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice,
             Effect effect, Matrix worldMatrix)
         {
@@ -710,6 +977,14 @@ namespace DwarfCorp
             graphicsDevice.RasterizerState = origState;
         }
 
+        /// <summary>
+        /// Renders all the visible chunks.
+        /// </summary>
+        /// <param name="renderCamera">The render camera.</param>
+        /// <param name="gameTime">The game time.</param>
+        /// <param name="graphicsDevice">The graphics device.</param>
+        /// <param name="effect">The effect.</param>
+        /// <param name="worldMatrix">The world matrix.</param>
         public void Render(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Effect effect,
             Matrix worldMatrix)
         {
@@ -752,6 +1027,9 @@ namespace DwarfCorp
             effect.CurrentTechnique = effect.Techniques["Textured"];
         }
 
+        /// <summary>
+        /// Generate ore veins/clusters for all chunks. (TODO: Move this to chunk generator!)
+        /// </summary>
         public void GenerateOres()
         {
             foreach (VoxelType type in VoxelLibrary.GetTypes())
@@ -795,7 +1073,12 @@ namespace DwarfCorp
                 }
             }
         }
-
+         
+        /// <summary>
+        /// Generates a set of chunks to start the game with.
+        /// </summary>
+        /// <param name="origin">The origin of the world.</param>
+        /// <param name="message">The loading message.</param>
         public void GenerateInitialChunks(Point3 origin, ref string message)
         {
             float origBuildRadius = GenerateDistance;
@@ -861,6 +1144,9 @@ namespace DwarfCorp
             ChunkData.ChunkManager.CreateGraphics(ref message, ChunkData);
         }
 
+        /// <summary>
+        /// Recalculates the world's bounding box.
+        /// </summary>
         private void RecalculateBounds()
         {
             List<BoundingBox> boxes = ChunkData.ChunkMap.Select(chunkPair => chunkPair.Value.GetBoundingBox()).ToList();
@@ -868,6 +1154,11 @@ namespace DwarfCorp
         }
 
 
+        /// <summary>
+        /// Gets the chunks intersecting the given bounding box.
+        /// </summary>
+        /// <param name="box">The box.</param>
+        /// <param name="chunks">The chunks which intersect.</param>
         public void GetChunksIntersecting(BoundingBox box, HashSet<VoxelChunk> chunks)
         {
             chunks.Clear();
@@ -889,6 +1180,11 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Gets the chunks intersecting the given bounding frustum.
+        /// </summary>
+        /// <param name="frustum">The frustum.</param>
+        /// <param name="chunks">The chunks which intersect.</param>
         public void GetChunksIntersecting(BoundingFrustum frustum, HashSet<VoxelChunk> chunks)
         {
             chunks.Clear();
@@ -896,8 +1192,15 @@ namespace DwarfCorp
             GetChunksIntersecting(frustumBox, chunks);
 
             chunks.RemoveWhere(chunk => frustum.Contains(chunk.GetBoundingBox()) == ContainmentType.Disjoint);
+        
         }
 
+        /// <summary>
+        /// Updates the chunks.
+        /// </summary>
+        /// <param name="gameTime">The game time.</param>
+        /// <param name="camera">The camera.</param>
+        /// <param name="g">The g.</param>
         public void Update(DwarfTime gameTime, Camera camera, GraphicsDevice g)
         {
             UpdateRenderList(camera);
@@ -993,6 +1296,11 @@ namespace DwarfCorp
             KilledVoxels.Clear();
         }
 
+        /// <summary>
+        /// Gets the list of voxels intersecting the given bounding box.
+        /// </summary>
+        /// <param name="box">The bounding box.</param>
+        /// <returns>A list of voxels intersecting the given bounding box.</returns>
         public List<Voxel> GetVoxelsIntersecting(BoundingBox box)
         {
             var intersects = new HashSet<VoxelChunk>();
@@ -1008,6 +1316,11 @@ namespace DwarfCorp
             return toReturn;
         }
 
+        /// <summary>
+        /// Creates the vertex buffers for the initial chunks.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="chunkData">The chunk data.</param>
         public void CreateGraphics(ref string message, ChunkData chunkData)
         {
             message = "Creating Graphics";
@@ -1080,7 +1393,9 @@ namespace DwarfCorp
             message = "Cleaning Up.";
         }
 
-
+        /// <summary>
+        /// Updates the world's bounding box TODO(mklingen) doesn't this already exist!?
+        /// </summary>
         public void UpdateBounds()
         {
             List<BoundingBox> boundingBoxes =
@@ -1088,6 +1403,9 @@ namespace DwarfCorp
             Bounds = MathFunctions.GetBoundingBox(boundingBoxes);
         }
 
+        /// <summary>
+        /// Destroys this instance.
+        /// </summary>
         public void Destroy()
         {
             PauseThreads = true;
@@ -1099,6 +1417,13 @@ namespace DwarfCorp
             ChunkData.ChunkMap.Clear();
         }
 
+        /// <summary>
+        /// Gets all the voxels within a radius of the given voxel which match a criteria.
+        /// </summary>
+        /// <param name="seed">The seed voxel.</param>
+        /// <param name="radiusSquared">The radius squared of the search.</param>
+        /// <param name="searchEmpty">if set to <c>true</c> search only empty voxels, otherwise search filled ones..</param>
+        /// <returns>A list of voxels that can be reached from the seed matching the criteria.</returns>
         public List<Voxel> BreadthFirstSearch(Voxel seed, float radiusSquared, bool searchEmpty = true)
         {
             var queue = new Queue<Voxel>();

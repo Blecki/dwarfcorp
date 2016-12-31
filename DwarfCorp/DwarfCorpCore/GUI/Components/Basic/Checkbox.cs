@@ -57,15 +57,59 @@ namespace DwarfCorp
             OnCheckModified += CheckBox_OnCheckModified;
         }
 
+
+        /// <summary>
+        /// Gets or sets the text.
+        /// </summary>
+        /// <value>
+        /// The text drawn next to the check box.
+        /// </value>
         public string Text { get; set; }
+        /// <summary>
+        /// Gets or sets the color of the text.
+        /// </summary>
+        /// <value>
+        /// The color of the text drawn next to the check box.
+        /// </value>
         public Color TextColor { get; set; }
+        /// <summary>
+        /// Gets or sets the color of the stroke.
+        /// </summary>
+        /// <value>
+        /// The color of the stroke around the text.
+        /// </value>
         public Color StrokeColor { get; set; }
+        /// <summary>
+        /// Gets or sets the color of the text when hovered over.
+        /// </summary>
+        /// <value>
+        /// The color of the hover text.
+        /// </value>
         public Color HoverTextColor { get; set; }
+        /// <summary>
+        /// Gets or sets the text font.
+        /// </summary>
+        /// <value>
+        /// The text font.
+        /// </value>
         public SpriteFont TextFont { get; set; }
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="Checkbox"/> is checked.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if checked; otherwise, <c>false</c>.
+        /// </value>
         public bool Checked { get; set; }
 
+        /// <summary>
+        /// Occurs when the checkbox is modified.
+        /// </summary>
         public event CheckModified OnCheckModified;
 
+        /// <summary>
+        /// Called when the checkbox is modified.
+        /// </summary>
+        /// <param name="arg">if set to <c>true</c> the checkbox is toggled..</param>
         private void CheckBox_OnCheckModified(bool arg)
         {
         }

@@ -111,7 +111,7 @@ namespace DwarfCorp
             return extents;
         }
 
-        public static EventWaitHandle WaitFor(WaitHandle[] waitHandles)
+        public static EventWaitHandle WaitFor(EventWaitHandle[] waitHandles)
         {
             int iHandle = WaitHandle.WaitAny(waitHandles, 500);
 

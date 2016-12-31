@@ -36,6 +36,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+    /// <summary>
+    /// This is a panel which merely displays a color.
+    /// </summary>
+    /// <seealso cref="GUIComponent" />
     public class ColorPanel : GUIComponent
     {
         public Color BorderColor = Color.Black;

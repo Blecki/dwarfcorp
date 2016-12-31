@@ -75,20 +75,65 @@ namespace DwarfCorp
 
         public class KeyMappings
         {
+            /// <summary>
+            /// Moves the camer backwards.
+            /// </summary>
             public Keys Back = Keys.S;
+            /// <summary>
+            /// Rotates the camera.
+            /// </summary>
             public Keys CameraMode = Keys.LeftShift;
+            /// <summary>
+            /// Moves the camera forward.
+            /// </summary>
             public Keys Forward = Keys.W;
+            /// <summary>
+            /// Opens up cheat mode.
+            /// </summary>
             public Keys GodMode = Keys.G;
+            /// <summary>
+            /// Moves the camera left.
+            /// </summary>
             public Keys Left = Keys.A;
+            /// <summary>
+            /// Toggles the minimap.
+            /// </summary>
             public Keys Map = Keys.M;
+            /// <summary>
+            /// Toggles Game Paused state.
+            /// </summary>
             public Keys Pause = Keys.P;
+            /// <summary>
+            /// Moves the camera to the right.
+            /// </summary>
             public Keys Right = Keys.D;
+            /// <summary>
+            /// Decrements the vertical chunk slice.
+            /// </summary>
             public Keys SliceDown = Keys.PageDown;
+            /// <summary>
+            /// Set the vertical slice to the selected voxel.
+            /// </summary>
             public Keys SliceSelected = Keys.Q;
+            /// <summary>
+            /// Increment the vertical chunk slice.
+            /// </summary>
             public Keys SliceUp = Keys.PageUp;
+            /// <summary>
+            /// Make time go backwards.
+            /// </summary>
             public Keys TimeBackward = Keys.Z;
+            /// <summary>
+            /// Make time go fowards.
+            /// </summary>
             public Keys TimeForward = Keys.X;
+            /// <summary>
+            /// Turn the GUI on and off.
+            /// </summary>
             public Keys ToggleGUI = Keys.B;
+            /// <summary>
+            /// Reset the current slice level.
+            /// </summary>
             public Keys Unslice = Keys.E;
         }
     }
