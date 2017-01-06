@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -6,8 +9,9 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+
     /// <summary>
-    ///     Specifies one of the 6 faces of a box.
+    /// Specifies one of the 6 faces of a box.
     /// </summary>
     public enum BoxFace
     {
@@ -19,17 +23,164 @@ namespace DwarfCorp
         Back
     }
 
-    #region legacy
 
-    /// <summary>
-    ///     This is a legacy primitive that existed before boxes were using index buffers.
-    /// </summary>
-    public sealed class OldBoxPrimitive : GeometricPrimitive
+   public sealed class OldBoxPrimitive : GeometricPrimitive
     {
+        public float Width { get; set; }
+        public float Height { get; set; }
+        public float Depth { get; set; }
+        public BoxTextureCoords UVs { get; set; }
+
         private const int NumFaces = 6;
         private const int NumVertices = 36;
 
         public BoundingBox BoundingBox;
+
+        public class FaceData
+        {
+            public Rectangle Rect { get; set; }
+            public bool FlipXY { get; set; }
+
+            public FaceData(int x, int y, int tileSize)
+            {
+                Rect = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
+                FlipXY = false;
+            }
+
+            public FaceData(Rectangle rect)
+            {
+                Rect = rect;
+                FlipXY = false;
+            }
+
+            public FaceData(Rectangle rect, bool flip)
+            {
+                Rect = rect;
+                FlipXY = flip;
+            }
+        }
+
+        public class BoxTextureCoords
+        {
+            public Vector2[] m_uvs = new Vector2[NumVertices];
+            public Point m_front;
+            public Point m_back;
+            public Point m_top;
+            public Point m_left;
+            public Point m_right;
+            public Point m_bottom;
+            public int m_texWidth;
+            public int m_texHeight;
+            public int m_cellWidth;
+            public int m_cellHeight;
+            public Vector4[] Bounds = new Vector4[6];
+
+            public BoxTextureCoords()
+            {
+                
+            }
+
+            public BoxTextureCoords(int totalTextureWidth, int totalTextureHeight,
+                FaceData front, FaceData back, FaceData top, FaceData bottom, FaceData left, FaceData right)
+            {
+                m_texWidth = totalTextureWidth;
+                m_texHeight = totalTextureHeight;
+
+                Vector2 textureTopLeft = new Vector2(0.0f, 0.0f);
+                Vector2 textureTopRight = new Vector2(1.0f, 0.0f);
+                Vector2 textureBottomLeft = new Vector2(0.0f, 1.0f);
+                Vector2 textureBottomRight = new Vector2(1.0f, 1.0f);
+
+                List<FaceData> cells = new List<FaceData>
+                {
+                    front,
+                    back,
+                    top,
+                    bottom,
+                    left,
+                    right
+                };
+
+
+                List<Vector2> baseCoords = new List<Vector2>
+                {
+                    textureTopLeft,
+                    textureBottomLeft,
+                    textureTopRight,
+                    textureBottomLeft,
+                    textureBottomRight,
+                    textureTopRight,
+
+                    textureTopRight,
+                    textureTopLeft,
+                    textureBottomRight,
+                    textureBottomRight,
+                    textureTopLeft,
+                    textureBottomLeft,
+                    
+                    textureBottomLeft,
+                    textureTopRight,
+                    textureTopLeft,
+                    textureBottomLeft,
+                    textureBottomRight,
+                    textureTopRight,
+                    
+                    textureTopLeft,
+                    textureBottomLeft,
+                    textureBottomRight,
+                    textureTopLeft,
+                    textureBottomRight,
+                    textureTopRight,
+
+                    textureTopRight,
+                    textureBottomLeft,
+                    textureBottomRight,
+                    textureTopLeft,
+                    textureBottomLeft,
+                    textureTopRight,
+                    
+                    textureTopLeft,
+                    textureBottomLeft,
+                    textureBottomRight,
+                    textureTopRight,
+                    textureTopLeft,
+                    textureBottomRight
+                };
+
+
+                for(int face = 0; face < 6; face++)
+                {
+                    Vector2 pixelCoords = new Vector2(cells[face].Rect.X, cells[face].Rect.Y);
+                    float normalizeX = (float) (cells[face].Rect.Width) / (float) (totalTextureWidth);
+                    float normalizeY = (float) (cells[face].Rect.Height) / (float) (totalTextureHeight);
+                    Vector2 normalizedCoords = new Vector2(pixelCoords.X / (float) totalTextureWidth, pixelCoords.Y / (float) totalTextureHeight);
+                    Bounds[face] = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f, normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
+
+
+                    for(int vert = 0; vert < 6; vert++)
+                    {
+                        int index = vert + face * 6;
+      
+                        if(!cells[face].FlipXY)
+                        {
+                            m_uvs[index] = new Vector2(normalizedCoords.X + baseCoords[index].Y * normalizeX, normalizedCoords.Y + baseCoords[index].X * normalizeY);
+                        }
+                        else
+                        {
+                            m_uvs[index] = new Vector2(normalizedCoords.X + baseCoords[index].X * normalizeX, normalizedCoords.Y + baseCoords[index].Y * normalizeY);
+                        }
+                    }
+                }
+            }
+
+            public BoxTextureCoords(int totalTextureWidth, int totalTextureHeight,
+                int cellWidth, int cellHeight,
+                Point front, Point back,
+                Point top, Point bottom,
+                Point left, Point right) :this(totalTextureWidth, totalTextureHeight, new FaceData(front.X, front.Y, cellWidth), new FaceData(back.X, back.Y, cellWidth), new FaceData(top.X, top.Y, cellWidth), new FaceData(bottom.X, bottom.Y, cellWidth), new FaceData(left.X, left.Y, cellWidth), new FaceData(right.X, right.Y, cellWidth)    )
+            {
+            }
+        }
 
 
         public OldBoxPrimitive(GraphicsDevice device, float width, float height, float depth, BoxTextureCoords uvs)
@@ -44,10 +195,6 @@ namespace DwarfCorp
             BoundingBox = new BoundingBox(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(width, height, depth));
         }
 
-        public float Width { get; set; }
-        public float Height { get; set; }
-        public float Depth { get; set; }
-        public BoxTextureCoords UVs { get; set; }
 
 
         public void GetFace(BoxFace face, BoxPrimitive.BoxTextureCoords uvs, out int index, out int count)
@@ -118,17 +265,17 @@ namespace DwarfCorp
             Vertices = new ExtendedVertex[NumVertices];
 
             // Calculate the position of the vertices on the top face.
-            var topLeftFront = new Vector3(0.0f, Height, 0.0f);
-            var topLeftBack = new Vector3(0.0f, Height, Depth);
-            var topRightFront = new Vector3(Width, Height, 0.0f);
-            var topRightBack = new Vector3(Width, Height, Depth);
-
+            Vector3 topLeftFront = new Vector3(0.0f, Height, 0.0f);
+            Vector3 topLeftBack = new Vector3(0.0f, Height, Depth);
+            Vector3 topRightFront = new Vector3(Width, Height, 0.0f);
+            Vector3 topRightBack = new Vector3(Width, Height, Depth);
+            
 
             // Calculate the position of the vertices on the bottom face.
-            var btmLeftFront = new Vector3(0.0f, 0.0f, 0.0f);
-            var btmLeftBack = new Vector3(0.0f, 0.0f, Depth);
-            var btmRightFront = new Vector3(Width, 0.0f, 0.0f);
-            var btmRightBack = new Vector3(Width, 0.0f, Depth);
+            Vector3 btmLeftFront = new Vector3(0.0f, 0.0f, 0.0f);
+            Vector3 btmLeftBack = new Vector3(0.0f, 0.0f, Depth);
+            Vector3 btmRightFront = new Vector3(Width, 0.0f, 0.0f);
+            Vector3 btmRightBack = new Vector3(Width, 0.0f, Depth);
 
             // Normal vectors for each face (needed for lighting / display)
             /*
@@ -175,7 +322,7 @@ namespace DwarfCorp
             Vertices[23] = new ExtendedVertex(btmRightFront, Color.White, Color.White, UVs.m_uvs[23], UVs.Bounds[3]);
 
             // Add the vertices for the LEFT face.
-            Vertices[24] = new ExtendedVertex(topLeftFront, Color.White, Color.White, UVs.m_uvs[24], UVs.Bounds[4]);
+            Vertices[24] = new ExtendedVertex(topLeftFront, Color.White,  Color.White, UVs.m_uvs[24], UVs.Bounds[4]);
             Vertices[25] = new ExtendedVertex(btmLeftBack, Color.White, Color.White, UVs.m_uvs[25], UVs.Bounds[4]);
             Vertices[26] = new ExtendedVertex(btmLeftFront, Color.White, Color.White, UVs.m_uvs[26], UVs.Bounds[4]);
             Vertices[27] = new ExtendedVertex(topLeftBack, Color.White, Color.White, UVs.m_uvs[27], UVs.Bounds[4]);
@@ -190,136 +337,35 @@ namespace DwarfCorp
             Vertices[34] = new ExtendedVertex(topRightFront, Color.White, Color.White, UVs.m_uvs[34], UVs.Bounds[5]);
             Vertices[35] = new ExtendedVertex(btmRightBack, Color.White, Color.White, UVs.m_uvs[35], UVs.Bounds[5]);
         }
+    }
 
-        public class BoxTextureCoords
-        {
-            public Vector4[] Bounds = new Vector4[6];
-            public Point m_back;
-            public Point m_bottom;
-            public int m_cellHeight;
-            public int m_cellWidth;
-            public Point m_front;
-            public Point m_left;
-            public Point m_right;
-            public int m_texHeight;
-            public int m_texWidth;
-            public Point m_top;
-            public Vector2[] m_uvs = new Vector2[NumVertices];
+    /// <summary>
+    /// A box primitive is just a simple textured rectangular box.
+    /// </summary>
+    [JsonObject(IsReference = true)]
+    public sealed class BoxPrimitive : GeometricPrimitive
+    {
+        public float Width { get; set; }
+        public float Height { get; set; }
+        public float Depth { get; set; }
+        public BoxTextureCoords UVs { get; set; }
 
-            public BoxTextureCoords()
-            {
-            }
+        private const int NumVertices = 24;
 
-            public BoxTextureCoords(int totalTextureWidth, int totalTextureHeight,
-                FaceData front, FaceData back, FaceData top, FaceData bottom, FaceData left, FaceData right)
-            {
-                m_texWidth = totalTextureWidth;
-                m_texHeight = totalTextureHeight;
+        public VoxelVertex[] Deltas { get; set; }
 
-                var textureTopLeft = new Vector2(0.0f, 0.0f);
-                var textureTopRight = new Vector2(1.0f, 0.0f);
-                var textureBottomLeft = new Vector2(0.0f, 1.0f);
-                var textureBottomRight = new Vector2(1.0f, 1.0f);
+        public BoundingBox BoundingBox;
 
-                var cells = new List<FaceData>
-                {
-                    front,
-                    back,
-                    top,
-                    bottom,
-                    left,
-                    right
-                };
-
-
-                var baseCoords = new List<Vector2>
-                {
-                    textureTopLeft,
-                    textureBottomLeft,
-                    textureTopRight,
-                    textureBottomLeft,
-                    textureBottomRight,
-                    textureTopRight,
-                    textureTopRight,
-                    textureTopLeft,
-                    textureBottomRight,
-                    textureBottomRight,
-                    textureTopLeft,
-                    textureBottomLeft,
-                    textureBottomLeft,
-                    textureTopRight,
-                    textureTopLeft,
-                    textureBottomLeft,
-                    textureBottomRight,
-                    textureTopRight,
-                    textureTopLeft,
-                    textureBottomLeft,
-                    textureBottomRight,
-                    textureTopLeft,
-                    textureBottomRight,
-                    textureTopRight,
-                    textureTopRight,
-                    textureBottomLeft,
-                    textureBottomRight,
-                    textureTopLeft,
-                    textureBottomLeft,
-                    textureTopRight,
-                    textureTopLeft,
-                    textureBottomLeft,
-                    textureBottomRight,
-                    textureTopRight,
-                    textureTopLeft,
-                    textureBottomRight
-                };
-
-
-                for (int face = 0; face < 6; face++)
-                {
-                    var pixelCoords = new Vector2(cells[face].Rect.X, cells[face].Rect.Y);
-                    float normalizeX = cells[face].Rect.Width/(float) (totalTextureWidth);
-                    float normalizeY = cells[face].Rect.Height/(float) (totalTextureHeight);
-                    var normalizedCoords = new Vector2(pixelCoords.X/totalTextureWidth, pixelCoords.Y/totalTextureHeight);
-                    Bounds[face] = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f,
-                        normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
-
-
-                    for (int vert = 0; vert < 6; vert++)
-                    {
-                        int index = vert + face*6;
-
-                        if (!cells[face].FlipXY)
-                        {
-                            m_uvs[index] = new Vector2(normalizedCoords.X + baseCoords[index].Y*normalizeX,
-                                normalizedCoords.Y + baseCoords[index].X*normalizeY);
-                        }
-                        else
-                        {
-                            m_uvs[index] = new Vector2(normalizedCoords.X + baseCoords[index].X*normalizeX,
-                                normalizedCoords.Y + baseCoords[index].Y*normalizeY);
-                        }
-                    }
-                }
-            }
-
-            public BoxTextureCoords(int totalTextureWidth, int totalTextureHeight,
-                int cellWidth, int cellHeight,
-                Point front, Point back,
-                Point top, Point bottom,
-                Point left, Point right)
-                : this(
-                    totalTextureWidth, totalTextureHeight, new FaceData(front.X, front.Y, cellWidth),
-                    new FaceData(back.X, back.Y, cellWidth), new FaceData(top.X, top.Y, cellWidth),
-                    new FaceData(bottom.X, bottom.Y, cellWidth), new FaceData(left.X, left.Y, cellWidth),
-                    new FaceData(right.X, right.Y, cellWidth))
-            {
-            }
-        }
+        public ushort[] FlippedIndexes = null;
 
         public class FaceData
         {
+            public Rectangle Rect { get; set; }
+            public bool FlipXY { get; set; }
+
             public FaceData(int x, int y, int tileSize)
             {
-                Rect = new Rectangle(x*tileSize, y*tileSize, tileSize, tileSize);
+                Rect = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
                 FlipXY = false;
             }
 
@@ -334,57 +380,130 @@ namespace DwarfCorp
                 Rect = rect;
                 FlipXY = flip;
             }
-
-            public Rectangle Rect { get; set; }
-            public bool FlipXY { get; set; }
         }
-    }
 
-    #endregion
+        public class BoxTextureCoords
+        {
+            public Vector2[] Uvs = new Vector2[NumVertices];
+            public Point Front;
+            public Point Back;
+            public Point Top;
+            public Point Left;
+            public Point Right;
+            public Point Bottom;
+            public int m_texWidth;
+            public int m_texHeight;
+            public Vector4[] Bounds = new Vector4[6];
+            public Vector2[] Scales = new Vector2[6];
+            public BoxTextureCoords()
+            {
+                
+            }
 
-    /// <summary>
-    ///     A box primitive is just a simple textured rectangular box.
-    /// </summary>
-    [JsonObject(IsReference = true)]
-    public sealed class BoxPrimitive : GeometricPrimitive
-    {
-        private const int NumVertices = 24;
+            public BoxTextureCoords(int totalTextureWidth, int totalTextureHeight,
+                FaceData front, FaceData back, FaceData top, FaceData bottom, FaceData left, FaceData right)
+            {
+                m_texWidth = totalTextureWidth;
+                m_texHeight = totalTextureHeight;
 
-        /// <summary>
-        ///     This is the bounding box encasing the box primitive.
-        /// </summary>
-        public BoundingBox BoundingBox;
+                Vector2 textureTopLeft = new Vector2(1.0f, 0.0f);
+                Vector2 textureTopRight = new Vector2(0.0f, 0.0f);
+                Vector2 textureBottomLeft = new Vector2(1.0f, 1.0f);
+                Vector2 textureBottomRight = new Vector2(0.0f, 1.0f);
 
-        /// <summary>
-        ///     These are a set of indices in which the top face of the box is flipped. What do I mean by this?
-        ///     Normally, the indices are like this:
-        ///     1 ------ 2
-        ///     |.       |
-        ///     |  .     |
-        ///     |    .   |
-        ///     |      . |
-        ///     3--------4
-        ///     The flipped indices are like this:
-        ///     1 ------ 2
-        ///     |       .|
-        ///     |     .  |
-        ///     |   .    |
-        ///     | .      |
-        ///     3--------4
-        ///     Why is this necessary? Because sometimes the topology of boxes laid out side-by-side like this does not
-        ///     make for very pretty lighting, so the top face sometimes has to be flipped to make the lighting prettier.
-        ///     The things I do for aesthetics...
-        /// </summary>
-        public ushort[] FlippedIndexes = null;
+                List<FaceData> cells = new List<FaceData>
+                {
+                    front,
+                    back,
+                    top,
+                    bottom,
+                    left,
+                    right
+                };
 
-        /// <summary>
-        ///     Creates a box primitive vertex buffer.
-        /// </summary>
-        /// <param name="width">Width (x) of the box in voxels.</param>
-        /// <param name="height">Height (y) of the box in voxels.</param>
-        /// <param name="depth">Depth (z) of the box in voxels.</param>
-        /// <param name="uvs">UV texture coordinates for the box.</param>
-        public BoxPrimitive(float width, float height, float depth, BoxTextureCoords uvs)
+                int i = 0;
+                foreach (FaceData face in cells)
+                {
+                    Scales[i] = new Vector2(face.Rect.Width / (float)totalTextureWidth, face.Rect.Height / (float)totalTextureHeight);
+                    i++;
+                }
+
+                List<Vector2> baseCoords = new List<Vector2>
+                {
+                    // front
+                    textureTopLeft,
+                    textureBottomLeft,
+                    textureBottomRight,
+                    textureTopRight,
+
+                    // back
+                    textureTopLeft,
+                    textureBottomLeft,
+                    textureBottomRight,
+                    textureTopRight,
+                    
+                    // top
+                    textureTopLeft,
+                    textureBottomLeft,
+                    textureBottomRight,
+                    textureTopRight,
+
+                    // bottom
+                    textureTopLeft,
+                    textureBottomLeft,
+                    textureBottomRight,
+                    textureTopRight,
+
+                    // left
+                    textureTopLeft,
+                    textureBottomLeft,
+                    textureBottomRight,
+                    textureTopRight,
+                    
+                    // right
+                    textureTopLeft,
+                    textureBottomLeft,
+                    textureBottomRight,
+                    textureTopRight,
+                };
+
+
+                for(int face = 0; face < 6; face++)
+                {
+                    Vector2 pixelCoords = new Vector2(cells[face].Rect.X, cells[face].Rect.Y);
+                    float normalizeX = (float) (cells[face].Rect.Width) / (float) (totalTextureWidth);
+                    float normalizeY = (float) (cells[face].Rect.Height) / (float) (totalTextureHeight);
+                    Vector2 normalizedCoords = new Vector2(pixelCoords.X / (float) totalTextureWidth, pixelCoords.Y / (float) totalTextureHeight);
+                    Bounds[face] = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f, normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
+
+
+                    for(int vert = 0; vert < 4; vert++)
+                    {
+                        int index = vert + face * 4;
+      
+                        if(cells[face].FlipXY)
+                        {
+                            Uvs[index] = new Vector2(normalizedCoords.X + baseCoords[index].Y * normalizeX, normalizedCoords.Y + baseCoords[index].X * normalizeY);
+                        }
+                        else
+                        {
+                            Uvs[index] = new Vector2(normalizedCoords.X + baseCoords[index].X * normalizeX, normalizedCoords.Y + baseCoords[index].Y * normalizeY);
+                        }
+                    }
+                }
+            }
+
+            public BoxTextureCoords(int totalTextureWidth, int totalTextureHeight,
+                int cellWidth, int cellHeight,
+                Point front, Point back,
+                Point top, Point bottom,
+                Point left, Point right) :this(totalTextureWidth, totalTextureHeight, new FaceData(front.X, front.Y, cellWidth), new FaceData(back.X, back.Y, cellWidth), new FaceData(top.X, top.Y, cellWidth), new FaceData(bottom.X, bottom.Y, cellWidth), new FaceData(left.X, left.Y, cellWidth), new FaceData(right.X, right.Y, cellWidth)    )
+            {
+            }
+        }
+
+
+        public BoxPrimitive(GraphicsDevice device, float width, float height, float depth, BoxTextureCoords uvs)
         {
             Width = width;
             Height = height;
@@ -399,45 +518,12 @@ namespace DwarfCorp
             }
         }
 
-        /// <summary>
-        ///     X size of the box.
-        /// </summary>
-        public float Width { get; set; }
-
-        /// <summary>
-        ///     Y size of the box.
-        /// </summary>
-        public float Height { get; set; }
-
-        /// <summary>
-        ///     Z size of the box.
-        /// </summary>
-        public float Depth { get; set; }
-
-        /// <summary>
-        ///     Box texture coordinates.
-        /// </summary>
-        public BoxTextureCoords UVs { get; set; }
-
-        /// <summary>
-        ///     These are the offsets of each of the vertices of the box.
-        /// </summary>
-        public VoxelVertex[] Deltas { get; set; }
-
         public override void Render(GraphicsDevice device)
         {
             base.Render(device);
         }
 
-        /// <summary>
-        ///     Returns a face of the box in terms of indices.
-        /// </summary>
-        /// <param name="face">The face to query.</param>
-        /// <param name="index">Index buffer offset into the face</param>
-        /// <param name="count">Number of indexes in the face.</param>
-        /// <param name="vertexOffset">Vertex buffer offset into the face.</param>
-        /// <param name="vertexCount">Number of vertices in the face.</param>
-        public void GetFace(BoxFace face, out int index, out int count, out int vertexOffset, out int vertexCount)
+        public void GetFace(BoxFace face, BoxPrimitive.BoxTextureCoords uvs, out int index, out int count, out int vertexOffset, out int vertexCount)
         {
             vertexCount = 4;
             count = 6;
@@ -474,9 +560,6 @@ namespace DwarfCorp
         }
 
 
-        /// <summary>
-        ///     Create a new vertex buffer for the box.
-        /// </summary>
         private void CreateVerticies()
         {
             Indexes = new ushort[36];
@@ -484,16 +567,16 @@ namespace DwarfCorp
             Vertices = new ExtendedVertex[NumVertices];
 
             // Calculate the position of the vertices on the top face.
-            var topLeftFront = new Vector3(0.0f, Height, 0.0f);
-            var topLeftBack = new Vector3(0.0f, Height, Depth);
-            var topRightFront = new Vector3(Width, Height, 0.0f);
-            var topRightBack = new Vector3(Width, Height, Depth);
+            Vector3 topLeftFront = new Vector3(0.0f, Height, 0.0f);
+            Vector3 topLeftBack = new Vector3(0.0f, Height, Depth);
+            Vector3 topRightFront = new Vector3(Width, Height, 0.0f);
+            Vector3 topRightBack = new Vector3(Width, Height, Depth);
 
             // Calculate the position of the vertices on the bottom face.
-            var btmLeftFront = new Vector3(0.0f, 0.0f, 0.0f);
-            var btmLeftBack = new Vector3(0.0f, 0.0f, Depth);
-            var btmRightFront = new Vector3(Width, 0.0f, 0.0f);
-            var btmRightBack = new Vector3(Width, 0.0f, Depth);
+            Vector3 btmLeftFront = new Vector3(0.0f, 0.0f, 0.0f);
+            Vector3 btmLeftBack = new Vector3(0.0f, 0.0f, Depth);
+            Vector3 btmRightFront = new Vector3(Width, 0.0f, 0.0f);
+            Vector3 btmRightBack = new Vector3(Width, 0.0f, Depth);
 
             // Normal vectors for each face (needed for lighting / display)
 
@@ -568,11 +651,11 @@ namespace DwarfCorp
             FlippedIndexes[11] = 4;
 
             // Add the vertices for the TOP face.
-            Vertices[8] = new ExtendedVertex(topLeftBack, Color.White, Color.White, UVs.Uvs[8], UVs.Bounds[2]);
-            Vertices[9] = new ExtendedVertex(topLeftFront, Color.White, Color.White, UVs.Uvs[9], UVs.Bounds[2]);
+            Vertices[8] = new ExtendedVertex(topLeftBack, Color.White,Color.White, UVs.Uvs[8], UVs.Bounds[2]);
+            Vertices[9] = new ExtendedVertex(topLeftFront, Color.White,Color.White, UVs.Uvs[9], UVs.Bounds[2]);
             Vertices[10] = new ExtendedVertex(topRightFront, Color.White, Color.White, UVs.Uvs[10], UVs.Bounds[2]);
-            Vertices[11] = new ExtendedVertex(topRightBack, Color.White, Color.White, UVs.Uvs[11], UVs.Bounds[2]);
-
+            Vertices[11] = new ExtendedVertex(topRightBack, Color.White,Color.White, UVs.Uvs[11], UVs.Bounds[2]);
+       
 
             /* 
              *  8 . . .11
@@ -604,10 +687,10 @@ namespace DwarfCorp
             FlippedIndexes[17] = 9;
 
             // Add the vertices for the BOTTOM face. 
-            Vertices[12] = new ExtendedVertex(btmLeftFront, Color.White, Color.White, UVs.Uvs[12], UVs.Bounds[3]);
-            Vertices[13] = new ExtendedVertex(btmLeftBack, Color.White, Color.White, UVs.Uvs[13], UVs.Bounds[3]);
-            Vertices[14] = new ExtendedVertex(btmRightBack, Color.White, Color.White, UVs.Uvs[14], UVs.Bounds[3]);
-            Vertices[15] = new ExtendedVertex(btmRightFront, Color.White, Color.White, UVs.Uvs[15], UVs.Bounds[3]);
+            Vertices[12] = new ExtendedVertex(btmLeftFront, Color.White,Color.White, UVs.Uvs[12], UVs.Bounds[3]);
+            Vertices[13] = new ExtendedVertex(btmLeftBack, Color.White,Color.White, UVs.Uvs[13], UVs.Bounds[3]);
+            Vertices[14] = new ExtendedVertex(btmRightBack, Color.White,Color.White, UVs.Uvs[14], UVs.Bounds[3]);
+            Vertices[15] = new ExtendedVertex(btmRightFront, Color.White,Color.White, UVs.Uvs[15], UVs.Bounds[3]);
 
 
             /* 
@@ -641,10 +724,10 @@ namespace DwarfCorp
             FlippedIndexes[23] = 14;
 
             // Add the vertices for the LEFT face.
-            Vertices[16] = new ExtendedVertex(btmLeftFront, Color.White, Color.White, UVs.Uvs[16], UVs.Bounds[4]);
+            Vertices[16] = new ExtendedVertex(btmLeftFront, Color.White,Color.White, UVs.Uvs[16], UVs.Bounds[4]);
             Vertices[17] = new ExtendedVertex(topLeftFront, Color.White, Color.White, UVs.Uvs[17], UVs.Bounds[4]);
-            Vertices[18] = new ExtendedVertex(topLeftBack, Color.White, Color.White, UVs.Uvs[18], UVs.Bounds[4]);
-            Vertices[19] = new ExtendedVertex(btmLeftBack, Color.White, Color.White, UVs.Uvs[19], UVs.Bounds[4]);
+            Vertices[18] = new ExtendedVertex(topLeftBack, Color.White,Color.White, UVs.Uvs[18], UVs.Bounds[4]);
+            Vertices[19] = new ExtendedVertex(btmLeftBack, Color.White,Color.White, UVs.Uvs[19], UVs.Bounds[4]);
 
             /* 
              *  16. . .19
@@ -677,10 +760,10 @@ namespace DwarfCorp
 
 
             // Add the vertices for the RIGHT face. 
-            Vertices[20] = new ExtendedVertex(topRightFront, Color.White, Color.White, UVs.Uvs[20], UVs.Bounds[5]);
-            Vertices[21] = new ExtendedVertex(btmRightFront, Color.White, Color.White, UVs.Uvs[21], UVs.Bounds[5]);
-            Vertices[22] = new ExtendedVertex(btmRightBack, Color.White, Color.White, UVs.Uvs[22], UVs.Bounds[5]);
-            Vertices[23] = new ExtendedVertex(topRightBack, Color.White, Color.White, UVs.Uvs[23], UVs.Bounds[5]);
+            Vertices[20] = new ExtendedVertex(topRightFront, Color.White,Color.White, UVs.Uvs[20], UVs.Bounds[5]);
+            Vertices[21] = new ExtendedVertex(btmRightFront, Color.White,Color.White, UVs.Uvs[21], UVs.Bounds[5]);
+            Vertices[22] = new ExtendedVertex(btmRightBack, Color.White,Color.White, UVs.Uvs[22], UVs.Bounds[5]);
+            Vertices[23] = new ExtendedVertex(topRightBack, Color.White,Color.White, UVs.Uvs[23], UVs.Bounds[5]);
 
             /* 
              *  20. . .23
@@ -710,261 +793,9 @@ namespace DwarfCorp
             FlippedIndexes[34] = 20;
             FlippedIndexes[35] = 22;
 
-            IndexBuffer = new IndexBuffer(GameState.Game.GraphicsDevice, typeof (ushort), Indexes.Length,
-                BufferUsage.WriteOnly);
+            IndexBuffer = new IndexBuffer(GameState.Game.GraphicsDevice, typeof(ushort), Indexes.Length, BufferUsage.WriteOnly);
             IndexBuffer.SetData(Indexes);
         }
-
-        /// <summary>
-        ///     Represents a set of UV coordinates associated with a textured box.
-        /// </summary>
-        public class BoxTextureCoords
-        {
-            /// <summary>
-            ///     The position of the back face's UV coordinates (as a sprite sheet grid position)
-            /// </summary>
-            public Point Back;
-
-            /// <summary>
-            ///     The position of the bottom face's UV coordinates (as a sprite sheet grid position)
-            /// </summary>
-            public Point Bottom;
-
-            /// <summary>
-            ///     Bounding boxes in normalized coordinates for each of the 6 faces.
-            /// </summary>
-            public Vector4[] Bounds = new Vector4[6];
-
-            /// <summary>
-            ///     The position of the front face's UV coordinates (as a sprite sheet grid position)
-            /// </summary>
-            public Point Front;
-
-            /// <summary>
-            ///     The position of the left face's UV coordinates (as a sprite sheet grid position)
-            /// </summary>
-            public Point Left;
-
-            /// <summary>
-            ///     The position of the right face's UV coordinates (as a sprite sheet grid position)
-            /// </summary>
-            public Point Right;
-
-            /// <summary>
-            ///     Normalizng factors for each of the 6 faces. That is, a number of pixels
-            ///     times this value is the normalized UV coordinate.
-            /// </summary>
-            public Vector2[] Scales = new Vector2[6];
-
-            /// <summary>
-            ///     The position of the top face's UV coordinates (as a sprite sheet grid position)
-            /// </summary>
-            public Point Top;
-
-            /// <summary>
-            ///     List of normalized UV coordinates for each vertex.
-            /// </summary>
-            public Vector2[] Uvs = new Vector2[NumVertices];
-
-            /// <summary>
-            ///     Heigh of the texture in pixels.
-            /// </summary>
-            public int m_texHeight;
-
-            /// <summary>
-            ///     Width of the texture in pixels.
-            /// </summary>
-            public int m_texWidth;
-
-            public BoxTextureCoords()
-            {
-            }
-
-            /// <summary>
-            ///     Creates a new box UV coordinates.
-            /// </summary>
-            /// <param name="totalTextureWidth">The width of the texture in pixels.</param>
-            /// <param name="totalTextureHeight">The height of the texture in pixels</param>
-            /// <param name="front">Front (+z) face data</param>
-            /// <param name="back">Back (-z) face data</param>
-            /// <param name="top">Top (+y) face data</param>
-            /// <param name="bottom">Bottom (-y) face data</param>
-            /// <param name="left">Left (-x) face data</param>
-            /// <param name="right">Right (+x) face data</param>
-            public BoxTextureCoords(int totalTextureWidth, int totalTextureHeight,
-                FaceData front, FaceData back, FaceData top, FaceData bottom, FaceData left, FaceData right)
-            {
-                m_texWidth = totalTextureWidth;
-                m_texHeight = totalTextureHeight;
-
-                var textureTopLeft = new Vector2(1.0f, 0.0f);
-                var textureTopRight = new Vector2(0.0f, 0.0f);
-                var textureBottomLeft = new Vector2(1.0f, 1.0f);
-                var textureBottomRight = new Vector2(0.0f, 1.0f);
-
-                var cells = new List<FaceData>
-                {
-                    front,
-                    back,
-                    top,
-                    bottom,
-                    left,
-                    right
-                };
-
-                int i = 0;
-                foreach (FaceData face in cells)
-                {
-                    Scales[i] = new Vector2(face.Rect.Width/(float) totalTextureWidth,
-                        face.Rect.Height/(float) totalTextureHeight);
-                    i++;
-                }
-
-                var baseCoords = new List<Vector2>
-                {
-                    // front
-                    textureTopLeft,
-                    textureBottomLeft,
-                    textureBottomRight,
-                    textureTopRight,
-
-                    // back
-                    textureTopLeft,
-                    textureBottomLeft,
-                    textureBottomRight,
-                    textureTopRight,
-                    
-                    // top
-                    textureTopLeft,
-                    textureBottomLeft,
-                    textureBottomRight,
-                    textureTopRight,
-
-                    // bottom
-                    textureTopLeft,
-                    textureBottomLeft,
-                    textureBottomRight,
-                    textureTopRight,
-
-                    // left
-                    textureTopLeft,
-                    textureBottomLeft,
-                    textureBottomRight,
-                    textureTopRight,
-                    
-                    // right
-                    textureTopLeft,
-                    textureBottomLeft,
-                    textureBottomRight,
-                    textureTopRight,
-                };
-
-
-                for (int face = 0; face < 6; face++)
-                {
-                    var pixelCoords = new Vector2(cells[face].Rect.X, cells[face].Rect.Y);
-                    float normalizeX = cells[face].Rect.Width/(float) (totalTextureWidth);
-                    float normalizeY = cells[face].Rect.Height/(float) (totalTextureHeight);
-                    var normalizedCoords = new Vector2(pixelCoords.X/totalTextureWidth, pixelCoords.Y/totalTextureHeight);
-                    Bounds[face] = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f,
-                        normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
-
-
-                    for (int vert = 0; vert < 4; vert++)
-                    {
-                        int index = vert + face*4;
-
-                        if (cells[face].FlipXY)
-                        {
-                            Uvs[index] = new Vector2(normalizedCoords.X + baseCoords[index].Y*normalizeX,
-                                normalizedCoords.Y + baseCoords[index].X*normalizeY);
-                        }
-                        else
-                        {
-                            Uvs[index] = new Vector2(normalizedCoords.X + baseCoords[index].X*normalizeX,
-                                normalizedCoords.Y + baseCoords[index].Y*normalizeY);
-                        }
-                    }
-                }
-            }
-
-            /// <summary>
-            ///     Create new box UV coordinates.
-            /// </summary>
-            /// <param name="totalTextureWidth">Widh of the texture in pixels</param>
-            /// <param name="totalTextureHeight">Height of the texture in pixels</param>
-            /// <param name="cellWidth">Width of a sprite sheet cell in pixels</param>
-            /// <param name="cellHeight">Height of a sprite sheet cell in pixels</param>
-            /// <param name="front">Front cell</param>
-            /// <param name="back">Back cell</param>
-            /// <param name="top">Top cell</param>
-            /// <param name="bottom">Bottom cell</param>
-            /// <param name="left">Left cell</param>
-            /// <param name="right">Right cell</param>
-            public BoxTextureCoords(int totalTextureWidth, int totalTextureHeight,
-                int cellWidth, int cellHeight,
-                Point front, Point back,
-                Point top, Point bottom,
-                Point left, Point right)
-                : this(
-                    totalTextureWidth, totalTextureHeight, new FaceData(front.X, front.Y, cellWidth),
-                    new FaceData(back.X, back.Y, cellWidth), new FaceData(top.X, top.Y, cellWidth),
-                    new FaceData(bottom.X, bottom.Y, cellWidth), new FaceData(left.X, left.Y, cellWidth),
-                    new FaceData(right.X, right.Y, cellWidth))
-            {
-            }
-        }
-
-        /// <summary>
-        ///     A box has 6 faces. Each face has texture coordinates in a rectangle on a texture.
-        ///     Sometimes we want to transpose the texture coordinates so that X and Y are flipped.
-        ///     Why do we do this? So that we can flip textures around to align them without duplicating.
-        ///     This only necessary sometimes.
-        /// </summary>
-        public class FaceData
-        {
-            /// <summary>
-            ///     Creates a new FaceData.
-            /// </summary>
-            /// <param name="x">The x coordinate in a spritesheet grid of the face.</param>
-            /// <param name="y">The y coordinate in a spritesheet grid of the face.</param>
-            /// <param name="tileSize">The size of spritesheet tiles in pixels.</param>
-            public FaceData(int x, int y, int tileSize)
-            {
-                Rect = new Rectangle(x*tileSize, y*tileSize, tileSize, tileSize);
-                FlipXY = false;
-            }
-
-            /// <summary>
-            ///     Create a new FaceData
-            /// </summary>
-            /// <param name="rect">The rectangle on the texture that the face corresponds to.</param>
-            public FaceData(Rectangle rect)
-            {
-                Rect = rect;
-                FlipXY = false;
-            }
-
-            /// <summary>
-            ///     Creates a new FaceData
-            /// </summary>
-            /// <param name="rect">The rectangle on the texture that the face corresponds to.</param>
-            /// <param name="flip">If true, the X and Y coords are transposed.</param>
-            public FaceData(Rectangle rect, bool flip)
-            {
-                Rect = rect;
-                FlipXY = flip;
-            }
-
-            /// <summary>
-            ///     Rectangle in the image that this face corresponds to.
-            /// </summary>
-            public Rectangle Rect { get; set; }
-
-            /// <summary>
-            ///     If true, the X and Y coordinates will be transposed, rotating the texture.
-            /// </summary>
-            public bool FlipXY { get; set; }
-        }
     }
+
 }

@@ -30,19 +30,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
+using DwarfCorpCore;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
+
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
 namespace DwarfCorp
 {
+
     /// <summary>
-    ///     Manages and creates 3D sounds.
+    /// Manages and creates 3D sounds.
     /// </summary>
     public class SoundManager
     {
@@ -50,11 +56,10 @@ namespace DwarfCorp
         public static List<Sound3D> ActiveSounds = new List<Sound3D>();
         public static AudioListener Listener = new AudioListener();
         public static AudioEmitter Emitter = new AudioEmitter();
+        public static ContentManager Content { get; set; }
         public static int MaxSounds = 5;
         public static Dictionary<string, int> SoundCounts = new Dictionary<string, int>();
         public static Dictionary<string, SoundEffect> EffectLibrary = new Dictionary<string, SoundEffect>();
-        private static bool once = true;
-        public static ContentManager Content { get; set; }
 
         public static void LoadDefaultSounds()
         {
@@ -70,7 +75,7 @@ namespace DwarfCorp
 
             foreach (string name in defaultSounds)
             {
-                var effect = Content.Load<SoundEffect>(name);
+                SoundEffect effect = Content.Load<SoundEffect>(name);
                 EffectLibrary[name] = effect;
             }
         }
@@ -87,18 +92,18 @@ namespace DwarfCorp
 
         public static void PlayMusic(string name)
         {
-            if (GameSettings.Default.MasterVolume < 0.001f || GameSettings.Default.MusicVolume < 0.001f)
+            if(GameSettings.Default.MasterVolume < 0.001f || GameSettings.Default.MusicVolume < 0.001f)
             {
                 return;
             }
-            var song = Content.Load<Song>(name);
+            Song song = Content.Load<Song>(name);
             MediaPlayer.Play(song);
-            MediaPlayer.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.MusicVolume;
+            MediaPlayer.Volume = GameSettings.Default.MasterVolume * GameSettings.Default.MusicVolume;
         }
 
         public static Sound3D PlaySound(string name, Vector3 location, bool randomPitch, float volume = 1.0f)
         {
-            if (Content == null)
+            if(Content == null)
             {
                 return null;
             }
@@ -115,6 +120,8 @@ namespace DwarfCorp
             }
 
 
+
+
             if (!SoundCounts.ContainsKey(name))
             {
                 SoundCounts[name] = 0;
@@ -124,7 +131,7 @@ namespace DwarfCorp
             {
                 SoundCounts[name]++;
 
-                var sound = new Sound3D
+                Sound3D sound = new Sound3D
                 {
                     Position = location,
                     EffectInstance = effect.CreateInstance(),
@@ -137,7 +144,7 @@ namespace DwarfCorp
 
                 if (randomPitch)
                 {
-                    sound.EffectInstance.Pitch = (float) (PlayState.Random.NextDouble()*1.0f - 0.5f);
+                    sound.EffectInstance.Pitch = (float)(PlayState.Random.NextDouble() * 1.0f - 0.5f);
                 }
                 ActiveSounds.Add(sound);
 
@@ -146,6 +153,7 @@ namespace DwarfCorp
 
 
             return null;
+
         }
 
         public static void PlaySound(string name)
@@ -162,7 +170,9 @@ namespace DwarfCorp
                 effect = EffectLibrary[name];
             }
 
-            effect.Play(GameSettings.Default.MasterVolume*GameSettings.Default.SoundEffectVolume, 0.0f, 0.0f);
+            effect.Play(GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume, 0.0f, 0.0f);
+
+
         }
 
         public static Sound3D PlaySound(string name, Vector3 location, float volume = 1.0f)
@@ -171,30 +181,30 @@ namespace DwarfCorp
         }
 
 
+        private static bool once = true;
         public static void Update(DwarfTime time, Camera camera)
         {
-            var toRemove = new List<Sound3D>();
+            List<Sound3D> toRemove = new List<Sound3D>();
 
             Matrix viewInverse = Matrix.Invert(camera.ViewMatrix);
             Listener.Position = camera.Position;
             Listener.Up = viewInverse.Up;
             Listener.Velocity = camera.Velocity;
             Listener.Forward = viewInverse.Forward;
+           
 
-
-            foreach (Sound3D instance in ActiveSounds)
+            foreach(Sound3D instance in ActiveSounds)
             {
-                if (instance.HasStarted && instance.EffectInstance.State == SoundState.Stopped ||
-                    instance.EffectInstance.State == SoundState.Paused)
+                if(instance.HasStarted && instance.EffectInstance.State == SoundState.Stopped || instance.EffectInstance.State == SoundState.Paused)
                 {
-                    if (!instance.EffectInstance.IsDisposed)
+                    if(!instance.EffectInstance.IsDisposed)
                         instance.EffectInstance.Dispose();
                     toRemove.Add(instance);
                     SoundCounts[instance.Name]--;
                 }
-                else if (!instance.HasStarted)
+                else if(!instance.HasStarted)
                 {
-                    if (float.IsNaN(instance.Position.X) ||
+                    if (float.IsNaN(instance.Position.X) || 
                         float.IsNaN(instance.Position.Y) ||
                         float.IsNaN(instance.Position.Z))
                     {
@@ -203,20 +213,18 @@ namespace DwarfCorp
                     Emitter.Position = instance.Position;
                     instance.EffectInstance.Apply3D(Listener, Emitter);
 
-                    instance.EffectInstance.Volume =
-                        Math.Max(Math.Min(400.0f/(camera.Position - instance.Position).LengthSquared(), 0.999f), 0.001f);
-                    instance.EffectInstance.Volume *= (GameSettings.Default.MasterVolume*
-                                                       GameSettings.Default.SoundEffectVolume*instance.VolumeMultiplier);
+                    instance.EffectInstance.Volume = Math.Max(Math.Min(400.0f / (camera.Position - instance.Position).LengthSquared(), 0.999f), 0.001f);
+                    instance.EffectInstance.Volume *= (GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * instance.VolumeMultiplier);
 
                     instance.EffectInstance.Play();
                     instance.HasStarted = true;
                 }
             }
 
-            MediaPlayer.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.MusicVolume*0.1f;
+            MediaPlayer.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.MusicVolume * 0.1f;
             if (MediaPlayer.State == MediaState.Stopped)
             {
-                if (once && ActiveSongs.Count > 0)
+                if (once  && ActiveSongs.Count > 0)
                 {
                     MediaPlayer.Play(ActiveSongs[PlayState.Random.Next(ActiveSongs.Count)]);
                     once = false;
@@ -227,10 +235,11 @@ namespace DwarfCorp
                 once = true;
             }
 
-            foreach (Sound3D r in toRemove)
+            foreach(Sound3D r in toRemove)
             {
                 ActiveSounds.Remove(r);
             }
         }
     }
+
 }

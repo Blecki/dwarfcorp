@@ -30,16 +30,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Text;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A creature grabs a given item and puts it in their inventory
+    /// A creature grabs a given item and puts it in their inventory
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class StashAct : CreatureAct
     {
         public enum PickUpType
@@ -47,20 +48,6 @@ namespace DwarfCorp
             None,
             Stockpile,
             Room
-        }
-
-        public StashAct()
-        {
-        }
-
-        public StashAct(CreatureAI agent, PickUpType type, Zone zone, string targetName, string stashedItemOut) :
-            base(agent)
-        {
-            Name = "Stash " + targetName;
-            PickType = type;
-            Zone = zone;
-            TargetName = targetName;
-            StashedItemOut = stashedItemOut;
         }
 
         public Zone Zone { get; set; }
@@ -71,11 +58,22 @@ namespace DwarfCorp
 
         public string StashedItemOut { get; set; }
 
-        [JsonIgnore]
-        public Body Target
+        [Newtonsoft.Json.JsonIgnore]
+        public Body Target { get { return GetTarget(); } set { SetTarget(value); } }
+
+        public StashAct()
         {
-            get { return GetTarget(); }
-            set { SetTarget(value); }
+
+        }
+
+        public StashAct(CreatureAI agent, PickUpType type, Zone zone, string targetName, string stashedItemOut) :
+            base(agent)
+        {
+            Name = "Stash " + targetName;
+            PickType = type;
+            Zone = zone;
+            TargetName = targetName;
+            StashedItemOut = stashedItemOut;
         }
 
         public Body GetTarget()
@@ -91,7 +89,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (Target == null)
+            if(Target == null)
             {
                 yield return Status.Fail;
             }
@@ -100,58 +98,61 @@ namespace DwarfCorp
             {
                 case (PickUpType.Room):
                 case (PickUpType.Stockpile):
-                {
-                    if (Zone == null)
                     {
-                        yield return Status.Fail;
-                        break;
-                    }
-                    bool removed = Zone.Resources.RemoveResource(new ResourceAmount(Target.Tags[0]));
-
-                    if (removed)
-                    {
-                        if (Creature.Inventory.Pickup(Target))
+                        if (Zone == null)
                         {
-                            Agent.Blackboard.SetData(StashedItemOut, new ResourceAmount(Target));
-                            SoundManager.PlaySound(ContentPaths.Audio.dig, Agent.Position);
-                            yield return Status.Success;
+                            yield return Status.Fail;
+                            break;
+                        }
+                        bool removed = Zone.Resources.RemoveResource(new ResourceAmount(Target.Tags[0]));
+
+                        if (removed)
+                        {
+                            if(Creature.Inventory.Pickup(Target))
+                            {
+                                Agent.Blackboard.SetData(StashedItemOut, new ResourceAmount(Target));
+                                SoundManager.PlaySound(ContentPaths.Audio.dig, Agent.Position);
+                                yield return Status.Success;
+                            }
+                            else
+                            {
+                                yield return Status.Fail;
+                            }
                         }
                         else
                         {
                             yield return Status.Fail;
                         }
-                    }
-                    else
-                    {
-                        yield return Status.Fail;
-                    }
-                    break;
-                }
-                case (PickUpType.None):
-                {
-                    if (!Creature.Inventory.Pickup(Target))
-                    {
-                        yield return Status.Fail;
-                    }
-
-                    if (Creature.Faction.GatherDesignations.Contains(Target))
-                    {
-                        Creature.Faction.GatherDesignations.Remove(Target);
-                    }
-                    else
-                    {
-                        yield return Status.Fail;
                         break;
                     }
+                case (PickUpType.None):
+                    {
+                        if (!Creature.Inventory.Pickup(Target))
+                        {
+                            yield return Status.Fail;
+                        }
 
-                    var resource = new ResourceAmount(Target);
-                    Agent.Blackboard.SetData(StashedItemOut, resource);
-                    //Creature.DrawIndicator(resource.ResourceType.Image, resource.ResourceType.Tint);
-                    SoundManager.PlaySound(ContentPaths.Audio.dig, Agent.Position);
-                    yield return Status.Success;
-                    break;
-                }
+                        if (Creature.Faction.GatherDesignations.Contains(Target))
+                        {
+                            Creature.Faction.GatherDesignations.Remove(Target);
+                        }
+                        else
+                        {
+                            yield return Status.Fail;
+                            break;
+                        }
+
+                        ResourceAmount resource = new ResourceAmount(Target);
+                        Agent.Blackboard.SetData(StashedItemOut, resource);
+                        //Creature.DrawIndicator(resource.ResourceType.Image, resource.ResourceType.Tint);
+                        SoundManager.PlaySound(ContentPaths.Audio.dig, Agent.Position);
+                        yield return Status.Success;
+                        break;
+                    }
             }
         }
+        
     }
+    
 }
+

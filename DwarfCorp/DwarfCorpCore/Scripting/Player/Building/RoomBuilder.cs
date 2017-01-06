@@ -30,36 +30,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 
+
 namespace DwarfCorp
 {
     /// <summary>
-    ///     The BuildRoom designator keeps track of voxels selected by the player and turns
-    ///     them into BuildRoom designations (so that dwarves can build BuildRoom).
+    /// The BuildRoom designator keeps track of voxels selected by the player and turns
+    /// them into BuildRoom designations (so that dwarves can build BuildRoom).
     /// </summary>
     [JsonObject(IsReference = true)]
     public class RoomBuilder
     {
-        public RoomBuilder()
-        {
-        }
-
-        public RoomBuilder(Faction faction)
-        {
-            DesignatedRooms = new List<Room>();
-            BuildDesignations = new List<BuildRoomOrder>();
-            CurrentRoomData = RoomLibrary.GetData("BedRoom");
-            Faction = faction;
-        }
-
         public List<Room> DesignatedRooms { get; set; }
         public List<BuildRoomOrder> BuildDesignations { get; set; }
         public RoomData CurrentRoomData { get; set; }
@@ -71,6 +60,19 @@ namespace DwarfCorp
             return DesignatedRooms.Where(r => r.RoomData.Name == type).ToList();
         }
 
+        public RoomBuilder()
+        {
+            
+        }
+
+        public RoomBuilder(Faction faction)
+        {
+            DesignatedRooms = new List<Room>();
+            BuildDesignations = new List<BuildRoomOrder>();
+            CurrentRoomData = RoomLibrary.GetData("BedRoom");
+            Faction = faction;
+        }
+
 
         public bool IsInRoom(Voxel v)
         {
@@ -80,9 +82,7 @@ namespace DwarfCorp
 
         public bool IsBuildDesignation(Voxel v)
         {
-            return
-                BuildDesignations.SelectMany(room => room.VoxelOrders)
-                    .Any(buildDesignation => buildDesignation.Voxel.Equals(v));
+            return BuildDesignations.SelectMany(room => room.VoxelOrders).Any(buildDesignation => buildDesignation.Voxel.Equals(v));
         }
 
         public bool IsBuildDesignation(Room r)
@@ -100,16 +100,12 @@ namespace DwarfCorp
 
         public BuildVoxelOrder GetBuildDesignation(Voxel v)
         {
-            return
-                BuildDesignations.SelectMany(room => room.VoxelOrders)
-                    .FirstOrDefault(
-                        buildDesignation => (buildDesignation.Voxel.Position - v.Position).LengthSquared() < 0.1f);
+            return BuildDesignations.SelectMany(room => room.VoxelOrders).FirstOrDefault(buildDesignation => (buildDesignation.Voxel.Position - v.Position).LengthSquared() < 0.1f);
         }
 
         public BuildRoomOrder GetMostLikelyDesignation(Voxel v)
         {
-            var larger = new BoundingBox(v.GetBoundingBox().Min - new Vector3(0.5f, 0.5f, 0.5f),
-                v.GetBoundingBox().Max + new Vector3(0.5f, 0.5f, 0.5f));
+            BoundingBox larger = new BoundingBox(v.GetBoundingBox().Min - new Vector3(0.5f, 0.5f, 0.5f), v.GetBoundingBox().Max + new Vector3(0.5f, 0.5f, 0.5f));
 
             return (from room in BuildDesignations
                 from buildDesignation in room.VoxelOrders
@@ -120,13 +116,12 @@ namespace DwarfCorp
         public Room GetMostLikelyRoom(Voxel v)
         {
             Voxel vRef = v;
-            foreach (Room r in DesignatedRooms.Where(r => r.ContainsVoxel(vRef)))
+            foreach(Room r in DesignatedRooms.Where(r => r.ContainsVoxel(vRef)))
             {
                 return r;
             }
 
-            var larger = new BoundingBox(v.GetBoundingBox().Min - new Vector3(0.5f, 0.5f, 0.5f),
-                v.GetBoundingBox().Max + new Vector3(0.5f, 0.5f, 0.5f));
+            BoundingBox larger = new BoundingBox(v.GetBoundingBox().Min - new Vector3(0.5f, 0.5f, 0.5f), v.GetBoundingBox().Max + new Vector3(0.5f, 0.5f, 0.5f));
 
             return (from room in BuildDesignations
                 from buildDesignation in room.VoxelOrders
@@ -188,7 +183,7 @@ namespace DwarfCorp
         {
             List<BuildRoomOrder> toRemove = BuildDesignations.Where(build => build.IsBuilt).ToList();
 
-            foreach (BuildRoomOrder build in toRemove)
+            foreach(BuildRoomOrder build in toRemove)
             {
                 BuildDesignations.Remove(build);
             }
@@ -196,12 +191,12 @@ namespace DwarfCorp
 
         public void OnVoxelDestroyed(Voxel voxDestroyed)
         {
-            var toDestroy = new List<Room>();
+            List<Room> toDestroy = new List<Room>();
             Voxel vRef = voxDestroyed;
 
             lock (DesignatedRooms)
             {
-                var toCheck = new List<Room>();
+                List<Room> toCheck = new List<Room>();
                 toCheck.AddRange(DesignatedRooms);
                 foreach (Room r in toCheck)
                 {
@@ -230,9 +225,9 @@ namespace DwarfCorp
             BuildRoomOrder order = null;
             IEnumerable<Voxel> designations = refs as IList<Voxel> ?? refs.ToList();
             IEnumerable<Voxel> nonEmpty = designations.Select(r => r).Where(v => !v.IsEmpty);
-            foreach (Voxel v in nonEmpty)
+            foreach(Voxel v in nonEmpty)
             {
-                if (IsBuildDesignation(v) || IsInRoom(v))
+                if(IsBuildDesignation(v) || IsInRoom(v))
                 {
                     continue;
                 }
@@ -242,7 +237,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                if (order == null)
+                if(order == null)
                 {
                     order = GetMostLikelyDesignation(v);
                 }
@@ -253,29 +248,29 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    if (CurrentRoomData != RoomLibrary.GetData("Stockpile"))
+                    if(CurrentRoomData != RoomLibrary.GetData("Stockpile"))
                     {
                         Room toBuild = RoomLibrary.CreateRoom(Faction, CurrentRoomData.Name, designations.ToList(), true);
                         DesignatedRooms.Add(toBuild);
-                        order = new BuildRoomOrder(toBuild, Faction);
+                        order = new BuildRoomOrder(toBuild, this.Faction);
                         order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
                         BuildDesignations.Add(order);
                     }
                     else
                     {
-                        var toBuild = new Stockpile(Faction);
+                        Stockpile toBuild = new Stockpile(Faction);
                         DesignatedRooms.Add(toBuild);
-                        order = new BuildStockpileOrder(toBuild, Faction);
+                        order = new BuildStockpileOrder(toBuild, this.Faction);
                         order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
                         BuildDesignations.Add(order);
                     }
                 }
             }
 
-            if (order != null)
+            if(order != null)
             {
                 order.CreateFences();
-                TaskManager.AssignTasks(new List<Task>
+                TaskManager.AssignTasks(new List<Task>()
                 {
                     new BuildRoomTask(order)
                 }, Faction.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Build));
@@ -293,8 +288,7 @@ namespace DwarfCorp
             {
                 if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                 {
-                    PlayState.GUI.ToolTipManager.ToolTip =
-                        Drawer2D.WrapColor("None of the selected units can build rooms.", Color.Red);
+                    PlayState.GUI.ToolTipManager.ToolTip = Drawer2D.WrapColor("None of the selected units can build rooms.", Color.Red);
                 }
                 else if (CurrentRoomData.Verify(refs, Faction))
                 {
@@ -325,21 +319,20 @@ namespace DwarfCorp
 
         public void VoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
         {
-            if (CurrentRoomData == null)
+            if(CurrentRoomData == null)
             {
                 return;
             }
 
-            if (button == InputManager.MouseButton.Left)
+            if(button == InputManager.MouseButton.Left)
             {
                 if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                 {
-                    PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor(
-                        "None of the selected units can build rooms.", Color.Red));
+                    PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("None of the selected units can build rooms.", Color.Red));
                 }
                 else if (CurrentRoomData.Verify(refs, Faction))
                 {
-                    BuildNewVoxels(refs);
+                    BuildNewVoxels(refs);    
                 }
             }
             else
@@ -348,17 +341,17 @@ namespace DwarfCorp
             }
         }
 
-        private void DeleteVoxels(IEnumerable<Voxel> refs)
+        private void DeleteVoxels(IEnumerable<Voxel> refs )
         {
-            foreach (Voxel v in refs.Select(r => r).Where(v => !v.IsEmpty))
+            foreach(Voxel v in refs.Select(r => r).Where(v => !v.IsEmpty))
             {
-                if (IsBuildDesignation(v))
+                if(IsBuildDesignation(v))
                 {
                     BuildVoxelOrder vox = GetBuildDesignation(v);
                     vox.ToBuild.Destroy();
                     BuildDesignations.Remove(vox.Order);
                 }
-                else if (IsInRoom(v))
+                else if(IsInRoom(v))
                 {
                     Room existingRoom = GetMostLikelyRoom(v);
 
@@ -368,15 +361,14 @@ namespace DwarfCorp
                     }
 
                     Dialog destroyDialog = Dialog.Popup(PlayState.GUI, "Destroy room?",
-                        "Do you want to destroy this " + Drawer2D.WrapColor(existingRoom.RoomData.Name, Color.DarkRed) +
-                        "?", Dialog.ButtonType.OkAndCancel);
-                    destroyDialog.OnClosed += status => destroyDialog_OnClosed(status, existingRoom);
+                        "Do you want to destroy this " + Drawer2D.WrapColor(existingRoom.RoomData.Name, Color.DarkRed) + "?", Dialog.ButtonType.OkAndCancel);
+                    destroyDialog.OnClosed += (status) => destroyDialog_OnClosed(status, existingRoom);
                     break;
                 }
             }
         }
 
-        private void destroyDialog_OnClosed(Dialog.ReturnStatus status, Room room)
+        void destroyDialog_OnClosed(Dialog.ReturnStatus status, Room room)
         {
             if (status == Dialog.ReturnStatus.Ok)
             {
@@ -396,4 +388,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

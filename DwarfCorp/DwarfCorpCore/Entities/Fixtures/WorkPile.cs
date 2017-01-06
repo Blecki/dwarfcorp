@@ -30,7 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -42,12 +45,11 @@ namespace DwarfCorp
     {
         public WorkPile()
         {
+            
         }
 
         public WorkPile(Vector3 position) :
-            base(
-            position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.underconstruction, 32, 32), new Point(0, 0),
-            PlayState.ComponentManager.RootComponent)
+            base(position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.underconstruction, 32, 32), new Point(0, 0), PlayState.ComponentManager.RootComponent)
         {
         }
     }
@@ -57,15 +59,14 @@ namespace DwarfCorp
     {
         public WorkFence()
         {
+            
         }
 
         public WorkFence(Vector3 position, float orientation) :
-            base(
-            position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.constructiontape, 32, 32), new Point(0, 0),
-            PlayState.ComponentManager.RootComponent)
+            base(position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.constructiontape, 32, 32), new Point(0, 0), PlayState.ComponentManager.RootComponent)
         {
-            Sprite.OrientationType = Sprite.OrientMode.Fixed;
-            Sprite.LocalTransform = Matrix.CreateRotationY(orientation);
+            this.Sprite.OrientationType = Sprite.OrientMode.Fixed;
+            this.Sprite.LocalTransform = Matrix.CreateRotationY(orientation);
         }
     }
 }

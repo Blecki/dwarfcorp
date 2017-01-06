@@ -30,23 +30,41 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
+
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A designation specifying that a creature should put an item of a given type
-    ///     at a location.
+    /// A designation specifying that a creature should put a voxel of a given type
+    /// at a location.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class CraftBuilder
     {
+        public class CraftDesignation
+        {
+            public CraftItem ItemType { get; set; }
+            public Voxel Location { get; set; }
+            public Body WorkPile { get; set; }
+        }
+
+        public Faction Faction { get; set; }
+        public List<CraftDesignation> Designations { get; set; }
+        public CraftItem CurrentCraftType { get; set; }
+        public bool IsEnabled { get; set; }
+
         public CraftBuilder()
         {
             IsEnabled = false;
@@ -58,11 +76,6 @@ namespace DwarfCorp
             Designations = new List<CraftDesignation>();
             IsEnabled = false;
         }
-
-        public Faction Faction { get; set; }
-        public List<CraftDesignation> Designations { get; set; }
-        public CraftItem CurrentCraftType { get; set; }
-        public bool IsEnabled { get; set; }
 
         public bool IsDesignation(Voxel reference)
         {
@@ -85,7 +98,7 @@ namespace DwarfCorp
         {
             Designations.Remove(des);
 
-            if (des.WorkPile != null)
+            if(des.WorkPile != null)
                 des.WorkPile.Die();
         }
 
@@ -110,8 +123,7 @@ namespace DwarfCorp
         {
             if (IsDesignation(designation.Location))
             {
-                PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Something is already being built there!",
-                    Color.Red));
+                PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Something is already being built there!", Color.Red));
                 return false;
             }
 
@@ -125,33 +137,30 @@ namespace DwarfCorp
             {
                 string neededResources = "";
 
-                foreach (var amount in designation.ItemType.RequiredResources)
+                foreach (Quantitiy<Resource.ResourceTags> amount in designation.ItemType.RequiredResources)
                 {
-                    neededResources += "" + amount.NumResources + " " + amount.ResourceType + " ";
+                    neededResources += "" + amount.NumResources + " " + amount.ResourceType.ToString() + " ";
                 }
 
-                PlayState.GUI.ToolTipManager.Popup(
-                    Drawer2D.WrapColor("Not enough resources! Need " + neededResources + ".", Color.Red));
+                PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Not enough resources! Need " + neededResources + ".", Color.Red));
                 return false;
             }
 
-            var neighbors = new Voxel[4];
+            Voxel[] neighbors = new Voxel[4];
             foreach (CraftItem.CraftPrereq req in designation.ItemType.Prerequisites)
             {
                 switch (req)
                 {
                     case CraftItem.CraftPrereq.NearWall:
                     {
-                        designation.Location.Chunk.Get2DManhattanNeighbors(neighbors,
-                            (int) designation.Location.GridPosition.X,
-                            (int) designation.Location.GridPosition.Y, (int) designation.Location.GridPosition.Z);
+                        designation.Location.Chunk.Get2DManhattanNeighbors(neighbors, (int)designation.Location.GridPosition.X,
+                            (int)designation.Location.GridPosition.Y, (int)designation.Location.GridPosition.Z);
 
                         bool neighborFound = neighbors.Any(voxel => voxel != null && !voxel.IsEmpty);
 
                         if (!neighborFound)
                         {
-                            PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Must be built next to wall!",
-                                Color.Red));
+                            PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Must be built next to wall!", Color.Red));
                             return false;
                         }
 
@@ -159,13 +168,12 @@ namespace DwarfCorp
                     }
                     case CraftItem.CraftPrereq.OnGround:
                     {
-                        var below = new Voxel();
+                        Voxel below = new Voxel();
                         designation.Location.GetNeighbor(Vector3.Down, ref below);
 
                         if (below.IsEmpty)
                         {
-                            PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Must be built on solid ground!",
-                                Color.Red));
+                            PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Must be built on solid ground!", Color.Red));
                             return false;
                         }
                         break;
@@ -174,6 +182,7 @@ namespace DwarfCorp
             }
 
             return true;
+
         }
 
         public void VoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
@@ -185,73 +194,67 @@ namespace DwarfCorp
             switch (button)
             {
                 case (InputManager.MouseButton.Left):
-                {
-                    if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Craft).Count ==
-                        0)
                     {
-                        PlayState.GUI.ToolTipManager.Popup("None of the selected units can craft items.");
-                        return;
-                    }
-                    var assignments = new List<Task>();
-                    foreach (Voxel r in refs)
-                    {
-                        if (IsDesignation(r) || r == null || !r.IsEmpty)
+                        if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Craft).Count == 0)
                         {
+                            PlayState.GUI.ToolTipManager.Popup("None of the selected units can craft items.");
+                            return;
                         }
-                        Vector3 pos = r.Position + Vector3.One*0.5f;
-                        Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
-                        Vector3 endPos = pos;
-                        var newDesignation = new CraftDesignation
+                        List<Task> assignments = new List<Task>();
+                        foreach (Voxel r in refs)
                         {
-                            ItemType = CurrentCraftType,
-                            Location = r,
-                            WorkPile = new WorkPile(startPos)
-                        };
+                            if (IsDesignation(r) ||r == null || !r.IsEmpty)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                Vector3 pos = r.Position + Vector3.One*0.5f;
+                                Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
+                                Vector3 endPos = pos;
+                                CraftDesignation newDesignation = new CraftDesignation()
+                                {
+                                    ItemType = CurrentCraftType,
+                                    Location = r,
+                                    WorkPile = new WorkPile(startPos)
+                                };
 
-                        newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f,
-                            Matrix.CreateTranslation(startPos), endPos));
-                        PlayState.ParticleManager.Trigger("puff", pos, Color.White, 10);
-                        if (IsValid(newDesignation))
-                        {
-                            AddDesignation(newDesignation);
-                            assignments.Add(new CraftItemTask(new Voxel(new Point3(r.GridPosition), r.Chunk),
-                                CurrentCraftType));
+                                newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
+                                PlayState.ParticleManager.Trigger("puff", pos, Color.White, 10);
+                                if (IsValid(newDesignation))
+                                {
+                                    AddDesignation(newDesignation);
+                                    assignments.Add(new CraftItemTask(new Voxel(new Point3(r.GridPosition), r.Chunk),
+                                        CurrentCraftType));
+                                }
+                                else
+                                {
+                                    newDesignation.WorkPile.Die();
+                                }
+                            }
                         }
-                        else
+
+                        if (assignments.Count > 0)
                         {
-                            newDesignation.WorkPile.Die();
+                            TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Craft));
                         }
-                    }
 
-                    if (assignments.Count > 0)
-                    {
-                        TaskManager.AssignTasks(assignments,
-                            Faction.FilterMinionsWithCapability(PlayState.Master.SelectedMinions,
-                                GameMaster.ToolMode.Craft));
+                        break;
                     }
-
-                    break;
-                }
                 case (InputManager.MouseButton.Right):
-                {
-                    foreach (Voxel r in refs)
                     {
-                        if (!IsDesignation(r))
+                        foreach (Voxel r in refs)
                         {
-                            continue;
+                            if (!IsDesignation(r))
+                            {
+                                continue;
+                            }
+                            RemoveDesignation(r);
                         }
-                        RemoveDesignation(r);
+                        break;
                     }
-                    break;
-                }
             }
         }
-
-        public class CraftDesignation
-        {
-            public CraftItem ItemType { get; set; }
-            public Voxel Location { get; set; }
-            public Body WorkPile { get; set; }
-        }
     }
+
 }

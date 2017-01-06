@@ -30,27 +30,26 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp.GameStates
 {
+
     /// <summary>
-    ///     This game state displays the company and game credits or whatever else needs to go at the beginning of the game.
+    ///  This game state displays the company and game credits or whatever else needs to go at the beginning of the game.
     /// </summary>
     public class IntroState : GameState
     {
+        public Texture2D Logo { get; set; }
         public Timer IntroTimer = new Timer(1, true);
 
         public IntroState(DwarfGame game, GameStateManager stateManager) :
             base(game, "IntroState", stateManager)
         {
-            var library = new ResourceLibrary();
+            ResourceLibrary library = new ResourceLibrary();
         }
-
-        public Texture2D Logo { get; set; }
 
 
         public override void OnEnter()
@@ -68,12 +67,12 @@ namespace DwarfCorp.GameStates
             Game.IsMouseVisible = false;
             IntroTimer.Update(gameTime);
 
-            if (IntroTimer.HasTriggered && Transitioning == TransitionMode.Running)
+            if(IntroTimer.HasTriggered && Transitioning == TransitionMode.Running)
             {
                 StateManager.PushState("MainMenuState");
             }
 
-            if (Keyboard.GetState().GetPressedKeys().Length > 0 && Transitioning == TransitionMode.Running)
+            if(Keyboard.GetState().GetPressedKeys().Length > 0 && Transitioning == TransitionMode.Running)
             {
                 StateManager.PushState("MainMenuState");
             }
@@ -84,11 +83,11 @@ namespace DwarfCorp.GameStates
 
         public override void Render(DwarfTime gameTime)
         {
+
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied);
 
-            var screenCenter = new Vector2(Game.GraphicsDevice.Viewport.Width/2 - Logo.Width/2,
-                Game.GraphicsDevice.Viewport.Height/2 - Logo.Height/2);
-            switch (Transitioning)
+            Vector2 screenCenter = new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - Logo.Width / 2, Game.GraphicsDevice.Viewport.Height / 2 - Logo.Height / 2);
+            switch(Transitioning)
             {
                 case TransitionMode.Running:
                     DwarfGame.SpriteBatch.Draw(Logo, screenCenter, null, new Color(1f, 1f, 1f));
@@ -105,4 +104,5 @@ namespace DwarfCorp.GameStates
             base.Render(gameTime);
         }
     }
+
 }

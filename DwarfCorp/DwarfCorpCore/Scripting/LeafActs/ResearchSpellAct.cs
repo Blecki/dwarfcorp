@@ -30,24 +30,26 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using DwarfCorp;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class ResearchSpellAct : CreatureAct
     {
+        public SpellTree.Node Spell { get; set; }
+
         public ResearchSpellAct(CreatureAI agent, SpellTree.Node spell) :
             base(agent)
         {
             Spell = spell;
         }
-
-        public SpellTree.Node Spell { get; set; }
 
         public override void OnCanceled()
         {
@@ -55,7 +57,7 @@ namespace DwarfCorp
             base.OnCanceled();
         }
 
-        public override IEnumerable<Status> Run()
+        public override IEnumerable<Act.Status> Run()
         {
             if (Spell.IsResearched)
             {
@@ -64,32 +66,30 @@ namespace DwarfCorp
                 yield return Status.Success;
                 yield break;
             }
-            var starParitcle = new Timer(0.5f, false);
+            Timer starParitcle = new Timer(0.5f, false);
             float totalResearch = 0.0f;
             while (!Spell.IsResearched)
             {
                 Creature.CurrentCharacterMode = Creature.CharacterMode.Attacking;
                 Creature.OverrideCharacterMode = true;
-                float research = Creature.Stats.BuffedInt*0.25f*DwarfTime.Dt;
+                float research = Creature.Stats.BuffedInt * 0.25f * DwarfTime.Dt;
                 Spell.ResearchProgress += research;
                 totalResearch += research;
                 Creature.Physics.Velocity *= 0;
                 if ((int) totalResearch > 0)
                 {
                     SoundManager.PlaySound(ContentPaths.Audio.tinkle, Creature.AI.Position, true);
-                    Creature.AI.AddXP((int) (totalResearch));
+                    Creature.AI.AddXP((int)(totalResearch));
                     totalResearch = 0.0f;
                 }
 
                 if (Spell.ResearchProgress >= Spell.ResearchTime)
                 {
-                    PlayState.AnnouncementManager.Announce("Researched " + Spell.Spell.Name,
-                        Creature.Stats.FullName + " (" + Creature.Stats.CurrentLevel.Name + ")" + " discovered the " +
-                        Spell.Spell.Name + " spell!", Agent.ZoomToMe);
+                    PlayState.AnnouncementManager.Announce("Researched " + Spell.Spell.Name, Creature.Stats.FullName + " (" + Creature.Stats.CurrentLevel.Name + ")" + " discovered the " + Spell.Spell.Name + " spell!", Agent.ZoomToMe);
                 }
 
                 starParitcle.Update(DwarfTime.LastTime);
-                if (starParitcle.HasTriggered)
+                if(starParitcle.HasTriggered)
                     PlayState.ParticleManager.Trigger("star_particle", Creature.AI.Position, Color.White, 3);
                 yield return Status.Running;
             }
@@ -97,6 +97,7 @@ namespace DwarfCorp
             Creature.OverrideCharacterMode = false;
             Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
             yield return Status.Success;
+            yield break;
         }
     }
 }

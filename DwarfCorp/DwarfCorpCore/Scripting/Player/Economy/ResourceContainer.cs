@@ -30,12 +30,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Security.AccessControl;
+using System.Text;
+using DwarfCorp.GameStates;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -43,36 +45,16 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class ResourceContainer : IEnumerable<ResourceAmount>
     {
-        [JsonProperty] private int currentResourceCount;
-
-        public ResourceContainer()
-        {
-            InitializeResources();
-        }
-
         public int MaxResources { get; set; }
-
-        public int CurrentResourceCount
-        {
-            get { return currentResourceCount; }
-        }
-
+        [JsonProperty]
+        private int currentResourceCount = 0;
+        public  int CurrentResourceCount { get { return currentResourceCount; } }
         [JsonProperty]
         public Dictionary<ResourceLibrary.ResourceType, ResourceAmount> Resources { get; set; }
 
-        public IEnumerator<ResourceAmount> GetEnumerator()
-        {
-            return Resources.Values.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
         private void InitializeResources()
         {
-            foreach (var pair in ResourceLibrary.Resources)
+            foreach(var pair in ResourceLibrary.Resources)
             {
                 if (Resources == null)
                 {
@@ -94,7 +76,12 @@ namespace DwarfCorp
         {
             InitializeResources();
         }
+       
 
+        public ResourceContainer()
+        {
+            InitializeResources();
+        }
 
         public void Clear()
         {
@@ -111,7 +98,7 @@ namespace DwarfCorp
                 Resources[resource.ResourceType.Type].NumResources -= toReturn;
                 currentResourceCount -= toReturn;
 
-                return toReturn;
+                return toReturn;   
             }
 
             return 0;
@@ -131,7 +118,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public bool RemoveResourceImmediate(Quantitiy<Resource.ResourceTags> tags)
+        public bool RemoveResourceImmediate(Quantitiy<Resource.ResourceTags> tags )
         {
             int numLeft = tags.NumResources;
 
@@ -173,7 +160,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (resource.NumResources > Resources[resource.ResourceType.Type].NumResources)
+            if(resource.NumResources > Resources[resource.ResourceType.Type].NumResources)
             {
                 return false;
             }
@@ -192,7 +179,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (resource.NumResources + CurrentResourceCount > MaxResources)
+            if(resource.NumResources + CurrentResourceCount > MaxResources)
             {
                 return false;
             }
@@ -207,6 +194,16 @@ namespace DwarfCorp
             return true;
         }
 
+        public IEnumerator<ResourceAmount> GetEnumerator()
+        {
+            return Resources.Values.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
         public bool IsFull()
         {
             return CurrentResourceCount >= MaxResources;
@@ -214,20 +211,23 @@ namespace DwarfCorp
 
         public bool AddItem(Body component)
         {
-            if (IsFull())
+            if(IsFull())
             {
                 return false;
             }
-            AddResource(new ResourceAmount(component));
+            else
+            {
+                AddResource(new ResourceAmount(component));
 
-            return true;
+                return true;
+            }
         }
 
         public void RemoveAnyResource()
         {
-            foreach (var resource in Resources)
+            foreach(KeyValuePair<ResourceLibrary.ResourceType, ResourceAmount> resource in Resources)
             {
-                if (resource.Value.NumResources > 0)
+                if(resource.Value.NumResources > 0)
                 {
                     resource.Value.NumResources = Math.Max(resource.Value.NumResources - 1, 0);
                     currentResourceCount -= 1;
@@ -238,7 +238,7 @@ namespace DwarfCorp
 
         public List<ResourceAmount> GetResources(Quantitiy<Resource.ResourceTags> tags)
         {
-            var toReturn = new List<ResourceAmount>();
+            List<ResourceAmount> toReturn = new List<ResourceAmount>();
             int amountLeft = tags.NumResources;
             foreach (ResourceAmount resourceAmount in Resources.Values)
             {
@@ -264,9 +264,7 @@ namespace DwarfCorp
 
         public int GetResourceCount(Resource.ResourceTags resourceType)
         {
-            return
-                Resources.Values.Where(resource => resource.ResourceType.Tags.Contains(resourceType))
-                    .Sum(resource => resource.NumResources);
+            return Resources.Values.Where(resource => resource.ResourceType.Tags.Contains(resourceType)).Sum(resource => resource.NumResources);
         }
 
         public bool HasResource(Resource.ResourceTags resourceType)
@@ -274,7 +272,7 @@ namespace DwarfCorp
             return Resources.Values.Any(resource => resource.ResourceType.Tags.Contains(resourceType));
         }
 
-        public bool HasResource(Quantitiy<Resource.ResourceTags> resourceType)
+        public bool HasResource(Quantitiy<Resource.ResourceTags > resourceType)
         {
             return GetResourceCount(resourceType.ResourceType) >= resourceType.NumResources;
         }

@@ -30,19 +30,42 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using DwarfCorpCore;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     This is a debug display for Dwarf AI. It tells us what the Dwarf is doing, and what it's Act tree is.
+    /// This is a debug display for Dwarf AI
     /// </summary>
     public class AIDebugger
     {
-        private bool m_visible;
+        public Panel MainPanel { get; set; }
+        public ComboBox DwarfSelector { get; set; }
+        public GridLayout Layout { get; set; }
+        public Label GoalLabel { get; set; }
+        public Label PlanLabel { get; set; }
+        public Label AStarPathLabel { get; set; }
+        public GameMaster Master { get; set; }
+        public Label LastMessages { get; set; }
+        private ActDisplay BTDisplay { get; set; }
+        private bool m_visible = false;
+
+        public bool Visible
+        {
+            get { return m_visible; }
+            set
+            {
+                m_visible = value;
+                MainPanel.IsVisible = value;
+            }
+        }
 
         public AIDebugger(DwarfGUI gui, GameMaster master)
         {
@@ -55,7 +78,7 @@ namespace DwarfCorp
             PlanLabel = new Label(gui, Layout, "Plan: null", gui.DefaultFont);
             AStarPathLabel = new Label(gui, Layout, "Astar Path: null", gui.DefaultFont);
             LastMessages = new Label(gui, Layout, "Messages: ", gui.DefaultFont);
-            var btDisplayHolder = new ScrollView(gui, Layout);
+            ScrollView btDisplayHolder = new ScrollView(gui, Layout);
             BTDisplay = new ActDisplay(gui, btDisplayHolder);
 
             Layout.SetComponentPosition(DwarfSelector, 0, 0, 1, 1);
@@ -67,7 +90,7 @@ namespace DwarfCorp
             Visible = false;
 
             int i = 0;
-            foreach (CreatureAI component in master.Faction.Minions)
+            foreach(CreatureAI component in master.Faction.Minions)
             {
                 DwarfSelector.AddValue("Minion " + i);
                 i++;
@@ -79,39 +102,21 @@ namespace DwarfCorp
             MainPanel.LocalBounds = new Rectangle(100, 120, 500, 600);
         }
 
-        public Panel MainPanel { get; set; }
-        public ComboBox DwarfSelector { get; set; }
-        public GridLayout Layout { get; set; }
-        public Label GoalLabel { get; set; }
-        public Label PlanLabel { get; set; }
-        public Label AStarPathLabel { get; set; }
-        public GameMaster Master { get; set; }
-        public Label LastMessages { get; set; }
-        private ActDisplay BTDisplay { get; set; }
-
-        public bool Visible
-        {
-            get { return m_visible; }
-            set
-            {
-                m_visible = value;
-                MainPanel.IsVisible = value;
-            }
-        }
-
         private void DwarfSelector_OnSelectionModified(string arg)
         {
-            int dwarfIndex = DwarfSelector.CurrentIndex;
-            if (dwarfIndex != -1 && DwarfSelector.CurrentValue != "")
-            {
-                CreatureAI creature = Master.Faction.Minions[dwarfIndex];
-                BTDisplay.CurrentAct = creature.CurrentAct;
-            }
+            
+             int dwarfIndex = DwarfSelector.CurrentIndex;
+             if (dwarfIndex != -1 && DwarfSelector.CurrentValue != "")
+             {
+                 CreatureAI creature = Master.Faction.Minions[dwarfIndex];
+                 BTDisplay.CurrentAct = creature.CurrentAct;
+             }
+             
         }
 
         public void Update(DwarfTime time)
         {
-            if (GameSettings.Default.EnableAIDebugger)
+            if(GameSettings.Default.EnableAIDebugger)
             {
                 DwarfSelector.ClearValues();
                 int i = 0;
@@ -121,38 +126,39 @@ namespace DwarfCorp
                     i++;
                 }
 
-                if (Keyboard.GetState().IsKeyDown(Keys.K))
+                if(Keyboard.GetState().IsKeyDown(Keys.K))
                 {
                     Visible = true;
                 }
-                else if (Keyboard.GetState().IsKeyDown(Keys.L))
+                else if(Keyboard.GetState().IsKeyDown(Keys.L))
                 {
                     Visible = false;
                 }
             }
 
-            if (!Visible)
+            if(!Visible)
             {
                 return;
             }
 
             int dwarfIndex = DwarfSelector.CurrentIndex;
-            if (dwarfIndex != -1 && DwarfSelector.CurrentValue != "")
+            if(dwarfIndex != -1 && DwarfSelector.CurrentValue != "")
             {
                 CreatureAI creature = Master.Faction.Minions[dwarfIndex];
-
+                
                 if (creature == null)
                 {
                     return;
                 }
 
-                if (creature.CurrentAct != BTDisplay.CurrentAct)
+                if(creature.CurrentAct != BTDisplay.CurrentAct)
                 {
                     BTDisplay.CurrentAct = creature.CurrentAct;
                 }
 
 
-                if (creature.CurrentPath != null)
+               
+                if(creature.CurrentPath != null)
                 {
                     AStarPathLabel.Text = "A* Plan: " + creature.CurrentPath.Count;
                 }
@@ -162,7 +168,7 @@ namespace DwarfCorp
                 }
 
                 LastMessages.Text = "";
-                for (int i = creature.MessageBuffer.Count - 1; i > Math.Max(creature.MessageBuffer.Count - 4, 0); i--)
+                for(int i = creature.MessageBuffer.Count - 1; i > Math.Max(creature.MessageBuffer.Count - 4, 0); i--)
                 {
                     LastMessages.Text += creature.MessageBuffer[i] + "\n";
                 }
@@ -171,4 +177,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

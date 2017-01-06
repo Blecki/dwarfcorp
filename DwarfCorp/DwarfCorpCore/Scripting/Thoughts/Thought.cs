@@ -30,8 +30,11 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -39,6 +42,12 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Thought
     {
+        public string Description { get; set; }
+        public float HappinessModifier { get; set; }
+        public DateTime TimeStamp { get; set; }
+        public TimeSpan TimeLimit { get; set; }
+        public ThoughtType Type { get; set; }
+
         public enum ThoughtType
         {
             Slept,
@@ -66,17 +75,11 @@ namespace DwarfCorp
             Magic
         }
 
-        public string Description { get; set; }
-        public float HappinessModifier { get; set; }
-        public DateTime TimeStamp { get; set; }
-        public TimeSpan TimeLimit { get; set; }
-        public ThoughtType Type { get; set; }
-
         public static Thought CreateStandardThought(ThoughtType type, DateTime time)
         {
             string description = "";
             float happiness = 0.0f;
-            var limit = new TimeSpan(0, 1, 0, 0);
+            TimeSpan limit = new TimeSpan(0, 1, 0, 0);
             switch (type)
             {
                 case ThoughtType.Magic:
@@ -149,7 +152,7 @@ namespace DwarfCorp
                     happiness = 10.0f;
                     limit = new TimeSpan(1, 0, 0, 0);
                     break;
-                case ThoughtType.NotPaid:
+                 case ThoughtType.NotPaid:
                     description = "I have not been paid!";
                     happiness = -25.0f;
                     limit = new TimeSpan(1, 0, 0, 0);
@@ -190,14 +193,14 @@ namespace DwarfCorp
                     limit = new TimeSpan(0, 8, 0, 0);
                     break;
                 case ThoughtType.Other:
-                    return new Thought
+                    return new Thought()
                     {
                         Type = type
                     };
                     break;
             }
 
-            return new Thought
+            return new Thought()
             {
                 Description = description,
                 HappinessModifier = happiness,

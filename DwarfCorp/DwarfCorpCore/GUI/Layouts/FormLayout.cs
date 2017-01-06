@@ -30,32 +30,21 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Has a number of labeled rows with different GUI components
-    ///     on each row.
+    /// Has a number of labeled rows with different GUI components 
+    /// on each row.
     /// </summary>
     public class FormLayout : Layout
     {
-        public FormLayout(DwarfGUI gui, GUIComponent parent) :
-            base(gui, parent)
-        {
-            LabelFont = GUI.DefaultFont;
-            NumColumns = 1;
-            MaxRows = 30;
-            FitToParent = true;
-            EdgePadding = 0;
-            RowHeight = 32;
-            ColumnWidth = 400;
-            Items = new List<FormEntry>();
-        }
-
         public List<FormEntry> Items { get; set; }
 
         public int NumColumns { get; set; }
@@ -69,6 +58,19 @@ namespace DwarfCorp
 
         public int ColumnWidth { get; set; }
         public SpriteFont LabelFont { get; set; }
+
+        public FormLayout(DwarfGUI gui, GUIComponent parent) :
+            base(gui, parent)
+        {
+            LabelFont = GUI.DefaultFont;
+            NumColumns = 1;
+            MaxRows = 30; 
+            FitToParent = true;
+            EdgePadding = 0;
+            RowHeight = 32;
+            ColumnWidth = 400;
+            Items = new List<FormEntry>();
+        }
 
         public void AddItem(string label, GUIComponent item)
         {
@@ -85,6 +87,8 @@ namespace DwarfCorp
         }
 
 
+
+
         public override void UpdateSizes()
         {
             int c = 0;
@@ -92,12 +96,11 @@ namespace DwarfCorp
 
             if (FitToParent)
             {
-                LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, Parent.LocalBounds.Width - EdgePadding,
-                    Parent.LocalBounds.Height - EdgePadding);
-                ColumnWidth = LocalBounds.Width/NumColumns;
+                LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, Parent.LocalBounds.Width - EdgePadding, Parent.LocalBounds.Height - EdgePadding);
+                ColumnWidth = LocalBounds.Width / NumColumns;
             }
 
-            if (NumColumns <= 0 || MaxRows <= 0)
+            if(NumColumns <= 0 || MaxRows <= 0)
             {
                 return;
             }
@@ -106,19 +109,18 @@ namespace DwarfCorp
             foreach (FormEntry item in Items)
             {
                 item.Label.LocalBounds
-                    = new Rectangle(EdgePadding + c*ColumnWidth, EdgePadding + r*RowHeight, ColumnWidth/2, RowHeight);
+                    = new Rectangle(EdgePadding + c * ColumnWidth, EdgePadding + r * RowHeight, ColumnWidth / 2, RowHeight);
 
                 item.Component.LocalBounds
-                    = new Rectangle(EdgePadding + c*ColumnWidth + ColumnWidth/2, EdgePadding + r*RowHeight,
-                        ColumnWidth/2, RowHeight);
+                    = new Rectangle(EdgePadding + c * ColumnWidth + ColumnWidth / 2, EdgePadding + r * RowHeight, ColumnWidth / 2, RowHeight);
                 r++;
 
-                if (r > MaxRows)
+                if(r > MaxRows)
                 {
                     r = 0;
                     c++;
 
-                    if (c >= NumColumns)
+                    if(c >= NumColumns)
                     {
                         NumColumns++;
                     }
@@ -127,10 +129,10 @@ namespace DwarfCorp
 
             if (!FitToParent)
             {
-                LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, (c + 1)*ColumnWidth + EdgePadding,
-                    (r + 1)*RowHeight + EdgePadding);
-                ColumnWidth = LocalBounds.Width/NumColumns;
+                LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, (c + 1) * ColumnWidth + EdgePadding, (r + 1) * RowHeight + EdgePadding);
+                ColumnWidth = LocalBounds.Width / NumColumns;
             }
         }
     }
+
 }

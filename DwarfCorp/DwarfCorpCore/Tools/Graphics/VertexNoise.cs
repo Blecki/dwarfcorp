@@ -30,25 +30,29 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+    
     /// <summary>
-    ///     This is used to apply random perlin noise to the positions of vertices.
-    ///     Used to make fancy, wavy terrain that isn't exactly square.
+    /// This is used to apply random perlin noise to the positions of vertices.
+    /// Used to make fancy, wavy terrain that isn't exactly square.
     /// </summary>
     internal class VertexNoise
     {
-        private static readonly Perlin VertexNoiseX = new Perlin(PlayState.Random.Next());
-        private static readonly Perlin VertexNoiseY = new Perlin(PlayState.Random.Next());
-        private static readonly Perlin VertexNoiseZ = new Perlin(PlayState.Random.Next());
-        private static readonly Perlin GlobalVertexNoiseX = new Perlin(PlayState.Random.Next());
-        private static readonly Perlin GlobalVertexNoiseY = new Perlin(PlayState.Random.Next());
-        private static readonly Perlin GlobalVertexNoiseZ = new Perlin(PlayState.Random.Next());
+        private static Perlin VertexNoiseX = new Perlin(PlayState.Random.Next());
+        private static Perlin VertexNoiseY = new Perlin(PlayState.Random.Next());
+        private static Perlin VertexNoiseZ = new Perlin(PlayState.Random.Next());
+        private static Perlin GlobalVertexNoiseX = new Perlin(PlayState.Random.Next());
+        private static Perlin GlobalVertexNoiseY = new Perlin(PlayState.Random.Next());
+        private static Perlin GlobalVertexNoiseZ = new Perlin(PlayState.Random.Next());
         private static float NoiseScale = 0.1f;
         private static float NoiseMagnitude = 0.35f;
         private static float GlobalNoiseScale = 0.01f;
@@ -59,27 +63,27 @@ namespace DwarfCorp
 
         public static Vector3[][][] GenerateRepeatingTexture(float w, float h, float d)
         {
-            var toReturn = new Vector3[(int) w][][];
+            Vector3[][][] toReturn = new Vector3[(int) w][][];
 
-            float whd = w*h*d;
-            for (int x = 0; x < w; x++)
+            float whd = w * h * d;
+            for(int x = 0; x < w; x++)
             {
                 toReturn[x] = new Vector3[(int) h][];
-                for (int y = 0; y < h; y++)
+                for(int y = 0; y < h; y++)
                 {
                     toReturn[x][y] = new Vector3[(int) d];
-                    for (int z = 0; z < d; z++)
+                    for(int z = 0; z < d; z++)
                     {
                         toReturn[x][y][z] = (
-                            GetRandomNoiseVector(x, y, z)*(w - x)*(h - y)*(d - z) +
-                            GetRandomNoiseVector(x - w, y, z)*(x)*(h - y)*(d - z) +
-                            GetRandomNoiseVector(x - w, y - h, z)*(x)*(y)*(d - z) +
-                            GetRandomNoiseVector(x, y - h, z)*(w - x)*(y)*(d - z) +
-                            GetRandomNoiseVector(x, y, z - d)*(w - x)*(h - y)*(d) +
-                            GetRandomNoiseVector(x - w, y, z - d)*(x)*(h - y)*(d) +
-                            GetRandomNoiseVector(x - w, y - h, z - d)*(x)*(y)*(d) +
-                            GetRandomNoiseVector(x, y - h, z - d)*(w - x)*(y)*(d)
-                            )/(whd);
+                            GetRandomNoiseVector(x, y, z) * (w - x) * (h - y) * (d - z) +
+                            GetRandomNoiseVector(x - w, y, z) * (x) * (h - y) * (d - z) +
+                            GetRandomNoiseVector(x - w, y - h, z) * (x) * (y) * (d - z) +
+                            GetRandomNoiseVector(x, y - h, z) * (w - x) * (y) * (d - z) +
+                            GetRandomNoiseVector(x, y, z - d) * (w - x) * (h - y) * (d) +
+                            GetRandomNoiseVector(x - w, y, z - d) * (x) * (h - y) * (d) +
+                            GetRandomNoiseVector(x - w, y - h, z - d) * (x) * (y) * (d) +
+                            GetRandomNoiseVector(x, y - h, z - d) * (w - x) * (y) * (d)
+                            ) / (whd);
                     }
                 }
             }
@@ -89,14 +93,13 @@ namespace DwarfCorp
 
         public static Vector3 GetNoiseVectorFromRepeatingTexture(Vector3 position)
         {
-            if (RepeatingTexture == null)
+            if(RepeatingTexture == null)
             {
-                RepeatingTexture = GenerateRepeatingTexture(RepeatingTextureSize, RepeatingTextureSize,
-                    RepeatingTextureSize);
+                RepeatingTexture = GenerateRepeatingTexture(RepeatingTextureSize, RepeatingTextureSize, RepeatingTextureSize);
             }
-            float modX = Math.Abs(position.X)%RepeatingTextureSize;
-            float modY = Math.Abs(position.Y)%RepeatingTextureSize;
-            float modZ = Math.Abs(position.Z)%RepeatingTextureSize;
+            float modX = Math.Abs(position.X) % RepeatingTextureSize;
+            float modY = Math.Abs(position.Y) % RepeatingTextureSize;
+            float modZ = Math.Abs(position.Z) % RepeatingTextureSize;
 
             return new Vector3(0, RepeatingTexture[(int) modX][(int) modY][(int) modZ].Y, 0);
         }
@@ -109,38 +112,29 @@ namespace DwarfCorp
 
         public static Vector3 GetRandomNoiseVector(Vector3 position)
         {
-            float x = VertexNoiseX.Noise(position.X*NoiseScale, position.Y*NoiseScale, position.Z*NoiseScale)*
-                      NoiseMagnitude - NoiseMagnitude/2.0f;
-            float y = VertexNoiseY.Noise(position.X*NoiseScale, position.Y*NoiseScale, position.Z*NoiseScale)*
-                      NoiseMagnitude - NoiseMagnitude/2.0f;
-            float z = VertexNoiseZ.Noise(position.X*NoiseScale, position.Y*NoiseScale, position.Z*NoiseScale)*
-                      NoiseMagnitude - NoiseMagnitude/2.0f;
+            float x = VertexNoiseX.Noise((float) position.X * NoiseScale, (float) position.Y * NoiseScale, (float) position.Z * NoiseScale) * NoiseMagnitude - NoiseMagnitude / 2.0f;
+            float y = VertexNoiseY.Noise((float) position.X * NoiseScale, (float) position.Y * NoiseScale, (float) position.Z * NoiseScale) * NoiseMagnitude - NoiseMagnitude / 2.0f;
+            float z = VertexNoiseZ.Noise((float) position.X * NoiseScale, (float) position.Y * NoiseScale, (float) position.Z * NoiseScale) * NoiseMagnitude - NoiseMagnitude / 2.0f;
 
-            float gx =
-                GlobalVertexNoiseX.Noise(position.X*GlobalNoiseScale, position.Y*GlobalNoiseScale,
-                    position.Z*GlobalNoiseScale)*GlobalNoiseMagnitude - GlobalNoiseMagnitude/2.0f;
-            float gy =
-                GlobalVertexNoiseY.Noise(position.X*GlobalNoiseScale, position.Y*GlobalNoiseScale,
-                    position.Z*GlobalNoiseScale)*GlobalNoiseMagnitude - GlobalNoiseMagnitude/2.0f;
-            float gz =
-                GlobalVertexNoiseZ.Noise(position.X*GlobalNoiseScale, position.Y*GlobalNoiseScale,
-                    position.Z*GlobalNoiseScale)*GlobalNoiseMagnitude - GlobalNoiseMagnitude/2.0f;
+            float gx = GlobalVertexNoiseX.Noise((float) position.X * GlobalNoiseScale, (float) position.Y * GlobalNoiseScale, (float) position.Z * GlobalNoiseScale) * GlobalNoiseMagnitude - GlobalNoiseMagnitude / 2.0f;
+            float gy = GlobalVertexNoiseY.Noise((float) position.X * GlobalNoiseScale, (float) position.Y * GlobalNoiseScale, (float) position.Z * GlobalNoiseScale) * GlobalNoiseMagnitude - GlobalNoiseMagnitude / 2.0f;
+            float gz = GlobalVertexNoiseZ.Noise((float) position.X * GlobalNoiseScale, (float) position.Y * GlobalNoiseScale, (float) position.Z * GlobalNoiseScale) * GlobalNoiseMagnitude - GlobalNoiseMagnitude / 2.0f;
 
-            return new Vector3(x + gx, y + gy, z + gz);
+            return new Vector3((float) x + (float) gx, (float) y + (float) gy, (float) z + (float) gz);
         }
 
         public static Vector3[] WarpPoints(Vector3[] points, Vector3 scale, Vector3 translation)
         {
-            var toReturn = new Vector3[points.Length];
+            Vector3[] toReturn = new Vector3[points.Length];
 
-            for (int i = 0; i < points.Length; i++)
+            for(int i = 0; i < points.Length; i++)
             {
-                var scaled = new Vector3(points[i].X*scale.X + translation.X, points[i].Y*scale.Y + translation.Y,
-                    points[i].Z*scale.Z + translation.Z);
+                Vector3 scaled = new Vector3(points[i].X * scale.X + translation.X, points[i].Y * scale.Y + translation.Y, points[i].Z * scale.Z + translation.Z);
                 toReturn[i] = points[i] + GetNoiseVectorFromRepeatingTexture(scaled);
             }
 
             return toReturn;
         }
     }
+
 }

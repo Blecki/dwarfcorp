@@ -30,9 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 
@@ -40,6 +41,13 @@ namespace DwarfCorp
 {
     public class NecromancerAI : CreatureAI
     {
+        public List<Skeleton> Skeletons { get; set; }
+        public int MaxSkeletons { get; set; }
+        public Timer WanderTimer { get; set; }
+        public Timer SummonTimer { get; set; }
+        public Timer AttackTimer { get; set; }
+        public float AttackRange { get; set; }
+
         public NecromancerAI()
         {
             Skeletons = new List<Skeleton>();
@@ -63,13 +71,6 @@ namespace DwarfCorp
             AttackRange = 10;
         }
 
-        public List<Skeleton> Skeletons { get; set; }
-        public int MaxSkeletons { get; set; }
-        public Timer WanderTimer { get; set; }
-        public Timer SummonTimer { get; set; }
-        public Timer AttackTimer { get; set; }
-        public float AttackRange { get; set; }
-
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
@@ -88,13 +89,12 @@ namespace DwarfCorp
             Vector3 pos = Position + MathFunctions.RandVector3Box(-1.0f, 1.0f, 0.0f, 0.0f, -1.0f, 1.0f);
             Skeleton skeleton = EntityFactory.GenerateSkeleton(pos, Manager, GameState.Game.Content,
                 GameState.Game.GraphicsDevice, Chunks, PlayState.Camera, Faction, PlayState.PlanService,
-                Creature.Allies).GetChildrenOfType<Skeleton>().FirstOrDefault();
+                this.Creature.Allies).GetChildrenOfType<Skeleton>().FirstOrDefault();
 
             Skeletons.Add(skeleton);
             Matrix animatePosition = skeleton.Sprite.LocalTransform;
             animatePosition.Translation = animatePosition.Translation - new Vector3(0, 1, 0);
-            skeleton.Sprite.AnimationQueue.Add(new EaseMotion(1.0f, animatePosition,
-                skeleton.Sprite.LocalTransform.Translation));
+            skeleton.Sprite.AnimationQueue.Add(new EaseMotion(1.0f, animatePosition, skeleton.Sprite.LocalTransform.Translation));
             PlayState.ParticleManager.Trigger("green_flame", pos, Color.White, 10);
             SoundManager.PlaySound(ContentPaths.Audio.tinkle, pos, true);
         }
@@ -122,18 +122,13 @@ namespace DwarfCorp
         public void OrderSkeletonsToAttack()
         {
             List<CreatureAI> enemies = (from faction in Creature.Manager.Factions.Factions
-                where
-                    PlayState.ComponentManager.Diplomacy.GetPolitics(Creature.Faction, faction.Value)
-                        .GetCurrentRelationship() == Relationship.Hateful
-                from minion in faction.Value.Minions
-                let dist = (minion.Position - Creature.AI.Position).Length()
-                where dist < AttackRange
-                select minion).ToList();
+                                        where PlayState.ComponentManager.Diplomacy.GetPolitics(Creature.Faction, faction.Value).GetCurrentRelationship() == Relationship.Hateful 
+                                        from minion in faction.Value.Minions 
+                                        let dist = (minion.Position - Creature.AI.Position).Length() 
+                                        where dist < AttackRange 
+                                        select minion).ToList();
 
-            List<Task> attackTasks =
-                enemies.Select(enemy => new KillEntityTask(enemy.Physics, KillEntityTask.KillType.Auto))
-                    .Cast<Task>()
-                    .ToList();
+            List<Task> attackTasks = enemies.Select(enemy => new KillEntityTask(enemy.Physics, KillEntityTask.KillType.Auto)).Cast<Task>().ToList();
             List<CreatureAI> skeletonAis = Skeletons.Select(skeleton => skeleton.AI).ToList();
             if (attackTasks.Count > 0)
             {
@@ -149,7 +144,7 @@ namespace DwarfCorp
                 if (SummonTimer.HasTriggered && Skeletons.Count < MaxSkeletons)
                 {
                     SummonTimer.Reset(SummonTimer.TargetTimeSeconds);
-                    for (int i = Skeletons.Count; i < MaxSkeletons; i += 2)
+                    for (int i = Skeletons.Count; i < MaxSkeletons; i+=2)
                     {
                         SummonSkeleton();
                     }

@@ -30,60 +30,79 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.IO;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
+
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 
 namespace DwarfCorp
 {
+
     /// <summary>
-    ///     This is a helper class designed to help load textures from disk. Can load entire directories of textures.
+    /// This is a helper class designed to help load textures from disk. Can load entire directories of textures.
     /// </summary>
     public class TextureLoader
     {
+        public string Folder { get; set; }
+        public string FileTypes { get; set; }
+        public GraphicsDevice Graphics { get; set; }
+
+        public class TextureFile
+        {
+            public Texture2D Texture;
+            public string File;
+            
+            public TextureFile(Texture2D texture, string file)
+            {
+                Texture = texture;
+                File = file;
+            }
+        }
+
         public TextureLoader(string folder, GraphicsDevice graphics)
         {
-            string assemblyLocation = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
-                                      ProgramData.DirChar + "DwarfCorp";
+            string assemblyLocation = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + ProgramData.DirChar + "DwarfCorp";
             string relativePath = assemblyLocation + ProgramData.DirChar + folder;
             FileTypes = "*.png";
             Folder = relativePath;
             Graphics = graphics;
         }
 
-        public string Folder { get; set; }
-        public string FileTypes { get; set; }
-        public GraphicsDevice Graphics { get; set; }
-
         public List<TextureFile> GetTextures()
         {
-            var di = new DirectoryInfo(Folder);
+            DirectoryInfo di = new DirectoryInfo(Folder);
 
-            if (!di.Exists)
+            if(!di.Exists)
             {
                 di.Create();
             }
             FileInfo[] files = di.GetFiles(FileTypes, SearchOption.TopDirectoryOnly);
 
-            var toReturn = new List<TextureFile>();
-            foreach (FileInfo file in files)
+            List<TextureFile> toReturn = new List<TextureFile>();
+            foreach(FileInfo file in files)
             {
                 Texture2D texture = null;
-                var stream = new FileStream(file.FullName, FileMode.Open);
+                FileStream stream = new FileStream(file.FullName, FileMode.Open);
                 try
                 {
                     texture = Texture2D.FromStream(Graphics, stream);
                 }
-                catch (IOException e)
+                catch(IOException e)
                 {
                     Console.Error.WriteLine(e.Message);
                     stream.Close();
                     continue;
                 }
 
-                if (texture != null)
+                if(texture != null)
                 {
                     toReturn.Add(new TextureFile(texture, file.FullName));
                 }
@@ -92,17 +111,6 @@ namespace DwarfCorp
 
             return toReturn;
         }
-
-        public class TextureFile
-        {
-            public string File;
-            public Texture2D Texture;
-
-            public TextureFile(Texture2D texture, string file)
-            {
-                Texture = texture;
-                File = file;
-            }
-        }
     }
+
 }

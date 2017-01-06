@@ -30,56 +30,48 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     When using this tool, the player clicks on creatures to specify that
-    ///     they should be killed
+    /// When using this tool, the player clicks on creatures to specify that 
+    /// they should be killed
     /// </summary>
     public class AttackTool : PlayerTool
     {
-        /// <summary>
-        ///     Color of boxes to draw around enemies.
-        /// </summary>
         public Color DesignationColor { get; set; }
-
-        /// <summary>
-        ///     Boxes pulsate at this frequency.
-        /// </summary>
         public float GlowRate { get; set; }
-
 
         public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
         {
-            // Intentionally left blank. This tool selects bodies, not voxels.
+
         }
 
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
-            // Intentionally left blank. This tool selects bodies, not voxels.
+
         }
 
         public override void OnBegin()
         {
-            // Intentionally left blank. Nothing to initialize.
+            
         }
 
         public override void OnEnd()
         {
-            // Intentionally left blank. Nothing to clean up.
+            
         }
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            // If the player is rotating the camera, don't activate the tool.
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
@@ -88,7 +80,6 @@ namespace DwarfCorp
                 return;
             }
 
-            // Otherwise, activate the tool. The body selector is on, and the voxel selector is off.
             Player.VoxSelector.Enabled = false;
             Player.BodySelector.Enabled = true;
             Player.BodySelector.AllowRightClickSelection = true;
@@ -102,57 +93,43 @@ namespace DwarfCorp
             {
                 PlayState.GUI.MouseMode = GUISkin.MousePointer.Attack;
             }
+
+
         }
 
-
-        /// <summary>
-        ///     Draw boxes around the targets.
-        /// </summary>
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
+
             Color drawColor = DesignationColor;
 
-            var alpha = (float) Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*GlowRate));
-            drawColor.R = (byte) (Math.Min(drawColor.R*alpha + 50, 255));
-            drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
-            drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
+            float alpha = (float)Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GlowRate));
+            drawColor.R = (byte)(Math.Min(drawColor.R * alpha + 50, 255));
+            drawColor.G = (byte)(Math.Min(drawColor.G * alpha + 50, 255));
+            drawColor.B = (byte)(Math.Min(drawColor.B * alpha + 50, 255));
 
             foreach (BoundingBox box in Player.Faction.AttackDesignations.Select(d => d.GetBoundingBox()))
             {
-                Drawer3D.DrawBox(box, drawColor, 0.05f*alpha + 0.05f, true);
+                Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
             }
         }
 
-        /// <summary>
-        ///     Called whenever a list of bodies was selected by the player. Determines which bodies can be attacked,
-        ///     and tells the player's Dwarfs to attack those bodies.
-        /// </summary>
-        /// <param name="bodies">The bodies which were selected by the player.</param>
-        /// <param name="button">The mouse button (left/right/center) that was pressed.</param>
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
-            // For each body, determine if it can be attacked.
+
             foreach (Body other in bodies)
             {
-                // We can only attack creatures.
                 Creature creature = other.GetChildrenOfType<Creature>().FirstOrDefault();
                 if (creature == null)
                 {
                     continue;
                 }
 
-                // We can't attack our friends!
-                if (
-                    PlayState.ComponentManager.Diplomacy.GetPolitics(creature.Faction, Player.Faction)
-                        .GetCurrentRelationship() == Relationship.Loving)
+                if (PlayState.ComponentManager.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() == Relationship.Loving)
                 {
                     continue;
                 }
 
-                // Now we know which things can be attacked. Draw a debug box around them.
                 Drawer3D.DrawBox(other.BoundingBox, DesignationColor, 0.1f, false);
-
-                // If left button is pressed, tell all the selected dwarves to attack.
                 if (button == InputManager.MouseButton.Left)
                 {
                     if (!Player.Faction.AttackDesignations.Contains(other))
@@ -167,7 +144,6 @@ namespace DwarfCorp
                         OnConfirm(Player.Faction.SelectedMinions);
                     }
                 }
-                    // If right button is pressed, tell all the selected dwarves not to attack.
                 else if (button == InputManager.MouseButton.Right)
                 {
                     if (Player.Faction.AttackDesignations.Contains(other))

@@ -30,22 +30,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
     public class CraftDwarfClass : EmployeeClass
     {
-        public CraftDwarfClass()
-        {
-            if (!staticsInitiailized)
-            {
-                InitializeStatics();
-            }
-        }
-
-        private void InitializeLevels()
+        void InitializeLevels()
         {
             Levels = new List<Level>
             {
@@ -63,7 +58,7 @@ namespace DwarfCorp
                     Name = "Assistant Craftsdwarf",
                     Pay = 50,
                     XP = 100,
-                    BaseStats = new CreatureStats.StatNums
+                    BaseStats = new CreatureStats.StatNums()
                     {
                         Intelligence = 6,
                         Constitution = 6
@@ -75,7 +70,7 @@ namespace DwarfCorp
                     Name = "Craftsdwarf",
                     Pay = 100,
                     XP = 250,
-                    BaseStats = new CreatureStats.StatNums
+                    BaseStats = new CreatureStats.StatNums()
                     {
                         Intelligence = 7,
                         Constitution = 6,
@@ -88,7 +83,7 @@ namespace DwarfCorp
                     Name = "Craft Engineer",
                     Pay = 200,
                     XP = 500,
-                    BaseStats = new CreatureStats.StatNums
+                    BaseStats = new CreatureStats.StatNums()
                     {
                         Intelligence = 7,
                         Constitution = 7,
@@ -102,7 +97,7 @@ namespace DwarfCorp
                     Name = "Craft Specialist",
                     Pay = 500,
                     XP = 1000,
-                    BaseStats = new CreatureStats.StatNums
+                    BaseStats = new CreatureStats.StatNums()
                     {
                         Intelligence = 8,
                         Constitution = 7,
@@ -116,7 +111,7 @@ namespace DwarfCorp
                     Name = "Principal Crafter",
                     Pay = 1000,
                     XP = 5000,
-                    BaseStats = new CreatureStats.StatNums
+                    BaseStats = new CreatureStats.StatNums()
                     {
                         Intelligence = 9,
                         Constitution = 8,
@@ -130,7 +125,7 @@ namespace DwarfCorp
                     Name = "VP of Crafting",
                     Pay = 5000,
                     XP = 10000,
-                    BaseStats = new CreatureStats.StatNums
+                    BaseStats = new CreatureStats.StatNums()
                     {
                         Intelligence = 10,
                         Constitution = 8,
@@ -144,7 +139,7 @@ namespace DwarfCorp
                     Name = "President of Crafting",
                     Pay = 10000,
                     XP = 20000,
-                    BaseStats = new CreatureStats.StatNums
+                    BaseStats = new CreatureStats.StatNums()
                     {
                         Intelligence = 10,
                         Constitution = 9,
@@ -152,6 +147,7 @@ namespace DwarfCorp
                         Dexterity = 9,
                         Strength = 6
                     }
+
                 },
                 new Level
                 {
@@ -159,7 +155,7 @@ namespace DwarfCorp
                     Name = "Craft Analyst",
                     Pay = 50000,
                     XP = 1000000,
-                    BaseStats = new CreatureStats.StatNums
+                    BaseStats = new CreatureStats.StatNums()
                     {
                         Intelligence = 10,
                         Constitution = 10,
@@ -174,7 +170,7 @@ namespace DwarfCorp
                     Name = "Craft Scientist",
                     Pay = 100000,
                     XP = 2000000,
-                    BaseStats = new CreatureStats.StatNums
+                    BaseStats = new CreatureStats.StatNums()
                     {
                         Intelligence = 10,
                         Constitution = 10,
@@ -189,7 +185,7 @@ namespace DwarfCorp
                     Name = "Craft Overlord",
                     Pay = 100000,
                     XP = 5000000,
-                    BaseStats = new CreatureStats.StatNums
+                    BaseStats = new CreatureStats.StatNums()
                     {
                         Intelligence = 10,
                         Constitution = 10,
@@ -201,9 +197,9 @@ namespace DwarfCorp
             };
         }
 
-        private void InitializeActions()
+        void InitializeActions()
         {
-            Actions = new List<GameMaster.ToolMode>
+            Actions = new List<GameMaster.ToolMode>()
             {
                 GameMaster.ToolMode.Build,
                 GameMaster.ToolMode.Attack,
@@ -214,9 +210,9 @@ namespace DwarfCorp
             };
         }
 
-        private void InitializeAnimations()
+        void InitializeAnimations()
         {
-            var descriptor =
+            CompositeAnimation.Descriptor descriptor =
                 FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
                     ContentPaths.GetFileAsString(ContentPaths.Entities.Dwarf.Sprites.crafter_animation));
             Animations = new List<Animation>();
@@ -225,7 +221,7 @@ namespace DwarfCorp
 
         public void InitializeWeapons()
         {
-            Attacks = new List<Attack>
+            Attacks = new List<Attack>()
             {
                 new Attack("Hammer", 1.0f, 0.5f, 1.0f, ContentPaths.Audio.hammer, ContentPaths.Effects.hit)
                 {
@@ -244,6 +240,13 @@ namespace DwarfCorp
             InitializeWeapons();
             InitializeActions();
             base.InitializeStatics();
+        }
+        public CraftDwarfClass()
+        {
+            if (!staticsInitiailized)
+            {
+                InitializeStatics();
+            }
         }
     }
 }

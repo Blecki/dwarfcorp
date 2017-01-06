@@ -30,17 +30,21 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.Scripting.LeafActs;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A creature finds an item with the tag "bed", goes to it, and sleeps in it.
+    /// A creature finds an item with the tag "bed", goes to it, and sleeps in it.
     /// </summary>
     public class FindBedAndSleepAct : CompoundCreatureAct
     {
+
         public FindBedAndSleepAct()
         {
             Name = "Find bed and sleep";
@@ -57,31 +61,22 @@ namespace DwarfCorp
         {
             Body closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true);
 
-
+            
             if (Agent.Status.Energy.IsUnhappy() && closestItem != null)
             {
                 closestItem.ReservedFor = Agent;
                 Creature.AI.Blackboard.SetData("Bed", closestItem);
                 Act unreserveAct = new Wrap(() => Creature.Unreserve("Bed"));
-                Tree =
+                Tree = 
                     new Sequence
-                        (
+                    (
                         new GoToEntityAct(closestItem, Creature.AI),
-                        new TeleportAct(Creature.AI)
-                        {
-                            Location = closestItem.GetRotatedBoundingBox().Center() + new Vector3(-0.0f, 0.75f, -0.0f)
-                        },
-                        new SleepAct(Creature.AI)
-                        {
-                            RechargeRate = 1.0f,
-                            Teleport = true,
-                            TeleportLocation =
-                                closestItem.GetRotatedBoundingBox().Center() + new Vector3(-0.0f, 0.75f, -0.0f)
-                        },
+                        new TeleportAct(Creature.AI) {Location = closestItem.GetRotatedBoundingBox().Center() + new Vector3(-0.0f, 0.75f, -0.0f)},
+                        new SleepAct(Creature.AI) { RechargeRate = 1.0f, Teleport = true, TeleportLocation = closestItem.GetRotatedBoundingBox().Center() + new Vector3(-0.0f, 0.75f, -0.0f) },
                         unreserveAct
-                        ) | unreserveAct;
+                    ) | unreserveAct;
             }
-            else if (Agent.Status.Energy.IsUnhappy() && closestItem == null)
+            else if(Agent.Status.Energy.IsUnhappy() && closestItem == null)
             {
                 Creature.AI.AddThought(Thought.ThoughtType.SleptOnGround);
 

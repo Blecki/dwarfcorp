@@ -30,27 +30,27 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Specifies how a liquid is to be rendered.
+    /// Specifies how a liquid is to be rendered.
     /// </summary>
     public struct LiquidAsset
     {
+        public LiquidType Type;
         public Texture2D BaseTexture;
         public Texture2D BumpTexture;
-        public Vector4 FlatColor;
-        public float MinOpacity;
         public float Opactiy;
-        public float Reflection;
-        public Vector4 RippleColor;
-        public LiquidType Type;
-        public float WaveHeight;
         public float WaveLength;
+        public float WaveHeight;
         public float WindForce;
+        public float MinOpacity;
+        public Vector4 RippleColor;
+        public Vector4 FlatColor;
+        public float Reflection;
     }
+
 }

@@ -30,21 +30,22 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Has a list of children which get ticked in sequence as if they are being run
-    ///     in parallel. Returns success when all of the children return success. Otherwise,
-    ///     continues running until a child returns failure.
+    /// Has a list of children which get ticked in sequence as if they are being run
+    /// in parallel. Returns success when all of the children return success. Otherwise,
+    /// continues running until a child returns failure.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class Parallel : Act
     {
+        public bool ReturnOnAllSucces { get; set; }
         public Parallel(params Act[] children) :
             this(children.AsEnumerable())
         {
@@ -59,11 +60,9 @@ namespace DwarfCorp
             ReturnOnAllSucces = true;
         }
 
-        public bool ReturnOnAllSucces { get; set; }
-
         public override void Initialize()
         {
-            foreach (Act child in Children)
+            foreach(Act child in Children)
             {
                 child.Initialize();
             }
@@ -75,24 +74,25 @@ namespace DwarfCorp
         {
             bool allSuccess = false;
 
-            while (!allSuccess)
+            while(!allSuccess)
             {
                 bool runEncountered = false;
-                foreach (Act child in Children)
+                foreach(Act child in Children)
                 {
                     Status childStatus = child.Tick();
 
-                    if (childStatus == Status.Fail)
+                    if(childStatus == Status.Fail)
                     {
                         yield return Status.Fail;
                         yield break;
                     }
-                    if (childStatus != Status.Success)
+                    else if (childStatus != Status.Success)
                     {
                         runEncountered = true;
                     }
                     else
                     {
+
                         if (!ReturnOnAllSucces)
                         {
                             yield return Status.Success;
@@ -101,7 +101,7 @@ namespace DwarfCorp
                     }
                 }
 
-                if (!runEncountered)
+                if(!runEncountered)
                 {
                     allSuccess = true;
                 }
@@ -111,7 +111,7 @@ namespace DwarfCorp
                 }
             }
 
-            if (allSuccess)
+            if(allSuccess)
             {
                 yield return Status.Success;
             }
@@ -121,4 +121,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

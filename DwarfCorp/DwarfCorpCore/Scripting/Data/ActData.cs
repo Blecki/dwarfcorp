@@ -30,29 +30,37 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A generic means of storing data for behaviors. Can store any object.
+    /// A generic means of storing data for behaviors. Can store any object.
     /// </summary>
     public class ActData
     {
+        public object Data { get; set; }
+
         public ActData(object data)
         {
             Data = data;
         }
 
-        public object Data { get; set; }
-
 
         public T GetData<T>()
         {
-            if (Data is T)
+            if(Data is T)
             {
                 return (T) Data;
             }
-            return default(T);
+            else
+            {
+                return default(T);
+            }
         }
     }
+
 }

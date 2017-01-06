@@ -30,20 +30,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.DwarfCorp;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A creature goes to a voxel named in the blackboard.
+    /// A creature goes to a voxel named in the blackboard.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GoToNamedVoxelAct : CompoundCreatureAct
     {
+        public string Voxel { get; set; }
+
         public GoToNamedVoxelAct()
         {
+
         }
 
         public GoToNamedVoxelAct(string voxel, CreatureAI creature) :
@@ -53,19 +58,20 @@ namespace DwarfCorp
             Name = "Go to Voxel " + voxel;
         }
 
-        public string Voxel { get; set; }
-
         public override void Initialize()
         {
             Tree = new Sequence(
-                new ForLoop(new Sequence(
-                    new PlanAct(Agent, "PathToVoxel", Voxel, PlanAct.PlanType.Adjacent),
-                    new FollowPathAnimationAct(Agent, "PathToVoxel")
-                    )
-                    , 3, true),
-                new StopAct(Agent));
+                new ForLoop(new Sequence( 
+                                  new PlanAct(Agent, "PathToVoxel", Voxel, PlanAct.PlanType.Adjacent),
+                                  new FollowPathAnimationAct(Agent, "PathToVoxel")
+                                 )
+                                   , 3, true),
+                                  new StopAct(Agent));
 
             base.Initialize();
         }
+
+
     }
+
 }

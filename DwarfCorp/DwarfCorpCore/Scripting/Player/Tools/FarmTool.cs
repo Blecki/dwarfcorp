@@ -30,10 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using DwarfCorp.Scripting.TaskManagement.Tasks;
 using Microsoft.Xna.Framework;
@@ -43,12 +43,16 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Using this tool, the player can specify regions of voxels to be
-    ///     turned into rooms.
+    /// Using this tool, the player can specify regions of voxels to be
+    /// turned into rooms.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class FarmTool : PlayerTool
     {
+        public FarmingPanel FarmPanel { get; set; }
+        public BuildMenu.BuildType BuildType { get; set; }
+        public string PlantType { get; set; }
+        public List<ResourceAmount> RequiredResources { get; set; } 
         public enum FarmMode
         {
             Tilling,
@@ -56,14 +60,47 @@ namespace DwarfCorp
             Harvesting
         }
 
-        public List<FarmTile> FarmTiles = new List<FarmTile>();
-
-        public FarmingPanel FarmPanel { get; set; }
-        public BuildMenu.BuildType BuildType { get; set; }
-        public string PlantType { get; set; }
-        public List<ResourceAmount> RequiredResources { get; set; }
-
         public FarmMode Mode { get; set; }
+
+        public class FarmTile
+        {
+            public Voxel Vox = null;
+            public Plant Plant = null;
+            public float Progress = 0.0f;
+            public CreatureAI Farmer = null;
+
+            public bool IsTilled()
+            {
+                return (Vox != null) && Vox.TypeName == "TilledSoil";
+            }
+
+            public bool IsFree()
+            {
+                return (Plant == null || Plant.IsDead) && Farmer == null;
+            }
+
+            public bool PlantExists()
+            {
+                return !(Plant == null || Plant.IsDead);
+            }
+
+            public void CreatePlant(string plantToCreate)
+            {
+                Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate, Vox.Position + Vector3.Up * 1.5f);
+                Seedling seed = Plant.BecomeSeedling();
+                
+                Matrix original = Plant.LocalTransform;
+                original.Translation += Vector3.Down;
+                seed.AnimationQueue.Add(new EaseMotion(0.5f, original, Plant.LocalTransform.Translation));
+                 
+                PlayState.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
+                
+                 SoundManager.PlaySound(ContentPaths.Audio.pluck, Vox.Position, true);
+                
+            }
+        }
+
+        public List<FarmTile> FarmTiles = new List<FarmTile>();
 
         public bool HasTile(Voxel vox)
         {
@@ -78,14 +115,13 @@ namespace DwarfCorp
 
         public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
         {
+
         }
 
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
-            List<CreatureAI> minions =
-                PlayState.Master.SelectedMinions.Where(
-                    minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)).ToList();
-            var goals = new List<Task>();
+            List<CreatureAI> minions = PlayState.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)).ToList();
+            List<Task> goals = new List<Task>();
             switch (Mode)
             {
                 case FarmMode.Tilling:
@@ -105,7 +141,7 @@ namespace DwarfCorp
                             }
                             if (!HasTile(voxel))
                             {
-                                var tile = new FarmTile {Vox = voxel};
+                                FarmTile tile = new FarmTile() {Vox = voxel};
                                 goals.Add(new FarmTask(tile) {Mode = FarmAct.FarmMode.Till, Plant = PlantType});
                                 FarmTiles.Add(tile);
                             }
@@ -137,13 +173,10 @@ namespace DwarfCorp
                 case FarmMode.Planting:
                     int currentAmount =
                         Player.Faction.ListResources()
-                            .Sum(
-                                resource =>
-                                    resource.Key == PlantType && resource.Value.NumResources > 0
-                                        ? resource.Value.NumResources
-                                        : 0);
+                        .Sum(resource => resource.Key == PlantType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
                     foreach (Voxel voxel in voxels)
                     {
+
                         if (currentAmount == 0)
                         {
                             PlayState.GUI.ToolTipManager.Popup("Not enough " + PlantType + " in stocks!");
@@ -176,19 +209,15 @@ namespace DwarfCorp
 
                         if (!HasPlant(voxel))
                         {
-                            var tile = new FarmTile {Vox = voxel};
-                            goals.Add(new FarmTask(tile)
-                            {
-                                Mode = FarmAct.FarmMode.Plant,
-                                Plant = PlantType,
-                                RequiredResources = RequiredResources
-                            });
+                            FarmTile tile = new FarmTile() { Vox = voxel };
+                            goals.Add(new FarmTask(tile) {  Mode = FarmAct.FarmMode.Plant, Plant = PlantType, RequiredResources = RequiredResources});
                             FarmTiles.Add(tile);
                             currentAmount--;
                         }
                         else
                         {
                             PlayState.GUI.ToolTipManager.Popup("Something is already planted here!");
+                            continue;
                         }
                     }
                     TaskManager.AssignTasksGreedy(goals, minions, 1);
@@ -238,9 +267,7 @@ namespace DwarfCorp
             int h = 350;
             FarmPanel = new FarmingPanel(PlayState.GUI, PlayState.GUI.RootComponent)
             {
-                LocalBounds =
-                    new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width/2 - w/2,
-                        GameState.Game.GraphicsDevice.Viewport.Height/2 - h/2, w, h),
+                LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width / 2 - w / 2, PlayState.Game.GraphicsDevice.Viewport.Height / 2 - h / 2, w, h),
                 IsVisible = true,
                 DrawOrder = 2
             };
@@ -250,21 +277,21 @@ namespace DwarfCorp
             FarmPanel.TweenIn(Drawer2D.Alignment.Right, 0.25f);
         }
 
-        private void FarmPanel_OnTill()
+        void FarmPanel_OnTill()
         {
             PlayState.GUI.ToolTipManager.Popup("Click and drag to till soil.");
             Mode = FarmMode.Tilling;
         }
 
-        private void FarmPanel_OnPlant(string plantType, string resource)
+        void FarmPanel_OnPlant(string plantType, string resource)
         {
             PlayState.GUI.ToolTipManager.Popup("Click and drag to plant " + plantType + ".");
             Mode = FarmMode.Planting;
             PlantType = plantType;
-            RequiredResources = new List<ResourceAmount> {new ResourceAmount(resource)};
+            RequiredResources = new List<ResourceAmount>() {new ResourceAmount(resource)};
         }
 
-        private void FarmPanel_OnHarvest()
+        void FarmPanel_OnHarvest()
         {
             PlayState.GUI.ToolTipManager.Popup("Click and drag to harvest.");
             Mode = FarmMode.Harvesting;
@@ -288,7 +315,7 @@ namespace DwarfCorp
 
             switch (Mode)
             {
-                case FarmMode.Tilling:
+               case FarmMode.Tilling:
                     Player.VoxSelector.Enabled = true;
                     Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
                     Player.BodySelector.Enabled = false;
@@ -305,9 +332,7 @@ namespace DwarfCorp
             }
             PlayState.GUI.IsMouseVisible = true;
 
-            PlayState.GUI.MouseMode = PlayState.GUI.IsMouseOver()
-                ? GUISkin.MousePointer.Pointer
-                : GUISkin.MousePointer.Farm;
+            PlayState.GUI.MouseMode = PlayState.GUI.IsMouseOver() ? GUISkin.MousePointer.Pointer : GUISkin.MousePointer.Farm;
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
@@ -318,14 +343,12 @@ namespace DwarfCorp
                 {
                     Color drawColor = Color.PaleGoldenrod;
 
-                    var alpha = (float) Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*2.0f));
+                    float alpha = (float) Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*2.0f));
                     drawColor.R = (byte) (Math.Min(drawColor.R*alpha + 50, 255));
                     drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
                     drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
 
-                    foreach (
-                        BoundingBox box in
-                            FarmTiles.Where(tile => !tile.IsTilled()).Select(tile => tile.Vox.GetBoundingBox()))
+                    foreach (BoundingBox box in FarmTiles.Where(tile => !tile.IsTilled()).Select(tile => tile.Vox.GetBoundingBox()))
                     {
                         Drawer3D.DrawBox(box, drawColor, 0.05f*alpha + 0.05f, true);
                     }
@@ -336,18 +359,15 @@ namespace DwarfCorp
                 {
                     Color drawColor = Color.LimeGreen;
 
-                    var alpha = (float) Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*2.0f));
-                    drawColor.R = (byte) (Math.Min(drawColor.R*alpha + 50, 255));
-                    drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
-                    drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
+                    float alpha = (float)Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * 2.0f));
+                    drawColor.R = (byte)(Math.Min(drawColor.R * alpha + 50, 255));
+                    drawColor.G = (byte)(Math.Min(drawColor.G * alpha + 50, 255));
+                    drawColor.B = (byte)(Math.Min(drawColor.B * alpha + 50, 255));
 
 
-                    foreach (
-                        BoundingBox box in
-                            FarmTiles.Where(tile => tile.IsTilled() && !tile.PlantExists() && tile.Farmer == null)
-                                .Select(tile => tile.Vox.GetBoundingBox()))
+                    foreach (BoundingBox box in FarmTiles.Where(tile => tile.IsTilled() && !tile.PlantExists() && tile.Farmer == null).Select(tile => tile.Vox.GetBoundingBox()))
                     {
-                        Drawer3D.DrawBox(box, drawColor, 0.05f*alpha + 0.05f, true);
+                        Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
                     }
 
                     break;
@@ -357,7 +377,7 @@ namespace DwarfCorp
                 {
                     Color drawColor = Color.LimeGreen;
 
-                    var alpha = (float) Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*2.0f));
+                    float alpha = (float) Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*2.0f));
                     drawColor.R = (byte) (Math.Min(drawColor.R*alpha + 50, 255));
                     drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
                     drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
@@ -371,42 +391,5 @@ namespace DwarfCorp
             }
         }
 
-        public class FarmTile
-        {
-            public CreatureAI Farmer = null;
-            public Plant Plant = null;
-            public float Progress = 0.0f;
-            public Voxel Vox = null;
-
-            public bool IsTilled()
-            {
-                return (Vox != null) && Vox.TypeName == "TilledSoil";
-            }
-
-            public bool IsFree()
-            {
-                return (Plant == null || Plant.IsDead) && Farmer == null;
-            }
-
-            public bool PlantExists()
-            {
-                return !(Plant == null || Plant.IsDead);
-            }
-
-            public void CreatePlant(string plantToCreate)
-            {
-                Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[plantToCreate].PlantToGenerate,
-                    Vox.Position + Vector3.Up*1.5f);
-                Seedling seed = Plant.BecomeSeedling();
-
-                Matrix original = Plant.LocalTransform;
-                original.Translation += Vector3.Down;
-                seed.AnimationQueue.Add(new EaseMotion(0.5f, original, Plant.LocalTransform.Translation));
-
-                PlayState.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
-
-                SoundManager.PlaySound(ContentPaths.Audio.pluck, Vox.Position, true);
-            }
-        }
     }
 }

@@ -30,8 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -41,8 +43,12 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CreateEntitySpell : Spell
     {
+        public string Entity { get; set; }
+        public bool Transmute { get; set; }
+
         public CreateEntitySpell()
         {
+            
         }
 
         public CreateEntitySpell(string entity, bool transmute)
@@ -53,9 +59,6 @@ namespace DwarfCorp
             Mode = transmute ? SpellMode.SelectEntities : SpellMode.SelectEmptyVoxels;
             Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 4, 2);
         }
-
-        public string Entity { get; set; }
-        public bool Transmute { get; set; }
 
         public void CreateEntity(Vector3 position)
         {

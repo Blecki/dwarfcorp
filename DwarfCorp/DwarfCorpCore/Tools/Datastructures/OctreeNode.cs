@@ -30,18 +30,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A particular octant in an octree.
+    /// A particular octant in an octree.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [JsonObject(IsReference =  true)]
     public class OctreeNode
     {
         public enum NodeType
@@ -68,21 +69,6 @@ namespace DwarfCorp
             null
         };
 
-        public object ObjectLock = new object();
-
-        public OctreeNode()
-        {
-        }
-
-        public OctreeNode(BoundingBox bounds, Octree tree, int depth, OctreeNode parent)
-        {
-            Bounds = bounds;
-            Objects = new List<IBoundedObject>();
-            Tree = tree;
-            Parent = parent;
-            Depth = depth;
-        }
-
         public BoundingBox Bounds { get; set; }
 
         public List<IBoundedObject> Objects { get; set; }
@@ -93,17 +79,19 @@ namespace DwarfCorp
 
         public int Depth { get; set; }
 
+        public object ObjectLock = new object();
+
         public void ComputeObjectsToNodesRecursive(Dictionary<IBoundedObject, OctreeNode> nodeMap)
         {
-            lock (ObjectLock)
+            lock(ObjectLock)
             {
-                foreach (IBoundedObject obj in Objects)
+                foreach(IBoundedObject obj in Objects)
                 {
                     nodeMap[obj] = this;
                 }
             }
 
-            foreach (OctreeNode node in Children.Where(node => node != null))
+            foreach(OctreeNode node in Children.Where(node => node != null))
             {
                 node.ComputeObjectsToNodesRecursive(nodeMap);
             }
@@ -133,34 +121,47 @@ namespace DwarfCorp
         }
 
 
+        public OctreeNode()
+        {
+            
+        }
+
+        public OctreeNode(BoundingBox bounds, Octree tree, int depth, OctreeNode parent)
+        {
+            Bounds = bounds;
+            Objects = new List<IBoundedObject>();
+            Tree = tree;
+            Parent = parent;
+            Depth = depth;
+        }
+
+
         public T GetComponentIntersecting<T>(Vector3 vect) where T : IBoundedObject
         {
-            if (Bounds.Contains(vect) == ContainmentType.Disjoint)
+            if(Bounds.Contains(vect) == ContainmentType.Disjoint)
             {
                 return default(T);
             }
 
-            lock (ObjectLock)
+            lock(ObjectLock)
             {
-                foreach (
-                    IBoundedObject o in
-                        Objects.Where(o => o is T && o.GetBoundingBox().Contains(vect) != ContainmentType.Disjoint))
+                foreach(IBoundedObject o in Objects.Where(o => o is T && o.GetBoundingBox().Contains(vect) != ContainmentType.Disjoint))
                 {
                     return (T) o;
                 }
             }
 
-            for (int i = 0; i < 8; i++)
+            for(int i = 0; i < 8; i++)
             {
                 OctreeNode child = Children[i];
-                if (child == null)
+                if(child == null)
                 {
                     continue;
                 }
 
-                var got = child.GetComponentIntersecting<T>(vect);
+                T got = child.GetComponentIntersecting<T>(vect);
 
-                if (got != null)
+                if(got != null)
                 {
                     return got;
                 }
@@ -170,30 +171,30 @@ namespace DwarfCorp
 
         public void GetComponentsIntersecting<T>(BoundingBox box, HashSet<T> set) where T : IBoundedObject
         {
-            var stack = new Stack<OctreeNode>();
+            Stack<OctreeNode> stack = new Stack<OctreeNode>();
             stack.Push(this);
 
-            while (stack.Count > 0)
+            while(stack.Count > 0)
             {
                 OctreeNode t = stack.Pop();
-                if (!t.Bounds.Intersects(box))
+                if(!t.Bounds.Intersects(box))
                 {
                     continue;
                 }
 
-                lock (t.ObjectLock)
+                lock(t.ObjectLock)
                 {
-                    foreach (IBoundedObject o in t.Objects.Where(o => o is T && o.GetBoundingBox().Intersects(box)))
+                    foreach(IBoundedObject o in t.Objects.Where(o => o is T && o.GetBoundingBox().Intersects(box)))
                     {
                         set.Add((T) o);
                     }
                 }
 
 
-                for (int i = 0; i < 8; i++)
+                for(int i = 0; i < 8; i++)
                 {
                     OctreeNode child = t.Children[i];
-                    if (child != null)
+                    if(child != null)
                     {
                         stack.Push(child);
                     }
@@ -204,9 +205,9 @@ namespace DwarfCorp
 
         public List<T> GetVisibleObjects<T>(BoundingFrustum frustrum) where T : IBoundedObject
         {
-            var toReturn = new List<T>();
+            List<T> toReturn = new List<T>();
 
-            var stack = new Stack<OctreeNode>();
+            Stack<OctreeNode> stack = new Stack<OctreeNode>();
             stack.Push(this);
 
             while (stack.Count > 0)
@@ -239,30 +240,30 @@ namespace DwarfCorp
 
         public void GetComponentsIntersecting<T>(BoundingFrustum box, HashSet<T> set) where T : IBoundedObject
         {
-            var stack = new Stack<OctreeNode>();
+            Stack<OctreeNode> stack = new Stack<OctreeNode>();
             stack.Push(this);
 
-            while (stack.Count > 0)
+            while(stack.Count > 0)
             {
                 OctreeNode t = stack.Pop();
-                if (!t.Bounds.Intersects(box))
+                if(!t.Bounds.Intersects(box))
                 {
                     continue;
                 }
 
-                lock (t.ObjectLock)
+                lock(t.ObjectLock)
                 {
-                    foreach (IBoundedObject o in t.Objects.Where(o => o is T && o.GetBoundingBox().Intersects(box)))
+                    foreach(IBoundedObject o in t.Objects.Where(o => o is T && o.GetBoundingBox().Intersects(box)))
                     {
                         set.Add((T) o);
                     }
                 }
 
 
-                for (int i = 0; i < 8; i++)
+                for(int i = 0; i < 8; i++)
                 {
                     OctreeNode child = t.Children[i];
-                    if (child != null)
+                    if(child != null)
                     {
                         stack.Push(child);
                     }
@@ -272,27 +273,27 @@ namespace DwarfCorp
 
         public void GetComponentsIntersecting<T>(BoundingSphere box, HashSet<T> set) where T : IBoundedObject
         {
-            var stack = new Stack<OctreeNode>();
+            Stack<OctreeNode> stack = new Stack<OctreeNode>();
             stack.Push(this);
 
-            while (stack.Count > 0)
+            while(stack.Count > 0)
             {
                 OctreeNode t = stack.Peek();
-                if (t.Bounds.Intersects(box))
+                if(t.Bounds.Intersects(box))
                 {
-                    lock (t.ObjectLock)
+                    lock(t.ObjectLock)
                     {
-                        foreach (IBoundedObject o in t.Objects.Where(o => o is T && o.GetBoundingBox().Intersects(box)))
+                        foreach(IBoundedObject o in t.Objects.Where(o => o is T && o.GetBoundingBox().Intersects(box)))
                         {
                             set.Add((T) o);
                         }
                     }
 
 
-                    for (int i = 0; i < 8; i++)
+                    for(int i = 0; i < 8; i++)
                     {
                         OctreeNode child = t.Children[i];
-                        if (child != null)
+                        if(child != null)
                         {
                             stack.Push(child);
                         }
@@ -305,31 +306,30 @@ namespace DwarfCorp
 
         public void GetComponentsIntersecting<T>(Ray box, HashSet<T> set) where T : IBoundedObject
         {
-            var stack = new Stack<OctreeNode>();
+            Stack<OctreeNode> stack = new Stack<OctreeNode>();
             stack.Push(this);
 
-            while (stack.Count > 0)
+            while(stack.Count > 0)
             {
                 OctreeNode t = stack.Pop();
-                if (t.Bounds.Intersects(box) == null)
+                if(t.Bounds.Intersects(box) == null)
                 {
                     continue;
                 }
 
-                lock (t.ObjectLock)
+                lock(t.ObjectLock)
                 {
-                    foreach (
-                        IBoundedObject o in t.Objects.Where(o => o is T && o.GetBoundingBox().Intersects(box) != null))
+                    foreach(IBoundedObject o in t.Objects.Where(o => o is T && o.GetBoundingBox().Intersects(box) != null))
                     {
                         set.Add((T) o);
                     }
                 }
 
 
-                for (int i = 0; i < 8; i++)
+                for(int i = 0; i < 8; i++)
                 {
                     OctreeNode child = t.Children[i];
-                    if (child != null)
+                    if(child != null)
                     {
                         stack.Push(child);
                     }
@@ -345,18 +345,21 @@ namespace DwarfCorp
                 {
                     return true;
                 }
-                for (int i = 0; i < 8; i++)
+                else
                 {
-                    OctreeNode node = Children[i];
-
-                    if (node == null)
+                    for (int i = 0; i < 8; i++)
                     {
-                        continue;
-                    }
+                        OctreeNode node = Children[i];
 
-                    if (node.ExistsInTreeRecursive(component))
-                    {
-                        return true;
+                        if (node == null)
+                        {
+                            continue;
+                        }
+
+                        if (node.ExistsInTreeRecursive(component))
+                        {
+                            return true;
+                        }
                     }
                 }
 
@@ -372,7 +375,7 @@ namespace DwarfCorp
                 {
                     return !component.GetBoundingBox().Intersects(Bounds);
                 }
-                if (HasChildren())
+                else if (HasChildren())
                 {
                     bool shouldUpdate = false;
                     for (int i = 0; i < 8; i++)
@@ -392,19 +395,22 @@ namespace DwarfCorp
 
                     return shouldUpdate;
                 }
-                return false;
+                else
+                {
+                    return false;
+                }
             }
         }
 
         public void AddObjectRecursive(IBoundedObject component)
         {
-            if (Parent == null && !component.GetBoundingBox().Intersects(Bounds))
+            if(Parent == null && !component.GetBoundingBox().Intersects(Bounds))
             {
                 Tree.ExpandAndRebuild();
                 return;
             }
 
-            if (component.GetBoundingBox().Intersects(Bounds) && !HasChildren())
+            if(component.GetBoundingBox().Intersects(Bounds) && !HasChildren())
             {
                 lock (ObjectLock)
                 {
@@ -424,10 +430,10 @@ namespace DwarfCorp
 
             else
             {
-                for (int i = 0; i < 8; i++)
+                for(int i = 0; i < 8; i++)
                 {
                     OctreeNode node = Children[i];
-                    if (node != null)
+                    if(node != null)
                     {
                         node.AddObjectRecursive(component);
                     }
@@ -443,17 +449,20 @@ namespace DwarfCorp
                 {
                     return true;
                 }
-                for (int i = 0; i < 8; i++)
+                else
                 {
-                    OctreeNode node = Children[i];
-                    if (node == null)
+                    for (int i = 0; i < 8; i++)
                     {
-                        continue;
-                    }
+                        OctreeNode node = Children[i];
+                        if (node == null)
+                        {
+                            continue;
+                        }
 
-                    if (node.ContainsObjectRecursive(component))
-                    {
-                        return true;
+                        if (node.ContainsObjectRecursive(component))
+                        {
+                            return true;
+                        }
                     }
                 }
 
@@ -493,42 +502,45 @@ namespace DwarfCorp
                 {
                     return RemoveObject(component);
                 }
-                bool toReturn = false;
-                for (int i = 0; i < 8; i++)
+                else
                 {
-                    OctreeNode node = Children[i];
-                    if (node != null)
+                    bool toReturn = false;
+                    for (int i = 0; i < 8; i++)
                     {
-                        toReturn = node.RemoveObjectRecursive(component) || toReturn;
+                        OctreeNode node = Children[i];
+                        if (node != null)
+                        {
+                            toReturn = node.RemoveObjectRecursive(component) || toReturn;
+                        }
                     }
-                }
 
-                Objects.Remove(component);
-                if (Tree.ObjectsToNodes.ContainsKey(component) && Tree.ObjectsToNodes[component] == this)
-                {
-                    Tree.ObjectsToNodes.Remove(component);
-                }
+                    Objects.Remove(component);
+                    if (Tree.ObjectsToNodes.ContainsKey(component) && Tree.ObjectsToNodes[component] == this)
+                    {
+                        Tree.ObjectsToNodes.Remove(component);
+                    }
 
-                return toReturn;
+                    return toReturn;
+                }
             }
         }
 
         public List<IBoundedObject> MergeRecursive()
         {
-            var toReturn = new List<IBoundedObject>();
+            List<IBoundedObject> toReturn = new List<IBoundedObject>();
 
-            for (int i = 0; i < 8; i++)
+            for(int i = 0; i < 8; i++)
             {
                 OctreeNode node = Children[i];
-                if (node != null)
+                if(node != null)
                 {
                     toReturn.AddRange(node.MergeRecursive());
                 }
             }
 
-            for (int i = 0; i < 8; i++)
+            for(int i = 0; i < 8; i++)
             {
-                if (Children[i] != null)
+                if(Children[i] != null)
                 {
                     lock (Children[i].ObjectLock)
                     {
@@ -538,7 +550,7 @@ namespace DwarfCorp
                 Children[i] = null;
             }
 
-            var toAdd = new List<IBoundedObject>();
+            List<IBoundedObject> toAdd = new List<IBoundedObject>();
             toAdd.AddRange(toReturn);
 
             lock (ObjectLock)
@@ -546,11 +558,11 @@ namespace DwarfCorp
                 toReturn.AddRange(Objects);
             }
 
-            foreach (IBoundedObject component in toAdd)
+            foreach(IBoundedObject component in toAdd)
             {
-                lock (ObjectLock)
+                lock(ObjectLock)
                 {
-                    if (!Objects.Contains(component))
+                    if(!Objects.Contains(component))
                     {
                         Objects.Add(component);
                         Tree.ObjectsToNodes[component] = this;
@@ -584,16 +596,16 @@ namespace DwarfCorp
         public void Split()
         {
             Vector3 extents = Bounds.Max - Bounds.Min;
-            Vector3 xExtents = new Vector3(extents.X, 0, 0)/2.0f;
-            Vector3 yExtents = new Vector3(0, extents.Y, 0)/2.0f;
-            Vector3 zExtents = new Vector3(0, 0, extents.Z)/2.0f;
-            Vector3 halfExtents = extents/2.0f;
-            Vector3 center = Bounds.Min + extents/2.0f;
-            for (int i = 0; i < 8; i++)
+            Vector3 xExtents = new Vector3(extents.X, 0, 0) / 2.0f;
+            Vector3 yExtents = new Vector3(0, extents.Y, 0) / 2.0f;
+            Vector3 zExtents = new Vector3(0, 0, extents.Z) / 2.0f;
+            Vector3 halfExtents = extents / 2.0f;
+            Vector3 center = Bounds.Min + extents / 2.0f;
+            for(int i = 0; i < 8; i++)
             {
-                var nodeType = (NodeType) i;
+                NodeType nodeType = (NodeType) i;
 
-                switch (nodeType)
+                switch(nodeType)
                 {
                     case NodeType.LowerBackLeft:
                         Children[i] = new OctreeNode(new BoundingBox(Bounds.Min, center), Tree, Depth + 1, this);
@@ -635,16 +647,16 @@ namespace DwarfCorp
                         break;
                 }
 
-                lock (ObjectLock)
+                lock(ObjectLock)
                 {
-                    foreach (IBoundedObject o in Objects)
+                    foreach(IBoundedObject o in Objects)
                     {
                         Children[i].AddObjectRecursive(o);
                     }
                 }
             }
 
-            lock (ObjectLock)
+            lock(ObjectLock)
             {
                 Objects.Clear();
             }
@@ -652,7 +664,7 @@ namespace DwarfCorp
 
         public void Draw(Color color, float width)
         {
-            if (Tree.DebugDraw)
+            if(Tree.DebugDraw)
             {
                 lock (ObjectLock)
                 {
@@ -673,4 +685,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

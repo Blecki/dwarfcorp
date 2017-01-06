@@ -30,17 +30,24 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Vegetation data describes how certain plants (such as trees) are to populate
-    ///     a chunk.
+    /// Vegetation data describes how certain plants (such as trees) are to populate
+    /// a chunk.
     /// </summary>
     public class VegetationData
     {
-        public VegetationData(string name, float meansize, float sizevar, float verticalOffset, float clumpSize,
-            float clumpThreshold, float spawnProbability)
+        public string Name { get; set; }
+        public float ClumpSize { get; set; }
+        public float ClumpThreshold { get; set; }
+        public float MeanSize { get; set; }
+        public float SizeVariance { get; set; }
+        public float VerticalOffset { get; set; }
+        public float NoiseOffset { get; set; }
+        public float SpawnProbability { get; set; }
+
+        public VegetationData(string name, float meansize, float sizevar, float verticalOffset, float clumpSize, float clumpThreshold, float spawnProbability)
         {
             Name = name;
             MeanSize = meansize;
@@ -51,14 +58,6 @@ namespace DwarfCorp
             SpawnProbability = spawnProbability;
             NoiseOffset = MathFunctions.Rand(0, 300.0f);
         }
-
-        public string Name { get; set; }
-        public float ClumpSize { get; set; }
-        public float ClumpThreshold { get; set; }
-        public float MeanSize { get; set; }
-        public float SizeVariance { get; set; }
-        public float VerticalOffset { get; set; }
-        public float NoiseOffset { get; set; }
-        public float SpawnProbability { get; set; }
     }
+
 }

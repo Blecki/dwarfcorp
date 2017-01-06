@@ -30,48 +30,53 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     When using this tool, the player specifies that certain
-    ///     entities should be put into stockpiles.
+    /// When using this tool, the player specifies that certain
+    /// entities should be put into stockpiles.
     /// </summary>
     public class GatherTool : PlayerTool
     {
+
         public Color GatherDesignationColor { get; set; }
         public float GatherDesignationGlowRate { get; set; }
 
+        public GatherTool()
+        {
+
+        }
+
         public override void OnBegin()
         {
+
         }
 
         public override void OnEnd()
         {
+
         }
 
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
             List<Body> resourcesPickedByMouse = ComponentManager.FilterComponentsWithTag("Resource", bodies);
-            var assignments = new List<Task>();
-            foreach (
-                Body resource in
-                    resourcesPickedByMouse.Where(
-                        resource =>
-                            resource.IsActive && resource.IsVisible &&
-                            resource.Parent == PlayState.ComponentManager.RootComponent))
+            List<Task> assignments = new List<Task>();
+            foreach(Body resource in resourcesPickedByMouse.Where(resource => resource.IsActive && resource.IsVisible && resource.Parent == PlayState.ComponentManager.RootComponent))
             {
                 if (!resource.IsVisible || resource.IsAboveCullPlane) continue;
                 Drawer3D.DrawBox(resource.BoundingBox, Color.LightGoldenrodYellow, 0.05f, true);
 
-                if (button == InputManager.MouseButton.Left)
+                if(button == InputManager.MouseButton.Left)
                 {
                     Player.Faction.AddGatherDesignation(resource);
 
@@ -79,7 +84,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    if (!Player.Faction.GatherDesignations.Contains(resource))
+                    if(!Player.Faction.GatherDesignations.Contains(resource))
                     {
                         continue;
                     }
@@ -97,14 +102,17 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
+
         }
 
         public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
         {
+
         }
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
+           
             if (Player.IsCameraRotationModeActive())
             {
                 return;
@@ -122,21 +130,26 @@ namespace DwarfCorp
             {
                 PlayState.GUI.MouseMode = GUISkin.MousePointer.Gather;
             }
+
+
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            List<Body> resourcesPickedByMouse = ComponentManager.FilterComponentsWithTag("Resource",
-                Player.BodySelector.CurrentBodies);
-            foreach (Body resource in Player.BodySelector.CurrentBodies.Where(resource => resource.IsActive &&
-                                                                                          resource.IsVisible &&
-                                                                                          resource.Parent ==
-                                                                                          PlayState.ComponentManager
-                                                                                              .RootComponent))
+            /*
+            Color drawColor = GatherDesignationColor;
+
+            float alpha = (float)Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GatherDesignationGlowRate));
+            drawColor.R = (byte)(Math.Min(drawColor.R * alpha + 50, 255));
+            drawColor.G = (byte)(Math.Min(drawColor.G * alpha + 50, 255));
+            drawColor.B = (byte)(Math.Min(drawColor.B * alpha + 50, 255));
+
+            foreach (BoundingBox box in Player.Faction.GatherDesignations.Select(d => d.GetBoundingBox()))
             {
-                if (!resource.IsVisible || resource.IsAboveCullPlane) continue;
-                Drawer2D.DrawRect(resource.Position, new Rectangle(0, 0, 2, 2), Color.Orange, Color.Transparent, 0.0f);
+                Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
             }
+             */
+
         }
     }
 }

@@ -1,4 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Permissions;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,6 +13,15 @@ namespace DwarfCorp
 {
     public class CreditsState : GameState
     {
+        public class CreditEntry
+        {
+            public string Name { get; set; }
+            public string Role { get; set; }
+            public Color Color { get; set; }
+            public bool RandomFlash { get; set; }
+            public bool Divider { get; set; }
+        }
+
         /*
         public static string[] SplitCsvToLines(string csv, char delimeter = '\n')
         {
@@ -155,7 +169,15 @@ namespace DwarfCorp
         }
         */
 
-        public CreditsState(DwarfGame game, string name, GameStateManager stateManager)
+        public float ScrollSpeed { get; set; }
+        public float CurrentScroll { get; set; }
+        public float EntryHeight { get; set; }
+        public float DividerHeight { get; set; }
+        public SpriteFont CreditsFont { get; set; }
+        public List<CreditEntry> Entries { get; set; }
+        public int Padding { get; set; }
+        public bool IsDone { get; set; }
+        public CreditsState(DwarfGame game, string name, GameStateManager stateManager) 
             : base(game, name, stateManager)
         {
             ScrollSpeed = 30;
@@ -165,19 +187,10 @@ namespace DwarfCorp
             IsDone = false;
         }
 
-        public float ScrollSpeed { get; set; }
-        public float CurrentScroll { get; set; }
-        public float EntryHeight { get; set; }
-        public float DividerHeight { get; set; }
-        public SpriteFont CreditsFont { get; set; }
-        public List<CreditEntry> Entries { get; set; }
-        public int Padding { get; set; }
-        public bool IsDone { get; set; }
-
         public override void OnEnter()
         {
             CurrentScroll = 0;
-            CreditsFont = Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
+            CreditsFont = GameState.Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
             Entries = ContentPaths.LoadFromJson<List<CreditEntry>>("credits.json");
             IsInitialized = true;
             IsDone = false;
@@ -186,6 +199,7 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime)
         {
+
             if (!IsDone)
             {
                 CurrentScroll += ScrollSpeed*(float) gameTime.ElapsedGameTime.TotalSeconds;
@@ -205,10 +219,9 @@ namespace DwarfCorp
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap,
                 DepthStencilState.Default, RasterizerState.CullNone);
             float y = -CurrentScroll;
-            int w = Game.GraphicsDevice.Viewport.Width;
-            int h = Game.GraphicsDevice.Viewport.Height;
-            Drawer2D.FillRect(DwarfGame.SpriteBatch, new Rectangle(Padding - 30, 0, w - Padding*2 + 30, h),
-                new Color(5, 5, 5, 150));
+            int w = GameState.Game.GraphicsDevice.Viewport.Width;
+            int h = GameState.Game.GraphicsDevice.Viewport.Height; 
+            Drawer2D.FillRect(DwarfGame.SpriteBatch, new Rectangle(Padding - 30, 0, w-Padding*2 + 30, h), new Color(5, 5, 5, 150));
             foreach (CreditEntry entry in Entries)
             {
                 if (entry.Divider)
@@ -218,7 +231,7 @@ namespace DwarfCorp
                 }
 
                 if (y + EntryHeight < -EntryHeight*2 ||
-                    y + EntryHeight > Game.GraphicsDevice.Viewport.Height + EntryHeight*2)
+                    y + EntryHeight > GameState.Game.GraphicsDevice.Viewport.Height + EntryHeight*2)
                 {
                     y += EntryHeight;
                     continue;
@@ -227,25 +240,15 @@ namespace DwarfCorp
 
                 if (entry.RandomFlash)
                 {
-                    color = new Color(MathFunctions.RandVector3Box(-1, 1, -1, 1, -1, 1)*0.5f + color.ToVector3());
+                    color = new Color(MathFunctions.RandVector3Box(-1, 1, -1, 1, -1, 1) * 0.5f + color.ToVector3());
                 }
-                DwarfGame.SpriteBatch.DrawString(CreditsFont, entry.Role,
-                    new Vector2(w/2 - Datastructures.SafeMeasure(CreditsFont, entry.Role).X - 5, y), color);
-                DwarfGame.SpriteBatch.DrawString(CreditsFont, entry.Name, new Vector2(w/2 + 5, y), color);
+                DwarfGame.SpriteBatch.DrawString(CreditsFont, entry.Role, new Vector2(w / 2 - Datastructures.SafeMeasure(CreditsFont, entry.Role).X - 5, y), color);
+                DwarfGame.SpriteBatch.DrawString(CreditsFont, entry.Name, new Vector2(w / 2 + 5, y), color);
 
                 y += EntryHeight;
             }
             DwarfGame.SpriteBatch.End();
             base.Render(gameTime);
-        }
-
-        public class CreditEntry
-        {
-            public string Name { get; set; }
-            public string Role { get; set; }
-            public Color Color { get; set; }
-            public bool RandomFlash { get; set; }
-            public bool Divider { get; set; }
         }
     }
 }

@@ -30,19 +30,22 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
     public static class CreatureExtensions
     {
         public static IEnumerable<Act.Status> ClearBlackboardData(this Creature agent, string data)
         {
-            if (data == null)
+            if(data == null)
             {
                 yield return Act.Status.Fail;
             }
@@ -59,43 +62,45 @@ namespace DwarfCorp
 
             if (foods.Count == 0)
             {
+
                 if (agent.Allies == "Dwarf")
                 {
-                    PlayState.AnnouncementManager.Announce(Drawer2D.WrapColor("We're out of food!", Color.DarkRed),
-                        "Our stockpiles don't have any food. Our employees will starve!");
+                    PlayState.AnnouncementManager.Announce(Drawer2D.WrapColor("We're out of food!", Color.DarkRed), "Our stockpiles don't have any food. Our employees will starve!");
                 }
                 yield return Act.Status.Fail;
+                yield break;
             }
-            foreach (ResourceAmount resource in foods)
+            else
             {
-                if (resource.NumResources > 0)
+                foreach (ResourceAmount resource in foods)
                 {
-                    bool removed =
-                        agent.Faction.RemoveResources(
-                            new List<ResourceAmount> {new ResourceAmount(resource.ResourceType, 1)}, agent.AI.Position);
-                    agent.Status.Hunger.CurrentValue += resource.ResourceType.FoodContent;
-                    agent.NoiseMaker.MakeNoise("Chew", agent.AI.Position);
-                    if (!removed)
+                    if (resource.NumResources > 0)
                     {
-                        yield return Act.Status.Fail;
+                        bool removed = agent.Faction.RemoveResources(new List<ResourceAmount>() { new ResourceAmount(resource.ResourceType, 1) }, agent.AI.Position);
+                        agent.Status.Hunger.CurrentValue += resource.ResourceType.FoodContent;
+                        agent.NoiseMaker.MakeNoise("Chew", agent.AI.Position);
+                        if (!removed)
+                        {
+                            yield return Act.Status.Fail;
+                        }
+                        else
+                        {
+                            agent.DrawIndicator(resource.ResourceType.Image, resource.ResourceType.Tint);
+                            agent.AI.AddThought(Thought.ThoughtType.AteFood);
+                            yield return Act.Status.Success;
+                        }
+                        yield break;
                     }
-                    else
-                    {
-                        agent.DrawIndicator(resource.ResourceType.Image, resource.ResourceType.Tint);
-                        agent.AI.AddThought(Thought.ThoughtType.AteFood);
-                        yield return Act.Status.Success;
-                    }
-                    yield break;
                 }
-            }
 
-            if (agent.Allies == "Dwarf")
-            {
-                PlayState.AnnouncementManager.Announce(Drawer2D.WrapColor("We're out of food!", Color.DarkRed),
-                    "Our stockpiles don't have any food. Our employees will starve!");
-            }
+                if (agent.Allies == "Dwarf")
+                {
+                    PlayState.AnnouncementManager.Announce(Drawer2D.WrapColor("We're out of food!", Color.DarkRed), "Our stockpiles don't have any food. Our employees will starve!");
+                }
 
-            yield return Act.Status.Fail;
+                yield return Act.Status.Fail;
+                yield break;
+            }
         }
 
         public static IEnumerable<Act.Status> FindAndReserve(this Creature agent, string tag, string thing)
@@ -118,7 +123,7 @@ namespace DwarfCorp
 
         public static IEnumerable<Act.Status> Reserve(this Creature agent, string thing)
         {
-            var objectToHit = agent.AI.Blackboard.GetData<Body>(thing);
+            Body objectToHit = agent.AI.Blackboard.GetData<Body>(thing);
 
             if (objectToHit != null && objectToHit.ReservedFor == null && !objectToHit.IsReserved)
             {
@@ -132,7 +137,7 @@ namespace DwarfCorp
 
         public static IEnumerable<Act.Status> Unreserve(this Creature agent, string thing)
         {
-            var objectToHit = agent.AI.Blackboard.GetData<Body>(thing);
+            Body objectToHit = agent.AI.Blackboard.GetData<Body>(thing);
 
             if (objectToHit != null && objectToHit.ReservedFor == agent.AI)
             {
@@ -149,7 +154,7 @@ namespace DwarfCorp
             foreach (ResourceAmount resource in agent.Inventory.Resources)
             {
                 if (resource.NumResources > 0)
-                    agent.AI.GatherManager.StockOrders.Add(new GatherManager.StockOrder
+                    agent.AI.GatherManager.StockOrders.Add(new GatherManager.StockOrder()
                     {
                         Destination = null,
                         Resource = resource
@@ -159,16 +164,17 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-
+        
         public static IEnumerable<Act.Status> Dig(this Creature agent, string voxel, float energyLoss)
         {
             Vector3 LocalTarget = agent.AI.Position;
             agent.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
-            while (true)
+            while(true)
             {
-                var blackBoardVoxel = agent.AI.Blackboard.GetData<Voxel>(voxel);
 
-                if (blackBoardVoxel == null)
+                Voxel blackBoardVoxel = agent.AI.Blackboard.GetData<Voxel>(voxel);
+
+                if(blackBoardVoxel == null)
                 {
                     agent.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                     yield return Act.Status.Fail;
@@ -176,27 +182,24 @@ namespace DwarfCorp
                 }
 
                 Voxel vox = blackBoardVoxel;
-                if (vox.Health <= 0.0f || !agent.Faction.IsDigDesignation(vox))
+                if(vox.Health <= 0.0f || !agent.Faction.IsDigDesignation(vox))
                 {
-                    agent.AI.AddXP(Math.Max(
-                        (int) (VoxelLibrary.GetVoxelType(blackBoardVoxel.TypeName).StartingHealth/4), 1));
+                    agent.AI.AddXP(Math.Max((int)(VoxelLibrary.GetVoxelType(blackBoardVoxel.TypeName).StartingHealth / 4), 1));
                     agent.Stats.NumBlocksDestroyed++;
                     agent.CurrentCharacterMode = Creature.CharacterMode.Idle;
                     yield return Act.Status.Success;
                     break;
                 }
-                agent.Physics.Face(vox.Position + Vector3.One*0.5f);
+                agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
                 agent.Physics.Velocity *= 0.9f;
 
                 agent.CurrentCharacterMode = Creature.CharacterMode.Attacking;
                 agent.Sprite.ResetAnimations(agent.CurrentCharacterMode);
                 agent.Sprite.PlayAnimations(agent.CurrentCharacterMode);
 
-                while (
-                    !agent.Attacks[0].Perform(agent, agent.Physics.Position, vox, DwarfTime.LastTime,
-                        agent.Stats.BaseDigSpeed, agent.Faction.Name))
+                while (!agent.Attacks[0].Perform(agent, agent.Physics.Position, vox, DwarfTime.LastTime, agent.Stats.BaseDigSpeed, agent.Faction.Name))
                 {
-                    agent.Physics.Face(vox.Position + Vector3.One*0.5f);
+                    agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
                     agent.Physics.Velocity *= 0.9f;
 
                     yield return Act.Status.Running;
@@ -213,11 +216,12 @@ namespace DwarfCorp
                             agent.Gather(item);
                         }
                     }
+
                 }
 
                 while (!agent.Sprite.CurrentAnimation.IsDone())
                 {
-                    agent.Physics.Face(vox.Position + Vector3.One*0.5f);
+                    agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
                     agent.Physics.Velocity *= 0.9f;
                     yield return Act.Status.Running;
                 }
@@ -228,7 +232,7 @@ namespace DwarfCorp
                 while (!agent.Attacks[0].RechargeTimer.HasTriggered)
                 {
                     agent.Attacks[0].RechargeTimer.Update(DwarfTime.LastTime);
-                    agent.Physics.Face(vox.Position + Vector3.One*0.5f);
+                    agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
                     agent.Physics.Velocity *= 0.9f;
                     yield return Act.Status.Running;
                 }
@@ -237,6 +241,12 @@ namespace DwarfCorp
 
                 yield return Act.Status.Running;
             }
+
+
         }
+ 
+    
     }
+
+
 }

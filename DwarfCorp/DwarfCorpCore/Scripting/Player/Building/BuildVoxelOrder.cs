@@ -30,17 +30,21 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+using System;
+using System.Collections.Generic;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     This designation specifies that a given voxel from a given BuildRoom should be built.
-    ///     A BuildRoom build designation is actually a colletion of these.
-    ///     NOTE: This is mostly a legacy class that comes from the time when dwarves would incrementally
-    ///     build rooms one voxel at a time. It is no longer so important.
+    /// This designation specifies that a given voxel from a given BuildRoom should be built.
+    /// A BuildRoom build designation is actually a colletion of these.
     /// </summary>
     public class BuildVoxelOrder
     {
+        public Room ToBuild { get; set; }
+        public Voxel Voxel { get; set; }
+        public BuildRoomOrder Order { get; set; }
+
         public BuildVoxelOrder(BuildRoomOrder order, Room toBuild, Voxel voxel)
         {
             Order = order;
@@ -48,19 +52,32 @@ namespace DwarfCorp
             Voxel = voxel;
         }
 
-        /// <summary>
-        ///     The room the BuildVoxelOrder corresponds to
-        /// </summary>
-        public Room ToBuild { get; set; }
 
-        /// <summary>
-        ///     The voxel in the room this BuildVoxelOrder corresponds to
-        /// </summary>
-        public Voxel Voxel { get; set; }
 
-        /// <summary>
-        ///     The room build order
-        /// </summary>
-        public BuildRoomOrder Order { get; set; }
+        public void Build()
+        {
+            Order.Build();
+        }
+
+        public Resource.ResourceTags GetNextRequiredResource()
+        {
+ 
+            foreach (var s in ToBuild.RoomData.RequiredResources.Keys)
+            {
+                if(!Order.PutResources.ContainsKey(s))
+                {
+                    return ToBuild.RoomData.RequiredResources[s].ResourceType;
+                }
+                else if(Order.PutResources[s].NumResources < Math.Max((int) (ToBuild.RoomData.RequiredResources[s].NumResources * Order.VoxelOrders.Count * 0.25f), 1))
+                {
+                    return ToBuild.RoomData.RequiredResources[s].ResourceType;
+                }
+            }
+
+            return Resource.ResourceTags.None;
+        }
+
+
     }
+
 }

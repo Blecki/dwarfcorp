@@ -30,20 +30,47 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+
     /// <summary>
-    ///     Specifies a specific kind of voxel.
+    /// Specifies a specific kind of voxel.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class VoxelType
     {
-        private static short maxID;
+        public short ID { get; set; }
+        public string Name { get; set; }
+        public bool ReleasesResource { get; set; }
+        public ResourceLibrary.ResourceType ResourceToRelease { get; set; }
+        public float StartingHealth { get; set; }
+        public float ProbabilityOfRelease { get; set; }
+        public bool CanRamp { get; set; }
+        public float RampSize { get; set; }
+        public bool IsBuildable { get; set; }
+        public string ParticleType { get; set; }
+        public string ExplosionSound { get; set; }
+        public bool HasTransitionTextures { get; set; }
+        public bool EmitsLight { get; set; }
+        public float MinSpawnHeight { get; set; }
+        public float MaxSpawnHeight { get; set; }
+        public float SpawnProbability { get; set; }
+        public float Rarity { get; set; }
+        public bool SpawnVeins { get; set; }
+        public bool SpawnClusters { get; set; }
+        public float ClusterSize { get; set; }
+        public float VeinLength { get; set; }
+        public Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords> TransitionTextures { get; set; }
+        public bool IsSoil { get; set; }
+        public bool IsSurface { get; set; }
+        public bool IsInvincible { get; set; }
+        public Color Tint { get; set; }
+        public bool SpawnOnSurface { get; set; }
+        private static short maxID = 0;
 
         public static List<VoxelType> TypeList = new List<VoxelType>();
 
@@ -105,7 +132,7 @@ namespace DwarfCorp
             IsSoil = false;
             EmitsLight = false;
             Tint = Color.White;
-            if (!TypeList.Contains(this))
+            if(!TypeList.Contains(this))
             {
                 TypeList.Add(this);
             }
@@ -119,33 +146,6 @@ namespace DwarfCorp
             Rarity = 1.0f;
             SpawnOnSurface = false;
         }
-
-        public short ID { get; set; }
-        public string Name { get; set; }
-        public bool ReleasesResource { get; set; }
-        public ResourceLibrary.ResourceType ResourceToRelease { get; set; }
-        public float StartingHealth { get; set; }
-        public float ProbabilityOfRelease { get; set; }
-        public bool CanRamp { get; set; }
-        public float RampSize { get; set; }
-        public bool IsBuildable { get; set; }
-        public string ParticleType { get; set; }
-        public string ExplosionSound { get; set; }
-        public bool HasTransitionTextures { get; set; }
-        public bool EmitsLight { get; set; }
-        public float MinSpawnHeight { get; set; }
-        public float MaxSpawnHeight { get; set; }
-        public float SpawnProbability { get; set; }
-        public float Rarity { get; set; }
-        public bool SpawnVeins { get; set; }
-        public bool SpawnClusters { get; set; }
-        public float ClusterSize { get; set; }
-        public float VeinLength { get; set; }
-        public Dictionary<TransitionTexture, BoxPrimitive.BoxTextureCoords> TransitionTextures { get; set; }
-        public bool IsSoil { get; set; }
-        public bool IsSurface { get; set; }
-        public bool IsInvincible { get; set; }
-        public Color Tint { get; set; }
-        public bool SpawnOnSurface { get; set; }
     }
+
 }

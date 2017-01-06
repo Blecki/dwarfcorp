@@ -30,48 +30,53 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
+using LibNoise.Models;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+
     /// <summary>
-    ///     Component which fires when an enemy creature enters a box. Attached to other components.
-    ///     REQUIRES that the EnemySensor be attached to a creature
+    /// Component which fires when an enemy creature enters a box. Attached to other components.
+    /// REQUIRES that the EnemySensor be attached to a creature
     /// </summary>
     [JsonObject(IsReference = true)]
     public class EnemySensor : Body
     {
         public delegate void EnemySensed(List<CreatureAI> enemies);
 
-        public EnemySensor()
-        {
-            Enemies = new List<CreatureAI>();
-            OnEnemySensed += EnemySensor_OnEnemySensed;
-            SenseTimer = new Timer(0.5f, false);
-            SenseRadius = 15*15;
-        }
-
-        public EnemySensor(ComponentManager manager, string name, GameComponent parent, Matrix localTransform,
-            Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-                base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
-        {
-            Enemies = new List<CreatureAI>();
-            OnEnemySensed += EnemySensor_OnEnemySensed;
-            Tags.Add("Sensor");
-            SenseTimer = new Timer(0.5f, false);
-            SenseRadius = 15*15;
-        }
+        public event EnemySensed OnEnemySensed;
 
         public Faction Allies { get; set; }
         public CreatureAI Creature { get; set; }
         public List<CreatureAI> Enemies { get; set; }
         public Timer SenseTimer { get; set; }
         public float SenseRadius { get; set; }
-        public event EnemySensed OnEnemySensed;
+
+        public EnemySensor() : base()
+        {
+            Enemies = new List<CreatureAI>();
+            OnEnemySensed += EnemySensor_OnEnemySensed;
+            SenseTimer = new Timer(0.5f, false);
+            SenseRadius = 15 * 15;
+        }
+
+        public EnemySensor(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
+            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
+        {
+            Enemies = new List<CreatureAI>();
+            OnEnemySensed += EnemySensor_OnEnemySensed;
+            Tags.Add("Sensor");
+            SenseTimer = new Timer(0.5f, false);
+            SenseRadius = 15 * 15;
+        }
 
 
         public void Sense()
@@ -81,9 +86,9 @@ namespace DwarfCorp
                 Allies = Creature.Faction;
             }
 
-            var sensed = new List<CreatureAI>();
-            var collide = new List<CreatureAI>();
-            foreach (var faction in PlayState.ComponentManager.Factions.Factions)
+            List<CreatureAI> sensed = new List<CreatureAI>();
+            List<CreatureAI> collide = new List<CreatureAI>();
+            foreach (KeyValuePair<string, Faction> faction in PlayState.ComponentManager.Factions.Factions)
             {
                 if (PlayState.ComponentManager.Diplomacy.GetPolitics(Allies, faction.Value).GetCurrentRelationship() !=
                     Relationship.Hateful) continue;
@@ -122,7 +127,7 @@ namespace DwarfCorp
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             SenseTimer.Update(gameTime);
-
+            
             if (SenseTimer.HasTriggered)
             {
                 Sense();
@@ -136,5 +141,7 @@ namespace DwarfCorp
         {
             Enemies = enemies;
         }
+
     }
+
 }

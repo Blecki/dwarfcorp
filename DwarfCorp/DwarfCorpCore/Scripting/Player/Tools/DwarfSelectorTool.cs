@@ -30,9 +30,12 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
+using LibNoise.Modifiers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -43,43 +46,42 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class DwarfSelectorTool : PlayerTool
     {
+
         public DwarfSelectorTool(GameMaster master)
         {
+           
             Player = master;
             InputManager.MouseClickedCallback += InputManager_MouseClickedCallback;
         }
 
-        public DwarfSelectorTool()
-        {
-        }
-
         public override void OnBegin()
         {
+
         }
 
         public override void OnEnd()
         {
+
         }
 
 
-        private void InputManager_MouseClickedCallback(InputManager.MouseButton button)
+        void InputManager_MouseClickedCallback(InputManager.MouseButton button)
         {
-            if (button != InputManager.MouseButton.Right || Player.CurrentTool != this)
+            if(button != InputManager.MouseButton.Right || Player.CurrentTool != this)
             {
                 return;
             }
 
-            Voxel vox = PlayState.ChunkManager.ChunkData.GetFirstVisibleBlockHitByMouse(Mouse.GetState(),
-                PlayState.Camera, GameState.Game.GraphicsDevice.Viewport);
-            if (vox == null)
+            Voxel vox = PlayState.ChunkManager.ChunkData.GetFirstVisibleBlockHitByMouse(Mouse.GetState(), PlayState.Camera, GameState.Game.GraphicsDevice.Viewport);
+            if(vox == null)
             {
                 return;
             }
 
-            foreach (CreatureAI minion in Player.SelectedMinions)
+            foreach(CreatureAI minion in Player.SelectedMinions)
             {
                 if (minion.Creature.IsAsleep) continue;
-                if (minion.CurrentTask != null)
+                if(minion.CurrentTask != null)
                 {
                     minion.Tasks.Add(minion.CurrentTask);
                     if (minion.CurrentTask.Script != null)
@@ -96,30 +98,36 @@ namespace DwarfCorp
             }
             OnConfirm(Player.SelectedMinions);
 
-            IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.DownArrow,
-                vox.Position + Vector3.One*0.5f, 0.5f, 2.0f, new Vector2(0, -50), Color.LightGreen);
+            IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.DownArrow, vox.Position + Vector3.One * 0.5f, 0.5f, 2.0f, new Vector2(0, -50), Color.LightGreen);
         }
 
 
+
+        public DwarfSelectorTool()
+        {
+            
+        }
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
+          
         }
 
         protected void SelectDwarves(List<Body> bodies)
         {
             KeyboardState keyState = Keyboard.GetState();
 
+            
 
-            if (!keyState.IsKeyDown(Keys.LeftShift))
+            if(!keyState.IsKeyDown(Keys.LeftShift))
             {
                 Player.SelectedMinions.Clear();
             }
-            var newDwarves = new List<CreatureAI>();
-            foreach (Body body in bodies)
+            List<CreatureAI> newDwarves = new List<CreatureAI>();
+            foreach(Body body in bodies)
             {
                 List<Creature> dwarves = body.GetChildrenOfType<Creature>();
 
-                if (dwarves.Count <= 0)
+                if(dwarves.Count <= 0)
                 {
                     continue;
                 }
@@ -138,7 +146,7 @@ namespace DwarfCorp
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
-            switch (button)
+            switch(button)
             {
                 case InputManager.MouseButton.Left:
                     SelectDwarves(bodies);
@@ -163,16 +171,17 @@ namespace DwarfCorp
             Viewport port = GameState.Game.GraphicsDevice.Viewport;
             foreach (CreatureAI creature in Player.SelectedMinions)
             {
-                Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, creature.Stats.FullName, PlayState.GUI.SmallFont,
-                    Color.White, Drawer2D.Alignment.Right, new Rectangle(port.Width - 300, 68 + i*24, 300, 24));
+                Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, creature.Stats.FullName, PlayState.GUI.SmallFont, Color.White, Drawer2D.Alignment.Right, new Rectangle(port.Width - 300, 68 + i * 24, 300, 24));
                 i++;
             }
 
             DwarfGame.SpriteBatch.End();
+             
         }
 
         public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
         {
+
         }
     }
 }

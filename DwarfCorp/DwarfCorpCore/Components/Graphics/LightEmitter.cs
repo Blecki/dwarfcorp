@@ -30,30 +30,36 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     This component dynamically lights up voxels around it with torch light.
+    /// This component dynamically lights up voxels around it with torch light.
     /// </summary>
     [JsonObject(IsReference = true)]
     internal class LightEmitter : Body
     {
+        public DynamicLight Light { get; set; }
+
+
         public LightEmitter()
         {
+            
         }
 
-        public LightEmitter(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents,
-            Vector3 boundingBoxPos, float intensity, float range) :
-                base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
+        public LightEmitter(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, float intensity, float range) :
+            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             Light = new DynamicLight(intensity, range);
         }
-
-        public DynamicLight Light { get; set; }
 
         public void UpdateLight()
         {
@@ -73,4 +79,5 @@ namespace DwarfCorp
             base.Die();
         }
     }
+
 }

@@ -30,47 +30,27 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 using Newtonsoft.Json;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Represents a sub-rectangle inside a 2D texture.
+    /// Represents a sub-rectangle inside a 2D texture.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class ImageFrame
     {
-        public ImageFrame()
-        {
-        }
-
-        public ImageFrame(Texture2D image)
-        {
-            Image = image;
-            if (image != null)
-                SourceRect = image.Bounds;
-        }
-
-        public ImageFrame(Texture2D image, int frameSize, int x, int y)
-        {
-            Image = image;
-            SourceRect = new Rectangle(x*frameSize, y*frameSize, frameSize, frameSize);
-        }
-
-        public ImageFrame(Texture2D image, Rectangle sourceRect)
-        {
-            Image = image;
-            SourceRect = sourceRect;
-        }
-
-        public Texture2D Image { get; set; }
-        public Rectangle SourceRect { get; set; }
-
         protected bool Equals(ImageFrame other)
         {
             return Equals(Image, other.Image) && SourceRect.Equals(other.SourceRect);
@@ -84,22 +64,50 @@ namespace DwarfCorp
             }
         }
 
+        public Texture2D Image { get; set; }
+        public Rectangle SourceRect { get; set; }
+
+        public ImageFrame()
+        {
+            
+        }
+
+        public ImageFrame(Texture2D image)
+        {
+            Image = image;
+            if(image != null)
+                SourceRect = image.Bounds;
+        }
+
+        public ImageFrame(Texture2D image, int frameSize, int x, int y)
+        {
+            Image = image;
+            SourceRect = new Rectangle(x * frameSize, y * frameSize, frameSize, frameSize);
+        }
+
+        public ImageFrame(Texture2D image, Rectangle sourceRect)
+        {
+            Image = image;
+            SourceRect = sourceRect;
+        }
+
         public override bool Equals(object obj)
         {
             return obj is ImageFrame && Equals((ImageFrame) obj);
         }
+
     }
 
     [JsonObject(IsReference = true)]
     public class LayeredImage
     {
+        public List<NamedImageFrame> Images { get; set; }
+        public List<Color> Tints { get; set; } 
+
         public LayeredImage()
         {
             Images = new List<NamedImageFrame>();
         }
-
-        public List<NamedImageFrame> Images { get; set; }
-        public List<Color> Tints { get; set; }
 
         public void Render(Rectangle location)
         {
@@ -113,8 +121,17 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class NamedImageFrame : ImageFrame
     {
+        public string AssetName { get; set; }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            Image = TextureManager.GetTexture(AssetName);
+        }
+
         public NamedImageFrame()
         {
+            
         }
 
         public NamedImageFrame(string name)
@@ -132,7 +149,7 @@ namespace DwarfCorp
         {
             AssetName = name;
             Image = TextureManager.GetTexture(name);
-            SourceRect = new Rectangle(x*frameSize, y*frameSize, frameSize, frameSize);
+            SourceRect = new Rectangle(x * frameSize, y * frameSize, frameSize, frameSize);
         }
 
         public NamedImageFrame(string name, Rectangle sourceRect)
@@ -141,13 +158,8 @@ namespace DwarfCorp
             Image = TextureManager.GetTexture(name);
             SourceRect = sourceRect;
         }
-
-        public string AssetName { get; set; }
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            Image = TextureManager.GetTexture(AssetName);
-        }
     }
+
+
+
 }

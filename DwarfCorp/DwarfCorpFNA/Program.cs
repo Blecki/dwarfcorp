@@ -35,23 +35,26 @@ using System;
 using System.IO;
 using System.Threading;
 using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 
 namespace DwarfCorpCore
 {
+    
 }
 
 namespace DwarfCorp
 {
+
 #if WINDOWS || XBOX
     internal static class Program
     {
         public static string Version = "16.11.12";
         public static char DirChar = Path.DirectorySeparatorChar;
-        public static ManualResetEvent ShutdownEvent = new ManualResetEvent(false);
-
+        
         /// <summary>
-        ///     The main entry point for the application.
+        /// The main entry point for the application.
         /// </summary>
         private static void Main(string[] args)
         {
@@ -59,7 +62,7 @@ namespace DwarfCorp
             try
 #endif
             {
-                using (var game = new DwarfGame())
+                using (DwarfGame game = new DwarfGame())
                 {
                     game.Run();
                 }
@@ -77,33 +80,29 @@ namespace DwarfCorp
         public static void WriteExceptionLog(Exception exception)
         {
             SignalShutdown();
-            DirectoryInfo worldDirectory =
-                Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Logging");
-            var file =
-                new StreamWriter(
-                    worldDirectory.FullName + Path.DirectorySeparatorChar + DateTime.Now.ToString("yyyyMMddHHmmssffff") +
-                    "_" + "Crashlog.txt", true);
+            DirectoryInfo worldDirectory = Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Logging");
+            StreamWriter file =
+                new StreamWriter(worldDirectory.FullName + Path.DirectorySeparatorChar + DateTime.Now.ToString("yyyyMMddHHmmssffff") + "_" + "Crashlog.txt", true);
             file.WriteLine("DwarfCorp Version " + Version);
             OperatingSystem os = Environment.OSVersion;
             file.WriteLine("OS Version: " + os.Version);
             file.WriteLine("OS Platform: " + os.Platform);
             file.WriteLine("OS SP: " + os.ServicePack);
             file.WriteLine("OS Version String: " + os.VersionString);
-
+            
             if (GameState.Game != null && GameState.Game.GraphicsDevice != null)
             {
                 GraphicsAdapter adapter = GameState.Game.GraphicsDevice.Adapter;
                 file.WriteLine("Graphics Card: " + adapter.DeviceName + "->" + adapter.Description);
-                file.WriteLine("Display Mode: " + adapter.CurrentDisplayMode.Width + "x" +
-                               adapter.CurrentDisplayMode.Height + " (" + adapter.CurrentDisplayMode.AspectRatio + ")");
+                file.WriteLine("Display Mode: " + adapter.CurrentDisplayMode.Width + "x" + adapter.CurrentDisplayMode.Height + " (" + adapter.CurrentDisplayMode.AspectRatio + ")");
                 file.WriteLine("Supported display modes: ");
 
-                foreach (DisplayMode mode in adapter.SupportedDisplayModes)
+                foreach (var mode in adapter.SupportedDisplayModes)
                 {
                     file.WriteLine(mode.Width + "x" + mode.Height + " (" + mode.AspectRatio + ")");
                 }
             }
-
+            
             file.WriteLine(exception.ToString());
             file.Close();
             throw exception;
@@ -113,11 +112,11 @@ namespace DwarfCorp
         {
             string toReturn = "";
 
-            for (int i = 0; i < args.Length; i++)
+            for(int i = 0; i < args.Length; i++)
             {
                 toReturn += args[i];
 
-                if (i < args.Length - 1)
+                if(i < args.Length - 1)
                 {
                     toReturn += DirChar;
                 }
@@ -126,11 +125,14 @@ namespace DwarfCorp
             return toReturn;
         }
 
+        public static ManualResetEvent ShutdownEvent = new ManualResetEvent(false);
+
         public static void SignalShutdown()
         {
             DwarfGame.ExitGame = true;
             ShutdownEvent.Set();
         }
+
     }
 #endif
 }

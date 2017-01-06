@@ -30,14 +30,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+
     public abstract class GoalRegion
     {
         public abstract bool IsInGoalRegion(Voxel voxel);
@@ -48,11 +54,6 @@ namespace DwarfCorp
 
     public class VoxelGoalRegion : GoalRegion
     {
-        public VoxelGoalRegion(Voxel voxel)
-        {
-            Voxel = voxel;
-        }
-
         public Voxel Voxel { get; set; }
 
         public override bool IsPossible()
@@ -63,6 +64,11 @@ namespace DwarfCorp
         public override float Heuristic(Voxel voxel)
         {
             return (voxel.Position - Voxel.Position).LengthSquared();
+        }
+
+        public VoxelGoalRegion(Voxel voxel)
+        {
+            Voxel = voxel;
         }
 
         public override bool IsInGoalRegion(Voxel voxel)
@@ -78,11 +84,6 @@ namespace DwarfCorp
 
     public class AdjacentVoxelGoalRegion2D : GoalRegion
     {
-        public AdjacentVoxelGoalRegion2D(Voxel voxel)
-        {
-            Voxel = voxel;
-        }
-
         public Voxel Voxel { get; set; }
 
         public override bool IsPossible()
@@ -93,6 +94,11 @@ namespace DwarfCorp
         public override float Heuristic(Voxel voxel)
         {
             return (voxel.Position - Voxel.Position).LengthSquared();
+        }
+
+        public AdjacentVoxelGoalRegion2D(Voxel voxel)
+        {
+            Voxel = voxel;
         }
 
         public override bool IsInGoalRegion(Voxel voxel)
@@ -134,11 +140,28 @@ namespace DwarfCorp
         {
             return true;
         }
+
     }
 
     public class SphereGoalRegion : GoalRegion
     {
-        private float r;
+        public Vector3 Position { get; set; }
+        public Voxel Voxel { get; set; }
+        private float r = 0.0f;
+        public float Radius 
+        {
+            get
+            {
+                return r;
+            }
+            set
+            {
+                r = value;
+                RadiusSquared = r*r;
+            }
+        } 
+
+        private float RadiusSquared { get; set; }
 
         public SphereGoalRegion(Voxel voxel, float radius)
         {
@@ -146,21 +169,6 @@ namespace DwarfCorp
             Voxel = voxel;
             Position = voxel.Position;
         }
-
-        public Vector3 Position { get; set; }
-        public Voxel Voxel { get; set; }
-
-        public float Radius
-        {
-            get { return r; }
-            set
-            {
-                r = value;
-                RadiusSquared = r*r;
-            }
-        }
-
-        private float RadiusSquared { get; set; }
 
         public override float Heuristic(Voxel voxel)
         {
@@ -186,38 +194,37 @@ namespace DwarfCorp
 
 
     /// <summary>
-    ///     A request to plan from point A to point B
+    /// A request to plan from point A to point B
     /// </summary>
     public class AstarPlanRequest
     {
-        public GoalRegion GoalRegion;
-        public float HeuristicWeight = 1;
-        public int MaxExpansions;
+        public PlanSubscriber Subscriber;
         public CreatureAI Sender;
         public Voxel Start;
-        public PlanSubscriber Subscriber;
+        public int MaxExpansions;
+        public GoalRegion GoalRegion;
+        public float HeuristicWeight = 1;
     }
 
     /// <summary>
-    ///     The result of a plan request (has a path on success)
+    /// The result of a plan request (has a path on success)
     /// </summary>
     public class AStarPlanResponse
     {
-        public List<Creature.MoveAction> Path;
         public bool Success;
+        public List<Creature.MoveAction> Path;
     }
 
     /// <summary>
-    ///     A service call which plans from pointA to pointB voxels.
+    /// A service call which plans from pointA to pointB voxels.
     /// </summary>
     public class PlanService : Service<AstarPlanRequest, AStarPlanResponse>
     {
         public override AStarPlanResponse HandleRequest(AstarPlanRequest req)
         {
-            List<Creature.MoveAction> path = AStarPlanner.FindPath(req.Sender.Movement, req.Start, req.GoalRegion,
-                PlayState.ChunkManager, req.MaxExpansions, req.HeuristicWeight);
+            List<Creature.MoveAction> path = AStarPlanner.FindPath(req.Sender.Movement, req.Start, req.GoalRegion, PlayState.ChunkManager, req.MaxExpansions, req.HeuristicWeight);
 
-            var res = new AStarPlanResponse
+            AStarPlanResponse res = new AStarPlanResponse
             {
                 Path = path,
                 Success = (path != null)
@@ -225,5 +232,7 @@ namespace DwarfCorp
 
             return res;
         }
+
     }
+
 }

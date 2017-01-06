@@ -30,8 +30,11 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Remoting.Channels;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -48,12 +51,11 @@ namespace DwarfCorp
             Description = "Magically destroys up to 8 stone, dirt, or other blocks.";
             Image = new ImageFrame(icons, 32, 2, 2);
             ManaCost = 10;
-            Mode = SpellMode.SelectFilledVoxels;
+            Mode = Spell.SpellMode.SelectFilledVoxels;
             Name = "Destroy Blocks";
             Hint = "Click and drag to destroy blocks";
             Recharges = false;
         }
-
         public override void OnVoxelsSelected(SpellTree tree, List<Voxel> voxels)
         {
             bool destroyed = false;
@@ -63,7 +65,7 @@ namespace DwarfCorp
                 {
                     if (OnCast(tree))
                     {
-                        Vector3 p = selected.Position + Vector3.One*0.5f;
+                        Vector3 p = selected.Position + Vector3.One * 0.5f;
                         IndicatorManager.DrawIndicator("-" + ManaCost + " M", p, 1.0f, Color.Red);
                         PlayState.ParticleManager.Trigger("star_particle", p,
                             Color.White, 4);
@@ -71,6 +73,7 @@ namespace DwarfCorp
                         destroyed = true;
                     }
                 }
+
             }
             if (destroyed)
             {

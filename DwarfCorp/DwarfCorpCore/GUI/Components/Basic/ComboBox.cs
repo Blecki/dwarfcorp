@@ -30,8 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -39,11 +41,20 @@ using Microsoft.Xna.Framework.Input;
 namespace DwarfCorp
 {
     /// <summary>
-    ///     This GUI component has a list of items which can be selected on
-    ///     a drop down menu.
+    /// This GUI component has a list of items which can be selected on
+    /// a drop down menu.
     /// </summary>
     public class ComboBox : GUIComponent
     {
+        public List<string> Values { get; set; }
+        public string CurrentValue { get; set; }
+        public int CurrentIndex { get; set; }
+        public bool IsOpen { get; set; }
+        public ComboBoxSelector Selector { get; set; }
+        public SpriteFont Font { get; set; }
+
+        public event ComboBoxSelector.Modified OnSelectionModified;
+
         public ComboBox(DwarfGUI gui, GUIComponent parent) :
             base(gui, parent)
         {
@@ -55,18 +66,9 @@ namespace DwarfCorp
             OnSelectionModified += ComboBox_OnSelectionModified;
         }
 
-        public List<string> Values { get; set; }
-        public string CurrentValue { get; set; }
-        public int CurrentIndex { get; set; }
-        public bool IsOpen { get; set; }
-        public ComboBoxSelector Selector { get; set; }
-        public SpriteFont Font { get; set; }
-
-        public event ComboBoxSelector.Modified OnSelectionModified;
-
         private void ComboBox_OnSelectionModified(string arg)
         {
-            if (GUI.FocusComponent == Selector)
+            if(GUI.FocusComponent == Selector)
             {
                 GUI.FocusComponent = null;
             }
@@ -79,11 +81,10 @@ namespace DwarfCorp
 
         private void ComboBox_OnLeftPressed()
         {
-            if (Selector == null && Values.Count > 0)
+            if(Selector == null && Values.Count > 0)
             {
-                var fieldRect = new Rectangle(GlobalBounds.X,
-                    GlobalBounds.Y + GlobalBounds.Height/2 - GUI.Skin.TileHeight/2, GlobalBounds.Width, 32);
-                if (fieldRect.Contains(Mouse.GetState().X, Mouse.GetState().Y))
+                Rectangle fieldRect = new Rectangle(GlobalBounds.X, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width, 32);
+                if(fieldRect.Contains(Mouse.GetState().X, Mouse.GetState().Y))
                 {
                     Selector = new ComboBoxSelector(GUI, this, ComboBoxSelector.CreateEntries(Values))
                     {
@@ -116,7 +117,7 @@ namespace DwarfCorp
         {
             Values.Remove(value);
 
-            if (CurrentValue == value)
+            if(CurrentValue == value)
             {
                 CurrentValue = "";
                 CurrentIndex = 0;
@@ -132,24 +133,21 @@ namespace DwarfCorp
             base.Update(time);
         }
 
-        public override void Render(DwarfTime time, SpriteBatch batch)
+        public override void Render(DwarfTime time, Microsoft.Xna.Framework.Graphics.SpriteBatch batch)
         {
             Rectangle clipBounds = batch.GraphicsDevice.ScissorRectangle;
 
             if (!clipBounds.Intersects(GlobalBounds) && !clipBounds.Contains(GlobalBounds)) return;
 
-            var fieldRect = new Rectangle(GlobalBounds.X, GlobalBounds.Y + GlobalBounds.Height/2 - GUI.Skin.TileHeight/2,
-                GlobalBounds.Width - 37, 32);
+            Rectangle fieldRect = new Rectangle(GlobalBounds.X, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width - 37, 32);
             GUI.Skin.RenderField(fieldRect, batch);
 
             batch.GraphicsDevice.ScissorRectangle = MathFunctions.Clamp(fieldRect, batch.GraphicsDevice.Viewport.Bounds);
-
+            
             Drawer2D.DrawAlignedText(batch, CurrentValue, Font, Color.Black, Drawer2D.Alignment.Center, fieldRect);
 
             batch.GraphicsDevice.ScissorRectangle = clipBounds;
-            GUI.Skin.RenderDownArrow(
-                new Rectangle(GlobalBounds.X + GlobalBounds.Width - 32,
-                    GlobalBounds.Y + GlobalBounds.Height/2 - GUI.Skin.TileHeight/2, 32, 32), batch);
+            GUI.Skin.RenderDownArrow(new Rectangle(GlobalBounds.X + GlobalBounds.Width - 32, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, 32, 32), batch);
             base.Render(time, batch);
         }
 
@@ -158,4 +156,5 @@ namespace DwarfCorp
             Values.Clear();
         }
     }
+
 }

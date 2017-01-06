@@ -30,22 +30,41 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Threading;
 using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     This is a GUI component which merely draws an image.
+    /// This is a GUI component which merely draws an image.
     /// </summary>
     public class ImagePanel : GUIComponent
     {
-        private ImageFrame imageFrame;
+        public ImageFrame Image
+        {
+            get { return imageFrame; }
+            set
+            {
+                Lock.WaitOne();
+                imageFrame = value;
+                Lock.ReleaseMutex();
+            }
+        }
+
+        private ImageFrame imageFrame = null;
+        public Mutex Lock { get; set; }
+        public bool KeepAspectRatio { get; set; }
+        public bool ConstrainSize { get; set; }
+        public bool Highlight { get; set; }
+        public string AssetName { get; set; }
+        public Color Tint { get; set; }
+
 
         public ImagePanel(DwarfGUI gui, GUIComponent parent, Texture2D image) :
             base(gui, parent)
@@ -55,7 +74,7 @@ namespace DwarfCorp
             Highlight = false;
             Lock = new Mutex();
             ConstrainSize = false;
-            if (image != null)
+            if(image != null)
             {
                 Image = new ImageFrame(image, new Rectangle(0, 0, image.Width, image.Height));
             }
@@ -73,28 +92,10 @@ namespace DwarfCorp
             KeepAspectRatio = true;
         }
 
-        public ImageFrame Image
-        {
-            get { return imageFrame; }
-            set
-            {
-                Lock.WaitOne();
-                imageFrame = value;
-                Lock.ReleaseMutex();
-            }
-        }
-
-        public Mutex Lock { get; set; }
-        public bool KeepAspectRatio { get; set; }
-        public bool ConstrainSize { get; set; }
-        public bool Highlight { get; set; }
-        public string AssetName { get; set; }
-        public Color Tint { get; set; }
-
-
         public override bool IsMouseOverRecursive()
         {
-            if (!IsVisible)
+
+                if(!IsVisible)
             {
                 return false;
             }
@@ -102,11 +103,11 @@ namespace DwarfCorp
             MouseState mouse = Mouse.GetState();
 
 
-            bool mouseOver = (IsMouseOver && this != GUI.RootComponent) ||
-                             Children.Any(child => child.IsMouseOverRecursive());
+            bool mouseOver =  (IsMouseOver && this != GUI.RootComponent) || Children.Any(child => child.IsMouseOverRecursive());
 
-            return GetImageBounds().Contains(mouse.X, mouse.Y) || Children.Any(child => child.IsMouseOverRecursive());
+            return GetImageBounds().Contains(mouse.X, mouse.Y)  || Children.Any(child => child.IsMouseOverRecursive());
         }
+
 
 
         public Rectangle GetImageBounds()
@@ -118,14 +119,14 @@ namespace DwarfCorp
                 return toDraw;
             }
 
-            if (Image == null)
+            if(Image == null)
             {
                 return toDraw;
             }
 
             toDraw = DwarfGUI.AspectRatioFit(Image.SourceRect, toDraw);
 
-            if (ConstrainSize)
+            if(ConstrainSize)
             {
                 toDraw.Width = Math.Min(Image.SourceRect.Width, toDraw.Width);
                 toDraw.Height = Math.Min(Image.SourceRect.Height, toDraw.Height);
@@ -138,39 +139,55 @@ namespace DwarfCorp
 
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
-            if (Image != null && Image.Image != null && IsVisible)
+            if(Image != null && Image.Image != null && IsVisible)
             {
                 Rectangle toDraw = GetImageBounds();
 
-                if (!Highlight)
+                if(!Highlight)
                 {
-                    batch.Draw(imageFrame.Image, toDraw, imageFrame.SourceRect, Tint, 0, Vector2.Zero,
-                        SpriteEffects.None, 0);
+                    batch.Draw(imageFrame.Image, toDraw, imageFrame.SourceRect, Tint, 0, Vector2.Zero, SpriteEffects.None, 0);
                 }
                 else
                 {
-                    if (IsMouseOver)
+                    if(IsMouseOver)
                     {
-                        batch.Draw(imageFrame.Image, toDraw, imageFrame.SourceRect, Color.Orange, 0, Vector2.Zero,
-                            SpriteEffects.None, 0);
+                        batch.Draw(imageFrame.Image, toDraw, imageFrame.SourceRect, Color.Orange, 0, Vector2.Zero, SpriteEffects.None, 0);
                     }
                     else
                     {
-                        batch.Draw(imageFrame.Image, toDraw, imageFrame.SourceRect, Tint, 0, Vector2.Zero,
-                            SpriteEffects.None, 0);
+                        batch.Draw(imageFrame.Image, toDraw, imageFrame.SourceRect, Tint, 0, Vector2.Zero, SpriteEffects.None, 0);
                     }
                 }
+                
             }
             base.Render(time, batch);
         }
     }
 
     /// <summary>
-    ///     This is a GUI component which merely draws an image.
+    /// This is a GUI component which merely draws an image.
     /// </summary>
     public class RenderPanel : GUIComponent
     {
-        private RenderTarget2D imageFrame;
+        public RenderTarget2D Image
+        {
+            get { return imageFrame; }
+            set
+            {
+                Lock.WaitOne();
+                imageFrame = value;
+                Lock.ReleaseMutex();
+            }
+        }
+
+        private RenderTarget2D imageFrame = null;
+        public Mutex Lock { get; set; }
+        public bool KeepAspectRatio { get; set; }
+        public bool ConstrainSize { get; set; }
+        public bool Highlight { get; set; }
+        public string AssetName { get; set; }
+        public Color Tint { get; set; }
+
 
         public RenderPanel(DwarfGUI gui, GUIComponent parent, RenderTarget2D image) :
             base(gui, parent)
@@ -184,27 +201,9 @@ namespace DwarfCorp
             KeepAspectRatio = true;
         }
 
-        public RenderTarget2D Image
-        {
-            get { return imageFrame; }
-            set
-            {
-                Lock.WaitOne();
-                imageFrame = value;
-                Lock.ReleaseMutex();
-            }
-        }
-
-        public Mutex Lock { get; set; }
-        public bool KeepAspectRatio { get; set; }
-        public bool ConstrainSize { get; set; }
-        public bool Highlight { get; set; }
-        public string AssetName { get; set; }
-        public Color Tint { get; set; }
-
-
         public override bool IsMouseOverRecursive()
         {
+
             if (!IsVisible)
             {
                 return false;
@@ -213,11 +212,11 @@ namespace DwarfCorp
             MouseState mouse = Mouse.GetState();
 
 
-            bool mouseOver = (IsMouseOver && this != GUI.RootComponent) ||
-                             Children.Any(child => child.IsMouseOverRecursive());
+            bool mouseOver = (IsMouseOver && this != GUI.RootComponent) || Children.Any(child => child.IsMouseOverRecursive());
 
             return GetImageBounds().Contains(mouse.X, mouse.Y) || Children.Any(child => child.IsMouseOverRecursive());
         }
+
 
 
         public Rectangle GetImageBounds()
@@ -261,16 +260,17 @@ namespace DwarfCorp
                 {
                     if (IsMouseOver)
                     {
-                        batch.Draw(imageFrame, toDraw, imageFrame.Bounds, Color.Orange, 0, Vector2.Zero,
-                            SpriteEffects.None, 0);
+                        batch.Draw(imageFrame, toDraw, imageFrame.Bounds, Color.Orange, 0, Vector2.Zero, SpriteEffects.None, 0);
                     }
                     else
                     {
                         batch.Draw(imageFrame, toDraw, imageFrame.Bounds, Tint, 0, Vector2.Zero, SpriteEffects.None, 0);
                     }
                 }
+
             }
             base.Render(time, batch);
         }
     }
+
 }

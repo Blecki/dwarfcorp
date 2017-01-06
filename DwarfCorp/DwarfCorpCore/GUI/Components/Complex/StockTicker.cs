@@ -30,24 +30,39 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Color = Microsoft.Xna.Framework.Color;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace DwarfCorp
 {
     public class StockTicker : GUIComponent
     {
-        public List<Company> FilteredCompanies = new List<Company>();
-        public float MaxStock = 100.0f;
+        public GridLayout Layout { get; set; }
+        public ComboBox IndustryBox { get; set; }
+        public Economy Economy { get; set; }
+        public int Window { get; set; }
+        public GUIComponent DrawSurface { get; set; }
         public float MinStock = 0.0f;
-        public Company SelectedCompany = null;
+        public float MaxStock = 100.0f;
+        public Color TickColor { get; set; }
+        public List<Company> FilteredCompanies = new List<Company>();
         public string SelectedIndustry = "";
-        private bool firstIter = true;
+        public Company SelectedCompany = null;
+        public struct StockIcon
+        {
+            public Company Company;
+            public Rectangle DestRect;
+        }
+
+        public List<StockIcon> Icons { get; set; } 
 
         public StockTicker(DwarfGUI gui, GUIComponent parent, Economy economy) :
             base(gui, parent)
@@ -57,7 +72,7 @@ namespace DwarfCorp
             Window = 30;
             TickColor = Color.Brown;
             Layout = new GridLayout(gui, this, 10, 4);
-            var displayLabel = new Label(gui, Layout, "Display: ", GUI.DefaultFont);
+            Label displayLabel = new Label(gui, Layout, "Display: ", GUI.DefaultFont);
             Layout.SetComponentPosition(displayLabel, 0, 0, 1, 1);
             IndustryBox = new ComboBox(gui, Layout);
             IndustryBox.AddValue("Our Company");
@@ -81,16 +96,7 @@ namespace DwarfCorp
             IndustryBox_OnSelectionModified("Our Company");
         }
 
-        public GridLayout Layout { get; set; }
-        public ComboBox IndustryBox { get; set; }
-        public Economy Economy { get; set; }
-        public int Window { get; set; }
-        public GUIComponent DrawSurface { get; set; }
-        public Color TickColor { get; set; }
-
-        public List<StockIcon> Icons { get; set; }
-
-        private void IndustryBox_OnSelectionModified(string arg)
+        void IndustryBox_OnSelectionModified(string arg)
         {
             FilteredCompanies = GetCompaniesByIndustry(arg);
             Icons.Clear();
@@ -105,7 +111,7 @@ namespace DwarfCorp
 
         public List<Company> GetCompaniesByIndustry(string industry)
         {
-            var toReturn = new List<Company>();
+            List<Company> toReturn = new List<Company>();
 
             if (industry == "Our Company")
             {
@@ -117,39 +123,24 @@ namespace DwarfCorp
             {
                 switch (industry)
                 {
-                    case "Average":
+                    case  "Average":
                     case "All":
                         toReturn.Add(company);
                         break;
                     case "Exploration":
-                        if (company.Industry == Company.Sector.Exploration)
-                        {
-                            toReturn.Add(company);
-                        }
+                        if (company.Industry == Company.Sector.Exploration) { toReturn.Add(company);}
                         break;
                     case "Military":
-                        if (company.Industry == Company.Sector.Military)
-                        {
-                            toReturn.Add(company);
-                        }
+                        if (company.Industry == Company.Sector.Military) { toReturn.Add(company); }
                         break;
                     case "Manufacturing":
-                        if (company.Industry == Company.Sector.Manufacturing)
-                        {
-                            toReturn.Add(company);
-                        }
+                        if (company.Industry == Company.Sector.Manufacturing) { toReturn.Add(company); }
                         break;
                     case "Magic":
-                        if (company.Industry == Company.Sector.Magic)
-                        {
-                            toReturn.Add(company);
-                        }
+                        if (company.Industry == Company.Sector.Magic) { toReturn.Add(company); }
                         break;
                     case "Finance":
-                        if (company.Industry == Company.Sector.Finance)
-                        {
-                            toReturn.Add(company);
-                        }
+                        if (company.Industry == Company.Sector.Finance) { toReturn.Add(company); }
                         break;
                 }
             }
@@ -174,8 +165,8 @@ namespace DwarfCorp
 
             for (int i = 1; i < Window; i++)
             {
-                int tick = (w/(Window + 1))*(i + 1);
-                int prevtick = (w/(Window + 1))*(i);
+                int tick = (w / (Window + 1)) * (i + 1);
+                int prevtick = (w / (Window + 1)) * (i);
                 foreach (Company company in FilteredCompanies)
                 {
                     if (company.StockHistory.Count < i + 1 || (company != SelectedCompany && SelectedCompany != null))
@@ -183,12 +174,11 @@ namespace DwarfCorp
                         continue;
                     }
                     float price1 = company.StockHistory[i - 1];
-                    float normalizedPrice1 = (price1 - MinStock)/(MaxStock - MinStock);
+                    float normalizedPrice1 = (price1 - MinStock) / (MaxStock - MinStock);
                     float price0 = company.StockHistory[i];
-                    float normalizedPrice0 = (price0 - MinStock)/(MaxStock - MinStock);
+                    float normalizedPrice0 = (price0 - MinStock) / (MaxStock - MinStock);
 
-                    Drawer2D.DrawLine(batch, new Vector2(x + tick, y + h - normalizedPrice0*h),
-                        new Vector2(x + prevtick, y + h - normalizedPrice1*h), company.BaseColor, 2);
+                    Drawer2D.DrawLine(batch, new Vector2(x + tick, y + h - normalizedPrice0 * h), new Vector2(x + prevtick, y + h - normalizedPrice1 * h), company.BaseColor, 2);
                 }
             }
 
@@ -197,8 +187,7 @@ namespace DwarfCorp
                 if (icon.Company != SelectedCompany && SelectedCompany != null)
                     continue;
 
-                batch.Draw(icon.Company.Logo.Image, icon.DestRect, icon.Company.Logo.SourceRect,
-                    icon.Company.SecondaryColor);
+                batch.Draw(icon.Company.Logo.Image, icon.DestRect, icon.Company.Logo.SourceRect, icon.Company.SecondaryColor);
             }
         }
 
@@ -217,13 +206,13 @@ namespace DwarfCorp
                 MinStock = Math.Min(stock, MinStock);
             }
 
-            MaxStock *= (FilteredCompanies.Count/2);
-            MinStock *= (FilteredCompanies.Count/2);
+            MaxStock *= (FilteredCompanies.Count / 2);
+            MinStock *= (FilteredCompanies.Count / 2);
 
             for (int i = 1; i < Window; i++)
             {
-                int tick = (w/(Window + 1))*(i + 1);
-                int prevtick = (w/(Window + 1))*(i);
+                int tick = (w / (Window + 1)) * (i + 1);
+                int prevtick = (w / (Window + 1)) * (i);
                 float prevAverage = 0.0f;
                 float currAverage = 0.0f;
 
@@ -235,10 +224,11 @@ namespace DwarfCorp
                     }
                     prevAverage += company.StockHistory[i];
                     currAverage += company.StockHistory[i - 1];
+                    
                 }
-
-                float normalizedPrice1 = (currAverage - MinStock)/(MaxStock - MinStock);
-                float normalizedPrice0 = (prevAverage - MinStock)/(MaxStock - MinStock);
+ 
+                float normalizedPrice1 = (currAverage - MinStock) / (MaxStock - MinStock);
+                float normalizedPrice0 = (prevAverage - MinStock) / (MaxStock - MinStock);
 
                 if (currAverage > 0)
                 {
@@ -246,6 +236,7 @@ namespace DwarfCorp
                         new Vector2(x + prevtick, y + h - normalizedPrice1*h), Color.Black, 2);
                 }
             }
+
         }
 
 
@@ -266,17 +257,17 @@ namespace DwarfCorp
 
             foreach (Company company in FilteredCompanies)
             {
-                Icons.Add(new StockIcon
+                Icons.Add(new StockIcon()
                 {
                     Company = company,
-                    DestRect = new Rectangle(x + w/2, y + h/2, 32, 32)
+                    DestRect = new Rectangle(x + w/2, y + h /2, 32, 32)
                 });
             }
 
             for (int i = 1; i < Window; i++)
             {
-                int tick = (w/(Window + 1))*(i + 1);
-                int prevtick = (w/(Window + 1))*(i);
+                int tick = (w / (Window + 1)) * (i + 1);
+                int prevtick = (w / (Window + 1)) * (i);
                 int j = 0;
                 foreach (Company company in FilteredCompanies)
                 {
@@ -285,12 +276,12 @@ namespace DwarfCorp
                         continue;
                     }
                     float price0 = company.StockHistory[i];
-                    float normalizedPrice0 = (price0 - MinStock)/(MaxStock - MinStock);
+                    float normalizedPrice0 = (price0 - MinStock) / (MaxStock - MinStock);
 
-                    if (j%company.StockHistory.Count == (i - 1))
+                    if (j % company.StockHistory.Count == (i - 1))
                     {
                         StockIcon icon = Icons[j];
-                        icon.DestRect = new Rectangle(x + tick, (int) (y + h - normalizedPrice0*h) - 16, 32, 32);
+                        icon.DestRect = new Rectangle((int) (x + tick), (int) (y + h - normalizedPrice0*h) - 16, 32, 32);
                         Icons[j] = icon;
                     }
                     j++;
@@ -315,9 +306,9 @@ namespace DwarfCorp
             if (SelectedCompany != null)
             {
                 ToolTip = SelectedCompany.Name + " (" + SelectedCompany.TickerName + ")\n" +
-                          " Share Price: " + SelectedCompany.StockPrice.ToString("C") + "\n" +
-                          " Industry: " + SelectedCompany.Industry + "\n" +
-                          " Motto: " + SelectedCompany.Motto;
+                    " Share Price: " + SelectedCompany.StockPrice.ToString("C") + "\n" +
+                    " Industry: " + SelectedCompany.Industry.ToString() +"\n" +
+                    " Motto: " + SelectedCompany.Motto;
                 if (FilteredCompanies.Contains(SelectedCompany))
                 {
                     FilteredCompanies.Remove(SelectedCompany);
@@ -330,6 +321,7 @@ namespace DwarfCorp
             }
         }
 
+        private bool firstIter = true;
         public override void Update(DwarfTime time)
         {
             UpdateMouse();
@@ -353,8 +345,8 @@ namespace DwarfCorp
             for (int i = 0; i < Window; i++)
             {
                 int tick = (w/(Window + 1))*(i + 1);
-                var start = new Vector2(x + tick, y + h);
-                var end = new Vector2(x + tick, y);
+                Vector2 start = new Vector2(x + tick, y + h);
+                Vector2 end = new Vector2(x + tick, y);
                 Drawer2D.DrawLine(batch, start, end, TickColor, 1);
             }
 
@@ -367,21 +359,12 @@ namespace DwarfCorp
                 RenderCompanies(time, batch);
             }
 
-            float midStock = (MaxStock + MinStock)*0.5f;
+            float midStock = (MaxStock + MinStock) * 0.5f;
 
-            Drawer2D.DrawAlignedText(batch, MinStock.ToString("C"), GUI.SmallFont, GUI.DefaultTextColor,
-                Drawer2D.Alignment.Left, new Rectangle(x - 10, y + h - 30, 30, 30));
-            Drawer2D.DrawAlignedText(batch, midStock.ToString("C"), GUI.SmallFont, GUI.DefaultTextColor,
-                Drawer2D.Alignment.Left, new Rectangle(x - 10, y + (h/2) - 30, 30, 30));
-            Drawer2D.DrawAlignedText(batch, MaxStock.ToString("C"), GUI.SmallFont, GUI.DefaultTextColor,
-                Drawer2D.Alignment.Left, new Rectangle(x - 10, y, 30, 30));
+            Drawer2D.DrawAlignedText(batch, MinStock.ToString("C"), GUI.SmallFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, new Rectangle(x - 10, y + h - 30, 30, 30));
+            Drawer2D.DrawAlignedText(batch, midStock.ToString("C"), GUI.SmallFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, new Rectangle(x - 10, y + (h / 2) - 30, 30, 30));
+            Drawer2D.DrawAlignedText(batch, MaxStock.ToString("C"), GUI.SmallFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, new Rectangle(x - 10, y, 30, 30));
             base.Render(time, batch);
-        }
-
-        public struct StockIcon
-        {
-            public Company Company;
-            public Rectangle DestRect;
         }
     }
 }

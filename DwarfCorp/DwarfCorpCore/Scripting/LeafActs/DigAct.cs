@@ -30,18 +30,23 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A creature attacks a voxel until it is destroyed.
+    /// A creature attacks a voxel until it is destroyed.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class DigAct : CreatureAct
     {
+        public string TargetVoxelName { get; set; }
+        public float EnergyLoss { get; set; }
+
         public DigAct(CreatureAI creature, string targetVoxel) :
             base(creature)
         {
@@ -49,9 +54,6 @@ namespace DwarfCorp
             Name = "Dig!";
             EnergyLoss = 10.0f;
         }
-
-        public string TargetVoxelName { get; set; }
-        public float EnergyLoss { get; set; }
 
         public Voxel GetTargetVoxel()
         {
@@ -63,4 +65,5 @@ namespace DwarfCorp
             return Creature.Dig(TargetVoxelName, EnergyLoss);
         }
     }
+
 }

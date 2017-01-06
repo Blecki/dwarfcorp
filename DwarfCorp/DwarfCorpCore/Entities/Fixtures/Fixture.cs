@@ -30,7 +30,11 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
@@ -39,22 +43,20 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Fixture : Body
     {
+        public Sprite Sprite { get; set; }
+
         public Fixture()
         {
+            
         }
 
         public Fixture(Vector3 position, SpriteSheet asset, Point frame, GameComponent parent) :
-            base(
-            "Fixture", parent, Matrix.CreateTranslation(position),
-            new Vector3(asset.FrameWidth*(1.0f/32.0f), asset.Height*(1.0f/32.0f), asset.FrameWidth*(1.0f/32.0f)),
-            Vector3.Zero, true)
+            base("Fixture", parent, Matrix.CreateTranslation(position), new Vector3(asset.FrameWidth * (1.0f / 32.0f), asset.Height * (1.0f / 32.0f), asset.FrameWidth * (1.0f / 32.0f)), Vector3.Zero, true)
         {
             Sprite = new Sprite(Manager, "Sprite", this, Matrix.Identity, asset, false);
             Sprite.AddAnimation(new Animation(asset.GenerateFrame(frame)));
             AddToCollisionManager = false;
             CollisionType = CollisionManager.CollisionType.Static;
         }
-
-        public Sprite Sprite { get; set; }
     }
 }

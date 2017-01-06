@@ -30,42 +30,36 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A static class describing all the kinds of rooms. Can create rooms using templates.
+    /// A static class describing all the kinds of rooms. Can create rooms using templates.
     /// </summary>
     public class RoomLibrary
     {
-        public enum FurnitureRotation
-        {
-            XMajor,
-            ZMajor
-        };
-
-        private static readonly Dictionary<string, RoomData> roomTypes = new Dictionary<string, RoomData>();
-        private static bool staticIntialized;
-
-        public RoomLibrary()
-        {
-            if (!staticIntialized)
-            {
-                InitializeStatics();
-            }
-        }
+        private static Dictionary<string, RoomData> roomTypes = new Dictionary<string, RoomData>();
+        private static bool staticIntialized = false;
 
         public static IEnumerable<string> GetRoomTypes()
         {
             return roomTypes.Keys;
+        }
+
+        public RoomLibrary()
+        {
+            if(!staticIntialized)
+            {
+                InitializeStatics();
+            }
         }
 
         public static void InitializeStatics()
@@ -91,6 +85,19 @@ namespace DwarfCorp
             return roomTypes.ContainsKey(name) ? roomTypes[name] : null;
         }
 
+        public enum FurnitureRotation
+        {
+            XMajor,
+            ZMajor
+        };
+
+        public struct PlacedFurniture
+        {
+            public Rectangle OccupiedSpace;
+            public FurnitureRotation Rotation;
+            public Voxel Vox;
+        };
+
         public static bool FurnitureIntersects(PlacedFurniture a, PlacedFurniture B)
         {
             return a.OccupiedSpace.Intersects(B.OccupiedSpace);
@@ -105,63 +112,51 @@ namespace DwarfCorp
         {
             if (name == BalloonPort.BalloonPortName)
             {
-                return blueprint
-                    ? new BalloonPort(faction, true, designations, PlayState.ChunkManager)
-                    : new BalloonPort(faction, designations, PlayState.ChunkManager);
-            }
-            if (name == BedRoom.BedRoomName)
+                return blueprint ? new BalloonPort(faction, true, designations, PlayState.ChunkManager) : new BalloonPort(faction, designations, PlayState.ChunkManager);
+            } 
+            else if (name == BedRoom.BedRoomName)
             {
-                return blueprint
-                    ? new BedRoom(true, designations, PlayState.ChunkManager)
-                    : new BedRoom(designations, PlayState.ChunkManager);
+                return blueprint ? new BedRoom(true, designations, PlayState.ChunkManager) : new BedRoom(designations, PlayState.ChunkManager);
             }
-            if (name == CommonRoom.CommonRoomName)
+            else if (name == CommonRoom.CommonRoomName)
             {
-                return blueprint
-                    ? new CommonRoom(true, designations, PlayState.ChunkManager)
-                    : new CommonRoom(designations, PlayState.ChunkManager);
+                return blueprint ? new CommonRoom(true, designations, PlayState.ChunkManager) : new CommonRoom(designations, PlayState.ChunkManager);
             }
-            if (name == LibraryRoom.LibraryRoomName)
+            else if (name == LibraryRoom.LibraryRoomName)
             {
-                return blueprint
-                    ? new LibraryRoom(true, designations, PlayState.ChunkManager)
-                    : new LibraryRoom(designations, PlayState.ChunkManager);
+                return blueprint ? new LibraryRoom(true, designations, PlayState.ChunkManager) : new LibraryRoom(designations, PlayState.ChunkManager);
             }
-            if (name == TrainingRoom.TrainingRoomName)
+            else if (name == TrainingRoom.TrainingRoomName)
             {
-                return blueprint
-                    ? new TrainingRoom(true, designations, PlayState.ChunkManager)
-                    : new TrainingRoom(designations, PlayState.ChunkManager);
+                return blueprint ? new TrainingRoom(true, designations, PlayState.ChunkManager) : new TrainingRoom(designations, PlayState.ChunkManager); 
             }
-            if (name == WorkshopRoom.WorkshopName)
+            else if (name == WorkshopRoom.WorkshopName)
             {
-                return blueprint
-                    ? new WorkshopRoom(true, designations, PlayState.ChunkManager)
-                    : new WorkshopRoom(designations, PlayState.ChunkManager);
+                return blueprint ? new WorkshopRoom(true, designations, PlayState.ChunkManager) : new WorkshopRoom(designations, PlayState.ChunkManager); 
             }
-            if (name == Kitchen.KitchenName)
+            else if (name == Kitchen.KitchenName)
             {
-                return blueprint
-                    ? new Kitchen(true, designations, PlayState.ChunkManager)
-                    : new Kitchen(designations, PlayState.ChunkManager);
+                return blueprint ? new Kitchen(true, designations, PlayState.ChunkManager) : new Kitchen(designations, PlayState.ChunkManager); 
             }
-            if (name == Stockpile.StockpileName)
+            else if (name == Stockpile.StockpileName)
             {
-                var toBuild = new Stockpile(faction);
+                Stockpile toBuild = new Stockpile(faction);
                 foreach (Voxel voxel in designations)
                 {
                     toBuild.AddVoxel(voxel);
                 }
                 return toBuild;
             }
-            return null;
+            else
+            {
+                return null;
+            }
         }
 
-        public static void GenerateRoomComponentsTemplate(Room room, ComponentManager componentManager,
-            ContentManager content, GraphicsDevice graphics)
+        public static void GenerateRoomComponentsTemplate(Room room, ComponentManager componentManager, Microsoft.Xna.Framework.Content.ContentManager content, GraphicsDevice graphics)
         {
             RoomTile[,] currentTiles = RoomTemplate.CreateFromRoom(room, room.Chunks);
-            var rotations = new float[currentTiles.GetLength(0), currentTiles.GetLength(1)];
+            float[,] rotations = new float[currentTiles.GetLength(0), currentTiles.GetLength(1)];
             foreach (RoomTemplate template in room.RoomData.Templates)
             {
                 for (int r = -2; r < currentTiles.GetLength(0) + 1; r++)
@@ -183,115 +178,96 @@ namespace DwarfCorp
             BoundingBox box = room.GetBoundingBox();
 
             int thingsMade = 0;
-            for (int r = 0; r < currentTiles.GetLength(0); r++)
+            for(int r = 0; r < currentTiles.GetLength(0); r++)
             {
-                for (int c = 0; c < currentTiles.GetLength(1); c++)
+                for(int c = 0; c < currentTiles.GetLength(1); c++)
                 {
                     RoomTile tile = currentTiles[r, c];
                     Body createdComponent = null;
                     Vector3 noise =
                         VertexNoise.GetNoiseVectorFromRepeatingTexture(box.Min +
                                                                        new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1));
-                    switch (tile)
+                    switch(tile)
                     {
                         case RoomTile.Barrel:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Barrel",
-                                box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Barrel", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Wheat:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Wheat",
-                                box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Wheat", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
 
                         case RoomTile.Mushroom:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Mushroom",
-                                box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Mushroom", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
 
                         case RoomTile.Table:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Table",
-                                box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Table", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Stove:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Stove",
-                                box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Stove", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.KitchenTable:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Kitchen Table",
-                                box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Kitchen Table", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Lamp:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Lamp",
-                                box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Lamp", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Flag:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Flag",
-                                box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Flag", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Chair:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Chair",
-                                box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Chair", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Books:
-                            createdComponent =
-                                EntityFactory.CreateEntity<Body>(MathFunctions.RandEvent(0.5f) ? "Books" : "Potions",
-                                    box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            createdComponent = EntityFactory.CreateEntity<Body>(MathFunctions.RandEvent(0.5f) ? "Books" : "Potions", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Anvil:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Anvil",
-                                box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Anvil", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Forge:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Forge",
-                                box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Forge", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Target:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Target",
-                                box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Target", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Strawman:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Strawman",
-                                box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Strawman", box.Min + new Vector3(r + 0.5f - 1, 1.5f, c + 0.5f - 1) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.BookShelf:
-                            createdComponent = EntityFactory.CreateEntity<Body>("Bookshelf",
-                                box.Min + new Vector3(r - 1 + 0.5f, 1.5f, c - 1 + 0.5f) + noise);
+                            createdComponent = EntityFactory.CreateEntity<Body>("Bookshelf", box.Min + new Vector3(r - 1 + 0.5f, 1.5f, c - 1 + 0.5f) + noise);
                             thingsMade++;
                             break;
                         case RoomTile.Pillow:
 
-                            for (int dx = -1; dx < 2; dx++)
+                            for(int dx = -1; dx < 2; dx++)
                             {
-                                for (int dy = -1; dy < 2; dy++)
+                                for(int dy = -1; dy < 2; dy++)
                                 {
-                                    if (Math.Abs(dx) + Math.Abs(dy) != 1 || r + dx < 0 ||
-                                        r + dx >= currentTiles.GetLength(0) || c + dy < 0 ||
-                                        c + dy >= currentTiles.GetLength(1))
+                                    if(Math.Abs(dx) + Math.Abs(dy) != 1 || r + dx < 0 || r + dx >= currentTiles.GetLength(0) || c + dy < 0 || c + dy >= currentTiles.GetLength(1))
                                     {
                                         continue;
                                     }
 
-                                    if (currentTiles[r + dx, c + dy] != RoomTile.Bed)
+                                    if(currentTiles[r + dx, c + dy] != RoomTile.Bed)
                                     {
                                         continue;
                                     }
 
-                                    createdComponent = EntityFactory.CreateEntity<Body>("Bed",
-                                        box.Min + new Vector3(r - 1 + 0.5f, 1.5f, c - 1 + 0.5f) + noise);
+                                    createdComponent = EntityFactory.CreateEntity<Body>("Bed", box.Min + new Vector3(r - 1 + 0.5f, 1.5f, c - 1 + 0.5f) + noise);
                                     break;
                                 }
                             }
@@ -303,29 +279,22 @@ namespace DwarfCorp
                             break;
                     }
 
-                    if (createdComponent != null)
+                    if(createdComponent != null)
                     {
-                        createdComponent.LocalTransform =
-                            Matrix.CreateRotationY(-(rotations[r, c] + (float) Math.PI*0.5f))*
-                            createdComponent.LocalTransform;
+                        createdComponent.LocalTransform = Matrix.CreateRotationY(-(rotations[r, c] + (float)Math.PI * 0.5f)) * createdComponent.LocalTransform;
                         Vector3 endPos = createdComponent.LocalTransform.Translation;
                         Matrix offsetTransform = createdComponent.LocalTransform;
                         offsetTransform.Translation += new Vector3(0, -1, 0);
                         createdComponent.LocalTransform = offsetTransform;
                         createdComponent.AnimationQueue.Add(new EaseMotion(0.8f, offsetTransform, endPos));
                         room.AddBody(createdComponent);
-                        PlayState.ParticleManager.Trigger("puff", endPos + new Vector3(0.5f, 0.5f, 0.5f), Color.White,
-                            10);
+                        PlayState.ParticleManager.Trigger("puff", endPos + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 10);
                     }
                 }
             }
         }
 
-        public struct PlacedFurniture
-        {
-            public Rectangle OccupiedSpace;
-            public FurnitureRotation Rotation;
-            public Voxel Vox;
-        };
+       
     }
+
 }

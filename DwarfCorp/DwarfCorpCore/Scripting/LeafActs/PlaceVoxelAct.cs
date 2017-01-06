@@ -30,32 +30,31 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A creature uses the item currently in its hands to construct a voxel.
+    /// A creature uses the item currently in its hands to construct a voxel.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class PlaceVoxelAct : CreatureAct
     {
+        public Voxel Voxel { get; set; }
+        public ResourceAmount Resource { get; set; }
         public PlaceVoxelAct(Voxel voxel, CreatureAI agent, ResourceAmount resource) :
             base(agent)
         {
             Agent = agent;
             Voxel = voxel;
-            Name = "Build Voxel " + voxel;
+            Name = "Build Voxel " + voxel.ToString();
             Resource = resource;
         }
-
-        public Voxel Voxel { get; set; }
-        public ResourceAmount Resource { get; set; }
 
         public override IEnumerable<Status> Run()
         {
@@ -75,33 +74,37 @@ namespace DwarfCorp
 
             Body grabbed = Creature.Inventory.RemoveAndCreate(Resource).FirstOrDefault();
 
-            if (grabbed == null)
+            if(grabbed == null)
             {
                 yield return Status.Fail;
-            }
-            if (Creature.Faction.WallBuilder.IsDesignation(Voxel))
-            {
-                var motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform,
-                    Voxel.Position + new Vector3(0.5f, 0.5f, 0.5f));
-                motion.OnComplete += grabbed.Die;
-                grabbed.AnimationQueue.Add(motion);
-
-                WallBuilder put = Creature.Faction.WallBuilder.GetDesignation(Voxel);
-                put.Put(PlayState.ChunkManager);
-
-
-                Creature.Faction.WallBuilder.Designations.Remove(put);
-                Creature.Stats.NumBlocksPlaced++;
-                Creature.AI.AddXP(1);
-                yield return Status.Success;
+                yield break;
             }
             else
             {
-                Creature.Inventory.Resources.AddItem(grabbed);
-                grabbed.Die();
+                if(Creature.Faction.WallBuilder.IsDesignation(Voxel))
+                {
+                    TossMotion motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Voxel.Position + new Vector3(0.5f, 0.5f, 0.5f));
+                    motion.OnComplete += grabbed.Die;
+                    grabbed.AnimationQueue.Add(motion);
 
-                yield return Status.Fail;
+                    WallBuilder put = Creature.Faction.WallBuilder.GetDesignation(Voxel);
+                    put.Put(PlayState.ChunkManager);
+
+
+                    Creature.Faction.WallBuilder.Designations.Remove(put);
+                    Creature.Stats.NumBlocksPlaced++;
+                    Creature.AI.AddXP(1);
+                    yield return Status.Success;
+                }
+                else
+                {
+                    Creature.Inventory.Resources.AddItem(grabbed);
+                    grabbed.Die();
+                    
+                    yield return Status.Fail;
+                }
             }
         }
     }
+
 }

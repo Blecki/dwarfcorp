@@ -1,21 +1,113 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Security.Cryptography;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     An animation flips a billboard sprite between several
-    ///     frames on a sprite sheet at a fixed rate.
+    /// An animation flips a billboard sprite between several
+    /// frames on a sprite sheet at a fixed rate.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class CompositeAnimation : Animation
     {
-        [JsonIgnore] public bool FirstIter = false;
-        private bool HasValidFrame;
+        [JsonIgnore]
+        public Composite Composite 
+        { 
+            get 
+            { 
+                return CompositeLibrary.Composites.ContainsKey(CompositeName) ? 
+                    CompositeLibrary.Composites[CompositeName] : null; 
+            } 
+        }
+
+        public string CompositeName { get; set; }
+        public List<Composite.Frame> CompositeFrames { get; set; }
+        [JsonIgnore]
+        public Point CurrentOffset { get; set; }
+        [JsonIgnore]
+        public bool FirstIter = false;
+        [JsonIgnore]
+        public BillboardPrimitive Primitive { get; set; }
+
+        private bool HasValidFrame = false;
+
+        public struct Descriptor
+        {
+            public List<SpriteSheet> Layers { get; set; }
+            public List<Color> Tints { get; set; }
+
+            public struct AnimationDescriptor
+            {
+                public string Name { get; set; }
+                public List<List<int>> Frames { get; set; }
+                public List<float> Speed { get; set; }
+                public bool PlayOnce { get; set; }
+            }
+
+            public List<AnimationDescriptor> Animations { get; set; }
+
+            public List<CompositeAnimation> GenerateAnimations(string composite)
+            {
+                List<CompositeAnimation> toReturn = new List<CompositeAnimation>();
+
+                foreach (AnimationDescriptor descriptor in Animations)
+                {
+                    int[][] frames = new int[descriptor.Frames.Count][];
+
+                    int i = 0;
+                    foreach (List<int> frame in descriptor.Frames)
+                    {
+                        frames[i]  = new int[frame.Count];
+
+                        int k = 0;
+                        foreach (int j in frame)
+                        {
+                            frames[i][k] = j;
+                            k++;
+                        }
+
+                        i++;
+                    }
+
+                    List<float> speeds = new List<float>();
+
+                    foreach (float speed in descriptor.Speed)
+                    {
+                        speeds.Add(1.0f / speed);
+                    }
+
+                    CompositeAnimation animation = new CompositeAnimation(composite, Layers, Tints, frames)
+                    {
+                        Name = descriptor.Name,
+                        Speeds = speeds,
+                        Loops = !descriptor.PlayOnce,
+                        SpriteSheet = Layers[0]
+                    };
+
+                    toReturn.Add(animation);
+                }
+
+                return toReturn;
+
+            }
+        }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            if (!CompositeLibrary.Composites.ContainsKey(CompositeName))
+            {
+                CompositeLibrary.Composites[CompositeName] = new Composite(CompositeFrames);
+            }
+        }
 
         public CompositeAnimation()
         {
@@ -38,47 +130,18 @@ namespace DwarfCorp
             Play();
         }
 
-        public CompositeAnimation(string composite, List<SpriteSheet> layers, List<Color> tints, int[][] frames) :
+        public CompositeAnimation(string composite, List<SpriteSheet> layers, List<Color> tints,  int[][] frames) :
             this(composite, CreateFrames(layers, tints, frames))
         {
+            
         }
 
-        [JsonIgnore]
-        public Composite Composite
+        public static List<Composite.Frame> CreateFrames(List<SpriteSheet> layers, List<Color> tints, params int[][] frames)
         {
-            get
+            List<Composite.Frame> frameList = new List<Composite.Frame>();
+            foreach (int[] frame in frames)
             {
-                return CompositeLibrary.Composites.ContainsKey(CompositeName)
-                    ? CompositeLibrary.Composites[CompositeName]
-                    : null;
-            }
-        }
-
-        public string CompositeName { get; set; }
-        public List<Composite.Frame> CompositeFrames { get; set; }
-
-        [JsonIgnore]
-        public Point CurrentOffset { get; set; }
-
-        [JsonIgnore]
-        public BillboardPrimitive Primitive { get; set; }
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            if (!CompositeLibrary.Composites.ContainsKey(CompositeName))
-            {
-                CompositeLibrary.Composites[CompositeName] = new Composite(CompositeFrames);
-            }
-        }
-
-        public static List<Composite.Frame> CreateFrames(List<SpriteSheet> layers, List<Color> tints,
-            params int[][] frames)
-        {
-            var frameList = new List<Composite.Frame>();
-            foreach (var frame in frames)
-            {
-                var currFrame = new Composite.Frame();
+                Composite.Frame currFrame = new Composite.Frame();
 
                 int x = frame[0];
                 int y = frame[1];
@@ -120,8 +183,7 @@ namespace DwarfCorp
 
         public override Rectangle GetCurrentFrameRect()
         {
-            var toReturn = new Rectangle(CurrentOffset.X*Composite.FrameSize.X, CurrentOffset.Y*Composite.FrameSize.Y,
-                FrameWidth, FrameHeight);
+            Rectangle toReturn = new Rectangle(CurrentOffset.X * Composite.FrameSize.X, CurrentOffset.Y * Composite.FrameSize.Y, FrameWidth, FrameHeight);
             return toReturn;
         }
 
@@ -135,7 +197,7 @@ namespace DwarfCorp
 
         public override void PreRender()
         {
-            SpriteSheet = new SpriteSheet(Composite.Target);
+            SpriteSheet = new SpriteSheet((Texture2D)Composite.Target);
             base.PreRender();
         }
 
@@ -172,70 +234,11 @@ namespace DwarfCorp
                 FrameHZ = FrameHZ,
                 Flipped = Flipped,
                 Loops = Loops,
-                CurrentFrame = CurrentFrame,
+                CurrentFrame =  CurrentFrame,
                 Speeds = new List<float>(Speeds),
                 SpriteSheet = SpriteSheet
             };
         }
-
-        public struct Descriptor
-        {
-            public List<SpriteSheet> Layers { get; set; }
-            public List<Color> Tints { get; set; }
-
-            public List<AnimationDescriptor> Animations { get; set; }
-
-            public List<CompositeAnimation> GenerateAnimations(string composite)
-            {
-                var toReturn = new List<CompositeAnimation>();
-
-                foreach (AnimationDescriptor descriptor in Animations)
-                {
-                    var frames = new int[descriptor.Frames.Count][];
-
-                    int i = 0;
-                    foreach (var frame in descriptor.Frames)
-                    {
-                        frames[i] = new int[frame.Count];
-
-                        int k = 0;
-                        foreach (int j in frame)
-                        {
-                            frames[i][k] = j;
-                            k++;
-                        }
-
-                        i++;
-                    }
-
-                    var speeds = new List<float>();
-
-                    foreach (float speed in descriptor.Speed)
-                    {
-                        speeds.Add(1.0f/speed);
-                    }
-
-                    var animation = new CompositeAnimation(composite, Layers, Tints, frames)
-                    {
-                        Name = descriptor.Name,
-                        Speeds = speeds,
-                        Loops = !descriptor.PlayOnce,
-                        SpriteSheet = Layers[0]
-                    };
-
-                    toReturn.Add(animation);
-                }
-
-                return toReturn;
-            }
-
-            public struct AnimationDescriptor
-            {
-                public string Name { get; set; }
-                public List<List<int>> Frames { get; set; }
-                public List<float> Speed { get; set; }
-                public bool PlayOnce { get; set; }
-            }
-        }
     }
+
 }

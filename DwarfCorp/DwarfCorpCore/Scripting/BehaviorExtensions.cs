@@ -30,15 +30,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
 
 namespace DwarfCorp
 {
+
     /// <summary>
-    ///     This static class adds implicit functions to acts to allow them to convert to and from
-    ///     boolean or enumerable functions.
+    /// This static class adds implicit functions to acts to allow them to convert to and from
+    /// boolean or enumerable functions.
     /// </summary>
     public static class BehaviorExtensions
     {
@@ -52,4 +52,5 @@ namespace DwarfCorp
             return new Wrap(func);
         }
     }
+
 }

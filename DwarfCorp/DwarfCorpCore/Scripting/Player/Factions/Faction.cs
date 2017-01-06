@@ -35,43 +35,57 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Security.Cryptography.X509Certificates;
 using DwarfCorp.GameStates;
 using DwarfCorpCore;
+using LibNoise;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
     public class Race
     {
+        public class RaceSpeech
+        {
+            public List<string> Greetings { get; set; }
+            public List<string> Farewells { get; set; }
+            public List<string> GoodTrades { get; set; }
+            public List<string> BadTrades { get; set; }
+            public List<string> WarDeclarations { get; set; }
+            public List<string> PeaceDeclarations { get; set; }
+        }
+
+
         public string Name { get; set; }
         public List<string> CreatureTypes { get; set; }
         public List<List<string>> WarParties { get; set; }
-        public List<List<string>> TradeEnvoys { get; set; }
-        public List<string> NaturalEnemies { get; set; }
+        public List<List<string>> TradeEnvoys { get; set; } 
+        public List<string> NaturalEnemies { get; set; } 
         public bool IsIntelligent { get; set; }
         public bool IsNative { get; set; }
         public string FactionNameFile { get; set; }
         public string NameFile { get; set; }
         public Animation.SimpleDescriptor TalkAnimation { get; set; }
-        public RaceSpeech Speech { get; set; }
-
+        public RaceSpeech Speech  { get; set; }
         [JsonIgnore]
         public List<List<string>> FactionNameTemplates { get; set; }
-
         [JsonIgnore]
         public List<List<string>> NameTemplates { get; set; }
 
         public List<Resource.ResourceTags> LikedResources { get; set; }
         public List<Resource.ResourceTags> HatedResources { get; set; }
         public List<Resource.ResourceTags> CommonResources { get; set; }
-        public List<Resource.ResourceTags> RareResources { get; set; }
+        public List<Resource.ResourceTags> RareResources { get; set; } 
 
         public Dictionary<Resource.ResourceTags, int> TradeGoods { get; set; }
         public List<Resource.ResourceTags> Crafts { get; set; }
-        public List<Resource.ResourceTags> Encrustings { get; set; }
-
+        public List<Resource.ResourceTags> Encrustings { get; set; } 
+ 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
@@ -81,7 +95,7 @@ namespace DwarfCorp
 
         public List<ResourceAmount> GenerateResources()
         {
-            var toReturn =
+            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> toReturn =
                 new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
 
             foreach (var tags in TradeGoods)
@@ -134,25 +148,16 @@ namespace DwarfCorp
             List<ResourceAmount> resList = toReturn.Select(amount => amount.Value).ToList();
             return resList;
         }
-
-        public class RaceSpeech
-        {
-            public List<string> Greetings { get; set; }
-            public List<string> Farewells { get; set; }
-            public List<string> GoodTrades { get; set; }
-            public List<string> BadTrades { get; set; }
-            public List<string> WarDeclarations { get; set; }
-            public List<string> PeaceDeclarations { get; set; }
-        }
+       
     }
-
     /// <summary>
-    ///     A faction is an independent collection of creatures, tied to an economy, rooms, and designations.
-    ///     Examples might be the player's dwarves, or the faction of goblins.
+    /// A faction is an independent collection of creatures, tied to an economy, rooms, and designations.
+    /// Examples might be the player's dwarves, or the faction of goblins.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class Faction
     {
+
         public Faction()
         {
             Threats = new List<Creature>();
@@ -174,20 +179,72 @@ namespace DwarfCorp
             TradeMoney = 0.0f;
         }
 
+        public class Expidition
+        {
+            public enum State
+            {
+                Leaving,
+                Arriving,
+                Fighting,
+                Trading
+            }
+
+            public DateTimer DeathTimer { get; set; }
+            public List<CreatureAI> Creatures { get; set; }
+            public Faction OwnerFaction { get; set; }
+            public Faction OtherFaction { get; set; }
+            public State ExpiditionState { get; set; }
+            public bool ShouldRemove { get; set; }
+
+            public Expidition()
+            {
+                ExpiditionState = State.Arriving;
+                ShouldRemove = false;
+                Creatures = new List<CreatureAI>();
+                DeathTimer = new DateTimer(PlayState.Time.CurrentDate, new TimeSpan(1, 12, 0, 0));
+            }
+        }
+
+        public class TradeEnvoy : Expidition
+        {
+            public float TradeMoney { get; set; }
+            public List<ResourceAmount> TradeGoods { get; set; }
+
+            public void DistributeGoods()
+            {
+                if (Creatures.Count == 0) return;
+                int goodsPerCreature = TradeGoods.Count / Creatures.Count;
+                int currentGood = 0;
+                foreach (CreatureAI creature in Creatures)
+                {
+                    ResourcePack pack = creature.GetComponent<ResourcePack>();
+                    if (pack != null)
+                    {
+                        pack.Contents.Resources.Clear();
+                        for (int i = currentGood; i < System.Math.Min(currentGood + goodsPerCreature, TradeGoods.Count); i++)
+                        {
+                            pack.Contents.Resources.AddResource(TradeGoods[i]);
+                        }
+                        currentGood += goodsPerCreature;
+                    }
+                }
+            }
+        }
+
+        public class WarParty : Expidition
+        {
+        }
+
         public float TradeMoney { get; set; }
         public Point StartingPlace { get; set; }
         public Point Center { get; set; }
         public int TerritorySize { get; set; }
         public Race Race { get; set; }
         public Economy Economy { get; set; }
-
-        public ComponentManager Components
-        {
-            get { return PlayState.ComponentManager; }
-        }
+        public ComponentManager Components { get { return PlayState.ComponentManager; }}
 
         public List<TradeEnvoy> TradeEnvoys { get; set; }
-        public List<WarParty> WarParties { get; set; }
+        public List<WarParty> WarParties { get; set; } 
         public List<BuildOrder> DigDesignations { get; set; }
         public List<BuildOrder> GuardDesignations { get; set; }
         public List<Body> ChopDesignations { get; set; }
@@ -218,7 +275,7 @@ namespace DwarfCorp
         {
             foreach (CreatureAI minion in Minions)
             {
-                if (minion.Physics.CollideMode == Physics.CollisionMode.None)
+                if (minion.Physics.CollideMode == Physics.CollisionMode.None) 
                     continue;
 
                 foreach (CreatureAI other in Minions)
@@ -233,7 +290,7 @@ namespace DwarfCorp
 
                     if (!float.IsNaN(dist) && dist < 0.25f)
                     {
-                        other.Physics.ApplyForce(meToOther/(dist + 0.05f)*50, (float) time.ElapsedGameTime.TotalSeconds);
+                        other.Physics.ApplyForce(meToOther / (dist + 0.05f) * 50, (float)time.ElapsedGameTime.TotalSeconds);
                     }
                 }
             }
@@ -251,10 +308,10 @@ namespace DwarfCorp
             CollideMinions(time);
 
             List<BuildOrder> removals = (from d in DigDesignations
-                let vref = d.Vox
-                let v = vref
-                where v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty" || v.Type.IsInvincible
-                select d).ToList();
+                                          let vref = d.Vox
+                                          let v = vref
+                                          where v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty" || v.Type.IsInvincible
+                                          select d).ToList();
 
             foreach (BuildOrder v in removals)
             {
@@ -265,11 +322,11 @@ namespace DwarfCorp
                 where b == null || b.IsDead
                 select b).ToList();
 
-            foreach (Body b in gatherRemovals)
+            foreach(Body b in gatherRemovals)
             {
                 GatherDesignations.Remove(b);
             }
-
+            
 
             removals.Clear();
             foreach (BuildOrder d in GuardDesignations)
@@ -333,8 +390,8 @@ namespace DwarfCorp
 
         public void HandleThreats()
         {
-            var tasks = new List<Task>();
-            var threatsToRemove = new List<Creature>();
+            List<Task> tasks = new List<Task>();
+            List<Creature> threatsToRemove = new List<Creature>();
             foreach (Creature threat in Threats)
             {
                 if (threat != null && !threat.IsDead)
@@ -362,7 +419,7 @@ namespace DwarfCorp
 
             foreach (Creature threat in threatsToRemove)
             {
-                Threats.Remove(threat);
+               Threats.Remove(threat);
             }
 
             TaskManager.AssignTasks(tasks, Minions);
@@ -375,7 +432,7 @@ namespace DwarfCorp
 
         public void OnVoxelDestroyed(Voxel v)
         {
-            if (v.IsEmpty)
+            if(v.IsEmpty)
             {
                 return;
             }
@@ -384,23 +441,23 @@ namespace DwarfCorp
 
             RoomBuilder.OnVoxelDestroyed(v);
 
-            var toRemove = new List<Stockpile>();
-            var currentStockpiles = new List<Stockpile>();
+            List<Stockpile> toRemove = new List<Stockpile>();
+            List<Stockpile> currentStockpiles = new List<Stockpile>();
             currentStockpiles.AddRange(Stockpiles);
             foreach (Stockpile s in currentStockpiles)
             {
-                if (s.ContainsVoxel(Voxel))
+                if(s.ContainsVoxel(Voxel))
                 {
                     s.RemoveVoxel(Voxel);
                 }
 
-                if (s.Voxels.Count == 0)
+                if(s.Voxels.Count == 0)
                 {
                     toRemove.Add(s);
                 }
             }
 
-            foreach (Stockpile s in toRemove)
+            foreach(Stockpile s in toRemove)
             {
                 Stockpiles.Remove(s);
                 s.Destroy();
@@ -440,13 +497,13 @@ namespace DwarfCorp
         {
             float closestDist = 99999;
             BuildOrder closestVoxel = null;
-            foreach (BuildOrder designation in DigDesignations)
+            foreach(BuildOrder designation in DigDesignations)
             {
                 Voxel vref = designation.Vox;
                 Voxel v = vref;
 
                 float d = (v.Position - position).LengthSquared();
-                if (!(d < closestDist))
+                if(!(d < closestDist))
                 {
                     continue;
                 }
@@ -462,13 +519,13 @@ namespace DwarfCorp
         {
             float closestDist = 99999;
             BuildOrder closestVoxel = null;
-            foreach (BuildOrder designation in GuardDesignations)
+            foreach(BuildOrder designation in GuardDesignations)
             {
                 Voxel vref = designation.Vox;
                 Voxel v = vref;
 
                 float d = (v.Position - position).LengthSquared();
-                if (!(d < closestDist))
+                if(!(d < closestDist))
                 {
                     continue;
                 }
@@ -511,23 +568,26 @@ namespace DwarfCorp
 
         public bool AddResources(ResourceAmount resources)
         {
-            var amount = new ResourceAmount(resources.ResourceType, resources.NumResources);
+            ResourceAmount amount = new ResourceAmount(resources.ResourceType, resources.NumResources);
             foreach (Stockpile stockpile in Stockpiles)
             {
                 int space = stockpile.Resources.MaxResources - stockpile.Resources.CurrentResourceCount;
 
-                if (space >= amount.NumResources)
+                if(space >= amount.NumResources)
                 {
                     stockpile.Resources.AddResource(amount);
                     stockpile.HandleBoxes();
                     return true;
                 }
-                stockpile.Resources.AddResource(amount);
-                amount.NumResources -= space;
-                stockpile.HandleBoxes();
-                if (amount.NumResources == 0)
+                else
                 {
-                    return true;
+                    stockpile.Resources.AddResource(amount);
+                    amount.NumResources -= space;
+                    stockpile.HandleBoxes();
+                    if(amount.NumResources == 0)
+                    {
+                        return true;
+                    }
                 }
             }
 
@@ -563,11 +623,11 @@ namespace DwarfCorp
             Stockpile nearest = null;
 
             float closestDist = float.MaxValue;
-            foreach (Stockpile stockpile in Stockpiles)
+            foreach(Stockpile stockpile in Stockpiles)
             {
                 float dist = (stockpile.GetBoundingBox().Center() - position).LengthSquared();
 
-                if (dist < closestDist)
+                if(dist < closestDist)
                 {
                     closestDist = dist;
                     nearest = stockpile;
@@ -620,12 +680,13 @@ namespace DwarfCorp
         {
             Body closestItem = null;
             float closestDist = float.MaxValue;
-            var zones = new List<Zone>();
+            List<Zone> zones = new List<Zone>();
             zones.AddRange(RoomBuilder.DesignatedRooms.Where(room => room != null && room.IsBuilt));
             zones.AddRange(Stockpiles);
 
             foreach (Zone s in zones)
             {
+                
                 Body i = s.GetNearestBodyWithTag(location, tag, filterReserved);
 
                 if (i != null)
@@ -639,31 +700,39 @@ namespace DwarfCorp
                 }
             }
 
+            
 
             return closestItem;
         }
 
         public int CompareZones(Zone a, Zone b, Vector3 pos)
         {
-            if (a == b)
+            if(a == b) 
             {
                 return 0;
             }
-            float costA = (pos - a.GetBoundingBox().Center()).LengthSquared();
-            float costB = (pos - b.GetBoundingBox().Center()).LengthSquared();
-
-            if (costA < costB)
+            else
             {
-                return -1;
+               
+                float costA = (pos- a.GetBoundingBox().Center()).LengthSquared();
+                float costB = (pos - b.GetBoundingBox().Center()).LengthSquared();
+
+                if(costA < costB)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 1;
+                }
             }
-            return 1;
         }
 
         public Dictionary<string, ResourceAmount> ListResources()
         {
-            var toReturn = new Dictionary<string, ResourceAmount>();
+            Dictionary<string, ResourceAmount> toReturn = new Dictionary<string, ResourceAmount>();
 
-            foreach (Stockpile stockpile in Stockpiles)
+            foreach(Stockpile stockpile in Stockpiles)
             {
                 foreach (ResourceAmount resource in stockpile.Resources)
                 {
@@ -683,11 +752,11 @@ namespace DwarfCorp
 
         public List<ResourceAmount> GetResourcesWithTags(List<Quantitiy<Resource.ResourceTags>> tags)
         {
-            var tagsRequired = new Dictionary<Resource.ResourceTags, int>();
-            var tagsGot = new Dictionary<Resource.ResourceTags, int>();
-            var amounts = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
+            Dictionary<Resource.ResourceTags, int> tagsRequired = new Dictionary<Resource.ResourceTags, int>();
+            Dictionary<Resource.ResourceTags, int> tagsGot = new Dictionary<Resource.ResourceTags, int>();
+            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> amounts = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
 
-            foreach (var quantity in tags)
+            foreach (Quantitiy<Resource.ResourceTags> quantity in tags)
             {
                 tagsRequired[quantity.ResourceType] = quantity.NumResources;
                 tagsGot[quantity.ResourceType] = 0;
@@ -705,7 +774,7 @@ namespace DwarfCorp
 
                         if (!resource.ResourceType.Tags.Contains(requirement.Key)) continue;
 
-                        int amountToRemove = Math.Min(resource.NumResources, requirement.Value - got);
+                        int amountToRemove = System.Math.Min(resource.NumResources, requirement.Value - got);
 
                         if (amountToRemove <= 0) continue;
 
@@ -717,8 +786,7 @@ namespace DwarfCorp
                         }
                         else
                         {
-                            amounts[resource.ResourceType.Type] = new ResourceAmount(resource.ResourceType.Type,
-                                amountToRemove);
+                            amounts[resource.ResourceType.Type] = new ResourceAmount(resource.ResourceType.Type, amountToRemove);
                         }
                     }
                 }
@@ -735,7 +803,7 @@ namespace DwarfCorp
 
         public bool HasResources(IEnumerable<Quantitiy<Resource.ResourceTags>> resources)
         {
-            foreach (var resource in resources)
+            foreach (Quantitiy<Resource.ResourceTags> resource in resources)
             {
                 int count = Stockpiles.Sum(stock => stock.Resources.GetResourceCount(resource.ResourceType));
 
@@ -759,7 +827,7 @@ namespace DwarfCorp
             {
                 int count = Stockpiles.Sum(stock => stock.Resources.GetResourceCount(resource.ResourceType));
 
-                if (count < resource.NumResources)
+                if(count < resource.NumResources)
                 {
                     return false;
                 }
@@ -770,7 +838,7 @@ namespace DwarfCorp
 
         public bool RemoveResources(List<ResourceAmount> resources, Vector3 position, bool createItems = true)
         {
-            var amounts = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
+            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> amounts = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
 
             foreach (ResourceAmount resource in resources)
             {
@@ -790,21 +858,21 @@ namespace DwarfCorp
             }
 
 
-            var stockpilesCopy = new List<Stockpile>(Stockpiles);
+            List<Stockpile> stockpilesCopy = new List<Stockpile>(Stockpiles);
             stockpilesCopy.Sort((a, b) => CompareZones(a, b, position));
 
 
-            foreach (ResourceAmount resource in resources)
+            foreach(ResourceAmount resource in resources)
             {
                 int count = 0;
-                var positions = new List<Vector3>();
+                List<Vector3> positions = new List<Vector3>();
                 foreach (Stockpile stock in stockpilesCopy)
                 {
-                    int num = stock.Resources.RemoveMaxResources(resource, resource.NumResources - count);
+                    int num =  stock.Resources.RemoveMaxResources(resource, resource.NumResources - count);
                     stock.HandleBoxes();
-                    if (stock.Boxes.Count > 0)
+                    if(stock.Boxes.Count > 0)
                     {
-                        for (int i = 0; i < num; i++)
+                        for(int i = 0; i < num; i++)
                         {
                             positions.Add(stock.Boxes[stock.Boxes.Count - 1].LocalTransform.Translation);
                         }
@@ -812,34 +880,38 @@ namespace DwarfCorp
 
                     count += num;
 
-                    if (count >= resource.NumResources)
+                    if(count >= resource.NumResources)
                     {
                         break;
                     }
+
                 }
 
                 if (createItems)
                 {
                     foreach (Vector3 vec in positions)
                     {
-                        var newEntity =
+                        Body newEntity =
                             EntityFactory.CreateEntity<Body>(resource.ResourceType.ResourceName + " Resource",
                                 vec + MathFunctions.RandVector3Cube()*0.5f);
 
-                        var toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f),
+                        TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f),
                             2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
                         newEntity.AnimationQueue.Add(toss);
                         toss.OnComplete += () => toss_OnComplete(newEntity);
+
                     }
                 }
+
             }
 
             return true;
         }
 
-        private void toss_OnComplete(Body entity)
+        void toss_OnComplete(Body entity)
         {
             entity.Die();
+            
         }
 
         public void Hire(Applicant currentApplicant)
@@ -854,19 +926,18 @@ namespace DwarfCorp
             Economy.CurrentMoney -= currentApplicant.Level.Pay*4;
             Dwarf newMinion =
                 EntityFactory.GenerateDwarf(
-                    rooms.First().GetBoundingBox().Center() + Vector3.UnitY*15,
+                    rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15,
                     Components, GameState.Game.Content, GameState.Game.GraphicsDevice, PlayState.ChunkManager,
-                    PlayState.Camera, this, PlayState.PlanService, "Player", currentApplicant.Class,
-                    currentApplicant.Level.Index).GetChildrenOfType<Dwarf>().First();
+                    PlayState.Camera, this, PlayState.PlanService, "Player", currentApplicant.Class, currentApplicant.Level.Index).GetChildrenOfType<Dwarf>().First();
 
             newMinion.Stats.CurrentClass = currentApplicant.Class;
             newMinion.Stats.LevelIndex = currentApplicant.Level.Index - 1;
             newMinion.Stats.LevelUp();
             newMinion.Stats.FullName = currentApplicant.Name;
-            newMinion.AI.AddMoney(currentApplicant.Level.Pay*4);
+            newMinion.AI.AddMoney(currentApplicant.Level.Pay * 4);
 
-            PlayState.AnnouncementManager.Announce("New Hire!",
-                currentApplicant.Name + " was hired as a " + currentApplicant.Level.Name, newMinion.AI.ZoomToMe);
+            PlayState.AnnouncementManager.Announce("New Hire!" ,currentApplicant.Name + " was hired as a " + currentApplicant.Level.Name, newMinion.AI.ZoomToMe);
+
         }
 
         public Body DispatchBalloon()
@@ -879,8 +950,7 @@ namespace DwarfCorp
             }
 
             Vector3 pos = rooms.First().GetBoundingBox().Center();
-            return EntityFactory.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY*15, Components,
-                GameState.Game.Content, GameState.Game.GraphicsDevice, new ShipmentOrder(0, null), this);
+            return  EntityFactory.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, Components, GameState.Game.Content, GameState.Game.GraphicsDevice, new ShipmentOrder(0, null), this);
         }
 
         public List<Body> GenerateRandomSpawn(int numCreatures, Vector3 position)
@@ -890,22 +960,22 @@ namespace DwarfCorp
                 return new List<Body>();
             }
 
-            var toReturn = new List<Body>();
+            List<Body> toReturn = new List<Body>();
             for (int i = 0; i < numCreatures; i++)
             {
                 string creature = Race.CreatureTypes[PlayState.Random.Next(Race.CreatureTypes.Count)];
-                Vector3 offset = MathFunctions.RandVector3Cube()*5;
-                var voxel = new Voxel();
-
+                Vector3 offset = MathFunctions.RandVector3Cube() * 5;
+                Voxel voxel = new Voxel();
+                
                 if (PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position + offset, ref voxel, true))
                 {
-                    var body = EntityFactory.CreateEntity<Body>(creature, position + offset);
+                    Body body = EntityFactory.CreateEntity<Body>(creature, position + offset);
                     CreatureAI ai = body.GetChildrenOfType<CreatureAI>().FirstOrDefault();
-
+                    
                     if (ai != null)
                     {
                         ai.Faction.Minions.Remove(ai);
-
+                        
                         Minions.Add(ai);
                         ai.Faction = this;
                         ai.Creature.Allies = Name;
@@ -960,60 +1030,9 @@ namespace DwarfCorp
             return desiredRoom;
         }
 
-        public class Expidition
-        {
-            public enum State
-            {
-                Leaving,
-                Arriving,
-                Fighting,
-                Trading
-            }
 
-            public Expidition()
-            {
-                ExpiditionState = State.Arriving;
-                ShouldRemove = false;
-                Creatures = new List<CreatureAI>();
-                DeathTimer = new DateTimer(PlayState.Time.CurrentDate, new TimeSpan(1, 12, 0, 0));
-            }
 
-            public DateTimer DeathTimer { get; set; }
-            public List<CreatureAI> Creatures { get; set; }
-            public Faction OwnerFaction { get; set; }
-            public Faction OtherFaction { get; set; }
-            public State ExpiditionState { get; set; }
-            public bool ShouldRemove { get; set; }
-        }
-
-        public class TradeEnvoy : Expidition
-        {
-            public float TradeMoney { get; set; }
-            public List<ResourceAmount> TradeGoods { get; set; }
-
-            public void DistributeGoods()
-            {
-                if (Creatures.Count == 0) return;
-                int goodsPerCreature = TradeGoods.Count/Creatures.Count;
-                int currentGood = 0;
-                foreach (CreatureAI creature in Creatures)
-                {
-                    var pack = creature.GetComponent<ResourcePack>();
-                    if (pack != null)
-                    {
-                        pack.Contents.Resources.Clear();
-                        for (int i = currentGood; i < Math.Min(currentGood + goodsPerCreature, TradeGoods.Count); i++)
-                        {
-                            pack.Contents.Resources.AddResource(TradeGoods[i]);
-                        }
-                        currentGood += goodsPerCreature;
-                    }
-                }
-            }
-        }
-
-        public class WarParty : Expidition
-        {
-        }
+       
     }
+
 }

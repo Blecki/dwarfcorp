@@ -30,15 +30,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Text;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class SetTargetVoxelFromEntityAct : CreatureAct
     {
+        public string VoxelOutName { get; set; }
+        public string EntityName { get; set; }
+
         public SetTargetVoxelFromEntityAct(CreatureAI creature, string entityName, string voxelOut) :
             base(creature)
         {
@@ -47,24 +51,27 @@ namespace DwarfCorp
             EntityName = entityName;
         }
 
-        public string VoxelOutName { get; set; }
-        public string EntityName { get; set; }
-
-        public static Status SetTarget(string voxelOutName, string entityName, Creature creature)
+        public static Act.Status SetTarget(string voxelOutName, string entityName, Creature creature)
         {
-            var target = creature.AI.Blackboard.GetData<Body>(entityName);
+            Body target = creature.AI.Blackboard.GetData<Body>(entityName);
             if (target == null)
             {
                 return Status.Fail;
             }
-            var voxel = new Voxel();
-
-            if (!creature.Chunks.ChunkData.GetFirstVoxelUnder(target.BoundingBox.Center(), ref voxel, true))
+            else
             {
-                return Status.Fail;
+                Voxel voxel = new Voxel();
+
+                if (!creature.Chunks.ChunkData.GetFirstVoxelUnder(target.BoundingBox.Center(), ref voxel, true))
+                {
+                    return Status.Fail;
+                }
+                else
+                {
+                    creature.AI.Blackboard.SetData(voxelOutName, voxel);
+                    return Status.Success;
+                }
             }
-            creature.AI.Blackboard.SetData(voxelOutName, voxel);
-            return Status.Success;
         }
 
         public override IEnumerable<Status> Run()
@@ -72,4 +79,5 @@ namespace DwarfCorp
             yield return SetTarget(VoxelOutName, EntityName, Creature);
         }
     }
+
 }

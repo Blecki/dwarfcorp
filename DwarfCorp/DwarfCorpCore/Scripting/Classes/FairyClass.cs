@@ -30,22 +30,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     public class FairyClass : EmployeeClass
     {
-        public FairyClass()
-        {
-            if (!staticsInitiailized)
-            {
-                InitializeStatics();
-            }
-        }
-
-        private void InitializeLevels()
+        void InitializeLevels()
         {
             Levels = new List<Level>
             {
@@ -55,7 +52,8 @@ namespace DwarfCorp
                     Name = "Fairy",
                     Pay = 0,
                     XP = 0,
-                    BaseStats = new CreatureStats.StatNums
+                   
+                    BaseStats = new CreatureStats.StatNums()
                     {
                         Constitution = 0.0f
                     }
@@ -63,9 +61,9 @@ namespace DwarfCorp
             };
         }
 
-        private void InitializeActions()
+        void InitializeActions()
         {
-            Actions = new List<GameMaster.ToolMode>
+            Actions = new List<GameMaster.ToolMode>()
             {
                 GameMaster.ToolMode.Gather,
                 GameMaster.ToolMode.Dig,
@@ -75,18 +73,18 @@ namespace DwarfCorp
             };
         }
 
-        private void InitializeAnimations()
+        void InitializeAnimations()
         {
-            var descriptor =
-                FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
-                    ContentPaths.GetFileAsString(ContentPaths.Entities.Dwarf.Sprites.fairy_animation));
+            CompositeAnimation.Descriptor descriptor =
+    FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
+        ContentPaths.GetFileAsString(ContentPaths.Entities.Dwarf.Sprites.fairy_animation));
             Animations = new List<Animation>();
             Animations.AddRange(descriptor.GenerateAnimations(CompositeLibrary.Dwarf));
         }
 
         public void InitializeWeapons()
         {
-            Attacks = new List<Attack>
+            Attacks = new List<Attack>()
             {
                 new Attack("Fairy Dust", 10.0f, 0.2f, 5.0f, ContentPaths.Audio.tinkle, ContentPaths.Effects.hit)
                 {
@@ -106,6 +104,13 @@ namespace DwarfCorp
             InitializeWeapons();
             InitializeActions();
             base.InitializeStatics();
+        }
+        public FairyClass()
+        {
+            if (!staticsInitiailized)
+            {
+                InitializeStatics();
+            }
         }
     }
 }

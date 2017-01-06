@@ -31,14 +31,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System.Runtime.Serialization;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+
     /// <summary>
-    ///     A task is an abstract object which describes a goal for a creature.
-    ///     Tasks construct acts (or behaviors) to solve them. Tasks have costs,
-    ///     and can either be feasible or infeasible for a crature.
+    /// A task is an abstract object which describes a goal for a creature.
+    /// Tasks construct acts (or behaviors) to solve them. Tasks have costs,
+    /// and can either be feasible or infeasible for a crature.
     /// </summary>
     [JsonObject(IsReference = true)]
     public abstract class Task
@@ -52,14 +55,10 @@ namespace DwarfCorp
             Urgent = 4
         }
 
-        public bool AutoRetry = false;
-
         public PriorityType Priority { get; set; }
-
         [JsonIgnore]
         public Act Script { get; set; }
-
-        public string Name { get; set; }
+        public bool AutoRetry = false;
 
         protected bool Equals(Task other)
         {
@@ -71,10 +70,13 @@ namespace DwarfCorp
             return (Name != null ? Name.GetHashCode() : 0);
         }
 
+        public string Name { get; set; }
+
         public abstract Task Clone();
 
         public virtual void Render(DwarfTime time)
         {
+            
         }
 
         public override bool Equals(object obj)
@@ -85,7 +87,7 @@ namespace DwarfCorp
 
         public virtual void SetupScript(Creature agent)
         {
-            if (Script != null)
+            if(Script != null)
                 Script.OnCanceled();
 
             Script = CreateScript(agent);
@@ -130,6 +132,7 @@ namespace DwarfCorp
     {
         public ActWrapperTask()
         {
+            
         }
 
 
@@ -155,4 +158,5 @@ namespace DwarfCorp
             return Script;
         }
     }
+
 }

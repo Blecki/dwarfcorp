@@ -30,7 +30,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -39,27 +38,21 @@ using Newtonsoft.Json.Linq;
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Serializes and deserializes Vector3 objects to JSON.
+    /// Serializes and deserializes Vector3 objects to JSON.
     /// </summary>
     public class Vector3Converter : JsonConverter
     {
-        public override bool CanWrite
-        {
-            get { return false; }
-        }
-
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             throw new NotImplementedException();
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
-            JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            var jObject = serializer.Deserialize<JValue>(reader);
+            JValue jObject = serializer.Deserialize<JValue>(reader);
             string[] tokens = jObject.Value.ToString().Split(' ', ',');
 
-            var intTokens = new string[3];
+            string[] intTokens = new string[3];
 
             int i = 0;
             foreach (string s in tokens)
@@ -74,32 +67,31 @@ namespace DwarfCorp
             return new Vector3(float.Parse(intTokens[0]), float.Parse(intTokens[1]), float.Parse(intTokens[2]));
         }
 
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof (Vector3);
-        }
-    }
-
-
-    /// <summary>
-    ///     Serializes and deserializes BoundingBox objects to JSON.
-    /// </summary>
-    public class BoxConverter : JsonConverter
-    {
         public override bool CanWrite
         {
             get { return false; }
         }
 
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(Vector3);
+        }
+    }
+
+
+    /// <summary>
+    /// Serializes and deserializes BoundingBox objects to JSON.
+    /// </summary>
+    public class BoxConverter : JsonConverter
+    {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             throw new NotImplementedException();
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
-            JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            var jObject = serializer.Deserialize<JValue>(reader);
+            JValue jObject = serializer.Deserialize<JValue>(reader);
             string[] tokens = jObject.Value.ToString().Split(':', ' ', '{', '}');
             // {Min: {X: vx, Y: vy, Z:vz}, Max: { X:vx, Y: vy, Z:vz} 4, 6, 8, 13, 15, 17
 
@@ -110,13 +102,18 @@ namespace DwarfCorp
             string maxY = tokens[15];
             string maxZ = tokens[17];
 
-            return new BoundingBox(new Vector3(float.Parse(minX), float.Parse(minY), float.Parse(minZ)),
-                new Vector3(float.Parse(maxX), float.Parse(maxY), float.Parse(maxZ)));
+            return new BoundingBox(new Vector3(float.Parse(minX), float.Parse(minY), float.Parse(minZ)), new Vector3(float.Parse(maxX), float.Parse(maxY), float.Parse(maxZ)));
+        }
+
+        public override bool CanWrite
+        {
+            get { return false; }
         }
 
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof (BoundingBox);
+            return objectType == typeof(BoundingBox);
         }
     }
+
 }

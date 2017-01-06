@@ -30,7 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
@@ -39,11 +42,14 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class MinimapIcon : Body
     {
+        public ImageFrame Icon { get; set; }
+        public float IconScale { get; set; }
         public MinimapIcon()
         {
+            
         }
 
-        public MinimapIcon(Body parent, ImageFrame icon) :
+        public MinimapIcon(Body parent, ImageFrame icon) : 
             base("Icon", parent, Matrix.Identity, Vector3.One, Vector3.Zero)
         {
             Icon = icon;
@@ -52,8 +58,6 @@ namespace DwarfCorp
             FrustrumCull = false;
             IsVisible = false;
         }
-
-        public ImageFrame Icon { get; set; }
-        public float IconScale { get; set; }
     }
 }
+

@@ -30,14 +30,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
-using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using DwarfCorp.GameStates;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class CraftItemTask : Task
     {
+        public CraftItem CraftType { get; set; }
+        public Voxel Voxel { get; set; }
+
         public CraftItemTask()
         {
             Priority = PriorityType.Low;
@@ -45,19 +51,15 @@ namespace DwarfCorp
 
         public CraftItemTask(Voxel voxel, CraftItem type)
         {
-            Name = "Craft item " + voxel.GridPosition + " " + voxel.ChunkID.X + " " + voxel.ChunkID.Y + " " +
-                   voxel.ChunkID.Z;
+            Name = "Craft item " + voxel.GridPosition + " " + voxel.ChunkID.X + " " + voxel.ChunkID.Y + " " + voxel.ChunkID.Z;
             Voxel = voxel;
             CraftType = type;
             Priority = PriorityType.Low;
         }
 
-        public CraftItem CraftType { get; set; }
-        public Voxel Voxel { get; set; }
-
         public override Task Clone()
         {
-            var v = new Voxel(new Point3(Voxel.GridPosition), Voxel.Chunk);
+            Voxel v = new Voxel(new Point3(Voxel.GridPosition), Voxel.Chunk);
             return new CraftItemTask(v, CraftType);
         }
 
@@ -82,16 +84,15 @@ namespace DwarfCorp
         }
     }
 
-    internal class CraftResourceTask : Task
+    class CraftResourceTask : Task
     {
+        public CraftItem Item { get; set; }
         public CraftResourceTask(CraftItem selectedResource)
         {
             Item = selectedResource;
             Name = "Craft " + Item.Name;
             Priority = PriorityType.Low;
         }
-
-        public CraftItem Item { get; set; }
 
         public override Act CreateScript(Creature creature)
         {
@@ -103,4 +104,5 @@ namespace DwarfCorp
             return new CraftResourceTask(Item);
         }
     }
+
 }

@@ -30,29 +30,26 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
+
     /// <summary>
-    ///     Convenience class for initializing goblins as creatures.
+    /// Convenience class for initializing goblins as creatures.
     /// </summary>
     public class Goblin : Creature
     {
-        public Goblin(CreatureStats stats, string allies, PlanService planService, Faction faction,
-            ComponentManager manager, string name, ChunkManager chunks, GraphicsDevice graphics, ContentManager content,
-            Vector3 position) :
-                base(
-                stats, allies, planService, faction,
-                new Physics("goblin", manager.RootComponent, Matrix.CreateTranslation(position),
-                    new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f,
-                    new Vector3(0, -10, 0)),
-                chunks, graphics, content, name)
+        public Goblin(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, Vector3 position) :
+            base(stats, allies, planService, faction, new Physics("goblin", manager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0)),
+                 chunks, graphics, content, name)
         {
             Initialize();
         }
@@ -60,8 +57,7 @@ namespace DwarfCorp
         public void Initialize()
         {
             Physics.Orientation = Physics.OrientMode.RotateY;
-            Sprite = new CharacterSprite(Graphics, Manager, "Goblin Sprite", Physics,
-                Matrix.CreateTranslation(new Vector3(0, 0.1f, 0)));
+            Sprite = new CharacterSprite(Graphics, Manager, "Goblin Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 0.1f, 0)));
             foreach (Animation animation in Stats.CurrentClass.Animations)
             {
                 Sprite.AddAnimation(animation.Clone());
@@ -72,12 +68,11 @@ namespace DwarfCorp
 
             Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero);
 
-            Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20),
-                Vector3.Zero);
+            Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
 
             AI = new CreatureAI(this, "Goblin AI", Sensors, PlanService);
 
-            Attacks = new List<Attack> {new Attack(Stats.CurrentClass.Attacks[0])};
+            Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
             Inventory = new Inventory("Inventory", Physics)
             {
@@ -87,25 +82,23 @@ namespace DwarfCorp
                 }
             };
 
-            Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI*0.5f);
+            Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
 
-            var shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
+            SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
 
             Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform, shadowTexture);
-            var shP = new List<Point>
+            List<Point> shP = new List<Point>
             {
                 new Point(0, 0)
             };
-            var shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32,
-                32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
+            Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
             Shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
             Shadow.SetCurrentAnimation("sh");
             Physics.Tags.Add("Goblin");
 
-            DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity,
-                Vector3.One, Vector3.Zero)
+            DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 3,
@@ -123,8 +116,8 @@ namespace DwarfCorp
             };
 
 
-            var minimapIcon = new MinimapIcon(Physics,
-                new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 3, 0));
+            MinimapIcon minimapIcon = new MinimapIcon(Physics, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 3, 0));
+
 
 
             NoiseMaker.Noises["Chew"] = new List<string>
@@ -140,6 +133,8 @@ namespace DwarfCorp
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
             //Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
             Stats.Size = 4;
+
         }
     }
+
 }

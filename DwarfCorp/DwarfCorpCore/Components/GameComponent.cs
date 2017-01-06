@@ -30,31 +30,67 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Configuration;
+using System.Runtime.Serialization;
+using System.Text;
 using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Concurrent;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+
     /// <summary>
-    ///     This class is responsible for handling components. "Components" are one of the most important parts of the
-    ///     DwarfCorp engine. Everything in the game is a collection of components. A collection of components is called an
-    ///     "entity".
-    ///     Components live in a tree-like structure, they have parents and children. Most components (called Locatable
-    ///     components)
-    ///     also have a position and orientation.
-    ///     By adding and removing components to an entity, functionality can be changed.
+    /// This class is responsible for handling components. "Components" are one of the most important parts of the 
+    /// DwarfCorp engine. Everything in the game is a collection of components. A collection of components is called an "entity".
+    /// Components live in a tree-like structure, they have parents and children. Most components (called Locatable components)
+    /// also have a position and orientation.
+    /// 
+    /// By adding and removing components to an entity, functionality can be changed.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class GameComponent
     {
-        private static uint maxGlobalID;
-        private static readonly Object globalIdLock = new object();
-        private uint maxLocalID;
+        public string Name { get; set; }
+
+        public uint GlobalID { get; set; }
+
+        public GameComponent Parent { get; set; }
+
+        public List<GameComponent> Children { get; set; }
+
+        private static uint maxGlobalID = 0;
+        private uint maxLocalID = 0;
+
+        public bool IsVisible { get; set; }
+        public bool IsActive { get; set; }
+        public bool IsDead { get; set; }
+
+        public List<string> Tags { get; set; }
+
+        public ComponentManager Manager { get { return PlayState.ComponentManager; }}
+
+        private static Object globalIdLock = new object();
+
+        public virtual void ReceiveMessageRecursive(Message messageToReceive)
+        {
+            foreach(GameComponent child in Children)
+            {
+                child.ReceiveMessageRecursive(messageToReceive);
+            }
+        }
+
+
+        public static void ResetMaxGlobalId(uint value)
+        {
+            maxGlobalID=value;
+        }
+
 
         public GameComponent()
         {
@@ -92,7 +128,7 @@ namespace DwarfCorp
             Name = name;
             RemoveFromParent();
 
-            if (parent != null)
+            if(parent != null)
             {
                 parent.AddChild(this);
             }
@@ -102,39 +138,6 @@ namespace DwarfCorp
             }
         }
 
-        public string Name { get; set; }
-
-        public uint GlobalID { get; set; }
-
-        public GameComponent Parent { get; set; }
-
-        public List<GameComponent> Children { get; set; }
-
-        public bool IsVisible { get; set; }
-        public bool IsActive { get; set; }
-        public bool IsDead { get; set; }
-
-        public List<string> Tags { get; set; }
-
-        public ComponentManager Manager
-        {
-            get { return PlayState.ComponentManager; }
-        }
-
-        public virtual void ReceiveMessageRecursive(Message messageToReceive)
-        {
-            foreach (GameComponent child in Children)
-            {
-                child.ReceiveMessageRecursive(messageToReceive);
-            }
-        }
-
-
-        public static void ResetMaxGlobalId(uint value)
-        {
-            maxGlobalID = value;
-        }
-
 
         public uint GetNextLocalID()
         {
@@ -142,18 +145,18 @@ namespace DwarfCorp
         }
 
 
-        public T GetComponent<T>(bool self = true) where T : GameComponent
+        public T GetComponent<T>(bool self=true) where T : GameComponent
         {
             return GetRootComponent().GetChildrenOfType<T>(self).FirstOrDefault();
         }
 
         public List<GameComponent> GetAllChildrenRecursive()
         {
-            var toReturn = new List<GameComponent>();
+            List<GameComponent> toReturn = new List<GameComponent>();
 
             toReturn.AddRange(Children);
 
-            foreach (GameComponent child in Children)
+            foreach(GameComponent child in Children)
             {
                 toReturn.AddRange(child.GetAllChildrenRecursive());
             }
@@ -167,8 +170,7 @@ namespace DwarfCorp
         }
 
 
-        public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
-            GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+        public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
         }
 
@@ -181,7 +183,7 @@ namespace DwarfCorp
         {
             IsActive = active;
 
-            foreach (GameComponent child in Children)
+            foreach(GameComponent child in Children)
             {
                 child.SetActiveRecursive(active);
             }
@@ -191,7 +193,7 @@ namespace DwarfCorp
         {
             IsVisible = visible;
 
-            foreach (GameComponent child in Children)
+            foreach(GameComponent child in Children)
             {
                 child.SetVisibleRecursive(visible);
             }
@@ -212,11 +214,12 @@ namespace DwarfCorp
             {
                 child.Delete();
             }
+
         }
 
         public virtual void Die()
         {
-            if (IsDead)
+            if(IsDead)
             {
                 return;
             }
@@ -230,17 +233,20 @@ namespace DwarfCorp
             }
 
             RemoveFromParent();
+            
+
         }
 
         public virtual string GetDescription()
         {
             string toReturn = "";
 
-            if (Parent == PlayState.ComponentManager.RootComponent)
+            if(Parent == PlayState.ComponentManager.RootComponent)
                 toReturn += Name;
 
             foreach (GameComponent component in Children)
             {
+
                 string componentDesc = component.GetDescription();
 
                 if (!String.IsNullOrEmpty(componentDesc))
@@ -268,7 +274,7 @@ namespace DwarfCorp
 
             if (includeSelf && this is T)
             {
-                toReturn.Add((T) this);
+                toReturn.Add((T)this);
             }
             return toReturn;
         }
@@ -296,7 +302,7 @@ namespace DwarfCorp
 
         public void RemoveFromParent()
         {
-            if (Parent != null)
+            if(Parent != null)
             {
                 Parent.RemoveChild(this);
             }
@@ -304,7 +310,7 @@ namespace DwarfCorp
 
         public void AddChild(GameComponent child)
         {
-            if (HasChildWithGlobalID(child.GlobalID))
+            if(HasChildWithGlobalID(child.GlobalID))
             {
                 return;
             }
@@ -318,7 +324,7 @@ namespace DwarfCorp
 
         public void RemoveChild(GameComponent child)
         {
-            if (!HasChildWithGlobalID(child.GlobalID))
+            if(!HasChildWithGlobalID(child.GlobalID))
             {
                 return;
             }
@@ -331,6 +337,7 @@ namespace DwarfCorp
 
         #endregion
 
+
         #region recursive_child_operators
 
         public bool HasChildWithNameRecursive(string name)
@@ -342,7 +349,7 @@ namespace DwarfCorp
         {
             GameComponent p = this;
 
-            while (p != null && p.Parent != Manager.RootComponent)
+            while(p != null && p.Parent != Manager.RootComponent)
             {
                 p = p.Parent;
             }
@@ -352,10 +359,10 @@ namespace DwarfCorp
 
         public List<GameComponent> GetChildrenWithNameRecursive(string name)
         {
-            var toReturn = new List<GameComponent>();
-            foreach (GameComponent child in Children)
+            List<GameComponent> toReturn = new List<GameComponent>();
+            foreach(GameComponent child in Children)
             {
-                if (child.Name == name)
+                if(child.Name == name)
                 {
                     toReturn.Add(child);
                 }
@@ -374,16 +381,16 @@ namespace DwarfCorp
 
         public GameComponent GetChildWithGlobalIDRecursive(uint id)
         {
-            foreach (GameComponent child in Children)
+            foreach(GameComponent child in Children)
             {
-                if (child.GlobalID == id)
+                if(child.GlobalID == id)
                 {
                     return child;
                 }
 
                 GameComponent grandChild = child.GetChildWithGlobalIDRecursive(id);
 
-                if (grandChild != null)
+                if(grandChild != null)
                 {
                     return grandChild;
                 }
@@ -400,10 +407,10 @@ namespace DwarfCorp
 
         public List<T> GetChildrenOfTypeRecursive<T>() where T : GameComponent
         {
-            var toReturn = new List<T>();
+            List<T> toReturn = new List<T>();
             foreach (GameComponent child in Children)
             {
-                if (child is T)
+                if(child is T)
                 {
                     toReturn.Add((T) child);
                 }
@@ -414,5 +421,7 @@ namespace DwarfCorp
         }
 
         #endregion
+
     }
+
 }

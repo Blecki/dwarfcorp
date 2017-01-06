@@ -30,14 +30,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using DwarfCorp.GameStates;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     The creature finds food in a stockpile or BuildRoom, and eats it.
+    /// The creature finds food in a stockpile or BuildRoom, and eats it.
     /// </summary>
     public class FindAndEatFoodAct : CompoundCreatureAct
     {
+
         public FindAndEatFoodAct()
         {
             Name = "Find and Eat Edible";
@@ -52,14 +58,14 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            if (Agent.Status.Hunger.IsUnhappy())
+            
+            if(Agent.Status.Hunger.IsUnhappy())
             {
                 Room commonRoom = Creature.Faction.GetNearestRoomOfType("CommonRoom", Agent.Position);
 
                 if (commonRoom != null && commonRoom.IsBuilt)
                 {
-                    Tree = (new GoToZoneAct(Agent, commonRoom) & new GoToChairAndSitAct(Agent) &
-                            new Wrap(Creature.EatStockedFood));
+                    Tree =  (new GoToZoneAct(Agent, commonRoom) & new GoToChairAndSitAct(Agent) & new Wrap(Creature.EatStockedFood));
                 }
                 else
                 {
@@ -75,7 +81,7 @@ namespace DwarfCorp
             {
                 Tree = null;
             }
-
+             
             base.Initialize();
         }
     }

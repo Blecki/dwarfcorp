@@ -30,48 +30,40 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     When using this tool, the player clicks on trees/bushes to specify that
-    ///     they should be chopped down.
+    /// When using this tool, the player clicks on trees/bushes to specify that 
+    /// they should be chopped down.
     /// </summary>
     public class ChopTool : PlayerTool
     {
-        /// <summary>
-        /// Gets or sets the color of the chop designation (bounding box drawn around object).
-        /// </summary>
-        /// <value>
-        /// The color of the chop designation.
-        /// </value>
         public Color ChopDesignationColor { get; set; }
-        /// <summary>
-        /// Gets or sets the chop designation glow rate (hz that the chop designation will pulsate at.).
-        /// </summary>
-        /// <value>
-        /// The chop designation glow rate.
-        /// </value>
         public float ChopDesignationGlowRate { get; set; }
 
         public override void OnBegin()
         {
+
         }
 
         public override void OnEnd()
         {
+
         }
 
 
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
+
         }
 
         public override void Update(DwarfGame game, DwarfTime time)
@@ -97,69 +89,61 @@ namespace DwarfCorp
             {
                 PlayState.GUI.MouseMode = GUISkin.MousePointer.Chop;
             }
+
+
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
+
             Color drawColor = ChopDesignationColor;
 
-            var alpha = (float) Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*ChopDesignationGlowRate));
-            drawColor.R = (byte) (Math.Min(drawColor.R*alpha + 50, 255));
-            drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
-            drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
+            float alpha = (float)Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * ChopDesignationGlowRate));
+            drawColor.R = (byte)(Math.Min(drawColor.R * alpha + 50, 255));
+            drawColor.G = (byte)(Math.Min(drawColor.G * alpha + 50, 255));
+            drawColor.B = (byte)(Math.Min(drawColor.B * alpha + 50, 255));
 
-            foreach (BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
+            foreach(BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
             {
-                Drawer3D.DrawBox(box, drawColor, 0.05f*alpha + 0.05f, true);
+                Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
             }
         }
 
         public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
         {
+
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
-            // Get all the selected bodies that have the tag "Vegetation"
+
             List<Body> treesPickedByMouse = ComponentManager.FilterComponentsWithTag("Vegetation", bodies);
 
-            // Get all the creatures that can chop.
             List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.Faction.SelectedMinions,
                 GameMaster.ToolMode.Chop);
-
-            // Create a list of chop tasks.
-            var tasks = new List<Task>();
+            List<Task> tasks = new List<Task>();
             foreach (Body tree in treesPickedByMouse)
             {
-                // Ignore invisible trees or trees above the slice.
                 if (!tree.IsVisible || tree.IsAboveCullPlane) continue;
 
-                // Draw a box around the tree.
                 Drawer3D.DrawBox(tree.BoundingBox, Color.LightGreen, 0.1f, false);
-
-                // On left click, add it to the chop designations. On right, remove it.
-                switch (button)
+                if (button == InputManager.MouseButton.Left)
                 {
-                    case InputManager.MouseButton.Left:
-                        if (!Player.Faction.ChopDesignations.Contains(tree))
-                        {
-                            Player.Faction.ChopDesignations.Add(tree);
-                            tasks.Add(new KillEntityTask(tree, KillEntityTask.KillType.Chop)
-                            {
-                                Priority = Task.PriorityType.Low
-                            });
-                        }
-                        break;
-                    case InputManager.MouseButton.Right:
-                        if (Player.Faction.ChopDesignations.Contains(tree))
-                        {
-                            Player.Faction.ChopDesignations.Remove(tree);
-                        }
-                        break;
+                    if (!Player.Faction.ChopDesignations.Contains(tree))
+                    {
+                        Player.Faction.ChopDesignations.Add(tree);
+                        tasks.Add(new KillEntityTask(tree, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low });
+                    }
+                }
+                else if (button == InputManager.MouseButton.Right)
+                {
+                    if (Player.Faction.ChopDesignations.Contains(tree))
+                    {
+                        Player.Faction.ChopDesignations.Remove(tree);
+                    }
                 }
             }
-
-            // Assign tasks.
+           
             if (tasks.Count > 0 && minions.Count > 0)
             {
                 TaskManager.AssignTasks(tasks, minions);

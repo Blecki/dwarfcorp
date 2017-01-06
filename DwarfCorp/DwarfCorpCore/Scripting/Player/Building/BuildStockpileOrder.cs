@@ -30,20 +30,26 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using DwarfCorp.GameStates;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    ///     Simple wrapper around BuildRoomOrder for Stockpiles.
-    /// </summary>
     [JsonObject(IsReference = true)]
     public class BuildStockpileOrder : BuildRoomOrder
     {
-        public BuildStockpileOrder(Stockpile toBuild, Faction faction)
+        public BuildStockpileOrder(Stockpile toBuild, Faction faction) 
             : base(toBuild, faction)
         {
+        }
+
+        public override void Build()
+        {
+            base.Build();
         }
     }
 }

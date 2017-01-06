@@ -30,21 +30,35 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Handles draggable items in the GUI, which can be picked and placed.
+    /// Handles draggable items in the GUI, which can be picked and placed.
     /// </summary>
     public class DragManager
     {
-        public delegate void DragEnded(DraggableItem fromItem, DraggableItem item, int amount);
+        public Dictionary<GUIComponent, DraggableItem> Slots { get; set; }
+        public DraggableItem CurrentItem { get; set; }
+        public int CurrentDragAmount { get; set; }
 
         public delegate void DragStarted(DraggableItem item, int amount);
+
+        public event DragStarted OnDragStarted;
+
+        public delegate void DragEnded(DraggableItem fromItem, DraggableItem item, int amount);
+
+        public event DragEnded OnDragEnded;
+
+        public Dictionary<GUIComponent, Dictionary<GUIComponent, bool>> IllegalDrags { get; set; }
 
         public DragManager()
         {
@@ -56,23 +70,14 @@ namespace DwarfCorp
             OnDragEnded += DragManager_OnDragEnded;
         }
 
-        public Dictionary<GUIComponent, DraggableItem> Slots { get; set; }
-        public DraggableItem CurrentItem { get; set; }
-        public int CurrentDragAmount { get; set; }
-        public Dictionary<GUIComponent, Dictionary<GUIComponent, bool>> IllegalDrags { get; set; }
-
-        public event DragStarted OnDragStarted;
-
-        public event DragEnded OnDragEnded;
-
         public void DisallowDragging(GUIComponent component1, GUIComponent component2)
         {
-            if (component1 == null || component2 == null)
+            if(component1 == null || component2 == null)
             {
                 return;
             }
 
-            if (!IllegalDrags.ContainsKey(component1))
+            if(!IllegalDrags.ContainsKey(component1))
             {
                 IllegalDrags[component1] = new Dictionary<GUIComponent, bool>();
             }
@@ -90,9 +95,9 @@ namespace DwarfCorp
 
         public GUIComponent GetIntersectingSlot(Rectangle rect)
         {
-            foreach (GUIComponent component in Slots.Keys)
+            foreach(GUIComponent component in Slots.Keys)
             {
-                if (component.GlobalBounds.Contains(rect.X + rect.Width/2, rect.Y + rect.Height/2))
+                if(component.GlobalBounds.Contains(rect.X + rect.Width / 2, rect.Y + rect.Height / 2))
                 {
                     return component;
                 }
@@ -112,24 +117,24 @@ namespace DwarfCorp
         public DraggableItem Drop()
         {
             MouseState mouseState = Mouse.GetState();
-            if (CurrentItem != null)
+            if(CurrentItem != null)
             {
                 Rectangle rect = CurrentItem.GlobalBounds;
-                rect.X = mouseState.X - rect.Width/2;
-                rect.Y = mouseState.Y - rect.Height/2;
+                rect.X = mouseState.X - rect.Width / 2;
+                rect.Y = mouseState.Y - rect.Height / 2;
 
                 GUIComponent drop = GetIntersectingSlot(rect);
 
 
-                if (drop != null)
+                if(drop != null)
                 {
-                    foreach (GUIComponent slotDropper in IllegalDrags.Keys)
+                    foreach(GUIComponent slotDropper in IllegalDrags.Keys)
                     {
-                        if (CurrentItem.HasAnscestor(slotDropper))
+                        if(CurrentItem.HasAnscestor(slotDropper))
                         {
-                            foreach (GUIComponent illegals in IllegalDrags[slotDropper].Keys)
+                            foreach(GUIComponent illegals in IllegalDrags[slotDropper].Keys)
                             {
-                                if (drop.HasAnscestor(illegals))
+                                if(drop.HasAnscestor(illegals))
                                 {
                                     CurrentItem.Item.CurrentAmount += CurrentDragAmount;
                                     OnDragEnded.Invoke(CurrentItem, null, 0);
@@ -143,23 +148,29 @@ namespace DwarfCorp
                     bool wasNew = false;
                     bool success = Drag(CurrentItem, CurrentDragAmount, drop, out toReturn, out wasNew);
 
-                    if (!success)
+                    if(!success)
                     {
                         CurrentItem.Item.CurrentAmount += CurrentDragAmount;
                         OnDragEnded.Invoke(CurrentItem, null, 0);
                         return null;
                     }
-                    if (wasNew)
+                    else if(wasNew)
                     {
                         OnDragEnded.Invoke(CurrentItem, toReturn, CurrentDragAmount);
                         return toReturn;
                     }
-                    OnDragEnded.Invoke(CurrentItem, null, CurrentDragAmount);
+                    else
+                    {
+                        OnDragEnded.Invoke(CurrentItem, null, CurrentDragAmount);
+                        return null;
+                    }
+                }
+                else
+                {
+                    CurrentItem.Item.CurrentAmount += CurrentDragAmount;
+                    OnDragEnded.Invoke(CurrentItem, null, 0);
                     return null;
                 }
-                CurrentItem.Item.CurrentAmount += CurrentDragAmount;
-                OnDragEnded.Invoke(CurrentItem, null, 0);
-                return null;
             }
 
 
@@ -171,31 +182,34 @@ namespace DwarfCorp
 
         public bool IsDragValid(DraggableItem item, GUIComponent slot)
         {
-            if (!Slots.ContainsKey(slot))
+            if(!Slots.ContainsKey(slot))
             {
                 return true;
             }
-            DraggableItem currentItem = Slots[slot];
-            GItem gItem = currentItem.Item;
-            if (gItem.Name != item.Item.Name)
+            else
             {
-                return false;
+                DraggableItem currentItem = Slots[slot];
+                GItem gItem = currentItem.Item;
+                if(gItem.Name != item.Item.Name)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
-            return true;
         }
 
-        public bool Drag(DraggableItem item, int amount, GUIComponent slot, out DraggableItem itemDraggedTo,
-            out bool wasNew)
+        public bool Drag(DraggableItem item, int amount, GUIComponent slot, out DraggableItem itemDraggedTo, out bool wasNew)
         {
-            if (!Slots.ContainsKey(slot))
+            if(!Slots.ContainsKey(slot))
             {
-                var currentItem = new DraggableItem(item.GUI, slot,
-                    new GItem(item.Item.ResourceType, item.Item.Image, item.Item.Tint, item.Item.MinAmount,
-                        item.Item.MaxAmount, item.Item.CurrentAmount, item.Item.Price));
+                DraggableItem currentItem = new DraggableItem(item.GUI, slot, new GItem(item.Item.ResourceType, item.Item.Image, item.Item.Tint, item.Item.MinAmount, item.Item.MaxAmount, item.Item.CurrentAmount, item.Item.Price));
                 GItem gItem = currentItem.Item;
 
 
-                if (gItem.CurrentAmount + amount <= gItem.MaxAmount)
+                if(gItem.CurrentAmount + amount <= gItem.MaxAmount)
                 {
                     gItem.CurrentAmount += amount;
                 }
@@ -210,28 +224,29 @@ namespace DwarfCorp
             {
                 DraggableItem currentItem = Slots[slot];
 
-                if (currentItem != null)
+                if(currentItem != null)
                 {
                     GItem gItem = currentItem.Item;
-                    if (gItem.Name != item.Item.Name)
+                    if(gItem.Name != item.Item.Name)
                     {
                         wasNew = false;
                         itemDraggedTo = null;
                         return false;
                     }
-                    if (gItem.CurrentAmount + amount <= gItem.MaxAmount)
+                    else
                     {
-                        gItem.CurrentAmount += amount;
-                        wasNew = false;
-                        itemDraggedTo = currentItem;
-                        return true;
+                        if(gItem.CurrentAmount + amount <= gItem.MaxAmount)
+                        {
+                            gItem.CurrentAmount += amount;
+                            wasNew = false;
+                            itemDraggedTo = currentItem;
+                            return true;
+                        }
                     }
                 }
                 else
                 {
-                    var ditem = new DraggableItem(item.GUI, slot,
-                        new GItem(item.Item.ResourceType, item.Item.Image, item.Item.Tint, item.Item.MinAmount,
-                            item.Item.MaxAmount, 0, item.Item.Price));
+                    DraggableItem ditem = new DraggableItem(item.GUI, slot, new GItem(item.Item.ResourceType, item.Item.Image, item.Item.Tint, item.Item.MinAmount, item.Item.MaxAmount, 0, item.Item.Price));
                     Slots[slot] = ditem;
                     ditem.LocalBounds = new Rectangle(0, 0, 32, 32);
                     ditem.Item.CurrentAmount += amount;
@@ -245,4 +260,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

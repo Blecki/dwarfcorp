@@ -30,24 +30,32 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     /// <summary>
-    ///     This component projects a billboard shadow to the ground below an entity.
+    /// This component projects a billboard shadow to the ground below an entity.
     /// </summary>
     public class Shadow : Sprite
     {
-        public Shadow()
+        public float GlobalScale { get; set; }
+        public Timer UpdateTimer { get; set; }
+        private Matrix OriginalTransform { get; set; }
+
+        public Shadow() : base()
         {
+            
         }
 
-        public Shadow(ComponentManager manager, string name, GameComponent parent, Matrix localTransform,
-            SpriteSheet spriteSheet) :
-                base(manager, name, parent, localTransform, spriteSheet, false)
+        public Shadow(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, SpriteSheet spriteSheet) :
+            base(manager, name, parent, localTransform, spriteSheet, false)
         {
             OrientationType = OrientMode.Fixed;
             GlobalScale = LocalTransform.Left.Length();
@@ -57,34 +65,30 @@ namespace DwarfCorp
             OriginalTransform = LocalTransform;
         }
 
-        public float GlobalScale { get; set; }
-        public Timer UpdateTimer { get; set; }
-        private Matrix OriginalTransform { get; set; }
-
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             UpdateTimer.Update(gameTime);
-            if (UpdateTimer.HasTriggered)
+            if(UpdateTimer.HasTriggered)
             {
-                var p = (Body) Parent;
+                Body p = (Body) Parent;
 
                 VoxelChunk chunk = chunks.ChunkData.GetVoxelChunkAtWorldLocation(p.GlobalTransform.Translation);
 
-                if (chunk != null)
+                if(chunk != null)
                 {
-                    Vector3 g = chunk.WorldToGrid(p.GlobalTransform.Translation + Vector3.Down*0.25f);
+                    Vector3 g = chunk.WorldToGrid(p.GlobalTransform.Translation + Vector3.Down * 0.25f);
 
                     int h = chunk.GetFilledVoxelGridHeightAt((int) g.X, (int) g.Y, (int) g.Z);
 
-                    if (h != -1)
+                    if(h != -1)
                     {
                         Vector3 pos = p.GlobalTransform.Translation;
                         pos.Y = h;
-                        float scaleFactor = GlobalScale/(Math.Max((p.GlobalTransform.Translation.Y - h)*0.25f, 1));
+                        float scaleFactor = GlobalScale / (Math.Max((p.GlobalTransform.Translation.Y - h) * 0.25f, 1));
                         Matrix newTrans = OriginalTransform;
                         newTrans *= Matrix.CreateScale(scaleFactor);
                         newTrans.Translation = (pos - p.GlobalTransform.Translation) + new Vector3(0.0f, 0.1f, 0.0f);
-                        Tint = new Color(Tint.R, Tint.G, Tint.B, (int) (scaleFactor*255));
+                        Tint = new Color(Tint.R, Tint.G, Tint.B, (int)(scaleFactor * 255));
                         LocalTransform = newTrans;
                     }
                 }
@@ -95,4 +99,5 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
     }
+
 }

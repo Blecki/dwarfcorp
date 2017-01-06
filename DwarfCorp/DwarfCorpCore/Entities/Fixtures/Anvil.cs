@@ -30,77 +30,79 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    ///     A simple Anvil fixture.
-    /// </summary>
     [JsonObject(IsReference = true)]
     public class Anvil : Fixture
     {
+
         public Anvil()
         {
+
         }
 
         public Anvil(Vector3 position) :
-            base(
-            position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 3),
-            PlayState.ComponentManager.RootComponent)
+            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 3), PlayState.ComponentManager.RootComponent)
         {
             Name = "Anvil";
             Tags.Add("Anvil");
         }
     }
 
-    /// <summary>
-    ///     A simple Stove fixture.
-    /// </summary>
     [JsonObject(IsReference = true)]
     public class Stove : Fixture
     {
+
         public Stove()
         {
+
         }
 
         public Stove(Vector3 position) :
-            base(
-            position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 4),
-            PlayState.ComponentManager.RootComponent)
+            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 4), PlayState.ComponentManager.RootComponent)
         {
             Name = "Stove";
             Tags.Add("Stove");
+
+
+            /*
+            new LightEmitter("light", this, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 5, 4)
+            {
+                HasMoved = true
+            };
+             */
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            // The stove creates smoke every now and then.
             if (MathFunctions.RandEvent(0.01f))
             {
-                PlayState.ParticleManager.Trigger("smoke", GlobalTransform.Translation + Vector3.Up*.5f, Color.White, 1);
+                PlayState.ParticleManager.Trigger("smoke", GlobalTransform.Translation + Vector3.Up * .5f, Color.White, 1);
             }
             base.Update(gameTime, chunks, camera);
         }
     }
 
-    /// <summary>
-    ///     A simple Barrel fixture.
-    /// </summary>
+
     [JsonObject(IsReference = true)]
     public class Barrel : Fixture
     {
+
         public Barrel()
         {
+
         }
 
         public Barrel(Vector3 position) :
-            base(
-            position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 0),
-            PlayState.ComponentManager.RootComponent)
+            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 0), PlayState.ComponentManager.RootComponent)
         {
             Name = "Barrel";
             Tags.Add("Barrel");

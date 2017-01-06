@@ -30,11 +30,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using DwarfCorp;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -44,15 +47,14 @@ namespace DwarfCorp
     {
         public Mushroom()
         {
+
         }
 
-        public Mushroom(Vector3 position,
-            string asset,
-            ResourceLibrary.ResourceType resource,
-            int numRelease, bool selfIlluminate) :
-                base(
-                "Mushroom", PlayState.ComponentManager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f),
-                Vector3.Zero)
+        public Mushroom(Vector3 position, 
+                        string asset, 
+                        ResourceLibrary.ResourceType resource, 
+                        int numRelease, bool selfIlluminate) :
+            base("Mushroom", PlayState.ComponentManager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.deadbush, 32, 32);
             SeedlingFrame = new Point(0, 0);
@@ -60,44 +62,42 @@ namespace DwarfCorp
             matrix.Translation = position + new Vector3(0.5f, -0.25f, 0.5f);
             LocalTransform = matrix;
 
-            var spriteSheet = new SpriteSheet(asset);
+            SpriteSheet spriteSheet = new SpriteSheet(asset);
 
-            var frames = new List<Point>
+            List<Point> frames = new List<Point>
             {
                 new Point(0, 0)
             };
-            var animation = new Animation(GameState.Game.GraphicsDevice, spriteSheet, "Mushroom", 32, 32, frames, false,
-                Color.White, 0.01f, 1.0f, 1.0f, false);
+            Animation animation = new Animation(GameState.Game.GraphicsDevice, spriteSheet, "Mushroom", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            var sprite = new Sprite(PlayState.ComponentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(PlayState.ComponentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed,
                 LightsWithVoxels = !selfIlluminate
             };
             sprite.AddAnimation(animation);
 
-            var sprite2 = new Sprite(PlayState.ComponentManager, "sprite2", this,
-                Matrix.CreateRotationY((float) Math.PI*0.5f), spriteSheet, false)
+            Sprite sprite2 = new Sprite(PlayState.ComponentManager, "sprite2", this, Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed,
                 LightsWithVoxels = !selfIlluminate
             };
             sprite2.AddAnimation(animation);
 
-            var voxelUnder = new Voxel();
+            Voxel voxelUnder = new Voxel();
             bool success = PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder);
 
             if (success)
             {
-                var listener = new VoxelListener(PlayState.ComponentManager, this, PlayState.ChunkManager, voxelUnder);
+                VoxelListener listener = new VoxelListener(PlayState.ComponentManager, this, PlayState.ChunkManager, voxelUnder);
             }
 
-            var inventory = new Inventory("Inventory", this)
+            Inventory inventory = new Inventory("Inventory", this)
             {
-                Resources = new ResourceContainer
+                Resources = new ResourceContainer()
                 {
                     MaxResources = 2,
-                    Resources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>
+                    Resources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>()
                     {
                         {
                             resource,
@@ -106,8 +106,8 @@ namespace DwarfCorp
                     }
                 }
             };
-
-            var health = new Health(PlayState.ComponentManager, "HP", this, 30, 0.0f, 30);
+            
+            Health health = new Health(PlayState.ComponentManager, "HP", this, 30, 0.0f, 30);
             new Flammable(PlayState.ComponentManager, "Flames", this, health);
 
             animation.Play();

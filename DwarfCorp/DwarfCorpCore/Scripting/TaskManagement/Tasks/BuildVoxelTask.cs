@@ -30,31 +30,29 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Text;
+using DwarfCorp.GameStates;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Tells a creature that it should get a resource, and put it into a voxel
-    ///     to build it. This is the Task that wraps BuildVoxelAct.
-    ///     NOTE: This is now a legacy task. The real work happens in GatherManager, which
-    ///     assigns a whole group of voxels to a Dwarf instead of assigning them one at a time.
+    /// Tells a creature that it should get a resource, and put it into a voxel
+    /// to build it.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class BuildVoxelTask : Task
     {
+        public VoxelType VoxType { get; set; }
+        public Voxel Voxel { get; set; }
+
         public BuildVoxelTask()
         {
             Priority = PriorityType.Low;
         }
 
-        /// <summary>
-        ///     Create a BuildVoxelTask
-        /// </summary>
-        /// <param name="voxel">The location to place the voxel.</param>
-        /// <param name="type">The type to place.</param>
         public BuildVoxelTask(Voxel voxel, VoxelType type)
         {
             Name = "Put voxel of type: " + type.Name + " on voxel " + voxel.Position;
@@ -62,16 +60,6 @@ namespace DwarfCorp
             VoxType = type;
             Priority = PriorityType.Low;
         }
-
-        /// <summary>
-        ///     The type of voxel to place.
-        /// </summary>
-        public VoxelType VoxType { get; set; }
-
-        /// <summary>
-        ///     The location to place the voxel.
-        /// </summary>
-        public Voxel Voxel { get; set; }
 
         public override bool IsFeasible(Creature agent)
         {
@@ -95,19 +83,12 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent)
         {
-            return Voxel == null
-                ? 1000
-                : 0.01f*(agent.AI.Position - Voxel.Position).LengthSquared() + (Voxel.Position.Y);
+            return Voxel == null ? 1000 : 0.01f * (agent.AI.Position - Voxel.Position).LengthSquared() + (Voxel.Position.Y);
         }
 
-        /// <summary>
-        ///     Adds this build voxel task to the creature's build order queue (managed by GatherManager).
-        /// </summary>
-        /// <param name="creature">The creature to perform the task.</param>
-        /// <returns>Act.Status.Success</returns>
         public IEnumerable<Act.Status> AddBuildOrder(Creature creature)
         {
-            creature.AI.GatherManager.AddVoxelOrder(new GatherManager.BuildVoxelOrder {Type = VoxType, Voxel = Voxel});
+            creature.AI.GatherManager.AddVoxelOrder(new GatherManager.BuildVoxelOrder() { Type = VoxType, Voxel = Voxel });
             yield return Act.Status.Success;
         }
 
@@ -115,5 +96,15 @@ namespace DwarfCorp
         {
             return new Wrap(() => AddBuildOrder(creature));
         }
+
+        public override void Render(DwarfTime time)
+        {
+            if (Voxel != null)
+            {
+                
+            }
+            base.Render(time);
+        }
     }
+
 }

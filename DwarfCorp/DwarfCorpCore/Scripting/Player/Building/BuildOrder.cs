@@ -30,15 +30,16 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 namespace DwarfCorp
 {
+
     /// <summary>
-    ///     A designation is just a voxel which can be assigned a number of creatures.
+    /// A designation is just a voxel which can be assigned a number of creatures.
     /// </summary>
     public class BuildOrder
     {
-        public int NumCreaturesAssigned = 0;
         public Voxel Vox = null;
+        public int NumCreaturesAssigned = 0;
     }
+
 }

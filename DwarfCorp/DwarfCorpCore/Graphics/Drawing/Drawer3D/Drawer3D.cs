@@ -30,18 +30,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Concurrent;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     This is a convenience class for drawing lines, boxes, etc. to the screen from
-    ///     threads other than the main drawing thread.
+    /// This is a convenience class for drawing lines, boxes, etc. to the screen from
+    /// threads other than the main drawing thread. 
     /// </summary>
     public class Drawer3D
     {
@@ -51,7 +51,7 @@ namespace DwarfCorp
 
         public static void DrawLine(Vector3 p1, Vector3 p2, Color color, float thickness)
         {
-            DrawLineList(new List<Vector3> {p1, p2}, color, thickness);
+            DrawLineList(new List<Vector3>(){p1, p2}, color, thickness);
         }
 
         public static void DrawLineList(List<Vector3> points, Color color, float thickness)
@@ -61,7 +61,7 @@ namespace DwarfCorp
 
         public static void DrawBoxList(List<BoundingBox> boxes, Color color, float thickness)
         {
-            foreach (BoundingBox box in boxes)
+            foreach(BoundingBox box in boxes)
             {
                 Commands.Add(new BoxDrawCommand3D(box, color, thickness, false));
             }
@@ -79,12 +79,12 @@ namespace DwarfCorp
 
         public static void DrawPlane(float y, float minX, float minZ, float maxX, float maxZ, Color color)
         {
-            Commands.Add(new PlaneDrawCommand(new Vector3((maxX + minX)*0.5f, y, (maxZ + minZ)*0.5f),
-                new Vector3((maxX - minX), 1.0f, (maxZ - minZ)), color));
+            Commands.Add(new PlaneDrawCommand(new Vector3((maxX + minX) * 0.5f, y, (maxZ + minZ) * 0.5f), new Vector3((maxX - minX), 1.0f, (maxZ - minZ)), color));
         }
 
         public static void Render(GraphicsDevice device, Effect effect, bool delete)
         {
+
             BlendState origBlen = device.BlendState;
             device.BlendState = BlendState.NonPremultiplied;
 
@@ -95,11 +95,11 @@ namespace DwarfCorp
             effect.CurrentTechnique = effect.Techniques["Untextured"];
             effect.Parameters["xWorld"].SetValue(Matrix.Identity);
 
-            var strips = new DrawCommand3D.LineStrip
+            DrawCommand3D.LineStrip strips = new DrawCommand3D.LineStrip()
             {
                 Vertices = new List<VertexPositionColor>()
             };
-            foreach (DrawCommand3D command in Commands)
+            foreach(DrawCommand3D command in Commands)
             {
                 if (command.DrawAccumlatedStrips)
                     command.AccumulateStrips(strips);
@@ -107,11 +107,10 @@ namespace DwarfCorp
 
             if (strips.Vertices.Count > 0 && strips.NumTriangles > 0)
             {
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    device.DrawUserPrimitives(PrimitiveType.TriangleStrip, strips.Vertices.ToArray(), 0,
-                        Math.Min(strips.Vertices.Count - 2, short.MaxValue));
+                    device.DrawUserPrimitives(PrimitiveType.TriangleStrip, strips.Vertices.ToArray(), 0, Math.Min(strips.Vertices.Count - 2, short.MaxValue));
                 }
             }
 
@@ -126,39 +125,38 @@ namespace DwarfCorp
                 }
             }
 
-            if (oldState != null)
+            if(oldState != null)
             {
                 device.RasterizerState = oldState;
             }
 
-            if (origBlen != null)
+            if(origBlen != null)
             {
                 device.BlendState = origBlen;
             }
 
 
-            if (!delete)
+            if(!delete)
             {
                 return;
             }
 
-            while (Commands.Count > 0)
+            while(Commands.Count > 0)
             {
                 DrawCommand3D result = null;
                 Commands.TryTake(out result);
             }
         }
 
-        public static List<VertexPositionColor> GetTriangleStrip(Vector3[] points, float thickness, Color color,
-            ref int triangleCount, Matrix worldMatrix)
+        public static List<VertexPositionColor> GetTriangleStrip(Vector3[] points, float thickness, Color color, ref int triangleCount, Matrix worldMatrix)
         {
             Vector3 lastPoint = Vector3.Zero;
-            var list = new List<VertexPositionColor>();
+            List<VertexPositionColor> list = new List<VertexPositionColor>();
 
 
-            for (int i = 0; i < points.Length; i++)
+            for(int i = 0; i < points.Length; i++)
             {
-                if (i == 0)
+                if(i == 0)
                 {
                     lastPoint = points[i];
                     continue;
@@ -172,10 +170,10 @@ namespace DwarfCorp
                 normal.Normalize();
 
 
-                Vector3 p1 = t1 + normal*thickness;
-                Vector3 p2 = t1 - normal*thickness;
-                Vector3 p3 = t2 + normal*thickness;
-                Vector3 p4 = t2 - normal*thickness;
+                Vector3 p1 = t1 + normal * thickness;
+                Vector3 p2 = t1 - normal * thickness;
+                Vector3 p3 = t2 + normal * thickness;
+                Vector3 p4 = t2 - normal * thickness;
 
                 list.Add(new VertexPositionColor(p1, color));
                 list.Add(new VertexPositionColor(p2, color));
@@ -193,9 +191,10 @@ namespace DwarfCorp
         public static void DrawAxes(Matrix t, float length)
         {
             Vector3 p = t.Translation;
-            DrawLine(p, p + t.Right*length, Color.Red, 0.01f);
-            DrawLine(p, p + t.Up*length, Color.Green, 0.01f);
-            DrawLine(p, p + t.Forward*length, Color.Blue, 0.01f);
+            DrawLine(p, p + t.Right * length, Color.Red, 0.01f);
+            DrawLine(p, p + t.Up * length, Color.Green, 0.01f);
+            DrawLine(p, p + t.Forward * length, Color.Blue, 0.01f);
         }
     }
+
 }

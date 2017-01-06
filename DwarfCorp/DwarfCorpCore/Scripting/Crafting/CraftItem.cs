@@ -30,48 +30,39 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A CraftItem is a kind of thing that a Dwarf can create from raw resources.
-    /// </summary>
     [JsonObject(IsReference = true)]
     public class CraftItem
     {
-        /// <summary>
-        /// Items can only be built in certain locations.
-        /// </summary>
-        public enum CraftPrereq
-        {
-            /// <summary>
-            /// Items must be placed on top of another voxel.
-            /// </summary>
-            OnGround,
-            /// <summary>
-            /// Items must be placed adjacent to a wall.
-            /// </summary>
-            NearWall
-        }
-
-        /// <summary>
-        /// The type of the object to be crafted.
-        /// </summary>
         public enum CraftType
         {
-            /// <summary>
-            /// These things are placed into the world as physical objects (like traps or doors)
-            /// </summary>
             Object,
-            /// <summary>
-            /// These become intermediate resources that get placed into stockpiles.
-            /// </summary>
             Resource
         }
 
+        public enum CraftPrereq
+        {
+            OnGround,
+            NearWall
+        }
+
+        public string Name { get; set; }
+        public List<Quantitiy<Resource.ResourceTags>> RequiredResources { get; set; }
+        public ImageFrame Image { get; set; }
+        public float BaseCraftTime { get; set; }
+        public string Description { get; set; }
+        public CraftType Type { get; set; }
+        public List<CraftPrereq> Prerequisites { get; set; }
+        public ResourceLibrary.ResourceType ResourceCreated { get; set; }
+        public List<ResourceAmount> SelectedResources { get; set; }
+        public string CraftLocation { get; set; }
         public CraftItem()
         {
             Name = "";
@@ -85,76 +76,5 @@ namespace DwarfCorp
             SelectedResources = new List<ResourceAmount>();
             CraftLocation = "Anvil";
         }
-
-        /// <summary>
-        /// Gets or sets the name.
-        /// </summary>
-        /// <value>
-        /// The name.
-        /// </value>
-        public string Name { get; set; }
-        /// <summary>
-        /// Gets or sets the required resources (as tags)
-        /// </summary>
-        /// <value>
-        /// The required resources.
-        /// </value>
-        public List<Quantitiy<Resource.ResourceTags>> RequiredResources { get; set; }
-        /// <summary>
-        /// Gets or sets the image to display in GUIs.
-        /// </summary>
-        /// <value>
-        /// The image.
-        /// </value>
-        public ImageFrame Image { get; set; }
-        /// <summary>
-        /// For level 1 dwarves, this is how long (in seconds) the item takes to craft.
-        /// </summary>
-        /// <value>
-        /// The base craft time.
-        /// </value>
-        public float BaseCraftTime { get; set; }
-        /// <summary>
-        /// A longer description of the item to display to the player.
-        /// </summary>
-        /// <value>
-        /// The description.
-        /// </value>
-        public string Description { get; set; }
-        /// <summary>
-        /// Gets or sets the type.
-        /// </summary>
-        /// <value>
-        /// The type.
-        /// </value>
-        public CraftType Type { get; set; }
-        /// <summary>
-        /// Gets or sets the prerequisites.
-        /// </summary>
-        /// <value>
-        /// The prerequisites.
-        /// </value>
-        public List<CraftPrereq> Prerequisites { get; set; }
-        /// <summary>
-        /// A resource of this type gets created by the action of crafting this item.
-        /// </summary>
-        /// <value>
-        /// The resource created.
-        /// </value>
-        public ResourceLibrary.ResourceType ResourceCreated { get; set; }
-        /// <summary>
-        /// These are the resources the player has selected to craft the item with.
-        /// </summary>
-        /// <value>
-        /// The selected resources.
-        /// </value>
-        public List<ResourceAmount> SelectedResources { get; set; }
-        /// <summary>
-        /// The player must have already built an object with this tag in order to build the item.
-        /// </summary>
-        /// <value>
-        /// The craft location.
-        /// </value>
-        public string CraftLocation { get; set; }
     }
 }

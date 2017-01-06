@@ -30,9 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -41,12 +42,19 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     /// <summary>
-    ///     This is an animated "billboard". Essentially, a simple rectangle is drawn with a texture on it.
-    ///     The rectangle is drawn in such a way that it is always more or less facing the camera.
+    /// This is an animated "billboard". Essentially, a simple rectangle is drawn with a texture on it.
+    /// The rectangle is drawn in such a way that it is always more or less facing the camera.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class Sprite : Tinter
     {
+        public Dictionary<string, Animation> Animations { get; set; }
+        
+        public SpriteSheet SpriteSheet { get; set; }
+        public Animation CurrentAnimation { get; set; }
+        public OrientMode OrientationType { get; set; }
+        public bool DistortPosition { get; set; }
+
         public enum OrientMode
         {
             Fixed,
@@ -56,9 +64,10 @@ namespace DwarfCorp
             ZAxis
         }
 
-        public Sprite(ComponentManager manager, string name, GameComponent parent, Matrix localTransform,
-            SpriteSheet spriteSheet, bool addToCollisionManager) :
-                base(name, parent, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
+        public float BillboardRotation { get; set; }
+
+        public Sprite(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, SpriteSheet spriteSheet, bool addToCollisionManager) :
+            base(name, parent, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
         {
             SpriteSheet = spriteSheet;
             Animations = new Dictionary<string, Animation>();
@@ -72,19 +81,9 @@ namespace DwarfCorp
             DistortPosition = true;
         }
 
-        public Dictionary<string, Animation> Animations { get; set; }
-
-        public SpriteSheet SpriteSheet { get; set; }
-        public Animation CurrentAnimation { get; set; }
-        public OrientMode OrientationType { get; set; }
-        public bool DistortPosition { get; set; }
-
-        public float BillboardRotation { get; set; }
-
         public void SetSingleFrameAnimation(Point frame)
         {
-            AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", new List<Point> {frame},
-                true, Color.White, 10.0f, false));
+            AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", new List<Point>() { frame }, true, Color.White, 10.0f, false));
         }
 
         public void SetSingleFrameAnimation()
@@ -94,7 +93,7 @@ namespace DwarfCorp
 
         public void AddAnimation(Animation animation)
         {
-            if (CurrentAnimation == null)
+            if(CurrentAnimation == null)
             {
                 CurrentAnimation = animation;
             }
@@ -110,7 +109,7 @@ namespace DwarfCorp
         {
             Animation anim = GetAnimation(name);
 
-            if (anim != null)
+            if(anim != null)
             {
                 CurrentAnimation = anim;
             }
@@ -119,7 +118,7 @@ namespace DwarfCorp
 
         public override void ReceiveMessageRecursive(Message messageToReceive)
         {
-            switch (messageToReceive.Type)
+            switch(messageToReceive.Type)
             {
                 case Message.MessageType.OnChunkModified:
                     HasMoved = true;
@@ -132,9 +131,9 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (IsActive)
+            if(IsActive)
             {
-                if (CurrentAnimation != null)
+                if(CurrentAnimation != null)
                 {
                     CurrentAnimation.Update(gameTime);
                 }
@@ -154,44 +153,40 @@ namespace DwarfCorp
         {
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
 
-            if (!IsVisible)
+            if(!IsVisible)
             {
                 return;
             }
 
-            if (CurrentAnimation != null && CurrentAnimation.CurrentFrame >= 0 &&
-                CurrentAnimation.CurrentFrame < CurrentAnimation.Primitives.Count)
+            if (CurrentAnimation != null && CurrentAnimation.CurrentFrame >= 0 && CurrentAnimation.CurrentFrame < CurrentAnimation.Primitives.Count)
             {
                 CurrentAnimation.PreRender();
                 SpriteSheet = CurrentAnimation.SpriteSheet;
                 effect.Parameters["xTexture"].SetValue(SpriteSheet.GetTexture());
 
-                if (OrientationType != OrientMode.Fixed)
+                if(OrientationType != OrientMode.Fixed)
                 {
-                    if (camera.Projection == Camera.ProjectionMode.Perspective)
+                    if(camera.Projection == Camera.ProjectionMode.Perspective)
                     {
-                        if (OrientationType == OrientMode.Spherical)
+                        if(OrientationType == OrientMode.Spherical)
                         {
                             float xscale = GlobalTransform.Left.Length();
                             float yscale = GlobalTransform.Up.Length();
                             float zscale = GlobalTransform.Forward.Length();
                             Matrix rot = Matrix.CreateRotationZ(BillboardRotation);
-                            Matrix bill = Matrix.CreateBillboard(GlobalTransform.Translation, camera.Position,
-                                camera.UpVector, null);
+                            Matrix bill = Matrix.CreateBillboard(GlobalTransform.Translation, camera.Position, camera.UpVector, null);
                             Matrix noTransBill = bill;
                             noTransBill.Translation = Vector3.Zero;
 
-                            Matrix worldRot = Matrix.CreateScale(new Vector3(xscale, yscale, zscale))*rot*noTransBill;
-                            worldRot.Translation = DistortPosition
-                                ? bill.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(bill.Translation)
-                                : bill.Translation;
+                            Matrix worldRot = Matrix.CreateScale(new Vector3(xscale, yscale, zscale)) * rot * noTransBill;
+                            worldRot.Translation = DistortPosition ? bill.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(bill.Translation) : bill.Translation;
                             effect.Parameters["xWorld"].SetValue(worldRot);
                         }
                         else
                         {
                             Vector3 axis = Vector3.Zero;
 
-                            switch (OrientationType)
+                            switch(OrientationType)
                             {
                                 case OrientMode.XAxis:
                                     axis = Vector3.UnitX;
@@ -204,37 +199,27 @@ namespace DwarfCorp
                                     break;
                             }
 
-                            Matrix worldRot = Matrix.CreateConstrainedBillboard(GlobalTransform.Translation,
-                                camera.Position, axis, null, null);
-                            worldRot.Translation = DistortPosition
-                                ? worldRot.Translation +
-                                  VertexNoise.GetNoiseVectorFromRepeatingTexture(worldRot.Translation)
-                                : worldRot.Translation;
+                            Matrix worldRot = Matrix.CreateConstrainedBillboard(GlobalTransform.Translation, camera.Position, axis, null, null);
+                            worldRot.Translation = DistortPosition ? worldRot.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(worldRot.Translation) : worldRot.Translation;
                             effect.Parameters["xWorld"].SetValue(worldRot);
                         }
                     }
                     else
                     {
-                        Matrix rotation = Matrix.CreateRotationY(-(float) Math.PI*0.25f)*
-                                          Matrix.CreateTranslation(GlobalTransform.Translation);
-                        rotation.Translation = DistortPosition
-                            ? rotation.Translation +
-                              VertexNoise.GetNoiseVectorFromRepeatingTexture(rotation.Translation)
-                            : rotation.Translation;
+                        Matrix rotation = Matrix.CreateRotationY(-(float) Math.PI * 0.25f) * Matrix.CreateTranslation(GlobalTransform.Translation);
+                        rotation.Translation = DistortPosition ? rotation.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(rotation.Translation) : rotation.Translation;
                         effect.Parameters["xWorld"].SetValue(rotation);
                     }
                 }
                 else
                 {
                     Matrix rotation = GlobalTransform;
-                    rotation.Translation = DistortPosition
-                        ? rotation.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(rotation.Translation)
-                        : rotation.Translation;
+                    rotation.Translation = DistortPosition ? rotation.Translation + VertexNoise.GetNoiseVectorFromRepeatingTexture(rotation.Translation) : rotation.Translation;
                     effect.Parameters["xWorld"].SetValue(rotation);
                 }
 
 
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                foreach(EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
                     CurrentAnimation.Primitives[CurrentAnimation.CurrentFrame].Render(graphicsDevice);
@@ -242,4 +227,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

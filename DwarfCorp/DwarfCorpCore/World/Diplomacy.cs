@@ -30,10 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using DwarfCorpCore;
 using Microsoft.Xna.Framework;
@@ -44,17 +44,106 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Diplomacy
     {
-        public Diplomacy(FactionLibrary factions)
+        public class PoliticalEvent
         {
-            Factions = factions;
-            FactionPolitics = new PoliticsDictionary();
+            public float Change { get; set; }
+            public string Description { get; set; }
+            public TimeSpan Duration { get; set; }
+            public DateTime Time { get; set; }
+        }
+
+        public class Politics
+        {
+            public Faction Faction { get; set; }
+            public List<PoliticalEvent> RecentEvents { get; set; }
+            public bool HasMet { get; set; }
+            public bool WasAtWar { get; set; }
+            public TimeSpan DistanceToCapital { get; set; }
+            public DateTimer WarPartyTimer { get; set; }
+            public DateTimer TradePartyTimer { get; set; }
+
+            public Politics()
+            {
+                WasAtWar = false;
+                HasMet = false;
+                WarPartyTimer = new DateTimer(PlayState.Time.CurrentDate, DistanceToCapital)
+                {
+                    TriggerOnce = true
+                };
+
+                TradePartyTimer = new DateTimer(PlayState.Time.CurrentDate, DistanceToCapital)
+                {
+                    TriggerOnce = true
+                };
+            }
+
+            public void DispatchNewTradeEnvoy()
+            {
+                TradePartyTimer = new DateTimer(PlayState.Time.CurrentDate, DistanceToCapital)
+                {
+                    TriggerOnce = true
+                };
+            }
+
+            public void DispatchNewWarParty()
+            {
+                WarPartyTimer = new DateTimer(PlayState.Time.CurrentDate, DistanceToCapital)
+                {
+                    TriggerOnce = true
+                };
+            }
+
+            public Relationship GetCurrentRelationship()
+            {
+                float feeling = GetCurrentFeeling();
+
+                if (feeling < -0.5f)
+                {
+                    return Relationship.Hateful;
+                }
+                else if (feeling < 0.5f)
+                {
+                    return Relationship.Indifferent;
+                }
+                else
+                {
+                    return Relationship.Loving;
+                }
+            }
+
+            public bool HasEvent(string text)
+            {
+                return RecentEvents.Any(e => e.Description == text);
+            }
+
+            public float GetCurrentFeeling()
+            {
+                return RecentEvents.Sum(e => e.Change);
+            }
+
+            public void UpdateEvents(DateTime currentDate)
+            {
+                RecentEvents.RemoveAll((e) => currentDate - e.Time > e.Duration);
+            }
         }
 
         public FactionLibrary Factions { get; set; }
 
 
+        [JsonArrayAttribute]
+        public class PoliticsDictionary : Dictionary<Pair<string>, Politics>
+        {
+            // Empty class needed to deserialize dictionary of string pairs.
+        }
+
         public PoliticsDictionary FactionPolitics { get; set; }
 
+
+        public Diplomacy(FactionLibrary factions)
+        {
+            Factions = factions;
+            FactionPolitics = new PoliticsDictionary();
+        }
 
         public Politics GetPolitics(Faction factionA, Faction factionB)
         {
@@ -63,28 +152,28 @@ namespace DwarfCorp
 
         public void Initialize(DateTime now)
         {
-            var forever = new TimeSpan(999999, 0, 0, 0);
+            TimeSpan forever = new TimeSpan(999999, 0, 0, 0);
             foreach (var faction in Factions.Factions)
             {
                 foreach (var otherFaction in Factions.Factions)
                 {
-                    var pair = new Pair<string>(faction.Value.Name, otherFaction.Value.Name);
+                    Pair<string> pair = new Pair<string>(faction.Value.Name, otherFaction.Value.Name);
 
-                    if (FactionPolitics.ContainsKey(pair))
+                    if (FactionPolitics.ContainsKey(pair)) 
                         continue;
 
                     if (faction.Key == otherFaction.Key)
                     {
-                        FactionPolitics[pair] = new Politics
+                        FactionPolitics[pair] = new Politics()
                         {
                             Faction = faction.Value,
                             HasMet = true,
-                            RecentEvents = new List<PoliticalEvent>
+                            RecentEvents = new List<PoliticalEvent>()
                             {
-                                new PoliticalEvent
+                                new PoliticalEvent()
                                 {
                                     Change = 1.0f,
-                                    Description = "we are of the same faction",
+                                    Description = "we are of the same faction", 
                                     Duration = forever,
                                     Time = now
                                 }
@@ -97,34 +186,35 @@ namespace DwarfCorp
                         Point c2 = otherFaction.Value.Center;
                         double dist = Math.Sqrt(Math.Pow(c1.X - c2.X, 2) + Math.Pow(c1.Y - c2.Y, 2));
                         // Time always takes between 1 and 4 days of travel.
-                        double timeInMinutes = Math.Min(Math.Max(dist*8.0f, 1440), 1440*4);
+                        double timeInMinutes = Math.Min(Math.Max(dist * 8.0f, 1440), 1440 * 4);
 
-                        var politics = new Politics
+                        Politics politics = new Politics()
                         {
                             Faction = otherFaction.Value,
                             HasMet = false,
                             RecentEvents = new List<PoliticalEvent>(),
-                            DistanceToCapital = new TimeSpan(0, (int) (timeInMinutes), 0)
+                            DistanceToCapital = new TimeSpan(0, (int)(timeInMinutes), 0)
                         };
 
                         politics.DispatchNewTradeEnvoy();
 
                         if (faction.Value.Race == otherFaction.Value.Race)
                         {
-                            politics.RecentEvents.Add(new PoliticalEvent
+                            politics.RecentEvents.Add(new PoliticalEvent()
                             {
                                 Change = 0.5f,
                                 Description = "we are of the same people",
                                 Duration = forever,
                                 Time = now
                             });
+
                         }
 
                         if (faction.Value.Race.NaturalEnemies.Any(name => name == otherFaction.Value.Race.Name))
                         {
                             if (!politics.HasEvent("we are taught to hate your kind"))
                             {
-                                politics.RecentEvents.Add(new PoliticalEvent
+                                politics.RecentEvents.Add(new PoliticalEvent()
                                 {
                                     Change = -2.0f,
                                     Description = "we are taught to hate your kind",
@@ -136,13 +226,15 @@ namespace DwarfCorp
 
                         FactionPolitics[pair] = politics;
                     }
+
                 }
             }
+            
         }
 
         public void SendTradeEnvoy(Faction natives)
         {
-            var playState = GameState.Game.StateManager.GetState<PlayState>("PlayState");
+            PlayState playState = (PlayState) GameState.Game.StateManager.GetState<PlayState>("PlayState");
 
             if (!playState.IsActiveState) return;
             Faction.TradeEnvoy envoy = null;
@@ -153,7 +245,7 @@ namespace DwarfCorp
                         PlayState.PlayerFaction, PlayState.Random.Next(4) + 1, false));
                 if (creatures.Count > 0)
                 {
-                    envoy = new Faction.TradeEnvoy
+                    envoy = new Faction.TradeEnvoy()
                     {
                         Creatures = creatures,
                         OtherFaction = PlayState.PlayerFaction,
@@ -165,7 +257,7 @@ namespace DwarfCorp
 
                     foreach (CreatureAI creature in envoy.Creatures)
                     {
-                        var resources = new ResourcePack(creature.Physics);
+                        ResourcePack resources = new ResourcePack(creature.Physics);
                     }
                     envoy.DistributeGoods();
 
@@ -176,6 +268,7 @@ namespace DwarfCorp
             }
             else
             {
+
                 List<CreatureAI> creatures =
                     PlayState.MonsterSpawner.Spawn(PlayState.MonsterSpawner.GenerateSpawnEvent(natives,
                         PlayState.PlayerFaction, PlayState.Random.Next(4) + 1, false));
@@ -192,7 +285,7 @@ namespace DwarfCorp
                         creature.Physics.LocalTransform = tf;
                     }
 
-                    envoy = new Faction.TradeEnvoy
+                    envoy = new Faction.TradeEnvoy()
                     {
                         Creatures = creatures,
                         OtherFaction = PlayState.PlayerFaction,
@@ -203,7 +296,7 @@ namespace DwarfCorp
                     };
                     foreach (CreatureAI creature in envoy.Creatures)
                     {
-                        var resources = new ResourcePack(creature.Physics);
+                        ResourcePack resources = new ResourcePack(creature.Physics);
                     }
                     envoy.DistributeGoods();
                     natives.TradeEnvoys.Add(envoy);
@@ -211,25 +304,24 @@ namespace DwarfCorp
                         "Click to zoom to location", creatures.First().ZoomToMe);
                 }
             }
+
         }
 
         public void SendWarParty(Faction natives)
         {
             // todo
-            PlayState.AnnouncementManager.Announce(
-                Drawer2D.WrapColor("War party from " + natives.Name + " has arrived!", Color.DarkRed), "");
+            PlayState.AnnouncementManager.Announce(Drawer2D.WrapColor("War party from " + natives.Name + " has arrived!", Color.DarkRed), "");
             Politics politics = GetPolitics(natives, PlayState.PlayerFaction);
             politics.WasAtWar = true;
-            List<CreatureAI> creatures =
-                PlayState.MonsterSpawner.Spawn(PlayState.MonsterSpawner.GenerateSpawnEvent(natives,
-                    PlayState.PlayerFaction, PlayState.Random.Next(5) + 1, true));
+            List<CreatureAI> creatures = PlayState.MonsterSpawner.Spawn(PlayState.MonsterSpawner.GenerateSpawnEvent(natives, PlayState.PlayerFaction, PlayState.Random.Next(5) + 1, true));
 
-            natives.WarParties.Add(new Faction.WarParty
+            natives.WarParties.Add(new Faction.WarParty()
             {
                 Creatures = creatures,
                 OtherFaction = PlayState.PlayerFaction,
                 ShouldRemove = false
             });
+
         }
 
 
@@ -240,18 +332,17 @@ namespace DwarfCorp
                 Pair<string> pair = mypolitics.Key;
                 if (!pair.IsSelfPair() && pair.Contains(PlayState.PlayerFaction.Name))
                 {
+                   
                     Faction otherFaction = null;
 
-                    otherFaction = pair.First.Equals(PlayState.PlayerFaction.Name)
-                        ? Factions.Factions[pair.Second]
-                        : Factions.Factions[pair.First];
+                    otherFaction = pair.First.Equals(PlayState.PlayerFaction.Name) ? Factions.Factions[pair.Second] : Factions.Factions[pair.First];
                     UpdateTradeEnvoys(otherFaction);
                     UpdateWarParties(otherFaction);
                     Race race = otherFaction.Race;
                     Politics relation = mypolitics.Value;
 
-
-                    if (race.IsIntelligent && !otherFaction.IsRaceFaction &&
+                    
+                    if (race.IsIntelligent  && !otherFaction.IsRaceFaction && 
                         relation.GetCurrentRelationship() != Relationship.Hateful)
                     {
                         if (otherFaction.TradeEnvoys.Count == 0 && !relation.TradePartyTimer.HasTriggered)
@@ -267,6 +358,7 @@ namespace DwarfCorp
                         {
                             relation.DispatchNewTradeEnvoy();
                         }
+
                     }
                     else if (race.IsIntelligent && !otherFaction.IsRaceFaction &&
                              relation.GetCurrentRelationship() == Relationship.Hateful)
@@ -297,10 +389,10 @@ namespace DwarfCorp
             {
                 if (envoy.DeathTimer.Update(PlayState.Time.CurrentDate))
                 {
-                    envoy.Creatures.ForEach(creature => creature.GetRootComponent().Die());
+                    envoy.Creatures.ForEach((creature) => creature.GetRootComponent().Die());
                 }
 
-                Politics politics = PlayState.ComponentManager.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
+                Diplomacy.Politics politics = PlayState.ComponentManager.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
                 if (politics.GetCurrentRelationship() == Relationship.Hateful)
                 {
                     RecallEnvoy(envoy);
@@ -310,9 +402,10 @@ namespace DwarfCorp
                     if (envoy.Creatures.Any(
                         creature => envoy.OtherFaction.AttackDesignations.Contains(creature.Physics)))
                     {
+
                         if (!politics.HasEvent("You attacked our trade delegates"))
                         {
-                            politics.RecentEvents.Add(new PoliticalEvent
+                            politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
                             {
                                 Change = -1.0f,
                                 Description = "You attacked our trade delegates",
@@ -322,7 +415,7 @@ namespace DwarfCorp
                         }
                         else
                         {
-                            politics.RecentEvents.Add(new PoliticalEvent
+                            politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
                             {
                                 Change = -2.0f,
                                 Description = "You attacked our trade delegates more than once",
@@ -337,25 +430,21 @@ namespace DwarfCorp
                 {
                     foreach (CreatureAI creature in envoy.Creatures)
                     {
+                       
                         Room tradePort = envoy.OtherFaction.GetNearestRoomOfType(BalloonPort.BalloonPortName,
                             creature.Position);
 
                         if (creature.Tasks.Count == 0)
                         {
-                            creature.Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, tradePort))
-                            {
-                                Name = "Go to trade port.",
-                                Priority = Task.PriorityType.Urgent
-                            });
+                            creature.Tasks.Add(new ActWrapperTask(new GoToZoneAct(creature, tradePort)) { Name = "Go to trade port.", Priority = Task.PriorityType.Urgent});
                         }
 
                         if (!tradePort.IsRestingOnZone(creature.Position)) continue;
 
                         envoy.ExpiditionState = Faction.Expidition.State.Trading;
-                        if (GameState.Game.StateManager.States.ContainsKey("DiplomacyState_" + faction.Name))
+                        if (GameState.Game.StateManager.States.ContainsKey("DiplomacyState_" +faction.Name))
                         {
-                            var state =
-                                GameState.Game.StateManager.States["DiplomacyState_" + faction.Name] as DiplomacyState;
+                            DiplomacyState state = GameState.Game.StateManager.States["DiplomacyState_" + faction.Name] as DiplomacyState;
                             if (state != null)
                             {
                                 state.Envoy = envoy;
@@ -367,7 +456,7 @@ namespace DwarfCorp
                         {
                             GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game,
                                 GameState.Game.StateManager,
-                                GameState.Game.StateManager.GetState<PlayState>("PlayState"), envoy)
+                                (PlayState) GameState.Game.StateManager.GetState<PlayState>("PlayState"), envoy)
                             {
                                 Name = "DiplomacyState_" + faction.Name,
                                 Envoy = envoy
@@ -402,6 +491,8 @@ namespace DwarfCorp
                 {
                     envoy.ShouldRemove = true;
                 }
+
+               
             }
 
             faction.TradeEnvoys.RemoveAll(t => t.ShouldRemove);
@@ -413,10 +504,10 @@ namespace DwarfCorp
             {
                 if (party.DeathTimer.Update(PlayState.Time.CurrentDate))
                 {
-                    party.Creatures.ForEach(creature => creature.Die());
+                    party.Creatures.ForEach((creature) => creature.Die());
                 }
 
-                Politics politics = PlayState.ComponentManager.Diplomacy.GetPolitics(faction, party.OtherFaction);
+                Diplomacy.Politics politics =  PlayState.ComponentManager.Diplomacy.GetPolitics(faction, party.OtherFaction);
                 if (politics.GetCurrentRelationship() != Relationship.Hateful)
                 {
                     RecallWarParty(party);
@@ -451,90 +542,5 @@ namespace DwarfCorp
             }
         }
 
-        public class PoliticalEvent
-        {
-            public float Change { get; set; }
-            public string Description { get; set; }
-            public TimeSpan Duration { get; set; }
-            public DateTime Time { get; set; }
-        }
-
-        public class Politics
-        {
-            public Politics()
-            {
-                WasAtWar = false;
-                HasMet = false;
-                WarPartyTimer = new DateTimer(PlayState.Time.CurrentDate, DistanceToCapital)
-                {
-                    TriggerOnce = true
-                };
-
-                TradePartyTimer = new DateTimer(PlayState.Time.CurrentDate, DistanceToCapital)
-                {
-                    TriggerOnce = true
-                };
-            }
-
-            public Faction Faction { get; set; }
-            public List<PoliticalEvent> RecentEvents { get; set; }
-            public bool HasMet { get; set; }
-            public bool WasAtWar { get; set; }
-            public TimeSpan DistanceToCapital { get; set; }
-            public DateTimer WarPartyTimer { get; set; }
-            public DateTimer TradePartyTimer { get; set; }
-
-            public void DispatchNewTradeEnvoy()
-            {
-                TradePartyTimer = new DateTimer(PlayState.Time.CurrentDate, DistanceToCapital)
-                {
-                    TriggerOnce = true
-                };
-            }
-
-            public void DispatchNewWarParty()
-            {
-                WarPartyTimer = new DateTimer(PlayState.Time.CurrentDate, DistanceToCapital)
-                {
-                    TriggerOnce = true
-                };
-            }
-
-            public Relationship GetCurrentRelationship()
-            {
-                float feeling = GetCurrentFeeling();
-
-                if (feeling < -0.5f)
-                {
-                    return Relationship.Hateful;
-                }
-                if (feeling < 0.5f)
-                {
-                    return Relationship.Indifferent;
-                }
-                return Relationship.Loving;
-            }
-
-            public bool HasEvent(string text)
-            {
-                return RecentEvents.Any(e => e.Description == text);
-            }
-
-            public float GetCurrentFeeling()
-            {
-                return RecentEvents.Sum(e => e.Change);
-            }
-
-            public void UpdateEvents(DateTime currentDate)
-            {
-                RecentEvents.RemoveAll(e => currentDate - e.Time > e.Duration);
-            }
-        }
-
-        [JsonArray]
-        public class PoliticsDictionary : Dictionary<Pair<string>, Politics>
-        {
-            // Empty class needed to deserialize dictionary of string pairs.
-        }
     }
 }

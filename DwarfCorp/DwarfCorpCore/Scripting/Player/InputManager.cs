@@ -1,27 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Wraps XNA's keyboard/mouse input to allow for a "callback" style instead of a "polling" style.
-    ///     This can be used to have specific functions called when a key is pressed.
+    /// Wraps XNA's keyboard/mouse input to allow for a "callback" style instead of a "polling" style.
+    /// This can be used to have specific functions called when a key is pressed.
     /// </summary>
     public class InputManager
     {
-        public delegate void OnKeyPressed(Keys key);
-
-        public delegate void OnKeyReleased(Keys key);
-
-        public delegate void OnMouseClicked(MouseButton button);
-
-        public delegate void OnMousePressed(MouseButton button);
-
-        public delegate void OnMouseReleased(MouseButton button);
-
-        public delegate void OnMouseScrolled(int amount);
-
         public enum MouseButton
         {
             Left,
@@ -29,8 +24,41 @@ namespace DwarfCorp
             Middle
         }
 
+
+        public delegate void OnMousePressed(MouseButton button);
+
+        public delegate void OnMouseReleased(MouseButton button);
+
+        public delegate void OnMouseClicked(MouseButton button);
+
+        public delegate void OnMouseScrolled(int amount);
+
+        public delegate void OnKeyPressed(Keys key);
+
+        public delegate void OnKeyReleased(Keys key);
+
+        public static Dictionary<Keys, KeyState> KeyStates { get; set; }
+        public static Dictionary<MouseButton, ButtonState> ButtonStates { get; set; }
+        public static event OnMousePressed MousePressedCallback;
+        public static event OnMouseReleased MouseReleasedCallback;
+        public static event OnMouseClicked MouseClickedCallback;
+        public static event OnMouseScrolled MouseScrolledCallback;
         public static Keys[] KeyValues = (Keys[]) Enum.GetValues(typeof (Keys));
         public static MouseButton[] MouseValues = (MouseButton[]) Enum.GetValues(typeof (MouseButton));
+        public static Dictionary<Keys, int> NumberKeys { get; set; }  
+
+        private static void OnMouseScrolledCallback(int amount)
+        {
+            OnMouseScrolled handler = MouseScrolledCallback;
+            if(handler != null)
+            {
+                handler(amount);
+            }
+        }
+
+
+        public static event OnKeyPressed KeyPressedCallback;
+        public static event OnKeyReleased KeyReleasedCallback;
 
         public InputManager()
         {
@@ -46,27 +74,6 @@ namespace DwarfCorp
             KeyPressedCallback += dummykeypressed;
             KeyReleasedCallback += dummykeypressed;
         }
-
-        public static Dictionary<Keys, KeyState> KeyStates { get; set; }
-        public static Dictionary<MouseButton, ButtonState> ButtonStates { get; set; }
-        public static Dictionary<Keys, int> NumberKeys { get; set; }
-        public static event OnMousePressed MousePressedCallback;
-        public static event OnMouseReleased MouseReleasedCallback;
-        public static event OnMouseClicked MouseClickedCallback;
-        public static event OnMouseScrolled MouseScrolledCallback;
-
-        private static void OnMouseScrolledCallback(int amount)
-        {
-            OnMouseScrolled handler = MouseScrolledCallback;
-            if (handler != null)
-            {
-                handler(amount);
-            }
-        }
-
-
-        public static event OnKeyPressed KeyPressedCallback;
-        public static event OnKeyReleased KeyReleasedCallback;
 
         public void InitializeNumKeys()
         {
@@ -119,23 +126,21 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        ///     Tries to convert keyboard input to characters and prevents repeatedly returning the
-        ///     same character if a key was pressed last frame, but not yet unpressed this frame.
+        /// Tries to convert keyboard input to characters and prevents repeatedly returning the 
+        /// same character if a key was pressed last frame, but not yet unpressed this frame.
         /// </summary>
         /// <param Name="keyboard">The current KeyboardState</param>
         /// <param Name="oldKeyboard">The KeyboardState of the previous frame</param>
-        /// <param Name="key">
-        ///     When this method returns, contains the correct character if conversion succeeded.
-        ///     Else contains the null, (000), character.
-        /// </param>
+        /// <param Name="key">When this method returns, contains the correct character if conversion succeeded.
+        /// Else contains the null, (000), character.</param>
         /// <returns>True if conversion was successful</returns>
         public static bool TryConvertKeyboardInput(Keys pressed, bool shift, out char key)
         {
-            switch (pressed)
+            switch(pressed)
             {
                     //Alphabet keys
                 case Keys.A:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'A';
                     }
@@ -145,7 +150,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.B:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'B';
                     }
@@ -155,7 +160,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.C:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'C';
                     }
@@ -165,7 +170,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.D:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'D';
                     }
@@ -175,7 +180,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.E:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'E';
                     }
@@ -185,7 +190,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.F:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'F';
                     }
@@ -195,7 +200,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.G:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'G';
                     }
@@ -205,7 +210,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.H:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'H';
                     }
@@ -215,7 +220,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.I:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'I';
                     }
@@ -225,7 +230,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.J:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'J';
                     }
@@ -235,7 +240,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.K:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'K';
                     }
@@ -245,7 +250,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.L:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'L';
                     }
@@ -255,7 +260,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.M:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'M';
                     }
@@ -265,7 +270,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.N:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'N';
                     }
@@ -275,7 +280,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.O:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'O';
                     }
@@ -285,7 +290,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.P:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'P';
                     }
@@ -295,7 +300,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.Q:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'Q';
                     }
@@ -305,7 +310,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.R:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'R';
                     }
@@ -315,7 +320,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.S:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'S';
                     }
@@ -325,7 +330,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.T:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'T';
                     }
@@ -335,7 +340,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.U:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'U';
                     }
@@ -345,7 +350,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.V:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'V';
                     }
@@ -355,7 +360,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.W:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'W';
                     }
@@ -365,7 +370,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.X:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'X';
                     }
@@ -375,7 +380,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.Y:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'Y';
                     }
@@ -385,7 +390,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.Z:
-                    if (shift)
+                    if(shift)
                     {
                         key = 'Z';
                     }
@@ -397,7 +402,7 @@ namespace DwarfCorp
 
                     //Decimal keys
                 case Keys.D0:
-                    if (shift)
+                    if(shift)
                     {
                         key = ')';
                     }
@@ -407,7 +412,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.D1:
-                    if (shift)
+                    if(shift)
                     {
                         key = '!';
                     }
@@ -417,7 +422,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.D2:
-                    if (shift)
+                    if(shift)
                     {
                         key = '@';
                     }
@@ -427,7 +432,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.D3:
-                    if (shift)
+                    if(shift)
                     {
                         key = '#';
                     }
@@ -437,7 +442,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.D4:
-                    if (shift)
+                    if(shift)
                     {
                         key = '$';
                     }
@@ -447,7 +452,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.D5:
-                    if (shift)
+                    if(shift)
                     {
                         key = '%';
                     }
@@ -457,7 +462,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.D6:
-                    if (shift)
+                    if(shift)
                     {
                         key = '^';
                     }
@@ -467,7 +472,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.D7:
-                    if (shift)
+                    if(shift)
                     {
                         key = '&';
                     }
@@ -477,7 +482,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.D8:
-                    if (shift)
+                    if(shift)
                     {
                         key = '*';
                     }
@@ -487,7 +492,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.D9:
-                    if (shift)
+                    if(shift)
                     {
                         key = '(';
                     }
@@ -531,7 +536,7 @@ namespace DwarfCorp
 
                     //Special keys
                 case Keys.OemTilde:
-                    if (shift)
+                    if(shift)
                     {
                         key = '~';
                     }
@@ -541,7 +546,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.OemSemicolon:
-                    if (shift)
+                    if(shift)
                     {
                         key = ':';
                     }
@@ -551,7 +556,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.OemQuotes:
-                    if (shift)
+                    if(shift)
                     {
                         key = '"';
                     }
@@ -561,7 +566,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.OemQuestion:
-                    if (shift)
+                    if(shift)
                     {
                         key = '?';
                     }
@@ -571,7 +576,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.OemPlus:
-                    if (shift)
+                    if(shift)
                     {
                         key = '+';
                     }
@@ -581,7 +586,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.OemPipe:
-                    if (shift)
+                    if(shift)
                     {
                         key = '|';
                     }
@@ -591,7 +596,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.OemPeriod:
-                    if (shift)
+                    if(shift)
                     {
                         key = '>';
                     }
@@ -601,7 +606,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.OemOpenBrackets:
-                    if (shift)
+                    if(shift)
                     {
                         key = '{';
                     }
@@ -611,7 +616,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.OemCloseBrackets:
-                    if (shift)
+                    if(shift)
                     {
                         key = '}';
                     }
@@ -621,7 +626,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.OemMinus:
-                    if (shift)
+                    if(shift)
                     {
                         key = '_';
                     }
@@ -631,7 +636,7 @@ namespace DwarfCorp
                     }
                     return true;
                 case Keys.OemComma:
-                    if (shift)
+                    if(shift)
                     {
                         key = '<';
                     }
@@ -652,9 +657,9 @@ namespace DwarfCorp
 
         public static void KeysInit(KeyboardState keyState)
         {
-            foreach (Keys key in KeyValues)
+            foreach(Keys key in KeyValues)
             {
-                if (keyState.IsKeyDown(key))
+                if(keyState.IsKeyDown(key))
                 {
                     KeyStates[key] = KeyState.Down;
                 }
@@ -667,10 +672,10 @@ namespace DwarfCorp
 
         public static void MouseInit(MouseState mouseState)
         {
-            foreach (MouseButton button in MouseValues)
+            foreach(MouseButton button in MouseValues)
             {
-                var state = ButtonState.Pressed;
-                switch (button)
+                ButtonState state = ButtonState.Pressed;
+                switch(button)
                 {
                     case MouseButton.Right:
                         state = mouseState.LeftButton;
@@ -688,10 +693,10 @@ namespace DwarfCorp
 
         public static void MouseUpate(MouseState mouseState)
         {
-            foreach (MouseButton button in MouseValues)
+            foreach(MouseButton button in MouseValues)
             {
-                var state = ButtonState.Pressed;
-                switch (button)
+                ButtonState state = ButtonState.Pressed;
+                switch(button)
                 {
                     case MouseButton.Right:
                         state = mouseState.RightButton;
@@ -704,9 +709,9 @@ namespace DwarfCorp
                         break;
                 }
 
-                if (state == ButtonState.Pressed)
+                if(state == ButtonState.Pressed)
                 {
-                    if (ButtonStates[button] == ButtonState.Released)
+                    if(ButtonStates[button] == ButtonState.Released)
                     {
                         MousePressedCallback(button);
                     }
@@ -715,7 +720,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    if (ButtonStates[button] == ButtonState.Pressed)
+                    if(ButtonStates[button] == ButtonState.Pressed)
                     {
                         MouseReleasedCallback(button);
                         MouseClickedCallback(button);
@@ -727,19 +732,19 @@ namespace DwarfCorp
 
         public static void KeysUpdate(KeyboardState keyState)
         {
-            foreach (Keys key in KeyValues)
+            foreach(Keys key in KeyValues)
             {
-                if (keyState.IsKeyDown(key))
+                if(keyState.IsKeyDown(key))
                 {
-                    if (KeyStates[key] == KeyState.Up)
+                    if(KeyStates[key] == KeyState.Up)
                     {
                         KeyPressedCallback(key);
                         KeyStates[key] = KeyState.Down;
                     }
                 }
-                else if (keyState.IsKeyUp(key))
+                else if(keyState.IsKeyUp(key))
                 {
-                    if (KeyStates[key] == KeyState.Down)
+                    if(KeyStates[key] == KeyState.Down)
                     {
                         KeyReleasedCallback(key);
                         KeyStates[key] = KeyState.Up;
@@ -763,11 +768,15 @@ namespace DwarfCorp
 
         public static int GetNum(Keys key)
         {
-            if (IsNumKey(key))
+            if(IsNumKey(key))
             {
                 return NumberKeys[key];
             }
-            return -1;
+            else
+            {
+                return -1;
+            }
         }
     }
+
 }

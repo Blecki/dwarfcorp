@@ -30,22 +30,24 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    ///     This is a spell that applies buffs to a creature. Buff it up!
-    /// </summary>
     [JsonObject(IsReference = true)]
     public class BuffSpell : Spell
     {
+        public List<Creature.Buff> Buffs { get; set; } 
+        
         public BuffSpell()
         {
+            
         }
 
         public BuffSpell(params Creature.Buff[] buffs)
@@ -59,28 +61,24 @@ namespace DwarfCorp
             Image = new NamedImageFrame(ContentPaths.GUI.icons, 32, 0, 2);
         }
 
-        /// <summary>
-        ///     Buffs to apply to the creature.
-        /// </summary>
-        public List<Creature.Buff> Buffs { get; set; }
-
 
         public override void OnEntitiesSelected(SpellTree tree, List<Body> entities)
         {
             foreach (Body body in entities)
             {
-                // Only select creatures.
                 Creature creature = body.GetChildrenOfType<Creature>().FirstOrDefault();
 
                 if (creature == null) continue;
-                // Try casting all the buffs on each of the creatures that were selected.
-                foreach (Creature.Buff buff in Buffs)
+                else
                 {
-                    if (OnCast(tree))
+                    foreach (Creature.Buff buff in Buffs)
                     {
-                        Vector3 p = creature.AI.Position + Vector3.Up;
-                        IndicatorManager.DrawIndicator("-" + ManaCost + " M", p, 1.0f, Color.Red);
-                        creature.AddBuff(buff.Clone());
+                        if (OnCast(tree))
+                        {
+                            Vector3 p = creature.AI.Position + Vector3.Up;
+                            IndicatorManager.DrawIndicator("-" + ManaCost + " M", p, 1.0f, Color.Red);
+                            creature.AddBuff(buff.Clone());
+                        }
                     }
                 }
             }

@@ -30,19 +30,24 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using DwarfCorp.GameStates;
+using DwarfCorpCore;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+
 namespace DwarfCorp
 {
+
     public class DwarfGame : Game
     {
-        public static bool ExitGame = false;
+        public GameStateManager StateManager { get; set; }
         public GraphicsDeviceManager Graphics;
+        public TextureManager TextureManager { get; set; }
+        public static SpriteBatch SpriteBatch { get; set; }
 
+ 
         public DwarfGame()
         {
             GameState.Game = this;
@@ -61,22 +66,16 @@ namespace DwarfCorp
             {
                 Graphics.ApplyChanges();
             }
-            catch (NoSuitableGraphicsDeviceException exception)
+            catch(NoSuitableGraphicsDeviceException exception)
             {
                 Console.Error.WriteLine(exception.Message);
             }
+
         }
-
-        public GameStateManager StateManager { get; set; }
-
-        public TextureManager TextureManager { get; set; }
-        public static SpriteBatch SpriteBatch { get; set; }
-
 
         public static string GetGameDirectory()
         {
-            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + ProgramData.DirChar +
-                   "DwarfCorp";
+            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + ProgramData.DirChar + "DwarfCorp";
         }
 
         protected override void Initialize()
@@ -87,7 +86,8 @@ namespace DwarfCorp
 
         protected override void LoadContent()
         {
-            var playState = new PlayState(this, StateManager);
+
+            PlayState playState = new PlayState(this, StateManager);
             BiomeLibrary.InitializeStatics();
             StateManager.States["IntroState"] = new IntroState(this, StateManager);
             StateManager.States["PlayState"] = playState;
@@ -101,7 +101,7 @@ namespace DwarfCorp
             StateManager.States["GameLoaderState"] = new GameLoaderState(this, StateManager);
             StateManager.States["LoseState"] = new LoseState(this, StateManager, playState);
 
-            if (GameSettings.Default.DisplayIntro)
+            if(GameSettings.Default.DisplayIntro)
             {
                 StateManager.PushState("IntroState");
             }
@@ -145,5 +145,8 @@ namespace DwarfCorp
             Program.SignalShutdown();
             base.OnExiting(sender, args);
         }
+
+        public static bool ExitGame = false;
     }
+
 }

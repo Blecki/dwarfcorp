@@ -30,17 +30,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Tells a creature that it should kill an entity.
+    /// Tells a creature that it should kill an entity.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class KillEntityTask : Task
     {
         public enum KillType
@@ -49,8 +50,8 @@ namespace DwarfCorp
             Attack,
             Auto
         }
-
         public Body EntityToKill = null;
+        public KillType Mode { get; set; }
 
         public KillEntityTask(Body entity, KillType type)
         {
@@ -59,8 +60,6 @@ namespace DwarfCorp
             EntityToKill = entity;
             Priority = PriorityType.Urgent;
         }
-
-        public KillType Mode { get; set; }
 
         public override Task Clone()
         {
@@ -79,13 +78,12 @@ namespace DwarfCorp
                 return 10000;
             }
 
-            return (agent.AI.Position - EntityToKill.LocalTransform.Translation).LengthSquared()*0.01f;
+            else return (agent.AI.Position - EntityToKill.LocalTransform.Translation).LengthSquared() * 0.01f;
         }
 
         public override bool ShouldDelete(Creature agent)
         {
-            if (EntityToKill == null || EntityToKill.IsDead ||
-                (EntityToKill.Position - agent.AI.Position).Length() > 100)
+            if (EntityToKill == null || EntityToKill.IsDead || (EntityToKill.Position - agent.AI.Position).Length() > 100)
             {
                 return true;
             }
@@ -95,22 +93,22 @@ namespace DwarfCorp
                 case KillType.Attack:
                 {
                     if (!agent.Faction.AttackDesignations.Contains(EntityToKill)) return true;
-                    return false;
-                    break;
-                }
-                case KillType.Chop:
-                {
-                    if (!agent.Faction.ChopDesignations.Contains(EntityToKill))
-                    {
-                        return true;
+                        return false;
+                        break;
                     }
-                    return false;
-                    break;
-                }
+                case KillType.Chop:
+                    {
+                        if (!agent.Faction.ChopDesignations.Contains(EntityToKill))
+                        {
+                            return true;
+                        }
+                        return false;
+                        break;
+                    }
                 case KillType.Auto:
-                {
-                    return false;
-                }
+                    {
+                        return false;
+                    }
             }
 
             return false;
@@ -118,49 +116,53 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            if (EntityToKill == null || EntityToKill.IsDead)
+            if(EntityToKill == null || EntityToKill.IsDead)
             {
                 return false;
             }
-            Creature ai = EntityToKill.GetChildrenOfTypeRecursive<Creature>().FirstOrDefault();
-            switch (Mode)
+            else
             {
-                case KillType.Attack:
+                Creature ai = EntityToKill.GetChildrenOfTypeRecursive<Creature>().FirstOrDefault();
+                switch (Mode)
                 {
-                    if (!agent.Faction.AttackDesignations.Contains(EntityToKill)) return false;
-                    return true;
-                    break;
-                }
-                case KillType.Chop:
-                {
-                    if (!agent.Faction.ChopDesignations.Contains(EntityToKill))
+                    case KillType.Attack:
                     {
-                        return false;
+                        if (!agent.Faction.AttackDesignations.Contains(EntityToKill)) return false;
+                        return true;
+                        break;
                     }
-                    return true;
-                    break;
+                    case KillType.Chop:
+                    {
+                        if (!agent.Faction.ChopDesignations.Contains(EntityToKill))
+                        {
+                            return false;
+                        }
+                        return true;
+                        break;
+                    }
+                    case KillType.Auto:
+                    {
+                        return true;
+                    }
                 }
-                case KillType.Auto:
+
+                Voxel target = new Voxel();
+                bool voxExists = PlayState.ChunkManager.ChunkData.GetVoxel(EntityToKill.Position, ref target);
+                if (!voxExists || !PlanAct.PathExists(agent.Physics.CurrentVoxel, target, agent.AI))
+                {
+                    return false;
+                }
+
+
+                if(ai == null)
                 {
                     return true;
                 }
+                Relationship relation =
+                    PlayState.ComponentManager.Diplomacy.GetPolitics(ai.Faction, agent.Faction).GetCurrentRelationship();
+                return relation == Relationship.Hateful || relation == Relationship.Indifferent;
             }
-
-            var target = new Voxel();
-            bool voxExists = PlayState.ChunkManager.ChunkData.GetVoxel(EntityToKill.Position, ref target);
-            if (!voxExists || !PlanAct.PathExists(agent.Physics.CurrentVoxel, target, agent.AI))
-            {
-                return false;
-            }
-
-
-            if (ai == null)
-            {
-                return true;
-            }
-            Relationship relation =
-                PlayState.ComponentManager.Diplomacy.GetPolitics(ai.Faction, agent.Faction).GetCurrentRelationship();
-            return relation == Relationship.Hateful || relation == Relationship.Indifferent;
         }
     }
+
 }

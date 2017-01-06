@@ -30,17 +30,22 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Draws text to the screen
+    /// Draws text to the screen
     /// </summary>
     public class TextDrawCommand : DrawCommand2D
     {
+        public SpriteFont Font { get; set; }
+        public string Text { get; set; }
+        public Vector3 Position { get; set; }
+        public Color TextColor { get; set; }
+        public Color StrokeColor { get; set; }
+
         public TextDrawCommand(string text, SpriteFont font, Vector3 position, Color color, Color strokeColor)
         {
             Font = font;
@@ -49,12 +54,6 @@ namespace DwarfCorp
             TextColor = color;
             StrokeColor = strokeColor;
         }
-
-        public SpriteFont Font { get; set; }
-        public string Text { get; set; }
-        public Vector3 Position { get; set; }
-        public Color TextColor { get; set; }
-        public Color StrokeColor { get; set; }
 
         public override void Render(SpriteBatch batch, Camera camera, Viewport viewport)
         {
@@ -80,4 +79,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

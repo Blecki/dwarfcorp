@@ -30,27 +30,33 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using DwarfCorp.GameStates;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     The task manager attempts to optimally assign tasks to creatures based
-    ///     on feasibility and cost contraints.
+    /// The task manager attempts to optimally assign tasks to creatures based
+    /// on feasibility and cost contraints.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class TaskManager
     {
+        public TaskManager()
+        {
+        }
+
         public int GetMaxColumnValue(int[,] matrix, int column, int numRows, int numColumns)
         {
             int maxValue = int.MinValue;
 
-            for (int r = 0; r < numRows; r++)
+            for(int r = 0; r < numRows; r++)
             {
-                if (matrix[r, column] > maxValue)
+                if(matrix[r, column] > maxValue)
                 {
                     maxValue = matrix[r, column];
                 }
@@ -63,9 +69,9 @@ namespace DwarfCorp
         {
             int maxValue = int.MinValue;
 
-            for (int c = 0; c < numColumns; c++)
+            for(int c = 0; c < numColumns; c++)
             {
-                if (matrix[row, c] > maxValue)
+                if(matrix[row, c] > maxValue)
                 {
                     maxValue = matrix[row, c];
                 }
@@ -78,11 +84,11 @@ namespace DwarfCorp
         {
             int maxValue = int.MinValue;
 
-            for (int c = 0; c < numColumns; c++)
+            for(int c = 0; c < numColumns; c++)
             {
-                for (int row = 0; row < numRows; row++)
+                for(int row = 0; row < numRows; row++)
                 {
-                    if (matrix[row, c] > maxValue)
+                    if(matrix[row, c] > maxValue)
                     {
                         maxValue = matrix[row, c];
                     }
@@ -94,7 +100,7 @@ namespace DwarfCorp
 
         public static void AssignTasksGreedy(List<Task> newGoals, List<CreatureAI> creatures, int maxPerGoal)
         {
-            var counts = new List<int>();
+            List<int> counts = new List<int>();
 
             for (int i = 0; i < newGoals.Count; i++)
             {
@@ -102,10 +108,10 @@ namespace DwarfCorp
             }
 
             bool allAssigned = false;
-            var randomized = new List<CreatureAI>(creatures);
-            var costs = new List<KeyValuePair<int, float>>();
+            List<CreatureAI> randomized = new List<CreatureAI>(creatures);
+            List<KeyValuePair<int, float>> costs = new List<KeyValuePair<int, float>>();
             int iters = 0;
-            while (!allAssigned && iters < newGoals.Count*creatures.Count)
+            while (!allAssigned && iters < newGoals.Count * creatures.Count)
             {
                 randomized.Shuffle();
                 iters++;
@@ -130,10 +136,10 @@ namespace DwarfCorp
                         {
                             return 0;
                         }
-                        return pairA.Value.CompareTo(pairB.Value);
+                        else return pairA.Value.CompareTo(pairB.Value);
                     });
 
-                    foreach (var taskCost in costs)
+                    foreach (KeyValuePair<int, float> taskCost in costs)
                     {
                         if (!creature.Tasks.Contains(newGoals[taskCost.Key]) && counts[taskCost.Key] < maxPerGoal)
                         {
@@ -153,19 +159,20 @@ namespace DwarfCorp
 
         public static void AssignTasks(List<Task> newGoals, List<CreatureAI> creatures)
         {
-            if (newGoals.Count == 0 || creatures.Count == 0)
+
+            if(newGoals.Count == 0 || creatures.Count == 0)
             {
                 return;
             }
 
-            var unassignedGoals = new List<Task>();
+            List<Task> unassignedGoals = new List<Task>();
             unassignedGoals.AddRange(newGoals);
 
-            while (unassignedGoals.Count > 0)
+            while(unassignedGoals.Count > 0)
             {
                 int[] assignments = CalculateOptimalAssignment(unassignedGoals, creatures);
-                var removals = new List<Task>();
-                for (int i = 0; i < creatures.Count; i++)
+                List<Task> removals = new List<Task>();
+                for(int i = 0; i < creatures.Count; i++)
                 {
                     int assignment = assignments[i];
 
@@ -178,20 +185,20 @@ namespace DwarfCorp
                     removals.Add(unassignedGoals[assignment]);
                 }
 
-                foreach (Task removal in removals)
+                foreach(Task removal in removals)
                 {
                     unassignedGoals.Remove(removal);
                 }
             }
         }
 
-        public static int[] CalculateOptimalAssignment(List<Task> newGoals, List<CreatureAI> agents)
+        public static int[] CalculateOptimalAssignment(List<Task> newGoals, List<CreatureAI> agents )
         {
             int numGoals = newGoals.Count;
             int numAgents = agents.Count;
             int maxSize = Math.Max(numGoals, numAgents);
 
-            var goalMatrix = new int[maxSize, maxSize];
+            int[,] goalMatrix = new int[maxSize, maxSize];
             const float multiplier = 100;
 
             if (numGoals == 0 || numAgents == 0)
@@ -208,7 +215,7 @@ namespace DwarfCorp
                     CreatureAI agent = agents[agentIndex];
                     float floatCost = goal.ComputeCost(agent.Creature);
 
-                    var cost = (int) (floatCost*multiplier);
+                    int cost = (int)(floatCost * multiplier);
 
                     if (!goal.IsFeasible(agent.Creature))
                     {
@@ -255,6 +262,10 @@ namespace DwarfCorp
             }
 
             return goalMatrix.FindAssignments();
+
         }
+
+
     }
+
 }

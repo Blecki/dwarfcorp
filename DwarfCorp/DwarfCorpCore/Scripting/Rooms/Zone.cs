@@ -1,4 +1,4 @@
-﻿// Room.cs
+﻿// Zone.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -30,51 +30,32 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Security.AccessControl;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A zone is a collection of voxel storages.
+    /// A zone is a collection of voxel storages.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class Zone
     {
         public string ID = "";
-        [JsonProperty] protected int ResPerVoxel = 8;
         public List<Voxel> Voxels = new List<Voxel>();
         public List<Body> ZoneBodies = new List<Body>();
-
-        public Zone(string id, ChunkManager chunks)
-        {
-            ID = id;
-            ReplacementType = null;
-            Chunks = chunks;
-            Resources = new ResourceContainer
-            {
-                MaxResources = 1
-            };
-        }
-
-        public Zone()
-        {
-        }
-
+            
+        [JsonProperty]
+        protected int ResPerVoxel = 8;
         [JsonIgnore]
-        public int ResourcesPerVoxel
-        {
-            get { return ResPerVoxel; }
-            set
-            {
-                ResPerVoxel = value;
-                RecalculateMaxResources();
-            }
-        }
-
+        public int ResourcesPerVoxel { get { return ResPerVoxel; } set { ResPerVoxel = value; RecalculateMaxResources(); } }
+        
         public bool ReplaceVoxelTypes
         {
             get { return ReplacementType != null; }
@@ -86,6 +67,23 @@ namespace DwarfCorp
         public ChunkManager Chunks { get; set; }
 
         public ResourceContainer Resources { get; set; }
+
+        public Zone(string id, ChunkManager chunks)
+        {
+            ID = id;
+            ReplacementType = null;
+            Chunks = chunks;
+            Resources = new ResourceContainer
+            {
+                MaxResources = 1
+            };
+
+        }
+
+        public Zone()
+        {
+
+        }
 
         public Body GetNearestBody(Vector3 location)
         {
@@ -136,14 +134,14 @@ namespace DwarfCorp
 
         public virtual void Destroy()
         {
-            var toKill = new List<Body>();
+            List<Body> toKill = new List<Body>();
             toKill.AddRange(ZoneBodies);
             foreach (Body body in toKill)
             {
                 body.Die();
             }
 
-            var voxelsToKill = new List<Voxel>();
+            List<Voxel> voxelsToKill = new List<Voxel>();
             voxelsToKill.AddRange(Voxels);
             foreach (Voxel voxel in voxelsToKill)
             {
@@ -165,7 +163,7 @@ namespace DwarfCorp
             return Resources.IsFull();
         }
 
-
+        
         public bool ContainsVoxel(Voxel voxel)
         {
             return Voxels.Any(store => store.Equals(voxel));
@@ -175,14 +173,14 @@ namespace DwarfCorp
         {
             Voxel toRemove = Voxels.FirstOrDefault(store => store.Equals(voxel));
 
-            if (toRemove == null)
+            if(toRemove == null)
             {
                 return;
             }
 
             Voxels.Remove(toRemove);
 
-            if (ReplaceVoxelTypes)
+            if(ReplaceVoxelTypes)
             {
                 toRemove.Kill();
             }
@@ -193,7 +191,7 @@ namespace DwarfCorp
         public virtual void RecalculateMaxResources()
         {
             if (Voxels == null) return;
-            int newResources = Voxels.Count*ResourcesPerVoxel;
+            int newResources = Voxels.Count * ResourcesPerVoxel;
 
             if (Resources != null)
             {
@@ -211,14 +209,14 @@ namespace DwarfCorp
 
         public virtual void AddVoxel(Voxel voxel)
         {
-            if (ContainsVoxel(voxel))
+            if(ContainsVoxel(voxel))
             {
                 return;
             }
 
             Voxels.Add(voxel);
 
-            if (ReplaceVoxelTypes)
+            if(ReplaceVoxelTypes)
             {
                 Voxel v = voxel;
                 v.Type = ReplacementType;
@@ -226,19 +224,20 @@ namespace DwarfCorp
             }
 
             RecalculateMaxResources();
+          
         }
 
         public Voxel GetNearestVoxel(Vector3 position)
         {
             Voxel closest = null;
-            var halfSize = new Vector3(0.5f, 0.5f, 0.5f);
+            Vector3 halfSize = new Vector3(0.5f, 0.5f, 0.5f);
             double closestDist = double.MaxValue;
 
             foreach (Voxel v in Voxels)
             {
                 double d = (v.Position - position + halfSize).LengthSquared();
 
-                if (d < closestDist)
+                if(d < closestDist)
                 {
                     closestDist = d;
                     closest = v;
@@ -254,11 +253,10 @@ namespace DwarfCorp
             return Resources.AddItem(component);
         }
 
-
+       
         public bool Intersects(BoundingBox box)
         {
-            var larger = new BoundingBox(box.Min - new Vector3(0.1f, 0.1f, 0.1f),
-                box.Max + new Vector3(0.1f, 0.1f, 0.1f));
+            BoundingBox larger = new BoundingBox(box.Min - new Vector3(0.1f, 0.1f, 0.1f), box.Max + new Vector3(0.1f, 0.1f, 0.1f));
 
             return Voxels.Any(storage => storage.GetBoundingBox().Intersects(larger));
         }
@@ -279,7 +277,7 @@ namespace DwarfCorp
             return GetBoundingBox().Contains(worldCoordinate) != ContainmentType.Disjoint;
         }
 
-        public bool IsRestingOnZone(Vector3 worldCoordinate, float expansion = 1.0f)
+        public bool IsRestingOnZone(Vector3 worldCoordinate, float expansion=1.0f)
         {
             BoundingBox box = GetBoundingBox();
             box.Max.Y += 1;
@@ -287,4 +285,5 @@ namespace DwarfCorp
             return box.Contains(worldCoordinate) != ContainmentType.Disjoint;
         }
     }
+
 }

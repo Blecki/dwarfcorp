@@ -30,19 +30,21 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
-using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Tells a creature that it should put the given item in the given voxel zone.
+    /// Tells a creature that it should put the given item in the given voxel zone.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class PutItemInZoneTask : Task
     {
-        public Item Item;
         public Zone Zone;
+        public Item Item;
 
         public PutItemInZoneTask()
         {
@@ -65,14 +67,13 @@ namespace DwarfCorp
         public override Act CreateScript(Creature creature)
         {
             return null;
-            //return new MoveItemAct(creature.AI, Item, Room);
+            //return new MoveItemAct(creature.AI, Item, Zone);
         }
 
         public override float ComputeCost(Creature agent)
         {
-            return (Zone == null || Item == null || Item.UserData == null)
-                ? 1000
-                : (agent.AI.Position - Item.UserData.GlobalTransform.Translation).LengthSquared();
+            return (Zone == null || Item == null || Item.UserData == null) ? 1000 : (agent.AI.Position - Item.UserData.GlobalTransform.Translation).LengthSquared();
         }
     }
+
 }

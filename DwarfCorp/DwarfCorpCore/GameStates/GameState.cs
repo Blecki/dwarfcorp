@@ -30,16 +30,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System.Threading;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.GameStates
 {
     /// <summary>
-    ///     A game state is a generic representation of how the game behaves. Game states live in a stack. The state on the top
-    ///     of the stack is the one currently running.
-    ///     States can be both rendered and updated. There are brief transition periods between states where animations can
-    ///     occur.
+    /// A game state is a generic representation of how the game behaves. Game states live in a stack. The state on the top of the stack is the one currently running.
+    /// States can be both rendered and updated. There are brief transition periods between states where animations can occur.
     /// </summary>
     public class GameState
     {
@@ -49,6 +47,16 @@ namespace DwarfCorp.GameStates
             Exiting,
             Running
         }
+
+        public static DwarfGame Game { get; set; }
+        public string Name { get; set; }
+        public GameStateManager StateManager { get; set; }
+        public bool IsInitialized { get; set; }
+        public float TransitionValue { get; set; }
+        public TransitionMode Transitioning { get; set; }
+        public bool RenderUnderneath { get; set; }
+        public bool IsActiveState { get; set; }
+        public bool EnableScreensaver { get; set; }
 
         public GameState(DwarfGame game, string name, GameStateManager stateManager)
         {
@@ -62,16 +70,6 @@ namespace DwarfCorp.GameStates
             RenderUnderneath = false;
             IsActiveState = false;
         }
-
-        public static DwarfGame Game { get; set; }
-        public string Name { get; set; }
-        public GameStateManager StateManager { get; set; }
-        public bool IsInitialized { get; set; }
-        public float TransitionValue { get; set; }
-        public TransitionMode Transitioning { get; set; }
-        public bool RenderUnderneath { get; set; }
-        public bool IsActiveState { get; set; }
-        public bool EnableScreensaver { get; set; }
 
         public virtual void OnEnter()
         {
@@ -103,11 +101,24 @@ namespace DwarfCorp.GameStates
 
         public virtual void OnPopped()
         {
+            
         }
+
     }
 
     public class WaitState : GameState
     {
+        public Thread WaitThread { get; set; }
+        public DwarfGUI GUI { get; set; }
+
+        public event Finished OnFinished;
+
+        protected virtual void OnOnFinished()
+        {
+            Finished handler = OnFinished;
+            if (handler != null) handler();
+        }
+        public bool Done { get; protected set; }
         public delegate void Finished();
 
         public WaitState(DwarfGame game, string name, GameStateManager stateManager, Thread waitThread, DwarfGUI gui)
@@ -117,18 +128,6 @@ namespace DwarfCorp.GameStates
             GUI = gui;
             OnFinished = () => { };
             Done = false;
-        }
-
-        public Thread WaitThread { get; set; }
-        public DwarfGUI GUI { get; set; }
-        public bool Done { get; protected set; }
-
-        public event Finished OnFinished;
-
-        protected virtual void OnOnFinished()
-        {
-            Finished handler = OnFinished;
-            if (handler != null) handler();
         }
 
         public override void OnEnter()
@@ -146,6 +145,7 @@ namespace DwarfCorp.GameStates
         }
 
 
+
         public override void Update(DwarfTime gameTime)
         {
             GUI.MouseMode = GUISkin.MousePointer.Wait;
@@ -158,5 +158,7 @@ namespace DwarfCorp.GameStates
 
             base.Update(gameTime);
         }
+
     }
+
 }

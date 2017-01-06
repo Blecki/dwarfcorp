@@ -30,16 +30,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
-using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Tells a creature that it should destroy a voxel via digging.
+    /// Tells a creature that it should destroy a voxel via digging.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class KillVoxelTask : Task
     {
         public Voxel VoxelToKill = null;
@@ -74,14 +77,14 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            if (VoxelToKill == null || VoxelToKill.IsEmpty || VoxelToKill.IsDead)
+            if(VoxelToKill == null || VoxelToKill.IsEmpty || VoxelToKill.IsDead)
             {
                 return false;
             }
 
             Voxel vox = VoxelToKill;
 
-            if (vox == null)
+            if(vox == null)
             {
                 return false;
             }
@@ -98,7 +101,7 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent)
         {
-            if (VoxelToKill == null)
+            if(VoxelToKill == null)
             {
                 return 1000;
             }
@@ -110,13 +113,13 @@ namespace DwarfCorp
             }
 
             int surroundedValue = 0;
-            if (vox.Chunk.IsCompletelySurrounded(VoxelToKill))
+            if(vox.Chunk.IsCompletelySurrounded(VoxelToKill))
             {
                 surroundedValue = 10000;
             }
 
-            return (agent.AI.Position - VoxelToKill.Position).LengthSquared() +
-                   100*Math.Abs(agent.AI.Position.Y - VoxelToKill.Position.Y) + surroundedValue;
+            return (agent.AI.Position - VoxelToKill.Position).LengthSquared() + 100 * Math.Abs(agent.AI.Position.Y - VoxelToKill.Position.Y) + surroundedValue;
         }
     }
+
 }

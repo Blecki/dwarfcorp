@@ -30,15 +30,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Just a simple data type with 3 integers (x, y, and z).
+    /// Just a simple data type with 3 integers (x, y, and z).
     /// </summary>
     [JsonObject(IsReference = false)]
     [Serializable]
@@ -48,7 +51,7 @@ namespace DwarfCorp
         public int Y;
         public int Z;
 
-        public Point3(Vector3 vect)
+        public Point3(Microsoft.Xna.Framework.Vector3 vect)
         {
             X = (int) vect.X;
             Y = (int) vect.Y;
@@ -62,25 +65,25 @@ namespace DwarfCorp
             Z = z;
         }
 
+        public override int GetHashCode()
+        {
+            const int p1 = 4273;
+            const int p2 = 6247;
+            return (X * p1 + Y) * p2 + Z;
+        }
+
         public bool Equals(Point3 other)
         {
             return other.X == X && other.Y == Y && other.Z == Z;
         }
 
-        public override int GetHashCode()
-        {
-            const int p1 = 4273;
-            const int p2 = 6247;
-            return (X*p1 + Y)*p2 + Z;
-        }
-
         public override bool Equals(object obj)
         {
-            if (!(obj is Point3))
+            if(!(obj is Point3))
             {
                 return false;
             }
-            var other = (Point3) obj;
+            Point3 other = (Point3) obj;
             return other.X == X && other.Y == Y && other.Z == Z;
         }
 
@@ -89,4 +92,5 @@ namespace DwarfCorp
             return new Vector3(X, Y, Z);
         }
     }
+
 }

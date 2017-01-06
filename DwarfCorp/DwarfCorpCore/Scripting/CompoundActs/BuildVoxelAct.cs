@@ -30,57 +30,52 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A creature goes to a voxel location, and places an object with the desired tags there to build it.
+    /// A creature goes to a voxel location, and places an object with the desired tags there to build it.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class BuildVoxelAct : CompoundCreatureAct
     {
+        public Voxel Voxel { get; set; }
+   
         public BuildVoxelAct()
         {
+            
         }
 
-        /// <summary>
-        ///     Construct a BuildVoxelAct
-        /// </summary>
-        /// <param name="creature">The creature we want to build the voxel</param>
-        /// <param name="voxel">The voxel location to build a wall</param>
-        /// <param name="type">The type of voxel to build</param>
         public BuildVoxelAct(CreatureAI creature, Voxel voxel, VoxelType type) :
             base(creature)
         {
             Voxel = voxel;
             Name = "Build voxel";
 
-            var resources = new List<ResourceAmount>
+            List<ResourceAmount> resources = new List<ResourceAmount>()
             {
                 new ResourceAmount(ResourceLibrary.Resources[type.ResourceToRelease], 1)
             };
 
-            if (Agent.Faction.WallBuilder.IsDesignation(voxel))
+            if(Agent.Faction.WallBuilder.IsDesignation(voxel))
             {
-                // In sequence.. The dwarf first gets the required resources
+
                 Tree = new Sequence(new GetResourcesAct(Agent, resources),
-                    // Then, it goes to the voxel and places it there.
                     new Sequence(
                         new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, Agent),
-                        new PlaceVoxelAct(voxel, creature, resources.First()), new Wrap(Creature.RestockAll)) |
-                    new Wrap(Creature.RestockAll)
+                        new PlaceVoxelAct(voxel, creature, resources.First()), new Wrap(Creature.RestockAll)) | new Wrap(Creature.RestockAll)
                     );
             }
             else
             {
+
                 Tree = null;
             }
         }
-
-        public Voxel Voxel { get; set; }
     }
+
 }

@@ -30,15 +30,21 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Text;
 
 namespace DwarfCorp.Scripting.TaskManagement.Tasks
 {
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class FarmTask : Task
     {
+        public FarmTool.FarmTile FarmToWork { get; set; }
+        public FarmAct.FarmMode Mode { get; set; }
+        public string Plant { get; set; }
+        public List<ResourceAmount> RequiredResources { get; set; } 
+
         public FarmTask()
         {
             Priority = PriorityType.Low;
@@ -50,11 +56,6 @@ namespace DwarfCorp.Scripting.TaskManagement.Tasks
             Name = "Work " + FarmToWork.Vox.Position;
             Priority = PriorityType.Low;
         }
-
-        public FarmTool.FarmTile FarmToWork { get; set; }
-        public FarmAct.FarmMode Mode { get; set; }
-        public string Plant { get; set; }
-        public List<ResourceAmount> RequiredResources { get; set; }
 
         public override bool ShouldRetry(Creature agent)
         {
@@ -68,33 +69,21 @@ namespace DwarfCorp.Scripting.TaskManagement.Tasks
 
         public override Act CreateScript(Creature agent)
         {
-            return new FarmAct(agent.AI)
-            {
-                Resources = RequiredResources,
-                PlantToCreate = Plant,
-                Mode = Mode,
-                FarmToWork = FarmToWork,
-                Name = "Work " + FarmToWork.Vox.Position
-            };
+            return new FarmAct(agent.AI) {Resources = RequiredResources, PlantToCreate = Plant, Mode = Mode, FarmToWork = FarmToWork, Name = "Work " + FarmToWork.Vox.Position};
         }
 
         public override float ComputeCost(Creature agent)
         {
             if (FarmToWork == null) return float.MaxValue;
-            return (FarmToWork.Vox.Position - agent.AI.Position).LengthSquared();
+            else
+            {
+                return (FarmToWork.Vox.Position - agent.AI.Position).LengthSquared();
+            }
         }
 
         public override Task Clone()
         {
-            return new FarmTask
-            {
-                RequiredResources = RequiredResources,
-                FarmToWork = FarmToWork,
-                Name = Name,
-                Mode = Mode,
-                Plant = Plant,
-                Priority = Priority
-            };
+            return new FarmTask() { RequiredResources = RequiredResources, FarmToWork = FarmToWork, Name = Name, Mode = Mode, Plant = Plant, Priority = Priority };
         }
     }
 }

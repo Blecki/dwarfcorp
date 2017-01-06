@@ -30,57 +30,43 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+
     /// <summary>
-    ///     This component draws a simple textured rectangular box.
+    /// This component draws a simple textured rectangular box.
     /// </summary>
     public class Box : Tinter
     {
-        /// <summary>
-        ///     Create a new box.
-        /// </summary>
-        /// <param name="name">Name of the box for debugging</param>
-        /// <param name="parent">Parent component of the box.</param>
-        /// <param name="localTransform">Transform of the box w.r.t its parent.</param>
-        /// <param name="boundingBoxExtents">Size of the bounding box (in voxels)</param>
-        /// <param name="boundingBoxPos">Relative position of the center of the bounding box.</param>
-        /// <param name="primitive">Box model asset tag.</param>
-        /// <param name="tex">Texture to use for the box.</param>
-        public Box(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents,
-            Vector3 boundingBoxPos, string primitive, Texture2D tex) :
-                base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos, false)
+        public string Primitive { get; set; }
+        public Texture2D Texture { get; set; }
+
+        public Box(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, string primitive, Texture2D tex) :
+            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos, false)
         {
             Primitive = primitive;
             Texture = tex;
         }
 
-        /// <summary>
-        ///     Box model asset tag from the BoxPrimitiveLibrary to draw.
-        /// </summary>
-        public string Primitive { get; set; }
-
-        /// <summary>
-        ///     Texture associated with the box.
-        /// </summary>
-        public Texture2D Texture { get; set; }
-
-        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
-            GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
             effect.Parameters["xTexture"].SetValue(Texture);
             effect.Parameters["xWorld"].SetValue(GlobalTransform);
 
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            foreach(EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
                 PrimitiveLibrary.BoxPrimitives[Primitive].Render(graphicsDevice);
             }
         }
     }
+
 }

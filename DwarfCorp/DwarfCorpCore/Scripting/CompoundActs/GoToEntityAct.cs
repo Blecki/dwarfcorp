@@ -30,23 +30,39 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using DwarfCorp.DwarfCorp;
 using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A creature finds the voxel below a given entity, and goes to it.
+    /// A creature finds the voxel below a given entity, and goes to it.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GoToEntityAct : CompoundCreatureAct
     {
+        public Body Entity { get { return Agent.Blackboard.GetData<Body>(EntityName);  } set {Agent.Blackboard.SetData(EntityName, value);} }
+        public bool MovingTarget { get; set; }
+        public string EntityName { get; set; }
+
         public GoToEntityAct()
         {
+
+        }
+
+        public bool EntityIsInHands()
+        {
+            return Entity == Agent.Hands.GetFirstGrab();
+        }
+
+        public Condition InHands()
+        {
+            return new Condition(EntityIsInHands);
         }
 
         public GoToEntityAct(string entity, CreatureAI creature) :
@@ -66,25 +82,6 @@ namespace DwarfCorp
             MovingTarget = true;
         }
 
-        public Body Entity
-        {
-            get { return Agent.Blackboard.GetData<Body>(EntityName); }
-            set { Agent.Blackboard.SetData(EntityName, value); }
-        }
-
-        public bool MovingTarget { get; set; }
-        public string EntityName { get; set; }
-
-        public bool EntityIsInHands()
-        {
-            return Entity == Agent.Hands.GetFirstGrab();
-        }
-
-        public Condition InHands()
-        {
-            return new Condition(EntityIsInHands);
-        }
-
         public IEnumerable<Status> CollidesWithTarget()
         {
             while (true)
@@ -101,14 +98,14 @@ namespace DwarfCorp
 
         public IEnumerable<Status> TargetMoved(string pathName)
         {
-            var path = Agent.Blackboard.GetData<List<Voxel>>(pathName);
-            var entity = Agent.Blackboard.GetData<Body>(EntityName);
+            List<Voxel> path = Agent.Blackboard.GetData<List<Voxel>>(pathName);
+            Body entity = Agent.Blackboard.GetData<Body>(EntityName);
             if (path == null || entity == null)
             {
                 yield return Status.Success;
                 yield break;
             }
-
+            
             while (true)
             {
                 if (path.Count == 0)
@@ -136,8 +133,8 @@ namespace DwarfCorp
             while (true)
             {
                 Creature.AI.Blackboard.Erase("EntityVoxel");
-                Status status = SetTargetVoxelFromEntityAct.SetTarget("EntityVoxel", EntityName, Creature);
-                var entity = Agent.Blackboard.GetData<Body>(EntityName);
+                Act.Status status = SetTargetVoxelFromEntityAct.SetTarget("EntityVoxel", EntityName, Creature);
+                Body entity = Agent.Blackboard.GetData<Body>(EntityName);
 
                 if (entity == null || entity.IsDead)
                 {
@@ -147,26 +144,26 @@ namespace DwarfCorp
 
                 if (status != Status.Success)
                 {
-                    yield return Status.Running;
+                    yield return Act.Status.Running;
                 }
                 Creature.AI.Blackboard.Erase("PathToEntity");
-                var planAct = new PlanAct(Creature.AI, "PathToEntity", "EntityVoxel", PlanAct.PlanType.Adjacent);
+                PlanAct planAct = new PlanAct(Creature.AI, "PathToEntity", "EntityVoxel", PlanAct.PlanType.Adjacent);
                 planAct.Initialize();
 
                 bool planSucceeded = false;
                 while (true)
                 {
-                    Status planStatus = planAct.Tick();
+                    Act.Status planStatus = planAct.Tick();
 
                     if (planStatus == Status.Fail)
                     {
-                        yield return Status.Running;
+                        yield return Act.Status.Running;
                         break;
                     }
 
-                    if (planStatus == Status.Running)
+                    else if (planStatus == Status.Running)
                     {
-                        yield return Status.Running;
+                        yield return Act.Status.Running;
                     }
 
                     else if (planStatus == Status.Success)
@@ -174,17 +171,18 @@ namespace DwarfCorp
                         planSucceeded = true;
                         break;
                     }
+
                 }
 
                 if (!planSucceeded)
                 {
                     currentFailures++;
-                    yield return Status.Running;
+                    yield return Act.Status.Running;
                     Creature.CurrentCharacterMode = Creature.CharacterMode.Idle;
                     Creature.Physics.Velocity = Vector3.Zero;
                     if (currentFailures > maxFailures)
                     {
-                        yield return Status.Fail;
+                        yield return Act.Status.Fail;
                         yield break;
                     }
 
@@ -192,25 +190,24 @@ namespace DwarfCorp
                 }
 
 
-                var followPath = new FollowPathAnimationAct(Creature.AI, "PathToEntity");
+                FollowPathAnimationAct followPath = new FollowPathAnimationAct(Creature.AI, "PathToEntity");
                 followPath.Initialize();
 
                 while (true)
                 {
-                    Status pathStatus = followPath.Tick();
+                    Act.Status pathStatus = followPath.Tick();
 
                     if (pathStatus == Status.Fail)
                     {
                         break;
                     }
 
-                    if (pathStatus == Status.Running)
+                    else if (pathStatus == Status.Running)
                     {
-                        yield return Status.Running;
+                        yield return Act.Status.Running;
 
-                        var path = Agent.Blackboard.GetData<List<Creature.MoveAction>>("PathToEntity");
-                        if (path.Count > 0 &&
-                            (path.Last().Voxel.Position - entity.LocalTransform.Translation).Length() > 4)
+                        List<Creature.MoveAction> path = Agent.Blackboard.GetData<List<Creature.MoveAction>>("PathToEntity");
+                        if (path.Count > 0 && (path.Last().Voxel.Position - entity.LocalTransform.Translation).Length() > 4)
                         {
                             break;
                         }
@@ -220,16 +217,19 @@ namespace DwarfCorp
                             yield return Status.Success;
                             yield break;
                         }
+
+                        continue;
                     }
 
-                    if (pathStatus == Status.Success)
+                    else if (pathStatus == Status.Success)
                     {
-                        yield return Status.Success;
+                        yield return Act.Status.Success;
                         yield break;
                     }
-                }
 
-                yield return Status.Running;
+                }
+                
+                yield return Act.Status.Running;
             }
         }
 
@@ -260,7 +260,7 @@ namespace DwarfCorp
                 new StopAct(Agent)
                 );
 
-            Tree.Initialize();
+        Tree.Initialize();
             base.Initialize();
         }
 
@@ -269,4 +269,5 @@ namespace DwarfCorp
             return base.Run();
         }
     }
+
 }

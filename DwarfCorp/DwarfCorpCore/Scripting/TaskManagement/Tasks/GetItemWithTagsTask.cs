@@ -30,15 +30,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
-using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Tells a creature that it should find an item with a tag, and pick it up.
+    /// Tells a creature that it should find an item with a tag, and pick it up.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class GetItemWithTagsTask : Task
     {
         public TagList Tags = null;
@@ -66,4 +68,5 @@ namespace DwarfCorp
             //return new GetItemWithTagsAct(creature.AI, Tags);
         }
     }
+
 }

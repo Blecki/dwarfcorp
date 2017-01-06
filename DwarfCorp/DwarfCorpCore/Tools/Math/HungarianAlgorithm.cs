@@ -30,11 +30,12 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
+using System.Diagnostics;
 
 namespace DwarfCorp
 {
+
     // Copyright (c) 2010 Alex Regueiro
     // Licensed under MIT license, available at <http://www.opensource.org/licenses/mit-license.php>.
     // Published originally at <http://blog.noldorin.com/2009/09/hungarian-algorithm-in-csharp/>.
@@ -43,36 +44,32 @@ namespace DwarfCorp
     public static class HungarianAlgorithm
     {
         /// <summary>
-        ///     Finds the optimal assignments for a given matrix of agents and costed tasks such that the total cost is
-        ///     minimized.
+        /// Finds the optimal assignments for a given matrix of agents and costed tasks such that the total cost is
+        /// minimized.
         /// </summary>
-        /// <param Name="costs">
-        ///     A cost matrix; the element at row <em>i</em> and column <em>j</em> represents the cost of
-        ///     agent <em>i</em> performing task <em>j</em>.
-        /// </param>
-        /// <returns>
-        ///     A matrix of assignments; the value of element <em>i</em> is the column of the task assigned to agent
-        ///     <em>i</em>.
-        /// </returns>
-        /// <exception cref="ArgumentNullException"><paramref Name="costs" /> is <see langword="null" />.</exception>
+        /// <param Name="costs">A cost matrix; the element at row <em>i</em> and column <em>j</em> represents the cost of
+        /// agent <em>i</em> performing task <em>j</em>.</param>
+        /// <returns>A matrix of assignments; the value of element <em>i</em> is the column of the task assigned to agent
+        /// <em>i</em>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref Name="costs"/> is <see langword="null"/>.</exception>
         public static int[] FindAssignments(this int[,] costs)
         {
-            if (costs == null)
+            if(costs == null)
             {
                 throw new ArgumentNullException("costs");
             }
 
-            int h = costs.GetLength(0);
-            int w = costs.GetLength(1);
+            var h = costs.GetLength(0);
+            var w = costs.GetLength(1);
 
-            for (int i = 0; i < h; i++)
+            for(int i = 0; i < h; i++)
             {
-                int min = int.MaxValue;
-                for (int j = 0; j < w; j++)
+                var min = int.MaxValue;
+                for(int j = 0; j < w; j++)
                 {
                     min = Math.Min(min, costs[i, j]);
                 }
-                for (int j = 0; j < w; j++)
+                for(int j = 0; j < w; j++)
                 {
                     costs[i, j] -= min;
                 }
@@ -81,11 +78,11 @@ namespace DwarfCorp
             var masks = new byte[h, w];
             var rowsCovered = new bool[h];
             var colsCovered = new bool[w];
-            for (int i = 0; i < h; i++)
+            for(int i = 0; i < h; i++)
             {
-                for (int j = 0; j < w; j++)
+                for(int j = 0; j < w; j++)
                 {
-                    if (costs[i, j] == 0 && !rowsCovered[i] && !colsCovered[j])
+                    if(costs[i, j] == 0 && !rowsCovered[i] && !colsCovered[j])
                     {
                         masks[i, j] = 1;
                         rowsCovered[i] = true;
@@ -95,12 +92,12 @@ namespace DwarfCorp
             }
             ClearCovers(rowsCovered, colsCovered, w, h);
 
-            var path = new Location[w*h];
+            var path = new Location[w * h];
             Location pathStart = default(Location);
-            int step = 1;
-            while (step != -1)
+            var step = 1;
+            while(step != -1)
             {
-                switch (step)
+                switch(step)
                 {
                     case 1:
                         step = RunStep1(costs, masks, rowsCovered, colsCovered, w, h);
@@ -118,11 +115,11 @@ namespace DwarfCorp
             }
 
             var agentsTasks = new int[h];
-            for (int i = 0; i < h; i++)
+            for(int i = 0; i < h; i++)
             {
-                for (int j = 0; j < w; j++)
+                for(int j = 0; j < w; j++)
                 {
-                    if (masks[i, j] == 1)
+                    if(masks[i, j] == 1)
                     {
                         agentsTasks[i] = j;
                         break;
@@ -134,53 +131,59 @@ namespace DwarfCorp
 
         private static int RunStep1(int[,] costs, byte[,] masks, bool[] rowsCovered, bool[] colsCovered, int w, int h)
         {
-            for (int i = 0; i < h; i++)
+            for(int i = 0; i < h; i++)
             {
-                for (int j = 0; j < w; j++)
+                for(int j = 0; j < w; j++)
                 {
-                    if (masks[i, j] == 1)
+                    if(masks[i, j] == 1)
                     {
                         colsCovered[j] = true;
                     }
                 }
             }
-            int colsCoveredCount = 0;
-            for (int j = 0; j < w; j++)
+            var colsCoveredCount = 0;
+            for(int j = 0; j < w; j++)
             {
-                if (colsCovered[j])
+                if(colsCovered[j])
                 {
                     colsCoveredCount++;
                 }
             }
-            if (colsCoveredCount == h)
+            if(colsCoveredCount == h)
             {
                 return -1;
             }
-            return 2;
+            else
+            {
+                return 2;
+            }
         }
 
         private static int RunStep2(int[,] costs, byte[,] masks, bool[] rowsCovered, bool[] colsCovered, int w, int h,
             ref Location pathStart)
         {
             Location loc;
-            while (true)
+            while(true)
             {
                 loc = FindZero(costs, masks, rowsCovered, colsCovered, w, h);
-                if (loc.Row == -1)
+                if(loc.Row == -1)
                 {
                     return 4;
                 }
-                masks[loc.Row, loc.Column] = 2;
-                int starCol = FindStarInRow(masks, w, loc.Row);
-                if (starCol != -1)
-                {
-                    rowsCovered[loc.Row] = true;
-                    colsCovered[starCol] = false;
-                }
                 else
                 {
-                    pathStart = loc;
-                    return 3;
+                    masks[loc.Row, loc.Column] = 2;
+                    var starCol = FindStarInRow(masks, w, loc.Row);
+                    if(starCol != -1)
+                    {
+                        rowsCovered[loc.Row] = true;
+                        colsCovered[starCol] = false;
+                    }
+                    else
+                    {
+                        pathStart = loc;
+                        return 3;
+                    }
                 }
             }
         }
@@ -188,18 +191,18 @@ namespace DwarfCorp
         private static int RunStep3(int[,] costs, byte[,] masks, bool[] rowsCovered, bool[] colsCovered, int w, int h,
             Location[] path, Location pathStart)
         {
-            int pathIndex = 0;
+            var pathIndex = 0;
             path[0] = pathStart;
-            while (true)
+            while(true)
             {
-                int row = FindStarInColumn(masks, h, path[pathIndex].Column);
-                if (row == -1)
+                var row = FindStarInColumn(masks, h, path[pathIndex].Column);
+                if(row == -1)
                 {
                     break;
                 }
                 pathIndex++;
                 path[pathIndex] = new Location(row, path[pathIndex - 1].Column);
-                int col = FindPrimeInRow(masks, w, path[pathIndex].Row);
+                var col = FindPrimeInRow(masks, w, path[pathIndex].Row);
                 pathIndex++;
                 path[pathIndex] = new Location(path[pathIndex - 1].Row, col);
             }
@@ -211,16 +214,16 @@ namespace DwarfCorp
 
         private static int RunStep4(int[,] costs, byte[,] masks, bool[] rowsCovered, bool[] colsCovered, int w, int h)
         {
-            int minValue = FindMinimum(costs, rowsCovered, colsCovered, w, h);
-            for (int i = 0; i < h; i++)
+            var minValue = FindMinimum(costs, rowsCovered, colsCovered, w, h);
+            for(int i = 0; i < h; i++)
             {
-                for (int j = 0; j < w; j++)
+                for(int j = 0; j < w; j++)
                 {
-                    if (rowsCovered[i])
+                    if(rowsCovered[i])
                     {
                         costs[i, j] += minValue;
                     }
-                    if (!colsCovered[j])
+                    if(!colsCovered[j])
                     {
                         costs[i, j] -= minValue;
                     }
@@ -231,13 +234,13 @@ namespace DwarfCorp
 
         private static void ConvertPath(byte[,] masks, Location[] path, int pathLength)
         {
-            for (int i = 0; i < pathLength; i++)
+            for(int i = 0; i < pathLength; i++)
             {
-                if (masks[path[i].Row, path[i].Column] == 1)
+                if(masks[path[i].Row, path[i].Column] == 1)
                 {
                     masks[path[i].Row, path[i].Column] = 0;
                 }
-                else if (masks[path[i].Row, path[i].Column] == 2)
+                else if(masks[path[i].Row, path[i].Column] == 2)
                 {
                     masks[path[i].Row, path[i].Column] = 1;
                 }
@@ -247,11 +250,11 @@ namespace DwarfCorp
         private static Location FindZero(int[,] costs, byte[,] masks, bool[] rowsCovered, bool[] colsCovered,
             int w, int h)
         {
-            for (int i = 0; i < h; i++)
+            for(int i = 0; i < h; i++)
             {
-                for (int j = 0; j < w; j++)
+                for(int j = 0; j < w; j++)
                 {
-                    if (costs[i, j] == 0 && !rowsCovered[i] && !colsCovered[j])
+                    if(costs[i, j] == 0 && !rowsCovered[i] && !colsCovered[j])
                     {
                         return new Location(i, j);
                     }
@@ -262,12 +265,12 @@ namespace DwarfCorp
 
         private static int FindMinimum(int[,] costs, bool[] rowsCovered, bool[] colsCovered, int w, int h)
         {
-            int minValue = int.MaxValue;
-            for (int i = 0; i < h; i++)
+            var minValue = int.MaxValue;
+            for(int i = 0; i < h; i++)
             {
-                for (int j = 0; j < w; j++)
+                for(int j = 0; j < w; j++)
                 {
-                    if (!rowsCovered[i] && !colsCovered[j])
+                    if(!rowsCovered[i] && !colsCovered[j])
                     {
                         minValue = Math.Min(minValue, costs[i, j]);
                     }
@@ -278,9 +281,9 @@ namespace DwarfCorp
 
         private static int FindStarInRow(byte[,] masks, int w, int row)
         {
-            for (int j = 0; j < w; j++)
+            for(int j = 0; j < w; j++)
             {
-                if (masks[row, j] == 1)
+                if(masks[row, j] == 1)
                 {
                     return j;
                 }
@@ -290,9 +293,9 @@ namespace DwarfCorp
 
         private static int FindStarInColumn(byte[,] masks, int h, int col)
         {
-            for (int i = 0; i < h; i++)
+            for(int i = 0; i < h; i++)
             {
-                if (masks[i, col] == 1)
+                if(masks[i, col] == 1)
                 {
                     return i;
                 }
@@ -302,9 +305,9 @@ namespace DwarfCorp
 
         private static int FindPrimeInRow(byte[,] masks, int w, int row)
         {
-            for (int j = 0; j < w; j++)
+            for(int j = 0; j < w; j++)
             {
-                if (masks[row, j] == 2)
+                if(masks[row, j] == 2)
                 {
                     return j;
                 }
@@ -314,11 +317,11 @@ namespace DwarfCorp
 
         private static void ClearCovers(bool[] rowsCovered, bool[] colsCovered, int w, int h)
         {
-            for (int i = 0; i < h; i++)
+            for(int i = 0; i < h; i++)
             {
                 rowsCovered[i] = false;
             }
-            for (int j = 0; j < w; j++)
+            for(int j = 0; j < w; j++)
             {
                 colsCovered[j] = false;
             }
@@ -326,11 +329,11 @@ namespace DwarfCorp
 
         private static void ClearPrimes(byte[,] masks, int w, int h)
         {
-            for (int i = 0; i < h; i++)
+            for(int i = 0; i < h; i++)
             {
-                for (int j = 0; j < w; j++)
+                for(int j = 0; j < w; j++)
                 {
-                    if (masks[i, j] == 2)
+                    if(masks[i, j] == 2)
                     {
                         masks[i, j] = 0;
                     }
@@ -340,14 +343,15 @@ namespace DwarfCorp
 
         private struct Location
         {
-            public readonly int Column;
-            public readonly int Row;
+            public int Row;
+            public int Column;
 
             public Location(int row, int col)
             {
-                Row = row;
-                Column = col;
+                this.Row = row;
+                this.Column = col;
             }
         }
     }
+
 }

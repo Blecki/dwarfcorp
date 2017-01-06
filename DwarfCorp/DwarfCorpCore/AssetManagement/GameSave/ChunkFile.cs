@@ -32,54 +32,69 @@
 // THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
+using Newtonsoft.Json.Serialization;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.IO.Compression;
 
 namespace DwarfCorp
 {
+
     /// <summary>
     ///     Minimal representation of a chunk.
     ///     Exists to write to and from files.
+    ///  Minimal representation of a chunk.
+    ///  Exists to write to and from files.
     /// </summary>
     [Serializable]
     public class ChunkFile
+    public class ChunkFile 
     {
-        /// <summary>
-        /// The file extension.
-        /// </summary>
         public static string Extension = "chunk";
-        /// <summary>
-        /// The compressed (zip) file extension
-        /// </summary>
         public static string CompressedExtension = "zchunk";
-        /// <summary>
-        /// Array telling us which voxels have been explored.
-        /// </summary>
-        public bool[,,] Explored;
-        /// <summary>
-        /// The identifier of the chunk.
-        /// </summary>
-        public Point3 ID;
-        /// <summary>
-        /// The liquid levels (0-255)
-        /// </summary>
-        public byte[,,] Liquid;
-        /// <summary>
-        /// The liquid types.
-        /// </summary>
-        public byte[,,] LiquidTypes;
-        /// <summary>
-        /// The origin of the chunk in world coordinates. (leastmost corner)
-        /// </summary>
-        public Vector3 Origin;
-        /// <summary>
-        /// The size of the chunk in voxels.
-        /// </summary>
-        public Point3 Size;
-        /// <summary>
-        /// The types of the voxels in the chunk.
-        /// </summary>
+
         public byte[,,] Types;
+        public byte[, ,] LiquidTypes;
+        public byte[,,] Liquid;
+
+
+
+
+
+        public bool[,,] Explored;
+
+        public Point3 Size;
+
+
+        public Point3 ID;
+        public byte[,,] Liquid;
+        public byte[,,] LiquidTypes;
+
+
+
+
+
+
+
+
+        public Vector3 Origin;
+        public Point3 Size;
+        public byte[,,] Types;
+
+
+
+
+
+
+
+
+
+        public static string Extension = "chunk";
+        public static string CompressedExtension = "zchunk";
 
         public ChunkFile()
         {
@@ -97,22 +112,12 @@ namespace DwarfCorp
             FillDataFromChunk(chunk);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ChunkFile"/> class from a file.
-        /// </summary>
-        /// <param name="fileName">Name of the file.</param>
-        /// <param name="compressed">if set to <c>true</c> the file is zip compressed.</param>
-        /// <param name="binary">if set to <c>true</c> the file is binary, otherwise, it is a JSON file..</param>
         public ChunkFile(string fileName, bool compressed, bool binary)
         {
             ReadFile(fileName, compressed, binary);
         }
 
 
-        /// <summary>
-        /// Deep clone another chunk file.
-        /// </summary>
-        /// <param name="chunkFile">The chunk file.</param>
         public void CopyFrom(ChunkFile chunkFile)
         {
             ID = chunkFile.ID;
@@ -122,20 +127,21 @@ namespace DwarfCorp
             Size = chunkFile.Size;
             Types = chunkFile.Types;
             Explored = chunkFile.Explored;
+            this.ID = chunkFile.ID;
+            this.Liquid = chunkFile.Liquid;
+            this.LiquidTypes = chunkFile.LiquidTypes;
+            this.Origin = chunkFile.Origin;
+            this.Size = chunkFile.Size;
+            this.Types = chunkFile.Types;
+            this.Explored = chunkFile.Explored;
         }
 
-        /// <summary>
-        /// Reads the file.
-        /// </summary>
-        /// <param name="filePath">The file path.</param>
-        /// <param name="isCompressed">if set to <c>true</c> the file is gzip compressed.</param>
-        /// <param name="isBinary">if set to <c>true</c> the file is binary.</param>
-        /// <returns>True if the file could be read, or false otherwise.</returns>
         public bool ReadFile(string filePath, bool isCompressed, bool isBinary)
         {
             if (!isBinary)
             {
                 var chunkFile = FileUtils.LoadJson<ChunkFile>(filePath, isCompressed);
+                ChunkFile chunkFile = FileUtils.LoadJson<ChunkFile>(filePath, isCompressed);
 
                 if (chunkFile == null)
                 {
@@ -143,10 +149,16 @@ namespace DwarfCorp
                 }
                 CopyFrom(chunkFile);
                 return true;
+                else
+                {
+                    CopyFrom(chunkFile);
+                    return true;
+                }
             }
             else
             {
                 var chunkFile = FileUtils.LoadBinary<ChunkFile>(filePath);
+                ChunkFile chunkFile = FileUtils.LoadBinary<ChunkFile>(filePath);
 
                 if (chunkFile == null)
                 {
@@ -157,43 +169,60 @@ namespace DwarfCorp
             }
         }
 
-        /// <summary>
-        /// Writes the chunk data to a file.
-        /// </summary>
-        /// <param name="filePath">The file path.</param>
-        /// <param name="compress">if set to <c>true</c> compress the file using gzip.</param>
-        /// <param name="binary">if set to <c>true</c> write a binary file.</param>
-        /// <returns></returns>
         public bool WriteFile(string filePath, bool compress, bool binary)
         {
             if (!binary)
                 return FileUtils.SaveJSon(this, filePath, compress);
             return FileUtils.SaveBinary(this, filePath);
+                return FileUtils.SaveJSon<ChunkFile>(this, filePath, compress);
+            else
+                return FileUtils.SaveBinary(this, filePath);
         }
 
-        /// <summary>
-        /// Create a new chunk using this file.
-        /// </summary>
-        /// <param name="manager">The manager.</param>
-        /// <returns>A new chunk containing the data from this file.</returns>
         public VoxelChunk ToChunk(ChunkManager manager)
         {
             int chunkSizeX = Size.X;
             int chunkSizeY = Size.Y;
             int chunkSizeZ = Size.Z;
             Vector3 origin = Origin;
-            // Note, this old way of doing it is too slow, instead directly set the data.
+            int chunkSizeX = this.Size.X;
+            int chunkSizeY = this.Size.Y;
+            int chunkSizeZ = this.Size.Z;
+            Vector3 origin = this.Origin;
             //Voxel[][][] voxels = ChunkGenerator.Allocate(chunkSizeX, chunkSizeY, chunkSizeZ);
-
-            // Create a new chunk
+            float scaleFator = PlayState.WorldScale;
             var c = new VoxelChunk(manager, origin, 1, ID, chunkSizeX, chunkSizeY, chunkSizeZ)
+            VoxelChunk c = new VoxelChunk(manager, origin, 1, ID, chunkSizeX, chunkSizeY, chunkSizeZ)
             {
                 ShouldRebuild = true,
-                ShouldRecalculateLighting = true,
-                ShouldRebuildWater = true
+                ShouldRecalculateLighting = true
             };
 
-            // For each voxel, set its properties.
+            for (int x = 0; x < chunkSizeX; x++)
+            for(int x = 0; x < chunkSizeX; x++)
+
+            {
+                for (int z = 0; z < chunkSizeZ; z++)
+                for(int z = 0; z < chunkSizeZ; z++)
+                {
+                    for (int y = 0; y < chunkSizeY; y++)
+                    for(int y = 0; y < chunkSizeY; y++)
+                    {
+                        int index = c.Data.IndexAt(x, y, z);
+                        if (Types[x, y, z] > 0)
+                        if(Types[x, y, z] > 0)
+                        {
+                            c.Data.Types[index] = Types[x, y, z];
+                            c.Data.Health[index] = (byte) VoxelLibrary.GetVoxelType(Types[x, y, z]).StartingHealth;
+                            c.Data.Types[index] = (byte) Types[x, y, z];
+                            c.Data.Health[index] = (byte)VoxelLibrary.GetVoxelType(Types[x, y, z]).StartingHealth;
+                        }
+                        c.Data.IsExplored[index] = Explored[x, y, z];
+                    }
+                }
+            }
+
+
             for (int x = 0; x < chunkSizeX; x++)
             {
                 for (int z = 0; z < chunkSizeZ; z++)
@@ -201,32 +230,38 @@ namespace DwarfCorp
                     for (int y = 0; y < chunkSizeY; y++)
                     {
                         int index = c.Data.IndexAt(x, y, z);
-                        if (Types[x, y, z] > 0)
-                        {
-                            c.Data.Types[index] = Types[x, y, z];
-                            c.Data.Health[index] = (byte) VoxelLibrary.GetVoxelType(Types[x, y, z]).StartingHealth;
-                        }
-                        c.Data.IsExplored[index] = Explored[x, y, z];
-                        c.Data.Water[index].WaterLevel = Liquid[x, y, z];
-                        c.Data.Water[index].Type = (LiquidType)LiquidTypes[x, y, z];
                     }
                 }
             }
 
+
+            for(int x = 0; x < chunkSizeX; x++)
+            {
+                for(int z = 0; z < chunkSizeZ; z++)
+                {
+                    for(int y = 0; y < chunkSizeY; y++)
+                    {
+                        int index = c.Data.IndexAt(x, y, z);
+                        c.Data.Water[index].WaterLevel = Liquid[x, y, z];
+                        c.Data.Water[index].Type = (LiquidType) LiquidTypes[x, y, z];
+                    }
+                }
+            }
+            c.ShouldRebuildWater = true;
+
             return c;
         }
 
-        /// <summary>
-        /// Fills this data file with the voxel data from a chunk.
-        /// </summary>
-        /// <param name="chunk">The chunk.</param>
         public void FillDataFromChunk(VoxelChunk chunk)
         {
             for (int x = 0; x < Size.X; x++)
+            for(int x = 0; x < Size.X; x++)
             {
                 for (int y = 0; y < Size.Y; y++)
+                for(int y = 0; y < Size.Y; y++)
                 {
                     for (int z = 0; z < Size.Z; z++)
+                    for(int z = 0; z < Size.Z; z++)
                     {
                         int index = chunk.Data.IndexAt(x, y, z);
                         WaterCell water = chunk.Data.Water[index];
@@ -234,9 +269,11 @@ namespace DwarfCorp
                         Explored[x, y, z] = chunk.Data.IsExplored[index];
 
                         if (water.WaterLevel > 0)
+                        if(water.WaterLevel > 0)
                         {
                             Liquid[x, y, z] = water.WaterLevel;
                             LiquidTypes[x, y, z] = (byte) water.Type;
+                            LiquidTypes[x, y, z] = (byte)water.Type;
                         }
                         else
                         {
@@ -248,4 +285,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

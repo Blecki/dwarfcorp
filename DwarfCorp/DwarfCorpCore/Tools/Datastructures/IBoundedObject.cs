@@ -30,18 +30,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A bounded object is just anything which has
-    ///     a bounding box.
+    /// A bounded object is just anything which has 
+    /// a bounding box.
     /// </summary>
     public interface IBoundedObject
     {
         BoundingBox GetBoundingBox();
         uint GetID();
     }
+
 }

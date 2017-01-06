@@ -30,8 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace DwarfCorp
 {
@@ -42,8 +44,7 @@ namespace DwarfCorp
             Worker,
             AxeDwarf,
             Wizard,
-            CraftsDwarf,
-            MusketDwarf
+            CraftsDwarf
         }
 
         public static Dictionary<JobType, EmployeeClass> Classes { get; set; }
@@ -55,7 +56,6 @@ namespace DwarfCorp
             Classes[JobType.AxeDwarf] = new AxeDwarfClass();
             Classes[JobType.CraftsDwarf] = new CraftDwarfClass();
             Classes[JobType.Wizard] = new WizardClass();
-            Classes[JobType.MusketDwarf] = new MusketDwarfClass();
         }
     }
 }

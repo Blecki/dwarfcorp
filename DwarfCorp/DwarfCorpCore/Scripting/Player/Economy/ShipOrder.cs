@@ -30,27 +30,29 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DwarfCorp
 {
+
     /// <summary>
-    ///     This designation specifies that a resource should be shipped to a given port.
-    ///     Creatures will find a resource from stockpiles and move it to the port.
+    /// This designation specifies that a resource should be shipped to a given port.
+    /// Creatures will find a resource from stockpiles and move it to the port.
     /// </summary>
     public class ShipOrder
     {
+        public ResourceAmount Resource { get; set; }
+        public Room Port { get; set; }
+        public List<Task> Assignments { get; set; }
+
         public ShipOrder(ResourceAmount resource, Room port)
         {
             Resource = resource;
             Port = port;
             Assignments = new List<Task>();
         }
-
-        public ResourceAmount Resource { get; set; }
-        public Room Port { get; set; }
-        public List<Task> Assignments { get; set; }
 
         public int GetRemainingNumResources()
         {
@@ -70,4 +72,5 @@ namespace DwarfCorp
             return GetRemainingNumResources() == 0;
         }
     }
+
 }

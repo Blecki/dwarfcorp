@@ -30,8 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -42,6 +44,9 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class PlaceBlockSpell : Spell
     {
+        public string VoxelType { get; set; }
+        public bool Transmute { get; set; }
+
         public PlaceBlockSpell(string voxelType, bool transmute)
         {
             Texture2D icons = TextureManager.GetTexture(ContentPaths.GUI.icons);
@@ -68,29 +73,26 @@ namespace DwarfCorp
                 ManaCost = 25;
                 Mode = SpellMode.SelectFilledVoxels;
             }
-        }
 
-        public string VoxelType { get; set; }
-        public bool Transmute { get; set; }
+        }
 
         public override void OnVoxelsSelected(SpellTree tree, List<Voxel> voxels)
         {
-            var chunksToRebuild = new HashSet<Point3>();
+            HashSet<Point3> chunksToRebuild = new HashSet<Point3>();
             bool placed = false;
             foreach (Voxel selected in voxels)
             {
-                if (selected != null && ((!Transmute && selected.IsEmpty) || Transmute && !selected.IsEmpty) &&
-                    OnCast(tree))
+
+                if (selected != null && ((!Transmute && selected.IsEmpty) || Transmute && !selected.IsEmpty) && OnCast(tree))
                 {
                     Vector3 p = selected.Position + Vector3.One*0.5f;
-                    IndicatorManager.DrawIndicator("-" + ManaCost + " M", p, 1.0f, Color.Red);
+                    IndicatorManager.DrawIndicator("-" + ManaCost + " M",p, 1.0f, Color.Red);
                     PlayState.ParticleManager.Trigger("star_particle", p, Color.White, 4);
                     VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType(VoxelType), selected);
 
                     if (VoxelType == "Magic")
                     {
-                        new VoxelListener(PlayState.ComponentManager, PlayState.ComponentManager.RootComponent,
-                            PlayState.ChunkManager, selected)
+                        new VoxelListener(PlayState.ComponentManager, PlayState.ComponentManager.RootComponent, PlayState.ChunkManager, selected)
                         {
                             DestroyOnTimer = true,
                             DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)

@@ -30,48 +30,49 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
-using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Task that tells a creature to build a room.
+    /// Tells a creature that it should find an item with the specified
+    /// tags and put it in a given zone.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class BuildRoomTask : Task
     {
-        /// <summary>
-        ///     The room to build.
-        /// </summary>
-        public BuildRoomOrder Room;
+        public BuildRoomOrder Zone;
 
         public BuildRoomTask()
         {
             Priority = PriorityType.Low;
         }
 
-        public BuildRoomTask(BuildRoomOrder room)
+        public BuildRoomTask(BuildRoomOrder zone)
         {
-            Name = "Build BuildRoom " + room.ToBuild.RoomData.Name + room.ToBuild.ID;
-            Room = room;
+            Name = "Build BuildRoom " + zone.ToBuild.RoomData.Name + zone.ToBuild.ID;
+            Zone = zone;
             Priority = PriorityType.Low;
         }
 
         public override Task Clone()
         {
-            return new BuildRoomTask(Room);
+            return new BuildRoomTask(Zone);
         }
 
         public override Act CreateScript(Creature creature)
         {
-            return new BuildRoomAct(creature.AI, Room);
+            return new BuildRoomAct(creature.AI, Zone);
         }
 
         public override float ComputeCost(Creature agent)
         {
-            // Right now all rooms are considered equal.
-            return (Room == null) ? 1000 : 1.0f;
+            return (Zone == null) ? 1000 : 1.0f;
         }
     }
+
 }

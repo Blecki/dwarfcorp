@@ -30,38 +30,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
     public class Window : Panel
     {
-        public enum WindowButtons
-        {
-            NoButtons,
-            CloseButton
-        }
-
-        public Window(DwarfGUI gui, GUIComponent parent, WindowButtons buttons = WindowButtons.NoButtons)
-            : base(gui, parent)
-        {
-            IsDraggable = true;
-            IsResizeable = true;
-            IsDragging = false;
-            IsResizing = false;
-            Mode = buttons == WindowButtons.NoButtons ? PanelMode.Window : PanelMode.WindowEx;
-
-            if (buttons == WindowButtons.CloseButton)
-            {
-                CloseButton = new Button(GUI, this, "", GUI.DefaultFont, Button.ButtonMode.ImageButton,
-                    GUI.Skin.GetSpecialFrame(GUISkin.Tile.CloseButton));
-                CloseButton.OnClicked += CloseButton_OnClicked;
-            }
-        }
-
         public Rectangle DragArea { get; set; }
         public Rectangle ResizeArea { get; set; }
         public bool IsDragging { get; set; }
@@ -73,13 +53,35 @@ namespace DwarfCorp
         public Point ResizeStartPosition { get; set; }
         public Button CloseButton { get; set; }
 
-        private void CloseButton_OnClicked()
+        public enum WindowButtons
+        {
+            NoButtons,
+            CloseButton
+        }
+
+        public Window(DwarfGUI gui, GUIComponent parent, WindowButtons buttons = WindowButtons.NoButtons) 
+            : base(gui, parent)
+        {
+            IsDraggable = true;
+            IsResizeable = true;
+            IsDragging = false;
+            IsResizing = false;
+            Mode = buttons == WindowButtons.NoButtons ? PanelMode.Window : PanelMode.WindowEx;
+
+            if (buttons == WindowButtons.CloseButton)
+            {
+                CloseButton = new Button(GUI, this, "", GUI.DefaultFont, Button.ButtonMode.ImageButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.CloseButton));
+                CloseButton.OnClicked += CloseButton_OnClicked;
+            }
+        }
+
+        void CloseButton_OnClicked()
         {
             IsVisible = false;
         }
 
 
-        private void Window_OnPressed()
+        void Window_OnPressed()
         {
             if (IsDragging || IsResizing)
             {
@@ -140,8 +142,8 @@ namespace DwarfCorp
             int my = mouseState.Y;
             int dx = mx - ResizeStartPosition.X;
             int dy = my - ResizeStartPosition.Y;
-            LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, Math.Max(ResizeStartSize.X + dx, 64),
-                Math.Max(ResizeStartSize.Y + dy, 64));
+            LocalBounds = new Rectangle(LocalBounds.X, LocalBounds.Y, Math.Max(ResizeStartSize.X + dx, 64), Math.Max(ResizeStartSize.Y + dy, 64));
+
         }
 
         public void Drag()
@@ -159,6 +161,7 @@ namespace DwarfCorp
             int x = mx - DragStart.X;
             int y = my - DragStart.Y;
             LocalBounds = new Rectangle(x, y, Math.Max(LocalBounds.Width, 64), Math.Max(LocalBounds.Height, 64));
+
         }
 
 
@@ -167,9 +170,7 @@ namespace DwarfCorp
             MouseState mouseState = Mouse.GetState();
             Rectangle expanded = GlobalBounds;
             expanded.Inflate(32, 32);
-            return this != GUI.RootComponent && IsVisible &&
-                   (expanded.Contains(mouseState.X, mouseState.Y) || DragArea.Contains(mouseState.X, mouseState.Y) ||
-                    ResizeArea.Contains(mouseState.X, mouseState.Y) || base.IsMouseOverRecursive());
+            return this != GUI.RootComponent && IsVisible && (expanded.Contains(mouseState.X, mouseState.Y) || DragArea.Contains(mouseState.X, mouseState.Y) || ResizeArea.Contains(mouseState.X, mouseState.Y) || base.IsMouseOverRecursive());
         }
 
         public virtual void UpdateAreas()
@@ -184,3 +185,4 @@ namespace DwarfCorp
         }
     }
 }
+ 

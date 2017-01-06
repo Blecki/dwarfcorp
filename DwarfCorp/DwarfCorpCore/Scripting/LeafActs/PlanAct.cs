@@ -30,20 +30,44 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
-using Newtonsoft.Json;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A creature finds a path from point A to point B and fills the blackboard with
-    ///     this information.
+    /// A creature finds a path from point A to point B and fills the blackboard with
+    /// this information.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class PlanAct : CreatureAct
     {
+        public Timer PlannerTimer { get; set; }
+        public int MaxExpansions { get; set; }
+
+        public string PathOut { get; set; }
+
+        public string TargetName { get; set; }
+
+        public List<Creature.MoveAction> Path { get { return GetPath(); } set {  SetPath(value);} }
+        public Voxel Target { get { return GetTarget(); } set {  SetTarget(value);} }
+
+        public PlanSubscriber PlanSubscriber { get; set; }
+
+        public int MaxTimeouts { get; set; }
+
+        public int Timeouts { get; set; }
+
+        private bool WaitingOnResponse { get; set; }
+
+        public float Radius { get; set; }
+
+        public List<float> Weights { get; set; } 
+
         public enum PlanType
         {
             Adjacent,
@@ -52,8 +76,12 @@ namespace DwarfCorp
             Edge
         }
 
+
+        public PlanType Type { get; set; }
+
         public PlanAct()
         {
+
         }
 
         public PlanAct(CreatureAI agent, string pathOut, string target, PlanType planType) :
@@ -72,40 +100,6 @@ namespace DwarfCorp
             Radius = 0;
             Weights = new List<float> {10.0f, 20.0f, 30.0f, 40.0f};
         }
-
-        public Timer PlannerTimer { get; set; }
-        public int MaxExpansions { get; set; }
-
-        public string PathOut { get; set; }
-
-        public string TargetName { get; set; }
-
-        public List<Creature.MoveAction> Path
-        {
-            get { return GetPath(); }
-            set { SetPath(value); }
-        }
-
-        public Voxel Target
-        {
-            get { return GetTarget(); }
-            set { SetTarget(value); }
-        }
-
-        public PlanSubscriber PlanSubscriber { get; set; }
-
-        public int MaxTimeouts { get; set; }
-
-        public int Timeouts { get; set; }
-
-        private bool WaitingOnResponse { get; set; }
-
-        public float Radius { get; set; }
-
-        public List<float> Weights { get; set; }
-
-
-        public PlanType Type { get; set; }
 
         public Voxel GetTarget()
         {
@@ -129,8 +123,7 @@ namespace DwarfCorp
 
         public static bool PathExists(Voxel voxA, Voxel voxB, CreatureAI creature)
         {
-            List<Creature.MoveAction> path = AStarPlanner.FindPath(creature.Movement, voxA, new VoxelGoalRegion(voxB),
-                PlayState.ChunkManager, 1000, 10);
+            var path = AStarPlanner.FindPath(creature.Movement, voxA, new VoxelGoalRegion(voxB), PlayState.ChunkManager, 1000, 10);
             return path != null && path.Count > 0;
         }
 
@@ -139,8 +132,8 @@ namespace DwarfCorp
             Path = null;
             Timeouts = 0;
             PlannerTimer.Reset(PlannerTimer.TargetTimeSeconds);
-            var voxUnder = new Voxel();
-            while (true)
+            Voxel voxUnder = new Voxel();
+            while(true)
             {
                 if (Path != null)
                 {
@@ -148,7 +141,7 @@ namespace DwarfCorp
                     break;
                 }
 
-                if (Timeouts > MaxTimeouts)
+                if(Timeouts > MaxTimeouts)
                 {
                     yield return Status.Fail;
                     break;
@@ -157,8 +150,9 @@ namespace DwarfCorp
                 PlannerTimer.Update(DwarfTime.LastTime);
 
                 ChunkManager chunks = PlayState.ChunkManager;
-                if (PlannerTimer.HasTriggered || Timeouts == 0)
+                if(PlannerTimer.HasTriggered || Timeouts == 0)
                 {
+
                     if (!chunks.ChunkData.GetVoxel(Agent.Position, ref voxUnder))
                     {
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
@@ -167,7 +161,7 @@ namespace DwarfCorp
                     }
 
 
-                    if (Target == null && Type != PlanType.Edge)
+                    if(Target == null && Type != PlanType.Edge)
                     {
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                         yield return Status.Fail;
@@ -177,7 +171,7 @@ namespace DwarfCorp
                     if (voxUnder != null)
                     {
                         Path = null;
-                        var aspr = new AstarPlanRequest
+                        AstarPlanRequest aspr = new AstarPlanRequest
                         {
                             Subscriber = PlanSubscriber,
                             Start = voxUnder,
@@ -206,6 +200,7 @@ namespace DwarfCorp
                         PlannerTimer.Reset(PlannerTimer.TargetTimeSeconds);
                         WaitingOnResponse = true;
                         yield return Status.Running;
+
                     }
                     else
                     {
@@ -219,9 +214,9 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    var statusResult = Status.Running;
+                    Status statusResult = Status.Running;
 
-                    while (PlanSubscriber.Responses.Count > 0)
+                    while(PlanSubscriber.Responses.Count > 0)
                     {
                         AStarPlanResponse response;
                         PlanSubscriber.Responses.TryDequeue(out response);
@@ -242,6 +237,7 @@ namespace DwarfCorp
                         {
                             Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                             statusResult = Status.Fail;
+
                         }
                     }
                     yield return statusResult;
@@ -249,4 +245,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

@@ -30,20 +30,31 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Permissions;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Specifies how a GUI should be drawn. Has a bunch of primitive drawing functions
-    ///     which draw different elements of the GUI.
+    /// Specifies how a GUI should be drawn. Has a bunch of primitive drawing functions
+    /// which draw different elements of the GUI.
     /// </summary>
     public class GUISkin
     {
+        public int TileWidth { get; set; }
+        public int TileHeight { get; set; }
+        public int PointerWidth { get; set; }
+        public int PointerHeight { get; set; }
+        public Texture2D Texture { get; set; }
+        public Texture2D PointerTexture { get; set; }
+        public Dictionary<Tile, Point> Frames { get; set; }
+        public Dictionary<MousePointer, Point> MouseFrames { get; set; }
+
         public enum MousePointer
         {
             Pointer,
@@ -84,10 +95,10 @@ namespace DwarfCorp
 
             CheckboxUnchecked,
             CheckboxChecked,
-
+            
             Radiobutton,
             RadiobuttonPushed,
-
+            
             ButtonUpperLeft,
             ButtonUpperRight,
             ButtonLowerLeft,
@@ -124,22 +135,22 @@ namespace DwarfCorp
             GroupUpperRight,
             GroupLeft,
             GroupRight,
-            GroupLower,
-            GroupLowerRight,
+            GroupLower ,
+            GroupLowerRight ,
             GroupLowerLeft,
 
             ProgressLeft,
             ProgressFilled,
             ProgressEmpty,
-            ProgressCap,
-            ProgressRight,
+            ProgressCap ,
+            ProgressRight ,
 
-            Check,
-            Ex,
-            RightArrow,
-            LeftArrow,
+            Check ,
+            Ex ,
+            RightArrow ,
+            LeftArrow ,
             DownArrow,
-            Save,
+            Save ,
 
             SmallArrowRight,
             SmallArrowLeft,
@@ -179,8 +190,10 @@ namespace DwarfCorp
             TrayCenterRight
         }
 
-        public GUISkin(Texture2D texture, int tileWidth, int tileHeight, Texture2D pointerTexture, int pointerWidth,
-            int pointerHeight)
+        public Timer MouseTimer { get; set; }
+        public int WaitIndex { get; set; }
+
+        public GUISkin(Texture2D texture, int tileWidth, int tileHeight, Texture2D pointerTexture, int pointerWidth, int pointerHeight)
         {
             Texture = texture;
             TileWidth = tileWidth;
@@ -194,21 +207,9 @@ namespace DwarfCorp
             WaitIndex = 0;
         }
 
-        public int TileWidth { get; set; }
-        public int TileHeight { get; set; }
-        public int PointerWidth { get; set; }
-        public int PointerHeight { get; set; }
-        public Texture2D Texture { get; set; }
-        public Texture2D PointerTexture { get; set; }
-        public Dictionary<Tile, Point> Frames { get; set; }
-        public Dictionary<MousePointer, Point> MouseFrames { get; set; }
-
-        public Timer MouseTimer { get; set; }
-        public int WaitIndex { get; set; }
-
         public Rectangle GetRect(Point p, int w, int h)
         {
-            return new Rectangle(p.X*w, p.Y*h, w, h);
+            return new Rectangle(p.X * w, p.Y * h, w, h);
         }
 
         public ImageFrame GetMouseFrame(Point p)
@@ -237,7 +238,11 @@ namespace DwarfCorp
                 frame.X += WaitIndex;
                 return GetMouseFrame(frame);
             }
-            return GetMouseFrame(MouseFrames[key]);
+            else
+            {
+
+                return GetMouseFrame(MouseFrames[key]);
+            }
         }
 
         public ImageFrame GetSpecialFrame(Tile key)
@@ -326,7 +331,7 @@ namespace DwarfCorp
 
 
             Frames[Tile.SpeechBubbleUpperLeft] = new Point(8, 6);
-            Frames[Tile.SpeechBubbleUpper] = new Point(9, 6);
+            Frames[Tile.SpeechBubbleUpper]     = new Point(9, 6);
             Frames[Tile.SpeechBubbleCenter] = new Point(9, 7);
             Frames[Tile.SpeechBubbleUpperRight] = new Point(10, 6);
             Frames[Tile.SpeechBubbleLeft] = new Point(8, 7);
@@ -347,7 +352,7 @@ namespace DwarfCorp
             Frames[Tile.LeftArrow] = new Point(4, 8);
             Frames[Tile.RightArrow] = new Point(5, 8);
 
-            Frames[Tile.ZoomIn] = new Point(11, 0);
+            Frames[Tile.ZoomIn] = new Point(11,0);
             Frames[Tile.ZoomOut] = new Point(11, 1);
             Frames[Tile.ZoomHome] = new Point(12, 0);
 
@@ -358,7 +363,7 @@ namespace DwarfCorp
             Frames[Tile.SmallEx] = new Point(14, 0);
 
             Frames[Tile.ButtonFrame] = new Point(9, 4);
-
+            
             Frames[Tile.TrayUpperLeft] = new Point(11, 3);
             Frames[Tile.TrayUpperRight] = new Point(12, 3);
             Frames[Tile.TrayBottomLeft] = new Point(11, 4);
@@ -380,23 +385,21 @@ namespace DwarfCorp
             MouseFrames[MousePointer.Guard] = new Point(3, 0);
             MouseFrames[MousePointer.Magic] = new Point(0, 1);
             MouseFrames[MousePointer.Wait] = new Point(0, 2);
-        }
+
+         }
 
         public void RenderButtonFrame(Rectangle buttonRect, SpriteBatch batch)
         {
-            var destRect = new Rectangle(buttonRect.X - TileWidth, buttonRect.Y - TileHeight,
-                buttonRect.Width + TileWidth*2, buttonRect.Height + TileHeight*2);
+            Rectangle destRect = new Rectangle(buttonRect.X - TileWidth, buttonRect.Y - TileHeight, buttonRect.Width + TileWidth * 2, buttonRect.Height + TileHeight * 2);
             ImageFrame frame = GetSpecialFrame(Tile.ButtonFrame);
-            var sourceRect = new Rectangle(frame.SourceRect.X - TileWidth, frame.SourceRect.Y - TileHeight,
-                frame.SourceRect.Width + TileWidth*2, frame.SourceRect.Height + TileHeight*2);
+            Rectangle sourceRect = new Rectangle(frame.SourceRect.X - TileWidth, frame.SourceRect.Y - TileHeight, frame.SourceRect.Width + TileWidth * 2, frame.SourceRect.Height + TileHeight * 2);
 
             batch.Draw(frame.Image, destRect, sourceRect, Color.White);
         }
 
         public void RenderMouse(int x, int y, int scale, MousePointer mode, SpriteBatch spriteBatch, Color tint)
         {
-            spriteBatch.Draw(PointerTexture, new Rectangle(x, y, PointerWidth*scale, PointerHeight*scale),
-                GetSpecialFrame(mode).SourceRect, tint);
+            spriteBatch.Draw(PointerTexture, new Rectangle(x, y, PointerWidth * scale, PointerHeight * scale), GetSpecialFrame(mode).SourceRect, tint);
         }
 
         public void RenderTile(Rectangle screenRect, Tile tile, SpriteBatch batch, Color tint)
@@ -422,31 +425,31 @@ namespace DwarfCorp
                     ySize = rect.Height;
                     break;
                 case Tray.Position.BottomRight:
-                    xPos = TileWidth/2;
-                    yPos = TileHeight/2;
+                    xPos = TileWidth / 2;
+                    yPos = TileHeight / 2;
                     xSize = rect.Width;
                     ySize = rect.Height;
                     break;
                 case Tray.Position.TopLeft:
-                    xPos = -TileWidth/2;
-                    yPos = -TileHeight/2;
+                    xPos = -TileWidth / 2;
+                    yPos = -TileHeight / 2;
                     xSize = rect.Width;
                     ySize = rect.Height - TileHeight;
                     break;
                 case Tray.Position.TopRight:
-                    xPos = TileWidth/2;
-                    yPos = -TileHeight/2;
+                    xPos = TileWidth / 2;
+                    yPos = -TileHeight / 2;
                     xSize = rect.Width;
                     ySize = rect.Height - TileHeight;
                     break;
+
             }
 
             for (int x = xPos; x < xSize; x += TileWidth)
             {
                 for (int y = yPos; y < ySize; y += TileHeight)
                 {
-                    spriteBatch.Draw(Texture, new Rectangle(x + rect.X, y + rect.Y, TileWidth, TileHeight),
-                        GetSourceRect(Tile.TrayBackground), Color.White);
+                    spriteBatch.Draw(Texture, new Rectangle(x + rect.X, y + rect.Y, TileWidth, TileHeight), GetSourceRect(Tile.TrayBackground), Color.White);
                 }
             }
 
@@ -458,20 +461,15 @@ namespace DwarfCorp
             }
             else if (trayPosition == Tray.Position.BottomLeft)
             {
-                spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width - TileWidth, rect.Y, TileWidth, TileHeight),
-                    GetSourceRect(Tile.TrayUpperRight), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width - TileWidth, rect.Y, TileWidth, TileHeight), GetSourceRect(Tile.TrayUpperRight), Color.White);
             }
             else if (trayPosition == Tray.Position.TopLeft)
             {
-                spriteBatch.Draw(Texture,
-                    new Rectangle(rect.X + rect.Width - TileWidth, rect.Y + rect.Height - TileHeight, TileWidth,
-                        TileHeight), GetSourceRect(Tile.TrayBottomRight), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width - TileWidth, rect.Y + rect.Height - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.TrayBottomRight), Color.White);
             }
             else if (trayPosition == Tray.Position.TopRight)
             {
-                spriteBatch.Draw(Texture,
-                    new Rectangle(rect.X, rect.Y + rect.Height - TileHeight, TileWidth, TileHeight),
-                    GetSourceRect(Tile.TrayBottomLeft), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y + rect.Height - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.TrayBottomLeft), Color.White);
             }
 
 
@@ -480,7 +478,7 @@ namespace DwarfCorp
                 Rectangle leftBounds = GetSourceRect(Tile.TrayCenterLeft);
                 leftBounds.Height *= 2;
                 int yStart = trayPosition == Tray.Position.BottomRight ? TileHeight : 0;
-                int yEnd = trayPosition == Tray.Position.BottomRight ? rect.Height : rect.Height - TileHeight*2;
+                int yEnd = trayPosition == Tray.Position.BottomRight ? rect.Height : rect.Height - TileHeight * 2;
                 for (int y = yStart; y < yEnd; y += TileHeight)
                 {
                     spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y + y, leftBounds.Width, leftBounds.Height),
@@ -511,8 +509,7 @@ namespace DwarfCorp
                 int yEnd = trayPosition == Tray.Position.BottomLeft ? rect.Height : rect.Height - TileHeight;
                 for (int y = yStart; y < yEnd; y += TileHeight)
                 {
-                    spriteBatch.Draw(Texture,
-                        new Rectangle(rect.X + rect.Width - TileWidth, rect.Y + y, rightBounds.Width, rightBounds.Height),
+                    spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width - TileWidth, rect.Y + y, rightBounds.Width, rightBounds.Height),
                         rightBounds, Color.White);
                 }
             }
@@ -526,113 +523,90 @@ namespace DwarfCorp
                 int xEnd = trayPosition == Tray.Position.TopRight ? rect.Width : rect.Width - TileWidth;
                 for (int x = xStart; x < xEnd; x += TileWidth)
                 {
-                    spriteBatch.Draw(Texture,
-                        new Rectangle(rect.X + x, rect.Y + rect.Height - TileHeight, bottomBounds.Width,
-                            bottomBounds.Height),
+                    spriteBatch.Draw(Texture, new Rectangle(rect.X + x, rect.Y + rect.Height - TileHeight, bottomBounds.Width, bottomBounds.Height),
                         bottomBounds, Color.White);
                 }
             }
+
         }
 
         public void RenderPanel(Rectangle rectbounds, SpriteBatch spriteBatch)
         {
-            var rect = new Rectangle(rectbounds.X + TileWidth/4, rectbounds.Y + TileHeight/4,
-                rectbounds.Width - TileWidth/2, rectbounds.Height - TileHeight/2);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y - TileHeight, TileWidth, TileHeight),
-                GetSourceRect(Tile.PanelUpperLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y + rect.Height, TileWidth, TileHeight),
-                GetSourceRect(Tile.PanelLowerLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight),
-                GetSourceRect(Tile.PanelUpperRight), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y + rect.Height, TileWidth, TileHeight),
-                GetSourceRect(Tile.PanelLowerRight), Color.White);
+            Rectangle rect = new Rectangle((int) (rectbounds.X + TileWidth / 4), (int) (rectbounds.Y + TileHeight / 4), rectbounds.Width - TileWidth / 2, rectbounds.Height - TileHeight / 2);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.PanelUpperLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.PanelLowerLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.PanelUpperRight), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.PanelLowerRight), Color.White);
 
             int maxX = rect.X + rect.Width;
-            int diffX = rect.Width%TileWidth;
+            int diffX = rect.Width % TileWidth;
             int maxY = rect.Y + rect.Height;
-            int diffY = rect.Height%TileHeight;
+            int diffY = rect.Height % TileHeight;
             int right = maxX - diffX - TileWidth;
             int bottom = maxY - diffY - TileHeight;
             int left = rect.X;
             int top = rect.Y;
 
-            for (int x = left; x <= right; x += TileWidth)
+            for(int x = left; x <= right; x += TileWidth)
             {
-                spriteBatch.Draw(Texture, new Rectangle(x, rect.Y - TileHeight, TileWidth, TileHeight),
-                    GetSourceRect(Tile.PanelUpper), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(x, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.PanelUpper), Color.White);
             }
 
-            spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, rect.Y - TileHeight, diffX, TileHeight),
-                GetSourceRect(Tile.PanelUpper), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, rect.Y - TileHeight, diffX, TileHeight), GetSourceRect(Tile.PanelUpper), Color.White);
 
-            for (int y = top; y <= bottom; y += TileHeight)
+            for(int y = top; y <= bottom; y += TileHeight)
             {
-                spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, y, TileWidth, TileHeight),
-                    GetSourceRect(Tile.PanelLeft), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, y, TileWidth, TileHeight), GetSourceRect(Tile.PanelLeft), Color.White);
             }
 
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, maxY - diffY, TileWidth, diffY),
-                GetSourceRect(Tile.PanelLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, maxY - diffY, TileWidth, diffY), GetSourceRect(Tile.PanelLeft), Color.White);
 
-            for (int x = left; x <= right; x += TileWidth)
+            for(int x = left; x <= right; x += TileWidth)
             {
-                spriteBatch.Draw(Texture, new Rectangle(x, rect.Y + rect.Height, TileWidth, TileHeight),
-                    GetSourceRect(Tile.PanelLower), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(x, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.PanelLower), Color.White);
             }
 
 
-            spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, rect.Y + rect.Height, diffX, TileHeight),
-                GetSourceRect(Tile.PanelLower), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, rect.Y + rect.Height, diffX, TileHeight), GetSourceRect(Tile.PanelLower), Color.White);
 
-            for (int y = top; y <= bottom; y += TileHeight)
+            for(int y = top; y <= bottom; y += TileHeight)
             {
-                spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, y, TileWidth, TileHeight),
-                    GetSourceRect(Tile.PanelRight), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, y, TileWidth, TileHeight), GetSourceRect(Tile.PanelRight), Color.White);
             }
 
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, maxY - diffY, TileWidth, diffY),
-                GetSourceRect(Tile.PanelRight), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, maxY - diffY, TileWidth, diffY), GetSourceRect(Tile.PanelRight), Color.White);
 
-            for (int x = left; x <= right; x += TileWidth)
+            for(int x = left; x <= right; x += TileWidth)
             {
-                for (int y = top; y <= bottom; y += TileHeight)
+                for(int y = top; y <= bottom; y += TileHeight)
                 {
-                    spriteBatch.Draw(Texture, new Rectangle(x, y, TileWidth, TileHeight),
-                        GetSourceRect(Tile.PanelCenter), Color.White);
+                    spriteBatch.Draw(Texture, new Rectangle(x, y, TileWidth, TileHeight), GetSourceRect(Tile.PanelCenter), Color.White);
                 }
-                spriteBatch.Draw(Texture, new Rectangle(x, maxY - diffY, TileWidth, diffY),
-                    GetSourceRect(Tile.PanelCenter), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(x, maxY - diffY, TileWidth, diffY), GetSourceRect(Tile.PanelCenter), Color.White);
             }
 
-            for (int y = top; y <= bottom; y += TileHeight)
+            for(int y = top; y <= bottom; y += TileHeight)
             {
-                spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, y, diffX, TileHeight),
-                    GetSourceRect(Tile.PanelCenter), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, y, diffX, TileHeight), GetSourceRect(Tile.PanelCenter), Color.White);
             }
 
-            spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, maxY - diffY, diffX, diffY),
-                GetSourceRect(Tile.PanelCenter), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, maxY - diffY, diffX, diffY), GetSourceRect(Tile.PanelCenter), Color.White);
         }
 
         public void RenderWindow(Rectangle rectbounds, SpriteBatch spriteBatch, bool ex)
         {
-            Tile upperTile = ex ? Tile.WindowUpperRight : Tile.WindowUpperRightNoEx;
-
-            var rect = new Rectangle(rectbounds.X + TileWidth/4, rectbounds.Y + TileHeight/4,
-                rectbounds.Width - TileWidth/2, rectbounds.Height - TileHeight/2);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y - TileHeight, TileWidth, TileHeight),
-                GetSourceRect(Tile.WindowUpperLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y + rect.Height, TileWidth, TileHeight),
-                GetSourceRect(Tile.WindowLowerLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight),
-                GetSourceRect(upperTile), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y + rect.Height, TileWidth, TileHeight),
-                GetSourceRect(Tile.WindowLowerRight), Color.White);
+            Tile upperTile = ex ?  Tile.WindowUpperRight : Tile.WindowUpperRightNoEx;
+    
+            Rectangle rect = new Rectangle((int)(rectbounds.X + TileWidth / 4), (int)(rectbounds.Y + TileHeight / 4), rectbounds.Width - TileWidth / 2, rectbounds.Height - TileHeight / 2);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.WindowUpperLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.WindowLowerLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(upperTile), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.WindowLowerRight), Color.White);
 
             int maxX = rect.X + rect.Width;
-            int diffX = rect.Width%TileWidth;
+            int diffX = rect.Width % TileWidth;
             int maxY = rect.Y + rect.Height;
-            int diffY = rect.Height%TileHeight;
+            int diffY = rect.Height % TileHeight;
             int right = maxX - diffX - TileWidth;
             int bottom = maxY - diffY - TileHeight;
             int left = rect.X;
@@ -640,149 +614,112 @@ namespace DwarfCorp
 
             for (int x = left; x <= right; x += TileWidth)
             {
-                spriteBatch.Draw(Texture, new Rectangle(x, rect.Y - TileHeight, TileWidth, TileHeight),
-                    GetSourceRect(Tile.WindowUpper), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(x, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.WindowUpper), Color.White);
             }
 
-            spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, rect.Y - TileHeight, diffX, TileHeight),
-                GetSourceRect(Tile.WindowUpper), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, rect.Y - TileHeight, diffX, TileHeight), GetSourceRect(Tile.WindowUpper), Color.White);
 
             for (int y = top; y <= bottom; y += TileHeight)
             {
-                spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, y, TileWidth, TileHeight),
-                    GetSourceRect(Tile.WindowLeft), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, y, TileWidth, TileHeight), GetSourceRect(Tile.WindowLeft), Color.White);
             }
 
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, maxY - diffY, TileWidth, diffY),
-                GetSourceRect(Tile.WindowLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, maxY - diffY, TileWidth, diffY), GetSourceRect(Tile.WindowLeft), Color.White);
 
             for (int x = left; x <= right; x += TileWidth)
             {
-                spriteBatch.Draw(Texture, new Rectangle(x, rect.Y + rect.Height, TileWidth, TileHeight),
-                    GetSourceRect(Tile.WindowLower), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(x, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.WindowLower), Color.White);
             }
 
 
-            spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, rect.Y + rect.Height, diffX, TileHeight),
-                GetSourceRect(Tile.WindowLower), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, rect.Y + rect.Height, diffX, TileHeight), GetSourceRect(Tile.WindowLower), Color.White);
 
             for (int y = top; y <= bottom; y += TileHeight)
             {
-                spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, y, TileWidth, TileHeight),
-                    GetSourceRect(Tile.WindowRight), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, y, TileWidth, TileHeight), GetSourceRect(Tile.WindowRight), Color.White);
             }
 
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, maxY - diffY, TileWidth, diffY),
-                GetSourceRect(Tile.WindowRight), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, maxY - diffY, TileWidth, diffY), GetSourceRect(Tile.WindowRight), Color.White);
 
             for (int x = left; x <= right; x += TileWidth)
             {
                 for (int y = top; y <= bottom; y += TileHeight)
                 {
-                    spriteBatch.Draw(Texture, new Rectangle(x, y, TileWidth, TileHeight),
-                        GetSourceRect(Tile.WindowCenter), Color.White);
+                    spriteBatch.Draw(Texture, new Rectangle(x, y, TileWidth, TileHeight), GetSourceRect(Tile.WindowCenter), Color.White);
                 }
-                spriteBatch.Draw(Texture, new Rectangle(x, maxY - diffY, TileWidth, diffY),
-                    GetSourceRect(Tile.WindowCenter), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(x, maxY - diffY, TileWidth, diffY), GetSourceRect(Tile.WindowCenter), Color.White);
             }
 
             for (int y = top; y <= bottom; y += TileHeight)
             {
-                spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, y, diffX, TileHeight),
-                    GetSourceRect(Tile.WindowCenter), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, y, diffX, TileHeight), GetSourceRect(Tile.WindowCenter), Color.White);
             }
 
-            spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, maxY - diffY, diffX, diffY),
-                GetSourceRect(Tile.WindowCenter), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, maxY - diffY, diffX, diffY), GetSourceRect(Tile.WindowCenter), Color.White);
         }
 
 
         public void RenderButton(Rectangle rectbounds, SpriteBatch spriteBatch)
         {
-            int w = Math.Max(rectbounds.Width - TileWidth/4, TileWidth/4);
-            int h = Math.Max(rectbounds.Height - TileHeight/4, TileHeight/4);
-            var rect = new Rectangle(rectbounds.X + TileWidth/8,
-                rectbounds.Y + TileHeight/8,
+            int w = Math.Max(rectbounds.Width - TileWidth / 4, TileWidth / 4);
+            int h = Math.Max(rectbounds.Height - TileHeight / 4, TileHeight / 4);
+            Rectangle rect = new Rectangle((int) (rectbounds.X + TileWidth / 8),
+                (int) (rectbounds.Y + TileHeight / 8),
                 w,
                 h);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y - TileHeight, TileWidth, TileHeight),
-                GetSourceRect(Tile.ButtonUpperLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y + rect.Height, TileWidth, TileHeight),
-                GetSourceRect(Tile.ButtonLowerLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight),
-                GetSourceRect(Tile.ButtonUpperRight), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y + rect.Height, TileWidth, TileHeight),
-                GetSourceRect(Tile.ButtonLowerRight), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y - TileHeight, rect.Width, TileHeight),
-                GetSourceRect(Tile.ButtonUpper), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y, TileWidth, rect.Height),
-                GetSourceRect(Tile.ButtonLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y + rect.Height, rect.Width, TileHeight),
-                GetSourceRect(Tile.ButtonLower), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height),
-                GetSourceRect(Tile.ButtonRight), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.ButtonUpperLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.ButtonLowerLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.ButtonUpperRight), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.ButtonLowerRight), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y - TileHeight, rect.Width, TileHeight), GetSourceRect(Tile.ButtonUpper), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y, TileWidth, rect.Height), GetSourceRect(Tile.ButtonLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y + rect.Height, rect.Width, TileHeight), GetSourceRect(Tile.ButtonLower), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height), GetSourceRect(Tile.ButtonRight), Color.White);
             spriteBatch.Draw(Texture, rect, GetSourceRect(Tile.ButtonCenter), Color.White);
         }
 
         public void RenderSpeechBubble(Rectangle rectbounds, SpriteBatch spriteBatch)
         {
-            int w = Math.Max(rectbounds.Width - TileWidth/4, TileWidth/4);
-            int h = Math.Max(rectbounds.Height - TileHeight/4, TileHeight/4);
-            var rect = new Rectangle(rectbounds.X + TileWidth/8,
-                rectbounds.Y + TileHeight/8,
+            int w = Math.Max(rectbounds.Width - TileWidth / 4, TileWidth / 4);
+            int h = Math.Max(rectbounds.Height - TileHeight / 4, TileHeight / 4);
+            Rectangle rect = new Rectangle((int)(rectbounds.X + TileWidth / 8),
+                (int)(rectbounds.Y + TileHeight / 8),
                 w,
                 h);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y - TileHeight, TileWidth, TileHeight),
-                GetSourceRect(Tile.SpeechBubbleUpperLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y + rect.Height, TileWidth, TileHeight),
-                GetSourceRect(Tile.SpeechBubbleLowerLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight),
-                GetSourceRect(Tile.SpeechBubbleUpperRight), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y + rect.Height, TileWidth, TileHeight),
-                GetSourceRect(Tile.SpeechBubbleLowerRight), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y - TileHeight, rect.Width, TileHeight),
-                GetSourceRect(Tile.SpeechBubbleUpper), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y, TileWidth, rect.Height),
-                GetSourceRect(Tile.SpeechBubbleLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y + rect.Height, rect.Width, TileHeight),
-                GetSourceRect(Tile.SpeechBubbleLower), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height),
-                GetSourceRect(Tile.SpeechBubbleRight), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.SpeechBubbleUpperLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.SpeechBubbleLowerLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.SpeechBubbleUpperRight), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.SpeechBubbleLowerRight), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y - TileHeight, rect.Width, TileHeight), GetSourceRect(Tile.SpeechBubbleUpper), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y, TileWidth, rect.Height), GetSourceRect(Tile.SpeechBubbleLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y + rect.Height, rect.Width, TileHeight), GetSourceRect(Tile.SpeechBubbleLower), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height), GetSourceRect(Tile.SpeechBubbleRight), Color.White);
             spriteBatch.Draw(Texture, rect, GetSourceRect(Tile.SpeechBubbleCenter), Color.White);
         }
 
 
         public void RenderToolTip(Rectangle rectbounds, SpriteBatch spriteBatch, Color tint)
         {
-            int w = Math.Max(rectbounds.Width - TileWidth/4, TileWidth/4);
-            int h = Math.Max(rectbounds.Height - TileHeight/4, TileHeight/4);
-            var rect = new Rectangle(rectbounds.X + TileWidth/8,
-                rectbounds.Y + TileHeight/8,
+            int w = Math.Max(rectbounds.Width - TileWidth / 4, TileWidth / 4);
+            int h = Math.Max(rectbounds.Height - TileHeight / 4, TileHeight / 4);
+            Rectangle rect = new Rectangle((int)(rectbounds.X + TileWidth / 8),
+                (int)(rectbounds.Y + TileHeight / 8),
                 w,
                 h);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y - TileHeight, TileWidth, TileHeight),
-                GetSourceRect(Tile.ToolTipUpperLeft), tint);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y + rect.Height, TileWidth, TileHeight),
-                GetSourceRect(Tile.ToolTipLowerLeft), tint);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight),
-                GetSourceRect(Tile.ToolTipUpperRight), tint);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y + rect.Height, TileWidth, TileHeight),
-                GetSourceRect(Tile.ToolTipLowerRight), tint);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y - TileHeight, rect.Width, TileHeight),
-                GetSourceRect(Tile.ToolTipUpper), tint);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y, TileWidth, rect.Height),
-                GetSourceRect(Tile.ToolTipLeft), tint);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y + rect.Height, rect.Width, TileHeight),
-                GetSourceRect(Tile.ToolTipLower), tint);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height),
-                GetSourceRect(Tile.ToolTipRight), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.ToolTipUpperLeft), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.ToolTipLowerLeft), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.ToolTipUpperRight), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.ToolTipLowerRight), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y - TileHeight, rect.Width, TileHeight), GetSourceRect(Tile.ToolTipUpper), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y, TileWidth, rect.Height), GetSourceRect(Tile.ToolTipLeft), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y + rect.Height, rect.Width, TileHeight), GetSourceRect(Tile.ToolTipLower), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height), GetSourceRect(Tile.ToolTipRight), tint);
             spriteBatch.Draw(Texture, rect, GetSourceRect(Tile.ToolTipCenter), tint);
         }
 
         public void RenderCheckbox(Rectangle rect, bool checkstate, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, rect,
-                checkstate ? GetSourceRect(Tile.CheckboxChecked) : GetSourceRect(Tile.CheckboxUnchecked), Color.White);
+            spriteBatch.Draw(Texture, rect, checkstate ? GetSourceRect(Tile.CheckboxChecked) : GetSourceRect(Tile.CheckboxUnchecked), Color.White);
         }
 
         public void RenderDownArrow(Rectangle rect, SpriteBatch spriteBatch)
@@ -792,28 +729,23 @@ namespace DwarfCorp
 
         public void RenderRadioButton(Rectangle rect, bool checkstate, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, rect,
-                checkstate ? GetSourceRect(Tile.RadiobuttonPushed) : GetSourceRect(Tile.Radiobutton), Color.White);
+            spriteBatch.Draw(Texture, rect, checkstate ? GetSourceRect(Tile.RadiobuttonPushed) : GetSourceRect(Tile.Radiobutton), Color.White);
         }
 
         public void RenderField(Rectangle rect, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y, TileWidth, TileHeight),
-                GetSourceRect(Tile.FieldLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + TileWidth, rect.Y, rect.Width - TileWidth*2, TileHeight),
-                GetSourceRect(Tile.FieldCenter), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.Right - TileWidth, rect.Top, TileWidth, TileHeight),
-                GetSourceRect(Tile.FieldRight), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y, TileWidth, TileHeight), GetSourceRect(Tile.FieldLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + TileWidth, rect.Y, rect.Width - TileWidth * 2, TileHeight), GetSourceRect(Tile.FieldCenter), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.Right - TileWidth, rect.Top, TileWidth, TileHeight), GetSourceRect(Tile.FieldRight), Color.White);
         }
 
         public void RenderProgressBar(Rectangle rectBounds, float progress, Color tint, SpriteBatch spriteBatch)
         {
-            var n = (float) Math.Max(Math.Min(progress, 1.0), 0.0);
+            float n = (float) Math.Max(Math.Min(progress, 1.0), 0.0);
 
-            if (n > 0)
+            if(n > 0)
             {
-                var drawFillRect = new Rectangle(rectBounds.X + TileWidth/2 - 8, rectBounds.Y,
-                    (int) ((rectBounds.Width - TileWidth/2 - 4)*n) - 8, rectBounds.Height);
+                Rectangle drawFillRect = new Rectangle(rectBounds.X + TileWidth / 2 - 8, rectBounds.Y, (int) ((rectBounds.Width - TileWidth / 2 - 4) * n) - 8, rectBounds.Height);
                 Rectangle filledRect = GetSourceRect(Tile.ProgressFilled);
                 filledRect.Width = 1;
                 spriteBatch.Draw(Texture, drawFillRect, filledRect, tint);
@@ -821,112 +753,89 @@ namespace DwarfCorp
                 Rectangle progressRect = GetSourceRect(Tile.ProgressCap);
                 progressRect.Width = 8;
 
-                var capRect = new Rectangle((int) ((rectBounds.Width - TileWidth/2 - 4)*n) + rectBounds.X, rectBounds.Y,
-                    8, rectBounds.Height);
+                Rectangle capRect = new Rectangle((int) ((rectBounds.Width - TileWidth / 2 - 4) * n) + rectBounds.X, rectBounds.Y, 8, rectBounds.Height);
                 spriteBatch.Draw(Texture, capRect, progressRect, tint);
             }
 
-            spriteBatch.Draw(Texture, new Rectangle(rectBounds.X, rectBounds.Y, TileWidth, rectBounds.Height),
-                GetSourceRect(Tile.ProgressLeft), Color.White);
-            spriteBatch.Draw(Texture,
-                new Rectangle(rectBounds.X + rectBounds.Width - TileWidth, rectBounds.Y, TileWidth, rectBounds.Height),
-                GetSourceRect(Tile.ProgressRight), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rectBounds.X, rectBounds.Y, TileWidth, rectBounds.Height), GetSourceRect(Tile.ProgressLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rectBounds.X + rectBounds.Width - TileWidth, rectBounds.Y, TileWidth, rectBounds.Height), GetSourceRect(Tile.ProgressRight), Color.White);
 
-            int steps = (rectBounds.Width - TileWidth)/TileWidth;
+            int steps = (rectBounds.Width - TileWidth) / TileWidth;
 
-            for (int i = 0; i < steps; i++)
+            for(int i = 0; i < steps; i++)
             {
-                spriteBatch.Draw(Texture,
-                    new Rectangle(rectBounds.X + TileWidth/2 + i*TileWidth, rectBounds.Y, TileWidth, rectBounds.Height),
-                    GetSourceRect(Tile.ProgressEmpty), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(rectBounds.X + TileWidth / 2 + i * TileWidth, rectBounds.Y, TileWidth, rectBounds.Height), GetSourceRect(Tile.ProgressEmpty), Color.White);
             }
 
-            int remainder = (rectBounds.Width - TileWidth) - steps*TileWidth;
+            int remainder = (rectBounds.Width - TileWidth) - steps * TileWidth;
 
-            if (remainder > 0)
+            if(remainder > 0)
             {
-                spriteBatch.Draw(Texture,
-                    new Rectangle(rectBounds.X + TileWidth/2 + steps*TileWidth, rectBounds.Y, remainder,
-                        rectBounds.Height), GetSourceRect(Tile.ProgressEmpty), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(rectBounds.X + TileWidth / 2 + steps * TileWidth, rectBounds.Y, remainder, rectBounds.Height), GetSourceRect(Tile.ProgressEmpty), Color.White);
             }
         }
 
         public void RenderGroup(Rectangle rectbounds, SpriteBatch spriteBatch)
         {
-            var rect = new Rectangle(rectbounds.X + TileWidth/4, rectbounds.Y + TileHeight/4,
-                rectbounds.Width - TileWidth/2, rectbounds.Height - TileHeight/2);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y - TileHeight, TileWidth, TileHeight),
-                GetSourceRect(Tile.GroupUpperLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y + rect.Height, TileWidth, TileHeight),
-                GetSourceRect(Tile.GroupLowerLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight),
-                GetSourceRect(Tile.GroupUpperRight), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y + rect.Height, TileWidth, TileHeight),
-                GetSourceRect(Tile.GroupLowerRight), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y - TileHeight, rect.Width, TileHeight),
-                GetSourceRect(Tile.GroupUpper), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y, TileWidth, rect.Height),
-                GetSourceRect(Tile.GroupLeft), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y + rect.Height, rect.Width, TileHeight),
-                GetSourceRect(Tile.GroupLower), Color.White);
-            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height),
-                GetSourceRect(Tile.GroupRight), Color.White);
+            Rectangle rect = new Rectangle((int) (rectbounds.X + TileWidth / 4), (int) (rectbounds.Y + TileHeight / 4), rectbounds.Width - TileWidth / 2, rectbounds.Height - TileHeight / 2);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.GroupUpperLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.GroupLowerLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y - TileHeight, TileWidth, TileHeight), GetSourceRect(Tile.GroupUpperRight), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y + rect.Height, TileWidth, TileHeight), GetSourceRect(Tile.GroupLowerRight), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y - TileHeight, rect.Width, TileHeight), GetSourceRect(Tile.GroupUpper), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X - TileWidth, rect.Y, TileWidth, rect.Height), GetSourceRect(Tile.GroupLeft), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y + rect.Height, rect.Width, TileHeight), GetSourceRect(Tile.GroupLower), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + rect.Width, rect.Y, TileWidth, rect.Height), GetSourceRect(Tile.GroupRight), Color.White);
         }
 
-        public void RenderSliderVertical(SpriteFont font, Rectangle boundingRect, float value, float minvalue,
-            float maxValue, Slider.SliderMode mode, bool drawLabel, bool invert, SpriteBatch spriteBatch)
+        public void RenderSliderVertical(SpriteFont font, Rectangle boundingRect, float value, float minvalue, float maxValue, Slider.SliderMode mode,  bool drawLabel, bool invert, SpriteBatch spriteBatch)
         {
             const int padding = 5;
 
-            if (invert)
+            if(invert)
             {
                 value = maxValue - value;
             }
 
 
-            int fieldSize = Math.Max(Math.Min((int) (0.2f*boundingRect.Width), 150), 64);
-            var rect = new Rectangle(boundingRect.X + boundingRect.Width/2 - TileWidth/2, boundingRect.Y + padding,
-                boundingRect.Width, boundingRect.Height - TileHeight - padding*2);
-            var fieldRect = new Rectangle(boundingRect.Right - fieldSize,
-                boundingRect.Y + boundingRect.Height - TileHeight/2, fieldSize, TileHeight);
+            int fieldSize = Math.Max(Math.Min((int) (0.2f * boundingRect.Width), 150), 64);
+            Rectangle rect = new Rectangle(boundingRect.X + boundingRect.Width / 2 - TileWidth / 2, boundingRect.Y + padding, boundingRect.Width, boundingRect.Height - TileHeight - padding * 2);
+            Rectangle fieldRect = new Rectangle(boundingRect.Right - fieldSize, boundingRect.Y + boundingRect.Height - TileHeight / 2, fieldSize, TileHeight);
 
             int maxY = rect.Y + rect.Height;
-            int diffY = rect.Height%TileHeight;
+            int diffY = rect.Height % TileHeight;
             int bottom = maxY;
             int left = rect.X;
             int top = rect.Y;
 
 
-            for (int y = top; y <= bottom; y += TileHeight)
+            for(int y = top; y <= bottom; y += TileHeight)
             {
-                spriteBatch.Draw(Texture, new Rectangle(rect.X, y, TileWidth, TileHeight), GetSourceRect(Tile.TrackVert),
-                    Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(rect.X, y, TileWidth, TileHeight), GetSourceRect(Tile.TrackVert), Color.White);
             }
 
-            spriteBatch.Draw(Texture, new Rectangle(rect.X, maxY - diffY, TileWidth, diffY),
-                GetSourceRect(Tile.TrackVert), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, maxY - diffY, TileWidth, diffY), GetSourceRect(Tile.TrackVert), Color.White);
 
-            float d = (value - minvalue)/(maxValue - minvalue);
+            float d = (value - minvalue) / (maxValue - minvalue);
 
-            var sliderY = (int) ((d)*rect.Height + rect.Y);
+            int sliderY = (int) ((d) * rect.Height + rect.Y);
 
-            spriteBatch.Draw(Texture, new Rectangle(rect.X, sliderY - TileHeight/2, TileWidth, TileHeight),
-                GetSourceRect(Tile.SliderVertical), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, sliderY - TileHeight / 2, TileWidth, TileHeight), GetSourceRect(Tile.SliderVertical), Color.White);
 
-            if (!drawLabel)
+            if(!drawLabel)
             {
                 return;
             }
 
             RenderField(fieldRect, spriteBatch);
 
-            if (invert)
+            if(invert)
             {
                 value = -(value - maxValue);
             }
 
             float v = 0.0f;
-            if (mode == Slider.SliderMode.Float)
+            if(mode == Slider.SliderMode.Float)
             {
                 v = (float) Math.Round(value, 2);
             }
@@ -937,60 +846,53 @@ namespace DwarfCorp
 
             string toDraw = "" + v;
 
-            Vector2 origin = Datastructures.SafeMeasure(font, toDraw)*0.5f;
+            Vector2 origin = Datastructures.SafeMeasure(font, toDraw) * 0.5f;
 
-            Drawer2D.SafeDraw(spriteBatch, toDraw, font, Color.Black,
-                new Vector2(fieldRect.X + fieldRect.Width/2, fieldRect.Y + 16), origin);
+            Drawer2D.SafeDraw(spriteBatch, toDraw, font, Color.Black, new Vector2(fieldRect.X + fieldRect.Width / 2, fieldRect.Y + 16), origin);
         }
 
-        public void RenderSliderHorizontal(SpriteFont font, Rectangle boundingRect, float value, float minvalue,
-            float maxValue, Slider.SliderMode mode, bool drawLabel, bool invertValue, SpriteBatch spriteBatch)
+        public void RenderSliderHorizontal(SpriteFont font, Rectangle boundingRect, float value, float minvalue, float maxValue, Slider.SliderMode mode,  bool drawLabel, bool invertValue, SpriteBatch spriteBatch)
         {
             const int padding = 5;
 
-            if (invertValue)
+            if(invertValue)
             {
                 value = maxValue - value;
             }
 
-            int fieldSize = Math.Max(Math.Min((int) (0.2f*boundingRect.Width), 150), 64);
-            var rect = new Rectangle(boundingRect.X + padding, boundingRect.Y + boundingRect.Height/2 - TileHeight/2,
-                boundingRect.Width - fieldSize - padding*2, boundingRect.Height/2);
-            var fieldRect = new Rectangle(boundingRect.Right - fieldSize,
-                boundingRect.Y + boundingRect.Height/2 - TileHeight/2, fieldSize, boundingRect.Height/2);
+            int fieldSize = Math.Max(Math.Min((int) (0.2f * boundingRect.Width), 150), 64);
+            Rectangle rect = new Rectangle(boundingRect.X + padding, boundingRect.Y + boundingRect.Height / 2 - TileHeight / 2, boundingRect.Width - fieldSize - padding * 2, boundingRect.Height / 2);
+            Rectangle fieldRect = new Rectangle(boundingRect.Right - fieldSize, boundingRect.Y + boundingRect.Height / 2 - TileHeight / 2, fieldSize, boundingRect.Height / 2);
             int maxX = rect.X + rect.Width;
-            int diffX = rect.Width%TileWidth;
+            int diffX = rect.Width % TileWidth;
             int right = maxX;
             int left = rect.X;
             int top = rect.Y;
 
 
-            for (int x = left; x <= right; x += TileWidth)
+            for(int x = left; x <= right; x += TileWidth)
             {
-                spriteBatch.Draw(Texture, new Rectangle(x, rect.Y, TileWidth, TileHeight), GetSourceRect(Tile.Track),
-                    Color.White);
+                spriteBatch.Draw(Texture, new Rectangle(x, rect.Y, TileWidth, TileHeight), GetSourceRect(Tile.Track), Color.White);
             }
 
-            spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, rect.Y, diffX, TileHeight), GetSourceRect(Tile.Track),
-                Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(maxX - diffX, rect.Y, diffX, TileHeight), GetSourceRect(Tile.Track), Color.White);
 
-            var sliderX = (int) ((value - minvalue)/(maxValue - minvalue)*rect.Width + rect.X);
+            int sliderX = (int) ((value - minvalue) / (maxValue - minvalue) * rect.Width + rect.X);
 
-            spriteBatch.Draw(Texture, new Rectangle(sliderX - TileWidth/2, rect.Y, TileWidth, TileHeight),
-                GetSourceRect(Tile.SliderTex), Color.White);
+            spriteBatch.Draw(Texture, new Rectangle(sliderX - TileWidth / 2, rect.Y, TileWidth, TileHeight), GetSourceRect(Tile.SliderTex), Color.White);
 
-            if (!drawLabel)
+            if(!drawLabel)
             {
                 return;
             }
             RenderField(fieldRect, spriteBatch);
 
             float v = 0.0f;
-            if (invertValue)
+            if(invertValue)
             {
                 value = value - maxValue;
             }
-            if (mode == Slider.SliderMode.Float)
+            if(mode == Slider.SliderMode.Float)
             {
                 v = (float) Math.Round(value, 2);
             }
@@ -1001,22 +903,17 @@ namespace DwarfCorp
 
             string toDraw = "" + v;
 
-            Vector2 origin = Datastructures.SafeMeasure(font, toDraw)*0.5f;
+            Vector2 origin = Datastructures.SafeMeasure(font, toDraw) * 0.5f;
 
-            Drawer2D.SafeDraw(spriteBatch, toDraw, font, Color.Black,
-                new Vector2(fieldRect.X + fieldRect.Width/2, fieldRect.Y + 16), origin);
+            Drawer2D.SafeDraw(spriteBatch, toDraw, font, Color.Black, new Vector2(fieldRect.X + fieldRect.Width / 2, fieldRect.Y + 16), origin);
         }
 
         public void RenderTab(Rectangle rect, SpriteBatch spriteBatch, Color tint)
         {
-            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y - TileHeight/4 - 2, TileWidth, TileHeight),
-                GetSourceRect(Tile.TabLeft), tint);
-            spriteBatch.Draw(Texture,
-                new Rectangle(rect.X + TileWidth, rect.Y - TileHeight/4 - 2, rect.Width - TileWidth*2, TileHeight),
-                GetSourceRect(Tile.TabCenter), tint);
-            spriteBatch.Draw(Texture,
-                new Rectangle(rect.Right - TileWidth, rect.Top - TileHeight/4 - 2, TileWidth, TileHeight),
-                GetSourceRect(Tile.TabRight), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X, rect.Y - TileHeight/4 - 2, TileWidth, TileHeight), GetSourceRect(Tile.TabLeft), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.X + TileWidth, rect.Y - TileHeight/4 - 2, rect.Width - TileWidth * 2, TileHeight), GetSourceRect(Tile.TabCenter), tint);
+            spriteBatch.Draw(Texture, new Rectangle(rect.Right - TileWidth, rect.Top - TileHeight / 4 - 2, TileWidth, TileHeight), GetSourceRect(Tile.TabRight), tint);
         }
     }
+
 }

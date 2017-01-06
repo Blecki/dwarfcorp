@@ -30,17 +30,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Some static helper functions which are primarily mathematical.
+    /// Some static helper functions which are primarily mathematical.
     /// </summary>
     public static class MathFunctions
     {
@@ -78,15 +78,18 @@ namespace DwarfCorp
             {
                 return A;
             }
-            if (distance > 1)
+            else if (distance > 1)
             {
                 return B;
             }
-            return A + AB*distance;
+            else
+            {
+                return A + AB*distance;
+            }
         }
 
         /// <summary>
-        ///     Gets the absolute transform given a parent transform.
+        /// Gets the absolute transform given a parent transform.
         /// </summary>
         /// <param Name="parentTransform">The parent transform.</param>
         /// <param Name="myTransform">Relative transform of the child.</param>
@@ -99,7 +102,7 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        ///     Gets the relative transform given a parent's transform and a child's absolute transform.
+        /// Gets the relative transform given a parent's transform and a child's absolute transform.
         /// </summary>
         /// <param Name="parentTransform">The parent transform.</param>
         /// <param Name="absoluteTransform">The absolute transform of the child.</param>
@@ -110,7 +113,7 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        ///     Applies a rotation around the z axis to a transform.
+        /// Applies a rotation around the z axis to a transform.
         /// </summary>
         /// <param Name="radians">The radians to rotate by.</param>
         /// <param Name="transform">The transform.</param>
@@ -122,7 +125,7 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        ///     Computes a transformation matrix from an angle and a position.
+        /// Computes a transformation matrix from an angle and a position.
         /// </summary>
         /// <param Name="angle">The angle.</param>
         /// <param Name="position">The position.</param>
@@ -135,7 +138,7 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        ///     Gets the angle of rotation about the Z axis of a matrix.
+        /// Gets the angle of rotation about the Z axis of a matrix.
         /// </summary>
         /// <param Name="rotationMatrix">The rotation matrix.</param>
         /// <returns>The angle of rotation about the Z axis.</returns>
@@ -145,8 +148,9 @@ namespace DwarfCorp
         }
 
 
+
         /// <summary>
-        ///     Restricts a value to be within a specified range.
+        /// Restricts a value to be within a specified range.
         /// </summary>
         public static float Clamp(float value, float min, float max)
         {
@@ -156,7 +160,7 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        ///     Restricts a value to be within a specified range.
+        /// Restricts a value to be within a specified range.
         /// </summary>
         public static int Clamp(int value, int min, int max)
         {
@@ -166,7 +170,7 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        ///     Restricts a value to be within a specified range.
+        /// Restricts a value to be within a specified range.
         /// </summary>
         public static uint Clamp(uint value, uint min, uint max)
         {
@@ -176,7 +180,7 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        ///     Restricts a value to be within a specified range.
+        /// Restricts a value to be within a specified range.
         /// </summary>
         public static byte Clamp(byte value, byte min, byte max)
         {
@@ -187,9 +191,9 @@ namespace DwarfCorp
 
         public static Vector3 Clamp(Vector3 value, BoundingBox bounds)
         {
-            return new Vector3(Clamp(value.X, bounds.Min.X, bounds.Max.X),
-                Clamp(value.Y, bounds.Min.Y, bounds.Max.Y),
-                Clamp(value.Z, bounds.Min.Z, bounds.Max.Z));
+            return new Vector3(Clamp(value.X, bounds.Min.X, bounds.Max.X), 
+                               Clamp(value.Y, bounds.Min.Y, bounds.Max.Y),
+                               Clamp(value.Z, bounds.Min.Z, bounds.Max.Z));
         }
 
 
@@ -210,40 +214,40 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        ///     Gets the Pitch, yaw and roll of a rotation matrix.
+        /// Gets the Pitch, yaw and roll of a rotation matrix.
         /// </summary>
         /// <param Name="rotationMatrix">The rotation matrix.</param>
         /// <returns>The pitch, yaw, and roll as a vector3</returns>
         public static Vector3 PitchYawRoll(Matrix rotationMatrix)
         {
-            var alpha = (float) Math.Atan2(rotationMatrix.M21, rotationMatrix.M11);
-            var beta =
+            float alpha = (float) Math.Atan2(rotationMatrix.M21, rotationMatrix.M11);
+            float beta =
                 (float)
                     Math.Atan2(-rotationMatrix.M31,
                         Math.Sqrt(rotationMatrix.M32*rotationMatrix.M32 + rotationMatrix.M33*rotationMatrix.M33));
-            var gamma = (float) Math.Atan2(rotationMatrix.M32, rotationMatrix.M33);
+            float gamma = (float) Math.Atan2(rotationMatrix.M32, rotationMatrix.M33);
 
             return new Vector3(beta, alpha, gamma);
         }
 
 
         /// <summary>
-        ///     Gets the Pitch, yaw and roll of a quaternion
+        /// Gets the Pitch, yaw and roll of a quaternion
         /// </summary>
         /// <param Name="q">The quaternion.</param>
         /// <returns>The pitch, yaw and roll as a vector3</returns>
         public static Vector3 PitchYawRoll(Quaternion q)
         {
-            var heading = (float) Math.Atan2(2*q.Y*q.W - 2*q.X*q.Z, 1 - 2*(q.Y*q.Y) - 2*(q.Z*q.Z));
-            var attitude = (float) Math.Asin(2*q.X*q.Y + 2*q.Z*q.W);
-            var bank = (float) Math.Atan2(2*q.X*q.W - 2*q.Y*q.Z, 1 - 2*(q.X*q.X) - 2*(q.Z*q.Z));
+            float heading = (float) Math.Atan2(2*q.Y*q.W - 2*q.X*q.Z, 1 - 2*(q.Y*q.Y) - 2*(q.Z*q.Z));
+            float attitude = (float) Math.Asin(2*q.X*q.Y + 2*q.Z*q.W);
+            float bank = (float) Math.Atan2(2*q.X*q.W - 2*q.Y*q.Z, 1 - 2*(q.X*q.X) - 2*(q.Z*q.Z));
 
             return new Vector3(bank, heading, attitude);
         }
 
 
         /// <summary>
-        ///     Gets the closest point to a line segement to a given point.
+        /// Gets the closest point to a line segement to a given point.
         /// </summary>
         /// <param Name="p">The point.</param>
         /// <param Name="a">The start of the line segment.</param>
@@ -311,7 +315,7 @@ namespace DwarfCorp
 
 
         /// <summary>
-        ///     Converts polar coordinates to a vector2 in rectangular
+        /// Converts polar coordinates to a vector2 in rectangular
         /// </summary>
         /// <param Name="theta">the angle of the polar coordinate</param>
         /// <param Name="r">the distance of the polar coordinate</param>
@@ -322,7 +326,7 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        ///     Converts a polar representation vector into a rectangular one.
+        /// Converts a polar representation vector into a rectangular one.
         /// </summary>
         /// <param Name="other">The polar representation vector (angle, distance).</param>
         /// <returns>A cartesian representation of this polar coordinate</returns>
@@ -332,17 +336,17 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        ///     Converts a cartesian (X, Y) vector to a polar (angle, distance) vector.
+        /// Converts a cartesian (X, Y) vector to a polar (angle, distance) vector.
         /// </summary>
         /// <param Name="other">The cartesian vector</param>
         /// <returns>A polar vector.</returns>
         public static Vector2 RectangularToPolar(Vector2 other)
         {
-            return new Vector2(other.Length(), (float) Math.Atan2(other.Y, other.X));
+            return new Vector2((float) other.Length(), (float) Math.Atan2(other.Y, other.X));
         }
 
         /// <summary>
-        ///     Averages the specified vectors.
+        /// Averages the specified vectors.
         /// </summary>
         /// <param Name="vectors">The vectors to average.</param>
         /// <returns>Average of the vectors</returns>
@@ -354,12 +358,12 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        /// <summary>
-        ///     Creates a rotation matrix so that the object faces another in 3D space.
-        ///     O is your object's position
-        ///     P is the position of the object to face
-        ///     U is the nominal "up" vector (typically Vector3.Y)
-        ///     Note: this does not work when O is straight below or straight above P
+        ///<summary>
+        ///Creates a rotation matrix so that the object faces another in 3D space.
+        /// O is your object's position
+        /// P is the position of the object to face
+        /// U is the nominal "up" vector (typically Vector3.Y)
+        /// Note: this does not work when O is straight below or straight above P
         /// </summary>
         public static Matrix CreateFacing(Vector3 pointToFace, Vector3 position, Vector3 u)
         {
@@ -369,13 +373,13 @@ namespace DwarfCorp
             Vector3 backwards = Vector3.Cross(right, u);
             Vector3.Normalize(ref backwards, out backwards);
             Vector3 up = Vector3.Cross(backwards, right);
-            var rot = new Matrix(right.X, right.Y, right.Z, 0, up.X, up.Y, up.Z, 0, backwards.X, backwards.Y,
+            Matrix rot = new Matrix(right.X, right.Y, right.Z, 0, up.X, up.Y, up.Z, 0, backwards.X, backwards.Y,
                 backwards.Z, 0, 0, 0, 0, 1);
             return rot;
         }
 
         /// <summary>
-        ///     Gets the positive root of a quadratic given by the quadratic formula.
+        /// Gets the positive root of a quadratic given by the quadratic formula.
         /// </summary>
         /// <param Name="a">The A in x = B + SQRT(B^2 - 4AC)/2A.</param>
         /// <param Name="b">The B in x = B + SQRT(B^2 - 4AC)/2A.</param>
@@ -387,7 +391,7 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        ///     Gets the negative root of a quadratic given by the quadratic formula.
+        /// Gets the negative root of a quadratic given by the quadratic formula.
         /// </summary>
         /// <param Name="a">The A in x = B + SQRT(B^2 - 4AC)/2A.</param>
         /// <param Name="b">The B in x = B + SQRT(B^2 - 4AC)/2A.</param>
@@ -399,14 +403,13 @@ namespace DwarfCorp
 
         public static BoundingBox GetBoundingBox(BoundingSphere sphere)
         {
-            return new BoundingBox(sphere.Center - new Vector3(sphere.Radius, sphere.Radius, sphere.Radius),
-                sphere.Center + new Vector3(sphere.Radius, sphere.Radius, sphere.Radius));
+            return new BoundingBox(sphere.Center - new Vector3(sphere.Radius, sphere.Radius, sphere.Radius), sphere.Center + new Vector3(sphere.Radius, sphere.Radius, sphere.Radius));
         }
 
         public static BoundingBox GetBoundingBox(IEnumerable<Vector3> points)
         {
-            var maxPos = new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue);
-            var minPos = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            Vector3 maxPos = new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue);
+            Vector3 minPos = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
 
             foreach (Vector3 point in points)
             {
@@ -423,8 +426,8 @@ namespace DwarfCorp
 
         public static BoundingBox GetBoundingBox(IEnumerable<BoundingBox> boxes)
         {
-            var maxPos = new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue);
-            var minPos = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            Vector3 maxPos = new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue);
+            Vector3 minPos = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
 
             foreach (BoundingBox box in boxes)
             {
@@ -471,8 +474,8 @@ namespace DwarfCorp
 
         public static Rectangle GetBoundingRectangle(IEnumerable<Rectangle> boxes)
         {
-            var maxPos = new Point(-int.MaxValue, -int.MaxValue);
-            var minPos = new Point(int.MaxValue, int.MaxValue);
+            Point maxPos = new Point(-int.MaxValue, -int.MaxValue);
+            Point minPos = new Point(int.MaxValue, int.MaxValue);
 
             foreach (Rectangle box in boxes)
             {
@@ -494,6 +497,7 @@ namespace DwarfCorp
                 {
                     maxPos.Y = box.Bottom;
                 }
+
             }
 
             return new Rectangle(minPos.X, minPos.Y, maxPos.X - minPos.X, maxPos.Y - minPos.Y);
@@ -570,7 +574,7 @@ namespace DwarfCorp
 
         public static Vector3 Min(params Vector3[] vecs)
         {
-            var toReturn = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            Vector3 toReturn = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
 
             for (int i = 0; i < vecs.Length; i++)
             {
@@ -583,7 +587,7 @@ namespace DwarfCorp
 
         public static Vector3 Max(params Vector3[] vecs)
         {
-            var toReturn = new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue);
+            Vector3 toReturn = new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue);
 
             for (int i = 0; i < vecs.Length; i++)
             {
@@ -786,9 +790,9 @@ namespace DwarfCorp
             // tMaxX, tMaxY, and tMaxZ.
 
             // Cube containing origin point.
-            float x = start.X;
-            float y = start.Y;
-            float z = start.Z;
+            var x = start.X;
+            var y = start.Y;
+            var z = start.Z;
             Vector3 direction = new Vector3(end.X, end.Y, end.Z) - new Vector3(start.X, start.Y, start.Z);
 
             if (L1(start, end) < 1e-12 || HasNan(start) || HasNan(end))
@@ -800,23 +804,23 @@ namespace DwarfCorp
 
             direction.Normalize();
             // Break out direction vector.
-            float dx = direction.X;
-            float dy = direction.Y;
-            float dz = direction.Z;
+            var dx = direction.X;
+            var dy = direction.Y;
+            var dz = direction.Z;
             // Direction to increment x,y,z when stepping.
-            int stepX = Math.Sign(dx);
-            int stepY = Math.Sign(dy);
-            int stepZ = Math.Sign(dz);
+            var stepX = Math.Sign(dx);
+            var stepY = Math.Sign(dy);
+            var stepZ = Math.Sign(dz);
             // See description above. The initial values depend on the fractional
             // part of the origin.
-            float tMaxX = IntBound(x, dx);
-            float tMaxY = IntBound(y, dy);
-            float tMaxZ = IntBound(z, dz);
+            var tMaxX = IntBound(x, dx);
+            var tMaxY = IntBound(y, dy);
+            var tMaxZ = IntBound(z, dz);
             // The change in t when taking a step (always positive).
-            float tDeltaX = stepX/dx;
-            float tDeltaY = stepY/dy;
-            float tDeltaZ = stepZ/dz;
-            var curr = new Vector3(x, y, z);
+            var tDeltaX = stepX/dx;
+            var tDeltaY = stepY/dy;
+            var tDeltaZ = stepZ/dz;
+            Vector3 curr = new Vector3(x, y, z);
             while (true)
             {
                 curr.X = x;
@@ -824,9 +828,8 @@ namespace DwarfCorp
                 curr.Z = z;
                 float len = (curr - end).Length();
                 yield return new Point3(FloorInt(x), FloorInt(y), FloorInt(z));
-                if (FloorInt(x) == FloorInt(end.X) && FloorInt(y) == FloorInt(end.Y) && FloorInt(z) == FloorInt(end.Z))
-                    yield break;
-                if (len > d1*1.1f) yield break;
+                if (FloorInt(x) == FloorInt(end.X) && FloorInt(y) == FloorInt(end.Y) && FloorInt(z) == FloorInt(end.Z)) yield break;
+                if (len > d1 * 1.1f) yield break;
                 // tMaxX stores the t-value at which we cross a cube boundary along the
                 // X axis, and similarly for Y and Z. Therefore, choosing the least tMax
                 // chooses the closest cube boundary. Only the first case of the four
@@ -866,9 +869,8 @@ namespace DwarfCorp
 
         public static Rectangle SnapRect(Vector2 vector2, Vector2 measure, Rectangle outer)
         {
-            var inner = new Rectangle((int) vector2.X, (int) vector2.Y, (int) measure.X, (int) measure.Y);
-            return new Rectangle(Clamp(inner.X, outer.X, outer.Right - inner.Width),
-                Clamp(inner.Y, outer.Y, outer.Bottom - inner.Height), inner.Width, inner.Height);
+            Rectangle inner = new Rectangle((int)vector2.X, (int)vector2.Y, (int)measure.X, (int)measure.Y);
+            return new Rectangle(Clamp(inner.X, outer.X, outer.Right - inner.Width), Clamp(inner.Y, outer.Y, outer.Bottom - inner.Height), inner.Width, inner.Height);
         }
 
         public static float Lerp(float a, float b, float t)
@@ -878,16 +880,15 @@ namespace DwarfCorp
 
         public static Rectangle Lerp(Rectangle start, Rectangle end, float t)
         {
-            return new Rectangle((int) Lerp(start.X, end.X, t), (int) Lerp(start.Y, end.Y, t),
-                (int) Lerp(start.Width, end.Width, t), (int) Lerp(start.Height, end.Height, t));
+            return new Rectangle((int)Lerp(start.X, end.X, t), (int)Lerp(start.Y, end.Y, t), (int)Lerp(start.Width, end.Width, t), (int)Lerp(start.Height, end.Height, t));
         }
 
         public static Matrix RandomTransform(BoundingBox bounds)
         {
             Matrix tf = Matrix.Identity;
-            tf *= Matrix.CreateRotationX(Rand((float) -Math.PI, (float) Math.PI));
-            tf *= Matrix.CreateRotationY(Rand((float) -Math.PI, (float) Math.PI));
-            tf *= Matrix.CreateRotationZ(Rand((float) -Math.PI, (float) Math.PI));
+            tf *= Matrix.CreateRotationX(Rand((float)-Math.PI, (float)Math.PI));
+            tf *= Matrix.CreateRotationY(Rand((float)-Math.PI, (float)Math.PI));
+            tf *= Matrix.CreateRotationZ(Rand((float)-Math.PI, (float)Math.PI));
             tf.Translation = RandVector3Box(bounds);
             return tf;
         }

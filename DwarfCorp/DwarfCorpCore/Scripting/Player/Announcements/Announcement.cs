@@ -30,43 +30,24 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    ///     Announcements are little messages sent to the player on events.
-    /// </summary>
     [JsonObject(IsReference = true)]
     public class Announcement
     {
-        /// <summary>
-        ///     Delegate called whenever the player clicks on the announcement.
-        /// </summary>
-        public delegate void Clicked();
-
-        /// <summary>
-        ///     Unique name of the announcement.
-        /// </summary>
         public string Name { get; set; }
-
-        /// <summary>
-        ///     The message to display to the player.
-        /// </summary>
         public string Message { get; set; }
-
-        /// <summary>
-        ///     Color of the default text to display.
-        /// </summary>
         public Color Color { get; set; }
-
-        /// <summary>
-        ///     Icon to dispaly next tot he text.
-        /// </summary>
         public ImageFrame Icon { get; set; }
 
+        public delegate void Clicked();
         public event Clicked OnClicked;
 
         protected virtual void OnOnClicked()
@@ -82,5 +63,14 @@ namespace DwarfCorp
                 OnClicked.Invoke();
             }
         }
+
+        public Announcement()
+        {
+            
+        }
+
+
     }
+
+
 }

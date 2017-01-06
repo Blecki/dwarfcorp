@@ -30,29 +30,29 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Text;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A creature uses the item currently in its hands to build a BuildRoom.
+    /// A creature uses the item currently in its hands to build a BuildRoom.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class PlaceRoomResourcesAct : CreatureAct
     {
-        public PlaceRoomResourcesAct(CreatureAI agent, BuildRoomOrder buildRoom,
-            List<Quantitiy<Resource.ResourceTags>> resources) :
-                base(agent)
+        public BuildRoomOrder BuildRoom { get; set; }
+        public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; } 
+
+        public PlaceRoomResourcesAct(CreatureAI agent, BuildRoomOrder buildRoom, List<Quantitiy<Resource.ResourceTags>> resources) :
+            base(agent)
         {
             Name = "Place BuildRoom resources";
             BuildRoom = buildRoom;
             Resources = resources;
         }
-
-        public BuildRoomOrder BuildRoom { get; set; }
-        public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; }
 
         public override IEnumerable<Status> Run()
         {
@@ -70,4 +70,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

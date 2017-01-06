@@ -30,14 +30,36 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
     public class ControlSettings
     {
+        public class KeyMappings
+        {
+            public Keys Forward = Keys.W;
+            public Keys Left = Keys.A;
+            public Keys Right = Keys.D;
+            public Keys Back = Keys.S;
+            public Keys CameraMode = Keys.LeftShift;
+            public Keys GodMode = Keys.G;
+            public Keys TimeForward = Keys.X;
+            public Keys TimeBackward = Keys.Z;
+            public Keys SliceUp = Keys.PageUp;
+            public Keys SliceDown = Keys.PageDown;
+            public Keys Pause = Keys.P;
+            public Keys Map = Keys.M;
+            public Keys SliceSelected = Keys.Q;
+            public Keys Unslice = Keys.E;
+            public Keys ToggleGUI = Keys.B;
+        }
+
         public static KeyMappings Mappings { get; set; }
 
         public static void Reset()
@@ -71,70 +93,6 @@ namespace DwarfCorp
                 Mappings = new KeyMappings();
                 Save();
             }
-        }
-
-        public class KeyMappings
-        {
-            /// <summary>
-            /// Moves the camer backwards.
-            /// </summary>
-            public Keys Back = Keys.S;
-            /// <summary>
-            /// Rotates the camera.
-            /// </summary>
-            public Keys CameraMode = Keys.LeftShift;
-            /// <summary>
-            /// Moves the camera forward.
-            /// </summary>
-            public Keys Forward = Keys.W;
-            /// <summary>
-            /// Opens up cheat mode.
-            /// </summary>
-            public Keys GodMode = Keys.G;
-            /// <summary>
-            /// Moves the camera left.
-            /// </summary>
-            public Keys Left = Keys.A;
-            /// <summary>
-            /// Toggles the minimap.
-            /// </summary>
-            public Keys Map = Keys.M;
-            /// <summary>
-            /// Toggles Game Paused state.
-            /// </summary>
-            public Keys Pause = Keys.P;
-            /// <summary>
-            /// Moves the camera to the right.
-            /// </summary>
-            public Keys Right = Keys.D;
-            /// <summary>
-            /// Decrements the vertical chunk slice.
-            /// </summary>
-            public Keys SliceDown = Keys.PageDown;
-            /// <summary>
-            /// Set the vertical slice to the selected voxel.
-            /// </summary>
-            public Keys SliceSelected = Keys.Q;
-            /// <summary>
-            /// Increment the vertical chunk slice.
-            /// </summary>
-            public Keys SliceUp = Keys.PageUp;
-            /// <summary>
-            /// Make time go backwards.
-            /// </summary>
-            public Keys TimeBackward = Keys.Z;
-            /// <summary>
-            /// Make time go fowards.
-            /// </summary>
-            public Keys TimeForward = Keys.X;
-            /// <summary>
-            /// Turn the GUI on and off.
-            /// </summary>
-            public Keys ToggleGUI = Keys.B;
-            /// <summary>
-            /// Reset the current slice level.
-            /// </summary>
-            public Keys Unslice = Keys.E;
         }
     }
 }

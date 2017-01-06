@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -11,15 +13,16 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Frog : Creature
     {
+
         public Frog()
         {
+
         }
 
-        public Frog(string sprites, Vector3 position, ComponentManager manager, ChunkManager chunks,
-            GraphicsDevice graphics, ContentManager content, string name) :
-                // Creature base constructor
-                base
-                (
+        public Frog(string sprites, Vector3 position, ComponentManager manager, ChunkManager chunks, GraphicsDevice graphics, ContentManager content, string name) :
+            // Creature base constructor
+            base
+            (
                 // Default stats
                 new CreatureStats
                 {
@@ -40,32 +43,32 @@ namespace DwarfCorp
                 manager.Factions.Factions["Herbivore"],
                 // The physics component this creature belongs to
                 new Physics
-                    (
-                    // It is called "bird"
+                (
+                // It is called "bird"
                     "A Frog",
-                    // It's attached to the root component of the component manager
+                // It's attached to the root component of the component manager
                     manager.RootComponent,
-                    // It is located at a position passed in as an argument
+                // It is located at a position passed in as an argument
                     Matrix.CreateTranslation(position),
-                    // It has a size of 0.25 blocks
+                // It has a size of 0.25 blocks
                     new Vector3(0.375f, 0.375f, 0.375f),
-                    // Its bounding box is located in its center
+                // Its bounding box is located in its center
                     new Vector3(0.0f, 0.0f, 0.0f),
-                    //It has a mass of 1, a moment of intertia of 1, and very small friction/restitution
+                //It has a mass of 1, a moment of intertia of 1, and very small friction/restitution
                     1.0f, 1.0f, 0.999f, 0.999f,
-                    // It has a gravity of 10 blocks per second downward
+                // It has a gravity of 10 blocks per second downward
                     new Vector3(0, -10, 0)
-                    ),
+                ),
                 // All the rest of the arguments are passed in directly
                 chunks, graphics, content, name
-                )
+            )
         {
             // Called from constructor with appropriate sprite asset as a string
             Initialize(sprites);
         }
 
         /// <summary>
-        ///     Initialize function creates all the required components for the bird.
+        /// Initialize function creates all the required components for the bird.
         /// </summary>
         /// <param name="spriteSheet">The sprite sheet to use for the bird</param>
         public void Initialize(string sprites)
@@ -76,14 +79,14 @@ namespace DwarfCorp
 
             // Create the sprite component for the bird.
             Sprite = new CharacterSprite
-                (Graphics,
-                    Manager,
-                    "Frog Sprite",
-                    Physics,
-                    Matrix.CreateTranslation(0, 0.5f, 0)
-                );
+                                  (Graphics,
+                                  Manager,
+                                  "Frog Sprite",
+                                  Physics,
+                                  Matrix.CreateTranslation(0, 0.5f, 0)
+                                  );
 
-            var descriptor =
+            CompositeAnimation.Descriptor descriptor =
                 FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
                     ContentPaths.GetFileAsString(sprites));
 
@@ -98,17 +101,13 @@ namespace DwarfCorp
             Hands = new Grabber("hands", Physics, Matrix.Identity, new Vector3(0.2f, 0.2f, 0.2f), Vector3.Zero);
 
             // Used to sense hostile creatures
-            Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20),
-                Vector3.Zero);
+            Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
 
             // Controls the behavior of the creature
             AI = new PacingCreatureAI(this, "Rabbit AI", Sensors, PlanService);
 
             // The bird can peck at its enemies (0.1 damage)
-            Attacks = new List<Attack>
-            {
-                new Attack("Bite", 0.01f, 2.0f, 1.0f, ContentPaths.Audio.frog, ContentPaths.Effects.bite)
-            };
+            Attacks = new List<Attack> { new Attack("Bite", 0.01f, 2.0f, 1.0f, ContentPaths.Audio.frog, ContentPaths.Effects.bite) };
 
 
             // The bird can hold one item at a time in its inventory
@@ -121,28 +120,26 @@ namespace DwarfCorp
             };
 
             // The shadow is rotated 90 degrees along X, and is 0.25 blocks beneath the creature
-            Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI*0.5f);
+            Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.25f, 0.0f);
             shadowTransform *= Matrix.CreateScale(0.75f);
 
-            var shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
+            SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
             Shadow = new Shadow(Manager, "Shadow", Physics, shadowTransform, shadowTexture);
 
             // We set up the shadow's animation so that it's just a static black circle
             // TODO: Make the shadow set this up automatically
-            var shP = new List<Point>
+            List<Point> shP = new List<Point>
             {
                 new Point(0, 0)
             };
-            var shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32,
-                32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
+            Animation shadowAnimation = new Animation(Graphics, new SpriteSheet(ContentPaths.Effects.shadowcircle), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
             Shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
             Shadow.SetCurrentAnimation("sh");
 
             // The bird will emit a shower of blood when it dies
-            DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity,
-                Vector3.One, Vector3.Zero)
+            DeathParticleTrigger = new ParticleTrigger("blood_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 1
@@ -157,15 +154,16 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the frog";
-            Stats.CurrentClass = new EmployeeClass
+            Stats.CurrentClass = new EmployeeClass()
             {
                 Name = "Frog",
-                Levels = new List<EmployeeClass.Level> {new EmployeeClass.Level {Index = 0, Name = "Frog"}}
+                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Frog" } }
             };
 
 
-            NoiseMaker.Noises.Add("Idle", new List<string> {ContentPaths.Audio.frog});
-            NoiseMaker.Noises.Add("Hurt", new List<string> {ContentPaths.Audio.frog});
+            NoiseMaker.Noises.Add("Idle", new List<string>() { ContentPaths.Audio.frog });
+            NoiseMaker.Noises.Add("Hurt", new List<string>() { ContentPaths.Audio.frog });
+
         }
     }
 }

@@ -30,19 +30,31 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Lays out GUI components in a simple grid. Each item occupies a position
-    ///     and extents in teh grid.
+    /// Lays out GUI components in a simple grid. Each item occupies a position
+    /// and extents in teh grid.
     /// </summary>
     public class GridLayout : Layout
     {
+        public Dictionary<Rectangle, GUIComponent> ComponentPositions { get; set; }
+        public Dictionary<GUIComponent, Point> ComponentOffsets { get; set; } 
+        public int Rows { get; set; }
+        public int Cols { get; set; }
+        public int EdgePadding { get; set; }
+        public int RowHighlight { get; set; }
+        public int ColumnHighlight { get; set; }
+        public Color HighlightColor { get; set; }
+
         public GridLayout(DwarfGUI gui, GUIComponent parent, int rows, int cols) :
             base(gui, parent)
         {
@@ -56,15 +68,6 @@ namespace DwarfCorp
             RowHighlight = -1;
             ColumnHighlight = -1;
         }
-
-        public Dictionary<Rectangle, GUIComponent> ComponentPositions { get; set; }
-        public Dictionary<GUIComponent, Point> ComponentOffsets { get; set; }
-        public int Rows { get; set; }
-        public int Cols { get; set; }
-        public int EdgePadding { get; set; }
-        public int RowHighlight { get; set; }
-        public int ColumnHighlight { get; set; }
-        public Color HighlightColor { get; set; }
 
         public void HighlightRow(int row, Color color)
         {
@@ -116,12 +119,12 @@ namespace DwarfCorp
             int w = LocalBounds.Width - EdgePadding;
             int h = LocalBounds.Height - EdgePadding;
 
-            if (Cols > 0 && Rows > 0)
+            if(Cols > 0 && Rows > 0)
             {
-                int cellX = w/Cols;
-                int cellY = h/Rows;
+                int cellX = w / Cols;
+                int cellY = h / Rows;
 
-                foreach (var comp in ComponentPositions)
+                foreach(KeyValuePair<Rectangle, GUIComponent> comp in ComponentPositions)
                 {
                     if (comp.Value == null)
                     {
@@ -132,18 +135,18 @@ namespace DwarfCorp
                     {
                         Point offset = GetOffset(comp.Value);
                         comp.Value.LocalBounds = new Rectangle(
-                            comp.Key.X*cellX + offset.X,
-                            comp.Key.Y*cellY + offset.Y,
-                            comp.Key.Width*cellX,
-                            comp.Key.Height*cellY);
+                            comp.Key.X * cellX + offset.X,
+                            comp.Key.Y * cellY + offset.Y, 
+                            comp.Key.Width * cellX, 
+                            comp.Key.Height * cellY);
                         comp.Value.UpdateSize();
                     }
                     else
                     {
-                        int lw = comp.Key.Width*cellX - 10;
-                        int lh = comp.Key.Height*cellY - 10;
-                        int lx = comp.Key.X*cellX + EdgePadding;
-                        int ly = comp.Key.Y*cellY + EdgePadding;
+                        int lw = comp.Key.Width * cellX - 10;
+                        int lh = comp.Key.Height * cellY - 10;
+                        int lx = comp.Key.X * cellX + EdgePadding;
+                        int ly = comp.Key.Y * cellY + EdgePadding;
                         if (lx + lw > w)
                         {
                             lw = (w - lx);
@@ -153,7 +156,7 @@ namespace DwarfCorp
                         {
                             lh = (h - ly);
                         }
-                        comp.Value.LocalBounds = new Rectangle(lx, ly, lw, lh);
+                        comp.Value.LocalBounds = new Rectangle(lx, ly, lw, lh);  
                         comp.Value.UpdateSize();
                     }
                 }
@@ -164,13 +167,13 @@ namespace DwarfCorp
         {
             int w = LocalBounds.Width - EdgePadding;
             int h = LocalBounds.Height - EdgePadding;
-            int cellX = w/Cols;
-            int cellY = h/Rows;
-            return new Rectangle(
-                coords.X*cellX + EdgePadding,
-                coords.Y*cellY + EdgePadding,
-                coords.Width*cellX,
-                coords.Height*cellY);
+            int cellX = w / Cols;
+            int cellY = h / Rows;
+           return new Rectangle(
+                            coords.X * cellX + EdgePadding,
+                            coords.Y * cellY + EdgePadding, 
+                            coords.Width * cellX, 
+                            coords.Height * cellY);
         }
 
         public override void Update(DwarfTime time)
@@ -180,13 +183,13 @@ namespace DwarfCorp
 
         public Rectangle GetGlobalRectOfRow(int row)
         {
-            var rects = new List<Rectangle>();
+            List<Rectangle> rects = new List<Rectangle>();
             int w = LocalBounds.Width - EdgePadding;
             int h = LocalBounds.Height - EdgePadding;
-            int cellX = w/Cols;
-            int cellY = h/Rows;
+            int cellX = w / Cols;
+            int cellY = h / Rows;
 
-            foreach (var comp in ComponentPositions)
+            foreach (KeyValuePair<Rectangle, GUIComponent> comp in ComponentPositions)
             {
                 if (comp.Value == null)
                 {
@@ -199,17 +202,17 @@ namespace DwarfCorp
                 {
                     Point offset = GetOffset(comp.Value);
                     rects.Add(new Rectangle(
-                        comp.Key.X*cellX + offset.X,
-                        comp.Key.Y*cellY + offset.Y,
-                        comp.Key.Width*cellX,
-                        comp.Key.Height*cellY));
+                        comp.Key.X * cellX + offset.X,
+                        comp.Key.Y * cellY + offset.Y,
+                        comp.Key.Width * cellX,
+                        comp.Key.Height * cellY));
                 }
                 else
                 {
-                    int lw = comp.Key.Width*cellX - 10;
-                    int lh = comp.Key.Height*cellY - 10;
-                    int lx = comp.Key.X*cellX + EdgePadding;
-                    int ly = comp.Key.Y*cellY + EdgePadding;
+                    int lw = comp.Key.Width * cellX - 10;
+                    int lh = comp.Key.Height * cellY - 10;
+                    int lx = comp.Key.X * cellX + EdgePadding;
+                    int ly = comp.Key.Y * cellY + EdgePadding;
                     if (lx + lw > w)
                     {
                         lw = (w - lx);
@@ -231,16 +234,15 @@ namespace DwarfCorp
 
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
-            if (RowHighlight >= 0)
+            if(RowHighlight >= 0)
             {
                 Rectangle rect = GetGlobalRectOfRow(RowHighlight);
                 Drawer2D.FillRect(batch, rect, HighlightColor);
             }
 
-            if (ColumnHighlight >= 0)
+            if(ColumnHighlight >= 0)
             {
-                var rect = new Rectangle(GlobalBounds.X + ColumnHighlight*(GlobalBounds.Width/Cols), GlobalBounds.Y,
-                    (GlobalBounds.Width/Cols), GlobalBounds.Height);
+                Rectangle rect = new Rectangle(GlobalBounds.X + ColumnHighlight * (GlobalBounds.Width / Cols), GlobalBounds.Y, (GlobalBounds.Width / Cols), GlobalBounds.Height);
                 Drawer2D.FillRect(batch, rect, HighlightColor);
             }
             base.Render(time, batch);
@@ -259,23 +261,32 @@ namespace DwarfCorp
             Bottom
         }
 
+        protected struct Aligner
+        {
+            public GUIComponent Child { get; set; }
+            public Alignment XAlignment { get; set; }
+            public Alignment YAlignment { get; set; }
+            public Vector2 OriginalPos { get; set; }
+        }
+
+        protected List<Aligner> Aligners { get; set; } 
+
         public enum PositionMode
         {
             Pixels,
             Percent
         }
 
+        public PositionMode Mode { get; set; }
+
         public AlignLayout(DwarfGUI gui, GUIComponent parent) : base(gui, parent)
         {
             Aligners = new List<Aligner>();
         }
 
-        protected List<Aligner> Aligners { get; set; }
-        public PositionMode Mode { get; set; }
-
         public void Add(GUIComponent child, Alignment xalignment, Alignment yAlignment, Vector2 originalPos)
         {
-            Aligners.Add(new Aligner
+            Aligners.Add(new Aligner()
             {
                 Child = child,
                 XAlignment = xalignment,
@@ -289,7 +300,7 @@ namespace DwarfCorp
         {
             Children.Remove(child);
 
-            Aligners.RemoveAll(aligner => aligner.Child == child);
+            Aligners.RemoveAll((aligner) => aligner.Child == child);
         }
 
         public void Clear()
@@ -300,7 +311,7 @@ namespace DwarfCorp
 
         public Vector2 PercentToPixels(Vector2 percent)
         {
-            return new Vector2(percent.X*LocalBounds.Width, percent.Y*LocalBounds.Y);
+            return new Vector2(percent.X * LocalBounds.Width, percent.Y * LocalBounds.Y);
         }
 
 
@@ -343,7 +354,7 @@ namespace DwarfCorp
                     break;
             }
 
-            aligner.Child.LocalBounds = new Rectangle((int) pos.X, (int) pos.Y, bounds.Width, bounds.Height);
+            aligner.Child.LocalBounds = new Rectangle((int)pos.X, (int)pos.Y, bounds.Width, bounds.Height);
         }
 
         public override void UpdateSizes()
@@ -355,13 +366,6 @@ namespace DwarfCorp
                 Align(aligner);
             }
         }
-
-        protected struct Aligner
-        {
-            public GUIComponent Child { get; set; }
-            public Alignment XAlignment { get; set; }
-            public Alignment YAlignment { get; set; }
-            public Vector2 OriginalPos { get; set; }
-        }
     }
+
 }

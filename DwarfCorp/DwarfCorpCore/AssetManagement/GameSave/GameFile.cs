@@ -30,18 +30,61 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
-using System.IO;
+using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
+using DwarfCorpCore;
+using Newtonsoft.Json.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.IO.Compression;
 
 namespace DwarfCorp
 {
-    public class GameFile
+
+    public class GameFile 
     {
+        public class GameData : SaveData
+        {
+            public Texture2D Screenshot { get; set; }
+            public List<ChunkFile> ChunkData { get; set; }
+            public MetaData Metadata { get; set; }
+
+            public OrbitCamera Camera { get; set; }
+
+            public ComponentManager Components { get; set; }
+
+            public int GameID { get; set; }
+
+            public GameData()
+            {
+                Metadata = new MetaData();
+            }
+
+            public void SaveToDirectory(string directory)
+            {
+                System.IO.Directory.CreateDirectory(directory);
+                System.IO.Directory.CreateDirectory(directory + ProgramData.DirChar + "Chunks");
+
+                foreach(ChunkFile chunk in ChunkData)
+                {
+                    chunk.WriteFile(directory + ProgramData.DirChar + "Chunks" + ProgramData.DirChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + "." + ChunkFile.CompressedExtension, true, true);
+                }
+
+                Metadata.WriteFile(directory + ProgramData.DirChar + "MetaData." + MetaData.CompressedExtension, true);
+                
+                FileUtils.SaveJSon(Camera, directory + ProgramData.DirChar + "Camera." + "json", false);
+
+                FileUtils.SaveJSon(Components, directory + ProgramData.DirChar + "Components." + "zcomp", true);
+            }
+        }
+
+        public GameData Data { get; set; }
+
         public static string Extension = "game";
         public static string CompressedExtension = "zgame";
 
@@ -67,11 +110,21 @@ namespace DwarfCorp
             };
 
 
-            foreach (
-                ChunkFile file in PlayState.ChunkManager.ChunkData.ChunkMap.Select(pair => new ChunkFile(pair.Value)))
+            foreach(ChunkFile file in PlayState.ChunkManager.ChunkData.ChunkMap.Select(pair => new ChunkFile(pair.Value)))
             {
                 Data.ChunkData.Add(file);
             }
+
+        }
+
+        public virtual string GetExtension()
+        {
+            return "game";
+        }
+
+        public virtual string GetCompressedExtension()
+        {
+            return "zgame";
         }
 
         public GameFile(string file, bool compressed)
@@ -83,18 +136,6 @@ namespace DwarfCorp
         public GameFile()
         {
             Data = new GameData();
-        }
-
-        public GameData Data { get; set; }
-
-        public virtual string GetExtension()
-        {
-            return "game";
-        }
-
-        public virtual string GetCompressedExtension()
-        {
-            return "zgame";
         }
 
         public void CopyFrom(GameFile file)
@@ -117,62 +158,63 @@ namespace DwarfCorp
             return true;
         }
 
-        public bool ReadFile(string filePath, bool isCompressed)
+        public  bool ReadFile(string filePath, bool isCompressed)
         {
-            if (!Directory.Exists(filePath))
+            if(!System.IO.Directory.Exists(filePath))
             {
                 return false;
-            }
-            string[] screenshots = SaveData.GetFilesInDirectory(filePath, false, "png", "png");
-            string[] metaFiles = SaveData.GetFilesInDirectory(filePath, isCompressed, MetaData.CompressedExtension,
-                MetaData.Extension);
-            string[] cameraFiles = SaveData.GetFilesInDirectory(filePath, false, "json", "json");
-
-            if (metaFiles.Length > 0)
-            {
-                Data.Metadata = new MetaData(metaFiles[0], isCompressed);
-                Data.GameID = Data.Metadata.GameID;
             }
             else
             {
-                return false;
-            }
+                string[] screenshots = SaveData.GetFilesInDirectory(filePath, false, "png", "png");
+                string[] metaFiles = SaveData.GetFilesInDirectory(filePath, isCompressed, GameFile.MetaData.CompressedExtension, GameFile.MetaData.Extension);
+                string[] cameraFiles = SaveData.GetFilesInDirectory(filePath, false, "json", "json");
 
-            if (cameraFiles.Length > 0)
-            {
-                Data.Camera = FileUtils.LoadJson<OrbitCamera>(cameraFiles[0], false);
-            }
-            else
-            {
-                return false;
-            }
-
-            string[] chunkDirs = Directory.GetDirectories(filePath, "Chunks");
-
-            if (chunkDirs.Length > 0)
-            {
-                string chunkDir = chunkDirs[0];
-
-                string[] chunks = SaveData.GetFilesInDirectory(chunkDir, isCompressed, ChunkFile.CompressedExtension,
-                    ChunkFile.Extension);
-                Data.ChunkData = new List<ChunkFile>();
-                foreach (string chunk in chunks)
+                if(metaFiles.Length > 0)
                 {
-                    Data.ChunkData.Add(new ChunkFile(chunk, isCompressed, true));
+                    Data.Metadata = new MetaData(metaFiles[0], isCompressed);
+                    Data.GameID = Data.Metadata.GameID;
                 }
-            }
-            else
-            {
-                return false;
-            }
+                else
+                {
+                    return false;
+                }
 
-            if (screenshots.Length > 0)
-            {
-                string screenshot = screenshots[0];
-                Data.Screenshot = TextureManager.LoadInstanceTexture(screenshot);
-            }
+                if(cameraFiles.Length > 0)
+                {
+                    Data.Camera = FileUtils.LoadJson<OrbitCamera>(cameraFiles[0], false);
+                }
+                else
+                {
+                    return false;
+                }
 
-            return true;
+                string[] chunkDirs = System.IO.Directory.GetDirectories(filePath, "Chunks");
+
+                if(chunkDirs.Length > 0)
+                {
+                    string chunkDir = chunkDirs[0];
+
+                    string[] chunks = SaveData.GetFilesInDirectory(chunkDir, isCompressed, ChunkFile.CompressedExtension, ChunkFile.Extension);
+                    Data.ChunkData = new List<ChunkFile>();
+                    foreach(string chunk in chunks)
+                    {
+                        Data.ChunkData.Add(new ChunkFile(chunk, isCompressed, true));
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+
+                if(screenshots.Length > 0)
+                {
+                    string screenshot = screenshots[0];
+                    Data.Screenshot = TextureManager.LoadInstanceTexture(screenshot);
+                }
+
+                return true;
+            }
         }
 
         public bool WriteFile(string filePath, bool compress)
@@ -181,47 +223,18 @@ namespace DwarfCorp
             return true;
         }
 
-        public class GameData : SaveData
+        public class MetaData 
         {
-            public GameData()
-            {
-                Metadata = new MetaData();
-            }
-
-            public Texture2D Screenshot { get; set; }
-            public List<ChunkFile> ChunkData { get; set; }
-            public MetaData Metadata { get; set; }
-
-            public OrbitCamera Camera { get; set; }
-
-            public ComponentManager Components { get; set; }
-
+            public string OverworldFile { get; set; }
+            public float WorldScale { get; set; }
+            public Vector2 WorldOrigin { get; set; }
+            public int ChunkWidth { get; set; }
+            public int ChunkHeight { get; set; }
+            public float TimeOfDay { get; set; }
             public int GameID { get; set; }
-
-            public void SaveToDirectory(string directory)
-            {
-                Directory.CreateDirectory(directory);
-                Directory.CreateDirectory(directory + ProgramData.DirChar + "Chunks");
-
-                foreach (ChunkFile chunk in ChunkData)
-                {
-                    chunk.WriteFile(
-                        directory + ProgramData.DirChar + "Chunks" + ProgramData.DirChar + chunk.ID.X + "_" + chunk.ID.Y +
-                        "_" + chunk.ID.Z + "." + ChunkFile.CompressedExtension, true, true);
-                }
-
-                Metadata.WriteFile(directory + ProgramData.DirChar + "MetaData." + MetaData.CompressedExtension, true);
-
-                FileUtils.SaveJSon(Camera, directory + ProgramData.DirChar + "Camera." + "json", false);
-
-                FileUtils.SaveJSon(Components, directory + ProgramData.DirChar + "Components." + "zcomp", true);
-            }
-        }
-
-        public class MetaData
-        {
-            public static string Extension = "meta";
-            public static string CompressedExtension = "zmeta";
+            public WorldTime Time { get; set; }
+            public new static string Extension = "meta";
+            public new static string CompressedExtension = "zmeta";
 
             public MetaData(string file, bool compressed)
             {
@@ -232,15 +245,6 @@ namespace DwarfCorp
             public MetaData()
             {
             }
-
-            public string OverworldFile { get; set; }
-            public float WorldScale { get; set; }
-            public Vector2 WorldOrigin { get; set; }
-            public int ChunkWidth { get; set; }
-            public int ChunkHeight { get; set; }
-            public float TimeOfDay { get; set; }
-            public int GameID { get; set; }
-            public WorldTime Time { get; set; }
 
             public void CopyFrom(MetaData file)
             {
@@ -254,22 +258,26 @@ namespace DwarfCorp
                 Time = file.Time;
             }
 
-            public bool ReadFile(string filePath, bool isCompressed)
+            public  bool ReadFile(string filePath, bool isCompressed)
             {
-                var file = FileUtils.LoadJson<MetaData>(filePath, isCompressed);
+                MetaData file = FileUtils.LoadJson<MetaData>(filePath, isCompressed);
 
-                if (file == null)
+                if(file == null)
                 {
                     return false;
                 }
-                CopyFrom(file);
-                return true;
+                else
+                {
+                    CopyFrom(file);
+                    return true;
+                }
             }
 
-            public bool WriteFile(string filePath, bool compress)
+            public  bool WriteFile(string filePath, bool compress)
             {
                 return FileUtils.SaveJSon(this, filePath, compress);
             }
         }
     }
+
 }

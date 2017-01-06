@@ -30,24 +30,38 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Component causes the object its attached to to become flammable. Flammable objects have "heat"
-    ///     when the heat is above a "flashpoint" they get damaged until they are destroyed, and emit flames.
+    /// Component causes the object its attached to to become flammable. Flammable objects have "heat"
+    /// when the heat is above a "flashpoint" they get damaged until they are destroyed, and emit flames.
     /// </summary>
     [JsonObject(IsReference = true)]
     public class Flammable : GameComponent
     {
+        public Body LocParent { get; set; }
+        public Health Health { get; set; }
+
+        public float Heat { get; set; }
+        public float Flashpoint { get; set; }
+        public float Damage { get; set; }
+
+        public Timer CheckLavaTimer { get; set; }
+        public Timer SoundTimer { get; set; }
+        public Timer DamageTimer { get; set; }
+
         public Flammable()
         {
+            
         }
 
         public Flammable(ComponentManager manager, string name, Body parent, Health health) :
@@ -63,30 +77,20 @@ namespace DwarfCorp
             DamageTimer = new Timer(1.0f, false);
         }
 
-        public Body LocParent { get; set; }
-        public Health Health { get; set; }
-
-        public float Heat { get; set; }
-        public float Flashpoint { get; set; }
-        public float Damage { get; set; }
-
-        public Timer CheckLavaTimer { get; set; }
-        public Timer SoundTimer { get; set; }
-        public Timer DamageTimer { get; set; }
-
 
         public void CheckForLavaAndWater(DwarfTime gameTime, ChunkManager chunks)
         {
+
             BoundingBox expandedBoundingBox = LocParent.BoundingBox.Expand(0.5f);
 
             List<Voxel> voxels = chunks.GetVoxelsIntersecting(expandedBoundingBox);
 
-            foreach (Voxel currentVoxel in voxels)
+            foreach(Voxel currentVoxel in voxels)
             {
                 WaterCell cell = currentVoxel.Water;
 
                 if (cell.WaterLevel == 0) continue;
-                if (cell.Type == LiquidType.Lava)
+                else if (cell.Type == LiquidType.Lava)
                 {
                     Heat += 100;
                 }
@@ -101,8 +105,9 @@ namespace DwarfCorp
         public int GetNumTrigger()
         {
             return
-                MathFunctions.Clamp((int) (Math.Abs(1*LocParent.BoundingBox.Max.Y - LocParent.BoundingBox.Min.Y)), 1,
-                    3);
+                (int)
+                    MathFunctions.Clamp((int) (Math.Abs(1*LocParent.BoundingBox.Max.Y - LocParent.BoundingBox.Min.Y)), 1,
+                        3);
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
@@ -111,28 +116,26 @@ namespace DwarfCorp
             DamageTimer.Update(gameTime);
             CheckLavaTimer.Update(gameTime);
             SoundTimer.Update(gameTime);
-            if (CheckLavaTimer.HasTriggered)
+            if(CheckLavaTimer.HasTriggered)
             {
                 CheckForLavaAndWater(gameTime, chunks);
             }
             Heat *= 0.999f;
 
-            if (Heat > Flashpoint)
+            if(Heat > Flashpoint)
             {
-                if (DamageTimer.HasTriggered)
+                if(DamageTimer.HasTriggered)
                     Health.Damage(Damage, Health.DamageType.Fire);
 
-                if (SoundTimer.HasTriggered)
+                if(SoundTimer.HasTriggered)
                     SoundManager.PlaySound(ContentPaths.Audio.fire, LocParent.Position, true, 0.5f);
                 double totalSize = (LocParent.BoundingBox.Max - LocParent.BoundingBox.Min).Length();
-                int numFlames = (int) (totalSize/4.0f) + 1;
+                int numFlames = (int) (totalSize / 4.0f) + 1;
 
-                for (int i = 0; i < numFlames; i++)
+                for(int i = 0; i < numFlames; i++)
                 {
                     Vector3 extents = (LocParent.BoundingBox.Max - LocParent.BoundingBox.Min);
-                    Vector3 randomPoint = LocParent.BoundingBox.Min +
-                                          new Vector3(extents.X*MathFunctions.Rand(), extents.Y*MathFunctions.Rand(),
-                                              extents.Z*MathFunctions.Rand());
+                    Vector3 randomPoint = LocParent.BoundingBox.Min + new Vector3(extents.X * MathFunctions.Rand(), extents.Y * MathFunctions.Rand(), extents.Z * MathFunctions.Rand());
                     PlayState.ParticleManager.Trigger("flame", randomPoint, Color.White, GetNumTrigger());
                 }
             }
@@ -140,4 +143,5 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
     }
+
 }

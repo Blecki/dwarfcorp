@@ -30,22 +30,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Lowest level act in the crafting tree. Creates a new object based
-    /// on a tag.
-    /// </summary>
-    /// <seealso cref="CreatureAct" />
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class CreateCraftItemAct : CreatureAct
     {
+        public Voxel Voxel { get; set; }
+        public string ItemType { get; set; }
         public CreateCraftItemAct(Voxel voxel, CreatureAI agent, string itemType) :
             base(agent)
         {
@@ -55,9 +53,6 @@ namespace DwarfCorp
             ItemType = itemType;
         }
 
-        public Voxel Voxel { get; set; }
-        public string ItemType { get; set; }
-
         public override IEnumerable<Status> Run()
         {
             if (!Creature.Faction.CraftBuilder.IsDesignation(Voxel))
@@ -65,9 +60,8 @@ namespace DwarfCorp
                 yield return Status.Fail;
             }
 
-            var item = EntityFactory.CreateEntity<Body>(CraftLibrary.CraftItems[ItemType].Name,
-                Voxel.Position + Vector3.One*0.5f);
-            PlayState.ParticleManager.Trigger("puff", Voxel.Position + Vector3.One*0.5f, Color.White, 10);
+            Body item = EntityFactory.CreateEntity<Body>(CraftLibrary.CraftItems[ItemType].Name, Voxel.Position + Vector3.One * 0.5f);
+            PlayState.ParticleManager.Trigger("puff", Voxel.Position + Vector3.One * 0.5f, Color.White, 10);
             if (item == null)
             {
                 yield return Status.Fail;
@@ -80,4 +74,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

@@ -30,39 +30,35 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A static collection of biome types. Biomes tell the voxel chunk generator what kinds of voxels
-    ///     to put into the environment, and how to populate it with animals and plants. Biomes are chosen
-    ///     based on a number of parameters like rainfall, height, and temperature.
+    /// A static collection of biome types.
     /// </summary>
     public class BiomeLibrary
     {
-        /// <summary>
-        ///     Static dictionary of all biomes.
-        /// </summary>
         public static Dictionary<Overworld.Biome, BiomeData> Biomes = new Dictionary<Overworld.Biome, BiomeData>();
 
-        /// <summary>
-        ///     Generate biomes from a JSON data file.
-        /// </summary>
+        public BiomeLibrary()
+        {
+        
+        }
+
         public static void InitializeStatics()
         {
             Biomes = ContentPaths.LoadFromJson<Dictionary<Overworld.Biome, BiomeData>>(ContentPaths.World.biomes);
         }
 
-        /// <summary>
-        ///     Convenient dictionary from biome name to color.
-        /// </summary>
-        /// <returns>A dictionary mapping biome name to its color on the map.</returns>
         public static Dictionary<string, Color> CreateBiomeColors()
         {
-            var toReturn = new Dictionary<string, Color>();
+            Dictionary<string, Color> toReturn = new Dictionary<string, Color>();
             foreach (var pair in Biomes)
             {
                 toReturn[pair.Value.Name] = pair.Value.MapColor;
@@ -70,4 +66,5 @@ namespace DwarfCorp
             return toReturn;
         }
     }
+
 }

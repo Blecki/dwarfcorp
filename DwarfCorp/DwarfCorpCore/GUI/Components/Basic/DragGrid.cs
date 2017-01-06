@@ -30,25 +30,47 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
+
     /// <summary>
-    ///     This is a GUI component which manages DragItems and puts them on a grid.
-    ///     Items can be dragged from one cell of the grid to another.
+    /// This is a GUI component which manages DragItems and puts them on a grid.
+    /// Items can be dragged from one cell of the grid to another.
     /// </summary>
     public class DragGrid : GUIComponent
     {
-        public delegate void Changed();
+        public DragManager DragManager { get; set; }
+        public List<DraggableItem> Items { get; set; }
+        public int GridWidth { get; set; }
+        public int GridHeight { get; set; }
+        public int TotalRows { get; set; }
+        public int TotalCols { get; set; }
+        public GridLayout Layout { get; set; }
+        public bool DrawGrid { get; set; }
+        public bool DrawBackground { get; set; }
+        public Color BackColor { get; set; }
+        public Color BorderColor { get; set; }
 
         public delegate void ItemCreated(DraggableItem item);
 
+        public event ItemCreated OnItemCreated;
+
         public delegate void ItemDestroyed(DraggableItem item);
+
+        public event ItemDestroyed OnItemDestroyed;
+
+        public delegate void Changed();
+
+        public event Changed OnChanged;
 
         public DragGrid(DwarfGUI gui, GUIComponent parent, DragManager dragManager, int gridWidth, int gridHeight) :
             base(gui, parent)
@@ -68,24 +90,6 @@ namespace DwarfCorp
             BackColor = new Color(255, 255, 255, 100);
             BorderColor = new Color(0, 0, 0, 100);
         }
-
-        public DragManager DragManager { get; set; }
-        public List<DraggableItem> Items { get; set; }
-        public int GridWidth { get; set; }
-        public int GridHeight { get; set; }
-        public int TotalRows { get; set; }
-        public int TotalCols { get; set; }
-        public GridLayout Layout { get; set; }
-        public bool DrawGrid { get; set; }
-        public bool DrawBackground { get; set; }
-        public Color BackColor { get; set; }
-        public Color BorderColor { get; set; }
-
-        public event ItemCreated OnItemCreated;
-
-        public event ItemDestroyed OnItemDestroyed;
-
-        public event Changed OnChanged;
 
         private void DragGrid_OnChanged()
         {
@@ -117,9 +121,9 @@ namespace DwarfCorp
             MouseState m = Mouse.GetState();
             DrawGrid = false;
 
-            if (GlobalBounds.Contains(m.X, m.Y))
+            if(GlobalBounds.Contains(m.X, m.Y))
             {
-                if (newSpawnedItem != null)
+                if(newSpawnedItem != null)
                 {
                     OnItemCreated.Invoke(newSpawnedItem);
                     Items.Add(newSpawnedItem);
@@ -131,7 +135,7 @@ namespace DwarfCorp
             }
 
 
-            if (Items.Contains(dItem) && dItem.Item.CurrentAmount <= 0)
+            if(Items.Contains(dItem) && dItem.Item.CurrentAmount <= 0)
             {
                 DragManager.Slots[dItem.Parent] = null;
                 dItem.Parent.RemoveChild(dItem);
@@ -150,20 +154,20 @@ namespace DwarfCorp
 
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
-            if (DrawBackground)
+            if(DrawBackground)
             {
                 Drawer2D.DrawRect(batch, GlobalBounds, BorderColor, 2);
                 Drawer2D.FillRect(batch, GlobalBounds, BackColor);
             }
 
-            if (DrawGrid)
+            if(DrawGrid)
             {
                 MouseState m = Mouse.GetState();
-                for (int r = 0; r < TotalRows; r++)
+                for(int r = 0; r < TotalRows; r++)
                 {
-                    for (int c = 0; c < TotalCols; c++)
+                    for(int c = 0; c < TotalCols; c++)
                     {
-                        var rect = new Rectangle(c, r, 1, 1);
+                        Rectangle rect = new Rectangle(c, r, 1, 1);
                         GUIComponent slot = Layout.ComponentPositions[rect];
                         Rectangle draw = slot.GlobalBounds;
                         //draw.X += 5;
@@ -172,7 +176,7 @@ namespace DwarfCorp
                         draw.Height += 5;
                         Drawer2D.DrawRect(batch, draw, new Color(0, 0, 0, 50), 2);
 
-                        if (draw.Contains(m.X, m.Y))
+                        if(draw.Contains(m.X, m.Y))
                         {
                             Drawer2D.FillRect(batch, draw, new Color(100, 100, 0, 100));
                         }
@@ -181,11 +185,11 @@ namespace DwarfCorp
             }
             else
             {
-                for (int r = 0; r < TotalRows; r++)
+                for(int r = 0; r < TotalRows; r++)
                 {
-                    for (int c = 0; c < TotalCols; c++)
+                    for(int c = 0; c < TotalCols; c++)
                     {
-                        var rect = new Rectangle(c, r, 1, 1);
+                        Rectangle rect = new Rectangle(c, r, 1, 1);
                         GUIComponent slot = Layout.ComponentPositions[rect];
                         Rectangle draw = slot.GlobalBounds;
                         //draw.X += 5;
@@ -203,15 +207,15 @@ namespace DwarfCorp
         public void SetupLayout()
         {
             Rectangle globalRect = GlobalBounds;
-            TotalRows = globalRect.Height/GridHeight;
-            TotalCols = globalRect.Width/GridWidth;
+            TotalRows = globalRect.Height / GridHeight;
+            TotalCols = globalRect.Width / GridWidth;
             Layout = new GridLayout(GUI, this, TotalRows, TotalCols);
 
-            for (int r = 0; r < TotalRows; r++)
+            for(int r = 0; r < TotalRows; r++)
             {
-                for (int c = 0; c < TotalCols; c++)
+                for(int c = 0; c < TotalCols; c++)
                 {
-                    var slot = new GUIComponent(GUI, Layout);
+                    GUIComponent slot = new GUIComponent(GUI, Layout);
                     Layout.SetComponentPosition(slot, c, r, 1, 1);
                     DragManager.Slots[slot] = null;
                 }
@@ -220,7 +224,7 @@ namespace DwarfCorp
 
         public void AddItem(GUIComponent slot, GItem item)
         {
-            var dItem = new DraggableItem(GUI, slot, item)
+            DraggableItem dItem = new DraggableItem(GUI, slot, item)
             {
                 ToolTip = item.Name
             };
@@ -238,24 +242,28 @@ namespace DwarfCorp
 
         public bool AddItem(GItem item, int r, int c)
         {
-            var rect = new Rectangle(c, r, 1, 1);
-            if (Layout.ComponentPositions.ContainsKey(rect))
+            Rectangle rect = new Rectangle(c, r, 1, 1);
+            if(Layout.ComponentPositions.ContainsKey(rect))
             {
                 GUIComponent slot = Layout.ComponentPositions[rect];
                 AddItem(slot, item);
                 return true;
             }
-            return false;
+            else
+            {
+                return false;
+            }
         }
 
         public void AddItem(GItem item)
         {
             int index = Items.Count;
-            int r = index/TotalCols;
-            int c = index%TotalCols;
+            int r = index / TotalCols;
+            int c = index % TotalCols;
 
 
             AddItem(item, r, c);
         }
     }
+
 }

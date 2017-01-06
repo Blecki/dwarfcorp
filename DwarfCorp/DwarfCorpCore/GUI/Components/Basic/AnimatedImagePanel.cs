@@ -30,35 +30,37 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    ///     This is a kind of ImagePanel GUI widget that displays an animation rather than a static image.
-    /// </summary>
     [JsonObject(IsReference = true)]
     public class AnimatedImagePanel : ImagePanel
     {
-        public AnimatedImagePanel(DwarfGUI gui, GUIComponent parent, Texture2D image)
+        public Animation Animation { get; set; }
+        public AnimatedImagePanel(DwarfGUI gui, GUIComponent parent, Texture2D image) 
             : base(gui, parent, image)
         {
+
         }
 
-        public AnimatedImagePanel(DwarfGUI gui, GUIComponent parent, ImageFrame image)
+        public AnimatedImagePanel(DwarfGUI gui, GUIComponent parent, ImageFrame image) 
             : base(gui, parent, image)
         {
+
         }
 
         public AnimatedImagePanel(DwarfGUI gui, GUIComponent parent, Animation animtion)
-            : base(gui, parent, new ImageFrame(animtion.SpriteSheet.GetTexture(), animtion.GetCurrentFrameRect()))
+            :base(gui, parent, new ImageFrame(animtion.SpriteSheet.GetTexture(), animtion.GetCurrentFrameRect()))
         {
             Animation = animtion;
         }
-
-        public Animation Animation { get; set; }
 
         public override void Update(DwarfTime time)
         {

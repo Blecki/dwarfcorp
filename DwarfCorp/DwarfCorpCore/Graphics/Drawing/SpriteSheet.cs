@@ -30,8 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
@@ -41,6 +43,30 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class SpriteSheet
     {
+        protected bool Equals(SpriteSheet other)
+        {
+            return FrameWidth == other.FrameWidth && FrameHeight == other.FrameHeight && string.Equals(AssetName, other.AssetName);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = FrameWidth;
+                hashCode = (hashCode*397) ^ FrameHeight;
+                hashCode = (hashCode*397) ^ (AssetName != null ? AssetName.GetHashCode() : 0);
+                return hashCode;
+            }
+        }
+
+        public int FrameWidth { get; set; }
+        public int FrameHeight { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+
+        private Texture2D FixedTexture { get; set; }
+        public string AssetName { get; set; }
+
         public SpriteSheet()
         {
             FrameWidth = -1;
@@ -83,42 +109,17 @@ namespace DwarfCorp
             Height = tex.Height;
         }
 
-        public int FrameWidth { get; set; }
-        public int FrameHeight { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-
-        private Texture2D FixedTexture { get; set; }
-        public string AssetName { get; set; }
-
-        protected bool Equals(SpriteSheet other)
-        {
-            return FrameWidth == other.FrameWidth && FrameHeight == other.FrameHeight &&
-                   string.Equals(AssetName, other.AssetName);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int hashCode = FrameWidth;
-                hashCode = (hashCode*397) ^ FrameHeight;
-                hashCode = (hashCode*397) ^ (AssetName != null ? AssetName.GetHashCode() : 0);
-                return hashCode;
-            }
-        }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
+            if (obj.GetType() != this.GetType()) return false;
             return Equals((SpriteSheet) obj);
         }
 
         public List<NamedImageFrame> GenerateFrames()
         {
-            var toReturn = new List<NamedImageFrame>();
+            List<NamedImageFrame> toReturn = new List<NamedImageFrame>();
             Texture2D texture = TextureManager.GetTexture(AssetName);
 
             if (texture == null) return null;
@@ -138,13 +139,12 @@ namespace DwarfCorp
         {
             if (FixedTexture == null)
                 return TextureManager.GetTexture(AssetName);
-            return FixedTexture;
+            else return FixedTexture;
         }
 
         public NamedImageFrame GenerateFrame(Point position)
         {
-            return new NamedImageFrame(AssetName,
-                new Rectangle(position.X*FrameWidth, position.Y*FrameHeight, FrameWidth, FrameHeight));
+            return new NamedImageFrame(AssetName, new Rectangle(position.X * FrameWidth, position.Y * FrameHeight, FrameWidth, FrameHeight));
         }
     }
 }

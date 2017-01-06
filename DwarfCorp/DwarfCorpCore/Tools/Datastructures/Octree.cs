@@ -30,22 +30,46 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Threading;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System.Threading;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+
     /// <summary>
-    ///     This data structure divides 3D space into 3D octants (8 splits per node) in a tree structure.
-    ///     At the base of the tree are bounded objects. Makes it efficient to query for collisions.
+    /// This data structure divides 3D space into 3D octants (8 splits per node) in a tree structure.
+    /// At the base of the tree are bounded objects. Makes it efficient to query for collisions.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [JsonObject(IsReference =  true)]
     public class Octree
     {
+        public int MaxDepth { get; set; }
+        public int MaxObjectsPerNode { get; set; }
+        public int MinObjectsPerNode { get; set; }
+        public BoundingBox Bounds { get; set; }
+        public OctreeNode Root { get; set; }
+        public bool DebugDraw { get; set; }
+
+        [JsonIgnore]
+        public ReaderWriterLockSlim Lock { get; set; }
+
+        [JsonIgnore]
+        public Dictionary<IBoundedObject, OctreeNode> ObjectsToNodes { get; set; }
+
+        [JsonIgnore]
+        protected Dictionary<IBoundedObject, bool> ObjectsToUpdate { get; set; }
+        public Timer UpdateTimer { get; set; }
+
+        [OnDeserialized]
+        protected void OnDeserialized(StreamingContext context)
+        {
+            ComputeObjectsToNodes();
+        }
+
         public Octree()
         {
             Lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
@@ -67,30 +91,6 @@ namespace DwarfCorp
             UpdateTimer = new Timer(1.0f, false);
         }
 
-        public int MaxDepth { get; set; }
-        public int MaxObjectsPerNode { get; set; }
-        public int MinObjectsPerNode { get; set; }
-        public BoundingBox Bounds { get; set; }
-        public OctreeNode Root { get; set; }
-        public bool DebugDraw { get; set; }
-
-        [JsonIgnore]
-        public ReaderWriterLockSlim Lock { get; set; }
-
-        [JsonIgnore]
-        public Dictionary<IBoundedObject, OctreeNode> ObjectsToNodes { get; set; }
-
-        [JsonIgnore]
-        protected Dictionary<IBoundedObject, bool> ObjectsToUpdate { get; set; }
-
-        public Timer UpdateTimer { get; set; }
-
-        [OnDeserialized]
-        protected void OnDeserialized(StreamingContext context)
-        {
-            ComputeObjectsToNodes();
-        }
-
         protected void ComputeObjectsToNodes()
         {
             Root.ComputeObjectsToNodesRecursive(ObjectsToNodes);
@@ -98,7 +98,7 @@ namespace DwarfCorp
 
         public void AddUpdate(IBoundedObject obj)
         {
-            lock (ObjectsToUpdate)
+            lock(ObjectsToUpdate)
             {
                 ObjectsToUpdate[obj] = true;
             }
@@ -106,20 +106,27 @@ namespace DwarfCorp
 
         public void AddObjectRecursive(IBoundedObject obj)
         {
-            if (ObjectsToNodes.ContainsKey(obj))
+            if(ObjectsToNodes.ContainsKey(obj))
             {
+                return;
             }
-            Root.AddObjectRecursive(obj);
+            else
+            {
+                Root.AddObjectRecursive(obj);
+            }
         }
 
         public bool RemoveObject(IBoundedObject obj)
         {
-            if (!ObjectsToNodes.ContainsKey(obj))
+            if(!ObjectsToNodes.ContainsKey(obj))
             {
                 return false;
             }
-            OctreeNode node = ObjectsToNodes[obj];
-            return node.RemoveObject(obj);
+            else
+            {
+                OctreeNode node = ObjectsToNodes[obj];
+                return node.RemoveObject(obj);
+            }
         }
 
 
@@ -129,13 +136,13 @@ namespace DwarfCorp
             ObjectsToNodes.Clear();
             List<IBoundedObject> objectsInTree = Root.MergeRecursive();
 
-            var bounds = new BoundingBox(Bounds.Min*2.0f, Bounds.Max*2.0f);
+            BoundingBox bounds = new BoundingBox(Bounds.Min * 2.0f, Bounds.Max * 2.0f);
             Bounds = bounds;
 
 
             Root = new OctreeNode(Bounds, this, 0, null);
 
-            foreach (IBoundedObject loc in objectsInTree)
+            foreach(IBoundedObject loc in objectsInTree)
             {
                 AddObjectRecursive(loc);
             }
@@ -145,27 +152,26 @@ namespace DwarfCorp
 
         public bool NeedsUpdate(IBoundedObject component)
         {
-            if (ObjectsToUpdate.ContainsKey(component))
+            if(ObjectsToUpdate.ContainsKey(component))
             {
                 return false;
             }
 
-            return !ObjectsToNodes.ContainsKey(component) ||
-                   ObjectsToNodes[component].Bounds.Intersects(component.GetBoundingBox());
+            return !ObjectsToNodes.ContainsKey(component) || ObjectsToNodes[component].Bounds.Intersects(component.GetBoundingBox());
         }
 
         public void Update(DwarfTime time)
         {
             UpdateTimer.Update(time);
 
-            if (!UpdateTimer.HasTriggered)
+            if(!UpdateTimer.HasTriggered)
             {
                 return;
             }
 
-            lock (ObjectsToUpdate)
+            lock(ObjectsToUpdate)
             {
-                foreach (var pair in ObjectsToUpdate)
+                foreach(KeyValuePair<IBoundedObject, bool> pair in ObjectsToUpdate)
                 {
                     RemoveObject(pair.Key);
                     AddObjectRecursive(pair.Key);
@@ -175,4 +181,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

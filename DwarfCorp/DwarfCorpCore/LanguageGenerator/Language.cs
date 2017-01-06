@@ -30,15 +30,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
+using System.Text;
+using System.Media;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 
 namespace DwarfCorp
 {
+
     public enum UtteranceType
     {
         Syllable,
@@ -47,21 +49,21 @@ namespace DwarfCorp
 
     public struct Utterance
     {
-        public SoundEffect Syllable;
         public UtteranceType Type;
+        public SoundEffect Syllable;
     }
 
     /// <summary>
-    ///     This is a weird (probably deprecated) system for making "talky" noises.
+    /// This is a weird (probably deprecated) system for making "talky" noises.
     /// </summary>
     public class Language
     {
+        public List<SoundEffect> Syllables { get; set; }
+
         public Language(List<SoundEffect> syllables)
         {
             Syllables = syllables;
         }
-
-        public List<SoundEffect> Syllables { get; set; }
 
 
         public void Say(string sentence)
@@ -71,24 +73,24 @@ namespace DwarfCorp
 
         public List<Utterance> ConvertSentence(string sentence)
         {
-            var toReturn = new List<Utterance>();
+            List<Utterance> toReturn = new List<Utterance>();
             string[] words = sentence.Split(' ');
-            foreach (string word in words)
+            foreach(string word in words)
             {
-                if (word != "." && word != ",")
+                if(word != "." && word != ",")
                 {
-                    var utter = new Utterance();
+                    Utterance utter = new Utterance();
                     utter.Type = UtteranceType.Syllable;
-                    utter.Syllable = Syllables[Math.Abs(word.GetHashCode())%Syllables.Count];
+                    utter.Syllable = Syllables[Math.Abs(word.GetHashCode()) % Syllables.Count];
 
-                    if (toReturn.Count == 0 || utter.Syllable != toReturn.Last().Syllable)
+                    if(toReturn.Count == 0 || utter.Syllable != toReturn.Last().Syllable)
                     {
                         toReturn.Add(utter);
                     }
                 }
                 else
                 {
-                    var pause = new Utterance();
+                    Utterance pause = new Utterance();
                     pause.Type = UtteranceType.Pause;
                     toReturn.Add(pause);
                 }
@@ -99,23 +101,24 @@ namespace DwarfCorp
 
         public void SayUtterance(List<Utterance> utterances)
         {
-            foreach (Utterance utter in utterances)
+            foreach(Utterance utter in utterances)
             {
-                if (utter.Type == UtteranceType.Pause)
+                if(utter.Type == UtteranceType.Pause)
                 {
-                    Thread.Sleep(1000);
+                    System.Threading.Thread.Sleep(1000);
                 }
                 else
                 {
                     SoundEffectInstance inst = utter.Syllable.CreateInstance();
                     inst.Play();
 
-                    while (inst.State == SoundState.Playing)
+                    while(inst.State == SoundState.Playing)
                     {
-                        Thread.Sleep(5);
+                        System.Threading.Thread.Sleep(5);
                     }
                 }
             }
         }
     }
+
 }

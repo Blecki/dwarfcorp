@@ -30,22 +30,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Text;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Wraps a boolean function so that it returns success when the function
-    ///     evaluates to "true", and failure otherwise.
+    /// Wraps a boolean function so that it returns success when the function
+    /// evaluates to "true", and failure otherwise.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class Condition : Act
     {
+        private Func<bool> Function { get; set; }
+
         public Condition()
         {
+
         }
 
         public Condition(bool condition)
@@ -60,11 +63,9 @@ namespace DwarfCorp
             Function = condition;
         }
 
-        private Func<bool> Function { get; set; }
-
         public override IEnumerable<Status> Run()
         {
-            if (Function())
+            if(Function())
             {
                 yield return Status.Success;
             }
@@ -74,4 +75,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

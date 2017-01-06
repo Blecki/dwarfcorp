@@ -30,19 +30,33 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     This componenet, when clicked, toggles on and off. It also has a
-    ///     label drawn next to it.
+    /// This componenet, when clicked, toggles on and off. It also has a 
+    /// label drawn next to it.
     /// </summary>
     public class Checkbox : GUIComponent
     {
+        public string Text { get; set; }
+        public Color TextColor { get; set; }
+        public Color StrokeColor { get; set; }
+        public Color HoverTextColor { get; set; }
+        public SpriteFont TextFont { get; set; }
+        public bool Checked { get; set; }
+
         public delegate void CheckModified(bool arg);
+
+        public event CheckModified OnCheckModified;
 
         public Checkbox(DwarfGUI gui, GUIComponent parent, string text, SpriteFont textFont, bool check) :
             base(gui, parent)
@@ -57,59 +71,6 @@ namespace DwarfCorp
             OnCheckModified += CheckBox_OnCheckModified;
         }
 
-
-        /// <summary>
-        /// Gets or sets the text.
-        /// </summary>
-        /// <value>
-        /// The text drawn next to the check box.
-        /// </value>
-        public string Text { get; set; }
-        /// <summary>
-        /// Gets or sets the color of the text.
-        /// </summary>
-        /// <value>
-        /// The color of the text drawn next to the check box.
-        /// </value>
-        public Color TextColor { get; set; }
-        /// <summary>
-        /// Gets or sets the color of the stroke.
-        /// </summary>
-        /// <value>
-        /// The color of the stroke around the text.
-        /// </value>
-        public Color StrokeColor { get; set; }
-        /// <summary>
-        /// Gets or sets the color of the text when hovered over.
-        /// </summary>
-        /// <value>
-        /// The color of the hover text.
-        /// </value>
-        public Color HoverTextColor { get; set; }
-        /// <summary>
-        /// Gets or sets the text font.
-        /// </summary>
-        /// <value>
-        /// The text font.
-        /// </value>
-        public SpriteFont TextFont { get; set; }
-        /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="Checkbox"/> is checked.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if checked; otherwise, <c>false</c>.
-        /// </value>
-        public bool Checked { get; set; }
-
-        /// <summary>
-        /// Occurs when the checkbox is modified.
-        /// </summary>
-        public event CheckModified OnCheckModified;
-
-        /// <summary>
-        /// Called when the checkbox is modified.
-        /// </summary>
-        /// <param name="arg">if set to <c>true</c> the checkbox is toggled..</param>
         private void CheckBox_OnCheckModified(bool arg)
         {
         }
@@ -127,12 +88,12 @@ namespace DwarfCorp
 
             Color c = TextColor;
 
-            if (IsMouseOver)
+            if(IsMouseOver)
             {
                 c = HoverTextColor;
             }
 
-            var checkboxBounds = new Rectangle(GlobalBounds.Right - 32, GlobalBounds.Top + 1, 32, 32);
+            Rectangle checkboxBounds = new Rectangle(GlobalBounds.Right - 32, GlobalBounds.Top + 1, 32, 32);
 
             GUI.Skin.RenderCheckbox(checkboxBounds, Checked, batch);
             Vector2 measure = Datastructures.SafeMeasure(GUI.DefaultFont, Text);
@@ -147,4 +108,5 @@ namespace DwarfCorp
             base.Render(time, batch);
         }
     }
+
 }

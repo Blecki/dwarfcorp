@@ -30,19 +30,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
-    public delegate void UpdateDelegate();
 
+    public delegate void UpdateDelegate();
     public delegate void RenderDelegate();
 
     public delegate void ClickedDelegate();
@@ -56,22 +57,41 @@ namespace DwarfCorp
     public delegate void ReleasedDelegate();
 
     public delegate void MouseScrolledDelegate(int amount);
-
     public delegate void MouseDraggedDelegate(InputManager.MouseButton button, Vector2 delta);
 
     /// <summary>
-    ///     A proprietary GUI system written from scratch. Based loosely on the Qt framework.
-    ///     GUI elements are laid out in a tree. Children are normally drawn after parents.
-    ///     Handles input from the user on its own. Elements are drawn with native XNA drawing functions.
+    /// A proprietary GUI system written from scratch. Based loosely on the Qt framework.
+    /// GUI elements are laid out in a tree. Children are normally drawn after parents.
+    /// Handles input from the user on its own. Elements are drawn with native XNA drawing functions. 
     /// </summary>
     public class DwarfGUI
     {
-        private readonly DwarfGame game;
+        public GUIComponent RootComponent { get; set; }
+        private readonly DwarfGame game = null;
+        public SpriteFont DefaultFont { get; set; }
+        public SpriteFont SmallFont { get; set; }
+        public SpriteFont TitleFont { get; set; }
+        public GUISkin Skin { get; set; }
+        public Vector2 GlobalOffset { get; set; }
+        public GUIComponent FocusComponent { get; set; }
+        public InputManager Input { get; set; }
+        public List<GUIComponent> DrawAfter { get; set; }
+        public Color DefaultTextColor { get; set; }
+        public Color DefaultStrokeColor { get; set; }
+        public GraphicsDevice Graphics { get; set; }
+        public bool IsMouseVisible { get; set; }
+        public GUISkin.MousePointer MouseMode { get; set; }
         public int MouseScale = 2;
         public Color MouseTint = Color.White;
+        public ToolTipManager ToolTipManager { get; set; }
+       
+        public bool DebugDraw { get; set; }
+        public int LastScrollWheel { get; set; }
+        public bool EnableMouseEvents { get; set; }
+        public float LastMouseX { get; set; }
+        public float LastMouseY { get; set; }
 
-        public DwarfGUI(DwarfGame game, SpriteFont defaultFont, SpriteFont titleFont, SpriteFont smallFont,
-            InputManager input)
+        public DwarfGUI(DwarfGame game, SpriteFont defaultFont, SpriteFont titleFont, SpriteFont smallFont, InputManager input)
         {
             EnableMouseEvents = true;
             IsMouseVisible = true;
@@ -85,8 +105,7 @@ namespace DwarfCorp
             };
 
             DefaultFont = defaultFont;
-            Skin = new GUISkin(TextureManager.GetTexture(ContentPaths.GUI.gui_widgets), 32, 32,
-                TextureManager.GetTexture(ContentPaths.GUI.pointers), 16, 16);
+            Skin = new GUISkin(TextureManager.GetTexture(ContentPaths.GUI.gui_widgets), 32, 32, TextureManager.GetTexture(ContentPaths.GUI.pointers), 16, 16);
             Skin.SetDefaults();
             TitleFont = titleFont;
             GlobalOffset = Vector2.Zero;
@@ -102,37 +121,14 @@ namespace DwarfCorp
             LastMouseY = 0;
         }
 
-        public GUIComponent RootComponent { get; set; }
-
-        public SpriteFont DefaultFont { get; set; }
-        public SpriteFont SmallFont { get; set; }
-        public SpriteFont TitleFont { get; set; }
-        public GUISkin Skin { get; set; }
-        public Vector2 GlobalOffset { get; set; }
-        public GUIComponent FocusComponent { get; set; }
-        public InputManager Input { get; set; }
-        public List<GUIComponent> DrawAfter { get; set; }
-        public Color DefaultTextColor { get; set; }
-        public Color DefaultStrokeColor { get; set; }
-        public GraphicsDevice Graphics { get; set; }
-        public bool IsMouseVisible { get; set; }
-        public GUISkin.MousePointer MouseMode { get; set; }
-        public ToolTipManager ToolTipManager { get; set; }
-
-        public bool DebugDraw { get; set; }
-        public int LastScrollWheel { get; set; }
-        public bool EnableMouseEvents { get; set; }
-        public float LastMouseX { get; set; }
-        public float LastMouseY { get; set; }
-
 
         public static Rectangle AspectRatioFit(Rectangle sourceArea, Rectangle fitArea)
         {
-            float[] ratios = {fitArea.Width/(float) sourceArea.Width, fitArea.Height/(float) sourceArea.Height};
-            float minRatio = Math.Min(ratios[0], ratios[1]);
-            float ratio = minRatio;
+            float[] ratios = { (float)fitArea.Width / (float)sourceArea.Width, (float)fitArea.Height / (float)sourceArea.Height };
+                float minRatio = Math.Min(ratios[0], ratios[1]);
+                float ratio = minRatio;
 
-            return new Rectangle(fitArea.X, fitArea.Y, (int) (sourceArea.Width*ratio), (int) (sourceArea.Height*ratio));
+                return new Rectangle(fitArea.X, fitArea.Y, (int)(sourceArea.Width * ratio), (int) (sourceArea.Height * ratio));
         }
 
         public static string WrapLines(string text, Rectangle bounds, SpriteFont textFont)
@@ -146,16 +142,16 @@ namespace DwarfCorp
 
             string[] originalWords = text.Split(' ');
 
-            var wrappedLines = new List<string>();
+            List<string> wrappedLines = new List<string>();
 
-            var actualLine = new StringBuilder();
+            StringBuilder actualLine = new StringBuilder();
             double actualWidth = 0;
 
-            foreach (string item in originalWords)
+            foreach (var item in originalWords)
             {
                 Vector2 itemMeasure = Datastructures.SafeMeasure(textFont, item + " ");
                 actualLine.Append(item + " ");
-                actualWidth += (int) itemMeasure.X;
+                actualWidth += (int)itemMeasure.X;
 
                 if (actualWidth >= bounds.Width - itemMeasure.X)
                 {
@@ -170,7 +166,7 @@ namespace DwarfCorp
 
             string toReturn = "";
 
-            foreach (string line in wrappedLines)
+            foreach (var line in wrappedLines)
             {
                 toReturn += line + "\n";
             }
@@ -180,16 +176,15 @@ namespace DwarfCorp
 
         public void Update(DwarfTime time)
         {
-            RootComponent.LocalBounds = new Rectangle(0, 0, GameState.Game.GraphicsDevice.Viewport.Width,
-                GameState.Game.GraphicsDevice.Viewport.Height);
+            RootComponent.LocalBounds = new Rectangle(0, 0, GameState.Game.GraphicsDevice.Viewport.Width, GameState.Game.GraphicsDevice.Viewport.Height);
             ToolTipManager.Update(time);
 
-            if (!IsMouseVisible)
+            if(!IsMouseVisible)
             {
                 return;
             }
 
-            if (FocusComponent == null)
+            if(FocusComponent == null)
             {
                 RootComponent.Update(time);
             }
@@ -227,13 +222,13 @@ namespace DwarfCorp
             RootComponent.UpdateTransformsRecursive();
             RootComponent.Render(time, batch);
 
-            if (FocusComponent != null)
+            if(FocusComponent != null)
             {
                 FocusComponent.Render(time, batch);
             }
 
 
-            foreach (GUIComponent component in DrawAfter)
+            foreach(GUIComponent component in DrawAfter)
             {
                 component.Render(time, batch);
             }
@@ -241,11 +236,14 @@ namespace DwarfCorp
 
             DrawAfter.Clear();
 
-            if (DebugDraw)
+            if(DebugDraw)
             {
                 RootComponent.DebugRender(time, batch);
             }
+
         }
+
+
 
 
         public bool IsMouseOver()
@@ -253,4 +251,5 @@ namespace DwarfCorp
             return RootComponent.IsMouseOverRecursive();
         }
     }
+
 }

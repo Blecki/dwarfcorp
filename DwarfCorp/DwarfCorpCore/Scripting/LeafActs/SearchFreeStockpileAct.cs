@@ -30,40 +30,33 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A creature looks for the nearest, free stockpile and puts that information onto the blackboard.
+    /// A creature looks for the nearest, free stockpile and puts that information onto the blackboard.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class SearchFreeStockpileAct : CreatureAct
     {
+        public string StockpileName { get; set; }
+        public string VoxelName { get; set; }
+
+        public Stockpile Stockpile { get { return GetStockpile(); } set { SetStockpile(value);} }
+
+        public Voxel Voxel { get { return GetVoxel(); } set { SetVoxel(value);} }
+
         public SearchFreeStockpileAct(CreatureAI creature, string stockName, string voxName) :
             base(creature)
         {
             Name = "Search Stockpile " + stockName;
             StockpileName = stockName;
             VoxelName = voxName;
-        }
-
-        public string StockpileName { get; set; }
-        public string VoxelName { get; set; }
-
-        public Stockpile Stockpile
-        {
-            get { return GetStockpile(); }
-            set { SetStockpile(value); }
-        }
-
-        public Voxel Voxel
-        {
-            get { return GetVoxel(); }
-            set { SetVoxel(value); }
         }
 
         public Voxel GetVoxel()
@@ -89,50 +82,56 @@ namespace DwarfCorp
 
         public int CompareStockpiles(Stockpile A, Stockpile B)
         {
-            if (A == B)
+            if(A == B)
             {
                 return 0;
             }
-            BoundingBox boxA = A.GetBoundingBox();
-            Vector3 centerA = (boxA.Min + boxA.Max)*0.5f;
-            float costA = (Creature.Physics.GlobalTransform.Translation - centerA).LengthSquared();
-
-            BoundingBox boxB = B.GetBoundingBox();
-            Vector3 centerB = (boxB.Min + boxB.Max)*0.5f;
-            float costB = (Creature.Physics.GlobalTransform.Translation - centerB).LengthSquared();
-
-            if (costA < costB)
+            else
             {
-                return -1;
+                BoundingBox boxA = A.GetBoundingBox();
+                Vector3 centerA = (boxA.Min + boxA.Max) * 0.5f;
+                float costA = (Creature.Physics.GlobalTransform.Translation - centerA).LengthSquared();
+
+                BoundingBox boxB = B.GetBoundingBox();
+                Vector3 centerB = (boxB.Min + boxB.Max) * 0.5f;
+                float costB = (Creature.Physics.GlobalTransform.Translation - centerB).LengthSquared();
+
+                if(costA < costB)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 1;
+                }
             }
-            return 1;
         }
 
         public override IEnumerable<Status> Run()
         {
             bool validTargetFound = false;
 
-            var sortedPiles = new List<Stockpile>(Creature.Faction.Stockpiles);
+            List<Stockpile> sortedPiles = new List<Stockpile>(Creature.Faction.Stockpiles);
 
             sortedPiles.Sort(CompareStockpiles);
 
-            foreach (Stockpile s in sortedPiles)
+            foreach(Stockpile s in sortedPiles)
             {
-                if (s.IsFull())
+                if(s.IsFull())
                 {
                     continue;
                 }
 
                 Voxel v = s.GetNearestVoxel(Creature.Physics.GlobalTransform.Translation);
 
-                if (v.IsEmpty)
+                if(v.IsEmpty)
                 {
                     continue;
                 }
 
                 Voxel = v;
                 Stockpile = s;
-                if (Voxel == null)
+                if(Voxel == null)
                 {
                     continue;
                 }
@@ -141,7 +140,7 @@ namespace DwarfCorp
                 break;
             }
 
-            if (validTargetFound)
+            if(validTargetFound)
             {
                 yield return Status.Success;
             }
@@ -152,4 +151,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

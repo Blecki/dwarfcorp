@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,13 +13,14 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class ParticleEffect
     {
+        public List<ParticleEmitter> Emitters { get; set; }
+
         public ParticleEffect()
         {
             Emitters = new List<ParticleEmitter>();
         }
 
-        public List<ParticleEmitter> Emitters { get; set; }
-
+        
 
         public void Trigger(int num, Vector3 position, Color tint)
         {
@@ -25,18 +29,32 @@ namespace DwarfCorp
                 Emitters[PlayState.Random.Next(Emitters.Count)].Trigger(1, position, tint);
             }
         }
+        
     }
 
     /// <summary>
-    ///     This class manages a set of particle effects, and allows them to be triggered
-    ///     at locations in 3D space.
+    /// This class manages a set of particle effects, and allows them to be triggered
+    /// at locations in 3D space.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [JsonObject(IsReference =  true)]
     public class ParticleManager
     {
+        public Dictionary<string, ParticleEffect> Effects { get; set; }
+        [JsonIgnore]
+        public ComponentManager Components { get; set; }
+
         public ParticleManager()
         {
+            
         }
+
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            Components = PlayState.ComponentManager;
+        }
+        
 
         public ParticleManager(ComponentManager components)
         {
@@ -45,19 +63,6 @@ namespace DwarfCorp
             components.ParticleManager = this;
         }
 
-        public Dictionary<string, ParticleEffect> Effects { get; set; }
-
-        [JsonIgnore]
-        public ComponentManager Components { get; set; }
-
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            Components = PlayState.ComponentManager;
-        }
-
-
         public void Trigger(string emitter, Vector3 position, Color tint, int num)
         {
             Effects[emitter].Trigger(num, position, tint);
@@ -65,7 +70,7 @@ namespace DwarfCorp
 
         public void RegisterEffect(string name, params EmitterData[] data)
         {
-            var emitters = new List<ParticleEmitter>();
+            List<ParticleEmitter> emitters = new List<ParticleEmitter>();
 
             foreach (EmitterData emitter in data)
             {
@@ -77,30 +82,28 @@ namespace DwarfCorp
                     FrustrumCull = false
                 });
             }
-            Effects[name] = new ParticleEffect
+            Effects[name] = new ParticleEffect()
             {
                 Emitters = emitters
             };
         }
 
         /// <summary>
-        ///     A library function which creates a "explosion" particle effect (bouncy particles)
+        /// A library function which creates a "explosion" particle effect (bouncy particles)
         /// </summary>
         /// <param name="assetName">Particle texture name</param>
         /// <param name="name">Name of the effect</param>
         /// <returns>A particle emitter which behaves like an explosion.</returns>
         public ParticleEffect CreateGenericExplosion(string assetName, string name)
         {
-            var frm = new List<Point>
+            List<Point> frm = new List<Point>
             {
                 new Point(0, 0)
             };
             Texture2D tex = TextureManager.GetTexture(assetName);
-            var testData = new EmitterData
+            EmitterData testData = new EmitterData
             {
-                Animation =
-                    new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(assetName), assetName, tex.Width,
-                        tex.Height, frm, true, Color.White, 1.0f, 1.0f, 1.0f, false),
+                Animation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(assetName), assetName, tex.Width, tex.Height, frm, true, Color.White, 1.0f, 1.0f, 1.0f, false),
                 ConstantAccel = new Vector3(0, -10, 0),
                 LinearDamping = 0.9999f,
                 AngularDamping = 0.9f,
@@ -130,11 +133,9 @@ namespace DwarfCorp
         public static EmitterData CreateExplosionLike(string name, SpriteSheet sheet, Point frame, BlendState state)
         {
             Texture2D tex = TextureManager.GetTexture(sheet.AssetName);
-            var data = new EmitterData
+            EmitterData data = new EmitterData
             {
-                Animation =
-                    new Animation(GameState.Game.GraphicsDevice, sheet, name, sheet.FrameWidth, sheet.FrameHeight,
-                        new List<Point> {frame}, true, Color.White, 1.0f, 1.0f, 1.0f, false),
+                Animation = new Animation(GameState.Game.GraphicsDevice, sheet, name, sheet.FrameWidth, sheet.FrameHeight, new List<Point>() { frame }, true, Color.White, 1.0f, 1.0f, 1.0f, false),
                 ConstantAccel = new Vector3(0, -10, 0),
                 LinearDamping = 0.9999f,
                 AngularDamping = 0.9f,
@@ -162,16 +163,14 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        ///     Creates a generic particle effect which is like a "puff" (cloudy particles which float)
+        /// Creates a generic particle effect which is like a "puff" (cloudy particles which float)
         /// </summary>
         public static EmitterData CreatePuffLike(string name, SpriteSheet sheet, Point frame, BlendState state)
         {
             Texture2D tex = TextureManager.GetTexture(sheet.AssetName);
-            var data = new EmitterData
+            EmitterData data = new EmitterData
             {
-                Animation =
-                    new Animation(GameState.Game.GraphicsDevice, sheet, name, sheet.FrameWidth, sheet.FrameHeight,
-                        new List<Point> {frame}, true, Color.White, 1.0f, 1.0f, 1.0f, false),
+                Animation = new Animation(GameState.Game.GraphicsDevice, sheet, name, sheet.FrameWidth, sheet.FrameHeight, new List<Point>(){frame}, true, Color.White, 1.0f, 1.0f, 1.0f, false),
                 ConstantAccel = new Vector3(0, 3, 0),
                 LinearDamping = 0.9f,
                 AngularDamping = 0.99f,
@@ -196,4 +195,5 @@ namespace DwarfCorp
             return data;
         }
     }
+
 }

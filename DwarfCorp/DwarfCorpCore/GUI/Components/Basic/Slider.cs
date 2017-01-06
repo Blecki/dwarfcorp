@@ -30,19 +30,27 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     This GUI component has a handle which can be dragged
-    ///     to specify a value.
+    /// This GUI component has a handle which can be dragged
+    /// to specify a value.
     /// </summary>
     public class Slider : GUIComponent
     {
-        public delegate void ValueModified(float arg);
+        public enum SliderMode
+        {
+            Integer,
+            Float
+        }
 
         public enum Orientation
         {
@@ -50,15 +58,22 @@ namespace DwarfCorp
             Vertical
         }
 
-        public enum SliderMode
-        {
-            Integer,
-            Float
-        }
+        public float SliderValue { get; set; }
+        public float MaxValue { get; set; }
+        public float MinValue { get; set; }
+        public SliderMode Mode { get; set; }
+        public Orientation Orient { get; set; }
+        public string Label { get; set; }
 
-        public Slider(DwarfGUI gui, GUIComponent parent, string label, float value, float minValue, float maxValue,
-            SliderMode mode) :
-                base(gui, parent)
+        public delegate void ValueModified(float arg);
+
+        public event ValueModified OnValueModified;
+        public bool DrawLabel { get; set; }
+        public bool Focused { get; set; }
+        public bool InvertValue { get; set; }
+
+        public Slider(DwarfGUI gui, GUIComponent parent, string label, float value, float minValue, float maxValue, SliderMode mode) :
+            base(gui, parent)
         {
             Orient = Orientation.Horizontal;
             DrawLabel = true;
@@ -73,21 +88,9 @@ namespace DwarfCorp
             InvertValue = false;
         }
 
-        public float SliderValue { get; set; }
-        public float MaxValue { get; set; }
-        public float MinValue { get; set; }
-        public SliderMode Mode { get; set; }
-        public Orientation Orient { get; set; }
-        public string Label { get; set; }
-
-        public bool DrawLabel { get; set; }
-        public bool Focused { get; set; }
-        public bool InvertValue { get; set; }
-        public event ValueModified OnValueModified;
-
         private void Slider_OnLeftPressed()
         {
-            if (IsMouseOver)
+            if(IsMouseOver)
             {
                 Focused = true;
             }
@@ -100,39 +103,39 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime time)
         {
-            if (IsMouseOver && Focused)
+            if(IsMouseOver && Focused)
             {
                 MouseState mouse = Mouse.GetState();
-                if (mouse.LeftButton == ButtonState.Pressed)
+                if(mouse.LeftButton == ButtonState.Pressed)
                 {
                     const int padding = 5;
                     const int fieldWidth = 64;
                     const int fieldHeight = 32;
-                    float w = GlobalBounds.Width - padding*2 - fieldWidth;
-                    float d = (mouse.X - (GlobalBounds.X + padding))/w;
+                    float w = GlobalBounds.Width - padding * 2 - fieldWidth;
+                    float d = (mouse.X - (GlobalBounds.X + padding)) / w;
 
-                    if (Orient == Orientation.Vertical)
+                    if(Orient == Orientation.Vertical)
                     {
-                        w = GlobalBounds.Height - padding*2 - fieldHeight;
-                        d = (mouse.Y - (GlobalBounds.Y - padding))/w;
+                        w = GlobalBounds.Height - padding * 2 - fieldHeight;
+                        d = (mouse.Y - (GlobalBounds.Y - padding)) / w;
                     }
 
-                    if (d > 1.0f)
+                    if(d > 1.0f)
                     {
                         d = 1.0f;
                     }
-                    else if (d < 0)
+                    else if(d < 0)
                     {
                         d = 0.0f;
                     }
 
 
-                    if (InvertValue)
+                    if(InvertValue)
                     {
                         d = (1.0f - d);
                     }
 
-                    SliderValue = d*(MaxValue - MinValue) + MinValue;
+                    SliderValue = d * (MaxValue - MinValue) + MinValue;
 
                     OnValueModified.Invoke(SliderValue);
                 }
@@ -148,20 +151,19 @@ namespace DwarfCorp
 
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
-            if (IsVisible)
+            if(IsVisible)
             {
-                if (Orient == Orientation.Horizontal)
+                if(Orient == Orientation.Horizontal)
                 {
-                    GUI.Skin.RenderSliderHorizontal(GUI.DefaultFont, GlobalBounds, SliderValue, MinValue, MaxValue, Mode,
-                        DrawLabel, InvertValue, batch);
+                    GUI.Skin.RenderSliderHorizontal(GUI.DefaultFont, GlobalBounds, SliderValue, MinValue, MaxValue, Mode, DrawLabel, InvertValue, batch);
                 }
                 else
                 {
-                    GUI.Skin.RenderSliderVertical(GUI.DefaultFont, GlobalBounds, SliderValue, MinValue, MaxValue, Mode,
-                        DrawLabel, InvertValue, batch);
+                    GUI.Skin.RenderSliderVertical(GUI.DefaultFont, GlobalBounds, SliderValue, MinValue, MaxValue, Mode, DrawLabel, InvertValue, batch);
                 }
             }
             base.Render(time, batch);
         }
     }
+
 }

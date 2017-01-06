@@ -30,88 +30,75 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
-using System.IO;
-using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
+using Newtonsoft.Json.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
+using System.IO.Compression;
 
 namespace DwarfCorp
 {
     [Serializable]
     public class OverworldFile
     {
-        public static string Extension = "world";
-        public static string CompressedExtension = "zworld";
-
-        public OverworldFile()
-        {
-        }
-
-        public OverworldFile(Overworld.MapData[,] map, string name)
-        {
-            Data = new OverworldData(map, name);
-        }
-
-        public OverworldFile(string fileName, bool isCompressed, bool isBinary)
-        {
-            ReadFile(fileName, isCompressed, isBinary);
-        }
-
-        public OverworldData Data { get; set; }
-
-
-        public void CopyFrom(OverworldFile file)
-        {
-            Data = file.Data;
-        }
-
-        public bool ReadFile(string filePath, bool isCompressed, bool isBinary)
-        {
-            if (!isBinary)
-            {
-                var file = FileUtils.LoadJson<OverworldFile>(filePath, isCompressed);
-
-                if (file == null)
-                {
-                    return false;
-                }
-                CopyFrom(file);
-                return true;
-            }
-            else
-            {
-                var file = FileUtils.LoadBinary<OverworldFile>(filePath);
-
-                if (file == null)
-                {
-                    return false;
-                }
-                CopyFrom(file);
-                return true;
-            }
-        }
-
-        public void SaveScreenshot(string filename)
-        {
-            Data.Screenshot.SaveAsPng(new FileStream(filename, FileMode.Create), Data.Screenshot.Width,
-                Data.Screenshot.Height);
-        }
-
-        public bool WriteFile(string filePath, bool compress, bool binary)
-        {
-            if (!binary)
-                return FileUtils.SaveJSon(this, filePath, compress);
-            return FileUtils.SaveBinary(this, filePath);
-        }
-
         [Serializable]
         public class OverworldData
         {
-            [JsonIgnore] [NonSerialized] public Texture2D Screenshot;
+            public string Name { get; set; }
+            public int[,] Biomes { get; set; }
+            public float[,] Erosion { get; set; }
+            public float[,] Faults { get; set; }
+            public float[,] Height { get; set; }
+            public float[,] Rainfall { get; set; }
+            public float[,] Temperature { get; set; }
+            public int[,] Water { get; set; }
+            public float[,] Weathering { get; set; }
+
+            [Newtonsoft.Json.JsonIgnore] [NonSerialized] public Texture2D Screenshot;
+
+            public Overworld.MapData[,] CreateMap()
+            {
+                int sx = Biomes.GetLength(0);
+                int sy = Biomes.GetLength(1);
+
+                Overworld.MapData[,] toReturn = new Overworld.MapData[Biomes.GetLength(0), Biomes.GetLength(1)];
+
+                for(int x = 0; x < sx; x++)
+                {
+                    for(int y = 0; y < sy; y++)
+                    {
+                        toReturn[x, y] = new Overworld.MapData
+                        {
+                            Biome = (Overworld.Biome) Biomes[x, y],
+                            Erosion =  Erosion[x, y],
+                            Faults =  Faults[x, y],
+                            Height =  Height[x, y],
+                            Rainfall = Rainfall[x, y],
+                            Temperature = Temperature[x, y],
+                            Water = (Overworld.WaterType) (Water[x, y]),
+                            Weathering =  Weathering[x, y]
+                        };
+                    }
+                }
+
+                return toReturn;
+            }
+
+            public Texture2D CreateTexture(GraphicsDevice device, int width, int height)
+            {
+                Texture2D toReturn = null;
+                Overworld.MapData[,] mapData = CreateMap();
+                toReturn = new Texture2D(device, width, height);
+                System.Threading.Mutex imageMutex = new System.Threading.Mutex();
+                Color[] worldData = new Color[width * height];
+                Overworld.TextureFromHeightMap("Height", mapData, Overworld.ScalarFieldType.Height, width, height, imageMutex, worldData, toReturn, PlayState.SeaLevel);
+
+                return toReturn;
+            }
 
             public OverworldData()
             {
@@ -131,75 +118,97 @@ namespace DwarfCorp
                 Height = new float[sizeX, sizeY];
                 Name = name;
 
-                for (int x = 0; x < sizeX; x++)
+                for(int x = 0; x < sizeX; x++)
                 {
-                    for (int y = 0; y < sizeY; y++)
+                    for(int y = 0; y < sizeY; y++)
                     {
                         Overworld.MapData data = map[x, y];
-                        Biomes[x, y] = (int) data.Biome;
-                        Erosion[x, y] = (data.Erosion);
+                        Biomes[x, y] =  (int)data.Biome;
+                        Erosion[x, y] =  (data.Erosion);
                         Faults[x, y] = (data.Faults);
                         Height[x, y] = (data.Height);
-                        Rainfall[x, y] = (data.Rainfall);
+                        Rainfall[x, y] =  (data.Rainfall);
                         Temperature[x, y] = (data.Temperature);
-                        Water[x, y] = (int) (data.Water);
-                        Weathering[x, y] = (data.Weathering);
+                        Water[x, y] = (int)(data.Water);
+                        Weathering[x, y] =  (data.Weathering);
                     }
                 }
 
-                Screenshot = CreateTexture(GameState.Game.GraphicsDevice, sizeX, sizeY);
+                Screenshot = CreateTexture(PlayState.Game.GraphicsDevice, sizeX, sizeY);
             }
+        }
 
-            public string Name { get; set; }
-            public int[,] Biomes { get; set; }
-            public float[,] Erosion { get; set; }
-            public float[,] Faults { get; set; }
-            public float[,] Height { get; set; }
-            public float[,] Rainfall { get; set; }
-            public float[,] Temperature { get; set; }
-            public int[,] Water { get; set; }
-            public float[,] Weathering { get; set; }
+        public OverworldData Data { get; set; }
 
-            public Overworld.MapData[,] CreateMap()
+        public static string Extension = "world";
+        public static string CompressedExtension = "zworld";
+
+        public OverworldFile()
+        {
+        }
+
+        public OverworldFile(Overworld.MapData[,] map, string name)
+        {
+            Data = new OverworldData(map, name);
+        }
+
+        public OverworldFile(string fileName, bool isCompressed, bool isBinary)
+        {
+            ReadFile(fileName, isCompressed, isBinary);
+        }
+
+
+        public void CopyFrom(OverworldFile file)
+        {
+            Data = file.Data;
+        }
+
+        public  bool ReadFile(string filePath, bool isCompressed, bool isBinary)
+        {
+            if (!isBinary)
             {
-                int sx = Biomes.GetLength(0);
-                int sy = Biomes.GetLength(1);
+                OverworldFile file = FileUtils.LoadJson<OverworldFile>(filePath, isCompressed);
 
-                var toReturn = new Overworld.MapData[Biomes.GetLength(0), Biomes.GetLength(1)];
-
-                for (int x = 0; x < sx; x++)
+                if (file == null)
                 {
-                    for (int y = 0; y < sy; y++)
-                    {
-                        toReturn[x, y] = new Overworld.MapData
-                        {
-                            Biome = (Overworld.Biome) Biomes[x, y],
-                            Erosion = Erosion[x, y],
-                            Faults = Faults[x, y],
-                            Height = Height[x, y],
-                            Rainfall = Rainfall[x, y],
-                            Temperature = Temperature[x, y],
-                            Water = (Overworld.WaterType) (Water[x, y]),
-                            Weathering = Weathering[x, y]
-                        };
-                    }
+                    return false;
                 }
-
-                return toReturn;
+                else
+                {
+                    CopyFrom(file);
+                    return true;
+                }
             }
-
-            public Texture2D CreateTexture(GraphicsDevice device, int width, int height)
+            else
             {
-                Texture2D toReturn = null;
-                Overworld.MapData[,] mapData = CreateMap();
-                toReturn = new Texture2D(device, width, height);
-                var imageMutex = new Mutex();
-                var worldData = new Color[width*height];
-                Overworld.TextureFromHeightMap("Height", mapData, Overworld.ScalarFieldType.Height, width, height,
-                    imageMutex, worldData, toReturn, PlayState.SeaLevel);
+                OverworldFile file = FileUtils.LoadBinary<OverworldFile>(filePath);
 
-                return toReturn;
+                if (file == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    CopyFrom(file);
+                    return true;
+                }
+            }
+        }
+
+        public void SaveScreenshot(string filename)
+        {
+            Data.Screenshot.SaveAsPng(new System.IO.FileStream(filename, System.IO.FileMode.Create), Data.Screenshot.Width, Data.Screenshot.Height);
+        }
+
+        public bool WriteFile(string filePath, bool compress, bool binary)
+        {
+            if (!binary)
+                return FileUtils.SaveJSon<OverworldFile>(this, filePath, compress);
+            else
+            {
+                return FileUtils.SaveBinary<OverworldFile>(this, filePath);
             }
         }
     }
+
 }

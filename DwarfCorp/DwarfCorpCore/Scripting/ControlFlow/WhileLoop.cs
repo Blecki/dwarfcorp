@@ -30,29 +30,30 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Text;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     Repeatedly runs a child until a condition is true. Returns failure
-    ///     if the child fails. Returns success when the condition is true, and the child succeeds.
-    ///     Otherwise returns running.
+    /// Repeatedly runs a child until a condition is true. Returns failure
+    /// if the child fails. Returns success when the condition is true, and the child succeeds.
+    /// Otherwise returns running.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class WhileLoop : Act
     {
+        public Act Child { get; set; }
+        public Act Condition { get; set; }
+
         public WhileLoop(Act child, Act condition)
         {
             Name = "While : " + condition.Name;
             Condition = condition;
             Child = child;
         }
-
-        public Act Child { get; set; }
-        public Act Condition { get; set; }
 
         public override void Initialize()
         {
@@ -73,38 +74,41 @@ namespace DwarfCorp
         public override IEnumerable<Status> Run()
         {
             bool failEncountered = false;
-            while (CheckCondition())
+            while(CheckCondition())
             {
                 Child.Initialize();
 
                 bool childDone = false;
 
-                while (!childDone && CheckCondition())
+                while(!childDone && CheckCondition())
                 {
                     Status childStatus = Child.Tick();
 
-                    if (childStatus == Status.Fail)
+                    if(childStatus == Status.Fail)
                     {
                         failEncountered = true;
                         yield return Status.Fail;
                         break;
                     }
-                    if (childStatus == Status.Success)
+                    else if(childStatus == Status.Success)
                     {
                         yield return Status.Running;
                         childDone = true;
                         break;
                     }
-                    yield return Status.Running;
+                    else
+                    {
+                        yield return Status.Running;
+                    }
                 }
 
-                if (failEncountered)
+                if(failEncountered)
                 {
                     break;
                 }
             }
 
-            if (failEncountered)
+            if(failEncountered)
             {
                 yield return Status.Fail;
             }
@@ -114,4 +118,5 @@ namespace DwarfCorp
             }
         }
     }
+
 }

@@ -30,23 +30,21 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.IO.Ports;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 namespace DwarfCorp
 {
     public class TabSelector : GUIComponent
     {
-        public TabSelector(DwarfGUI gui, GUIComponent parent, int numTabs) :
-            base(gui, parent)
-        {
-            Tabs = new Dictionary<string, Tab>();
-            Layout = new GridLayout(GUI, this, 10, numTabs);
-        }
-
         public Dictionary<string, Tab> Tabs { get; set; }
         public GridLayout Layout { get; set; }
-        public Tab CurrentTab { get; set; }
+        public TabSelector.Tab CurrentTab { get; set; }
 
         public string CurrentTabName
         {
@@ -54,6 +52,30 @@ namespace DwarfCorp
             set { SetTab(value); }
         }
 
+
+        public class Tab : GUIComponent
+        {
+            public string Name { get; set; }
+            public TabSelector Selector { get; set; }
+            public int Index { get; set; }
+            public Button Button { get; set; }
+
+            public delegate void SelectedDelegate();
+            public event SelectedDelegate OnSelected;
+
+            public Tab(string name, TabSelector selector, GUIComponent parent) :
+                base(selector.GUI, parent)
+            {
+                Name = name;
+                Selector = selector;
+                OnSelected = () => { };
+            }
+
+            public void Select()
+            {
+                OnSelected.Invoke();
+            }
+        }
 
         public void SetTab(string tab)
         {
@@ -69,6 +91,13 @@ namespace DwarfCorp
             Layout.UpdateSizes();
         }
 
+        public TabSelector(DwarfGUI gui, GUIComponent parent, int numTabs) :
+            base(gui, parent)
+        {
+            Tabs = new Dictionary<string, Tab>();
+           Layout = new GridLayout(GUI, this, 10, numTabs);
+        }
+
         public Tab AddTab(string name)
         {
             Tabs[name] = new Tab(name, this, Layout)
@@ -76,7 +105,7 @@ namespace DwarfCorp
                 Index = Tabs.Count,
             };
 
-            var tabButton = new Button(GUI, Layout, name, GUI.SmallFont, Button.ButtonMode.TabButton, null)
+            Button tabButton = new Button(GUI, Layout, name, GUI.SmallFont, Button.ButtonMode.TabButton, null)
             {
                 DrawFrame = false,
                 CanToggle = true
@@ -90,34 +119,10 @@ namespace DwarfCorp
             return Tabs[name];
         }
 
-        private void tabButton_OnClicked(Button sender)
+        void tabButton_OnClicked(Button sender)
         {
             SetTab(sender.Text);
         }
 
-        public class Tab : GUIComponent
-        {
-            public delegate void SelectedDelegate();
-
-            public Tab(string name, TabSelector selector, GUIComponent parent) :
-                base(selector.GUI, parent)
-            {
-                Name = name;
-                Selector = selector;
-                OnSelected = () => { };
-            }
-
-            public string Name { get; set; }
-            public TabSelector Selector { get; set; }
-            public int Index { get; set; }
-            public Button Button { get; set; }
-
-            public event SelectedDelegate OnSelected;
-
-            public void Select()
-            {
-                OnSelected.Invoke();
-            }
-        }
     }
 }

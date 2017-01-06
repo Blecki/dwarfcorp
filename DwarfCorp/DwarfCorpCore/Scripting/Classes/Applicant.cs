@@ -30,62 +30,37 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using DwarfCorp.GameStates;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    ///     An Applicant is a potential new hire for the Dwarf Corporation. Just get some randomly
-    ///     generated text for an application.
-    /// </summary>
     [JsonObject(IsReference = true)]
     public class Applicant
     {
-        /// <summary>
-        ///     The kind of employee to hire.
-        /// </summary>
         public EmployeeClass Class { get; set; }
-
-        /// <summary>
-        ///     The level to hire the employee at.
-        /// </summary>
         public EmployeeClass.Level Level { get; set; }
-
-        /// <summary>
-        ///     The name of the employee.
-        /// </summary>
         public string Name { get; set; }
-
-        /// <summary>
-        ///     Flavor text.
-        /// </summary>
         public string CoverLetter { get; set; }
-
-        /// <summary>
-        ///     Flavor text profession.
-        /// </summary>
         public string FormerProfession { get; set; }
-
-        /// <summary>
-        ///     Flavor text town.
-        /// </summary>
         public string HomeTown { get; set; }
 
-        /// <summary>
-        ///     Create a new random employee wth the given level class
-        /// </summary>
-        /// <param name="employeeClass">The class to generate.</param>
-        /// <param name="level">The level of the class to generate.</param>
+        public Applicant()
+        {
+            
+        }
+
         public void GenerateRandom(EmployeeClass employeeClass, int level)
         {
             Class = employeeClass;
             Level = Class.Levels[level];
 
             Name = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
-            var justifications = new List<string>
+            List<string> justifications = new List<string>()
             {
                 "I have many relevant qualities!",
                 "My expereince is extensive!",
@@ -96,13 +71,10 @@ namespace DwarfCorp
                 "I am a very hard worker!",
                 "I am an adventurous soul!"
             };
-            CoverLetter =
+           CoverLetter =
                 TextGenerator.GenerateRandom("Dear " + PlayState.PlayerCompany.Name + ",\n",
-                    "${Please,Do}", " consider ", "${my,this}", " application for the position of " + Level.Name +
-                                                                ". " +
-                                                                justifications[
-                                                                    PlayState.Random.Next(justifications.Count)] + "\n",
-                    "${Thanks,Sincerely,Yours}", ",\n    ", Name);
+                "${Please,Do}"," consider ", "${my,this}"," application for the position of " + Level.Name +
+                                             ". " + justifications[PlayState.Random.Next(justifications.Count)] +"\n", "${Thanks,Sincerely,Yours}", ",\n    " ,Name);
 
             if (level > 0)
             {
@@ -113,7 +85,7 @@ namespace DwarfCorp
                 FormerProfession = TextGenerator.GenerateRandom("$profession");
             }
 
-            var templates = new List<string[]>
+            List<string[]> templates = new List<string[]>
             {
                 new[]
                 {
@@ -159,23 +131,24 @@ namespace DwarfCorp
                     " ",
                     "$place"
                 },
-                new[]
+                new []
                 {
                     "$adjective",
                     "ville"
                 },
-                new[]
+                new []
                 {
                     "$adjective",
                     "burg"
                 },
-                new[]
+                new []
                 {
                     "$lastname",
                     "ton"
                 }
+               
             };
-            HomeTown = TextGenerator.GenerateRandom(templates[PlayState.Random.Next(templates.Count)]);
+             HomeTown = TextGenerator.GenerateRandom(templates[PlayState.Random.Next(templates.Count)]); 
         }
     }
 }

@@ -30,21 +30,35 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+
 namespace DwarfCorp
 {
     /// <summary>
-    ///     This GUI component takes input and displays a specific keyboard Key.
+    /// This GUI component takes input and displays a specific keyboard Key.
     /// </summary>
     public class KeyEdit : GUIComponent
     {
+        public delegate void Modified(string arg);
+
+        public event Modified OnTextModified;
+
         public delegate void KeyModified(Keys prevKey, Keys arg, KeyEdit editor);
 
-        public delegate void Modified(string arg);
+        public event KeyModified OnKeyModified;
+
+        public string Text { get; set; }
+        public Keys Key { get; set; }
+        public bool HasKeyboardFocus { get; set; }
+        public int Carat { get; set; }
+        public bool IsEditable { get; set; }
 
         public KeyEdit(DwarfGUI gui, GUIComponent parent, Keys key) :
             base(gui, parent)
@@ -60,14 +74,6 @@ namespace DwarfCorp
             IsEditable = true;
         }
 
-        public string Text { get; set; }
-        public Keys Key { get; set; }
-        public bool HasKeyboardFocus { get; set; }
-        public int Carat { get; set; }
-        public bool IsEditable { get; set; }
-        public event Modified OnTextModified;
-        public event KeyModified OnKeyModified;
-
         private void KeyEdit_OnKeyModified(Keys prevKey, Keys arg, KeyEdit editor)
         {
         }
@@ -76,9 +82,9 @@ namespace DwarfCorp
         {
         }
 
-        private void InputManager_KeyPressedCallback(Keys key)
+        private void InputManager_KeyPressedCallback(Microsoft.Xna.Framework.Input.Keys key)
         {
-            if (!HasKeyboardFocus || !IsEditable)
+            if(!HasKeyboardFocus || !IsEditable)
             {
                 return;
             }
@@ -91,7 +97,7 @@ namespace DwarfCorp
 
         private void InputManager_MouseClickedCallback(InputManager.MouseButton button)
         {
-            if (IsMouseOver && IsEditable)
+            if(IsMouseOver && IsEditable)
             {
                 HasKeyboardFocus = true;
             }
@@ -110,18 +116,21 @@ namespace DwarfCorp
         {
             Vector2 measure = Datastructures.SafeMeasure(GUI.DefaultFont, Text);
 
-            if (measure.X < GlobalBounds.Width - 15)
+            if(measure.X < GlobalBounds.Width - 15)
             {
                 return Text;
             }
-            for (int i = 0; i < Text.Length; i++)
+            else
             {
-                string subtext = Text.Substring(i);
-                measure = Datastructures.SafeMeasure(GUI.DefaultFont, subtext);
-
-                if (measure.X < GlobalBounds.Width - 15)
+                for(int i = 0; i < Text.Length; i++)
                 {
-                    return "..." + subtext;
+                    string subtext = Text.Substring(i);
+                    measure = Datastructures.SafeMeasure(GUI.DefaultFont, subtext);
+
+                    if(measure.X < GlobalBounds.Width - 15)
+                    {
+                        return "..." + subtext;
+                    }
                 }
             }
 
@@ -130,34 +139,30 @@ namespace DwarfCorp
 
         public override void Render(DwarfTime time, SpriteBatch batch)
         {
-            var fieldRect = new Rectangle(GlobalBounds.X, GlobalBounds.Y + GlobalBounds.Height/2 - GUI.Skin.TileHeight/2,
-                GlobalBounds.Width, GUI.Skin.TileHeight);
-            var textRect = new Rectangle(GlobalBounds.X + 5,
-                GlobalBounds.Y + GlobalBounds.Height/2 - GUI.Skin.TileHeight/2, GlobalBounds.Width, GUI.Skin.TileHeight);
+            Rectangle fieldRect = new Rectangle(GlobalBounds.X, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width, GUI.Skin.TileHeight);
+            Rectangle textRect = new Rectangle(GlobalBounds.X + 5, GlobalBounds.Y + GlobalBounds.Height / 2 - GUI.Skin.TileHeight / 2, GlobalBounds.Width, GUI.Skin.TileHeight);
             GUI.Skin.RenderField(fieldRect, batch);
 
             string substring = GetSubstringToShow();
 
-            if (!HasKeyboardFocus)
+            if(!HasKeyboardFocus)
             {
-                Drawer2D.DrawAlignedText(batch, substring, GUI.DefaultFont, GUI.DefaultTextColor,
-                    Drawer2D.Alignment.Left, textRect);
+                Drawer2D.DrawAlignedText(batch, substring, GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
             }
             else
             {
-                if (time.TotalGameTime.TotalMilliseconds%1000 < 500)
+                if(time.TotalGameTime.TotalMilliseconds % 1000 < 500)
                 {
-                    Drawer2D.DrawAlignedText(batch, substring + "|", GUI.DefaultFont, GUI.DefaultTextColor,
-                        Drawer2D.Alignment.Left, textRect);
+                    Drawer2D.DrawAlignedText(batch, substring + "|", GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
                 }
                 else
                 {
-                    Drawer2D.DrawAlignedText(batch, substring, GUI.DefaultFont, GUI.DefaultTextColor,
-                        Drawer2D.Alignment.Left, textRect);
+                    Drawer2D.DrawAlignedText(batch, substring, GUI.DefaultFont, GUI.DefaultTextColor, Drawer2D.Alignment.Left, textRect);
                 }
             }
 
             base.Render(time, batch);
         }
     }
+
 }

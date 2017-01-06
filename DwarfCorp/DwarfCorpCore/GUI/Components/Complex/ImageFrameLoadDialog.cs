@@ -30,47 +30,46 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     This GUI component displays a set of textures from a directory
-    ///     which can be loaded.
+    /// This GUI component displays a set of textures from a directory
+    /// which can be loaded.
     /// </summary>
     public class ImageFrameLoadDialog : Dialog
     {
-        public delegate void TextureSelected(NamedImageFrame arg);
-
-        public ImageFrameLoadDialog(DwarfGUI gui, GUIComponent parent, List<SpriteSheet> sprites) :
-            base(gui, parent)
-        {
-            Sprites = sprites;
-        }
-
         public NamedImageFrame DefaultTexture { get; set; }
         public List<NamedImageFrame> Images { get; set; }
-        public List<SpriteSheet> Sprites { get; set; }
-
-        public GridLayout SpriteLayout { get; set; }
+        public List<SpriteSheet> Sprites { get; set; } 
+        public delegate void TextureSelected(NamedImageFrame arg);
         public event TextureSelected OnTextureSelected;
+        public GridLayout SpriteLayout { get; set; }
 
         public static ImageFrameLoadDialog Popup(DwarfGUI gui, List<SpriteSheet> sprites)
         {
             int w = gui.Graphics.Viewport.Width - 128;
             int h = gui.Graphics.Viewport.Height - 128;
-            var toReturn = new ImageFrameLoadDialog(gui, gui.RootComponent, sprites)
+            ImageFrameLoadDialog toReturn = new ImageFrameLoadDialog(gui, gui.RootComponent, sprites)
             {
                 LocalBounds =
-                    new Rectangle(gui.Graphics.Viewport.Width/2 - w/2, gui.Graphics.Viewport.Height/2 - h/2, w, h)
+                    new Rectangle(gui.Graphics.Viewport.Width / 2 - w / 2, gui.Graphics.Viewport.Height / 2 - h / 2, w, h)
             };
             toReturn.Initialize(ButtonType.Cancel, "Select Image", "");
 
             return toReturn;
+        }
+
+        public ImageFrameLoadDialog(DwarfGUI gui, GUIComponent parent, List<SpriteSheet> sprites) :
+            base(gui, parent)
+        {
+            Sprites = sprites;
         }
 
         public override void Initialize(ButtonType buttons, string title, string message)
@@ -94,24 +93,16 @@ namespace DwarfCorp
 
             OnTextureSelected += TextureLoadDialog_OnTextureSelected;
 
-            int rc = Math.Max((int) (Math.Round(Math.Sqrt(Images.Count) + 0.5f)), 2);
+            int rc = Math.Max((int)(Math.Round(Math.Sqrt(Images.Count) + 0.5f)), 2);
 
             if (SpriteLayout == null)
             {
-                SpriteLayout = new GridLayout(GUI, Layout, rc, rc)
-                {
-                    WidthSizeMode = SizeMode.Fixed,
-                    HeightSizeMode = SizeMode.Fixed
-                };
+                SpriteLayout = new GridLayout(GUI, Layout, rc, rc) {WidthSizeMode = SizeMode.Fixed, HeightSizeMode = SizeMode.Fixed};
             }
             else
             {
                 RemoveChild(SpriteLayout);
-                SpriteLayout = new GridLayout(GUI, Layout, rc, rc)
-                {
-                    WidthSizeMode = SizeMode.Fixed,
-                    HeightSizeMode = SizeMode.Fixed
-                };
+                SpriteLayout = new GridLayout(GUI, Layout, rc, rc) { WidthSizeMode = SizeMode.Fixed, HeightSizeMode = SizeMode.Fixed };
             }
 
             Layout.SetComponentPosition(SpriteLayout, 0, 1, 4, 2);
@@ -119,15 +110,9 @@ namespace DwarfCorp
 
             for (int i = 0; i < Images.Count; i++)
             {
-                var img = new ImagePanel(GUI, SpriteLayout, Images[i])
-                {
-                    Highlight = true,
-                    KeepAspectRatio = true,
-                    AssetName = Images[i].AssetName,
-                    ConstrainSize = true
-                };
-                int row = i/rc;
-                int col = i%rc;
+                ImagePanel img = new ImagePanel(GUI, SpriteLayout, Images[i]) { Highlight = true, KeepAspectRatio = true, AssetName = Images[i].AssetName, ConstrainSize = true};
+                int row = i / rc;
+                int col = i % rc;
                 NamedImageFrame texFile = Images[i];
                 img.OnClicked += () => img_OnClicked(texFile);
 
@@ -146,4 +131,5 @@ namespace DwarfCorp
             //throw new NotImplementedException();
         }
     }
+
 }

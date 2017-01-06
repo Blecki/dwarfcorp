@@ -30,17 +30,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     /// <summary>
-    ///     A creature attacks a voxel until it is destroyed.
+    /// A creature attacks a voxel until it is destroyed.
     /// </summary>
-    [JsonObject(IsReference = true)]
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class TeleportAct : CreatureAct
     {
         public enum TeleportType
@@ -49,6 +50,8 @@ namespace DwarfCorp
             Lerp,
             Snap
         }
+        public Vector3 Location { get; set; }
+        public TeleportType Type { get; set; }
 
         public TeleportAct(CreatureAI creature) :
             base(creature)
@@ -57,9 +60,6 @@ namespace DwarfCorp
             Type = TeleportType.Jump;
         }
 
-        public Vector3 Location { get; set; }
-        public TeleportType Type { get; set; }
-
 
         public override IEnumerable<Status> Run()
         {
@@ -67,9 +67,9 @@ namespace DwarfCorp
             {
                 case TeleportType.Jump:
                 {
-                    var motion = new TossMotion(0.6f, 0.9f, Creature.Physics.GlobalTransform, Location);
+                    TossMotion motion = new TossMotion(0.6f, 0.9f, Creature.Physics.GlobalTransform, Location);
                     Creature.AI.Jump(DwarfTime.LastTime);
-
+                    
                     while (!motion.IsDone())
                     {
                         Creature.Physics.IsSleeping = true;
@@ -79,10 +79,10 @@ namespace DwarfCorp
                         yield return Status.Running;
                     }
                     break;
-                }
+                }    
                 case TeleportType.Lerp:
                 {
-                    var motion = new EaseMotion(0.6f, Creature.Physics.GlobalTransform, Location);
+                    EaseMotion motion = new EaseMotion(0.6f, Creature.Physics.GlobalTransform, Location);
                     while (!motion.IsDone())
                     {
                         motion.Update(DwarfTime.LastTime);
@@ -95,8 +95,9 @@ namespace DwarfCorp
                     Creature.AI.Position = Location;
                     break;
             }
-
+            
             yield return Status.Success;
         }
     }
+
 }
