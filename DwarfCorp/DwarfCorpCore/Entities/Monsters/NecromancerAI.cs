@@ -43,7 +43,6 @@ namespace DwarfCorp
     {
         public List<Skeleton> Skeletons { get; set; }
         public int MaxSkeletons { get; set; }
-        public Timer WanderTimer { get; set; }
         public Timer SummonTimer { get; set; }
         public Timer AttackTimer { get; set; }
         public float AttackRange { get; set; }

@@ -68,7 +68,6 @@ namespace DwarfCorp
         public SpriteFont Font { get; set; }
 
         public bool IsDead = false;
-        public float MaxHeight = 500;
         private int ColumnWidth = 0;
 
 
@@ -150,6 +149,7 @@ namespace DwarfCorp
         public ComboBoxSelector(DwarfGUI gui, ComboBox parent, List<Entry> values, int posX = -1, int posY = -1) :
             base(gui, parent)
         {
+			MaxHeight = 500;
             Font = gui.DefaultFont;
             Columns = new List<List<Entry>>();
             Values = values;

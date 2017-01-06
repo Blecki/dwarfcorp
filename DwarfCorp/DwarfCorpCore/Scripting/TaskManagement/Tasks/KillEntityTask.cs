@@ -94,7 +94,6 @@ namespace DwarfCorp
                 {
                     if (!agent.Faction.AttackDesignations.Contains(EntityToKill)) return true;
                         return false;
-                        break;
                     }
                 case KillType.Chop:
                     {
@@ -103,7 +102,6 @@ namespace DwarfCorp
                             return true;
                         }
                         return false;
-                        break;
                     }
                 case KillType.Auto:
                     {
@@ -129,7 +127,6 @@ namespace DwarfCorp
                     {
                         if (!agent.Faction.AttackDesignations.Contains(EntityToKill)) return false;
                         return true;
-                        break;
                     }
                     case KillType.Chop:
                     {
@@ -138,7 +135,6 @@ namespace DwarfCorp
                             return false;
                         }
                         return true;
-                        break;
                     }
                     case KillType.Auto:
                     {

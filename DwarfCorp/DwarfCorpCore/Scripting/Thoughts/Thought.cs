@@ -197,7 +197,6 @@ namespace DwarfCorp
                     {
                         Type = type
                     };
-                    break;
             }
 
             return new Thought()

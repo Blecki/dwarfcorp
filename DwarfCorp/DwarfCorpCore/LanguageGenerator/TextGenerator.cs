@@ -266,6 +266,8 @@ namespace DwarfCorp
                 }
                 catch (Exception exception)
                 {
+					// Pointless line to avoid warning for unused exception.
+					exception.ToString();
                     return -1;
                 }
             }
