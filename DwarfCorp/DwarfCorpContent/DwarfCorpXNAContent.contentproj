@@ -1186,30 +1186,30 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Content Include="Entities\Moleman\moleman_animation.json">
+    <None Include="Entities\Moleman\moleman_animation.json">
       <Name>moleman_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Entities\Dwarf\dwarf.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Dwarf\dwarf.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>dwarf</Name>
-    </Content>
-    <Content Include="Entities\Dwarf\dwarf_classes.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Dwarf\dwarf_classes.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>dwarf_classes</Name>
-    </Content>
-    <Content Include="Entities\Goblin\goblin_classes.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Goblin\goblin_classes.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>goblin_classes</Name>
-    </Content>
-    <Content Include="Entities\Goblin\Sprites\goblin_animation.json">
+    </None>
+    <None Include="Entities\Goblin\Sprites\goblin_animation.json">
       <Name>goblin_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Entities\Goblin\goblin.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Goblin\goblin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>goblin</Name>
-    </Content>
+    </None>
     <Compile Include="Entities\Plants\cactus.png">
       <Name>cactus</Name>
       <Importer>TextureImporter</Importer>
@@ -1220,66 +1220,66 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Content Include="Entities\Skeleton\skele_animation.json">
+    <None Include="Entities\Skeleton\skele_animation.json">
       <Name>skele_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Entities\Skeleton\necro_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Skeleton\necro_animation.json">
       <Name>necro_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Entities\Skeleton\skeleton.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Skeleton\skeleton.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>skeleton</Name>
-    </Content>
-    <Content Include="Entities\Skeleton\skeleton_classes.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Skeleton\skeleton_classes.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>skeleton_classes</Name>
-    </Content>
-    <Content Include="Entities\Moleman\moleman.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Moleman\moleman.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>moleman</Name>
-    </Content>
-    <Content Include="Entities\Moleman\moleman_classes.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Moleman\moleman_classes.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>moleman_classes</Name>
-    </Content>
-    <Content Include="Entities\Demon\demon_animation.json">
+    </None>
+    <None Include="Entities\Demon\demon_animation.json">
       <Name>demon_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Entities\Animals\Rabbit\rabbit0_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Animals\Rabbit\rabbit0_animation.json">
       <Name>rabbit0_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Entities\Animals\Rabbit\rabbit1_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Animals\Rabbit\rabbit1_animation.json">
       <Name>rabbit1_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Entities\Animals\Frog\frog0_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Animals\Frog\frog0_animation.json">
       <Name>frog0_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Entities\Animals\Frog\frog1_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Animals\Frog\frog1_animation.json">
       <Name>frog1_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Entities\Animals\scorpion_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Animals\scorpion_animation.json">
       <Name>scorpion_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Entities\Animals\bat_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Animals\bat_animation.json">
       <Name>bat_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Entities\Animals\Spider\spider_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Animals\Spider\spider_animation.json">
       <Name>spider_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="credits.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="credits.json">
       <Name>credits</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Shaders\FXAA.fxh">
       <Name>FXAA</Name>
       <Importer>EffectImporter</Importer>
@@ -1379,218 +1379,218 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
     </Compile>
-    <Content Include="Text\bodypart.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="Text\bodypart.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>bodypart</Name>
-    </Content>
-    <Content Include="Text\Templates\names_dwarf.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\Templates\names_dwarf.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>names_dwarf</Name>
-    </Content>
-    <Content Include="Text\Templates\names_goblin.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\Templates\names_goblin.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>names_goblin</Name>
-    </Content>
-    <Content Include="Text\Templates\names_elf.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\Templates\names_elf.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>names_elf</Name>
-    </Content>
-    <Content Include="Text\Templates\names_undead.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\Templates\names_undead.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>names_undead</Name>
-    </Content>
-    <Content Include="Text\Templates\foods.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\Templates\foods.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>foods</Name>
-    </Content>
-    <Content Include="Text\undeadfamily.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\undeadfamily.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>undeadfamily</Name>
-    </Content>
-    <Content Include="Text\undeadname.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\undeadname.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>undeadname</Name>
-    </Content>
-    <Content Include="Text\place.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\place.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>place</Name>
-    </Content>
-    <Content Include="Text\adverb.txt">
+    </None>
+    <None Include="Text\adverb.txt">
       <Name>adverb</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Text\animal.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\animal.txt">
       <Name>animal</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="World\races.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="World\races.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>races</Name>
-    </Content>
-    <Content Include="World\embarkments.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="World\embarkments.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>embarkments</Name>
-    </Content>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Text\adjective.txt">
+    <None Include="Text\adjective.txt">
       <Name>adjective</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Text\family.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="Text\family.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>family</Name>
-    </Content>
-    <Content Include="Text\corp.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\corp.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>corp</Name>
-    </Content>
-    <Content Include="Text\color.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\color.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>color</Name>
-    </Content>
-    <Content Include="Text\intejection.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\intejection.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>intejection</Name>
-    </Content>
-    <Content Include="Text\goblinname.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\goblinname.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>goblinname</Name>
-    </Content>
-    <Content Include="Text\goblinfamily.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\goblinfamily.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>goblinfamily</Name>
-    </Content>
-    <Content Include="Text\profession.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\profession.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>profession</Name>
-    </Content>
-    <Content Include="Text\magical.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\magical.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>magical</Name>
-    </Content>
-    <Content Include="Text\military.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\military.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>military</Name>
-    </Content>
-    <Content Include="Text\industrial.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\industrial.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>industrial</Name>
-    </Content>
-    <Content Include="Text\elfname.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\elfname.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>elfname</Name>
-    </Content>
-    <Content Include="Text\elffamily.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\elffamily.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>elffamily</Name>
-    </Content>
-    <Content Include="Text\material.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\material.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>material</Name>
-    </Content>
-    <Content Include="Text\Templates\company_military.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\Templates\company_military.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>company_military</Name>
-    </Content>
-    <Content Include="Text\Templates\company_industrial.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\Templates\company_industrial.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>company_industrial</Name>
-    </Content>
-    <Content Include="Text\Templates\company_exploration.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\Templates\company_exploration.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>company_exploration</Name>
-    </Content>
-    <Content Include="Text\Templates\company_magical.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\Templates\company_magical.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>company_magical</Name>
-    </Content>
-    <Content Include="Text\Templates\company_finance.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\Templates\company_finance.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>company_finance</Name>
-    </Content>
-    <Content Include="Text\Templates\mottos.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\Templates\mottos.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>mottos</Name>
-    </Content>
-    <Content Include="Text\Templates\worlds.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\Templates\worlds.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>worlds</Name>
-    </Content>
-    <Content Include="Text\Templates\nations_goblin.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\Templates\nations_goblin.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>nations_goblin</Name>
-    </Content>
-    <Content Include="Text\Templates\nations_elf.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\Templates\nations_elf.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>nations_elf</Name>
-    </Content>
-    <Content Include="Text\Templates\nations_dwarf.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\Templates\nations_dwarf.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>nations_dwarf</Name>
-    </Content>
-    <Content Include="Text\Templates\nations_undead.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Text\Templates\nations_undead.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>nations_undead</Name>
-    </Content>
-    <Content Include="Text\verb.txt">
+    </None>
+    <None Include="Text\verb.txt">
       <Name>verb</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Text\noun.txt">
+    <None Include="Text\noun.txt">
       <Name>noun</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Text\lastname.txt">
+    <None Include="Text\lastname.txt">
       <Name>lastname</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Text\firstname.txt">
+    <None Include="Text\firstname.txt">
       <Name>firstname</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Entities\Dwarf\Sprites\worker_animation.json">
+    <None Include="Entities\Dwarf\Sprites\worker_animation.json">
       <Name>worker_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Entities\Dwarf\Sprites\crafter_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Dwarf\Sprites\crafter_animation.json">
       <Name>crafter_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Entities\Dwarf\Sprites\soldier_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Dwarf\Sprites\soldier_animation.json">
       <Name>soldier_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Entities\Dwarf\Sprites\wizard_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Dwarf\Sprites\wizard_animation.json">
       <Name>wizard_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Entities\Elf\Sprites\elf_animation.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Elf\Sprites\elf_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>elf_animation</Name>
-    </Content>
-    <Content Include="Entities\Dwarf\Sprites\fairy_animation.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Dwarf\Sprites\fairy_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>fairy_animation</Name>
-    </Content>
+    </None>
     <None Include="Music\dwarfcorp_ogg.ogg">
       <Name>dwarfcorp_ogg</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Content Include="World\biomes.json">
+    <None Include="World\biomes.json">
       <Name>biomes</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
