@@ -51,50 +51,21 @@ namespace DwarfCorp
     ///  Exists to write to and from files.
     /// </summary>
     [Serializable]
-    public class ChunkFile
     public class ChunkFile 
     {
         public static string Extension = "chunk";
         public static string CompressedExtension = "zchunk";
 
-        public byte[,,] Types;
-        public byte[, ,] LiquidTypes;
-        public byte[,,] Liquid;
-
-
-
-
-
         public bool[,,] Explored;
-
-        public Point3 Size;
-
 
         public Point3 ID;
         public byte[,,] Liquid;
         public byte[,,] LiquidTypes;
 
-
-
-
-
-
-
-
         public Vector3 Origin;
         public Point3 Size;
         public byte[,,] Types;
 
-
-
-
-
-
-
-
-
-        public static string Extension = "chunk";
-        public static string CompressedExtension = "zchunk";
 
         public ChunkFile()
         {
@@ -140,7 +111,6 @@ namespace DwarfCorp
         {
             if (!isBinary)
             {
-                var chunkFile = FileUtils.LoadJson<ChunkFile>(filePath, isCompressed);
                 ChunkFile chunkFile = FileUtils.LoadJson<ChunkFile>(filePath, isCompressed);
 
                 if (chunkFile == null)
@@ -149,15 +119,9 @@ namespace DwarfCorp
                 }
                 CopyFrom(chunkFile);
                 return true;
-                else
-                {
-                    CopyFrom(chunkFile);
-                    return true;
-                }
             }
             else
             {
-                var chunkFile = FileUtils.LoadBinary<ChunkFile>(filePath);
                 ChunkFile chunkFile = FileUtils.LoadBinary<ChunkFile>(filePath);
 
                 if (chunkFile == null)
@@ -174,38 +138,26 @@ namespace DwarfCorp
             if (!binary)
                 return FileUtils.SaveJSon(this, filePath, compress);
             return FileUtils.SaveBinary(this, filePath);
-                return FileUtils.SaveJSon<ChunkFile>(this, filePath, compress);
-            else
-                return FileUtils.SaveBinary(this, filePath);
         }
 
         public VoxelChunk ToChunk(ChunkManager manager)
         {
-            int chunkSizeX = Size.X;
-            int chunkSizeY = Size.Y;
-            int chunkSizeZ = Size.Z;
-            Vector3 origin = Origin;
             int chunkSizeX = this.Size.X;
             int chunkSizeY = this.Size.Y;
             int chunkSizeZ = this.Size.Z;
             Vector3 origin = this.Origin;
             //Voxel[][][] voxels = ChunkGenerator.Allocate(chunkSizeX, chunkSizeY, chunkSizeZ);
             float scaleFator = PlayState.WorldScale;
-            var c = new VoxelChunk(manager, origin, 1, ID, chunkSizeX, chunkSizeY, chunkSizeZ)
             VoxelChunk c = new VoxelChunk(manager, origin, 1, ID, chunkSizeX, chunkSizeY, chunkSizeZ)
             {
                 ShouldRebuild = true,
                 ShouldRecalculateLighting = true
             };
 
-            for (int x = 0; x < chunkSizeX; x++)
             for(int x = 0; x < chunkSizeX; x++)
-
             {
-                for (int z = 0; z < chunkSizeZ; z++)
                 for(int z = 0; z < chunkSizeZ; z++)
                 {
-                    for (int y = 0; y < chunkSizeY; y++)
                     for(int y = 0; y < chunkSizeY; y++)
                     {
                         int index = c.Data.IndexAt(x, y, z);
@@ -254,13 +206,10 @@ namespace DwarfCorp
 
         public void FillDataFromChunk(VoxelChunk chunk)
         {
-            for (int x = 0; x < Size.X; x++)
             for(int x = 0; x < Size.X; x++)
             {
-                for (int y = 0; y < Size.Y; y++)
                 for(int y = 0; y < Size.Y; y++)
                 {
-                    for (int z = 0; z < Size.Z; z++)
                     for(int z = 0; z < Size.Z; z++)
                     {
                         int index = chunk.Data.IndexAt(x, y, z);
