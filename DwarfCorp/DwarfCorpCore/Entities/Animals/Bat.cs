@@ -69,9 +69,8 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        /// Initialize function creates all the required components for the bird.
+        /// Initialize function creates all the required components for the bat.
         /// </summary>
-        /// <param name="spriteSheet">The sprite sheet to use for the bird</param>
         public void Initialize()
         {
             // When true, causes the bird to face the direction its moving in
