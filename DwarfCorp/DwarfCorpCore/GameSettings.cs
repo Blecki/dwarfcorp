@@ -125,11 +125,8 @@ namespace DwarfCorp
             {
                 Default = FileUtils.LoadJson<Settings>(file, false);
             }
-            catch (FileNotFoundException fileLoad)
+            catch (FileNotFoundException)
             {
-				// Pointless line to avoid warning for unused exception.
-				fileLoad.ToString();
-
 				Console.Error.WriteLine("Settings file does not exist. Using default settings.");
                 Default = new Settings();
                 Save();

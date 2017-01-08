@@ -47,6 +47,7 @@ namespace DwarfCorp
         public TextureManager TextureManager { get; set; }
         public static SpriteBatch SpriteBatch { get; set; }
 
+        public static Gem.GumInputMapper GumInput;
  
         public DwarfGame()
         {
@@ -71,6 +72,7 @@ namespace DwarfCorp
                 Console.Error.WriteLine(exception.Message);
             }
 
+            GumInput = new Gem.GumInputMapper(Window.Handle);
         }
 
         public static string GetGameDirectory()
