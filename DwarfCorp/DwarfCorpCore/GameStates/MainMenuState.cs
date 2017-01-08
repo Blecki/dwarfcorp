@@ -227,8 +227,7 @@ namespace DwarfCorp.GameStates
 
             if (!MaintainState)
             {
-                GuiRoot = new Gum.Root(GameState.Game.GraphicsDevice, new Point(640, 480),
-                    GameState.Game.Content, "newgui/xna_draw", "Content/newgui/sheets.txt");
+                GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
                 GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
 
                 MakeDefaultMenu();

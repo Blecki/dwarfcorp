@@ -48,6 +48,7 @@ namespace DwarfCorp
         public static SpriteBatch SpriteBatch { get; set; }
 
         public static Gem.GumInputMapper GumInput;
+        public static Gum.RenderData GumSkin;
  
         public DwarfGame()
         {
@@ -71,8 +72,6 @@ namespace DwarfCorp
             {
                 Console.Error.WriteLine(exception.Message);
             }
-
-            GumInput = new Gem.GumInputMapper(Window.Handle);
         }
 
         public static string GetGameDirectory()
@@ -88,6 +87,11 @@ namespace DwarfCorp
 
         protected override void LoadContent()
         {
+            // Prepare GemGui
+            GumInput = new Gem.GumInputMapper(Window.Handle);
+            GumSkin = new Gum.RenderData(GraphicsDevice,  Content,
+                    "newgui/xna_draw", "Content/newgui/sheets.txt");
+
 
             PlayState playState = new PlayState(this, StateManager);
             BiomeLibrary.InitializeStatics();
