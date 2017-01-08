@@ -88,11 +88,8 @@ namespace DwarfCorp
             {
                 Mappings = FileUtils.LoadJson<KeyMappings>(file, false);
             }
-            catch (FileNotFoundException fileLoad)
+            catch (FileNotFoundException)
             {
-				// Pointless line to avoid warning for unused exception.
-				fileLoad.ToString();
-
                 Mappings = new KeyMappings();
                 Save();
             }

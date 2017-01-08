@@ -264,10 +264,8 @@ namespace DwarfCorp
                 {
                     return int.Parse(Regex.Match(literal, @"#(\d+)").Groups[1].Value);
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
-					// Pointless line to avoid warning for unused exception.
-					exception.ToString();
                     return -1;
                 }
             }
