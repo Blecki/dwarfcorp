@@ -52,6 +52,8 @@ namespace DwarfCorp.GameStates
         public bool IsGameRunning { get; set; }
         public bool MaintainState { get; set; }
 
+        private Gum.Root GuiRoot;
+
 
         public MainMenuState(DwarfGame game, GameStateManager stateManager) :
             base(game, "MainMenuState", stateManager)
@@ -199,6 +201,13 @@ namespace DwarfCorp.GameStates
 
         public override void OnEnter()
         {
+            if (!MaintainState)
+            {
+                GuiRoot = new Gum.Root(GameState.Game.GraphicsDevice, new Point(640, 480),
+                    GameState.Game.Content, "newgui/xna_draw", "Content/newgui/sheets.txt");
+            }
+
+
             if (!MaintainState)
             {
                 DefaultFont = Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
