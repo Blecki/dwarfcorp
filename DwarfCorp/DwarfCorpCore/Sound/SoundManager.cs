@@ -158,6 +158,11 @@ namespace DwarfCorp
 
         public static void PlaySound(string name)
         {
+            PlaySound(name, 1.0f);
+        }
+
+        public static void PlaySound(string name, float volume = 1.0f)
+        {
             SoundEffect effect = null;
 
             if (!EffectLibrary.ContainsKey(name))
@@ -170,7 +175,7 @@ namespace DwarfCorp
                 effect = EffectLibrary[name];
             }
 
-            effect.Play(GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume, 0.0f, 0.0f);
+            effect.Play(GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * volume, 0.0f, 0.0f);
 
 
         }
