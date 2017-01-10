@@ -1,5 +1,11 @@
 ﻿{
 	"Sheets": [
+		{ 
+			"Name": "logo",
+			"Texture": "newgui/gamelogo",
+			"TileWidth": 600,
+			"TileHeight": 348
+		},
 		{
 			"Name": "font",
 			"Texture": "newgui/font",
