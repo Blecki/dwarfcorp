@@ -163,6 +163,9 @@ namespace DwarfCorp
 
         public static void PlaySound(string name, float volume = 1.0f)
         {
+            // TODO: Remove this block once the SoundManager is initialized in a better location.
+            if (Content == null) return;
+
             SoundEffect effect = null;
 
             if (!EffectLibrary.ContainsKey(name))

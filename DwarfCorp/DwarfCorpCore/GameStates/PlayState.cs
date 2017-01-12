@@ -252,12 +252,8 @@ namespace DwarfCorp.GameStates
             set { ComponentManager.ParticleManager = value; }
         }
 
-        // The current calendar date/time of th egame.
+        // The current calendar date/time of the game.
         public static WorldTime Time = new WorldTime();
-
-        // Hacks to count frame rate TODO: Make a framerate counter class
-        private uint frameCounter = 0;
-        private readonly Timer frameTimer = new Timer(1.0f, false);
 
         // Hack to smooth water reflections TODO: Put into water manager
         private float lastWaterHeight = 8.0f;
@@ -266,8 +262,6 @@ namespace DwarfCorp.GameStates
         private bool pausePressed = false;
         private bool bPressed = false;
 
-        private readonly List<float> lastFps = new List<float>();
-        private float fps = 0.0f;
         private GameFile gameFile;
         public Panel PausePanel;
 
@@ -2075,11 +2069,6 @@ namespace DwarfCorp.GameStates
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
-            // Keeping track of a running FPS buffer (averaged)
-            if (lastFps.Count > 100)
-            {
-                lastFps.RemoveAt(0);
-            }
 
             if (GameSettings.Default.UseDynamicShadows)
             {
@@ -2179,21 +2168,6 @@ namespace DwarfCorp.GameStates
                 fxaa.End(DwarfTime.LastTime, fxaa.RenderTarget);
             }
 
-            frameTimer.Update(gameTime);
-
-            if (frameTimer.HasTriggered)
-            {
-                fps = frameCounter;
-
-                lastFps.Add(fps);
-                frameCounter = 0;
-                frameTimer.Reset(1.0f);
-            }
-            else
-            {
-                frameCounter++;
-            }
-
             RasterizerState rasterizerState = new RasterizerState()
             {
                 ScissorTestEnable = true
@@ -2214,29 +2188,6 @@ namespace DwarfCorp.GameStates
             drawer2D.Render(DwarfGame.SpriteBatch, Camera, GraphicsDevice.Viewport);
 
             GUI.Render(gameTime, DwarfGame.SpriteBatch, Vector2.Zero);
-
-            bool drawDebugData = GameSettings.Default.DrawDebugData;
-            if (drawDebugData)
-            {
-                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"),
-                    "Num Chunks " + ChunkManager.ChunkData.ChunkMap.Values.Count, new Vector2(5, 5), Color.White);
-                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"),
-                    "Max Viewing Level " + ChunkManager.ChunkData.MaxViewingLevel, new Vector2(5, 20), Color.White);
-                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "FPS " + Math.Round(fps),
-                    new Vector2(5, 35), Color.White);
-                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "60",
-                    new Vector2(5, 150 - 65), Color.White);
-                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "30",
-                    new Vector2(5, 150 - 35), Color.White);
-                DwarfGame.SpriteBatch.DrawString(Game.Content.Load<SpriteFont>("Default"), "10",
-                    new Vector2(5, 150 - 15), Color.White);
-                for (int i = 0; i < lastFps.Count; i++)
-                {
-                    DwarfGame.SpriteBatch.Draw(pixel,
-                        new Rectangle(30 + i*2, 150 - (int) lastFps[i], 2, (int) lastFps[i]),
-                        new Color(1.0f - lastFps[i]/60.0f, lastFps[i]/60.0f, 0.0f, 0.5f));
-                }
-            }
 
             if (Paused)
             {
