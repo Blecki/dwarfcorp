@@ -841,21 +841,18 @@
       <Name>font1-w</Name>
       <Importer>TextureImporter</Importer>
       <Processor>FontTextureProcessor</Processor>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
     </Compile>
     <Compile Include="Fonts\font1-w-2x.bmp">
       <Name>font1-w-2x</Name>
       <Importer>TextureImporter</Importer>
       <Processor>FontTextureProcessor</Processor>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
     </Compile>
     <Compile Include="Fonts\font1-w-4x.bmp">
       <Name>font1-w-4x</Name>
       <Importer>TextureImporter</Importer>
       <Processor>FontTextureProcessor</Processor>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
     </Compile>
     <Compile Include="Entities\Dwarf\Sprites\crafter-hammer.png">
@@ -1592,7 +1589,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <PropertyGroup>
     <PostBuildEvent>

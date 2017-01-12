@@ -80,6 +80,8 @@ namespace DwarfCorp
 
         protected override void Initialize()
         {
+            // TODO: Find a more appropriate spot for this.
+            GameObjectCaching.Initialize();
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             base.Initialize();
         }

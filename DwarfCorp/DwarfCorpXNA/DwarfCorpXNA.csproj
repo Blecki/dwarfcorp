@@ -1274,6 +1274,9 @@
     <Compile Include="..\DwarfCorpCore\Tools\Extensions.cs">
       <Link>Tools\Extensions.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\Tools\GameObjectCaching.cs">
+      <Link>Tools\GameObjectCaching.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\Tools\Graphics\ColorGradient.cs">
       <Link>Tools\Graphics\ColorGradient.cs</Link>
     </Compile>
