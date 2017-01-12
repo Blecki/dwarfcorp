@@ -65,7 +65,8 @@ namespace DwarfCorp
             }
             catch (InvalidCastException exception)
             {
-                
+				// Pointless line to avoid warning for unused exception.
+				exception.ToString();
             }
 
             stream.Close();

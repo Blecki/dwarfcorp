@@ -233,8 +233,8 @@ namespace DwarfCorp
             public float TimeOfDay { get; set; }
             public int GameID { get; set; }
             public WorldTime Time { get; set; }
-            public new static string Extension = "meta";
-            public new static string CompressedExtension = "zmeta";
+            public static string Extension = "meta";
+            public static string CompressedExtension = "zmeta";
 
             public MetaData(string file, bool compressed)
             {

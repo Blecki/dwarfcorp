@@ -443,7 +443,6 @@ namespace DwarfCorp.GameStates
         /// <summary>
         /// Generates a random set of dwarves in the given chunk.
         /// </summary>
-        /// <param name="numDwarves">Number of dwarves to generate</param>
         /// <param name="c">The chunk the dwarves belong to</param>
         public void CreateInitialDwarves(VoxelChunk c)
         {
@@ -1589,7 +1588,7 @@ namespace DwarfCorp.GameStates
         /// <summary>
         /// Called every frame
         /// </summary>
-        /// <param name="DwarfTime">The current time</param>
+        /// <param name="gameTime">The current time</param>
         public override void Update(DwarfTime gameTime)
         {
             // If this playstate is not supposed to be running,
@@ -1917,7 +1916,7 @@ namespace DwarfCorp.GameStates
         /// <summary>
         /// Draws all the 3D terrain and entities
         /// </summary>
-        /// <param name="DwarfTime">The current time</param>
+        /// <param name="gameTime">The current time</param>
         /// <param name="cubeEffect">The textured shader</param>
         /// <param name="view">The view matrix of the camera</param> 
         public void Draw3DThings(DwarfTime gameTime, Effect cubeEffect, Matrix view)
@@ -1950,7 +1949,7 @@ namespace DwarfCorp.GameStates
         /// <summary>
         /// Draws all of the game entities
         /// </summary>
-        /// <param name="DwarfTime">The current time</param>
+        /// <param name="gameTime">The current time</param>
         /// <param name="effect">The shader</param>
         /// <param name="view">The view matrix</param>
         /// <param name="waterRenderType">Whether we are rendering for reflection/refraction or nothing</param>
@@ -1972,6 +1971,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         /// <param name="time">The current time</param>
         /// <param name="view">The camera view matrix</param>
+		/// <param name="scale">The scale for the sky drawing</param>
         public void DrawSky(DwarfTime time, Matrix view, float scale)
         {
             Matrix oldView = Camera.ViewMatrix;
@@ -1986,7 +1986,7 @@ namespace DwarfCorp.GameStates
         /// <summary>
         /// If the game is not loaded yet, just draws a loading message centered
         /// </summary>
-        /// <param name="DwarfTime">The current time</param>
+        /// <param name="gameTime">The current time</param>
         public override void RenderUnitialized(DwarfTime gameTime)
         {
             TipTimer.Update(gameTime);
@@ -2053,7 +2053,7 @@ namespace DwarfCorp.GameStates
         /// <summary>
         /// Called when a frame is to be drawn to the screen
         /// </summary>
-        /// <param name="DwarfTime">The current time</param>
+        /// <param name="gameTime">The current time</param>
         public override void Render(DwarfTime gameTime)
         {
             // If we are simulating the game before starting, just display black.

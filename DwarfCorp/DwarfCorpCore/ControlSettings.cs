@@ -90,6 +90,9 @@ namespace DwarfCorp
             }
             catch (FileNotFoundException fileLoad)
             {
+				// Pointless line to avoid warning for unused exception.
+				fileLoad.ToString();
+
                 Mappings = new KeyMappings();
                 Save();
             }

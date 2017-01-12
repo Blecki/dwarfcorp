@@ -161,25 +161,18 @@ namespace DwarfCorp
                     {
                         case Creature.MoveType.Walk:
                             return unitTime*diffNorm;
-                            break;
                         case Creature.MoveType.Climb:
                             return unitTime*diffNorm*2.5f;
-                            break;
                         case Creature.MoveType.Jump:
                             return unitTime * diffNorm * 1.5f;
-                            break;
                         case Creature.MoveType.Swim:
                             return unitTime * diffNorm * 2.0f;
-                            break;
                         case Creature.MoveType.Fall:
                             return unitTime * diffNorm * 0.5f;
-                            break;
                         case Creature.MoveType.Fly:
                             return unitTime*diffNorm*0.6f;
-                            break;
                         case Creature.MoveType.DestroyObject:
                             return unitTime * diffNorm;
-                            break;
                     }
 
                 }

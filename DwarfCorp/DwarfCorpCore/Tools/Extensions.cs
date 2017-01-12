@@ -104,7 +104,7 @@ namespace DwarfCorp
             return (includeHash ? "#" : string.Empty) + string.Join(string.Empty, argb);
         }
 
-        // <summary>
+        /// <summary>
         /// Creates a <see cref="Color"/> value from an ARGB or RGB hex string.  The string may
         /// begin with or without the hash mark (#) character.
         /// </summary>
