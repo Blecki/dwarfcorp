@@ -201,7 +201,7 @@ namespace DwarfCorp
                 {
                     if (Training)
                     {
-                        Agent.AddXP(10);
+                        Agent.AddXP(1);
                         Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                         Creature.OverrideCharacterMode = false;
                         Creature.CurrentCharacterMode = defaultCharachterMode;
@@ -230,44 +230,33 @@ namespace DwarfCorp
                     Target.GetBoundingBox().Min.Y,
                     Target.GlobalTransform.Translation.Z);
 
-                Vector3 diff = targetPos - Creature.AI.Position;
+                Vector2 diff = new Vector2(targetPos.X, targetPos.Z) - new Vector2(Creature.AI.Position.X, Creature.AI.Position.Z);
 
                 Creature.Physics.Face(targetPos);
 
-                // If we are far away from the target, run toward it
-                if (diff.Length() > CurrentAttack.Range * 8)
+                bool intersectsbounds = Creature.Physics.BoundingBox.Intersects(Target.BoundingBox);
+
+                // If we are really far from the target, something must have gone wrong.
+                if (!intersectsbounds && diff.Length() > CurrentAttack.Range * 8)
                 {
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = defaultCharachterMode;
                     yield return Status.Fail;
                 }
-
-                if(diff.Length() > CurrentAttack.Range)
+                // If we're out of attack range, run toward the target.
+                if(!intersectsbounds && diff.Length() > CurrentAttack.Range)
                 {
                     Creature.CurrentCharacterMode = defaultCharachterMode;
                     Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
                     output.Y = 0.0f;
                     Creature.Physics.ApplyForce(output, DwarfTime.Dt);
-
-                    if ((targetPos - Creature.AI.Position).Y > 0.3 && Creature.IsOnGround)
-                    {
-                        Agent.Jump(DwarfTime.LastTime);
-                    }
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                 }
-                else if (!avoided && (CurrentAttack.Mode == Attack.AttackMode.Ranged &&
+                // If we have a ranged weapon, try avoiding the target for a few seconds to get within range.
+                else if (!intersectsbounds && !avoided && (CurrentAttack.Mode == Attack.AttackMode.Ranged &&
                     diff.Length() < CurrentAttack.Range*0.75f))
                 {
-                    /*
-                   
-                    Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
-                    output.Y = 0.0f;
-                    Creature.Physics.ApplyForce(-output, DwarfTime.Dt);
-                     
-                    Creature.CurrentCharacterMode = Creature.CharacterMode.Walking;
-                    Creature.Physics.Orientation = Physics.OrientMode.RotateY;
-                    */
                     FailTimer.Reset();
                     foreach (Act.Status stat in AvoidTarget(CurrentAttack.Range, 3.0f))
                     {

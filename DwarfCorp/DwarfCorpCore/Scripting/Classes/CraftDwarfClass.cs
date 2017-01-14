@@ -223,7 +223,7 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Hammer", 1.0f, 0.5f, 1.0f, ContentPaths.Audio.hammer, ContentPaths.Effects.hit)
+                new Attack("Hammer", 1.0f, 0.5f, 3.0f, ContentPaths.Audio.hammer, ContentPaths.Effects.hit)
                 {
                     Knockback = 2.5f,
                     TriggerMode = Attack.AttackTrigger.Animation,

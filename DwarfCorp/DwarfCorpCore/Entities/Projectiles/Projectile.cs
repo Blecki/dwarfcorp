@@ -216,7 +216,7 @@ namespace DwarfCorp
         public BulletProjectile(Vector3 position, Vector3 initialVelocity, Body target) :
             base(position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Particles.stone_particle, "puff", ContentPaths.Audio.explode, target)
         {
-            HitAnimation = new Animation(ContentPaths.Effects.explode, 32, 32, 0, 1, 2, 3, 4) {FrameHZ = 2.0f};
+            HitAnimation = new Animation(ContentPaths.Effects.explode, 32, 32, 0, 1, 2, 3, 4);
         }
     }
 }
