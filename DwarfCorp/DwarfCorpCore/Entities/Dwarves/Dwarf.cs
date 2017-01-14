@@ -155,6 +155,9 @@ namespace DwarfCorp
             Stats.Size = 5;
             Stats.CanSleep = true;
             Stats.CanEat = true;
+            AI.Movement.CanClimbWalls = true;
+            AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
+            AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             AI.TriggersMourning = true;
         }
     }
