@@ -12,41 +12,100 @@ namespace DwarfCorp
 {
     public class GamePerformance : IDisposable
     {
-        private static GamePerformance _instance;
+        /// <summary>
+        /// A boolean toggle changed with a keyboard button press.  Allows realtime switching between two code blocks
+        /// for comparsion testing.
+        /// </summary>
         public static bool DebugToggle1;
 
+        /// <summary>
+        /// The amount of pixels added between lines of text.
+        /// </summary>
+        private readonly float guiPadding = 5f;
+
+        /// <summary>
+        /// Single white pixel texture used to draw lines in DrawChangeGraph
+        /// </summary>
         private Texture2D pixel;
 
-        private Dictionary<string, Tracker> inlineTrackers;
+        /// <summary>
+        /// Singleton instance field.
+        /// </summary>
+        private static GamePerformance _instance;
+
+        /// <summary>
+        /// Internal Dictionary used to store and retrieve trackers set by String value.
+        /// </summary>
+        private Dictionary<string, Tracker> internalTrackers;
+
+        /// <summary>
+        /// Internal list used to store all set trackers.
+        /// </summary>
         private List<Tracker> trackers;
 
+        /// <summary>
+        /// Stopwatch object used for millisecond based timing by Tracker classes.
+        /// </summary>
         private Stopwatch internalWatch;
 
-        private Boolean performanceKeyPressed;
+        /// <summary>
+        /// Stores if the key to toggle the debug flag is pressed to allow it to change only once per keypress.
+        /// </summary>
+        private Boolean debugToggleKeyPressed;
+
+        /// <summary>
+        /// Stores if the key to toggle the overlay flag is pressed to allow it to change only once per keypress.
+        /// </summary>
         private Boolean overlayKeyPressed;
 
+        /// <summary>
+        /// Game reference used to access GraphicsDevice and ContentManager.
+        /// </summary>
         private DwarfGame _game;
-        public SpriteFont overlayFont;
 
+        /// <summary>
+        /// Font used for handling text drawing on the overlay.
+        /// </summary>
+        private SpriteFont overlayFont;
+
+        /// <summary>
+        /// Cached value of the font height to avoid remeasuring every call.
+        /// </summary>
         private float fontHeight;
+
+        /// <summary>
+        /// Cached value of the font height with the guiPadding field added in to avoid the constant math.
+        /// </summary>
         private float paddedFontHeight;
 
+        /// <summary>
+        /// Position of the next overlay element to be drawn using the available Draw functions in the class.
+        /// Updates itself after each call.
+        /// </summary>
         private Vector2 guiPosition;
-        private readonly float guiPadding = 5f;
+
 
         private float LastRenderTime { get; set; }
         private float LastUpdateTime { get; set; }
 
+        /// <summary>
+        /// Singleton object.  Not a lazy instantiated one.  Call GamePerformance.Initialize first.
+        /// </summary>
         public static GamePerformance Instance
         {
             get { return _instance; }
         }
 
+        /// <summary>
+        /// Constructor.
+        /// Adds three default trackers.
+        /// </summary>
+        /// <param name="game"></param>
         public GamePerformance(DwarfGame game)
         {
             _game = game;
             trackers = new List<Tracker>();
-            inlineTrackers = new Dictionary<string, Tracker>();
+            internalTrackers = new Dictionary<string, Tracker>();
 
             internalWatch = Stopwatch.StartNew();
 
@@ -55,16 +114,24 @@ namespace DwarfCorp
             trackers.Add(new RenderTimeTracker(this));
         }
 
+        /// <summary>
+        /// Creates the singleton for use.
+        /// </summary>
+        /// <param name="game">Reference to the base DwarfGame object.</param>
         public static void Initialize(DwarfGame game)
         {
             _instance = new GamePerformance(game);
         }
 
+        /// <summary>
+        /// Property to expose the shared watch time for Tracker classes.
+        /// </summary>
         public long Elapsed
         {
             get { return _instance.internalWatch.ElapsedMilliseconds; }
         }
 
+        // Unused options class to make things more generic and easier to use without rewritting Tracker classes.
         public class TrackerOptions
         {
             public int HistorySize;
@@ -74,16 +141,21 @@ namespace DwarfCorp
             }
         }
 
+        // Tracks how many function calls happen per time period.  Aka, update/render or per-second.
         public class FunctionCounterTracker
         {
 
         }
 
+        // Tracks something while handling recursive calls.
         public class RecursionTracker
         {
 
         }
 
+        /// <summary>
+        /// Tracks performance between two calls.  Does not properly handle recursive calls.
+        /// </summary>
         public class PerformanceTracker : Tracker
         {
             readonly int maxHistory = 60;
@@ -134,6 +206,14 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Tracks a single variable and outputs it during the next render call using ToString().
+        /// Value types will show the state at the time the TrackVariable call happens.
+        /// Reference types will show the state when the text is rendered.  
+        /// This should likely be fixed.  Could call .ToString during Update but that would cause constant String GC.
+        /// Separate function with reference handling would be better.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         public class VariableTracker<T> : Tracker
         {
             private T _value;
@@ -163,6 +243,10 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Counts the number of billiseconds a full Game.Update call takes.
+        /// Updates the parent's LastUpdateTime field for use.
+        /// </summary>
         public class UpdateTimeTracker : Tracker
         {
             readonly int maxHistory = 10;
@@ -202,6 +286,10 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Counts the number of milliseconds a full Game.Render call takes.
+        /// Updates the parent's LastRenderTime field for use.
+        /// </summary>
         public class RenderTimeTracker : Tracker
         {
             long time;
@@ -231,6 +319,9 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Counts the number of Render calls that get done every second for the FPS display.
+        /// </summary>
         public class FramerateTracker : Tracker
         {
             int fps;
@@ -292,6 +383,9 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Unused tracker type.  Meant to be used for trackers created by provding a name to a Track function.
+        /// </summary>
         public class InternalTracker : Tracker
         {
             protected string _name;
@@ -309,6 +403,10 @@ namespace DwarfCorp
             }
         }
 
+
+        /// <summary>
+        /// Abstract Tracker class for the other classes to inherit from.
+        /// </summary>
         public class Tracker
         {
             protected GamePerformance _parent;
@@ -329,9 +427,9 @@ namespace DwarfCorp
             public virtual void Render() { }
         }
 
-        #region Inline tracking functions
+        #region Internal tracking functions
         /*
-        public Tracker GetInlineTracker<T>(String name) where T: InternalTracker, new()
+        public Tracker GetInternalTracker<T>(String name) where T: InternalTracker, new()
         {
             InternalTracker t;
             if (inlineTrackers.TryGetValue(name, out t))
@@ -348,10 +446,14 @@ namespace DwarfCorp
             return t;
         } */
 
+        /// <summary>
+        /// Call this at the start of the location you want to track performance of.
+        /// </summary>
+        /// <param name="name">The display name for the tracker.</param>
         public void StartTrackPerformance(String name)
         {
             Tracker t;
-            if (inlineTrackers.TryGetValue(name, out t))
+            if (internalTrackers.TryGetValue(name, out t))
             {
                 if (!(t is PerformanceTracker))
                 {
@@ -362,17 +464,21 @@ namespace DwarfCorp
             else
             {
                 t = new PerformanceTracker(this, name);
-                inlineTrackers.Add(name, t);
+                internalTrackers.Add(name, t);
                 trackers.Add(t);
             }
 
             (t as PerformanceTracker).StartTracking();
         }
 
+        /// <summary>
+        /// Call this at the end of the location you want to track performance of.
+        /// </summary>
+        /// <param name="name">The display name of the tracker you used to start tracking.</param>
         public void EndTrackPerformance(String name)
         {
             Tracker t;
-            if (inlineTrackers.TryGetValue(name, out t))
+            if (internalTrackers.TryGetValue(name, out t))
             {
                 if (!(t is PerformanceTracker))
                 {
@@ -389,10 +495,16 @@ namespace DwarfCorp
             (t as PerformanceTracker).StopTracking();
         }
 
+        /// <summary>
+        /// Single shot tracker.  Saves the value of that variable at that point to draw during the next Render.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name">The display name of the tracker.</param>
+        /// <param name="variable">The variable you wish to track.</param>
         public void TrackVariable<T>(String name, T variable)
         {
             Tracker t;
-            if (inlineTrackers.TryGetValue(name, out t))
+            if (internalTrackers.TryGetValue(name, out t))
             {
                 if (!(t is VariableTracker<T>))
                 {
@@ -403,7 +515,7 @@ namespace DwarfCorp
             else
             {
                 t = new VariableTracker<T>(this, name);
-                inlineTrackers.Add(name, t);
+                internalTrackers.Add(name, t);
                 trackers.Add(t);
             }
 
@@ -412,6 +524,9 @@ namespace DwarfCorp
         #endregion
 
         #region Update Hooks
+        /// <summary>
+        /// Base hook for things to be done before Game.Update
+        /// </summary>
         public void PreUpdate()
         {
             foreach (Tracker t in trackers)
@@ -422,21 +537,25 @@ namespace DwarfCorp
             Update();
         }
 
+        /// <summary>
+        /// Hook called after PreUpdate but does not chain down to the trackers.
+        /// Used to handle keyboard input and other global state changes.
+        /// </summary>
         public void Update()
         {
             KeyboardState keyboard = Keyboard.GetState();
 
             if (keyboard.IsKeyDown(ControlSettings.Mappings.TogglePerformanceOverlay))
             {
-                if (!performanceKeyPressed) performanceKeyPressed = true;
+                if (!debugToggleKeyPressed) debugToggleKeyPressed = true;
             }
             else
             {
-                if (performanceKeyPressed)
+                if (debugToggleKeyPressed)
                 {
                     SoundManager.PlaySound(ContentPaths.Audio.pick, .25f);
                     GameSettings.Default.DrawDebugData = !GameSettings.Default.DrawDebugData;
-                    performanceKeyPressed = false;
+                    debugToggleKeyPressed = false;
                 }
             }
 
@@ -456,6 +575,9 @@ namespace DwarfCorp
 
         }
 
+        /// <summary>
+        /// Base hook for things to be done after Game.Update
+        /// </summary>
         public void PostUpdate()
         {
             foreach (Tracker t in trackers)
@@ -464,6 +586,9 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Base hook for things to be done before Game.Render
+        /// </summary>
         public void PreRender()
         {
             foreach (Tracker t in trackers)
@@ -472,6 +597,9 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Base hook for things to be done after Game.Render
+        /// </summary>
         public void PostRender()
         {
             foreach (Tracker t in trackers)
@@ -480,6 +608,10 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Sets up for and renders all current trackers.
+        /// </summary>
+        /// <param name="spriteBatch"></param>
         public void Render(SpriteBatch spriteBatch)
         {
             if (_game.GraphicsDevice.IsDisposed ||
@@ -529,6 +661,12 @@ namespace DwarfCorp
         #endregion
 
         #region Drawing Functions
+        /// <summary>
+        /// Function to draw a string from inside a Tracker.
+        /// Uses the font size to automatically adjust downwards.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="color"></param>
         public void DrawString(string text, Color color)
         {
             DwarfGame.SpriteBatch.DrawString(overlayFont, text, guiPosition, color);
@@ -536,6 +674,13 @@ namespace DwarfCorp
             guiPosition.Y += paddedFontHeight;
         }
 
+        /// <summary>
+        /// Draws a graph based on the data presented to it.
+        /// </summary>
+        /// <param name="legend">A string array containing the labels to print down the side of the graph.</param>
+        /// <param name="data">An enumerable block of data in integer format.</param>
+        /// <param name="height">The height of the final graph</param>
+        /// <param name="bounds">The bounds for the data set, lower then upper.</param>
         public void DrawChangeGraph(string[] legend, IEnumerable<int> data, int height, Vector2 bounds)
         {
             int labelSizeX = 0;
