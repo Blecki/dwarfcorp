@@ -286,6 +286,7 @@
     <Compile Include="Scripting\Classes\FairyClass.cs" />
     <Compile Include="Scripting\Classes\JobLibrary.cs" />
     <Compile Include="Scripting\Classes\MolemanMinerClass.cs" />
+    <Compile Include="Scripting\Classes\MusketDwarfClass.cs" />
     <Compile Include="Scripting\Classes\NecromancerClass.cs" />
     <Compile Include="Scripting\Classes\SkeletonClass.cs" />
     <Compile Include="Scripting\Classes\SwordGoblinClass.cs" />
