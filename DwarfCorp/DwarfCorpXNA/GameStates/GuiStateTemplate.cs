@@ -12,6 +12,10 @@ namespace DwarfCorp.GameStates
     {
         private Gum.Root GuiRoot;
 
+        public GuiStateTemplate(DwarfGame Game, GameStateManager StateManager) :
+            base(Game, "GuiStateTemplate", StateManager)
+        { }
+
         public override void OnEnter()
         {
             // Clear the input queue... cause other states aren't using it and it's been filling up.

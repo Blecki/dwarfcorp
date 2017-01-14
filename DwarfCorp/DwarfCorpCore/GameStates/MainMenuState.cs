@@ -173,6 +173,12 @@ namespace DwarfCorp.GameStates
                     StateManager.PushState("OptionsState");
                 });
 
+            MakeMenuItem(frame, "New Options", "Change game settings.", (sender, args) =>
+            {
+                MaintainState = true;
+                StateManager.PushState("NewOptionsState");
+            });
+
             MakeMenuItem(frame, "Credits", "View the credits.", (sender, args) =>
                 {
                     if (StateManager.States.ContainsKey("CreditsState"))

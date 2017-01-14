@@ -1387,6 +1387,8 @@
     <Compile Include="..\DwarfCorpCore\World\WorldTime.cs">
       <Link>World\WorldTime.cs</Link>
     </Compile>
+    <Compile Include="GameStates\NewOptionsState.cs" />
+    <Compile Include="GameStates\GuiStateTemplate.cs" />
     <Compile Include="GemInput\GumInputMapper.cs" />
     <Compile Include="GemInput\Input.cs" />
     <Compile Include="GemInput\MessageFilter.cs" />
