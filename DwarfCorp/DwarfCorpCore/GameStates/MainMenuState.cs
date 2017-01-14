@@ -45,7 +45,6 @@ namespace DwarfCorp.GameStates
     public class MainMenuState : GameState
     {
         public Texture2D Logo { get; set; }
-        public Drawer2D Drawer { get; set; }
         public bool IsGameRunning { get; set; }
         public bool MaintainState { get; set; }
 
@@ -239,8 +238,6 @@ namespace DwarfCorp.GameStates
                 GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
 
                 MakeDefaultMenu();
-
-                Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
 
                 // Must be true or Render will not be called.
                 IsInitialized = true;
