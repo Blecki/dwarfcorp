@@ -89,8 +89,6 @@ namespace DwarfCorp
             {
                 PlayState.GUI.MouseMode = GUISkin.MousePointer.Chop;
             }
-
-
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
@@ -106,6 +104,14 @@ namespace DwarfCorp
             foreach(BoundingBox box in Player.Faction.ChopDesignations.Select(d => d.GetBoundingBox()))
             {
                 Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
+            }
+
+            foreach (Body tree in Player.BodySelector.CurrentBodies)
+            {
+                if (tree.Tags.Contains("Vegetation"))
+                {
+                    Drawer3D.DrawBox(tree.BoundingBox, Color.LightGreen, 0.1f, false);
+                }
             }
         }
 

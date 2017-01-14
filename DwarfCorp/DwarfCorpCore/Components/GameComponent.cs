@@ -209,12 +209,14 @@ namespace DwarfCorp
             }
 
             IsDead = true;
+            List<GameComponent> children = GetAllChildrenRecursive();
 
-            foreach (GameComponent child in Children)
+            foreach (GameComponent child in children)
             {
                 child.Delete();
             }
 
+            RemoveFromParent();
         }
 
         public virtual void Die()
@@ -233,8 +235,6 @@ namespace DwarfCorp
             }
 
             RemoveFromParent();
-            
-
         }
 
         public virtual string GetDescription()
