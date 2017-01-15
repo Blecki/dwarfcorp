@@ -78,15 +78,18 @@ namespace DwarfCorp
 
         public override void Render(SpriteBatch batch, Camera camera, Viewport viewport)
         {
-            if(camera == null)
+            if (camera == null)
             {
                 return;
             }
 
             Vector3 screenCoord = viewport.Project(WorldPosition, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
-            if(viewport.Bounds.Contains((int) screenCoord.X, (int) screenCoord.Y) && screenCoord.Z < 0.999f && Image != null)
+            Vector3 scaleCoord = viewport.Project(WorldPosition + camera.UpVector, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
+            if (viewport.Bounds.Contains((int)screenCoord.X, (int)screenCoord.Y) && screenCoord.Z < 0.999f && Image != null)
             {
-                batch.Draw(Image.Image, new Vector2(screenCoord.X, screenCoord.Y) + Offset, Image.SourceRect, Tint, Rotation, new Vector2(Image.SourceRect.Width / 2.0f, Image.SourceRect.Height / 2.0f), Scale, Effects, 0.0f);
+                float perspectiveScale = 1.0f / 32.0f * (scaleCoord - screenCoord).Length();
+                batch.Draw(Image.Image, new Vector2(screenCoord.X, screenCoord.Y) + Offset, Image.SourceRect, Tint, Rotation,
+                    new Vector2(Image.SourceRect.Width / 2.0f, Image.SourceRect.Height / 2.0f), Scale * perspectiveScale, Effects, 0.0f);
             }
         }
     }
