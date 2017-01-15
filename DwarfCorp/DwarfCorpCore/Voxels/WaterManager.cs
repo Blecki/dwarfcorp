@@ -227,10 +227,6 @@ namespace DwarfCorp
 
             foreach(VoxelChunk chunk in chunksToUpdate)
             {
-                if(chunk.ShouldRebuildWater || chunk.FirstWaterIter)
-                {
-                    chunk.ResetWaterBuffer();
-                }
 
                 if(!UpdateChunk(chunk) && !chunk.FirstWaterIter)
                 {
