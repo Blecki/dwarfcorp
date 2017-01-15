@@ -208,24 +208,20 @@ namespace DwarfCorp
 
         /// <summary>
         /// Tracks a single variable and outputs it during the next render call using ToString().
-        /// Value types will show the state at the time the TrackVariable call happens.
-        /// Reference types will show the state when the text is rendered.  
-        /// This should likely be fixed.  Could call .ToString during Update but that would cause constant String GC.
-        /// Separate function with reference handling would be better.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        public class VariableTracker<T> : Tracker
+        /// <typeparam name="T">A ValueType based type</typeparam>
+        public class ValueTypeTracker<T> : Tracker where T: struct
         {
             private T _value;
             private string _name;
 
-            public VariableTracker()
+            public ValueTypeTracker()
                 : base(null)
             {
 
             }
 
-            public VariableTracker(GamePerformance parent, string name)
+            public ValueTypeTracker(GamePerformance parent, string name)
                 : base(parent)
             {
                 _name = name;
@@ -243,6 +239,40 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Tracks a single variable and outputs it during the next render call using ToString().
+        /// </summary>
+        /// <typeparam name="T">An Object based type</typeparam>
+        public class ReferenceTypeTracker<T> : Tracker where T : class
+        {
+            private string _value;
+            private string _name;
+
+            public ReferenceTypeTracker()
+                : base(null)
+            {
+
+            }
+
+            public ReferenceTypeTracker(GamePerformance parent, string name)
+                : base(parent)
+            {
+                _name = name;
+            }
+
+            public void Update(T value)
+            {
+                _value = value.ToString();
+            }
+
+            public override void Render()
+            {
+                _parent.DrawString(_name + ": " + _value, Color.White);
+                base.Render();
+            }
+        }
+
+        
         /// <summary>
         /// Counts the number of billiseconds a full Game.Update call takes.
         /// Updates the parent's LastUpdateTime field for use.
@@ -262,13 +292,13 @@ namespace DwarfCorp
 
             public override void PreUpdate()
             {
-                time = _parent.Elapsed;
+                time = Stopwatch.GetTimestamp();
                 base.PreUpdate();
             }
 
             public override void PostUpdate()
             {
-                time = _parent.Elapsed - time;
+                time = Stopwatch.GetTimestamp() - time;
                 total += time;
                 history.Enqueue(time);
                 if (history.Count > maxHistory)
@@ -281,6 +311,9 @@ namespace DwarfCorp
             {
                 float average = 0;
                 if (history.Count > 0) average = (float)total / history.Count;
+                float newAvg = average * (1 / Stopwatch.Frequency);
+                newAvg *= 1000000;
+                //average = average * (1 / Stopwatch.Frequency) * 1000000;
                 _parent.DrawString("Update time: " + average.ToString() + "ms", Color.White);
                 base.Render();
             }
@@ -500,26 +533,53 @@ namespace DwarfCorp
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="name">The display name of the tracker.</param>
-        /// <param name="variable">The variable you wish to track.</param>
-        public void TrackVariable<T>(String name, T variable)
+        /// <param name="variable">The ValueType based variable you wish to track.</param>
+        public void TrackValueType<T>(String name, T variable) where T: struct
         {
             Tracker t;
             if (internalTrackers.TryGetValue(name, out t))
             {
-                if (!(t is VariableTracker<T>))
+                if (!(t is ValueTypeTracker<T>))
                 {
-                    Debug.WriteLine("'" + name + "' is not a VariableTracker type.");
+                    Debug.WriteLine("'" + name + "' is not a ValueTypeTracker type.");
                     return;
                 }
             }
             else
             {
-                t = new VariableTracker<T>(this, name);
+                t = new ValueTypeTracker<T>(this, name);
                 internalTrackers.Add(name, t);
                 trackers.Add(t);
             }
 
-            (t as VariableTracker<T>).Update(variable);
+            (t as ValueTypeTracker<T>).Update(variable);
+        }
+
+        /// <summary>
+        /// Single shot tracker.  Saves the value of that variable at that point to draw during the next Render.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name">The display name of the tracker.</param>
+        /// <param name="variable">The Object based variable you wish to track.</param>
+        public void TrackReferenceType<T>(String name, T variable) where T : class
+        {
+            Tracker t;
+            if (internalTrackers.TryGetValue(name, out t))
+            {
+                if (!(t is ReferenceTypeTracker<T>))
+                {
+                    Debug.WriteLine("'" + name + "' is not a ReferenceTypeTracker type.");
+                    return;
+                }
+            }
+            else
+            {
+                t = new ReferenceTypeTracker<T>(this, name);
+                internalTrackers.Add(name, t);
+                trackers.Add(t);
+            }
+
+            (t as ReferenceTypeTracker<T>).Update(variable);
         }
         #endregion
 
