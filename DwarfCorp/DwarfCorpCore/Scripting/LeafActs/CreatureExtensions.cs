@@ -167,7 +167,6 @@ namespace DwarfCorp
         
         public static IEnumerable<Act.Status> Dig(this Creature agent, string voxel, float energyLoss)
         {
-            Vector3 LocalTarget = agent.AI.Position;
             agent.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
             while(true)
             {
