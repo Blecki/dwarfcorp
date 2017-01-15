@@ -1356,7 +1356,7 @@ namespace DwarfCorp
                         }
 
                         voxel.GridPosition = new Vector3(x, y, z);
-                        if(test > level  && !voxel.IsEmpty)
+                        if(test > level  && (!voxel.IsEmpty || voxel.WaterLevel > 0))
                         {
                             return true;
                         }
