@@ -93,9 +93,9 @@ namespace DwarfCorp
                 original.Translation += Vector3.Down;
                 seed.AnimationQueue.Add(new EaseMotion(0.5f, original, Plant.LocalTransform.Translation));
                  
-                PlayState.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
+                WorldManager.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
                 
-                 SoundManager.PlaySound(ContentPaths.Audio.pluck, Vox.Position, true);
+                SoundManager.PlaySound(ContentPaths.Audio.pluck, Vox.Position, true);
                 
             }
         }
@@ -120,7 +120,7 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
-            List<CreatureAI> minions = PlayState.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)).ToList();
+            List<CreatureAI> minions = WorldManager.Master.SelectedMinions.Where(minion => minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)).ToList();
             List<Task> goals = new List<Task>();
             switch (Mode)
             {

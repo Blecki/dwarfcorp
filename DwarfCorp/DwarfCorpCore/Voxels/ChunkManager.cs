@@ -134,7 +134,7 @@ namespace DwarfCorp
 
         private Camera camera = null;
 
-        public ComponentManager Components { get { return PlayState.ComponentManager; }}
+        public ComponentManager Components { get { return WorldManager.ComponentManager; }}
         public ContentManager Content { get; set; }
 
         private readonly HashSet<VoxelChunk> visibleSet = new HashSet<VoxelChunk>();
@@ -924,7 +924,7 @@ namespace DwarfCorp
                     {
                         ChunkData.AddChunk(chunk);
                         ChunkGen.GenerateVegetation(chunk, Components, Content, Graphics);
-                        ChunkGen.GenerateFauna(chunk, Components, Content, Graphics, PlayState.ComponentManager.Factions);
+                        ChunkGen.GenerateFauna(chunk, Components, Content, Graphics, WorldManager.ComponentManager.Factions);
                         List<VoxelChunk> adjacents = ChunkData.GetAdjacentChunks(chunk);
                         foreach(VoxelChunk c in adjacents)
                         {

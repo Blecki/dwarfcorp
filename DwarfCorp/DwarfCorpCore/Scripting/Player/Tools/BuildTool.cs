@@ -117,7 +117,7 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            Player.Faction.RoomBuilder.Render(time, PlayState.ChunkManager.Graphics);
+            Player.Faction.RoomBuilder.Render(time, WorldManager.ChunkManager.Graphics);
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)

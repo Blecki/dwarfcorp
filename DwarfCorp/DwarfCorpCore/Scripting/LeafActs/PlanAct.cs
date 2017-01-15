@@ -93,7 +93,7 @@ namespace DwarfCorp
             MaxExpansions = 1000;
             PathOut = pathOut;
             TargetName = target;
-            PlanSubscriber = new PlanSubscriber(PlayState.PlanService);
+            PlanSubscriber = new PlanSubscriber(WorldManager.PlanService);
             WaitingOnResponse = false;
             MaxTimeouts = 4;
             Timeouts = 0;
@@ -123,7 +123,7 @@ namespace DwarfCorp
 
         public static bool PathExists(Voxel voxA, Voxel voxB, CreatureAI creature)
         {
-            var path = AStarPlanner.FindPath(creature.Movement, voxA, new VoxelGoalRegion(voxB), PlayState.ChunkManager, 1000, 10);
+            var path = AStarPlanner.FindPath(creature.Movement, voxA, new VoxelGoalRegion(voxB), WorldManager.ChunkManager, 1000, 10);
             return path != null && path.Count > 0;
         }
 
@@ -149,7 +149,7 @@ namespace DwarfCorp
 
                 PlannerTimer.Update(DwarfTime.LastTime);
 
-                ChunkManager chunks = PlayState.ChunkManager;
+                ChunkManager chunks = WorldManager.ChunkManager;
                 if(PlannerTimer.HasTriggered || Timeouts == 0)
                 {
 

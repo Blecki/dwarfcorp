@@ -53,13 +53,13 @@ namespace DwarfCorp.GameStates
         public int EdgePadding { get; set; }
         public GridLayout Layout { get; set; }
         public InputManager Input { get; set; }
-        public PlayState PlayState { get; set; }
+        public WorldManager PlayState { get; set; }
         public Texture2D Icons { get; set; }
         public List<Button> TabButtons { get; set; }
         public Dictionary<string, GUIComponent> Tabs { get; set; } 
       
 
-        public EconomyState(DwarfGame game, GameStateManager stateManager, PlayState play) :
+        public EconomyState(DwarfGame game, GameStateManager stateManager, WorldManager play) :
             base(game, "EconomyState", stateManager)
         {
             
@@ -103,7 +103,7 @@ namespace DwarfCorp.GameStates
 
 
            CreateTabButton(tabLayout, "Employees", "Hire and fire dwarves", 5, 0);
-            EmployeeDisplay employeeDisplay = new EmployeeDisplay(GUI, Layout, PlayState.Master.Faction)
+            EmployeeDisplay employeeDisplay = new EmployeeDisplay(GUI, Layout, WorldManager.Master.Faction)
             {
                 IsVisible = false
             };
@@ -111,7 +111,7 @@ namespace DwarfCorp.GameStates
            
 
            CreateTabButton(tabLayout, "Capital", "Financial report", 2, 1);
-           CapitalPanel capitalPanel = new CapitalPanel(GUI, Layout, PlayState.Master.Faction)
+           CapitalPanel capitalPanel = new CapitalPanel(GUI, Layout, WorldManager.Master.Faction)
            {
                IsVisible = false
            };
@@ -192,7 +192,7 @@ namespace DwarfCorp.GameStates
 
         public override void OnEnter()
         {
-            PlayState.GUI.ToolTipManager.ToolTip = "";
+            WorldManager.GUI.ToolTipManager.ToolTip = "";
             Initialize();
             base.OnEnter();
         }
@@ -200,7 +200,7 @@ namespace DwarfCorp.GameStates
      
         private void back_OnClicked()
         {
-            PlayState.GUI.RootComponent.IsVisible = true;
+            WorldManager.GUI.RootComponent.IsVisible = true;
             StateManager.PopState();
         }
 

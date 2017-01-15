@@ -91,21 +91,21 @@ namespace DwarfCorp
             if (underMouse != null)
             {
                 VoxelUnderMouse = underMouse;
-                PlayState.CursorLightPos = underMouse.Position + new Vector3(0.5f, 0.5f, 0.5f);
+                WorldManager.CursorLightPos = underMouse.Position + new Vector3(0.5f, 0.5f, 0.5f);
 
                 if (Enabled && underMouse.TypeName != "empty" && underMouse.IsExplored)
                 {
                     string info = underMouse.TypeName;
 
 
-                    if (PlayState.PlayerFaction.RoomBuilder.IsInRoom(underMouse))
+                    if (WorldManager.PlayerFaction.RoomBuilder.IsInRoom(underMouse))
                     {
-                        Room room = PlayState.PlayerFaction.RoomBuilder.GetMostLikelyRoom(underMouse);
+                        Room room = WorldManager.PlayerFaction.RoomBuilder.GetMostLikelyRoom(underMouse);
 
                         if (room != null)
                             info += " (" + room.ID + ")";
                     }
-                    PlayState.GUI.ToolTipManager.PopupInfo(info);
+                    WorldManager.GUI.ToolTipManager.PopupInfo(info);
                 }
             }
 

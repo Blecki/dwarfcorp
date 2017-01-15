@@ -1191,10 +1191,10 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Content Include="Entities\Dwarf\Sprites\musket_animation.json">
+    <None Include="Entities\Dwarf\Sprites\musket_animation.json">
       <Name>musket_animation</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </None>
     <None Include="Entities\Moleman\moleman_animation.json">
       <Name>moleman_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

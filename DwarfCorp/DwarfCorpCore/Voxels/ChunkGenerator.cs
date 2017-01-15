@@ -215,7 +215,7 @@ namespace DwarfCorp
                     }
 
 
-                    Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z)/PlayState.WorldScale;
+                    Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z)/WorldManager.WorldScale;
                     if (Overworld.GetWater(Overworld.Map, vec) != Overworld.WaterType.Volcano)
                     {
                         continue;
@@ -258,14 +258,14 @@ namespace DwarfCorp
 
         public static BiomeData GetBiomeAt(Vector3 worldPosition)
         {
-            Vector2 vec = new Vector2(worldPosition.X, worldPosition.Z) / PlayState.WorldScale;
+            Vector2 vec = new Vector2(worldPosition.X, worldPosition.Z) / WorldManager.WorldScale;
             Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(vec.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(vec.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
             return BiomeLibrary.Biomes[biome];
         }
 
         public static float GetValueAt(Vector3 worldPosition, Overworld.ScalarFieldType T)
         {
-            Vector2 vec = new Vector2(worldPosition.X, worldPosition.Z) / PlayState.WorldScale;
+            Vector2 vec = new Vector2(worldPosition.X, worldPosition.Z) / WorldManager.WorldScale;
             return Overworld.GetValue(Overworld.Map, new Vector2(MathFunctions.Clamp(vec.X, 0, Overworld.Map.GetLength(0) - 1),
                 MathFunctions.Clamp(vec.Y, 0, Overworld.Map.GetLength(1) - 1)), T);
         }
@@ -278,7 +278,7 @@ namespace DwarfCorp
             {
                 for (int z = 0; z < chunk.SizeZ; z++)
                 {
-                    Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z) / PlayState.WorldScale;
+                    Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z) / WorldManager.WorldScale;
                     Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(vec.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(vec.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
@@ -298,7 +298,7 @@ namespace DwarfCorp
 
                     foreach (FaunaData animal in biomeData.Fauna)
                     {
-                        if (y <= 0 || !(PlayState.Random.NextDouble() < animal.SpawnProbability))
+                        if (y <= 0 || !(WorldManager.Random.NextDouble() < animal.SpawnProbability))
                         {
                             continue;
                         }
@@ -321,7 +321,7 @@ namespace DwarfCorp
             {
                 for(int z = 0; z < chunk.SizeZ; z++)
                 {
-                    Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z) / PlayState.WorldScale;
+                    Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z) / WorldManager.WorldScale;
                     Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(vec.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(vec.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
@@ -498,7 +498,7 @@ namespace DwarfCorp
                                         if (GameSettings.Default.FogofWar)
                                         {
                                             ExploredListener listener = new ExploredListener(
-                                                PlayState.ComponentManager, entity, PlayState.ChunkManager, vUnder);
+                                                WorldManager.ComponentManager, entity, WorldManager.ChunkManager, vUnder);
                                         }
                                     }
                                 }
@@ -506,7 +506,7 @@ namespace DwarfCorp
 
                             foreach (FaunaData animal in biome.Fauna)
                             {
-                                if (y <= 0 || !(PlayState.Random.NextDouble() < animal.SpawnProbability))
+                                if (y <= 0 || !(WorldManager.Random.NextDouble() < animal.SpawnProbability))
                                 {
                                     continue;
                                 }
@@ -518,8 +518,8 @@ namespace DwarfCorp
 
                                 if (GameSettings.Default.FogofWar)
                                 {
-                                    ExploredListener listener = new ExploredListener(PlayState.ComponentManager, entity,
-                                        PlayState.ChunkManager, chunk.MakeVoxel(x, y, z));
+                                    ExploredListener listener = new ExploredListener(WorldManager.ComponentManager, entity,
+                                        WorldManager.ChunkManager, chunk.MakeVoxel(x, y, z));
                                 }
                                 break;
                             }
@@ -606,13 +606,13 @@ namespace DwarfCorp
             {
                 for(int z = 0; z < chunkSizeZ; z++)
                 {
-                    Vector2 v = new Vector2(x + origin.X, z + origin.Z) / PlayState.WorldScale;
+                    Vector2 v = new Vector2(x + origin.X, z + origin.Z) / WorldManager.WorldScale;
 
                     Overworld.Biome biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
 
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
-                    Vector2 pos = new Vector2(x + origin.X, z + origin.Z) / PlayState.WorldScale;
+                    Vector2 pos = new Vector2(x + origin.X, z + origin.Z) / WorldManager.WorldScale;
                     float hNorm = Overworld.LinearInterpolate(pos, Overworld.Map, Overworld.ScalarFieldType.Height);
                     float h = MathFunctions.Clamp(hNorm * chunkSizeY, 0.0f, chunkSizeY - 2);
                     int stoneHeight = (int) Math.Max(h - 2, 1);

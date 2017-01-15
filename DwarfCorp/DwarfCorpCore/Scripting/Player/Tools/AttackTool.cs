@@ -124,7 +124,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                if (PlayState.ComponentManager.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() == Relationship.Loving)
+                if (WorldManager.ComponentManager.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() == Relationship.Loving)
                 {
                     continue;
                 }

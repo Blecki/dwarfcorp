@@ -39,16 +39,16 @@ namespace DwarfCorp
                 // Belongs to herbivore team
                 "Undead",
                 // Uses the default plan service
-                PlayState.PlanService,
+                WorldManager.PlanService,
                 // Belongs to the herbivore team
-                PlayState.ComponentManager.Factions.Factions["Undead"],
+                WorldManager.ComponentManager.Factions.Factions["Undead"],
                 // The physics component this creature belongs to
                 new Physics
                 (
                 // It is called "bird"
                     "bat",
                 // It's attached to the root component of the component manager
-                    PlayState.ComponentManager.RootComponent,
+                    WorldManager.ComponentManager.RootComponent,
                 // It is located at a position passed in as an argument
                     Matrix.CreateTranslation(position),
                 // It has a size of 0.25 blocks
@@ -61,7 +61,7 @@ namespace DwarfCorp
                     new Vector3(0, -10, 0)
                 ),
                 // All the rest of the arguments are passed in directly
-                PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Bat"
+                WorldManager.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Bat"
             )
         {
             // Called from constructor with appropriate sprite asset as a string

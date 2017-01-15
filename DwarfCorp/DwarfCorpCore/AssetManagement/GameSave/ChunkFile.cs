@@ -147,7 +147,7 @@ namespace DwarfCorp
             int chunkSizeZ = this.Size.Z;
             Vector3 origin = this.Origin;
             //Voxel[][][] voxels = ChunkGenerator.Allocate(chunkSizeX, chunkSizeY, chunkSizeZ);
-            float scaleFator = PlayState.WorldScale;
+            float scaleFator = WorldManager.WorldScale;
             VoxelChunk c = new VoxelChunk(manager, origin, 1, ID, chunkSizeX, chunkSizeY, chunkSizeZ)
             {
                 ShouldRebuild = true,

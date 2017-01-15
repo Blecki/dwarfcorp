@@ -52,9 +52,9 @@ namespace DwarfCorp
         }
 
         public Chair(Vector3 position) :
-            base("Chair", PlayState.ComponentManager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+            base("Chair", WorldManager.ComponentManager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
-            ComponentManager componentManager = PlayState.ComponentManager;
+            ComponentManager componentManager = WorldManager.ComponentManager;
             Matrix matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
             matrix.Translation = position - new Vector3(0, 0.22f, 0);
             LocalTransform = matrix;
@@ -96,9 +96,9 @@ namespace DwarfCorp
 
             Voxel voxelUnder = new Voxel();
 
-            if (PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            if (WorldManager.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {
-                VoxelListener listener = new VoxelListener(componentManager, this, PlayState.ChunkManager, voxelUnder);
+                VoxelListener listener = new VoxelListener(componentManager, this, WorldManager.ChunkManager, voxelUnder);
             }
 
 

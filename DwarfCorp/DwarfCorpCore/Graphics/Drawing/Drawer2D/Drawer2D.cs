@@ -88,7 +88,7 @@ namespace DwarfCorp
         public static void DrawRect(Vector3 worldPos, Rectangle screenRect, Color backgroundColor, Color strokeColor, float strokewidth)
         {
             
-            Vector3 screenPos = GameState.Game.GraphicsDevice.Viewport.Project(worldPos, PlayState.Camera.ProjectionMatrix, PlayState.Camera.ViewMatrix, Matrix.Identity);
+            Vector3 screenPos = GameState.Game.GraphicsDevice.Viewport.Project(worldPos, WorldManager.Camera.ProjectionMatrix, WorldManager.Camera.ViewMatrix, Matrix.Identity);
 
             if (screenPos.Z < 0.999f)
             {

@@ -118,7 +118,7 @@ namespace DwarfCorp
             };
 
             IsActive = false;
-            Chunks = PlayState.ChunkManager;
+            Chunks = WorldManager.ChunkManager;
 
 
             foreach(string s in RoomLibrary.GetRoomTypes())
@@ -210,8 +210,8 @@ namespace DwarfCorp
 
                         if (type == "Magic")
                         {
-                            new VoxelListener(PlayState.ComponentManager, PlayState.ComponentManager.RootComponent,
-                                PlayState.ChunkManager, vox)
+                            new VoxelListener(WorldManager.ComponentManager, WorldManager.ComponentManager.RootComponent,
+                                WorldManager.ChunkManager, vox)
                             {
                                 DestroyOnTimer = true,
                                 DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
@@ -225,7 +225,7 @@ namespace DwarfCorp
                     {
                         case "Delete Block":
                         {
-                            PlayState.Master.Faction.OnVoxelDestroyed(vox);
+                            WorldManager.Master.Faction.OnVoxelDestroyed(vox);
                             vox.Chunk.NotifyDestroyed(new Point3(vox.GridPosition));
                             vox.Type = VoxelType.TypeList[0];
                             vox.Water = new WaterCell();

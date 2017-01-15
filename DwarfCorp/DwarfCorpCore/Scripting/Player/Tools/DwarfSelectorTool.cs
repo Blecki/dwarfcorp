@@ -72,7 +72,7 @@ namespace DwarfCorp
                 return;
             }
 
-            Voxel vox = PlayState.ChunkManager.ChunkData.GetFirstVisibleBlockHitByMouse(Mouse.GetState(), PlayState.Camera, GameState.Game.GraphicsDevice.Viewport);
+            Voxel vox = WorldManager.ChunkManager.ChunkData.GetFirstVisibleBlockHitByMouse(Mouse.GetState(), WorldManager.Camera, GameState.Game.GraphicsDevice.Viewport);
             if(vox == null)
             {
                 return;
@@ -181,7 +181,7 @@ namespace DwarfCorp
             {
                 if (IsDwarf(body))
                 {
-                    Drawer2D.DrawRect(DwarfGame.SpriteBatch, body.GetScreenRect(PlayState.Camera), Color.White, 1.0f);
+                    Drawer2D.DrawRect(DwarfGame.SpriteBatch, body.GetScreenRect(WorldManager.Camera), Color.White, 1.0f);
                 }
             }
              

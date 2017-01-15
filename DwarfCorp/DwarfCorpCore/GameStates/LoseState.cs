@@ -48,10 +48,10 @@ namespace DwarfCorp.GameStates
         public GUIComponent MainWindow { get; set; }
         public GridLayout Layout { get; set; }
         public InputManager Input { get; set; }
-        public PlayState PlayState { get; set; }
+        public WorldManager PlayState { get; set; }
         public int EdgePadding = 55;
 
-        public LoseState(DwarfGame game, GameStateManager stateManager, PlayState play) :
+        public LoseState(DwarfGame game, GameStateManager stateManager, WorldManager play) :
             base(game, "EconomyState", stateManager)
         {
             Input = new InputManager();
@@ -77,7 +77,7 @@ namespace DwarfCorp.GameStates
             Layout.SetComponentPosition(title, 0, 0, 4, 4);
 
             Label text = new Label(GUI, Layout,
-                "The heady days of exploration for " + PlayState.Master.Faction.Economy.Company.Name +
+                "The heady days of exploration for " + WorldManager.Master.Faction.Economy.Company.Name +
                 " are no more.\n Our stock is through the floor. Our investors have all jumped ship! \n We are going to have to sell the company. If only we had shipped more goods...",
                 GUI.DefaultFont)
             {
@@ -100,7 +100,7 @@ namespace DwarfCorp.GameStates
       
         public override void OnEnter()
         {
-            PlayState.GUI.ToolTipManager.ToolTip = "";
+            WorldManager.GUI.ToolTipManager.ToolTip = "";
             Initialize();
             base.OnEnter();
         }

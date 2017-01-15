@@ -71,7 +71,7 @@ namespace DwarfCorp
         {
             List<Body> resourcesPickedByMouse = ComponentManager.FilterComponentsWithTag("Resource", bodies);
             List<Task> assignments = new List<Task>();
-            foreach(Body resource in resourcesPickedByMouse.Where(resource => resource.IsActive && resource.IsVisible && resource.Parent == PlayState.ComponentManager.RootComponent))
+            foreach(Body resource in resourcesPickedByMouse.Where(resource => resource.IsActive && resource.IsVisible && resource.Parent == WorldManager.ComponentManager.RootComponent))
             {
                 if (!resource.IsVisible || resource.IsAboveCullPlane) continue;
                 Drawer3D.DrawBox(resource.BoundingBox, Color.LightGoldenrodYellow, 0.05f, true);
@@ -93,7 +93,7 @@ namespace DwarfCorp
                 }
             }
 
-            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(PlayState.Master.SelectedMinions,
+            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(WorldManager.Master.SelectedMinions,
                 GameMaster.ToolMode.Gather);
             TaskManager.AssignTasks(assignments, minions);
 
