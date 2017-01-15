@@ -65,6 +65,8 @@ namespace DwarfCorp
         [JsonIgnore]
         public IEnumerator<Status> Enumerator;
 
+        [JsonIgnore]
+        public Act LastTickedChild { get; set; }
 
         public Act()
         {

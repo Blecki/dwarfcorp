@@ -67,7 +67,7 @@ namespace DwarfCorp
             while(!done)
             {
                 Status childStatus = Child.Tick();
-
+                LastTickedChild = Child;
                 if(childStatus == Status.Running)
                 {
                     yield return Status.Running;

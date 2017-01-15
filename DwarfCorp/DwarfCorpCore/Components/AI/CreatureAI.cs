@@ -732,6 +732,28 @@ namespace DwarfCorp
                 desc += "    Task: " + CurrentTask.Name;
             }
 
+            if (CurrentAct != null)
+            {
+                desc += "\n   Action: ";
+                Act act = CurrentAct;
+                while (act != null && act.LastTickedChild != null)
+                {
+                    Act prevAct = act;
+                    act = act.LastTickedChild;
+                    if (act == null)
+                    {
+                        act = prevAct;
+                        break;
+                    }
+
+                    if (act == act.LastTickedChild)
+                    {
+                        break;
+                    }
+                }
+                desc += act.Name;
+            }
+
             return desc;
         }
 
@@ -781,7 +803,7 @@ namespace DwarfCorp
                         };
 
                         agent.AI.Blackboard.SetData("GreedyPath", new List<Creature.MoveAction> { nullAction, minAction });
-                        var pathAct = new FollowPathAnimationAct(agent.AI, "GreedyPath");
+                        var pathAct = new FollowPathAct(agent.AI, "GreedyPath");
                         pathAct.Initialize();
 
                         foreach (Act.Status status in pathAct.Run())

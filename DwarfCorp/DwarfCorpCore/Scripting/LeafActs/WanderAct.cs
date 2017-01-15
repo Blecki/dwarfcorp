@@ -180,7 +180,7 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            Tree = new Sequence(new Wrap(FindRandomPath), new FollowPathAnimationAct(Creature.AI, "RandomPath"));
+            Tree = new Sequence(new Wrap(FindRandomPath), new FollowPathAct(Creature.AI, "RandomPath"));
             base.Initialize();
         }
     }
