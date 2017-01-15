@@ -17,8 +17,8 @@ namespace DwarfCorp.GameStates
         private Gum.Widget MainPanel;
         private Gum.Widgets.TabPanel TabPanel;
 
-        private HorizontalSlider MoveSpeed;
-        private HorizontalSlider ZoomSpeed;
+        private HorizontalFloatSlider MoveSpeed;
+        private HorizontalFloatSlider ZoomSpeed;
         private CheckBox InvertZoom;
         private CheckBox EdgeScrolling;
         private CheckBox FogOfWar;
@@ -156,17 +156,17 @@ namespace DwarfCorp.GameStates
                     Border = "border-thin"
                 });
 
-            MoveSpeed = panel.AddChild(LabelAndDockWidget("Camera Move Speed", new HorizontalSlider
+            MoveSpeed = panel.AddChild(LabelAndDockWidget("Camera Move Speed", new HorizontalFloatSlider
                 {
                     ScrollArea = 20,
                     OnScroll = OnItemChanged
-                })).GetChild(1) as HorizontalSlider;
+                })).GetChild(1) as HorizontalFloatSlider;
 
-            ZoomSpeed = panel.AddChild(LabelAndDockWidget("Camera Zoom Speed", new HorizontalSlider
+            ZoomSpeed = panel.AddChild(LabelAndDockWidget("Camera Zoom Speed", new HorizontalFloatSlider
             {
                 ScrollArea = 2,
                 OnScroll = OnItemChanged
-            })).GetChild(1) as HorizontalSlider;
+            })).GetChild(1) as HorizontalFloatSlider;
 
             InvertZoom = panel.AddChild(new CheckBox
                 {

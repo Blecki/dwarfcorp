@@ -164,7 +164,7 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(frame, "Load Game", "Load DwarfCorp game from a file.", (sender, args) =>
                 {
                     MaintainState = true;
-                    StateManager.PushState("WorldLoaderState");
+                    StateManager.PushState("GameLoaderState");
                 });
 
             MakeMenuItem(frame, "Options", "Change game settings.", (sender, args) =>
