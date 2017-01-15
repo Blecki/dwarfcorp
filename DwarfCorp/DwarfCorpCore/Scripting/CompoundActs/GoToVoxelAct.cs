@@ -81,7 +81,7 @@ namespace DwarfCorp
                 Tree = new Sequence(
             new Sequence(
                           new PlanAct(Agent, "PathToVoxel", VoxelName, PlanType) { Radius = Radius },
-                          new FollowPathAnimationAct(Agent, "PathToVoxel")
+                          new FollowPathAct(Agent, "PathToVoxel")
                          ),
                           new StopAct(Agent));
             }
@@ -90,7 +90,7 @@ namespace DwarfCorp
                 Tree = new Sequence(
                       new SetBlackboardData<Voxel>(Agent, "TargetVoxel", Voxel),
                       new PlanAct(Agent, "PathToVoxel", "TargetVoxel", PlanType) { Radius = Radius },
-                      new FollowPathAnimationAct(Agent, "PathToVoxel"),
+                      new FollowPathAct(Agent, "PathToVoxel"),
                       new StopAct(Agent));
             }
             base.Initialize();

@@ -80,6 +80,7 @@ namespace DwarfCorp
             {
                 foreach(Status s in Tree.Run())
                 {
+                    LastTickedChild = Tree.LastTickedChild;
                     yield return s;
                 }
             }

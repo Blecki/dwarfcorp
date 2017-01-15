@@ -190,7 +190,7 @@ namespace DwarfCorp
                 }
 
 
-                FollowPathAnimationAct followPath = new FollowPathAnimationAct(Creature.AI, "PathToEntity");
+                FollowPathAct followPath = new FollowPathAct(Creature.AI, "PathToEntity");
                 followPath.Initialize();
 
                 while (true)
@@ -248,7 +248,7 @@ namespace DwarfCorp
                         new Sequence( 
                             new SetTargetVoxelFromEntityAct(Agent, EntityName, "EntityVoxel"),
                             new PlanAct(Agent, "PathToEntity", "EntityVoxel", PlanAct.PlanType.Adjacent),
-                            new Parallel( new FollowPathAnimationAct(Agent, "PathToEntity"), 
+                            new Parallel( new FollowPathAct(Agent, "PathToEntity"), 
                                           new Wrap(() => TargetMoved("PathToEntity")), 
                                           new Wrap(CollidesWithTarget)) { ReturnOnAllSucces = false }
                                      ), 
