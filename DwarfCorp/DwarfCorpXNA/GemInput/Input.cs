@@ -38,7 +38,7 @@ namespace Gem
 
         public void AddAction(String Action, KeyBindingType BindingType)
         {
-            if (InputActions.ContainsKey(Action)) throw new InvalidOperationException();
+            if (InputActions.ContainsKey(Action)) return;// throw new InvalidOperationException();
 
             InputActions.Add(Action, new InputAction
                 {
