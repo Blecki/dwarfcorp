@@ -89,8 +89,8 @@ namespace DwarfCorp
 
                 if (!Creature.IsOnGround)
                 {
-                    yield return Status.Running;
-                    continue;
+                    yield return Status.Fail;
+                    yield break;
                 }
                 if(TurnTime.Update(DwarfTime.LastTime) || TurnTime.HasTriggered || firstIter)
                 {
