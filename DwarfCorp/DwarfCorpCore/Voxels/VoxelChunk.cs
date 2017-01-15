@@ -1853,18 +1853,6 @@ namespace DwarfCorp
         }
 
 
-        public void ResetWaterBuffer()
-        {
-            int numVoxels = sizeX*sizeY*sizeZ;
-
-            for (int i = 0; i < numVoxels; i++)
-            {
-                Data.Water[i].HasChanged = false;
-                Data.Water[i].IsFalling = false;
-            }
-           
-        }
-
         public Vector3 GridToWorld(Vector3 gridCoord)
         {
             return gridCoord + Origin;
