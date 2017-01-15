@@ -55,8 +55,24 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                 {
                     // If changes, prompt before closing.
-
-                    StateManager.PopState();
+                    if (HasChanges)
+                    {
+                        var confirm = new NewGui.Confirm
+                            {
+                                Text = "Apply changes?",
+                                OkayText = "YES",
+                                CancelText = "NO",
+                                OnClose = (s2) =>
+                                    {
+                                        if ((s2 as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)
+                                            ApplySettings();
+                                        StateManager.PopState();
+                                    }
+                            };
+                        GuiRoot.ShowPopup(confirm, false);
+                    }
+                    else
+                        StateManager.PopState();
                 },
                 AutoLayout = AutoLayout.FloatBottomRight
             });
@@ -88,6 +104,8 @@ namespace DwarfCorp.GameStates
             TabPanel.SelectedTab = 0;
 
             GuiRoot.RootItem.Layout();
+
+            LoadSettings();
 
             // Must be true or Render will not be called.
             IsInitialized = true;
@@ -209,6 +227,12 @@ namespace DwarfCorp.GameStates
         private void ApplySettings()
         {
             // Copy all the states from widgets to game settings.
+            GameSettings.Default.CameraScrollSpeed = this.MoveSpeed.ScrollPosition;
+            GameSettings.Default.CameraZoomSpeed = this.ZoomSpeed.ScrollPosition;
+            GameSettings.Default.EnableEdgeScroll = this.EdgeScrolling.CheckState;
+            GameSettings.Default.FogofWar = this.FogOfWar.CheckState;
+            GameSettings.Default.InvertZoom = this.InvertZoom.CheckState;
+            GameSettings.Default.DisplayIntro = this.PlayIntro.CheckState;
 
             HasChanges = false;
         }
@@ -216,6 +240,12 @@ namespace DwarfCorp.GameStates
         private void LoadSettings()
         {
             // Set all the widget states based on game settings.
+            this.MoveSpeed.ScrollPosition = GameSettings.Default.CameraScrollSpeed;
+            this.ZoomSpeed.ScrollPosition = GameSettings.Default.CameraZoomSpeed;
+            this.EdgeScrolling.CheckState = GameSettings.Default.EnableEdgeScroll;
+            this.FogOfWar.CheckState = GameSettings.Default.FogofWar;
+            this.InvertZoom.CheckState = GameSettings.Default.InvertZoom;
+            this.PlayIntro.CheckState = GameSettings.Default.DisplayIntro;
 
             HasChanges = false;
         }
