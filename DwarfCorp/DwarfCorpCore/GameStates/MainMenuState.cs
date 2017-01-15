@@ -67,7 +67,8 @@ namespace DwarfCorp.GameStates
             {
                 MinimumSize = new Point(600, 348),
                 Background = new Gum.TileReference("logo", 0),
-                AutoLayout = Gum.AutoLayout.FloatTop
+                AutoLayout = Gum.AutoLayout.FloatTop,
+                Padding = new Gum.Margin(2,2,2,2)
             });
 
             return GuiRoot.RootItem.AddChild(new Gum.Widget
@@ -78,7 +79,7 @@ namespace DwarfCorp.GameStates
                 TextHorizontalAlign = Gum.HorizontalAlign.Center,
                 Text = Name,
                 TextSize = 2,
-                TopMargin = 16,
+                InteriorMargin = new Gum.Margin(16,0,0,0),
                 OnLayout = (sender) => { sender.Rect.Y = 350; }
             });
         }
