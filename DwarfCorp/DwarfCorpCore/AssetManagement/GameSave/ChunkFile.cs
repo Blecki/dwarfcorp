@@ -97,13 +97,6 @@ namespace DwarfCorp
             Size = chunkFile.Size;
             Types = chunkFile.Types;
             Explored = chunkFile.Explored;
-            this.ID = chunkFile.ID;
-            this.Liquid = chunkFile.Liquid;
-            this.LiquidTypes = chunkFile.LiquidTypes;
-            this.Origin = chunkFile.Origin;
-            this.Size = chunkFile.Size;
-            this.Types = chunkFile.Types;
-            this.Explored = chunkFile.Explored;
         }
 
         public bool ReadFile(string filePath, bool isCompressed, bool isBinary)

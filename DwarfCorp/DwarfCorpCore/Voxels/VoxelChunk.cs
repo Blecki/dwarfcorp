@@ -1859,8 +1859,6 @@ namespace DwarfCorp
 
             for (int i = 0; i < numVoxels; i++)
             {
-                Data.Water[i].HasChanged = false;
-                Data.Water[i].IsFalling = false;
             }
            
         }
