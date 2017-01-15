@@ -137,6 +137,12 @@ namespace DwarfCorp
                     Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, furthest.Voxel.Position + Vector3.One*0.5f,
                         Agent.Position);
                     Creature.Physics.ApplyForce(output, DwarfTime.Dt);
+
+                    if (Creature.AI.Movement.CanFly)
+                    {
+                        Creature.Physics.ApplyForce(Vector3.Up * 10, DwarfTime.Dt);
+                    }
+
                     timeout.Update(DwarfTime.LastTime);
 
                     yield return Status.Running;
@@ -250,6 +256,10 @@ namespace DwarfCorp
                     Creature.CurrentCharacterMode = defaultCharachterMode;
                     Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
                     output.Y = 0.0f;
+                    if (Creature.AI.Movement.CanFly)
+                    {
+                        Creature.Physics.ApplyForce(-Creature.Physics.Gravity, DwarfTime.Dt);
+                    }
                     Creature.Physics.ApplyForce(output, DwarfTime.Dt);
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                 }
@@ -281,11 +291,19 @@ namespace DwarfCorp
                             Creature.AI.Position, Creature.Faction.Name))
                     {
                         Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
+                        if (Creature.AI.Movement.CanFly)
+                        {
+                            Creature.Physics.ApplyForce(-Creature.Physics.Gravity, DwarfTime.Dt);
+                        }
                         yield return Status.Running;
                     }
 
                     while (!Agent.Creature.Sprite.CurrentAnimation.IsDone())
                     {
+                        if (Creature.AI.Movement.CanFly)
+                        {
+                            Creature.Physics.ApplyForce(-Creature.Physics.Gravity, DwarfTime.Dt);
+                        }
                         yield return Status.Running;
                     }
 
@@ -309,6 +327,10 @@ namespace DwarfCorp
                         {
                             Creature.Sprite.PauseAnimations(Creature.CharacterMode.Attacking);
                             Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
+                            if (Creature.AI.Movement.CanFly)
+                            {
+                                Creature.Physics.ApplyForce(-Creature.Physics.Gravity, DwarfTime.Dt);
+                            }
                         }
                         yield return Status.Running;
                     }
