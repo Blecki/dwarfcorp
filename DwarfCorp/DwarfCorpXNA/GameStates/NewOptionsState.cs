@@ -23,6 +23,9 @@ namespace DwarfCorp.GameStates
         private CheckBox EdgeScrolling;
         private CheckBox FogOfWar;
         private CheckBox PlayIntro;
+        private HorizontalFloatSlider MasterVolume;
+        private HorizontalFloatSlider SFXVolume;
+        private HorizontalFloatSlider MusicVolume;
 
         public NewOptionsState(DwarfGame Game, GameStateManager StateManager) :
             base(Game, "NewOptionsState", StateManager)
@@ -42,7 +45,7 @@ namespace DwarfCorp.GameStates
                 {
                     Rect = GuiRoot.VirtualScreen,
                     Background = new TileReference("basic", 0),
-                    Padding = 4
+                    Padding = new Margin(4,4,4,4)
                 });
 
             MainPanel.AddChild(new Widget
@@ -100,6 +103,7 @@ namespace DwarfCorp.GameStates
             }) as Gum.Widgets.TabPanel;
 
             CreateGameplayTab();
+            CreateAudioTab();
 
             TabPanel.SelectedTab = 0;
 
@@ -118,7 +122,8 @@ namespace DwarfCorp.GameStates
             var r = GuiRoot.ConstructWidget(new Widget
             {
                 MinimumSize = new Point(0, 20),
-                AutoLayout = AutoLayout.DockTop
+                AutoLayout = AutoLayout.DockTop,
+                Padding = new Margin(0,0,4,4)
             });
 
             r.AddChild(new Widget
@@ -171,7 +176,8 @@ namespace DwarfCorp.GameStates
         {
             var panel = TabPanel.AddTab("GAMEPLAY", new Widget
                 {
-                    Border = "border-thin"
+                    Border = "border-thin",
+                    Padding = new Margin(4,4,0,0)
                 });
 
             MoveSpeed = panel.AddChild(LabelAndDockWidget("Camera Move Speed", new HorizontalFloatSlider
@@ -219,6 +225,43 @@ namespace DwarfCorp.GameStates
             }) as CheckBox;
         }
 
+        private void CreateAudioTab()
+        {
+            var panel = TabPanel.AddTab("AUDIO", new Widget
+            {
+                Border = "border-thin",
+                Padding = new Margin(4, 4, 0, 0)
+            });
+
+            MasterVolume = panel.AddChild(LabelAndDockWidget("Master Volume", new HorizontalFloatSlider
+            {
+                ScrollArea = 1.0f,
+                OnScroll = OnItemChanged
+            })).GetChild(1) as HorizontalFloatSlider;
+
+            SFXVolume = panel.AddChild(LabelAndDockWidget("SFX Volume", new HorizontalFloatSlider
+            {
+                ScrollArea = 1.0f,
+                OnScroll = OnItemChanged
+            })).GetChild(1) as HorizontalFloatSlider;
+
+            MusicVolume = panel.AddChild(LabelAndDockWidget("Music Volume", new HorizontalFloatSlider
+            {
+                ScrollArea = 1.0f,
+                OnScroll = OnItemChanged
+            })).GetChild(1) as HorizontalFloatSlider;
+        }
+
+        private void CreateKeysTab()
+        {
+            var panel = TabPanel.AddTab("KEYS", new Widget
+            {
+                Border = "border-thin",
+                Padding = new Margin(4, 4, 0, 0)
+            });
+
+        }
+
         private void OnItemChanged(Gum.Widget Sender)
         {
             HasChanges = true;
@@ -227,6 +270,8 @@ namespace DwarfCorp.GameStates
         private void ApplySettings()
         {
             // Copy all the states from widgets to game settings.
+
+            // Gameplay settings
             GameSettings.Default.CameraScrollSpeed = this.MoveSpeed.ScrollPosition;
             GameSettings.Default.CameraZoomSpeed = this.ZoomSpeed.ScrollPosition;
             GameSettings.Default.EnableEdgeScroll = this.EdgeScrolling.CheckState;
@@ -234,18 +279,30 @@ namespace DwarfCorp.GameStates
             GameSettings.Default.InvertZoom = this.InvertZoom.CheckState;
             GameSettings.Default.DisplayIntro = this.PlayIntro.CheckState;
 
+            // Audio settings
+            GameSettings.Default.MasterVolume = this.MasterVolume.ScrollPosition;
+            GameSettings.Default.SoundEffectVolume = this.SFXVolume.ScrollPosition;
+            GameSettings.Default.MusicVolume = this.SFXVolume.ScrollPosition;
+
             HasChanges = false;
         }
 
         private void LoadSettings()
         {
             // Set all the widget states based on game settings.
+
+            // Gameplay settings
             this.MoveSpeed.ScrollPosition = GameSettings.Default.CameraScrollSpeed;
             this.ZoomSpeed.ScrollPosition = GameSettings.Default.CameraZoomSpeed;
             this.EdgeScrolling.CheckState = GameSettings.Default.EnableEdgeScroll;
             this.FogOfWar.CheckState = GameSettings.Default.FogofWar;
             this.InvertZoom.CheckState = GameSettings.Default.InvertZoom;
             this.PlayIntro.CheckState = GameSettings.Default.DisplayIntro;
+
+            // Audio settings
+            this.MasterVolume.ScrollPosition = GameSettings.Default.MasterVolume;
+            this.SFXVolume.ScrollPosition = GameSettings.Default.SoundEffectVolume;
+            this.MusicVolume.ScrollPosition = GameSettings.Default.MusicVolume;
 
             HasChanges = false;
         }

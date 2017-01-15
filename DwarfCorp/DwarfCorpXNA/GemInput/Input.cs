@@ -7,64 +7,67 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Gem
 {
-    public enum KeyBindingType
-    {
-        Pressed,
-        Held
-    }
-
     public class Input
     {
+        public enum KeyBindingType
+        {
+            Pressed,
+            Held
+        }
+
         public class InputAction
         {
-            public String Name;
-            public Action Handler;
-            public Keys Key;
+            public List<Keys> Keys = new List<Keys>();
             public KeyBindingType Type;
+            public Action Handler;
         }
 
         private GumInputMapper Mapper;
-        private List<InputAction> InputActions = new List<InputAction>();
+        private Dictionary<String, InputAction> InputActions = new Dictionary<String, InputAction>();
+
+        public IEnumerable<KeyValuePair<String, InputAction>> EnumerateBindableActions()
+        {
+            foreach (var binding in InputActions)
+                yield return binding;
+        }
 
         public Input(GumInputMapper Mapper)
         {
             this.Mapper = Mapper;
         }
 
-        public void BindKeyAction(Keys Key, String Name, KeyBindingType Type)
+        public void AddAction(String Action, KeyBindingType BindingType)
         {
-            InputActions.Add(new InputAction
-            {
-                Name = Name,
-                Key = Key,
-                Type = Type,
-                Handler = null
+            if (InputActions.ContainsKey(Action)) throw new InvalidOperationException();
 
-            });
+            InputActions.Add(Action, new InputAction
+                {
+                    Type = BindingType
+                });
         }
 
-        public void BindKeyAction(Keys Key, String Name, KeyBindingType Type, Action Handler)
+        public void BindKey(String Action, Keys Key)
         {
-            InputActions.Add(new InputAction
-            {
-                Name = Name,
-                Key = Key,
-                Type = Type,
-                Handler = Handler
-
-            });
+            if (!InputActions.ContainsKey(Action)) throw new InvalidOperationException();
+            InputActions[Action].Keys.Add(Key);
         }
 
-        public void BindAction(String Name, Action Handler)
+        public void ClearKeyBindings(String Action)
         {
-            var binding = InputActions.FirstOrDefault(ia => ia.Name == Name);
-            if (binding != null) binding.Handler += Handler;
+            if (!InputActions.ContainsKey(Action)) throw new InvalidOperationException();
+            InputActions[Action].Keys.Clear();
         }
 
-        public void ClearAction(String Name)
+        public void BindHandler(String Action, Action Handler)
         {
-            var binding = InputActions.FirstOrDefault(ia => ia.Name == Name);
-            if (binding != null) binding.Handler = null;
+            if (!InputActions.ContainsKey(Action)) throw new InvalidOperationException();
+            InputActions[Action].Handler += Handler;
+        }
+
+        public void ClearHandlers(String Action)
+        {
+            if (!InputActions.ContainsKey(Action)) throw new InvalidOperationException();
+            InputActions[Action].Handler = null;
         }
 
         public void FireActions(Gum.Root Gui, Action<Gum.InputEvents, Gum.InputEventArgs> MouseHandler)
@@ -84,18 +87,18 @@ namespace Gem
                     }
                     else if (@event.Message == Gum.InputEvents.KeyUp)
                     {
-                        foreach (var handler in InputActions.Where(ia => (int)ia.Key == @event.Args.KeyValue && ia.Type == KeyBindingType.Pressed))
-                            if (handler.Handler != null)
-                                handler.Handler();
+                        foreach (var binding in InputActions.Where(ia => ia.Value.Keys.Contains((Keys)@event.Args.KeyValue) && ia.Value.Type == KeyBindingType.Pressed))
+                            if (binding.Value.Handler != null)
+                                binding.Value.Handler();
                     }
                 }
             }
 
             // Check 'Held' actions
             var kbState = Keyboard.GetState();
-            foreach (var handler in InputActions.Where(ia => ia.Type == KeyBindingType.Held))
-                if (kbState.IsKeyDown(handler.Key) && handler.Handler != null) 
-                    handler.Handler();
+            foreach (var binding in InputActions.Where(ia => ia.Value.Type == KeyBindingType.Held))
+                if (binding.Value.Keys.Count(k => kbState.IsKeyDown(k)) > 0 && binding.Value.Handler != null)
+                    binding.Value.Handler();
         }
     }
 }
