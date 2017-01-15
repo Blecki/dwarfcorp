@@ -45,7 +45,6 @@ namespace DwarfCorp.GameStates
     public class MainMenuState : GameState
     {
         public Texture2D Logo { get; set; }
-        public Drawer2D Drawer { get; set; }
         public bool IsGameRunning { get; set; }
         public bool MaintainState { get; set; }
 
@@ -165,7 +164,7 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(frame, "Load Game", "Load DwarfCorp game from a file.", (sender, args) =>
                 {
                     MaintainState = true;
-                    StateManager.PushState("WorldLoaderState");
+                    StateManager.PushState("GameLoaderState");
                 });
 
             MakeMenuItem(frame, "Options", "Change game settings.", (sender, args) =>
@@ -173,6 +172,12 @@ namespace DwarfCorp.GameStates
                     MaintainState = true;
                     StateManager.PushState("OptionsState");
                 });
+
+            MakeMenuItem(frame, "New Options", "Change game settings.", (sender, args) =>
+            {
+                MaintainState = true;
+                StateManager.PushState("NewOptionsState");
+            });
 
             MakeMenuItem(frame, "Credits", "View the credits.", (sender, args) =>
                 {
@@ -239,8 +244,6 @@ namespace DwarfCorp.GameStates
                 GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
 
                 MakeDefaultMenu();
-
-                Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
 
                 // Must be true or Render will not be called.
                 IsInitialized = true;
