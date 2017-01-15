@@ -234,7 +234,6 @@ namespace DwarfCorp
                     continue;
                 }
 
-
                 chunk.ShouldRebuildWater = true;
                 chunk.FirstWaterIter = false;
             }
