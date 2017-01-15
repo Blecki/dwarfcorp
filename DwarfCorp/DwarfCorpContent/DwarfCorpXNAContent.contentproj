@@ -1195,6 +1195,11 @@
       <Name>musket_animation</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Compile Include="newgui\slider.png">
+      <Name>slider</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <None Include="Entities\Moleman\moleman_animation.json">
       <Name>moleman_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
