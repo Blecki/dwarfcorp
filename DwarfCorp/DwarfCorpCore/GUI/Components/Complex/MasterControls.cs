@@ -58,6 +58,9 @@ namespace DwarfCorp
         public int IconSize { get; set; }
         public int NumRows { get; set; }
         public int NumColumns { get; set; }
+        public int[] GameSpeeds = {1, 2, 3};
+        public int CurrSpeed = 0;
+        public Button SpeedButton { get; set; }
 
         public MasterControls(DwarfGUI gui, GUIComponent parent, GameMaster master, Texture2D icons, GraphicsDevice device, SpriteFont font) :
             base(gui, parent)
@@ -93,6 +96,15 @@ namespace DwarfCorp
                 layout.SetComponentPosition(b, i % NumColumns, i / NumColumns, 1, 1);
                 i++;
             }
+
+            SpeedButton = new Button(GUI, this, "1x", GUI.SmallFont, Button.ButtonMode.PushButton, null);
+            SpeedButton.LocalBounds = new Rectangle(-70, 32, 65, 32);
+            SpeedButton.OnClicked += () =>
+            {
+                CurrSpeed = (CurrSpeed + 1)%GameSpeeds.Length;
+                SpeedButton.Text = GameSpeeds[CurrSpeed].ToString() + "x";
+                DwarfTime.LastTime.Speed = (float) GameSpeeds[CurrSpeed];
+            };
         }
 
 
