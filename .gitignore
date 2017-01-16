@@ -5,6 +5,7 @@ DwarfCorp/DwarfCorpXNA/bin/*
 DwarfCorp/DwarfCorpXNA/obj/*
 DwarfCorp/JsonDotNet/bin/*
 DwarfCorp/JsonDotNet/obj/*
+DwarfCorp/Packages/*
 DwarfCorpFNA/bin/*
 DwarfCorpFNA/obj/*
 DwarfCorp/LibNoise/bin/*
