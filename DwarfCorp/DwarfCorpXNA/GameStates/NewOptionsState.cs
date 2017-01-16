@@ -97,8 +97,8 @@ namespace DwarfCorp.GameStates
             MainPanel = GuiRoot.RootItem.AddChild(new Gum.Widget
                 {
                     Rect = GuiRoot.VirtualScreen,
-                    Background = new TileReference("basic", 0),
-                    Padding = new Margin(4,4,4,4)
+                    Padding = new Margin(4,4,4,4),
+                    Transparent = true
                 });
 
             MainPanel.AddChild(new Widget
