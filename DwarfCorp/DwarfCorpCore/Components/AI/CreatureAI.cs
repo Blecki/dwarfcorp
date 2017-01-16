@@ -71,13 +71,13 @@ namespace DwarfCorp
             CurrentPath = null;
             DrawPath = false;
             PlannerTimer = new Timer(0.1f, false);
-            LocalControlTimeout = new Timer(5, false);
+            LocalControlTimeout = new Timer(5, false, Timer.TimerMode.Real);
             WanderTimer = new Timer(1, false);
             Creature.Faction.Minions.Add(this);
             DrawAIPlan = false;
             WaitingOnResponse = false;
             PlanSubscriber = new PlanSubscriber(planService);
-            ServiceTimeout = new Timer(2, false);
+            ServiceTimeout = new Timer(2, false, Timer.TimerMode.Real);
             Sensor = sensor;
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
             Sensor.Creature = this;
