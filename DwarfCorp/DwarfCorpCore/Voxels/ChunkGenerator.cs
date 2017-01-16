@@ -452,7 +452,7 @@ namespace DwarfCorp
                                 int index = chunk.Data.IndexAt(x, y - dy, z);
                                 chunk.GetNeighborsManhattan(x, y - dy, z, neighbors);
 
-                                if (neighbors.Any(v => v.WaterLevel > 0))
+                                if (neighbors.Any(v => v != null &&  v.WaterLevel > 0))
                                 {
                                     waterFound = true;
                                 }
