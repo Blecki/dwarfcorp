@@ -170,7 +170,7 @@ namespace DwarfCorp
         public bool IsOverQualified {
             get { return CurrentClass.Levels.Count > 1 && XP > CurrentClass.Levels[LevelIndex + 1].XP; }}
 
-        public float BaseFarmSpeed { get { return BuffedInt/100.0f + BuffedStr/100.0f; }}
+        public float BaseFarmSpeed { get { return BuffedInt + BuffedStr; }}
         public bool CanEat { get; set; }
         public float BuildSpeed { get { return (BuffedInt + BuffedDex)/10.0f; }}
 

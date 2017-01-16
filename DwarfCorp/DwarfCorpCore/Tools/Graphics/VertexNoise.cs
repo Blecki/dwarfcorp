@@ -93,6 +93,10 @@ namespace DwarfCorp
 
         public static Vector3 GetNoiseVectorFromRepeatingTexture(Vector3 position)
         {
+            if (MathFunctions.HasNan(position))
+            {
+                return Vector3.Zero;
+            }
             if(RepeatingTexture == null)
             {
                 RepeatingTexture = GenerateRepeatingTexture(RepeatingTextureSize, RepeatingTextureSize, RepeatingTextureSize);

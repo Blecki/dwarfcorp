@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using LibNoise.Modifiers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -58,6 +59,7 @@ namespace DwarfCorp
         public int IconSize { get; set; }
         public int NumRows { get; set; }
         public int NumColumns { get; set; }
+        public GameSpeedControl SpeedButton { get; set; }
 
         public MasterControls(DwarfGUI gui, GUIComponent parent, GameMaster master, Texture2D icons, GraphicsDevice device, SpriteFont font) :
             base(gui, parent)
@@ -93,6 +95,10 @@ namespace DwarfCorp
                 layout.SetComponentPosition(b, i % NumColumns, i / NumColumns, 1, 1);
                 i++;
             }
+            SpeedButton = new GameSpeedControl(GUI, this)
+            {
+                LocalBounds = new Rectangle(-132, 75, 100, 20)
+            };
         }
 
 
@@ -188,6 +194,119 @@ namespace DwarfCorp
 
             base.Update(time);
         }
+    }
+
+    /// <summary>
+    /// This is a GUI component for controlling the game speed.
+    /// </summary>
+    public class GameSpeedControl : Panel
+    {
+        private readonly int[] _gameSpeeds = { 0, 1, 2, 3 };
+        private readonly string[] _labels = {"||", "1x", "2x", "3x"};
+        private readonly string[] _rightLabels = {">", ">>", ">>>", ""};
+        private readonly string[] _leftLabels = {"", "||", "<", "<"};
+        private readonly string[] _tooltips =
+        {
+            "Game paused.", "Game running at 1x speed.", "Game running at 2x speed.",
+            "Game running at 3x speed."
+        };
+
+        private readonly string[] _leftTooltips =
+        {
+            "", "Pause game", "1x speed", "2x speed"
+        };
+
+        private readonly string[] _rightTooltips =
+        {
+            "1x speed", "2x speed", "3x speed", ""
+        };
+        private int _currSpeed = 0;
+
+        private Button TimeForward { get; set; }
+        private Button TimeBackward { get; set; }
+        private Label TimeLabel { get; set; }
+
+        public GameSpeedControl(DwarfGUI gui, GUIComponent parent) :
+            base(gui, parent)
+        {
+            Mode = PanelMode.Simple;
+            GridLayout layout = new GridLayout(GUI, this, 1, 3);
+
+            TimeLabel = new Label(GUI, layout, "", gui.SmallFont)
+            {
+                TextColor = Color.White,
+                Alignment = Drawer2D.Alignment.Center
+            };
+            layout.SetComponentPosition(TimeLabel, 1, 0, 1, 1);
+
+            TimeBackward = new Button(GUI, layout, "", gui.SmallFont, Button.ButtonMode.PushButton, null)
+            {
+                DrawFrame = false,
+                TextColor = Color.White
+            };
+            layout.SetComponentPosition(TimeBackward, 0, 0, 1, 1);
+
+            TimeForward = new Button(GUI, layout, "", gui.SmallFont, Button.ButtonMode.PushButton, null)
+            {
+                DrawFrame = false,
+                TextColor = Color.White
+            };
+            layout.SetComponentPosition(TimeForward, 2, 0, 1, 1);
+
+            TimeForward.OnClicked += () => SetSpeed(_currSpeed + 1);
+            TimeBackward.OnClicked += () => SetSpeed(_currSpeed - 1);
+            SetSpeed(1);
+            layout.UpdateSizes();
+        }
+
+        public void IncrementSpeed()
+        {
+            SetSpeed(_currSpeed + 1);
+        }
+
+        public void DecrementSpeed()
+        {
+            SetSpeed(_currSpeed - 1);
+        }
+
+        public void SetSpecialSpeed(int multiplier)
+        {
+            TimeForward.IsVisible = false;
+            TimeBackward.IsVisible = false;
+            DwarfTime.LastTime.Speed = (float) multiplier;
+            PlayState.Paused = false;
+            TimeLabel.Text = multiplier + "x";
+            TimeLabel.ToolTip = "Game is running at " + multiplier + "x speed";
+        }
+
+        /// <summary>
+        /// Sets the speed to the given index.
+        /// </summary>
+        /// <param name="idx">The index into GameSpeeds.</param>
+        public void SetSpeed(int idx)
+        {
+            _currSpeed = Math.Max(Math.Min(idx, _gameSpeeds.Length - 1), 0);
+            TimeLabel.Text = _labels[_currSpeed];
+            TimeLabel.ToolTip = _tooltips[_currSpeed];
+            TimeBackward.Text = _leftLabels[_currSpeed];
+            TimeBackward.ToolTip = _leftTooltips[_currSpeed];
+            TimeForward.Text = _rightLabels[_currSpeed];
+            TimeForward.ToolTip = _rightTooltips[_currSpeed];
+            TimeBackward.IsVisible = true;
+            TimeForward.IsVisible = true;
+            if (_currSpeed == 0)
+            {
+                TimeBackward.IsVisible = false;
+            }
+            else if (_currSpeed == _gameSpeeds.Length - 1)
+            {
+                TimeForward.IsVisible = false;
+            }
+
+            DwarfTime.LastTime.Speed = (float)_gameSpeeds[_currSpeed];
+            PlayState.Paused = _gameSpeeds[_currSpeed] == 0;
+        }
+
     }
 
 }
