@@ -112,11 +112,23 @@ namespace DwarfCorp
           
         }
 
+        bool IsDwarf(Body body)
+        {
+            List<Creature> dwarves = body.GetChildrenOfType<Creature>();
+
+            if (dwarves.Count <= 0)
+            {
+                return false;
+            }
+
+            Creature dwarf = dwarves[0];
+            return dwarf.Faction == Player.Faction && !Player.SelectedMinions.Contains(dwarf.AI);
+        }
+
         protected void SelectDwarves(List<Body> bodies)
         {
             KeyboardState keyState = Keyboard.GetState();
 
-            
 
             if(!keyState.IsKeyDown(Keys.LeftShift))
             {
@@ -125,20 +137,10 @@ namespace DwarfCorp
             List<CreatureAI> newDwarves = new List<CreatureAI>();
             foreach(Body body in bodies)
             {
-                List<Creature> dwarves = body.GetChildrenOfType<Creature>();
-
-                if(dwarves.Count <= 0)
+                if (IsDwarf(body))
                 {
-                    continue;
-                }
-
-                Creature dwarf = dwarves[0];
-
-
-                if (dwarf.Allies == Player.Faction.Name && !Player.SelectedMinions.Contains(dwarf.AI))
-                {
-                    Player.SelectedMinions.Add(dwarf.AI);
-                    newDwarves.Add(dwarf.AI);
+                    Player.SelectedMinions.Add(body.GetComponent<CreatureAI>());
+                    newDwarves.Add(body.GetComponent<CreatureAI>());
                 }
             }
             OnConfirm(newDwarves);
@@ -175,8 +177,17 @@ namespace DwarfCorp
                 i++;
             }
 
-            DwarfGame.SpriteBatch.End();
+            foreach (Body body in Player.BodySelector.CurrentBodies)
+            {
+                if (IsDwarf(body))
+                {
+                    Drawer2D.DrawRect(DwarfGame.SpriteBatch, body.GetScreenRect(PlayState.Camera), Color.White, 1.0f);
+                }
+            }
              
+
+            DwarfGame.SpriteBatch.End();
+
         }
 
         public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)

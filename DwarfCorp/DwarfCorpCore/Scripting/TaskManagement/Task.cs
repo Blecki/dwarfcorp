@@ -154,7 +154,10 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature agent)
         {
-            Script.Initialize();
+            if (Script != null)
+            {
+                Script.Initialize();
+            }
             return Script;
         }
     }

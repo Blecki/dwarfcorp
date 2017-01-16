@@ -89,8 +89,8 @@ namespace DwarfCorp
 
                 if (!Creature.IsOnGround)
                 {
-                    yield return Status.Running;
-                    continue;
+                    yield return Status.Fail;
+                    yield break;
                 }
                 if(TurnTime.Update(DwarfTime.LastTime) || TurnTime.HasTriggered || firstIter)
                 {
@@ -134,6 +134,7 @@ namespace DwarfCorp
     {
         public int PathLength { get; set; }
         public float Radius { get; set; }
+        public bool Is2D { get; set; }
 
         public LongWanderAct()
         {
@@ -148,6 +149,7 @@ namespace DwarfCorp
         public IEnumerable<Status> FindRandomPath()
         {
             Vector3 target = MathFunctions.RandVector3Cube()*Radius + Creature.AI.Position;
+            if (Is2D) target.Y = Creature.AI.Position.Y;
             List<Creature.MoveAction> path = new List<Creature.MoveAction>();
             Voxel curr = Creature.Physics.CurrentVoxel;
             for (int i = 0; i < PathLength; i++)
@@ -174,13 +176,20 @@ namespace DwarfCorp
                     curr = bestAction.Value.Voxel;
                 }
             }
-            Creature.AI.Blackboard.SetData("RandomPath", path);
-            yield return Status.Success;
+            if (path.Count > 0)
+            {
+                Creature.AI.Blackboard.SetData("RandomPath", path);
+                yield return Status.Success;
+            }
+            else
+            {
+                yield return Status.Fail;
+            }
         }
 
         public override void Initialize()
         {
-            Tree = new Sequence(new Wrap(FindRandomPath), new FollowPathAnimationAct(Creature.AI, "RandomPath"));
+            Tree = new Sequence(new Wrap(FindRandomPath), new FollowPathAct(Creature.AI, "RandomPath"));
             base.Initialize();
         }
     }

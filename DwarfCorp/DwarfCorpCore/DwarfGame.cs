@@ -47,6 +47,8 @@ namespace DwarfCorp
         public TextureManager TextureManager { get; set; }
         public static SpriteBatch SpriteBatch { get; set; }
 
+        public static Gem.GumInputMapper GumInput;
+        public static Gum.RenderData GumSkin;
  
         public DwarfGame()
         {
@@ -70,7 +72,6 @@ namespace DwarfCorp
             {
                 Console.Error.WriteLine(exception.Message);
             }
-
         }
 
         public static string GetGameDirectory()
@@ -91,7 +92,20 @@ namespace DwarfCorp
 
         protected override void LoadContent()
         {
+            // Prepare GemGui
+            GumInput = new Gem.GumInputMapper(Window.Handle);
+            GumSkin = new Gum.RenderData(GraphicsDevice,  Content,
+                    "newgui/xna_draw", "Content/newgui/sheets.txt");
 
+            if (SoundManager.Content == null)
+            {
+                SoundManager.Content = Content;
+                SoundManager.LoadDefaultSounds();
+#if XNA_BUILD
+                SoundManager.SetActiveSongs(ContentPaths.Music.dwarfcorp, ContentPaths.Music.dwarfcorp_2,
+                    ContentPaths.Music.dwarfcorp_3, ContentPaths.Music.dwarfcorp_4, ContentPaths.Music.dwarfcorp_5);
+#endif
+            }
             PlayState playState = new PlayState(this, StateManager);
             BiomeLibrary.InitializeStatics();
             StateManager.States["IntroState"] = new IntroState(this, StateManager);
@@ -100,6 +114,7 @@ namespace DwarfCorp
             StateManager.States["WorldSetupState"] = new WorldSetupState(this, StateManager);
             StateManager.States["WorldGeneratorState"] = new WorldGeneratorState(this, StateManager);
             StateManager.States["OptionsState"] = new OptionsState(this, StateManager);
+            StateManager.States["NewOptionsState"] = new NewOptionsState(this, StateManager);
             StateManager.States["EconomyState"] = new EconomyState(this, StateManager, playState);
             StateManager.States["CompanyMakerState"] = new CompanyMakerState(this, StateManager);
             StateManager.States["WorldLoaderState"] = new WorldLoaderState(this, StateManager);

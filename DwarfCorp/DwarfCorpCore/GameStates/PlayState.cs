@@ -252,15 +252,11 @@ namespace DwarfCorp.GameStates
             set { ComponentManager.ParticleManager = value; }
         }
 
-        // The current calendar date/time of the game.
+        // The current calendar date/time of Inth egame.
         public static WorldTime Time = new WorldTime();
 
         // Hack to smooth water reflections TODO: Put into water manager
         private float lastWaterHeight = 8.0f;
-
-        // Hack to bypass input manager TODO: replace with input manager
-        private bool pausePressed = false;
-        private bool bPressed = false;
 
         private GameFile gameFile;
         public Panel PausePanel;
@@ -339,6 +335,7 @@ namespace DwarfCorp.GameStates
             WorldOrigin = new Vector2(WorldWidth/2, WorldHeight/2);
             PreSimulateTimer = new Timer(3, false);
             Time = new WorldTime();
+            
         }
 
         public void InvokeLoss()
@@ -406,6 +403,7 @@ namespace DwarfCorp.GameStates
 
             if (Camera != null)
                 Camera.LastWheel = Mouse.GetState().ScrollWheelValue;
+
             base.OnEnter();
         }
 
@@ -471,15 +469,6 @@ namespace DwarfCorp.GameStates
             CompositeLibrary.Initialize();
             CraftLibrary = new CraftLibrary();
 
-            if (SoundManager.Content == null)
-            {
-                SoundManager.Content = Content;
-                SoundManager.LoadDefaultSounds();
-#if XNA_BUILD
-                SoundManager.SetActiveSongs(ContentPaths.Music.dwarfcorp, ContentPaths.Music.dwarfcorp_2,
-                    ContentPaths.Music.dwarfcorp_3, ContentPaths.Music.dwarfcorp_4, ContentPaths.Music.dwarfcorp_5);
-#endif
-            }
             new PrimitiveLibrary(GraphicsDevice, Content);
             InstanceManager = new InstanceManager();
 
@@ -1576,6 +1565,23 @@ namespace DwarfCorp.GameStates
                     //Master.ToolBar.CurrentMode = modes[index];
                 }
             }
+            else if (key == ControlSettings.Mappings.Pause)
+            {
+                Paused = !Paused;
+                Master.ToolBar.SpeedButton.SetSpeed(Paused ? 0 : 1);
+            }
+            else if (key == ControlSettings.Mappings.TimeForward)
+            {
+                Master.ToolBar.SpeedButton.IncrementSpeed();
+            }
+            else if (key == ControlSettings.Mappings.TimeBackward)
+            {
+                Master.ToolBar.SpeedButton.DecrementSpeed();
+            }
+            else if (key == ControlSettings.Mappings.ToggleGUI)
+            {
+                GUI.RootComponent.IsVisible = !GUI.RootComponent.IsVisible;
+            }
         }
 
 
@@ -1592,20 +1598,6 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
-            // Handles time foward + backward TODO: Replace with input manager
-            if (Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.TimeForward))
-            {
-                Time.Speed = 10000;
-            }
-            else if (Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.TimeBackward))
-            {
-                Time.Speed = -10000;
-            }
-            else
-            {
-                Time.Speed = 100;
-            }
-
             if (FastForwardToDay)
             {
                 if (Time.IsDay())
@@ -1615,46 +1607,17 @@ namespace DwarfCorp.GameStates
                     {
                         minion.Status.Energy.CurrentValue = minion.Status.Energy.MaxValue;
                     }
+                    Master.ToolBar.SpeedButton.SetSpeed(1);
+                    Time.Speed = 100;
                 }
                 else
                 {
-                    Time.Speed = 10000;
+                    Master.ToolBar.SpeedButton.SetSpecialSpeed(3);
+                    Time.Speed = 1000;
                 }
             }
 
-            // Handles pausing and unpausing TODO: replace with input manager
-            if (Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.Pause))
-            {
-                if (!pausePressed)
-                {
-                    pausePressed = true;
-                }
-            }
-            else
-            {
-                if (pausePressed)
-                {
-                    pausePressed = false;
-                    Paused = !Paused;
-                }
-            }
 
-            // Turns the gui on and off TODO: replace with input manager
-            if (Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.ToggleGUI))
-            {
-                if (!bPressed)
-                {
-                    bPressed = true;
-                }
-            }
-            else
-            {
-                if (bPressed)
-                {
-                    bPressed = false;
-                    GUI.RootComponent.IsVisible = !GUI.RootComponent.IsVisible;
-                }
-            }
             //Drawer3D.DrawPlane(0, Camera.Position.X - 1500, Camera.Position.Z - 1500, Camera.Position.X + 1500, Camera.Position.Z + 1500, Color.Black);
             FillClosestLights(gameTime);
             IndicatorManager.Update(gameTime);
@@ -2189,11 +2152,6 @@ namespace DwarfCorp.GameStates
 
             GUI.Render(gameTime, DwarfGame.SpriteBatch, Vector2.Zero);
 
-            if (Paused)
-            {
-                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Paused", GUI.DefaultFont,
-                    new Vector2(GraphicsDevice.Viewport.Width - 100, 10), Color.White, Color.Black);
-            }
             IndicatorManager.Render(gameTime);
             GUI.PostRender(gameTime);
             DwarfGame.SpriteBatch.End();

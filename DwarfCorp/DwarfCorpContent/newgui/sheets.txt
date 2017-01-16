@@ -1,0 +1,87 @@
+﻿{
+	"Sheets": [
+		{ 
+			"Name": "logo",
+			"Texture": "newgui/gamelogo",
+			"TileWidth": 600,
+			"TileHeight": 348
+		},
+		{
+			"Name": "old-font",
+			"Texture": "newgui/font",
+			"TileWidth": 6,
+			"TileHeight": 8
+		},
+		{
+			"Name": "font",
+			"Texture": "newgui/font1-w",
+			"Type": "VariableWidthFont"
+		},
+		{
+			"Name": "mouse",
+			"Texture": "newgui/pointers",
+			"TileWidth": 16,
+			"TileHeight" : 16
+		},
+		{
+			"Name": "basic",
+			"Texture": "newgui/basic",
+			"TileWidth": 8,
+			"TileHeight": 8
+		},
+		{
+			"Name": "border-one",
+			"Texture": "newgui/border",
+			"TileWidth": 16,
+			"TileHeight": 16
+		},
+		{
+			"Name": "border-fancy",
+			"Texture": "newgui/fancy-border",
+			"TileWidth": 30,
+			"TileHeight": 30
+		},
+		{
+			"Name": "border-button",
+			"Texture": "newgui/button",
+			"TileWidth": 8,
+			"TileHeight": 8
+		},
+		{
+			"Name": "checkbox",
+			"Texture": "newgui/checkbox",
+			"TileWidth": 18,
+			"TileHeight": 18
+		},
+		{
+			"Name": "radiobutton",
+			"Texture": "newgui/radiobutton",
+			"TileWidth": 18,
+			"TileHeight": 18
+		},
+		{
+			"Name": "border-thin",
+			"Texture": "newgui/thin",
+			"TileWidth": 2,
+			"TileHeight": 2
+		},
+		{
+			"Name": "vertical-scrollbar",
+			"Texture": "newgui/vertical-scrollbar",
+			"TileWidth": 24,
+			"TileHeight": 24
+		},
+		{
+			"Name": "horizontal-slider",
+			"Texture": "newgui/slider",
+			"TileWidth": 24,
+			"TileHeight": 24
+		},
+		{
+			"Name": "combo-down",
+			"Texture": "newgui/down",
+			"TileWidth": 16,
+			"TileHeight": 16
+		}
+	]
+}

@@ -54,7 +54,7 @@ namespace DwarfCorp
 
         public KillVoxelTask(Voxel vox)
         {
-            Name = "Kill Voxel: " + vox.Position;
+            Name = "Mine Block " + vox.Position;
             VoxelToKill = vox;
             Priority = PriorityType.Low;
         }

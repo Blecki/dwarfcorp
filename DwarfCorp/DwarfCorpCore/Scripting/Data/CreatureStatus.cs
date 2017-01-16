@@ -172,7 +172,15 @@ namespace DwarfCorp
         public void Update(Creature creature, DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            Hunger.CurrentValue -= dt * creature.Stats.HungerGrowth;
+
+            if (!creature.IsAsleep)
+            {
+                Hunger.CurrentValue -= dt*creature.Stats.HungerGrowth;
+            }
+            else
+            {
+                creature.Hp += dt*0.1f;
+            }
 
             Health.CurrentValue = (creature.Hp - creature.MinHealth) / (creature.MaxHealth - creature.MinHealth);
 
@@ -188,7 +196,7 @@ namespace DwarfCorp
                 creature.DrawIndicator(IndicatorManager.StandardIndicators.Sleepy);
             }
 
-            if(creature.Stats.CanEat && Hunger.IsUnhappy())
+            if(creature.Stats.CanEat && Hunger.IsUnhappy() && !creature.IsAsleep)
             {
                 creature.DrawIndicator(IndicatorManager.StandardIndicators.Hungry);
 

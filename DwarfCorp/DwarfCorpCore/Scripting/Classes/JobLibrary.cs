@@ -44,7 +44,8 @@ namespace DwarfCorp
             Worker,
             AxeDwarf,
             Wizard,
-            CraftsDwarf
+            CraftsDwarf,
+            MusketDwarf
         }
 
         public static Dictionary<JobType, EmployeeClass> Classes { get; set; }
@@ -56,6 +57,7 @@ namespace DwarfCorp
             Classes[JobType.AxeDwarf] = new AxeDwarfClass();
             Classes[JobType.CraftsDwarf] = new CraftDwarfClass();
             Classes[JobType.Wizard] = new WizardClass();
+            Classes[JobType.MusketDwarf] = new MusketDwarfClass();
         }
     }
 }

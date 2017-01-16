@@ -136,20 +136,19 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            /*
-            Color drawColor = GatherDesignationColor;
-
-            float alpha = (float)Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds * GatherDesignationGlowRate));
-            drawColor.R = (byte)(Math.Min(drawColor.R * alpha + 50, 255));
-            drawColor.G = (byte)(Math.Min(drawColor.G * alpha + 50, 255));
-            drawColor.B = (byte)(Math.Min(drawColor.B * alpha + 50, 255));
-
-            foreach (BoundingBox box in Player.Faction.GatherDesignations.Select(d => d.GetBoundingBox()))
+            // Draw a bounding box around the currently selected bodies.
+            foreach (Body body in Player.BodySelector.CurrentBodies)
             {
-                Drawer3D.DrawBox(box, drawColor, 0.05f * alpha + 0.05f, true);
+                if (body.Tags.Contains("Resource"))
+                {
+                    Drawer2D.DrawText(body.Name, body.Position, Color.White, Color.Black);
+                    BoundingBox bounds = body.BoundingBox;
+                    bounds.Min += Vector3.Up * 0.5f;
+                    bounds.Max += Vector3.Up * 0.5f;
+                    bounds = bounds.Expand(0.25f);
+                    Drawer3D.DrawBox(bounds, Color.Orange, 0.02f, false);
+                }
             }
-             */
-
         }
     }
 }

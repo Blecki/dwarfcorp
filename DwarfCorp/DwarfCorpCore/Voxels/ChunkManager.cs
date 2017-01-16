@@ -1101,6 +1101,45 @@ namespace DwarfCorp
             ChunkData.ChunkMap.Clear();
         }
 
+        /// <summary>
+        /// Does a n-iteration breadth-first search starting from the seed.
+        /// </summary>
+        /// <param name="seed">The seed.</param>
+        /// <param name="radiusSquared">The squared number of voxels to search.</param>
+        /// <param name="fn">The function. Returns the first voxel matching this function.</param>
+        /// <returns>the first voxel matching fn.</returns>
+        public Voxel BreadthFirstSearch(Voxel seed, float radiusSquared, Func<Voxel, bool> fn)
+        {
+            Queue<Voxel> queue = new Queue<Voxel>();
+            queue.Enqueue(seed);
+            HashSet<Voxel> visited = new HashSet<Voxel>();
+            List<Voxel> neighbors = new List<Voxel>(6);
+            while (queue.Count > 0)
+            {
+                Voxel curr = queue.Dequeue();
+                if (fn(curr))
+                {
+                    return curr;
+                }
+                
+                if((curr.Position - seed.Position).LengthSquared() < radiusSquared)
+                {
+                    curr.Chunk.GetNeighborsManhattan((int)curr.GridPosition.X, (int)curr.GridPosition.Y, (int)curr.GridPosition.Z, neighbors);
+
+                    foreach (Voxel voxel in neighbors)
+                    {
+                        if (voxel != null && !visited.Contains(voxel))
+                        {
+                            queue.Enqueue(new Voxel(new Point3(voxel.GridPosition), voxel.Chunk));
+                        }
+                    }
+                }
+                //Drawer3D.DrawBox(curr.GetBoundingBox(), Color.White, 0.01f);
+                visited.Add(curr);
+            }
+            return null;
+        }
+
         public List<Voxel> BreadthFirstSearch(Voxel seed, float radiusSquared, bool searchEmpty = true)
         {
             Queue<Voxel> queue = new Queue<Voxel>();

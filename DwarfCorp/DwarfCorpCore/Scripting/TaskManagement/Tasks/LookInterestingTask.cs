@@ -34,6 +34,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -63,6 +65,113 @@ namespace DwarfCorp
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return 1.0f;
+        }
+    }
+
+    /// <summary>
+    /// If the creature is in liquid, causes it to find the nearest land and go there.
+    /// </summary>
+    /// <seealso cref="Task" />
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    internal class FindLandTask : Task
+    {
+        public FindLandTask()
+        {
+            Name = "Find Land";
+            Priority = PriorityType.High;
+        }
+
+        public override Task Clone()
+        {
+            return new FindLandTask();
+        }
+
+        /// <summary>
+        /// Finds a voxel to stand on within a radius of N voxels using BFS.
+        /// </summary>
+        /// <param name="radius">The radius to search in.</param>
+        /// <returns>The voxel within the radius which is over land if it exists, null otherwise.</returns>
+        public Voxel FindLand(int radius, Voxel checkVoxel)
+        {
+            return PlayState.ChunkManager.BreadthFirstSearch(checkVoxel, radius * radius, voxel => voxel != null && voxel.IsEmpty && voxel.WaterLevel == 0 && !voxel.IsBottomEmpty());
+        }
+
+        /// <summary>
+        /// Finds the air above the creature.
+        /// </summary>
+        /// <param name="creature">The creature.</param>
+        /// <returns>A voxel containing air above the creature if it exists, or null otherwise</returns>
+        public Voxel FindAir(Creature creature)
+        {
+            int startHeight = (int) creature.AI.Position.Y;
+            int x = (int)creature.Physics.CurrentVoxel.GridPosition.X;
+            int z = (int)creature.Physics.CurrentVoxel.GridPosition.Z;
+            VoxelChunk chunk = creature.Physics.CurrentVoxel.Chunk;
+            Voxel check = chunk.MakeVoxel(0, 0, 0);
+            for (int y = startHeight; y < creature.Chunks.ChunkData.ChunkSizeY; y++)
+            {
+                check.GridPosition = new Vector3(x, y, z);
+                if (check.WaterLevel == 0 && check.IsEmpty)
+                {
+                    return check;
+                }
+            }
+            return null;
+        }
+
+        public IEnumerable<Act.Status> SwimUp(Creature creature)
+        {
+            Timer timer = new Timer(10.0f, false, Timer.TimerMode.Game);
+
+            while (!timer.HasTriggered)
+            {
+                timer.Update(DwarfTime.LastTime);
+
+                creature.Physics.ApplyForce(Vector3.Up * 25, DwarfTime.Dt);
+
+                if (!creature.Physics.IsInLiquid)
+                {
+                    yield return Act.Status.Success;
+                    yield break;
+                }
+                yield return Act.Status.Running;
+            }
+            yield return Act.Status.Fail;
+        }
+
+        public override Act CreateScript(Creature creature)
+        {
+            if (creature.Physics.CurrentVoxel.GetVoxelAbove().WaterLevel > 0 || creature.AI.Movement.CanFly)
+            {
+                return new Wrap(() => SwimUp(creature)) { Name = "Swim up"};
+            }
+
+            Voxel findLand = FindLand(3, creature.Physics.CurrentVoxel);
+            if (findLand == null)
+            {
+                if (creature.Faction.GetRooms().Count == 0)
+                {
+                    return new LongWanderAct(creature.AI) {PathLength = 20, Radius = 30, Is2D = true};
+                }
+                else
+                {
+                    return new GoToZoneAct(creature.AI, Datastructures.SelectRandom(creature.Faction.GetRooms()));
+                }
+            }
+            else
+            {
+                return new GoToVoxelAct(findLand, PlanAct.PlanType.Into, creature.AI);
+            }
+        }
+
+        public override float  ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
+        {
+            return 1.0f;
+        }
+
+        public override bool IsFeasible(Creature agent)
+        {
+            return agent.Physics.IsInLiquid;
         }
     }
 

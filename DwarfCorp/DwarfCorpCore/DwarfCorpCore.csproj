@@ -286,6 +286,7 @@
     <Compile Include="Scripting\Classes\FairyClass.cs" />
     <Compile Include="Scripting\Classes\JobLibrary.cs" />
     <Compile Include="Scripting\Classes\MolemanMinerClass.cs" />
+    <Compile Include="Scripting\Classes\MusketDwarfClass.cs" />
     <Compile Include="Scripting\Classes\NecromancerClass.cs" />
     <Compile Include="Scripting\Classes\SkeletonClass.cs" />
     <Compile Include="Scripting\Classes\SwordGoblinClass.cs" />
@@ -490,10 +491,6 @@
     <Compile Include="World\WorldTime.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\JsonDotNet\Newtonsoft.Json.Net40.csproj">
-      <Project>{a9ae40ff-1a21-414a-9fe7-3be13644cc6d}</Project>
-      <Name>Newtonsoft.Json.Net40</Name>
-    </ProjectReference>
     <ProjectReference Include="..\LibNoise\LibNoise.csproj">
       <Project>{031c8cff-f147-44ea-b7e5-0a5644808a7e}</Project>
       <Name>LibNoise</Name>

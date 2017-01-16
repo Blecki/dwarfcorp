@@ -115,7 +115,8 @@ namespace DwarfCorp
                                 Vector3 delta = faceDeltas[(int)face];
 
 
-                                bool success = chunk.Manager.ChunkData.GetVoxel(chunk, new Vector3(x + (int)delta.X, y + (int)delta.Y, z + (int)delta.Z) + chunk.Origin, ref vox);
+                                bool success = chunk.Manager.ChunkData.GetVoxel(chunk, 
+                                    new Vector3(x + (int)delta.X, y + (int)delta.Y, z + (int)delta.Z) + chunk.Origin, ref vox);
 
                                 if(success)
                                 {
@@ -187,8 +188,10 @@ namespace DwarfCorp
                     lock (VertexLock)
                     {
                         VertexBuffer = null;
-                        MaxVertex = -1;
-                        MaxIndex = -1;
+                        Vertices = null;
+                        Indexes = null;
+                        MaxVertex = 0;
+                        MaxIndex = 0;
                     }
                 }
                 catch (System.Threading.AbandonedMutexException e)

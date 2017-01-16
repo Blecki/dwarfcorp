@@ -80,7 +80,7 @@ namespace DwarfCorp
         public Button(DwarfGUI gui, GUIComponent parent, string text, SpriteFont textFont, ButtonMode mode, ImageFrame image) :
             base(gui, parent)
         {
-            DrawFrame = false;
+            DrawFrame = mode == ButtonMode.PushButton || mode == ButtonMode.ToolButton;
             Text = text;
             Image = image;
             TextColor = gui.DefaultTextColor;
@@ -205,13 +205,15 @@ namespace DwarfCorp
                     }
                     break;
                 case ButtonMode.PushButton:
-                    GUI.Skin.RenderButton(GlobalBounds, batch);
+                    if (DrawFrame)
+                        GUI.Skin.RenderButton(GlobalBounds, batch);
                     Drawer2D.DrawAlignedStrokedText(batch, Text,
                         TextFont,
                         textColor, strokeColor, Drawer2D.Alignment.Center, GlobalBounds, true);
                     break;
                 case ButtonMode.ToolButton:
-                    GUI.Skin.RenderButton(GlobalBounds, batch);
+                    if (DrawFrame)
+                        GUI.Skin.RenderButton(GlobalBounds, batch);
                     if (Image != null && Image.Image != null)
                     {
                         Rectangle imageRect = GetImageBounds();

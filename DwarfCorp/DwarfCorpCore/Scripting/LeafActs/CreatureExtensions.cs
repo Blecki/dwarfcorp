@@ -164,16 +164,24 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        
+        /// <summary>
+        /// This is the underlying Dig behavior that dwarves follow while digging.
+        /// </summary>
+        /// <param name="agent">The agent.</param>
+        /// <param name="voxel">The voxel.</param>
+        /// <param name="energyLoss">The energy loss the dwarf gets per block mined.</param>
+        /// <returns>Success when the block is mined, fail if it fails to be mined, and running otherwise.</returns>
         public static IEnumerable<Act.Status> Dig(this Creature agent, string voxel, float energyLoss)
         {
-            Vector3 LocalTarget = agent.AI.Position;
             agent.Sprite.ResetAnimations(Creature.CharacterMode.Attacking);
+
+            // Block since we're in a coroutine.
             while(true)
             {
-
+                // Get the voxel stored in the agent's blackboard.
                 Voxel blackBoardVoxel = agent.AI.Blackboard.GetData<Voxel>(voxel);
 
+                // Somehow, there wasn't a voxel to mine.
                 if(blackBoardVoxel == null)
                 {
                     agent.DrawIndicator(IndicatorManager.StandardIndicators.Question);
@@ -182,6 +190,8 @@ namespace DwarfCorp
                 }
 
                 Voxel vox = blackBoardVoxel;
+
+                // If the voxel has already been destroyed, just ignore it and return.
                 if(vox.Health <= 0.0f || !agent.Faction.IsDigDesignation(vox))
                 {
                     agent.AI.AddXP(Math.Max((int)(VoxelLibrary.GetVoxelType(blackBoardVoxel.TypeName).StartingHealth / 4), 1));
@@ -190,21 +200,37 @@ namespace DwarfCorp
                     yield return Act.Status.Success;
                     break;
                 }
+
+                // Look at the block and slow your velocity down.
                 agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
                 agent.Physics.Velocity *= 0.9f;
 
+                // Play the attack animations.
                 agent.CurrentCharacterMode = Creature.CharacterMode.Attacking;
                 agent.Sprite.ResetAnimations(agent.CurrentCharacterMode);
                 agent.Sprite.PlayAnimations(agent.CurrentCharacterMode);
 
-                while (!agent.Attacks[0].Perform(agent, agent.Physics.Position, vox, DwarfTime.LastTime, agent.Stats.BaseDigSpeed, agent.Faction.Name))
+                // Wait until an attack was successful...
+                foreach (var status in 
+                    agent.Attacks[0].Perform(agent, 
+                            agent.Physics.Position, 
+                            vox, DwarfTime.LastTime, 
+                            agent.Stats.BaseDigSpeed, 
+                            agent.Faction.Name))
                 {
-                    agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
-                    agent.Physics.Velocity *= 0.9f;
+                    if (status == Act.Status.Running)
+                    {
+                        agent.Physics.Face(vox.Position + Vector3.One*0.5f);
+                        agent.Physics.Velocity *= 0.9f;
 
-                    yield return Act.Status.Running;
+                        // Debug drawing.
+                        if (agent.AI.DrawPath)
+                            Drawer3D.DrawLine(vox.Position, agent.AI.Position, Color.Green, 0.25f);
+                        yield return Act.Status.Running;
+                    }
                 }
 
+                // If the voxel has been destroyed by you, gather it.
                 if (vox.Health <= 0.0f)
                 {
                     List<Body> items = vox.Kill();
@@ -219,15 +245,19 @@ namespace DwarfCorp
 
                 }
 
-                while (!agent.Sprite.CurrentAnimation.IsDone())
+                // Wait until the animation is done playing before continuing.
+                while (!agent.Sprite.CurrentAnimation.IsDone() && agent.Sprite.CurrentAnimation.IsPlaying)
                 {
                     agent.Physics.Face(vox.Position + Vector3.One * 0.5f);
                     agent.Physics.Velocity *= 0.9f;
                     yield return Act.Status.Running;
                 }
+
+                // Pause the animation and wait for a recharge timer.
                 agent.Sprite.PauseAnimations(agent.CurrentCharacterMode);
 
 
+                // Wait for a recharge timer to trigger.
                 agent.Attacks[0].RechargeTimer.Reset();
                 while (!agent.Attacks[0].RechargeTimer.HasTriggered)
                 {

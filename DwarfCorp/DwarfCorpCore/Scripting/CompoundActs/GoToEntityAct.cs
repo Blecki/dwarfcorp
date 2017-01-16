@@ -49,10 +49,13 @@ namespace DwarfCorp
         public Body Entity { get { return Agent.Blackboard.GetData<Body>(EntityName);  } set {Agent.Blackboard.SetData(EntityName, value);} }
         public bool MovingTarget { get; set; }
         public string EntityName { get; set; }
+        public PlanAct.PlanType PlanType { get; set; }
+        public float Radius { get; set; }
 
         public GoToEntityAct()
         {
-
+            PlanType = PlanAct.PlanType.Adjacent;
+            Radius = 0.0f;
         }
 
         public bool EntityIsInHands()
@@ -147,7 +150,8 @@ namespace DwarfCorp
                     yield return Act.Status.Running;
                 }
                 Creature.AI.Blackboard.Erase("PathToEntity");
-                PlanAct planAct = new PlanAct(Creature.AI, "PathToEntity", "EntityVoxel", PlanAct.PlanType.Adjacent);
+
+                PlanAct planAct = new PlanAct(Creature.AI, "PathToEntity", "EntityVoxel", PlanType) { Radius = Radius};
                 planAct.Initialize();
 
                 bool planSucceeded = false;
@@ -190,11 +194,16 @@ namespace DwarfCorp
                 }
 
 
-                FollowPathAnimationAct followPath = new FollowPathAnimationAct(Creature.AI, "PathToEntity");
+                FollowPathAct followPath = new FollowPathAct(Creature.AI, "PathToEntity");
                 followPath.Initialize();
 
                 while (true)
                 {
+                    if (PlanType == PlanAct.PlanType.Radius && (Creature.Physics.Position - entity.Position).Length() < Radius)
+                    {
+                        yield return Act.Status.Success;
+                    }
+
                     Act.Status pathStatus = followPath.Tick();
 
                     if (pathStatus == Status.Fail)
@@ -248,7 +257,7 @@ namespace DwarfCorp
                         new Sequence( 
                             new SetTargetVoxelFromEntityAct(Agent, EntityName, "EntityVoxel"),
                             new PlanAct(Agent, "PathToEntity", "EntityVoxel", PlanAct.PlanType.Adjacent),
-                            new Parallel( new FollowPathAnimationAct(Agent, "PathToEntity"), 
+                            new Parallel( new FollowPathAct(Agent, "PathToEntity"), 
                                           new Wrap(() => TargetMoved("PathToEntity")), 
                                           new Wrap(CollidesWithTarget)) { ReturnOnAllSucces = false }
                                      ), 

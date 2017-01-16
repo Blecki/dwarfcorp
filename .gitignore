@@ -9,6 +9,7 @@ DwarfCorpFNA/bin/*
 DwarfCorpFNA/obj/*
 DwarfCorp/LibNoise/bin/*
 DwarfCorp/LibNoise/obj/*
+packages/*
 .vs/
 *.suo
 *.cachefile

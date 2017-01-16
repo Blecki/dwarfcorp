@@ -129,6 +129,7 @@ namespace DwarfCorp
             public static string bite = ProgramData.CreatePath("Effects", "bite");
             public static string pierce = ProgramData.CreatePath("Effects", "pierce");
             public static string hit = ProgramData.CreatePath("Effects", "hit");
+            public static string explode = ProgramData.CreatePath("Effects", "explode");
         }
 
         public class World
@@ -306,6 +307,8 @@ namespace DwarfCorp
 
                     public static string fairy_animation = ProgramData.CreatePath("Entities", "Dwarf", "Sprites",
                         "fairy_animation.json");
+
+                    public static string musketdwarf_animations = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "musket_animation.json");
                 }
 
             }

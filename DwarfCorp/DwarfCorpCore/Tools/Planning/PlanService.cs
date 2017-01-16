@@ -44,14 +44,43 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
 
+    /// <summary>
+    /// A goal region is an abstract way of specifing when a dwarf has reached a goal.
+    /// </summary>
     public abstract class GoalRegion
     {
+        /// <summary>
+        /// Determines whetherthe specified voxel is within the goal region.
+        /// </summary>
+        /// <param name="voxel">The voxel.</param>
+        /// <returns>
+        ///   <c>true</c> if [is in goal region] [the specified voxel]; otherwise, <c>false</c>.
+        /// </returns>
         public abstract bool IsInGoalRegion(Voxel voxel);
+        /// <summary>
+        /// Gets a voxel associated with this goal region.
+        /// </summary>
+        /// <returns>The voxel associated with this goal region.</returns>
         public abstract Voxel GetVoxel();
+        /// <summary>
+        /// Returns an admissible heuristic for A* planning from the given voxel to this region.
+        /// </summary>
+        /// <param name="voxel">The voxel.</param>
+        /// <returns>An admissible heuristic value.</returns>
         public abstract float Heuristic(Voxel voxel);
+        /// <summary>
+        /// Determines whether the goal is a.priori possible.
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if this instance is possible; otherwise, <c>false</c>.
+        /// </returns>
         public abstract bool IsPossible();
     }
 
+    /// <summary>
+    /// This is a GoalRegion which tells the dwarf to be in a specific voxel.
+    /// </summary>
+    /// <seealso cref="GoalRegion" />
     public class VoxelGoalRegion : GoalRegion
     {
         public Voxel Voxel { get; set; }
@@ -82,6 +111,10 @@ namespace DwarfCorp
         }
     }
 
+    /// <summary>
+    /// This is a GoalRegion which tells the dwarf to be 4-ways adjacent to the voxel in X and Z.
+    /// </summary>
+    /// <seealso cref="GoalRegion" />
     public class AdjacentVoxelGoalRegion2D : GoalRegion
     {
         public Voxel Voxel { get; set; }
@@ -114,8 +147,9 @@ namespace DwarfCorp
         }
     }
 
-
-    // Tries to plan toward an edge of the world.
+    /// <summary>
+    /// This is a goal region which causes a dwarf to leave the world.
+    /// </summary>
     public class EdgeGoalRegion : GoalRegion
     {
         public override bool IsInGoalRegion(Voxel voxel)
@@ -143,6 +177,10 @@ namespace DwarfCorp
 
     }
 
+    /// <summary>
+    /// This is a goal region which is a sphere around a voxel.
+    /// </summary>
+    /// <seealso cref="GoalRegion" />
     public class SphereGoalRegion : GoalRegion
     {
         public Vector3 Position { get; set; }

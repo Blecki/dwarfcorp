@@ -74,7 +74,7 @@ namespace DwarfCorp
                 while(true)
                 {
                     Status childStatus = Child.Tick();
-
+                    LastTickedChild = Child;
                     if(childStatus == Status.Fail)
                     {
                         failEncountered = true;
