@@ -805,7 +805,7 @@ namespace DwarfCorp
 
         public Voxel MakeVoxel(int x, int y, int z)
         {
-            return new Voxel(new Point3(x, y, z), this);
+            return VoxelPool.Allocate(new Point3(x, y, z), this);
         }
 
         public void BuildGrassMotes(Overworld.Biome biome)
@@ -1572,6 +1572,23 @@ namespace DwarfCorp
             }
 
         }
+
+        /*
+        // Enumerate neighbors. Not sure why existing version leaves unitialized voxels in array??
+        public IEnumerable<Voxel> EnumerateSuccessors(List<Point3> Successors, Point3 Coordinate)
+        {
+            foreach (var successor in Successors)
+            {
+                var newCoord = Coordinate + successor;
+                var newChunk = new Point3(newCoord.X / ChunkWidth, newCoord.Y / ChunkHeight, newCoord.Z / ChunkDepth);
+                if (!Manager.ChunkData.ChunkMap.ContainsKey(newChunk))
+                    continue;
+                yield return new Voxel(newCoord, this)
+                {
+                    ChunkID = newChunk
+                };
+            }
+        }*/
 
         public void GetNeighborsSuccessors(List<Vector3> succ, int x, int y, int z, List<Voxel> toReturn)
         {

@@ -59,7 +59,7 @@ namespace DwarfCorp
 
         public override Task Clone()
         {
-            Voxel v = new Voxel(new Point3(Voxel.GridPosition), Voxel.Chunk);
+            Voxel v = VoxelPool.Allocate(new Point3(Voxel.GridPosition), Voxel.Chunk);
             return new CraftItemTask(v, CraftType);
         }
 
