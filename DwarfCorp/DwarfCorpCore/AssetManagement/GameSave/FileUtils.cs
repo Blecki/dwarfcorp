@@ -63,10 +63,8 @@ namespace DwarfCorp
             {
                 toReturn = (T) formatter.Deserialize(stream);
             }
-            catch (InvalidCastException exception)
+            catch (InvalidCastException)
             {
-				// Pointless line to avoid warning for unused exception.
-				exception.ToString();
             }
 
             stream.Close();

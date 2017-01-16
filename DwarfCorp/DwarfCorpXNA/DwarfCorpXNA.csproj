@@ -48,7 +48,7 @@
     <NoStdLib>true</NoStdLib>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
-    <XnaCompressContent>false</XnaCompressContent>
+    <XnaCompressContent>True</XnaCompressContent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
@@ -1281,6 +1281,12 @@
     </Compile>
     <Compile Include="..\DwarfCorpCore\Tools\Extensions.cs">
       <Link>Tools\Extensions.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Tools\GameObjectCaching.cs">
+      <Link>Tools\GameObjectCaching.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\Tools\GamePerformance.cs">
+      <Link>Tools\GamePerformance.cs</Link>
     </Compile>
     <Compile Include="..\DwarfCorpCore\Tools\Graphics\ColorGradient.cs">
       <Link>Tools\Graphics\ColorGradient.cs</Link>

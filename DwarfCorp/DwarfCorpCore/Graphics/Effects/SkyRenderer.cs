@@ -87,8 +87,8 @@ namespace DwarfCorp
         public void RenderSunMoon(DwarfTime time, GraphicsDevice device, Camera camera, Viewport viewPort, float scale)
         {
             Matrix rot = Matrix.CreateRotationZ((-CosTime + 0.5f * (float) Math.PI));
-            SunPosition = new Vector3(-1000, 100, 0);
-            Vector3 moonPosition = new Vector3(1000, 100, 0);
+            SunPosition = new Vector3(1000, 100, 0);
+            Vector3 moonPosition = new Vector3(-1000, 100, 0);
             SunPosition = Vector3.Transform(SunPosition, rot);
             moonPosition = Vector3.Transform(moonPosition, rot);
             SunPosition += camera.Position;

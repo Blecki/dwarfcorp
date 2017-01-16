@@ -81,6 +81,11 @@ namespace DwarfCorp
 
         protected override void Initialize()
         {
+            // Goes before anything else so we can track from the very start.
+            GamePerformance.Initialize(this);
+            // TODO: Find a more appropriate spot for this.
+            GameObjectCaching.Initialize();
+
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             base.Initialize();
         }
@@ -138,6 +143,7 @@ namespace DwarfCorp
 
         protected override void Update(GameTime time)
         {
+            GamePerformance.Instance.PreUpdate();
             if (DwarfTime.LastTime == null)
             {
                 DwarfTime.LastTime = new DwarfTime(time);
@@ -145,13 +151,17 @@ namespace DwarfCorp
             DwarfTime.LastTime.Update(time);
             StateManager.Update(DwarfTime.LastTime);
             base.Update(time);
+            GamePerformance.Instance.PostUpdate();
         }
 
         protected override void Draw(GameTime time)
         {
+            GamePerformance.Instance.PreRender();
             StateManager.Render(DwarfTime.LastTime);
             GraphicsDevice.SetRenderTarget(null);
             base.Draw(time);
+            GamePerformance.Instance.PostRender();
+            GamePerformance.Instance.Render(DwarfGame.SpriteBatch);
         }
 
         protected override void OnExiting(object sender, EventArgs args)

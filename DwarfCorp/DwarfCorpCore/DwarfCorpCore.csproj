@@ -452,6 +452,8 @@
     <Compile Include="Tools\Datastructures\PriorityQueue.cs" />
     <Compile Include="Tools\Datastructures\ThreadSafeRandom.cs" />
     <Compile Include="Tools\Extensions.cs" />
+    <Compile Include="Tools\GameObjectCaching.cs" />
+    <Compile Include="Tools\GamePerformance.cs" />
     <Compile Include="Tools\Graphics\ColorGradient.cs" />
     <Compile Include="Tools\Graphics\VertexNoise.cs" />
     <Compile Include="Tools\Math\Easing.cs" />

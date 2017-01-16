@@ -632,12 +632,14 @@ namespace DwarfCorp
             effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
             effect.Parameters["SelfIllumination"].SetValue(1);
             effect.Parameters["xEnableShadows"].SetValue(0);
+
+			BoundingFrustum cameraFrustrum = renderCamera.GetFrustrum();
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
                 foreach (KeyValuePair<Point3, VoxelChunk> chunk in ChunkData.ChunkMap)
                 {
-                    if (renderCamera.GetFrustrum().Intersects(chunk.Value.GetBoundingBox()))
+                    if (cameraFrustrum.Intersects(chunk.Value.GetBoundingBox()))
                     {
                         chunk.Value.Render(Graphics);
                     }
