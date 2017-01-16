@@ -81,7 +81,7 @@ namespace DwarfCorp
             return new BuildVoxelTask(Voxel, VoxType);
         }
 
-        public override float ComputeCost(Creature agent)
+        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return Voxel == null ? 1000 : 0.01f * (agent.AI.Position - Voxel.Position).LengthSquared() + (Voxel.Position.Y);
         }

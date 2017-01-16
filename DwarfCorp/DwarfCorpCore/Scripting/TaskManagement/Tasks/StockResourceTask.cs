@@ -73,7 +73,7 @@ namespace DwarfCorp
             return agent.Faction.HasFreeStockpile();
         }
 
-        public override float ComputeCost(Creature agent)
+        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return 1.0f;
         }

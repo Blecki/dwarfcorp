@@ -60,7 +60,7 @@ namespace DwarfCorp
             return new WanderAct(creature.AI, 2, 0.5f, 1.0f);
         }
 
-        public override float ComputeCost(Creature agent)
+        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return 1.0f;
         }

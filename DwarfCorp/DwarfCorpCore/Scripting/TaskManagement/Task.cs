@@ -99,7 +99,7 @@ namespace DwarfCorp
             return null;
         }
 
-        public virtual float ComputeCost(Creature agent)
+        public virtual float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return 1.0f;
         }

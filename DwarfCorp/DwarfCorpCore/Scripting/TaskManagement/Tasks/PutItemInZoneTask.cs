@@ -70,7 +70,7 @@ namespace DwarfCorp
             //return new MoveItemAct(creature.AI, Item, Zone);
         }
 
-        public override float ComputeCost(Creature agent)
+        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return (Zone == null || Item == null || Item.UserData == null) ? 1000 : (agent.AI.Position - Item.UserData.GlobalTransform.Translation).LengthSquared();
         }

@@ -63,7 +63,7 @@ namespace DwarfCorp
             return agent.Sensors.Enemies.Count == 0;
         }
 
-        public override float ComputeCost(Creature agent)
+        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return agent.Status.Hunger.IsUnhappy() ? 0.0f : 1e13f;
         }

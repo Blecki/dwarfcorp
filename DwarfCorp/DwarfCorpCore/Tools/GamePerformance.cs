@@ -201,7 +201,8 @@ namespace DwarfCorp
                 if (history.Count > 0) average = (float)total / history.Count;
                 float percent = 0;
                 if (_parent.LastRenderTime != 0) percent = average / _parent.LastRenderTime;
-                _parent.DrawString(String.Format("{0}: {1:P2}%", _name, percent), Color.White);
+                //_parent.DrawString(String.Format("{0}: {1:P2}%", _name, percent), Color.White);
+                _parent.DrawString(String.Format("{0}: {1}ms", _name, average), Color.White);
                 _parent.DrawChangeGraph(percentLegend, history, 40, new Vector2(0, history.Max()));
             }
         }

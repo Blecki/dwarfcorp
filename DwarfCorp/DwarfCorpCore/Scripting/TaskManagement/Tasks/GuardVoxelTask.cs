@@ -63,7 +63,7 @@ namespace DwarfCorp
             return new GuardVoxelAct(agent.AI, VoxelToGuard);
         }
 
-        public override float ComputeCost(Creature agent)
+        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return VoxelToGuard == null ? 1000 : (agent.AI.Position - VoxelToGuard.Position).LengthSquared();
         }

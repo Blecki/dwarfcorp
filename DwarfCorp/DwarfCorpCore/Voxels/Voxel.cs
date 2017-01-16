@@ -115,6 +115,11 @@ namespace DwarfCorp
             return Equals(Chunk, other.Chunk) && Index == other.Index;
         }
 
+        public bool IsSameAs(Voxel other)
+        {
+            if (quickCompare == other.quickCompare) return true;
+            return false;
+        }
 
         public override int GetHashCode()
         {
@@ -205,8 +210,11 @@ namespace DwarfCorp
             { 
                 gridpos = value;
 
-                if(Chunk != null)
-                    index = Chunk.Data.IndexAt((int)gridpos.X, (int)gridpos.Y, (int)gridpos.Z); 
+                if (Chunk != null)
+                {
+                    index = Chunk.Data.IndexAt((int)gridpos.X, (int)gridpos.Y, (int)gridpos.Z);
+                    RegenerateQuickCompare();
+                }
             }
         }
 
@@ -239,7 +247,26 @@ namespace DwarfCorp
         public Point3 ChunkID
         {
             get { return chunkID; }
-            set { chunkID = value;  }
+            set { chunkID = value; RegenerateQuickCompare(); }
+        }
+
+        [NonSerialized]
+        private ulong quickCompare;
+        public ulong QuickCompare
+        {
+            get { return quickCompare; }
+        }
+
+        private void RegenerateQuickCompare()
+        {
+            // long build of the ulong.
+            ulong q = 0;
+            q |= (((ulong)chunkID.X & 0xFFFF) << 48);
+            q |= (((ulong)chunkID.Y & 0xFFFF) << 32);
+            q |= (((ulong)chunkID.Z & 0xFFFF) << 16);
+            q |= ((ulong)index & 0xFFFF);
+            quickCompare = q;
+            //quickCompare = (ulong) (((chunkID.X & 0xFFFF) << 48) | ((chunkID.Y & 0xFFFF) << 32) | ((chunkID.Y & 0xFFFF) << 16) | (index & 0xFFFF));
         }
 
         [JsonIgnore]
@@ -327,6 +354,7 @@ namespace DwarfCorp
             Chunk = chunk;
             GridPosition = gridPosition;
             index = Chunk.Data.IndexAt((int) gridPosition.X, (int) gridPosition.Y, (int) gridPosition.Z);
+            RegenerateQuickCompare();
         }
 
         public override bool Equals(object o)
@@ -431,6 +459,7 @@ namespace DwarfCorp
             {
                 Chunk = PlayState.ChunkManager.ChunkData.ChunkMap[chunkID];
                 index = Chunk.Data.IndexAt((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z);
+                RegenerateQuickCompare();
             }
         }
 

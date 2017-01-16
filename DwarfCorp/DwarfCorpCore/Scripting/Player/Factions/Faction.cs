@@ -165,7 +165,7 @@ namespace DwarfCorp
             SelectedMinions = new List<CreatureAI>();
             TaskManager = new TaskManager();
             Stockpiles = new List<Stockpile>();
-            DigDesignations = new List<BuildOrder>();
+            DigDesignations = new Dictionary<ulong, BuildOrder>();
             GuardDesignations = new List<BuildOrder>();
             ChopDesignations = new List<Body>();
             AttackDesignations = new List<Body>();
@@ -244,8 +244,8 @@ namespace DwarfCorp
         public ComponentManager Components { get { return PlayState.ComponentManager; }}
 
         public List<TradeEnvoy> TradeEnvoys { get; set; }
-        public List<WarParty> WarParties { get; set; } 
-        public List<BuildOrder> DigDesignations { get; set; }
+        public List<WarParty> WarParties { get; set; }
+        public Dictionary<ulong, BuildOrder> DigDesignations { get; set; }
         public List<BuildOrder> GuardDesignations { get; set; }
         public List<Body> ChopDesignations { get; set; }
         public List<Body> AttackDesignations { get; set; }
@@ -307,15 +307,17 @@ namespace DwarfCorp
             SelectedMinions.ForEach(m => m.Creature.SelectionCircle.IsVisible = true);
             CollideMinions(time);
 
-            List<BuildOrder> removals = (from d in DigDesignations
-                                          let vref = d.Vox
-                                          let v = vref
-                                          where v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty" || v.Type.IsInvincible
-                                          select d).ToList();
-
-            foreach (BuildOrder v in removals)
+            List<ulong> removalKeys = new List<ulong>();
+            foreach (KeyValuePair<ulong, BuildOrder> kvp in DigDesignations)
             {
-                DigDesignations.Remove(v);
+                Voxel v = kvp.Value.Vox;
+                if (v.IsEmpty || v.Health <= 0.0f || v.Type.Name == "empty" || v.Type.IsInvincible)
+                    removalKeys.Add(kvp.Key);
+            }
+
+            for (int i = 0; i < removalKeys.Count; i++)
+            {
+                DigDesignations.Remove(removalKeys[i]);
             }
 
             List<Body> gatherRemovals = (from b in GatherDesignations
@@ -326,9 +328,9 @@ namespace DwarfCorp
             {
                 GatherDesignations.Remove(b);
             }
-            
 
-            removals.Clear();
+
+            List<BuildOrder> removals = new List<BuildOrder>();
             foreach (BuildOrder d in GuardDesignations)
             {
                 Voxel v = d.Vox;
@@ -497,9 +499,9 @@ namespace DwarfCorp
         {
             float closestDist = 99999;
             BuildOrder closestVoxel = null;
-            foreach(BuildOrder designation in DigDesignations)
+            foreach(KeyValuePair<ulong, BuildOrder> kvp in DigDesignations)
             {
-                Voxel vref = designation.Vox;
+                Voxel vref = kvp.Value.Vox;
                 Voxel v = vref;
 
                 float d = (v.Position - position).LengthSquared();
@@ -509,7 +511,7 @@ namespace DwarfCorp
                 }
 
                 closestDist = d;
-                closestVoxel = designation;
+                closestVoxel = kvp.Value;
             }
 
             return closestVoxel;
@@ -548,16 +550,36 @@ namespace DwarfCorp
 
         public BuildOrder GetDigDesignation(Voxel vox)
         {
-            return (from d in DigDesignations
-                let vref = d.Vox
-                let v = vref
-                where vox.Equals(v)
-                select d).FirstOrDefault();
+            BuildOrder returnOrder;
+            if (DigDesignations.TryGetValue(vox.QuickCompare, out returnOrder))
+                return returnOrder;
+            return new BuildOrder();
+        }
+
+        public void AddDigDesignation(BuildOrder order)
+        {
+            if (order.Vox == null) return;
+            DigDesignations.Add(order.Vox.QuickCompare, order);
+        }
+
+        public void RemoveDigDesignation(Voxel vox)
+        {
+            if (DigDesignations.ContainsKey(vox.QuickCompare))
+                DigDesignations.Remove(vox.QuickCompare);
         }
 
         public bool IsDigDesignation(Voxel vox)
         {
-            return DigDesignations.Select(d => d.Vox).Select(vref => vref).Any(vox.Equals);
+            GamePerformance.Instance.TrackValueType<int>("Dig Designations", DigDesignations.Count);
+
+            return DigDesignations.ContainsKey(vox.QuickCompare);
+            /*
+            for (int i = 0; i < DigDesignations.Count; i++)
+            {
+                if (DigDesignations[i].Vox.IsSameAs(vox)) return true;
+            }
+            return false;
+             * */
         }
 
 
@@ -1029,10 +1051,6 @@ namespace DwarfCorp
 
             return desiredRoom;
         }
-
-
-
-       
     }
 
 }

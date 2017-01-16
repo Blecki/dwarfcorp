@@ -63,7 +63,7 @@ namespace DwarfCorp
             return new CraftItemTask(v, CraftType);
         }
 
-        public override float ComputeCost(Creature agent)
+        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return Voxel == null ? 1000 : (agent.AI.Position - Voxel.Position).LengthSquared();
         }
