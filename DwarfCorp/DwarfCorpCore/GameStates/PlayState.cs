@@ -78,10 +78,10 @@ namespace DwarfCorp.GameStates
         public static int WorldHeight = 800;
 
         // The number of voxels along x and z in a chunk
-        public static int ChunkWidth = 16;
+        public static int ChunkWidth {get { return GameSettings.Default.ChunkWidth; }}
 
         // The number of voxels along y in a chunk.
-        public static int ChunkHeight = 48;
+        public static int ChunkHeight { get { return GameSettings.Default.ChunkHeight; }}
 
         // The current coordinate of the cursor light
         public static Vector3 CursorLightPos
@@ -533,8 +533,8 @@ namespace DwarfCorp.GameStates
                 PlayState.Time = gameFile.Data.Metadata.Time;
                 WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
                 WorldScale = gameFile.Data.Metadata.WorldScale;
-                ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
-                ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
+                GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
+                GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
 
                 if (gameFile.Data.Metadata.OverworldFile != null && gameFile.Data.Metadata.OverworldFile != "flat")
                 {
@@ -1020,8 +1020,8 @@ namespace DwarfCorp.GameStates
                 Time = gameFile.Data.Metadata.Time;
                 WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
                 WorldScale = gameFile.Data.Metadata.WorldScale;
-                ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
-                ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
+                GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
+                GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
                 Master = new GameMaster(ComponentManager.Factions.Factions["Player"], Game, ComponentManager,
                     ChunkManager, Camera, GraphicsDevice, GUI);
 
