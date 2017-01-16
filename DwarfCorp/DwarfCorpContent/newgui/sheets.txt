@@ -7,10 +7,15 @@
 			"TileHeight": 348
 		},
 		{
-			"Name": "font",
+			"Name": "old-font",
 			"Texture": "newgui/font",
 			"TileWidth": 6,
 			"TileHeight": 8
+		},
+		{
+			"Name": "font",
+			"Texture": "newgui/font1-w",
+			"Type": "VariableWidthFont"
 		},
 		{
 			"Name": "mouse",

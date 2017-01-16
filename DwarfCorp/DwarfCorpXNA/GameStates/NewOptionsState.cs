@@ -97,8 +97,8 @@ namespace DwarfCorp.GameStates
             MainPanel = GuiRoot.RootItem.AddChild(new Gum.Widget
                 {
                     Rect = GuiRoot.VirtualScreen,
-                    Background = new TileReference("basic", 0),
-                    Padding = new Margin(4,4,4,4)
+                    Padding = new Margin(4,4,4,4),
+                    Transparent = true
                 });
 
             MainPanel.AddChild(new Widget
@@ -107,7 +107,6 @@ namespace DwarfCorp.GameStates
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
-                TextSize = 2,
                 OnClick = (sender, args) =>
                 {
                     // If changes, prompt before closing.
@@ -139,7 +138,6 @@ namespace DwarfCorp.GameStates
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
-                TextSize = 2,
                 OnClick = (sender, args) =>
                 {
                     ApplySettings();
@@ -151,7 +149,7 @@ namespace DwarfCorp.GameStates
             TabPanel = MainPanel.AddChild(new Gum.Widgets.TabPanel
             {
                 AutoLayout = AutoLayout.DockFill,
-                TextSize = 4,
+                TextSize = 2,
                 SelectedTabColor = new Vector4(1,0,0,1),
                 OnLayout = (sender) => sender.Rect.Height -= 36 // Keep it from overlapping bottom buttons.
             }) as Gum.Widgets.TabPanel;
@@ -180,7 +178,6 @@ namespace DwarfCorp.GameStates
             r.AddChild(new Widget
             {
                 Text = Label,
-                TextSize = 2,
                 AutoLayout = AutoLayout.DockLeft
             });
 
@@ -214,7 +211,6 @@ namespace DwarfCorp.GameStates
             InvertZoom = panel.AddChild(new CheckBox
                 {
                     Text = "Invert Zoom",
-                    TextSize = 2,
                     OnCheckStateChange = OnItemChanged,
                     AutoLayout = AutoLayout.DockTop
                 }) as CheckBox;
@@ -222,7 +218,6 @@ namespace DwarfCorp.GameStates
             EdgeScrolling = panel.AddChild(new CheckBox
             {
                 Text = "Edge Scrolling",
-                TextSize = 2,
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
@@ -230,7 +225,6 @@ namespace DwarfCorp.GameStates
             PlayIntro = panel.AddChild(new CheckBox
             {
                 Text = "Play Intro",
-                TextSize = 2,
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
@@ -238,7 +232,6 @@ namespace DwarfCorp.GameStates
             FogOfWar = panel.AddChild(new CheckBox
             {
                 Text = "Fog Of War",
-                TextSize = 2,
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
@@ -283,7 +276,6 @@ namespace DwarfCorp.GameStates
             panel.AddChild(new Widget
                 {
                     Text = "NON-FUNCTIONAL UNTIL INPUT SYSTEM REDONE",
-                    TextSize = 2,
                     AutoLayout = AutoLayout.DockTop
                 });
 
@@ -300,7 +292,6 @@ namespace DwarfCorp.GameStates
                 entryPanel.AddChild(new Widget
                     {
                         Text = binding.Key,
-                        TextSize = 2,
                         AutoLayout = AutoLayout.DockLeft
                     });
 
@@ -314,158 +305,157 @@ namespace DwarfCorp.GameStates
             var panel = TabPanel.AddTab("GRAPHICS", new Widget
             {
                 Border = "border-thin",
-                Padding = new Margin(4, 4, 0, 0)
+                Padding = new Margin(4,4,4,4)
             });
 
-            Resolution = panel.AddChild(LabelAndDockWidget("Resolution", new Gum.Widgets.ComboBox
+            var leftPanel = panel.AddChild(new Widget
+            {
+                MinimumSize = new Point(GuiRoot.VirtualScreen.Width / 2 - 4, 0),
+                AutoLayout = AutoLayout.DockLeft,
+                Padding = new Margin(2,2,2,2)
+            });
+
+            var rightPanel = panel.AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockFill,
+                Padding = new Margin(2,2,2,2)
+            });
+
+            Resolution = leftPanel.AddChild(LabelAndDockWidget("Resolution", new Gum.Widgets.ComboBox
                 {
                     Items = DisplayModes.Select(dm => dm.Key).ToList(),
-                    TextSize = 2,
-                    OnSelectedIndexChanged = OnItemChanged
+                    OnSelectedIndexChanged = OnItemChanged,
+                    Border = "border-thin"
                 })).GetChild(1) as Gum.Widgets.ComboBox;
 
-            Fullscreen = panel.AddChild(new CheckBox
+            Fullscreen = leftPanel.AddChild(new CheckBox
                 {
                     Text = "Fullscreen",
-                    TextSize = 2,
                     OnCheckStateChange = OnItemChanged,
                     AutoLayout = AutoLayout.DockTop
                 }) as CheckBox;
 
-            ChunkDrawDistance = panel.AddChild(LabelAndDockWidget("Chunk Draw Distance", new HorizontalFloatSlider
+            ChunkDrawDistance = leftPanel.AddChild(LabelAndDockWidget("Chunk Draw Distance", new HorizontalFloatSlider
             {
                 ScrollArea = 1000f,
                 OnScroll = OnItemChanged
             })).GetChild(1) as HorizontalFloatSlider;
 
-            VertexCullDistance = panel.AddChild(LabelAndDockWidget("Vertex Cull Distance",
+            VertexCullDistance = leftPanel.AddChild(LabelAndDockWidget("Vertex Cull Distance",
                 new HorizontalFloatSlider
             {
                 ScrollArea = 1000f,
                 OnScroll = OnItemChanged
             })).GetChild(1) as HorizontalFloatSlider;
 
-            GenerateDistance = panel.AddChild(LabelAndDockWidget("Generate Distance",
+            GenerateDistance = leftPanel.AddChild(LabelAndDockWidget("Generate Distance",
                 new HorizontalFloatSlider
                 {
                     ScrollArea = 1000f,
                     OnScroll = OnItemChanged
                 })).GetChild(1) as HorizontalFloatSlider;
 
-            Glow = panel.AddChild(new CheckBox
+            Glow = leftPanel.AddChild(new CheckBox
             {
                 Text = "Glow",
-                TextSize = 2,
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            Antialiasing = panel.AddChild(LabelAndDockWidget("Antialiasing", new Gum.Widgets.ComboBox
+            Antialiasing = rightPanel.AddChild(LabelAndDockWidget("Antialiasing", new Gum.Widgets.ComboBox
             {
                 Items = AntialiasingOptions.Select(o => o.Key).ToList(),
-                TextSize = 2,
-                OnSelectedIndexChanged = OnItemChanged
+                OnSelectedIndexChanged = OnItemChanged,
+                Border = "border-thin"
             })).GetChild(1) as Gum.Widgets.ComboBox;
 
-            ReflectTerrain = panel.AddChild(new CheckBox
+            ReflectTerrain = rightPanel.AddChild(new CheckBox
             {
                 Text = "Reflect Terrain",
-                TextSize = 2,
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            ReflectEntities = panel.AddChild(new CheckBox
+            ReflectEntities = rightPanel.AddChild(new CheckBox
             {
                 Text = "Reflect Entities",
-                TextSize = 2,
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            Sunlight = panel.AddChild(new CheckBox
+            Sunlight = rightPanel.AddChild(new CheckBox
             {
                 Text = "Sunlight",
-                TextSize = 2,
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            AmbientOcclusion = panel.AddChild(new CheckBox
+            AmbientOcclusion = rightPanel.AddChild(new CheckBox
             {
                 Text = "Ambient Occlusion",
-                TextSize = 2,
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            Ramps = panel.AddChild(new CheckBox
+            Ramps = leftPanel.AddChild(new CheckBox
             {
                 Text = "Ramps",
-                TextSize = 2,
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            CursorLight = panel.AddChild(new CheckBox
+            CursorLight = rightPanel.AddChild(new CheckBox
             {
                 Text = "Cursor Light",
-                TextSize = 2,
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            EntityLight = panel.AddChild(new CheckBox
+            EntityLight = rightPanel.AddChild(new CheckBox
             {
                 Text = "Entity Light",
-                TextSize = 2,
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            SelfIllumination = panel.AddChild(new CheckBox
+            SelfIllumination = rightPanel.AddChild(new CheckBox
             {
                 Text = "Ore Glow",
-                TextSize = 2,
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            ParticlePhysics = panel.AddChild(new CheckBox
+            ParticlePhysics = leftPanel.AddChild(new CheckBox
             {
                 Text = "Particle Physics",
-                TextSize = 2,
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            Motes = panel.AddChild(new CheckBox
+            Motes = leftPanel.AddChild(new CheckBox
             {
                 Text = "Motes",
-                TextSize = 2,
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            NumMotes = panel.AddChild(LabelAndDockWidget("Number of Motes",
+            NumMotes = leftPanel.AddChild(LabelAndDockWidget("Number of Motes",
                  new HorizontalFloatSlider
                  {
                      ScrollArea = 2048 - 100,
                      OnScroll = OnItemChanged
                  })).GetChild(1) as HorizontalFloatSlider;
 
-            LightMap = panel.AddChild(new CheckBox
+            LightMap = leftPanel.AddChild(new CheckBox
             {
                 Text = "Light Maps",
-                TextSize = 2,
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            DynamicShadows = panel.AddChild(new CheckBox
+            DynamicShadows = leftPanel.AddChild(new CheckBox
             {
                 Text = "Dynamic Shadows",
-                TextSize = 2,
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;

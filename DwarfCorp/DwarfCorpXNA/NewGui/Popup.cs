@@ -19,7 +19,6 @@ namespace DwarfCorp.NewGui
             Rect.Y = (Root.VirtualScreen.Height / 2) - 32;
 
             Border = "border-fancy";
-            TextSize = 2;
 
             AddChild(new Widget
             {
@@ -27,7 +26,6 @@ namespace DwarfCorp.NewGui
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
-                TextSize = 2,
                 OnClick = (sender, args) => this.Close(),
                 AutoLayout = AutoLayout.FloatBottomRight
             });
