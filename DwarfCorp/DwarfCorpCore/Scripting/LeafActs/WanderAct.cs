@@ -89,8 +89,8 @@ namespace DwarfCorp
 
                 if (!Creature.IsOnGround)
                 {
-                    yield return Status.Running;
-                    continue;
+                    yield return Status.Fail;
+                    yield break;
                 }
                 if(TurnTime.Update(DwarfTime.LastTime) || TurnTime.HasTriggered || firstIter)
                 {
@@ -180,7 +180,7 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            Tree = new Sequence(new Wrap(FindRandomPath), new FollowPathAnimationAct(Creature.AI, "RandomPath"));
+            Tree = new Sequence(new Wrap(FindRandomPath), new FollowPathAct(Creature.AI, "RandomPath"));
             base.Initialize();
         }
     }

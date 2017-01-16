@@ -40,8 +40,6 @@ namespace DwarfCorp
     public struct WaterCell
     {
         public byte WaterLevel;
-        public bool HasChanged;
-        public bool IsFalling;
         public LiquidType Type;
     }
 

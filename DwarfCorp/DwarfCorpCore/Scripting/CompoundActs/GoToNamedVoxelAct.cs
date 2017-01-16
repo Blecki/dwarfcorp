@@ -63,7 +63,7 @@ namespace DwarfCorp
             Tree = new Sequence(
                 new ForLoop(new Sequence( 
                                   new PlanAct(Agent, "PathToVoxel", Voxel, PlanAct.PlanType.Adjacent),
-                                  new FollowPathAnimationAct(Agent, "PathToVoxel")
+                                  new FollowPathAct(Agent, "PathToVoxel")
                                  )
                                    , 3, true),
                                   new StopAct(Agent));

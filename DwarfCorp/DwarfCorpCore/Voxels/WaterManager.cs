@@ -227,16 +227,12 @@ namespace DwarfCorp
 
             foreach(VoxelChunk chunk in chunksToUpdate)
             {
-                if(chunk.ShouldRebuildWater || chunk.FirstWaterIter)
-                {
-                    chunk.ResetWaterBuffer();
-                }
 
                 if(!UpdateChunk(chunk) && !chunk.FirstWaterIter)
                 {
+                    chunk.FirstWaterIter = false;
                     continue;
                 }
-
 
                 chunk.ShouldRebuildWater = true;
                 chunk.FirstWaterIter = false;
@@ -404,9 +400,6 @@ namespace DwarfCorp
                         }
                         chunk.Data.Water[idx].WaterLevel = 0;
                         chunk.Data.Water[idx].Type = LiquidType.None;
-                        chunk.Data.Water[idx].IsFalling = true;
-                        chunk.Data.Water[idx].HasChanged = true;
-                        cellBelow.HasChanged = true;
                         voxBelow.Water = cellBelow;
                         CreateTransfer(worldPos, chunk.Data.Water[idx], cellBelow, cellBelow.WaterLevel);
                         updateOccurred = true;
@@ -424,14 +417,12 @@ namespace DwarfCorp
                         {
                             byte transfer = chunk.Data.Water[idx].WaterLevel;
                             cellBelow.WaterLevel += transfer;
-                            cellBelow.HasChanged = true;
                             if(cellBelow.Type == LiquidType.None)
                             {
                                 cellBelow.Type = chunk.Data.Water[idx].Type;
                             }
                             chunk.Data.Water[idx].WaterLevel = 0;
                             chunk.Data.Water[idx].Type = LiquidType.None;
-                            chunk.Data.Water[idx].HasChanged = true;
 
                             CreateTransfer(worldPos - Vector3.UnitY, chunk.Data.Water[idx], cellBelow, transfer);
                             voxBelow.Water = cellBelow;
@@ -443,8 +434,6 @@ namespace DwarfCorp
                         {
                             chunk.Data.Water[idx].WaterLevel -= spaceLeft;
                             cellBelow.WaterLevel += spaceLeft;
-                            chunk.Data.Water[idx].HasChanged = true;
-                            cellBelow.HasChanged = true;
                             if(cellBelow.Type == LiquidType.None)
                             {
                                 cellBelow.Type = chunk.Data.Water[idx].Type;
@@ -501,8 +490,6 @@ namespace DwarfCorp
                         neighborWater.Type = chunk.Data.Water[idx].Type;
                     }
 
-                    chunk.Data.Water[idx].HasChanged = true;
-                    neighborWater.HasChanged = true;
                     neighbor.Water = neighborWater;
 
                     if (chunk.Data.Water[idx].WaterLevel >= 1)

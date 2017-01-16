@@ -92,7 +92,15 @@ namespace DwarfCorp
             GumSkin = new Gum.RenderData(GraphicsDevice,  Content,
                     "newgui/xna_draw", "Content/newgui/sheets.txt");
 
-
+            if (SoundManager.Content == null)
+            {
+                SoundManager.Content = Content;
+                SoundManager.LoadDefaultSounds();
+#if XNA_BUILD
+                SoundManager.SetActiveSongs(ContentPaths.Music.dwarfcorp, ContentPaths.Music.dwarfcorp_2,
+                    ContentPaths.Music.dwarfcorp_3, ContentPaths.Music.dwarfcorp_4, ContentPaths.Music.dwarfcorp_5);
+#endif
+            }
             PlayState playState = new PlayState(this, StateManager);
             BiomeLibrary.InitializeStatics();
             StateManager.States["IntroState"] = new IntroState(this, StateManager);
