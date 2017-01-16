@@ -22,153 +22,6 @@ namespace DwarfCorp
             public bool Divider { get; set; }
         }
 
-        /*
-        public static string[] SplitCsvToLines(string csv, char delimeter = '\n')
-        {
-            csv = csv.Replace("\r\n", "\n").Replace("\n\r", "\n");
-            List<string> lines = new List<string>();
-            StringBuilder sb = new StringBuilder();
-            bool isInsideACell = false;
-
-            foreach (char ch in csv)
-            {
-                if (ch == delimeter)
-                {
-                    if (isInsideACell == false)
-                    {
-                        // nasli sme koniec riadka, vsetko co je teraz v StringBuilder-y je riadok
-                        lines.Add(sb.ToString());
-                        sb.Clear();
-                    }
-                    else
-                    {
-                        sb.Append(ch);
-                    }
-                }
-                else
-                {
-                    sb.Append(ch);
-                    if (ch == '"')
-                    {
-                        isInsideACell = !isInsideACell;
-                    }
-                }
-            }
-
-            if (sb.Length > 0)
-            {
-                lines.Add(sb.ToString());
-            }
-
-            return lines.ToArray();
-        }
-
-        public static string[] SplitCsvLineToCells(string line, char delimeter = ',')
-        {
-            List<string> list = new List<string>();
-            do
-            {
-                if (line.StartsWith("\""))
-                {
-                    line = line.Substring(1);
-                    int idx = line.IndexOf("\"");
-                    while (line.IndexOf("\"", idx) == line.IndexOf("\"\"", idx))
-                    {
-                        idx = line.IndexOf("\"\"", idx) + 2;
-                    }
-                    idx = line.IndexOf("\"", idx);
-                    list.Add(line.Substring(0, idx).Replace("\"\"", "\""));
-                    if (idx + 2 < line.Length)
-                    {
-                        line = line.Substring(idx + 2);
-                    }
-                    else
-                    {
-                        line = String.Empty;
-                    }
-                }
-                else
-                {
-                    list.Add(line.Substring(0, Math.Max(line.IndexOf(delimeter), 0)).Replace("\"\"", "\""));
-                    line = line.Substring(line.IndexOf(delimeter) + 1);
-                }
-            }
-            while (line.IndexOf(delimeter) != -1);
-            if (!String.IsNullOrEmpty(line))
-            {
-                if (line.StartsWith("\"") && line.EndsWith("\""))
-                {
-                    line = line.Substring(1, line.Length - 2);
-                }
-                list.Add(line.Replace("\"\"", "\""));
-            }
-
-            return list.ToArray();
-        }
-
-        public static List<CreditEntry> ParseCSVFile(string file, SpriteFont font)
-        {
-            string data = File.ReadAllText(file);
-            string[] lines = SplitCsvToLines(data);
-            List<KeyValuePair<int, string>> backers = new List<KeyValuePair<int, string>>();
-            for (int i = 1; i < lines.Length; i++)
-            {
-                string line = lines[i];
-                string[] cells = SplitCsvLineToCells(line);
-                int money = int.Parse(cells[4]);
-                string name = cells[5];
-                backers.Add(new KeyValuePair<int, string>(money, name));
-            }
-            backers.Sort((a, b) => a.Key.CompareTo(b.Key));
-            backers.Reverse();
-            List<CreditEntry> toReturn = new List<CreditEntry>();
-
-            foreach (var backer in backers)
-            {
-                string role = "Backer";
-                Color color = Color.White;
-                bool flash = false;
-                if (backer.Key >= 1000)
-                {
-                    role = "Mega-Producer";
-                    color = Color.Yellow;
-                    flash = true;
-                }
-                else if (backer.Key >= 500)
-                {
-                    role = "Super-Producer";
-                    color = Color.Red;
-                    flash = true;
-                }
-                else if (backer.Key >= 100)
-                {
-                    role = "Producer";
-                }
-                else if (backer.Key >= 20)
-                {
-                    role = "Mega-backer";
-                }
-                else if (backer.Key >= 10)
-                {
-                    role = "Super-backer";
-                }
-                else
-                {
-                    role = "Backer";
-                }
-
-                toReturn.Add(new CreditEntry()
-                {
-                    Name = Drawer2D.Internationalize(backer.Value, font),
-                    Role = Drawer2D.Internationalize(role, font),
-                    Color = color,
-                    RandomFlash = flash
-                });
-            }
-            return toReturn;
-        }
-        */
-
         public float ScrollSpeed { get; set; }
         public float CurrentScroll { get; set; }
         public float EntryHeight { get; set; }
@@ -189,6 +42,9 @@ namespace DwarfCorp
 
         public override void OnEnter()
         {
+            // HACK - Remove when input transition is complete.
+            DwarfGame.GumInput.GetInputQueue();
+
             CurrentScroll = 0;
             CreditsFont = GameState.Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
             Entries = ContentPaths.LoadFromJson<List<CreditEntry>>("credits.json");
@@ -199,18 +55,21 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime)
         {
-
-            if (!IsDone)
+            // Use new input system so event is not captured by both GUIs.
+            foreach (var @event in DwarfGame.GumInput.GetInputQueue())
             {
-                CurrentScroll += ScrollSpeed*(float) gameTime.ElapsedGameTime.TotalSeconds;
-                KeyboardState state = Keyboard.GetState();
-                MouseState mouseState = Mouse.GetState();
-                if (state.GetPressedKeys().Length > 0 || mouseState.LeftButton == ButtonState.Pressed)
+                if (@event.Message == Gum.InputEvents.KeyPress || @event.Message == Gum.InputEvents.MouseClick)
                 {
                     IsDone = true;
                     StateManager.PopState();
                 }
             }
+
+            if (!IsDone)
+            {
+                CurrentScroll += ScrollSpeed*(float) gameTime.ElapsedGameTime.TotalSeconds;
+             }
+
             base.Update(gameTime);
         }
 

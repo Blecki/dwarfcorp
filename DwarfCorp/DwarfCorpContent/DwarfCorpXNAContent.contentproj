@@ -1200,6 +1200,13 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="newgui\font1-w.bmp">
+      <Name>font1-w</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
+      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
+    </Compile>
     <None Include="Entities\Moleman\moleman_animation.json">
       <Name>moleman_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
