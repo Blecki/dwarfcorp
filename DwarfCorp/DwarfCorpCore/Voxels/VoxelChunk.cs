@@ -1038,7 +1038,7 @@ namespace DwarfCorp
 
             foreach(Voxel v in neighbors)
             {
-                if(!chunks.ChunkData.ChunkMap.ContainsKey(v.Chunk.ID))
+                if(v == null || !chunks.ChunkData.ChunkMap.ContainsKey(v.Chunk.ID))
                 {
                     continue;
                 }
@@ -1595,8 +1595,15 @@ namespace DwarfCorp
 
                 if(isInterior || IsCellValid(nx, ny, nz))
                 {
-                    toReturn[i].Chunk = this;
-                    toReturn[i].GridPosition = new Vector3(nx, ny, nz);
+                    if (toReturn[i] == null)
+                    {
+                        toReturn[i] = MakeVoxel(nx, ny, nz);
+                    }
+                    else
+                    {
+                        toReturn[i].Chunk = this;
+                        toReturn[i].GridPosition = new Vector3(nx, ny, nz);   
+                    }
                 }
                 else
                 {
@@ -1637,12 +1644,20 @@ namespace DwarfCorp
 
                     if(!Manager.ChunkData.ChunkMap.ContainsKey(chunkID))
                     {
+                        toReturn[i] = null;
                         continue;
                     }
 
                     VoxelChunk chunk = Manager.ChunkData.ChunkMap[chunkID];
-                    toReturn[i].Chunk = chunk;
-                    toReturn[i].GridPosition = new Vector3(nx, ny, nz);
+                    if (toReturn[i] == null)
+                    {
+                        toReturn[i] = chunk.MakeVoxel(nx, ny, nz);
+                    }
+                    else
+                    {
+                        toReturn[i].Chunk = chunk;
+                        toReturn[i].GridPosition = new Vector3(nx, ny, nz);
+                    }
                 }
             }
         }
