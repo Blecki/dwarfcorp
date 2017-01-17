@@ -61,6 +61,7 @@ namespace DwarfCorp
 
             // Toggles a variable in GamePerformance that can be used with if-blocks to quickly change between old and new code for comparison purposes.
             // Likely should be removed for a true release as there should be no toggles left in.
+            public Keys DebugToggle2 = Keys.F8;
             public Keys DebugToggle1 = Keys.F9;
             // Toggles FPS and other stat showing via GamePerformance.
             public Keys TogglePerformanceOverlay = Keys.F10;

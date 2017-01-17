@@ -18,6 +18,8 @@ namespace DwarfCorp
         /// </summary>
         public static bool DebugToggle1;
 
+        public static bool DebugToggle2;
+
         /// <summary>
         /// The amount of pixels added between lines of text.
         /// </summary>
@@ -51,12 +53,17 @@ namespace DwarfCorp
         /// <summary>
         /// Stores if the key to toggle the debug flag is pressed to allow it to change only once per keypress.
         /// </summary>
-        private Boolean debugToggleKeyPressed;
+        private Boolean overlayKeyPressed;
+
+        /// <summary>
+        /// Stores if the key to toggle the debug flag is pressed to allow it to change only once per keypress.
+        /// </summary>
+        private Boolean debug2ToggleKeyPressed;
 
         /// <summary>
         /// Stores if the key to toggle the overlay flag is pressed to allow it to change only once per keypress.
         /// </summary>
-        private Boolean overlayKeyPressed;
+        private Boolean debug1ToggleKeyPressed;
 
         /// <summary>
         /// Game reference used to access GraphicsDevice and ContentManager.
@@ -312,9 +319,7 @@ namespace DwarfCorp
             {
                 float average = 0;
                 if (history.Count > 0) average = (float)total / history.Count;
-                float newAvg = average * (1 / Stopwatch.Frequency);
-                newAvg *= 1000000;
-                //average = average * (1 / Stopwatch.Frequency) * 1000000;
+                average = average * (1.0f / Stopwatch.Frequency) * 1000000;
                 _parent.DrawString("Update time: " + average.ToString() + "ms", Color.White);
                 base.Render();
             }
@@ -327,28 +332,40 @@ namespace DwarfCorp
         public class RenderTimeTracker : Tracker
         {
             long time;
+            float msFrequency;
+            float usFrequency;
             public RenderTimeTracker(GamePerformance parent)
                 : base(parent)
             {
-
+                msFrequency = (1.0f / Stopwatch.Frequency) * 1000;
+                usFrequency = (1.0f / Stopwatch.Frequency) * 1000000;
             }
 
             public override void PreRender()
             {
-                time = _parent.Elapsed;
+                if (DebugToggle2)
+                    time = Stopwatch.GetTimestamp();
+                else
+                    time = _parent.Elapsed;
                 base.PreRender();
             }
 
             public override void PostRender()
             {
-                time = _parent.Elapsed - time;
+                if (DebugToggle2)
+                    time = Stopwatch.GetTimestamp() - time;
+                else
+                    time = _parent.Elapsed - time;
                 _parent.LastRenderTime = time;
                 base.PostRender();
             }
 
             public override void Render()
             {
-                _parent.DrawString("Render time: " + time.ToString() + "ms", Color.White);
+                float ftime = time;
+                if (DebugToggle2)
+                    ftime = ftime * usFrequency;
+                _parent.DrawString("Render time: " + ftime.ToString() + "ms", Color.White);
                 base.Render();
             }
         }
@@ -608,20 +625,6 @@ namespace DwarfCorp
 
             if (keyboard.IsKeyDown(ControlSettings.Mappings.TogglePerformanceOverlay))
             {
-                if (!debugToggleKeyPressed) debugToggleKeyPressed = true;
-            }
-            else
-            {
-                if (debugToggleKeyPressed)
-                {
-                    SoundManager.PlaySound(ContentPaths.Audio.pick, .25f);
-                    GameSettings.Default.DrawDebugData = !GameSettings.Default.DrawDebugData;
-                    debugToggleKeyPressed = false;
-                }
-            }
-
-            if (keyboard.IsKeyDown(ControlSettings.Mappings.DebugToggle1))
-            {
                 if (!overlayKeyPressed) overlayKeyPressed = true;
             }
             else
@@ -629,8 +632,36 @@ namespace DwarfCorp
                 if (overlayKeyPressed)
                 {
                     SoundManager.PlaySound(ContentPaths.Audio.pick, .25f);
-                    DebugToggle1 = !DebugToggle1;
+                    GameSettings.Default.DrawDebugData = !GameSettings.Default.DrawDebugData;
                     overlayKeyPressed = false;
+                }
+            }
+
+            if (keyboard.IsKeyDown(ControlSettings.Mappings.DebugToggle1))
+            {
+                if (!debug1ToggleKeyPressed) debug1ToggleKeyPressed = true;
+            }
+            else
+            {
+                if (debug1ToggleKeyPressed)
+                {
+                    SoundManager.PlaySound(ContentPaths.Audio.pick, .25f);
+                    DebugToggle1 = !DebugToggle1;
+                    debug1ToggleKeyPressed = false;
+                }
+            }
+
+            if (keyboard.IsKeyDown(ControlSettings.Mappings.DebugToggle2))
+            {
+                if (!debug2ToggleKeyPressed) debug2ToggleKeyPressed = true;
+            }
+            else
+            {
+                if (debug2ToggleKeyPressed)
+                {
+                    SoundManager.PlaySound(ContentPaths.Audio.pick, .25f);
+                    DebugToggle2 = !DebugToggle2;
+                    debug2ToggleKeyPressed = false;
                 }
             }
 
