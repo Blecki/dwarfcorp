@@ -71,6 +71,15 @@ namespace DwarfCorp.GameStates
            
         }
 
+        public static void PushEconomyState()
+        {
+            if (Game.StateManager.NextState == "")
+            {
+                WorldManager.GUI.RootComponent.IsVisible = false;
+                Game.StateManager.PushState("EconomyState");
+            }
+        }
+
         void Initialize()
         {
             Tabs = new Dictionary<string, GUIComponent>();

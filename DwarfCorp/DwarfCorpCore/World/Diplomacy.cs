@@ -234,9 +234,7 @@ namespace DwarfCorp
 
         public void SendTradeEnvoy(Faction natives)
         {
-            PlayState playState = (PlayState) GameState.Game.StateManager.GetState<PlayState>("PlayState");
-
-            if (!playState.IsActiveState) return;
+            if (!WorldManager.world.gameState.IsActiveState) return;
             Faction.TradeEnvoy envoy = null;
             if (natives.Race.IsNative)
             {
@@ -456,7 +454,7 @@ namespace DwarfCorp
                         {
                             GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game,
                                 GameState.Game.StateManager,
-                                GameState.Game.StateManager.GetState<PlayState>("PlayState").World, envoy)
+                                WorldManager.world, envoy)
                             {
                                 Name = "DiplomacyState_" + faction.Name,
                                 Envoy = envoy

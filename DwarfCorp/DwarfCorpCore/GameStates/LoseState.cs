@@ -48,10 +48,10 @@ namespace DwarfCorp.GameStates
         public GUIComponent MainWindow { get; set; }
         public GridLayout Layout { get; set; }
         public InputManager Input { get; set; }
-        public WorldManager PlayState { get; set; }
+        public PlayState PlayState { get; set; }
         public int EdgePadding = 55;
 
-        public LoseState(DwarfGame game, GameStateManager stateManager, WorldManager play) :
+        public LoseState(DwarfGame game, GameStateManager stateManager, PlayState play) :
             base(game, "EconomyState", stateManager)
         {
             Input = new InputManager();

@@ -112,8 +112,9 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            world = PlayState.Game.StateManager.GetState<PlayState>("PlayState").World;
+            world = WorldManager.world;
         }
+
         public void UpdateStocks(DateTime time)
         {
             float marketBias = (float)Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds * 0.001f) * 0.25f;

@@ -158,12 +158,12 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            PlayState.GUI.IsMouseVisible = true;
+            WorldManager.GUI.IsMouseVisible = true;
             Player.VoxSelector.Enabled = false;
             Player.BodySelector.Enabled = true;
             Player.BodySelector.AllowRightClickSelection = false;
 
-            PlayState.GUI.MouseMode = GUISkin.MousePointer.Pointer;
+            WorldManager.GUI.MouseMode = GUISkin.MousePointer.Pointer;
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
@@ -173,7 +173,7 @@ namespace DwarfCorp
             Viewport port = GameState.Game.GraphicsDevice.Viewport;
             foreach (CreatureAI creature in Player.SelectedMinions)
             {
-                Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, creature.Stats.FullName, PlayState.GUI.SmallFont, Color.White, Drawer2D.Alignment.Right, new Rectangle(port.Width - 300, 68 + i * 24, 300, 24));
+                Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, creature.Stats.FullName, WorldManager.GUI.SmallFont, Color.White, Drawer2D.Alignment.Right, new Rectangle(port.Width - 300, 68 + i * 24, 300, 24));
                 i++;
             }
 

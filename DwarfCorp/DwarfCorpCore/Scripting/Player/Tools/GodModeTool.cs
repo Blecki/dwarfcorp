@@ -308,15 +308,15 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                PlayState.GUI.IsMouseVisible = false;
+                WorldManager.GUI.IsMouseVisible = false;
                 return;
             }
 
             Player.VoxSelector.Enabled = true;
             Player.BodySelector.Enabled = false;
-            PlayState.GUI.IsMouseVisible = true;
+            WorldManager.GUI.IsMouseVisible = true;
 
-            PlayState.GUI.MouseMode = GUISkin.MousePointer.Pointer;
+            WorldManager.GUI.MouseMode = GUISkin.MousePointer.Pointer;
 
         }
 

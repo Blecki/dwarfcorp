@@ -138,9 +138,6 @@ namespace DwarfCorp
         // If the game was loaded from a file, this contains the name of that file.
         public string ExistingFile = "";
 
-        // Draws and manages the user interface 
-        public static DwarfGUI GUI = null;
-
         // Just a helpful 1x1 white pixel texture
         private Texture2D pixel;
 
@@ -167,9 +164,6 @@ namespace DwarfCorp
         // Responsible for handling instances of particular primitives (or models)
         // and drawing them to the screen
         public static InstanceManager InstanceManager;
-
-        // Provides event-based keyboard and mouse input.
-        public InputManager Input = new InputManager();
 
         // Handles loading of game assets
         public ContentManager Content;
@@ -211,33 +205,6 @@ namespace DwarfCorp
         // Contains the storm forecast
         public static Weather Weather = new Weather();
 
-        // Text displayed on the screen for the player's company
-        public Label CompanyNameLabel { get; set; }
-
-        // Text displayed on the screen for the player's logo
-        public ImagePanel CompanyLogoPanel { get; set; }
-
-        // Text displayed on the screen for the current amount of money the player has
-        public Label MoneyLabel { get; set; }
-
-        // Text displayed on the screen for the current amount of money the player has
-        public Label StockLabel { get; set; }
-
-        // Text displayed on the screen for the current game time
-        public Label TimeLabel { get; set; }
-
-        // Text displayed on the screen for the current slice
-        public Label CurrentLevelLabel { get; set; }
-
-        // When pressed, makes the current slice increase.
-        public Button CurrentLevelUpButton { get; set; }
-
-        //When pressed, makes the current slice decrease
-        public Button CurrentLevelDownButton { get; set; }
-
-        // When dragged, the current slice changes
-        public Slider LevelSlider { get; set; }
-
         // Maintains a dictionary of particle emitters
         public static ParticleManager ParticleManager
         {
@@ -255,22 +222,13 @@ namespace DwarfCorp
         // Hack to smooth water reflections TODO: Put into water manager
         private float lastWaterHeight = 8.0f;
 
-        // Hack to bypass input manager TODO: replace with input manager
-        private bool pausePressed = false;
-        private bool bPressed = false;
-
         private readonly List<float> lastFps = new List<float>();
         private float fps = 0.0f;
         private GameFile gameFile;
-        public Panel PausePanel;
 
         public static Point3 WorldSize { get; set; }
 
-        public Minimap MiniMap { get; set; }
-
         public static AnnouncementManager AnnouncementManager = new AnnouncementManager();
-
-        public AnnouncementViewer AnnouncementViewer { get; set; }
 
         public static MonsterSpawner MonsterSpawner { get; set; }
 
@@ -307,9 +265,21 @@ namespace DwarfCorp
 
         public bool ShowingWorld { get; set; }
 
-        protected WorldManagerCallback callback;
-
         public GameState gameState;
+
+        public static DwarfGUI GUI;
+
+        // Since world, like many of the other classes, is pretty much a singleton given how many static variables it has
+        // this provides singleton access
+        public static WorldManager world;
+
+        // event that is called when the world is done loading
+        public delegate void OnLoaded();
+        public event OnLoaded OnLoadedEvent;
+
+        // event that is called when the player loses in the world
+        public delegate void OnLose();
+        public event OnLose OnLoseEvent;
 
         #endregion
 
@@ -317,20 +287,20 @@ namespace DwarfCorp
         /// Creates a new play state
         /// </summary>
         /// <param name="game">The program currently running</param>
-        /// <param name="callback">Interface so that the World can tell the creator about events occuring in the world</param>
-        public WorldManager(DwarfGame Game, WorldManagerCallback callback=null)
+        public WorldManager(DwarfGame Game)
         {
+            world = this;
             this.Game = Game;
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;
-            this.callback = callback;
             Seed = Random.Next();
             WorldOrigin = new Vector2(WorldWidth / 2, WorldHeight / 2);
             Time = new WorldTime();
         }
 
-        public void Reset()
+        public void Setup(DwarfGUI outerGUI)
         {
+            GUI = outerGUI;
             Screenshots = new List<Screenshot>();
 
             // In this code block we load some stuff that can't be done in a thread
@@ -349,14 +319,14 @@ namespace DwarfCorp
             Game.Graphics.PreparingDeviceSettings += GraphicsPreparingDeviceSettings;
 
             // Now we load everything else in a thread so we can see the progress on the screensaver
-            LoadingThread = new Thread(Load);
+            LoadingThread = new Thread(LoadThreaded);
             LoadingThread.Start();
         }
 
         /// <summary>
         /// Executes the entire game loading sequence, and draws loading messages.
         /// </summary>
-        public void Load()
+        private void LoadThreaded()
         {
             drawer2D = new Drawer2D(Content, GraphicsDevice);
             LoadingMessage = "Waiting for Graphics Device ...";
@@ -383,14 +353,14 @@ namespace DwarfCorp
                 LoadingMessage = "Creating Shadows...";
                 CreateShadows();
 
-                LoadingMessage = "Creating Liquids..";
+                LoadingMessage = "Creating Liquids ...";
                 CreateLiquids();
 
-                LoadingMessage = "Generating Initial Terrain Chunks...";
+                LoadingMessage = "Generating Initial Terrain Chunks ...";
                 GenerateInitialChunks();
 
-                LoadingMessage = "Creating GUI ...";
-                CreateGUI(string.IsNullOrEmpty(ExistingFile));
+                LoadingMessage = "Creating GameMaster ...";
+                CreateGameMaster();
 
                 LoadingMessage = "Embarking ...";
                 CreateInitialEmbarkment();
@@ -401,10 +371,7 @@ namespace DwarfCorp
                 {
                     GenerateInitialObjects();
                 }
-                if (callback != null)
-                {
-                    callback.OnLoaded();
-                }
+                OnLoadedEvent();
 
                 Thread.Sleep(1000);
                 ShowingWorld = true;
@@ -519,6 +486,8 @@ namespace DwarfCorp
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);
             ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
+            ComponentManager.Diplomacy = new Diplomacy(ComponentManager.Factions);
+            ComponentManager.Diplomacy.Initialize(Time.CurrentDate);
 
             JobLibrary.Initialize();
             MonsterSpawner = new MonsterSpawner();
@@ -757,242 +726,24 @@ namespace DwarfCorp
                 Content.Load<Effect>(ContentPaths.Shaders.SkySphere));
         }
 
-        /// <summary>
-        /// Creates the user interface + player controls.
-        /// </summary>
-        /// <param name="createMaster">True if the Game Master needs to be created as well.</param>
-        public void CreateGUI(bool createMaster)
+        public void CreateGameMaster()
         {
-            LoadingMessage = "Creating GUI";
-            IndicatorManager.SetupStandards();
-
-            GUI = new DwarfGUI(Game, Content.Load<SpriteFont>(ContentPaths.Fonts.Default),
-                Content.Load<SpriteFont>(ContentPaths.Fonts.Title),
-                Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
-
-            GUI.ToolTipManager.InfoLocation = new Point(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height);
-
-            if (!createMaster)
+            // if we are loading reinitialize a bunch of stuff to make sure the game master is created correctly
+            if (!string.IsNullOrEmpty(ExistingFile))
             {
-                return;
+                InstanceManager.Clear();
+                gameFile.LoadComponents(ExistingFile);
+                ComponentManager = gameFile.Data.Components;
+                GameComponent.ResetMaxGlobalId(ComponentManager.GetMaxComponentID() + 1);
+                Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
+                Time = gameFile.Data.Metadata.Time;
+                WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
+                WorldScale = gameFile.Data.Metadata.WorldScale;
+                ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
+                ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
             }
-
             Master = new GameMaster(ComponentManager.Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
                 Camera, GraphicsDevice, GUI);
-            ComponentManager.Diplomacy = new Diplomacy(ComponentManager.Factions);
-            ComponentManager.Diplomacy.Initialize(Time.CurrentDate);
-            CreateGUIComponents();
-            GUI.MouseMode = GUISkin.MousePointer.Wait;
-        }
-
-
-        /// <summary>
-        /// Creates all of the sub-components of the GUI in for the PlayState (buttons, etc.)
-        /// </summary>
-        public void CreateGUIComponents()
-        {
-            GUI.RootComponent.ClearChildren();
-            AlignLayout layout = new AlignLayout(GUI, GUI.RootComponent)
-            {
-                LocalBounds = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height),
-                WidthSizeMode = GUIComponent.SizeMode.Fit,
-                HeightSizeMode = GUIComponent.SizeMode.Fit,
-                Mode = AlignLayout.PositionMode.Percent
-            };
-
-            GUI.RootComponent.AddChild(Master.Debugger.MainPanel);
-            layout.AddChild(Master.ToolBar);
-            Master.ToolBar.Parent = layout;
-            Master.ToolBar.LocalBounds = new Rectangle(0, 0, 256, 100);
-
-            layout.Add(Master.ToolBar, AlignLayout.Alignment.Right, AlignLayout.Alignment.Bottom, Vector2.Zero);
-            //layout.SetComponentPosition(Master.ToolBar, 7, 10, 4, 1);
-
-            GUIComponent companyInfoComponent = new GUIComponent(GUI, layout)
-            {
-                LocalBounds = new Rectangle(0, 0, 350, 200),
-                TriggerMouseOver = false
-            };
-
-            layout.Add(companyInfoComponent, AlignLayout.Alignment.Left, AlignLayout.Alignment.Top, Vector2.Zero);
-            //layout.SetComponentPosition(companyInfoComponent, 0, 0, 4, 2);
-
-            GUIComponent resourceInfoComponent = new ResourceInfoComponent(GUI, layout, Master.Faction)
-            {
-                LocalBounds = new Rectangle(0, 0, 400, 256),
-                TriggerMouseOver = false
-            };
-            layout.Add(resourceInfoComponent, AlignLayout.Alignment.None, AlignLayout.Alignment.Top,
-                new Vector2(0.55f, 0.0f));
-            //layout.SetComponentPosition(resourceInfoComponent, 7, 0, 2, 2);
-
-            GridLayout infoLayout = new GridLayout(GUI, companyInfoComponent, 3, 4);
-
-            CompanyLogoPanel = new ImagePanel(GUI, infoLayout, PlayerCompany.Logo)
-            {
-                ConstrainSize = true,
-                KeepAspectRatio = true
-            };
-            infoLayout.SetComponentPosition(CompanyLogoPanel, 0, 0, 1, 1);
-
-            CompanyNameLabel = new Label(GUI, infoLayout, PlayerCompany.Name, GUI.DefaultFont)
-            {
-                TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 255),
-                ToolTip = "Our company Name.",
-                Alignment = Drawer2D.Alignment.Top,
-            };
-            infoLayout.SetComponentPosition(CompanyNameLabel, 1, 0, 1, 1);
-
-            MoneyLabel = new DynamicLabel(GUI, infoLayout, "Money:\n", "", GUI.DefaultFont, "C2",
-                () => Master.Faction.Economy.CurrentMoney)
-            {
-                TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 255),
-                ToolTip = "Amount of money in our treasury.",
-                Alignment = Drawer2D.Alignment.Top,
-                TriggerMouseOver = false
-            };
-            infoLayout.SetComponentPosition(MoneyLabel, 3, 0, 1, 1);
-
-
-            StockLabel = new DynamicLabel(GUI, infoLayout, "Stock:\n", "", GUI.DefaultFont, "C2",
-                () => Master.Faction.Economy.Company.StockPrice)
-            {
-                TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 255),
-                ToolTip = "The price of our company stock.",
-                Alignment = Drawer2D.Alignment.Top,
-            };
-            infoLayout.SetComponentPosition(StockLabel, 5, 0, 1, 1);
-
-
-            TimeLabel = new Label(GUI, layout,
-                Time.CurrentDate.ToShortDateString() + " " + Time.CurrentDate.ToShortTimeString(), GUI.SmallFont)
-            {
-                TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 255),
-                Alignment = Drawer2D.Alignment.Top,
-                ToolTip = "Current time and date."
-            };
-            layout.Add(TimeLabel, AlignLayout.Alignment.Center, AlignLayout.Alignment.Top, Vector2.Zero);
-            //layout.SetComponentPosition(TimeLabel, 6, 0, 1, 1);
-
-            CurrentLevelLabel = new Label(GUI, infoLayout, "Slice: " + ChunkManager.ChunkData.MaxViewingLevel,
-                GUI.DefaultFont)
-            {
-                TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 255),
-                ToolTip = "The maximum height of visible terrain"
-            };
-            infoLayout.SetComponentPosition(CurrentLevelLabel, 0, 1, 1, 1);
-
-            CurrentLevelUpButton = new Button(GUI, CurrentLevelLabel, "", GUI.DefaultFont, Button.ButtonMode.ImageButton,
-                GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowUp))
-            {
-                ToolTip = "Go up one level of visible terrain",
-                KeepAspectRatio = true,
-                DontMakeBigger = true,
-                DontMakeSmaller = true,
-                LocalBounds = new Rectangle(100, 16, 32, 32)
-            };
-
-            CurrentLevelUpButton.OnClicked += CurrentLevelUpButton_OnClicked;
-
-            CurrentLevelDownButton = new Button(GUI, CurrentLevelLabel, "", GUI.DefaultFont,
-                Button.ButtonMode.ImageButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowDown))
-            {
-                ToolTip = "Go down one level of visible terrain",
-                KeepAspectRatio = true,
-                DontMakeBigger = true,
-                DontMakeSmaller = true,
-                LocalBounds = new Rectangle(140, 16, 32, 32)
-            };
-            CurrentLevelDownButton.OnClicked += CurrentLevelDownButton_OnClicked;
-
-            /*
-            LevelSlider = new Slider(GUI, layout, "", ChunkManager.ChunkData.MaxViewingLevel, 0, ChunkManager.ChunkData.ChunkSizeY, Slider.SliderMode.Integer)
-            {
-                Orient = Slider.Orientation.Vertical,
-                ToolTip = "Controls the maximum height of visible terrain",
-                DrawLabel = false
-            };
-
-            layout.SetComponentPosition(LevelSlider, 0, 1, 1, 6);
-            LevelSlider.OnClicked += LevelSlider_OnClicked;
-            LevelSlider.InvertValue = true;
-            */
-
-            MiniMap = new Minimap(GUI, layout, 192, 192, this,
-                TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap),
-                TextureManager.GetTexture(ContentPaths.GUI.gui_minimap))
-            {
-                IsVisible = true,
-                LocalBounds = new Rectangle(0, 0, 192, 192)
-            };
-            layout.Add(MiniMap, AlignLayout.Alignment.Left, AlignLayout.Alignment.Bottom, Vector2.Zero);
-            //layout.SetComponentPosition(MiniMap, 0, 8, 4, 4);
-            //Rectangle rect = layout.GetRect(new Rectangle(0, 8, 4, 4));
-            //layout.SetComponentOffset(MiniMap,  new Point(0, rect.Height - 250));
-
-
-            Tray topRightTray = new Tray(GUI, layout)
-            {
-                LocalBounds = new Rectangle(0, 0, 132, 68),
-                TrayPosition = Tray.Position.TopRight
-            };
-
-            Button moneyButton = new Button(GUI, topRightTray, "Economy", GUI.SmallFont, Button.ButtonMode.ImageButton,
-                new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 2, 1))
-            {
-                KeepAspectRatio = true,
-                ToolTip = "Opens the Economy Menu",
-                DontMakeBigger = true,
-                DrawFrame = true,
-                TextColor = Color.White,
-                LocalBounds = new Rectangle(8, 6, 32, 32)
-            };
-
-
-            moneyButton.OnClicked += moneyButton_OnClicked;
-
-
-            Button settingsButton = new Button(GUI, topRightTray, "Settings", GUI.SmallFont,
-                Button.ButtonMode.ImageButton,
-                new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 4, 1))
-            {
-                KeepAspectRatio = true,
-                ToolTip = "Opens the Settings Menu",
-                DontMakeBigger = true,
-                DrawFrame = true,
-                TextColor = Color.White,
-                LocalBounds = new Rectangle(64 + 8, 6, 32, 32)
-            };
-
-            settingsButton.OnClicked += OpenPauseMenu;
-
-            layout.Add(topRightTray, AlignLayout.Alignment.Right, AlignLayout.Alignment.Top, Vector2.Zero);
-
-
-            InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
-            InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
-
-            AnnouncementViewer = new AnnouncementViewer(GUI, layout, AnnouncementManager)
-            {
-                LocalBounds = new Rectangle(0, 0, 350, 80)
-            };
-            layout.Add(AnnouncementViewer, AlignLayout.Alignment.Center, AlignLayout.Alignment.Bottom, Vector2.Zero);
-            //layout.SetComponentPosition(AnnouncementViewer, 3, 10, 3, 1);
-            layout.UpdateSizes();
-        }
-
-        public void moneyButton_OnClicked()
-        {
-            if (gameState.StateManager.NextState == "")
-            {
-                GUI.RootComponent.IsVisible = false;
-                gameState.StateManager.PushState("EconomyState");
-            }
         }
 
         /// <summary>
@@ -1018,26 +769,6 @@ namespace DwarfCorp
                     new Vector3(Camera.Position.X, ChunkHeight - 2, Camera.Position.Z), ComponentManager, Content,
                     GraphicsDevice, new ShipmentOrder(0, null), Master.Faction);
             }
-
-            // Otherwise, we unfortunately need to take care of preliminaries to make sure
-            // The game master was created correctly.
-            else
-            {
-                InstanceManager.Clear();
-                gameFile.LoadComponents(ExistingFile);
-                ComponentManager = gameFile.Data.Components;
-                GameComponent.ResetMaxGlobalId(ComponentManager.GetMaxComponentID() + 1);
-                Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
-                Time = gameFile.Data.Metadata.Time;
-                WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
-                WorldScale = gameFile.Data.Metadata.WorldScale;
-                ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
-                ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
-                Master = new GameMaster(ComponentManager.Factions.Factions["Player"], Game, ComponentManager,
-                    ChunkManager, Camera, GraphicsDevice, GUI);
-
-                CreateGUIComponents();
-            }
         }
 
         public void WaitForGraphicsDevice()
@@ -1058,34 +789,6 @@ namespace DwarfCorp
                     ComponentManager.Factions);
             }
         }
-
-        /// <summary>
-        /// Called when the slice slider was moved.
-        /// </summary>
-        private void LevelSlider_OnClicked()
-        {
-            ChunkManager.ChunkData.SetMaxViewingLevel((int)LevelSlider.SliderValue, ChunkManager.SliceMode.Y);
-        }
-
-        /// <summary>
-        /// Called when the "Slice -" button is pressed
-        /// </summary>
-        private void CurrentLevelDownButton_OnClicked()
-        {
-            ChunkManager.ChunkData.SetMaxViewingLevel(ChunkManager.ChunkData.MaxViewingLevel - 1,
-                ChunkManager.SliceMode.Y);
-        }
-
-
-        /// <summary>
-        /// Called when the "Slice +" button is pressed
-        /// </summary>
-        private void CurrentLevelUpButton_OnClicked()
-        {
-            ChunkManager.ChunkData.SetMaxViewingLevel(ChunkManager.ChunkData.MaxViewingLevel + 1,
-                ChunkManager.SliceMode.Y);
-        }
-
 
         /// <summary>
         /// Creates a flat, wooden balloon port for the balloon to land on, and Dwarves to sit on.
@@ -1224,7 +927,7 @@ namespace DwarfCorp
             // Actually create the BuildRoom.
             BalloonPort toBuild = new BalloonPort(PlayerFaction, designations, chunkManager);
             BuildRoomOrder buildDes = new BuildRoomOrder(toBuild, roomDes.Faction);
-            buildDes.Build();
+            buildDes.Build(true);
             roomDes.DesignatedRooms.Add(toBuild);
             return toBuild;
         }
@@ -1468,96 +1171,11 @@ namespace DwarfCorp
             });
         }
 
-
-        /// <summary>
-        /// Called when the user releases a key
-        /// </summary>
-        /// <param name="key">The keyboard key released</param>
-        private void InputManager_KeyReleasedCallback(Keys key)
-        {
-            if (key == ControlSettings.Mappings.Map)
-            {
-                DrawMap = !DrawMap;
-                MiniMap.SetMinimized(!DrawMap);
-            }
-
-            if (key == Keys.Escape)
-            {
-                if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
-                {
-                    Master.ToolBar.ToolButtons[GameMaster.ToolMode.SelectUnits].InvokeClick();
-                }
-                else if (PausePanel != null && PausePanel.IsVisible)
-                {
-                    PausePanel.IsVisible = false;
-                    Paused = false;
-                }
-                else
-                {
-                    OpenPauseMenu();
-                }
-            }
-
-            // Special case: number keys reserved for changing tool mode
-            else if (InputManager.IsNumKey(key))
-            {
-                int index = InputManager.GetNum(key) - 1;
-
-
-                if (index < 0)
-                {
-                    index = 9;
-                }
-
-                // In this special case, all dwarves are selected
-                if (index == 0 && Master.SelectedMinions.Count == 0)
-                {
-                    Master.SelectedMinions.AddRange(Master.Faction.Minions);
-                }
-                int i = 0;
-                if (index == 0 || Master.SelectedMinions.Count > 0)
-                {
-                    foreach (var pair in Master.ToolBar.ToolButtons)
-                    {
-                        if (i == index)
-                        {
-                            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
-                                pair.Key);
-
-                            if ((index == 0 || minions.Count > 0))
-                            {
-                                pair.Value.InvokeClick();
-                                break;
-                            }
-                        }
-                        i++;
-                    }
-
-                    //Master.ToolBar.CurrentMode = modes[index];
-                }
-            }
-        }
-
-
         /// <summary>
         /// Called every frame
         /// </summary>
         /// <param name="gameTime">The current time</param>
-        public void Update2(DwarfTime gameTime) {
-            // Handles time foward + backward TODO: Replace with input manager
-            if (Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.TimeForward))
-            {
-                Time.Speed = 10000;
-            }
-            else if (Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.TimeBackward))
-            {
-                Time.Speed = -10000;
-            }
-            else
-            {
-                Time.Speed = 100;
-            }
-
+        public void Update(DwarfTime gameTime) {
             if (FastForwardToDay)
             {
                 if (Time.IsDay())
@@ -1574,39 +1192,6 @@ namespace DwarfCorp
                 }
             }
 
-            // Handles pausing and unpausing TODO: replace with input manager
-            if (Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.Pause))
-            {
-                if (!pausePressed)
-                {
-                    pausePressed = true;
-                }
-            }
-            else
-            {
-                if (pausePressed)
-                {
-                    pausePressed = false;
-                    Paused = !Paused;
-                }
-            }
-
-            // Turns the gui on and off TODO: replace with input manager
-            if (Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.ToggleGUI))
-            {
-                if (!bPressed)
-                {
-                    bPressed = true;
-                }
-            }
-            else
-            {
-                if (bPressed)
-                {
-                    bPressed = false;
-                    GUI.RootComponent.IsVisible = !GUI.RootComponent.IsVisible;
-                }
-            }
             //Drawer3D.DrawPlane(0, Camera.Position.X - 1500, Camera.Position.Z - 1500, Camera.Position.X + 1500, Camera.Position.Z + 1500, Color.Black);
             FillClosestLights(gameTime);
             IndicatorManager.Update(gameTime);
@@ -1646,20 +1231,11 @@ namespace DwarfCorp
             }
 
             // These things are updated even when the game is paused
-            GUI.Update(gameTime);
             ChunkManager.Update(gameTime, Camera, GraphicsDevice);
             InstanceManager.Update(gameTime, Camera, GraphicsDevice);
-            Input.Update();
 
             SoundManager.Update(gameTime, Camera);
             Weather.Update();
-
-            // Updates some of the GUI status
-            if (Game.IsActive)
-            {
-                CurrentLevelLabel.Text = "Slice: " + ChunkManager.ChunkData.MaxViewingLevel + "/" + ChunkHeight;
-                TimeLabel.Text = Time.CurrentDate.ToShortDateString() + " " + Time.CurrentDate.ToShortTimeString();
-            }
 
             // Make sure that the slice slider snaps to the current viewing level (an integer)
             //if(!LevelSlider.IsMouseOver)
@@ -1679,84 +1255,13 @@ namespace DwarfCorp
         public bool FastForwardToDay { get; set; }
         public static Embarkment InitialEmbark { get; set; }
 
-
-        /// <summary>
-        /// Called whenever the escape button is pressed. Opens a small menu for saving/loading, etc.
-        /// </summary>
-        public void OpenPauseMenu()
+        public void Quit()
         {
-            if (PausePanel != null && PausePanel.IsVisible) return;
-
-            Paused = true;
-
-            int w = 200;
-            int h = 200;
-
-            PausePanel = new Panel(GUI, GUI.RootComponent)
-            {
-                LocalBounds =
-                    new Rectangle(GraphicsDevice.Viewport.Width/2 - w/2, GraphicsDevice.Viewport.Height/2 - h/2, w, h)
-            };
-
-            GridLayout pauseLayout = new GridLayout(GUI, PausePanel, 1, 1);
-
-            ListSelector pauseSelector = new ListSelector(GUI, pauseLayout)
-            {
-                Label = "-Menu-",
-                DrawPanel = false,
-                Mode = ListItem.SelectionMode.Selector
-            };
-            pauseLayout.SetComponentPosition(pauseSelector, 0, 0, 1, 1);
-            pauseLayout.UpdateSizes();
-            pauseSelector.AddItem("Continue");
-            pauseSelector.AddItem("Options");
-            pauseSelector.AddItem("Save");
-            pauseSelector.AddItem("Quit");
-
-            pauseSelector.OnItemClicked += () => pauseSelector_OnItemClicked(pauseSelector);
-        }
-
-        public void QuitGame()
-        {
-            gameState.StateManager.StateStack.Clear();
-            MainMenuState menuState = gameState.StateManager.GetState<MainMenuState>("MainMenuState");
-            menuState.IsGameRunning = false;
             ChunkManager.Destroy();
             ComponentManager.RootComponent.Delete();
             GC.Collect();
             PlanService.Die();
-            gameState.StateManager.States["PlayState"] = new PlayState(Game, gameState.StateManager);
-            gameState.StateManager.CurrentState = "";
-            gameState.StateManager.PushState("MainMenuState");
         }
-
-        /// <summary>
-        /// Called whenever the pause menu is clicked.
-        /// </summary>
-        /// <param name="selector">The list of things the user could have clicked on.</param>
-        private void pauseSelector_OnItemClicked(ListSelector selector)
-        {
-            string selected = selector.SelectedItem.Label;
-            switch (selected)
-            {
-                case "Continue":
-                    GUI.RootComponent.RemoveChild(PausePanel);
-                    Paused = false;
-                    PausePanel.Destroy();
-                    PausePanel = null;
-                    break;
-                case "Options":
-                    gameState.StateManager.PushState("OptionsState");
-            break;
-                case "Save":
-                    SaveGame(Overworld.Name + "_" + GameID);
-                    break;
-                case "Quit":
-                    QuitGame();
-                    break;
-            }
-        }
-
 
         /// <summary>
         /// Saves the game state to a file.
@@ -1929,7 +1434,7 @@ namespace DwarfCorp
 
         public void RenderUninitialized(DwarfTime gameTime, String tip = null)
         {
-            Render2(gameTime);
+            Render(gameTime);
         }
 
         /// <summary>
@@ -1992,7 +1497,7 @@ namespace DwarfCorp
         /// Called when a frame is to be drawn to the screen
         /// </summary>
         /// <param name="gameTime">The current time</param>
-        public void Render2(DwarfTime gameTime)
+        public void Render(DwarfTime gameTime)
         {
             // If we are not ready to show the world then just display the loading text
             if (!ShowingWorld)
@@ -2011,7 +1516,6 @@ namespace DwarfCorp
             CompositeLibrary.Update();
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
-            GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
 
             if (GameSettings.Default.UseDynamicShadows)
             {
@@ -2128,8 +1632,6 @@ namespace DwarfCorp
 
             drawer2D.Render(DwarfGame.SpriteBatch, Camera, GraphicsDevice.Viewport);
 
-            GUI.Render(gameTime, DwarfGame.SpriteBatch, Vector2.Zero);
-
             bool drawDebugData = GameSettings.Default.DrawDebugData;
             if (drawDebugData)
             {
@@ -2159,7 +1661,6 @@ namespace DwarfCorp
                     new Vector2(GraphicsDevice.Viewport.Width - 100, 10), Color.White, Color.Black);
             }
             IndicatorManager.Render(gameTime);
-            GUI.PostRender(gameTime);
             DwarfGame.SpriteBatch.End();
 
             Master.Render(Game, gameTime, GraphicsDevice);
@@ -2239,24 +1740,7 @@ namespace DwarfCorp
 
         public void InvokeLoss()
         {
-            if (callback != null)
-                callback.OnLose();
+            OnLoseEvent();
         }
-    }
-
-    /// <summary>
-    /// Interface for the WorldManager to tell its creator when an event happens in the world
-    /// </summary>
-    public interface WorldManagerCallback
-    {
-        /// <summary>
-        /// Called when the world is done being loaded
-        /// </summary>
-        void OnLoaded();
-
-        /// <summary>
-        /// Called when Player faction has lost
-        /// </summary>
-        void OnLose();
     }
 }
