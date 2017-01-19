@@ -100,8 +100,6 @@ namespace DwarfCorp
 
         public static void AssignTasksGreedy(List<Task> newGoals, List<CreatureAI> creatures, int maxPerGoal)
         {
-            string trackingString = "AssignTasksGreedy(" + newGoals.Count + ")";
-            GamePerformance.Instance.StartTrackPerformance(trackingString);
             // We are going to keep track of the unassigned goal count
             // to avoid having to parse the list at the end of the loop.
             int goalsUnassigned = newGoals.Count;
@@ -210,7 +208,6 @@ namespace DwarfCorp
                 }
 
             }
-            GamePerformance.Instance.EndTrackPerformance(trackingString);
         }
 
         public static void AssignTasks(List<Task> newGoals, List<CreatureAI> creatures)

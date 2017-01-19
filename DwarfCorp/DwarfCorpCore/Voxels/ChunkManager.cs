@@ -224,6 +224,7 @@ namespace DwarfCorp
                 Program.ShutdownEvent
             };
 
+            GamePerformance.Instance.RegisterThreadLoopTracker("UpdateWater", GamePerformance.ThreadIdentifier.UpdateWater);
 #if CREATE_CRASH_LOGS
             try
 #endif
@@ -232,6 +233,7 @@ namespace DwarfCorp
                 {
                     EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
 
+                    GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.UpdateWater);
                     if (wh == Program.ShutdownEvent)
                     {
                         break;
@@ -241,6 +243,7 @@ namespace DwarfCorp
                     {
                         Water.UpdateWater();
                     }
+                    GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.UpdateWater);
                 }
             }
 #if CREATE_CRASH_LOGS
@@ -259,6 +262,8 @@ namespace DwarfCorp
                 Program.ShutdownEvent
             };
 
+            GamePerformance.Instance.RegisterThreadLoopTracker("RebuildLiquids", GamePerformance.ThreadIdentifier.RebuildWater);
+
 #if CREATE_CRASH_LOGS
             try
 #endif
@@ -273,6 +278,7 @@ namespace DwarfCorp
                         break;
                     }
 
+                    GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.RebuildWater);
                     while (!PauseThreads && RebuildLiquidsList.Count > 0)
                     {
                         VoxelChunk chunk = null;
@@ -303,6 +309,7 @@ namespace DwarfCorp
                             break;
                         }
                     }
+                    GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.RebuildWater);
                 }
             }
 #if CREATE_CRASH_LOGS
@@ -314,7 +321,6 @@ namespace DwarfCorp
 
         }
 
-
         public void RebuildVoxelsThread()
         {
             EventWaitHandle[] waitHandles =
@@ -323,6 +329,8 @@ namespace DwarfCorp
                 Program.ShutdownEvent
             };
 
+            GamePerformance.Instance.RegisterThreadLoopTracker("RebuildVoxels", GamePerformance.ThreadIdentifier.RebuildVoxels);
+
 #if CREATE_CRASH_LOGS
             try
 #endif
@@ -330,6 +338,8 @@ namespace DwarfCorp
                 while (!DwarfGame.ExitGame && !ExitThreads)
                 {
                     EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
+
+                    GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);
 
                     if (wh == Program.ShutdownEvent)
                     {
@@ -405,6 +415,7 @@ namespace DwarfCorp
                             }
                         
                     }
+                    GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);
                 }
             }
 #if CREATE_CRASH_LOGS
