@@ -351,6 +351,8 @@ namespace DwarfCorp
             Faction.Minions.RemoveAll(m => m.IsDead);
 
             UpdateRooms();
+
+            Faction.CraftBuilder.Update(time, this);
         }
 
 

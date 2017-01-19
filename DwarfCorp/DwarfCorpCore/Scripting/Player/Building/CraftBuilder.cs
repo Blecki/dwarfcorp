@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using Gem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -64,6 +65,8 @@ namespace DwarfCorp
         public List<CraftDesignation> Designations { get; set; }
         public CraftItem CurrentCraftType { get; set; }
         public bool IsEnabled { get; set; }
+        protected Body CurrentCraftBody { get; set; }
+        protected CraftDesignation CurrentDesignation { get; set; }
 
         public CraftBuilder()
         {
@@ -98,7 +101,7 @@ namespace DwarfCorp
         {
             Designations.Remove(des);
 
-            if(des.WorkPile != null)
+            if (des.WorkPile != null)
                 des.WorkPile.Die();
         }
 
@@ -114,6 +117,56 @@ namespace DwarfCorp
         }
 
 
+        private void SetDisplayColor(Color color)
+        {
+            List<Tinter> sprites = CurrentCraftBody.GetChildrenOfTypeRecursive<Tinter>();
+
+            foreach (Tinter sprite in sprites)
+            {
+                sprite.VertexColorTint = color;
+            }
+        }
+
+
+        public void Update(DwarfTime gameTime, GameMaster player)
+        {
+            if (!IsEnabled)
+            {
+                if (CurrentCraftBody != null)
+                {
+                    CurrentCraftBody.Delete();
+                    CurrentCraftBody = null;
+                }
+                return;
+            }
+
+            if (CurrentCraftType != null && CurrentCraftBody == null)
+            {
+                CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.Name, player.VoxSelector.VoxelUnderMouse.Position);
+                CurrentCraftBody.SetActiveRecursive(false);
+                CurrentDesignation = new CraftDesignation()
+                {
+                    ItemType = CurrentCraftType,
+                    Location = new Voxel(new Point3(0, 0, 0), null)
+                };
+                SetDisplayColor(Color.Green);
+            }
+
+            if (CurrentCraftBody == null || player.VoxSelector.VoxelUnderMouse == null) 
+                return;
+
+            CurrentCraftBody.LocalPosition = player.VoxSelector.VoxelUnderMouse.Position + Vector3.One * 0.5f;
+            CurrentCraftBody.GlobalTransform = CurrentCraftBody.LocalTransform;
+            CurrentCraftBody.OrientToWalls();
+
+            if (CurrentDesignation.Location.IsSameAs(player.VoxSelector.VoxelUnderMouse)) 
+                return;
+            
+            CurrentDesignation.Location = new Voxel(player.VoxSelector.VoxelUnderMouse);
+
+            SetDisplayColor(IsValid(CurrentDesignation) ? Color.Green : Color.Red);
+        }
+
         public void Render(DwarfTime gameTime, GraphicsDevice graphics, Effect effect)
         {
         }
@@ -123,7 +176,8 @@ namespace DwarfCorp
         {
             if (IsDesignation(designation.Location))
             {
-                PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Something is already being built there!", Color.Red));
+                PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Something is already being built there!",
+                    Color.Red));
                 return false;
             }
 
@@ -142,7 +196,8 @@ namespace DwarfCorp
                     neededResources += "" + amount.NumResources + " " + amount.ResourceType.ToString() + " ";
                 }
 
-                PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Not enough resources! Need " + neededResources + ".", Color.Red));
+                PlayState.GUI.ToolTipManager.Popup(
+                    Drawer2D.WrapColor("Not enough resources! Need " + neededResources + ".", Color.Red));
                 return false;
             }
 
@@ -153,14 +208,16 @@ namespace DwarfCorp
                 {
                     case CraftItem.CraftPrereq.NearWall:
                     {
-                        designation.Location.Chunk.Get2DManhattanNeighbors(neighbors, (int)designation.Location.GridPosition.X,
-                            (int)designation.Location.GridPosition.Y, (int)designation.Location.GridPosition.Z);
+                        designation.Location.Chunk.Get2DManhattanNeighbors(neighbors,
+                            (int) designation.Location.GridPosition.X,
+                            (int) designation.Location.GridPosition.Y, (int) designation.Location.GridPosition.Z);
 
                         bool neighborFound = neighbors.Any(voxel => voxel != null && !voxel.IsEmpty);
 
                         if (!neighborFound)
                         {
-                            PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Must be built next to wall!", Color.Red));
+                            PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Must be built next to wall!",
+                                Color.Red));
                             return false;
                         }
 
@@ -173,7 +230,8 @@ namespace DwarfCorp
 
                         if (below.IsEmpty)
                         {
-                            PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Must be built on solid ground!", Color.Red));
+                            PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Must be built on solid ground!",
+                                Color.Red));
                             return false;
                         }
                         break;

@@ -67,16 +67,19 @@ namespace DwarfCorp
             int h = 350;
             BuildPanel = new BuildMenu(PlayState.GUI, PlayState.GUI.RootComponent, Player, BuildType)
             {
-                LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width/2 - w/2, PlayState.Game.GraphicsDevice.Viewport.Height/2 - h/2, w, h),
+                LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width/2 - w/2, GameState.Game.GraphicsDevice.Viewport.Height/2 - h/2, w, h),
                 IsVisible = true,
                 DrawOrder = 2
             };
             BuildPanel.TweenIn(Drawer2D.Alignment.Right, 0.25f);
+
+            Player.Faction.CraftBuilder.IsEnabled = false;
         }
 
         public override void OnEnd()
         {
             BuildPanel.TweenOut(Drawer2D.Alignment.Right, 0.25f);
+            Player.Faction.CraftBuilder.IsEnabled = false;
         }
 
 

@@ -2025,7 +2025,7 @@ namespace DwarfCorp.GameStates
             x = x*x;
             DefaultShader.Parameters["xFogColor"].SetValue(new Vector3(0.32f*x, 0.58f*x, 0.9f*x));
             DefaultShader.Parameters["xLightPositions"].SetValue(LightPositions);
-
+            DefaultShader.Parameters["xColorTint"].SetValue(Vector4.One);
 
             CompositeLibrary.Render(GraphicsDevice, DwarfGame.SpriteBatch);
             CompositeLibrary.Update();

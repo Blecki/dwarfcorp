@@ -93,7 +93,10 @@ Texture xTorchGradient;
 Texture xRefractionMap;
 Texture xShoreGradient;
 Texture xLightmap;
+// Light ramp tint
 float4 xTint;
+// Multiplicative output color.
+float4 xColorTint;
 
 sampler LightmapSampler = sampler_state { texture = <xLightmap>; magfilter = POINT; minfilter = LINEAR; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
 
@@ -302,7 +305,7 @@ TVertexToPixel TexturedVS(float4 inPos : POSITION,
     Output.ClipDistance = dot(worldPosition, ClipPlane0);
 	Output.Color = inColor * lightTint;
 	Output.Color.a = lightTint.a;
-	Output.ColorTint = tint;
+	Output.ColorTint = tint * xColorTint;
 
 	if(xEnableLighting)
 	{
