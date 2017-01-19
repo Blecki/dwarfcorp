@@ -89,10 +89,6 @@ namespace DwarfCorp.GameStates
         // Provides event-based keyboard and mouse input.
         public InputManager Input = new InputManager();
 
-        // Hack to bypass input manager TODO: replace with input manager
-        private bool pausePressed = false;
-        private bool bPressed = false;
-
         /// <summary>
         /// Creates a new play state
         /// </summary>
@@ -165,54 +161,6 @@ namespace DwarfCorp.GameStates
             if (!Game.IsActive || !IsActiveState)
             {
                 return;
-            }
-
-            // Handles time foward + backward TODO: Replace with input manager
-            if (Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.TimeForward))
-            {
-                WorldManager.Time.Speed = 10000;
-            }
-            else if (Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.TimeBackward))
-            {
-                WorldManager.Time.Speed = -10000;
-            }
-            else
-            {
-                WorldManager.Time.Speed = 100;
-            }
-
-            // Handles pausing and unpausing TODO: replace with input manager
-            if (Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.Pause))
-            {
-                if (!pausePressed)
-                {
-                    pausePressed = true;
-                }
-            }
-            else
-            {
-                if (pausePressed)
-                {
-                    pausePressed = false;
-                    Paused = !Paused;
-                }
-            }
-
-            // Turns the gui on and off TODO: replace with input manager
-            if (Keyboard.GetState().IsKeyDown(ControlSettings.Mappings.ToggleGUI))
-            {
-                if (!bPressed)
-                {
-                    bPressed = true;
-                }
-            }
-            else
-            {
-                if (bPressed)
-                {
-                    bPressed = false;
-                    GUI.RootComponent.IsVisible = !GUI.RootComponent.IsVisible;
-                }
             }
 
             World.Update(gameTime);
@@ -580,6 +528,23 @@ namespace DwarfCorp.GameStates
 
                     //Master.ToolBar.CurrentMode = modes[index];
                 }
+            }
+            else if (key == ControlSettings.Mappings.Pause)
+            {
+                Paused = !Paused;
+                Master.ToolBar.SpeedButton.SetSpeed(Paused ? 0 : 1);
+            }
+            else if (key == ControlSettings.Mappings.TimeForward)
+            {
+                Master.ToolBar.SpeedButton.IncrementSpeed();
+            }
+            else if (key == ControlSettings.Mappings.TimeBackward)
+            {
+                Master.ToolBar.SpeedButton.DecrementSpeed();
+            }
+            else if (key == ControlSettings.Mappings.ToggleGUI)
+            {
+                GUI.RootComponent.IsVisible = !GUI.RootComponent.IsVisible;
             }
         }
 

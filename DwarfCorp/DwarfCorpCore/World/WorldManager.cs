@@ -79,10 +79,10 @@ namespace DwarfCorp
         public static int WorldHeight = 800;
 
         // The number of voxels along x and z in a chunk
-        public static int ChunkWidth = 16;
+        public static int ChunkWidth {get { return GameSettings.Default.ChunkWidth; }}
 
         // The number of voxels along y in a chunk.
-        public static int ChunkHeight = 48;
+        public static int ChunkHeight {get { return GameSettings.Default.ChunkHeight; }}
 
         // The current coordinate of the cursor light
         public static Vector3 CursorLightPos
@@ -212,18 +212,12 @@ namespace DwarfCorp
             set { ComponentManager.ParticleManager = value; }
         }
 
-        // The current calendar date/time of th egame.
+        // The current calendar date/time of the game.
         public static WorldTime Time = new WorldTime();
-
-        // Hacks to count frame rate TODO: Make a framerate counter class
-        private uint frameCounter = 0;
-        private readonly Timer frameTimer = new Timer(1.0f, false);
 
         // Hack to smooth water reflections TODO: Put into water manager
         private float lastWaterHeight = 8.0f;
 
-        private readonly List<float> lastFps = new List<float>();
-        private float fps = 0.0f;
         private GameFile gameFile;
 
         public static Point3 WorldSize { get; set; }
@@ -439,15 +433,6 @@ namespace DwarfCorp
             CompositeLibrary.Initialize();
             CraftLibrary = new CraftLibrary();
 
-            if (SoundManager.Content == null)
-            {
-                SoundManager.Content = Content;
-                SoundManager.LoadDefaultSounds();
-#if XNA_BUILD
-                SoundManager.SetActiveSongs(ContentPaths.Music.dwarfcorp, ContentPaths.Music.dwarfcorp_2,
-                    ContentPaths.Music.dwarfcorp_3, ContentPaths.Music.dwarfcorp_4, ContentPaths.Music.dwarfcorp_5);
-#endif
-            }
             new PrimitiveLibrary(GraphicsDevice, Content);
             InstanceManager = new InstanceManager();
 
@@ -515,8 +500,8 @@ namespace DwarfCorp
                 WorldManager.Time = gameFile.Data.Metadata.Time;
                 WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
                 WorldScale = gameFile.Data.Metadata.WorldScale;
-                ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
-                ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
+                GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
+                GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
 
                 if (gameFile.Data.Metadata.OverworldFile != null && gameFile.Data.Metadata.OverworldFile != "flat")
                 {
@@ -740,8 +725,8 @@ namespace DwarfCorp
                 Time = gameFile.Data.Metadata.Time;
                 WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
                 WorldScale = gameFile.Data.Metadata.WorldScale;
-                ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
-                ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
+                GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
+                GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
             }
             Master = new GameMaster(ComponentManager.Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
                 Camera, GraphicsDevice, GUI);
@@ -1186,10 +1171,13 @@ namespace DwarfCorp
                     {
                         minion.Status.Energy.CurrentValue = minion.Status.Energy.MaxValue;
                     }
+                    Master.ToolBar.SpeedButton.SetSpeed(1);
+                    Time.Speed = 100;
                 }
                 else
                 {
-                    Time.Speed = 10000;
+                    Master.ToolBar.SpeedButton.SetSpecialSpeed(3);
+                    Time.Speed = 1000;
                 }
             }
 
@@ -1601,34 +1589,6 @@ namespace DwarfCorp
 
             drawer2D.Render(DwarfGame.SpriteBatch, Camera, GraphicsDevice.Viewport);
 
-            bool drawDebugData = GameSettings.Default.DrawDebugData;
-            if (drawDebugData)
-            {
-                DwarfGame.SpriteBatch.DrawString(Content.Load<SpriteFont>("Default"),
-                    "Num Chunks " + ChunkManager.ChunkData.ChunkMap.Values.Count, new Vector2(5, 5), Color.White);
-                DwarfGame.SpriteBatch.DrawString(Content.Load<SpriteFont>("Default"),
-                    "Max Viewing Level " + ChunkManager.ChunkData.MaxViewingLevel, new Vector2(5, 20), Color.White);
-                DwarfGame.SpriteBatch.DrawString(Content.Load<SpriteFont>("Default"), "FPS " + Math.Round(fps),
-                    new Vector2(5, 35), Color.White);
-                DwarfGame.SpriteBatch.DrawString(Content.Load<SpriteFont>("Default"), "60",
-                    new Vector2(5, 150 - 65), Color.White);
-                DwarfGame.SpriteBatch.DrawString(Content.Load<SpriteFont>("Default"), "30",
-                    new Vector2(5, 150 - 35), Color.White);
-                DwarfGame.SpriteBatch.DrawString(Content.Load<SpriteFont>("Default"), "10",
-                    new Vector2(5, 150 - 15), Color.White);
-                for (int i = 0; i < lastFps.Count; i++)
-                {
-                    DwarfGame.SpriteBatch.Draw(pixel,
-                        new Rectangle(30 + i*2, 150 - (int) lastFps[i], 2, (int) lastFps[i]),
-                        new Color(1.0f - lastFps[i]/60.0f, lastFps[i]/60.0f, 0.0f, 0.5f));
-                }
-            }
-
-            if (Paused)
-            {
-                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Paused", GUI.DefaultFont,
-                    new Vector2(GraphicsDevice.Viewport.Width - 100, 10), Color.White, Color.Black);
-            }
             IndicatorManager.Render(gameTime);
             DwarfGame.SpriteBatch.End();
 
@@ -1649,25 +1609,6 @@ namespace DwarfCorp
                 }
 
                 Screenshots.Clear();
-            }
-
-            // Keeping track of a running FPS buffer (averaged)
-            while (lastFps.Count > 100)
-            {
-                lastFps.RemoveAt(0);
-            }
-            frameTimer.Update(gameTime);
-            if (frameTimer.HasTriggered)
-            {
-                fps = frameCounter;
-
-                lastFps.Add(fps);
-                frameCounter = 0;
-                frameTimer.Reset(1.0f);
-            }
-            else
-            {
-                frameCounter++;
             }
         }
 
