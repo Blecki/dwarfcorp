@@ -477,6 +477,14 @@ namespace DwarfCorp
             return new Vector3(x, y, z);
         }
 
+        public Point3 RoundToChunkCoordsPoint3(Vector3 location)
+        {
+            int x = MathFunctions.FloorInt(location.X * InvCSX);
+            int y = MathFunctions.FloorInt(location.Y * InvCSY);
+            int z = MathFunctions.FloorInt(location.Z * InvCSZ);
+            return new Point3(x, y, z);
+        }
+
         public VoxelChunk GetVoxelChunkAtWorldLocation(Vector3 worldLocation)
         {
             Point3 id = GetChunkID(worldLocation);
@@ -534,8 +542,7 @@ namespace DwarfCorp
 
         public Point3 GetChunkID(Vector3 origin)
         {
-            origin = RoundToChunkCoords(origin);
-            return new Point3(MathFunctions.FloorInt(origin.X), MathFunctions.FloorInt(origin.Y), MathFunctions.FloorInt(origin.Z));
+            return RoundToChunkCoordsPoint3(origin);
         }
 
         /// <summary> 
