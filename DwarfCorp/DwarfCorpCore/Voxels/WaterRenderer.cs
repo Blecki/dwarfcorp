@@ -136,7 +136,7 @@ namespace DwarfCorp
             }
         }
 
-        public void DrawReflectionMap(DwarfTime gameTime, PlayState game, float waterHeight, Matrix reflectionViewMatrix, Effect effect, GraphicsDevice device)
+        public void DrawReflectionMap(DwarfTime gameTime, WorldManager game, float waterHeight, Matrix reflectionViewMatrix, Effect effect, GraphicsDevice device)
         {
             if (!DrawReflections) return;
             Plane reflectionPlane = CreatePlane(waterHeight, new Vector3(0, -1, 0), reflectionViewMatrix, true);

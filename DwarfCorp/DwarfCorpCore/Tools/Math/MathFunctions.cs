@@ -51,7 +51,7 @@ namespace DwarfCorp
 
         public static float Rand()
         {
-            return (float) PlayState.Random.NextDouble();
+            return (float) WorldManager.Random.NextDouble();
         }
 
         public static float Rand(float min, float max)
@@ -895,7 +895,7 @@ namespace DwarfCorp
 
         public static int RandInt(int min, int max)
         {
-            return PlayState.Random.Next(min, max);
+            return WorldManager.Random.Next(min, max);
         }
     }
 }

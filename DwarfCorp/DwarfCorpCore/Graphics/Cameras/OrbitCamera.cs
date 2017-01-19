@@ -132,7 +132,7 @@ namespace DwarfCorp
 
             if (PhysicsObject == null)
             {
-                PhysicsObject = new Physics("CameraPhysics", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(Target), new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero, 1.0f, 1.0f, 0.999f, 1.0f, Vector3.Down * 10);
+                PhysicsObject = new Physics("CameraPhysics", WorldManager.ComponentManager.RootComponent, Matrix.CreateTranslation(Target), new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero, 1.0f, 1.0f, 0.999f, 1.0f, Vector3.Down * 10);
                 PhysicsObject.IsSleeping = false;
                 PhysicsObject.Velocity = Vector3.Down*0.01f;
             }
@@ -304,7 +304,7 @@ namespace DwarfCorp
 
             bool stateChanged = false;
             float dt = (float)time.ElapsedRealTime.TotalSeconds;
-            SnapToBounds(new BoundingBox(PlayState.ChunkManager.Bounds.Min, PlayState.ChunkManager.Bounds.Max + Vector3.UnitY * 20));
+            SnapToBounds(new BoundingBox(WorldManager.ChunkManager.Bounds.Min, WorldManager.ChunkManager.Bounds.Max + Vector3.UnitY * 20));
             if (KeyManager.RotationEnabled())
             {
                 if (!shiftPressed)
@@ -501,7 +501,7 @@ namespace DwarfCorp
                 }
             }
 
-            if (mouse.ScrollWheelValue != LastWheel && !PlayState.GUI.IsMouseOver())
+            if (mouse.ScrollWheelValue != LastWheel && !WorldManager.GUI.IsMouseOver())
             {
                 int change = mouse.ScrollWheelValue - LastWheel;
 
@@ -527,7 +527,7 @@ namespace DwarfCorp
 
             LastWheel = mouse.ScrollWheelValue;
 
-            if (!CollidesWithChunks(PlayState.ChunkManager, Target + Velocity, false))
+            if (!CollidesWithChunks(WorldManager.ChunkManager, Target + Velocity, false))
             {
                 Target += Velocity;
                 PushVelocity = Vector3.Zero;

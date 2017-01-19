@@ -53,10 +53,10 @@ namespace DwarfCorp
 
         }
         public Fairy(string allies, Vector3 position) :
-            base( new CreatureStats(new FairyClass(), 0), "Player", PlayState.PlanService, PlayState.ComponentManager.Factions.Factions[allies],
-           new Physics("Fairy", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position),
+            base( new CreatureStats(new FairyClass(), 0), "Player", WorldManager.PlanService, WorldManager.ComponentManager.Factions.Factions[allies],
+           new Physics("Fairy", WorldManager.ComponentManager.RootComponent, Matrix.CreateTranslation(position),
                        new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, 0, 0)),
-              PlayState.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Fairy")
+              WorldManager.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Fairy")
         {
             HasMeat = false;
             HasBones = false;
@@ -69,7 +69,7 @@ namespace DwarfCorp
         {
             if (ParticleTimer.HasTriggered)
             {
-                PlayState.ParticleManager.Trigger("star_particle", Sprite.Position, Color.White, 1);    
+                WorldManager.ParticleManager.Trigger("star_particle", Sprite.Position, Color.White, 1);    
             }
             DeathTimer.Update(gameTime);
             ParticleTimer.Update(gameTime);

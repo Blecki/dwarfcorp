@@ -305,7 +305,7 @@ namespace DwarfCorp
 
         public bool IsVoxelOccluded(Voxel voxel)
         {
-            Vector3 cameraPos = PlayState.Camera.Position;
+            Vector3 cameraPos = WorldManager.Camera.Position;
             Vector3 voxelPoint = voxel.Position + Vector3.One * 0.5f;
             Voxel atPos = new Voxel();
             foreach (Point3 coord in MathFunctions.RasterizeLine(cameraPos, voxelPoint))

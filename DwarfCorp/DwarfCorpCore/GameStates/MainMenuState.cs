@@ -92,7 +92,7 @@ namespace DwarfCorp.GameStates
                     MaintainState = false;
                     Overworld.CreateHillsLand(Game.GraphicsDevice);
                     StateManager.PushState("PlayState");
-                    PlayState.WorldSize = new Point3(8, 1, 8);
+                    WorldManager.WorldSize = new Point3(8, 1, 8);
                     //GUI.MouseMode = GUISkin.MousePointer.Wait;
 
                     IsGameRunning = true;
@@ -103,14 +103,14 @@ namespace DwarfCorp.GameStates
                     MaintainState = false;
                     Overworld.CreateCliffsLand(Game.GraphicsDevice);
                     StateManager.PushState("PlayState");
-                    PlayState.WorldSize = new Point3(8, 1, 8);
+                    WorldManager.WorldSize = new Point3(8, 1, 8);
                     //GUI.MouseMode = GUISkin.MousePointer.Wait;
-                    PlayState.Natives = new List<Faction>();
+                    WorldManager.Natives = new List<Faction>();
                     FactionLibrary library = new FactionLibrary();
                     library.Initialize(null, "fake", "fake", null, Color.Blue);
                     for (int i = 0; i < 10; i++)
                     {
-                        PlayState.Natives.Add(library.GenerateFaction(i, 10));
+                        WorldManager.Natives.Add(library.GenerateFaction(i, 10));
                     }
 
                     IsGameRunning = true;
@@ -121,7 +121,7 @@ namespace DwarfCorp.GameStates
                     MaintainState = false;
                     Overworld.CreateUniformLand(Game.GraphicsDevice);
                     StateManager.PushState("PlayState");
-                    PlayState.WorldSize = new Point3(8, 1, 8);
+                    WorldManager.WorldSize = new Point3(8, 1, 8);
                     //GUI.MouseMode = GUISkin.MousePointer.Wait;
 
                     IsGameRunning = true;
@@ -132,7 +132,7 @@ namespace DwarfCorp.GameStates
                     MaintainState = false;
                     Overworld.CreateOceanLand(Game.GraphicsDevice);
                     StateManager.PushState("PlayState");
-                    PlayState.WorldSize = new Point3(8, 1, 8);
+                    WorldManager.WorldSize = new Point3(8, 1, 8);
                     //GUI.MouseMode = GUISkin.MousePointer.Wait;
 
                     IsGameRunning = true;
