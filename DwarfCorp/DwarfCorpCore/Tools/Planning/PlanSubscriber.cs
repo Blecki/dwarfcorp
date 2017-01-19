@@ -35,7 +35,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections.Concurrent;
-using DwarfCorp.Tools.ServiceArchitecture;
 using Newtonsoft.Json;
 
 namespace DwarfCorp

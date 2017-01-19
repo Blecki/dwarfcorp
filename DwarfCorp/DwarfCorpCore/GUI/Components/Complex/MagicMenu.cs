@@ -39,7 +39,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
-namespace DwarfCorpCore
+namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
     public class MagicMenu : Window

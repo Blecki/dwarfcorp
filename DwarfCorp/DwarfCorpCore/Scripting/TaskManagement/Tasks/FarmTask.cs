@@ -35,7 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DwarfCorp.Scripting.TaskManagement.Tasks
+namespace DwarfCorp
 {
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class FarmTask : Task
