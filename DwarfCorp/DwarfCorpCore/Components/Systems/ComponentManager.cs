@@ -93,7 +93,7 @@ namespace DwarfCorp
             
         }
 
-        public ComponentManager(PlayState state, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor, List<Faction> natives )
+        public ComponentManager(WorldManager state, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor, List<Faction> natives )
         {
             Components = new Dictionary<uint, GameComponent>();
             Removals = new List<GameComponent>();
@@ -107,7 +107,7 @@ namespace DwarfCorp
                 Factions.AddFactions(natives);
             }
             Factions.Initialize(state, companyName, companyMotto, companyLogo, companyColor);
-            Point playerOrigin = new Point((int)(PlayState.WorldOrigin.X), (int)(PlayState.WorldOrigin.Y));
+            Point playerOrigin = new Point((int)(WorldManager.WorldOrigin.X), (int)(WorldManager.WorldOrigin.Y));
 
             Factions.Factions["Player"].Center = playerOrigin;
             Factions.Factions["Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
@@ -215,7 +215,7 @@ namespace DwarfCorp
                     where   screenPos.Z > 0 
                     && (selectionRectangle.Contains((int)screenPos.X, (int)screenPos.Y) || selectionRectangle.Intersects(component.GetScreenRect(camera))) 
                     && camera.GetFrustrum().Contains(component.GlobalTransform.Translation) != ContainmentType.Disjoint
-                    && !PlayState.ChunkManager.ChunkData.CheckOcclusionRay(camera.Position, component.Position)
+                    && !WorldManager.ChunkManager.ChunkData.CheckOcclusionRay(camera.Position, component.Position)
                     select component).ToList();
         }
 

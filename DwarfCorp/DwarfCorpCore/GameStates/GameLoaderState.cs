@@ -270,8 +270,8 @@ namespace DwarfCorp.GameStates
                 }
 
 
-                PlayState state = (PlayState)(StateManager.States["PlayState"]);
-                state.ExistingFile = descriptor.FileName;
+                PlayState state = StateManager.GetState<PlayState>("PlayState");
+                state.World.ExistingFile = descriptor.FileName;
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
             
                 JoinThreads();

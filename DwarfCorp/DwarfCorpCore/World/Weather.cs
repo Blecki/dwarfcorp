@@ -25,7 +25,7 @@ namespace DwarfCorp
 
         public void Update()
         {
-            DateTime currentDate = PlayState.Time.CurrentDate;
+            DateTime currentDate = WorldManager.Time.CurrentDate;
 
             foreach (Storm storm in Forecast)
             {
@@ -72,8 +72,8 @@ namespace DwarfCorp
                     {
                         StormType.RainStorm, new StormProperties()
                         {
-                            RainEffect = PlayState.ParticleManager.Effects["rain"],
-                            HitEffect = PlayState.ParticleManager.Effects["splat"],
+                            RainEffect = WorldManager.ParticleManager.Effects["rain"],
+                            HitEffect = WorldManager.ParticleManager.Effects["splat"],
                             RainSpeed = 30,
                             CreatesLiquid = true,
                             LiquidToCreate = LiquidType.Water
@@ -82,8 +82,8 @@ namespace DwarfCorp
                     {
                         StormType.SnowStorm, new StormProperties()
                         {
-                            RainEffect = PlayState.ParticleManager.Effects["snowflake"],
-                            HitEffect = PlayState.ParticleManager.Effects["snow_particle"],
+                            RainEffect = WorldManager.ParticleManager.Effects["snowflake"],
+                            HitEffect = WorldManager.ParticleManager.Effects["snow_particle"],
                             RainSpeed = 10,
                             RainRandom = 10f,
                             CreatesVoxel = true,
@@ -101,13 +101,13 @@ namespace DwarfCorp
 
             public bool IsDone()
             {
-                return IsInitialized && PlayState.Time.CurrentDate > Date;
+                return IsInitialized && WorldManager.Time.CurrentDate > Date;
             }
 
             public void Start()
             {
-                PlayState.AnnouncementManager.Announce("A storm is coming!", "A storm is incoming.");
-                BoundingBox bounds = PlayState.ChunkManager.Bounds;
+                WorldManager.AnnouncementManager.Announce("A storm is coming!", "A storm is incoming.");
+                BoundingBox bounds = WorldManager.ChunkManager.Bounds;
                 Vector3 extents = bounds.Extents();
                 Vector3 center = bounds.Center();
                 Vector3 windNormalized = WindSpeed / WindSpeed.Length();
@@ -145,11 +145,11 @@ namespace DwarfCorp
         public static List<Storm> CreateForecast(int days)
         {
             List<Storm> foreCast = new List<Storm>();
-            DateTime date = PlayState.Time.CurrentDate;
+            DateTime date = WorldManager.Time.CurrentDate;
             for (int i = 0; i < days; i++)
             {
                 // Each day, a storm could originate from a randomly selected biome
-                Vector3 randomSample = MathFunctions.RandVector3Box(PlayState.ChunkManager.Bounds);
+                Vector3 randomSample = MathFunctions.RandVector3Box(WorldManager.ChunkManager.Bounds);
                 float rain = ChunkGenerator.GetValueAt(randomSample, Overworld.ScalarFieldType.Rainfall);
                 float temperature = ChunkGenerator.GetValueAt(randomSample, Overworld.ScalarFieldType.Temperature);
                 // Generate storms according to the rainfall in the biome. Up to 4 storms per day.
@@ -203,7 +203,7 @@ namespace DwarfCorp
             }
 
             public Cloud(float raininess, int maxRain, float height, Vector3 pos) :
-                base(pos, new SpriteSheet(ContentPaths.Particles.stormclouds), new Point(0, 0), PlayState.ComponentManager.RootComponent)
+                base(pos, new SpriteSheet(ContentPaths.Particles.stormclouds), new Point(0, 0), WorldManager.ComponentManager.RootComponent)
             {
                 Matrix tf = LocalTransform;
                 tf.Translation = new Vector3(pos.X, height, pos.Z);
@@ -279,7 +279,7 @@ namespace DwarfCorp
                         RainDrops[i].Particle.Velocity = RainDrops[i].Vel;
                     }
 
-                    if (!PlayState.ChunkManager.ChunkData.GetVoxel(RainDrops[i].Pos, ref test)) continue;
+                    if (!WorldManager.ChunkManager.ChunkData.GetVoxel(RainDrops[i].Pos, ref test)) continue;
                     if (test == null || test.IsEmpty || test.WaterLevel > 0) continue;
 
                     RainDrops[i].IsAlive = false;

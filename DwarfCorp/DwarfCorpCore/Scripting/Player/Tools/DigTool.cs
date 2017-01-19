@@ -118,20 +118,20 @@ namespace DwarfCorp
             {
                 Player.VoxSelector.Enabled = false;
                 Player.BodySelector.Enabled = false;
-                PlayState.GUI.IsMouseVisible = false;
+                WorldManager.GUI.IsMouseVisible = false;
                 return;
             }
 
             Player.VoxSelector.Enabled = true;
-            PlayState.GUI.IsMouseVisible = true;
+            WorldManager.GUI.IsMouseVisible = true;
 
-            if(PlayState.GUI.IsMouseOver())
+            if(WorldManager.GUI.IsMouseOver())
             {
-                PlayState.GUI.MouseMode = GUISkin.MousePointer.Pointer;
+                WorldManager.GUI.MouseMode = GUISkin.MousePointer.Pointer;
             }
             else
             {
-                PlayState.GUI.MouseMode = GUISkin.MousePointer.Dig;
+                WorldManager.GUI.MouseMode = GUISkin.MousePointer.Dig;
             }
 
             Player.BodySelector.Enabled = false;

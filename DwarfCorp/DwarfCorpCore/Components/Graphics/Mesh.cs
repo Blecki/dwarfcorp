@@ -59,7 +59,7 @@ namespace DwarfCorp
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
         {
-            Instance = PlayState.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
+            Instance = WorldManager.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
             instanceVisible = true;
         }
 
@@ -72,7 +72,7 @@ namespace DwarfCorp
             base(name, parent, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
         {
             ModelType = modelType;
-            Instance = PlayState.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
+            Instance = WorldManager.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
             instanceVisible = true;
         }
 
@@ -102,7 +102,7 @@ namespace DwarfCorp
 
         public override void Die()
         {
-            PlayState.InstanceManager.Instances[ModelType].Remove(Instance);
+            WorldManager.InstanceManager.Instances[ModelType].Remove(Instance);
             base.Die();
         }
 
@@ -112,11 +112,11 @@ namespace DwarfCorp
             {
                 if(value && !instanceVisible)
                 {
-                    PlayState.InstanceManager.Instances[ModelType].Add(Instance);
+                    WorldManager.InstanceManager.Instances[ModelType].Add(Instance);
                 }
                 else if(!value && instanceVisible)
                 {
-                    PlayState.InstanceManager.Instances[ModelType].Remove(Instance);
+                    WorldManager.InstanceManager.Instances[ModelType].Remove(Instance);
                 }
             }
 

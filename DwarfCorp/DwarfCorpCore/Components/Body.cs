@@ -222,7 +222,7 @@ namespace DwarfCorp
             Voxel curr = new Voxel();
             Voxel[] neighbors = new Voxel[4];
             Vector3 pos = LocalTransform.Translation;
-            if (PlayState.ChunkManager.ChunkData.GetVoxel(pos, ref curr))
+            if (WorldManager.ChunkManager.ChunkData.GetVoxel(pos, ref curr))
             {
                 
                 curr.Chunk.Get2DManhattanNeighbors(neighbors, (int)curr.GridPosition.X, (int)curr.GridPosition.Y, (int)curr.GridPosition.Z);

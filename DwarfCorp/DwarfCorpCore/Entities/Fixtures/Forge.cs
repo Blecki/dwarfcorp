@@ -51,7 +51,7 @@ namespace DwarfCorp
         }
 
         public Forge(Vector3 position) :
-            base("Forge", PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+            base("Forge", WorldManager.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
             SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
 
@@ -64,7 +64,7 @@ namespace DwarfCorp
             };
             Animation lampAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "Forge", 32, 32, frames, true, Color.White, 3.0f, 1f, 1.0f, false);
 
-            Sprite sprite = new Sprite(PlayState.ComponentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(WorldManager.ComponentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
             {
                 LightsWithVoxels = false
             };
@@ -77,9 +77,9 @@ namespace DwarfCorp
 
             Voxel voxelUnder = new Voxel();
 
-            if (PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            if (WorldManager.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {
-                new VoxelListener(PlayState.ComponentManager, this, PlayState.ChunkManager, voxelUnder);
+                new VoxelListener(WorldManager.ComponentManager, this, WorldManager.ChunkManager, voxelUnder);
             }
 
             new LightEmitter("light", this, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 50, 4)

@@ -61,7 +61,7 @@ namespace DwarfCorp
             }
 
             Body item = EntityFactory.CreateEntity<Body>(CraftLibrary.CraftItems[ItemType].Name, Voxel.Position + Vector3.One * 0.5f);
-            PlayState.ParticleManager.Trigger("puff", Voxel.Position + Vector3.One * 0.5f, Color.White, 10);
+            WorldManager.ParticleManager.Trigger("puff", Voxel.Position + Vector3.One * 0.5f, Color.White, 10);
             if (item == null)
             {
                 yield return Status.Fail;

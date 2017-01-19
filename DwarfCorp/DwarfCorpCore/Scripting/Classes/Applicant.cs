@@ -67,14 +67,14 @@ namespace DwarfCorp
                 "I really need this job!",
                 "I need to get away from it all!",
                 "I will be your loyal servant!",
-                "I've always wanted to work at " + PlayState.PlayerCompany.Name + "!",
+                "I've always wanted to work at " + WorldManager.PlayerCompany.Name + "!",
                 "I am a very hard worker!",
                 "I am an adventurous soul!"
             };
            CoverLetter =
-                TextGenerator.GenerateRandom("Dear " + PlayState.PlayerCompany.Name + ",\n",
+                TextGenerator.GenerateRandom("Dear " + WorldManager.PlayerCompany.Name + ",\n",
                 "${Please,Do}"," consider ", "${my,this}"," application for the position of " + Level.Name +
-                                             ". " + justifications[PlayState.Random.Next(justifications.Count)] +"\n", "${Thanks,Sincerely,Yours}", ",\n    " ,Name);
+                                             ". " + justifications[WorldManager.Random.Next(justifications.Count)] +"\n", "${Thanks,Sincerely,Yours}", ",\n    " ,Name);
 
             if (level > 0)
             {
@@ -148,7 +148,7 @@ namespace DwarfCorp
                 }
                
             };
-             HomeTown = TextGenerator.GenerateRandom(templates[PlayState.Random.Next(templates.Count)]); 
+             HomeTown = TextGenerator.GenerateRandom(templates[WorldManager.Random.Next(templates.Count)]); 
         }
     }
 }

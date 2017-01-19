@@ -93,7 +93,7 @@ namespace DwarfCorp
         /// <returns>The voxel within the radius which is over land if it exists, null otherwise.</returns>
         public Voxel FindLand(int radius, Voxel checkVoxel)
         {
-            return PlayState.ChunkManager.BreadthFirstSearch(checkVoxel, radius * radius, voxel => voxel != null && voxel.IsEmpty && voxel.WaterLevel == 0 && !voxel.IsBottomEmpty());
+            return WorldManager.ChunkManager.BreadthFirstSearch(checkVoxel, radius * radius, voxel => voxel != null && voxel.IsEmpty && voxel.WaterLevel == 0 && !voxel.IsBottomEmpty());
         }
 
         /// <summary>

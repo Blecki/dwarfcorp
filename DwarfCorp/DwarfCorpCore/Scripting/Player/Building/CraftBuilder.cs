@@ -123,13 +123,13 @@ namespace DwarfCorp
         {
             if (IsDesignation(designation.Location))
             {
-                PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Something is already being built there!", Color.Red));
+                WorldManager.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Something is already being built there!", Color.Red));
                 return false;
             }
 
             if (Faction.GetNearestRoomOfType(WorkshopRoom.WorkshopName, designation.Location.Position) == null)
             {
-                PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Can't build, no workshops!", Color.Red));
+                WorldManager.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Can't build, no workshops!", Color.Red));
                 return false;
             }
 
@@ -142,7 +142,7 @@ namespace DwarfCorp
                     neededResources += "" + amount.NumResources + " " + amount.ResourceType.ToString() + " ";
                 }
 
-                PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Not enough resources! Need " + neededResources + ".", Color.Red));
+                WorldManager.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Not enough resources! Need " + neededResources + ".", Color.Red));
                 return false;
             }
 
@@ -160,7 +160,7 @@ namespace DwarfCorp
 
                         if (!neighborFound)
                         {
-                            PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Must be built next to wall!", Color.Red));
+                            WorldManager.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Must be built next to wall!", Color.Red));
                             return false;
                         }
 
@@ -173,7 +173,7 @@ namespace DwarfCorp
 
                         if (below.IsEmpty)
                         {
-                            PlayState.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Must be built on solid ground!", Color.Red));
+                            WorldManager.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Must be built on solid ground!", Color.Red));
                             return false;
                         }
                         break;
@@ -197,7 +197,7 @@ namespace DwarfCorp
                     {
                         if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Craft).Count == 0)
                         {
-                            PlayState.GUI.ToolTipManager.Popup("None of the selected units can craft items.");
+                            WorldManager.GUI.ToolTipManager.Popup("None of the selected units can craft items.");
                             return;
                         }
                         List<Task> assignments = new List<Task>();
@@ -220,7 +220,7 @@ namespace DwarfCorp
                                 };
 
                                 newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
-                                PlayState.ParticleManager.Trigger("puff", pos, Color.White, 10);
+                                WorldManager.ParticleManager.Trigger("puff", pos, Color.White, 10);
                                 if (IsValid(newDesignation))
                                 {
                                     AddDesignation(newDesignation);
@@ -236,7 +236,7 @@ namespace DwarfCorp
 
                         if (assignments.Count > 0)
                         {
-                            TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(PlayState.Master.SelectedMinions, GameMaster.ToolMode.Craft));
+                            TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(WorldManager.Master.SelectedMinions, GameMaster.ToolMode.Craft));
                         }
 
                         break;

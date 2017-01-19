@@ -136,7 +136,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public static float Dt
         {
-            get { return (float) LastTime.ElapsedGameTime.TotalSeconds; }
+            get { return (float)LastTime.ElapsedGameTime.TotalSeconds; }
         }
     }
 
@@ -172,33 +172,33 @@ namespace DwarfCorp
 
         public bool Update(DwarfTime t)
         {
-            if(null == t)
+            if (null == t)
             {
                 return false;
             }
 
             float seconds = (float)(Mode == TimerMode.Game ? t.TotalGameTime.TotalSeconds : t.TotalRealTime.TotalSeconds);
 
-            if(!TriggerOnce && HasTriggered)
+            if (!TriggerOnce && HasTriggered)
             {
                 HasTriggered = false;
                 CurrentTimeSeconds = 0.0f;
                 StartTimeSeconds = -1;
             }
-            
+
             if (HasTriggered && TriggerOnce)
             {
                 return true;
             }
 
-            if(StartTimeSeconds < 0)
+            if (StartTimeSeconds < 0)
             {
                 StartTimeSeconds = seconds;
             }
 
             CurrentTimeSeconds = seconds - StartTimeSeconds;
 
-            if(CurrentTimeSeconds > TargetTimeSeconds)
+            if (CurrentTimeSeconds > TargetTimeSeconds)
             {
                 HasTriggered = true;
                 CurrentTimeSeconds = TargetTimeSeconds;
@@ -232,7 +232,7 @@ namespace DwarfCorp
 
         public DateTimer()
         {
-            
+
         }
 
         public DateTimer(DateTime now, TimeSpan target)

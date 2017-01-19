@@ -145,7 +145,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public virtual void Build()
+        public virtual void Build(bool silent=false)
         {
             if(IsBuilt)
             {
@@ -158,10 +158,13 @@ namespace DwarfCorp
             }
             IsBuilt = true;
             ToBuild.IsBuilt = true;
-            RoomLibrary.GenerateRoomComponentsTemplate(ToBuild, Faction.Components, PlayState.ChunkManager.Content, PlayState.ChunkManager.Graphics);
+            RoomLibrary.GenerateRoomComponentsTemplate(ToBuild, Faction.Components, WorldManager.ChunkManager.Content, WorldManager.ChunkManager.Graphics);
             ToBuild.OnBuilt();
 
-            PlayState.AnnouncementManager.Announce("Built room!", ToBuild.ID + " was built");
+            if (!silent)
+            {
+                WorldManager.AnnouncementManager.Announce("Built room!", ToBuild.ID + " was built");
+            }
 
             foreach (GameComponent fence in WorkObjects)
             {
