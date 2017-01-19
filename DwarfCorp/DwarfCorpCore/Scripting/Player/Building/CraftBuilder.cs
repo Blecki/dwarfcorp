@@ -224,7 +224,7 @@ namespace DwarfCorp
                                 if (IsValid(newDesignation))
                                 {
                                     AddDesignation(newDesignation);
-                                    assignments.Add(new CraftItemTask(VoxelPool.Allocate(new Point3(r.GridPosition), r.Chunk),
+                                    assignments.Add(new CraftItemTask(new Voxel(new Point3(r.GridPosition), r.Chunk),
                                         CurrentCraftType));
                                 }
                                 else

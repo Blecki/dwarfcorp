@@ -33,6 +33,8 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Gum;
+using Gum.Widgets;
 
 namespace DwarfCorp.GameStates
 {
@@ -42,19 +44,9 @@ namespace DwarfCorp.GameStates
     /// </summary>
     public class CompanyMakerState : GameState
     {
-        public DwarfGUI GUI { get; set; }
-        public SpriteFont DefaultFont { get; set; }
-        public Drawer2D Drawer { get; set; }
-        public Panel MainWindow { get; set; }
-        public int EdgePadding { get; set; }
-        public GridLayout Layout { get; set; }
-        public InputManager Input { get; set; }
-
-        public ImagePanel CompanyLogoPanel { get; set; }
-
-        private LineEdit CompanyNameEdit { get; set; }
-        private LineEdit CompanyMottoEdit { get; set; }
-        private ColorPanel CompanyColorPanel { get; set; }
+        private Gum.Root GuiRoot;
+        private Gum.Widgets.EditableTextField NameField;
+        private Gum.Widgets.EditableTextField MottoField;
 
         public TextGenerator TextGenerator { get; set; }
         public static Color DefaultColor = Color.DarkRed;
@@ -73,54 +65,142 @@ namespace DwarfCorp.GameStates
             CompanyMotto = DefaultMotto;
             CompanyLogo = DefaultLogo;
             CompanyColor = DefaultColor;
-            EdgePadding = 32;
-            Input = new InputManager();
-            Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
             TextGenerator = new TextGenerator();
         }
 
         public override void OnEnter()
         {
+            // Clear the input queue... cause other states aren't using it and it's been filling up.
+            DwarfGame.GumInput.GetInputQueue();
+
+            GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
+            GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
+
+            // CONSTRUCT GUI HERE...
+            var mainPanel = GuiRoot.RootItem.AddChild(new Gum.Widget
+            {
+                Rect = GuiRoot.VirtualScreen,
+                Border = "border-fancy",
+                Text = "Create a Company",
+                Padding = new Margin(4, 4, 4, 4),
+                InteriorMargin = new Margin(24,0,0,0),
+                TextSize = 2
+            });
+
+            mainPanel.AddChild(new Widget
+            {
+                Text = "CREATE!",
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                Border = "border-button",
+                OnClick = (sender, args) =>
+                {
+                    
+                    StateManager.PopState();
+                },
+                AutoLayout = AutoLayout.FloatBottomRight
+            });
+
+            // Todo: Main menu needs to be fixed so going back actually goes back to the first menu.
+            mainPanel.AddChild(new Widget
+            {
+                Text = "BACK",
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                Border = "border-button",
+                OnClick = (sender, args) =>
+                {
+                    StateManager.PopState();
+                },
+                AutoLayout = AutoLayout.FloatBottomRight,
+                OnLayout = s => s.Rect.X -= 128 // Hack to keep it from floating over the other button.
+            });
+
+            #region Name 
+            var nameRow = mainPanel.AddChild(new Widget
+            {
+                MinimumSize = new Point(0, 24),
+                AutoLayout = AutoLayout.DockTop,
+                Padding = new Margin(0,0,2,2)
+            });
+
+            nameRow.AddChild(new Widget
+            {
+                MinimumSize = new Point(64, 0),
+                Text = "Name",
+                AutoLayout = AutoLayout.DockLeft
+            });
+
+            nameRow.AddChild(new Widget
+            {
+                Text = "Randomize",
+                AutoLayout = AutoLayout.DockRight,
+                Border = "border-button",
+                OnClick = (sender, args) =>
+                    {
+                        var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.company_exploration);
+                        CompanyName = TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
+                        NameField.Text = CompanyName;
+                        // Todo: Doesn't automatically invalidate when text changed??
+                        NameField.Invalidate();
+                    }
+            });
+
+            NameField = nameRow.AddChild(new EditableTextField
+                {
+                    Text = DefaultName,
+                    AutoLayout = AutoLayout.DockFill
+                }) as EditableTextField;
+            #endregion
+
+
+            #region Motto
+            var mottoRow = mainPanel.AddChild(new Widget
+            {
+                MinimumSize = new Point(0, 24),
+                AutoLayout = AutoLayout.DockTop,
+                Padding = new Margin(0, 0, 2, 2)
+            });
+
+            mottoRow.AddChild(new Widget
+            {
+                MinimumSize = new Point(64, 0),
+                Text = "Motto",
+                AutoLayout = AutoLayout.DockLeft
+            });
+
+            mottoRow.AddChild(new Widget
+            {
+                Text = "Randomize",
+                AutoLayout = AutoLayout.DockRight,
+                Border = "border-button",
+                OnClick = (sender, args) =>
+                {
+                    var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.mottos);
+                    CompanyMotto = TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
+                    MottoField.Text = CompanyName;
+                    // Todo: Doesn't automatically invalidate when text changed??
+                    MottoField.Invalidate();
+                }
+            });
+
+            MottoField = mottoRow.AddChild(new EditableTextField
+            {
+                Text = DefaultMotto,
+                AutoLayout = AutoLayout.DockFill
+            }) as EditableTextField;
+            #endregion
+
+            GuiRoot.RootItem.Layout();
+
+            // Must be true or Render will not be called.
             IsInitialized = true;
-            DefaultFont = Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
-            GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
-            MainWindow = new Panel(GUI, GUI.RootComponent)
-            {
-                LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2)
-            };
-            Layout = new GridLayout(GUI, MainWindow, 10, 3);
 
-            Label title = new Label(GUI, Layout, "Create a Company", GUI.TitleFont);
-            Layout.SetComponentPosition(title, 0, 0, 1, 1);
+            base.OnEnter();
+            return;
 
-            Label companyNameLabel = new Label(GUI, Layout, "Name", GUI.DefaultFont);
-            Layout.SetComponentPosition(companyNameLabel, 0, 1, 1, 1);
-
-            CompanyNameEdit = new LineEdit(GUI, Layout, CompanyName);
-            Layout.SetComponentPosition(CompanyNameEdit, 1, 1, 1, 1);
-
-            Button randomButton = new Button(GUI, Layout, "Random", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
-            {
-                ToolTip = "Randomly generate a name"
-            };
-            Layout.SetComponentPosition(randomButton, 2, 1, 1, 1);
-            randomButton.OnClicked += randomButton_OnClicked;
-
-            Label companyMottoLabel = new Label(GUI, Layout, "Motto", GUI.DefaultFont);
-            Layout.SetComponentPosition(companyMottoLabel, 0, 2, 1, 1);
-
-            CompanyMottoEdit = new LineEdit(GUI, Layout, CompanyMotto);
-            Layout.SetComponentPosition(CompanyMottoEdit, 1, 2, 1, 1);
-            CompanyMottoEdit.OnTextModified += companyMottoEdit_OnTextModified;
-
-            CompanyNameEdit.OnTextModified += companyNameEdit_OnTextModified;
-
-            Button randomButton2 = new Button(GUI, Layout, "Random", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
-            {
-                ToolTip = "Randomly generate a motto"
-            };
-            Layout.SetComponentPosition(randomButton2, 2, 2, 1, 1);
-            randomButton2.OnClicked += randomButton2_OnClicked;
+        /*    
+           
 
             Label companyLogoLabel = new Label(GUI, Layout, "Logo", GUI.DefaultFont);
             Layout.SetComponentPosition(companyLogoLabel, 0, 3, 1, 1);
@@ -159,6 +239,7 @@ namespace DwarfCorp.GameStates
             back.OnClicked += back_onClicked;
 
             base.OnEnter();
+         * */
         }
 
         public List<Color> GenerateDefaultColors()
@@ -179,62 +260,12 @@ namespace DwarfCorp.GameStates
             return toReturn;
         }
 
-        void CompanyColorPanel_OnClicked()
-        {
-            ColorDialog colorDialog = ColorDialog.Popup(GUI, GenerateDefaultColors());
-            colorDialog.OnColorSelected += colorDialog_OnColorSelected;
-        }
-
-        void colorDialog_OnColorSelected(Color arg)
-        {
-            CompanyColor = arg;
-            CompanyColorPanel.CurrentColor = arg;
-        }
-
-        private void selectorButton_OnClicked()
-        {
-            List<SpriteSheet> sprites = new List<SpriteSheet>()
-            {
-                new SpriteSheet(ContentPaths.Logos.grebeardlogo, 32),
-                new SpriteSheet(ContentPaths.Logos.logos, 32)
-            };
-            ImageFrameLoadDialog dialog = ImageFrameLoadDialog.Popup(GUI, sprites);
-            dialog.OnTextureSelected += Loader_OnTextureSelected;
-        }
-
         
-        private void Loader_OnTextureSelected(NamedImageFrame arg)
-        {
-            CompanyLogo = arg;
-            CompanyLogoPanel.Image = arg;
-            CompanyLogoPanel.AssetName = arg.AssetName;
-        }
-         
-
-        private void randomButton2_OnClicked()
-        {
-            List<List<string>> atoms = TextGenerator.GetAtoms(ContentPaths.Text.Templates.mottos);
-            CompanyMotto = TextGenerator.GenerateRandom(Datastructures.SelectRandom(atoms).ToArray());
-            CompanyMottoEdit.Text = CompanyMotto;
-        }
-
-        private void randomButton_OnClicked()
-        {
-            var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.company_exploration);
-            CompanyName = TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
-            CompanyNameEdit.Text = CompanyName;
-        }
-
-        private void companyMottoEdit_OnTextModified(string arg)
-        {
-            CompanyMotto = arg;
-        }
-
         private void apply_OnClicked()
         {
-            CompanyName = CompanyNameEdit.Text;
-            CompanyMotto = CompanyMottoEdit.Text;
-            CompanyLogo = new NamedImageFrame(CompanyLogoPanel.AssetName, CompanyLogoPanel.Image.SourceRect);
+        //    CompanyName = CompanyNameEdit.Text;
+        //    CompanyMotto = CompanyMottoEdit.Text;
+        //    CompanyLogo = new NamedImageFrame(CompanyLogoPanel.AssetName, CompanyLogoPanel.Image.SourceRect);
             StateManager.PopState();
         }
 
@@ -250,47 +281,22 @@ namespace DwarfCorp.GameStates
 
         public override void Update(DwarfTime gameTime)
         {
-            MainWindow.LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2);
-            Input.Update();
-            GUI.Update(gameTime);
+            foreach (var @event in DwarfGame.GumInput.GetInputQueue())
+            {
+                GuiRoot.HandleInput(@event.Message, @event.Args);
+                if (!@event.Args.Handled)
+                {
+                    // Pass event to game...
+                }
+            }
+
+            GuiRoot.Update(gameTime.ToGameTime());
             base.Update(gameTime);
         }
-
-
-        private void DrawGUI(DwarfTime gameTime, float dx)
-        {
-            RasterizerState rasterizerState = new RasterizerState()
-            {
-                ScissorTestEnable = true
-            };
-
-            GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
-            DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp, null, rasterizerState);
-            Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
-            GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
-            GUI.PostRender(gameTime);
-            DwarfGame.SpriteBatch.End();
-        }
-
+        
         public override void Render(DwarfTime gameTime)
         {
-            if(Transitioning == TransitionMode.Running)
-            {
-                Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-                DrawGUI(gameTime, 0);
-            }
-            else if(Transitioning == TransitionMode.Entering)
-            {
-                float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                DrawGUI(gameTime, dx);
-            }
-            else if(Transitioning == TransitionMode.Exiting)
-            {
-                float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                DrawGUI(gameTime, dx);
-            }
-
-
+            GuiRoot.Draw();
             base.Render(gameTime);
         }
     }
