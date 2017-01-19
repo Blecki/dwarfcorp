@@ -933,6 +933,7 @@ namespace DwarfCorp
     {
         public CreatureMovement(Creature creature)
         {
+            Creature = creature;
             Actions = new Dictionary<Creature.MoveType, ActionStats>
             {
                 {

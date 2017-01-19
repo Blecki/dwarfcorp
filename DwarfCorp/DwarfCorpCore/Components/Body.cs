@@ -125,6 +125,14 @@ namespace DwarfCorp
             get { return GlobalTransform.Translation; }
         }
 
+        [JsonIgnore]
+        public Vector3 LocalPosition
+        {
+            get { return LocalTransform.Translation; }
+            set { localTransform.Translation = value; }
+        }
+
+
         public BoundingBox BoundingBox = new BoundingBox();
 
 
@@ -332,10 +340,6 @@ namespace DwarfCorp
 
         public void UpdateTransformsRecursive()
         {
-            if(!IsActive)
-            {
-                return;
-            }
 
             if(Parent is Body)
             {

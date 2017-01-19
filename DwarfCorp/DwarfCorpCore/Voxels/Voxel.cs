@@ -269,6 +269,12 @@ namespace DwarfCorp
             //quickCompare = (ulong) (((chunkID.X & 0xFFFF) << 48) | ((chunkID.Y & 0xFFFF) << 32) | ((chunkID.Y & 0xFFFF) << 16) | (index & 0xFFFF));
         }
 
+        public Voxel(Voxel other)
+        {
+            Chunk = other.Chunk;
+            GridPosition = other.GridPosition;
+        }
+
         [JsonIgnore]
         public float Health
         {
@@ -448,7 +454,8 @@ namespace DwarfCorp
         {
             UpdateStatics();
             Chunk = chunk;
-            chunkID = chunk.ID;
+            if (chunk != null)
+                chunkID = chunk.ID;
             GridPosition = new Vector3(gridPosition.X, gridPosition.Y, gridPosition.Z);
         }
 

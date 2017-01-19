@@ -53,7 +53,7 @@ namespace DwarfCorp
             public Keys TimeBackward = Keys.Z;
             public Keys SliceUp = Keys.PageUp;
             public Keys SliceDown = Keys.PageDown;
-            public Keys Pause = Keys.P;
+            public Keys Pause = Keys.Space;
             public Keys Map = Keys.M;
             public Keys SliceSelected = Keys.Q;
             public Keys Unslice = Keys.E;

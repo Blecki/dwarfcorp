@@ -414,6 +414,7 @@ namespace DwarfCorp.GameStates
         {
             IsGenerating = false;
             DoneGenerating = false;
+            Seed = WorldManager.Random.Next();
         }
 
         void advancedButton_OnClicked()

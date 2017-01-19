@@ -292,9 +292,12 @@ namespace DwarfCorp
 
                         if (!altPressed)
                         {
-                            SelectionBuffer.RemoveAll(
+                            if (SelectionType == VoxelSelectionType.SelectFilled)
+                            { 
+                                SelectionBuffer.RemoveAll(
                                 voxel =>
-                                    (!voxel.Equals(underMouse) && Chunks.ChunkData.IsVoxelOccluded(voxel)));
+                                    (!voxel.Equals(underMouse) && !Chunks.ChunkData.IsVoxelVisibleSurface(voxel)));
+                            }
                         }
 
                         if (newVoxel)
