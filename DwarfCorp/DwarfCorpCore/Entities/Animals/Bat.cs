@@ -37,11 +37,11 @@ namespace DwarfCorp
                     CanSleep = false
                 },
                 // Belongs to herbivore team
-                "Undead",
+                "Carnivore",
                 // Uses the default plan service
                 WorldManager.PlanService,
                 // Belongs to the herbivore team
-                WorldManager.ComponentManager.Factions.Factions["Undead"],
+                WorldManager.ComponentManager.Factions.Factions["Carnivore"],
                 // The physics component this creature belongs to
                 new Physics
                 (

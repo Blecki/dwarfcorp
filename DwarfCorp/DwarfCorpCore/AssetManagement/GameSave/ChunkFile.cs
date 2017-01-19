@@ -66,7 +66,6 @@ namespace DwarfCorp
         public Point3 Size;
         public byte[,,] Types;
 
-
         public ChunkFile()
         {
         }
@@ -98,13 +97,6 @@ namespace DwarfCorp
             Size = chunkFile.Size;
             Types = chunkFile.Types;
             Explored = chunkFile.Explored;
-            this.ID = chunkFile.ID;
-            this.Liquid = chunkFile.Liquid;
-            this.LiquidTypes = chunkFile.LiquidTypes;
-            this.Origin = chunkFile.Origin;
-            this.Size = chunkFile.Size;
-            this.Types = chunkFile.Types;
-            this.Explored = chunkFile.Explored;
         }
 
         public bool ReadFile(string filePath, bool isCompressed, bool isBinary)
@@ -146,8 +138,6 @@ namespace DwarfCorp
             int chunkSizeY = this.Size.Y;
             int chunkSizeZ = this.Size.Z;
             Vector3 origin = this.Origin;
-            //Voxel[][][] voxels = ChunkGenerator.Allocate(chunkSizeX, chunkSizeY, chunkSizeZ);
-            float scaleFator = WorldManager.WorldScale;
             VoxelChunk c = new VoxelChunk(manager, origin, 1, ID, chunkSizeX, chunkSizeY, chunkSizeZ)
             {
                 ShouldRebuild = true,
@@ -161,41 +151,14 @@ namespace DwarfCorp
                     for(int y = 0; y < chunkSizeY; y++)
                     {
                         int index = c.Data.IndexAt(x, y, z);
-                        if (Types[x, y, z] > 0)
                         if(Types[x, y, z] > 0)
                         {
                             c.Data.Types[index] = Types[x, y, z];
                             c.Data.Health[index] = (byte) VoxelLibrary.GetVoxelType(Types[x, y, z]).StartingHealth;
-                            c.Data.Types[index] = (byte) Types[x, y, z];
-                            c.Data.Health[index] = (byte)VoxelLibrary.GetVoxelType(Types[x, y, z]).StartingHealth;
                         }
                         c.Data.IsExplored[index] = Explored[x, y, z];
-                    }
-                }
-            }
-
-
-            for (int x = 0; x < chunkSizeX; x++)
-            {
-                for (int z = 0; z < chunkSizeZ; z++)
-                {
-                    for (int y = 0; y < chunkSizeY; y++)
-                    {
-                        int index = c.Data.IndexAt(x, y, z);
-                    }
-                }
-            }
-
-
-            for(int x = 0; x < chunkSizeX; x++)
-            {
-                for(int z = 0; z < chunkSizeZ; z++)
-                {
-                    for(int y = 0; y < chunkSizeY; y++)
-                    {
-                        int index = c.Data.IndexAt(x, y, z);
                         c.Data.Water[index].WaterLevel = Liquid[x, y, z];
-                        c.Data.Water[index].Type = (LiquidType) LiquidTypes[x, y, z];
+                        c.Data.Water[index].Type = (LiquidType)LiquidTypes[x, y, z];
                     }
                 }
             }
@@ -217,7 +180,6 @@ namespace DwarfCorp
                         Types[x, y, z] = chunk.Data.Types[index];
                         Explored[x, y, z] = chunk.Data.IsExplored[index];
 
-                        if (water.WaterLevel > 0)
                         if(water.WaterLevel > 0)
                         {
                             Liquid[x, y, z] = water.WaterLevel;

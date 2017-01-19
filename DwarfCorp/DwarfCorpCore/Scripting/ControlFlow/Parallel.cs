@@ -80,7 +80,7 @@ namespace DwarfCorp
                 foreach(Act child in Children)
                 {
                     Status childStatus = child.Tick();
-
+                    LastTickedChild = child;
                     if(childStatus == Status.Fail)
                     {
                         yield return Status.Fail;

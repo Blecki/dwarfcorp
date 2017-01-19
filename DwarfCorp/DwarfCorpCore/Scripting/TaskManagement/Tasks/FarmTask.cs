@@ -72,7 +72,7 @@ namespace DwarfCorp.Scripting.TaskManagement.Tasks
             return new FarmAct(agent.AI) {Resources = RequiredResources, PlantToCreate = Plant, Mode = Mode, FarmToWork = FarmToWork, Name = "Work " + FarmToWork.Vox.Position};
         }
 
-        public override float ComputeCost(Creature agent)
+        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             if (FarmToWork == null) return float.MaxValue;
             else

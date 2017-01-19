@@ -35,6 +35,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -106,7 +108,7 @@ namespace DwarfCorp
                 new SetBlackboardData<Voxel>(creature, "DigVoxel", voxel),
                 new Sequence(
                               new Wrap(() => IncrementAssignment(creature, "DigVoxel", 1)),
-                              new GoToVoxelAct(voxel, PlanAct.PlanType.Adjacent, creature),
+                              new GoToVoxelAct(voxel, PlanAct.PlanType.Radius, creature) {Radius = 2.0f},
                               new Wrap(() => CheckIsDigDesignation(creature, "DigVoxel")),
                               new DigAct(Agent, "DigVoxel"),
                               new ClearBlackboardData(creature, "DigVoxel")

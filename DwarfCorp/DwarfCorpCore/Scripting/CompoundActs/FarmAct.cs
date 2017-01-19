@@ -94,7 +94,7 @@ namespace DwarfCorp
                 {
 
                     Creature.Physics.Velocity *= 0.1f;
-                    tile.Progress += Creature.Stats.BaseFarmSpeed;
+                    tile.Progress += Creature.Stats.BaseFarmSpeed * DwarfTime.Dt;
 
                     Drawer2D.DrawLoadBar(Agent.Position + Vector3.Up, Color.White, Color.Black, 100, 16,
                         tile.Progress/100.0f);

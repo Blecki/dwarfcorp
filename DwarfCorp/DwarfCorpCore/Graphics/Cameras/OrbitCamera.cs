@@ -363,14 +363,13 @@ namespace DwarfCorp
                 Theta = targetTheta * 0.5f + Theta * 0.5f;
                 Phi = targetPhi * 0.5f + Phi * 0.5f;
 
-
-                if (Phi < -1.5f)
+                if (Phi < -MathHelper.PiOver2)
                 {
-                    Phi = -1.5f;
+                    Phi = -MathHelper.PiOver2;
                 }
-                else if (Phi > 1.5f)
+                else if (Phi > MathHelper.PiOver2)
                 {
-                    Phi = 1.5f;
+                    Phi = MathHelper.PiOver2;
                 }
             }
             else

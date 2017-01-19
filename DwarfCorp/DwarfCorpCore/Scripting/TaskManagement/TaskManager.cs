@@ -100,61 +100,117 @@ namespace DwarfCorp
 
         public static void AssignTasksGreedy(List<Task> newGoals, List<CreatureAI> creatures, int maxPerGoal)
         {
-            List<int> counts = new List<int>();
+            string trackingString = "AssignTasksGreedy(" + newGoals.Count + ")";
+            GamePerformance.Instance.StartTrackPerformance(trackingString);
+            // We are going to keep track of the unassigned goal count
+            // to avoid having to parse the list at the end of the loop.
+            int goalsUnassigned = newGoals.Count;
+            List<int> counts = new List<int>(goalsUnassigned);
 
-            for (int i = 0; i < newGoals.Count; i++)
+            for (int i = 0; i < goalsUnassigned; i++)
             {
                 counts.Add(0);
             }
 
-            bool allAssigned = false;
-            List<CreatureAI> randomized = new List<CreatureAI>(creatures);
-            List<KeyValuePair<int, float>> costs = new List<KeyValuePair<int, float>>();
-            int iters = 0;
-            while (!allAssigned && iters < newGoals.Count * creatures.Count)
+            // Randomized list changed from the CreatureAI objects themselves to an index into the
+            // List passed in.  This is to avoid having to shift the masterCosts list around to match
+            // each time we randomize.
+            List<int> randomIndex = new List<int>(creatures.Count);
+            for (int i = 0; i < creatures.Count; i++)
             {
-                randomized.Shuffle();
-                iters++;
-                foreach (CreatureAI creature in randomized)
+                randomIndex.Add(i);
+            }
+
+            // We create the comparer outside of the loop.  It gets reused for each sort.
+            CostComparer toCompare = new CostComparer();
+
+            // One of the biggest issues with the old function was that it was recalculating the whole task list for
+            // the creature each time through the loop, using one item and then throwing it away.  Nothing changed
+            // in how the calculation happened between each time so we will instead make a costs list for each creature
+            // and keep them all.  This not only avoids rebuilding the list but the sheer KeyValuePair object churn there already was.
+            List<List<KeyValuePair<int, float>>> masterCosts = new List<List<KeyValuePair<int, float>>>(creatures.Count);
+
+            // We will set this up in the next loop rather than make it's own loop.
+            List<int> costsPositions = new List<int>(creatures.Count);
+            for (int costIndex = 0; costIndex < creatures.Count; costIndex++)
+            {
+                List<KeyValuePair<int, float>> costs = new List<KeyValuePair<int, float>>();
+                CreatureAI creature = creatures[costIndex];
+
+                // We already were doing an index count to be able to make the KeyValuePair for costs
+                // and foreach uses Enumeration which is slower.
+                for (int i = 0; i < newGoals.Count; i++)
                 {
-                    costs.Clear();
-                    int index = 0;
-                    foreach (Task task in newGoals)
+                    Task task = newGoals[i];
+                    // We are checking for tasks the creature is already assigned up here to avoid having to check
+                    // every task in the newGoals list against every task in the newGoals list.  The newGoals list
+                    // should reasonably not contain any task duplicates.
+                    if (creature.Tasks.Contains(task)) continue;
+
+                    float cost = 0;
+                    // We've swapped the order of the two checks to take advantage of a new ComputeCost that can act different
+                    // if we say we've already called IsFeasible first.  This allows us to skip any calculations that are repeated in both.
+                    if (!task.IsFeasible(creature.Creature))
                     {
-                        float cost = task.ComputeCost(creature.Creature);
-                        if (!task.IsFeasible(creature.Creature))
-                        {
-                            cost += 1e10f;
-                        }
-                        costs.Add(new KeyValuePair<int, float>(index, cost));
-                        index++;
+                        cost += 1e10f;
                     }
+                    cost += task.ComputeCost(creature.Creature, true);
+                    costs.Add(new KeyValuePair<int, float>(i, cost));
+                }
+                // The sort lambda function has been replaced by an IComparer class.
+                // This is faster but I mainly did it because VS can not Edit & Continue
+                // any function with a Lambda function in it which was slowing down dev time.
+                costs.Sort(toCompare);
 
-                    costs.Sort((pairA, pairB) =>
-                    {
-                        if (pairA.Key == pairB.Key)
-                        {
-                            return 0;
-                        }
-                        else return pairA.Value.CompareTo(pairB.Value);
-                    });
+                masterCosts.Add(costs);
+                costsPositions.Add(0);
+            }
 
-                    foreach (KeyValuePair<int, float> taskCost in costs)
+
+            // We are going to precalculate the maximum iterations and count down
+            // instead of up.
+            int iters = goalsUnassigned * creatures.Count;
+            while (goalsUnassigned > 0 && iters > 0)
+            {
+                randomIndex.Shuffle();
+                iters--;
+                for (int creatureIndex = 0; creatureIndex < randomIndex.Count; creatureIndex++)
+                {
+                    int randomCreature = randomIndex[creatureIndex];
+                    CreatureAI creature = creatures[randomCreature];
+
+                    List<KeyValuePair<int, float>> costs = masterCosts[randomCreature];
+                    int costPosition = costsPositions[randomCreature];
+                    // This loop starts with the previous spot we stopped.  This avoids us having to constantly run a task we
+                    // know we have processed.
+                    for (int i = costPosition; i < costs.Count; i++)
                     {
-                        if (!creature.Tasks.Contains(newGoals[taskCost.Key]) && counts[taskCost.Key] < maxPerGoal)
+                        // Incremented at the start in case we find a task and break.
+                        costPosition++;
+
+                        KeyValuePair<int, float> taskCost = costs[i];
+                        // We've swapped the checks here.  Tasks.Contains is far more expensive so being able to skip
+                        // if it's going to fail the maxPerGoal check anyways is very good.
+                        if (counts[taskCost.Key] < maxPerGoal)//  && !creature.Tasks.Contains(newGoals[taskCost.Key]))
                         {
+                            // We have to check to see if the task we are assigning is fully unassigned.  If so 
+                            // we reduce the goalsUnassigned count.  If it's already assigned we skip it.
+                            if (counts[taskCost.Key] == 0) goalsUnassigned--;
+
                             counts[taskCost.Key]++;
                             creature.Tasks.Add(newGoals[taskCost.Key].Clone());
                             break;
                         }
                     }
-                    allAssigned = true;
-                    foreach (int c in counts)
-                    {
-                        if (c == 0) allAssigned = false;
-                    }
+                    // We have to set the position we'll start the loop at the next time based on where we found
+                    // our task.
+                    costsPositions[randomCreature] = costPosition;
+                    // The loop at the end to see if all are unassigned is gone now, replaced by a countdown
+                    // variable: goalsUnassigned.
                 }
+
             }
+            GamePerformance.Instance.EndTrackPerformance(trackingString);
         }
 
         public static void AssignTasks(List<Task> newGoals, List<CreatureAI> creatures)
@@ -265,7 +321,17 @@ namespace DwarfCorp
 
         }
 
-
+        public class CostComparer : IComparer<KeyValuePair<int, float>>
+        {
+            public int Compare(KeyValuePair<int, float> pairA, KeyValuePair<int, float> pairB)
+            {
+                if (pairA.Key == pairB.Key)
+                {
+                    return 0;
+                }
+                else return pairA.Value.CompareTo(pairB.Value);
+            }
+        }
     }
 
 }

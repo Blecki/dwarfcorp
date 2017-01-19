@@ -115,7 +115,8 @@ namespace DwarfCorp
                                 Vector3 delta = faceDeltas[(int)face];
 
 
-                                bool success = chunk.Manager.ChunkData.GetVoxel(chunk, new Vector3(x + (int)delta.X, y + (int)delta.Y, z + (int)delta.Z) + chunk.Origin, ref vox);
+                                bool success = chunk.Manager.ChunkData.GetVoxel(chunk, 
+                                    new Vector3(x + (int)delta.X, y + (int)delta.Y, z + (int)delta.Z) + chunk.Origin, ref vox);
 
                                 if(success)
                                 {
@@ -187,8 +188,10 @@ namespace DwarfCorp
                     lock (VertexLock)
                     {
                         VertexBuffer = null;
-                        MaxVertex = -1;
-                        MaxIndex = -1;
+                        Vertices = null;
+                        Indexes = null;
+                        MaxVertex = 0;
+                        MaxIndex = 0;
                     }
                 }
                 catch (System.Threading.AbandonedMutexException e)
@@ -231,12 +234,14 @@ namespace DwarfCorp
                 float count = 1.0f;
                 float emptyNeighbors = 0.0f;
 
-                foreach(byte level in neighborsVertex.Select(vox => vox.WaterLevel))
+                foreach(Voxel vox in neighborsVertex)
                 {
-                    averageWaterLevel += level;
+                    if (vox == null) continue;
+                    
+                    averageWaterLevel += vox.WaterLevel;
                     count++;
 
-                    if(level < 1)
+                    if(vox.WaterLevel < 1)
                     {
                         emptyNeighbors++;
                     }

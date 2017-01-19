@@ -79,10 +79,10 @@ namespace DwarfCorp
         public static int WorldHeight = 800;
 
         // The number of voxels along x and z in a chunk
-        public static int ChunkWidth {get { return GameSettings.Default.ChunkWidth; }}
+        public static int ChunkWidth { get { return GameSettings.Default.ChunkWidth; } }
 
         // The number of voxels along y in a chunk.
-        public static int ChunkHeight {get { return GameSettings.Default.ChunkHeight; }}
+        public static int ChunkHeight { get { return GameSettings.Default.ChunkHeight; } }
 
         // The current coordinate of the cursor light
         public static Vector3 CursorLightPos
@@ -1161,7 +1161,8 @@ namespace DwarfCorp
         /// Called every frame
         /// </summary>
         /// <param name="gameTime">The current time</param>
-        public void Update(DwarfTime gameTime) {
+        public void Update(DwarfTime gameTime)
+        {
             if (FastForwardToDay)
             {
                 if (Time.IsDay())
@@ -1190,8 +1191,8 @@ namespace DwarfCorp
             Camera.Update(gameTime, WorldManager.ChunkManager);
 
             if (KeyManager.RotationEnabled())
-                Mouse.SetPosition(Game.GraphicsDevice.Viewport.Width/2,
-                    Game.GraphicsDevice.Viewport.Height/2);
+                Mouse.SetPosition(Game.GraphicsDevice.Viewport.Width / 2,
+                    Game.GraphicsDevice.Viewport.Height / 2);
 
             Master.Update(Game, gameTime);
             // If not paused, we want to just update the rest of the game.
@@ -1202,7 +1203,7 @@ namespace DwarfCorp
                 ComponentManager.Update(gameTime, ChunkManager, Camera);
                 Sky.TimeOfDay = Time.GetSkyLightness();
 
-                Sky.CosTime = (float) (Time.GetTotalHours()*2*Math.PI/24.0f);
+                Sky.CosTime = (float)(Time.GetTotalHours() * 2 * Math.PI / 24.0f);
                 DefaultShader.Parameters["xTimeOfDay"].SetValue(Sky.TimeOfDay);
                 MonsterSpawner.Update(gameTime);
                 bool allAsleep = Master.AreAllEmployeesAsleep();
@@ -1254,7 +1255,7 @@ namespace DwarfCorp
 
         public delegate void SaveCallback(bool success, Exception e);
 
-        public void Save(string filename, SaveCallback callback=null)
+        public void Save(string filename, SaveCallback callback = null)
         {
             Paused = true;
             WaitState waitforsave = new WaitState(Game, "SaveWait", gameState.StateManager,
@@ -1290,7 +1291,7 @@ namespace DwarfCorp
                         FileName = DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" +
                                    Path.DirectorySeparatorChar + filename + Path.DirectorySeparatorChar +
                                    "screenshot.png",
-                        Resolution = new Point(GraphicsDevice.Viewport.Width/4, GraphicsDevice.Viewport.Height/4)
+                        Resolution = new Point(GraphicsDevice.Viewport.Width / 4, GraphicsDevice.Viewport.Height / 4)
                     });
                 }
             }
@@ -1309,9 +1310,9 @@ namespace DwarfCorp
         public Matrix GetReflectedCameraMatrix(float waterHeight)
         {
             Vector3 reflCameraPosition = Camera.Position;
-            reflCameraPosition.Y = -Camera.Position.Y + waterHeight*2;
+            reflCameraPosition.Y = -Camera.Position.Y + waterHeight * 2;
             Vector3 reflTargetPos = Camera.Target;
-            reflTargetPos.Y = -Camera.Target.Y + waterHeight*2;
+            reflTargetPos.Y = -Camera.Target.Y + waterHeight * 2;
 
             Vector3 cameraRight = Vector3.Cross(Camera.Target - Camera.Position, Camera.UpVector);
             cameraRight.Normalize();
@@ -1401,20 +1402,20 @@ namespace DwarfCorp
         public void RenderScreenSaverMessages(DwarfTime gameTime)
         {
             DwarfGame.SpriteBatch.Begin();
-            float t = (float) (Math.Sin(gameTime.TotalGameTime.TotalSeconds*2.0f) + 1.0f)*0.5f + 0.5f;
+            float t = (float)(Math.Sin(gameTime.TotalGameTime.TotalSeconds * 2.0f) + 1.0f) * 0.5f + 0.5f;
             Color toDraw = new Color(t, t, t);
             SpriteFont font = Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
             Vector2 measurement = Datastructures.SafeMeasure(font, LoadingMessage);
             Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, LoadingMessage, font,
-                new Vector2(GraphicsDevice.Viewport.Width/2 - measurement.X/2,
-                    GraphicsDevice.Viewport.Height/2), toDraw, new Color(50, 50, 50));
+                new Vector2(GraphicsDevice.Viewport.Width / 2 - measurement.X / 2,
+                    GraphicsDevice.Viewport.Height / 2), toDraw, new Color(50, 50, 50));
 
             if (!string.IsNullOrEmpty(LoadingMessageBottom))
             {
                 Vector2 tipMeasurement = Datastructures.SafeMeasure(font, LoadingMessageBottom);
                 Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Tip: " + LoadingMessageBottom, font,
-                    new Vector2(GraphicsDevice.Viewport.Width/2 - tipMeasurement.X/2,
-                        GraphicsDevice.Viewport.Height - tipMeasurement.Y*2), toDraw, new Color(50, 50, 50));
+                    new Vector2(GraphicsDevice.Viewport.Width / 2 - tipMeasurement.X / 2,
+                        GraphicsDevice.Viewport.Height - tipMeasurement.Y * 2), toDraw, new Color(50, 50, 50));
             }
             DwarfGame.SpriteBatch.End();
         }
@@ -1465,8 +1466,8 @@ namespace DwarfCorp
 
             // Controls the sky fog
             float x = (1.0f - Sky.TimeOfDay);
-            x = x*x;
-            DefaultShader.Parameters["xFogColor"].SetValue(new Vector3(0.32f*x, 0.58f*x, 0.9f*x));
+            x = x * x;
+            DefaultShader.Parameters["xFogColor"].SetValue(new Vector3(0.32f * x, 0.58f * x, 0.9f * x));
             DefaultShader.Parameters["xLightPositions"].SetValue(LightPositions);
 
             CompositeLibrary.Render(GraphicsDevice, DwarfGame.SpriteBatch);
@@ -1514,7 +1515,7 @@ namespace DwarfCorp
                 level = 1000;
             }
 
-            SlicePlane = SlicePlane*0.5f + level*0.5f;
+            SlicePlane = SlicePlane * 0.5f + level * 0.5f;
 
             Plane slicePlane = WaterRenderer.CreatePlane(SlicePlane, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
 

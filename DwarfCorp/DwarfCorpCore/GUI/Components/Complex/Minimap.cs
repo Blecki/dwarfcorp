@@ -259,9 +259,9 @@ namespace DwarfCorp
 
                 DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, null, RasterizerState.CullNone);
                 Viewport viewPort = new Viewport(RenderTarget.Bounds);
-                foreach(MinimapIcon icon in WorldManager.ComponentManager.RootComponent.GetChildrenOfTypeRecursive<MinimapIcon>())
-                {
 
+                foreach (MinimapIcon icon in GameObjectCaching.MinimapIcons)
+                {
                     if (!icon.Parent.IsVisible)
                     {
                         continue;

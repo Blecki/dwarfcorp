@@ -202,9 +202,10 @@ namespace DwarfCorp
     public class GameSpeedControl : Panel
     {
         private readonly int[] _gameSpeeds = { 0, 1, 2, 3 };
-        private readonly string[] _labels = { "||", "1x", "2x", "3x" };
-        private readonly string[] _rightLabels = { ">", ">>", ">>>", "" };
-        private readonly string[] _leftLabels = { "", "||", "<", "<" };
+
+        private readonly string[] _labels = {"||", "1x", "2x", "3x"};
+        private readonly string[] _rightLabels = {">", ">>", ">>>", ""};
+        private readonly string[] _leftLabels = {"", "||", "<", "<"};
         private readonly string[] _tooltips =
         {
             "Game paused.", "Game running at 1x speed.", "Game running at 2x speed.",
@@ -273,8 +274,8 @@ namespace DwarfCorp
         {
             TimeForward.IsVisible = false;
             TimeBackward.IsVisible = false;
-            DwarfTime.LastTime.Speed = (float)multiplier;
-            PlayState.Paused = false;
+            DwarfTime.LastTime.Speed = (float) multiplier;
+            WorldManager.Paused = false;
             TimeLabel.Text = multiplier + "x";
             TimeLabel.ToolTip = "Game is running at " + multiplier + "x speed";
         }

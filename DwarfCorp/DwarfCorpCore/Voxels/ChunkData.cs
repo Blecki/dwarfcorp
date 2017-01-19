@@ -36,6 +36,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using DwarfCorp.GameStates;
 using DwarfCorpCore;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -51,8 +52,8 @@ namespace DwarfCorp
     {
         private ChunkManager chunkManager;
 
-        public ChunkData(uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, float invCSX, float invCSY, float invCSZ, 
-             ChunkManager chunkManager)
+        public ChunkData(uint chunkSizeX, uint chunkSizeY, uint chunkSizeZ, float invCSX, float invCSY, float invCSZ,
+            ChunkManager chunkManager)
         {
             ChunkSizeX = chunkSizeX;
             ChunkSizeY = chunkSizeY;
@@ -64,8 +65,16 @@ namespace DwarfCorp
         }
 
         public ConcurrentDictionary<Point3, VoxelChunk> ChunkMap { get; set; }
-        public Texture2D Tilemap { get { return TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles); } }
-        public Texture2D IllumMap { get { return TextureManager.GetTexture(ContentPaths.Terrain.terrain_illumination); } }
+
+        public Texture2D Tilemap
+        {
+            get { return TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles); }
+        }
+
+        public Texture2D IllumMap
+        {
+            get { return TextureManager.GetTexture(ContentPaths.Terrain.terrain_illumination); }
+        }
 
         public int MaxChunks
         {
@@ -75,15 +84,28 @@ namespace DwarfCorp
 
         public float MaxViewingLevel { get; set; }
         public ChunkManager.SliceMode Slice { get; set; }
-        public Texture2D SunMap { get { return TextureManager.GetTexture(ContentPaths.Gradients.sungradient); }}
-        public Texture2D AmbientMap { get { return TextureManager.GetTexture(ContentPaths.Gradients.ambientgradient); } }
-        public Texture2D TorchMap { get { return TextureManager.GetTexture(ContentPaths.Gradients.torchgradient); } }
+
+        public Texture2D SunMap
+        {
+            get { return TextureManager.GetTexture(ContentPaths.Gradients.sungradient); }
+        }
+
+        public Texture2D AmbientMap
+        {
+            get { return TextureManager.GetTexture(ContentPaths.Gradients.ambientgradient); }
+        }
+
+        public Texture2D TorchMap
+        {
+            get { return TextureManager.GetTexture(ContentPaths.Gradients.torchgradient); }
+        }
+
         public uint ChunkSizeX { get; set; }
         public uint ChunkSizeY { get; set; }
         public uint ChunkSizeZ { get; set; }
         public float InvCSX { get; set; }
         public float InvCSY { get; set; }
-        public float InvCSZ { get; set; } 
+        public float InvCSZ { get; set; }
 
         public ChunkManager ChunkManager
         {
@@ -96,7 +118,7 @@ namespace DwarfCorp
             Slice = slice;
             MaxViewingLevel = Math.Max(Math.Min(level, ChunkSizeY), 1);
 
-            foreach(VoxelChunk c in ChunkMap.Select(chunks => chunks.Value))
+            foreach (VoxelChunk c in ChunkMap.Select(chunks => chunks.Value))
             {
                 c.ShouldRecalculateLighting = false;
                 c.ShouldRebuild = true;
@@ -105,7 +127,7 @@ namespace DwarfCorp
 
         public void Reveal(Voxel voxel)
         {
-            Reveal(new List<Voxel>() { voxel });
+            Reveal(new List<Voxel>() {voxel});
         }
 
         public void Reveal(IEnumerable<Voxel> voxels)
@@ -114,9 +136,9 @@ namespace DwarfCorp
             List<Point3> affectedChunks = new List<Point3>();
             Queue<Voxel> q = new Queue<Voxel>(128);
 
-            foreach(Voxel voxel in voxels)
-            { 
-                if(voxel != null)
+            foreach (Voxel voxel in voxels)
+            {
+                if (voxel != null)
                     q.Enqueue(voxel);
             }
             List<Voxel> neighbors = new List<Voxel>();
@@ -133,7 +155,7 @@ namespace DwarfCorp
                 foreach (Voxel nextVoxel in neighbors)
                 {
                     if (nextVoxel == null) continue;
-                   
+
                     if (nextVoxel.IsExplored) continue;
 
                     nextVoxel.Chunk.NotifyExplored(new Point3(nextVoxel.GridPosition));
@@ -151,7 +173,7 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    if(!v.IsExplored)
+                    if (!v.IsExplored)
                         q.Enqueue(new Voxel(new Point3(nextVoxel.GridPosition), nextVoxel.Chunk));
                 }
 
@@ -170,33 +192,34 @@ namespace DwarfCorp
                     chunk.ShouldRebuild = true;
                 }
             }
-            
+
         }
 
         public Voxel GetNearestFreeAdjacentVoxel(Voxel voxel, Vector3 referenceLocation)
         {
-            if(voxel == null)
+            if (voxel == null)
             {
                 return null;
             }
 
-            if(voxel.IsEmpty)
+            if (voxel.IsEmpty)
             {
                 return voxel;
             }
 
             List<Voxel> neighbors = voxel.Chunk.AllocateVoxels(6);
-            voxel.Chunk.GetNeighborsManhattan((int)voxel.GridPosition.X, (int)voxel.GridPosition.Y, (int)voxel.GridPosition.Z, neighbors);
+            voxel.Chunk.GetNeighborsManhattan((int) voxel.GridPosition.X, (int) voxel.GridPosition.Y,
+                (int) voxel.GridPosition.Z, neighbors);
 
             Voxel closestNeighbor = null;
 
             float closestDist = 999;
 
-            foreach(Voxel neighbor in neighbors)
+            foreach (Voxel neighbor in neighbors)
             {
                 float d = (neighbor.Position - referenceLocation).LengthSquared();
 
-                if(d < closestDist && neighbor.IsEmpty)
+                if (d < closestDist && neighbor.IsEmpty)
                 {
                     closestDist = d;
                     closestNeighbor = neighbor;
@@ -216,23 +239,28 @@ namespace DwarfCorp
 
             Vector3 grid = chunk.WorldToGrid(worldPosition);
 
-            chunk.GetNeighborsSuccessors(succ, (int)grid.X, (int)grid.Y, (int)grid.Z, toReturn);
+            chunk.GetNeighborsSuccessors(succ, (int) grid.X, (int) grid.Y, (int) grid.Z, toReturn);
             return true;
         }
 
 
-        public Voxel GetFirstVisibleBlockHitByMouse(MouseState mouse, Camera camera, Viewport viewPort, bool selectEmpty = false)
+        public Voxel GetFirstVisibleBlockHitByMouse(MouseState mouse, Camera camera, Viewport viewPort,
+            bool selectEmpty = false)
         {
-            Voxel vox = GetFirstVisibleBlockHitByScreenCoord(mouse.X, mouse.Y, camera, viewPort, 150.0f, false, selectEmpty);
+            Voxel vox = GetFirstVisibleBlockHitByScreenCoord(mouse.X, mouse.Y, camera, viewPort, 150.0f, false,
+                selectEmpty);
             return vox;
         }
 
-        public Voxel GetFirstVisibleBlockHitByScreenCoord(int x, int y, Camera camera, Viewport viewPort, float dist, bool draw = false, bool selectEmpty = false)
+        public Voxel GetFirstVisibleBlockHitByScreenCoord(int x, int y, Camera camera, Viewport viewPort, float dist,
+            bool draw = false, bool selectEmpty = false)
         {
-            Vector3 pos1 = viewPort.Unproject(new Vector3(x, y, 0), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
-            Vector3 pos2 = viewPort.Unproject(new Vector3(x, y, 1), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
+            Vector3 pos1 = viewPort.Unproject(new Vector3(x, y, 0), camera.ProjectionMatrix, camera.ViewMatrix,
+                Matrix.Identity);
+            Vector3 pos2 = viewPort.Unproject(new Vector3(x, y, 1), camera.ProjectionMatrix, camera.ViewMatrix,
+                Matrix.Identity);
             Vector3 dir = Vector3.Normalize(pos2 - pos1);
-            Voxel vox = GetFirstVisibleBlockHitByRay(pos1, pos1 + dir * dist, draw, selectEmpty);
+            Voxel vox = GetFirstVisibleBlockHitByRay(pos1, pos1 + dir*dist, draw, selectEmpty);
 
             return vox;
         }
@@ -255,6 +283,25 @@ namespace DwarfCorp
             return false;
         }
 
+
+        public bool IsVoxelOccluded(Voxel voxel)
+        {
+            Vector3 cameraPos = PlayState.Camera.Position;
+            Vector3 voxelPoint = voxel.Position + Vector3.One * 0.5f;
+            Voxel atPos = new Voxel();
+            foreach (Point3 coord in MathFunctions.RasterizeLine(cameraPos, voxelPoint))
+            {
+                Vector3 pos = new Vector3(coord.X, coord.Y, coord.Z);
+
+                bool success = GetNonNullVoxelAtWorldLocationCheckFirst(null, pos, ref atPos);
+
+                if (success && atPos.IsVisible && !atPos.Equals(voxel))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         public bool CheckOcclusionRay(Vector3 rayStart, Vector3 rayEnd)
         {

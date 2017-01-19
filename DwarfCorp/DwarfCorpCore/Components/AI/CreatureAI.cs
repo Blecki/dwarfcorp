@@ -71,13 +71,13 @@ namespace DwarfCorp
             CurrentPath = null;
             DrawPath = false;
             PlannerTimer = new Timer(0.1f, false);
-            LocalControlTimeout = new Timer(5, false);
+            LocalControlTimeout = new Timer(5, false, Timer.TimerMode.Real);
             WanderTimer = new Timer(1, false);
             Creature.Faction.Minions.Add(this);
             DrawAIPlan = false;
             WaitingOnResponse = false;
             PlanSubscriber = new PlanSubscriber(planService);
-            ServiceTimeout = new Timer(2, false);
+            ServiceTimeout = new Timer(2, false, Timer.TimerMode.Real);
             Sensor = sensor;
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
             Sensor.Creature = this;
@@ -445,6 +445,8 @@ namespace DwarfCorp
                 else
                 {
                     CurrentTask = ActOnIdle();
+                    if (CurrentTask != null)
+                        CurrentTask.SetupScript(Creature);
                 }
             }
 
@@ -492,6 +494,51 @@ namespace DwarfCorp
             return new WanderAct(this, 2, 0.5f + MathFunctions.Rand(-0.25f, 0.25f), 1.0f);
         }
 
+        /// <summary>
+        /// Causes the creature to look for nearby blocks to jump on
+        /// so as not to fall.
+        /// </summary>
+        /// <returns>Success if the jump has succeeded, Fail if it failed, and Running otherwise.</returns>
+        public IEnumerable<Act.Status> AvoidFalling()
+        {
+            foreach (Voxel vox in Physics.Neighbors)
+            {
+                if (vox == null) continue;
+                if (vox.IsEmpty) continue;
+                Voxel voxAbove = vox.GetVoxelAbove();
+                if (!voxAbove.IsEmpty) continue;
+                Vector3 target = voxAbove.Position + new Vector3(0.5f, 0.5f, 0.5f);
+                Physics.Face(target);
+                foreach (Act.Status status in Hop(target))
+                {
+                    yield return Act.Status.Running;
+                }
+                yield return Act.Status.Success;
+                yield break;
+            }
+            yield return Act.Status.Fail;
+            yield break;
+        }
+
+        /// <summary>
+        /// Hops the specified location (coroutine)
+        /// </summary>
+        /// <param name="location">The location.</param>
+        /// <returns>Running until the hop completes, and then returns success.</returns>
+        public IEnumerable<Act.Status> Hop(Vector3 location)
+        {
+            float hopTime = 0.5f;
+
+            TossMotion motion = new TossMotion(hopTime, location.Y - Position.Y, Physics.GlobalTransform, location);
+            Physics.AnimationQueue.Add(motion);
+
+            while (!motion.IsDone())
+            {
+                yield return Act.Status.Running;
+            }
+            yield return Act.Status.Success;
+        }
+
         /// <summary> 
         /// Task the creature performs when it has no more tasks. In this case the creature will gather any necessary
         /// resources and place any blocks. If it doesn't have anything to do, it may wander somewhere or use an item
@@ -499,6 +546,16 @@ namespace DwarfCorp
         /// </summary>
         public virtual Task ActOnIdle()
         {
+            if (!Creature.IsOnGround && !Movement.CanFly && !Creature.Physics.IsInLiquid)
+            {
+                return new ActWrapperTask(new Wrap(AvoidFalling));
+            }
+
+            if (Creature.Physics.IsInLiquid && MathFunctions.RandEvent(0.01f))
+            {
+                return new FindLandTask();
+            }
+
             if (GatherManager.VoxelOrders.Count == 0 &&
                 (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()))
             {
@@ -732,6 +789,28 @@ namespace DwarfCorp
                 desc += "    Task: " + CurrentTask.Name;
             }
 
+            if (CurrentAct != null)
+            {
+                desc += "\n   Action: ";
+                Act act = CurrentAct;
+                while (act != null && act.LastTickedChild != null)
+                {
+                    Act prevAct = act;
+                    act = act.LastTickedChild;
+                    if (act == null)
+                    {
+                        act = prevAct;
+                        break;
+                    }
+
+                    if (act == act.LastTickedChild)
+                    {
+                        break;
+                    }
+                }
+                desc += act.Name;
+            }
+
             return desc;
         }
 
@@ -781,7 +860,7 @@ namespace DwarfCorp
                         };
 
                         agent.AI.Blackboard.SetData("GreedyPath", new List<Creature.MoveAction> { nullAction, minAction });
-                        var pathAct = new FollowPathAnimationAct(agent.AI, "GreedyPath");
+                        var pathAct = new FollowPathAct(agent.AI, "GreedyPath");
                         pathAct.Initialize();
 
                         foreach (Act.Status status in pathAct.Run())
@@ -1115,7 +1194,7 @@ namespace DwarfCorp
                 {
                     bool hasLadder = enumerable.Any(component => component.Tags.Contains("Climbable"));
                     // if the creature can climb objects and a ladder is in this voxel,
-                    /// then add a climb action.
+                    // then add a climb action.
                     if (hasLadder)
                     {
                         successors.Add(new Creature.MoveAction

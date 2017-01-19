@@ -88,7 +88,7 @@ namespace DwarfCorp
                         {
                             Vox = r
                         };
-                        Player.Faction.DigDesignations.Add(d);
+                        Player.Faction.AddDigDesignation(d);
                     }
 
                     assignments.Add(new KillVoxelTask(r));
@@ -102,21 +102,12 @@ namespace DwarfCorp
             {
                 foreach (Voxel r in refs)
                 {
-                    if (r == null)
-                    {
-                        continue;
-                    }
-                    Voxel v = r;
-
-                    if (v.IsEmpty)
+                    if (r == null || r.IsEmpty)
                     {
                         continue;
                     }
 
-                    if (Player.Faction.IsDigDesignation(v))
-                    {
-                        Player.Faction.DigDesignations.Remove(Player.Faction.GetDigDesignation(v));
-                    }
+                    Player.Faction.RemoveDigDesignation(r);
                 }
             }
         }
@@ -149,16 +140,16 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            foreach (BuildOrder d in Player.Faction.DigDesignations)
+            foreach (KeyValuePair<ulong, BuildOrder> kvp in Player.Faction.DigDesignations)
             {
-                Voxel v = d.Vox;
+                Voxel v = kvp.Value.Vox;
 
                 BoundingBox box = v.GetBoundingBox();
 
 
                 Color drawColor = DigDesignationColor;
 
-                if (d.NumCreaturesAssigned == 0)
+                if (kvp.Value.NumCreaturesAssigned == 0)
                 {
                     drawColor = UnreachableColor;
                 }

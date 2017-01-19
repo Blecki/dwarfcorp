@@ -58,6 +58,12 @@ namespace DwarfCorp
             public Keys SliceSelected = Keys.Q;
             public Keys Unslice = Keys.E;
             public Keys ToggleGUI = Keys.B;
+
+            // Toggles a variable in GamePerformance that can be used with if-blocks to quickly change between old and new code for comparison purposes.
+            // Likely should be removed for a true release as there should be no toggles left in.
+            public Keys DebugToggle1 = Keys.F9;
+            // Toggles FPS and other stat showing via GamePerformance.
+            public Keys TogglePerformanceOverlay = Keys.F10;
         }
 
         public static KeyMappings Mappings { get; set; }
@@ -88,11 +94,8 @@ namespace DwarfCorp
             {
                 Mappings = FileUtils.LoadJson<KeyMappings>(file, false);
             }
-            catch (FileNotFoundException fileLoad)
+            catch (FileNotFoundException)
             {
-				// Pointless line to avoid warning for unused exception.
-				fileLoad.ToString();
-
                 Mappings = new KeyMappings();
                 Save();
             }

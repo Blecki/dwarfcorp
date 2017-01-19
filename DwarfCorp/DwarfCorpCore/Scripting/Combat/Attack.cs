@@ -146,55 +146,68 @@ namespace DwarfCorp
             CreateHitAnimation();
         }
 
-        public bool Perform(Creature performer, Vector3 pos, Voxel other, DwarfTime time, float bonus, string faction)
+        public IEnumerable<Act.Status> Perform(Creature performer, Vector3 pos, Voxel other, DwarfTime time, float bonus, string faction)
         {
-            if (other == null)
+            while (true)
             {
-                return false;
-            }
-
-            switch (TriggerMode)
-            {
-                case AttackTrigger.Timer:
-                    RechargeTimer.Update(time);
-                    if (!RechargeTimer.HasTriggered) return false;
-                    break;
-                case AttackTrigger.Animation:
-                    if (performer.Sprite.CurrentAnimation == null || performer.Sprite.CurrentAnimation.CurrentFrame != TriggerFrame)
-                    {
-                        return false;
-                    }
-                    break;
-            }
-
-            switch (Mode)
-            {
-                case AttackMode.Melee:
+                if (other == null)
                 {
-                    other.Health -= DamageAmount + bonus;
-                    PlayNoise(other.Position);
-                    if (HitParticles != "")
+                    yield return Act.Status.Fail;
+                    yield break;
+                }
+
+                switch (TriggerMode)
+                {
+                    case AttackTrigger.Timer:
+                        RechargeTimer.Update(time);
+                        if (!RechargeTimer.HasTriggered)
+                        {
+                            yield return Act.Status.Running;
+                            continue;
+                        }
+                        break;
+                    case AttackTrigger.Animation:
+                        if (performer.Sprite.CurrentAnimation == null ||
+                            performer.Sprite.CurrentAnimation.CurrentFrame != TriggerFrame)
+                        {
+                            if (performer.Sprite.CurrentAnimation != null)
+                                performer.Sprite.CurrentAnimation.Play();
+                            yield return Act.Status.Running;
+                            continue;
+                        }
+                        break;
+                }
+
+                switch (Mode)
+                {
+                    case AttackMode.Melee:
                     {
-                        WorldManager.ParticleManager.Trigger(HitParticles, other.Position, Color.White, 5);
+                        other.Health -= DamageAmount + bonus;
+                        PlayNoise(other.Position);
+                        if (HitParticles != "")
+                        {
+                            WorldManager.ParticleManager.Trigger(HitParticles, other.Position, Color.White, 5);
+                        }
+
+                        if (HitAnimation != null)
+                        {
+                            HitAnimation.Reset();
+                            HitAnimation.Play();
+                            IndicatorManager.DrawIndicator(HitAnimation.Clone(), other.Position + Vector3.One*0.5f,
+                                10.0f, 1.0f, MathFunctions.RandVector2Circle()*10, HitColor, MathFunctions.Rand() > 0.5f);
+                        }
+                        break;
+                    }
+                    case AttackMode.Ranged:
+                    {
+                        LaunchProjectile(pos, other.Position, null);
+                        break;
                     }
 
-                    if (HitAnimation != null)
-                    {
-                        HitAnimation.Reset();
-                        HitAnimation.Play();
-                        IndicatorManager.DrawIndicator(HitAnimation.Clone(), other.Position + Vector3.One * 0.5f, 10.0f, 1.0f, MathFunctions.RandVector2Circle() * 10, HitColor, MathFunctions.Rand() > 0.5f);
-                    }
-                    break;
                 }
-                case AttackMode.Ranged:
-                {
-                    LaunchProjectile(pos, other.Position, null);
-                    break;
-                }
-                    
+                yield return Act.Status.Success;
+                yield break;
             }
-            return true;
-            
 
         }
 

@@ -58,7 +58,7 @@ namespace DwarfCorp
             return new FindAndEatFoodAct(agent.AI);
         }
 
-        public override float ComputeCost(Creature agent)
+        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return agent.Status.Hunger.IsUnhappy() ? 0.0f : 1e13f;
         }

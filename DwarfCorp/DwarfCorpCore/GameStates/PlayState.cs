@@ -19,7 +19,8 @@ namespace DwarfCorp.GameStates
 
         public bool ShouldReset { get; set; }
         public WorldManager World { get; set; }
-        public GameMaster Master {
+        public GameMaster Master
+        {
             get { return WorldManager.Master; }
             set { WorldManager.Master = value; }
         }

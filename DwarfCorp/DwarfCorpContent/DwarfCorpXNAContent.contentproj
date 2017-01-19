@@ -841,21 +841,18 @@
       <Name>font1-w</Name>
       <Importer>TextureImporter</Importer>
       <Processor>FontTextureProcessor</Processor>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
     </Compile>
     <Compile Include="Fonts\font1-w-2x.bmp">
       <Name>font1-w-2x</Name>
       <Importer>TextureImporter</Importer>
       <Processor>FontTextureProcessor</Processor>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
     </Compile>
     <Compile Include="Fonts\font1-w-4x.bmp">
       <Name>font1-w-4x</Name>
       <Importer>TextureImporter</Importer>
       <Processor>FontTextureProcessor</Processor>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
     </Compile>
     <Compile Include="Entities\Dwarf\Sprites\crafter-hammer.png">
@@ -1193,8 +1190,20 @@
     </Compile>
     <None Include="Entities\Dwarf\Sprites\musket_animation.json">
       <Name>musket_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Compile Include="newgui\slider.png">
+      <Name>slider</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\font1-w.bmp">
+      <Name>font1-w</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
+      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
+    </Compile>
     <None Include="Entities\Moleman\moleman_animation.json">
       <Name>moleman_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

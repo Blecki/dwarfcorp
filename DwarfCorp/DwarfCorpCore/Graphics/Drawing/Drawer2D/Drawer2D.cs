@@ -243,10 +243,13 @@ namespace DwarfCorp
                 toDisplay = "null";
             }
 
-            SafeDraw(batch, toDisplay, Font, strokeColor, textPosition - new Vector2(1, 0), Vector2.Zero, false);
-            SafeDraw(batch, toDisplay, Font, strokeColor, textPosition + new Vector2(1, 0), Vector2.Zero, false);
-            SafeDraw(batch, toDisplay, Font, strokeColor, textPosition - new Vector2(0, 1), Vector2.Zero, false);
-            SafeDraw(batch, toDisplay, Font, strokeColor, textPosition + new Vector2(0, 1), Vector2.Zero, false);
+            if (strokeColor.A > 0)
+            {
+                SafeDraw(batch, toDisplay, Font, strokeColor, textPosition - new Vector2(1, 0), Vector2.Zero, false);
+                SafeDraw(batch, toDisplay, Font, strokeColor, textPosition + new Vector2(1, 0), Vector2.Zero, false);
+                SafeDraw(batch, toDisplay, Font, strokeColor, textPosition - new Vector2(0, 1), Vector2.Zero, false);
+                SafeDraw(batch, toDisplay, Font, strokeColor, textPosition + new Vector2(0, 1), Vector2.Zero, false);
+            }
             SafeDraw(batch, toDisplay, Font, textColor, textPosition, Vector2.Zero);
         }
 
@@ -342,7 +345,7 @@ namespace DwarfCorp
 
             origin.X = (int) origin.X;
             origin.Y = (int) origin.Y;
-            if (textColor.A > 0)
+            if (textColor.A > 0 && strokeColor.A > 0)
             {
                 SafeDraw(batch, text, font, strokeColor, pos - new Vector2(1, 0), origin, false);
                 SafeDraw(batch, text, font, strokeColor, pos + new Vector2(1, 0), origin, false);

@@ -85,7 +85,7 @@ namespace DwarfCorp
                                       agent.AI);
         }
 
-        public override float ComputeCost(Creature agent)
+        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return EntityToGather == null  || EntityToGather.IsDead ? 1000 : (agent.AI.Position - EntityToGather.GlobalTransform.Translation).LengthSquared();
         }

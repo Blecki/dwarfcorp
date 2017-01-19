@@ -403,13 +403,15 @@ namespace DwarfCorp
             VoxelType sandType = new VoxelType
             {
                 Name = "Sand",
-                ReleasesResource = false,
+                ReleasesResource = true,
                 StartingHealth = 15,
                 CanRamp = true,
                 RampSize = 0.5f,
                 IsBuildable = false,
                 ParticleType = "sand_particle",
-                IsSurface = true
+                IsSurface = true,
+                ResourceToRelease = ResourceLibrary.ResourceType.Sand,
+                ProbabilityOfRelease = 0.5f
             };
 
             VoxelType ironType = new VoxelType

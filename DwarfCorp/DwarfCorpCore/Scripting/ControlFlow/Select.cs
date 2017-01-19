@@ -87,7 +87,7 @@ namespace DwarfCorp
             while(CurrentChildIndex < Children.Count)
             {
                 Status childStatus = CurrentChild.Tick();
-
+                LastTickedChild = CurrentChild;
                 if(childStatus == Status.Fail)
                 {
                     CurrentChildIndex++;

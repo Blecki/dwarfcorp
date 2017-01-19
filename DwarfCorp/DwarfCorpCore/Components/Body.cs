@@ -291,6 +291,11 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            if (MathFunctions.HasNan(Position))
+            {
+                Die();
+            }
+
             IsAboveCullPlane =  GlobalTransform.Translation.Y - GetBoundingBox().Extents().Y > (chunks.ChunkData.MaxViewingLevel + 5);
             if(DrawScreenRect)
             {

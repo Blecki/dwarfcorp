@@ -101,7 +101,7 @@ namespace DwarfCorp
                     yield break;
                 }
                 Status childStatus = CurrentChild.Tick();
-
+                LastTickedChild = CurrentChild;
                 if(childStatus == Status.Fail)
                 {
                     failed = true;

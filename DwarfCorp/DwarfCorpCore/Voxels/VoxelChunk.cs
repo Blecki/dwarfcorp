@@ -1038,7 +1038,7 @@ namespace DwarfCorp
 
             foreach(Voxel v in neighbors)
             {
-                if(!chunks.ChunkData.ChunkMap.ContainsKey(v.Chunk.ID))
+                if(v == null || !chunks.ChunkData.ChunkMap.ContainsKey(v.Chunk.ID))
                 {
                     continue;
                 }
@@ -1356,7 +1356,7 @@ namespace DwarfCorp
                         }
 
                         voxel.GridPosition = new Vector3(x, y, z);
-                        if(test > level  && !voxel.IsEmpty)
+                        if(test > level  && (!voxel.IsEmpty || voxel.WaterLevel > 0))
                         {
                             return true;
                         }
@@ -1595,8 +1595,15 @@ namespace DwarfCorp
 
                 if(isInterior || IsCellValid(nx, ny, nz))
                 {
-                    toReturn[i].Chunk = this;
-                    toReturn[i].GridPosition = new Vector3(nx, ny, nz);
+                    if (toReturn[i] == null)
+                    {
+                        toReturn[i] = MakeVoxel(nx, ny, nz);
+                    }
+                    else
+                    {
+                        toReturn[i].Chunk = this;
+                        toReturn[i].GridPosition = new Vector3(nx, ny, nz);   
+                    }
                 }
                 else
                 {
@@ -1637,12 +1644,20 @@ namespace DwarfCorp
 
                     if(!Manager.ChunkData.ChunkMap.ContainsKey(chunkID))
                     {
+                        toReturn[i] = null;
                         continue;
                     }
 
                     VoxelChunk chunk = Manager.ChunkData.ChunkMap[chunkID];
-                    toReturn[i].Chunk = chunk;
-                    toReturn[i].GridPosition = new Vector3(nx, ny, nz);
+                    if (toReturn[i] == null)
+                    {
+                        toReturn[i] = chunk.MakeVoxel(nx, ny, nz);
+                    }
+                    else
+                    {
+                        toReturn[i].Chunk = chunk;
+                        toReturn[i].GridPosition = new Vector3(nx, ny, nz);
+                    }
                 }
             }
         }
@@ -1852,18 +1867,6 @@ namespace DwarfCorp
             GetNeighborsManhattan((int) v.GridPosition.X, (int) v.GridPosition.Y, (int) v.GridPosition.Z, toReturn);
         }
 
-
-        public void ResetWaterBuffer()
-        {
-            int numVoxels = sizeX*sizeY*sizeZ;
-
-            for (int i = 0; i < numVoxels; i++)
-            {
-                Data.Water[i].HasChanged = false;
-                Data.Water[i].IsFalling = false;
-            }
-           
-        }
 
         public Vector3 GridToWorld(Vector3 gridCoord)
         {

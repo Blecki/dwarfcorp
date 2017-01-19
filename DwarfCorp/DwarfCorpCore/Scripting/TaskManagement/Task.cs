@@ -99,7 +99,7 @@ namespace DwarfCorp
             return null;
         }
 
-        public virtual float ComputeCost(Creature agent)
+        public virtual float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return 1.0f;
         }
@@ -154,7 +154,10 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature agent)
         {
-            Script.Initialize();
+            if (Script != null)
+            {
+                Script.Initialize();
+            }
             return Script;
         }
     }

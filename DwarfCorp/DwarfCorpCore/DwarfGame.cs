@@ -81,6 +81,11 @@ namespace DwarfCorp
 
         protected override void Initialize()
         {
+            // Goes before anything else so we can track from the very start.
+            GamePerformance.Initialize(this);
+            // TODO: Find a more appropriate spot for this.
+            GameObjectCaching.Initialize();
+
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             base.Initialize();
         }
@@ -92,7 +97,15 @@ namespace DwarfCorp
             GumSkin = new Gum.RenderData(GraphicsDevice,  Content,
                     "newgui/xna_draw", "Content/newgui/sheets.txt");
 
-
+            if (SoundManager.Content == null)
+            {
+                SoundManager.Content = Content;
+                SoundManager.LoadDefaultSounds();
+#if XNA_BUILD
+                SoundManager.SetActiveSongs(ContentPaths.Music.dwarfcorp, ContentPaths.Music.dwarfcorp_2,
+                    ContentPaths.Music.dwarfcorp_3, ContentPaths.Music.dwarfcorp_4, ContentPaths.Music.dwarfcorp_5);
+#endif
+            }
             PlayState playState = new PlayState(this, StateManager);
             BiomeLibrary.InitializeStatics();
             StateManager.States["IntroState"] = new IntroState(this, StateManager);
@@ -101,6 +114,7 @@ namespace DwarfCorp
             StateManager.States["WorldSetupState"] = new WorldSetupState(this, StateManager);
             StateManager.States["WorldGeneratorState"] = new WorldGeneratorState(this, StateManager);
             StateManager.States["OptionsState"] = new OptionsState(this, StateManager);
+            StateManager.States["NewOptionsState"] = new NewOptionsState(this, StateManager);
             StateManager.States["EconomyState"] = new EconomyState(this, StateManager, playState.World);
             StateManager.States["CompanyMakerState"] = new CompanyMakerState(this, StateManager);
             StateManager.States["WorldLoaderState"] = new WorldLoaderState(this, StateManager);
@@ -129,6 +143,7 @@ namespace DwarfCorp
 
         protected override void Update(GameTime time)
         {
+            GamePerformance.Instance.PreUpdate();
             if (DwarfTime.LastTime == null)
             {
                 DwarfTime.LastTime = new DwarfTime(time);
@@ -136,13 +151,17 @@ namespace DwarfCorp
             DwarfTime.LastTime.Update(time);
             StateManager.Update(DwarfTime.LastTime);
             base.Update(time);
+            GamePerformance.Instance.PostUpdate();
         }
 
         protected override void Draw(GameTime time)
         {
+            GamePerformance.Instance.PreRender();
             StateManager.Render(DwarfTime.LastTime);
             GraphicsDevice.SetRenderTarget(null);
             base.Draw(time);
+            GamePerformance.Instance.PostRender();
+            GamePerformance.Instance.Render(DwarfGame.SpriteBatch);
         }
 
         protected override void OnExiting(object sender, EventArgs args)

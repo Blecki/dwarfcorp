@@ -36,6 +36,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
@@ -46,10 +47,10 @@ namespace DwarfCorp
         public float IconScale { get; set; }
         public MinimapIcon()
         {
-            
+
         }
 
-        public MinimapIcon(Body parent, ImageFrame icon) : 
+        public MinimapIcon(Body parent, ImageFrame icon) :
             base("Icon", parent, Matrix.Identity, Vector3.One, Vector3.Zero)
         {
             Icon = icon;
@@ -57,6 +58,26 @@ namespace DwarfCorp
             AddToCollisionManager = false;
             FrustrumCull = false;
             IsVisible = false;
+
+            GameObjectCaching.AddMinimapIcon(this);
+        }
+
+        [OnDeserialized]
+        public void OnDeserialize(StreamingContext context)
+        {
+            GameObjectCaching.AddMinimapIcon(this);
+        }
+
+        public override void Delete()
+        {
+            GameObjectCaching.RemoveMinimapIcon(this);
+            base.Delete();
+        }
+
+        public override void Die()
+        {
+            GameObjectCaching.RemoveMinimapIcon(this);
+            base.Die();
         }
     }
 }

@@ -71,7 +71,7 @@ namespace DwarfCorp
             return new KillEntityAct(EntityToKill, creature.AI, Mode);
         }
 
-        public override float ComputeCost(Creature agent)
+        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             if (agent == null || EntityToKill == null)
             {

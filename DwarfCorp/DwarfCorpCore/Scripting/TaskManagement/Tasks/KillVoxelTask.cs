@@ -54,7 +54,7 @@ namespace DwarfCorp
 
         public KillVoxelTask(Voxel vox)
         {
-            Name = "Kill Voxel: " + vox.Position;
+            Name = "Mine Block " + vox.Position;
             VoxelToKill = vox;
             Priority = PriorityType.Low;
         }
@@ -82,14 +82,6 @@ namespace DwarfCorp
                 return false;
             }
 
-            Voxel vox = VoxelToKill;
-
-            if(vox == null)
-            {
-                return false;
-            }
-
-
             return agent.Faction.IsDigDesignation(VoxelToKill) && !VoxelToKill.Chunk.IsCompletelySurrounded(VoxelToKill);
         }
 
@@ -99,23 +91,20 @@ namespace DwarfCorp
                    !agent.Faction.IsDigDesignation(VoxelToKill);
         }
 
-        public override float ComputeCost(Creature agent)
+        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            if(VoxelToKill == null)
+            if (VoxelToKill == null)
             {
                 return 1000;
             }
-            Voxel vox = VoxelToKill;
-
-            if (vox == null)
-            {
-                return 10000;
-            }
 
             int surroundedValue = 0;
-            if(vox.Chunk.IsCompletelySurrounded(VoxelToKill))
+            if (!alreadyCheckedFeasible)
             {
-                surroundedValue = 10000;
+                if (VoxelToKill.Chunk.IsCompletelySurrounded(VoxelToKill))
+                {
+                    surroundedValue = 10000;
+                }
             }
 
             return (agent.AI.Position - VoxelToKill.Position).LengthSquared() + 100 * Math.Abs(agent.AI.Position.Y - VoxelToKill.Position.Y) + surroundedValue;
