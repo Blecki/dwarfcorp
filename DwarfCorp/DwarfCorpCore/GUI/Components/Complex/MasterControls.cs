@@ -90,7 +90,7 @@ namespace DwarfCorp
             CreateButton(layout, GameMaster.ToolMode.Attack, "Attack", "Click and drag to attack entities.\nRight click to cancel.", 3, 0);
 
             int i = 0;
-            foreach(Button b in ToolButtons.Values)
+            foreach (Button b in ToolButtons.Values)
             {
                 layout.SetComponentPosition(b, i % NumColumns, i / NumColumns, 1, 1);
                 i++;
@@ -124,20 +124,20 @@ namespace DwarfCorp
         public void ButtonClicked(Button sender)
         {
             sender.IsToggled = true;
-            
-            foreach(KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons)
+
+            foreach (KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons)
             {
-                if(pair.Value == sender)
+                if (pair.Value == sender)
                 {
                     CurrentMode = pair.Key;
-                   Master.Tools[pair.Key].OnBegin();
+                    Master.Tools[pair.Key].OnBegin();
 
                     if (Master.CurrentTool != Master.Tools[pair.Key])
                     {
                         Master.CurrentTool.OnEnd();
                     }
 
-                  
+
                 }
                 else
                 {
@@ -167,16 +167,16 @@ namespace DwarfCorp
         public override void Update(DwarfTime time)
         {
 
-            if(Master.SelectedMinions.Count == 0)
+            if (Master.SelectedMinions.Count == 0)
             {
 
-                if(Master.CurrentToolMode != GameMaster.ToolMode.God)
+                if (Master.CurrentToolMode != GameMaster.ToolMode.God)
                 {
                     Master.CurrentToolMode = GameMaster.ToolMode.SelectUnits;
                 }
 
 
-                foreach(KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons.Where(pair => pair.Key != GameMaster.ToolMode.SelectUnits))
+                foreach (KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons.Where(pair => pair.Key != GameMaster.ToolMode.SelectUnits))
                 {
                     pair.Value.IsVisible = false;
                 }
@@ -184,12 +184,12 @@ namespace DwarfCorp
             }
             else
             {
-     
-                foreach(KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons.Where(pair => pair.Key != GameMaster.ToolMode.SelectUnits))
+
+                foreach (KeyValuePair<GameMaster.ToolMode, Button> pair in ToolButtons.Where(pair => pair.Key != GameMaster.ToolMode.SelectUnits))
                 {
                     pair.Value.IsVisible = SelectedUnitsHaveCapability(pair.Key);
                 }
-                 
+
             }
 
             base.Update(time);
@@ -202,6 +202,7 @@ namespace DwarfCorp
     public class GameSpeedControl : Panel
     {
         private readonly int[] _gameSpeeds = { 0, 1, 2, 3 };
+
         private readonly string[] _labels = {"||", "1x", "2x", "3x"};
         private readonly string[] _rightLabels = {">", ">>", ">>>", ""};
         private readonly string[] _leftLabels = {"", "||", "<", "<"};
@@ -274,7 +275,7 @@ namespace DwarfCorp
             TimeForward.IsVisible = false;
             TimeBackward.IsVisible = false;
             DwarfTime.LastTime.Speed = (float) multiplier;
-            PlayState.Paused = false;
+            WorldManager.Paused = false;
             TimeLabel.Text = multiplier + "x";
             TimeLabel.ToolTip = "Game is running at " + multiplier + "x speed";
         }

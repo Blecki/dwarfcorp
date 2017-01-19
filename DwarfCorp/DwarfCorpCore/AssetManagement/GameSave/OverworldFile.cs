@@ -95,7 +95,7 @@ namespace DwarfCorp
                 toReturn = new Texture2D(device, width, height);
                 System.Threading.Mutex imageMutex = new System.Threading.Mutex();
                 Color[] worldData = new Color[width * height];
-                Overworld.TextureFromHeightMap("Height", mapData, Overworld.ScalarFieldType.Height, width, height, imageMutex, worldData, toReturn, PlayState.SeaLevel);
+                Overworld.TextureFromHeightMap("Height", mapData, Overworld.ScalarFieldType.Height, width, height, imageMutex, worldData, toReturn, WorldManager.SeaLevel);
 
                 return toReturn;
             }
@@ -104,7 +104,7 @@ namespace DwarfCorp
             {
             }
 
-            public OverworldData(Overworld.MapData[,] map, string name)
+            public OverworldData(GraphicsDevice device, Overworld.MapData[,] map, string name)
             {
                 int sizeX = map.GetLength(0);
                 int sizeY = map.GetLength(1);
@@ -134,7 +134,7 @@ namespace DwarfCorp
                     }
                 }
 
-                Screenshot = CreateTexture(PlayState.Game.GraphicsDevice, sizeX, sizeY);
+                Screenshot = CreateTexture(device, sizeX, sizeY);
             }
         }
 
@@ -147,9 +147,9 @@ namespace DwarfCorp
         {
         }
 
-        public OverworldFile(Overworld.MapData[,] map, string name)
+        public OverworldFile(GraphicsDevice device, Overworld.MapData[,] map, string name)
         {
-            Data = new OverworldData(map, name);
+            Data = new OverworldData(device, map, name);
         }
 
         public OverworldFile(string fileName, bool isCompressed, bool isBinary)

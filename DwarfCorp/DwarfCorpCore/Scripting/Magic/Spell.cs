@@ -79,8 +79,8 @@ namespace DwarfCorp
             }
             else
             {
-                SoundManager.PlaySound(ContentPaths.Audio.wurp, PlayState.CursorLightPos, true, 0.25f);
-                PlayState.GUI.ToolTipManager.Popup("Not enough mana. Need " + (int)ManaCost + " but only have " + (int)tree.Mana);
+                SoundManager.PlaySound(ContentPaths.Audio.wurp, WorldManager.CursorLightPos, true, 0.25f);
+                WorldManager.GUI.ToolTipManager.Popup("Not enough mana. Need " + (int)ManaCost + " but only have " + (int)tree.Mana);
             }
             return canCast;
         }
@@ -97,7 +97,7 @@ namespace DwarfCorp
 
         public virtual void OnButtonTriggered()
         {
-            PlayState.GUI.ToolTipManager.Popup(Hint);
+            WorldManager.GUI.ToolTipManager.Popup(Hint);
         }
 
         public virtual void OnContinuousUpdate(DwarfTime time)
@@ -134,7 +134,7 @@ namespace DwarfCorp
 
             if (!Recharges || RechargeTimer.HasTriggered)
             {
-                PlayState.ParticleManager.Trigger("star_particle", PlayState.CursorLightPos + Vector3.Up * 0.5f, Color.White, 2);
+                WorldManager.ParticleManager.Trigger("star_particle", WorldManager.CursorLightPos + Vector3.Up * 0.5f, Color.White, 2);
             }
         }
 
@@ -142,8 +142,8 @@ namespace DwarfCorp
         {
             if (Recharges && !RechargeTimer.HasTriggered)
             {
-                Drawer2D.DrawLoadBar(PlayState.CursorLightPos - Vector3.Up, Color.White, Color.Black, 150, 20, RechargeTimer.CurrentTimeSeconds / RechargeTimer.TargetTimeSeconds);
-                Drawer2D.DrawTextBox("Charging...", PlayState.CursorLightPos + Vector3.Up * 2);
+                Drawer2D.DrawLoadBar(WorldManager.CursorLightPos - Vector3.Up, Color.White, Color.Black, 150, 20, RechargeTimer.CurrentTimeSeconds / RechargeTimer.TargetTimeSeconds);
+                Drawer2D.DrawTextBox("Charging...", WorldManager.CursorLightPos + Vector3.Up * 2);
             }
         }
 

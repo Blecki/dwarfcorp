@@ -47,9 +47,9 @@ namespace DwarfCorp
         {
         }
 
-        public override void Build()
+        public override void Build(bool silent=false)
         {
-            base.Build();
+            base.Build(silent);
         }
     }
 }

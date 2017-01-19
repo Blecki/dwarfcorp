@@ -441,7 +441,7 @@ namespace DwarfCorp
                 LabelFont = GUI.SmallFont
             };
 
-            Body nearest = PlayState.PlayerFaction.FindNearestItemWithTags(item.CraftLocation, Vector3.Zero, false);
+            Body nearest = WorldManager.PlayerFaction.FindNearestItemWithTags(item.CraftLocation, Vector3.Zero, false);
 
 
             string requirementsText = "Requires: " + item.CraftLocation + ",\n";
@@ -528,7 +528,7 @@ namespace DwarfCorp
             };
             string requirementsText = "Requires:\n";
 
-            Body nearest = PlayState.PlayerFaction.FindNearestItemWithTags(item.CraftLocation, Vector3.Zero, false);
+            Body nearest = WorldManager.PlayerFaction.FindNearestItemWithTags(item.CraftLocation, Vector3.Zero, false);
 
             if (nearest == null)
             {
