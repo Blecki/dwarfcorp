@@ -262,6 +262,7 @@ namespace DwarfCorp
         }
 
         public List<Screenshot> Screenshots { get; set; }
+        private object ScreenshotLock = new object();
 
         public bool ShowingWorld { get; set; }
 
@@ -1263,21 +1264,19 @@ namespace DwarfCorp
             PlanService.Die();
         }
 
-        /// <summary>
-        /// Saves the game state to a file.
-        /// </summary>
-        /// <param name="filename">The file to save to</param>
-        public void SaveGame(string filename)
-        {
-            Dialog dialog = Dialog.Popup(GUI, "Saving/Loading",
-                "Warning: Saving is still an unstable feature. Are you sure you want to continue?",
-                Dialog.ButtonType.OkAndCancel);
+        public delegate void SaveCallback(bool success, Exception e);
 
-            dialog.OnClosed += (status) => savedialog_OnClosed(status, filename);
+        public void Save(string filename, SaveCallback callback=null)
+        {
+            Paused = true;
+            WaitState waitforsave = new WaitState(Game, "SaveWait", gameState.StateManager,
+                () => SaveThreadRoutine(filename), GUI);
+            if (callback != null)
+                waitforsave.OnFinished += (bool b, WaitStateException e) => callback(b, e);
+            gameState.StateManager.PushState(waitforsave);
         }
 
-
-        private void SaveThread(string filename)
+        private bool SaveThreadRoutine(string filename)
         {
             try
             {
@@ -1306,43 +1305,13 @@ namespace DwarfCorp
                         Resolution = new Point(GraphicsDevice.Viewport.Width/4, GraphicsDevice.Viewport.Height/4)
                     });
                 }
-                saveGameException = null;
             }
             catch (Exception exception)
             {
-                this.saveGameException = exception;
+                throw new WaitStateException(exception.Message);
             }
+            return true;
         }
-
-        private object ScreenshotLock = new object();
-        private Exception saveGameException = null;
-
-        private void savedialog_OnClosed(Dialog.ReturnStatus status, string filename)
-        {
-            switch (status)
-            {
-                case Dialog.ReturnStatus.Ok:
-                {
-                        Paused = true;
-                        WaitState waitforsave = new WaitState(Game, "SaveWait", gameState.StateManager,
-                            new Thread(() => SaveThread(filename)), GUI);
-                        waitforsave.OnFinished += waitforsave_OnFinished;
-                        gameState.StateManager.PushState(waitforsave);
-                        break;
-                }
-            }
-        }
-
-        private void waitforsave_OnFinished()
-        {
-            if (saveGameException == null)
-                Dialog.Popup(GUI, "Save", "File saved.", Dialog.ButtonType.OK);
-            else
-            {
-                Dialog.Popup(GUI, "Save", "File save failed : " + saveGameException.Message, Dialog.ButtonType.OK);
-            }
-        }
-
 
         /// <summary>
         /// Reflects a camera beneath a water surface for reflection drawing TODO: move to water manager

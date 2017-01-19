@@ -638,11 +638,48 @@ namespace DwarfCorp.GameStates
                     StateManager.PushState("OptionsState");
                     break;
                 case "Save":
-                    World.SaveGame(Overworld.Name + "_" + WorldManager.GameID);
+                    SaveGame(Overworld.Name + "_" + WorldManager.GameID);
                     break;
                 case "Quit":
                     QuitGame();
                     break;
+            }
+        }
+
+        /// <summary>
+        /// Saves the game state to a file.
+        /// </summary>
+        /// <param name="filename">The file to save to</param>
+        public void SaveGame(string filename)
+        {
+            Dialog dialog = Dialog.Popup(GUI, "Saving/Loading",
+                "Warning: Saving is still an unstable feature. Are you sure you want to continue?",
+                Dialog.ButtonType.OkAndCancel);
+
+            dialog.OnClosed += (status) => savedialog_OnClosed(status, filename);
+        }
+
+        private void savedialog_OnClosed(Dialog.ReturnStatus status, string filename)
+        {
+            switch (status)
+            {
+                case Dialog.ReturnStatus.Ok:
+                    {
+                        World.Save(filename, waitforsave_OnFinished);
+                        break;
+                    }
+            }
+        }
+
+        private void waitforsave_OnFinished(bool success, Exception exception)
+        {
+            if (success)
+            {
+                Dialog.Popup(GUI, "Save", "File saved.", Dialog.ButtonType.OK);
+            }
+            else
+            {
+                Dialog.Popup(GUI, "Save", "File save failed : " + exception.Message, Dialog.ButtonType.OK);
             }
         }
 
