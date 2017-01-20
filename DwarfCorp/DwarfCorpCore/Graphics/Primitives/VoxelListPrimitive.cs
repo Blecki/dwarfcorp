@@ -180,7 +180,7 @@ namespace DwarfCorp
                             List<Vector3> neighbors = VertexNeighbors2D[(int)bestKey];
                             chunk.GetNeighborsSuccessors(neighbors, (int)v.GridPosition.X, (int)v.GridPosition.Y, (int)v.GridPosition.Z, diagNeighbors);
                         
-                            bool emptyFound = diagNeighbors.Any(vox => vox.IsEmpty);
+                            bool emptyFound = diagNeighbors.Any(vox => vox == null || vox.IsEmpty);
 
                             if(!emptyFound)
                             {
@@ -618,7 +618,7 @@ namespace DwarfCorp
             }
             MaxIndex = maxIndex;
             MaxVertex = maxVertex;
-            GenerateLightmap(PlayState.ChunkManager.ChunkData.Tilemap.Bounds);
+            GenerateLightmap(WorldManager.ChunkManager.ChunkData.Tilemap.Bounds);
             isRebuilding = false;
 
             //chunk.PrimitiveMutex.WaitOne();

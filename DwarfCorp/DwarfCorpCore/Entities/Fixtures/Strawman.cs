@@ -49,7 +49,7 @@ namespace DwarfCorp
         }
 
         public Strawman(Vector3 position) :
-            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 5), PlayState.ComponentManager.RootComponent)
+            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 5), WorldManager.ComponentManager.RootComponent)
         {
             Name = "Strawman";
             Tags.Add("Strawman");

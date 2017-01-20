@@ -207,7 +207,7 @@ namespace DwarfCorp
             {
                 VoxelUnderMouse = underMouse;
                 // Update the cursor light.
-                PlayState.CursorLightPos = underMouse.Position + new Vector3(0.5f, 0.5f, 0.5f);
+                WorldManager.CursorLightPos = underMouse.Position + new Vector3(0.5f, 0.5f, 0.5f);
 
                 // Get the type of the voxel and display it to the player.
                 if (Enabled && !underMouse.IsEmpty && underMouse.IsExplored)
@@ -215,14 +215,14 @@ namespace DwarfCorp
                     string info = underMouse.TypeName;
 
                     // If it belongs to a room, display that information.
-                    if (PlayState.PlayerFaction.RoomBuilder.IsInRoom(underMouse))
+                    if (WorldManager.PlayerFaction.RoomBuilder.IsInRoom(underMouse))
                     {
-                        Room room = PlayState.PlayerFaction.RoomBuilder.GetMostLikelyRoom(underMouse);
+                        Room room = WorldManager.PlayerFaction.RoomBuilder.GetMostLikelyRoom(underMouse);
 
                         if (room != null)
                             info += " (" + room.ID + ")";
                     }
-                    PlayState.GUI.ToolTipManager.PopupInfo(info);
+                    WorldManager.GUI.ToolTipManager.PopupInfo(info);
                 }
             }
 
@@ -292,9 +292,12 @@ namespace DwarfCorp
 
                         if (!altPressed)
                         {
-                            SelectionBuffer.RemoveAll(
+                            if (SelectionType == VoxelSelectionType.SelectFilled)
+                            { 
+                                SelectionBuffer.RemoveAll(
                                 voxel =>
-                                    (!voxel.Equals(underMouse) && Chunks.ChunkData.IsVoxelOccluded(voxel)));
+                                    (!voxel.Equals(underMouse) && !Chunks.ChunkData.IsVoxelVisibleSurface(voxel)));
+                            }
                         }
 
                         if (newVoxel)

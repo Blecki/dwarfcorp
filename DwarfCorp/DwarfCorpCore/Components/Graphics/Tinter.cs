@@ -54,7 +54,7 @@ namespace DwarfCorp
         public Voxel VoxelUnder = null;
         public bool ColorAppplied = false;
         private bool entityLighting = GameSettings.Default.EntityLighting;
-
+        public Color VertexColorTint { get; set; }
         public Timer StartTimer { get; set; }
 
         public Tinter()
@@ -73,6 +73,7 @@ namespace DwarfCorp
             TintChangeRate = 1.0f;
             LightsWithVoxels = true;
             VoxelUnder = new Voxel();
+            VertexColorTint = Color.White;
         }
 
 
@@ -170,8 +171,10 @@ namespace DwarfCorp
             if(IsVisible)
             {
                 effect.Parameters["xTint"].SetValue(new Vector4(Tint.R, Tint.G, Tint.B, Tint.A));
+                effect.Parameters["xColorTint"].SetValue(new Vector4(VertexColorTint.R, VertexColorTint.G, VertexColorTint.B, VertexColorTint.A));
 
                 base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+
             }
         }
     }

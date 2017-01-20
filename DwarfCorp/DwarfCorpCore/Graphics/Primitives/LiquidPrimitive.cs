@@ -234,12 +234,14 @@ namespace DwarfCorp
                 float count = 1.0f;
                 float emptyNeighbors = 0.0f;
 
-                foreach(byte level in neighborsVertex.Select(vox => vox.WaterLevel))
+                foreach(Voxel vox in neighborsVertex)
                 {
-                    averageWaterLevel += level;
+                    if (vox == null) continue;
+                    
+                    averageWaterLevel += vox.WaterLevel;
                     count++;
 
-                    if(level < 1)
+                    if(vox.WaterLevel < 1)
                     {
                         emptyNeighbors++;
                     }

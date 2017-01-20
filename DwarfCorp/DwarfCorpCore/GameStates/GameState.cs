@@ -32,6 +32,7 @@
 // THE SOFTWARE.
 using System.Threading;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace DwarfCorp.GameStates
 {
@@ -101,9 +102,13 @@ namespace DwarfCorp.GameStates
 
         public virtual void OnPopped()
         {
-            
+
         }
 
+    }
+
+    public class WaitStateException : Exception {
+        public WaitStateException(string message) : base(message) { }
     }
 
     public class WaitState : GameState
@@ -116,18 +121,38 @@ namespace DwarfCorp.GameStates
         protected virtual void OnOnFinished()
         {
             Finished handler = OnFinished;
-            if (handler != null) handler();
+            if (handler != null) handler(true, null);
         }
         public bool Done { get; protected set; }
-        public delegate void Finished();
+        public delegate void Finished(bool success, WaitStateException e);
 
-        public WaitState(DwarfGame game, string name, GameStateManager stateManager, Thread waitThread, DwarfGUI gui)
+        /// <summary>
+        /// the routine to be run in a thread while the wait state is active
+        /// </summary>
+        /// <returns>success</returns>
+        public delegate bool WaitThreadRoutine();
+
+        public WaitStateException exception;
+        public bool success = false;
+
+        public WaitState(DwarfGame game, string name, GameStateManager stateManager, WaitThreadRoutine routine, DwarfGUI gui)
             : base(game, name, stateManager)
         {
-            WaitThread = waitThread;
+            WaitThread = new Thread(() => runRoutine(routine));
             GUI = gui;
-            OnFinished = () => { };
+            OnFinished = (Boolean, Exception) => { };
             Done = false;
+        }
+
+        protected void runRoutine(WaitThreadRoutine routine)
+        {
+            try
+            {
+                success = routine();
+            } catch (WaitStateException e)  // allows any exceptions we didn't throw on purpose to be thrown properly
+            {
+                this.exception = e;
+            }
         }
 
         public override void OnEnter()
@@ -140,11 +165,9 @@ namespace DwarfCorp.GameStates
         public override void OnPopped()
         {
             StateManager.States.Remove(Name);
-            OnFinished.Invoke();
+            OnFinished.Invoke(success, exception);
             base.OnPopped();
         }
-
-
 
         public override void Update(DwarfTime gameTime)
         {

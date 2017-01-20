@@ -67,16 +67,16 @@ namespace DwarfCorp
         public List<Company> Market { get; set; }
 
         [JsonIgnore]
-        public PlayState PlayState { get; set; }
+        public WorldManager world { get; set; }
 
         public Economy()
         {
             
         }
 
-        public Economy(Faction faction, float currentMoney, PlayState state, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
+        public Economy(Faction faction, float currentMoney, WorldManager world, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
         {
-            PlayState = state;
+            this.world = world;
             Company = Company.GenerateRandom(currentMoney, 1.0f, Company.Sector.Exploration);
             Company.Name = companyName;
             Company.SecondaryColor = Color.White;
@@ -106,14 +106,15 @@ namespace DwarfCorp
                 Company.GenerateRandom(1800, 60.0f, Company.Sector.Finance)
             };
 
-            PlayState.Time.NewDay += Time_NewDay;
+            WorldManager.Time.NewDay += Time_NewDay;
         }
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            PlayState = GameState.Game.StateManager.GetState<PlayState>("PlayState");
+            world = WorldManager.world;
         }
+
         public void UpdateStocks(DateTime time)
         {
             float marketBias = (float)Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds * 0.001f) * 0.25f;
@@ -135,17 +136,17 @@ namespace DwarfCorp
             float diff = Company.StockPrice - originalStockPrice;
             if (Company.StockPrice <= 0)
             {
-                PlayState.InvokeLoss();
+                world.InvokeLoss();
             }
 
             if (Company.Assets <= 0)
             {
-                PlayState.AnnouncementManager.Announce("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
+                WorldManager.AnnouncementManager.Announce("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
             }
 
             string symbol = diff > 0 ? "+" : "";
            
-            PlayState.AnnouncementManager.Announce(Company.TickerName + " " + Company.StockPrice.ToString("F2") + " " + symbol + diff.ToString("F2"), "Our stock price changed by " + symbol + " " + diff.ToString("F2") + " today.");
+            WorldManager.AnnouncementManager.Announce(Company.TickerName + " " + Company.StockPrice.ToString("F2") + " " + symbol + diff.ToString("F2"), "Our stock price changed by " + symbol + " " + diff.ToString("F2") + " today.");
         }
 
         void Time_NewDay(DateTime time)

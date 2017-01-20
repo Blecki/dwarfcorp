@@ -176,12 +176,12 @@ namespace DwarfCorp
         public Creature(Vector3 pos, CreatureDef def, string creatureClass, int creatureLevel, string faction) :
             this(new CreatureStats(EmployeeClass.Classes[creatureClass], creatureLevel),
                 faction,
-                PlayState.PlanService,
-                PlayState.ComponentManager.Factions.Factions[faction],
-                new Physics(def.Name, PlayState.ComponentManager.RootComponent, Matrix.CreateTranslation(pos), def.Size,
+                WorldManager.PlanService,
+                WorldManager.ComponentManager.Factions.Factions[faction],
+                new Physics(def.Name, WorldManager.ComponentManager.RootComponent, Matrix.CreateTranslation(pos), def.Size,
                     new Vector3(0, -def.Size.Y * 0.5f, 0), def.Mass, 1.0f, 0.999f, 0.999f, Vector3.UnitY * -10,
                     Physics.OrientMode.RotateY),
-                PlayState.ChunkManager,
+                WorldManager.ChunkManager,
                 GameState.Game.GraphicsDevice,
                 GameState.Game.Content,
                 def.Name)
@@ -262,7 +262,7 @@ namespace DwarfCorp
 
             var minimapIcon = new MinimapIcon(Physics, def.MinimapIcon);
             Stats.FullName =
-                TextGenerator.GenerateRandom(PlayState.ComponentManager.Factions.Races[def.Race].NameTemplates);
+                TextGenerator.GenerateRandom(WorldManager.ComponentManager.Factions.Races[def.Race].NameTemplates);
             Stats.CanSleep = def.CanSleep;
             Stats.CanEat = def.CanEat;
             AI.TriggersMourning = def.TriggersMourning;
@@ -407,9 +407,9 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Graphics = PlayState.ChunkManager.Graphics;
-            Content = PlayState.ChunkManager.Content;
-            Chunks = PlayState.ChunkManager;
+            Graphics = WorldManager.ChunkManager.Graphics;
+            Content = WorldManager.ChunkManager.Content;
+            Chunks = WorldManager.ChunkManager;
         }
 
         /// <summary> Adds the specified ongoing effect. </summary>
@@ -624,7 +624,7 @@ namespace DwarfCorp
                     NoiseMaker.MakeNoise("Hurt", AI.Position);
                     Sprite.Blink(0.5f);
                     AI.AddThought(Thought.ThoughtType.TookDamage);
-                    PlayState.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
+                    WorldManager.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
                     break;
             }
 
@@ -702,7 +702,7 @@ namespace DwarfCorp
                 NoiseMaker.MakeNoise("Hurt", AI.Position);
                 Sprite.Blink(0.5f);
                 AI.AddThought(Thought.ThoughtType.TookDamage);
-                PlayState.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
+                WorldManager.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
             }
 
             return damage;
@@ -792,7 +792,7 @@ namespace DwarfCorp
 
                 if (ParticleTimer.HasTriggered && !string.IsNullOrEmpty(Particles))
                 {
-                    PlayState.ParticleManager.Trigger(Particles, creature.Physics.Position, Color.White, 1);
+                    WorldManager.ParticleManager.Trigger(Particles, creature.Physics.Position, Color.White, 1);
                 }
             }
 

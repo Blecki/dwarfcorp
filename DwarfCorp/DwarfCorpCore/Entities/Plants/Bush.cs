@@ -47,11 +47,11 @@ namespace DwarfCorp
         public Cactus() { }
 
         public Cactus(Vector3 position, string asset, float bushSize) :
-            base("Cactus", PlayState.ComponentManager.RootComponent, Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero)
+            base("Cactus", WorldManager.ComponentManager.RootComponent, Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);
-            ComponentManager componentManager = PlayState.ComponentManager;
+            ComponentManager componentManager = WorldManager.ComponentManager;
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position + new Vector3(0.5f, -0.2f, 0.5f);
             LocalTransform = matrix;
@@ -63,9 +63,9 @@ namespace DwarfCorp
 
             Voxel voxelUnder = new Voxel();
 
-            if (PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            if (WorldManager.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {
-                VoxelListener listener = new VoxelListener(componentManager, this, PlayState.ChunkManager, voxelUnder);
+                VoxelListener listener = new VoxelListener(componentManager, this, WorldManager.ChunkManager, voxelUnder);
             }
 
 
@@ -99,11 +99,11 @@ namespace DwarfCorp
         public Bush() { }
 
         public Bush(Vector3 position, string asset, float bushSize) :
-            base("Bush", PlayState.ComponentManager.RootComponent, Matrix.Identity, new Vector3(bushSize, bushSize, bushSize),Vector3.Zero)
+            base("Bush", WorldManager.ComponentManager.RootComponent, Matrix.Identity, new Vector3(bushSize, bushSize, bushSize),Vector3.Zero)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);
-            ComponentManager componentManager = PlayState.ComponentManager;
+            ComponentManager componentManager = WorldManager.ComponentManager;
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position + new Vector3(0.5f, -0.2f, 0.5f);
             LocalTransform = matrix;
@@ -115,9 +115,9 @@ namespace DwarfCorp
 
             Voxel voxelUnder = new Voxel();
 
-            if (PlayState.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            if (WorldManager.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {
-                VoxelListener listener = new VoxelListener(componentManager, this, PlayState.ChunkManager, voxelUnder);
+                VoxelListener listener = new VoxelListener(componentManager, this, WorldManager.ChunkManager, voxelUnder);
             }
 
             Tags.Add("Vegetation");

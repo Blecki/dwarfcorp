@@ -168,7 +168,6 @@
     <Compile Include="GameStates\LoseState.cs" />
     <Compile Include="GameStates\MainMenuState.cs" />
     <Compile Include="GameStates\OptionsState.cs" />
-    <Compile Include="GameStates\PlayState.cs" />
     <Compile Include="GameStates\WorldGeneratorState.cs" />
     <Compile Include="GameStates\WorldSetupState.cs" />
     <Compile Include="GameStates\WorldLoaderState.cs" />
@@ -486,8 +485,10 @@
     <Compile Include="World\Diplomacy.cs" />
     <Compile Include="World\FaunaData.cs" />
     <Compile Include="World\Overworld.cs" />
+    <Compile Include="GameStates\PlayState.cs" />
     <Compile Include="World\VegetationData.cs" />
     <Compile Include="World\Weather.cs" />
+    <Compile Include="World\WorldManager.cs" />
     <Compile Include="World\WorldTime.cs" />
   </ItemGroup>
   <ItemGroup>

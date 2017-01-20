@@ -56,7 +56,7 @@ namespace DwarfCorp
         public Door(Vector3 position, Faction team, SpriteSheet sheet, Point frame, float hp) :
             base(
             position, sheet, frame,
-            PlayState.ComponentManager.RootComponent)
+            WorldManager.ComponentManager.RootComponent)
         {
             IsMoving = false;
             IsOpen = false;
@@ -71,15 +71,18 @@ namespace DwarfCorp
             ClosedTransform = LocalTransform;
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
-            Health health = new Health(PlayState.ComponentManager, "Health", this, hp, 0.0f, hp);
-           
+            Health health = new Health(WorldManager.ComponentManager, "Health", this, hp, 0.0f, hp);
+            
         }
 
         public Matrix CreateHingeTransform(float angle)
         {
-            Vector3 hinge = new Vector3(0, 0, 0.5f);
-            Vector3 center = new Vector3((float)Math.Sin(angle) * 0.5f, 0, (float)Math.Cos(angle) * 0.5f);
-            return  Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(center - hinge);
+            Matrix toReturn = Matrix.Identity;
+            Vector3 hinge = new Vector3(0, 0, -0.5f);
+            toReturn = Matrix.CreateTranslation(-hinge) * toReturn;
+            toReturn = Matrix.CreateRotationY(angle) * toReturn;
+            toReturn = Matrix.CreateTranslation(hinge)* toReturn;
+            return toReturn;
         }
 
         public void Open()

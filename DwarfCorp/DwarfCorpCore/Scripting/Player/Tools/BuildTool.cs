@@ -65,18 +65,21 @@ namespace DwarfCorp
             }
             int w = 600;
             int h = 350;
-            BuildPanel = new BuildMenu(PlayState.GUI, PlayState.GUI.RootComponent, Player, BuildType)
+            BuildPanel = new BuildMenu(WorldManager.GUI, WorldManager.GUI.RootComponent, Player, BuildType)
             {
-                LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width/2 - w/2, PlayState.Game.GraphicsDevice.Viewport.Height/2 - h/2, w, h),
+                LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width/2 - w/2, GameState.Game.GraphicsDevice.Viewport.Height/2 - h/2, w, h),
                 IsVisible = true,
                 DrawOrder = 2
             };
             BuildPanel.TweenIn(Drawer2D.Alignment.Right, 0.25f);
+
+            Player.Faction.CraftBuilder.IsEnabled = false;
         }
 
         public override void OnEnd()
         {
             BuildPanel.TweenOut(Drawer2D.Alignment.Right, 0.25f);
+            Player.Faction.CraftBuilder.IsEnabled = false;
         }
 
 
@@ -85,7 +88,7 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                PlayState.GUI.IsMouseVisible = false;
+                WorldManager.GUI.IsMouseVisible = false;
                 Player.BodySelector.Enabled = false;
                 return;
             }
@@ -97,9 +100,9 @@ namespace DwarfCorp
             {
                 Player.VoxSelector.Enabled = true;
                 Player.BodySelector.Enabled = false;
-                PlayState.GUI.IsMouseVisible = true;
+                WorldManager.GUI.IsMouseVisible = true;
 
-                PlayState.GUI.MouseMode = PlayState.GUI.IsMouseOver()
+                WorldManager.GUI.MouseMode = WorldManager.GUI.IsMouseOver()
                     ? GUISkin.MousePointer.Pointer
                     : GUISkin.MousePointer.Build;
             }
@@ -107,9 +110,9 @@ namespace DwarfCorp
             {
                 Player.VoxSelector.Enabled = false;
                 Player.BodySelector.Enabled = false;
-                PlayState.GUI.IsMouseVisible = true;
+                WorldManager.GUI.IsMouseVisible = true;
 
-                PlayState.GUI.MouseMode = PlayState.GUI.IsMouseOver()
+                WorldManager.GUI.MouseMode = WorldManager.GUI.IsMouseOver()
                     ? GUISkin.MousePointer.Pointer
                     : GUISkin.MousePointer.Cook;
             }
@@ -117,7 +120,7 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            Player.Faction.RoomBuilder.Render(time, PlayState.ChunkManager.Graphics);
+            Player.Faction.RoomBuilder.Render(time, WorldManager.ChunkManager.Graphics);
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
