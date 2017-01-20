@@ -269,6 +269,12 @@ namespace DwarfCorp
             //quickCompare = (ulong) (((chunkID.X & 0xFFFF) << 48) | ((chunkID.Y & 0xFFFF) << 32) | ((chunkID.Y & 0xFFFF) << 16) | (index & 0xFFFF));
         }
 
+        public Voxel(Voxel other)
+        {
+            Chunk = other.Chunk;
+            GridPosition = other.GridPosition;
+        }
+
         [JsonIgnore]
         public float Health
         {
@@ -395,15 +401,15 @@ namespace DwarfCorp
                 return null;
             }
 
-            if(PlayState.ParticleManager != null)
+            if(WorldManager.ParticleManager != null)
             {
-                PlayState.ParticleManager.Trigger(Type.ParticleType, Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
-                PlayState.ParticleManager.Trigger("puff", Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                WorldManager.ParticleManager.Trigger(Type.ParticleType, Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                WorldManager.ParticleManager.Trigger("puff", Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
             }
 
-            if(PlayState.Master != null)
+            if(WorldManager.Master != null)
             {
-                PlayState.Master.Faction.OnVoxelDestroyed(this);
+                WorldManager.Master.Faction.OnVoxelDestroyed(this);
             }
 
             SoundManager.PlaySound(Type.ExplosionSound, Position);
@@ -448,16 +454,17 @@ namespace DwarfCorp
         {
             UpdateStatics();
             Chunk = chunk;
-            chunkID = chunk.ID;
+            if (chunk != null)
+                chunkID = chunk.ID;
             GridPosition = new Vector3(gridPosition.X, gridPosition.Y, gridPosition.Z);
         }
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            if (PlayState.ChunkManager.ChunkData.ChunkMap.ContainsKey(chunkID))
+            if (WorldManager.ChunkManager.ChunkData.ChunkMap.ContainsKey(chunkID))
             {
-                Chunk = PlayState.ChunkManager.ChunkData.ChunkMap[chunkID];
+                Chunk = WorldManager.ChunkManager.ChunkData.ChunkMap[chunkID];
                 index = Chunk.Data.IndexAt((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z);
                 RegenerateQuickCompare();
             }

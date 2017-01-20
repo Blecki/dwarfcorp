@@ -72,14 +72,23 @@ namespace DwarfCorp
 
         protected void OnDeserialized(StreamingContext context)
         {
-            Initialize(GameState.Game, PlayState.ComponentManager, PlayState.ChunkManager, PlayState.Camera, PlayState.ChunkManager.Graphics,  PlayState.GUI);
-            PlayState.Master = this;
+            Initialize(GameState.Game, WorldManager.ComponentManager, WorldManager.ChunkManager, WorldManager.Camera, WorldManager.ChunkManager.Graphics,  WorldManager.GUI);
+            WorldManager.Master = this;
         }
 
         public GameMaster()
         {
         }
 
+        public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics, DwarfGUI gui)
+        {
+            Faction = faction;
+            Initialize(game, components, chunks, camera, graphics, gui);
+            VoxSelector.Selected += OnSelected;
+            VoxSelector.Dragged += OnDrag;
+            BodySelector.Selected += OnBodiesSelected;
+            WorldManager.Time.NewDay += Time_NewDay;
+        }
 
         public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics, DwarfGUI gui)
         {
@@ -169,16 +178,6 @@ namespace DwarfCorp
             };
         }
 
-        public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics, DwarfGUI gui)
-        {
-            Faction = faction;
-            Initialize(game, components, chunks, camera, graphics, gui);
-            VoxSelector.Selected += OnSelected;
-            VoxSelector.Dragged += OnDrag;
-            BodySelector.Selected += OnBodiesSelected;
-            PlayState.Time.NewDay += Time_NewDay;
-        }
-
         void Time_NewDay(DateTime time)
         {
             PayEmployees();
@@ -231,7 +230,7 @@ namespace DwarfCorp
                 {
                     if (!noMoney)
                     {
-                        PlayState.AnnouncementManager.Announce(Drawer2D.WrapColor("We're bankrupt!", Color.DarkRed),
+                        WorldManager.AnnouncementManager.Announce(Drawer2D.WrapColor("We're bankrupt!", Color.DarkRed),
                             "If we don't make a profit by tomorrow, our stock will crash!");
                     }
                     noMoney = true;
@@ -243,7 +242,7 @@ namespace DwarfCorp
             }
 
             SoundManager.PlaySound(ContentPaths.Audio.change);
-            PlayState.AnnouncementManager.Announce("Pay day!", "We paid our employees " + total.ToString("C") + " today.");
+            WorldManager.AnnouncementManager.Announce("Pay day!", "We paid our employees " + total.ToString("C") + " today.");
         }
 
 
@@ -316,7 +315,7 @@ namespace DwarfCorp
                 }
             }
 
-            if (!PlayState.Paused)
+            if (!WorldManager.Paused)
             {
 
             }
@@ -341,7 +340,7 @@ namespace DwarfCorp
 
                 if (deadMinion != null)
                 {
-                    PlayState.AnnouncementManager.Announce(
+                    WorldManager.AnnouncementManager.Announce(
                         deadMinion.Stats.FullName + " (" + deadMinion.Stats.CurrentLevel.Name + ")" + Drawer2D.WrapColor(" died!", Color.DarkRed),
                         "One of our employees has died!");
                     Faction.Economy.Company.StockPrice -= MathFunctions.Rand(0, 0.5f);
@@ -351,6 +350,8 @@ namespace DwarfCorp
             Faction.Minions.RemoveAll(m => m.IsDead);
 
             UpdateRooms();
+
+            Faction.CraftBuilder.Update(time, this);
         }
 
 
@@ -369,7 +370,7 @@ namespace DwarfCorp
         {
             if(KeyManager.RotationEnabled())
             {
-                PlayState.GUI.IsMouseVisible = false;
+                WorldManager.GUI.IsMouseVisible = false;
             }
           
         }
@@ -397,12 +398,12 @@ namespace DwarfCorp
         {
             if(key == ControlSettings.Mappings.SliceUp)
             {
-                PlayState.ChunkManager.ChunkData.SetMaxViewingLevel(PlayState.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
+                WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(WorldManager.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
             }
 
             if(key == ControlSettings.Mappings.SliceDown)
             {
-                PlayState.ChunkManager.ChunkData.SetMaxViewingLevel(PlayState.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
+                WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(WorldManager.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
             }
 
 

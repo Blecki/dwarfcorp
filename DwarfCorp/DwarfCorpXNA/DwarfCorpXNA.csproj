@@ -1390,6 +1390,9 @@
     <Compile Include="..\DwarfCorpCore\World\Weather.cs">
       <Link>World\Weather.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\World\WorldManager.cs">
+      <Link>World\WorldManager.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\World\WorldTime.cs">
       <Link>World\WorldTime.cs</Link>
     </Compile>

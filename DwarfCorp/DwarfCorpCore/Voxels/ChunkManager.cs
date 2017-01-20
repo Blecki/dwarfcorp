@@ -134,7 +134,7 @@ namespace DwarfCorp
 
         private Camera camera = null;
 
-        public ComponentManager Components { get { return PlayState.ComponentManager; }}
+        public ComponentManager Components { get { return WorldManager.ComponentManager; }}
         public ContentManager Content { get; set; }
 
         private readonly HashSet<VoxelChunk> visibleSet = new HashSet<VoxelChunk>();
@@ -604,6 +604,7 @@ namespace DwarfCorp
             effect.Parameters["xAmbientGradient"].SetValue(ChunkData.AmbientMap);
             effect.Parameters["xTorchGradient"].SetValue(ChunkData.TorchMap);
             effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+            effect.Parameters["xColorTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
             effect.Parameters["SelfIllumination"].SetValue(0);
             effect.Parameters["xEnableShadows"].SetValue(0);
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
@@ -630,6 +631,7 @@ namespace DwarfCorp
             effect.Parameters["xAmbientGradient"].SetValue(ChunkData.AmbientMap);
             effect.Parameters["xTorchGradient"].SetValue(ChunkData.TorchMap);
             effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+            effect.Parameters["xColorTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
             effect.Parameters["SelfIllumination"].SetValue(1);
             effect.Parameters["xEnableShadows"].SetValue(0);
 
@@ -694,6 +696,7 @@ namespace DwarfCorp
             effect.Parameters["xAmbientGradient"].SetValue(ChunkData.AmbientMap);
             effect.Parameters["xTorchGradient"].SetValue(ChunkData.TorchMap);
             effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+            effect.Parameters["xColorTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
             effect.Parameters["SelfIllumination"].SetValue(1);
             effect.Parameters["xEnableShadows"].SetValue(GameSettings.Default.UseDynamicShadows ? 1 : 0);
             graphicsDevice.RasterizerState = state;
@@ -733,6 +736,7 @@ namespace DwarfCorp
             effect.Parameters["xAmbientGradient"].SetValue(ChunkData.AmbientMap);
             effect.Parameters["xTorchGradient"].SetValue(ChunkData.TorchMap);
             effect.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+            effect.Parameters["xColorTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
             effect.Parameters["SelfIllumination"].SetValue(1);
             effect.Parameters["xWorld"].SetValue(Matrix.Identity);
 
@@ -926,7 +930,7 @@ namespace DwarfCorp
                     {
                         ChunkData.AddChunk(chunk);
                         ChunkGen.GenerateVegetation(chunk, Components, Content, Graphics);
-                        ChunkGen.GenerateFauna(chunk, Components, Content, Graphics, PlayState.ComponentManager.Factions);
+                        ChunkGen.GenerateFauna(chunk, Components, Content, Graphics, WorldManager.ComponentManager.Factions);
                         List<VoxelChunk> adjacents = ChunkData.GetAdjacentChunks(chunk);
                         foreach(VoxelChunk c in adjacents)
                         {

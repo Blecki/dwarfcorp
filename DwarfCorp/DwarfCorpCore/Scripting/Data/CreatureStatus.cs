@@ -185,7 +185,7 @@ namespace DwarfCorp
             Health.CurrentValue = (creature.Hp - creature.MinHealth) / (creature.MaxHealth - creature.MinHealth);
 
             if(creature.Stats.CanSleep)
-                Energy.CurrentValue = (float) (100*Math.Sin(PlayState.Time.GetTotalHours()*Math.PI / 24.0f));
+                Energy.CurrentValue = (float) (100*Math.Sin(WorldManager.Time.GetTotalHours()*Math.PI / 24.0f));
             else
             {
                 Energy.CurrentValue = 100.0f;
