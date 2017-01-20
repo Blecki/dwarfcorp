@@ -35,6 +35,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Gum;
 using Gum.Widgets;
+using System.Linq;
 
 namespace DwarfCorp.GameStates
 {
@@ -47,6 +48,7 @@ namespace DwarfCorp.GameStates
         private Gum.Root GuiRoot;
         private Gum.Widgets.EditableTextField NameField;
         private Gum.Widgets.EditableTextField MottoField;
+        private NewGui.CompanyLogo CompanyLogoDisplay;
 
         public TextGenerator TextGenerator { get; set; }
         public static Color DefaultColor = Color.DarkRed;
@@ -55,6 +57,8 @@ namespace DwarfCorp.GameStates
         public static NamedImageFrame DefaultLogo = new NamedImageFrame(ContentPaths.Logos.grebeardlogo);
         public static string CompanyName { get; set; }
         public static string CompanyMotto { get; set; }
+
+        // Does not actually set these.
         public static NamedImageFrame CompanyLogo { get; set; }
         public static Color CompanyColor { get; set; }
 
@@ -95,7 +99,13 @@ namespace DwarfCorp.GameStates
                 Border = "border-button",
                 OnClick = (sender, args) =>
                 {
-                    
+                    // Grab string values from widgets!
+                    CompanyName = NameField.Text;
+                    CompanyMotto = MottoField.Text;
+
+                    // Todo:  Logo stuff...
+
+                    // Why are they stored as statics on this class???
                     StateManager.PopState();
                 },
                 AutoLayout = AutoLayout.FloatBottomRight
@@ -110,6 +120,8 @@ namespace DwarfCorp.GameStates
                 Border = "border-button",
                 OnClick = (sender, args) =>
                 {
+                    // Why does this do the exact same thing as creating?
+                    // Todo: Return to main menu, not world menu
                     StateManager.PopState();
                 },
                 AutoLayout = AutoLayout.FloatBottomRight,
@@ -128,7 +140,9 @@ namespace DwarfCorp.GameStates
             {
                 MinimumSize = new Point(64, 0),
                 Text = "Name",
-                AutoLayout = AutoLayout.DockLeft
+                AutoLayout = AutoLayout.DockLeft,
+                TextHorizontalAlign = HorizontalAlign.Right,
+                TextVerticalAlign = VerticalAlign.Center
             });
 
             nameRow.AddChild(new Widget
@@ -139,8 +153,7 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                     {
                         var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.company_exploration);
-                        CompanyName = TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
-                        NameField.Text = CompanyName;
+                        NameField.Text = TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
                         // Todo: Doesn't automatically invalidate when text changed??
                         NameField.Invalidate();
                     }
@@ -166,7 +179,9 @@ namespace DwarfCorp.GameStates
             {
                 MinimumSize = new Point(64, 0),
                 Text = "Motto",
-                AutoLayout = AutoLayout.DockLeft
+                AutoLayout = AutoLayout.DockLeft,
+                TextHorizontalAlign = HorizontalAlign.Right,
+                TextVerticalAlign = VerticalAlign.Center
             });
 
             mottoRow.AddChild(new Widget
@@ -177,8 +192,7 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                 {
                     var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.mottos);
-                    CompanyMotto = TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
-                    MottoField.Text = CompanyName;
+                    MottoField.Text = TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
                     // Todo: Doesn't automatically invalidate when text changed??
                     MottoField.Invalidate();
                 }
@@ -191,92 +205,188 @@ namespace DwarfCorp.GameStates
             }) as EditableTextField;
             #endregion
 
+            #region Logo
+
+            var logoRow = mainPanel.AddChild(new Widget
+            {
+                MinimumSize = new Point(0, 64),
+                AutoLayout = AutoLayout.DockTop,
+                Padding = new Margin(0, 0, 2, 2)
+            });
+
+            CompanyLogoDisplay = logoRow.AddChild(new NewGui.CompanyLogo
+                {
+                    AutoLayout = AutoLayout.DockLeft,
+                    MinimumSize = new Point(64,64),
+                    MaximumSize = new Point(64,64)
+                }) as NewGui.CompanyLogo;
+
+            logoRow.AddChild(new Widget
+            {
+                Text = "BG:",
+                AutoLayout = AutoLayout.DockLeft
+            });
+
+            logoRow.AddChild(new Widget
+                {
+                    Background = new TileReference("company-logo-background", 0),
+                    MinimumSize = new Point(32,32),
+                    MaximumSize = new Point(32,32),
+                    AutoLayout = AutoLayout.DockLeft,
+                    OnClick = (sender, args) =>
+                        {
+                            var source = GuiRoot.GetTileSheet("company-logo-background") as Gum.TileSheet;
+                            var chooser = new NewGui.GridChooser
+                            {
+                                ItemSource = Enumerable.Range(0, source.Columns * source.Rows)
+                                    .Select(i => new Widget {
+                                        Background = new TileReference("company-logo-background", i)
+                                    }),
+                                OnClose = (s2) =>
+                                    {
+                                        var gc = s2 as NewGui.GridChooser;
+                                        if (gc.DialogResult == NewGui.GridChooser.Result.OKAY &&
+                                            gc.SelectedItem != null)
+                                        {
+                                            sender.Background = gc.SelectedItem.Background;
+                                            sender.Invalidate();
+                                            CompanyLogoDisplay.LogoBackground = gc.SelectedItem.Background;
+                                            CompanyLogoDisplay.Invalidate();
+                                        }
+                                    }
+                            };
+                            GuiRoot.ShowPopup(chooser, false);
+                        }
+                });
+
+            logoRow.AddChild(new Widget
+            {
+                Background = new TileReference("basic", 1),
+                BackgroundColor = new Vector4(DefaultColor.ToVector3(), 1),
+                MinimumSize = new Point(32, 32),
+                MaximumSize = new Point(32, 32),
+                AutoLayout = AutoLayout.DockLeft,
+                OnClick = (sender, args) =>
+                {
+                    var chooser = new NewGui.GridChooser
+                    {
+                        ItemSize = new Point(16,16),
+                        ItemSpacing = new Point(4, 4),
+                        ItemSource = EnumerateDefaultColors()
+                            .Select(c => new Widget
+                            {
+                                Background = new TileReference("basic", 1),
+                                BackgroundColor = new Vector4(c.ToVector3(), 1),
+                            }),
+                        OnClose = (s2) =>
+                        {
+                            var gc = s2 as NewGui.GridChooser;
+                            if (gc.DialogResult == NewGui.GridChooser.Result.OKAY &&
+                                gc.SelectedItem != null)
+                            {
+                                sender.BackgroundColor = gc.SelectedItem.BackgroundColor;
+                                sender.Invalidate();
+                                CompanyLogoDisplay.LogoBackgroundColor = gc.SelectedItem.BackgroundColor;
+                                CompanyLogoDisplay.Invalidate();
+                            }
+                        }
+                    };
+                    GuiRoot.ShowPopup(chooser, false);
+                }
+            });
+
+            logoRow.AddChild(new Widget
+            {
+                Text = "FG:",
+                AutoLayout = AutoLayout.DockLeft
+            });
+
+            logoRow.AddChild(new Widget
+            {
+                Background = new TileReference("company-logo-symbol", 0),
+                MinimumSize = new Point(32, 32),
+                MaximumSize = new Point(32, 32),
+                AutoLayout = AutoLayout.DockLeft,
+                OnClick = (sender, args) =>
+                {
+                    var source = GuiRoot.GetTileSheet("company-logo-symbol") as Gum.TileSheet;
+                    var chooser = new NewGui.GridChooser
+                    {
+                        ItemSource = Enumerable.Range(0, source.Columns * source.Rows)
+                            .Select(i => new Widget
+                            {
+                                Background = new TileReference("company-logo-symbol", i)
+                            }),
+                        OnClose = (s2) =>
+                        {
+                            var gc = s2 as NewGui.GridChooser;
+                            if (gc.DialogResult == NewGui.GridChooser.Result.OKAY &&
+                                gc.SelectedItem != null)
+                            {
+                                sender.Background = gc.SelectedItem.Background;
+                                sender.Invalidate();
+                                CompanyLogoDisplay.LogoSymbol = gc.SelectedItem.Background;
+                                CompanyLogoDisplay.Invalidate();
+                            }
+                        }
+                    };
+                    GuiRoot.ShowPopup(chooser, false);
+                }
+            });
+
+            logoRow.AddChild(new Widget
+            {
+                Background = new TileReference("basic", 1),
+                BackgroundColor = new Vector4(DefaultColor.ToVector3(), 1),
+                MinimumSize = new Point(32, 32),
+                MaximumSize = new Point(32, 32),
+                AutoLayout = AutoLayout.DockLeft,
+                OnClick = (sender, args) =>
+                {
+                    var chooser = new NewGui.GridChooser
+                    {
+                        ItemSize = new Point(16, 16),
+                        ItemSpacing = new Point(4, 4),
+                        ItemSource = EnumerateDefaultColors()
+                            .Select(c => new Widget
+                            {
+                                Background = new TileReference("basic", 1),
+                                BackgroundColor = new Vector4(c.ToVector3(), 1),
+                            }),
+                        OnClose = (s2) =>
+                        {
+                            var gc = s2 as NewGui.GridChooser;
+                            if (gc.DialogResult == NewGui.GridChooser.Result.OKAY &&
+                                gc.SelectedItem != null)
+                            {
+                                sender.BackgroundColor = gc.SelectedItem.BackgroundColor;
+                                sender.Invalidate();
+                                CompanyLogoDisplay.LogoSymbolColor = gc.SelectedItem.BackgroundColor;
+                                CompanyLogoDisplay.Invalidate();
+                            }
+                        }
+                    };
+                    GuiRoot.ShowPopup(chooser, false);
+                }
+            });
+
+
+            #endregion
+
             GuiRoot.RootItem.Layout();
 
             // Must be true or Render will not be called.
             IsInitialized = true;
 
             base.OnEnter();
-            return;
-
-        /*    
-           
-
-            Label companyLogoLabel = new Label(GUI, Layout, "Logo", GUI.DefaultFont);
-            Layout.SetComponentPosition(companyLogoLabel, 0, 3, 1, 1);
-
-            CompanyLogoPanel = new ImagePanel(GUI, Layout, CompanyLogo)
-            {
-                KeepAspectRatio = true,
-                AssetName = CompanyLogo.AssetName
-            };
-            Layout.SetComponentPosition(CompanyLogoPanel, 1, 3, 1, 1);
-
-
-            Button selectorButton = new Button(GUI, Layout, "Select", GUI.DefaultFont, Button.ButtonMode.PushButton, null)
-            {
-                ToolTip = "Load a custom company logo"
-            };
-            Layout.SetComponentPosition(selectorButton, 2, 3, 1, 1);
-            selectorButton.OnClicked += selectorButton_OnClicked;
-
-            Label companyColorLabel = new Label(GUI, Layout, "Color", GUI.DefaultFont);
-            Layout.SetComponentPosition(companyColorLabel, 0, 4, 1, 1);
-
-            CompanyColorPanel = new ColorPanel(GUI, Layout) {CurrentColor = DefaultColor};
-            Layout.SetComponentPosition(CompanyColorPanel, 1, 4, 1, 1);
-            CompanyColorPanel.OnClicked += CompanyColorPanel_OnClicked;
-
-
-            Button apply = new Button(GUI, Layout, "Continue", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.Check));
-            Layout.SetComponentPosition(apply, 2, 9, 1, 1);
-
-            apply.OnClicked += apply_OnClicked;
-
-            Button back = new Button(GUI, Layout, "Back", GUI.DefaultFont, Button.ButtonMode.ToolButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.LeftArrow));
-            Layout.SetComponentPosition(back, 1, 9, 1, 1);
-
-            back.OnClicked += back_onClicked;
-
-            base.OnEnter();
-         * */
         }
 
-        public List<Color> GenerateDefaultColors()
+        private IEnumerable<Color> EnumerateDefaultColors()
         {
-            List<Color> toReturn = new List<Color>();
             for (int h = 0; h < 255; h += 16)
-            {
                 for (int v = 64; v < 255; v += 64)
-                {
                     for (int s = 128; s < 255; s += 32)
-                    {
-                        toReturn.Add(new HSLColor((float) h, (float) s, (float) v));
-                    }
-
-                }
-            }
-        
-            return toReturn;
-        }
-
-        
-        private void apply_OnClicked()
-        {
-        //    CompanyName = CompanyNameEdit.Text;
-        //    CompanyMotto = CompanyMottoEdit.Text;
-        //    CompanyLogo = new NamedImageFrame(CompanyLogoPanel.AssetName, CompanyLogoPanel.Image.SourceRect);
-            StateManager.PopState();
-        }
-
-        private void back_onClicked()
-        {
-            StateManager.PopState();
-        }
-
-        private void companyNameEdit_OnTextModified(string arg)
-        {
-            CompanyName = arg;
+                        yield return new HSLColor((float)h, (float)s, (float)v);
         }
 
         public override void Update(DwarfTime gameTime)
