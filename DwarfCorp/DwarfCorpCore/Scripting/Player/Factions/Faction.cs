@@ -286,6 +286,8 @@ namespace DwarfCorp
                 {
                     CreatureAI other = Minions[j];
 
+                    if (!other.IsActive) continue;
+
                     // Grab both positions now to avoid the double lookup.
                     Vector3 otherPosition = other.Position;
                     Vector3 minionPosition = minion.Position;
