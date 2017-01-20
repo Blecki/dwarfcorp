@@ -742,7 +742,7 @@ namespace DwarfCorp
 
             lock (threadLoopLockObject)
             {
-                threadLoopTrackers.Add(identifier, loopTracker);
+                threadLoopTrackers[identifier] = loopTracker;
             }
         }
 
