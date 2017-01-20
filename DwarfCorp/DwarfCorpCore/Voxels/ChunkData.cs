@@ -487,21 +487,16 @@ namespace DwarfCorp
 
         public VoxelChunk GetVoxelChunkAtWorldLocation(Vector3 worldLocation)
         {
-            Point3 id = GetChunkID(worldLocation);
+            VoxelChunk returnChunk = null;
 
-            if(ChunkMap.ContainsKey(id))
-            {
-                return ChunkMap[id];
-            }
+            ChunkMap.TryGetValue(GetChunkID(worldLocation), out returnChunk);
 
-
-            return null;
+            return returnChunk;
         }
 
         public bool GetVoxel(Vector3 worldLocation, ref Voxel voxel)
         {
             return GetVoxel(null, worldLocation, ref voxel);
-
         }
 
         public bool GetVoxel(VoxelChunk checkFirst, Vector3 worldLocation, ref Voxel newReference)
