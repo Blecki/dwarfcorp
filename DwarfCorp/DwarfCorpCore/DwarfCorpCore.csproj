@@ -166,6 +166,8 @@
     <Compile Include="GameStates\GUITest.cs" />
     <Compile Include="GameStates\IntroState.cs" />
     <Compile Include="GameStates\LoseState.cs" />
+    <Compile Include="GameStates\NewGameCreateDebugWorldState.cs" />
+    <Compile Include="GameStates\NewGameChooseWorldState.cs" />
     <Compile Include="GameStates\MainMenuState.cs" />
     <Compile Include="GameStates\OptionsState.cs" />
     <Compile Include="GameStates\WorldGeneratorState.cs" />

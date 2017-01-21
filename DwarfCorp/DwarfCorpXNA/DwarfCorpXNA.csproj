@@ -430,6 +430,12 @@
     <Compile Include="..\DwarfCorpCore\GameStates\MainMenuState.cs">
       <Link>GameStates\MainMenuState.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\GameStates\NewGameChooseWorldState.cs">
+      <Link>GameStates\NewGameChooseWorldState.cs</Link>
+    </Compile>
+    <Compile Include="..\DwarfCorpCore\GameStates\NewGameCreateDebugWorldState.cs">
+      <Link>GameStates\NewGameCreateDebugWorldState.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\GameStates\OptionsState.cs">
       <Link>GameStates\OptionsState.cs</Link>
     </Compile>

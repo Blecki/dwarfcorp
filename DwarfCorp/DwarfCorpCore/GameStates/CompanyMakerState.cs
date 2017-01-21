@@ -106,7 +106,7 @@ namespace DwarfCorp.GameStates
                     // Todo:  Logo stuff...
 
                     // Why are they stored as statics on this class???
-                    StateManager.PopState();
+                    StateManager.PushState("NewGameChooseWorldState");
                 },
                 AutoLayout = AutoLayout.FloatBottomRight
             });

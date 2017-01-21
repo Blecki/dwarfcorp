@@ -111,6 +111,8 @@ namespace DwarfCorp
             StateManager.States["IntroState"] = new IntroState(this, StateManager);
             StateManager.States["PlayState"] = playState;
             StateManager.States["MainMenuState"] = new MainMenuState(this, StateManager);
+            StateManager.States["NewGameChooseWorldState"] = new NewGameChooseWorldState(this, StateManager);
+            StateManager.States["NewGameCreateDebugWorldState"] = new NewGameCreateDebugWorldState(this, StateManager);
             StateManager.States["WorldSetupState"] = new WorldSetupState(this, StateManager);
             StateManager.States["WorldGeneratorState"] = new WorldGeneratorState(this, StateManager);
             StateManager.States["OptionsState"] = new OptionsState(this, StateManager);

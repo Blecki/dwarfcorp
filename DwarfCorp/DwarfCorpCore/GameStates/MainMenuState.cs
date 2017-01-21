@@ -82,67 +82,6 @@ namespace DwarfCorp.GameStates
             });
         }
 
-        public void MakeDebugWorldMenu()
-        {
-            GuiRoot.RootItem.Clear();
-
-            var frame = MakeMenuFrame("DEBUG WORLDS");
-            MakeMenuItem(frame, "Hills", "Create a hilly world.", (sender, args) =>
-                {
-                    MaintainState = false;
-                    Overworld.CreateHillsLand(Game.GraphicsDevice);
-                    StateManager.PushState("PlayState");
-                    WorldManager.WorldSize = new Point3(8, 1, 8);
-                    //GUI.MouseMode = GUISkin.MousePointer.Wait;
-
-                    IsGameRunning = true;
-                });
-
-            MakeMenuItem(frame, "Cliffs", "Create a cliff-y world.", (sender, args) =>
-                {
-                    MaintainState = false;
-                    Overworld.CreateCliffsLand(Game.GraphicsDevice);
-                    StateManager.PushState("PlayState");
-                    WorldManager.WorldSize = new Point3(8, 1, 8);
-                    //GUI.MouseMode = GUISkin.MousePointer.Wait;
-                    WorldManager.Natives = new List<Faction>();
-                    FactionLibrary library = new FactionLibrary();
-                    library.Initialize(null, "fake", "fake", null, Color.Blue);
-                    for (int i = 0; i < 10; i++)
-                    {
-                        WorldManager.Natives.Add(library.GenerateFaction(i, 10));
-                    }
-
-                    IsGameRunning = true;
-                });
-
-            MakeMenuItem(frame, "Flat", "Create a flat world.", (sender, args) =>
-                {
-                    MaintainState = false;
-                    Overworld.CreateUniformLand(Game.GraphicsDevice);
-                    StateManager.PushState("PlayState");
-                    WorldManager.WorldSize = new Point3(8, 1, 8);
-                    //GUI.MouseMode = GUISkin.MousePointer.Wait;
-
-                    IsGameRunning = true;
-                });
-
-            MakeMenuItem(frame, "Ocean", "Create an ocean world", (sender, args) =>
-                {
-                    MaintainState = false;
-                    Overworld.CreateOceanLand(Game.GraphicsDevice);
-                    StateManager.PushState("PlayState");
-                    WorldManager.WorldSize = new Point3(8, 1, 8);
-                    //GUI.MouseMode = GUISkin.MousePointer.Wait;
-
-                    IsGameRunning = true;
-                });
-
-            MakeMenuItem(frame, "Back", "Go back to the main menu.", (sender, args) => MakeDefaultMenu());
-
-            GuiRoot.RootItem.Layout();
-        }
-
         public void MakeDefaultMenu()
         {
             GuiRoot.RootItem.Clear();
@@ -155,7 +94,6 @@ namespace DwarfCorp.GameStates
 
             MakeMenuItem(frame, "New Game", "Start a new game of DwarfCorp.", (sender, args) =>
                 {
-                    MakePlayMenu();
                     StateManager.PushState("CompanyMakerState");
                     MaintainState = true;
                 });
@@ -205,32 +143,7 @@ namespace DwarfCorp.GameStates
             });
         }
 
-        public void MakePlayMenu()
-        {
-            GuiRoot.RootItem.Clear();
-
-            var frame = MakeMenuFrame("PLAY DWARFCORP");
-
-            MakeMenuItem(frame, "Generate World", "Create a new world from scratch.", (sender, args) =>
-                {
-                    MaintainState = true;
-                    StateManager.PushState("WorldGeneratorState");
-                });
-
-            MakeMenuItem(frame, "Load World", "Load a continent from an existing file.", (sender, args) =>
-                {
-                    MaintainState = true;
-                    StateManager.PushState("WorldLoaderState");
-                });
-
-            MakeMenuItem(frame, "Debug World", "Create a debug world.", (sender, args) => MakeDebugWorldMenu());
-
-            MakeMenuItem(frame, "Back", "Go back to main menu.", (sender, args) => MakeDefaultMenu());
-
-            GuiRoot.RootItem.Layout();
-        }
-
-
+       
         public override void OnEnter()
         {
             // Clear the input queue... cause other states aren't using it and it's been filling up.
