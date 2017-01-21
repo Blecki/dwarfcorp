@@ -1401,6 +1401,9 @@
     <Compile Include="GemInput\GumInputMapper.cs" />
     <Compile Include="GemInput\Input.cs" />
     <Compile Include="GemInput\MessageFilter.cs" />
+    <Compile Include="NewGui\CompanyLogo.cs" />
+    <Compile Include="NewGui\GridChooser.cs" />
+    <Compile Include="NewGui\GridPanel.cs" />
     <Compile Include="NewGui\Popup.cs" />
     <Compile Include="NewGui\Confirm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

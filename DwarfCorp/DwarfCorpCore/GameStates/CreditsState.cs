@@ -42,7 +42,7 @@ namespace DwarfCorp
 
         public override void OnEnter()
         {
-            // HACK - Remove when input transition is complete.
+            // Todo - HACK - Remove when input transition is complete.
             DwarfGame.GumInput.GetInputQueue();
 
             CurrentScroll = 0;
