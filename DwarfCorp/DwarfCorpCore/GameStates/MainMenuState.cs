@@ -46,7 +46,6 @@ namespace DwarfCorp.GameStates
     {
         public Texture2D Logo { get; set; }
         public bool IsGameRunning { get; set; }
-        public bool MaintainState { get; set; }
 
         private Gum.Root GuiRoot;
 
@@ -54,11 +53,7 @@ namespace DwarfCorp.GameStates
         public MainMenuState(DwarfGame game, GameStateManager stateManager) :
             base(game, "MainMenuState", stateManager)
         {
-            ResourceLibrary library = new ResourceLibrary();
-            Embarkment.Initialize();
-            VoxelChunk.InitializeStatics();
             IsGameRunning = false;
-            MaintainState = false;
         }
 
         private Gum.Widget MakeMenuFrame(String Name)
@@ -82,53 +77,6 @@ namespace DwarfCorp.GameStates
             });
         }
 
-        public void MakeDefaultMenu()
-        {
-            GuiRoot.RootItem.Clear();
-
-            var frame = MakeMenuFrame("MAIN MENU");
-
-            if (IsGameRunning)
-                MakeMenuItem(frame, "Continue", "Return to your game.", (sender, args) =>
-                    StateManager.PopState());
-
-            MakeMenuItem(frame, "New Game", "Start a new game of DwarfCorp.", (sender, args) =>
-                {
-                    StateManager.PushState("CompanyMakerState");
-                    MaintainState = true;
-                });
-
-            MakeMenuItem(frame, "Load Game", "Load DwarfCorp game from a file.", (sender, args) =>
-                {
-                    MaintainState = true;
-                    StateManager.PushState("GameLoaderState");
-                });
-
-            MakeMenuItem(frame, "Options", "Change game settings.", (sender, args) =>
-                {
-                    MaintainState = true;
-                    StateManager.PushState("OptionsState");
-                });
-
-            MakeMenuItem(frame, "New Options", "Change game settings.", (sender, args) =>
-            {
-                MaintainState = true;
-                StateManager.PushState("NewOptionsState");
-            });
-
-            MakeMenuItem(frame, "Credits", "View the credits.", (sender, args) =>
-                {
-                    if (StateManager.States.ContainsKey("CreditsState"))
-                        StateManager.PushState("CreditsState");
-                    else
-                        StateManager.PushState(new CreditsState(GameState.Game, "CreditsState", StateManager));
-                });
-
-            MakeMenuItem(frame, "Quit", "Goodbye.", (sender, args) => Game.Exit());
-
-            GuiRoot.RootItem.Layout();
-        }
-
         private void MakeMenuItem(Gum.Widget Menu, string Name, string Tooltip, Action<Gum.Widget, Gum.InputEventArgs> OnClick)
         {
             Menu.AddChild(new Gum.Widget
@@ -143,22 +91,58 @@ namespace DwarfCorp.GameStates
             });
         }
 
-       
+        public void MakeMenu()
+        {
+            GuiRoot.RootItem.Clear();
+
+            var frame = MakeMenuFrame("MAIN MENU");
+
+            if (IsGameRunning)
+                MakeMenuItem(frame, "Continue", "Return to your game.", (sender, args) =>
+                    StateManager.PopState());
+
+            MakeMenuItem(frame, "New Game", "Start a new game of DwarfCorp.", (sender, args) =>
+                {
+                    StateManager.PushState("CompanyMakerState");
+                });
+
+            MakeMenuItem(frame, "Load Game", "Load DwarfCorp game from a file.", (sender, args) =>
+                {
+                    StateManager.PushState("GameLoaderState");
+                });
+
+            MakeMenuItem(frame, "Options", "Change game settings.", (sender, args) =>
+                {
+                    StateManager.PushState("OptionsState");
+                });
+
+            MakeMenuItem(frame, "New Options", "Change game settings.", (sender, args) =>
+            {
+                StateManager.PushState("NewOptionsState");
+            });
+
+            MakeMenuItem(frame, "Credits", "View the credits.", (sender, args) =>
+                {
+                    if (StateManager.States.ContainsKey("CreditsState"))
+                        StateManager.PushState("CreditsState");
+                    else
+                        StateManager.PushState(new CreditsState(GameState.Game, StateManager));
+                });
+
+            MakeMenuItem(frame, "Quit", "Goodbye.", (sender, args) => Game.Exit());
+
+            GuiRoot.RootItem.Layout();
+        }
+
         public override void OnEnter()
         {
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInput.GetInputQueue();
 
-            if (!MaintainState)
-            {
-                GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
-                GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
-
-                MakeDefaultMenu();
-
-                // Must be true or Render will not be called.
-                IsInitialized = true;
-            }
+            GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
+            GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
+            MakeMenu();
+            IsInitialized = true;
 
             base.OnEnter();
         }

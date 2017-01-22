@@ -135,7 +135,6 @@ namespace DwarfCorp
     public class DiplomacyState : GameState
     {
         public DwarfGUI GUI { get; set; }
-        public Drawer2D Drawer { get; set; }
         public GUIComponent MainWindow { get; set; }
         public int EdgePadding { get; set; }
         public GridLayout Layout { get; set; }
@@ -329,7 +328,6 @@ namespace DwarfCorp
                 DebugDraw = false
             };
             IsInitialized = true;
-            Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
             MainWindow = new GUIComponent(GUI, GUI.RootComponent)
             {
                 LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2)
@@ -700,6 +698,8 @@ namespace DwarfCorp
             WorldManager.Paused = true;
             Initialize();
             TransitionValue = 1.0f;
+
+
             base.OnEnter();
         }
 
@@ -774,7 +774,7 @@ namespace DwarfCorp
 
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
 
-            Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
+            Drawer2D.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.PostRender(gameTime);
             DwarfGame.SpriteBatch.End();
         }

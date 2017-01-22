@@ -30,8 +30,8 @@ namespace DwarfCorp
         public List<CreditEntry> Entries { get; set; }
         public int Padding { get; set; }
         public bool IsDone { get; set; }
-        public CreditsState(DwarfGame game, string name, GameStateManager stateManager) 
-            : base(game, name, stateManager)
+        public CreditsState(DwarfGame game, GameStateManager stateManager) 
+            : base(game, "CreditState", stateManager)
         {
             ScrollSpeed = 30;
             EntryHeight = 30;

@@ -163,7 +163,6 @@
     <Compile Include="GameStates\GameLoaderState.cs" />
     <Compile Include="GameStates\GameState.cs" />
     <Compile Include="GameStates\GameStateManager.cs" />
-    <Compile Include="GameStates\GUITest.cs" />
     <Compile Include="GameStates\IntroState.cs" />
     <Compile Include="GameStates\LoseState.cs" />
     <Compile Include="GameStates\NewGameCreateDebugWorldState.cs" />

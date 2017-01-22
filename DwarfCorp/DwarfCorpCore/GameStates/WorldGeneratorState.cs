@@ -59,7 +59,6 @@ namespace DwarfCorp.GameStates
         public Matrix ViewMatrix { get; set; }
         public Matrix ProjMatrix { get; set; }
         public SpriteFont DefaultFont { get; set; }
-        public Drawer2D Drawer { get; set; }
         public bool GenerationComplete { get; set; }
         public string LoadingMessage = "";
         public Mutex ImageMutex;
@@ -252,7 +251,6 @@ namespace DwarfCorp.GameStates
             DefaultFont = Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
             GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
             IsInitialized = true;
-            Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
             GenerationComplete = false;
             MainWindow = new Panel(GUI, GUI.RootComponent)
             {
@@ -1327,7 +1325,7 @@ namespace DwarfCorp.GameStates
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
                 null, null);
-            Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
+            Drawer2D.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(0, dx));
 
             Progress.Message = !GenerationComplete ? LoadingMessage : "";

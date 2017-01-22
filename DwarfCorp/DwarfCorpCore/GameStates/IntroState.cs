@@ -48,9 +48,7 @@ namespace DwarfCorp.GameStates
         public IntroState(DwarfGame game, GameStateManager stateManager) :
             base(game, "IntroState", stateManager)
         {
-            ResourceLibrary library = new ResourceLibrary();
         }
-
 
         public override void OnEnter()
         {

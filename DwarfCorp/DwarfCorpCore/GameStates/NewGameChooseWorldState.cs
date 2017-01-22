@@ -1,47 +1,10 @@
-﻿// MainMenuState.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp.GameStates
 {
-
-    /// <summary>
-    /// This game state is just the set of menus at the start of the game. Allows navigation to other game states.
-    /// </summary>
     public class NewGameChooseWorldState : GameState
     {
         private Gum.Root GuiRoot;
@@ -86,21 +49,17 @@ namespace DwarfCorp.GameStates
             });
         }
 
-        public void MakePlayMenu()
+        public void MakeMenu()
         {
             GuiRoot.RootItem.Clear();
 
             var frame = MakeMenuFrame("PLAY DWARFCORP");
 
             MakeMenuItem(frame, "Generate World", "Create a new world from scratch.", (sender, args) =>
-                {
-                    StateManager.PushState("WorldGeneratorState");
-                });
+                StateManager.PushState("WorldGeneratorState"));
 
             MakeMenuItem(frame, "Load World", "Load a continent from an existing file.", (sender, args) =>
-                {
-                    StateManager.PushState("WorldLoaderState");
-                });
+                StateManager.PushState("WorldLoaderState"));
 
             MakeMenuItem(frame, "Debug World", "Create a debug world.", (sender, args) => 
                 StateManager.PushState("NewGameCreateDebugWorldState"));
@@ -111,16 +70,14 @@ namespace DwarfCorp.GameStates
             GuiRoot.RootItem.Layout();
         }
 
-
         public override void OnEnter()
         {
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInput.GetInputQueue();
-                GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
-                GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
-            MakePlayMenu();
-                // Must be true or Render will not be called.
-                IsInitialized = true;
+            GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
+            GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
+            MakeMenu();
+            IsInitialized = true;
             
             base.OnEnter();
         }

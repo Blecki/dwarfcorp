@@ -418,9 +418,6 @@
     <Compile Include="..\DwarfCorpCore\GameStates\GameStateManager.cs">
       <Link>GameStates\GameStateManager.cs</Link>
     </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\GUITest.cs">
-      <Link>GameStates\GUITest.cs</Link>
-    </Compile>
     <Compile Include="..\DwarfCorpCore\GameStates\IntroState.cs">
       <Link>GameStates\IntroState.cs</Link>
     </Compile>
