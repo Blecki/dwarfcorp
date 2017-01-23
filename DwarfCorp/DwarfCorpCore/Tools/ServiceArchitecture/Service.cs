@@ -109,6 +109,7 @@ namespace DwarfCorp
                     ExitThreads = false;
                 }
                 ServiceThreadObject = new Thread(this.ServiceThread);
+                ServiceThreadObject.Name = "ServiceThread";
                 ServiceThreadObject.Start();
             }
             catch (System.AccessViolationException e)

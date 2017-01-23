@@ -81,6 +81,7 @@ namespace DwarfCorp
 
         protected override void Initialize()
         {
+            System.Threading.Thread.CurrentThread.Name = "Main";
             // Goes before anything else so we can track from the very start.
             GamePerformance.Initialize(this);
             // TODO: Find a more appropriate spot for this.

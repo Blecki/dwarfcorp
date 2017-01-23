@@ -315,6 +315,7 @@ namespace DwarfCorp
 
             // Now we load everything else in a thread so we can see the progress on the screensaver
             LoadingThread = new Thread(LoadThreaded);
+            LoadingThread.Name = "Load";
             LoadingThread.Start();
         }
 

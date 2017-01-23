@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
+using System.Collections.Concurrent;
 
 namespace DwarfCorp
 {
@@ -24,17 +22,34 @@ namespace DwarfCorp
         /// </summary>
         public static bool DebugToggle2;
 
+        /// <summary>
+        /// One copy per thread.  Lets us tell when we haven't set up that thread yet.
+        /// </summary>
         [ThreadStatic]
         public static bool threadInitialized = false;
 
+        /// <summary>
+        /// A thread ID number.  Set when we call a class function from that new thread.
+        /// </summary>
         [ThreadStatic]
         public static int threadIdentifier = 0;
 
-        public static int threadCount = 0;
+        /// <summary>
+        /// Keeps track of the current zone we are in for the thread.
+        /// </summary>
+        [ThreadStatic]
+        public static Stack<TrackerZone> zone;
 
-        public static int mainThreadIdentifier;
-        public static int rebuildThreadIdentifier;
-        public static int waterThreadIdentifier;
+        /// <summary>
+        /// A display name for the thread.
+        /// </summary>
+        [ThreadStatic]
+        public static string threadName;
+
+        /// <summary>
+        /// A value incremented as we call functions from new threads.
+        /// </summary>
+        public static int threadCount = 0;
 
         public enum ThreadIdentifier
         {
@@ -71,7 +86,25 @@ namespace DwarfCorp
         /// </summary>
         private Dictionary<ThreadIdentifier, ThreadLoopTracker> threadLoopTrackers;
 
+        /// <summary>
+        /// Object used to synchronize threadLoopTrackers access.
+        /// </summary>
         private Object threadLoopLockObject;
+
+        /// <summary>
+        /// Object used to synchronize internalTrackers access.
+        /// </summary>
+        private Object internalTrackerLockObject;
+
+        /// <summary>
+        /// Object used to synchronize zoneList access.  Not needed right now as we are using a ConcurrentDictionary.
+        /// </summary>
+        private Object zoneListLockObject;
+
+        /// <summary>
+        /// Dictionary used to store information about the zones.
+        /// </summary>
+        private ConcurrentDictionary<string, TrackerZone> zoneList;
 
         /// <summary>
         /// Internal list used to store all set trackers.
@@ -124,7 +157,6 @@ namespace DwarfCorp
         /// </summary>
         private Vector2 guiPosition;
 
-        private CollectionZone zone;
         private float LastRenderTime { get; set; }
         private float LastUpdateTime { get; set; }
 
@@ -147,7 +179,11 @@ namespace DwarfCorp
             trackers = new List<Tracker>();
             internalTrackers = new Dictionary<string, Tracker>();
             threadLoopTrackers = new Dictionary<ThreadIdentifier, ThreadLoopTracker>();
+            zoneList = new ConcurrentDictionary<string, TrackerZone>();
+
             threadLoopLockObject = new Object();
+            internalTrackerLockObject = new Object();
+            zoneListLockObject = new Object();
 
             internalWatch = Stopwatch.StartNew();
 
@@ -163,7 +199,6 @@ namespace DwarfCorp
         public static void Initialize(DwarfGame game)
         {
             _instance = new GamePerformance(game);
-            mainThreadIdentifier = ThreadID;
             microsecondMultiplier = (1.0f / Stopwatch.Frequency) * 1000000;
         }
 
@@ -177,7 +212,10 @@ namespace DwarfCorp
                 {
                     threadInitialized = true;
                     threadIdentifier = threadCount;
+                    threadName = System.Threading.Thread.CurrentThread.Name;
                     threadCount++;
+                    zone = new Stack<TrackerZone>();
+                    Instance.EnterZone("Unknown #" + threadIdentifier);
                 }
                 return threadIdentifier;
             }
@@ -191,12 +229,12 @@ namespace DwarfCorp
             get { return _instance.internalWatch.ElapsedMilliseconds; }
         }
 
-        public CollectionZone Zone { get { return zone; } }
         // Unused options class to make things more generic and easier to use without rewritting Tracker classes.
         public class TrackerOptions
         {
             public int HistorySize;
             public bool RenderAsPercentofZone;
+            public bool vanishWhenUnused;
             public TrackerOptions()
             {
 
@@ -210,6 +248,72 @@ namespace DwarfCorp
             Render,
             Unknown,
             Count
+        }
+
+        public class TrackerZone
+        {
+            private string name;
+            private int id;
+            private Object lockObject;
+            private int entranceCount;
+            private long time;
+            private long lastZoneTime;
+            private static int nextID = 0;
+
+            public TrackerZone()
+            {
+                id = nextID;
+                nextID++;
+                lockObject = new Object();
+            }
+
+            public TrackerZone(string zoneName)
+            {
+                id = nextID;
+                nextID++;
+                lockObject = new object();
+                name = zoneName;
+            }
+
+            public void Enter()
+            {
+                lock (lockObject)
+                {
+                    entranceCount++;
+                    time = Stopwatch.GetTimestamp();
+                }
+            }
+
+            public void Exit()
+            {
+                if (entranceCount == 0)
+                    throw new Exception("TrackerZone " + name + " has called Exit before Enter.");
+                lock (lockObject)
+                {
+                    entranceCount--;
+                    time = Stopwatch.GetTimestamp() - time;
+                    lastZoneTime = time;
+                }
+            }
+
+            public bool IsInZone()
+            {
+                return (entranceCount > 0);
+            }
+
+            public long LastZoneTime
+            {
+                get
+                {
+                    lock (lockObject)
+                    {
+                        return lastZoneTime;
+                    }
+                }
+            }
+
+            public int ID { get { return id; } }
+            public string Name { get { return name; } }
         }
 
         // Tracks how many function calls happen per time period.  Aka, update/render or per-second.
@@ -231,14 +335,14 @@ namespace DwarfCorp
         {
             readonly int maxHistory = 5;
             private string _name;
-            private bool tracking;
 
-            private ZoneData current;
-            private ZoneData[] zoneList;
+            private Dictionary<int, ZoneData> zoneData;
+            private Object zoneDataLockObject;
             private int zonesUsed;
 
             public class ZoneData
             {
+                private string threadName;
                 private string name;
                 private int maxHistory;
                 private Queue<long> history;
@@ -246,24 +350,35 @@ namespace DwarfCorp
                 private long time;
                 private long total;
                 private long callCount;
+                private bool tracking;
 
                 public long CallCount { get { return callCount; } }
                 public string ZoneName { get { return name; } }
+                public string ThreadName { get { return threadName; } }
 
-                public ZoneData(CollectionZone zoneType, int historySize)
+                public ZoneData(TrackerZone zone, int historySize)
                 {
-                    name = Enum.GetName(typeof(CollectionZone), zoneType);
+                    threadName = GamePerformance.threadName;
+                    if (threadName == null) Debugger.Break();
+                    name = zone.Name;
                     history = new Queue<long>(historySize);
                     maxHistory = historySize;
                 }
 
                 public void Start()
                 {
+                    if (threadName == "Main" && name == "Unknown #0") Debugger.Break();
+                    if (tracking)
+                        throw new Exception("ZoneData.Start called more than once in a row.");
+                    tracking = true;
                     time = Stopwatch.GetTimestamp();
                 }
 
                 public void Stop(long endTimestamp)
                 {
+                    if (!tracking)
+                        throw new Exception("ZoneData.Stop called without calling Start first.");
+                    tracking = false;
                     time = endTimestamp - time;
                     total += time;
                     callCount++;
@@ -305,92 +420,66 @@ namespace DwarfCorp
             {
                 _name = name;
                 zonesUsed = 0;
-                zoneList = new ZoneData[(int)CollectionZone.Count];
-            }
-
-            private void Reset()
-            {
-                if (zoneList[(int)CollectionZone.None] != null) zoneList[(int)CollectionZone.None].Reset();
-                if (zoneList[(int)CollectionZone.Unknown] != null) zoneList[(int)CollectionZone.Unknown].Reset();
+                zoneData = new Dictionary<int, ZoneData>();
+                zoneDataLockObject = new Object();
             }
 
             public void StartTracking()
             {
-                if (tracking)
-                    throw new Exception("PerformanceTracker.StartTracking called more than once in a row.");
-                tracking = true;
-
-                if (current == null)
-                {
-                    current = new ZoneData(_parent.Zone, maxHistory);
-                    zoneList[(int)_parent.Zone] = current;
-                    zonesUsed++;
-                }
-
-                current.Start();
+                int id = ThreadID;
+                ZoneData data = GetData();
+                data.Start();
             }
 
             public void StopTracking(long endTimestamp)
             {
-                if (!tracking)
-                    throw new Exception("PerformanceTracker.StopTracking called without calling StartTracking first.");
-                tracking = false;
+                ZoneData data = GetData();
+                data.Stop(endTimestamp);
+            }
 
-                if (current == null)
+            private ZoneData GetData(bool autoCreate = true)
+            {
+                ZoneData data;
+                TrackerZone z = zone.Peek();
+                if (!zoneData.TryGetValue(z.ID, out data))
                 {
-                    current = new ZoneData(_parent.Zone, maxHistory);
-                    zoneList[(int)_parent.Zone] = current;
+                    if (!autoCreate) return null;
+                    data = new ZoneData(z, maxHistory);
+                    lock (zoneDataLockObject)
+                    {
+                        zoneData.Add(z.ID, data);
+                    }
                     zonesUsed++;
                 }
-
-                current.Stop(endTimestamp);
+                return data;
             }
 
-            private void SwitchZone(CollectionZone newZone)
+            public override void EnterZone()
             {
-                current = zoneList[(int)newZone];
+                ZoneData data = GetData(false);
+                if (data != null) data.Reset();
             }
 
-            public override void PreUpdate()
+            public override void ExitZone()
             {
-                SwitchZone(CollectionZone.Update);
-                if (current == null) return;
-                current.Reset();
-            }
-
-            public override void PostUpdate()
-            {
-                if (current == null) return;
-                current.FinishCollection();
-                SwitchZone(CollectionZone.Unknown);
-            }
-
-            public override void PreRender()
-            {
-                SwitchZone(CollectionZone.Render);
-                if (current == null) return;
-                current.Reset();
-            }
-
-            public override void PostRender()
-            {
-                if (current == null) return;
-                current.FinishCollection();
-                SwitchZone(CollectionZone.Unknown);
+                ZoneData data = GetData(false);
+                if (data != null) data.FinishCollection();
             }
 
             public override void Render()
             {
-                for (int i = 0; i < zoneList.Length; i++)
+                lock (zoneDataLockObject)
                 {
-                    if (zoneList[i] == null) continue;
+                    foreach (KeyValuePair<int, ZoneData> kvp in zoneData)
+                    {
+                        ZoneData data = kvp.Value;
+                        if (data == null) continue;
 
-                    float average = zoneList[i].GetAverageResult();
-                    average *= microsecondMultiplier;
-                    _parent.DrawString(String.Format("[{0}] {1}: {2}us {3}", zoneList[i].ZoneName, _name, average, zoneList[i].CallCount), Color.White);
+                        float average = data.GetAverageResult();
+                        average *= microsecondMultiplier;
+                        _parent.DrawString(String.Format("{{{0}}}[{1}] {2}: {3}us {4}", data.ThreadName, data.ZoneName, _name, average, data.CallCount), Color.White);
+                    }
                 }
-
-                Reset();
             }
         }
 
@@ -514,7 +603,7 @@ namespace DwarfCorp
             private Queue<long> history;
             private long total;
             private long time;
-            
+
             public RenderTimeTracker(GamePerformance parent)
                 : base(parent)
             {
@@ -701,6 +790,10 @@ namespace DwarfCorp
             public virtual void PreThreadLoop() { }
 
             public virtual void PostThreadLoop() { }
+
+            public virtual void EnterZone() { }
+
+            public virtual void ExitZone() { }
         }
 
         #region Internal tracking functions
@@ -729,10 +822,10 @@ namespace DwarfCorp
             switch (identifier)
             {
                 case ThreadIdentifier.RebuildVoxels:
-                    rebuildThreadIdentifier = threadID;
+                    //rebuildThreadIdentifier = threadID;
                     break;
                 case ThreadIdentifier.RebuildWater:
-                    waterThreadIdentifier = threadID;
+                    //waterThreadIdentifier = threadID;
                     break;
                 default:
                     break;
@@ -746,13 +839,54 @@ namespace DwarfCorp
             }
         }
 
+        public void RegisterZone(String zoneName)
+        {
+
+        }
+
+        public void EnterZone(String zoneName)
+        {
+            int id = ThreadID;
+            TrackerZone z;
+            if (!zoneList.TryGetValue(zoneName, out z))
+            {
+                z = new TrackerZone(zoneName);
+                zoneList.TryAdd(zoneName, z);
+            }
+            zone.Push(z);
+            lock (internalTrackerLockObject)
+            {
+                foreach (KeyValuePair<string, Tracker> kvp in internalTrackers)
+                {
+                    kvp.Value.EnterZone();
+                }
+            }
+        }
+
+        public void ExitZone(String zoneName)
+        {
+            TrackerZone z;
+            if (!zoneList.TryGetValue(zoneName, out z))
+                throw new Exception("Unknown TrackerZone found.");
+            TrackerZone cur = zone.Peek();
+            if (z != zone.Peek())
+                throw new Exception("TrackerZone " + z.Name + " trying to exit but we are actually in " + cur.Name);
+            lock (internalTrackerLockObject)
+            {
+                foreach (KeyValuePair<string, Tracker> kvp in internalTrackers)
+                {
+                    kvp.Value.ExitZone();
+                }
+            }
+            zone.Pop();
+        }
+
         /// <summary>
         /// Call this at the start of the location you want to track performance of.
         /// </summary>
         /// <param name="name">The display name for the tracker.</param>
         public void StartTrackPerformance(String name)
         {
-            if (ThreadID != GamePerformance.mainThreadIdentifier) return;
             Tracker t;
             if (internalTrackers.TryGetValue(name, out t))
             {
@@ -766,7 +900,6 @@ namespace DwarfCorp
             {
                 t = new PerformanceTracker(this, name);
                 internalTrackers.Add(name, t);
-                trackers.Add(t);
             }
 
             (t as PerformanceTracker).StartTracking();
@@ -859,7 +992,7 @@ namespace DwarfCorp
         /// </summary>
         public void PreUpdate()
         {
-            zone = CollectionZone.Update;
+            EnterZone("Update");
             foreach (Tracker t in trackers)
             {
                 if (t != null) t.PreUpdate();
@@ -925,11 +1058,11 @@ namespace DwarfCorp
         /// </summary>
         public void PostUpdate()
         {
-            zone = CollectionZone.Unknown;
             foreach (Tracker t in trackers)
             {
                 if (t != null) t.PostUpdate();
             }
+            ExitZone("Update");
         }
 
         /// <summary>
@@ -937,7 +1070,7 @@ namespace DwarfCorp
         /// </summary>
         public void PreRender()
         {
-            zone = CollectionZone.Render;
+            EnterZone("Render");
             foreach (Tracker t in trackers)
             {
                 if (t != null) t.PreRender();
@@ -949,11 +1082,11 @@ namespace DwarfCorp
         /// </summary>
         public void PostRender()
         {
-            zone = CollectionZone.Unknown;
             foreach (Tracker t in trackers)
             {
                 if (t != null) t.PostRender();
             }
+            ExitZone("Render");
         }
 
         /// <summary>
@@ -1012,6 +1145,14 @@ namespace DwarfCorp
                 }
             }
 
+            lock (internalTrackerLockObject)
+            {
+                foreach (KeyValuePair<string, Tracker> kvp in internalTrackers)
+                {
+                    if (kvp.Value != null) kvp.Value.Render();
+                }
+            }
+
             spriteBatch.End();
         }
 
@@ -1024,7 +1165,7 @@ namespace DwarfCorp
             }
             else
             {
-                throw new Exception("ThreadIdentifier." + Enum.GetName(typeof(ThreadIdentifier), identifier) + " used before RegisterThreadLoopTracker called for the type."); 
+                throw new Exception("ThreadIdentifier." + Enum.GetName(typeof(ThreadIdentifier), identifier) + " used before RegisterThreadLoopTracker called for the type.");
             }
         }
 

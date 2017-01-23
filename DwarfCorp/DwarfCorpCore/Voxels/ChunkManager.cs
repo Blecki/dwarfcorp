@@ -170,11 +170,15 @@ namespace DwarfCorp
 
             GeneratedChunks = new ConcurrentQueue<VoxelChunk>();
             GeneratorThread = new Thread(GenerateThread);
+            GeneratorThread.Name = "Generate";
 
             RebuildThread = new Thread(RebuildVoxelsThread);
+            RebuildThread.Name = "RebuildVoxels";
             RebuildLiquidThread = new Thread(RebuildLiquidsThread);
+            RebuildLiquidThread.Name = "RebuildLiquids";
 
             WaterThread = new Thread(UpdateWaterThread);
+            WaterThread.Name = "UpdateWater";
 
             ToGenerate = new List<Point3>();
             Graphics = graphics;
@@ -234,6 +238,7 @@ namespace DwarfCorp
                     EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
 
                     GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.UpdateWater);
+                    GamePerformance.Instance.EnterZone("UpdateWater");
                     if (wh == Program.ShutdownEvent)
                     {
                         break;
@@ -244,6 +249,7 @@ namespace DwarfCorp
                         Water.UpdateWater();
                     }
                     GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.UpdateWater);
+                    GamePerformance.Instance.ExitZone("UpdateWater");
                 }
             }
 #if CREATE_CRASH_LOGS
@@ -340,6 +346,7 @@ namespace DwarfCorp
                     EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
 
                     GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);
+                    GamePerformance.Instance.EnterZone("RebuildVoxels");
 
                     if (wh == Program.ShutdownEvent)
                     {
@@ -416,6 +423,7 @@ namespace DwarfCorp
                         
                     }
                     GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);
+                    GamePerformance.Instance.ExitZone("RebuildVoxels");
                 }
             }
 #if CREATE_CRASH_LOGS

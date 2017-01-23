@@ -575,6 +575,7 @@ namespace DwarfCorp.GameStates
             {
                 WorldManager.WorldOrigin = new Vector2(WorldManager.WorldWidth / 2, WorldManager.WorldHeight / 2);
                 genThread = new Thread(unused => GenerateWorld(Seed, (int) WorldManager.WorldWidth, (int) WorldManager.WorldHeight));
+                genThread.Name = "GenerateWorld";
                 genThread.Start();
                 IsGenerating = true;
             }

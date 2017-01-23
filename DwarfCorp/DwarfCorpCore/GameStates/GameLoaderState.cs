@@ -209,6 +209,7 @@ namespace DwarfCorp.GameStates
                 if (max - min > 0)
                 {
                     Thread loadThread = new Thread(() => WorldLoaderThread(min, max));
+                    loadThread.Name = "WorldLoader";
                     loadThread.Start();
                     Threads.Add(loadThread);
                 }
