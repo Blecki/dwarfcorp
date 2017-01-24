@@ -37,7 +37,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using DwarfCorp.GameStates;
-using DwarfCorpCore;
 using LibNoise;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;

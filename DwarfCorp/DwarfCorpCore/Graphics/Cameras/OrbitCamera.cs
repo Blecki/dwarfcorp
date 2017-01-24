@@ -37,7 +37,6 @@ using System.Runtime.CompilerServices;
 using System.Security.Policy;
 using System.Text;
 using DwarfCorp.GameStates;
-using DwarfCorpCore;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;

@@ -32,7 +32,6 @@
 // THE SOFTWARE.
 using System.Collections.Generic;
 using System.Linq;
-using DwarfCorpCore;
 using LibNoise;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

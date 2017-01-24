@@ -36,7 +36,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using DwarfCorp.GameStates;
-using DwarfCorpCore;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;

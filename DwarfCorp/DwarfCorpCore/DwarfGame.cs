@@ -32,7 +32,6 @@
 // THE SOFTWARE.
 using System;
 using DwarfCorp.GameStates;
-using DwarfCorpCore;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

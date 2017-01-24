@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DwarfCorp.GameStates;
-using DwarfCorpCore;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
