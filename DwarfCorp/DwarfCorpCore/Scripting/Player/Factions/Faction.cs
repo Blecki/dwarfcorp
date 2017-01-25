@@ -273,27 +273,27 @@ namespace DwarfCorp
 
         public void CollideMinions(DwarfTime time)
         {
-            foreach (CreatureAI minion in Minions)
-            {
-                if (minion.Physics.CollideMode == Physics.CollisionMode.None) 
-                    continue;
+            //foreach (CreatureAI minion in Minions)
+            //{
+            //    if (minion.Physics.CollideMode == Physics.CollisionMode.None) 
+            //        continue;
 
-                foreach (CreatureAI other in Minions)
-                {
-                    if (minion == other)
-                    {
-                        continue;
-                    }
+            //    foreach (CreatureAI other in Minions)
+            //    {
+            //        if (minion == other)
+            //        {
+            //            continue;
+            //        }
 
-                    Vector3 meToOther = other.Position - minion.Position;
-                    float dist = (meToOther).Length();
+            //        Vector3 meToOther = other.Position - minion.Position;
+            //        float dist = (meToOther).Length();
 
-                    if (!float.IsNaN(dist) && dist < 0.25f)
-                    {
-                        other.Physics.ApplyForce(meToOther / (dist + 0.05f) * 50, (float)time.ElapsedGameTime.TotalSeconds);
-                    }
-                }
-            }
+            //        if (!float.IsNaN(dist) && dist < 0.25f)
+            //        {
+            //            other.Physics.ApplyForce(meToOther / (dist + 0.05f) * 50, (float)time.ElapsedGameTime.TotalSeconds);
+            //        }
+            //    }
+            //}
         }
 
 
