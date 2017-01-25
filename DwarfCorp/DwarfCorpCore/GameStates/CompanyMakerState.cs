@@ -106,7 +106,7 @@ namespace DwarfCorp.GameStates
                     // Todo:  Logo stuff...
 
                     // Why are they stored as statics on this class???
-                    StateManager.PopState();
+                    StateManager.PushState("NewGameChooseWorldState");
                 },
                 AutoLayout = AutoLayout.FloatBottomRight
             });
@@ -120,8 +120,6 @@ namespace DwarfCorp.GameStates
                 Border = "border-button",
                 OnClick = (sender, args) =>
                 {
-                    // Why does this do the exact same thing as creating?
-                    // Todo: Return to main menu, not world menu
                     StateManager.PopState();
                 },
                 AutoLayout = AutoLayout.FloatBottomRight,

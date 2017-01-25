@@ -46,7 +46,7 @@ namespace DwarfCorp
     /// A static collection of resource types (should eventually be replaced with a file)
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class ResourceLibrary
+    public static class ResourceLibrary
     {
 
         public struct ResourceType
@@ -96,14 +96,6 @@ namespace DwarfCorp
 
         public static Dictionary<ResourceType, Resource> Resources = new Dictionary<ResourceType, Resource>();
 
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            InitializeStatics();
-        }
-
-
         public static List<Resource> GetResourcesByTag(Resource.ResourceTags tag)
         {
             return Resources.Values.Where(resource => resource.Tags.Contains(tag)).ToList();
@@ -129,7 +121,7 @@ namespace DwarfCorp
             EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new ResourceEntity(resource.Type, position));
         }
 
-        public void InitializeStatics()
+        public static void Initialize()
         {
             string tileSheet = ContentPaths.Entities.Resources.resources;
             Resources = new Dictionary<ResourceType, Resource>();
@@ -429,13 +421,7 @@ namespace DwarfCorp
             toReturn.ShortName = baseMaterial + " " + names[item];
             return toReturn;
         }
-
-        public ResourceLibrary()
-        {
-            InitializeStatics();
-        }
-
-
+        
         public static Resource CreateBread(Resource component)
         {
             Resource toReturn = new Resource(Resources[ResourceType.Bread])

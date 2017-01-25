@@ -136,13 +136,10 @@ namespace DwarfCorp
         public static GameMaster Master = null;
 
         // If the game was loaded from a file, this contains the name of that file.
-        public string ExistingFile = "";
+        public static string ExistingFile = "";
 
         // Just a helpful 1x1 white pixel texture
         private Texture2D pixel;
-
-        // Draws lines/boxes etc. to the screen
-        private Drawer2D drawer2D;
 
         // A shader which draws fancy light blooming to the screen
         private BloomComponent bloom;
@@ -323,7 +320,6 @@ namespace DwarfCorp
         /// </summary>
         private void LoadThreaded()
         {
-            drawer2D = new Drawer2D(Content, GraphicsDevice);
             LoadingMessage = "Waiting for Graphics Device ...";
 
             WaitForGraphicsDevice();
@@ -1588,7 +1584,7 @@ namespace DwarfCorp
                 Drawer2D.FillRect(DwarfGame.SpriteBatch, GraphicsDevice.Viewport.Bounds, new Color(10, 40, 60, 200));
             }
 
-            drawer2D.Render(DwarfGame.SpriteBatch, Camera, GraphicsDevice.Viewport);
+            Drawer2D.Render(DwarfGame.SpriteBatch, Camera, GraphicsDevice.Viewport);
 
             IndicatorManager.Render(gameTime);
             DwarfGame.SpriteBatch.End();
