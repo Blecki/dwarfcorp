@@ -201,7 +201,7 @@ namespace DwarfCorp
                 ExpiditionState = State.Arriving;
                 ShouldRemove = false;
                 Creatures = new List<CreatureAI>();
-                DeathTimer = new DateTimer(World.Time.CurrentDate, new TimeSpan(1, 12, 0, 0));
+                DeathTimer = new DateTimer(WorldManager.Time.CurrentDate, new TimeSpan(1, 12, 0, 0));
             }
         }
 
@@ -241,7 +241,7 @@ namespace DwarfCorp
         public int TerritorySize { get; set; }
         public Race Race { get; set; }
         public Economy Economy { get; set; }
-        public ComponentManager Components { get { return World.ComponentManager; }}
+        public ComponentManager Components { get { return WorldManager.ComponentManager; }}
 
         public List<TradeEnvoy> TradeEnvoys { get; set; }
         public List<WarParty> WarParties { get; set; }
@@ -689,7 +689,7 @@ namespace DwarfCorp
         public Body GetRandomGatherDesignationWithTag(string tag)
         {
             List<Body> des = GatherDesignations.Where(c => c.Tags.Contains(tag)).ToList();
-            return des.Count == 0 ? null : des[World.Random.Next(0, des.Count)];
+            return des.Count == 0 ? null : des[WorldManager.Random.Next(0, des.Count)];
         }
 
 
@@ -949,8 +949,8 @@ namespace DwarfCorp
             Dwarf newMinion =
                 EntityFactory.GenerateDwarf(
                     rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15,
-                    Components, GameState.Game.Content, GameState.Game.GraphicsDevice, World.ChunkManager,
-                    World.Camera, this, World.PlanService, "Player", currentApplicant.Class, currentApplicant.Level.Index).GetChildrenOfType<Dwarf>().First();
+                    Components, GameState.Game.Content, GameState.Game.GraphicsDevice, WorldManager.ChunkManager,
+                    WorldManager.Camera, this, WorldManager.PlanService, "Player", currentApplicant.Class, currentApplicant.Level.Index).GetChildrenOfType<Dwarf>().First();
 
             newMinion.Stats.CurrentClass = currentApplicant.Class;
             newMinion.Stats.LevelIndex = currentApplicant.Level.Index - 1;
@@ -958,7 +958,7 @@ namespace DwarfCorp
             newMinion.Stats.FullName = currentApplicant.Name;
             newMinion.AI.AddMoney(currentApplicant.Level.Pay * 4);
 
-            World.AnnouncementManager.Announce("New Hire!" ,currentApplicant.Name + " was hired as a " + currentApplicant.Level.Name, newMinion.AI.ZoomToMe);
+            WorldManager.AnnouncementManager.Announce("New Hire!" ,currentApplicant.Name + " was hired as a " + currentApplicant.Level.Name, newMinion.AI.ZoomToMe);
 
         }
 
@@ -985,11 +985,11 @@ namespace DwarfCorp
             List<Body> toReturn = new List<Body>();
             for (int i = 0; i < numCreatures; i++)
             {
-                string creature = Race.CreatureTypes[World.Random.Next(Race.CreatureTypes.Count)];
+                string creature = Race.CreatureTypes[WorldManager.Random.Next(Race.CreatureTypes.Count)];
                 Vector3 offset = MathFunctions.RandVector3Cube() * 5;
                 Voxel voxel = new Voxel();
                 
-                if (World.ChunkManager.ChunkData.GetFirstVoxelUnder(position + offset, ref voxel, true))
+                if (WorldManager.ChunkManager.ChunkData.GetFirstVoxelUnder(position + offset, ref voxel, true))
                 {
                     Body body = EntityFactory.CreateEntity<Body>(creature, position + offset);
                     CreatureAI ai = body.GetChildrenOfType<CreatureAI>().FirstOrDefault();

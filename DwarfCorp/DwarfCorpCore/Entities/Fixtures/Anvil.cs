@@ -50,7 +50,7 @@ namespace DwarfCorp
         }
 
         public Anvil(Vector3 position) :
-            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 3), World.ComponentManager.RootComponent)
+            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 3), WorldManager.ComponentManager.RootComponent)
         {
             Name = "Anvil";
             Tags.Add("Anvil");
@@ -67,7 +67,7 @@ namespace DwarfCorp
         }
 
         public Stove(Vector3 position) :
-            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 4), World.ComponentManager.RootComponent)
+            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 4), WorldManager.ComponentManager.RootComponent)
         {
             Name = "Stove";
             Tags.Add("Stove");
@@ -85,7 +85,7 @@ namespace DwarfCorp
         {
             if (MathFunctions.RandEvent(0.01f))
             {
-                World.ParticleManager.Trigger("smoke", GlobalTransform.Translation + Vector3.Up * .5f, Color.White, 1);
+                WorldManager.ParticleManager.Trigger("smoke", GlobalTransform.Translation + Vector3.Up * .5f, Color.White, 1);
             }
             base.Update(gameTime, chunks, camera);
         }
@@ -102,7 +102,7 @@ namespace DwarfCorp
         }
 
         public Barrel(Vector3 position) :
-            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 0), World.ComponentManager.RootComponent)
+            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 0), WorldManager.ComponentManager.RootComponent)
         {
             Name = "Barrel";
             Tags.Add("Barrel");

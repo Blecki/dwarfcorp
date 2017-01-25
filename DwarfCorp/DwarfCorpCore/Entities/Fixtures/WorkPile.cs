@@ -49,7 +49,7 @@ namespace DwarfCorp
         }
 
         public WorkPile(Vector3 position) :
-            base(position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.underconstruction, 32, 32), new Point(0, 0), World.ComponentManager.RootComponent)
+            base(position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.underconstruction, 32, 32), new Point(0, 0), WorldManager.ComponentManager.RootComponent)
         {
         }
     }
@@ -63,7 +63,7 @@ namespace DwarfCorp
         }
 
         public WorkFence(Vector3 position, float orientation) :
-            base(position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.constructiontape, 32, 32), new Point(0, 0), World.ComponentManager.RootComponent)
+            base(position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.constructiontape, 32, 32), new Point(0, 0), WorldManager.ComponentManager.RootComponent)
         {
             this.Sprite.OrientationType = Sprite.OrientMode.Fixed;
             this.Sprite.LocalTransform = Matrix.CreateRotationY(orientation);

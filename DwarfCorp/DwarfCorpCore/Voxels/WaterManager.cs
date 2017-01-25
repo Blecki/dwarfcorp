@@ -186,7 +186,7 @@ namespace DwarfCorp
                     break;
                 }
 
-                World.ParticleManager.Trigger(splash.name, splash.position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, splash.numSplashes);
+                WorldManager.ParticleManager.Trigger(splash.name, splash.position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, splash.numSplashes);
 
                 if(splashNoiseLimiter[splash.name].HasTriggered)
                 {
@@ -216,7 +216,7 @@ namespace DwarfCorp
 
         public void UpdateWater()
         {
-            if(World.Paused)
+            if(WorldManager.Paused)
             {
                 return;
             }

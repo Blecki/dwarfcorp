@@ -63,15 +63,15 @@ namespace DwarfCorp
             public void Update(DwarfTime time)
             {
                 ChargeTimer.Update(time);
-                if (ManaSprite != null && Charge > 0.0f && World.Master.Spells.Mana < World.Master.Spells.MaxMana)
+                if (ManaSprite != null && Charge > 0.0f && WorldManager.Master.Spells.Mana < WorldManager.Master.Spells.MaxMana)
                 {
                     if (ChargeTimer.HasTriggered)
                     {
                         SoundManager.PlaySound(ContentPaths.Audio.tinkle, ManaSprite.Position);
                         IndicatorManager.DrawIndicator("+" + (int)ChargeRate + " M", ManaSprite.Position, 1.0f, Color.Green);
-                        World.ParticleManager.Trigger("star_particle", ManaSprite.Position, Color.White, 1);
+                        WorldManager.ParticleManager.Trigger("star_particle", ManaSprite.Position, Color.White, 1);
                         Charge -= ChargeRate;
-                        World.Master.Spells.Recharge(ChargeRate);
+                        WorldManager.Master.Spells.Recharge(ChargeRate);
                     }
 
                 }
@@ -86,7 +86,7 @@ namespace DwarfCorp
                 if (ManaSprite != null)
                 {
                     ManaSprite.Die();  
-                    World.ParticleManager.Trigger("star_particle", position, Color.White, 5);
+                    WorldManager.ParticleManager.Trigger("star_particle", position, Color.White, 5);
                     SoundManager.PlaySound(ContentPaths.Audio.wurp, position, true);
                     ManaSprite = null;
                     ReCreateTimer.Reset();
@@ -142,16 +142,16 @@ namespace DwarfCorp
 
                 if(Battery.Charge <= 0)
                 {
-                    Battery.Reset(World.PlayerFaction, Position + Vector3.Up);
+                    Battery.Reset(WorldManager.PlayerFaction, Position + Vector3.Up);
                 }
             }
             base.Update(time, chunks, camera);
         }
 
         public Table(Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame) :
-            base("Table", World.ComponentManager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+            base("Table", WorldManager.ComponentManager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
-            ComponentManager componentManager = World.ComponentManager;
+            ComponentManager componentManager = WorldManager.ComponentManager;
             Matrix matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
             matrix.Translation = position;
             LocalTransform = matrix;
@@ -193,9 +193,9 @@ namespace DwarfCorp
 
             Voxel voxelUnder = new Voxel();
 
-            if (World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            if (WorldManager.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {
-                VoxelListener listener = new VoxelListener(componentManager, this, World.ChunkManager, voxelUnder);
+                VoxelListener listener = new VoxelListener(componentManager, this, WorldManager.ChunkManager, voxelUnder);
             }
 
 

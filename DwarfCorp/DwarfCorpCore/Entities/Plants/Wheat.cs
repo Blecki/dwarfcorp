@@ -51,7 +51,7 @@ namespace DwarfCorp
         }
 
         public Wheat(Vector3 position) :
-            base("Wheat", World.ComponentManager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+            base("Wheat", WorldManager.ComponentManager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.gnarled, 32, 32);
             SeedlingFrame = new Point(0, 0);
@@ -67,24 +67,24 @@ namespace DwarfCorp
             };
             Animation tableAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Plants.wheat), "Wheat", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            Sprite sprite = new Sprite(World.ComponentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(WorldManager.ComponentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
             };
             sprite.AddAnimation(tableAnimation);
 
-            Sprite sprite2 = new Sprite(World.ComponentManager, "sprite2", this, Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
+            Sprite sprite2 = new Sprite(WorldManager.ComponentManager, "sprite2", this, Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
             };
             sprite2.AddAnimation(tableAnimation);
 
             Voxel voxelUnder = new Voxel();
-            bool success = World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder);
+            bool success = WorldManager.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder);
 
             if (success)
             {
-                VoxelListener listener = new VoxelListener(World.ComponentManager, this, World.ChunkManager, voxelUnder);
+                VoxelListener listener = new VoxelListener(WorldManager.ComponentManager, this, WorldManager.ChunkManager, voxelUnder);
             }
 
             Inventory inventory = new Inventory("Inventory", this)
@@ -102,8 +102,8 @@ namespace DwarfCorp
                 }
             };
 
-            Health health = new Health(World.ComponentManager, "HP", this, 30, 0.0f, 30);
-            new Flammable(World.ComponentManager, "Flames", this, health);
+            Health health = new Health(WorldManager.ComponentManager, "HP", this, 30, 0.0f, 30);
+            new Flammable(WorldManager.ComponentManager, "Flames", this, health);
 
             tableAnimation.Play();
             Tags.Add("Wheat");

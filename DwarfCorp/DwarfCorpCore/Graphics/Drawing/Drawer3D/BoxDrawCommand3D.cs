@@ -190,8 +190,8 @@ namespace DwarfCorp
             DrawAccumlatedStrips = false;
             if (VertBuffer == null)
             {
-                VertBuffer = new VertexBuffer(World.GUI.Graphics, VertexPositionColor.VertexDeclaration, 4, BufferUsage.None);
-                IndexBuffer = new IndexBuffer(World.GUI.Graphics, typeof(short), 6, BufferUsage.None);
+                VertBuffer = new VertexBuffer(WorldManager.GUI.Graphics, VertexPositionColor.VertexDeclaration, 4, BufferUsage.None);
+                IndexBuffer = new IndexBuffer(WorldManager.GUI.Graphics, typeof(short), 6, BufferUsage.None);
                 VertBuffer.SetData(TopFace);
                 IndexBuffer.SetData(Idx);
             }

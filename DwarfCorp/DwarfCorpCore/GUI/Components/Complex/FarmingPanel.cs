@@ -45,7 +45,7 @@ namespace DwarfCorp
             PlantButton.OnClicked += PlantButton_OnClicked;
 
             PlantSelector = new ComboBox(GUI, Layout);
-            List<ResourceAmount> resources = World.Master.Faction.ListResourcesWithTag(Resource.ResourceTags.Plantable);
+            List<ResourceAmount> resources = WorldManager.Master.Faction.ListResourcesWithTag(Resource.ResourceTags.Plantable);
             foreach (ResourceAmount resource in resources)
             {
                 if (resource.NumResources > 0)

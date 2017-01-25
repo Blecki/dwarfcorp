@@ -65,7 +65,7 @@ namespace DwarfCorp
 
                 if (agent.Allies == "Dwarf")
                 {
-                    World.AnnouncementManager.Announce(Drawer2D.WrapColor("We're out of food!", Color.DarkRed), "Our stockpiles don't have any food. Our employees will starve!");
+                    WorldManager.AnnouncementManager.Announce(Drawer2D.WrapColor("We're out of food!", Color.DarkRed), "Our stockpiles don't have any food. Our employees will starve!");
                 }
                 yield return Act.Status.Fail;
                 yield break;
@@ -95,7 +95,7 @@ namespace DwarfCorp
 
                 if (agent.Allies == "Dwarf")
                 {
-                    World.AnnouncementManager.Announce(Drawer2D.WrapColor("We're out of food!", Color.DarkRed), "Our stockpiles don't have any food. Our employees will starve!");
+                    WorldManager.AnnouncementManager.Announce(Drawer2D.WrapColor("We're out of food!", Color.DarkRed), "Our stockpiles don't have any food. Our employees will starve!");
                 }
 
                 yield return Act.Status.Fail;

@@ -112,31 +112,31 @@ namespace DwarfCorp
         {
             if (name == BalloonPort.BalloonPortName)
             {
-                return blueprint ? new BalloonPort(faction, true, designations, World.ChunkManager) : new BalloonPort(faction, designations, World.ChunkManager);
+                return blueprint ? new BalloonPort(faction, true, designations, WorldManager.ChunkManager) : new BalloonPort(faction, designations, WorldManager.ChunkManager);
             } 
             else if (name == BedRoom.BedRoomName)
             {
-                return blueprint ? new BedRoom(true, designations, World.ChunkManager) : new BedRoom(designations, World.ChunkManager);
+                return blueprint ? new BedRoom(true, designations, WorldManager.ChunkManager) : new BedRoom(designations, WorldManager.ChunkManager);
             }
             else if (name == CommonRoom.CommonRoomName)
             {
-                return blueprint ? new CommonRoom(true, designations, World.ChunkManager) : new CommonRoom(designations, World.ChunkManager);
+                return blueprint ? new CommonRoom(true, designations, WorldManager.ChunkManager) : new CommonRoom(designations, WorldManager.ChunkManager);
             }
             else if (name == LibraryRoom.LibraryRoomName)
             {
-                return blueprint ? new LibraryRoom(true, designations, World.ChunkManager) : new LibraryRoom(designations, World.ChunkManager);
+                return blueprint ? new LibraryRoom(true, designations, WorldManager.ChunkManager) : new LibraryRoom(designations, WorldManager.ChunkManager);
             }
             else if (name == TrainingRoom.TrainingRoomName)
             {
-                return blueprint ? new TrainingRoom(true, designations, World.ChunkManager) : new TrainingRoom(designations, World.ChunkManager); 
+                return blueprint ? new TrainingRoom(true, designations, WorldManager.ChunkManager) : new TrainingRoom(designations, WorldManager.ChunkManager); 
             }
             else if (name == WorkshopRoom.WorkshopName)
             {
-                return blueprint ? new WorkshopRoom(true, designations, World.ChunkManager) : new WorkshopRoom(designations, World.ChunkManager); 
+                return blueprint ? new WorkshopRoom(true, designations, WorldManager.ChunkManager) : new WorkshopRoom(designations, WorldManager.ChunkManager); 
             }
             else if (name == Kitchen.KitchenName)
             {
-                return blueprint ? new Kitchen(true, designations, World.ChunkManager) : new Kitchen(designations, World.ChunkManager); 
+                return blueprint ? new Kitchen(true, designations, WorldManager.ChunkManager) : new Kitchen(designations, WorldManager.ChunkManager); 
             }
             else if (name == Stockpile.StockpileName)
             {
@@ -288,7 +288,7 @@ namespace DwarfCorp
                         createdComponent.LocalTransform = offsetTransform;
                         createdComponent.AnimationQueue.Add(new EaseMotion(0.8f, offsetTransform, endPos));
                         room.AddBody(createdComponent);
-                        World.ParticleManager.Trigger("puff", endPos + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 10);
+                        WorldManager.ParticleManager.Trigger("puff", endPos + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 10);
                     }
                 }
             }

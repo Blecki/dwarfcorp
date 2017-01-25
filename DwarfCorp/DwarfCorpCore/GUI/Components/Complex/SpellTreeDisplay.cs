@@ -501,7 +501,7 @@ namespace DwarfCorp
             if (spell.IsResearched || (spell.Parent != null &&  !spell.Parent.IsResearched)) return;
             else
             {
-                List<CreatureAI> wizards = Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.Magic);
+                List<CreatureAI> wizards = Faction.FilterMinionsWithCapability(WorldManager.Master.SelectedMinions, GameMaster.ToolMode.Magic);
 
                 foreach (CreatureAI wizard in wizards)
                 {

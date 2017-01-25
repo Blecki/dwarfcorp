@@ -180,7 +180,7 @@ namespace DwarfCorp
                 first = false;
             }
             // Create a description of the body and display it on the screen.
-            World.GUI.ToolTipManager.PopupInfo(desc);
+            WorldManager.GUI.ToolTipManager.PopupInfo(desc);
         }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace DwarfCorp
             {
                 isLeftPressed = true;
                 ClickPoint = new Point(mouse.X, mouse.Y);
-                ClickPoint3D = World.CursorLightPos;
+                ClickPoint3D = WorldManager.CursorLightPos;
                 SelectionRectangle = new Rectangle(mouse.X, mouse.Y, 0, 0);
             }
 
@@ -257,7 +257,7 @@ namespace DwarfCorp
                 {
                     isRightPressed = true;
                     ClickPoint = new Point(mouse.X, mouse.Y);
-                    ClickPoint3D = World.CursorLightPos;
+                    ClickPoint3D = WorldManager.CursorLightPos;
                     SelectionRectangle = new Rectangle(mouse.X, mouse.Y, 0, 0);
                 }
             }

@@ -51,7 +51,7 @@ namespace DwarfCorp
         }
 
         public ResourceEntity(ResourceLibrary.ResourceType resourceType, Vector3 position) :
-            base(ResourceLibrary.Resources[resourceType].ResourceName, World.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.25f, 0.25f, 0.25f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
+            base(ResourceLibrary.Resources[resourceType].ResourceName, WorldManager.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.25f, 0.25f, 0.25f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
         {
             Restitution = 0.1f;
             Friction = 0.1f;
@@ -67,7 +67,7 @@ namespace DwarfCorp
             };
             Animation animation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(type.Image.AssetName), "Animation", 32, 32, frames, false, type.Tint, 0.01f, 0.75f, 0.75f, false);
 
-            Sprite sprite = new Sprite(World.ComponentManager, "Sprite", this, Matrix.CreateTranslation(Vector3.UnitY * 0.25f), spriteSheet, false)
+            Sprite sprite = new Sprite(WorldManager.ComponentManager, "Sprite", this, Matrix.CreateTranslation(Vector3.UnitY * 0.25f), spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Spherical,
                 LightsWithVoxels = !type.SelfIlluminating
@@ -84,8 +84,8 @@ namespace DwarfCorp
 
             if (type.IsFlammable)
             {
-                Health health = new Health(World.ComponentManager, "health", this, 10.0f, 0.0f, 10.0f);
-                new Flammable(World.ComponentManager, "Flames", this, health);
+                Health health = new Health(WorldManager.ComponentManager, "health", this, 10.0f, 0.0f, 10.0f);
+                new Flammable(WorldManager.ComponentManager, "Flames", this, health);
 
             }
         }

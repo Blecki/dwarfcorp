@@ -159,7 +159,7 @@ namespace DwarfCorp
                     if (!announced)
                     {
                         announced = true;
-                        World.AnnouncementManager.Announce(FullName + " (" + CurrentLevel.Name + ")" + " wants a promotion!",
+                        WorldManager.AnnouncementManager.Announce(FullName + " (" + CurrentLevel.Name + ")" + " wants a promotion!",
                             FullName + " can now be promoted to " +
                             CurrentClass.Levels[LevelIndex + 1].Name, EconomyState.PushEconomyState);
                     }

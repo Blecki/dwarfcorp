@@ -87,12 +87,12 @@ namespace DwarfCorp
                 {
                     Vector3 p = selected.Position + Vector3.One*0.5f;
                     IndicatorManager.DrawIndicator("-" + ManaCost + " M",p, 1.0f, Color.Red);
-                    World.ParticleManager.Trigger("star_particle", p, Color.White, 4);
+                    WorldManager.ParticleManager.Trigger("star_particle", p, Color.White, 4);
                     VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType(VoxelType), selected);
 
                     if (VoxelType == "Magic")
                     {
-                        new VoxelListener(World.ComponentManager, World.ComponentManager.RootComponent, World.ChunkManager, selected)
+                        new VoxelListener(WorldManager.ComponentManager, WorldManager.ComponentManager.RootComponent, WorldManager.ChunkManager, selected)
                         {
                             DestroyOnTimer = true,
                             DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
@@ -105,14 +105,14 @@ namespace DwarfCorp
 
             foreach (Point3 point in chunksToRebuild)
             {
-                VoxelChunk chunk = World.ChunkManager.ChunkData.ChunkMap[point];
+                VoxelChunk chunk = WorldManager.ChunkManager.ChunkData.ChunkMap[point];
                 chunk.ShouldRebuild = true;
                 chunk.NotifyTotalRebuild(true);
             }
 
             if (placed)
             {
-                SoundManager.PlaySound(ContentPaths.Audio.tinkle, World.CursorLightPos, true, 1.0f);
+                SoundManager.PlaySound(ContentPaths.Audio.tinkle, WorldManager.CursorLightPos, true, 1.0f);
             }
 
             RechargeTimer.Reset(RechargeTimer.TargetTimeSeconds);

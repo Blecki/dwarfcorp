@@ -56,7 +56,7 @@ namespace DwarfCorp
         public Door(Vector3 position, Faction team, SpriteSheet sheet, Point frame, float hp) :
             base(
             position, sheet, frame,
-            World.ComponentManager.RootComponent)
+            WorldManager.ComponentManager.RootComponent)
         {
             IsMoving = false;
             IsOpen = false;
@@ -71,7 +71,7 @@ namespace DwarfCorp
             ClosedTransform = LocalTransform;
             AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
-            Health health = new Health(World.ComponentManager, "Health", this, hp, 0.0f, hp);
+            Health health = new Health(WorldManager.ComponentManager, "Health", this, hp, 0.0f, hp);
             
         }
 

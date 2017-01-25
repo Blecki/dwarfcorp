@@ -71,7 +71,7 @@ namespace DwarfCorp
         {
             List<Body> resourcesPickedByMouse = ComponentManager.FilterComponentsWithTag("Resource", bodies);
             List<Task> assignments = new List<Task>();
-            foreach(Body resource in resourcesPickedByMouse.Where(resource => resource.IsActive && resource.IsVisible && resource.Parent == World.ComponentManager.RootComponent))
+            foreach(Body resource in resourcesPickedByMouse.Where(resource => resource.IsActive && resource.IsVisible && resource.Parent == WorldManager.ComponentManager.RootComponent))
             {
                 if (!resource.IsVisible || resource.IsAboveCullPlane) continue;
                 Drawer3D.DrawBox(resource.BoundingBox, Color.LightGoldenrodYellow, 0.05f, true);
@@ -93,7 +93,7 @@ namespace DwarfCorp
                 }
             }
 
-            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(World.Master.SelectedMinions,
+            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(WorldManager.Master.SelectedMinions,
                 GameMaster.ToolMode.Gather);
             TaskManager.AssignTasks(assignments, minions);
 
@@ -120,15 +120,15 @@ namespace DwarfCorp
             Player.VoxSelector.Enabled = false;
             Player.BodySelector.Enabled = true;
             Player.BodySelector.AllowRightClickSelection = true;
-            World.GUI.IsMouseVisible = true;
+            WorldManager.GUI.IsMouseVisible = true;
 
-            if (World.GUI.IsMouseOver())
+            if (WorldManager.GUI.IsMouseOver())
             {
-                World.GUI.MouseMode = GUISkin.MousePointer.Pointer;
+                WorldManager.GUI.MouseMode = GUISkin.MousePointer.Pointer;
             }
             else
             {
-                World.GUI.MouseMode = GUISkin.MousePointer.Gather;
+                WorldManager.GUI.MouseMode = GUISkin.MousePointer.Gather;
             }
 
 

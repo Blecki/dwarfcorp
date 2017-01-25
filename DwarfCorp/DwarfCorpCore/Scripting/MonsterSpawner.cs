@@ -63,7 +63,7 @@ namespace DwarfCorp
 
         public void Update(DwarfTime t)
         {
-            bool shouldSpawn = World.Time.IsNight() && Math.Abs(World.Time.CurrentDate.TimeOfDay.Hours - LastSpawnHour) > SpawnRate;
+            bool shouldSpawn = WorldManager.Time.IsNight() && Math.Abs(WorldManager.Time.CurrentDate.TimeOfDay.Hours - LastSpawnHour) > SpawnRate;
 
             if (shouldSpawn)
             {
@@ -79,8 +79,8 @@ namespace DwarfCorp
         public SpawnEvent GenerateSpawnEvent(Faction spawnFaction, Faction targetFaction, int num, bool attack=true)
         {
             float padding = 2.0f;
-            int side = World.Random.Next(4);
-            BoundingBox bounds = World.ChunkManager.Bounds;
+            int side = WorldManager.Random.Next(4);
+            BoundingBox bounds = WorldManager.ChunkManager.Bounds;
             Vector3 pos = Vector3.Zero;
             switch (side)
             {

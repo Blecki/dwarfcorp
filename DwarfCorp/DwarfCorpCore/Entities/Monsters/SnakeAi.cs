@@ -68,7 +68,7 @@ namespace DwarfCorp
             while (true)
             {
                 
-               Creature.Physics.ApplyForce(0.1f *(World.CursorLightPos - this.Creature.AI.Position) - 0.1f * Creature.Physics.Velocity, 1);
+               Creature.Physics.ApplyForce(0.1f *(WorldManager.CursorLightPos - this.Creature.AI.Position) - 0.1f * Creature.Physics.Velocity, 1);
                yield return Act.Status.Running;
             }
         }

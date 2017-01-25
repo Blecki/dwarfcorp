@@ -67,16 +67,16 @@ namespace DwarfCorp
         public List<Company> Market { get; set; }
 
         [JsonIgnore]
-        public World world { get; set; }
+        public WorldManager WorldManager { get; set; }
 
         public Economy()
         {
             
         }
 
-        public Economy(Faction faction, float currentMoney, World world, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
+        public Economy(Faction faction, float currentMoney, WorldManager WorldManager, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
         {
-            this.world = world;
+            this.WorldManager = WorldManager;
             Company = Company.GenerateRandom(currentMoney, 1.0f, Company.Sector.Exploration);
             Company.Name = companyName;
             Company.SecondaryColor = Color.White;
@@ -106,13 +106,13 @@ namespace DwarfCorp
                 Company.GenerateRandom(1800, 60.0f, Company.Sector.Finance)
             };
 
-            World.Time.NewDay += Time_NewDay;
+            WorldManager.Time.NewDay += Time_NewDay;
         }
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            world = World.world;
+            WorldManager = WorldManager.WorldManager;
         }
 
         public void UpdateStocks(DateTime time)
@@ -136,17 +136,17 @@ namespace DwarfCorp
             float diff = Company.StockPrice - originalStockPrice;
             if (Company.StockPrice <= 0)
             {
-                world.InvokeLoss();
+                WorldManager.InvokeLoss();
             }
 
             if (Company.Assets <= 0)
             {
-                World.AnnouncementManager.Announce("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
+                WorldManager.AnnouncementManager.Announce("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
             }
 
             string symbol = diff > 0 ? "+" : "";
            
-            World.AnnouncementManager.Announce(Company.TickerName + " " + Company.StockPrice.ToString("F2") + " " + symbol + diff.ToString("F2"), "Our stock price changed by " + symbol + " " + diff.ToString("F2") + " today.");
+            WorldManager.AnnouncementManager.Announce(Company.TickerName + " " + Company.StockPrice.ToString("F2") + " " + symbol + diff.ToString("F2"), "Our stock price changed by " + symbol + " " + diff.ToString("F2") + " today.");
         }
 
         void Time_NewDay(DateTime time)

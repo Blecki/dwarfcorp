@@ -18,16 +18,16 @@ namespace DwarfCorp.GameStates
         public GraphicsDevice GraphicsDevice;
 
         public bool ShouldReset { get; set; }
-        public World World { get; set; }
+        public WorldManager WorldManager { get; set; }
         public GameMaster Master
         {
-            get { return World.Master; }
-            set { World.Master = value; }
+            get { return WorldManager.Master; }
+            set { WorldManager.Master = value; }
         }
         public static bool Paused
         {
-            get { return World.Paused; }
-            set { World.Paused = value; }
+            get { return WorldManager.Paused; }
+            set { WorldManager.Paused = value; }
         }
 
         // Displays tips when the game is loading.
@@ -101,10 +101,10 @@ namespace DwarfCorp.GameStates
             ShouldReset = true;
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;
-            World = new World(game);
-            World.gameState = this;
-            World.OnLoadedEvent += World_OnLoadedEvent;
-            World.OnLoseEvent += World_OnLoseEvent;
+            WorldManager = new WorldManager(game);
+            WorldManager.gameState = this;
+            WorldManager.OnLoadedEvent += World_OnLoadedEvent;
+            WorldManager.OnLoseEvent += World_OnLoseEvent;
             Paused = false;
             RenderUnderneath = true;
         }
@@ -132,12 +132,12 @@ namespace DwarfCorp.GameStates
                 IsInitialized = false;
                 ShouldReset = false;
                 CreateGUI();
-                World.Setup(GUI);
+                WorldManager.Setup(GUI);
             }
             else
             {
                 // Otherwise, we just unpause everything and re-enter the game.
-                World.Unpause();
+                WorldManager.Unpause();
             }
             base.OnEnter();
         }
@@ -147,7 +147,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public override void OnExit()
         {
-            World.Pause();
+            WorldManager.Pause();
             base.OnExit();
         }
 
@@ -164,15 +164,15 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
-            World.Update(gameTime);
+            WorldManager.Update(gameTime);
             GUI.Update(gameTime);
             Input.Update();
 
             // Updates some of the GUI status
             if (Game.IsActive)
             {
-                CurrentLevelLabel.Text = "Slice: " + World.ChunkManager.ChunkData.MaxViewingLevel + "/" + World.ChunkHeight;
-                TimeLabel.Text = World.Time.CurrentDate.ToShortDateString() + " " + World.Time.CurrentDate.ToShortTimeString();
+                CurrentLevelLabel.Text = "Slice: " + WorldManager.ChunkManager.ChunkData.MaxViewingLevel + "/" + WorldManager.ChunkHeight;
+                TimeLabel.Text = WorldManager.Time.CurrentDate.ToShortDateString() + " " + WorldManager.Time.CurrentDate.ToShortTimeString();
             }
         }
 
@@ -182,11 +182,11 @@ namespace DwarfCorp.GameStates
         /// <param name="gameTime">The current time</param>
         public override void Render(DwarfTime gameTime)
         {
-            EnableScreensaver = !World.ShowingWorld;
-            if (World.ShowingWorld)
+            EnableScreensaver = !WorldManager.ShowingWorld;
+            if (WorldManager.ShowingWorld)
             {
                 GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
-                World.Render(gameTime);
+                WorldManager.Render(gameTime);
 
                 // SpriteBatch Begin and End must be called again. Hopefully we can factor this out with the new gui
                 RasterizerState rasterizerState = new RasterizerState()
@@ -211,12 +211,12 @@ namespace DwarfCorp.GameStates
             TipTimer.Update(gameTime);
             if (TipTimer.HasTriggered)
             {
-                World.LoadingMessageBottom = LoadingTips[World.Random.Next(LoadingTips.Count)];
+                WorldManager.LoadingMessageBottom = LoadingTips[WorldManager.Random.Next(LoadingTips.Count)];
                 TipIndex++;
             }
 
             EnableScreensaver = true;
-            World.Render(gameTime);
+            WorldManager.Render(gameTime);
             base.RenderUnitialized(gameTime);
         }
 
@@ -278,14 +278,14 @@ namespace DwarfCorp.GameStates
 
             GridLayout infoLayout = new GridLayout(GUI, companyInfoComponent, 3, 4);
 
-            CompanyLogoPanel = new ImagePanel(GUI, infoLayout, World.PlayerCompany.Logo)
+            CompanyLogoPanel = new ImagePanel(GUI, infoLayout, WorldManager.PlayerCompany.Logo)
             {
                 ConstrainSize = true,
                 KeepAspectRatio = true
             };
             infoLayout.SetComponentPosition(CompanyLogoPanel, 0, 0, 1, 1);
 
-            CompanyNameLabel = new Label(GUI, infoLayout, World.PlayerCompany.Name, GUI.DefaultFont)
+            CompanyNameLabel = new Label(GUI, infoLayout, WorldManager.PlayerCompany.Name, GUI.DefaultFont)
             {
                 TextColor = Color.White,
                 StrokeColor = new Color(0, 0, 0, 255),
@@ -318,7 +318,7 @@ namespace DwarfCorp.GameStates
 
 
             TimeLabel = new Label(GUI, layout,
-                World.Time.CurrentDate.ToShortDateString() + " " + World.Time.CurrentDate.ToShortTimeString(), GUI.SmallFont)
+                WorldManager.Time.CurrentDate.ToShortDateString() + " " + WorldManager.Time.CurrentDate.ToShortTimeString(), GUI.SmallFont)
             {
                 TextColor = Color.White,
                 StrokeColor = new Color(0, 0, 0, 255),
@@ -328,7 +328,7 @@ namespace DwarfCorp.GameStates
             layout.Add(TimeLabel, AlignLayout.Alignment.Center, AlignLayout.Alignment.Top, Vector2.Zero);
             //layout.SetComponentPosition(TimeLabel, 6, 0, 1, 1);
 
-            CurrentLevelLabel = new Label(GUI, infoLayout, "Slice: " + World.ChunkManager.ChunkData.MaxViewingLevel,
+            CurrentLevelLabel = new Label(GUI, infoLayout, "Slice: " + WorldManager.ChunkManager.ChunkData.MaxViewingLevel,
                 GUI.DefaultFont)
             {
                 TextColor = Color.White,
@@ -373,7 +373,7 @@ namespace DwarfCorp.GameStates
             LevelSlider.InvertValue = true;
             */
 
-            MiniMap = new Minimap(GUI, layout, 192, 192, World,
+            MiniMap = new Minimap(GUI, layout, 192, 192, WorldManager,
                 TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap),
                 TextureManager.GetTexture(ContentPaths.GUI.gui_minimap))
             {
@@ -426,7 +426,7 @@ namespace DwarfCorp.GameStates
             InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
 
-            AnnouncementViewer = new AnnouncementViewer(GUI, layout, World.AnnouncementManager)
+            AnnouncementViewer = new AnnouncementViewer(GUI, layout, WorldManager.AnnouncementManager)
             {
                 LocalBounds = new Rectangle(0, 0, 350, 80)
             };
@@ -440,7 +440,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         private void LevelSlider_OnClicked()
         {
-            World.ChunkManager.ChunkData.SetMaxViewingLevel((int)LevelSlider.SliderValue, ChunkManager.SliceMode.Y);
+            WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel((int)LevelSlider.SliderValue, ChunkManager.SliceMode.Y);
         }
 
         /// <summary>
@@ -448,7 +448,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         private void CurrentLevelDownButton_OnClicked()
         {
-            World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel - 1,
+            WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(WorldManager.ChunkManager.ChunkData.MaxViewingLevel - 1,
                 ChunkManager.SliceMode.Y);
         }
 
@@ -458,7 +458,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         private void CurrentLevelUpButton_OnClicked()
         {
-            World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel + 1,
+            WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(WorldManager.ChunkManager.ChunkData.MaxViewingLevel + 1,
                 ChunkManager.SliceMode.Y);
         }
 
@@ -471,8 +471,8 @@ namespace DwarfCorp.GameStates
         {
             if (key == ControlSettings.Mappings.Map)
             {
-                World.DrawMap = !World.DrawMap;
-                MiniMap.SetMinimized(!World.DrawMap);
+                WorldManager.DrawMap = !WorldManager.DrawMap;
+                MiniMap.SetMinimized(!WorldManager.DrawMap);
             }
 
             if (key == Keys.Escape)
@@ -604,7 +604,7 @@ namespace DwarfCorp.GameStates
                     StateManager.PushState("OptionsState");
                     break;
                 case "Save":
-                    SaveGame(Overworld.Name + "_" + World.GameID);
+                    SaveGame(Overworld.Name + "_" + WorldManager.GameID);
                     break;
                 case "Quit":
                     QuitGame();
@@ -631,7 +631,7 @@ namespace DwarfCorp.GameStates
             {
                 case Dialog.ReturnStatus.Ok:
                     {
-                        World.Save(filename, waitforsave_OnFinished);
+                        WorldManager.Save(filename, waitforsave_OnFinished);
                         break;
                     }
             }
@@ -654,7 +654,7 @@ namespace DwarfCorp.GameStates
             StateManager.StateStack.Clear();
             MainMenuState menuState = StateManager.GetState<MainMenuState>("MainMenuState");
             menuState.IsGameRunning = false;
-            World.Quit();
+            WorldManager.Quit();
             StateManager.States["PlayState"] = new PlayState(Game, StateManager);
             StateManager.CurrentState = "";
             StateManager.PushState("MainMenuState");

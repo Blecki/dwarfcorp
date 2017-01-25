@@ -118,7 +118,7 @@ namespace DwarfCorp
             };
 
             IsActive = false;
-            Chunks = World.ChunkManager;
+            Chunks = WorldManager.ChunkManager;
 
 
             foreach(string s in RoomLibrary.GetRoomTypes())
@@ -210,8 +210,8 @@ namespace DwarfCorp
 
                         if (type == "Magic")
                         {
-                            new VoxelListener(World.ComponentManager, World.ComponentManager.RootComponent,
-                                World.ChunkManager, vox)
+                            new VoxelListener(WorldManager.ComponentManager, WorldManager.ComponentManager.RootComponent,
+                                WorldManager.ChunkManager, vox)
                             {
                                 DestroyOnTimer = true,
                                 DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
@@ -225,7 +225,7 @@ namespace DwarfCorp
                     {
                         case "Delete Block":
                         {
-                            World.Master.Faction.OnVoxelDestroyed(vox);
+                            WorldManager.Master.Faction.OnVoxelDestroyed(vox);
                             vox.Chunk.NotifyDestroyed(new Point3(vox.GridPosition));
                             vox.Type = VoxelType.TypeList[0];
                             vox.Water = new WaterCell();
@@ -308,15 +308,15 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                World.GUI.IsMouseVisible = false;
+                WorldManager.GUI.IsMouseVisible = false;
                 return;
             }
 
             Player.VoxSelector.Enabled = true;
             Player.BodySelector.Enabled = false;
-            World.GUI.IsMouseVisible = true;
+            WorldManager.GUI.IsMouseVisible = true;
 
-            World.GUI.MouseMode = GUISkin.MousePointer.Pointer;
+            WorldManager.GUI.MouseMode = GUISkin.MousePointer.Pointer;
 
         }
 

@@ -95,22 +95,22 @@ namespace DwarfCorp
                 Metadata =
                 {
                     OverworldFile = overworld,
-                    WorldOrigin = World.WorldOrigin,
-                    WorldScale = World.WorldScale,
-                    TimeOfDay = World.Sky.TimeOfDay,
-                    ChunkHeight = World.ChunkHeight,
-                    ChunkWidth = World.ChunkWidth,
+                    WorldOrigin = WorldManager.WorldOrigin,
+                    WorldScale = WorldManager.WorldScale,
+                    TimeOfDay = WorldManager.Sky.TimeOfDay,
+                    ChunkHeight = WorldManager.ChunkHeight,
+                    ChunkWidth = WorldManager.ChunkWidth,
                     GameID = id,
-                    Time = World.Time
+                    Time = WorldManager.Time
                 },
-                Camera = World.Camera,
-                Components = World.ComponentManager,
+                Camera = WorldManager.Camera,
+                Components = WorldManager.ComponentManager,
                 ChunkData = new List<ChunkFile>(),
                 GameID = id,
             };
 
 
-            foreach(ChunkFile file in World.ChunkManager.ChunkData.ChunkMap.Select(pair => new ChunkFile(pair.Value)))
+            foreach(ChunkFile file in WorldManager.ChunkManager.ChunkData.ChunkMap.Select(pair => new ChunkFile(pair.Value)))
             {
                 Data.ChunkData.Add(file);
             }

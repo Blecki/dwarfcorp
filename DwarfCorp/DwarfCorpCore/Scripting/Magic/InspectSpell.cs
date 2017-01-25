@@ -99,15 +99,15 @@ namespace DwarfCorp
 
                     if (selected.Count > 0)
                     {
-                        OnEntitiesSelected(World.Master.Spells, selected);
+                        OnEntitiesSelected(WorldManager.Master.Spells, selected);
                     }
                 }
                 else
                 {
                     Voxel vox = new Voxel();
-                    World.ChunkManager.ChunkData.GetNonNullVoxelAtWorldLocation(World.CursorLightPos, ref vox);
+                    WorldManager.ChunkManager.ChunkData.GetNonNullVoxelAtWorldLocation(WorldManager.CursorLightPos, ref vox);
 
-                    OnVoxelsSelected(World.Master.Spells, new List<Voxel>(){vox});
+                    OnVoxelsSelected(WorldManager.Master.Spells, new List<Voxel>(){vox});
                 }
             }
             base.Update(time, voxSelector, bodySelector);
@@ -128,11 +128,11 @@ namespace DwarfCorp
 
             if (desc != "")
             {
-                World.GUI.ToolTipManager.ToolTip = desc;
+                WorldManager.GUI.ToolTipManager.ToolTip = desc;
             }
             else
             {
-                World.GUI.ToolTipManager.ToolTip = "";
+                WorldManager.GUI.ToolTipManager.ToolTip = "";
             }
             base.OnEntitiesSelected(tree, entities);
         }
@@ -162,11 +162,11 @@ namespace DwarfCorp
 
             if (description != "")
             {
-                World.GUI.ToolTipManager.ToolTip = description;
+                WorldManager.GUI.ToolTipManager.ToolTip = description;
             }
             else
             {
-                World.GUI.ToolTipManager.ToolTip = "";
+                WorldManager.GUI.ToolTipManager.ToolTip = "";
             }
             base.OnVoxelsSelected(tree, voxels);
         }

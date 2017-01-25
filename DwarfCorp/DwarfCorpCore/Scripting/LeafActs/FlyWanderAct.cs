@@ -151,7 +151,7 @@ namespace DwarfCorp
                     // Pick a target within a box floating some distance above the surface.
                     float randomX = MathFunctions.Rand()*Radius - Radius/2.0f;
                     float randomZ = MathFunctions.Rand()*Radius - Radius/2.0f;
-                    float randomY = (float) World.Random.NextDouble()*YRadius + Altitude + surfaceHeight;
+                    float randomY = (float) WorldManager.Random.NextDouble()*YRadius + Altitude + surfaceHeight;
 
                     // Set the target to that random location.
                     LocalTarget = new Vector3(randomX + oldPosition.X, randomY, randomZ + oldPosition.Z);
@@ -172,7 +172,7 @@ namespace DwarfCorp
                         // Pick a target within a box floating some distance above the surface.
                         float randomX = MathFunctions.Rand()*Radius - Radius/2.0f;
                         float randomZ = MathFunctions.Rand()*Radius - Radius/2.0f;
-                        float randomY = (float) World.Random.NextDouble()*YRadius + Altitude + surfaceHeight;
+                        float randomY = (float) WorldManager.Random.NextDouble()*YRadius + Altitude + surfaceHeight;
 
                         // Set the target to that random location.
                         LocalTarget = new Vector3(randomX + oldPosition.X, randomY, randomZ + oldPosition.Z);

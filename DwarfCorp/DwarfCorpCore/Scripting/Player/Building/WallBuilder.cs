@@ -72,7 +72,7 @@ namespace DwarfCorp
             v.Health = Type.StartingHealth;
             chunk.NotifyTotalRebuild(!v.IsInterior);
 
-            World.ParticleManager.Trigger("puff", v.Position, Color.White, 20);
+            WorldManager.ParticleManager.Trigger("puff", v.Position, Color.White, 20);
 
             List<Body> components = new List<Body>();
             manager.Components.GetBodiesIntersecting(Vox.GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic);
@@ -221,7 +221,7 @@ namespace DwarfCorp
                 {
                     if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                     {
-                        World.GUI.ToolTipManager.Popup("None of the selected units can build walls.");
+                        WorldManager.GUI.ToolTipManager.Popup("None of the selected units can build walls.");
                         return;
                     }
                     List<Task> assignments = new List<Task>();
@@ -229,7 +229,7 @@ namespace DwarfCorp
 
                     if (!Verify(validRefs, CurrentVoxelType.ResourceToRelease))
                     {
-                        World.GUI.ToolTipManager.Popup("Can't build this! Need at least " + validRefs.Count + " " + ResourceLibrary.Resources[CurrentVoxelType.ResourceToRelease].ResourceName + ".");
+                        WorldManager.GUI.ToolTipManager.Popup("Can't build this! Need at least " + validRefs.Count + " " + ResourceLibrary.Resources[CurrentVoxelType.ResourceToRelease].ResourceName + ".");
                         return;
                     }
 
@@ -239,7 +239,7 @@ namespace DwarfCorp
                         assignments.Add(new BuildVoxelTask(r, CurrentVoxelType));
                     }
 
-                    TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.Build));
+                    TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(WorldManager.Master.SelectedMinions, GameMaster.ToolMode.Build));
 
                     break;
                 }

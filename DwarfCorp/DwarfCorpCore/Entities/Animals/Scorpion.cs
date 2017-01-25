@@ -39,7 +39,7 @@ namespace DwarfCorp
                 // Belongs to herbivore team
                 "Carnivore",
                 // Uses the default plan service
-                World.PlanService,
+                WorldManager.PlanService,
                 // Belongs to the herbivore team
                 manager.Factions.Factions["Carnivore"],
                 // The physics component this creature belongs to

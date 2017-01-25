@@ -79,7 +79,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Graphics = World.ChunkManager.Graphics;
+            Graphics = WorldManager.ChunkManager.Graphics;
         }
 
         public CharacterSprite()

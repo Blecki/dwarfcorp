@@ -401,15 +401,15 @@ namespace DwarfCorp
                 return null;
             }
 
-            if(World.ParticleManager != null)
+            if(WorldManager.ParticleManager != null)
             {
-                World.ParticleManager.Trigger(Type.ParticleType, Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
-                World.ParticleManager.Trigger("puff", Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                WorldManager.ParticleManager.Trigger(Type.ParticleType, Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
+                WorldManager.ParticleManager.Trigger("puff", Position + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
             }
 
-            if(World.Master != null)
+            if(WorldManager.Master != null)
             {
-                World.Master.Faction.OnVoxelDestroyed(this);
+                WorldManager.Master.Faction.OnVoxelDestroyed(this);
             }
 
             SoundManager.PlaySound(Type.ExplosionSound, Position);
@@ -462,9 +462,9 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            if (World.ChunkManager.ChunkData.ChunkMap.ContainsKey(chunkID))
+            if (WorldManager.ChunkManager.ChunkData.ChunkMap.ContainsKey(chunkID))
             {
-                Chunk = World.ChunkManager.ChunkData.ChunkMap[chunkID];
+                Chunk = WorldManager.ChunkManager.ChunkData.ChunkMap[chunkID];
                 index = Chunk.Data.IndexAt((int) GridPosition.X, (int) GridPosition.Y, (int) GridPosition.Z);
                 RegenerateQuickCompare();
             }

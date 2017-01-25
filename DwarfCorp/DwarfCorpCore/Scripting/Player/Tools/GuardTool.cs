@@ -88,7 +88,7 @@ namespace DwarfCorp
                 }
             }
 
-            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.Gather);
+            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(WorldManager.Master.SelectedMinions, GameMaster.ToolMode.Gather);
             TaskManager.AssignTasks(assignedTasks, minions);
             OnConfirm(minions);
 
@@ -115,22 +115,22 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                World.GUI.IsMouseVisible = false;
+                WorldManager.GUI.IsMouseVisible = false;
                 return;
             }
 
             Player.VoxSelector.Enabled = true;
-            World.GUI.IsMouseVisible = true;
+            WorldManager.GUI.IsMouseVisible = true;
             Player.BodySelector.Enabled = false;
             Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
 
-            if (World.GUI.IsMouseOver())
+            if (WorldManager.GUI.IsMouseOver())
             {
-                World.GUI.MouseMode = GUISkin.MousePointer.Pointer;
+                WorldManager.GUI.MouseMode = GUISkin.MousePointer.Pointer;
             }
             else
             {
-                World.GUI.MouseMode = GUISkin.MousePointer.Guard;
+                WorldManager.GUI.MouseMode = GUISkin.MousePointer.Guard;
             }
         }
 

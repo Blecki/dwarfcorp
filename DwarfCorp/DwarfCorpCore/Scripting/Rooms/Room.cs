@@ -117,7 +117,7 @@ namespace DwarfCorp
             HashSet<Body> components = new HashSet<Body>();
             BoundingBox box = GetBoundingBox();
             box.Max += new Vector3(0, 0, 2);
-            World.ComponentManager.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
+            WorldManager.ComponentManager.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
             toReturn.AddRange(components);
 

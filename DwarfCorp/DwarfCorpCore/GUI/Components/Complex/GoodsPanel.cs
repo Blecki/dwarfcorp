@@ -473,7 +473,7 @@ namespace DwarfCorp
             
             IsResizeable = false;
             IsDraggable = false;
-            TradePanel = new TradePanel(GUI, this, World.PlayerFaction, otherFaction, resources)
+            TradePanel = new TradePanel(GUI, this, WorldManager.PlayerFaction, otherFaction, resources)
             {
                 WidthSizeMode = SizeMode.Fit,
                 HeightSizeMode = SizeMode.Fit
