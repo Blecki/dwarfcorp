@@ -527,7 +527,7 @@ namespace DwarfCorp.GameStates
                 Overworld.Name = Settings.Name;
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
                 StateManager.PopState();
-                StateManager.PushState("PlayState");
+                StateManager.PushState("LoadState");
 
                 MainMenuState menu = (MainMenuState) StateManager.States["MainMenuState"];
                 menu.IsGameRunning = true;

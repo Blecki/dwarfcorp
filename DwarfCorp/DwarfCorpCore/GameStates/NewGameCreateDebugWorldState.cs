@@ -81,14 +81,14 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(frame, "Hills", "Create a hilly world.", (sender, args) =>
                 {
                     Overworld.CreateHillsLand(Game.GraphicsDevice);
-                    StateManager.PushState("PlayState");
+                    StateManager.PushState("LoadState");
                     WorldManager.WorldSize = new Point3(8, 1, 8);
                 });
 
             MakeMenuItem(frame, "Cliffs", "Create a cliff-y world.", (sender, args) =>
                 {
                     Overworld.CreateCliffsLand(Game.GraphicsDevice);
-                    StateManager.PushState("PlayState");
+                    StateManager.PushState("LoadState");
                     WorldManager.WorldSize = new Point3(8, 1, 8);
                     //GUI.MouseMode = GUISkin.MousePointer.Wait;
                     WorldManager.Natives = new List<Faction>();
@@ -103,14 +103,14 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(frame, "Flat", "Create a flat world.", (sender, args) =>
                 {
                     Overworld.CreateUniformLand(Game.GraphicsDevice);
-                    StateManager.PushState("PlayState");
+                    StateManager.PushState("LoadState");
                     WorldManager.WorldSize = new Point3(8, 1, 8);
                 });
 
             MakeMenuItem(frame, "Ocean", "Create an ocean world", (sender, args) =>
                 {
                     Overworld.CreateOceanLand(Game.GraphicsDevice);
-                    StateManager.PushState("PlayState");
+                    StateManager.PushState("LoadState");
                     WorldManager.WorldSize = new Point3(8, 1, 8);
                 });
 

@@ -132,11 +132,12 @@ namespace DwarfCorp
             StateManager.States["WorldGeneratorState"] = new WorldGeneratorState(this, StateManager);
             StateManager.States["OptionsState"] = new OptionsState(this, StateManager);
             StateManager.States["NewOptionsState"] = new NewOptionsState(this, StateManager);
-            StateManager.States["EconomyState"] = new EconomyState(this, StateManager, playState.World);
+            StateManager.States["EconomyState"] = new EconomyState(this, StateManager);
             StateManager.States["CompanyMakerState"] = new CompanyMakerState(this, StateManager);
             StateManager.States["WorldLoaderState"] = new WorldLoaderState(this, StateManager);
             StateManager.States["GameLoaderState"] = new GameLoaderState(this, StateManager);
             StateManager.States["LoseState"] = new LoseState(this, StateManager, playState);
+            StateManager.States["LoadState"] = new LoadState(this, StateManager);
 
             if(GameSettings.Default.DisplayIntro)
             {

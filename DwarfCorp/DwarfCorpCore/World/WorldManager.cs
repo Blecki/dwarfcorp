@@ -136,7 +136,7 @@ namespace DwarfCorp
         public static GameMaster Master = null;
 
         // If the game was loaded from a file, this contains the name of that file.
-        public string ExistingFile = "";
+        public static string ExistingFile = "";
 
         // Just a helpful 1x1 white pixel texture
         private Texture2D pixel;

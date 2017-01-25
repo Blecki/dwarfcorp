@@ -52,19 +52,17 @@ namespace DwarfCorp.GameStates
         public int EdgePadding { get; set; }
         public GridLayout Layout { get; set; }
         public InputManager Input { get; set; }
-        public WorldManager PlayState { get; set; }
         public Texture2D Icons { get; set; }
         public List<Button> TabButtons { get; set; }
         public Dictionary<string, GUIComponent> Tabs { get; set; } 
       
 
-        public EconomyState(DwarfGame game, GameStateManager stateManager, WorldManager play) :
+        public EconomyState(DwarfGame game, GameStateManager stateManager) :
             base(game, "EconomyState", stateManager)
         {
             
             EdgePadding = 32;
             Input = new InputManager();
-            PlayState = play;
             EnableScreensaver = false;
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
            

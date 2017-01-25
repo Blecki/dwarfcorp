@@ -169,6 +169,7 @@
     <Compile Include="GameStates\NewGameChooseWorldState.cs" />
     <Compile Include="GameStates\MainMenuState.cs" />
     <Compile Include="GameStates\OptionsState.cs" />
+    <Compile Include="GameStates\LoadState.cs" />
     <Compile Include="GameStates\WorldGeneratorState.cs" />
     <Compile Include="GameStates\WorldSetupState.cs" />
     <Compile Include="GameStates\WorldLoaderState.cs" />

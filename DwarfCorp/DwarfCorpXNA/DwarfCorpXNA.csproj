@@ -421,6 +421,9 @@
     <Compile Include="..\DwarfCorpCore\GameStates\IntroState.cs">
       <Link>GameStates\IntroState.cs</Link>
     </Compile>
+    <Compile Include="..\DwarfCorpCore\GameStates\LoadState.cs">
+      <Link>GameStates\LoadState.cs</Link>
+    </Compile>
     <Compile Include="..\DwarfCorpCore\GameStates\LoseState.cs">
       <Link>GameStates\LoseState.cs</Link>
     </Compile>

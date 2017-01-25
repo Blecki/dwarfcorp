@@ -271,12 +271,12 @@ namespace DwarfCorp.GameStates
 
 
                 PlayState state = StateManager.GetState<PlayState>("PlayState");
-                state.World.ExistingFile = descriptor.FileName;
+                WorldManager.ExistingFile = descriptor.FileName;
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
             
                 JoinThreads();
                 StateManager.PopState();
-                StateManager.PushState("PlayState");
+                StateManager.PushState("LoadState");
                 Games.Clear();
             }
         }
