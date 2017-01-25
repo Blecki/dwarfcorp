@@ -53,7 +53,7 @@ namespace DwarfCorp
     /// <summary>
     /// This is the main game state for actually playing the game.
     /// </summary>
-    public class World : IDisposable
+    public class WorldManager : IDisposable
     {
         #region fields
 
@@ -266,7 +266,7 @@ namespace DwarfCorp
 
         // Since world, like many of the other classes, is pretty much a singleton given how many static variables it has
         // this provides singleton access
-        public static World world;
+        public static WorldManager World;
 
         // event that is called when the world is done loading
         public delegate void OnLoaded();
@@ -282,9 +282,9 @@ namespace DwarfCorp
         /// Creates a new play state
         /// </summary>
         /// <param name="game">The program currently running</param>
-        public World(DwarfGame Game)
+        public WorldManager(DwarfGame Game)
         {
-            world = this;
+            World = this;
             this.Game = Game;
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;
@@ -497,7 +497,7 @@ namespace DwarfCorp
                 LoadingMessage = "Loading " + ExistingFile;
                 gameFile = new GameFile(ExistingFile, true);
                 Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
-                World.Time = gameFile.Data.Metadata.Time;
+                WorldManager.Time = gameFile.Data.Metadata.Time;
                 WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
                 WorldScale = gameFile.Data.Metadata.WorldScale;
                 GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
@@ -744,7 +744,7 @@ namespace DwarfCorp
                 BalloonPort port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager,
                     Camera.Position.X, Camera.Position.Z, 3);
                 CreateInitialDwarves(c);
-                World.PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
+                WorldManager.PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
 
                 foreach (var res in InitialEmbark.Resources)
                 {
@@ -1188,7 +1188,7 @@ namespace DwarfCorp
             AspectRatio = GraphicsDevice.Viewport.AspectRatio;
             Camera.AspectRatio = AspectRatio;
 
-            Camera.Update(gameTime, World.ChunkManager);
+            Camera.Update(gameTime, WorldManager.ChunkManager);
 
             if (KeyManager.RotationEnabled())
                 Mouse.SetPosition(Game.GraphicsDevice.Viewport.Width / 2,

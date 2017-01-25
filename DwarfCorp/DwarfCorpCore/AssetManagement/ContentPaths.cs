@@ -135,8 +135,8 @@ namespace DwarfCorp
         public class World
         {
             public static string biomes = ProgramData.CreatePath("World", "biomes.json");
-            public static string races = ProgramData.CreatePath("WorldManager", "races.json");
-            public static string embarks = ProgramData.CreatePath("WorldManager", "embarkments.json");
+            public static string races = ProgramData.CreatePath("World", "races.json");
+            public static string embarks = ProgramData.CreatePath("World", "embarkments.json");
         }
 
         public static T LoadFromJson<T>(string asset)

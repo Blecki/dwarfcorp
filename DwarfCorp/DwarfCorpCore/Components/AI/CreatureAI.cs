@@ -297,9 +297,10 @@ namespace DwarfCorp
             if (CurrentTask == null) return;
 
             Task newTask = null;
+            Tasks.RemoveAll(task => !task.IsFeasible(Creature));
             foreach (Task task in Tasks)
             {
-                if (task.Priority > CurrentTask.Priority && task.IsFeasible(Creature))
+                if (task.Priority > CurrentTask.Priority)
                 {
                     newTask = task;
                     break;

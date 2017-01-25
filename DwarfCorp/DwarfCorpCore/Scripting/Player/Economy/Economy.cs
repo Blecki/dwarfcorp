@@ -112,7 +112,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            WorldManager = WorldManager.WorldManager;
+            WorldManager = WorldManager.World;
         }
 
         public void UpdateStocks(DateTime time)
