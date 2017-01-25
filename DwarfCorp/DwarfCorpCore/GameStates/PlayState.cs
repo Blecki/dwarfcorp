@@ -18,7 +18,7 @@ namespace DwarfCorp.GameStates
         public GraphicsDevice GraphicsDevice;
 
         public bool ShouldReset { get; set; }
-        public static WorldManager WorldManager { get; set; }
+        public static WorldManager World { get; set; }
         public GameMaster Master
         {
             get { return WorldManager.Master; }
@@ -101,7 +101,7 @@ namespace DwarfCorp.GameStates
             ShouldReset = true;
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;
-            //World = new WorldManager(game);
+            //World = new World(game);
             //World.gameState = this;
             //World.OnLoadedEvent += World_OnLoadedEvent;
             //World.OnLoseEvent += World_OnLoseEvent;
@@ -131,10 +131,10 @@ namespace DwarfCorp.GameStates
         public override void OnEnter()
         {
 
-            //World = new WorldManager(game);
-            World.gameState = this;
+            //World = new World(game);
+            //World.gameState = this;
             //World.OnLoadedEvent += World_OnLoadedEvent;
-            World.OnLoseEvent += World_OnLoseEvent;
+            //World.OnLoseEvent += World_OnLoseEvent;
 
             CreateGUIComponents();
             // If the game should reset, we initialize everything
@@ -148,7 +148,7 @@ namespace DwarfCorp.GameStates
             //else
             //{
                 // Otherwise, we just unpause everything and re-enter the game.
-                WorldManager.Unpause();
+                World.Unpause();
             //}
             base.OnEnter();
         }
@@ -158,7 +158,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public override void OnExit()
         {
-            WorldManager.Pause();
+            World.Pause();
             base.OnExit();
         }
 
@@ -175,7 +175,7 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
-            WorldManager.Update(gameTime);
+            World.Update(gameTime);
             GUI.Update(gameTime);
             Input.Update();
 
@@ -193,11 +193,11 @@ namespace DwarfCorp.GameStates
         /// <param name="gameTime">The current time</param>
         public override void Render(DwarfTime gameTime)
         {
-            EnableScreensaver = !WorldManager.ShowingWorld;
-            if (WorldManager.ShowingWorld)
+            EnableScreensaver = !World.ShowingWorld;
+            if (World.ShowingWorld)
             {
                 GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
-                WorldManager.Render(gameTime);
+                World.Render(gameTime);
 
                 // SpriteBatch Begin and End must be called again. Hopefully we can factor this out with the new gui
                 RasterizerState rasterizerState = new RasterizerState()
@@ -222,12 +222,12 @@ namespace DwarfCorp.GameStates
             TipTimer.Update(gameTime);
             if (TipTimer.HasTriggered)
             {
-                WorldManager.LoadingMessageBottom = LoadingTips[WorldManager.Random.Next(LoadingTips.Count)];
+                World.LoadingMessageBottom = LoadingTips[WorldManager.Random.Next(LoadingTips.Count)];
                 TipIndex++;
             }
 
             EnableScreensaver = true;
-            WorldManager.Render(gameTime);
+            World.Render(gameTime);
             base.RenderUnitialized(gameTime);
         }
 
@@ -384,7 +384,7 @@ namespace DwarfCorp.GameStates
             LevelSlider.InvertValue = true;
             */
 
-            MiniMap = new Minimap(GUI, layout, 192, 192, WorldManager,
+            MiniMap = new Minimap(GUI, layout, 192, 192, World,
                 TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap),
                 TextureManager.GetTexture(ContentPaths.GUI.gui_minimap))
             {
@@ -482,8 +482,8 @@ namespace DwarfCorp.GameStates
         {
             if (key == ControlSettings.Mappings.Map)
             {
-                WorldManager.DrawMap = !WorldManager.DrawMap;
-                MiniMap.SetMinimized(!WorldManager.DrawMap);
+                World.DrawMap = !World.DrawMap;
+                MiniMap.SetMinimized(!World.DrawMap);
             }
 
             if (key == Keys.Escape)
@@ -642,7 +642,7 @@ namespace DwarfCorp.GameStates
             {
                 case Dialog.ReturnStatus.Ok:
                     {
-                        WorldManager.Save(filename, waitforsave_OnFinished);
+                        World.Save(filename, waitforsave_OnFinished);
                         break;
                     }
             }
@@ -665,7 +665,7 @@ namespace DwarfCorp.GameStates
             StateManager.StateStack.Clear();
             MainMenuState menuState = StateManager.GetState<MainMenuState>("MainMenuState");
             menuState.IsGameRunning = false;
-            WorldManager.Quit();
+            World.Quit();
             //StateManager.States["PlayState"] = new PlayState(Game, StateManager);
             StateManager.CurrentState = "";
             StateManager.PushState("MainMenuState");
