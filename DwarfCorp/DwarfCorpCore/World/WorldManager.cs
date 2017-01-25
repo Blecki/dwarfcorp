@@ -58,7 +58,6 @@ namespace DwarfCorp
         #region fields
 
         // The random seed of the whole game
-        public static int Seed { get; set; }
 
         // Defines the number of pixels in the overworld to number of voxels conversion
         public static float WorldScale
@@ -154,9 +153,6 @@ namespace DwarfCorp
 
         // Draws shadow maps
         public static ShadowRenderer Shadows;
-
-        // Used to generate all random numbers in the game.
-        public static ThreadSafeRandom Random = new ThreadSafeRandom();
 
         // Responsible for handling instances of particular primitives (or models)
         // and drawing them to the screen
@@ -285,7 +281,7 @@ namespace DwarfCorp
             this.Game = Game;
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;
-            Seed = Random.Next();
+            MathFunctions.Seed = MathFunctions.Random.Next();
             WorldOrigin = new Vector2(WorldWidth / 2, WorldHeight / 2);
             Time = new WorldTime();
         }
@@ -409,8 +405,8 @@ namespace DwarfCorp
 
             foreach (string ent in InitialEmbark.Party)
             {
-                Vector3 dorfPos = new Vector3(Camera.Position.X + (float)Random.NextDouble(), h + 10,
-                    Camera.Position.Z + (float)Random.NextDouble());
+                Vector3 dorfPos = new Vector3(Camera.Position.X + (float)MathFunctions.Random.NextDouble(), h + 10,
+                    Camera.Position.Z + (float)MathFunctions.Random.NextDouble());
                 Physics creat = (Physics)EntityFactory.CreateEntity<Physics>(ent, dorfPos);
                 creat.Velocity = new Vector3(1, 0, 0);
             }
@@ -525,11 +521,11 @@ namespace DwarfCorp
             }
             else
             {
-                GameID = Random.Next(0, 1024);
+                GameID = MathFunctions.Random.Next(0, 1024);
             }
 
 
-            ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f, ChunkHeight / 2.0f)
+            ChunkGenerator = new ChunkGenerator(VoxelLibrary, MathFunctions.Seed, 0.02f, ChunkHeight / 2.0f)
             {
                 SeaLevel = SeaLevel
             };

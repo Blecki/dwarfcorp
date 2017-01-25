@@ -298,7 +298,7 @@ namespace DwarfCorp
 
                     foreach (FaunaData animal in biomeData.Fauna)
                     {
-                        if (y <= 0 || !(WorldManager.Random.NextDouble() < animal.SpawnProbability))
+                        if (y <= 0 || !(MathFunctions.Random.NextDouble() < animal.SpawnProbability))
                         {
                             continue;
                         }
@@ -506,7 +506,7 @@ namespace DwarfCorp
 
                             foreach (FaunaData animal in biome.Fauna)
                             {
-                                if (y <= 0 || !(WorldManager.Random.NextDouble() < animal.SpawnProbability))
+                                if (y <= 0 || !(MathFunctions.Random.NextDouble() < animal.SpawnProbability))
                                 {
                                     continue;
                                 }

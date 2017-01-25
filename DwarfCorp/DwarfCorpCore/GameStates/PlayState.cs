@@ -222,7 +222,7 @@ namespace DwarfCorp.GameStates
             TipTimer.Update(gameTime);
             if (TipTimer.HasTriggered)
             {
-                World.LoadingMessageBottom = LoadingTips[WorldManager.Random.Next(LoadingTips.Count)];
+                World.LoadingMessageBottom = LoadingTips[MathFunctions.Random.Next(LoadingTips.Count)];
                 TipIndex++;
             }
 

@@ -74,7 +74,7 @@ namespace DwarfCorp
            CoverLetter =
                 TextGenerator.GenerateRandom("Dear " + WorldManager.PlayerCompany.Name + ",\n",
                 "${Please,Do}"," consider ", "${my,this}"," application for the position of " + Level.Name +
-                                             ". " + justifications[WorldManager.Random.Next(justifications.Count)] +"\n", "${Thanks,Sincerely,Yours}", ",\n    " ,Name);
+                                             ". " + justifications[MathFunctions.Random.Next(justifications.Count)] +"\n", "${Thanks,Sincerely,Yours}", ",\n    " ,Name);
 
             if (level > 0)
             {
@@ -148,7 +148,7 @@ namespace DwarfCorp
                 }
                
             };
-             HomeTown = TextGenerator.GenerateRandom(templates[WorldManager.Random.Next(templates.Count)]); 
+             HomeTown = TextGenerator.GenerateRandom(templates[MathFunctions.Random.Next(templates.Count)]); 
         }
     }
 }

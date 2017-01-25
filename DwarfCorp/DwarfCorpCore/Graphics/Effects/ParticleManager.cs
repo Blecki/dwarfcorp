@@ -26,7 +26,7 @@ namespace DwarfCorp
         {
             for (int i = 0; i < num; i++)
             {
-                Emitters[WorldManager.Random.Next(Emitters.Count)].Trigger(1, position, tint);
+                Emitters[MathFunctions.Random.Next(Emitters.Count)].Trigger(1, position, tint);
             }
         }
         
