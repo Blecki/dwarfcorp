@@ -67,14 +67,14 @@ namespace DwarfCorp
         public List<Company> Market { get; set; }
 
         [JsonIgnore]
-        public WorldManager world { get; set; }
+        public World world { get; set; }
 
         public Economy()
         {
             
         }
 
-        public Economy(Faction faction, float currentMoney, WorldManager world, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
+        public Economy(Faction faction, float currentMoney, World world, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
         {
             this.world = world;
             Company = Company.GenerateRandom(currentMoney, 1.0f, Company.Sector.Exploration);
@@ -106,13 +106,13 @@ namespace DwarfCorp
                 Company.GenerateRandom(1800, 60.0f, Company.Sector.Finance)
             };
 
-            WorldManager.Time.NewDay += Time_NewDay;
+            World.Time.NewDay += Time_NewDay;
         }
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            world = WorldManager.world;
+            world = World.world;
         }
 
         public void UpdateStocks(DateTime time)
@@ -141,12 +141,12 @@ namespace DwarfCorp
 
             if (Company.Assets <= 0)
             {
-                WorldManager.AnnouncementManager.Announce("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
+                World.AnnouncementManager.Announce("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
             }
 
             string symbol = diff > 0 ? "+" : "";
            
-            WorldManager.AnnouncementManager.Announce(Company.TickerName + " " + Company.StockPrice.ToString("F2") + " " + symbol + diff.ToString("F2"), "Our stock price changed by " + symbol + " " + diff.ToString("F2") + " today.");
+            World.AnnouncementManager.Announce(Company.TickerName + " " + Company.StockPrice.ToString("F2") + " " + symbol + diff.ToString("F2"), "Our stock price changed by " + symbol + " " + diff.ToString("F2") + " today.");
         }
 
         void Time_NewDay(DateTime time)

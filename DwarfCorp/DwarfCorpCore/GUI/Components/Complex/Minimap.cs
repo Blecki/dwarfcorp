@@ -55,7 +55,7 @@ namespace DwarfCorp
 
         public OrbitCamera Camera { get; set; }
 
-        public WorldManager PlayState { get; set; }
+        public World PlayState { get; set; }
 
         public bool IsMinimized { get; set; }
 
@@ -65,7 +65,7 @@ namespace DwarfCorp
         protected Button MinimizeButton { get; set; }
         bool SuppressClick { get; set; }
 
-        public Minimap(DwarfGUI gui, GUIComponent parent, int width, int height, WorldManager playState, Texture2D colormap, Texture2D frame):
+        public Minimap(DwarfGUI gui, GUIComponent parent, int width, int height, World playState, Texture2D colormap, Texture2D frame):
             base(gui, parent, new ImageFrame())
         {
             Frame = frame;
@@ -149,9 +149,9 @@ namespace DwarfCorp
 
         void ZoomHomeButton_OnClicked()
         {
-            WorldManager.Camera.UpdateViewMatrix();
-            WorldManager.Camera.ZoomTargets.Clear();
-            WorldManager.Camera.ZoomTargets.Add(HomePosition);
+            World.Camera.UpdateViewMatrix();
+            World.Camera.ZoomTargets.Clear();
+            World.Camera.ZoomTargets.Add(HomePosition);
         }
 
         bool IsOverButtons(int x, int y)
@@ -170,16 +170,16 @@ namespace DwarfCorp
                 SuppressClick = false;
                 return;
             }
-            Vector3 forward = (WorldManager.Camera.Target - WorldManager.Camera.Position);
+            Vector3 forward = (World.Camera.Target - World.Camera.Position);
             forward.Normalize();
 
             Vector3 pos = viewPort.Unproject(new Vector3(mouseState.X - imageBounds.X, mouseState.Y - imageBounds.Y, 0), Camera.ProjectionMatrix, Camera.ViewMatrix, Matrix.Identity) - forward * 10;
-            Vector3 target = new Vector3(pos.X, WorldManager.Camera.Target.Y, pos.Z);
-            float height = WorldManager.ChunkManager.ChunkData.GetFilledVoxelGridHeightAt(target.X, target.Y, target.Z);
+            Vector3 target = new Vector3(pos.X, World.Camera.Target.Y, pos.Z);
+            float height = World.ChunkManager.ChunkData.GetFilledVoxelGridHeightAt(target.X, target.Y, target.Z);
             target.Y = Math.Max(height + 15, target.Y);
-            target = MathFunctions.Clamp(target, WorldManager.ChunkManager.Bounds);
-            WorldManager.Camera.ZoomTargets.Clear();
-            WorldManager.Camera.ZoomTargets.Add(target);
+            target = MathFunctions.Clamp(target, World.ChunkManager.Bounds);
+            World.Camera.ZoomTargets.Clear();
+            World.Camera.ZoomTargets.Add(target);
         }
 
         void zoomOutButton_OnClicked()
@@ -225,37 +225,37 @@ namespace DwarfCorp
         {
             if(!HomeSet)
             {
-                HomePosition = WorldManager.Camera.Target;
+                HomePosition = World.Camera.Target;
                 HomeSet = true;
             }
 
             if(IsVisible && !IsMinimized && GUI.RootComponent.IsVisible)
             {
                 
-                Camera.Update(time, WorldManager.ChunkManager);
-                Camera.Target = WorldManager.Camera.Target + Vector3.Up * 50;
+                Camera.Update(time, World.ChunkManager);
+                Camera.Target = World.Camera.Target + Vector3.Up * 50;
                 Camera.Phi = -(float) Math.PI * 0.5f;
-                Camera.Theta = WorldManager.Camera.Theta;
+                Camera.Theta = World.Camera.Theta;
                 Camera.UpdateProjectionMatrix();
                 
                 PlayState.GraphicsDevice.SetRenderTarget(RenderTarget);
                 
                 PlayState.GraphicsDevice.Clear(ClearOptions.Target, Color.Black, 0, 0);
-                WorldManager.DefaultShader.Parameters["xView"].SetValue(Camera.ViewMatrix);
-                WorldManager.DefaultShader.Parameters["xEnableFog"].SetValue(0);
+                World.DefaultShader.Parameters["xView"].SetValue(Camera.ViewMatrix);
+                World.DefaultShader.Parameters["xEnableFog"].SetValue(0);
 
-                WorldManager.DefaultShader.Parameters["xProjection"].SetValue(Camera.ProjectionMatrix);
-                WorldManager.DefaultShader.CurrentTechnique = WorldManager.DefaultShader.Techniques["Textured_colorscale"];
+                World.DefaultShader.Parameters["xProjection"].SetValue(Camera.ProjectionMatrix);
+                World.DefaultShader.CurrentTechnique = World.DefaultShader.Techniques["Textured_colorscale"];
 
                 PlayState.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
 
-                WorldManager.ChunkManager.RenderAll(Camera, time, PlayState.GraphicsDevice, WorldManager.DefaultShader, Matrix.Identity, ColorMap);
-                WorldManager.WaterRenderer.DrawWaterFlat(PlayState.GraphicsDevice, Camera.ViewMatrix, Camera.ProjectionMatrix, WorldManager.DefaultShader, WorldManager.ChunkManager);
+                World.ChunkManager.RenderAll(Camera, time, PlayState.GraphicsDevice, World.DefaultShader, Matrix.Identity, ColorMap);
+                World.WaterRenderer.DrawWaterFlat(PlayState.GraphicsDevice, Camera.ViewMatrix, Camera.ProjectionMatrix, World.DefaultShader, World.ChunkManager);
                 PlayState.GraphicsDevice.Textures[0] = null;
                 PlayState.GraphicsDevice.Indices = null;
                 PlayState.GraphicsDevice.SetVertexBuffer(null);
 
-                WorldManager.DefaultShader.Parameters["xEnableFog"].SetValue(1);
+                World.DefaultShader.Parameters["xEnableFog"].SetValue(1);
 
                 DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, null, RasterizerState.CullNone);
                 Viewport viewPort = new Viewport(RenderTarget.Bounds);

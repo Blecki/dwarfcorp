@@ -275,7 +275,7 @@ namespace DwarfCorp
             TimeForward.IsVisible = false;
             TimeBackward.IsVisible = false;
             DwarfTime.LastTime.Speed = (float) multiplier;
-            WorldManager.Paused = false;
+            World.Paused = false;
             TimeLabel.Text = multiplier + "x";
             TimeLabel.ToolTip = "Game is running at " + multiplier + "x speed";
         }

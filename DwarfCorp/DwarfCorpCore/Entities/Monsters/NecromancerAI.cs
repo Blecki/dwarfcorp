@@ -87,14 +87,14 @@ namespace DwarfCorp
         {
             Vector3 pos = Position + MathFunctions.RandVector3Box(-1.0f, 1.0f, 0.0f, 0.0f, -1.0f, 1.0f);
             Skeleton skeleton = EntityFactory.GenerateSkeleton(pos, Manager, GameState.Game.Content,
-                GameState.Game.GraphicsDevice, Chunks, WorldManager.Camera, Faction, WorldManager.PlanService,
+                GameState.Game.GraphicsDevice, Chunks, World.Camera, Faction, World.PlanService,
                 this.Creature.Allies).GetChildrenOfType<Skeleton>().FirstOrDefault();
 
             Skeletons.Add(skeleton);
             Matrix animatePosition = skeleton.Sprite.LocalTransform;
             animatePosition.Translation = animatePosition.Translation - new Vector3(0, 1, 0);
             skeleton.Sprite.AnimationQueue.Add(new EaseMotion(1.0f, animatePosition, skeleton.Sprite.LocalTransform.Translation));
-            WorldManager.ParticleManager.Trigger("green_flame", pos, Color.White, 10);
+            World.ParticleManager.Trigger("green_flame", pos, Color.White, 10);
             SoundManager.PlaySound(ContentPaths.Audio.tinkle, pos, true);
         }
 
@@ -121,7 +121,7 @@ namespace DwarfCorp
         public void OrderSkeletonsToAttack()
         {
             List<CreatureAI> enemies = (from faction in Creature.Manager.Factions.Factions
-                                        where WorldManager.ComponentManager.Diplomacy.GetPolitics(Creature.Faction, faction.Value).GetCurrentRelationship() == Relationship.Hateful 
+                                        where World.ComponentManager.Diplomacy.GetPolitics(Creature.Faction, faction.Value).GetCurrentRelationship() == Relationship.Hateful 
                                         from minion in faction.Value.Minions 
                                         let dist = (minion.Position - Creature.AI.Position).Length() 
                                         where dist < AttackRange 

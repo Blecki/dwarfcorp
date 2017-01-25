@@ -144,7 +144,7 @@ namespace DwarfCorp
 
             for(int i = 0; i < max; i++)
             {
-                int r = WorldManager.Random.Next(indices.Count);
+                int r = World.Random.Next(indices.Count);
 
                 toReturn.Add(indices[r]);
                 indices.RemoveAt(r);
@@ -173,7 +173,7 @@ namespace DwarfCorp
         public static T SelectRandom<T>(IEnumerable<T> list)
         {
             var enumerable = list as IList<T> ?? list.ToList();
-            return enumerable.ElementAt(WorldManager.Random.Next(enumerable.Count()));
+            return enumerable.ElementAt(World.Random.Next(enumerable.Count()));
         }
 
         public static T[,] RotateClockwise<T>(T[,] A)

@@ -260,7 +260,7 @@ namespace DwarfCorp
     {
         public override AStarPlanResponse HandleRequest(AstarPlanRequest req)
         {
-            List<Creature.MoveAction> path = AStarPlanner.FindPath(req.Sender.Movement, req.Start, req.GoalRegion, WorldManager.ChunkManager, req.MaxExpansions, req.HeuristicWeight);
+            List<Creature.MoveAction> path = AStarPlanner.FindPath(req.Sender.Movement, req.Start, req.GoalRegion, World.ChunkManager, req.MaxExpansions, req.HeuristicWeight);
 
             AStarPlanResponse res = new AStarPlanResponse
             {

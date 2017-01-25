@@ -143,7 +143,7 @@ namespace DwarfCorp
                 }
 
                 Voxel target = new Voxel();
-                bool voxExists = WorldManager.ChunkManager.ChunkData.GetVoxel(EntityToKill.Position, ref target);
+                bool voxExists = World.ChunkManager.ChunkData.GetVoxel(EntityToKill.Position, ref target);
                 if (!voxExists || !PlanAct.PathExists(agent.Physics.CurrentVoxel, target, agent.AI))
                 {
                     return false;
@@ -155,7 +155,7 @@ namespace DwarfCorp
                     return true;
                 }
                 Relationship relation =
-                    WorldManager.ComponentManager.Diplomacy.GetPolitics(ai.Faction, agent.Faction).GetCurrentRelationship();
+                    World.ComponentManager.Diplomacy.GetPolitics(ai.Faction, agent.Faction).GetCurrentRelationship();
                 return relation == Relationship.Hateful || relation == Relationship.Indifferent;
             }
         }

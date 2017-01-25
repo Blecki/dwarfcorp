@@ -130,7 +130,7 @@ namespace DwarfCorp
         /// <value>
         /// The manager.
         /// </value>
-        public ComponentManager Manager { get { return WorldManager.ComponentManager; }}
+        public ComponentManager Manager { get { return World.ComponentManager; }}
 
         /// <summary>
         /// The global identifier lock. This is necessary to ensure that no two components
@@ -368,7 +368,7 @@ namespace DwarfCorp
         {
             string toReturn = "";
 
-            if(Parent == WorldManager.ComponentManager.RootComponent)
+            if(Parent == World.ComponentManager.RootComponent)
                 toReturn += Name;
 
             foreach (GameComponent component in Children)

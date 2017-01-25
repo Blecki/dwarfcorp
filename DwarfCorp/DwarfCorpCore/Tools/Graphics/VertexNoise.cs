@@ -47,12 +47,12 @@ namespace DwarfCorp
     /// </summary>
     internal class VertexNoise
     {
-        private static Perlin VertexNoiseX = new Perlin(WorldManager.Random.Next());
-        private static Perlin VertexNoiseY = new Perlin(WorldManager.Random.Next());
-        private static Perlin VertexNoiseZ = new Perlin(WorldManager.Random.Next());
-        private static Perlin GlobalVertexNoiseX = new Perlin(WorldManager.Random.Next());
-        private static Perlin GlobalVertexNoiseY = new Perlin(WorldManager.Random.Next());
-        private static Perlin GlobalVertexNoiseZ = new Perlin(WorldManager.Random.Next());
+        private static Perlin VertexNoiseX = new Perlin(World.Random.Next());
+        private static Perlin VertexNoiseY = new Perlin(World.Random.Next());
+        private static Perlin VertexNoiseZ = new Perlin(World.Random.Next());
+        private static Perlin GlobalVertexNoiseX = new Perlin(World.Random.Next());
+        private static Perlin GlobalVertexNoiseY = new Perlin(World.Random.Next());
+        private static Perlin GlobalVertexNoiseZ = new Perlin(World.Random.Next());
         private static float NoiseScale = 0.1f;
         private static float NoiseMagnitude = 0.35f;
         private static float GlobalNoiseScale = 0.01f;

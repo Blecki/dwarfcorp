@@ -68,12 +68,12 @@ namespace DwarfCorp
         {
             Points = new List<Vector2>();
 
-            BoundingFrustum cameraFrustrum = WorldManager.Camera.GetFrustrum();
+            BoundingFrustum cameraFrustrum = World.Camera.GetFrustrum();
             foreach(Vector3 point in points)
             {
                 if(cameraFrustrum.Contains(point) == ContainmentType.Contains)
                 {
-                    Vector3 screenVec = GameState.Game.GraphicsDevice.Viewport.Project(point, WorldManager.Camera.ProjectionMatrix, WorldManager.Camera.ViewMatrix, Matrix.Identity);
+                    Vector3 screenVec = GameState.Game.GraphicsDevice.Viewport.Project(point, World.Camera.ProjectionMatrix, World.Camera.ViewMatrix, Matrix.Identity);
                     Points.Add(new Vector2(screenVec.X, screenVec.Y));
                 }
             }

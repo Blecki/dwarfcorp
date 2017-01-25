@@ -72,8 +72,8 @@ namespace DwarfCorp
 
         protected void OnDeserialized(StreamingContext context)
         {
-            Initialize(GameState.Game, WorldManager.ComponentManager, WorldManager.ChunkManager, WorldManager.Camera, WorldManager.ChunkManager.Graphics,  WorldManager.GUI);
-            WorldManager.Master = this;
+            Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Camera, World.ChunkManager.Graphics,  World.GUI);
+            World.Master = this;
         }
 
         public GameMaster()
@@ -87,7 +87,7 @@ namespace DwarfCorp
             VoxSelector.Selected += OnSelected;
             VoxSelector.Dragged += OnDrag;
             BodySelector.Selected += OnBodiesSelected;
-            WorldManager.Time.NewDay += Time_NewDay;
+            World.Time.NewDay += Time_NewDay;
         }
 
         public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics, DwarfGUI gui)
@@ -230,7 +230,7 @@ namespace DwarfCorp
                 {
                     if (!noMoney)
                     {
-                        WorldManager.AnnouncementManager.Announce(Drawer2D.WrapColor("We're bankrupt!", Color.DarkRed),
+                        World.AnnouncementManager.Announce(Drawer2D.WrapColor("We're bankrupt!", Color.DarkRed),
                             "If we don't make a profit by tomorrow, our stock will crash!");
                     }
                     noMoney = true;
@@ -242,7 +242,7 @@ namespace DwarfCorp
             }
 
             SoundManager.PlaySound(ContentPaths.Audio.change);
-            WorldManager.AnnouncementManager.Announce("Pay day!", "We paid our employees " + total.ToString("C") + " today.");
+            World.AnnouncementManager.Announce("Pay day!", "We paid our employees " + total.ToString("C") + " today.");
         }
 
 
@@ -315,7 +315,7 @@ namespace DwarfCorp
                 }
             }
 
-            if (!WorldManager.Paused)
+            if (!World.Paused)
             {
 
             }
@@ -340,7 +340,7 @@ namespace DwarfCorp
 
                 if (deadMinion != null)
                 {
-                    WorldManager.AnnouncementManager.Announce(
+                    World.AnnouncementManager.Announce(
                         deadMinion.Stats.FullName + " (" + deadMinion.Stats.CurrentLevel.Name + ")" + Drawer2D.WrapColor(" died!", Color.DarkRed),
                         "One of our employees has died!");
                     Faction.Economy.Company.StockPrice -= MathFunctions.Rand(0, 0.5f);
@@ -370,7 +370,7 @@ namespace DwarfCorp
         {
             if(KeyManager.RotationEnabled())
             {
-                WorldManager.GUI.IsMouseVisible = false;
+                World.GUI.IsMouseVisible = false;
             }
           
         }
@@ -398,12 +398,12 @@ namespace DwarfCorp
         {
             if(key == ControlSettings.Mappings.SliceUp)
             {
-                WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(WorldManager.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
+                World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
             }
 
             if(key == ControlSettings.Mappings.SliceDown)
             {
-                WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(WorldManager.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
+                World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
             }
 
 

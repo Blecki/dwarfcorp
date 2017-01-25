@@ -144,7 +144,7 @@ namespace DwarfCorp
 
                 if (randomPitch)
                 {
-                    sound.EffectInstance.Pitch = (float)(WorldManager.Random.NextDouble() * 1.0f - 0.5f);
+                    sound.EffectInstance.Pitch = (float)(World.Random.NextDouble() * 1.0f - 0.5f);
                 }
                 ActiveSounds.Add(sound);
 
@@ -234,7 +234,7 @@ namespace DwarfCorp
             {
                 if (once  && ActiveSongs.Count > 0)
                 {
-                    MediaPlayer.Play(ActiveSongs[WorldManager.Random.Next(ActiveSongs.Count)]);
+                    MediaPlayer.Play(ActiveSongs[World.Random.Next(ActiveSongs.Count)]);
                     once = false;
                 }
             }

@@ -56,7 +56,7 @@ namespace DwarfCorp
         {
             CreatureDef dwarfDef = ContentPaths.LoadFromJson<CreatureDef>(ContentPaths.Entities.Dwarf.dwarf);
             Creature toReturn =  new Creature(position, dwarfDef, "Wizard", 0, "Player");
-            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, WorldManager.Time.CurrentDate), false);
+            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, World.Time.CurrentDate), false);
             return toReturn.Physics;
         }
 
@@ -64,7 +64,7 @@ namespace DwarfCorp
         {
             CreatureDef dwarfDef = ContentPaths.LoadFromJson<CreatureDef>(ContentPaths.Entities.Goblin.goblin);
             Creature toReturn = new Creature(position, dwarfDef, "Sword Goblin", 0, "Goblins");
-            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, WorldManager.Time.CurrentDate), false);
+            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, World.Time.CurrentDate), false);
             return toReturn.Physics;
         }
 
@@ -72,7 +72,7 @@ namespace DwarfCorp
         {
             CreatureDef dwarfDef = ContentPaths.LoadFromJson<CreatureDef>(ContentPaths.Entities.Skeleton.skeleton);
             Creature toReturn = new Creature(position, dwarfDef, "Skeleton", 0, "Undead");
-            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, WorldManager.Time.CurrentDate), false);
+            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, World.Time.CurrentDate), false);
             return toReturn.Physics;
         }
 
@@ -81,42 +81,42 @@ namespace DwarfCorp
         {
             CreatureDef dwarfDef = ContentPaths.LoadFromJson<CreatureDef>(ContentPaths.Entities.Moleman.moleman);
             Creature toReturn = new Creature(position, dwarfDef, "Moleman Miner", 0, "Molemen");
-            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, WorldManager.Time.CurrentDate), false);
+            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, World.Time.CurrentDate), false);
             return toReturn.Physics;
         }
 
         public static void Initialize()
         {
             RegisterEntity("Crate", (position, data) => new Crate(position));
-            RegisterEntity("Balloon", (position, data) => CreateBalloon(position + new Vector3(0, 1000, 0), position, WorldManager.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, null, WorldManager.PlayerFaction));
+            RegisterEntity("Balloon", (position, data) => CreateBalloon(position + new Vector3(0, 1000, 0), position, World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, null, World.PlayerFaction));
             RegisterEntity("Work Pile", (position, data) => new WorkPile(position));
             RegisterEntity("Pine Tree", (position, data) => new Tree(position, "pine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f)));
             RegisterEntity("Snow Pine Tree", (position, data) => new Tree(position, "snowpine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f)));
             RegisterEntity("Palm Tree", (position, data) => new Tree(position, "palm", ResourceLibrary.ResourceType.Coconut, data.GetData("Scale", 1.0f)));
             RegisterEntity("Cactus", (position, data) => new Cactus(position, "cactus", data.GetData("Scale", 1.0f)));
             RegisterEntity("Berry Bush", (position, data) => new Bush(position, "berrybush", data.GetData("Scale", 1.0f)));
-            RegisterEntity("Bird", (position, data) => new Bird(ContentPaths.Entities.Animals.Birds.GetRandomBird(), position, WorldManager.ComponentManager, WorldManager.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Bird"));
+            RegisterEntity("Bird", (position, data) => new Bird(ContentPaths.Entities.Animals.Birds.GetRandomBird(), position, World.ComponentManager, World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Bird"));
             RegisterEntity("Bat", (position, data) => new Bat(position));
-            RegisterEntity("Scorpion", (position, data) => new Scorpion(ContentPaths.Entities.Animals.Scorpion.scorption_animation, position, WorldManager.ComponentManager, WorldManager.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Scorpion"));
+            RegisterEntity("Scorpion", (position, data) => new Scorpion(ContentPaths.Entities.Animals.Scorpion.scorption_animation, position, World.ComponentManager, World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Scorpion"));
             RegisterEntity("Spider", (position, data) => new Spider(ContentPaths.Entities.Animals.Spider.spider_animation, position));
-            RegisterEntity("Frog", (position, data) => new Frog(ContentPaths.Entities.Animals.Frog.frog0_animation, position, WorldManager.ComponentManager, WorldManager.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Frog"));
-            RegisterEntity("Tree Frog", (position, data) => new Frog(ContentPaths.Entities.Animals.Frog.frog1_animation, position, WorldManager.ComponentManager, WorldManager.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Frog"));
-            RegisterEntity("Brown Rabbit", (position, data) => new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit0_animation, position, WorldManager.ComponentManager, WorldManager.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Brown Rabbit"));
-            RegisterEntity("White Rabbit", (position, data) => new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit1_animation, position, WorldManager.ComponentManager, WorldManager.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "White Rabbit"));
-            RegisterEntity("Deer", (position, data) => new Deer(ContentPaths.Entities.Animals.Deer.deer, position, WorldManager.ComponentManager, WorldManager.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Deer"));
-            RegisterEntity("Dwarf", (position, data) => GenerateDwarf(position, WorldManager.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, WorldManager.ChunkManager, WorldManager.Camera, WorldManager.PlayerFaction, WorldManager.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Worker], 0));
+            RegisterEntity("Frog", (position, data) => new Frog(ContentPaths.Entities.Animals.Frog.frog0_animation, position, World.ComponentManager, World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Frog"));
+            RegisterEntity("Tree Frog", (position, data) => new Frog(ContentPaths.Entities.Animals.Frog.frog1_animation, position, World.ComponentManager, World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Frog"));
+            RegisterEntity("Brown Rabbit", (position, data) => new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit0_animation, position, World.ComponentManager, World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Brown Rabbit"));
+            RegisterEntity("White Rabbit", (position, data) => new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit1_animation, position, World.ComponentManager, World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "White Rabbit"));
+            RegisterEntity("Deer", (position, data) => new Deer(ContentPaths.Entities.Animals.Deer.deer, position, World.ComponentManager, World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Deer"));
+            RegisterEntity("Dwarf", (position, data) => GenerateDwarf(position, World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, World.ChunkManager, World.Camera, World.PlayerFaction, World.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Worker], 0));
             //RegisterEntity("TestDwarf", (position, data) => GenerateTestDwarf(position));
             //RegisterEntity("TestGoblin", (position, data) => GenerateTestGoblin(position));
             //RegisterEntity("TestSkeleton", (position, data) => GenerateTestSeketon(position));
             //RegisterEntity("TestMoleman", (position, data) => GenerateTestMoleman(position));
-            RegisterEntity("AxeDwarf", (position, data) => GenerateDwarf(position, WorldManager.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, WorldManager.ChunkManager, WorldManager.Camera, WorldManager.PlayerFaction, WorldManager.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.AxeDwarf], 0));
-            RegisterEntity("CraftsDwarf", (position, data) => GenerateDwarf(position, WorldManager.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, WorldManager.ChunkManager, WorldManager.Camera, WorldManager.PlayerFaction, WorldManager.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.CraftsDwarf], 0));
-            RegisterEntity("Wizard", (position, data) => GenerateDwarf(position, WorldManager.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, WorldManager.ChunkManager, WorldManager.Camera, WorldManager.PlayerFaction, WorldManager.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Wizard], 0));
-            RegisterEntity("MusketDwarf", (position, data) => GenerateDwarf(position, WorldManager.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, WorldManager.ChunkManager, WorldManager.Camera, WorldManager.PlayerFaction, WorldManager.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.MusketDwarf], 0));
-            RegisterEntity("Moleman", (position, data) => GenerateMoleman(position, WorldManager.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, WorldManager.ChunkManager, WorldManager.Camera, WorldManager.ComponentManager.Factions.Factions["Molemen"], WorldManager.PlanService, "Molemen"));
-            RegisterEntity("Goblin", (position, data) => GenerateGoblin(position, WorldManager.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, WorldManager.ChunkManager, WorldManager.Camera, WorldManager.ComponentManager.Factions.Factions["Goblins"], WorldManager.PlanService, "Goblins"));
-            RegisterEntity("Skeleton", (position, data) => GenerateSkeleton(position, WorldManager.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, WorldManager.ChunkManager, WorldManager.Camera, WorldManager.ComponentManager.Factions.Factions["Undead"], WorldManager.PlanService, "Undead"));
-            RegisterEntity("Necromancer", (position, data) => GenerateNecromancer(position, WorldManager.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, WorldManager.ChunkManager, WorldManager.Camera, WorldManager.ComponentManager.Factions.Factions["Undead"], WorldManager.PlanService, "Undead"));
+            RegisterEntity("AxeDwarf", (position, data) => GenerateDwarf(position, World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, World.ChunkManager, World.Camera, World.PlayerFaction, World.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.AxeDwarf], 0));
+            RegisterEntity("CraftsDwarf", (position, data) => GenerateDwarf(position, World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, World.ChunkManager, World.Camera, World.PlayerFaction, World.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.CraftsDwarf], 0));
+            RegisterEntity("Wizard", (position, data) => GenerateDwarf(position, World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, World.ChunkManager, World.Camera, World.PlayerFaction, World.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Wizard], 0));
+            RegisterEntity("MusketDwarf", (position, data) => GenerateDwarf(position, World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, World.ChunkManager, World.Camera, World.PlayerFaction, World.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.MusketDwarf], 0));
+            RegisterEntity("Moleman", (position, data) => GenerateMoleman(position, World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, World.ChunkManager, World.Camera, World.ComponentManager.Factions.Factions["Molemen"], World.PlanService, "Molemen"));
+            RegisterEntity("Goblin", (position, data) => GenerateGoblin(position, World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, World.ChunkManager, World.Camera, World.ComponentManager.Factions.Factions["Goblins"], World.PlanService, "Goblins"));
+            RegisterEntity("Skeleton", (position, data) => GenerateSkeleton(position, World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, World.ChunkManager, World.Camera, World.ComponentManager.Factions.Factions["Undead"], World.PlanService, "Undead"));
+            RegisterEntity("Necromancer", (position, data) => GenerateNecromancer(position, World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, World.ChunkManager, World.Camera, World.ComponentManager.Factions.Factions["Undead"], World.PlanService, "Undead"));
             RegisterEntity("Bed", (position, data) => new Bed(position));
             RegisterEntity("Barrel", (position, data) => new Barrel(position));
             RegisterEntity("Bear Trap", (position, data) => new BearTrap(position));
@@ -132,8 +132,8 @@ namespace DwarfCorp
             RegisterEntity("Potions", (position, data) => new Table(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4)) { Tags = new List<string>(){"Research"}, Battery = new Table.ManaBattery() { Charge = 0.0f, MaxCharge = 100.0f } });
             RegisterEntity("Anvil", (position, data) => new Anvil(position));
             RegisterEntity("Forge", (position, data) => new Forge(position));
-            RegisterEntity("Elf", (position, data) => GenerateElf(position, WorldManager.ComponentManager.Factions.Factions["Elf"], "Elf"));
-            RegisterEntity("Demon", (position, data) => GenerateDemon(position, WorldManager.ComponentManager.Factions.Factions["Demon"], "Demon"));
+            RegisterEntity("Elf", (position, data) => GenerateElf(position, World.ComponentManager.Factions.Factions["Elf"], "Elf"));
+            RegisterEntity("Demon", (position, data) => GenerateDemon(position, World.ComponentManager.Factions.Factions["Demon"], "Demon"));
             RegisterEntity("Arrow", (position, data) => new ArrowProjectile(position, data.GetData("Velocity", Vector3.Up*10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
             RegisterEntity("Bullet", (position, data) => new BulletProjectile(position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
             RegisterEntity("Web", (position, data) => new WebProjectile(position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
@@ -143,21 +143,21 @@ namespace DwarfCorp
             RegisterEntity("Stove", (position, data) => new Stove(position));
             RegisterEntity("Strawman", (position, data) =>
             {
-                float value = (float)WorldManager.Random.NextDouble();
+                float value = (float)World.Random.NextDouble();
                 return value < 0.33
                     ? (Body)(new Strawman(position))
                     : (value < 0.66 ? (Body)(new WeightRack(position)) : (Body)(new PunchingBag(position)));
             });
             RegisterEntity("Bookshelf", (position, data) => new Bookshelf(position));
-            RegisterEntity("Wooden Door", (position, data) => new Door(position, WorldManager.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 1), 50));
-            RegisterEntity("Metal Door", (position, data) => new Door(position, WorldManager.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 8), 100));
-            RegisterEntity("Stone Door", (position, data) => new Door(position, WorldManager.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 8), 75));
+            RegisterEntity("Wooden Door", (position, data) => new Door(position, World.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 1), 50));
+            RegisterEntity("Metal Door", (position, data) => new Door(position, World.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 8), 100));
+            RegisterEntity("Stone Door", (position, data) => new Door(position, World.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 8), 75));
             RegisterEntity("Wooden Ladder", (position, data) => new Ladder(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 0)));
             RegisterEntity("Stone Ladder", (position, data) => new Ladder(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 8)));
             RegisterEntity("Metal Ladder", (position, data) => new Ladder(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 8)));
             RegisterEntity("RandTrinket", (position, data) => CreateRandomTrinket(position));
             RegisterEntity("RandFood", (position, data) => CreateRandomFood(position));
-            RegisterEntity("Turret", (position, data) => new TurretTrap(position, WorldManager.PlayerFaction));
+            RegisterEntity("Turret", (position, data) => new TurretTrap(position, World.PlayerFaction));
             RegisterEntity("Snow Cloud", (position, data) => new Weather.Cloud(0.1f, 50, 40, position) {TypeofStorm = Weather.StormType.SnowStorm});
             RegisterEntity("Rain Cloud", (position, data) => new Weather.Cloud(0.1f, 50, 40, position) { TypeofStorm = Weather.StormType.RainStorm });
             RegisterEntity("Storm", (position, data) =>
@@ -328,14 +328,14 @@ namespace DwarfCorp
         public static Body GenerateElf(Vector3 position, Faction faction, string allies)
         {
             CreatureStats stats = new CreatureStats(new ElfClass(), 0);
-            return new Elf(stats, allies, WorldManager.PlanService, faction, WorldManager.ComponentManager, "Elf", WorldManager.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position).Physics;
+            return new Elf(stats, allies, World.PlanService, faction, World.ComponentManager, "Elf", World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position).Physics;
         }
 
 
         public static Body GenerateDemon(Vector3 position, Faction faction, string allies)
         {
             CreatureStats stats = new CreatureStats(new DemonClass(), 0);
-            return new Demon(stats, allies, WorldManager.PlanService, faction, WorldManager.ComponentManager, "Demon", WorldManager.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position).Physics;
+            return new Demon(stats, allies, World.PlanService, faction, World.ComponentManager, "Demon", World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position).Physics;
         }
 
         public static Body GenerateGoblin(Vector3 position,
@@ -370,7 +370,7 @@ namespace DwarfCorp
         {
             CreatureStats stats = new CreatureStats(dwarfClass, level);
             Dwarf toReturn =  new Dwarf(stats, allies, planService, faction, "Dwarf", chunkManager, graphics, content, dwarfClass, position);
-            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, WorldManager.Time.CurrentDate), false);
+            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, World.Time.CurrentDate), false);
             return toReturn.Physics;
         }
 

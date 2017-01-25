@@ -58,7 +58,7 @@ namespace DwarfCorp
         }
 
         public Projectile(Vector3 position, Vector3 initialVelocity, Health.DamageAmount damage, float size, string asset, string hitParticles, string hitNoise, Body target) : 
-            base("Projectile", WorldManager.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0) )
+            base("Projectile", World.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0) )
         {
             Target = target;
             HitAnimation = null;
@@ -67,13 +67,13 @@ namespace DwarfCorp
             Orientation = OrientMode.LookAt;
             AddToCollisionManager = false;
             CollideMode = Physics.CollisionMode.None;
-            Sprite = new Sprite(WorldManager.ComponentManager, "Sprite", this, Matrix.CreateRotationY((float)Math.PI * 0.5f),
+            Sprite = new Sprite(World.ComponentManager, "Sprite", this, Matrix.CreateRotationY((float)Math.PI * 0.5f),
                 new SpriteSheet(asset), false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
             };
             Sprite.SetSingleFrameAnimation(new Point(0, 0));
-            Sprite2 = new Sprite(WorldManager.ComponentManager, "Sprite2", Sprite, Matrix.CreateRotationX((float)Math.PI * 0.5f),
+            Sprite2 = new Sprite(World.ComponentManager, "Sprite2", Sprite, Matrix.CreateRotationX((float)Math.PI * 0.5f),
                 new SpriteSheet(asset), false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
@@ -81,7 +81,7 @@ namespace DwarfCorp
             Sprite2.SetSingleFrameAnimation(new Point(0, 0));
 
             Damage = damage;
-            HitParticles = new ParticleTrigger(hitParticles, WorldManager.ComponentManager, "Hit Particles", this,
+            HitParticles = new ParticleTrigger(hitParticles, World.ComponentManager, "Hit Particles", this,
                 Matrix.Identity, new Vector3(size * 0.5f, size * 0.5f, size * 0.5f), Vector3.Zero)
             {
                 TriggerOnDeath = true,
@@ -129,9 +129,9 @@ namespace DwarfCorp
                 if (Target != null)
                 {
                     Vector3 camvelocity0 = GameState.Game.GraphicsDevice.Viewport.Project( Position,
-                        WorldManager.Camera.ProjectionMatrix, WorldManager.Camera.ViewMatrix, Matrix.Identity);
+                        World.Camera.ProjectionMatrix, World.Camera.ViewMatrix, Matrix.Identity);
                     Vector3 camvelocity1 = GameState.Game.GraphicsDevice.Viewport.Project(Position + Velocity,
-                        WorldManager.Camera.ProjectionMatrix, WorldManager.Camera.ViewMatrix, Matrix.Identity);
+                        World.Camera.ProjectionMatrix, World.Camera.ViewMatrix, Matrix.Identity);
                     IndicatorManager.DrawIndicator(HitAnimation, Target.Position,
                         HitAnimation.FrameHZ*HitAnimation.Frames.Count + 1.0f, 1.0f, Vector2.Zero, Color.White, camvelocity1.X - camvelocity0.X > 0);
                 }

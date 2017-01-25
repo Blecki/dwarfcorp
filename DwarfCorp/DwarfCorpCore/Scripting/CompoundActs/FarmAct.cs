@@ -114,7 +114,7 @@ namespace DwarfCorp
                         }
                     }
                     if (MathFunctions.RandEvent(0.01f))
-                        WorldManager.ParticleManager.Trigger("dirt_particle", Creature.AI.Position, Color.White, 1);
+                        World.ParticleManager.Trigger("dirt_particle", Creature.AI.Position, Color.White, 1);
                     yield return Status.Running;
                     Creature.Sprite.ReloopAnimations(Creature.CharacterMode.Attacking);
                 }

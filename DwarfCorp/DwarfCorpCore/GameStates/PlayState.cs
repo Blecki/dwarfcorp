@@ -18,16 +18,16 @@ namespace DwarfCorp.GameStates
         public GraphicsDevice GraphicsDevice;
 
         public bool ShouldReset { get; set; }
-        public WorldManager World { get; set; }
+        public World World { get; set; }
         public GameMaster Master
         {
-            get { return WorldManager.Master; }
-            set { WorldManager.Master = value; }
+            get { return World.Master; }
+            set { World.Master = value; }
         }
         public static bool Paused
         {
-            get { return WorldManager.Paused; }
-            set { WorldManager.Paused = value; }
+            get { return World.Paused; }
+            set { World.Paused = value; }
         }
 
         // Displays tips when the game is loading.
@@ -101,7 +101,7 @@ namespace DwarfCorp.GameStates
             ShouldReset = true;
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;
-            World = new WorldManager(game);
+            World = new World(game);
             World.gameState = this;
             World.OnLoadedEvent += World_OnLoadedEvent;
             World.OnLoseEvent += World_OnLoseEvent;
@@ -171,8 +171,8 @@ namespace DwarfCorp.GameStates
             // Updates some of the GUI status
             if (Game.IsActive)
             {
-                CurrentLevelLabel.Text = "Slice: " + WorldManager.ChunkManager.ChunkData.MaxViewingLevel + "/" + WorldManager.ChunkHeight;
-                TimeLabel.Text = WorldManager.Time.CurrentDate.ToShortDateString() + " " + WorldManager.Time.CurrentDate.ToShortTimeString();
+                CurrentLevelLabel.Text = "Slice: " + World.ChunkManager.ChunkData.MaxViewingLevel + "/" + World.ChunkHeight;
+                TimeLabel.Text = World.Time.CurrentDate.ToShortDateString() + " " + World.Time.CurrentDate.ToShortTimeString();
             }
         }
 
@@ -211,7 +211,7 @@ namespace DwarfCorp.GameStates
             TipTimer.Update(gameTime);
             if (TipTimer.HasTriggered)
             {
-                World.LoadingMessageBottom = LoadingTips[WorldManager.Random.Next(LoadingTips.Count)];
+                World.LoadingMessageBottom = LoadingTips[World.Random.Next(LoadingTips.Count)];
                 TipIndex++;
             }
 
@@ -278,14 +278,14 @@ namespace DwarfCorp.GameStates
 
             GridLayout infoLayout = new GridLayout(GUI, companyInfoComponent, 3, 4);
 
-            CompanyLogoPanel = new ImagePanel(GUI, infoLayout, WorldManager.PlayerCompany.Logo)
+            CompanyLogoPanel = new ImagePanel(GUI, infoLayout, World.PlayerCompany.Logo)
             {
                 ConstrainSize = true,
                 KeepAspectRatio = true
             };
             infoLayout.SetComponentPosition(CompanyLogoPanel, 0, 0, 1, 1);
 
-            CompanyNameLabel = new Label(GUI, infoLayout, WorldManager.PlayerCompany.Name, GUI.DefaultFont)
+            CompanyNameLabel = new Label(GUI, infoLayout, World.PlayerCompany.Name, GUI.DefaultFont)
             {
                 TextColor = Color.White,
                 StrokeColor = new Color(0, 0, 0, 255),
@@ -318,7 +318,7 @@ namespace DwarfCorp.GameStates
 
 
             TimeLabel = new Label(GUI, layout,
-                WorldManager.Time.CurrentDate.ToShortDateString() + " " + WorldManager.Time.CurrentDate.ToShortTimeString(), GUI.SmallFont)
+                World.Time.CurrentDate.ToShortDateString() + " " + World.Time.CurrentDate.ToShortTimeString(), GUI.SmallFont)
             {
                 TextColor = Color.White,
                 StrokeColor = new Color(0, 0, 0, 255),
@@ -328,7 +328,7 @@ namespace DwarfCorp.GameStates
             layout.Add(TimeLabel, AlignLayout.Alignment.Center, AlignLayout.Alignment.Top, Vector2.Zero);
             //layout.SetComponentPosition(TimeLabel, 6, 0, 1, 1);
 
-            CurrentLevelLabel = new Label(GUI, infoLayout, "Slice: " + WorldManager.ChunkManager.ChunkData.MaxViewingLevel,
+            CurrentLevelLabel = new Label(GUI, infoLayout, "Slice: " + World.ChunkManager.ChunkData.MaxViewingLevel,
                 GUI.DefaultFont)
             {
                 TextColor = Color.White,
@@ -426,7 +426,7 @@ namespace DwarfCorp.GameStates
             InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
 
-            AnnouncementViewer = new AnnouncementViewer(GUI, layout, WorldManager.AnnouncementManager)
+            AnnouncementViewer = new AnnouncementViewer(GUI, layout, World.AnnouncementManager)
             {
                 LocalBounds = new Rectangle(0, 0, 350, 80)
             };
@@ -440,7 +440,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         private void LevelSlider_OnClicked()
         {
-            WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel((int)LevelSlider.SliderValue, ChunkManager.SliceMode.Y);
+            World.ChunkManager.ChunkData.SetMaxViewingLevel((int)LevelSlider.SliderValue, ChunkManager.SliceMode.Y);
         }
 
         /// <summary>
@@ -448,7 +448,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         private void CurrentLevelDownButton_OnClicked()
         {
-            WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(WorldManager.ChunkManager.ChunkData.MaxViewingLevel - 1,
+            World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel - 1,
                 ChunkManager.SliceMode.Y);
         }
 
@@ -458,7 +458,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         private void CurrentLevelUpButton_OnClicked()
         {
-            WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(WorldManager.ChunkManager.ChunkData.MaxViewingLevel + 1,
+            World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel + 1,
                 ChunkManager.SliceMode.Y);
         }
 
@@ -604,7 +604,7 @@ namespace DwarfCorp.GameStates
                     StateManager.PushState("OptionsState");
                     break;
                 case "Save":
-                    SaveGame(Overworld.Name + "_" + WorldManager.GameID);
+                    SaveGame(Overworld.Name + "_" + World.GameID);
                     break;
                 case "Quit":
                     QuitGame();

@@ -66,7 +66,7 @@ namespace DwarfCorp
 
         public string GetRandom()
         {
-            return Terms[WorldManager.Random.Next(Terms.Count)];
+            return Terms[World.Random.Next(Terms.Count)];
         }
     }
 

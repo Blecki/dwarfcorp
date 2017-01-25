@@ -214,7 +214,7 @@ namespace DwarfCorp
                     // Generates a random bird asset string from bird0 to bird7.
                     public static string GetRandomBird()
                     {
-                        return bird_prefix + WorldManager.Random.Next(8);
+                        return bird_prefix + global::DwarfCorp.World.Random.Next(8);
                     }
                 }
 

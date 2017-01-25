@@ -26,7 +26,7 @@ namespace DwarfCorp
         {
             for (int i = 0; i < num; i++)
             {
-                Emitters[WorldManager.Random.Next(Emitters.Count)].Trigger(1, position, tint);
+                Emitters[World.Random.Next(Emitters.Count)].Trigger(1, position, tint);
             }
         }
         
@@ -52,7 +52,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Components = WorldManager.ComponentManager;
+            Components = World.ComponentManager;
         }
         
 

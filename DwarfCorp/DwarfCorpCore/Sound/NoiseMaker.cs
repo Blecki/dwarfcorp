@@ -65,7 +65,7 @@ namespace DwarfCorp
             if (CurrentSound == null || CurrentSound.EffectInstance == null || CurrentSound.EffectInstance.IsDisposed || CurrentSound.EffectInstance.State == SoundState.Stopped || CurrentSound.EffectInstance.State == SoundState.Paused)
             {
                 List<string> availableNoises = Noises[noise];
-                int index = WorldManager.Random.Next(availableNoises.Count);
+                int index = World.Random.Next(availableNoises.Count);
 
                 if (index >= 0 && index < availableNoises.Count)
                 {

@@ -50,7 +50,7 @@ namespace DwarfCorp
         }
 
         public Lamp(Vector3 position) :
-            base("Lamp", WorldManager.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+            base("Lamp", World.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
             SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
 
@@ -63,7 +63,7 @@ namespace DwarfCorp
             };
             Animation lampAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "Lamp", 32, 32, frames, true, Color.White, 3.0f, 1f, 1.0f, false);
 
-            Sprite sprite = new Sprite(WorldManager.ComponentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(World.ComponentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
             {
                 LightsWithVoxels = false,
                 OrientationType = Sprite.OrientMode.YAxis
@@ -78,9 +78,9 @@ namespace DwarfCorp
 
             Voxel voxelUnder = new Voxel();
 
-            if (WorldManager.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            if (World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {
-                new VoxelListener(WorldManager.ComponentManager, this, WorldManager.ChunkManager, voxelUnder);
+                new VoxelListener(World.ComponentManager, this, World.ChunkManager, voxelUnder);
             }
 
 

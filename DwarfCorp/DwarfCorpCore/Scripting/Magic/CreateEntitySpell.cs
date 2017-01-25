@@ -63,7 +63,7 @@ namespace DwarfCorp
         public void CreateEntity(Vector3 position)
         {
             EntityFactory.CreateEntity<Body>(Entity, position);
-            WorldManager.ParticleManager.Trigger("star_particle", position, Color.White, 4);
+            World.ParticleManager.Trigger("star_particle", position, Color.White, 4);
             Vector3 p = position + Vector3.Up;
             IndicatorManager.DrawIndicator("-" + ManaCost + " M", p, 1.0f, Color.Red);
         }
@@ -102,7 +102,7 @@ namespace DwarfCorp
 
             if (got)
             {
-                SoundManager.PlaySound(ContentPaths.Audio.tinkle, WorldManager.CursorLightPos, true, 1.0f);
+                SoundManager.PlaySound(ContentPaths.Audio.tinkle, World.CursorLightPos, true, 1.0f);
             }
 
             base.OnVoxelsSelected(tree, voxels);

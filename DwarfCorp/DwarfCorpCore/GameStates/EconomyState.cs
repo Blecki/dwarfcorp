@@ -53,13 +53,13 @@ namespace DwarfCorp.GameStates
         public int EdgePadding { get; set; }
         public GridLayout Layout { get; set; }
         public InputManager Input { get; set; }
-        public WorldManager PlayState { get; set; }
+        public World PlayState { get; set; }
         public Texture2D Icons { get; set; }
         public List<Button> TabButtons { get; set; }
         public Dictionary<string, GUIComponent> Tabs { get; set; } 
       
 
-        public EconomyState(DwarfGame game, GameStateManager stateManager, WorldManager play) :
+        public EconomyState(DwarfGame game, GameStateManager stateManager, World play) :
             base(game, "EconomyState", stateManager)
         {
             
@@ -75,7 +75,7 @@ namespace DwarfCorp.GameStates
         {
             if (Game.StateManager.NextState == "")
             {
-                WorldManager.GUI.RootComponent.IsVisible = false;
+                World.GUI.RootComponent.IsVisible = false;
                 Game.StateManager.PushState("EconomyState");
             }
         }
@@ -112,7 +112,7 @@ namespace DwarfCorp.GameStates
 
 
            CreateTabButton(tabLayout, "Employees", "Hire and fire dwarves", 5, 0);
-            EmployeeDisplay employeeDisplay = new EmployeeDisplay(GUI, Layout, WorldManager.Master.Faction)
+            EmployeeDisplay employeeDisplay = new EmployeeDisplay(GUI, Layout, World.Master.Faction)
             {
                 IsVisible = false
             };
@@ -120,7 +120,7 @@ namespace DwarfCorp.GameStates
            
 
            CreateTabButton(tabLayout, "Capital", "Financial report", 2, 1);
-           CapitalPanel capitalPanel = new CapitalPanel(GUI, Layout, WorldManager.Master.Faction)
+           CapitalPanel capitalPanel = new CapitalPanel(GUI, Layout, World.Master.Faction)
            {
                IsVisible = false
            };
@@ -201,7 +201,7 @@ namespace DwarfCorp.GameStates
 
         public override void OnEnter()
         {
-            WorldManager.GUI.ToolTipManager.ToolTip = "";
+            World.GUI.ToolTipManager.ToolTip = "";
             Initialize();
             base.OnEnter();
         }
@@ -209,7 +209,7 @@ namespace DwarfCorp.GameStates
      
         private void back_OnClicked()
         {
-            WorldManager.GUI.RootComponent.IsVisible = true;
+            World.GUI.RootComponent.IsVisible = true;
             StateManager.PopState();
         }
 

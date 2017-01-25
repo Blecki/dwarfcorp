@@ -53,7 +53,7 @@ namespace DwarfCorp
     /// <summary>
     /// This is the main game state for actually playing the game.
     /// </summary>
-    public class WorldManager : IDisposable
+    public class World : IDisposable
     {
         #region fields
 
@@ -266,7 +266,7 @@ namespace DwarfCorp
 
         // Since world, like many of the other classes, is pretty much a singleton given how many static variables it has
         // this provides singleton access
-        public static WorldManager world;
+        public static World world;
 
         // event that is called when the world is done loading
         public delegate void OnLoaded();
@@ -282,7 +282,7 @@ namespace DwarfCorp
         /// Creates a new play state
         /// </summary>
         /// <param name="game">The program currently running</param>
-        public WorldManager(DwarfGame Game)
+        public World(DwarfGame Game)
         {
             world = this;
             this.Game = Game;
@@ -497,7 +497,7 @@ namespace DwarfCorp
                 LoadingMessage = "Loading " + ExistingFile;
                 gameFile = new GameFile(ExistingFile, true);
                 Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
-                WorldManager.Time = gameFile.Data.Metadata.Time;
+                World.Time = gameFile.Data.Metadata.Time;
                 WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
                 WorldScale = gameFile.Data.Metadata.WorldScale;
                 GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
@@ -744,7 +744,7 @@ namespace DwarfCorp
                 BalloonPort port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager,
                     Camera.Position.X, Camera.Position.Z, 3);
                 CreateInitialDwarves(c);
-                WorldManager.PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
+                World.PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
 
                 foreach (var res in InitialEmbark.Resources)
                 {
@@ -1188,7 +1188,7 @@ namespace DwarfCorp
             AspectRatio = GraphicsDevice.Viewport.AspectRatio;
             Camera.AspectRatio = AspectRatio;
 
-            Camera.Update(gameTime, WorldManager.ChunkManager);
+            Camera.Update(gameTime, World.ChunkManager);
 
             if (KeyManager.RotationEnabled())
                 Mouse.SetPosition(Game.GraphicsDevice.Viewport.Width / 2,

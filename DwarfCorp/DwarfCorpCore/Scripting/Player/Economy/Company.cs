@@ -128,11 +128,11 @@ namespace DwarfCorp
         public static List<float> GenerateRandomStockHistory(float current, int length)
         {
             List<float> history = new List<float>();
-            float startPrice = current + (float)WorldManager.Random.NextDouble()*current*0.5f - current * 0.5f;
+            float startPrice = current + (float)World.Random.NextDouble()*current*0.5f - current * 0.5f;
             float slope = (current - startPrice) / length;
             for (int i = 0; i < length - 1; i++)
             {
-                history.Add((float)WorldManager.Random.NextDouble() * 0.5f + slope * i + startPrice);
+                history.Add((float)World.Random.NextDouble() * 0.5f + slope * i + startPrice);
             }
             history.Add(current);
             return history;
@@ -161,10 +161,10 @@ namespace DwarfCorp
                     row = 2;
                     break;
             }
-            NamedImageFrame image = new NamedImageFrame(ContentPaths.Logos.logos, 32, WorldManager.Random.Next(0, texture.Width / 32), row);
+            NamedImageFrame image = new NamedImageFrame(ContentPaths.Logos.logos, 32, World.Random.Next(0, texture.Width / 32), row);
 
-            Color c = new Color(WorldManager.Random.Next(0, 255), WorldManager.Random.Next(0, 255),
-                WorldManager.Random.Next(0, 255));
+            Color c = new Color(World.Random.Next(0, 255), World.Random.Next(0, 255),
+                World.Random.Next(0, 255));
                 
             return new Company()
             {

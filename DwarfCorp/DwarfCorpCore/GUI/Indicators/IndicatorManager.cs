@@ -133,7 +133,7 @@ namespace DwarfCorp
             switch (Mode)
             {
                 case IndicatorMode.Indicator2D:
-                    Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, Text, WorldManager.GUI.DefaultFont, Tint, Drawer2D.Alignment.Center,  new Rectangle((int)Position.X, (int)Position.Y, 32, 32));
+                    Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, Text, World.GUI.DefaultFont, Tint, Drawer2D.Alignment.Center,  new Rectangle((int)Position.X, (int)Position.Y, 32, 32));
                     break;
                 case IndicatorMode.Indicator3D:
                     Drawer2D.DrawText(Text, Position, Tint, Color.Transparent);

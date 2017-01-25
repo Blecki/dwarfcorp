@@ -203,7 +203,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public ChunkManager Chunks
         {
-            get { return WorldManager.ChunkManager; }
+            get { return World.ChunkManager; }
         }
 
         /// <summary> Blackboard used for Acts. </summary>
@@ -329,8 +329,8 @@ namespace DwarfCorp
         /// <summary> Animate the PlayState Camera to look at this creature </summary>
         public void ZoomToMe()
         {
-            WorldManager.Camera.ZoomTo(Position + Vector3.Up * 8.0f);
-            WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel((int)Position.Y, ChunkManager.SliceMode.Y);
+            World.Camera.ZoomTo(Position + Vector3.Up * 8.0f);
+            World.ChunkManager.ChunkData.SetMaxViewingLevel((int)Position.Y, ChunkManager.SliceMode.Y);
         }
 
         /// <summary> Update this creature </summary>
@@ -346,7 +346,7 @@ namespace DwarfCorp
             PreEmptTasks();
 
             // Try to go to sleep if we are low on energy and it is night time.
-            if (Status.Energy.IsUnhappy() && WorldManager.Time.IsNight())
+            if (Status.Energy.IsUnhappy() && World.Time.IsNight())
             {
                 Task toReturn = new SatisfyTirednessTask();
                 toReturn.SetupScript(Creature);
@@ -427,7 +427,7 @@ namespace DwarfCorp
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
                         if (Creature.Allies == "Dwarf")
                         {
-                            WorldManager.AnnouncementManager.Announce(
+                            World.AnnouncementManager.Announce(
                                 Stats.FullName + " (" + Stats.CurrentLevel.Name + ")" +
                                 Drawer2D.WrapColor(" refuses to work!", Color.DarkRed),
                                 "Our employee is unhappy, and would rather not work!", ZoomToMe);
@@ -642,7 +642,7 @@ namespace DwarfCorp
         {
             if (!HasThought(type))
             {
-                AddThought(Thought.CreateStandardThought(type, WorldManager.Time.CurrentDate), true);
+                AddThought(Thought.CreateStandardThought(type, World.Time.CurrentDate), true);
             }
         }
 
@@ -699,7 +699,7 @@ namespace DwarfCorp
         /// <summary> Updates the thoughts in the creature's head. </summary>
         public void UpdateThoughts()
         {
-            Thoughts.RemoveAll(thought => thought.IsOver(WorldManager.Time.CurrentDate));
+            Thoughts.RemoveAll(thought => thought.IsOver(World.Time.CurrentDate));
             Status.Happiness.CurrentValue = 50.0f;
 
             foreach (Thought thought in Thoughts)
@@ -750,9 +750,9 @@ namespace DwarfCorp
                 {
                     Creature.AI.Tasks.Add(task);
 
-                    if (Faction == WorldManager.PlayerFaction)
+                    if (Faction == World.PlayerFaction)
                     {
-                        WorldManager.AnnouncementManager.Announce(
+                        World.AnnouncementManager.Announce(
                             Stats.FullName + Drawer2D.WrapColor(" is fighting ", Color.DarkRed) +
                             TextGenerator.IndefiniteArticle(enemy.Creature.Name),
                             Stats.FullName + " the " + Stats.CurrentLevel.Name + " is fighting " +
@@ -1100,7 +1100,7 @@ namespace DwarfCorp
         private Voxel[, ,] GetNeighborhood(Voxel voxel)
         {
             var neighborHood = new Voxel[3, 3, 3];
-            CollisionManager objectHash = WorldManager.ComponentManager.CollisionManager;
+            CollisionManager objectHash = World.ComponentManager.CollisionManager;
 
             VoxelChunk startChunk = voxel.Chunk;
             var x = (int)voxel.GridPosition.X;
@@ -1117,7 +1117,7 @@ namespace DwarfCorp
                         int ny = dy + y;
                         int nz = dz + z;
                         if (
-                            !WorldManager.ChunkManager.ChunkData.GetVoxel(startChunk,
+                            !World.ChunkManager.ChunkData.GetVoxel(startChunk,
                                 new Vector3(nx, ny, nz) + startChunk.Origin,
                                 ref neighborHood[dx + 1, dy + 1, dz + 1]))
                         {
@@ -1161,7 +1161,7 @@ namespace DwarfCorp
         public List<Creature.MoveAction> GetMoveActions(Vector3 pos)
         {
             var vox = new Voxel();
-            WorldManager.ChunkManager.ChunkData.GetVoxel(pos, ref vox);
+            World.ChunkManager.ChunkData.GetVoxel(pos, ref vox);
             return GetMoveActions(vox);
         }
 
@@ -1170,7 +1170,7 @@ namespace DwarfCorp
         {
             var toReturn = new List<Creature.MoveAction>();
 
-            CollisionManager objectHash = WorldManager.ComponentManager.CollisionManager;
+            CollisionManager objectHash = World.ComponentManager.CollisionManager;
 
             Voxel[, ,] neighborHood = GetNeighborhood(voxel);
             var x = (int)voxel.GridPosition.X;
@@ -1390,7 +1390,7 @@ namespace DwarfCorp
                 {
                     // Do one final check to see if there is an object blocking the motion.
                     bool blockedByObject = false;
-                    List<IBoundedObject> objectsAtNeighbor = WorldManager.ComponentManager.CollisionManager.GetObjectsAt(
+                    List<IBoundedObject> objectsAtNeighbor = World.ComponentManager.CollisionManager.GetObjectsAt(
                         n, CollisionManager.CollisionType.Static);
 
                     // If there is an object blocking the motion, determine if it can be passed through.
@@ -1406,7 +1406,7 @@ namespace DwarfCorp
                             if (door != null)
                             {
                                 if (
-                                    WorldManager.ComponentManager.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction)
+                                    World.ComponentManager.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction)
                                         .GetCurrentRelationship() !=
                                     Relationship.Loving)
                                 {

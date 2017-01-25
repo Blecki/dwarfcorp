@@ -136,7 +136,7 @@ namespace DwarfCorp
                 {
                     Vector3 extents = (LocParent.BoundingBox.Max - LocParent.BoundingBox.Min);
                     Vector3 randomPoint = LocParent.BoundingBox.Min + new Vector3(extents.X * MathFunctions.Rand(), extents.Y * MathFunctions.Rand(), extents.Z * MathFunctions.Rand());
-                    WorldManager.ParticleManager.Trigger("flame", randomPoint, Color.White, GetNumTrigger());
+                    World.ParticleManager.Trigger("flame", randomPoint, Color.White, GetNumTrigger());
                 }
             }
 

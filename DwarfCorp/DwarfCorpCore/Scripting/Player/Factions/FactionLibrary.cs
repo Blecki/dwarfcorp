@@ -51,7 +51,7 @@ namespace DwarfCorp
         public static void Initialize()
         {
             EmbarkmentLibrary = ContentPaths.LoadFromJson<Dictionary<string, Embarkment>>(ContentPaths.World.embarks);
-            WorldManager.InitialEmbark = EmbarkmentLibrary["Normal"];
+            World.InitialEmbark = EmbarkmentLibrary["Normal"];
         }
     }
 
@@ -84,7 +84,7 @@ namespace DwarfCorp
             Races = ContentPaths.LoadFromJson<Dictionary<string, Race>>(ContentPaths.World.races);
         }
 
-        public void Initialize(WorldManager state, string name, string motto, NamedImageFrame logo, Color color)
+        public void Initialize(World state, string name, string motto, NamedImageFrame logo, Color color)
         {
             if (Races == null)
             {
