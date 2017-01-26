@@ -422,8 +422,6 @@ namespace DwarfCorp.GameStates
 
             layout.Add(topRightTray, AlignLayout.Alignment.Right, AlignLayout.Alignment.Top, Vector2.Zero);
 
-
-            InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
 
             AnnouncementViewer = new AnnouncementViewer(GUI, layout, WorldManager.AnnouncementManager)
@@ -649,8 +647,15 @@ namespace DwarfCorp.GameStates
             }
         }
 
+        public void Destroy()
+        {
+            InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
+            Input.Destroy();
+        }
+
         public void QuitGame()
         {
+            Destroy();
             StateManager.StateStack.Clear();
             MainMenuState menuState = StateManager.GetState<MainMenuState>("MainMenuState");
             menuState.IsGameRunning = false;
@@ -660,4 +665,4 @@ namespace DwarfCorp.GameStates
             StateManager.PushState("MainMenuState");
         }
     }
-}
+}   
