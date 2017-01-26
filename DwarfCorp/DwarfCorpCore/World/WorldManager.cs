@@ -371,6 +371,9 @@ namespace DwarfCorp
                 Thread.Sleep(1000);
                 ShowingWorld = true;
                 LoadingMessage = "Complete.";
+
+                // GameFile is no longer needed.
+                gameFile = null;
             }
 #if CREATE_CRASH_LOGS
             catch (Exception exception)
@@ -1269,6 +1272,7 @@ namespace DwarfCorp
         {
             try
             {
+                System.Threading.Thread.CurrentThread.Name = "Save";
                 DirectoryInfo worldDirectory =
                     Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Worlds" +
                                               Path.DirectorySeparatorChar + Overworld.Name);
@@ -1283,6 +1287,8 @@ namespace DwarfCorp
                 gameFile.WriteFile(
                     DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar +
                     filename, true);
+                // GameFile instance is no longer needed.
+                gameFile = null;
 
                 lock (ScreenshotLock)
                 {

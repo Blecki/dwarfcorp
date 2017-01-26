@@ -169,22 +169,22 @@ namespace DwarfCorp
 
         public void FillDataFromChunk(VoxelChunk chunk)
         {
+            VoxelChunk.VoxelData data = chunk.Data;
             for(int x = 0; x < Size.X; x++)
             {
                 for(int y = 0; y < Size.Y; y++)
                 {
                     for(int z = 0; z < Size.Z; z++)
                     {
-                        int index = chunk.Data.IndexAt(x, y, z);
-                        WaterCell water = chunk.Data.Water[index];
-                        Types[x, y, z] = chunk.Data.Types[index];
-                        Explored[x, y, z] = chunk.Data.IsExplored[index];
+                        int index = data.IndexAt(x, y, z);
+                        WaterCell water = data.Water[index];
+                        Types[x, y, z] = data.Types[index];
+                        Explored[x, y, z] = data.IsExplored[index];
 
                         if(water.WaterLevel > 0)
                         {
                             Liquid[x, y, z] = water.WaterLevel;
                             LiquidTypes[x, y, z] = (byte) water.Type;
-                            LiquidTypes[x, y, z] = (byte)water.Type;
                         }
                         else
                         {

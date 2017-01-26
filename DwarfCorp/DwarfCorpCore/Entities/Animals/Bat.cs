@@ -200,8 +200,6 @@ namespace DwarfCorp
                 }
                 yield return Act.Status.Running;
             }
-
-            yield return Act.Status.Success;
         }
 
 
