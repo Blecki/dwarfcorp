@@ -48,7 +48,6 @@ namespace DwarfCorp.GameStates
     {
         public DwarfGUI GUI { get; set; }
         public SpriteFont DefaultFont { get; set; }
-        public Drawer2D Drawer { get; set; }
         public Panel MainWindow { get; set; }
         public int EdgePadding { get; set; }
         public GridLayout Layout { get; set; }
@@ -79,7 +78,6 @@ namespace DwarfCorp.GameStates
             DefaultFont = Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
             GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
             IsInitialized = true;
-            Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
             MainWindow = new Panel(GUI, GUI.RootComponent)
             {
                 LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2)
@@ -752,7 +750,7 @@ namespace DwarfCorp.GameStates
             };
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, null, rasterizerState);
-            Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
+            Drawer2D.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
 
             GUI.PostRender(gameTime);
@@ -763,22 +761,8 @@ namespace DwarfCorp.GameStates
 
         public override void Render(DwarfTime gameTime)
         {
-            if(Transitioning == TransitionMode.Running)
-            {
-                Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-                DrawGUI(gameTime, 0);
-            }
-            else if(Transitioning == TransitionMode.Entering)
-            {
-                float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                DrawGUI(gameTime, dx);
-            }
-            else if(Transitioning == TransitionMode.Exiting)
-            {
-                float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                DrawGUI(gameTime, dx);
-            }
-
+            Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+            DrawGUI(gameTime, 0);
 
             base.Render(gameTime);
         }

@@ -46,14 +46,14 @@ namespace DwarfCorp
     /// This is a convenience class for drawing lines, sprites, boxes, etc. to the screen from
     /// threads other than the main drawing thread.
     /// </summary>
-    public class Drawer2D
+    public static class Drawer2D
     {
         public static ConcurrentQueue<DrawCommand2D> DrawCommands = new ConcurrentQueue<DrawCommand2D>();
         public static ContentManager Content { get; set; }
         public static SpriteFont DefaultFont { get; set; }
         public static Texture2D Pixel { get; set; }
 
-        public Drawer2D(ContentManager content, GraphicsDevice graphics)
+        public static void Initialize(ContentManager content, GraphicsDevice graphics)
         {
             Content = content;
             DefaultFont = content.Load<SpriteFont>(ContentPaths.Fonts.Default);
@@ -134,7 +134,7 @@ namespace DwarfCorp
             DrawCommands.Enqueue(new TextDrawCommand(text, DefaultFont, position, color, strokeColor));
         }
 
-        public void Render(SpriteBatch batch, Camera camera, Viewport viewport)
+        public static void Render(SpriteBatch batch, Camera camera, Viewport viewport)
         {
             foreach(DrawCommand2D draw in DrawCommands)
             {

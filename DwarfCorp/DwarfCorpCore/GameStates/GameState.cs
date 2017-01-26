@@ -54,7 +54,7 @@ namespace DwarfCorp.GameStates
         public GameStateManager StateManager { get; set; }
         public bool IsInitialized { get; set; }
         public float TransitionValue { get; set; }
-        public TransitionMode Transitioning { get; set; }
+        //public TransitionMode Transitioning { get; set; }
         public bool RenderUnderneath { get; set; }
         public bool IsActiveState { get; set; }
         public bool EnableScreensaver { get; set; }
@@ -67,7 +67,6 @@ namespace DwarfCorp.GameStates
             StateManager = stateManager;
             IsInitialized = false;
             TransitionValue = 0.0f;
-            Transitioning = TransitionMode.Entering;
             RenderUnderneath = false;
             IsActiveState = false;
         }
@@ -76,14 +75,12 @@ namespace DwarfCorp.GameStates
         {
             IsActiveState = true;
             TransitionValue = 0.0f;
-            Transitioning = TransitionMode.Entering;
         }
 
         public virtual void OnExit()
         {
             IsActiveState = false;
             TransitionValue = 0.0f;
-            Transitioning = TransitionMode.Exiting;
         }
 
 

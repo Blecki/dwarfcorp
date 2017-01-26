@@ -59,7 +59,6 @@ namespace DwarfCorp.GameStates
         public Matrix ViewMatrix { get; set; }
         public Matrix ProjMatrix { get; set; }
         public SpriteFont DefaultFont { get; set; }
-        public Drawer2D Drawer { get; set; }
         public bool GenerationComplete { get; set; }
         public string LoadingMessage = "";
         public Mutex ImageMutex;
@@ -252,7 +251,6 @@ namespace DwarfCorp.GameStates
             DefaultFont = Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
             GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
             IsInitialized = true;
-            Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
             GenerationComplete = false;
             MainWindow = new Panel(GUI, GUI.RootComponent)
             {
@@ -529,7 +527,7 @@ namespace DwarfCorp.GameStates
                 Overworld.Name = Settings.Name;
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
                 StateManager.PopState();
-                StateManager.PushState("PlayState");
+                StateManager.PushState("LoadState");
 
                 MainMenuState menu = (MainMenuState) StateManager.States["MainMenuState"];
                 menu.IsGameRunning = true;
@@ -1327,7 +1325,7 @@ namespace DwarfCorp.GameStates
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
                 null, null);
-            Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
+            Drawer2D.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(0, dx));
 
             Progress.Message = !GenerationComplete ? LoadingMessage : "";
@@ -1394,21 +1392,8 @@ namespace DwarfCorp.GameStates
       
         public override void Render(DwarfTime gameTime)
         {
-            if(Transitioning == TransitionMode.Running)
-            {
-                Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-                DrawGUI(gameTime, 0);
-            }
-            else if(Transitioning == TransitionMode.Entering)
-            {
-                float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Height, Game.GraphicsDevice.Viewport.Height, 1.0f);
-                DrawGUI(gameTime, dx);
-            }
-            else if(Transitioning == TransitionMode.Exiting)
-            {
-                float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Height, 1.0f);
-                DrawGUI(gameTime, dx);
-            }
+            Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+            DrawGUI(gameTime, 0);
             base.Render(gameTime);
         }
 

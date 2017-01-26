@@ -84,14 +84,6 @@ namespace DwarfCorp.GameStates
 
                 NextState = state;
                 States[NextState].OnEnter();
-                States[NextState].TransitionValue = 0.0f;
-                States[NextState].Transitioning = GameState.TransitionMode.Entering;
-
-                if(CurrentState != "")
-                {
-                    States[CurrentState].Transitioning = GameState.TransitionMode.Exiting;
-                    States[CurrentState].TransitionValue = 0.0f;
-                }
             }
         }
 
@@ -106,15 +98,6 @@ namespace DwarfCorp.GameStates
         {
             NextState = state;
             States[NextState].OnEnter();
-            States[NextState].TransitionValue = 0.0f;
-            States[NextState].Transitioning = GameState.TransitionMode.Entering;
-
-            if(CurrentState != "")
-            {
-                States[CurrentState].Transitioning = GameState.TransitionMode.Exiting;
-                States[CurrentState].TransitionValue = 0.0f;
-            }
-
             StateStack.Insert(0, state);
         }
 
@@ -123,12 +106,10 @@ namespace DwarfCorp.GameStates
             if(CurrentState != "")
             {
                 States[CurrentState].OnExit();
-                States[CurrentState].Transitioning = GameState.TransitionMode.Exiting;
                 States[CurrentState].OnPopped();
             }
 
             CurrentState = NextState;
-            States[CurrentState].Transitioning = GameState.TransitionMode.Running;
             NextState = "";
         }
 
@@ -141,27 +122,11 @@ namespace DwarfCorp.GameStates
             if(CurrentState != "" && States[CurrentState].IsInitialized)
             {
                 States[CurrentState].Update(time);
-
-                if(CurrentState != "" && States[CurrentState].Transitioning != GameState.TransitionMode.Running)
-                {
-                    States[CurrentState].TransitionValue += (float) (TransitionSpeed * time.ElapsedRealTime.TotalSeconds);
-                    States[CurrentState].TransitionValue = Math.Min(States[CurrentState].TransitionValue, 1.001f);
-                }
             }
 
             if(NextState != "" && States[NextState].IsInitialized)
             {
-                //States[NextState].Update(time);
-
-                if(States[NextState].Transitioning != GameState.TransitionMode.Running)
-                {
-                    States[NextState].TransitionValue += (float) (TransitionSpeed * time.ElapsedRealTime.TotalSeconds);
-                    States[NextState].TransitionValue = Math.Min(States[NextState].TransitionValue, 1.001f);
-                    if(States[NextState].TransitionValue >= 1.0)
-                    {
-                        TransitionComplete();
-                    }
-                }
+                TransitionComplete();
             }
         }
 
