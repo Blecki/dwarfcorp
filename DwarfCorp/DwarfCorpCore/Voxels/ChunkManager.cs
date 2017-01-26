@@ -868,7 +868,12 @@ namespace DwarfCorp
             GenerateOres();
 
             message = "Fog of war...";
+            // We are going to force fog of war to be on for the first reveal then reset it back to it's previous setting after.
+            // This is a pseudo hack to stop worlds created with Fog of War off then looking awful if it is turned back on.
+            bool fogOfWar = GameSettings.Default.FogofWar;
+            GameSettings.Default.FogofWar = true;
             ChunkData.Reveal(GeneratedChunks.First().MakeVoxel(0, (int)ChunkData.ChunkSizeY - 1, 0));
+            GameSettings.Default.FogofWar = fogOfWar;
 
             UpdateRebuildList();
             GenerateDistance = origBuildRadius;
