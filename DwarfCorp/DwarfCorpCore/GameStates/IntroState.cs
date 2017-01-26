@@ -65,12 +65,12 @@ namespace DwarfCorp.GameStates
             Game.IsMouseVisible = false;
             IntroTimer.Update(gameTime);
 
-            if(IntroTimer.HasTriggered && Transitioning == TransitionMode.Running)
+            if(IntroTimer.HasTriggered)
             {
                 StateManager.PushState("MainMenuState");
             }
 
-            if(Keyboard.GetState().GetPressedKeys().Length > 0 && Transitioning == TransitionMode.Running)
+            if(Keyboard.GetState().GetPressedKeys().Length > 0)
             {
                 StateManager.PushState("MainMenuState");
             }
@@ -85,18 +85,7 @@ namespace DwarfCorp.GameStates
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied);
 
             Vector2 screenCenter = new Vector2(Game.GraphicsDevice.Viewport.Width / 2 - Logo.Width / 2, Game.GraphicsDevice.Viewport.Height / 2 - Logo.Height / 2);
-            switch(Transitioning)
-            {
-                case TransitionMode.Running:
-                    DwarfGame.SpriteBatch.Draw(Logo, screenCenter, null, new Color(1f, 1f, 1f));
-                    break;
-                case TransitionMode.Entering:
-                    DwarfGame.SpriteBatch.Draw(Logo, screenCenter, null, new Color(1f, 1f, 1f, TransitionValue));
-                    break;
-                case TransitionMode.Exiting:
-                    DwarfGame.SpriteBatch.Draw(Logo, screenCenter, null, new Color(1f, 1f, 1f, 1.0f - TransitionValue));
-                    break;
-            }
+            DwarfGame.SpriteBatch.Draw(Logo, screenCenter, null, new Color(1f, 1f, 1f));
             DwarfGame.SpriteBatch.End();
 
             base.Render(gameTime);

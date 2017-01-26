@@ -1392,21 +1392,8 @@ namespace DwarfCorp.GameStates
       
         public override void Render(DwarfTime gameTime)
         {
-            if(Transitioning == TransitionMode.Running)
-            {
-                Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-                DrawGUI(gameTime, 0);
-            }
-            else if(Transitioning == TransitionMode.Entering)
-            {
-                float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Height, Game.GraphicsDevice.Viewport.Height, 1.0f);
-                DrawGUI(gameTime, dx);
-            }
-            else if(Transitioning == TransitionMode.Exiting)
-            {
-                float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Height, 1.0f);
-                DrawGUI(gameTime, dx);
-            }
+            Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+            DrawGUI(gameTime, 0);
             base.Render(gameTime);
         }
 
