@@ -314,7 +314,9 @@ namespace DwarfCorp
             SelectedMinions.RemoveAll(m => m.IsDead);
             Minions.ForEach(m => m.Creature.SelectionCircle.IsVisible = false);
             SelectedMinions.ForEach(m => m.Creature.SelectionCircle.IsVisible = true);
-            CollideMinions(time);
+            
+            // Turned off until a non-O(n^2) collision method is create.
+            //CollideMinions(time);
 
             List<ulong> removalKeys = new List<ulong>();
             foreach (KeyValuePair<ulong, BuildOrder> kvp in DigDesignations)
