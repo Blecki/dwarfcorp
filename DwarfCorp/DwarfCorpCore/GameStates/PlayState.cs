@@ -30,28 +30,6 @@ namespace DwarfCorp.GameStates
             set { WorldManager.Paused = value; }
         }
 
-        // Displays tips when the game is loading.
-        public List<string> LoadingTips = new List<string>()
-        {
-            "Can't get the right angle? Hold SHIFT to move the camera around!",
-            "Need to see tiny dwarves? Use the mousewheel to zoom!",
-            "Press Q to quickly slice the terrain at the height of the cursor.",
-            "Press E to quickly un-slice the terrain.",
-            "The number keys can be used to quickly switch between tools.",
-            "Employees will not work if they are unhappy.",
-            "Monsters got you down? Try hiring some thugs!",
-            "The most lucrative resources are beneath the earth.",
-            "Dwarves can swim!",
-            "Stockpiles are free!",
-            "Payday occurs at midnight. Make sure to sell your goods before then!",
-            "Dwarves prefer to eat in common rooms, but they will eat out of stockpiles if necessary.",
-            "The minimap can be closed and opened.",
-            "Monsters are shown on the minimap.",
-            "Axedwarves are better at chopping trees than miners."
-        };
-        private Timer TipTimer = new Timer(5, false);
-        private int TipIndex = 0;
-
         // ------GUI--------
         // Draws and manages the user interface 
         public static DwarfGUI GUI = null;
@@ -110,7 +88,7 @@ namespace DwarfCorp.GameStates
 
             //CreateGUIComponents();
 
-            IsInitialized = true;
+            IsInitialized = false;
         }
 
         private void World_OnLoseEvent()
@@ -130,26 +108,13 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public override void OnEnter()
         {
-
-            //World = new World(game);
-            //World.gameState = this;
-            //World.OnLoadedEvent += World_OnLoadedEvent;
-            //World.OnLoseEvent += World_OnLoseEvent;
-
-            CreateGUIComponents();
-            // If the game should reset, we initialize everything
-            //if (ShouldReset)
-            //{
-            //    IsInitialized = false;
-            //    ShouldReset = false;
-            //    CreateGUI();
-            //    World.Setup(GUI);
-            //}
-            //else
-            //{
-                // Otherwise, we just unpause everything and re-enter the game.
-                World.Unpause();
-            //}
+            if (!IsInitialized)
+            {
+                CreateGUIComponents();
+                IsInitialized = true;
+            }
+            
+            World.Unpause();
             base.OnEnter();
         }
 
@@ -219,12 +184,7 @@ namespace DwarfCorp.GameStates
         /// <param name="gameTime">The current time</param>
         public override void RenderUnitialized(DwarfTime gameTime)
         {
-            TipTimer.Update(gameTime);
-            if (TipTimer.HasTriggered)
-            {
-                World.LoadingMessageBottom = LoadingTips[MathFunctions.Random.Next(LoadingTips.Count)];
-                TipIndex++;
-            }
+           
 
             EnableScreensaver = true;
             World.Render(gameTime);
@@ -666,7 +626,7 @@ namespace DwarfCorp.GameStates
             MainMenuState menuState = StateManager.GetState<MainMenuState>("MainMenuState");
             menuState.IsGameRunning = false;
             World.Quit();
-            //StateManager.States["PlayState"] = new PlayState(Game, StateManager);
+            StateManager.States["PlayState"] = new PlayState(Game, StateManager);
             StateManager.CurrentState = "";
             StateManager.PushState("MainMenuState");
         }
