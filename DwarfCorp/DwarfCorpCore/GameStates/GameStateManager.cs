@@ -44,12 +44,11 @@ namespace DwarfCorp.GameStates
     /// </summary>
     public class GameStateManager
     {
-        public List<string> StateStack { get; set; }
+        public List<GameState> StateStack { get; private set; }
         public Dictionary<string, GameState> States { get; set; }
         public DwarfGame Game { get; set; }
-        public string CurrentState { get; set; }
-        public string NextState { get; set; }
-        public float TransitionSpeed { get; set; }
+        public GameState CurrentState { get; private set; }
+        public GameState NextState { get; private set; }
 
         public Terrain2D ScreenSaver { get; set; }
 
@@ -57,10 +56,9 @@ namespace DwarfCorp.GameStates
         {
             Game = game;
             States = new Dictionary<string, GameState>();
-            CurrentState = "";
-            NextState = "";
-            TransitionSpeed = 2.0f;
-            StateStack = new List<string>();
+            CurrentState = null;
+            NextState = null;
+            StateStack = new List<GameState>();
         }
 
         public T GetState<T>(string name) where T : class
@@ -78,56 +76,55 @@ namespace DwarfCorp.GameStates
             {
                 StateStack.RemoveAt(0);
             }
-            if(StateStack.Count > 0)
+            
+            if (StateStack.Count > 0)
             {
-                string state = StateStack.ElementAt(0);
-
+                var state = StateStack.ElementAt(0);
                 NextState = state;
-                States[NextState].OnEnter();
+                NextState.OnEnter();
             }
         }
 
+        public void ClearState()
+        {
+            StateStack.Clear();
+            CurrentState = null;
+            NextState = null;
+        }
 
         public void PushState(GameState state)
         {
-            States.Add(state.Name, state);
-            PushState(state.Name);
+            NextState = state;
+            NextState.OnEnter();
+            StateStack.Insert(0, NextState);
         }
 
         public void PushState(string state)
         {
-            NextState = state;
-            States[NextState].OnEnter();
-            StateStack.Insert(0, state);
-        }
-
-        private void TransitionComplete()
-        {
-            if(CurrentState != "")
-            {
-                States[CurrentState].OnExit();
-                States[CurrentState].OnPopped();
-            }
-
-            CurrentState = NextState;
-            NextState = "";
+            if (States.ContainsKey(state))
+                PushState(States[state]);
         }
 
         public void Update(DwarfTime time)
         {
             if(ScreenSaver == null)
-            {
                 ScreenSaver = new Terrain2D(Game);
-            }
-            if(CurrentState != "" && States[CurrentState].IsInitialized)
+
+            if(CurrentState != null && CurrentState.IsInitialized)
+                CurrentState.Update(time);
+
+            if (NextState != null && NextState.IsInitialized)
             {
-                States[CurrentState].Update(time);
+                if (CurrentState != null)
+                {
+                    CurrentState.OnExit();
+                    CurrentState.OnPopped();
+                }
+
+                CurrentState = NextState;
+                NextState = null;
             }
 
-            if(NextState != "" && States[NextState].IsInitialized)
-            {
-                TransitionComplete();
-            }
         }
 
         public void Render(DwarfTime time)
@@ -138,15 +135,16 @@ namespace DwarfCorp.GameStates
 
             Game.GraphicsDevice.Clear(Color.Black);
 
-            if(CurrentState != "" && States[CurrentState].EnableScreensaver)
-            {
+            if (CurrentState != null && CurrentState.EnableScreensaver)
                 ScreenSaver.Render(Game.GraphicsDevice, DwarfGame.SpriteBatch, time);
-            }
+
             for(int i = StateStack.Count - 1; i >= 0; i--)
             {
-                GameState state = States[StateStack[i]];
+                GameState state = StateStack[i];
                
-                if(state.RenderUnderneath || i == 0 || state.Name == CurrentState || state.Name == NextState)
+                if(state.RenderUnderneath || i == 0 
+                    || Object.ReferenceEquals(state, CurrentState) 
+                    || Object.ReferenceEquals(state, NextState))
                 {
                     if(state.IsInitialized)
                     {

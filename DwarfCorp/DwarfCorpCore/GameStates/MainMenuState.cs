@@ -123,10 +123,7 @@ namespace DwarfCorp.GameStates
 
             MakeMenuItem(frame, "Credits", "View the credits.", (sender, args) =>
                 {
-                    if (StateManager.States.ContainsKey("CreditsState"))
-                        StateManager.PushState("CreditsState");
-                    else
-                        StateManager.PushState(new CreditsState(GameState.Game, StateManager));
+                    StateManager.PushState(new CreditsState(GameState.Game, StateManager));
                 });
 
             MakeMenuItem(frame, "Quit", "Goodbye.", (sender, args) => Game.Exit());

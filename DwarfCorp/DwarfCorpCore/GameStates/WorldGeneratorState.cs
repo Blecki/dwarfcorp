@@ -1269,7 +1269,7 @@ namespace DwarfCorp.GameStates
 
         public override void Update(DwarfTime gameTime)
         {
-            if (StateManager.CurrentState == Name)
+            if (Object.ReferenceEquals(StateManager.CurrentState, this))
             {
                 GUI.Update(gameTime);
                 Input.Update();
@@ -1281,7 +1281,7 @@ namespace DwarfCorp.GameStates
                     Generate();
                 }
             }
-            TransitionValue = 1.0f;
+
             if (!GUI.Graphics.IsDisposed)
             {
                 GUI.Graphics.DepthStencilState = DepthStencilState.Default;

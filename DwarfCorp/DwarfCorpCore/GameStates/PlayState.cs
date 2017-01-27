@@ -627,7 +627,8 @@ namespace DwarfCorp.GameStates
             menuState.IsGameRunning = false;
             World.Quit();
             StateManager.States["PlayState"] = new PlayState(Game, StateManager);
-            StateManager.CurrentState = "";
+            StateManager.ClearState();
+            //StateManager.CurrentState = null;
             StateManager.PushState("MainMenuState");
         }
     }

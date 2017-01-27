@@ -1406,7 +1406,7 @@ namespace DwarfCorp
             if (!string.IsNullOrEmpty(LoadingMessageBottom))
             {
                 Vector2 tipMeasurement = Datastructures.SafeMeasure(font, LoadingMessageBottom);
-                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Tip: " + LoadingMessageBottom, font,
+                Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, LoadingMessageBottom, font,
                     new Vector2(GraphicsDevice.Viewport.Width / 2 - tipMeasurement.X / 2,
                         GraphicsDevice.Viewport.Height - tipMeasurement.Y * 2), toDraw, new Color(50, 50, 50));
             }

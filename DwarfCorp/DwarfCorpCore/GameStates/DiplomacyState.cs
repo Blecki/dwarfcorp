@@ -697,8 +697,6 @@ namespace DwarfCorp
             WorldManager.GUI.ToolTipManager.ToolTip = "";
             WorldManager.Paused = true;
             Initialize();
-            TransitionValue = 1.0f;
-
 
             base.OnEnter();
         }

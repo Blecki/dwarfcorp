@@ -53,8 +53,6 @@ namespace DwarfCorp.GameStates
         public string Name { get; set; }
         public GameStateManager StateManager { get; set; }
         public bool IsInitialized { get; set; }
-        public float TransitionValue { get; set; }
-        //public TransitionMode Transitioning { get; set; }
         public bool RenderUnderneath { get; set; }
         public bool IsActiveState { get; set; }
         public bool EnableScreensaver { get; set; }
@@ -66,7 +64,6 @@ namespace DwarfCorp.GameStates
             Name = name;
             StateManager = stateManager;
             IsInitialized = false;
-            TransitionValue = 0.0f;
             RenderUnderneath = false;
             IsActiveState = false;
         }
@@ -74,13 +71,11 @@ namespace DwarfCorp.GameStates
         public virtual void OnEnter()
         {
             IsActiveState = true;
-            TransitionValue = 0.0f;
         }
 
         public virtual void OnExit()
         {
             IsActiveState = false;
-            TransitionValue = 0.0f;
         }
 
 
@@ -170,7 +165,7 @@ namespace DwarfCorp.GameStates
         {
             GUI.MouseMode = GUISkin.MousePointer.Wait;
 
-            if (!WaitThread.IsAlive && StateManager.CurrentState == Name && !Done)
+            if (!WaitThread.IsAlive && Object.ReferenceEquals(StateManager.CurrentState, this) && !Done)
             {
                 StateManager.PopState();
                 Done = true;

@@ -70,7 +70,7 @@ namespace DwarfCorp.GameStates
 
         public static void PushEconomyState()
         {
-            if (Game.StateManager.NextState == "")
+            if (Game.StateManager.NextState == null)
             {
                 WorldManager.GUI.RootComponent.IsVisible = false;
                 Game.StateManager.PushState("EconomyState");
