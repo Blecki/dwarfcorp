@@ -58,6 +58,7 @@ namespace DwarfCorp
         #region fields
 
         // The random seed of the whole game
+        public static int Seed { get; set; }
 
         // Defines the number of pixels in the overworld to number of voxels conversion
         public static float WorldScale
@@ -281,7 +282,7 @@ namespace DwarfCorp
             this.Game = Game;
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;
-            MathFunctions.Seed = MathFunctions.Random.Next();
+            Seed = MathFunctions.Random.Next();
             WorldOrigin = new Vector2(WorldWidth / 2, WorldHeight / 2);
             Time = new WorldTime();
         }
@@ -525,7 +526,7 @@ namespace DwarfCorp
             }
 
 
-            ChunkGenerator = new ChunkGenerator(VoxelLibrary, MathFunctions.Seed, 0.02f, ChunkHeight / 2.0f)
+            ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f, ChunkHeight / 2.0f)
             {
                 SeaLevel = SeaLevel
             };
