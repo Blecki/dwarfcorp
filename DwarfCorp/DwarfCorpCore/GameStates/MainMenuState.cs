@@ -45,15 +45,11 @@ namespace DwarfCorp.GameStates
     public class MainMenuState : GameState
     {
         public Texture2D Logo { get; set; }
-        public bool IsGameRunning { get; set; }
-
         private Gum.Root GuiRoot;
-
 
         public MainMenuState(DwarfGame game, GameStateManager stateManager) :
             base(game, "MainMenuState", stateManager)
         {
-            IsGameRunning = false;
         }
 
         private Gum.Widget MakeMenuFrame(String Name)
@@ -96,10 +92,6 @@ namespace DwarfCorp.GameStates
             GuiRoot.RootItem.Clear();
 
             var frame = MakeMenuFrame("MAIN MENU");
-
-            if (IsGameRunning)
-                MakeMenuItem(frame, "Continue", "Return to your game.", (sender, args) =>
-                    StateManager.PopState());
 
             MakeMenuItem(frame, "New Game", "Start a new game of DwarfCorp.", (sender, args) =>
                 {

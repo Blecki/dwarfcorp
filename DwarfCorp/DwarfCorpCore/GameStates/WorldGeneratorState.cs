@@ -529,9 +529,6 @@ namespace DwarfCorp.GameStates
                 StateManager.PopState();
                 StateManager.PushState("LoadState");
 
-                MainMenuState menu = (MainMenuState) StateManager.States["MainMenuState"];
-                menu.IsGameRunning = true;
-
                 WorldManager.Natives = NativeCivilizations;
             }
         }

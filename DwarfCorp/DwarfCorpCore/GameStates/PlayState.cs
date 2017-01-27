@@ -622,9 +622,6 @@ namespace DwarfCorp.GameStates
 
         public void QuitGame()
         {
-            StateManager.StateStack.Clear();
-            MainMenuState menuState = StateManager.GetState<MainMenuState>("MainMenuState");
-            menuState.IsGameRunning = false;
             World.Quit();
             StateManager.States["PlayState"] = new PlayState(Game, StateManager);
             StateManager.ClearState();
