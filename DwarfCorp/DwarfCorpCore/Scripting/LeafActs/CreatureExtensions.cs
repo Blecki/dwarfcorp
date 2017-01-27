@@ -194,8 +194,6 @@ namespace DwarfCorp
                 // If the voxel has already been destroyed, just ignore it and return.
                 if(vox.Health <= 0.0f || !agent.Faction.IsDigDesignation(vox))
                 {
-                    agent.AI.AddXP(Math.Max((int)(VoxelLibrary.GetVoxelType(blackBoardVoxel.TypeName).StartingHealth / 4), 1));
-                    agent.Stats.NumBlocksDestroyed++;
                     agent.CurrentCharacterMode = Creature.CharacterMode.Idle;
                     yield return Act.Status.Success;
                     break;
@@ -242,7 +240,8 @@ namespace DwarfCorp
                             agent.Gather(item);
                         }
                     }
-
+                    agent.AI.AddXP(Math.Max((int)(VoxelLibrary.GetVoxelType(blackBoardVoxel.TypeName).StartingHealth / 4), 1));
+                    agent.Stats.NumBlocksDestroyed++;
                 }
 
                 // Wait until the animation is done playing before continuing.

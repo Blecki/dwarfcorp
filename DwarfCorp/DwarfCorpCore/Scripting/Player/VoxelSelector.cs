@@ -415,6 +415,8 @@ namespace DwarfCorp
             dotColor.A = 90;
             foreach (Voxel v in SelectionBuffer)
             {
+                if (v == null) continue;
+                
                 if ((SelectionType == VoxelSelectionType.SelectFilled && !v.IsEmpty)
                     || (SelectionType == VoxelSelectionType.SelectEmpty && v.IsEmpty))
                 {

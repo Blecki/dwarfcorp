@@ -67,16 +67,16 @@ namespace DwarfCorp
         public List<Company> Market { get; set; }
 
         [JsonIgnore]
-        public WorldManager world { get; set; }
+        public WorldManager WorldManager { get; set; }
 
         public Economy()
         {
             
         }
 
-        public Economy(Faction faction, float currentMoney, WorldManager world, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
+        public Economy(Faction faction, float currentMoney, WorldManager WorldManager, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
         {
-            this.world = world;
+            this.WorldManager = WorldManager;
             Company = Company.GenerateRandom(currentMoney, 1.0f, Company.Sector.Exploration);
             Company.Name = companyName;
             Company.SecondaryColor = Color.White;
@@ -112,7 +112,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            world = WorldManager.world;
+            WorldManager = WorldManager.World;
         }
 
         public void UpdateStocks(DateTime time)
@@ -136,7 +136,7 @@ namespace DwarfCorp
             float diff = Company.StockPrice - originalStockPrice;
             if (Company.StockPrice <= 0)
             {
-                world.InvokeLoss();
+                WorldManager.InvokeLoss();
             }
 
             if (Company.Assets <= 0)

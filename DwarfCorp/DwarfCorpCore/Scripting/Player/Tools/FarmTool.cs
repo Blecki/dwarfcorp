@@ -68,6 +68,7 @@ namespace DwarfCorp
             public Plant Plant = null;
             public float Progress = 0.0f;
             public CreatureAI Farmer = null;
+            public bool IsCanceled = false;
 
             public bool IsTilled()
             {
@@ -156,10 +157,14 @@ namespace DwarfCorp
                         }
                         else
                         {
-                            if (HasTile(voxel) && !HasPlant(voxel))
+                            if (!HasTile(voxel) || HasPlant(voxel)) continue;
+
+                            foreach (FarmTile tile in FarmTiles)
                             {
-                                FarmTiles.RemoveAll(tile => tile.Vox.Equals(voxel));
+                                if (tile.Vox.Equals(voxel))
+                                    tile.IsCanceled = true;
                             }
+                            FarmTiles.RemoveAll(tile => tile.Vox.Equals(voxel));
                         }
                     }
                     TaskManager.AssignTasksGreedy(goals, minions, 1);

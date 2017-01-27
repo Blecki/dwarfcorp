@@ -143,7 +143,7 @@ namespace DwarfCorp
             RegisterEntity("Stove", (position, data) => new Stove(position));
             RegisterEntity("Strawman", (position, data) =>
             {
-                float value = (float)WorldManager.Random.NextDouble();
+                float value = (float)MathFunctions.Random.NextDouble();
                 return value < 0.33
                     ? (Body)(new Strawman(position))
                     : (value < 0.66 ? (Body)(new WeightRack(position)) : (Body)(new PunchingBag(position)));

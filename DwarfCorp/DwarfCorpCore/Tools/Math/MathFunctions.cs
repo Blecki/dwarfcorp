@@ -51,7 +51,7 @@ namespace DwarfCorp
 
         public static float Rand()
         {
-            return (float) WorldManager.Random.NextDouble();
+            return (float) Random.NextDouble();
         }
 
         public static float Rand(float min, float max)
@@ -189,6 +189,12 @@ namespace DwarfCorp
             return value;
         }
 
+        /// <summary>
+        /// Clamps the specified vector to a bounding box.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="bounds">The bounds.</param>
+        /// <returns>A vector inside the bounds.</returns>
         public static Vector3 Clamp(Vector3 value, BoundingBox bounds)
         {
             return new Vector3(Clamp(value.X, bounds.Min.X, bounds.Max.X), 
@@ -197,12 +203,23 @@ namespace DwarfCorp
         }
 
 
+        /// <summary>
+        /// Clamps the specified vector to a rectangle.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="bounds">The bounds.</param>
+        /// <returns>A vector clamped to the rectangle bounds.</returns>
         public static Vector2 Clamp(Vector2 value, Rectangle bounds)
         {
             return new Vector2(Clamp(value.X, bounds.Left, bounds.Right), Clamp(value.Y, bounds.Top, bounds.Bottom));
         }
 
-
+        /// <summary>
+        /// Finds the intersection of inner and outer.
+        /// </summary>
+        /// <param name="inner">The inner.</param>
+        /// <param name="outer">The outer.</param>
+        /// <returns>A rectangle which is the intersection of inner and outer.</returns>
         public static Rectangle Clamp(Rectangle inner, Rectangle outer)
         {
             Rectangle rect = inner;
@@ -281,26 +298,53 @@ namespace DwarfCorp
             return normal;
         }
 
+        /// <summary>
+        /// Returns a random vector within the unit cube.
+        /// </summary>
+        /// <returns></returns>
         public static Vector3 RandVector3Cube()
         {
             return new Vector3(Rand() - 0.5f, Rand() - 0.5f, Rand() - 0.5f);
         }
 
+        /// <summary>
+        /// Returns a uniform random vector within an axis aligned box.
+        /// </summary>
+        /// <param name="minX">The minimum x.</param>
+        /// <param name="maxX">The max x.</param>
+        /// <param name="minY">The minimum y.</param>
+        /// <param name="maxY">The max y.</param>
+        /// <param name="minZ">The minimum z.</param>
+        /// <param name="maxZ">The max z.</param>
+        /// <returns></returns>
         public static Vector3 RandVector3Box(float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
         {
             return new Vector3(Rand(minX, maxX), Rand(minY, maxY), Rand(minZ, maxZ));
         }
 
+        /// <summary>
+        /// Returns a uniform random vector within a box.
+        /// </summary>
+        /// <param name="box">The box.</param>
+        /// <returns></returns>
         public static Vector3 RandVector3Box(BoundingBox box)
         {
             return RandVector3Box(box.Min.X, box.Max.X, box.Min.Y, box.Max.Y, box.Min.Z, box.Max.Z);
         }
 
+        /// <summary>
+        /// Returns a uniform random vector within a unit square centered on the origin.
+        /// </summary>
+        /// <returns></returns>
         public static Vector2 RandVector2Square()
         {
             return new Vector2(Rand() - 0.5f, Rand() - 0.5f);
         }
 
+        /// <summary>
+        /// Returns a uniform random vector within a unit circle centered on the origin.
+        /// </summary>
+        /// <returns></returns>
         public static Vector2 RandVector2Circle()
         {
             Vector2 toReturn;
@@ -315,7 +359,7 @@ namespace DwarfCorp
 
 
         /// <summary>
-        /// Converts polar coordinates to a vector2 in rectangular
+        /// Converts polar coordinates to a min in rectangular
         /// </summary>
         /// <param Name="theta">the angle of the polar coordinate</param>
         /// <param Name="r">the distance of the polar coordinate</param>
@@ -401,15 +445,25 @@ namespace DwarfCorp
             return (b - (float) Math.Sqrt(b*b - 4*a*c))/(2*a);
         }
 
+        /// <summary>
+        /// Gets the bounding box of the specified sphere.
+        /// </summary>
+        /// <param name="sphere">The sphere.</param>
+        /// <returns></returns>
         public static BoundingBox GetBoundingBox(BoundingSphere sphere)
         {
             return new BoundingBox(sphere.Center - new Vector3(sphere.Radius, sphere.Radius, sphere.Radius), sphere.Center + new Vector3(sphere.Radius, sphere.Radius, sphere.Radius));
         }
 
+        /// <summary>
+        /// Gets the bounds of a set of 3D points.
+        /// </summary>
+        /// <param name="points">The points.</param>
+        /// <returns></returns>
         public static BoundingBox GetBoundingBox(IEnumerable<Vector3> points)
         {
-            Vector3 maxPos = new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue);
-            Vector3 minPos = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            Vector3 maxPos = new Vector3(-Single.MaxValue, -Single.MaxValue, -Single.MaxValue);
+            Vector3 minPos = new Vector3(Single.MaxValue, Single.MaxValue, Single.MaxValue);
 
             foreach (Vector3 point in points)
             {
@@ -424,10 +478,15 @@ namespace DwarfCorp
             return new BoundingBox(minPos, maxPos);
         }
 
+        /// <summary>
+        /// Gets the bounding box of a set of bounding boxes.
+        /// </summary>
+        /// <param name="boxes">The boxes.</param>
+        /// <returns></returns>
         public static BoundingBox GetBoundingBox(IEnumerable<BoundingBox> boxes)
         {
-            Vector3 maxPos = new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue);
-            Vector3 minPos = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            Vector3 maxPos = new Vector3(-Single.MaxValue, -Single.MaxValue, -Single.MaxValue);
+            Vector3 minPos = new Vector3(Single.MaxValue, Single.MaxValue, Single.MaxValue);
 
             foreach (BoundingBox box in boxes)
             {
@@ -465,6 +524,12 @@ namespace DwarfCorp
             return new BoundingBox(minPos, maxPos);
         }
 
+        /// <summary>
+        /// Gets the distance in X and Z to a 3D bounding box of a 3d point.
+        /// </summary>
+        /// <param name="bounds">The bounds.</param>
+        /// <param name="pos">The position.</param>
+        /// <returns></returns>
         public static float Dist2D(BoundingBox bounds, Vector3 pos)
         {
             float dx = Math.Min(Math.Abs(pos.X - bounds.Min.X), Math.Abs(bounds.Max.X - pos.X));
@@ -472,10 +537,15 @@ namespace DwarfCorp
             return Math.Min(dx, dz);
         }
 
+        /// <summary>
+        /// Gets the bounding rectangle of a set of rectangles.
+        /// </summary>
+        /// <param name="boxes">The boxes.</param>
+        /// <returns></returns>
         public static Rectangle GetBoundingRectangle(IEnumerable<Rectangle> boxes)
         {
-            Point maxPos = new Point(-int.MaxValue, -int.MaxValue);
-            Point minPos = new Point(int.MaxValue, int.MaxValue);
+            Point maxPos = new Point(-Int32.MaxValue, -Int32.MaxValue);
+            Point minPos = new Point(Int32.MaxValue, Int32.MaxValue);
 
             foreach (Rectangle box in boxes)
             {
@@ -504,6 +574,10 @@ namespace DwarfCorp
         }
 
 
+        /// <summary>
+        /// Bilinearly interpolates between values in a grid.
+        /// </summary>
+        /// <returns></returns>
         public static float LinearCombination(float x, float y, float x1, float y1, float x2, float y2, float q11,
             float q12, float q21, float q22)
         {
@@ -513,6 +587,12 @@ namespace DwarfCorp
                                                  q22*(x - x1)*(y - y1));
         }
 
+        /// <summary>
+        /// Bilinear interpolation in a 2D float map.
+        /// </summary>
+        /// <param name="position">The position to get the value at. Clamped to be inside the map.</param>
+        /// <param name="map">The map.</param>
+        /// <returns>Bilinearly interpolated value at that map position.</returns>
         public static float LinearInterpolate(Vector2 position, float[,] map)
         {
             float x = position.X;
@@ -532,7 +612,6 @@ namespace DwarfCorp
                 y1 = y1 + 1;
             }
 
-
             float q11 = map[(int) x1, (int) y1];
             float q12 = map[(int) x1, (int) y2];
             float q21 = map[(int) x2, (int) y1];
@@ -541,6 +620,10 @@ namespace DwarfCorp
             return LinearCombination(x, y, x1, y1, x2, y2, q11, q12, q21, q22);
         }
 
+
+        /// <summary>
+        /// Gets the distance of point p to a line segment made up vectors v and w.
+        /// </summary>
 
         public static float PointLineDistance2D(Vector2 v, Vector2 w, Vector2 p)
         {
@@ -572,9 +655,14 @@ namespace DwarfCorp
             return (p - projection).LengthSquared();
         }
 
+        /// <summary>
+        /// Returns the component-wise minimum of a specified set of vectors.
+        /// </summary>
+        /// <param name="vecs">The vecs.</param>
+        /// <returns></returns>
         public static Vector3 Min(params Vector3[] vecs)
         {
-            Vector3 toReturn = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            Vector3 toReturn = new Vector3(Single.MaxValue, Single.MaxValue, Single.MaxValue);
 
             for (int i = 0; i < vecs.Length; i++)
             {
@@ -585,9 +673,14 @@ namespace DwarfCorp
             return toReturn;
         }
 
+        /// <summary>
+        /// Returns the maximmum of a specified set of vectors.
+        /// </summary>
+        /// <param name="vecs">The vecs.</param>
+        /// <returns></returns>
         public static Vector3 Max(params Vector3[] vecs)
         {
-            Vector3 toReturn = new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue);
+            Vector3 toReturn = new Vector3(-Single.MaxValue, -Single.MaxValue, -Single.MaxValue);
 
             for (int i = 0; i < vecs.Length; i++)
             {
@@ -598,29 +691,29 @@ namespace DwarfCorp
             return toReturn;
         }
 
+        /// <summary>
+        /// Returns the L1 (manhattan) norm between vectors a and b.
+        /// </summary>
+        /// <param name="a">a.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         public static float L1(Vector3 a, Vector3 b)
         {
             return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) + Math.Abs(a.Z - b.Z);
         }
 
-        public static void SetMinMax(float minValue, float maxValue, ref float currentMin, ref float currentMax)
-        {
-            if (minValue < currentMin)
-            {
-                currentMin = minValue;
-            }
-
-            if (maxValue > currentMax)
-            {
-                currentMax = maxValue;
-            }
-        }
-
+        /// <summary>
+        /// Float equivalent of the modulus function.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="modulus">The modulus.</param>
+        /// <returns></returns>
         private static float Mod(float value, float modulus)
         {
             return (value%modulus + modulus)%modulus;
         }
 
+        // Find the smallest positive t such that s+t*ds is an integer.
         public static float IntBound(float s, float ds)
         {
             while (true)
@@ -640,137 +733,36 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Floors the int.
+        /// </summary>
+        /// <param name="s">The s.</param>
+        /// <returns></returns>
         public static int FloorInt(float s)
         {
             return (int) Math.Floor(s);
         }
 
+        /// <summary>
+        /// Determines whether the specified f has nan values.
+        /// </summary>
+        /// <param name="f">The f.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified f has nan; otherwise, <c>false</c>.
+        /// </returns>
         public static bool HasNan(Vector3 f)
         {
-            return float.IsNaN(f.X) || float.IsNaN(f.Y) || float.IsNaN(f.Z);
+            return Single.IsNaN(f.X) || Single.IsNaN(f.Y) || Single.IsNaN(f.Z);
         }
 
+        /// <summary>
+        /// Rasterizes the line, producing a list of Point3's that intersect the line segment.
+        /// </summary>
+        /// <param name="start">The start.</param>
+        /// <param name="end">The end.</param>
+        /// <returns></returns>
         public static IEnumerable<Point3> RasterizeLine(Vector3 start, Vector3 end)
         {
-            /*
-            int x1 = start.X;
-            int y1 = start.Y;
-            int z1 = start.Z;
-            int x2 = end.X;
-            int y2 = end.Y;
-            int z2 = end.Z;
-
-            int xd, yd, zd;
-            int x, y, z;
-            int ax, ay, az;
-            int sx, sy, sz;
-            int dx, dy, dz;
-
-            dx = x2 - x1;
-            dy = y2 - y1;
-            dz = z2 - z1;
-
-            ax = Math.Abs(dx) << 1;
-            ay = Math.Abs(dy) << 1;
-            az = Math.Abs(dz) << 1;
-
-            sx = Math.Sign(dx);
-            sy = Math.Sign(dy);
-            sz = Math.Sign(dz);
-
-            x = x1;
-            y = y1;
-            z = z1;
-
-            if (ax >= Math.Max(ay, az)) // x dominant 
-            {
-                yd = ay - (ax >> 1);
-                zd = az - (ax >> 1);
-                for (;;)
-                {
-                    yield return new Point3(x, y, z);
-                    if (x == x2)
-                    {
-                        yield break;
-                    }
-
-                    if (yd >= 0)
-                    {
-                        y += sy;
-                        yd -= ax;
-                    }
-
-                    if (zd >= 0)
-                    {
-                        z += sz;
-                        zd -= ax;
-                    }
-
-                    x += sx;
-                    yd += ay;
-                    zd += az;
-                }
-            }
-            else if (ay >= Math.Max(ax, az)) // y dominant 
-            {
-                xd = ax - (ay >> 1);
-                zd = az - (ay >> 1);
-                for (;;)
-                {
-                    yield return new Point3(x, y, z);
-                    if (y == y2)
-                    {
-                        yield break;
-                    }
-
-                    if (xd >= 0)
-                    {
-                        x += sx;
-                        xd -= ay;
-                    }
-
-                    if (zd >= 0)
-                    {
-                        z += sz;
-                        zd -= ay;
-                    }
-
-                    y += sy;
-                    xd += ax;
-                    zd += az;
-                }
-            }
-            else if (az >= Math.Max(ax, ay)) // z dominant 
-            {
-                xd = ax - (az >> 1);
-                yd = ay - (az >> 1);
-                for (;;)
-                {
-                    yield return new Point3(x, y, z);
-                    if (z == z2)
-                    {
-                        yield break;
-                    }
-
-                    if (xd >= 0)
-                    {
-                        x += sx;
-                        xd -= az;
-                    }
-
-                    if (yd >= 0)
-                    {
-                        y += sy;
-                        yd -= az;
-                    }
-
-                    z += sz;
-                    xd += ax;
-                    yd += ay;
-                }
-            }
-        }
-             */
             // From "A Fast Voxel Traversal Algorithm for Ray Tracing"
             // by John Amanatides and Andrew Woo, 1987
             // <http://www.cse.yorku.ca/~amana/research/grid.pdf>
@@ -867,22 +859,48 @@ namespace DwarfCorp
             }
         }
 
-        public static Rectangle SnapRect(Vector2 vector2, Vector2 measure, Rectangle outer)
+        /// <summary>
+        /// Clamps a rectangle given by its minimum and max to an outer rectangle, while preserving the rectangle's size.
+        /// </summary>
+        /// <param name="min">The min.</param>
+        /// <param name="max">The max.</param>
+        /// <param name="outer">The outer.</param>
+        /// <returns></returns>
+        public static Rectangle SnapRect(Vector2 min, Vector2 max, Rectangle outer)
         {
-            Rectangle inner = new Rectangle((int)vector2.X, (int)vector2.Y, (int)measure.X, (int)measure.Y);
+            Rectangle inner = new Rectangle((int)min.X, (int)min.Y, (int)max.X, (int)max.Y);
             return new Rectangle(Clamp(inner.X, outer.X, outer.Right - inner.Width), Clamp(inner.Y, outer.Y, outer.Bottom - inner.Height), inner.Width, inner.Height);
         }
 
+        /// <summary>
+        /// Linearly interpolate between a and b.
+        /// </summary>
+        /// <param name="a">a.</param>
+        /// <param name="b">The b.</param>
+        /// <param name="t">Scalar between 0 and 1.</param>
+        /// <returns></returns>
         public static float Lerp(float a, float b, float t)
         {
             return t*b + (1 - t)*a;
         }
 
+        /// <summary>
+        /// Linearly interpolate a rectangle.
+        /// </summary>
+        /// <param name="start">The start.</param>
+        /// <param name="end">The end.</param>
+        /// <param name="t">The t scalar (between 0 and 1).</param>
+        /// <returns></returns>
         public static Rectangle Lerp(Rectangle start, Rectangle end, float t)
         {
             return new Rectangle((int)Lerp(start.X, end.X, t), (int)Lerp(start.Y, end.Y, t), (int)Lerp(start.Width, end.Width, t), (int)Lerp(start.Height, end.Height, t));
         }
 
+        /// <summary>
+        /// Creates a random transform within the given bounding box. Just uses Euler angles...
+        /// </summary>
+        /// <param name="bounds">The bounds.</param>
+        /// <returns></returns>
         public static Matrix RandomTransform(BoundingBox bounds)
         {
             Matrix tf = Matrix.Identity;
@@ -893,9 +911,29 @@ namespace DwarfCorp
             return tf;
         }
 
+        /// <summary>
+        /// Returns a random integer between min and max.
+        /// </summary>
+        /// <param name="min">The minimum.</param>
+        /// <param name="max">The maximum.</param>
+        /// <returns></returns>
         public static int RandInt(int min, int max)
         {
-            return WorldManager.Random.Next(min, max);
+            return Random.Next(min, max);
         }
+
+        /// <summary>
+        /// Gets or sets the static random seed shared by all functions using this random generator..
+        /// </summary>
+        /// <value>
+        /// The seed.
+        /// </value>
+        public static int Seed { get; set; }
+        /// <summary>
+        /// The random generator used by everything in the game. Why does it have the same seed everywhere?
+        /// so that randomly generated worlds are exactly the same. Even though this is called "ThreadSafe"
+        /// it should probably NOT be called from threads other than the main thread to maintain seed consistency.
+        /// </summary>
+        public static ThreadSafeRandom Random = new ThreadSafeRandom();
     }
 }

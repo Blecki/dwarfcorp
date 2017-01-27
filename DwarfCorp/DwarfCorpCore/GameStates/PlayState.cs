@@ -101,7 +101,7 @@ namespace DwarfCorp.GameStates
             ShouldReset = true;
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;
-            //World = new WorldManager(game);
+            //World = new World(game);
             //World.gameState = this;
             //World.OnLoadedEvent += World_OnLoadedEvent;
             //World.OnLoseEvent += World_OnLoseEvent;
@@ -131,10 +131,10 @@ namespace DwarfCorp.GameStates
         public override void OnEnter()
         {
 
-            //World = new WorldManager(game);
-            World.gameState = this;
+            //World = new World(game);
+            //World.gameState = this;
             //World.OnLoadedEvent += World_OnLoadedEvent;
-            World.OnLoseEvent += World_OnLoseEvent;
+            //World.OnLoseEvent += World_OnLoseEvent;
 
             CreateGUIComponents();
             // If the game should reset, we initialize everything
@@ -222,7 +222,7 @@ namespace DwarfCorp.GameStates
             TipTimer.Update(gameTime);
             if (TipTimer.HasTriggered)
             {
-                World.LoadingMessageBottom = LoadingTips[WorldManager.Random.Next(LoadingTips.Count)];
+                World.LoadingMessageBottom = LoadingTips[MathFunctions.Random.Next(LoadingTips.Count)];
                 TipIndex++;
             }
 

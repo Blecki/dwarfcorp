@@ -32,6 +32,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -47,7 +48,9 @@ namespace DwarfCorp
     {
         private static readonly ConcurrentBag<DrawCommand3D> Commands = new ConcurrentBag<DrawCommand3D>();
         public static OrbitCamera Camera = null;
-
+        private static DynamicVertexBuffer StripBuffer;
+        private static VertexPositionColor[] StripVertices = null;
+        private static int MaxStripVertex = -1;
 
         public static void DrawLine(Vector3 p1, Vector3 p2, Color color, float thickness)
         {
@@ -84,7 +87,6 @@ namespace DwarfCorp
 
         public static void Render(GraphicsDevice device, Effect effect, bool delete)
         {
-
             BlendState origBlen = device.BlendState;
             device.BlendState = BlendState.NonPremultiplied;
 
@@ -94,6 +96,7 @@ namespace DwarfCorp
 
             effect.CurrentTechnique = effect.Techniques["Untextured"];
             effect.Parameters["xWorld"].SetValue(Matrix.Identity);
+
 
             DrawCommand3D.LineStrip strips = new DrawCommand3D.LineStrip()
             {
@@ -105,16 +108,31 @@ namespace DwarfCorp
                     command.AccumulateStrips(strips);
             }
 
-            if (strips.Vertices.Count > 0 && strips.NumTriangles > 0)
+            if (strips.Vertices.Count > 0 &&
+                (StripVertices == null ||
+                strips.Vertices.Count > StripVertices.Count()))
             {
-                foreach(EffectPass pass in effect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    device.DrawUserPrimitives(PrimitiveType.TriangleStrip, strips.Vertices.ToArray(), 0, Math.Min(strips.Vertices.Count - 2, short.MaxValue));
-                }
+                StripVertices = new VertexPositionColor[strips.Vertices.Count * 2];
+                StripBuffer = new DynamicVertexBuffer(device, VertexPositionColor.VertexDeclaration, strips.Vertices.Count * 2, BufferUsage.WriteOnly);    
             }
 
+            if (strips.Vertices.Count > 0)
+            {
+                strips.Vertices.CopyTo(StripVertices);
+                MaxStripVertex = strips.Vertices.Count;
 
+                if (MaxStripVertex > 0 && StripBuffer != null)
+                {
+                    StripBuffer.SetData(StripVertices, 0, MaxStripVertex);
+                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+                        device.SetVertexBuffer(StripBuffer);
+                        device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, strips.Vertices.Count - 2);
+                    }
+                }
+            }
+        
             effect.CurrentTechnique = effect.Techniques["Textured"];
 
             foreach (DrawCommand3D command in Commands)
