@@ -306,6 +306,7 @@ namespace DwarfCorp
             }
         }
 
+
         public void Update(DwarfTime time)
         {
             RoomBuilder.CheckRemovals();

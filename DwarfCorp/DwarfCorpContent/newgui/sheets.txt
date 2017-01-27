@@ -82,6 +82,18 @@
 			"Texture": "newgui/down",
 			"TileWidth": 16,
 			"TileHeight": 16
+		},
+		{
+			"Name": "company-logo-background",
+			"Texture": "newgui/logo-bg",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
+			"Name": "company-logo-symbol",
+			"Texture": "newgui/logo-fg",
+			"TileWidth": 32,
+			"TileHeight": 32
 		}
 	]
 }

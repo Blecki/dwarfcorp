@@ -44,7 +44,6 @@ namespace DwarfCorp.GameStates
     public class LoseState : GameState
     {
         public DwarfGUI GUI { get; set; }
-        public Drawer2D Drawer { get; set; }
         public GUIComponent MainWindow { get; set; }
         public GridLayout Layout { get; set; }
         public InputManager Input { get; set; }
@@ -67,7 +66,6 @@ namespace DwarfCorp.GameStates
                 DebugDraw = false
             };
             IsInitialized = true;
-            Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
             MainWindow = new Panel(GUI, GUI.RootComponent)
             {
                 LocalBounds = new Rectangle(EdgePadding, EdgePadding, Game.GraphicsDevice.Viewport.Width - EdgePadding * 2, Game.GraphicsDevice.Viewport.Height - EdgePadding * 2)
@@ -129,7 +127,7 @@ namespace DwarfCorp.GameStates
 
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(dx, 0));
 
-            Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
+            Drawer2D.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.PostRender(gameTime);
             DwarfGame.SpriteBatch.End();
         }

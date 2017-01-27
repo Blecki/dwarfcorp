@@ -34,6 +34,7 @@ using System;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Linq;
 
 
 namespace DwarfCorp
@@ -106,20 +107,37 @@ namespace DwarfCorp
                     ContentPaths.Music.dwarfcorp_3, ContentPaths.Music.dwarfcorp_4, ContentPaths.Music.dwarfcorp_5);
 #endif
             }
+
+            // The thing keeping this from working is that some states are tied tightly to the play state.
+            // Ideally the solution is to stop caching these at all, so there's no point in trying to make
+            // an implementation work just to throw it out.
+            /*
+            foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
+            {
+                if (type.IsSubclassOf(typeof(GameState)))
+                {
+                    var instance = Activator.CreateInstance(type, this, StateManager);
+                    StateManager.States.Add(type.Name, instance as GameState);
+                }
+            }
+            */
+
             PlayState playState = new PlayState(this, StateManager);
-            BiomeLibrary.InitializeStatics();
             StateManager.States["IntroState"] = new IntroState(this, StateManager);
             StateManager.States["PlayState"] = playState;
             StateManager.States["MainMenuState"] = new MainMenuState(this, StateManager);
+            StateManager.States["NewGameChooseWorldState"] = new NewGameChooseWorldState(this, StateManager);
+            StateManager.States["NewGameCreateDebugWorldState"] = new NewGameCreateDebugWorldState(this, StateManager);
             StateManager.States["WorldSetupState"] = new WorldSetupState(this, StateManager);
             StateManager.States["WorldGeneratorState"] = new WorldGeneratorState(this, StateManager);
             StateManager.States["OptionsState"] = new OptionsState(this, StateManager);
             StateManager.States["NewOptionsState"] = new NewOptionsState(this, StateManager);
-            StateManager.States["EconomyState"] = new EconomyState(this, StateManager, playState.World);
+            StateManager.States["EconomyState"] = new EconomyState(this, StateManager);
             StateManager.States["CompanyMakerState"] = new CompanyMakerState(this, StateManager);
             StateManager.States["WorldLoaderState"] = new WorldLoaderState(this, StateManager);
             StateManager.States["GameLoaderState"] = new GameLoaderState(this, StateManager);
             StateManager.States["LoseState"] = new LoseState(this, StateManager, playState);
+            StateManager.States["LoadState"] = new LoadState(this, StateManager);
 
             if(GameSettings.Default.DisplayIntro)
             {
@@ -130,13 +148,12 @@ namespace DwarfCorp
                 StateManager.PushState("MainMenuState");
             }
 
-            StateManager.States["IntroState"].OnEnter();
-            StateManager.States["MainMenuState"].OnEnter();
-            StateManager.States["OptionsState"].OnEnter();
-            StateManager.States["CompanyMakerState"].OnEnter();
-
-
-            //TestBehaviors.RunTests();
+            BiomeLibrary.InitializeStatics();
+            Embarkment.Initialize();
+            VoxelChunk.InitializeStatics();
+            ControlSettings.Load();
+            Drawer2D.Initialize(Content, GraphicsDevice);
+            ResourceLibrary.Initialize();
 
             base.LoadContent();
         }

@@ -59,7 +59,6 @@ namespace DwarfCorp.GameStates
         public Matrix ViewMatrix { get; set; }
         public Matrix ProjMatrix { get; set; }
         public SpriteFont DefaultFont { get; set; }
-        public Drawer2D Drawer { get; set; }
         public bool GenerationComplete { get; set; }
         public string LoadingMessage = "";
         public Mutex ImageMutex;
@@ -252,7 +251,6 @@ namespace DwarfCorp.GameStates
             DefaultFont = Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
             GUI = new DwarfGUI(Game, DefaultFont, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title), Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
             IsInitialized = true;
-            Drawer = new Drawer2D(Game.Content, Game.GraphicsDevice);
             GenerationComplete = false;
             MainWindow = new Panel(GUI, GUI.RootComponent)
             {
@@ -471,10 +469,10 @@ namespace DwarfCorp.GameStates
             }
             float w = WorldManager.WorldSize.X * WorldManager.WorldScale;
             float h = WorldManager.WorldSize.Z * WorldManager.WorldScale;
-            float clickX = Math.Max(Math.Min(WorldManager.WorldOrigin.X, WorldManager.WorldWidth - w - 1), w + 1);
-            float clickY = Math.Max(Math.Min(WorldManager.WorldOrigin.Y, WorldManager.WorldHeight - h - 1), h + 1);
+            float clickX = Math.Max(Math.Min(WorldManager.WorldGenerationOrigin.X, WorldManager.WorldWidth - w - 1), w + 1);
+            float clickY = Math.Max(Math.Min(WorldManager.WorldGenerationOrigin.Y, WorldManager.WorldHeight - h - 1), h + 1);
 
-            WorldManager.WorldOrigin = new Vector2((int)(clickX), (int)(clickY));
+            WorldManager.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
         }
 
 
@@ -529,7 +527,7 @@ namespace DwarfCorp.GameStates
                 Overworld.Name = Settings.Name;
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
                 StateManager.PopState();
-                StateManager.PushState("PlayState");
+                StateManager.PushState("LoadState");
 
                 MainMenuState menu = (MainMenuState) StateManager.States["MainMenuState"];
                 menu.IsGameRunning = true;
@@ -573,7 +571,7 @@ namespace DwarfCorp.GameStates
             DoneGenerating = false;
             if(!IsGenerating && !DoneGenerating)
             {
-                WorldManager.WorldOrigin = new Vector2(WorldManager.WorldWidth / 2, WorldManager.WorldHeight / 2);
+                WorldManager.WorldGenerationOrigin = new Vector2(WorldManager.WorldWidth / 2, WorldManager.WorldHeight / 2);
                 genThread = new Thread(unused => GenerateWorld(Seed, (int) WorldManager.WorldWidth, (int) WorldManager.WorldHeight));
                 genThread.Name = "GenerateWorld";
                 genThread.Start();
@@ -601,7 +599,7 @@ namespace DwarfCorp.GameStates
             clickX = Math.Max(Math.Min(clickX, WorldManager.WorldWidth - w - 1), w + 1);
             clickY = Math.Max(Math.Min(clickY, WorldManager.WorldHeight - h - 1), h + 1 );
            
-            WorldManager.WorldOrigin = new Vector2((int)(clickX), (int)(clickY));
+            WorldManager.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
         }
 
         public Dictionary<string, Color> GenerateFactionColors()
@@ -1300,7 +1298,7 @@ namespace DwarfCorp.GameStates
         {
             int w = (int) (WorldManager.WorldSize.X * WorldManager.WorldScale);
             int h = (int) (WorldManager.WorldSize.Z * WorldManager.WorldScale);
-            return new Rectangle((int)WorldManager.WorldOrigin.X - w, (int)WorldManager.WorldOrigin.Y - h, w * 2, h * 2);
+            return new Rectangle((int)WorldManager.WorldGenerationOrigin.X - w, (int)WorldManager.WorldGenerationOrigin.Y - h, w * 2, h * 2);
         }
 
         public void GetSpawnRectangleOnImage(ref Point a, ref Point b, ref Point c, ref Point d, ref bool valid)
@@ -1328,7 +1326,7 @@ namespace DwarfCorp.GameStates
             GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,
                 null, null);
-            Drawer.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
+            Drawer2D.Render(DwarfGame.SpriteBatch, null, Game.GraphicsDevice.Viewport);
             GUI.Render(gameTime, DwarfGame.SpriteBatch, new Vector2(0, dx));
 
             Progress.Message = !GenerationComplete ? LoadingMessage : "";
@@ -1395,21 +1393,8 @@ namespace DwarfCorp.GameStates
       
         public override void Render(DwarfTime gameTime)
         {
-            if(Transitioning == TransitionMode.Running)
-            {
-                Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-                DrawGUI(gameTime, 0);
-            }
-            else if(Transitioning == TransitionMode.Entering)
-            {
-                float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Height, Game.GraphicsDevice.Viewport.Height, 1.0f);
-                DrawGUI(gameTime, dx);
-            }
-            else if(Transitioning == TransitionMode.Exiting)
-            {
-                float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Height, 1.0f);
-                DrawGUI(gameTime, dx);
-            }
+            Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+            DrawGUI(gameTime, 0);
             base.Render(gameTime);
         }
 

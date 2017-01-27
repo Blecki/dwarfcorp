@@ -18,7 +18,7 @@ namespace DwarfCorp.GameStates
         public GraphicsDevice GraphicsDevice;
 
         public bool ShouldReset { get; set; }
-        public WorldManager World { get; set; }
+        public static WorldManager World { get; set; }
         public GameMaster Master
         {
             get { return WorldManager.Master; }
@@ -88,7 +88,7 @@ namespace DwarfCorp.GameStates
         public Minimap MiniMap { get; set; }
 
         // Provides event-based keyboard and mouse input.
-        public InputManager Input = new InputManager();
+        public static InputManager Input;// = new InputManager();
 
         /// <summary>
         /// Creates a new play state
@@ -101,12 +101,10 @@ namespace DwarfCorp.GameStates
             ShouldReset = true;
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;
-            World = new WorldManager(game);
-            World.gameState = this;
-            World.OnLoadedEvent += World_OnLoadedEvent;
-            World.OnLoseEvent += World_OnLoseEvent;
             Paused = false;
             RenderUnderneath = true;
+
+            IsInitialized = true;
         }
 
         private void World_OnLoseEvent()
@@ -115,10 +113,11 @@ namespace DwarfCorp.GameStates
             //StateManager.PushState("LoseState");
         }
 
-        private void World_OnLoadedEvent()
+        public void WorldLoaded()
         {
-            IsInitialized = true;
-            CreateGUIComponents();  // create gui components after everything has been loaded
+            World.gameState = this;
+            World.OnLoseEvent += World_OnLoseEvent;
+            CreateGUIComponents();
         }
 
         /// <summary>
@@ -126,19 +125,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public override void OnEnter()
         {
-            // If the game should reset, we initialize everything
-            if (ShouldReset)
-            {
-                IsInitialized = false;
-                ShouldReset = false;
-                CreateGUI();
-                World.Setup(GUI);
-            }
-            else
-            {
-                // Otherwise, we just unpause everything and re-enter the game.
-                World.Unpause();
-            }
+            World.Unpause();
             base.OnEnter();
         }
 
@@ -218,22 +205,6 @@ namespace DwarfCorp.GameStates
             EnableScreensaver = true;
             World.Render(gameTime);
             base.RenderUnitialized(gameTime);
-        }
-
-        /// <summary>
-        /// Creates the user interface + player controls.
-        /// </summary>
-        /// <param name="createMaster">True if the Game Master needs to be created as well.</param>
-        public void CreateGUI()
-        {
-            IndicatorManager.SetupStandards();
-
-            GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default),
-                Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title),
-                Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
-
-            GUI.ToolTipManager.InfoLocation = new Point(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height);
-            GUI.MouseMode = GUISkin.MousePointer.Wait;
         }
 
         /// <summary>
@@ -660,7 +631,7 @@ namespace DwarfCorp.GameStates
             MainMenuState menuState = StateManager.GetState<MainMenuState>("MainMenuState");
             menuState.IsGameRunning = false;
             World.Quit();
-            StateManager.States["PlayState"] = new PlayState(Game, StateManager);
+            //StateManager.States["PlayState"] = new PlayState(Game, StateManager);
             StateManager.CurrentState = "";
             StateManager.PushState("MainMenuState");
         }
