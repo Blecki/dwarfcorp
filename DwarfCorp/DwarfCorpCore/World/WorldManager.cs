@@ -309,7 +309,6 @@ namespace DwarfCorp
             {
                 Console.Error.WriteLine(exception.Message);
             }
-            Game.Graphics.PreparingDeviceSettings -= GraphicsPreparingDeviceSettings;
             Game.Graphics.PreparingDeviceSettings += GraphicsPreparingDeviceSettings;
 
             // Now we load everything else in a thread so we can see the progress on the screensaver
@@ -1249,8 +1248,17 @@ namespace DwarfCorp
 
         public void Quit()
         {
+            Game.Graphics.PreparingDeviceSettings -= GraphicsPreparingDeviceSettings;
+
             ChunkManager.Destroy();
             ComponentManager.RootComponent.Delete();
+            ComponentManager = null;
+
+            Master.Destroy();
+            Master = null;
+
+            ChunkManager = null;
+            ChunkGenerator = null;
             GC.Collect();
             PlanService.Die();
         }

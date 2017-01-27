@@ -54,6 +54,11 @@ namespace DwarfCorp
             InputManager.MouseClickedCallback += InputManager_MouseClickedCallback;
         }
 
+        public override void Destroy()
+        {
+            InputManager.MouseClickedCallback -= InputManager_MouseClickedCallback;
+        }
+
         public override void OnBegin()
         {
 

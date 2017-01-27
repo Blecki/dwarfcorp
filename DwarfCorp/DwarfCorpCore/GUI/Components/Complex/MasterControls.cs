@@ -166,6 +166,7 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime time)
         {
+            if (Master == null) return; // We are shutting down.
 
             if (Master.SelectedMinions.Count == 0)
             {

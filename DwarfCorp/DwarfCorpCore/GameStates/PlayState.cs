@@ -17,6 +17,8 @@ namespace DwarfCorp.GameStates
         // Interfaces with the graphics card
         public GraphicsDevice GraphicsDevice;
 
+        private bool IsShuttingDown { get; set; }
+        private bool QuitOnNextUpdate { get; set; }
         public bool ShouldReset { get; set; }
         public static WorldManager World { get; set; }
         public GameMaster Master
@@ -98,6 +100,8 @@ namespace DwarfCorp.GameStates
         public PlayState(DwarfGame game, GameStateManager stateManager) :
             base(game, "PlayState", stateManager)
         {
+            IsShuttingDown = false;
+            QuitOnNextUpdate = false;
             ShouldReset = true;
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;
@@ -146,8 +150,16 @@ namespace DwarfCorp.GameStates
         {
             // If this playstate is not supposed to be running,
             // just exit.
-            if (!Game.IsActive || !IsActiveState)
+            if (!Game.IsActive || !IsActiveState || IsShuttingDown)
             {
+                return;
+            }
+
+            if (QuitOnNextUpdate)
+            {
+                QuitGame();
+                IsShuttingDown = true;
+                QuitOnNextUpdate = false;
                 return;
             }
 
@@ -576,7 +588,7 @@ namespace DwarfCorp.GameStates
                     SaveGame(Overworld.Name + "_" + WorldManager.GameID);
                     break;
                 case "Quit":
-                    QuitGame();
+                    QuitOnNextUpdate = true;
                     break;
             }
         }
@@ -620,6 +632,22 @@ namespace DwarfCorp.GameStates
 
         public void Destroy()
         {
+            // TODO: Make this prettier.  Possibly as a recursive call via RootComponent.
+            // That or fully clean up the GUIComponents....
+            foreach(GUIComponent c in GUI.RootComponent.Children)
+            {
+                if (c is AlignLayout)
+                {
+                    AlignLayout layout = (c as AlignLayout);
+
+                    foreach (GUIComponent l in layout.Children)
+                    {
+                        if (l is ResourceInfoComponent)
+                            (l as ResourceInfoComponent).CleanUp();
+                    }
+                }
+            }
+
             InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
             Input.Destroy();
         }
