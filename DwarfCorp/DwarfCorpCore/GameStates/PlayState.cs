@@ -631,7 +631,12 @@ namespace DwarfCorp.GameStates
             MainMenuState menuState = StateManager.GetState<MainMenuState>("MainMenuState");
             menuState.IsGameRunning = false;
             World.Quit();
-            //StateManager.States["PlayState"] = new PlayState(Game, StateManager);
+
+            // This line needs to stay in so the GC can properly collect all the items the PlayState keeps active.
+            // If you want to remove this line you better be prepared to fully clean up the PlayState instance
+            // using another method.
+            StateManager.States["PlayState"] = new PlayState(Game, StateManager);
+            
             StateManager.CurrentState = "";
             StateManager.PushState("MainMenuState");
         }
