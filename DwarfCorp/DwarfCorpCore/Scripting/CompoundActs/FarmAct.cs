@@ -78,7 +78,16 @@ namespace DwarfCorp
         public IEnumerable<Status> FarmATile()
         {
             FarmTool.FarmTile tile = FarmToWork;
-            if (tile == null) yield return Status.Fail;
+            if (tile == null) 
+            {
+                yield return Status.Fail;
+                yield break;
+            }
+            if (tile.IsCanceled)
+            {
+                yield return Status.Fail;
+                yield break;
+            }
             else if (tile.PlantExists())
             {
                 tile.Farmer = null;
@@ -92,9 +101,13 @@ namespace DwarfCorp
                 Creature.Sprite.PlayAnimations(Creature.CharacterMode.Attacking);
                 while (tile.Progress < 100.0f && !Satisfied())
                 {
-
+                    if (tile.IsCanceled)
+                    {
+                        yield return Status.Fail;
+                        yield break;
+                    }
                     Creature.Physics.Velocity *= 0.1f;
-                    tile.Progress += Creature.Stats.BaseFarmSpeed * DwarfTime.Dt;
+                    tile.Progress += Creature.Stats.BaseFarmSpeed*DwarfTime.Dt;
 
                     Drawer2D.DrawLoadBar(Agent.Position + Vector3.Up, Color.White, Color.Black, 100, 16,
                         tile.Progress/100.0f);
@@ -151,8 +164,11 @@ namespace DwarfCorp
                 if (FarmToWork.Vox != null)
                 {
                     Tree = new Sequence(
+                        new Condition(!FarmToWork.IsCanceled),
                         new GoToVoxelAct(FarmToWork.Vox, PlanAct.PlanType.Adjacent, Creature.AI),
+                        new Condition(!FarmToWork.IsCanceled),
                         new StopAct(Creature.AI),
+                        new Condition(!FarmToWork.IsCanceled),
                         new Wrap(FarmATile));
 
                     if (Mode == FarmMode.Plant)

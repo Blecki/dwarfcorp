@@ -372,7 +372,7 @@ namespace DwarfCorp
                 4.0f
             };
 
-            int item = WorldManager.Random.Next(names.Count());
+            int item = MathFunctions.Random.Next(names.Count());
 
             string name = names[item];
             Point tile = tiles[item];

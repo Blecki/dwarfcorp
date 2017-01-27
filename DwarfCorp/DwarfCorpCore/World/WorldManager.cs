@@ -157,9 +157,6 @@ namespace DwarfCorp
         // Draws shadow maps
         public static ShadowRenderer Shadows;
 
-        // Used to generate all random numbers in the game.
-        public static ThreadSafeRandom Random = new ThreadSafeRandom();
-
         // Responsible for handling instances of particular primitives (or models)
         // and drawing them to the screen
         public static InstanceManager InstanceManager;
@@ -265,7 +262,7 @@ namespace DwarfCorp
 
         // Since world, like many of the other classes, is pretty much a singleton given how many static variables it has
         // this provides singleton access
-        public static WorldManager world;
+        public static WorldManager World;
 
         // event that is called when the world is done loading
         public delegate void OnLoaded();
@@ -283,11 +280,11 @@ namespace DwarfCorp
         /// <param name="game">The program currently running</param>
         public WorldManager(DwarfGame Game)
         {
-            world = this;
+            World = this;
             this.Game = Game;
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;
-            Seed = Random.Next();
+            Seed = MathFunctions.Random.Next();
             WorldOrigin = WorldGenerationOrigin;
             Time = new WorldTime();
         }
@@ -414,8 +411,8 @@ namespace DwarfCorp
 
             foreach (string ent in InitialEmbark.Party)
             {
-                Vector3 dorfPos = new Vector3(Camera.Position.X + (float)Random.NextDouble(), h + 10,
-                    Camera.Position.Z + (float)Random.NextDouble());
+                Vector3 dorfPos = new Vector3(Camera.Position.X + (float)MathFunctions.Random.NextDouble(), h + 10,
+                    Camera.Position.Z + (float)MathFunctions.Random.NextDouble());
                 Physics creat = (Physics)EntityFactory.CreateEntity<Physics>(ent, dorfPos);
                 creat.Velocity = new Vector3(1, 0, 0);
             }
@@ -530,7 +527,7 @@ namespace DwarfCorp
             }
             else
             {
-                GameID = Random.Next(0, 1024);
+                GameID = MathFunctions.Random.Next(0, 1024);
             }
 
 

@@ -156,7 +156,7 @@ namespace DwarfCorp
     }
 
     /// <summary>
-    /// Draws a 3D axis aligned box to the screen.
+    /// Draws a 3D axis aligned plane to the screen.
     /// </summary>
     internal class PlaneDrawCommand : DrawCommand3D
     {

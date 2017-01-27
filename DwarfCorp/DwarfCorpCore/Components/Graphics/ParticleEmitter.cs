@@ -180,7 +180,7 @@ namespace DwarfCorp
 
         public float Rand(float min, float max)
         {
-            return (float) (WorldManager.Random.NextDouble() * (max - min) + min);
+            return (float) (MathFunctions.Random.NextDouble() * (max - min) + min);
         }
 
         public Vector3 RandVec(float scale)

@@ -64,7 +64,7 @@ namespace DwarfCorp
 
         public override bool IsFeasible(Creature agent)
         {
-            return FarmToWork != null;
+            return FarmToWork != null && !FarmToWork.IsCanceled;
         }
 
         public override Act CreateScript(Creature agent)

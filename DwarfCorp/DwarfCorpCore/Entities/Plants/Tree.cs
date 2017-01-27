@@ -160,7 +160,7 @@ namespace DwarfCorp
             matrix.Translation = position;
             LocalTransform = matrix;
 
-            new Mesh(componentManager, "Model", this, Matrix.CreateRotationY((float)(WorldManager.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(treeSize, treeSize, treeSize) * Matrix.CreateTranslation(new Vector3(0.7f, 0.0f, 0.7f)), asset, false);
+            new Mesh(componentManager, "Model", this, Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(treeSize, treeSize, treeSize) * Matrix.CreateTranslation(new Vector3(0.7f, 0.0f, 0.7f)), asset, false);
 
             Health health = new Health(componentManager, "HP", this, 100.0f * treeSize, 0.0f, 100.0f * treeSize);
             

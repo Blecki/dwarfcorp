@@ -79,7 +79,7 @@ namespace DwarfCorp
         public SpawnEvent GenerateSpawnEvent(Faction spawnFaction, Faction targetFaction, int num, bool attack=true)
         {
             float padding = 2.0f;
-            int side = WorldManager.Random.Next(4);
+            int side = MathFunctions.Random.Next(4);
             BoundingBox bounds = WorldManager.ChunkManager.Bounds;
             Vector3 pos = Vector3.Zero;
             switch (side)

@@ -94,7 +94,7 @@ namespace DwarfCorp
         public override void OnBuilt()
         {
            
-            Button farmButton = new Button(WorldManager.GUI, WorldManager.GUI.RootComponent, "Farm", WorldManager.GUI.DefaultFont,
+            Button farmButton = new Button(World.GUI, World.GUI.RootComponent, "Farm", World.GUI.DefaultFont,
                 Button.ButtonMode.ImageButton, new NamedImageFrame(ContentPaths.GUI.icons, 32, 5, 1))
             {
                 LocalBounds = new Rectangle(0, 0, 32, 32),

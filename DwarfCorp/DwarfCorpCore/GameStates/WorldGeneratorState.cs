@@ -77,8 +77,8 @@ namespace DwarfCorp.GameStates
         private Vector3 newTarget = new Vector3(0.5f, 0, 0.5f);
         public int Seed
         {
-            get { return WorldManager.Seed; }
-            set { WorldManager.Seed = value; }
+            get { return MathFunctions.Seed; }
+            set { MathFunctions.Seed = value; }
         }
 
         public ProgressBar Progress { get; set; }
@@ -243,7 +243,7 @@ namespace DwarfCorp.GameStates
             WorldManager.WorldWidth = Settings.Width;
             WorldManager.WorldHeight = Settings.Height;
             WorldManager.SeaLevel = Settings.SeaLevel;
-            WorldManager.Random = new ThreadSafeRandom(Seed);
+            MathFunctions.Random = new ThreadSafeRandom(Seed);
             WorldManager.WorldSize = new Point3(8, 1, 8);
 
             Overworld.Volcanoes = new List<Vector2>();
@@ -412,7 +412,7 @@ namespace DwarfCorp.GameStates
         {
             IsGenerating = false;
             DoneGenerating = false;
-            Seed = WorldManager.Random.Next();
+            Seed = MathFunctions.Random.Next();
         }
 
         void advancedButton_OnClicked()
@@ -493,7 +493,7 @@ namespace DwarfCorp.GameStates
         private void seedEdit_OnTextModified(string arg)
         {
             Seed = arg.GetHashCode();
-            WorldManager.Random = new ThreadSafeRandom(Seed);
+            MathFunctions.Random = new ThreadSafeRandom(Seed);
         }
 
         public override void OnExit()
@@ -661,11 +661,11 @@ namespace DwarfCorp.GameStates
             float volcanoSize = 11;
             for(int i = 0; i < (int) Settings.NumVolcanoes; i++)
             {
-                Vector2 randomPos = new Vector2((float) (WorldManager.Random.NextDouble() * width), (float) (WorldManager.Random.NextDouble() * height));
+                Vector2 randomPos = new Vector2((float) (MathFunctions.Random.NextDouble() * width), (float) (MathFunctions.Random.NextDouble() * height));
                 float maxFaults = Overworld.Map[(int) randomPos.X, (int) randomPos.Y].Height;
                 for(int j = 0; j < volcanoSamples; j++)
                 {
-                    Vector2 randomPos2 = new Vector2((float) (WorldManager.Random.NextDouble() * width), (float) (WorldManager.Random.NextDouble() * height));
+                    Vector2 randomPos2 = new Vector2((float) (MathFunctions.Random.NextDouble() * width), (float) (MathFunctions.Random.NextDouble() * height));
                     float faults = Overworld.Map[(int) randomPos2.X, (int) randomPos2.Y].Height;
 
                     if(faults > maxFaults)
@@ -714,7 +714,7 @@ namespace DwarfCorp.GameStates
             {
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
                
-                WorldManager.Random = new ThreadSafeRandom(Seed);
+                MathFunctions.Random = new ThreadSafeRandom(Seed);
                 GenerationComplete = false;
 
                 LoadingMessage = "Init..";
@@ -991,8 +991,8 @@ namespace DwarfCorp.GameStates
                 float bestHeight = 0.0f;
                 for(int k = 0; k < numRainSamples; k++)
                 {
-                    int randX = WorldManager.Random.Next(1, width - 1);
-                    int randY = WorldManager.Random.Next(1, height - 1);
+                    int randX = MathFunctions.Random.Next(1, width - 1);
+                    int randY = MathFunctions.Random.Next(1, height - 1);
 
                     currentPos = new Vector2(randX, randY);
                     float h = Overworld.GetHeight(buffer, currentPos);
@@ -1095,7 +1095,7 @@ namespace DwarfCorp.GameStates
 
         private static Vector2 GetEdgePoint(int width, int height)
         {
-            return new Vector2(WorldManager.Random.Next(0, width), WorldManager.Random.Next(0, height));
+            return new Vector2(MathFunctions.Random.Next(0, width), MathFunctions.Random.Next(0, height));
         }
 
         private static void ScaleMap(Overworld.MapData[,] map, int width, int height, Overworld.ScalarFieldType fieldType)
@@ -1172,8 +1172,8 @@ namespace DwarfCorp.GameStates
             int height = map.GetLength(1);
             while (i < maxIters)
             {
-                int x = WorldManager.Random.Next(0, width);
-                int y = WorldManager.Random.Next(0, height);
+                int x = MathFunctions.Random.Next(0, width);
+                int y = MathFunctions.Random.Next(0, height);
 
                 if (map[x, y].Height > Settings.SeaLevel)
                 {

@@ -702,7 +702,7 @@ namespace DwarfCorp
         public Body GetRandomGatherDesignationWithTag(string tag)
         {
             List<Body> des = GatherDesignations.Where(c => c.Tags.Contains(tag)).ToList();
-            return des.Count == 0 ? null : des[WorldManager.Random.Next(0, des.Count)];
+            return des.Count == 0 ? null : des[MathFunctions.Random.Next(0, des.Count)];
         }
 
 
@@ -998,7 +998,7 @@ namespace DwarfCorp
             List<Body> toReturn = new List<Body>();
             for (int i = 0; i < numCreatures; i++)
             {
-                string creature = Race.CreatureTypes[WorldManager.Random.Next(Race.CreatureTypes.Count)];
+                string creature = Race.CreatureTypes[MathFunctions.Random.Next(Race.CreatureTypes.Count)];
                 Vector3 offset = MathFunctions.RandVector3Cube() * 5;
                 Voxel voxel = new Voxel();
                 

@@ -272,7 +272,8 @@ namespace DwarfCorp
                 creature.Creature.SelectionCircle.IsVisible = true;
                 foreach(Task task in creature.Tasks)
                 {
-                    task.Render(time);
+                    if (task.IsFeasible(creature.Creature))
+                        task.Render(time);
                 }
 
                 if(creature.CurrentTask != null)

@@ -140,7 +140,7 @@ namespace DwarfCorp
 
         public override void CreateGUIObjects()
         {
-            FarmButton = new Button(WorldManager.GUI, WorldManager.GUI.RootComponent, "Farm", WorldManager.GUI.DefaultFont, Button.ButtonMode.ImageButton, new NamedImageFrame(ContentPaths.GUI.icons, 32, 5, 1))
+            FarmButton = new Button(World.GUI, World.GUI.RootComponent, "Farm", World.GUI.DefaultFont, Button.ButtonMode.ImageButton, new NamedImageFrame(ContentPaths.GUI.icons, 32, 5, 1))
             {
                 LocalBounds = new Rectangle(0, 0, 32, 32),
                 DrawFrame = true,
@@ -182,7 +182,7 @@ namespace DwarfCorp
 
             if (minions.Count == 0)
             {
-                WorldManager.GUI.ToolTipManager.Popup("None of the selected units can farm.");
+                World.GUI.ToolTipManager.Popup("None of the selected units can farm.");
             }
         }
 
