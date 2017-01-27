@@ -98,31 +98,9 @@ namespace DwarfCorp.GameStates
             base.Update(gameTime);
         }
 
-
-        private void DrawGUI(DwarfTime gameTime, float dx)
-        {
-            GuiRoot.Draw(new Point((int)dx, 0));
-        }
-
         public override void Render(DwarfTime gameTime)
         {
-
-            if(Transitioning == TransitionMode.Running)
-            {
-                DrawGUI(gameTime, 0);
-            }
-            else if(Transitioning == TransitionMode.Entering)
-            {
-                float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                DrawGUI(gameTime, dx);
-            }
-            else if(Transitioning == TransitionMode.Exiting)
-            {
-                // Doesn't actually hide GUI during world gen... just draws it off screen. WTF!
-                float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                DrawGUI(gameTime, dx);
-            }
-
+            GuiRoot.Draw();
             base.Render(gameTime);
         }
     }

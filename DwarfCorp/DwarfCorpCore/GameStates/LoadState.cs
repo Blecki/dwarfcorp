@@ -41,9 +41,7 @@ namespace DwarfCorp.GameStates
         public LoadState(DwarfGame game, GameStateManager stateManager) :
             base(game, "LoadState", stateManager)
         {
-            World = new WorldManager(game);
-            World.gameState = this;
-            World.OnLoadedEvent += World_OnLoadedEvent;
+            
         }
 
         private void World_OnLoadedEvent()
@@ -65,6 +63,10 @@ namespace DwarfCorp.GameStates
                 IsInitialized = false;
 
                 IndicatorManager.SetupStandards();
+
+                World = new WorldManager(Game);
+                World.gameState = this;
+                World.OnLoadedEvent += World_OnLoadedEvent;
 
             // Todo - Save gui creation for play state. We're only creating it here so we can give it to
             //      the world class. The world doesn't need it until after loading.

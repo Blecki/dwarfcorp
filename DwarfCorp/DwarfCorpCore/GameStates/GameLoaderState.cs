@@ -425,25 +425,7 @@ namespace DwarfCorp.GameStates
 
         public override void Render(DwarfTime gameTime)
         {
-            switch (Transitioning)
-            {
-                case TransitionMode.Running:
-                    DrawGUI(gameTime, 0);
-                    break;
-                case TransitionMode.Entering:
-                    {
-                        float dx = Easing.CubeInOut(TransitionValue, -Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                        DrawGUI(gameTime, dx);
-                    }
-                    break;
-                case TransitionMode.Exiting:
-                    {
-                        float dx = Easing.CubeInOut(TransitionValue, 0, Game.GraphicsDevice.Viewport.Width, 1.0f);
-                        DrawGUI(gameTime, dx);
-                    }
-                    break;
-            }
-
+            DrawGUI(gameTime, 0);
             base.Render(gameTime);
         }
     }
