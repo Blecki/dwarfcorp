@@ -273,6 +273,7 @@ namespace DwarfCorp
         public void CollideMinions(DwarfTime time)
         {
             for (int i = 0; i < Minions.Count; i++)
+            //{
             {
                 CreatureAI minion = Minions[i];
 

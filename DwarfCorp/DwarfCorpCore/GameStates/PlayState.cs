@@ -109,6 +109,8 @@ namespace DwarfCorp.GameStates
             RenderUnderneath = true;
 
             IsInitialized = true;
+
+            IsInitialized = true;
         }
 
         private void World_OnLoseEvent()
