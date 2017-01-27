@@ -59,6 +59,11 @@ namespace DwarfCorp
             PanelHeight = 40;
         }
 
+        public void CleanUp()
+        {
+            Faction = null;
+        }
+
         public void CreateResourcePanels()
         {
             Layout.ClearChildren();
