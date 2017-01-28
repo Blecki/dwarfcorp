@@ -56,10 +56,6 @@ namespace DwarfCorp.GameStates
 
             StateManager.PopState();
             StateManager.PushState("PlayState");
-
-            // Call one time setup code for PlayState.
-            PlayState playState = StateManager.States["PlayState"] as PlayState;
-            playState.WorldLoaded();
         }
 
         public override void OnEnter()
@@ -92,7 +88,8 @@ namespace DwarfCorp.GameStates
 
         public override void Render(DwarfTime gameTime)
         {
-            throw new InvalidOperationException();
+            return;
+            //throw new InvalidOperationException();
 
             base.Render(gameTime);
         }

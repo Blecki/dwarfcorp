@@ -97,13 +97,6 @@ namespace DwarfCorp.GameStates
             //StateManager.PushState("LoseState");
         }
 
-        public void WorldLoaded()
-        {
-            World.gameState = this;
-            World.OnLoseEvent += World_OnLoseEvent;
-            CreateGUIComponents();
-        }
-
         /// <summary>
         /// Called when the PlayState is entered from the state manager.
         /// </summary>
@@ -111,6 +104,8 @@ namespace DwarfCorp.GameStates
         {
             if (!IsInitialized)
             {
+                World.gameState = this;
+                World.OnLoseEvent += World_OnLoseEvent;
                 CreateGUIComponents();
                 IsInitialized = true;
             }
