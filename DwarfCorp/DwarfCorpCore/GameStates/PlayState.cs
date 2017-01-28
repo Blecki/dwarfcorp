@@ -114,6 +114,7 @@ namespace DwarfCorp.GameStates
                 CreateGUIComponents();
                 IsInitialized = true;
             }
+
             World.Unpause();
             base.OnEnter();
         }
@@ -636,6 +637,7 @@ namespace DwarfCorp.GameStates
         {
             World.Quit();
             StateManager.ClearState();
+            Destroy();
 
             // This line needs to stay in so the GC can properly collect all the items the PlayState keeps active.
             // If you want to remove this line you better be prepared to fully clean up the PlayState instance
