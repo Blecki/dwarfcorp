@@ -1,0 +1,3 @@
+1. Install .NET 4.0 redistributable. This is included as an installer.
+2. Install VC++ 2010 redistributable. This is also included as an installer.
+3. Run DwarfCorpFNA.exe
