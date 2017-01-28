@@ -66,7 +66,8 @@ namespace DwarfCorp
         private float Rotation = 0.0f;
         public CollisionMode CollideMode { get; set; }
         public Voxel CurrentVoxel = null;
-        public List<Voxel> Neighbors = new List<Voxel>(); 
+        public List<Voxel> Neighbors = new List<Voxel>();
+        public const float FixedDT = 0.016f;
         public enum CollisionMode
         {
             All,
@@ -111,26 +112,9 @@ namespace DwarfCorp
             CurrentVoxel = new Voxel();
         }
 
-
-        public void MoveX(float dt)
+        public void Move(float dt)
         {
-            Vector3 newPos = new Vector3(LocalTransform.Translation.X + Velocity.X * dt, LocalTransform.Translation.Y, LocalTransform.Translation.Z);
-            Matrix transform = LocalTransform;
-            transform.Translation = newPos;
-            LocalTransform = transform;
-        }
-
-        public void MoveY(float dt)
-        {
-            Vector3 newPos = new Vector3(LocalTransform.Translation.X, LocalTransform.Translation.Y + Velocity.Y * dt, LocalTransform.Translation.Z);
-            Matrix transform = LocalTransform;
-            transform.Translation = newPos;
-            LocalTransform = transform;
-        }
-
-        public void MoveZ(float dt)
-        {
-            Vector3 newPos = new Vector3(LocalTransform.Translation.X, LocalTransform.Translation.Y, LocalTransform.Translation.Z + Velocity.Z * dt);
+            Vector3 newPos = new Vector3(LocalTransform.Translation.X, LocalTransform.Translation.Y, LocalTransform.Translation.Z) + Velocity * dt;
             Matrix transform = LocalTransform;
             transform.Translation = newPos;
             LocalTransform = transform;
@@ -169,102 +153,106 @@ namespace DwarfCorp
 
                 float dt = (float) (gameTime.ElapsedGameTime.TotalSeconds);
 
+                int numTimesteps = Math.Max((int) (dt/FixedDT), 1);
 
                 if (MathFunctions.HasNan(Velocity))
                 {
                     Velocity = Vector3.Zero;
                 }
 
-                MoveY(dt);
-                MoveX(dt);
-                MoveZ(dt);
-                chunks.ChunkData.GetVoxel(Position, ref CurrentVoxel);
-                if (CurrentVoxel != null && CurrentVoxel.Chunk != null)
+                for (int n = 0; n < numTimesteps; n++)
                 {
-                    Vector3 gridPos = CurrentVoxel.GridPosition;
-                    CurrentVoxel.Chunk.GetNeighborsSuccessors(VoxelChunk.ManhattanSuccessors, (int)gridPos.X, (int)gridPos.Y, (int)gridPos.Z, Neighbors);
-                }
-                HandleCollisions(chunks, dt);
-
-                Matrix transform = LocalTransform;
-                if (bounds.Contains(LocalTransform.Translation + Velocity*dt) != ContainmentType.Contains)
-                {
-                    transform.Translation = LocalTransform.Translation - 0.1f * Velocity * dt;
-                    Velocity = new Vector3(Velocity.X * -0.9f, Velocity.Y, Velocity.Z * -0.9f);
-                }
-
-
-                if (LocalTransform.Translation.Y < -10 || bounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
-                {
-                    Die();
-                }
-
-
-                if(Orientation == OrientMode.Physics)
-                {
-                    Matrix dA = Matrix.Identity;
-                    dA *= Matrix.CreateRotationX(AngularVelocity.X * dt);
-                    dA *= Matrix.CreateRotationY(AngularVelocity.Y * dt);
-                    dA *= Matrix.CreateRotationZ(AngularVelocity.Z * dt);
-
-                    transform = dA * transform;
-                }
-                else if(Orientation != OrientMode.Fixed)
-                {
-                    if(Velocity.Length() > 0.4f)
+                    Move(FixedDT);
+                    chunks.ChunkData.GetVoxel(Position, ref CurrentVoxel);
+                    if (CurrentVoxel != null && CurrentVoxel.Chunk != null)
                     {
-                        if (Orientation == OrientMode.LookAt)
+                        Vector3 gridPos = CurrentVoxel.GridPosition;
+                        CurrentVoxel.Chunk.GetNeighborsSuccessors(VoxelChunk.ManhattanSuccessors, (int) gridPos.X,
+                            (int) gridPos.Y, (int) gridPos.Z, Neighbors);
+                    }
+                    HandleCollisions(chunks, FixedDT);
+
+                    Matrix transform = LocalTransform;
+                    if (bounds.Contains(LocalTransform.Translation + Velocity*dt) != ContainmentType.Contains)
+                    {
+                        transform.Translation = LocalTransform.Translation - 0.1f*Velocity*dt;
+                        Velocity = new Vector3(Velocity.X*-0.9f, Velocity.Y, Velocity.Z*-0.9f);
+                    }
+
+
+                    if (LocalTransform.Translation.Y < -10 ||
+                        bounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
+                    {
+                        Die();
+                    }
+
+
+                    if (Orientation == OrientMode.Physics)
+                    {
+                        Matrix dA = Matrix.Identity;
+                        dA *= Matrix.CreateRotationX(AngularVelocity.X * FixedDT);
+                        dA *= Matrix.CreateRotationY(AngularVelocity.Y * FixedDT);
+                        dA *= Matrix.CreateRotationZ(AngularVelocity.Z * FixedDT);
+
+                        transform = dA*transform;
+                    }
+                    else if (Orientation != OrientMode.Fixed)
+                    {
+                        if (Velocity.Length() > 0.4f)
                         {
-                            Matrix newTransform =
-                                Matrix.Invert(Matrix.CreateLookAt(Position, Position + Velocity, Vector3.Down));
-                            newTransform.Translation = transform.Translation;
-                            transform = newTransform;
-                        }
-                        else if (Orientation == OrientMode.RotateY)
-                        {
-              
-                            Rotation = (float) Math.Atan2(Velocity.X, -Velocity.Z);
-                            Quaternion newRotation = Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationY(Rotation));
-                            Quaternion oldRotation = Quaternion.CreateFromRotationMatrix(LocalTransform);
-                            Quaternion finalRot = Quaternion.Slerp(oldRotation, newRotation, 0.1f);
-                            finalRot.Normalize();
-                            Matrix newTransform = Matrix.CreateFromQuaternion(finalRot);
-                            newTransform.Translation = transform.Translation;
-                            newTransform.Right.Normalize();
-                            newTransform.Up.Normalize();
-                            newTransform.Forward.Normalize();
-                            newTransform.M14 = 0;
-                            newTransform.M24 = 0;
-                            newTransform.M34 = 0;
-                            newTransform.M44 = 1;
-                            transform = newTransform;
+                            if (Orientation == OrientMode.LookAt)
+                            {
+                                Matrix newTransform =
+                                    Matrix.Invert(Matrix.CreateLookAt(Position, Position + Velocity, Vector3.Down));
+                                newTransform.Translation = transform.Translation;
+                                transform = newTransform;
+                            }
+                            else if (Orientation == OrientMode.RotateY)
+                            {
+
+                                Rotation = (float) Math.Atan2(Velocity.X, -Velocity.Z);
+                                Quaternion newRotation =
+                                    Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationY(Rotation));
+                                Quaternion oldRotation = Quaternion.CreateFromRotationMatrix(LocalTransform);
+                                Quaternion finalRot = Quaternion.Slerp(oldRotation, newRotation, 0.1f);
+                                finalRot.Normalize();
+                                Matrix newTransform = Matrix.CreateFromQuaternion(finalRot);
+                                newTransform.Translation = transform.Translation;
+                                newTransform.Right.Normalize();
+                                newTransform.Up.Normalize();
+                                newTransform.Forward.Normalize();
+                                newTransform.M14 = 0;
+                                newTransform.M24 = 0;
+                                newTransform.M34 = 0;
+                                newTransform.M44 = 1;
+                                transform = newTransform;
+                            }
                         }
                     }
-                }
 
-                transform.Translation = ClampToBounds(transform.Translation);
-                LocalTransform = transform;
+                    transform.Translation = ClampToBounds(transform.Translation);
+                    LocalTransform = transform;
 
-                if(Math.Abs(Velocity.Y) < 0.1f)
-                {
-                    Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
-                }
+                    if (Math.Abs(Velocity.Y) < 0.1f)
+                    {
+                        Velocity = new Vector3(Velocity.X*Friction, Velocity.Y, Velocity.Z*Friction);
+                    }
 
-                if (applyGravityThisFrame)
-                {
-                    ApplyForce(Gravity, dt);
-                }
-                else
-                {
-                    applyGravityThisFrame = true;
-                }
+                    if (applyGravityThisFrame)
+                    {
+                        ApplyForce(Gravity, FixedDT);
+                    }
 
-                Velocity *= LinearDamping;
-                AngularVelocity *= AngularDamping;
-                UpdateBoundingBox();
+                    Vector3 dampingForce = -Velocity*(1.0f - LinearDamping);
+
+                    Velocity += dampingForce * FixedDT;
+                    AngularVelocity *= AngularDamping;
+                    UpdateBoundingBox();
+                }
             }
+
+            if (!applyGravityThisFrame) applyGravityThisFrame = true;
             CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
-            Velocity = (PreviousVelocity * 0.1f + Velocity * 0.9f);
             PreviousVelocity = Velocity;
             PreviousPosition = Position;
             base.Update(gameTime, chunks, camera);
