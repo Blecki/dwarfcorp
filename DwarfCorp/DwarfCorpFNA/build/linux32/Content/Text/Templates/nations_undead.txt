@@ -1,0 +1,7 @@
+<undeadname>'s Tower
+<undeadname>'s Fortress
+<undeadfamily>'s Grippe
+<place> of Death
+Hell's <place>
+Wasted <place>
+<undeadfamily>ia

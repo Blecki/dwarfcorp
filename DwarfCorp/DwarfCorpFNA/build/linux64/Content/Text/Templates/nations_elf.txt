@@ -1,0 +1,12 @@
+<elfname> Collective
+<elfname> Commune
+Forest of <elffamily>
+<elfname>land
+<elffamily>ia
+<elfname>land
+Big <noun>
+<elffamily>land
+<noun>ia
+<elffamily>stan
+<elffamily>non
+<elffamily>ica
