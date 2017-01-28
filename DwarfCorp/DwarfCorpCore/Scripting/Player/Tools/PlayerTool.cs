@@ -69,5 +69,10 @@ namespace DwarfCorp
             }
         }
 
+        public virtual void Destroy()
+        {
+
+        }
+
     }
 }

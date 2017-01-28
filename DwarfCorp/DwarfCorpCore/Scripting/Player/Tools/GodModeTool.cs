@@ -151,6 +151,12 @@ namespace DwarfCorp
             SelectorPanel.IsVisible = false;
         }
 
+        public override void Destroy()
+        {
+            SelectorBox.OnSelectionModified -= SelectorBox_OnSelectionModified;
+            SelectorBox.CleanUp();
+        }
+
         private void SelectorBox_OnSelectionModified(string arg)
         {
             if(arg == "Delete Block" || arg.Contains("Build") || arg == "Kill Block")

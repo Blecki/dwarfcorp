@@ -162,17 +162,22 @@ namespace DwarfCorp
                 newWidth = Lightmap.Width;
                 newHeight = Lightmap.Height;
             }
-            widthScale = newWidth/((float)textureBounds.Width);
-            heightScale = newHeight/((float) textureBounds.Height);
+            widthScale = newWidth / ((float)textureBounds.Width);
+            heightScale = newHeight / ((float)textureBounds.Height);
             for (int i = 0; i < Vertices.Length; i++)
             {
-                Vertices[i].LightmapCoordinate = new Vector2(Vertices[i].LightmapCoordinate.X /widthScale, Vertices[i].LightmapCoordinate.Y /heightScale);
-                Vertices[i].LightmapBounds = new Vector4(Vertices[i].LightmapBounds.X / widthScale,
-                                                         Vertices[i].LightmapBounds.Y / heightScale,
-                                                         Vertices[i].LightmapBounds.Z / widthScale,
-                                                         Vertices[i].LightmapBounds.W / heightScale);
-            }
+                Vector2 lmc = Vertices[i].LightmapCoordinate;
+                lmc.X /= widthScale;
+                lmc.Y /= heightScale;
+                Vertices[i].LightmapCoordinate = lmc;
 
+                Vector4 lmb = Vertices[i].LightmapBounds;
+                lmb.X /= widthScale;
+                lmb.Y /= heightScale;
+                lmb.Z /= widthScale;
+                lmb.W /= heightScale;
+                Vertices[i].LightmapBounds = lmb;
+            }
         }
 
         /// <summary>

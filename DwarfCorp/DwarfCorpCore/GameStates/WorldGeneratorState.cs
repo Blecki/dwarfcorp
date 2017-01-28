@@ -469,10 +469,10 @@ namespace DwarfCorp.GameStates
             }
             float w = WorldManager.WorldSize.X * WorldManager.WorldScale;
             float h = WorldManager.WorldSize.Z * WorldManager.WorldScale;
-            float clickX = Math.Max(Math.Min(WorldManager.WorldOrigin.X, WorldManager.WorldWidth - w - 1), w + 1);
-            float clickY = Math.Max(Math.Min(WorldManager.WorldOrigin.Y, WorldManager.WorldHeight - h - 1), h + 1);
+            float clickX = Math.Max(Math.Min(WorldManager.WorldGenerationOrigin.X, WorldManager.WorldWidth - w - 1), w + 1);
+            float clickY = Math.Max(Math.Min(WorldManager.WorldGenerationOrigin.Y, WorldManager.WorldHeight - h - 1), h + 1);
 
-            WorldManager.WorldOrigin = new Vector2((int)(clickX), (int)(clickY));
+            WorldManager.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
         }
 
 
@@ -571,8 +571,9 @@ namespace DwarfCorp.GameStates
             DoneGenerating = false;
             if(!IsGenerating && !DoneGenerating)
             {
-                WorldManager.WorldOrigin = new Vector2(WorldManager.WorldWidth / 2, WorldManager.WorldHeight / 2);
+                WorldManager.WorldGenerationOrigin = new Vector2(WorldManager.WorldWidth / 2, WorldManager.WorldHeight / 2);
                 genThread = new Thread(unused => GenerateWorld(Seed, (int) WorldManager.WorldWidth, (int) WorldManager.WorldHeight));
+                genThread.Name = "GenerateWorld";
                 genThread.Start();
                 IsGenerating = true;
             }
@@ -598,7 +599,7 @@ namespace DwarfCorp.GameStates
             clickX = Math.Max(Math.Min(clickX, WorldManager.WorldWidth - w - 1), w + 1);
             clickY = Math.Max(Math.Min(clickY, WorldManager.WorldHeight - h - 1), h + 1 );
            
-            WorldManager.WorldOrigin = new Vector2((int)(clickX), (int)(clickY));
+            WorldManager.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
         }
 
         public Dictionary<string, Color> GenerateFactionColors()
@@ -1297,7 +1298,7 @@ namespace DwarfCorp.GameStates
         {
             int w = (int) (WorldManager.WorldSize.X * WorldManager.WorldScale);
             int h = (int) (WorldManager.WorldSize.Z * WorldManager.WorldScale);
-            return new Rectangle((int)WorldManager.WorldOrigin.X - w, (int)WorldManager.WorldOrigin.Y - h, w * 2, h * 2);
+            return new Rectangle((int)WorldManager.WorldGenerationOrigin.X - w, (int)WorldManager.WorldGenerationOrigin.Y - h, w * 2, h * 2);
         }
 
         public void GetSpawnRectangleOnImage(ref Point a, ref Point b, ref Point c, ref Point d, ref bool valid)

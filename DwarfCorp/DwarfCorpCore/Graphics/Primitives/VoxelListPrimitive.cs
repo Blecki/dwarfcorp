@@ -585,14 +585,13 @@ namespace DwarfCorp
                                     Vertices = newVertices;
                                 }
 
-
-                                Vertices[maxVertex].Position = vert.Position + v.Position +
-                                                               VertexNoise.GetNoiseVectorFromRepeatingTexture(
-                                                                   vert.Position + v.Position) + offset;
-                                Vertices[maxVertex].Color = color;
-                                Vertices[maxVertex].VertColor = tint;
-                                Vertices[maxVertex].TextureCoordinate = uvs.Uvs[vertOffset + vertexIndex] + texOffset;
-                                Vertices[maxVertex].TextureBounds = uvs.Bounds[faceIndex/6];
+                                Vertices[maxVertex] = new ExtendedVertex(vert.Position + v.Position +
+                                                                   VertexNoise.GetNoiseVectorFromRepeatingTexture(
+                                                                       vert.Position + v.Position) + offset,
+                                    color,
+                                    tint,
+                                    uvs.Uvs[vertOffset + vertexIndex] + texOffset,
+                                    uvs.Bounds[faceIndex / 6]);
                                 maxVertex++;
                             }
 

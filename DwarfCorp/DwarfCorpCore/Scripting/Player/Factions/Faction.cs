@@ -37,7 +37,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using DwarfCorp.GameStates;
-using DwarfCorpCore;
 using LibNoise;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -273,27 +272,39 @@ namespace DwarfCorp
 
         public void CollideMinions(DwarfTime time)
         {
-            //foreach (CreatureAI minion in Minions)
+            for (int i = 0; i < Minions.Count; i++)
             //{
-            //    if (minion.Physics.CollideMode == Physics.CollisionMode.None) 
-            //        continue;
+            {
+                CreatureAI minion = Minions[i];
 
-            //    foreach (CreatureAI other in Minions)
-            //    {
-            //        if (minion == other)
-            //        {
-            //            continue;
-            //        }
+                if (!minion.IsActive) continue;
 
-            //        Vector3 meToOther = other.Position - minion.Position;
-            //        float dist = (meToOther).Length();
+                if (minion.Physics.CollideMode == Physics.CollisionMode.None)
+                    continue;
 
-            //        if (!float.IsNaN(dist) && dist < 0.25f)
-            //        {
-            //            other.Physics.ApplyForce(meToOther / (dist + 0.05f) * 50, (float)time.ElapsedGameTime.TotalSeconds);
-            //        }
-            //    }
-            //}
+                for (int j = i + 1; j < Minions.Count; j++)
+                {
+                    CreatureAI other = Minions[j];
+
+                    if (!other.IsActive) continue;
+
+                    // Grab both positions now to avoid the double lookup.
+                    Vector3 otherPosition = other.Position;
+                    Vector3 minionPosition = minion.Position;
+                    Vector3 meToOther = otherPosition - minionPosition;
+
+                    float dist = meToOther.Length();
+
+                    if (!float.IsNaN(dist) && (dist < 0.25f))
+                    {
+                        other.Physics.ApplyForce(meToOther / (dist + 0.05f) * 50, (float)time.ElapsedGameTime.TotalSeconds);
+
+                        // We need to set the physics on the second one as well.
+                        Vector3 otherToMe = minionPosition - otherPosition;
+                        minion.Physics.ApplyForce(otherToMe / (dist + 0.05f) * 50, (float)time.ElapsedGameTime.TotalSeconds);
+                    }
+                }
+            }
         }
 
 
@@ -305,7 +316,9 @@ namespace DwarfCorp
             SelectedMinions.RemoveAll(m => m.IsDead);
             Minions.ForEach(m => m.Creature.SelectionCircle.IsVisible = false);
             SelectedMinions.ForEach(m => m.Creature.SelectionCircle.IsVisible = true);
-            CollideMinions(time);
+            
+            // Turned off until a non-O(n^2) collision method is create.
+            //CollideMinions(time);
 
             List<ulong> removalKeys = new List<ulong>();
             foreach (KeyValuePair<ulong, BuildOrder> kvp in DigDesignations)

@@ -36,7 +36,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
-using DwarfCorpCore;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -170,11 +169,15 @@ namespace DwarfCorp
 
             GeneratedChunks = new ConcurrentQueue<VoxelChunk>();
             GeneratorThread = new Thread(GenerateThread);
+            GeneratorThread.Name = "Generate";
 
             RebuildThread = new Thread(RebuildVoxelsThread);
+            RebuildThread.Name = "RebuildVoxels";
             RebuildLiquidThread = new Thread(RebuildLiquidsThread);
+            RebuildLiquidThread.Name = "RebuildLiquids";
 
             WaterThread = new Thread(UpdateWaterThread);
+            WaterThread.Name = "UpdateWater";
 
             ToGenerate = new List<Point3>();
             Graphics = graphics;
@@ -224,6 +227,7 @@ namespace DwarfCorp
                 Program.ShutdownEvent
             };
 
+            GamePerformance.Instance.RegisterThreadLoopTracker("UpdateWater", GamePerformance.ThreadIdentifier.UpdateWater);
 #if CREATE_CRASH_LOGS
             try
 #endif
@@ -232,6 +236,8 @@ namespace DwarfCorp
                 {
                     EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
 
+                    GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.UpdateWater);
+                    GamePerformance.Instance.EnterZone("UpdateWater");
                     if (wh == Program.ShutdownEvent)
                     {
                         break;
@@ -241,6 +247,8 @@ namespace DwarfCorp
                     {
                         Water.UpdateWater();
                     }
+                    GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.UpdateWater);
+                    GamePerformance.Instance.ExitZone("UpdateWater");
                 }
             }
 #if CREATE_CRASH_LOGS
@@ -259,6 +267,8 @@ namespace DwarfCorp
                 Program.ShutdownEvent
             };
 
+            GamePerformance.Instance.RegisterThreadLoopTracker("RebuildLiquids", GamePerformance.ThreadIdentifier.RebuildWater);
+
 #if CREATE_CRASH_LOGS
             try
 #endif
@@ -273,6 +283,7 @@ namespace DwarfCorp
                         break;
                     }
 
+                    GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.RebuildWater);
                     while (!PauseThreads && RebuildLiquidsList.Count > 0)
                     {
                         VoxelChunk chunk = null;
@@ -303,6 +314,7 @@ namespace DwarfCorp
                             break;
                         }
                     }
+                    GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.RebuildWater);
                 }
             }
 #if CREATE_CRASH_LOGS
@@ -314,7 +326,6 @@ namespace DwarfCorp
 
         }
 
-
         public void RebuildVoxelsThread()
         {
             EventWaitHandle[] waitHandles =
@@ -323,6 +334,8 @@ namespace DwarfCorp
                 Program.ShutdownEvent
             };
 
+            GamePerformance.Instance.RegisterThreadLoopTracker("RebuildVoxels", GamePerformance.ThreadIdentifier.RebuildVoxels);
+
 #if CREATE_CRASH_LOGS
             try
 #endif
@@ -330,6 +343,9 @@ namespace DwarfCorp
                 while (!DwarfGame.ExitGame && !ExitThreads)
                 {
                     EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
+
+                    GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);
+                    GamePerformance.Instance.EnterZone("RebuildVoxels");
 
                     if (wh == Program.ShutdownEvent)
                     {
@@ -405,6 +421,8 @@ namespace DwarfCorp
                             }
                         
                     }
+                    GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);
+                    GamePerformance.Instance.ExitZone("RebuildVoxels");
                 }
             }
 #if CREATE_CRASH_LOGS
@@ -850,7 +868,12 @@ namespace DwarfCorp
             GenerateOres();
 
             message = "Fog of war...";
+            // We are going to force fog of war to be on for the first reveal then reset it back to it's previous setting after.
+            // This is a pseudo hack to stop worlds created with Fog of War off then looking awful if it is turned back on.
+            bool fogOfWar = GameSettings.Default.FogofWar;
+            GameSettings.Default.FogofWar = true;
             ChunkData.Reveal(GeneratedChunks.First().MakeVoxel(0, (int)ChunkData.ChunkSizeY - 1, 0));
+            GameSettings.Default.FogofWar = fogOfWar;
 
             UpdateRebuildList();
             GenerateDistance = origBuildRadius;

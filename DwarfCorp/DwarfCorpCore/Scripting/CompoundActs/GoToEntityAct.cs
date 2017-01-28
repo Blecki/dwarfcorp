@@ -35,7 +35,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using DwarfCorp.DwarfCorp;
 using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
