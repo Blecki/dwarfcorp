@@ -47,27 +47,144 @@ namespace DwarfCorp
     /// </summary>
     public class Physics : Body
     {
+        /// <summary>
+        /// Gets or sets the angular velocity in radians per second.
+        /// </summary>
+        /// <value>
+        /// The angular velocity.
+        /// </value>
         public Vector3 AngularVelocity { get; set; }
+        /// <summary>
+        /// Gets or sets the linear velocity in voxels per second.
+        /// </summary>
+        /// <value>
+        /// The velocity.
+        /// </value>
         public Vector3 Velocity { get; set; }
+        /// <summary>
+        /// Gets or sets the mass in voxel weights.
+        /// </summary>
+        /// <value>
+        /// The mass.
+        /// </value>
         public float Mass { get; set; }
+        /// <summary>
+        /// Gets or sets the moment of inertia.
+        /// </summary>
+        /// <value>
+        /// The i.
+        /// </value>
         public float I { get; set; }
+        /// <summary>
+        /// Gets or sets the linear viscous damping force. 1.0 means no damping. 0.0 means full damping.
+        /// </summary>
+        /// <value>
+        /// The linear damping.
+        /// </value>
         public float LinearDamping { get; set; }
+        /// <summary>
+        /// Gets or sets the viscous angular damping force. 1.0 means no damping. 0.0 means full damping.
+        /// </summary>
+        /// <value>
+        /// The angular damping.
+        /// </value>
         public float AngularDamping { get; set; }
+        /// <summary>
+        /// Gets or sets the restitution in proportion. 
+        /// A colliding body with 1.0 restitution bounces back with 100% of its velocity.
+        /// </summary>
+        /// <value>
+        /// The restitution.
+        /// </value>
         public float Restitution { get; set; }
+        /// <summary>
+        /// Gets or sets the friction when colliding with voxels.
+        /// </summary>
+        /// <value>
+        /// The friction.
+        /// </value>
         public float Friction { get; set; }
+        /// <summary>
+        /// Gets or sets the gravity in voxels per second squared.
+        /// </summary>
+        /// <value>
+        /// The gravity.
+        /// </value>
         public Vector3 Gravity { get; set; }
+        /// <summary>
+        /// Gets or sets the previous position of this body on the last update.
+        /// </summary>
+        /// <value>
+        /// The previous position.
+        /// </value>
         public Vector3 PreviousPosition { get; set; }
+        /// <summary>
+        /// Book keeping for applying gravity. Avoids applying gravity when it would otherwise mess up physics.
+        /// </summary>
         private bool applyGravityThisFrame = true;
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is sleeping. A sleeping instance does not update
+        /// unless acted upon by an outside force. (Take that, newton)
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is sleeping; otherwise, <c>false</c>.
+        /// </value>
         public bool IsSleeping { get; set; }
+        /// <summary>
+        /// Book-keeping. If we are sleeping, and this is set to true, we check physics for one more frame
+        /// before going back to sleep.
+        /// </summary>
         private bool overrideSleepThisFrame = true;
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is in liquid (like water or lava).
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is in liquid; otherwise, <c>false</c>.
+        /// </value>
         public bool IsInLiquid { get; set; }
+        /// <summary>
+        /// Gets or sets the previous velocity. On the last update.
+        /// </summary>
+        /// <value>
+        /// The previous velocity.
+        /// </value>
         public Vector3 PreviousVelocity { get; set; }
+        /// <summary>
+        /// Gets or sets the orientation mode.
+        /// </summary>
+        /// <value>
+        /// The orientation.
+        /// </value>
         public OrientMode Orientation { get; set; }
+        /// <summary>
+        /// When in RotateY mode, this is the angle around Y in radians in which to rotate.
+        /// </summary>
         private float Rotation = 0.0f;
+        /// <summary>
+        /// Gets or sets the collision mode. 
+        /// </summary>
+        /// <value>
+        /// The collide mode.
+        /// </value>
         public CollisionMode CollideMode { get; set; }
+        /// <summary>
+        /// The current voxel
+        /// </summary>
         public Voxel CurrentVoxel = null;
+        /// <summary>
+        /// The neighbors of this voxel.
+        /// </summary>
         public List<Voxel> Neighbors = new List<Voxel>();
-        public const float FixedDT = 0.016f;
+        /// <summary>
+        /// Fixed time to update physics at. This is to prevent instabilty on very slow
+        /// or very fast machines, and to protect stability during fast forward.
+        /// </summary>
+        public const float FixedDT = 1.0f / 60.0f;
+
+        /// <summary>
+        /// Does this physics object collide on all sides, none,
+        /// just the top and bottom, or just the 2D sides?
+        /// </summary>
         public enum CollisionMode
         {
             All,
@@ -76,6 +193,12 @@ namespace DwarfCorp
             Sides
         }
 
+        /// <summary>
+        /// Does this physics object rotate in accordance with
+        /// physics, or is its orientation fixed? It may also look
+        /// at the direction it is traveling, or may just rotate about the
+        /// Y axis.
+        /// </summary>
         public enum OrientMode
         {
             Physics,
@@ -124,9 +247,11 @@ namespace DwarfCorp
         {
             if (!IsActive) return;
 
+            // Check to see if we're outside the bounds of the world.
             BoundingBox bounds = chunks.Bounds;
             bounds.Max.Y += 50;
 
+            // If we're not sleeping and moving very slowly, go to sleep.
             if (!IsSleeping && (Velocity).Length() < 0.15f)
             {
                 SleepTimer.Update(gameTime);
@@ -144,6 +269,7 @@ namespace DwarfCorp
                 IsSleeping = false;
             }
 
+            // If not sleeping, update physics.
             if (!IsSleeping || overrideSleepThisFrame)
             {
                 if (overrideSleepThisFrame)
@@ -151,18 +277,24 @@ namespace DwarfCorp
                     overrideSleepThisFrame = false;
                 }
 
-                float dt = (float) (gameTime.ElapsedGameTime.TotalSeconds);
 
+                float dt = (float) (gameTime.ElapsedGameTime.TotalSeconds);
+                // Calculate the number of timesteps to apply.
                 int numTimesteps = Math.Max((int) (dt/FixedDT), 1);
 
+                // If the velocity is messed up, set it to zero.
                 if (MathFunctions.HasNan(Velocity))
                 {
                     Velocity = Vector3.Zero;
                 }
 
+                // For each timestep, move and collide.
                 for (int n = 0; n < numTimesteps; n++)
                 {
+                    // Move by a fixed amount.
                     Move(FixedDT);
+
+                    // Get the current voxel.
                     chunks.ChunkData.GetVoxel(Position, ref CurrentVoxel);
                     if (CurrentVoxel != null && CurrentVoxel.Chunk != null)
                     {
@@ -170,9 +302,12 @@ namespace DwarfCorp
                         CurrentVoxel.Chunk.GetNeighborsSuccessors(VoxelChunk.ManhattanSuccessors, (int) gridPos.X,
                             (int) gridPos.Y, (int) gridPos.Z, Neighbors);
                     }
+
+                    // Collide with the world.
                     HandleCollisions(chunks, FixedDT);
 
                     Matrix transform = LocalTransform;
+                    // Avoid leaving the world.
                     if (bounds.Contains(LocalTransform.Translation + Velocity*dt) != ContainmentType.Contains)
                     {
                         transform.Translation = LocalTransform.Translation - 0.1f*Velocity*dt;
@@ -180,6 +315,7 @@ namespace DwarfCorp
                     }
 
 
+                    // If we're outside the world, die
                     if (LocalTransform.Translation.Y < -10 ||
                         bounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
                     {
@@ -187,6 +323,7 @@ namespace DwarfCorp
                     }
 
 
+                    // Orientation logic.
                     if (Orientation == OrientMode.Physics)
                     {
                         Matrix dA = Matrix.Identity;
@@ -230,19 +367,24 @@ namespace DwarfCorp
                         }
                     }
 
+                    // Final check to ensure we're in the world.
                     transform.Translation = ClampToBounds(transform.Translation);
                     LocalTransform = transform;
 
+                    // Assume that if velocity is small, we're standing on ground (lol bad assumption)
+                    // Apply friction.
                     if (Math.Abs(Velocity.Y) < 0.1f)
                     {
                         Velocity = new Vector3(Velocity.X*Friction, Velocity.Y, Velocity.Z*Friction);
                     }
 
+                    // Apply gravity.
                     if (applyGravityThisFrame)
                     {
                         ApplyForce(Gravity, FixedDT);
                     }
 
+                    // Damp the velocity.
                     Vector3 dampingForce = -Velocity*(1.0f - LinearDamping);
 
                     Velocity += dampingForce * FixedDT;
