@@ -361,15 +361,16 @@ namespace DwarfCorp
                 targetPhi = Phi - (filterDiffY);
                 Theta = targetTheta * 0.5f + Theta * 0.5f;
                 Phi = targetPhi * 0.5f + Phi * 0.5f;
+               
+                if (Phi < -MathHelper.PiOver2 + 0.01f)
+                {
+                    Phi = -MathHelper.PiOver2 + 0.01f;
+                }
+                else if (Phi > MathHelper.PiOver2 - 0.01f)
+                {
+                    Phi = MathHelper.PiOver2 - 0.01f;
+                }
 
-                if (Phi < -MathHelper.PiOver2)
-                {
-                    Phi = -MathHelper.PiOver2;
-                }
-                else if (Phi > MathHelper.PiOver2)
-                {
-                    Phi = MathHelper.PiOver2;
-                }
             }
             else
             {
