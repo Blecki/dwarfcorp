@@ -1,0 +1,353 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LibNoise</name>
+    </assembly>
+    <members>
+        <member name="T:LibNoise.Models.Cylinder">
+            <summary>
+            Model that maps the output of a module onto a cylinder.
+            </summary>
+        </member>
+        <member name="M:LibNoise.Models.Cylinder.#ctor(LibNoise.IModule)">
+            <summary>
+            Initialises a new instance of the Cylinder class.
+            </summary>
+            <param name="sourceModule">The module from which to retrieve noise.</param>
+        </member>
+        <member name="M:LibNoise.Models.Cylinder.GetValue(System.Double,System.Double)">
+            <summary>
+            Returns noise mapped to the given angle and height along the cylinder.
+            </summary>
+        </member>
+        <member name="P:LibNoise.Models.Cylinder.SourceModule">
+            <summary>
+            The module from which to retrieve noise.
+            </summary>
+        </member>
+        <member name="T:LibNoise.Models.Line">
+            <summary>
+            Model that maps the output of a module onto a line.
+            </summary>
+        </member>
+        <member name="F:LibNoise.Models.Line.m_x0">
+            @a x coordinate of the start of the line segment.
+        </member>
+        <member name="F:LibNoise.Models.Line.m_x1">
+            @a x coordinate of the end of the line segment.
+        </member>
+        <member name="F:LibNoise.Models.Line.m_y0">
+            @a y coordinate of the start of the line segment.
+        </member>
+        <member name="F:LibNoise.Models.Line.m_y1">
+            @a y coordinate of the end of the line segment.
+        </member>
+        <member name="F:LibNoise.Models.Line.m_z0">
+            @a z coordinate of the start of the line segment.
+        </member>
+        <member name="F:LibNoise.Models.Line.m_z1">
+            @a z coordinate of the end of the line segment.
+        </member>
+        <member name="M:LibNoise.Models.Line.#ctor(LibNoise.IModule)">
+            <summary>
+            Initialises a new instance of the Line class.
+            </summary>
+            <param name="sourceModule">The module from which to retrieve noise.</param>
+        </member>
+        <member name="M:LibNoise.Models.Line.GetValue(System.Double)">
+            <summary>
+            Returns noise mapped to the given point along the length of the line.
+            </summary>
+        </member>
+        <member name="M:LibNoise.Models.Line.SetStartPoint(System.Double,System.Double,System.Double)">
+            <summary>
+            Sets the start point of the line in 3D space.
+            </summary>
+        </member>
+        <member name="M:LibNoise.Models.Line.SetEndPoint(System.Double,System.Double,System.Double)">
+            <summary>
+            Sets the end point of the line in 3D space.
+            </summary>
+        </member>
+        <member name="P:LibNoise.Models.Line.SourceModule">
+            <summary>
+            The module from which to retrieve noise.
+            </summary>
+        </member>
+        <member name="P:LibNoise.Models.Line.Attenuate">
+            <summary>
+            Specifies whether to attenuate the noise.  If true, the noise will approach 0.0
+            as the ends of the line are approached.
+            </summary>
+        </member>
+        <member name="T:LibNoise.Models.Plane">
+            <summary>
+            Model that maps the output of a module onto a plane.
+            </summary>
+        </member>
+        <member name="M:LibNoise.Models.Plane.#ctor(LibNoise.IModule)">
+            <summary>
+            Initialises a new instance of the Plane class.
+            </summary>
+            <param name="sourceModule">The module from which to retrieve noise.</param>
+        </member>
+        <member name="M:LibNoise.Models.Plane.GetValue(System.Double,System.Double)">
+            <summary>
+            Returns noise mapped to the given location on the plane.
+            </summary>
+        </member>
+        <member name="P:LibNoise.Models.Plane.SourceModule">
+            <summary>
+            The module from which to retrieve noise.
+            </summary>
+        </member>
+        <member name="T:LibNoise.Models.Sphere">
+            <summary>
+            Model that maps the output of a module onto a sphere.
+            </summary>
+        </member>
+        <member name="T:LibNoise.Math">
+            <summary>
+            Provides math operations not found in System.Math.
+            </summary>
+        </member>
+        <member name="M:LibNoise.Math.ClampValue(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Returns the given value clamped between the given lower and upper bounds.
+            </summary>
+        </member>
+        <member name="M:LibNoise.Math.CubicInterpolate(System.Double,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Returns the cubic interpolation of two values bound between two other values.
+            </summary>
+            <param name="n0">The value before the first value.</param>
+            <param name="n1">The first value.</param>
+            <param name="n2">The second value.</param>
+            <param name="n3">The value after the second value.</param>
+            <param name="a">The alpha value.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LibNoise.Math.GetSmaller(System.Double,System.Double)">
+            <summary>
+            Returns the smaller of the two given numbers.
+            </summary>
+        </member>
+        <member name="M:LibNoise.Math.GetLarger(System.Double,System.Double)">
+            <summary>
+            Returns the larger of the two given numbers.
+            </summary>
+        </member>
+        <member name="M:LibNoise.Math.SwapValues(System.Double@,System.Double@)">
+            <summary>
+            Swaps the values contained by the two given variables.
+            </summary>
+        </member>
+        <member name="M:LibNoise.Math.LinearInterpolate(System.Double,System.Double,System.Double)">
+            <summary>
+            Returns the linear interpolation of two values with the given alpha.
+            </summary>
+        </member>
+        <member name="M:LibNoise.Math.SCurve3(System.Double)">
+            <summary>
+            Returns the given value mapped onto a cubic S-curve.
+            </summary>
+        </member>
+        <member name="M:LibNoise.Math.SCurve5(System.Double)">
+            <summary>
+            Returns the given value mapped onto a quintic S-curve.
+            </summary>
+        </member>
+        <member name="F:LibNoise.Math.PI">
+            <summary>
+            Returns the value of the mathematical constant PI.
+            </summary>
+        </member>
+        <member name="F:LibNoise.Math.Sqrt2">
+            <summary>
+            Returns the square root of 2.
+            </summary>
+        </member>
+        <member name="F:LibNoise.Math.Sqrt3">
+            <summary>
+            Returns the square root of 3.
+            </summary>
+        </member>
+        <member name="F:LibNoise.Math.DEG_TO_RAD">
+            <summary>
+            Returns PI/180.0, used for converting degrees to radians.
+            </summary>
+        </member>
+        <member name="M:LibNoise.Math.LatLonToXYZ(System.Double,System.Double,System.Double@,System.Double@,System.Double@)">
+            <summary>
+            Provides the X, Y, and Z coordinates on the surface of a sphere 
+            cooresponding to the given latitude and longitude.
+            </summary>
+        </member>
+        <member name="M:LibNoise.Models.Sphere.#ctor(LibNoise.IModule)">
+            <summary>
+            Initialises a new instance of the Sphere class.
+            </summary>
+            <param name="sourceModule">The module from which to retrieve noise.</param>
+        </member>
+        <member name="M:LibNoise.Models.Sphere.GetValue(System.Double,System.Double)">
+            <summary>
+            Returns noise mapped to the given location in the sphere.
+            </summary>
+        </member>
+        <member name="P:LibNoise.Models.Sphere.SourceModule">
+            <summary>
+            The module from which to retrieve noise.
+            </summary>
+        </member>
+        <member name="T:LibNoise.Modifiers.AbsoluteOutput">
+            <summary>
+            Module that returns the absolute value of the output of a source module.    
+            </summary>
+        </member>
+        <member name="M:LibNoise.Modifiers.AbsoluteOutput.#ctor(LibNoise.IModule)">
+            <summary>
+            Initialises a new instance of the AbsoluteOutput class.
+            </summary>
+            <param name="sourceModule">The module from which to retrieve noise.</param>
+        </member>
+        <member name="M:LibNoise.Modifiers.AbsoluteOutput.GetValue(System.Double,System.Double,System.Double)">
+            <summary>
+            Returns the absolute value of noise from the source module at the given coordinates.
+            </summary>
+        </member>
+        <member name="P:LibNoise.Modifiers.AbsoluteOutput.SourceModule">
+            <summary>
+            The module from which to retrieve noise.
+            </summary>
+        </member>
+        <member name="T:LibNoise.Modifiers.Add">
+            <summary>
+            Module that returns the output of two source modules added together.
+            </summary>
+        </member>
+        <member name="M:LibNoise.Modifiers.Add.#ctor(LibNoise.IModule,LibNoise.IModule)">
+            <summary>
+            Initialises a new instance of the Add class.
+            </summary>
+            <param name="sourceModule1">The first module from which to retrieve noise.</param>
+            <param name="sourceModule2">The second module from which to retrieve noise.</param>
+        </member>
+        <member name="M:LibNoise.Modifiers.Add.GetValue(System.Double,System.Double,System.Double)">
+            <summary>
+            Returns the output of the two source modules added together.
+            </summary>
+        </member>
+        <member name="P:LibNoise.Modifiers.Add.SourceModule1">
+            <summary>
+            The first module from which to retrieve noise.
+            </summary>
+        </member>
+        <member name="P:LibNoise.Modifiers.Add.SourceModule2">
+            <summary>
+            The second module from which to retrieve noise.
+            </summary>
+        </member>
+        <member name="T:LibNoise.Modifiers.BiasOutput">
+            <summary>
+            Module that biases the output of a source module by adding a given value to the output.
+            </summary>
+        </member>
+        <member name="M:LibNoise.Modifiers.BiasOutput.#ctor(LibNoise.IModule,System.Double)">
+            <summary>
+            Initialises a new instance of the BiasOutput class.
+            </summary>
+            <param name="sourceModule">The module from which to retrieve noise.</param>
+            <param name="bias">The value to add to the output.</param>
+        </member>
+        <member name="M:LibNoise.Modifiers.BiasOutput.GetValue(System.Double,System.Double,System.Double)">
+            <summary>
+            Returns the biased output of the source module.
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <param name="z"></param>
+            <returns></returns>
+        </member>
+        <member name="P:LibNoise.Modifiers.BiasOutput.SourceModule">
+            <summary>
+            The module from which to retrieve noise.
+            </summary>
+        </member>
+        <member name="P:LibNoise.Modifiers.BiasOutput.Bias">
+            <summary>
+            The value to add to the output.
+            </summary>
+        </member>
+        <member name="T:LibNoise.Modifiers.Blend">
+            <summary>
+            Module that blends the output of two source modules using the output
+            of an weight module as the blending weight.
+            </summary>
+        </member>
+        <member name="M:LibNoise.Modifiers.Blend.#ctor(LibNoise.IModule,LibNoise.IModule,LibNoise.IModule)">
+            <summary>
+            Initialises a new instance of the Blend class.
+            </summary>
+            <param name="sourceModule1">The first module from which to retrieve noise to be blended.</param>
+            <param name="sourceModule2">The second module from which to retrieve noise to be blended.</param>
+            <param name="weightModule">The module from which to retrieve noise to be used as the blending weight.</param>
+        </member>
+        <member name="M:LibNoise.Modifiers.Blend.GetValue(System.Double,System.Double,System.Double)">
+            <summary>
+            Returns the result of blending the output of the two source modules using the 
+            output of the weight module as the blending weight.
+            </summary>
+        </member>
+        <member name="P:LibNoise.Modifiers.Blend.SourceModule1">
+            <summary>
+            The first module from which to retrieve noise to be blended.
+            </summary>
+        </member>
+        <member name="P:LibNoise.Modifiers.Blend.SourceModule2">
+            <summary>
+            The second module from which to retrieve noise to be blended.
+            </summary>
+        </member>
+        <member name="P:LibNoise.Modifiers.Blend.WeightModule">
+            <summary>
+            The module from which to retrieve noise to be used as the blending weight.
+            </summary>
+        </member>
+        <member name="F:LibNoise.Modifiers.RotateInput.m_x1Matrix">
+            An entry within the 3x3 rotation matrix used for rotating the
+            input value.
+        </member>
+        <member name="F:LibNoise.Modifiers.RotateInput.m_x2Matrix">
+            An entry within the 3x3 rotation matrix used for rotating the
+            input value.
+        </member>
+        <member name="F:LibNoise.Modifiers.RotateInput.m_x3Matrix">
+            An entry within the 3x3 rotation matrix used for rotating the
+            input value.
+        </member>
+        <member name="F:LibNoise.Modifiers.RotateInput.m_y1Matrix">
+            An entry within the 3x3 rotation matrix used for rotating the
+            input value.
+        </member>
+        <member name="F:LibNoise.Modifiers.RotateInput.m_y2Matrix">
+            An entry within the 3x3 rotation matrix used for rotating the
+            input value.
+        </member>
+        <member name="F:LibNoise.Modifiers.RotateInput.m_y3Matrix">
+            An entry within the 3x3 rotation matrix used for rotating the
+            input value.
+        </member>
+        <member name="F:LibNoise.Modifiers.RotateInput.m_z1Matrix">
+            An entry within the 3x3 rotation matrix used for rotating the
+            input value.
+        </member>
+        <member name="F:LibNoise.Modifiers.RotateInput.m_z2Matrix">
+            An entry within the 3x3 rotation matrix used for rotating the
+            input value.
+        </member>
+        <member name="F:LibNoise.Modifiers.RotateInput.m_z3Matrix">
+            An entry within the 3x3 rotation matrix used for rotating the
+            input value.
+        </member>
+    </members>
+</doc>

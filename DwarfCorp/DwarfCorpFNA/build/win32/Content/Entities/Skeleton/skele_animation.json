@@ -1,0 +1,191 @@
+{
+   "Animations" : [
+      {
+         "Frames" : [
+            [ 1, 0, 0 ],
+            [ 1, 0, 0 ],
+            [ 1, 0, 0 ],
+            [ 1, 0, 0 ]
+         ],
+         "Name" : "IdleFORWARD",
+         "Speed" : [ 1, 0.15, 0.15, 0.15]
+      },
+      {
+         "Frames" : [
+            [ 1, 1, 0 ],
+            [ 1, 1, 0 ],
+            [ 1, 1, 0 ],
+            [ 1, 1, 0 ]
+         ],
+         "Name" : "IdleLEFT",
+         "Speed" : [ 1, 0.15, 0.15, 0.15]
+      },
+      {
+         "Frames" : [
+            [ 1, 2, 0 ],
+            [ 1, 2, 0 ],
+            [ 1, 2, 0 ],
+            [ 1, 2, 0 ]
+         ],
+         "Name" : "IdleRIGHT",
+         "Speed" : [ 1, 0.15, 0.15, 0.15]
+      },
+      {
+         "Frames" : [
+            [ 1, 3, 0 ],
+            [ 1, 3, 0 ],
+            [ 1, 3, 0 ],
+            [ 1, 3, 0 ]
+         ],
+         "Name" : "IdleBACKWARD",
+         "Speed" : [ 1, 0.15, 0.15, 0.15]
+      },
+      {
+         "Frames" : [
+            [ 1, 0, 0 ],
+            [ 2, 0, 0 ],
+            [ 1, 0, 0 ],
+            [ 0, 0, 0 ]
+         ],
+         "Name" : "WalkingFORWARD",
+         "Speed" : [0.15]
+      },
+      {
+         "Frames" : [
+            [ 1, 1, 0 ],
+            [ 2, 1, 0 ],
+            [ 1, 1, 0 ],
+            [ 0, 1, 0 ]
+         ],
+         "Name" : "WalkingLEFT",
+         "Speed" : [0.15]
+      },
+      {
+         "Frames" : [
+            [ 1, 2, 0 ],
+            [ 2, 2, 0 ],
+            [ 1, 2, 0 ],
+            [ 0, 2, 0 ]
+         ],
+         "Name" : "WalkingRIGHT",
+         "Speed" : [0.15]
+      },
+      {
+         "Frames" : [
+            [ 1, 3, 0 ],
+            [ 2, 3, 0 ],
+            [ 1, 3, 0 ],
+            [ 0, 3, 0 ]
+         ],
+         "Name" : "WalkingBACKWARD",
+         "Speed" : [0.15]
+      },
+
+      {
+         "Frames" : [
+            [ 0, 8, 0 ],
+            [ 1, 8, 0 ],
+            [ 2, 8, 0 ],
+            [ 3, 8, 0 ]
+         ],
+         "Name" : "AttackingFORWARD",
+         "Speed" : [0.15]
+      },
+      {
+         "Frames" : [
+            [ 0, 9, 0 ],
+            [ 1, 9, 0 ],
+            [ 2, 9, 0 ],
+            [ 3, 9, 0 ]
+         ],
+         "Name" : "AttackingLEFT",
+         "Speed" : [0.15]
+      },
+      {
+         "Frames" : [
+            [ 0, 10, 0 ],
+            [ 1, 10, 0 ],
+            [ 2, 10, 0 ],
+            [ 3, 10, 0 ]
+         ],
+         "Name" : "AttackingRIGHT",
+         "Speed" : [0.15]
+      },
+      {
+         "Frames" : [
+            [ 0, 11, 0 ],
+            [ 1, 11, 0 ],
+            [ 2, 11, 0 ],
+            [ 3, 11, 0 ]
+         ],
+         "Name" : "AttackingBACKWARD",
+         "Speed" : [0.15]
+      },
+      {
+         "Frames" : [
+            [ 0, 4, 0 ]
+         ],
+         "Name" : "JumpingFORWARD",
+         "Speed" : [1]
+      },
+      {
+         "Frames" : [
+            [ 0, 5, 0 ]
+         ],
+         "Name" : "JumpingLEFT",
+         "Speed" : [1]
+      },
+      {
+         "Frames" : [
+            [ 0, 6, 0 ]
+         ],
+         "Name" : "JumpingRIGHT",
+         "Speed" : [1]
+      },
+      {
+         "Frames" : [
+            [ 0, 7, 0 ]
+         ],
+         "Name" : "JumpingBACKWARD",
+         "Speed" : [1]
+      },
+
+      {
+         "Frames" : [
+            [ 1, 4, 0 ]
+         ],
+         "Name" : "FallingFORWARD",
+         "Speed" : [1]
+      },
+      {
+         "Frames" : [
+            [ 1, 5, 0 ]
+         ],
+         "Name" : "FallingLEFT",
+         "Speed" : [1]
+      },
+      {
+         "Frames" : [
+            [ 1, 6, 0 ]
+         ],
+         "Name" : "FallingRIGHT",
+         "Speed" : [1]
+      },
+      {
+         "Frames" : [
+            [ 1, 7, 0 ]
+         ],
+         "Name" : "FallingBACKWARD",
+         "Speed" : [1]
+      }
+   ],
+   "Layers" : [
+      {
+         "$id" : "1",
+         "AssetName" : "Entities\\Skeleton\\skele",
+         "FrameHeight" : 40,
+         "FrameWidth" : 32
+      },
+   ],
+   "Tints" : [ "255, 255, 255, 255"]
+}

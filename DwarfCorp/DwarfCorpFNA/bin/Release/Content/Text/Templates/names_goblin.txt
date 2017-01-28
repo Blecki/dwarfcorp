@@ -1,0 +1,7 @@
+<goblinname> <goblinfamily>
+<goblinname> <goblinfamily>
+<goblinname> <goblinfamily>
+<goblinname> <goblinfamily>
+<goblinname> <goblinfamily>
+<goblinname> of <goblinfamily>
+<goblinname> the <adjective>
