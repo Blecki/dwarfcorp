@@ -1,4 +1,3 @@
-
 # User-specific files
 *.suo
 *.user
@@ -255,6 +254,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+<<<<<<< HEAD
 =======
 
 # User-specific files
@@ -513,3 +513,4 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+=======
