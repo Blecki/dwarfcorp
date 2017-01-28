@@ -1,0 +1,10 @@
+Iron
+Stone
+Gold
+Steel
+Wood
+Ice
+Dirt
+Water
+Fire
+Bronze
