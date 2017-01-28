@@ -1,6 +1,6 @@
 [submodule "FNA"]
 	path = FNA
-	url = https://github.com/CompletelyFairGames/FNA.git
+	url = https://github.com/CompletelyFairGames/FNA
 	branch = dwarfcorp-master
 [submodule "gemgui"]
 	path = gemgui
