@@ -115,1305 +115,447 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\DwarfCorpCore\AssetManagement\ContentPathGenerator.cs">
-      <Link>AssetManagement\ContentPathGenerator.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\AssetManagement\ContentPaths.cs">
-      <Link>AssetManagement\ContentPaths.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\AssetManagement\GameSave\ChunkFile.cs">
-      <Link>AssetManagement\GameSave\ChunkFile.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\AssetManagement\GameSave\FileUtils.cs">
-      <Link>AssetManagement\GameSave\FileUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\AssetManagement\GameSave\GameFile.cs">
-      <Link>AssetManagement\GameSave\GameFile.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\AssetManagement\GameSave\JsonConverters\BoxConverter.cs">
-      <Link>AssetManagement\GameSave\JsonConverters\BoxConverter.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\AssetManagement\GameSave\JsonConverters\ContentConverter.cs">
-      <Link>AssetManagement\GameSave\JsonConverters\ContentConverter.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\AssetManagement\GameSave\JsonConverters\MatrixConverter.cs">
-      <Link>AssetManagement\GameSave\JsonConverters\MatrixConverter.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\AssetManagement\GameSave\JsonConverters\RectangleConverter.cs">
-      <Link>AssetManagement\GameSave\JsonConverters\RectangleConverter.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\AssetManagement\GameSave\OverworldFile.cs">
-      <Link>AssetManagement\GameSave\OverworldFile.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\AssetManagement\GameSave\SaveData.cs">
-      <Link>AssetManagement\GameSave\SaveData.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\AssetManagement\TextureLoader.cs">
-      <Link>AssetManagement\TextureLoader.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\AssetManagement\TextureManager.cs">
-      <Link>AssetManagement\TextureManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\AI\Creature.cs">
-      <Link>Components\AI\Creature.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\AI\CreatureAI.cs">
-      <Link>Components\AI\CreatureAI.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\AI\Grabber.cs">
-      <Link>Components\AI\Grabber.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\AI\Health.cs">
-      <Link>Components\AI\Health.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\AI\Inventory.cs">
-      <Link>Components\AI\Inventory.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\AI\Sensors\EnemySensor.cs">
-      <Link>Components\AI\Sensors\EnemySensor.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\AI\Sensors\Sensor.cs">
-      <Link>Components\AI\Sensors\Sensor.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\AI\Sensors\TrapSensor.cs">
-      <Link>Components\AI\Sensors\TrapSensor.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\AI\Sensors\VoxelListener.cs">
-      <Link>Components\AI\Sensors\VoxelListener.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Body.cs">
-      <Link>Components\Body.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\DeathComponentSpawner.cs">
-      <Link>Components\DeathComponentSpawner.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\GameComponent.cs">
-      <Link>Components\GameComponent.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Graphics\BatchedSprite.cs">
-      <Link>Components\Graphics\BatchedSprite.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Graphics\Bobber.cs">
-      <Link>Components\Graphics\Bobber.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Graphics\Box.cs">
-      <Link>Components\Graphics\Box.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Graphics\CharacterSprite.cs">
-      <Link>Components\Graphics\CharacterSprite.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Graphics\Follower.cs">
-      <Link>Components\Graphics\Follower.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Graphics\LightEmitter.cs">
-      <Link>Components\Graphics\LightEmitter.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Graphics\Mesh.cs">
-      <Link>Components\Graphics\Mesh.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Graphics\OrientedAnimation.cs">
-      <Link>Components\Graphics\OrientedAnimation.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Graphics\ParticleEmitter.cs">
-      <Link>Components\Graphics\ParticleEmitter.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Graphics\ParticleTrigger.cs">
-      <Link>Components\Graphics\ParticleTrigger.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Graphics\SelectionCircle.cs">
-      <Link>Components\Graphics\SelectionCircle.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Graphics\Shadow.cs">
-      <Link>Components\Graphics\Shadow.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Graphics\Sprite.cs">
-      <Link>Components\Graphics\Sprite.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Graphics\Tinter.cs">
-      <Link>Components\Graphics\Tinter.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\GUI\MinimapIcon.cs">
-      <Link>Components\GUI\MinimapIcon.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\GUI\WorldGUIObject.cs">
-      <Link>Components\GUI\WorldGUIObject.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Physics\Flammable.cs">
-      <Link>Components\Physics\Flammable.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Physics\Physics.cs">
-      <Link>Components\Physics\Physics.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Systems\ComponentManager.cs">
-      <Link>Components\Systems\ComponentManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Components\Systems\Message.cs">
-      <Link>Components\Systems\Message.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\ControlSettings.cs">
-      <Link>ControlSettings.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\DwarfGame.cs">
-      <Link>DwarfGame.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Animals\Bat.cs">
-      <Link>Entities\Animals\Bat.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Animals\Bird.cs">
-      <Link>Entities\Animals\Bird.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Animals\BirdAI.cs">
-      <Link>Entities\Animals\BirdAI.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Animals\Deer.cs">
-      <Link>Entities\Animals\Deer.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Animals\Frog.cs">
-      <Link>Entities\Animals\Frog.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Animals\Rabbit.cs">
-      <Link>Entities\Animals\Rabbit.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Animals\Scorpion.cs">
-      <Link>Entities\Animals\Scorpion.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Animals\Spider.cs">
-      <Link>Entities\Animals\Spider.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\BalloonAI.cs">
-      <Link>Entities\BalloonAI.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Dwarves\Dwarf.cs">
-      <Link>Entities\Dwarves\Dwarf.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\EntityFactory.cs">
-      <Link>Entities\EntityFactory.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Anvil.cs">
-      <Link>Entities\Fixtures\Anvil.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Bed.cs">
-      <Link>Entities\Fixtures\Bed.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Chair.cs">
-      <Link>Entities\Fixtures\Chair.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Crate.cs">
-      <Link>Entities\Fixtures\Crate.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Door.cs">
-      <Link>Entities\Fixtures\Door.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Fixture.cs">
-      <Link>Entities\Fixtures\Fixture.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Flag.cs">
-      <Link>Entities\Fixtures\Flag.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Forge.cs">
-      <Link>Entities\Fixtures\Forge.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Ladder.cs">
-      <Link>Entities\Fixtures\Ladder.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Lamp.cs">
-      <Link>Entities\Fixtures\Lamp.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\PunchingBag.cs">
-      <Link>Entities\Fixtures\PunchingBag.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Strawman.cs">
-      <Link>Entities\Fixtures\Strawman.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Table.cs">
-      <Link>Entities\Fixtures\Table.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\Target.cs">
-      <Link>Entities\Fixtures\Target.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\WeightRack.cs">
-      <Link>Entities\Fixtures\WeightRack.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Fixtures\WorkPile.cs">
-      <Link>Entities\Fixtures\WorkPile.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Monsters\Demon.cs">
-      <Link>Entities\Monsters\Demon.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Monsters\Elf.cs">
-      <Link>Entities\Monsters\Elf.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Monsters\Fairy.cs">
-      <Link>Entities\Monsters\Fairy.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Monsters\Goblin.cs">
-      <Link>Entities\Monsters\Goblin.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Monsters\Moleman.cs">
-      <Link>Entities\Monsters\Moleman.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Monsters\Necromancer.cs">
-      <Link>Entities\Monsters\Necromancer.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Monsters\NecromancerAI.cs">
-      <Link>Entities\Monsters\NecromancerAI.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Monsters\Skeleton.cs">
-      <Link>Entities\Monsters\Skeleton.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Monsters\Snake.cs">
-      <Link>Entities\Monsters\Snake.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Monsters\SnakeAi.cs">
-      <Link>Entities\Monsters\SnakeAi.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Plants\Bush.cs">
-      <Link>Entities\Plants\Bush.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Plants\Mushroom.cs">
-      <Link>Entities\Plants\Mushroom.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Plants\Tree.cs">
-      <Link>Entities\Plants\Tree.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Plants\Wheat.cs">
-      <Link>Entities\Plants\Wheat.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Projectiles\Projectile.cs">
-      <Link>Entities\Projectiles\Projectile.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Resources\ResourceEntity.cs">
-      <Link>Entities\Resources\ResourceEntity.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Resources\ResourcePack.cs">
-      <Link>Entities\Resources\ResourcePack.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Traps\BearTrap.cs">
-      <Link>Entities\Traps\BearTrap.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Entities\Traps\TurretTrap.cs">
-      <Link>Entities\Traps\TurretTrap.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameSettings.cs">
-      <Link>GameSettings.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\CompanyMakerState.cs">
-      <Link>GameStates\CompanyMakerState.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\CreditsState.cs">
-      <Link>GameStates\CreditsState.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\DiplomacyState.cs">
-      <Link>GameStates\DiplomacyState.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\EconomyState.cs">
-      <Link>GameStates\EconomyState.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\GameLoaderState.cs">
-      <Link>GameStates\GameLoaderState.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\GameState.cs">
-      <Link>GameStates\GameState.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\GameStateManager.cs">
-      <Link>GameStates\GameStateManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\IntroState.cs">
-      <Link>GameStates\IntroState.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\LoadState.cs">
-      <Link>GameStates\LoadState.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\LoseState.cs">
-      <Link>GameStates\LoseState.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\MainMenuState.cs">
-      <Link>GameStates\MainMenuState.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\NewGameChooseWorldState.cs">
-      <Link>GameStates\NewGameChooseWorldState.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\NewGameCreateDebugWorldState.cs">
-      <Link>GameStates\NewGameCreateDebugWorldState.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\OptionsState.cs">
-      <Link>GameStates\OptionsState.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\PlayState.cs">
-      <Link>GameStates\PlayState.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\WorldGeneratorState.cs">
-      <Link>GameStates\WorldGeneratorState.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\WorldLoaderState.cs">
-      <Link>GameStates\WorldLoaderState.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GameStates\WorldSetupState.cs">
-      <Link>GameStates\WorldSetupState.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Cameras\Camera.cs">
-      <Link>Graphics\Camera\Camera.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Cameras\OrbitCamera.cs">
-      <Link>Graphics\Camera\OrbitCamera.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Drawing\Drawer2D\DrawCommand2D.cs">
-      <Link>Graphics\Drawing\Drawer2D\DrawCommand2D.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Drawing\Drawer2D\Drawer2D.cs">
-      <Link>Graphics\Drawing\Drawer2D\Drawer2D.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Drawing\Drawer2D\PolygonDrawCommand.cs">
-      <Link>Graphics\Drawing\Drawer2D\PolygonDrawCommand.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Drawing\Drawer2D\RectDrawCommand.cs">
-      <Link>Graphics\Drawing\Drawer2D\RectDrawCommand.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Drawing\Drawer2D\SpriteDrawCommand.cs">
-      <Link>Graphics\Drawing\Drawer2D\SpriteDrawCommand.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Drawing\Drawer2D\TextBoxDrawCommand.cs">
-      <Link>Graphics\Drawing\Drawer2D\TextBoxDrawCommand.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Drawing\Drawer2D\TextDrawCommand.cs">
-      <Link>Graphics\Drawing\Drawer2D\TextDrawCommand.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Drawing\Drawer3D\BoxDrawCommand3D.cs">
-      <Link>Graphics\Drawing\Drawer3D\BoxDrawCommand3D.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Drawing\Drawer3D\DrawCommand3D.cs">
-      <Link>Graphics\Drawing\Drawer3D\DrawCommand3D.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Drawing\Drawer3D\Drawer3D.cs">
-      <Link>Graphics\Drawing\Drawer3D\Drawer3D.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Drawing\Drawer3D\LineListCommand3D.cs">
-      <Link>Graphics\Drawing\Drawer3D\LineListCommand3D.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Drawing\HSLColor.cs">
-      <Link>Graphics\Drawing\HSLColor.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Drawing\ImageFrame.cs">
-      <Link>Graphics\Drawing\ImageFrame.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Drawing\SpriteSheet.cs">
-      <Link>Graphics\Drawing\SpriteSheet.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Effects\BloomComponent.cs">
-      <Link>Graphics\Effects\BloomComponent.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Effects\BloomSettings.cs">
-      <Link>Graphics\Effects\BloomSettings.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Effects\FXAA.cs">
-      <Link>Graphics\Effects\FXAA.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Effects\ParticleManager.cs">
-      <Link>Graphics\Effects\ParticleManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Effects\ShadowRenderer.cs">
-      <Link>Graphics\Effects\ShadowRenderer.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Effects\SkyRenderer.cs">
-      <Link>Graphics\Effects\SkyRenderer.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Instancing\FixedInstanceArray.cs">
-      <Link>Graphics\Instancing\FixedInstanceArray.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Instancing\InstanceData.cs">
-      <Link>Graphics\Instancing\InstanceData.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Instancing\InstancedVertex.cs">
-      <Link>Graphics\Instancing\InstancedVertex.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Instancing\InstanceManager.cs">
-      <Link>Graphics\Instancing\InstanceManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\MotionAnimation\EaseMotion.cs">
-      <Link>Graphics\MotionAnimation\EaseMotion.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\MotionAnimation\MotionAnimation.cs">
-      <Link>Graphics\MotionAnimation\MotionAnimation.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\MotionAnimation\TossMotion.cs">
-      <Link>Graphics\MotionAnimation\TossMotion.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Primitives\Animation.cs">
-      <Link>Graphics\Primitives\Animation.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Primitives\BatchBillboardPrimitive.cs">
-      <Link>Graphics\Primitives\BatchBillboardPrimitive.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Primitives\BillboardPrimitive.cs">
-      <Link>Graphics\Primitives\BillboardPrimitive.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Primitives\BoxPrimitive.cs">
-      <Link>Graphics\Primitives\BoxPrimitive.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Primitives\Composite.cs">
-      <Link>Graphics\Primitives\Composite.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Primitives\CompositeAnimation.cs">
-      <Link>Graphics\Primitives\CompositeAnimation.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Primitives\ExtendedVertex.cs">
-      <Link>Graphics\Primitives\ExtendedVertex.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Primitives\GeometricPrimitive.cs">
-      <Link>Graphics\Primitives\GeometricPrimitive.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Primitives\LiquidPrimitive.cs">
-      <Link>Graphics\Primitives\LiquidPrimitive.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Primitives\PrimitiveLibrary.cs">
-      <Link>Graphics\Primitives\PrimitiveLibrary.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Graphics\Primitives\VoxelListPrimitive.cs">
-      <Link>Graphics\Primitives\VoxelListPrimitive.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\AnimatedImagePanel.cs">
-      <Link>GUI\Components\Basic\AnimatedImagePanel.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\Button.cs">
-      <Link>GUI\Components\Basic\Button.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\Checkbox.cs">
-      <Link>GUI\Components\Basic\Checkbox.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\ColorKey.cs">
-      <Link>GUI\Components\Basic\ColorKey.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\ColorPanel.cs">
-      <Link>GUI\Components\Basic\ColorPanel.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\ComboBox.cs">
-      <Link>GUI\Components\Basic\ComboBox.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\ComboBoxSelector.cs">
-      <Link>GUI\Components\Basic\ComboBoxSelector.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\Dialog.cs">
-      <Link>GUI\Components\Basic\Dialog.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\DraggableItem.cs">
-      <Link>GUI\Components\Basic\DraggableItem.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\DragGrid.cs">
-      <Link>GUI\Components\Basic\DragGrid.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\GroupBox.cs">
-      <Link>GUI\Components\Basic\GroupBox.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\ImagePanel.cs">
-      <Link>GUI\Components\Basic\ImagePanel.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\KeyEdit.cs">
-      <Link>GUI\Components\Basic\KeyEdit.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\Label.cs">
-      <Link>GUI\Components\Basic\Label.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\LineEdit.cs">
-      <Link>GUI\Components\Basic\LineEdit.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\ListSelector.cs">
-      <Link>GUI\Components\Basic\ListSelector.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\MiniBar.cs">
-      <Link>GUI\Components\Basic\MiniBar.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\Panel.cs">
-      <Link>GUI\Components\Basic\Panel.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\ProgressBar.cs">
-      <Link>GUI\Components\Basic\ProgressBar.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\ScrollView.cs">
-      <Link>GUI\Components\Basic\ScrollView.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\Slider.cs">
-      <Link>GUI\Components\Basic\Slider.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\SpinBox.cs">
-      <Link>GUI\Components\Basic\SpinBox.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Basic\Window.cs">
-      <Link>GUI\Components\Basic\Window.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\ActDisplay.cs">
-      <Link>GUI\Components\Complex\ActDisplay.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\AIDebugger.cs">
-      <Link>GUI\Components\Complex\AIDebugger.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\AnnounementViewer.cs">
-      <Link>GUI\Components\Complex\AnnounementViewer.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\ApplicationPanel.cs">
-      <Link>GUI\Components\Complex\ApplicationPanel.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\BuildMenu.cs">
-      <Link>GUI\Components\Complex\BuildMenu.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\CapitalPanel.cs">
-      <Link>GUI\Components\Complex\CapitalPanel.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\ColorDialog.cs">
-      <Link>GUI\Components\Complex\ColorDialog.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\ColorSelector.cs">
-      <Link>GUI\Components\Complex\ColorSelector.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\EmployeeDisplay.cs">
-      <Link>GUI\Components\Complex\EmployeeDisplay.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\FarmingPanel.cs">
-      <Link>GUI\Components\Complex\FarmingPanel.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\GoodsPanel.cs">
-      <Link>GUI\Components\Complex\GoodsPanel.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\HireDialog.cs">
-      <Link>GUI\Components\Complex\HireDialog.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\ImageFrameLoadDialog.cs">
-      <Link>GUI\Components\Complex\ImageFrameLoadDialog.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\ItemSelector.cs">
-      <Link>GUI\Components\Complex\ItemSelector.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\KeyEditor.cs">
-      <Link>GUI\Components\Complex\KeyEditor.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\MagicMenu.cs">
-      <Link>GUI\Components\Complex\MagicMenu.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\MasterControls.cs">
-      <Link>GUI\Components\Complex\MasterControls.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\Minimap.cs">
-      <Link>GUI\Components\Complex\Minimap.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\MinionPanel.cs">
-      <Link>GUI\Components\Complex\MinionPanel.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\ResourceInfoComponent.cs">
-      <Link>GUI\Components\Complex\ResourceInfoComponent.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\SpellTreeDisplay.cs">
-      <Link>GUI\Components\Complex\SpellTreeDisplay.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\StockTicker.cs">
-      <Link>GUI\Components\Complex\StockTicker.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\TabSelector.cs">
-      <Link>GUI\Components\Complex\TabSelector.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Components\Complex\TextureLoadDialog.cs">
-      <Link>GUI\Components\Complex\TextureLoadDialog.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\DragManager.cs">
-      <Link>GUI\DragManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\DwarfGUI.cs">
-      <Link>GUI\DwarfGUI.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\GItem.cs">
-      <Link>GUI\GItem.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\GUIComponent.cs">
-      <Link>GUI\GUIComponent.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Indicators\IndicatorManager.cs">
-      <Link>GUI\Indicators\IndicatorManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Layouts\FormEntry.cs">
-      <Link>GUI\Layouts\FormEntry.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Layouts\FormLayout.cs">
-      <Link>GUI\Layouts\FormLayout.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Layouts\GridLayout.cs">
-      <Link>GUI\Layouts\GridLayout.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Layouts\Layout.cs">
-      <Link>GUI\Layouts\Layout.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\Skins\GUISkin.cs">
-      <Link>GUI\Skins\GUISkin.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\GUI\ToolTipManager.cs">
-      <Link>GUI\ToolTipManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\LanguageGenerator\Language.cs">
-      <Link>LanguageGenerator\Language.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\LanguageGenerator\TextAtom.cs">
-      <Link>LanguageGenerator\TextAtom.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\LanguageGenerator\TextGenerator.cs">
-      <Link>LanguageGenerator\TextGenerator.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\ProgramData.cs">
-      <Link>ProgramData.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Screensaver\Terrain2D.cs">
-      <Link>Screensaver\Terrain2D.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Act.cs">
-      <Link>Scripting\Act.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\BehaviorExtensions.cs">
-      <Link>Scripting\BehaviorExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Classes\Applicant.cs">
-      <Link>Scripting\Classes\Applicant.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Classes\AxeDwarfClass.cs">
-      <Link>Scripting\Classes\AxeDwarfClass.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Classes\CraftDwarfClass.cs">
-      <Link>Scripting\Classes\CraftDwarfClass.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Classes\ElfClass.cs">
-      <Link>Scripting\Classes\ElfClass.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Classes\EmployeeClass.cs">
-      <Link>Scripting\Classes\EmployeeClass.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Classes\FairyClass.cs">
-      <Link>Scripting\Classes\FairyClass.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Classes\JobLibrary.cs">
-      <Link>Scripting\Classes\JobLibrary.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Classes\MolemanMinerClass.cs">
-      <Link>Scripting\Classes\MolemanMinerClass.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Classes\MusketDwarfClass.cs">
-      <Link>Scripting\Classes\MusketDwarfClass.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Classes\NecromancerClass.cs">
-      <Link>Scripting\Classes\NecromancerClass.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Classes\SkeletonClass.cs">
-      <Link>Scripting\Classes\SkeletonClass.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Classes\SwordGoblinClass.cs">
-      <Link>Scripting\Classes\SwordGoblinClass.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Classes\WizardClass.cs">
-      <Link>Scripting\Classes\WizardClass.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Classes\WorkerClass.cs">
-      <Link>Scripting\Classes\WorkerClass.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Combat\Alliance.cs">
-      <Link>Scripting\Combat\Alliance.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Combat\Attack.cs">
-      <Link>Scripting\Combat\Attack.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\BuildRoomAct.cs">
-      <Link>Scripting\CompoundActs\BuildRoomAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\BuildVoxelAct.cs">
-      <Link>Scripting\CompoundActs\BuildVoxelAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\BuildVoxelsAct.cs">
-      <Link>Scripting\CompoundActs\BuildVoxelsAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\CompoundAct.cs">
-      <Link>Scripting\CompoundActs\CompoundAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\CompoundCreatureAct.cs">
-      <Link>Scripting\CompoundActs\CompoundCreatureAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\CraftItemAct.cs">
-      <Link>Scripting\CompoundActs\CraftItemAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\FarmAct.cs">
-      <Link>Scripting\CompoundActs\FarmAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\FindAndEatFoodAct.cs">
-      <Link>Scripting\CompoundActs\FindAndEatFoodAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\FindBedAndSleepAct.cs">
-      <Link>Scripting\CompoundActs\FindBedAndSleepAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\GatherItemAct.cs">
-      <Link>Scripting\CompoundActs\GatherItemAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\GetResourcesAct.cs">
-      <Link>Scripting\CompoundActs\GetResourcesAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\GoResearchSpellAct.cs">
-      <Link>Scripting\CompoundActs\GoResearchSpellAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\GoToChairAndSitAct.cs">
-      <Link>Scripting\CompoundActs\GoToChairAndSitAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\GoToEntityAct.cs">
-      <Link>Scripting\CompoundActs\GoToEntityAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\GoToNamedVoxelAct.cs">
-      <Link>Scripting\CompoundActs\GoToNamedVoxelAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\GoToTaggedObjectAct.cs">
-      <Link>Scripting\CompoundActs\GoToTaggedObjectAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\GoToVoxelAct.cs">
-      <Link>Scripting\CompoundActs\GoToVoxelAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\GoToZoneAct.cs">
-      <Link>Scripting\CompoundActs\GoToZoneAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\GoTrainAct.cs">
-      <Link>Scripting\CompoundActs\GoTrainAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\GuardVoxelAct.cs">
-      <Link>Scripting\CompoundActs\GuardVoxelAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\KillEntityAct.cs">
-      <Link>Scripting\CompoundActs\KillEntityAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\KillVoxelAct.cs">
-      <Link>Scripting\CompoundActs\KillVoxelAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\CompoundActs\StockResourceAct.cs">
-      <Link>Scripting\CompoundActs\StockResourceAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\ControlFlow\Condition.cs">
-      <Link>Scripting\ControlFlow\Condition.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\ControlFlow\ForLoop.cs">
-      <Link>Scripting\ControlFlow\ForLoop.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\ControlFlow\Not.cs">
-      <Link>Scripting\ControlFlow\Not.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\ControlFlow\Parallel.cs">
-      <Link>Scripting\ControlFlow\Parallel.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\ControlFlow\Select.cs">
-      <Link>Scripting\ControlFlow\Select.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\ControlFlow\Sequence.cs">
-      <Link>Scripting\ControlFlow\Sequence.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\ControlFlow\Wait.cs">
-      <Link>Scripting\ControlFlow\Wait.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\ControlFlow\WhileLoop.cs">
-      <Link>Scripting\ControlFlow\WhileLoop.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\ControlFlow\Wrap.cs">
-      <Link>Scripting\ControlFlow\Wrap.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Crafting\CraftItem.cs">
-      <Link>Scripting\Crafting\CraftItem.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Crafting\CraftLibrary.cs">
-      <Link>Scripting\Crafting\CraftLibrary.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Data\ActData.cs">
-      <Link>Scripting\Data\ActData.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Data\Blackboard.cs">
-      <Link>Scripting\Data\Blackboard.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Data\CreatureStats.cs">
-      <Link>Scripting\Data\CreatureStats.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Data\CreatureStatus.cs">
-      <Link>Scripting\Data\CreatureStatus.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Items\Item.cs">
-      <Link>Scripting\Items\Item.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Items\TagList.cs">
-      <Link>Scripting\Items\TagList.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\ClearBlackboardData.cs">
-      <Link>Scripting\LeafActs\ClearBlackboardData.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\ConsumeItemAct.cs">
-      <Link>Scripting\LeafActs\ConsumeItemAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\CreateCraftItemAct.cs">
-      <Link>Scripting\LeafActs\CreateCraftItemAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\CreatureAct.cs">
-      <Link>Scripting\LeafActs\CreatureAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\CreatureExtensions.cs">
-      <Link>Scripting\LeafActs\CreatureExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\DigAct.cs">
-      <Link>Scripting\LeafActs\DigAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\DropItemAct.cs">
-      <Link>Scripting\LeafActs\DropItemAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\FlyWanderAct.cs">
-      <Link>Scripting\LeafActs\FlyWanderAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\FollowPathAct.cs">
-      <Link>Scripting\LeafActs\FollowPathAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\GetNearestFreeVoxelInZone.cs">
-      <Link>Scripting\LeafActs\GetNearestFreeVoxelInZone.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\MeleeAct.cs">
-      <Link>Scripting\LeafActs\MeleeAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\PlaceRoomResourcesAct.cs">
-      <Link>Scripting\LeafActs\PlaceRoomResourcesAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\PlaceVoxelAct.cs">
-      <Link>Scripting\LeafActs\PlaceVoxelAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\PlanAct.cs">
-      <Link>Scripting\LeafActs\PlanAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\PutResourceInZoneAct.cs">
-      <Link>Scripting\LeafActs\PutResourceInZoneAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\ResearchSpellAct.cs">
-      <Link>Scripting\LeafActs\ResearchSpellAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\SearchFreeStockpileAct.cs">
-      <Link>Scripting\LeafActs\SearchFreeStockpileAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\SetBlackboardData.cs">
-      <Link>Scripting\LeafActs\SetBlackboardData.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\SetTargetVoxelAct.cs">
-      <Link>Scripting\LeafActs\SetTargetVoxelAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\SetTargetVoxelFromEntityAct.cs">
-      <Link>Scripting\LeafActs\SetTargetVoxelFromEntityAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\SleepAct.cs">
-      <Link>Scripting\LeafActs\SleepAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\StashAct.cs">
-      <Link>Scripting\LeafActs\StashAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\StashResourcesAct.cs">
-      <Link>Scripting\LeafActs\StashResourcesAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\StopAct.cs">
-      <Link>Scripting\LeafActs\StopAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\TeleportAct.cs">
-      <Link>Scripting\LeafActs\TeleportAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\LeafActs\WanderAct.cs">
-      <Link>Scripting\LeafActs\WanderAct.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Magic\BuffSpell.cs">
-      <Link>Scripting\Magic\BuffSpell.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Magic\CreateEntitySpell.cs">
-      <Link>Scripting\Magic\CreateEntitySpell.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Magic\DestroyBlockSpell.cs">
-      <Link>Scripting\Magic\DestroyBlockSpell.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Magic\InspectSpell.cs">
-      <Link>Scripting\Magic\InspectSpell.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Magic\PlaceBlockSpell.cs">
-      <Link>Scripting\Magic\PlaceBlockSpell.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Magic\Spell.cs">
-      <Link>Scripting\Magic\Spell.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Magic\SpellLibrary.cs">
-      <Link>Scripting\Magic\SpellLibrary.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Magic\SpellTree.cs">
-      <Link>Scripting\Magic\SpellTree.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\MonsterSpawner.cs">
-      <Link>Scripting\MonsterSpawner.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Announcements\Announcement.cs">
-      <Link>Scripting\Player\Announcements\Announcement.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Announcements\AnnouncementManager.cs">
-      <Link>Scripting\Player\Announcements\AnnouncementManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\BodySelector.cs">
-      <Link>Scripting\Player\BodySelector.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Building\BuildOrder.cs">
-      <Link>Scripting\Player\Building\BuildOrder.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Building\BuildRoomOrder.cs">
-      <Link>Scripting\Player\Building\BuildRoomOrder.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Building\BuildStockpileOrder.cs">
-      <Link>Scripting\Player\Building\BuildStockpileOrder.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Building\BuildVoxelOrder.cs">
-      <Link>Scripting\Player\Building\BuildVoxelOrder.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Building\CraftBuilder.cs">
-      <Link>Scripting\Player\Building\CraftBuilder.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Building\RoomBuilder.cs">
-      <Link>Scripting\Player\Building\RoomBuilder.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Building\WallBuilder.cs">
-      <Link>Scripting\Player\Building\WallBuilder.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Economy\Company.cs">
-      <Link>Scripting\Player\Economy\Company.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Economy\Economy.cs">
-      <Link>Scripting\Player\Economy\Economy.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Economy\Resource.cs">
-      <Link>Scripting\Player\Economy\Resource.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Economy\ResourceAmount.cs">
-      <Link>Scripting\Player\Economy\ResourceAmount.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Economy\ResourceContainer.cs">
-      <Link>Scripting\Player\Economy\ResourceContainer.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Economy\ResourceLibrary.cs">
-      <Link>Scripting\Player\Economy\ResourceLibrary.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Economy\ShipmentOrder.cs">
-      <Link>Scripting\Player\Economy\ShipmentOrder.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Economy\ShipOrder.cs">
-      <Link>Scripting\Player\Economy\ShipOrder.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Factions\Faction.cs">
-      <Link>Scripting\Player\Factions\Faction.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Factions\FactionLibrary.cs">
-      <Link>Scripting\Player\Factions\FactionLibrary.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\GameMaster.cs">
-      <Link>Scripting\Player\GameMaster.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\InputManager.cs">
-      <Link>Scripting\Player\InputManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\KeyManager.cs">
-      <Link>Scripting\Player\KeyManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Tools\AttackTool.cs">
-      <Link>Scripting\Player\Tools\AttackTool.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Tools\BuildTool.cs">
-      <Link>Scripting\Player\Tools\BuildTool.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Tools\ChopTool.cs">
-      <Link>Scripting\Player\Tools\ChopTool.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Tools\DigTool.cs">
-      <Link>Scripting\Player\Tools\DigTool.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Tools\DwarfSelectorTool.cs">
-      <Link>Scripting\Player\Tools\DwarfSelectorTool.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Tools\FarmTool.cs">
-      <Link>Scripting\Player\Tools\FarmTool.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Tools\GatherTool.cs">
-      <Link>Scripting\Player\Tools\GatherTool.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Tools\GodModeTool.cs">
-      <Link>Scripting\Player\Tools\GodModeTool.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Tools\GuardTool.cs">
-      <Link>Scripting\Player\Tools\GuardTool.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Tools\MagicTool.cs">
-      <Link>Scripting\Player\Tools\MagicTool.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\Tools\PlayerTool.cs">
-      <Link>Scripting\Player\Tools\PlayerTool.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Player\VoxelSelector.cs">
-      <Link>Scripting\Player\VoxelSelector.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Rooms\Farm.cs">
-      <Link>Scripting\Rooms\Farm.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Rooms\Room.cs">
-      <Link>Scripting\Rooms\Room.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Rooms\RoomData.cs">
-      <Link>Scripting\Rooms\RoomData.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Rooms\RoomLibrary.cs">
-      <Link>Scripting\Rooms\RoomLibrary.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Rooms\RoomTemplate.cs">
-      <Link>Scripting\Rooms\RoomTemplate.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Rooms\RoomTypes\BalloonPort.cs">
-      <Link>Scripting\Rooms\RoomTypes\BalloonPort.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Rooms\RoomTypes\BedRoom.cs">
-      <Link>Scripting\Rooms\RoomTypes\BedRoom.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Rooms\RoomTypes\CommonRoom.cs">
-      <Link>Scripting\Rooms\RoomTypes\CommonRoom.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Rooms\RoomTypes\Kitchen.cs">
-      <Link>Scripting\Rooms\RoomTypes\Kitchen.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Rooms\RoomTypes\LibraryRoom.cs">
-      <Link>Scripting\Rooms\RoomTypes\LibraryRoom.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Rooms\RoomTypes\MushroomFarm.cs">
-      <Link>Scripting\Rooms\RoomTypes\MushroomFarm.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Rooms\RoomTypes\TrainingRoom.cs">
-      <Link>Scripting\Rooms\RoomTypes\TrainingRoom.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Rooms\RoomTypes\WheatFarm.cs">
-      <Link>Scripting\Rooms\RoomTypes\WheatFarm.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Rooms\RoomTypes\WorkshopRoom.cs">
-      <Link>Scripting\Rooms\RoomTypes\WorkshopRoom.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Rooms\Stockpile.cs">
-      <Link>Scripting\Rooms\Stockpile.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Rooms\Zone.cs">
-      <Link>Scripting\Rooms\Zone.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\GatherManager.cs">
-      <Link>Scripting\TaskManagement\GatherManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\Task.cs">
-      <Link>Scripting\TaskManagement\Task.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\TaskManager.cs">
-      <Link>Scripting\TaskManagement\TaskManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\Tasks\BuildRoomTask.cs">
-      <Link>Scripting\TaskManagement\Tasks\BuildRoomTask.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\Tasks\BuildVoxelTask.cs">
-      <Link>Scripting\TaskManagement\Tasks\BuildVoxelTask.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\Tasks\CraftItemTask.cs">
-      <Link>Scripting\TaskManagement\Tasks\CraftItemTask.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\Tasks\FarmTask.cs">
-      <Link>Scripting\TaskManagement\Tasks\FarmTask.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\Tasks\GatherItemTask.cs">
-      <Link>Scripting\TaskManagement\Tasks\GatherItemTask.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\Tasks\GetItemWithTagsTask.cs">
-      <Link>Scripting\TaskManagement\Tasks\GetItemWithTagsTask.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\Tasks\GuardVoxelTask.cs">
-      <Link>Scripting\TaskManagement\Tasks\GuardVoxelTask.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\Tasks\KillEntityTask.cs">
-      <Link>Scripting\TaskManagement\Tasks\KillEntityTask.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\Tasks\KillVoxelTask.cs">
-      <Link>Scripting\TaskManagement\Tasks\KillVoxelTask.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\Tasks\LookInterestingTask.cs">
-      <Link>Scripting\TaskManagement\Tasks\LookInterestingTask.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\Tasks\PutItemInZoneTask.cs">
-      <Link>Scripting\TaskManagement\Tasks\PutItemInZoneTask.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\Tasks\PutItemWithTagTask.cs">
-      <Link>Scripting\TaskManagement\Tasks\PutItemWithTagTask.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\Tasks\SatisfyHungerTask.cs">
-      <Link>Scripting\TaskManagement\Tasks\SatisfyHungerTask.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\Tasks\SatisfyTirednessTask.cs">
-      <Link>Scripting\TaskManagement\Tasks\SatisfyTirednessTask.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TaskManagement\Tasks\StockResourceTask.cs">
-      <Link>Scripting\TaskManagement\Tasks\StockResourceTask.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\TestBehaviors.cs">
-      <Link>Scripting\TestBehaviors.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Scripting\Thoughts\Thought.cs">
-      <Link>Scripting\Thoughts\Thought.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Sound\NoiseMaker.cs">
-      <Link>Sound\NoiseMaker.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Sound\Sound3D.cs">
-      <Link>Sound\Sound3D.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Sound\SoundManager.cs">
-      <Link>Sound\SoundManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Datastructures\CollisionManager.cs">
-      <Link>Tools\Datastructures\CollisionManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Datastructures\Datastructures.cs">
-      <Link>Tools\Datastructures\Datastructures.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Datastructures\IBoundedObject.cs">
-      <Link>Tools\Datastructures\IBoundedObject.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Datastructures\MinBag.cs">
-      <Link>Tools\Datastructures\MinBag.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Datastructures\Octree.cs">
-      <Link>Tools\Datastructures\Octree.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Datastructures\OctreeNode.cs">
-      <Link>Tools\Datastructures\OctreeNode.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Datastructures\PriorityQueue.cs">
-      <Link>Tools\Datastructures\PriorityQueue.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Datastructures\ThreadSafeRandom.cs">
-      <Link>Tools\Datastructures\ThreadSafeRandom.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Extensions.cs">
-      <Link>Tools\Extensions.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\GameObjectCaching.cs">
-      <Link>Tools\GameObjectCaching.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\GamePerformance.cs">
-      <Link>Tools\GamePerformance.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Graphics\ColorGradient.cs">
-      <Link>Tools\Graphics\ColorGradient.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Graphics\VertexNoise.cs">
-      <Link>Tools\Graphics\VertexNoise.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Math\Easing.cs">
-      <Link>Tools\Math\Easing.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Math\HungarianAlgorithm.cs">
-      <Link>Tools\Math\HungarianAlgorithm.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Math\MathFunctions.cs">
-      <Link>Tools\Math\MathFunctions.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Math\Perlin.cs">
-      <Link>Tools\Math\Perlin.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Math\PIDController.cs">
-      <Link>Tools\Math\PIDController.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Math\Point3.cs">
-      <Link>Tools\Math\Point3.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Planning\AStarPlanner.cs">
-      <Link>Tools\Planning\AStarPlanner.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Planning\PlanService.cs">
-      <Link>Tools\Planning\PlanService.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Planning\PlanSubscriber.cs">
-      <Link>Tools\Planning\PlanSubscriber.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\ServiceArchitecture\Service.cs">
-      <Link>Tools\ServiceArchitecture\Service.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\ServiceArchitecture\Subscriber.cs">
-      <Link>Tools\ServiceArchitecture\Subscriber.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Tools\Timer.cs">
-      <Link>Tools\Timer.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Voxels\ChunkData.cs">
-      <Link>Voxels\ChunkData.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Voxels\ChunkGenerator.cs">
-      <Link>Voxels\ChunkGenerator.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Voxels\ChunkManager.cs">
-      <Link>Voxels\ChunkManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Voxels\DynamicLight.cs">
-      <Link>Voxels\DynamicLight.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Voxels\LiquidAsset.cs">
-      <Link>Voxels\LiquidAsset.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Voxels\Voxel.cs">
-      <Link>Voxels\Voxel.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Voxels\VoxelChunk.cs">
-      <Link>Voxels\VoxelChunk.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Voxels\VoxelLibrary.cs">
-      <Link>Voxels\VoxelLibrary.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Voxels\VoxelType.cs">
-      <Link>Voxels\VoxelType.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Voxels\WaterCell.cs">
-      <Link>Voxels\WaterCell.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Voxels\WaterManager.cs">
-      <Link>Voxels\WaterManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\Voxels\WaterRenderer.cs">
-      <Link>Voxels\WaterRenderer.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\World\BiomeData.cs">
-      <Link>World\BiomeData.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\World\BiomeLibrary.cs">
-      <Link>World\BiomeLibrary.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\World\DetailMoteData.cs">
-      <Link>World\DetailMoteData.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\World\Diplomacy.cs">
-      <Link>World\Diplomacy.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\World\FaunaData.cs">
-      <Link>World\FaunaData.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\World\Overworld.cs">
-      <Link>World\Overworld.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\World\VegetationData.cs">
-      <Link>World\VegetationData.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\World\Weather.cs">
-      <Link>World\Weather.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\World\WorldManager.cs">
-      <Link>World\WorldManager.cs</Link>
-    </Compile>
-    <Compile Include="..\DwarfCorpCore\World\WorldTime.cs">
-      <Link>World\WorldTime.cs</Link>
-    </Compile>
+    <Compile Include="AssetManagement\ContentPathGenerator.cs" />
+    <Compile Include="AssetManagement\ContentPaths.cs" />
+    <Compile Include="AssetManagement\GameSave\ChunkFile.cs" />
+    <Compile Include="AssetManagement\GameSave\FileUtils.cs" />
+    <Compile Include="AssetManagement\GameSave\GameFile.cs" />
+    <Compile Include="AssetManagement\GameSave\JsonConverters\BoxConverter.cs" />
+    <Compile Include="AssetManagement\GameSave\JsonConverters\ContentConverter.cs" />
+    <Compile Include="AssetManagement\GameSave\JsonConverters\MatrixConverter.cs" />
+    <Compile Include="AssetManagement\GameSave\JsonConverters\RectangleConverter.cs" />
+    <Compile Include="AssetManagement\GameSave\OverworldFile.cs" />
+    <Compile Include="AssetManagement\GameSave\SaveData.cs" />
+    <Compile Include="AssetManagement\TextureLoader.cs" />
+    <Compile Include="AssetManagement\TextureManager.cs" />
+    <Compile Include="Components\AI\Creature.cs" />
+    <Compile Include="Components\AI\CreatureAI.cs" />
+    <Compile Include="Components\AI\Grabber.cs" />
+    <Compile Include="Components\AI\Health.cs" />
+    <Compile Include="Components\AI\Inventory.cs" />
+    <Compile Include="Components\AI\Sensors\EnemySensor.cs" />
+    <Compile Include="Components\AI\Sensors\Sensor.cs" />
+    <Compile Include="Components\AI\Sensors\TrapSensor.cs" />
+    <Compile Include="Components\AI\Sensors\VoxelListener.cs" />
+    <Compile Include="Components\Body.cs" />
+    <Compile Include="Components\DeathComponentSpawner.cs" />
+    <Compile Include="Components\GameComponent.cs" />
+    <Compile Include="Components\Graphics\BatchedSprite.cs" />
+    <Compile Include="Components\Graphics\Bobber.cs" />
+    <Compile Include="Components\Graphics\Box.cs" />
+    <Compile Include="Components\Graphics\CharacterSprite.cs" />
+    <Compile Include="Components\Graphics\Follower.cs" />
+    <Compile Include="Components\Graphics\LightEmitter.cs" />
+    <Compile Include="Components\Graphics\Mesh.cs" />
+    <Compile Include="Components\Graphics\OrientedAnimation.cs" />
+    <Compile Include="Components\Graphics\ParticleEmitter.cs" />
+    <Compile Include="Components\Graphics\ParticleTrigger.cs" />
+    <Compile Include="Components\Graphics\SelectionCircle.cs" />
+    <Compile Include="Components\Graphics\Shadow.cs" />
+    <Compile Include="Components\Graphics\Sprite.cs" />
+    <Compile Include="Components\Graphics\Tinter.cs" />
+    <Compile Include="Components\GUI\MinimapIcon.cs" />
+    <Compile Include="Components\GUI\WorldGUIObject.cs" />
+    <Compile Include="Components\Physics\Flammable.cs" />
+    <Compile Include="Components\Physics\Physics.cs" />
+    <Compile Include="Components\Systems\ComponentManager.cs" />
+    <Compile Include="Components\Systems\Message.cs" />
+    <Compile Include="ControlSettings.cs" />
+    <Compile Include="DwarfGame.cs" />
+    <Compile Include="Entities\Animals\Bat.cs" />
+    <Compile Include="Entities\Animals\Bird.cs" />
+    <Compile Include="Entities\Animals\BirdAI.cs" />
+    <Compile Include="Entities\Animals\Deer.cs" />
+    <Compile Include="Entities\Animals\Frog.cs" />
+    <Compile Include="Entities\Animals\Rabbit.cs" />
+    <Compile Include="Entities\Animals\Scorpion.cs" />
+    <Compile Include="Entities\Animals\Spider.cs" />
+    <Compile Include="Entities\BalloonAI.cs" />
+    <Compile Include="Entities\Dwarves\Dwarf.cs" />
+    <Compile Include="Entities\EntityFactory.cs" />
+    <Compile Include="Entities\Fixtures\Anvil.cs" />
+    <Compile Include="Entities\Fixtures\Bed.cs" />
+    <Compile Include="Entities\Fixtures\Chair.cs" />
+    <Compile Include="Entities\Fixtures\Crate.cs" />
+    <Compile Include="Entities\Fixtures\Door.cs" />
+    <Compile Include="Entities\Fixtures\Fixture.cs" />
+    <Compile Include="Entities\Fixtures\Flag.cs" />
+    <Compile Include="Entities\Fixtures\Forge.cs" />
+    <Compile Include="Entities\Fixtures\Ladder.cs" />
+    <Compile Include="Entities\Fixtures\Lamp.cs" />
+    <Compile Include="Entities\Fixtures\PunchingBag.cs" />
+    <Compile Include="Entities\Fixtures\Strawman.cs" />
+    <Compile Include="Entities\Fixtures\Table.cs" />
+    <Compile Include="Entities\Fixtures\Target.cs" />
+    <Compile Include="Entities\Fixtures\WeightRack.cs" />
+    <Compile Include="Entities\Fixtures\WorkPile.cs" />
+    <Compile Include="Entities\Monsters\Demon.cs" />
+    <Compile Include="Entities\Monsters\Elf.cs" />
+    <Compile Include="Entities\Monsters\Fairy.cs" />
+    <Compile Include="Entities\Monsters\Goblin.cs" />
+    <Compile Include="Entities\Monsters\Moleman.cs" />
+    <Compile Include="Entities\Monsters\Necromancer.cs" />
+    <Compile Include="Entities\Monsters\NecromancerAI.cs" />
+    <Compile Include="Entities\Monsters\Skeleton.cs" />
+    <Compile Include="Entities\Monsters\Snake.cs" />
+    <Compile Include="Entities\Monsters\SnakeAi.cs" />
+    <Compile Include="Entities\Plants\Bush.cs" />
+    <Compile Include="Entities\Plants\Mushroom.cs" />
+    <Compile Include="Entities\Plants\Tree.cs" />
+    <Compile Include="Entities\Plants\Wheat.cs" />
+    <Compile Include="Entities\Projectiles\Projectile.cs" />
+    <Compile Include="Entities\Resources\ResourceEntity.cs" />
+    <Compile Include="Entities\Resources\ResourcePack.cs" />
+    <Compile Include="Entities\Traps\BearTrap.cs" />
+    <Compile Include="Entities\Traps\TurretTrap.cs" />
+    <Compile Include="GameSettings.cs" />
+    <Compile Include="GameStates\CompanyMakerState.cs" />
+    <Compile Include="GameStates\CreditsState.cs" />
+    <Compile Include="GameStates\DiplomacyState.cs" />
+    <Compile Include="GameStates\EconomyState.cs" />
+    <Compile Include="GameStates\GameLoaderState.cs" />
+    <Compile Include="GameStates\GameState.cs" />
+    <Compile Include="GameStates\GameStateManager.cs" />
+    <Compile Include="GameStates\IntroState.cs" />
+    <Compile Include="GameStates\LoadState.cs" />
+    <Compile Include="GameStates\LoseState.cs" />
+    <Compile Include="GameStates\MainMenuState.cs" />
+    <Compile Include="GameStates\NewGameChooseWorldState.cs" />
+    <Compile Include="GameStates\NewGameCreateDebugWorldState.cs" />
     <Compile Include="GameStates\NewOptionsState.cs" />
     <Compile Include="GameStates\GuiStateTemplate.cs" />
+    <Compile Include="GameStates\OptionsState.cs" />
+    <Compile Include="GameStates\PlayState.cs" />
+    <Compile Include="GameStates\WorldGeneratorState.cs" />
+    <Compile Include="GameStates\WorldLoaderState.cs" />
+    <Compile Include="GameStates\WorldSetupState.cs" />
     <Compile Include="GemInput\GumInputMapper.cs" />
     <Compile Include="GemInput\Input.cs" />
     <Compile Include="GemInput\MessageFilter.cs" />
+    <Compile Include="Graphics\Cameras\Camera.cs" />
+    <Compile Include="Graphics\Cameras\OrbitCamera.cs" />
+    <Compile Include="Graphics\Drawing\Drawer2D\DrawCommand2D.cs" />
+    <Compile Include="Graphics\Drawing\Drawer2D\Drawer2D.cs" />
+    <Compile Include="Graphics\Drawing\Drawer2D\PolygonDrawCommand.cs" />
+    <Compile Include="Graphics\Drawing\Drawer2D\RectDrawCommand.cs" />
+    <Compile Include="Graphics\Drawing\Drawer2D\SpriteDrawCommand.cs" />
+    <Compile Include="Graphics\Drawing\Drawer2D\TextBoxDrawCommand.cs" />
+    <Compile Include="Graphics\Drawing\Drawer2D\TextDrawCommand.cs" />
+    <Compile Include="Graphics\Drawing\Drawer3D\BoxDrawCommand3D.cs" />
+    <Compile Include="Graphics\Drawing\Drawer3D\DrawCommand3D.cs" />
+    <Compile Include="Graphics\Drawing\Drawer3D\Drawer3D.cs" />
+    <Compile Include="Graphics\Drawing\Drawer3D\LineListCommand3D.cs" />
+    <Compile Include="Graphics\Drawing\HSLColor.cs" />
+    <Compile Include="Graphics\Drawing\ImageFrame.cs" />
+    <Compile Include="Graphics\Drawing\SpriteSheet.cs" />
+    <Compile Include="Graphics\Effects\BloomComponent.cs" />
+    <Compile Include="Graphics\Effects\BloomSettings.cs" />
+    <Compile Include="Graphics\Effects\FXAA.cs" />
+    <Compile Include="Graphics\Effects\ParticleManager.cs" />
+    <Compile Include="Graphics\Effects\ShadowRenderer.cs" />
+    <Compile Include="Graphics\Effects\SkyRenderer.cs" />
+    <Compile Include="Graphics\Instancing\FixedInstanceArray.cs" />
+    <Compile Include="Graphics\Instancing\InstanceData.cs" />
+    <Compile Include="Graphics\Instancing\InstancedVertex.cs" />
+    <Compile Include="Graphics\Instancing\InstanceManager.cs" />
+    <Compile Include="Graphics\MotionAnimation\EaseMotion.cs" />
+    <Compile Include="Graphics\MotionAnimation\MotionAnimation.cs" />
+    <Compile Include="Graphics\MotionAnimation\TossMotion.cs" />
+    <Compile Include="Graphics\Primitives\Animation.cs" />
+    <Compile Include="Graphics\Primitives\BatchBillboardPrimitive.cs" />
+    <Compile Include="Graphics\Primitives\BillboardPrimitive.cs" />
+    <Compile Include="Graphics\Primitives\BoxPrimitive.cs" />
+    <Compile Include="Graphics\Primitives\Composite.cs" />
+    <Compile Include="Graphics\Primitives\CompositeAnimation.cs" />
+    <Compile Include="Graphics\Primitives\ExtendedVertex.cs" />
+    <Compile Include="Graphics\Primitives\GeometricPrimitive.cs" />
+    <Compile Include="Graphics\Primitives\LiquidPrimitive.cs" />
+    <Compile Include="Graphics\Primitives\PrimitiveLibrary.cs" />
+    <Compile Include="Graphics\Primitives\VoxelListPrimitive.cs" />
+    <Compile Include="GUI\Components\Basic\AnimatedImagePanel.cs" />
+    <Compile Include="GUI\Components\Basic\Button.cs" />
+    <Compile Include="GUI\Components\Basic\Checkbox.cs" />
+    <Compile Include="GUI\Components\Basic\ColorKey.cs" />
+    <Compile Include="GUI\Components\Basic\ColorPanel.cs" />
+    <Compile Include="GUI\Components\Basic\ComboBox.cs" />
+    <Compile Include="GUI\Components\Basic\ComboBoxSelector.cs" />
+    <Compile Include="GUI\Components\Basic\Dialog.cs" />
+    <Compile Include="GUI\Components\Basic\DraggableItem.cs" />
+    <Compile Include="GUI\Components\Basic\DragGrid.cs" />
+    <Compile Include="GUI\Components\Basic\GroupBox.cs" />
+    <Compile Include="GUI\Components\Basic\ImagePanel.cs" />
+    <Compile Include="GUI\Components\Basic\KeyEdit.cs" />
+    <Compile Include="GUI\Components\Basic\Label.cs" />
+    <Compile Include="GUI\Components\Basic\LineEdit.cs" />
+    <Compile Include="GUI\Components\Basic\ListSelector.cs" />
+    <Compile Include="GUI\Components\Basic\MiniBar.cs" />
+    <Compile Include="GUI\Components\Basic\Panel.cs" />
+    <Compile Include="GUI\Components\Basic\ProgressBar.cs" />
+    <Compile Include="GUI\Components\Basic\ScrollView.cs" />
+    <Compile Include="GUI\Components\Basic\Slider.cs" />
+    <Compile Include="GUI\Components\Basic\SpinBox.cs" />
+    <Compile Include="GUI\Components\Basic\Window.cs" />
+    <Compile Include="GUI\Components\Complex\ActDisplay.cs" />
+    <Compile Include="GUI\Components\Complex\AIDebugger.cs" />
+    <Compile Include="GUI\Components\Complex\AnnounementViewer.cs" />
+    <Compile Include="GUI\Components\Complex\ApplicationPanel.cs" />
+    <Compile Include="GUI\Components\Complex\BuildMenu.cs" />
+    <Compile Include="GUI\Components\Complex\CapitalPanel.cs" />
+    <Compile Include="GUI\Components\Complex\ColorDialog.cs" />
+    <Compile Include="GUI\Components\Complex\ColorSelector.cs" />
+    <Compile Include="GUI\Components\Complex\EmployeeDisplay.cs" />
+    <Compile Include="GUI\Components\Complex\FarmingPanel.cs" />
+    <Compile Include="GUI\Components\Complex\GoodsPanel.cs" />
+    <Compile Include="GUI\Components\Complex\HireDialog.cs" />
+    <Compile Include="GUI\Components\Complex\ImageFrameLoadDialog.cs" />
+    <Compile Include="GUI\Components\Complex\ItemSelector.cs" />
+    <Compile Include="GUI\Components\Complex\KeyEditor.cs" />
+    <Compile Include="GUI\Components\Complex\MagicMenu.cs" />
+    <Compile Include="GUI\Components\Complex\MasterControls.cs" />
+    <Compile Include="GUI\Components\Complex\Minimap.cs" />
+    <Compile Include="GUI\Components\Complex\MinionPanel.cs" />
+    <Compile Include="GUI\Components\Complex\ResourceInfoComponent.cs" />
+    <Compile Include="GUI\Components\Complex\SpellTreeDisplay.cs" />
+    <Compile Include="GUI\Components\Complex\StockTicker.cs" />
+    <Compile Include="GUI\Components\Complex\TabSelector.cs" />
+    <Compile Include="GUI\Components\Complex\TextureLoadDialog.cs" />
+    <Compile Include="GUI\DragManager.cs" />
+    <Compile Include="GUI\DwarfGUI.cs" />
+    <Compile Include="GUI\GItem.cs" />
+    <Compile Include="GUI\GUIComponent.cs" />
+    <Compile Include="GUI\Indicators\IndicatorManager.cs" />
+    <Compile Include="GUI\Layouts\FormEntry.cs" />
+    <Compile Include="GUI\Layouts\FormLayout.cs" />
+    <Compile Include="GUI\Layouts\GridLayout.cs" />
+    <Compile Include="GUI\Layouts\Layout.cs" />
+    <Compile Include="GUI\Skins\GUISkin.cs" />
+    <Compile Include="GUI\ToolTipManager.cs" />
+    <Compile Include="LanguageGenerator\Language.cs" />
+    <Compile Include="LanguageGenerator\TextAtom.cs" />
+    <Compile Include="LanguageGenerator\TextGenerator.cs" />
     <Compile Include="NewGui\CompanyLogo.cs" />
     <Compile Include="NewGui\GridChooser.cs" />
     <Compile Include="NewGui\GridPanel.cs" />
     <Compile Include="NewGui\Popup.cs" />
     <Compile Include="NewGui\Confirm.cs" />
+    <Compile Include="ProgramData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Screensaver\Terrain2D.cs" />
+    <Compile Include="Scripting\Act.cs" />
+    <Compile Include="Scripting\BehaviorExtensions.cs" />
+    <Compile Include="Scripting\Classes\Applicant.cs" />
+    <Compile Include="Scripting\Classes\AxeDwarfClass.cs" />
+    <Compile Include="Scripting\Classes\CraftDwarfClass.cs" />
+    <Compile Include="Scripting\Classes\ElfClass.cs" />
+    <Compile Include="Scripting\Classes\EmployeeClass.cs" />
+    <Compile Include="Scripting\Classes\FairyClass.cs" />
+    <Compile Include="Scripting\Classes\JobLibrary.cs" />
+    <Compile Include="Scripting\Classes\MolemanMinerClass.cs" />
+    <Compile Include="Scripting\Classes\MusketDwarfClass.cs" />
+    <Compile Include="Scripting\Classes\NecromancerClass.cs" />
+    <Compile Include="Scripting\Classes\SkeletonClass.cs" />
+    <Compile Include="Scripting\Classes\SwordGoblinClass.cs" />
+    <Compile Include="Scripting\Classes\WizardClass.cs" />
+    <Compile Include="Scripting\Classes\WorkerClass.cs" />
+    <Compile Include="Scripting\Combat\Alliance.cs" />
+    <Compile Include="Scripting\Combat\Attack.cs" />
+    <Compile Include="Scripting\CompoundActs\BuildRoomAct.cs" />
+    <Compile Include="Scripting\CompoundActs\BuildVoxelAct.cs" />
+    <Compile Include="Scripting\CompoundActs\BuildVoxelsAct.cs" />
+    <Compile Include="Scripting\CompoundActs\CompoundAct.cs" />
+    <Compile Include="Scripting\CompoundActs\CompoundCreatureAct.cs" />
+    <Compile Include="Scripting\CompoundActs\CraftItemAct.cs" />
+    <Compile Include="Scripting\CompoundActs\FarmAct.cs" />
+    <Compile Include="Scripting\CompoundActs\FindAndEatFoodAct.cs" />
+    <Compile Include="Scripting\CompoundActs\FindBedAndSleepAct.cs" />
+    <Compile Include="Scripting\CompoundActs\GatherItemAct.cs" />
+    <Compile Include="Scripting\CompoundActs\GetResourcesAct.cs" />
+    <Compile Include="Scripting\CompoundActs\GoResearchSpellAct.cs" />
+    <Compile Include="Scripting\CompoundActs\GoToChairAndSitAct.cs" />
+    <Compile Include="Scripting\CompoundActs\GoToEntityAct.cs" />
+    <Compile Include="Scripting\CompoundActs\GoToNamedVoxelAct.cs" />
+    <Compile Include="Scripting\CompoundActs\GoToTaggedObjectAct.cs" />
+    <Compile Include="Scripting\CompoundActs\GoToVoxelAct.cs" />
+    <Compile Include="Scripting\CompoundActs\GoToZoneAct.cs" />
+    <Compile Include="Scripting\CompoundActs\GoTrainAct.cs" />
+    <Compile Include="Scripting\CompoundActs\GuardVoxelAct.cs" />
+    <Compile Include="Scripting\CompoundActs\KillEntityAct.cs" />
+    <Compile Include="Scripting\CompoundActs\KillVoxelAct.cs" />
+    <Compile Include="Scripting\CompoundActs\StockResourceAct.cs" />
+    <Compile Include="Scripting\ControlFlow\Condition.cs" />
+    <Compile Include="Scripting\ControlFlow\ForLoop.cs" />
+    <Compile Include="Scripting\ControlFlow\Not.cs" />
+    <Compile Include="Scripting\ControlFlow\Parallel.cs" />
+    <Compile Include="Scripting\ControlFlow\Select.cs" />
+    <Compile Include="Scripting\ControlFlow\Sequence.cs" />
+    <Compile Include="Scripting\ControlFlow\Wait.cs" />
+    <Compile Include="Scripting\ControlFlow\WhileLoop.cs" />
+    <Compile Include="Scripting\ControlFlow\Wrap.cs" />
+    <Compile Include="Scripting\Crafting\CraftItem.cs" />
+    <Compile Include="Scripting\Crafting\CraftLibrary.cs" />
+    <Compile Include="Scripting\Data\ActData.cs" />
+    <Compile Include="Scripting\Data\Blackboard.cs" />
+    <Compile Include="Scripting\Data\CreatureStats.cs" />
+    <Compile Include="Scripting\Data\CreatureStatus.cs" />
+    <Compile Include="Scripting\Items\Item.cs" />
+    <Compile Include="Scripting\Items\TagList.cs" />
+    <Compile Include="Scripting\LeafActs\ClearBlackboardData.cs" />
+    <Compile Include="Scripting\LeafActs\ConsumeItemAct.cs" />
+    <Compile Include="Scripting\LeafActs\CreateCraftItemAct.cs" />
+    <Compile Include="Scripting\LeafActs\CreatureAct.cs" />
+    <Compile Include="Scripting\LeafActs\CreatureExtensions.cs" />
+    <Compile Include="Scripting\LeafActs\DigAct.cs" />
+    <Compile Include="Scripting\LeafActs\DropItemAct.cs" />
+    <Compile Include="Scripting\LeafActs\FlyWanderAct.cs" />
+    <Compile Include="Scripting\LeafActs\FollowPathAct.cs" />
+    <Compile Include="Scripting\LeafActs\GetNearestFreeVoxelInZone.cs" />
+    <Compile Include="Scripting\LeafActs\MeleeAct.cs" />
+    <Compile Include="Scripting\LeafActs\PlaceRoomResourcesAct.cs" />
+    <Compile Include="Scripting\LeafActs\PlaceVoxelAct.cs" />
+    <Compile Include="Scripting\LeafActs\PlanAct.cs" />
+    <Compile Include="Scripting\LeafActs\PutResourceInZoneAct.cs" />
+    <Compile Include="Scripting\LeafActs\ResearchSpellAct.cs" />
+    <Compile Include="Scripting\LeafActs\SearchFreeStockpileAct.cs" />
+    <Compile Include="Scripting\LeafActs\SetBlackboardData.cs" />
+    <Compile Include="Scripting\LeafActs\SetTargetVoxelAct.cs" />
+    <Compile Include="Scripting\LeafActs\SetTargetVoxelFromEntityAct.cs" />
+    <Compile Include="Scripting\LeafActs\SleepAct.cs" />
+    <Compile Include="Scripting\LeafActs\StashAct.cs" />
+    <Compile Include="Scripting\LeafActs\StashResourcesAct.cs" />
+    <Compile Include="Scripting\LeafActs\StopAct.cs" />
+    <Compile Include="Scripting\LeafActs\TeleportAct.cs" />
+    <Compile Include="Scripting\LeafActs\WanderAct.cs" />
+    <Compile Include="Scripting\Magic\BuffSpell.cs" />
+    <Compile Include="Scripting\Magic\CreateEntitySpell.cs" />
+    <Compile Include="Scripting\Magic\DestroyBlockSpell.cs" />
+    <Compile Include="Scripting\Magic\InspectSpell.cs" />
+    <Compile Include="Scripting\Magic\PlaceBlockSpell.cs" />
+    <Compile Include="Scripting\Magic\Spell.cs" />
+    <Compile Include="Scripting\Magic\SpellLibrary.cs" />
+    <Compile Include="Scripting\Magic\SpellTree.cs" />
+    <Compile Include="Scripting\MonsterSpawner.cs" />
+    <Compile Include="Scripting\Player\Announcements\Announcement.cs" />
+    <Compile Include="Scripting\Player\Announcements\AnnouncementManager.cs" />
+    <Compile Include="Scripting\Player\BodySelector.cs" />
+    <Compile Include="Scripting\Player\Building\BuildOrder.cs" />
+    <Compile Include="Scripting\Player\Building\BuildRoomOrder.cs" />
+    <Compile Include="Scripting\Player\Building\BuildStockpileOrder.cs" />
+    <Compile Include="Scripting\Player\Building\BuildVoxelOrder.cs" />
+    <Compile Include="Scripting\Player\Building\CraftBuilder.cs" />
+    <Compile Include="Scripting\Player\Building\RoomBuilder.cs" />
+    <Compile Include="Scripting\Player\Building\WallBuilder.cs" />
+    <Compile Include="Scripting\Player\Economy\Company.cs" />
+    <Compile Include="Scripting\Player\Economy\Economy.cs" />
+    <Compile Include="Scripting\Player\Economy\Resource.cs" />
+    <Compile Include="Scripting\Player\Economy\ResourceAmount.cs" />
+    <Compile Include="Scripting\Player\Economy\ResourceContainer.cs" />
+    <Compile Include="Scripting\Player\Economy\ResourceLibrary.cs" />
+    <Compile Include="Scripting\Player\Economy\ShipmentOrder.cs" />
+    <Compile Include="Scripting\Player\Economy\ShipOrder.cs" />
+    <Compile Include="Scripting\Player\Factions\Faction.cs" />
+    <Compile Include="Scripting\Player\Factions\FactionLibrary.cs" />
+    <Compile Include="Scripting\Player\GameMaster.cs" />
+    <Compile Include="Scripting\Player\InputManager.cs" />
+    <Compile Include="Scripting\Player\KeyManager.cs" />
+    <Compile Include="Scripting\Player\Tools\AttackTool.cs" />
+    <Compile Include="Scripting\Player\Tools\BuildTool.cs" />
+    <Compile Include="Scripting\Player\Tools\ChopTool.cs" />
+    <Compile Include="Scripting\Player\Tools\DigTool.cs" />
+    <Compile Include="Scripting\Player\Tools\DwarfSelectorTool.cs" />
+    <Compile Include="Scripting\Player\Tools\FarmTool.cs" />
+    <Compile Include="Scripting\Player\Tools\GatherTool.cs" />
+    <Compile Include="Scripting\Player\Tools\GodModeTool.cs" />
+    <Compile Include="Scripting\Player\Tools\GuardTool.cs" />
+    <Compile Include="Scripting\Player\Tools\MagicTool.cs" />
+    <Compile Include="Scripting\Player\Tools\PlayerTool.cs" />
+    <Compile Include="Scripting\Player\VoxelSelector.cs" />
+    <Compile Include="Scripting\Rooms\Farm.cs" />
+    <Compile Include="Scripting\Rooms\Room.cs" />
+    <Compile Include="Scripting\Rooms\RoomData.cs" />
+    <Compile Include="Scripting\Rooms\RoomLibrary.cs" />
+    <Compile Include="Scripting\Rooms\RoomTemplate.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\BalloonPort.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\BedRoom.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\CommonRoom.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\Kitchen.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\LibraryRoom.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\MushroomFarm.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\TrainingRoom.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\WheatFarm.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\WorkshopRoom.cs" />
+    <Compile Include="Scripting\Rooms\Stockpile.cs" />
+    <Compile Include="Scripting\Rooms\Zone.cs" />
+    <Compile Include="Scripting\TaskManagement\GatherManager.cs" />
+    <Compile Include="Scripting\TaskManagement\Task.cs" />
+    <Compile Include="Scripting\TaskManagement\TaskManager.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\BuildRoomTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\BuildVoxelTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\CraftItemTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\FarmTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\GatherItemTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\GetItemWithTagsTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\GuardVoxelTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\KillEntityTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\KillVoxelTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\LookInterestingTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\PutItemInZoneTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\PutItemWithTagTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\SatisfyHungerTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\SatisfyTirednessTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\StockResourceTask.cs" />
+    <Compile Include="Scripting\TestBehaviors.cs" />
+    <Compile Include="Scripting\Thoughts\Thought.cs" />
+    <Compile Include="Sound\NoiseMaker.cs" />
+    <Compile Include="Sound\Sound3D.cs" />
+    <Compile Include="Sound\SoundManager.cs" />
+    <Compile Include="Tools\Datastructures\CollisionManager.cs" />
+    <Compile Include="Tools\Datastructures\Datastructures.cs" />
+    <Compile Include="Tools\Datastructures\IBoundedObject.cs" />
+    <Compile Include="Tools\Datastructures\MinBag.cs" />
+    <Compile Include="Tools\Datastructures\Octree.cs" />
+    <Compile Include="Tools\Datastructures\OctreeNode.cs" />
+    <Compile Include="Tools\Datastructures\PriorityQueue.cs" />
+    <Compile Include="Tools\Datastructures\ThreadSafeRandom.cs" />
+    <Compile Include="Tools\Extensions.cs" />
+    <Compile Include="Tools\GameObjectCaching.cs" />
+    <Compile Include="Tools\GamePerformance.cs" />
+    <Compile Include="Tools\Graphics\ColorGradient.cs" />
+    <Compile Include="Tools\Graphics\VertexNoise.cs" />
+    <Compile Include="Tools\Math\Easing.cs" />
+    <Compile Include="Tools\Math\HungarianAlgorithm.cs" />
+    <Compile Include="Tools\Math\MathFunctions.cs" />
+    <Compile Include="Tools\Math\Perlin.cs" />
+    <Compile Include="Tools\Math\PIDController.cs" />
+    <Compile Include="Tools\Math\Point3.cs" />
+    <Compile Include="Tools\Planning\AStarPlanner.cs" />
+    <Compile Include="Tools\Planning\PlanService.cs" />
+    <Compile Include="Tools\Planning\PlanSubscriber.cs" />
+    <Compile Include="Tools\ServiceArchitecture\Service.cs" />
+    <Compile Include="Tools\ServiceArchitecture\Subscriber.cs" />
+    <Compile Include="Tools\Timer.cs" />
+    <Compile Include="Voxels\ChunkData.cs" />
+    <Compile Include="Voxels\ChunkGenerator.cs" />
+    <Compile Include="Voxels\ChunkManager.cs" />
+    <Compile Include="Voxels\DynamicLight.cs" />
+    <Compile Include="Voxels\LiquidAsset.cs" />
+    <Compile Include="Voxels\Voxel.cs" />
+    <Compile Include="Voxels\VoxelChunk.cs" />
+    <Compile Include="Voxels\VoxelLibrary.cs" />
+    <Compile Include="Voxels\VoxelType.cs" />
+    <Compile Include="Voxels\WaterCell.cs" />
+    <Compile Include="Voxels\WaterManager.cs" />
+    <Compile Include="Voxels\WaterRenderer.cs" />
+    <Compile Include="World\BiomeData.cs" />
+    <Compile Include="World\BiomeLibrary.cs" />
+    <Compile Include="World\DetailMoteData.cs" />
+    <Compile Include="World\Diplomacy.cs" />
+    <Compile Include="World\FaunaData.cs" />
+    <Compile Include="World\Overworld.cs" />
+    <Compile Include="World\VegetationData.cs" />
+    <Compile Include="World\Weather.cs" />
+    <Compile Include="World\WorldManager.cs" />
+    <Compile Include="World\WorldTime.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />

@@ -1,0 +1,9 @@
+<goblinname> Tribe
+<goblinfamily> House
+<goblinfamily> Kingdom
+Lands of <goblinname>
+<goblinname>ia
+<goblinfamily>ia
+<goblinfamily>stan
+<goblinfamily>non
+<goblinfamily>ica

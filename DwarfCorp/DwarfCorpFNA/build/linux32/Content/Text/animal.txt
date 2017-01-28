@@ -1,0 +1,367 @@
+Aardvark 
+Elephant 
+Pangolin 
+Albatross 
+Alligator 
+Alpaca 
+Anaconda 
+Angel Fish 
+Ant 
+Anteater 
+Antelope 
+Archer Fish 
+Armadillo 
+Aye-Aye 
+Baboon 
+Badger 
+Bald Eagle 
+Bandicoot 
+Bangle Tiger 
+Barnacle 
+Barracuda 
+Basilisk 
+Bass 
+Hound 
+Bat 
+Dragon 
+Beaver 
+Bee 
+Beetle 
+Whale 
+Bird 
+Sheep
+Bison 
+Black Bear 
+Black Fly 
+Black Rhino 
+Black Widow
+Blackbird 
+Blowfish 
+Blue Jay 
+Blue Whale 
+Boa 
+Boar 
+Bob-Cat 
+Bonobo 
+Bottle-Nose
+Orangutan 
+Boxer dog 
+Brown Bear 
+Buck 
+Budgie 
+Buffalo 
+Bull 
+Bull frog 
+Mastiff 
+Butterfly 
+Buzzard 
+Caribou 
+Cheetah 
+Camel 
+Canary 
+Carp 
+Cat 
+Caterpillar 
+Cattle 
+Catfish 
+Chameleon 
+Centipede 
+Chicken 
+Chimpanzee 
+Chihuahua 
+Chinchilla 
+Chipmunk 
+Clam 
+Chupacabra 
+Clown Fish 
+Cobra 
+Cockatiel 
+Cockatoo 
+Cockroach 
+Cod 
+Coho 
+Corn Snake 
+Cougar 
+Cow 
+Coyote 
+Crab 
+Crane 
+Crawfish 
+Cray fish 
+Cricket 
+Crocodile 
+Crow 
+Cuckoo bird 
+Cuttle fish 
+Deer 
+Dog 
+Du-gong 
+Dalmation 
+Dacshund 
+Damsel fly 
+Dart Frog 
+Degus 
+Devi
+Diamondback
+Dik-dik 
+Dingo 
+Dinosaur 
+Doberman
+Dodo bird 
+Dolphin 
+Dolly Varden 
+Donkey 
+Door mouse 
+Dormouse 
+Draft horse 
+Dove 
+Dragonfly 
+Drake 
+Duck 
+Platypus 
+Dung beetle 
+Lynx 
+Eagle 
+Earthworm 
+Earwig 
+Echidna 
+Eclectus 
+Eel 
+Egret 
+Elephant 
+Elephant Seal 
+Elk 
+Emu 
+Erne 
+Falcon 
+Finch 
+Fish 
+Firefly 
+Flamingo 
+Flatworm 
+Fly 
+Ferret 
+Fox 
+Alligator 
+Frog 
+Iguana 
+Tortoise 
+Gazelle 
+Anteater 
+Giant panda 
+Giraffe 
+Gnat 
+Goat 
+Goose 
+Gopher 
+Gorilla 
+Grasshopper 
+Green fly 
+Grey Whale 
+Shark 
+Groundhog 
+Hammerhead 
+Hare 
+Hawk 
+Hedgehog 
+Heron 
+Herring 
+Hippopotamus 
+Horse 
+Hyena 
+Hyrax 
+Irrawaddy 
+Iguana 
+Iguanodon 
+Impala 
+Inchworm 
+Insect 
+Jellyfish 
+Jackal 
+Jackrabbit 
+Jaguar 
+June bug 
+Kangaroo 
+Killer Whale 
+King Cobra 
+Kingfisher
+Koala 
+Komodo Dragon 
+Kookaburra 
+Krill 
+Llama 
+Lamb 
+Lancelet 
+Leatherback
+Leech 
+Lemming 
+Lemur 
+Leopard 
+Louse 
+Lion 
+Lionfish 
+Llama 
+Lobster 
+Lynx 
+Manatee 
+Man-Of-War 
+Mantis
+Marmot 
+Marsupials 
+Meerkat 
+Mink 
+Mole 
+Mollusk 
+Butterfly 
+Mongoose 
+Monkey 
+Moose 
+Mountain Lion 
+Mouse 
+Mule 
+Muskox 
+Muskrat 
+Naked Mole Rat 
+Narwhal 
+Nautilus 
+Nene 
+Newt 
+Nutria 
+Nyala 
+Ocelot 
+Octopus 
+Okapi 
+Opossum 
+Orangutan 
+Orca 
+Osprey 
+Ostrich 
+Otter 
+Owl 
+Ox 
+Panda 
+Panther
+Peacock
+Pelican 
+Penguin 
+Pig 
+Pigeon
+Platypus
+Polar Bear
+Potto
+Porcupine
+Praying Mantis
+Prawn
+Puma
+Quail 
+Quetzal 
+Rabbit
+Raccoon
+Rat 
+Ray 
+Reindeer 
+Rhino
+Ringworm
+Rhinoceros
+Robin
+Rooster
+Roundworm
+Salmon
+Sandpiper
+Seahorse
+Seal
+Sea Anemone
+Sea Lion
+Sea Urchin
+Scallop
+Scorpion
+Shark
+Sheep
+Shrimp
+Tiger
+Skunk 
+Slender Loris
+Sloth
+Sloth bear
+Slug 
+Snail 
+Snake 
+Snow Hare 
+Snow Fox 
+Snow Leopard 
+Sponge 
+Spectacled Bear 
+Squid
+Squirrel
+Starfish
+Stork
+Swan
+Swordfish
+Tapir
+Tiger 
+Tadpole 
+Tamarin 
+Tapeworm 
+Tarantula 
+Tarpan 
+Terrapin 
+Tick
+Tiger shark
+Tortoise 
+Trout
+Turkey
+Turtle 
+Uakari 
+Umbrella bird 
+Urchin 
+Urutu 
+Vicuna 
+Viper 
+Vulture 
+Vampire bat 
+Velociraptor 
+Vole 
+Viper Fish 
+Velvet worm 
+Vervet 
+Walrus 
+Warbler 
+Warthog 
+Wasp 
+Water Buffalo 
+Water Dragon
+Wallaby 
+Whale 
+Whale Shark 
+White Rhino
+Whippet 
+White-Tailed Deer 
+Whooper 
+Whooping Crane 
+Weasel 
+Weevil 
+Wolf 
+Wolf Spider 
+Wolverine
+Woodchuck
+Woodpecker
+Widow Spider 
+Wren 
+Wombat 
+Wildcat
+Wildebeest
+Xantus 
+Xenop 
+Xiphactinus 
+Ray Fish 
+Yak 
+Yellow-Bellied Marmot 
+Yellow-Belly Sapsucker 
+Yellow-Finned Tuna 
+Yeti 
+Zander 
+Zebra 
+Zebra Finch 
+Zebra Dove 
+Zorilla 
+Zebu
