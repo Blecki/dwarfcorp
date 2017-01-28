@@ -83,6 +83,8 @@ namespace DwarfCorp.GameStates
                     Overworld.CreateHillsLand(Game.GraphicsDevice);
                     StateManager.PushState("LoadState");
                     WorldManager.WorldSize = new Point3(8, 1, 8);
+                    WorldManager.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / WorldManager.WorldScale,
+                                                                     Overworld.Map.GetLength(1) / WorldManager.WorldScale) * 0.5f;
                 });
 
             MakeMenuItem(frame, "Cliffs", "Create a cliff-y world.", (sender, args) =>
@@ -98,6 +100,9 @@ namespace DwarfCorp.GameStates
                     {
                         WorldManager.Natives.Add(library.GenerateFaction(i, 10));
                     }
+                    WorldManager.WorldSize = new Point3(8, 1, 8);
+                    WorldManager.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / WorldManager.WorldScale,
+                                                                     Overworld.Map.GetLength(1) / WorldManager.WorldScale) * 0.5f;
                 });
 
             MakeMenuItem(frame, "Flat", "Create a flat world.", (sender, args) =>
@@ -105,6 +110,9 @@ namespace DwarfCorp.GameStates
                     Overworld.CreateUniformLand(Game.GraphicsDevice);
                     StateManager.PushState("LoadState");
                     WorldManager.WorldSize = new Point3(8, 1, 8);
+                    WorldManager.WorldSize = new Point3(8, 1, 8);
+                    WorldManager.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / WorldManager.WorldScale,
+                                                                     Overworld.Map.GetLength(1) / WorldManager.WorldScale) * 0.5f;
                 });
 
             MakeMenuItem(frame, "Ocean", "Create an ocean world", (sender, args) =>
@@ -112,6 +120,9 @@ namespace DwarfCorp.GameStates
                     Overworld.CreateOceanLand(Game.GraphicsDevice);
                     StateManager.PushState("LoadState");
                     WorldManager.WorldSize = new Point3(8, 1, 8);
+                    WorldManager.WorldSize = new Point3(8, 1, 8);
+                    WorldManager.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / WorldManager.WorldScale,
+                                                                     Overworld.Map.GetLength(1) / WorldManager.WorldScale) * 0.5f;
                 });
 
             MakeMenuItem(frame, "Back", "Go back to the main menu.", (sender, args) => 

@@ -114,6 +114,7 @@ namespace DwarfCorp
             animation.Play();
             animation.Loops = true;
             animation.FrameHZ = 2.0f;
+            Talker.TweenOut(Drawer2D.Alignment.Bottom);
         }
 
         void Manager_OnRemoved(Announcement announcement)

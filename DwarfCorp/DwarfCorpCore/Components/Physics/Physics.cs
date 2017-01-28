@@ -194,7 +194,7 @@ namespace DwarfCorp
                 }
 
 
-                if (LocalTransform.Translation.Z < -10 || bounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
+                if (LocalTransform.Translation.Y < -10 || bounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
                 {
                     Die();
                 }
