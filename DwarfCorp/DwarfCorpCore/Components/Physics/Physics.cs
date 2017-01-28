@@ -47,26 +47,144 @@ namespace DwarfCorp
     /// </summary>
     public class Physics : Body
     {
+        /// <summary>
+        /// Gets or sets the angular velocity in radians per second.
+        /// </summary>
+        /// <value>
+        /// The angular velocity.
+        /// </value>
         public Vector3 AngularVelocity { get; set; }
+        /// <summary>
+        /// Gets or sets the linear velocity in voxels per second.
+        /// </summary>
+        /// <value>
+        /// The velocity.
+        /// </value>
         public Vector3 Velocity { get; set; }
+        /// <summary>
+        /// Gets or sets the mass in voxel weights.
+        /// </summary>
+        /// <value>
+        /// The mass.
+        /// </value>
         public float Mass { get; set; }
+        /// <summary>
+        /// Gets or sets the moment of inertia.
+        /// </summary>
+        /// <value>
+        /// The i.
+        /// </value>
         public float I { get; set; }
+        /// <summary>
+        /// Gets or sets the linear viscous damping force. 1.0 means no damping. 0.0 means full damping.
+        /// </summary>
+        /// <value>
+        /// The linear damping.
+        /// </value>
         public float LinearDamping { get; set; }
+        /// <summary>
+        /// Gets or sets the viscous angular damping force. 1.0 means no damping. 0.0 means full damping.
+        /// </summary>
+        /// <value>
+        /// The angular damping.
+        /// </value>
         public float AngularDamping { get; set; }
+        /// <summary>
+        /// Gets or sets the restitution in proportion. 
+        /// A colliding body with 1.0 restitution bounces back with 100% of its velocity.
+        /// </summary>
+        /// <value>
+        /// The restitution.
+        /// </value>
         public float Restitution { get; set; }
+        /// <summary>
+        /// Gets or sets the friction when colliding with voxels.
+        /// </summary>
+        /// <value>
+        /// The friction.
+        /// </value>
         public float Friction { get; set; }
+        /// <summary>
+        /// Gets or sets the gravity in voxels per second squared.
+        /// </summary>
+        /// <value>
+        /// The gravity.
+        /// </value>
         public Vector3 Gravity { get; set; }
+        /// <summary>
+        /// Gets or sets the previous position of this body on the last update.
+        /// </summary>
+        /// <value>
+        /// The previous position.
+        /// </value>
         public Vector3 PreviousPosition { get; set; }
+        /// <summary>
+        /// Book keeping for applying gravity. Avoids applying gravity when it would otherwise mess up physics.
+        /// </summary>
         private bool applyGravityThisFrame = true;
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is sleeping. A sleeping instance does not update
+        /// unless acted upon by an outside force. (Take that, newton)
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is sleeping; otherwise, <c>false</c>.
+        /// </value>
         public bool IsSleeping { get; set; }
+        /// <summary>
+        /// Book-keeping. If we are sleeping, and this is set to true, we check physics for one more frame
+        /// before going back to sleep.
+        /// </summary>
         private bool overrideSleepThisFrame = true;
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is in liquid (like water or lava).
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is in liquid; otherwise, <c>false</c>.
+        /// </value>
         public bool IsInLiquid { get; set; }
+        /// <summary>
+        /// Gets or sets the previous velocity. On the last update.
+        /// </summary>
+        /// <value>
+        /// The previous velocity.
+        /// </value>
         public Vector3 PreviousVelocity { get; set; }
+        /// <summary>
+        /// Gets or sets the orientation mode.
+        /// </summary>
+        /// <value>
+        /// The orientation.
+        /// </value>
         public OrientMode Orientation { get; set; }
+        /// <summary>
+        /// When in RotateY mode, this is the angle around Y in radians in which to rotate.
+        /// </summary>
         private float Rotation = 0.0f;
+        /// <summary>
+        /// Gets or sets the collision mode. 
+        /// </summary>
+        /// <value>
+        /// The collide mode.
+        /// </value>
         public CollisionMode CollideMode { get; set; }
+        /// <summary>
+        /// The current voxel
+        /// </summary>
         public Voxel CurrentVoxel = null;
-        public List<Voxel> Neighbors = new List<Voxel>(); 
+        /// <summary>
+        /// The neighbors of this voxel.
+        /// </summary>
+        public List<Voxel> Neighbors = new List<Voxel>();
+        /// <summary>
+        /// Fixed time to update physics at. This is to prevent instabilty on very slow
+        /// or very fast machines, and to protect stability during fast forward.
+        /// </summary>
+        public const float FixedDT = 1.0f / 60.0f;
+
+        /// <summary>
+        /// Does this physics object collide on all sides, none,
+        /// just the top and bottom, or just the 2D sides?
+        /// </summary>
         public enum CollisionMode
         {
             All,
@@ -75,6 +193,12 @@ namespace DwarfCorp
             Sides
         }
 
+        /// <summary>
+        /// Does this physics object rotate in accordance with
+        /// physics, or is its orientation fixed? It may also look
+        /// at the direction it is traveling, or may just rotate about the
+        /// Y axis.
+        /// </summary>
         public enum OrientMode
         {
             Physics,
@@ -111,26 +235,9 @@ namespace DwarfCorp
             CurrentVoxel = new Voxel();
         }
 
-
-        public void MoveX(float dt)
+        public void Move(float dt)
         {
-            Vector3 newPos = new Vector3(LocalTransform.Translation.X + Velocity.X * dt, LocalTransform.Translation.Y, LocalTransform.Translation.Z);
-            Matrix transform = LocalTransform;
-            transform.Translation = newPos;
-            LocalTransform = transform;
-        }
-
-        public void MoveY(float dt)
-        {
-            Vector3 newPos = new Vector3(LocalTransform.Translation.X, LocalTransform.Translation.Y + Velocity.Y * dt, LocalTransform.Translation.Z);
-            Matrix transform = LocalTransform;
-            transform.Translation = newPos;
-            LocalTransform = transform;
-        }
-
-        public void MoveZ(float dt)
-        {
-            Vector3 newPos = new Vector3(LocalTransform.Translation.X, LocalTransform.Translation.Y, LocalTransform.Translation.Z + Velocity.Z * dt);
+            Vector3 newPos = new Vector3(LocalTransform.Translation.X, LocalTransform.Translation.Y, LocalTransform.Translation.Z) + Velocity * dt;
             Matrix transform = LocalTransform;
             transform.Translation = newPos;
             LocalTransform = transform;
@@ -140,9 +247,11 @@ namespace DwarfCorp
         {
             if (!IsActive) return;
 
+            // Check to see if we're outside the bounds of the world.
             BoundingBox bounds = chunks.Bounds;
             bounds.Max.Y += 50;
 
+            // If we're not sleeping and moving very slowly, go to sleep.
             if (!IsSleeping && (Velocity).Length() < 0.15f)
             {
                 SleepTimer.Update(gameTime);
@@ -160,6 +269,7 @@ namespace DwarfCorp
                 IsSleeping = false;
             }
 
+            // If not sleeping, update physics.
             if (!IsSleeping || overrideSleepThisFrame)
             {
                 if (overrideSleepThisFrame)
@@ -167,104 +277,133 @@ namespace DwarfCorp
                     overrideSleepThisFrame = false;
                 }
 
+
                 float dt = (float) (gameTime.ElapsedGameTime.TotalSeconds);
+                // Calculate the number of timesteps to apply.
+                int numTimesteps = Math.Max((int) (dt/FixedDT), 1);
 
-
+                // If the velocity is messed up, set it to zero.
                 if (MathFunctions.HasNan(Velocity))
                 {
                     Velocity = Vector3.Zero;
                 }
 
-                MoveY(dt);
-                MoveX(dt);
-                MoveZ(dt);
-                chunks.ChunkData.GetVoxel(Position, ref CurrentVoxel);
-                if (CurrentVoxel != null && CurrentVoxel.Chunk != null)
+                float velocityLength = Velocity.Length();
+
+                // For each timestep, move and collide.
+                for (int n = 0; n < numTimesteps; n++)
                 {
-                    Vector3 gridPos = CurrentVoxel.GridPosition;
-                    CurrentVoxel.Chunk.GetNeighborsSuccessors(VoxelChunk.ManhattanSuccessors, (int)gridPos.X, (int)gridPos.Y, (int)gridPos.Z, Neighbors);
-                }
-                HandleCollisions(chunks, dt);
 
-                Matrix transform = LocalTransform;
-                if (bounds.Contains(LocalTransform.Translation + Velocity*dt) != ContainmentType.Contains)
-                {
-                    transform.Translation = LocalTransform.Translation - 0.1f * Velocity * dt;
-                    Velocity = new Vector3(Velocity.X * -0.9f, Velocity.Y, Velocity.Z * -0.9f);
-                }
+                    int numVelocitySteps = Math.Max((int) (velocityLength), 1);
 
-
-                if (LocalTransform.Translation.Y < -10 || bounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
-                {
-                    Die();
-                }
-
-
-                if(Orientation == OrientMode.Physics)
-                {
-                    Matrix dA = Matrix.Identity;
-                    dA *= Matrix.CreateRotationX(AngularVelocity.X * dt);
-                    dA *= Matrix.CreateRotationY(AngularVelocity.Y * dt);
-                    dA *= Matrix.CreateRotationZ(AngularVelocity.Z * dt);
-
-                    transform = dA * transform;
-                }
-                else if(Orientation != OrientMode.Fixed)
-                {
-                    if(Velocity.Length() > 0.4f)
+                    for (int i = 0; i < numVelocitySteps; i++)
                     {
-                        if (Orientation == OrientMode.LookAt)
+                        // Move by a fixed amount.
+                        Move(FixedDT / numVelocitySteps);
+
+                        // Get the current voxel.
+                        chunks.ChunkData.GetVoxel(Position, ref CurrentVoxel);
+                        if (CurrentVoxel != null && CurrentVoxel.Chunk != null)
                         {
-                            Matrix newTransform =
-                                Matrix.Invert(Matrix.CreateLookAt(Position, Position + Velocity, Vector3.Down));
-                            newTransform.Translation = transform.Translation;
-                            transform = newTransform;
+                            Vector3 gridPos = CurrentVoxel.GridPosition;
+                            CurrentVoxel.Chunk.GetNeighborsSuccessors(VoxelChunk.ManhattanSuccessors, (int) gridPos.X,
+                                (int) gridPos.Y, (int) gridPos.Z, Neighbors);
                         }
-                        else if (Orientation == OrientMode.RotateY)
+
+                        // Collide with the world.
+                        HandleCollisions(chunks, FixedDT / numVelocitySteps);
+
+                        Matrix transform = LocalTransform;
+                        // Avoid leaving the world.
+                        if (bounds.Contains(LocalTransform.Translation + Velocity*dt) != ContainmentType.Contains)
                         {
-              
-                            Rotation = (float) Math.Atan2(Velocity.X, -Velocity.Z);
-                            Quaternion newRotation = Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationY(Rotation));
-                            Quaternion oldRotation = Quaternion.CreateFromRotationMatrix(LocalTransform);
-                            Quaternion finalRot = Quaternion.Slerp(oldRotation, newRotation, 0.1f);
-                            finalRot.Normalize();
-                            Matrix newTransform = Matrix.CreateFromQuaternion(finalRot);
-                            newTransform.Translation = transform.Translation;
-                            newTransform.Right.Normalize();
-                            newTransform.Up.Normalize();
-                            newTransform.Forward.Normalize();
-                            newTransform.M14 = 0;
-                            newTransform.M24 = 0;
-                            newTransform.M34 = 0;
-                            newTransform.M44 = 1;
-                            transform = newTransform;
+                            transform.Translation = LocalTransform.Translation - 0.1f*Velocity*dt;
+                            Velocity = new Vector3(Velocity.X*-0.9f, Velocity.Y, Velocity.Z*-0.9f);
                         }
+
+
+                        // If we're outside the world, die
+                        if (LocalTransform.Translation.Y < -10 ||
+                            bounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
+                        {
+                            Die();
+                        }
+
+
+                        // Orientation logic.
+                        if (Orientation == OrientMode.Physics)
+                        {
+                            Matrix dA = Matrix.Identity;
+                            dA *= Matrix.CreateRotationX(AngularVelocity.X*FixedDT);
+                            dA *= Matrix.CreateRotationY(AngularVelocity.Y*FixedDT);
+                            dA *= Matrix.CreateRotationZ(AngularVelocity.Z*FixedDT);
+
+                            transform = dA*transform;
+                        }
+                        else if (Orientation != OrientMode.Fixed)
+                        {
+                            if (Velocity.Length() > 0.4f)
+                            {
+                                if (Orientation == OrientMode.LookAt)
+                                {
+                                    Matrix newTransform =
+                                        Matrix.Invert(Matrix.CreateLookAt(Position, Position + Velocity, Vector3.Down));
+                                    newTransform.Translation = transform.Translation;
+                                    transform = newTransform;
+                                }
+                                else if (Orientation == OrientMode.RotateY)
+                                {
+
+                                    Rotation = (float) Math.Atan2(Velocity.X, -Velocity.Z);
+                                    Quaternion newRotation =
+                                        Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationY(Rotation));
+                                    Quaternion oldRotation = Quaternion.CreateFromRotationMatrix(LocalTransform);
+                                    Quaternion finalRot = Quaternion.Slerp(oldRotation, newRotation, 0.1f);
+                                    finalRot.Normalize();
+                                    Matrix newTransform = Matrix.CreateFromQuaternion(finalRot);
+                                    newTransform.Translation = transform.Translation;
+                                    newTransform.Right.Normalize();
+                                    newTransform.Up.Normalize();
+                                    newTransform.Forward.Normalize();
+                                    newTransform.M14 = 0;
+                                    newTransform.M24 = 0;
+                                    newTransform.M34 = 0;
+                                    newTransform.M44 = 1;
+                                    transform = newTransform;
+                                }
+                            }
+                        }
+
+                        // Final check to ensure we're in the world.
+                        transform.Translation = ClampToBounds(transform.Translation);
+                        LocalTransform = transform;
+
+                        // Assume that if velocity is small, we're standing on ground (lol bad assumption)
+                        // Apply friction.
+                        if (Math.Abs(Velocity.Y) < 0.1f)
+                        {
+                            Velocity = new Vector3(Velocity.X*Friction, Velocity.Y, Velocity.Z*Friction);
+                        }
+
+                        // Apply gravity.
+                        if (applyGravityThisFrame)
+                        {
+                            ApplyForce(Gravity, FixedDT/numVelocitySteps);
+                        }
+
+                        // Damp the velocity.
+                        Vector3 dampingForce = -Velocity*(1.0f - LinearDamping);
+
+                        Velocity += dampingForce*FixedDT/numVelocitySteps;
+                        AngularVelocity *= AngularDamping;
+                        UpdateBoundingBox();
+                        UpdateTransformsRecursive();
                     }
                 }
-
-                transform.Translation = ClampToBounds(transform.Translation);
-                LocalTransform = transform;
-
-                if(Math.Abs(Velocity.Y) < 0.1f)
-                {
-                    Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
-                }
-
-                if (applyGravityThisFrame)
-                {
-                    ApplyForce(Gravity, dt);
-                }
-                else
-                {
-                    applyGravityThisFrame = true;
-                }
-
-                Velocity *= LinearDamping;
-                AngularVelocity *= AngularDamping;
-                UpdateBoundingBox();
             }
+
+            if (!applyGravityThisFrame) applyGravityThisFrame = true;
             CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
-            Velocity = (PreviousVelocity * 0.1f + Velocity * 0.9f);
             PreviousVelocity = Velocity;
             PreviousPosition = Position;
             base.Update(gameTime, chunks, camera);
@@ -333,7 +472,7 @@ namespace DwarfCorp
         }
 
 
-        public bool Collide(BoundingBox box)
+        public bool Collide(BoundingBox box, float dt)
         {
             if (!BoundingBox.Intersects(box))
             {
@@ -348,23 +487,12 @@ namespace DwarfCorp
             }
 
             Matrix m = LocalTransform;
-            m.Translation += contact.NEnter * (contact.Penetration) * 1.01f;
+            m.Translation += contact.NEnter * (contact.Penetration) * 0.5f;
 
-            Vector3 impulse = (Vector3.Dot(Velocity, -contact.NEnter)*contact.NEnter);
-            Velocity += impulse;
-            //Vector3 newVelocity = (contact.NEnter * Vector3.Dot(Velocity, contact.NEnter));
-            //Velocity = (Velocity - newVelocity) * Restitution;
-            /*
-            if (Math.Abs(contact.NEnter.Y) > 0.1f)
-            {
-                Velocity = new Vector3(Velocity.X, -Velocity.Y * Restitution, Velocity.Z);
-            }
-            else
-            {
-                Velocity = Vector3.Reflect(Velocity, -contact.NEnter);
-                Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
-            }
-             */
+            Vector3 impulse = (Vector3.Dot(Velocity, -contact.NEnter)*contact.NEnter) * 60.0f;
+            Velocity += impulse * dt;
+            //Velocity = Vector3.Reflect(Velocity, -contact.NEnter) * Restitution;
+            Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
 
             LocalTransform = m;
             UpdateBoundingBox();
@@ -406,7 +534,7 @@ namespace DwarfCorp
                 }
 
                 BoundingBox voxAABB = v.GetBoundingBox();
-                if (Collide(voxAABB))
+                if (Collide(voxAABB, dt))
                 {
                     OnTerrainCollision(v);
                 }
