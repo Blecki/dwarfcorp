@@ -38,7 +38,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using BloomPostprocess;
-using DwarfCorpCore;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -71,6 +70,9 @@ namespace DwarfCorp
 
         // The horizontal size of the overworld in pixels
         public static int WorldWidth = 800;
+
+        // Used to pass WorldOrigin from the WorldGenState into WorldManager.
+        public static Vector2 WorldGenerationOrigin { get; set; }
 
         // The origin of the overworld in pixels [(0, 0, 0) in world space.]
         public static Vector2 WorldOrigin { get; set; }
@@ -283,7 +285,7 @@ namespace DwarfCorp
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;
             Seed = MathFunctions.Random.Next();
-            WorldOrigin = new Vector2(WorldWidth / 2, WorldHeight / 2);
+            WorldOrigin = WorldGenerationOrigin;
             Time = new WorldTime();
         }
 
@@ -304,11 +306,11 @@ namespace DwarfCorp
             {
                 Console.Error.WriteLine(exception.Message);
             }
-            Game.Graphics.PreparingDeviceSettings -= GraphicsPreparingDeviceSettings;
             Game.Graphics.PreparingDeviceSettings += GraphicsPreparingDeviceSettings;
 
             // Now we load everything else in a thread so we can see the progress on the screensaver
             LoadingThread = new Thread(LoadThreaded);
+            LoadingThread.Name = "Load";
             LoadingThread.Start();
         }
 
@@ -364,6 +366,9 @@ namespace DwarfCorp
                 Thread.Sleep(1000);
                 ShowingWorld = true;
                 LoadingMessage = "Complete.";
+
+                // GameFile is no longer needed.
+                gameFile = null;
             }
 #if CREATE_CRASH_LOGS
             catch (Exception exception)
@@ -1240,8 +1245,17 @@ namespace DwarfCorp
 
         public void Quit()
         {
+            Game.Graphics.PreparingDeviceSettings -= GraphicsPreparingDeviceSettings;
+
             ChunkManager.Destroy();
             ComponentManager.RootComponent.Delete();
+            ComponentManager = null;
+
+            Master.Destroy();
+            Master = null;
+
+            ChunkManager = null;
+            ChunkGenerator = null;
             GC.Collect();
             PlanService.Die();
         }
@@ -1262,6 +1276,7 @@ namespace DwarfCorp
         {
             try
             {
+                System.Threading.Thread.CurrentThread.Name = "Save";
                 DirectoryInfo worldDirectory =
                     Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Worlds" +
                                               Path.DirectorySeparatorChar + Overworld.Name);
@@ -1276,6 +1291,8 @@ namespace DwarfCorp
                 gameFile.WriteFile(
                     DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar +
                     filename, true);
+                // GameFile instance is no longer needed.
+                gameFile = null;
 
                 lock (ScreenshotLock)
                 {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using DwarfCorp.GameStates;
-using DwarfCorpCore;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -110,6 +109,22 @@ namespace DwarfCorp
 
             Debugger = new AIDebugger(GUI, this);
 
+        }
+
+        public void Destroy()
+        {
+            VoxSelector.Selected -= OnSelected;
+            VoxSelector.Dragged -= OnDrag;
+            BodySelector.Selected -= OnBodiesSelected;
+            WorldManager.Time.NewDay -= Time_NewDay;
+            InputManager.KeyReleasedCallback -= OnKeyReleased;
+            Tools[ToolMode.God].Destroy();
+            Tools[ToolMode.SelectUnits].Destroy();
+            Tools.Clear();
+            Faction = null;
+            ToolBar.Master = null;
+            VoxSelector = null;
+            BodySelector = null;
         }
 
         private void CreateTools()

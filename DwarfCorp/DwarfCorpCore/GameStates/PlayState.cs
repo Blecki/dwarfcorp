@@ -17,6 +17,8 @@ namespace DwarfCorp.GameStates
         // Interfaces with the graphics card
         public GraphicsDevice GraphicsDevice;
 
+        private bool IsShuttingDown { get; set; }
+        private bool QuitOnNextUpdate { get; set; }
         public bool ShouldReset { get; set; }
         public static WorldManager World { get; set; }
         public GameMaster Master
@@ -76,17 +78,15 @@ namespace DwarfCorp.GameStates
         public PlayState(DwarfGame game, GameStateManager stateManager) :
             base(game, "PlayState", stateManager)
         {
+            IsShuttingDown = false;
+            QuitOnNextUpdate = false;
             ShouldReset = true;
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;
-            //World = new World(game);
-            //World.gameState = this;
-            //World.OnLoadedEvent += World_OnLoadedEvent;
-            //World.OnLoseEvent += World_OnLoseEvent;
             Paused = false;
             RenderUnderneath = true;
 
-            //CreateGUIComponents();
+            IsInitialized = true;
 
             IsInitialized = false;
         }
@@ -97,11 +97,12 @@ namespace DwarfCorp.GameStates
             //StateManager.PushState("LoseState");
         }
 
-        //private void World_OnLoadedEvent()
-        //{
-        //    IsInitialized = true;
-        //    CreateGUIComponents();  // create gui components after everything has been loaded
-        //}
+        public void WorldLoaded()
+        {
+            World.gameState = this;
+            World.OnLoseEvent += World_OnLoseEvent;
+            CreateGUIComponents();
+        }
 
         /// <summary>
         /// Called when the PlayState is entered from the state manager.
@@ -113,7 +114,6 @@ namespace DwarfCorp.GameStates
                 CreateGUIComponents();
                 IsInitialized = true;
             }
-            
             World.Unpause();
             base.OnEnter();
         }
@@ -135,8 +135,16 @@ namespace DwarfCorp.GameStates
         {
             // If this playstate is not supposed to be running,
             // just exit.
-            if (!Game.IsActive || !IsActiveState)
+            if (!Game.IsActive || !IsActiveState || IsShuttingDown)
             {
+                return;
+            }
+
+            if (QuitOnNextUpdate)
+            {
+                QuitGame();
+                IsShuttingDown = true;
+                QuitOnNextUpdate = false;
                 return;
             }
 
@@ -189,22 +197,6 @@ namespace DwarfCorp.GameStates
             EnableScreensaver = true;
             World.Render(gameTime);
             base.RenderUnitialized(gameTime);
-        }
-
-        /// <summary>
-        /// Creates the user interface + player controls.
-        /// </summary>
-        /// <param name="createMaster">True if the Game Master needs to be created as well.</param>
-        public void CreateGUI()
-        {
-            IndicatorManager.SetupStandards();
-
-            GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default),
-                Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title),
-                Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
-
-            GUI.ToolTipManager.InfoLocation = new Point(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height);
-            GUI.MouseMode = GUISkin.MousePointer.Wait;
         }
 
         /// <summary>
@@ -393,8 +385,6 @@ namespace DwarfCorp.GameStates
 
             layout.Add(topRightTray, AlignLayout.Alignment.Right, AlignLayout.Alignment.Top, Vector2.Zero);
 
-
-            InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
 
             AnnouncementViewer = new AnnouncementViewer(GUI, layout, WorldManager.AnnouncementManager)
@@ -578,7 +568,7 @@ namespace DwarfCorp.GameStates
                     SaveGame(Overworld.Name + "_" + WorldManager.GameID);
                     break;
                 case "Quit":
-                    QuitGame();
+                    QuitOnNextUpdate = true;
                     break;
             }
         }
@@ -620,13 +610,39 @@ namespace DwarfCorp.GameStates
             }
         }
 
+        public void Destroy()
+        {
+            // TODO: Make this prettier.  Possibly as a recursive call via RootComponent.
+            // That or fully clean up the GUIComponents....
+            foreach(GUIComponent c in GUI.RootComponent.Children)
+            {
+                if (c is AlignLayout)
+                {
+                    AlignLayout layout = (c as AlignLayout);
+
+                    foreach (GUIComponent l in layout.Children)
+                    {
+                        if (l is ResourceInfoComponent)
+                            (l as ResourceInfoComponent).CleanUp();
+                    }
+                }
+            }
+
+            InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
+            Input.Destroy();
+        }
+
         public void QuitGame()
         {
             World.Quit();
-            StateManager.States["PlayState"] = new PlayState(Game, StateManager);
             StateManager.ClearState();
-            //StateManager.CurrentState = null;
+
+            // This line needs to stay in so the GC can properly collect all the items the PlayState keeps active.
+            // If you want to remove this line you better be prepared to fully clean up the PlayState instance
+            // using another method.
+            StateManager.States["PlayState"] = new PlayState(Game, StateManager);
+            
             StateManager.PushState("MainMenuState");
         }
     }
-}
+}   

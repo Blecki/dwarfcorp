@@ -67,12 +67,32 @@ namespace DwarfCorp
             KeysInit(Keyboard.GetState());
             MouseInit(Mouse.GetState());
             InitializeNumKeys();
+            RegisterEventHandlers();
+        }
+
+        private void RegisterEventHandlers()
+        {
             MousePressedCallback += dummymousepressed;
             MouseReleasedCallback += dummymousereleased;
             MouseClickedCallback += dummymouseclicked;
             MouseScrolledCallback += dummymousescroll;
             KeyPressedCallback += dummykeypressed;
             KeyReleasedCallback += dummykeypressed;
+        }
+
+        private void UnregisterEventHandlers()
+        {
+            MousePressedCallback -= dummymousepressed;
+            MouseReleasedCallback -= dummymousereleased;
+            MouseClickedCallback -= dummymouseclicked;
+            MouseScrolledCallback -= dummymousescroll;
+            KeyPressedCallback -= dummykeypressed;
+            KeyReleasedCallback -= dummykeypressed;
+        }
+
+        public void Destroy()
+        {
+            UnregisterEventHandlers();
         }
 
         public void InitializeNumKeys()

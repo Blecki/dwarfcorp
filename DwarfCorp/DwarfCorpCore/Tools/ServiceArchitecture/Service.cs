@@ -36,7 +36,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using DwarfCorp.Tools.ServiceArchitecture;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -110,6 +109,7 @@ namespace DwarfCorp
                     ExitThreads = false;
                 }
                 ServiceThreadObject = new Thread(this.ServiceThread);
+                ServiceThreadObject.Name = "ServiceThread";
                 ServiceThreadObject.Start();
             }
             catch (System.AccessViolationException e)

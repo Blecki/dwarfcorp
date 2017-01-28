@@ -37,7 +37,7 @@ using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 
-namespace DwarfCorp.Scripting.LeafActs
+namespace DwarfCorp
 {
     /// <summary>
     /// A creature remains inactive, recharging its energy until it is satisfied.

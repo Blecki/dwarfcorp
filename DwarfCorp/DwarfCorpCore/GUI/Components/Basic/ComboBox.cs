@@ -66,6 +66,11 @@ namespace DwarfCorp
             OnSelectionModified += ComboBox_OnSelectionModified;
         }
 
+        public void CleanUp()
+        {
+            OnSelectionModified -= ComboBox_OnSelectionModified;
+        }
+
         private void ComboBox_OnSelectionModified(string arg)
         {
             if(GUI.FocusComponent == Selector)

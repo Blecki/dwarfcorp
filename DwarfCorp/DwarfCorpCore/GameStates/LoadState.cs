@@ -56,6 +56,10 @@ namespace DwarfCorp.GameStates
 
             StateManager.PopState();
             StateManager.PushState("PlayState");
+
+            // Call one time setup code for PlayState.
+            PlayState playState = StateManager.States["PlayState"] as PlayState;
+            playState.WorldLoaded();
         }
 
         public override void OnEnter()
@@ -65,7 +69,6 @@ namespace DwarfCorp.GameStates
                 IndicatorManager.SetupStandards();
 
                 World = new WorldManager(Game);
-                World.gameState = this;
                 World.OnLoadedEvent += World_OnLoadedEvent;
 
             // Todo - Save gui creation for play state. We're only creating it here so we can give it to

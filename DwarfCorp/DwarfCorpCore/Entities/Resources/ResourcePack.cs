@@ -5,7 +5,7 @@ using System.Text;
 using DwarfCorp;
 using Microsoft.Xna.Framework;
 
-namespace DwarfCorpCore
+namespace DwarfCorp
 {
     public class ResourcePack : Follower
     {
