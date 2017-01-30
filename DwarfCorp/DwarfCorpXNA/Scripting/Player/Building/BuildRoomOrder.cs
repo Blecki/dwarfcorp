@@ -163,7 +163,7 @@ namespace DwarfCorp
 
             if (!silent)
             {
-                WorldManager.AnnouncementManager.Announce("Built room!", ToBuild.ID + " was built");
+                WorldManager.MakeAnnouncement("Built room!", String.Format("{0} was built", ToBuild.ID));
             }
 
             foreach (GameComponent fence in WorkObjects)

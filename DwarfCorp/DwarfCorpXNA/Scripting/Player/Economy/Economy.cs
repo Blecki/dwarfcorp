@@ -137,12 +137,14 @@ namespace DwarfCorp
 
             if (Company.Assets <= 0)
             {
-                WorldManager.AnnouncementManager.Announce("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
+                WorldManager.MakeAnnouncement("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
             }
 
             string symbol = diff > 0 ? "+" : "";
-           
-            WorldManager.AnnouncementManager.Announce(Company.TickerName + " " + Company.StockPrice.ToString("F2") + " " + symbol + diff.ToString("F2"), "Our stock price changed by " + symbol + " " + diff.ToString("F2") + " today.");
+
+            WorldManager.MakeAnnouncement(String.Format("{0} {1} {2}{3}",
+                Company.TickerName, Company.StockPrice.ToString("F2"), symbol, diff.ToString("F2")),
+                String.Format("Our stock price changed by {0}{1} today.", symbol, diff.ToString("F2")));
         }
 
         void Time_NewDay(DateTime time)

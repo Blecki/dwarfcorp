@@ -333,6 +333,7 @@
     <Compile Include="LanguageGenerator\Language.cs" />
     <Compile Include="LanguageGenerator\TextAtom.cs" />
     <Compile Include="LanguageGenerator\TextGenerator.cs" />
+    <Compile Include="NewGui\AnnouncementPopup.cs" />
     <Compile Include="NewGui\FramedIcon.cs" />
     <Compile Include="NewGui\CompanyLogo.cs" />
     <Compile Include="NewGui\IconTray.cs" />

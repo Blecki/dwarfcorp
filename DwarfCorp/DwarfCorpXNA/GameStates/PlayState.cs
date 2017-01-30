@@ -364,52 +364,21 @@ namespace DwarfCorp.GameStates
                         }
                 });
 
-            /*
-            Tray topRightTray = new Tray(GUI, layout)
-            {
-                LocalBounds = new Rectangle(0, 0, 132, 68),
-                TrayPosition = Tray.Position.TopRight
-            };
-
-            Button moneyButton = new Button(GUI, topRightTray, "Economy", GUI.SmallFont, Button.ButtonMode.ImageButton,
-                new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 2, 1))
-            {
-                KeepAspectRatio = true,
-                ToolTip = "Opens the Economy Menu",
-                DontMakeBigger = true,
-                DrawFrame = true,
-                TextColor = Color.White,
-                LocalBounds = new Rectangle(8, 6, 32, 32)
-            };
-
-            moneyButton.OnClicked += EconomyState.PushEconomyState;
-
-
-            Button settingsButton = new Button(GUI, topRightTray, "Settings", GUI.SmallFont,
-                Button.ButtonMode.ImageButton,
-                new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 4, 1))
-            {
-                KeepAspectRatio = true,
-                ToolTip = "Opens the Settings Menu",
-                DontMakeBigger = true,
-                DrawFrame = true,
-                TextColor = Color.White,
-                LocalBounds = new Rectangle(64 + 8, 6, 32, 32)
-            };
-
-            settingsButton.OnClicked += OpenPauseMenu;
-            */
-
-            //layout.Add(topRightTray, AlignLayout.Alignment.Right, AlignLayout.Alignment.Top, Vector2.Zero);
-
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
 
-            AnnouncementViewer = new AnnouncementViewer(GUI, layout, WorldManager.AnnouncementManager)
-            {
-                LocalBounds = new Rectangle(0, 0, 350, 80)
-            };
-            layout.Add(AnnouncementViewer, AlignLayout.Alignment.Center, AlignLayout.Alignment.Bottom, Vector2.Zero);
-            //layout.SetComponentPosition(AnnouncementViewer, 3, 10, 3, 1);
+            WorldManager.OnAnnouncement = (title, message, clickAction) =>
+                {
+                    NewGui.RootItem.AddChild(new NewGui.AnnouncementPopup
+                    {
+                        Text = title,
+                        Message = message,
+                        OnClick = (sender, args) => { if (clickAction != null) clickAction(); },
+                        Rect = new Rectangle(
+                            NewGui.VirtualScreen.Left + (NewGui.VirtualScreen.Width / 2) - 128,
+                            NewGui.VirtualScreen.Bottom - 128, 256, 128)
+                    });
+                };
+                        
             layout.UpdateSizes();
 
             NewGui.RootItem.Layout();

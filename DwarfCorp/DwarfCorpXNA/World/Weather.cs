@@ -106,7 +106,7 @@ namespace DwarfCorp
 
             public void Start()
             {
-                WorldManager.AnnouncementManager.Announce("A storm is coming!", "A storm is incoming.");
+                WorldManager.MakeAnnouncement("A storm is coming!", null);
                 BoundingBox bounds = WorldManager.ChunkManager.Bounds;
                 Vector3 extents = bounds.Extents();
                 Vector3 center = bounds.Center();

@@ -259,8 +259,8 @@ namespace DwarfCorp
                     envoy.DistributeGoods();
 
                     natives.TradeEnvoys.Add(envoy);
-                    WorldManager.AnnouncementManager.Announce("Trade envoy from " + natives.Name + " has arrived!",
-                        "Click to zoom to location", creatures.First().ZoomToMe);
+                    WorldManager.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!", natives.Name),
+                        "Click to zoom to location.", creatures.First().ZoomToMe);
                 }
             }
             else
@@ -297,8 +297,8 @@ namespace DwarfCorp
                     }
                     envoy.DistributeGoods();
                     natives.TradeEnvoys.Add(envoy);
-                    WorldManager.AnnouncementManager.Announce("Trade envoy from " + natives.Name + " has arrived!",
-                        "Click to zoom to location", creatures.First().ZoomToMe);
+                    WorldManager.MakeAnnouncement(String.Format("Trade envoy from {0} has arrived!",
+                        natives.Name), "Click to zoom to location.", creatures.First().ZoomToMe);
                 }
             }
 
@@ -307,7 +307,7 @@ namespace DwarfCorp
         public void SendWarParty(Faction natives)
         {
             // todo
-            WorldManager.AnnouncementManager.Announce(Drawer2D.WrapColor("War party from " + natives.Name + " has arrived!", Color.DarkRed), "");
+            WorldManager.MakeAnnouncement(String.Format("War party from {0} has arrived!", natives.Name), null);
             Politics politics = GetPolitics(natives, WorldManager.PlayerFaction);
             politics.WasAtWar = true;
             List<CreatureAI> creatures = WorldManager.MonsterSpawner.Spawn(WorldManager.MonsterSpawner.GenerateSpawnEvent(natives, WorldManager.PlayerFaction, MathFunctions.Random.Next(5) + 1, true));

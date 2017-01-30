@@ -31,6 +31,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DwarfCorp.GameStates;
@@ -426,9 +427,8 @@ namespace DwarfCorp
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
                         if (Creature.Allies == "Dwarf")
                         {
-                            WorldManager.AnnouncementManager.Announce(
-                                Stats.FullName + " (" + Stats.CurrentLevel.Name + ")" +
-                                Drawer2D.WrapColor(" refuses to work!", Color.DarkRed),
+                            WorldManager.MakeAnnouncement(String.Format("{0} ({1}) refuses to workd!",
+                                Stats.FullName, Stats.CurrentLevel.Name),
                                 "Our employee is unhappy, and would rather not work!", ZoomToMe);
                         }
                         CurrentTask = null;
@@ -751,12 +751,13 @@ namespace DwarfCorp
 
                     if (Faction == WorldManager.PlayerFaction)
                     {
-                        WorldManager.AnnouncementManager.Announce(
-                            Stats.FullName + Drawer2D.WrapColor(" is fighting ", Color.DarkRed) +
-                            TextGenerator.IndefiniteArticle(enemy.Creature.Name),
-                            Stats.FullName + " the " + Stats.CurrentLevel.Name + " is fighting " +
-                            TextGenerator.IndefiniteArticle(enemy.Stats.CurrentLevel.Name) + " " +
-                            enemy.Faction.Race.Name,
+                        WorldManager.MakeAnnouncement(
+                            String.Format("{0} is fighting {1}!", Stats.FullName,
+                                TextGenerator.IndefiniteArticle(enemy.Creature.Name)),
+                            String.Format("{0} the {1} is fighting {2} {3}", Stats.FullName,
+                                Stats.CurrentLevel.Name,
+                                TextGenerator.IndefiniteArticle(enemy.Stats.CurrentLevel.Name),
+                                enemy.Faction.Race.Name),
                             ZoomToMe);
                     }
                 }
