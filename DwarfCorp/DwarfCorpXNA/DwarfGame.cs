@@ -48,6 +48,7 @@ namespace DwarfCorp
         public static SpriteBatch SpriteBatch { get; set; }
 
         public static Gem.GumInputMapper GumInput;
+        public static Gem.Input GemInput;
         public static Gum.RenderData GumSkin;
  
         public DwarfGame()
@@ -95,6 +96,11 @@ namespace DwarfCorp
         {
             // Prepare GemGui
             GumInput = new Gem.GumInputMapper(Window.Handle);
+            GemInput = new Gem.Input(GumInput);
+
+            // Register all bindable actions with the input system.
+            GemInput.AddAction("TEST", Gem.Input.KeyBindingType.Pressed);
+
             GumSkin = new Gum.RenderData(GraphicsDevice,  Content,
                     "newgui/xna_draw", "Content/newgui/sheets.txt");
 

@@ -327,9 +327,8 @@ namespace DwarfCorp
 #endif
             {
                 LoadingMessage = "Initializing ...";
-                InitializeStaticData(CompanyMakerState.CompanyName, CompanyMakerState.CompanyMotto,
-                    CompanyMakerState.CompanyLogo,
-                    CompanyMakerState.CompanyColor, Natives);
+                // Todo: How is this initialized by save games?
+                InitializeStaticData(CompanyMakerState.CompanyInformation, Natives);
 
                 LoadingMessage = "Creating Planner ...";
                 PlanService = new PlanService();
@@ -425,8 +424,7 @@ namespace DwarfCorp
         /// Creates a bunch of stuff (such as the biome library, primitive library etc.) which won't change
         /// from game to game.
         /// </summary>
-        public void InitializeStaticData(string companyName, string companyMotto, NamedImageFrame companyLogo,
-            Color companyColor, List<Faction> natives)
+        public void InitializeStaticData(CompanyInformation CompanyInformation, List<Faction> natives)
         {
             CompositeLibrary.Initialize();
             CraftLibrary = new CraftLibrary();
@@ -465,7 +463,7 @@ namespace DwarfCorp
             if (PlanService != null)
                 PlanService.Restart();
 
-            ComponentManager = new ComponentManager(this, companyName, companyMotto, companyLogo, companyColor, natives);
+            ComponentManager = new ComponentManager(this, CompanyInformation, natives);
             ComponentManager.RootComponent = new Body("root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero, false);
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);

@@ -9,16 +9,13 @@ namespace DwarfCorp.NewGui
 {
     public class CompanyLogo : Widget
     {
-        public TileReference LogoBackground = null;
-        public Vector4 LogoBackgroundColor = Vector4.One;
-        public TileReference LogoSymbol = null;
-        public Vector4 LogoSymbolColor = Vector4.One;
+        public CompanyInformation CompanyInformation;
 
         public override Point GetBestSize()
         {
-            if (LogoBackground != null)
+            if (CompanyInformation.LogoBackground != null)
             {
-                var logoTileSheet = Root.GetTileSheet(LogoBackground.Sheet);
+                var logoTileSheet = Root.GetTileSheet(CompanyInformation.LogoBackground.Sheet);
                 return new Point(logoTileSheet.TileWidth, logoTileSheet.TileHeight);
             }
 
@@ -30,25 +27,25 @@ namespace DwarfCorp.NewGui
             var meshes = new List<Gum.Mesh>();
             meshes.Add(base.Redraw());
 
-            if (LogoBackground != null)
+            if (CompanyInformation.LogoBackground != null)
             {
-                var bgTileSet = Root.GetTileSheet(LogoBackground.Sheet);
+                var bgTileSet = Root.GetTileSheet(CompanyInformation.LogoBackground.Sheet);
                 meshes.Add(Gum.Mesh.Quad()
                     .Scale(Rect.Width, Rect.Height)
-                    .Texture(bgTileSet.TileMatrix(LogoBackground.Tile))
+                    .Texture(bgTileSet.TileMatrix(CompanyInformation.LogoBackground.Tile))
                     .Translate(Rect.X, Rect.Y)
-                    .Colorize(LogoBackgroundColor));
+                    .Colorize(CompanyInformation.LogoBackgroundColor));
             }
 
-            if (LogoSymbol != null)
+            if (CompanyInformation.LogoSymbol != null)
             {
                 // Todo: Center symbol on logo.
-                var symbol = Root.GetTileSheet(LogoSymbol.Sheet);
+                var symbol = Root.GetTileSheet(CompanyInformation.LogoSymbol.Sheet);
                 meshes.Add(Gum.Mesh.Quad()
                     .Scale(Rect.Width, Rect.Height)
-                    .Texture(symbol.TileMatrix(LogoSymbol.Tile))
+                    .Texture(symbol.TileMatrix(CompanyInformation.LogoSymbol.Tile))
                     .Translate(Rect.X, Rect.Y)
-                    .Colorize(LogoSymbolColor));
+                    .Colorize(CompanyInformation.LogoSymbolColor));
             }
 
             return Gum.Mesh.Merge(meshes.ToArray());

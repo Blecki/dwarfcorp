@@ -94,6 +94,24 @@
 			"Texture": "newgui/logo-fg",
 			"TileWidth": 32,
 			"TileHeight": 32
+		},
+		{
+			"Name": "icon-frame",
+			"Texture": "newgui/icon-frame",
+			"TileWidth": 40,
+			"TileHeight": 40
+		},
+		{
+			"Name": "tool-icons",
+			"Texture": "newgui/icons",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
+			"Name": "tray-border",
+			"Texture": "newgui/tray-border",
+			"TileWidth": 32,
+			"TileHeight": 32
 		}
 	]
 }

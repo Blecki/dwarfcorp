@@ -824,7 +824,7 @@ namespace DwarfCorp.GameStates
                 LoadingMessage = "Factions";
                 NativeCivilizations = new List<Faction>();
                 FactionLibrary library = new FactionLibrary();
-                library.Initialize(null, "fake", "fake", null, Color.Blue);
+                library.Initialize(null, new CompanyInformation());
                 for (int i = 0; i < Settings.NumCivilizations; i++)
                 {
                     NativeCivilizations.Add(library.GenerateFaction(i, Settings.NumCivilizations));

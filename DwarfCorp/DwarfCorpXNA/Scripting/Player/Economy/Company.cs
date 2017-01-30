@@ -53,17 +53,14 @@ namespace DwarfCorp
             Finance
         };
 
-        public string Name { get; set; }
-        public string Motto { get; set; }
         public Sector Industry { get; set; }
         public float StockPrice { get; set; }
         public float Assets { get; set; }
         public float LastAssets { get; set; }
-        public NamedImageFrame Logo { get; set; }
-        public Color BaseColor { get; set; }
-        public Color SecondaryColor { get; set; }
-        public string TickerName { get { return GenerateTickerName(Name); } }
-        public List<float> StockHistory { get; set; } 
+        public string TickerName { get { return GenerateTickerName(Information.Name); } }
+        public List<float> StockHistory { get; set; }
+
+        public CompanyInformation Information;
 
         public static string GenerateTickerName(string longName)
         {
@@ -140,6 +137,8 @@ namespace DwarfCorp
 
         public static Company GenerateRandom(float assets, float stockPrice, Sector industry)
         {
+            // Todo: Find out how random companies are actually used and reimplement logo generation.
+            /*
             Texture2D texture = TextureManager.GetTexture(ContentPaths.Logos.logos);
 
             int row = 0;
@@ -165,17 +164,18 @@ namespace DwarfCorp
 
             Color c = new Color(MathFunctions.Random.Next(0, 255), MathFunctions.Random.Next(0, 255),
                 MathFunctions.Random.Next(0, 255));
+             * */
                 
             return new Company()
             {
                 Assets = assets,
                 StockPrice = stockPrice,
                 Industry = industry,
-                Logo = image,
-                Name = GenerateName(industry),
-                Motto = GenerateMotto(),
-                BaseColor = c,
-                SecondaryColor  = c,
+                Information = new CompanyInformation
+                {
+                    Name = GenerateName(industry),
+                    Motto = GenerateMotto()
+                },
                 StockHistory = GenerateRandomStockHistory(stockPrice, 10),
                 LastAssets = assets
             };

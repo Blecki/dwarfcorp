@@ -92,7 +92,7 @@ namespace DwarfCorp
             
         }
 
-        public ComponentManager(WorldManager state, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor, List<Faction> natives )
+        public ComponentManager(WorldManager state, CompanyInformation CompanyInformation, List<Faction> natives )
         {
             Components = new Dictionary<uint, GameComponent>();
             Removals = new List<GameComponent>();
@@ -105,7 +105,7 @@ namespace DwarfCorp
             {
                 Factions.AddFactions(natives);
             }
-            Factions.Initialize(state, companyName, companyMotto, companyLogo, companyColor);
+            Factions.Initialize(state, CompanyInformation);
             Point playerOrigin = new Point((int)(WorldManager.WorldOrigin.X), (int)(WorldManager.WorldOrigin.Y));
 
             Factions.Factions["Player"].Center = playerOrigin;

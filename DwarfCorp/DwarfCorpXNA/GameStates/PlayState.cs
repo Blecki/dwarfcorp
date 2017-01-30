@@ -11,12 +11,6 @@ namespace DwarfCorp.GameStates
 {
     public class PlayState : GameState
     {
-        // Handles loading of game assets
-        public ContentManager Content;
-
-        // Interfaces with the graphics card
-        public GraphicsDevice GraphicsDevice;
-
         private bool IsShuttingDown { get; set; }
         private bool QuitOnNextUpdate { get; set; }
         public bool ShouldReset { get; set; }
@@ -70,6 +64,8 @@ namespace DwarfCorp.GameStates
         // Provides event-based keyboard and mouse input.
         public static InputManager Input;// = new InputManager();
 
+        private Gum.Root NewGui;
+
         /// <summary>
         /// Creates a new play state
         /// </summary>
@@ -81,8 +77,6 @@ namespace DwarfCorp.GameStates
             IsShuttingDown = false;
             QuitOnNextUpdate = false;
             ShouldReset = true;
-            Content = Game.Content;
-            GraphicsDevice = Game.GraphicsDevice;
             Paused = false;
             RenderUnderneath = true;
 
@@ -102,8 +96,20 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public override void OnEnter()
         {
+            // Just toss out any pending input.
+            DwarfGame.GumInput.GetInputQueue();
+
             if (!IsInitialized)
             {
+                // Setup new gui. Double rendering the mouse?
+                NewGui = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
+                NewGui.MousePointer = new Gum.MousePointer("mouse", 4, 0);
+
+                // Setup input event handlers. All of the actions should already be established - just 
+                // need handlers.
+                DwarfGame.GemInput.ClearAllHandlers();
+
+
                 World.gameState = this;
                 World.OnLoseEvent += World_OnLoseEvent;
                 CreateGUIComponents();
@@ -154,6 +160,15 @@ namespace DwarfCorp.GameStates
                 CurrentLevelLabel.Text = "Slice: " + WorldManager.ChunkManager.ChunkData.MaxViewingLevel + "/" + WorldManager.ChunkHeight;
                 TimeLabel.Text = WorldManager.Time.CurrentDate.ToShortDateString() + " " + WorldManager.Time.CurrentDate.ToShortTimeString();
             }
+
+            // Update new input system.
+            DwarfGame.GemInput.FireActions(NewGui, (@event, args) =>
+                {
+                    // Let old input handle mouse interaction for now. Will eventually need to be replaced.
+                });
+
+            // Really just handles mouse pointer animation.
+            NewGui.Update(gameTime.ToGameTime());
         }
 
         /// <summary>
@@ -179,6 +194,9 @@ namespace DwarfCorp.GameStates
                 GUI.PostRender(gameTime);
                 DwarfGame.SpriteBatch.End();
             }
+
+            NewGui.Draw();
+
             base.Render(gameTime);
         }
 
@@ -203,7 +221,8 @@ namespace DwarfCorp.GameStates
             GUI.RootComponent.ClearChildren();
             AlignLayout layout = new AlignLayout(GUI, GUI.RootComponent)
             {
-                LocalBounds = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height),
+                LocalBounds = new Rectangle(0, 0, Game.GraphicsDevice.Viewport.Width,
+                    Game.GraphicsDevice.Viewport.Height),
                 WidthSizeMode = GUIComponent.SizeMode.Fit,
                 HeightSizeMode = GUIComponent.SizeMode.Fit,
                 Mode = AlignLayout.PositionMode.Percent
@@ -235,24 +254,39 @@ namespace DwarfCorp.GameStates
                 new Vector2(0.55f, 0.0f));
             //layout.SetComponentPosition(resourceInfoComponent, 7, 0, 2, 2);
 
+            var topLeftPanel = NewGui.RootItem.AddChild(new Gum.Widget
+            {
+                AutoLayout = Gum.AutoLayout.FloatTopLeft,
+                MinimumSize = new Point(256, 128),
+                Transparent = true
+            });
+
+            // Todo: Some kind of row/column abstraction in the layout engine? This transparent
+            //  row panel nonsense is annoying.
+            var topRow = topLeftPanel.AddChild(new Gum.Widget
+                {
+                    AutoLayout = Gum.AutoLayout.DockTop,
+                    MinimumSize = new Point(0, 36),
+                    Transparent = true
+                });
+
+            topRow.AddChild(new NewGui.CompanyLogo
+                {
+                    MinimumSize = new Point(32, 32),
+                    MaximumSize = new Point(32, 32),
+                    AutoLayout = Gum.AutoLayout.DockLeft,
+                    CompanyInformation = WorldManager.PlayerCompany.Information
+                });
+
+            topRow.AddChild(new Gum.Widget
+                {
+                    Text = WorldManager.PlayerCompany.Information.Name,
+                    AutoLayout = Gum.AutoLayout.DockLeft
+                });
+
+
             GridLayout infoLayout = new GridLayout(GUI, companyInfoComponent, 3, 4);
-
-            CompanyLogoPanel = new ImagePanel(GUI, infoLayout, WorldManager.PlayerCompany.Logo)
-            {
-                ConstrainSize = true,
-                KeepAspectRatio = true
-            };
-            infoLayout.SetComponentPosition(CompanyLogoPanel, 0, 0, 1, 1);
-
-            CompanyNameLabel = new Label(GUI, infoLayout, WorldManager.PlayerCompany.Name, GUI.DefaultFont)
-            {
-                TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 255),
-                ToolTip = "Our company Name.",
-                Alignment = Drawer2D.Alignment.Top,
-            };
-            infoLayout.SetComponentPosition(CompanyNameLabel, 1, 0, 1, 1);
-
+            
             MoneyLabel = new DynamicLabel(GUI, infoLayout, "Money:\n", "", GUI.DefaultFont, "C2",
                 () => Master.Faction.Economy.CurrentMoney)
             {
@@ -344,7 +378,27 @@ namespace DwarfCorp.GameStates
             //Rectangle rect = layout.GetRect(new Rectangle(0, 8, 4, 4));
             //layout.SetComponentOffset(MiniMap,  new Point(0, rect.Height - 250));
 
+            var topRightTray = NewGui.RootItem.AddChild(new NewGui.IconTray
+                {
+                    Corners = Gum.Scale9Corners.Left | Gum.Scale9Corners.Bottom,
+                    AutoLayout = Gum.AutoLayout.FloatTopRight,
+                    MinimumSize = new Point(132, 68),
+                    ItemSource = new Gum.Widget[] 
+                        { 
+                            new NewGui.FramedIcon
+                            {
+                                Icon = new Gum.TileReference("tool-icons", 10),
+                                OnClick = (sender, args) => StateManager.PushState("EconomyState")
+                        },
+                        new NewGui.FramedIcon
+                        {
+                            Icon = new Gum.TileReference("tool-icons", 12),
+                            OnClick = (sender, args) => { OpenPauseMenu(); }
+                        }
+                        }
+                });
 
+            /*
             Tray topRightTray = new Tray(GUI, layout)
             {
                 LocalBounds = new Rectangle(0, 0, 132, 68),
@@ -378,8 +432,9 @@ namespace DwarfCorp.GameStates
             };
 
             settingsButton.OnClicked += OpenPauseMenu;
+            */
 
-            layout.Add(topRightTray, AlignLayout.Alignment.Right, AlignLayout.Alignment.Top, Vector2.Zero);
+            //layout.Add(topRightTray, AlignLayout.Alignment.Right, AlignLayout.Alignment.Top, Vector2.Zero);
 
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
 
@@ -390,6 +445,8 @@ namespace DwarfCorp.GameStates
             layout.Add(AnnouncementViewer, AlignLayout.Alignment.Center, AlignLayout.Alignment.Bottom, Vector2.Zero);
             //layout.SetComponentPosition(AnnouncementViewer, 3, 10, 3, 1);
             layout.UpdateSizes();
+
+            NewGui.RootItem.Layout();
         }
 
         /// <summary>
@@ -521,7 +578,8 @@ namespace DwarfCorp.GameStates
             PausePanel = new Panel(GUI, GUI.RootComponent)
             {
                 LocalBounds =
-                    new Rectangle(GraphicsDevice.Viewport.Width / 2 - w / 2, GraphicsDevice.Viewport.Height / 2 - h / 2, w, h)
+                    new Rectangle(Game.GraphicsDevice.Viewport.Width / 2 - w / 2, 
+                        Game.GraphicsDevice.Viewport.Height / 2 - h / 2, w, h)
             };
 
             GridLayout pauseLayout = new GridLayout(GUI, PausePanel, 1, 1);

@@ -74,17 +74,13 @@ namespace DwarfCorp
             
         }
 
-        public Economy(Faction faction, float currentMoney, WorldManager WorldManager, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
+        public Economy(Faction faction, float currentMoney, WorldManager WorldManager, 
+            CompanyInformation CompanyInformation)
         {
             this.WorldManager = WorldManager;
             Company = Company.GenerateRandom(currentMoney, 1.0f, Company.Sector.Exploration);
-            Company.Name = companyName;
-            Company.SecondaryColor = Color.White;
-            Company.Logo = companyLogo;
-            Company.Motto = companyMotto;
+            Company.Information = CompanyInformation;
             Company.Assets = currentMoney;
-            Company.BaseColor = companyColor;
-
 
             CurrentMoney = currentMoney;
             Faction = faction;
