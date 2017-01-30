@@ -39,8 +39,6 @@ namespace DwarfCorp.GameStates
         // Text displayed on the screen for the current game time
         public Label TimeLabel { get; set; }
 
-        public AnnouncementViewer AnnouncementViewer { get; set; }
-
         public Minimap MiniMap { get; set; }
 
         // Provides event-based keyboard and mouse input.

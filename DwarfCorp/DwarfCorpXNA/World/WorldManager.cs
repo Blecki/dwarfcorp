@@ -218,8 +218,6 @@ namespace DwarfCorp
 
         public static Point3 WorldSize { get; set; }
 
-        //public static AnnouncementManager AnnouncementManager = new AnnouncementManager();
-        
         // More statics. Hate this.
         public static Action<String, String, Action> OnAnnouncement;
 

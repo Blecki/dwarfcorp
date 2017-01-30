@@ -297,7 +297,6 @@
     <Compile Include="GUI\Components\Basic\Window.cs" />
     <Compile Include="GUI\Components\Complex\ActDisplay.cs" />
     <Compile Include="GUI\Components\Complex\AIDebugger.cs" />
-    <Compile Include="GUI\Components\Complex\AnnounementViewer.cs" />
     <Compile Include="GUI\Components\Complex\ApplicationPanel.cs" />
     <Compile Include="GUI\Components\Complex\BuildMenu.cs" />
     <Compile Include="GUI\Components\Complex\CapitalPanel.cs" />
@@ -438,8 +437,6 @@
     <Compile Include="Scripting\Magic\SpellLibrary.cs" />
     <Compile Include="Scripting\Magic\SpellTree.cs" />
     <Compile Include="Scripting\MonsterSpawner.cs" />
-    <Compile Include="Scripting\Player\Announcements\Announcement.cs" />
-    <Compile Include="Scripting\Player\Announcements\AnnouncementManager.cs" />
     <Compile Include="Scripting\Player\BodySelector.cs" />
     <Compile Include="Scripting\Player\Building\BuildOrder.cs" />
     <Compile Include="Scripting\Player\Building\BuildRoomOrder.cs" />
