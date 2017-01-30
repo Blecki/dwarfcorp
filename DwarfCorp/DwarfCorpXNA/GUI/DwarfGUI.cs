@@ -243,9 +243,6 @@ namespace DwarfCorp
 
         }
 
-
-
-
         public bool IsMouseOver()
         {
             return RootComponent.IsMouseOverRecursive();

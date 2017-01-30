@@ -267,6 +267,16 @@ namespace DwarfCorp
         public GameState gameState;
 
         public static DwarfGUI GUI;
+        public static Gum.Root NewGui;
+
+        public static bool IsMouseOverGui
+        {
+            get
+            {
+                return GUI.IsMouseOver() ||
+                    NewGui.HoverItem != null;
+            }
+        }
 
         // Since world, like many of the other classes, is pretty much a singleton given how many static variables it has
         // this provides singleton access
@@ -1176,12 +1186,12 @@ namespace DwarfCorp
                     {
                         minion.Status.Energy.CurrentValue = minion.Status.Energy.MaxValue;
                     }
-                    Master.ToolBar.SpeedButton.SetSpeed(1);
+                    //Master.ToolBar.SpeedButton.SetSpeed(1);
                     Time.Speed = 100;
                 }
                 else
                 {
-                    Master.ToolBar.SpeedButton.SetSpecialSpeed(3);
+                    //Master.ToolBar.SpeedButton.SetSpecialSpeed(3);
                     Time.Speed = 1000;
                 }
             }

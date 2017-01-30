@@ -81,7 +81,7 @@ namespace DwarfCorp
             Player.BodySelector.AllowRightClickSelection = true;
             WorldManager.GUI.IsMouseVisible = true;
 
-            if (WorldManager.GUI.IsMouseOver())
+            if (WorldManager.IsMouseOverGui)
             {
                 WorldManager.GUI.MouseMode = GUISkin.MousePointer.Pointer;
             }

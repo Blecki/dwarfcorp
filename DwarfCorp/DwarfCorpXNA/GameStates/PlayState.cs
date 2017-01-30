@@ -35,6 +35,8 @@ namespace DwarfCorp.GameStates
         private Gum.Widget MoneyLabel;
         private Gum.Widget StockLabel;
         private Gum.Widget LevelLabel;
+        private Dictionary<GameMaster.ToolMode, Gum.Widget> ToolbarItems = new Dictionary<GameMaster.ToolMode, Gum.Widget>();
+        private Gum.Widget BottomRightTray;
 
         // Text displayed on the screen for the current game time
         public Label TimeLabel { get; set; }
@@ -84,6 +86,7 @@ namespace DwarfCorp.GameStates
                 // Setup new gui. Double rendering the mouse?
                 NewGui = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
                 NewGui.MousePointer = new Gum.MousePointer("mouse", 4, 0);
+                WorldManager.NewGui = NewGui;
 
                 // Setup input event handlers. All of the actions should already be established - just 
                 // need handlers.
@@ -130,6 +133,13 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
+            // Needs to run before old input so tools work
+            // Update new input system.
+            DwarfGame.GemInput.FireActions(NewGui, (@event, args) =>
+            {
+                // Let old input handle mouse interaction for now. Will eventually need to be replaced.
+            });
+
             World.Update(gameTime);
             GUI.Update(gameTime);
             Input.Update();
@@ -140,11 +150,7 @@ namespace DwarfCorp.GameStates
                 TimeLabel.Text = WorldManager.Time.CurrentDate.ToShortDateString() + " " + WorldManager.Time.CurrentDate.ToShortTimeString();
             }
 
-            // Update new input system.
-            DwarfGame.GemInput.FireActions(NewGui, (@event, args) =>
-                {
-                    // Let old input handle mouse interaction for now. Will eventually need to be replaced.
-                });
+           
             
             MoneyLabel.Text = String.Format("Money: {0}", Master.Faction.Economy.CurrentMoney);
             MoneyLabel.Invalidate();
@@ -156,6 +162,27 @@ namespace DwarfCorp.GameStates
                 WorldManager.ChunkManager.ChunkData.MaxViewingLevel,
                 WorldManager.ChunkHeight);
             LevelLabel.Invalidate();
+
+            #region Update toolbar tray
+            foreach (var tools in ToolbarItems)
+            {
+                tools.Value.Hidden = true;
+                tools.Value.Invalidate();
+            }
+
+            if (Master.SelectedMinions.Count == 0)
+            {
+                if (Master.CurrentToolMode != GameMaster.ToolMode.God)
+                    Master.CurrentToolMode = GameMaster.ToolMode.SelectUnits;
+            }
+            else
+            {
+                foreach (var tool in ToolbarItems)
+                    tool.Value.Hidden = !Master.Faction.SelectedMinions.Any(minion => minion.Stats.CurrentClass.HasAction(tool.Key));
+            }
+
+            ToolbarItems[GameMaster.ToolMode.SelectUnits].Hidden = false;
+            #endregion
 
             // Really just handles mouse pointer animation.
             NewGui.Update(gameTime.ToGameTime());
@@ -219,13 +246,13 @@ namespace DwarfCorp.GameStates
             };
 
             GUI.RootComponent.AddChild(Master.Debugger.MainPanel);
-            layout.AddChild(Master.ToolBar);
-            Master.ToolBar.Parent = layout;
-            Master.ToolBar.LocalBounds = new Rectangle(0, 0, 256, 100);
+            //layout.AddChild(Master.ToolBar);
+            //Master.ToolBar.Parent = layout;
+            //Master.ToolBar.LocalBounds = new Rectangle(0, 0, 256, 100);
 
-            layout.Add(Master.ToolBar, AlignLayout.Alignment.Right, AlignLayout.Alignment.Bottom, Vector2.Zero);
+            //layout.Add(Master.ToolBar, AlignLayout.Alignment.Right, AlignLayout.Alignment.Bottom, Vector2.Zero);
             //layout.SetComponentPosition(Master.ToolBar, 7, 10, 4, 1);
-
+            
             GUIComponent companyInfoComponent = new GUIComponent(GUI, layout)
             {
                 LocalBounds = new Rectangle(0, 0, 350, 200),
@@ -244,13 +271,24 @@ namespace DwarfCorp.GameStates
                 new Vector2(0.55f, 0.0f));
             //layout.SetComponentPosition(resourceInfoComponent, 7, 0, 2, 2);
 
-            var topLeftPanel = NewGui.RootItem.AddChild(new Gum.Widget
-            {
-                AutoLayout = Gum.AutoLayout.FloatTopLeft,
-                MinimumSize = new Point(256, 128),
-                Transparent = true
-            });
+            ToolbarItems[GameMaster.ToolMode.SelectUnits] = CreateIcon(5, GameMaster.ToolMode.SelectUnits);
+            ToolbarItems[GameMaster.ToolMode.Dig] = CreateIcon(0, GameMaster.ToolMode.Dig);
+            ToolbarItems[GameMaster.ToolMode.Build] = CreateIcon(2, GameMaster.ToolMode.Build);
+            ToolbarItems[GameMaster.ToolMode.Cook] = CreateIcon(3, GameMaster.ToolMode.Cook);
+            ToolbarItems[GameMaster.ToolMode.Farm] = CreateIcon(5, GameMaster.ToolMode.Farm);
+            ToolbarItems[GameMaster.ToolMode.Magic] = CreateIcon(6, GameMaster.ToolMode.Magic);
+            ToolbarItems[GameMaster.ToolMode.Gather] = CreateIcon(6, GameMaster.ToolMode.Gather);
+            ToolbarItems[GameMaster.ToolMode.Chop] = CreateIcon(1, GameMaster.ToolMode.Chop);
+            ToolbarItems[GameMaster.ToolMode.Guard] = CreateIcon(4, GameMaster.ToolMode.Guard);
+            ToolbarItems[GameMaster.ToolMode.Attack] = CreateIcon(3, GameMaster.ToolMode.Attack);
 
+            BottomRightTray = NewGui.RootItem.AddChild(new NewGui.IconTray
+            {
+                Corners = Gum.Scale9Corners.Left | Gum.Scale9Corners.Top,
+                AutoLayout = Gum.AutoLayout.FloatBottomRight,
+                MinimumSize = new Point(256, 128),
+                ItemSource = ToolbarItems.Select(i => i.Value)
+            });
 
             NewGui.RootItem.AddChild(new NewGui.CompanyLogo
                 {
@@ -381,6 +419,21 @@ namespace DwarfCorp.GameStates
 
             NewGui.RootItem.Layout();
         }
+
+        private Gum.Widget CreateIcon(int Tile, GameMaster.ToolMode Mode)
+        {
+            return new NewGui.FramedIcon
+            {
+                Icon = new Gum.TileReference("tool-icons", Tile),
+                OnClick = (sender, args) =>
+                    {
+                        Master.Tools[Mode].OnBegin();
+                        if (Master.CurrentToolMode != Mode)
+                            Master.CurrentTool.OnEnd();
+                        Master.CurrentToolMode = Mode;
+                    }
+            };
+        }
                 
         /// <summary>
         /// Called when the user releases a key
@@ -398,7 +451,7 @@ namespace DwarfCorp.GameStates
             {
                 if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
                 {
-                    Master.ToolBar.ToolButtons[GameMaster.ToolMode.SelectUnits].InvokeClick();
+                    ToolbarItems[Master.CurrentToolMode].OnClick(null, null);
                 }
                 else if (PausePanel != null && PausePanel.IsVisible)
                 {
@@ -430,7 +483,7 @@ namespace DwarfCorp.GameStates
                 int i = 0;
                 if (index == 0 || Master.SelectedMinions.Count > 0)
                 {
-                    foreach (var pair in Master.ToolBar.ToolButtons)
+                    foreach (var pair in ToolbarItems)
                     {
                         if (i == index)
                         {
@@ -439,7 +492,7 @@ namespace DwarfCorp.GameStates
 
                             if ((index == 0 || minions.Count > 0))
                             {
-                                pair.Value.InvokeClick();
+                                pair.Value.OnClick(null,null);
                                 break;
                             }
                         }
@@ -452,15 +505,15 @@ namespace DwarfCorp.GameStates
             else if (key == ControlSettings.Mappings.Pause)
             {
                 Paused = !Paused;
-                Master.ToolBar.SpeedButton.SetSpeed(Paused ? 0 : 1);
+                //Master.ToolBar.SpeedButton.SetSpeed(Paused ? 0 : 1);
             }
             else if (key == ControlSettings.Mappings.TimeForward)
             {
-                Master.ToolBar.SpeedButton.IncrementSpeed();
+                //Master.ToolBar.SpeedButton.IncrementSpeed();
             }
             else if (key == ControlSettings.Mappings.TimeBackward)
             {
-                Master.ToolBar.SpeedButton.DecrementSpeed();
+                //Master.ToolBar.SpeedButton.DecrementSpeed();
             }
             else if (key == ControlSettings.Mappings.ToggleGUI)
             {

@@ -44,9 +44,6 @@ namespace DwarfCorp
         public DwarfGUI GUI { get; set; }
 
         [JsonIgnore]
-        public MasterControls ToolBar { get; set; }
-
-        [JsonIgnore]
         public VoxelSelector VoxSelector { get; set; }
 
         [JsonIgnore]
@@ -102,10 +99,6 @@ namespace DwarfCorp
             CreateTools();
 
             InputManager.KeyReleasedCallback += OnKeyReleased;
-            ToolBar = new MasterControls(GUI, GUI.RootComponent, this, TextureManager.GetTexture(ContentPaths.GUI.icons), graphics, game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default))
-            {
-                Master = this
-            };
 
             Debugger = new AIDebugger(GUI, this);
 
@@ -122,7 +115,6 @@ namespace DwarfCorp
             Tools[ToolMode.SelectUnits].Destroy();
             Tools.Clear();
             Faction = null;
-            ToolBar.Master = null;
             VoxSelector = null;
             BodySelector = null;
         }
@@ -318,10 +310,10 @@ namespace DwarfCorp
 
         public void Update(DwarfGame game, DwarfTime time)
         {
-            if(CurrentToolMode != ToolMode.God)
-            {
-                CurrentToolMode = ToolBar.CurrentMode;
-            }
+            //if (CurrentToolMode != ToolMode.God)
+            //{
+            //    CurrentToolMode = ToolBar.CurrentMode;
+            //}
 
             CurrentTool.Update(game, time);
             if(GameSettings.Default.EnableAIDebugger)
@@ -428,7 +420,7 @@ namespace DwarfCorp
             {
                 if(CurrentToolMode == ToolMode.God)
                 {
-                    CurrentToolMode = ToolBar.CurrentMode;
+                    
                     GodModeTool godMode = (GodModeTool) Tools[ToolMode.God];
                     godMode.IsActive = false;
                 }
@@ -441,9 +433,11 @@ namespace DwarfCorp
             }
         }
 
+        // Todo: Delete this.
         public bool IsMouseOverGui()
         {
-            return GUI.IsMouseOver() || (GUI.FocusComponent != null);
+            return WorldManager.IsMouseOverGui;
+            //return GUI.IsMouseOver() || (GUI.FocusComponent != null);
         }
 
         #endregion

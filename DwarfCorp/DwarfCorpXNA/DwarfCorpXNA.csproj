@@ -310,7 +310,6 @@
     <Compile Include="GUI\Components\Complex\ItemSelector.cs" />
     <Compile Include="GUI\Components\Complex\KeyEditor.cs" />
     <Compile Include="GUI\Components\Complex\MagicMenu.cs" />
-    <Compile Include="GUI\Components\Complex\MasterControls.cs" />
     <Compile Include="GUI\Components\Complex\Minimap.cs" />
     <Compile Include="GUI\Components\Complex\MinionPanel.cs" />
     <Compile Include="GUI\Components\Complex\ResourceInfoComponent.cs" />

@@ -501,7 +501,7 @@ namespace DwarfCorp
                 }
             }
 
-            if (mouse.ScrollWheelValue != LastWheel && !WorldManager.GUI.IsMouseOver())
+            if (mouse.ScrollWheelValue != LastWheel && !WorldManager.IsMouseOverGui)
             {
                 int change = mouse.ScrollWheelValue - LastWheel;
 
