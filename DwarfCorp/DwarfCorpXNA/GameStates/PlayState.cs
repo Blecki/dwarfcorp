@@ -30,32 +30,14 @@ namespace DwarfCorp.GameStates
         // Draws and manages the user interface 
         public static DwarfGUI GUI = null;
         public Panel PausePanel;
-        // Text displayed on the screen for the player's company
-        public Label CompanyNameLabel { get; set; }
 
-        // Text displayed on the screen for the player's logo
-        public ImagePanel CompanyLogoPanel { get; set; }
 
-        // Text displayed on the screen for the current amount of money the player has
-        public Label MoneyLabel { get; set; }
-
-        // Text displayed on the screen for the current amount of money the player has
-        public Label StockLabel { get; set; }
+        private Gum.Widget MoneyLabel;
+        private Gum.Widget StockLabel;
+        private Gum.Widget LevelLabel;
 
         // Text displayed on the screen for the current game time
         public Label TimeLabel { get; set; }
-
-        // Text displayed on the screen for the current slice
-        public Label CurrentLevelLabel { get; set; }
-
-        // When pressed, makes the current slice increase.
-        public Button CurrentLevelUpButton { get; set; }
-
-        //When pressed, makes the current slice decrease
-        public Button CurrentLevelDownButton { get; set; }
-
-        // When dragged, the current slice changes
-        public Slider LevelSlider { get; set; }
 
         public AnnouncementViewer AnnouncementViewer { get; set; }
 
@@ -157,7 +139,6 @@ namespace DwarfCorp.GameStates
             // Updates some of the GUI status
             if (Game.IsActive)
             {
-                CurrentLevelLabel.Text = "Slice: " + WorldManager.ChunkManager.ChunkData.MaxViewingLevel + "/" + WorldManager.ChunkHeight;
                 TimeLabel.Text = WorldManager.Time.CurrentDate.ToShortDateString() + " " + WorldManager.Time.CurrentDate.ToShortTimeString();
             }
 
@@ -166,6 +147,17 @@ namespace DwarfCorp.GameStates
                 {
                     // Let old input handle mouse interaction for now. Will eventually need to be replaced.
                 });
+            
+            MoneyLabel.Text = String.Format("Money: {0}", Master.Faction.Economy.CurrentMoney);
+            MoneyLabel.Invalidate();
+
+            StockLabel.Text = String.Format("Stock: {0}", Master.Faction.Economy.Company.StockPrice);
+            StockLabel.Invalidate();
+
+            LevelLabel.Text = String.Format("Slice: {0}/{1}",
+                WorldManager.ChunkManager.ChunkData.MaxViewingLevel,
+                WorldManager.ChunkHeight);
+            LevelLabel.Invalidate();
 
             // Really just handles mouse pointer animation.
             NewGui.Update(gameTime.ToGameTime());
@@ -261,54 +253,73 @@ namespace DwarfCorp.GameStates
                 Transparent = true
             });
 
-            // Todo: Some kind of row/column abstraction in the layout engine? This transparent
-            //  row panel nonsense is annoying.
-            var topRow = topLeftPanel.AddChild(new Gum.Widget
-                {
-                    AutoLayout = Gum.AutoLayout.DockTop,
-                    MinimumSize = new Point(0, 36),
-                    Transparent = true
-                });
 
-            topRow.AddChild(new NewGui.CompanyLogo
+            NewGui.RootItem.AddChild(new NewGui.CompanyLogo
                 {
+                    Rect = new Rectangle(8,8,32,32),
                     MinimumSize = new Point(32, 32),
                     MaximumSize = new Point(32, 32),
-                    AutoLayout = Gum.AutoLayout.DockLeft,
+                    AutoLayout = Gum.AutoLayout.None,
                     CompanyInformation = WorldManager.PlayerCompany.Information
                 });
 
-            topRow.AddChild(new Gum.Widget
+            NewGui.RootItem.AddChild(new Gum.Widget
                 {
+                    Rect = new Rectangle(48,8,256,20),
                     Text = WorldManager.PlayerCompany.Information.Name,
-                    AutoLayout = Gum.AutoLayout.DockLeft
+                    AutoLayout = Gum.AutoLayout.None,
+                    TextSize = 2
                 });
+
+            MoneyLabel = NewGui.RootItem.AddChild(new Gum.Widget
+                {
+                    Rect = new Rectangle(48, 32, 128, 20),
+                    AutoLayout = Gum.AutoLayout.None,
+                    TextSize = 2
+                });
+
+            StockLabel = NewGui.RootItem.AddChild(new Gum.Widget
+                {
+                    Rect = new Rectangle(48, 56, 128, 20),
+                    AutoLayout = Gum.AutoLayout.None,
+                    TextSize = 2
+                });
+
+            LevelLabel = NewGui.RootItem.AddChild(new Gum.Widget
+                {
+                    Rect = new Rectangle(8, 80, 128, 20),
+                    AutoLayout = Gum.AutoLayout.None,
+                    TextSize = 2
+                });
+
+            NewGui.RootItem.AddChild(new Gum.Widget
+                {
+                    Background = new Gum.TileReference("round-buttons", 3),
+                    Rect = new Rectangle(136, 80, 16, 16),
+                    OnClick = (sender, args) =>
+                    {
+                        WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(
+                            WorldManager.ChunkManager.ChunkData.MaxViewingLevel + 1,
+                            ChunkManager.SliceMode.Y);
+                    }
+                });
+
+            NewGui.RootItem.AddChild(new Gum.Widget
+            {
+                Background = new Gum.TileReference("round-buttons", 7),
+                Rect = new Rectangle(154, 80, 16, 16),
+                OnClick = (sender, args) => 
+                {
+                    WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(
+                        WorldManager.ChunkManager.ChunkData.MaxViewingLevel - 1,
+                        ChunkManager.SliceMode.Y);
+                }
+            });
 
 
             GridLayout infoLayout = new GridLayout(GUI, companyInfoComponent, 3, 4);
             
-            MoneyLabel = new DynamicLabel(GUI, infoLayout, "Money:\n", "", GUI.DefaultFont, "C2",
-                () => Master.Faction.Economy.CurrentMoney)
-            {
-                TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 255),
-                ToolTip = "Amount of money in our treasury.",
-                Alignment = Drawer2D.Alignment.Top,
-                TriggerMouseOver = false
-            };
-            infoLayout.SetComponentPosition(MoneyLabel, 3, 0, 1, 1);
-
-
-            StockLabel = new DynamicLabel(GUI, infoLayout, "Stock:\n", "", GUI.DefaultFont, "C2",
-                () => Master.Faction.Economy.Company.StockPrice)
-            {
-                TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 255),
-                ToolTip = "The price of our company stock.",
-                Alignment = Drawer2D.Alignment.Top,
-            };
-            infoLayout.SetComponentPosition(StockLabel, 5, 0, 1, 1);
-
+            
 
             TimeLabel = new Label(GUI, layout,
                 WorldManager.Time.CurrentDate.ToShortDateString() + " " + WorldManager.Time.CurrentDate.ToShortTimeString(), GUI.SmallFont)
@@ -320,51 +331,6 @@ namespace DwarfCorp.GameStates
             };
             layout.Add(TimeLabel, AlignLayout.Alignment.Center, AlignLayout.Alignment.Top, Vector2.Zero);
             //layout.SetComponentPosition(TimeLabel, 6, 0, 1, 1);
-
-            CurrentLevelLabel = new Label(GUI, infoLayout, "Slice: " + WorldManager.ChunkManager.ChunkData.MaxViewingLevel,
-                GUI.DefaultFont)
-            {
-                TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 255),
-                ToolTip = "The maximum height of visible terrain"
-            };
-            infoLayout.SetComponentPosition(CurrentLevelLabel, 0, 1, 1, 1);
-
-            CurrentLevelUpButton = new Button(GUI, CurrentLevelLabel, "", GUI.DefaultFont, Button.ButtonMode.ImageButton,
-                GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowUp))
-            {
-                ToolTip = "Go up one level of visible terrain",
-                KeepAspectRatio = true,
-                DontMakeBigger = true,
-                DontMakeSmaller = true,
-                LocalBounds = new Rectangle(100, 16, 32, 32)
-            };
-
-            CurrentLevelUpButton.OnClicked += CurrentLevelUpButton_OnClicked;
-
-            CurrentLevelDownButton = new Button(GUI, CurrentLevelLabel, "", GUI.DefaultFont,
-                Button.ButtonMode.ImageButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowDown))
-            {
-                ToolTip = "Go down one level of visible terrain",
-                KeepAspectRatio = true,
-                DontMakeBigger = true,
-                DontMakeSmaller = true,
-                LocalBounds = new Rectangle(140, 16, 32, 32)
-            };
-            CurrentLevelDownButton.OnClicked += CurrentLevelDownButton_OnClicked;
-
-            /*
-            LevelSlider = new Slider(GUI, layout, "", ChunkManager.ChunkData.MaxViewingLevel, 0, ChunkManager.ChunkData.ChunkSizeY, Slider.SliderMode.Integer)
-            {
-                Orient = Slider.Orientation.Vertical,
-                ToolTip = "Controls the maximum height of visible terrain",
-                DrawLabel = false
-            };
-
-            layout.SetComponentPosition(LevelSlider, 0, 1, 1, 6);
-            LevelSlider.OnClicked += LevelSlider_OnClicked;
-            LevelSlider.InvertValue = true;
-            */
 
             MiniMap = new Minimap(GUI, layout, 192, 192, World,
                 TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap),
@@ -448,35 +414,7 @@ namespace DwarfCorp.GameStates
 
             NewGui.RootItem.Layout();
         }
-
-        /// <summary>
-        /// Called when the slice slider was moved.
-        /// </summary>
-        private void LevelSlider_OnClicked()
-        {
-            WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel((int)LevelSlider.SliderValue, ChunkManager.SliceMode.Y);
-        }
-
-        /// <summary>
-        /// Called when the "Slice -" button is pressed
-        /// </summary>
-        private void CurrentLevelDownButton_OnClicked()
-        {
-            WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(WorldManager.ChunkManager.ChunkData.MaxViewingLevel - 1,
-                ChunkManager.SliceMode.Y);
-        }
-
-
-        /// <summary>
-        /// Called when the "Slice +" button is pressed
-        /// </summary>
-        private void CurrentLevelUpButton_OnClicked()
-        {
-            WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(WorldManager.ChunkManager.ChunkData.MaxViewingLevel + 1,
-                ChunkManager.SliceMode.Y);
-        }
-
-
+                
         /// <summary>
         /// Called when the user releases a key
         /// </summary>
