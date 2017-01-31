@@ -318,12 +318,11 @@ namespace DwarfCorp
             }
         }
 
-
-        public List<T> GetVisibleObjects<T>(BoundingFrustum getFrustrum, CollisionType collisionType) where T : IBoundedObject
+        public HashSet<T> GetVisibleObjects<T>(BoundingFrustum getFrustrum, CollisionType collisionType) where T : IBoundedObject
         {
             HashSet<T> objects = new HashSet<T>();
             GetObjectsIntersecting(getFrustrum, objects, collisionType);
-            return objects.ToList();
+            return objects;
         }
 
         public void DebugDraw()

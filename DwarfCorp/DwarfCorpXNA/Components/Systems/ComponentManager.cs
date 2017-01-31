@@ -322,16 +322,7 @@ namespace DwarfCorp
             Removals.Clear();
             RemovalMutex.ReleaseMutex();
         }
-
-
-        public List<Body> FrustrumCullLocatableComponents(Camera camera)
-        {
-            List<Body> visible = CollisionManager.GetVisibleObjects<Body>(camera.GetFrustrum(), CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
-              
-            return visible;
-        }
-
-
+                
         private HashSet<Body> visibleComponents = new HashSet<Body>();
         private List<GameComponent> componentsToDraw = new List<GameComponent>();
 
@@ -366,17 +357,11 @@ namespace DwarfCorp
 
             if(!renderForWater)
             {
-                visibleComponents.Clear();
-                componentsToDraw.Clear();
-                
-                
-                List<Body> list = FrustrumCullLocatableComponents(camera);
-                foreach(Body component in list)
-                {
-                    visibleComponents.Add(component);
-                }
-                 
+                visibleComponents = CollisionManager.GetVisibleObjects<Body>(camera.GetFrustrum(),
+                    CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
+                componentsToDraw.Clear();
+               
                 Camera = camera;
                 foreach(GameComponent component in Components.Values)
                 {
