@@ -478,6 +478,11 @@ namespace DwarfCorp
             return new BoundingBox(minPos, maxPos);
         }
 
+        public static BoundingBox GetBoundingBox(IEnumerable<IBoundedObject> objects)
+        {
+            return GetBoundingBox(objects.Select(item => item.GetBoundingBox()));
+        }
+
         /// <summary>
         /// Gets the bounding box of a set of bounding boxes.
         /// </summary>

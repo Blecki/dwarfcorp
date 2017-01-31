@@ -272,6 +272,7 @@
     <Compile Include="Graphics\Primitives\LiquidPrimitive.cs" />
     <Compile Include="Graphics\Primitives\PrimitiveLibrary.cs" />
     <Compile Include="Graphics\Primitives\VoxelListPrimitive.cs" />
+    <Compile Include="Graphics\SelectionBuffer.cs" />
     <Compile Include="GUI\Components\Basic\AnimatedImagePanel.cs" />
     <Compile Include="GUI\Components\Basic\Button.cs" />
     <Compile Include="GUI\Components\Basic\Checkbox.cs" />

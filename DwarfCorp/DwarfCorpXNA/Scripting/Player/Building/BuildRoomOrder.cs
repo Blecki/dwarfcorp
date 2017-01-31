@@ -158,7 +158,9 @@ namespace DwarfCorp
             }
             IsBuilt = true;
             ToBuild.IsBuilt = true;
-            RoomLibrary.GenerateRoomComponentsTemplate(ToBuild, Faction.Components, WorldManager.ChunkManager.Content, WorldManager.ChunkManager.Graphics);
+            List<Body> components = RoomLibrary.GenerateRoomComponentsTemplate(ToBuild.RoomData, ToBuild.Voxels,
+                Faction.Components, WorldManager.ChunkManager.Content, WorldManager.ChunkManager.Graphics);
+            RoomLibrary.BuildAllComponents(components, ToBuild);
             ToBuild.OnBuilt();
 
             if (!silent)

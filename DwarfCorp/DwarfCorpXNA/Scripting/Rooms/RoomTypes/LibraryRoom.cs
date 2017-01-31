@@ -83,11 +83,11 @@ namespace DwarfCorp
             RoomTile[,]  bookshlf =
             {
                 {
-                    RoomTile.None,
+                    RoomTile.Open,
                     RoomTile.Wall | RoomTile.Edge
                 },
                 {
-                    RoomTile.None,
+                    RoomTile.Open,
                     RoomTile.BookShelf
                 }
             };
@@ -109,17 +109,17 @@ namespace DwarfCorp
             {
                 {
                     RoomTile.None,
-                    RoomTile.Open,
+                    RoomTile.Open | RoomTile.Edge | RoomTile.BookShelf,
                     RoomTile.None
                 },
                 {
-                    RoomTile.Open,
+                    RoomTile.Open | RoomTile.Edge | RoomTile.BookShelf,
                     RoomTile.Books,
-                    RoomTile.Open
+                    RoomTile.Open | RoomTile.Edge | RoomTile.BookShelf,
                 },
                 {
                     RoomTile.None,
-                    RoomTile.Open,
+                    RoomTile.Open | RoomTile.Edge | RoomTile.BookShelf,
                     RoomTile.None
                 }
             };
