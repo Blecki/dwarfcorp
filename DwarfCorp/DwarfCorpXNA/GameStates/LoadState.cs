@@ -86,14 +86,6 @@ namespace DwarfCorp.GameStates
  
         }
 
-        public override void Render(DwarfTime gameTime)
-        {
-            return;
-            //throw new InvalidOperationException();
-
-            base.Render(gameTime);
-        }
-
         public override void RenderUnitialized(DwarfTime gameTime)
         {
             TipTimer.Update(gameTime);

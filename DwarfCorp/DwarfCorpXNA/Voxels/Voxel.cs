@@ -514,6 +514,11 @@ namespace DwarfCorp
         {
             return Chunk.Manager.ChunkData.GetVoxel(Position + dir, ref vox);
         }
+
+        public override string ToString()
+        {
+            return String.Format("Voxel {{{0}, {1}, {2}}}", gridpos.X, gridpos.Y, gridpos.Z);
+        }
     }
 
 }
