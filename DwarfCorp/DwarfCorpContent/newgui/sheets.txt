@@ -130,6 +130,12 @@
 			"Texture": "newgui/diplo-dorf",
 			"TileWidth": 64,
 			"TileHeight": 64
+		},
+		{
+			"Name": "minimap-frame",
+			"Texture": "newgui/gui_minimap",
+			"TileWidth": 239,
+			"TileHeight": 210
 		}
 	]
 }

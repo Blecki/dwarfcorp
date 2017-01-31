@@ -29,19 +29,18 @@ namespace DwarfCorp.GameStates
         // ------GUI--------
         // Draws and manages the user interface 
         public static DwarfGUI GUI = null;
-        public Panel PausePanel;
-
 
         private Gum.Widget MoneyLabel;
         private Gum.Widget StockLabel;
         private Gum.Widget LevelLabel;
         private Dictionary<GameMaster.ToolMode, Gum.Widget> ToolbarItems = new Dictionary<GameMaster.ToolMode, Gum.Widget>();
         private Gum.Widget BottomRightTray;
+        private Gum.Widget TimeLabel;
+        private Gum.Widget PausePanel;
+        private NewGui.MinimapFrame MinimapFrame;
+        private NewGui.MinimapRenderer MinimapRenderer;
 
-        // Text displayed on the screen for the current game time
-        public Label TimeLabel { get; set; }
-
-        public Minimap MiniMap { get; set; }
+       // public Minimap MiniMap { get; set; }
 
         // Provides event-based keyboard and mouse input.
         public static InputManager Input;// = new InputManager();
@@ -144,14 +143,14 @@ namespace DwarfCorp.GameStates
             GUI.Update(gameTime);
             Input.Update();
 
-            // Updates some of the GUI status
-            if (Game.IsActive)
-            {
-                TimeLabel.Text = WorldManager.Time.CurrentDate.ToShortDateString() + " " + WorldManager.Time.CurrentDate.ToShortTimeString();
-            }
+            #region Update time label
+            TimeLabel.Text = String.Format("{0} {1}",
+                WorldManager.Time.CurrentDate.ToShortDateString(),
+                WorldManager.Time.CurrentDate.ToShortTimeString());
+            TimeLabel.Invalidate();
+            #endregion
 
-           
-            
+            #region Update top left panel
             MoneyLabel.Text = String.Format("Money: {0}", Master.Faction.Economy.CurrentMoney);
             MoneyLabel.Invalidate();
 
@@ -162,6 +161,7 @@ namespace DwarfCorp.GameStates
                 WorldManager.ChunkManager.ChunkData.MaxViewingLevel,
                 WorldManager.ChunkHeight);
             LevelLabel.Invalidate();
+            #endregion
 
             #region Update toolbar tray
             foreach (var tools in ToolbarItems)
@@ -195,6 +195,9 @@ namespace DwarfCorp.GameStates
         public override void Render(DwarfTime gameTime)
         {
             EnableScreensaver = !World.ShowingWorld;
+
+            MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
+
             if (World.ShowingWorld)
             {
                 GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
@@ -212,6 +215,8 @@ namespace DwarfCorp.GameStates
                 DwarfGame.SpriteBatch.End();
             }
 
+            if (!MinimapFrame.Hidden)
+                MinimapRenderer.Render(new Rectangle(0, NewGui.VirtualScreen.Bottom - 192, 192, 192), NewGui);
             NewGui.Draw();
 
             base.Render(gameTime);
@@ -246,21 +251,6 @@ namespace DwarfCorp.GameStates
             };
 
             GUI.RootComponent.AddChild(Master.Debugger.MainPanel);
-            //layout.AddChild(Master.ToolBar);
-            //Master.ToolBar.Parent = layout;
-            //Master.ToolBar.LocalBounds = new Rectangle(0, 0, 256, 100);
-
-            //layout.Add(Master.ToolBar, AlignLayout.Alignment.Right, AlignLayout.Alignment.Bottom, Vector2.Zero);
-            //layout.SetComponentPosition(Master.ToolBar, 7, 10, 4, 1);
-            
-            GUIComponent companyInfoComponent = new GUIComponent(GUI, layout)
-            {
-                LocalBounds = new Rectangle(0, 0, 350, 200),
-                TriggerMouseOver = false
-            };
-
-            layout.Add(companyInfoComponent, AlignLayout.Alignment.Left, AlignLayout.Alignment.Top, Vector2.Zero);
-            //layout.SetComponentPosition(companyInfoComponent, 0, 0, 4, 2);
 
             GUIComponent resourceInfoComponent = new ResourceInfoComponent(GUI, layout, Master.Faction)
             {
@@ -270,6 +260,8 @@ namespace DwarfCorp.GameStates
             layout.Add(resourceInfoComponent, AlignLayout.Alignment.None, AlignLayout.Alignment.Top,
                 new Vector2(0.55f, 0.0f));
             //layout.SetComponentPosition(resourceInfoComponent, 7, 0, 2, 2);
+
+            #region Setup bottom right tray
 
             ToolbarItems[GameMaster.ToolMode.SelectUnits] = CreateIcon(5, GameMaster.ToolMode.SelectUnits);
             ToolbarItems[GameMaster.ToolMode.Dig] = CreateIcon(0, GameMaster.ToolMode.Dig);
@@ -289,7 +281,9 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(256, 128),
                 ItemSource = ToolbarItems.Select(i => i.Value)
             });
+            #endregion
 
+            #region Setup company information section
             NewGui.RootItem.AddChild(new NewGui.CompanyLogo
                 {
                     Rect = new Rectangle(8,8,32,32),
@@ -351,35 +345,46 @@ namespace DwarfCorp.GameStates
                         ChunkManager.SliceMode.Y);
                 }
             });
+            #endregion
 
+            #region Setup time display
+            TimeLabel = NewGui.RootItem.AddChild(new Gum.Widget
+                {
+                    AutoLayout = Gum.AutoLayout.FloatTop,
+                    TextHorizontalAlign = Gum.HorizontalAlign.Center,
+                    MinimumSize = new Point(128, 20),
+                    TextSize = 2
+                });
+            #endregion
 
-            GridLayout infoLayout = new GridLayout(GUI, companyInfoComponent, 3, 4);
-            
-            
+            #region Minimap
 
-            TimeLabel = new Label(GUI, layout,
-                WorldManager.Time.CurrentDate.ToShortDateString() + " " + WorldManager.Time.CurrentDate.ToShortTimeString(), GUI.SmallFont)
-            {
-                TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 255),
-                Alignment = Drawer2D.Alignment.Top,
-                ToolTip = "Current time and date."
-            };
-            layout.Add(TimeLabel, AlignLayout.Alignment.Center, AlignLayout.Alignment.Top, Vector2.Zero);
-            //layout.SetComponentPosition(TimeLabel, 6, 0, 1, 1);
+            // Little hack here - Normally this button his hidden by the minimap. Hide the minimap and it 
+            // becomes visible!
+            NewGui.RootItem.AddChild(new Gum.Widget
+                {
+                    AutoLayout = Gum.AutoLayout.FloatBottomLeft,
+                    Background = new Gum.TileReference("round-buttons", 3),
+                    MinimumSize = new Point(16,16),
+                    MaximumSize = new Point(16,16),
+                    OnClick = (sender, args) =>
+                        {
+                            MinimapFrame.Hidden = false;
+                            MinimapFrame.Invalidate();
+                        }
+                });
 
-            MiniMap = new Minimap(GUI, layout, 192, 192, World,
-                TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap),
-                TextureManager.GetTexture(ContentPaths.GUI.gui_minimap))
-            {
-                IsVisible = true,
-                LocalBounds = new Rectangle(0, 0, 192, 192)
-            };
-            layout.Add(MiniMap, AlignLayout.Alignment.Left, AlignLayout.Alignment.Bottom, Vector2.Zero);
-            //layout.SetComponentPosition(MiniMap, 0, 8, 4, 4);
-            //Rectangle rect = layout.GetRect(new Rectangle(0, 8, 4, 4));
-            //layout.SetComponentOffset(MiniMap,  new Point(0, rect.Height - 250));
+            MinimapRenderer = new NewGui.MinimapRenderer(192, 192, World,
+                TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap));
 
+            MinimapFrame = NewGui.RootItem.AddChild(new NewGui.MinimapFrame
+                {
+                    AutoLayout = Gum.AutoLayout.FloatBottomLeft,
+                    Renderer = MinimapRenderer
+                }) as NewGui.MinimapFrame;
+            #endregion
+
+            #region Setup top right tray
             var topRightTray = NewGui.RootItem.AddChild(new NewGui.IconTray
                 {
                     Corners = Gum.Scale9Corners.Left | Gum.Scale9Corners.Bottom,
@@ -399,6 +404,7 @@ namespace DwarfCorp.GameStates
                         }
                         }
                 });
+            #endregion
 
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
 
@@ -444,7 +450,8 @@ namespace DwarfCorp.GameStates
             if (key == ControlSettings.Mappings.Map)
             {
                 World.DrawMap = !World.DrawMap;
-                MiniMap.SetMinimized(!World.DrawMap);
+                // Todo: Reimplement minimap hotkey.
+                //MiniMap.SetMinimized(!World.DrawMap);
             }
 
             if (key == Keys.Escape)
@@ -453,9 +460,9 @@ namespace DwarfCorp.GameStates
                 {
                     ToolbarItems[Master.CurrentToolMode].OnClick(null, null);
                 }
-                else if (PausePanel != null && PausePanel.IsVisible)
+                else if (PausePanel != null)
                 {
-                    PausePanel.IsVisible = false;
+                    PausePanel.Close();
                     Paused = false;
                 }
                 else
@@ -517,72 +524,58 @@ namespace DwarfCorp.GameStates
             }
             else if (key == ControlSettings.Mappings.ToggleGUI)
             {
+                // Todo: Reimplement.
                 GUI.RootComponent.IsVisible = !GUI.RootComponent.IsVisible;
             }
         }
 
-        /// <summary>
-        /// Called whenever the escape button is pressed. Opens a small menu for saving/loading, etc.
-        /// </summary>
-        public void OpenPauseMenu()
+        private void MakeMenuItem(Gum.Widget Menu, string Name, string Tooltip, Action<Gum.Widget, Gum.InputEventArgs> OnClick)
         {
-            if (PausePanel != null && PausePanel.IsVisible) return;
-
-            Paused = true;
-
-            int w = 200;
-            int h = 200;
-
-            PausePanel = new Panel(GUI, GUI.RootComponent)
+            Menu.AddChild(new Gum.Widget
             {
-                LocalBounds =
-                    new Rectangle(Game.GraphicsDevice.Viewport.Width / 2 - w / 2, 
-                        Game.GraphicsDevice.Viewport.Height / 2 - h / 2, w, h)
-            };
-
-            GridLayout pauseLayout = new GridLayout(GUI, PausePanel, 1, 1);
-
-            ListSelector pauseSelector = new ListSelector(GUI, pauseLayout)
-            {
-                Label = "-Menu-",
-                DrawPanel = false,
-                Mode = ListItem.SelectionMode.Selector
-            };
-            pauseLayout.SetComponentPosition(pauseSelector, 0, 0, 1, 1);
-            pauseLayout.UpdateSizes();
-            pauseSelector.AddItem("Continue");
-            pauseSelector.AddItem("Options");
-            pauseSelector.AddItem("Save");
-            pauseSelector.AddItem("Quit");
-
-            pauseSelector.OnItemClicked += () => pauseSelector_OnItemClicked(pauseSelector);
+                AutoLayout = Gum.AutoLayout.DockTop,
+                Border = "border-thin",
+                Text = Name,
+                OnClick = OnClick,
+                Tooltip = Tooltip,
+                TextHorizontalAlign = Gum.HorizontalAlign.Center,
+                TextVerticalAlign = Gum.VerticalAlign.Center,
+                TextSize = 2
+            });
         }
 
-        /// <summary>
-        /// Called whenever the pause menu is clicked.
-        /// </summary>
-        /// <param name="selector">The list of things the user could have clicked on.</param>
-        private void pauseSelector_OnItemClicked(ListSelector selector)
+        public void OpenPauseMenu()
         {
-            string selected = selector.SelectedItem.Label;
-            switch (selected)
+            if (PausePanel != null) return;
+            Paused = true;
+
+            PausePanel = NewGui.RootItem.AddChild(new Gum.Widget
             {
-                case "Continue":
-                    GUI.RootComponent.RemoveChild(PausePanel);
+                Rect = new Rectangle(NewGui.VirtualScreen.Center.X - 128,
+                    NewGui.VirtualScreen.Center.Y - 100, 256, 200),
+                Border = "border-fancy",
+                TextHorizontalAlign = Gum.HorizontalAlign.Center,
+                Text = "- Paused -",
+                InteriorMargin = new Gum.Margin(12, 0, 0, 0),
+                Padding = new Gum.Margin(2, 2, 2, 2)
+            });
+
+            MakeMenuItem(PausePanel, "Continue", "", (sender, args) =>
+                {
+                    PausePanel.Close();
                     Paused = false;
-                    PausePanel.Destroy();
                     PausePanel = null;
-                    break;
-                case "Options":
-                    StateManager.PushState("OptionsState");
-                    break;
-                case "Save":
-                    SaveGame(Overworld.Name + "_" + WorldManager.GameID);
-                    break;
-                case "Quit":
-                    QuitOnNextUpdate = true;
-                    break;
-            }
+                });
+
+            MakeMenuItem(PausePanel, "Options", "", (sender, args) => StateManager.PushState("OptionsState"));
+
+            MakeMenuItem(PausePanel, "New Options", "", (sender, args) => StateManager.PushState("NewOptionsState"));
+
+            MakeMenuItem(PausePanel, "Save", "", (sender, args) => SaveGame(Overworld.Name + "_" + WorldManager.GameID));
+
+            MakeMenuItem(PausePanel, "Quit", "", (sender, args) => QuitOnNextUpdate = true);
+
+            PausePanel.Layout();
         }
 
         /// <summary>
