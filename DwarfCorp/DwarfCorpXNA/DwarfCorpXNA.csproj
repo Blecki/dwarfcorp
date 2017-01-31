@@ -310,10 +310,7 @@
     <Compile Include="GUI\Components\Complex\ItemSelector.cs" />
     <Compile Include="GUI\Components\Complex\KeyEditor.cs" />
     <Compile Include="GUI\Components\Complex\MagicMenu.cs" />
-    <Compile Include="GUI\Components\Complex\MasterControls.cs" />
-    <Compile Include="GUI\Components\Complex\Minimap.cs" />
     <Compile Include="GUI\Components\Complex\MinionPanel.cs" />
-    <Compile Include="GUI\Components\Complex\ResourceInfoComponent.cs" />
     <Compile Include="GUI\Components\Complex\SpellTreeDisplay.cs" />
     <Compile Include="GUI\Components\Complex\StockTicker.cs" />
     <Compile Include="GUI\Components\Complex\TabSelector.cs" />
@@ -338,6 +335,7 @@
     <Compile Include="NewGui\IconTray.cs" />
     <Compile Include="NewGui\GridChooser.cs" />
     <Compile Include="NewGui\GridPanel.cs" />
+    <Compile Include="NewGui\GameSpeedControls.cs" />
     <Compile Include="NewGui\Minimap.cs" />
     <Compile Include="NewGui\Popup.cs" />
     <Compile Include="NewGui\Confirm.cs" />

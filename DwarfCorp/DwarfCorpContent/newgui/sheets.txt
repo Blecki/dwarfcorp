@@ -136,6 +136,12 @@
 			"Texture": "newgui/gui_minimap",
 			"TileWidth": 239,
 			"TileHeight": 210
+		},
+		{
+			"Name": "resources",
+			"Texture": "newgui/resources",
+			"TileWidth": 32,
+			"TileHeight": 32
 		}
 	]
 }

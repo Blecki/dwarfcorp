@@ -39,6 +39,8 @@ namespace DwarfCorp.GameStates
         private Gum.Widget PausePanel;
         private NewGui.MinimapFrame MinimapFrame;
         private NewGui.MinimapRenderer MinimapRenderer;
+        private NewGui.GameSpeedControls GameSpeedControls;
+        private Gum.Widget ResourcePanel;
 
        // public Minimap MiniMap { get; set; }
 
@@ -184,6 +186,39 @@ namespace DwarfCorp.GameStates
             ToolbarItems[GameMaster.ToolMode.SelectUnits].Hidden = false;
             #endregion
 
+            #region Update resource panel
+            ResourcePanel.Clear();
+            foreach (var resource in Master.Faction.ListResources().Where(p => p.Value.NumResources > 0))
+            {
+                var row = ResourcePanel.AddChild(new Gum.Widget
+                    {
+                        MinimumSize = new Point(0, 16),
+                        AutoLayout = Gum.AutoLayout.DockTop
+                    });
+
+                row.AddChild(new Gum.Widget
+                    {
+                        Background = new Gum.TileReference("resources", resource.Value.ResourceType.NewGuiSprite),
+                        MinimumSize = new Point(16, 16),
+                        AutoLayout = Gum.AutoLayout.DockLeft,
+                        Tooltip = String.Format("{0} - {1}", 
+                            resource.Value.ResourceType.ResourceName,
+                            resource.Value.ResourceType.Description)
+                    });
+
+                row.AddChild(new Gum.Widget
+                {
+                    Text = resource.Value.NumResources.ToString(),
+                    MinimumSize = new Point(16, 16),
+                    AutoLayout = Gum.AutoLayout.DockLeft,
+                    Tooltip = String.Format("{0} - {1}",
+                        resource.Value.ResourceType.ResourceName,
+                        resource.Value.ResourceType.Description)
+                });
+            }
+            ResourcePanel.Layout();
+            #endregion
+
             // Really just handles mouse pointer animation.
             NewGui.Update(gameTime.ToGameTime());
         }
@@ -251,15 +286,6 @@ namespace DwarfCorp.GameStates
             };
 
             GUI.RootComponent.AddChild(Master.Debugger.MainPanel);
-
-            GUIComponent resourceInfoComponent = new ResourceInfoComponent(GUI, layout, Master.Faction)
-            {
-                LocalBounds = new Rectangle(0, 0, 400, 256),
-                TriggerMouseOver = false
-            };
-            layout.Add(resourceInfoComponent, AlignLayout.Alignment.None, AlignLayout.Alignment.Top,
-                new Vector2(0.55f, 0.0f));
-            //layout.SetComponentPosition(resourceInfoComponent, 7, 0, 2, 2);
 
             #region Setup bottom right tray
 
@@ -347,6 +373,13 @@ namespace DwarfCorp.GameStates
             });
             #endregion
 
+            ResourcePanel = NewGui.RootItem.AddChild(new Gum.Widget
+                {
+                    Transparent = true,
+                    Rect = new Rectangle(0, 104, 128, 128),
+                    AutoLayout = Gum.AutoLayout.None
+                });
+
             #region Setup time display
             TimeLabel = NewGui.RootItem.AddChild(new Gum.Widget
                 {
@@ -404,6 +437,14 @@ namespace DwarfCorp.GameStates
                         }
                         }
                 });
+            #endregion
+
+            #region Setup game speed controls
+            GameSpeedControls = NewGui.RootItem.AddChild(new NewGui.GameSpeedControls
+                {
+                    AutoLayout = Gum.AutoLayout.FloatBottom
+                }) as NewGui.GameSpeedControls;
+
             #endregion
 
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
@@ -617,22 +658,6 @@ namespace DwarfCorp.GameStates
 
         public void Destroy()
         {
-            // TODO: Make this prettier.  Possibly as a recursive call via RootComponent.
-            // That or fully clean up the GUIComponents....
-            foreach(GUIComponent c in GUI.RootComponent.Children)
-            {
-                if (c is AlignLayout)
-                {
-                    AlignLayout layout = (c as AlignLayout);
-
-                    foreach (GUIComponent l in layout.Children)
-                    {
-                        if (l is ResourceInfoComponent)
-                            (l as ResourceInfoComponent).CleanUp();
-                    }
-                }
-            }
-
             InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
             Input.Destroy();
         }
