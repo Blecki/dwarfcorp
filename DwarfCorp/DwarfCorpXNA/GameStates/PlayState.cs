@@ -352,7 +352,7 @@ namespace DwarfCorp.GameStates
                     Text = WorldManager.PlayerCompany.Information.Name,
                     AutoLayout = Gum.AutoLayout.None,
                     TextSize = 1,
-                    Font = "font2",
+                    Font = "outline-font",
                     TextColor = new Vector4(1,1,1,1)
                 });
 

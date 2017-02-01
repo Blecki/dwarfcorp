@@ -276,7 +276,7 @@ namespace DwarfCorp.GameStates
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
             
                 JoinThreads();
-                StateManager.PopState();
+                StateManager.ClearState();
                 StateManager.PushState("LoadState");
                 Games.Clear();
             }
