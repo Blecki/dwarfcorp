@@ -154,6 +154,14 @@ namespace DwarfCorp
             }
         }
 
+        public void RenderSelectionBuffer(GraphicsDevice device, Effect effect, Camera camera, bool resetVertices)
+        {
+            foreach (FixedInstanceArray list in Instances.Values)
+            {
+                list.RenderSelectionBuffer(device, effect, camera, resetVertices);
+            }
+        }
+
         public void Render(GraphicsDevice device, Effect effect, Camera camera, bool resetVertices)
         {
             foreach(FixedInstanceArray list in Instances.Values)

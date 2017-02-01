@@ -80,7 +80,7 @@ namespace DwarfCorp
             inventory.Resources.AddResource(new ResourceAmount()
             {
                 NumResources = 2,
-                ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Cactus]
+                ResourceType = ResourceLibrary.ResourceType.Cactus
             });
 
 
@@ -134,7 +134,7 @@ namespace DwarfCorp
             inventory.Resources.AddResource(new ResourceAmount()
             {
                 NumResources = 3,
-                ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Berry]
+                ResourceType = ResourceLibrary.ResourceType.Berry
             });
 
             AddToCollisionManager = true;

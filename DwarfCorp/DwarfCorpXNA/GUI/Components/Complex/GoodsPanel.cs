@@ -62,11 +62,17 @@ namespace DwarfCorp
                     select new GItem(r, r.Image, r.Tint, 0, 1000, 1000, r.MoneyValue * priceMultiplier)).ToList();
         }
 
-        public List<GItem> GetResources(List<ResourceAmount> resources )
+        public IEnumerable<GItem> GetResources(List<ResourceAmount> resources )
         {
-            return (from r in resources
-                    where r.NumResources > 0
-                    select new GItem(r.ResourceType, r.ResourceType.Image, r.ResourceType.Tint, 0, 1000, r.NumResources, r.ResourceType.MoneyValue)).ToList();
+            foreach (var amount in resources)
+            {
+                if (amount.NumResources == 0) continue;
+                Resource r = ResourceLibrary.GetResourceByName(amount.ResourceType);
+                yield return new GItem(r,
+                    r.Image,
+                    r.Tint, 0, 1000,
+                    amount.NumResources, r.MoneyValue);
+            }
         }
 
         public void CreateBuyTab()
@@ -143,7 +149,7 @@ namespace DwarfCorp
                 Faction.AddResources(new ResourceAmount(item.Name) { NumResources = item.CurrentAmount });
             }
 
-            SellSelector.Items = GetResources(Faction.ListResources().Values.ToList());
+            SellSelector.Items = GetResources(Faction.ListResources().Values.ToList()).ToList();
             SellSelector.ReCreateItems();
 
         }
@@ -399,34 +405,35 @@ namespace DwarfCorp
             }
         }
 
-        bool IsCommon(Resource resource)
+        bool IsCommon(ResourceLibrary.ResourceType resource)
         {
-            return CommonThings.Any(tags => resource.Tags.Contains(tags));
+            return CommonThings.Any(tags => ResourceLibrary.GetResourceByName(resource).Tags.Contains(tags));
         }
 
-        bool IsRare(Resource resource)
+        bool IsRare(ResourceLibrary.ResourceType resource)
         {
-            return RareThings.Any(tags => resource.Tags.Contains(tags));
+            return RareThings.Any(tags => ResourceLibrary.GetResourceByName(resource).Tags.Contains(tags));
         }
 
-        bool IsLiked(Resource resource)
+        bool IsLiked(ResourceLibrary.ResourceType resource)
         {
-            return LikedThings.Any(tags => resource.Tags.Contains(tags));
+            return LikedThings.Any(tags => ResourceLibrary.GetResourceByName(resource).Tags.Contains(tags));
         }
 
-        bool IsHated(Resource resource)
+        bool IsHated(ResourceLibrary.ResourceType resource)
         {
-            return HatedThings.Any(tags => resource.Tags.Contains(tags));
+            return HatedThings.Any(tags => ResourceLibrary.GetResourceByName(resource).Tags.Contains(tags));
         }
 
-        public float GetPrice(Resource item)
+        public float GetPrice(ResourceLibrary.ResourceType type)
         {
+            Resource item = ResourceLibrary.GetResourceByName(type);
             float price = item.MoneyValue;
-            if (IsRare(item))
+            if (IsRare(type))
             {
                 price *= 2;
             }
-            else if (IsCommon(item))
+            else if (IsCommon(type))
             {
                 price *= 0.5f;
             }
@@ -557,7 +564,8 @@ namespace DwarfCorp
         {
             return (from r in resources
                     where r.NumResources > 0
-                    select new GItem(r.ResourceType, r.ResourceType.Image, r.ResourceType.Tint, 0, 1000, r.NumResources, r.ResourceType.MoneyValue)).ToList();
+                    let resource = ResourceLibrary.GetResourceByName(r.ResourceType)
+                    select new GItem(resource, resource.Image, resource.Tint, 0, 1000, r.NumResources, resource.MoneyValue)).ToList();
         }
 
 

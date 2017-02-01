@@ -39,6 +39,7 @@ float3 xFogColor;
 float4 xRippleColor;
 float4 xFlatColor;
 float2 pixelSize;
+float4 xID;
 
 //------- Technique: Clipping Plane Fix --------
 
@@ -116,6 +117,7 @@ sampler WaterBumpMapSampler = sampler_state { texture = <xWaterBumpMap> ; magfil
 
 Texture xShadowMap;
 sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = LINEAR; minfilter = LINEAR; mipfilter = LINEAR; AddressU = clamp; AddressV = clamp; };
+
 
 ///////////// Technique untextured
 	struct UTVertexToPixel
@@ -267,6 +269,14 @@ struct TVertexToPixel
 	float3 ColorTint     : COLOR1;
 };
 
+struct SelectionBufferToPixel
+{
+	float4 Position : POSITION;
+	float2 TextureCoords: TEXCOORD1;
+	float4 ClipDistance : TEXCOORD2;
+	float4 SelectionColor : COLOR0;
+};
+
 struct LightmapToPixel
 {
 	float4 Position          : POSITION;
@@ -282,6 +292,22 @@ struct TPixelToFrame
 	float4 Color : COLOR0;
 };
 
+
+SelectionBufferToPixel SelectionVS(float4 inPos: POSITION, float2 inTexCoords : TEXCOORD0, float4x4 world : BLENDWEIGHT, float4 selection : COLOR2)
+{
+	SelectionBufferToPixel Output = (SelectionBufferToPixel)0;
+
+	float4 worldPosition = mul(inPos, world);
+	worldPosition += GetNoise(worldPosition);
+
+	float4 viewPosition = mul(worldPosition, xView);
+	Output.Position = mul(viewPosition, xProjection);
+
+	Output.TextureCoords = inTexCoords;
+	Output.ClipDistance = dot(worldPosition, ClipPlane0);
+	Output.SelectionColor = selection;
+	return Output;
+}
 
 TVertexToPixel TexturedVS(float4 inPos : POSITION,  
 						   float2 inTexCoords: TEXCOORD0, 
@@ -475,6 +501,19 @@ TVertexToPixel TexturedVSInstanced( float4 inPos : POSITION,
 	return TexturedVS(inPos, inTexCoords, inColor, inTexSource, transpose(transform), instanceColor, float4(1, 1, 1, 1));
 }
 
+SelectionBufferToPixel SelectionVSNonInstanced(float4 inPos : POSITION, float2 inTexCoords : TEXCOORD0)
+{
+	return  SelectionVS(inPos, inTexCoords, xWorld, xID);
+}
+
+SelectionBufferToPixel SelectionVSInstanced(float4 inPos : POSITION,
+	float2 inTexCoords : TEXCOORD0,
+	float4x4 transform : BLENDWEIGHT,
+	float4 id : COLOR3)
+{
+	return SelectionVS(inPos, inTexCoords, transpose(transform) , id);
+}
+
 
 TPixelToFrame TexturedPS_Colorscale(TVertexToPixel PSIn)
 {
@@ -497,6 +536,23 @@ TPixelToFrame TexturedPS_Colorscale(TVertexToPixel PSIn)
 		}
 	}
 
+	return Output;
+}
+
+TPixelToFrame SelectionPS_Alphatest(SelectionBufferToPixel PSIn)
+{
+	TPixelToFrame Output = (TPixelToFrame)0;
+
+	float2 textureCoords = PSIn.TextureCoords;
+	float4 texColor = tex2D(TextureSampler, textureCoords);
+
+	clip((texColor.a - 0.5));
+
+	if (Clipping)
+	{
+		clip(PSIn.ClipDistance.w);
+	}
+	Output.Color = PSIn.SelectionColor;
 	return Output;
 }
 
@@ -599,6 +655,15 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
     return Output;
 }
 
+technique Selection
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_2_0 SelectionVSNonInstanced();
+		PixelShader = compile ps_2_0 SelectionPS_Alphatest();
+	}
+};
+
 technique Textured
 {
     pass Pass0
@@ -642,6 +707,15 @@ technique Instanced
         VertexShader = compile vs_2_0 TexturedVSInstanced();
         PixelShader  = compile ps_2_0 TexturedPS_Alphatest();
     }
+}
+
+technique Instanced_SelectionBuffer
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_2_0 SelectionVSInstanced();
+		PixelShader = compile ps_2_0 SelectionPS_Alphatest();
+	}
 }
 
 //------- Technique: Water --------

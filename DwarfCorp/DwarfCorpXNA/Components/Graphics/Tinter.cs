@@ -92,20 +92,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            bool parentHasMoved = true;
-
-            GameComponent root = GetRootComponent();
-
-            if(root is Body)
-            {
-                Body loc = (Body) root;
-
-                parentHasMoved = loc.HasMoved;
-            }
-
-            bool moved = HasMoved || parentHasMoved;
-
-            return LightsWithVoxels && ((moved && LightingTimer.HasTriggered) || firstIteration || !ColorAppplied);
+            return LightingTimer.HasTriggered;
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
@@ -122,16 +109,11 @@ namespace DwarfCorp
             {
                 if (entityLighting)
                 {
-                    bool success = chunks.ChunkData.GetFirstVoxelUnder(GlobalTransform.Translation, ref VoxelUnder);
+                    bool success = chunks.ChunkData.GetVoxel(Position, ref VoxelUnder);
 
-                    if (success && !VoxelUnder.Chunk.IsRebuilding && VoxelUnder.Chunk.LightingCalculated)
+                    if (success)
                     {
-                        Color color =
-                            new Color(
-                                VoxelUnder.Chunk.Data.SunColors[
-                                    VoxelUnder.Chunk.Data.IndexAt((int) VoxelUnder.GridPosition.X, (int) VoxelUnder.GridPosition.Y + 1,
-                                        (int) VoxelUnder.GridPosition.Z)], 255,
-                                    0);
+                        Color color = new Color(VoxelUnder.SunColor, 255, 0);
 
                         TargetTint = color;
                         firstIteration = false;

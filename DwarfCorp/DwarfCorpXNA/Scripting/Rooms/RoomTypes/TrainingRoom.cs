@@ -52,19 +52,19 @@ namespace DwarfCorp
             RoomTile[,] targetTemp =
             {
                 {
-                    RoomTile.Open,
-                    RoomTile.Open,
-                    RoomTile.Open
+                    RoomTile.Open | RoomTile.Edge,
+                    RoomTile.Open| RoomTile.Edge,
+                    RoomTile.Open  | RoomTile.Edge
                 },
                 {
-                    RoomTile.Open,
+                    RoomTile.Open| RoomTile.Edge,
                     RoomTile.Strawman,
-                    RoomTile.Open
+                    RoomTile.Open| RoomTile.Edge
                 },
                 {
-                    RoomTile.Open,
-                    RoomTile.Open,
-                    RoomTile.Open
+                    RoomTile.Open| RoomTile.Edge,
+                    RoomTile.Open| RoomTile.Edge,
+                    RoomTile.Open| RoomTile.Edge
                 }
             };
 
@@ -123,7 +123,9 @@ namespace DwarfCorp
             Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
             return new RoomData(TrainingRoomName, 3, "CobblestoneFloor", roomResources, trainingTemplates, new ImageFrame(roomIcons, 16, 3, 0))
             {
-                Description = "Military dwarves train here"
+                Description = "Military dwarves train here",
+                MinimumSideLength = 4,
+                MinimumSideWidth = 3
             };
 
         }

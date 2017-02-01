@@ -178,6 +178,7 @@ namespace DwarfCorp.GameStates
                 GUI.Render(gameTime, DwarfGame.SpriteBatch, Vector2.Zero);
                 GUI.PostRender(gameTime);
                 DwarfGame.SpriteBatch.End();
+                //WorldManager.SelectionBuffer.DebugDraw(0, 0);
             }
             base.Render(gameTime);
         }

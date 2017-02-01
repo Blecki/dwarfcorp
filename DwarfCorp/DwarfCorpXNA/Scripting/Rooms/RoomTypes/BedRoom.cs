@@ -126,7 +126,9 @@ namespace DwarfCorp
             return new RoomData(BedRoomName, 0, "BrownTileFloor", roomResources, bedroomTemplates, new ImageFrame(roomIcons, 16, 2, 1))
             {
                 Description = "Dwarves relax and rest here",
-                CanBuildAboveGround = false
+                CanBuildAboveGround = false,
+                MinimumSideLength = 4,
+                MinimumSideWidth = 3
             };
         }
 

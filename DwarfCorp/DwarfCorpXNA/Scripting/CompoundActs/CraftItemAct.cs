@@ -65,7 +65,7 @@ namespace DwarfCorp
             ItemType.SelectedResources = stashed;
             if (ItemType.Name == ResourceLibrary.ResourceType.Trinket)
             {
-                Resource craft = ResourceLibrary.GenerateTrinket(stashed.ElementAt(0).ResourceType.Type,
+                Resource craft = ResourceLibrary.GenerateTrinket(stashed.ElementAt(0).ResourceType,
                     (Agent.Stats.Dexterity + Agent.Stats.Intelligence)/15.0f*MathFunctions.Rand(0.5f, 1.75f));
                 ItemType.ResourceCreated = craft.Type;
             }
@@ -95,14 +95,14 @@ namespace DwarfCorp
                 Resource trinket = null;
                 foreach (ResourceAmount stashedResource in stashed)
                 {
-                    if (stashedResource.ResourceType.Tags.Contains(Resource.ResourceTags.Craft))
+                    if (ResourceLibrary.GetResourceByName(stashedResource.ResourceType).Tags.Contains(Resource.ResourceTags.Craft))
                     {
-                        trinket = stashedResource.ResourceType;
+                        trinket = ResourceLibrary.GetResourceByName(stashedResource.ResourceType);
                     }
 
-                    if (stashedResource.ResourceType.Tags.Contains(Resource.ResourceTags.Gem))
+                    if (ResourceLibrary.GetResourceByName(stashedResource.ResourceType).Tags.Contains(Resource.ResourceTags.Gem))
                     {
-                        gem = stashedResource.ResourceType;
+                        gem = ResourceLibrary.GetResourceByName(stashedResource.ResourceType);
                     }
                 }
 
@@ -113,7 +113,7 @@ namespace DwarfCorp
                     yield break;
                 }
 
-                Resource craft = ResourceLibrary.EncrustTrinket(trinket, gem.Type);
+                Resource craft = ResourceLibrary.EncrustTrinket(trinket.Type, gem.Type);
                 ItemType.ResourceCreated = craft.Type;
             }
 

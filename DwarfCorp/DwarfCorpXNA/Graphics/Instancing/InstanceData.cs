@@ -14,6 +14,7 @@ namespace DwarfCorp
         private static uint maxID = 0;
         public bool ShouldDraw { get; set; }
         public float Depth { get; set; }
+        public Color SelectionBufferColor { get; set; }
 
         public InstanceData(Matrix world, Color colour, bool shouldDraw)
         {
@@ -23,6 +24,7 @@ namespace DwarfCorp
             maxID++;
             ShouldDraw = shouldDraw;
             Depth = 0.0f;
+            SelectionBufferColor = Color.Black;
         }
     }
 

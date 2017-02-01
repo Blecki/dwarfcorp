@@ -60,6 +60,7 @@ namespace DwarfCorp
         protected void OnDeserialized(StreamingContext context)
         {
             Instance = WorldManager.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
+            Instance.SelectionBufferColor = GetGlobalIDColor();
             instanceVisible = true;
         }
 
@@ -73,6 +74,7 @@ namespace DwarfCorp
         {
             ModelType = modelType;
             Instance = WorldManager.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
+            Instance.SelectionBufferColor = GetGlobalIDColor();
             instanceVisible = true;
         }
 
@@ -86,6 +88,7 @@ namespace DwarfCorp
             {
                 Instance.Color = TargetTint;
                 Instance.Transform = GlobalTransform;
+                Instance.SelectionBufferColor = GetGlobalIDColor();
                 firstIter = false;
             }
 
