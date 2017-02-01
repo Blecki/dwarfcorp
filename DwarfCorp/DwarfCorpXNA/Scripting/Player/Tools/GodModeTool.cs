@@ -314,16 +314,13 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                WorldManager.GUI.IsMouseVisible = false;
+                WorldManager.SetMouse(null);
                 return;
             }
 
             Player.VoxSelector.Enabled = true;
             Player.BodySelector.Enabled = false;
-            WorldManager.GUI.IsMouseVisible = true;
-
-            WorldManager.GUI.MouseMode = GUISkin.MousePointer.Pointer;
-
+            WorldManager.SetMouse(WorldManager.MousePointer);
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)

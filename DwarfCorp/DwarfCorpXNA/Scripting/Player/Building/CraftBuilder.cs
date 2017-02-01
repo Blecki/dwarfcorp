@@ -176,13 +176,13 @@ namespace DwarfCorp
         {
             if (IsDesignation(designation.Location))
             {
-                WorldManager.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Something is already being built there!", Color.Red));
+                WorldManager.ShowTooltip(Drawer2D.WrapColor("Something is already being built there!", Color.Red));
                 return false;
             }
 
             if (Faction.GetNearestRoomOfType(WorkshopRoom.WorkshopName, designation.Location.Position) == null)
             {
-                WorldManager.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Can't build, no workshops!", Color.Red));
+                WorldManager.ShowTooltip(Drawer2D.WrapColor("Can't build, no workshops!", Color.Red));
                 return false;
             }
 
@@ -195,7 +195,7 @@ namespace DwarfCorp
                     neededResources += "" + amount.NumResources + " " + amount.ResourceType.ToString() + " ";
                 }
 
-                WorldManager.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Not enough resources! Need " + neededResources + ".", Color.Red));
+                WorldManager.ShowTooltip(Drawer2D.WrapColor("Not enough resources! Need " + neededResources + ".", Color.Red));
                 return false;
             }
 
@@ -214,7 +214,7 @@ namespace DwarfCorp
 
                         if (!neighborFound)
                         {
-                            WorldManager.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Must be built next to wall!", Color.Red));
+                            WorldManager.ShowTooltip("Must be built next to wall!");
                             return false;
                         }
 
@@ -227,7 +227,7 @@ namespace DwarfCorp
 
                         if (below.IsEmpty)
                         {
-                            WorldManager.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("Must be built on solid ground!", Color.Red));
+                            WorldManager.ShowTooltip(Drawer2D.WrapColor("Must be built on solid ground!", Color.Red));
                             return false;
                         }
                         break;
@@ -251,7 +251,7 @@ namespace DwarfCorp
                     {
                         if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Craft).Count == 0)
                         {
-                            WorldManager.GUI.ToolTipManager.Popup("None of the selected units can craft items.");
+                            WorldManager.ShowTooltip("None of the selected units can craft items.");
                             return;
                         }
                         List<Task> assignments = new List<Task>();

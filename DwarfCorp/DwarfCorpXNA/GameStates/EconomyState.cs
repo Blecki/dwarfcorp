@@ -72,7 +72,6 @@ namespace DwarfCorp.GameStates
         {
             if (Game.StateManager.NextState == null)
             {
-                WorldManager.GUI.RootComponent.IsVisible = false;
                 Game.StateManager.PushState("EconomyState");
             }
         }
@@ -197,7 +196,6 @@ namespace DwarfCorp.GameStates
 
         public override void OnEnter()
         {
-            WorldManager.GUI.ToolTipManager.ToolTip = "";
             Initialize();
             base.OnEnter();
         }
@@ -205,7 +203,7 @@ namespace DwarfCorp.GameStates
      
         private void back_OnClicked()
         {
-            WorldManager.GUI.RootComponent.IsVisible = true;
+            WorldManager.SetMouse(WorldManager.MousePointer);
             StateManager.PopState();
         }
 

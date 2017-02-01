@@ -269,6 +269,11 @@ namespace DwarfCorp
         public static DwarfGUI GUI;
         public static Gum.Root NewGui;
 
+        public static Action<String> ShowTooltip = null;
+        public static Action<String> ShowInfo = null;
+        public static Action<Gum.MousePointer> SetMouse = null;
+        public static Gum.MousePointer MousePointer = new Gum.MousePointer("mouse", 1, 0);
+        
         public static bool IsMouseOverGui
         {
             get

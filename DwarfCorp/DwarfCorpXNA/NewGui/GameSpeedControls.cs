@@ -16,7 +16,13 @@ namespace DwarfCorp.NewGui
 {
     public class GameSpeedControls : Gum.Widget
     {
-        public int CurrentSpeed = 1;
+        private int _currentSpeed = 1;
+        public int CurrentSpeed
+        {
+            get { return _currentSpeed; }
+            set { SetGameSpeed(value); }
+        }
+
         public int MaximumSpeed = 3;
         public int PlaySpeed = 1;
 
@@ -84,12 +90,12 @@ namespace DwarfCorp.NewGui
         // Todo: This doesn't belong here. Actual manipulation of the speed should not be handled by the gui.
         private void SetGameSpeed(int NewSpeed)
         {
-            CurrentSpeed = Math.Min(MaximumSpeed, Math.Max(NewSpeed, 0));
-            TimeLabel.Text = String.Format("{0}x", CurrentSpeed);
+            _currentSpeed = Math.Min(MaximumSpeed, Math.Max(NewSpeed, 0));
+            TimeLabel.Text = String.Format("{0}x", _currentSpeed);
             TimeLabel.Invalidate();
 
-            DwarfTime.LastTime.Speed = (float)CurrentSpeed;
-            PlayState.Paused = CurrentSpeed == 0;
+            DwarfTime.LastTime.Speed = (float)_currentSpeed;
+            PlayState.Paused = _currentSpeed == 0;
         }
     }
 }

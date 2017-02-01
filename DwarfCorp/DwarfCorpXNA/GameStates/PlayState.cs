@@ -41,6 +41,7 @@ namespace DwarfCorp.GameStates
         private NewGui.MinimapRenderer MinimapRenderer;
         private NewGui.GameSpeedControls GameSpeedControls;
         private Gum.Widget ResourcePanel;
+        private NewGui.InfoTicker InfoTicker;
 
        // public Minimap MiniMap { get; set; }
 
@@ -92,6 +93,22 @@ namespace DwarfCorp.GameStates
                 // Setup input event handlers. All of the actions should already be established - just 
                 // need handlers.
                 DwarfGame.GemInput.ClearAllHandlers();
+
+                WorldManager.ShowInfo += (text) =>
+                    {
+                        InfoTicker.AddMessage(text);
+                    };
+
+                WorldManager.ShowTooltip += (text) =>
+                    {
+                        // Todo - Actually put this at the mouse position.
+                        NewGui.ShowTooltip(new Point(0, 0), text);
+                    };
+
+                WorldManager.SetMouse += (mouse) =>
+                    {
+                        NewGui.MousePointer = mouse;
+                    };
 
 
                 World.gameState = this;
@@ -465,6 +482,13 @@ namespace DwarfCorp.GameStates
                             NewGui.VirtualScreen.Bottom - 128, 256, 128)
                     });
                 };
+
+            InfoTicker = NewGui.RootItem.AddChild(new NewGui.InfoTicker
+                {
+                    Rect = new Rectangle(NewGui.VirtualScreen.X + 239,
+                        NewGui.VirtualScreen.Bottom - 210, 256, 210),
+                    Transparent = true
+                }) as NewGui.InfoTicker;
                         
             layout.UpdateSizes();
 
@@ -557,15 +581,16 @@ namespace DwarfCorp.GameStates
             else if (key == ControlSettings.Mappings.Pause)
             {
                 Paused = !Paused;
-                //Master.ToolBar.SpeedButton.SetSpeed(Paused ? 0 : 1);
+                if (Paused) GameSpeedControls.CurrentSpeed = 0;
+                else GameSpeedControls.CurrentSpeed = GameSpeedControls.PlaySpeed;
             }
             else if (key == ControlSettings.Mappings.TimeForward)
             {
-                //Master.ToolBar.SpeedButton.IncrementSpeed();
+                GameSpeedControls.CurrentSpeed += 1;
             }
             else if (key == ControlSettings.Mappings.TimeBackward)
             {
-                //Master.ToolBar.SpeedButton.DecrementSpeed();
+                GameSpeedControls.CurrentSpeed -= 1;
             }
             else if (key == ControlSettings.Mappings.ToggleGUI)
             {
@@ -604,6 +629,8 @@ namespace DwarfCorp.GameStates
                 InteriorMargin = new Gum.Margin(12, 0, 0, 0),
                 Padding = new Gum.Margin(2, 2, 2, 2)
             };
+
+            NewGui.ConstructWidget(PausePanel);
 
             MakeMenuItem(PausePanel, "Continue", "", (sender, args) =>
                 {

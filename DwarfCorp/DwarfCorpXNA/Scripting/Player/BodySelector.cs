@@ -180,7 +180,7 @@ namespace DwarfCorp
                 first = false;
             }
             // Create a description of the body and display it on the screen.
-            WorldManager.GUI.ToolTipManager.PopupInfo(desc);
+            WorldManager.ShowInfo(desc);
         }
 
         /// <summary>
