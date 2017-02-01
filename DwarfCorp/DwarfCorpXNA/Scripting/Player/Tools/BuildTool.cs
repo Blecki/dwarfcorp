@@ -80,6 +80,7 @@ namespace DwarfCorp
         {
             BuildPanel.TweenOut(Drawer2D.Alignment.Right, 0.25f);
             Player.Faction.CraftBuilder.IsEnabled = false;
+            Player.Faction.RoomBuilder.OnExit();
         }
 
 

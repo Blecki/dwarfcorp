@@ -124,7 +124,7 @@ namespace DwarfCorp
                         {
                             List<Resource> availableGems =
                                 ResourceLibrary.GetResourcesByTag(Datastructures.SelectRandom(Encrustings));
-                            randResource = ResourceLibrary.EncrustTrinket(trinket,
+                            randResource = ResourceLibrary.EncrustTrinket(trinket.Type,
                                 Datastructures.SelectRandom(availableGems).Type);
                         }
                         else
@@ -771,13 +771,13 @@ namespace DwarfCorp
             {
                 foreach (ResourceAmount resource in stockpile.Resources)
                 {
-                    if (toReturn.ContainsKey(resource.ResourceType.ResourceName))
+                    if (toReturn.ContainsKey(resource.ResourceType))
                     {
-                        toReturn[resource.ResourceType.ResourceName].NumResources += resource.NumResources;
+                        toReturn[resource.ResourceType].NumResources += resource.NumResources;
                     }
                     else
                     {
-                        toReturn[resource.ResourceType.ResourceName] = new ResourceAmount(resource);
+                        toReturn[resource.ResourceType] = new ResourceAmount(resource);
                     }
                 }
             }
@@ -807,7 +807,7 @@ namespace DwarfCorp
 
                         if (requirement.Value <= got) continue;
 
-                        if (!resource.ResourceType.Tags.Contains(requirement.Key)) continue;
+                        if (!ResourceLibrary.GetResourceByName(resource.ResourceType).Tags.Contains(requirement.Key)) continue;
 
                         int amountToRemove = System.Math.Min(resource.NumResources, requirement.Value - got);
 
@@ -815,13 +815,13 @@ namespace DwarfCorp
 
                         tagsGot[requirement.Key] += amountToRemove;
 
-                        if (amounts.ContainsKey(resource.ResourceType.Type))
+                        if (amounts.ContainsKey(resource.ResourceType))
                         {
-                            amounts[resource.ResourceType.Type].NumResources += amountToRemove;
+                            amounts[resource.ResourceType].NumResources += amountToRemove;
                         }
                         else
                         {
-                            amounts[resource.ResourceType.Type] = new ResourceAmount(resource.ResourceType.Type, amountToRemove);
+                            amounts[resource.ResourceType] = new ResourceAmount(resource.ResourceType, amountToRemove);
                         }
                     }
                 }
@@ -877,13 +877,13 @@ namespace DwarfCorp
 
             foreach (ResourceAmount resource in resources)
             {
-                if (!amounts.ContainsKey(resource.ResourceType.Type))
+                if (!amounts.ContainsKey(resource.ResourceType))
                 {
-                    amounts.Add(resource.ResourceType.Type, new ResourceAmount(resource));
+                    amounts.Add(resource.ResourceType, new ResourceAmount(resource));
                 }
                 else
                 {
-                    amounts[resource.ResourceType.Type].NumResources += resource.NumResources;
+                    amounts[resource.ResourceType].NumResources += resource.NumResources;
                 }
             }
 
@@ -927,7 +927,7 @@ namespace DwarfCorp
                     foreach (Vector3 vec in positions)
                     {
                         Body newEntity =
-                            EntityFactory.CreateEntity<Body>(resource.ResourceType.ResourceName + " Resource",
+                            EntityFactory.CreateEntity<Body>(resource.ResourceType + " Resource",
                                 vec + MathFunctions.RandVector3Cube()*0.5f);
 
                         TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f),
@@ -1039,7 +1039,7 @@ namespace DwarfCorp
         public List<ResourceAmount> ListResourcesWithTag(Resource.ResourceTags tag)
         {
             Dictionary<string, ResourceAmount> resources = ListResources();
-            return (from pair in resources where pair.Value.ResourceType.Tags.Contains(tag) select pair.Value).ToList();
+            return (from pair in resources where ResourceLibrary.GetResourceByName(pair.Value.ResourceType).Tags.Contains(tag) select pair.Value).ToList();
         }
 
         public Room GetNearestRoom(Vector3 position)

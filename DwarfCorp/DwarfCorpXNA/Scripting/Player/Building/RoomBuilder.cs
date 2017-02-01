@@ -53,7 +53,7 @@ namespace DwarfCorp
         public List<BuildRoomOrder> BuildDesignations { get; set; }
         public RoomData CurrentRoomData { get; set; }
         public Faction Faction { get; set; }
-
+        private List<Body> displayObjects = null; 
 
         public List<Room> FilterRoomsByType(string type)
         {
@@ -71,6 +71,17 @@ namespace DwarfCorp
             BuildDesignations = new List<BuildRoomOrder>();
             CurrentRoomData = RoomLibrary.GetData("BedRoom");
             Faction = faction;
+        }
+
+        public void OnExit()
+        {
+            if (displayObjects != null)
+            {
+                foreach (var thing in displayObjects)
+                {
+                    thing.Delete();
+                }
+            }
         }
 
 
@@ -232,6 +243,7 @@ namespace DwarfCorp
                     continue;
                 }
 
+        
                 if (!v.GetVoxelAbove().IsEmpty)
                 {
                     continue;
@@ -277,8 +289,27 @@ namespace DwarfCorp
             }
         }
 
+        private void SetDisplayColor(Body body, Color color)
+        {
+            List<Tinter> sprites = body.GetChildrenOfTypeRecursive<Tinter>();
+
+            foreach (Tinter sprite in sprites)
+            {
+                sprite.VertexColorTint = color;
+            }
+        }
+
         public void OnVoxelsDragged(List<Voxel> refs, InputManager.MouseButton button)
         {
+
+            if (displayObjects != null)
+            {
+                foreach (var thing in displayObjects)
+                {
+                    thing.Delete();
+                }
+            }
+
             if (CurrentRoomData == null)
             {
                 return;
@@ -313,6 +344,16 @@ namespace DwarfCorp
                     }
 
                     WorldManager.GUI.ToolTipManager.Popup(Drawer2D.WrapColor(tip + "Release to build here.", Color.Green));
+
+
+                    displayObjects = RoomLibrary.GenerateRoomComponentsTemplate(CurrentRoomData, refs, Faction.Components, 
+                        WorldManager.ChunkManager.Content, WorldManager.ChunkManager.Graphics);
+
+                    foreach(Body thing in displayObjects)
+                    {
+                        thing.SetActiveRecursive(false);
+                        SetDisplayColor(thing, Color.Green);
+                    }
                 }
             }
         }
@@ -322,6 +363,14 @@ namespace DwarfCorp
             if(CurrentRoomData == null)
             {
                 return;
+            }
+
+            if (displayObjects != null)
+            {
+                foreach (var thing in displayObjects)
+                {
+                    thing.Delete();
+                }
             }
 
             if(button == InputManager.MouseButton.Left)

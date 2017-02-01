@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Xna.Framework;
 
@@ -95,6 +96,34 @@ namespace DwarfCorp
                 Accessories = Datastructures.RotateClockwise(Accessories);
                 Rotation -= (float)Math.PI*0.5f;
             }
+        }
+
+        public RoomTemplate(RoomTemplate other)
+        {
+            Template = new RoomTile[other.Template.GetLength(0), other.Template.GetLength(1)];
+
+            for (int x = 0; x < other.Template.GetLength(0); x++)
+            {
+                for (int y = 0; y < other.Template.GetLength(1); y++)
+                {
+                    Template[x, y] = other.Template[x, y];
+                }
+            }
+
+            Accessories = new RoomTile[other.Accessories.GetLength(0), other.Accessories.GetLength(1)];
+
+            for (int x = 0; x < other.Accessories.GetLength(0); x++)
+            {
+                for (int y = 0; y < other.Accessories.GetLength(1); y++)
+                {
+                    Accessories[x, y] = other.Accessories[x, y];
+                }
+            }
+            
+            PlacementType = other.PlacementType;
+            Rotation = other.Rotation;
+            CanRotate = other.CanRotate;
+            Probability = other.Probability;
         }
 
         public RoomTemplate()
@@ -172,8 +201,6 @@ namespace DwarfCorp
 
                     RoomTile curent = room[x, y];
 
-
-
                     bool meetsWallRequirements = !hasWall || (curent == RoomTile.Wall);
                     bool meetsEdgeRequirements = (!hasEdge && !hasWall) || (hasEdge && curent == RoomTile.Edge);
                     bool meetsOpenRequriments = !hasOpen || (curent == RoomTile.Open);
@@ -231,9 +258,9 @@ namespace DwarfCorp
             return (requirements & value) == value;
         }
 
-        public static RoomTile[,] CreateFromRoom(Room room, ChunkManager chunks)
+        public static RoomTile[,] CreateFromRoom(List<Voxel> voxelsInRoom, ChunkManager chunks)
         {
-            BoundingBox box0 = room.GetBoundingBox();
+            BoundingBox box0 = MathFunctions.GetBoundingBox(voxelsInRoom);
             BoundingBox box = new BoundingBox(box0.Min + Vector3.Up, box0.Max + Vector3.Up);
             BoundingBox bigBox = new BoundingBox(box0.Min + Vector3.Up + new Vector3(-1, 0, -1), box0.Max + Vector3.Up + new Vector3(1, 0, 1));
             int nr = Math.Max((int) (box.Max.X - box.Min.X), 1);
@@ -242,7 +269,6 @@ namespace DwarfCorp
             RoomTile[,] toReturn = new RoomTile[nr + 2, nc + 2];
 
             Dictionary<Point, Voxel> voxelDict = new Dictionary<Point, Voxel>();
-            List<Voxel> voxelsInRoom = chunks.GetVoxelsIntersecting(bigBox);
             foreach(Voxel vox in voxelsInRoom)
             {
                 voxelDict[new Point((int)(vox.Position.X - box.Min.X) + 1, (int)(vox.Position.Z - box.Min.Z) + 1)] = vox;
@@ -258,14 +284,14 @@ namespace DwarfCorp
 
             foreach(KeyValuePair<Point, Voxel> voxPair in voxelDict)
             {
-                Voxel vox = voxPair.Value;
+                Voxel vox = voxPair.Value.GetVoxelAbove();
                 Point p = voxPair.Key;
 
                 if(vox.IsEmpty && p.X > 0 && p.X < nr + 1 && p.Y > 0 && p.Y < nc + 1)
                 {
                     toReturn[p.X, p.Y] = RoomTile.Open;
                 }
-                else if(vox.TypeName != "empty")
+                else if(!vox.IsEmpty)
                 {
                     toReturn[p.X, p.Y] = RoomTile.Wall;
                 }

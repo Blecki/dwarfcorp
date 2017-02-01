@@ -50,7 +50,7 @@ namespace DwarfCorp
             {
                 if (resource.NumResources > 0)
                 {
-                    PlantSelector.AddValue(resource.ResourceType.Type);
+                    PlantSelector.AddValue(resource.ResourceType);
                 }
             }
 

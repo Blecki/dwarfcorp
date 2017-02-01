@@ -301,11 +301,11 @@ namespace DwarfCorp
             Resources.Remove(ResourceType.Bones);
         }
 
-        public static Resource CreateAle(Resource component)
+        public static Resource CreateAle(ResourceType type)
         {
             Resource toReturn = new Resource(Resources[ResourceType.Ale])
             {
-                Type = component.Type + " Ale"
+                Type = type + " Ale"
             };
             toReturn.ShortName = toReturn.Type;
 
@@ -315,8 +315,10 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public static Resource CreateMeal(Resource componentA, Resource componentB)
+        public static Resource CreateMeal(ResourceType typeA, ResourceType typeB)
         {
+            Resource componentA = Resources[typeA];
+            Resource componentB = Resources[typeB];
             Resource toReturn = new Resource(Resources[ResourceType.Meal])
             {
                 FoodContent = componentA.FoodContent + componentB.FoodContent,
@@ -332,9 +334,9 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public static Resource EncrustTrinket(Resource resource, ResourceType gemType)
+        public static Resource EncrustTrinket(ResourceType resourcetype, ResourceType gemType)
         {
-            Resource toReturn = new Resource(resource);
+            Resource toReturn = new Resource(Resources[resourcetype]);
             toReturn.Type = gemType + "-encrusted " + toReturn.ResourceName;
             toReturn.MoneyValue += Resources[gemType].MoneyValue * 2;
             toReturn.Tags = new List<Resource.ResourceTags>() {Resource.ResourceTags.Craft};
@@ -430,11 +432,11 @@ namespace DwarfCorp
             return toReturn;
         }
         
-        public static Resource CreateBread(Resource component)
+        public static Resource CreateBread(ResourceType component)
         {
             Resource toReturn = new Resource(Resources[ResourceType.Bread])
             {
-                Type = component.Type + " Bread"
+                Type = component + " Bread"
             };
             toReturn.ShortName = toReturn.Type;
 

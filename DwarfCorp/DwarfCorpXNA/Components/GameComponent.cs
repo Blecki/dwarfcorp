@@ -280,6 +280,57 @@ namespace DwarfCorp
         {
         }
 
+
+        /// <summary>
+        /// Renders the component to the selection buffer (for selecting stuff on screen).
+        /// </summary>
+        /// <param name="gameTime">The game time.</param>
+        /// <param name="chunks">The chunks.</param>
+        /// <param name="camera">The camera.</param>
+        /// <param name="spriteBatch">The sprite batch.</param>
+        /// <param name="graphicsDevice">The graphics device.</param>
+        /// <param name="effect">The shader to use.</param>
+        public virtual void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera,
+            SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect)
+        {
+            
+        }
+
+        /// <summary>
+        /// Converts the global identifier into a color for rendering to 
+        /// the selection buffer.
+        /// </summary>
+        /// <returns></returns>
+        public Color GetGlobalIDColor()
+        {
+            // 0xFFFFFFFF
+            // 0xRRGGBBAA
+            int r = (int)(GlobalID >> 6);
+            int g = (int)((GlobalID >> 4) & 0x000000FF);
+            int b = (int)((GlobalID >> 2) & 0x000000FF);
+            int a = (int)((GlobalID) & 0x000000FF);
+            //return new Color {PackedValue = GlobalID};
+            return new Color(r, g, b, a);
+        }
+
+        /// <summary>
+        /// Converts a packed color representation of a global ID to a global ID.
+        /// </summary>
+        /// <param name="color">The color (packed representaiton)</param>
+        /// <returns></returns>
+        public static uint GlobalIDFromColor(Color color)
+        {
+            // 0xFFFFFFFF
+            // 0xRRGGBBAA
+            //return color.PackedValue;
+            uint id = 0;
+            id = id | (uint) (color.R << 6);
+            id = id | (uint) (color.G << 4);
+            id = id | (uint) (color.B << 2);
+            id = id | (uint) (color.A);
+            return id;
+        }
+
         /// <summary>
         /// Returns a hash code for this instance.
         /// </summary>
@@ -408,14 +459,16 @@ namespace DwarfCorp
         /// <returns>A list of components of type T</returns>
         public List<T> GetChildrenOfType<T>(bool includeSelf = false) where T : GameComponent
         {
-            List<T> toReturn = (from child in Children
-                where child is T
-                select (T) child).ToList();
-
+            List<T> toReturn = new List<T>();
             if (includeSelf && this is T)
             {
                 toReturn.Add((T)this);
             }
+
+            toReturn.AddRange(from child in Children
+                where child is T
+                select (T) child);
+
             return toReturn;
         }
 

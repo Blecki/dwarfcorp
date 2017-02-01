@@ -262,6 +262,26 @@ namespace DwarfCorp
 
             BoundingBox frustumBox = MathFunctions.GetBoundingBox(frustum.GetCorners());
 
+            foreach (var hash in hashes)
+            {
+                foreach (var pair in hash.HashMap)
+                {
+                    if (pair.Value == null) continue;
+                    if (frustumBox.Contains(pair.Key.ToVector3()) != ContainmentType.Contains) continue;
+                    foreach (IBoundedObject obj in pair.Value)
+                    {
+                        if (!(obj is TObject)) continue;
+                        if (!set.Contains((TObject)obj)) continue;
+                        BoundingBox box = obj.GetBoundingBox();
+                        if (box.Intersects(frustumBox) && box.Intersects(frustum))
+                        {
+                            set.Add((TObject) obj);
+                        }
+                    }
+                }
+            }
+
+            /*
             foreach (var obj in 
                 from hash 
                     in hashes 
@@ -274,6 +294,7 @@ namespace DwarfCorp
             {
                 set.Add((TObject) obj);
             }
+             */
            
         }
 
@@ -318,6 +339,7 @@ namespace DwarfCorp
             }
         }
 
+
         public HashSet<T> GetVisibleObjects<T>(BoundingFrustum getFrustrum, CollisionType collisionType) where T : IBoundedObject
         {
             HashSet<T> objects = new HashSet<T>();
@@ -338,5 +360,4 @@ namespace DwarfCorp
 
         }
     }
-
 }

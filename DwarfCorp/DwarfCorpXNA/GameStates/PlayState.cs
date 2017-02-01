@@ -190,6 +190,8 @@ namespace DwarfCorp.GameStates
             ResourcePanel.Clear();
             foreach (var resource in Master.Faction.ListResources().Where(p => p.Value.NumResources > 0))
             {
+                var resourceTemplate = ResourceLibrary.GetResourceByName(resource.Key);
+
                 var row = ResourcePanel.AddChild(new Gum.Widget
                     {
                         MinimumSize = new Point(0, 16),
@@ -198,22 +200,23 @@ namespace DwarfCorp.GameStates
 
                 row.AddChild(new Gum.Widget
                     {
-                        Background = new Gum.TileReference("resources", resource.Value.ResourceType.NewGuiSprite),
-                        MinimumSize = new Point(16, 16),
+                        Background = new Gum.TileReference("resources", resourceTemplate.NewGuiSprite),
+                        MinimumSize = new Point(32, 32),
                         AutoLayout = Gum.AutoLayout.DockLeft,
-                        Tooltip = String.Format("{0} - {1}", 
-                            resource.Value.ResourceType.ResourceName,
-                            resource.Value.ResourceType.Description)
+                        Tooltip = String.Format("{0} - {1}",
+                            resourceTemplate.ResourceName,
+                            resourceTemplate.Description)
                     });
 
                 row.AddChild(new Gum.Widget
                 {
                     Text = resource.Value.NumResources.ToString(),
-                    MinimumSize = new Point(16, 16),
+                    MinimumSize = new Point(32, 32),
                     AutoLayout = Gum.AutoLayout.DockLeft,
                     Tooltip = String.Format("{0} - {1}",
-                        resource.Value.ResourceType.ResourceName,
-                        resource.Value.ResourceType.Description)
+                        resourceTemplate.ResourceName,
+                        resourceTemplate.Description),
+                    TextSize = 2
                 });
             }
             ResourcePanel.Layout();
@@ -248,6 +251,7 @@ namespace DwarfCorp.GameStates
                 GUI.Render(gameTime, DwarfGame.SpriteBatch, Vector2.Zero);
                 GUI.PostRender(gameTime);
                 DwarfGame.SpriteBatch.End();
+                //WorldManager.SelectionBuffer.DebugDraw(0, 0);
             }
 
             if (!MinimapFrame.Hidden)

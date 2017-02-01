@@ -54,7 +54,7 @@ namespace DwarfCorp
         public StockResourceTask(ResourceAmount entity)
         {
             EntityToGather = entity.CloneResource();
-            Name = "Stock Entity: " + entity.ResourceType.ResourceName + " " + entity.NumResources;
+            Name = "Stock Entity: " + entity.ResourceType + " " + entity.NumResources;
             Priority = PriorityType.Low;
         }
 
