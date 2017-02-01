@@ -527,6 +527,7 @@ namespace DwarfCorp.GameStates
                 Overworld.Name = Settings.Name;
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
                 StateManager.ClearState();
+                WorldManager.ExistingFile = null;
                 StateManager.PushState("LoadState");
 
                 WorldManager.Natives = NativeCivilizations;

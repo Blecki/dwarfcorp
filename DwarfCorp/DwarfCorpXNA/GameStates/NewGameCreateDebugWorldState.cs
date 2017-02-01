@@ -82,6 +82,7 @@ namespace DwarfCorp.GameStates
                 {
                     Overworld.CreateHillsLand(Game.GraphicsDevice);
                     StateManager.ClearState();
+                    WorldManager.ExistingFile = null;
                     StateManager.PushState("LoadState");
                     WorldManager.WorldSize = new Point3(8, 1, 8);
                     WorldManager.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / WorldManager.WorldScale,
@@ -92,6 +93,7 @@ namespace DwarfCorp.GameStates
                 {
                     Overworld.CreateCliffsLand(Game.GraphicsDevice);
                     StateManager.ClearState();
+                    WorldManager.ExistingFile = null;
                     StateManager.PushState("LoadState");
                     WorldManager.WorldSize = new Point3(8, 1, 8);
                     //GUI.MouseMode = GUISkin.MousePointer.Wait;
@@ -111,6 +113,7 @@ namespace DwarfCorp.GameStates
                 {
                     Overworld.CreateUniformLand(Game.GraphicsDevice);
                     StateManager.ClearState();
+                    WorldManager.ExistingFile = null;
                     StateManager.PushState("LoadState");
                     WorldManager.WorldSize = new Point3(8, 1, 8);
                     WorldManager.WorldSize = new Point3(8, 1, 8);
@@ -122,6 +125,7 @@ namespace DwarfCorp.GameStates
                 {
                     Overworld.CreateOceanLand(Game.GraphicsDevice);
                     StateManager.ClearState();
+                    WorldManager.ExistingFile = null;
                     StateManager.PushState("LoadState");
                     WorldManager.WorldSize = new Point3(8, 1, 8);
                     WorldManager.WorldSize = new Point3(8, 1, 8);

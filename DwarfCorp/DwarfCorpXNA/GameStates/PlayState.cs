@@ -136,7 +136,7 @@ namespace DwarfCorp.GameStates
         /// <param name="gameTime">The current time</param>
         public override void Update(DwarfTime gameTime)
         {
-            WorldManager.GUI.IsMouseVisible = false;
+            //WorldManager.GUI.IsMouseVisible = false;
 
             // If this playstate is not supposed to be running,
             // just exit.
@@ -259,9 +259,7 @@ namespace DwarfCorp.GameStates
             {
                 GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
                 World.Render(gameTime);
-
-               
-
+                
                 // SpriteBatch Begin and End must be called again. Hopefully we can factor this out with the new gui
                 RasterizerState rasterizerState = new RasterizerState()
                 {
@@ -277,9 +275,7 @@ namespace DwarfCorp.GameStates
                 if (!MinimapFrame.Hidden)
                     MinimapRenderer.Render(new Rectangle(0, NewGui.VirtualScreen.Bottom - 192, 192, 192), NewGui);
                 NewGui.Draw();
-            }
-
-            
+            }           
 
             base.Render(gameTime);
         }
@@ -635,7 +631,8 @@ namespace DwarfCorp.GameStates
                 TextHorizontalAlign = Gum.HorizontalAlign.Center,
                 Text = "- Paused -",
                 InteriorMargin = new Gum.Margin(12, 0, 0, 0),
-                Padding = new Gum.Margin(2, 2, 2, 2)
+                Padding = new Gum.Margin(2, 2, 2, 2),
+                OnClose = (sender) => PausePanel = null
             };
 
             NewGui.ConstructWidget(PausePanel);
@@ -666,35 +663,23 @@ namespace DwarfCorp.GameStates
         /// <param name="filename">The file to save to</param>
         public void SaveGame(string filename)
         {
-            Dialog dialog = Dialog.Popup(GUI, "Saving/Loading",
-                "Warning: Saving is still an unstable feature. Are you sure you want to continue?",
-                Dialog.ButtonType.OkAndCancel);
-
-            dialog.OnClosed += (status) => savedialog_OnClosed(status, filename);
+            NewGui.ShowPopup(new NewGui.Confirm
+                {
+                    Text = "Warning: Saving is still an unstable feature. Are you sure you want to continue?",
+                    OnClose = (sender) =>
+                        {
+                            if ((sender as NewGui.Confirm).DialogResult == DwarfCorp.NewGui.Confirm.Result.OKAY)
+                                World.Save(filename, waitforsave_OnFinished);
+                        }
+                }, false);
         }
-
-        private void savedialog_OnClosed(Dialog.ReturnStatus status, string filename)
-        {
-            switch (status)
-            {
-                case Dialog.ReturnStatus.Ok:
-                    {
-                        World.Save(filename, waitforsave_OnFinished);
-                        break;
-                    }
-            }
-        }
-
+        
         private void waitforsave_OnFinished(bool success, Exception exception)
         {
-            if (success)
-            {
-                Dialog.Popup(GUI, "Save", "File saved.", Dialog.ButtonType.OK);
-            }
-            else
-            {
-                Dialog.Popup(GUI, "Save", "File save failed : " + exception.Message, Dialog.ButtonType.OK);
-            }
+            NewGui.ShowPopup(new NewGui.Popup
+                {
+                    Text = success ? "File saved." : "Save failed - " + exception.Message,
+                }, false);
         }
 
         public void Destroy()
