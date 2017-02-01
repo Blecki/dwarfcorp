@@ -136,6 +136,8 @@ namespace DwarfCorp.GameStates
         /// <param name="gameTime">The current time</param>
         public override void Update(DwarfTime gameTime)
         {
+            WorldManager.GUI.IsMouseVisible = false;
+
             // If this playstate is not supposed to be running,
             // just exit.
             if (!Game.IsActive || !IsActiveState || IsShuttingDown)
@@ -258,6 +260,8 @@ namespace DwarfCorp.GameStates
                 GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
                 World.Render(gameTime);
 
+               
+
                 // SpriteBatch Begin and End must be called again. Hopefully we can factor this out with the new gui
                 RasterizerState rasterizerState = new RasterizerState()
                 {
@@ -269,11 +273,13 @@ namespace DwarfCorp.GameStates
                 GUI.PostRender(gameTime);
                 DwarfGame.SpriteBatch.End();
                 //WorldManager.SelectionBuffer.DebugDraw(0, 0);
+
+                if (!MinimapFrame.Hidden)
+                    MinimapRenderer.Render(new Rectangle(0, NewGui.VirtualScreen.Bottom - 192, 192, 192), NewGui);
+                NewGui.Draw();
             }
 
-            if (!MinimapFrame.Hidden)
-                MinimapRenderer.Render(new Rectangle(0, NewGui.VirtualScreen.Bottom - 192, 192, 192), NewGui);
-            NewGui.Draw();
+            
 
             base.Render(gameTime);
         }
@@ -345,7 +351,9 @@ namespace DwarfCorp.GameStates
                     Rect = new Rectangle(48,8,256,20),
                     Text = WorldManager.PlayerCompany.Information.Name,
                     AutoLayout = Gum.AutoLayout.None,
-                    TextSize = 2
+                    TextSize = 1,
+                    Font = "font2",
+                    TextColor = new Vector4(1,1,1,1)
                 });
 
             MoneyLabel = NewGui.RootItem.AddChild(new Gum.Widget

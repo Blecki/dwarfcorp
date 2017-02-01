@@ -18,6 +18,11 @@
 			"Type": "VariableWidthFont"
 		},
 		{
+			"Name": "font2",
+			"Texture": "newgui/font2",
+			"Type": "VariableWidthFont"
+		},
+		{
 			"Name": "mouse",
 			"Texture": "newgui/pointers",
 			"TileWidth": 16,
