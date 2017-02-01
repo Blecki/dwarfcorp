@@ -6,6 +6,7 @@
 *.cs text
 *.json text
 *.txt text
+*.fx text
 
 # Declare files that will always have CRLF line endings on checkout.
 *.sln text eol=crlf
