@@ -590,7 +590,7 @@ namespace DwarfCorp.GameStates
             if (PausePanel != null) return;
             Paused = true;
 
-            PausePanel = NewGui.RootItem.AddChild(new Gum.Widget
+            PausePanel = new Gum.Widget
             {
                 Rect = new Rectangle(NewGui.VirtualScreen.Center.X - 128,
                     NewGui.VirtualScreen.Center.Y - 100, 256, 200),
@@ -599,7 +599,7 @@ namespace DwarfCorp.GameStates
                 Text = "- Paused -",
                 InteriorMargin = new Gum.Margin(12, 0, 0, 0),
                 Padding = new Gum.Margin(2, 2, 2, 2)
-            });
+            };
 
             MakeMenuItem(PausePanel, "Continue", "", (sender, args) =>
                 {
@@ -617,6 +617,8 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(PausePanel, "Quit", "", (sender, args) => QuitOnNextUpdate = true);
 
             PausePanel.Layout();
+
+            NewGui.ShowPopup(PausePanel, false);
         }
 
         /// <summary>
