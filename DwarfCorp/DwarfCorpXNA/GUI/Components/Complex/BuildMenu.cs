@@ -469,7 +469,7 @@ namespace DwarfCorp
                     foreach (ResourceAmount resource in resources)
                     {
                         if (resource.NumResources >= resourceAmount.NumResources)
-                            box.AddValue(resource.ResourceType.ResourceName);
+                            box.AddValue(resource.ResourceType);
                     }
 
                     if (resources.Count == 0 || box.Values.Count == 0)
@@ -549,7 +549,7 @@ namespace DwarfCorp
                     foreach (ResourceAmount resource in resources)
                     {
                         if (resource.NumResources >= resourceAmount.NumResources)
-                            box.AddValue(resource.ResourceType.ResourceName);
+                            box.AddValue(resource.ResourceType);
                     }
 
                     if (resources.Count == 0 || box.Values.Count == 0)

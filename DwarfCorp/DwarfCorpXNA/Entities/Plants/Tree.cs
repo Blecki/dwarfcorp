@@ -189,14 +189,14 @@ namespace DwarfCorp
             inventory.Resources.AddResource(new ResourceAmount()
             {
                 NumResources = (int)(treeSize * 10),
-                ResourceType = ResourceLibrary.Resources[ResourceLibrary.ResourceType.Wood]
+                ResourceType = ResourceLibrary.ResourceType.Wood
             });
 
 
             inventory.Resources.AddResource(new ResourceAmount()
             {
                 NumResources = (int)(treeSize * 2),
-                ResourceType = ResourceLibrary.Resources[seed]
+                ResourceType = seed
             });
 
 

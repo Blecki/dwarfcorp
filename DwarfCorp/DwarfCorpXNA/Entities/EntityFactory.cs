@@ -171,8 +171,8 @@ namespace DwarfCorp
         {
             List<Resource> foods = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.RawFood);
 
-            Resource randresource = ResourceLibrary.CreateMeal(Datastructures.SelectRandom(foods),
-                Datastructures.SelectRandom(foods));
+            Resource randresource = ResourceLibrary.CreateMeal(Datastructures.SelectRandom(foods).Type,
+                Datastructures.SelectRandom(foods).Type);
             return new ResourceEntity(randresource.Type, position);
         }
 
@@ -183,7 +183,7 @@ namespace DwarfCorp
 
             if (MathFunctions.RandEvent(0.5f))
             {
-                randResource = ResourceLibrary.EncrustTrinket(randResource, "Emerald");
+                randResource = ResourceLibrary.EncrustTrinket(randResource.Type, "Emerald");
             }
 
             return new ResourceEntity(randResource.Type, pos);

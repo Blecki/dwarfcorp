@@ -88,17 +88,18 @@ namespace DwarfCorp
                     continue;
                 }
 
+                Resource resource = ResourceLibrary.GetResourceByName(amount.ResourceType);
 
                 bool exists = false;
                 int k = 0;
                 foreach (ImagePanel imgPanel in panels)
                 {
-                    if (imgPanel.Image.Equals(amount.ResourceType.Image))
+                    if (imgPanel.Image.Equals(resource.Image))
                     {
                         imgPanel.ToolTip = imgPanel.ToolTip + "\n" +
-                                             "* " + amount.NumResources.ToString() + " " + amount.ResourceType.ResourceName + "\n" +
-                                           amount.ResourceType.Description + "\n Props: " +
-                                           amount.ResourceType.GetTagDescription(", ");
+                                             "* " + amount.NumResources.ToString() + " " + resource.ResourceName + "\n" +
+                                           resource.Description + "\n Props: " +
+                                           resource.GetTagDescription(", ");
                         exists = true;
 
                         counts[k] += amount.NumResources;
@@ -113,11 +114,11 @@ namespace DwarfCorp
                 int r = itemIndex / wItems;
                 int c = itemIndex % wItems;
 
-                ImagePanel panel = new ImagePanel(GUI, Layout, amount.ResourceType.Image)
+                ImagePanel panel = new ImagePanel(GUI, Layout, resource.Image)
                 {
                     KeepAspectRatio = true,
-                    ToolTip = "* " + amount.NumResources.ToString() + " " + amount.ResourceType.ResourceName + "\n" + amount.ResourceType.Description + "\n Props: " + amount.ResourceType.GetTagDescription(", "),
-                    Tint = amount.ResourceType.Tint
+                    ToolTip = "* " + amount.NumResources.ToString() + " " + resource.ResourceName + "\n" + resource.Description + "\n Props: " + resource.GetTagDescription(", "),
+                    Tint = resource.Tint
                 };
 
                 Layout.SetComponentPosition(panel, c, r, 1, 1);
