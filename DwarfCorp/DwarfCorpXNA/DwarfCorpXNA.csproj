@@ -298,7 +298,6 @@
     <Compile Include="GUI\Components\Basic\Window.cs" />
     <Compile Include="GUI\Components\Complex\ActDisplay.cs" />
     <Compile Include="GUI\Components\Complex\AIDebugger.cs" />
-    <Compile Include="GUI\Components\Complex\AnnounementViewer.cs" />
     <Compile Include="GUI\Components\Complex\ApplicationPanel.cs" />
     <Compile Include="GUI\Components\Complex\BuildMenu.cs" />
     <Compile Include="GUI\Components\Complex\CapitalPanel.cs" />
@@ -312,10 +311,7 @@
     <Compile Include="GUI\Components\Complex\ItemSelector.cs" />
     <Compile Include="GUI\Components\Complex\KeyEditor.cs" />
     <Compile Include="GUI\Components\Complex\MagicMenu.cs" />
-    <Compile Include="GUI\Components\Complex\MasterControls.cs" />
-    <Compile Include="GUI\Components\Complex\Minimap.cs" />
     <Compile Include="GUI\Components\Complex\MinionPanel.cs" />
-    <Compile Include="GUI\Components\Complex\ResourceInfoComponent.cs" />
     <Compile Include="GUI\Components\Complex\SpellTreeDisplay.cs" />
     <Compile Include="GUI\Components\Complex\StockTicker.cs" />
     <Compile Include="GUI\Components\Complex\TabSelector.cs" />
@@ -334,9 +330,14 @@
     <Compile Include="LanguageGenerator\Language.cs" />
     <Compile Include="LanguageGenerator\TextAtom.cs" />
     <Compile Include="LanguageGenerator\TextGenerator.cs" />
+    <Compile Include="NewGui\AnnouncementPopup.cs" />
+    <Compile Include="NewGui\FramedIcon.cs" />
     <Compile Include="NewGui\CompanyLogo.cs" />
+    <Compile Include="NewGui\IconTray.cs" />
     <Compile Include="NewGui\GridChooser.cs" />
     <Compile Include="NewGui\GridPanel.cs" />
+    <Compile Include="NewGui\GameSpeedControls.cs" />
+    <Compile Include="NewGui\Minimap.cs" />
     <Compile Include="NewGui\Popup.cs" />
     <Compile Include="NewGui\Confirm.cs" />
     <Compile Include="ProgramData.cs" />
@@ -436,8 +437,6 @@
     <Compile Include="Scripting\Magic\SpellLibrary.cs" />
     <Compile Include="Scripting\Magic\SpellTree.cs" />
     <Compile Include="Scripting\MonsterSpawner.cs" />
-    <Compile Include="Scripting\Player\Announcements\Announcement.cs" />
-    <Compile Include="Scripting\Player\Announcements\AnnouncementManager.cs" />
     <Compile Include="Scripting\Player\BodySelector.cs" />
     <Compile Include="Scripting\Player\Building\BuildOrder.cs" />
     <Compile Include="Scripting\Player\Building\BuildRoomOrder.cs" />

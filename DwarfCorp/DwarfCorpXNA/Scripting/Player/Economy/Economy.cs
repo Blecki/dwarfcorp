@@ -74,17 +74,13 @@ namespace DwarfCorp
             
         }
 
-        public Economy(Faction faction, float currentMoney, WorldManager WorldManager, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor)
+        public Economy(Faction faction, float currentMoney, WorldManager WorldManager, 
+            CompanyInformation CompanyInformation)
         {
             this.WorldManager = WorldManager;
             Company = Company.GenerateRandom(currentMoney, 1.0f, Company.Sector.Exploration);
-            Company.Name = companyName;
-            Company.SecondaryColor = Color.White;
-            Company.Logo = companyLogo;
-            Company.Motto = companyMotto;
+            Company.Information = CompanyInformation;
             Company.Assets = currentMoney;
-            Company.BaseColor = companyColor;
-
 
             CurrentMoney = currentMoney;
             Faction = faction;
@@ -141,12 +137,14 @@ namespace DwarfCorp
 
             if (Company.Assets <= 0)
             {
-                WorldManager.AnnouncementManager.Announce("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
+                WorldManager.MakeAnnouncement("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
             }
 
             string symbol = diff > 0 ? "+" : "";
-           
-            WorldManager.AnnouncementManager.Announce(Company.TickerName + " " + Company.StockPrice.ToString("F2") + " " + symbol + diff.ToString("F2"), "Our stock price changed by " + symbol + " " + diff.ToString("F2") + " today.");
+
+            WorldManager.MakeAnnouncement(String.Format("{0} {1} {2}{3}",
+                Company.TickerName, Company.StockPrice.ToString("F2"), symbol, diff.ToString("F2")),
+                String.Format("Our stock price changed by {0}{1} today.", symbol, diff.ToString("F2")));
         }
 
         void Time_NewDay(DateTime time)

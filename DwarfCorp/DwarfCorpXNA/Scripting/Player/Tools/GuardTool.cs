@@ -124,7 +124,7 @@ namespace DwarfCorp
             Player.BodySelector.Enabled = false;
             Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
 
-            if (WorldManager.GUI.IsMouseOver())
+            if (WorldManager.IsMouseOverGui)
             {
                 WorldManager.GUI.MouseMode = GUISkin.MousePointer.Pointer;
             }

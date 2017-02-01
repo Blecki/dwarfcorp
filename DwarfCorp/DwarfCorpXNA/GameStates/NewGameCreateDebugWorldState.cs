@@ -95,7 +95,7 @@ namespace DwarfCorp.GameStates
                     //GUI.MouseMode = GUISkin.MousePointer.Wait;
                     WorldManager.Natives = new List<Faction>();
                     FactionLibrary library = new FactionLibrary();
-                    library.Initialize(null, "fake", "fake", null, Color.Blue);
+                    library.Initialize(null, new CompanyInformation());
                     for (int i = 0; i < 10; i++)
                     {
                         WorldManager.Natives.Add(library.GenerateFaction(i, 10));

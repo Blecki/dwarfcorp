@@ -103,7 +103,7 @@ namespace DwarfCorp
                 Player.BodySelector.Enabled = false;
                 WorldManager.GUI.IsMouseVisible = true;
 
-                WorldManager.GUI.MouseMode = WorldManager.GUI.IsMouseOver()
+                WorldManager.GUI.MouseMode = WorldManager.IsMouseOverGui
                     ? GUISkin.MousePointer.Pointer
                     : GUISkin.MousePointer.Build;
             }
@@ -113,7 +113,7 @@ namespace DwarfCorp
                 Player.BodySelector.Enabled = false;
                 WorldManager.GUI.IsMouseVisible = true;
 
-                WorldManager.GUI.MouseMode = WorldManager.GUI.IsMouseOver()
+                WorldManager.GUI.MouseMode = WorldManager.IsMouseOverGui
                     ? GUISkin.MousePointer.Pointer
                     : GUISkin.MousePointer.Cook;
             }

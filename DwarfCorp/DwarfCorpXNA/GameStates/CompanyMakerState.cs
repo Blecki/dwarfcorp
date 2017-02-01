@@ -37,9 +37,21 @@ using Gum;
 using Gum.Widgets;
 using System.Linq;
 
+namespace DwarfCorp
+{
+    public class CompanyInformation
+    {
+        public TileReference LogoBackground = new TileReference("company-logo-background", 0);
+        public Vector4 LogoBackgroundColor = Vector4.One;
+        public TileReference LogoSymbol = new TileReference("company-logo-symbol", 0);
+        public Vector4 LogoSymbolColor = Vector4.One;
+        public string Name = "Graybeard & Sons";
+        public string Motto = "My beard is in the workd!";
+    }
+}
+
 namespace DwarfCorp.GameStates
 {
-
     /// <summary>
     /// This game state allows the player to design their own dwarf company.
     /// </summary>
@@ -50,26 +62,20 @@ namespace DwarfCorp.GameStates
         private Gum.Widgets.EditableTextField MottoField;
         private NewGui.CompanyLogo CompanyLogoDisplay;
 
-        public TextGenerator TextGenerator { get; set; }
-        public static Color DefaultColor = Color.DarkRed;
-        public static string DefaultName = "Greybeard & Sons";
-        public static string DefaultMotto = "My beard is in the work!";
-        public static NamedImageFrame DefaultLogo = new NamedImageFrame(ContentPaths.Logos.grebeardlogo);
-        public static string CompanyName { get; set; }
-        public static string CompanyMotto { get; set; }
+        // Todo: This should be passed to the next screen when create is clicked, and so on. Instead
+        //  of being static... there should be a state object that is slowly built by each screen until
+        //  it finally gets passed to the game.
+        // Todo: Also need to save this when the game is saved.
+        public static CompanyInformation CompanyInformation { get; set; }
 
         // Does not actually set these.
-        public static NamedImageFrame CompanyLogo { get; set; }
-        public static Color CompanyColor { get; set; }
+        //public static NamedImageFrame CompanyLogo { get; set; }
+        //public static Color CompanyColor { get; set; }
 
         public CompanyMakerState(DwarfGame game, GameStateManager stateManager) :
             base(game, "CompanyMakerState", stateManager)
         {
-            CompanyName = DefaultName;
-            CompanyMotto = DefaultMotto;
-            CompanyLogo = DefaultLogo;
-            CompanyColor = DefaultColor;
-            TextGenerator = new TextGenerator();
+            CompanyInformation = new CompanyInformation();
         }
 
         public override void OnEnter()
@@ -100,10 +106,8 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                 {
                     // Grab string values from widgets!
-                    CompanyName = NameField.Text;
-                    CompanyMotto = MottoField.Text;
-
-                    // Todo:  Logo stuff...
+                    CompanyInformation.Name = NameField.Text;
+                    CompanyInformation.Motto = MottoField.Text;
 
                     // Why are they stored as statics on this class???
                     StateManager.PushState("NewGameChooseWorldState");
@@ -111,7 +115,6 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.FloatBottomRight
             });
 
-            // Todo: Main menu needs to be fixed so going back actually goes back to the first menu.
             mainPanel.AddChild(new Widget
             {
                 Text = "BACK",
@@ -159,7 +162,7 @@ namespace DwarfCorp.GameStates
 
             NameField = nameRow.AddChild(new EditableTextField
                 {
-                    Text = DefaultName,
+                    Text = CompanyInformation.Name,
                     AutoLayout = AutoLayout.DockFill
                 }) as EditableTextField;
             #endregion
@@ -198,7 +201,7 @@ namespace DwarfCorp.GameStates
 
             MottoField = mottoRow.AddChild(new EditableTextField
             {
-                Text = DefaultMotto,
+                Text = CompanyInformation.Motto,
                 AutoLayout = AutoLayout.DockFill
             }) as EditableTextField;
             #endregion
@@ -216,7 +219,8 @@ namespace DwarfCorp.GameStates
                 {
                     AutoLayout = AutoLayout.DockLeft,
                     MinimumSize = new Point(64,64),
-                    MaximumSize = new Point(64,64)
+                    MaximumSize = new Point(64,64),
+                    CompanyInformation = CompanyInformation
                 }) as NewGui.CompanyLogo;
 
             logoRow.AddChild(new Widget
@@ -227,7 +231,7 @@ namespace DwarfCorp.GameStates
 
             logoRow.AddChild(new Widget
                 {
-                    Background = new TileReference("company-logo-background", 0),
+                    Background = CompanyInformation.LogoBackground,
                     MinimumSize = new Point(32,32),
                     MaximumSize = new Point(32,32),
                     AutoLayout = AutoLayout.DockLeft,
@@ -248,7 +252,7 @@ namespace DwarfCorp.GameStates
                                         {
                                             sender.Background = gc.SelectedItem.Background;
                                             sender.Invalidate();
-                                            CompanyLogoDisplay.LogoBackground = gc.SelectedItem.Background;
+                                            CompanyInformation.LogoBackground = gc.SelectedItem.Background;
                                             CompanyLogoDisplay.Invalidate();
                                         }
                                     }
@@ -260,7 +264,7 @@ namespace DwarfCorp.GameStates
             logoRow.AddChild(new Widget
             {
                 Background = new TileReference("basic", 1),
-                BackgroundColor = new Vector4(DefaultColor.ToVector3(), 1),
+                BackgroundColor = CompanyInformation.LogoBackgroundColor,
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
                 AutoLayout = AutoLayout.DockLeft,
@@ -284,7 +288,7 @@ namespace DwarfCorp.GameStates
                             {
                                 sender.BackgroundColor = gc.SelectedItem.BackgroundColor;
                                 sender.Invalidate();
-                                CompanyLogoDisplay.LogoBackgroundColor = gc.SelectedItem.BackgroundColor;
+                                CompanyInformation.LogoBackgroundColor = gc.SelectedItem.BackgroundColor;
                                 CompanyLogoDisplay.Invalidate();
                             }
                         }
@@ -301,7 +305,7 @@ namespace DwarfCorp.GameStates
 
             logoRow.AddChild(new Widget
             {
-                Background = new TileReference("company-logo-symbol", 0),
+                Background = CompanyInformation.LogoSymbol,
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
                 AutoLayout = AutoLayout.DockLeft,
@@ -323,7 +327,7 @@ namespace DwarfCorp.GameStates
                             {
                                 sender.Background = gc.SelectedItem.Background;
                                 sender.Invalidate();
-                                CompanyLogoDisplay.LogoSymbol = gc.SelectedItem.Background;
+                                CompanyInformation.LogoSymbol = gc.SelectedItem.Background;
                                 CompanyLogoDisplay.Invalidate();
                             }
                         }
@@ -335,7 +339,7 @@ namespace DwarfCorp.GameStates
             logoRow.AddChild(new Widget
             {
                 Background = new TileReference("basic", 1),
-                BackgroundColor = new Vector4(DefaultColor.ToVector3(), 1),
+                BackgroundColor = CompanyInformation.LogoSymbolColor,
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
                 AutoLayout = AutoLayout.DockLeft,
@@ -359,7 +363,7 @@ namespace DwarfCorp.GameStates
                             {
                                 sender.BackgroundColor = gc.SelectedItem.BackgroundColor;
                                 sender.Invalidate();
-                                CompanyLogoDisplay.LogoSymbolColor = gc.SelectedItem.BackgroundColor;
+                                CompanyInformation.LogoSymbolColor = gc.SelectedItem.BackgroundColor;
                                 CompanyLogoDisplay.Invalidate();
                             }
                         }

@@ -76,7 +76,6 @@ namespace DwarfCorp
         public FactionLibrary Factions { get; set; }
         public Diplomacy Diplomacy { get; set; }
 
-            
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
@@ -93,7 +92,7 @@ namespace DwarfCorp
             
         }
 
-        public ComponentManager(WorldManager state, string companyName, string companyMotto, NamedImageFrame companyLogo, Color companyColor, List<Faction> natives )
+        public ComponentManager(WorldManager state, CompanyInformation CompanyInformation, List<Faction> natives )
         {
             Components = new Dictionary<uint, GameComponent>();
             Removals = new List<GameComponent>();
@@ -106,7 +105,7 @@ namespace DwarfCorp
             {
                 Factions.AddFactions(natives);
             }
-            Factions.Initialize(state, companyName, companyMotto, companyLogo, companyColor);
+            Factions.Initialize(state, CompanyInformation);
             Point playerOrigin = new Point((int)(WorldManager.WorldOrigin.X), (int)(WorldManager.WorldOrigin.Y));
 
             Factions.Factions["Player"].Center = playerOrigin;
@@ -210,7 +209,6 @@ namespace DwarfCorp
 
         public List<Body> SelectRootBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
         {
-            /*
             return (from component in RootComponent.Children.OfType<Body>()
                     let screenPos = camera.Project(component.GlobalTransform.Translation)
                     where   screenPos.Z > 0 
@@ -218,22 +216,6 @@ namespace DwarfCorp
                     && camera.GetFrustrum().Contains(component.GlobalTransform.Translation) != ContainmentType.Disjoint
                     && !WorldManager.ChunkManager.ChunkData.CheckOcclusionRay(camera.Position, component.Position)
                     select component).ToList();
-             */
-            if (WorldManager.SelectionBuffer == null)
-            {
-                return new List<Body>();
-            }
-            List<Body> toReturn = new List<Body>();
-            foreach (uint id in WorldManager.SelectionBuffer.GetIDsSelected(selectionRectangle))
-            {
-                GameComponent component;
-                if (!Components.TryGetValue(id, out component))
-                {
-                    continue;
-                }
-                toReturn.Add(component.GetRootComponent().GetComponent<Body>());
-            }
-            return toReturn;
         }
 
         public List<Body> SelectAllBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
@@ -340,16 +322,7 @@ namespace DwarfCorp
             Removals.Clear();
             RemovalMutex.ReleaseMutex();
         }
-
-
-        public List<Body> FrustrumCullLocatableComponents(Camera camera)
-        {
-            List<Body> visible = CollisionManager.GetVisibleObjects<Body>(camera.GetFrustrum(), CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
-              
-            return visible;
-        }
-
-
+                
         private HashSet<Body> visibleComponents = new HashSet<Body>();
         private List<GameComponent> componentsToDraw = new List<GameComponent>();
 
@@ -372,17 +345,6 @@ namespace DwarfCorp
             None
         }
 
-        public void RenderSelectionBuffer(DwarfTime time, ChunkManager chunks, Camera camera,
-            SpriteBatch spriteBatch, GraphicsDevice graphics, Effect effect)
-        {
-            effect.CurrentTechnique = effect.Techniques["Selection"];
-            foreach (GameComponent component in componentsToDraw)
-            {
-                if (component.IsVisible)
-                    component.RenderSelectionBuffer(time, chunks, camera, spriteBatch, graphics, effect);
-            }
-        }
-
         public void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
@@ -395,17 +357,11 @@ namespace DwarfCorp
 
             if(!renderForWater)
             {
-                visibleComponents.Clear();
-                componentsToDraw.Clear();
-                
-                
-                List<Body> list = FrustrumCullLocatableComponents(camera);
-                foreach(Body component in list)
-                {
-                    visibleComponents.Add(component);
-                }
-                 
+                visibleComponents = CollisionManager.GetVisibleObjects<Body>(camera.GetFrustrum(),
+                    CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
+                componentsToDraw.Clear();
+               
                 Camera = camera;
                 foreach(GameComponent component in Components.Values)
                 {

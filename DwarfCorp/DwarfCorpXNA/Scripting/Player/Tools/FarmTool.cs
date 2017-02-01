@@ -336,7 +336,7 @@ namespace DwarfCorp
             }
             WorldManager.GUI.IsMouseVisible = true;
 
-            WorldManager.GUI.MouseMode = WorldManager.GUI.IsMouseOver() ? GUISkin.MousePointer.Pointer : GUISkin.MousePointer.Farm;
+            WorldManager.GUI.MouseMode = WorldManager.IsMouseOverGui ? GUISkin.MousePointer.Pointer : GUISkin.MousePointer.Farm;
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)

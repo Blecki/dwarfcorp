@@ -155,7 +155,7 @@ namespace DwarfCorp
                 CurrentSpell.Update(time, Player.VoxSelector, Player.BodySelector);
             }
 
-            WorldManager.GUI.MouseMode = WorldManager.GUI.IsMouseOver() ? GUISkin.MousePointer.Pointer : GUISkin.MousePointer.Magic;
+            WorldManager.GUI.MouseMode = WorldManager.IsMouseOverGui ? GUISkin.MousePointer.Pointer : GUISkin.MousePointer.Magic;
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)

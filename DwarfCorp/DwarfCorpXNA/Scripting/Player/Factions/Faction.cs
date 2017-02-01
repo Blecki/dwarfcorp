@@ -971,8 +971,8 @@ namespace DwarfCorp
             newMinion.Stats.FullName = currentApplicant.Name;
             newMinion.AI.AddMoney(currentApplicant.Level.Pay * 4);
 
-            WorldManager.AnnouncementManager.Announce("New Hire!" ,currentApplicant.Name + " was hired as a " + currentApplicant.Level.Name, newMinion.AI.ZoomToMe);
-
+            WorldManager.MakeAnnouncement("New hire!", String.Format("{0} was hired as a {1}.",
+                currentApplicant.Name, currentApplicant.Level.Name), newMinion.AI.ZoomToMe);
         }
 
         public Body DispatchBalloon()

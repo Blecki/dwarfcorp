@@ -157,9 +157,6 @@ namespace DwarfCorp
         // Draws shadow maps
         public static ShadowRenderer Shadows;
 
-        // Draws a selection buffer (for pixel-perfect selection)
-        public static SelectionBuffer SelectionBuffer;
-
         // Responsible for handling instances of particular primitives (or models)
         // and drawing them to the screen
         public static InstanceManager InstanceManager;
@@ -221,7 +218,15 @@ namespace DwarfCorp
 
         public static Point3 WorldSize { get; set; }
 
-        public static AnnouncementManager AnnouncementManager = new AnnouncementManager();
+        // More statics. Hate this.
+        public static Action<String, String, Action> OnAnnouncement;
+
+        public static void MakeAnnouncement(String Title, String Message, Action ClickAction = null)
+        {
+            if (OnAnnouncement != null)
+                OnAnnouncement(Title, Message, ClickAction);
+        }
+
 
         public static MonsterSpawner MonsterSpawner { get; set; }
 
@@ -262,6 +267,16 @@ namespace DwarfCorp
         public GameState gameState;
 
         public static DwarfGUI GUI;
+        public static Gum.Root NewGui;
+
+        public static bool IsMouseOverGui
+        {
+            get
+            {
+                return GUI.IsMouseOver() ||
+                    NewGui.HoverItem != null;
+            }
+        }
 
         // Since world, like many of the other classes, is pretty much a singleton given how many static variables it has
         // this provides singleton access
@@ -330,9 +345,8 @@ namespace DwarfCorp
 #endif
             {
                 LoadingMessage = "Initializing ...";
-                InitializeStaticData(CompanyMakerState.CompanyName, CompanyMakerState.CompanyMotto,
-                    CompanyMakerState.CompanyLogo,
-                    CompanyMakerState.CompanyColor, Natives);
+                // Todo: How is this initialized by save games?
+                InitializeStaticData(CompanyMakerState.CompanyInformation, Natives);
 
                 LoadingMessage = "Creating Planner ...";
                 PlanService = new PlanService();
@@ -428,8 +442,7 @@ namespace DwarfCorp
         /// Creates a bunch of stuff (such as the biome library, primitive library etc.) which won't change
         /// from game to game.
         /// </summary>
-        public void InitializeStaticData(string companyName, string companyMotto, NamedImageFrame companyLogo,
-            Color companyColor, List<Faction> natives)
+        public void InitializeStaticData(CompanyInformation CompanyInformation, List<Faction> natives)
         {
             CompositeLibrary.Initialize();
             CraftLibrary = new CraftLibrary();
@@ -468,7 +481,7 @@ namespace DwarfCorp
             if (PlanService != null)
                 PlanService.Restart();
 
-            ComponentManager = new ComponentManager(this, companyName, companyMotto, companyLogo, companyColor, natives);
+            ComponentManager = new ComponentManager(this, CompanyInformation, natives);
             ComponentManager.RootComponent = new Body("root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero, false);
             Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
             Vector3 extents = new Vector3(1500, 1500, 1500);
@@ -1173,12 +1186,12 @@ namespace DwarfCorp
                     {
                         minion.Status.Energy.CurrentValue = minion.Status.Energy.MaxValue;
                     }
-                    Master.ToolBar.SpeedButton.SetSpeed(1);
+                    //Master.ToolBar.SpeedButton.SetSpeed(1);
                     Time.Speed = 100;
                 }
                 else
                 {
-                    Master.ToolBar.SpeedButton.SetSpecialSpeed(3);
+                    //Master.ToolBar.SpeedButton.SetSpecialSpeed(3);
                     Time.Speed = 1000;
                 }
             }
@@ -1334,33 +1347,6 @@ namespace DwarfCorp
             return Matrix.CreateLookAt(reflCameraPosition, reflTargetPos, invUpVector);
         }
 
-        public void DrawSelectionBuffer(DwarfTime gameTime, Effect effect, Matrix view)
-        {
-            if (SelectionBuffer == null)
-            {
-                SelectionBuffer = new SelectionBuffer(8, GraphicsDevice);
-            }
-            GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            GraphicsDevice.BlendState = BlendState.Opaque;
-            
-            SelectionBuffer.Begin(GraphicsDevice);
-
-            Plane slicePlane = WaterRenderer.CreatePlane(SlicePlane, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
-
-            // Draw the whole world, and make sure to handle slicing
-            DefaultShader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
-            DefaultShader.Parameters["Clipping"].SetValue(1);
-            effect.Parameters["xView"].SetValue(view);
-            effect.Parameters["xProjection"].SetValue(Camera.ProjectionMatrix);
-            effect.Parameters["xWorld"].SetValue(Matrix.Identity);
-            ChunkManager.RenderSelectionBuffer(effect, GraphicsDevice, Camera.ViewMatrix);
-            ComponentManager.RenderSelectionBuffer(gameTime, ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, effect);
-            InstanceManager.RenderSelectionBuffer(GraphicsDevice, effect, Camera, false);
-            SelectionBuffer.End(GraphicsDevice);
-             
-        }
-
         /// <summary>
         /// Draws all the 3D terrain and entities
         /// </summary>
@@ -1512,7 +1498,6 @@ namespace DwarfCorp
 
             CompositeLibrary.Render(GraphicsDevice, DwarfGame.SpriteBatch);
             CompositeLibrary.Update();
-
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
 
@@ -1534,8 +1519,6 @@ namespace DwarfCorp
             // Draw reflection/refraction images
             WaterRenderer.DrawReflectionMap(gameTime, this, wHeight - 0.1f, GetReflectedCameraMatrix(wHeight),
                 DefaultShader, GraphicsDevice);
-
-            DrawSelectionBuffer(gameTime, DefaultShader, Camera.ViewMatrix);
 
             // Start drawing the bloom effect
             if (GameSettings.Default.EnableGlow)
@@ -1644,8 +1627,6 @@ namespace DwarfCorp
 
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
-
-            //SelectionBuffer.DebugDraw(GraphicsDevice.Viewport.Bounds);
 
             lock (ScreenshotLock)
             {

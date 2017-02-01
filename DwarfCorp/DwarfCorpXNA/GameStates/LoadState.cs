@@ -54,8 +54,12 @@ namespace DwarfCorp.GameStates
             PlayState.Input = Input;
             PlayState.GUI = GUI;
 
+            // Hack: So that saved games still load.
+            if (WorldManager.PlayerCompany.Information == null)
+                WorldManager.PlayerCompany.Information = new CompanyInformation();
+
             StateManager.PopState();
-            StateManager.PushState("PlayState");
+            StateManager.PushState("PlayState");            
         }
 
         public override void OnEnter()

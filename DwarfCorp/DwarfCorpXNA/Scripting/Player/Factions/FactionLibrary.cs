@@ -84,7 +84,7 @@ namespace DwarfCorp
             Races = ContentPaths.LoadFromJson<Dictionary<string, Race>>(ContentPaths.World.races);
         }
 
-        public void Initialize(WorldManager state, string name, string motto, NamedImageFrame logo, Color color)
+        public void Initialize(WorldManager state, CompanyInformation CompanyInformation)
         {
             if (Races == null)
             {
@@ -160,7 +160,7 @@ namespace DwarfCorp
                 IsRaceFaction = true
             };
             
-            Factions["Player"].Economy = new Economy(Factions["Player"], 300.0f, state, name, motto, logo, color);
+            Factions["Player"].Economy = new Economy(Factions["Player"], 300.0f, state, CompanyInformation);
         }
 
 

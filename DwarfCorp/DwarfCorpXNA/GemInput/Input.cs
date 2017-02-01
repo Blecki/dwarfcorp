@@ -70,6 +70,12 @@ namespace Gem
             InputActions[Action].Handler = null;
         }
 
+        public void ClearAllHandlers()
+        {
+            foreach (var action in InputActions)
+                action.Value.Handler = null;
+        }
+
         public void FireActions(Gum.Root Gui, Action<Gum.InputEvents, Gum.InputEventArgs> MouseHandler)
         {
             var queue = Mapper.GetInputQueue();

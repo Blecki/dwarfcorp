@@ -53,17 +53,10 @@ namespace DwarfCorp.GameStates
             base(Game, "NewOptionsState", StateManager)
         { }
 
-        private Gem.Input Input; // Todo: This needs to be shared with the play state somehow so the key
-        // bindings actually work.
-
         public override void OnEnter()
         {
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInput.GetInputQueue();
-            Input = new Gem.Input(DwarfGame.GumInput);
-
-            // Dummy key binding for testing.
-            Input.AddAction("TEST", Gem.Input.KeyBindingType.Pressed);
 
             // Setup antialiasing options.
             AntialiasingOptions = new Dictionary<string, int>();
@@ -278,7 +271,7 @@ namespace DwarfCorp.GameStates
                     AutoLayout = AutoLayout.DockTop
                 });
 
-            foreach (var binding in Input.EnumerateBindableActions())
+            foreach (var binding in DwarfGame.GemInput.EnumerateBindableActions())
             {
                 // Todo: Columns?
 
