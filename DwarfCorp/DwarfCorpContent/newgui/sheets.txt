@@ -147,6 +147,12 @@
 			"Texture": "newgui/resources",
 			"TileWidth": 32,
 			"TileHeight": 32
+		},
+		{
+			"Name": "rooms",
+			"Texture": "newgui/room_icons",
+			"TileWidth": 16,
+			"TileHeight": 16
 		}
 	]
 }

@@ -87,7 +87,9 @@ namespace Gem
                 if (!@event.Args.Handled)
                 {
                     if (@event.Message == Gum.InputEvents.MouseClick ||
-                        @event.Message == Gum.InputEvents.MouseMove)
+                        @event.Message == Gum.InputEvents.MouseMove ||
+                        @event.Message == Gum.InputEvents.MouseDown ||
+                        @event.Message == Gum.InputEvents.MouseUp)
                     {
                         if (MouseHandler != null) MouseHandler(@event.Message, @event.Args);
                     }
