@@ -209,6 +209,7 @@ namespace DwarfCorp
 
         public List<Body> SelectRootBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
         {
+            /*
             return (from component in RootComponent.Children.OfType<Body>()
                     let screenPos = camera.Project(component.GlobalTransform.Translation)
                     where   screenPos.Z > 0 
@@ -216,14 +217,22 @@ namespace DwarfCorp
                     && camera.GetFrustrum().Contains(component.GlobalTransform.Translation) != ContainmentType.Disjoint
                     && !WorldManager.ChunkManager.ChunkData.CheckOcclusionRay(camera.Position, component.Position)
                     select component).ToList();
-        }
-
-        public List<Body> SelectAllBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
-        {
-            return (from component in Components.Values.OfType<Body>()
-                    let screenPos = camera.Project(component.GlobalTransform.Translation)
-                    where selectionRectangle.Contains((int)screenPos.X, (int)screenPos.Y) || selectionRectangle.Intersects(component.GetScreenRect(camera)) && screenPos.Z > 0
-                    select component).ToList();
+             */
+            if (WorldManager.SelectionBuffer == null)
+            {
+                return new List<Body>();
+            }
+            List<Body> toReturn = new List<Body>();
+            foreach (uint id in WorldManager.SelectionBuffer.GetIDsSelected(selectionRectangle))
+            {
+                GameComponent component;
+                if (!Components.TryGetValue(id, out component))
+                {
+                    continue;
+                }
+                toReturn.Add(component.GetRootComponent().GetComponent<Body>());
+            }
+            return toReturn;
         }
 
         #endregion
@@ -343,6 +352,17 @@ namespace DwarfCorp
         {
             Reflective,
             None
+        }
+
+        public void RenderSelectionBuffer(DwarfTime time, ChunkManager chunks, Camera camera,
+            SpriteBatch spriteBatch, GraphicsDevice graphics, Effect effect)
+        {
+            effect.CurrentTechnique = effect.Techniques["Selection"];
+            foreach (GameComponent component in componentsToDraw)
+            {
+                if (component.IsVisible)
+                    component.RenderSelectionBuffer(time, chunks, camera, spriteBatch, graphics, effect);
+            }
         }
 
         public void Render(DwarfTime gameTime,
