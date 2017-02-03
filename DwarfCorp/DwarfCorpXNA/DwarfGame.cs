@@ -47,8 +47,8 @@ namespace DwarfCorp
         public TextureManager TextureManager { get; set; }
         public static SpriteBatch SpriteBatch { get; set; }
 
-        public static Gem.GumInputMapper GumInput;
-        public static Gem.Input GemInput;
+        public static Gum.Input.GumInputMapper GumInputMapper;
+        public static Gum.Input.Input GumInput;
         public static Gum.RenderData GumSkin;
  
         public DwarfGame()
@@ -95,11 +95,11 @@ namespace DwarfCorp
         protected override void LoadContent()
         {
             // Prepare GemGui
-            GumInput = new Gem.GumInputMapper(Window.Handle);
-            GemInput = new Gem.Input(GumInput);
+            GumInputMapper = new Gum.Input.GumInputMapper(Window.Handle);
+            GumInput = new Gum.Input.Input(GumInputMapper);
 
             // Register all bindable actions with the input system.
-            GemInput.AddAction("TEST", Gem.Input.KeyBindingType.Pressed);
+            GumInput.AddAction("TEST", Gum.Input.KeyBindingType.Pressed);
 
             GumSkin = new Gum.RenderData(GraphicsDevice,  Content,
                     "newgui/xna_draw", "Content/newgui/sheets.txt");

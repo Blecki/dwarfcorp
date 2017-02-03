@@ -82,7 +82,7 @@ namespace DwarfCorp.GameStates
         public override void OnEnter()
         {
             // Just toss out any pending input.
-            DwarfGame.GumInput.GetInputQueue();
+            DwarfGame.GumInputMapper.GetInputQueue();
 
             if (!IsInitialized)
             {
@@ -93,7 +93,7 @@ namespace DwarfCorp.GameStates
 
                 // Setup input event handlers. All of the actions should already be established - just 
                 // need handlers.
-                DwarfGame.GemInput.ClearAllHandlers();
+                DwarfGame.GumInput.ClearAllHandlers();
 
                 WorldManager.ShowInfo += (text) =>
                     {
@@ -155,7 +155,7 @@ namespace DwarfCorp.GameStates
 
             // Needs to run before old input so tools work
             // Update new input system.
-            DwarfGame.GemInput.FireActions(NewGui, (@event, args) =>
+            DwarfGame.GumInput.FireActions(NewGui, (@event, args) =>
             {
                 // Let old input handle mouse interaction for now. Will eventually need to be replaced.
             });

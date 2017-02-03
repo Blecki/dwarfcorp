@@ -173,7 +173,7 @@ namespace DwarfCorp
             Tools[ToolMode.Build] = new BuildTool
             {
                 Player = this,
-                BuildType = BuildMenu.BuildType.Craft | BuildMenu.BuildType.Item | BuildMenu.BuildType.Room | BuildMenu.BuildType.Wall
+                BuildType = NewGui.BuildMenu.BuildTypes.AllButCook,
             };
 
             Tools[ToolMode.Magic] = new MagicTool(this);
@@ -181,7 +181,7 @@ namespace DwarfCorp
             Tools[ToolMode.Cook] = new BuildTool
             {
                 Player = this,
-                BuildType = BuildMenu.BuildType.Cook
+                BuildType = NewGui.BuildMenu.BuildTypes.Cook,
             };
         }
 
