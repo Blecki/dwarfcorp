@@ -59,24 +59,16 @@ namespace DwarfCorp
             FrustrumCull = false;
             IsVisible = false;
 
-            GameObjectCaching.AddMinimapIcon(this);
-        }
-
-        [OnDeserialized]
-        public void OnDeserialize(StreamingContext context)
-        {
-            GameObjectCaching.AddMinimapIcon(this);
+            AddCacheType(GameObjectCaching.MiniMapIconCache);
         }
 
         public override void Delete()
         {
-            GameObjectCaching.RemoveMinimapIcon(this);
             base.Delete();
         }
 
         public override void Die()
         {
-            GameObjectCaching.RemoveMinimapIcon(this);
             base.Die();
         }
     }

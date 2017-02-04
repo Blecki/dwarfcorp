@@ -133,6 +133,16 @@ namespace DwarfCorp
         public ComponentManager Manager { get { return WorldManager.ComponentManager; }}
 
         /// <summary>
+        /// A list of the GameComponentCache type handlers this component subscribes to.
+        /// </summary>
+        [JsonIgnore]
+        public List<GameObjectCaching.GameComponentCache> cacheTypes;
+
+        public List<string> cacheTypeNames;
+
+        public bool HasOwnRender;
+
+        /// <summary>
         /// The global identifier lock. This is necessary to ensure that no two components
         /// have the same ID (they might be getting created in threads).
         /// </summary>
@@ -165,6 +175,7 @@ namespace DwarfCorp
             IsVisible = true;
             IsActive = true;
             Tags = new List<string>();
+            HasOwnRender = GameObjectCaching.HasOwnRender(this.GetType());
         }
 
 
@@ -192,6 +203,7 @@ namespace DwarfCorp
                 Manager.AddComponent(this);
 
             Tags = new List<string>();
+            HasOwnRender = GameObjectCaching.HasOwnRender(this.GetType());
         }
 
         /// <summary>
@@ -262,21 +274,6 @@ namespace DwarfCorp
         /// <param name="chunks">The chunk manager.</param>
         /// <param name="camera">The camera.</param>
         public virtual void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
-        {
-        }
-
-
-        /// <summary>
-        /// Renders the component.
-        /// </summary>
-        /// <param name="gameTime">The game time.</param>
-        /// <param name="chunks">The chunk manager.</param>
-        /// <param name="camera">The camera.</param>
-        /// <param name="spriteBatch">The sprite batch.</param>
-        /// <param name="graphicsDevice">The graphics device.</param>
-        /// <param name="effect">The shader to use.</param>
-        /// <param name="renderingForWater">if set to <c>true</c> rendering for water reflections.</param>
-        public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
         }
 
@@ -542,6 +539,7 @@ namespace DwarfCorp
             {
                 Children.Add(child);
                 child.Parent = this;
+                child.AddToCache(child);
             }
         }
 
@@ -559,6 +557,7 @@ namespace DwarfCorp
             lock (Children)
             {
                 Children.Remove(child);
+                child.RemoveFromCache(child);
             }
         }
 
@@ -689,6 +688,96 @@ namespace DwarfCorp
 
         #endregion
 
+        #region cacheType functions
+        public void AddCacheType(string cacheName)
+        {
+            GameObjectCaching.GameComponentCache cache = GameObjectCaching.GetCacheByName(cacheName);
+            if (cache == null) return;
+
+            if (cacheTypeNames == null)
+            {
+                cacheTypeNames = new List<string>();
+                cacheTypes = new List<GameObjectCaching.GameComponentCache>();
+            } else if (cacheTypeNames.Contains(cacheName)) return;
+
+            cacheTypeNames.Add(cacheName);
+            cacheTypes.Add(cache);
+
+            // Sadly, when we call this in the type constructor of a derived type we've already called AddChild for that type
+            // in the GameComponent constructor so we can't put AddToCache there.
+            cache.addFunction(this);
+        }
+
+        public void RemoveCacheType(string cacheName)
+        {
+            GameObjectCaching.GameComponentCache cache = GameObjectCaching.GetCacheByName(cacheName);
+            if (cache == null) return;
+
+            if (cacheTypeNames == null)
+            {
+                cacheTypeNames = new List<string>();
+                cacheTypes = new List<GameObjectCaching.GameComponentCache>();
+            }
+            else if (!cacheTypeNames.Contains(cacheName)) return;
+            cacheTypeNames.Remove(cacheName);
+            cacheTypes.Remove(cache);
+            cache.removeFunction(this);
+        }
+
+        public void AddToCache(GameComponent cachedObject)
+        {
+            if (cacheTypes == null) return;
+            for (int i = 0; i < cacheTypes.Count; i++)
+            {
+                cacheTypes[i].addFunction(cachedObject);
+            }
+        }
+
+        public void RemoveFromCache(GameComponent cachedObject)
+        {
+            if (cacheTypes == null) return;
+            for (int i = 0; i < cacheTypes.Count; i++)
+            {
+                cacheTypes[i].removeFunction(cachedObject);
+            }
+        }
+
+        public void RefreshCacheTypes()
+        {
+            if (cacheTypeNames == null) return;
+            cacheTypes = new List<GameObjectCaching.GameComponentCache>(cacheTypeNames.Count);
+            for (int i = 0; i < cacheTypeNames.Count; i++)
+            {
+                GameObjectCaching.GameComponentCache cache = GameObjectCaching.GetCacheByName(cacheTypeNames[i]);
+                if (cache == null) continue;
+                cacheTypes.Add(cache);
+                cache.addFunction(this);
+            }
+        }
+
+        public void RefreshCacheTypesRecursive()
+        {
+            Stack<IEnumerator<GameComponent>> eStack = new Stack<IEnumerator<GameComponent>>();
+
+            eStack.Push(Children.GetEnumerator());
+
+            while(eStack.Count > 0)
+            {
+                IEnumerator<GameComponent> e = eStack.Pop();
+                while (e.MoveNext())
+                {
+                    GameComponent current = e.Current;
+                    current.RefreshCacheTypes();
+
+                    if (current.Children.Count > 0)
+                    {
+                        eStack.Push(e);
+                        e = current.Children.GetEnumerator();
+                    }
+                }
+            }
+        }
+        #endregion
     }
 
 }

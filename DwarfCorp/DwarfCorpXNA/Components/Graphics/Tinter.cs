@@ -45,7 +45,6 @@ namespace DwarfCorp
     public class Tinter : Body
     {
         public bool LightsWithVoxels { get; set; }
-        private bool firstIteration = true;
         public Color Tint { get; set; }
         public Color TargetTint { get; set; }
         public float TintChangeRate { get; set; }
@@ -116,7 +115,6 @@ namespace DwarfCorp
                         Color color = new Color(VoxelUnder.SunColor, 255, 0);
 
                         TargetTint = color;
-                        firstIteration = false;
                         ColorAppplied = true;
                     }
                 }
@@ -147,15 +145,12 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
 
-        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+        public void ApplyTintingToEffect(Effect effect)
         {
-            if(IsVisible)
+            if (IsVisible)
             {
                 effect.Parameters["xTint"].SetValue(new Vector4(Tint.R, Tint.G, Tint.B, Tint.A));
                 effect.Parameters["xColorTint"].SetValue(new Vector4(VertexColorTint.R, VertexColorTint.G, VertexColorTint.B, VertexColorTint.A));
-
-                base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
-
             }
         }
     }

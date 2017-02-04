@@ -245,6 +245,7 @@ namespace DwarfCorp
             }
         }
 
+        // Old frustrum culling method.  Not used anymore
         public void GetObjectsIntersecting<TObject>(BoundingFrustum frustum, HashSet<TObject> set, CollisionType queryType) where TObject : IBoundedObject
         {
             List<SpatialHash<IBoundedObject>> hashes = new List<SpatialHash<IBoundedObject>>();
@@ -262,40 +263,31 @@ namespace DwarfCorp
 
             BoundingBox frustumBox = MathFunctions.GetBoundingBox(frustum.GetCorners());
 
-            foreach (var hash in hashes)
+            for (int i = 0; i < hashes.Count; i++)
             {
-                foreach (var pair in hash.HashMap)
+                SpatialHash<IBoundedObject> hash = hashes[i];
+                foreach (KeyValuePair<Point3, List<IBoundedObject>> kvp in hash.HashMap)
                 {
-                    if (pair.Value == null) continue;
-                    if (frustumBox.Contains(pair.Key.ToVector3()) != ContainmentType.Contains) continue;
-                    foreach (IBoundedObject obj in pair.Value)
+                    List<IBoundedObject> objectList = kvp.Value;
+                    if (objectList != null && frustumBox.Contains(kvp.Key.ToVector3()) == ContainmentType.Contains)
                     {
-                        if (!(obj is TObject)) continue;
-                        if (!set.Contains((TObject)obj)) continue;
-                        BoundingBox box = obj.GetBoundingBox();
-                        if (box.Intersects(frustumBox) && box.Intersects(frustum))
+                        for (int j = 0; j < objectList.Count; j++)
                         {
-                            set.Add((TObject) obj);
+                            if (!(objectList[j] is TObject)) continue;
+                            TObject obj = (TObject)objectList[j];
+
+                            if (!set.Contains(obj))
+                            {
+                                bool intersect = obj.GetBoundingBox().Intersects(frustum);
+                                if (intersect)
+                                {
+                                    set.Add(obj);
+                                }
+                            }
                         }
                     }
                 }
             }
-
-            /*
-            foreach (var obj in 
-                from hash 
-                    in hashes 
-                from pair 
-                    in hash.HashMap
-                where pair.Value != null && frustumBox.Contains(pair.Key.ToVector3()) == ContainmentType.Contains
-                from obj in pair.Value
-                where obj is TObject && !set.Contains((TObject)obj) && obj.GetBoundingBox().Intersects(frustum) 
-                select obj)
-            {
-                set.Add((TObject) obj);
-            }
-             */
-           
         }
 
         public void GetObjectsIntersecting<TObject>(BoundingSphere sphere, HashSet<TObject> set, CollisionType queryType) where TObject : IBoundedObject
