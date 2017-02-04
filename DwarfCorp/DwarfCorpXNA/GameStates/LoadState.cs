@@ -41,13 +41,11 @@ namespace DwarfCorp.GameStates
         public LoadState(DwarfGame game, GameStateManager stateManager) :
             base(game, "LoadState", stateManager)
         {
-            
+            EnableScreensaver = true;
         }
 
         private void World_OnLoadedEvent()
         {
-            IsInitialized = true;
-
             // Todo: Decouple gui/input from world.
             // Copy important bits to PlayState - This is a hack; decouple world from gui and input instead.
             PlayState.World = World;
@@ -64,7 +62,7 @@ namespace DwarfCorp.GameStates
 
         public override void OnEnter()
         {
-                IsInitialized = false;
+                IsInitialized = true;
 
                 IndicatorManager.SetupStandards();
 
@@ -84,22 +82,10 @@ namespace DwarfCorp.GameStates
 
             base.OnEnter();
         }
-
-        public override void Update(DwarfTime gameTime)
-        {
- 
-        }
-
+       
         public override void Render(DwarfTime gameTime)
-        {
-            return;
-            //throw new InvalidOperationException();
-
-            base.Render(gameTime);
-        }
-
-        public override void RenderUnitialized(DwarfTime gameTime)
-        {
+        {        
+            // Todo: This state should be rendering these, NOT the world manager.
             TipTimer.Update(gameTime);
             if (TipTimer.HasTriggered)
             {
@@ -109,7 +95,7 @@ namespace DwarfCorp.GameStates
 
             EnableScreensaver = true;
             World.Render(gameTime);
-            base.RenderUnitialized(gameTime);
+            base.Render(gameTime);
         }
 
     }

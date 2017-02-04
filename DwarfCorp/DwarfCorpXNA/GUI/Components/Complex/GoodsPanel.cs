@@ -646,7 +646,7 @@ namespace DwarfCorp
         {
             if (Faction.ComputeStockpileSpace() < MyGoods.ComputeSpace() + TheirTrades.ComputeSpace())
             {
-                GUI.ToolTipManager.Popup("Not enough stockpile space!");
+                WorldManager.ShowTooltip("Not enough stockpile space!");
                 return;
             }
 

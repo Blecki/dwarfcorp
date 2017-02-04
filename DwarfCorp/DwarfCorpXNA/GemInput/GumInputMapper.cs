@@ -108,8 +108,31 @@ namespace Gem
                         handled = true;
                         break;
                     }
+                case WindowMessage.WM_LBUTTONDOWN:
+                    {
+                        Queued.Add(new QueuedInput
+                        {
+                            Message = Gum.InputEvents.MouseDown,
+                            Args = new Gum.InputEventArgs
+                            {
+                                X = (int)((int)Msg.LParam & 0x0000FFFFu),
+                                Y = (int)((int)Msg.LParam & 0xFFFF0000u) >> 16
+                            }
+                        });
+                        handled = false;
+                        break;
+                    }
                 case WindowMessage.WM_LBUTTONUP:
                     {
+                        Queued.Add(new QueuedInput
+                        {
+                            Message = Gum.InputEvents.MouseUp,
+                            Args = new Gum.InputEventArgs
+                            {
+                                X = (int)((int)Msg.LParam & 0x0000FFFFu),
+                                Y = (int)((int)Msg.LParam & 0xFFFF0000u) >> 16
+                            }
+                        });
                         Queued.Add(new QueuedInput
                         {
                             Message = Gum.InputEvents.MouseClick,

@@ -61,34 +61,35 @@ namespace DwarfCorp
                 MagicMenu.Destroy();
             }
 
-            MagicMenu = new MagicMenu(WorldManager.GUI, WorldManager.GUI.RootComponent, Player)
-            {
-                LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width - 750, PlayState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350),
-                DrawOrder = 3
-            };
-            MagicMenu.SpellTriggered += MagicMenu_SpellTriggered;
+            // Todo: Reimplement
+            //MagicMenu = new MagicMenu(WorldManager.GUI, WorldManager.GUI.RootComponent, Player)
+            //{
+            //    LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width - 750, PlayState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350),
+            //    DrawOrder = 3
+            //};
+            //MagicMenu.SpellTriggered += MagicMenu_SpellTriggered;
 
-            MagicMenu.IsVisible = true;
-            MagicMenu.LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 750,
-                GameState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350);
+            //MagicMenu.IsVisible = true;
+            //MagicMenu.LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 750,
+            //    GameState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350);
 
-            if (MagicBar != null)
-            {
-                MagicBar.Destroy();
-            }
+            //if (MagicBar != null)
+            //{
+            //    MagicBar.Destroy();
+            //}
 
-            MagicBar = new ProgressBar(WorldManager.GUI, WorldManager.GUI.RootComponent, MagicMenu.Master.Spells.Mana / MagicMenu.Master.Spells.MaxMana)
-            {
-                ToolTip = "Remaining Mana Pool",
-                LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 200, 68, 180, 32),
-                Tint = Color.Cyan,
-                DrawOrder = 4
-            };
-            MagicBar.OnUpdate += MagicBar_OnUpdate;
+            //MagicBar = new ProgressBar(WorldManager.GUI, WorldManager.GUI.RootComponent, MagicMenu.Master.Spells.Mana / MagicMenu.Master.Spells.MaxMana)
+            //{
+            //    ToolTip = "Remaining Mana Pool",
+            //    LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 200, 68, 180, 32),
+            //    Tint = Color.Cyan,
+            //    DrawOrder = 4
+            //};
+            //MagicBar.OnUpdate += MagicBar_OnUpdate;
 
-            MagicBar.IsVisible = true;
-            MagicMenu.TweenIn(Drawer2D.Alignment.Right, 0.25f);
-            MagicBar.TweenIn(Drawer2D.Alignment.Right, 0.25f);
+            //MagicBar.IsVisible = true;
+            //MagicMenu.TweenIn(Drawer2D.Alignment.Right, 0.25f);
+            //MagicBar.TweenIn(Drawer2D.Alignment.Right, 0.25f);
         }
 
         void MagicBar_OnUpdate()
@@ -137,25 +138,27 @@ namespace DwarfCorp
         {
             Player.BodySelector.Enabled = false;
             Player.VoxSelector.Enabled = false;
-            
+
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                WorldManager.GUI.IsMouseVisible = false;
+                WorldManager.SetMouse(null);
                 Player.BodySelector.Enabled = false;
                 return;
             }
             else
-            {
-                WorldManager.GUI.IsMouseVisible = true;
-            }
+                WorldManager.SetMouse(WorldManager.MousePointer);
 
             if (CurrentSpell != null)
             {
                 CurrentSpell.Update(time, Player.VoxSelector, Player.BodySelector);
             }
 
-            WorldManager.GUI.MouseMode = WorldManager.IsMouseOverGui ? GUISkin.MousePointer.Pointer : GUISkin.MousePointer.Magic;
+            if (WorldManager.IsMouseOverGui)
+                WorldManager.SetMouse(WorldManager.MousePointer);
+            else
+                WorldManager.SetMouse(new Gum.MousePointer("mouse", 1, 8));
+
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)

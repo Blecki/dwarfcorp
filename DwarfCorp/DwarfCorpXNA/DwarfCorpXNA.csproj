@@ -337,6 +337,7 @@
     <Compile Include="NewGui\GridChooser.cs" />
     <Compile Include="NewGui\GridPanel.cs" />
     <Compile Include="NewGui\GameSpeedControls.cs" />
+    <Compile Include="NewGui\InfoTicker.cs" />
     <Compile Include="NewGui\Minimap.cs" />
     <Compile Include="NewGui\Popup.cs" />
     <Compile Include="NewGui\Confirm.cs" />
