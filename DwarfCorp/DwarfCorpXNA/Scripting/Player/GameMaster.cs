@@ -114,6 +114,8 @@ namespace DwarfCorp
             Tools[ToolMode.God].Destroy();
             Tools[ToolMode.SelectUnits].Destroy();
             Tools.Clear();
+            Debugger.Destroy();
+            Debugger = null;
             Faction = null;
             VoxSelector = null;
             BodySelector = null;

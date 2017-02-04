@@ -101,6 +101,11 @@ namespace DwarfCorp
             MainPanel.LocalBounds = new Rectangle(100, 120, 500, 600);
         }
 
+        public void Destroy()
+        {
+            DwarfSelector.OnSelectionModified += DwarfSelector_OnSelectionModified;
+        }
+
         private void DwarfSelector_OnSelectionModified(string arg)
         {
             

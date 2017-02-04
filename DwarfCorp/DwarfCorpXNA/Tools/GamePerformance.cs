@@ -899,7 +899,10 @@ namespace DwarfCorp
             else
             {
                 t = new PerformanceTracker(this, name);
-                internalTrackers.Add(name, t);
+                lock (internalTrackerLockObject)
+                {
+                    internalTrackers.Add(name, t);
+                }
             }
 
             (t as PerformanceTracker).StartTracking();
@@ -911,7 +914,6 @@ namespace DwarfCorp
         /// <param name="name">The display name of the tracker you used to start tracking.</param>
         public void StopTrackPerformance(String name)
         {
-            //if (ThreadID != GamePerformance.mainThreadIdentifier) return;
             long endTime = Stopwatch.GetTimestamp();
             Tracker t;
             if (internalTrackers.TryGetValue(name, out t))
@@ -951,8 +953,10 @@ namespace DwarfCorp
             else
             {
                 t = new ValueTypeTracker<T>(this, name);
-                internalTrackers.Add(name, t);
-                trackers.Add(t);
+                lock (internalTrackerLockObject)
+                {
+                    internalTrackers.Add(name, t);
+                }
             }
 
             (t as ValueTypeTracker<T>).Update(variable);
@@ -978,8 +982,10 @@ namespace DwarfCorp
             else
             {
                 t = new ReferenceTypeTracker<T>(this, name);
-                internalTrackers.Add(name, t);
-                trackers.Add(t);
+                lock (internalTrackerLockObject)
+                {
+                    internalTrackers.Add(name, t);
+                }
             }
 
             (t as ReferenceTypeTracker<T>).Update(variable);

@@ -173,10 +173,10 @@ namespace DwarfCorp
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
             DwarfGame.SpriteBatch.Begin();
-            int i = 0;
             Viewport port = GameState.Game.GraphicsDevice.Viewport;
 
             // Todo: Reimplement list of selected dwarves?
+            //int i = 0;
             //foreach (CreatureAI creature in Player.SelectedMinions)
             //{
             //    Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, creature.Stats.FullName, WorldManager.GUI.SmallFont, Color.White, Drawer2D.Alignment.Right, new Rectangle(port.Width - 300, 68 + i * 24, 300, 24));
