@@ -242,6 +242,9 @@ namespace DwarfCorp.GameStates
             ResourcePanel.Layout();
             #endregion
 
+            if (Paused && GameSpeedControls.CurrentSpeed != 0)
+                GameSpeedControls.CurrentSpeed = 0;
+
             // Really just handles mouse pointer animation.
             NewGui.Update(gameTime.ToGameTime());
         }
@@ -404,7 +407,8 @@ namespace DwarfCorp.GameStates
                     AutoLayout = Gum.AutoLayout.FloatTop,
                     TextHorizontalAlign = Gum.HorizontalAlign.Center,
                     MinimumSize = new Point(128, 20),
-                    TextSize = 2
+                    Font = "outline-font",
+                    TextColor = new Vector4(1,1,1,1)
                 });
             #endregion
 

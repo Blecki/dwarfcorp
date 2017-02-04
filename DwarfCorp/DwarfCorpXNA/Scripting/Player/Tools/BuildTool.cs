@@ -78,7 +78,8 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-            BuildPanel.Close();
+            if (BuildPanel != null && BuildPanel.Root != null)
+                BuildPanel.Close();
             BuildPanel = null;
             Player.Faction.CraftBuilder.IsEnabled = false;
             Player.Faction.RoomBuilder.OnExit();

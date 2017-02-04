@@ -54,9 +54,9 @@ namespace DwarfCorp.NewGui
 
                 BuildTab(tabPanel, "Rooms", RoomLibrary.GetRoomTypes().Select(name => RoomLibrary.GetData(name)).Select(data =>
                     Tuple.Create(new Gum.TileReference("rooms", iconSheet.ConvertRectToIndex(data.Icon.SourceRect)), data.Name, (Object)data)),
-                    (@object) =>
+                    tup =>
                     {
-                        var data = @object as RoomData;
+                        var data = tup.Item3 as RoomData;
                         var builder = new StringBuilder();
                         builder.AppendLine(data.Description);
                         if (!data.CanBuildAboveGround)
@@ -74,14 +74,25 @@ namespace DwarfCorp.NewGui
                         if (data.RequiredResources.Count == 0)
                             builder.AppendLine("Nothing!");
                         return builder.ToString();
+                    },
+                    tup =>
+                    {
+                        Faction.Faction.RoomBuilder.CurrentRoomData = tup.Item3 as RoomData;
+                        Faction.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+                        Faction.Faction.WallBuilder.CurrentVoxelType = null;
+                        Faction.Faction.CraftBuilder.IsEnabled = false;
+                        Faction.CurrentToolMode = GameMaster.ToolMode.Build;
+                        WorldManager.ShowTooltip("Click and drag to build " + tup.Item2);
+                        this.Close();
                     });
             }
 
             Layout();
         }
         
-        private void BuildTab(Gum.Widgets.TabPanel TabPanel, String TabName, IEnumerable<Tuple<Gum.TileReference, String, Object>> ItemSource,
-            Func<Object, String> MakeDescription)
+        private void BuildTab(Gum.Widgets.TabPanel TabPanel, String TabName, IEnumerable<Tuple<TileReference, String, Object>> ItemSource,
+            Func<Tuple<TileReference, String, Object>, String> MakeDescription,
+            Action<Tuple<TileReference, String, Object>> BuildClicked)
         {
             var panel = TabPanel.AddTab(TabName, new Widget
             {
@@ -89,9 +100,21 @@ namespace DwarfCorp.NewGui
                 Padding = new Margin(4, 4, 0, 0)
             });
 
+            Gum.Widgets.WidgetListView list = null;
             Gum.Widget descriptionPanel = null;
+            Gum.Widget iconPanel = null;
 
-            var list = panel.AddChild(new Gum.Widgets.WidgetListView
+            panel.AddChild(new Widget
+            {
+                Text = "BUILD",
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                Border = "border-button",
+                OnClick = (sender, args) => BuildClicked(list.SelectedItem.Tag as Tuple<TileReference, String, Object>),
+                AutoLayout = AutoLayout.FloatBottomRight
+            });           
+
+            list = panel.AddChild(new Gum.Widgets.WidgetListView
                 {
                     ItemHeight = 32,
                     MinimumSize = new Point(256,0),
@@ -101,23 +124,34 @@ namespace DwarfCorp.NewGui
                             var selectedItem = (sender as Gum.Widgets.WidgetListView).SelectedItem;
                             if (selectedItem != null)
                             {
-                                descriptionPanel.Text = MakeDescription(selectedItem.Tag);
+                                descriptionPanel.Text = MakeDescription(selectedItem.Tag as Tuple<TileReference, String, Object>);
                                 descriptionPanel.Invalidate();
+
+                                iconPanel.Background = (selectedItem.Tag as Tuple<TileReference, String, Object>).Item1;
+                                iconPanel.Invalidate();
                             }
                         }
                 }) as Gum.Widgets.WidgetListView;
 
+            iconPanel = panel.AddChild(new Widget
+            {
+                MinimumSize = new Point(32, 32),
+                MaximumSize = new Point(32, 32),
+                AutoLayout = Gum.AutoLayout.DockTop
+            });
+
             descriptionPanel = panel.AddChild(new Widget
-                {
-                    AutoLayout = Gum.AutoLayout.DockFill
-                });
+            {
+                AutoLayout = Gum.AutoLayout.DockFill,
+                OnLayout = (sender) => sender.Rect.Height -= 36
+            });
 
             foreach (var buildableItem in ItemSource)
             {
                 var row = new Gum.Widget
                     {
                         Background = new TileReference("basic", 0),
-                        Tag = buildableItem.Item3
+                        Tag = buildableItem
                     };
 
                 list.AddItem(row);
@@ -135,6 +169,8 @@ namespace DwarfCorp.NewGui
                     AutoLayout = Gum.AutoLayout.DockFill
                 });
             }
+
+            list.SelectedIndex = 0;
         }
     }
 }
