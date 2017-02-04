@@ -84,6 +84,8 @@ namespace DwarfCorp
             Removals = new List<GameComponent>();
             Additions = new List<GameComponent>();
             CollisionManager = new CollisionManager(new BoundingBox());
+            GameObjectCaching.Reset();
+            RootComponent.RefreshCacheTypesRecursive();
         }
        
 
@@ -332,21 +334,8 @@ namespace DwarfCorp
             RemovalMutex.ReleaseMutex();
         }
                 
-        private HashSet<Body> visibleComponents = new HashSet<Body>();
-        private List<GameComponent> componentsToDraw = new List<GameComponent>();
 
-        public bool RenderReflective(GameComponent component, float waterLevel)
-        {
-            var body = component as Body;
-            if(body != null)
-            {
-                return body.GetBoundingBox().Min.Y > waterLevel - 2;
-            }
-            else
-            {
-                return true;
-            }
-        }
+        private HashSet<Body> visibleComponents = new HashSet<Body>();
 
         public enum WaterRenderType
         {
@@ -358,10 +347,10 @@ namespace DwarfCorp
             SpriteBatch spriteBatch, GraphicsDevice graphics, Effect effect)
         {
             effect.CurrentTechnique = effect.Techniques["Selection"];
-            foreach (GameComponent component in componentsToDraw)
+            foreach (Body bodyToDraw in visibleComponents)
             {
-                if (component.IsVisible)
-                    component.RenderSelectionBuffer(time, chunks, camera, spriteBatch, graphics, effect);
+                if (bodyToDraw.IsVisible)
+                    bodyToDraw.RenderSelectionBuffer(time, chunks, camera, spriteBatch, graphics, effect);
             }
         }
 
@@ -375,50 +364,47 @@ namespace DwarfCorp
         {
             bool renderForWater = (waterRenderMode != WaterRenderType.None);
 
-            if(!renderForWater)
+            if (!renderForWater)
             {
-                visibleComponents = CollisionManager.GetVisibleObjects<Body>(camera.GetFrustrum(),
-                    CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
+                visibleComponents.Clear();
 
-                componentsToDraw.Clear();
-               
-                Camera = camera;
-                foreach(GameComponent component in Components.Values)
+                BoundingFrustum frustrum = camera.GetFrustrum();
+
+                List<Body> bodies = GameObjectCaching.RenderBodies;
+
+                for (int i = 0; i < bodies.Count; i++)
                 {
-                    bool isLocatable = component is Body;
+                    Body b = bodies[i];
 
-                    if(isLocatable)
+                    if (!b.IsActive) continue;
+                    if (!b.IsVisible) continue;
+                    if (b.IsAboveCullPlane) continue;
+
+                    if (b.FrustrumCull)
                     {
-                        Body loc = (Body) component;
-
-
-                        if(((loc.GlobalTransform.Translation - camera.Position).LengthSquared() < chunks.DrawDistanceSquared &&
-                            visibleComponents.Contains(loc) || !(loc.FrustrumCull) || !(loc.WasAddedToOctree) && !loc.IsAboveCullPlane)
-                            )
-                        {
-                            componentsToDraw.Add(component);
-                        }
+                        if ((b.GlobalTransform.Translation - camera.Position).LengthSquared() >= chunks.DrawDistanceSquared) continue;
+                        if (!(b.GetBoundingBox().Intersects(frustrum))) continue;
                     }
-                    else
-                    {
-                        componentsToDraw.Add(component);
-                    }
+
+                    System.Diagnostics.Debug.Assert(!visibleComponents.Contains(b));
+                    visibleComponents.Add(b);
                 }
-            }
 
+                Camera = camera;
+            }
 
             effect.Parameters["xEnableLighting"].SetValue(GameSettings.Default.CursorLightEnabled ? 1 : 0);
             graphicsDevice.RasterizerState = RasterizerState.CullNone;
 
-            foreach(GameComponent component in componentsToDraw)
+            foreach (Body bodyToDraw in visibleComponents)
             {
-                if(waterRenderMode == WaterRenderType.Reflective && !RenderReflective(component, waterLevel))
+                if (waterRenderMode == WaterRenderType.Reflective &&
+                   !(bodyToDraw.GetBoundingBox().Min.Y > waterLevel - 2))
                 {
                     continue;
                 }
-                component.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderForWater);
+                bodyToDraw.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderForWater);
             }
-
             effect.Parameters["xEnableLighting"].SetValue(0);
         }
 

@@ -310,8 +310,8 @@ namespace DwarfCorp
                     Settings.Height = 256;
                     break;
                 case Low:
-                    Settings.Width = 350;
-                    Settings.Height = 350;
+                    Settings.Width = 384;
+                    Settings.Height = 384;
                     break;
                 case Medium:
                     Settings.Width = 512;

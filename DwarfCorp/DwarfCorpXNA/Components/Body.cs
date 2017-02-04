@@ -132,7 +132,6 @@ namespace DwarfCorp
             set { localTransform.Translation = value; }
         }
 
-
         public BoundingBox BoundingBox = new BoundingBox();
 
 
@@ -199,6 +198,8 @@ namespace DwarfCorp
                 OnDestroyed += Body_OnDestroyed;
 
             lastBounds = GetBoundingBox();
+
+            AddCacheType(GameObjectCaching.RenderBodyCache);
         }
 
         public Body(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToCollisionManager) :
@@ -218,11 +219,13 @@ namespace DwarfCorp
             DrawInFrontOfSiblings = false;
             CollisionType = CollisionManager.CollisionType.None;
             DrawScreenRect = false;
-
+            
             if (OnDestroyed == null)
                 OnDestroyed += Body_OnDestroyed;
 
             lastBounds = GetBoundingBox();
+
+            AddCacheType(GameObjectCaching.RenderBodyCache);
         }
 
         public void OrientToWalls()
@@ -337,6 +340,20 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
 
+        /// <summary>
+        /// Renders the component.
+        /// </summary>
+        /// <param name="gameTime">The game time.</param>
+        /// <param name="chunks">The chunk manager.</param>
+        /// <param name="camera">The camera.</param>
+        /// <param name="spriteBatch">The sprite batch.</param>
+        /// <param name="graphicsDevice">The graphics device.</param>
+        /// <param name="effect">The shader to use.</param>
+        /// <param name="renderingForWater">if set to <c>true</c> rendering for water reflections.</param>
+        public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+        {
+        }
+
 
         public void UpdateTransformsRecursive()
         {
@@ -389,9 +406,10 @@ namespace DwarfCorp
 
         public void UpdateBoundingBox()
         {
-            Vector3 extents = BoundingBox.Max - BoundingBox.Min;
-            BoundingBox.Min = GlobalTransform.Translation - extents / 2.0f + BoundingBoxPos;
-            BoundingBox.Max = GlobalTransform.Translation + extents / 2.0f + BoundingBoxPos;
+            Vector3 extents = (BoundingBox.Max - BoundingBox.Min) / 2.0f;
+            Vector3 translation = GlobalTransform.Translation;
+            BoundingBox.Min = translation - extents + BoundingBoxPos;
+            BoundingBox.Max = translation + extents + BoundingBoxPos;
         }
 
         public override void Die()
@@ -407,6 +425,7 @@ namespace DwarfCorp
             OnDestroyed.Invoke();
             base.Die();
         }
+
 
     }
 

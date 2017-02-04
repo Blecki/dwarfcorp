@@ -91,6 +91,11 @@ namespace DwarfCorp
         {
             return new Vector3(X, Y, Z);
         }
+
+        public override string ToString()
+        {
+            return String.Format("{{{0}, {1}, {2}}}", X, Y, Z);
+        }
     }
 
 }
