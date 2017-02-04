@@ -65,7 +65,7 @@ namespace DwarfCorp
 
             BuildPanel = WorldManager.NewGui.ConstructWidget(new NewGui.BuildMenu
                 {
-                    Faction = Player,
+                    Master = Player,
                     BuildType = BuildType
                 }) as NewGui.BuildMenu;
 
