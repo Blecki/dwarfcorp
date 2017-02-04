@@ -57,7 +57,7 @@ namespace DwarfCorp
 
         public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
-            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+            ApplyTintingToEffect(effect);
             effect.Parameters["xTexture"].SetValue(Texture);
             effect.Parameters["xWorld"].SetValue(GlobalTransform);
 

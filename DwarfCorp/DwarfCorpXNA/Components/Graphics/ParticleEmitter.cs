@@ -239,8 +239,8 @@ namespace DwarfCorp
 
         public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
         {
+            ApplyTintingToEffect(effect);
             Sprites.Render(graphicsDevice, effect, camera, !renderingForWater);
-            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
         }
 
         public Particle CreateParticle(Vector3 pos, Vector3 velocity, Color tint)
