@@ -103,7 +103,7 @@ namespace DwarfCorp
             
             SelectorPanel = new Window(GUI, gui.RootComponent)
             {
-                LocalBounds = new Rectangle(200, 100, 300, 100)
+                LocalBounds = new Rectangle(200, 200, 300, 200)
             };
 
             Label label = new Label(GUI, SelectorPanel, "Cheat Mode!", GUI.DefaultFont)
@@ -147,6 +147,26 @@ namespace DwarfCorp
             SelectorBox.AddValue("Fire");
             SelectorBox.OnSelectionModified += SelectorBox_OnSelectionModified;
 
+
+            Button tradeButton = new Button(GUI, SelectorPanel, "Send Trade Envoy", GUI.DefaultFont,
+                Button.ButtonMode.PushButton, null)
+            {
+                LocalBounds = new Rectangle(10, 128, 200, 50)
+            };
+            tradeButton.OnClicked += () =>
+            {
+                Faction toSend = null;
+                foreach (var faction in WorldManager.ComponentManager.Factions.Factions)
+                {
+                    if (faction.Value.Race.IsIntelligent && faction.Value.Race.IsNative)
+                    {
+                        toSend = faction.Value;
+                        break;
+                    }
+                }
+                if (toSend == null) return;
+                WorldManager.ComponentManager.Diplomacy.SendTradeEnvoy(toSend);
+            };
 
             SelectorPanel.IsVisible = false;
         }
