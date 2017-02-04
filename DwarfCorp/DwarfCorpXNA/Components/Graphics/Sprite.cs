@@ -151,7 +151,7 @@ namespace DwarfCorp
             Effect effect,
             bool renderingForWater)
         {
-            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+            ApplyTintingToEffect(effect);
 
             if(!IsVisible)
             {

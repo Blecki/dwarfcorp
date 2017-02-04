@@ -165,15 +165,12 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
 
-        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+        public void ApplyTintingToEffect(Effect effect)
         {
-            if(IsVisible)
+            if (IsVisible)
             {
                 effect.Parameters["xTint"].SetValue(new Vector4(Tint.R, Tint.G, Tint.B, Tint.A));
                 effect.Parameters["xColorTint"].SetValue(new Vector4(VertexColorTint.R, VertexColorTint.G, VertexColorTint.B, VertexColorTint.A));
-
-                base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
-
             }
         }
     }
