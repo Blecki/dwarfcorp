@@ -89,7 +89,7 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                WorldManager.GUI.IsMouseVisible = false;
+                WorldManager.SetMouse(null);
                 Player.BodySelector.Enabled = false;
                 return;
             }
@@ -101,21 +101,21 @@ namespace DwarfCorp
             {
                 Player.VoxSelector.Enabled = true;
                 Player.BodySelector.Enabled = false;
-                WorldManager.GUI.IsMouseVisible = true;
 
-                WorldManager.GUI.MouseMode = WorldManager.IsMouseOverGui
-                    ? GUISkin.MousePointer.Pointer
-                    : GUISkin.MousePointer.Build;
+                if (WorldManager.IsMouseOverGui)
+                    WorldManager.SetMouse(WorldManager.MousePointer);
+                else
+                    WorldManager.SetMouse(new Gum.MousePointer("mouse", 1, 4));
             }
             else
             {
                 Player.VoxSelector.Enabled = false;
                 Player.BodySelector.Enabled = false;
-                WorldManager.GUI.IsMouseVisible = true;
 
-                WorldManager.GUI.MouseMode = WorldManager.IsMouseOverGui
-                    ? GUISkin.MousePointer.Pointer
-                    : GUISkin.MousePointer.Cook;
+                if (WorldManager.IsMouseOverGui)
+                    WorldManager.SetMouse(WorldManager.MousePointer);
+                else
+                    WorldManager.SetMouse(new Gum.MousePointer("mouse", 1, 11));
             }
         }
 

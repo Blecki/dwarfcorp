@@ -693,8 +693,8 @@ namespace DwarfCorp
 
         public override void OnEnter()
         {
-            WorldManager.GUI.RootComponent.IsVisible = false;
-            WorldManager.GUI.ToolTipManager.ToolTip = "";
+            //WorldManager.GUI.RootComponent.IsVisible = false;
+            //WorldManager.GUI.ToolTipManager.ToolTip = "";
             WorldManager.Paused = true;
             Initialize();
 
@@ -703,7 +703,7 @@ namespace DwarfCorp
 
         public override void OnExit()
         {
-            WorldManager.GUI.RootComponent.IsVisible = true;
+            //WorldManager.GUI.RootComponent.IsVisible = true;
             WorldManager.Paused = false;
             base.OnExit();
         }
@@ -711,7 +711,7 @@ namespace DwarfCorp
 
         private void back_OnClicked()
         {
-            WorldManager.GUI.RootComponent.IsVisible = true;
+            //WorldManager.GUI.RootComponent.IsVisible = true;
             StateManager.PopState();
         }
 

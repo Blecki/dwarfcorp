@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Gum;
 using Gum.Widgets;
+using System;
 
 namespace DwarfCorp.GameStates
 {
@@ -12,6 +13,7 @@ namespace DwarfCorp.GameStates
     {
         private Gum.Root GuiRoot;
         private bool HasChanges = false;
+        public Action OnClosed = null;
 
         private Dictionary<string, int> AntialiasingOptions;
         private Dictionary<string, DisplayMode> DisplayModes;
@@ -113,13 +115,17 @@ namespace DwarfCorp.GameStates
                                     {
                                         if ((s2 as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)
                                             ApplySettings();
+                                        if (OnClosed != null) OnClosed();
                                         StateManager.PopState();
                                     }
                             };
                         GuiRoot.ShowPopup(confirm, false);
                     }
                     else
+                    {
+                        if (OnClosed != null) OnClosed();
                         StateManager.PopState();
+                    }
                 },
                 AutoLayout = AutoLayout.FloatBottomRight
             });

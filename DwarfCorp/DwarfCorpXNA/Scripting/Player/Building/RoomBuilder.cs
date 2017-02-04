@@ -228,7 +228,7 @@ namespace DwarfCorp
 
         public void Update(MouseState mouseState, KeyboardState keyState, DwarfGame game, DwarfTime time)
         {
-            WorldManager.GUI.IsMouseVisible = true;
+            WorldManager.SetMouse(WorldManager.MousePointer);
         }
 
         private void BuildNewVoxels(IEnumerable<Voxel> refs)
@@ -319,7 +319,7 @@ namespace DwarfCorp
             {
                 if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                 {
-                    WorldManager.GUI.ToolTipManager.ToolTip = Drawer2D.WrapColor("None of the selected units can build rooms.", Color.Red);
+                    WorldManager.ShowTooltip("None of the selected units can build rooms.");
                 }
                 else if (CurrentRoomData.Verify(refs, Faction))
                 {
@@ -343,8 +343,7 @@ namespace DwarfCorp
                         tip += "\n";
                     }
 
-                    WorldManager.GUI.ToolTipManager.Popup(Drawer2D.WrapColor(tip + "Release to build here.", Color.Green));
-
+                    WorldManager.ShowTooltip("Release to build her.");
 
                     displayObjects = RoomLibrary.GenerateRoomComponentsTemplate(CurrentRoomData, refs, Faction.Components, 
                         WorldManager.ChunkManager.Content, WorldManager.ChunkManager.Graphics);
@@ -377,7 +376,7 @@ namespace DwarfCorp
             {
                 if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                 {
-                    WorldManager.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("None of the selected units can build rooms.", Color.Red));
+                    WorldManager.ShowTooltip("None of the selected units can build rooms.");
                 }
                 else if (CurrentRoomData.Verify(refs, Faction))
                 {
@@ -409,17 +408,20 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    Dialog destroyDialog = Dialog.Popup(WorldManager.GUI, "Destroy room?",
-                        "Do you want to destroy this " + Drawer2D.WrapColor(existingRoom.RoomData.Name, Color.DarkRed) + "?", Dialog.ButtonType.OkAndCancel);
-                    destroyDialog.OnClosed += (status) => destroyDialog_OnClosed(status, existingRoom);
+                    WorldManager.NewGui.ShowDialog(new NewGui.Confirm
+                        {
+                            Text = "Do you want to destroy this " + Drawer2D.WrapColor(existingRoom.RoomData.Name, Color.DarkRed) + "?",
+                            OnClose = (sender) => destroyDialog_OnClosed((sender as NewGui.Confirm).DialogResult, existingRoom)
+                        });
+
                     break;
                 }
             }
         }
 
-        void destroyDialog_OnClosed(Dialog.ReturnStatus status, Room room)
+        void destroyDialog_OnClosed(NewGui.Confirm.Result status, Room room)
         {
-            if (status == Dialog.ReturnStatus.Ok)
+            if (status == NewGui.Confirm.Result.OKAY)
             {
                 DesignatedRooms.Remove(room);
 

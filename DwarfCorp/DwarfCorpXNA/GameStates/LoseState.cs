@@ -98,7 +98,6 @@ namespace DwarfCorp.GameStates
       
         public override void OnEnter()
         {
-            WorldManager.GUI.ToolTipManager.ToolTip = "";
             Initialize();
             base.OnEnter();
         }

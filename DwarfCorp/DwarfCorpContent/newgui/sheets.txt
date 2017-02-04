@@ -18,6 +18,11 @@
 			"Type": "VariableWidthFont"
 		},
 		{
+			"Name": "outline-font",
+			"Texture": "newgui/font2",
+			"Type": "VariableWidthFont"
+		},
+		{
 			"Name": "mouse",
 			"Texture": "newgui/pointers",
 			"TileWidth": 16,
@@ -142,6 +147,12 @@
 			"Texture": "newgui/resources",
 			"TileWidth": 32,
 			"TileHeight": 32
+		},
+		{
+			"Name": "rooms",
+			"Texture": "newgui/room_icons",
+			"TileWidth": 16,
+			"TileHeight": 16
 		}
 	]
 }

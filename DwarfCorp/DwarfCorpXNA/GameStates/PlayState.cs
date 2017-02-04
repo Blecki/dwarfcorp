@@ -41,7 +41,9 @@ namespace DwarfCorp.GameStates
         private NewGui.MinimapRenderer MinimapRenderer;
         private NewGui.GameSpeedControls GameSpeedControls;
         private Gum.Widget ResourcePanel;
+        private NewGui.InfoTicker InfoTicker;
 
+        private Point RememberedScreenResolution = new Point(0, 0);
        // public Minimap MiniMap { get; set; }
 
         // Provides event-based keyboard and mouse input.
@@ -93,6 +95,21 @@ namespace DwarfCorp.GameStates
                 // need handlers.
                 DwarfGame.GemInput.ClearAllHandlers();
 
+                WorldManager.ShowInfo += (text) =>
+                    {
+                        InfoTicker.AddMessage(text);
+                    };
+
+                WorldManager.ShowTooltip += (text) =>
+                    {
+                        // Todo - Actually put this at the mouse position.
+                        NewGui.ShowTooltip(new Point(0, 0), text);
+                    };
+
+                WorldManager.SetMouse += (mouse) =>
+                    {
+                        NewGui.MousePointer = mouse;
+                    };
 
                 World.gameState = this;
                 World.OnLoseEvent += World_OnLoseEvent;
@@ -119,6 +136,8 @@ namespace DwarfCorp.GameStates
         /// <param name="gameTime">The current time</param>
         public override void Update(DwarfTime gameTime)
         {
+            //WorldManager.GUI.IsMouseVisible = false;
+
             // If this playstate is not supposed to be running,
             // just exit.
             if (!Game.IsActive || !IsActiveState || IsShuttingDown)
@@ -194,7 +213,7 @@ namespace DwarfCorp.GameStates
 
                 var row = ResourcePanel.AddChild(new Gum.Widget
                     {
-                        MinimumSize = new Point(0, 16),
+                        MinimumSize = new Point(0, 32),
                         AutoLayout = Gum.AutoLayout.DockTop
                     });
 
@@ -216,7 +235,8 @@ namespace DwarfCorp.GameStates
                     Tooltip = String.Format("{0} - {1}",
                         resourceTemplate.ResourceName,
                         resourceTemplate.Description),
-                    TextSize = 2
+                    Font = "outline-font",
+                    TextColor = new Vector4(1,1,1,1)
                 });
             }
             ResourcePanel.Layout();
@@ -241,6 +261,10 @@ namespace DwarfCorp.GameStates
                 GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
                 World.Render(gameTime);
 
+                if (!MinimapFrame.Hidden)
+                    MinimapRenderer.Render(new Rectangle(0, NewGui.VirtualScreen.Bottom - 192, 192, 192), NewGui);
+                NewGui.Draw();
+
                 // SpriteBatch Begin and End must be called again. Hopefully we can factor this out with the new gui
                 RasterizerState rasterizerState = new RasterizerState()
                 {
@@ -252,11 +276,7 @@ namespace DwarfCorp.GameStates
                 GUI.PostRender(gameTime);
                 DwarfGame.SpriteBatch.End();
                 //WorldManager.SelectionBuffer.DebugDraw(0, 0);
-            }
-
-            if (!MinimapFrame.Hidden)
-                MinimapRenderer.Render(new Rectangle(0, NewGui.VirtualScreen.Bottom - 192, 192, 192), NewGui);
-            NewGui.Draw();
+            }        
 
             base.Render(gameTime);
         }
@@ -267,8 +287,6 @@ namespace DwarfCorp.GameStates
         /// <param name="gameTime">The current time</param>
         public override void RenderUnitialized(DwarfTime gameTime)
         {
-           
-
             EnableScreensaver = true;
             World.Render(gameTime);
             base.RenderUnitialized(gameTime);
@@ -280,14 +298,6 @@ namespace DwarfCorp.GameStates
         public void CreateGUIComponents()
         {
             GUI.RootComponent.ClearChildren();
-            AlignLayout layout = new AlignLayout(GUI, GUI.RootComponent)
-            {
-                LocalBounds = new Rectangle(0, 0, Game.GraphicsDevice.Viewport.Width,
-                    Game.GraphicsDevice.Viewport.Height),
-                WidthSizeMode = GUIComponent.SizeMode.Fit,
-                HeightSizeMode = GUIComponent.SizeMode.Fit,
-                Mode = AlignLayout.PositionMode.Percent
-            };
 
             GUI.RootComponent.AddChild(Master.Debugger.MainPanel);
 
@@ -328,34 +338,38 @@ namespace DwarfCorp.GameStates
                     Rect = new Rectangle(48,8,256,20),
                     Text = WorldManager.PlayerCompany.Information.Name,
                     AutoLayout = Gum.AutoLayout.None,
-                    TextSize = 2
+                    Font = "outline-font",
+                    TextColor = new Vector4(1,1,1,1)
                 });
 
             MoneyLabel = NewGui.RootItem.AddChild(new Gum.Widget
                 {
                     Rect = new Rectangle(48, 32, 128, 20),
                     AutoLayout = Gum.AutoLayout.None,
-                    TextSize = 2
+                    Font = "outline-font",
+                    TextColor = new Vector4(1,1,1,1)
                 });
 
             StockLabel = NewGui.RootItem.AddChild(new Gum.Widget
                 {
                     Rect = new Rectangle(48, 56, 128, 20),
                     AutoLayout = Gum.AutoLayout.None,
-                    TextSize = 2
+                    Font = "outline-font",
+                    TextColor = new Vector4(1,1,1,1)
                 });
 
             LevelLabel = NewGui.RootItem.AddChild(new Gum.Widget
                 {
                     Rect = new Rectangle(8, 80, 128, 20),
                     AutoLayout = Gum.AutoLayout.None,
-                    TextSize = 2
+                    Font = "outline-font",
+                    TextColor = new Vector4(1,1,1,1)
                 });
 
             NewGui.RootItem.AddChild(new Gum.Widget
                 {
                     Background = new Gum.TileReference("round-buttons", 3),
-                    Rect = new Rectangle(136, 80, 16, 16),
+                    Rect = new Rectangle(148, 80, 16, 16),
                     OnClick = (sender, args) =>
                     {
                         WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(
@@ -367,7 +381,7 @@ namespace DwarfCorp.GameStates
             NewGui.RootItem.AddChild(new Gum.Widget
             {
                 Background = new Gum.TileReference("round-buttons", 7),
-                Rect = new Rectangle(154, 80, 16, 16),
+                Rect = new Rectangle(166, 80, 16, 16),
                 OnClick = (sender, args) => 
                 {
                     WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(
@@ -397,7 +411,8 @@ namespace DwarfCorp.GameStates
             #region Minimap
 
             // Little hack here - Normally this button his hidden by the minimap. Hide the minimap and it 
-            // becomes visible!
+            // becomes visible! 
+            // Todo: Doh, doesn't actually work.
             NewGui.RootItem.AddChild(new Gum.Widget
                 {
                     AutoLayout = Gum.AutoLayout.FloatBottomLeft,
@@ -465,9 +480,14 @@ namespace DwarfCorp.GameStates
                             NewGui.VirtualScreen.Bottom - 128, 256, 128)
                     });
                 };
-                        
-            layout.UpdateSizes();
 
+            InfoTicker = NewGui.RootItem.AddChild(new NewGui.InfoTicker
+                {
+                    Rect = new Rectangle(NewGui.VirtualScreen.X + 239,
+                        NewGui.VirtualScreen.Bottom - 210, 256, 210),
+                    Transparent = true
+                }) as NewGui.InfoTicker;
+                        
             NewGui.RootItem.Layout();
         }
 
@@ -495,8 +515,8 @@ namespace DwarfCorp.GameStates
             if (key == ControlSettings.Mappings.Map)
             {
                 World.DrawMap = !World.DrawMap;
-                // Todo: Reimplement minimap hotkey.
-                //MiniMap.SetMinimized(!World.DrawMap);
+                MinimapFrame.Hidden = true;
+                MinimapFrame.Invalidate();
             }
 
             if (key == Keys.Escape)
@@ -557,15 +577,16 @@ namespace DwarfCorp.GameStates
             else if (key == ControlSettings.Mappings.Pause)
             {
                 Paused = !Paused;
-                //Master.ToolBar.SpeedButton.SetSpeed(Paused ? 0 : 1);
+                if (Paused) GameSpeedControls.CurrentSpeed = 0;
+                else GameSpeedControls.CurrentSpeed = GameSpeedControls.PlaySpeed;
             }
             else if (key == ControlSettings.Mappings.TimeForward)
             {
-                //Master.ToolBar.SpeedButton.IncrementSpeed();
+                GameSpeedControls.CurrentSpeed += 1;
             }
             else if (key == ControlSettings.Mappings.TimeBackward)
             {
-                //Master.ToolBar.SpeedButton.DecrementSpeed();
+                GameSpeedControls.CurrentSpeed -= 1;
             }
             else if (key == ControlSettings.Mappings.ToggleGUI)
             {
@@ -602,8 +623,11 @@ namespace DwarfCorp.GameStates
                 TextHorizontalAlign = Gum.HorizontalAlign.Center,
                 Text = "- Paused -",
                 InteriorMargin = new Gum.Margin(12, 0, 0, 0),
-                Padding = new Gum.Margin(2, 2, 2, 2)
+                Padding = new Gum.Margin(2, 2, 2, 2),
+                OnClose = (sender) => PausePanel = null
             };
+
+            NewGui.ConstructWidget(PausePanel);
 
             MakeMenuItem(PausePanel, "Continue", "", (sender, args) =>
                 {
@@ -614,54 +638,49 @@ namespace DwarfCorp.GameStates
 
             MakeMenuItem(PausePanel, "Options", "", (sender, args) => StateManager.PushState("OptionsState"));
 
-            MakeMenuItem(PausePanel, "New Options", "", (sender, args) => StateManager.PushState("NewOptionsState"));
+            MakeMenuItem(PausePanel, "New Options", "", (sender, args) =>
+                {
+                    StateManager.GetState<NewOptionsState>("NewOptionsState").OnClosed = () =>
+                    {
+                        NewGui.ResizeVirtualScreen(new Point(640, 480));
+                        NewGui.ResetGui();
+                        CreateGUIComponents();
+                        OpenPauseMenu();
+                    };
 
-            MakeMenuItem(PausePanel, "Save", "", (sender, args) => SaveGame(Overworld.Name + "_" + WorldManager.GameID));
+                    StateManager.PushState("NewOptionsState");
+                });
 
+            MakeMenuItem(PausePanel, "Save", "",
+                (sender, args) =>
+                {
+                    NewGui.ShowPopup(new NewGui.Confirm
+                    {
+                        Text = "Warning: Saving is still an unstable feature. Are you sure you want to continue?",
+                        OnClose = (s) =>
+                        {
+                            if ((s as NewGui.Confirm).DialogResult == DwarfCorp.NewGui.Confirm.Result.OKAY)
+                                World.Save(
+                                    String.Format("{0}_{1}", Overworld.Name, WorldManager.GameID),
+                                    (success, exception) =>
+                                    {
+                                        NewGui.ShowPopup(new NewGui.Popup
+                                        {
+                                            Text = success ? "File saved." : "Save failed - " + exception.Message,
+                                            OnClose = (s2) => OpenPauseMenu()
+                                        }, false);
+                                    });
+                        }
+                    }, false);
+                });
+            
             MakeMenuItem(PausePanel, "Quit", "", (sender, args) => QuitOnNextUpdate = true);
 
             PausePanel.Layout();
 
             NewGui.ShowPopup(PausePanel, false);
         }
-
-        /// <summary>
-        /// Saves the game state to a file.
-        /// </summary>
-        /// <param name="filename">The file to save to</param>
-        public void SaveGame(string filename)
-        {
-            Dialog dialog = Dialog.Popup(GUI, "Saving/Loading",
-                "Warning: Saving is still an unstable feature. Are you sure you want to continue?",
-                Dialog.ButtonType.OkAndCancel);
-
-            dialog.OnClosed += (status) => savedialog_OnClosed(status, filename);
-        }
-
-        private void savedialog_OnClosed(Dialog.ReturnStatus status, string filename)
-        {
-            switch (status)
-            {
-                case Dialog.ReturnStatus.Ok:
-                    {
-                        World.Save(filename, waitforsave_OnFinished);
-                        break;
-                    }
-            }
-        }
-
-        private void waitforsave_OnFinished(bool success, Exception exception)
-        {
-            if (success)
-            {
-                Dialog.Popup(GUI, "Save", "File saved.", Dialog.ButtonType.OK);
-            }
-            else
-            {
-                Dialog.Popup(GUI, "Save", "File save failed : " + exception.Message, Dialog.ButtonType.OK);
-            }
-        }
-
+      
         public void Destroy()
         {
             InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;

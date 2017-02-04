@@ -379,7 +379,7 @@ namespace DwarfCorp
         {
             if(KeyManager.RotationEnabled())
             {
-                WorldManager.GUI.IsMouseVisible = false;
+                WorldManager.SetMouse(null);
             }
           
         }
