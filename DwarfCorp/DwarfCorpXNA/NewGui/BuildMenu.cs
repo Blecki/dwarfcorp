@@ -67,9 +67,9 @@ namespace DwarfCorp.NewGui
                         Name = data.Name,
                         Data = data
                     }),
-                    tup =>
+                    (item, description, buildButton) =>
                     {
-                        var data = tup.Data as RoomData;
+                        var data = item.Data as RoomData;
                         var builder = new StringBuilder();
                         builder.AppendLine(data.Description);
                         if (!data.CanBuildAboveGround)
@@ -86,17 +86,31 @@ namespace DwarfCorp.NewGui
                         }
                         if (data.RequiredResources.Count == 0)
                             builder.AppendLine("Nothing!");
-                        return builder.ToString();
-                    },
-                    tup =>
-                    {
-                        Master.Faction.RoomBuilder.CurrentRoomData = tup.Data as RoomData;
-                        Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-                        Master.Faction.WallBuilder.CurrentVoxelType = null;
-                        Master.Faction.CraftBuilder.IsEnabled = false;
-                        Master.CurrentToolMode = GameMaster.ToolMode.Build;
-                        WorldManager.ShowTooltip("Click and drag to build " + tup.Name);
-                        this.Close();
+
+                        description.AddChild(new Gum.Widget
+                            {
+                                Background = item.Icon,
+                                MinimumSize = new Point(32, 32),
+                                AutoLayout = Gum.AutoLayout.DockTop
+                            });
+
+                        description.AddChild(new Gum.Widget
+                            {
+                                Font = "outline-font",
+                                Text = builder.ToString(),
+                                AutoLayout = Gum.AutoLayout.DockFill
+                            });
+
+                        buildButton.OnClick = (sender, args) =>
+                        {
+                            Master.Faction.RoomBuilder.CurrentRoomData = item.Data as RoomData;
+                            Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+                            Master.Faction.WallBuilder.CurrentVoxelType = null;
+                            Master.Faction.CraftBuilder.IsEnabled = false;
+                            Master.CurrentToolMode = GameMaster.ToolMode.Build;
+                            WorldManager.ShowTooltip("Click and drag to build " + item.Name);
+                            this.Close();
+                        };
                     });
             }
             #endregion
@@ -113,24 +127,30 @@ namespace DwarfCorp.NewGui
                         Name = wall.Name,
                         Data = wall
                     }),
-                    wall =>
+                    (item, description, buildButton) =>
                     {
-                        var data = wall.Data as VoxelType;
+                        var data = item.Data as VoxelType;
                         var builder = new StringBuilder();
                         builder.AppendLine(String.Format("{0} Wall", data.Name));
                         builder.AppendLine(String.Format("Strength: {0}", data.StartingHealth));
                         builder.AppendLine(String.Format("Requires: {0}", ResourceLibrary.Resources[data.ResourceToRelease].ResourceName));
-                        return builder.ToString();
-                    },
-                    wall =>
-                    {
-                        Master.Faction.RoomBuilder.CurrentRoomData = null;
-                        Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                        Master.Faction.WallBuilder.CurrentVoxelType = wall.Data as VoxelType;
-                        Master.Faction.CraftBuilder.IsEnabled = false;
-                        Master.CurrentToolMode = GameMaster.ToolMode.Build;
-                        WorldManager.ShowTooltip("Click and drag to build " + wall.Name + " wall.");
-                        this.Close();
+
+                        description.AddChild(new Gum.Widget
+                            {
+                                Font = "outline-font",
+                                Text = builder.ToString(),
+                            });
+
+                        buildButton.OnClick = (sender, args) =>
+                            {
+                                Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                                Master.Faction.WallBuilder.CurrentVoxelType = item.Data as VoxelType;
+                                Master.Faction.CraftBuilder.IsEnabled = false;
+                                Master.CurrentToolMode = GameMaster.ToolMode.Build;
+                                WorldManager.ShowTooltip("Click and drag to build " + item.Name + " wall.");
+                                this.Close();
+                            };
                     });
             }
             #endregion
@@ -146,18 +166,40 @@ namespace DwarfCorp.NewGui
                         Name = craft.Name,
                         Data = craft
                     }),
-                    craft =>
+                    (item, description, buildButton) =>
                     {
-                        var data = craft.Data as CraftItem;
+                        var data = item.Data as CraftItem;
                         var builder = new StringBuilder();
                         builder.AppendLine(data.Name);
                         builder.AppendLine(data.Description);
                         builder.AppendLine("Required:");
 
+                        description.AddChild(new Gum.Widget
+                            {
+                                Background = item.Icon,
+                                MinimumSize = new Point(32, 32),
+                                AutoLayout = AutoLayout.DockTop
+                            });
+
+                        description.AddChild(new Gum.Widget
+                            {
+                                Font = "outline-font",
+                                Text = builder.ToString(),
+                                AutoLayout = Gum.AutoLayout.DockTop
+                            });
+
                         var nearestBuildLocation = WorldManager.PlayerFaction.FindNearestItemWithTags(data.CraftLocation, Vector3.Zero, false);
 
                         if (nearestBuildLocation == null)
-                            builder.AppendLine(String.Format("Needs {0} to build!", data.CraftLocation));
+                        {
+                            description.AddChild(new Gum.Widget
+                                {
+                                    Font = "outline-font",
+                                    Text = String.Format("Needs {0} to build!", data.CraftLocation),
+                                    TextColor = new Vector4(1,0,0,1),
+                                    AutoLayout = Gum.AutoLayout.DockTop
+                                });
+                        }
                         else
                         {
                             foreach (var resourceAmount in data.RequiredResources)
@@ -165,14 +207,6 @@ namespace DwarfCorp.NewGui
                                 
                             }
                         }
-
-
-                        return builder.ToString();
-                    },
-                    craft =>
-                    {
-
-
                     });
             }
         
@@ -183,8 +217,7 @@ namespace DwarfCorp.NewGui
         }
         
         private void BuildTab(Gum.Widgets.TabPanel TabPanel, String TabName, IEnumerable<BuildableItem> ItemSource,
-            Func<BuildableItem, String> MakeDescription,
-            Action<BuildableItem> BuildClicked)
+            Action<BuildableItem, Gum.Widget, Gum.Widget> BuildDescriptionPanel)
         {
             var panel = TabPanel.AddTab(TabName, new Widget
             {
@@ -194,18 +227,8 @@ namespace DwarfCorp.NewGui
 
             Gum.Widgets.WidgetListView list = null;
             Gum.Widget descriptionPanel = null;
-            Gum.Widget iconPanel = null;
-
-            panel.AddChild(new Widget
-            {
-                Text = "BUILD",
-                TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
-                Border = "border-button",
-                OnClick = (sender, args) => BuildClicked(list.SelectedItem.Tag as BuildableItem),
-                AutoLayout = AutoLayout.FloatBottomRight
-            });           
-
+            Gum.Widget buildButton = null;
+            
             list = panel.AddChild(new Gum.Widgets.WidgetListView
                 {
                     ItemHeight = 32,
@@ -216,32 +239,32 @@ namespace DwarfCorp.NewGui
                             var selectedItem = (sender as Gum.Widgets.WidgetListView).SelectedItem;
                             if (selectedItem != null)
                             {
-                                var buildableItem = selectedItem.Tag as BuildableItem;
-
-                                descriptionPanel.Text = MakeDescription(buildableItem);
-                                descriptionPanel.Invalidate();
-
-                                if (buildableItem.Icon != null)
-                                {
-                                    iconPanel.Background = buildableItem.Icon;
-                                    iconPanel.Hidden = false;
-                                }
-                                else
-                                {
-                                    iconPanel.Hidden = true;
-                                }
-                                iconPanel.Invalidate();                                
+                                descriptionPanel.Clear();
+                                buildButton.Hidden = false;
+                                BuildDescriptionPanel(selectedItem.Tag as BuildableItem, descriptionPanel, buildButton);
+                                descriptionPanel.Layout();
+                                buildButton.Invalidate();        
+        
                             }
                         }
                 }) as Gum.Widgets.WidgetListView;
 
-            iconPanel = panel.AddChild(new Widget
-            {
-                MinimumSize = new Point(32, 32),
-                MaximumSize = new Point(32, 32),
-                AutoLayout = Gum.AutoLayout.DockTop
-            });
+            var bottomRow = panel.AddChild(new Widget
+                {
+                    MinimumSize = new Point(0, 32),
+                    AutoLayout = Gum.AutoLayout.DockBottom
+                });
 
+            buildButton = bottomRow.AddChild(new Widget
+            {
+                Text = "BUILD",
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                Border = "border-button",
+                //OnClick = (sender, args) => BuildClicked(list.SelectedItem.Tag as BuildableItem),
+                AutoLayout = AutoLayout.DockRight
+            });
+            
             descriptionPanel = panel.AddChild(new Widget
             {
                 AutoLayout = Gum.AutoLayout.DockFill,
