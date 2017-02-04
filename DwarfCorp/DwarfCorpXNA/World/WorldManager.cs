@@ -157,6 +157,9 @@ namespace DwarfCorp
         // Draws shadow maps
         public static ShadowRenderer Shadows;
 
+        // Draws a selection buffer (for pixel-perfect selection)
+        public static SelectionBuffer SelectionBuffer;
+
         // Responsible for handling instances of particular primitives (or models)
         // and drawing them to the screen
         public static InstanceManager InstanceManager;
@@ -1353,6 +1356,40 @@ namespace DwarfCorp
         }
 
         /// <summary>
+        /// Draws components to a selection buffer for per-pixel selection accuracy
+        /// </summary>
+        /// <param name="gameTime">The game time.</param>
+        /// <param name="effect">The effect.</param>
+        /// <param name="view">The view.</param>
+        public void DrawSelectionBuffer(DwarfTime gameTime, Effect effect, Matrix view)
+        {
+            if (SelectionBuffer == null)
+            {
+                SelectionBuffer = new SelectionBuffer(8, GraphicsDevice);
+            }
+            GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.BlendState = BlendState.Opaque;
+
+            SelectionBuffer.Begin(GraphicsDevice);
+
+            Plane slicePlane = WaterRenderer.CreatePlane(SlicePlane, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
+
+            // Draw the whole world, and make sure to handle slicing
+            DefaultShader.Parameters["ClipPlane0"].SetValue(new Vector4(slicePlane.Normal, slicePlane.D));
+            DefaultShader.Parameters["Clipping"].SetValue(1);
+            effect.Parameters["xView"].SetValue(view);
+            effect.Parameters["xProjection"].SetValue(Camera.ProjectionMatrix);
+            effect.Parameters["xWorld"].SetValue(Matrix.Identity);
+            ChunkManager.RenderSelectionBuffer(effect, GraphicsDevice, Camera.ViewMatrix);
+            ComponentManager.RenderSelectionBuffer(gameTime, ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, effect);
+            InstanceManager.RenderSelectionBuffer(GraphicsDevice, effect, Camera, false);
+            SelectionBuffer.End(GraphicsDevice);
+
+        }
+
+
+        /// <summary>
         /// Draws all the 3D terrain and entities
         /// </summary>
         /// <param name="gameTime">The current time</param>
@@ -1524,6 +1561,9 @@ namespace DwarfCorp
             // Draw reflection/refraction images
             WaterRenderer.DrawReflectionMap(gameTime, this, wHeight - 0.1f, GetReflectedCameraMatrix(wHeight),
                 DefaultShader, GraphicsDevice);
+
+
+            DrawSelectionBuffer(gameTime, DefaultShader, Camera.ViewMatrix);
 
             // Start drawing the bloom effect
             if (GameSettings.Default.EnableGlow)
