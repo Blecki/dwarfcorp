@@ -606,6 +606,62 @@ namespace DwarfCorp
             return h;
         }
 
+        public static float[,] GenerateHeightMapLookup(int width, int height)
+        {
+            float[,] toReturn = new float[width, height];
+
+            const float mountainWidth = 0.04f;
+            const float continentSize = 0.03f;
+            const float hillSize = 0.1f;
+            const float smallNoiseSize = 0.15f;
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    float mountain = (float)Math.Pow(noise(x, y, 0, mountainWidth), 1);
+                    float continent = noise(x, y, 10, continentSize);
+                    float hill = noise(x, y, 20, hillSize) * 0.02f;
+                    float smallnoise = noise(x, y, 100, smallNoiseSize) * 0.01f;
+
+                    float h = pow(clamp((continent * mountain) + hill, 0, 1), 1);
+                    h += smallnoise;
+                    h += 0.4f;
+                    toReturn[x, y] = h;
+                }
+            }
+
+            return toReturn;
+        }
+
+        public static void GenerateHeightMapFromLookup(float[,] lookup, int width, int height, float globalScale, bool erode)
+        {
+            if (!erode)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        Map[x, y].Height = clamp(lookup[x, y], 0, 1);
+                    }
+                }
+            }
+            else
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        float h = lookup[x, y];
+                        Vector2 vec = new Vector2(x, y);
+                        h *= LinearInterpolate(vec, Map, ScalarFieldType.Faults);
+                        h += LinearInterpolate(vec, Map, ScalarFieldType.Weathering);
+                        h *= LinearInterpolate(vec, Map, ScalarFieldType.Erosion);
+                        Map[x, y].Height = clamp(h, 0, 1);
+                    }
+                }
+            }
+        }
+
         public static void GenerateHeightMap(int width, int height, float globalScale, bool erode)
         {
             for(int x = 0; x < width; x++)

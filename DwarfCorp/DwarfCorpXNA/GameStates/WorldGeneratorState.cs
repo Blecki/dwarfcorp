@@ -723,7 +723,9 @@ namespace DwarfCorp.GameStates
                 Progress.Value = 0.01f;
 
                 LoadingMessage = "Height Map ...";
-                Overworld.GenerateHeightMap(width, height, 1.0f, false);
+                float[,] heightMapLookup = null;
+                heightMapLookup = Overworld.GenerateHeightMapLookup(width, height);
+                Overworld.GenerateHeightMapFromLookup(heightMapLookup, width, height, 1.0f, false);
 
                 Progress.Value = 0.05f;
 
@@ -775,11 +777,11 @@ namespace DwarfCorp.GameStates
 
                 #endregion
 
-                Overworld.GenerateHeightMap(width, height, 1.0f, true);
+                Overworld.GenerateHeightMapFromLookup(heightMapLookup, width, height, 1.0f, true);
 
                 Progress.Value = 0.2f;
 
-                Overworld.GenerateHeightMap(width, height, 1.0f, true);
+                Overworld.GenerateHeightMapFromLookup(heightMapLookup, width, height, 1.0f, true);
 
                 Progress.Value = 0.25f;
                 Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, width, height, MapPanel.Lock, worldData, worldMap, Settings.SeaLevel);
@@ -789,7 +791,7 @@ namespace DwarfCorp.GameStates
 
                 float[,] buffer = new float[width, height];
                 Erode(width, height, Settings.SeaLevel, Overworld.Map, numRains, rainLength, numRainSamples, buffer);
-                Overworld.GenerateHeightMap(width, height, 1.0f, true);
+                Overworld.GenerateHeightMapFromLookup(heightMapLookup, width, height, 1.0f, true);
 
                 #endregion
 
@@ -800,7 +802,7 @@ namespace DwarfCorp.GameStates
                 Overworld.Blur(Overworld.Map, width, height, Overworld.ScalarFieldType.Erosion);
 
                 LoadingMessage = "Generate height.";
-                Overworld.GenerateHeightMap(width, height, 1.0f, true);
+                Overworld.GenerateHeightMapFromLookup(heightMapLookup, width, height, 1.0f, true);
 
 
                 LoadingMessage = "Rain";
