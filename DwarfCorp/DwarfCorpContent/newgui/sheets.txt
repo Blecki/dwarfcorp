@@ -71,6 +71,12 @@
 			"TileHeight": 2
 		},
 		{
+			"Name": "border-thin-transparent",
+			"Texture": "newgui/thin-transparent",
+			"TileWidth": 2,
+			"TileHeight": 2
+		},
+		{
 			"Name": "vertical-scrollbar",
 			"Texture": "newgui/vertical-scrollbar",
 			"TileWidth": 24,
@@ -149,10 +155,22 @@
 			"TileHeight": 32
 		},
 		{
+			"Name": "crafts",
+			"Texture": "newgui/crafts",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
 			"Name": "rooms",
 			"Texture": "newgui/room_icons",
 			"TileWidth": 16,
 			"TileHeight": 16
+		},
+		{
+			"Name": "furniture",
+			"Texture": "newgui/interior_furniture",
+			"TileWidth": 32,
+			"TileHeight": 32
 		}
 	]
 }

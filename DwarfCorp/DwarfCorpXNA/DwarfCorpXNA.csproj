@@ -219,6 +219,7 @@
     <Compile Include="GameStates\IntroState.cs" />
     <Compile Include="GameStates\LoadState.cs" />
     <Compile Include="GameStates\LoseState.cs" />
+    <Compile Include="GameStates\GuiDebugState.cs" />
     <Compile Include="GameStates\MainMenuState.cs" />
     <Compile Include="GameStates\NewGameChooseWorldState.cs" />
     <Compile Include="GameStates\NewGameCreateDebugWorldState.cs" />

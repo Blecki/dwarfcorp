@@ -55,6 +55,7 @@ namespace DwarfCorp.NewGui
                 OnLayout = (sender) => sender.Rect.Height -= 36 // Keep it from overlapping bottom buttons.
             }) as Gum.Widgets.TabPanel;
 
+            #region Room Tab
             if (BuildType.HasFlag(BuildTypes.Room))
             {
                 var iconSheet = Root.GetTileSheet("rooms") as Gum.TileSheet;
@@ -98,7 +99,9 @@ namespace DwarfCorp.NewGui
                         this.Close();
                     });
             }
+            #endregion
 
+            #region Wall tab
             if (BuildType.HasFlag(BuildTypes.Wall))
             {
                 var wallTypes = VoxelLibrary.GetTypes().Where(voxel => voxel.IsBuildable);
@@ -130,6 +133,51 @@ namespace DwarfCorp.NewGui
                         this.Close();
                     });
             }
+            #endregion
+
+            #region Item Tab
+            if (BuildType.HasFlag(BuildTypes.Item))
+            {
+                var iconSheet = Root.GetTileSheet("crafts") as Gum.TileSheet;
+                BuildTab(tabPanel, "Objects",
+                    CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Object).Select(craft => new BuildableItem
+                    {
+                        Icon = new TileReference("furniture", iconSheet.ConvertRectToIndex(craft.Image.SourceRect)),
+                        Name = craft.Name,
+                        Data = craft
+                    }),
+                    craft =>
+                    {
+                        var data = craft.Data as CraftItem;
+                        var builder = new StringBuilder();
+                        builder.AppendLine(data.Name);
+                        builder.AppendLine(data.Description);
+                        builder.AppendLine("Required:");
+
+                        var nearestBuildLocation = WorldManager.PlayerFaction.FindNearestItemWithTags(data.CraftLocation, Vector3.Zero, false);
+
+                        if (nearestBuildLocation == null)
+                            builder.AppendLine(String.Format("Needs {0} to build!", data.CraftLocation));
+                        else
+                        {
+                            foreach (var resourceAmount in data.RequiredResources)
+                            {
+                                
+                            }
+                        }
+
+
+                        return builder.ToString();
+                    },
+                    craft =>
+                    {
+
+
+                    });
+            }
+        
+
+            #endregion
 
             Layout();
         }

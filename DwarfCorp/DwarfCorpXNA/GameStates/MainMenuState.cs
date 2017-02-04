@@ -44,7 +44,6 @@ namespace DwarfCorp.GameStates
     /// </summary>
     public class MainMenuState : GameState
     {
-        public Texture2D Logo { get; set; }
         private Gum.Root GuiRoot;
 
         public MainMenuState(DwarfGame game, GameStateManager stateManager) :
@@ -116,6 +115,12 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(frame, "Credits", "View the credits.", (sender, args) =>
                 {
                     StateManager.PushState(new CreditsState(GameState.Game, StateManager));
+                });
+
+            MakeMenuItem(frame, "GUI Debug", "Open the GUI debug screen.",
+                (sender, args) =>
+                {
+                    StateManager.PushState(new GuiDebugState(GameState.Game, StateManager));
                 });
 
             MakeMenuItem(frame, "Quit", "Goodbye.", (sender, args) => Game.Exit());
