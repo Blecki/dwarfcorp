@@ -67,12 +67,12 @@ namespace DwarfCorp
                 "I really need this job!",
                 "I need to get away from it all!",
                 "I will be your loyal servant!",
-                "I've always wanted to work at " + WorldManager.PlayerCompany.Name + "!",
+                "I've always wanted to work at " + WorldManager.PlayerCompany.Information.Name + "!",
                 "I am a very hard worker!",
                 "I am an adventurous soul!"
             };
            CoverLetter =
-                TextGenerator.GenerateRandom("Dear " + WorldManager.PlayerCompany.Name + ",\n",
+                TextGenerator.GenerateRandom("Dear " + WorldManager.PlayerCompany.Information.Name + ",\n",
                 "${Please,Do}"," consider ", "${my,this}"," application for the position of " + Level.Name +
                                              ". " + justifications[MathFunctions.Random.Next(justifications.Count)] +"\n", "${Thanks,Sincerely,Yours}", ",\n    " ,Name);
 

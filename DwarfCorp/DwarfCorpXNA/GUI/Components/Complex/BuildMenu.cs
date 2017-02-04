@@ -411,7 +411,7 @@ namespace DwarfCorp
             Master.Faction.CraftBuilder.IsEnabled = true;
             Master.Faction.CraftBuilder.CurrentCraftType = SelectedItem;
             Master.CurrentToolMode = GameMaster.ToolMode.Build;
-            GUI.ToolTipManager.Popup("Click and drag to build " + SelectedItem.Name);
+            WorldManager.ShowTooltip("Click and drag to build " + SelectedItem.Name);
         }
 
         public CraftItem SelectedResource { get; set; }
@@ -469,7 +469,7 @@ namespace DwarfCorp
                     foreach (ResourceAmount resource in resources)
                     {
                         if (resource.NumResources >= resourceAmount.NumResources)
-                            box.AddValue(resource.ResourceType.ResourceName);
+                            box.AddValue(resource.ResourceType);
                     }
 
                     if (resources.Count == 0 || box.Values.Count == 0)
@@ -549,7 +549,7 @@ namespace DwarfCorp
                     foreach (ResourceAmount resource in resources)
                     {
                         if (resource.NumResources >= resourceAmount.NumResources)
-                            box.AddValue(resource.ResourceType.ResourceName);
+                            box.AddValue(resource.ResourceType);
                     }
 
                     if (resources.Count == 0 || box.Values.Count == 0)
@@ -635,7 +635,7 @@ namespace DwarfCorp
             Master.Faction.WallBuilder.CurrentVoxelType = SelectedWall;
             Master.Faction.CraftBuilder.IsEnabled = false;
             Master.CurrentToolMode = GameMaster.ToolMode.Build;
-            GUI.ToolTipManager.Popup("Click and drag to build " + SelectedWall.Name + " wall.");
+            WorldManager.ShowTooltip("Click and drag to build " + SelectedWall.Name + " wall.");
         }
 
 
@@ -706,7 +706,7 @@ namespace DwarfCorp
             Master.Faction.WallBuilder.CurrentVoxelType = null;
             Master.Faction.CraftBuilder.IsEnabled = false;
             Master.CurrentToolMode = GameMaster.ToolMode.Build;
-            GUI.ToolTipManager.Popup("Click and drag to build " + SelectedRoom.Name);
+            WorldManager.ShowTooltip("Click and drag to build " + SelectedRoom.Name);
         }
 
         private void HoverItem(GridLayout roomLayout, int i)

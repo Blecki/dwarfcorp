@@ -668,6 +668,26 @@ namespace DwarfCorp
             effect.Parameters["SelfIllumination"].SetValue(0);
         }
 
+        public void RenderSelectionBuffer(Effect effect, GraphicsDevice graphicsDevice,
+            Matrix viewmatrix)
+        {
+            effect.CurrentTechnique = effect.Techniques["Selection"];
+            effect.Parameters["xTexture"].SetValue(ChunkData.Tilemap);
+            effect.Parameters["xWorld"].SetValue(Matrix.Identity);
+            effect.Parameters["xView"].SetValue(viewmatrix);
+            effect.Parameters["xID"].SetValue(Vector4.Zero);
+            List<VoxelChunk> renderListCopy = RenderList.ToArray().ToList();
+
+            foreach (VoxelChunk chunk in renderListCopy)
+            {
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    chunk.Render(Graphics);
+                }
+            }
+        }
+
         public void RenderShadowmap(Effect effect,
                                     GraphicsDevice graphicsDevice, 
                                     ShadowRenderer shadowRenderer,

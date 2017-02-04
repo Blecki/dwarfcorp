@@ -153,30 +153,44 @@ namespace DwarfCorp
             }
         }
 
-        public static void GenerateRoomComponentsTemplate(Room room, ComponentManager componentManager, Microsoft.Xna.Framework.Content.ContentManager content, GraphicsDevice graphics)
+        public static void BuildAllComponents(List<Body> components, Room room)
         {
-            RoomTile[,] currentTiles = RoomTemplate.CreateFromRoom(room, room.Chunks);
-            float[,] rotations = new float[currentTiles.GetLength(0), currentTiles.GetLength(1)];
-            foreach (RoomTemplate template in room.RoomData.Templates)
+            foreach (Body createdComponent in components)
             {
+                Vector3 endPos = createdComponent.LocalTransform.Translation;
+                Matrix offsetTransform = createdComponent.LocalTransform;
+                offsetTransform.Translation += new Vector3(0, -1, 0);
+                createdComponent.LocalTransform = offsetTransform;
+                createdComponent.AnimationQueue.Add(new EaseMotion(0.8f, offsetTransform, endPos));
+                room.AddBody(createdComponent);
+                WorldManager.ParticleManager.Trigger("puff", endPos + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 10);
+                createdComponent.SetActiveRecursive(true);
+            }
+        }
+
+        public static List<Body> GenerateRoomComponentsTemplate(RoomData roomData, List<Voxel> voxels , ComponentManager componentManager, 
+            Microsoft.Xna.Framework.Content.ContentManager content, GraphicsDevice graphics)
+        {
+            List<Body> components = new List<Body>();
+            RoomTile[,] currentTiles = RoomTemplate.CreateFromRoom(voxels, WorldManager.ChunkManager);
+            float[,] rotations = new float[currentTiles.GetLength(0), currentTiles.GetLength(1)];
+            foreach (RoomTemplate myTemp in roomData.Templates)
+            {
+                RoomTemplate template = new RoomTemplate(myTemp) {Rotation = 0};
                 for (int r = -2; r < currentTiles.GetLength(0) + 1; r++)
                 {
                     for (int c = -2; c < currentTiles.GetLength(1) + 1; c++)
                     {
                         for (int rotation = 0; rotation < 5; rotation++)
                         {
-                            if (MathFunctions.RandEvent(template.Probability))
-                            {
-                                template.PlaceTemplate(ref currentTiles, ref rotations, r, c);
-                                template.RotateClockwise(1);
-                            }
+                            template.PlaceTemplate(ref currentTiles, ref rotations, r, c);
+                            template.RotateClockwise(1);
                         }
                     }
                 }
             }
 
-            BoundingBox box = room.GetBoundingBox();
-
+            BoundingBox box = MathFunctions.GetBoundingBox(voxels);
             int thingsMade = 0;
             for(int r = 0; r < currentTiles.GetLength(0); r++)
             {
@@ -279,19 +293,12 @@ namespace DwarfCorp
                             break;
                     }
 
-                    if(createdComponent != null)
-                    {
-                        createdComponent.LocalTransform = Matrix.CreateRotationY(-(rotations[r, c] + (float)Math.PI * 0.5f)) * createdComponent.LocalTransform;
-                        Vector3 endPos = createdComponent.LocalTransform.Translation;
-                        Matrix offsetTransform = createdComponent.LocalTransform;
-                        offsetTransform.Translation += new Vector3(0, -1, 0);
-                        createdComponent.LocalTransform = offsetTransform;
-                        createdComponent.AnimationQueue.Add(new EaseMotion(0.8f, offsetTransform, endPos));
-                        room.AddBody(createdComponent);
-                        WorldManager.ParticleManager.Trigger("puff", endPos + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 10);
-                    }
+                    if (createdComponent == null) continue;
+                    createdComponent.LocalTransform = Matrix.CreateRotationY(-(rotations[r, c] + (float)Math.PI * 0.5f)) * createdComponent.LocalTransform;
+                    components.Add(createdComponent);
                 }
             }
+            return components;
         }
 
        

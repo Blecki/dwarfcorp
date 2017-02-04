@@ -53,7 +53,7 @@ namespace DwarfCorp
         public List<BuildRoomOrder> BuildDesignations { get; set; }
         public RoomData CurrentRoomData { get; set; }
         public Faction Faction { get; set; }
-
+        private List<Body> displayObjects = null; 
 
         public List<Room> FilterRoomsByType(string type)
         {
@@ -71,6 +71,17 @@ namespace DwarfCorp
             BuildDesignations = new List<BuildRoomOrder>();
             CurrentRoomData = RoomLibrary.GetData("BedRoom");
             Faction = faction;
+        }
+
+        public void OnExit()
+        {
+            if (displayObjects != null)
+            {
+                foreach (var thing in displayObjects)
+                {
+                    thing.Delete();
+                }
+            }
         }
 
 
@@ -217,7 +228,7 @@ namespace DwarfCorp
 
         public void Update(MouseState mouseState, KeyboardState keyState, DwarfGame game, DwarfTime time)
         {
-            WorldManager.GUI.IsMouseVisible = true;
+            WorldManager.SetMouse(WorldManager.MousePointer);
         }
 
         private void BuildNewVoxels(IEnumerable<Voxel> refs)
@@ -232,6 +243,7 @@ namespace DwarfCorp
                     continue;
                 }
 
+        
                 if (!v.GetVoxelAbove().IsEmpty)
                 {
                     continue;
@@ -277,8 +289,27 @@ namespace DwarfCorp
             }
         }
 
+        private void SetDisplayColor(Body body, Color color)
+        {
+            List<Tinter> sprites = body.GetChildrenOfTypeRecursive<Tinter>();
+
+            foreach (Tinter sprite in sprites)
+            {
+                sprite.VertexColorTint = color;
+            }
+        }
+
         public void OnVoxelsDragged(List<Voxel> refs, InputManager.MouseButton button)
         {
+
+            if (displayObjects != null)
+            {
+                foreach (var thing in displayObjects)
+                {
+                    thing.Delete();
+                }
+            }
+
             if (CurrentRoomData == null)
             {
                 return;
@@ -288,7 +319,7 @@ namespace DwarfCorp
             {
                 if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                 {
-                    WorldManager.GUI.ToolTipManager.ToolTip = Drawer2D.WrapColor("None of the selected units can build rooms.", Color.Red);
+                    WorldManager.ShowTooltip("None of the selected units can build rooms.");
                 }
                 else if (CurrentRoomData.Verify(refs, Faction))
                 {
@@ -312,7 +343,16 @@ namespace DwarfCorp
                         tip += "\n";
                     }
 
-                    WorldManager.GUI.ToolTipManager.Popup(Drawer2D.WrapColor(tip + "Release to build here.", Color.Green));
+                    WorldManager.ShowTooltip("Release to build her.");
+
+                    displayObjects = RoomLibrary.GenerateRoomComponentsTemplate(CurrentRoomData, refs, Faction.Components, 
+                        WorldManager.ChunkManager.Content, WorldManager.ChunkManager.Graphics);
+
+                    foreach(Body thing in displayObjects)
+                    {
+                        thing.SetActiveRecursive(false);
+                        SetDisplayColor(thing, Color.Green);
+                    }
                 }
             }
         }
@@ -324,11 +364,19 @@ namespace DwarfCorp
                 return;
             }
 
+            if (displayObjects != null)
+            {
+                foreach (var thing in displayObjects)
+                {
+                    thing.Delete();
+                }
+            }
+
             if(button == InputManager.MouseButton.Left)
             {
                 if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                 {
-                    WorldManager.GUI.ToolTipManager.Popup(Drawer2D.WrapColor("None of the selected units can build rooms.", Color.Red));
+                    WorldManager.ShowTooltip("None of the selected units can build rooms.");
                 }
                 else if (CurrentRoomData.Verify(refs, Faction))
                 {
@@ -360,17 +408,20 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    Dialog destroyDialog = Dialog.Popup(WorldManager.GUI, "Destroy room?",
-                        "Do you want to destroy this " + Drawer2D.WrapColor(existingRoom.RoomData.Name, Color.DarkRed) + "?", Dialog.ButtonType.OkAndCancel);
-                    destroyDialog.OnClosed += (status) => destroyDialog_OnClosed(status, existingRoom);
+                    WorldManager.NewGui.ShowDialog(new NewGui.Confirm
+                        {
+                            Text = "Do you want to destroy this " + Drawer2D.WrapColor(existingRoom.RoomData.Name, Color.DarkRed) + "?",
+                            OnClose = (sender) => destroyDialog_OnClosed((sender as NewGui.Confirm).DialogResult, existingRoom)
+                        });
+
                     break;
                 }
             }
         }
 
-        void destroyDialog_OnClosed(Dialog.ReturnStatus status, Room room)
+        void destroyDialog_OnClosed(NewGui.Confirm.Result status, Room room)
         {
-            if (status == Dialog.ReturnStatus.Ok)
+            if (status == NewGui.Confirm.Result.OKAY)
             {
                 DesignatedRooms.Remove(room);
 

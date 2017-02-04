@@ -142,9 +142,10 @@ namespace DwarfCorp.GameStates
             {
                 GameState state = StateStack[i];
                
-                if(state.RenderUnderneath || i == 0 
+                if(state != null &&
+                    (state.RenderUnderneath || i == 0 
                     || Object.ReferenceEquals(state, CurrentState) 
-                    || Object.ReferenceEquals(state, NextState))
+                    || Object.ReferenceEquals(state, NextState)))
                 {
                     if(state.IsInitialized)
                     {

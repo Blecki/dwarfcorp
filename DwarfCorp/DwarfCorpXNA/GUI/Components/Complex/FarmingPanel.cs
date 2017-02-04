@@ -50,7 +50,7 @@ namespace DwarfCorp
             {
                 if (resource.NumResources > 0)
                 {
-                    PlantSelector.AddValue(resource.ResourceType.Type);
+                    PlantSelector.AddValue(resource.ResourceType);
                 }
             }
 
@@ -89,7 +89,7 @@ namespace DwarfCorp
             }
             else
             {
-                GUI.ToolTipManager.Popup("Nothing to plant.");
+                WorldManager.ShowTooltip("Nothing to plant.");
             }
         }
 

@@ -192,7 +192,7 @@ namespace DwarfCorp
                 List<ResourceAmount> removals = new List<ResourceAmount>();
                 foreach (ResourceAmount other in Resources)
                 {
-                    if (other.ResourceType.Type != resource.ResourceType.Type) continue;
+                    if (other.ResourceType != resource.ResourceType) continue;
                     other.NumResources -= resource.NumResources;
 
                     if (other.NumResources <= 0)
@@ -206,7 +206,7 @@ namespace DwarfCorp
 
             foreach (ResourceAmount other in trade.GoodsSent)
             {
-                if (Resources.All(r => r.ResourceType.Type != other.ResourceType.Type))
+                if (Resources.All(r => r.ResourceType != other.ResourceType))
                 {
                     Resources.Add(other);
                 }
@@ -214,7 +214,7 @@ namespace DwarfCorp
                 {
                     ResourceAmount other1 = other;
                     foreach (
-                        ResourceAmount r in Resources.Where(k => k.ResourceType.Type == other1.ResourceType.Type))
+                        ResourceAmount r in Resources.Where(k => k.ResourceType == other1.ResourceType))
                     {
                         r.NumResources += other.NumResources;
                     }
@@ -693,8 +693,8 @@ namespace DwarfCorp
 
         public override void OnEnter()
         {
-            WorldManager.GUI.RootComponent.IsVisible = false;
-            WorldManager.GUI.ToolTipManager.ToolTip = "";
+            //WorldManager.GUI.RootComponent.IsVisible = false;
+            //WorldManager.GUI.ToolTipManager.ToolTip = "";
             WorldManager.Paused = true;
             Initialize();
 
@@ -703,7 +703,7 @@ namespace DwarfCorp
 
         public override void OnExit()
         {
-            WorldManager.GUI.RootComponent.IsVisible = true;
+            //WorldManager.GUI.RootComponent.IsVisible = true;
             WorldManager.Paused = false;
             base.OnExit();
         }
@@ -711,7 +711,7 @@ namespace DwarfCorp
 
         private void back_OnClicked()
         {
-            WorldManager.GUI.RootComponent.IsVisible = true;
+            //WorldManager.GUI.RootComponent.IsVisible = true;
             StateManager.PopState();
         }
 

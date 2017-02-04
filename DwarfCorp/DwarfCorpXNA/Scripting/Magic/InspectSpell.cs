@@ -127,13 +127,8 @@ namespace DwarfCorp
             }
 
             if (desc != "")
-            {
-                WorldManager.GUI.ToolTipManager.ToolTip = desc;
-            }
-            else
-            {
-                WorldManager.GUI.ToolTipManager.ToolTip = "";
-            }
+                WorldManager.ShowTooltip(desc);
+
             base.OnEntitiesSelected(tree, entities);
         }
 
@@ -161,13 +156,8 @@ namespace DwarfCorp
             }
 
             if (description != "")
-            {
-                WorldManager.GUI.ToolTipManager.ToolTip = description;
-            }
-            else
-            {
-                WorldManager.GUI.ToolTipManager.ToolTip = "";
-            }
+                WorldManager.ShowTooltip(description);
+
             base.OnVoxelsSelected(tree, voxels);
         }
     }

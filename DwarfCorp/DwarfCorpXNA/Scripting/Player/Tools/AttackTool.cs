@@ -76,25 +76,19 @@ namespace DwarfCorp
             {
                 Player.VoxSelector.Enabled = false;
                 Player.BodySelector.Enabled = false;
-                WorldManager.GUI.IsMouseVisible = false;
+                WorldManager.SetMouse(null);
                 return;
             }
 
             Player.VoxSelector.Enabled = false;
             Player.BodySelector.Enabled = true;
             Player.BodySelector.AllowRightClickSelection = true;
-            WorldManager.GUI.IsMouseVisible = true;
 
-            if (WorldManager.GUI.IsMouseOver())
-            {
-                WorldManager.GUI.MouseMode = GUISkin.MousePointer.Pointer;
-            }
+
+            if (WorldManager.IsMouseOverGui)
+                WorldManager.SetMouse(WorldManager.MousePointer);
             else
-            {
-                WorldManager.GUI.MouseMode = GUISkin.MousePointer.Attack;
-            }
-
-
+                WorldManager.SetMouse(new Gum.MousePointer("mouse", 1, 2));
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)

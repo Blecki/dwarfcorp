@@ -182,7 +182,7 @@ namespace DwarfCorp
 
             if (minions.Count == 0)
             {
-                World.GUI.ToolTipManager.Popup("None of the selected units can farm.");
+                World.ShowTooltip("None of the selected units can farm.");
             }
         }
 

@@ -11,12 +11,6 @@ namespace DwarfCorp.GameStates
 {
     public class PlayState : GameState
     {
-        // Handles loading of game assets
-        public ContentManager Content;
-
-        // Interfaces with the graphics card
-        public GraphicsDevice GraphicsDevice;
-
         private bool IsShuttingDown { get; set; }
         private bool QuitOnNextUpdate { get; set; }
         public bool ShouldReset { get; set; }
@@ -35,40 +29,27 @@ namespace DwarfCorp.GameStates
         // ------GUI--------
         // Draws and manages the user interface 
         public static DwarfGUI GUI = null;
-        public Panel PausePanel;
-        // Text displayed on the screen for the player's company
-        public Label CompanyNameLabel { get; set; }
 
-        // Text displayed on the screen for the player's logo
-        public ImagePanel CompanyLogoPanel { get; set; }
+        private Gum.Widget MoneyLabel;
+        private Gum.Widget StockLabel;
+        private Gum.Widget LevelLabel;
+        private Dictionary<GameMaster.ToolMode, Gum.Widget> ToolbarItems = new Dictionary<GameMaster.ToolMode, Gum.Widget>();
+        private Gum.Widget BottomRightTray;
+        private Gum.Widget TimeLabel;
+        private Gum.Widget PausePanel;
+        private NewGui.MinimapFrame MinimapFrame;
+        private NewGui.MinimapRenderer MinimapRenderer;
+        private NewGui.GameSpeedControls GameSpeedControls;
+        private Gum.Widget ResourcePanel;
+        private NewGui.InfoTicker InfoTicker;
 
-        // Text displayed on the screen for the current amount of money the player has
-        public Label MoneyLabel { get; set; }
-
-        // Text displayed on the screen for the current amount of money the player has
-        public Label StockLabel { get; set; }
-
-        // Text displayed on the screen for the current game time
-        public Label TimeLabel { get; set; }
-
-        // Text displayed on the screen for the current slice
-        public Label CurrentLevelLabel { get; set; }
-
-        // When pressed, makes the current slice increase.
-        public Button CurrentLevelUpButton { get; set; }
-
-        //When pressed, makes the current slice decrease
-        public Button CurrentLevelDownButton { get; set; }
-
-        // When dragged, the current slice changes
-        public Slider LevelSlider { get; set; }
-
-        public AnnouncementViewer AnnouncementViewer { get; set; }
-
-        public Minimap MiniMap { get; set; }
+        private Point RememberedScreenResolution = new Point(0, 0);
+       // public Minimap MiniMap { get; set; }
 
         // Provides event-based keyboard and mouse input.
         public static InputManager Input;// = new InputManager();
+
+        private Gum.Root NewGui;
 
         /// <summary>
         /// Creates a new play state
@@ -81,8 +62,6 @@ namespace DwarfCorp.GameStates
             IsShuttingDown = false;
             QuitOnNextUpdate = false;
             ShouldReset = true;
-            Content = Game.Content;
-            GraphicsDevice = Game.GraphicsDevice;
             Paused = false;
             RenderUnderneath = true;
 
@@ -102,8 +81,36 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public override void OnEnter()
         {
+            // Just toss out any pending input.
+            DwarfGame.GumInput.GetInputQueue();
+
             if (!IsInitialized)
             {
+                // Setup new gui. Double rendering the mouse?
+                NewGui = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
+                NewGui.MousePointer = new Gum.MousePointer("mouse", 4, 0);
+                WorldManager.NewGui = NewGui;
+
+                // Setup input event handlers. All of the actions should already be established - just 
+                // need handlers.
+                DwarfGame.GemInput.ClearAllHandlers();
+
+                WorldManager.ShowInfo += (text) =>
+                    {
+                        InfoTicker.AddMessage(text);
+                    };
+
+                WorldManager.ShowTooltip += (text) =>
+                    {
+                        // Todo - Actually put this at the mouse position.
+                        NewGui.ShowTooltip(new Point(0, 0), text);
+                    };
+
+                WorldManager.SetMouse += (mouse) =>
+                    {
+                        NewGui.MousePointer = mouse;
+                    };
+
                 World.gameState = this;
                 World.OnLoseEvent += World_OnLoseEvent;
                 CreateGUIComponents();
@@ -129,6 +136,8 @@ namespace DwarfCorp.GameStates
         /// <param name="gameTime">The current time</param>
         public override void Update(DwarfTime gameTime)
         {
+            //WorldManager.GUI.IsMouseVisible = false;
+
             // If this playstate is not supposed to be running,
             // just exit.
             if (!Game.IsActive || !IsActiveState || IsShuttingDown)
@@ -144,16 +153,97 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
+            // Needs to run before old input so tools work
+            // Update new input system.
+            DwarfGame.GemInput.FireActions(NewGui, (@event, args) =>
+            {
+                // Let old input handle mouse interaction for now. Will eventually need to be replaced.
+            });
+
             World.Update(gameTime);
             GUI.Update(gameTime);
             Input.Update();
 
-            // Updates some of the GUI status
-            if (Game.IsActive)
+            #region Update time label
+            TimeLabel.Text = String.Format("{0} {1}",
+                WorldManager.Time.CurrentDate.ToShortDateString(),
+                WorldManager.Time.CurrentDate.ToShortTimeString());
+            TimeLabel.Invalidate();
+            #endregion
+
+            #region Update top left panel
+            MoneyLabel.Text = String.Format("Money: {0}", Master.Faction.Economy.CurrentMoney);
+            MoneyLabel.Invalidate();
+
+            StockLabel.Text = String.Format("Stock: {0}", Master.Faction.Economy.Company.StockPrice);
+            StockLabel.Invalidate();
+
+            LevelLabel.Text = String.Format("Slice: {0}/{1}",
+                WorldManager.ChunkManager.ChunkData.MaxViewingLevel,
+                WorldManager.ChunkHeight);
+            LevelLabel.Invalidate();
+            #endregion
+
+            #region Update toolbar tray
+            foreach (var tools in ToolbarItems)
             {
-                CurrentLevelLabel.Text = "Slice: " + WorldManager.ChunkManager.ChunkData.MaxViewingLevel + "/" + WorldManager.ChunkHeight;
-                TimeLabel.Text = WorldManager.Time.CurrentDate.ToShortDateString() + " " + WorldManager.Time.CurrentDate.ToShortTimeString();
+                tools.Value.Hidden = true;
+                tools.Value.Invalidate();
             }
+
+            if (Master.SelectedMinions.Count == 0)
+            {
+                if (Master.CurrentToolMode != GameMaster.ToolMode.God)
+                    Master.CurrentToolMode = GameMaster.ToolMode.SelectUnits;
+            }
+            else
+            {
+                foreach (var tool in ToolbarItems)
+                    tool.Value.Hidden = !Master.Faction.SelectedMinions.Any(minion => minion.Stats.CurrentClass.HasAction(tool.Key));
+            }
+
+            ToolbarItems[GameMaster.ToolMode.SelectUnits].Hidden = false;
+            #endregion
+
+            #region Update resource panel
+            ResourcePanel.Clear();
+            foreach (var resource in Master.Faction.ListResources().Where(p => p.Value.NumResources > 0))
+            {
+                var resourceTemplate = ResourceLibrary.GetResourceByName(resource.Key);
+
+                var row = ResourcePanel.AddChild(new Gum.Widget
+                    {
+                        MinimumSize = new Point(0, 32),
+                        AutoLayout = Gum.AutoLayout.DockTop
+                    });
+
+                row.AddChild(new Gum.Widget
+                    {
+                        Background = new Gum.TileReference("resources", resourceTemplate.NewGuiSprite),
+                        MinimumSize = new Point(32, 32),
+                        AutoLayout = Gum.AutoLayout.DockLeft,
+                        Tooltip = String.Format("{0} - {1}",
+                            resourceTemplate.ResourceName,
+                            resourceTemplate.Description)
+                    });
+
+                row.AddChild(new Gum.Widget
+                {
+                    Text = resource.Value.NumResources.ToString(),
+                    MinimumSize = new Point(32, 32),
+                    AutoLayout = Gum.AutoLayout.DockLeft,
+                    Tooltip = String.Format("{0} - {1}",
+                        resourceTemplate.ResourceName,
+                        resourceTemplate.Description),
+                    Font = "outline-font",
+                    TextColor = new Vector4(1,1,1,1)
+                });
+            }
+            ResourcePanel.Layout();
+            #endregion
+
+            // Really just handles mouse pointer animation.
+            NewGui.Update(gameTime.ToGameTime());
         }
 
         /// <summary>
@@ -163,10 +253,17 @@ namespace DwarfCorp.GameStates
         public override void Render(DwarfTime gameTime)
         {
             EnableScreensaver = !World.ShowingWorld;
+
+            MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
+
             if (World.ShowingWorld)
             {
                 GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
                 World.Render(gameTime);
+
+                if (!MinimapFrame.Hidden)
+                    MinimapRenderer.Render(new Rectangle(0, NewGui.VirtualScreen.Bottom - 192, 192, 192), NewGui);
+                NewGui.Draw();
 
                 // SpriteBatch Begin and End must be called again. Hopefully we can factor this out with the new gui
                 RasterizerState rasterizerState = new RasterizerState()
@@ -178,7 +275,9 @@ namespace DwarfCorp.GameStates
                 GUI.Render(gameTime, DwarfGame.SpriteBatch, Vector2.Zero);
                 GUI.PostRender(gameTime);
                 DwarfGame.SpriteBatch.End();
-            }
+                //WorldManager.SelectionBuffer.DebugDraw(0, 0);
+            }        
+
             base.Render(gameTime);
         }
 
@@ -188,8 +287,6 @@ namespace DwarfCorp.GameStates
         /// <param name="gameTime">The current time</param>
         public override void RenderUnitialized(DwarfTime gameTime)
         {
-           
-
             EnableScreensaver = true;
             World.Render(gameTime);
             base.RenderUnitialized(gameTime);
@@ -201,225 +298,214 @@ namespace DwarfCorp.GameStates
         public void CreateGUIComponents()
         {
             GUI.RootComponent.ClearChildren();
-            AlignLayout layout = new AlignLayout(GUI, GUI.RootComponent)
-            {
-                LocalBounds = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height),
-                WidthSizeMode = GUIComponent.SizeMode.Fit,
-                HeightSizeMode = GUIComponent.SizeMode.Fit,
-                Mode = AlignLayout.PositionMode.Percent
-            };
 
             GUI.RootComponent.AddChild(Master.Debugger.MainPanel);
-            layout.AddChild(Master.ToolBar);
-            Master.ToolBar.Parent = layout;
-            Master.ToolBar.LocalBounds = new Rectangle(0, 0, 256, 100);
 
-            layout.Add(Master.ToolBar, AlignLayout.Alignment.Right, AlignLayout.Alignment.Bottom, Vector2.Zero);
-            //layout.SetComponentPosition(Master.ToolBar, 7, 10, 4, 1);
+            #region Setup bottom right tray
 
-            GUIComponent companyInfoComponent = new GUIComponent(GUI, layout)
+            ToolbarItems[GameMaster.ToolMode.SelectUnits] = CreateIcon(5, GameMaster.ToolMode.SelectUnits);
+            ToolbarItems[GameMaster.ToolMode.Dig] = CreateIcon(0, GameMaster.ToolMode.Dig);
+            ToolbarItems[GameMaster.ToolMode.Build] = CreateIcon(2, GameMaster.ToolMode.Build);
+            ToolbarItems[GameMaster.ToolMode.Cook] = CreateIcon(3, GameMaster.ToolMode.Cook);
+            ToolbarItems[GameMaster.ToolMode.Farm] = CreateIcon(5, GameMaster.ToolMode.Farm);
+            ToolbarItems[GameMaster.ToolMode.Magic] = CreateIcon(6, GameMaster.ToolMode.Magic);
+            ToolbarItems[GameMaster.ToolMode.Gather] = CreateIcon(6, GameMaster.ToolMode.Gather);
+            ToolbarItems[GameMaster.ToolMode.Chop] = CreateIcon(1, GameMaster.ToolMode.Chop);
+            ToolbarItems[GameMaster.ToolMode.Guard] = CreateIcon(4, GameMaster.ToolMode.Guard);
+            ToolbarItems[GameMaster.ToolMode.Attack] = CreateIcon(3, GameMaster.ToolMode.Attack);
+
+            BottomRightTray = NewGui.RootItem.AddChild(new NewGui.IconTray
             {
-                LocalBounds = new Rectangle(0, 0, 350, 200),
-                TriggerMouseOver = false
-            };
+                Corners = Gum.Scale9Corners.Left | Gum.Scale9Corners.Top,
+                AutoLayout = Gum.AutoLayout.FloatBottomRight,
+                MinimumSize = new Point(256, 128),
+                ItemSource = ToolbarItems.Select(i => i.Value)
+            });
+            #endregion
 
-            layout.Add(companyInfoComponent, AlignLayout.Alignment.Left, AlignLayout.Alignment.Top, Vector2.Zero);
-            //layout.SetComponentPosition(companyInfoComponent, 0, 0, 4, 2);
+            #region Setup company information section
+            NewGui.RootItem.AddChild(new NewGui.CompanyLogo
+                {
+                    Rect = new Rectangle(8,8,32,32),
+                    MinimumSize = new Point(32, 32),
+                    MaximumSize = new Point(32, 32),
+                    AutoLayout = Gum.AutoLayout.None,
+                    CompanyInformation = WorldManager.PlayerCompany.Information
+                });
 
-            GUIComponent resourceInfoComponent = new ResourceInfoComponent(GUI, layout, Master.Faction)
+            NewGui.RootItem.AddChild(new Gum.Widget
+                {
+                    Rect = new Rectangle(48,8,256,20),
+                    Text = WorldManager.PlayerCompany.Information.Name,
+                    AutoLayout = Gum.AutoLayout.None,
+                    Font = "outline-font",
+                    TextColor = new Vector4(1,1,1,1)
+                });
+
+            MoneyLabel = NewGui.RootItem.AddChild(new Gum.Widget
+                {
+                    Rect = new Rectangle(48, 32, 128, 20),
+                    AutoLayout = Gum.AutoLayout.None,
+                    Font = "outline-font",
+                    TextColor = new Vector4(1,1,1,1)
+                });
+
+            StockLabel = NewGui.RootItem.AddChild(new Gum.Widget
+                {
+                    Rect = new Rectangle(48, 56, 128, 20),
+                    AutoLayout = Gum.AutoLayout.None,
+                    Font = "outline-font",
+                    TextColor = new Vector4(1,1,1,1)
+                });
+
+            LevelLabel = NewGui.RootItem.AddChild(new Gum.Widget
+                {
+                    Rect = new Rectangle(8, 80, 128, 20),
+                    AutoLayout = Gum.AutoLayout.None,
+                    Font = "outline-font",
+                    TextColor = new Vector4(1,1,1,1)
+                });
+
+            NewGui.RootItem.AddChild(new Gum.Widget
+                {
+                    Background = new Gum.TileReference("round-buttons", 3),
+                    Rect = new Rectangle(148, 80, 16, 16),
+                    OnClick = (sender, args) =>
+                    {
+                        WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(
+                            WorldManager.ChunkManager.ChunkData.MaxViewingLevel + 1,
+                            ChunkManager.SliceMode.Y);
+                    }
+                });
+
+            NewGui.RootItem.AddChild(new Gum.Widget
             {
-                LocalBounds = new Rectangle(0, 0, 400, 256),
-                TriggerMouseOver = false
-            };
-            layout.Add(resourceInfoComponent, AlignLayout.Alignment.None, AlignLayout.Alignment.Top,
-                new Vector2(0.55f, 0.0f));
-            //layout.SetComponentPosition(resourceInfoComponent, 7, 0, 2, 2);
+                Background = new Gum.TileReference("round-buttons", 7),
+                Rect = new Rectangle(166, 80, 16, 16),
+                OnClick = (sender, args) => 
+                {
+                    WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(
+                        WorldManager.ChunkManager.ChunkData.MaxViewingLevel - 1,
+                        ChunkManager.SliceMode.Y);
+                }
+            });
+            #endregion
 
-            GridLayout infoLayout = new GridLayout(GUI, companyInfoComponent, 3, 4);
+            ResourcePanel = NewGui.RootItem.AddChild(new Gum.Widget
+                {
+                    Transparent = true,
+                    Rect = new Rectangle(0, 104, 128, 128),
+                    AutoLayout = Gum.AutoLayout.None
+                });
 
-            CompanyLogoPanel = new ImagePanel(GUI, infoLayout, WorldManager.PlayerCompany.Logo)
-            {
-                ConstrainSize = true,
-                KeepAspectRatio = true
-            };
-            infoLayout.SetComponentPosition(CompanyLogoPanel, 0, 0, 1, 1);
+            #region Setup time display
+            TimeLabel = NewGui.RootItem.AddChild(new Gum.Widget
+                {
+                    AutoLayout = Gum.AutoLayout.FloatTop,
+                    TextHorizontalAlign = Gum.HorizontalAlign.Center,
+                    MinimumSize = new Point(128, 20),
+                    TextSize = 2
+                });
+            #endregion
 
-            CompanyNameLabel = new Label(GUI, infoLayout, WorldManager.PlayerCompany.Name, GUI.DefaultFont)
-            {
-                TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 255),
-                ToolTip = "Our company Name.",
-                Alignment = Drawer2D.Alignment.Top,
-            };
-            infoLayout.SetComponentPosition(CompanyNameLabel, 1, 0, 1, 1);
+            #region Minimap
 
-            MoneyLabel = new DynamicLabel(GUI, infoLayout, "Money:\n", "", GUI.DefaultFont, "C2",
-                () => Master.Faction.Economy.CurrentMoney)
-            {
-                TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 255),
-                ToolTip = "Amount of money in our treasury.",
-                Alignment = Drawer2D.Alignment.Top,
-                TriggerMouseOver = false
-            };
-            infoLayout.SetComponentPosition(MoneyLabel, 3, 0, 1, 1);
+            // Little hack here - Normally this button his hidden by the minimap. Hide the minimap and it 
+            // becomes visible! 
+            // Todo: Doh, doesn't actually work.
+            NewGui.RootItem.AddChild(new Gum.Widget
+                {
+                    AutoLayout = Gum.AutoLayout.FloatBottomLeft,
+                    Background = new Gum.TileReference("round-buttons", 3),
+                    MinimumSize = new Point(16,16),
+                    MaximumSize = new Point(16,16),
+                    OnClick = (sender, args) =>
+                        {
+                            MinimapFrame.Hidden = false;
+                            MinimapFrame.Invalidate();
+                        }
+                });
 
+            MinimapRenderer = new NewGui.MinimapRenderer(192, 192, World,
+                TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap));
 
-            StockLabel = new DynamicLabel(GUI, infoLayout, "Stock:\n", "", GUI.DefaultFont, "C2",
-                () => Master.Faction.Economy.Company.StockPrice)
-            {
-                TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 255),
-                ToolTip = "The price of our company stock.",
-                Alignment = Drawer2D.Alignment.Top,
-            };
-            infoLayout.SetComponentPosition(StockLabel, 5, 0, 1, 1);
+            MinimapFrame = NewGui.RootItem.AddChild(new NewGui.MinimapFrame
+                {
+                    AutoLayout = Gum.AutoLayout.FloatBottomLeft,
+                    Renderer = MinimapRenderer
+                }) as NewGui.MinimapFrame;
+            #endregion
 
+            #region Setup top right tray
+            var topRightTray = NewGui.RootItem.AddChild(new NewGui.IconTray
+                {
+                    Corners = Gum.Scale9Corners.Left | Gum.Scale9Corners.Bottom,
+                    AutoLayout = Gum.AutoLayout.FloatTopRight,
+                    MinimumSize = new Point(132, 68),
+                    ItemSource = new Gum.Widget[] 
+                        { 
+                            new NewGui.FramedIcon
+                            {
+                                Icon = new Gum.TileReference("tool-icons", 10),
+                                OnClick = (sender, args) => StateManager.PushState("EconomyState")
+                        },
+                        new NewGui.FramedIcon
+                        {
+                            Icon = new Gum.TileReference("tool-icons", 12),
+                            OnClick = (sender, args) => { OpenPauseMenu(); }
+                        }
+                        }
+                });
+            #endregion
 
-            TimeLabel = new Label(GUI, layout,
-                WorldManager.Time.CurrentDate.ToShortDateString() + " " + WorldManager.Time.CurrentDate.ToShortTimeString(), GUI.SmallFont)
-            {
-                TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 255),
-                Alignment = Drawer2D.Alignment.Top,
-                ToolTip = "Current time and date."
-            };
-            layout.Add(TimeLabel, AlignLayout.Alignment.Center, AlignLayout.Alignment.Top, Vector2.Zero);
-            //layout.SetComponentPosition(TimeLabel, 6, 0, 1, 1);
+            #region Setup game speed controls
+            GameSpeedControls = NewGui.RootItem.AddChild(new NewGui.GameSpeedControls
+                {
+                    AutoLayout = Gum.AutoLayout.FloatBottom
+                }) as NewGui.GameSpeedControls;
 
-            CurrentLevelLabel = new Label(GUI, infoLayout, "Slice: " + WorldManager.ChunkManager.ChunkData.MaxViewingLevel,
-                GUI.DefaultFont)
-            {
-                TextColor = Color.White,
-                StrokeColor = new Color(0, 0, 0, 255),
-                ToolTip = "The maximum height of visible terrain"
-            };
-            infoLayout.SetComponentPosition(CurrentLevelLabel, 0, 1, 1, 1);
-
-            CurrentLevelUpButton = new Button(GUI, CurrentLevelLabel, "", GUI.DefaultFont, Button.ButtonMode.ImageButton,
-                GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowUp))
-            {
-                ToolTip = "Go up one level of visible terrain",
-                KeepAspectRatio = true,
-                DontMakeBigger = true,
-                DontMakeSmaller = true,
-                LocalBounds = new Rectangle(100, 16, 32, 32)
-            };
-
-            CurrentLevelUpButton.OnClicked += CurrentLevelUpButton_OnClicked;
-
-            CurrentLevelDownButton = new Button(GUI, CurrentLevelLabel, "", GUI.DefaultFont,
-                Button.ButtonMode.ImageButton, GUI.Skin.GetSpecialFrame(GUISkin.Tile.SmallArrowDown))
-            {
-                ToolTip = "Go down one level of visible terrain",
-                KeepAspectRatio = true,
-                DontMakeBigger = true,
-                DontMakeSmaller = true,
-                LocalBounds = new Rectangle(140, 16, 32, 32)
-            };
-            CurrentLevelDownButton.OnClicked += CurrentLevelDownButton_OnClicked;
-
-            /*
-            LevelSlider = new Slider(GUI, layout, "", ChunkManager.ChunkData.MaxViewingLevel, 0, ChunkManager.ChunkData.ChunkSizeY, Slider.SliderMode.Integer)
-            {
-                Orient = Slider.Orientation.Vertical,
-                ToolTip = "Controls the maximum height of visible terrain",
-                DrawLabel = false
-            };
-
-            layout.SetComponentPosition(LevelSlider, 0, 1, 1, 6);
-            LevelSlider.OnClicked += LevelSlider_OnClicked;
-            LevelSlider.InvertValue = true;
-            */
-
-            MiniMap = new Minimap(GUI, layout, 192, 192, World,
-                TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap),
-                TextureManager.GetTexture(ContentPaths.GUI.gui_minimap))
-            {
-                IsVisible = true,
-                LocalBounds = new Rectangle(0, 0, 192, 192)
-            };
-            layout.Add(MiniMap, AlignLayout.Alignment.Left, AlignLayout.Alignment.Bottom, Vector2.Zero);
-            //layout.SetComponentPosition(MiniMap, 0, 8, 4, 4);
-            //Rectangle rect = layout.GetRect(new Rectangle(0, 8, 4, 4));
-            //layout.SetComponentOffset(MiniMap,  new Point(0, rect.Height - 250));
-
-
-            Tray topRightTray = new Tray(GUI, layout)
-            {
-                LocalBounds = new Rectangle(0, 0, 132, 68),
-                TrayPosition = Tray.Position.TopRight
-            };
-
-            Button moneyButton = new Button(GUI, topRightTray, "Economy", GUI.SmallFont, Button.ButtonMode.ImageButton,
-                new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 2, 1))
-            {
-                KeepAspectRatio = true,
-                ToolTip = "Opens the Economy Menu",
-                DontMakeBigger = true,
-                DrawFrame = true,
-                TextColor = Color.White,
-                LocalBounds = new Rectangle(8, 6, 32, 32)
-            };
-
-            moneyButton.OnClicked += EconomyState.PushEconomyState;
-
-
-            Button settingsButton = new Button(GUI, topRightTray, "Settings", GUI.SmallFont,
-                Button.ButtonMode.ImageButton,
-                new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 4, 1))
-            {
-                KeepAspectRatio = true,
-                ToolTip = "Opens the Settings Menu",
-                DontMakeBigger = true,
-                DrawFrame = true,
-                TextColor = Color.White,
-                LocalBounds = new Rectangle(64 + 8, 6, 32, 32)
-            };
-
-            settingsButton.OnClicked += OpenPauseMenu;
-
-            layout.Add(topRightTray, AlignLayout.Alignment.Right, AlignLayout.Alignment.Top, Vector2.Zero);
+            #endregion
 
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
 
-            AnnouncementViewer = new AnnouncementViewer(GUI, layout, WorldManager.AnnouncementManager)
+            WorldManager.OnAnnouncement = (title, message, clickAction) =>
+                {
+                    NewGui.RootItem.AddChild(new NewGui.AnnouncementPopup
+                    {
+                        Text = title,
+                        Message = message,
+                        OnClick = (sender, args) => { if (clickAction != null) clickAction(); },
+                        Rect = new Rectangle(
+                            NewGui.VirtualScreen.Left + (NewGui.VirtualScreen.Width / 2) - 128,
+                            NewGui.VirtualScreen.Bottom - 128, 256, 128)
+                    });
+                };
+
+            InfoTicker = NewGui.RootItem.AddChild(new NewGui.InfoTicker
+                {
+                    Rect = new Rectangle(NewGui.VirtualScreen.X + 239,
+                        NewGui.VirtualScreen.Bottom - 210, 256, 210),
+                    Transparent = true
+                }) as NewGui.InfoTicker;
+                        
+            NewGui.RootItem.Layout();
+        }
+
+        private Gum.Widget CreateIcon(int Tile, GameMaster.ToolMode Mode)
+        {
+            return new NewGui.FramedIcon
             {
-                LocalBounds = new Rectangle(0, 0, 350, 80)
+                Icon = new Gum.TileReference("tool-icons", Tile),
+                OnClick = (sender, args) =>
+                    {
+                        Master.Tools[Mode].OnBegin();
+                        if (Master.CurrentToolMode != Mode)
+                            Master.CurrentTool.OnEnd();
+                        Master.CurrentToolMode = Mode;
+                    }
             };
-            layout.Add(AnnouncementViewer, AlignLayout.Alignment.Center, AlignLayout.Alignment.Bottom, Vector2.Zero);
-            //layout.SetComponentPosition(AnnouncementViewer, 3, 10, 3, 1);
-            layout.UpdateSizes();
         }
-
-        /// <summary>
-        /// Called when the slice slider was moved.
-        /// </summary>
-        private void LevelSlider_OnClicked()
-        {
-            WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel((int)LevelSlider.SliderValue, ChunkManager.SliceMode.Y);
-        }
-
-        /// <summary>
-        /// Called when the "Slice -" button is pressed
-        /// </summary>
-        private void CurrentLevelDownButton_OnClicked()
-        {
-            WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(WorldManager.ChunkManager.ChunkData.MaxViewingLevel - 1,
-                ChunkManager.SliceMode.Y);
-        }
-
-
-        /// <summary>
-        /// Called when the "Slice +" button is pressed
-        /// </summary>
-        private void CurrentLevelUpButton_OnClicked()
-        {
-            WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(WorldManager.ChunkManager.ChunkData.MaxViewingLevel + 1,
-                ChunkManager.SliceMode.Y);
-        }
-
-
+                
         /// <summary>
         /// Called when the user releases a key
         /// </summary>
@@ -429,18 +515,19 @@ namespace DwarfCorp.GameStates
             if (key == ControlSettings.Mappings.Map)
             {
                 World.DrawMap = !World.DrawMap;
-                MiniMap.SetMinimized(!World.DrawMap);
+                MinimapFrame.Hidden = true;
+                MinimapFrame.Invalidate();
             }
 
             if (key == Keys.Escape)
             {
                 if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
                 {
-                    Master.ToolBar.ToolButtons[GameMaster.ToolMode.SelectUnits].InvokeClick();
+                    ToolbarItems[Master.CurrentToolMode].OnClick(null, null);
                 }
-                else if (PausePanel != null && PausePanel.IsVisible)
+                else if (PausePanel != null)
                 {
-                    PausePanel.IsVisible = false;
+                    PausePanel.Close();
                     Paused = false;
                 }
                 else
@@ -468,7 +555,7 @@ namespace DwarfCorp.GameStates
                 int i = 0;
                 if (index == 0 || Master.SelectedMinions.Count > 0)
                 {
-                    foreach (var pair in Master.ToolBar.ToolButtons)
+                    foreach (var pair in ToolbarItems)
                     {
                         if (i == index)
                         {
@@ -477,7 +564,7 @@ namespace DwarfCorp.GameStates
 
                             if ((index == 0 || minions.Count > 0))
                             {
-                                pair.Value.InvokeClick();
+                                pair.Value.OnClick(null,null);
                                 break;
                             }
                         }
@@ -490,140 +577,112 @@ namespace DwarfCorp.GameStates
             else if (key == ControlSettings.Mappings.Pause)
             {
                 Paused = !Paused;
-                Master.ToolBar.SpeedButton.SetSpeed(Paused ? 0 : 1);
+                if (Paused) GameSpeedControls.CurrentSpeed = 0;
+                else GameSpeedControls.CurrentSpeed = GameSpeedControls.PlaySpeed;
             }
             else if (key == ControlSettings.Mappings.TimeForward)
             {
-                Master.ToolBar.SpeedButton.IncrementSpeed();
+                GameSpeedControls.CurrentSpeed += 1;
             }
             else if (key == ControlSettings.Mappings.TimeBackward)
             {
-                Master.ToolBar.SpeedButton.DecrementSpeed();
+                GameSpeedControls.CurrentSpeed -= 1;
             }
             else if (key == ControlSettings.Mappings.ToggleGUI)
             {
+                // Todo: Reimplement.
                 GUI.RootComponent.IsVisible = !GUI.RootComponent.IsVisible;
             }
         }
 
-        /// <summary>
-        /// Called whenever the escape button is pressed. Opens a small menu for saving/loading, etc.
-        /// </summary>
+        private void MakeMenuItem(Gum.Widget Menu, string Name, string Tooltip, Action<Gum.Widget, Gum.InputEventArgs> OnClick)
+        {
+            Menu.AddChild(new Gum.Widget
+            {
+                AutoLayout = Gum.AutoLayout.DockTop,
+                Border = "border-thin",
+                Text = Name,
+                OnClick = OnClick,
+                Tooltip = Tooltip,
+                TextHorizontalAlign = Gum.HorizontalAlign.Center,
+                TextVerticalAlign = Gum.VerticalAlign.Center,
+                TextSize = 2
+            });
+        }
+
         public void OpenPauseMenu()
         {
-            if (PausePanel != null && PausePanel.IsVisible) return;
-
+            if (PausePanel != null) return;
             Paused = true;
 
-            int w = 200;
-            int h = 200;
-
-            PausePanel = new Panel(GUI, GUI.RootComponent)
+            PausePanel = new Gum.Widget
             {
-                LocalBounds =
-                    new Rectangle(GraphicsDevice.Viewport.Width / 2 - w / 2, GraphicsDevice.Viewport.Height / 2 - h / 2, w, h)
+                Rect = new Rectangle(NewGui.VirtualScreen.Center.X - 128,
+                    NewGui.VirtualScreen.Center.Y - 100, 256, 200),
+                Border = "border-fancy",
+                TextHorizontalAlign = Gum.HorizontalAlign.Center,
+                Text = "- Paused -",
+                InteriorMargin = new Gum.Margin(12, 0, 0, 0),
+                Padding = new Gum.Margin(2, 2, 2, 2),
+                OnClose = (sender) => PausePanel = null
             };
 
-            GridLayout pauseLayout = new GridLayout(GUI, PausePanel, 1, 1);
+            NewGui.ConstructWidget(PausePanel);
 
-            ListSelector pauseSelector = new ListSelector(GUI, pauseLayout)
-            {
-                Label = "-Menu-",
-                DrawPanel = false,
-                Mode = ListItem.SelectionMode.Selector
-            };
-            pauseLayout.SetComponentPosition(pauseSelector, 0, 0, 1, 1);
-            pauseLayout.UpdateSizes();
-            pauseSelector.AddItem("Continue");
-            pauseSelector.AddItem("Options");
-            pauseSelector.AddItem("Save");
-            pauseSelector.AddItem("Quit");
-
-            pauseSelector.OnItemClicked += () => pauseSelector_OnItemClicked(pauseSelector);
-        }
-
-        /// <summary>
-        /// Called whenever the pause menu is clicked.
-        /// </summary>
-        /// <param name="selector">The list of things the user could have clicked on.</param>
-        private void pauseSelector_OnItemClicked(ListSelector selector)
-        {
-            string selected = selector.SelectedItem.Label;
-            switch (selected)
-            {
-                case "Continue":
-                    GUI.RootComponent.RemoveChild(PausePanel);
+            MakeMenuItem(PausePanel, "Continue", "", (sender, args) =>
+                {
+                    PausePanel.Close();
                     Paused = false;
-                    PausePanel.Destroy();
                     PausePanel = null;
-                    break;
-                case "Options":
-                    StateManager.PushState("OptionsState");
-                    break;
-                case "Save":
-                    SaveGame(Overworld.Name + "_" + WorldManager.GameID);
-                    break;
-                case "Quit":
-                    QuitOnNextUpdate = true;
-                    break;
-            }
-        }
+                });
 
-        /// <summary>
-        /// Saves the game state to a file.
-        /// </summary>
-        /// <param name="filename">The file to save to</param>
-        public void SaveGame(string filename)
-        {
-            Dialog dialog = Dialog.Popup(GUI, "Saving/Loading",
-                "Warning: Saving is still an unstable feature. Are you sure you want to continue?",
-                Dialog.ButtonType.OkAndCancel);
+            MakeMenuItem(PausePanel, "Options", "", (sender, args) => StateManager.PushState("OptionsState"));
 
-            dialog.OnClosed += (status) => savedialog_OnClosed(status, filename);
-        }
-
-        private void savedialog_OnClosed(Dialog.ReturnStatus status, string filename)
-        {
-            switch (status)
-            {
-                case Dialog.ReturnStatus.Ok:
+            MakeMenuItem(PausePanel, "New Options", "", (sender, args) =>
+                {
+                    StateManager.GetState<NewOptionsState>("NewOptionsState").OnClosed = () =>
                     {
-                        World.Save(filename, waitforsave_OnFinished);
-                        break;
-                    }
-            }
-        }
+                        NewGui.ResizeVirtualScreen(new Point(640, 480));
+                        NewGui.ResetGui();
+                        CreateGUIComponents();
+                        OpenPauseMenu();
+                    };
 
-        private void waitforsave_OnFinished(bool success, Exception exception)
-        {
-            if (success)
-            {
-                Dialog.Popup(GUI, "Save", "File saved.", Dialog.ButtonType.OK);
-            }
-            else
-            {
-                Dialog.Popup(GUI, "Save", "File save failed : " + exception.Message, Dialog.ButtonType.OK);
-            }
-        }
+                    StateManager.PushState("NewOptionsState");
+                });
 
+            MakeMenuItem(PausePanel, "Save", "",
+                (sender, args) =>
+                {
+                    NewGui.ShowPopup(new NewGui.Confirm
+                    {
+                        Text = "Warning: Saving is still an unstable feature. Are you sure you want to continue?",
+                        OnClose = (s) =>
+                        {
+                            if ((s as NewGui.Confirm).DialogResult == DwarfCorp.NewGui.Confirm.Result.OKAY)
+                                World.Save(
+                                    String.Format("{0}_{1}", Overworld.Name, WorldManager.GameID),
+                                    (success, exception) =>
+                                    {
+                                        NewGui.ShowPopup(new NewGui.Popup
+                                        {
+                                            Text = success ? "File saved." : "Save failed - " + exception.Message,
+                                            OnClose = (s2) => OpenPauseMenu()
+                                        }, false);
+                                    });
+                        }
+                    }, false);
+                });
+            
+            MakeMenuItem(PausePanel, "Quit", "", (sender, args) => QuitOnNextUpdate = true);
+
+            PausePanel.Layout();
+
+            NewGui.ShowPopup(PausePanel, false);
+        }
+      
         public void Destroy()
         {
-            // TODO: Make this prettier.  Possibly as a recursive call via RootComponent.
-            // That or fully clean up the GUIComponents....
-            foreach(GUIComponent c in GUI.RootComponent.Children)
-            {
-                if (c is AlignLayout)
-                {
-                    AlignLayout layout = (c as AlignLayout);
-
-                    foreach (GUIComponent l in layout.Children)
-                    {
-                        if (l is ResourceInfoComponent)
-                            (l as ResourceInfoComponent).CleanUp();
-                    }
-                }
-            }
-
             InputManager.KeyReleasedCallback -= InputManager_KeyReleasedCallback;
             Input.Destroy();
         }

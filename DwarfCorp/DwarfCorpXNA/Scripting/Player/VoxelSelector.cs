@@ -222,7 +222,7 @@ namespace DwarfCorp
                         if (room != null)
                             info += " (" + room.ID + ")";
                     }
-                    WorldManager.GUI.ToolTipManager.PopupInfo(info);
+                    WorldManager.ShowInfo(info);
                 }
             }
 

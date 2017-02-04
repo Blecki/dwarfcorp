@@ -18,6 +18,11 @@
 			"Type": "VariableWidthFont"
 		},
 		{
+			"Name": "outline-font",
+			"Texture": "newgui/font2",
+			"Type": "VariableWidthFont"
+		},
+		{
 			"Name": "mouse",
 			"Texture": "newgui/pointers",
 			"TileWidth": 16,
@@ -94,6 +99,60 @@
 			"Texture": "newgui/logo-fg",
 			"TileWidth": 32,
 			"TileHeight": 32
+		},
+		{
+			"Name": "icon-frame",
+			"Texture": "newgui/icon-frame",
+			"TileWidth": 40,
+			"TileHeight": 40
+		},
+		{
+			"Name": "tool-icons",
+			"Texture": "newgui/icons",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
+			"Name": "tray-border",
+			"Texture": "newgui/tray-border",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
+			"Name": "round-buttons",
+			"Texture": "newgui/round-buttons",
+			"TileWidth": 16,
+			"TileHeight": 16
+		},
+		{
+			"Name": "speech-bubble",
+			"Texture": "newgui/speech-bubble",
+			"TileWidth": 30,
+			"TileHeight": 30
+		},
+		{
+			"Name": "dwarf",
+			"Texture": "newgui/diplo-dorf",
+			"TileWidth": 64,
+			"TileHeight": 64
+		},
+		{
+			"Name": "minimap-frame",
+			"Texture": "newgui/gui_minimap",
+			"TileWidth": 239,
+			"TileHeight": 210
+		},
+		{
+			"Name": "resources",
+			"Texture": "newgui/resources",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
+			"Name": "rooms",
+			"Texture": "newgui/room_icons",
+			"TileWidth": 16,
+			"TileHeight": 16
 		}
 	]
 }

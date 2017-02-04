@@ -179,7 +179,7 @@ namespace DwarfCorp
             {
                 for (int i = 0; i < resource.NumResources; i++)
                 {
-                    Physics body = EntityFactory.CreateEntity<Physics>(resource.ResourceType.Type + " Resource",
+                    Physics body = EntityFactory.CreateEntity<Physics>(resource.ResourceType + " Resource",
                         Vector3.Up + MathFunctions.RandVector3Box(box)) as Physics;
 
                     if (body != null)

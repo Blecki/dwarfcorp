@@ -178,7 +178,7 @@ namespace DwarfCorp
                     float price0 = company.StockHistory[i];
                     float normalizedPrice0 = (price0 - MinStock) / (MaxStock - MinStock);
 
-                    Drawer2D.DrawLine(batch, new Vector2(x + tick, y + h - normalizedPrice0 * h), new Vector2(x + prevtick, y + h - normalizedPrice1 * h), company.BaseColor, 2);
+                    Drawer2D.DrawLine(batch, new Vector2(x + tick, y + h - normalizedPrice0 * h), new Vector2(x + prevtick, y + h - normalizedPrice1 * h), new Color(company.Information.LogoBackgroundColor), 2);
                 }
             }
 
@@ -187,7 +187,8 @@ namespace DwarfCorp
                 if (icon.Company != SelectedCompany && SelectedCompany != null)
                     continue;
 
-                batch.Draw(icon.Company.Logo.Image, icon.DestRect, icon.Company.Logo.SourceRect, icon.Company.SecondaryColor);
+                // Todo: Change in company logo broke stock ticker.
+                //batch.Draw(icon.Company.Logo.Image, icon.DestRect, icon.Company.Logo.SourceRect, icon.Company.SecondaryColor);
             }
         }
 
@@ -305,10 +306,10 @@ namespace DwarfCorp
 
             if (SelectedCompany != null)
             {
-                ToolTip = SelectedCompany.Name + " (" + SelectedCompany.TickerName + ")\n" +
+                ToolTip = SelectedCompany.Information.Name + " (" + SelectedCompany.TickerName + ")\n" +
                     " Share Price: " + SelectedCompany.StockPrice.ToString("C") + "\n" +
                     " Industry: " + SelectedCompany.Industry.ToString() +"\n" +
-                    " Motto: " + SelectedCompany.Motto;
+                    " Motto: " + SelectedCompany.Information.Motto;
                 if (FilteredCompanies.Contains(SelectedCompany))
                 {
                     FilteredCompanies.Remove(SelectedCompany);

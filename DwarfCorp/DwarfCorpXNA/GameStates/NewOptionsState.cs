@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Gum;
 using Gum.Widgets;
+using System;
 
 namespace DwarfCorp.GameStates
 {
@@ -12,6 +13,7 @@ namespace DwarfCorp.GameStates
     {
         private Gum.Root GuiRoot;
         private bool HasChanges = false;
+        public Action OnClosed = null;
 
         private Dictionary<string, int> AntialiasingOptions;
         private Dictionary<string, DisplayMode> DisplayModes;
@@ -53,17 +55,10 @@ namespace DwarfCorp.GameStates
             base(Game, "NewOptionsState", StateManager)
         { }
 
-        private Gem.Input Input; // Todo: This needs to be shared with the play state somehow so the key
-        // bindings actually work.
-
         public override void OnEnter()
         {
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInput.GetInputQueue();
-            Input = new Gem.Input(DwarfGame.GumInput);
-
-            // Dummy key binding for testing.
-            Input.AddAction("TEST", Gem.Input.KeyBindingType.Pressed);
 
             // Setup antialiasing options.
             AntialiasingOptions = new Dictionary<string, int>();
@@ -120,13 +115,17 @@ namespace DwarfCorp.GameStates
                                     {
                                         if ((s2 as NewGui.Confirm).DialogResult == NewGui.Confirm.Result.OKAY)
                                             ApplySettings();
+                                        if (OnClosed != null) OnClosed();
                                         StateManager.PopState();
                                     }
                             };
                         GuiRoot.ShowPopup(confirm, false);
                     }
                     else
+                    {
+                        if (OnClosed != null) OnClosed();
                         StateManager.PopState();
+                    }
                 },
                 AutoLayout = AutoLayout.FloatBottomRight
             });
@@ -278,7 +277,7 @@ namespace DwarfCorp.GameStates
                     AutoLayout = AutoLayout.DockTop
                 });
 
-            foreach (var binding in Input.EnumerateBindableActions())
+            foreach (var binding in DwarfGame.GemInput.EnumerateBindableActions())
             {
                 // Todo: Columns?
 

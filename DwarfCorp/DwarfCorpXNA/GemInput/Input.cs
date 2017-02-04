@@ -70,6 +70,12 @@ namespace Gem
             InputActions[Action].Handler = null;
         }
 
+        public void ClearAllHandlers()
+        {
+            foreach (var action in InputActions)
+                action.Value.Handler = null;
+        }
+
         public void FireActions(Gum.Root Gui, Action<Gum.InputEvents, Gum.InputEventArgs> MouseHandler)
         {
             var queue = Mapper.GetInputQueue();
@@ -81,7 +87,9 @@ namespace Gem
                 if (!@event.Args.Handled)
                 {
                     if (@event.Message == Gum.InputEvents.MouseClick ||
-                        @event.Message == Gum.InputEvents.MouseMove)
+                        @event.Message == Gum.InputEvents.MouseMove ||
+                        @event.Message == Gum.InputEvents.MouseDown ||
+                        @event.Message == Gum.InputEvents.MouseUp)
                     {
                         if (MouseHandler != null) MouseHandler(@event.Message, @event.Args);
                     }

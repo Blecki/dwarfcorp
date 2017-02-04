@@ -171,13 +171,15 @@ namespace DwarfCorp
                 {
                     instanceVertexes[j].Transform = t.Transform;
                     instanceVertexes[j].Color = t.Color;
+                    instanceVertexes[j].SelectionBufferColor = t.SelectionBufferColor;
                     j++;
                 }
             }
             numActiveInstances = j;
         }
 
-        public void Render(GraphicsDevice graphics, Effect effect, Camera cam, bool rebuildVertices)
+
+        public void Render(GraphicsDevice graphics, Effect effect, Camera cam, bool rebuildVertices, string mode)
         {
             Camera = cam;
 
@@ -191,9 +193,9 @@ namespace DwarfCorp
             {
                 graphics.RasterizerState = rasterState;
 
-                effect.CurrentTechnique = effect.Techniques["Instanced"];
+                effect.CurrentTechnique = effect.Techniques[mode];
                 effect.Parameters["xEnableLighting"].SetValue(1);
-
+                effect.Parameters["xColorTint"].SetValue(Vector4.One);
                 if (Model.VertexBuffer == null || Model.IndexBuffer == null)
                 {
                     Model.ResetBuffer(graphics);
@@ -215,9 +217,9 @@ namespace DwarfCorp
                 {
                     pass.Apply();
                     graphics.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0,
-                                        Model.MaxVertex, 0,
-                                        Model.Indexes.Length / 3,
-                                        numActiveInstances);
+                        Model.MaxVertex, 0,
+                        Model.Indexes.Length/3,
+                        numActiveInstances);
                     /*
                     foreach (InstanceData instance in SortedData.Data)
                     {
@@ -239,7 +241,52 @@ namespace DwarfCorp
                 effect.CurrentTechnique = effect.Techniques["Textured"];
                 effect.Parameters["xWorld"].SetValue(Matrix.Identity);
                 graphics.BlendState = blendState;
+            }
+        }
 
+
+        public void Render(GraphicsDevice graphics, Effect effect, Camera cam, bool rebuildVertices)
+        {
+            Render(graphics, effect, cam, rebuildVertices, "Instanced");
+        }
+
+        public void RenderSelectionBuffer(GraphicsDevice graphics, Effect effect, Camera cam, bool rebuildVertices)
+        {
+            if (Model == null || Model.MaxVertex < 3 || numActiveInstances < 1)
+            {
+                return;
+            }
+
+            effect.Parameters["xTexture"].SetValue(Texture);
+            effect.Parameters["xTint"].SetValue(Vector4.One);
+            effect.Parameters["xColorTint"].SetValue(Vector4.One);
+            effect.CurrentTechnique = effect.Techniques["Instanced_SelectionBuffer"];
+
+            graphics.SetVertexBuffers(Model.VertexBuffer, new VertexBufferBinding(instanceBuffer, 0, 1));
+            graphics.Indices = Model.IndexBuffer;
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                graphics.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0,
+                    Model.MaxVertex, 0,
+                    Model.Indexes.Length / 3,
+                    numActiveInstances);
+                /*
+                foreach (InstanceData instance in SortedData.Data)
+                {
+                    if (!instance.ShouldDraw) continue;
+
+                    if (!hasIndex)
+                    {
+                        graphics.DrawPrimitives(PrimitiveType.TriangleList, 0, Model.VertexBuffer.VertexCount/3);
+                    }
+                    else
+                    {
+                        graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0,
+                            Model.VertexBuffer.VertexCount, 0, Model.IndexBuffer.IndexCount/3);
+                    }
+                }
+                 */
             }
         }
 

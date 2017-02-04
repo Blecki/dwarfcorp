@@ -81,6 +81,8 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(frame, "Hills", "Create a hilly world.", (sender, args) =>
                 {
                     Overworld.CreateHillsLand(Game.GraphicsDevice);
+                    StateManager.ClearState();
+                    WorldManager.ExistingFile = null;
                     StateManager.PushState("LoadState");
                     WorldManager.WorldSize = new Point3(8, 1, 8);
                     WorldManager.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / WorldManager.WorldScale,
@@ -90,12 +92,14 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(frame, "Cliffs", "Create a cliff-y world.", (sender, args) =>
                 {
                     Overworld.CreateCliffsLand(Game.GraphicsDevice);
+                    StateManager.ClearState();
+                    WorldManager.ExistingFile = null;
                     StateManager.PushState("LoadState");
                     WorldManager.WorldSize = new Point3(8, 1, 8);
                     //GUI.MouseMode = GUISkin.MousePointer.Wait;
                     WorldManager.Natives = new List<Faction>();
                     FactionLibrary library = new FactionLibrary();
-                    library.Initialize(null, "fake", "fake", null, Color.Blue);
+                    library.Initialize(null, new CompanyInformation());
                     for (int i = 0; i < 10; i++)
                     {
                         WorldManager.Natives.Add(library.GenerateFaction(i, 10));
@@ -108,6 +112,8 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(frame, "Flat", "Create a flat world.", (sender, args) =>
                 {
                     Overworld.CreateUniformLand(Game.GraphicsDevice);
+                    StateManager.ClearState();
+                    WorldManager.ExistingFile = null;
                     StateManager.PushState("LoadState");
                     WorldManager.WorldSize = new Point3(8, 1, 8);
                     WorldManager.WorldSize = new Point3(8, 1, 8);
@@ -118,6 +124,8 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(frame, "Ocean", "Create an ocean world", (sender, args) =>
                 {
                     Overworld.CreateOceanLand(Game.GraphicsDevice);
+                    StateManager.ClearState();
+                    WorldManager.ExistingFile = null;
                     StateManager.PushState("LoadState");
                     WorldManager.WorldSize = new Point3(8, 1, 8);
                     WorldManager.WorldSize = new Point3(8, 1, 8);
