@@ -60,6 +60,10 @@
         "SpawnProbability": 0.0001
       },
       {
+        "Name": "Chicken",
+        "SpawnProbability": 0.0001
+      },
+      {
         "Name": "White Rabbit",
         "SpawnProbability": 0.00001
       }
@@ -346,7 +350,11 @@
       {
         "Name": "Tree Frog",
         "SpawnProbability": 0.001
-      }
+      },
+      {
+        "Name": "Chicken",
+        "SpawnProbability": 0.0001
+      },
     ],
     "GrassVoxel": "JungleGrass",
     "SoilVoxel": "Dirt",

@@ -65,7 +65,8 @@ namespace DwarfCorp
                     Charisma = 1,
                     Intelligence = 1,
                     Size = 0.25f,
-                    CanSleep = false
+                    CanSleep = false,
+                    LaysEggs = true
                 },
                 // Belongs to herbivore team
                 "Herbivore",

@@ -104,6 +104,53 @@ namespace DwarfCorp
         }
     }
 
+    [JsonObject(IsReference = true)]
+    public class Egg : GameComponent
+    {
+        public string Adult { get; set; }
+        public DateTime Birthday { get; set; }
+        public Body ParentBody { get; set; }
+        public Egg()
+        {
+            
+        }
+
+        public Egg(string adult, ComponentManager manager, Vector3 position) :
+            base(false, manager)
+        {
+            Manager = manager;
+            Adult = adult;
+            Birthday = DwarfGame.World.Time.CurrentDate + new TimeSpan(0, 12, 0, 0);
+
+            if (ResourceLibrary.GetResourceByName(adult + " Egg") == null)
+            {
+                Resource newEggResource =
+                    new Resource(ResourceLibrary.GetResourceByName(ResourceLibrary.ResourceType.Egg));
+                newEggResource.Type = adult + " Egg";
+                ResourceLibrary.Add(newEggResource);
+            }
+            ParentBody = EntityFactory.CreateEntity<Body>(adult + " Egg Resource", position);
+            ParentBody.AddChild(this);
+            manager.AddComponent(this);
+        }
+
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        {
+            if (DwarfGame.World.Time.CurrentDate > Birthday)
+            {
+                Hatch();
+            }
+
+            base.Update(gameTime, chunks, camera);
+        }
+
+        public void Hatch()
+        {
+            EntityFactory.CreateEntity<Body>(Adult, ParentBody.Position);
+            GetRootComponent().Die();
+        }
+    }
+
     /// <summary>
     ///     Component which keeps track of a large number of other components (AI, physics, sprites, etc.)
     ///     related to creatures (such as dwarves and goblins).
@@ -303,6 +350,11 @@ namespace DwarfCorp
             };
         }
 
+        public void LayEgg()
+        {
+            new Egg(this.Name, Manager, Physics.Position);
+        }
+
         /// <summary> The creature's AI determines how it will behave. </summary>
         public CreatureAI AI { get; set; }
         /// <summary> The crature's physics determines how it moves around </summary>
@@ -329,7 +381,7 @@ namespace DwarfCorp
         public NoiseMaker NoiseMaker { get; set; }
         /// <summary> The creature can hold objects in its inventory </summary>
         public Inventory Inventory { get; set; }
-
+        public Timer EggTimer { get; set; }
         /// <summary> Reference to the graphics device. </summary>
         [JsonIgnore]
         public GraphicsDevice Graphics { get; set; }
@@ -446,6 +498,21 @@ namespace DwarfCorp
             Status.Update(this, gameTime, chunks, camera);
             JumpTimer.Update(gameTime);
             HandleBuffs(gameTime);
+
+            if (Stats.LaysEggs)
+            {
+                if (EggTimer == null)
+                {
+                    EggTimer = new Timer(120.0f, false);
+                }
+                EggTimer.Update(gameTime);
+
+                if (EggTimer.HasTriggered)
+                {
+                    LayEgg();
+                    EggTimer = new Timer(120.0f + MathFunctions.Rand(-30.0f, 30.0f), false);
+                }
+            }
 
             base.Update(gameTime, chunks, camera);
         }

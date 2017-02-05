@@ -1188,6 +1188,10 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Content Include="Entities\Animals\chicken_animation.json">
+      <Name>chicken_animation</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Entities\Dwarf\Sprites\musket_animation.json">
       <Name>musket_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1836,6 +1840,13 @@
   <ItemGroup>
     <Compile Include="newgui\tray-border-transparent.png">
       <Name>tray-border-transparent</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Animals\chicken.png">
+      <Name>chicken</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
