@@ -59,7 +59,7 @@ namespace DwarfCorp
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
         {
-            Instance = WorldManager.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
+            Instance = DwarfGame.World.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
             Instance.SelectionBufferColor = GetGlobalIDColor();
             instanceVisible = true;
         }
@@ -73,7 +73,7 @@ namespace DwarfCorp
             base(name, parent, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
         {
             ModelType = modelType;
-            Instance = WorldManager.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
+            Instance = DwarfGame.World.InstanceManager.AddInstance(ModelType, GlobalTransform, Tint);
             Instance.SelectionBufferColor = GetGlobalIDColor();
             instanceVisible = true;
         }
@@ -105,7 +105,7 @@ namespace DwarfCorp
 
         public override void Die()
         {
-            WorldManager.InstanceManager.Instances[ModelType].Remove(Instance);
+            DwarfGame.World.InstanceManager.Instances[ModelType].Remove(Instance);
             base.Die();
         }
 
@@ -115,11 +115,11 @@ namespace DwarfCorp
             {
                 if(value && !instanceVisible)
                 {
-                    WorldManager.InstanceManager.Instances[ModelType].Add(Instance);
+                    DwarfGame.World.InstanceManager.Instances[ModelType].Add(Instance);
                 }
                 else if(!value && instanceVisible)
                 {
-                    WorldManager.InstanceManager.Instances[ModelType].Remove(Instance);
+                    DwarfGame.World.InstanceManager.Instances[ModelType].Remove(Instance);
                 }
             }
 

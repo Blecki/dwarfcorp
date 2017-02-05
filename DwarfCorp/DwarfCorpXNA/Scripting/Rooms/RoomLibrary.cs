@@ -112,31 +112,31 @@ namespace DwarfCorp
         {
             if (name == BalloonPort.BalloonPortName)
             {
-                return blueprint ? new BalloonPort(faction, true, designations, WorldManager.ChunkManager) : new BalloonPort(faction, designations, WorldManager.ChunkManager);
+                return blueprint ? new BalloonPort(faction, true, designations, DwarfGame.World.ChunkManager) : new BalloonPort(faction, designations, DwarfGame.World.ChunkManager);
             } 
             else if (name == BedRoom.BedRoomName)
             {
-                return blueprint ? new BedRoom(true, designations, WorldManager.ChunkManager) : new BedRoom(designations, WorldManager.ChunkManager);
+                return blueprint ? new BedRoom(true, designations, DwarfGame.World.ChunkManager) : new BedRoom(designations, DwarfGame.World.ChunkManager);
             }
             else if (name == CommonRoom.CommonRoomName)
             {
-                return blueprint ? new CommonRoom(true, designations, WorldManager.ChunkManager) : new CommonRoom(designations, WorldManager.ChunkManager);
+                return blueprint ? new CommonRoom(true, designations, DwarfGame.World.ChunkManager) : new CommonRoom(designations, DwarfGame.World.ChunkManager);
             }
             else if (name == LibraryRoom.LibraryRoomName)
             {
-                return blueprint ? new LibraryRoom(true, designations, WorldManager.ChunkManager) : new LibraryRoom(designations, WorldManager.ChunkManager);
+                return blueprint ? new LibraryRoom(true, designations, DwarfGame.World.ChunkManager) : new LibraryRoom(designations, DwarfGame.World.ChunkManager);
             }
             else if (name == TrainingRoom.TrainingRoomName)
             {
-                return blueprint ? new TrainingRoom(true, designations, WorldManager.ChunkManager) : new TrainingRoom(designations, WorldManager.ChunkManager); 
+                return blueprint ? new TrainingRoom(true, designations, DwarfGame.World.ChunkManager) : new TrainingRoom(designations, DwarfGame.World.ChunkManager); 
             }
             else if (name == WorkshopRoom.WorkshopName)
             {
-                return blueprint ? new WorkshopRoom(true, designations, WorldManager.ChunkManager) : new WorkshopRoom(designations, WorldManager.ChunkManager); 
+                return blueprint ? new WorkshopRoom(true, designations, DwarfGame.World.ChunkManager) : new WorkshopRoom(designations, DwarfGame.World.ChunkManager); 
             }
             else if (name == Kitchen.KitchenName)
             {
-                return blueprint ? new Kitchen(true, designations, WorldManager.ChunkManager) : new Kitchen(designations, WorldManager.ChunkManager); 
+                return blueprint ? new Kitchen(true, designations, DwarfGame.World.ChunkManager) : new Kitchen(designations, DwarfGame.World.ChunkManager); 
             }
             else if (name == Stockpile.StockpileName)
             {
@@ -163,7 +163,7 @@ namespace DwarfCorp
                 createdComponent.LocalTransform = offsetTransform;
                 createdComponent.AnimationQueue.Add(new EaseMotion(0.8f, offsetTransform, endPos));
                 room.AddBody(createdComponent);
-                WorldManager.ParticleManager.Trigger("puff", endPos + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 10);
+                DwarfGame.World.ParticleManager.Trigger("puff", endPos + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 10);
                 createdComponent.SetActiveRecursive(true);
             }
         }
@@ -172,7 +172,7 @@ namespace DwarfCorp
             Microsoft.Xna.Framework.Content.ContentManager content, GraphicsDevice graphics)
         {
             List<Body> components = new List<Body>();
-            RoomTile[,] currentTiles = RoomTemplate.CreateFromRoom(voxels, WorldManager.ChunkManager);
+            RoomTile[,] currentTiles = RoomTemplate.CreateFromRoom(voxels, DwarfGame.World.ChunkManager);
             float[,] rotations = new float[currentTiles.GetLength(0), currentTiles.GetLength(1)];
             foreach (RoomTemplate myTemp in roomData.Templates)
             {

@@ -309,8 +309,8 @@ namespace DwarfCorp.GameStates
                     Overworld.Map = descriptor.File.Data.CreateMap();
 
                     Overworld.Name = descriptor.File.Data.Name;
-                    WorldManager.WorldWidth = Overworld.Map.GetLength(1);
-                    WorldManager.WorldHeight = Overworld.Map.GetLength(0);
+                    DwarfGame.World.WorldWidth = Overworld.Map.GetLength(1);
+                    DwarfGame.World.WorldHeight = Overworld.Map.GetLength(0);
 
                     WorldGeneratorState state = (WorldGeneratorState)(StateManager.States["WorldGeneratorState"]);
 

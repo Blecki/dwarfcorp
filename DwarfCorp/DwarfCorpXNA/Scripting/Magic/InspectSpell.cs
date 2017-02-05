@@ -99,15 +99,15 @@ namespace DwarfCorp
 
                     if (selected.Count > 0)
                     {
-                        OnEntitiesSelected(WorldManager.Master.Spells, selected);
+                        OnEntitiesSelected(DwarfGame.World.Master.Spells, selected);
                     }
                 }
                 else
                 {
                     Voxel vox = new Voxel();
-                    WorldManager.ChunkManager.ChunkData.GetNonNullVoxelAtWorldLocation(WorldManager.CursorLightPos, ref vox);
+                    DwarfGame.World.ChunkManager.ChunkData.GetNonNullVoxelAtWorldLocation(DwarfGame.World.CursorLightPos, ref vox);
 
-                    OnVoxelsSelected(WorldManager.Master.Spells, new List<Voxel>(){vox});
+                    OnVoxelsSelected(DwarfGame.World.Master.Spells, new List<Voxel>(){vox});
                 }
             }
             base.Update(time, voxSelector, bodySelector);
@@ -127,7 +127,7 @@ namespace DwarfCorp
             }
 
             if (desc != "")
-                WorldManager.ShowTooltip(desc);
+                DwarfGame.World.ShowTooltip(desc);
 
             base.OnEntitiesSelected(tree, entities);
         }
@@ -156,7 +156,7 @@ namespace DwarfCorp
             }
 
             if (description != "")
-                WorldManager.ShowTooltip(description);
+                DwarfGame.World.ShowTooltip(description);
 
             base.OnVoxelsSelected(tree, voxels);
         }

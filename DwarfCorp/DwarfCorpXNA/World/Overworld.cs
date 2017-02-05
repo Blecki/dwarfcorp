@@ -838,7 +838,7 @@ namespace DwarfCorp
 
         public static void CreateHillsLand(GraphicsDevice graphics)
         {
-            WorldManager.SeaLevel = 0.17f;
+            DwarfGame.World.SeaLevel = 0.17f;
             int size = 512;
             Map = new MapData[size, size];
 
@@ -861,13 +861,13 @@ namespace DwarfCorp
 
             Color[] worldData = new Color[size * size];
             WorldGeneratorState.worldMap = new Texture2D(graphics, size, size);
-            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, WorldManager.SeaLevel);
+            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, DwarfGame.World.SeaLevel);
             Overworld.Name = "hills" + MathFunctions.Random.Next(9999);
         }
 
         public static void CreateCliffsLand(GraphicsDevice graphicsDevice)
         {
-            WorldManager.SeaLevel = 0.17f;
+            DwarfGame.World.SeaLevel = 0.17f;
             int size = 512;
             Map = new MapData[size, size];
 
@@ -892,13 +892,13 @@ namespace DwarfCorp
 
             Color[] worldData = new Color[size * size];
             WorldGeneratorState.worldMap = new Texture2D(graphicsDevice, size, size);
-            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, WorldManager.SeaLevel);
+            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, DwarfGame.World.SeaLevel);
             Overworld.Name = "Cliffs_" + MathFunctions.Random.Next(9999);
         }
 
         public static void CreateUniformLand(GraphicsDevice graphics)
         {
-            WorldManager.SeaLevel = 0.17f;
+            DwarfGame.World.SeaLevel = 0.17f;
             int size = 512;
             Map = new MapData[size, size];
 
@@ -918,13 +918,13 @@ namespace DwarfCorp
 
             Color[] worldData = new Color[size * size];
             WorldGeneratorState.worldMap = new Texture2D(graphics, size, size);
-            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, WorldManager.SeaLevel);
+            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, DwarfGame.World.SeaLevel);
             Overworld.Name = "flat_" + MathFunctions.Random.Next(9999);
         }
 
         public static void CreateOceanLand(GraphicsDevice graphicsDevice)
         {
-            WorldManager.SeaLevel = 0.17f;
+            DwarfGame.World.SeaLevel = 0.17f;
             int size = 512;
             Map = new MapData[size, size];
 
@@ -944,7 +944,7 @@ namespace DwarfCorp
 
             Color[] worldData = new Color[size * size];
             WorldGeneratorState.worldMap = new Texture2D(graphicsDevice, size, size);
-            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, WorldManager.SeaLevel);
+            Overworld.TextureFromHeightMap("Height", Overworld.Map, Overworld.ScalarFieldType.Height, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null, worldData, WorldGeneratorState.worldMap, DwarfGame.World.SeaLevel);
             Overworld.Name = "flat";
         }
 

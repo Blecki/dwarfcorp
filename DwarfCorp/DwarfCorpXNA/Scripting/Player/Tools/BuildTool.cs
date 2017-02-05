@@ -65,7 +65,7 @@ namespace DwarfCorp
             }
             int w = 600;
             int h = 350;
-            BuildPanel = new BuildMenu(WorldManager.GUI, WorldManager.GUI.RootComponent, Player, BuildType)
+            BuildPanel = new BuildMenu(DwarfGame.World.GUI, DwarfGame.World.GUI.RootComponent, Player, BuildType)
             {
                 LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width/2 - w/2, GameState.Game.GraphicsDevice.Viewport.Height/2 - h/2, w, h),
                 IsVisible = true,
@@ -89,7 +89,7 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                WorldManager.SetMouse(null);
+                DwarfGame.World.SetMouse(null);
                 Player.BodySelector.Enabled = false;
                 return;
             }
@@ -102,26 +102,26 @@ namespace DwarfCorp
                 Player.VoxSelector.Enabled = true;
                 Player.BodySelector.Enabled = false;
 
-                if (WorldManager.IsMouseOverGui)
-                    WorldManager.SetMouse(WorldManager.MousePointer);
+                if (DwarfGame.World.IsMouseOverGui)
+                    DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
                 else
-                    WorldManager.SetMouse(new Gum.MousePointer("mouse", 1, 4));
+                    DwarfGame.World.SetMouse(new Gum.MousePointer("mouse", 1, 4));
             }
             else
             {
                 Player.VoxSelector.Enabled = false;
                 Player.BodySelector.Enabled = false;
 
-                if (WorldManager.IsMouseOverGui)
-                    WorldManager.SetMouse(WorldManager.MousePointer);
+                if (DwarfGame.World.IsMouseOverGui)
+                    DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
                 else
-                    WorldManager.SetMouse(new Gum.MousePointer("mouse", 1, 11));
+                    DwarfGame.World.SetMouse(new Gum.MousePointer("mouse", 1, 11));
             }
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            Player.Faction.RoomBuilder.Render(time, WorldManager.ChunkManager.Graphics);
+            Player.Faction.RoomBuilder.Render(time, DwarfGame.World.ChunkManager.Graphics);
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)

@@ -31,7 +31,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Threading;
 using DwarfCorp.GameStates;
+using Gem;
+using Gum;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
@@ -47,10 +50,10 @@ namespace DwarfCorp
         public TextureManager TextureManager { get; set; }
         public static SpriteBatch SpriteBatch { get; set; }
 
-        public static Gem.GumInputMapper GumInput;
-        public static Gem.Input GemInput;
-        public static Gum.RenderData GumSkin;
- 
+        public static GumInputMapper GumInput;
+        public static Input GemInput;
+        public static RenderData GumSkin;
+        public static WorldManager World { get; set; }
         public DwarfGame()
         {
             GameState.Game = this;
@@ -73,6 +76,7 @@ namespace DwarfCorp
             {
                 Console.Error.WriteLine(exception.Message);
             }
+            World = new WorldManager(this);
         }
 
         public static string GetGameDirectory()
@@ -82,7 +86,7 @@ namespace DwarfCorp
 
         protected override void Initialize()
         {
-            System.Threading.Thread.CurrentThread.Name = "Main";
+            Thread.CurrentThread.Name = "Main";
             // Goes before anything else so we can track from the very start.
             GamePerformance.Initialize(this);
             // TODO: Find a more appropriate spot for this.
@@ -95,13 +99,13 @@ namespace DwarfCorp
         protected override void LoadContent()
         {
             // Prepare GemGui
-            GumInput = new Gem.GumInputMapper(Window.Handle);
-            GemInput = new Gem.Input(GumInput);
+            GumInput = new GumInputMapper(Window.Handle);
+            GemInput = new Input(GumInput);
 
             // Register all bindable actions with the input system.
-            GemInput.AddAction("TEST", Gem.Input.KeyBindingType.Pressed);
+            GemInput.AddAction("TEST", Input.KeyBindingType.Pressed);
 
-            GumSkin = new Gum.RenderData(GraphicsDevice,  Content,
+            GumSkin = new RenderData(GraphicsDevice,  Content,
                     "newgui/xna_draw", "Content/newgui/sheets.txt");
 
             if (SoundManager.Content == null)
@@ -184,7 +188,7 @@ namespace DwarfCorp
             GraphicsDevice.SetRenderTarget(null);
             base.Draw(time);
             GamePerformance.Instance.PostRender();
-            GamePerformance.Instance.Render(DwarfGame.SpriteBatch);
+            GamePerformance.Instance.Render(SpriteBatch);
         }
 
         protected override void OnExiting(object sender, EventArgs args)

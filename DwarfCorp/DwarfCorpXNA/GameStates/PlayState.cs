@@ -14,16 +14,16 @@ namespace DwarfCorp.GameStates
         private bool IsShuttingDown { get; set; }
         private bool QuitOnNextUpdate { get; set; }
         public bool ShouldReset { get; set; }
-        public static WorldManager World { get; set; }
+
         public GameMaster Master
         {
-            get { return WorldManager.Master; }
-            set { WorldManager.Master = value; }
+            get { return DwarfGame.World.Master; }
+            set { DwarfGame.World.Master = value; }
         }
         public static bool Paused
         {
-            get { return WorldManager.Paused; }
-            set { WorldManager.Paused = value; }
+            get { return DwarfGame.World.Paused; }
+            set { DwarfGame.World.Paused = value; }
         }
 
         // ------GUI--------
@@ -89,35 +89,35 @@ namespace DwarfCorp.GameStates
                 // Setup new gui. Double rendering the mouse?
                 NewGui = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
                 NewGui.MousePointer = new Gum.MousePointer("mouse", 4, 0);
-                WorldManager.NewGui = NewGui;
-
+                DwarfGame.World.NewGui = NewGui;
+                
                 // Setup input event handlers. All of the actions should already be established - just 
                 // need handlers.
                 DwarfGame.GemInput.ClearAllHandlers();
 
-                WorldManager.ShowInfo += (text) =>
+                DwarfGame.World.ShowInfo += (text) =>
                     {
                         InfoTicker.AddMessage(text);
                     };
 
-                WorldManager.ShowTooltip += (text) =>
+                DwarfGame.World.ShowTooltip += (text) =>
                     {
                         // Todo - Actually put this at the mouse position.
                         NewGui.ShowTooltip(new Point(0, 0), text);
                     };
 
-                WorldManager.SetMouse += (mouse) =>
+                DwarfGame.World.SetMouse += (mouse) =>
                     {
                         NewGui.MousePointer = mouse;
                     };
 
-                World.gameState = this;
-                World.OnLoseEvent += World_OnLoseEvent;
+                DwarfGame.World.gameState = this;
+                DwarfGame.World.OnLoseEvent += World_OnLoseEvent;
                 CreateGUIComponents();
                 IsInitialized = true;
             }
 
-            World.Unpause();
+            DwarfGame.World.Unpause();
             base.OnEnter();
         }
 
@@ -126,7 +126,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public override void OnExit()
         {
-            World.Pause();
+            DwarfGame.World.Pause();
             base.OnExit();
         }
 
@@ -136,7 +136,7 @@ namespace DwarfCorp.GameStates
         /// <param name="gameTime">The current time</param>
         public override void Update(DwarfTime gameTime)
         {
-            //WorldManager.GUI.IsMouseVisible = false;
+            //DwarfGame.World.GUI.IsMouseVisible = false;
 
             // If this playstate is not supposed to be running,
             // just exit.
@@ -160,14 +160,14 @@ namespace DwarfCorp.GameStates
                 // Let old input handle mouse interaction for now. Will eventually need to be replaced.
             });
 
-            World.Update(gameTime);
+            DwarfGame.World.Update(gameTime);
             GUI.Update(gameTime);
             Input.Update();
 
             #region Update time label
             TimeLabel.Text = String.Format("{0} {1}",
-                WorldManager.Time.CurrentDate.ToShortDateString(),
-                WorldManager.Time.CurrentDate.ToShortTimeString());
+                DwarfGame.World.Time.CurrentDate.ToShortDateString(),
+                DwarfGame.World.Time.CurrentDate.ToShortTimeString());
             TimeLabel.Invalidate();
             #endregion
 
@@ -179,8 +179,8 @@ namespace DwarfCorp.GameStates
             StockLabel.Invalidate();
 
             LevelLabel.Text = String.Format("Slice: {0}/{1}",
-                WorldManager.ChunkManager.ChunkData.MaxViewingLevel,
-                WorldManager.ChunkHeight);
+                DwarfGame.World.ChunkManager.ChunkData.MaxViewingLevel,
+                DwarfGame.World.ChunkHeight);
             LevelLabel.Invalidate();
             #endregion
 
@@ -252,14 +252,14 @@ namespace DwarfCorp.GameStates
         /// <param name="gameTime">The current time</param>
         public override void Render(DwarfTime gameTime)
         {
-            EnableScreensaver = !World.ShowingWorld;
+            EnableScreensaver = !DwarfGame.World.ShowingWorld;
 
             MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
 
-            if (World.ShowingWorld)
+            if (DwarfGame.World.ShowingWorld)
             {
                 GUI.PreRender(gameTime, DwarfGame.SpriteBatch);
-                World.Render(gameTime);
+                DwarfGame.World.Render(gameTime);
 
                 if (!MinimapFrame.Hidden)
                     MinimapRenderer.Render(new Rectangle(0, NewGui.VirtualScreen.Bottom - 192, 192, 192), NewGui);
@@ -275,7 +275,7 @@ namespace DwarfCorp.GameStates
                 GUI.Render(gameTime, DwarfGame.SpriteBatch, Vector2.Zero);
                 GUI.PostRender(gameTime);
                 DwarfGame.SpriteBatch.End();
-                //WorldManager.SelectionBuffer.DebugDraw(0, 0);
+                //DwarfGame.World.SelectionBuffer.DebugDraw(0, 0);
             }        
 
             base.Render(gameTime);
@@ -288,7 +288,7 @@ namespace DwarfCorp.GameStates
         public override void RenderUnitialized(DwarfTime gameTime)
         {
             EnableScreensaver = true;
-            World.Render(gameTime);
+            DwarfGame.World.Render(gameTime);
             base.RenderUnitialized(gameTime);
         }
 
@@ -330,13 +330,13 @@ namespace DwarfCorp.GameStates
                     MinimumSize = new Point(32, 32),
                     MaximumSize = new Point(32, 32),
                     AutoLayout = Gum.AutoLayout.None,
-                    CompanyInformation = WorldManager.PlayerCompany.Information
+                    CompanyInformation = DwarfGame.World.PlayerCompany.Information
                 });
 
             NewGui.RootItem.AddChild(new Gum.Widget
                 {
                     Rect = new Rectangle(48,8,256,20),
-                    Text = WorldManager.PlayerCompany.Information.Name,
+                    Text = DwarfGame.World.PlayerCompany.Information.Name,
                     AutoLayout = Gum.AutoLayout.None,
                     Font = "outline-font",
                     TextColor = new Vector4(1,1,1,1)
@@ -372,8 +372,8 @@ namespace DwarfCorp.GameStates
                     Rect = new Rectangle(148, 80, 16, 16),
                     OnClick = (sender, args) =>
                     {
-                        WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(
-                            WorldManager.ChunkManager.ChunkData.MaxViewingLevel + 1,
+                        DwarfGame.World.ChunkManager.ChunkData.SetMaxViewingLevel(
+                            DwarfGame.World.ChunkManager.ChunkData.MaxViewingLevel + 1,
                             ChunkManager.SliceMode.Y);
                     }
                 });
@@ -384,8 +384,8 @@ namespace DwarfCorp.GameStates
                 Rect = new Rectangle(166, 80, 16, 16),
                 OnClick = (sender, args) => 
                 {
-                    WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(
-                        WorldManager.ChunkManager.ChunkData.MaxViewingLevel - 1,
+                    DwarfGame.World.ChunkManager.ChunkData.SetMaxViewingLevel(
+                        DwarfGame.World.ChunkManager.ChunkData.MaxViewingLevel - 1,
                         ChunkManager.SliceMode.Y);
                 }
             });
@@ -426,7 +426,7 @@ namespace DwarfCorp.GameStates
                         }
                 });
 
-            MinimapRenderer = new NewGui.MinimapRenderer(192, 192, World,
+            MinimapRenderer = new NewGui.MinimapRenderer(192, 192, DwarfGame.World,
                 TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap));
 
             MinimapFrame = NewGui.RootItem.AddChild(new NewGui.MinimapFrame
@@ -468,7 +468,7 @@ namespace DwarfCorp.GameStates
 
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
 
-            WorldManager.OnAnnouncement = (title, message, clickAction) =>
+            DwarfGame.World.OnAnnouncement = (title, message, clickAction) =>
                 {
                     NewGui.RootItem.AddChild(new NewGui.AnnouncementPopup
                     {
@@ -514,7 +514,7 @@ namespace DwarfCorp.GameStates
         {
             if (key == ControlSettings.Mappings.Map)
             {
-                World.DrawMap = !World.DrawMap;
+                DwarfGame.World.DrawMap = !DwarfGame.World.DrawMap;
                 MinimapFrame.Hidden = true;
                 MinimapFrame.Invalidate();
             }
@@ -660,8 +660,8 @@ namespace DwarfCorp.GameStates
                         OnClose = (s) =>
                         {
                             if ((s as NewGui.Confirm).DialogResult == DwarfCorp.NewGui.Confirm.Result.OKAY)
-                                World.Save(
-                                    String.Format("{0}_{1}", Overworld.Name, WorldManager.GameID),
+                                DwarfGame.World.Save(
+                                    String.Format("{0}_{1}", Overworld.Name, DwarfGame.World.GameID),
                                     (success, exception) =>
                                     {
                                         NewGui.ShowPopup(new NewGui.Popup
@@ -689,7 +689,7 @@ namespace DwarfCorp.GameStates
 
         public void QuitGame()
         {
-            World.Quit();
+            DwarfGame.World.Quit();
             StateManager.ClearState();
             Destroy();
 
