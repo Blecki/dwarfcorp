@@ -137,6 +137,19 @@ namespace DwarfCorp.GameStates
         {
             //WorldManager.GUI.IsMouseVisible = false;
 
+            if (NewGui.ResolutionChanged())
+            {
+                NewGui.ResizeVirtualScreen(new Point(640, 480));
+                NewGui.ResetGui();
+                CreateGUIComponents();
+
+                if (PausePanel != null)
+                {
+                    PausePanel = null;
+                    OpenPauseMenu();
+                }
+            }
+
             // If this playstate is not supposed to be running,
             // just exit.
             if (!Game.IsActive || !IsActiveState || IsShuttingDown)
@@ -717,9 +730,6 @@ namespace DwarfCorp.GameStates
                     {
                         OnClosed = () =>
                         {
-                            NewGui.ResizeVirtualScreen(new Point(640, 480));
-                            NewGui.ResetGui();
-                            CreateGUIComponents();
                             OpenPauseMenu();
                         }
                     };
