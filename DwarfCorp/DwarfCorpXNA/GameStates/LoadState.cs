@@ -57,7 +57,7 @@ namespace DwarfCorp.GameStates
                 DwarfGame.World.PlayerCompany.Information = new CompanyInformation();
 
             StateManager.PopState();
-            StateManager.PushState("PlayState");            
+            StateManager.PushState(new PlayState(Game, StateManager));            
         }
 
         public override void OnEnter()

@@ -312,13 +312,13 @@ namespace DwarfCorp.GameStates
                     DwarfGame.World.WorldWidth = Overworld.Map.GetLength(1);
                     DwarfGame.World.WorldHeight = Overworld.Map.GetLength(0);
 
-                    WorldGeneratorState state = (WorldGeneratorState)(StateManager.States["WorldGeneratorState"]);
+                    WorldGeneratorState state = StateManager.GetState<WorldGeneratorState>();
 
                     WorldGeneratorState.worldMap = descriptor.File.Data.CreateTexture(Game.GraphicsDevice, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
 
                     JoinThreads();
                     StateManager.PopState();
-                    StateManager.PushState("WorldGeneratorState");
+                    StateManager.PushState(new WorldGeneratorState(Game, Game.StateManager));
                     state.Progress.Value = 1.0f;
                     state.GenerationComplete = true;
                     state.DoneGenerating = true;

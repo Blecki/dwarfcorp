@@ -132,6 +132,7 @@ namespace DwarfCorp
             }
             */
 
+            /*
             PlayState playState = new PlayState(this, StateManager);
             StateManager.States["IntroState"] = new IntroState(this, StateManager);
             StateManager.States["PlayState"] = playState;
@@ -148,14 +149,15 @@ namespace DwarfCorp
             StateManager.States["GameLoaderState"] = new GameLoaderState(this, StateManager);
             StateManager.States["LoseState"] = new LoseState(this, StateManager, playState);
             StateManager.States["LoadState"] = new LoadState(this, StateManager);
+             */
 
             if(GameSettings.Default.DisplayIntro)
             {
-                StateManager.PushState("IntroState");
+                StateManager.PushState(new IntroState(this, StateManager));
             }
             else
             {
-                StateManager.PushState("MainMenuState");
+                StateManager.PushState(new MainMenuState(this, StateManager));
             }
 
             BiomeLibrary.InitializeStatics();

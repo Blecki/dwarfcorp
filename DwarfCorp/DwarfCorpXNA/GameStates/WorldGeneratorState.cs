@@ -417,13 +417,17 @@ namespace DwarfCorp.GameStates
 
         void advancedButton_OnClicked()
         {
-            WorldSetupState setup = StateManager.GetState<WorldSetupState>("WorldSetupState");
+            WorldSetupState setup = StateManager.GetState<WorldSetupState>();
 
             if (setup != null)
             {
                 setup.Settings = Settings;
+                StateManager.ReinsertState(setup);
             }
-           StateManager.PushState("WorldSetupState");
+            else
+            {
+                StateManager.PushState(new WorldSetupState(Game, Game.StateManager));   
+            }
         }
 
         void embarkCombo_OnSelectionModified(string arg)
@@ -528,7 +532,8 @@ namespace DwarfCorp.GameStates
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
                 StateManager.ClearState();
                 DwarfGame.World.ExistingFile = null;
-                StateManager.PushState("LoadState");
+                DwarfGame.World.WorldOrigin = DwarfGame.World.WorldGenerationOrigin;
+                StateManager.PushState(new LoadState(Game, StateManager));
 
                 DwarfGame.World.Natives = NativeCivilizations;
             }

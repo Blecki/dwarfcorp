@@ -86,7 +86,7 @@ namespace DwarfCorp.GameStates
                     DwarfGame.World.WorldSize = new Point3(8, 1, 8);
                     DwarfGame.World.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / DwarfGame.World.WorldScale,
                                                                      Overworld.Map.GetLength(1) / DwarfGame.World.WorldScale) * 0.5f;
-                    StateManager.PushState("LoadState");
+                    StateManager.PushState(new LoadState(Game, StateManager));
                 });
 
             MakeMenuItem(frame, "Cliffs", "Create a cliff-y world.", (sender, args) =>
@@ -106,7 +106,7 @@ namespace DwarfCorp.GameStates
                     DwarfGame.World.WorldSize = new Point3(8, 1, 8);
                     DwarfGame.World.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / DwarfGame.World.WorldScale,
                                                                      Overworld.Map.GetLength(1) / DwarfGame.World.WorldScale) * 0.5f;
-                    StateManager.PushState("LoadState");
+                    StateManager.PushState(new LoadState(Game, StateManager));
                 });
 
             MakeMenuItem(frame, "Flat", "Create a flat world.", (sender, args) =>
@@ -118,7 +118,7 @@ namespace DwarfCorp.GameStates
                     DwarfGame.World.WorldSize = new Point3(8, 1, 8);
                     DwarfGame.World.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / DwarfGame.World.WorldScale,
                                                                      Overworld.Map.GetLength(1) / DwarfGame.World.WorldScale) * 0.5f;
-                    StateManager.PushState("LoadState");
+                    StateManager.PushState(new LoadState(Game, StateManager));
                 });
 
             MakeMenuItem(frame, "Ocean", "Create an ocean world", (sender, args) =>
@@ -130,13 +130,10 @@ namespace DwarfCorp.GameStates
                     DwarfGame.World.WorldSize = new Point3(8, 1, 8);
                     DwarfGame.World.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / DwarfGame.World.WorldScale,
                                                                      Overworld.Map.GetLength(1) / DwarfGame.World.WorldScale) * 0.5f;
-                    StateManager.PushState("LoadState");
+                    StateManager.PushState(new LoadState(Game, StateManager));
                 });
 
-            MakeMenuItem(frame, "Back", "Go back to the main menu.", (sender, args) => 
-                {
-                    StateManager.PopState();
-                });
+            MakeMenuItem(frame, "Back", "Go back to the main menu.", (sender, args) => StateManager.PopState());
 
             GuiRoot.RootItem.Layout();
         }

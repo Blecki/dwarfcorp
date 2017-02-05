@@ -93,30 +93,15 @@ namespace DwarfCorp.GameStates
 
             var frame = MakeMenuFrame("MAIN MENU");
 
-            MakeMenuItem(frame, "New Game", "Start a new game of DwarfCorp.", (sender, args) =>
-                {
-                    StateManager.PushState("CompanyMakerState");
-                });
+            MakeMenuItem(frame, "New Game", "Start a new game of DwarfCorp.", (sender, args) => StateManager.PushState(new CompanyMakerState(Game, Game.StateManager)));
 
-            MakeMenuItem(frame, "Load Game", "Load DwarfCorp game from a file.", (sender, args) =>
-                {
-                    StateManager.PushState("GameLoaderState");
-                });
+            MakeMenuItem(frame, "Load Game", "Load DwarfCorp game from a file.", (sender, args) => StateManager.PushState(new GameLoaderState(Game, StateManager)));
 
-            MakeMenuItem(frame, "Options", "Change game settings.", (sender, args) =>
-                {
-                    StateManager.PushState("OptionsState");
-                });
+            MakeMenuItem(frame, "Options", "Change game settings.", (sender, args) => StateManager.PushState(new OptionsState(Game, StateManager)));
 
-            MakeMenuItem(frame, "New Options", "Change game settings.", (sender, args) =>
-            {
-                StateManager.PushState("NewOptionsState");
-            });
+            MakeMenuItem(frame, "New Options", "Change game settings.", (sender, args) => StateManager.PushState(new NewOptionsState(Game, StateManager)));
 
-            MakeMenuItem(frame, "Credits", "View the credits.", (sender, args) =>
-                {
-                    StateManager.PushState(new CreditsState(GameState.Game, StateManager));
-                });
+            MakeMenuItem(frame, "Credits", "View the credits.", (sender, args) => StateManager.PushState(new CreditsState(GameState.Game, StateManager)));
 
             MakeMenuItem(frame, "Quit", "Goodbye.", (sender, args) => Game.Exit());
 

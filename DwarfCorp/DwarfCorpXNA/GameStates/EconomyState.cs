@@ -72,7 +72,7 @@ namespace DwarfCorp.GameStates
         {
             if (Game.StateManager.NextState == null)
             {
-                Game.StateManager.PushState("EconomyState");
+                Game.StateManager.PushState(new EconomyState(Game, Game.StateManager));
             }
         }
 

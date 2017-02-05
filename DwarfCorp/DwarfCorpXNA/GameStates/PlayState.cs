@@ -447,7 +447,7 @@ namespace DwarfCorp.GameStates
                             new NewGui.FramedIcon
                             {
                                 Icon = new Gum.TileReference("tool-icons", 10),
-                                OnClick = (sender, args) => StateManager.PushState("EconomyState")
+                                OnClick = (sender, args) => StateManager.PushState(new EconomyState(Game, StateManager))
                         },
                         new NewGui.FramedIcon
                         {
@@ -636,11 +636,12 @@ namespace DwarfCorp.GameStates
                     PausePanel = null;
                 });
 
-            MakeMenuItem(PausePanel, "Options", "", (sender, args) => StateManager.PushState("OptionsState"));
+            MakeMenuItem(PausePanel, "Options", "", (sender, args) => StateManager.PushState(new OptionsState(Game, StateManager)));
 
             MakeMenuItem(PausePanel, "New Options", "", (sender, args) =>
                 {
-                    StateManager.GetState<NewOptionsState>("NewOptionsState").OnClosed = () =>
+                    StateManager.PushState(new NewOptionsState(Game, StateManager));
+                    StateManager.GetState<NewOptionsState>().OnClosed = () =>
                     {
                         NewGui.ResizeVirtualScreen(new Point(640, 480));
                         NewGui.ResetGui();
@@ -648,7 +649,6 @@ namespace DwarfCorp.GameStates
                         OpenPauseMenu();
                     };
 
-                    StateManager.PushState("NewOptionsState");
                 });
 
             MakeMenuItem(PausePanel, "Save", "",
@@ -696,9 +696,9 @@ namespace DwarfCorp.GameStates
             // This line needs to stay in so the GC can properly collect all the items the PlayState keeps active.
             // If you want to remove this line you better be prepared to fully clean up the PlayState instance
             // using another method.
-            StateManager.States["PlayState"] = new PlayState(Game, StateManager);
+            StateManager.ClearState();
             
-            StateManager.PushState("MainMenuState");
+            StateManager.PushState(new MainMenuState(Game, StateManager));
         }
     }
 }   

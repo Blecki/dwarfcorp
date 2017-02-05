@@ -439,26 +439,13 @@ namespace DwarfCorp
                         if (!tradePort.IsRestingOnZone(creature.Position)) continue;
 
                         envoy.ExpiditionState = Faction.Expidition.State.Trading;
-                        if (GameState.Game.StateManager.States.ContainsKey("DiplomacyState_" +faction.Name))
+                        GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game,
+                            GameState.Game.StateManager,
+                            DwarfGame.World.World, envoy)
                         {
-                            DiplomacyState state = GameState.Game.StateManager.States["DiplomacyState_" + faction.Name] as DiplomacyState;
-                            if (state != null)
-                            {
-                                state.Envoy = envoy;
-                                state.Resources = envoy.TradeGoods;
-                            }
-                            GameState.Game.StateManager.PushState("DiplomacyState_" + faction.Name);
-                        }
-                        else
-                        {
-                            GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game,
-                                GameState.Game.StateManager,
-                                DwarfGame.World.World, envoy)
-                            {
-                                Name = "DiplomacyState_" + faction.Name,
-                                Envoy = envoy
-                            });
-                        }
+                            Name = "DiplomacyState_" + faction.Name,
+                            Envoy = envoy
+                        });
                         break;
                     }
                 }
