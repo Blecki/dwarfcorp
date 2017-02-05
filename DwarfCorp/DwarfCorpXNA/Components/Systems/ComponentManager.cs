@@ -232,6 +232,7 @@ namespace DwarfCorp
                 {
                     continue;
                 }
+                if (!component.IsVisible) continue;
                 toReturn.Add(component.GetRootComponent().GetComponent<Body>());
             }
             return toReturn;

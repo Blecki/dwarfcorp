@@ -227,6 +227,7 @@ namespace DwarfCorp
             Persistence = 0.2f
         };
 
+
         public static List<Vector2> Volcanoes { get; set; }
         
         public static MapData[,] Map { get; set; }
@@ -395,7 +396,7 @@ namespace DwarfCorp
 
         public static float noise(float x, float y, float z, float s)
         {
-            return (float) heightNoise.GetValue(x * s, y * s, z * s);
+            return (float) heightNoise.GetValue(x*s, y*s, z*s);
         }
 
         private static float clamp(float x, float min, float max)
