@@ -843,7 +843,7 @@ namespace DwarfCorp
             }
         }
 
-        public void GenerateInitialChunks(Point3 origin, ref string message)
+        public void GenerateInitialChunks(Point3 origin, Action<String> SetLoadingMessage)
         {
             float origBuildRadius = GenerateDistance;
             GenerateDistance = origBuildRadius * 2.0f;
@@ -856,7 +856,7 @@ namespace DwarfCorp
                 {
                     for (int dz = origin.Z - WorldSize.Z/2 + 1; dz < origin.Z + WorldSize.Z/2; dz++)
                     {
-                        message = "Generating : " + (i + 1) + "/" + iters;
+                        SetLoadingMessage("Generating : " + (i + 1) + "/" + iters);
                         i++;
 
                         Point3 box = new Point3(dx, dy, dz);
@@ -883,11 +883,11 @@ namespace DwarfCorp
                 }
             }
             RecalculateBounds();
-            message = "Generating Ores...";
+            SetLoadingMessage("Generating Ores...");
 
             GenerateOres();
 
-            message = "Fog of war...";
+            SetLoadingMessage("Fog of war...");
             // We are going to force fog of war to be on for the first reveal then reset it back to it's previous setting after.
             // This is a pseudo hack to stop worlds created with Fog of War off then looking awful if it is turned back on.
             bool fogOfWar = GameSettings.Default.FogofWar;
@@ -907,7 +907,7 @@ namespace DwarfCorp
                 }
             }
 
-            ChunkData.ChunkManager.CreateGraphics(ref message, ChunkData);
+            ChunkData.ChunkManager.CreateGraphics(SetLoadingMessage, ChunkData);
         }
 
         private void RecalculateBounds()
@@ -1057,9 +1057,9 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public void CreateGraphics(ref string message, ChunkData chunkData)
+        public void CreateGraphics(Action<String> SetLoadingMessage, ChunkData chunkData)
         {
-            message = "Creating Graphics";
+            SetLoadingMessage("Creating Graphics");
             List<VoxelChunk> toRebuild = new List<VoxelChunk>();
 
             while(RebuildList.Count > 0)
@@ -1078,18 +1078,18 @@ namespace DwarfCorp
                 toRebuild.Add(chunk);
             }
 
-            message = "Creating Graphics : Updating Ramps";
+            SetLoadingMessage("Updating Ramps");
             foreach(VoxelChunk chunk in toRebuild.Where(chunk => GameSettings.Default.CalculateRamps))
             {
                 chunk.UpdateRamps();
             }
 
-            message = "Creating Graphics : Calculating lighting ";
+            SetLoadingMessage("Calculating lighting ");
             int j = 0;
             foreach(VoxelChunk chunk in toRebuild)
             {
                 j++;
-                message = "Creating Graphics : Calculating lighting " + j + "/" + toRebuild.Count;
+                SetLoadingMessage("Calculating lighting " + j + "/" + toRebuild.Count);
                 if(chunk.ShouldRecalculateLighting)
                 {
                     chunk.CalculateGlobalLight();
@@ -1101,16 +1101,16 @@ namespace DwarfCorp
             foreach(VoxelChunk chunk in toRebuild)
             {
                 j++;
-                message = "Creating Graphics : Calculating vertex light " + j + "/" + toRebuild.Count;
+                SetLoadingMessage("Calculating vertex light " + j + "/" + toRebuild.Count);
                 chunk.CalculateVertexLighting();
             }
 
-            message = "Creating Graphics: Building Vertices";
+            SetLoadingMessage("Building Vertices");
             j = 0;
             foreach(VoxelChunk chunk in toRebuild)
             {
                 j++;
-                message = "Creating Graphics : Building Vertices " + j + "/" + toRebuild.Count;
+                SetLoadingMessage("Building Vertices " + j + "/" + toRebuild.Count);
 
                 if(!chunk.ShouldRebuild)
                 {
@@ -1126,7 +1126,7 @@ namespace DwarfCorp
             chunkData.RecomputeNeighbors();
 
 
-            message = "Cleaning Up.";
+            SetLoadingMessage("Cleaning Up.");
         }
 
        

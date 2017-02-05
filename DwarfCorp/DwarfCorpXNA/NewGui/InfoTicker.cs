@@ -8,38 +8,11 @@ namespace DwarfCorp.NewGui
 {
     public class InfoTicker : Gum.Widget
     {
-        private class Message
-        {
-            public DateTime DeletionTime;
-            public String RawMessage;
-            public List<String> Lines;
-        }
+        private List<String> Messages = new List<String>();
+        private System.Threading.Mutex MessageLock = new System.Threading.Mutex();
+        private bool NeedsInvalidated = false;
 
-        private List<Message> Messages = new List<Message>();
-        private int MessageLineCount {  get { return Messages.Sum(m => m.Lines.Count); } }
-
-        public float MessageLiveSeconds = 10.0f;
         public Vector4 TextBackgroundColor = new Vector4(0.0f, 0.0f, 0.0f, 0.25f);
-
-        public override void Construct()
-        {
-            Root.RegisterForUpdate(this);
-
-            Font = "font";
-            TextColor = new Vector4(1, 1, 1, 1);
-
-            OnUpdate += (sender, time) =>
-                {
-                    var now = DateTime.Now;
-                    if (Messages.Count > 0 && Messages[0].DeletionTime < now)
-                    {
-                        Messages.RemoveAt(0);
-                        Invalidate();
-                    }
-                };
-
-            base.Construct();
-        }
 
         public int VisibleLines
         {
@@ -50,24 +23,35 @@ namespace DwarfCorp.NewGui
             }
         }
 
+        public override void Construct()
+        {
+            Root.RegisterForUpdate(this);
+            OnUpdate = (sender, time) =>
+            {
+                MessageLock.WaitOne();
+                if (NeedsInvalidated)
+                    this.Invalidate();
+                NeedsInvalidated = false;
+                MessageLock.ReleaseMutex();
+            };
+        }
+
         public void AddMessage(String Message)
         {
-            var existingMessage = Messages.FirstOrDefault(m => m.RawMessage == Message);
+            // AddMessage is called by another thread - need to protect the list.
+            MessageLock.WaitOne();
 
-            if (existingMessage != null)
-                Messages.Remove(existingMessage);
+            if (Messages.Count > 0 && Messages[Messages.Count - 1].Length > 11 &&
+                Message.StartsWith(Messages[Messages.Count - 1].Substring(0, 11)))
+                Messages[Messages.Count - 1] = Message;
+            else
+                Messages.Add(Message);
 
-            Messages.Add(new Message
-            {
-                RawMessage = Message,
-                DeletionTime = DateTime.Now.AddSeconds(MessageLiveSeconds),
-                Lines = new List<String>(Message.Split('\n'))
-            });
-
-            while (MessageLineCount > VisibleLines)
+            if (Messages.Count > VisibleLines)
                 Messages.RemoveAt(0);
-
-            Invalidate();
+            // Need to invalidate inside the main GUI thread or else!
+            NeedsInvalidated = true;
+            MessageLock.ReleaseMutex();
         }
 
         protected override Gum.Mesh Redraw()
@@ -78,7 +62,8 @@ namespace DwarfCorp.NewGui
             var basic = Root.GetTileSheet("basic");
             var linePos = 0;
 
-            foreach (var line in Messages.SelectMany(m => m.Lines))
+            MessageLock.WaitOne();
+            foreach (var line in Messages)
             {
                 var stringMesh = Gum.Mesh.CreateStringMesh(line, font, new Vector2(TextSize, TextSize), out stringScreenSize)
                     .Translate(Rect.X, Rect.Y + linePos)
@@ -90,8 +75,8 @@ namespace DwarfCorp.NewGui
                     .Colorize(TextBackgroundColor));
                 meshes.Add(stringMesh);
                 linePos += font.TileHeight * TextSize;
-
             }
+            MessageLock.ReleaseMutex();
 
             return Gum.Mesh.Merge(meshes.ToArray());
         }

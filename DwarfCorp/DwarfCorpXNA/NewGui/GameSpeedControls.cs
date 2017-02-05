@@ -32,7 +32,7 @@ namespace DwarfCorp.NewGui
         public override void Construct()
         {
             Border = "border-dark";
-            MinimumSize = new Point(128, 36);
+            MinimumSize = new Point(128, 40);
             Padding = new Gum.Margin(2, 2, 4, 4);
             Font = "font2x";
 

@@ -10,7 +10,7 @@ namespace DwarfCorp.NewGui
     public class GridPanel : Widget
     {
         public Point ItemSize = new Point(32, 32);
-        public Point ItemSpacing = new Point(8, 8);
+        public Point ItemSpacing = new Point(4, 4);
 
         public override void Layout()
         {
@@ -20,7 +20,7 @@ namespace DwarfCorp.NewGui
             {
                 child.Rect = new Rectangle(pos.X, pos.Y, ItemSize.X, ItemSize.Y);
                 pos.X += ItemSize.X + ItemSpacing.X;
-                if (pos.X >= Rect.Right - ItemSize.X)
+                if (pos.X > Rect.Right - ItemSize.X)
                 {
                     pos.X = Rect.X;
                     pos.Y += ItemSize.Y + ItemSpacing.Y;

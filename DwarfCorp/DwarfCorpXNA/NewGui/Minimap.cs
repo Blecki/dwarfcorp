@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
+using Gum;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -16,19 +17,23 @@ namespace DwarfCorp.NewGui
         public String Frame = "minimap-frame";
         public MinimapRenderer Renderer;
 
+        public override Point GetBestSize()
+        {
+            return new Point(Renderer.RenderWidth + 16, Renderer.RenderHeight + 12);
+        }
+
         public override void Construct()
         {
-            var frame = Root.GetTileSheet(Frame);
-            MinimumSize = new Point(frame.TileWidth, frame.TileHeight);
-            MaximumSize = new Point(frame.TileWidth, frame.TileHeight);
-            Background = new Gum.TileReference(Frame, 0);
+            MinimumSize = GetBestSize();
+            MaximumSize = GetBestSize();
 
             OnClick = (sender, args) =>
                 {
                     var localX = args.X - Rect.X;
                     var localY = args.Y - Rect.Y;
 
-                    Renderer.OnClicked(localX, localY);
+                    if (localX < Renderer.RenderWidth && localY > 12)
+                        Renderer.OnClicked(localX, localY);
                 };
 
             var buttonRow = AddChild(new Gum.Widget
@@ -82,6 +87,11 @@ namespace DwarfCorp.NewGui
             base.Construct();
         }
 
+        protected override Gum.Mesh Redraw()
+        {
+            return Gum.Mesh.CreateScale9Background(Rect, Root.GetTileSheet("tray-border-transparent"), Scale9Corners.Top | Scale9Corners.Right);
+        }
+
     }
 
     public class MinimapRenderer
@@ -90,8 +100,8 @@ namespace DwarfCorp.NewGui
         protected bool HomeSet = false;
         public RenderTarget2D RenderTarget = null;
         public Texture2D ColorMap { get; set; }
-        protected int RenderWidth = 196;
-        protected int RenderHeight = 196;
+        public int RenderWidth = 196;
+        public int RenderHeight = 196;
         public OrbitCamera Camera { get; set; }
         public WorldManager PlayState { get; set; }
 
