@@ -176,10 +176,14 @@ namespace DwarfCorp
         // Loads the game in the background while a loading message displays
         public Thread LoadingThread { get; set; }
 
-        // When the game is loading, this message is displayed on the screen
-        public string LoadingMessage = "";
-        // loading messages running across the bottom
-        public string LoadingMessageBottom = "";
+        // Callback to set message on loading screen.
+        public Action<String> OnSetLoadingMessage = null;
+
+        public void SetLoadingMessage(String Message)
+        {
+            if (OnSetLoadingMessage != null)
+                OnSetLoadingMessage(Message);
+        }
 
         private bool paused_ = false;
         // True if the game's update loop is paused, false otherwise
@@ -345,42 +349,42 @@ namespace DwarfCorp
         /// </summary>
         private void LoadThreaded()
         {
-            LoadingMessage = "Waiting for Graphics Device ...";
+            SetLoadingMessage("Waiting for Graphics Device ...");
 
             WaitForGraphicsDevice();
 #if CREATE_CRASH_LOGS
             try
 #endif
             {
-                LoadingMessage = "Initializing ...";
+                SetLoadingMessage("Initializing ...");
                 // Todo: How is this initialized by save games?
                 InitializeStaticData(CompanyMakerState.CompanyInformation, Natives);
 
-                LoadingMessage = "Creating Planner ...";
+                SetLoadingMessage("Creating Planner ...");
                 PlanService = new PlanService();
 
-                LoadingMessage = "Creating Particles ...";
+                SetLoadingMessage("Creating Particles ...");
                 CreateParticles();
 
-                LoadingMessage = "Creating Sky...";
+                SetLoadingMessage("Creating Sky...");
                 CreateSky();
 
-                LoadingMessage = "Creating Shadows...";
+                SetLoadingMessage("Creating Shadows...");
                 CreateShadows();
 
-                LoadingMessage = "Creating Liquids ...";
+                SetLoadingMessage("Creating Liquids ...");
                 CreateLiquids();
 
-                LoadingMessage = "Generating Initial Terrain Chunks ...";
+                SetLoadingMessage("Generating Initial Terrain Chunks ...");
                 GenerateInitialChunks();
 
-                LoadingMessage = "Creating GameMaster ...";
+                SetLoadingMessage("Creating GameMaster ...");
                 CreateGameMaster();
 
-                LoadingMessage = "Embarking ...";
+                SetLoadingMessage("Embarking ...");
                 CreateInitialEmbarkment();
 
-                LoadingMessage = "Presimulating ...";
+                SetLoadingMessage("Presimulating ...");
                 ShowingWorld = false;
                 if (string.IsNullOrEmpty(ExistingFile))
                 {
@@ -390,7 +394,7 @@ namespace DwarfCorp
 
                 Thread.Sleep(1000);
                 ShowingWorld = true;
-                LoadingMessage = "Complete.";
+                SetLoadingMessage("Complete.");
 
                 // GameFile is no longer needed.
                 gameFile = null;
@@ -517,7 +521,7 @@ namespace DwarfCorp
             // This is preliminary stuff that just makes sure the file exists and can be loaded.
             if (fileExists)
             {
-                LoadingMessage = "Loading " + ExistingFile;
+                SetLoadingMessage("Loading " + ExistingFile);
                 gameFile = new GameFile(ExistingFile, true);
                 Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
                 DwarfGame.World.Time = gameFile.Data.Metadata.Time;
@@ -528,7 +532,7 @@ namespace DwarfCorp
 
                 if (gameFile.Data.Metadata.OverworldFile != null && gameFile.Data.Metadata.OverworldFile != "flat")
                 {
-                    LoadingMessage = "Loading world " + gameFile.Data.Metadata.OverworldFile;
+                    SetLoadingMessage("Loading world " + gameFile.Data.Metadata.OverworldFile);
                     Overworld.Name = gameFile.Data.Metadata.OverworldFile;
                     DirectoryInfo worldDirectory =
                         Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds" +
@@ -544,7 +548,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    LoadingMessage = "Generating flat world..";
+                    SetLoadingMessage("Generating flat world..");
                     Overworld.CreateUniformLand(GraphicsDevice);
                 }
 
@@ -607,13 +611,13 @@ namespace DwarfCorp
             if (gameFile == null)
             {
                 ChunkManager.GenerateInitialChunks(
-                    ChunkManager.ChunkData.GetChunkID(new Vector3(0, 0, 0) + globalOffset), ref LoadingMessage);
+                    ChunkManager.ChunkData.GetChunkID(new Vector3(0, 0, 0) + globalOffset), SetLoadingMessage);
             }
             // Otherwise, we just load all the chunks from the file.
             else
             {
-                LoadingMessage = "Loading Chunks from Game File";
-                ChunkManager.ChunkData.LoadFromFile(gameFile, ref LoadingMessage);
+                SetLoadingMessage("Loading Chunks from Game File");
+                ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
             }
 
             // If there's no file, for some reason we modify the camera position...
@@ -1470,7 +1474,7 @@ namespace DwarfCorp
         /// <param name="gameTime">The current time</param>
         public void RenderScreenSaverMessages(DwarfTime gameTime)
         {
-            DwarfGame.SpriteBatch.Begin();
+            /* DwarfGame.SpriteBatch.Begin();
             float t = (float)(Math.Sin(gameTime.TotalGameTime.TotalSeconds * 2.0f) + 1.0f) * 0.5f + 0.5f;
             Color toDraw = new Color(t, t, t);
             SpriteFont font = Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
@@ -1487,6 +1491,7 @@ namespace DwarfCorp
                         GraphicsDevice.Viewport.Height - tipMeasurement.Y * 2), toDraw, new Color(50, 50, 50));
             }
             DwarfGame.SpriteBatch.End();
+            */
         }
 
         public void FillClosestLights(DwarfTime time)

@@ -690,7 +690,7 @@ namespace DwarfCorp
             return true;
         }
 
-        public void LoadFromFile(GameFile gameFile, ref string loadingMessage)
+        public void LoadFromFile(GameFile gameFile, Action<String> SetLoadingMessage)
         {
             foreach(VoxelChunk chunk in gameFile.Data.ChunkData.Select(file => file.ToChunk(chunkManager)))
             {
@@ -698,7 +698,7 @@ namespace DwarfCorp
             }
             chunkManager.UpdateBounds();
             chunkManager.UpdateRebuildList();
-            chunkManager.CreateGraphics(ref loadingMessage, this);
+            chunkManager.CreateGraphics(SetLoadingMessage, this);
         }
     }
 

@@ -18,6 +18,7 @@ namespace DwarfCorp.GameStates
 
         private Gum.Root GuiRoot;
         private Gum.Widget Tip;
+        private NewGui.InfoTicker LoadTicker;
 
         // Displays tips when the game is loading.
         public List<string> LoadingTips = new List<string>()
@@ -38,9 +39,8 @@ namespace DwarfCorp.GameStates
             "Monsters are shown on the minimap.",
             "Axedwarves are better at chopping trees than miners."
         };
-        private Timer TipTimer = new Timer(5, false);
-        private int TipIndex = 0;
 
+        private Timer TipTimer = new Timer(5, false);
         
         public LoadState(DwarfGame game, GameStateManager stateManager) :
             base(game, "LoadState", stateManager)
@@ -63,7 +63,9 @@ namespace DwarfCorp.GameStates
                 DwarfGame.World.PlayerCompany.Information = new CompanyInformation();
 
             StateManager.PopState();
-            StateManager.PushState(new PlayState(Game, StateManager));            
+            StateManager.PushState(new PlayState(Game, StateManager));
+
+            World.OnSetLoadingMessage = null;         
         }
 
         public override void OnEnter()
@@ -110,6 +112,15 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gum.AutoLayout.DockBottom
             });
 
+            LoadTicker = GuiRoot.RootItem.AddChild(new NewGui.InfoTicker
+            {
+                Font = "outline-font",
+                AutoLayout = Gum.AutoLayout.DockFill,
+                TextColor = new Vector4(1,1,1,1)
+            }) as NewGui.InfoTicker;
+
+            World.OnSetLoadingMessage = (s) => LoadTicker.AddMessage(s);
+
             GuiRoot.RootItem.Layout();
 
             base.OnEnter();
@@ -121,6 +132,7 @@ namespace DwarfCorp.GameStates
                 if (item.Message == Gum.InputEvents.KeyDown)
                     Runner.Jump();
 
+            GuiRoot.Update(gameTime.ToGameTime());
             Runner.Update(gameTime);
             base.Update(gameTime);
         }
