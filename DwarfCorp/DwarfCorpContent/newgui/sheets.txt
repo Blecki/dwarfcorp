@@ -18,8 +18,13 @@
 			"Type": "VariableWidthFont"
 		},
 		{
+			"Name": "font2x",
+			"Texture": "newgui/font1-w-2x",
+			"Type": "VariableWidthFont"
+		},
+		{
 			"Name": "outline-font",
-			"Texture": "newgui/font2",
+			"Texture": "newgui/font1-hires-outline-aa",
 			"Type": "VariableWidthFont"
 		},
 		{
@@ -45,6 +50,12 @@
 			"Texture": "newgui/fancy-border",
 			"TileWidth": 30,
 			"TileHeight": 30
+		},
+		{
+			"Name": "border-dark",
+			"Texture": "newgui/dark-border",
+			"TileWidth": 11,
+			"TileHeight": 11
 		},
 		{
 			"Name": "border-button",

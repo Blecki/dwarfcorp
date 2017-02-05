@@ -69,7 +69,7 @@ namespace DwarfCorp
                     BuildType = BuildType
                 }) as NewGui.BuildMenu;
 
-            WorldManager.NewGui.ShowPopup(BuildPanel, false);
+            WorldManager.NewGui.ShowDialog(BuildPanel);
 
             Player.Faction.CraftBuilder.IsEnabled = false;
 

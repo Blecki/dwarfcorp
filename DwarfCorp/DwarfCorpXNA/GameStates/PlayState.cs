@@ -172,13 +172,13 @@ namespace DwarfCorp.GameStates
             #endregion
 
             #region Update top left panel
-            MoneyLabel.Text = String.Format("Money: {0}", Master.Faction.Economy.CurrentMoney);
+            MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString();
             MoneyLabel.Invalidate();
 
-            StockLabel.Text = String.Format("Stock: {0}", Master.Faction.Economy.Company.StockPrice);
+            StockLabel.Text = Master.Faction.Economy.Company.StockPrice.ToString();
             StockLabel.Invalidate();
 
-            LevelLabel.Text = String.Format("Slice: {0}/{1}",
+            LevelLabel.Text = String.Format("{0}/{1}",
                 WorldManager.ChunkManager.ChunkData.MaxViewingLevel,
                 WorldManager.ChunkHeight);
             LevelLabel.Invalidate();
@@ -236,6 +236,7 @@ namespace DwarfCorp.GameStates
                         resourceTemplate.ResourceName,
                         resourceTemplate.Description),
                     Font = "outline-font",
+                    TextVerticalAlign = Gum.VerticalAlign.Center,
                     TextColor = new Vector4(1,1,1,1)
                 });
             }
@@ -345,60 +346,118 @@ namespace DwarfCorp.GameStates
                     TextColor = new Vector4(1,1,1,1)
                 });
 
-            MoneyLabel = NewGui.RootItem.AddChild(new Gum.Widget
+            var infoPanel = NewGui.RootItem.AddChild(new Gum.Widget
+            {
+                Rect = new Rectangle(0, 40, 128, 102),
+                AutoLayout = Gum.AutoLayout.None
+            });
+
+            var moneyRow = infoPanel.AddChild(new Gum.Widget
+            {
+                MinimumSize = new Point(0, 34),
+                AutoLayout = Gum.AutoLayout.DockTop
+            });
+
+            moneyRow.AddChild(new Gum.Widget
+            {
+                Background = new Gum.TileReference("resources", 40),
+                MinimumSize = new Point(32, 32),
+                MaximumSize = new Point(32, 32),
+                AutoLayout = Gum.AutoLayout.DockLeft
+            });
+
+            MoneyLabel = moneyRow.AddChild(new Gum.Widget
                 {
                     Rect = new Rectangle(48, 32, 128, 20),
-                    AutoLayout = Gum.AutoLayout.None,
+                    AutoLayout = Gum.AutoLayout.DockFill,
                     Font = "outline-font",
+                    TextVerticalAlign = Gum.VerticalAlign.Center,
                     TextColor = new Vector4(1,1,1,1)
                 });
 
-            StockLabel = NewGui.RootItem.AddChild(new Gum.Widget
-                {
-                    Rect = new Rectangle(48, 56, 128, 20),
-                    AutoLayout = Gum.AutoLayout.None,
-                    Font = "outline-font",
-                    TextColor = new Vector4(1,1,1,1)
-                });
+            var stockRow = infoPanel.AddChild(new Gum.Widget
+            {
+                MinimumSize = new Point(0, 34),
+                AutoLayout = Gum.AutoLayout.DockTop
+            });
 
-            LevelLabel = NewGui.RootItem.AddChild(new Gum.Widget
-                {
-                    Rect = new Rectangle(8, 80, 128, 20),
-                    AutoLayout = Gum.AutoLayout.None,
-                    Font = "outline-font",
-                    TextColor = new Vector4(1,1,1,1)
-                });
+            stockRow.AddChild(new Gum.Widget
+            {
+                Background = new Gum.TileReference("resources", 41),
+                MinimumSize = new Point(32, 32),
+                MaximumSize = new Point(32, 32),
+                AutoLayout = Gum.AutoLayout.DockLeft
+            });
 
-            NewGui.RootItem.AddChild(new Gum.Widget
-                {
-                    Background = new Gum.TileReference("round-buttons", 3),
-                    Rect = new Rectangle(148, 80, 16, 16),
-                    OnClick = (sender, args) =>
-                    {
-                        WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(
-                            WorldManager.ChunkManager.ChunkData.MaxViewingLevel + 1,
-                            ChunkManager.SliceMode.Y);
-                    }
-                });
+            StockLabel = stockRow.AddChild(new Gum.Widget
+            {
+                Rect = new Rectangle(48, 32, 128, 20),
+                AutoLayout = Gum.AutoLayout.DockFill,
+                Font = "outline-font",
+                TextVerticalAlign = Gum.VerticalAlign.Center,
+                TextColor = new Vector4(1, 1, 1, 1)
+            });
 
-            NewGui.RootItem.AddChild(new Gum.Widget
+            var levelRow = infoPanel.AddChild(new Gum.Widget
+            {
+                MinimumSize = new Point(0, 34),
+                AutoLayout = Gum.AutoLayout.DockTop
+            });
+
+            levelRow.AddChild(new Gum.Widget
+            {
+                Background = new Gum.TileReference("resources", 40), // Todo: level icon!
+                MinimumSize = new Point(32, 32),
+                MaximumSize = new Point(32, 32),
+                AutoLayout = Gum.AutoLayout.DockLeft
+            });
+
+            levelRow.AddChild(new Gum.Widget
             {
                 Background = new Gum.TileReference("round-buttons", 7),
-                Rect = new Rectangle(166, 80, 16, 16),
-                OnClick = (sender, args) => 
+                MinimumSize = new Point(16,16),
+                MaximumSize = new Point(16,16),
+                AutoLayout = Gum.AutoLayout.FloatLeft,
+                OnLayout = (sender) => sender.Rect.X += 18,
+                OnClick = (sender, args) =>
                 {
                     WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(
                         WorldManager.ChunkManager.ChunkData.MaxViewingLevel - 1,
                         ChunkManager.SliceMode.Y);
                 }
             });
+
+            levelRow.AddChild(new Gum.Widget
+            {
+                Background = new Gum.TileReference("round-buttons", 3),
+                MinimumSize = new Point(16, 16),
+                MaximumSize = new Point(16, 16),
+                AutoLayout = Gum.AutoLayout.FloatLeft,
+                OnClick = (sender, args) =>
+                {
+                    WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(
+                        WorldManager.ChunkManager.ChunkData.MaxViewingLevel + 1,
+                        ChunkManager.SliceMode.Y);
+                }
+            });            
+
+            LevelLabel = levelRow.AddChild(new Gum.Widget
+            {
+                Rect = new Rectangle(48, 32, 128, 20),
+                AutoLayout = Gum.AutoLayout.DockFill,
+                Font = "outline-font",
+                OnLayout = (sender) => sender.Rect.X += 36,
+                TextVerticalAlign = Gum.VerticalAlign.Center,
+                TextColor = new Vector4(1, 1, 1, 1)
+            });            
             #endregion
 
             ResourcePanel = NewGui.RootItem.AddChild(new Gum.Widget
                 {
                     Transparent = true,
                     Rect = new Rectangle(0, 104, 128, 128),
-                    AutoLayout = Gum.AutoLayout.None
+                    AutoLayout = Gum.AutoLayout.None,
+                    OnLayout = sender => sender.Rect.Y = infoPanel.Rect.Bottom + 4
                 });
 
             #region Setup time display
@@ -465,7 +524,13 @@ namespace DwarfCorp.GameStates
             #region Setup game speed controls
             GameSpeedControls = NewGui.RootItem.AddChild(new NewGui.GameSpeedControls
                 {
-                    AutoLayout = Gum.AutoLayout.FloatBottom
+                    AutoLayout = Gum.AutoLayout.None,
+                    OnLayout = (sender) =>
+                    {
+                        // Want to position this directly above the bottom-right tray.
+                        sender.Rect = new Rectangle(BottomRightTray.Rect.Right - sender.MinimumSize.X,
+                            BottomRightTray.Rect.Top - sender.MinimumSize.Y, sender.MinimumSize.X, sender.MinimumSize.Y);
+                    }
                 }) as NewGui.GameSpeedControls;
 
             #endregion
@@ -474,15 +539,20 @@ namespace DwarfCorp.GameStates
 
             WorldManager.OnAnnouncement = (title, message, clickAction) =>
                 {
-                    NewGui.RootItem.AddChild(new NewGui.AnnouncementPopup
+                    var announcer = NewGui.RootItem.AddChild(new NewGui.AnnouncementPopup
                     {
                         Text = title,
                         Message = message,
                         OnClick = (sender, args) => { if (clickAction != null) clickAction(); },
                         Rect = new Rectangle(
-                            NewGui.VirtualScreen.Left + (NewGui.VirtualScreen.Width / 2) - 128,
-                            NewGui.VirtualScreen.Bottom - 128, 256, 128)
+                            BottomRightTray.Rect.X,
+                            GameSpeedControls.Rect.Y - 128,
+                            BottomRightTray.Rect.Width,
+                            128)
                     });
+
+                    // Make the announcer stay behind other controls.
+                    NewGui.RootItem.SendToBack(announcer);
                 };
 
             InfoTicker = NewGui.RootItem.AddChild(new NewGui.InfoTicker

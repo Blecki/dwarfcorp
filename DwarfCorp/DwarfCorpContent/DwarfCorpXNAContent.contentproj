@@ -1769,14 +1769,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="newgui\font2.bmp">
-      <Name>font2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="newgui\room_icons.png">
       <Name>room_icons</Name>
       <Importer>TextureImporter</Importer>
@@ -1800,6 +1792,43 @@
   <ItemGroup>
     <Compile Include="newgui\interior_furniture.png">
       <Name>interior_furniture</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\font1-hires-outline-aa.bmp">
+      <Name>font1-hires-outline-aa</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
+      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
+    </Compile>
+    <Compile Include="newgui\font1-hires-outline.bmp">
+      <Name>font1-hires-outline</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
+      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
+    </Compile>
+    <Compile Include="newgui\font1-w-2x.bmp">
+      <Name>font1-w-2x</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
+      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
+    </Compile>
+    <Compile Include="newgui\font1-w-4x.bmp">
+      <Name>font1-w-4x</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
+      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\dark-border.png">
+      <Name>dark-border</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

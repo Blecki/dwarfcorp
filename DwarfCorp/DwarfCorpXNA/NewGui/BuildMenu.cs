@@ -91,7 +91,8 @@ namespace DwarfCorp.NewGui
                             {
                                 Background = item.Icon,
                                 MinimumSize = new Point(32, 32),
-                                AutoLayout = Gum.AutoLayout.DockTop
+                                AutoLayout = Gum.AutoLayout.DockTop,
+                                MaximumSize = new Point(32,32)
                             });
 
                         description.AddChild(new Gum.Widget
@@ -139,6 +140,7 @@ namespace DwarfCorp.NewGui
                             {
                                 Font = "outline-font",
                                 Text = builder.ToString(),
+                                AutoLayout = AutoLayout.DockFill
                             });
 
                         buildButton.OnClick = (sender, args) =>
@@ -178,7 +180,8 @@ namespace DwarfCorp.NewGui
                             {
                                 Background = item.Icon,
                                 MinimumSize = new Point(32, 32),
-                                AutoLayout = AutoLayout.DockTop
+                                AutoLayout = AutoLayout.DockTop,
+                                MaximumSize = new Point(32,32)
                             });
 
                         description.AddChild(new Gum.Widget
@@ -204,7 +207,15 @@ namespace DwarfCorp.NewGui
                         {
                             foreach (var resourceAmount in data.RequiredResources)
                             {
-                                
+                                var resourceSelector = description.AddChild(new Gum.Widgets.ComboBox
+                                {
+                                    Font = "outline-font",
+                                    Items = Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType).Select(r => r.ResourceType.ToString()).ToList(),
+                                    AutoLayout = AutoLayout.DockTop
+                                }) as Gum.Widgets.ComboBox;
+
+                                if (resourceSelector.Items.Count == 0)
+                                    resourceSelector.Items.Add("<Not enough!>");
                             }
                         }
                     });
