@@ -14,7 +14,7 @@ namespace DwarfCorp.GameStates
         private bool IsShuttingDown { get; set; }
         private bool QuitOnNextUpdate { get; set; }
         public bool ShouldReset { get; set; }
-        public static WorldManager World { get; set; }
+        public static WorldManager World { get { return DwarfGame.World; } }
         public GameMaster Master
         {
             get { return DwarfGame.World.Master; }
