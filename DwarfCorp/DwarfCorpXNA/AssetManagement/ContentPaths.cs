@@ -183,6 +183,9 @@ namespace DwarfCorp
 
         public class Entities
         {
+            public static string mudman_animation = ProgramData.CreatePath("Entities", "Mudman", "mudman_animation.json");
+            public static string mudman_projectile = ProgramData.CreatePath("Entities", "Mudman", "mudman-projectile");
+
             public class Animals
             {
                 public static string chicken_animations = ProgramData.CreatePath("Entities", "Animals",

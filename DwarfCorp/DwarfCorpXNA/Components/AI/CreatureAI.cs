@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -1092,6 +1093,8 @@ namespace DwarfCorp
         {
             Actions[type].Speed = value;
         }
+
+        public bool IsSessile = false;
 
         /// <summary> 
         /// Returns a 3 x 3 x 3 voxel grid corresponding to the immediate neighborhood

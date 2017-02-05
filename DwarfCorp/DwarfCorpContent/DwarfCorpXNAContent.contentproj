@@ -1192,6 +1192,16 @@
       <Name>chicken_animation</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Compile Include="Entities\Mudman\mudman-projectile.png">
+      <Name>mudman-projectile</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Mudman\mudman.png">
+      <Name>mudman</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <None Include="Entities\Dwarf\Sprites\musket_animation.json">
       <Name>musket_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1242,6 +1252,10 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Content Include="Entities\Mudman\mudman_animation.json">
+      <Name>mudman_animation</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Entities\Skeleton\skele_animation.json">
       <Name>skele_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

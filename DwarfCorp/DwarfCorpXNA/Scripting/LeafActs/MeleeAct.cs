@@ -251,7 +251,7 @@ namespace DwarfCorp
                     yield return Status.Fail;
                 }
                 // If we're out of attack range, run toward the target.
-                if(!intersectsbounds && diff.Length() > CurrentAttack.Range)
+                if(!Creature.AI.Movement.IsSessile && !intersectsbounds && diff.Length() > CurrentAttack.Range)
                 {
                     Creature.CurrentCharacterMode = defaultCharachterMode;
                     Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, targetPos, Creature.Physics.GlobalTransform.Translation) * 0.9f;
@@ -260,11 +260,15 @@ namespace DwarfCorp
                     {
                         Creature.Physics.ApplyForce(-Creature.Physics.Gravity, DwarfTime.Dt);
                     }
+                    if (Creature.AI.Movement.IsSessile)
+                    {
+                        output *= 0.0f;
+                    }
                     Creature.Physics.ApplyForce(output, DwarfTime.Dt);
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                 }
                 // If we have a ranged weapon, try avoiding the target for a few seconds to get within range.
-                else if (!intersectsbounds && !avoided && (CurrentAttack.Mode == Attack.AttackMode.Ranged &&
+                else if (!Creature.AI.Movement.IsSessile && !intersectsbounds && !avoided && (CurrentAttack.Mode == Attack.AttackMode.Ranged &&
                     diff.Length() < CurrentAttack.Range*0.75f))
                 {
                     FailTimer.Reset();
