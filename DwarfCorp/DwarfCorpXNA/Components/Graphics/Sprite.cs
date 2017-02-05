@@ -146,6 +146,8 @@ namespace DwarfCorp
         public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Effect effect)
         {
+            if (!IsVisible) return;
+
             base.RenderSelectionBuffer(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect);
             effect.Parameters["xID"].SetValue(GetGlobalIDColor().ToVector4());
             Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);

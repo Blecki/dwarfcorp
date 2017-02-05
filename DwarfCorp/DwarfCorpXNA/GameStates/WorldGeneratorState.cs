@@ -94,6 +94,7 @@ namespace DwarfCorp.GameStates
             GenerationComplete = false;
             ImageMutex = new Mutex();
             Input = new InputManager();
+            Seed = MathFunctions.Random.Next();
             Settings = new WorldSettings()
             {
                 Width = 512,
@@ -1107,12 +1108,14 @@ namespace DwarfCorp.GameStates
         {
             float min = 99999;
             float max = -99999;
+            float average = 0;
 
             for(int x = 0; x < width; x++)
             {
                 for(int y = 0; y < height; y++)
                 {
                     float v = map[x, y].GetValue(fieldType);
+                    average += v;
                     if(v < min)
                     {
                         min = v;
@@ -1124,13 +1127,18 @@ namespace DwarfCorp.GameStates
                     }
                 }
             }
-
+            average /= (width*height);
+            average = ((average - min)/(max - min));
+            bool tooLow = average < 0.5f;
             for(int x = 0; x < width; x++)
             {
                 for(int y = 0; y < height; y++)
                 {
                     float v = map[x, y].GetValue(fieldType);
-                    map[x, y].SetValue(fieldType, ((v - min) / (max - min)) + 0.001f);
+                    float newVal = ((v - min)/(max - min)) + 0.001f;
+                    if (tooLow)
+                        newVal = 1.0f - newVal;
+                    map[x, y].SetValue(fieldType, newVal);
                 }
             }
         }

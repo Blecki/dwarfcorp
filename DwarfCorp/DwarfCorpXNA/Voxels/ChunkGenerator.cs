@@ -513,12 +513,13 @@ namespace DwarfCorp
 
 
                                 var entity = EntityFactory.CreateEntity<GameComponent>(animal.Name, chunk.Origin + new Vector3(x, y, z) + Vector3.Up * 1.0f);
-                                entity.GetRootComponent().SetActiveRecursive(false);
-                                entity.GetRootComponent().SetVisibleRecursive(false);
 
                                 if (GameSettings.Default.FogofWar)
                                 {
-                                    ExploredListener listener = new ExploredListener(DwarfGame.World.ComponentManager, entity,
+                                    entity.GetRootComponent().SetActiveRecursive(false);
+                                    entity.GetRootComponent().SetVisibleRecursive(false);
+                                    ExploredListener listener = new ExploredListener(DwarfGame.World.ComponentManager,
+                                        entity,
                                         DwarfGame.World.ChunkManager, chunk.MakeVoxel(x, y, z));
                                 }
                                 break;
