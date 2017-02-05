@@ -14,6 +14,7 @@ namespace DwarfCorp.GameStates
         public WorldManager World { get; set; }
         public InputManager Input = new InputManager();
         public static DwarfGUI GUI = null;
+        private DwarfRunner Runner;
 
         // Displays tips when the game is loading.
         public List<string> LoadingTips = new List<string>()
@@ -42,6 +43,8 @@ namespace DwarfCorp.GameStates
             base(game, "LoadState", stateManager)
         {
             EnableScreensaver = true;
+
+            Runner = new DwarfRunner(game);
         }
 
         private void World_OnLoadedEvent()
@@ -90,9 +93,21 @@ namespace DwarfCorp.GameStates
 
             World.Setup(GUI);
 
+            DwarfGame.GumInputMapper.GetInputQueue();
+
             base.OnEnter();
         }
-       
+
+        public override void Update(DwarfTime gameTime)
+        {
+            foreach (var item in DwarfGame.GumInputMapper.GetInputQueue())
+                if (item.Message == Gum.InputEvents.KeyDown)
+                    Runner.Jump();
+
+            Runner.Update(gameTime);
+            base.Update(gameTime);
+        }
+
         public override void Render(DwarfTime gameTime)
         {        
             // Todo: This state should be rendering these, NOT the world manager.
@@ -106,6 +121,8 @@ namespace DwarfCorp.GameStates
             EnableScreensaver = true;
             World.Render(gameTime);
             base.Render(gameTime);
+
+            Runner.Render(Game.GraphicsDevice, DwarfGame.SpriteBatch, gameTime);
         }
 
     }

@@ -19,7 +19,7 @@ namespace DwarfCorp.NewGui
 
         public override Point GetBestSize()
         {
-            return new Point(Renderer.RenderWidth + 12, Renderer.RenderHeight + 16);
+            return new Point(Renderer.RenderWidth + 16, Renderer.RenderHeight + 12);
         }
 
         public override void Construct()
@@ -32,7 +32,7 @@ namespace DwarfCorp.NewGui
                     var localX = args.X - Rect.X;
                     var localY = args.Y - Rect.Y;
 
-                    if (localX < Renderer.RenderWidth && localY > 16)
+                    if (localX < Renderer.RenderWidth && localY > 12)
                         Renderer.OnClicked(localX, localY);
                 };
 
