@@ -176,6 +176,11 @@ namespace DwarfCorp
         public bool CanEat { get; set; }
         public float BuildSpeed { get { return (BuffedInt + BuffedDex)/10.0f; }}
 
+        /// <summary>
+        /// If true, the creature will occasionally lay eggs.
+        /// </summary>
+        public bool LaysEggs { get; set; }
+
         public CreatureStats()
         {
             CanSleep = false;

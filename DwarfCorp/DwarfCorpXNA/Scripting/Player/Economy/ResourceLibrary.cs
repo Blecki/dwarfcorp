@@ -77,6 +77,7 @@ namespace DwarfCorp
             public static ResourceType PineCone = "Pine Cone";
             public static ResourceType Coconut = "Coconut";
             public static ResourceType Cactus = "Cactus";
+            public static ResourceType Egg = "Egg";
 
             public static implicit operator ResourceType(string value)
             {
@@ -218,6 +219,8 @@ namespace DwarfCorp
                 Image = new NamedImageFrame(tileSheet, GetRect(1, 4)),
                 NewGuiSprite = 33
             });
+
+            Add(new Resource(ResourceType.Egg, 0.5f, "An egg", new NamedImageFrame(tileSheet, GetRect(7, 2)), 23, Color.White, Resource.ResourceTags.Edible, Resource.ResourceTags.AnimalProduct, Resource.ResourceTags.Brewable));
 
             // Todo: Trinkets won't show up right in new gui.
             // Images are in crafts.png - combine into single sprite sheet.

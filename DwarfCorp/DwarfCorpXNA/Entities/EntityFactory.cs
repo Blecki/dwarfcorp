@@ -165,6 +165,7 @@ namespace DwarfCorp
                 Weather.CreateStorm(MathFunctions.RandVector3Cube() * 10, MathFunctions.Rand(0.05f, 1.0f));
                                                             return new Weather.Cloud(0.1f, 50, 40, position);
             });
+            RegisterEntity("Chicken", (position, data) => new Chicken(position, DwarfGame.World.ComponentManager, DwarfGame.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Chicken"));
         }
 
         private static GameComponent CreateRandomFood(Vector3 position)

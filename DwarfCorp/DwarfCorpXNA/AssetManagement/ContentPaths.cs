@@ -185,6 +185,9 @@ namespace DwarfCorp
         {
             public class Animals
             {
+                public static string chicken_animations = ProgramData.CreatePath("Entities", "Animals",
+                    "chicken_animation.json");
+
                 public class Bat
                 {
                     public static string bat = ProgramData.CreatePath("Entities", "Animals", "bat");
@@ -378,8 +381,8 @@ namespace DwarfCorp
             }
             public class Resources
             {
-                public static string resources = ProgramData.CreatePath("Entities", "Resources", "resources");
-
+                //public static string resources = ProgramData.CreatePath("Entities", "Resources", "resources");
+                public static string resources = ProgramData.CreatePath("newgui", "resources");
             }
 
             public class Moleman
