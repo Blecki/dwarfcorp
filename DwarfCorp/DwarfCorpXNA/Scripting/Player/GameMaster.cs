@@ -68,8 +68,8 @@ namespace DwarfCorp
 
         protected void OnDeserialized(StreamingContext context)
         {
-            Initialize(GameState.Game, WorldManager.ComponentManager, WorldManager.ChunkManager, WorldManager.Camera, WorldManager.ChunkManager.Graphics,  WorldManager.GUI);
-            WorldManager.Master = this;
+            Initialize(GameState.Game, DwarfGame.World.ComponentManager, DwarfGame.World.ChunkManager, DwarfGame.World.Camera, DwarfGame.World.ChunkManager.Graphics,  DwarfGame.World.GUI);
+            DwarfGame.World.Master = this;
         }
 
         public GameMaster()
@@ -83,7 +83,7 @@ namespace DwarfCorp
             VoxSelector.Selected += OnSelected;
             VoxSelector.Dragged += OnDrag;
             BodySelector.Selected += OnBodiesSelected;
-            WorldManager.Time.NewDay += Time_NewDay;
+            DwarfGame.World.Time.NewDay += Time_NewDay;
         }
 
         public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, Camera camera, GraphicsDevice graphics, DwarfGUI gui)
@@ -109,7 +109,7 @@ namespace DwarfCorp
             VoxSelector.Selected -= OnSelected;
             VoxSelector.Dragged -= OnDrag;
             BodySelector.Selected -= OnBodiesSelected;
-            WorldManager.Time.NewDay -= Time_NewDay;
+            DwarfGame.World.Time.NewDay -= Time_NewDay;
             InputManager.KeyReleasedCallback -= OnKeyReleased;
             Tools[ToolMode.God].Destroy();
             Tools[ToolMode.SelectUnits].Destroy();
@@ -175,7 +175,7 @@ namespace DwarfCorp
             Tools[ToolMode.Build] = new BuildTool
             {
                 Player = this,
-                BuildType = BuildMenu.BuildType.Craft | BuildMenu.BuildType.Item | BuildMenu.BuildType.Room | BuildMenu.BuildType.Wall
+                BuildType = NewGui.BuildMenu.BuildTypes.AllButCook,
             };
 
             Tools[ToolMode.Magic] = new MagicTool(this);
@@ -183,7 +183,7 @@ namespace DwarfCorp
             Tools[ToolMode.Cook] = new BuildTool
             {
                 Player = this,
-                BuildType = BuildMenu.BuildType.Cook
+                BuildType = NewGui.BuildMenu.BuildTypes.Cook,
             };
         }
 
@@ -239,7 +239,7 @@ namespace DwarfCorp
                 {
                     if (!noMoney)
                     {
-                        WorldManager.MakeAnnouncement("We're bankrupt!",
+                        DwarfGame.World.MakeAnnouncement("We're bankrupt!",
                             "If we don't make a profit by tomorrow, our stock will crash!");
                     }
                     noMoney = true;
@@ -251,7 +251,7 @@ namespace DwarfCorp
             }
 
             SoundManager.PlaySound(ContentPaths.Audio.change);
-            WorldManager.MakeAnnouncement("Pay day!", String.Format("We paid our employees {0} today.",
+            DwarfGame.World.MakeAnnouncement("Pay day!", String.Format("We paid our employees {0} today.",
                 total.ToString("C")));
         }
 
@@ -326,7 +326,7 @@ namespace DwarfCorp
                 }
             }
 
-            if (!WorldManager.Paused)
+            if (!DwarfGame.World.Paused)
             {
 
             }
@@ -351,7 +351,7 @@ namespace DwarfCorp
 
                 if (deadMinion != null)
                 {
-                    WorldManager.MakeAnnouncement(
+                    DwarfGame.World.MakeAnnouncement(
                         String.Format("{0} ({1}) died!", deadMinion.Stats.FullName, deadMinion.Stats.CurrentLevel.Name),
                         "One of our employees has died!");
                     Faction.Economy.Company.StockPrice -= MathFunctions.Rand(0, 0.5f);
@@ -381,7 +381,7 @@ namespace DwarfCorp
         {
             if(KeyManager.RotationEnabled())
             {
-                WorldManager.SetMouse(null);
+                DwarfGame.World.SetMouse(null);
             }
           
         }
@@ -409,12 +409,12 @@ namespace DwarfCorp
         {
             if(key == ControlSettings.Mappings.SliceUp)
             {
-                WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(WorldManager.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
+                DwarfGame.World.ChunkManager.ChunkData.SetMaxViewingLevel(DwarfGame.World.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
             }
 
             if(key == ControlSettings.Mappings.SliceDown)
             {
-                WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(WorldManager.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
+                DwarfGame.World.ChunkManager.ChunkData.SetMaxViewingLevel(DwarfGame.World.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
             }
 
 
@@ -438,7 +438,7 @@ namespace DwarfCorp
         // Todo: Delete this.
         public bool IsMouseOverGui()
         {
-            return WorldManager.IsMouseOverGui;
+            return DwarfGame.World.IsMouseOverGui;
             //return GUI.IsMouseOver() || (GUI.FocusComponent != null);
         }
 

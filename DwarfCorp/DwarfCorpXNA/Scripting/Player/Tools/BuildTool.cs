@@ -48,8 +48,9 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class BuildTool : PlayerTool
     {
-        public BuildMenu BuildPanel { get; set; }
-        public BuildMenu.BuildType BuildType { get; set; }
+        private NewGui.BuildMenu BuildPanel;
+        public NewGui.BuildMenu.BuildTypes BuildType;
+
         public override void OnVoxelsSelected(List<Voxel> voxels, InputManager.MouseButton button)
         {
             Player.Faction.RoomBuilder.VoxelsSelected(voxels, button);
@@ -59,69 +60,69 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-            if (BuildPanel != null)
-            {
-                BuildPanel.Destroy();
-            }
-            int w = 600;
-            int h = 350;
-            BuildPanel = new BuildMenu(WorldManager.GUI, WorldManager.GUI.RootComponent, Player, BuildType)
-            {
-                LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width/2 - w/2, GameState.Game.GraphicsDevice.Viewport.Height/2 - h/2, w, h),
-                IsVisible = true,
-                DrawOrder = 2
-            };
-            BuildPanel.TweenIn(Drawer2D.Alignment.Right, 0.25f);
+            if (BuildPanel != null && BuildPanel.Root != null)
+                BuildPanel.Close();
+
+            BuildPanel = DwarfGame.World.NewGui.ConstructWidget(new NewGui.BuildMenu
+                {
+                    Master = Player,
+                    BuildType = BuildType
+                }) as NewGui.BuildMenu;
+
+            DwarfGame.World.NewGui.ShowDialog(BuildPanel);
 
             Player.Faction.CraftBuilder.IsEnabled = false;
+
+            DwarfGame.World.Paused = true;
         }
 
         public override void OnEnd()
         {
-            BuildPanel.TweenOut(Drawer2D.Alignment.Right, 0.25f);
+            if (BuildPanel != null && BuildPanel.Root != null)
+                BuildPanel.Close();
+            BuildPanel = null;
             Player.Faction.CraftBuilder.IsEnabled = false;
             Player.Faction.RoomBuilder.OnExit();
         }
-
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                WorldManager.SetMouse(null);
+                DwarfGame.World.SetMouse(null);
                 Player.BodySelector.Enabled = false;
                 return;
             }
 
 
-            bool hasCook = this.BuildType == BuildMenu.BuildType.Cook;
+            bool hasCook = BuildType.HasFlag(NewGui.BuildMenu.BuildTypes.Cook);
 
             if (!hasCook)
             {
                 Player.VoxSelector.Enabled = true;
                 Player.BodySelector.Enabled = false;
 
-                if (WorldManager.IsMouseOverGui)
-                    WorldManager.SetMouse(WorldManager.MousePointer);
+                if (DwarfGame.World.IsMouseOverGui)
+                    DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
                 else
-                    WorldManager.SetMouse(new Gum.MousePointer("mouse", 1, 4));
+                    DwarfGame.World.SetMouse(new Gum.MousePointer("mouse", 1, 4));
             }
             else
             {
                 Player.VoxSelector.Enabled = false;
                 Player.BodySelector.Enabled = false;
 
-                if (WorldManager.IsMouseOverGui)
-                    WorldManager.SetMouse(WorldManager.MousePointer);
+                if (DwarfGame.World.IsMouseOverGui)
+                    DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
                 else
-                    WorldManager.SetMouse(new Gum.MousePointer("mouse", 1, 11));
+                    DwarfGame.World.SetMouse(new Gum.MousePointer("mouse", 1, 11));
             }
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            Player.Faction.RoomBuilder.Render(time, WorldManager.ChunkManager.Graphics);
+            Player.Faction.RoomBuilder.Render(time, DwarfGame.World.ChunkManager.Graphics);
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)

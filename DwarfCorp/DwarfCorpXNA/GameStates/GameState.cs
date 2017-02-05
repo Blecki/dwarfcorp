@@ -156,7 +156,6 @@ namespace DwarfCorp.GameStates
 
         public override void OnPopped()
         {
-            StateManager.States.Remove(Name);
             OnFinished.Invoke(success, exception);
             base.OnPopped();
         }

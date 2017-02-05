@@ -56,13 +56,13 @@ namespace DwarfCorp.GameStates
             var frame = MakeMenuFrame("PLAY DWARFCORP");
 
             MakeMenuItem(frame, "Generate World", "Create a new world from scratch.", (sender, args) =>
-                StateManager.PushState("WorldGeneratorState"));
+                StateManager.PushState(new WorldGeneratorState(Game, StateManager)));
 
             MakeMenuItem(frame, "Load World", "Load a continent from an existing file.", (sender, args) =>
-                StateManager.PushState("WorldLoaderState"));
+                StateManager.PushState(new WorldLoaderState(Game, StateManager)));
 
             MakeMenuItem(frame, "Debug World", "Create a debug world.", (sender, args) => 
-                StateManager.PushState("NewGameCreateDebugWorldState"));
+                StateManager.PushState(new NewGameCreateDebugWorldState(Game, StateManager)));
 
             MakeMenuItem(frame, "Back", "Go back to main menu.", (sender, args) => 
                 StateManager.PopState());
@@ -73,7 +73,7 @@ namespace DwarfCorp.GameStates
         public override void OnEnter()
         {
             // Clear the input queue... cause other states aren't using it and it's been filling up.
-            DwarfGame.GumInput.GetInputQueue();
+            DwarfGame.GumInputMapper.GetInputQueue();
             GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
             MakeMenu();
@@ -84,7 +84,7 @@ namespace DwarfCorp.GameStates
 
         public override void Update(DwarfTime gameTime)
         {
-            foreach (var @event in DwarfGame.GumInput.GetInputQueue())
+            foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
             {
                 GuiRoot.HandleInput(@event.Message, @event.Args);
                 if (!@event.Args.Handled)

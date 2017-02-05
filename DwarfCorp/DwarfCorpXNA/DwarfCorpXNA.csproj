@@ -219,6 +219,7 @@
     <Compile Include="GameStates\IntroState.cs" />
     <Compile Include="GameStates\LoadState.cs" />
     <Compile Include="GameStates\LoseState.cs" />
+    <Compile Include="GameStates\GuiDebugState.cs" />
     <Compile Include="GameStates\MainMenuState.cs" />
     <Compile Include="GameStates\NewGameChooseWorldState.cs" />
     <Compile Include="GameStates\NewGameCreateDebugWorldState.cs" />
@@ -229,9 +230,6 @@
     <Compile Include="GameStates\WorldGeneratorState.cs" />
     <Compile Include="GameStates\WorldLoaderState.cs" />
     <Compile Include="GameStates\WorldSetupState.cs" />
-    <Compile Include="GemInput\GumInputMapper.cs" />
-    <Compile Include="GemInput\Input.cs" />
-    <Compile Include="GemInput\MessageFilter.cs" />
     <Compile Include="Graphics\Cameras\Camera.cs" />
     <Compile Include="Graphics\Cameras\OrbitCamera.cs" />
     <Compile Include="Graphics\Drawing\Drawer2D\DrawCommand2D.cs" />
@@ -331,6 +329,7 @@
     <Compile Include="LanguageGenerator\TextAtom.cs" />
     <Compile Include="LanguageGenerator\TextGenerator.cs" />
     <Compile Include="NewGui\AnnouncementPopup.cs" />
+    <Compile Include="NewGui\BuildMenu.cs" />
     <Compile Include="NewGui\FramedIcon.cs" />
     <Compile Include="NewGui\CompanyLogo.cs" />
     <Compile Include="NewGui\IconTray.cs" />
@@ -341,6 +340,7 @@
     <Compile Include="NewGui\Minimap.cs" />
     <Compile Include="NewGui\Popup.cs" />
     <Compile Include="NewGui\Confirm.cs" />
+    <Compile Include="NewGui\TileSheetExtension.cs" />
     <Compile Include="ProgramData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />

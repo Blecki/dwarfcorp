@@ -67,7 +67,7 @@ namespace DwarfCorp
                     Size = 3
                 },
                 "Herbivore",
-                WorldManager.PlanService,
+                DwarfGame.World.PlanService,
                 manager.Factions.Factions["Herbivore"],
                 new Physics
                 (

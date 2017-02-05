@@ -14,16 +14,16 @@ namespace DwarfCorp.GameStates
         private bool IsShuttingDown { get; set; }
         private bool QuitOnNextUpdate { get; set; }
         public bool ShouldReset { get; set; }
-        public static WorldManager World { get; set; }
+        public static WorldManager World { get { return DwarfGame.World; } }
         public GameMaster Master
         {
-            get { return WorldManager.Master; }
-            set { WorldManager.Master = value; }
+            get { return DwarfGame.World.Master; }
+            set { DwarfGame.World.Master = value; }
         }
         public static bool Paused
         {
-            get { return WorldManager.Paused; }
-            set { WorldManager.Paused = value; }
+            get { return DwarfGame.World.Paused; }
+            set { DwarfGame.World.Paused = value; }
         }
 
         // ------GUI--------
@@ -82,31 +82,30 @@ namespace DwarfCorp.GameStates
         public override void OnEnter()
         {
             // Just toss out any pending input.
-            DwarfGame.GumInput.GetInputQueue();
+            DwarfGame.GumInputMapper.GetInputQueue();
 
             if (!IsInitialized)
             {
                 // Setup new gui. Double rendering the mouse?
                 NewGui = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
                 NewGui.MousePointer = new Gum.MousePointer("mouse", 4, 0);
-                WorldManager.NewGui = NewGui;
+                DwarfGame.World.NewGui = NewGui;
 
                 // Setup input event handlers. All of the actions should already be established - just 
                 // need handlers.
-                DwarfGame.GemInput.ClearAllHandlers();
+                DwarfGame.GumInput.ClearAllHandlers();
 
-                WorldManager.ShowInfo += (text) =>
+                DwarfGame.World.ShowInfo += (text) =>
                     {
                         InfoTicker.AddMessage(text);
                     };
 
-                WorldManager.ShowTooltip += (text) =>
+                DwarfGame.World.ShowTooltip += (text) =>
                     {
-                        // Todo - Actually put this at the mouse position.
-                        NewGui.ShowTooltip(new Point(0, 0), text);
+                        NewGui.ShowTooltip(NewGui.MousePosition, text);
                     };
 
-                WorldManager.SetMouse += (mouse) =>
+                DwarfGame.World.SetMouse += (mouse) =>
                     {
                         NewGui.MousePointer = mouse;
                     };
@@ -155,7 +154,7 @@ namespace DwarfCorp.GameStates
 
             // Needs to run before old input so tools work
             // Update new input system.
-            DwarfGame.GemInput.FireActions(NewGui, (@event, args) =>
+            DwarfGame.GumInput.FireActions(NewGui, (@event, args) =>
             {
                 // Let old input handle mouse interaction for now. Will eventually need to be replaced.
             });
@@ -166,21 +165,21 @@ namespace DwarfCorp.GameStates
 
             #region Update time label
             TimeLabel.Text = String.Format("{0} {1}",
-                WorldManager.Time.CurrentDate.ToShortDateString(),
-                WorldManager.Time.CurrentDate.ToShortTimeString());
+                DwarfGame.World.Time.CurrentDate.ToShortDateString(),
+                DwarfGame.World.Time.CurrentDate.ToShortTimeString());
             TimeLabel.Invalidate();
             #endregion
 
             #region Update top left panel
-            MoneyLabel.Text = String.Format("Money: {0}", Master.Faction.Economy.CurrentMoney);
+            MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString();
             MoneyLabel.Invalidate();
 
-            StockLabel.Text = String.Format("Stock: {0}", Master.Faction.Economy.Company.StockPrice);
+            StockLabel.Text = Master.Faction.Economy.Company.StockPrice.ToString();
             StockLabel.Invalidate();
 
-            LevelLabel.Text = String.Format("Slice: {0}/{1}",
-                WorldManager.ChunkManager.ChunkData.MaxViewingLevel,
-                WorldManager.ChunkHeight);
+            LevelLabel.Text = String.Format("{0}/{1}",
+                DwarfGame.World.ChunkManager.ChunkData.MaxViewingLevel,
+                DwarfGame.World.ChunkHeight);
             LevelLabel.Invalidate();
             #endregion
 
@@ -236,11 +235,15 @@ namespace DwarfCorp.GameStates
                         resourceTemplate.ResourceName,
                         resourceTemplate.Description),
                     Font = "outline-font",
+                    TextVerticalAlign = Gum.VerticalAlign.Center,
                     TextColor = new Vector4(1,1,1,1)
                 });
             }
             ResourcePanel.Layout();
             #endregion
+
+            if (Paused && GameSpeedControls.CurrentSpeed != 0)
+                GameSpeedControls.CurrentSpeed = 0;
 
             // Really just handles mouse pointer animation.
             NewGui.Update(gameTime.ToGameTime());
@@ -330,72 +333,130 @@ namespace DwarfCorp.GameStates
                     MinimumSize = new Point(32, 32),
                     MaximumSize = new Point(32, 32),
                     AutoLayout = Gum.AutoLayout.None,
-                    CompanyInformation = WorldManager.PlayerCompany.Information
+                    CompanyInformation = DwarfGame.World.PlayerCompany.Information
                 });
 
             NewGui.RootItem.AddChild(new Gum.Widget
                 {
                     Rect = new Rectangle(48,8,256,20),
-                    Text = WorldManager.PlayerCompany.Information.Name,
+                    Text = DwarfGame.World.PlayerCompany.Information.Name,
                     AutoLayout = Gum.AutoLayout.None,
                     Font = "outline-font",
                     TextColor = new Vector4(1,1,1,1)
                 });
 
-            MoneyLabel = NewGui.RootItem.AddChild(new Gum.Widget
+            var infoPanel = NewGui.RootItem.AddChild(new Gum.Widget
+            {
+                Rect = new Rectangle(0, 40, 128, 102),
+                AutoLayout = Gum.AutoLayout.None
+            });
+
+            var moneyRow = infoPanel.AddChild(new Gum.Widget
+            {
+                MinimumSize = new Point(0, 34),
+                AutoLayout = Gum.AutoLayout.DockTop
+            });
+
+            moneyRow.AddChild(new Gum.Widget
+            {
+                Background = new Gum.TileReference("resources", 40),
+                MinimumSize = new Point(32, 32),
+                MaximumSize = new Point(32, 32),
+                AutoLayout = Gum.AutoLayout.DockLeft
+            });
+
+            MoneyLabel = moneyRow.AddChild(new Gum.Widget
                 {
                     Rect = new Rectangle(48, 32, 128, 20),
-                    AutoLayout = Gum.AutoLayout.None,
+                    AutoLayout = Gum.AutoLayout.DockFill,
                     Font = "outline-font",
+                    TextVerticalAlign = Gum.VerticalAlign.Center,
                     TextColor = new Vector4(1,1,1,1)
                 });
 
-            StockLabel = NewGui.RootItem.AddChild(new Gum.Widget
-                {
-                    Rect = new Rectangle(48, 56, 128, 20),
-                    AutoLayout = Gum.AutoLayout.None,
-                    Font = "outline-font",
-                    TextColor = new Vector4(1,1,1,1)
-                });
+            var stockRow = infoPanel.AddChild(new Gum.Widget
+            {
+                MinimumSize = new Point(0, 34),
+                AutoLayout = Gum.AutoLayout.DockTop
+            });
 
-            LevelLabel = NewGui.RootItem.AddChild(new Gum.Widget
-                {
-                    Rect = new Rectangle(8, 80, 128, 20),
-                    AutoLayout = Gum.AutoLayout.None,
-                    Font = "outline-font",
-                    TextColor = new Vector4(1,1,1,1)
-                });
+            stockRow.AddChild(new Gum.Widget
+            {
+                Background = new Gum.TileReference("resources", 41),
+                MinimumSize = new Point(32, 32),
+                MaximumSize = new Point(32, 32),
+                AutoLayout = Gum.AutoLayout.DockLeft
+            });
 
-            NewGui.RootItem.AddChild(new Gum.Widget
-                {
-                    Background = new Gum.TileReference("round-buttons", 3),
-                    Rect = new Rectangle(148, 80, 16, 16),
-                    OnClick = (sender, args) =>
-                    {
-                        WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(
-                            WorldManager.ChunkManager.ChunkData.MaxViewingLevel + 1,
-                            ChunkManager.SliceMode.Y);
-                    }
-                });
+            StockLabel = stockRow.AddChild(new Gum.Widget
+            {
+                Rect = new Rectangle(48, 32, 128, 20),
+                AutoLayout = Gum.AutoLayout.DockFill,
+                Font = "outline-font",
+                TextVerticalAlign = Gum.VerticalAlign.Center,
+                TextColor = new Vector4(1, 1, 1, 1)
+            });
 
-            NewGui.RootItem.AddChild(new Gum.Widget
+            var levelRow = infoPanel.AddChild(new Gum.Widget
+            {
+                MinimumSize = new Point(0, 34),
+                AutoLayout = Gum.AutoLayout.DockTop
+            });
+
+            levelRow.AddChild(new Gum.Widget
+            {
+                Background = new Gum.TileReference("resources", 40), // Todo: level icon!
+                MinimumSize = new Point(32, 32),
+                MaximumSize = new Point(32, 32),
+                AutoLayout = Gum.AutoLayout.DockLeft
+            });
+
+            levelRow.AddChild(new Gum.Widget
             {
                 Background = new Gum.TileReference("round-buttons", 7),
-                Rect = new Rectangle(166, 80, 16, 16),
-                OnClick = (sender, args) => 
+                MinimumSize = new Point(16,16),
+                MaximumSize = new Point(16,16),
+                AutoLayout = Gum.AutoLayout.FloatLeft,
+                OnLayout = (sender) => sender.Rect.X += 18,
+                OnClick = (sender, args) =>
                 {
-                    WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(
-                        WorldManager.ChunkManager.ChunkData.MaxViewingLevel - 1,
+                    DwarfGame.World.ChunkManager.ChunkData.SetMaxViewingLevel(
+                        DwarfGame.World.ChunkManager.ChunkData.MaxViewingLevel - 1,
                         ChunkManager.SliceMode.Y);
                 }
             });
+
+            levelRow.AddChild(new Gum.Widget
+            {
+                Background = new Gum.TileReference("round-buttons", 3),
+                MinimumSize = new Point(16, 16),
+                MaximumSize = new Point(16, 16),
+                AutoLayout = Gum.AutoLayout.FloatLeft,
+                OnClick = (sender, args) =>
+                {
+                    DwarfGame.World.ChunkManager.ChunkData.SetMaxViewingLevel(
+                        DwarfGame.World.ChunkManager.ChunkData.MaxViewingLevel + 1,
+                        ChunkManager.SliceMode.Y);
+                }
+            });            
+
+            LevelLabel = levelRow.AddChild(new Gum.Widget
+            {
+                Rect = new Rectangle(48, 32, 128, 20),
+                AutoLayout = Gum.AutoLayout.DockFill,
+                Font = "outline-font",
+                OnLayout = (sender) => sender.Rect.X += 36,
+                TextVerticalAlign = Gum.VerticalAlign.Center,
+                TextColor = new Vector4(1, 1, 1, 1)
+            });            
             #endregion
 
             ResourcePanel = NewGui.RootItem.AddChild(new Gum.Widget
                 {
                     Transparent = true,
                     Rect = new Rectangle(0, 104, 128, 128),
-                    AutoLayout = Gum.AutoLayout.None
+                    AutoLayout = Gum.AutoLayout.None,
+                    OnLayout = sender => sender.Rect.Y = infoPanel.Rect.Bottom + 4
                 });
 
             #region Setup time display
@@ -404,7 +465,8 @@ namespace DwarfCorp.GameStates
                     AutoLayout = Gum.AutoLayout.FloatTop,
                     TextHorizontalAlign = Gum.HorizontalAlign.Center,
                     MinimumSize = new Point(128, 20),
-                    TextSize = 2
+                    Font = "outline-font",
+                    TextColor = new Vector4(1,1,1,1)
                 });
             #endregion
 
@@ -447,7 +509,7 @@ namespace DwarfCorp.GameStates
                             new NewGui.FramedIcon
                             {
                                 Icon = new Gum.TileReference("tool-icons", 10),
-                                OnClick = (sender, args) => StateManager.PushState("EconomyState")
+                                OnClick = (sender, args) => StateManager.PushState(new EconomyState(Game, StateManager))
                         },
                         new NewGui.FramedIcon
                         {
@@ -461,24 +523,35 @@ namespace DwarfCorp.GameStates
             #region Setup game speed controls
             GameSpeedControls = NewGui.RootItem.AddChild(new NewGui.GameSpeedControls
                 {
-                    AutoLayout = Gum.AutoLayout.FloatBottom
+                    AutoLayout = Gum.AutoLayout.None,
+                    OnLayout = (sender) =>
+                    {
+                        // Want to position this directly above the bottom-right tray.
+                        sender.Rect = new Rectangle(BottomRightTray.Rect.Right - sender.MinimumSize.X,
+                            BottomRightTray.Rect.Top - sender.MinimumSize.Y, sender.MinimumSize.X, sender.MinimumSize.Y);
+                    }
                 }) as NewGui.GameSpeedControls;
 
             #endregion
 
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
 
-            WorldManager.OnAnnouncement = (title, message, clickAction) =>
+            DwarfGame.World.OnAnnouncement = (title, message, clickAction) =>
                 {
-                    NewGui.RootItem.AddChild(new NewGui.AnnouncementPopup
+                    var announcer = NewGui.RootItem.AddChild(new NewGui.AnnouncementPopup
                     {
                         Text = title,
                         Message = message,
                         OnClick = (sender, args) => { if (clickAction != null) clickAction(); },
                         Rect = new Rectangle(
-                            NewGui.VirtualScreen.Left + (NewGui.VirtualScreen.Width / 2) - 128,
-                            NewGui.VirtualScreen.Bottom - 128, 256, 128)
+                            BottomRightTray.Rect.X,
+                            GameSpeedControls.Rect.Y - 128,
+                            BottomRightTray.Rect.Width,
+                            128)
                     });
+
+                    // Make the announcer stay behind other controls.
+                    NewGui.RootItem.SendToBack(announcer);
                 };
 
             InfoTicker = NewGui.RootItem.AddChild(new NewGui.InfoTicker
@@ -636,11 +709,11 @@ namespace DwarfCorp.GameStates
                     PausePanel = null;
                 });
 
-            MakeMenuItem(PausePanel, "Options", "", (sender, args) => StateManager.PushState("OptionsState"));
+            MakeMenuItem(PausePanel, "Options", "", (sender, args) => StateManager.PushState(new OptionsState(Game, StateManager)));
 
             MakeMenuItem(PausePanel, "New Options", "", (sender, args) =>
                 {
-                    StateManager.GetState<NewOptionsState>("NewOptionsState").OnClosed = () =>
+                    StateManager.GetState<NewOptionsState>().OnClosed = () =>
                     {
                         NewGui.ResizeVirtualScreen(new Point(640, 480));
                         NewGui.ResetGui();
@@ -648,7 +721,7 @@ namespace DwarfCorp.GameStates
                         OpenPauseMenu();
                     };
 
-                    StateManager.PushState("NewOptionsState");
+                    StateManager.PushState(new NewOptionsState(Game, StateManager));
                 });
 
             MakeMenuItem(PausePanel, "Save", "",
@@ -661,7 +734,7 @@ namespace DwarfCorp.GameStates
                         {
                             if ((s as NewGui.Confirm).DialogResult == DwarfCorp.NewGui.Confirm.Result.OKAY)
                                 World.Save(
-                                    String.Format("{0}_{1}", Overworld.Name, WorldManager.GameID),
+                                    String.Format("{0}_{1}", Overworld.Name, DwarfGame.World.GameID),
                                     (success, exception) =>
                                     {
                                         NewGui.ShowPopup(new NewGui.Popup
@@ -696,9 +769,9 @@ namespace DwarfCorp.GameStates
             // This line needs to stay in so the GC can properly collect all the items the PlayState keeps active.
             // If you want to remove this line you better be prepared to fully clean up the PlayState instance
             // using another method.
-            StateManager.States["PlayState"] = new PlayState(Game, StateManager);
+            //StateManager.States["PlayState"] = new PlayState(Game, StateManager);
             
-            StateManager.PushState("MainMenuState");
+            StateManager.PushState(new MainMenuState(Game, StateManager));
         }
     }
 }   

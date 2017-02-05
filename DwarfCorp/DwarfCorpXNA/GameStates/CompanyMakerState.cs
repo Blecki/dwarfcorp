@@ -81,7 +81,7 @@ namespace DwarfCorp.GameStates
         public override void OnEnter()
         {
             // Clear the input queue... cause other states aren't using it and it's been filling up.
-            DwarfGame.GumInput.GetInputQueue();
+            DwarfGame.GumInputMapper.GetInputQueue();
 
             GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
@@ -110,7 +110,7 @@ namespace DwarfCorp.GameStates
                     CompanyInformation.Motto = MottoField.Text;
 
                     // Why are they stored as statics on this class???
-                    StateManager.PushState("NewGameChooseWorldState");
+                    StateManager.PushState(new NewGameChooseWorldState(Game, Game.StateManager));
                 },
                 AutoLayout = AutoLayout.FloatBottomRight
             });
@@ -393,7 +393,7 @@ namespace DwarfCorp.GameStates
 
         public override void Update(DwarfTime gameTime)
         {
-            foreach (var @event in DwarfGame.GumInput.GetInputQueue())
+            foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
             {
                 GuiRoot.HandleInput(@event.Message, @event.Args);
                 if (!@event.Args.Handled)

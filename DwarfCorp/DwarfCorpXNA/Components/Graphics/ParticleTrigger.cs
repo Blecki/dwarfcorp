@@ -86,12 +86,12 @@ namespace DwarfCorp
                         MathFunctions.Rand() * ext.Y,
                         MathFunctions.Rand() * ext.Z)
                         ;
-                    WorldManager.ParticleManager.Effects[EmitterName].Trigger(num, triggerPos, Tint);
+                    DwarfGame.World.ParticleManager.Effects[EmitterName].Trigger(num, triggerPos, Tint);
                 }
             }
             else
             {
-                WorldManager.ParticleManager.Effects[EmitterName].Trigger(num, p, Tint);
+                DwarfGame.World.ParticleManager.Effects[EmitterName].Trigger(num, p, Tint);
             }
         }
 

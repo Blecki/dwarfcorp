@@ -8,17 +8,30 @@ namespace DwarfCorp.NewGui
 {
     public class InfoTicker : Gum.Widget
     {
-        private List<Tuple<String, DateTime>> Messages = new List<Tuple<String, DateTime>>();
+        private class Message
+        {
+            public DateTime DeletionTime;
+            public String RawMessage;
+            public List<String> Lines;
+        }
+
+        private List<Message> Messages = new List<Message>();
+        private int MessageLineCount {  get { return Messages.Sum(m => m.Lines.Count); } }
+
         public float MessageLiveSeconds = 10.0f;
+        public Vector4 TextBackgroundColor = new Vector4(0.0f, 0.0f, 0.0f, 0.25f);
 
         public override void Construct()
         {
             Root.RegisterForUpdate(this);
 
+            Font = "font";
+            TextColor = new Vector4(1, 1, 1, 1);
+
             OnUpdate += (sender, time) =>
                 {
                     var now = DateTime.Now;
-                    if (Messages.Count > 0 && Messages[0].Item2 < now)
+                    if (Messages.Count > 0 && Messages[0].DeletionTime < now)
                     {
                         Messages.RemoveAt(0);
                         Invalidate();
@@ -28,7 +41,7 @@ namespace DwarfCorp.NewGui
             base.Construct();
         }
 
-        public int VisibleMessages
+        public int VisibleLines
         {
             get
             {
@@ -39,24 +52,47 @@ namespace DwarfCorp.NewGui
 
         public void AddMessage(String Message)
         {
-            foreach (var message in Message.Split('\n'))
+            var existingMessage = Messages.FirstOrDefault(m => m.RawMessage == Message);
+
+            if (existingMessage != null)
+                Messages.Remove(existingMessage);
+
+            Messages.Add(new Message
             {
-                if (Messages.Count == VisibleMessages)
-                    Messages.RemoveAt(0);
-                Messages.Add(Tuple.Create(message, DateTime.Now.AddSeconds(MessageLiveSeconds)));
-            }
+                RawMessage = Message,
+                DeletionTime = DateTime.Now.AddSeconds(MessageLiveSeconds),
+                Lines = new List<String>(Message.Split('\n'))
+            });
+
+            while (MessageLineCount > VisibleLines)
+                Messages.RemoveAt(0);
+
             Invalidate();
         }
 
         protected override Gum.Mesh Redraw()
         {
             var meshes = new List<Gum.Mesh>();
-            var ignore = new Rectangle();
+            var stringScreenSize = new Rectangle();
             var font = Root.GetTileSheet(Font);
-            for (var i = 0; i < Messages.Count; ++i)
-                meshes.Add(Gum.Mesh.CreateStringMesh(Messages[i].Item1,
-                    font, new Vector2(TextSize, TextSize), out ignore)
-                    .Translate(Rect.X, Rect.Y + (font.TileHeight * TextSize * i)));
+            var basic = Root.GetTileSheet("basic");
+            var linePos = 0;
+
+            foreach (var line in Messages.SelectMany(m => m.Lines))
+            {
+                var stringMesh = Gum.Mesh.CreateStringMesh(line, font, new Vector2(TextSize, TextSize), out stringScreenSize)
+                    .Translate(Rect.X, Rect.Y + linePos)
+                    .Colorize(TextColor);
+                meshes.Add(Gum.Mesh.Quad()
+                    .Scale(stringScreenSize.Width, stringScreenSize.Height)
+                    .Translate(Rect.X, Rect.Y + linePos)
+                    .Texture(basic.TileMatrix(1))
+                    .Colorize(TextBackgroundColor));
+                meshes.Add(stringMesh);
+                linePos += font.TileHeight * TextSize;
+
+            }
+
             return Gum.Mesh.Merge(meshes.ToArray());
         }
     }

@@ -76,7 +76,7 @@ namespace DwarfCorp
         public override IEnumerable<Status> Run()
         {
             float startingHealth = Creature.Status.Health.CurrentValue;
-            while(!Creature.Status.Energy.IsSatisfied() && WorldManager.Time.IsNight())
+            while(!Creature.Status.Energy.IsSatisfied() && DwarfGame.World.Time.IsNight())
             {
                 if(Teleport)
                 {

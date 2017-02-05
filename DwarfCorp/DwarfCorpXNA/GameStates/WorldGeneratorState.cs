@@ -240,11 +240,11 @@ namespace DwarfCorp.GameStates
         {
             IsGenerating = false;
             DoneGenerating = false;
-            WorldManager.WorldWidth = Settings.Width;
-            WorldManager.WorldHeight = Settings.Height;
-            WorldManager.SeaLevel = Settings.SeaLevel;
+            DwarfGame.World.WorldWidth = Settings.Width;
+            DwarfGame.World.WorldHeight = Settings.Height;
+            DwarfGame.World.SeaLevel = Settings.SeaLevel;
             MathFunctions.Random = new ThreadSafeRandom(Seed);
-            WorldManager.WorldSize = new Point3(8, 1, 8);
+            DwarfGame.World.WorldSize = new Point3(8, 1, 8);
 
             Overworld.Volcanoes = new List<Vector2>();
 
@@ -417,18 +417,22 @@ namespace DwarfCorp.GameStates
 
         void advancedButton_OnClicked()
         {
-            WorldSetupState setup = StateManager.GetState<WorldSetupState>("WorldSetupState");
+            WorldSetupState setup = StateManager.GetState<WorldSetupState>();
 
             if (setup != null)
             {
                 setup.Settings = Settings;
+                StateManager.ReinsertState(setup);
             }
-           StateManager.PushState("WorldSetupState");
+            else
+            {
+                StateManager.PushState(new WorldSetupState(Game, Game.StateManager));   
+            }
         }
 
         void embarkCombo_OnSelectionModified(string arg)
         {
-            WorldManager.InitialEmbark = Embarkment.EmbarkmentLibrary[arg];
+            DwarfGame.World.InitialEmbark = Embarkment.EmbarkmentLibrary[arg];
         }
 
         void MapPanel_OnDragged(InputManager.MouseButton button, Vector2 delta)
@@ -452,27 +456,27 @@ namespace DwarfCorp.GameStates
             switch (arg)
             {
                 case "Tiny":
-                    WorldManager.WorldSize = new Point3(4, 1, 4);
+                    DwarfGame.World.WorldSize = new Point3(4, 1, 4);
                     break;
                 case "Small":
-                    WorldManager.WorldSize = new Point3(8, 1, 8);
+                    DwarfGame.World.WorldSize = new Point3(8, 1, 8);
                     break;
                 case "Medium":
-                    WorldManager.WorldSize = new Point3(10, 1, 10);
+                    DwarfGame.World.WorldSize = new Point3(10, 1, 10);
                     break;
                 case "Large":
-                    WorldManager.WorldSize = new Point3(16, 1, 16);
+                    DwarfGame.World.WorldSize = new Point3(16, 1, 16);
                     break;
                 case "Huge":
-                    WorldManager.WorldSize = new Point3(24, 1, 24);
+                    DwarfGame.World.WorldSize = new Point3(24, 1, 24);
                     break;
             }
-            float w = WorldManager.WorldSize.X * WorldManager.WorldScale;
-            float h = WorldManager.WorldSize.Z * WorldManager.WorldScale;
-            float clickX = Math.Max(Math.Min(WorldManager.WorldGenerationOrigin.X, WorldManager.WorldWidth - w - 1), w + 1);
-            float clickY = Math.Max(Math.Min(WorldManager.WorldGenerationOrigin.Y, WorldManager.WorldHeight - h - 1), h + 1);
+            float w = DwarfGame.World.WorldSize.X * DwarfGame.World.WorldScale;
+            float h = DwarfGame.World.WorldSize.Z * DwarfGame.World.WorldScale;
+            float clickX = Math.Max(Math.Min(DwarfGame.World.WorldGenerationOrigin.X, DwarfGame.World.WorldWidth - w - 1), w + 1);
+            float clickY = Math.Max(Math.Min(DwarfGame.World.WorldGenerationOrigin.Y, DwarfGame.World.WorldHeight - h - 1), h + 1);
 
-            WorldManager.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
+            DwarfGame.World.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
         }
 
 
@@ -527,10 +531,11 @@ namespace DwarfCorp.GameStates
                 Overworld.Name = Settings.Name;
                 GUI.MouseMode = GUISkin.MousePointer.Wait;
                 StateManager.ClearState();
-                WorldManager.ExistingFile = null;
-                StateManager.PushState("LoadState");
+                DwarfGame.World.ExistingFile = null;
+                DwarfGame.World.WorldOrigin = DwarfGame.World.WorldGenerationOrigin;
+                StateManager.PushState(new LoadState(Game, StateManager));
 
-                WorldManager.Natives = NativeCivilizations;
+                DwarfGame.World.Natives = NativeCivilizations;
             }
         }
 
@@ -569,8 +574,8 @@ namespace DwarfCorp.GameStates
             DoneGenerating = false;
             if(!IsGenerating && !DoneGenerating)
             {
-                WorldManager.WorldGenerationOrigin = new Vector2(WorldManager.WorldWidth / 2, WorldManager.WorldHeight / 2);
-                genThread = new Thread(unused => GenerateWorld(Seed, (int) WorldManager.WorldWidth, (int) WorldManager.WorldHeight));
+                DwarfGame.World.WorldGenerationOrigin = new Vector2(DwarfGame.World.WorldWidth / 2, DwarfGame.World.WorldHeight / 2);
+                genThread = new Thread(unused => GenerateWorld(Seed, (int) DwarfGame.World.WorldWidth, (int) DwarfGame.World.WorldHeight));
                 genThread.Name = "GenerateWorld";
                 genThread.Start();
                 IsGenerating = true;
@@ -590,14 +595,14 @@ namespace DwarfCorp.GameStates
 
             Point worldPos = ScreenToWorld(new Vector2(ms.X, ms.Y));
 
-            float w = WorldManager.WorldSize.X * WorldManager.WorldScale;
-            float h = WorldManager.WorldSize.Z * WorldManager.WorldScale;
+            float w = DwarfGame.World.WorldSize.X * DwarfGame.World.WorldScale;
+            float h = DwarfGame.World.WorldSize.Z * DwarfGame.World.WorldScale;
             float clickX = worldPos.X;
             float clickY = worldPos.Y;
-            clickX = Math.Max(Math.Min(clickX, WorldManager.WorldWidth - w - 1), w + 1);
-            clickY = Math.Max(Math.Min(clickY, WorldManager.WorldHeight - h - 1), h + 1 );
+            clickX = Math.Max(Math.Min(clickX, DwarfGame.World.WorldWidth - w - 1), w + 1);
+            clickY = Math.Max(Math.Min(clickY, DwarfGame.World.WorldHeight - h - 1), h + 1 );
            
-            WorldManager.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
+            DwarfGame.World.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
         }
 
         public Dictionary<string, Color> GenerateFactionColors()
@@ -1296,9 +1301,9 @@ namespace DwarfCorp.GameStates
 
         public Rectangle GetSpawnRectangle()
         {
-            int w = (int) (WorldManager.WorldSize.X * WorldManager.WorldScale);
-            int h = (int) (WorldManager.WorldSize.Z * WorldManager.WorldScale);
-            return new Rectangle((int)WorldManager.WorldGenerationOrigin.X - w, (int)WorldManager.WorldGenerationOrigin.Y - h, w * 2, h * 2);
+            int w = (int) (DwarfGame.World.WorldSize.X * DwarfGame.World.WorldScale);
+            int h = (int) (DwarfGame.World.WorldSize.Z * DwarfGame.World.WorldScale);
+            return new Rectangle((int)DwarfGame.World.WorldGenerationOrigin.X - w, (int)DwarfGame.World.WorldGenerationOrigin.Y - h, w * 2, h * 2);
         }
 
         public void GetSpawnRectangleOnImage(ref Point a, ref Point b, ref Point c, ref Point d, ref bool valid)
@@ -1334,8 +1339,8 @@ namespace DwarfCorp.GameStates
             if(GenerationComplete)
             {
                 Rectangle imageBounds = MapPanel.GetImageBounds();
-                float scaleX = ((float)imageBounds.Width / (float)WorldManager.WorldWidth);
-                float scaleY = ((float)imageBounds.Height / (float)WorldManager.WorldHeight);
+                float scaleX = ((float)imageBounds.Width / (float)DwarfGame.World.WorldWidth);
+                float scaleY = ((float)imageBounds.Height / (float)DwarfGame.World.WorldHeight);
                 Rectangle spawnRect = GetSpawnRectangle();
                 Point a = new Point(), b = new Point(), c= new Point(), d = new Point();
                 bool valid = true;

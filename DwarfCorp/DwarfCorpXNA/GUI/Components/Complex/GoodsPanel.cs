@@ -480,7 +480,7 @@ namespace DwarfCorp
             
             IsResizeable = false;
             IsDraggable = false;
-            TradePanel = new TradePanel(GUI, this, WorldManager.PlayerFaction, otherFaction, resources)
+            TradePanel = new TradePanel(GUI, this, DwarfGame.World.PlayerFaction, otherFaction, resources)
             {
                 WidthSizeMode = SizeMode.Fit,
                 HeightSizeMode = SizeMode.Fit
@@ -646,7 +646,7 @@ namespace DwarfCorp
         {
             if (Faction.ComputeStockpileSpace() < MyGoods.ComputeSpace() + TheirTrades.ComputeSpace())
             {
-                WorldManager.ShowTooltip("Not enough stockpile space!");
+                DwarfGame.World.ShowTooltip("Not enough stockpile space!");
                 return;
             }
 
