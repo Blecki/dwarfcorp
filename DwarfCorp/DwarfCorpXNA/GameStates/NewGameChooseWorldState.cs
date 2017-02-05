@@ -56,13 +56,13 @@ namespace DwarfCorp.GameStates
             var frame = MakeMenuFrame("PLAY DWARFCORP");
 
             MakeMenuItem(frame, "Generate World", "Create a new world from scratch.", (sender, args) =>
-                StateManager.PushState("WorldGeneratorState"));
+                StateManager.PushState(new WorldGeneratorState(Game, StateManager)));
 
             MakeMenuItem(frame, "Load World", "Load a continent from an existing file.", (sender, args) =>
-                StateManager.PushState("WorldLoaderState"));
+                StateManager.PushState(new WorldLoaderState(Game, StateManager)));
 
             MakeMenuItem(frame, "Debug World", "Create a debug world.", (sender, args) => 
-                StateManager.PushState("NewGameCreateDebugWorldState"));
+                StateManager.PushState(new NewGameCreateDebugWorldState(Game, StateManager)));
 
             MakeMenuItem(frame, "Back", "Go back to main menu.", (sender, args) => 
                 StateManager.PopState());

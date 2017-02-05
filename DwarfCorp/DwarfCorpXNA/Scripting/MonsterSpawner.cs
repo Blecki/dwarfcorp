@@ -63,7 +63,7 @@ namespace DwarfCorp
 
         public void Update(DwarfTime t)
         {
-            bool shouldSpawn = WorldManager.Time.IsNight() && Math.Abs(WorldManager.Time.CurrentDate.TimeOfDay.Hours - LastSpawnHour) > SpawnRate;
+            bool shouldSpawn = DwarfGame.World.Time.IsNight() && Math.Abs(DwarfGame.World.Time.CurrentDate.TimeOfDay.Hours - LastSpawnHour) > SpawnRate;
 
             if (shouldSpawn)
             {
@@ -80,7 +80,7 @@ namespace DwarfCorp
         {
             float padding = 2.0f;
             int side = MathFunctions.Random.Next(4);
-            BoundingBox bounds = WorldManager.ChunkManager.Bounds;
+            BoundingBox bounds = DwarfGame.World.ChunkManager.Bounds;
             Vector3 pos = Vector3.Zero;
             switch (side)
             {

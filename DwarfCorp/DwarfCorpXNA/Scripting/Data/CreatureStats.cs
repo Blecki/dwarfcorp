@@ -159,7 +159,7 @@ namespace DwarfCorp
                     if (!announced)
                     {
                         announced = true;
-                        WorldManager.MakeAnnouncement(String.Format("{0} ({1}) wants a promotion!",
+                        DwarfGame.World.MakeAnnouncement(String.Format("{0} ({1}) wants a promotion!",
                                 FullName, CurrentLevel.Name),
                             String.Format("{0} can now be promoted to {1}.",
                                 FullName, CurrentClass.Levels[LevelIndex + 1].Name),

@@ -110,7 +110,7 @@ namespace DwarfCorp.GameStates
                     CompanyInformation.Motto = MottoField.Text;
 
                     // Why are they stored as statics on this class???
-                    StateManager.PushState("NewGameChooseWorldState");
+                    StateManager.PushState(new NewGameChooseWorldState(Game, Game.StateManager));
                 },
                 AutoLayout = AutoLayout.FloatBottomRight
             });

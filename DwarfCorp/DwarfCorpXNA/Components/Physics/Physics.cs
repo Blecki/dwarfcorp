@@ -440,7 +440,7 @@ namespace DwarfCorp
 
             if (IsInLiquid && Velocity.LengthSquared() > 0.5f)
             {
-                WorldManager.ParticleManager.Trigger("splat", Position + MathFunctions.RandVector3Box(-0.5f, 0.5f, 0.1f, 0.25f, -0.5f, 0.5f), Color.White, MathFunctions.Random.Next(0, 2));
+                DwarfGame.World.ParticleManager.Trigger("splat", Position + MathFunctions.RandVector3Box(-0.5f, 0.5f, 0.1f, 0.25f, -0.5f, 0.5f), Color.White, MathFunctions.Random.Next(0, 2));
             }
 
             if (successBelow && belowVoxel.WaterLevel > 5)
@@ -655,7 +655,7 @@ namespace DwarfCorp
 
         public Vector3 ClampToBounds(Vector3 vector3)
         {
-            return MathFunctions.Clamp(vector3, WorldManager.ChunkManager.Bounds);
+            return MathFunctions.Clamp(vector3, DwarfGame.World.ChunkManager.Bounds);
         }
     }
 

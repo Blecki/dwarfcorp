@@ -51,7 +51,7 @@ namespace DwarfCorp
         public static void Initialize()
         {
             EmbarkmentLibrary = ContentPaths.LoadFromJson<Dictionary<string, Embarkment>>(ContentPaths.World.embarks);
-            WorldManager.InitialEmbark = EmbarkmentLibrary["Normal"];
+            DwarfGame.World.InitialEmbark = EmbarkmentLibrary["Normal"];
         }
     }
 

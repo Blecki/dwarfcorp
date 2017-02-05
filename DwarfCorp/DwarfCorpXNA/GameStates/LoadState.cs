@@ -48,37 +48,47 @@ namespace DwarfCorp.GameStates
         {
             // Todo: Decouple gui/input from world.
             // Copy important bits to PlayState - This is a hack; decouple world from gui and input instead.
-            PlayState.World = World;
+            DwarfGame.World = World;
             PlayState.Input = Input;
             PlayState.GUI = GUI;
 
             // Hack: So that saved games still load.
-            if (WorldManager.PlayerCompany.Information == null)
-                WorldManager.PlayerCompany.Information = new CompanyInformation();
+            if (DwarfGame.World.PlayerCompany.Information == null)
+                DwarfGame.World.PlayerCompany.Information = new CompanyInformation();
 
             StateManager.PopState();
-            StateManager.PushState("PlayState");            
+            StateManager.PushState(new PlayState(Game, StateManager));            
         }
 
         public override void OnEnter()
         {
-                IsInitialized = true;
+            IsInitialized = true;
 
-                IndicatorManager.SetupStandards();
+            IndicatorManager.SetupStandards();
 
-                World = new WorldManager(Game);
-                World.OnLoadedEvent += World_OnLoadedEvent;
+            // TODO: Had to copy static state over from DwarfGame here. Shouldn't be necessary.
+            // instead these functions should be instantiated inside LoadState.
+            World = new WorldManager(Game)
+            {
+                WorldOrigin = DwarfGame.World.WorldOrigin,
+                WorldScale = DwarfGame.World.WorldScale,
+                WorldSize = DwarfGame.World.WorldSize,
+                InitialEmbark = DwarfGame.World.InitialEmbark,
+                ExistingFile = DwarfGame.World.ExistingFile
+            };
+            DwarfGame.World = World;
+            World.OnLoadedEvent += World_OnLoadedEvent;
 
             // Todo - Save gui creation for play state. We're only creating it here so we can give it to
             //      the world class. The world doesn't need it until after loading.
-                GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default),
-                    Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title),
-                    Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
+            GUI = new DwarfGUI(Game, Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default),
+                Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Title),
+                Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
 
-                GUI.ToolTipManager.InfoLocation = new Point(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height);
-                GUI.MouseMode = GUISkin.MousePointer.Wait;
+            GUI.ToolTipManager.InfoLocation = new Point(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height);
+            GUI.MouseMode = GUISkin.MousePointer.Wait;
 
-                World.Setup(GUI);
+            World.Setup(GUI);
 
             base.OnEnter();
         }

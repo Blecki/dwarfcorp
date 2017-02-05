@@ -88,9 +88,9 @@ namespace DwarfCorp
 
             List<CreatureAI> sensed = new List<CreatureAI>();
             List<CreatureAI> collide = new List<CreatureAI>();
-            foreach (KeyValuePair<string, Faction> faction in WorldManager.ComponentManager.Factions.Factions)
+            foreach (KeyValuePair<string, Faction> faction in DwarfGame.World.ComponentManager.Factions.Factions)
             {
-                if (WorldManager.ComponentManager.Diplomacy.GetPolitics(Allies, faction.Value).GetCurrentRelationship() !=
+                if (DwarfGame.World.ComponentManager.Diplomacy.GetPolitics(Allies, faction.Value).GetCurrentRelationship() !=
                     Relationship.Hateful) continue;
 
                 foreach (CreatureAI minion in faction.Value.Minions)
@@ -105,7 +105,7 @@ namespace DwarfCorp
 
                     float dist = (minion.Position - GlobalTransform.Translation).LengthSquared();
 
-                    if (dist < SenseRadius && !WorldManager.ChunkManager.ChunkData.CheckRaySolid(Position, minion.Position))
+                    if (dist < SenseRadius && !DwarfGame.World.ChunkManager.ChunkData.CheckRaySolid(Position, minion.Position))
                     {
                         sensed.Add(minion);
                     }

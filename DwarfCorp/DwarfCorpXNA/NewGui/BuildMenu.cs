@@ -109,7 +109,7 @@ namespace DwarfCorp.NewGui
                             Master.Faction.WallBuilder.CurrentVoxelType = null;
                             Master.Faction.CraftBuilder.IsEnabled = false;
                             Master.CurrentToolMode = GameMaster.ToolMode.Build;
-                            WorldManager.ShowTooltip("Click and drag to build " + item.Name);
+                            DwarfGame.World.ShowTooltip("Click and drag to build " + item.Name);
                             this.Close();
                         };
                     });
@@ -150,7 +150,7 @@ namespace DwarfCorp.NewGui
                                 Master.Faction.WallBuilder.CurrentVoxelType = item.Data as VoxelType;
                                 Master.Faction.CraftBuilder.IsEnabled = false;
                                 Master.CurrentToolMode = GameMaster.ToolMode.Build;
-                                WorldManager.ShowTooltip("Click and drag to build " + item.Name + " wall.");
+                                DwarfGame.World.ShowTooltip("Click and drag to build " + item.Name + " wall.");
                                 this.Close();
                             };
                     });
@@ -191,7 +191,7 @@ namespace DwarfCorp.NewGui
                                 AutoLayout = Gum.AutoLayout.DockTop
                             });
 
-                        var nearestBuildLocation = WorldManager.PlayerFaction.FindNearestItemWithTags(data.CraftLocation, Vector3.Zero, false);
+                        var nearestBuildLocation = DwarfGame.World.PlayerFaction.FindNearestItemWithTags(data.CraftLocation, Vector3.Zero, false);
 
                         if (nearestBuildLocation == null)
                         {

@@ -159,13 +159,13 @@ namespace DwarfCorp
             IsBuilt = true;
             ToBuild.IsBuilt = true;
             List<Body> components = RoomLibrary.GenerateRoomComponentsTemplate(ToBuild.RoomData, ToBuild.Voxels,
-                Faction.Components, WorldManager.ChunkManager.Content, WorldManager.ChunkManager.Graphics);
+                Faction.Components, DwarfGame.World.ChunkManager.Content, DwarfGame.World.ChunkManager.Graphics);
             RoomLibrary.BuildAllComponents(components, ToBuild);
             ToBuild.OnBuilt();
 
             if (!silent)
             {
-                WorldManager.MakeAnnouncement("Built room!", String.Format("{0} was built", ToBuild.ID));
+                DwarfGame.World.MakeAnnouncement("Built room!", String.Format("{0} was built", ToBuild.ID));
             }
 
             foreach (GameComponent fence in WorkObjects)

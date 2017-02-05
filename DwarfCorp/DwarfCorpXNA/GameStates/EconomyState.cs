@@ -72,7 +72,7 @@ namespace DwarfCorp.GameStates
         {
             if (Game.StateManager.NextState == null)
             {
-                Game.StateManager.PushState("EconomyState");
+                Game.StateManager.PushState(new EconomyState(Game, Game.StateManager));
             }
         }
 
@@ -107,7 +107,7 @@ namespace DwarfCorp.GameStates
 
 
            CreateTabButton(tabLayout, "Employees", "Hire and fire dwarves", 5, 0);
-            EmployeeDisplay employeeDisplay = new EmployeeDisplay(GUI, Layout, WorldManager.Master.Faction)
+            EmployeeDisplay employeeDisplay = new EmployeeDisplay(GUI, Layout, DwarfGame.World.Master.Faction)
             {
                 IsVisible = false
             };
@@ -115,7 +115,7 @@ namespace DwarfCorp.GameStates
            
 
            CreateTabButton(tabLayout, "Capital", "Financial report", 2, 1);
-           CapitalPanel capitalPanel = new CapitalPanel(GUI, Layout, WorldManager.Master.Faction)
+           CapitalPanel capitalPanel = new CapitalPanel(GUI, Layout, DwarfGame.World.Master.Faction)
            {
                IsVisible = false
            };
@@ -203,7 +203,7 @@ namespace DwarfCorp.GameStates
      
         private void back_OnClicked()
         {
-            WorldManager.SetMouse(WorldManager.MousePointer);
+            DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
             StateManager.PopState();
         }
 

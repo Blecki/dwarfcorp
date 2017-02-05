@@ -65,14 +65,15 @@ namespace DwarfCorp.GameStates
             Game.IsMouseVisible = false;
             IntroTimer.Update(gameTime);
 
-            if(IntroTimer.HasTriggered)
+            if (IntroTimer.HasTriggered)
             {
-                StateManager.PushState("MainMenuState");
+                StateManager.PopState();
+                StateManager.PushState(new MainMenuState(Game, StateManager));
             }
-
-            if(Keyboard.GetState().GetPressedKeys().Length > 0)
+            else if (Keyboard.GetState().GetPressedKeys().Length > 0)
             {
-                StateManager.PushState("MainMenuState");
+                StateManager.PopState();
+                StateManager.PushState(new MainMenuState(Game, StateManager));
             }
 
             base.Update(gameTime);

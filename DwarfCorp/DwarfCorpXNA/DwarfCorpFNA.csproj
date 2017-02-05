@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\DwarfCorpFNA\bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,7 +26,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\DwarfCorpFNA\bin\Release\</OutputPath>
     <DefineConstants>WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -39,6 +39,9 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Management.Instrumentation" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssetManagement\ContentPathGenerator.cs" />
@@ -199,6 +202,7 @@
     <Compile Include="Graphics\Primitives\LiquidPrimitive.cs" />
     <Compile Include="Graphics\Primitives\PrimitiveLibrary.cs" />
     <Compile Include="Graphics\Primitives\VoxelListPrimitive.cs" />
+    <Compile Include="Graphics\SelectionBuffer.cs" />
     <Compile Include="GUI\Components\Basic\AnimatedImagePanel.cs" />
     <Compile Include="GUI\Components\Basic\Button.cs" />
     <Compile Include="GUI\Components\Basic\Checkbox.cs" />
@@ -224,7 +228,6 @@
     <Compile Include="GUI\Components\Basic\Window.cs" />
     <Compile Include="GUI\Components\Complex\ActDisplay.cs" />
     <Compile Include="GUI\Components\Complex\AIDebugger.cs" />
-    <Compile Include="GUI\Components\Complex\AnnounementViewer.cs" />
     <Compile Include="GUI\Components\Complex\ApplicationPanel.cs" />
     <Compile Include="GUI\Components\Complex\BuildMenu.cs" />
     <Compile Include="GUI\Components\Complex\CapitalPanel.cs" />
@@ -238,10 +241,7 @@
     <Compile Include="GUI\Components\Complex\ItemSelector.cs" />
     <Compile Include="GUI\Components\Complex\KeyEditor.cs" />
     <Compile Include="GUI\Components\Complex\MagicMenu.cs" />
-    <Compile Include="GUI\Components\Complex\MasterControls.cs" />
-    <Compile Include="GUI\Components\Complex\Minimap.cs" />
     <Compile Include="GUI\Components\Complex\MinionPanel.cs" />
-    <Compile Include="GUI\Components\Complex\ResourceInfoComponent.cs" />
     <Compile Include="GUI\Components\Complex\SpellTreeDisplay.cs" />
     <Compile Include="GUI\Components\Complex\StockTicker.cs" />
     <Compile Include="GUI\Components\Complex\TabSelector.cs" />
@@ -260,10 +260,16 @@
     <Compile Include="LanguageGenerator\Language.cs" />
     <Compile Include="LanguageGenerator\TextAtom.cs" />
     <Compile Include="LanguageGenerator\TextGenerator.cs" />
+    <Compile Include="NewGui\AnnouncementPopup.cs" />
     <Compile Include="NewGui\CompanyLogo.cs" />
     <Compile Include="NewGui\Confirm.cs" />
+    <Compile Include="NewGui\FramedIcon.cs" />
+    <Compile Include="NewGui\GameSpeedControls.cs" />
     <Compile Include="NewGui\GridChooser.cs" />
     <Compile Include="NewGui\GridPanel.cs" />
+    <Compile Include="NewGui\IconTray.cs" />
+    <Compile Include="NewGui\InfoTicker.cs" />
+    <Compile Include="NewGui\Minimap.cs" />
     <Compile Include="NewGui\Popup.cs" />
     <Compile Include="ProgramData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -361,8 +367,6 @@
     <Compile Include="Scripting\Magic\SpellLibrary.cs" />
     <Compile Include="Scripting\Magic\SpellTree.cs" />
     <Compile Include="Scripting\MonsterSpawner.cs" />
-    <Compile Include="Scripting\Player\Announcements\Announcement.cs" />
-    <Compile Include="Scripting\Player\Announcements\AnnouncementManager.cs" />
     <Compile Include="Scripting\Player\BodySelector.cs" />
     <Compile Include="Scripting\Player\Building\BuildOrder.cs" />
     <Compile Include="Scripting\Player\Building\BuildRoomOrder.cs" />
@@ -564,6 +568,10 @@
       <Project>{35253ce1-c864-4cd3-8249-4d1319748e8f}</Project>
       <Name>FNA</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\gemgui\Gum\FnaGum.csproj">
+      <Project>{803efe3a-4db5-4f86-b212-273350ed9c07}</Project>
+      <Name>FnaGum</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LibNoise\LibNoise.csproj">
       <Project>{031c8cff-f147-44ea-b7e5-0a5644808a7e}</Project>
       <Name>LibNoise</Name>
@@ -572,31 +580,49 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>echo "Building for OSX"
-XCOPY "$(ProjectDir)\FNA_libs\osx\*" "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
-XCOPY "$(ProjectDir)\FNA_libs\mono\*" "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
+
+if not exist "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" MD "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS"
+XCOPY "$(ProjectDir)Build_Metadata\osx\*" "$(ProjectDir)build\osx" /Y /E /V
+XCOPY "$(ProjectDir)FNA_libs\osx\*" "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
+
+XCOPY "$(ProjectDir)FNA_libs\mono\*" "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
+
 XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
 
+
 echo "Building for linux 32"
+
 MD "$(ProjectDir)\build\linux32"
+
 XCOPY "$(ProjectDir)\FNA_libs\lib\*" "$(ProjectDir)\build\linux32" /Y /E /V
+
 XCOPY "$(ProjectDir)\FNA_libs\mono\*" "$(ProjectDir)\build\linux32" /Y /E /V
+
 XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\linux32" /Y /E /V
+
 
 echo "Building for linux 64"
 MD "$(ProjectDir)\build\linux64"
+
 XCOPY "$(ProjectDir)\FNA_libs\lib64\*" "$(ProjectDir)\build\linux64" /Y /E /V
 XCOPY "$(ProjectDir)\FNA_libs\mono\*" "$(ProjectDir)\build\linux64" /Y /E /V
+
 XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\linux64" /Y /E /V
 
+
 echo "Building for windows"
+
+if not exist "$(ProjectDir)\build\win32" MD "$(ProjectDir)\build\win32"
 XCOPY "$(ProjectDir)\FNA_libs\win32\*" "$(ProjectDir)\$(OutDir)" /Y /E /V
 XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)build\win32" /Y /E /V</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>RD /S /Q "$(ProjectDir)$(OutDir)
-MD $(ProjectDir)$(OutDir)
-MD $(ProjectDir)$(OutDir)Content
+    <PreBuildEvent>RD /S /Q "$(ProjectDir)$(OutDir)"
+if not exist "$(ProjectDir)$(OutDir)" MD "$(ProjectDir)$(OutDir)"
+
+if not exist "$(ProjectDir)$(OutDir)Content" MD "$(ProjectDir)$(OutDir)Content"
 ECHO "$(ProjectDir)..\DwarfCorpXNA\bin\x86\$(ConfigurationName)\Content" 
+
 XCOPY "$(ProjectDir)\..\DwarfCorpXNA\bin\x86\$(ConfigurationName)\Content" "$(ProjectDir)$(OutDir)Content" /Y /E</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

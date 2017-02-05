@@ -228,7 +228,7 @@ namespace DwarfCorp
 
         public void Update(MouseState mouseState, KeyboardState keyState, DwarfGame game, DwarfTime time)
         {
-            WorldManager.SetMouse(WorldManager.MousePointer);
+            DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
         }
 
         private void BuildNewVoxels(IEnumerable<Voxel> refs)
@@ -285,7 +285,7 @@ namespace DwarfCorp
                 TaskManager.AssignTasks(new List<Task>()
                 {
                     new BuildRoomTask(order)
-                }, Faction.FilterMinionsWithCapability(WorldManager.Master.SelectedMinions, GameMaster.ToolMode.Build));
+                }, Faction.FilterMinionsWithCapability(DwarfGame.World.Master.SelectedMinions, GameMaster.ToolMode.Build));
             }
         }
 
@@ -319,7 +319,7 @@ namespace DwarfCorp
             {
                 if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                 {
-                    WorldManager.ShowTooltip("None of the selected units can build rooms.");
+                    DwarfGame.World.ShowTooltip("None of the selected units can build rooms.");
                 }
                 else if (CurrentRoomData.Verify(refs, Faction))
                 {
@@ -343,10 +343,10 @@ namespace DwarfCorp
                         tip += "\n";
                     }
 
-                    WorldManager.ShowTooltip("Release to build her.");
+                    DwarfGame.World.ShowTooltip("Release to build her.");
 
                     displayObjects = RoomLibrary.GenerateRoomComponentsTemplate(CurrentRoomData, refs, Faction.Components, 
-                        WorldManager.ChunkManager.Content, WorldManager.ChunkManager.Graphics);
+                        DwarfGame.World.ChunkManager.Content, DwarfGame.World.ChunkManager.Graphics);
 
                     foreach(Body thing in displayObjects)
                     {
@@ -376,7 +376,7 @@ namespace DwarfCorp
             {
                 if (Faction.FilterMinionsWithCapability(Faction.SelectedMinions, GameMaster.ToolMode.Build).Count == 0)
                 {
-                    WorldManager.ShowTooltip("None of the selected units can build rooms.");
+                    DwarfGame.World.ShowTooltip("None of the selected units can build rooms.");
                 }
                 else if (CurrentRoomData.Verify(refs, Faction))
                 {
@@ -408,7 +408,7 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    WorldManager.NewGui.ShowDialog(new NewGui.Confirm
+                    DwarfGame.World.NewGui.ShowDialog(new NewGui.Confirm
                         {
                             Text = "Do you want to destroy this " + Drawer2D.WrapColor(existingRoom.RoomData.Name, Color.DarkRed) + "?",
                             OnClose = (sender) => destroyDialog_OnClosed((sender as NewGui.Confirm).DialogResult, existingRoom)

@@ -82,61 +82,58 @@ namespace DwarfCorp.GameStates
                 {
                     Overworld.CreateHillsLand(Game.GraphicsDevice);
                     StateManager.ClearState();
-                    WorldManager.ExistingFile = null;
-                    StateManager.PushState("LoadState");
-                    WorldManager.WorldSize = new Point3(8, 1, 8);
-                    WorldManager.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / WorldManager.WorldScale,
-                                                                     Overworld.Map.GetLength(1) / WorldManager.WorldScale) * 0.5f;
+                    DwarfGame.World.ExistingFile = null;
+                    DwarfGame.World.WorldSize = new Point3(8, 1, 8);
+                    DwarfGame.World.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / DwarfGame.World.WorldScale,
+                                                                     Overworld.Map.GetLength(1) / DwarfGame.World.WorldScale) * 0.5f;
+                    StateManager.PushState(new LoadState(Game, StateManager));
                 });
 
             MakeMenuItem(frame, "Cliffs", "Create a cliff-y world.", (sender, args) =>
                 {
                     Overworld.CreateCliffsLand(Game.GraphicsDevice);
                     StateManager.ClearState();
-                    WorldManager.ExistingFile = null;
-                    StateManager.PushState("LoadState");
-                    WorldManager.WorldSize = new Point3(8, 1, 8);
+                    DwarfGame.World.ExistingFile = null;
+                    DwarfGame.World.WorldSize = new Point3(8, 1, 8);
                     //GUI.MouseMode = GUISkin.MousePointer.Wait;
-                    WorldManager.Natives = new List<Faction>();
+                    DwarfGame.World.Natives = new List<Faction>();
                     FactionLibrary library = new FactionLibrary();
                     library.Initialize(null, new CompanyInformation());
                     for (int i = 0; i < 10; i++)
                     {
-                        WorldManager.Natives.Add(library.GenerateFaction(i, 10));
+                        DwarfGame.World.Natives.Add(library.GenerateFaction(i, 10));
                     }
-                    WorldManager.WorldSize = new Point3(8, 1, 8);
-                    WorldManager.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / WorldManager.WorldScale,
-                                                                     Overworld.Map.GetLength(1) / WorldManager.WorldScale) * 0.5f;
+                    DwarfGame.World.WorldSize = new Point3(8, 1, 8);
+                    DwarfGame.World.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / DwarfGame.World.WorldScale,
+                                                                     Overworld.Map.GetLength(1) / DwarfGame.World.WorldScale) * 0.5f;
+                    StateManager.PushState(new LoadState(Game, StateManager));
                 });
 
             MakeMenuItem(frame, "Flat", "Create a flat world.", (sender, args) =>
                 {
                     Overworld.CreateUniformLand(Game.GraphicsDevice);
                     StateManager.ClearState();
-                    WorldManager.ExistingFile = null;
-                    StateManager.PushState("LoadState");
-                    WorldManager.WorldSize = new Point3(8, 1, 8);
-                    WorldManager.WorldSize = new Point3(8, 1, 8);
-                    WorldManager.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / WorldManager.WorldScale,
-                                                                     Overworld.Map.GetLength(1) / WorldManager.WorldScale) * 0.5f;
+                    DwarfGame.World.ExistingFile = null;
+                    DwarfGame.World.WorldSize = new Point3(8, 1, 8);
+                    DwarfGame.World.WorldSize = new Point3(8, 1, 8);
+                    DwarfGame.World.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / DwarfGame.World.WorldScale,
+                                                                     Overworld.Map.GetLength(1) / DwarfGame.World.WorldScale) * 0.5f;
+                    StateManager.PushState(new LoadState(Game, StateManager));
                 });
 
             MakeMenuItem(frame, "Ocean", "Create an ocean world", (sender, args) =>
                 {
                     Overworld.CreateOceanLand(Game.GraphicsDevice);
                     StateManager.ClearState();
-                    WorldManager.ExistingFile = null;
-                    StateManager.PushState("LoadState");
-                    WorldManager.WorldSize = new Point3(8, 1, 8);
-                    WorldManager.WorldSize = new Point3(8, 1, 8);
-                    WorldManager.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / WorldManager.WorldScale,
-                                                                     Overworld.Map.GetLength(1) / WorldManager.WorldScale) * 0.5f;
+                    DwarfGame.World.ExistingFile = null;
+                    DwarfGame.World.WorldSize = new Point3(8, 1, 8);
+                    DwarfGame.World.WorldSize = new Point3(8, 1, 8);
+                    DwarfGame.World.WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / DwarfGame.World.WorldScale,
+                                                                     Overworld.Map.GetLength(1) / DwarfGame.World.WorldScale) * 0.5f;
+                    StateManager.PushState(new LoadState(Game, StateManager));
                 });
 
-            MakeMenuItem(frame, "Back", "Go back to the main menu.", (sender, args) => 
-                {
-                    StateManager.PopState();
-                });
+            MakeMenuItem(frame, "Back", "Go back to the main menu.", (sender, args) => StateManager.PopState());
 
             GuiRoot.RootItem.Layout();
         }

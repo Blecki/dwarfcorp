@@ -17,13 +17,13 @@ namespace DwarfCorp.GameStates
         public static WorldManager World { get; set; }
         public GameMaster Master
         {
-            get { return WorldManager.Master; }
-            set { WorldManager.Master = value; }
+            get { return DwarfGame.World.Master; }
+            set { DwarfGame.World.Master = value; }
         }
         public static bool Paused
         {
-            get { return WorldManager.Paused; }
-            set { WorldManager.Paused = value; }
+            get { return DwarfGame.World.Paused; }
+            set { DwarfGame.World.Paused = value; }
         }
 
         // ------GUI--------
@@ -89,24 +89,23 @@ namespace DwarfCorp.GameStates
                 // Setup new gui. Double rendering the mouse?
                 NewGui = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
                 NewGui.MousePointer = new Gum.MousePointer("mouse", 4, 0);
-                WorldManager.NewGui = NewGui;
+                DwarfGame.World.NewGui = NewGui;
 
                 // Setup input event handlers. All of the actions should already be established - just 
                 // need handlers.
                 DwarfGame.GumInput.ClearAllHandlers();
 
-                WorldManager.ShowInfo += (text) =>
+                DwarfGame.World.ShowInfo += (text) =>
                     {
                         InfoTicker.AddMessage(text);
                     };
 
-                WorldManager.ShowTooltip += (text) =>
+                DwarfGame.World.ShowTooltip += (text) =>
                     {
-                        // Todo - Actually put this at the mouse position.
-                        NewGui.ShowTooltip(new Point(0, 0), text);
+                        NewGui.ShowTooltip(NewGui.MousePosition, text);
                     };
 
-                WorldManager.SetMouse += (mouse) =>
+                DwarfGame.World.SetMouse += (mouse) =>
                     {
                         NewGui.MousePointer = mouse;
                     };
@@ -166,8 +165,8 @@ namespace DwarfCorp.GameStates
 
             #region Update time label
             TimeLabel.Text = String.Format("{0} {1}",
-                WorldManager.Time.CurrentDate.ToShortDateString(),
-                WorldManager.Time.CurrentDate.ToShortTimeString());
+                DwarfGame.World.Time.CurrentDate.ToShortDateString(),
+                DwarfGame.World.Time.CurrentDate.ToShortTimeString());
             TimeLabel.Invalidate();
             #endregion
 
@@ -179,8 +178,8 @@ namespace DwarfCorp.GameStates
             StockLabel.Invalidate();
 
             LevelLabel.Text = String.Format("{0}/{1}",
-                WorldManager.ChunkManager.ChunkData.MaxViewingLevel,
-                WorldManager.ChunkHeight);
+                DwarfGame.World.ChunkManager.ChunkData.MaxViewingLevel,
+                DwarfGame.World.ChunkHeight);
             LevelLabel.Invalidate();
             #endregion
 
@@ -334,13 +333,13 @@ namespace DwarfCorp.GameStates
                     MinimumSize = new Point(32, 32),
                     MaximumSize = new Point(32, 32),
                     AutoLayout = Gum.AutoLayout.None,
-                    CompanyInformation = WorldManager.PlayerCompany.Information
+                    CompanyInformation = DwarfGame.World.PlayerCompany.Information
                 });
 
             NewGui.RootItem.AddChild(new Gum.Widget
                 {
                     Rect = new Rectangle(48,8,256,20),
-                    Text = WorldManager.PlayerCompany.Information.Name,
+                    Text = DwarfGame.World.PlayerCompany.Information.Name,
                     AutoLayout = Gum.AutoLayout.None,
                     Font = "outline-font",
                     TextColor = new Vector4(1,1,1,1)
@@ -421,8 +420,8 @@ namespace DwarfCorp.GameStates
                 OnLayout = (sender) => sender.Rect.X += 18,
                 OnClick = (sender, args) =>
                 {
-                    WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(
-                        WorldManager.ChunkManager.ChunkData.MaxViewingLevel - 1,
+                    DwarfGame.World.ChunkManager.ChunkData.SetMaxViewingLevel(
+                        DwarfGame.World.ChunkManager.ChunkData.MaxViewingLevel - 1,
                         ChunkManager.SliceMode.Y);
                 }
             });
@@ -435,8 +434,8 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gum.AutoLayout.FloatLeft,
                 OnClick = (sender, args) =>
                 {
-                    WorldManager.ChunkManager.ChunkData.SetMaxViewingLevel(
-                        WorldManager.ChunkManager.ChunkData.MaxViewingLevel + 1,
+                    DwarfGame.World.ChunkManager.ChunkData.SetMaxViewingLevel(
+                        DwarfGame.World.ChunkManager.ChunkData.MaxViewingLevel + 1,
                         ChunkManager.SliceMode.Y);
                 }
             });            
@@ -510,7 +509,7 @@ namespace DwarfCorp.GameStates
                             new NewGui.FramedIcon
                             {
                                 Icon = new Gum.TileReference("tool-icons", 10),
-                                OnClick = (sender, args) => StateManager.PushState("EconomyState")
+                                OnClick = (sender, args) => StateManager.PushState(new EconomyState(Game, StateManager))
                         },
                         new NewGui.FramedIcon
                         {
@@ -537,7 +536,7 @@ namespace DwarfCorp.GameStates
 
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
 
-            WorldManager.OnAnnouncement = (title, message, clickAction) =>
+            DwarfGame.World.OnAnnouncement = (title, message, clickAction) =>
                 {
                     var announcer = NewGui.RootItem.AddChild(new NewGui.AnnouncementPopup
                     {
@@ -710,11 +709,11 @@ namespace DwarfCorp.GameStates
                     PausePanel = null;
                 });
 
-            MakeMenuItem(PausePanel, "Options", "", (sender, args) => StateManager.PushState("OptionsState"));
+            MakeMenuItem(PausePanel, "Options", "", (sender, args) => StateManager.PushState(new OptionsState(Game, StateManager)));
 
             MakeMenuItem(PausePanel, "New Options", "", (sender, args) =>
                 {
-                    StateManager.GetState<NewOptionsState>("NewOptionsState").OnClosed = () =>
+                    StateManager.GetState<NewOptionsState>().OnClosed = () =>
                     {
                         NewGui.ResizeVirtualScreen(new Point(640, 480));
                         NewGui.ResetGui();
@@ -722,7 +721,7 @@ namespace DwarfCorp.GameStates
                         OpenPauseMenu();
                     };
 
-                    StateManager.PushState("NewOptionsState");
+                    StateManager.PushState(new NewOptionsState(Game, StateManager));
                 });
 
             MakeMenuItem(PausePanel, "Save", "",
@@ -735,7 +734,7 @@ namespace DwarfCorp.GameStates
                         {
                             if ((s as NewGui.Confirm).DialogResult == DwarfCorp.NewGui.Confirm.Result.OKAY)
                                 World.Save(
-                                    String.Format("{0}_{1}", Overworld.Name, WorldManager.GameID),
+                                    String.Format("{0}_{1}", Overworld.Name, DwarfGame.World.GameID),
                                     (success, exception) =>
                                     {
                                         NewGui.ShowPopup(new NewGui.Popup
@@ -770,9 +769,9 @@ namespace DwarfCorp.GameStates
             // This line needs to stay in so the GC can properly collect all the items the PlayState keeps active.
             // If you want to remove this line you better be prepared to fully clean up the PlayState instance
             // using another method.
-            StateManager.States["PlayState"] = new PlayState(Game, StateManager);
+            //StateManager.States["PlayState"] = new PlayState(Game, StateManager);
             
-            StateManager.PushState("MainMenuState");
+            StateManager.PushState(new MainMenuState(Game, StateManager));
         }
     }
 }   
