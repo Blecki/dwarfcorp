@@ -1012,7 +1012,7 @@ namespace DwarfCorp.GameStates
 
                 currentPos = bestPos;
 
-                const float erosionRate = 0.99f;
+                const float erosionRate = 0.9f;
                 Vector2 velocity = Vector2.Zero;
                 for(int j = 0; j < rainLength; j++)
                 {
