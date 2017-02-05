@@ -166,6 +166,8 @@ namespace DwarfCorp
                                                             return new Weather.Cloud(0.1f, 50, 40, position);
             });
             RegisterEntity("Chicken", (position, data) => new Chicken(position, DwarfGame.World.ComponentManager, DwarfGame.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Chicken"));
+            RegisterEntity("MudGolem", (position, data) => new MudGolem(new CreatureStats(new MudGolemClass(), 0), "Carnivore", DwarfGame.World.PlanService,  DwarfGame.World.ComponentManager.Factions.Factions["Carnivore"], DwarfGame.World.ComponentManager, "Mud Golem", DwarfGame.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position));
+            RegisterEntity("Mud", (position, data) => new MudProjectile(position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
         }
 
         private static GameComponent CreateRandomFood(Vector3 position)

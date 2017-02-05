@@ -81,6 +81,17 @@ namespace DwarfCorp
             DistortPosition = true;
         }
 
+        public void SetSimpleAnimation(int row = 0)
+        {
+            List<Point> frames = new List<Point>();
+
+            for (int c = 0; c < SpriteSheet.Width/SpriteSheet.FrameWidth; c++)
+            {
+                frames.Add(new Point(c, row));
+            }
+            AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", frames, true, Color.White, 1.0f, false));
+        }
+
         public void SetSingleFrameAnimation(Point frame)
         {
             AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", new List<Point>() { frame }, true, Color.White, 10.0f, false));

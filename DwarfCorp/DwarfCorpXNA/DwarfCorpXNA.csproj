@@ -195,6 +195,7 @@
     <Compile Include="Entities\Monsters\Fairy.cs" />
     <Compile Include="Entities\Monsters\Goblin.cs" />
     <Compile Include="Entities\Monsters\Moleman.cs" />
+    <Compile Include="Entities\Monsters\MudGolem.cs" />
     <Compile Include="Entities\Monsters\Necromancer.cs" />
     <Compile Include="Entities\Monsters\NecromancerAI.cs" />
     <Compile Include="Entities\Monsters\Skeleton.cs" />
