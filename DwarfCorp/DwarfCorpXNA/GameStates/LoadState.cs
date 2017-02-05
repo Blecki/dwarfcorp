@@ -86,7 +86,7 @@ namespace DwarfCorp.GameStates
                 Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
 
             GUI.ToolTipManager.InfoLocation = new Point(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height);
-            GUI.MouseMode = GUISkin.MousePointer.Wait;
+            GUI.MouseMode = GUISkin.MousePointer.Pointer;
 
             World.Setup(GUI);
 

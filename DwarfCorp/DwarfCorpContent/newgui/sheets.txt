@@ -136,6 +136,12 @@
 			"TileHeight": 32
 		},
 		{
+			"Name": "tray-border-transparent",
+			"Texture": "newgui/tray-border-transparent",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
 			"Name": "round-buttons",
 			"Texture": "newgui/round-buttons",
 			"TileWidth": 16,
