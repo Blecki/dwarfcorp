@@ -16,6 +16,9 @@ namespace DwarfCorp.GameStates
         public static DwarfGUI GUI = null;
         private DwarfRunner Runner;
 
+        private Gum.Root GuiRoot;
+        private Gum.Widget Tip;
+
         // Displays tips when the game is loading.
         public List<string> LoadingTips = new List<string>()
         {
@@ -94,6 +97,20 @@ namespace DwarfCorp.GameStates
             World.Setup(GUI);
 
             DwarfGame.GumInputMapper.GetInputQueue();
+            GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
+
+            Tip = GuiRoot.RootItem.AddChild(new Gum.Widget
+            {
+                Font = "outline-font",
+                TextColor = new Vector4(1, 1, 1, 1),
+                MinimumSize = new Point(0, 128),
+                TextHorizontalAlign = Gum.HorizontalAlign.Center,
+                TextVerticalAlign = Gum.VerticalAlign.Center,
+                Text = "Press any key to jump!",
+                AutoLayout = Gum.AutoLayout.DockBottom
+            });
+
+            GuiRoot.RootItem.Layout();
 
             base.OnEnter();
         }
@@ -114,8 +131,8 @@ namespace DwarfCorp.GameStates
             TipTimer.Update(gameTime);
             if (TipTimer.HasTriggered)
             {
-                World.LoadingMessageBottom = LoadingTips[MathFunctions.Random.Next(LoadingTips.Count)];
-                TipIndex++;
+                Tip.Text = LoadingTips[MathFunctions.Random.Next(LoadingTips.Count)];
+                Tip.Invalidate();
             }
 
             EnableScreensaver = true;
@@ -123,6 +140,7 @@ namespace DwarfCorp.GameStates
             base.Render(gameTime);
 
             Runner.Render(Game.GraphicsDevice, DwarfGame.SpriteBatch, gameTime);
+            GuiRoot.Draw();
         }
 
     }

@@ -133,7 +133,8 @@
 			"Name": "tray-border",
 			"Texture": "newgui/tray-border",
 			"TileWidth": 32,
-			"TileHeight": 32
+			"TileHeight": 32,
+			"RepeatWhenUsedAsBorder": true
 		},
 		{
 			"Name": "tray-border-transparent",
