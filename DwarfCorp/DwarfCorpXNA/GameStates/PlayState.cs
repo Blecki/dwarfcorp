@@ -41,7 +41,7 @@ namespace DwarfCorp.GameStates
         private NewGui.MinimapRenderer MinimapRenderer;
         private NewGui.GameSpeedControls GameSpeedControls;
         private Gum.Widget ResourcePanel;
-        private NewGui.InfoTicker InfoTicker;
+        private NewGui.InfoTray InfoTray;
 
         private Point RememberedScreenResolution = new Point(0, 0);
        // public Minimap MiniMap { get; set; }
@@ -97,7 +97,7 @@ namespace DwarfCorp.GameStates
 
                 DwarfGame.World.ShowInfo += (text) =>
                     {
-                        InfoTicker.AddMessage(text);
+                        InfoTray.AddMessage(text);
                     };
 
                 DwarfGame.World.ShowTooltip += (text) =>
@@ -321,8 +321,8 @@ namespace DwarfCorp.GameStates
             {
                 Corners = Gum.Scale9Corners.Left | Gum.Scale9Corners.Top,
                 AutoLayout = Gum.AutoLayout.FloatBottomRight,
-                MinimumSize = new Point(256, 128),
-                ItemSource = ToolbarItems.Select(i => i.Value)
+                ItemSource = ToolbarItems.Select(i => i.Value),
+                SizeToGrid = new Point(5,2)
             });
             #endregion
 
@@ -503,7 +503,7 @@ namespace DwarfCorp.GameStates
                 {
                     Corners = Gum.Scale9Corners.Left | Gum.Scale9Corners.Bottom,
                     AutoLayout = Gum.AutoLayout.FloatTopRight,
-                    MinimumSize = new Point(132, 68),
+                    SizeToGrid = new Point(2,1),
                     ItemSource = new Gum.Widget[] 
                         { 
                             new NewGui.FramedIcon
@@ -554,12 +554,12 @@ namespace DwarfCorp.GameStates
                     NewGui.RootItem.SendToBack(announcer);
                 };
 
-            InfoTicker = NewGui.RootItem.AddChild(new NewGui.InfoTicker
+            InfoTray = NewGui.RootItem.AddChild(new NewGui.InfoTray
                 {
                     Rect = new Rectangle(NewGui.VirtualScreen.X + 239,
                         NewGui.VirtualScreen.Bottom - 210, 256, 210),
                     Transparent = true
-                }) as NewGui.InfoTicker;
+                }) as NewGui.InfoTray;
                         
             NewGui.RootItem.Layout();
         }
@@ -713,15 +713,18 @@ namespace DwarfCorp.GameStates
 
             MakeMenuItem(PausePanel, "New Options", "", (sender, args) =>
                 {
-                    StateManager.GetState<NewOptionsState>().OnClosed = () =>
+                    var state = new NewOptionsState(Game, StateManager)
                     {
-                        NewGui.ResizeVirtualScreen(new Point(640, 480));
-                        NewGui.ResetGui();
-                        CreateGUIComponents();
-                        OpenPauseMenu();
+                        OnClosed = () =>
+                        {
+                            NewGui.ResizeVirtualScreen(new Point(640, 480));
+                            NewGui.ResetGui();
+                            CreateGUIComponents();
+                            OpenPauseMenu();
+                        }
                     };
 
-                    StateManager.PushState(new NewOptionsState(Game, StateManager));
+                    StateManager.PushState(state);
                 });
 
             MakeMenuItem(PausePanel, "Save", "",

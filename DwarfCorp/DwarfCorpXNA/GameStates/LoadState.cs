@@ -14,6 +14,11 @@ namespace DwarfCorp.GameStates
         public WorldManager World { get; set; }
         public InputManager Input = new InputManager();
         public static DwarfGUI GUI = null;
+        private DwarfRunner Runner;
+
+        private Gum.Root GuiRoot;
+        private Gum.Widget Tip;
+        private NewGui.InfoTicker LoadTicker;
 
         // Displays tips when the game is loading.
         public List<string> LoadingTips = new List<string>()
@@ -34,14 +39,15 @@ namespace DwarfCorp.GameStates
             "Monsters are shown on the minimap.",
             "Axedwarves are better at chopping trees than miners."
         };
-        private Timer TipTimer = new Timer(5, false);
-        private int TipIndex = 0;
 
+        private Timer TipTimer = new Timer(5, false);
         
         public LoadState(DwarfGame game, GameStateManager stateManager) :
             base(game, "LoadState", stateManager)
         {
             EnableScreensaver = true;
+
+            Runner = new DwarfRunner(game);
         }
 
         private void World_OnLoadedEvent()
@@ -57,7 +63,9 @@ namespace DwarfCorp.GameStates
                 DwarfGame.World.PlayerCompany.Information = new CompanyInformation();
 
             StateManager.PopState();
-            StateManager.PushState(new PlayState(Game, StateManager));            
+            StateManager.PushState(new PlayState(Game, StateManager));
+
+            World.OnSetLoadingMessage = null;         
         }
 
         public override void OnEnter()
@@ -86,26 +94,65 @@ namespace DwarfCorp.GameStates
                 Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small), Input);
 
             GUI.ToolTipManager.InfoLocation = new Point(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height);
-            GUI.MouseMode = GUISkin.MousePointer.Wait;
+            GUI.MouseMode = GUISkin.MousePointer.Pointer;
 
             World.Setup(GUI);
 
+            DwarfGame.GumInputMapper.GetInputQueue();
+            GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
+
+            Tip = GuiRoot.RootItem.AddChild(new Gum.Widget
+            {
+                Font = "outline-font",
+                TextColor = new Vector4(1, 1, 1, 1),
+                MinimumSize = new Point(0, 128),
+                TextHorizontalAlign = Gum.HorizontalAlign.Center,
+                TextVerticalAlign = Gum.VerticalAlign.Center,
+                Text = "Press any key to jump!",
+                AutoLayout = Gum.AutoLayout.DockBottom
+            });
+
+            LoadTicker = GuiRoot.RootItem.AddChild(new NewGui.InfoTicker
+            {
+                Font = "outline-font",
+                AutoLayout = Gum.AutoLayout.DockFill,
+                TextColor = new Vector4(1,1,1,1)
+            }) as NewGui.InfoTicker;
+
+            World.OnSetLoadingMessage = (s) => LoadTicker.AddMessage(s);
+
+            GuiRoot.RootItem.Layout();
+
             base.OnEnter();
         }
-       
+
+        public override void Update(DwarfTime gameTime)
+        {
+            foreach (var item in DwarfGame.GumInputMapper.GetInputQueue())
+                if (item.Message == Gum.InputEvents.KeyDown)
+                    Runner.Jump();
+
+            GuiRoot.Update(gameTime.ToGameTime());
+            Runner.Update(gameTime);
+            base.Update(gameTime);
+        }
+
         public override void Render(DwarfTime gameTime)
         {        
             // Todo: This state should be rendering these, NOT the world manager.
             TipTimer.Update(gameTime);
             if (TipTimer.HasTriggered)
             {
-                World.LoadingMessageBottom = LoadingTips[MathFunctions.Random.Next(LoadingTips.Count)];
-                TipIndex++;
+                Tip.Text = LoadingTips[MathFunctions.Random.Next(LoadingTips.Count)];
+                Tip.Invalidate();
             }
 
             EnableScreensaver = true;
             World.Render(gameTime);
             base.Render(gameTime);
+
+            Runner.Render(Game.GraphicsDevice, DwarfGame.SpriteBatch, gameTime);
+            GuiRoot.Draw();
         }
 
     }

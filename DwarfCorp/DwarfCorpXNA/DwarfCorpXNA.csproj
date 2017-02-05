@@ -336,6 +336,7 @@
     <Compile Include="NewGui\GridChooser.cs" />
     <Compile Include="NewGui\GridPanel.cs" />
     <Compile Include="NewGui\GameSpeedControls.cs" />
+    <Compile Include="NewGui\InfoTray.cs" />
     <Compile Include="NewGui\InfoTicker.cs" />
     <Compile Include="NewGui\Minimap.cs" />
     <Compile Include="NewGui\Popup.cs" />
@@ -344,6 +345,7 @@
     <Compile Include="ProgramData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Screensaver\DwarfRunner.cs" />
     <Compile Include="Screensaver\Terrain2D.cs" />
     <Compile Include="Scripting\Act.cs" />
     <Compile Include="Scripting\BehaviorExtensions.cs" />
