@@ -57,6 +57,8 @@ namespace DwarfCorp
 
         public void Initialize()
         {
+            HasMeat = false;
+            HasBones = false;
             Physics.Orientation = Physics.OrientMode.RotateY;
             Sprite = new CharacterSprite(Graphics, Manager, "MudGolem Sprite", Physics, Matrix.CreateTranslation(new Vector3(0, 0.35f, 0)));
             foreach (Animation animation in Stats.CurrentClass.Animations)
@@ -76,12 +78,12 @@ namespace DwarfCorp
             {
                 Resources = new ResourceContainer
                 {
-                    MaxResources = 32
+                    MaxResources = 16
                 }
             };
 
             var gems = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.Gem);
-            for (int i = 0; i < 32;  i++)
+            for (int i = 0; i < 16;  i++)
             {
                 int num = MathFunctions.RandInt(1, 32 - i);
                 Inventory.Resources.AddResource(new ResourceAmount(Datastructures.SelectRandom(gems), num));
@@ -93,7 +95,7 @@ namespace DwarfCorp
 
        
             Physics.Tags.Add("MudGolem");
-
+            Physics.Mass = 100;
             DeathParticleTrigger = new ParticleTrigger("dirt_particle", Manager, "Death Gibs", Physics, Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
@@ -119,6 +121,9 @@ namespace DwarfCorp
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
             //Stats.LastName = TextGenerator.GenerateRandom("$elffamily");
             Stats.Size = 4;
+            Resistances[DamageType.Fire] = 5;
+            Resistances[DamageType.Acid] = 5;
+            Resistances[DamageType.Cold] = 5;
         }
     }
 
@@ -155,7 +160,7 @@ namespace DwarfCorp
                     XP = 0,
                     BaseStats = new CreatureStats.StatNums()
                     {
-                        Constitution = 10.0f
+                        Constitution = 20.0f
                     }
                 }
             };
@@ -184,7 +189,7 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Mud", 0.1f, 10.0f, 50.0f, ContentPaths.Audio.demon_attack, ContentPaths.Effects.hit)
+                new Attack("Mud", 0.1f, 1.0f, 50.0f, ContentPaths.Audio.demon_attack, ContentPaths.Effects.hit)
                 {
                     Mode = Attack.AttackMode.Ranged,
                     LaunchSpeed = 10.0f,
