@@ -89,7 +89,7 @@ namespace DwarfCorp
             {
                 frames.Add(new Point(c, row));
             }
-            AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", frames, true, Color.White, 1.0f, false));
+            AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", frames, true, Color.White, 5.0f, false));
         }
 
         public void SetSingleFrameAnimation(Point frame)
