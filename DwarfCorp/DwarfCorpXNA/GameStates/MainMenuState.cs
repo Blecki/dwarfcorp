@@ -44,7 +44,6 @@ namespace DwarfCorp.GameStates
     /// </summary>
     public class MainMenuState : GameState
     {
-        public Texture2D Logo { get; set; }
         private Gum.Root GuiRoot;
 
         public MainMenuState(DwarfGame game, GameStateManager stateManager) :
@@ -93,29 +92,20 @@ namespace DwarfCorp.GameStates
 
             var frame = MakeMenuFrame("MAIN MENU");
 
-            MakeMenuItem(frame, "New Game", "Start a new game of DwarfCorp.", (sender, args) =>
-                {
-                    StateManager.PushState("CompanyMakerState");
-                });
+            MakeMenuItem(frame, "New Game", "Start a new game of DwarfCorp.", (sender, args) => StateManager.PushState(new CompanyMakerState(Game, Game.StateManager)));
 
-            MakeMenuItem(frame, "Load Game", "Load DwarfCorp game from a file.", (sender, args) =>
-                {
-                    StateManager.PushState("GameLoaderState");
-                });
+            MakeMenuItem(frame, "Load Game", "Load DwarfCorp game from a file.", (sender, args) => StateManager.PushState(new GameLoaderState(Game, StateManager)));
 
-            MakeMenuItem(frame, "Options", "Change game settings.", (sender, args) =>
-                {
-                    StateManager.PushState("OptionsState");
-                });
+            MakeMenuItem(frame, "Options", "Change game settings.", (sender, args) => StateManager.PushState(new OptionsState(Game, StateManager)));
 
-            MakeMenuItem(frame, "New Options", "Change game settings.", (sender, args) =>
-            {
-                StateManager.PushState("NewOptionsState");
-            });
+            MakeMenuItem(frame, "New Options", "Change game settings.", (sender, args) => StateManager.PushState(new NewOptionsState(Game, StateManager)));
 
-            MakeMenuItem(frame, "Credits", "View the credits.", (sender, args) =>
+            MakeMenuItem(frame, "Credits", "View the credits.", (sender, args) => StateManager.PushState(new CreditsState(GameState.Game, StateManager)));
+
+            MakeMenuItem(frame, "GUI Debug", "Open the GUI debug screen.",
+                (sender, args) =>
                 {
-                    StateManager.PushState(new CreditsState(GameState.Game, StateManager));
+                    StateManager.PushState(new GuiDebugState(GameState.Game, StateManager));
                 });
 
             MakeMenuItem(frame, "Quit", "Goodbye.", (sender, args) => Game.Exit());
@@ -126,7 +116,7 @@ namespace DwarfCorp.GameStates
         public override void OnEnter()
         {
             // Clear the input queue... cause other states aren't using it and it's been filling up.
-            DwarfGame.GumInput.GetInputQueue();
+            DwarfGame.GumInputMapper.GetInputQueue();
 
             GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
@@ -138,7 +128,7 @@ namespace DwarfCorp.GameStates
 
         public override void Update(DwarfTime gameTime)
         {
-            foreach (var @event in DwarfGame.GumInput.GetInputQueue())
+            foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
             {
                 GuiRoot.HandleInput(@event.Message, @event.Args);
                 if (!@event.Args.Handled)

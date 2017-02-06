@@ -63,7 +63,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Chunk = WorldManager.ChunkManager.ChunkData.ChunkMap[ChunkID];
+            Chunk = DwarfGame.World.ChunkManager.ChunkData.ChunkMap[ChunkID];
             firstIter = true;
             Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
         }
@@ -75,7 +75,7 @@ namespace DwarfCorp
 
 
         public VoxelListener(ComponentManager manager, GameComponent parent, ChunkManager chunkManager, Voxel vref) :
-            base("VoxelListener", parent)
+            base("VoxelListener", parent, manager)
         {
             Chunk = vref.Chunk;
             VoxelID = new Point3(vref.GridPosition);
@@ -145,7 +145,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Chunk = WorldManager.ChunkManager.ChunkData.ChunkMap[ChunkID];
+            Chunk = DwarfGame.World.ChunkManager.ChunkData.ChunkMap[ChunkID];
             Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
         }
 
@@ -156,7 +156,7 @@ namespace DwarfCorp
 
 
         public ExploredListener(ComponentManager manager, GameComponent parent, ChunkManager chunkManager, Voxel vref) :
-            base("ExploredListener", parent)
+            base("ExploredListener", parent, manager)
         {
             Chunk = vref.Chunk;
             VoxelID = new Point3(vref.GridPosition);

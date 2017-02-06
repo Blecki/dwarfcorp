@@ -34,9 +34,9 @@ namespace DwarfCorp.NewGui
             var speakerTiles = Root.GetTileSheet(Speaker);
             meshes.Add(Gum.Mesh.Quad()
                 .TileScaleAndTexture(speakerTiles, 0)
-                .Translate(Rect.X, Rect.Bottom - speakerTiles.TileHeight));
+                .Translate(Rect.Right - speakerTiles.TileWidth, Rect.Bottom - speakerTiles.TileHeight));
 
-            var bubbleRect = new Rectangle(Rect.Left + speakerTiles.TileWidth, Rect.Top,
+            var bubbleRect = new Rectangle(Rect.Left, Rect.Top,
                 Rect.Width - speakerTiles.TileWidth, Rect.Height - (speakerTiles.TileHeight / 2));
 
             meshes.Add(Gum.Mesh.CreateScale9Background(bubbleRect, Root.GetTileSheet("speech-bubble")));

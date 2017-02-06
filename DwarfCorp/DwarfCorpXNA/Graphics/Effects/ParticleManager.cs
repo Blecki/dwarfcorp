@@ -52,7 +52,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Components = WorldManager.ComponentManager;
+            Components = DwarfGame.World.ComponentManager;
         }
         
 

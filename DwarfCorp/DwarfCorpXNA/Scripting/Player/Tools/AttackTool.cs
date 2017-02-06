@@ -76,7 +76,7 @@ namespace DwarfCorp
             {
                 Player.VoxSelector.Enabled = false;
                 Player.BodySelector.Enabled = false;
-                WorldManager.SetMouse(null);
+                DwarfGame.World.SetMouse(null);
                 return;
             }
 
@@ -85,10 +85,10 @@ namespace DwarfCorp
             Player.BodySelector.AllowRightClickSelection = true;
 
 
-            if (WorldManager.IsMouseOverGui)
-                WorldManager.SetMouse(WorldManager.MousePointer);
+            if (DwarfGame.World.IsMouseOverGui)
+                DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
             else
-                WorldManager.SetMouse(new Gum.MousePointer("mouse", 1, 2));
+                DwarfGame.World.SetMouse(new Gum.MousePointer("mouse", 1, 2));
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
@@ -118,7 +118,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                if (WorldManager.ComponentManager.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() == Relationship.Loving)
+                if (DwarfGame.World.ComponentManager.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() == Relationship.Loving)
                 {
                     continue;
                 }

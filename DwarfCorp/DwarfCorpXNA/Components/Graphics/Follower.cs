@@ -57,7 +57,7 @@ namespace DwarfCorp
         }
 
         public Follower(Body parentBody) :
-            base("Follower", parentBody, Matrix.Identity, Vector3.One, Vector3.Zero, false)
+            base(parentBody.Manager, "Follower", parentBody, Matrix.Identity, Vector3.One, Vector3.Zero, false)
         {
             ParentBody = parentBody;
             FollowRadius = 1.5f;

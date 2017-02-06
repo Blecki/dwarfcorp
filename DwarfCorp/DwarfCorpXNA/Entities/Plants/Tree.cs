@@ -56,18 +56,18 @@ namespace DwarfCorp
         }
 
         public Seedling(Body adult, Vector3 position, SpriteSheet asset, Point frame) :
-            base(position, asset, frame, WorldManager.ComponentManager.RootComponent)
+            base(position, asset, frame, DwarfGame.World.ComponentManager.RootComponent)
         {
             IsGrown = false;
             Adult = adult;
             Name = adult.Name + " seedling";
-            Health health = new Health(WorldManager.ComponentManager, "HP", this, 1.0f, 0.0f, 1.0f);
-            new Flammable(WorldManager.ComponentManager, "Flames", this, health);
+            Health health = new Health(DwarfGame.World.ComponentManager, "HP", this, 1.0f, 0.0f, 1.0f);
+            new Flammable(DwarfGame.World.ComponentManager, "Flames", this, health);
             Voxel voxelUnder = new Voxel();
 
-            if (WorldManager.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            if (DwarfGame.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {
-                VoxelListener listener = new VoxelListener(WorldManager.ComponentManager, this, WorldManager.ChunkManager, voxelUnder);
+                VoxelListener listener = new VoxelListener(DwarfGame.World.ComponentManager, this, DwarfGame.World.ChunkManager, voxelUnder);
             }
         }
 
@@ -91,7 +91,7 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (WorldManager.Time.CurrentDate >= FullyGrownDay)
+            if (DwarfGame.World.Time.CurrentDate >= FullyGrownDay)
             {
                 CreateAdult();
             }
@@ -137,7 +137,7 @@ namespace DwarfCorp
 
             return new Seedling(this, LocalTransform.Translation, Seedlingsheet, SeedlingFrame)
             {
-                FullyGrownDay = WorldManager.Time.CurrentDate.AddHours(GrowthHours).AddDays(GrowthDays)
+                FullyGrownDay = DwarfGame.World.Time.CurrentDate.AddHours(GrowthHours).AddDays(GrowthDays)
             };
         }
     }
@@ -150,12 +150,12 @@ namespace DwarfCorp
         public Tree() { }
 
         public Tree(Vector3 position, string asset, ResourceLibrary.ResourceType seed, float treeSize) :
-            base("Tree", WorldManager.ComponentManager.RootComponent, Matrix.Identity, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), new Vector3(treeSize * 0.5f, treeSize * 0.25f, treeSize * 0.5f))
+            base("Tree", DwarfGame.World.ComponentManager.RootComponent, Matrix.Identity, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), new Vector3(treeSize * 0.5f, treeSize * 0.25f, treeSize * 0.5f))
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);
             HurtTimer = new Timer(1.0f, false);
-            ComponentManager componentManager = WorldManager.ComponentManager;
+            ComponentManager componentManager = DwarfGame.World.ComponentManager;
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
             LocalTransform = matrix;
@@ -173,9 +173,9 @@ namespace DwarfCorp
             //new MinimapIcon(this, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 1, 0));
             Voxel voxelUnder = new Voxel();
 
-            if (WorldManager.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            if (DwarfGame.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {
-                new VoxelListener(componentManager, this, WorldManager.ChunkManager, voxelUnder);
+                new VoxelListener(componentManager, this, DwarfGame.World.ChunkManager, voxelUnder);
             }
 
             Inventory inventory = new Inventory("Inventory", this)

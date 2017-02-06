@@ -75,7 +75,7 @@ namespace DwarfCorp.GameStates
             Layout.SetComponentPosition(title, 0, 0, 4, 4);
 
             Label text = new Label(GUI, Layout,
-                "The heady days of exploration for " + WorldManager.Master.Faction.Economy.Company.Information.Name +
+                "The heady days of exploration for " + DwarfGame.World.Master.Faction.Economy.Company.Information.Name +
                 " are no more.\n Our stock is through the floor. Our investors have all jumped ship! \n We are going to have to sell the company. If only we had shipped more goods...",
                 GUI.DefaultFont)
             {

@@ -59,19 +59,19 @@ namespace DwarfCorp
             
         }
 
-        public BearTrap(Vector3 pos) :
-            base(
-            "BearTrap", WorldManager.ComponentManager.RootComponent, Matrix.CreateTranslation(pos),
+        public BearTrap(ComponentManager manager, Vector3 pos) :
+            base(manager,
+            "BearTrap", DwarfGame.World.ComponentManager.RootComponent, Matrix.CreateTranslation(pos),
             new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, true)
         {
-            Allies = WorldManager.PlayerFaction;
+            Allies = DwarfGame.World.PlayerFaction;
             Sensor = new Sensor("Sensor", this, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
             {
                 FireTimer = new Timer(0.5f, false)
             };
             Sensor.OnSensed += Sensor_OnSensed;
             DeathTimer = new Timer(0.6f, true);
-            DeathParticles = new ParticleTrigger("puff", WorldManager.ComponentManager, "DeathParticles", this,
+            DeathParticles = new ParticleTrigger("puff", DwarfGame.World.ComponentManager, "DeathParticles", this,
                 Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
             {
                 SoundToPlay = ""
@@ -79,9 +79,9 @@ namespace DwarfCorp
 
             DamageAmount = 200;
             Voxel voxUnder = new Voxel();
-            WorldManager.ChunkManager.ChunkData.GetFirstVoxelUnder(pos, ref voxUnder);
-            VoxListener = new VoxelListener(WorldManager.ComponentManager, this, WorldManager.ChunkManager, voxUnder);
-            Sprite = new Sprite(WorldManager.ComponentManager, "Sprite", this, Matrix.Identity, new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap), false);
+            DwarfGame.World.ChunkManager.ChunkData.GetFirstVoxelUnder(pos, ref voxUnder);
+            VoxListener = new VoxelListener(DwarfGame.World.ComponentManager, this, DwarfGame.World.ChunkManager, voxUnder);
+            Sprite = new Sprite(DwarfGame.World.ComponentManager, "Sprite", this, Matrix.Identity, new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap), false);
             Sprite.AddAnimation(new Animation(0, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0) {Name = IdleAnimation});
             Sprite.AddAnimation(new Animation(1, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0, 1, 2, 3) {Name = TriggerAnimation, Speeds =  new List<float>() {6.6f}, Loops = true});
 
@@ -99,7 +99,7 @@ namespace DwarfCorp
                 CreatureAI creature = body.GetChildrenOfTypeRecursive<CreatureAI>().FirstOrDefault();
 
                 if (creature == null) continue;
-                if (WorldManager.ComponentManager.Diplomacy.GetPolitics(creature.Creature.Faction, Allies).GetCurrentRelationship() == Relationship.Loving) continue;
+                if (DwarfGame.World.ComponentManager.Diplomacy.GetPolitics(creature.Creature.Faction, Allies).GetCurrentRelationship() == Relationship.Loving) continue;
 
                 creature.Creature.Damage(DamageAmount);
                 creature.Creature.Physics.Velocity *= 0.0f;

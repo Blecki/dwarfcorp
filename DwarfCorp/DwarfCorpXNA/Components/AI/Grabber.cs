@@ -60,7 +60,7 @@ namespace DwarfCorp
         }
 
         public Grabber(string name, GameComponent parent, Matrix localTrans, Vector3 boundingboxExtents, Vector3 boundingBoxCenter) :
-            base(name, parent, localTrans, boundingboxExtents, boundingBoxCenter, false)
+            base(parent.Manager, name, parent, localTrans, boundingboxExtents, boundingBoxCenter, false)
         {
             GrabbedComponents = new List<GrabbedItem>();
             MaxGrabs = 1;

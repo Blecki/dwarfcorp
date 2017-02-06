@@ -27,60 +27,71 @@ namespace DwarfCorp.NewGui
         public int PlaySpeed = 1;
 
         private Gum.Widget TimeLabel;
+        private Gum.Widget PlayPauseButton;
 
         public override void Construct()
         {
-            Border = "border-button";
-            MinimumSize = new Point(128, 30);
-            Padding = new Gum.Margin(4, 4, 4, 4);
+            Border = "border-dark";
+            MinimumSize = new Point(128, 40);
+            Padding = new Gum.Margin(2, 2, 4, 4);
+            Font = "font2x";
 
             TimeLabel = AddChild(new Gum.Widget
                 {
                     AutoLayout = Gum.AutoLayout.DockLeft,
                     MinimumSize = new Point(16, 0),
-                    Text = "1x"
+                    Text = "1x",
+                    Tooltip = "Current Game Speed",
+                    TextVerticalAlign = Gum.VerticalAlign.Center,
+                    TextColor = new Vector4(1,1,1,1)
                 });
 
-            AddChild(new Gum.Widget
+            PlayPauseButton = AddChild(new Gum.Widget
             {
                 AutoLayout = Gum.AutoLayout.DockLeft,
+                Border = "border-thin",
                 Text = "||",
+                Tooltip = "Pause",
                 OnClick = (sender, args) =>
                     {
-                        PlaySpeed = CurrentSpeed;
-                        SetGameSpeed(0);
-                    }
-            });
-
-            AddChild(new Gum.Widget
-                {
-                    AutoLayout = Gum.AutoLayout.DockLeft,
-                    Text = ">",
-                    OnClick = (sender, args) =>
+                        if (PlayState.Paused)
                         {
                             if (PlaySpeed == 0) PlaySpeed = 1;
                             SetGameSpeed(PlaySpeed);
                         }
-                });
-
+                        else
+                        {
+                            PlaySpeed = CurrentSpeed;
+                            SetGameSpeed(0);
+                        }
+                    },
+                TextVerticalAlign = Gum.VerticalAlign.Center
+            });
+            
             AddChild(new Gum.Widget
             {
                 AutoLayout = Gum.AutoLayout.DockLeft,
                 Text = ">>",
+                Border = "border-thin",
+                Tooltip = "Increase Speed",
                 OnClick = (sender, args) =>
                 {
                     SetGameSpeed(CurrentSpeed + 1);
-                }
+                },
+                TextVerticalAlign = Gum.VerticalAlign.Center
             });
 
             AddChild(new Gum.Widget
             {
                 AutoLayout = Gum.AutoLayout.DockLeft,
                 Text = "<<",
+                Border = "border-thin",
+                Tooltip = "Decrease Speed",
                 OnClick = (sender, args) =>
                 {
                     SetGameSpeed(CurrentSpeed - 1);
-                }
+                },
+                TextVerticalAlign = Gum.VerticalAlign.Center
             });
 
 
@@ -93,6 +104,10 @@ namespace DwarfCorp.NewGui
             _currentSpeed = Math.Min(MaximumSpeed, Math.Max(NewSpeed, 0));
             TimeLabel.Text = String.Format("{0}x", _currentSpeed);
             TimeLabel.Invalidate();
+
+            PlayPauseButton.Text = (_currentSpeed == 0 ? ">" : "||");
+            PlayPauseButton.Tooltip = (_currentSpeed == 0 ? "Resume" : "Pause");
+            PlayPauseButton.Invalidate();
 
             DwarfTime.LastTime.Speed = (float)_currentSpeed;
             PlayState.Paused = _currentSpeed == 0;

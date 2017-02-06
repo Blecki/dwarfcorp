@@ -1188,6 +1188,20 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Content Include="Entities\Animals\chicken_animation.json">
+      <Name>chicken_animation</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Compile Include="Entities\Mudman\mudman-projectile.png">
+      <Name>mudman-projectile</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Mudman\mudman.png">
+      <Name>mudman</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <None Include="Entities\Dwarf\Sprites\musket_animation.json">
       <Name>musket_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1238,6 +1252,10 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Content Include="Entities\Mudman\mudman_animation.json">
+      <Name>mudman_animation</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Entities\Skeleton\skele_animation.json">
       <Name>skele_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1769,16 +1787,80 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="newgui\font2.bmp">
-      <Name>font2</Name>
+    <Compile Include="newgui\room_icons.png">
+      <Name>room_icons</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="newgui\room_icons.png">
-      <Name>room_icons</Name>
+    <Compile Include="newgui\crafts.png">
+      <Name>crafts</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\thin-transparent.png">
+      <Name>thin-transparent</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\interior_furniture.png">
+      <Name>interior_furniture</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\font1-hires-outline-aa.bmp">
+      <Name>font1-hires-outline-aa</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
+      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
+    </Compile>
+    <Compile Include="newgui\font1-hires-outline.bmp">
+      <Name>font1-hires-outline</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
+      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
+    </Compile>
+    <Compile Include="newgui\font1-w-2x.bmp">
+      <Name>font1-w-2x</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
+      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
+    </Compile>
+    <Compile Include="newgui\font1-w-4x.bmp">
+      <Name>font1-w-4x</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_ColorKeyEnabled>False</ProcessorParameters_ColorKeyEnabled>
+      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\dark-border.png">
+      <Name>dark-border</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\tray-border-transparent.png">
+      <Name>tray-border-transparent</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Animals\chicken.png">
+      <Name>chicken</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

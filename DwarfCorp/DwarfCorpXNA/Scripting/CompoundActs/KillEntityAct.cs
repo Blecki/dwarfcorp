@@ -90,25 +90,39 @@ namespace DwarfCorp
             Name = "Kill Entity";
             PlanAct.PlanType planType = PlanAct.PlanType.Adjacent;
             float radius = 0.0f;
-            if (creature.Creature.Attacks[0].Mode == Attack.AttackMode.Melee)
+            if (creature.Creature.Attacks[0].Mode == Attack.AttackMode.Ranged)
             {
                 planType = PlanAct.PlanType.Radius;
                 radius = creature.Creature.Attacks[0].Range;
             }
-            Tree =
-                new Parallel(
-                    new Sequence
-                    (
-                        new GoToEntityAct(entity, creature)
-                        {
-                            MovingTarget = mode != KillEntityTask.KillType.Chop,
-                            PlanType = planType,
-                            Radius = radius
-                        },
-                        new MeleeAct(Agent, entity)
-                    ),
-                    new Wrap(Verify)
-                    );
+            if (creature.Movement.IsSessile)
+            {
+                Tree =
+                    new Parallel(
+                        new Sequence
+                        (
+                            new MeleeAct(Agent, entity)
+                        ),
+                        new Wrap(Verify)
+                        );
+            }
+            else
+            {
+                Tree =
+                   new Parallel(
+                       new Sequence
+                       (
+                           new GoToEntityAct(entity, creature)
+                           {
+                               MovingTarget = mode != KillEntityTask.KillType.Chop,
+                               PlanType = planType,
+                               Radius = radius
+                           },
+                           new MeleeAct(Agent, entity)
+                       ),
+                       new Wrap(Verify)
+                       );   
+                        }
         }
     }
 

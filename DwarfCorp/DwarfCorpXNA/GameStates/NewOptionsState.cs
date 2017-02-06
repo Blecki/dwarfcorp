@@ -58,7 +58,7 @@ namespace DwarfCorp.GameStates
         public override void OnEnter()
         {
             // Clear the input queue... cause other states aren't using it and it's been filling up.
-            DwarfGame.GumInput.GetInputQueue();
+            DwarfGame.GumInputMapper.GetInputQueue();
 
             // Setup antialiasing options.
             AntialiasingOptions = new Dictionary<string, int>();
@@ -277,7 +277,7 @@ namespace DwarfCorp.GameStates
                     AutoLayout = AutoLayout.DockTop
                 });
 
-            foreach (var binding in DwarfGame.GemInput.EnumerateBindableActions())
+            foreach (var binding in DwarfGame.GumInput.EnumerateBindableActions())
             {
                 // Todo: Columns?
 
@@ -598,7 +598,7 @@ namespace DwarfCorp.GameStates
 
         public override void Update(DwarfTime gameTime)
         {
-            foreach (var @event in DwarfGame.GumInput.GetInputQueue())
+            foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
             {
                 GuiRoot.HandleInput(@event.Message, @event.Args);
                 if (!@event.Args.Handled)

@@ -57,43 +57,43 @@ namespace DwarfCorp
         #region fields
 
         // The random seed of the whole game
-        public static int Seed { get; set; }
+        public int Seed { get; set; }
 
         // Defines the number of pixels in the overworld to number of voxels conversion
-        public static float WorldScale
+        public float WorldScale
         {
             get { return GameSettings.Default.WorldScale; }
             set { GameSettings.Default.WorldScale = value; }
         }
 
-        public static float SlicePlane = 0;
+        public float SlicePlane = 0;
 
         // The horizontal size of the overworld in pixels
-        public static int WorldWidth = 800;
+        public int WorldWidth = 800;
 
-        // Used to pass WorldOrigin from the WorldGenState into WorldManager.
-        public static Vector2 WorldGenerationOrigin { get; set; }
+        // Used to pass WorldOrigin from the WorldGenState into DwarfGame.World.
+        public Vector2 WorldGenerationOrigin { get; set; }
 
         // The origin of the overworld in pixels [(0, 0, 0) in world space.]
-        public static Vector2 WorldOrigin { get; set; }
+        public Vector2 WorldOrigin { get; set; }
 
         // The vertical size of the overworld in pixels
-        public static int WorldHeight = 800;
+        public int WorldHeight = 800;
 
         // The number of voxels along x and z in a chunk
-        public static int ChunkWidth { get { return GameSettings.Default.ChunkWidth; } }
+        public int ChunkWidth { get { return GameSettings.Default.ChunkWidth; } }
 
         // The number of voxels along y in a chunk.
-        public static int ChunkHeight { get { return GameSettings.Default.ChunkHeight; } }
+        public int ChunkHeight { get { return GameSettings.Default.ChunkHeight; } }
 
         // The current coordinate of the cursor light
-        public static Vector3 CursorLightPos
+        public Vector3 CursorLightPos
         {
             get { return LightPositions[0]; }
             set { LightPositions[0] = value; }
         }
 
-        public static Vector3[] LightPositions = new Vector3[16];
+        public Vector3[] LightPositions = new Vector3[16];
 
         // When true, the minimap will be drawn.
         public bool DrawMap = true;
@@ -102,10 +102,10 @@ namespace DwarfCorp
         public Texture2D Tilesheet;
 
         // The shader used to draw the terrain and most entities
-        public static Effect DefaultShader;
+        public Effect DefaultShader;
 
         // The player's view into the world.
-        public static OrbitCamera Camera;
+        public OrbitCamera Camera;
 
         // Gives the number of antialiasing multisamples. 0 means no AA. 
         public int MultiSamples
@@ -120,25 +120,25 @@ namespace DwarfCorp
         }
 
         // The ratio of width to height in screen pixels. (ie 16/9 or 4/3)
-        public static float AspectRatio = 0.0f;
+        public float AspectRatio = 0.0f;
 
         // Responsible for managing terrain
-        public static ChunkManager ChunkManager = null;
+        public ChunkManager ChunkManager = null;
 
         // Maps a set of voxel types to assets and properties
-        public static VoxelLibrary VoxelLibrary = null;
+        public VoxelLibrary VoxelLibrary = null;
 
         // Responsible for creating terrain
-        public static ChunkGenerator ChunkGenerator = null;
+        public ChunkGenerator ChunkGenerator = null;
 
         // Responsible for managing game entities
-        public static ComponentManager ComponentManager = null;
+        public ComponentManager ComponentManager = null;
 
         // Handles interfacing with the player and sending commands to dwarves
-        public static GameMaster Master = null;
+        public GameMaster Master = null;
 
         // If the game was loaded from a file, this contains the name of that file.
-        public static string ExistingFile = "";
+        public string ExistingFile = "";
 
         // Just a helpful 1x1 white pixel texture
         private Texture2D pixel;
@@ -149,20 +149,20 @@ namespace DwarfCorp
         private FXAA fxaa;
 
         // Responsible for drawing liquids.
-        public static WaterRenderer WaterRenderer;
+        public WaterRenderer WaterRenderer;
 
         // Responsible for drawing the skybox
-        public static SkyRenderer Sky;
+        public SkyRenderer Sky;
 
         // Draws shadow maps
-        public static ShadowRenderer Shadows;
+        public ShadowRenderer Shadows;
 
         // Draws a selection buffer (for pixel-perfect selection)
-        public static SelectionBuffer SelectionBuffer;
+        public SelectionBuffer SelectionBuffer;
 
         // Responsible for handling instances of particular primitives (or models)
         // and drawing them to the screen
-        public static InstanceManager InstanceManager;
+        public InstanceManager InstanceManager;
 
         // Handles loading of game assets
         public ContentManager Content;
@@ -176,14 +176,18 @@ namespace DwarfCorp
         // Loads the game in the background while a loading message displays
         public Thread LoadingThread { get; set; }
 
-        // When the game is loading, this message is displayed on the screen
-        public string LoadingMessage = "";
-        // loading messages running across the bottom
-        public string LoadingMessageBottom = "";
+        // Callback to set message on loading screen.
+        public Action<String> OnSetLoadingMessage = null;
 
-        private static bool paused_ = false;
+        public void SetLoadingMessage(String Message)
+        {
+            if (OnSetLoadingMessage != null)
+                OnSetLoadingMessage(Message);
+        }
+
+        private bool paused_ = false;
         // True if the game's update loop is paused, false otherwise
-        public static bool Paused
+        public bool Paused
         {
             get { return paused_; }
             set
@@ -196,65 +200,65 @@ namespace DwarfCorp
         }
 
         // Handles a thread which constantly runs A* plans for whoever needs them.
-        public static PlanService PlanService = null;
+        public PlanService PlanService = null;
 
         // Maintains a dictionary of biomes (forest, desert, etc.)
-        public static BiomeLibrary BiomeLibrary = new BiomeLibrary();
+        public BiomeLibrary BiomeLibrary = new BiomeLibrary();
 
         // Contains the storm forecast
-        public static Weather Weather = new Weather();
+        public Weather Weather = new Weather();
 
         // Maintains a dictionary of particle emitters
-        public static ParticleManager ParticleManager
+        public ParticleManager ParticleManager
         {
             get { return ComponentManager.ParticleManager; }
             set { ComponentManager.ParticleManager = value; }
         }
 
         // The current calendar date/time of the game.
-        public static WorldTime Time = new WorldTime();
+        public WorldTime Time = new WorldTime();
 
         // Hack to smooth water reflections TODO: Put into water manager
         private float lastWaterHeight = 8.0f;
 
         private GameFile gameFile;
 
-        public static Point3 WorldSize { get; set; }
+        public Point3 WorldSize { get; set; }
 
         // More statics. Hate this.
-        public static Action<String, String, Action> OnAnnouncement;
+        public Action<String, String, Action> OnAnnouncement;
 
-        public static void MakeAnnouncement(String Title, String Message, Action ClickAction = null)
+        public void MakeAnnouncement(String Title, String Message, Action ClickAction = null)
         {
             if (OnAnnouncement != null)
                 OnAnnouncement(Title, Message, ClickAction);
         }
 
 
-        public static MonsterSpawner MonsterSpawner { get; set; }
+        public MonsterSpawner MonsterSpawner { get; set; }
 
-        public static Company PlayerCompany
+        public Company PlayerCompany
         {
             get { return Master.Faction.Economy.Company; }
         }
 
-        public static Faction PlayerFaction
+        public Faction PlayerFaction
         {
             get { return Master.Faction; }
         }
 
-        public static Economy PlayerEconomy
+        public Economy PlayerEconomy
         {
             get { return Master.Faction.Economy; }
         }
 
-        public static List<Faction> Natives { get; set; }
+        public List<Faction> Natives { get; set; }
 
         private bool SleepPrompt = false;
 
-        public static CraftLibrary CraftLibrary = null;
+        public CraftLibrary CraftLibrary = null;
 
-        public static int GameID = -1;
+        public int GameID = -1;
 
         public struct Screenshot
         {
@@ -269,15 +273,15 @@ namespace DwarfCorp
 
         public GameState gameState;
 
-        public static DwarfGUI GUI;
-        public static Gum.Root NewGui;
+        public DwarfGUI GUI;
+        public Gum.Root NewGui;
 
-        public static Action<String> ShowTooltip = null;
-        public static Action<String> ShowInfo = null;
-        public static Action<Gum.MousePointer> SetMouse = null;
-        public static Gum.MousePointer MousePointer = new Gum.MousePointer("mouse", 1, 0);
+        public Action<String> ShowTooltip = null;
+        public Action<String> ShowInfo = null;
+        public Action<Gum.MousePointer> SetMouse = null;
+        public Gum.MousePointer MousePointer = new Gum.MousePointer("mouse", 1, 0);
         
-        public static bool IsMouseOverGui
+        public bool IsMouseOverGui
         {
             get
             {
@@ -286,9 +290,9 @@ namespace DwarfCorp
             }
         }
 
-        // Since world, like many of the other classes, is pretty much a singleton given how many static variables it has
+        // Since world, like many of the other classes, is pretty much a singleton given how many variables it has
         // this provides singleton access
-        public static WorldManager World;
+        public WorldManager World;
 
         // event that is called when the world is done loading
         public delegate void OnLoaded();
@@ -345,42 +349,42 @@ namespace DwarfCorp
         /// </summary>
         private void LoadThreaded()
         {
-            LoadingMessage = "Waiting for Graphics Device ...";
+            SetLoadingMessage("Waiting for Graphics Device ...");
 
             WaitForGraphicsDevice();
 #if CREATE_CRASH_LOGS
             try
 #endif
             {
-                LoadingMessage = "Initializing ...";
+                SetLoadingMessage("Initializing ...");
                 // Todo: How is this initialized by save games?
                 InitializeStaticData(CompanyMakerState.CompanyInformation, Natives);
 
-                LoadingMessage = "Creating Planner ...";
+                SetLoadingMessage("Creating Planner ...");
                 PlanService = new PlanService();
 
-                LoadingMessage = "Creating Particles ...";
+                SetLoadingMessage("Creating Particles ...");
                 CreateParticles();
 
-                LoadingMessage = "Creating Sky...";
+                SetLoadingMessage("Creating Sky...");
                 CreateSky();
 
-                LoadingMessage = "Creating Shadows...";
+                SetLoadingMessage("Creating Shadows...");
                 CreateShadows();
 
-                LoadingMessage = "Creating Liquids ...";
+                SetLoadingMessage("Creating Liquids ...");
                 CreateLiquids();
 
-                LoadingMessage = "Generating Initial Terrain Chunks ...";
+                SetLoadingMessage("Generating Initial Terrain Chunks ...");
                 GenerateInitialChunks();
 
-                LoadingMessage = "Creating GameMaster ...";
+                SetLoadingMessage("Creating GameMaster ...");
                 CreateGameMaster();
 
-                LoadingMessage = "Embarking ...";
+                SetLoadingMessage("Embarking ...");
                 CreateInitialEmbarkment();
 
-                LoadingMessage = "Presimulating ...";
+                SetLoadingMessage("Presimulating ...");
                 ShowingWorld = false;
                 if (string.IsNullOrEmpty(ExistingFile))
                 {
@@ -390,7 +394,7 @@ namespace DwarfCorp
 
                 Thread.Sleep(1000);
                 ShowingWorld = true;
-                LoadingMessage = "Complete.";
+                SetLoadingMessage("Complete.");
 
                 // GameFile is no longer needed.
                 gameFile = null;
@@ -452,6 +456,15 @@ namespace DwarfCorp
         /// </summary>
         public void InitializeStaticData(CompanyInformation CompanyInformation, List<Faction> natives)
         {
+            ComponentManager = new ComponentManager(this, CompanyInformation, natives);
+            ComponentManager.RootComponent = new Body(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero,
+                Vector3.Zero, false);
+            Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
+            Vector3 extents = new Vector3(1500, 1500, 1500);
+            ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
+            ComponentManager.Diplomacy = new Diplomacy(ComponentManager.Factions);
+            ComponentManager.Diplomacy.Initialize(Time.CurrentDate);
+
             CompositeLibrary.Initialize();
             CraftLibrary = new CraftLibrary();
 
@@ -489,14 +502,6 @@ namespace DwarfCorp
             if (PlanService != null)
                 PlanService.Restart();
 
-            ComponentManager = new ComponentManager(this, CompanyInformation, natives);
-            ComponentManager.RootComponent = new Body("root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero, false);
-            Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
-            Vector3 extents = new Vector3(1500, 1500, 1500);
-            ComponentManager.CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
-            ComponentManager.Diplomacy = new Diplomacy(ComponentManager.Factions);
-            ComponentManager.Diplomacy.Initialize(Time.CurrentDate);
-
             JobLibrary.Initialize();
             MonsterSpawner = new MonsterSpawner();
             EntityFactory.Initialize();
@@ -516,10 +521,10 @@ namespace DwarfCorp
             // This is preliminary stuff that just makes sure the file exists and can be loaded.
             if (fileExists)
             {
-                LoadingMessage = "Loading " + ExistingFile;
+                SetLoadingMessage("Loading " + ExistingFile);
                 gameFile = new GameFile(ExistingFile, true);
                 Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
-                WorldManager.Time = gameFile.Data.Metadata.Time;
+                DwarfGame.World.Time = gameFile.Data.Metadata.Time;
                 WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
                 WorldScale = gameFile.Data.Metadata.WorldScale;
                 GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
@@ -527,7 +532,7 @@ namespace DwarfCorp
 
                 if (gameFile.Data.Metadata.OverworldFile != null && gameFile.Data.Metadata.OverworldFile != "flat")
                 {
-                    LoadingMessage = "Loading world " + gameFile.Data.Metadata.OverworldFile;
+                    SetLoadingMessage("Loading world " + gameFile.Data.Metadata.OverworldFile);
                     Overworld.Name = gameFile.Data.Metadata.OverworldFile;
                     DirectoryInfo worldDirectory =
                         Directory.CreateDirectory(DwarfGame.GetGameDirectory() + ProgramData.DirChar + "Worlds" +
@@ -543,7 +548,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    LoadingMessage = "Generating flat world..";
+                    SetLoadingMessage("Generating flat world..");
                     Overworld.CreateUniformLand(GraphicsDevice);
                 }
 
@@ -606,13 +611,13 @@ namespace DwarfCorp
             if (gameFile == null)
             {
                 ChunkManager.GenerateInitialChunks(
-                    ChunkManager.ChunkData.GetChunkID(new Vector3(0, 0, 0) + globalOffset), ref LoadingMessage);
+                    ChunkManager.ChunkData.GetChunkID(new Vector3(0, 0, 0) + globalOffset), SetLoadingMessage);
             }
             // Otherwise, we just load all the chunks from the file.
             else
             {
-                LoadingMessage = "Loading Chunks from Game File";
-                ChunkManager.ChunkData.LoadFromFile(gameFile, ref LoadingMessage);
+                SetLoadingMessage("Loading Chunks from Game File");
+                ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
             }
 
             // If there's no file, for some reason we modify the camera position...
@@ -630,7 +635,7 @@ namespace DwarfCorp
             ChunkManager.StartThreads();
         }
 
-        public static float SeaLevel { get; set; }
+        public float SeaLevel { get; set; }
 
 
         /// <summary>
@@ -766,7 +771,7 @@ namespace DwarfCorp
                 BalloonPort port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager,
                     Camera.Position.X, Camera.Position.Z, 3);
                 CreateInitialDwarves(c);
-                WorldManager.PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
+                DwarfGame.World.PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
 
                 foreach (var res in InitialEmbark.Resources)
                 {
@@ -948,7 +953,7 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        /// Creates all the static particle emitters used in the game.
+        /// Creates all the particle emitters used in the game.
         /// </summary>
         public void CreateParticles()
         {
@@ -1210,7 +1215,7 @@ namespace DwarfCorp
             AspectRatio = GraphicsDevice.Viewport.AspectRatio;
             Camera.AspectRatio = AspectRatio;
 
-            Camera.Update(gameTime, WorldManager.ChunkManager);
+            Camera.Update(gameTime, DwarfGame.World.ChunkManager);
 
             if (KeyManager.RotationEnabled())
                 Mouse.SetPosition(Game.GraphicsDevice.Viewport.Width / 2,
@@ -1265,7 +1270,7 @@ namespace DwarfCorp
         }
 
         public bool FastForwardToDay { get; set; }
-        public static Embarkment InitialEmbark { get; set; }
+        public Embarkment InitialEmbark { get; set; }
 
         public void Quit()
         {
@@ -1469,7 +1474,7 @@ namespace DwarfCorp
         /// <param name="gameTime">The current time</param>
         public void RenderScreenSaverMessages(DwarfTime gameTime)
         {
-            DwarfGame.SpriteBatch.Begin();
+            /* DwarfGame.SpriteBatch.Begin();
             float t = (float)(Math.Sin(gameTime.TotalGameTime.TotalSeconds * 2.0f) + 1.0f) * 0.5f + 0.5f;
             Color toDraw = new Color(t, t, t);
             SpriteFont font = Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
@@ -1486,6 +1491,7 @@ namespace DwarfCorp
                         GraphicsDevice.Viewport.Height - tipMeasurement.Y * 2), toDraw, new Color(50, 50, 50));
             }
             DwarfGame.SpriteBatch.End();
+            */
         }
 
         public void FillClosestLights(DwarfTime time)
