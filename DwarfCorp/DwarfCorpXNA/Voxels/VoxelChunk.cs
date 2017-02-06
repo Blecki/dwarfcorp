@@ -32,10 +32,6 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Threading;
@@ -220,6 +216,7 @@ namespace DwarfCorp
         public static readonly Dictionary<BoxFace, VoxelVertex[]> FaceVertices = new Dictionary<BoxFace, VoxelVertex[]>();
         public static List<Vector3> ManhattanSuccessors;
         public static List<Vector3> Manhattan2DSuccessors;
+        public static List<List<Point3>> EuclideanSuccessorsByVoxelPosition;
         private static int[] manhattan2DMultipliers;
 
 
@@ -500,7 +497,53 @@ namespace DwarfCorp
                 VertexSuccessorsDiag[vertex] = diagSuccessors;
             }
 
+            InitializeRelativeNeighborLookup();
+
             staticsInitialized = true;
+        }
+
+        public static void InitializeRelativeNeighborLookup()
+        {
+            EuclideanSuccessorsByVoxelPosition = new List<List<Point3>>();
+            for (int i = 0; i < 27; i++)
+            {
+                EuclideanSuccessorsByVoxelPosition.Add(new List<Point3>());
+            }
+
+            List<Point3> euclidianNeighbors = new List<Point3>();
+            for (int x = -1; x <= 1; x++)
+            {
+                for (int y = -1; y <= 1;y++)
+                {
+                    for (int z = -1; z <= 1; z++)
+                    {
+                        if (x == 0 && y == 0 && z == 0) continue;
+                        euclidianNeighbors.Add(new Point3(x, y, z));
+                    }
+                }
+            }
+
+            int key;
+            for (int x = -1; x <= 1; x++)
+            {
+                for (int y = -1; y <= 1; y++)
+                {
+                    for (int z = -1; z <= 1; z++)
+                    {
+                        key = (x + 1) + (y + 1) * 3 + (z + 1) * 9;
+                        List<Point3> neighbors = EuclideanSuccessorsByVoxelPosition[key];
+                        
+                        for(int i = 0; i < euclidianNeighbors.Count; i++)
+                        {
+                            Point3 testPoint = euclidianNeighbors[i];
+                            if ((testPoint.X == x || testPoint.X == 0) &&
+                                (testPoint.Y == y || testPoint.Y == 0) &&
+                                (testPoint.Z == z || testPoint.Z == 0))
+                                neighbors.Add(testPoint);
+                        }
+                    }
+                }
+            }
         }
 
         #endregion
@@ -1381,6 +1424,27 @@ namespace DwarfCorp
             GetNeighborsVertex(vertex, (int) grid.X, (int) grid.Y, (int) grid.Z, toReturn);
         }
 
+        public List<Point3> GetEuclidianSuccessorByVoxel(Voxel v)
+        {
+            Point3 gridPos;
+            if (v == null)
+            {
+                gridPos = new Point3(0, 0, 0);
+            } else
+            {
+                gridPos = new Point3(v.GridPosition);
+            }
+
+            int key = 0;
+            if (gridPos.X == SizeX - 1) key += 2;
+            else if (gridPos.X != 0) key += 1;
+            if (gridPos.Y == SizeY - 1) key += 6;
+            else if (gridPos.Y != 0) key += 3;
+            if (gridPos.Z == SizeZ - 1) key += 18;
+            else if (gridPos.Z != 0) key += 9;
+
+            return EuclideanSuccessorsByVoxelPosition[key];
+        }
 
         public bool IsInterior(int x, int y, int z)
         {
