@@ -4,4 +4,4 @@
 	branch = dwarfcorp-master
 [submodule "gemgui"]
 	path = gemgui
-	url = ./gemgui/
+	url = https://github.com/Blecki/gemgui
