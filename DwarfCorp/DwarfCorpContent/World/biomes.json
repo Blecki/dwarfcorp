@@ -430,6 +430,10 @@
       {
         "Name": "Bat",
         "SpawnProbability": 0.008
+      },
+      {
+        "Name": "MudGolem",
+        "SpawnProbability": 0.001
       }
     ],
     "GrassVoxel": "CaveFungus",

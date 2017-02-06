@@ -57,7 +57,7 @@ namespace DwarfCorp
             
         }
 
-        public Projectile(Vector3 position, Vector3 initialVelocity, Health.DamageAmount damage, float size, string asset, string hitParticles, string hitNoise, Body target, bool animated = false) : 
+        public Projectile(Vector3 position, Vector3 initialVelocity, Health.DamageAmount damage, float size, string asset, string hitParticles, string hitNoise, Body target, bool animated = false, bool singleSprite = false) : 
             base("Projectile", DwarfGame.World.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0) )
         {
             Target = target;
@@ -68,6 +68,13 @@ namespace DwarfCorp
             AddToCollisionManager = false;
             CollideMode = Physics.CollisionMode.None;
             var spriteSheet = new SpriteSheet(asset);
+
+            if (animated)
+            {
+                spriteSheet.FrameWidth = Math.Min(spriteSheet.FrameWidth, spriteSheet.FrameHeight);
+                spriteSheet.FrameHeight = spriteSheet.FrameWidth;
+            }
+
             Sprite = new Sprite(DwarfGame.World.ComponentManager, "Sprite", this, Matrix.CreateRotationY((float)Math.PI * 0.5f),
                 spriteSheet, false)
             {
@@ -82,21 +89,30 @@ namespace DwarfCorp
             {
                 Sprite.SetSingleFrameAnimation();   
             }
-            Sprite2 = new Sprite(DwarfGame.World.ComponentManager, "Sprite2", Sprite, Matrix.CreateRotationX((float)Math.PI * 0.5f),
-                spriteSheet, false)
-            {
-                OrientationType = Sprite.OrientMode.Fixed
-            };
 
-            if (animated)
+            if (singleSprite)
             {
-                Sprite2.SetSimpleAnimation();
-            }
-            else
-            {
-                Sprite2.SetSingleFrameAnimation();   
+                this.Sprite.OrientationType = Sprite.OrientMode.Spherical;
             }
 
+            if (!singleSprite)
+            {
+                Sprite2 = new Sprite(DwarfGame.World.ComponentManager, "Sprite2", Sprite,
+                    Matrix.CreateRotationX((float) Math.PI*0.5f),
+                    spriteSheet, false)
+                {
+                    OrientationType = Sprite.OrientMode.Fixed
+                };
+
+                if (animated)
+                {
+                    Sprite2.SetSimpleAnimation();
+                }
+                else
+                {
+                    Sprite2.SetSingleFrameAnimation();
+                }
+            }
             Damage = damage;
             HitParticles = new ParticleTrigger(hitParticles, DwarfGame.World.ComponentManager, "Hit Particles", this,
                 Matrix.Identity, new Vector3(size * 0.5f, size * 0.5f, size * 0.5f), Vector3.Zero)
@@ -245,7 +261,7 @@ namespace DwarfCorp
         }
 
         public MudProjectile(Vector3 position, Vector3 initialVelocity, Body target) :
-            base(position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Entities.mudman_projectile, "dirt_particle", ContentPaths.Audio.gravel, target)
+            base(position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Entities.mudman_projectile, "dirt_particle", ContentPaths.Audio.gravel, target, true, true)
         {
             HitAnimation = new Animation(ContentPaths.Effects.flash, 32, 32, 0, 1, 2, 3, 4);
         }
