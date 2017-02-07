@@ -43,9 +43,6 @@ namespace DwarfCorp.GameStates
         private Gum.Widget ResourcePanel;
         private NewGui.InfoTray InfoTray;
 
-        private Point RememberedScreenResolution = new Point(0, 0);
-       // public Minimap MiniMap { get; set; }
-
         // Provides event-based keyboard and mouse input.
         public static InputManager Input;// = new InputManager();
 
@@ -64,9 +61,7 @@ namespace DwarfCorp.GameStates
             ShouldReset = true;
             Paused = false;
             RenderUnderneath = true;
-
-            IsInitialized = true;
-
+            EnableScreensaver = false;
             IsInitialized = false;
         }
 
