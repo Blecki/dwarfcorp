@@ -54,7 +54,7 @@ namespace DwarfCorp
         }
 
         public WorldGUIObject(Body parent, GUIComponent guiObject) :
-            base("GUIObject", parent, Matrix.Identity, Vector3.One, Vector3.Zero)
+            base(parent.Manager, "GUIObject", parent, Matrix.Identity, Vector3.One, Vector3.Zero)
         {
             GUIObject = guiObject;
             AddToCollisionManager = false;

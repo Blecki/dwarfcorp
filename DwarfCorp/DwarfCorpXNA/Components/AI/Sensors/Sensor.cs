@@ -54,7 +54,7 @@ namespace DwarfCorp
         private readonly List<Body> sensedItems = new List<Body>();
 
         public Sensor(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
+            base(parent.Manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             OnSensed += Sensor_OnSensed;
             Tags.Add("Sensor");

@@ -695,7 +695,7 @@ namespace DwarfCorp
                                     Texture2D tilemap)
         {
             Vector3[] corners = new Vector3[8];
-            Camera tempCamera = new Camera(camera.Target, camera.Position, camera.FOV, camera.AspectRatio, camera.NearPlane, 30);
+            Camera tempCamera = new Camera(DwarfGame.World, camera.Target, camera.Position, camera.FOV, camera.AspectRatio, camera.NearPlane, 30);
             tempCamera.GetFrustrum().GetCorners(corners);
             BoundingBox cameraBox = MathFunctions.GetBoundingBox(corners);
             cameraBox = cameraBox.Expand(1.0f);

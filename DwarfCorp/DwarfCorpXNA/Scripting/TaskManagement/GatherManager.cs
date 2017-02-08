@@ -75,6 +75,7 @@ namespace DwarfCorp
 
         public void AddVoxelOrder(BuildVoxelOrder buildVoxelOrder)
         {
+            if (Creature.Movement.IsSessile) return;
 
             foreach (BuildVoxelOrder order in VoxelOrders)
             {

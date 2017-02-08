@@ -48,8 +48,8 @@ namespace DwarfCorp
 
         }
 
-        public WeightRack(Vector3 position) :
-            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 5), DwarfGame.World.ComponentManager.RootComponent)
+        public WeightRack(ComponentManager componentManager, Vector3 position) :
+            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 5), componentManager.RootComponent)
         {
             Name = "WeightRack";
             Tags.Add("WeightRack");

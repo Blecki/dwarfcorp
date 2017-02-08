@@ -73,6 +73,7 @@ namespace DwarfCorp
         {
             return EntityToGather != null
                    && !EntityToGather.IsDead
+                   && !agent.AI.Movement.IsSessile
                    &&  agent.AI.Faction.GatherDesignations.Contains(EntityToGather)
                    && !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather)
                    && !agent.Inventory.Resources.IsFull();

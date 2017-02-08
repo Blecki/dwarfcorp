@@ -137,13 +137,13 @@ namespace DwarfCorp
             RoomData = BedRoomData;
         }
 
-        public BedRoom(bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
-            base(designation, designations, BedRoomData, chunks)
+        public BedRoom(bool designation, IEnumerable<Voxel> designations, WorldManager world) :
+            base(designation, designations, BedRoomData, world)
         {
         }
 
-        public BedRoom(IEnumerable<Voxel> voxels, ChunkManager chunks) :
-            base(voxels, BedRoomData, chunks)
+        public BedRoom(IEnumerable<Voxel> voxels, WorldManager world) :
+            base(voxels, BedRoomData, world)
         {
             OnBuilt();
         }

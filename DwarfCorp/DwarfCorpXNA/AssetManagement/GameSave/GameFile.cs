@@ -83,33 +83,33 @@ namespace DwarfCorp
         }
 
         public GameData Data { get; set; }
-
+       
         public static string Extension = "game";
         public static string CompressedExtension = "zgame";
 
-        public GameFile(string overworld, int id)
+        public GameFile(string overworld, int id, WorldManager world)
         {
             Data = new GameData
             {
                 Metadata =
                 {
                     OverworldFile = overworld,
-                    WorldOrigin = DwarfGame.World.WorldOrigin,
-                    WorldScale = DwarfGame.World.WorldScale,
-                    TimeOfDay = DwarfGame.World.Sky.TimeOfDay,
-                    ChunkHeight = DwarfGame.World.ChunkHeight,
-                    ChunkWidth = DwarfGame.World.ChunkWidth,
+                    WorldOrigin = world.WorldOrigin,
+                    WorldScale = world.WorldScale,
+                    TimeOfDay = world.Sky.TimeOfDay,
+                    ChunkHeight = world.ChunkHeight,
+                    ChunkWidth = world.ChunkWidth,
                     GameID = id,
-                    Time = DwarfGame.World.Time
+                    Time = world.Time
                 },
-                Camera = DwarfGame.World.Camera,
-                Components = DwarfGame.World.ComponentManager,
+                Camera = world.Camera,
+                Components = world.ComponentManager,
                 ChunkData = new List<ChunkFile>(),
                 GameID = id,
             };
 
 
-            foreach(ChunkFile file in DwarfGame.World.ChunkManager.ChunkData.ChunkMap.Select(pair => new ChunkFile(pair.Value)))
+            foreach (ChunkFile file in world.ChunkManager.ChunkData.ChunkMap.Select(pair => new ChunkFile(pair.Value)))
             {
                 Data.ChunkData.Add(file);
             }

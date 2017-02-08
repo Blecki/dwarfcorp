@@ -262,7 +262,7 @@ namespace DwarfCorp
                 {
                     if(CurrentRoomData != RoomLibrary.GetData("Stockpile"))
                     {
-                        Room toBuild = RoomLibrary.CreateRoom(Faction, CurrentRoomData.Name, designations.ToList(), true);
+                        Room toBuild = RoomLibrary.CreateRoom(Faction, CurrentRoomData.Name, designations.ToList(), true, DwarfGame.World);
                         DesignatedRooms.Add(toBuild);
                         order = new BuildRoomOrder(toBuild, this.Faction);
                         order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
@@ -270,7 +270,7 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        Stockpile toBuild = new Stockpile(Faction);
+                        Stockpile toBuild = new Stockpile(Faction, DwarfGame.World);
                         DesignatedRooms.Add(toBuild);
                         order = new BuildStockpileOrder(toBuild, this.Faction);
                         order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
@@ -281,7 +281,7 @@ namespace DwarfCorp
 
             if(order != null)
             {
-                order.CreateFences();
+                order.CreateFences(DwarfGame.World.ComponentManager);
                 TaskManager.AssignTasks(new List<Task>()
                 {
                     new BuildRoomTask(order)
@@ -321,7 +321,7 @@ namespace DwarfCorp
                 {
                     DwarfGame.World.ShowTooltip("None of the selected units can build rooms.");
                 }
-                else if (CurrentRoomData.Verify(refs, Faction))
+                else if (CurrentRoomData.Verify(refs, Faction, DwarfGame.World))
                 {
                     List<Quantitiy<Resource.ResourceTags>> requirements =
                         CurrentRoomData.GetRequiredResources(refs.Count, Faction);
@@ -378,7 +378,7 @@ namespace DwarfCorp
                 {
                     DwarfGame.World.ShowTooltip("None of the selected units can build rooms.");
                 }
-                else if (CurrentRoomData.Verify(refs, Faction))
+                else if (CurrentRoomData.Verify(refs, Faction, DwarfGame.World))
                 {
                     BuildNewVoxels(refs);    
                 }

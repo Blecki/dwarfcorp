@@ -50,18 +50,18 @@ namespace DwarfCorp
             
         }
 
-        public Bed(Vector3 position) :
-            base("Bed", DwarfGame.World.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(1.5f, 0.5f, 0.75f), new Vector3(-0.5f + 1.5f * 0.5f, -0.5f + 0.25f, -0.5f + 0.75f * 0.5f))
+        public Bed(ComponentManager manager, Vector3 position) :
+            base(manager, "Bed", manager.RootComponent, Matrix.CreateTranslation(position), new Vector3(1.5f, 0.5f, 0.75f), new Vector3(-0.5f + 1.5f * 0.5f, -0.5f + 0.25f, -0.5f + 0.75f * 0.5f))
         {
             Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Furniture.bedtex);
-            bedModel = new Box(DwarfGame.World.ComponentManager, "bedbox", this, Matrix.CreateTranslation(-0.5f, -0.5f, -0.5f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), new Vector3(1.0f, 1.0f, 2.0f), new Vector3(0.5f, 0.5f, 1.0f), "bed", spriteSheet);
+            bedModel = new Box(manager.World.ComponentManager, "bedbox", this, Matrix.CreateTranslation(-0.5f, -0.5f, -0.5f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), new Vector3(1.0f, 1.0f, 2.0f), new Vector3(0.5f, 0.5f, 1.0f), "bed", spriteSheet);
 
             Voxel voxelUnder = new Voxel();
 
 
-            if (DwarfGame.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            if (manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {
-                VoxelListener listener = new VoxelListener(DwarfGame.World.ComponentManager, this, DwarfGame.World.ChunkManager, voxelUnder);
+                VoxelListener listener = new VoxelListener(manager.World.ComponentManager, this, manager.World.ChunkManager, voxelUnder);
             }
 
             Tags.Add("Bed");
@@ -79,18 +79,18 @@ namespace DwarfCorp
 
         }
         // 20 x 8 x 32
-        public Bookshelf(Vector3 position) :
-            base("Bookshelf", DwarfGame.World.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(32.0f / 32.0f, 8.0f / 32.0f, 20.0f / 32.0f), new Vector3(0.5f, 0.5f, 0.5f))
+        public Bookshelf(ComponentManager manager, Vector3 position) :
+            base(manager, "Bookshelf", manager.RootComponent, Matrix.CreateTranslation(position), new Vector3(32.0f / 32.0f, 8.0f / 32.0f, 20.0f / 32.0f), new Vector3(0.5f, 0.5f, 0.5f))
         {
             Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Furniture.bookshelf);
-            bedModel = new Box(DwarfGame.World.ComponentManager, "model", this, Matrix.CreateTranslation(new Vector3(-20.0f / 64.0f, -32.0f / 64.0f, -8.0f / 64.0f)), new Vector3(32.0f / 32.0f, 8.0f / 32.0f, 20.0f / 32.0f), new Vector3(0.0f, 0.0f, 0.0f), "bookshelf", spriteSheet);
+            bedModel = new Box(manager, "model", this, Matrix.CreateTranslation(new Vector3(-20.0f / 64.0f, -32.0f / 64.0f, -8.0f / 64.0f)), new Vector3(32.0f / 32.0f, 8.0f / 32.0f, 20.0f / 32.0f), new Vector3(0.0f, 0.0f, 0.0f), "bookshelf", spriteSheet);
            
             Voxel voxelUnder = new Voxel();
 
 
-            if (DwarfGame.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            if (manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {
-                VoxelListener listener = new VoxelListener(DwarfGame.World.ComponentManager, this, DwarfGame.World.ChunkManager, voxelUnder);
+                VoxelListener listener = new VoxelListener(manager.World.ComponentManager, this, manager.World.ChunkManager, voxelUnder);
             }
 
             Tags.Add("Books");

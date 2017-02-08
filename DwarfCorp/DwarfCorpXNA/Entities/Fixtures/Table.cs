@@ -60,18 +60,18 @@ namespace DwarfCorp
                 ChargeTimer = new Timer(1.0f, false);
             }
 
-            public void Update(DwarfTime time)
+            public void Update(DwarfTime time, WorldManager world)
             {
                 ChargeTimer.Update(time);
-                if (ManaSprite != null && Charge > 0.0f && DwarfGame.World.Master.Spells.Mana < DwarfGame.World.Master.Spells.MaxMana)
+                if (ManaSprite != null && Charge > 0.0f && world.Master.Spells.Mana < world.Master.Spells.MaxMana)
                 {
                     if (ChargeTimer.HasTriggered)
                     {
                         SoundManager.PlaySound(ContentPaths.Audio.tinkle, ManaSprite.Position);
                         IndicatorManager.DrawIndicator("+" + (int)ChargeRate + " M", ManaSprite.Position, 1.0f, Color.Green);
-                        DwarfGame.World.ParticleManager.Trigger("star_particle", ManaSprite.Position, Color.White, 1);
+                        world.ParticleManager.Trigger("star_particle", ManaSprite.Position, Color.White, 1);
                         Charge -= ChargeRate;
-                        DwarfGame.World.Master.Spells.Recharge(ChargeRate);
+                        world.Master.Spells.Recharge(ChargeRate);
                     }
 
                 }
@@ -81,12 +81,12 @@ namespace DwarfCorp
                 }
             }
 
-            public bool CreateNewManaSprite(Faction faction, Vector3 position)
+            public bool CreateNewManaSprite(Faction faction, Vector3 position, WorldManager world)
             {
                 if (ManaSprite != null)
                 {
                     ManaSprite.Die();  
-                    DwarfGame.World.ParticleManager.Trigger("star_particle", position, Color.White, 5);
+                    world.ParticleManager.Trigger("star_particle", position, Color.White, 5);
                     SoundManager.PlaySound(ContentPaths.Audio.wurp, position, true);
                     ManaSprite = null;
                     ReCreateTimer.Reset();
@@ -108,9 +108,9 @@ namespace DwarfCorp
                 return false;
             }
 
-            public void Reset(Faction faction, Vector3 position)
+            public void Reset(Faction faction, Vector3 position, WorldManager world)
             {
-                if (CreateNewManaSprite(faction, position))
+                if (CreateNewManaSprite(faction, position, world))
                 {
                     Charge = MaxCharge;
                 }
@@ -122,14 +122,14 @@ namespace DwarfCorp
             
         }
 
-        public Table(Vector3 position):
-            this(position, null, Point.Zero)
+        public Table(ComponentManager componentManager, Vector3 position):
+            this(componentManager, position, null, Point.Zero)
         {
             
         }
 
-        public Table(Vector3 position, string asset) :
-            this(position, new SpriteSheet(asset), Point.Zero)
+        public Table(ComponentManager manager, Vector3 position, string asset) :
+            this(manager, position, new SpriteSheet(asset), Point.Zero)
         {
 
         }
@@ -138,20 +138,19 @@ namespace DwarfCorp
         {
             if (Battery != null)
             {
-                Battery.Update(time);
+                Battery.Update(time, Manager.World);
 
                 if(Battery.Charge <= 0)
                 {
-                    Battery.Reset(DwarfGame.World.PlayerFaction, Position + Vector3.Up);
+                    Battery.Reset(Manager.World.PlayerFaction, Position + Vector3.Up, Manager.World);
                 }
             }
             base.Update(time, chunks, camera);
         }
 
-        public Table(Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame) :
-            base("Table", DwarfGame.World.ComponentManager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+        public Table(ComponentManager manager, Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame) :
+            base(manager, "Table", manager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
-            ComponentManager componentManager = DwarfGame.World.ComponentManager;
             Matrix matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
             matrix.Translation = position;
             LocalTransform = matrix;
@@ -173,19 +172,19 @@ namespace DwarfCorp
             Animation tableTop = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "tableTop", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
             Animation tableAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "tableTop", 32, 32, sideframes, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            Sprite tabletopSprite = new Sprite(componentManager, "sprite1", this, Matrix.CreateRotationX((float)Math.PI * 0.5f), spriteSheet, false)
+            Sprite tabletopSprite = new Sprite(manager, "sprite1", this, Matrix.CreateRotationX((float)Math.PI * 0.5f), spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
             };
             tabletopSprite.AddAnimation(tableTop);
 
-            Sprite sprite = new Sprite(componentManager, "sprite", this, Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(manager, "sprite", this, Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.Identity, spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
             };
             sprite.AddAnimation(tableAnimation);
 
-            Sprite sprite2 = new Sprite(componentManager, "sprite2", this, Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
+            Sprite sprite2 = new Sprite(manager, "sprite2", this, Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
             };
@@ -193,9 +192,9 @@ namespace DwarfCorp
 
             Voxel voxelUnder = new Voxel();
 
-            if (DwarfGame.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            if (manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {
-                VoxelListener listener = new VoxelListener(componentManager, this, DwarfGame.World.ChunkManager, voxelUnder);
+                VoxelListener listener = new VoxelListener(manager, this, manager.World.ChunkManager, voxelUnder);
             }
 
 

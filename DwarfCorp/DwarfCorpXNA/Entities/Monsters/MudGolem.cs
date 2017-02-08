@@ -70,7 +70,7 @@ namespace DwarfCorp
 
             Sensors = new EnemySensor(Manager, "EnemySensor", Physics, Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero);
 
-            AI = new MudGolemAI(this, Sensors, DwarfGame.World.PlanService) { Movement = { IsSessile = true, CanFly = false, CanSwim = false, CanWalk = false, CanClimb = false, CanClimbWalls = false} };
+            AI = new MudGolemAI(this, Sensors, Manager.World.PlanService) { Movement = { IsSessile = true, CanFly = false, CanSwim = false, CanWalk = false, CanClimb = false, CanClimbWalls = false} };
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 

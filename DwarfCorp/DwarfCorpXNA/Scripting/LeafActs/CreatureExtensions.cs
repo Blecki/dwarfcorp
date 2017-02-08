@@ -65,7 +65,7 @@ namespace DwarfCorp
 
                 if (agent.Allies == "Dwarf")
                 {
-                    DwarfGame.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
+                    agent.Manager.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
                 }
                 yield return Act.Status.Fail;
                 yield break;
@@ -96,7 +96,7 @@ namespace DwarfCorp
 
                 if (agent.Allies == "Dwarf")
                 {
-                    DwarfGame.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
+                    agent.Manager.World.MakeAnnouncement("We're out of food!", "Our stockpiles don't have any food. Our employees will starve!");
                 }
 
                 yield return Act.Status.Fail;

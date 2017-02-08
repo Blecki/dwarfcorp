@@ -54,8 +54,8 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
 
-        public Flag(Vector3 position) :
-            base("Flag", DwarfGame.World.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+        public Flag(ComponentManager componentManager, Vector3 position) :
+            base(componentManager, "Flag", componentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
             SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
             List<Point> frames = new List<Point>
@@ -66,7 +66,7 @@ namespace DwarfCorp
             };
             Animation lampAnimation = new Animation(GameState.Game.GraphicsDevice, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), "Flag", 32, 32, frames, true, Color.White, 5.0f + MathFunctions.Rand(), 1f, 1.0f, false);
 
-            Sprite sprite = new Sprite(DwarfGame.World.ComponentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.YAxis
             };
@@ -76,9 +76,9 @@ namespace DwarfCorp
 
             Voxel voxelUnder = new Voxel();
 
-            if (DwarfGame.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            if (Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {
-                VoxelListener listener = new VoxelListener(DwarfGame.World.ComponentManager, this, DwarfGame.World.ChunkManager, voxelUnder);
+                VoxelListener listener = new VoxelListener(componentManager, this, Manager.World.ChunkManager, voxelUnder);
             }
 
             lampAnimation.Play();

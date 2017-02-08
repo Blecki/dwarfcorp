@@ -88,7 +88,7 @@ namespace DwarfCorp
                     grabbed.AnimationQueue.Add(motion);
 
                     WallBuilder put = Creature.Faction.WallBuilder.GetDesignation(Voxel);
-                    put.Put(DwarfGame.World.ChunkManager);
+                    put.Put(Creature.Manager.World.ChunkManager);
 
 
                     Creature.Faction.WallBuilder.Designations.Remove(put);

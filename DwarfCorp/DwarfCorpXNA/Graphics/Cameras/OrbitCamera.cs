@@ -82,15 +82,15 @@ namespace DwarfCorp
         public Vector3 PushVelocity = Vector3.Zero;
         public ControlType Control = ControlType.Overhead;
 
-        public List<Vector3> ZoomTargets { get; set; } 
-       
+        public List<Vector3> ZoomTargets { get; set; }
+
         public OrbitCamera() : base()
         {
             
         }
 
-        public OrbitCamera(float theta, float phi, float radius, Vector3 target, Vector3 position, float fov, float aspectRatio, float nearPlane, float farPlane) :
-            base(target, position, fov, aspectRatio, nearPlane, farPlane)
+        public OrbitCamera(WorldManager world, float theta, float phi, float radius, Vector3 target, Vector3 position, float fov, float aspectRatio, float nearPlane, float farPlane) :
+            base(world, target, position, fov, aspectRatio, nearPlane, farPlane)
         {
             Theta = theta;
             Phi = phi;
@@ -131,7 +131,7 @@ namespace DwarfCorp
 
             if (PhysicsObject == null)
             {
-                PhysicsObject = new Physics("CameraPhysics", DwarfGame.World.ComponentManager.RootComponent, Matrix.CreateTranslation(Target), new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero, 1.0f, 1.0f, 0.999f, 1.0f, Vector3.Down * 10);
+                PhysicsObject = new Physics("CameraPhysics", World.ComponentManager.RootComponent, Matrix.CreateTranslation(Target), new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero, 1.0f, 1.0f, 0.999f, 1.0f, Vector3.Down * 10);
                 PhysicsObject.IsSleeping = false;
                 PhysicsObject.Velocity = Vector3.Down*0.01f;
             }
@@ -303,7 +303,7 @@ namespace DwarfCorp
 
             bool stateChanged = false;
             float dt = (float)time.ElapsedRealTime.TotalSeconds;
-            SnapToBounds(new BoundingBox(DwarfGame.World.ChunkManager.Bounds.Min, DwarfGame.World.ChunkManager.Bounds.Max + Vector3.UnitY * 20));
+            SnapToBounds(new BoundingBox(World.ChunkManager.Bounds.Min, World.ChunkManager.Bounds.Max + Vector3.UnitY * 20));
             if (KeyManager.RotationEnabled())
             {
                 if (!shiftPressed)
@@ -501,7 +501,7 @@ namespace DwarfCorp
                 }
             }
 
-            if (mouse.ScrollWheelValue != LastWheel && !DwarfGame.World.IsMouseOverGui)
+            if (mouse.ScrollWheelValue != LastWheel && !World.IsMouseOverGui)
             {
                 int change = mouse.ScrollWheelValue - LastWheel;
 
@@ -527,7 +527,7 @@ namespace DwarfCorp
 
             LastWheel = mouse.ScrollWheelValue;
 
-            if (!CollidesWithChunks(DwarfGame.World.ChunkManager, Target + Velocity, false))
+            if (!CollidesWithChunks(World.ChunkManager, Target + Velocity, false))
             {
                 Target += Velocity;
                 PushVelocity = Vector3.Zero;

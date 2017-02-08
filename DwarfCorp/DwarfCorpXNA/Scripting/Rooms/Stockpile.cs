@@ -71,8 +71,8 @@ namespace DwarfCorp
         }
 
 
-        public Stockpile(Faction faction) :
-            base(false, new List<Voxel>(), RoomLibrary.GetData(StockpileName), DwarfGame.World.ChunkManager)
+        public Stockpile(Faction faction, WorldManager world) :
+            base(false, new List<Voxel>(), RoomLibrary.GetData(StockpileName), world)
         {
             Boxes = new List<Body>();
             ReplacementType = VoxelLibrary.GetVoxelType("Stockpile");
@@ -80,16 +80,16 @@ namespace DwarfCorp
             Faction = faction;
         }
 
-        public Stockpile(Faction faction, IEnumerable<Voxel> voxels, RoomData data, ChunkManager chunks) :
-            base(voxels, data, chunks)
+        public Stockpile(Faction faction, IEnumerable<Voxel> voxels, RoomData data, WorldManager world) :
+            base(voxels, data, world)
         {
             Boxes = new List<Body>();
             faction.Stockpiles.Add(this);
             Faction = faction;
         }
 
-        public Stockpile(Faction faction, bool designation, IEnumerable<Voxel> designations, RoomData data, ChunkManager chunks) :
-            base(designation, designations, data, chunks)
+        public Stockpile(Faction faction, bool designation, IEnumerable<Voxel> designations, RoomData data, WorldManager world) :
+            base(designation, designations, data, world)
         {
             Boxes = new List<Body>();
             faction.Stockpiles.Add(this);

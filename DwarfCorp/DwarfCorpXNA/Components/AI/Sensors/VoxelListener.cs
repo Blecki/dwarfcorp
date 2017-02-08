@@ -63,7 +63,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Chunk = DwarfGame.World.ChunkManager.ChunkData.ChunkMap[ChunkID];
+            Chunk = Manager.World.ChunkManager.ChunkData.ChunkMap[ChunkID];
             firstIter = true;
             Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
         }
@@ -145,7 +145,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Chunk = DwarfGame.World.ChunkManager.ChunkData.ChunkMap[ChunkID];
+            Chunk = Manager.World.ChunkManager.ChunkData.ChunkMap[ChunkID];
             Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
         }
 
