@@ -308,30 +308,6 @@ namespace DwarfCorp
             intersectingBounds.RemoveWhere(obj => !obj.GetBoundingBox().Intersects(sphere));
         }
 
-
-
-        public void GetObjectsIntersecting<TObject>(Ray ray, HashSet<TObject> set, CollisionType queryType)
-            where TObject : IBoundedObject
-        {
-            if (queryType == (CollisionType.Static | CollisionType.Dynamic))
-            {
-                GetObjectsIntersecting<TObject>(ray, set, CollisionType.Static);
-                GetObjectsIntersecting<TObject>(ray, set, CollisionType.Dynamic);
-            }
-            else foreach(Point3 pos in MathFunctions.RasterizeLine(ray.Position, ray.Direction*100 + ray.Position))
-            {
-                if (queryType != CollisionType.Static && queryType != CollisionType.Dynamic) continue;
-
-                List<IBoundedObject> obj = Hashes[queryType].GetItems(pos);
-                if (obj == null) continue;
-                foreach (TObject item in obj.OfType<TObject>().Where(item => !set.Contains(item) && ray.Intersects(item.GetBoundingBox()) != null))
-                {
-                    set.Add(item);
-                }
-            }
-        }
-
-
         public HashSet<T> GetVisibleObjects<T>(BoundingFrustum getFrustrum, CollisionType collisionType) where T : IBoundedObject
         {
             HashSet<T> objects = new HashSet<T>();

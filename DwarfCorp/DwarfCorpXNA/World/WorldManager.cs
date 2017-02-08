@@ -522,7 +522,7 @@ namespace DwarfCorp
             if (fileExists)
             {
                 SetLoadingMessage("Loading " + ExistingFile);
-                gameFile = new GameFile(ExistingFile, true);
+                gameFile = new GameFile(ExistingFile, DwarfGame.COMPRESSED_BINARY_SAVES);
                 Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
                 DwarfGame.World.Time = gameFile.Data.Metadata.Time;
                 WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
@@ -540,7 +540,7 @@ namespace DwarfCorp
                     OverworldFile overWorldFile =
                         new OverworldFile(
                             worldDirectory.FullName + ProgramData.DirChar + "world." + OverworldFile.CompressedExtension,
-                            true, true);
+                            DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
                     Overworld.Map = overWorldFile.Data.CreateMap();
                     Overworld.Name = overWorldFile.Data.Name;
                     WorldWidth = Overworld.Map.GetLength(1);
@@ -1313,13 +1313,13 @@ namespace DwarfCorp
                 OverworldFile file = new OverworldFile(Game.GraphicsDevice, Overworld.Map, Overworld.Name);
                 file.WriteFile(
                     worldDirectory.FullName + Path.DirectorySeparatorChar + "world." + OverworldFile.CompressedExtension,
-                    true, true);
+                    DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
                 file.SaveScreenshot(worldDirectory.FullName + Path.DirectorySeparatorChar + "screenshot.png");
 
                 gameFile = new GameFile(Overworld.Name, GameID);
                 gameFile.WriteFile(
                     DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar +
-                    filename, true);
+                    filename, DwarfGame.COMPRESSED_BINARY_SAVES);
                 // GameFile instance is no longer needed.
                 gameFile = null;
 

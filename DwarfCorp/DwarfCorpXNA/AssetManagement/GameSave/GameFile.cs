@@ -71,14 +71,14 @@ namespace DwarfCorp
 
                 foreach(ChunkFile chunk in ChunkData)
                 {
-                    chunk.WriteFile(directory + ProgramData.DirChar + "Chunks" + ProgramData.DirChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + "." + ChunkFile.CompressedExtension, true, true);
+                    chunk.WriteFile(directory + ProgramData.DirChar + "Chunks" + ProgramData.DirChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + "." + ChunkFile.CompressedExtension, DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
                 }
 
-                Metadata.WriteFile(directory + ProgramData.DirChar + "MetaData." + MetaData.CompressedExtension, true);
+                Metadata.WriteFile(directory + ProgramData.DirChar + "MetaData." + MetaData.CompressedExtension, DwarfGame.COMPRESSED_BINARY_SAVES);
                 
-                FileUtils.SaveJSon(Camera, directory + ProgramData.DirChar + "Camera." + "json", false);
+                FileUtils.SaveJSon(Camera, directory + ProgramData.DirChar + "Camera." + "json", DwarfGame.COMPRESSED_BINARY_SAVES);
 
-                FileUtils.SaveJSon(Components, directory + ProgramData.DirChar + "Components." + "zcomp", true);
+                FileUtils.SaveJSon(Components, directory + ProgramData.DirChar + "Components." + "zcomp", DwarfGame.COMPRESSED_BINARY_SAVES);
             }
         }
 
