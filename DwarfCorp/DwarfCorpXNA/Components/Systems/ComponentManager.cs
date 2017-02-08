@@ -158,14 +158,6 @@ namespace DwarfCorp
             }
         }
 
-        public void GetBodiesIntersecting(BoundingSphere sphere, List<Body> components, CollisionManager.CollisionType type)
-        {
-            HashSet<Body> set = new HashSet<Body>();
-            CollisionManager.GetObjectsIntersecting(sphere, set, type);
-
-            components.AddRange(set);
-        }
-
         public void GetBodiesIntersecting(BoundingFrustum frustrum, List<Body> components, CollisionManager.CollisionType type)
         {
             HashSet<Body> set = new HashSet<Body>();

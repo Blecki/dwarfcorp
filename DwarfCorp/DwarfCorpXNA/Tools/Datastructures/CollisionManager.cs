@@ -39,8 +39,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
-
     [JsonObject(IsReference = true)]
     public class SpatialHash<T>
     {
@@ -288,24 +286,6 @@ namespace DwarfCorp
                     }
                 }
             }
-        }
-
-        public void GetObjectsIntersecting<TObject>(BoundingSphere sphere, HashSet<TObject> set, CollisionType queryType) where TObject : IBoundedObject
-        {
-            HashSet<TObject> intersectingBounds = new HashSet<TObject>();
-            BoundingBox box = MathFunctions.GetBoundingBox(sphere);
-            switch ((int)queryType)
-            {
-                case (int)CollisionType.Static:
-                case (int)CollisionType.Dynamic:
-                    Hashes[queryType].GetItemsInBox(box, intersectingBounds);
-                    break;
-                case ((int)CollisionType.Static | (int)CollisionType.Dynamic):
-                    Hashes[CollisionType.Static].GetItemsInBox(box, intersectingBounds);
-                    Hashes[CollisionType.Dynamic].GetItemsInBox(box, intersectingBounds);
-                    break;
-            }
-            intersectingBounds.RemoveWhere(obj => !obj.GetBoundingBox().Intersects(sphere));
         }
 
         public HashSet<T> GetVisibleObjects<T>(BoundingFrustum getFrustrum, CollisionType collisionType) where T : IBoundedObject
