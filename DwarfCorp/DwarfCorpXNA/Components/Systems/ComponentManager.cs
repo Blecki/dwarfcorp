@@ -121,39 +121,6 @@ namespace DwarfCorp
             return toFilter.Where(component => component.Tags.Contains(tag)).ToList();
         }
         
-        public bool IsVisibleToCamera(Body component, Camera camera)
-        {
-            BoundingFrustum frustrum = new BoundingFrustum(camera.ViewMatrix * camera.ProjectionMatrix);
-            return (component.Intersects(frustrum));
-        }
-
-        public void GetBodiesVisibleToCamera(Camera camera, List<Body> components)
-        {
-            BoundingFrustum frustrum = new BoundingFrustum(camera.ViewMatrix * camera.ProjectionMatrix);
-            GetBodiesIntersecting(frustrum, components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
-        }
-
-        public void GetBodiesInvisibleToCamera(Camera camera, List<Body> components)
-        {
-            BoundingFrustum frustrum = new BoundingFrustum(camera.ViewMatrix * camera.ProjectionMatrix);
-
-            foreach(GameComponent c in Components.Values)
-            {
-                if(c is Body && !((Body) c).Intersects(frustrum))
-                {
-                    components.Add((Body) c);
-                }
-            }
-        }
-
-        public void GetBodiesIntersecting(BoundingFrustum frustrum, List<Body> components, CollisionManager.CollisionType type)
-        {
-            HashSet<Body> set = new HashSet<Body>();
-            CollisionManager.GetObjectsIntersecting(frustrum, set, type);
-
-            components.AddRange(set);
-        }
-
         public void GetBodiesIntersecting(BoundingBox box, List<Body> components, CollisionManager.CollisionType type)
         {
             HashSet<Body> set = new HashSet<Body>();
