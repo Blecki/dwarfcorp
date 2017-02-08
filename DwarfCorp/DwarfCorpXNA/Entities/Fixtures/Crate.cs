@@ -49,12 +49,12 @@ namespace DwarfCorp
             
         }
 
-        public Crate(Vector3 position) :
-            base("Crate", DwarfGame.World.ComponentManager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.75f, 0.5f, 1.5f), new Vector3(0.5f, 0.5f, 1.0f))
+        public Crate(ComponentManager manager, Vector3 position) :
+            base(manager, "Crate", manager.RootComponent, Matrix.CreateTranslation(position), new Vector3(0.75f, 0.5f, 1.5f), new Vector3(0.5f, 0.5f, 1.0f))
         {
             Texture2D spriteSheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
 
-            Box crateModel = new Box(DwarfGame.World.ComponentManager, "Cratebox", this, Matrix.CreateRotationY(MathFunctions.Rand(-0.25f, 0.25f)), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.5f, 0.5f, 0.5f), "crate", spriteSheet);
+            Box crateModel = new Box(manager, "Cratebox", this, Matrix.CreateRotationY(MathFunctions.Rand(-0.25f, 0.25f)), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.5f, 0.5f, 0.5f), "crate", spriteSheet);
 
             Tags.Add("Crate");
             CollisionType = CollisionManager.CollisionType.Static;

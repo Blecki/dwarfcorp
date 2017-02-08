@@ -85,7 +85,7 @@ namespace DwarfCorp
 
                 if (Spell.ResearchProgress >= Spell.ResearchTime)
                 {
-                    DwarfGame.World.MakeAnnouncement(String.Format("Researched {0}", Spell.Spell.Name),
+                    Creature.Manager.World.MakeAnnouncement(String.Format("Researched {0}", Spell.Spell.Name),
                         String.Format("{0} ({1}) discovered the {2} spell!", Creature.Stats.FullName,
                         Creature.Stats.CurrentLevel.Name, Spell.Spell.Name),
                         Agent.ZoomToMe);
@@ -93,7 +93,7 @@ namespace DwarfCorp
 
                 starParitcle.Update(DwarfTime.LastTime);
                 if(starParitcle.HasTriggered)
-                    DwarfGame.World.ParticleManager.Trigger("star_particle", Creature.AI.Position, Color.White, 3);
+                   Creature.Manager.World.ParticleManager.Trigger("star_particle", Creature.AI.Position, Color.White, 3);
                 yield return Status.Running;
             }
             Creature.AI.AddThought(Thought.ThoughtType.Researched);

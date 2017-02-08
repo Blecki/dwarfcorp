@@ -47,7 +47,8 @@ namespace DwarfCorp
         public string VoxelType { get; set; }
         public bool Transmute { get; set; }
 
-        public PlaceBlockSpell(string voxelType, bool transmute)
+        public PlaceBlockSpell(WorldManager world, string voxelType, bool transmute) :
+            base(world)
         {
             Texture2D icons = TextureManager.GetTexture(ContentPaths.GUI.icons);
             Image = new ImageFrame(icons, 32, 1, 2);
@@ -87,12 +88,12 @@ namespace DwarfCorp
                 {
                     Vector3 p = selected.Position + Vector3.One*0.5f;
                     IndicatorManager.DrawIndicator("-" + ManaCost + " M",p, 1.0f, Color.Red);
-                    DwarfGame.World.ParticleManager.Trigger("star_particle", p, Color.White, 4);
+                    World.ParticleManager.Trigger("star_particle", p, Color.White, 4);
                     VoxelLibrary.PlaceType(VoxelLibrary.GetVoxelType(VoxelType), selected);
 
                     if (VoxelType == "Magic")
                     {
-                        new VoxelListener(DwarfGame.World.ComponentManager, DwarfGame.World.ComponentManager.RootComponent, DwarfGame.World.ChunkManager, selected)
+                        new VoxelListener(World.ComponentManager, World.ComponentManager.RootComponent, World.ChunkManager, selected)
                         {
                             DestroyOnTimer = true,
                             DestroyTimer = new Timer(5.0f + MathFunctions.Rand(-0.5f, 0.5f), true)
@@ -105,14 +106,14 @@ namespace DwarfCorp
 
             foreach (Point3 point in chunksToRebuild)
             {
-                VoxelChunk chunk = DwarfGame.World.ChunkManager.ChunkData.ChunkMap[point];
+                VoxelChunk chunk = World.ChunkManager.ChunkData.ChunkMap[point];
                 chunk.ShouldRebuild = true;
                 chunk.NotifyTotalRebuild(true);
             }
 
             if (placed)
             {
-                SoundManager.PlaySound(ContentPaths.Audio.tinkle, DwarfGame.World.CursorLightPos, true, 1.0f);
+                SoundManager.PlaySound(ContentPaths.Audio.tinkle, World.CursorLightPos, true, 1.0f);
             }
 
             RechargeTimer.Reset(RechargeTimer.TargetTimeSeconds);

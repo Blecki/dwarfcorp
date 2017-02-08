@@ -45,6 +45,8 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Camera
     {
+        [JsonIgnore]
+        public WorldManager World { get; set; }
         public Vector3 Target { get; set; }
         private Vector3 p = Vector3.Zero;
 
@@ -80,8 +82,9 @@ namespace DwarfCorp
         public int LastWheel { get; set; }
 
 
-        public Camera(Vector3 target, Vector3 position, float fov, float aspectRatio, float nearPlane, float farPlane)
+        public Camera(WorldManager world, Vector3 target, Vector3 position, float fov, float aspectRatio, float nearPlane, float farPlane)
         {
+            World = world;
             UpVector = Vector3.Up;
             Target = target;
             Position = position;

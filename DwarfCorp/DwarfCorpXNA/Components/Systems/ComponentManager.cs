@@ -76,6 +76,9 @@ namespace DwarfCorp
         public FactionLibrary Factions { get; set; }
         public Diplomacy Diplomacy { get; set; }
 
+        [JsonIgnore]
+        public WorldManager World { get; set; }
+
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
@@ -96,6 +99,7 @@ namespace DwarfCorp
 
         public ComponentManager(WorldManager state, CompanyInformation CompanyInformation, List<Faction> natives )
         {
+            World = state;
             Components = new Dictionary<uint, GameComponent>();
             Removals = new List<GameComponent>();
             Additions = new List<GameComponent>();
@@ -108,7 +112,7 @@ namespace DwarfCorp
                 Factions.AddFactions(natives);
             }
             Factions.Initialize(state, CompanyInformation);
-            Point playerOrigin = new Point((int)(DwarfGame.World.WorldOrigin.X), (int)(DwarfGame.World.WorldOrigin.Y));
+            Point playerOrigin = new Point((int)(World.WorldOrigin.X), (int)(World.WorldOrigin.Y));
 
             Factions.Factions["Player"].Center = playerOrigin;
             Factions.Factions["Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
@@ -137,15 +141,15 @@ namespace DwarfCorp
                     where   screenPos.Z > 0 
                     && (selectionRectangle.Contains((int)screenPos.X, (int)screenPos.Y) || selectionRectangle.Intersects(component.GetScreenRect(camera))) 
                     && camera.GetFrustrum().Contains(component.GlobalTransform.Translation) != ContainmentType.Disjoint
-                    && !DwarfGame.World.ChunkManager.ChunkData.CheckOcclusionRay(camera.Position, component.Position)
+                    && !World.ChunkManager.ChunkData.CheckOcclusionRay(camera.Position, component.Position)
                     select component).ToList();
              */
-            if (DwarfGame.World.SelectionBuffer == null)
+            if (World.SelectionBuffer == null)
             {
                 return new List<Body>();
             }
             List<Body> toReturn = new List<Body>();
-            foreach (uint id in DwarfGame.World.SelectionBuffer.GetIDsSelected(selectionRectangle))
+            foreach (uint id in World.SelectionBuffer.GetIDsSelected(selectionRectangle))
             {
                 GameComponent component;
                 if (!Components.TryGetValue(id, out component))

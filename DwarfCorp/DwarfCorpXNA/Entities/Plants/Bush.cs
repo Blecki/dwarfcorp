@@ -46,26 +46,25 @@ namespace DwarfCorp
     {
         public Cactus() { }
 
-        public Cactus(Vector3 position, string asset, float bushSize) :
-            base("Cactus", DwarfGame.World.ComponentManager.RootComponent, Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero)
+        public Cactus(ComponentManager componentManager, Vector3 position, string asset, float bushSize) :
+            base("Cactus", componentManager.RootComponent, Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);
-            ComponentManager componentManager = DwarfGame.World.ComponentManager;
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position + new Vector3(0.5f, -0.2f, 0.5f);
             LocalTransform = matrix;
 
-            new Mesh(componentManager, "Model", this, Matrix.CreateScale(bushSize, bushSize, bushSize), asset, false);
+            new Mesh("Model", this, Matrix.CreateScale(bushSize, bushSize, bushSize), asset, false);
 
             Health health = new Health(componentManager, "HP", this, 30 * bushSize, 0.0f, 30 * bushSize);
             new Flammable(componentManager, "Flames", this, health);
 
             Voxel voxelUnder = new Voxel();
 
-            if (DwarfGame.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            if (componentManager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {
-                VoxelListener listener = new VoxelListener(componentManager, this, DwarfGame.World.ChunkManager, voxelUnder);
+                VoxelListener listener = new VoxelListener(componentManager, this, componentManager.World.ChunkManager, voxelUnder);
             }
 
 
@@ -98,26 +97,25 @@ namespace DwarfCorp
     {
         public Bush() { }
 
-        public Bush(Vector3 position, string asset, float bushSize) :
-            base("Bush", DwarfGame.World.ComponentManager.RootComponent, Matrix.Identity, new Vector3(bushSize, bushSize, bushSize),Vector3.Zero)
+        public Bush(ComponentManager componentManager, Vector3 position, string asset, float bushSize) :
+            base("Bush", componentManager.RootComponent, Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), Vector3.Zero)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);
-            ComponentManager componentManager = DwarfGame.World.ComponentManager;
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position + new Vector3(0.5f, -0.2f, 0.5f);
             LocalTransform = matrix;
 
-            new Mesh(componentManager, "Model", this, Matrix.CreateScale(bushSize, bushSize, bushSize), asset, false);
+            new Mesh("Model", this, Matrix.CreateScale(bushSize, bushSize, bushSize), asset, false);
 
             Health health = new Health(componentManager, "HP", this, 30 * bushSize, 0.0f, 30 * bushSize);
             new Flammable(componentManager, "Flames", this, health);
 
             Voxel voxelUnder = new Voxel();
 
-            if (DwarfGame.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            if (componentManager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {
-                VoxelListener listener = new VoxelListener(componentManager, this, DwarfGame.World.ChunkManager, voxelUnder);
+                VoxelListener listener = new VoxelListener(componentManager, this, componentManager.World.ChunkManager, voxelUnder);
             }
 
             Tags.Add("Vegetation");

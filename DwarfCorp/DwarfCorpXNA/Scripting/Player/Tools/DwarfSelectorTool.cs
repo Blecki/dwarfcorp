@@ -77,7 +77,7 @@ namespace DwarfCorp
                 return;
             }
 
-            Voxel vox = DwarfGame.World.ChunkManager.ChunkData.GetFirstVisibleBlockHitByMouse(Mouse.GetState(), DwarfGame.World.Camera, GameState.Game.GraphicsDevice.Viewport);
+            Voxel vox = Player.World.ChunkManager.ChunkData.GetFirstVisibleBlockHitByMouse(Mouse.GetState(), Player.World.Camera, GameState.Game.GraphicsDevice.Viewport);
             if(vox == null)
             {
                 return;
@@ -167,7 +167,7 @@ namespace DwarfCorp
             Player.BodySelector.Enabled = true;
             Player.BodySelector.AllowRightClickSelection = false;
 
-            DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
+            Player.World.SetMouse(Player.World.MousePointer);
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
@@ -179,7 +179,7 @@ namespace DwarfCorp
             //int i = 0;
             //foreach (CreatureAI creature in Player.SelectedMinions)
             //{
-            //    Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, creature.Stats.FullName, DwarfGame.World.GUI.SmallFont, Color.White, Drawer2D.Alignment.Right, new Rectangle(port.Width - 300, 68 + i * 24, 300, 24));
+            //    Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, creature.Stats.FullName, Player.World.GUI.SmallFont, Color.White, Drawer2D.Alignment.Right, new Rectangle(port.Width - 300, 68 + i * 24, 300, 24));
             //    i++;
             //}
 
@@ -187,7 +187,7 @@ namespace DwarfCorp
             {
                 if (IsDwarf(body))
                 {
-                    Drawer2D.DrawRect(DwarfGame.SpriteBatch, body.GetScreenRect(DwarfGame.World.Camera), Color.White, 1.0f);
+                    Drawer2D.DrawRect(DwarfGame.SpriteBatch, body.GetScreenRect(Player.World.Camera), Color.White, 1.0f);
                 }
             }
              

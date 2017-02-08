@@ -107,7 +107,7 @@ namespace DwarfCorp.GameStates
 
 
            CreateTabButton(tabLayout, "Employees", "Hire and fire dwarves", 5, 0);
-            EmployeeDisplay employeeDisplay = new EmployeeDisplay(GUI, Layout, DwarfGame.World.Master.Faction)
+            EmployeeDisplay employeeDisplay = new EmployeeDisplay(GUI, Layout, DwarfGame.World.Master.Faction, DwarfGame.World.PlayerCompany.Information)
             {
                 IsVisible = false
             };

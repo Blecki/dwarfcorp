@@ -185,8 +185,8 @@ namespace DwarfCorp
         }
 
 
-        public Body(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-            this(parent.Manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos, true)
+        public Body(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
+            this(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos, true)
         {
             DrawReservation = false;
             AnimationQueue = new List<MotionAnimation>();
@@ -233,7 +233,7 @@ namespace DwarfCorp
             Voxel curr = new Voxel();
             Voxel[] neighbors = new Voxel[4];
             Vector3 pos = LocalTransform.Translation;
-            if (DwarfGame.World.ChunkManager.ChunkData.GetVoxel(pos, ref curr))
+            if (Manager.World.ChunkManager.ChunkData.GetVoxel(pos, ref curr))
             {
                 
                 curr.Chunk.Get2DManhattanNeighbors(neighbors, (int)curr.GridPosition.X, (int)curr.GridPosition.Y, (int)curr.GridPosition.Z);

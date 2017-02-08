@@ -63,24 +63,22 @@ namespace DwarfCorp
             
         }
 
-        public Room(bool designation, IEnumerable<Voxel> designations, RoomData data, ChunkManager chunks) :
-            base(data.Name + " " + Counter, chunks)
+        public Room(bool designation, IEnumerable<Voxel> designations, RoomData data, WorldManager world) :
+            base(data.Name + " " + Counter, world)
         {
             RoomData = data;
             ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
-            Chunks = chunks;
             Counter++;
             Designations = designations.ToList();
             IsBuilt = false;
         }
 
 
-        public Room(IEnumerable<Voxel> voxels, RoomData data, ChunkManager chunks) :
-            base(data.Name + " " + Counter, chunks)
+        public Room(IEnumerable<Voxel> voxels, RoomData data, WorldManager world) :
+            base(data.Name + " " + Counter, world)
         {
             RoomData = data;
             ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
-            Chunks = chunks;
 
             Designations = new List<Voxel>();
             Counter++;
@@ -117,7 +115,7 @@ namespace DwarfCorp
             HashSet<Body> components = new HashSet<Body>();
             BoundingBox box = GetBoundingBox();
             box.Max += new Vector3(0, 0, 2);
-            DwarfGame.World.ComponentManager.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
+            World.ComponentManager.CollisionManager.GetObjectsIntersecting(GetBoundingBox(), components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
 
             toReturn.AddRange(components);
 

@@ -109,7 +109,7 @@ namespace DwarfCorp
                     Creature.Physics.Velocity *= 0.1f;
                     tile.Progress += Creature.Stats.BaseFarmSpeed*DwarfTime.Dt;
 
-                    Drawer2D.DrawLoadBar(Agent.Position + Vector3.Up, Color.White, Color.Black, 100, 16,
+                    Drawer2D.DrawLoadBar(Agent.Manager.World.Camera, Agent.Position + Vector3.Up, Color.White, Color.Black, 100, 16,
                         tile.Progress/100.0f);
 
                     if (tile.Progress >= 100.0f && !Satisfied())
@@ -117,7 +117,7 @@ namespace DwarfCorp
                         tile.Progress = 0.0f;
                         if (Mode == FarmAct.FarmMode.Plant)
                         {
-                            FarmToWork.CreatePlant(PlantToCreate);
+                            FarmToWork.CreatePlant(PlantToCreate, Creature.Manager.World);
                             DestroyResources();
                         }
                         else
@@ -127,7 +127,7 @@ namespace DwarfCorp
                         }
                     }
                     if (MathFunctions.RandEvent(0.01f))
-                        DwarfGame.World.ParticleManager.Trigger("dirt_particle", Creature.AI.Position, Color.White, 1);
+                        Creature.Manager.World.ParticleManager.Trigger("dirt_particle", Creature.AI.Position, Color.White, 1);
                     yield return Status.Running;
                     Creature.Sprite.ReloopAnimations(Creature.CharacterMode.Attacking);
                 }

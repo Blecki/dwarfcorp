@@ -45,12 +45,14 @@ namespace DwarfCorp
     {
         public List<Creature.Buff> Buffs { get; set; } 
         
-        public BuffSpell()
+        public BuffSpell(WorldManager world) :
+            base(world)
         {
             
         }
 
-        public BuffSpell(params Creature.Buff[] buffs)
+        public BuffSpell(WorldManager world, params Creature.Buff[] buffs) :
+            base(world)
         {
             Buffs = buffs.ToList();
             Mode = SpellMode.SelectEntities;

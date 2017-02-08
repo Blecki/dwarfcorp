@@ -48,8 +48,8 @@ namespace DwarfCorp
             
         }
 
-        public WorkPile(Vector3 position) :
-            base(position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.underconstruction, 32, 32), new Point(0, 0), DwarfGame.World.ComponentManager.RootComponent)
+        public WorkPile(ComponentManager componentManager, Vector3 position) :
+            base(position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.underconstruction, 32, 32), new Point(0, 0), componentManager.RootComponent)
         {
         }
     }
@@ -62,8 +62,8 @@ namespace DwarfCorp
             
         }
 
-        public WorkFence(Vector3 position, float orientation) :
-            base(position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.constructiontape, 32, 32), new Point(0, 0), DwarfGame.World.ComponentManager.RootComponent)
+        public WorkFence(ComponentManager componentManager, Vector3 position, float orientation) :
+            base(position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.constructiontape, 32, 32), new Point(0, 0), componentManager.RootComponent)
         {
             this.Sprite.OrientationType = Sprite.OrientMode.Fixed;
             this.Sprite.LocalTransform = Matrix.CreateRotationY(orientation);
