@@ -87,7 +87,7 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-
+            IsActive = false;
         }
 
         public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
