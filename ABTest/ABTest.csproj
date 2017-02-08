@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SpacialHash\IntegerOctTree.cs" />
     <Compile Include="SpacialHash\NaiveOctTree.cs" />
     <Compile Include="SpacialHash\Point3.cs" />
     <Compile Include="Program.cs" />

@@ -120,18 +120,6 @@ namespace DwarfCorp
         {
             return toFilter.Where(component => component.Tags.Contains(tag)).ToList();
         }
-
-        public bool IsUnderMouse(Body component, MouseState mouse, Camera camera, Viewport viewPort)
-        {
-            List<Body> viewable = new List<Body>();
-            Vector3 pos1 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 0), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
-            Vector3 pos2 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 1), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
-            Vector3 dir = Vector3.Normalize(pos2 - pos1);
-
-            Ray toCast = new Ray(pos1, dir);
-
-            return component.Intersects(toCast);
-        }
         
         public bool IsVisibleToCamera(Body component, Camera camera)
         {
