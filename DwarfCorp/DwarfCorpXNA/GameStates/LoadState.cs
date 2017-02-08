@@ -82,7 +82,8 @@ namespace DwarfCorp.GameStates
                 WorldScale = DwarfGame.World.WorldScale,
                 WorldSize = DwarfGame.World.WorldSize,
                 InitialEmbark = DwarfGame.World.InitialEmbark,
-                ExistingFile = DwarfGame.World.ExistingFile
+                ExistingFile = DwarfGame.World.ExistingFile,
+                SeaLevel = DwarfGame.World.SeaLevel
             };
             DwarfGame.World = World;
             World.OnLoadedEvent += World_OnLoadedEvent;
