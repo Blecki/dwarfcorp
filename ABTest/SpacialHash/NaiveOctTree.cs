@@ -105,6 +105,8 @@ namespace ABTest.Oct
                     for (var i = 0; i < Items.Count; ++i)
                         for (var c = 0; c < 8; ++c)
                             Children[c].AddToTree(Items[i], SubdivideThreshold);
+                    for (var c = 0; c < 8; ++c)
+                        Children[c].AddToTree(Item, SubdivideThreshold);
                     Items = null;
                 }
                 else

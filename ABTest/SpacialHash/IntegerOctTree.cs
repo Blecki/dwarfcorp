@@ -123,6 +123,7 @@ namespace ABTest.IntegerOct
                 Subdivide();
                 for (var i = 0; i < Items.Count; ++i)
                     Children[Bin(Items[i].Item2)].AddToTree(Items[i], SubdivideThreshold);
+                Children[Bin(Item.Item2)].AddToTree(Item, SubdivideThreshold);
                 Items.Clear();
             }
             else
