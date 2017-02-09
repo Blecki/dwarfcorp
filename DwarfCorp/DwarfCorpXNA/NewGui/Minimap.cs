@@ -114,7 +114,7 @@ namespace DwarfCorp.NewGui
             RenderTarget = new RenderTarget2D(GameState.Game.GraphicsDevice, RenderWidth, RenderHeight, false, SurfaceFormat.Color, DepthFormat.Depth24);
             PlayState = playState;
 
-            Camera = new OrbitCamera(0, 0, 0.01f, new Vector3(0, 0, 0), new Vector3(0, 0, 0), 2.5f, 1.0f, 0.1f, 1000.0f)
+            Camera = new OrbitCamera(DwarfGame.World, 0, 0, 0.01f, new Vector3(0, 0, 0), new Vector3(0, 0, 0), 2.5f, 1.0f, 0.1f, 1000.0f)
             {
                 Projection = global::DwarfCorp.Camera.ProjectionMode.Orthographic
             };

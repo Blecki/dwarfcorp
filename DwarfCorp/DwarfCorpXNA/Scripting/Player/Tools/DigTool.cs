@@ -118,16 +118,16 @@ namespace DwarfCorp
             {
                 Player.VoxSelector.Enabled = false;
                 Player.BodySelector.Enabled = false;
-                DwarfGame.World.SetMouse(null);
+                Player.World.SetMouse(null);
                 return;
             }
 
             Player.VoxSelector.Enabled = true;
 
-            if (DwarfGame.World.IsMouseOverGui)
-                DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
+            if (Player.World.IsMouseOverGui)
+                Player.World.SetMouse(Player.World.MousePointer);
             else
-                DwarfGame.World.SetMouse(new Gum.MousePointer("mouse", 1, 1));
+                Player.World.SetMouse(new Gum.MousePointer("mouse", 1, 1));
 
             Player.BodySelector.Enabled = false;
             Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;

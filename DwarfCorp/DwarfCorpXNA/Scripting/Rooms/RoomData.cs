@@ -106,7 +106,7 @@ namespace DwarfCorp
         }
 
 
-        public bool Verify(List<Voxel> refs, Faction faction)
+        public bool Verify(List<Voxel> refs, Faction faction, WorldManager world)
         {
             if (refs.Count == 0)
             {
@@ -125,13 +125,13 @@ namespace DwarfCorp
 
             if (maxExtents < MinimumSideLength || minExtents < MinimumSideWidth)
             {
-                DwarfGame.World.ShowTooltip(Drawer2D.WrapColor("Room is too small", Color.Red) + " (minimum is " + MinimumSideLength + " x " + MinimumSideWidth +")!");
+                world.ShowTooltip(Drawer2D.WrapColor("Room is too small", Color.Red) + " (minimum is " + MinimumSideLength + " x " + MinimumSideWidth +")!");
                 return false;
             }
 
             if (!HasAvailableResources(refs.Count, faction))
             {
-                DwarfGame.World.ShowTooltip(Drawer2D.WrapColor("Not enough resources for this room.", Color.Red));
+                world.ShowTooltip(Drawer2D.WrapColor("Not enough resources for this room.", Color.Red));
                 return false;
             }
 
@@ -148,7 +148,7 @@ namespace DwarfCorp
                 }
                 else if (height != (int) voxel.GridPosition.Y && !CanBuildOnMultipleLevels)
                 {
-                    DwarfGame.World.ShowTooltip(Drawer2D.WrapColor("Room must be on flat ground!", Color.Red));
+                    world.ShowTooltip(Drawer2D.WrapColor("Room must be on flat ground!", Color.Red));
                     return false;
                 }
 
@@ -156,7 +156,7 @@ namespace DwarfCorp
                 {
                     if (!voxel.Type.IsSoil)
                     {
-                        DwarfGame.World.ShowTooltip(Drawer2D.WrapColor("Room must be built on soil!", Color.Red));
+                        world.ShowTooltip(Drawer2D.WrapColor("Room must be built on soil!", Color.Red));
                         return false;
                     }
                 }
@@ -165,14 +165,14 @@ namespace DwarfCorp
                 {
                     if (voxel.Chunk.Data.SunColors[voxel.Index] <= 5) continue;
 
-                    DwarfGame.World.ShowTooltip(Drawer2D.WrapColor("Room can't be built aboveground!", Color.Red));
+                    world.ShowTooltip(Drawer2D.WrapColor("Room can't be built aboveground!", Color.Red));
                     return false;
                 } 
                 else if (!CanBuildBelowGround)
                 {
                     if (voxel.Chunk.Data.SunColors[voxel.Index] >= 5) continue;
 
-                    DwarfGame.World.ShowTooltip(Drawer2D.WrapColor("Room can't be built belowground!", Color.Red));
+                    world.ShowTooltip(Drawer2D.WrapColor("Room can't be built belowground!", Color.Red));
                     return false;
                 }
 

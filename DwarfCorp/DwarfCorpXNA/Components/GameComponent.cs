@@ -425,7 +425,7 @@ namespace DwarfCorp
         {
             string toReturn = "";
 
-            if(Parent == DwarfGame.World.ComponentManager.RootComponent)
+            if(Parent == Manager.RootComponent)
                 toReturn += Name;
 
             foreach (GameComponent component in Children)

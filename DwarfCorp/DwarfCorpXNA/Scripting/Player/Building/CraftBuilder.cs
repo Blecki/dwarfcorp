@@ -269,7 +269,7 @@ namespace DwarfCorp
                                 {
                                     ItemType = CurrentCraftType,
                                     Location = r,
-                                    WorkPile = new WorkPile(startPos)
+                                    WorkPile = new WorkPile(DwarfGame.World.ComponentManager, startPos)
                                 };
 
                                 newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));

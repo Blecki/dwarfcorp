@@ -504,7 +504,7 @@ namespace DwarfCorp
 
             JobLibrary.Initialize();
             MonsterSpawner = new MonsterSpawner();
-            EntityFactory.Initialize();
+            EntityFactory.Initialize(this);
         }
 
         /// <summary>
@@ -578,7 +578,7 @@ namespace DwarfCorp
             // facing down slightly.
             Camera = fileExists
                 ? gameFile.Data.Camera
-                : new OrbitCamera(0, 0, 10f, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset,
+                : new OrbitCamera(this, 0, 0, 10f, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset,
                     new Vector3(0, 50, 0) + globalOffset, MathHelper.PiOver4, AspectRatio, 0.1f,
                     GameSettings.Default.VertexCullDistance);
 
@@ -938,7 +938,7 @@ namespace DwarfCorp
 
 
             // Actually create the BuildRoom.
-            BalloonPort toBuild = new BalloonPort(PlayerFaction, designations, chunkManager);
+            BalloonPort toBuild = new BalloonPort(PlayerFaction, designations, this);
             BuildRoomOrder buildDes = new BuildRoomOrder(toBuild, roomDes.Faction);
             buildDes.Build(true);
             roomDes.DesignatedRooms.Add(toBuild);
@@ -1310,13 +1310,13 @@ namespace DwarfCorp
                     Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Worlds" +
                                               Path.DirectorySeparatorChar + Overworld.Name);
 
-                OverworldFile file = new OverworldFile(Game.GraphicsDevice, Overworld.Map, Overworld.Name);
+                OverworldFile file = new OverworldFile(Game.GraphicsDevice, Overworld.Map, Overworld.Name, SeaLevel);
                 file.WriteFile(
                     worldDirectory.FullName + Path.DirectorySeparatorChar + "world." + OverworldFile.CompressedExtension,
                     true, true);
                 file.SaveScreenshot(worldDirectory.FullName + Path.DirectorySeparatorChar + "screenshot.png");
 
-                gameFile = new GameFile(Overworld.Name, GameID);
+                gameFile = new GameFile(Overworld.Name, GameID, this);
                 gameFile.WriteFile(
                     DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar +
                     filename, true);

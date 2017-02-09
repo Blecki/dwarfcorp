@@ -84,8 +84,11 @@ namespace DwarfCorp
         private bool isRightPressed;
 
 
-        public VoxelSelector(Camera camera, GraphicsDevice graphics, ChunkManager chunks)
+        public WorldManager World;
+
+        public VoxelSelector(WorldManager world, Camera camera, GraphicsDevice graphics, ChunkManager chunks)
         {
+            World = world;
             SelectionType = VoxelSelectionType.SelectEmpty;
             SelectionColor = Color.White;
             SelectionWidth = 0.1f;
@@ -207,7 +210,7 @@ namespace DwarfCorp
             {
                 VoxelUnderMouse = underMouse;
                 // Update the cursor light.
-                DwarfGame.World.CursorLightPos = underMouse.Position + new Vector3(0.5f, 0.5f, 0.5f);
+                World.CursorLightPos = underMouse.Position + new Vector3(0.5f, 0.5f, 0.5f);
 
                 // Get the type of the voxel and display it to the player.
                 if (Enabled && !underMouse.IsEmpty && underMouse.IsExplored)
@@ -215,14 +218,14 @@ namespace DwarfCorp
                     string info = underMouse.TypeName;
 
                     // If it belongs to a room, display that information.
-                    if (DwarfGame.World.PlayerFaction.RoomBuilder.IsInRoom(underMouse))
+                    if (World.PlayerFaction.RoomBuilder.IsInRoom(underMouse))
                     {
-                        Room room = DwarfGame.World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(underMouse);
+                        Room room = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(underMouse);
 
                         if (room != null)
                             info += " (" + room.ID + ")";
                     }
-                    DwarfGame.World.ShowInfo(info);
+                    World.ShowInfo(info);
                 }
             }
 
@@ -420,7 +423,7 @@ namespace DwarfCorp
                 if ((SelectionType == VoxelSelectionType.SelectFilled && !v.IsEmpty)
                     || (SelectionType == VoxelSelectionType.SelectEmpty && v.IsEmpty))
                 {
-                    Drawer2D.DrawRect(v.Position + half, screenRect, dotColor, Color.Transparent, 0.0f);
+                    Drawer2D.DrawRect(World.Camera, v.Position + half, screenRect, dotColor, Color.Transparent, 0.0f);
                 }
             }
         }

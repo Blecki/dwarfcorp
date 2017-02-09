@@ -45,7 +45,8 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class DestroyBlockSpell : Spell
     {
-        public DestroyBlockSpell()
+        public DestroyBlockSpell(WorldManager world) :
+            base(world)
         {
             Texture2D icons = TextureManager.GetTexture(ContentPaths.GUI.icons);
             Description = "Magically destroys up to 8 stone, dirt, or other blocks.";
@@ -67,7 +68,7 @@ namespace DwarfCorp
                     {
                         Vector3 p = selected.Position + Vector3.One * 0.5f;
                         IndicatorManager.DrawIndicator("-" + ManaCost + " M", p, 1.0f, Color.Red);
-                        DwarfGame.World.ParticleManager.Trigger("star_particle", p,
+                        World.ParticleManager.Trigger("star_particle", p,
                             Color.White, 4);
                         selected.Kill();
                         destroyed = true;
@@ -77,7 +78,7 @@ namespace DwarfCorp
             }
             if (destroyed)
             {
-                SoundManager.PlaySound(ContentPaths.Audio.tinkle, DwarfGame.World.CursorLightPos, true, 1.0f);
+                SoundManager.PlaySound(ContentPaths.Audio.tinkle, World.CursorLightPos, true, 1.0f);
             }
 
             base.OnVoxelsSelected(tree, voxels);

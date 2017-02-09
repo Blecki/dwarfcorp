@@ -99,13 +99,13 @@ namespace DwarfCorp
         {
         }
 
-        public BalloonPort(Faction faction, bool designation, IEnumerable<Voxel> designations, ChunkManager chunks) :
-            base(faction, designation, designations, BalloonPortData, chunks)
+        public BalloonPort(Faction faction, bool designation, IEnumerable<Voxel> designations, WorldManager world) :
+            base(faction, designation, designations, BalloonPortData, world)
         {
         }
 
-        public BalloonPort(Faction faction, IEnumerable<Voxel> voxels, ChunkManager chunks) :
-            base(faction, voxels, BalloonPortData, chunks)
+        public BalloonPort(Faction faction, IEnumerable<Voxel> voxels, WorldManager world) :
+            base(faction, voxels, BalloonPortData, world)
         {
             OnBuilt();
         }

@@ -49,6 +49,7 @@ namespace DwarfCorp
         /// <param name="components">Selectable components in a manager.</param>
         public BodySelector(Camera camera, GraphicsDevice graphics, ComponentManager components)
         {
+            World = components.World;
             AllowRightClickSelection = true;
             SelectionColor = Color.White;
             CurrentColor = Color.White;
@@ -155,6 +156,8 @@ namespace DwarfCorp
         /// </summary>
         public event OnRightReleased RightReleased;
 
+        public WorldManager World;
+
         /// <summary>
         ///     Returns a list of bodies that are inside the given screen rectangle.
         /// </summary>
@@ -180,7 +183,7 @@ namespace DwarfCorp
                 first = false;
             }
             // Create a description of the body and display it on the screen.
-            DwarfGame.World.ShowInfo(desc);
+            World.ShowInfo(desc);
         }
 
         /// <summary>
@@ -229,7 +232,7 @@ namespace DwarfCorp
             {
                 isLeftPressed = true;
                 ClickPoint = new Point(mouse.X, mouse.Y);
-                ClickPoint3D = DwarfGame.World.CursorLightPos;
+                ClickPoint3D = World.CursorLightPos;
                 SelectionRectangle = new Rectangle(mouse.X, mouse.Y, 0, 0);
             }
 
@@ -257,7 +260,7 @@ namespace DwarfCorp
                 {
                     isRightPressed = true;
                     ClickPoint = new Point(mouse.X, mouse.Y);
-                    ClickPoint3D = DwarfGame.World.CursorLightPos;
+                    ClickPoint3D = World.CursorLightPos;
                     SelectionRectangle = new Rectangle(mouse.X, mouse.Y, 0, 0);
                 }
             }

@@ -56,18 +56,18 @@ namespace DwarfCorp
         }
 
         public Seedling(Body adult, Vector3 position, SpriteSheet asset, Point frame) :
-            base(position, asset, frame, DwarfGame.World.ComponentManager.RootComponent)
+            base(position, asset, frame, adult.Manager.World.ComponentManager.RootComponent)
         {
             IsGrown = false;
             Adult = adult;
             Name = adult.Name + " seedling";
-            Health health = new Health(DwarfGame.World.ComponentManager, "HP", this, 1.0f, 0.0f, 1.0f);
-            new Flammable(DwarfGame.World.ComponentManager, "Flames", this, health);
+            Health health = new Health(adult.Manager.World.ComponentManager, "HP", this, 1.0f, 0.0f, 1.0f);
+            new Flammable(adult.Manager.World.ComponentManager, "Flames", this, health);
             Voxel voxelUnder = new Voxel();
 
-            if (DwarfGame.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            if (Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {
-                VoxelListener listener = new VoxelListener(DwarfGame.World.ComponentManager, this, DwarfGame.World.ChunkManager, voxelUnder);
+                VoxelListener listener = new VoxelListener(Manager.World.ComponentManager, this, Manager.World.ChunkManager, voxelUnder);
             }
         }
 
@@ -91,7 +91,7 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (DwarfGame.World.Time.CurrentDate >= FullyGrownDay)
+            if (Manager.World.Time.CurrentDate >= FullyGrownDay)
             {
                 CreateAdult();
             }
@@ -121,9 +121,9 @@ namespace DwarfCorp
             GrowthHours = 12;
         }
 
-        public Plant(string name, GameComponent manager, Matrix localTransform, Vector3 bboxSize,
+        public Plant(string name, GameComponent parent, Matrix localTransform, Vector3 bboxSize,
             Vector3 bboxLocation) :
-            base(name, manager, localTransform, bboxSize, bboxLocation)
+            base(parent.Manager, name, parent, localTransform, bboxSize, bboxLocation)
         {
             GrowthDays = 0;
             GrowthHours = 12;
@@ -137,7 +137,7 @@ namespace DwarfCorp
 
             return new Seedling(this, LocalTransform.Translation, Seedlingsheet, SeedlingFrame)
             {
-                FullyGrownDay = DwarfGame.World.Time.CurrentDate.AddHours(GrowthHours).AddDays(GrowthDays)
+                FullyGrownDay = Manager.World.Time.CurrentDate.AddHours(GrowthHours).AddDays(GrowthDays)
             };
         }
     }
@@ -149,18 +149,18 @@ namespace DwarfCorp
         public ParticleTrigger Particles { get; set; }
         public Tree() { }
 
-        public Tree(Vector3 position, string asset, ResourceLibrary.ResourceType seed, float treeSize) :
-            base("Tree", DwarfGame.World.ComponentManager.RootComponent, Matrix.Identity, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), new Vector3(treeSize * 0.5f, treeSize * 0.25f, treeSize * 0.5f))
+        public Tree(ComponentManager manager, Vector3 position, string asset, ResourceLibrary.ResourceType seed, float treeSize) :
+            base("Tree", manager.World.ComponentManager.RootComponent, Matrix.Identity, new Vector3(treeSize * 2, treeSize * 3, treeSize * 2), new Vector3(treeSize * 0.5f, treeSize * 0.25f, treeSize * 0.5f))
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.vine, 32, 32);
             SeedlingFrame = new Point(0, 0);
             HurtTimer = new Timer(1.0f, false);
-            ComponentManager componentManager = DwarfGame.World.ComponentManager;
+            ComponentManager componentManager = Manager.World.ComponentManager;
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
             LocalTransform = matrix;
 
-            new Mesh(componentManager, "Model", this, Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(treeSize, treeSize, treeSize) * Matrix.CreateTranslation(new Vector3(0.7f, 0.0f, 0.7f)), asset, false);
+            new Mesh("Model", this, Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(treeSize, treeSize, treeSize) * Matrix.CreateTranslation(new Vector3(0.7f, 0.0f, 0.7f)), asset, false);
 
             Health health = new Health(componentManager, "HP", this, 100.0f * treeSize, 0.0f, 100.0f * treeSize);
             
@@ -173,9 +173,9 @@ namespace DwarfCorp
             //new MinimapIcon(this, new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.map_icons), 16, 1, 0));
             Voxel voxelUnder = new Voxel();
 
-            if (DwarfGame.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            if (Manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {
-                new VoxelListener(componentManager, this, DwarfGame.World.ChunkManager, voxelUnder);
+                new VoxelListener(componentManager, this, componentManager.World.ChunkManager, voxelUnder);
             }
 
             Inventory inventory = new Inventory("Inventory", this)

@@ -50,11 +50,12 @@ namespace DwarfCorp
 
         }
 
-        public Mushroom(Vector3 position, 
+        public Mushroom(ComponentManager componentManager,
+                        Vector3 position, 
                         string asset, 
                         ResourceLibrary.ResourceType resource, 
                         int numRelease, bool selfIlluminate) :
-            base("Mushroom", DwarfGame.World.ComponentManager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+            base("Mushroom", componentManager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
             Seedlingsheet = new SpriteSheet(ContentPaths.Entities.Plants.deadbush, 32, 32);
             SeedlingFrame = new Point(0, 0);
@@ -70,14 +71,14 @@ namespace DwarfCorp
             };
             Animation animation = new Animation(GameState.Game.GraphicsDevice, spriteSheet, "Mushroom", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            Sprite sprite = new Sprite(DwarfGame.World.ComponentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(componentManager, "sprite", this, Matrix.Identity, spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed,
                 LightsWithVoxels = !selfIlluminate
             };
             sprite.AddAnimation(animation);
 
-            Sprite sprite2 = new Sprite(DwarfGame.World.ComponentManager, "sprite2", this, Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
+            Sprite sprite2 = new Sprite(componentManager, "sprite2", this, Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed,
                 LightsWithVoxels = !selfIlluminate
@@ -85,11 +86,11 @@ namespace DwarfCorp
             sprite2.AddAnimation(animation);
 
             Voxel voxelUnder = new Voxel();
-            bool success = DwarfGame.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder);
+            bool success = componentManager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder);
 
             if (success)
             {
-                VoxelListener listener = new VoxelListener(DwarfGame.World.ComponentManager, this, DwarfGame.World.ChunkManager, voxelUnder);
+                VoxelListener listener = new VoxelListener(componentManager.World.ComponentManager, this, componentManager.World.ChunkManager, voxelUnder);
             }
 
             Inventory inventory = new Inventory("Inventory", this)
@@ -106,9 +107,9 @@ namespace DwarfCorp
                     }
                 }
             };
-            
-            Health health = new Health(DwarfGame.World.ComponentManager, "HP", this, 30, 0.0f, 30);
-            new Flammable(DwarfGame.World.ComponentManager, "Flames", this, health);
+
+            Health health = new Health(componentManager.World.ComponentManager, "HP", this, 30, 0.0f, 30);
+            new Flammable(componentManager.World.ComponentManager, "Flames", this, health);
 
             animation.Play();
             Tags.Add("Mushroom");

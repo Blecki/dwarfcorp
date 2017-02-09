@@ -22,7 +22,7 @@ namespace DwarfCorp
         }
 
         public TurretTrap(ComponentManager manager, Vector3 position, Faction faction) :
-            base(manager, "TurretTrap", DwarfGame.World.ComponentManager.RootComponent, Matrix.CreateTranslation(position),
+            base(manager, "TurretTrap", manager.RootComponent, Matrix.CreateTranslation(position),
             new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, true)
         {
             Allies = faction;
@@ -33,13 +33,13 @@ namespace DwarfCorp
                 Mode = Attack.AttackMode.Ranged,
                 LaunchSpeed = 15
             };
-            ParticleTrigger deathParticles = new ParticleTrigger("puff", DwarfGame.World.ComponentManager, "DeathParticles", this,
+            ParticleTrigger deathParticles = new ParticleTrigger("puff", Manager, "DeathParticles", this,
             Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
             {
                 SoundToPlay = ""
             };
-            Health health = new Health(DwarfGame.World.ComponentManager, "health", this, 50.0f, 0.0f, 50.0f);
-            Sensor = new EnemySensor(DwarfGame.World.ComponentManager, "sensor", this, Matrix.Identity, new Vector3(8, 8, 8),
+            Health health = new Health(Manager, "health", this, 50.0f, 0.0f, 50.0f);
+            Sensor = new EnemySensor(Manager, "sensor", this, Matrix.Identity, new Vector3(8, 8, 8),
                 Vector3.Zero)
             {
                 Allies = faction

@@ -51,112 +51,112 @@ namespace DwarfCorp
 
         public static Dictionary<string, Func<Vector3, Blackboard, GameComponent>> EntityFuncs { get; set; }
 
-        public static Body GenerateTestDwarf(Vector3 position)
+        public static Body GenerateTestDwarf(WorldManager world, Vector3 position)
         {
             CreatureDef dwarfDef = ContentPaths.LoadFromJson<CreatureDef>(ContentPaths.Entities.Dwarf.dwarf);
-            Creature toReturn =  new Creature(position, dwarfDef, "Wizard", 0, "Player");
-            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, DwarfGame.World.Time.CurrentDate), false);
+            Creature toReturn =  new Creature(world.ComponentManager, position, dwarfDef, "Wizard", 0, "Player");
+            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, world.Time.CurrentDate), false);
             return toReturn.Physics;
         }
 
-        public static Body GenerateTestGoblin(Vector3 position)
+        public static Body GenerateTestGoblin(WorldManager world, Vector3 position)
         {
             CreatureDef dwarfDef = ContentPaths.LoadFromJson<CreatureDef>(ContentPaths.Entities.Goblin.goblin);
-            Creature toReturn = new Creature(position, dwarfDef, "Sword Goblin", 0, "Goblins");
-            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, DwarfGame.World.Time.CurrentDate), false);
+            Creature toReturn = new Creature(world.ComponentManager, position, dwarfDef, "Sword Goblin", 0, "Goblins");
+            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, world.Time.CurrentDate), false);
             return toReturn.Physics;
         }
 
-        public static Body GenerateTestSeketon(Vector3 position)
+        public static Body GenerateTestSeketon(WorldManager world, Vector3 position)
         {
             CreatureDef dwarfDef = ContentPaths.LoadFromJson<CreatureDef>(ContentPaths.Entities.Skeleton.skeleton);
-            Creature toReturn = new Creature(position, dwarfDef, "Skeleton", 0, "Undead");
-            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, DwarfGame.World.Time.CurrentDate), false);
+            Creature toReturn = new Creature(world.ComponentManager, position, dwarfDef, "Skeleton", 0, "Undead");
+            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, world.Time.CurrentDate), false);
             return toReturn.Physics;
         }
 
 
-        public static Body GenerateTestMoleman(Vector3 position)
+        public static Body GenerateTestMoleman(WorldManager world, Vector3 position)
         {
             CreatureDef dwarfDef = ContentPaths.LoadFromJson<CreatureDef>(ContentPaths.Entities.Moleman.moleman);
-            Creature toReturn = new Creature(position, dwarfDef, "Moleman Miner", 0, "Molemen");
-            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, DwarfGame.World.Time.CurrentDate), false);
+            Creature toReturn = new Creature(world.ComponentManager, position, dwarfDef, "Moleman Miner", 0, "Molemen");
+            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, world.Time.CurrentDate), false);
             return toReturn.Physics;
         }
 
-        public static void Initialize()
+        public static void Initialize(WorldManager world)
         {
-            RegisterEntity("Crate", (position, data) => new Crate(position));
-            RegisterEntity("Balloon", (position, data) => CreateBalloon(position + new Vector3(0, 1000, 0), position, DwarfGame.World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, null, DwarfGame.World.PlayerFaction));
-            RegisterEntity("Work Pile", (position, data) => new WorkPile(position));
-            RegisterEntity("Pine Tree", (position, data) => new Tree(position, "pine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f)));
-            RegisterEntity("Snow Pine Tree", (position, data) => new Tree(position, "snowpine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f)));
-            RegisterEntity("Palm Tree", (position, data) => new Tree(position, "palm", ResourceLibrary.ResourceType.Coconut, data.GetData("Scale", 1.0f)));
-            RegisterEntity("Cactus", (position, data) => new Cactus(position, "cactus", data.GetData("Scale", 1.0f)));
-            RegisterEntity("Berry Bush", (position, data) => new Bush(position, "berrybush", data.GetData("Scale", 1.0f)));
-            RegisterEntity("Bird", (position, data) => new Bird(ContentPaths.Entities.Animals.Birds.GetRandomBird(), position, DwarfGame.World.ComponentManager, DwarfGame.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Bird"));
-            RegisterEntity("Bat", (position, data) => new Bat(position));
-            RegisterEntity("Scorpion", (position, data) => new Scorpion(ContentPaths.Entities.Animals.Scorpion.scorption_animation, position, DwarfGame.World.ComponentManager, DwarfGame.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Scorpion"));
-            RegisterEntity("Spider", (position, data) => new Spider(ContentPaths.Entities.Animals.Spider.spider_animation, position));
-            RegisterEntity("Frog", (position, data) => new Frog(ContentPaths.Entities.Animals.Frog.frog0_animation, position, DwarfGame.World.ComponentManager, DwarfGame.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Frog"));
-            RegisterEntity("Tree Frog", (position, data) => new Frog(ContentPaths.Entities.Animals.Frog.frog1_animation, position, DwarfGame.World.ComponentManager, DwarfGame.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Frog"));
-            RegisterEntity("Brown Rabbit", (position, data) => new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit0_animation, position, DwarfGame.World.ComponentManager, DwarfGame.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Brown Rabbit"));
-            RegisterEntity("White Rabbit", (position, data) => new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit1_animation, position, DwarfGame.World.ComponentManager, DwarfGame.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "White Rabbit"));
-            RegisterEntity("Deer", (position, data) => new Deer(ContentPaths.Entities.Animals.Deer.deer, position, DwarfGame.World.ComponentManager, DwarfGame.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Deer"));
-            RegisterEntity("Dwarf", (position, data) => GenerateDwarf(position, DwarfGame.World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, DwarfGame.World.ChunkManager, DwarfGame.World.Camera, DwarfGame.World.PlayerFaction, DwarfGame.World.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Worker], 0));
+            RegisterEntity("Crate", (position, data) => new Crate(world.ComponentManager, position));
+            RegisterEntity("Balloon", (position, data) => CreateBalloon(position + new Vector3(0, 1000, 0), position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, null, world.PlayerFaction));
+            RegisterEntity("Work Pile", (position, data) => new WorkPile(world.ComponentManager, position));
+            RegisterEntity("Pine Tree", (position, data) => new Tree(world.ComponentManager, position, "pine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f)));
+            RegisterEntity("Snow Pine Tree", (position, data) => new Tree(world.ComponentManager, position, "snowpine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f)));
+            RegisterEntity("Palm Tree", (position, data) => new Tree(world.ComponentManager, position, "palm", ResourceLibrary.ResourceType.Coconut, data.GetData("Scale", 1.0f)));
+            RegisterEntity("Cactus", (position, data) => new Cactus(world.ComponentManager, position, "cactus", data.GetData("Scale", 1.0f)));
+            RegisterEntity("Berry Bush", (position, data) => new Bush(world.ComponentManager, position, "berrybush", data.GetData("Scale", 1.0f)));
+            RegisterEntity("Bird", (position, data) => new Bird(ContentPaths.Entities.Animals.Birds.GetRandomBird(), position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Bird"));
+            RegisterEntity("Bat", (position, data) => new Bat(world.ComponentManager, position));
+            RegisterEntity("Scorpion", (position, data) => new Scorpion(ContentPaths.Entities.Animals.Scorpion.scorption_animation, position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Scorpion"));
+            RegisterEntity("Spider", (position, data) => new Spider(world.ComponentManager, ContentPaths.Entities.Animals.Spider.spider_animation, position));
+            RegisterEntity("Frog", (position, data) => new Frog(ContentPaths.Entities.Animals.Frog.frog0_animation, position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Frog"));
+            RegisterEntity("Tree Frog", (position, data) => new Frog(ContentPaths.Entities.Animals.Frog.frog1_animation, position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Frog"));
+            RegisterEntity("Brown Rabbit", (position, data) => new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit0_animation, position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Brown Rabbit"));
+            RegisterEntity("White Rabbit", (position, data) => new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit1_animation, position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "White Rabbit"));
+            RegisterEntity("Deer", (position, data) => new Deer(ContentPaths.Entities.Animals.Deer.deer, position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Deer"));
+            RegisterEntity("Dwarf", (position, data) => GenerateDwarf(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.PlayerFaction, world.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Worker], 0));
             //RegisterEntity("TestDwarf", (position, data) => GenerateTestDwarf(position));
             //RegisterEntity("TestGoblin", (position, data) => GenerateTestGoblin(position));
             //RegisterEntity("TestSkeleton", (position, data) => GenerateTestSeketon(position));
             //RegisterEntity("TestMoleman", (position, data) => GenerateTestMoleman(position));
-            RegisterEntity("AxeDwarf", (position, data) => GenerateDwarf(position, DwarfGame.World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, DwarfGame.World.ChunkManager, DwarfGame.World.Camera, DwarfGame.World.PlayerFaction, DwarfGame.World.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.AxeDwarf], 0));
-            RegisterEntity("CraftsDwarf", (position, data) => GenerateDwarf(position, DwarfGame.World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, DwarfGame.World.ChunkManager, DwarfGame.World.Camera, DwarfGame.World.PlayerFaction, DwarfGame.World.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.CraftsDwarf], 0));
-            RegisterEntity("Wizard", (position, data) => GenerateDwarf(position, DwarfGame.World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, DwarfGame.World.ChunkManager, DwarfGame.World.Camera, DwarfGame.World.PlayerFaction, DwarfGame.World.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Wizard], 0));
-            RegisterEntity("MusketDwarf", (position, data) => GenerateDwarf(position, DwarfGame.World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, DwarfGame.World.ChunkManager, DwarfGame.World.Camera, DwarfGame.World.PlayerFaction, DwarfGame.World.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.MusketDwarf], 0));
-            RegisterEntity("Moleman", (position, data) => GenerateMoleman(position, DwarfGame.World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, DwarfGame.World.ChunkManager, DwarfGame.World.Camera, DwarfGame.World.ComponentManager.Factions.Factions["Molemen"], DwarfGame.World.PlanService, "Molemen"));
-            RegisterEntity("Goblin", (position, data) => GenerateGoblin(position, DwarfGame.World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, DwarfGame.World.ChunkManager, DwarfGame.World.Camera, DwarfGame.World.ComponentManager.Factions.Factions["Goblins"], DwarfGame.World.PlanService, "Goblins"));
-            RegisterEntity("Skeleton", (position, data) => GenerateSkeleton(position, DwarfGame.World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, DwarfGame.World.ChunkManager, DwarfGame.World.Camera, DwarfGame.World.ComponentManager.Factions.Factions["Undead"], DwarfGame.World.PlanService, "Undead"));
-            RegisterEntity("Necromancer", (position, data) => GenerateNecromancer(position, DwarfGame.World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, DwarfGame.World.ChunkManager, DwarfGame.World.Camera, DwarfGame.World.ComponentManager.Factions.Factions["Undead"], DwarfGame.World.PlanService, "Undead"));
-            RegisterEntity("Bed", (position, data) => new Bed(position));
-            RegisterEntity("Barrel", (position, data) => new Barrel(position));
-            RegisterEntity("Bear Trap", (position, data) => new BearTrap(DwarfGame.World.ComponentManager, position));
-            RegisterEntity("Lamp", (position, data) => new Lamp(position));
-            RegisterEntity("Table", (position, data) => new Table(position));
-            RegisterEntity("Chair", (position, data) => new Chair(position));
-            RegisterEntity("Flag", (position, data) => new Flag(position));
-            RegisterEntity("Mushroom", (position, data) => new Mushroom(position, ContentPaths.Entities.Plants.mushroom, ResourceLibrary.ResourceType.Mushroom, 2, false));
-            RegisterEntity("Cave Mushroom", (position, data) => new Mushroom(position, ContentPaths.Entities.Plants.cavemushroom, ResourceLibrary.ResourceType.CaveMushroom, 4, true));
-            RegisterEntity("Wheat", (position, data) => new Wheat(position));
-            RegisterEntity("Kitchen Table", (position, data) => new Table(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 7)) { Tags = new List<string>() { "Cutting Board" } });
-            RegisterEntity("Books", (position, data) => new Table(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 4)) {Tags = new List<string>(){"Research"}, Battery = new Table.ManaBattery() { Charge = 0.0f, MaxCharge = 100.0f }});
-            RegisterEntity("Potions", (position, data) => new Table(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4)) { Tags = new List<string>(){"Research"}, Battery = new Table.ManaBattery() { Charge = 0.0f, MaxCharge = 100.0f } });
-            RegisterEntity("Anvil", (position, data) => new Anvil(position));
-            RegisterEntity("Forge", (position, data) => new Forge(position));
-            RegisterEntity("Elf", (position, data) => GenerateElf(position, DwarfGame.World.ComponentManager.Factions.Factions["Elf"], "Elf"));
-            RegisterEntity("Demon", (position, data) => GenerateDemon(position, DwarfGame.World.ComponentManager.Factions.Factions["Demon"], "Demon"));
-            RegisterEntity("Arrow", (position, data) => new ArrowProjectile(position, data.GetData("Velocity", Vector3.Up*10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
-            RegisterEntity("Bullet", (position, data) => new BulletProjectile(position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
-            RegisterEntity("Web", (position, data) => new WebProjectile(position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
-            RegisterEntity("Fireball", (position, data) => new FireballProjectile(position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
-            RegisterEntity("Fairy", (position, data) => new Fairy("Player", position));
-            RegisterEntity("Target", (position, data) => new Target(position));
-            RegisterEntity("Stove", (position, data) => new Stove(position));
+            RegisterEntity("AxeDwarf", (position, data) => GenerateDwarf(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.PlayerFaction, world.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.AxeDwarf], 0));
+            RegisterEntity("CraftsDwarf", (position, data) => GenerateDwarf(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.PlayerFaction, world.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.CraftsDwarf], 0));
+            RegisterEntity("Wizard", (position, data) => GenerateDwarf(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.PlayerFaction, world.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.Wizard], 0));
+            RegisterEntity("MusketDwarf", (position, data) => GenerateDwarf(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.PlayerFaction, world.PlanService, "Player", JobLibrary.Classes[JobLibrary.JobType.MusketDwarf], 0));
+            RegisterEntity("Moleman", (position, data) => GenerateMoleman(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.ComponentManager.Factions.Factions["Molemen"], world.PlanService, "Molemen"));
+            RegisterEntity("Goblin", (position, data) => GenerateGoblin(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.ComponentManager.Factions.Factions["Goblins"], world.PlanService, "Goblins"));
+            RegisterEntity("Skeleton", (position, data) => GenerateSkeleton(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.ComponentManager.Factions.Factions["Undead"], world.PlanService, "Undead"));
+            RegisterEntity("Necromancer", (position, data) => GenerateNecromancer(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, world.ComponentManager.Factions.Factions["Undead"], world.PlanService, "Undead"));
+            RegisterEntity("Bed", (position, data) => new Bed(world.ComponentManager, position));
+            RegisterEntity("Barrel", (position, data) => new Barrel(world.ComponentManager, position));
+            RegisterEntity("Bear Trap", (position, data) => new BearTrap(world.ComponentManager, position));
+            RegisterEntity("Lamp", (position, data) => new Lamp(world.ComponentManager, position));
+            RegisterEntity("Table", (position, data) => new Table(world.ComponentManager, position));
+            RegisterEntity("Chair", (position, data) => new Chair(world.ComponentManager, position));
+            RegisterEntity("Flag", (position, data) => new Flag(world.ComponentManager, position));
+            RegisterEntity("Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.mushroom, ResourceLibrary.ResourceType.Mushroom, 2, false));
+            RegisterEntity("Cave Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.cavemushroom, ResourceLibrary.ResourceType.CaveMushroom, 4, true));
+            RegisterEntity("Wheat", (position, data) => new Wheat(world.ComponentManager, position));
+            RegisterEntity("Kitchen Table", (position, data) => new Table(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 7)) { Tags = new List<string>() { "Cutting Board" } });
+            RegisterEntity("Books", (position, data) => new Table(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 4)) { Tags = new List<string>() { "Research" }, Battery = new Table.ManaBattery() { Charge = 0.0f, MaxCharge = 100.0f } });
+            RegisterEntity("Potions", (position, data) => new Table(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4)) { Tags = new List<string>() { "Research" }, Battery = new Table.ManaBattery() { Charge = 0.0f, MaxCharge = 100.0f } });
+            RegisterEntity("Anvil", (position, data) => new Anvil(world.ComponentManager, position));
+            RegisterEntity("Forge", (position, data) => new Forge(world.ComponentManager, position));
+            RegisterEntity("Elf", (position, data) => GenerateElf(world, position, world.ComponentManager.Factions.Factions["Elf"], "Elf"));
+            RegisterEntity("Demon", (position, data) => GenerateDemon(world, position, world.ComponentManager.Factions.Factions["Demon"], "Demon"));
+            RegisterEntity("Arrow", (position, data) => new ArrowProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
+            RegisterEntity("Bullet", (position, data) => new BulletProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
+            RegisterEntity("Web", (position, data) => new WebProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
+            RegisterEntity("Fireball", (position, data) => new FireballProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
+            RegisterEntity("Fairy", (position, data) => new Fairy(world.ComponentManager, "Player", position));
+            RegisterEntity("Target", (position, data) => new Target(world.ComponentManager, position));
+            RegisterEntity("Stove", (position, data) => new Stove(world.ComponentManager, position));
             RegisterEntity("Strawman", (position, data) =>
             {
                 float value = (float)MathFunctions.Random.NextDouble();
                 return value < 0.33
-                    ? (Body)(new Strawman(position))
-                    : (value < 0.66 ? (Body)(new WeightRack(position)) : (Body)(new PunchingBag(position)));
+                    ? (Body)(new Strawman(world.ComponentManager, position))
+                    : (value < 0.66 ? (Body)(new WeightRack(world.ComponentManager,position)) : (Body)(new PunchingBag(world.ComponentManager, position)));
             });
-            RegisterEntity("Bookshelf", (position, data) => new Bookshelf(position));
-            RegisterEntity("Wooden Door", (position, data) => new Door(position, DwarfGame.World.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 1), 50));
-            RegisterEntity("Metal Door", (position, data) => new Door(position, DwarfGame.World.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 8), 100));
-            RegisterEntity("Stone Door", (position, data) => new Door(position, DwarfGame.World.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 8), 75));
-            RegisterEntity("Wooden Ladder", (position, data) => new Ladder(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 0)));
-            RegisterEntity("Stone Ladder", (position, data) => new Ladder(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 8)));
-            RegisterEntity("Metal Ladder", (position, data) => new Ladder(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 8)));
-            RegisterEntity("RandTrinket", (position, data) => CreateRandomTrinket(position));
-            RegisterEntity("RandFood", (position, data) => CreateRandomFood(position));
-            RegisterEntity("Turret", (position, data) => new TurretTrap(DwarfGame.World.ComponentManager, position, DwarfGame.World.PlayerFaction));
+            RegisterEntity("Bookshelf", (position, data) => new Bookshelf(world.ComponentManager, position));
+            RegisterEntity("Wooden Door", (position, data) => new Door(world.ComponentManager, position, world.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 1), 50));
+            RegisterEntity("Metal Door", (position, data) => new Door(world.ComponentManager, position, world.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 8), 100));
+            RegisterEntity("Stone Door", (position, data) => new Door(world.ComponentManager, position, world.PlayerFaction, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 8), 75));
+            RegisterEntity("Wooden Ladder", (position, data) => new Ladder(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 0)));
+            RegisterEntity("Stone Ladder", (position, data) => new Ladder(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 8)));
+            RegisterEntity("Metal Ladder", (position, data) => new Ladder(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 8)));
+            RegisterEntity("RandTrinket", (position, data) => CreateRandomTrinket(world, position));
+            RegisterEntity("RandFood", (position, data) => CreateRandomFood(world, position));
+            RegisterEntity("Turret", (position, data) => new TurretTrap(world.ComponentManager, position, world.PlayerFaction));
             RegisterEntity("Snow Cloud", (position, data) => new Weather.Cloud(0.1f, 50, 40, position) {TypeofStorm = Weather.StormType.SnowStorm});
             RegisterEntity("Rain Cloud", (position, data) => new Weather.Cloud(0.1f, 50, 40, position) { TypeofStorm = Weather.StormType.RainStorm });
             RegisterEntity("Storm", (position, data) =>
@@ -165,22 +165,22 @@ namespace DwarfCorp
                 Weather.CreateStorm(MathFunctions.RandVector3Cube() * 10, MathFunctions.Rand(0.05f, 1.0f));
                                                             return new Weather.Cloud(0.1f, 50, 40, position);
             });
-            RegisterEntity("Chicken", (position, data) => new Chicken(position, DwarfGame.World.ComponentManager, DwarfGame.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Chicken"));
-            RegisterEntity("MudGolem", (position, data) => new MudGolem(new CreatureStats(new MudGolemClass(), 0), "Carnivore", DwarfGame.World.PlanService,  DwarfGame.World.ComponentManager.Factions.Factions["Carnivore"], DwarfGame.World.ComponentManager, "Mud Golem", DwarfGame.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position));
-            RegisterEntity("Mud", (position, data) => new MudProjectile(position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
+            RegisterEntity("Chicken", (position, data) => new Chicken(position, world.ComponentManager, world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Chicken"));
+            RegisterEntity("MudGolem", (position, data) => new MudGolem(new CreatureStats(new MudGolemClass(), 0), "Carnivore", world.PlanService,  world.ComponentManager.Factions.Factions["Carnivore"], world.ComponentManager, "Mud Golem", world.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position));
+            RegisterEntity("Mud", (position, data) => new MudProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
         }
 
-        private static GameComponent CreateRandomFood(Vector3 position)
+        private static GameComponent CreateRandomFood(WorldManager world, Vector3 position)
         {
             List<Resource> foods = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.RawFood);
 
             Resource randresource = ResourceLibrary.CreateMeal(Datastructures.SelectRandom(foods).Type,
                 Datastructures.SelectRandom(foods).Type);
-            return new ResourceEntity(randresource.Type, position);
+            return new ResourceEntity(world.ComponentManager, randresource.Type, position);
         }
 
 
-        public static ResourceEntity CreateRandomTrinket(Vector3 pos)
+        public static ResourceEntity CreateRandomTrinket(WorldManager world, Vector3 pos)
         {
             Resource randResource = ResourceLibrary.GenerateTrinket("Gold", MathFunctions.Rand(0.1f, 3.5f));
 
@@ -189,7 +189,7 @@ namespace DwarfCorp
                 randResource = ResourceLibrary.EncrustTrinket(randResource.Type, "Emerald");
             }
 
-            return new ResourceEntity(randResource.Type, pos);
+            return new ResourceEntity(world.ComponentManager, randResource.Type, pos);
         }
 
         public static void RegisterEntity<T>(string id, Func<Vector3, Blackboard, T> function) where T : GameComponent
@@ -222,7 +222,7 @@ namespace DwarfCorp
 
         public static Body CreateBalloon(Vector3 target, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ShipmentOrder order, Faction master)
         {
-            Body balloon = new Body("Balloon", componentManager.RootComponent,
+            Body balloon = new Body(componentManager, "Balloon", componentManager.RootComponent,
                 Matrix.CreateTranslation(position), new Vector3(0.5f, 1, 0.5f), new Vector3(0, -2, 0));
 
             SpriteSheet tex = new SpriteSheet(ContentPaths.Entities.Balloon.Sprites.balloon);
@@ -327,17 +327,17 @@ namespace DwarfCorp
         }
 
 
-        public static Body GenerateElf(Vector3 position, Faction faction, string allies)
+        public static Body GenerateElf(WorldManager worldManger, Vector3 position, Faction faction, string allies)
         {
             CreatureStats stats = new CreatureStats(new ElfClass(), 0);
-            return new Elf(stats, allies, DwarfGame.World.PlanService, faction, DwarfGame.World.ComponentManager, "Elf", DwarfGame.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position).Physics;
+            return new Elf(stats, allies, worldManger.PlanService, faction, worldManger.ComponentManager, "Elf", worldManger.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position).Physics;
         }
 
 
-        public static Body GenerateDemon(Vector3 position, Faction faction, string allies)
+        public static Body GenerateDemon(WorldManager worldManager, Vector3 position, Faction faction, string allies)
         {
             CreatureStats stats = new CreatureStats(new DemonClass(), 0);
-            return new Demon(stats, allies, DwarfGame.World.PlanService, faction, DwarfGame.World.ComponentManager, "Demon", DwarfGame.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position).Physics;
+            return new Demon(stats, allies, worldManager.PlanService, faction, worldManager.ComponentManager, "Demon", worldManager.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, position).Physics;
         }
 
         public static Body GenerateGoblin(Vector3 position,
@@ -371,8 +371,8 @@ namespace DwarfCorp
             Faction faction, PlanService planService, string allies, EmployeeClass dwarfClass, int level)
         {
             CreatureStats stats = new CreatureStats(dwarfClass, level);
-            Dwarf toReturn =  new Dwarf(stats, allies, planService, faction, "Dwarf", chunkManager, graphics, content, dwarfClass, position);
-            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, DwarfGame.World.Time.CurrentDate), false);
+            Dwarf toReturn =  new Dwarf(componentManager, stats, allies, planService, faction, "Dwarf", chunkManager, graphics, content, dwarfClass, position);
+            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, componentManager.World.Time.CurrentDate), false);
             return toReturn.Physics;
         }
 

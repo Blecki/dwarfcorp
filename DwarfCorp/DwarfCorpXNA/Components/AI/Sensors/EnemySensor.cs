@@ -69,7 +69,7 @@ namespace DwarfCorp
         }
 
         public EnemySensor(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
+            base(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             Enemies = new List<CreatureAI>();
             OnEnemySensed += EnemySensor_OnEnemySensed;
@@ -88,9 +88,9 @@ namespace DwarfCorp
 
             List<CreatureAI> sensed = new List<CreatureAI>();
             List<CreatureAI> collide = new List<CreatureAI>();
-            foreach (KeyValuePair<string, Faction> faction in DwarfGame.World.ComponentManager.Factions.Factions)
+            foreach (KeyValuePair<string, Faction> faction in Manager.Factions.Factions)
             {
-                if (DwarfGame.World.ComponentManager.Diplomacy.GetPolitics(Allies, faction.Value).GetCurrentRelationship() !=
+                if (Manager.Diplomacy.GetPolitics(Allies, faction.Value).GetCurrentRelationship() !=
                     Relationship.Hateful) continue;
 
                 foreach (CreatureAI minion in faction.Value.Minions)
@@ -105,7 +105,7 @@ namespace DwarfCorp
 
                     float dist = (minion.Position - GlobalTransform.Translation).LengthSquared();
 
-                    if (dist < SenseRadius && !DwarfGame.World.ChunkManager.ChunkData.CheckRaySolid(Position, minion.Position))
+                    if (dist < SenseRadius && !Manager.World.ChunkManager.ChunkData.CheckRaySolid(Position, minion.Position))
                     {
                         sensed.Add(minion);
                     }

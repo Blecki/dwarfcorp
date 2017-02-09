@@ -62,7 +62,7 @@ namespace DwarfCorp
             }
 
             // Todo: Reimplement
-            //MagicMenu = new MagicMenu(DwarfGame.World.GUI, DwarfGame.World.GUI.RootComponent, Player)
+            //MagicMenu = new MagicMenu(Player.World.GUI, Player.World.GUI.RootComponent, Player)
             //{
             //    LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width - 750, PlayState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350),
             //    DrawOrder = 3
@@ -78,7 +78,7 @@ namespace DwarfCorp
             //    MagicBar.Destroy();
             //}
 
-            //MagicBar = new ProgressBar(DwarfGame.World.GUI, DwarfGame.World.GUI.RootComponent, MagicMenu.Master.Spells.Mana / MagicMenu.Master.Spells.MaxMana)
+            //MagicBar = new ProgressBar(Player.World.GUI, Player.World.GUI.RootComponent, MagicMenu.Master.Spells.Mana / MagicMenu.Master.Spells.MaxMana)
             //{
             //    ToolTip = "Remaining Mana Pool",
             //    LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 200, 68, 180, 32),
@@ -142,22 +142,22 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                DwarfGame.World.SetMouse(null);
+                Player.World.SetMouse(null);
                 Player.BodySelector.Enabled = false;
                 return;
             }
             else
-                DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
+                Player.World.SetMouse(Player.World.MousePointer);
 
             if (CurrentSpell != null)
             {
                 CurrentSpell.Update(time, Player.VoxSelector, Player.BodySelector);
             }
 
-            if (DwarfGame.World.IsMouseOverGui)
-                DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
+            if (Player.World.IsMouseOverGui)
+                Player.World.SetMouse(Player.World.MousePointer);
             else
-                DwarfGame.World.SetMouse(new Gum.MousePointer("mouse", 1, 8));
+                Player.World.SetMouse(new Gum.MousePointer("mouse", 1, 8));
 
         }
 
