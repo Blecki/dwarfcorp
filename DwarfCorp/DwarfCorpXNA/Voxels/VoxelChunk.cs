@@ -1157,7 +1157,7 @@ namespace DwarfCorp
             for(int y = (int) voxRef.GridPosition.Y; y < SizeY; y++)
             {
                 int index = Data.IndexAt(x, y, z);
-                tot += (Data.Water[index].WaterLevel) / 8.0f;
+                tot += (Data.Water[index].WaterLevel) / (float) WaterManager.maxWaterLevel;
 
                 if (Data.Water[index].WaterLevel == 0 && y > (int)voxRef.GridPosition.Y)
                 {

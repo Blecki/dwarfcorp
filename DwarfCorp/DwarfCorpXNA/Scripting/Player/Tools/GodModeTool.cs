@@ -277,7 +277,7 @@ namespace DwarfCorp
                         {
                             if (vox.IsEmpty)
                             {
-                                vox.WaterLevel = 8;
+                                vox.WaterLevel = WaterManager.maxWaterLevel;
                                 vox.Chunk.Data.Water[vox.Index].Type = LiquidType.Water;
                                 chunksToRebuild.Add(vox.ChunkID);
                             }
@@ -288,7 +288,7 @@ namespace DwarfCorp
                             Vector3 gridPos = vox.GridPosition;
                             if (vox.IsEmpty)
                             {
-                                vox.WaterLevel = 8;
+                                vox.WaterLevel = WaterManager.maxWaterLevel;
                                 vox.Chunk.Data.Water[vox.Index].Type = LiquidType.Lava;
                                 chunksToRebuild.Add(vox.ChunkID);
                             }

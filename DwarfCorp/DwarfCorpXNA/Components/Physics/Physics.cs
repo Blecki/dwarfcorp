@@ -432,7 +432,7 @@ namespace DwarfCorp
             Voxel belowVoxel = new Voxel();
             bool successBelow = chunks.ChunkData.GetVoxel(GlobalTransform.Translation + Vector3.Down * 0.25f, ref belowVoxel);
 
-            if (success && CurrentVoxel.WaterLevel > 5)
+            if (success && CurrentVoxel.WaterLevel > WaterManager.inWaterThreshold)
             {
                 ApplyForce(new Vector3(0, 25, 0), dt);
                 Velocity = new Vector3(Velocity.X * 0.9f, Velocity.Y * 0.5f, Velocity.Z * 0.9f);
@@ -443,7 +443,7 @@ namespace DwarfCorp
                 DwarfGame.World.ParticleManager.Trigger("splat", Position + MathFunctions.RandVector3Box(-0.5f, 0.5f, 0.1f, 0.25f, -0.5f, 0.5f), Color.White, MathFunctions.Random.Next(0, 2));
             }
 
-            if (successBelow && belowVoxel.WaterLevel > 5)
+            if (successBelow && belowVoxel.WaterLevel > WaterManager.inWaterThreshold)
             {
                 IsInLiquid = true;
             }
