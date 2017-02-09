@@ -22,7 +22,10 @@ namespace ABTest
             return id;
         }
 
-        public Oct.NaiveOctTreeNode<SpacialHashTag> OwnerNode;
+        public override string ToString()
+        {
+            return id.ToString();
+        }
     }
 
     class Program
@@ -86,12 +89,14 @@ namespace ABTest
             // Test searching
             Debug.WriteLine("-- Generating {0} random boxes.", iterations);
             var randomBoxes = new List<Microsoft.Xna.Framework.BoundingBox>();
+            var randomBoxesIO = new List<IntegerOct.BoundingBox>();
             for (var i = 0; i < iterations; ++i)
             {
                 var box = new SpacialHash.Point3(random.Next(cubeSize), random.Next(cubeSize), random.Next(cubeSize));
                 var corner = new Microsoft.Xna.Framework.Vector3(box.X, box.Y, box.Z);
                 randomBoxes.Add(new Microsoft.Xna.Framework.BoundingBox(
                     corner, corner + new Microsoft.Xna.Framework.Vector3(10, 10, 5)));
+                randomBoxesIO.Add(new IntegerOct.BoundingBox(randomBoxes[i]));
             }
             
             Debug.WriteLine("-- Find items in generated boxes.");
@@ -105,13 +110,13 @@ namespace ABTest
             container = new HashSet<SpacialHashTag>();
             var otFindTestStart = DateTime.Now;
             foreach (var box in randomBoxes)
-                octtree.FindItemsInBox(new Oct.BoundingBox(box), container);
+                octtree.FindItems(box, container);
             var otFindTestEnd = DateTime.Now;
 
             container = new HashSet<SpacialHashTag>();
             var ioFindTestStart = DateTime.Now;
-            foreach (var box in randomBoxes)
-                ioct.FindItemsInBox(new IntegerOct.BoundingBox(box), container);
+            foreach (var box in randomBoxesIO)
+                ioct.FindItemsInBox(box, container);
             var ioFindTestEnd = DateTime.Now;
 
             Debug.WriteLine("SH: {0}ms  OT: {1}ms  IO: {2}ms",
@@ -137,12 +142,89 @@ namespace ABTest
                 hash.GetItemsInBox(randomBoxes[i], hashContainer);
 
                 var octContainer = new HashSet<SpacialHashTag>();
-                octtree.FindItemsInBox(new Oct.BoundingBox(randomBoxes[i]), octContainer);
+                octtree.FindItems(randomBoxes[i], octContainer);
 
                 var ioContainer = new HashSet<SpacialHashTag>();
-                ioct.FindItemsInBox(new IntegerOct.BoundingBox(randomBoxes[i]), ioContainer);
+                ioct.FindItemsInBox(randomBoxesIO[i], ioContainer);
 
-                Debug.WriteLine("SH: {0}  OT: {1}  IO: {2}", hashContainer.Count, octContainer.Count, ioContainer.Count);
+                #region HashTag Comparisions
+                List<SpacialHashTag> inAAndB = new List<SpacialHashTag>();
+                List<SpacialHashTag> inANotB = new List<SpacialHashTag>();
+                List<SpacialHashTag> inBNotA = new List<SpacialHashTag>();
+
+                foreach(SpacialHashTag aTag in hashContainer)
+                {
+                    bool inB = false;
+                    foreach(SpacialHashTag bTag in octContainer)
+                    {
+                        if (aTag.id == bTag.id)
+                        {
+                            inAAndB.Add(aTag);
+                            inB = true;
+                            break;
+                        }
+                    }
+                    if (!inB) inANotB.Add(aTag);
+                }
+
+                foreach (SpacialHashTag bTag in octContainer)
+                {
+                    bool inA = false;
+                    foreach (SpacialHashTag aTag in hashContainer)
+                    {
+                        if (aTag.id == bTag.id)
+                        {
+                            inA = true;
+                            break;
+                        }
+                    }
+                    if (!inA) inBNotA.Add(bTag);
+                }
+
+
+                bool allSame = false;
+                if (inANotB.Count == 0 && inBNotA.Count == 0) allSame = true;
+
+                if (allSame)
+                {
+                    inAAndB.Clear();
+                    inANotB.Clear();
+                    inBNotA.Clear();
+
+                    foreach (SpacialHashTag aTag in hashContainer)
+                    {
+                        bool inB = false;
+                        foreach (SpacialHashTag bTag in ioContainer)
+                        {
+                            if (aTag.id == bTag.id)
+                            {
+                                inAAndB.Add(aTag);
+                                inB = true;
+                                break;
+                            }
+                        }
+                        if (!inB) inANotB.Add(aTag);
+                    }
+
+                    foreach (SpacialHashTag bTag in ioContainer)
+                    {
+                        bool inA = false;
+                        foreach (SpacialHashTag aTag in hashContainer)
+                        {
+                            if (aTag.id == bTag.id)
+                            {
+                                inA = true;
+                                break;
+                            }
+                        }
+                        if (!inA) inBNotA.Add(bTag);
+                    }
+                }
+
+
+                if (inANotB.Count == 0 && inBNotA.Count == 0) allSame = true;
+                #endregion
+                Debug.WriteLine("SH: {0}  OT: {1}  IO: {2}  AllSame: {3}", hashContainer.Count, octContainer.Count, ioContainer.Count, allSame);
 
             /*    foreach (var found in hashContainer)
                 {
