@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Gum;
+using System.Linq;
 
 namespace DwarfCorp.GameStates
 {
@@ -165,6 +166,18 @@ namespace DwarfCorp.GameStates
             GuiRoot.RootItem.Layout();
         }
 
+        private Gum.Widget CreateIcon(int Tile, GameMaster.ToolMode Mode)
+        {
+            return new NewGui.FramedIcon
+            {
+                Icon = new Gum.TileReference("tool-icons", Tile),
+                OnClick = (sender, args) =>
+                {
+                    
+                }
+            };
+        }
+
         public override void OnEnter()
         {
             // Clear the input queue... cause other states aren't using it and it's been filling up.
@@ -173,6 +186,30 @@ namespace DwarfCorp.GameStates
             GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
             MakeMenu();
+
+           Dictionary<GameMaster.ToolMode, Gum.Widget> ToolbarItems = new Dictionary<GameMaster.ToolMode, Gum.Widget>();
+
+        ToolbarItems[GameMaster.ToolMode.SelectUnits] = CreateIcon(5, GameMaster.ToolMode.SelectUnits);
+            ToolbarItems[GameMaster.ToolMode.Dig] = CreateIcon(0, GameMaster.ToolMode.Dig);
+            ToolbarItems[GameMaster.ToolMode.Build] = CreateIcon(2, GameMaster.ToolMode.Build);
+            ToolbarItems[GameMaster.ToolMode.Cook] = CreateIcon(3, GameMaster.ToolMode.Cook);
+            ToolbarItems[GameMaster.ToolMode.Farm] = CreateIcon(5, GameMaster.ToolMode.Farm);
+            ToolbarItems[GameMaster.ToolMode.Magic] = CreateIcon(6, GameMaster.ToolMode.Magic);
+            ToolbarItems[GameMaster.ToolMode.Gather] = CreateIcon(6, GameMaster.ToolMode.Gather);
+            ToolbarItems[GameMaster.ToolMode.Chop] = CreateIcon(1, GameMaster.ToolMode.Chop);
+            ToolbarItems[GameMaster.ToolMode.Guard] = CreateIcon(4, GameMaster.ToolMode.Guard);
+            ToolbarItems[GameMaster.ToolMode.Attack] = CreateIcon(3, GameMaster.ToolMode.Attack);
+
+            var bottomRightTray = GuiRoot.RootItem.AddChild(new NewGui.IconTray
+            {
+                Corners = Gum.Scale9Corners.Left | Gum.Scale9Corners.Top,
+                AutoLayout = Gum.AutoLayout.FloatBottomRight,
+                ItemSource = ToolbarItems.Select(i => i.Value),
+                SizeToGrid = new Point(10, 1)
+            });
+
+            GuiRoot.RootItem.Layout();
+
             IsInitialized = true;
 
             base.OnEnter();

@@ -413,7 +413,7 @@ namespace DwarfCorp.GameStates
 
             levelRow.AddChild(new Gum.Widget
             {
-                Background = new Gum.TileReference("resources", 40), // Todo: level icon!
+                Background = new Gum.TileReference("resources", 42),
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
                 AutoLayout = Gum.AutoLayout.DockLeft
