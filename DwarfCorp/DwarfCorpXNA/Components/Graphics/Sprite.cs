@@ -81,6 +81,17 @@ namespace DwarfCorp
             DistortPosition = true;
         }
 
+        public void SetSimpleAnimation(int row = 0)
+        {
+            List<Point> frames = new List<Point>();
+
+            for (int c = 0; c < SpriteSheet.Width/SpriteSheet.FrameWidth; c++)
+            {
+                frames.Add(new Point(c, row));
+            }
+            AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", frames, true, Color.White, 5.0f, false));
+        }
+
         public void SetSingleFrameAnimation(Point frame)
         {
             AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", new List<Point>() { frame }, true, Color.White, 10.0f, false));
@@ -146,6 +157,8 @@ namespace DwarfCorp
         public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Effect effect)
         {
+            if (!IsVisible) return;
+
             base.RenderSelectionBuffer(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect);
             effect.Parameters["xID"].SetValue(GetGlobalIDColor().ToVector4());
             Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);

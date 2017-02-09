@@ -43,7 +43,7 @@ namespace DwarfCorp
         public override void OnEnter()
         {
             // Todo - HACK - Remove when input transition is complete.
-            DwarfGame.GumInput.GetInputQueue();
+            DwarfGame.GumInputMapper.GetInputQueue();
 
             CurrentScroll = 0;
             CreditsFont = GameState.Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
@@ -56,7 +56,7 @@ namespace DwarfCorp
         public override void Update(DwarfTime gameTime)
         {
             // Use new input system so event is not captured by both GUIs.
-            foreach (var @event in DwarfGame.GumInput.GetInputQueue())
+            foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
             {
                 if (@event.Message == Gum.InputEvents.KeyPress || @event.Message == Gum.InputEvents.MouseClick)
                 {

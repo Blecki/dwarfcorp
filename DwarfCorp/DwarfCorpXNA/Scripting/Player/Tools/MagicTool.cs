@@ -62,7 +62,7 @@ namespace DwarfCorp
             }
 
             // Todo: Reimplement
-            //MagicMenu = new MagicMenu(WorldManager.GUI, WorldManager.GUI.RootComponent, Player)
+            //MagicMenu = new MagicMenu(DwarfGame.World.GUI, DwarfGame.World.GUI.RootComponent, Player)
             //{
             //    LocalBounds = new Rectangle(PlayState.Game.GraphicsDevice.Viewport.Width - 750, PlayState.Game.GraphicsDevice.Viewport.Height - 512, 700, 350),
             //    DrawOrder = 3
@@ -78,7 +78,7 @@ namespace DwarfCorp
             //    MagicBar.Destroy();
             //}
 
-            //MagicBar = new ProgressBar(WorldManager.GUI, WorldManager.GUI.RootComponent, MagicMenu.Master.Spells.Mana / MagicMenu.Master.Spells.MaxMana)
+            //MagicBar = new ProgressBar(DwarfGame.World.GUI, DwarfGame.World.GUI.RootComponent, MagicMenu.Master.Spells.Mana / MagicMenu.Master.Spells.MaxMana)
             //{
             //    ToolTip = "Remaining Mana Pool",
             //    LocalBounds = new Rectangle(GameState.Game.GraphicsDevice.Viewport.Width - 200, 68, 180, 32),
@@ -142,22 +142,22 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                WorldManager.SetMouse(null);
+                DwarfGame.World.SetMouse(null);
                 Player.BodySelector.Enabled = false;
                 return;
             }
             else
-                WorldManager.SetMouse(WorldManager.MousePointer);
+                DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
 
             if (CurrentSpell != null)
             {
                 CurrentSpell.Update(time, Player.VoxSelector, Player.BodySelector);
             }
 
-            if (WorldManager.IsMouseOverGui)
-                WorldManager.SetMouse(WorldManager.MousePointer);
+            if (DwarfGame.World.IsMouseOverGui)
+                DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
             else
-                WorldManager.SetMouse(new Gum.MousePointer("mouse", 1, 8));
+                DwarfGame.World.SetMouse(new Gum.MousePointer("mouse", 1, 8));
 
         }
 

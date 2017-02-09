@@ -89,7 +89,7 @@ namespace DwarfCorp
         }
 
         public Health(ComponentManager manager, string name, GameComponent parent, float maxHealth, float minHealth, float currentHp) :
-            base(name, parent)
+            base(name, parent, manager)
         {
             InitializeResistance();
             MaxHealth = maxHealth;

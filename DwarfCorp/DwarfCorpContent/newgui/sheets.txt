@@ -18,8 +18,13 @@
 			"Type": "VariableWidthFont"
 		},
 		{
+			"Name": "font2x",
+			"Texture": "newgui/font1-w-2x",
+			"Type": "VariableWidthFont"
+		},
+		{
 			"Name": "outline-font",
-			"Texture": "newgui/font2",
+			"Texture": "newgui/font1-hires-outline-aa",
 			"Type": "VariableWidthFont"
 		},
 		{
@@ -47,6 +52,12 @@
 			"TileHeight": 30
 		},
 		{
+			"Name": "border-dark",
+			"Texture": "newgui/dark-border",
+			"TileWidth": 11,
+			"TileHeight": 11
+		},
+		{
 			"Name": "border-button",
 			"Texture": "newgui/button",
 			"TileWidth": 8,
@@ -67,6 +78,12 @@
 		{
 			"Name": "border-thin",
 			"Texture": "newgui/thin",
+			"TileWidth": 2,
+			"TileHeight": 2
+		},
+		{
+			"Name": "border-thin-transparent",
+			"Texture": "newgui/thin-transparent",
 			"TileWidth": 2,
 			"TileHeight": 2
 		},
@@ -116,6 +133,13 @@
 			"Name": "tray-border",
 			"Texture": "newgui/tray-border",
 			"TileWidth": 32,
+			"TileHeight": 32,
+			"RepeatWhenUsedAsBorder": true
+		},
+		{
+			"Name": "tray-border-transparent",
+			"Texture": "newgui/tray-border-transparent",
+			"TileWidth": 32,
 			"TileHeight": 32
 		},
 		{
@@ -149,10 +173,22 @@
 			"TileHeight": 32
 		},
 		{
+			"Name": "crafts",
+			"Texture": "newgui/crafts",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
 			"Name": "rooms",
 			"Texture": "newgui/room_icons",
 			"TileWidth": 16,
 			"TileHeight": 16
+		},
+		{
+			"Name": "furniture",
+			"Texture": "newgui/interior_furniture",
+			"TileWidth": 32,
+			"TileHeight": 32
 		}
 	]
 }

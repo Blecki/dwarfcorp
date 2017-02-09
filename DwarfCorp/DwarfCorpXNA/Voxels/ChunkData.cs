@@ -304,7 +304,7 @@ namespace DwarfCorp
 
         public bool IsVoxelOccluded(Voxel voxel)
         {
-            Vector3 cameraPos = WorldManager.Camera.Position;
+            Vector3 cameraPos = DwarfGame.World.Camera.Position;
             Vector3 voxelPoint = voxel.Position + Vector3.One * 0.5f;
             Voxel atPos = new Voxel();
             foreach (Point3 coord in MathFunctions.RasterizeLine(cameraPos, voxelPoint))
@@ -690,7 +690,7 @@ namespace DwarfCorp
             return true;
         }
 
-        public void LoadFromFile(GameFile gameFile, ref string loadingMessage)
+        public void LoadFromFile(GameFile gameFile, Action<String> SetLoadingMessage)
         {
             foreach(VoxelChunk chunk in gameFile.Data.ChunkData.Select(file => file.ToChunk(chunkManager)))
             {
@@ -698,7 +698,7 @@ namespace DwarfCorp
             }
             chunkManager.UpdateBounds();
             chunkManager.UpdateRebuildList();
-            chunkManager.CreateGraphics(ref loadingMessage, this);
+            chunkManager.CreateGraphics(SetLoadingMessage, this);
         }
     }
 

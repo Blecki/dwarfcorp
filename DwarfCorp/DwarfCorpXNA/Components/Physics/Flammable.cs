@@ -65,7 +65,7 @@ namespace DwarfCorp
         }
 
         public Flammable(ComponentManager manager, string name, Body parent, Health health) :
-            base(name, parent)
+            base(name, parent, manager)
         {
             LocParent = parent;
             Heat = 0.0f;
@@ -136,7 +136,7 @@ namespace DwarfCorp
                 {
                     Vector3 extents = (LocParent.BoundingBox.Max - LocParent.BoundingBox.Min);
                     Vector3 randomPoint = LocParent.BoundingBox.Min + new Vector3(extents.X * MathFunctions.Rand(), extents.Y * MathFunctions.Rand(), extents.Z * MathFunctions.Rand());
-                    WorldManager.ParticleManager.Trigger("flame", randomPoint, Color.White, GetNumTrigger());
+                    DwarfGame.World.ParticleManager.Trigger("flame", randomPoint, Color.White, GetNumTrigger());
                 }
             }
 

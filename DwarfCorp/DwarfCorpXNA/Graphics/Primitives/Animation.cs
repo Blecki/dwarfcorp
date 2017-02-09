@@ -107,7 +107,7 @@ namespace DwarfCorp
 
 
         public Animation(GraphicsDevice device, SpriteSheet sheet, string name, List<Point> frames, bool loops, Color tint, float frameHZ, bool flipped) :
-            this(device, sheet, name, sheet.Width, sheet.Height, frames, loops, tint, frameHZ, sheet.Width / 32.0f, sheet.Height / 32.0f, flipped)
+            this(device, sheet, name, sheet.FrameWidth, sheet.FrameHeight, frames, loops, tint, frameHZ, sheet.FrameWidth / 32.0f, sheet.FrameHeight / 32.0f, flipped)
         {
             Speeds = new List<float>();
             SpeedMultiplier = 1.0f;

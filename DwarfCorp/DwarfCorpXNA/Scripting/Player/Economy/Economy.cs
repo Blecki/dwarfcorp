@@ -102,13 +102,13 @@ namespace DwarfCorp
                 Company.GenerateRandom(1800, 60.0f, Company.Sector.Finance)
             };
 
-            WorldManager.Time.NewDay += Time_NewDay;
+            DwarfGame.World.Time.NewDay += Time_NewDay;
         }
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            WorldManager = WorldManager.World;
+            WorldManager = DwarfGame.World.World;
         }
 
         public void UpdateStocks(DateTime time)
@@ -132,17 +132,17 @@ namespace DwarfCorp
             float diff = Company.StockPrice - originalStockPrice;
             if (Company.StockPrice <= 0)
             {
-                WorldManager.InvokeLoss();
+                DwarfGame.World.InvokeLoss();
             }
 
             if (Company.Assets <= 0)
             {
-                WorldManager.MakeAnnouncement("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
+                DwarfGame.World.MakeAnnouncement("We're bankrupt!", "If we don't make a profit by tomorrow, our stock will crash!");
             }
 
             string symbol = diff > 0 ? "+" : "";
 
-            WorldManager.MakeAnnouncement(String.Format("{0} {1} {2}{3}",
+            DwarfGame.World.MakeAnnouncement(String.Format("{0} {1} {2}{3}",
                 Company.TickerName, Company.StockPrice.ToString("F2"), symbol, diff.ToString("F2")),
                 String.Format("Our stock price changed by {0}{1} today.", symbol, diff.ToString("F2")));
         }

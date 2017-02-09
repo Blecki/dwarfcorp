@@ -45,7 +45,7 @@ namespace DwarfCorp.GameStates
     public class GameStateManager
     {
         public List<GameState> StateStack { get; private set; }
-        public Dictionary<string, GameState> States { get; set; }
+        //public Dictionary<string, GameState> States { get; set; }
         public DwarfGame Game { get; set; }
         public GameState CurrentState { get; private set; }
         public GameState NextState { get; private set; }
@@ -55,19 +55,14 @@ namespace DwarfCorp.GameStates
         public GameStateManager(DwarfGame game)
         {
             Game = game;
-            States = new Dictionary<string, GameState>();
             CurrentState = null;
             NextState = null;
             StateStack = new List<GameState>();
         }
 
-        public T GetState<T>(string name) where T : class
+        public T GetState<T>() where T : class
         {
-            if(States.ContainsKey(name) && States[name] is T)
-            {
-                return States[name] as T;
-            }
-            else return null;
+            return StateStack.OfType<T>().FirstOrDefault();
         }
 
         public void PopState()
@@ -99,10 +94,10 @@ namespace DwarfCorp.GameStates
             StateStack.Insert(0, NextState);
         }
 
-        public void PushState(string state)
+        public void ReinsertState(GameState state)
         {
-            if (States.ContainsKey(state))
-                PushState(States[state]);
+            StateStack.Remove(state);
+            PushState(state);
         }
 
         public void Update(DwarfTime time)

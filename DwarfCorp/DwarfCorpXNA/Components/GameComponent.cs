@@ -32,6 +32,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net.Configuration;
 using System.Runtime.Serialization;
@@ -130,7 +131,7 @@ namespace DwarfCorp
         /// <value>
         /// The manager.
         /// </value>
-        public ComponentManager Manager { get { return WorldManager.ComponentManager; }}
+        public ComponentManager Manager { get; set; }
 
         /// <summary>
         /// A list of the GameComponentCache type handlers this component subscribes to.
@@ -165,11 +166,18 @@ namespace DwarfCorp
             maxGlobalID=value;
         }
 
+        [OnDeserialized]
+        void OnDeserializing(StreamingContext context)
+        {
+            Manager = DwarfGame.World.ComponentManager;
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GameComponent"/> class.
         /// </summary>
         public GameComponent()
         {
+            Manager = null;
             Children = new List<GameComponent>();
             Name = "uninitialized";
             IsVisible = true;
@@ -183,8 +191,9 @@ namespace DwarfCorp
         /// Initializes a new instance of the <see cref="GameComponent"/> class, while adding it to the component manager.
         /// </summary>
         /// <param name="createNew">if set to <c>true</c> adds this component to the manager..</param>
-        public GameComponent(bool createNew)
+        public GameComponent(bool createNew, ComponentManager manager)
         {
+            Manager = manager;
             lock (globalIdLock)
             {
                 GlobalID = maxGlobalID;
@@ -199,7 +208,7 @@ namespace DwarfCorp
             IsActive = true;
             IsDead = false;
 
-            if (createNew)
+            if (createNew && Manager != null)
                 Manager.AddComponent(this);
 
             Tags = new List<string>();
@@ -211,8 +220,8 @@ namespace DwarfCorp
         /// </summary>
         /// <param name="name">The name of the component.</param>
         /// <param name="parent">The parent component.</param>
-        public GameComponent(string name, GameComponent parent) :
-            this(true)
+        public GameComponent(string name, GameComponent parent, ComponentManager manager) :
+            this(true, manager)
         {
             Name = name;
             RemoveFromParent();
@@ -416,7 +425,7 @@ namespace DwarfCorp
         {
             string toReturn = "";
 
-            if(Parent == WorldManager.ComponentManager.RootComponent)
+            if(Parent == DwarfGame.World.ComponentManager.RootComponent)
                 toReturn += Name;
 
             foreach (GameComponent component in Children)

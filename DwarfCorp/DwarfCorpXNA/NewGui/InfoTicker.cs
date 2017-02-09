@@ -8,27 +8,13 @@ namespace DwarfCorp.NewGui
 {
     public class InfoTicker : Gum.Widget
     {
-        private List<Tuple<String, DateTime>> Messages = new List<Tuple<String, DateTime>>();
-        public float MessageLiveSeconds = 10.0f;
+        private List<String> Messages = new List<String>();
+        private System.Threading.Mutex MessageLock = new System.Threading.Mutex();
+        private bool NeedsInvalidated = false;
 
-        public override void Construct()
-        {
-            Root.RegisterForUpdate(this);
+        public Vector4 TextBackgroundColor = new Vector4(0.0f, 0.0f, 0.0f, 0.25f);
 
-            OnUpdate += (sender, time) =>
-                {
-                    var now = DateTime.Now;
-                    if (Messages.Count > 0 && Messages[0].Item2 < now)
-                    {
-                        Messages.RemoveAt(0);
-                        Invalidate();
-                    }
-                };
-
-            base.Construct();
-        }
-
-        public int VisibleMessages
+        public int VisibleLines
         {
             get
             {
@@ -37,26 +23,61 @@ namespace DwarfCorp.NewGui
             }
         }
 
+        public override void Construct()
+        {
+            Root.RegisterForUpdate(this);
+            OnUpdate = (sender, time) =>
+            {
+                MessageLock.WaitOne();
+                if (NeedsInvalidated)
+                    this.Invalidate();
+                NeedsInvalidated = false;
+                MessageLock.ReleaseMutex();
+            };
+        }
+
         public void AddMessage(String Message)
         {
-            foreach (var message in Message.Split('\n'))
-            {
-                if (Messages.Count == VisibleMessages)
-                    Messages.RemoveAt(0);
-                Messages.Add(Tuple.Create(message, DateTime.Now.AddSeconds(MessageLiveSeconds)));
-            }
-            Invalidate();
+            // AddMessage is called by another thread - need to protect the list.
+            MessageLock.WaitOne();
+
+            if (Messages.Count > 0 && Messages[Messages.Count - 1].Length > 11 &&
+                Message.StartsWith(Messages[Messages.Count - 1].Substring(0, 11)))
+                Messages[Messages.Count - 1] = Message;
+            else
+                Messages.Add(Message);
+
+            if (Messages.Count > VisibleLines)
+                Messages.RemoveAt(0);
+            // Need to invalidate inside the main GUI thread or else!
+            NeedsInvalidated = true;
+            MessageLock.ReleaseMutex();
         }
 
         protected override Gum.Mesh Redraw()
         {
             var meshes = new List<Gum.Mesh>();
-            var ignore = new Rectangle();
+            var stringScreenSize = new Rectangle();
             var font = Root.GetTileSheet(Font);
-            for (var i = 0; i < Messages.Count; ++i)
-                meshes.Add(Gum.Mesh.CreateStringMesh(Messages[i].Item1,
-                    font, new Vector2(TextSize, TextSize), out ignore)
-                    .Translate(Rect.X, Rect.Y + (font.TileHeight * TextSize * i)));
+            var basic = Root.GetTileSheet("basic");
+            var linePos = 0;
+
+            MessageLock.WaitOne();
+            foreach (var line in Messages)
+            {
+                var stringMesh = Gum.Mesh.CreateStringMesh(line, font, new Vector2(TextSize, TextSize), out stringScreenSize)
+                    .Translate(Rect.X, Rect.Y + linePos)
+                    .Colorize(TextColor);
+                meshes.Add(Gum.Mesh.Quad()
+                    .Scale(stringScreenSize.Width, stringScreenSize.Height)
+                    .Translate(Rect.X, Rect.Y + linePos)
+                    .Texture(basic.TileMatrix(1))
+                    .Colorize(TextBackgroundColor));
+                meshes.Add(stringMesh);
+                linePos += font.TileHeight * TextSize;
+            }
+            MessageLock.ReleaseMutex();
+
             return Gum.Mesh.Merge(meshes.ToArray());
         }
     }

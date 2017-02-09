@@ -186,7 +186,7 @@ namespace DwarfCorp
                         PlayNoise(other.Position);
                         if (HitParticles != "")
                         {
-                            WorldManager.ParticleManager.Trigger(HitParticles, other.Position, Color.White, 5);
+                            DwarfGame.World.ParticleManager.Trigger(HitParticles, other.Position, Color.White, 5);
                         }
 
                         if (HitAnimation != null)
@@ -243,7 +243,7 @@ namespace DwarfCorp
                 PlayNoise(pos);
                 if (HitParticles != "")
                 {
-                    WorldManager.ParticleManager.Trigger(HitParticles, pos, Color.White, 5);
+                    DwarfGame.World.ParticleManager.Trigger(HitParticles, pos, Color.White, 5);
                 }
 
 
@@ -285,7 +285,7 @@ namespace DwarfCorp
                         PlayNoise(other.GlobalTransform.Translation);
                         if (HitParticles != "")
                         {
-                            WorldManager.ParticleManager.Trigger(HitParticles, other.LocalTransform.Translation, Color.White, 5);
+                            DwarfGame.World.ParticleManager.Trigger(HitParticles, other.LocalTransform.Translation, Color.White, 5);
                         }
 
                         if (HitAnimation != null)

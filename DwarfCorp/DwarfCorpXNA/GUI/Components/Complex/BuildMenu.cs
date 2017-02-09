@@ -411,7 +411,7 @@ namespace DwarfCorp
             Master.Faction.CraftBuilder.IsEnabled = true;
             Master.Faction.CraftBuilder.CurrentCraftType = SelectedItem;
             Master.CurrentToolMode = GameMaster.ToolMode.Build;
-            WorldManager.ShowTooltip("Click and drag to build " + SelectedItem.Name);
+            DwarfGame.World.ShowTooltip("Click and drag to build " + SelectedItem.Name);
         }
 
         public CraftItem SelectedResource { get; set; }
@@ -441,7 +441,7 @@ namespace DwarfCorp
                 LabelFont = GUI.SmallFont
             };
 
-            Body nearest = WorldManager.PlayerFaction.FindNearestItemWithTags(item.CraftLocation, Vector3.Zero, false);
+            Body nearest = DwarfGame.World.PlayerFaction.FindNearestItemWithTags(item.CraftLocation, Vector3.Zero, false);
 
 
             string requirementsText = "Requires: " + item.CraftLocation + ",\n";
@@ -528,7 +528,7 @@ namespace DwarfCorp
             };
             string requirementsText = "Requires:\n";
 
-            Body nearest = WorldManager.PlayerFaction.FindNearestItemWithTags(item.CraftLocation, Vector3.Zero, false);
+            Body nearest = DwarfGame.World.PlayerFaction.FindNearestItemWithTags(item.CraftLocation, Vector3.Zero, false);
 
             if (nearest == null)
             {
@@ -635,7 +635,7 @@ namespace DwarfCorp
             Master.Faction.WallBuilder.CurrentVoxelType = SelectedWall;
             Master.Faction.CraftBuilder.IsEnabled = false;
             Master.CurrentToolMode = GameMaster.ToolMode.Build;
-            WorldManager.ShowTooltip("Click and drag to build " + SelectedWall.Name + " wall.");
+            DwarfGame.World.ShowTooltip("Click and drag to build " + SelectedWall.Name + " wall.");
         }
 
 
@@ -706,7 +706,7 @@ namespace DwarfCorp
             Master.Faction.WallBuilder.CurrentVoxelType = null;
             Master.Faction.CraftBuilder.IsEnabled = false;
             Master.CurrentToolMode = GameMaster.ToolMode.Build;
-            WorldManager.ShowTooltip("Click and drag to build " + SelectedRoom.Name);
+            DwarfGame.World.ShowTooltip("Click and drag to build " + SelectedRoom.Name);
         }
 
         private void HoverItem(GridLayout roomLayout, int i)

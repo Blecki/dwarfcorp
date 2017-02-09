@@ -31,7 +31,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Threading;
 using DwarfCorp.GameStates;
+using Gum;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
@@ -47,10 +49,11 @@ namespace DwarfCorp
         public TextureManager TextureManager { get; set; }
         public static SpriteBatch SpriteBatch { get; set; }
 
-        public static Gem.GumInputMapper GumInput;
-        public static Gem.Input GemInput;
+        public static Gum.Input.GumInputMapper GumInputMapper;
+        public static Gum.Input.Input GumInput;
         public static Gum.RenderData GumSkin;
- 
+        public static WorldManager World { get; set; }
+
         public DwarfGame()
         {
             GameState.Game = this;
@@ -73,6 +76,7 @@ namespace DwarfCorp
             {
                 Console.Error.WriteLine(exception.Message);
             }
+            World = new WorldManager(this);
         }
 
         public static string GetGameDirectory()
@@ -82,7 +86,7 @@ namespace DwarfCorp
 
         protected override void Initialize()
         {
-            System.Threading.Thread.CurrentThread.Name = "Main";
+            Thread.CurrentThread.Name = "Main";
             // Goes before anything else so we can track from the very start.
             GamePerformance.Initialize(this);
             // TODO: Find a more appropriate spot for this.
@@ -95,13 +99,13 @@ namespace DwarfCorp
         protected override void LoadContent()
         {
             // Prepare GemGui
-            GumInput = new Gem.GumInputMapper(Window.Handle);
-            GemInput = new Gem.Input(GumInput);
+            GumInputMapper = new Gum.Input.GumInputMapper(Window.Handle);
+            GumInput = new Gum.Input.Input(GumInputMapper);
 
             // Register all bindable actions with the input system.
-            GemInput.AddAction("TEST", Gem.Input.KeyBindingType.Pressed);
+            GumInput.AddAction("TEST", Gum.Input.KeyBindingType.Pressed);
 
-            GumSkin = new Gum.RenderData(GraphicsDevice,  Content,
+            GumSkin = new RenderData(GraphicsDevice,  Content,
                     "newgui/xna_draw", "Content/newgui/sheets.txt");
 
             if (SoundManager.Content == null)
@@ -128,6 +132,7 @@ namespace DwarfCorp
             }
             */
 
+            /*
             PlayState playState = new PlayState(this, StateManager);
             StateManager.States["IntroState"] = new IntroState(this, StateManager);
             StateManager.States["PlayState"] = playState;
@@ -144,14 +149,15 @@ namespace DwarfCorp
             StateManager.States["GameLoaderState"] = new GameLoaderState(this, StateManager);
             StateManager.States["LoseState"] = new LoseState(this, StateManager, playState);
             StateManager.States["LoadState"] = new LoadState(this, StateManager);
+             */
 
             if(GameSettings.Default.DisplayIntro)
             {
-                StateManager.PushState("IntroState");
+                StateManager.PushState(new IntroState(this, StateManager));
             }
             else
             {
-                StateManager.PushState("MainMenuState");
+                StateManager.PushState(new MainMenuState(this, StateManager));
             }
 
             BiomeLibrary.InitializeStatics();
@@ -184,7 +190,7 @@ namespace DwarfCorp
             GraphicsDevice.SetRenderTarget(null);
             base.Draw(time);
             GamePerformance.Instance.PostRender();
-            GamePerformance.Instance.Render(DwarfGame.SpriteBatch);
+            GamePerformance.Instance.Render(SpriteBatch);
         }
 
         protected override void OnExiting(object sender, EventArgs args)

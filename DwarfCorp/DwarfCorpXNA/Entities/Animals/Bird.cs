@@ -65,12 +65,13 @@ namespace DwarfCorp
                     Charisma = 1,
                     Intelligence = 1,
                     Size = 0.25f,
-                    CanSleep = false
+                    CanSleep = false,
+                    LaysEggs = true
                 },
                 // Belongs to herbivore team
                 "Herbivore",
                 // Uses the default plan service
-                WorldManager.PlanService,
+                DwarfGame.World.PlanService,
                 // Belongs to the herbivore team
                 manager.Factions.Factions["Herbivore"],
                 // The physics component this creature belongs to

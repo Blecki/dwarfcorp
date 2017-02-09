@@ -108,7 +108,7 @@ namespace DwarfCorp
                 Factions.AddFactions(natives);
             }
             Factions.Initialize(state, CompanyInformation);
-            Point playerOrigin = new Point((int)(WorldManager.WorldOrigin.X), (int)(WorldManager.WorldOrigin.Y));
+            Point playerOrigin = new Point((int)(DwarfGame.World.WorldOrigin.X), (int)(DwarfGame.World.WorldOrigin.Y));
 
             Factions.Factions["Player"].Center = playerOrigin;
             Factions.Factions["Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
@@ -217,21 +217,22 @@ namespace DwarfCorp
                     where   screenPos.Z > 0 
                     && (selectionRectangle.Contains((int)screenPos.X, (int)screenPos.Y) || selectionRectangle.Intersects(component.GetScreenRect(camera))) 
                     && camera.GetFrustrum().Contains(component.GlobalTransform.Translation) != ContainmentType.Disjoint
-                    && !WorldManager.ChunkManager.ChunkData.CheckOcclusionRay(camera.Position, component.Position)
+                    && !DwarfGame.World.ChunkManager.ChunkData.CheckOcclusionRay(camera.Position, component.Position)
                     select component).ToList();
              */
-            if (WorldManager.SelectionBuffer == null)
+            if (DwarfGame.World.SelectionBuffer == null)
             {
                 return new List<Body>();
             }
             List<Body> toReturn = new List<Body>();
-            foreach (uint id in WorldManager.SelectionBuffer.GetIDsSelected(selectionRectangle))
+            foreach (uint id in DwarfGame.World.SelectionBuffer.GetIDsSelected(selectionRectangle))
             {
                 GameComponent component;
                 if (!Components.TryGetValue(id, out component))
                 {
                     continue;
                 }
+                if (!component.IsVisible) continue;
                 toReturn.Add(component.GetRootComponent().GetComponent<Body>());
             }
             return toReturn;
@@ -295,6 +296,8 @@ namespace DwarfCorp
 
             foreach(GameComponent component in Components.Values)
             {
+                component.Manager = this;
+
                 if(component.IsActive)
                 {
                     component.Update(gameTime, chunks, camera);

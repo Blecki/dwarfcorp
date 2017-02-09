@@ -207,7 +207,7 @@ namespace DwarfCorp
             {
                 VoxelUnderMouse = underMouse;
                 // Update the cursor light.
-                WorldManager.CursorLightPos = underMouse.Position + new Vector3(0.5f, 0.5f, 0.5f);
+                DwarfGame.World.CursorLightPos = underMouse.Position + new Vector3(0.5f, 0.5f, 0.5f);
 
                 // Get the type of the voxel and display it to the player.
                 if (Enabled && !underMouse.IsEmpty && underMouse.IsExplored)
@@ -215,14 +215,14 @@ namespace DwarfCorp
                     string info = underMouse.TypeName;
 
                     // If it belongs to a room, display that information.
-                    if (WorldManager.PlayerFaction.RoomBuilder.IsInRoom(underMouse))
+                    if (DwarfGame.World.PlayerFaction.RoomBuilder.IsInRoom(underMouse))
                     {
-                        Room room = WorldManager.PlayerFaction.RoomBuilder.GetMostLikelyRoom(underMouse);
+                        Room room = DwarfGame.World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(underMouse);
 
                         if (room != null)
                             info += " (" + room.ID + ")";
                     }
-                    WorldManager.ShowInfo(info);
+                    DwarfGame.World.ShowInfo(info);
                 }
             }
 

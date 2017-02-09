@@ -104,6 +104,53 @@ namespace DwarfCorp
         }
     }
 
+    [JsonObject(IsReference = true)]
+    public class Egg : GameComponent
+    {
+        public string Adult { get; set; }
+        public DateTime Birthday { get; set; }
+        public Body ParentBody { get; set; }
+        public Egg()
+        {
+            
+        }
+
+        public Egg(string adult, ComponentManager manager, Vector3 position) :
+            base(false, manager)
+        {
+            Manager = manager;
+            Adult = adult;
+            Birthday = DwarfGame.World.Time.CurrentDate + new TimeSpan(0, 12, 0, 0);
+
+            if (ResourceLibrary.GetResourceByName(adult + " Egg") == null)
+            {
+                Resource newEggResource =
+                    new Resource(ResourceLibrary.GetResourceByName(ResourceLibrary.ResourceType.Egg));
+                newEggResource.Type = adult + " Egg";
+                ResourceLibrary.Add(newEggResource);
+            }
+            ParentBody = EntityFactory.CreateEntity<Body>(adult + " Egg Resource", position);
+            ParentBody.AddChild(this);
+            manager.AddComponent(this);
+        }
+
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        {
+            if (DwarfGame.World.Time.CurrentDate > Birthday)
+            {
+                Hatch();
+            }
+
+            base.Update(gameTime, chunks, camera);
+        }
+
+        public void Hatch()
+        {
+            EntityFactory.CreateEntity<Body>(Adult, ParentBody.Position);
+            GetRootComponent().Die();
+        }
+    }
+
     /// <summary>
     ///     Component which keeps track of a large number of other components (AI, physics, sprites, etc.)
     ///     related to creatures (such as dwarves and goblins).
@@ -176,12 +223,12 @@ namespace DwarfCorp
         public Creature(Vector3 pos, CreatureDef def, string creatureClass, int creatureLevel, string faction) :
             this(new CreatureStats(EmployeeClass.Classes[creatureClass], creatureLevel),
                 faction,
-                WorldManager.PlanService,
-                WorldManager.ComponentManager.Factions.Factions[faction],
-                new Physics(def.Name, WorldManager.ComponentManager.RootComponent, Matrix.CreateTranslation(pos), def.Size,
+                DwarfGame.World.PlanService,
+                DwarfGame.World.ComponentManager.Factions.Factions[faction],
+                new Physics(def.Name, DwarfGame.World.ComponentManager.RootComponent, Matrix.CreateTranslation(pos), def.Size,
                     new Vector3(0, -def.Size.Y * 0.5f, 0), def.Mass, 1.0f, 0.999f, 0.999f, Vector3.UnitY * -10,
                     Physics.OrientMode.RotateY),
-                WorldManager.ChunkManager,
+                DwarfGame.World.ChunkManager,
                 GameState.Game.GraphicsDevice,
                 GameState.Game.Content,
                 def.Name)
@@ -262,7 +309,7 @@ namespace DwarfCorp
 
             var minimapIcon = new MinimapIcon(Physics, def.MinimapIcon);
             Stats.FullName =
-                TextGenerator.GenerateRandom(WorldManager.ComponentManager.Factions.Races[def.Race].NameTemplates);
+                TextGenerator.GenerateRandom(DwarfGame.World.ComponentManager.Factions.Races[def.Race].NameTemplates);
             Stats.CanSleep = def.CanSleep;
             Stats.CanEat = def.CanEat;
             AI.TriggersMourning = def.TriggersMourning;
@@ -303,6 +350,11 @@ namespace DwarfCorp
             };
         }
 
+        public void LayEgg()
+        {
+            new Egg(this.Name, Manager, Physics.Position);
+        }
+
         /// <summary> The creature's AI determines how it will behave. </summary>
         public CreatureAI AI { get; set; }
         /// <summary> The crature's physics determines how it moves around </summary>
@@ -329,7 +381,7 @@ namespace DwarfCorp
         public NoiseMaker NoiseMaker { get; set; }
         /// <summary> The creature can hold objects in its inventory </summary>
         public Inventory Inventory { get; set; }
-
+        public Timer EggTimer { get; set; }
         /// <summary> Reference to the graphics device. </summary>
         [JsonIgnore]
         public GraphicsDevice Graphics { get; set; }
@@ -407,9 +459,9 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Graphics = WorldManager.ChunkManager.Graphics;
-            Content = WorldManager.ChunkManager.Content;
-            Chunks = WorldManager.ChunkManager;
+            Graphics = DwarfGame.World.ChunkManager.Graphics;
+            Content = DwarfGame.World.ChunkManager.Content;
+            Chunks = DwarfGame.World.ChunkManager;
         }
 
         /// <summary> Adds the specified ongoing effect. </summary>
@@ -446,6 +498,21 @@ namespace DwarfCorp
             Status.Update(this, gameTime, chunks, camera);
             JumpTimer.Update(gameTime);
             HandleBuffs(gameTime);
+
+            if (Stats.LaysEggs)
+            {
+                if (EggTimer == null)
+                {
+                    EggTimer = new Timer(120.0f, false);
+                }
+                EggTimer.Update(gameTime);
+
+                if (EggTimer.HasTriggered)
+                {
+                    LayEgg();
+                    EggTimer = new Timer(120.0f + MathFunctions.Rand(-30.0f, 30.0f), false);
+                }
+            }
 
             base.Update(gameTime, chunks, camera);
         }
@@ -624,7 +691,7 @@ namespace DwarfCorp
                     NoiseMaker.MakeNoise("Hurt", AI.Position);
                     Sprite.Blink(0.5f);
                     AI.AddThought(Thought.ThoughtType.TookDamage);
-                    WorldManager.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
+                    DwarfGame.World.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
                     break;
             }
 
@@ -702,7 +769,7 @@ namespace DwarfCorp
                 NoiseMaker.MakeNoise("Hurt", AI.Position);
                 Sprite.Blink(0.5f);
                 AI.AddThought(Thought.ThoughtType.TookDamage);
-                WorldManager.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
+                DwarfGame.World.ParticleManager.Trigger(DeathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
             }
 
             return damage;
@@ -792,7 +859,7 @@ namespace DwarfCorp
 
                 if (ParticleTimer.HasTriggered && !string.IsNullOrEmpty(Particles))
                 {
-                    WorldManager.ParticleManager.Trigger(Particles, creature.Physics.Position, Color.White, 1);
+                    DwarfGame.World.ParticleManager.Trigger(Particles, creature.Physics.Position, Color.White, 1);
                 }
             }
 
