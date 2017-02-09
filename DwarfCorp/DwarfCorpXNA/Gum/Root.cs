@@ -26,7 +26,6 @@ namespace Gum
         public Point ResolutionAtCreation { get; private set; }
         public int ScaleRatio { get; private set; }
         public Widget RootItem { get; private set; }
-        public Widget PopupItem { get; private set; }
         public bool DestroyPopupOnOffClick { get; private set; }
         public Widget TooltipItem { get; private set; }
         private List<Widget> UpdateItems = new List<Widget>();
@@ -40,6 +39,8 @@ namespace Gum
         public int TooltipTextSize = 1;
         public float CursorBlinkTime = 0.3f;
         internal double RunTime = 0.0f;
+
+        private List<Widget> PopupStack = new List<Widget>();
 
         public Root(Point IdealSize, RenderData RenderData)
         {
@@ -67,7 +68,7 @@ namespace Gum
         {
             HoverItem = null;
             FocusItem = null;
-            PopupItem = null;
+            PopupStack.Clear();
             TooltipItem = null;
             RootItem = ConstructWidget(new Widget
                 {
@@ -145,9 +146,20 @@ namespace Gum
             Widget.Constructed = false;
             if (Object.ReferenceEquals(FocusItem, Widget)) FocusItem = null;
             if (Object.ReferenceEquals(HoverItem, Widget)) HoverItem = null;
-            if (Object.ReferenceEquals(PopupItem, Widget)) PopupItem = null;
             if (Object.ReferenceEquals(TooltipItem, Widget)) TooltipItem = null;
             UpdateItems.RemoveAll(p => Object.ReferenceEquals(p, Widget));
+            if (PopupStack.Contains(Widget)) PopupStack = new List<Widget>();
+        }
+
+        private void CleanupPopupStack()
+        {
+            foreach (var item in PopupStack)
+            {
+                SafeCall(item.OnPopupClose, item);
+                DestroyWidget(item);
+            }
+
+            PopupStack.Clear();
         }
 
         public void DestroyWidget(Widget Widget)
@@ -179,15 +191,9 @@ namespace Gum
         /// <param name="Popup"></param>
         public void ShowPopup(Widget Popup, bool DestroyOnOffClick)
         {
-            if (PopupItem != null)
-            {
-                SafeCall(PopupItem.OnPopupClose, PopupItem);
-                DestroyWidget(PopupItem);
-            }
-
-            PopupItem = Popup;
+            PopupStack.Add(Popup);
             DestroyPopupOnOffClick = DestroyOnOffClick;
-            RootItem.AddChild(PopupItem);
+            RootItem.AddChild(Popup);
         }
 
         public void ShowTooltip(Point Where, String Tip)
@@ -255,9 +261,13 @@ namespace Gum
 
         private bool IsHoverPartOfPopup()
         {
-            if (PopupItem == null || HoverItem == null) return false;
-            if (Object.ReferenceEquals(PopupItem, HoverItem)) return true;
-            if (HoverItem.IsChildOf(PopupItem)) return true;
+            if (PopupStack.Count == 0 || HoverItem == null) return false;
+
+            foreach (var item in PopupStack)
+            {
+                if (Object.ReferenceEquals(item, HoverItem)) return true;
+                if (HoverItem.IsChildOf(item)) return true;
+            }
             return false;
         }
 
@@ -297,7 +307,7 @@ namespace Gum
                         var newArgs = new InputEventArgs { X = MousePosition.X, Y = MousePosition.Y };
 
                         MouseDownItem = null;
-                        if (PopupItem != null)
+                        if (PopupStack.Count != 0)
                         {
                             if (IsHoverPartOfPopup())
                                 MouseDownItem = HoverItem;
@@ -314,24 +324,18 @@ namespace Gum
                         MousePosition = ScreenPointToGuiPoint(new Point(Args.X, Args.Y));
                         var newArgs = new InputEventArgs { X = MousePosition.X, Y = MousePosition.Y };
 
-                        if (PopupItem != null)
+                        if (PopupStack.Count != 0)
                         {
-                            if (HoverItem == null || (!Object.ReferenceEquals(HoverItem, PopupItem) &&
-                                !HoverItem.IsChildOf(PopupItem)))
+                            if (HoverItem == null || !IsHoverPartOfPopup())
                             {
                                 if (DestroyPopupOnOffClick)
-                                {
-                                    SafeCall(PopupItem.OnPopupClose, PopupItem);
-                                    DestroyWidget(PopupItem);
-                                    PopupItem = null;
-                                }
+                                    CleanupPopupStack();
 
                                 MouseDownItem = null;
                                 return;
                             }
 
-                            if (HoverItem != null && (Object.ReferenceEquals(HoverItem, PopupItem) ||
-                                HoverItem.IsChildOf(PopupItem)))
+                            if (IsHoverPartOfPopup())
                             {
                                 Args.Handled = true;
                                 if (Object.ReferenceEquals(HoverItem, MouseDownItem))
