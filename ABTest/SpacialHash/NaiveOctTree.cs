@@ -76,9 +76,7 @@ namespace ABTest.Oct
                 for (var i = 0; i < Items.Count; ++i)
                     Children[Bin(Items[i].Item2)].AddToTree(Items[i], SubdivideThreshold);
                 Children[Bin(Item.Item2)].AddToTree(Item, SubdivideThreshold);
-
-                for (var i = 0; i < 8; ++i)
-                    Children[i].AddToTree(Item, SubdivideThreshold);
+                
 #else
                 for (var i = 0; i < Items.Count; ++i)
                     for (var c = 0; c < 8; ++c)

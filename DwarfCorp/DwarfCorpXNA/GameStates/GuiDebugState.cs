@@ -166,18 +166,57 @@ namespace DwarfCorp.GameStates
             GuiRoot.RootItem.Layout();
         }
 
-        private Gum.Widget CreateIcon(int Tile, GameMaster.ToolMode Mode)
+        private Gum.Widget CreateTray(IEnumerable<Widget> Icons)
         {
-            return new NewGui.FramedIcon
+            return GuiRoot.ConstructWidget(new NewGui.IconTray
+            {
+                SizeToGrid = new Point(Icons.Count(), 1),
+                Corners = Scale9Corners.Top | Scale9Corners.Right | Scale9Corners.Left,
+                ItemSource = Icons,
+                Hidden = true,
+                //OnMouseLeave = (sender, args) => sender.Hidden = true
+            });
+        }
+
+        private Gum.Widget CreateTrayIcon(int Tile, Gum.Widget Child)
+        {
+            var r = new NewGui.FramedIcon
             {
                 Icon = new Gum.TileReference("tool-icons", Tile),
                 OnClick = (sender, args) =>
                 {
                     
+                },
+                OnHover = (sender) =>
+                {
+                    foreach (var child in sender.Parent.EnumerateChildren().Where(c => c is NewGui.FramedIcon)
+                    .SelectMany(c => c.EnumerateChildren()))
+                    {
+                        child.Hidden = true;
+                        child.Invalidate();
+                    }
+
+                    if (Child != null)
+                    {
+                        Child.Hidden = false;
+                        Child.Invalidate();
+                    }
+                },
+                OnLayout = (sender) =>
+                {
+                    if (Child != null)
+                    {
+                        Child.Rect.X = sender.Rect.X;
+                        Child.Rect.Y = sender.Rect.Y - 64;
+                    }
                 }
             };
-        }
 
+            GuiRoot.ConstructWidget(r);
+            if (Child != null) r.AddChild(Child);
+            return r;
+        }
+        
         public override void OnEnter()
         {
             // Clear the input queue... cause other states aren't using it and it's been filling up.
@@ -189,22 +228,52 @@ namespace DwarfCorp.GameStates
 
            Dictionary<GameMaster.ToolMode, Gum.Widget> ToolbarItems = new Dictionary<GameMaster.ToolMode, Gum.Widget>();
 
-        ToolbarItems[GameMaster.ToolMode.SelectUnits] = CreateIcon(5, GameMaster.ToolMode.SelectUnits);
-            ToolbarItems[GameMaster.ToolMode.Dig] = CreateIcon(0, GameMaster.ToolMode.Dig);
-            ToolbarItems[GameMaster.ToolMode.Build] = CreateIcon(2, GameMaster.ToolMode.Build);
-            ToolbarItems[GameMaster.ToolMode.Cook] = CreateIcon(3, GameMaster.ToolMode.Cook);
-            ToolbarItems[GameMaster.ToolMode.Farm] = CreateIcon(5, GameMaster.ToolMode.Farm);
-            ToolbarItems[GameMaster.ToolMode.Magic] = CreateIcon(6, GameMaster.ToolMode.Magic);
-            ToolbarItems[GameMaster.ToolMode.Gather] = CreateIcon(6, GameMaster.ToolMode.Gather);
-            ToolbarItems[GameMaster.ToolMode.Chop] = CreateIcon(1, GameMaster.ToolMode.Chop);
-            ToolbarItems[GameMaster.ToolMode.Guard] = CreateIcon(4, GameMaster.ToolMode.Guard);
-            ToolbarItems[GameMaster.ToolMode.Attack] = CreateIcon(3, GameMaster.ToolMode.Attack);
+        //ToolbarItems[GameMaster.ToolMode.SelectUnits] = CreateIcon(5, GameMaster.ToolMode.SelectUnits);
+        //    ToolbarItems[GameMaster.ToolMode.Dig] = CreateIcon(0, GameMaster.ToolMode.Dig);
+        //    ToolbarItems[GameMaster.ToolMode.Build] = CreateIcon(2, GameMaster.ToolMode.Build);
+        //    ToolbarItems[GameMaster.ToolMode.Cook] = CreateIcon(3, GameMaster.ToolMode.Cook);
+        //    ToolbarItems[GameMaster.ToolMode.Farm] = CreateIcon(5, GameMaster.ToolMode.Farm);
+        //    ToolbarItems[GameMaster.ToolMode.Magic] = CreateIcon(6, GameMaster.ToolMode.Magic);
+        //    ToolbarItems[GameMaster.ToolMode.Gather] = CreateIcon(6, GameMaster.ToolMode.Gather);
+        //    ToolbarItems[GameMaster.ToolMode.Chop] = CreateIcon(1, GameMaster.ToolMode.Chop);
+        //    ToolbarItems[GameMaster.ToolMode.Guard] = CreateIcon(4, GameMaster.ToolMode.Guard);
+        //    ToolbarItems[GameMaster.ToolMode.Attack] = CreateIcon(3, GameMaster.ToolMode.Attack);
 
             var bottomRightTray = GuiRoot.RootItem.AddChild(new NewGui.IconTray
             {
                 Corners = Gum.Scale9Corners.Left | Gum.Scale9Corners.Top,
                 AutoLayout = Gum.AutoLayout.FloatBottomRight,
-                ItemSource = ToolbarItems.Select(i => i.Value),
+                ItemSource = new Gum.Widget[]
+                {
+                    CreateTrayIcon(5, CreateTray(
+                        new Gum.Widget[]
+                        {
+                            CreateTrayIcon(0, null),
+                            CreateTrayIcon(1, null),
+                            CreateTrayIcon(2, null)
+                        })),
+                    CreateTrayIcon(5, CreateTray(
+                        new Gum.Widget[]
+                        {
+                            CreateTrayIcon(3, null),
+                            CreateTrayIcon(4, CreateTray(
+                                new Gum.Widget[]
+                                {
+                                    CreateTrayIcon(5, null),
+                                    CreateTrayIcon(6, null),
+                                    CreateTrayIcon(7, null)
+                                }
+                        )),
+                            CreateTrayIcon(2, null)
+                        })),
+                    CreateTrayIcon(5, CreateTray(
+                        new Gum.Widget[]
+                        {
+                            CreateTrayIcon(8, null),
+                            CreateTrayIcon(9, null),
+                            CreateTrayIcon(10, null)
+                        }))
+                },
                 SizeToGrid = new Point(10, 1)
             });
 

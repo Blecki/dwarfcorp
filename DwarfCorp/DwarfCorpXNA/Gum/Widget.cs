@@ -108,6 +108,7 @@ namespace Gum
         public Action<Widget, InputEventArgs> OnMouseEnter = null;
         public Action<Widget, InputEventArgs> OnMouseLeave = null;
         public Action<Widget, InputEventArgs> OnMouseMove = null;
+        public Action<Widget> OnHover = null;
         public Action<Widget, InputEventArgs> OnClick = null;
         public Action<Widget> OnGainFocus = null;
         public Action<Widget> OnLoseFocus = null;
@@ -124,6 +125,7 @@ namespace Gum
         #endregion
 
         public Object Tag = null;
+        public PopupDestructionType PopupDestructionType = PopupDestructionType.Keep;
 
         private Mesh CachedRenderMesh = null;
         internal List<Widget> Children = new List<Widget>();

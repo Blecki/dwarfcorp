@@ -15,11 +15,13 @@ namespace DwarfCorp.GameStates
         private bool QuitOnNextUpdate { get; set; }
         public bool ShouldReset { get; set; }
         public static WorldManager World { get { return DwarfGame.World; } }
+
         public GameMaster Master
         {
             get { return DwarfGame.World.Master; }
             set { DwarfGame.World.Master = value; }
         }
+
         public static bool Paused
         {
             get { return DwarfGame.World.Paused; }
@@ -250,8 +252,7 @@ namespace DwarfCorp.GameStates
             ResourcePanel.Layout();
             #endregion
 
-            if (Paused && GameSpeedControls.CurrentSpeed != 0)
-                GameSpeedControls.CurrentSpeed = 0;
+            GameSpeedControls.CurrentSpeed = (int)DwarfTime.LastTime.Speed;
 
             // Really just handles mouse pointer animation.
             NewGui.Update(gameTime.ToGameTime());
@@ -530,15 +531,20 @@ namespace DwarfCorp.GameStates
 
             #region Setup game speed controls
             GameSpeedControls = NewGui.RootItem.AddChild(new NewGui.GameSpeedControls
+            {
+                AutoLayout = Gum.AutoLayout.None,
+                OnLayout = (sender) =>
                 {
-                    AutoLayout = Gum.AutoLayout.None,
-                    OnLayout = (sender) =>
-                    {
                         // Want to position this directly above the bottom-right tray.
                         sender.Rect = new Rectangle(BottomRightTray.Rect.Right - sender.MinimumSize.X,
-                            BottomRightTray.Rect.Top - sender.MinimumSize.Y, sender.MinimumSize.X, sender.MinimumSize.Y);
-                    }
-                }) as NewGui.GameSpeedControls;
+                        BottomRightTray.Rect.Top - sender.MinimumSize.Y, sender.MinimumSize.X, sender.MinimumSize.Y);
+                },
+                OnSpeedChanged = (sender, speed) =>
+                {
+                    DwarfTime.LastTime.Speed = (float)speed;
+                    PlayState.Paused = speed == 0;
+                }
+            }) as NewGui.GameSpeedControls;
 
             #endregion
 
@@ -694,7 +700,7 @@ namespace DwarfCorp.GameStates
         public void OpenPauseMenu()
         {
             if (PausePanel != null) return;
-            Paused = true;
+            GameSpeedControls.Pause();
 
             PausePanel = new Gum.Widget
             {
@@ -713,7 +719,7 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(PausePanel, "Continue", "", (sender, args) =>
                 {
                     PausePanel.Close();
-                    Paused = false;
+                    GameSpeedControls.Resume();
                     PausePanel = null;
                 });
 
@@ -749,17 +755,17 @@ namespace DwarfCorp.GameStates
                                         {
                                             Text = success ? "File saved." : "Save failed - " + exception.Message,
                                             OnClose = (s2) => OpenPauseMenu()
-                                        }, false);
+                                        });
                                     });
                         }
-                    }, false);
+                    });
                 });
             
             MakeMenuItem(PausePanel, "Quit", "", (sender, args) => QuitOnNextUpdate = true);
 
             PausePanel.Layout();
 
-            NewGui.ShowPopup(PausePanel, false);
+            NewGui.ShowPopup(PausePanel);
         }
       
         public void Destroy()

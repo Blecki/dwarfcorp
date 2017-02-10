@@ -38,4 +38,11 @@ namespace Gum
         FloatBottomLeft,
     }
 
+    public enum PopupDestructionType
+    {
+        Keep,
+        DestroyOnOffClick,
+        DestroyOnMouseLeave
+    }
+
 }

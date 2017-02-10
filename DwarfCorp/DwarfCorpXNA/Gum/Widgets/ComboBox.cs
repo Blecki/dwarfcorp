@@ -92,7 +92,8 @@ namespace Gum.Widgets
                                 };
 
                             SelectorPopup = listView;
-                            Root.ShowPopup(SelectorPopup, true);
+                            SelectorPopup.PopupDestructionType = PopupDestructionType.DestroyOnOffClick;
+                            Root.ShowPopup(SelectorPopup);
                         }
                     }
                 };

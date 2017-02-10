@@ -26,7 +26,6 @@ namespace Gum
         public Point ResolutionAtCreation { get; private set; }
         public int ScaleRatio { get; private set; }
         public Widget RootItem { get; private set; }
-        public bool DestroyPopupOnOffClick { get; private set; }
         public Widget TooltipItem { get; private set; }
         private List<Widget> UpdateItems = new List<Widget>();
         public Widget MouseDownItem { get; private set; }
@@ -189,10 +188,9 @@ namespace Gum
         /// Show a widget as a popup. Replaces any existing popup widget already displayed.
         /// </summary>
         /// <param name="Popup"></param>
-        public void ShowPopup(Widget Popup, bool DestroyOnOffClick)
+        public void ShowPopup(Widget Popup)
         {
             PopupStack.Add(Popup);
-            DestroyPopupOnOffClick = DestroyOnOffClick;
             RootItem.AddChild(Popup);
         }
 
@@ -299,6 +297,12 @@ namespace Gum
                         if (MouseDownItem != null)
                             SafeCall(MouseDownItem.OnMouseMove, MouseDownItem,
                                 new InputEventArgs { X = MousePosition.X, Y = MousePosition.Y });
+                        
+                        if (HoverItem != null && 
+                            !IsHoverPartOfPopup() && 
+                            PopupStack.Count > 0 && 
+                            PopupStack[PopupStack.Count - 1].PopupDestructionType == PopupDestructionType.DestroyOnMouseLeave)
+                            CleanupPopupStack();
                     }
                     break;
                 case InputEvents.MouseDown:
@@ -328,7 +332,7 @@ namespace Gum
                         {
                             if (HoverItem == null || !IsHoverPartOfPopup())
                             {
-                                if (DestroyPopupOnOffClick)
+                                if (PopupStack[PopupStack.Count - 1].PopupDestructionType == PopupDestructionType.DestroyOnOffClick)
                                     CleanupPopupStack();
 
                                 MouseDownItem = null;
@@ -401,6 +405,8 @@ namespace Gum
             var localCopy = new List<Widget>(UpdateItems);
             foreach (var item in localCopy)
                 SafeCall(item.OnUpdate, item, Time);
+
+            if (HoverItem != null) SafeCall(HoverItem.OnHover, HoverItem);
         }
 
         public void Draw()
