@@ -195,7 +195,7 @@ namespace DwarfCorp
 
         public void GenerateWater(VoxelChunk chunk)
         {
-            int waterHeight = (int) (SeaLevel*chunk.SizeY);
+            int waterHeight = (int) (SeaLevel*chunk.SizeY) + 1;
             Voxel voxel = chunk.MakeVoxel(0, 0, 0);
             for (int x = 0; x < chunk.SizeX; x++)
             {
@@ -594,7 +594,7 @@ namespace DwarfCorp
 
         public VoxelChunk GenerateChunk(Vector3 origin, int chunkSizeX, int chunkSizeY, int chunkSizeZ, ComponentManager components, ContentManager content, GraphicsDevice graphics)
         {
-            float waterHeight = SeaLevel;
+            float waterHeight = SeaLevel + 1.0f / chunkSizeY;
             VoxelChunk c = new VoxelChunk(Manager, origin, 1,
                 Manager.ChunkData.GetChunkID(origin + new Vector3(0.5f, 0.5f, 0.5f)), chunkSizeX, chunkSizeY, chunkSizeZ)
             {
@@ -659,7 +659,7 @@ namespace DwarfCorp
                         {
                             voxel.Type = VoxelLibrary.GetVoxelType("empty");
                         }
-                        else if(hNorm < waterHeight)
+                        else if(hNorm <= waterHeight)
                         {
                             voxel.Type = VoxelLibrary.GetVoxelType(biomeData.ShoreVoxel);
                             voxel.Health = VoxelLibrary.GetVoxelType(biomeData.ShoreVoxel).StartingHealth;
@@ -679,7 +679,6 @@ namespace DwarfCorp
             GenerateCaves(c);
             //GenerateAquifers(c);
             //GenerateLavaTubes(c);
-
 
             c.ShouldRecalculateLighting = true;
             c.ShouldRebuildWater = true;
