@@ -206,8 +206,9 @@ namespace DwarfCorp.GameStates
                 {
                     if (Child != null)
                     {
-                        Child.Rect.X = sender.Rect.X;
-                        Child.Rect.Y = sender.Rect.Y - 64;
+                        var midPoint = sender.Rect.X + (sender.Rect.Width / 2);
+                        Child.Rect.X = midPoint - (Child.Rect.Width / 2);
+                        Child.Rect.Y = sender.Rect.Y - 60;
                     }
                 }
             };
@@ -228,16 +229,19 @@ namespace DwarfCorp.GameStates
 
            Dictionary<GameMaster.ToolMode, Gum.Widget> ToolbarItems = new Dictionary<GameMaster.ToolMode, Gum.Widget>();
 
-        //ToolbarItems[GameMaster.ToolMode.SelectUnits] = CreateIcon(5, GameMaster.ToolMode.SelectUnits);
-        //    ToolbarItems[GameMaster.ToolMode.Dig] = CreateIcon(0, GameMaster.ToolMode.Dig);
-        //    ToolbarItems[GameMaster.ToolMode.Build] = CreateIcon(2, GameMaster.ToolMode.Build);
-        //    ToolbarItems[GameMaster.ToolMode.Cook] = CreateIcon(3, GameMaster.ToolMode.Cook);
-        //    ToolbarItems[GameMaster.ToolMode.Farm] = CreateIcon(5, GameMaster.ToolMode.Farm);
-        //    ToolbarItems[GameMaster.ToolMode.Magic] = CreateIcon(6, GameMaster.ToolMode.Magic);
-        //    ToolbarItems[GameMaster.ToolMode.Gather] = CreateIcon(6, GameMaster.ToolMode.Gather);
-        //    ToolbarItems[GameMaster.ToolMode.Chop] = CreateIcon(1, GameMaster.ToolMode.Chop);
-        //    ToolbarItems[GameMaster.ToolMode.Guard] = CreateIcon(4, GameMaster.ToolMode.Guard);
-        //    ToolbarItems[GameMaster.ToolMode.Attack] = CreateIcon(3, GameMaster.ToolMode.Attack);
+            //ToolbarItems[GameMaster.ToolMode.SelectUnits] = CreateIcon(5, GameMaster.ToolMode.SelectUnits);
+            //    ToolbarItems[GameMaster.ToolMode.Dig] = CreateIcon(0, GameMaster.ToolMode.Dig);
+            //    ToolbarItems[GameMaster.ToolMode.Build] = CreateIcon(2, GameMaster.ToolMode.Build);
+            //    ToolbarItems[GameMaster.ToolMode.Cook] = CreateIcon(3, GameMaster.ToolMode.Cook);
+            //    ToolbarItems[GameMaster.ToolMode.Farm] = CreateIcon(5, GameMaster.ToolMode.Farm);
+            //    ToolbarItems[GameMaster.ToolMode.Magic] = CreateIcon(6, GameMaster.ToolMode.Magic);
+            //    ToolbarItems[GameMaster.ToolMode.Gather] = CreateIcon(6, GameMaster.ToolMode.Gather);
+            //    ToolbarItems[GameMaster.ToolMode.Chop] = CreateIcon(1, GameMaster.ToolMode.Chop);
+            //    ToolbarItems[GameMaster.ToolMode.Guard] = CreateIcon(4, GameMaster.ToolMode.Guard);
+            //    ToolbarItems[GameMaster.ToolMode.Attack] = CreateIcon(3, GameMaster.ToolMode.Attack);
+
+            var roomIcons = GuiRoot.GetTileSheet("rooms") as Gum.TileSheet;
+            RoomLibrary.InitializeStatics();
 
             var bottomRightTray = GuiRoot.RootItem.AddChild(new NewGui.IconTray
             {
@@ -245,13 +249,18 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gum.AutoLayout.FloatBottomRight,
                 ItemSource = new Gum.Widget[]
                 {
-                    CreateTrayIcon(5, CreateTray(
-                        new Gum.Widget[]
-                        {
-                            CreateTrayIcon(0, null),
-                            CreateTrayIcon(1, null),
-                            CreateTrayIcon(2, null)
-                        })),
+                    NewGui.ToolTray.CreateIcon(GuiRoot, new TileReference("tool-icons", 5), 
+                        NewGui.ToolTray.CreateTray(GuiRoot,
+                        RoomLibrary.GetRoomTypes().Select(name => RoomLibrary.GetData(name))
+                            .Select(data => NewGui.ToolTray.CreateIcon(GuiRoot,
+                                new TileReference("rooms", roomIcons.ConvertRectToIndex(data.Icon.SourceRect)),
+                                GuiRoot.ConstructWidget(new NewGui.BuildCommandButton
+                                {
+                                    Data = data,
+                                    Rect = new Rectangle(0,0,256,128)
+                                }),
+                                null))),
+                        null),
                     CreateTrayIcon(5, CreateTray(
                         new Gum.Widget[]
                         {
@@ -273,6 +282,7 @@ namespace DwarfCorp.GameStates
                             CreateTrayIcon(9, null),
                             CreateTrayIcon(10, null)
                         }))
+                        
                 },
                 SizeToGrid = new Point(10, 1)
             });
