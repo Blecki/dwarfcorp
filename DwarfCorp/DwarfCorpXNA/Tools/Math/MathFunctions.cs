@@ -940,5 +940,33 @@ namespace DwarfCorp
         /// it should probably NOT be called from threads other than the main thread to maintain seed consistency.
         /// </summary>
         public static ThreadSafeRandom Random = new ThreadSafeRandom();
+
+        public static Vector3 ProjectOutOfCylinder(Vector3 position, Vector3 origin, float radius)
+        {
+            Vector3 pos2d = new Vector3(position.X - origin.X, 0, position.Z - origin.Z);
+            bool isInCylinder = pos2d.Length() < radius;
+
+            if (isInCylinder)
+            {
+                pos2d.Normalize();
+                pos2d *= radius;
+                return new Vector3(origin.X + pos2d.X, position.Y, origin.Z + pos2d.Z);
+            }
+            return position;
+        }
+
+        public static Vector3 ProjectToSphere(Vector3 position, float radius, Vector3 target)
+        {
+            Vector3 normDiff = position - target;
+            normDiff.Normalize();
+            normDiff *= radius;
+            return normDiff + target;
+        }
+
+        public static Vector2 LinearToSpherical(Vector3 position, float radius, Vector3 target)
+        {
+            Vector3 p = position - target;
+            return new Vector2((float)Math.Atan2(p.Y, p.X), (float)Math.Acos(p.Z / radius));
+        }
     }
 }

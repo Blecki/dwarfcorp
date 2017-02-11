@@ -114,7 +114,7 @@ namespace DwarfCorp.NewGui
             RenderTarget = new RenderTarget2D(GameState.Game.GraphicsDevice, RenderWidth, RenderHeight, false, SurfaceFormat.Color, DepthFormat.Depth24);
             PlayState = playState;
 
-            Camera = new OrbitCamera(DwarfGame.World, 0, 0, 0.01f, new Vector3(0, 0, 0), new Vector3(0, 0, 0), 2.5f, 1.0f, 0.1f, 1000.0f)
+            Camera = new OrbitCamera(DwarfGame.World, new Vector3(0, 0, 0), new Vector3(0, 0, 0), 2.5f, 1.0f, 0.1f, 1000.0f)
             {
                 Projection = global::DwarfCorp.Camera.ProjectionMode.Orthographic
             };
@@ -169,10 +169,10 @@ namespace DwarfCorp.NewGui
             }
 
 
-            Camera.Update(time, DwarfGame.World.ChunkManager);
-            Camera.Target = DwarfGame.World.Camera.Target + Vector3.Up * 50;
-            Camera.Phi = -(float)Math.PI * 0.5f;
-            Camera.Theta = DwarfGame.World.Camera.Theta;
+            //Camera.Update(time, DwarfGame.World.ChunkManager);
+            Camera.Target = DwarfGame.World.Camera.Target;
+            Camera.Position = DwarfGame.World.Camera.Position + Vector3.Up*50 + Vector3.Backward * 5;
+            Camera.UpdateViewMatrix();
             Camera.UpdateProjectionMatrix();
 
             PlayState.GraphicsDevice.SetRenderTarget(RenderTarget);
@@ -185,7 +185,8 @@ namespace DwarfCorp.NewGui
             DwarfGame.World.DefaultShader.CurrentTechnique = DwarfGame.World.DefaultShader.Techniques["Textured_colorscale"];
 
             PlayState.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-
+            PlayState.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            
             DwarfGame.World.ChunkManager.RenderAll(Camera, time, PlayState.GraphicsDevice, DwarfGame.World.DefaultShader, Matrix.Identity, ColorMap);
             DwarfGame.World.WaterRenderer.DrawWaterFlat(PlayState.GraphicsDevice, Camera.ViewMatrix, Camera.ProjectionMatrix, DwarfGame.World.DefaultShader, DwarfGame.World.ChunkManager);
             PlayState.GraphicsDevice.Textures[0] = null;
