@@ -97,7 +97,6 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime time, ChunkManager chunks)
         {
-            Drawer3D.DrawAxes(Matrix.CreateTranslation(Target), 1.0f);
             switch (Control)
             {
               case ControlType.Overhead:
@@ -221,7 +220,7 @@ namespace DwarfCorp
                     filterDiffY = 1.0f * Math.Sign(filterDiffY);
                 }
 
-                diffTheta = - (filterDiffX);
+                diffTheta = (filterDiffX);
                 diffPhi =  - (filterDiffY);
 
             }
@@ -394,8 +393,8 @@ namespace DwarfCorp
             Position = (Position + diffTarget) * 0.05f + Position * 0.95f;
             Target = projectedTarget * 0.05f + Target * 0.95f;
             float currRadius = (Position - Target).Length();
-            float newRadius = Math.Max(currRadius + diffRadius, 1.0f);
-            Position = MathFunctions.ProjectToSphere(Position - right*diffTheta * 2 - up*diffPhi * 2, newRadius, Target);
+            float newRadius = Math.Max(currRadius + diffRadius, 3.0f);
+            Position = MathFunctions.ProjectOutOfCylinder(MathFunctions.ProjectToSphere(Position - right*diffTheta * 2 - up*diffPhi * 2, newRadius, Target), Target, 3.0f);
             UpdateViewMatrix();
         }
 
