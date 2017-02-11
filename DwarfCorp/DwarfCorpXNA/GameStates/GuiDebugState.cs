@@ -246,40 +246,55 @@ namespace DwarfCorp.GameStates
             VoxelLibrary.InitializeDefaultLibrary(Game.GraphicsDevice, Tilesheet);
 
 
-            var bottomRightTray = GuiRoot.RootItem.AddChild(new NewGui.IconTray
+            var bottomRightTray = GuiRoot.RootItem.AddChild(new NewGui.ToolTray.Tray
             {
                 Corners = Gum.Scale9Corners.Left | Gum.Scale9Corners.Top,
                 AutoLayout = Gum.AutoLayout.FloatBottomRight,
                 ItemSource = new Gum.Widget[]
                 {
-                    NewGui.ToolTray.CreateExpandingIcon(GuiRoot, new TileReference("tool-icons", 5), 
-                        NewGui.ToolTray.CreateTray(GuiRoot,
-                        RoomLibrary.GetRoomTypes().Select(name => RoomLibrary.GetData(name))
-                            .Select(data => NewGui.ToolTray.CreateLeafButton(GuiRoot,
-                                new TileReference("rooms", roomIcons.ConvertRectToIndex(data.Icon.SourceRect)),
-                                GuiRoot.ConstructWidget(new NewGui.BuildRoomButton
+                    new NewGui.ToolTray.ExpandingIcon
+                    {
+                        Icon = new TileReference("tool-icons", 5),
+                        ExpansionChild = new NewGui.ToolTray.Tray
+                        {
+                            ItemSource = RoomLibrary.GetRoomTypes().Select(name => RoomLibrary.GetData(name))
+                                .Select(data => new NewGui.ToolTray.LeafIcon
                                 {
-                                    Data = data,
-                                    Rect = new Rectangle(0,0,256,128)
-                                }),
-                                null)))),
-                    NewGui.ToolTray.CreateExpandingIcon(GuiRoot, new TileReference("tool-icons", 5),
-                        NewGui.ToolTray.CreateTray(GuiRoot,
-                        VoxelLibrary.GetTypes().Where(voxel => voxel.IsBuildable).Select(data =>
-                            NewGui.ToolTray.CreateLeafButton(GuiRoot,
-                                new TileReference("rooms", 0),
-                                GuiRoot.ConstructWidget(new NewGui.BuildWallButton
+                                    Icon = new TileReference("rooms", roomIcons.ConvertRectToIndex(data.Icon.SourceRect)),
+                                    ExpansionChild = new NewGui.BuildRoomButton
+                                    {
+                                        Data = data,
+                                        Rect = new Rectangle(0,0,256,128)
+                                    },
+                                    OnClick = (sender, args) =>
+                                    {
+                                        (sender as NewGui.FramedIcon).Enabled = false;
+                                    }
+                                })
+                        }
+                    },
+                    new NewGui.ToolTray.ExpandingIcon
+                    {
+                        Icon = new TileReference("tool-icons", 6),
+                        ExpansionChild = new NewGui.ToolTray.Tray
+                        {
+                            ItemSource = VoxelLibrary.GetTypes().Where(voxel => voxel.IsBuildable)
+                                .Select(data => new NewGui.ToolTray.LeafIcon
                                 {
-                                    Data = data,
-                                    Rect = new Rectangle(0,0,256,128)
-                                }),
-                                null))))
-                        
-                        
-                },
-                SizeToGrid = new Point(10, 1)
+                                    Icon = new TileReference("rooms", 0),
+                                    ExpansionChild = new NewGui.BuildWallButton
+                                    {
+                                        Data = data,
+                                        Rect = new Rectangle(0,0,256,128)
+                                    }
+                                })
+
+                        }
+                    }
+                }
             });
 
+            bottomRightTray.Hidden = false;
             GuiRoot.RootItem.Layout();
 
             IsInitialized = true;

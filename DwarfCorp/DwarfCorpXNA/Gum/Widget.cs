@@ -118,6 +118,7 @@ namespace Gum
         public Action<Widget> OnPopupClose = null;
         public Action<Widget> OnUpdateWhileFocus = null;
         public Action<Widget, GameTime> OnUpdate = null;
+        public Action<Widget> OnConstruct = null;
         public Action<Widget> OnLayout = null;
         public Action<Widget> OnClose = null;
         public bool TriggerOnChildClick = false;
@@ -142,6 +143,7 @@ namespace Gum
             {
                 Constructed = true;
                 this.Construct();
+                Root.SafeCall(OnConstruct, this);
             }
         }
 

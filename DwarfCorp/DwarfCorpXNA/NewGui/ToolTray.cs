@@ -9,22 +9,23 @@ namespace DwarfCorp.NewGui
 {
     public class ToolTray
     {
-        public static Widget CreateTray(Root Root, IEnumerable<Widget> Icons)
+        public class Tray : IconTray
         {
-            return Root.ConstructWidget(new NewGui.IconTray
+            public override void Construct()
             {
-                SizeToGrid = new Point(Icons.Count(), 1),
-                Corners = Scale9Corners.Top | Scale9Corners.Right | Scale9Corners.Left,
-                ItemSource = Icons,
-                Hidden = true,
-            });
+                SizeToGrid = new Point(ItemSource.Count(), 1);
+                Corners = Scale9Corners.Top | Scale9Corners.Right | Scale9Corners.Left;
+                Hidden = true;
+                base.Construct();
+            }
         }
-
-        public static Widget CreateExpandingIcon(Root Root, TileReference Icon, Widget Child)
+        
+        public class ExpandingIcon : FramedIcon
         {
-            var r = new FramedIcon
+            public Widget ExpansionChild;
+
+            public ExpandingIcon()
             {
-                Icon = Icon,
                 OnHover = (sender) =>
                 {
                     foreach (var child in sender.Parent.EnumerateChildren().Where(c => c is FramedIcon)
@@ -34,44 +35,50 @@ namespace DwarfCorp.NewGui
                         child.Invalidate();
                     }
 
-                    if (Child != null)
+                    if (ExpansionChild != null && (sender as FramedIcon).Enabled)
                     {
-                        Child.Hidden = false;
-                        Child.Invalidate();
+                        ExpansionChild.Hidden = false;
+                        ExpansionChild.Invalidate();
                     }
-                },
+                };
+
+                OnDisable = (sender) =>
+                {
+                    if (ExpansionChild != null)
+                    {
+                        ExpansionChild.Hidden = true;
+                        ExpansionChild.Invalidate();
+                    }
+                };
+
                 OnLayout = (sender) =>
                 {
-                    if (Child != null)
+                    if (ExpansionChild != null)
                     {
                         var midPoint = sender.Rect.X + (sender.Rect.Width / 2);
-                        Child.Rect.X = midPoint - (Child.Rect.Width / 2);
-                        Child.Rect.Y = sender.Rect.Y - Child.Rect.Height;
+                        ExpansionChild.Rect.X = midPoint - (ExpansionChild.Rect.Width / 2);
+                        ExpansionChild.Rect.Y = sender.Rect.Y - ExpansionChild.Rect.Height;
                     }
-                }
-            };
-
-            Root.ConstructWidget(r);
-
-            if (Child != null)
-            {
-                r.AddChild(Child);
-                Child.Hidden = true;
+                };
             }
 
-            return r;
+            public override void Construct()
+            {
+                base.Construct();
+                if (ExpansionChild != null)
+                {
+                    AddChild(ExpansionChild);
+                    ExpansionChild.Hidden = true;
+                }
+            }
         }
 
-
-        public static Widget CreateLeafButton(Root Root, TileReference Icon, Widget Child, Action<Widget, InputEventArgs> OnClick)
+        public class LeafIcon : FramedIcon
         {
-            var r = new FramedIcon
+            public Widget ExpansionChild;
+
+            public LeafIcon()
             {
-                Icon = Icon,
-                OnClick = (sender, args) =>
-                {
-                    Root.SafeCall(OnClick, sender, args);
-                },
                 OnMouseEnter = (sender, args) =>
                 {
                     foreach (var child in sender.Parent.EnumerateChildren().Where(c => c is FramedIcon)
@@ -81,40 +88,51 @@ namespace DwarfCorp.NewGui
                         child.Invalidate();
                     }
 
-                    if (Child != null)
+                    if (ExpansionChild != null && (sender as FramedIcon).Enabled)
                     {
-                        Child.Hidden = false;
-                        Child.Invalidate();
+                        ExpansionChild.Hidden = false;
+                        ExpansionChild.Invalidate();
                     }
-                },
+                };
+
                 OnMouseLeave = (sender, args) =>
                 {
-                    if (Child != null)
+                    if (ExpansionChild != null)
                     {
-                        Child.Hidden = true;
-                        Child.Invalidate();
+                        ExpansionChild.Hidden = true;
+                        ExpansionChild.Invalidate();
                     }
-                },
+                };
+
+                OnDisable = (sender) =>
+                {
+                    if (ExpansionChild != null)
+                    {
+                        ExpansionChild.Hidden = true;
+                        ExpansionChild.Invalidate();
+                    }
+                };
+
                 OnLayout = (sender) =>
                 {
-                    if (Child != null)
+                    if (ExpansionChild != null)
                     {
                         var midPoint = sender.Rect.X + (sender.Rect.Width / 2);
-                        Child.Rect.X = midPoint - (Child.Rect.Width / 2);
-                        Child.Rect.Y = sender.Rect.Y - Child.Rect.Height;
+                        ExpansionChild.Rect.X = midPoint - (ExpansionChild.Rect.Width / 2);
+                        ExpansionChild.Rect.Y = sender.Rect.Y - ExpansionChild.Rect.Height;
                     }
-                }
-            };
-
-            Root.ConstructWidget(r);
-
-            if (Child != null)
-            {
-                r.AddChild(Child);
-                Child.Hidden = true;
+                };
             }
 
-            return r;
+            public override void Construct()
+            {
+                base.Construct();
+                if (ExpansionChild != null)
+                {
+                    AddChild(ExpansionChild);
+                    ExpansionChild.Hidden = true;
+                }
+            }
         }
     }
 }
