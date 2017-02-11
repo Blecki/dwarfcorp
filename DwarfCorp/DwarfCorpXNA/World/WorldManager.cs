@@ -86,6 +86,8 @@ namespace DwarfCorp
         // The number of voxels along y in a chunk.
         public int ChunkHeight { get { return GameSettings.Default.ChunkHeight; } }
 
+        public Vector3 CursorPos { get { return CursorLightPos; } }
+
         // The current coordinate of the cursor light
         public Vector3 CursorLightPos
         {
@@ -446,8 +448,8 @@ namespace DwarfCorp
                 creat.Velocity = new Vector3(1, 0, 0);
             }
 
-            Camera.Target = new Vector3(Camera.Position.X, h + 10, Camera.Position.Z + 10);
-            Camera.Phi = -(float)Math.PI * 0.3f;
+            Camera.Target = new Vector3(Camera.Position.X, h, Camera.Position.Z + 10);
+            Camera.Position = new Vector3(Camera.Target.X, Camera.Target.Y + 20, Camera.Position.Z - 10);
         }
 
         /// <summary>
@@ -577,8 +579,9 @@ namespace DwarfCorp
             // facing down slightly.
             Camera = fileExists
                 ? gameFile.Data.Camera
-                : new OrbitCamera(this, 0, 0, 10f, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset,
-                    new Vector3(0, 50, 0) + globalOffset, MathHelper.PiOver4, AspectRatio, 0.1f,
+                : new OrbitCamera(this, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset,
+                    new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset + Vector3.Up  * 10.0f + Vector3.Backward * 10, 
+                    MathHelper.PiOver4, AspectRatio, 0.1f,
                     GameSettings.Default.VertexCullDistance);
 
             Drawer3D.Camera = Camera;
@@ -601,8 +604,6 @@ namespace DwarfCorp
                 WorldOrigin = new Vector2(globalOffset.X, globalOffset.Z);
                 Camera.Position = new Vector3(0, 10, 0) + globalOffset;
                 Camera.Target = new Vector3(0, 10, 1) + globalOffset;
-                Camera.Radius = 0.01f;
-                Camera.Phi = -1.57f;
             }
 
 
@@ -619,14 +620,6 @@ namespace DwarfCorp
                 ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
             }
 
-            // If there's no file, for some reason we modify the camera position...
-            // TODO: Figure out why the camera keeps needing to be reset.
-            if (!fileExists)
-            {
-                Camera.Radius = 0.01f;
-                Camera.Phi = -1.57f / 4.0f;
-                Camera.Theta = 0.0f;
-            }
 
             // Finally, the chunk manager's threads are started to allow it to 
             // dynamically rebuild terrain
