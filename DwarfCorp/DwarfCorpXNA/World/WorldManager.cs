@@ -485,7 +485,6 @@ namespace DwarfCorp
             DefaultShader.Parameters["xFogStart"].SetValue(40.0f);
             DefaultShader.Parameters["xFogEnd"].SetValue(80.0f);
 
-            VoxelLibrary = new VoxelLibrary();
             VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice, Tilesheet);
 
             bloom = new BloomComponent(Game)

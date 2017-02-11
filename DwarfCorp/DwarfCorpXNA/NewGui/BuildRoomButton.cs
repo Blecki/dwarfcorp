@@ -10,7 +10,7 @@ namespace DwarfCorp.NewGui
     /// <summary>
     /// A properly framed Icon for use in an icon tray.
     /// </summary>
-    public class BuildCommandButton : Widget
+    public class BuildRoomButton : Widget
     {
         public RoomData Data;
 

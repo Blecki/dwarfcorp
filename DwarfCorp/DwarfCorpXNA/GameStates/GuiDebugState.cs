@@ -242,6 +242,9 @@ namespace DwarfCorp.GameStates
 
             var roomIcons = GuiRoot.GetTileSheet("rooms") as Gum.TileSheet;
             RoomLibrary.InitializeStatics();
+            var Tilesheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
+            VoxelLibrary.InitializeDefaultLibrary(Game.GraphicsDevice, Tilesheet);
+
 
             var bottomRightTray = GuiRoot.RootItem.AddChild(new NewGui.IconTray
             {
@@ -249,39 +252,29 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gum.AutoLayout.FloatBottomRight,
                 ItemSource = new Gum.Widget[]
                 {
-                    NewGui.ToolTray.CreateIcon(GuiRoot, new TileReference("tool-icons", 5), 
+                    NewGui.ToolTray.CreateExpandingIcon(GuiRoot, new TileReference("tool-icons", 5), 
                         NewGui.ToolTray.CreateTray(GuiRoot,
                         RoomLibrary.GetRoomTypes().Select(name => RoomLibrary.GetData(name))
-                            .Select(data => NewGui.ToolTray.CreateIcon(GuiRoot,
+                            .Select(data => NewGui.ToolTray.CreateLeafButton(GuiRoot,
                                 new TileReference("rooms", roomIcons.ConvertRectToIndex(data.Icon.SourceRect)),
-                                GuiRoot.ConstructWidget(new NewGui.BuildCommandButton
+                                GuiRoot.ConstructWidget(new NewGui.BuildRoomButton
                                 {
                                     Data = data,
                                     Rect = new Rectangle(0,0,256,128)
                                 }),
-                                null))),
-                        null),
-                    CreateTrayIcon(5, CreateTray(
-                        new Gum.Widget[]
-                        {
-                            CreateTrayIcon(3, null),
-                            CreateTrayIcon(4, CreateTray(
-                                new Gum.Widget[]
+                                null)))),
+                    NewGui.ToolTray.CreateExpandingIcon(GuiRoot, new TileReference("tool-icons", 5),
+                        NewGui.ToolTray.CreateTray(GuiRoot,
+                        VoxelLibrary.GetTypes().Where(voxel => voxel.IsBuildable).Select(data =>
+                            NewGui.ToolTray.CreateLeafButton(GuiRoot,
+                                new TileReference("rooms", 0),
+                                GuiRoot.ConstructWidget(new NewGui.BuildWallButton
                                 {
-                                    CreateTrayIcon(5, null),
-                                    CreateTrayIcon(6, null),
-                                    CreateTrayIcon(7, null)
-                                }
-                        )),
-                            CreateTrayIcon(2, null)
-                        })),
-                    CreateTrayIcon(5, CreateTray(
-                        new Gum.Widget[]
-                        {
-                            CreateTrayIcon(8, null),
-                            CreateTrayIcon(9, null),
-                            CreateTrayIcon(10, null)
-                        }))
+                                    Data = data,
+                                    Rect = new Rectangle(0,0,256,128)
+                                }),
+                                null))))
+                        
                         
                 },
                 SizeToGrid = new Point(10, 1)

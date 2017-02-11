@@ -20,15 +20,11 @@ namespace DwarfCorp.NewGui
             });
         }
 
-        public static Widget CreateIcon(Root Root, TileReference Icon, Widget Child, Action<Widget, InputEventArgs> OnClick)
+        public static Widget CreateExpandingIcon(Root Root, TileReference Icon, Widget Child)
         {
             var r = new FramedIcon
             {
                 Icon = Icon,
-                OnClick = (sender, args) =>
-                {
-                    Root.SafeCall(OnClick, sender, args);
-                },
                 OnHover = (sender) =>
                 {
                     foreach (var child in sender.Parent.EnumerateChildren().Where(c => c is FramedIcon)
@@ -41,6 +37,61 @@ namespace DwarfCorp.NewGui
                     if (Child != null)
                     {
                         Child.Hidden = false;
+                        Child.Invalidate();
+                    }
+                },
+                OnLayout = (sender) =>
+                {
+                    if (Child != null)
+                    {
+                        var midPoint = sender.Rect.X + (sender.Rect.Width / 2);
+                        Child.Rect.X = midPoint - (Child.Rect.Width / 2);
+                        Child.Rect.Y = sender.Rect.Y - Child.Rect.Height;
+                    }
+                }
+            };
+
+            Root.ConstructWidget(r);
+
+            if (Child != null)
+            {
+                r.AddChild(Child);
+                Child.Hidden = true;
+            }
+
+            return r;
+        }
+
+
+        public static Widget CreateLeafButton(Root Root, TileReference Icon, Widget Child, Action<Widget, InputEventArgs> OnClick)
+        {
+            var r = new FramedIcon
+            {
+                Icon = Icon,
+                OnClick = (sender, args) =>
+                {
+                    Root.SafeCall(OnClick, sender, args);
+                },
+                OnMouseEnter = (sender, args) =>
+                {
+                    foreach (var child in sender.Parent.EnumerateChildren().Where(c => c is FramedIcon)
+                    .SelectMany(c => c.EnumerateChildren()))
+                    {
+                        child.Hidden = true;
+                        child.Invalidate();
+                    }
+
+                    if (Child != null)
+                    {
+                        Child.Hidden = false;
+                        Child.Invalidate();
+                    }
+                },
+                OnMouseLeave = (sender, args) =>
+                {
+                    if (Child != null)
+                    {
+                        Child.Hidden = true;
                         Child.Invalidate();
                     }
                 },
