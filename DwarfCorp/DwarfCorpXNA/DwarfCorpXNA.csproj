@@ -372,8 +372,9 @@
     <Compile Include="NativeInjector.cs" />
     <Compile Include="NewGui\AnnouncementPopup.cs" />
     <Compile Include="NewGui\BuildMenu.cs" />
-    <Compile Include="NewGui\BuildWallButton.cs" />
-    <Compile Include="NewGui\BuildRoomButton.cs" />
+    <Compile Include="NewGui\BuildCraftInfo.cs" />
+    <Compile Include="NewGui\BuildWallInfo.cs" />
+    <Compile Include="NewGui\BuildRoomInfo.cs" />
     <Compile Include="NewGui\FramedIcon.cs" />
     <Compile Include="NewGui\CompanyLogo.cs" />
     <Compile Include="NewGui\ToolTray.cs" />

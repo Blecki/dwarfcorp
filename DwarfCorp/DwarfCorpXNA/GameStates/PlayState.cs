@@ -58,7 +58,20 @@ namespace DwarfCorp.GameStates
         }
 
         private List<ToolbarItem> ToolbarItems = new List<ToolbarItem>();
+        private Dictionary<GameMaster.ToolMode, NewGui.FramedIcon> ToolHiliteItems = new Dictionary<GameMaster.ToolMode, NewGui.FramedIcon>();
 
+        private void AddToolSelectIcon(GameMaster.ToolMode Mode, Gum.Widget Icon)
+        {
+            if (!ToolHiliteItems.ContainsKey(Mode))
+                ToolHiliteItems.Add(Mode, Icon as NewGui.FramedIcon);
+        }
+
+        private void ChangeTool(GameMaster.ToolMode Mode)
+        {
+            Master.ChangeTool(Mode);
+            foreach (var icon in ToolHiliteItems)
+                icon.Value.Hilite = icon.Key == Mode;
+        }
 
         // Provides event-based keyboard and mouse input.
         public static InputManager Input;// = new InputManager();
@@ -571,34 +584,47 @@ namespace DwarfCorp.GameStates
             */
 
             var roomIcons = GuiRoot.GetTileSheet("rooms") as Gum.TileSheet;
+            var craftIcons = GuiRoot.GetTileSheet("crafts") as Gum.TileSheet;
+
 
             BottomRightTray = GuiRoot.RootItem.AddChild(new NewGui.ToolTray.Tray
             {
                 AutoLayout = global::Gum.AutoLayout.FloatBottom,
+                IsRootTray = true,
                 ItemSource = new Gum.Widget[]
                 {
-                    // Select tool
-                    new NewGui.ToolTray.LeafIcon
+                    #region Select Tool
+                    new NewGui.ToolTray.Icon
                     {
                         Icon = new Gum.TileReference("tool-icons", 5),
-                        OnClick = (sender, args) => Master.ChangeTool(GameMaster.ToolMode.SelectUnits),
-                        OnConstruct = (sender) => ToolbarItems.Add(new ToolbarItem(sender, () => true))
+                        OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.SelectUnits),
+                        OnConstruct = (sender) =>
+                        {
+                            ToolbarItems.Add(new ToolbarItem(sender, () => true));
+                            AddToolSelectIcon(GameMaster.ToolMode.SelectUnits, sender);
+                        }
                     },
+                    #endregion
 
-                    // Build rooms
-                    new NewGui.ToolTray.ExpandingIcon
+                    #region Build room tool
+                    new NewGui.ToolTray.Icon
                     {
                         Icon = new Gum.TileReference("tool-icons", 2),
-                        OnConstruct = (sender) => ToolbarItems.Add(new ToolbarItem(sender, () =>
+                        KeepChildVisible = true,
+                        OnConstruct = (sender) =>
+                        {
+                            ToolbarItems.Add(new ToolbarItem(sender, () =>
                             Master.Faction.SelectedMinions.Any(minion =>
-                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Build)))),
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Build))));
+                            AddToolSelectIcon(GameMaster.ToolMode.Build, sender);
+                        },
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
                             ItemSource = RoomLibrary.GetRoomTypes().Select(name => RoomLibrary.GetData(name))
-                                .Select(data => new NewGui.ToolTray.LeafIcon
+                                .Select(data => new NewGui.ToolTray.Icon
                                 {
                                     Icon = new Gum.TileReference("rooms", roomIcons.ConvertRectToIndex(data.Icon.SourceRect)),
-                                    ExpansionChild = new NewGui.BuildRoomButton
+                                    ExpansionChild = new NewGui.BuildRoomInfo
                                     {
                                         Data = data,
                                         Rect = new Rectangle(0,0,256,128)
@@ -609,29 +635,35 @@ namespace DwarfCorp.GameStates
                                         Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
                                         Master.Faction.WallBuilder.CurrentVoxelType = null;
                                         Master.Faction.CraftBuilder.IsEnabled = false;
-                                        Master.ChangeTool(GameMaster.ToolMode.Build);
+                                        ChangeTool(GameMaster.ToolMode.Build);
                                         DwarfGame.World.ShowTooltip("Click and drag to build " + data.Name);
                                     }
                                     //Todo: Add to toolbar item list & disable if not enough resources?
                                 })
                         }
                     },
+                    #endregion
 
-                    // Build walls
-                    new NewGui.ToolTray.ExpandingIcon
+                    #region Build wall tool
+                    new NewGui.ToolTray.Icon
                     {
                         Icon = new Gum.TileReference("tool-icons", 2),
-                        OnConstruct = (sender) => ToolbarItems.Add(new ToolbarItem(sender, () =>
+                        KeepChildVisible = true,
+                        OnConstruct = (sender) =>
+                        {
+                            ToolbarItems.Add(new ToolbarItem(sender, () =>
                             Master.Faction.SelectedMinions.Any(minion =>
-                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Build)))),
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Build))));
+                            AddToolSelectIcon(GameMaster.ToolMode.Build, sender);
+                        },
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
                             ItemSource = VoxelLibrary.GetTypes().Where(voxel => voxel.IsBuildable)
-                                .Select(data => new NewGui.ToolTray.LeafIcon
+                                .Select(data => new NewGui.ToolTray.Icon
                                 {
                                     // Todo: Need icons for wall types.
                                     Icon = new Gum.TileReference("rooms", 0),
-                                    ExpansionChild = new NewGui.BuildWallButton
+                                    ExpansionChild = new NewGui.BuildWallInfo
                                     {
                                         Data = data,
                                         Rect = new Rectangle(0,0,256,128)
@@ -642,64 +674,125 @@ namespace DwarfCorp.GameStates
                                         Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                         Master.Faction.WallBuilder.CurrentVoxelType = data;
                                         Master.Faction.CraftBuilder.IsEnabled = false;
-                                        Master.ChangeTool(GameMaster.ToolMode.Build);
+                                        ChangeTool(GameMaster.ToolMode.Build);
                                         DwarfGame.World.ShowTooltip("Click and drag to build " + data.Name + " wall.");
                                     }
                                     //Todo: Add to toolbar item list & disable if not enough resources?
                                 })
                         }
                     },
+                    #endregion
 
-                    // Dig tool
-                    new NewGui.ToolTray.LeafIcon
+                    #region Build craft
+                    new NewGui.ToolTray.Icon
+                    {
+                        Icon = new Gum.TileReference("tool-icons", 2),
+                        KeepChildVisible = true,
+                        OnConstruct = (sender) =>
+                        {
+                            ToolbarItems.Add(new ToolbarItem(sender, () =>
+                            Master.Faction.SelectedMinions.Any(minion =>
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Build))));
+                            AddToolSelectIcon(GameMaster.ToolMode.Build, sender);
+                        },
+                        ExpansionChild = new NewGui.ToolTray.Tray
+                        {
+                            ItemSource = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Object)
+                                .Select(data => new NewGui.ToolTray.Icon
+                                {
+                                    // Todo: Need to get all the icons into one sheet.
+                                    Icon = new Gum.TileReference("furniture", craftIcons.ConvertRectToIndex(data.Image.SourceRect)),
+                                    KeepChildVisible = true, // So the player can interact with the popup.
+                                    ExpansionChild = new NewGui.BuildCraftInfo
+                                    {
+                                        Data = data,
+                                        Rect = new Rectangle(0,0,256,128),
+                                        Master = Master
+                                    },
+                                    OnClick = (sender, args) =>
+                                    {
+                                       // Todo: Actually build the item.
+                                    }
+                                    //Todo: Add to toolbar item list & disable if not enough resources?
+                                })
+                        }
+                    },
+                    #endregion
+
+                    #region Dig tool
+                    new NewGui.ToolTray.Icon
                     {
                         Icon = new Gum.TileReference("tool-icons", 0),
-                        OnClick = (sender, args) => Master.ChangeTool(GameMaster.ToolMode.Dig),
-                        OnConstruct = (sender) => ToolbarItems.Add(new ToolbarItem(sender, () =>
+                        OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Dig),
+                        OnConstruct = (sender) =>
+                        {
+                            ToolbarItems.Add(new ToolbarItem(sender, () =>
                             Master.Faction.SelectedMinions.Any(minion =>
-                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Dig))))
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Dig))));
+                            AddToolSelectIcon(GameMaster.ToolMode.Dig, sender);
+                        }
                     },
+                    #endregion
 
-                    // Gather tool
-                    new NewGui.ToolTray.LeafIcon
+                    #region Gather tool
+                    new NewGui.ToolTray.Icon
                     {
                         Icon = new Gum.TileReference("tool-icons", 6),
-                        OnClick = (sender, args) => Master.ChangeTool(GameMaster.ToolMode.Gather),
-                        OnConstruct = (sender) => ToolbarItems.Add(new ToolbarItem(sender, () =>
+                        OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Gather),
+                        OnConstruct = (sender) =>
+                        {
+                            ToolbarItems.Add(new ToolbarItem(sender, () =>
                             Master.Faction.SelectedMinions.Any(minion =>
-                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Gather))))
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Gather))));
+                            AddToolSelectIcon(GameMaster.ToolMode.Gather, sender);
+                        }
                     },
+                    #endregion
 
-                    // Chop tool
-                    new NewGui.ToolTray.LeafIcon
+                    #region Chop tool
+                    new NewGui.ToolTray.Icon
                     {
                         Icon = new Gum.TileReference("tool-icons", 1),
-                        OnClick = (sender, args) => Master.ChangeTool(GameMaster.ToolMode.Chop),
-                        OnConstruct = (sender) => ToolbarItems.Add(new ToolbarItem(sender, () =>
+                        OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Chop),
+                        OnConstruct = (sender) =>
+                        {
+                            ToolbarItems.Add(new ToolbarItem(sender, () =>
                             Master.Faction.SelectedMinions.Any(minion =>
-                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Chop))))
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Chop))));
+                            AddToolSelectIcon(GameMaster.ToolMode.Chop, sender);
+                        }
                     },
+                    #endregion
 
-                    // Guard tool
-                    new NewGui.ToolTray.LeafIcon
+                    #region Guard tool
+                    new NewGui.ToolTray.Icon
                     {
                         Icon = new Gum.TileReference("tool-icons", 4),
-                        OnClick = (sender, args) => Master.ChangeTool(GameMaster.ToolMode.Guard),
-                        OnConstruct = (sender) => ToolbarItems.Add(new ToolbarItem(sender, () =>
+                        OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Guard),
+                        OnConstruct = (sender) =>
+                        {
+                            ToolbarItems.Add(new ToolbarItem(sender, () =>
                             Master.Faction.SelectedMinions.Any(minion =>
-                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Guard))))
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Guard))));
+                            AddToolSelectIcon(GameMaster.ToolMode.Guard, sender);
+                        }
                     },
+                    #endregion
 
-
-                    // Attack tool
-                    new NewGui.ToolTray.LeafIcon
+                    #region Attack tool
+                    new NewGui.ToolTray.Icon
                     {
                         Icon = new Gum.TileReference("tool-icons", 3),
-                        OnClick = (sender, args) => Master.ChangeTool(GameMaster.ToolMode.Attack),
-                        OnConstruct = (sender) => ToolbarItems.Add(new ToolbarItem(sender, () =>
+                        OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Attack),
+                        OnConstruct = (sender) =>
+                        {
+                            ToolbarItems.Add(new ToolbarItem(sender, () =>
                             Master.Faction.SelectedMinions.Any(minion =>
-                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack))))
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack))));
+                            AddToolSelectIcon(GameMaster.ToolMode.Attack, sender);
+                        }
                     },
+                    #endregion
                 }
             });
 

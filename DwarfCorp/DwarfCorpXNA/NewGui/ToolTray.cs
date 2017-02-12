@@ -11,73 +11,35 @@ namespace DwarfCorp.NewGui
     {
         public class Tray : IconTray
         {
+            public bool IsRootTray = false;
+
             public override void Construct()
             {
                 SizeToGrid = new Point(ItemSource.Count(), 1);
                 Corners = Scale9Corners.Top | Scale9Corners.Right | Scale9Corners.Left;
+                Hidden = !IsRootTray;
+                base.Construct();
+            }
+
+            public void CollapseTrays()
+            {
+                if (IsRootTray) return;
+
                 Hidden = true;
-                base.Construct();
-            }
-        }
-        
-        public class ExpandingIcon : FramedIcon
-        {
-            public Widget ExpansionChild;
 
-            public ExpandingIcon()
-            {
-                OnHover = (sender) =>
+                if (Parent != null && Parent is Icon)
                 {
-                    foreach (var child in sender.Parent.EnumerateChildren().Where(c => c is FramedIcon)
-                    .SelectMany(c => c.EnumerateChildren()))
-                    {
-                        child.Hidden = true;
-                        child.Invalidate();
-                    }
-
-                    if (ExpansionChild != null && (sender as FramedIcon).Enabled)
-                    {
-                        ExpansionChild.Hidden = false;
-                        ExpansionChild.Invalidate();
-                    }
-                };
-
-                OnDisable = (sender) =>
-                {
-                    if (ExpansionChild != null)
-                    {
-                        ExpansionChild.Hidden = true;
-                        ExpansionChild.Invalidate();
-                    }
-                };
-
-                OnLayout = (sender) =>
-                {
-                    if (ExpansionChild != null)
-                    {
-                        var midPoint = sender.Rect.X + (sender.Rect.Width / 2);
-                        ExpansionChild.Rect.X = midPoint - (ExpansionChild.Rect.Width / 2);
-                        ExpansionChild.Rect.Y = sender.Rect.Y - ExpansionChild.Rect.Height;
-                    }
-                };
-            }
-
-            public override void Construct()
-            {
-                base.Construct();
-                if (ExpansionChild != null)
-                {
-                    AddChild(ExpansionChild);
-                    ExpansionChild.Hidden = true;
+                    (Parent as Icon).CollapseTrays();
                 }
             }
         }
 
-        public class LeafIcon : FramedIcon
+        public class Icon : FramedIcon
         {
             public Widget ExpansionChild;
+            public bool KeepChildVisible = false;
 
-            public LeafIcon()
+            public Icon()
             {
                 OnMouseEnter = (sender, args) =>
                 {
@@ -97,7 +59,7 @@ namespace DwarfCorp.NewGui
 
                 OnMouseLeave = (sender, args) =>
                 {
-                    if (ExpansionChild != null)
+                    if (!KeepChildVisible && ExpansionChild != null)
                     {
                         ExpansionChild.Hidden = true;
                         ExpansionChild.Invalidate();
@@ -127,11 +89,28 @@ namespace DwarfCorp.NewGui
             public override void Construct()
             {
                 base.Construct();
+
                 if (ExpansionChild != null)
                 {
                     AddChild(ExpansionChild);
                     ExpansionChild.Hidden = true;
                 }
+
+                if (OnClick != null)
+                {
+                    var lambdaOnClick = OnClick;
+                    OnClick = (sender, args) =>
+                    {
+                        Root.SafeCall(lambdaOnClick, sender, args);
+                        CollapseTrays();
+                    };
+                }
+            }
+
+            public void CollapseTrays()
+            {
+                if (Parent != null && Parent is Tray)
+                    (Parent as Tray).CollapseTrays();
             }
         }
     }

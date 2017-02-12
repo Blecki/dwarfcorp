@@ -248,20 +248,22 @@ namespace DwarfCorp.GameStates
 
             var bottomRightTray = GuiRoot.RootItem.AddChild(new NewGui.ToolTray.Tray
             {
+                IsRootTray = true,
                 Corners = Gum.Scale9Corners.Left | Gum.Scale9Corners.Top,
-                AutoLayout = Gum.AutoLayout.FloatBottomRight,
+                AutoLayout = Gum.AutoLayout.FloatBottom,
                 ItemSource = new Gum.Widget[]
                 {
-                    new NewGui.ToolTray.ExpandingIcon
+                    new NewGui.ToolTray.Icon
                     {
                         Icon = new TileReference("tool-icons", 5),
+                        KeepChildVisible = true,
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
                             ItemSource = RoomLibrary.GetRoomTypes().Select(name => RoomLibrary.GetData(name))
-                                .Select(data => new NewGui.ToolTray.LeafIcon
+                                .Select(data => new NewGui.ToolTray.Icon
                                 {
                                     Icon = new TileReference("rooms", roomIcons.ConvertRectToIndex(data.Icon.SourceRect)),
-                                    ExpansionChild = new NewGui.BuildRoomButton
+                                    ExpansionChild = new NewGui.BuildRoomInfo
                                     {
                                         Data = data,
                                         Rect = new Rectangle(0,0,256,128)
@@ -273,16 +275,17 @@ namespace DwarfCorp.GameStates
                                 })
                         }
                     },
-                    new NewGui.ToolTray.ExpandingIcon
+                    new NewGui.ToolTray.Icon
                     {
                         Icon = new TileReference("tool-icons", 6),
+                        KeepChildVisible = true,
                         ExpansionChild = new NewGui.ToolTray.Tray
                         {
                             ItemSource = VoxelLibrary.GetTypes().Where(voxel => voxel.IsBuildable)
-                                .Select(data => new NewGui.ToolTray.LeafIcon
+                                .Select(data => new NewGui.ToolTray.Icon
                                 {
                                     Icon = new TileReference("rooms", 0),
-                                    ExpansionChild = new NewGui.BuildWallButton
+                                    ExpansionChild = new NewGui.BuildWallInfo
                                     {
                                         Data = data,
                                         Rect = new Rectangle(0,0,256,128)
