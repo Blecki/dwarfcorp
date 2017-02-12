@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -146,6 +147,7 @@ namespace DwarfCorp
     /// </summary>
     public class Timer
     {
+        [JsonIgnore]
         public float StartTimeSeconds { get; set; }
         public float TargetTimeSeconds { get; set; }
         public float CurrentTimeSeconds { get; set; }
@@ -158,6 +160,17 @@ namespace DwarfCorp
         {
             Real,
             Game
+        }
+
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext ctx)
+        {
+            StartTimeSeconds = -1;
+        }
+
+        public Timer()
+        {
+            
         }
 
         public Timer(float targetTimeSeconds, bool triggerOnce, TimerMode mode = TimerMode.Game)

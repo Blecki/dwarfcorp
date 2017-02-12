@@ -50,11 +50,11 @@ namespace DwarfCorp.GameStates
         public PlayState PlayState { get; set; }
         public int EdgePadding = 55;
 
-        public LoseState(DwarfGame game, GameStateManager stateManager, PlayState play) :
+        public LoseState(DwarfGame game, GameStateManager stateManager, PlayState playState) :
             base(game, "EconomyState", stateManager)
         {
             Input = new InputManager();
-            PlayState = play;
+            PlayState = playState;
             EnableScreensaver = false;
             
         }
@@ -75,7 +75,7 @@ namespace DwarfCorp.GameStates
             Layout.SetComponentPosition(title, 0, 0, 4, 4);
 
             Label text = new Label(GUI, Layout,
-                "The heady days of exploration for " + DwarfGame.World.Master.Faction.Economy.Company.Information.Name +
+                "The heady days of exploration for " + PlayState.World.Master.Faction.Economy.Company.Information.Name +
                 " are no more.\n Our stock is through the floor. Our investors have all jumped ship! \n We are going to have to sell the company. If only we had shipped more goods...",
                 GUI.DefaultFont)
             {

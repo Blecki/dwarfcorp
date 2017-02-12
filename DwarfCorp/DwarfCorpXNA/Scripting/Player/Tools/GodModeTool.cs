@@ -165,7 +165,7 @@ namespace DwarfCorp
                     }
                 }
                 if (toSend == null) return;
-                Player.World.ComponentManager.Diplomacy.SendTradeEnvoy(toSend);
+                Player.World.ComponentManager.Diplomacy.SendTradeEnvoy(toSend, Player.World);
             };
 
             SelectorPanel.IsVisible = false;

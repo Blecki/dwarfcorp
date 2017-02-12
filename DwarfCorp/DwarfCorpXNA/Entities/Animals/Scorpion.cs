@@ -27,9 +27,9 @@ namespace DwarfCorp
                 // Default stats
                 new CreatureStats
                 {
-                    Dexterity = 6,
-                    Constitution = 1,
-                    Strength = 1,
+                    Dexterity = 2,
+                    Constitution = 2,
+                    Strength = 2,
                     Wisdom = 1,
                     Charisma = 1,
                     Intelligence = 1,
@@ -109,7 +109,7 @@ namespace DwarfCorp
             AI = new PacingCreatureAI(this, "Scorpion AI", Sensors, PlanService);
 
             // The bird can peck at its enemies (0.1 damage)
-            Attacks = new List<Attack> { new Attack("Sting", 0.01f, 2.0f, 1.0f, ContentPaths.Audio.hiss, ContentPaths.Effects.pierce) };
+            Attacks = new List<Attack> { new Attack("Sting", 4.0f, 2.0f, 1.0f, ContentPaths.Audio.hiss, ContentPaths.Effects.pierce) };
 
 
             // The bird can hold one item at a time in its inventory
