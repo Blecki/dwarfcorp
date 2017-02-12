@@ -76,7 +76,7 @@ namespace DwarfCorp
 
         private VoxelSelectionType GetSelectionType(bool active)
         {
-            return active ? VoxelSelectionType.SelectEmpty : orignalSelection;
+            return active ? GetSelectionTypeBySelectionBoxValue(SelectorBox.CurrentValue) : orignalSelection;
         }
 
 
@@ -177,16 +177,21 @@ namespace DwarfCorp
             SelectorBox.CleanUp();
         }
 
-        private void SelectorBox_OnSelectionModified(string arg)
+        private VoxelSelectionType GetSelectionTypeBySelectionBoxValue(string arg)
         {
-            if(arg == "Delete Block" || arg.Contains("Build") || arg == "Kill Block")
+            if (arg == "Delete Block" || arg.Contains("Build") || arg == "Kill Block")
             {
-                Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+                return VoxelSelectionType.SelectFilled;
             }
             else
             {
-                Player.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                return VoxelSelectionType.SelectEmpty;
             }
+        }
+
+        private void SelectorBox_OnSelectionModified(string arg)
+        {
+            Player.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(arg);
         }
 
         public override void OnVoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
