@@ -163,7 +163,7 @@ namespace DwarfCorp
                                 FullName, CurrentLevel.Name),
                             String.Format("{0} can now be promoted to {1}.",
                                 FullName, CurrentClass.Levels[LevelIndex + 1].Name),
-                            EconomyState.PushEconomyState);
+                            () => EconomyState.PushEconomyState(DwarfGame.World));
                     }
                 }
             }

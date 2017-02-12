@@ -71,7 +71,7 @@ namespace DwarfCorp
         // The horizontal size of the overworld in pixels
         public int WorldWidth = 800;
 
-        // Used to pass WorldOrigin from the WorldGenState into DwarfGame.World.
+        // Used to pass WorldOrigin from the WorldGenState into 
         public Vector2 WorldGenerationOrigin { get; set; }
 
         // The origin of the overworld in pixels [(0, 0, 0) in world space.]
@@ -526,7 +526,7 @@ namespace DwarfCorp
                 SetLoadingMessage("Loading " + ExistingFile);
                 gameFile = new GameFile(ExistingFile, true);
                 Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
-                DwarfGame.World.Time = gameFile.Data.Metadata.Time;
+                Time = gameFile.Data.Metadata.Time;
                 WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
                 WorldScale = gameFile.Data.Metadata.WorldScale;
                 GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
@@ -584,7 +584,7 @@ namespace DwarfCorp
                     new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset + Vector3.Up  * 10.0f + Vector3.Backward * 10, 
                     MathHelper.PiOver4, AspectRatio, 0.1f,
                     GameSettings.Default.VertexCullDistance);
-
+            Camera.World = this;
             Drawer3D.Camera = Camera;
 
             // Creates the terrain management system.
@@ -740,6 +740,7 @@ namespace DwarfCorp
                 InstanceManager.Clear();
                 gameFile.LoadComponents(ExistingFile);
                 ComponentManager = gameFile.Data.Components;
+                ComponentManager.World = this;
                 GameComponent.ResetMaxGlobalId(ComponentManager.GetMaxComponentID() + 1);
                 Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
                 Time = gameFile.Data.Metadata.Time;
@@ -748,6 +749,7 @@ namespace DwarfCorp
                 GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
                 GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
             }
+            
             Master = new GameMaster(ComponentManager.Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
                 Camera, GraphicsDevice, GUI);
         }
@@ -764,7 +766,7 @@ namespace DwarfCorp
                 BalloonPort port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager,
                     Camera.Position.X, Camera.Position.Z, 3);
                 CreateInitialDwarves(c);
-                DwarfGame.World.PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
+                PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
 
                 foreach (var res in InitialEmbark.Resources)
                 {
@@ -1208,7 +1210,7 @@ namespace DwarfCorp
             AspectRatio = GraphicsDevice.Viewport.AspectRatio;
             Camera.AspectRatio = AspectRatio;
 
-            Camera.Update(gameTime, DwarfGame.World.ChunkManager);
+            Camera.Update(gameTime, ChunkManager);
 
             if (KeyManager.RotationEnabled())
                 Mouse.SetPosition(Game.GraphicsDevice.Viewport.Width / 2,

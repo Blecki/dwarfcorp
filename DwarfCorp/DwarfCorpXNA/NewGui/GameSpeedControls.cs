@@ -29,6 +29,8 @@ namespace DwarfCorp.NewGui
         private Gum.Widget TimeLabel;
         private Gum.Widget PlayPauseButton;
 
+        public PlayState PlayState { get; set; }
+
         public override void Construct()
         {
             Border = "border-dark";
