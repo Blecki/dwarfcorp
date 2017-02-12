@@ -1019,7 +1019,7 @@ namespace DwarfCorp
                 affectedChunks.Add(voxel.Chunk);
                 voxel.Chunk.NotifyDestroyed(new Point3(voxel.GridPosition));
                 List<Point3> neighbors = voxel.Chunk.GetEuclidianSuccessorByVoxel(voxel);
-                Point3 gridPos = new Point3(voxel.GridPosition);
+                Point3 gridPos = voxel.ChunkID;
                 for (int i = 0; i < neighbors.Count; i++)
                 {
                     VoxelChunk chunk;
