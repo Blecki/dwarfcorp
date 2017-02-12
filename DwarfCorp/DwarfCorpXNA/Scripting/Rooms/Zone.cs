@@ -50,7 +50,7 @@ namespace DwarfCorp
         public string ID = "";
         public List<Voxel> Voxels = new List<Voxel>();
         public List<Body> ZoneBodies = new List<Body>();
-            
+        
         [JsonProperty]
         protected int ResPerVoxel = 8;
         [JsonIgnore]
@@ -64,15 +64,17 @@ namespace DwarfCorp
         public VoxelType ReplacementType { get; set; }
 
         [JsonIgnore]
-        public ChunkManager Chunks { get; set; }
+        public WorldManager World { get; set; }
+
+        protected ChunkManager Chunks { get { return World.ChunkManager; } }
 
         public ResourceContainer Resources { get; set; }
 
-        public Zone(string id, ChunkManager chunks)
+        public Zone(string id, WorldManager world)
         {
             ID = id;
             ReplacementType = null;
-            Chunks = chunks;
+            World = world;
             Resources = new ResourceContainer
             {
                 MaxResources = 1

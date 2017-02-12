@@ -54,13 +54,13 @@ namespace DwarfCorp.GameStates
         public InputManager Input { get; set; }
         public Texture2D Icons { get; set; }
         public List<Button> TabButtons { get; set; }
-        public Dictionary<string, GUIComponent> Tabs { get; set; } 
-      
+        public Dictionary<string, GUIComponent> Tabs { get; set; }
+        public WorldManager World { get; set; }
 
-        public EconomyState(DwarfGame game, GameStateManager stateManager) :
+        public EconomyState(DwarfGame game, GameStateManager stateManager, WorldManager world) :
             base(game, "EconomyState", stateManager)
         {
-            
+            World = world;
             EdgePadding = 32;
             Input = new InputManager();
             EnableScreensaver = false;
@@ -68,11 +68,11 @@ namespace DwarfCorp.GameStates
            
         }
 
-        public static void PushEconomyState()
+        public static void PushEconomyState(WorldManager world)
         {
             if (Game.StateManager.NextState == null)
             {
-                Game.StateManager.PushState(new EconomyState(Game, Game.StateManager));
+                Game.StateManager.PushState(new EconomyState(Game, Game.StateManager, world));
             }
         }
 
@@ -107,7 +107,7 @@ namespace DwarfCorp.GameStates
 
 
            CreateTabButton(tabLayout, "Employees", "Hire and fire dwarves", 5, 0);
-            EmployeeDisplay employeeDisplay = new EmployeeDisplay(GUI, Layout, DwarfGame.World.Master.Faction)
+            EmployeeDisplay employeeDisplay = new EmployeeDisplay(GUI, Layout, World.Master.Faction, World.PlayerCompany.Information)
             {
                 IsVisible = false
             };
@@ -115,7 +115,7 @@ namespace DwarfCorp.GameStates
            
 
            CreateTabButton(tabLayout, "Capital", "Financial report", 2, 1);
-           CapitalPanel capitalPanel = new CapitalPanel(GUI, Layout, DwarfGame.World.Master.Faction)
+           CapitalPanel capitalPanel = new CapitalPanel(GUI, Layout, World.Master.Faction)
            {
                IsVisible = false
            };
@@ -203,7 +203,7 @@ namespace DwarfCorp.GameStates
      
         private void back_OnClicked()
         {
-            DwarfGame.World.SetMouse(DwarfGame.World.MousePointer);
+            World.SetMouse(World.MousePointer);
             StateManager.PopState();
         }
 

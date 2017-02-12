@@ -56,6 +56,8 @@ namespace DwarfCorp
        
         public delegate void HiredDelegate(Applicant applicant);
 
+        public CompanyInformation Company { get; set; }
+
         public event HiredDelegate OnHired;
 
         protected virtual void OnOnHired(Applicant applicant)
@@ -65,7 +67,7 @@ namespace DwarfCorp
             
         }
 
-        public static HireDialog Popup(DwarfGUI gui, Faction faction)
+        public static HireDialog Popup(DwarfGUI gui, Faction faction, CompanyInformation company)
         {
             int w = gui.Graphics.Viewport.Width - 64;
             int h = gui.Graphics.Viewport.Height - 64;
@@ -73,7 +75,8 @@ namespace DwarfCorp
             {
                 Faction = faction,
                 LocalBounds =
-                    new Rectangle(gui.Graphics.Viewport.Width/2 - w/2, gui.Graphics.Viewport.Height/2 - h/2, w, h)
+                    new Rectangle(gui.Graphics.Viewport.Width/2 - w/2, gui.Graphics.Viewport.Height/2 - h/2, w, h),
+                Company = company
             };
             toReturn.Initialize(ButtonType.OK, "Hire new Employees", "");
             return toReturn;
@@ -84,7 +87,7 @@ namespace DwarfCorp
         {
         }
 
-        public void GenerateApplicants()
+        public void GenerateApplicants(CompanyInformation info)
         {
             Applicants = new List<Applicant>();
 
@@ -93,7 +96,7 @@ namespace DwarfCorp
                 for (int i = 0; i < 5; i++)
                 {
                     Applicant applicant = new Applicant();
-                    applicant.GenerateRandom(employeeType.Value, 0);
+                    applicant.GenerateRandom(employeeType.Value, 0, info);
                     Applicants.Add(applicant);   
                 }
             }
@@ -103,7 +106,7 @@ namespace DwarfCorp
         public override void Initialize(Dialog.ButtonType buttons, string title, string message)
         {
             WasSomeoneHired = false;
-            GenerateApplicants();
+            GenerateApplicants(Company);
             IsModal = true;
             OnClicked += HireDialog_OnClicked;
             OnClosed += HireDialog_OnClosed;

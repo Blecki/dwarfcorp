@@ -314,7 +314,7 @@ namespace DwarfCorp.GameStates
 
                     WorldGeneratorState state = StateManager.GetState<WorldGeneratorState>();
 
-                    WorldGeneratorState.worldMap = descriptor.File.Data.CreateTexture(Game.GraphicsDevice, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
+                    WorldGeneratorState.worldMap = descriptor.File.Data.CreateTexture(Game.GraphicsDevice, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), descriptor.File.Data.SeaLevel);
 
                     JoinThreads();
                     StateManager.PopState();

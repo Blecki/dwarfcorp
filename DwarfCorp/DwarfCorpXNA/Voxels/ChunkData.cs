@@ -159,7 +159,6 @@ namespace DwarfCorp
 
                     nextVoxel.Chunk.NotifyExplored(new Point3(nextVoxel.GridPosition));
 
-                    if (!nextVoxel.IsEmpty)
                     {
                         if (!nextVoxel.IsExplored)
                         {
@@ -168,12 +167,11 @@ namespace DwarfCorp
                             {
                                 affectedChunks.Add(nextVoxel.ChunkID);
                             }
+                            if (nextVoxel.IsEmpty)
+                                q.Enqueue(new Voxel(new Point3(nextVoxel.GridPosition), nextVoxel.Chunk));
                         }
-                        continue;
                     }
 
-                    if (!v.IsExplored)
-                        q.Enqueue(new Voxel(new Point3(nextVoxel.GridPosition), nextVoxel.Chunk));
                 }
 
                 v.IsExplored = true;

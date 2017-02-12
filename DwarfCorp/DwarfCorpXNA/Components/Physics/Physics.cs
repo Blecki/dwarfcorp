@@ -213,7 +213,7 @@ namespace DwarfCorp
         }
 
         public Physics(string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, float mass, float i, float linearDamping, float angularDamping, Vector3 gravity, OrientMode orientation = OrientMode.Fixed) :
-            base(name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
+            base(parent.Manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             Mass = mass;
             Velocity = Vector3.Zero;
@@ -440,7 +440,7 @@ namespace DwarfCorp
 
             if (IsInLiquid && Velocity.LengthSquared() > 0.5f)
             {
-                DwarfGame.World.ParticleManager.Trigger("splat", Position + MathFunctions.RandVector3Box(-0.5f, 0.5f, 0.1f, 0.25f, -0.5f, 0.5f), Color.White, MathFunctions.Random.Next(0, 2));
+                Manager.World.ParticleManager.Trigger("splat", Position + MathFunctions.RandVector3Box(-0.5f, 0.5f, 0.1f, 0.25f, -0.5f, 0.5f), Color.White, MathFunctions.Random.Next(0, 2));
             }
 
             if (successBelow && belowVoxel.WaterLevel > WaterManager.inWaterThreshold)
@@ -655,7 +655,7 @@ namespace DwarfCorp
 
         public Vector3 ClampToBounds(Vector3 vector3)
         {
-            return MathFunctions.Clamp(vector3, DwarfGame.World.ChunkManager.Bounds);
+            return MathFunctions.Clamp(vector3, Manager.World.ChunkManager.Bounds);
         }
     }
 

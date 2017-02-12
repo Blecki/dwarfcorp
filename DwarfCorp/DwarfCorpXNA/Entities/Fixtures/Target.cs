@@ -48,8 +48,8 @@ namespace DwarfCorp
 
         }
 
-        public Target(Vector3 position) :
-            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 5), DwarfGame.World.ComponentManager.RootComponent)
+        public Target(ComponentManager componentManager, Vector3 position) :
+            base(position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 5), componentManager.RootComponent)
         {
             Name = "Target";
             Tags.Add("Target");

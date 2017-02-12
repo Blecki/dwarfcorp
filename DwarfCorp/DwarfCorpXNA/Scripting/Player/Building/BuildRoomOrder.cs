@@ -63,7 +63,7 @@ namespace DwarfCorp
         }
 
 
-        public void CreateFences()
+        public void CreateFences(ComponentManager components)
         {
             Voxel neighbor = new Voxel();
 
@@ -72,31 +72,33 @@ namespace DwarfCorp
             foreach (BuildVoxelOrder order in VoxelOrders)
             {
                 Voxel voxel = order.Voxel;
-                if (voxel.GetNeighbor(new Vector3(0, 0, 1), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
+                if (voxel.GetNeighbor(new Vector3(0, 0, 1), ref neighbor) &&
+                    !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
                 {
-                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(0, 0, 0.45f), (float)Math.Atan2(0, 1)));
+                    WorkObjects.Add(new WorkFence(components, voxel.Position + off + new Vector3(0, 0, 0.45f),
+                        (float) Math.Atan2(0, 1)));
                 }
 
                 if (voxel.GetNeighbor(new Vector3(0, 0, -1), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
                 {
-                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(0, 0, -0.45f), (float)Math.Atan2(0, -1)));
+                    WorkObjects.Add(new WorkFence(components, voxel.Position + off + new Vector3(0, 0, -0.45f), (float)Math.Atan2(0, -1)));
                 }
 
 
                 if (voxel.GetNeighbor(new Vector3(1, 0, 0), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
                 {
-                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(0.45f, 0, 0.0f), (float)Math.Atan2(1, 0)));
+                    WorkObjects.Add(new WorkFence(components, voxel.Position + off + new Vector3(0.45f, 0, 0.0f), (float)Math.Atan2(1, 0)));
                 }
 
 
                 if (voxel.GetNeighbor(new Vector3(-1, 0, 0), ref neighbor) && !VoxelOrders.Any(o => o.Voxel.Equals(neighbor)))
                 {
-                    WorkObjects.Add(new WorkFence(voxel.Position + off + new Vector3(-0.45f, 0, 0.0f), (float)Math.Atan2(-1, 0)));
+                    WorkObjects.Add(new WorkFence(components, voxel.Position + off + new Vector3(-0.45f, 0, 0.0f), (float)Math.Atan2(-1, 0)));
                 }
 
                 if (MathFunctions.RandEvent(0.1f))
                 {
-                    WorkObjects.Add(new WorkPile(voxel.Position + off));
+                    WorkObjects.Add(new WorkPile(components, voxel.Position + off));
                 }
             }
         }

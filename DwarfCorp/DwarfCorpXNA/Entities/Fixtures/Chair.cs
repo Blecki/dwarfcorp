@@ -51,10 +51,9 @@ namespace DwarfCorp
             
         }
 
-        public Chair(Vector3 position) :
-            base("Chair", DwarfGame.World.ComponentManager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+        public Chair(ComponentManager manager, Vector3 position) :
+            base(manager, "Chair",manager.RootComponent, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
         {
-            ComponentManager componentManager = DwarfGame.World.ComponentManager;
             Matrix matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
             matrix.Translation = position - new Vector3(0, 0.22f, 0);
             LocalTransform = matrix;
@@ -76,19 +75,19 @@ namespace DwarfCorp
             Animation tableTop = new Animation(GameState.Game.GraphicsDevice, spriteSheet, "tableTop", 32, 32, frames, false, Color.White, 0.01f, 1.0f, 1.0f, false);
             Animation tableAnimation = new Animation(GameState.Game.GraphicsDevice, spriteSheet, "tableTop", 32, 32, sideframes, false, Color.White, 0.01f, 1.0f, 1.0f, false);
 
-            Sprite tabletopSprite = new Sprite(componentManager, "sprite1", this, Matrix.CreateRotationX((float)Math.PI * 0.5f), spriteSheet, false)
+            Sprite tabletopSprite = new Sprite(manager, "sprite1", this, Matrix.CreateRotationX((float)Math.PI * 0.5f), spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
             };
             tabletopSprite.AddAnimation(tableTop);
 
-            Sprite sprite = new Sprite(componentManager, "sprite", this, Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.Identity, spriteSheet, false)
+            Sprite sprite = new Sprite(manager, "sprite", this, Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.Identity, spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
             };
             sprite.AddAnimation(tableAnimation);
 
-            Sprite sprite2 = new Sprite(componentManager, "sprite2", this, Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
+            Sprite sprite2 = new Sprite(manager, "sprite2", this, Matrix.CreateTranslation(0.0f, -0.05f, -0.0f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, false)
             {
                 OrientationType = Sprite.OrientMode.Fixed
             };
@@ -96,9 +95,9 @@ namespace DwarfCorp
 
             Voxel voxelUnder = new Voxel();
 
-            if (DwarfGame.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
+            if (manager.World.ChunkManager.ChunkData.GetFirstVoxelUnder(position, ref voxelUnder))
             {
-                VoxelListener listener = new VoxelListener(componentManager, this, DwarfGame.World.ChunkManager, voxelUnder);
+                VoxelListener listener = new VoxelListener(manager, this, manager.World.ChunkManager, voxelUnder);
             }
 
 

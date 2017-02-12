@@ -71,7 +71,7 @@ namespace DwarfCorp
         // The horizontal size of the overworld in pixels
         public int WorldWidth = 800;
 
-        // Used to pass WorldOrigin from the WorldGenState into DwarfGame.World.
+        // Used to pass WorldOrigin from the WorldGenState into 
         public Vector2 WorldGenerationOrigin { get; set; }
 
         // The origin of the overworld in pixels [(0, 0, 0) in world space.]
@@ -85,6 +85,8 @@ namespace DwarfCorp
 
         // The number of voxels along y in a chunk.
         public int ChunkHeight { get { return GameSettings.Default.ChunkHeight; } }
+
+        public Vector3 CursorPos { get { return CursorLightPos; } }
 
         // The current coordinate of the cursor light
         public Vector3 CursorLightPos
@@ -446,8 +448,8 @@ namespace DwarfCorp
                 creat.Velocity = new Vector3(1, 0, 0);
             }
 
-            Camera.Target = new Vector3(Camera.Position.X, h + 10, Camera.Position.Z + 10);
-            Camera.Phi = -(float)Math.PI * 0.3f;
+            Camera.Target = new Vector3(Camera.Position.X, h, Camera.Position.Z + 10);
+            Camera.Position = new Vector3(Camera.Target.X, Camera.Target.Y + 20, Camera.Position.Z - 10);
         }
 
         /// <summary>
@@ -504,7 +506,7 @@ namespace DwarfCorp
 
             JobLibrary.Initialize();
             MonsterSpawner = new MonsterSpawner();
-            EntityFactory.Initialize();
+            EntityFactory.Initialize(this);
         }
 
         /// <summary>
@@ -524,7 +526,7 @@ namespace DwarfCorp
                 SetLoadingMessage("Loading " + ExistingFile);
                 gameFile = new GameFile(ExistingFile, true);
                 Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
-                DwarfGame.World.Time = gameFile.Data.Metadata.Time;
+                Time = gameFile.Data.Metadata.Time;
                 WorldOrigin = gameFile.Data.Metadata.WorldOrigin;
                 WorldScale = gameFile.Data.Metadata.WorldScale;
                 GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
@@ -578,10 +580,11 @@ namespace DwarfCorp
             // facing down slightly.
             Camera = fileExists
                 ? gameFile.Data.Camera
-                : new OrbitCamera(0, 0, 10f, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset,
-                    new Vector3(0, 50, 0) + globalOffset, MathHelper.PiOver4, AspectRatio, 0.1f,
+                : new OrbitCamera(this, new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset,
+                    new Vector3(ChunkWidth, ChunkHeight - 1.0f, ChunkWidth) + globalOffset + Vector3.Up  * 10.0f + Vector3.Backward * 10, 
+                    MathHelper.PiOver4, AspectRatio, 0.1f,
                     GameSettings.Default.VertexCullDistance);
-
+            Camera.World = this;
             Drawer3D.Camera = Camera;
 
             // Creates the terrain management system.
@@ -602,8 +605,6 @@ namespace DwarfCorp
                 WorldOrigin = new Vector2(globalOffset.X, globalOffset.Z);
                 Camera.Position = new Vector3(0, 10, 0) + globalOffset;
                 Camera.Target = new Vector3(0, 10, 1) + globalOffset;
-                Camera.Radius = 0.01f;
-                Camera.Phi = -1.57f;
             }
 
 
@@ -620,14 +621,6 @@ namespace DwarfCorp
                 ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
             }
 
-            // If there's no file, for some reason we modify the camera position...
-            // TODO: Figure out why the camera keeps needing to be reset.
-            if (!fileExists)
-            {
-                Camera.Radius = 0.01f;
-                Camera.Phi = -1.57f / 4.0f;
-                Camera.Theta = 0.0f;
-            }
 
             // Finally, the chunk manager's threads are started to allow it to 
             // dynamically rebuild terrain
@@ -747,6 +740,7 @@ namespace DwarfCorp
                 InstanceManager.Clear();
                 gameFile.LoadComponents(ExistingFile);
                 ComponentManager = gameFile.Data.Components;
+                ComponentManager.World = this;
                 GameComponent.ResetMaxGlobalId(ComponentManager.GetMaxComponentID() + 1);
                 Sky.TimeOfDay = gameFile.Data.Metadata.TimeOfDay;
                 Time = gameFile.Data.Metadata.Time;
@@ -755,6 +749,7 @@ namespace DwarfCorp
                 GameSettings.Default.ChunkWidth = gameFile.Data.Metadata.ChunkWidth;
                 GameSettings.Default.ChunkHeight = gameFile.Data.Metadata.ChunkHeight;
             }
+            
             Master = new GameMaster(ComponentManager.Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
                 Camera, GraphicsDevice, GUI);
         }
@@ -771,7 +766,7 @@ namespace DwarfCorp
                 BalloonPort port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager,
                     Camera.Position.X, Camera.Position.Z, 3);
                 CreateInitialDwarves(c);
-                DwarfGame.World.PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
+                PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
 
                 foreach (var res in InitialEmbark.Resources)
                 {
@@ -938,7 +933,7 @@ namespace DwarfCorp
 
 
             // Actually create the BuildRoom.
-            BalloonPort toBuild = new BalloonPort(PlayerFaction, designations, chunkManager);
+            BalloonPort toBuild = new BalloonPort(PlayerFaction, designations, this);
             BuildRoomOrder buildDes = new BuildRoomOrder(toBuild, roomDes.Faction);
             buildDes.Build(true);
             roomDes.DesignatedRooms.Add(toBuild);
@@ -1215,7 +1210,7 @@ namespace DwarfCorp
             AspectRatio = GraphicsDevice.Viewport.AspectRatio;
             Camera.AspectRatio = AspectRatio;
 
-            Camera.Update(gameTime, DwarfGame.World.ChunkManager);
+            Camera.Update(gameTime, ChunkManager);
 
             if (KeyManager.RotationEnabled())
                 Mouse.SetPosition(Game.GraphicsDevice.Viewport.Width / 2,
@@ -1310,13 +1305,13 @@ namespace DwarfCorp
                     Directory.CreateDirectory(DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Worlds" +
                                               Path.DirectorySeparatorChar + Overworld.Name);
 
-                OverworldFile file = new OverworldFile(Game.GraphicsDevice, Overworld.Map, Overworld.Name);
+                OverworldFile file = new OverworldFile(Game.GraphicsDevice, Overworld.Map, Overworld.Name, SeaLevel);
                 file.WriteFile(
                     worldDirectory.FullName + Path.DirectorySeparatorChar + "world." + OverworldFile.CompressedExtension,
                     true, true);
                 file.SaveScreenshot(worldDirectory.FullName + Path.DirectorySeparatorChar + "screenshot.png");
 
-                gameFile = new GameFile(Overworld.Name, GameID);
+                gameFile = new GameFile(Overworld.Name, GameID, this);
                 gameFile.WriteFile(
                     DwarfGame.GetGameDirectory() + Path.DirectorySeparatorChar + "Saves" + Path.DirectorySeparatorChar +
                     filename, true);

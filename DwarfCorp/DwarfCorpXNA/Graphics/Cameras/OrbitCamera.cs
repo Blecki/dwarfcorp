@@ -50,9 +50,9 @@ namespace DwarfCorp
     /// </summary>
     public class OrbitCamera : Camera
     {
-        public float Theta { get; set; }
-        public float Phi { get; set; }
-        public float Radius { get; set; }
+        //public float Theta { get; set; }
+        //public float Phi { get; set; }
+        //public float Radius { get; set; }
 
         public float CameraMoveSpeed
         {
@@ -72,41 +72,28 @@ namespace DwarfCorp
             Walk
         }
 
-        public Physics PhysicsObject { get; set; }
         private bool isLeftPressed = false;
         private bool isRightPressed = false;
-        private readonly Timer moveTimer = new Timer(0.25f, true);
-        private float targetTheta = 0.0f;
-        private float targetPhi = 0.0f;
+        private readonly Timer moveTimer = new Timer(0.25f, true, Timer.TimerMode.Real);
         private bool shiftPressed = false;
         public Vector3 PushVelocity = Vector3.Zero;
         public ControlType Control = ControlType.Overhead;
 
-        public List<Vector3> ZoomTargets { get; set; } 
-       
+        public List<Vector3> ZoomTargets { get; set; }
+
+
         public OrbitCamera() : base()
         {
             
         }
 
-        public OrbitCamera(float theta, float phi, float radius, Vector3 target, Vector3 position, float fov, float aspectRatio, float nearPlane, float farPlane) :
-            base(target, position, fov, aspectRatio, nearPlane, farPlane)
+        public OrbitCamera(WorldManager world, Vector3 target, Vector3 position, float fov, float aspectRatio, float nearPlane, float farPlane) :
+            base(world, target, position, fov, aspectRatio, nearPlane, farPlane)
         {
-            Theta = theta;
-            Phi = phi;
-            Radius = radius;
             LastWheel = Mouse.GetState().ScrollWheelValue;
-            targetTheta = theta;
-            targetPhi = phi;
             ZoomTargets = new List<Vector3>();
         }
 
-
-        public void SetTargetRotation(float theta, float phi)
-        {
-            targetTheta = theta;
-            targetPhi = phi;
-        }
 
         public override void Update(DwarfTime time, ChunkManager chunks)
         {
@@ -117,158 +104,12 @@ namespace DwarfCorp
                     break;
 
                 case ControlType.Walk:
-                    WalkUpdate(time, chunks);
                     break;
             }
             base.Update(time, chunks);
         }
 
-        private void WalkUpdate(DwarfTime time, ChunkManager chunks)
-        {
-            MouseState mouse = Mouse.GetState();
-            KeyboardState keys = Keyboard.GetState();
-
-
-            if (PhysicsObject == null)
-            {
-                PhysicsObject = new Physics("CameraPhysics", DwarfGame.World.ComponentManager.RootComponent, Matrix.CreateTranslation(Target), new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero, 1.0f, 1.0f, 0.999f, 1.0f, Vector3.Down * 10);
-                PhysicsObject.IsSleeping = false;
-                PhysicsObject.Velocity = Vector3.Down*0.01f;
-            }
-
-            bool stateChanged = false;
-            float dt = (float)time.ElapsedGameTime.TotalSeconds;
-
-            if (KeyManager.RotationEnabled())
-            {
-                if (!shiftPressed)
-                {
-                    shiftPressed = true;
-
-                    mouse = Mouse.GetState();
-                    stateChanged = true;
-                }
-                if (!isLeftPressed && mouse.LeftButton == ButtonState.Pressed)
-                {
-                    isLeftPressed = true;
-                    stateChanged = true;
-                }
-                else if (mouse.LeftButton == ButtonState.Released)
-                {
-                    isLeftPressed = false;
-                }
-
-                if (!isRightPressed && mouse.RightButton == ButtonState.Pressed)
-                {
-                    isRightPressed = true;
-                    stateChanged = true;
-                }
-                else if (mouse.RightButton == ButtonState.Released)
-                {
-                    isRightPressed = false;
-                }
-
-
-                if (stateChanged)
-                {
-                    Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2, GameState.Game.GraphicsDevice.Viewport.Height / 2);
-                    mouse = Mouse.GetState();
-                }
-
-
-                float diffX = mouse.X - GameState.Game.GraphicsDevice.Viewport.Width / 2;
-                float diffY = mouse.Y - GameState.Game.GraphicsDevice.Viewport.Height / 2;
-
-
-                float filterDiffX = (float)(diffX * dt);
-                float filterDiffY = (float)(diffY * dt);
-                if (Math.Abs(filterDiffX) > 1.0f)
-                {
-                    filterDiffX = 1.0f * Math.Sign(filterDiffX);
-                }
-
-                if (Math.Abs(filterDiffY) > 1.0f)
-                {
-                    filterDiffY = 1.0f * Math.Sign(filterDiffY);
-                }
-
-                targetTheta = Theta - (filterDiffX);
-                targetPhi = Phi - (filterDiffY);
-                Theta = targetTheta * 0.5f + Theta * 0.5f;
-                Phi = targetPhi * 0.5f + Phi * 0.5f;
-
-
-                if (Phi < -1.5f)
-                {
-                    Phi = -1.5f;
-                }
-                else if (Phi > 1.5f)
-                {
-                    Phi = 1.5f;
-                }
-            }
-            else
-            {
-                shiftPressed = false;
-            }
-
-            Vector3 velocityToSet = Vector3.Zero;
-            if (keys.IsKeyDown(ControlSettings.Mappings.Forward) || keys.IsKeyDown(Keys.Up))
-            {
-                Vector3 forward = (Target - Position);
-                forward.Normalize();
-
-                velocityToSet += forward * CameraMoveSpeed * dt;
-            }
-            else if (keys.IsKeyDown(ControlSettings.Mappings.Back) || keys.IsKeyDown(Keys.Down))
-            {
-                Vector3 forward = (Target - Position);
-                forward.Normalize();
-                velocityToSet += -forward * CameraMoveSpeed * dt;
-            }
-
-            if (keys.IsKeyDown(ControlSettings.Mappings.Left) || keys.IsKeyDown(Keys.Left))
-            {
-                Vector3 forward = (Target - Position);
-                forward.Normalize();
-                Vector3 right = Vector3.Cross(forward, UpVector);
-                right.Normalize();
-                velocityToSet += -right * CameraMoveSpeed * dt;
-            }
-            else if (keys.IsKeyDown(ControlSettings.Mappings.Right) || keys.IsKeyDown(Keys.Right))
-            {
-                Vector3 forward = (Target - Position);
-                forward.Normalize();
-                Vector3 right = Vector3.Cross(forward, UpVector);
-                right.Normalize();
-                velocityToSet += right * CameraMoveSpeed * dt;
-            }
-
-            if (velocityToSet.LengthSquared() > 0)
-            {
-                Velocity = Velocity * 0.5f + velocityToSet * 0.5f;
-            }
-
-
-
-            LastWheel = mouse.ScrollWheelValue;
-
-            Velocity = new Vector3(Velocity.X, 0, Velocity.Z);
-
-
-            if (keys.IsKeyDown(Keys.Space))
-            {
-                Velocity += Vector3.Up;
-            }
-
-            //CollidesWithChunks(PlayState.ChunkManager, Target, true);
-            PhysicsObject.ApplyForce(Velocity * 20, dt);
-         
-            Target = PhysicsObject.GlobalTransform.Translation + Vector3.Up * 0.5f;
-            Velocity *= 0.8f;
-            UpdateBasisVectors();
-        }
-
+      
         public void ZoomTo(Vector3 pos)
         {
             ZoomTargets.Clear();
@@ -276,17 +117,40 @@ namespace DwarfCorp
         }
 
 
+        private Vector3 ProjectToSurface(Vector3 pos)
+        {
+            Voxel vox =  World.ChunkManager.ChunkData.GetFirstVisibleBlockHitByRay(new Vector3(pos.X, World.ChunkHeight - 1, pos.Z), new Vector3(pos.X, 0, pos.Z));
+            if (vox == null)
+            {
+                return pos;
+            }
+            else return new Vector3(pos.X, vox.Position.Y + 0.5f, pos.Z);
+        }
+
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)
         {
+            Voxel currentVoxel = new Voxel();
+            float diffPhi = 0;
+            float diffTheta = 0;
+            float diffRadius = 0;
+            Vector3 forward = (Target - Position);
+            forward.Normalize();
+            Vector3 right = Vector3.Cross(forward, UpVector);
+            Vector3 up = Vector3.Cross(right, forward);
+            right.Normalize();
+            up.Normalize();
             MouseState mouse = Mouse.GetState();
             KeyboardState keys = Keyboard.GetState();
 
             if (ZoomTargets.Count > 0)
             {
-                Vector3 currTarget = ZoomTargets.First();
+                Vector3 currTarget = ProjectToSurface(ZoomTargets.First());
                 if (Vector3.DistanceSquared(Target, currTarget) > 5)
                 {
-                    Target = 0.8f * Target + 0.2f * currTarget;
+                    Vector3 newTarget = 0.8f * Target + 0.2f * currTarget;
+                    Vector3 d = newTarget - Target;
+                    Target += d;
+                    Position += d;
                 }
                 else
                 {
@@ -301,9 +165,10 @@ namespace DwarfCorp
                 edgePadding = 100;
             }
 
+            float diffX, diffY = 0;
             bool stateChanged = false;
             float dt = (float)time.ElapsedRealTime.TotalSeconds;
-            SnapToBounds(new BoundingBox(DwarfGame.World.ChunkManager.Bounds.Min, DwarfGame.World.ChunkManager.Bounds.Max + Vector3.UnitY * 20));
+            SnapToBounds(new BoundingBox(World.ChunkManager.Bounds.Min, World.ChunkManager.Bounds.Max + Vector3.UnitY * 20));
             if (KeyManager.RotationEnabled())
             {
                 if (!shiftPressed)
@@ -333,42 +198,26 @@ namespace DwarfCorp
                     isRightPressed = false;
                 }
 
-
                 if (stateChanged)
                 {
-                    Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2, GameState.Game.GraphicsDevice.Viewport.Height / 2);
+                    Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2,
+                        GameState.Game.GraphicsDevice.Viewport.Height / 2);
                     mouse = Mouse.GetState();
                 }
 
 
-                float diffX = mouse.X - GameState.Game.GraphicsDevice.Viewport.Width / 2;
-                float diffY = mouse.Y - GameState.Game.GraphicsDevice.Viewport.Height / 2;
+                diffX = mouse.X - GameState.Game.GraphicsDevice.Viewport.Width / 2;
+                diffY = mouse.Y - GameState.Game.GraphicsDevice.Viewport.Height / 2;
 
 
-                float filterDiffX = (float)(diffX * dt);
-                float filterDiffY = (float)(diffY * dt);
-                if (Math.Abs(filterDiffX) > 1.0f)
+                if (!isRightPressed)
                 {
-                    filterDiffX = 1.0f * Math.Sign(filterDiffX);
-                }
 
-                if (Math.Abs(filterDiffY) > 1.0f)
-                {
-                    filterDiffY = 1.0f * Math.Sign(filterDiffY);
-                }
+                    float filterDiffX = (float) (diffX*dt);
+                    float filterDiffY = (float) (diffY*dt);
 
-                targetTheta = Theta - (filterDiffX);
-                targetPhi = Phi - (filterDiffY);
-                Theta = targetTheta * 0.5f + Theta * 0.5f;
-                Phi = targetPhi * 0.5f + Phi * 0.5f;
-               
-                if (Phi < -MathHelper.PiOver2 + 0.01f)
-                {
-                    Phi = -MathHelper.PiOver2 + 0.01f;
-                }
-                else if (Phi > MathHelper.PiOver2 - 0.01f)
-                {
-                    Phi = MathHelper.PiOver2 - 0.01f;
+                    diffTheta = (filterDiffX);
+                    diffPhi = - (filterDiffY);
                 }
 
             }
@@ -381,57 +230,34 @@ namespace DwarfCorp
             Vector3 velocityToSet = Vector3.Zero;
             if (keys.IsKeyDown(ControlSettings.Mappings.Forward) || keys.IsKeyDown(Keys.Up))
             {
-                Vector3 forward = (Target - Position);
-                forward.Normalize();
-
-                if (!KeyManager.RotationEnabled())
-                {
-                    forward.Y = 0;
-                }
-                forward.Normalize();
-
-                velocityToSet += forward * CameraMoveSpeed * dt;
+                Vector3 mov = forward;
+                mov.Y = 0;
+                mov.Normalize();
+                velocityToSet += mov * CameraMoveSpeed * dt;
             }
             else if (keys.IsKeyDown(ControlSettings.Mappings.Back) || keys.IsKeyDown(Keys.Down))
             {
-                Vector3 forward = (Target - Position);
-                forward.Normalize();
                 goingBackward = true;
 
-                if (!KeyManager.RotationEnabled())
-                {
-                    forward.Y = 0;
-                }
-
-                forward.Normalize();
-
-                velocityToSet += -forward * CameraMoveSpeed * dt;
+                Vector3 mov = forward;
+                mov.Y = 0;
+                mov.Normalize();
+                velocityToSet += -mov * CameraMoveSpeed * dt;
             }
 
             if (keys.IsKeyDown(ControlSettings.Mappings.Left) || keys.IsKeyDown(Keys.Left))
             {
-                Vector3 forward = (Target - Position);
-                forward.Normalize();
-                Vector3 right = Vector3.Cross(forward, UpVector);
-                right.Normalize();
-                if (goingBackward)
-                {
-                    //right *= -1;
-                }
-
-                velocityToSet += -right * CameraMoveSpeed * dt;
+                Vector3 mov = right;
+                mov.Y = 0;
+                mov.Normalize();
+                velocityToSet += -mov * CameraMoveSpeed * dt;
             }
             else if (keys.IsKeyDown(ControlSettings.Mappings.Right) || keys.IsKeyDown(Keys.Right))
             {
-                Vector3 forward = (Target - Position);
-                forward.Normalize();
-                Vector3 right = Vector3.Cross(forward, UpVector);
-                right.Normalize();
-                if (goingBackward)
-                {
-                    //right *= -1;
-                }
-                velocityToSet += right * CameraMoveSpeed * dt;
+                Vector3 mov = right;
+                mov.Y = 0;
+                mov.Normalize();
+                velocityToSet += mov * CameraMoveSpeed * dt;
             }
 
             if (velocityToSet.LengthSquared() > 0)
@@ -442,81 +268,106 @@ namespace DwarfCorp
 
             if (!KeyManager.RotationEnabled())
             {
-                if (mouse.X < edgePadding || mouse.X > GameState.Game.GraphicsDevice.Viewport.Width - edgePadding)
+                World.GUI.IsMouseVisible = true;
+
+                if (!World.IsMouseOverGui)
                 {
-                    moveTimer.Update(time);
-                    if (moveTimer.HasTriggered)
+
+                    if (mouse.X < edgePadding || mouse.X > GameState.Game.GraphicsDevice.Viewport.Width - edgePadding)
                     {
-                        float dir = 0.0f;
-
-                        if (mouse.X < edgePadding)
+                        moveTimer.Update(time);
+                        if (moveTimer.HasTriggered)
                         {
-                            dir = edgePadding - mouse.X;
-                        }
-                        else
-                        {
-                            dir = (GameState.Game.GraphicsDevice.Viewport.Width - edgePadding) - mouse.X;
-                        }
+                            float dir = 0.0f;
 
-                        dir *= 0.05f;
+                            if (mouse.X < edgePadding)
+                            {
+                                dir = edgePadding - mouse.X;
+                            }
+                            else
+                            {
+                                dir = (GameState.Game.GraphicsDevice.Viewport.Width - edgePadding) - mouse.X;
+                            }
 
-                        Vector3 forward = (Target - Position);
-                        forward.Normalize();
-                        Vector3 right = Vector3.Cross(forward, UpVector);
-                        Vector3 delta = right * CameraMoveSpeed * dir * dt;
-                        delta.Y = 0;
-                        Velocity = -delta;
+                            dir *= 0.01f;
+                            Vector3 delta = right*CameraMoveSpeed*dir*dt;
+                            delta.Y = 0;
+                            Velocity = -delta;
+                        }
                     }
-                }
-                else if (mouse.Y < edgePadding || mouse.Y > GameState.Game.GraphicsDevice.Viewport.Height - edgePadding)
-                {
-                    moveTimer.Update(time);
-                    if (moveTimer.HasTriggered)
+                    else if (mouse.Y < edgePadding ||
+                             mouse.Y > GameState.Game.GraphicsDevice.Viewport.Height - edgePadding)
                     {
-                        float dir = 0.0f;
-
-                        if (mouse.Y < edgePadding)
+                        moveTimer.Update(time);
+                        if (moveTimer.HasTriggered)
                         {
-                            dir = -(edgePadding - mouse.Y);
-                        }
-                        else
-                        {
-                            dir = -((GameState.Game.GraphicsDevice.Viewport.Height - edgePadding) - mouse.Y);
-                        }
+                            float dir = 0.0f;
 
-                        dir *= 0.1f;
+                            if (mouse.Y < edgePadding)
+                            {
+                                dir = -(edgePadding - mouse.Y);
+                            }
+                            else
+                            {
+                                dir = -((GameState.Game.GraphicsDevice.Viewport.Height - edgePadding) - mouse.Y);
+                            }
 
-                        Vector3 forward = (Target - Position);
-                        forward.Normalize();
-                        Vector3 right = Vector3.Cross(forward, UpVector);
-                        Vector3 up = Vector3.Cross(right, forward);
-                        Vector3 delta = up * CameraMoveSpeed * dir * dt;
-                        delta.Y = 0;
-                        Velocity = -delta;
+                            dir *= 0.01f;
+
+                            Vector3 delta = up*CameraMoveSpeed*dir*dt;
+                            delta.Y = 0;
+                            Velocity = -delta;
+                        }
                     }
-                }
-                else
-                {
-                    moveTimer.Reset(moveTimer.TargetTimeSeconds);
+                    else
+                    {
+                        moveTimer.Reset(moveTimer.TargetTimeSeconds);
+                    }
                 }
             }
-
-            if (mouse.ScrollWheelValue != LastWheel && !DwarfGame.World.IsMouseOverGui)
+            else
             {
-                int change = mouse.ScrollWheelValue - LastWheel;
+                World.GUI.IsMouseVisible = false;
+            }
+
+            int scroll = mouse.ScrollWheelValue;
+
+            if (isRightPressed && KeyManager.RotationEnabled())
+            {
+                scroll = (int)(diffY * 10) + LastWheel;
+            }
+
+            if (scroll != LastWheel && !World.IsMouseOverGui)
+            {
+                int change = scroll - LastWheel;
 
                 if (!(keys.IsKeyDown(Keys.LeftAlt) || keys.IsKeyDown(Keys.RightAlt)))
                 {
                     if (!keys.IsKeyDown(Keys.LeftControl))
                     {
-                        Vector3 delta = new Vector3(0, change, 0);
+                        var delta = change * -1;
 
                         if (GameSettings.Default.InvertZoom)
                         {
                             delta *= -1;
                         }
 
-                        Velocity = delta * CameraZoomSpeed * dt;
+                        diffRadius = delta * CameraZoomSpeed * dt;
+
+                        if (diffRadius < 0)
+                        {
+                            float diffxy =
+                                (new Vector3(Target.X, 0, Target.Z) -
+                                 new Vector3(World.CursorPos.X, 0, World.CursorPos.Z)).Length();
+
+                            if (diffxy > 5)
+                            {
+                                Vector3 slewTarget = Target*0.9f + World.CursorPos*0.1f;
+                                Vector3 slewDiff = slewTarget - Target;
+                                Target += slewDiff;
+                                Position += slewDiff;
+                            }
+                        }
                     }
                     else
                     {
@@ -527,19 +378,34 @@ namespace DwarfCorp
 
             LastWheel = mouse.ScrollWheelValue;
 
-            if (!CollidesWithChunks(DwarfGame.World.ChunkManager, Target + Velocity, false))
+            if (!CollidesWithChunks(World.ChunkManager, Position + Velocity, false))
             {
-                Target += Velocity;
+                MoveTarget(Velocity);
                 PushVelocity = Vector3.Zero;
             }
             else
             {
-                PushVelocity += Vector3.Up * 0.05f;
-                Target += PushVelocity;
+                PushVelocity += Vector3.Up * 0.1f;
+                Position += PushVelocity;
             }
+
 
             Velocity *= 0.8f;
             UpdateBasisVectors();
+            Vector3 projectedTarget = ProjectToSurface(Target);
+            Vector3 diffTarget = projectedTarget - Target;
+            Position = (Position + diffTarget) * 0.05f + Position * 0.95f;
+            Target = projectedTarget * 0.05f + Target * 0.95f;
+            float currRadius = (Position - Target).Length();
+            float newRadius = Math.Max(currRadius + diffRadius, 3.0f);
+            Position = MathFunctions.ProjectOutOfCylinder(MathFunctions.ProjectToSphere(Position - right*diffTheta * 2 - up*diffPhi * 2, newRadius, Target), Target, 3.0f);
+            UpdateViewMatrix();
+        }
+
+        public void MoveTarget(Vector3 delta)
+        {
+            Target += delta;
+            Position += delta;
         }
 
         public void UpdateBasisVectors()
@@ -549,18 +415,7 @@ namespace DwarfCorp
 
         public override void UpdateViewMatrix()
         {
-
-            Matrix cameraRotation = Matrix.CreateRotationX(Phi) * Matrix.CreateRotationY(Theta);
-
-            Vector3 cameraOriginalTarget = new Vector3(0, 0, -1);
-            Vector3 cameraRotatedTarget = Vector3.Transform(cameraOriginalTarget, cameraRotation);
-            Vector3 cameraFinalTarget = Position + cameraRotatedTarget;
-
-            Vector3 cameraOriginalUpVector = new Vector3(0, 1, 0);
-            Vector3 cameraRotatedUpVector = Vector3.Transform(cameraOriginalUpVector, cameraRotation);
-
-            ViewMatrix = Matrix.CreateLookAt(Position, cameraFinalTarget, cameraRotatedUpVector);
-            Position = Target - cameraRotatedTarget;
+            ViewMatrix = Matrix.CreateLookAt(Position, Target, Vector3.UnitY);
         }
 
         public bool Collide(BoundingBox myBox, BoundingBox box)
@@ -590,7 +445,12 @@ namespace DwarfCorp
 
         public void SnapToBounds(BoundingBox bounds)
         {
-            Target = MathFunctions.Clamp(Target, bounds.Expand(-2.0f));
+            Vector3 clampTarget = MathFunctions.Clamp(Target, bounds.Expand(-2.0f));
+            Vector3 clampPosition = MathFunctions.Clamp(Position, bounds.Expand(-2.0f));
+            Vector3 dTarget = clampTarget - Target;
+            Vector3 dPosition = clampPosition - Position;
+            Position += dTarget + dPosition;
+            Target += dTarget + dPosition;
         }
 
         public bool CollidesWithChunks(ChunkManager chunks, Vector3 pos, bool applyForce)

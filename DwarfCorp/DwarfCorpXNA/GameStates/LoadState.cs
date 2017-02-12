@@ -63,7 +63,7 @@ namespace DwarfCorp.GameStates
                 DwarfGame.World.PlayerCompany.Information = new CompanyInformation();
 
             StateManager.PopState();
-            StateManager.PushState(new PlayState(Game, StateManager));
+            StateManager.PushState(new PlayState(Game, StateManager, World));
 
             World.OnSetLoadingMessage = null;         
         }

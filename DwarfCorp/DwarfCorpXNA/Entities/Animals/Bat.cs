@@ -20,7 +20,7 @@ namespace DwarfCorp
 
         }
 
-        public Bat(Vector3 position) :
+        public Bat(ComponentManager manager, Vector3 position) :
             // Creature base constructor
             base
             (
@@ -39,16 +39,16 @@ namespace DwarfCorp
                 // Belongs to herbivore team
                 "Carnivore",
                 // Uses the default plan service
-                DwarfGame.World.PlanService,
+                manager.World.PlanService,
                 // Belongs to the herbivore team
-                DwarfGame.World.ComponentManager.Factions.Factions["Carnivore"],
+                manager.World.ComponentManager.Factions.Factions["Carnivore"],
                 // The physics component this creature belongs to
                 new Physics
                 (
                 // It is called "bird"
                     "bat",
                 // It's attached to the root component of the component manager
-                    DwarfGame.World.ComponentManager.RootComponent,
+                    manager.World.ComponentManager.RootComponent,
                 // It is located at a position passed in as an argument
                     Matrix.CreateTranslation(position),
                 // It has a size of 0.25 blocks
@@ -61,7 +61,7 @@ namespace DwarfCorp
                     new Vector3(0, -10, 0)
                 ),
                 // All the rest of the arguments are passed in directly
-                DwarfGame.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Bat"
+                manager.World.ChunkManager, GameState.Game.GraphicsDevice, GameState.Game.Content, "Bat"
             )
         {
             // Called from constructor with appropriate sprite asset as a string

@@ -55,7 +55,8 @@ namespace DwarfCorp
         public InspectType Type { get; set; }
         public Timer SelectionTimer = new Timer(0.25f, false);
 
-        public InspectSpell(InspectType type)
+        public InspectSpell(WorldManager world, InspectType type) :
+            base(world)
         {
             Type = type;
             Texture2D icons = TextureManager.GetTexture(ContentPaths.GUI.icons);
@@ -99,15 +100,15 @@ namespace DwarfCorp
 
                     if (selected.Count > 0)
                     {
-                        OnEntitiesSelected(DwarfGame.World.Master.Spells, selected);
+                        OnEntitiesSelected(World.Master.Spells, selected);
                     }
                 }
                 else
                 {
                     Voxel vox = new Voxel();
-                    DwarfGame.World.ChunkManager.ChunkData.GetNonNullVoxelAtWorldLocation(DwarfGame.World.CursorLightPos, ref vox);
+                    World.ChunkManager.ChunkData.GetNonNullVoxelAtWorldLocation(World.CursorLightPos, ref vox);
 
-                    OnVoxelsSelected(DwarfGame.World.Master.Spells, new List<Voxel>(){vox});
+                    OnVoxelsSelected(World.Master.Spells, new List<Voxel>(){vox});
                 }
             }
             base.Update(time, voxSelector, bodySelector);
@@ -127,7 +128,7 @@ namespace DwarfCorp
             }
 
             if (desc != "")
-                DwarfGame.World.ShowTooltip(desc);
+                World.ShowTooltip(desc);
 
             base.OnEntitiesSelected(tree, entities);
         }
@@ -156,7 +157,7 @@ namespace DwarfCorp
             }
 
             if (description != "")
-                DwarfGame.World.ShowTooltip(description);
+                World.ShowTooltip(description);
 
             base.OnVoxelsSelected(tree, voxels);
         }
