@@ -121,6 +121,7 @@ namespace Gum
         public Action<Widget> OnConstruct = null;
         public Action<Widget> OnLayout = null;
         public Action<Widget> OnClose = null;
+        public Action<Widget> OnShown = null;
         public bool TriggerOnChildClick = false;
 
         #endregion

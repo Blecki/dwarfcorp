@@ -567,8 +567,11 @@ namespace DwarfCorp.GameStates
 
             InfoTray = GuiRoot.RootItem.AddChild(new NewGui.InfoTray
             {
-                Rect = new Rectangle(MinimapFrame.Rect.Right,
-                        MinimapFrame.Rect.Top, 256, MinimapFrame.Rect.Height),
+                OnLayout = (sender) =>
+                {
+                    sender.Rect = new Rectangle(MinimapFrame.Rect.Right,
+                            MinimapFrame.Rect.Top, 256, MinimapFrame.Rect.Height);
+                },
                 Transparent = true
             }) as NewGui.InfoTray;
 
@@ -707,11 +710,21 @@ namespace DwarfCorp.GameStates
                                     {
                                         Data = data,
                                         Rect = new Rectangle(0,0,256,128),
-                                        Master = Master
+                                        Master = Master,
+                                        World = World
                                     },
                                     OnClick = (sender, args) =>
                                     {
-                                       // Todo: Actually build the item.
+                                        var buildInfo = (sender as NewGui.ToolTray.Icon).ExpansionChild as NewGui.BuildCraftInfo;
+                                        data.SelectedResources = buildInfo.GetSelectedResources();
+
+                                        Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                        Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                                        Master.Faction.WallBuilder.CurrentVoxelType = null;
+                                        Master.Faction.CraftBuilder.IsEnabled = true;
+                                        Master.Faction.CraftBuilder.CurrentCraftType = data;
+                                        ChangeTool(GameMaster.ToolMode.Build);
+                                        DwarfGame.World.ShowTooltip("Click and drag to build " + data.Name);
                                     }
                                     //Todo: Add to toolbar item list & disable if not enough resources?
                                 })

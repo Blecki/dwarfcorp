@@ -53,6 +53,7 @@ namespace DwarfCorp.NewGui
                     if (ExpansionChild != null && (sender as FramedIcon).Enabled)
                     {
                         ExpansionChild.Hidden = false;
+                        Root.SafeCall(ExpansionChild.OnShown, ExpansionChild);
                         ExpansionChild.Invalidate();
                     }
                 };
