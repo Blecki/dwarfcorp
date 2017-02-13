@@ -737,12 +737,15 @@ namespace DwarfCorp.GameStates
             {
                 if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
                 {
+                    /*
                     Gum.Widget currentTool;
                     if (!ToolbarItems.TryGetValue(Master.CurrentToolMode, out currentTool))
                     {
-                        currentTool = ToolbarItems[GameMaster.ToolMode.SelectUnits];
+                        currentTool = ToolbarItems[(int)GameMaster.ToolMode.SelectUnits];
                     }
-                    currentTool.OnClick(null, null);
+                    currentTool.OnClick(null, null);*/
+
+                    
                 }
                 else if (PausePanel != null)
                 {
