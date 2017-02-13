@@ -526,7 +526,7 @@ namespace DwarfCorp.GameStates
                 OnSpeedChanged = (sender, speed) =>
                 {
                     DwarfTime.LastTime.Speed = (float)speed;
-                    PlayState.Paused = speed == 0;
+                    Paused = speed == 0;
                 }
             }) as NewGui.GameSpeedControls;
 
