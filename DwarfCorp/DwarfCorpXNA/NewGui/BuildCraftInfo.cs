@@ -78,8 +78,7 @@ namespace DwarfCorp.NewGui
             for (var i = 0; i < Data.RequiredResources.Count && i < ResourceCombos.Count; ++i)
             {
                 if (ResourceCombos[i].SelectedItem == "<Not enough!>") continue;
-                r.Add(new ResourceAmount((Enum.Parse(typeof(ResourceLibrary.ResourceType),
-                    ResourceCombos[i].SelectedItem) as ResourceLibrary.ResourceType?).Value,
+                r.Add(new ResourceAmount(ResourceCombos[i].SelectedItem,
                     Data.RequiredResources[i].NumResources));
             }
             return r;

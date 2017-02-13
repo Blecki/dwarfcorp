@@ -732,6 +732,98 @@ namespace DwarfCorp.GameStates
                     },
                     #endregion
 
+                    #region Build Resource
+                    new NewGui.ToolTray.Icon
+                    {
+                        Icon = new Gum.TileReference("tool-icons", 2),
+                        KeepChildVisible = true,
+                        OnConstruct = (sender) =>
+                        {
+                            ToolbarItems.Add(new ToolbarItem(sender, () =>
+                            Master.Faction.SelectedMinions.Any(minion =>
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Build))));
+                            AddToolSelectIcon(GameMaster.ToolMode.Build, sender);
+                        },
+                        ExpansionChild = new NewGui.ToolTray.Tray
+                        {
+                            ItemSource = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) && !ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
+                                .Select(data => new NewGui.ToolTray.Icon
+                                {
+                                    // Todo: Need to get all the icons into one sheet.
+                                    Icon = new Gum.TileReference("resources", craftIcons.ConvertRectToIndex(data.Image.SourceRect)),
+                                    KeepChildVisible = true, // So the player can interact with the popup.
+                                    ExpansionChild = new NewGui.BuildCraftInfo
+                                    {
+                                        Data = data,
+                                        Rect = new Rectangle(0,0,256,128),
+                                        Master = Master,
+                                        World = World
+                                    },
+                                    OnClick = (sender, args) =>
+                                    {
+                                        var buildInfo = (sender as NewGui.ToolTray.Icon).ExpansionChild as NewGui.BuildCraftInfo;
+                                        data.SelectedResources = buildInfo.GetSelectedResources();
+
+                                        Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                        Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                                        Master.Faction.WallBuilder.CurrentVoxelType = null;
+                                        Master.Faction.CraftBuilder.IsEnabled = true;
+                                        Master.Faction.CraftBuilder.CurrentCraftType = data;
+                                        ChangeTool(GameMaster.ToolMode.Build);
+                                        DwarfGame.World.ShowTooltip("Click and drag to build " + data.Name);
+                                    }
+                                    //Todo: Add to toolbar item list & disable if not enough resources?
+                                })
+                        }
+                    },
+                    #endregion
+
+                    #region Cook
+                    new NewGui.ToolTray.Icon
+                    {
+                        Icon = new Gum.TileReference("tool-icons", 27),
+                        KeepChildVisible = true,
+                        OnConstruct = (sender) =>
+                        {
+                            ToolbarItems.Add(new ToolbarItem(sender, () =>
+                            Master.Faction.SelectedMinions.Any(minion =>
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Build))));
+                            AddToolSelectIcon(GameMaster.ToolMode.Build, sender);
+                        },
+                        ExpansionChild = new NewGui.ToolTray.Tray
+                        {
+                            ItemSource = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) && ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
+                                .Select(data => new NewGui.ToolTray.Icon
+                                {
+                                    // Todo: Need to get all the icons into one sheet.
+                                    Icon = new Gum.TileReference("resources", craftIcons.ConvertRectToIndex(data.Image.SourceRect)),
+                                    KeepChildVisible = true, // So the player can interact with the popup.
+                                    ExpansionChild = new NewGui.BuildCraftInfo
+                                    {
+                                        Data = data,
+                                        Rect = new Rectangle(0,0,256,128),
+                                        Master = Master,
+                                        World = World
+                                    },
+                                    OnClick = (sender, args) =>
+                                    {
+                                        var buildInfo = (sender as NewGui.ToolTray.Icon).ExpansionChild as NewGui.BuildCraftInfo;
+                                        data.SelectedResources = buildInfo.GetSelectedResources();
+
+                                        Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                        Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                                        Master.Faction.WallBuilder.CurrentVoxelType = null;
+                                        Master.Faction.CraftBuilder.IsEnabled = true;
+                                        Master.Faction.CraftBuilder.CurrentCraftType = data;
+                                        ChangeTool(GameMaster.ToolMode.Build);
+                                        DwarfGame.World.ShowTooltip("Click and drag to build " + data.Name);
+                                    }
+                                    //Todo: Add to toolbar item list & disable if not enough resources?
+                                })
+                        }
+                    },
+                    #endregion
+
                     #region Dig tool
                     new NewGui.ToolTray.Icon
                     {
@@ -806,6 +898,37 @@ namespace DwarfCorp.GameStates
                         }
                     },
                     #endregion
+                                        
+                    #region Farm tool
+                    new NewGui.ToolTray.Icon
+                    {
+                        Icon = new Gum.TileReference("tool-icons", 13),
+                        OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Farm),
+                        OnConstruct = (sender) =>
+                        {
+                            ToolbarItems.Add(new ToolbarItem(sender, () =>
+                            Master.Faction.SelectedMinions.Any(minion =>
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm))));
+                            AddToolSelectIcon(GameMaster.ToolMode.Farm, sender);
+                        }
+                    },
+                    #endregion
+
+                    #region Magic tool
+                    new NewGui.ToolTray.Icon
+                    {
+                        Icon = new Gum.TileReference("tool-icons", 14),
+                        OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Magic),
+                        OnConstruct = (sender) =>
+                        {
+                            ToolbarItems.Add(new ToolbarItem(sender, () =>
+                            Master.Faction.SelectedMinions.Any(minion =>
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Magic))));
+                            AddToolSelectIcon(GameMaster.ToolMode.Magic, sender);
+                        }
+                    },
+                    #endregion
+
                 }
             });
 
