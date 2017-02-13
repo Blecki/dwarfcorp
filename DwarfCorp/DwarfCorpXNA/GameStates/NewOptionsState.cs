@@ -119,7 +119,7 @@ namespace DwarfCorp.GameStates
                                         StateManager.PopState();
                                     }
                             };
-                        GuiRoot.ShowPopup(confirm, false);
+                        GuiRoot.ShowPopup(confirm);
                     }
                     else
                     {
@@ -535,8 +535,9 @@ namespace DwarfCorp.GameStates
                     GuiRoot.ShowPopup(new NewGui.Popup
                         {
                             Text = "Could not change display mode. Previous settings restored.",
-                            TextSize = 2
-                        }, false);
+                            TextSize = 2,
+                            PopupDestructionType = PopupDestructionType.DestroyOnOffClick
+                        });
                 }
             }
 

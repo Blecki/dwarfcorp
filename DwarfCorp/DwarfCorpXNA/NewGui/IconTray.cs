@@ -41,6 +41,9 @@ namespace DwarfCorp.NewGui
             MaximumSize.Y = InteriorMargin.Top + InteriorMargin.Bottom + (SizeToGrid.Y * ItemSize.Y) + ((SizeToGrid.Y - 1) * ItemSpacing.Y);
             MinimumSize = MaximumSize;
 
+            Rect.Width = MinimumSize.X;
+            Rect.Height = MinimumSize.Y;
+
             Panel = AddChild(new GridPanel
                 {
                     AutoLayout = Gum.AutoLayout.DockFill,

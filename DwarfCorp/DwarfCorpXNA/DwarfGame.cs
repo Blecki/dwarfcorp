@@ -44,6 +44,8 @@ namespace DwarfCorp
 
     public class DwarfGame : Game
     {
+        public static bool COMPRESSED_BINARY_SAVES = false;
+
         public GameStateManager StateManager { get; set; }
         public GraphicsDeviceManager Graphics;
         public TextureManager TextureManager { get; set; }

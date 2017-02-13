@@ -15,6 +15,7 @@ namespace DwarfCorp.GameStates
         private bool QuitOnNextUpdate { get; set; }
         public bool ShouldReset { get; set; }
         public WorldManager World { get; set; }
+
         public GameMaster Master
         {
             get { return World.Master; }
@@ -33,7 +34,6 @@ namespace DwarfCorp.GameStates
         private Gum.Widget MoneyLabel;
         private Gum.Widget StockLabel;
         private Gum.Widget LevelLabel;
-        private Dictionary<GameMaster.ToolMode, Gum.Widget> ToolbarItems = new Dictionary<GameMaster.ToolMode, Gum.Widget>();
         private Gum.Widget BottomRightTray;
         private Gum.Widget TimeLabel;
         private Gum.Widget PausePanel;
@@ -43,13 +43,26 @@ namespace DwarfCorp.GameStates
         private Gum.Widget ResourcePanel;
         private NewGui.InfoTray InfoTray;
 
-        private Point RememberedScreenResolution = new Point(0, 0);
-       // public Minimap MiniMap { get; set; }
+        private class ToolbarItem
+        {
+            public NewGui.FramedIcon Icon;
+            public Func<bool> Available;
+
+            public ToolbarItem(Gum.Widget Icon, Func<bool> Available)
+            {
+                System.Diagnostics.Debug.Assert(Icon is NewGui.FramedIcon);
+                this.Icon = Icon as NewGui.FramedIcon;
+                this.Available = Available;
+            }
+        }
+
+        private List<ToolbarItem> ToolbarItems = new List<ToolbarItem>();
+
 
         // Provides event-based keyboard and mouse input.
         public static InputManager Input;// = new InputManager();
 
-        private Gum.Root NewGui;
+        private Gum.Root GuiRoot;
 
         /// <summary>
         /// Creates a new play state
@@ -65,9 +78,7 @@ namespace DwarfCorp.GameStates
             ShouldReset = true;
             Paused = false;
             RenderUnderneath = true;
-
-            IsInitialized = true;
-
+            EnableScreensaver = false;
             IsInitialized = false;
         }
 
@@ -88,9 +99,9 @@ namespace DwarfCorp.GameStates
             if (!IsInitialized)
             {
                 // Setup new gui. Double rendering the mouse?
-                NewGui = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
-                NewGui.MousePointer = new Gum.MousePointer("mouse", 4, 0);
-                World.NewGui = NewGui;
+                GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
+                GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
+                DwarfGame.World.NewGui = GuiRoot;
 
                 // Setup input event handlers. All of the actions should already be established - just 
                 // need handlers.
@@ -103,12 +114,12 @@ namespace DwarfCorp.GameStates
 
                 World.ShowTooltip += (text) =>
                     {
-                        NewGui.ShowTooltip(NewGui.MousePosition, text);
+                        GuiRoot.ShowTooltip(GuiRoot.MousePosition, text);
                     };
 
                 World.SetMouse += (mouse) =>
                     {
-                        NewGui.MousePointer = mouse;
+                        GuiRoot.MousePointer = mouse;
                     };
 
                 World.gameState = this;
@@ -138,10 +149,10 @@ namespace DwarfCorp.GameStates
         {
             //WorldManager.GUI.IsMouseVisible = false;
 
-            if (NewGui.ResolutionChanged())
+            if (GuiRoot.ResolutionChanged())
             {
-                NewGui.ResizeVirtualScreen(new Point(640, 480));
-                NewGui.ResetGui();
+                GuiRoot.ResizeVirtualScreen(new Point(640, 480));
+                GuiRoot.ResetGui();
                 CreateGUIComponents();
 
                 if (PausePanel != null)
@@ -168,7 +179,7 @@ namespace DwarfCorp.GameStates
 
             // Needs to run before old input so tools work
             // Update new input system.
-            DwarfGame.GumInput.FireActions(NewGui, (@event, args) =>
+            DwarfGame.GumInput.FireActions(GuiRoot, (@event, args) =>
             {
                 // Let old input handle mouse interaction for now. Will eventually need to be replaced.
             });
@@ -198,24 +209,16 @@ namespace DwarfCorp.GameStates
             #endregion
 
             #region Update toolbar tray
-            foreach (var tools in ToolbarItems)
-            {
-                tools.Value.Hidden = true;
-                tools.Value.Invalidate();
-            }
-
             if (Master.SelectedMinions.Count == 0)
             {
                 if (Master.CurrentToolMode != GameMaster.ToolMode.God)
                     Master.CurrentToolMode = GameMaster.ToolMode.SelectUnits;
             }
-            else
-            {
-                foreach (var tool in ToolbarItems)
-                    tool.Value.Hidden = !Master.Faction.SelectedMinions.Any(minion => minion.Stats.CurrentClass.HasAction(tool.Key));
-            }
 
-            ToolbarItems[GameMaster.ToolMode.SelectUnits].Hidden = false;
+            foreach (var tool in ToolbarItems)
+                tool.Icon.Enabled = tool.Available();
+            
+            //ToolbarItems[GameMaster.ToolMode.SelectUnits].Hidden = false;
             #endregion
 
             #region Update resource panel
@@ -227,15 +230,15 @@ namespace DwarfCorp.GameStates
                 var row = ResourcePanel.AddChild(new Gum.Widget
                     {
                         MinimumSize = new Point(0, 32),
-                        AutoLayout = Gum.AutoLayout.DockTop
+                        AutoLayout = global::Gum.AutoLayout.DockTop
                     });
 
                 row.AddChild(new Gum.Widget
                     {
                         Background = new Gum.TileReference("resources", resourceTemplate.NewGuiSprite),
                         MinimumSize = new Point(32, 32),
-                        AutoLayout = Gum.AutoLayout.DockLeft,
-                        Tooltip = String.Format("{0} - {1}",
+                        AutoLayout = global::Gum.AutoLayout.DockLeft,
+                        Tooltip = string.Format("{0} - {1}",
                             resourceTemplate.ResourceName,
                             resourceTemplate.Description)
                     });
@@ -244,23 +247,22 @@ namespace DwarfCorp.GameStates
                 {
                     Text = resource.Value.NumResources.ToString(),
                     MinimumSize = new Point(32, 32),
-                    AutoLayout = Gum.AutoLayout.DockLeft,
-                    Tooltip = String.Format("{0} - {1}",
+                    AutoLayout = global::Gum.AutoLayout.DockLeft,
+                    Tooltip = string.Format("{0} - {1}",
                         resourceTemplate.ResourceName,
                         resourceTemplate.Description),
                     Font = "outline-font",
-                    TextVerticalAlign = Gum.VerticalAlign.Center,
+                    TextVerticalAlign = global::Gum.VerticalAlign.Center,
                     TextColor = new Vector4(1,1,1,1)
                 });
             }
             ResourcePanel.Layout();
             #endregion
 
-            if (Paused && GameSpeedControls.CurrentSpeed != 0)
-                GameSpeedControls.CurrentSpeed = 0;
+            GameSpeedControls.CurrentSpeed = (int)DwarfTime.LastTime.Speed;
 
             // Really just handles mouse pointer animation.
-            NewGui.Update(gameTime.ToGameTime());
+            GuiRoot.Update(gameTime.ToGameTime());
         }
 
         /// <summary>
@@ -279,8 +281,8 @@ namespace DwarfCorp.GameStates
                 World.Render(gameTime);
 
                 if (!MinimapFrame.Hidden)
-                    MinimapRenderer.Render(new Rectangle(0, NewGui.VirtualScreen.Bottom - 192, 192, 192), NewGui);
-                NewGui.Draw();
+                    MinimapRenderer.Render(new Rectangle(0, GuiRoot.VirtualScreen.Bottom - 192, 192, 192), GuiRoot);
+                GuiRoot.Draw();
 
                 // SpriteBatch Begin and End must be called again. Hopefully we can factor this out with the new gui
                 RasterizerState rasterizerState = new RasterizerState()
@@ -318,57 +320,35 @@ namespace DwarfCorp.GameStates
 
             GUI.RootComponent.AddChild(Master.Debugger.MainPanel);
 
-            #region Setup bottom right tray
-
-            ToolbarItems[GameMaster.ToolMode.SelectUnits] = CreateIcon(5, GameMaster.ToolMode.SelectUnits);
-            ToolbarItems[GameMaster.ToolMode.Dig] = CreateIcon(0, GameMaster.ToolMode.Dig);
-            ToolbarItems[GameMaster.ToolMode.Build] = CreateIcon(2, GameMaster.ToolMode.Build);
-            ToolbarItems[GameMaster.ToolMode.Cook] = CreateIcon(3, GameMaster.ToolMode.Cook);
-            ToolbarItems[GameMaster.ToolMode.Farm] = CreateIcon(5, GameMaster.ToolMode.Farm);
-            ToolbarItems[GameMaster.ToolMode.Magic] = CreateIcon(6, GameMaster.ToolMode.Magic);
-            ToolbarItems[GameMaster.ToolMode.Gather] = CreateIcon(6, GameMaster.ToolMode.Gather);
-            ToolbarItems[GameMaster.ToolMode.Chop] = CreateIcon(1, GameMaster.ToolMode.Chop);
-            ToolbarItems[GameMaster.ToolMode.Guard] = CreateIcon(4, GameMaster.ToolMode.Guard);
-            ToolbarItems[GameMaster.ToolMode.Attack] = CreateIcon(3, GameMaster.ToolMode.Attack);
-
-            BottomRightTray = NewGui.RootItem.AddChild(new NewGui.IconTray
-            {
-                Corners = Gum.Scale9Corners.Left | Gum.Scale9Corners.Top,
-                AutoLayout = Gum.AutoLayout.FloatBottomRight,
-                ItemSource = ToolbarItems.Select(i => i.Value),
-                SizeToGrid = new Point(5,2)
-            });
-            #endregion
-
             #region Setup company information section
-            NewGui.RootItem.AddChild(new NewGui.CompanyLogo
+            GuiRoot.RootItem.AddChild(new NewGui.CompanyLogo
                 {
                     Rect = new Rectangle(8,8,32,32),
                     MinimumSize = new Point(32, 32),
                     MaximumSize = new Point(32, 32),
-                    AutoLayout = Gum.AutoLayout.None,
+                    AutoLayout = global::Gum.AutoLayout.None,
                     CompanyInformation = World.PlayerCompany.Information
                 });
 
-            NewGui.RootItem.AddChild(new Gum.Widget
+            GuiRoot.RootItem.AddChild(new Gum.Widget
                 {
                     Rect = new Rectangle(48,8,256,20),
                     Text = World.PlayerCompany.Information.Name,
-                    AutoLayout = Gum.AutoLayout.None,
+                    AutoLayout = global::Gum.AutoLayout.None,
                     Font = "outline-font",
                     TextColor = new Vector4(1,1,1,1)
                 });
 
-            var infoPanel = NewGui.RootItem.AddChild(new Gum.Widget
+            var infoPanel = GuiRoot.RootItem.AddChild(new Gum.Widget
             {
                 Rect = new Rectangle(0, 40, 128, 102),
-                AutoLayout = Gum.AutoLayout.None
+                AutoLayout = global::Gum.AutoLayout.None
             });
 
             var moneyRow = infoPanel.AddChild(new Gum.Widget
             {
                 MinimumSize = new Point(0, 34),
-                AutoLayout = Gum.AutoLayout.DockTop
+                AutoLayout = global::Gum.AutoLayout.DockTop
             });
 
             moneyRow.AddChild(new Gum.Widget
@@ -376,22 +356,22 @@ namespace DwarfCorp.GameStates
                 Background = new Gum.TileReference("resources", 40),
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
-                AutoLayout = Gum.AutoLayout.DockLeft
+                AutoLayout = global::Gum.AutoLayout.DockLeft
             });
 
             MoneyLabel = moneyRow.AddChild(new Gum.Widget
                 {
                     Rect = new Rectangle(48, 32, 128, 20),
-                    AutoLayout = Gum.AutoLayout.DockFill,
+                    AutoLayout = global::Gum.AutoLayout.DockFill,
                     Font = "outline-font",
-                    TextVerticalAlign = Gum.VerticalAlign.Center,
+                    TextVerticalAlign = global::Gum.VerticalAlign.Center,
                     TextColor = new Vector4(1,1,1,1)
                 });
 
             var stockRow = infoPanel.AddChild(new Gum.Widget
             {
                 MinimumSize = new Point(0, 34),
-                AutoLayout = Gum.AutoLayout.DockTop
+                AutoLayout = global::Gum.AutoLayout.DockTop
             });
 
             stockRow.AddChild(new Gum.Widget
@@ -399,30 +379,30 @@ namespace DwarfCorp.GameStates
                 Background = new Gum.TileReference("resources", 41),
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
-                AutoLayout = Gum.AutoLayout.DockLeft
+                AutoLayout = global::Gum.AutoLayout.DockLeft
             });
 
             StockLabel = stockRow.AddChild(new Gum.Widget
             {
                 Rect = new Rectangle(48, 32, 128, 20),
-                AutoLayout = Gum.AutoLayout.DockFill,
+                AutoLayout = global::Gum.AutoLayout.DockFill,
                 Font = "outline-font",
-                TextVerticalAlign = Gum.VerticalAlign.Center,
+                TextVerticalAlign = global::Gum.VerticalAlign.Center,
                 TextColor = new Vector4(1, 1, 1, 1)
             });
 
             var levelRow = infoPanel.AddChild(new Gum.Widget
             {
                 MinimumSize = new Point(0, 34),
-                AutoLayout = Gum.AutoLayout.DockTop
+                AutoLayout = global::Gum.AutoLayout.DockTop
             });
 
             levelRow.AddChild(new Gum.Widget
             {
-                Background = new Gum.TileReference("resources", 40), // Todo: level icon!
+                Background = new Gum.TileReference("resources", 42),
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
-                AutoLayout = Gum.AutoLayout.DockLeft
+                AutoLayout = global::Gum.AutoLayout.DockLeft
             });
 
             levelRow.AddChild(new Gum.Widget
@@ -430,7 +410,7 @@ namespace DwarfCorp.GameStates
                 Background = new Gum.TileReference("round-buttons", 7),
                 MinimumSize = new Point(16,16),
                 MaximumSize = new Point(16,16),
-                AutoLayout = Gum.AutoLayout.FloatLeft,
+                AutoLayout = global::Gum.AutoLayout.FloatLeft,
                 OnLayout = (sender) => sender.Rect.X += 18,
                 OnClick = (sender, args) =>
                 {
@@ -445,39 +425,39 @@ namespace DwarfCorp.GameStates
                 Background = new Gum.TileReference("round-buttons", 3),
                 MinimumSize = new Point(16, 16),
                 MaximumSize = new Point(16, 16),
-                AutoLayout = Gum.AutoLayout.FloatLeft,
+                AutoLayout = global::Gum.AutoLayout.FloatLeft,
                 OnClick = (sender, args) =>
                 {
                     World.ChunkManager.ChunkData.SetMaxViewingLevel(
                         World.ChunkManager.ChunkData.MaxViewingLevel + 1,
                         ChunkManager.SliceMode.Y);
                 }
-            });            
+            });
 
             LevelLabel = levelRow.AddChild(new Gum.Widget
             {
                 Rect = new Rectangle(48, 32, 128, 20),
-                AutoLayout = Gum.AutoLayout.DockFill,
+                AutoLayout = global::Gum.AutoLayout.DockFill,
                 Font = "outline-font",
                 OnLayout = (sender) => sender.Rect.X += 36,
-                TextVerticalAlign = Gum.VerticalAlign.Center,
+                TextVerticalAlign = global::Gum.VerticalAlign.Center,
                 TextColor = new Vector4(1, 1, 1, 1)
-            });            
+            });
             #endregion
 
-            ResourcePanel = NewGui.RootItem.AddChild(new Gum.Widget
+            ResourcePanel = GuiRoot.RootItem.AddChild(new Gum.Widget
                 {
                     Transparent = true,
                     Rect = new Rectangle(0, 104, 128, 128),
-                    AutoLayout = Gum.AutoLayout.None,
+                    AutoLayout = global::Gum.AutoLayout.None,
                     OnLayout = sender => sender.Rect.Y = infoPanel.Rect.Bottom + 4
                 });
 
             #region Setup time display
-            TimeLabel = NewGui.RootItem.AddChild(new Gum.Widget
+            TimeLabel = GuiRoot.RootItem.AddChild(new Gum.Widget
                 {
-                    AutoLayout = Gum.AutoLayout.FloatTop,
-                    TextHorizontalAlign = Gum.HorizontalAlign.Center,
+                    AutoLayout = global::Gum.AutoLayout.FloatTop,
+                    TextHorizontalAlign = global::Gum.HorizontalAlign.Center,
                     MinimumSize = new Point(128, 20),
                     Font = "outline-font",
                     TextColor = new Vector4(1,1,1,1)
@@ -489,9 +469,9 @@ namespace DwarfCorp.GameStates
             // Little hack here - Normally this button his hidden by the minimap. Hide the minimap and it 
             // becomes visible! 
             // Todo: Doh, doesn't actually work.
-            NewGui.RootItem.AddChild(new Gum.Widget
+            GuiRoot.RootItem.AddChild(new Gum.Widget
                 {
-                    AutoLayout = Gum.AutoLayout.FloatBottomLeft,
+                    AutoLayout = global::Gum.AutoLayout.FloatBottomLeft,
                     Background = new Gum.TileReference("round-buttons", 3),
                     MinimumSize = new Point(16,16),
                     MaximumSize = new Point(16,16),
@@ -505,18 +485,18 @@ namespace DwarfCorp.GameStates
             MinimapRenderer = new NewGui.MinimapRenderer(192, 192, World,
                 TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap));
 
-            MinimapFrame = NewGui.RootItem.AddChild(new NewGui.MinimapFrame
-                {
-                    AutoLayout = Gum.AutoLayout.FloatBottomLeft,
-                    Renderer = MinimapRenderer
-                }) as NewGui.MinimapFrame;
+            MinimapFrame = GuiRoot.RootItem.AddChild(new NewGui.MinimapFrame
+            {
+                AutoLayout = global::Gum.AutoLayout.FloatBottomLeft,
+                Renderer = MinimapRenderer
+            }) as NewGui.MinimapFrame;
             #endregion
 
             #region Setup top right tray
-            var topRightTray = NewGui.RootItem.AddChild(new NewGui.IconTray
+            var topRightTray = GuiRoot.RootItem.AddChild(new NewGui.IconTray
                 {
-                    Corners = Gum.Scale9Corners.Left | Gum.Scale9Corners.Bottom,
-                    AutoLayout = Gum.AutoLayout.FloatTopRight,
+                    Corners = global::Gum.Scale9Corners.Left | global::Gum.Scale9Corners.Bottom,
+                    AutoLayout = global::Gum.AutoLayout.FloatTopRight,
                     SizeToGrid = new Point(2,1),
                     ItemSource = new Gum.Widget[] 
                         { 
@@ -535,17 +515,20 @@ namespace DwarfCorp.GameStates
             #endregion
 
             #region Setup game speed controls
-            GameSpeedControls = NewGui.RootItem.AddChild(new NewGui.GameSpeedControls
+            GameSpeedControls = GuiRoot.RootItem.AddChild(new NewGui.GameSpeedControls
+            {
+                AutoLayout = Gum.AutoLayout.FloatBottomRight,
+                OnLayout = (sender) =>
                 {
-                    AutoLayout = Gum.AutoLayout.None,
-                    OnLayout = (sender) =>
-                    {
-                        // Want to position this directly above the bottom-right tray.
-                        sender.Rect = new Rectangle(BottomRightTray.Rect.Right - sender.MinimumSize.X,
-                            BottomRightTray.Rect.Top - sender.MinimumSize.Y, sender.MinimumSize.X, sender.MinimumSize.Y);
-                    },
-                    PlayState = this
-                }) as NewGui.GameSpeedControls;
+                    sender.Rect.X -= 8;
+                    sender.Rect.Y -= 8;
+                },
+                OnSpeedChanged = (sender, speed) =>
+                {
+                    DwarfTime.LastTime.Speed = (float)speed;
+                    PlayState.Paused = speed == 0;
+                }
+            }) as NewGui.GameSpeedControls;
 
             #endregion
 
@@ -553,7 +536,7 @@ namespace DwarfCorp.GameStates
 
             World.OnAnnouncement = (title, message, clickAction) =>
                 {
-                    var announcer = NewGui.RootItem.AddChild(new NewGui.AnnouncementPopup
+                    var announcer = GuiRoot.RootItem.AddChild(new NewGui.AnnouncementPopup
                     {
                         Text = title,
                         Message = message,
@@ -566,31 +549,174 @@ namespace DwarfCorp.GameStates
                     });
 
                     // Make the announcer stay behind other controls.
-                    NewGui.RootItem.SendToBack(announcer);
+                    GuiRoot.RootItem.SendToBack(announcer);
                 };
 
-            InfoTray = NewGui.RootItem.AddChild(new NewGui.InfoTray
+            InfoTray = GuiRoot.RootItem.AddChild(new NewGui.InfoTray
+            {
+                Rect = new Rectangle(MinimapFrame.Rect.Right,
+                        MinimapFrame.Rect.Top, 256, MinimapFrame.Rect.Height),
+                Transparent = true
+            }) as NewGui.InfoTray;
+
+            #region Setup bottom right tray
+
+            /*
+                tool.Value.Enabled = !Master.Faction.SelectedMinions.Any(minion => minion.Stats.CurrentClass.HasAction(tool.Key));)
+
+            ToolbarItems[GameMaster.ToolMode.Build] = CreateIcon(2, GameMaster.ToolMode.Build);
+            ToolbarItems[GameMaster.ToolMode.Cook] = CreateIcon(3, GameMaster.ToolMode.Cook);
+            ToolbarItems[GameMaster.ToolMode.Farm] = CreateIcon(5, GameMaster.ToolMode.Farm);
+            ToolbarItems[GameMaster.ToolMode.Magic] = CreateIcon(6, GameMaster.ToolMode.Magic);
+            */
+
+            var roomIcons = GuiRoot.GetTileSheet("rooms") as Gum.TileSheet;
+
+            BottomRightTray = GuiRoot.RootItem.AddChild(new NewGui.ToolTray.Tray
+            {
+                AutoLayout = global::Gum.AutoLayout.FloatBottom,
+                ItemSource = new Gum.Widget[]
                 {
-                    Rect = new Rectangle(NewGui.VirtualScreen.X + 239,
-                        NewGui.VirtualScreen.Bottom - 210, 256, 210),
-                    Transparent = true
-                }) as NewGui.InfoTray;
-                        
-            NewGui.RootItem.Layout();
+                    // Select tool
+                    new NewGui.ToolTray.LeafIcon
+                    {
+                        Icon = new Gum.TileReference("tool-icons", 5),
+                        OnClick = (sender, args) => Master.ChangeTool(GameMaster.ToolMode.SelectUnits),
+                        OnConstruct = (sender) => ToolbarItems.Add(new ToolbarItem(sender, () => true))
+                    },
+
+                    // Build rooms
+                    new NewGui.ToolTray.ExpandingIcon
+                    {
+                        Icon = new Gum.TileReference("tool-icons", 2),
+                        OnConstruct = (sender) => ToolbarItems.Add(new ToolbarItem(sender, () =>
+                            Master.Faction.SelectedMinions.Any(minion =>
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Build)))),
+                        ExpansionChild = new NewGui.ToolTray.Tray
+                        {
+                            ItemSource = RoomLibrary.GetRoomTypes().Select(name => RoomLibrary.GetData(name))
+                                .Select(data => new NewGui.ToolTray.LeafIcon
+                                {
+                                    Icon = new Gum.TileReference("rooms", roomIcons.ConvertRectToIndex(data.Icon.SourceRect)),
+                                    ExpansionChild = new NewGui.BuildRoomButton
+                                    {
+                                        Data = data,
+                                        Rect = new Rectangle(0,0,256,128)
+                                    },
+                                    OnClick = (sender, args) =>
+                                    {
+                                        Master.Faction.RoomBuilder.CurrentRoomData = data;
+                                        Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+                                        Master.Faction.WallBuilder.CurrentVoxelType = null;
+                                        Master.Faction.CraftBuilder.IsEnabled = false;
+                                        Master.ChangeTool(GameMaster.ToolMode.Build);
+                                        DwarfGame.World.ShowTooltip("Click and drag to build " + data.Name);
+                                    }
+                                    //Todo: Add to toolbar item list & disable if not enough resources?
+                                })
+                        }
+                    },
+
+                    // Build walls
+                    new NewGui.ToolTray.ExpandingIcon
+                    {
+                        Icon = new Gum.TileReference("tool-icons", 2),
+                        OnConstruct = (sender) => ToolbarItems.Add(new ToolbarItem(sender, () =>
+                            Master.Faction.SelectedMinions.Any(minion =>
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Build)))),
+                        ExpansionChild = new NewGui.ToolTray.Tray
+                        {
+                            ItemSource = VoxelLibrary.GetTypes().Where(voxel => voxel.IsBuildable)
+                                .Select(data => new NewGui.ToolTray.LeafIcon
+                                {
+                                    // Todo: Need icons for wall types.
+                                    Icon = new Gum.TileReference("rooms", 0),
+                                    ExpansionChild = new NewGui.BuildWallButton
+                                    {
+                                        Data = data,
+                                        Rect = new Rectangle(0,0,256,128)
+                                    },
+                                    OnClick = (sender, args) =>
+                                    {
+                                        Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                        Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                                        Master.Faction.WallBuilder.CurrentVoxelType = data;
+                                        Master.Faction.CraftBuilder.IsEnabled = false;
+                                        Master.ChangeTool(GameMaster.ToolMode.Build);
+                                        DwarfGame.World.ShowTooltip("Click and drag to build " + data.Name + " wall.");
+                                    }
+                                    //Todo: Add to toolbar item list & disable if not enough resources?
+                                })
+                        }
+                    },
+
+                    // Dig tool
+                    new NewGui.ToolTray.LeafIcon
+                    {
+                        Icon = new Gum.TileReference("tool-icons", 0),
+                        OnClick = (sender, args) => Master.ChangeTool(GameMaster.ToolMode.Dig),
+                        OnConstruct = (sender) => ToolbarItems.Add(new ToolbarItem(sender, () =>
+                            Master.Faction.SelectedMinions.Any(minion =>
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Dig))))
+                    },
+
+                    // Gather tool
+                    new NewGui.ToolTray.LeafIcon
+                    {
+                        Icon = new Gum.TileReference("tool-icons", 6),
+                        OnClick = (sender, args) => Master.ChangeTool(GameMaster.ToolMode.Gather),
+                        OnConstruct = (sender) => ToolbarItems.Add(new ToolbarItem(sender, () =>
+                            Master.Faction.SelectedMinions.Any(minion =>
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Gather))))
+                    },
+
+                    // Chop tool
+                    new NewGui.ToolTray.LeafIcon
+                    {
+                        Icon = new Gum.TileReference("tool-icons", 1),
+                        OnClick = (sender, args) => Master.ChangeTool(GameMaster.ToolMode.Chop),
+                        OnConstruct = (sender) => ToolbarItems.Add(new ToolbarItem(sender, () =>
+                            Master.Faction.SelectedMinions.Any(minion =>
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Chop))))
+                    },
+
+                    // Guard tool
+                    new NewGui.ToolTray.LeafIcon
+                    {
+                        Icon = new Gum.TileReference("tool-icons", 4),
+                        OnClick = (sender, args) => Master.ChangeTool(GameMaster.ToolMode.Guard),
+                        OnConstruct = (sender) => ToolbarItems.Add(new ToolbarItem(sender, () =>
+                            Master.Faction.SelectedMinions.Any(minion =>
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Guard))))
+                    },
+
+
+                    // Attack tool
+                    new NewGui.ToolTray.LeafIcon
+                    {
+                        Icon = new Gum.TileReference("tool-icons", 3),
+                        OnClick = (sender, args) => Master.ChangeTool(GameMaster.ToolMode.Attack),
+                        OnConstruct = (sender) => ToolbarItems.Add(new ToolbarItem(sender, () =>
+                            Master.Faction.SelectedMinions.Any(minion =>
+                                minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Attack))))
+                    },
+                }
+            });
+
+            BottomRightTray.Hidden = false;
+
+            #endregion
+
+
+            GuiRoot.RootItem.Layout();
         }
 
-        private Gum.Widget CreateIcon(int Tile, GameMaster.ToolMode Mode)
+        private NewGui.FramedIcon CreateIcon(int Tile, GameMaster.ToolMode Mode)
         {
             return new NewGui.FramedIcon
             {
                 Icon = new Gum.TileReference("tool-icons", Tile),
-                OnClick = (sender, args) =>
-                    {
-                        Master.Tools[Mode].OnBegin();
-                        if (Master.CurrentToolMode != Mode)
-                            Master.CurrentTool.OnEnd();
-                        Master.CurrentToolMode = Mode;
-                    }
+                OnClick = (sender, args) => Master.ChangeTool(Mode)
             };
         }
                 
@@ -611,7 +737,8 @@ namespace DwarfCorp.GameStates
             {
                 if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
                 {
-                    ToolbarItems[Master.CurrentToolMode].OnClick(null, null);
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    //ToolbarItems[Master.CurrentToolMode].OnClick(null, null);
                 }
                 else if (PausePanel != null)
                 {
@@ -643,21 +770,21 @@ namespace DwarfCorp.GameStates
                 int i = 0;
                 if (index == 0 || Master.SelectedMinions.Count > 0)
                 {
-                    foreach (var pair in ToolbarItems)
-                    {
-                        if (i == index)
-                        {
-                            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
-                                pair.Key);
+                    //foreach (var pair in ToolbarItems)
+                    //{
+                    //    if (i == index)
+                    //    {
+                    //        List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Master.SelectedMinions,
+                    //            pair.Key);
 
-                            if ((index == 0 || minions.Count > 0))
-                            {
-                                pair.Value.OnClick(null,null);
-                                break;
-                            }
-                        }
-                        i++;
-                    }
+                    //        if ((index == 0 || minions.Count > 0))
+                    //        {
+                    //            pair.Value.OnClick(null,null);
+                    //            break;
+                    //        }
+                    //    }
+                    //    i++;
+                    //}
 
                     //Master.ToolBar.CurrentMode = modes[index];
                 }
@@ -687,13 +814,13 @@ namespace DwarfCorp.GameStates
         {
             Menu.AddChild(new Gum.Widget
             {
-                AutoLayout = Gum.AutoLayout.DockTop,
+                AutoLayout = global::Gum.AutoLayout.DockTop,
                 Border = "border-thin",
                 Text = Name,
                 OnClick = OnClick,
                 Tooltip = Tooltip,
-                TextHorizontalAlign = Gum.HorizontalAlign.Center,
-                TextVerticalAlign = Gum.VerticalAlign.Center,
+                TextHorizontalAlign = global::Gum.HorizontalAlign.Center,
+                TextVerticalAlign = global::Gum.VerticalAlign.Center,
                 TextSize = 2
             });
         }
@@ -701,26 +828,26 @@ namespace DwarfCorp.GameStates
         public void OpenPauseMenu()
         {
             if (PausePanel != null) return;
-            Paused = true;
+            GameSpeedControls.Pause();
 
             PausePanel = new Gum.Widget
             {
-                Rect = new Rectangle(NewGui.VirtualScreen.Center.X - 128,
-                    NewGui.VirtualScreen.Center.Y - 100, 256, 200),
+                Rect = new Rectangle(GuiRoot.VirtualScreen.Center.X - 128,
+                    GuiRoot.VirtualScreen.Center.Y - 100, 256, 200),
                 Border = "border-fancy",
-                TextHorizontalAlign = Gum.HorizontalAlign.Center,
+                TextHorizontalAlign = global::Gum.HorizontalAlign.Center,
                 Text = "- Paused -",
                 InteriorMargin = new Gum.Margin(12, 0, 0, 0),
                 Padding = new Gum.Margin(2, 2, 2, 2),
                 OnClose = (sender) => PausePanel = null
             };
 
-            NewGui.ConstructWidget(PausePanel);
+            GuiRoot.ConstructWidget(PausePanel);
 
             MakeMenuItem(PausePanel, "Continue", "", (sender, args) =>
                 {
                     PausePanel.Close();
-                    Paused = false;
+                    GameSpeedControls.Resume();
                     PausePanel = null;
                 });
 
@@ -742,7 +869,7 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(PausePanel, "Save", "",
                 (sender, args) =>
                 {
-                    NewGui.ShowPopup(new NewGui.Confirm
+                    GuiRoot.ShowPopup(new NewGui.Confirm
                     {
                         Text = "Warning: Saving is still an unstable feature. Are you sure you want to continue?",
                         OnClose = (s) =>
@@ -752,21 +879,21 @@ namespace DwarfCorp.GameStates
                                     String.Format("{0}_{1}", Overworld.Name, World.GameID),
                                     (success, exception) =>
                                     {
-                                        NewGui.ShowPopup(new NewGui.Popup
+                                        GuiRoot.ShowPopup(new NewGui.Popup
                                         {
                                             Text = success ? "File saved." : "Save failed - " + exception.Message,
                                             OnClose = (s2) => OpenPauseMenu()
-                                        }, false);
+                                        });
                                     });
                         }
-                    }, false);
+                    });
                 });
             
             MakeMenuItem(PausePanel, "Quit", "", (sender, args) => QuitOnNextUpdate = true);
 
             PausePanel.Layout();
 
-            NewGui.ShowPopup(PausePanel, false);
+            GuiRoot.ShowPopup(PausePanel);
         }
       
         public void Destroy()

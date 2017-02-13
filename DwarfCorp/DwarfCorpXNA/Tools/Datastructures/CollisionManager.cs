@@ -39,8 +39,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
-
     [JsonObject(IsReference = true)]
     public class SpatialHash<T>
     {
@@ -289,48 +287,6 @@ namespace DwarfCorp
                 }
             }
         }
-
-        public void GetObjectsIntersecting<TObject>(BoundingSphere sphere, HashSet<TObject> set, CollisionType queryType) where TObject : IBoundedObject
-        {
-            HashSet<TObject> intersectingBounds = new HashSet<TObject>();
-            BoundingBox box = MathFunctions.GetBoundingBox(sphere);
-            switch ((int)queryType)
-            {
-                case (int)CollisionType.Static:
-                case (int)CollisionType.Dynamic:
-                    Hashes[queryType].GetItemsInBox(box, intersectingBounds);
-                    break;
-                case ((int)CollisionType.Static | (int)CollisionType.Dynamic):
-                    Hashes[CollisionType.Static].GetItemsInBox(box, intersectingBounds);
-                    Hashes[CollisionType.Dynamic].GetItemsInBox(box, intersectingBounds);
-                    break;
-            }
-            intersectingBounds.RemoveWhere(obj => !obj.GetBoundingBox().Intersects(sphere));
-        }
-
-
-
-        public void GetObjectsIntersecting<TObject>(Ray ray, HashSet<TObject> set, CollisionType queryType)
-            where TObject : IBoundedObject
-        {
-            if (queryType == (CollisionType.Static | CollisionType.Dynamic))
-            {
-                GetObjectsIntersecting<TObject>(ray, set, CollisionType.Static);
-                GetObjectsIntersecting<TObject>(ray, set, CollisionType.Dynamic);
-            }
-            else foreach(Point3 pos in MathFunctions.RasterizeLine(ray.Position, ray.Direction*100 + ray.Position))
-            {
-                if (queryType != CollisionType.Static && queryType != CollisionType.Dynamic) continue;
-
-                List<IBoundedObject> obj = Hashes[queryType].GetItems(pos);
-                if (obj == null) continue;
-                foreach (TObject item in obj.OfType<TObject>().Where(item => !set.Contains(item) && ray.Intersects(item.GetBoundingBox()) != null))
-                {
-                    set.Add(item);
-                }
-            }
-        }
-
 
         public HashSet<T> GetVisibleObjects<T>(BoundingFrustum getFrustrum, CollisionType collisionType) where T : IBoundedObject
         {

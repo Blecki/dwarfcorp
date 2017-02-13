@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Gum;
+using System.Linq;
 
 namespace DwarfCorp.GameStates
 {
@@ -165,6 +166,58 @@ namespace DwarfCorp.GameStates
             GuiRoot.RootItem.Layout();
         }
 
+        private Gum.Widget CreateTray(IEnumerable<Widget> Icons)
+        {
+            return GuiRoot.ConstructWidget(new NewGui.IconTray
+            {
+                SizeToGrid = new Point(Icons.Count(), 1),
+                Corners = Scale9Corners.Top | Scale9Corners.Right | Scale9Corners.Left,
+                ItemSource = Icons,
+                Hidden = true,
+                //OnMouseLeave = (sender, args) => sender.Hidden = true
+            });
+        }
+
+        private Gum.Widget CreateTrayIcon(int Tile, Gum.Widget Child)
+        {
+            var r = new NewGui.FramedIcon
+            {
+                Icon = new Gum.TileReference("tool-icons", Tile),
+                OnClick = (sender, args) =>
+                {
+                    
+                },
+                OnHover = (sender) =>
+                {
+                    foreach (var child in sender.Parent.EnumerateChildren().Where(c => c is NewGui.FramedIcon)
+                    .SelectMany(c => c.EnumerateChildren()))
+                    {
+                        child.Hidden = true;
+                        child.Invalidate();
+                    }
+
+                    if (Child != null)
+                    {
+                        Child.Hidden = false;
+                        Child.Invalidate();
+                    }
+                },
+                OnLayout = (sender) =>
+                {
+                    if (Child != null)
+                    {
+                        var midPoint = sender.Rect.X + (sender.Rect.Width / 2);
+                        Child.Rect.X = midPoint - (Child.Rect.Width / 2);
+                        Child.Rect.Y = sender.Rect.Y - 60;
+                    }
+                }
+            };
+
+            GuiRoot.ConstructWidget(r);
+            if (Child != null) r.AddChild(Child);
+            return r;
+        }
+        
         public override void OnEnter()
         {
             // Clear the input queue... cause other states aren't using it and it's been filling up.
@@ -173,6 +226,77 @@ namespace DwarfCorp.GameStates
             GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
             GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
             MakeMenu();
+
+           Dictionary<GameMaster.ToolMode, Gum.Widget> ToolbarItems = new Dictionary<GameMaster.ToolMode, Gum.Widget>();
+
+            //ToolbarItems[GameMaster.ToolMode.SelectUnits] = CreateIcon(5, GameMaster.ToolMode.SelectUnits);
+            //    ToolbarItems[GameMaster.ToolMode.Dig] = CreateIcon(0, GameMaster.ToolMode.Dig);
+            //    ToolbarItems[GameMaster.ToolMode.Build] = CreateIcon(2, GameMaster.ToolMode.Build);
+            //    ToolbarItems[GameMaster.ToolMode.Cook] = CreateIcon(3, GameMaster.ToolMode.Cook);
+            //    ToolbarItems[GameMaster.ToolMode.Farm] = CreateIcon(5, GameMaster.ToolMode.Farm);
+            //    ToolbarItems[GameMaster.ToolMode.Magic] = CreateIcon(6, GameMaster.ToolMode.Magic);
+            //    ToolbarItems[GameMaster.ToolMode.Gather] = CreateIcon(6, GameMaster.ToolMode.Gather);
+            //    ToolbarItems[GameMaster.ToolMode.Chop] = CreateIcon(1, GameMaster.ToolMode.Chop);
+            //    ToolbarItems[GameMaster.ToolMode.Guard] = CreateIcon(4, GameMaster.ToolMode.Guard);
+            //    ToolbarItems[GameMaster.ToolMode.Attack] = CreateIcon(3, GameMaster.ToolMode.Attack);
+
+            var roomIcons = GuiRoot.GetTileSheet("rooms") as Gum.TileSheet;
+            RoomLibrary.InitializeStatics();
+            var Tilesheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
+            VoxelLibrary.InitializeDefaultLibrary(Game.GraphicsDevice, Tilesheet);
+
+
+            var bottomRightTray = GuiRoot.RootItem.AddChild(new NewGui.ToolTray.Tray
+            {
+                Corners = Gum.Scale9Corners.Left | Gum.Scale9Corners.Top,
+                AutoLayout = Gum.AutoLayout.FloatBottomRight,
+                ItemSource = new Gum.Widget[]
+                {
+                    new NewGui.ToolTray.ExpandingIcon
+                    {
+                        Icon = new TileReference("tool-icons", 5),
+                        ExpansionChild = new NewGui.ToolTray.Tray
+                        {
+                            ItemSource = RoomLibrary.GetRoomTypes().Select(name => RoomLibrary.GetData(name))
+                                .Select(data => new NewGui.ToolTray.LeafIcon
+                                {
+                                    Icon = new TileReference("rooms", roomIcons.ConvertRectToIndex(data.Icon.SourceRect)),
+                                    ExpansionChild = new NewGui.BuildRoomButton
+                                    {
+                                        Data = data,
+                                        Rect = new Rectangle(0,0,256,128)
+                                    },
+                                    OnClick = (sender, args) =>
+                                    {
+                                        (sender as NewGui.FramedIcon).Enabled = false;
+                                    }
+                                })
+                        }
+                    },
+                    new NewGui.ToolTray.ExpandingIcon
+                    {
+                        Icon = new TileReference("tool-icons", 6),
+                        ExpansionChild = new NewGui.ToolTray.Tray
+                        {
+                            ItemSource = VoxelLibrary.GetTypes().Where(voxel => voxel.IsBuildable)
+                                .Select(data => new NewGui.ToolTray.LeafIcon
+                                {
+                                    Icon = new TileReference("rooms", 0),
+                                    ExpansionChild = new NewGui.BuildWallButton
+                                    {
+                                        Data = data,
+                                        Rect = new Rectangle(0,0,256,128)
+                                    }
+                                })
+
+                        }
+                    }
+                }
+            });
+
+            bottomRightTray.Hidden = false;
+            GuiRoot.RootItem.Layout();
+
             IsInitialized = true;
 
             base.OnEnter();

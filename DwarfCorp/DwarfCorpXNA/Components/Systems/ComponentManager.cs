@@ -120,95 +120,15 @@ namespace DwarfCorp
 
         #region picking
 
-        public static List<T> FilterComponentsWithoutTag<T>(string tag, List<T> toFilter) where T : GameComponent
-        {
-            return toFilter.Where(component => !component.Tags.Contains(tag)).ToList();
-        }
-
         public static List<T> FilterComponentsWithTag<T>(string tag, List<T> toFilter) where T : GameComponent
         {
             return toFilter.Where(component => component.Tags.Contains(tag)).ToList();
         }
-
-        public bool IsUnderMouse(Body component, MouseState mouse, Camera camera, Viewport viewPort)
-        {
-            List<Body> viewable = new List<Body>();
-            Vector3 pos1 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 0), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
-            Vector3 pos2 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 1), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
-            Vector3 dir = Vector3.Normalize(pos2 - pos1);
-
-            Ray toCast = new Ray(pos1, dir);
-
-            return component.Intersects(toCast);
-        }
-
-
-        public void GetBodiesUnderMouse(MouseState mouse, Camera camera, Viewport viewPort, List<Body> components)
-        {
-            Vector3 pos1 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 0), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
-            Vector3 pos2 = viewPort.Unproject(new Vector3(mouse.X, mouse.Y, 1), camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
-            Vector3 dir = Vector3.Normalize(pos2 - pos1);
-
-            Ray toCast = new Ray(pos1, dir);
-            HashSet<Body> set = new HashSet<Body>();
-            CollisionManager.GetObjectsIntersecting(toCast, set, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
-
-            components.AddRange(set);
-        }
-
-        public bool IsVisibleToCamera(Body component, Camera camera)
-        {
-            BoundingFrustum frustrum = new BoundingFrustum(camera.ViewMatrix * camera.ProjectionMatrix);
-            return (component.Intersects(frustrum));
-        }
-
-        public void GetBodiesVisibleToCamera(Camera camera, List<Body> components)
-        {
-            BoundingFrustum frustrum = new BoundingFrustum(camera.ViewMatrix * camera.ProjectionMatrix);
-            GetBodiesIntersecting(frustrum, components, CollisionManager.CollisionType.Dynamic | CollisionManager.CollisionType.Static);
-        }
-
-        public void GetBodiesInvisibleToCamera(Camera camera, List<Body> components)
-        {
-            BoundingFrustum frustrum = new BoundingFrustum(camera.ViewMatrix * camera.ProjectionMatrix);
-
-            foreach(GameComponent c in Components.Values)
-            {
-                if(c is Body && !((Body) c).Intersects(frustrum))
-                {
-                    components.Add((Body) c);
-                }
-            }
-        }
-
-        public void GetBodiesIntersecting(BoundingSphere sphere, List<Body> components, CollisionManager.CollisionType type)
-        {
-            HashSet<Body> set = new HashSet<Body>();
-            CollisionManager.GetObjectsIntersecting(sphere, set, type);
-
-            components.AddRange(set);
-        }
-
-        public void GetBodiesIntersecting(BoundingFrustum frustrum, List<Body> components, CollisionManager.CollisionType type)
-        {
-            HashSet<Body> set = new HashSet<Body>();
-            CollisionManager.GetObjectsIntersecting(frustrum, set, type);
-
-            components.AddRange(set);
-        }
-
+        
         public void GetBodiesIntersecting(BoundingBox box, List<Body> components, CollisionManager.CollisionType type)
         {
             HashSet<Body> set = new HashSet<Body>();
             CollisionManager.GetObjectsIntersecting(box, set, type);
-
-            components.AddRange(set);
-        }
-
-        public void GetBodiesIntersecting(Ray ray, List<Body> components, CollisionManager.CollisionType type)
-        {
-            HashSet<Body> set = new HashSet<Body>();
-            CollisionManager.GetObjectsIntersecting(ray, set, type);
 
             components.AddRange(set);
         }
