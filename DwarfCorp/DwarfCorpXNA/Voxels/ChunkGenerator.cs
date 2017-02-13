@@ -209,7 +209,7 @@ namespace DwarfCorp
                         voxel.GridPosition = new Vector3(x, y, z);
                         if (voxel.IsEmpty && y >= h)
                         {
-                            chunk.Data.Water[index].WaterLevel = 8;
+                            chunk.Data.Water[index].WaterLevel = WaterManager.maxWaterLevel;
                             chunk.Data.Water[index].Type = LiquidType.Water;
                         }
                     }
@@ -229,7 +229,7 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    chunk.Data.Water[chunk.Data.IndexAt(x, h, z)].WaterLevel = 8;
+                    chunk.Data.Water[chunk.Data.IndexAt(x, h, z)].WaterLevel = WaterManager.maxWaterLevel;
                     chunk.Data.Water[chunk.Data.IndexAt(x, h, z)].Type = LiquidType.Lava;
                 }
             }
@@ -248,7 +248,7 @@ namespace DwarfCorp
                         voxel.GridPosition = new Vector3(x, y, z);
                         if (voxel.IsEmpty && chunk.Data.Water[voxel.Index].WaterLevel == 0)
                         {
-                            chunk.Data.Water[voxel.Index].WaterLevel = 8;
+                            chunk.Data.Water[voxel.Index].WaterLevel = WaterManager.maxWaterLevel;
                             chunk.Data.Water[voxel.Index].Type = LiquidType.Lava;
                         }
                     }
@@ -409,7 +409,7 @@ namespace DwarfCorp
                         if (caveNoise > LavaSize)
                         {
                             chunk.Data.Types[chunk.Data.IndexAt(x, y, z)] = 0;
-                            chunk.Data.Water[chunk.Data.IndexAt(x, y, z)].WaterLevel = 8;
+                            chunk.Data.Water[chunk.Data.IndexAt(x, y, z)].WaterLevel = WaterManager.maxWaterLevel;
                             chunk.Data.Water[chunk.Data.IndexAt(x, y, z)].Type = LiquidType.Lava;
                         }
                     }
@@ -552,7 +552,7 @@ namespace DwarfCorp
                         if (caveNoise > AquiferSize)
                         {
                             chunk.Data.Types[chunk.Data.IndexAt(x, y, z)] = 0;
-                            chunk.Data.Water[chunk.Data.IndexAt(x, y, z)].WaterLevel = 8;
+                            chunk.Data.Water[chunk.Data.IndexAt(x, y, z)].WaterLevel = WaterManager.maxWaterLevel;
                             chunk.Data.Water[chunk.Data.IndexAt(x, y, z)].Type = LiquidType.Water;
                         }
                     }
