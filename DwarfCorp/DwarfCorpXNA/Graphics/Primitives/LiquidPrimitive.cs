@@ -249,7 +249,7 @@ namespace DwarfCorp
 
                 averageWaterLevel = averageWaterLevel / count;
 
-                float averageWaterHeight = (float)averageWaterLevel / 8.0f;
+                float averageWaterHeight = (float)averageWaterLevel / WaterManager.maxWaterLevel;
                 float foaminess = emptyNeighbors / count;
 
                 if(foaminess <= 0.5f)

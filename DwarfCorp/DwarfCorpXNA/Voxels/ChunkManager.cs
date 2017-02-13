@@ -1018,12 +1018,13 @@ namespace DwarfCorp
             {
                 affectedChunks.Add(voxel.Chunk);
                 voxel.Chunk.NotifyDestroyed(new Point3(voxel.GridPosition));
-                if (!voxel.IsInterior)
+                List<Point3> neighbors = voxel.Chunk.GetEuclidianSuccessorByVoxel(voxel);
+                Point3 gridPos = voxel.ChunkID;
+                for (int i = 0; i < neighbors.Count; i++)
                 {
-                    foreach (KeyValuePair<Point3, VoxelChunk> n in voxel.Chunk.Neighbors)
-                    {
-                        affectedChunks.Add(n.Value);
-                    }
+                    VoxelChunk chunk;
+                    if (chunkData.ChunkMap.TryGetValue(gridPos + neighbors[i], out chunk))
+                        affectedChunks.Add(chunk);
                 }
             }
 

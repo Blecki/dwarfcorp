@@ -76,7 +76,7 @@ namespace DwarfCorp
 
         private VoxelSelectionType GetSelectionType(bool active)
         {
-            return active ? VoxelSelectionType.SelectEmpty : orignalSelection;
+            return active ? GetSelectionTypeBySelectionBoxValue(SelectorBox.CurrentValue) : orignalSelection;
         }
 
 
@@ -87,7 +87,7 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-
+            IsActive = false;
         }
 
         public override void OnVoxelsDragged(List<Voxel> voxels, InputManager.MouseButton button)
@@ -177,16 +177,21 @@ namespace DwarfCorp
             SelectorBox.CleanUp();
         }
 
-        private void SelectorBox_OnSelectionModified(string arg)
+        private VoxelSelectionType GetSelectionTypeBySelectionBoxValue(string arg)
         {
-            if(arg == "Delete Block" || arg.Contains("Build") || arg == "Kill Block")
+            if (arg == "Delete Block" || arg.Contains("Build") || arg == "Kill Block")
             {
-                Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+                return VoxelSelectionType.SelectFilled;
             }
             else
             {
-                Player.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                return VoxelSelectionType.SelectEmpty;
             }
+        }
+
+        private void SelectorBox_OnSelectionModified(string arg)
+        {
+            Player.VoxSelector.SelectionType = GetSelectionTypeBySelectionBoxValue(arg);
         }
 
         public override void OnVoxelsSelected(List<Voxel> refs, InputManager.MouseButton button)
@@ -277,7 +282,7 @@ namespace DwarfCorp
                         {
                             if (vox.IsEmpty)
                             {
-                                vox.WaterLevel = 8;
+                                vox.WaterLevel = WaterManager.maxWaterLevel;
                                 vox.Chunk.Data.Water[vox.Index].Type = LiquidType.Water;
                                 chunksToRebuild.Add(vox.ChunkID);
                             }
@@ -288,7 +293,7 @@ namespace DwarfCorp
                             Vector3 gridPos = vox.GridPosition;
                             if (vox.IsEmpty)
                             {
-                                vox.WaterLevel = 8;
+                                vox.WaterLevel = WaterManager.maxWaterLevel;
                                 vox.Chunk.Data.Water[vox.Index].Type = LiquidType.Lava;
                                 chunksToRebuild.Add(vox.ChunkID);
                             }

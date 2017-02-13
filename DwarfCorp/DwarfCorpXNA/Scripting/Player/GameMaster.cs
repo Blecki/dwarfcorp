@@ -428,7 +428,7 @@ namespace DwarfCorp
             {
                 if(CurrentToolMode == ToolMode.God)
                 {
-                    
+                    CurrentToolMode = ToolMode.SelectUnits;
                     GodModeTool godMode = (GodModeTool) Tools[ToolMode.God];
                     godMode.IsActive = false;
                 }
