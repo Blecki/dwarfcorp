@@ -27,6 +27,17 @@ namespace DwarfCorp.NewGui
 
         public Action<Widget> OnDisable;
 
+        private bool _hilite = false;
+        public bool Hilite
+        {
+            get { return _hilite; }
+            set
+            {
+                _hilite = value;
+                Invalidate();
+            }
+        }
+
         public override void Construct()
         {
             Background = new TileReference("icon-frame", 0);
@@ -52,7 +63,12 @@ namespace DwarfCorp.NewGui
         protected override Gum.Mesh Redraw()
         {
             var meshes = new List<Gum.Mesh>();
-            meshes.Add(base.Redraw());
+
+            meshes.Add(Gum.Mesh.Quad()
+                    .Scale(Rect.Width, Rect.Height)
+                    .Translate(Rect.X, Rect.Y)
+                    .Colorize(Hilite ? new Vector4(1,0,0,1) : BackgroundColor)
+                    .Texture(Root.GetTileSheet(Background.Sheet).TileMatrix(Background.Tile)));
 
             if (Icon != null)
             {

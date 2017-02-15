@@ -10,7 +10,7 @@ namespace DwarfCorp.NewGui
     /// <summary>
     /// A properly framed Icon for use in an icon tray.
     /// </summary>
-    public class BuildWallButton : Widget
+    public class BuildWallInfo : Widget
     {
         public VoxelType Data;
 
