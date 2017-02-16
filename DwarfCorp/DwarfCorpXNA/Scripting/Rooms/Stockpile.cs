@@ -209,8 +209,9 @@ namespace DwarfCorp
            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
             {
             };
-            Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(StockpileName, 0, "Stockpile", roomResources, stockpileTemplates, new ImageFrame(roomIcons, 16, 0, 0))
+
+            return new RoomData(StockpileName, 0, "Stockpile", roomResources, stockpileTemplates, 
+                new Gum.TileReference("rooms", 0))
             {
                 Description = "Dwarves can stock resources here",
             };

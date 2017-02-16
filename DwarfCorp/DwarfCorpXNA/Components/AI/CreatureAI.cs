@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Windows.Forms;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -1179,7 +1180,7 @@ namespace DwarfCorp
             var x = (int)voxel.GridPosition.X;
             var y = (int)voxel.GridPosition.Y;
             var z = (int)voxel.GridPosition.Z;
-            bool inWater = (neighborHood[1, 1, 1] != null && neighborHood[1, 1, 1].WaterLevel > 5);
+            bool inWater = (neighborHood[1, 1, 1] != null && neighborHood[1, 1, 1].WaterLevel > WaterManager.inWaterThreshold);
             bool standingOnGround = (neighborHood[1, 0, 1] != null && !neighborHood[1, 0, 1].IsEmpty);
             bool topCovered = (neighborHood[1, 2, 1] != null && !neighborHood[1, 2, 1].IsEmpty);
             bool hasNeighbors = HasNeighbors(neighborHood);

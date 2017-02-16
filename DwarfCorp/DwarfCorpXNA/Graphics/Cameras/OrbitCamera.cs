@@ -72,7 +72,6 @@ namespace DwarfCorp
             Walk
         }
 
-        public Physics PhysicsObject { get; set; }
         private bool isLeftPressed = false;
         private bool isRightPressed = false;
         private readonly Timer moveTimer = new Timer(0.25f, true, Timer.TimerMode.Real);
@@ -81,6 +80,7 @@ namespace DwarfCorp
         public ControlType Control = ControlType.Overhead;
 
         public List<Vector3> ZoomTargets { get; set; }
+
 
         public OrbitCamera() : base()
         {
@@ -165,6 +165,7 @@ namespace DwarfCorp
                 edgePadding = 100;
             }
 
+            float diffX, diffY = 0;
             bool stateChanged = false;
             float dt = (float)time.ElapsedRealTime.TotalSeconds;
             SnapToBounds(new BoundingBox(World.ChunkManager.Bounds.Min, World.ChunkManager.Bounds.Max + Vector3.UnitY * 20));
@@ -197,31 +198,27 @@ namespace DwarfCorp
                     isRightPressed = false;
                 }
 
-
                 if (stateChanged)
                 {
-                    Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2, GameState.Game.GraphicsDevice.Viewport.Height / 2);
+                    Mouse.SetPosition(GameState.Game.GraphicsDevice.Viewport.Width / 2,
+                        GameState.Game.GraphicsDevice.Viewport.Height / 2);
                     mouse = Mouse.GetState();
                 }
 
-                float diffX = mouse.X - GameState.Game.GraphicsDevice.Viewport.Width / 2;
-                float diffY = mouse.Y - GameState.Game.GraphicsDevice.Viewport.Height / 2;
+
+                diffX = mouse.X - GameState.Game.GraphicsDevice.Viewport.Width / 2;
+                diffY = mouse.Y - GameState.Game.GraphicsDevice.Viewport.Height / 2;
 
 
-                float filterDiffX = (float)(diffX * dt);
-                float filterDiffY = (float)(diffY * dt);
-                if (Math.Abs(filterDiffX) > 1.0f)
+                if (!isRightPressed)
                 {
-                    filterDiffX = 1.0f * Math.Sign(filterDiffX);
-                }
 
-                if (Math.Abs(filterDiffY) > 1.0f)
-                {
-                    filterDiffY = 1.0f * Math.Sign(filterDiffY);
-                }
+                    float filterDiffX = (float) (diffX*dt);
+                    float filterDiffY = (float) (diffY*dt);
 
-                diffTheta = (filterDiffX);
-                diffPhi =  - (filterDiffY);
+                    diffTheta = (filterDiffX);
+                    diffPhi = - (filterDiffY);
+                }
 
             }
             else
@@ -271,9 +268,9 @@ namespace DwarfCorp
 
             if (!KeyManager.RotationEnabled())
             {
-                DwarfGame.World.GUI.IsMouseVisible = true;
+                World.GUI.IsMouseVisible = true;
 
-                if (!DwarfGame.World.IsMouseOverGui)
+                if (!World.IsMouseOverGui)
                 {
 
                     if (mouse.X < edgePadding || mouse.X > GameState.Game.GraphicsDevice.Viewport.Width - edgePadding)
@@ -330,12 +327,19 @@ namespace DwarfCorp
             }
             else
             {
-                DwarfGame.World.GUI.IsMouseVisible = false;
+                World.GUI.IsMouseVisible = false;
             }
 
-            if (mouse.ScrollWheelValue != LastWheel && !World.IsMouseOverGui)
+            int scroll = mouse.ScrollWheelValue;
+
+            if (isRightPressed && KeyManager.RotationEnabled())
             {
-                int change = mouse.ScrollWheelValue - LastWheel;
+                scroll = (int)(diffY * 10) + LastWheel;
+            }
+
+            if (scroll != LastWheel && !World.IsMouseOverGui)
+            {
+                int change = scroll - LastWheel;
 
                 if (!(keys.IsKeyDown(Keys.LeftAlt) || keys.IsKeyDown(Keys.RightAlt)))
                 {
@@ -354,11 +358,11 @@ namespace DwarfCorp
                         {
                             float diffxy =
                                 (new Vector3(Target.X, 0, Target.Z) -
-                                 new Vector3(DwarfGame.World.CursorPos.X, 0, DwarfGame.World.CursorPos.Z)).Length();
+                                 new Vector3(World.CursorPos.X, 0, World.CursorPos.Z)).Length();
 
                             if (diffxy > 5)
                             {
-                                Vector3 slewTarget = Target*0.9f + DwarfGame.World.CursorPos*0.1f;
+                                Vector3 slewTarget = Target*0.9f + World.CursorPos*0.1f;
                                 Vector3 slewDiff = slewTarget - Target;
                                 Target += slewDiff;
                                 Position += slewDiff;
@@ -441,8 +445,12 @@ namespace DwarfCorp
 
         public void SnapToBounds(BoundingBox bounds)
         {
-            Target = MathFunctions.Clamp(Target, bounds.Expand(-2.0f));
-            Position = MathFunctions.Clamp(Position, bounds.Expand(-2.0f));
+            Vector3 clampTarget = MathFunctions.Clamp(Target, bounds.Expand(-2.0f));
+            Vector3 clampPosition = MathFunctions.Clamp(Position, bounds.Expand(-2.0f));
+            Vector3 dTarget = clampTarget - Target;
+            Vector3 dPosition = clampPosition - Position;
+            Position += dTarget + dPosition;
+            Target += dTarget + dPosition;
         }
 
         public bool CollidesWithChunks(ChunkManager chunks, Vector3 pos, bool applyForce)

@@ -53,6 +53,11 @@ namespace DwarfCorp
         public Body EntityToKill = null;
         public KillType Mode { get; set; }
 
+        public KillEntityTask()
+        {
+            
+        }
+
         public KillEntityTask(Body entity, KillType type)
         {
             Mode = type;

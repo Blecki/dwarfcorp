@@ -70,7 +70,7 @@ namespace DwarfCorp
                         {
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 4)
                         },
-                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.DwarfObjects.beartrap), 32, 0, 0),
+                        Icon = new Gum.TileReference("beartrap", 0),
                         BaseCraftTime = 20,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround}
                     }
@@ -85,7 +85,7 @@ namespace DwarfCorp
                         {
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Fuel, 1)
                         },
-                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 0, 1),
+                        Icon = new Gum.TileReference("furniture", 5),
                         BaseCraftTime = 10,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround}
                     }
@@ -100,7 +100,7 @@ namespace DwarfCorp
                         {
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 1)
                         },
-                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 2, 0),
+                        Icon = new Gum.TileReference("furniture", 2),
                         BaseCraftTime = 10,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
                     }
@@ -115,7 +115,7 @@ namespace DwarfCorp
                         {
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone, 1)
                         },
-                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 2, 8),
+                        Icon = new Gum.TileReference("furniture", 34),
                         BaseCraftTime = 10,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
                     }
@@ -130,7 +130,7 @@ namespace DwarfCorp
                         {
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 1)
                         },
-                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 3, 8),
+                        Icon = new Gum.TileReference("furniture", 35),
                         BaseCraftTime = 10,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
                     }
@@ -145,7 +145,7 @@ namespace DwarfCorp
                         {
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Wood, 1)
                         },
-                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 3, 1),
+                        Icon = new Gum.TileReference("furniture", 7),
                         BaseCraftTime = 10,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
                     }
@@ -160,7 +160,7 @@ namespace DwarfCorp
                         {
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Stone, 1)
                         },
-                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 0, 8),
+                        Icon = new Gum.TileReference("furniture", 32),
                         BaseCraftTime = 10,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
                     }
@@ -175,7 +175,7 @@ namespace DwarfCorp
                         {
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 1)
                         },
-                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 1, 8),
+                        Icon = new Gum.TileReference("furniture", 33),
                         BaseCraftTime = 10,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall}
                     }
@@ -190,7 +190,7 @@ namespace DwarfCorp
                         {
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Material, 3)
                         },
-                        Image = new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, 0, 1),
+                        Icon = new Gum.TileReference("crafts", 0),
                         BaseCraftTime = 15,
                         Type = CraftItem.CraftType.Resource,
                         ResourceCreated = "Trinket"
@@ -207,7 +207,7 @@ namespace DwarfCorp
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Encrustable, 1),
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Gem, 1)
                         },
-                        Image = new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, 1, 1),
+                        Icon = new Gum.TileReference("crafts", 1),
                         BaseCraftTime = 15,
                         Type = CraftItem.CraftType.Resource,
                         ResourceCreated = "Gem-set Trinket"
@@ -224,7 +224,7 @@ namespace DwarfCorp
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.RawFood, 1),
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.RawFood, 1),
                         },
-                        Image = new NamedImageFrame(ContentPaths.Entities.Resources.resources, 32, 5, 2),
+                        Icon = new Gum.TileReference("resources", 21),
                         BaseCraftTime = 15,
                         Type = CraftItem.CraftType.Resource,
                         ResourceCreated = "Meal",
@@ -241,7 +241,7 @@ namespace DwarfCorp
                         {
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Bakeable, 1)
                         },
-                        Image = new NamedImageFrame(ContentPaths.Entities.Resources.resources, 32, 6, 2),
+                        Icon = new Gum.TileReference("resources", 22),
                         BaseCraftTime = 15,
                         Type = CraftItem.CraftType.Resource,
                         ResourceCreated = "Bread",
@@ -258,7 +258,7 @@ namespace DwarfCorp
                         {
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Brewable, 1)
                         },
-                        Image = new NamedImageFrame(ContentPaths.Entities.Resources.resources, 32, 4, 2),
+                        Icon = new Gum.TileReference("resources", 20),
                         BaseCraftTime = 15,
                         Type = CraftItem.CraftType.Resource,
                         ResourceCreated = "Ale",
@@ -276,7 +276,7 @@ namespace DwarfCorp
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 2),
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Magical, 1),
                         },
-                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.Entities.Furniture.interior_furniture), 32, 1, 7),
+                        Icon = new Gum.TileReference("furniture", 29),
                         BaseCraftTime = 30,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround}
                     }

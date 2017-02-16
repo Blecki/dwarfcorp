@@ -87,8 +87,8 @@ namespace DwarfCorp
             {
                 flag
             };
-            Texture2D roomIcons = TextureManager.GetTexture(ContentPaths.GUI.room_icons);
-            return new RoomData(BalloonPortName, 0, "Stockpile", balloonPortResources, balloonTemplates, new ImageFrame(roomIcons, 16, 1, 0))
+
+            return new RoomData(BalloonPortName, 0, "Stockpile", balloonPortResources, balloonTemplates, new Gum.TileReference("rooms", 1))
             {
                 Description = "Balloons pick up / drop off resources here.",
                 CanBuildBelowGround = false

@@ -1188,10 +1188,10 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Content Include="Entities\Animals\chicken_animation.json">
+    <None Include="Entities\Animals\chicken_animation.json">
       <Name>chicken_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Compile Include="Entities\Mudman\mudman-projectile.png">
       <Name>mudman-projectile</Name>
       <Importer>TextureImporter</Importer>
@@ -1257,10 +1257,10 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Content Include="Entities\Mudman\mudman_animation.json">
+    <None Include="Entities\Mudman\mudman_animation.json">
       <Name>mudman_animation</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Entities\Skeleton\skele_animation.json">
       <Name>skele_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1866,6 +1866,13 @@
   <ItemGroup>
     <Compile Include="Entities\Animals\chicken.png">
       <Name>chicken</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\beartrap.png">
+      <Name>beartrap</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

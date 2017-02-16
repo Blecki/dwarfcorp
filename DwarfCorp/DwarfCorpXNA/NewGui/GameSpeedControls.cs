@@ -46,6 +46,8 @@ namespace DwarfCorp.NewGui
             CurrentSpeed = PlaySpeed;
         }
 
+        public PlayState PlayState { get; set; }
+
         public override void Construct()
         {
             Border = "border-dark";

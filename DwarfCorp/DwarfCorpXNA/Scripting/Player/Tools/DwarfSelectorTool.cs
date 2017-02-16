@@ -72,7 +72,7 @@ namespace DwarfCorp
 
         void InputManager_MouseClickedCallback(InputManager.MouseButton button)
         {
-            if(button != InputManager.MouseButton.Right || Player.CurrentTool != this)
+            if(button != InputManager.MouseButton.Right || Player.CurrentTool != this || KeyManager.RotationEnabled())
             {
                 return;
             }

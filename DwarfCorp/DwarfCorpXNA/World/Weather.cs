@@ -291,10 +291,10 @@ namespace DwarfCorp
 
                     if (above == null) continue;
                     if (stormProperties.CreatesLiquid && 
-                        (above.WaterLevel < 8 && (above.Water.Type == LiquidType.Water || above.Water.Type == LiquidType.None)))
+                        (above.WaterLevel < WaterManager.maxWaterLevel && (above.Water.Type == LiquidType.Water || above.Water.Type == LiquidType.None)))
                     {
                         WaterCell water = above.Water;
-                        water.WaterLevel++;
+                        water.WaterLevel = (byte)Math.Min(WaterManager.maxWaterLevel, water.WaterLevel + WaterManager.rainFallAmount);
                         water.Type = stormProperties.LiquidToCreate;
                                    
                         above.Water = water;

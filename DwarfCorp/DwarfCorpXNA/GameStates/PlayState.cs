@@ -14,18 +14,18 @@ namespace DwarfCorp.GameStates
         private bool IsShuttingDown { get; set; }
         private bool QuitOnNextUpdate { get; set; }
         public bool ShouldReset { get; set; }
-        public static WorldManager World { get { return DwarfGame.World; } }
+        public static WorldManager World { get; set; }
 
         public GameMaster Master
         {
-            get { return DwarfGame.World.Master; }
-            set { DwarfGame.World.Master = value; }
+            get { return World.Master; }
+            set { World.Master = value; }
         }
 
-        public static bool Paused
+        public bool Paused
         {
-            get { return DwarfGame.World.Paused; }
-            set { DwarfGame.World.Paused = value; }
+            get { return World.Paused; }
+            set { World.Paused = value; }
         }
 
         // ------GUI--------
@@ -83,9 +83,10 @@ namespace DwarfCorp.GameStates
         /// </summary>
         /// <param name="game">The program currently running</param>
         /// <param name="stateManager">The game state manager this state will belong to</param>
-        public PlayState(DwarfGame game, GameStateManager stateManager) :
+        public PlayState(DwarfGame game, GameStateManager stateManager, WorldManager world) :
             base(game, "PlayState", stateManager)
         {
+            World = world;
             IsShuttingDown = false;
             QuitOnNextUpdate = false;
             ShouldReset = true;
@@ -114,23 +115,23 @@ namespace DwarfCorp.GameStates
                 // Setup new gui. Double rendering the mouse?
                 GuiRoot = new Gum.Root(new Point(640, 480), DwarfGame.GumSkin);
                 GuiRoot.MousePointer = new Gum.MousePointer("mouse", 4, 0);
-                DwarfGame.World.NewGui = GuiRoot;
+                World.NewGui = GuiRoot;
 
                 // Setup input event handlers. All of the actions should already be established - just 
                 // need handlers.
                 DwarfGame.GumInput.ClearAllHandlers();
 
-                DwarfGame.World.ShowInfo += (text) =>
+                World.ShowInfo += (text) =>
                     {
                         InfoTray.AddMessage(text);
                     };
 
-                DwarfGame.World.ShowTooltip += (text) =>
+                World.ShowTooltip += (text) =>
                     {
                         GuiRoot.ShowTooltip(GuiRoot.MousePosition, text);
                     };
 
-                DwarfGame.World.SetMouse += (mouse) =>
+                World.SetMouse += (mouse) =>
                     {
                         GuiRoot.MousePointer = mouse;
                     };
@@ -203,8 +204,8 @@ namespace DwarfCorp.GameStates
 
             #region Update time label
             TimeLabel.Text = String.Format("{0} {1}",
-                DwarfGame.World.Time.CurrentDate.ToShortDateString(),
-                DwarfGame.World.Time.CurrentDate.ToShortTimeString());
+                World.Time.CurrentDate.ToShortDateString(),
+                World.Time.CurrentDate.ToShortTimeString());
             TimeLabel.Invalidate();
             #endregion
 
@@ -216,8 +217,8 @@ namespace DwarfCorp.GameStates
             StockLabel.Invalidate();
 
             LevelLabel.Text = String.Format("{0}/{1}",
-                DwarfGame.World.ChunkManager.ChunkData.MaxViewingLevel,
-                DwarfGame.World.ChunkHeight);
+                World.ChunkManager.ChunkData.MaxViewingLevel,
+                World.ChunkHeight);
             LevelLabel.Invalidate();
             #endregion
 
@@ -339,15 +340,15 @@ namespace DwarfCorp.GameStates
                     Rect = new Rectangle(8,8,32,32),
                     MinimumSize = new Point(32, 32),
                     MaximumSize = new Point(32, 32),
-                    AutoLayout = global::Gum.AutoLayout.None,
-                    CompanyInformation = DwarfGame.World.PlayerCompany.Information
+                    AutoLayout = Gum.AutoLayout.None,
+                    CompanyInformation = World.PlayerCompany.Information
                 });
 
             GuiRoot.RootItem.AddChild(new Gum.Widget
                 {
                     Rect = new Rectangle(48,8,256,20),
-                    Text = DwarfGame.World.PlayerCompany.Information.Name,
-                    AutoLayout = global::Gum.AutoLayout.None,
+                    Text = World.PlayerCompany.Information.Name,
+                    AutoLayout = Gum.AutoLayout.None,
                     Font = "outline-font",
                     TextColor = new Vector4(1,1,1,1)
                 });
@@ -427,8 +428,8 @@ namespace DwarfCorp.GameStates
                 OnLayout = (sender) => sender.Rect.X += 18,
                 OnClick = (sender, args) =>
                 {
-                    DwarfGame.World.ChunkManager.ChunkData.SetMaxViewingLevel(
-                        DwarfGame.World.ChunkManager.ChunkData.MaxViewingLevel - 1,
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(
+                        World.ChunkManager.ChunkData.MaxViewingLevel - 1,
                         ChunkManager.SliceMode.Y);
                 }
             });
@@ -441,8 +442,8 @@ namespace DwarfCorp.GameStates
                 AutoLayout = global::Gum.AutoLayout.FloatLeft,
                 OnClick = (sender, args) =>
                 {
-                    DwarfGame.World.ChunkManager.ChunkData.SetMaxViewingLevel(
-                        DwarfGame.World.ChunkManager.ChunkData.MaxViewingLevel + 1,
+                    World.ChunkManager.ChunkData.SetMaxViewingLevel(
+                        World.ChunkManager.ChunkData.MaxViewingLevel + 1,
                         ChunkManager.SliceMode.Y);
                 }
             });
@@ -516,7 +517,7 @@ namespace DwarfCorp.GameStates
                             new NewGui.FramedIcon
                             {
                                 Icon = new Gum.TileReference("tool-icons", 10),
-                                OnClick = (sender, args) => StateManager.PushState(new EconomyState(Game, StateManager))
+                                OnClick = (sender, args) => StateManager.PushState(new EconomyState(Game, StateManager, World))
                         },
                         new NewGui.FramedIcon
                         {
@@ -539,7 +540,7 @@ namespace DwarfCorp.GameStates
                 OnSpeedChanged = (sender, speed) =>
                 {
                     DwarfTime.LastTime.Speed = (float)speed;
-                    PlayState.Paused = speed == 0;
+                    Paused = speed == 0;
                 }
             }) as NewGui.GameSpeedControls;
 
@@ -547,7 +548,7 @@ namespace DwarfCorp.GameStates
 
             InputManager.KeyReleasedCallback += InputManager_KeyReleasedCallback;
 
-            DwarfGame.World.OnAnnouncement = (title, message, clickAction) =>
+            World.OnAnnouncement = (title, message, clickAction) =>
                 {
                     var announcer = GuiRoot.RootItem.AddChild(new NewGui.AnnouncementPopup
                     {
@@ -626,7 +627,7 @@ namespace DwarfCorp.GameStates
                             ItemSource = RoomLibrary.GetRoomTypes().Select(name => RoomLibrary.GetData(name))
                                 .Select(data => new NewGui.ToolTray.Icon
                                 {
-                                    Icon = new Gum.TileReference("rooms", roomIcons.ConvertRectToIndex(data.Icon.SourceRect)),
+                                    Icon = data.NewIcon,
                                     ExpansionChild = new NewGui.BuildRoomInfo
                                     {
                                         Data = data,
@@ -704,7 +705,7 @@ namespace DwarfCorp.GameStates
                                 .Select(data => new NewGui.ToolTray.Icon
                                 {
                                     // Todo: Need to get all the icons into one sheet.
-                                    Icon = new Gum.TileReference("furniture", craftIcons.ConvertRectToIndex(data.Image.SourceRect)),
+                                    Icon = data.Icon,
                                     KeepChildVisible = true, // So the player can interact with the popup.
                                     ExpansionChild = new NewGui.BuildCraftInfo
                                     {
@@ -750,7 +751,7 @@ namespace DwarfCorp.GameStates
                                 .Select(data => new NewGui.ToolTray.Icon
                                 {
                                     // Todo: Need to get all the icons into one sheet.
-                                    Icon = new Gum.TileReference("resources", craftIcons.ConvertRectToIndex(data.Image.SourceRect)),
+                                    Icon = data.Icon,
                                     KeepChildVisible = true, // So the player can interact with the popup.
                                     ExpansionChild = new NewGui.BuildCraftInfo
                                     {
@@ -795,8 +796,7 @@ namespace DwarfCorp.GameStates
                             ItemSource = CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) && ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
                                 .Select(data => new NewGui.ToolTray.Icon
                                 {
-                                    // Todo: Need to get all the icons into one sheet.
-                                    Icon = new Gum.TileReference("resources", craftIcons.ConvertRectToIndex(data.Image.SourceRect)),
+                                    Icon = data.Icon,
                                     KeepChildVisible = true, // So the player can interact with the popup.
                                     ExpansionChild = new NewGui.BuildCraftInfo
                                     {
@@ -967,7 +967,6 @@ namespace DwarfCorp.GameStates
                 if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
                 {
                     Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
-                    //ToolbarItems[Master.CurrentToolMode].OnClick(null, null);
                 }
                 else if (PausePanel != null)
                 {
@@ -1105,7 +1104,7 @@ namespace DwarfCorp.GameStates
                         {
                             if ((s as NewGui.Confirm).DialogResult == DwarfCorp.NewGui.Confirm.Result.OKAY)
                                 World.Save(
-                                    String.Format("{0}_{1}", Overworld.Name, DwarfGame.World.GameID),
+                                    String.Format("{0}_{1}", Overworld.Name, World.GameID),
                                     (success, exception) =>
                                     {
                                         GuiRoot.ShowPopup(new NewGui.Popup

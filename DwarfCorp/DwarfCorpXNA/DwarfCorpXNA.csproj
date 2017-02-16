@@ -302,7 +302,6 @@
     <Compile Include="GUI\Components\Complex\ActDisplay.cs" />
     <Compile Include="GUI\Components\Complex\AIDebugger.cs" />
     <Compile Include="GUI\Components\Complex\ApplicationPanel.cs" />
-    <Compile Include="GUI\Components\Complex\BuildMenu.cs" />
     <Compile Include="GUI\Components\Complex\CapitalPanel.cs" />
     <Compile Include="GUI\Components\Complex\ColorDialog.cs" />
     <Compile Include="GUI\Components\Complex\ColorSelector.cs" />
@@ -371,8 +370,8 @@
     <Compile Include="LanguageGenerator\TextGenerator.cs" />
     <Compile Include="NativeInjector.cs" />
     <Compile Include="NewGui\AnnouncementPopup.cs" />
-    <Compile Include="NewGui\BuildMenu.cs" />
     <Compile Include="NewGui\BuildCraftInfo.cs" />
+    <Compile Include="NewGui\BuildMenu.cs" />
     <Compile Include="NewGui\BuildWallInfo.cs" />
     <Compile Include="NewGui\BuildRoomInfo.cs" />
     <Compile Include="NewGui\FramedIcon.cs" />

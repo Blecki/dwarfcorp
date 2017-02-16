@@ -87,6 +87,11 @@ namespace DwarfCorp
             return other.X == X && other.Y == Y && other.Z == Z;
         }
 
+        public static Point3 operator +(Point3 toAdd1, Point3 toAdd2)
+        {
+            return new Point3(toAdd1.X + toAdd2.X, toAdd1.Y + toAdd2.Y, toAdd1.Z + toAdd2.Z);
+        }
+
         public Vector3 ToVector3()
         {
             return new Vector3(X, Y, Z);
