@@ -1,4 +1,4 @@
-﻿// PlayState.cs
+// PlayState.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -771,9 +771,10 @@ namespace DwarfCorp
                 {
                     PlayerFaction.AddResources(new ResourceAmount(res.Key, res.Value));
                 }
+                var portBox = port.GetBoundingBox();
                 EntityFactory.CreateBalloon(
-                    new Vector3(Camera.Position.X, ChunkHeight - 2, Camera.Position.Z) + new Vector3(0, 1000, 0),
-                    new Vector3(Camera.Position.X, ChunkHeight - 2, Camera.Position.Z), ComponentManager, Content,
+                    portBox.Center() + new Vector3(0, 100, 0),
+                    portBox.Center() + new Vector3(0, 10, 0), ComponentManager, Content,
                     GraphicsDevice, new ShipmentOrder(0, null), Master.Faction);
             }
         }

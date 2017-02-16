@@ -1,4 +1,4 @@
-﻿// OrientedAnimation.cs
+// OrientedAnimation.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -106,6 +106,7 @@ namespace DwarfCorp
                 base(manager, name, parent, localTransform, null, false)
         {
         }
+
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {

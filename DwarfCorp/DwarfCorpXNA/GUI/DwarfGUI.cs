@@ -1,4 +1,4 @@
-﻿// DwarfGUI.cs
+// DwarfGUI.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -205,7 +205,7 @@ namespace DwarfCorp
 
         public void PostRender(DwarfTime time)
         {
-            if (IsMouseVisible)
+            if (IsMouseVisible && IsMouseOver())
             {
                 MouseState mouse = Mouse.GetState();
                 Skin.RenderMouse(mouse.X, mouse.Y, MouseScale, MouseMode, DwarfGame.SpriteBatch, MouseTint);

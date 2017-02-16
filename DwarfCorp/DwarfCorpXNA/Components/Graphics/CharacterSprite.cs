@@ -1,4 +1,4 @@
-﻿// CharacterSprite.cs
+// CharacterSprite.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -128,19 +128,6 @@ namespace DwarfCorp
                 a.Reset();
             }
         }
-
-        public Animation GetAnimation(Creature.CharacterMode mode, Orientation orient)
-        {
-            if (HasAnimation(mode, orient))
-            {
-                return Animations[mode.ToString() + OrientationStrings[(int) orient]];
-            }
-            else
-            {
-                return null;
-            }
-        }
-
 
         public static Animation CreateAnimation(Creature.CharacterMode mode,
             Orientation orient,
