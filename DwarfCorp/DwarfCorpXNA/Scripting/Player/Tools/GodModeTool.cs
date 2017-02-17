@@ -66,6 +66,11 @@ namespace DwarfCorp
 
                 Player.VoxSelector.SelectionType = GetSelectionType(value);
                 SelectorPanel.IsVisible = value;
+
+                if (!value)
+                {
+                    SelectorBox.Kill();
+                }
             }
         }
 

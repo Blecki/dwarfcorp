@@ -101,6 +101,12 @@ namespace DwarfCorp
             }
         }
 
+        public void Kill()
+        {
+            if (Selector != null) Selector.Kill();
+            Selector = null;
+        }
+
         private void Selector_OnSelectionModified(string value)
         {
             CurrentIndex = Values.IndexOf(value);

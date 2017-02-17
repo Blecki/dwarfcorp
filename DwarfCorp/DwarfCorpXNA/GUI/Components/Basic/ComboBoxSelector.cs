@@ -221,6 +221,19 @@ namespace DwarfCorp
             return toReturn;
         }
 
+        public void Kill()
+        {
+            // This will chain down the line as many times as needed.
+            if (CurrentValue.ChildSelector != null)
+            {
+                CurrentValue.ChildSelector.Kill();
+                CurrentValue.ChildSelector = null;
+            }
+            InputManager.MouseClickedCallback -= InputManager_MouseClickedCallback;
+            IsDead = true;
+            Parent.RemoveChild(this);
+            GUI.FocusComponent = null;
+        }
 
         private void InputManager_MouseClickedCallback(InputManager.MouseButton button)
         {
