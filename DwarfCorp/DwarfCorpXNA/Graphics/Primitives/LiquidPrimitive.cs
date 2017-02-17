@@ -114,9 +114,7 @@ namespace DwarfCorp
 
                                 Vector3 delta = faceDeltas[(int)face];
 
-
-                                bool success = chunk.Manager.ChunkData.GetVoxel(chunk, 
-                                    new Vector3(x + (int)delta.X, y + (int)delta.Y, z + (int)delta.Z) + chunk.Origin, ref vox);
+                                bool success = myVoxel.GetNeighborBySuccessor(delta, ref vox, false);
 
                                 if(success)
                                 {
@@ -142,7 +140,7 @@ namespace DwarfCorp
                                             drawFace[(int)face] = false;
                                         }
 
-                                        bool gotVox = chunk.Manager.ChunkData.GetVoxel(chunk, new Vector3(x, y + 1, z) + chunk.Origin, ref vox);
+                                        bool gotVox = myVoxel.GetNeighborBySuccessor(new Vector3(0, 1, 0),ref vox, false);
 
                                         isTop = !gotVox || vox.IsEmpty || vox.WaterLevel == 0;
                                     }
