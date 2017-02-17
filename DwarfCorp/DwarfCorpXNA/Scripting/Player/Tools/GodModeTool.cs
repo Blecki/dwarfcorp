@@ -261,11 +261,7 @@ namespace DwarfCorp
                             vox.Type = VoxelType.TypeList[0];
                             vox.Water = new WaterCell();
 
-                            if(!chunksToRebuild.Contains(vox.ChunkID))
-                            {
-                                Chunks.ChunkData.ChunkMap[vox.ChunkID].NotifyTotalRebuild(vox.IsEmpty && !vox.IsInterior);
-                            }
-                            chunksToRebuild.Add(vox.ChunkID);
+                            vox.Chunk.Manager.KilledVoxels.Add(vox);
                         }
                             break;
                         case "Kill Block":
