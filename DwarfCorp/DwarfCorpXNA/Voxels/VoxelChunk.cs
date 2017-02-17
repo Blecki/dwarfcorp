@@ -805,10 +805,13 @@ namespace DwarfCorp
 
         public void RebuildLiquids()
         {
+            List<LiquidPrimitive> toInit = new List<LiquidPrimitive>();
+
             foreach (KeyValuePair<LiquidType, LiquidPrimitive> primitive in Liquids)
             {
-                primitive.Value.InitializeFromChunk(this);
+                toInit.Add(primitive.Value);
             }
+            LiquidPrimitive.InitializePrimativesFromChunk(this, toInit);
             ShouldRebuildWater = false;
         }
 

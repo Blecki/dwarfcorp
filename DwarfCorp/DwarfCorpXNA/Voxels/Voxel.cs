@@ -276,6 +276,8 @@ namespace DwarfCorp
         [JsonIgnore]
         private ulong quickCompare;
         private const ulong invalidCompareValue = 0xFFFFFFFFFFFFFFFFUL;
+
+        [JsonIgnore]
         public ulong QuickCompare
         {
             get {
