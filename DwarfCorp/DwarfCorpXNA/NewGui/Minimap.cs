@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -178,11 +178,11 @@ namespace DwarfCorp.NewGui
             PlayState.GraphicsDevice.SetRenderTarget(RenderTarget);
 
             PlayState.GraphicsDevice.Clear(ClearOptions.Target, Color.Black, 0, 0);
-            DwarfGame.World.DefaultShader.Parameters["xView"].SetValue(Camera.ViewMatrix);
-            DwarfGame.World.DefaultShader.Parameters["xEnableFog"].SetValue(0);
+            DwarfGame.World.DefaultShader.View = Camera.ViewMatrix;
+            DwarfGame.World.DefaultShader.EnbleFog = false;
 
-            DwarfGame.World.DefaultShader.Parameters["xProjection"].SetValue(Camera.ProjectionMatrix);
-            DwarfGame.World.DefaultShader.CurrentTechnique = DwarfGame.World.DefaultShader.Techniques["Textured_colorscale"];
+            DwarfGame.World.DefaultShader.Projection = Camera.ProjectionMatrix;
+            DwarfGame.World.DefaultShader.CurrentTechnique = DwarfGame.World.DefaultShader.Techniques[Shader.Technique.TexturedWithColorScale];
 
             PlayState.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             PlayState.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -193,7 +193,7 @@ namespace DwarfCorp.NewGui
             PlayState.GraphicsDevice.Indices = null;
             PlayState.GraphicsDevice.SetVertexBuffer(null);
 
-            DwarfGame.World.DefaultShader.Parameters["xEnableFog"].SetValue(1);
+            DwarfGame.World.DefaultShader.EnbleFog = true;
 
             DwarfGame.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointClamp, null, RasterizerState.CullNone);
             Viewport viewPort = new Viewport(RenderTarget.Bounds);

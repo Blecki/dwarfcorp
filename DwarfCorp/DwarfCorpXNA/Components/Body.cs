@@ -1,4 +1,4 @@
-﻿// Body.cs
+// Body.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -350,7 +350,7 @@ namespace DwarfCorp
         /// <param name="graphicsDevice">The graphics device.</param>
         /// <param name="effect">The shader to use.</param>
         /// <param name="renderingForWater">if set to <c>true</c> rendering for water reflections.</param>
-        public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+        public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
         }
 

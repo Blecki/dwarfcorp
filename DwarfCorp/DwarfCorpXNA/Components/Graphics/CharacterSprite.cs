@@ -61,7 +61,7 @@ namespace DwarfCorp
 
 
         public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
-            GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+            GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             if (!isBlinking)
             {

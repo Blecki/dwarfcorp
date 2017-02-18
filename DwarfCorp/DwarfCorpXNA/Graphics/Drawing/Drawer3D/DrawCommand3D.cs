@@ -1,4 +1,4 @@
-﻿// DrawCommand3D.cs
+// DrawCommand3D.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -56,7 +56,7 @@ namespace DwarfCorp
             DrawAccumlatedStrips = true;
         }
 
-        public abstract void Render(GraphicsDevice device, Effect effect);
+        public abstract void Render(GraphicsDevice device, Shader effect);
 
         public abstract void AccumulateStrips(LineStrip vertices);
     }

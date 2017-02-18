@@ -1,4 +1,4 @@
-﻿// RoomBuilder.cs
+// RoomBuilder.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -343,7 +343,7 @@ namespace DwarfCorp
                         tip += "\n";
                     }
 
-                    DwarfGame.World.ShowTooltip("Release to build her.");
+                    DwarfGame.World.ShowTooltip("Release to build here.");
 
                     displayObjects = RoomLibrary.GenerateRoomComponentsTemplate(CurrentRoomData, refs, Faction.Components, 
                         DwarfGame.World.ChunkManager.Content, DwarfGame.World.ChunkManager.Graphics);

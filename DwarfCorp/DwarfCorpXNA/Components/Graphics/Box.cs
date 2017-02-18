@@ -1,4 +1,4 @@
-﻿// Box.cs
+// Box.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -55,11 +55,11 @@ namespace DwarfCorp
             Texture = tex;
         }
 
-        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect, bool renderingForWater)
+        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             ApplyTintingToEffect(effect);
-            effect.Parameters["xTexture"].SetValue(Texture);
-            effect.Parameters["xWorld"].SetValue(GlobalTransform);
+            effect.MainTexture = Texture;
+            effect.World = GlobalTransform;
 
             foreach(EffectPass pass in effect.CurrentTechnique.Passes)
             {
